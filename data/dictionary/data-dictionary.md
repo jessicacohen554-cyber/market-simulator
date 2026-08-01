@@ -108,7 +108,7 @@ snapshot).
 | wecc-west-supply | — | n/a |
 | zonal-shares | per-ISO via directory partitioning | n/a |
 | weather | per-ISO via directory partitioning | n/a |
-| egrid | national (EPA eGRID, by vintage year) | n/a |
+| egrid | national (EPA eGRID, by vintage year) | 2023 |
 | pjm-outages | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
@@ -288,13 +288,16 @@ measured offer-surface source. Schema:
   `interval_start_utc`, `row_kind`, `step_idx`
 - **Reconciles:** CAISO OASIS Public Bid Data GroupZip archives (one zip per
   DAM trade date, 90-day publication lag) onto one tidy row per (resource,
-  trade date, bid segment); first (and so far only) registered ISO: CAISO.
+  OPERATING HOUR, product, bid segment) — the raw disclosure is
+  run-length-encoded over hours and every parser expands its ranges before
+  assigning step_idx (caiso-152); first (and so far only) registered ISO:
+  CAISO.
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
 | `iso` | `string` | `none` | no | ISO whose DAM produced the bid ("CAISO"). |
 | `trade_date` | `datetime64[ns]` | `local_date` | no | DAM trade date (= operating date) as a tz-naive local calendar day (midnight-normalized). Maps to the OASIS STARTDATE field. |
-| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the operating hour the bid row applies to. Curve rows: SCH_BID_TIMEINTERVALSTART_GMT; self-schedule rows: TIMEINTERVALSTART_GMT. |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the ONE operating hour the bid row applies to. Curve rows: SCH_BID_TIMEINTERVALSTART_GMT; self-schedule rows: TIMEINTERVALSTART_GMT — in both cases the raw range is expanded to one row per hour up to its matching STOP/END stamp (see the header), so this is an hour, never a multi-hour range start. |
 | `resource_type` | `string` | `none` | no | OASIS RESOURCE_TYPE — GENERATOR, LOAD (participating load), or INTERTIE (import/export bid at a scheduling point). |
 | `sc_seq` | `int64` | `none` | yes | Masked scheduling-coordinator sequence id (SCHEDULINGCOORDINATOR_SEQ). Informational; persistent. |
 | `resource_seq` | `int64` | `none` | no | Masked resource sequence id (RESOURCEBID_SEQ). Persistent across days and years — the longitudinal join key for per-resource statistics. |

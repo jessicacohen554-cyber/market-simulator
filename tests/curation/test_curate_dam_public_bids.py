@@ -1,11 +1,13 @@
 """Tests for the dam-public-bids intake on a tiny synthetic fixture.
 
-Writes a minimal CAISO ``PUB_DAM_GRP`` daily zip (two resources, two hours:
-one piecewise curve, one self-schedule, one AS bid) into a tmp raw tree,
-runs ``curate``, and asserts the written Parquet is schema-valid and the
+Writes a minimal CAISO ``PUB_DAM_GRP`` daily zip (three resources: one
+piecewise curve, one self-schedule, one AS bid, plus a run-length-encoded
+3-hour curve and a 2-hour self-schedule) into a tmp raw tree, runs
+``curate``, and asserts the written Parquet is schema-valid and the
 reconciliation (segment vs self-schedule row split, GMT hour selection,
-ascending-MW step_idx) is correct. CLEAN_DIR is redirected to a tmp dir (as
-in tests/curation/test_curate_outages.py) so it never touches the real tree.
+RLE expansion to the declared per-hour grain, ascending-MW step_idx) is
+correct. CLEAN_DIR is redirected to a tmp dir (as in
+tests/curation/test_curate_outages.py) so it never touches the real tree.
 """
 
 import io
@@ -53,6 +55,18 @@ _ROWS = [
     ",,,,2024-01-10 00:00:00.0,DAM,GENERATOR,9002,222,,,,,,,,SR,,"
     "2024-01-10T01:00:00,2024-01-10T02:00:00,2024-01-10T09:00:00-00:00,"
     "2024-01-10T10:00:00-00:00,12.0,4.0,,BIDPRICE,,",
+    # Resource 333: run-length-encoded 2-point EN curve held for THREE hours
+    # (12:00-15:00 UTC) — one raw row per breakpoint, six clean rows.
+    ",,,,2024-01-10 00:00:00.0,DAM,GENERATOR,9003,333,,,,,,,,EN,,"
+    "2024-01-10T04:00:00,2024-01-10T07:00:00,2024-01-10T12:00:00-00:00,"
+    "2024-01-10T15:00:00-00:00,25.0,18.0,,BIDPRICE,,",
+    ",,,,2024-01-10 00:00:00.0,DAM,GENERATOR,9003,333,,,,,,,,EN,,"
+    "2024-01-10T04:00:00,2024-01-10T07:00:00,2024-01-10T12:00:00-00:00,"
+    "2024-01-10T15:00:00-00:00,10.0,7.0,,BIDPRICE,,",
+    # Resource 333: run-length-encoded self-schedule held for TWO hours.
+    ",,,,2024-01-10 00:00:00.0,DAM,GENERATOR,9003,333,"
+    "2024-01-10T08:00:00,2024-01-10T10:00:00,2024-01-10T16:00:00-00:00,"
+    "2024-01-10T18:00:00-00:00,,,,EN,9.5,,,,,,,,,",
 ]
 
 
@@ -87,7 +101,8 @@ class TestCurateDamPublicBids(unittest.TestCase):
         self.assertEqual(len(written), 1)
         clean_io.validate_clean(written[0])
         df = pd.read_parquet(written[0])
-        self.assertEqual(len(df), 5)
+        # 5 single-hour rows + 2 breakpoints x 3 hours + 1 self-sched x 2 hours.
+        self.assertEqual(len(df), 13)
 
         # Curve rows: step_idx follows ascending MW despite file order.
         en111 = df[(df.resource_seq == 111) & (df["product"] == "EN")].sort_values(
@@ -101,7 +116,7 @@ class TestCurateDamPublicBids(unittest.TestCase):
         )
 
         # Self-schedule row: hour from TIMEINTERVALSTART_GMT, MW carried.
-        ss = df[df.row_kind == "self_sched"]
+        ss = df[(df.row_kind == "self_sched") & (df.resource_seq == 222)]
         self.assertEqual(len(ss), 1)
         self.assertEqual(ss.self_sched_mw.iloc[0], 17.5)
         self.assertTrue(pd.isna(ss.segment_mw.iloc[0]))
@@ -111,6 +126,38 @@ class TestCurateDamPublicBids(unittest.TestCase):
 
         # AS product retained.
         self.assertEqual((df["product"] == "SR").sum(), 1)
+
+        # RLE curve: one raw row per breakpoint held 12:00-15:00 UTC becomes
+        # a complete 2-step curve in EACH of the three hours, and step_idx
+        # restarts per hour in ascending-MW order (caiso-152).
+        en333 = df[(df.resource_seq == 333) & (df.row_kind == "segment")].sort_values(
+            ["interval_start_utc", "step_idx"]
+        )
+        self.assertEqual(len(en333), 6)
+        self.assertEqual(
+            [str(t) for t in en333.interval_start_utc.unique()],
+            [
+                "2024-01-10 12:00:00+00:00",
+                "2024-01-10 13:00:00+00:00",
+                "2024-01-10 14:00:00+00:00",
+            ],
+        )
+        self.assertEqual(list(en333.step_idx), [1, 2, 1, 2, 1, 2])
+        self.assertEqual(list(en333.segment_mw), [10.0, 25.0] * 3)
+        self.assertEqual(list(en333.segment_price_usd_per_mwh), [7.0, 18.0] * 3)
+
+        # RLE self-schedule: the quantity repeats in every hour of its range,
+        # it is never summed or spread across them.
+        ss333 = df[
+            (df.resource_seq == 333) & (df.row_kind == "self_sched")
+        ].sort_values("interval_start_utc")
+        self.assertEqual(len(ss333), 2)
+        self.assertEqual(list(ss333.self_sched_mw), [9.5, 9.5])
+        self.assertEqual(
+            [str(t) for t in ss333.interval_start_utc],
+            ["2024-01-10 16:00:00+00:00", "2024-01-10 17:00:00+00:00"],
+        )
+        self.assertEqual(list(ss333.step_idx), [1, 1])
 
         # Idempotent re-run.
         again = curate_dpb.curate(raw_root=self.raw_root, isos=["CAISO"], years=[2024])

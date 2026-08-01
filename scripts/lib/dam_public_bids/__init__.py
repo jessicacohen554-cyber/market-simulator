@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Iterable
 
+import numpy as np
 import pandas as pd
 
 DATATYPE = "dam-public-bids"
@@ -45,6 +46,75 @@ ROW_KINDS: frozenset[str] = frozenset({"segment", "self_sched"})
 
 #: ISO modules to import on load so their specs self-register.
 _ISO_MODULES: tuple[str, ...] = ("caiso",)
+
+
+def expand_rle(
+    frame: pd.DataFrame,
+    stop_utc,
+    *,
+    hour_col: str = "interval_start_utc",
+) -> pd.DataFrame:
+    """Expand run-length-encoded ``[start, stop)`` rows to one row per hour.
+
+    ISO DAM bid disclosures publish a bid that is unchanged across several
+    operating hours as ONE row carrying a start stamp and a stop stamp, not
+    as one row per hour: a resource that holds the same curve all day emits
+    a single 24-hour row. The datatype's declared grain is one row per
+    masked resource x **operating hour** x product x breakpoint, so a parser
+    that keys on the start stamp alone silently drops every hour of every
+    multi-hour range and biases the surviving population toward
+    frequently-rebidding resource-hours (caiso-152; the defect filed at
+    caiso-150 §E1). Measured on CAISO GENERATOR EN curves, 2023-01-02:
+    18,520 raw rows carry 50,972 real curve-hours.
+
+    Every ISO's disclosure is run-length-encoded this way, so the expansion
+    is shared here rather than repeated per ISO module (each parser passes
+    its own STOP column).
+
+    Parameters
+    ----------
+    frame:
+        Rows keyed by their RANGE START in ``hour_col`` (tz-aware UTC).
+    stop_utc:
+        Matching exclusive range end per row, positionally aligned with
+        ``frame``. Parsed to tz-aware UTC; a null or non-positive span is
+        treated as a single hour (never dropped).
+    hour_col:
+        Column holding the range start, rewritten in place to the expanded
+        per-hour stamp.
+
+    Returns
+    -------
+    pandas.DataFrame
+        ``frame`` with each row repeated once per hour in its range, the
+        index reset. Row order is preserved: a range's hours stay adjacent
+        and in ascending order.
+    """
+    if frame.empty:
+        return frame.reset_index(drop=True)
+
+    start = pd.DatetimeIndex(
+        pd.to_datetime(pd.Series(frame[hour_col]).to_numpy(), utc=True)
+    )
+    stop = pd.DatetimeIndex(
+        pd.to_datetime(pd.Series(stop_utc).to_numpy(), utc=True, format="mixed")
+    )
+    hours = (stop - start).total_seconds().to_numpy() / 3600.0
+    # A missing/degenerate stop stamp means "this hour only" — never a drop.
+    span = np.where(np.isfinite(hours), hours, 1.0).astype("int64")
+    np.clip(span, 1, None, out=span)
+    if not (span > 1).any():
+        out = frame.reset_index(drop=True)
+        out[hour_col] = start
+        return out
+
+    rep = np.repeat(np.arange(len(frame)), span)
+    # Offset of each expanded row within its own range: 0, 1, ... span-1.
+    ends = np.cumsum(span)
+    offs = np.arange(ends[-1]) - np.repeat(ends - span, span)
+    out = frame.iloc[rep].reset_index(drop=True)
+    out[hour_col] = start[rep] + pd.to_timedelta(offs, unit="h")
+    return out
 
 
 @dataclass(frozen=True)
