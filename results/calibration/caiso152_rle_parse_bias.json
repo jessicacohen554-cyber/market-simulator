@@ -1,0 +1,284 @@
+{
+ "probe": "caiso-152 dam-public-bids RLE parse bias",
+ "prereg": "results/calibration/PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md",
+ "prereg_addendum": "results/calibration/PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md",
+ "tolerance": {
+  "abs": 0.08,
+  "rel": 0.1,
+  "source": "the deriver's own G2/G3"
+ },
+ "corpus": "full contiguous 2023-2025 (PREREG addendum \u00a7C)",
+ "population": {
+  "old": {
+   "curve_rows": 29788818,
+   "rows_at_min_cap": 19639092,
+   "resources": 680
+  },
+  "new": {
+   "curve_rows": 66985503,
+   "rows_at_min_cap": 50164548,
+   "resources": 694
+  }
+ },
+ "derive_gates": {
+  "old": {
+   "all_pass": false,
+   "consumed_jsons_written": false,
+   "G1": {
+    "CC_REGULAR": {
+     "bucket_mw": 12007.0,
+     "fleet_mw": 13708.0,
+     "ratio": 0.876,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "bucket_mw": 1786.0,
+     "fleet_mw": 7616.0,
+     "ratio": 0.235,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": false
+    }
+   }
+  },
+  "new": {
+   "all_pass": false,
+   "consumed_jsons_written": false,
+   "G1": {
+    "CC_REGULAR": {
+     "bucket_mw": 11481.0,
+     "fleet_mw": 13708.0,
+     "ratio": 0.838,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "bucket_mw": 2130.0,
+     "fleet_mw": 7616.0,
+     "ratio": 0.28,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": false
+    }
+   }
+  }
+ },
+ "T1_static_bands": {
+  "CC_REGULAR": {
+   "econ_low": {
+    "old": 1.544,
+    "new": 1.595,
+    "delta": 0.051,
+    "tol": 0.1544,
+    "fires": false
+   },
+   "econ_high": {
+    "old": 1.689,
+    "new": 1.705,
+    "delta": 0.016,
+    "tol": 0.1689,
+    "fires": false
+   },
+   "peak": {
+    "old": 1.71,
+    "new": 1.709,
+    "delta": -0.001,
+    "tol": 0.171,
+    "fires": false
+   },
+   "committed_band_unarmed": {
+    "old": 1.63,
+    "new": 1.637
+   }
+  },
+  "CT_PEAKER": {
+   "econ_low": {
+    "old": 0.745,
+    "new": 0.681,
+    "delta": -0.064,
+    "tol": 0.08,
+    "fires": false
+   },
+   "econ_high": {
+    "old": 1.055,
+    "new": 0.912,
+    "delta": -0.143,
+    "tol": 0.1055,
+    "fires": true
+   },
+   "peak": {
+    "old": 1.05,
+    "new": 1.076,
+    "delta": 0.026,
+    "tol": 0.105,
+    "fires": false
+   },
+   "committed_band_unarmed": {
+    "old": -0.278,
+    "new": -0.281
+   }
+  }
+ },
+ "T2_ladder_bin_means": {
+  "CC_REGULAR": {
+   "0": {
+    "old": 3.112,
+    "new": 3.069,
+    "delta": -0.043,
+    "tol": 0.3112,
+    "fires": false
+   },
+   "1": {
+    "old": 3.0326,
+    "new": 2.9616,
+    "delta": -0.071,
+    "tol": 0.3033,
+    "fires": false
+   },
+   "2": {
+    "old": 3.1734,
+    "new": 3.0928,
+    "delta": -0.0806,
+    "tol": 0.3173,
+    "fires": false
+   },
+   "3": {
+    "old": 3.258,
+    "new": 3.1234,
+    "delta": -0.1346,
+    "tol": 0.3258,
+    "fires": false
+   }
+  },
+  "CT_PEAKER": {
+   "0": {
+    "old": 1.4666,
+    "new": 1.7776,
+    "delta": 0.311,
+    "tol": 0.1467,
+    "fires": true
+   },
+   "1": {
+    "old": 1.454,
+    "new": 1.7308,
+    "delta": 0.2768,
+    "tol": 0.1454,
+    "fires": true
+   },
+   "2": {
+    "old": 1.4724,
+    "new": 1.7486,
+    "delta": 0.2762,
+    "tol": 0.1472,
+    "fires": true
+   },
+   "3": {
+    "old": 1.4532,
+    "new": 1.7576,
+    "delta": 0.3044,
+    "tol": 0.1453,
+    "fires": true
+   }
+  }
+ },
+ "reproduction_vs_committed": {
+  "CC_REGULAR": {
+   "bands": {
+    "econ_low": {
+     "committed": 1.051,
+     "old_arm": 1.544,
+     "new_arm": 1.595
+    },
+    "econ_high": {
+     "committed": 1.053,
+     "old_arm": 1.689,
+     "new_arm": 1.705
+    },
+    "peak": {
+     "committed": 1.333,
+     "old_arm": 1.71,
+     "new_arm": 1.709
+    }
+   },
+   "ladder_bin_means": {
+    "0": {
+     "committed": 1.909,
+     "old_arm": 3.112,
+     "new_arm": 3.069
+    },
+    "1": {
+     "committed": 1.8452,
+     "old_arm": 3.0326,
+     "new_arm": 2.9616
+    },
+    "2": {
+     "committed": 2.0234,
+     "old_arm": 3.1734,
+     "new_arm": 3.0928
+    },
+    "3": {
+     "committed": 2.0264,
+     "old_arm": 3.258,
+     "new_arm": 3.1234
+    }
+   }
+  },
+  "CT_PEAKER": {
+   "bands": {
+    "econ_low": {
+     "committed": 1.147,
+     "old_arm": 0.745,
+     "new_arm": 0.681
+    },
+    "econ_high": {
+     "committed": 1.182,
+     "old_arm": 1.055,
+     "new_arm": 0.912
+    },
+    "peak": {
+     "committed": 1.176,
+     "old_arm": 1.05,
+     "new_arm": 1.076
+    }
+   },
+   "ladder_bin_means": {
+    "0": {
+     "committed": 2.1868,
+     "old_arm": 1.4666,
+     "new_arm": 1.7776
+    },
+    "1": {
+     "committed": 2.1708,
+     "old_arm": 1.454,
+     "new_arm": 1.7308
+    },
+    "2": {
+     "committed": 2.2942,
+     "old_arm": 1.4724,
+     "new_arm": 1.7486
+    },
+    "3": {
+     "committed": 2.3798,
+     "old_arm": 1.4532,
+     "new_arm": 1.7576
+    }
+   }
+  }
+ },
+ "T1_fires": true,
+ "T2_fires": true,
+ "parse_effect": "MATERIAL",
+ "verdict": "DERIVE_GATE_FAIL \u2014 the corrected derive cannot be shipped; the lane STOPS at the derive and no threshold is retuned (rule 23). The parse effect itself is MATERIAL.",
+ "old_arm_reproduces_committed_gates": false
+}

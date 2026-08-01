@@ -1,0 +1,54 @@
+{
+ "arm": "new",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "derive_rc": 1,
+ "curve_rows": 66985503,
+ "rows_at_min_cap": 50164548,
+ "resources": 694,
+ "G1": {
+  "CC_REGULAR": {
+   "bucket_mw": 11481.0,
+   "fleet_mw": 13708.0,
+   "ratio": 0.838,
+   "bounds": [
+    0.5,
+    1.3
+   ],
+   "pass": true
+  },
+  "CT_PEAKER": {
+   "bucket_mw": 2130.0,
+   "fleet_mw": 7616.0,
+   "ratio": 0.28,
+   "bounds": [
+    0.5,
+    1.6
+   ],
+   "pass": false
+  }
+ },
+ "static_bands": {
+  "CC_REGULAR": {
+   "committed": 1.637,
+   "econ_low": 1.595,
+   "econ_high": 1.705,
+   "peak": 1.709
+  },
+  "CT_PEAKER": {
+   "committed": -0.281,
+   "econ_low": 0.681,
+   "econ_high": 0.912,
+   "peak": 1.076
+  }
+ },
+ "ladder_body_p50": {
+  "CC_REGULAR": 1.877,
+  "CT_PEAKER": 1.17
+ },
+ "gates_all_pass": false,
+ "consumed_jsons_written": false
+}
