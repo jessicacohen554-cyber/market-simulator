@@ -175,8 +175,10 @@ def evolve_fleet(
         events: Optional dict (see
             :func:`market_sim.results.evolution_ledger.new_events`) populated
             in place with the per-year capacity events — retirements
-            (known/economic), reliability-floor-retained units, thermal
-            additions (planned/economic/reserve_backstop), CCS retrofits,
+            (confirmed/announced/economic), confirmed-registry derates of
+            surviving plant-binned tranches (``confirmed_derates``),
+            reliability-floor-retained units, thermal additions
+            (planned/economic/reserve_backstop), CCS retrofits,
             renewable additions, and the fleet-by-fuel totals before/after.
             ``None`` records nothing and leaves the solve path byte-identical.
         peak_demand_next: The ENTERING year's known peak demand in MW
@@ -335,6 +337,36 @@ def evolve_fleet(
     )
     if confirmed_channel_on:
         fleet = _pkg_ns().apply_confirmed_exits(fleet, year, confirmed_exits)
+    if _rec:
+        # Step-0 recorder seam (FFR-1A / FR-1): attribute the confirmed channel
+        # BEFORE the announced step runs, so the two exogenous channels carry
+        # their documented split reasons instead of one conflated "known" diff.
+        # A unit-grain confirmed exit drops its unit_id → a ``retirements`` row
+        # (reason "confirmed"); a plant-binned exit DERATES a surviving unit_id
+        # in place, invisible to any set-diff → a ``confirmed_derates`` row
+        # (the I4/A1 leak: derated MW left the fleet with no ledger record).
+        _post_confirmed = {g.unit_id: g for g in fleet}
+        events["retirements"].extend(
+            {
+                "unit_id": uid,
+                "fuel": g.fuel_type,
+                "mw": float(g.pmax_mw),
+                "reason": "confirmed",
+            }
+            for uid, g in _pre_known.items()
+            if uid not in _post_confirmed
+        )
+        events.setdefault("confirmed_derates", []).extend(
+            {
+                "unit_id": uid,
+                "fuel": g.fuel_type,
+                "mw_before": float(g.pmax_mw),
+                "mw_after": float(_post_confirmed[uid].pmax_mw),
+                "derate_mw": float(g.pmax_mw - _post_confirmed[uid].pmax_mw),
+            }
+            for uid, g in _pre_known.items()
+            if uid in _post_confirmed and _post_confirmed[uid].pmax_mw != g.pmax_mw
+        )
 
     # 1. Announced (EIA-860 date) retirements. Fossil units are a default no-op
     #    (their phaseout is economic, step 2; the exogenous fossil channel is
@@ -358,15 +390,17 @@ def evolve_fleet(
         reversed_plant_codes=announced_reversal_plants,
     )
     if _rec:
+        # Step-1 recorder seam: diff against the POST-step-0 fleet, so a unit
+        # already attributed "confirmed" above is never double-recorded here.
         _survived = {g.unit_id for g in fleet}
         events["retirements"].extend(
             {
-                "unit_id": g.unit_id,
+                "unit_id": uid,
                 "fuel": g.fuel_type,
                 "mw": float(g.pmax_mw),
-                "reason": "known",
+                "reason": "announced",
             }
-            for uid, g in _pre_known.items()
+            for uid, g in _post_confirmed.items()
             if uid not in _survived
         )
 
@@ -514,6 +548,15 @@ def evolve_fleet(
     # removed from the pipeline (mutated in place, so they stop occupying
     # the queue the step-5 screen nets against); deterministic, so it runs
     # even in a year the price-driven screen is skipped.
+    #
+    # The ADDITIONS-RECORDER baseline is snapshotted BEFORE the commissioned
+    # insert (FFR-1A / FR-13): commissioned units must land in the step-5
+    # ``thermal_additions`` diff, or their MW enters the fleet with no ledger
+    # row and I4 fails by the commissioned MW in every COD year once
+    # ``entry_commissioning_lag`` is armed. The DECISION-grain baseline
+    # (``_pre_entry_ids_all``, below) stays post-4.5 — commissioned rows were
+    # counted at their decision year and must not re-count at COD.
+    _pre_commission_ids = {g.unit_id for g in fleet} if _rec else None
     _commissioned_rows: list[dict] = []
     if entry_pipeline:
         for r in [r for r in entry_pipeline if int(r["cod_year"]) <= year]:
@@ -547,7 +590,7 @@ def evolve_fleet(
     # growth-ladder prior-max update; tracked unconditionally (cheap).
     _decided_mw_by_tech: dict[str, float] = {}
     _pre_entry_ids_all = {g.unit_id for g in fleet}
-    _pre_entry_ids = _pre_entry_ids_all if _rec else None
+    _pre_entry_ids = _pre_commission_ids if _rec else None
     # RC-0C entry-screen diagnostic sink (GATED entry_screen_diagnostics,
     # default off): a per-candidate decomposition ledger with no decision
     # effect, persisted into the year's evolution ledger by the runner.

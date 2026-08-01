@@ -221,6 +221,34 @@ def test_i4_fails_on_unexplained_delta():
     assert C.check_i4_capacity_accounting(_mk_run([led])).status == C.FAIL
 
 
+def test_i4_closes_with_confirmed_derates():
+    # FFR-1A / FR-1: a plant-binned confirmed exit shrinks a SURVIVING unit_id,
+    # recorded as a confirmed_derates row (no retirement row exists). I4 must
+    # subtract derate_mw per fuel or the balance cannot close.
+    led = _ledger(
+        2027,
+        before={"gas_st": 1333.0, "coal": 500.0},
+        after={"coal": 500.0},
+    )
+    led["confirmed_derates"] = [
+        {
+            "unit_id": "b1",
+            "fuel": "gas_st",
+            "mw_before": 1333.0,
+            "mw_after": 0.0,
+            "derate_mw": 1333.0,
+        }
+    ]
+    assert C.check_i4_capacity_accounting(_mk_run([led])).status == C.PASS
+
+
+def test_i4_fails_on_unledgered_derate():
+    # The pre-FFR-1A leak itself: derated MW with no confirmed_derates row
+    # (legacy ledger, key absent) is an unexplained delta -> FAIL.
+    led = _ledger(2027, before={"gas_st": 1333.0}, after={"gas_st": 0.0})
+    assert C.check_i4_capacity_accounting(_mk_run([led])).status == C.FAIL
+
+
 def test_i4_ccs_retrofit_shifts_fuel():
     led = _ledger(
         2027,
