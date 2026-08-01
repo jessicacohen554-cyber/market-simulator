@@ -1876,8 +1876,43 @@ charter with a new measured identification** before a solve:
 
 ### 5.7 Cross-cutting audits (not ISO levers)
 
+- **Diurnal price-amplitude audit, all six ISOs — DONE 2026-08-01 (xiso-1), and
+  the answer is SYSTEMIC.** One construction, zero LP (keeper
+  `hourly/system_<year>.parquet` P1 load-weighted duals vs the committed
+  `actual_lmp_hourly_<ISO>.parquet` hub DA/RT, both already on the model's
+  chronological 8760 calendar), probe
+  `scripts/probes/_xiso1_diurnal_amplitude_audit.py`, record
+  `results/calibration/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`.
+  **All 36 ISO × year × benchmark cells compress with the same signature:**
+  daily MAX under-priced in 36/36 (−7.5 % … −65.5 %), daily MIN over-priced in
+  36/36 (+5.9 % … +146.0 %), hour-of-day amplitude **19.9–92.2 % of measured**
+  (mean **40.5 %** vs DA, **43.9 %** vs RT) while the annual LEVEL is right to a
+  mean absolute **7.1 %** and the PHASE is right in **34/36** rows.
+
+  | ISO | amplitude vs DA, 2023 / 2024 / 2025 | cell |
+  |---|---|---|
+  | ERCOT | 52.9 / 38.2 / 36.7 % *(2023 uninterpretable — level −36.4 %)* | `U` |
+  | CAISO | 46.5 / 52.9 / **75.9** % | `U` |
+  | PJM | 31.6 / 36.5 / 34.2 % | `G` |
+  | MISO | 34.0 / 36.3 / 25.2 % | `G` |
+  | NYISO | 52.0 / 50.9 / 44.5 % | `O` |
+  | NEISO | 27.1 / **23.6** / 29.9 % | `U` |
+
+  Three consequences for every lane. (a) **The pre-existing ISO-local findings
+  are this defect, not separate ones** — pjm-141's 31/33/32 %, miso-89's
+  29–47 %, nyiso-109's 69/49/45 % and neiso-74's 24–30 % all reconcile
+  (rule 19 `[R-ONE-MECH]`); do not re-derive them. (b) **The level passes by
+  cancellation** — the trough is over-priced by about as much as the peak is
+  under-priced, so judge any successor on the AMPLITUDE and pre-register its
+  level effect. (c) **No criterion sees it at ANY ISO** — C3a is a level test,
+  C3b is a TWELVE-MONTH NRMSE for every ISO (structurally blind to hour-of-day),
+  C3c is a tail count, C7/D-1 is class *dispatch* shape; PJM's keeper is fully
+  `CALIBRATED` at ~34 % amplitude. Whether the rubric gains a diurnal-amplitude
+  criterion is an **OWNER CALL**, filed by neiso-74 and re-filed here; the
+  scorer was NOT changed. Matrix row `diurnal_price_amplitude`.
 - Post-guard re-derivation sweep of outage-derived artifacts, all six ISOs
-  (flagged in governance.md 2026-07-26, unaudited).
+  (flagged in governance.md 2026-07-26, unaudited) — **still the oldest open
+  audit on this list.**
 - `NG: PS` hydro-pin audit — **ALL SIX ISOs NOW SCREENED** (miso-108 audited
   MISO; miso-109 fixed it and ran the same three-signature screen across the
   rest, `scripts/probes/_miso109_hydro_level_audit.py`). The check is
