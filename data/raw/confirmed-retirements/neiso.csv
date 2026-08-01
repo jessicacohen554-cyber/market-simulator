@@ -33,6 +33,29 @@
 #   - Bridgeport Harbor 3 (the well-known ~383 MW coal-to-oil unit, distinct
 #     from "Bridgeport Harbor 4" above): already retired 2021-06-01 per the
 #     tracker — historical, out of scope.
+# ===========================================================================
+# RE-QUERY PASS 2026-07-31 (FFR-PA).
+#
+#   - Merrimack 1-2: re-queried, unchanged (2024 CWA consent decree, 2028-06;
+#     the station ceased operating entirely 2025-09-12, ahead of it). The
+#     EIA-860 spine still carries self-reported planned_retirement_year 2027
+#     (Unit 1, status OP) and 2028 (Unit 2, status OS) — the consent decree,
+#     not the owner's plan, is this row's instrument.
+#   - No new qualifying instrument found. The de-list-bid candidates held out
+#     in the 2026-07-05 pass remain held out on the same grounds (no
+#     verifiable EIA-860 identity match).
+#
+# STRUCTURAL WATCH for the next vintage: ISO-NE's capacity-auction reform
+# replaces the four-year-ahead de-list-bid construct with a one-year
+# deactivation-notification process. When that takes effect, this ISO's
+# instrument bar in the README ("Retirement / Permanent De-List Bid cleared in
+# an FCA") must be restated in terms of the new notification, or the bar will
+# silently stop matching any real instrument.
+# MANUAL DOWNLOAD NEEDED: ISO-NE's "Status of Nonprice Retirement Requests,
+# Retirement De-list Bids and Substitution Auction Demand Bids" tracker. The
+# FCM qualification pages reachable from here do not link a current edition,
+# and the copy cited by the previous pass still self-reports 2024-02-28 as its
+# last update.
 iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes
-NEISO,2364,1,Merrimack 1,113.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-1,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,"Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown",2026-07-05,"Granite Shore Power ceased ALL Merrimack Station operations 2025-09-12, ahead of the 2028-06 decree deadline — the decree date remains the citable binding-instrument ceiling. GT1/GT2 peaker units (18.6 MW each, same plant) are oil/gas combustion turbines outside the coal consent decree's scope and are excluded from this row."
-NEISO,2364,2,Merrimack 2,345.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-2,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,"Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown",2026-07-05,"See Merrimack 1's note (same consent decree). EIA-860 already shows this unit OS (out of service, not expected back)."
+NEISO,2364,1,Merrimack 1,113.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-1,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown,2026-07-31,"Granite Shore Power ceased ALL Merrimack Station operations 2025-09-12, ahead of the 2028-06 decree deadline — the decree date remains the citable binding-instrument ceiling. GT1/GT2 peaker units (18.6 MW each, same plant) are oil/gas combustion turbines outside the coal consent decree's scope and are excluded from this row. | Re-queried 2026-07-31 (FFR-PA): consent-decree deadline unchanged (2028-06); the station ceased operating 2025-09-12, ahead of it. Note the EIA-860 spine still carries a self-reported planned_retirement_year of 2027 for Unit 1 and 2028 for Unit 2 (statuses OP / OS) — the consent decree, not the owner's self-reported plan, is the instrument this row rests on."
+NEISO,2364,2,Merrimack 2,345.6,2028,6,consent_decree,gsp-cwa-cd-merrimack-2,"Clean Water Act consent decree — Granite Shore Power settlement with EPA, Conservation Law Foundation, and Sierra Club (proposed consent decree lodged 2024-03-29) requiring closure of Merrimack Station's coal units by 2028-06",2024-03-29,false,,https://www.federalregister.gov/documents/2024/03/29/2024-06661/proposed-consent-decree-clean-water-act-claim,Federal Register notice of lodging (2024-06661); Inside Climate News coverage of the plant's actual 2025-09-12 shutdown,2026-07-31,"See Merrimack 1's note (same consent decree). EIA-860 already shows this unit OS (out of service, not expected back). | Re-queried 2026-07-31 (FFR-PA): consent-decree deadline unchanged (2028-06); the station ceased operating 2025-09-12, ahead of it. Note the EIA-860 spine still carries a self-reported planned_retirement_year of 2027 for Unit 1 and 2028 for Unit 2 (statuses OP / OS) — the consent decree, not the owner's self-reported plan, is the instrument this row rests on."
