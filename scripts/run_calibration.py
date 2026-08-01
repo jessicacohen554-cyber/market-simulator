@@ -347,6 +347,7 @@ def run_year(
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
+    gas_offer_margin_zonal_anchor: bool = False,
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
@@ -902,6 +903,31 @@ def run_year(
         config = config.with_overrides(
             gas_offer_net_revenue_margin=True,
             gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
+        )
+    if gas_offer_margin_zonal_anchor:
+        # nyiso-109 — the SAME mechanism's identification point, resolved at
+        # the grain its own definition requires. `_gas_series` (which the ISO
+        # anchor is derived from) is ISO-level and does NOT carry the per-zone
+        # basis the solve applies afterwards on the (n_gen, T) array, so on an
+        # ISO whose keeper arms a zonal basis the ISO anchor is the REFERENCE
+        # zone's level and every other zone's units price their markup at a
+        # fuel level they never pay. The zone table resolves HERE from the
+        # registry so run_config.json records the values (rule 21); an ISO
+        # without one is a hard error, never a fallback (rules 24/25).
+        # Identification: derive_gas_offer_margin_anchor.py --by-zone.
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ZONE
+
+        if iso not in GAS_OFFER_MARGIN_ANCHOR_BY_ZONE:
+            raise SystemExit(
+                "--gas-offer-margin-zonal-anchor: no derived zone anchor table "
+                f"for {iso} in constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE — run "
+                "scripts/data/derive_gas_offer_margin_anchor.py --by-zone on "
+                "that ISO's own basis and register the values (rule 25: a zone "
+                "table never crosses an ISO boundary)"
+            )
+        config = config.with_overrides(
+            gas_offer_margin_zonal_anchor=True,
+            gas_offer_margin_anchor_by_zone=dict(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE[iso]),
         )
     if coal_offer_margin:
         # Coal-offer NET-REVENUE MARGIN form (ERCOT-137, the gas form's coal

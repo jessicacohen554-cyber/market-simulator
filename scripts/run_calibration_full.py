@@ -2918,6 +2918,7 @@ def solve_and_persist(
     tranche_startup_measured_runs: bool = False,
     tranche_startup_conditional_runs: bool = False,
     gas_offer_margin: bool = False,
+    gas_offer_margin_zonal_anchor: bool = False,
     coal_offer_margin: bool = False,
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
@@ -4122,6 +4123,27 @@ def solve_and_persist(
                 gas_offer_net_revenue_margin=True,
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
+        if gas_offer_margin_zonal_anchor:
+            # Zone-resolved identification point for the SAME mechanism
+            # (nyiso-109): record the gate AND the resolved per-zone anchors
+            # (rule 21 — run_config carries the values the solve used, never a
+            # lookup indirection).
+            from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ZONE
+
+            if iso not in GAS_OFFER_MARGIN_ANCHOR_BY_ZONE:
+                raise SystemExit(
+                    f"--gas-offer-margin-zonal-anchor: {iso} has no zone anchor "
+                    "table in constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE — derive "
+                    "it from the ISO's own basis with "
+                    "scripts/data/derive_gas_offer_margin_anchor.py --by-zone "
+                    "(rule 25: never transfer another ISO's zone table)"
+                )
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_margin_zonal_anchor=True,
+                gas_offer_margin_anchor_by_zone=dict(
+                    GAS_OFFER_MARGIN_ANCHOR_BY_ZONE[iso]
+                ),
+            )
         if coal_offer_margin:
             # Coal net-revenue margin form (ERCOT-137): record the gate AND
             # both resolved identification constants (rule 25 — run_config
@@ -4445,6 +4467,7 @@ def solve_and_persist(
             tranche_startup_measured_runs=tranche_startup_measured_runs,
             tranche_startup_conditional_runs=tranche_startup_conditional_runs,
             gas_offer_margin=gas_offer_margin,
+            gas_offer_margin_zonal_anchor=gas_offer_margin_zonal_anchor,
             coal_offer_margin=coal_offer_margin,
             cc_committed_offer_margin=cc_committed_offer_margin,
             coal_peak_offer_margin=coal_peak_offer_margin,
@@ -5168,6 +5191,7 @@ def solve_and_persist(
         "tranche_startup_measured_runs": tranche_startup_measured_runs,
         "tranche_startup_conditional_runs": tranche_startup_conditional_runs,
         "gas_offer_margin": gas_offer_margin,
+        "gas_offer_margin_zonal_anchor": gas_offer_margin_zonal_anchor,
         "coal_offer_margin": coal_offer_margin,
         "cc_committed_offer_margin": cc_committed_offer_margin,
         "coal_peak_offer_margin": coal_peak_offer_margin,
@@ -7843,6 +7867,28 @@ def main() -> None:
         "derived anchor hard-fail; ISOs without phys_* keys are inert. "
         "Design: docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md. "
         "Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--gas-offer-margin-zonal-anchor",
+        dest="gas_offer_margin_zonal_anchor",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Resolve --gas-offer-margin's identification anchor PER ZONE "
+        "(nyiso-109, ScenarioConfig.gas_offer_margin_zonal_anchor). The "
+        "mechanism's identity is that at fuel == anchor the reformed offer "
+        "reduces EXACTLY to the registered band multiplier — a statement "
+        "about a unit's OWN delivered fuel — but the ISO anchor is derived "
+        "from the ISO-level _gas_series, which does NOT carry the per-zone "
+        "basis the solve applies afterwards. On an ISO with a zonal basis "
+        "(NYISO: the reference zone keeps Iroquois Z2 and every other zone "
+        "shifts DOWN to its own hub) a unit outside the reference zone "
+        "therefore prices its markup at a fuel level it never pays. When "
+        "set, each gas tranche prices its markup at ITS ZONE's anchor "
+        "(constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE, "
+        "derive_gas_offer_margin_anchor.py --by-zone). Requires "
+        "--gas-offer-margin; a band-scoped rebasis anchor still wins "
+        "(rule 19). ISOs without a zone table hard-fail. Default OFF -> "
+        "prior keepers byte-identical.",
     )
     parser.add_argument(
         "--coal-offer-margin",
@@ -10822,6 +10868,7 @@ def main() -> None:
         tranche_startup_measured_runs=args.tranche_startup_measured_runs,
         tranche_startup_conditional_runs=args.tranche_startup_conditional_runs,
         gas_offer_margin=args.gas_offer_margin,
+        gas_offer_margin_zonal_anchor=args.gas_offer_margin_zonal_anchor,
         coal_offer_margin=args.coal_offer_margin,
         cc_committed_offer_margin=args.cc_committed_offer_margin,
         coal_peak_offer_margin=args.coal_peak_offer_margin,

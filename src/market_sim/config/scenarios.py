@@ -234,6 +234,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # True, or a set gas_offer_margin_anchor) enters the key as a distinct scenario.
     "gas_offer_net_revenue_margin",
     "gas_offer_margin_anchor",
+    # Zone-resolved anchor for the same mechanism (nyiso-109): the gate plus
+    # its resolved {zone: anchor} map. Both default-off (False / None) and
+    # byte-identical for every config that does not arm them; registered here
+    # at their defaults so every pre-existing cache key stays byte-stable. An
+    # armed run (the gate True, or the map set) enters the key as a distinct
+    # scenario.
+    "gas_offer_margin_zonal_anchor",
+    "gas_offer_margin_anchor_by_zone",
     # Coal-offer net-revenue margin form (ERCOT-137): the gate plus its two
     # identification constants (delivered-coal anchor $/MMBtu + measured RT
     # curve-bottom level $/MWh). All three default-off (False / None / None)
@@ -7455,6 +7463,35 @@ class ScenarioConfig:
     # harness resolves it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ISO so the
     # bundle's run_config.json records the resolved value.
     gas_offer_margin_anchor: float | None = None
+    # ZONE-RESOLVED anchor gate (nyiso-109; default OFF, byte-identical off).
+    # The mechanism's identity — at ``fuel == anchor`` the reformed offer
+    # reduces EXACTLY to the registered band multiplier — is a statement about a
+    # unit's OWN delivered fuel, so the anchor has to be measured on the series
+    # that unit's fuel is drawn from. ``gas_offer_margin_anchor`` above is
+    # derived from ``data.fuel.trajectories._gas_series``, which is ISO-level:
+    # it carries the hub overlay but NOT the per-zone basis the solve applies
+    # afterwards on the ``(n_gen, T)`` array. On an ISO with no zonal basis
+    # those are one series and the single anchor is identified everywhere; on
+    # NYISO they are not — ``apply_nyiso_zonal_gas_basis`` leaves the reference
+    # zone (Capital_Hudson / Iroquois Z2) unchanged and shifts every other zone
+    # DOWN to its own measured pipeline hub, so a NYC or Upstate_West unit pays
+    # persistently below the anchor and ``markup_hr × (anchor − fuel)`` hands it
+    # an uplift its band multiplier never contained. When armed, each gas
+    # tranche prices its markup at ITS ZONE's anchor
+    # (constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE, resolved into
+    # ``gas_offer_margin_anchor_by_zone`` below so run_config records the values
+    # the solve used). Requires ``gas_offer_net_revenue_margin``; a band-scoped
+    # rebasis anchor (ERCOT-118/119 ``margin_anchor_*``) still takes precedence,
+    # so the two never stack (rule 19 [R-ONE-MECH]). Zero fitted parameters —
+    # the zonal anchors are the SAME measurement as the ISO anchor evaluated per
+    # zone, rule-23 frozen against residuals.
+    gas_offer_margin_zonal_anchor: bool = False
+    # The resolved ``{zone: anchor $/MMBtu}`` map. None + the zonal gate armed
+    # is a hard error (no silent fallback — rule 24); the backcast harness
+    # resolves it from constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE so the bundle's
+    # run_config.json records the resolved values rather than a lookup
+    # indirection (rule 21 [R-REGISTRY]).
+    gas_offer_margin_anchor_by_zone: dict[str, float] | None = None
 
     # Coal-offer NET-REVENUE MARGIN form (the gas form's coal analogue,
     # ERCOT-137; owner ruling 2026-07-29: coal offers move to a measured

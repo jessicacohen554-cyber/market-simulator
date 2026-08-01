@@ -547,6 +547,51 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
     "NEISO": 4.0763,
 }
 
+# ZONE-resolved delivered-gas anchor ($/MMBtu) — the same identification point
+# as ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` above, evaluated at the grain the
+# mechanism's own definition requires, for the ISOs whose keeper applies a
+# PER-ZONE delivered-gas basis (nyiso-109).
+#
+# ``apply_gas_offer_margin``'s identity is *at ``fuel == anchor`` the reformed
+# offer reduces EXACTLY to the registered band multiplier* — a statement about a
+# unit's OWN delivered fuel. The ISO anchor above is derived from
+# ``data.fuel.trajectories._gas_series``, which is ISO-level: it carries the hub
+# overlay but NOT the per-zone basis, which the solve applies afterwards on the
+# ``(n_gen, T)`` array. On an ISO with no zonal basis the two are the same
+# series and the ISO anchor is correctly identified everywhere. On NYISO they
+# are not: ``apply_nyiso_zonal_gas_basis`` is anchored so the REFERENCE zone
+# (Capital_Hudson, Iroquois Z2) is unchanged and every other zone shifts DOWN to
+# its own measured pipeline hub, so a unit in NYC (Transco Z6 NY) or
+# Upstate_West (Tenn Z4 200L) pays persistently less than the ISO series — and
+# ``markup_hr × (anchor − fuel)`` then adds a margin uplift its band multiplier
+# was never calibrated to carry (the further below the anchor, the larger the
+# uplift). Resolving the anchor per zone restores the mechanism's own identity
+# in every zone; the reference zone's value is the ISO anchor unchanged.
+#
+# Values are the derive script's output 2026-08-01
+# (``scripts/data/derive_gas_offer_margin_anchor.py --iso NYISO --by-zone``),
+# which applies the RUNTIME zonal-basis transform to the same delivered series
+# over the same 2023-2025 training window, so these are by construction the
+# levels the solve prices those zones' gas units at:
+#   Capital_Hudson / Lower_Hudson / Long_Island  3.9046 = mean(3.3566, 2.7969,
+#     5.5602) — the reference hub, identical to the ISO anchor.
+#   NYC          2.7612 = mean(2.0166, 2.0869, 4.1802) — Transco Z6 NY.
+#   Upstate_West 2.0346 = mean(1.8966, 1.7269, 2.4802) — Tenn Z4 200L.
+# An identification constant, not a tunable: rule 23 [R-FROZEN-DERIVE], it
+# re-derives ONLY when the gas source data or the per-zone hub table changes,
+# never because a price residual moved. ISOs absent from the registry hard-fail
+# when the zonal gate is armed (never a silent fallback — rule 24), and a zone
+# table is that ISO's own measured basis and never crosses a boundary (rule 25).
+GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
+    "NYISO": {
+        "Upstate_West": 2.0346,
+        "Capital_Hudson": 3.9046,
+        "Lower_Hudson": 3.9046,
+        "NYC": 2.7612,
+        "Long_Island": 3.9046,
+    },
+}
+
 # Delivered-COAL anchor ($/MMBtu) — the identification point of the
 # ``coal_offer_net_revenue_margin`` mechanism (ERCOT-137, the gas form's coal
 # analogue; :func:`market_sim.data.fleet.legacy_bins.apply_coal_tranches`).
