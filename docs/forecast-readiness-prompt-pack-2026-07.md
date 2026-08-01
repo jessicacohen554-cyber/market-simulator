@@ -123,6 +123,7 @@ forward TTC).
 | **W3 re-baseline** | 3A (O), 3B (O) | 3B first or parallel (3B lands schema, 3A populates) | the ONE consolidated battery: T1-F ×6 + T1-X folds + T1-H re-scores + FC-6 | boards regenerated & current |
 | **WS structural** | SA (F), SB (F), SC (O) | yes | T0 smoke only; everything ships **default-off/no-solve** so the W3 baseline stays valid | owner arming decisions (later) |
 | **WP intake** | PA (O), PB (O) | parallel-**anytime** (data/docs only, no solve) | none | — |
+| **WFH hindcast** | FH-1 (F), FH-2 (O), FH-3 (O), then FH-4/FH-5 (O) ⛔ | FH-1/2/3 yes — parallel with W2; **FH-4/5 GATED on W1 merge + §W1-X epoch bump** (FR-7/FR-8 corrupt weather-pinned historic runs) | FH-4: 3 solve-yr × 6 ISOs × 2 arms; FH-5: 4 solve-yr | forward-mode skill measured → feeds §2.1b(c) "worth-the-compute" evidence |
 | **WG gate-open** | per-ISO, order: PJM → NEISO → MISO → ERCOT → NYISO → CAISO | — | **HELD.** Prompts re-authored at gate-open per §2.1b(d); not included here by design (FF Wave-4 withdrawal stands) | — |
 
 **Lane threads (sequential per lane across waves):**
@@ -735,6 +736,14 @@ verification (FR-20; FF-0D M1/M2) — DATA + CITATIONS ONLY
 5. **Anytime after W3:** FFR-SA/SB/SC (default-off; baseline stays valid).
 6. **WG (gate-open per ISO)** stays held: prompts are re-authored at gate-open under §2.1b(d) —
    this pack deliberately contains none (FF Wave-4 withdrawal stands).
+7. **Wave FH (forward-mode hindcast, T1-FF)** — its own pack:
+   `docs/hindcast-forward-plan-2026-07.md`. Runs the model in FORECAST configuration over historic
+   years (base 2023 → 2023-2025, then base 2021 → 2021-2025) with **no measured overlays**, scored
+   2023-2025 against bench + keeper comparators; the keeper→ArmR→ArmK spread measures what the
+   overlays are worth and what driver-forecast error costs. Launch FH-1/2/3 alongside Wave 2;
+   **FH-4/5 only after §W1-X** (FR-7/FR-8 would corrupt every weather-pinned historic solve, and
+   the epoch bump keeps stale 2026+ bundles out). Its output is the missing capacity-expansion
+   skill measurement the peer review names as bucket-C item 7.
 
 *Produced 2026-07-30; refreshed 2026-07-31 @ HEAD `7b8c36a` (state delta §0a; FFR-2E added,
 FFR-PA promoted, peer review `docs/forecast-readiness-peer-review-2026-07.md` folded in). No LP
