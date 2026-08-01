@@ -194,6 +194,120 @@ def cmd_curate(args: argparse.Namespace) -> int:
 
 
 # --------------------------------------------------------------------------- #
+# binshift — the ladder's exposure, measured without running the derive
+# --------------------------------------------------------------------------- #
+def cmd_binshift(args: argparse.Namespace) -> int:
+    """Measure how the parse defect mis-assigns curve-hours to net-load bins.
+
+    The conditional ladder assigns each resource-hour to a net-load bin from
+    its hour. Under the old parse a multi-hour hold was charged entirely to
+    the bin of its RANGE START, so the population feeding each bin's rungs
+    was not the population that actually bid there. This measures the
+    mis-assignment directly on the raw corpus — no clean tree, no derive, no
+    multiplier — so the ladder's exposure is stated independently of whatever
+    the re-derive returns.
+
+    Weighting is per (resource, range), deduplicated across breakpoints, so
+    curves are counted once each rather than once per step.
+    """
+    import zipfile
+
+    import numpy as np
+    import pandas as pd
+
+    from scripts.data import derive_caiso_offer_surface as D
+
+    edges = np.asarray(args.edges, dtype=float)
+    nl = D._netload_pct(list(args.years)).set_index(["day", "he"]).q
+
+    def _bins(idx: pd.DatetimeIndex):
+        loc = idx.tz_convert("US/Pacific")
+        key = pd.MultiIndex.from_arrays(
+            [loc.normalize().tz_localize(None), loc.hour + 1]
+        )
+        q = nl.reindex(key).to_numpy()
+        return np.searchsorted(edges, q, side="right"), q
+
+    zips = sorted((REPO / "data/raw/caiso-public-bids/zips").glob("*.zip"))
+    zips = [z for z in zips if int(z.name[:4]) in set(args.years)]
+    frames = []
+    for z in zips:
+        if z.name[:8] == "20240229":
+            continue  # non-leap model calendar (the caiso-151 corpus rule)
+        with zipfile.ZipFile(z) as zf:
+            name = next(n for n in zf.namelist() if n.lower().endswith(".csv"))
+            df = pd.read_csv(
+                zf.open(name),
+                usecols=[
+                    "RESOURCE_TYPE",
+                    "MARKETPRODUCTTYPE",
+                    "RESOURCEBID_SEQ",
+                    "SCH_BID_TIMEINTERVALSTART_GMT",
+                    "SCH_BID_TIMEINTERVALSTOP_GMT",
+                    "SCH_BID_XAXISDATA",
+                ],
+                low_memory=False,
+            )
+        df = df[
+            (df.RESOURCE_TYPE == "GENERATOR")
+            & (df.MARKETPRODUCTTYPE == "EN")
+            & df.SCH_BID_XAXISDATA.notna()
+        ]
+        if df.empty:
+            continue
+        s = pd.to_datetime(df.SCH_BID_TIMEINTERVALSTART_GMT, utc=True, format="mixed")
+        e = pd.to_datetime(df.SCH_BID_TIMEINTERVALSTOP_GMT, utc=True, format="mixed")
+        span = ((e - s).dt.total_seconds() // 3600).clip(lower=1).astype(int)
+        frames.append(
+            pd.DataFrame(
+                {
+                    "res": df.RESOURCEBID_SEQ.to_numpy(),
+                    "s": s.to_numpy(),
+                    "span": span.to_numpy(),
+                }
+            ).drop_duplicates()
+        )
+    k = pd.concat(frames, ignore_index=True)
+
+    span = k.span.to_numpy()
+    rep = np.repeat(np.arange(len(k)), span)
+    ends = np.cumsum(span)
+    offs = np.arange(ends[-1]) - np.repeat(ends - span, span)
+    start = pd.DatetimeIndex(k.s)[rep]
+    hour = pd.DatetimeIndex(start + pd.to_timedelta(offs, unit="h"))
+
+    b_true, q_true = _bins(hour)
+    b_start, _ = _bins(pd.DatetimeIndex(start))
+    m = ~np.isnan(q_true)
+    b_ranges, _ = _bins(pd.DatetimeIndex(k.s))
+
+    def _share(v) -> dict[str, float]:
+        s = pd.Series(v).value_counts(normalize=True).sort_index()
+        return {str(int(i)): round(float(x), 4) for i, x in s.items()}
+
+    rec = {
+        "days": len(zips),
+        "years": list(args.years),
+        "edges": list(edges),
+        "resource_ranges": int(len(k)),
+        "curve_hours": int(span.sum()),
+        "span_gt_1_share_of_ranges": round(float((span > 1).mean()), 4),
+        "hours_carried_by_old_parse": round(float(len(k) / span.sum()), 4),
+        "misassigned_bin_share_of_curve_hours": round(
+            float((b_true[m] != b_start[m]).mean()), 4
+        ),
+        "bin_share_old_range_starts": _share(b_ranges),
+        "bin_share_new_curve_hours": _share(b_true[m]),
+        "n_24h_holds": int((span == 24).sum()),
+    }
+    out = Path(args.out_root) / "caiso152_binshift.json"
+    out.write_text(json.dumps(rec, indent=1) + "\n")
+    print(json.dumps(rec, indent=1))
+    print(f"-> {out}")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
 # derive — re-run the offer-surface derive against one arm's clean tree
 # --------------------------------------------------------------------------- #
 def cmd_derive(args: argparse.Namespace) -> int:
@@ -383,20 +497,34 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--out-root", default=str(REPO / "results" / "calibration"))
-    ap.add_argument("--out", default=str(DEFAULT_OUT))
-    ap.add_argument("--clean-root", default=str(REPO / "results" / "calibration"))
-    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    # Shared options live on a parent parser so they may be given AFTER the
+    # subcommand: `--years` takes a list, and a greedy list before the
+    # subcommand would swallow it.
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--out-root", default=str(REPO / "results" / "calibration"))
+    common.add_argument("--out", default=str(DEFAULT_OUT))
+    common.add_argument("--clean-root", default=str(REPO / "results" / "calibration"))
+    common.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    common.add_argument(
+        "--edges",
+        nargs="+",
+        type=float,
+        default=[0.80, 0.90, 0.97],
+        help="net-load percentile bin edges (the deriver's armed default)",
+    )
+
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0], parents=[common])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("verify")
+    sub.add_parser("verify", parents=[common])
+    sub.add_parser("binshift", parents=[common])
     for name in ("curate", "derive"):
-        p = sub.add_parser(name)
+        p = sub.add_parser(name, parents=[common])
         p.add_argument("--arm", choices=("old", "new"), required=True)
-    sub.add_parser("compare")
+    sub.add_parser("compare", parents=[common])
     args = ap.parse_args(argv)
     return {
         "verify": cmd_verify,
+        "binshift": cmd_binshift,
         "curate": cmd_curate,
         "derive": cmd_derive,
         "compare": cmd_compare,
