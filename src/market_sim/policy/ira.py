@@ -203,10 +203,22 @@ def ira_phaseout_fraction(year: int, config: ScenarioConfig) -> float:
     ``ira_other_clean_75pct_year``, 50% through
     ``ira_other_clean_50pct_year``, 0% from ``ira_other_clean_phaseout_end``
     on. The model uses a generator's build/entry year as the
-    construction-begin-year proxy. Source: 26 U.S.C. §45Y/§48E, triangulated
-    (not a direct primary-text read — see the confidence note in
-    data/raw/policy/ira-credit-parameters/README.md) in
-    data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv.
+    construction-begin-year proxy.
+
+    Source: 26 U.S.C. §45Y(d)(2)-(3) and §48E(e)(2)-(3), read from the
+    Office of the Law Revision Counsel US Code (uscode.house.gov, prelim
+    edition) on 2026-07-31 — a DIRECT PRIMARY-TEXT read that supersedes the
+    former triangulated-from-secondary-sources caveat (FFR-PB, FR-20 M2).
+    §45Y(d)(2) sets 100%/75%/50%/0% for construction beginning in the
+    first/second/third/any-subsequent calendar year following the
+    "applicable year"; §45Y(d)(3), as amended by OBBBA (Pub. L. 119-21
+    §70512(a)(2)), fixes that applicable year flatly at calendar year 2032,
+    having struck the prior "later of 2032 or the <=25%-of-2022 electricity
+    emissions year" determination. 2032 therefore yields exactly the
+    2033/2034/2035/2036 breakpoints defaulted in ScenarioConfig. Values
+    landed in data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv;
+    provenance narrative in that directory's README.md and
+    docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md.
 
     This REPLACES the module's previous continuous 5-step-implied linear
     ramp (2028 full / 2033 zero, an undocumented estimate that predates this

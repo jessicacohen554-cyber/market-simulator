@@ -5,14 +5,25 @@ trajectories (2022-2050) onto the tidy schema in
 ``data/dictionary/schema/nrel-atb.schema.yaml`` and writes one Parquet
 partition through the frozen :func:`scripts.lib.clean_io.write_clean` seam.
 
-Single source: ``data/raw/nrel-atb/atb_2024_electricity_filtered.csv`` -- a
-technology-filtered, crpyears-deduplicated extract of NREL's public
-``ATBe.csv`` (the full file is ~572k rows / 94MB; see
-``data/raw/nrel-atb/README.md`` for the exact filter and how to regenerate it
-from the original). ``year`` is a *column* (one file spans 2022-2050), so the
-whole datatype writes one partition
-``data/clean/nrel-atb/nrel-atb.parquet`` (``year=None``). Reads only
-``data/raw``; idempotent; skips cleanly when the CSV has not landed yet.
+Sources: one technology-filtered, crpyears-deduplicated extract of NREL's
+public ``ATBe.csv`` per committed ATB *version* -- today
+``atb_2024_electricity_filtered.csv`` (2024 v3.0.0) and
+``atb_2024v4_electricity_filtered.csv`` (2024 v4.0.0). The full source file
+is ~572-586k rows / ~94-103MB; see ``data/raw/nrel-atb/README.md`` for the
+exact filter and how to regenerate either from the original.
+
+NREL re-releases an ATB *edition* under successive point *versions* when it
+corrects it, so edition-year alone does not identify a vintage --
+``atb_version`` is therefore part of the schema key, every landed version is
+curated into the one partition, and :func:`parse` defaults to the single
+version this repo's cost constants were derived from
+(:data:`DERIVATION_PINNED_VERSION`) so its derive-script callers are
+unaffected when a newer version lands.
+
+``year`` is a *column* (one file spans 2022-2050), so the whole datatype
+writes one partition ``data/clean/nrel-atb/nrel-atb.parquet``
+(``year=None``). Reads only ``data/raw``; idempotent; skips cleanly when no
+extract has landed yet.
 
 Run ``python scripts/data/curate_nrel_atb.py``.
 """
@@ -65,13 +76,49 @@ _UNIT_BY_PARAMETER = {
     "Fixed O&M": "2022 $/kW-yr",
 }
 
-_SOURCE_DOC = "NREL ATB 2024 v3.0.0 electricity, OEDI data lake"
-_SOURCE_KEY = "ATB/electricity/csv/2024/v3.0.0/ATBe.csv"
+# The ATB versions committed under data/raw/nrel-atb, newest last. An ATB
+# *edition* (2024) is re-released by NREL under successive point *versions*
+# when it is corrected, so edition-year alone does not identify a vintage --
+# hence `atb_version` is part of this datatype's key and each version lands
+# its own raw extract under its own filename stem. Adding a version here (and
+# committing its extract) is the whole intake step for a new ATB release.
+#
+# stem -> (edition_year, version, OEDI object key)
+_VERSIONS: dict[str, tuple[int, str, str]] = {
+    "atb_2024_electricity_filtered": (
+        2024,
+        "v3.0.0",
+        "ATB/electricity/csv/2024/v3.0.0/ATBe.csv",
+    ),
+    "atb_2024v4_electricity_filtered": (
+        2024,
+        "v4.0.0",
+        "ATB/electricity/csv/2024/v4.0.0/ATBe.csv",
+    ),
+}
+
+# The version this repo's committed constants were derived from. `parse`
+# defaults to it so the derive scripts and their rule-23 consistency tests
+# (tests/test_atb_entry_cost_consistency.py,
+# tests/test_cost_benchmark_envelope.py) keep reading exactly the bytes they
+# were built against when a newer version lands alongside. `curate` ignores
+# this and writes EVERY committed version to the clean partition, so a
+# re-derivation session can select the newer one explicitly. Moving this pin
+# is a deliberate re-derivation act (FFR-SC), never a side effect of intake.
+DERIVATION_PINNED_VERSION = "v3.0.0"
+
+_STEM_BY_VERSION = {v: stem for stem, (_, v, _) in _VERSIONS.items()}
 
 
-def raw_csv_path(raw_root: Path) -> Path:
-    """Return the expected raw CSV path beneath ``raw_root``."""
-    return raw_root / "nrel-atb" / "atb_2024_electricity_filtered.csv"
+def raw_csv_path(raw_root: Path, version: str = DERIVATION_PINNED_VERSION) -> Path:
+    """Return the expected raw CSV path for one ATB version beneath ``raw_root``."""
+    try:
+        stem = _STEM_BY_VERSION[version]
+    except KeyError:
+        raise ValueError(
+            f"unknown ATB version {version!r}; known: {sorted(_STEM_BY_VERSION)}"
+        ) from None
+    return raw_root / "nrel-atb" / f"{stem}.csv"
 
 
 def _rel(path: Path) -> str:
@@ -82,7 +129,22 @@ def _rel(path: Path) -> str:
         return str(path)
 
 
-def _read_raw_csv(raw_root: Path) -> pd.DataFrame | None:
+def available_versions(raw_root: Path) -> list[str]:
+    """Return the ATB versions whose raw extract has landed under ``raw_root``.
+
+    Ordered as :data:`_VERSIONS` declares them (oldest first). A version with
+    neither its single CSV nor any ``.part*.csv`` piece present is skipped,
+    so this reports what is actually on disk rather than what is known.
+    """
+    found = []
+    for version in _STEM_BY_VERSION:
+        single = raw_csv_path(raw_root, version)
+        if single.is_file() or sorted(single.parent.glob(f"{single.stem}.part*.csv")):
+            found.append(version)
+    return found
+
+
+def _read_raw_csv(raw_root: Path, version: str) -> pd.DataFrame | None:
     """Read the single CSV if present, else concat ``.part*.csv`` files.
 
     This repo's GitHub-API push path caps individual file-content size, so
@@ -92,7 +154,7 @@ def _read_raw_csv(raw_root: Path) -> pd.DataFrame | None:
     layout is byte-identical once concatenated. Returns ``None`` if neither
     is present (not yet fetched).
     """
-    single = raw_csv_path(raw_root)
+    single = raw_csv_path(raw_root, version)
     if single.is_file():
         return pd.read_csv(single, low_memory=False)
     parts = sorted(single.parent.glob(f"{single.stem}.part*.csv"))
@@ -103,29 +165,38 @@ def _read_raw_csv(raw_root: Path) -> pd.DataFrame | None:
     )
 
 
-def _source_repr(raw_root: Path) -> str:
+def _source_repr(raw_root: Path, version: str) -> str:
     """Provenance string: the single CSV, or ``;``-joined part files."""
-    single = raw_csv_path(raw_root)
+    single = raw_csv_path(raw_root, version)
     if single.is_file():
         return _rel(single)
     parts = sorted(single.parent.glob(f"{single.stem}.part*.csv"))
     return ";".join(_rel(p) for p in parts) or _rel(single)
 
 
-def parse(raw_root: Path) -> pd.DataFrame:
-    """Read and schema-shape the raw ATB extract (empty if not landed).
+def parse(raw_root: Path, version: str = DERIVATION_PINNED_VERSION) -> pd.DataFrame:
+    """Read and schema-shape one ATB version's raw extract (empty if not landed).
 
     Renames ATB's native column names to the schema's, maps parameter ->
-    unit, converts the 0/1 default flag to bool, and attaches fixed source
-    provenance.
+    unit, converts the 0/1 default flag to bool, and attaches the version's
+    own source provenance.
+
+    ``version`` defaults to :data:`DERIVATION_PINNED_VERSION` -- the vintage
+    this repo's committed cost constants were derived from -- so the derive
+    scripts that call this keep seeing exactly one row per key, unchanged,
+    when a newer ATB version lands alongside. Pass an explicit version to
+    read a different one.
     """
-    df = _read_raw_csv(raw_root)
+    df = _read_raw_csv(raw_root, version)
     if df is None:
         return pd.DataFrame()
+    edition_year, _, source_key = _VERSIONS[_STEM_BY_VERSION[version]]
 
     missing = set(_RAW_COLUMNS) - set(df.columns)
     if missing:
-        raise ValueError(f"{_source_repr(raw_root)}: missing columns {sorted(missing)}")
+        raise ValueError(
+            f"{_source_repr(raw_root, version)}: missing columns {sorted(missing)}"
+        )
     df = df[_RAW_COLUMNS].rename(columns=_RENAME).copy()
 
     df["atb_edition_year"] = df["atb_edition_year"].astype("int64")
@@ -143,19 +214,26 @@ def parse(raw_root: Path) -> pd.DataFrame:
     bad_params = set(df["parameter"]) - set(_UNIT_BY_PARAMETER)
     if bad_params:
         raise ValueError(
-            f"{_source_repr(raw_root)}: unmapped parameter(s) {sorted(bad_params)}"
+            f"{_source_repr(raw_root, version)}: unmapped parameter(s) {sorted(bad_params)}"
         )
     df["unit"] = df["parameter"].map(_UNIT_BY_PARAMETER)
 
     bad_financial = set(df["financial_case"]) - {"Market"}
     if bad_financial:
         raise ValueError(
-            f"{_source_repr(raw_root)}: unexpected financial_case(s) "
+            f"{_source_repr(raw_root, version)}: unexpected financial_case(s) "
             f"{sorted(bad_financial)} -- this datatype only lands the Market case"
         )
 
-    df["source_doc"] = _SOURCE_DOC
-    df["source_page"] = _SOURCE_KEY
+    if set(df["atb_edition_year"]) != {edition_year}:
+        raise ValueError(
+            f"{_source_repr(raw_root, version)}: expected atb_year "
+            f"{edition_year} for {version}, found "
+            f"{sorted(set(df['atb_edition_year']))}"
+        )
+    df["atb_version"] = version
+    df["source_doc"] = f"NREL ATB {edition_year} {version} electricity, OEDI data lake"
+    df["source_page"] = source_key
 
     key = [
         "technology",
@@ -169,7 +247,7 @@ def parse(raw_root: Path) -> pd.DataFrame:
     dupes = df[df.duplicated(key, keep=False)]
     if not dupes.empty:
         raise ValueError(
-            f"{_source_repr(raw_root)}: duplicate key rows:\n{dupes[key].to_string()}"
+            f"{_source_repr(raw_root, version)}: duplicate key rows:\n{dupes[key].to_string()}"
         )
 
     return df.reset_index(drop=True)
@@ -178,18 +256,30 @@ def parse(raw_root: Path) -> pd.DataFrame:
 def curate(raw_root: Path | None = None) -> list[Path]:
     """Curate and write the ATB partition; returns paths written.
 
+    Writes EVERY ATB version whose extract has landed (``atb_version`` is
+    part of the key, so successive versions of one edition stack in the
+    single partition rather than colliding) -- unlike :func:`parse`, which
+    defaults to the one pinned vintage its callers derive from.
+
     Reads only ``data/raw``; safe to re-run. Returns an empty list (and skips
-    the write) when the raw CSV has not landed yet.
+    the write) when no raw extract has landed yet.
     """
     raw_root = Path(raw_root) if raw_root is not None else paths.RAW_DIR
-    df = parse(raw_root)
-    if df.empty:
-        print(f"[skip] {DATATYPE}: no raw CSV at {_rel(raw_csv_path(raw_root))}")
+    versions = available_versions(raw_root)
+    if not versions:
+        print(
+            f"[skip] {DATATYPE}: no raw CSV at "
+            f"{_rel(raw_csv_path(raw_root).parent)} for any known version "
+            f"{sorted(_STEM_BY_VERSION)}"
+        )
         return []
-    source = _source_repr(raw_root)
+
+    frames = [parse(raw_root, version) for version in versions]
+    df = pd.concat(frames, ignore_index=True)
+    source = ";".join(_source_repr(raw_root, version) for version in versions)
     path = clean_io.write_clean(df, DATATYPE, year=None, source=source)
     clean_io.validate_clean(path)
-    print(f"wrote {path}  ({len(df)} rows)")
+    print(f"wrote {path}  ({len(df)} rows, versions {', '.join(versions)})")
     return [path]
 
 
