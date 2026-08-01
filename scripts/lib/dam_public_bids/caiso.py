@@ -8,6 +8,17 @@ in ``SCH_BID_TIMEINTERVALSTART_GMT`` and one (MW, price) breakpoint; self-
 schedule rows carry the hour in ``TIMEINTERVALSTART_GMT`` and ``SELFSCHEDMW``
 with no curve. Rows with neither a breakpoint nor a self-schedule quantity
 (none observed) are dropped.
+
+Both shapes are RUN-LENGTH-ENCODED: the stamp pair is ``[start, stop)`` over
+whole hours, and a bid held unchanged across several hours is published as a
+SINGLE row (whole-day holds appear as one 24-hour row). Each shape is
+expanded to the datatype's declared per-hour grain through the shared
+:func:`~scripts.lib.dam_public_bids.expand_rle`, using its own stop column
+(``SCH_BID_TIMEINTERVALSTOP_GMT`` for curve rows, ``TIMEINTERVALEND_GMT``
+for self-schedule rows), BEFORE ``step_idx`` is assigned. Keying on the
+start stamp alone — this parser's behaviour before caiso-152 — carried only
+36 % of the real GENERATOR EN curve-hours (18,520 raw rows vs 50,972 hours
+on 2023-01-02) and dropped exactly the STABLE-bid hours.
 """
 
 from __future__ import annotations
@@ -19,7 +30,7 @@ import pandas as pd
 
 from market_sim.config import paths
 
-from . import CANONICAL_COLUMNS, IsoSpec, register
+from . import CANONICAL_COLUMNS, IsoSpec, expand_rle, register
 
 #: Columns read from the raw daily CSV (the rest are redundant renderings).
 _RAW_COLS = [
@@ -29,9 +40,11 @@ _RAW_COLS = [
     "SCHEDULINGCOORDINATOR_SEQ",
     "RESOURCEBID_SEQ",
     "TIMEINTERVALSTART_GMT",
+    "TIMEINTERVALEND_GMT",
     "MARKETPRODUCTTYPE",
     "SELFSCHEDMW",
     "SCH_BID_TIMEINTERVALSTART_GMT",
+    "SCH_BID_TIMEINTERVALSTOP_GMT",
     "SCH_BID_XAXISDATA",
     "SCH_BID_Y1AXISDATA",
     "SCH_BID_CURVETYPE",
@@ -53,6 +66,12 @@ def parse_day(path: Path) -> pd.DataFrame:
         df["SCH_BID_TIMEINTERVALSTART_GMT"],
         df["TIMEINTERVALSTART_GMT"],
     )
+    # Exclusive end of the row's run-length-encoded hour range (caiso-152).
+    stop = np.where(
+        is_segment,
+        df["SCH_BID_TIMEINTERVALSTOP_GMT"],
+        df["TIMEINTERVALEND_GMT"],
+    )
     out = pd.DataFrame(
         {
             "iso": "CAISO",
@@ -69,6 +88,11 @@ def parse_day(path: Path) -> pd.DataFrame:
             "curve_type": df["SCH_BID_CURVETYPE"].astype("string"),
         }
     )
+
+    # Expand the RLE ranges to the declared per-hour grain BEFORE step_idx is
+    # assigned, so a multi-hour hold numbers its breakpoints in every hour it
+    # covers rather than only in the hour it started (caiso-152).
+    out = expand_rle(out, stop)
 
     # step_idx: ascending segment_mw within each curve (stable for ties and
     # for self-schedule rows, which sort on NaN and keep file order).
