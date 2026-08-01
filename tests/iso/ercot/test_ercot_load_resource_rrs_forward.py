@@ -61,9 +61,24 @@ def _get_req(cfg, fleet, hours, sim_year=None):
     return kw["reserve_requirement"]
 
 
-def _get_multi_req(cfg, fleet, hours, sim_year=None):
-    """Get multi-product reserve design via the unified API."""
-    design = get_reserve_design(cfg, fleet, hours, ["ERCOT"], sim_year=sim_year)
+def _get_multi_req(cfg, fleet, hours, sim_year=None, drivers=None):
+    """Get multi-product reserve design via the unified API.
+
+    ``drivers`` optionally threads (system_load, wind_gen, solar_gen) — the
+    forecast path requires them since FR-12 (the measured AS-plan fallback is
+    backcast-only and hard-errors in forecast).
+    """
+    system_load, wind_gen, solar_gen = drivers if drivers else (None, None, None)
+    design = get_reserve_design(
+        cfg,
+        fleet,
+        hours,
+        ["ERCOT"],
+        sim_year=sim_year,
+        system_load=system_load,
+        wind_gen=wind_gen,
+        solar_gen=solar_gen,
+    )
     kw = build_reserve_dispatch_kwargs(design)
     return kw["reserve_requirement"], kw["ordc_penalties"], kw["ordc_step_widths"]
 
@@ -208,12 +223,13 @@ class TestSingleProductCredit(unittest.TestCase):
 class TestMultiProductCredit(unittest.TestCase):
     """The credit nets off only the RRS product RHS; the demand curve is untouched."""
 
-    def _build(self, cfg, fleet, sim_year=None):
+    def _build(self, cfg, fleet, sim_year=None, drivers=None):
         return _get_multi_req(
             cfg.with_overrides(ercot_multiproduct_as_coopt=True),
             fleet,
             8760,
             sim_year=sim_year,
+            drivers=drivers,
         )
 
     def test_flag_off_is_byte_identical(self):
@@ -259,10 +275,17 @@ class TestMultiProductCredit(unittest.TestCase):
             ercot_load_resource_reserve=True,
             ercot_as_forward_requirement=True,
         )
-        # Forward AS requirement needs drivers; without them it falls back to the
-        # measured RRS plan, which is enough to exercise the credit growth.
-        near, _, _ = self._build(cfg, fleet, sim_year=2026)
-        far, _, _ = self._build(cfg, fleet, sim_year=2034)
+        # Forward AS requirement needs the load/VRE drivers — the measured-plan
+        # fallback is backcast-only since FR-12 (a forecast reaching it is a
+        # hard error), so thread flat drivers and let the forward formula set
+        # the RRS requirement; the credit growth is what is under test.
+        drivers = (
+            np.full(8760, 60000.0),
+            np.full(8760, 12000.0),
+            np.full(8760, 8000.0),
+        )
+        near, _, _ = self._build(cfg, fleet, sim_year=2026, drivers=drivers)
+        far, _, _ = self._build(cfg, fleet, sim_year=2034, drivers=drivers)
         self.assertLess(float(far[_RRS_IDX].mean()), float(near[_RRS_IDX].mean()))
 
 

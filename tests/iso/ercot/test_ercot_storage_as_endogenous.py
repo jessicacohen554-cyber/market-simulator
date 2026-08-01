@@ -174,6 +174,10 @@ class TestWiringByteIdentical(unittest.TestCase):
         fleet, _mc = _fleet([("gas_cc", 100.0, 20.0)], ["Z0"], 24)
         base = ScenarioConfig(
             iso="ERCOT",
+            # Backcast: the measured storage-AS credit under test is a
+            # backcast-only measured record since FR-12 (a default-mode
+            # forecast config now hard-errors at the read site).
+            mode="backcast",
             weather_year=2025,
             hours=24,
             # energy_reserve_coopt is required by the endogenous flag (the split
