@@ -219,7 +219,40 @@ a surprise.
   and BIT plants are not in the artifact's REG PRB set), so G3 should pass
   trivially; a G3 miss would indicate a scoping bug, not a mechanism effect.
 
-## 8. Rule duties this session commits to
+## 8. Post-measurement readout — committed BEFORE any solve
+
+Phase 2 ran after §1–§7 were committed and pushed. **K1 did NOT fire.** Probe
+`scripts/probes/_miso113_floor_binding_audit.py`, no LP, on the keeper's own
+committed per-plant hourly payload:
+
+| year | COAL_PRB class energy | floor volume WRITTEN | floor volume that BINDS | binding share | K1 line |
+|---|---|---|---|---|---|
+| 2023 | 123.689 TWh | 70.500 TWh | **6.1957 TWh** | **5.01 %** | 0.5 % |
+| 2024 | 118.327 TWh | 72.284 TWh | **6.1893 TWh** | **5.23 %** | 0.5 % |
+| 2025 | 147.133 TWh | 75.974 TWh | **2.2705 TWh** | **1.54 %** | 0.5 % |
+
+Ten times the inertness line in both cheap-gas years. **So the answer to §4's
+open question is settled, and it settles it against the inertness reading:**
+the committed band is *not* pinned inframarginal in every hour. miso-111
+Phase-1's "the `_committed` band is pinned inframarginal in all 8760 h" does
+not hold on the keeper's own dispatch — the band backs out, and the measured
+night level is exactly what it backs out below. **miso-111 PREREG §8's
+"provably inert" verdict fails on BOTH of its legs at this level**: on the
+level leg (§4: the night level sits above the mustrun band at 18 of 26 plants,
+69.2 % of REG PRB capacity) and now on the reachability leg as well.
+
+Concentration, 2023: 4 plants carry 5.0 of the 6.2 TWh — 1733 (1.92), 1710
+(1.23), 56068 (1.10), 1893 (0.73). All four are large regulated PRB plants
+whose measured night level sits above their own mustrun band, which is the
+population the mechanism was designed for.
+
+**The A/B is therefore licensed and Phase 3 runs.** Nothing in §6's guards or
+§7's predictions is revised — in particular P-B (2023 C1 is the most likely G2
+casualty, in the OVER direction) is left exactly as written, and 6.20 TWh of
+binding volume against a class already over by >8 TWh is now a quantified
+statement of that risk rather than a hunch.
+
+## 9. Rule duties this session commits to
 
 - **Rule 15 [R-DASHBOARD]** — every run produced is registered on the backcast
   dashboard in THIS session, keeper or rejected probe. If K1 fires, **no run is

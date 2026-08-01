@@ -148,6 +148,7 @@ from market_sim.pipeline import (
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
+    build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
@@ -1902,6 +1903,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             nyiso_bridge_prep = build_nyiso_gas_bridge_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays, mc_base
             )
+            # P1-native MISO regulated-coal night floor (miso-113):
+            # committed-state floor on the regulated PRB/subbituminous fleet
+            # at each plant's OWN measured within-run night level, net of its
+            # _mustrun band (rule 19 [R-ONE-MECH]), over the P0-detected
+            # committed run. Forward-native (the run pattern is the model's
+            # own P0), so the forecast path carries it identically (D-5
+            # parity). None for every non-MISO / gate-off run
+            # (byte-identical).
+            miso_night_floor_prep = build_miso_coal_night_floor_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays
+            )
             # P1-native PJM commitment-scoped reserve supply (path B, G-20b):
             # fa_p2-style availability mask from the P0 run pattern + the
             # deliverable supply cap recomputed on the masked fleet. (None,
@@ -1934,6 +1946,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     ra_p1_prep
                     or ercot_bridge_prep
                     or nyiso_bridge_prep
+                    or miso_night_floor_prep
                     or pjm_fleet_prep
                 ),
                 p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
