@@ -401,6 +401,97 @@
     "share_reproduced": 0.6881,
     "trough_error": 7.26,
     "peak_error": 3.013
+   },
+   "DEF_fleet_census": {
+    "n_lp_rows": 747,
+    "n_internal_rows": 739,
+    "trough_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.1701,
+      "econ": 0.8045,
+      "peak": 0.0254,
+      "_unbinned": 0.0
+     },
+     "top_pairs": {
+      "CC_REGULAR:econ": 27553,
+      "CC_CHP:econ": 10110,
+      "CC_CHP:committed": 3200,
+      "CC_REGULAR:committed": 2185,
+      "CT_CHP:committed": 1909,
+      "CT_CHP:econ": 1476,
+      "ST_GAS:econ": 1109,
+      "ST_GAS:committed": 937
+     },
+     "top_pair_shares": {
+      "CC_REGULAR:econ": 0.5398,
+      "CC_CHP:econ": 0.1981,
+      "CC_CHP:committed": 0.0627,
+      "CC_REGULAR:committed": 0.0428,
+      "CT_CHP:committed": 0.0374,
+      "CT_CHP:econ": 0.0289,
+      "ST_GAS:econ": 0.0217,
+      "ST_GAS:committed": 0.0184
+     },
+     "detection_rate": 0.9995,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 29.6948,
+      "cap_weighted_burn": 20.5574,
+      "cap_weighted_vom": 2.2996,
+      "cap_weighted_residual_markup": 6.8378,
+      "cap_weighted_heat_rate": 7.9927,
+      "cap_weighted_fuel_price": 2.7554
+     }
+    },
+    "peak_control_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.0923,
+      "econ": 0.8448,
+      "peak": 0.0611,
+      "_unbinned": 0.0018
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 5959,
+      "CC_REGULAR:econ": 5411,
+      "CC_CHP:econ": 3231,
+      "CT_PEAKER:econ": 2481,
+      "ST_GAS:committed": 647,
+      "CT_CHP:committed": 629,
+      "CT_CHP:econ": 508,
+      "CC_CHP:peak": 496
+     },
+     "top_pair_shares": {
+      "ST_GAS:econ": 0.2831,
+      "CC_REGULAR:econ": 0.2571,
+      "CC_CHP:econ": 0.1535,
+      "CT_PEAKER:econ": 0.1179,
+      "ST_GAS:committed": 0.0307,
+      "CT_CHP:committed": 0.0299,
+      "CT_CHP:econ": 0.0241,
+      "CC_CHP:peak": 0.0236
+     },
+     "detection_rate": 0.9973,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 40.2647,
+      "cap_weighted_burn": 27.3383,
+      "cap_weighted_vom": 3.2555,
+      "cap_weighted_residual_markup": 9.6709,
+      "cap_weighted_heat_rate": 10.6309,
+      "cap_weighted_fuel_price": 2.6267
+     }
+    },
+    "stack_depth": {
+     "measured_trough_p05_target": 14.599,
+     "mean_gw_offered_below_target": 8.0109,
+     "mean_gw_available_total": 25.0134,
+     "cheapest_thermal_offer": 1.4
+    },
+    "within_day_offer_sigma_max": 0.0,
+    "cap_weighted_offer_trough": 77.0973,
+    "cap_weighted_offer_peak": 77.0973
    }
   },
   "2024": {
@@ -794,6 +885,97 @@
     "share_reproduced": 0.491,
     "trough_error": 5.497,
     "peak_error": -4.258
+   },
+   "DEF_fleet_census": {
+    "n_lp_rows": 744,
+    "n_internal_rows": 736,
+    "trough_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.168,
+      "econ": 0.8113,
+      "peak": 0.0207,
+      "_unbinned": 0.0
+     },
+     "top_pairs": {
+      "CC_REGULAR:econ": 27274,
+      "CC_CHP:econ": 12839,
+      "CC_REGULAR:committed": 3229,
+      "CC_CHP:committed": 2999,
+      "CT_CHP:econ": 1440,
+      "CT_CHP:committed": 1379,
+      "ST_GAS:committed": 1127,
+      "ST_GAS:econ": 949
+     },
+     "top_pair_shares": {
+      "CC_REGULAR:econ": 0.5088,
+      "CC_CHP:econ": 0.2395,
+      "CC_REGULAR:committed": 0.0602,
+      "CC_CHP:committed": 0.0559,
+      "CT_CHP:econ": 0.0269,
+      "CT_CHP:committed": 0.0257,
+      "ST_GAS:committed": 0.021,
+      "ST_GAS:econ": 0.0177
+     },
+     "detection_rate": 0.9912,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 28.981,
+      "cap_weighted_burn": 16.6686,
+      "cap_weighted_vom": 2.1823,
+      "cap_weighted_residual_markup": 10.1302,
+      "cap_weighted_heat_rate": 8.2512,
+      "cap_weighted_fuel_price": 2.0887
+     }
+    },
+    "peak_control_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.0918,
+      "econ": 0.8352,
+      "peak": 0.0721,
+      "_unbinned": 0.0008
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 6402,
+      "CC_REGULAR:econ": 5697,
+      "CT_PEAKER:econ": 3627,
+      "CC_CHP:econ": 2765,
+      "ST_GAS:committed": 772,
+      "CC_REGULAR:peak": 695,
+      "CT_CHP:committed": 613,
+      "CC_CHP:peak": 596
+     },
+     "top_pair_shares": {
+      "ST_GAS:econ": 0.278,
+      "CC_REGULAR:econ": 0.2474,
+      "CT_PEAKER:econ": 0.1575,
+      "CC_CHP:econ": 0.1201,
+      "ST_GAS:committed": 0.0335,
+      "CC_REGULAR:peak": 0.0302,
+      "CT_CHP:committed": 0.0266,
+      "CC_CHP:peak": 0.0259
+     },
+     "detection_rate": 0.9945,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 44.0127,
+      "cap_weighted_burn": 27.6834,
+      "cap_weighted_vom": 3.2471,
+      "cap_weighted_residual_markup": 13.0822,
+      "cap_weighted_heat_rate": 11.1507,
+      "cap_weighted_fuel_price": 2.5337
+     }
+    },
+    "stack_depth": {
+     "measured_trough_p05_target": 14.228,
+     "mean_gw_offered_below_target": 7.6887,
+     "mean_gw_available_total": 25.0036,
+     "cheapest_thermal_offer": 1.4
+    },
+    "within_day_offer_sigma_max": 0.0,
+    "cap_weighted_offer_trough": 79.6813,
+    "cap_weighted_offer_peak": 79.6813
    }
   },
   "2025": {
@@ -1182,6 +1364,97 @@
     "share_reproduced": 0.4457,
     "trough_error": 8.653,
     "peak_error": -9.753
+   },
+   "DEF_fleet_census": {
+    "n_lp_rows": 744,
+    "n_internal_rows": 736,
+    "trough_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.1576,
+      "econ": 0.8083,
+      "peak": 0.034,
+      "_unbinned": 0.0001
+     },
+     "top_pairs": {
+      "CC_REGULAR:econ": 10933,
+      "CC_CHP:econ": 4090,
+      "ST_GAS:econ": 2940,
+      "CT_PEAKER:econ": 2048,
+      "CC_CHP:committed": 1273,
+      "CC_REGULAR:committed": 1231,
+      "CT_CHP:committed": 923,
+      "CT_CHP:econ": 728
+     },
+     "top_pair_shares": {
+      "CC_REGULAR:econ": 0.4221,
+      "CC_CHP:econ": 0.1579,
+      "ST_GAS:econ": 0.1135,
+      "CT_PEAKER:econ": 0.0791,
+      "CC_CHP:committed": 0.0491,
+      "CC_REGULAR:committed": 0.0475,
+      "CT_CHP:committed": 0.0356,
+      "CT_CHP:econ": 0.0281
+     },
+     "detection_rate": 1.0,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 45.3608,
+      "cap_weighted_burn": 33.7315,
+      "cap_weighted_vom": 2.3936,
+      "cap_weighted_residual_markup": 9.2356,
+      "cap_weighted_heat_rate": 8.4412,
+      "cap_weighted_fuel_price": 4.0725
+     }
+    },
+    "peak_control_census": {
+     "marginal_count_share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.1011,
+      "econ": 0.8521,
+      "peak": 0.0438,
+      "_unbinned": 0.003
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 4250,
+      "CT_PEAKER:econ": 3562,
+      "CC_REGULAR:econ": 2418,
+      "CC_CHP:econ": 1019,
+      "ST_GAS:committed": 587,
+      "CT_CHP:committed": 414,
+      "CT_CHP:econ": 232,
+      "CC_CHP:peak": 231
+     },
+     "top_pair_shares": {
+      "ST_GAS:econ": 0.3145,
+      "CT_PEAKER:econ": 0.2636,
+      "CC_REGULAR:econ": 0.1789,
+      "CC_CHP:econ": 0.0754,
+      "ST_GAS:committed": 0.0434,
+      "CT_CHP:committed": 0.0306,
+      "CT_CHP:econ": 0.0172,
+      "CC_CHP:peak": 0.0171
+     },
+     "detection_rate": 0.9708,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 66.5426,
+      "cap_weighted_burn": 54.646,
+      "cap_weighted_vom": 3.3795,
+      "cap_weighted_residual_markup": 8.5172,
+      "cap_weighted_heat_rate": 11.1177,
+      "cap_weighted_fuel_price": 4.9349
+     }
+    },
+    "stack_depth": {
+     "measured_trough_p05_target": 19.956,
+     "mean_gw_offered_below_target": 8.2421,
+     "mean_gw_available_total": 25.5761,
+     "cheapest_thermal_offer": 1.4
+    },
+    "within_day_offer_sigma_max": 0.0,
+    "cap_weighted_offer_trough": 92.077,
+    "cap_weighted_offer_peak": 92.077
    }
   }
  }

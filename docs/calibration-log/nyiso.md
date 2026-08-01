@@ -3685,6 +3685,37 @@ refusal in §2(b) does not depend on it — it rests on the real-world flow-vs-l
 statistic — but the sentence was wrong as written and the `flows.parquet` measurement
 that corrects it only became available once this session's own arms were solved.
 
+### 8. The marginal-rung census confirms the diagnosis and names the term
+
+The pjm-141 marginal-set test re-derived on NYISO's own fleet (no LP, detection
+99.1-100 %): the trough marginal tranche is **`econ` 80.5/81.1/80.8 %**, dominated by
+`CC_REGULAR:econ` 54.0/50.9/42.2 %, and the **peak control is the same family**
+(84.5/83.5/85.2 %) — no floor rung, no part-load artifact at the margin. The marginal
+trough rung's offer decomposes as burn + VOM + a **residual markup of
+$6.84/$10.13/$9.24** at a fuel of 2.755/2.089/4.072 $/MMBtu: **the markup is largest
+exactly where the fuel sits furthest below the 3.9046 ISO anchor**, which is
+`markup_hr x (anchor - fuel)` read straight off the price-setting rung. Also measured
+and reported: **within-day offer variation is EXACTLY zero** (sigma $0.000000; the
+cap-weighted offer at trough equals the peak to the cent, 77.10/79.68/92.08), so all
+diurnal amplitude must come from merit-order traversal — NYISO reproduces pjm-141's T6
+finding on its own fleet; and the model does not lack a cheap offer (cheapest thermal
+$1.40 against a measured trough p05 of 14.60/14.23/19.96) but lacks **depth**, with only
+8.0/7.7/8.2 GW of 25.0-25.6 GW available below that target.
+
+### 9. Test baseline at this HEAD
+
+`tests/{curation,scoring,unit}` after a full `regenerate_clean`: **14 failed / 4419
+passed / 14 skipped / 1 xfailed** in 11m56s — `test_measured_chp_heat_rates.py` 7, three
+cache-key byte-stability tests, `test_consume_lmp.py` 1, `test_ff_readiness_battery.py`
+1, `test_outages.py` 1, `test_clean_io.py::test_datatype_list_matches_schemas` 1. Thirteen
+are nyiso-108's baseline verbatim; the fourteenth is a datatype/schema registry mismatch
+on main and this branch touches no `clean_io`/schema/`regenerate_clean` file. **The three
+cache-key failures were checked rather than assumed**, because this session adds two
+`ScenarioConfig` fields: the default `ScenarioConfig().cache_key()` is
+`0e9fce2fb55b889f` on BOTH `origin/main` and this HEAD, so the new fields are correctly
+registered and the tests fail against a literal that was already stale on main. **11 new
+tests** land with the mechanism, all passing.
+
 `results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
 
 Next shorthand: nyiso-110.

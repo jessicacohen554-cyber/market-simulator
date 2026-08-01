@@ -127,6 +127,47 @@ fixed $/MWh margin, whose implied per-band margins on NYISO's registered curve
 are `CC_REGULAR` econ_low **$5.03**, `ST_GAS` econ_low **$10.36** / econ_high
 **$12.52**, `CT_PEAKER` committed **$23.65**.
 
+### 1.5 The marginal-rung census confirms it, and names the term
+
+The pjm-141 §1 marginal-set test, re-derived on NYISO's own fleet (a unit is
+marginal when its own hourly offer equals its own zone's dual to within
+EPS = $1; fleet rebuilt from the control bundle's `meta.json` through
+`run_year(fleet_only=True)`, **no LP**; detection 99.1–100 %):
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| trough marginal tranche = **`econ`** | **80.5 %** | **81.1 %** | **80.8 %** |
+| dominant pair `CC_REGULAR:econ` | 54.0 % | 50.9 % | 42.2 % |
+| **peak control**, `econ` | 84.5 % | 83.5 % | 85.2 % |
+
+The trough and peak windows are set by the **same rung family** — ordinary
+economic loading, no floor rung and no part-load artifact at the margin, exactly
+pjm-141's result. And the marginal trough rung's own offer decomposes as:
+
+| | offer | = physical burn | + VOM | + **residual markup** | at fuel |
+|---|---|---|---|---|---|
+| 2023 | 29.69 | 20.56 | 2.30 | **6.84** | 2.755 |
+| 2024 | 28.98 | 16.67 | 2.18 | **10.13** | 2.089 |
+| 2025 | 45.36 | 33.73 | 2.39 | **9.24** | 4.072 |
+
+**The markup is largest exactly where the fuel is furthest below the ISO
+anchor** — 2024, at $2.089/MMBtu against an anchor of 3.9046 — which is
+`markup_hr × (anchor − fuel)` read straight off the marginal rung. That is the
+term §2 corrects, measured on the rung that actually sets the trough price.
+
+Two further census results, both reported rather than acted on:
+
+* **Within-day offer variation is EXACTLY zero.** No thermal LP row's offer
+  moves between the trough hour and the peak hour of the same calendar day
+  (σ = $0.000000, cap-weighted offer at trough = peak to the cent: $77.10 /
+  $79.68 / $92.08). All of the model's diurnal amplitude must therefore come
+  from merit-order traversal — NYISO reproduces pjm-141's T6 finding on its own
+  fleet. This is the structural statement behind §1.2.
+* **The model does not lack a cheap offer; it lacks depth.** Its cheapest
+  thermal offer is **$1.40**, far below NYISO's own measured trough p05
+  ($14.60 / $14.23 / $19.96), but only **8.0 / 7.7 / 8.2 GW** of 25.0–25.6 GW
+  available sits below that target.
+
 ---
 
 ## §2 — The lever: the mechanism's own identification point, at the right grain
@@ -289,4 +330,37 @@ about the model's link separating in 0.0 % of hours is wrong as written (§1.3
 above), and the `flows.parquet` measurement that corrects it only became
 available once this session's own arms were solved.
 
-**Test baseline measured at this HEAD** — see §9 of the session log entry.
+---
+
+## §9 — Test baseline measured at this HEAD
+
+`tests/{curation,scoring,unit}` after a full `regenerate_clean`:
+**14 failed / 4419 passed / 14 skipped / 1 xfailed / 254 subtests passed** in
+11m56s. Composition: `test_measured_chp_heat_rates.py` **7** (the standing
+deriver cluster), three cache-key byte-stability tests
+(`test_cc_committed_offer_margin.py`, `test_ramp_envelope_basis.py`,
+`test_forecast_xyear_warmstart_flag.py`), `test_consume_lmp.py` 1,
+`test_ff_readiness_battery.py` 1, `test_outages.py` 1, and
+`test_clean_io.py::test_datatype_list_matches_schemas` 1.
+
+**None is attributable to this session.** Thirteen are nyiso-108's measured
+baseline verbatim; the fourteenth (`test_datatype_list_matches_schemas` — the
+`regenerate_clean` datatype list carries `ira-credit-parameters` with no schema
+file) is a datatype/schema registry mismatch on main, and this branch touches no
+`clean_io`, schema or `regenerate_clean` file.
+
+**The three cache-key failures deserve their own check, because this session
+added two `ScenarioConfig` fields.** Verified directly rather than assumed: the
+default `ScenarioConfig().cache_key()` is **`0e9fce2fb55b889f` on `origin/main`
+and `0e9fce2fb55b889f` at this HEAD** — byte-identical. The new fields are
+correctly registered in the cache-key exclusion list at their defaults, and the
+three tests fail against a stale pinned literal (`603c2498bf71d21d`) that was
+already stale on main. Re-measure rather than inherit — the set moves several
+PRs per session.
+
+**11 new tests** land with the mechanism
+(`tests/unit/data/test_gas_offer_margin_zonal_anchor.py`), all passing: the gate
+is byte-identical off, hard-fails when half-armed, resolves each zone to its own
+anchor, keeps a band-scoped rebasis anchor's precedence, and reproduces the
+mechanism's identity (offer == the registered multiplier at the zone's own
+anchor) in every zone.
