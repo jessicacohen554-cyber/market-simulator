@@ -134,7 +134,6 @@ def _build_entry(ab: dict) -> dict:
 def _attested_by(ab: dict, arm: bool) -> str:
     """The C6 attestation prose for one arm, from the committed A/B JSON."""
     cg = ab["construction_gates"]
-    kg = ab["kill_gates"]
     k3 = cg["K3_liveness"]["by_year"]
     k6 = cg["K6_direction_integrity"]["by_year"]
     rep = ab["reported_never_a_kill"]

@@ -8,7 +8,9 @@
 no out-of-training year approached, nothing registered on any dashboard (no run was produced).
 Every change is a guard, a test, a deletion, or a doc correction.
 
-Branch: `claude/ffr-1d-ci-guards-config-21sid9`, off `origin/main` `40ecb0a`.
+Branch: `claude/ffr-1d-ci-guards-config-21sid9`, originally off `origin/main` `40ecb0a`,
+**rebased 2026-08-01 onto `6e98263`** — after FFR-1A/1B/1C/1E and the WP intake lanes merged. See
+§7c for what the rebase changed.
 
 ---
 
@@ -297,7 +299,7 @@ means; none was weakened.
 | `test_outages.py::ErcotThermalDamAvailabilityTest` × 2 | the two **"forecast mode: overlay never applies"** assertions now assert the config REFUSES the overlay — strictly stronger than asserting a silent no-op |
 | `test_runner.py::TestMainCLI` × 2 | the CLI-parsing fixture pins a T1-F window (an unguarded 2026–2050 default is now refused; the refusal has its own coverage) |
 
-**Final fast tier: 5,673 passed / 14 failed**, and all 14 are **pre-existing on `origin/main`** —
+**Final fast tier (pre-rebase: 5,673 passed / 14 failed; post-rebase: 5,757 passed / 14 failed)**, and all 14 are **pre-existing on `origin/main`** —
 verified by running the same tests at `origin/main` in a clean worktree:
 
 | Pre-existing failure | Cause |
@@ -320,6 +322,47 @@ its command lints the whole tree, **every PR touching `src/`, `scripts/` or `tes
 red**, including this one. `results` is now in ruff's `extend-exclude`, on the same rationale as the
 existing `scripts/probes` / `scripts/archive` exemptions: `results/` is the run-bundle tree (the
 calibration record), not code under maintenance. No source file's lint scope changed.
+
+## 7c. Rebase onto the merged Wave-1 lanes (2026-08-01)
+
+Rebased onto `origin/main` `6e98263` (70 commits: FFR-1A, 1B, 1C, 1E and the WP intake lanes all
+merged). One conflict, in `docs/codebase-site/data/mechanism-matrix.js` — both sides **appended** to
+the header comment. Resolved by keeping both: main's NEISO verdict stamps (neiso-72/73/74) first,
+then this session's non-verdict enforcement stamp. **No cell verdict from either side was touched.**
+`ci.yml` did not conflict — FFR-1E correctly held its parity job back, and it can land now.
+
+Two follow-ups the rebase itself required:
+
+1. **The invariant-failure ledger was re-seeded** for the 15 hindcast sidecars the merged Wave-1
+   lanes registered (125 FAILs across 72 runs, up from 111/59). This is the new CI job working as
+   designed on its first real encounter — and the re-seed captured a genuinely useful signal worth
+   naming: `pjm-2026-2030-ffr1a-before` and `neiso-2026-2030-ffr1a-before` carry **I4**, and neither
+   of their `arm1`/`arm2` successors does. FFR-1A's confirmed-exit derate ledgering closed I4 on
+   both ISOs, and the ledger now records that. The FFR-1C `i7-before`/`i7-after` pairs still both
+   carry I7 (hydro accreditation narrowed the gap without closing it), and the FFR-1A ERCOT T0 arms
+   carry I3 — the standing FR-6 scarcity-slack finding, not anything those arms introduced.
+2. **The FR-11 guard needed no further test fixes** against the merged lanes: FFR-1B's new
+   solve-year availability tests and FFR-1C's hydro-accreditation tests all construct their configs
+   in the mode they mean.
+
+### Cross-lane breaks repaired in passing
+
+`origin/main` at `6e98263` was red in **three** CI jobs before this branch touched anything. All
+three are one-line registration steps that a merged lane's own documentation tells it to perform,
+so they are repaired here rather than left to redden every PR in the repo:
+
+| Job | Break | Repair |
+|---|---|---|
+| `lint` | five E402s in a committed per-run scratch driver (`results/calibration/_ercot144_scratch/`), plus an unused local in `scripts/gen_nyiso109_attestation.py` (nyiso-109) | `results` added to ruff's `extend-exclude` (same rationale as the existing `scripts/probes` / `scripts/archive` exemptions); dead local removed |
+| `refactor-guards` (BLOCKING) | FFR-1C added `HYDRO_ACCREDITATION_CREDIT_BY_ISO` to `capacity_market.py` and re-exported it from the constants facade, but left it out of the frozen `MOVED_SURFACE` inventory | name registered in the inventory |
+| `fast-tests` (BLOCKING) | the FFR-PB ATB/IRA intake registered `ira-credit-parameters` and `nrel-atb` in `regenerate_clean.DATATYPES` without refreshing the frozen snapshot — exactly what that file's own header says to do | snapshot refreshed |
+| `quarantine-gates` | `frontend/data/backcast/status/MISO.js` stale vs current verdicts | regenerated with `build_status.py --iso MISO`; the ONLY semantic drift is two display floats (`share_pp -0.96 → -0.95`, `vintage_gap_twh -0.205 → -0.204`) plus the timestamp — **no criterion, status or determination changed; MISO stays NOT-YET** |
+
+**Deliberately NOT repaired: the stale `PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"`** (three
+files, five failing tests). The default config hashes to `0e9fce2fb55b889f` at `origin/main` and at
+this branch **identically** — this branch does not move it. Re-pinning the literal is the
+"tempting and WRONG remedy" `ci.yml`'s own cache-key-guard comment warns about; the right owner is
+the §W1-X cache-epoch bump.
 
 ## 8. Open items handed on
 
