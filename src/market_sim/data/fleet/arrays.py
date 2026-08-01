@@ -1540,8 +1540,30 @@ def _apply_outage_overlays(
         # mirrors the apply block above: >= 5-day unit windows + the ERCOT
         # plant-grain partial plateaus always; short / unit-grain-partial
         # layers only when their gates armed them into availability.
+        #
+        # ERCOT-149 gas widening (config.ercot_dam_availability_gas_event_cap,
+        # default off): the SAME precedence rule extended to the DAM-covered
+        # gas classes — one mechanism, one min() block, its class scope
+        # widened (rule 19: never a second cap layer). The gas windows are
+        # event-based dead spans (every hour < 2% CF) that survived the armed
+        # merit-order guard, and the Phase 0/1 audit measured 4.27/5.93/4.14
+        # TWh (2023/24/25) of CC_REGULAR + ST_GAS dispatch above the windowed
+        # ceiling, carried by the pin's own site-series misalignments
+        # (config-collapse train-aliasing, partial site acceptance) plus true
+        # OFF-at-HSL filings through certified dead stops — see the
+        # ScenarioConfig field comment and
+        # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md. CT_PEAKER is
+        # in scope on principle and provably inert (peakers carry no windows
+        # by the detector's design). Coal-only arms stay byte-identical: for
+        # a COAL generator the (plant_code, plant_group) layer key below is
+        # exactly the former (plant_code, "COAL") literal.
+        _evcap_scope: set[str] = set()
+        if getattr(config, "ercot_dam_availability_coal_event_cap", False):
+            _evcap_scope.add("COAL")
+        if getattr(config, "ercot_dam_availability_gas_event_cap", False):
+            _evcap_scope.update(("CC_REGULAR", "ST_GAS", "CT_PEAKER"))
         if (
-            getattr(config, "ercot_dam_availability_coal_event_cap", False)
+            _evcap_scope
             and getattr(config, "outage_source", "statistical") == "historic"
         ):
             _bins_path = getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV))
@@ -1563,11 +1585,11 @@ def _apply_outage_overlays(
             _plant_partial = partial_outage_derate_factors(int(_yr), hours)
             _n_capped = 0
             for g_idx, gen in enumerate(generators):
-                if gen.plant_group != "COAL":
+                if gen.plant_group not in _evcap_scope:
                     continue
                 _ceil_w: np.ndarray | None = None
                 for _layer in _cap_layers:
-                    _f = _layer.get((int(gen.plant_code), "COAL"))
+                    _f = _layer.get((int(gen.plant_code), gen.plant_group))
                     if _f is not None:
                         _ceil_w = (
                             np.array(_f, dtype=float, copy=True)
@@ -1590,11 +1612,12 @@ def _apply_outage_overlays(
                 )
                 _n_capped += 1
             logger.info(
-                "ERCOT measured-event precedence cap (%d): %d COAL tranche(s) "
+                "ERCOT measured-event precedence cap (%d): %d %s tranche(s) "
                 "capped at the CAMPD event-window ceiling (DAM COP restore "
                 "bounded by measured full-stop/partial windows)",
                 int(_yr),
                 _n_capped,
+                "/".join(sorted(_evcap_scope)),
             )
 
     # NEISO measured FLEET operable-capacity availability (backcast overlay,
