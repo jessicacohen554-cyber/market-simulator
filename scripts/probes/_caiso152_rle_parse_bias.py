@@ -385,7 +385,22 @@ def cmd_derive(args: argparse.Namespace) -> int:
     Consumed output paths are redirected into the arm's directory, so the
     committed keeper artifacts under ``data/raw/_validation-source/`` are
     never touched by this probe.
+
+    When a derive gate fails the deriver WITHHOLDS the consumed JSONs (rule 23
+    — correctly: an artifact that cannot pass its own identification gates must
+    not be shippable). The parse delta still has to be measurable in that case,
+    so this captures the derive's own reported statistics from its stdout into
+    ``derive_report.json``: the per-class static bands, the ladder ``body_p50``
+    clamp, the G1 bucket reconciliation and the population size. The summary
+    CSV (the per-bin ladder rungs, which T2 scores) is written by the deriver
+    on every path already. Nothing here recomputes a statistic — it only
+    records what the deriver printed.
     """
+    import ast
+    import contextlib
+    import io
+    import re
+
     from market_sim.config import paths
 
     paths.CLEAN_DIR = Path(args.clean_root) / f"clean_{args.arm}"
@@ -398,7 +413,50 @@ def cmd_derive(args: argparse.Namespace) -> int:
     D.OUT_CSV = out / "caiso_offer_surface_summary.csv"
 
     argv = ["--years", *[str(y) for y in args.years], "--allow-gate-failures"]
-    rc = D.main(argv)
+
+    class _Tee(io.TextIOBase):
+        def __init__(self, real):
+            self._real = real
+            self.buf = io.StringIO()
+
+        def write(self, s):  # noqa: D102
+            self.buf.write(s)
+            return self._real.write(s)
+
+        def flush(self):  # noqa: D102
+            self._real.flush()
+
+    tee = _Tee(sys.stdout)
+    with contextlib.redirect_stdout(tee):
+        rc = D.main(argv)
+    log = tee.buf.getvalue()
+
+    report: dict = {"arm": args.arm, "years": list(args.years), "derive_rc": int(rc)}
+    m = re.search(
+        r"([\d,]+) curve rows -> ([\d,]+) rows at cap .*?, (\d+) resources", log
+    )
+    if m:
+        report["curve_rows"] = int(m.group(1).replace(",", ""))
+        report["rows_at_min_cap"] = int(m.group(2).replace(",", ""))
+        report["resources"] = int(m.group(3))
+    m = re.search(r"^G1 (\{.*\})$", log, re.M)
+    if m:
+        report["G1"] = json.loads(m.group(1))
+    report["static_bands"] = {
+        cls: ast.literal_eval(v)
+        for cls, v in re.findall(r"^(\w+): static bands (\{.*\})$", log, re.M)
+    }
+    report["ladder_body_p50"] = {
+        cls: float(v)
+        for cls, v in re.findall(r"^(\w+): ladder body_p50 ([\d.]+)$", log, re.M)
+    }
+    report["gates_all_pass"] = "GATES ALL PASS" in log
+    report["consumed_jsons_written"] = D.OUT_STATIC.exists()
+    missing = sorted(set(CLASSES) - set(report["static_bands"]))
+    if missing:
+        raise SystemExit(f"derive printed no static bands for {missing} — cannot score")
+
+    (out / "derive_report.json").write_text(json.dumps(report, indent=1) + "\n")
     print(f"arm={args.arm}: derive rc={rc} -> {out}")
     # rc=1 means gates failed and the JSONs were withheld — a first-class
     # outcome (PREREG §4 third branch), reported by `compare`, not a crash.
@@ -408,47 +466,56 @@ def cmd_derive(args: argparse.Namespace) -> int:
 # --------------------------------------------------------------------------- #
 # compare — the pre-registered triggers
 # --------------------------------------------------------------------------- #
-def _ladder_bin_means(cond: dict) -> dict[str, dict[str, float]]:
-    """Mean rung multiplier per (class, net-load bin) — the LP-consumed markup."""
+def _ladder_bin_means_from_csv(path: Path) -> dict[str, dict[str, float]]:
+    """Mean rung multiplier per (class, net-load bin) — the LP-consumed markup.
+
+    Read from the deriver's own summary CSV, which it writes on EVERY path
+    (including a gate failure), so T2 is scorable even when the consumed JSONs
+    are correctly withheld.
+    """
+    import pandas as pd
+
+    df = pd.read_csv(path)
+    rung_cols = [c for c in df.columns if c.startswith("rung")]
     out: dict[str, dict[str, float]] = {}
-    for cls in CLASSES:
-        if cls not in cond:
-            continue
-        rungs = cond[cls]["binned_ladder"]
-        out[cls] = {
-            str(b): float(sum(r[1] for r in ladder) / len(ladder))
-            for b, ladder in enumerate(rungs)
+    for cls, sub in df.groupby("class"):
+        out[str(cls)] = {
+            str(int(r.bin)): float(
+                sum(getattr(r, c) for c in rung_cols) / len(rung_cols)
+            )
+            for r in sub.itertuples()
         }
     return out
 
 
-def _gate_pass(doc: dict) -> dict:
-    """Flatten a derive's own G1-G4 verdicts from its provenance block."""
-    g = doc.get("_provenance", {}).get("gates", {})
-    return {
-        "G1": all(v["pass"] for v in g.get("G1_capacity_reconciliation", {}).values()),
-        "G2": bool(g.get("G2_cut_robustness", {}).get("pass", False)),
-        "G3": all(
-            v["pass"]
-            for rows in g.get("G3_estimation_loyo", {}).values()
-            for v in rows.values()
-        ),
-        "G4": all(v["pass"] for v in g.get("G4_physical_sanity", {}).values()),
-    }
+def _ladder_bin_means_from_json(cond: dict) -> dict[str, dict[str, float]]:
+    """Same statistic, from a written condbinned JSON (the committed artifact)."""
+    out: dict[str, dict[str, float]] = {}
+    for cls in CLASSES:
+        if cls not in cond:
+            continue
+        out[cls] = {
+            str(b): float(sum(r[1] for r in ladder) / len(ladder))
+            for b, ladder in enumerate(cond[cls]["binned_ladder"])
+        }
+    return out
 
 
 def cmd_compare(args: argparse.Namespace) -> int:
-    """Score T1/T2 and write the probe's JSON record."""
+    """Score the pre-registered T1/T2 triggers and write the probe's record."""
     out_root = Path(args.out_root)
     arms: dict[str, dict] = {}
     for arm in ("old", "new"):
         d = _arm_dir(out_root, arm)
-        static_p = d / "caiso_offer_curve_measured.json"
-        cond_p = d / "caiso_offer_surface_condbinned.json"
+        rep_p = d / "derive_report.json"
+        csv_p = d / "caiso_offer_surface_summary.csv"
+        if not rep_p.exists():
+            raise SystemExit(
+                f"no derive_report.json for arm {arm} — run `derive --arm {arm}`"
+            )
         arms[arm] = {
-            "static": json.loads(static_p.read_text()) if static_p.exists() else None,
-            "cond": json.loads(cond_p.read_text()) if cond_p.exists() else None,
-            "gates_withheld": not static_p.exists(),
+            "report": json.loads(rep_p.read_text()),
+            "ladder": _ladder_bin_means_from_csv(csv_p),
         }
 
     committed = json.loads(
@@ -465,33 +532,42 @@ def cmd_compare(args: argparse.Namespace) -> int:
     rec: dict = {
         "probe": "caiso-152 dam-public-bids RLE parse bias",
         "prereg": "results/calibration/PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md",
-        "tolerance": {"abs": TOL_ABS, "rel": TOL_REL, "source": "deriver G2/G3"},
-        "gates": {
-            a: (_gate_pass(v["static"]) if v["static"] else None)
-            for a, v in arms.items()
+        "prereg_addendum": "results/calibration/PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md",
+        "tolerance": {
+            "abs": TOL_ABS,
+            "rel": TOL_REL,
+            "source": "the deriver's own G2/G3",
+        },
+        "corpus": "full contiguous 2023-2025 (PREREG addendum §C)",
+        "population": {
+            a: {
+                k: arms[a]["report"].get(k)
+                for k in ("curve_rows", "rows_at_min_cap", "resources")
+            }
+            for a in arms
+        },
+        "derive_gates": {
+            a: {
+                "all_pass": arms[a]["report"]["gates_all_pass"],
+                "consumed_jsons_written": arms[a]["report"]["consumed_jsons_written"],
+                "G1": arms[a]["report"].get("G1"),
+            }
+            for a in arms
         },
         "T1_static_bands": {},
         "T2_ladder_bin_means": {},
-        "context_new_vs_committed": {},
+        "reproduction_vs_committed": {},
     }
 
-    if arms["old"]["static"] is None or arms["new"]["static"] is None:
-        rec["verdict"] = (
-            "DERIVE_GATE_FAIL — consumed JSONs withheld on at least one arm"
-        )
-        Path(args.out).write_text(json.dumps(rec, indent=1) + "\n")
-        print(json.dumps(rec, indent=1))
-        return 0
-
+    # ---- T1: the 6 consumed static band multipliers ---------------------- #
     t1_fired = False
     for cls in CLASSES:
-        o = arms["old"]["static"][cls]
-        n = arms["new"]["static"][cls]
+        o = arms["old"]["report"]["static_bands"][cls]
+        n = arms["new"]["report"]["static_bands"][cls]
         row = {}
         for band in CONSUMED_BANDS:
-            ov, nv = o["bands"][band], n["bands"][band]
-            dev = abs(nv - ov)
-            tol = _tol(ov)
+            ov, nv = float(o[band]), float(n[band])
+            dev, tol = abs(nv - ov), _tol(ov)
             fired = dev > tol
             t1_fired = t1_fired or fired
             row[band] = {
@@ -501,22 +577,21 @@ def cmd_compare(args: argparse.Namespace) -> int:
                 "tol": round(tol, 4),
                 "fires": bool(fired),
             }
-        # Reported, never a trigger.
+        # Reported, never a trigger (rule 19: its owner is unit commitment).
         row["committed_band_unarmed"] = {
-            "old": o["unarmed"]["committed"],
-            "new": n["unarmed"]["committed"],
+            "old": float(o["committed"]),
+            "new": float(n["committed"]),
         }
         rec["T1_static_bands"][cls] = row
 
+    # ---- T2: per (class x net-load bin) mean ladder rung ------------------ #
     t2_fired = False
-    old_bins = _ladder_bin_means(arms["old"]["cond"])
-    new_bins = _ladder_bin_means(arms["new"]["cond"])
     for cls in CLASSES:
         row = {}
-        for b in sorted(old_bins.get(cls, {}), key=int):
-            ov, nv = old_bins[cls][b], new_bins[cls][b]
-            dev = abs(nv - ov)
-            tol = _tol(ov)
+        for b in sorted(arms["old"]["ladder"].get(cls, {}), key=int):
+            ov = arms["old"]["ladder"][cls][b]
+            nv = arms["new"]["ladder"][cls][b]
+            dev, tol = abs(nv - ov), _tol(ov)
             fired = dev > tol
             t2_fired = t2_fired or fired
             row[b] = {
@@ -528,39 +603,52 @@ def cmd_compare(args: argparse.Namespace) -> int:
             }
         rec["T2_ladder_bin_means"][cls] = row
 
-    # CONTEXT ONLY — confounds parse with corpus (PREREG §3).
-    comm_bins = _ladder_bin_means(committed_cond)
+    # ---- reproduction of the COMMITTED artifact (context, never a trigger)  #
+    comm_bins = _ladder_bin_means_from_json(committed_cond)
     for cls in CLASSES:
-        rec["context_new_vs_committed"][cls] = {
+        rec["reproduction_vs_committed"][cls] = {
             "bands": {
                 band: {
                     "committed": committed[cls]["bands"][band],
-                    "new": arms["new"]["static"][cls]["bands"][band],
-                    "delta": round(
-                        arms["new"]["static"][cls]["bands"][band]
-                        - committed[cls]["bands"][band],
-                        4,
-                    ),
+                    "old_arm": arms["old"]["report"]["static_bands"][cls][band],
+                    "new_arm": arms["new"]["report"]["static_bands"][cls][band],
                 }
                 for band in CONSUMED_BANDS
             },
             "ladder_bin_means": {
                 b: {
                     "committed": round(comm_bins[cls][b], 4),
-                    "new": round(new_bins[cls][b], 4),
-                    "delta": round(new_bins[cls][b] - comm_bins[cls][b], 4),
+                    "old_arm": round(arms["old"]["ladder"][cls][b], 4),
+                    "new_arm": round(arms["new"]["ladder"][cls][b], 4),
                 }
                 for b in sorted(comm_bins.get(cls, {}), key=int)
+                if b in arms["old"]["ladder"].get(cls, {})
             },
         }
 
     rec["T1_fires"] = bool(t1_fired)
     rec["T2_fires"] = bool(t2_fired)
-    rec["verdict"] = "MATERIAL" if (t1_fired or t2_fired) else "IMMATERIAL"
+    parse_material = t1_fired or t2_fired
+    rec["parse_effect"] = "MATERIAL" if parse_material else "IMMATERIAL"
+
+    # The shippability question is separate from the parse question, and the
+    # derive's own gates decide it (PREREG §4 third branch, rule 23).
+    new_ok = arms["new"]["report"]["gates_all_pass"]
+    old_ok = arms["old"]["report"]["gates_all_pass"]
+    if not new_ok:
+        rec["verdict"] = (
+            "DERIVE_GATE_FAIL — the corrected derive cannot be shipped; the lane "
+            "STOPS at the derive and no threshold is retuned (rule 23). The parse "
+            f"effect itself is {rec['parse_effect']}."
+        )
+    else:
+        rec["verdict"] = rec["parse_effect"]
+    rec["old_arm_reproduces_committed_gates"] = bool(old_ok)
 
     Path(args.out).write_text(json.dumps(rec, indent=1) + "\n")
     print(json.dumps(rec, indent=1))
-    print(f"\nVERDICT {rec['verdict']} (T1={t1_fired}, T2={t2_fired}) -> {args.out}")
+    print(f"\nT1={t1_fired} T2={t2_fired} -> {rec['verdict']}")
+    print(f"-> {args.out}")
     return 0
 
 
