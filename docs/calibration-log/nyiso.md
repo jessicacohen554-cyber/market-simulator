@@ -3575,3 +3575,147 @@ not reproduce the scorer's tail basis. The authoritative C3c comes from
 `results/calibration/FINDING-nyiso108-hydro-input-repair-2026-07-31.md`.
 
 Next shorthand: nyiso-109.
+
+---
+
+## nyiso-109 — the 2023 C3a breach was an identification-GRAIN error; NYISO recovers to CALIBRATED-WITH-CAVEATS (2026-08-01)
+
+**2 solves** (same-HEAD zero-delta control + single-delta arm, three years each).
+**Frozen HEAD `1aad56a`** + this session's mechanism commit. Keeper
+`2026-07-31-nyiso108-hydro-input-repair` -> **`2026-08-01-nyiso109-zonal-margin-anchor`**
+(bundle `nyiso109_zonalanchor_B`). Pre-registered and PUSHED before either arm was
+scored. **This promotion is the pre-registration's OWN verdict** — every construction
+gate K1-K6 and every kill gate P1-P5 passed; no owner override was needed or used.
+
+### 1. The lever: the margin anchor's identification GRAIN, not a tuning knob
+
+`apply_gas_offer_margin` adds `markup_hr x (anchor - fuel)` and states its own
+identity — *at `fuel == anchor` the reformed offer reduces EXACTLY to the registered
+band multiplier* — which is a statement about a unit's **own** delivered fuel. But
+`GAS_OFFER_MARGIN_ANCHOR_BY_ISO` is derived from `_gas_series`, which is **ISO-level**:
+it carries the hub overlay but NOT the per-zone basis the solve applies afterwards on
+the `(n_gen, T)` array. On the five ISOs without a zonal spread that is the same
+series. On NYISO it is not: `apply_nyiso_zonal_gas_basis` leaves the REFERENCE zone
+(Capital_Hudson / Iroquois Z2) unchanged and shifts every other zone strictly DOWN to
+its own measured pipeline hub — NYC to Transco Z6 NY, Upstate_West to Tenn Z4 200L,
+measured offsets **-1.34/-0.71/-1.38** and **-1.46/-1.07/-3.08** $/MMBtu. Two of five
+zones, carrying **67.6 % of NYISO load**, were pricing their markup at a fuel level
+they never pay and collecting an uplift their band multiplier never contained.
+
+Zone anchors — **Upstate_West 2.0346, NYC 2.7612, reference zones 3.9046 unchanged** —
+are the SAME measurement as the ISO anchor evaluated per zone, produced by the same
+derive script (`derive_gas_offer_margin_anchor.py --by-zone`) applying the RUNTIME
+zonal-basis transform to the same delivered series over the same 2023-2025 window.
+**Zero free parameters** (+1 DOF entry, +0 residual; 26 -> 27 entries, `n_residual` 6).
+Rule 19: a band-scoped rebasis anchor keeps precedence, so the channels never stack.
+Rule 25: the registry carries NYISO ONLY and hard-fails elsewhere. In the solve,
+**234 of 404** marked-up tranches move onto a zone anchor and the median fixed margin
+falls **6.04 -> 5.39 $/MWh**.
+
+### 2. TWO handoff premises CORRECTED by measurement
+
+**(a) The defect is NOT 2023-specific.** The residual is a COMPRESSED price
+distribution present in all three years: the model reproduces only **69/49/45 %** of
+the measured trough->peak swing, the trough is over-priced by **+7.3/+5.5/+8.7 $/MWh**
+and the peak under-priced in 2024/2025. 2023 failed alone only because it is the mild
+year whose peak error is ALSO positive (+3.01), so nothing cancelled the trough excess.
+Same defect PJM diagnosed at pjm-141 — measured here independently on NYISO's own data.
+
+**(b) The congestion route is REFUSED ex-ante on NYISO's own measurement**, no solve
+spent: `measured_interface_limits` NYISO **U -> G**. The premise is real (the model's
+Upstate->Capital link separates in 12.0/1.3/1.1 % of hours against a real
+60.3/54.8/38.2 %), but the REAL `CENTRAL EAST - VC` sits within 50 MW of its posted
+limit in **0.8/0.1/0.2 %** of hours and TOTAL EAST / UPNY CONED / SPR-DUN-SOUTH in
+**0.0 %**, while the model's monthly TTC already tracks the measured monthly mean limit
+(2023 model 1950..2725 vs measured 1918..2699 MW) and the model's own link is AT that
+envelope in 16.1/1.7/1.4 % of hours. The posted limit is not what produces the real
+separation — marginal losses plus SUB-INTERFACE nodal constraints are, neither
+representable at five-zone grain (rule 14's misalignment clause).
+
+### 3. Every gate passes; K2 on the STRICT BYTE basis, and stronger than nyiso-108's
+
+Control minus committed keeper = **exactly 0.0 MW** on every class-hour in all three
+years — **despite four solve-path commits landing on main since that keeper's HEAD**
+(`data/hydro.py`, `data/fleet/arrays.py`, `model/reserves/spec.py`), whose NYISO
+inertness the prereg recorded as a falsifiable expectation and the control did not
+falsify. K3: system lambda **-0.871/-0.609/-0.602 $/MWh**. K6 direction integrity: no
+zone's lambda RISES anywhere, as the construction requires. Slack and dump 0.0 in both
+arms, all years.
+
+### 4. RESULT and the reported cost
+
+**C3a 2023 +10.21 % -> +7.51 %**, inside the +/-10 % band; C3a PASSES in all three
+years (2024 +1.05 -> -0.55, 2025 -8.73 -> **-9.64**). Determination **NOT-YET ->
+CALIBRATED-WITH-CAVEATS** (7 target-grade / 1 FAIL -> **8 / 0 FAILs**, 1 ledgered).
+C1 stays **14/14 all-class, 10/10 free-class**; C2/C3b/C4/C6/C7/C8 PASS in both arms;
+**C3c bit-unchanged** (3/0/7 h vs actual 10/12/42).
+
+**The cost is reported, not hidden:** C3a 2025 moves nearer the band edge. That is the
+honest signature of §2(a) — this lever corrects the TROUGH half of a sign-symmetric
+amplitude defect and the PEAK half stays open. The expected direction (weakly downward
+by construction: every zone anchor <= the ISO anchor, every markup >= 0) was
+**pre-registered as grounds for EXTRA scrutiny, not encouragement** (rule 1, both
+directions); the lever is defended on the arithmetic of the mechanism's stated
+identity and would have been correct had C3a not moved at all.
+
+### 5. The frontier: C3c STANDS and its PREMISE is RESTORED
+
+C3a passing in all three years makes C3c once again the SOLE miss, carried as ONE
+ledgered caveat, so the nyiso-104b declaration's premise holds again. C3c evidence is
+bit-unchanged, so no caveat slot is spent and the re-open condition (Capital_Hudson ->
+Zone-F/Zone-G topology split, owner charter) is unchanged. **What is NOT restored is
+the "options exhausted" reading** — the compressed-distribution defect is real, open,
+and passes every current gate, so it is an open item rather than a blocker. Holdout
+unaffected: `complete` kept, absent from `final`, spend freeze ACTIVE.
+
+### 6. Cross-ISO exposure: measured, REPORTED, not acted on
+
+ERCOT, PJM and MISO also arm a zonal gas basis on their keepers, so the same grain
+mismatch exists in their lanes; their cells enter as **U** and each needs its own
+derived table and A/B (rule 25). CAISO and NEISO arm none (n/a). ERCOT partially
+self-corrects via the flat EP-basis level term `_gas_series` already adds. Nothing
+outside NYISO is touched and no other keeper moves.
+
+### 7. Recorded honestly rather than dropped
+
+This session's OWN pre-registration §1.3 says the model's Upstate->Capital link
+"separates in 0.0 % of hours in all three years". That is true only on the
+covered-actual-hours subsample at a $1 threshold; full-year it is 12.0/1.3/1.1 %. The
+refusal in §2(b) does not depend on it — it rests on the real-world flow-vs-limit
+statistic — but the sentence was wrong as written and the `flows.parquet` measurement
+that corrects it only became available once this session's own arms were solved.
+
+### 8. The marginal-rung census confirms the diagnosis and names the term
+
+The pjm-141 marginal-set test re-derived on NYISO's own fleet (no LP, detection
+99.1-100 %): the trough marginal tranche is **`econ` 80.5/81.1/80.8 %**, dominated by
+`CC_REGULAR:econ` 54.0/50.9/42.2 %, and the **peak control is the same family**
+(84.5/83.5/85.2 %) — no floor rung, no part-load artifact at the margin. The marginal
+trough rung's offer decomposes as burn + VOM + a **residual markup of
+$6.84/$10.13/$9.24** at a fuel of 2.755/2.089/4.072 $/MMBtu: **the markup is largest
+exactly where the fuel sits furthest below the 3.9046 ISO anchor**, which is
+`markup_hr x (anchor - fuel)` read straight off the price-setting rung. Also measured
+and reported: **within-day offer variation is EXACTLY zero** (sigma $0.000000; the
+cap-weighted offer at trough equals the peak to the cent, 77.10/79.68/92.08), so all
+diurnal amplitude must come from merit-order traversal — NYISO reproduces pjm-141's T6
+finding on its own fleet; and the model does not lack a cheap offer (cheapest thermal
+$1.40 against a measured trough p05 of 14.60/14.23/19.96) but lacks **depth**, with only
+8.0/7.7/8.2 GW of 25.0-25.6 GW available below that target.
+
+### 9. Test baseline at this HEAD
+
+`tests/{curation,scoring,unit}` after a full `regenerate_clean`: **14 failed / 4419
+passed / 14 skipped / 1 xfailed** in 11m56s — `test_measured_chp_heat_rates.py` 7, three
+cache-key byte-stability tests, `test_consume_lmp.py` 1, `test_ff_readiness_battery.py`
+1, `test_outages.py` 1, `test_clean_io.py::test_datatype_list_matches_schemas` 1. Thirteen
+are nyiso-108's baseline verbatim; the fourteenth is a datatype/schema registry mismatch
+on main and this branch touches no `clean_io`/schema/`regenerate_clean` file. **The three
+cache-key failures were checked rather than assumed**, because this session adds two
+`ScenarioConfig` fields: the default `ScenarioConfig().cache_key()` is
+`0e9fce2fb55b889f` on BOTH `origin/main` and this HEAD, so the new fields are correctly
+registered and the tests fail against a literal that was already stale on main. **11 new
+tests** land with the mechanism, all passing.
+
+`results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
+
+Next shorthand: nyiso-110.
