@@ -107,11 +107,16 @@ _CLEAN_FUELS: frozenset[str] = frozenset({"wind", "solar", "nuclear", "hydro"})
 _RPS_ELIGIBLE_FUELS: frozenset[str] = frozenset({"wind", "solar"})
 
 # Firm clean (non-VRE) capacity fuels. The reliability floor no longer nets
-# these out at nameplate — its accreditation rebuild routes every resource
-# (hydro included) through accredited_firm_capacity_mw at its UCAP/capacity-
-# credit value (capacity-economics plan 2026-07 §3.2). The constant is retained
-# only as the evolution ledger's ``firm_clean_mw`` reporting basis
-# (runner.py); it no longer participates in any retirement/adequacy decision.
+# these out at nameplate — its accreditation rebuild routes the resources it
+# SEES through accredited_firm_capacity_mw at their UCAP/capacity-credit value
+# (capacity-economics plan 2026-07 §3.2). Hydro, however, never reaches that
+# ledger today: it is not part of the persistent evolved fleet (the runner
+# carries hydro only in the transient dispatch fleet), so no
+# accredited_firm_capacity_mw term exists for it and the evolution ledger's
+# ``firm_clean_mw`` over this constant is structurally 0 (forecast-readiness
+# audit 2026-07 FR-3; the hydro-accreditation fix is FFR-1C's). The constant is
+# retained only as that ledger reporting basis (runner.py); it no longer
+# participates in any retirement/adequacy decision.
 _FIRM_CLEAN_FUELS: tuple[str, ...] = ("hydro",)
 
 # Per-fuel ScenarioConfig field names for the consecutive-loss threshold
@@ -279,37 +284,62 @@ def apply_confirmed_exits(
     rows never reach here (the loader drops them), so a counter-instrument (RMR,
     202(c)) correctly reverts the unit to the economic screen.
 
-    A confirmed exit is a discrete, once-at-its-date event, never a recurring
-    per-year filter. ``fleet`` threads forward mutated through the runner's
-    year loop, so re-selecting an already-applied row from ``exits`` every year
-    would re-derate the same MW repeatedly (a plant-binned exit's remaining
-    tranche has no memory of which rows already reduced it). Two call sites
-    coordinate the once-only semantics via ``apply_backlog``:
+    A confirmed exit is a discrete event with a fixed per-row MW removal
+    schedule, never a recurring per-year filter. ``fleet`` threads forward
+    mutated through the runner's year loop, so a row's MW must be removed
+    exactly once across the run (a plant-binned exit's remaining tranche has
+    no memory of which rows already reduced it). Each row's schedule
+    (FFR-1A arm 2 / audit FR-2 — MW subtraction composes across years where
+    factor-of-factor arithmetic cannot):
+
+    * ``exit_month <= 6`` (effective in ``exit_year``): the effective year
+      removes the annual-average share ``(12 − m)/12 × mw`` (the unit ran
+      ``m`` months), and **the following year removes the remaining
+      ``m/12 × mw``** — the completion leg. Before the completion leg a
+      first-half exit froze at its annual-average factor forever (a unit
+      legally gone by May kept ~5/12 of its MW through the horizon).
+    * ``exit_month > 6`` or no month: the effective year (``exit_year + 1``
+      for late-month rows, majority-of-year rule) removes the full ``mw``.
+    * **Over-subscribed registry** (``Σ mw > binned_mw`` — the fleet
+      under-represents the plant): the effective-year removal is apportioned
+      by ``binned/Σmw`` so the year still lands on the annual-average of the
+      plant's true start/end states (factor ``m/12`` for a whole-plant
+      first-half exit — the pre-FFR-1A behaviour); the uncapped completion
+      leg then floors the factor at 0, finishing the plant at
+      ``max(0, binned − Σmw)``.
+
+    Two call sites coordinate via ``apply_backlog``:
 
     * ``apply_backlog=True`` (:func:`market_sim.data.fleet.build_base_fleet`,
-      the first simulated year only): selects every exit with
-      ``effective_year <= year`` — the pre-start backlog, applied exactly once
-      as the fleet is built, since a unit confirmed to exit before or in the
-      first simulated year can never reach :func:`evolve_fleet`.
+      the first simulated year only): a row effective THIS year starts its
+      normal schedule (annual-average now, completion next year via
+      :func:`evolve_fleet`); a row effective in an EARLIER, never-simulated
+      year removes its **full** ``mw`` at once — by the first simulated year
+      both schedule legs are already due, so no annual-average ghost survives
+      the pre-start backlog.
     * ``apply_backlog=False`` (the default, :func:`evolve_fleet`, every later
-      year): selects only exits with ``effective_year == year`` — the row
-      newly effective this year — so a row already applied (in the backlog or
-      a prior year) is never re-selected.
+      year): selects rows newly effective this year plus the completion legs
+      of last year's first-half rows — a leg already applied (in the backlog
+      or a prior year) is never re-selected.
 
     Matching (plan §5.1):
 
     * **Unit-grain** generators (raw EIA-860 units, ``unit_id`` =
-      ``"{plant_code}_{generator_id}"``) are dropped when their generator ID is
-      confirmed to exit this year.
+      ``"{plant_code}_{generator_id}"``) are dropped whole when their
+      generator ID is confirmed to exit this year (annual grain — no partial
+      unit; completion legs never re-match a unit dropped at its effective
+      year).
     * **Plant-binned** generators (ERCOT CAMPD bins / synthesized tranche plants,
-      ``is_campd_bin`` or an unparseable ``unit_id``) are **derated**: the plant's
-      binned MW is scaled by ``(binned_mw - exit_mw) / binned_mw`` — pmax/pmin and
-      the MW-valued tranche floors scale proportionally, dropping a tranche when
-      its remaining MW ≤ ε. The residual heat-rate composition shift (the exiting
+      ``is_campd_bin`` or an unparseable ``unit_id``) are **derated**: the
+      plant's binned MW is scaled by
+      ``(binned_mw − mw_due_now) / binned_mw`` — pmax/pmin and the MW-valued
+      tranche floors scale proportionally, dropping a tranche when its
+      remaining MW ≤ ε. The residual heat-rate composition shift (the exiting
       unit is usually the worst) is accepted second-order error. Because each
-      row is now selected exactly once (never re-summed against an
-      already-shrunk denominator), a plant with multiple rows landing in
-      different years derates correctly year over year.
+      row's schedule legs are each selected exactly once and remove absolute
+      MW (never re-summed against an already-shrunk denominator), a plant
+      with multiple rows landing in different years derates correctly year
+      over year.
 
     The economic screen still sees a confirmed unit in the years before its date,
     so a sustained-loss unit can exit earlier (``min(economic, confirmed_date)``);
@@ -328,52 +358,109 @@ def apply_confirmed_exits(
 
     Returns:
         A new fleet list with confirmed exits removed / derated. Byte-identical
-        to ``fleet`` when no exit is effective this year.
+        to ``fleet`` when no exit leg is due this year.
     """
     if apply_backlog:
-        effective = [e for e in exits if _confirmed_effective_year(e) <= year]
+        current = [e for e in exits if _confirmed_effective_year(e) == year]
+        # Rows effective before the first simulated year: BOTH schedule legs
+        # are already due (the annual-average year was never simulated), so
+        # the full registry MW is removed at once — otherwise a first-half
+        # pre-start exit (V H Braunig, March 2025, in a 2026-start forecast)
+        # would freeze at its annual-average factor forever (FR-2's backlog
+        # variant).
+        prior = [e for e in exits if _confirmed_effective_year(e) < year]
+        completion: list[ConfirmedExit] = []
     else:
-        effective = [e for e in exits if _confirmed_effective_year(e) == year]
-    if not effective:
+        current = [e for e in exits if _confirmed_effective_year(e) == year]
+        prior = []
+        # Completion legs (FFR-1A arm 2 / FR-2): last year's first-half rows
+        # removed only their annual-average share; the remaining m/12 × mw is
+        # due now. Derate-branch only — a unit-grain row dropped its whole
+        # unit at the effective year, so there is nothing left to complete.
+        completion = [
+            e
+            for e in exits
+            if e.exit_month is not None
+            and e.exit_month <= 6
+            and _confirmed_effective_year(e) == year - 1
+        ]
+    if not current and not prior and not completion:
         return list(fleet)
 
-    exit_mw_by_plant: dict[int, float] = {}
+    # Per-plant MW due for removal THIS year (the derate branch's numerator),
+    # the registry MW behind it (warning + over-subscription basis,
+    # current/prior rows only), the completion dues (kept separate — they are
+    # never capped, see below), and the unit-grain generator IDs dropping this
+    # year.
+    remove_mw_by_plant: dict[int, float] = {}
+    raw_mw_by_plant: dict[int, float] = {}
+    completion_mw_by_plant: dict[int, float] = {}
     exit_gids_by_plant: dict[int, set[str]] = {}
-    exit_month_by_plant: dict[int, int | None] = {}
-    for e in effective:
-        exit_mw_by_plant[e.plant_id] = exit_mw_by_plant.get(e.plant_id, 0.0) + (
-            e.mw or 0.0
-        )
+    for e in current:
+        mw = e.mw or 0.0
+        raw_mw_by_plant[e.plant_id] = raw_mw_by_plant.get(e.plant_id, 0.0) + mw
+        if e.exit_month is not None and e.exit_month <= 6:
+            # Annual-average leg: the unit ran exit_month months this year.
+            due = mw * (12 - e.exit_month) / 12.0
+        else:
+            due = mw
+        remove_mw_by_plant[e.plant_id] = remove_mw_by_plant.get(e.plant_id, 0.0) + due
         exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
-        # Track the earliest exit_month (in case multiple units exit in different months).
-        if e.plant_id not in exit_month_by_plant:
-            exit_month_by_plant[e.plant_id] = e.exit_month
-        elif e.exit_month is not None and (
-            exit_month_by_plant[e.plant_id] is None
-            or e.exit_month < exit_month_by_plant[e.plant_id]
-        ):
-            exit_month_by_plant[e.plant_id] = e.exit_month
+    for e in prior:
+        mw = e.mw or 0.0
+        raw_mw_by_plant[e.plant_id] = raw_mw_by_plant.get(e.plant_id, 0.0) + mw
+        remove_mw_by_plant[e.plant_id] = remove_mw_by_plant.get(e.plant_id, 0.0) + mw
+        exit_gids_by_plant.setdefault(e.plant_id, set()).add(str(e.generator_id))
+    for e in completion:
+        # No gid entry: the unit-grain drop happened at the effective year.
+        due = (e.mw or 0.0) * e.exit_month / 12.0
+        completion_mw_by_plant[e.plant_id] = (
+            completion_mw_by_plant.get(e.plant_id, 0.0) + due
+        )
+
+    exit_plants = (
+        set(remove_mw_by_plant) | set(completion_mw_by_plant) | set(exit_gids_by_plant)
+    )
 
     # Per exit-plant total binned MW (the derate denominator), computed once.
     binned_mw_by_plant: dict[int, float] = {}
     for g in fleet:
         pc = int(g.plant_code)
-        if pc in exit_mw_by_plant and _is_confirmed_binned(g):
+        if pc in exit_plants and _is_confirmed_binned(g):
             binned_mw_by_plant[pc] = binned_mw_by_plant.get(pc, 0.0) + g.pmax_mw
+
+    # Over-subscription cap: when the registry's exit MW exceeds the plant's
+    # binned fleet MW (the fleet under-represents the plant — NEISO Merrimack
+    # carries 108 MW against a 459.2 MW registry exit), apportion this year's
+    # current/prior removal by binned/raw so a partial-year row's effective
+    # year still lands on the annual-average of the plant's true start/end
+    # states (factor m/12 when the whole plant exits) instead of bleeding the
+    # over-subscription into the months the unit still ran. Completion legs
+    # are added AFTER the cap, uncapped: next year the raw m/12 × mw due
+    # meets the already-averaged remainder, the factor floors at 0, and the
+    # plant correctly finishes at max(0, binned − mw).
+    for pc, raw in raw_mw_by_plant.items():
+        binned = binned_mw_by_plant.get(pc, 0.0)
+        if raw > binned > 0.0:
+            remove_mw_by_plant[pc] *= binned / raw
+    for pc, due in completion_mw_by_plant.items():
+        remove_mw_by_plant[pc] = remove_mw_by_plant.get(pc, 0.0) + due
 
     kept: list[Generator] = []
     for g in fleet:
         pc = int(g.plant_code)
-        if pc not in exit_mw_by_plant:
+        if pc not in exit_plants:
             kept.append(g)
             continue
         if _is_confirmed_binned(g):
             binned_mw = binned_mw_by_plant.get(pc, 0.0)
-            exit_mw = exit_mw_by_plant[pc]
-            if binned_mw <= 0.0 or exit_mw <= 0.0:
+            remove_mw = remove_mw_by_plant.get(pc, 0.0)
+            if binned_mw <= 0.0 or remove_mw <= 0.0:
                 # No usable MW to derate against (registry left capacity_mw
                 # blank): keep the tranche rather than over-retire the plant.
-                if exit_mw <= 0.0:
+                # Warn only for a current/prior row's plant — a completion leg
+                # with no MW already warned at its effective year.
+                if pc in raw_mw_by_plant and raw_mw_by_plant[pc] <= 0.0:
                     logger.warning(
                         "confirmed-exit: plant %d has no capacity_mw to derate "
                         "binned tranches; kept intact",
@@ -381,40 +468,14 @@ def apply_confirmed_exits(
                     )
                 kept.append(g)
                 continue
-            # Calculate derate factor, accounting for month-level precision.
-            # If exit_month <= 6 and we're applying in the exit year, compute
-            # annual-average: available for exit_month months, retired for the rest.
-            exit_month = exit_month_by_plant.get(pc)
-            if (
-                exit_month is not None
-                and exit_month <= 6
-                and _confirmed_effective_year(
-                    ConfirmedExit(
-                        plant_id=pc,
-                        generator_id="",
-                        exit_year=year,
-                        exit_month=exit_month,
-                    )
-                )
-                == year
-            ):
-                # Annual-average derate accounting for month-level precision:
-                # exit_month months at full capacity + (12 - exit_month) months at reduced capacity
-                months_retired = 12 - exit_month
-                reduced_factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
-                factor = (exit_month / 12.0) * 1.0 + (
-                    months_retired / 12.0
-                ) * reduced_factor
-            else:
-                # Full-year derate (exit_month > 6 effective next year, or no exit_month).
-                factor = max(0.0, (binned_mw - exit_mw) / binned_mw)
+            factor = max(0.0, (binned_mw - remove_mw) / binned_mw)
             derated = _derate_generator(g, factor)
             if derated.pmax_mw > _CONFIRMED_EXIT_MW_EPS:
                 kept.append(derated)
             # else: fully retired by the confirmed exit (dropped).
         else:
             gid = _unit_generator_id(g)
-            if gid is not None and gid in exit_gids_by_plant[pc]:
+            if gid is not None and gid in exit_gids_by_plant.get(pc, set()):
                 continue  # unit-grain confirmed exit: drop
             kept.append(g)
     return kept
