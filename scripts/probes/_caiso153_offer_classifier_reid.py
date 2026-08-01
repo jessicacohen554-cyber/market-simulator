@@ -214,20 +214,25 @@ def _score_resources(daily, gas_plus_carbon, cap, D, estimator: str):
             continue
         x = g.gas.to_numpy(float)
         y = g.p_body.to_numpy(float)
-        slope, intercept = _fit(x, y, estimator)
-        if not np.isfinite(slope):
-            continue
-        r = float(np.corrcoef(x, y)[0, 1])
+        # A constant body price gives a 0/0 correlation; NaN then fails the
+        # r gate exactly as a real non-coupled resource does, so this only
+        # silences the divide warning — it changes no population.
+        with np.errstate(invalid="ignore", divide="ignore"):
+            slope, intercept = _fit(x, y, estimator)
+            if not np.isfinite(slope):
+                continue
+            r = float(np.corrcoef(x, y)[0, 1])
 
-        # implied non-fuel adder against the FULL physical basis (fuel+carbon)
-        basis = g.day.map(gas_plus_carbon).to_numpy(float)
-        level = float(np.median(y - slope * basis))
+            # implied non-fuel adder against the FULL physical basis
+            basis = g.day.map(gas_plus_carbon).to_numpy(float)
+            level = float(np.median(y - slope * basis))
 
-        # split-half by alternating gas rank: both halves span the same range
-        order = np.argsort(x)
-        ia, ib = order[0::2], order[1::2]
-        sa, _ = _fit(x[ia], y[ia], estimator)
-        sb, _ = _fit(x[ib], y[ib], estimator)
+            # split-half by alternating gas rank: both halves span the same
+            # regressor range, so this tests the estimator, not the split
+            order = np.argsort(x)
+            ia, ib = order[0::2], order[1::2]
+            sa, _ = _fit(x[ia], y[ia], estimator)
+            sb, _ = _fit(x[ib], y[ib], estimator)
 
         rows.append(
             {
