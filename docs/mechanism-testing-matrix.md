@@ -1095,22 +1095,42 @@ C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
 still real (miso-89's measurement stands) but it no longer breaches any
 criterion; the outage-grain data ask below remains its honest continuation.)*
 
-0. **Committed-band SPLIT on the measured within-run loading distribution —
-   the miso-112 lane, the queue's live head.** miso-111 (2026-07-31) A/B'd the
-   whole-band form (`coal_prb_committed_dispatchable`, cell R): shape WORKS
-   (C7 PRB cv_ratio 0.466→0.828 / 0.475→1.028, FAIL→PASS, BIT untouched,
-   C3a improved) but C1 PRB flips −8.77/−14.97 TWh in the cheap-gas years —
-   the discount carries ~9-15 TWh/yr of real stay-online energy the mustrun
-   band alone does not. Measured target: reality's within-run night level is
-   0.62×HSL, BETWEEN mustrun (0.46) and the full stack (0.92); one band at
-   one price cannot hold it. Successor: split `_committed` into a
-   hold-through slice (keeps the contract discount) + a cycling slice (full
-   SRMC), both sizes from the CAMPD loading-when-on construction (night p50
-   vs day p50, per plant — `scripts/probes/_miso111_prb_conduct.py` extends
-   directly). 2025 will still be short of the 0.5 gate on the overnight
-   price-formation defect (model off-peak p10 $29.71 vs actual hub $17.95)
-   — data-blocked (miso-78/79), do not stack an offer lever on it. DO NOT
-   re-test the whole-band form (miso-111 R).
+0. **Night-level min-gen FLOOR on the P0-detected committed run — the
+   miso-113 lane, the queue's live head. The two OFFER-side forms above it
+   are both spent and both R; do not re-test either.** miso-111 rejected the
+   whole-band repricing (`coal_prb_committed_dispatchable`) and miso-112
+   rejected the measured per-plant SPLIT (`coal_prb_committed_split`) on its
+   pre-registered G2: the split fixes shape better than miso-111 and
+   recovers 2023 volume (C7 PRB cv_ratio 0.466→0.738 / 0.475→0.872 FAIL→PASS,
+   2025 0.314→0.393, BIT untouched, C3a improved, zero D-2 forced rows) but
+   C1 2024 PRB still lands −10.23 TWh vs ±8. **The structural test that
+   closes the offer-side family** (miso-112 §4, per plant, online hours,
+   cap-weighted over the 26 regulated PRB plants, model vs each plant's own
+   measured `night_p50`): the KEEPER's night level is already right — 0.437
+   against a measured 0.434 in 2024 — while the split arm drives it *below*
+   the meter to 0.374 (0.483→0.407 in 2023). What the keeper gets wrong is
+   within-day VARIABILITY, not level; a discount-only hold slice has no
+   floor, so it backs out in cheap hours and nothing holds the fleet at its
+   measured level. **The missing object is a floor, not a second price.**
+   The lever: the repo's existing P0-detected-run → `min_gen` construction
+   (CAISO RA must-offer / ERCOT / NYISO bridges), sized at the measured
+   within-run NIGHT level. miso-111 PREREG §8 retired the bridge as
+   "provably inert", but that verdict was reached on the **LSL** statistic
+   (plant-basis loading-when-on p5 = 0.182, below the 0.30-0.52 mustrun
+   bands) and **does not extend to the night level** (0.434 plant-basis /
+   0.62×HSL class-basis), which sits ABOVE the mustrun band at most plants
+   and is exactly the level neither arm holds — re-read that inertness
+   argument before quoting it. Rule 17 shape is available off the shelf:
+   driver = regulated self-commitment (SOM Table 7, 53-56 % of coal starts),
+   window = the detected committed run, forward story = regenerates from any
+   year's P0 pattern plus the frozen measured level. Measured input already
+   committed: `data/raw/_processed-legacy/coal_prb_committed_split_MISO.csv`
+   (`night_p50` per plant, frozen deriver
+   `scripts/data/derive_prb_committed_split.py`). 2025 will still be short of
+   the 0.5 gate on the overnight price-formation defect (model off-peak p10
+   $29.71 vs actual hub $17.95) — data-blocked (miso-78/79), do not stack a
+   lever on it. Pre-register G2 (C1 16/16) again: it is what killed both
+   predecessors.
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
    tonnage priced by its dual, the named miso-96 successor) stays the only
