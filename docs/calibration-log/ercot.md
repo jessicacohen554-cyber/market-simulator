@@ -3826,3 +3826,143 @@ note). Successor pointer: the coal residual is now the LOADING-CONDUCT
 under-run the phantom had masked (ERCOT-126 object) plus the standing
 RT-scarcity-formation attribution (C3a/C3c) and `winter_citygate_daily`
 data-intake (C3b-2023).
+
+## 2026-08-01 — ERCOT-149 (the ERCOT-148 named successor / owner ruling #7: gas-side COP-vs-window collision): MATERIAL at 4.27/5.93/4.14 TWh and adjudicated a DEFECT on the gas fleet's own conduct — the widened event cap (`ercot_dam_availability_gas_event_cap`) solved full-span and REGISTERED as `2026-08-01-ercot149-gas-event-cap`; **KEEPER CANDIDATE, NOT PROMOTED** — 10/11 pre-registered guards held (C3a-2024 flips PASS un-targeted, C3c-2024 formation matched 4→13), the C3c spurious-2024 guard tripped 3→7, and the disposition is the owner's (handoff: "surface, do not decide"); keeper UNCHANGED (ercot148-dam-event-cap)
+
+**Task (autonomous handoff, the diagnosis-§6.1 successor; Phase 0/1 first, no
+solve until they adjudicate).** Precommit
+`docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md` pushed BEFORE the
+solve; diagnosis `docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`; probe
+`scripts/probes/ercot149_gas_outage_phase0.py` (+ the reused
+`ercot148_availability_capture.py` seam captures); committed record
+`results/calibration/ercot149_gas_outage_phase0.json`. Preconditions:
+`audit_keepers --iso ERCOT` PASS 0/0; default cache key drifted name-only
+again (`8161b094a391de90` → `0e9fce2fb55b889f`, post-merge default-off
+fields) — the armed-key MECHANISM verified instead (keeper `run_config`
+rebuilds with every stored field live, cap flag on, toggling moves the key);
+payload decode calibrated by reproducing the ERCOT-148 committed coal
+quantification (4.36/4.98/5.01) per plant to 0.01 TWh on the ercot145
+payload.
+
+**Phase 0 (no LP).** Keeper dispatch above the measured event-window ceiling
+(≥ 5-day unit windows × plant-grain partials, both armed incumbents on gas —
+`arrays.py:1026`/`:1226`): CC_REGULAR 4.116/5.195/3.870 TWh, ST_GAS
+0.158/0.735/0.272 (2023/24/25) — the coal-phantom order; near-identical on
+the prior ercot145 payload (not an ERCOT-148 artifact). Mapped pin
+1.42/3.42/2.22, unmapped class-water-fill 2.86/2.51/1.92. Controls: CHP
+(no DAM overlay) true dispatch respects the ceiling exactly (its apparent
+0.07–0.24 TWh is the render's flat BTM adder, verified 39.1 MW at Pasadena
+2024); CT_PEAKER has no windows by design.
+
+**Phase 1 (adjudicated from the gas fleet's own conduct — the coal ruling was
+NOT assumed to transfer).** (a) The gas windows are identification-strong:
+event-based dead spans (every hour < 2 % CF), derived with the merit-order
+guard armed, and **81.6 % of committed window GW-days sit at exactly 0.0
+out-of-merit share** on the guard's own SRMC-vs-revealed-clearing-cost panel
+(86.4 % ≤ 0.1, 91.4 % ≤ 0.5; every headline window 0.000) — in merit for
+weeks while producing nothing, so "startable but unneeded" is untenable; the
+deriver's OFF-is-available hourly convention stays correct OUTSIDE windows.
+(b) The mapped restore decomposes into three MEASURED mechanisms (raw
+Gen_Resource pulls + crosswalk ratios): config-collapse TRAIN-ALIASING
+(`_site()` folds GUADG_CC1+CC2 / KMCHI_CC1+CC2 — two physical trains — into
+one site whose live = max across trains, so a single-train outage is
+arithmetically invisible; Guadalupe's Oct–Dec 2024 block is erased with the
+dead train's configs filing **OUT honestly**, 264/264 rows); PARTIAL SITE
+ACCEPTANCE (Jack County's train 2 is the un-accepted site `JCKCNTY2`;
+BRAUNIG_VHB3-only, GIDEONG3-only, OLING_3, SANDHSYD, DANSBYG1 — ratios
+0.33–0.52 at 8 of 16 accepted gas plants); and TRUE `OFF`-at-HSL through
+certified dead stops at covered sites (Bastrop `dam_frac` 0.52–0.57, Nueces
+Bay 0.57–0.63, VHB1/2 OFF@111–200/75–160 — the Coleto/Limestone conduct on
+gas). (c) Controls reproduce the coal pattern: honest-OUT Victoria
+(0.019→0.004 TWh), Rio Nogales 2024 (0.187→0.036), and the within-plant
+V H Braunig pair — 2024 frac 0.70 → 0.643 TWh phantom vs 2025 frac 0.075 →
+0.059 on 360 windowed days. Ruling: a wiring/precedence defect of the
+ERCOT-148 class (rules 14/19) — fix = the SAME `min()` block, class scope
+widened to the DAM-covered gas classes via ONE new default-off gate, zero
+fitted parameters, never a second layer. Seam-verified before the precommit
+push: flag-on capture equals `min(base, ceiling)` EXACTLY on all 1,138
+scoped tranches, non-scoped byte-identical, CT_PEAKER inert, and the
+coal-only path reproduces the keeper's own "40 COAL tranche(s)" through the
+widened code.
+
+**Phase 2 (single-delta replay off `ercot148_dam_event_cap_arm`, full span,
+ONE invocation, bundle `ercot149_gas_event_cap_arm`).** CC_REGULAR
+144.78/147.16/144.58 → 142.63/143.84/142.45 TWh (−2.15/−3.32/−2.13 — down by
+far less than the gross phantom, the predicted intra-class re-dispatch; 2023
+crosses to a small under, pre-registered). Re-dispatch lands on COAL_PRB
++0.96/+1.26/+0.41 (the 2024 coal −8.9 % under-run improves un-targeted),
+CT_PEAKER +0.34/+1.17/+0.80, CC_CHP +0.26/+0.36/+0.25 — and **ST_GAS
++0.46/+0.26/+0.55, an ADVERSE un-predicted direction reported honestly**
+(the precommit predicted ST_GAS down; it picked up displaced CC energy and
+its over-run worsens, inside the C1/C2 bands). Named plants: Nueces Bay
++63/+62/+69 % → +64/+49/+49 %, Jack County 2024 +3.7 % → −13.4 % and
+Guadalupe further under — both pre-registered rule-14 compensating-error
+unwinds (the phantom masked the CC econ-band under-dispatch, the
+ERCOT-138/139 object); the rebuild's [7c] operating-shape report flags
+cf_emd regressions on CC_REGULAR/COAL/CC_CHP from the same exposure (the
+substitution margin runs to coal — the OPEN CC-dearness lane, now less
+masked). **GUARDS (precommit §4): TEN OF ELEVEN HELD, ONE TRIPPED.** Held,
+hour-level where applicable: C3c 2023/2025 EXACT byte-level (54 tail /
+2 spurious; 0/0); C1 16/16 free 12/12 EXACT; C2 PASS; C7-2024/25
+COAL_LIGNITE both legs PASS (hard kill; the standing 2023 cv-leg stays,
+its profile r IMPROVING 0.879→0.886); C4/C8 PASS; n_residual 6 UNCHANGED;
+C6 ATTESTED+PASS (governance block written before the verdict).
+Un-targeted improvements (rule 1 — reported, never the basis): **C3a
+−34.3/−10.4/−11.6 → −33.3/+0.8/−9.1 % — 2024 FLIPS PASS essentially exact**,
+C3b 0.618→0.616 / 0.205→0.198 / 0.112 (all improve, 2024/25 stay PASS),
+**C3c-2024 tail 7→20 with matched 4→13 toward the actual 53** (0.13×→0.38×).
+TRIPPED: **C3c spurious-2024 3→7 vs the ≤3(+1 straddle) guard.** Hour-level
+anatomy, recorded verbatim: 3 of the 7 are the keeper's own spurious hours
+byte-carried (Jan-15 Heather morning, prices within $2); 1 is a literal
+threshold straddle (keeper $199.9 → arm $204.7, same morning); the 3
+genuinely new are single-hour TRAILING EDGES of REAL scarcity events the arm
+newly forms — Apr-15 / Apr-27 / May-7 2024 evenings, actual RT peaking
+$958/$1,260/$3,049 within ±3 h, each attached to 2–4 newly MATCHED hours at
+the same event (exactly the probe's pre-measured event-day exposure:
+2024-05-08 carried 9.4 GW of windowed-out gas). Event-boundary overhang of
+real formation, not the guarded failure mode (invented scarcity on
+quiet-margin days). Determination NOT-YET, fail set {C3a(2023-only now),
+C3b(2023-only), C3c, C7(2023-lignite cv-leg)} — identical in kind to the
+keeper with C3a's failing years SHRINKING to one. LOYO: zero fitted
+parameters — structurally exempt, per-year guard table standing in
+(ercot145b/148 precedent).
+
+**Disposition.** The precommit's decision rule is guard-table-bound and the
+handoff reserves ruling #7 to the owner ("surface, do not decide"): with one
+pre-registered guard exceeded beyond its ±1 adjudication allowance, the
+session does NOT promote. `2026-08-01-ercot149-gas-event-cap` is registered
+as the **KEEPER CANDIDATE** (the ERCOT-139 posture), keeper UNCHANGED at
+`2026-07-31-ercot148-dam-event-cap`, matrix cell `O` with the full outcome,
+and the owner's disposition options are on the record: promote under the
+standing structural-integrity standard (the trip anatomy is 3 carried + 1
+straddle + 3 real-event edges, against matched-formation 4→13 and C3a-2024
+flipping PASS), or hold the candidate pending the §6 root-cause lanes.
+Top-15 prune retired `2026-07-26-ercot117-gas-basis-probe`.
+
+**Governance.** Registered same-session (rule 15); matrix row
+`ercot_dam_availability_gas_event_cap` added in the mechanism PR (26c) and
+its cell stamped with the solved outcome (26b); §5.1 header re-stamped;
+calibration log this entry; keeper shard/status untouched (no promotion —
+`audit_keepers --iso ERCOT` re-verified PASS post-registration). Holdouts
+untouched (2023–25 only). ERCOT-scoped (rule 25). Pre-existing matched, not
+fixed: `tests/unit/data/test_outages.py::NuclearUnitAvailabilityTest::
+test_unknown_iso_degrades_to_empty` FAILs at HEAD on the clean tree
+(0.08 s, pre-diff — new to the known list); hydro-plant-modes / gtc-limits
+clean-partition warnings; `ercot_wtx_*` dual-channel warning;
+eGRID-55641/CC-55098 reconcile notices; D-4 CT_PEAKER h14-21 rows and D-1
+2023-lignite cv leg (attributed keeper state); the 2025 preliminary-vintage
+C1 skips. Open owner rulings carried: (1) `gas_hh_monthly_shape` row (26c);
+(2) per-gate dispositions of the attributed gates; (3) `split_coal_tranches`
+delete-vs-inert; (4) `ercot_offer_hrmult_ep_*` rows (26c); (5) Martin Lake
+lignite class composition; (6) ERCOT-147 three-part CT reopen intake
+authorization; **(7) THIS LANE — the gas-side collision is now measured,
+defect-adjudicated, and its arm is a registered candidate awaiting the
+owner's keeper disposition**; (8) the DAM deriver rating basis for
+all-year-OUT sites; NEW **(9)** the deriver `_site()` cross-train collapse
+(live should SUM per-train maxes) + the gas crosswalk's partial site
+acceptance — a rule-23 derive/crosswalk lane that re-derives all three
+grains and re-gates every armed DAM keeper; NEW **(10)** the pin's
+remove-direction over-removal at partial-coverage plants (V H Braunig
+2025). Successor pointer: the exposed CC econ-band under-dispatch
+(Jack County/Guadalupe now under — the ERCOT-138/139 object) and the
+standing RT-scarcity-formation attribution.
