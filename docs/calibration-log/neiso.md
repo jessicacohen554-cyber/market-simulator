@@ -1009,3 +1009,23 @@ layup-vs-outage seam) still pending owner decision. (4) Bench hydro 2024 re-base
 (scorer-side) unchanged. (5) Rubric question in (c) above, for the owner.
 
 Next shorthand: **neiso-75.**
+
+### 2026-08-01 — xiso-1 answers neiso-74's open question: the amplitude defect is SYSTEMIC (cross-ISO audit, no LP, NEISO unchanged)
+
+neiso-74 asked whether NEISO's 24–30 % diurnal price amplitude was
+NEISO-specific. **It is not.** The xiso-1 cross-ISO audit measured all six ISOs
+in one construction (keeper `hourly/` sidecars vs the committed hub DA/RT; zero
+LP) and every one of the **36** ISO × year × benchmark cells compresses with the
+same signature — daily MAX under-priced 36/36, daily MIN over-priced 36/36,
+amplitude 19.9–92.2 % of measured, level right to 7.1 % and phase right in 34/36
+rows. **NEISO is the most compressed of the six** (27.1 / 23.6 / 29.9 % vs DA);
+the audit reproduced neiso-74's NEISO numbers exactly on its swapped loader.
+Two consequences for this lane: the neiso-74 **DO-NOT-REDO on storage-side PS
+levers stands unchanged**, and the rubric question in neiso-74 (c) is re-filed
+as a cross-ISO owner call — no criterion sees hour-of-day amplitude at *any*
+ISO, and PJM's keeper is fully `CALIBRATED` at ~34 %. **§5.6 item 1 still needs
+its own owner charter; this audit grants none.**
+`results/calibration/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`;
+full entry in `docs/calibration-log/governance.md` (2026-08-01).
+
+Next shorthand: **neiso-75** (unchanged).
