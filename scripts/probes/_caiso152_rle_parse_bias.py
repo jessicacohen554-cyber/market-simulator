@@ -308,6 +308,75 @@ def cmd_binshift(args: argparse.Namespace) -> int:
 
 
 # --------------------------------------------------------------------------- #
+# density — how much of the derive's classification depends on corpus DENSITY
+# --------------------------------------------------------------------------- #
+def cmd_density(args: argparse.Namespace) -> int:
+    """Measure the gas-coupling classifier's sensitivity to trade-day density.
+
+    The offer-surface derive identifies gas resources by regressing each
+    masked resource's daily body bid on the citygate daily series, and keeps
+    only resources clearing ``r >= 0.6``, a slope in [4, 18] MMBtu/MWh and
+    >= 120 resource-days. That is a per-resource TIME-SERIES estimator, so it
+    needs a DENSE daily corpus — unlike the caiso-151 intertie ceiling, whose
+    (month × hod) climatology is served by a sparse seasonally balanced
+    sample. This subcommand thins the corpus to every k-th local day and
+    reports how the classified bucket capacity (the deriver's own G1 gate)
+    responds, so the corpus requirement is measured rather than assumed.
+    """
+    from pathlib import Path as _Path
+
+    from market_sim.config import paths
+
+    paths.CLEAN_DIR = _Path(args.clean_root) / f"clean_{args.arm}"
+
+    import numpy as np  # noqa: F401 — used via pandas ops below
+
+    from scripts.data import derive_caiso_offer_surface as D
+
+    bids = D._load_bids(list(args.years))
+    cap_ry = bids.groupby(["resource_seq", "year"]).segment_mw.quantile(0.98)
+    bids = bids.join(cap_ry.rename("cap"), on=["resource_seq", "year"])
+    bids = bids[bids.cap >= D.MIN_CAP_MW]
+    gas = D._gas_staircase()
+    geom = D._fleet_geometry()
+
+    local_day = (
+        bids.interval_start_utc.dt.tz_convert("US/Pacific")
+        .dt.normalize()
+        .dt.tz_localize(None)
+    )
+    days = sorted(local_day.unique())
+
+    rows = []
+    for k in args.thin:
+        keep = set(days[:: int(k)])
+        sub = bids[local_day.isin(keep)]
+        res, _ = D._classify(sub, gas, 8.5)
+        gl = res[res.is_gas]
+        row = {
+            "every_kth_day": int(k),
+            "days": len(keep),
+            "resources_scored": int(len(res)),
+            "resources_gas_pass": int(len(gl)),
+            "fail_slope_out_of_range": int(
+                (~res.slope.between(*D.GAS_SLOPE_RANGE)).sum()
+            ),
+            "fail_r_below_min": int((res.r < D.GAS_MIN_R).sum()),
+        }
+        for cls in CLASSES:
+            mw = float(gl[gl.cls == cls].cap.sum())
+            row[f"{cls}_bucket_mw"] = round(mw, 0)
+            row[f"{cls}_G1_ratio"] = round(mw / geom[cls]["fleet_mw"], 3)
+        rows.append(row)
+        print(json.dumps(row), flush=True)
+
+    out = Path(args.out_root) / "caiso152_corpus_density.json"
+    out.write_text(json.dumps({"arm": args.arm, "rows": rows}, indent=1) + "\n")
+    print(f"-> {out}")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
 # derive — re-run the offer-surface derive against one arm's clean tree
 # --------------------------------------------------------------------------- #
 def cmd_derive(args: argparse.Namespace) -> int:
@@ -520,6 +589,15 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("curate", "derive"):
         p = sub.add_parser(name, parents=[common])
         p.add_argument("--arm", choices=("old", "new"), required=True)
+    p = sub.add_parser("density", parents=[common])
+    p.add_argument("--arm", choices=("old", "new"), default="old")
+    p.add_argument(
+        "--thin",
+        nargs="+",
+        type=int,
+        default=[1, 2, 3, 6],
+        help="keep every k-th local trade day (1 = the whole corpus)",
+    )
     sub.add_parser("compare", parents=[common])
     args = ap.parse_args(argv)
     return {
@@ -527,6 +605,7 @@ def main(argv: list[str] | None = None) -> int:
         "binshift": cmd_binshift,
         "curate": cmd_curate,
         "derive": cmd_derive,
+        "density": cmd_density,
         "compare": cmd_compare,
     }[args.cmd](args)
 
