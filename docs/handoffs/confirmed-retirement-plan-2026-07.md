@@ -349,6 +349,16 @@ against current postings/dockets and corrected. All rows below pass
   the plant's earlier 2016-settlement dates — the worked `superseded`
   audit-trail example the schema was designed around.
 
+> **Superseded in two places by the 2026-07-31 re-query pass (FFR-PA)** —
+> `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`. Both of
+> this section's hold-outs were reversed, on the grounds that they were
+> inconsistent with rows already registered: **ERCOT Braunig Unit 3** now
+> carries an `rmr_end` row at its RMR end date (2027-03), as §4.3 originally
+> directed and as PJM's Brandon Shores/Wagner rows already do; and **MISO
+> J.H. Campbell 1–3** now carry `superseded=true` rows (MPSC U-21090,
+> overridden by the DOE §202(c) chain), the same shape as Eddystone. The rest
+> of this section stands as written.
+
 **Net effect: the default-flip decision (§7) is now unblocked on data
 grounds for all six ISOs** (five seeded, NYISO's zero is itself a completed,
 researched result) — flipping `confirmed_exits_enabled`'s default remains an
@@ -528,6 +538,27 @@ mid-window reversal ever lands.
   activates the non-fossil announced-horizon gate (§5.2), coupled to the same
   flag in `capacity.evolve_fleet`. Backcast mode is unaffected (the channel is
   forecast-mode only, verified byte-identical).
+* **Quarterly re-query cadence (PROPOSED 2026-07-31, FFR-PA; owner decision
+  pending — proposed, not adopted, nothing automated).** Re-query every ISO's
+  rows against its public source once a quarter (target: first two weeks of
+  Jan / Apr / Jul / Oct), refresh every row's `accessed` stamp whether or not
+  the row changes, and bump the README vintage. Between quarters, re-query on
+  demand whenever a row's own counter-instrument has a dated expiry — the
+  rolling DOE §202(c) orders (Eddystone, Campbell) expire on ~90-day cycles and
+  each expiry can flip a supersession, and a compliance date that actually
+  binds (CAISO OTC, 2026-12-31) needs a pass immediately after it passes. The
+  registry carries the expiry dates it must be re-queried against in
+  `superseding_instrument`; a quarterly pass that skips a row whose expiry has
+  passed is not a pass. Deliberately manual: this is a human-in-the-loop
+  curation datatype (§4.2) whose sources are PDFs, dockets and WAF-protected
+  postings, and CI runner minutes are owner-billed — the cadence is a
+  scheduling discipline for session prompts, not a job. Motivating evidence
+  (three expiries inside five months, none of which anything in the repo would
+  notice): `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`
+  §6, which also raises two smaller follow-ups — a curation-time assertion that
+  every `superseded=true` row carries a `superseding_instrument_date` (the
+  Eddystone null it caught), and a machine-readable
+  `superseding_instrument_expiry` column (schema-v3 question).
 * Month-precise forecast exits by un-gating the COD ramp for forecast years (also
   fixes the comment/code drift at `fleet.py:1983-1992`, whose comment already
   claims forecast support the gate denies).
