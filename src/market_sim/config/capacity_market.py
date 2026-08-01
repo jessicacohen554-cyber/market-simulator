@@ -2069,6 +2069,91 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "NEISO": 567.0,  # FCA 17 cleared imports (NY/QC/NB), CSO-holding supply
 }
 
+# Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
+# firm fraction of the modelled hydro fleet's nameplate each ISO's OWN published
+# resource-adequacy construction counts toward its requirement (FFR-1C, closing
+# audit finding FR-3 / gap-register R5c). Consumed by
+# :func:`market_sim.model.capacity_evolution.adequacy._hydro_firm_mw`, which
+# pairs it with the model's own hydro nameplate (the same EIA-860/EIA-923 plant
+# population :func:`market_sim.data.hydro.build_hydro_fleet` puts in the LP) —
+# hydro is an energy-budget resource that never enters the persistent ``fleet``,
+# so before FFR-1C it contributed 0 MW to the accredited ledger for EVERY ISO
+# while being fully dispatched (docs/handoffs/ff-2b-adequacy-basis-2026-07.md
+# §2.2/§2.3/§4).
+#
+# **Every value below is an ISO-published accreditation factor, never a value
+# tuned to clear the I7 adequacy invariant (rules 5/13/21).** Each ISO's
+# published construction splits hydro into a controllable/reservoir class and a
+# limited-control / run-of-river class, at materially different factors. The
+# model carries NO per-plant RA class assignment for its hydro fleet (the
+# ORNL-EHA ``hydro-plant-modes`` classifier behind ``hydro_ror_split`` is a
+# curated CLEAN partition, absent from a default raw-path run and reviewed only
+# for some ISOs), so this registry carries **one credit per ISO: the LOWER —
+# limited-control / run-of-river / non-dispatchable — published class factor**.
+# That choice is deliberate and conservative in the only direction that matters
+# for an adequacy ledger: it can never manufacture firm MW the ISO would not
+# count, so any I7 movement is a floor on the published credit, not a fit. The
+# per-plant class split (which would raise CAISO/NYISO/MISO toward their
+# reservoir factors) is a routed refinement — it needs a published plant->CARC /
+# plant->class intake, not a parameter (see the FFR-1C findings doc).
+#
+# * CAISO — 0.7041. CPUC/CAISO Final Net Qualifying Capacity Report for
+#   Compliance Year 2025 ("2025 Tech Factors" tab, "Non-dispatchable Hydro":
+#   monthly QC factors as a fraction of Pmax, the 3-year 2021-2023 average the
+#   report itself publishes). The CPUC's adopted QC methodology counts
+#   DISPATCHABLE hydro at its most recent maximum-capability (Pmax) test = 1.00
+#   and NON-DISPATCHABLE hydro at historical production (CPUC 2023 Resource
+#   Adequacy Report §5 "Net Qualifying Capacity"; adopted QC Methodology Manual,
+#   D.10-06-036 App. B §§7,10). 0.7041 is the SEPTEMBER factor — the minimum
+#   over CAISO's Jul/Aug/Sep peak-risk months (Jul 0.7252, Aug 0.7084, Sep
+#   0.7041; the model's own CAISO peak lands in Aug 2023/2025 and Sep 2024), so
+#   the credit holds in whichever of the three the annual peak falls. Rule 13:
+#   the factor is re-published every compliance year off a rolling 3-year
+#   production window and responds to water conditions.
+#   Source: https://www.caiso.com/documents/final-net-qualifying-capacity-report-for-compliance-year-2025.xlsx
+# * NYISO — 0.3844. NYISO 2025-2026 **Final Capacity Accreditation Factors**
+#   (ICAPWG/MIWG, 2025-02-04), CARC "Limited Control Run of River", Rest-of-State
+#   column = 38.44% (GHI 41.44%; the class does not exist in NYC/LI). NYISO's
+#   controllable classes accredit far higher in the SAME table — "Large Hydro"
+#   100.00% and "Large Hydro with partial Pump Storage" 100.00% — so 0.3844 is
+#   the conservative end of NYISO's own published hydro accreditation, not a
+#   blended or fitted value. CAFs are re-derived annually from the IRM/LCR base
+#   case (rule 13).
+#   Source: https://www.nyiso.com/documents/20142/49572424/2025-2026%20Final%20CAF%20and%20PLW_%202.4.2025_Final.pdf
+# * MISO — 0.62. MISO PY 2025-2026 **Indicative Resource Class-level UCAP
+#   (DLOL)**, expressed as a percentage of ICAP, Summer column: "Run-of-River
+#   Hydro" 62% (Fall 52%, Winter 58%). The same table publishes "Reservoir
+#   Hydro" 89% Summer. MISO's summer column is the right season for a
+#   summer-peak adequacy ledger. (Single-document arithmetic for the fleet blend
+#   is available and recorded for the routed refinement: the companion
+#   Indicative PRMR table gives Summer class UCAP of 1,846 MW reservoir /
+#   721 MW run-of-river, implying ICAP 2,074 / 1,163 MW and an MW-weighted fleet
+#   credit of 0.793 — NOT adopted here because the model cannot assign its own
+#   plants to the two classes.) DLOL accreditation is re-run every planning year
+#   (rule 13).
+#   Source: https://cdn.misoenergy.org/Indicative%20DLOL%20Results%20PY%202025-2026667100.pdf
+# * PJM — 0.38. PJM 2026/2027 BRA official/final ELCC class ratings, class
+#   "Hydro Intermittent" = 38% at 519 MW installed — the committed row in
+#   data/raw/capacity-market/elcc/pjm/pjm.csv (the same intake
+#   RENEWABLE_ELCC_CURVES_BY_ISO["PJM"] and THERMAL_ELCC_CLASS_RATING_BY_ISO
+#   read, and the same 2026/27 vintage they are anchored to). PJM's controllable
+#   class "Hydro with Non-Pumped Storage" rated 96% in the predecessor Dec-2021
+#   ELCC report; the 2027/28 final vintage moves Hydro Intermittent to 39%.
+# * NEISO / ERCOT — ABSENT, so they fall back to the generic published class
+#   derate :data:`RENEWABLE_CAPACITY_CREDIT`\\ ["hydro"] = 0.50 (the same
+#   fallback every uncredited class already takes, rule 25 spirit — never a
+#   foreign ISO's factor). No ISO-published hydro class factor was located for
+#   either this session: ISO-NE's FCM qualifies hydro at Seasonal Claimed
+#   Capability with intermittent hydro at a median-output construction
+#   (per-resource, no published class rating), and ERCOT is energy-only with no
+#   accreditation product. Both are open items in the FFR-1C findings doc.
+HYDRO_ACCREDITATION_CREDIT_BY_ISO: dict[str, float] = {
+    "CAISO": 0.7041,  # CPUC/CAISO CY2025 NQC tech factor, non-disp. hydro, Sep
+    "NYISO": 0.3844,  # NYISO 2025-26 Final CAF, Limited Control Run of River, RoS
+    "MISO": 0.62,  # MISO PY2025-26 Indicative DLOL, Run-of-River Hydro, Summer
+    "PJM": 0.38,  # PJM 2026/27 BRA final ELCC class rating, Hydro Intermittent
+}
+
 # ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
 # pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in
 # :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity —

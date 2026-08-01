@@ -46,6 +46,7 @@ from market_sim.policy.ira import (
     section_45u_credit_per_mwh,
 )
 from market_sim.policy.rps import get_rps_acp, get_rps_target
+from tests.helpers.builders import no_hydro_accreditation
 
 
 def _gen(
@@ -1021,6 +1022,14 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
 
     T = 10
 
+    def setUp(self):
+        # Hand-computed requirement/UCAP arithmetic on a synthetic 1-2-unit
+        # fixture: zero the FFR-1C hydro pool so the ISO's real EIA hydro
+        # census can never enter these sums (tests/helpers docstring).
+        patcher = no_hydro_accreditation()
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def _dispatch_result(self, n_gen, level):
         return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
 
@@ -1832,12 +1841,23 @@ class TestPJMAdequacySideRegistries(unittest.TestCase):
         )
 
     def test_accredited_firm_includes_pjm_tie_imports(self):
-        from market_sim.model.capacity import accredited_firm_capacity_mw
-
-        # An empty fleet accredits exactly the cleared BRA import UCAP.
-        self.assertAlmostEqual(
-            accredited_firm_capacity_mw([], iso="PJM"), 1_281.7, places=6
+        from market_sim.model.capacity import (
+            _hydro_firm_mw,
+            accredited_firm_capacity_mw,
         )
+
+        # An empty fleet accredits exactly the cleared BRA import UCAP plus
+        # PJM's published hydro accreditation (FFR-1C: the hydro pool is the
+        # only other non-fleet supply term).
+        self.assertAlmostEqual(
+            accredited_firm_capacity_mw([], iso="PJM"),
+            1_281.7 + _hydro_firm_mw([], "PJM"),
+            places=6,
+        )
+        with no_hydro_accreditation():
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw([], iso="PJM"), 1_281.7, places=6
+            )
 
 
 class TestFF2BAdequacyBasis(unittest.TestCase):
@@ -1897,12 +1917,15 @@ class TestFF2BAdequacyBasis(unittest.TestCase):
         # One resolver, and an empty fleet accredits exactly the firm import.
         self.assertEqual(_firm_import_mw("CAISO"), 3_371.0)
         self.assertEqual(_firm_import_mw(None), 0.0)
-        self.assertAlmostEqual(
-            accredited_firm_capacity_mw([], iso="CAISO"), 3_371.0, places=6
-        )
-        self.assertAlmostEqual(
-            accredited_firm_capacity_mw([], iso="NEISO"), 567.0, places=6
-        )
+        # The firm-import credit is additive to the (FFR-1C) hydro pool — the
+        # two are the ledger's only non-fleet, non-pool supply terms.
+        with no_hydro_accreditation():
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw([], iso="CAISO"), 3_371.0, places=6
+            )
+            self.assertAlmostEqual(
+                accredited_firm_capacity_mw([], iso="NEISO"), 567.0, places=6
+            )
 
 
 class TestReserveMarginBuild(unittest.TestCase):

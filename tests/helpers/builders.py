@@ -126,3 +126,23 @@ def backcast_scenario(
     exercises the real flag→field mapping rather than a hand-built config.
     """
     return backcast_config(year, iso, hours, gas_price, **overrides)
+
+
+def no_hydro_accreditation():
+    """Zero the FFR-1C hydro pool for hand-computed adequacy-ledger tests.
+
+    :func:`market_sim.model.capacity_evolution.adequacy.accredited_firm_capacity_mw`
+    credits the ISO's own dispatched conventional-hydro fleet at its published
+    accreditation (audit FR-3 / gap-register R5c). That term is real data — the
+    ISO's EIA-860/EIA-923 hydro census — and has no place in a synthetic
+    1-2-unit fixture whose point is the requirement/UCAP arithmetic. Use this
+    context manager (or ``self.enterContext``/``addCleanup``) so those tests stay
+    hermetic; tests that assert the LEDGER'S COMPOSITION should instead add the
+    hydro term explicitly rather than zero it.
+    """
+    from unittest import mock
+
+    return mock.patch(
+        "market_sim.model.capacity_evolution.adequacy.modelled_hydro_nameplate_mw",
+        lambda iso, year=None: 0.0,
+    )
