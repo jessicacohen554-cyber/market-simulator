@@ -4657,3 +4657,118 @@ confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue a
 this session: item 2 (prerequisite now *answered*, build pending) and item 3.
 
 Next number: caiso-151.
+
+## caiso-152 (2026-08-01) — the OASIS **RLE parse defect** (caiso-150 §E1, unowned since) is REAL, is FIXED ISO-generically, and its effect on the keeper's measured offer surface is **MATERIAL** — the CT_PEAKER ladder moves **+19–21 % in every net-load bin**, ~2× the deriver's own tolerance. But the corrected input **CANNOT BE SHIPPED**: the derive fails its **own G1** on BOTH arms, and the OLD (committed) code path on the deriver's OWN default corpus **does not reproduce the committed keeper artifact at all**. **NO SOLVE, no arm, no new field, keeper unchanged**
+
+Full evidence:
+`results/calibration/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md`; prereg
+`PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md` + the corpus addendum
+`PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md`, both committed and pushed
+before the values they govern existed. Probe
+`scripts/probes/_caiso152_rle_parse_bias.py`.
+
+### The defect, and the fix
+
+`scripts/lib/dam_public_bids/caiso.py` keyed every clean row by its range START
+stamp and never read the STOP columns, while the datatype's schema declares the
+grain as one row per masked resource × **operating hour** × product ×
+breakpoint. OASIS is run-length-encoded, so every hour of every multi-hour range
+was dropped — **exactly the stable-bid hours**. Raw CSV, GENERATOR EN,
+2023-01-02: **18,520 rows carry 50,972 curve-hours (36.3 % carried)**, 909 of
+them 24-hour holds. Full corpus: 8,761,998 ranges carry 18,306,549 curve-hours,
+the old parse carried **47.9 %**, 209,483 rows are 24-hour holds.
+
+Fixed with a shared `expand_rle()` in the `dam_public_bids` package (ISO-generic
+— every ISO's DAM disclosure is RLE-encoded; CAISO is only the first registered
+spec), called per row shape with that shape's own STOP column before `step_idx`.
+Semantics **reuse** the committed caiso-151 expander. Verified: clean rows ==
+independently counted raw curve-hours, 0 duplicate schema keys, hours confined
+to the trade date; 7 unit tests; schema + rendered dictionary corrected.
+
+### The ladder's exposure, measured with no derive
+
+**18.0 %** of true curve-hours were charged to the **wrong net-load bin** (a
+multi-hour hold was charged entirely to its range start). The old population
+under-weights every tight bin by **15–16 %** relative: bin1 0.0741 vs 0.0872,
+bin2 0.0530 vs 0.0630, bin3 0.0228 vs 0.0270.
+
+### The corpus: the caiso-151 balanced sample is the WRONG corpus here
+
+On the registered 358-day balanced corpus (fetched clean, zero holes) **both
+arms failed G1 identically** — a defect firing the same way with and without the
+fix is not the parse. Measured cause: this derive is a **per-resource
+time-series regression**, and its bucket capacity is strongly monotone in
+trade-day count (CT 414 → 1,135 → 1,297 MW at 122 / 179 / 358 days). **caiso-150
+§B is not reopened** — the intertie ceiling is a (month × hod) climatology, this
+is a daily regression; different estimators, different corpus requirements.
+Widened to the full contiguous span (**1,095 days**, 364/366/365) and registered
+in the addendum before any value on it existed.
+
+### The parse effect: MATERIAL, entirely in CT_PEAKER
+
+Population 29.8M → 67.0M GENERATOR EN curve rows. Thresholds are the deriver's
+**own** frozen `max(0.08, 10 %)`.
+
+* **T1 FIRES** — CT_PEAKER `econ_high` **1.055 → 0.912** (Δ −0.143, tol 0.105).
+  CT `econ_low` 0.745 → 0.681 and `peak` 1.050 → 1.076 stay inside tol.
+  **CC_REGULAR is unmoved** on all three bands (max |Δ| 0.051 on tol 0.154) —
+  the median-robustness argument registered ex ante holds for CC.
+* **T2 FIRES on ALL FOUR CT_PEAKER bins** — **+0.311 / +0.277 / +0.276 /
+  +0.304** against a ~0.146 tol: a uniform **+19–21 % level shift** of the CT
+  peak surface, not a re-shaping. CC inside tol in every bin.
+
+### The blocker, and the bigger finding
+
+**Both arms FAIL the deriver's own G1** (CT bucket ratio **0.235** old /
+**0.280** new against a ≥ 0.50 bound), so it correctly withholds the consumed
+JSONs. PREREG §4's third branch governs: **the lane STOPS at the derive**, the
+keeper keeps its artifact, **no threshold is retuned** (rule 23).
+
+And the OLD arm **is** the committed code path on the deriver's **own default
+corpus** — yet it does not regenerate the committed artifact: CC `econ_low`
+**1.544 vs 1.051**, CT bucket **1,786 MW vs 10,785**, **25 CT units vs 102**,
+and **G1 FAILS where the committed artifact records it PASSING at 1.416**. So
+`caiso_offer_curve_measured.json` / `caiso_offer_surface_condbinned.json` — a
+LIVE keeper input — **is not reproducible from its documented source**. Gas is
+byte-identical inside 2023–25 and fleet geometry round-trips exactly; what
+cannot be checked is the deriver's state at derive time (repo history begins
+2026-07-30, eleven days *after* the artifact) and the corpus it used (the
+artifact records no manifest).
+
+### Disposition
+
+Parse fix **LANDS** (contract repair; rule 14 keeps it regardless). Parse effect
+**MATERIAL**. **NO SOLVE spent, nothing registered** — PREREG §9's A/B is
+unreachable because it needs a corrected artifact the derive refuses to produce.
+Keeper unchanged (`2026-07-31-caiso-151-firm-selfsched`, CALIBRATED-WITH-CAVEATS,
+0 FAILs, C1 12/12 · free 8/8, 2 of 3 slots, protective 0/1). Matrix cell
+`measured_offer_surface` CAISO stays **`K`** with its evidence re-cited — the
+mechanism was neither rejected nor replaced; its *input's standing* changed.
+
+**NEW BLOCKING CHARTER, not absorbed here:** the CAISO measured offer surface
+needs a **re-identification of its gas-coupling classifier** before either half
+can be re-derived. Measured lead (not a diagnosis): 71 resources / 16,329 MW
+clear `r ≥ 0.6` but land at slope < 4 MMBtu/MWh — physically impossible for a
+thermal unit — pointing at the body-price probe (`_price_at_frac` at 35 % of a
+p98-estimated capacity) landing off the SRMC body, rather than at the
+thresholds.
+
+### DO-NOT-REDO (new; full list `FINDING-caiso152` §H)
+
+Re-running the comparison on a seasonally balanced sample (§D: it starves the
+classifier and both arms fail G1 there); relaxing/re-centring/re-scoping G1 or
+any of G2–G4 to make the corrected derive writable (rule 23 — the CT ratio is a
+2× miss, not a threshold quibble); shipping the corrected artifact by any route
+that bypasses the gate (hand-edit, OLD/NEW blend, CC-only cherry-pick, arming
+the ladder off a summary CSV); re-deriving CT band levels against a price
+residual to "recover" the committed values; treating caiso-150 §H as reopened
+(the intertie ceiling was not re-derived, re-measured or read); re-litigating
+caiso-149 §G on the strength of the CT movement; quoting any 358-day multiplier,
+or either arm's absolute levels, as a measurement of CAISO conduct — only the
+OLD-vs-NEW *difference* and §F's reproduction gap are results.
+
+**CAISO still holds NO rule-22 calibration-complete marker** — every read was
+confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue after
+this session: item 3, plus the new offer-surface re-identification charter.
+
+Next number: caiso-153.

@@ -499,9 +499,50 @@ target C5a and the standing structural/offer questions. Items 1, 4, 5 and 6 are
 struck through — 1, 4 and 5 were adjudicated and closed **without spending a
 solve** (caiso-144, caiso-149 and caiso-136), and **6 was spent and PROMOTED at
 caiso-146**. They are kept in place so the numbering stays stable and none is
-re-proposed. **Live queue as of 2026-07-31: items 2 and 3.** (Item 7 was SPENT
-and PROMOTED at caiso-147; **item 8 was SPENT and PROMOTED at caiso-148**;
-**item 4 was REFUSED EX ANTE at caiso-149**.)
+re-proposed. **Live queue as of 2026-08-01: item 3, plus item 9 (new,
+BLOCKING).** (Item 7 was SPENT and PROMOTED at caiso-147; **item 8 was SPENT
+and PROMOTED at caiso-148**; **item 4 was REFUSED EX ANTE at caiso-149**;
+**item 2 was BUILT and PROMOTED at caiso-151**.)
+
+9. **Re-identify the CAISO measured offer surface's gas-coupling classifier**
+   — **NEW at caiso-152 (2026-08-01), BLOCKING, unowned.** This is a
+   prerequisite, not a price lever, and it blocks a correction the model
+   demonstrably needs.
+   `results/calibration/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md`.
+
+   caiso-152 fixed the `dam-public-bids` RLE parse defect (`FINDING-caiso150`
+   §E1): the parser keyed rows by their range START and never read the STOP
+   columns, carrying only **47.9 %** of real GENERATOR EN curve-hours —
+   dropping exactly the **stable-bid** ones — and charging **18.0 %** of
+   curve-hours to the **wrong net-load bin** (tight bins under-weighted 15–16 %
+   relative). The correction's effect is **MATERIAL and lands entirely on
+   CT_PEAKER**: `econ_high` 1.055 → 0.912 and the ladder bin means
+   +0.311/+0.277/+0.276/+0.304 against a ~0.146 tolerance — a uniform
+   **+19–21 %** level shift in all four bins. CC_REGULAR is inside tolerance
+   everywhere.
+
+   **But the corrected artifact cannot be shipped**, and the blocker is not the
+   parse. The derive fails its **own G1** on BOTH arms (CT bucket ratio 0.235
+   old / 0.280 new against a ≥ 0.50 bound) and correctly withholds the consumed
+   JSONs; rule 23 forbids retuning the gate. Worse, the OLD arm **is** the
+   committed code path on the deriver's **own default corpus** (full contiguous
+   1,095 days) and does **not** reproduce the committed keeper artifact: CC
+   `econ_low` 1.544 vs 1.051, CT bucket 1,786 MW vs 10,785, **25 CT units vs
+   102**, and G1 **failing** where the committed artifact records it **passing**
+   at 1.416. Gas is byte-identical inside 2023–25 and fleet geometry round-trips
+   exactly; what cannot be checked is the deriver's state at derive time (repo
+   history begins 2026-07-30, eleven days *after* the artifact) or its corpus
+   (no manifest is recorded).
+
+   **The task:** re-identify the classifier so the CT bucket can be
+   reconstituted, then re-derive both halves with the corrected parse.
+   **Measured lead, not a diagnosis:** on the full corpus 71 resources /
+   16,329 MW clear `r ≥ 0.6` but land at slope **< 4 MMBtu/MWh** — physically
+   impossible for a thermal unit — which points at the body-price probe
+   (`_price_at_frac` at 35 % of a p98-estimated capacity) landing off the SRMC
+   body rather than at the gate thresholds. **Do not** relax G1–G4, blend
+   OLD/NEW values, cherry-pick the passing CC half, or re-derive CT levels
+   against a price residual (`FINDING-caiso152` §H).
 
 **C3a-2025 IS DIAGNOSED-UNCLOSED WITH AN EMPTY IN-MODEL LEVER QUEUE (caiso-142);
 LEDGERED at caiso-145.**
