@@ -280,6 +280,19 @@
  *   §C firm-block elasticity is prerequisite (a), not (c), and with F = 0 no new
  *   constraint is needed at all. Also corrects caiso-142 §I part 2: hub - eps
  *   over-prices PNW but UNDER-prices DSW by ~$4.4, so "both corridors" is wrong.
+ * CAISO column re-checked 2026-08-01 by caiso-152 (no-LP, NO SOLVE SPENT,
+ *   NOTHING REGISTERED; keeper UNCHANGED at 2026-07-31-caiso-151-firm-selfsched;
+ *   the stale CAISO keeper stamp in `keepers` is repaired here — caiso-151's
+ *   promoting session left it at 2026-07-29-caiso139-dump-guard-offer).
+ *   measured_offer_surface CAISO stays K: the mechanism was neither rejected nor
+ *   replaced, but its INPUT's standing changed. The dam-public-bids RLE parse
+ *   defect (filed caiso-150 §E1, unowned since) is REAL and FIXED ISO-generically,
+ *   its effect is MATERIAL and lands ENTIRELY on CT_PEAKER (+19-21 % ladder level
+ *   shift in all four net-load bins, ~2x the deriver's own tolerance) — yet the
+ *   corrected artifact CANNOT SHIP, because the derive fails its OWN G1 on BOTH
+ *   arms, and the OLD (committed) code path on the deriver's OWN default corpus
+ *   does not reproduce the committed keeper artifact at all. NEW BLOCKING CHARTER:
+ *   re-identify the gas-coupling classifier before either half is re-derived.
  * CAISO column re-checked 2026-07-31 (4th) by caiso-149 (no-LP, NO SOLVE SPENT;
  *   keeper UNCHANGED at 2026-07-31-caiso148-nuclear-availability, determination
  *   CALIBRATED-WITH-CAVEATS, 0 FAILs, the same 2 of 3 ledgered slots, protective
@@ -666,7 +679,7 @@ window.MECH_MATRIX = {
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-07-31-ercot148-dam-event-cap",
-    CAISO: "2026-07-29-caiso139-dump-guard-offer",
+    CAISO: "2026-07-31-caiso-151-firm-selfsched",
     PJM: "2026-07-31-pjm-143b-hy-level",
     MISO: "2026-07-31-miso-109b-hy-level",
     NYISO: "2026-07-31-nyiso108-hydro-input-repair",
@@ -866,7 +879,7 @@ window.MECH_MATRIX = {
       def: "ercot_offer_surface_* :5477+ / caiso :6281 / pjm :6221 / neiso :6183", mode: "B",
       cells: "KKRUUI",
       note: "ERCOT: conditional + cleared-share DA/RT ladder keeper (state weight OFF — ERCOT-99). CAISO: measured surface keeper at zero new DOF (caiso-92). PJM: dispersion-lever family REFUTED — the tight-bin inversion is a conditioning artifact (pjm-126/127); within-season re-conditioning refuted (pjm-132). PJM RESOLUTION BOUND, measured no-LP at pjm-141 (D-BIN): the armed [0.80,0.90,0.97] net-load bins put 99.0/97.2/94.4 % of h01-h04 AND 61.3/61.1/63.7 % of h16-h18 in the SAME bin 0 (bin 0 = bottom 80 % of net load, edge 94.7/99.1/103.5 GW; overnight net load 75.3/77.7/81.4 GW vs peak 94.4/98.0/98.9 GW), so the surface assigns one conduct level to a ~20 GW swing and contributes ZERO diurnal slope where PJM's amplitude defect lives — it is a scarcity-reach device for the tightest fifth of hours, not a merit-slope mechanism. This does NOT reopen the cell: re-binning the edges against that residual with unchanged source data is barred by rule 23 [R-FROZEN-DERIVE] independently of the R verdict, so there is no admissible 're-bin it so it binds'. The artifact finding is ISO-WIDE but acting on it elsewhere needs each ISO's own memo (rules 23/25) — MISO cell R inherits only the MISO-specific refusal of SOM deep-discount premise (MISO-53); NYISO untested; NEISO Limb B DORMANT (real tail forms while cheaper non-fast-start headroom remains).",
-      ev: { E: "ERCOT-73/92/93/99; ERCOT-138 §4 (DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29) — the two ARMED ERCOT surfaces make the P1 gas curve DEARER still (CC p75/p90 delta vs measured goes +3.25/+5.13 base -> +7.12/+36.01 with them), so the ERCOT-138 gas-too-dear verdict measured on the base curve is CONSERVATIVE", C: "caiso-92", P: "pjm-126/127/132; pjm-141 D-BIN resolution bound (FINDING-pjm141-overnight-marginal-tranche-is-correct-the-defect-is-a-flat-offer-stack-2026-07-30 §4.2/§5.3)", Q: "neiso-58" } },
+      ev: { E: "ERCOT-73/92/93/99; ERCOT-138 §4 (DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29) — the two ARMED ERCOT surfaces make the P1 gas curve DEARER still (CC p75/p90 delta vs measured goes +3.25/+5.13 base -> +7.12/+36.01 with them), so the ERCOT-138 gas-too-dear verdict measured on the base curve is CONSERVATIVE", C: "caiso-92; caiso-152 (results/calibration/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md) \u2014 the INPUT\u0027s standing changed, the mechanism did not: (a) the dam-public-bids parser keyed rows by their RLE range START and never read the STOP columns, carrying only 47.9 % of real GENERATOR EN curve-hours and dropping exactly the STABLE-bid ones, and charging 18.0 % of curve-hours to the WRONG net-load bin (tight bins under-weighted 15-16 % relative); fixed ISO-generically via a shared expand_rle() in the dam_public_bids package. (b) The parse effect is MATERIAL and lands ENTIRELY on CT_PEAKER \u2014 T1 econ_high 1.055 -> 0.912 (tol 0.105) and T2 the ladder bin means +0.311/+0.277/+0.276/+0.304 against a ~0.146 tol, a uniform +19-21 % level shift in ALL FOUR bins; CC_REGULAR is inside tolerance on every band and every bin. (c) BUT THE CORRECTED ARTIFACT CANNOT SHIP: the derive fails its OWN G1 on BOTH arms (CT bucket ratio 0.235 old / 0.280 new vs a >= 0.50 bound) and correctly withholds the consumed JSONs \u2014 lane STOPS at the derive, no threshold retuned (rule 23). (d) AND THE COMMITTED ARTIFACT IS NOT REPRODUCIBLE: the OLD arm IS the committed code path on the deriver\u0027s OWN default corpus (full contiguous 1,095 days) and gives CC econ_low 1.544 vs the committed 1.051, CT bucket 1,786 MW vs 10,785, 25 CT units vs 102, and G1 FAILING where the committed artifact records it PASSING at 1.416; gas is byte-identical inside 2023-25 and fleet geometry round-trips exactly, but the repo history begins 2026-07-30 (eleven days AFTER the artifact) and the artifact records no corpus manifest. Cell stays K \u2014 armed in the keeper, neither rejected nor replaced \u2014 but a NEW BLOCKING CHARTER is opened: re-identify the gas-coupling classifier before either half is re-derived (measured lead: 71 resources / 16,329 MW clear r >= 0.6 at slope < 4 MMBtu/MWh, physically impossible for a thermal unit, pointing at the body-price probe not the thresholds). NO SOLVE SPENT, keeper unchanged.", P: "pjm-126/127/132; pjm-141 D-BIN resolution bound (FINDING-pjm141-overnight-marginal-tranche-is-correct-the-defect-is-a-flat-offer-stack-2026-07-30 §4.2/§5.3)", Q: "neiso-58" } },
     { id: "pjm_midcurve_belt", cat: "offer", name: "Measured CC_LIKE mid-curve belt (conditional)",
       def: "pjm_offer_midcurve_conditional :6347", mode: "B",
       cells: "U.K...",
