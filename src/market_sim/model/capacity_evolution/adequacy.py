@@ -19,10 +19,14 @@ The full pre-split surface stays importable from
 
 from __future__ import annotations
 
+import logging
+from functools import lru_cache
+
 from market_sim.config.constants import (
     ADEQUACY_EXTERNAL_TIE_FIRM_MW,
     DEFAULT_MARKET_DESIGN,
     EFORD,
+    HYDRO_ACCREDITATION_CREDIT_BY_ISO,
     MARKET_DESIGN,
     QUEUE_CAP_GW,
     RENEWABLE_CAPACITY_CREDIT,
@@ -40,6 +44,8 @@ from .retirements import (
     resolve_adequacy_requirement_mw,
     resolve_renewable_capacity_credit,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _renewable_nameplate_by_fuel(
@@ -128,6 +134,118 @@ def _firm_import_mw(iso: str | None) -> float:
     return ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso or "", 0.0)
 
 
+def resolve_hydro_capacity_credit(iso: str | None) -> float:
+    """Firm fraction of hydro nameplate the ISO's own RA ledger counts.
+
+    The single resolver (rule 19) for "conventional-hydro accreditation",
+    reading :data:`HYDRO_ACCREDITATION_CREDIT_BY_ISO` — each ISO's published
+    limited-control / run-of-river / non-dispatchable class factor (CPUC NQC
+    technology factor, NYISO CAF, MISO DLOL class UCAP, PJM ELCC class
+    rating; see the constant's citation block). ISOs with no published hydro
+    class factor — and ``iso=None`` — fall back to the generic published
+    class derate :data:`RENEWABLE_CAPACITY_CREDIT`\\ ["hydro"], the same
+    neutral fallback every unpublished class already takes (rule 25 spirit).
+    """
+    published = HYDRO_ACCREDITATION_CREDIT_BY_ISO.get(iso or "")
+    if published is not None:
+        return float(published)
+    return float(RENEWABLE_CAPACITY_CREDIT.get("hydro", 0.0))
+
+
+@lru_cache(maxsize=64)
+def modelled_hydro_nameplate_mw(iso: str, year: int | None = None) -> float:
+    """Nameplate MW of the hydro fleet the model actually dispatches.
+
+    The accreditation basis has to be the model's OWN hydro capability, not an
+    EIA-860 balancing-authority total (rule 13): this reproduces exactly the
+    plant population :func:`market_sim.data.hydro.build_hydro_fleet` puts in the
+    LP — the EIA-923-reporting conventional-hydro plants (prime mover ``HY``;
+    pumped storage is a storage resource) that resolve to one of the ISO's model
+    zones with positive nameplate and positive energy — and sums their MW
+    envelope. Hydro is an energy-budget resource that lives only in the
+    *transient dispatch* fleet, so it can never be read off the persistent
+    ``fleet`` the rest of the ledger is built from (audit FR-3).
+
+    ``year`` is the solve year; like the forecast hydro path it is clamped to
+    :data:`~market_sim.data.eia923.EIA923_LATEST_FINAL_VINTAGE`, the newest
+    vintage with a COMPLETE (final-release) plant census — vintages after it are
+    monthly early releases carrying only the large reporters (CAISO 26 of ~160
+    plants in 2025, NEISO 5 of ~166), so an unclamped year would accredit a
+    partial fleet. ``None`` (the callers that carry no solve year) resolves at
+    that vintage directly.
+
+    Returns ``0.0`` — and logs — when the ISO has no usable hydro budget, so a
+    missing input can never fabricate accredited MW. Cached per ``(iso, year)``:
+    the ledger is recomputed several times per solve year (ledger, reliability
+    floor, backstop, CR-1 position) off a static plant census.
+    """
+    from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
+    from market_sim.data.hydro import load_hydro_budget
+
+    census_year = (
+        EIA923_LATEST_FINAL_VINTAGE
+        if year is None
+        else min(int(year), EIA923_LATEST_FINAL_VINTAGE)
+    )
+    try:
+        zone_names = set(get_iso_config(iso).zone_names)
+    except Exception:
+        logger.warning("hydro accreditation: unknown ISO %s — crediting 0 MW", iso)
+        return 0.0
+    try:
+        budget = load_hydro_budget(iso, census_year)
+    except (FileNotFoundError, ValueError):
+        logger.warning(
+            "hydro accreditation: no EIA-923 hydro budget for %s %d — "
+            "crediting 0 MW to the accredited ledger",
+            iso,
+            census_year,
+        )
+        return 0.0
+    total = 0.0
+    for i in range(len(budget.plant_ids)):
+        # Same three filters build_hydro_fleet applies before making a unit.
+        if (
+            budget.zones[i] in zone_names
+            and float(budget.max_mw[i]) > 0.0
+            and float(budget.monthly_energy[i].sum()) > 0.0
+        ):
+            total += float(budget.max_mw[i])
+    return total
+
+
+def _hydro_firm_mw(
+    fleet: list[Generator], iso: str | None, year: int | None = None
+) -> float:
+    """Accredited firm MW of the ISO's conventional-hydro fleet (FFR-1C).
+
+    ``modelled_hydro_nameplate_mw`` x :func:`resolve_hydro_capacity_credit` —
+    the model's own hydro capability at the ISO's published accreditation, the
+    hydro analogue of the wind/solar pool credits. Closes audit finding FR-3 /
+    gap-register R5c: hydro was dispatched but contributed 0 MW to
+    :func:`accredited_firm_capacity_mw` for every ISO, which FF-2B measured as
+    the dominant cause of the NYISO base-year I7 FAIL and a major CAISO
+    contributor (docs/handoffs/ff-2b-adequacy-basis-2026-07.md §4).
+
+    **No double-count** (the ``_firm_import_mw`` discipline): the persistent
+    ``fleet`` is not supposed to carry hydro at all, but should any ISO/path
+    ever place hydro Generators in it — where the existing ``_credit`` loop
+    already accredits them — that nameplate is netted off the pool here, so the
+    pool only ever credits the capability the fleet loop did not.
+
+    ``iso=None`` credits nothing (byte-identical legacy behaviour: the legacy
+    generic basis has no ISO to resolve a hydro fleet for).
+    """
+    if iso is None:
+        return 0.0
+    pool_mw = modelled_hydro_nameplate_mw(iso, year)
+    fleet_hydro_mw = sum(
+        float(g.pmax_mw) for g in fleet if getattr(g, "fuel_type", None) == "hydro"
+    )
+    net_pool_mw = max(0.0, pool_mw - fleet_hydro_mw)
+    return net_pool_mw * resolve_hydro_capacity_credit(iso)
+
+
 def accredited_firm_capacity_mw(
     fleet: list[Generator],
     wind_pool_mw: float = 0.0,
@@ -136,6 +254,7 @@ def accredited_firm_capacity_mw(
     iso: str | None = None,
     peak_demand_mw: float | None = None,
     elcc_curves_enabled: bool = False,
+    year: int | None = None,
 ) -> float:
     """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
 
@@ -150,6 +269,11 @@ def accredited_firm_capacity_mw(
     override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
     at its duration-dependent ELCC (passed in pre-accredited as
     ``storage_firm_mw``, since the ELCC helper lives in the storage module),
+    conventional hydro at the ISO's published hydro accreditation
+    (:func:`_hydro_firm_mw` / :data:`HYDRO_ACCREDITATION_CREDIT_BY_ISO` — the
+    model's own dispatched hydro capability resolved from the hydro budget
+    loader for ``year``, never from the persistent ``fleet``, which structurally
+    never contains hydro; FFR-1C, audit FR-3),
     plus the firm import capacity the ISO's own adequacy ledger counts
     (:func:`_firm_import_mw` / :data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC
     ties, PJM's CIL-governed cleared BRA imports, and the RA/FCM firm imports of
@@ -189,6 +313,10 @@ def accredited_firm_capacity_mw(
     # import-node ISOs (CAISO WECC_import, NEISO HQ_import) — additive, never
     # double-counted against the dispatch node (see :func:`_firm_import_mw`).
     firm += _firm_import_mw(iso)
+    # Conventional hydro at the ISO's published accreditation (FFR-1C / FR-3):
+    # dispatched via the energy-budget path, so it is absent from `fleet` and
+    # must be credited as its own pool, exactly like wind/solar above.
+    firm += _hydro_firm_mw(fleet, iso, year)
     for g in fleet:
         credit = _credit(g.fuel_type)
         if credit is not None:
@@ -242,6 +370,7 @@ def capacity_reserve_position(
         iso=iso,
         peak_demand_mw=peak_demand_mw,
         elcc_curves_enabled=config.renewable_elcc_curves,
+        year=year,
     )
     return accredited_mw / requirement_mw
 

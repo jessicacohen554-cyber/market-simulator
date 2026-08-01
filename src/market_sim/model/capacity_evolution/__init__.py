@@ -181,11 +181,14 @@ from .ccs import (
 )
 from .adequacy import (
     _firm_import_mw as _firm_import_mw,
+    _hydro_firm_mw as _hydro_firm_mw,
     _renewable_nameplate_by_fuel as _renewable_nameplate_by_fuel,
     accredited_firm_capacity_mw,
     apply_reserve_margin_build,
     capacity_reserve_position,
+    modelled_hydro_nameplate_mw,
     renewable_credits_applied,
+    resolve_hydro_capacity_credit,
     resolve_reserve_margin_build_enabled,
 )
 from .evolve import (
@@ -278,7 +281,9 @@ __all__ = [
     "accredited_firm_capacity_mw",
     "apply_reserve_margin_build",
     "capacity_reserve_position",
+    "modelled_hydro_nameplate_mw",
     "renewable_credits_applied",
+    "resolve_hydro_capacity_credit",
     "resolve_reserve_margin_build_enabled",
     # evolve
     "evolve_fleet",

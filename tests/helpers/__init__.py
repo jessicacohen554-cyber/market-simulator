@@ -30,6 +30,7 @@ from tests.helpers.builders import (  # noqa: E402
     base_scenario,
     make_fleet,
     make_gen,
+    no_hydro_accreditation,
 )
 from tests.helpers.clean_asserts import (  # noqa: E402
     assert_clean_valid,
@@ -46,6 +47,7 @@ __all__ = [
     "make_fleet",
     "base_scenario",
     "backcast_scenario",
+    "no_hydro_accreditation",
     "solve_tiny",
     "assert_clean_valid",
     "read_clean_or_fail",
