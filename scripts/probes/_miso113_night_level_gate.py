@@ -13,9 +13,18 @@ plants, ONLINE hours only — the WP-3 loading-when-on identification applied to
 each side's own series, so model and meter are measured the same way:
 
     plant load  = sum of the plant's unit rows in the P1 dispatch
-    HSL_proxy   = p99.5 of the plant's pooled hourly load
-    online      = load >= max(10 MW, 2% x HSL_proxy)
-    night level = p50 of load / HSL_proxy over ONLINE hours h0-5
+    HSL         = the plant's MEASURED hsl_mw from the artifact — the SHARED
+                  denominator, so model and meter are the same ratio and the
+                  comparison is a level comparison rather than a shape one
+                  (using each side's own p99.5 instead rescales the model onto
+                  its own maximum and inflates both arms by ~0.06)
+    online      = load >= max(10 MW, 2% x HSL)
+    night level = p50 of load / HSL over ONLINE hours h0-5
+
+Reproduction check: on the miso-113 control this yields 0.488 (2023) / 0.444
+(2024) against a measured 0.437/0.438, versus FINDING-miso112 §4's 0.483 /
+0.437 against 0.434 — i.e. the construction is recovered to ~0.005, the
+residual being the 2025-vintage HEAD drift and the keeper-vs-control rebuild.
 
 The measured side is the frozen artifact's pooled ``night_p50``
 (``data/raw/_processed-legacy/coal_prb_committed_split_MISO.csv``, deriver
@@ -52,18 +61,24 @@ ONLINE_FRAC = 0.02
 NIGHT_H = range(0, 6)  # h0-5, the deriver's own night window
 
 
-def _scope() -> dict[int, float]:
-    """Return ``{plant_code: measured night_p50}`` for regulated MISO PRB."""
+def _scope() -> tuple[dict[int, float], dict[int, float]]:
+    """Return ``({plant: measured night_p50}, {plant: measured hsl_mw})``."""
     night = pd.read_csv(SPLIT)
     reg = eia860_selfcommit_scope_plants()
-    return {
-        int(r.plant_code): float(r.night_p50)
+    rows = [
+        r
         for r in night.itertuples(index=False)
         if int(r.plant_code) in reg and _coal_class_for(int(r.plant_code)) == "COAL_PRB"
-    }
+    ]
+    return (
+        {int(r.plant_code): float(r.night_p50) for r in rows},
+        {int(r.plant_code): float(r.hsl_mw) for r in rows},
+    )
 
 
-def _model_night_levels(bundle: Path, year: int, scope: dict[int, float]):
+def _model_night_levels(
+    bundle: Path, year: int, scope: dict[int, float], hsl_mw: dict[int, float]
+):
     """Return ``{plant: (model_night_level, plant_cap_mw)}`` for one bundle-year."""
     path = bundle / "hourly" / f"unit_hourly_{year}.parquet"
     if not path.exists():
@@ -77,7 +92,7 @@ def _model_night_levels(bundle: Path, year: int, scope: dict[int, float]):
         cap = float(grp.groupby("hour")["cap_mw"].sum().max())
         arr = load.to_numpy(dtype=float)
         hod = load.index.to_numpy() % 24
-        hsl = float(np.percentile(arr, 99.5))
+        hsl = float(hsl_mw[int(pc)])  # the MEASURED HSL, shared with the meter
         if hsl <= 0.0:
             continue
         online = arr >= max(ONLINE_MW, ONLINE_FRAC * hsl)
@@ -94,13 +109,13 @@ def main() -> None:
     control = Path(sys.argv[1])
     arm = Path(sys.argv[2])
     years = [int(y) for y in sys.argv[3:]] or [2023, 2024, 2025]
-    scope = _scope()
+    scope, hsl_mw = _scope()
     print(f"regulated MISO COAL_PRB plants in scope: {len(scope)}")
 
     rows = []
     for year in years:
-        ctl = _model_night_levels(control, year, scope)
-        armv = _model_night_levels(arm, year, scope)
+        ctl = _model_night_levels(control, year, scope, hsl_mw)
+        armv = _model_night_levels(arm, year, scope, hsl_mw)
         plants = sorted(set(ctl) & set(armv))
         w = np.array([ctl[p][1] for p in plants], dtype=float)
         meas = np.array([scope[p] for p in plants], dtype=float)
