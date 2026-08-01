@@ -411,6 +411,17 @@ results/hindcast/*/run.log
 results/ff2b-after/*/*/*/year_*.parquet
 results/ff2b-after/*/*/*/config.yaml
 
+# FFR-1C base-year hydro-accreditation A/B (results/ffr1c/{before,after}-<iso>,
+# run_full_horizon at T0 scale for the 2026 I7 probe both arms' forecast-namespace
+# sidecars point to). Same class as the ff2b-* solves above: the slim deliverable
+# is full_horizon_summary.json + evolution_*.json (the capacity accounting the I7
+# numbers are read from); the dispatch parquet, config and run log are
+# reproducible from the recorded run. BOTH arms are kept here (unlike ff2b) —
+# the before-arm is the A/B control a sidecar does point at.
+results/ffr1c/*/*/*/year_*.parquet
+results/ffr1c/*/*/*/config.yaml
+results/ffr1c/*.log
+
 # -----------------------------------------------------------------------------
 # 10. Misc local caches (docs/handoffs driver scratch — the committed
 #     deliverables are the driver-battery-<iso>-<date>.{md,json} memos).
