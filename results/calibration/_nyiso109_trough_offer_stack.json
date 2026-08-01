@@ -1,0 +1,1188 @@
+{
+ "bundle": "results/calibration/nyiso109_control_A",
+ "eps": 1.0,
+ "trough_hours": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "peak_hours": [
+  17,
+  18,
+  19
+ ],
+ "years": {
+  "2023": {
+   "A_residual_deciles": {
+    "covered_hours": 1464,
+    "covered_months": [
+     6,
+     12
+    ],
+    "model_mean": 34.242,
+    "actual_mean": 29.677,
+    "percentiles": {
+     "p1": {
+      "model": 24.605,
+      "actual": 14.436
+     },
+     "p5": {
+      "model": 26.162,
+      "actual": 17.419
+     },
+     "p10": {
+      "model": 26.881,
+      "actual": 18.73
+     },
+     "p25": {
+      "model": 30.352,
+      "actual": 21.731
+     },
+     "p50": {
+      "model": 33.358,
+      "actual": 26.26
+     },
+     "p75": {
+      "model": 35.829,
+      "actual": 32.631
+     },
+     "p90": {
+      "model": 41.865,
+      "actual": 40.492
+     },
+     "p95": {
+      "model": 44.092,
+      "actual": 45.928
+     },
+     "p99": {
+      "model": 50.357,
+      "actual": 68.793
+     }
+    },
+    "by_actual_price_decile": [
+     {
+      "decile": 1,
+      "load_gw": 13.668,
+      "model": 27.549,
+      "actual": 16.697,
+      "diff": 10.852,
+      "model_std": 2.628,
+      "actual_std": 1.952
+     },
+     {
+      "decile": 2,
+      "load_gw": 14.752,
+      "model": 29.455,
+      "actual": 19.758,
+      "diff": 9.698,
+      "model_std": 2.532,
+      "actual_std": 0.645
+     },
+     {
+      "decile": 3,
+      "load_gw": 15.732,
+      "model": 30.441,
+      "actual": 21.762,
+      "diff": 8.679,
+      "model_std": 2.761,
+      "actual_std": 0.543
+     },
+     {
+      "decile": 4,
+      "load_gw": 16.302,
+      "model": 31.762,
+      "actual": 23.606,
+      "diff": 8.156,
+      "model_std": 2.527,
+      "actual_std": 0.473
+     },
+     {
+      "decile": 5,
+      "load_gw": 16.573,
+      "model": 32.512,
+      "actual": 25.274,
+      "diff": 7.238,
+      "model_std": 2.809,
+      "actual_std": 0.563
+     },
+     {
+      "decile": 6,
+      "load_gw": 16.965,
+      "model": 33.444,
+      "actual": 27.337,
+      "diff": 6.106,
+      "model_std": 3.144,
+      "actual_std": 0.654
+     },
+     {
+      "decile": 7,
+      "load_gw": 17.615,
+      "model": 35.033,
+      "actual": 29.718,
+      "diff": 5.315,
+      "model_std": 3.934,
+      "actual_std": 0.698
+     },
+     {
+      "decile": 8,
+      "load_gw": 17.855,
+      "model": 36.158,
+      "actual": 32.736,
+      "diff": 3.422,
+      "model_std": 4.465,
+      "actual_std": 1.058
+     },
+     {
+      "decile": 9,
+      "load_gw": 18.593,
+      "model": 39.078,
+      "actual": 37.738,
+      "diff": 1.34,
+      "model_std": 6.261,
+      "actual_std": 1.678
+     },
+     {
+      "decile": 10,
+      "load_gw": 19.42,
+      "model": 41.006,
+      "actual": 52.57,
+      "diff": -11.564,
+      "model_std": 5.558,
+      "actual_std": 23.721
+     }
+    ],
+    "by_load_decile": [
+     {
+      "decile": 1,
+      "load_gw": 13.2,
+      "model": 27.109,
+      "actual": 18.294,
+      "diff": 8.815,
+      "model_std": 2.168,
+      "actual_std": 3.42
+     },
+     {
+      "decile": 2,
+      "load_gw": 14.203,
+      "model": 29.215,
+      "actual": 21.68,
+      "diff": 7.536,
+      "model_std": 3.353,
+      "actual_std": 4.525
+     },
+     {
+      "decile": 3,
+      "load_gw": 15.017,
+      "model": 30.583,
+      "actual": 23.611,
+      "diff": 6.972,
+      "model_std": 2.822,
+      "actual_std": 4.86
+     },
+     {
+      "decile": 4,
+      "load_gw": 15.704,
+      "model": 31.332,
+      "actual": 25.381,
+      "diff": 5.951,
+      "model_std": 2.266,
+      "actual_std": 5.201
+     },
+     {
+      "decile": 5,
+      "load_gw": 16.401,
+      "model": 32.146,
+      "actual": 26.781,
+      "diff": 5.365,
+      "model_std": 1.858,
+      "actual_std": 6.397
+     },
+     {
+      "decile": 6,
+      "load_gw": 17.055,
+      "model": 33.308,
+      "actual": 29.076,
+      "diff": 4.232,
+      "model_std": 2.675,
+      "actual_std": 7.26
+     },
+     {
+      "decile": 7,
+      "load_gw": 17.668,
+      "model": 34.556,
+      "actual": 29.64,
+      "diff": 4.916,
+      "model_std": 2.838,
+      "actual_std": 6.427
+     },
+     {
+      "decile": 8,
+      "load_gw": 18.315,
+      "model": 36.785,
+      "actual": 33.116,
+      "diff": 3.669,
+      "model_std": 4.821,
+      "actual_std": 9.566
+     },
+     {
+      "decile": 9,
+      "load_gw": 19.122,
+      "model": 38.381,
+      "actual": 36.792,
+      "diff": 1.589,
+      "model_std": 4.173,
+      "actual_std": 11.957
+     },
+     {
+      "decile": 10,
+      "load_gw": 20.785,
+      "model": 43.005,
+      "actual": 42.865,
+      "diff": 0.141,
+      "model_std": 4.865,
+      "actual_std": 24.846
+     }
+    ]
+   },
+   "B_zonal_separation": {
+    "covered_hours": 1464,
+    "links": [
+     {
+      "link": "Upstate_West->Capital_Hudson",
+      "model_mean_spread": -0.0,
+      "actual_mean_spread": 2.685,
+      "model_share_sep_gt_1": 0.0,
+      "actual_share_sep_gt_1": 0.6031
+     },
+     {
+      "link": "Capital_Hudson->Lower_Hudson",
+      "model_mean_spread": 0.0,
+      "actual_mean_spread": -0.355,
+      "model_share_sep_gt_1": 0.0,
+      "actual_share_sep_gt_1": 0.0827
+     },
+     {
+      "link": "Lower_Hudson->NYC",
+      "model_mean_spread": 0.001,
+      "actual_mean_spread": 0.626,
+      "model_share_sep_gt_1": 0.0,
+      "actual_share_sep_gt_1": 0.0745
+     },
+     {
+      "link": "NYC->Long_Island",
+      "model_mean_spread": 2.469,
+      "actual_mean_spread": 6.169,
+      "model_share_sep_gt_1": 0.252,
+      "actual_share_sep_gt_1": 0.3108
+     }
+    ],
+    "zone_means": {
+     "Upstate_West": {
+      "model": 33.298,
+      "actual": 26.003
+     },
+     "Capital_Hudson": {
+      "model": 33.298,
+      "actual": 28.689
+     },
+     "Lower_Hudson": {
+      "model": 33.298,
+      "actual": 28.334
+     },
+     "NYC": {
+      "model": 33.299,
+      "actual": 28.96
+     },
+     "Long_Island": {
+      "model": 35.768,
+      "actual": 35.129
+     }
+    }
+   },
+   "C_interface_reality": {
+    "interfaces": [
+     {
+      "interface": "CENTRAL EAST - VC",
+      "flow_mean": 1328.3,
+      "flow_p95": 1870.5,
+      "flow_max": 2951.5,
+      "limit_mean": 1733.2,
+      "limit_p05": 1140.0,
+      "share_within_50mw_of_limit": 0.0075
+     },
+     {
+      "interface": "TOTAL EAST",
+      "flow_mean": 3004.8,
+      "flow_p95": 4361.1,
+      "flow_max": 5883.2,
+      "limit_mean": 6193.9,
+      "limit_p05": 6000.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "UPNY CONED",
+      "flow_mean": 2814.7,
+      "flow_p95": 4108.2,
+      "flow_max": 5824.9,
+      "limit_mean": 5759.1,
+      "limit_p05": 5055.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "SPR/DUN-SOUTH",
+      "flow_mean": 1603.5,
+      "flow_p95": 2566.0,
+      "flow_max": 3656.3,
+      "limit_mean": 4483.6,
+      "limit_p05": 4350.0,
+      "share_within_50mw_of_limit": 0.0003
+     }
+    ],
+    "central_east_monthly": {
+     "measured_mean_flow": [
+      1748.0,
+      1618.6,
+      1336.7,
+      1154.6,
+      1336.8,
+      1250.4,
+      1214.3,
+      1194.0,
+      1118.7,
+      1147.5,
+      1217.1,
+      1611.9
+     ],
+     "measured_mean_limit": [
+      1918.0,
+      1792.0,
+      1492.8,
+      1428.9,
+      1583.3,
+      1865.4,
+      1805.1,
+      1586.0,
+      1542.2,
+      1540.1,
+      1532.9,
+      2699.2
+     ],
+     "model_ttc": [
+      1950.0,
+      1875.0,
+      1550.0,
+      1450.0,
+      1600.0,
+      1900.0,
+      1775.0,
+      1650.0,
+      1550.0,
+      1575.0,
+      1525.0,
+      2725.0
+     ]
+    }
+   },
+   "C2_model_interface": {
+    "mean_flow_mw": 751.5,
+    "share_at_ttc": 0.1612,
+    "share_sep_gt_0p01": 0.1202,
+    "mean_sep_when_at_ttc": 2.1978
+   },
+   "G_amplitude": {
+    "model_trough": 29.221,
+    "model_peak": 38.592,
+    "actual_trough": 21.961,
+    "actual_peak": 35.579,
+    "model_swing": 9.371,
+    "actual_swing": 13.618,
+    "share_reproduced": 0.6881,
+    "trough_error": 7.26,
+    "peak_error": 3.013
+   }
+  },
+  "2024": {
+   "A_residual_deciles": {
+    "covered_hours": 4344,
+    "covered_months": [
+     2,
+     3,
+     4,
+     5,
+     6,
+     9
+    ],
+    "model_mean": 32.633,
+    "actual_mean": 30.392,
+    "percentiles": {
+     "p1": {
+      "model": 22.08,
+      "actual": 11.682
+     },
+     "p5": {
+      "model": 23.923,
+      "actual": 16.124
+     },
+     "p10": {
+      "model": 25.301,
+      "actual": 18.03
+     },
+     "p25": {
+      "model": 27.385,
+      "actual": 21.082
+     },
+     "p50": {
+      "model": 30.719,
+      "actual": 25.662
+     },
+     "p75": {
+      "model": 34.283,
+      "actual": 32.833
+     },
+     "p90": {
+      "model": 39.286,
+      "actual": 40.654
+     },
+     "p95": {
+      "model": 44.071,
+      "actual": 47.928
+     },
+     "p99": {
+      "model": 53.112,
+      "actual": 81.033
+     }
+    },
+    "by_actual_price_decile": [
+     {
+      "decile": 1,
+      "load_gw": 14.406,
+      "model": 26.459,
+      "actual": 15.282,
+      "diff": 11.176,
+      "model_std": 3.25,
+      "actual_std": 3.49
+     },
+     {
+      "decile": 2,
+      "load_gw": 14.672,
+      "model": 27.137,
+      "actual": 19.218,
+      "diff": 7.919,
+      "model_std": 3.517,
+      "actual_std": 0.622
+     },
+     {
+      "decile": 3,
+      "load_gw": 15.143,
+      "model": 28.708,
+      "actual": 21.107,
+      "diff": 7.601,
+      "model_std": 3.595,
+      "actual_std": 0.496
+     },
+     {
+      "decile": 4,
+      "load_gw": 15.642,
+      "model": 29.701,
+      "actual": 22.838,
+      "diff": 6.863,
+      "model_std": 3.706,
+      "actual_std": 0.517
+     },
+     {
+      "decile": 5,
+      "load_gw": 16.081,
+      "model": 30.927,
+      "actual": 24.752,
+      "diff": 6.175,
+      "model_std": 4.023,
+      "actual_std": 0.528
+     },
+     {
+      "decile": 6,
+      "load_gw": 16.386,
+      "model": 31.859,
+      "actual": 26.776,
+      "diff": 5.082,
+      "model_std": 4.601,
+      "actual_std": 0.653
+     },
+     {
+      "decile": 7,
+      "load_gw": 16.513,
+      "model": 31.968,
+      "actual": 29.463,
+      "diff": 2.505,
+      "model_std": 3.966,
+      "actual_std": 0.867
+     },
+     {
+      "decile": 8,
+      "load_gw": 17.361,
+      "model": 34.063,
+      "actual": 32.838,
+      "diff": 1.224,
+      "model_std": 4.967,
+      "actual_std": 1.069
+     },
+     {
+      "decile": 9,
+      "load_gw": 17.924,
+      "model": 35.983,
+      "actual": 37.416,
+      "diff": -1.434,
+      "model_std": 5.401,
+      "actual_std": 1.715
+     },
+     {
+      "decile": 10,
+      "load_gw": 19.418,
+      "model": 40.669,
+      "actual": 61.966,
+      "diff": -21.297,
+      "model_std": 9.614,
+      "actual_std": 74.471
+     }
+    ],
+    "by_load_decile": [
+     {
+      "decile": 1,
+      "load_gw": 12.887,
+      "model": 25.251,
+      "actual": 20.332,
+      "diff": 4.92,
+      "model_std": 1.953,
+      "actual_std": 4.81
+     },
+     {
+      "decile": 2,
+      "load_gw": 13.794,
+      "model": 26.451,
+      "actual": 22.257,
+      "diff": 4.193,
+      "model_std": 2.252,
+      "actual_std": 6.134
+     },
+     {
+      "decile": 3,
+      "load_gw": 14.516,
+      "model": 27.708,
+      "actual": 23.793,
+      "diff": 3.915,
+      "model_std": 2.378,
+      "actual_std": 6.992
+     },
+     {
+      "decile": 4,
+      "load_gw": 15.157,
+      "model": 29.114,
+      "actual": 25.276,
+      "diff": 3.838,
+      "model_std": 2.805,
+      "actual_std": 8.161
+     },
+     {
+      "decile": 5,
+      "load_gw": 15.738,
+      "model": 30.171,
+      "actual": 27.045,
+      "diff": 3.125,
+      "model_std": 2.575,
+      "actual_std": 16.13
+     },
+     {
+      "decile": 6,
+      "load_gw": 16.345,
+      "model": 31.531,
+      "actual": 32.027,
+      "diff": -0.495,
+      "model_std": 2.717,
+      "actual_std": 56.922
+     },
+     {
+      "decile": 7,
+      "load_gw": 16.952,
+      "model": 32.411,
+      "actual": 29.948,
+      "diff": 2.463,
+      "model_std": 2.703,
+      "actual_std": 12.454
+     },
+     {
+      "decile": 8,
+      "load_gw": 17.708,
+      "model": 34.006,
+      "actual": 30.348,
+      "diff": 3.658,
+      "model_std": 3.242,
+      "actual_std": 8.785
+     },
+     {
+      "decile": 9,
+      "load_gw": 18.687,
+      "model": 36.67,
+      "actual": 34.483,
+      "diff": 2.186,
+      "model_std": 3.869,
+      "actual_std": 13.195
+     },
+     {
+      "decile": 10,
+      "load_gw": 21.756,
+      "model": 44.156,
+      "actual": 46.178,
+      "diff": -2.022,
+      "model_std": 8.134,
+      "actual_std": 50.664
+     }
+    ]
+   },
+   "B_zonal_separation": {
+    "covered_hours": 4344,
+    "links": [
+     {
+      "link": "Upstate_West->Capital_Hudson",
+      "model_mean_spread": 0.001,
+      "actual_mean_spread": 1.416,
+      "model_share_sep_gt_1": 0.0005,
+      "actual_share_sep_gt_1": 0.5479
+     },
+     {
+      "link": "Capital_Hudson->Lower_Hudson",
+      "model_mean_spread": 0.023,
+      "actual_mean_spread": 1.093,
+      "model_share_sep_gt_1": 0.0058,
+      "actual_share_sep_gt_1": 0.1618
+     },
+     {
+      "link": "Lower_Hudson->NYC",
+      "model_mean_spread": 0.157,
+      "actual_mean_spread": 1.496,
+      "model_share_sep_gt_1": 0.0262,
+      "actual_share_sep_gt_1": 0.1197
+     },
+     {
+      "link": "NYC->Long_Island",
+      "model_mean_spread": 2.633,
+      "actual_mean_spread": 2.789,
+      "model_share_sep_gt_1": 0.2337,
+      "actual_share_sep_gt_1": 0.279
+     }
+    ],
+    "zone_means": {
+     "Upstate_West": {
+      "model": 31.28,
+      "actual": 26.554
+     },
+     "Capital_Hudson": {
+      "model": 31.281,
+      "actual": 27.97
+     },
+     "Lower_Hudson": {
+      "model": 31.304,
+      "actual": 29.063
+     },
+     "NYC": {
+      "model": 31.461,
+      "actual": 30.559
+     },
+     "Long_Island": {
+      "model": 34.094,
+      "actual": 33.347
+     }
+    }
+   },
+   "C_interface_reality": {
+    "interfaces": [
+     {
+      "interface": "CENTRAL EAST - VC",
+      "flow_mean": 1758.6,
+      "flow_p95": 2802.4,
+      "flow_max": 3381.6,
+      "limit_mean": 2829.9,
+      "limit_p05": 2355.0,
+      "share_within_50mw_of_limit": 0.0013
+     },
+     {
+      "interface": "TOTAL EAST",
+      "flow_mean": 3219.5,
+      "flow_p95": 4988.3,
+      "flow_max": 6259.6,
+      "limit_mean": 7545.6,
+      "limit_p05": 7550.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "UPNY CONED",
+      "flow_mean": 3015.7,
+      "flow_p95": 4416.7,
+      "flow_max": 5765.9,
+      "limit_mean": 6101.6,
+      "limit_p05": 5360.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "SPR/DUN-SOUTH",
+      "flow_mean": 1775.5,
+      "flow_p95": 2798.3,
+      "flow_max": 3770.9,
+      "limit_mean": 4479.1,
+      "limit_p05": 4350.0,
+      "share_within_50mw_of_limit": 0.0
+     }
+    ],
+    "central_east_monthly": {
+     "measured_mean_flow": [
+      2322.0,
+      2227.7,
+      1318.9,
+      1440.4,
+      1582.5,
+      1812.9,
+      1965.9,
+      1460.6,
+      1169.5,
+      1440.3,
+      1950.4,
+      2420.0
+     ],
+     "measured_mean_limit": [
+      3098.8,
+      3045.8,
+      2892.2,
+      2822.1,
+      2793.4,
+      2780.8,
+      2791.4,
+      2692.4,
+      2474.6,
+      2745.5,
+      2764.2,
+      3056.3
+     ],
+     "model_ttc": [
+      3050.0,
+      3075.0,
+      3000.0,
+      2875.0,
+      2825.0,
+      2750.0,
+      2800.0,
+      2700.0,
+      2525.0,
+      2825.0,
+      2750.0,
+      3075.0
+     ]
+    }
+   },
+   "C2_model_interface": {
+    "mean_flow_mw": 568.2,
+    "share_at_ttc": 0.0175,
+    "share_sep_gt_0p01": 0.0134,
+    "mean_sep_when_at_ttc": 12.0047
+   },
+   "G_amplitude": {
+    "model_trough": 27.899,
+    "model_peak": 37.31,
+    "actual_trough": 22.401,
+    "actual_peak": 41.568,
+    "model_swing": 9.411,
+    "actual_swing": 19.166,
+    "share_reproduced": 0.491,
+    "trough_error": 5.497,
+    "peak_error": -4.258
+   }
+  },
+  "2025": {
+   "A_residual_deciles": {
+    "covered_hours": 744,
+    "covered_months": [
+     8
+    ],
+    "model_mean": 48.239,
+    "actual_mean": 45.328,
+    "percentiles": {
+     "p1": {
+      "model": 25.74,
+      "actual": 17.94
+     },
+     "p5": {
+      "model": 30.457,
+      "actual": 21.591
+     },
+     "p10": {
+      "model": 31.748,
+      "actual": 23.574
+     },
+     "p25": {
+      "model": 37.633,
+      "actual": 27.685
+     },
+     "p50": {
+      "model": 42.88,
+      "actual": 35.865
+     },
+     "p75": {
+      "model": 53.073,
+      "actual": 49.937
+     },
+     "p90": {
+      "model": 64.673,
+      "actual": 65.58
+     },
+     "p95": {
+      "model": 68.46,
+      "actual": 77.492
+     },
+     "p99": {
+      "model": 77.673,
+      "actual": 97.051
+     }
+    },
+    "by_actual_price_decile": [
+     {
+      "decile": 1,
+      "load_gw": 14.269,
+      "model": 30.458,
+      "actual": 21.182,
+      "diff": 9.276,
+      "model_std": 4.208,
+      "actual_std": 2.04
+     },
+     {
+      "decile": 2,
+      "load_gw": 15.909,
+      "model": 35.785,
+      "actual": 24.97,
+      "diff": 10.814,
+      "model_std": 3.975,
+      "actual_std": 0.757
+     },
+     {
+      "decile": 3,
+      "load_gw": 16.366,
+      "model": 37.462,
+      "actual": 27.653,
+      "diff": 9.809,
+      "model_std": 3.899,
+      "actual_std": 0.901
+     },
+     {
+      "decile": 4,
+      "load_gw": 16.742,
+      "model": 38.948,
+      "actual": 30.334,
+      "diff": 8.614,
+      "model_std": 4.141,
+      "actual_std": 0.79
+     },
+     {
+      "decile": 5,
+      "load_gw": 17.355,
+      "model": 42.516,
+      "actual": 33.963,
+      "diff": 8.553,
+      "model_std": 4.717,
+      "actual_std": 1.176
+     },
+     {
+      "decile": 6,
+      "load_gw": 18.092,
+      "model": 45.458,
+      "actual": 38.17,
+      "diff": 7.288,
+      "model_std": 5.08,
+      "actual_std": 1.25
+     },
+     {
+      "decile": 7,
+      "load_gw": 18.691,
+      "model": 48.518,
+      "actual": 43.707,
+      "diff": 4.811,
+      "model_std": 5.171,
+      "actual_std": 1.606
+     },
+     {
+      "decile": 8,
+      "load_gw": 20.482,
+      "model": 55.503,
+      "actual": 49.962,
+      "diff": 5.541,
+      "model_std": 6.777,
+      "actual_std": 1.955
+     },
+     {
+      "decile": 9,
+      "load_gw": 21.913,
+      "model": 58.791,
+      "actual": 58.704,
+      "diff": 0.087,
+      "model_std": 6.317,
+      "actual_std": 3.877
+     },
+     {
+      "decile": 10,
+      "load_gw": 24.012,
+      "model": 68.364,
+      "actual": 93.408,
+      "diff": -25.043,
+      "model_std": 11.336,
+      "actual_std": 70.435
+     }
+    ],
+    "by_load_decile": [
+     {
+      "decile": 1,
+      "load_gw": 13.765,
+      "model": 30.742,
+      "actual": 22.433,
+      "diff": 8.309,
+      "model_std": 4.477,
+      "actual_std": 3.393
+     },
+     {
+      "decile": 2,
+      "load_gw": 15.055,
+      "model": 35.394,
+      "actual": 27.461,
+      "diff": 7.933,
+      "model_std": 3.858,
+      "actual_std": 4.362
+     },
+     {
+      "decile": 3,
+      "load_gw": 15.96,
+      "model": 38.526,
+      "actual": 29.729,
+      "diff": 8.797,
+      "model_std": 5.411,
+      "actual_std": 4.968
+     },
+     {
+      "decile": 4,
+      "load_gw": 16.792,
+      "model": 40.245,
+      "actual": 32.86,
+      "diff": 7.386,
+      "model_std": 5.419,
+      "actual_std": 6.284
+     },
+     {
+      "decile": 5,
+      "load_gw": 17.489,
+      "model": 43.322,
+      "actual": 34.557,
+      "diff": 8.765,
+      "model_std": 5.008,
+      "actual_std": 6.851
+     },
+     {
+      "decile": 6,
+      "load_gw": 18.262,
+      "model": 44.27,
+      "actual": 36.821,
+      "diff": 7.449,
+      "model_std": 5.556,
+      "actual_std": 8.154
+     },
+     {
+      "decile": 7,
+      "load_gw": 19.09,
+      "model": 47.886,
+      "actual": 43.065,
+      "diff": 4.821,
+      "model_std": 5.119,
+      "actual_std": 9.782
+     },
+     {
+      "decile": 8,
+      "load_gw": 20.271,
+      "model": 51.507,
+      "actual": 48.78,
+      "diff": 2.727,
+      "model_std": 6.067,
+      "actual_std": 11.349
+     },
+     {
+      "decile": 9,
+      "load_gw": 22.076,
+      "model": 59.476,
+      "actual": 62.339,
+      "diff": -2.862,
+      "model_std": 5.762,
+      "actual_std": 15.683
+     },
+     {
+      "decile": 10,
+      "load_gw": 25.064,
+      "model": 70.434,
+      "actual": 84.113,
+      "diff": -13.678,
+      "model_std": 9.69,
+      "actual_std": 72.846
+     }
+    ]
+   },
+   "B_zonal_separation": {
+    "covered_hours": 744,
+    "links": [
+     {
+      "link": "Upstate_West->Capital_Hudson",
+      "model_mean_spread": 0.0,
+      "actual_mean_spread": -0.123,
+      "model_share_sep_gt_1": 0.0,
+      "actual_share_sep_gt_1": 0.3817
+     },
+     {
+      "link": "Capital_Hudson->Lower_Hudson",
+      "model_mean_spread": 0.0,
+      "actual_mean_spread": 0.906,
+      "model_share_sep_gt_1": 0.0,
+      "actual_share_sep_gt_1": 0.2527
+     },
+     {
+      "link": "Lower_Hudson->NYC",
+      "model_mean_spread": 0.131,
+      "actual_mean_spread": 0.482,
+      "model_share_sep_gt_1": 0.0242,
+      "actual_share_sep_gt_1": 0.0497
+     },
+     {
+      "link": "NYC->Long_Island",
+      "model_mean_spread": 2.36,
+      "actual_mean_spread": 0.673,
+      "model_share_sep_gt_1": 0.2688,
+      "actual_share_sep_gt_1": 0.2352
+     }
+    ],
+    "zone_means": {
+     "Upstate_West": {
+      "model": 45.771,
+      "actual": 41.435
+     },
+     "Capital_Hudson": {
+      "model": 45.771,
+      "actual": 41.312
+     },
+     "Lower_Hudson": {
+      "model": 45.771,
+      "actual": 42.218
+     },
+     "NYC": {
+      "model": 45.903,
+      "actual": 42.7
+     },
+     "Long_Island": {
+      "model": 48.263,
+      "actual": 43.373
+     }
+    }
+   },
+   "C_interface_reality": {
+    "interfaces": [
+     {
+      "interface": "CENTRAL EAST - VC",
+      "flow_mean": 1664.0,
+      "flow_p95": 2908.3,
+      "flow_max": 3359.4,
+      "limit_mean": 2830.7,
+      "limit_p05": 2255.0,
+      "share_within_50mw_of_limit": 0.0021
+     },
+     {
+      "interface": "TOTAL EAST",
+      "flow_mean": 3129.0,
+      "flow_p95": 5212.8,
+      "flow_max": 6274.7,
+      "limit_mean": 7536.7,
+      "limit_p05": 7550.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "UPNY CONED",
+      "flow_mean": 3003.2,
+      "flow_p95": 4270.0,
+      "flow_max": 6262.7,
+      "limit_mean": 6409.2,
+      "limit_p05": 5610.0,
+      "share_within_50mw_of_limit": 0.0
+     },
+     {
+      "interface": "SPR/DUN-SOUTH",
+      "flow_mean": 1851.0,
+      "flow_p95": 2866.4,
+      "flow_max": 3772.0,
+      "limit_mean": 4600.0,
+      "limit_p05": 4600.0,
+      "share_within_50mw_of_limit": 0.0
+     }
+    ],
+    "central_east_monthly": {
+     "measured_mean_flow": [
+      2807.2,
+      2433.0,
+      1639.9,
+      1457.5,
+      1559.7,
+      1553.2,
+      1400.9,
+      960.9,
+      1170.0,
+      1194.4,
+      1667.1,
+      2173.2
+     ],
+     "measured_mean_limit": [
+      3171.8,
+      3025.2,
+      2586.3,
+      2475.2,
+      2506.8,
+      2933.8,
+      3065.0,
+      2968.8,
+      2785.0,
+      2776.0,
+      2712.6,
+      2967.4
+     ],
+     "model_ttc": [
+      3175.0,
+      3075.0,
+      2725.0,
+      2500.0,
+      2525.0,
+      2925.0,
+      3025.0,
+      3000.0,
+      2850.0,
+      2850.0,
+      2725.0,
+      2900.0
+     ]
+    }
+   },
+   "C2_model_interface": {
+    "mean_flow_mw": 674.4,
+    "share_at_ttc": 0.0145,
+    "share_sep_gt_0p01": 0.0106,
+    "mean_sep_when_at_ttc": 1.2183
+   },
+   "G_amplitude": {
+    "model_trough": 39.878,
+    "model_peak": 54.679,
+    "actual_trough": 31.226,
+    "actual_peak": 64.433,
+    "model_swing": 14.801,
+    "actual_swing": 33.207,
+    "share_reproduced": 0.4457,
+    "trough_error": 8.653,
+    "peak_error": -9.753
+   }
+  }
+ }
+}
