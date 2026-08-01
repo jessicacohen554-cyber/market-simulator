@@ -1658,7 +1658,7 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED and ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72
 
 Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
 
@@ -1722,6 +1722,26 @@ charter with a new measured identification** before a solve:
     **fleet/nameplate lane** (Kendall's capacity basis, inside the miso-95
     provenance-orphaned `nameplate_mw` column), not a floor lane. Evidence:
     `results/calibration/FINDING-neiso71-chp-floor-nuclear-2026-07-31.md` §1.
+    **PREREQUISITE ADJUDICATED at neiso-73 (2026-07-31, NO LP spent):
+    ARTIFACT, not missing capacity.** CAMPD unit-4 `grossLoad` at 1595 is not
+    gross electrical MW (max 317–323 MW exceeds the 294.9 MW summed nameplate
+    of every generator ever installed; implied gross HR 6.36–6.59 mmBtu/MWh is
+    thermodynamically impossible; 923-net/CAMPD-gross flat at 0.654–0.687
+    across 96 months; monthly net saturates the 860 winter rating at 99.5 %);
+    mean gross/net 1.483 ≈ the saturated `steam_level_cf` 1.461 — the WP-3
+    statistic measured the basis ratio, not a steam obligation. **The EIA-860
+    basis (206.0 MW summer = the model pmax) is CORRECT; no model change was
+    made and no A/B run.** The floor lane may reopen **only** on a NET-basis
+    identification (923-anchored: Kendall's net loading-when-on is
+    89.4/95.8/90.5 % of pmax at 94.5/91.3/94.0 % on-frequency — a genuine
+    flat steam host, so neiso-71's "no obligation" claim now stands only for
+    the non-Kendall cogens) with its own prereg declaring the over-closing
+    hazard (~1.6–1.7 TWh floor effect vs a 0.34–0.68 TWh shortfall). Any
+    derivation touching 1595 must de-base or avoid the CAMPD gross channel —
+    it contaminates both `steam_level_cf` and any heat-rate derivation there
+    (~32 % low). Evidence:
+    `results/calibration/FINDING-neiso73-kendall-capacity-basis-2026-07-31.md`;
+    probe `scripts/probes/_neiso73_kendall_capacity_screen.py`.
 
 7. ~~**`nuclear_unit_availability` crosswalk.**~~ **DONE at neiso-71 → `K`,
     PROMOTED to keeper** (2026-07-31). The gap this item named (NEISO absent
