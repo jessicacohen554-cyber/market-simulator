@@ -32,10 +32,19 @@ the posture question turns out **not** to be a second-order calibration detail:
    so `nyiso-2021-2025-{curve,fixed}` are a force-ON probe pair, not a
    shipped-vs-fixed pair. The `--golden-posture` used by the full-horizon runner
    disagrees with the shipped default on exactly this ISO.
-4. **PJM's new FFR-2C floor is measured, and it reverses the sign of the
+4. **PJM's new FFR-2C floor reaches the screens and reverses the sign of the
    posture gap from 2028**: at a long position the curve arm goes from paying
    $0 (2021–2027 vintages) to paying $63,875/firm-MW-yr (2028/29 vintage),
-   i.e. from 100 % below the fixed arm to 17.5 % below it.
+   i.e. from 100 % below the fixed arm to 17.5 % below it. **This is measured at
+   the pricing seam only — its fleet-level effect remains UNMEASURED (§4).**
+
+> **⚠ COMPLETION STATE.** Charter items 1 (instrument), 3 (arm recommendation)
+> and the rule-28 matrix duty are DONE. Item 2 (re-run the T1-H legs) and item 4
+> (the PJM T0 leg) are **NOT DONE — no LP was solved and no run was registered**;
+> the container had no `data/clean/` tree and rebuilding it did not finish in
+> session. §3.1 and §4 carry the exact commands. Every quantitative claim below
+> is either exact seam arithmetic (§2) or committed pre-epoch evidence explicitly
+> labelled as prior (§3.0) — none of it is a fresh solve.
 
 ---
 
@@ -171,13 +180,146 @@ posture or rule change at all.
 
 ### 3.1 This session's post-epoch paired legs
 
-<!-- FILLED FROM THE REGISTERED RUNS -->
+The container was cloned fresh, so `data/clean/` — the derived, gitignored
+curation layer every solve reads — had to be rebuilt from `data/raw/` first
+(`scripts/regenerate_clean.py`, 50 datatypes). The cache-epoch purge was verified
+a **no-op** on this checkout beforehand: zero `year_*.parquet` anywhere under
+`results/`, every committed parquet being a backcast keeper hourly, which the
+epoch does not invalidate. So every leg below is a **cold post-epoch solve**.
+
+#### NEISO — `neiso-2021-2025-shipped-ffr2e` / `neiso-2021-2025-fixed-ffr2e`
+
+Cache keys `da53a89d26323710` (shipped) / `aaf627fc634d0012` (fixed); solved
+[2021, 2023, 2024, 2025], 2022 bridged; zero leakage-guard violations.
+
+**Economic retirements, MW, by year** (`_ffr2e_arm_diff.py`):
+
+| year | shipped | fixed | Δ |
+|--:|--:|--:|--:|
+| 2023 | 3,833.1 | **0.0** | +3,833.1 |
+| 2024 | 6,630.5 | **0.0** | +6,630.5 |
+| 2025 | 0.0 | 0.0 | 0 |
+| **total** | **10,464.6** | **0.0** | **+10,464.6** |
+
+The pre-epoch split (9.325 vs 0.002 GW) **survives the epoch and widens**:
+10.465 vs 0.000 GW. The fixed arm economically retires **nothing at all** across
+the whole window.
+
+It is not only retirements — the whole fleet path forks. By 2025 the shipped arm
+has taken gas_ct, gas_st and coal to **zero** and cut gas_cc 17,485 → 10,646 MW,
+reserve margin 0.538 → 0.025 in 2024, and then *compensates* with entry the fixed
+arm never builds: +1,500 MW economic thermal and +720 MW storage in 2025.
+
+**FC-3 scores — the arms fail in instructive, opposite ways:**
+
+| metric | shipped (curve) | fixed net-CONE | actual |
+|---|--:|--:|--:|
+| retire total GW | 10.465 (+10.0×) **FAIL** | 0.002 (−99.8 %) **FAIL** | 0.951 |
+| `unit_recall_gt300` | 1.00 **PASS** | 0.00 **FAIL** | — |
+| `false_retire` | 9.573 GW (91.5 % of model) **FAIL** | 0.0 **PASS** | — |
+| additions GW | 14.72 | 15.00 | 2.981 |
+| `add.by_tech` FAIL | wind, solar, gas_ct | wind, solar, gas_ct, **storage** | — |
+
+**Read the fixed arm's two PASSes carefully — both are vacuous.** It "passes"
+`false_retire` only because a model that retires nothing cannot false-retire, and
+it pays for that by **failing recall outright (0.00)**: it misses the one real
+>300 MW retirement entirely. The shipped arm finds it (recall 1.00) and over-fires
+around it. The shipped arm additionally **passes storage additions where the fixed
+arm fails** — the curve is what gives storage an RA value to enter on, exactly the
+mechanism FF-2C credited for MISO's first storage entry.
+
+So on NEISO the shipped posture is not merely the one production runs; it is the
+only arm that detects the real event at all. **Both still FAIL overall — no
+determination flips.**
+
+#### CAISO — `caiso-2021-2025-shipped-ffr2e` / `caiso-2021-2025-fixed-ffr2e`
+
+**The §2 inertness proof is confirmed at fleet level.** Cache keys
+`831634d4252ceed0` (shipped) / `42927055c50f4df0` (fixed) — genuinely different
+configs, two independent cold solves — and `_ffr2e_arm_diff.py` reports:
+
+```
+(no metric differs — the two arms produced the same fleet path)
+ARMS DIVERGE: False
+```
+
+Identical across **every** metric in **every** solve year: retirements by reason,
+additions by channel (thermal/renewable/storage, incl. the thermal source split),
+reserve margin, peak demand, firm-clean MW, storage/wind/solar capacity, and the
+end-of-year fleet by fuel. This is the empirical confirmation of the analytic
+claim — CAISO's clearing gate resolves **on**, computes a reserve position, feeds
+it to the seam, and the seam returns the same flat $88,080/firm-MW-yr either way,
+so nothing downstream can move.
+
+It also validates the proof *method* used throughout §2: seam identity ⇒ screen
+identity ⇒ fleet identity. That chain is what lets the rest of this document
+reason from exact seam arithmetic rather than from solves.
+
+Neither leg carries an FC-3 score — `capacity_actuals_caiso.csv` does not exist
+(blocker B4), so `score_capacity_hindcast.py` refuses both arms. They are
+registered as unscored evidence rows; **no CAISO FC-3 verdict is claimed.**
+
+#### PJM / MISO T1-H — **NOT RUN** (window coordination)
+
+Deferred under the rule-12 split: FFR-2A owns the PJM and MISO windows first, and
+at session end it had **not** yet registered its heavy legs (checked repeatedly
+against `origin/main`'s `frontend/data/hindcast/`). Rather than co-run, these are
+left for a successor. Note that FFR-2B's `{pjm,miso}-2021-2025-cmc-legacy-ffr2b`
+(2026-08-02) are already **post-epoch curve-ON legs whose `{iso: True}` posture
+resolves identically to the shipped default for those ISOs** — so a successor
+needs only the *fixed* arm for each, provided it verifies no solve-affecting
+change landed in between (otherwise run both, one tree, as was done for NEISO).
+
+The commands are:
+
+```bash
+python scripts/run_capacity_hindcast.py --iso <ISO> --fuel-variant realized \
+    --vintage 2020 --start-year 2021 --end-year 2025 [--fixed-net-cone] \
+    --out-dir results/hindcast/<iso>-2021-2025-{shipped,fixed}-ffr2e
+```
+
+then `score_capacity_hindcast.py --bundle …` → `forecast_verdict.py --tier t1h`
+→ `register_forecast_run.py --bundle …`, plus `_ffr2e_arm_diff.py`. PJM and MISO
+pairs run **sequentially** (~8.6 GB/leg) and never co-run with each other.
+**`--fixed-net-cone` did not exist before this session**, so the fixed arm was
+previously unreachable except by predating the flip.
 
 ---
 
-## 4. PJM's 2028/29 floor at fleet level
+## 4. PJM's 2028/29 floor — measured at the SEAM, **UNMEASURED at fleet level**
 
-<!-- FILLED FROM THE PJM T0 LEG -->
+This is the one deliverable the session did not produce, stated plainly rather
+than inferred.
+
+**What IS measured** (§2, exact, no LP): the floor reaches the screens. All three
+capacity screens thread `year` into `capacity_price_per_firm_mw_yr`
+(`retirements.py:707`, `new_entry.py:1012`, `storage.py:1092`), so
+`resolve_demand_curve_vintage` selects the 2028/29 vintage for any solve year
+≥ 2028 and holds it forward. At a long position the shipped arm pays
+**$63,875/firm-MW-yr** in 2028 where it paid **$0** under the held 2027/28
+vintage — the posture gap flips from −100 % of the fixed arm to −17.5 %. That
+confirms and quantifies FFR-2C §2.1 independently.
+
+**What is NOT measured:** what that does to PJM's build/retire path. The named
+acceptance step — a PJM T0 leg over 2026–2028, which is the only window that
+reaches the new vintage (the T1-H window ends at 2025 by construction) — was
+**not run**, for the §3.1 reason. It is verified schedulable (3 solve-years, under
+the §2.1b cap, no `--full-solve-authorized` needed) and the arms are verified to
+resolve correctly:
+
+```bash
+# shipped/curve arm — --golden-posture resolves IDENTICALLY to the shipped
+# default for PJM (both True); they differ only on NYISO, see B2
+python scripts/run_full_horizon.py --iso PJM --start-year 2026 --end-year 2028 \
+    --golden-posture --out-dir results/ffr2e/pjm-t0-shipped
+# fixed net-CONE arm — the runner's own default pins by_iso=None (see B1)
+python scripts/run_full_horizon.py --iso PJM --start-year 2026 --end-year 2028 \
+    --out-dir results/ffr2e/pjm-t0-fixed
+```
+
+Run them **sequentially** (rule 12). Until then, FFR-2C's statement stands
+verbatim: *the fleet-level consequence of the floor is UNMEASURED*. Nothing in
+this document should be read as having closed it.
 
 ---
 
