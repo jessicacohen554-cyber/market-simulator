@@ -274,14 +274,251 @@ it separately signable, so it needs its own probe row). Runs
   the FC-2 cobweb the audit cites; the anti-cobweb claim for the COD lag is
   **not tested here** (no cobweb to remove). Reported as untested, not as a win.
 
-## 2. D-1 decision box
+### 1.4 PJM T1-H, curve-ON — `legacy` → `pipeline`, measured on one tree
 
-_(populated after the legs land)_
+Bundles `…/PJM/e29d4571e9a062da` (legacy) and `…/PJM/f28791014e454366` (pipeline).
 
-## 3. D-2 decision box
+| quantity | actual | `legacy` | `pipeline` | verdict |
+|---|--:|--:|--:|:--|
+| **unit recall > 300 MW** | 17 | 9 (53 %) ❌ | **13 (76 %)** ✅ | **restored** |
+| **false-retire raw** | — | 22.342 GW (76 % of model) ❌ | **11.968 GW (63 %)** ❌ | −46 %, still FAIL |
+| thermal GW retired (T-R1 level) | 11.121 | 29.373 (+164 %) ❌ | **18.862 (+70 %)** ❌ | over-fire halved |
+| **gas_st econ (A = 0)** | 0.0 | **10.358 GW** | **0.0 GW** | **inversion closed** |
+| **gas_ct econ** | 3.491 | 11.379 (+226 %) | 0.0 (−100 %) | over → under |
+| coal econ (cum) | 6.885 | 3.530 (−49 %) | 14.756 (**+114 %**) | under → over |
+| nuclear (announced channel) | 0.0 | 4.097 | 4.097 | unchanged — Byron/Dresden reversal |
+| T-R10a / T-R10b | — | FAIL / FAIL (first movers `gas_ct`,`gas_st`) | **PASS / PASS** (`coal`) | ✅ |
+| LOYO holds ≥ 2/3 (recall · a · b) | — | ✗ · ✗ · ✗ | **✓ · ✓ · ✓** | **rule-22 bar MET** |
+| **BLK-10 backstop fired** | — | **8.652 GW** | **3.258 GW** | **−62 %** |
+| gas_ct additions (cum) | 0.447 | 8.652 (+1834 %) | 3.258 (+628 %) | improves, still FAIL |
+| wind / solar / gas_cc / storage adds | 1.619 / 13.066 / 8.525 / 0.283 | 6.0 / 24.0 / 4.118 / 0.0 | **6.0 / 24.0 / 4.118 / 0.0** | **byte-identical** |
+| I6 worst single year (cap 20 %) | — | **12.68 % (2023)** ✅ | **8.55 % (2024)** ✅ | −4.1 pp |
+| 2025 system CO₂ (Mt) | 448.7 | 328.7 (−27 %) ❌ | 287.4 (−36 %) ❌ | worsens |
+| invariants (non-PASS) | — | **none** | I12 WARN | — |
 
-_(populated after the legs land)_
+**LOYO folds:**
 
-## 4. FH-4 cross-read
+| fold | `legacy` recall · false raw · T-R10a/b | `pipeline` recall · false raw · T-R10a/b |
+|---|---|---|
+| −2023 | 6/9 FAIL · 4.097 GW · PASS/PASS | **9/9 PASS** · 14.372 GW · PASS/PASS |
+| −2024 | 4/16 FAIL · 22.916 GW · FAIL/FAIL | 0/16 FAIL · **4.097 GW** · PASS/PASS |
+| −2025 | 9/16 FAIL · 22.371 GW · FAIL/FAIL | **12/16 PASS** · 12.413 GW · PASS/PASS |
 
-_(populated after the legs land)_
+**Readings.**
+
+- **Flip-gate items 3 and 4 clear for PJM too, LOYO-robust** (T-R10a/b 3/3,
+  recall 2/3, the −2024 fold zeroing for the same coal-execution-concentration
+  reason as MISO).
+- **E4 fires much harder on PJM than on MISO.** FF-1A's committed `D1=3`
+  BEFORE recorded PJM false-retire **4.097 GW raw / 0.0 IS-2020** and coal
+  recall 0 %. At post-W1 HEAD the same legacy rule gives **22.342 GW** — a
+  **5.5×** deterioration with no rule change. Together with MISO's +49 %, this
+  is a Wave-1 effect (FR-7's solve-year availability keying is the leading
+  candidate: an aging fleet thins attainable margins and more units fail the
+  screen). **The consequence for D-1 is that the audit's FR-4 case is
+  understated, not overstated** — the rule the default still executes is
+  substantially worse today than the evidence the decision was framed on.
+- **The PJM residual is over-retirement of coal DEPTH (+114 %), and it is the
+  already-known revenue-lane bar question**, not a rule defect: FF-1A recorded
+  the PJM coal break-even at ≈ 92 $/kW-yr against the current 58.5 $/kW-yr
+  going-forward bar, with the margin trace straddling 92 rather than 58.5.
+  Routed to BLK-6/BLK-9 / RD-4 as an open blocker (rule 11/21); **not** closable
+  by a coal-specific threshold (rule 1).
+- **CO₂ moves the wrong way** (−27 % → −36 %) because the deeper coal exit
+  removes more emitting energy than reality did — the same level residual seen
+  from the emissions side, not an independent failure.
+- **BLK-10 improves substantially on PJM** (8.652 → 3.258 GW, −62 %), the
+  opposite of the MISO T1-F finding in §1.3 where the cumulative was invariant.
+  The two are consistent: on PJM the backstop shrinks because the *retirement
+  wave* it is responding to shrank (a D-1 effect); on MISO T1-F the wave was
+  already zero, so the ladder had only phasing to change (a D-2 effect). **The
+  rate limit and the rule act on different halves of the over-fire.**
+
+## 2. D-1 decision box — `retirement_rule` `legacy` → `pipeline`
+
+**The audit's own bar (owner packet D-1): "flip iff FFR-2B's post-W1 probes
+clear the T-R battery + T-R10 + LOYO with bands unchanged."**
+
+### Measured before → after, both curve-ON ISOs, one tree, bands unchanged
+
+| gate | MISO | PJM |
+|---|:--|:--|
+| **T-R10a no-inversion** | FAIL → **PASS** | FAIL → **PASS** |
+| **T-R10b no-inversion** | FAIL → **PASS** | FAIL → **PASS** |
+| **LOYO ≥ 2/3 (recall)** | ✗ → **✓** | ✗ → **✓** |
+| **LOYO ≥ 2/3 (T-R10a/b)** | ✗ → **✓ (3/3)** | ✗ → **✓ (3/3)** |
+| **recall band** | FAIL (12 %) → **PASS (76 %)** | FAIL (53 %) → **PASS (76 %)** |
+| false-retire | 12.920 → **0.997 GW** ✅ | 22.342 → **11.968 GW** (−46 %, still ❌) |
+| zero-real-fuel exits | 12.920 → **0.0 GW** | 10.358 → **0.0 GW** |
+| T-R1 thermal level | PASS (−0 %) → **FAIL (−16 %)** | FAIL (+164 %) → **FAIL (+70 %)** |
+| additions bands (T-R1e) | **unchanged to the MW** | **unchanged to the MW** |
+| BLK-10 backstop | 0.0 → 0.0 GW | 8.652 → **3.258 GW** |
+| new invariant failures | **none** | **none** (I12 WARN appears) |
+| 2025 CO₂ | +14 % ❌ → **+7 %** ✅ | −27 % → −36 % ❌ |
+
+### What the flip re-opens
+
+**Expected: nothing — and measured: nothing.** The pipeline rule is an
+identified construction (uniform bar = the unchanged `net_revenue <
+going_forward_cost`; joint entry capped by the *existing* adequacy requirement;
+soft latch at the same bar; five rule-23-identified EIA-860 execution-lag
+medians). Its DOF ledger is **−7 fitted-adjacent integers, +5 identified lags,
+2 open DOFs held and none tuned** (FF-1A §2). Concretely:
+
+- **No new invariant failure in either ISO.** I4/I6/I7/I13 PASS in all four
+  T1-H arms. PJM gains an I12 WARN; MISO's I9/I12 rows are bit-identical
+  across arms.
+- **Additions are byte-identical across the arms in both ISOs**, so no
+  additions verdict, and no part of the D-2 evidence, is disturbed.
+- **The field is cache-key-registered at non-default**, so the flip moves
+  forecast cache keys by construction — no silent bundle reuse, and no epoch
+  debt from the flip itself.
+- **Re-solve cost** is the one already scheduled: every T1-H FC-3 verdict, at
+  FFR-3A step 1.
+
+### Recommendation
+
+**FLIP.** The pre-registered bar is met in both curve-ON ISOs on both no-inversion
+gates and on recall, LOYO-robust at 3/3 folds for T-R10 — with bands imported,
+never widened, and with no new invariant failure and no additions movement.
+
+Two things the owner should sign this with in view, neither of which is a
+reason to hold:
+
+1. **The aggregate thermal LEVEL band gets worse in MISO (PASS → FAIL) and
+   stays failing in PJM.** MISO's `legacy` −0 % PASS was arithmetic
+   cancellation between 12.920 GW of a zero-real fuel and a 9.4 GW coal
+   shortfall; treating that as the better result is precisely the rule-1
+   failure mode. The remaining level residuals — MISO under-retiring
+   gas_ct/gas_cc/oil, PJM over-retiring coal depth against a 58.5 vs ≈ 92
+   $/kW-yr going-forward bar — are the **revenue lane's** (BLK-6/BLK-9, RD-4)
+   and are recorded here as open blockers, not parameters (rule 11/21).
+2. **The case is stronger than the audit states.** At post-W1 HEAD the legacy
+   rule's false-retire is **12.920 GW in MISO (vs 8.643 pre-W1)** and
+   **22.342 GW in PJM (vs 4.097 pre-W1, a 5.5× deterioration)**. FR-4's
+   evidence base was measured on a pre-Wave-1 tree and understates the defect.
+
+**Sign-off:** ☐ FLIP ☐ HOLD ☐ DEFER
+
+## 3. D-2 decision box — arm `entry_rate_limits` + `entry_commissioning_lag`
+
+**The audit's own bar (owner packet D-2): "arm the two dampers iff FFR-2B shows
+I4 green with the lag armed and I13/BLK-10 improved without new invariant
+failures."** Graded literally, on MISO T1-F 2026–2030 (§1.3):
+
+| condition | measured | verdict |
+|---|---|:--|
+| **I4 green with the lag armed** (the FR-13 test) | **PASS** — and the fix verified in code at `evolve.py:559` | ✅ **MET** |
+| **I13 improved** | PASS → PASS; **no cobweb existed in this window to remove** | ⚠️ **untested, not met** |
+| **BLK-10 improved** | cumulative **11,195.3 → 11,187.7 MW (−0.07 %)**; first wave 4,894 → 1,350 MW (−72 %) | ⚠️ **re-phased, not reduced** |
+| **no new invariant failures** | **I12 WARN → FAIL**; I7 failing years 1 → 3 | ❌ **NOT met** |
+
+### What the flip re-opens
+
+More than the packet anticipated. The packet expected "FC-2 (I13) verdicts and
+the BLK-10 backstop-sizing record; nothing else." Measured, it also re-opens
+**MISO's I7/I12 adequacy rows**: delaying entry by the cited 2-year COD lag and
+capping the backstop at the cited growth ladder leaves MISO short of its own
+adequacy requirement for 2026–2028 instead of 2026 alone.
+
+### Recommendation
+
+**ARM — but as a disclosed adequacy change, not a quiet damper, and score the
+two gates separately.**
+
+The reasoning is rule 1 [R-STRUCT] applied straight. Both mechanisms are
+identified constructions with zero free parameters (ReEDS 200 %-of-prior-max;
+LBNL "Queued Up" IA→COD median), and the invariant regressions are not the
+dampers inventing a shortfall — they are the dampers **ceasing to conceal
+one**. The base arm closes its 2027 adequacy gap by building **4,894 MW of
+gas_ct in a single year** in an ISO whose *actual* 2021–2025 gas_ct additions
+totalled **1.379 GW**. That build is not a physical option, so an I12 that
+passes because of it is passing on a fiction. Under rule 1 the mechanism stays
+in even though the gate goes red, and the red gate becomes the finding.
+
+What the owner is really deciding is therefore not "damper or no damper" but
+**"does MISO's forecast disclose a 2026–2028 adequacy shortfall or paper over
+it with an unbuildable CT wave."** Recommend disclosing.
+
+Three caveats to sign with:
+
+1. **`entry_rate_limits` does not fix BLK-10's magnitude on this evidence.**
+   Cumulative fired MW is invariant to 0.07 %. The packet's "2.5 → 1.103 GW"
+   is a *first-wave* figure; read cumulatively it is re-phasing. If the owner's
+   intent for D-2 was to shrink total backstop over-fire, **this arm does not
+   deliver it** — §1.4 shows that shrinkage comes from D-1 instead (PJM 8.652
+   → 3.258 GW, −62 %, from the smaller retirement wave the rule produces).
+   The two decisions act on different halves and should not be credited twice.
+2. **The anti-cobweb claim is untested**, not validated: I13 passed in both
+   arms, so this window contained no cobweb to damp.
+3. **`entry_vre_capacity_revenue` is unprobed** and remains separately
+   signable, exactly as the packet says. It changes entry economics (BLK-7
+   term c), not entry dynamics, and no evidence is offered here. **Do not sign
+   it on this session's evidence.**
+
+**Sign-off:** ☐ ARM BOTH ☐ ARM `entry_rate_limits` only ☐ ARM
+`entry_commissioning_lag` only ☐ HOLD ☐ DEFER · `entry_vre_capacity_revenue`:
+☐ separate probe first
+
+## 4. FH-4 cross-read (pack §0d item 3)
+
+**The question asked:** do the armed arms move the I6 single-year
+econ-retirement fraction, and in which direction?
+
+**Answer: yes — `pipeline` REDUCES I6 in both curve-ON ISOs, materially in PJM.**
+
+| leg | I6 worst single year | year | verdict (cap 20 %) |
+|---|--:|--:|:--|
+| MISO T1-H `legacy` | 9.06 % | 2023 | PASS |
+| MISO T1-H `pipeline` | **8.37 %** | 2024 | PASS |
+| PJM T1-H `legacy` | 12.68 % | 2023 | PASS |
+| PJM T1-H `pipeline` | **8.55 %** | 2024 | PASS |
+| MISO T1-F both arms | 0.00 % | — | PASS |
+| _FH-1 gate probe, ERCOT T1-FF base 2023 (reference, not re-run)_ | _26.8 %_ | _2025_ | _FAIL_ |
+
+Direction: **down**. PJM −4.13 pp (12.68 → 8.55 %, a **−33 % relative**
+reduction); MISO −0.69 pp. In both ISOs the concentration year also moves
+2023 → 2024, consistent with the measured per-fuel execution lags (coal = 3).
+
+**Three qualifications, stated so this is not over-read.**
+
+1. **Neither ISO I can measure ever FAILS I6, under either rule.** The worst
+   legacy value across both curve-ON ISOs is PJM's 12.68 %, comfortably inside
+   the cap. So this evidence shows `pipeline` moving I6 **in the right
+   direction**, but it **cannot demonstrate that `pipeline` converts a failing
+   I6 into a passing one** — the failing case is ERCOT's, and ERCOT is outside
+   this session's arms.
+2. **The single-year lumping SURVIVES the rule change.** In all four T1-H arms
+   the economic exits land in exactly **one** year (MISO 2023→2024, PJM
+   2023→2024) with zero in the other three. `pipeline` reduces *how much* is
+   lumped and shifts *when*, but it does not spread the wave. Since the legacy
+   consecutive-loss counters are removed entirely under `pipeline`, **the
+   concentration cannot be the counters' doing alone** — it survives their
+   removal. That points the root cause upstream of the decision rule, to the
+   screens all flipping on one common perfect-foresight margin path across an
+   over-supplied vintage fleet: exactly the **G-31 screen-grain** diagnosis
+   FH-1 §7 and the T1-X adjudication both named.
+3. **This does not lift the FH-4 block and is not offered as doing so.** FH-4's
+   `REQUIRES` demands FH-1's own gate re-probed and passing. FH-1's gate probe
+   was **not** re-run here (out of charter), and nothing above licenses a claim
+   about ERCOT's 26.8 %.
+
+**Routing (charter: name the owning lane, do not fix).** The evidence points at
+**two** lanes, not one, and they are separable:
+
+- **FF-1A R-NEW pipeline (owner D-1)** owns the *magnitude*. Flipping it is
+  measured here to cut the worst single-year fraction by a third in PJM, so it
+  is a real and probably necessary part of an FH-4 unblock — but on this
+  evidence it is **not demonstrated to be sufficient**, because a 33 % relative
+  cut applied to ERCOT's 26.8 % would land near ~18 %, i.e. inside the cap only
+  narrowly and only if the effect transfers, which rule 25 forbids assuming
+  across ISOs.
+- **G-31 screen grain** owns the *concentration*, and this session supplies new
+  evidence that it is the independent term: the lumping is invariant to
+  removing the counters. An FH-4 re-probe that flips only the rule and still
+  fails should be read as confirming G-31, not as refuting the rule.
+
+**Recommended sequencing for whoever owns the unblock:** flip D-1 first (it is
+independently justified by §2 and cuts the magnitude), then re-run FH-1's gate
+probe unchanged. If it still fails, the residual is G-31's by elimination, and
+the measurement above is the evidence for that attribution.
