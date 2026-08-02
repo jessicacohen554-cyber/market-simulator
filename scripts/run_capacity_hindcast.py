@@ -265,6 +265,9 @@ def build_config(
     correlated_forced_outage: bool = False,
     retirement_rule: str = "legacy",
     entry_screen_diagnostics: bool = False,
+    entry_vre_capacity_revenue: bool = False,
+    entry_rate_limits: bool = False,
+    entry_commissioning_lag: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -396,24 +399,22 @@ def build_config(
         # (the G-31 question). Measured frozen curves, zero fitted parameters
         # -- see scenarios.py:correlated_forced_outage.
         correlated_forced_outage=correlated_forced_outage,
-        # DELETED 2026-07-31 (FFR-1D, rule 26 — audit FR-15): the three FF-2A
-        # entry-stack CLI flags (--entry-vre-capacity-revenue /
-        # --entry-rate-limits / --entry-commissioning-lag), their build_config
-        # parameters and their run-summary entries. FF-3D (2026-07-18) had
-        # already dropped the passthrough because the ScenarioConfig fields did
-        # not exist, keeping the flags as "inert no-ops" — but the flags still
-        # WROTE their state into the bundle's meta, so a leg launched with
-        # --entry-rate-limits recorded `entry_rate_limits: true` on a solve that
-        # never armed it. An inert flag that falsifies the run record is worse
-        # than no flag; deleted means deleted.
-        #
-        # The ScenarioConfig fields themselves (entry_vre_capacity_revenue /
-        # entry_rate_limits / entry_commissioning_lag) DO exist now and ARE
-        # consumed (runner.py:733,746; new_entry.py:781,1104,1118) — they are
-        # the dormant FF-2A dampers awaiting owner decision D-2 (audit §3.3).
-        # A session that needs them on THIS harness wires the passthrough for
-        # real, one line each; it does not resurrect a flag that lies.
-        #
+        # FF-2A entry-stack dampers (GATED, default-off; audit FR-5 / owner
+        # decision D-2). History: FFR-1D deleted the three CLI flags on
+        # 2026-07-31 (rule 26) because FF-3D had dropped their passthrough while
+        # keeping the flags, so a leg launched with --entry-rate-limits recorded
+        # `entry_rate_limits: true` in its meta on a solve that never armed it —
+        # an inert flag that falsifies the run record. FFR-1D's own instruction
+        # for the successor was "a session that needs them wires the passthrough
+        # for real, one line each; it does not resurrect a flag that lies".
+        # FFR-2B (2026-08-02) is that session: the fields are consumed at
+        # runner.py:733,746 and new_entry.py:781,1104,1118, so each flag below
+        # now genuinely arms its mechanism and the meta it writes is true.
+        # Defaults stay False — no ScenarioConfig default moves here (rule 24;
+        # the flip is the owner's, executed at FFR-3A step 0).
+        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
+        entry_rate_limits=entry_rate_limits,
+        entry_commissioning_lag=entry_commissioning_lag,
         # RC-0C decision-neutral per-candidate entry-screen decomposition
         # (byte-identical fleet outcome; lands in evolution_<year>.json).
         entry_screen_diagnostics=entry_screen_diagnostics,
@@ -711,6 +712,39 @@ def main(argv: list[str] | None = None) -> int:
             "(entry_screen_diagnostics=True). Byte-identical fleet outcome."
         ),
     )
+    parser.add_argument(
+        "--entry-vre-capacity-revenue",
+        action="store_true",
+        help=(
+            "FF-2A item 1 PROBE arm (audit FR-5 / owner D-2): wind+solar entry "
+            "candidates earn capacity_price_per_firm_mw_yr x the published "
+            "ELCC credit at the model's own installed nameplate -- the SAME "
+            "price seam thermal entry uses. Structural no-op in energy-only "
+            "ISOs (capacity price 0). Never the harness default."
+        ),
+    )
+    parser.add_argument(
+        "--entry-rate-limits",
+        action="store_true",
+        help=(
+            "FF-2A item 2 PROBE arm (audit FR-5 / BLK-10): cap per-tech annual "
+            "economic entry AND the reserve-margin backstop at "
+            "ENTRY_GROWTH_LIMIT_MULTIPLE (2.0) x the prior-max annual build, "
+            "seeded from the measured EIA-860 record at the run's vintage "
+            "(ReEDS relative-growth constraint). Never the harness default."
+        ),
+    )
+    parser.add_argument(
+        "--entry-commissioning-lag",
+        action="store_true",
+        help=(
+            "FF-2A item 3 PROBE arm (audit FR-5 / FR-13): economic entry "
+            "decides in year Y and commissions at Y+ENTRY_COD_LAG_YEARS (2, "
+            "the LBNL 'Queued Up' IA->COD median); pending decided-not-online "
+            "MW net against later years' caps. The structural anti-cobweb. "
+            "Never the harness default."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -810,6 +844,9 @@ def main(argv: list[str] | None = None) -> int:
         correlated_forced_outage=args.correlated_forced_outage,
         retirement_rule=args.retirement_rule,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
+        entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
+        entry_rate_limits=args.entry_rate_limits,
+        entry_commissioning_lag=args.entry_commissioning_lag,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -877,6 +914,13 @@ def main(argv: list[str] | None = None) -> int:
         "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
         "correlated_forced_outage": bool(args.correlated_forced_outage),
         "entry_screen_diagnostics": bool(args.entry_screen_diagnostics),
+        # FF-2A dampers (FFR-2B): read from the SOLVED config, never from
+        # args — the FFR-1D defect was a meta entry sourced from a flag that
+        # armed nothing, so the record is taken from the object the solve
+        # actually ran on and cannot diverge from it.
+        "entry_vre_capacity_revenue": bool(config.entry_vre_capacity_revenue),
+        "entry_rate_limits": bool(config.entry_rate_limits),
+        "entry_commissioning_lag": bool(config.entry_commissioning_lag),
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "crossover": crossover,
