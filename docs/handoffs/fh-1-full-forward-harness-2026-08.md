@@ -207,8 +207,51 @@ FAIL — 25.6 % of prior thermal economically retired in a single forward year
 by 2025, adjudicated "a legacy-bin crossover-harness property, not the T1-F
 config."
 
-<!-- GATE RESULT FILLED POST-PROBE -->
-**RESULT: PENDING — filled below when the probe completes.**
+**RESULT: REPRODUCED — STOP-THE-LINE for Phase A (FH-4 must not start).**
+
+The run itself is mechanically clean — solved [2023, 2024, 2025], zero
+leakage-guard violations, both Arm R weather rebinds fired (2024/2025 log
+lines), the hydro shape/level pinned to the base ("ERCOT 2023 hydro budget"
+while building 2025), gas on `hindcast_realized` every year, freeze legality
+printed. The defect is the retirement layer, and it carries over exactly as
+§3.3 predicted:
+
+| Year | Prior thermal | Econ retired | I6 fraction |
+|---|---|---|---|
+| 2023 | 78.2 GW | 0.00 GW | 0.0 % |
+| 2024 | 78.2 GW | 0.00 GW | 0.0 % |
+| 2025 | 78.5 GW | **21.05 GW** | **26.8 %** — I6 FAIL (> 20 % cap) |
+
+Cumulative by 2025: 21.05 GW = 26.9 % of the initial vintage-2023 thermal
+fleet — vs the T1-X reference 25.6 %. The full FC-1 signature reproduces, not
+just I6: the registered invariant battery reads **I6 FAIL** (26.8 % single-year
+econ retirement), **I7 FAIL** (2025 thermal 57.5 GW < the retirement-bounded
+floor 78.5 GW), **I12 WARN** (reserve-margin band exits) — the same
+I6/I7/I12 triple `ff-t1-gate-2026-07.md` §4.2 adjudicated on the vintage-2023
+T1-X crossover.
+
+**Reading (rule 11 — root cause, not tuned):** the property follows the
+harness posture, not the input stack — Arm R feeds the screens *realized*
+weather/gas and the wave still fires entering 2025, once the two-consecutive-
+loss counters mature on the 2023/2024 perfect-foresight margins of an
+over-supplied vintage fleet (the s3/G-31 root cause, unchanged). It is
+therefore a **harness/screen-grain defect upstream of T1-FF**, exactly as the
+T1-X adjudication said ("a legacy-bin crossover-harness property, not the
+T1-F config"), now measured at the T1-FF posture. Nothing here is tuned in
+response; the open remediation lanes are the already-chartered ones (FF-1A
+R-NEW retirement pipeline / G-31 grain / FFR retirement-calibration lane).
+
+**Consequences:** (a) FH-4/Phase A is BLOCKED on an over-retiring harness —
+its REQUIRES line already demands this gate PASSED; the block stands until a
+retirement-lane fix lands and a re-probe passes. (b) The probe's dispatch-
+skill numbers (registered for the record: price gaps 2.1/54.0/2.3, fuel-mix
+gaps 9.8/13.6/28.1 vs keeper ercot149) are GATE CONTEXT ONLY — they must
+never be quoted as T1-FF skill, because 2024's price and 2025's fuel mix are
+dominated by the defect (2024 scarcity from the pre-wave tight fleet, 2025
+mix from the post-wave gutted one). (c) The probe is registered on the
+hindcast namespace (`ercot-2023-2025-t1ff-armr-fh1gate`, kind
+`full_forward`) with the failing invariants in its sidecar, so the record is
+the dashboard, not this prose.
 
 ## 8. Byte-identity attestation + deviations
 
@@ -240,7 +283,12 @@ this — deleted means deleted). Same event broke the pinned-default-key test
 (`tests/unit/pipeline/test_forecast_xyear_warmstart_flag.py::TestFieldRegistration::test_default_cache_key_unmoved`,
 pins `603c2498bf71d21d`) — **failing at origin/main today**, independent of
 FH-1. Both belong to the pending §W1-X cache-epoch bump (which this session
-was instructed not to take); the re-pin should land with that bump.
+was instructed not to take); the re-pin should land with that bump. A third
+pre-existing failure, unrelated:
+`tests/scoring/test_ff_readiness_battery.py::test_marker_state_reflects_committed_markers`
+still asserts PJM holds no marker, stale against PJM's 2026-07-31 `complete`
+declaration (both inputs untouched by FH-1; the battery/board refresh is
+FFR-3A's, per the pack's §0a item 5).
 
 **Scoped deviations from the letter of the prompt, with reasons (rule 11 —
 root cause, stated):**
