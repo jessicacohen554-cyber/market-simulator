@@ -12,6 +12,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -22,6 +23,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -50,6 +52,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "tsa_transfer_derate",
@@ -86,6 +89,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -96,6 +100,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "prose_only",
       "owning_rows": [
         {
           "row": "caiso_node_export_constraint",
@@ -132,6 +137,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -142,6 +148,7 @@
       "keeper_value": 0.523,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -168,6 +175,7 @@
       "keeper_value": 21,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -194,6 +202,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -204,6 +213,7 @@
       "keeper_value": 0.238,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -230,6 +240,7 @@
       "keeper_value": 2.0,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -256,6 +267,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -282,6 +294,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -308,6 +321,7 @@
       "keeper_value": 0.239,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -334,6 +348,7 @@
       "keeper_value": 13,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -360,6 +375,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -386,6 +402,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "st_gas_mustrun_p25",
@@ -436,6 +453,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -464,6 +482,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "import_hub_pricing",
@@ -500,6 +519,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -528,6 +548,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "nyiso_import_sil_retire",
@@ -560,6 +581,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
+      "coverage": "prose_only",
       "owning_rows": [
         {
           "row": "st_gas_mustrun_p25",
@@ -578,6 +600,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
+      "coverage": "prose_only",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -588,6 +611,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "nyiso_import_sil_retire",
@@ -635,6 +659,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -645,6 +670,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "prose_only",
       "owning_rows": [
         {
           "row": "lcr_tsl_published",
@@ -681,6 +707,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "nyiso_import_sil_retire",
@@ -728,6 +755,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -738,6 +766,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -748,6 +777,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -758,6 +788,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -768,6 +799,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "scr_edrp_dr",
@@ -804,6 +836,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -832,6 +865,7 @@
       "keeper_value": 500.0,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -860,6 +894,7 @@
       "keeper_value": 1.0,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -888,6 +923,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
+      "coverage": "prose_only",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": [
@@ -900,6 +936,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
+      "coverage": "absent",
       "owning_rows": [],
       "nyiso_cells": [],
       "armed_in_bundles": []
@@ -910,6 +947,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
@@ -946,6 +984,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "nysdec_peaker_rule_availability",
@@ -962,7 +1001,7 @@
       ]
     }
   ],
-  "nyiso_family_matrix_gaps": [
+  "nyiso_family_matrix_gaps_absent": [
     "nyiso_downstate_ct_gas_basis",
     "nyiso_downstate_ct_gas_daily",
     "nyiso_east_reserve_families",
@@ -988,6 +1027,32 @@
     "nyiso_scr_edrp_strike",
     "nyiso_spin_headroom_frac",
     "nyiso_synchronised_reserve"
+  ],
+  "nyiso_family_prose_only": [
+    "nyiso_firm_imports",
+    "nyiso_incity_commitment_obligation",
+    "nyiso_iroquois_winter_spread",
+    "nyiso_local_selfsupply",
+    "nyiso_spin_reserve_online"
+  ],
+  "armed_on_keeper_with_no_cell": [
+    "nyiso_downstate_ct_gas_daily",
+    "nyiso_firm_imports",
+    "nyiso_gas_bridge_cc_min_load_frac",
+    "nyiso_gas_bridge_cc_min_run_hours",
+    "nyiso_gas_bridge_ct_min_load_frac",
+    "nyiso_gas_bridge_ct_min_run_hours",
+    "nyiso_gas_bridge_da_horizon",
+    "nyiso_gas_bridge_min_run",
+    "nyiso_gas_bridge_st_min_load_frac",
+    "nyiso_gas_bridge_st_min_run_hours",
+    "nyiso_gas_bridge_startup",
+    "nyiso_hydro_reserve_eligible",
+    "nyiso_import_reconciliation",
+    "nyiso_local_selfsupply",
+    "nyiso_scr_edrp_reserve_eligible",
+    "nyiso_scr_edrp_strike",
+    "nyiso_spin_headroom_frac"
   ],
   "live_but_invisible": [
     {
