@@ -253,12 +253,22 @@ wave manager:
    gate opens for the ISO in question.
 2. **Gate conditions — ALL required, per ISO, evidence committed before the ask:**
    - **(a) Backcast calibration proof.** The ISO's backcast calibration is complete: a
-     designated full-span keeper (rule 16) on the calibration dashboard AND the ISO's
-     calibration-complete marker present (the same
-     `frontend/data/backcast/calibration-complete.json` object rule 22 keys on; a
-     withdrawn marker — e.g. NYISO, 2026-07-19 — closes this gate until
-     re-calibration). The model first proves it can reproduce reality where reality
-     is known.
+     designated full-span keeper (rule 16) on the calibration dashboard AND an entry for the
+     ISO in the **`complete` block** of `frontend/data/backcast/calibration-complete.json`
+     (the validation-tier block of the two-block marker structure, owner decision 2026-07-31
+     — the same object rule 22 keys on). The **`final`** (locked-test) block is **never
+     required for forecast work**: locked-test years are backcast holdout instruments, and no
+     forecast instrument reads them. A withdrawn or never-declared `complete` entry closes
+     this gate until the owner (re-)declares. The holdout spend freeze is orthogonal: it
+     suspends out-of-training solves, not the marker's role as calibration attestation, so an
+     active freeze does not by itself close gate (a). The model first proves it can reproduce
+     reality where reality is known.
+
+     *Gate (a) status under this text (owner decision D-5(a), signed 2026-08-02,
+     `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1): it reads as **met by three
+     ISOs — NEISO, NYISO, PJM** — the current membership of the `complete` block. Conditions
+     (b)–(d) still gate every full solve independently, and the holdout spend freeze still
+     gates every holdout spend.*
    - **(b) POC gates green.** The FF-2D T1 battery rubric verdict at the T1→T2 bar
      (FC-1 PASS, FC-2 no-FAIL, FC-3/FC-4 in-band, FC-6 green).
    - **(c) Worth-the-compute evidence.** The T1-X crossover input gap (FC-4) measured
