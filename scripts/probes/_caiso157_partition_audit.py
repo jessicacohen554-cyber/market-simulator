@@ -96,6 +96,57 @@ def audit_bundles(root: Path) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["iso", "timestamp", "mechanism"])
 
 
+def _load_meta(bundle: Path) -> dict | None:
+    """Return a bundle's ``meta.json``, or ``None`` when it is absent/unreadable."""
+    path = bundle / "meta.json"
+    if not path.is_file():
+        return None
+    try:
+        return json.loads(path.read_text())
+    except Exception:
+        return None
+
+
+def audit_keepers() -> pd.DataFrame:
+    """Return the same armed-vs-pinned check for each ISO's DESIGNATED keeper.
+
+    The bundle sweep answers "which runs were degraded"; this answers the
+    question that actually matters — "is any ISO's *current keeper* advertising
+    a mechanism that never ran". Resolves each ISO's keeper shard to its bundle
+    through the registry sidecar, so it reads exactly what the dashboard claims.
+    """
+    rows: list[dict] = []
+    for shard in sorted(Path("frontend/data/backcast/keepers").glob("*.json")):
+        if shard.name == "index.json":
+            continue
+        keeper = json.loads(shard.read_text())
+        iso, run_id = keeper.get("iso"), keeper.get("keeper")
+        sidecar = Path(f"frontend/data/backcast/registry/{run_id}.json")
+        if not sidecar.is_file():
+            rows.append({"iso": iso, "keeper": run_id, "state": "sidecar absent"})
+            continue
+        bundle = Path(json.loads(sidecar.read_text()).get("bundle", ""))
+        meta = _load_meta(bundle)
+        if meta is None:
+            rows.append({"iso": iso, "keeper": run_id, "state": "bundle absent"})
+            continue
+        pins = set(meta.get("shared_inputs") or {})
+        degraded = [
+            f"{flag} -> {pin}"
+            for flag, (field, pin) in _PARTITION_MECHANISMS.items()
+            if _armed(meta, field) and pin not in pins
+        ]
+        rows.append(
+            {
+                "iso": iso,
+                "keeper": run_id,
+                "state": "solved",
+                "degraded": "; ".join(degraded) if degraded else "none",
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def audit_seam_binding(bundle: Path) -> pd.DataFrame:
     """Count P1 hours whose total import sits at the fitted CAISO seam cap."""
     rows: list[dict] = []
@@ -191,6 +242,12 @@ def main() -> None:
             f"\n  DEGRADED: {len(degraded)} of {len(audit)} armed (bundle, mechanism) "
             f"pairs; ISOs affected: {sorted(degraded['iso'].dropna().unique().tolist())}"
         )
+
+    print()
+    print("=" * 78)
+    print("1b. The same check on each ISO's DESIGNATED KEEPER")
+    print("=" * 78)
+    print(audit_keepers().to_string(index=False))
 
     print()
     print("=" * 78)
