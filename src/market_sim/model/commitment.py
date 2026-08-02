@@ -618,6 +618,7 @@ def _apply_economic_bridges(
     p1_prices: np.ndarray | None,  # (n_zones, T)
     bridge_decommit: bool,
     surplus_floor_value: float,
+    min_load_frac_by_gen: np.ndarray | None = None,
 ) -> None:
     """Write the ≥min-down economic bridge floors, decommitting under surplus.
 
@@ -682,7 +683,14 @@ def _apply_economic_bridges(
             lmp = p1_prices[zone, s:e]
             over = floor_total[s:e] > absorb[s:e]
             lmp_eff = np.where(over, np.minimum(lmp, surplus_floor_value), lmp)
-            hold_cost = (mc_gap - float(np.mean(lmp_eff))) * min_load_frac * gap
+            # Per-unit min-load fraction when the caller identified the level
+            # per plant (miso-113); the class scalar otherwise.
+            frac_g = (
+                min_load_frac
+                if min_load_frac_by_gen is None
+                else float(min_load_frac_by_gen[g])
+            )
+            hold_cost = (mc_gap - float(np.mean(lmp_eff))) * frac_g * gap
             if startup_per_mw > hold_cost:
                 kept_idx.add(i)
             else:
@@ -710,6 +718,7 @@ def caiso_ra_mustoffer_min_gen(
     startup_lead_hours: np.ndarray | None = None,
     min_run_hours: np.ndarray | None = None,
     floor_online_hours: bool = False,
+    min_load_frac_by_gen: np.ndarray | None = None,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -935,10 +944,25 @@ def caiso_ra_mustoffer_min_gen(
             shares their D-2 attribution — same mechanism, wider WINDOW, so it
             EXTENDS rather than stacks (rule 19 [R-ONE-MECH]). Default False is
             byte-identical.
+        min_load_frac_by_gen: Optional ``(n_gen,)`` PER-UNIT minimum-load
+            fraction overriding the scalar ``min_load_frac`` row by row
+            (miso-113, ``ScenarioConfig.miso_coal_night_floor``). The scalar
+            is right where one measured statistic describes a whole class
+            (CAISO 0.26, ERCOT 0.574, NYISO's two per-class values); it is
+            not where the level is identified PER PLANT from that plant's own
+            meter, as MISO's regulated-coal within-run night level is
+            (``night_p50``, one value per plant). Calling the detector once
+            per plant would work — the NYISO per-class precedent — but at 26
+            plants it allocates 26 full ``(n_gen, T)`` floors to compose by
+            maximum; a per-unit vector is the same arithmetic in one pass.
+            A row whose entry is ``≤ 0`` is SKIPPED entirely (not floored),
+            which is how a caller scopes the mechanism to a subset of the
+            fleet without a class-name tuple. ``None`` (default) uses the
+            scalar for every row and is byte-identical.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
-        ``min_load_frac`` is non-positive.
+        ``min_load_frac`` is non-positive and no per-unit vector is given.
 
     Raises:
         ValueError: If ``startup_bridge`` (or ``startup_aware``) is True but
@@ -947,8 +971,17 @@ def caiso_ra_mustoffer_min_gen(
     """
     n_gen, T = p1_dispatch.shape
     floor = np.zeros((n_gen, T), dtype=float)
-    if min_load_frac <= 0.0:
+    if min_load_frac <= 0.0 and min_load_frac_by_gen is None:
         return floor
+    if min_load_frac_by_gen is not None:
+        min_load_frac_by_gen = np.asarray(min_load_frac_by_gen, dtype=float)
+        if min_load_frac_by_gen.shape != (n_gen,):
+            raise ValueError(
+                "caiso_ra_mustoffer_min_gen: min_load_frac_by_gen must have "
+                f"shape ({n_gen},), got {min_load_frac_by_gen.shape}"
+            )
+        if not np.any(min_load_frac_by_gen > 0.0):
+            return floor
     if (startup_bridge or startup_aware) and (p1_prices is None or base_mc is None):
         raise ValueError(
             "caiso_ra_mustoffer_min_gen: startup_bridge/startup_aware require "
@@ -978,6 +1011,19 @@ def caiso_ra_mustoffer_min_gen(
         # their own drag/startup mechanisms (one mechanism per phenomenon);
         # coal/nuclear/non-thermal have no gas commitment params.
         if gen.plant_group.endswith("_CHP") or gen.fuel_type not in fuel_types:
+            continue
+        # Per-unit minimum-load fraction (miso-113): a level identified from
+        # THIS plant's own meter, or the class scalar when no vector is given.
+        # A non-positive entry scopes the row out of the mechanism entirely —
+        # the caller's population gate, expressed as a level rather than as a
+        # class-name tuple (rule 18 [R-PHYSICS] keeps the ELIGIBILITY gate in
+        # _ra_bridge_unit_params below, on min-down/startup physics).
+        frac_g = (
+            min_load_frac
+            if min_load_frac_by_gen is None
+            else float(min_load_frac_by_gen[g])
+        )
+        if frac_g <= 0.0:
             continue
         resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
         if resolved is None:
@@ -1029,7 +1075,7 @@ def caiso_ra_mustoffer_min_gen(
             if is_bin
             else pmax[g]
         )
-        target_mw = min(min_load_frac * floor_pmax, pmax[g])
+        target_mw = min(frac_g * floor_pmax, pmax[g])
         zone = int(zone_idx[g])
         # MINIMUM-RUN EXTENSION (nyiso-87, ``min_run_hours``): a started unit
         # must stay online for at least its minimum run duration. The LP,
@@ -1133,7 +1179,7 @@ def caiso_ra_mustoffer_min_gen(
             # (MC − LMP) × min_load_frac × gap_hours. Averaged over the gap.
             mc_gap = float(np.mean(base_mc[g, end_prev:start_next]))
             lmp_gap = float(np.mean(p1_prices[zone, end_prev:start_next]))
-            hold_cost = (mc_gap - lmp_gap) * min_load_frac * gap
+            hold_cost = (mc_gap - lmp_gap) * frac_g * gap
             if startup_per_mw > hold_cost:
                 economic_bridges.append(
                     (g, end_prev, start_next, target_mw, startup_per_mw, zone, mc_gap)
@@ -1150,6 +1196,7 @@ def caiso_ra_mustoffer_min_gen(
         p1_prices,
         bridge_decommit,
         surplus_floor_value,
+        min_load_frac_by_gen=min_load_frac_by_gen,
     )
     return floor
 

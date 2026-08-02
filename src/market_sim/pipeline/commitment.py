@@ -892,6 +892,178 @@ def build_nyiso_gas_bridge_p1_prep(
     return _fleet_prep
 
 
+_MISO_NIGHT_FLOOR_SUPPLIES = ("prb", "subbituminous")
+
+
+def miso_coal_night_min_load_fracs(fleet: list) -> np.ndarray:
+    """Return the ``(n_gen,)`` per-unit night-floor min-load fractions for MISO.
+
+    The level leg of ``ScenarioConfig.miso_coal_night_floor`` (miso-113). For
+    each regulated PRB/subbituminous CAMPD tranche the entry is that PLANT's
+    own measured within-run night level NET of its own ``_mustrun`` band::
+
+        frac_p = max(0, night_p50_p - must_run_pct_p / 100)
+
+    ``night_p50`` is the frozen measured conduct input (p50 of plant load /
+    HSL over ONLINE hours h0-5, pooled 2023-2025, WP-3 loading-when-on) read
+    by :func:`data.fleet.campd_bins.coal_prb_committed_split_night` from
+    ``coal_prb_committed_split_MISO.csv``; ``must_run_pct`` is the plant's own
+    band, carried on the ``_committed`` tranche by ``bins_to_fleet``.
+
+    **Subtracting the band is the rule 19 [R-ONE-MECH] reconciliation, not an
+    adjustment.** The ``_mustrun`` tranche already occupies the bottom of the
+    plant's stack at a fuel-free bid, so a floor written at the raw
+    ``night_p50`` would deliver ``mustrun + night`` of forced output. Netting
+    it makes the plant's TOTAL floor exactly ``night_p50 x plant capacity``,
+    which is what the meter says. Merit order inside a plant (mustrun
+    fuel-free < committed discounted < econ < peak) makes the identity exact.
+
+    Every OTHER row is left at ``0.0``, which the detector reads as "not in
+    this mechanism" and skips — the population gate is expressed as a level,
+    so no class-name tuple is needed anywhere (rule 18 [R-PHYSICS] keeps the
+    eligibility gate on ``_ra_bridge_unit_params``' min-down/startup physics,
+    which admits only the ``_committed`` band).
+    """
+    from market_sim.data.fleet.campd_bins import coal_prb_committed_split_night
+    from market_sim.data.fleet.eia860 import eia860_selfcommit_scope_plants
+
+    night = coal_prb_committed_split_night("MISO")
+    out = np.zeros(len(fleet), dtype=float)
+    if not night:
+        return out
+    regulated = eia860_selfcommit_scope_plants()
+    for g, gen in enumerate(fleet):
+        if not getattr(gen, "is_campd_bin", False) or gen.fuel_type != "coal":
+            continue
+        if getattr(gen, "coal_supply", "") not in _MISO_NIGHT_FLOOR_SUPPLIES:
+            continue
+        code = int(getattr(gen, "plant_code", 0) or 0)
+        # Population = the regulated SELF-COMMITMENT set (who self-commits is
+        # a market-design fact, EIA-860 Regulatory Status / cost-of-service
+        # majority ownership), the same scope the take-or-pay discount uses.
+        if code not in regulated or code not in night:
+            continue
+        frac = float(night[code]) - float(getattr(gen, "must_run_pct", 0.0)) / 100.0
+        if frac > 0.0:
+            out[g] = frac
+    return out
+
+
+def _miso_coal_night_floor(
+    config,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` MISO regulated-coal night floor.
+
+    Runs the ISO-neutral detector (:func:`model.commitment.
+    caiso_ra_mustoffer_min_gen`) ONCE over the coal fleet with a PER-UNIT
+    min-load vector (:func:`miso_coal_night_min_load_fracs`), because MISO's
+    level is identified per plant rather than per class — the NYISO bridge's
+    per-class loop generalized to per-plant without allocating one full floor
+    array per plant.
+
+    Legs armed: the ercot141 ONLINE-HOURS leg (``floor_online_hours``) plus
+    the detector's unconditional physical restart bar (an idle gap shorter
+    than the unit's own min-down cannot be a real cycle). The economic
+    ``>=min-down`` startup leg is NOT armed: a gap at or beyond min-down is a
+    next-day decommit/re-offer decision, outside this mechanism's declared
+    rule-17 window (the detected committed run).
+
+    Returns ``None`` when no plant is in scope or the detector floors nothing.
+    """
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    fracs = miso_coal_night_min_load_fracs(fleet)
+    n_scoped = int((fracs > 0.0).sum())
+    if n_scoped == 0:
+        logger.info("MISO coal night floor: no plant in scope — inert")
+        return None
+    floor = caiso_ra_mustoffer_min_gen(
+        p0_dispatch,
+        fleet_arrays,
+        fleet,
+        0.0,  # unused: the per-unit vector supplies every level
+        fuel_types=("coal",),
+        floor_online_hours=True,
+        min_load_frac_by_gen=fracs,
+    )
+    if not np.any(floor > 0.0):
+        logger.info(
+            "MISO coal night floor: %d scoped tranches, detector floored "
+            "nothing (no P0 run) — inert",
+            n_scoped,
+        )
+        return None
+    # D-4 window evidence: with the online-hours leg armed a floored segment
+    # IS a committed block (runs and any sub-min-down gap between them fuse),
+    # so the segment-length distribution is the direct evidence that the
+    # declared window — the detected committed run — is what binds.
+    seg_lengths = [
+        e - s
+        for g in np.flatnonzero((floor > 0.0).any(axis=1))
+        for s, e in find_runs(floor[g] > 0.0)
+    ]
+    seg = np.array(seg_lengths) if seg_lengths else np.zeros(0)
+    logger.info(
+        "MISO coal night floor: %d scoped tranches, %d unit-hours floored "
+        "(%.3f TWh floor volume), %d committed blocks by length %s",
+        n_scoped,
+        int((floor > 0.0).sum()),
+        float(floor.sum()) / 1e6,
+        len(seg_lengths),
+        {
+            "<24h": int((seg < 24).sum()),
+            "24-168h": int(((seg >= 24) & (seg < 168)).sum()),
+            "168-720h": int(((seg >= 168) & (seg < 720)).sum()),
+            ">720h": int((seg >= 720).sum()),
+        },
+    )
+    return floor
+
+
+def build_miso_coal_night_floor_p1_prep(config, iso: str, fleet: list, fleet_arrays):
+    """Return a ``p1_fleet_prep`` hook for the MISO regulated-coal night floor.
+
+    The P1-native committed-state floor on MISO's regulated PRB/subbituminous
+    fleet (``ScenarioConfig.miso_coal_night_floor``, miso-113 — the successor
+    to the two REJECTED offer-side arms, ``coal_prb_committed_dispatchable``
+    (miso-111) and ``coal_prb_committed_split`` (miso-112)). Detector:
+    :func:`_miso_coal_night_floor`; D-2 attribution:
+    ``MECH_MISO_COAL_NIGHT_FLOOR``.
+
+    ``preserve_absorption=True``: MISO runs priced export sinks
+    (``miso_seam_export_limit`` / ``miso_seam_envelope_merit_cap``), and a
+    zeros-initialised floor otherwise collapses every ``pmin < 0`` sink's
+    lower bound to ``max(pmin, 0) = 0``, deleting the seam export outlet from
+    the scored P1 while P0 keeps it — the defect FINDING-caiso138 §D measured
+    on the CAISO corridor. Set from the start here rather than left to a
+    later re-gate: this mechanism has no keeper to shift underneath.
+
+    Returns ``None`` when the mechanism is off or the ISO is not MISO, so
+    every other path is byte-identical. ISO-exclusive with the CAISO, ERCOT,
+    NYISO and PJM P1-prep hooks by construction (each gates on its own ISO).
+    """
+    if not (getattr(config, "miso_coal_night_floor", False) and iso == "MISO"):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_MISO_COAL_NIGHT_FLOOR
+
+    def _fleet_prep(r0):
+        floor = _miso_coal_night_floor(config, fleet, fleet_arrays, r0.dispatch)
+        if floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays,
+            floor,
+            MECH_MISO_COAL_NIGHT_FLOOR,
+            preserve_absorption=True,
+        )
+
+    return _fleet_prep
+
+
 def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
 

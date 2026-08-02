@@ -513,6 +513,7 @@ def run_year(
     nyiso_incity_commitment_obligation: bool | None = None,
     nyiso_east_reserve_families: bool | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
+    miso_coal_night_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
     nyiso_gas_bridge_startup: bool | None = None,
@@ -1275,6 +1276,8 @@ def run_year(
         config = config.with_overrides(
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge
         )
+    if miso_coal_night_floor is not None:
+        config = config.with_overrides(miso_coal_night_floor=miso_coal_night_floor)
     if nyiso_gas_bridge_cc_min_load_frac is not None:
         config = config.with_overrides(
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
