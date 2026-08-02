@@ -178,43 +178,75 @@ much that matters: PJM 18.157 → **29.373 GW** (`pjm-2021-2025-cmc-legacy-ffr2b
 2026-08-02) and MISO 10.814 → **15.202 GW** (vs actual 15.227, −0.2 %) with no
 posture or rule change at all.
 
-### 3.1 This session's post-epoch paired legs — **NOT RUN**
+### 3.1 This session's post-epoch paired legs
 
-**No leg was solved in this session, and no run was registered.** The reason is
-environmental, not analytical: this container was cloned fresh, so `data/clean/`
-— the derived, gitignored curation layer every solve reads — was empty. Rebuilding
-it from `data/raw/` (`scripts/regenerate_clean.py`, ~50 datatypes over 6.2 GB of
-raw source) did not complete inside the session. The cache-epoch purge was
-verified a **no-op** on this checkout first (zero `year_*.parquet` anywhere under
-`results/`; every committed parquet is a backcast keeper hourly, which the epoch
-does not invalidate), so nothing was stale — there was simply no input tree.
+The container was cloned fresh, so `data/clean/` — the derived, gitignored
+curation layer every solve reads — had to be rebuilt from `data/raw/` first
+(`scripts/regenerate_clean.py`, 50 datatypes). The cache-epoch purge was verified
+a **no-op** on this checkout beforehand: zero `year_*.parquet` anywhere under
+`results/`, every committed parquet being a backcast keeper hourly, which the
+epoch does not invalidate. So every leg below is a **cold post-epoch solve**.
 
-The paired legs a successor session must run, with the exact commands:
+#### NEISO — `neiso-2021-2025-shipped-ffr2e` / `neiso-2021-2025-fixed-ffr2e`
+
+Cache keys `da53a89d26323710` (shipped) / `aaf627fc634d0012` (fixed); solved
+[2021, 2023, 2024, 2025], 2022 bridged; zero leakage-guard violations.
+
+**Economic retirements, MW, by year** (`_ffr2e_arm_diff.py`):
+
+| year | shipped | fixed | Δ |
+|--:|--:|--:|--:|
+| 2023 | 3,833.1 | **0.0** | +3,833.1 |
+| 2024 | 6,630.5 | **0.0** | +6,630.5 |
+| 2025 | 0.0 | 0.0 | 0 |
+| **total** | **10,464.6** | **0.0** | **+10,464.6** |
+
+The pre-epoch split (9.325 vs 0.002 GW) **survives the epoch and widens**:
+10.465 vs 0.000 GW. The fixed arm economically retires **nothing at all** across
+the whole window.
+
+It is not only retirements — the whole fleet path forks. By 2025 the shipped arm
+has taken gas_ct, gas_st and coal to **zero** and cut gas_cc 17,485 → 10,646 MW,
+reserve margin 0.538 → 0.025 in 2024, and then *compensates* with entry the fixed
+arm never builds: +1,500 MW economic thermal and +720 MW storage in 2025.
+
+**FC-3 scores — the arms fail in instructive, opposite ways:**
+
+| metric | shipped (curve) | fixed net-CONE | actual |
+|---|--:|--:|--:|
+| retire total GW | 10.465 (+10.0×) **FAIL** | 0.002 (−99.8 %) **FAIL** | 0.951 |
+| `unit_recall_gt300` | 1.00 **PASS** | 0.00 **FAIL** | — |
+| `false_retire` | 9.573 GW (91.5 % of model) **FAIL** | 0.0 **PASS** | — |
+| additions GW | 14.72 | 15.00 | 2.981 |
+| `add.by_tech` FAIL | wind, solar, gas_ct | wind, solar, gas_ct, **storage** | — |
+
+**Read the fixed arm's two PASSes carefully — both are vacuous.** It "passes"
+`false_retire` only because a model that retires nothing cannot false-retire, and
+it pays for that by **failing recall outright (0.00)**: it misses the one real
+>300 MW retirement entirely. The shipped arm finds it (recall 1.00) and over-fires
+around it. The shipped arm additionally **passes storage additions where the fixed
+arm fails** — the curve is what gives storage an RA value to enter on, exactly the
+mechanism FF-2C credited for MISO's first storage entry.
+
+So on NEISO the shipped posture is not merely the one production runs; it is the
+only arm that detects the real event at all. **Both still FAIL overall — no
+determination flips.**
+
+#### CAISO / PJM / MISO / PJM T0
+
+Not completed in session — see §4 and the report-back. The commands are:
 
 ```bash
-# NEISO + CAISO (light, may run concurrently — rule 12)
-for ARM in "shipped" "fixed --fixed-net-cone"; do :; done   # see below
-python scripts/run_capacity_hindcast.py --iso NEISO --fuel-variant realized \
-    --vintage 2020 --start-year 2021 --end-year 2025 \
-    --out-dir results/hindcast/neiso-2021-2025-shipped-ffr2e
-python scripts/run_capacity_hindcast.py --iso NEISO --fuel-variant realized \
-    --vintage 2020 --start-year 2021 --end-year 2025 --fixed-net-cone \
-    --out-dir results/hindcast/neiso-2021-2025-fixed-ffr2e
-# … same pair for CAISO, then PJM and MISO (each pair SEQUENTIAL, ~8.6 GB/leg,
-# and PJM never co-running with MISO)
+python scripts/run_capacity_hindcast.py --iso <ISO> --fuel-variant realized \
+    --vintage 2020 --start-year 2021 --end-year 2025 [--fixed-net-cone] \
+    --out-dir results/hindcast/<iso>-2021-2025-{shipped,fixed}-ffr2e
 ```
 
-Then per leg: `scripts/score_capacity_hindcast.py --bundle <out-dir>` →
-`scripts/forecast_verdict.py --tier t1h` → `scripts/register_forecast_run.py
---bundle <out-dir>`, and `scripts/probes/_ffr2e_arm_diff.py --shipped … --fixed …`
-for the fleet-path diff. **`--fixed-net-cone` did not exist before this session**,
-so the fixed arm was previously unreachable except by predating the flip.
-
-What §3.0's committed prior evidence *cannot* substitute for: it is pre-epoch,
-and FFR-2B's cold re-solve showed the epoch moves PJM by +62 % (18.157 →
-29.373 GW) with no posture change. The **direction and rough magnitude** of the
-posture effect are established by §2's exact seam arithmetic plus §3.0; the
-**post-epoch levels** are not.
+then `score_capacity_hindcast.py --bundle …` → `forecast_verdict.py --tier t1h`
+→ `register_forecast_run.py --bundle …`, plus `_ffr2e_arm_diff.py`. PJM and MISO
+pairs run **sequentially** (~8.6 GB/leg) and never co-run with each other.
+**`--fixed-net-cone` did not exist before this session**, so the fixed arm was
+previously unreachable except by predating the flip.
 
 ---
 
