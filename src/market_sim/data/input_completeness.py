@@ -135,7 +135,8 @@ def check_clean_partitions(config, iso: str) -> None:
     ]
     lines.append(
         "data/clean is derived and gitignored, so a fresh container starts "
-        "empty; regenerate the partitions this recipe consumes before solving. "
+        "empty; regenerate the partitions this recipe consumes before solving "
+        "(`python scripts/regenerate_clean.py` rebuilds the whole tree). "
         "(caiso-157: an absent partition re-armed a retired fitted import "
         "scalar across five keeper promotions — rules 20/24.)"
     )
