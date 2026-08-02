@@ -76,11 +76,17 @@ GAS_SERIES_FLAGS: dict[str, dict[str, bool]] = {
         "gas_seasonality": True,
     },
     # PJM keeper: --gas-monthly-actuals (its keeper passes it explicitly) +
-    # the mean-preserving daily HH shape. No citygate/basin hub overlay.
+    # the mean-preserving daily HH shape. No citygate/basin hub overlay. The
+    # zonal-basis flag mirrors the keeper (pjm-143b run_config
+    # pjm_zonal_gas_basis=true) and is required so ZONAL_BASIS_APPLIERS["PJM"]
+    # fires when :func:`derive_zonal_anchors` applies the runtime transform —
+    # it does not change ``_gas_series`` (the basis applies on the (n_gen, T)
+    # array, never the ISO series), so the ISO anchor is unchanged by it.
     "PJM": {
         "gas_seasonality": True,
         "gas_monthly_actuals": True,
         "gas_daily_shape": True,
+        "pjm_zonal_gas_basis": True,
     },
     # CAISO keeper: monthly actuals + the SoCal/PG&E Citygate hub-basis overlay
     # (the measured CA trading hub the marginal CC prices off) + daily shape.
@@ -143,36 +149,66 @@ def derive_anchor(iso: str) -> tuple[dict[int, float], float]:
 #: unit fuel IS the ISO series, so its single anchor is already identified at
 #: the grain the mechanism's own definition requires. Rule 25 — an entry here is
 #: that ISO's own measured basis table and never transfers.
-ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO"})
+ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM"})
+
+#: The subset of :data:`ZONAL_BASIS_ISOS` whose applier is the shared
+#: CAPACITY-WEIGHTED MEAN-ZERO core (``data.fuel.basis.meanzero``): the raw
+#: per-zone basis is re-centred by subtracting the GAS-CAPACITY-weighted mean
+#: over the fleet's gas rows, so the calibrated fleet-aggregate level is
+#: preserved and only the cross-zonal spread opens. For these ISOs the runtime
+#: transform depends on the solve's own per-zone gas capacity, so the zonal
+#: derivation must carry the SOLVE's fleet weights — supplied via
+#: ``--weights-bundle`` (the keeper bundle whose ``meta.json`` fleet recipe is
+#: rebuilt no-LP through ``scripts.lib.bundle_fleet.reconstruct_bundle_fleet``,
+#: the same reconstruction every no-LP pre-check uses). NYISO's applier is
+#: absolute (reference-zone-anchored offsets, no weighting), so its synthetic
+#: one-row-per-zone fleet measures the transform exactly and needs no bundle.
+CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM"})
 
 
 def derive_zonal_anchors(
     iso: str,
+    weights_bundle: Path | None = None,
 ) -> tuple[dict[str, dict[int, float]], dict[str, float]]:
     """Return ({zone: {year: delivered mean}}, {zone: anchor}) for ``iso``.
 
     The zone-resolved identification point of ``gas_offer_net_revenue_margin``.
     :func:`derive_anchor` reads ``_gas_series``, which is ISO-level: it carries
     the hub overlay but NOT the per-zone basis, which the solve applies later on
-    the ``(n_gen, T)`` array (``data.fuel.basis.nyiso.apply_nyiso_zonal_gas_basis``,
-    anchored so the REFERENCE zone is unchanged and every other zone shifts
-    down). So on an ISO with a zonal basis the single anchor is the reference
-    zone's level, while a unit outside that zone pays persistently less — and
-    ``apply_gas_offer_margin``'s ``markup_hr × (anchor − fuel)`` then hands that
-    unit a margin uplift the band multipliers were never calibrated to carry.
-    The mechanism's own identity — *at ``fuel == anchor`` the reformed offer
-    reduces EXACTLY to the registered band multiplier* — is a statement about a
-    unit's OWN delivered fuel, so the anchor has to be measured on the same
-    series that unit's fuel comes from.
+    the ``(n_gen, T)`` array. So on an ISO with a zonal basis the single anchor
+    is NOT the level every unit pays — and ``apply_gas_offer_margin``'s
+    ``markup_hr × (anchor − fuel)`` then hands units a margin shift their band
+    multipliers were never calibrated to carry. The mechanism's own identity —
+    *at ``fuel == anchor`` the reformed offer reduces EXACTLY to the registered
+    band multiplier* — is a statement about a unit's OWN delivered fuel, so the
+    anchor has to be measured on the same series that unit's fuel comes from.
+    Two applier conventions exist, with opposite defect geometry:
 
-    This applies the RUNTIME transform (never a re-derivation of it) to a
-    synthetic one-gas-row-per-zone fleet, so the zonal levels here are by
-    construction the levels the solve prices those units at.
+    * **NYISO** (``basis.nyiso.apply_nyiso_zonal_gas_basis``): absolute offsets
+      anchored so the REFERENCE zone is unchanged and every other zone shifts
+      strictly DOWN — the ISO anchor is the reference (maximum) level and the
+      defect is one-sided over-marking. The applier ignores capacity, so a
+      synthetic one-gas-row-per-zone fleet measures its transform exactly.
+    * **Capacity-weighted mean-zero** (:data:`CAPWEIGHTED_ZONAL_ISOS`; the
+      ``basis.meanzero`` core, PJM): each zone's measured basis has the
+      GAS-CAPACITY-weighted fleet mean subtracted, so the aggregate level is
+      preserved and the defect is TWO-SIDED — premium zones under-marked,
+      discount zones over-marked, centred on the ISO anchor. The transform
+      depends on the solve's own per-zone gas capacity, so ``weights_bundle``
+      (the keeper bundle) is REQUIRED: its per-year fleet is rebuilt no-LP via
+      ``scripts.lib.bundle_fleet.reconstruct_bundle_fleet`` and the runtime
+      applier is called on that real fleet.
+
+    Both paths apply the RUNTIME transform (never a re-derivation of it) to the
+    same delivered series the ISO anchor is derived from, so the zonal levels
+    here are by construction the levels the solve prices those units at.
 
     Rule-23 frozen derive, exactly like :func:`derive_anchor`: re-run ONLY when
     the underlying gas source data changes (``data/raw/gas-prices/`` workbooks,
-    the ISO hub-basis series, or the per-zone hub table), and cite that data
-    change in the re-derivation commit. NEVER because a price residual moved.
+    the ISO hub-basis series, the per-zone hub table, or — for a
+    capacity-weighted ISO — the keeper fleet recipe the weights are read from),
+    and cite that data change in the re-derivation commit. NEVER because a
+    price residual moved.
     """
     if iso not in ZONAL_BASIS_ISOS:
         raise SystemExit(
@@ -182,43 +218,98 @@ def derive_zonal_anchors(
             "(rule 25: never transfer another ISO's zonal table)"
         )
     from market_sim.config.iso_configs import get_iso_config
-    from market_sim.data.fleet import FleetArrays
     from market_sim.data.fuel._shared import _GAS_FUEL_IDX
     from market_sim.data.fuel.basis import ZONAL_BASIS_APPLIERS
 
     zone_names = list(get_iso_config(iso).zone_names)
-    n = len(zone_names)
-    gas_idx = int(sorted(_GAS_FUEL_IDX)[0])
     base = ScenarioConfig(
         iso=iso, mode="backcast", hours=HOURS_PER_YEAR, **GAS_SERIES_FLAGS[iso]
     )
     apply_basis = ZONAL_BASIS_APPLIERS[iso]
     by_zone: dict[str, dict[int, float]] = {z: {} for z in zone_names}
-    for year, hh in sorted(TRAIN_WINDOW_HH.items()):
-        cfg = base.with_overrides(gas_price_override=hh)
-        series = _gas_series(cfg, year, HOURS_PER_YEAR)
-        prices = np.repeat(series[None, :], n, axis=0)
-        # One synthetic gas row per zone: the applier keys only on
-        # ``fuel_type_idx`` and ``zone_idx``, so this measures its transform
-        # exactly as the solve applies it.
-        fleet = FleetArrays(
-            pmax=np.ones(n),
-            pmin=np.zeros(n),
-            heat_rate=np.full(n, 7.0),
-            vom=np.zeros(n),
-            emission_rate=np.zeros(n),
-            nox_rate=np.zeros(n),
-            so2_rate=np.zeros(n),
-            zone_idx=np.arange(n),
-            fuel_type_idx=np.full(n, gas_idx),
-            availability=np.ones((n, HOURS_PER_YEAR)),
-            unit_ids=[f"probe_{z}" for z in zone_names],
-            efficiency_bin=np.zeros(n, dtype=int),
-            plant_code=np.zeros(n, dtype=int),
-        )
-        apply_basis(prices, fleet, cfg, year)
-        for i, zone in enumerate(zone_names):
-            by_zone[zone][year] = float(np.nanmean(prices[i]))
+
+    if iso in CAPWEIGHTED_ZONAL_ISOS:
+        if weights_bundle is None:
+            raise SystemExit(
+                f"{iso}: its zonal-basis applier re-centres on the "
+                "GAS-CAPACITY-weighted fleet mean, so the runtime transform "
+                "depends on the solve's own fleet — pass --weights-bundle "
+                "<keeper bundle> so the per-year weights are the keeper's own "
+                "fleet build (reconstruct_bundle_fleet, no LP), never a "
+                "synthetic approximation"
+            )
+        from scripts.lib.bundle_fleet import reconstruct_bundle_fleet
+
+        for year, hh in sorted(TRAIN_WINDOW_HH.items()):
+            state, meta = reconstruct_bundle_fleet(
+                Path(weights_bundle), year, verbose=True
+            )
+            if meta.get("iso", "").upper() != iso:
+                raise SystemExit(
+                    f"--weights-bundle is a {meta.get('iso')} bundle, not {iso}"
+                )
+            fleet = state["fleet_arrays"]
+            rec_cfg = state["config"]
+            # The weights bundle must price gas exactly the way this recipe
+            # does — a drifted keeper gas recipe would identify the anchor on
+            # a series the solve never prices (the GAS_SERIES_FLAGS comment's
+            # contract, now checked instead of assumed).
+            for flag in GAS_SERIES_FLAGS[iso]:
+                if bool(getattr(rec_cfg, flag, False)) is not True:
+                    raise SystemExit(
+                        f"--weights-bundle does not arm {flag}, but the "
+                        f"registered {iso} delivered-series recipe does — "
+                        "re-align GAS_SERIES_FLAGS with the keeper before "
+                        "deriving (rule 24: the anchor is identified on the "
+                        "keeper's own delivered series)"
+                    )
+            cfg = base.with_overrides(gas_price_override=hh)
+            series = _gas_series(cfg, year, HOURS_PER_YEAR)
+            n_gen = int(fleet.pmax.shape[0])
+            prices = np.repeat(series[None, :], n_gen, axis=0)
+            apply_basis(prices, fleet, cfg, year)
+            gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
+            for i, zone in enumerate(zone_names):
+                rows = gas_rows[fleet.zone_idx[gas_rows] == i]
+                if rows.size == 0:
+                    raise SystemExit(
+                        f"{zone}: no gas rows in the {year} weights fleet — "
+                        "cannot read the zone's transformed delivered level"
+                    )
+                # Every gas row in a zone carries the same additive spread, so
+                # the first row IS the zone's transformed series.
+                by_zone[zone][year] = float(np.nanmean(prices[rows[0]]))
+            del state, prices
+    else:
+        from market_sim.data.fleet import FleetArrays
+
+        n = len(zone_names)
+        gas_idx = int(sorted(_GAS_FUEL_IDX)[0])
+        for year, hh in sorted(TRAIN_WINDOW_HH.items()):
+            cfg = base.with_overrides(gas_price_override=hh)
+            series = _gas_series(cfg, year, HOURS_PER_YEAR)
+            prices = np.repeat(series[None, :], n, axis=0)
+            # One synthetic gas row per zone: this ISO's applier keys only on
+            # ``fuel_type_idx`` and ``zone_idx`` (no capacity weighting), so
+            # this measures its transform exactly as the solve applies it.
+            fleet = FleetArrays(
+                pmax=np.ones(n),
+                pmin=np.zeros(n),
+                heat_rate=np.full(n, 7.0),
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=np.arange(n),
+                fuel_type_idx=np.full(n, gas_idx),
+                availability=np.ones((n, HOURS_PER_YEAR)),
+                unit_ids=[f"probe_{z}" for z in zone_names],
+                efficiency_bin=np.zeros(n, dtype=int),
+                plant_code=np.zeros(n, dtype=int),
+            )
+            apply_basis(prices, fleet, cfg, year)
+            for i, zone in enumerate(zone_names):
+                by_zone[zone][year] = float(np.nanmean(prices[i]))
     anchors = {z: float(np.mean(list(v.values()))) for z, v in by_zone.items()}
     return by_zone, anchors
 
@@ -308,6 +399,15 @@ def main() -> None:
         "per-zone delivered-gas basis; register in constants."
         "GAS_OFFER_MARGIN_ANCHOR_BY_ZONE, cite this script).",
     )
+    parser.add_argument(
+        "--weights-bundle",
+        default=None,
+        metavar="BUNDLE",
+        help="Keeper bundle whose per-year fleet supplies the gas-capacity "
+        "weights (REQUIRED with --by-zone for the capacity-weighted mean-zero "
+        "ISOs, e.g. results/calibration/pjm143_hy_level_B for PJM; rebuilt "
+        "no-LP via scripts.lib.bundle_fleet.reconstruct_bundle_fleet).",
+    )
     args = parser.parse_args()
     year_means, anchor = derive_anchor(args.iso)
     print(f"{args.iso} delivered-gas anchor derivation (train window):")
@@ -318,7 +418,10 @@ def main() -> None:
         "GAS_OFFER_MARGIN_ANCHOR_BY_ISO, cite this script)"
     )
     if args.by_zone:
-        by_zone, anchors = derive_zonal_anchors(args.iso)
+        by_zone, anchors = derive_zonal_anchors(
+            args.iso,
+            Path(args.weights_bundle) if args.weights_bundle else None,
+        )
         print(
             f"\n{args.iso} ZONE-resolved anchors (the same series with each "
             "zone's own measured basis applied — what its gas units pay):"
