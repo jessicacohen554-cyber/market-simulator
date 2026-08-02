@@ -2747,3 +2747,123 @@ cheap* that still under-runs is being held down by a floor, not by economics.
   The prereg was written first and the verdict went **against** the handoff's
   hypothesis — the direction contamination does not explain.
 * Next number: **miso-116.**
+
+## 2026-08-02 — miso-116: the `CC_CHP` overnight deficit is a **reporting-basis artifact** and its heat-rate half a **probe-flag artifact** — both miso-115 CHP results WITHDRAWN, the floor deriver audits CLEAN, NO SOLVE SPENT, keeper UNCHANGED
+Pre-registration (`results/calibration/PREREG-miso116-chp-floor-deriver-2026-08-02.md`)
+written and committed **before** any number was computed; probe
+`scripts/probes/_miso116_chp_floor_deriver_audit.py` (re-runnable, ~8 min, zero LP),
+transcript `results/calibration/PROBE-miso116-chp-floor-deriver-2026-08-02.txt`,
+finding `results/calibration/FINDING-miso116-chp-floor-deriver-2026-08-02.md`.
+
+### The verdict: BASIS-ARTIFACT
+
+| `CC_CHP`, h1–3 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| miso-115 `R_raw` (CAMPD **gross** ÷ model **grid-only**) | 2.156 | 2.246 | 2.555 |
+| **reproduced here (K3, exact)** | **2.156** | **2.246** | **2.555** |
+| `R_btm` (× (1 − btm), upper bound) | 1.065 | 1.125 | 1.237 |
+| **`R_basis` (basis-matched)** | **1.062** | **1.123** | **1.234** |
+
+Pre-registered band was `R_basis ∈ [0.80, 1.25]` in ≥2/3 years; it holds **3/3**,
+and on the parasitic-free upper bound too. `fleet/assembly.py:399–404` removes a
+cogen's BTM host self-supply **as capacity** (`grid_cap = nameplate × (1 − btm)`),
+never as a floor, and the bench closes the basis on the *actual* side
+(`_btm_frame`: `classFull = 923 total − BTM`). So `class_hourly.mw` is
+grid-facing only (K4, verified in code) while CAMPD `grossLoad` is whole-plant.
+Forced, not fitted: analytic `grid_cap` is **3,458 MW** against a CAMPD gross
+trough of 3,891/4,098/4,018 MW — the model could not have passed that comparison.
+
+### The floor's deriver is clean; its one real defect is small and elsewhere
+
+* **Q1** — not a per-prime-mover obligation. `derive_thermal_tranches` emits a
+  row only for a plant's **primary** group, and `chp_overrides` keys by
+  `plant_code` alone: **104 CHP rows over 104 plants, 0 with >1 row**. One pooled
+  per-plant CF, applied to every prime mover at that plant.
+* **Q2** — nothing to explain after the basis fix. The mis-apportionment is real
+  but lands on **17 plants / 2,284 of 11,593 MW = 19.7 % of CHP capacity**,
+  concentrated in `CT_CHP`/`ST_CHP` — both **VOID on miso-115's own K1 coverage
+  kill** and not quoted.
+* **Q3** — **no model-dependent term.** CAMPD p2 available-CF under the measured
+  outage overlay (20 rows), EIA-923 class CF (84), measured parasitic factors,
+  EIA-860 `Sector`, EIA-923 Schedule-8 shares. Nothing reads an LP price,
+  dispatch or residual: rule 13 `[R-MEASURED]`-admissible as constructed.
+* **K1 fired and is reported:** `CHP_BTM_PCT_BY_SECTOR["merchant"] = 35.0` is
+  self-documented as *"residual-identified … no independent source yet"* and
+  sizes **54.6 %** of MISO `CC_CHP` capacity. An unsourced constant (rule 5
+  `[R-NO-MAGIC]` / rule 21 `[R-DOF]`), not a model-dependent term. Split on it,
+  the sector-**sourced** 20.5 % runs `R_basis` 1.409/1.399/1.774 (≈0.3 GW, on an
+  apportioned denominator — a note, not a charter); merchant 0.973/1.052/1.095.
+
+### Q4 REFUTED — and the "23 % too cheap" number was never the keeper's
+
+A floor is a **lower** bound and cannot hold a class down; measured, `CC_CHP`
+runs at **45.5–52.8 % of its own `grid_cap` ceiling** with D-1 `profile_r`
+**0.989/0.987/0.967**. And `load_fleet_from_csv` defaults
+`measured_chp_heat_rates=False` while the keeper **arms** it — miso-115's
+`model_fleet()` omitted the flag:
+
+| MISO cap-weighted HR | `CC_CHP` | `CT_CHP` | `CT_PEAKER` |
+|---|---:|---:|---:|
+| flag **off** (what miso-115 §4 read) | 6.76 | 6.62 | 12.37 |
+| flag **on** (what the keeper solved) | **8.77** | **7.75** | 12.37 |
+
+Against miso-115's own measured CAMPD gross **8.83**, the keeper's rate is
+**8.77 — 0.7 %, not a 23 % discount**. Plant-matched over the 14 covered plants,
+full year: model **9.12** vs CAMPD gross **9.48**, ratio 1.056/1.054/1.032 — the
+right way up, since eGRID is net-denominated and CAMPD gross-denominated.
+**`CT_PEAKER` is unaffected** (the keeper does not arm `measured_ct_heat_rates`),
+so miso-115 §4's CT_PEAKER +9.9…+11.1 % error **stands as published**.
+
+### Withdrawn / stands
+
+**Withdrawn** (both miso-115, both probe artifacts, neither a model defect):
+§3's `CC_CHP` 2,086/2,274/2,446 MW deficit; §4's "priced 23 % too cheap … held
+down by its floor"; §6's named successor, whose premise does not exist. §3's
+~3 GW all-gas reconciliation is on the **same uncorrected basis** (model
+grid-only for CHP vs whole-plant CAMPD/EIA-930), so it does not size a hole
+either — no successor should inherit it as one.
+
+**Stands:** miso-115 §0–§2 (trough marginal unit NOT mis-specified;
+`CT_PEAKER`/`ST_GAS`/`CC_REGULAR` all reproduce), §4's `CT_PEAKER` pricing error,
+the `CT_CHP`/`ST_CHP` VOID status, and miso-114's decomposition.
+
+### Named successor + the durable lesson
+
+C7 `COAL_PRB` is still the keeper's one failing criterion and **three overnight-gas
+hypotheses have now closed without reaching it** (miso-114 seam, miso-115 marginal
+unit, miso-116 CHP). Best-identified remaining: **`measured_ct_heat_rates`**
+(matrix item 4, MISO `U`) on miso-115 §4's surviving `CT_PEAKER` error, worth
+$3.15/$2.45/$3.91 per MWh. **PR status checked and CORRECTED: #3140 is CLOSED,
+NOT MERGED** (2026-07-30; miso-115 recorded it as open). The successor is
+nonetheless **not** blocked on a re-derivation — MISO's
+`campd_ct_heat_rates_MISO.csv` **is on `main` and loadable** (86 entries, landed
+under PR #3217/neiso-71). The cell stays `U` because no merged MISO *result*
+exists; what is missing is the arm and its A/B, not the input. Then the 4
+plant-level `CC_CHP` HR outliers (52.7 % of matched capacity below 0.85× CAMPD).
+
+**Lesson for the lane:** both withdrawn results came from a probe reading the
+model side with a *different configuration than the keeper solved* — once on the
+reporting basis, once on a default-off flag — and neither was visible in the
+ratio. A probe scoring against a keeper should build its model side from that
+keeper's own `run_config.json`. miso-116's probe does; miso-115's probe now
+carries a docstring note pointing here, with its numbers left exactly as run.
+
+### Governance
+
+* **Rule 15** — no run produced; nothing to register.
+* **Rule 16** — no bundle; 2023–2025 audited in one pass.
+* **Rule 22** — 2023–2025 only; MISO holds no holdout marker, none touched.
+* **Rule 23** — no derive re-run; the §2 deriver defect is documented, not
+  patched against a residual.
+* **Rule 24** — every crosswalk is the repo's own (`states_for_iso`,
+  `_hour_index_8760`, `unit_family`, `chp_btm_pct`, `chp_pmin_cf`,
+  `chp_overrides`, `pooled_factor_map`).
+* **Rule 28 duty (b)** — `chp_steam_following` and `measured_chp_heat_rates`
+  MISO cells annotated in-session; **both keep `K`** (nothing armed, rejected or
+  promoted — the corrections are to the evidence, not to either mechanism).
+* **Contamination declared** — miso-114/115 and the CHP sources were read before
+  the prereg was written, so the session was **not** blind. K3 forced a
+  byte-level reproduction of miso-115's published figure before any correction
+  was allowed, and the verdict went **against** the handoff's framing (which
+  expected a mis-apportioned floor).
+* Next number: **miso-117.**
