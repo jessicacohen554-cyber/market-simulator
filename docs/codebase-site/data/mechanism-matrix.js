@@ -1351,6 +1351,11 @@ window.MECH_MATRIX = {
       def: "scenarios.py:4720", mode: "BF",
       cells: "UUUURU",
       note: "REFUTED for NYISO (Arm D, corroborated nyiso-86/87). Every keeper pins 0.0; a nonzero proposal anywhere needs its own derivation, not a residual fit." },
+    { id: "demand_growth_vintage", cat: "demand", name: "As-of demand-growth vintage (hindcast-forward T1-FF Arm K)",
+      def: "demand_growth_vintage (scenarios.py, default None; FH-2) -> constants.DEMAND_GROWTH_RATES_VINTAGES", mode: "F",
+      cells: "......", fc: "UUUUUU",
+      note: "FH-2 mechanism, hindcast-forward plan §4 row 6 (the second BLOCKER). DEMAND_GROWTH_RATES is derived from the 2025/2026 LTLF/Gold Book/CELT/IEPR editions, so every rate in it encodes the data-center boom (ERCOT mid near 8.5 %/yr); a T1-FF run launched from a 2021 or 2023 base that grows load on it is importing post-base information, not forecasting (+17.7 % over 2021->2023 against roughly +2 % actual). demand_growth_vintage addresses the same one mechanism (rule 19) at a base year instead: {as_of_year: {iso: {low|mid|high: {near, long}}}}, i.e. the rates the ISOs had actually published as of that base. Default None resolves the current table and is cache-neutral, so every existing run is byte-identical (default key 603c2498bf71d21d unmoved, five-config attestation in the findings doc). FAIL-CLOSED: an unknown vintage, or a vintage carrying no row for the run's ISO, RAISES at config build (resolve_demand_growth_table) — it never falls back to today's table, because that fallback IS the leak. The registry ships EMPTY at FH-2 (mechanism, resolver and tests only); FH-3 lands the per-ISO cited edition values, so every cell is U until an arm actually runs. Backcast cells are n/a: __post_init__ refuses a vintage in backcast mode, where demand is measured and never growth-scaled. Arm R (given-weather) is inert here — its growth spans are zero-year; this is the demand half of Arm K's as-known posture.",
+      ev: { E: "FH-2 (docs/handoffs/fh-2-as-of-driver-plumbing-2026-08.md §2)" } },
 
     /* ============ capacity (forecast lane) ============ */
     { id: "confirmed_exits", cat: "capacity", name: "Confirmed exits registry (step 0, instrument-gated)",
