@@ -886,6 +886,56 @@ class TestMarketDesignVintages(unittest.TestCase):
             places=6,
         )
 
+    def test_nyiso_2026_2027_vintage_reconciles_with_published(self):
+        # FFR-2C re-anchor. The generic anchor/cap-fraction loops above already
+        # cover this vintage; this pins the three things they do not — that
+        # hold-last moved off 2025-2026, that the anchor is the published
+        # Gross CONE − Net EAS identity (so a reindex_gross option has a real
+        # published offset to re-net), and that the shape is built from the
+        # published summer pair + the 12 % Demand Curve Length.
+        r = self._rows("NYISO", "2026-2027")
+        arv = self._scalar(r, "net_cone", area="NYCA")
+        gross = self._scalar(r, "gross_cone", area="NYCA")
+        self.assertAlmostEqual(arv, 57.70, places=2)
+        self.assertAlmostEqual(gross - arv, 74.24, places=2)  # published Net EAS
+        v = resolve_demand_curve_vintage("NYISO", 2026)
+        self.assertEqual(v.delivery_year, "2026-2027")
+        self.assertEqual(
+            resolve_demand_curve_vintage("NYISO", 2040).delivery_year, "2026-2027"
+        )  # hold-last moved forward off 2025-2026
+        self.assertAlmostEqual(v.net_cone_curve_per_kw_yr, arv, places=6)
+        ref = float(
+            r[(r.metric == "curve_point") & (r.area == "NYCA") & (r.season == "summer")]
+            .sort_values("point_index")
+            .y_value.iloc[0]
+        )
+        cap = self._scalar(r, "price_cap", area="NYCA", season="summer")
+        self.assertAlmostEqual(
+            v.demand_curve[0].price_frac_net_cone, cap / ref, places=6
+        )
+        self.assertAlmostEqual(v.demand_curve[1].reserve_ratio, 1.0, places=6)
+        self.assertAlmostEqual(v.demand_curve[2].reserve_ratio, 1.12, places=6)
+
+    def test_nyiso_vintage_is_inert_while_its_clearing_gate_is_off(self):
+        # Disclosure, asserted: NYISO is deliberately absent from the shipped
+        # capacity_market_clearing_by_iso map, so the seam prices the FIXED
+        # registry anchor and the 2026-2027 re-anchor changes no price in the
+        # shipped posture. If a future session adds NYISO to that map, this
+        # test fails and forces the flip to be argued explicitly.
+        from market_sim.config.scenarios import ScenarioConfig
+
+        shipped = ScenarioConfig().capacity_market_clearing_by_iso or {}
+        self.assertNotIn("NYISO", shipped)
+        design = MARKET_DESIGN["NYISO"]
+        off = SimpleNamespace(
+            capacity_market_clearing=False, capacity_market_clearing_by_iso=shipped
+        )
+        for pos in (0.7, 1.0, 1.3):
+            self.assertEqual(
+                design.capacity_price_per_firm_mw_yr(off, pos, iso="NYISO", year=2026),
+                design.net_cone_per_kw_yr * 1000.0,
+            )
+
     # ---- pricing-seam behavior ------------------------------------------
     def test_reference_year_equals_registry_default(self):
         # At each ISO's registry reference delivery year, the vintage override

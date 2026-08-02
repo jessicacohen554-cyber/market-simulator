@@ -63,3 +63,34 @@ Coverage is uneven by design, not oversight:
   instead. NYC (Zone J) and LI (Zone K) are unchanged across cycles. This is
   a genuine methodology change documented in NYISO's own filings, not a
   zone-mapping inconsistency in this file.
+
+**STATUS (2026-08-02 addition, FFR-2C — the FR-19 re-anchor).** Extended forward
+to **Capability Year 2026-2027**, the second annual update of the 2025-2029 DCR,
+which NYISO was required to post by its tariff deadline of 2025-11-30 (presented
+at the joint ICAPWG/MIWG/PRLWG session 2025-11-17). Source: the
+currently-live "Demand Curve Parameters CY 2026-2027" one-pager linked from the
+nyiso.com Installed Capacity Market page
+(`documents/20142/54740429/Demand-Curve-Parameters-CY-2026-2027.pdf`, sha256
+`713560dc6851e9d03e18c50c23c63520af8fe6ef67ad062c4e64700c981207cc`). This closes
+the NYISO row of the parent `../README.md` forward-vintage backlog, which FF-G3
+filed as NOT RETRIEVED — the document-library URL was simply not locatable then;
+it is reachable now from the ICAP market page.
+
+Identical sheet layout and identical representative zones to the 2025-2026 block
+(F-Capital → NYCA, G-Hudson Valley (Dutchess) → G-J, J → NYC, K → LI), so the
+two years are directly comparable. NYCA Annual Reference Value moves
+**50.55 → 57.70 $/kW-Year (+14.1 %)**, decomposing into Gross CONE
+127.71 → 131.94 (+3.3 %) and Net EAS Revenues 77.15 → 74.24 (−3.8 %) — i.e. most
+of the move is a smaller energy-and-ancillary offset, not construction cost.
+
+Two coverage notes, both deliberate:
+
+- **`gross_cone` rows are new with this vintage.** The 2026-2027 block carries
+  the published Gross Cost of New Entry alongside the Annual Reference Value, so
+  the E&AS offset (their difference, = the published Net EAS Revenues line) is
+  recoverable from the file. Earlier blocks were intaken before that need
+  existed and carry `net_cone` only; they are not backfilled here.
+- **No `irm` row for 2026-2027.** The Annual Reference Value one-pager does not
+  publish the IRM — that comes from the NYSRC IRM Study for the capability year,
+  which was not retrieved in this session. Left absent rather than carried
+  forward from the 2025-2026 study (24.4 %), per the no-guessing rule.
