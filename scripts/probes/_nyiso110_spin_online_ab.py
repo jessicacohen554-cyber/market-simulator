@@ -203,7 +203,7 @@ def main(argv: list[str] | None = None) -> int:
         ca, cc = _class_hourly(arm, y), _class_hourly(ctrl, y)
         cols = sorted(set(ca.columns) | set(cc.columns))
         de = {
-            c: round((ca.get(c, 0).sum() - cc.get(c, 0).sum()) / 1e6, 4)
+            c: round(float(ca.get(c, 0).sum() - cc.get(c, 0).sum()) / 1e6, 4)
             for c in cols
         }
         row["class_energy_delta_twh"] = {k: v for k, v in de.items() if abs(v) > 1e-4}

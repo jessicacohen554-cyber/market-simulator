@@ -1333,7 +1333,7 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED at nyiso-110 and ACTIVE behind its pre-registration**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
 
 **STATUS 2026-08-02 (nyiso-110).** The peak half is **DECOMPOSED, no LP**, on the
 keeper's own sidecars + NYISO's own posted AS prices
@@ -1362,9 +1362,28 @@ hours, confining the gate's bite to the peak and dissolving the recorded
 overnight-GT-forcing objection in the hours it fired in). Kill P1 is the
 pre-registered **C3a-2023 un-cancellation breach** (> +10 %); P4 re-kills on the
 nyiso-84 forcing signature; K3's liveness floor (500 dual-hours/yr) routes an
-under-forming arm to **INERT**, which would charter the nyiso-84 class-widening
-build with the arm as its control evidence.
+under-forming arm to **INERT**.
 `results/calibration/FINDING-nyiso110-peak-half-decomposition-2026-08-02.md`.
+
+**OUTCOME, same session (solved at the rebased HEAD; registered
+`2026-08-01-nyiso110-control-zerodelta` / `2026-08-02-nyiso110-spin-online-inert`):
+the arm is INERT by its own K3 rule** — reserve-dual hours identical to control
+(17/6/34 of 8,760), C3a +0.006 pp, swing shares unchanged to 3 dp; K2 = 0.0 MW
+(the ercot-150 landing is NYISO-inert). Root cause, corrected on the record
+(FINDING §10): the class-2 online gate is an **aggregate** ρ·output row that
+reserve-eligible hydro's own output (2–5 GW × ρ ≥ 0.5) keeps slack in every
+hour, with idle quick-start capacity still admissible per-gen — the E4 census
+had tested the per-gen headroom binder. The same arithmetic **refutes the
+nyiso-84 class-widening successor ex-ante** (widening only adds slack; excluding
+certified NYPA hydro would falsify real eligibility, rule 14). With reserve
+offers unpublished (rule 13/21), withholding a rule-19 stack, MIP forbidden and
+congestion G, **the in-LP reserve-formation family at NYISO is EXHAUSTED**:
+`diurnal_price_amplitude` NYISO **O → G** (the PJM/MISO no-build class). The
+peak half re-opens ONLY behind (i) the owner amplitude-criterion call — now
+carrying both the cancellation fact and this exhaustion — (ii) an owner-funded
+reserve-offer / sub-hourly data intake, or (iii) item 8's Robert Moses
+resolution (the separate energy-side hydro leg). Keeper unchanged; item 4 stays
+blocked (the candidate joint summer lever died with the arm).
 
 **STATUS CHANGE 2026-08-01 (nyiso-109).** NYISO recovers **NOT-YET -> CALIBRATED-WITH-CAVEATS**,
 and unlike nyiso-108 this promotion is the pre-registration's **OWN verdict** — every construction
