@@ -1,0 +1,468 @@
+{
+ "probe": "ercot-150 zone-resolved gas-offer margin anchor A/B",
+ "prereg": "results/calibration/PREREG-ercot150-zonal-margin-anchor-2026-08-02.md",
+ "arms": {
+  "A_control": "ercot150_control_A",
+  "B": "ercot150_zonalanchor_B",
+  "keeper": "ercot149_gas_event_cap_arm"
+ },
+ "construction_gates": {
+  "K1_flag_fidelity": {
+   "passed": true,
+   "A": {
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null
+   },
+   "B": {
+    "gas_offer_margin_zonal_anchor": true,
+    "gas_offer_margin_anchor_by_zone": {
+     "West": 1.9586,
+     "North": 2.7178,
+     "Northeast": 2.7178,
+     "Houston": 2.3111,
+     "South_Central": 2.7578,
+     "South": 3.2778
+    }
+   },
+   "registry": {
+    "West": 1.9586,
+    "North": 2.7178,
+    "Northeast": 2.7178,
+    "Houston": 2.3111,
+    "South_Central": 2.7578,
+    "South": 3.2778
+   },
+   "iso_anchor_A": 2.2494,
+   "iso_anchor_B": 2.2494,
+   "cc_committed_level_A": 10.354,
+   "cc_committed_level_B": 10.354
+  },
+  "K2_control_integrity": {
+   "passed": true,
+   "basis": "scorecard (gate); byte basis reported below",
+   "keeper_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "FAIL",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "control_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "FAIL",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "keeper_determination": "NOT-YET",
+   "control_determination": "NOT-YET",
+   "byte_basis_identical": false,
+   "byte_basis_by_year": {
+    "2023": {
+     "max_abs_diff_mw": 2201.437988,
+     "max_by_class_mw": {
+      "CC_CHP": 158.4666,
+      "CC_REGULAR": 2201.438,
+      "COAL_LIGNITE": 718.1599,
+      "COAL_PRB": 596.0,
+      "CT_CHP": 94.3011,
+      "CT_PEAKER": 485.2117,
+      "OTHER": 0.0,
+      "ST_CHP": 2.7089,
+      "ST_GAS": 485.3667,
+      "biomass": 0.0,
+      "hydro": 243.81,
+      "nuclear": 0.0,
+      "oil": 4.1614,
+      "solar": 1278.1602,
+      "wind": 831.9004
+     }
+    },
+    "2024": {
+     "max_abs_diff_mw": 3532.440918,
+     "max_by_class_mw": {
+      "CC_CHP": 280.0391,
+      "CC_REGULAR": 1047.1641,
+      "COAL_LIGNITE": 845.2029,
+      "COAL_PRB": 1177.7573,
+      "CT_CHP": 67.6008,
+      "CT_PEAKER": 609.5676,
+      "OTHER": 0.0,
+      "ST_CHP": 4.1077,
+      "ST_GAS": 647.7573,
+      "biomass": 0.0,
+      "hydro": 120.9,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 3532.4409,
+      "wind": 2272.3926
+     }
+    },
+    "2025": {
+     "max_abs_diff_mw": 2983.029297,
+     "max_by_class_mw": {
+      "CC_CHP": 294.9316,
+      "CC_REGULAR": 1838.3799,
+      "COAL_LIGNITE": 1310.0511,
+      "COAL_PRB": 1245.8171,
+      "CT_CHP": 86.4761,
+      "CT_PEAKER": 790.2805,
+      "OTHER": 0.0,
+      "ST_CHP": 8.0728,
+      "ST_GAS": 669.6006,
+      "biomass": 0.0,
+      "hydro": 9.6,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 2983.0293,
+      "wind": 1327.9336
+     }
+    }
+   }
+  },
+  "K3_liveness": {
+   "passed": true,
+   "by_year": {
+    "2023": {
+     "max_abs_class_hour_mw": 1073.399902,
+     "max_abs_zone_price_delta": 0.356273,
+     "waha_zone_deltas_REPORTED": {
+      "West": 0.356273,
+      "Panhandle": 0.322039
+     },
+     "A_lw_price": 42.7607,
+     "B_lw_price": 43.2064,
+     "delta_system_lw_price_REPORTED": 0.4457,
+     "passed": true
+    },
+    "2024": {
+     "max_abs_class_hour_mw": 1457.588379,
+     "max_abs_zone_price_delta": 0.304478,
+     "waha_zone_deltas_REPORTED": {
+      "West": 0.304141,
+      "Panhandle": 0.254641
+     },
+     "A_lw_price": 30.915,
+     "B_lw_price": 31.2443,
+     "delta_system_lw_price_REPORTED": 0.3293,
+     "passed": true
+    },
+    "2025": {
+     "max_abs_class_hour_mw": 1431.779785,
+     "max_abs_zone_price_delta": 0.318744,
+     "waha_zone_deltas_REPORTED": {
+      "West": 0.318289,
+      "Panhandle": 0.241042
+     },
+     "A_lw_price": 32.6674,
+     "B_lw_price": 33.0064,
+     "delta_system_lw_price_REPORTED": 0.339,
+     "passed": true
+    }
+   },
+   "thresholds": {
+    "mw": 50.0,
+    "zonal_price": 0.1
+   }
+  },
+  "K4_single_delta": {
+   "passed": true,
+   "differing_keys": [
+    "gas_offer_margin_anchor_by_zone",
+    "gas_offer_margin_zonal_anchor"
+   ]
+  },
+  "K5_year_span": {
+   "passed": true,
+   "spans": {
+    "A": [
+     2023,
+     2024,
+     2025
+    ],
+    "B": [
+     2023,
+     2024,
+     2025
+    ]
+   }
+  }
+ },
+ "k6_dropped": "nyiso-109's K6 direction-integrity gate stays DROPPED: ERCOT's applier is a capacity-weighted mean-zero spread plus a flat measured EP level correction \u2014 a two-sided spread on a one-sided level, neither of which admits a one-sided gate; direction is REPORTED, never gated",
+ "kill_gates": {
+  "available": true,
+  "P1_free_class": {
+   "passed": true,
+   "A_free": {
+    "pass": 12,
+    "total": 12
+   },
+   "B_free": {
+    "pass": 12,
+    "total": 12
+   },
+   "A_all": {
+    "pass": 16,
+    "total": 16
+   },
+   "B_all": {
+    "pass": 16,
+    "total": 16
+   }
+  },
+  "P2_no_new_fail": {
+   "passed": true,
+   "criterion_grain_passed": true,
+   "A_fails": [
+    "price_mean",
+    "price_shape",
+    "price_tail",
+    "shape"
+   ],
+   "B_fails": [
+    "price_mean",
+    "price_shape",
+    "price_tail",
+    "shape"
+   ],
+   "row_grain_passed": true,
+   "rows_flipped_pass_to_fail": []
+  },
+  "P3_protective": {
+   "passed": true,
+   "B": {
+    "governance": "PASS",
+    "forced_share": "PASS"
+   },
+   "note": "shape (C7) is a control FAIL at ERCOT \u2014 covered by P2's row grain, not required PASS here"
+  },
+  "P4_slack_dump_zero": {
+   "passed": false,
+   "by_year": {
+    "2023": {
+     "A": [
+      3478.923,
+      0.0
+     ],
+     "B": [
+      3479.894,
+      0.0
+     ]
+    },
+    "2024": {
+     "A": [
+      1114.605,
+      0.0
+     ],
+     "B": [
+      1115.516,
+      0.0
+     ]
+    },
+    "2025": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    }
+   }
+  },
+  "P5_no_fitted_followup": {
+   "passed": true,
+   "note": "declarative: the zone anchors are the derive script's own output (keeper-fleet weights, runtime applier) and were never swept (rule 23)"
+  }
+ },
+ "reported_never_a_kill": {
+  "anchor_table": {
+   "West": 1.9586,
+   "North": 2.7178,
+   "Northeast": 2.7178,
+   "Houston": 2.3111,
+   "South_Central": 2.7578,
+   "South": 3.2778
+  },
+  "zones_above_iso_anchor": [
+   "Houston",
+   "North",
+   "Northeast",
+   "South",
+   "South_Central"
+  ],
+  "zones_below_iso_anchor": [
+   "West"
+  ],
+  "zonal_direction_REPORTED": {
+   "2023": {
+    "delta_by_zone": {
+     "Houston": 0.356267,
+     "North": 0.356267,
+     "Northeast": 0.241109,
+     "Panhandle": 0.322039,
+     "South": 0.356267,
+     "South_Central": 0.356267,
+     "West": 0.356273
+    },
+    "above_zone_mean": 0.333235,
+    "below_zone_mean": 0.356273,
+    "offer_side_sign_agreement": "5/6"
+   },
+   "2024": {
+    "delta_by_zone": {
+     "Houston": 0.30444,
+     "North": 0.30444,
+     "Northeast": 0.198927,
+     "Panhandle": 0.254641,
+     "South": 0.304478,
+     "South_Central": 0.30444,
+     "West": 0.304141
+    },
+    "above_zone_mean": 0.283345,
+    "below_zone_mean": 0.304141,
+    "offer_side_sign_agreement": "5/6"
+   },
+   "2025": {
+    "delta_by_zone": {
+     "Houston": 0.318367,
+     "North": 0.318367,
+     "Northeast": 0.263582,
+     "Panhandle": 0.241042,
+     "South": 0.318744,
+     "South_Central": 0.318367,
+     "West": 0.318289
+    },
+    "above_zone_mean": 0.307485,
+    "below_zone_mean": 0.318289,
+    "offer_side_sign_agreement": "5/6"
+   }
+  },
+  "class_twh_delta_top": {
+   "2023": {
+    "COAL_PRB": 0.35040000081062317,
+    "CC_REGULAR": -0.30219998955726624,
+    "CC_CHP": -0.11620000004768372,
+    "ST_GAS": 0.04540000110864639,
+    "CT_PEAKER": 0.029999999329447746,
+    "CT_CHP": -0.014800000004470348,
+    "COAL_LIGNITE": 0.010999999940395355,
+    "solar": -0.000699999975040555
+   },
+   "2024": {
+    "COAL_PRB": 0.3752000033855438,
+    "CC_REGULAR": -0.26980000734329224,
+    "CC_CHP": -0.1315000057220459,
+    "CT_PEAKER": 0.05169999971985817,
+    "CT_CHP": -0.034699998795986176,
+    "COAL_LIGNITE": 0.011900000274181366,
+    "ST_GAS": 0.004000000189989805,
+    "solar": 0.00019999999494757503
+   },
+   "2025": {
+    "CT_PEAKER": -0.19670000672340393,
+    "CC_REGULAR": 0.13030000030994415,
+    "COAL_PRB": 0.11540000140666962,
+    "CC_CHP": -0.09629999846220016,
+    "ST_GAS": 0.08640000224113464,
+    "CT_CHP": -0.04639999940991402,
+    "COAL_LIGNITE": 0.016100000590085983,
+    "solar": -0.0006000000284984708
+   }
+  },
+  "criteria_from_calibration_verdict": {
+   "keeper": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "FAIL",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "A_control": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "FAIL",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "B_arm": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "FAIL",
+    "price_tail": "FAIL",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   }
+  },
+  "determination": {
+   "keeper": "NOT-YET",
+   "A_control": "NOT-YET",
+   "B_arm": "NOT-YET"
+  },
+  "grade_summary": {
+   "keeper": {
+    "scored": 9,
+    "target_grade": 5,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 4
+   },
+   "A_control": {
+    "scored": 9,
+    "target_grade": 5,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 4
+   },
+   "B_arm": {
+    "scored": 9,
+    "target_grade": 5,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 4
+   }
+  },
+  "free_class_headline": {
+   "keeper": "C1 all 16/16 \u00b7 free 12/12",
+   "A_control": "C1 all 16/16 \u00b7 free 12/12",
+   "B_arm": "C1 all 16/16 \u00b7 free 12/12"
+  },
+  "price_tail_detail": {
+   "keeper": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "FAIL"
+   },
+   "A_control": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "FAIL"
+   },
+   "B_arm": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "FAIL"
+   }
+  }
+ }
+}
