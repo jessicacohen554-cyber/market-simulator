@@ -205,6 +205,75 @@ the ONLY difference is `retirement_rule`. Bundles
 - **CO₂ improves as a by-product**, +14 % → +7 %, crossing back inside the
   ±10 % band — consistent with retiring the right fuel.
 
+### 1.3 MISO T1-F 2026–2030 — the entry dampers (D-2)
+
+Both arms solved cold, 5 solve-years, shipped forecast posture. The armed arm
+adds `retirement_rule=pipeline` + `entry_rate_limits` + `entry_commissioning_lag`
+(the `entry_vre_capacity_revenue` leg is **not** armed — the owner packet makes
+it separately signable, so it needs its own probe row). Runs
+`miso-2026-2030-ffr2b-t1f-base` / `-dampers`.
+
+**Thermal entry by source (MW), the BLK-10 row:**
+
+| year | BASE economic | BASE backstop | BASE renew | ARMED economic | ARMED backstop | ARMED renew |
+|---|--:|--:|--:|--:|--:|--:|
+| 2026 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2027 | **3,000** (gas_cc) | **4,894.1** | **4,000** (wind) | 0 | **1,349.8** | 0 |
+| 2028 | 0 | 222.6 | 0 | 0 | 2,699.6 | 0 |
+| 2029 | 0 | 3,455.6 | 0 | **3,000** (gas_cc) | **5,240.6** | **4,000** (wind) |
+| 2030 | 0 | 2,623.1 | 0 | 0 | 1,897.7 | 0 |
+| **total** | 3,000 | **11,195.3** | 4,000 | 3,000 | **11,187.7** | 4,000 |
+
+**Invariants:**
+
+| invariant | BASE | ARMED |
+|---|:--|:--|
+| **I4 capacity accounting** | PASS | **PASS** ← the FR-13 latent-defect test |
+| I6 econ-retire sanity | PASS (0.0 % every year) | PASS (0.0 % every year) |
+| I13 cobweb | PASS | PASS |
+| I7 reliability floor | FAIL — 2026 only | FAIL — **2026, 2027, 2028** |
+| I12 reserve-margin band | **WARN** — 2026 only (5.3 %) | **FAIL** — 2026 (5.3 %), 2027 (5.2 %), 2028 (6.5 %) |
+
+**Readings.**
+
+- **E5 CONFIRMED — I4 stays PASS with the commissioning lag armed.** FR-13's
+  predicted failure ("I4 fails by the commissioned MW in every COD year") does
+  **not** occur. The mechanism is verified in code as well as in the run:
+  `capacity_evolution/evolve.py:559` snapshots the additions-recorder baseline
+  `_pre_commission_ids` **before** the step-4.5 commissioned insert, so
+  commissioned units land in the step-5 `thermal_additions` diff, while the
+  decision-grain baseline `_pre_entry_ids_all` stays post-4.5 so nothing
+  double-counts at COD. **FFR-1A's fix holds; the FR-5 precondition is met.**
+- **E7 is only HALF met, and the half that fails is the important one.** The
+  rate limit does **not** reduce the backstop's magnitude — cumulative fired MW
+  is 11,195.3 → 11,187.7, a **−0.07 % change, i.e. invariant**. What it changes
+  is the *concentration*: the first-wave burst is cut **4,894.1 → 1,349.8 MW
+  (−72 %)** and the deficit is deferred into 2028–2029. The measured ladder is
+  exactly the cited construction working as specified — MISO's EIA-860 gas_ct
+  seed is 0.742 GW/yr, so the 2027 cap is 2.0 × 0.742 = **1.484 GW** (fired
+  1.350), and the cap then doubles endogenously each year as the model's own
+  builds raise the prior max (1,349.8 → 2,699.6 → 5,240.6 ≈ ×2 each step).
+  **Correction of the record for the owner:** FF-2A's "2.5 → 1.103 GW" is a
+  *first-wave* number and was read in the packet as a sizing fix; measured
+  cumulatively at post-W1 HEAD on MISO it is a **re-phasing, not a reduction**.
+- **The COD lag does exactly what it is built to do.** The identical economic
+  package (3,000 MW gas_cc + 4,000 MW wind) moves from COD 2027 to COD 2029 —
+  a clean +2-year shift matching `ENTRY_COD_LAG_YEARS = 2` (LBNL IA→COD median).
+- **The dampers make near-term adequacy WORSE, and this is the load-bearing
+  cost the owner must price.** I12 goes **WARN → FAIL** and I7's failing set
+  goes from one year to three. Mechanically this is not a defect of the
+  dampers: it is the undamped backstop's instantaneous full-deficit rebuild
+  that was concealing the shortfall — MISO's *actual* 2021–2025 gas_ct
+  additions were 1.379 GW total, so a 4.9 GW single-year CT build is not a
+  physical option and the base arm's 2027 "recovery" is an artifact. Under
+  rule 1 the damped arm is the structurally faithful one and the new I7/I12
+  failures are a **disclosed adequacy shortfall, not a regression to tune
+  away**. But it is a real change in what the MISO forecast board will show,
+  and D-2 should be signed with that in view rather than discovered afterwards.
+- **I13 PASSES in both arms**, so this 5-year MISO window does not reproduce
+  the FC-2 cobweb the audit cites; the anti-cobweb claim for the COD lag is
+  **not tested here** (no cobweb to remove). Reported as untested, not as a win.
+
 ## 2. D-1 decision box
 
 _(populated after the legs land)_
