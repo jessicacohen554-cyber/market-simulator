@@ -27,46 +27,86 @@
      }
     ]
    },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
     "gating_rows": [
-     { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" }
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
     ]
    },
-   "FC-8": { "status": "PASS" }
+   "FC-8": {
+    "status": "PASS"
+   }
   }
  },
  "ercot-t1f": {
   "tier": "t1f",
   "iso": "ERCOT",
   "determination": "HOLD",
-  "reasons": [ "FC-1 structural integrity (I1-I14) FAIL" ],
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL"
+  ],
   "categories": {
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I3']: I3: 2027: slack 0.03% of load; 2028: slack 0.02% of load; 2029: slack 0.01% of load; 2030: slack 0.02% of load" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I3']: I3: 2027: slack 0.03% of load; 2028: slack 0.02% of load; 2029: slack 0.01% of load; 2030: slack 0.02% of load"
+     }
     ]
    },
    "FC-2": {
     "status": "CAVEAT",
     "gating_rows": [
-     { "row": "row1", "status": "CAVEAT", "detail": "reserve-margin band (I12 WARN): scalar floor [13.8%, 28.7%]; out: 2030:12.6% (band [13.8%, 28.7%])" }
+     {
+      "row": "row1",
+      "status": "CAVEAT",
+      "detail": "reserve-margin band (I12 WARN): scalar floor [13.8%, 28.7%]; out: 2030:12.6% (band [13.8%, 28.7%])"
+     }
     ]
    },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "PASS" }
+   "FC-8": {
+    "status": "PASS"
+   }
   }
  },
  "ercot-t1x": {
@@ -82,53 +122,103 @@
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I12', 'I6', 'I7']: I12: scalar floor [13.8%, 28.7%]; out: 2024:29.5%, 2025:11.3%, 2026:7.0%, 2027:10.5%; I6: 2025: 25.6% of thermal retired in one year; I7: 2025: thermal 58121 < retirement-bounded floor 78171 MW" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I6', 'I7']: I12: scalar floor [13.8%, 28.7%]; out: 2024:29.5%, 2025:11.3%, 2026:7.0%, 2027:10.5%; I6: 2025: 25.6% of thermal retired in one year; I7: 2025: thermal 58121 < retirement-bounded floor 78171 MW"
+     }
     ]
    },
    "FC-2": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "row1", "status": "FAIL", "detail": "reserve-margin band (I12 FAIL): scalar floor [13.8%, 28.7%]; out: 2024:29.5%, 2025:11.3%, 2026:7.0%, 2027:10.5%" }
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): scalar floor [13.8%, 28.7%]; out: 2024:29.5%, 2025:11.3%, 2026:7.0%, 2027:10.5%"
+     }
     ]
    },
-   "FC-3": { "status": "SKIPPED" },
+   "FC-3": {
+    "status": "SKIPPED"
+   },
    "FC-4": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "dispatch skill", "status": "FAIL", "detail": "K_iso=1.5; price 2023 |69.2%|>15.0% FAIL; price 2024 |42.7%|>15.0% FAIL; price 2025 |8.6%| PASS; co2 2023 |48.9%| FAIL; co2 2024 |43.1%| FAIL; co2 2025 |49.9%| FAIL" }
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=1.5; price 2023 |69.2%|>15.0% FAIL; price 2024 |42.7%|>15.0% FAIL; price 2025 |8.6%| PASS; co2 2023 |48.9%| FAIL; co2 2024 |43.1%| FAIL; co2 2025 |49.9%| FAIL"
+     }
     ]
    },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "n/a" },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "n/a"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
   }
  },
  "pjm-t1x": {
   "tier": "t1x",
   "iso": "PJM",
   "determination": "HOLD",
-  "reasons": [ "FC-4 crossover dispatch skill (T1-X) FAIL" ],
+  "reasons": [
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
   "categories": {
-   "FC-1": { "status": "PASS" },
-   "FC-2": { "status": "SKIPPED" },
-   "FC-3": { "status": "SKIPPED" },
+   "FC-1": {
+    "status": "PASS"
+   },
+   "FC-2": {
+    "status": "SKIPPED"
+   },
+   "FC-3": {
+    "status": "SKIPPED"
+   },
    "FC-4": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "dispatch skill", "status": "FAIL", "detail": "K_iso=3.0; price 2025 |17.5%| in (10%, 30.0%] CAVEAT; co2 2023 |45.8%|>30.0% FAIL; co2 2024 |42.9%|>30.0% FAIL; co2 2025 |57.9%|>30.0% FAIL" }
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=3.0; price 2025 |17.5%| in (10%, 30.0%] CAVEAT; co2 2023 |45.8%|>30.0% FAIL; co2 2024 |42.9%|>30.0% FAIL; co2 2025 |57.9%|>30.0% FAIL"
+     }
     ]
    },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "n/a" },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "n/a"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
   }
  },
  "miso-t1f": {
@@ -143,27 +233,59 @@
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I4', 'I7']: I4: 2029:coal off by 1639.8 MW; I7: 2026: accredited firm 133834 < requirement 135371 MW" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I4', 'I7']: I4: 2029:coal off by 1639.8 MW; I7: 2026: accredited firm 133834 < requirement 135371 MW"
+     }
     ]
    },
    "FC-2": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "row1", "status": "CAVEAT", "detail": "reserve-margin band (I12 WARN): requirement-implied floor [10.0%, 25.0%]; out: 2026:8.7%" },
-     { "row": "row3", "status": "FAIL", "detail": "cobweb (I13 WARN => row FAIL): gas_ct(3)" }
+     {
+      "row": "row1",
+      "status": "CAVEAT",
+      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [10.0%, 25.0%]; out: 2026:8.7%"
+     },
+     {
+      "row": "row3",
+      "status": "FAIL",
+      "detail": "cobweb (I13 WARN => row FAIL): gas_ct(3)"
+     }
     ]
    },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
    "FC-8": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "runtime", "status": "CAVEAT", "detail": "peak RSS 9.6 GB >= 8.6 GB (no co-run)" } ]
+    "gating_rows": [
+     {
+      "row": "runtime",
+      "status": "CAVEAT",
+      "detail": "peak RSS 9.6 GB >= 8.6 GB (no co-run)"
+     }
+    ]
    }
   }
  },
@@ -171,79 +293,157 @@
   "tier": "t1f",
   "iso": "NYISO",
   "determination": "HOLD",
-  "reasons": [ "FC-1 structural integrity (I1-I14) FAIL" ],
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL"
+  ],
   "categories": {
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I7']: I7: 2026: accredited firm 30322 < requirement 32121 MW" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I7']: I7: 2026: accredited firm 30322 < requirement 32121 MW"
+     }
     ]
    },
    "FC-2": {
     "status": "CAVEAT",
     "gating_rows": [
-     { "row": "row1", "status": "CAVEAT", "detail": "reserve-margin band (I12 WARN): requirement-implied floor [8.0%, 23.0%]; out: 2026:1.9%" }
+     {
+      "row": "row1",
+      "status": "CAVEAT",
+      "detail": "reserve-margin band (I12 WARN): requirement-implied floor [8.0%, 23.0%]; out: 2026:1.9%"
+     }
     ]
    },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "PASS" }
+   "FC-8": {
+    "status": "PASS"
+   }
   }
  },
  "neiso-t1f": {
   "tier": "t1f",
   "iso": "NEISO",
   "determination": "HOLD",
-  "reasons": [ "FC-1 structural integrity (I1-I14) FAIL" ],
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL"
+  ],
   "categories": {
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I4']: I4: 2028:coal off by 54.0 MW" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I4']: I4: 2028:coal off by 54.0 MW"
+     }
     ]
    },
-   "FC-2": { "status": "PASS" },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-2": {
+    "status": "PASS"
+   },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "PASS" }
+   "FC-8": {
+    "status": "PASS"
+   }
   }
  },
  "pjm-t1f": {
   "tier": "t1f",
   "iso": "PJM",
   "determination": "HOLD",
-  "reasons": [ "FC-1 structural integrity (I1-I14) FAIL" ],
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL"
+  ],
   "categories": {
    "FC-1": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "invariants I1-I14", "status": "FAIL", "detail": "FAIL ['I4']: I4: 2029:coal off by 742.6 MW" }
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I4']: I4: 2029:coal off by 742.6 MW"
+     }
     ]
    },
-   "FC-2": { "status": "PASS" },
-   "FC-3": { "status": "n/a" },
-   "FC-4": { "status": "n/a" },
-   "FC-5": { "status": "SKIPPED" },
-   "FC-6": { "status": "SKIPPED" },
+   "FC-2": {
+    "status": "PASS"
+   },
+   "FC-3": {
+    "status": "n/a"
+   },
+   "FC-4": {
+    "status": "n/a"
+   },
+   "FC-5": {
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "status": "SKIPPED"
+   },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
    "FC-8": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "runtime", "status": "CAVEAT", "detail": "peak RSS 8.8 GB >= 8.6 GB (no co-run)" } ]
+    "gating_rows": [
+     {
+      "row": "runtime",
+      "status": "CAVEAT",
+      "detail": "peak RSS 8.8 GB >= 8.6 GB (no co-run)"
+     }
+    ]
    }
   }
  },
@@ -251,80 +451,298 @@
   "tier": "t1h",
   "iso": "PJM",
   "determination": "HOLD",
-  "reasons": [ "FC-3 capacity-evolution skill (T1-H hindcast) FAIL" ],
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
   "categories": {
-   "FC-1": { "status": "SKIPPED" },
+   "FC-1": {
+    "status": "SKIPPED"
+   },
    "FC-3": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "hindcast bands", "status": "FAIL", "detail": "band FAIL: retire.total_gw, retire.unit_recall_gt300, retire.false_retire, add.by_tech.{wind,solar,gas_cc,gas_ct,storage}, add.shares.{wind,solar,gas_cc,gas_ct}" }
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: retire.total_gw, retire.unit_recall_gt300, retire.false_retire, add.by_tech.{wind,solar,gas_cc,gas_ct,storage}, add.shares.{wind,solar,gas_cc,gas_ct}"
+     }
     ]
    },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
   }
  },
  "miso-2021-2025-curve-ff2c-t1h": {
   "tier": "t1h",
   "iso": "MISO",
   "determination": "HOLD",
-  "reasons": [ "FC-3 capacity-evolution skill (T1-H hindcast) FAIL" ],
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
   "categories": {
-   "FC-1": { "status": "SKIPPED" },
+   "FC-1": {
+    "status": "SKIPPED"
+   },
    "FC-3": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "hindcast bands", "status": "FAIL", "detail": "band FAIL: retire.total_gw, retire.unit_recall_gt300, retire.false_retire, add.by_tech.{solar,gas_cc,gas_ct,storage}, add.shares.{wind,solar,gas_cc,gas_ct,storage}" }
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: retire.total_gw, retire.unit_recall_gt300, retire.false_retire, add.by_tech.{solar,gas_cc,gas_ct,storage}, add.shares.{wind,solar,gas_cc,gas_ct,storage}"
+     }
     ]
    },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
   }
  },
  "neiso-2021-2025-curve-t1h": {
   "tier": "t1h",
   "iso": "NEISO",
   "determination": "HOLD",
-  "reasons": [ "FC-3 capacity-evolution skill (T1-H hindcast) FAIL" ],
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
   "categories": {
-   "FC-1": { "status": "SKIPPED" },
+   "FC-1": {
+    "status": "SKIPPED"
+   },
    "FC-3": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "hindcast bands", "status": "FAIL", "detail": "band FAIL: retire.total_gw, retire.false_retire, add.by_tech.{wind,solar,gas_ct}, add.shares.{wind,solar,gas_cc,storage}" }
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: retire.total_gw, retire.false_retire, add.by_tech.{wind,solar,gas_ct}, add.shares.{wind,solar,gas_cc,storage}"
+     }
     ]
    },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
   }
  },
  "nyiso-2021-2025-curve-t1h": {
   "tier": "t1h",
   "iso": "NYISO",
   "determination": "HOLD",
-  "reasons": [ "FC-3 capacity-evolution skill (T1-H hindcast) FAIL" ],
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
+  ],
   "categories": {
-   "FC-1": { "status": "SKIPPED" },
+   "FC-1": {
+    "status": "SKIPPED"
+   },
    "FC-3": {
     "status": "FAIL",
     "gating_rows": [
-     { "row": "hindcast bands", "status": "FAIL", "detail": "band FAIL: retire.total_gw, retire.false_retire, add.by_tech.{wind,solar,gas_ct,storage}, add.shares.{solar,gas_cc,storage}" }
+     {
+      "row": "hindcast bands",
+      "status": "FAIL",
+      "detail": "band FAIL: retire.total_gw, retire.false_retire, add.by_tech.{wind,solar,gas_ct,storage}, add.shares.{solar,gas_cc,storage}"
+     }
     ]
    },
    "FC-7": {
     "status": "CAVEAT",
-    "gating_rows": [ { "row": "dof ledger", "status": "CAVEAT", "detail": "DOF ledger absent (identification unproven)" } ]
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
    },
-   "FC-8": { "status": "SKIPPED" }
+   "FC-8": {
+    "status": "SKIPPED"
+   }
+  }
+ },
+ "ercot-t1x-ffr2a": {
+  "tier": "t1x",
+  "iso": "ERCOT",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-2 adequacy & equilibrium behavior FAIL",
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "categories": {
+   "FC-1": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I12', 'I3', 'I6', 'I7']: I12: scalar floor [13.8%, 28.7%]; out: 2024:30.2% (band [13.8%, 28.7%]), 2025:10.8% (band [13.8%, 28.7%]), 2026:6.5% (band [13.8%, 28.7%]), 2027:7.1% (band [13.8%, 28.7%]); I3: 2027: slack 0.02% of load; I6: 2025: 26.9% of thermal retired in one year; I7: 2025: thermal 57437 < retirement-bounded floor 78527 MW"
+     }
+    ]
+   },
+   "FC-2": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "row1",
+      "status": "FAIL",
+      "detail": "reserve-margin band (I12 FAIL): scalar floor [13.8%, 28.7%]; out: 2024:30.2% (band [13.8%, 28.7%]), 2025:10.8% (band [13.8%, 28.7%]), 2026:6.5% (band [13.8%, 28.7%]), 2027:7.1% (band [13.8%, 28.7%])"
+     }
+    ]
+   },
+   "FC-3": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "hindcast bands",
+      "status": "SKIPPED",
+      "detail": "no committed capacity-hindcast score for the ISO"
+     }
+    ]
+   },
+   "FC-4": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.9%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |49.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |42.7%|>15.0%=K1.5\u00d710% FAIL; co2 2025 |51.2%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |38.1%|>7.5%=K1.5\u00d75% FAIL"
+     }
+    ]
+   },
+   "FC-5": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)"
+     }
+    ]
+   },
+   "FC-6": {
+    "status": "n/a"
+   },
+   "FC-7": {
+    "status": "CAVEAT",
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
+   },
+   "FC-8": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary"
+     }
+    ]
+   }
+  }
+ },
+ "pjm-t1x-ffr2a": {
+  "tier": "t1x",
+  "iso": "PJM",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "categories": {
+   "FC-1": {
+    "status": "PASS"
+   },
+   "FC-2": {
+    "status": "PASS"
+   },
+   "FC-3": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "hindcast bands",
+      "status": "SKIPPED",
+      "detail": "no committed capacity-hindcast score for the ISO"
+     }
+    ]
+   },
+   "FC-4": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=3.0; price 2025 |17.2%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |42.2%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |57.3%|>30.0%=K3.0\u00d710% FAIL; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |25.2%|>15.0%=K3.0\u00d75% FAIL"
+     }
+    ]
+   },
+   "FC-5": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)"
+     }
+    ]
+   },
+   "FC-6": {
+    "status": "n/a"
+   },
+   "FC-7": {
+    "status": "CAVEAT",
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
+   },
+   "FC-8": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary"
+     }
+    ]
+   }
   }
  }
 }
