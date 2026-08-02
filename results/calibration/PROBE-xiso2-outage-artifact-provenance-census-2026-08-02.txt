@@ -1,0 +1,195 @@
+
+xiso-2 — post-guard provenance census of outage-derived artifacts
+repo HEAD: a92ae97f0
+
+==============================================================================
+A. GUARD TIMELINE
+==============================================================================
+  guard commit 6a8f285c5  2026-07-26 00:36:26 +0000  neiso-65: adopt guard-corrected CAMPD extracts, all six ISOs + layup companions
+
+  Per-ISO standard extract, last content-changing commit:
+    ERCOT  2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+    CAISO  2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+    MISO   2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+    NEISO  2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+    NYISO  2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+    PJM    2026-07-26  6a8f285c5  neiso-65: adopt guard-corrected CAMPD extracts, all 
+
+==============================================================================
+B. DEPENDENCY CENSUS — artifacts downstream of a guard-affected extract
+==============================================================================
+
+  artifact : config/fuel_trajectories.py::MAINTENANCE_MONTHLY_SHAPE
+  producer : scripts/data/derive_maintenance_shape.py
+  reads    : glob data/raw/campd-unit-outages*.csv (ALL six + companions)
+  consumer : data/fleet/arrays.py — FORECAST mode only (ScenarioConfig.maintenance_monthly_shape, default True)
+  last-derived: 2026-06-25  1fd092221  [PRE-GUARD (STALE)]
+                Add forecast monthly maintenance shape (spec §1.7 / gap G12)
+                note: values baked here; block MOVED to fuel_trajectories.py by 9824177b7 (2026-07-20) with no re-derivation
+
+  artifact : data/raw/reference/caiso-dam-resource-crosswalk.csv
+  producer : scripts/data/derive_caiso_dam_resource_crosswalk.py
+  reads    : campd-unit-outages-CAISO.csv
+  consumer : NONE — no code path reads it (docs/findings only)
+  last-derived: 2026-07-19  3bdd8df68  [PRE-GUARD (STALE)]
+                caiso-105: DAM RESOURCE ID -> ORIS crosswalk (derive + hand-verifi
+
+  artifact : data/raw/reference/reliability_floor_coeffs_NYISO.csv (NYC/LI/Capital ST_GAS limbs)
+  producer : scripts/data/derive_nyiso_st_reliability_floor.py (prints coefficients; CSV hand-transcribed)
+  reads    : campd-unit-outages-NYISO.csv (outage-free CF denominator)
+  consumer : config/iso_configs.py::RELIABILITY_FLOOR_REGISTRY — NYISO keeper
+  last-derived: 2026-07-26  261d7472b  [POST-GUARD]
+                nyiso-81: re-derive NYC/LI ST_GAS reliability-floor coefficients o
+
+  artifact : data/raw/campd-unit-outages-maxgen-MISO.csv
+  producer : scripts/data/derive_campd_maxgen_outages.py
+  reads    : campd-unit-outages-MISO.csv (imports the standard deriver)
+  consumer : data/outages.py::unit_outage_maxgen_derate_factors (gated, default off)
+  last-derived: 2026-07-26  6b0d55aab  [POST-GUARD]
+                miso-94: re-derive MISO short + maxgen outage extracts on the guar
+
+  artifact : data/raw/campd-unit-outages-short-<ISO>.csv (5 ISOs)
+  producer : scripts/data/derive_campd_unit_outages.py --short-windows
+  reads    : same CAMPD source; disjoint-by-construction with the standard extract
+  consumer : data/outages.py::unit_outage_short_derate_factors
+    campd-unit-outages-short-CAISO.csv     2026-07-28  8941a3ebd  [POST-GUARD]
+    campd-unit-outages-short-MISO.csv      2026-07-31  951c03f61  [POST-GUARD]
+    campd-unit-outages-short-NEISO.csv     2026-07-28  08177ea31  [POST-GUARD]
+    campd-unit-outages-short-NYISO.csv     2026-07-28  0488b4be9  [POST-GUARD]
+    campd-unit-outages-short-PJM.csv       2026-07-31  951c03f61  [POST-GUARD]
+
+  artifact : data/clean/** (curated Parquet)
+  producer : scripts/data/curate_outages.py, curate_unit_outage_events.py
+  reads    : the six standard extracts
+  consumer : clean_io readers — DERIVED/disposable/gitignored, regenerated on demand, so not a staleness surface
+  last-derived: n/a — gitignored derived tree — no committed bytes, so no staleness surface by construction
+
+  Excluded by inspection (mention an extract, never read one):
+    - scripts/data/build_calibration_reference.py (comment only)
+    - scripts/data/build_neiso_operable_capacity.py (docstring; reads morning_report_*.csv)
+    - scripts/data/derive_ct_deployment.py (docstring only)
+    - scripts/data/derive_ercot_commitment_loading_state.py (comment only)
+    - scripts/data/derive_partial_outages.py (comment; reads CAMPD unit-level directly)
+    - scripts/data/derive_nyiso_ct_reliability_floor.py (reads bin_assignments + weather)
+    - scripts/data/derive_reliability_coeffs.py and the *_drag derives (no outage read)
+
+==============================================================================
+C. derive_maintenance_shape GLOB CONTAMINATION (defect found + FIXED by xiso-2)
+==============================================================================
+  The script USED to pool glob('data/raw/campd-unit-outages*.csv'). Intended:
+  the six STANDARD extracts. That glob matches at HEAD:
+    [ 6] STANDARD (intended)
+         campd-unit-outages-CAISO.csv
+         campd-unit-outages-MISO.csv
+         campd-unit-outages-NEISO.csv
+         campd-unit-outages-NYISO.csv
+         campd-unit-outages-PJM.csv
+         campd-unit-outages.csv
+    [ 6] e923 fallback (different source)
+         campd-unit-outages-e923-CAISO.csv
+         campd-unit-outages-e923-ERCOT.csv
+         campd-unit-outages-e923-MISO.csv
+         campd-unit-outages-e923-NEISO.csv
+         campd-unit-outages-e923-NYISO.csv
+         campd-unit-outages-e923-PJM.csv
+    [ 6] layup (the guard's OWN vetoes)
+         campd-unit-outages-layup-CAISO.csv
+         campd-unit-outages-layup-MISO.csv
+         campd-unit-outages-layup-NEISO.csv
+         campd-unit-outages-layup-NYISO.csv
+         campd-unit-outages-layup-PJM.csv
+         campd-unit-outages-layup.csv
+    [ 1] maxgen derate companion
+         campd-unit-outages-maxgen-MISO.csv
+    [ 5] short-window companion
+         campd-unit-outages-short-CAISO.csv
+         campd-unit-outages-short-MISO.csv
+         campd-unit-outages-short-NEISO.csv
+         campd-unit-outages-short-NYISO.csv
+         campd-unit-outages-short-PJM.csv
+
+  files: glob  24   intended   6
+  rows : glob 58,744   intended 39,755   inflation +47.8 %
+
+  The layup companions are the windows the guard EXISTS to remove; pooling
+  them back in partially inverts the guard for this artifact (rule 19).
+  FIXED by xiso-2: derive_maintenance_shape now enumerates the six standard
+  extracts (_STANDARD_EXTRACTS) instead of globbing.
+
+==============================================================================
+D. MAINTENANCE_MONTHLY_SHAPE — does it reproduce at HEAD?
+==============================================================================
+  COMMITTED = config/fuel_trajectories.py (baked 2026-06-25, PRE-guard)
+  PREFIX    = re-derived at HEAD with the PRE-FIX contaminated glob
+  STD6      = re-derived at HEAD from the six standard extracts only
+              (what the xiso-2-fixed script now does)
+
+  COAL
+    COMMITTED 0.239 1.125 1.757 1.923 1.559 0.568 0.000 0.174 1.003 1.442 1.481 0.772
+    PREFIX    0.484 0.971 1.800 1.839 1.473 0.525 0.000 0.181 0.938 1.561 1.400 0.848   max|d| 0.245
+    STD6      0.449 0.964 1.800 1.848 1.460 0.538 0.000 0.196 0.947 1.558 1.414 0.847   max|d| 0.210
+  CC_REGULAR
+    COMMITTED 0.608 0.961 1.765 2.175 1.591 0.473 0.000 0.007 0.449 1.524 1.554 0.910
+    PREFIX    1.103 1.275 1.801 1.859 1.384 0.445 0.000 0.022 0.511 1.313 1.383 0.936   max|d| 0.495
+    STD6      1.029 1.220 1.815 1.920 1.450 0.445 0.000 0.019 0.515 1.386 1.392 0.840   max|d| 0.421
+  CC_CHP
+    COMMITTED 0.574 0.851 1.658 2.217 1.775 0.516 0.000 0.072 0.505 1.736 1.481 0.623
+    PREFIX    0.828 1.112 1.836 1.976 1.578 0.516 0.000 0.047 0.606 1.425 1.351 0.749   max|d| 0.311
+    STD6      0.766 1.028 1.789 2.161 1.704 0.509 0.000 0.022 0.530 1.454 1.453 0.608   max|d| 0.282
+  CT_PEAKER
+    COMMITTED 0.581 1.131 1.719 1.926 1.499 0.514 0.000 0.132 0.731 1.394 1.478 0.929
+    PREFIX    0.956 1.246 1.777 1.749 1.337 0.484 0.000 0.107 0.693 1.346 1.371 0.966   max|d| 0.375
+    STD6      0.820 1.140 1.798 1.849 1.422 0.502 0.000 0.110 0.725 1.425 1.393 0.844   max|d| 0.239
+  CT_CHP
+    COMMITTED 1.261 1.336 1.692 2.107 1.582 0.874 0.010 0.000 0.223 0.787 1.270 0.907
+    PREFIX    1.482 1.705 1.708 1.557 1.042 0.465 0.000 0.023 0.269 1.382 1.387 1.037   max|d| 0.595
+    STD6      1.229 1.352 1.870 1.563 0.987 0.616 0.000 0.145 0.357 1.497 1.695 0.732   max|d| 0.710
+  ST_GAS
+    COMMITTED 1.136 1.553 1.567 1.346 1.140 0.488 0.000 0.328 0.882 0.971 1.314 1.330
+    PREFIX    1.486 1.712 1.667 1.247 0.929 0.508 0.000 0.202 0.742 0.972 1.281 1.316   max|d| 0.350
+    STD6      1.254 1.462 1.735 1.487 1.143 0.623 0.000 0.202 0.882 1.075 1.277 0.913   max|d| 0.417
+  ST_CHP
+    COMMITTED 0.867 0.949 1.495 1.576 1.174 0.337 0.000 0.427 0.753 1.831 1.620 0.975
+    PREFIX    1.015 1.150 1.632 1.731 0.812 0.221 0.000 0.227 0.684 1.888 1.583 1.078   max|d| 0.362
+    STD6      1.040 1.178 1.623 1.618 0.746 0.260 0.000 0.205 0.728 1.881 1.626 1.119   max|d| 0.428
+  _POOLED
+    COMMITTED 0.581 1.131 1.719 1.926 1.499 0.514 0.000 0.132 0.731 1.394 1.478 0.929
+    PREFIX    0.956 1.246 1.777 1.749 1.337 0.484 0.000 0.107 0.693 1.346 1.371 0.966   max|d| 0.375
+    STD6      0.820 1.140 1.798 1.849 1.422 0.502 0.000 0.110 0.725 1.425 1.393 0.844   max|d| 0.239
+
+  VERDICT: the committed constant does NOT reproduce at HEAD under either selector.
+  Note, against interest: STD6 is not uniformly closer to the committed
+  value than PREFIX (CT_CHP / ST_GAS / ST_CHP are further). Fixing the
+  glob alone therefore does NOT restore the committed constant — the
+  artifact is genuinely stale w.r.t. the 2026-07-24 backfill and the
+  2026-07-26 guard, which are BOTH source-data changes and so make a
+  re-derivation rule-23 ADMISSIBLE (as a separate, gated act).
+
+==============================================================================
+E. BYTE-REPRODUCTION of the six committed STANDARD extracts at HEAD
+==============================================================================
+  staged re-derivations: /tmp/claude-0/-home-user-market-simulator/e198d1a1-c62b-524d-9e36-eda3dd8952d2/scratchpad/rederive
+
+  ISO    re-derived md5                     committed md5                      verdict
+  ERCOT  389dcd978197988ceacdae0714b56d21   389dcd978197988ceacdae0714b56d21   BYTE-IDENTICAL
+  CAISO  c8d0bcf56d49da7ffac49be422a8ccb8   c8d0bcf56d49da7ffac49be422a8ccb8   BYTE-IDENTICAL
+  MISO   a892bafe319bc83c5d24f863cd2f8ee4   7d7ce59b355ad74a8073d428f002d57d   *** MISMATCH ***
+  NEISO  df65b17f2246f189dacad2f1cc8502a7   df65b17f2246f189dacad2f1cc8502a7   BYTE-IDENTICAL
+  NYISO  73cc84547c213b62f4252ff421441b08   73cc84547c213b62f4252ff421441b08   BYTE-IDENTICAL
+  PJM    a8f9b670ad38468db7940c7f7dda2d7c   a8f9b670ad38468db7940c7f7dda2d7c   BYTE-IDENTICAL
+
+  5 byte-identical, 1 mismatched, 0 not staged.
+
+  xiso-2 baseline (2026-08-02): 5/6 byte-identical; MISO the sole mismatch.
+  MISO's re-derivation is a strict SUPERSET — +17 windows, 0 lost, ALL of
+  them 2022 COAL — and its layup companion is byte-identical, so the guard's
+  own classification reproduces exactly. Root cause is a SOURCE-DATA change,
+  not detector drift: commit 5cd937407 (2026-07-31) filled the MISO EIA-930
+  2022 wide-hourly hole, taking 2022 from 7 rows to 8,760 (8,757 non-null
+  Demand), and the detector's revealed-availability filter needs that system
+  load. The 2023-2025 TRAINING window is IDENTICAL row-for-row, so no MISO
+  keeper reads a stale byte; the drift is entirely inside the 2022 VALIDATION
+  holdout. Re-derivation is therefore rule-23 ADMISSIBLE (a source-data
+  change) but NOT urgent — and it must not be done as a side effect of a
+  calibration session (rule 23: cite the data change).
+

@@ -48,7 +48,6 @@ Run: ``python scripts/data/derive_maintenance_shape.py`` (prints the constant bl
 from __future__ import annotations
 
 import argparse
-import glob
 import sys
 from pathlib import Path
 
@@ -65,6 +64,18 @@ from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 _MONTH_DAYS = np.array([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], dtype=float)
 _MONTH_HOURS = _MONTH_DAYS * 24.0
 _H = float(_MONTH_HOURS.sum())  # 8760
+
+# The six STANDARD per-ISO unit-outage extracts — the only files this shape is
+# derived from. See :func:`load_unit_outages` for why these are enumerated rather
+# than globbed.
+_STANDARD_EXTRACTS: tuple[str, ...] = (
+    "campd-unit-outages.csv",  # ERCOT
+    "campd-unit-outages-CAISO.csv",
+    "campd-unit-outages-MISO.csv",
+    "campd-unit-outages-NEISO.csv",
+    "campd-unit-outages-NYISO.csv",
+    "campd-unit-outages-PJM.csv",
+)
 
 # Plant groups carried in THERMAL_AVAILABILITY whose forecast POF this shape
 # replaces. Groups with too few outage observations fall back to the pooled
@@ -106,15 +117,32 @@ def _month_overlap_days(start: pd.Timestamp, end: pd.Timestamp) -> np.ndarray:
 
 
 def load_unit_outages() -> pd.DataFrame:
-    """Concatenate every committed ``campd-unit-outages*.csv`` (all ISOs)."""
-    paths = sorted(glob.glob(str(RAW_DATA_DIR / "campd-unit-outages*.csv")))
+    """Concatenate the six committed STANDARD unit-outage extracts (all ISOs).
+
+    Only the standard ``>= --min-outage-days`` extracts written by
+    ``scripts/data/derive_campd_unit_outages.py`` are pooled — the set named in
+    this module's docstring, whose windows have already passed the
+    revealed-availability filter.
+
+    The enumeration is explicit rather than a ``campd-unit-outages*.csv`` glob
+    because that glob is no longer selective (xiso-2 audit, 2026-08-02): since
+    the merit-order guard landed it also matches the ``-layup-`` companions —
+    the economic-idling windows the guard EXISTS to veto, so pooling them
+    partially inverts the guard (rule 19 ``[R-ONE-MECH]``) — plus the ``-e923-``
+    non-CAMPD fallback (a different source), the ``-short-`` sub-5-day companions
+    and the ``-maxgen-`` derate file (different regimes). At HEAD the glob drew
+    24 files / 58,744 rows where 6 files / 39,755 rows were intended, a +47.8 %
+    row inflation. Record:
+    ``results/calibration/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md``.
+    """
+    paths = [RAW_DATA_DIR / name for name in _STANDARD_EXTRACTS]
     frames = []
     for p in paths:
+        if not p.exists():
+            raise FileNotFoundError(f"missing standard unit-outage extract: {p}")
         df = pd.read_csv(p)
-        df["_iso_file"] = Path(p).stem
+        df["_iso_file"] = p.stem
         frames.append(df)
-    if not frames:
-        raise FileNotFoundError("no campd-unit-outages*.csv under data/raw/")
     return pd.concat(frames, ignore_index=True)
 
 
