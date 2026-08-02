@@ -25,6 +25,71 @@ governs this: a behavior-changing PR must either express the change as a
 and purge/segregate the affected caches. A pure byte-identical refactor needs
 neither. This module never auto-invalidates on epoch; that is the operator's
 responsibility per that policy.
+
+**The epoch is a dated ledger entry, not a code token.** There is deliberately
+no ``CACHE_EPOCH`` constant: a constant that entered ``ScenarioConfig`` would
+move the key of *every* config including the backcast keepers (a solve-affecting
+change under rule 24 and a rule-28 matrix row for a non-mechanism), and one that
+did not enter the key would be inert. The epoch is therefore materialized on two
+surfaces, both human-read:
+
+* **Key advances** — when a change legitimately re-keys the DEFAULT config —
+  are recorded at ``PINNED_DEFAULT_CACHE_KEY`` in
+  ``tests/regression/test_persisted_identity.py``, with a dated cause block
+  above the literal. A key movement caused by an unregistered new field is NOT
+  an advance: the remedy is ``_CACHE_KEY_OPTIONAL_FIELDS`` registration
+  (``scripts/check_cache_key_registration.py``), never re-pinning.
+* **Same-key invalidations** — a behavior change that leaves every key
+  unmoved — are recorded in the ledger below, because nothing else can see
+  them. Each entry names its date, its cause, exactly what is invalidated, and
+  what is NOT.
+
+Cache-epoch ledger (same-key invalidations)
+-------------------------------------------
+**Epoch 2026-08-02 — FFR Wave-1 forecast fixes (FR-1, FR-2, FR-7, FR-8).**
+Taken once at the Wave-1 close (`docs/forecast-readiness-prompt-pack-2026-07.md`
+§W1-X; `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`). Four merged fixes
+change forecast output under **unchanged cache keys** — none added, removed or
+re-defaulted a ``ScenarioConfig`` field, so no key moved and a pre-Wave-1 bundle
+would be silently re-used:
+
+* **FR-1** (`ffr-1a-confirmed-exit-accounting-2026-07-31.md`) — confirmed-exit
+  tranche derates are now written to the evolution ledger. Dispatch-inert
+  (byte-identity attested), but every cached ``evolution_<year>.json`` from a
+  forecast run predating it is missing its ``confirmed_derates`` rows and its
+  ``confirmed``/``announced`` reason split.
+* **FR-2** (same doc, arm 2) — partial-year confirmed exits now complete in
+  year+1 instead of holding a fraction of their MW forever. **Behavioral:**
+  fleet MW, dispatch and prices move from the exit year+1 onward.
+* **FR-7** (`ffr-1b-solve-year-availability-2026-08-01.md`) — the age-based
+  availability escalation keys on the SOLVE year, not ``weather_year``.
+  **Behavioral in every forecast year**: the fleet ages, and model-built
+  entrants no longer carry a negative age.
+* **FR-8** (same doc) — the measured 2025 Martin Lake derate is gated to
+  backcast, so it can no longer leak into a ``weather_year=2025``-pinned
+  crossover leg. **Behavioral** for every T1-X leg, realized and forward.
+
+*Invalidated:* every cached bundle produced in **forecast mode**
+(``mode="forecast"``, including ``hindcast=True`` capacity-hindcast and T1-X
+crossover legs) at a commit before the Wave-1 merges — any solve year, not only
+2026+, because FR-8 reaches a crossover's realized 2023–2025 legs too. Purge or
+move aside the per-ISO cache roots and the contents of every forecast
+``--out-dir`` cache (the roots hold tracked ``.gitignore`` keep-files — clear
+their contents, not the directories)::
+
+    rm -rf results/{ERCOT,CAISO,PJM,MISO,NYISO,NEISO}
+    for d in full-horizon ff-t1f-baseline ffr1a d9-ab probe-* verify-*; do
+        [ -d "results/$d" ] && find "results/$d" -mindepth 1 ! -name .gitignore -delete
+    done
+
+Run it before any forecast solve on a checkout that predates 2026-08-02; a
+container cloned fresh after that date has nothing to purge (verified empty at
+the close: zero ``year_*.parquet`` anywhere under ``results/``).
+
+*NOT invalidated:* **backcast** caches and every keeper bundle. FR-7/FR-8 are
+mode-gated and FR-1/FR-2 run only under forecast-mode capacity evolution; the
+six current keepers' input surfaces and cache keys were attested unchanged
+across all three ``scenarios.py``-touching Wave-1 merges (§W1-X close doc §1).
 """
 
 from contextlib import contextmanager
