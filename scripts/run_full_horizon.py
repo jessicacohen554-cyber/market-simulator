@@ -125,6 +125,10 @@ def reference_config(
     cmc: bool,
     golden_posture: bool = False,
     transmission_expansion: bool = False,
+    retirement_rule: str = "legacy",
+    entry_vre_capacity_revenue: bool = False,
+    entry_rate_limits: bool = False,
+    entry_commissioning_lag: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -159,6 +163,15 @@ def reference_config(
         capacity_market_clearing=cmc,
         capacity_market_clearing_by_iso=cmc_by_iso,
         transmission_expansion_enabled=transmission_expansion,
+        # FFR-2B probe arms for owner decisions D-1 / D-2 (audit FR-4 / FR-5).
+        # All four default to the shipped ScenarioConfig values, so a call that
+        # passes none of them is byte-identical to the pre-FFR-2B reference
+        # config. No default moves here (rule 24) — the flips are the owner's,
+        # executed at FFR-3A step 0.
+        retirement_rule=retirement_rule,
+        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
+        entry_rate_limits=entry_rate_limits,
+        entry_commissioning_lag=entry_commissioning_lag,
     )
 
 
@@ -491,6 +504,48 @@ def main(argv: list[str] | None = None) -> int:
             "unschedulable until the owner authorizes it per ISO (plan §2.1b)."
         ),
     )
+    ap.add_argument(
+        "--retirement-rule",
+        choices=["legacy", "pipeline"],
+        default="legacy",
+        help=(
+            "FF-1A PROBE arm (audit FR-4 / owner D-1): economic-retirement "
+            "decision rule. 'legacy' (default, shipped) = per-fuel "
+            "consecutive-loss counters. 'pipeline' = the R-NEW "
+            "decision/execution split (uniform bar, joint adequacy-capped "
+            "entry, soft latch, measured per-fuel execution lags). Never the "
+            "runner default pending the owner flip."
+        ),
+    )
+    ap.add_argument(
+        "--entry-vre-capacity-revenue",
+        action="store_true",
+        help=(
+            "FF-2A item 1 PROBE arm (audit FR-5 / owner D-2): VRE entry "
+            "candidates earn the capacity price x published ELCC credit on the "
+            "same seam thermal entry uses. No-op in energy-only ISOs."
+        ),
+    )
+    ap.add_argument(
+        "--entry-rate-limits",
+        action="store_true",
+        help=(
+            "FF-2A item 2 PROBE arm (audit FR-5 / BLK-10): per-tech annual "
+            "economic entry AND the reserve-margin backstop capped at "
+            "ENTRY_GROWTH_LIMIT_MULTIPLE (2.0) x prior-max annual build "
+            "(ReEDS relative-growth constraint, EIA-860-seeded)."
+        ),
+    )
+    ap.add_argument(
+        "--entry-commissioning-lag",
+        action="store_true",
+        help=(
+            "FF-2A item 3 PROBE arm (audit FR-5 / FR-13): entry decides in "
+            "year Y, commissions at Y+ENTRY_COD_LAG_YEARS (2, LBNL IA->COD "
+            "median); pending MW net against later caps. The structural "
+            "anti-cobweb."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -508,6 +563,10 @@ def main(argv: list[str] | None = None) -> int:
         args.capacity_market_clearing,
         golden_posture=args.golden_posture,
         transmission_expansion=args.transmission_expansion,
+        retirement_rule=args.retirement_rule,
+        entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
+        entry_rate_limits=args.entry_rate_limits,
+        entry_commissioning_lag=args.entry_commissioning_lag,
     )
     summary = solve_and_summarize(
         config,
