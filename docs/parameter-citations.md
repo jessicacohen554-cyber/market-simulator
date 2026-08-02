@@ -157,6 +157,7 @@ inline comment and still need a dated primary source — search the table for
 | `demand_growth_rates.PJM.low.near` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.mid.long` | 0.024 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.mid.near` | 0.036 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates_vintages` | {"2021": {"ERCOT": {"mid": {"near": 0… | 2 | As-of-vintage demand-growth rates for the full-forward hindcast (T1… | 2026-08 | modeled |
 | `demand_growth_transition_year` | 2030 | 2 | Year at which demand growth transitions from near-term to long-term… | 2030 | auto-generated |
 | `miso_rpe_demand_value` | 200.0 | 2 | Reserve Procurement Enhancement (RPE): MISO "models a Reserve Procu… | 2024 | auto-generated |
 | `scenario.caiso_demand_clock_realign` | False | 2 | Apply the MEASURED source-data |  | auto-generated, needs-citation |
@@ -402,8 +403,9 @@ inline comment and still need a dated primary source — search the table for
 | `gas_st_peak_hr_override_default` | 1.5 | 2 | gas-steam peak ≈ 1.5× base HR |  | auto-generated, needs-citation |
 | `global_annual_deployment_gw.gas_cc` | 20.0 | 2 | was 25. IEA WEO 2025. | 2025 | auto-generated |
 | `henry_hub_trajectories.high` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
-| `henry_hub_trajectories.hindcast_asknown_aeo2021` | {"2021": 3.07, "2023": 2.86, "2024": … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `henry_hub_trajectories.hindcast_realized` | {"2021": 3.91, "2023": 2.54, "2024": … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `henry_hub_trajectories.hindcast_asknown_aeo2021` | {"2021": 3.13, "2023": 3.1, "2024": 2… | 2 | EIA Annual Energy Outlook 2021, Reference case (scenario ref2021), … | 2021-02 | modeled |
+| `henry_hub_trajectories.hindcast_asknown_aeo2023` | {"2023": 5.48, "2024": 4.34, "2025": … | 2 | EIA Annual Energy Outlook 2023, Reference case (scenario ref2023), … | 2023-03 | modeled |
+| `henry_hub_trajectories.hindcast_realized` | {"2021": 3.91, "2023": 2.54, "2024": … | 2 | EIA Henry Hub Natural Gas Spot Price, annual mean of monthly series… | 2026-08 | measured |
 | `henry_hub_trajectories.low` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
 | `henry_hub_trajectories.mid` | {"2023": 2.54, "2024": 2.19, "2025": … | 1 | EIA Annual Energy Outlook 2025 | 2025-04 | modeled |
 | `lignite_price_2023_25` | 1.45 | 2 | --- ERCOT lignite / PRB delivered coal cost, 2023-2025 ------------… | 2023 | auto-generated |
