@@ -605,13 +605,43 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 #   PJM_Central_PA 2.9708 = mean(2.9281, 2.5497, 3.4346) — TETCO M3 (PA).
 #   PJM_West_APS   2.9495 = mean(2.7871, 2.5917, 3.4696) — Appalachian (WV).
 #
+# ERCOT (ercot-150, derived 2026-08-02) — capacity-weighted mean-zero spread
+# PLUS flat measured LEVEL convention (``apply_ercot_zonal_gas_basis``, ERCOT's
+# own basis module): each zone's EIA-923 basis minus the gas-capacity-weighted
+# fleet mean, plus the measured TX delivered-to-electric-power level correction
+# (EIA N3045TX3 minus the −0.50 scalar baked into the ISO anchor: +0.500 /
+# +0.417 / +0.045 in 2023/24/25) — so the ISO anchor is BELOW the fleet
+# centroid and six zones sit above it while Waha-priced West sits below. The
+# anchors are read from the keeper reconstruction's own resolved fuel_prices
+# (``derive_gas_offer_margin_anchor.SOLVE_FUEL_ARRAY_ISOS``; weights bundle
+# ``results/calibration/ercot149_gas_event_cap_arm`` rebuilt no-LP via
+# scripts.lib.bundle_fleet.reconstruct_bundle_fleet), the exact array
+# ``apply_gas_offer_margin`` prices against, so the West value includes the
+# keeper's ``ercot_west_netload_gas_shape`` burner-tip floor lift (post-basis
+# 1.62/0.21/0.65 → realized 1.99/1.15/2.74 — the two-regime step confines the
+# Waha collapse to the measured 3/42/11 % of hours and prices the rest at firm
+# Waha, restoring most of the West annual level). Basis source
+# data/raw/ercot_zonal_gas_hub.csv; EP series
+# data/raw/ercot_electric_power_gas_price.csv; per-year capw means removed
+# +0.18 / +0.04 / +0.02 $/MMBtu (full record with the West decomposition in
+# results/calibration/_ercot150_zonal_anchor_derivation.json):
+#   South         3.2778 = mean(3.5721, 2.6518, 3.6094) — South TX/Agua Dulce.
+#   South_Central 2.7578 = mean(2.9021, 2.4718, 2.8994) — South TX hubs.
+#   North         2.7178 = mean(2.4721, 2.2318, 3.4494) — North/East-TX complex.
+#   Northeast     2.7178 = mean(2.4721, 2.2318, 3.4494) — proxy→North (E-TX).
+#   Houston       2.3111 = mean(2.1921, 1.8718, 2.8694) — Houston Ship Channel.
+#   West          1.9586 = mean(1.9866, 1.1497, 2.7396) — Waha, net-load-shaped.
+#   (Panhandle carries no gas capacity in any training year and is omitted —
+#   zones absent from the map keep the window anchor, a no-op on an empty
+#   zone.)
+#
 # An identification constant, not a tunable: rule 23 [R-FROZEN-DERIVE], it
-# re-derives ONLY when the gas source data, the per-zone hub table, or (for a
-# capacity-weighted ISO) the keeper fleet recipe the weights are read from
-# changes, never because a price residual moved. ISOs absent from the registry
-# hard-fail when the zonal gate is armed (never a silent fallback — rule 24),
-# and a zone table is that ISO's own measured basis and never crosses a
-# boundary (rule 25).
+# re-derives ONLY when the gas source data, the per-zone hub table, the EP
+# series, or (for a capacity-weighted ISO) the keeper fleet recipe the weights
+# are read from changes, never because a price residual moved. ISOs absent
+# from the registry hard-fail when the zonal gate is armed (never a silent
+# fallback — rule 24), and a zone table is that ISO's own measured basis and
+# never crosses a boundary (rule 25).
 GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
     "NYISO": {
         "Upstate_West": 2.0346,
@@ -629,6 +659,14 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
         "PJM_Dominion": 3.8798,
         "PJM_EMAAC": 3.4898,
         "PJM_SWMAAC": 4.4328,
+    },
+    "ERCOT": {
+        "West": 1.9586,
+        "North": 2.7178,
+        "Northeast": 2.7178,
+        "Houston": 2.3111,
+        "South_Central": 2.7578,
+        "South": 3.2778,
     },
 }
 
