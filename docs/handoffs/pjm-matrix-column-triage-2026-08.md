@@ -22,9 +22,10 @@ drafted 2022-validation session renumbers to **pjm-147**.
 `cb1c416`): `uv sync`; `curate_capacity_deliverability.py` (155 PJM rows);
 `regenerate_clean.py`; `fetch_pjm_da_virtuals.py` (36 monthly
 `hrl_da_incs_decs` parquets — the keeper arms `pjm_da_virtual_bids`, loader
-hard-fails without them); `build_pjm_as_withholding.py` re-run per the
-pjm-145 fresh-clone note, with the byte-churned committed ≤2022 parquets
-`git checkout`-ed back (rule 23). 12 GB swapfile enabled BEFORE any solve
+hard-fails without them). The pjm-145 fresh-clone caveat on
+`build_pjm_as_withholding.py` is RESOLVED at this HEAD: the
+`pjm_{2023..2025}_as_up_mw.parquet` files are git-tracked now, so no rebuild
+and no churn-checkout was needed. 12 GB swapfile enabled BEFORE any solve
 (keeper note 14: peak RSS 15.55 GB with `ramp_limits=True`). Default cache
 key verified `603c2498bf71d21d` (the pjm-145 repair at f58339b; the handoff's
 `0e9fce2fb55b889f` was stale). Test baseline: see §4.
