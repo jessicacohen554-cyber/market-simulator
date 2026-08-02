@@ -32,6 +32,7 @@ from market_sim.config.scenario_resolvers import (  # noqa: F401
     _effective_percentile,
     _interpolate_low_mid_high,
     resolve_demand_growth_rate,
+    resolve_demand_growth_table,
     resolve_new_entry_costs,
     resolve_policy_bundle,
 )
@@ -132,6 +133,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # full-forward run sets True and so gets a distinct key (a distinct
     # scenario — its forward years load per-solve-year weather bases).
     "crossover_solve_year_weather",
+    # As-of demand-growth vintage (FH-2, hindcast-forward plan §4 row 6):
+    # dropped from the hash at its None default so every pre-existing cached run
+    # keeps its key (the pinned default 603c2498bf71d21d stays byte-stable); a
+    # vintage-addressed run grows load on a DIFFERENT published rate table and
+    # so gets a distinct key (a distinct scenario).
+    "demand_growth_vintage",
     # G-30 first-wave probes (default-off): dropped from the hash at default so
     # every pre-existing cached run keeps its key; a non-default value enters
     # the key (a distinct scenario). (staged_oversupply_thinning /
@@ -855,6 +862,25 @@ class ScenarioConfig:
     # 0.5=mid, 1.0=high), via config.scenarios.resolve_demand_growth_rate.
     # Neutral 0.5 reproduces demand_growth_path's own selection exactly;
     # percentile only overrides path's choice when moved off 0.5.
+    demand_growth_vintage: int | None = None  # As-of demand-growth vintage
+    # (FH-2; hindcast-forward plan §4 row 6). ``None`` (default) resolves the
+    # CURRENT constants.DEMAND_GROWTH_RATES table — byte-identical to every run
+    # that predates this field. An int selects that base year's entry in
+    # constants.DEMAND_GROWTH_RATES_VINTAGES: the near/long growth rates the
+    # ISOs had actually PUBLISHED as of that year, which is what a genuine
+    # as-known forecast launched from that base would have grown load on. It is
+    # the demand half of the T1-FF Arm K posture (plan §2.1); Arm R's zero-year
+    # growth spans make it inert there. An unknown vintage — or a vintage with
+    # no row for this ISO — RAISES (config.scenario_resolvers.
+    # resolve_demand_growth_table); it never silently falls back to today's
+    # table, because that fallback IS the leak (ERCOT mid near 8.5%/yr applied
+    # 2021->2023 is +17.7% against ~+2% actual). The vintage registry ships
+    # EMPTY at FH-2 (mechanism only) and FH-3 lands its cited values, so today
+    # any non-None value raises — fail-closed. Forward/hindcast-lane input only:
+    # __post_init__ refuses it in backcast mode, where demand is measured and
+    # never growth-scaled. Cache-neutral at its None default
+    # (_CACHE_KEY_OPTIONAL_FIELDS); a vintage-addressed run grows load on a
+    # different table and so gets a distinct key.
     # --- Data-center load block (CX-4, gap G-34). Forecast-mode-only; "off" =
     # today, byte-identical. See docs/handoffs/cx4-datacenter-load-design-2026-
     # 07.md and data/datacenter.py. ---
@@ -9527,6 +9553,25 @@ class ScenarioConfig:
                 "hindcast-forward plan §2.1)"
             )
 
+        # As-of demand-growth vintage (FH-2, plan §4 row 6). Validated HERE,
+        # at config build, so an unknown vintage aborts before a multi-hour
+        # solve burns (the FH-1 pre-solve-guard precedent) rather than at the
+        # first _scale_demand call. Two rules, both fail-closed:
+        #  * backcast never growth-scales (measured load governs), so a vintage
+        #    there would be a silent no-op — hard error instead;
+        #  * an unknown vintage raises through the one resolver that owns the
+        #    table (resolve_demand_growth_table), never a silent fallback to
+        #    the current DEMAND_GROWTH_RATES.
+        if self.demand_growth_vintage is not None:
+            if self.mode == "backcast":
+                raise ValueError(
+                    "demand_growth_vintage is a forward-lane input: a backcast "
+                    "pins measured load and never growth-scales it, so a "
+                    "vintage there would be inert (hindcast-forward plan §4 "
+                    "row 6). Leave it None in backcast mode."
+                )
+            resolve_demand_growth_table(self)
+
         # The two on-line-capacity envelope variants resolve the SAME LP row
         # from different derived tables (base decile vs extreme-peak-resolved);
         # setting both would be ambiguous about which table governs, so it is a
@@ -9898,7 +9943,8 @@ class ScenarioConfig:
 # Moved verbatim to config/scenario_resolvers.py (refactor-consolidation plan
 # §5 item 9) and re-exported from this module's import block above:
 # _interpolate_low_mid_high, _effective_percentile, resolve_new_entry_costs,
-# resolve_demand_growth_rate, resolve_policy_bundle (+ the private
+# resolve_demand_growth_rate, resolve_demand_growth_table, resolve_policy_bundle
+# (+ the private
 # _PERCENTILE_BY_PATH_LABEL / _NEUTRAL_PERCENTILE / _IRA_LAST_YEAR_FIELDS /
 # _POLICY_BUNDLES support tables). resolve_real_discount_rate (FF-1E per-tech
 # WACC, not a PB-1 lever) stays defined here.
@@ -10140,6 +10186,7 @@ TIER_TAGS: dict[str, int] = {
     "demand_growth_rate": 1,
     "demand_growth_path": 1,
     "demand_growth_percentile": 1,
+    "demand_growth_vintage": 1,
     "datacenter_load_path": 2,
     "datacenter_percentile": 2,
     "datacenter_load_factor": 2,
