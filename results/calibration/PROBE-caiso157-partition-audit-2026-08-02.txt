@@ -40,6 +40,17 @@ CAISO 2026-07-31T22:52:05    caiso151_control_A                hydro_ror_split  
   DEGRADED: 24 of 34 armed (bundle, mechanism) pairs; ISOs affected: ['CAISO']
 
 ==============================================================================
+1b. The same check on each ISO's DESIGNATED KEEPER
+==============================================================================
+  iso                                  keeper  state                                                                                        degraded
+CAISO              2026-07-31-caiso153-reid-b solved capacity_deliverability_limits -> capacity_deliverability; hydro_ror_split -> hydro_plant_modes
+ERCOT       2026-08-02-ercot150b-zonal-anchor solved                                                                                            none
+ MISO           2026-07-31-miso-109b-hy-level solved                                                                                            none
+NEISO           2026-07-31-neiso-72-hy-window solved                                                                                            none
+NYISO 2026-08-01-nyiso109-zonal-margin-anchor solved                                                                                            none
+  PJM            2026-07-31-pjm-143b-hy-level solved                                                                                            none
+
+==============================================================================
 2. Does the RETIRED fitted seam (7500 MW) bind? — results/calibration/caiso153_reid_B
 ==============================================================================
  year  hours_at_cap  share_pct  mean_import_mw  p95_import_mw  max_import_mw  top_hours_of_day         top_months  sep_dec_at_cap  sep_dec_hours  sep_dec_share_pct
@@ -50,7 +61,13 @@ CAISO 2026-07-31T22:52:05    caiso151_control_A                hydro_ror_split  
 ==============================================================================
 3. The PUBLISHED MIC seam the accurate input would apply
 ==============================================================================
- year delivery_year  n_areas  seam_mw  fitted_fallback_mw
- 2023          2023       36  16055.0              7500.0
- 2024          2024       36  16452.0              7500.0
- 2025          2025       33  16148.0              7500.0
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+capacity-deliverability: clean partition for CAISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+ year delivery_year  n_areas seam_mw  fitted_fallback_mw
+ 2023          2023        0    None              7500.0
+ 2024          2024        0    None              7500.0
+ 2025          2025        0    None              7500.0
