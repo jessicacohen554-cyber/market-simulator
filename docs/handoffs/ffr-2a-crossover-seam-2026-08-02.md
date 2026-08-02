@@ -129,9 +129,15 @@ independent reasons no keeper can move, each sufficient:
    already, by reason 2).
 
 No `ScenarioConfig` field added, removed or re-defaulted; the pinned default cache key stays
-`603c2498bf71d21d` (four pinned-literal tests green); no band widened; no default moved. **No
-mechanism-matrix row is required** — nothing here is a solve-affecting mechanism, and no cell
-was tested (rule 28 duties (b)/(c) do not fire).
+`603c2498bf71d21d` (four pinned-literal tests green); no band widened; no default moved.
+
+**Rule 28.** No new `ScenarioConfig` field, so duty (c) does not fire; no mechanism was armed,
+probed or A/B'd, so duty (b) does not fire and **no cell moves**. The `reference_price_interface`
+row nonetheless gets a NOTE (not a row, not a verdict) recording that its crossover branch was
+defective before 2026-08-02 and is now fixed and guarded — a future session reading that cell
+should know. `check_mechanism_matrix.py` passes. The note was merged by hand against
+miso-114's concurrent edit to the same field (both texts preserved in full, plus miso-114's
+`ev:` line) when `origin/main` advanced mid-session.
 
 ---
 
