@@ -184,21 +184,52 @@ Audited family by family at HEAD. **BLOCKER** = must be fixed before a T1-FF run
 | 3 | **Confirmed exits / announced reversals** | RESOLVES | The one true information gate in the codebase: `confirmed_registry_as_of = date(eia860_vintage_year, 12, 31)` → `load_confirmed_exits(as_of=...)` (`runner.py:667-676`), which drops later-dated **and null-dated** rows. Fires only when `config.hindcast` — fine for T1-FF, flagged for the plain-forecast case. | — |
 | 4 | **Outages / availability** | RESOLVES | Forecast default `outage_source="statistical"`: `_thermal_outage(category, age)` is purely age-parameterized, **no calendar-year dependency**, resolves for any year. `correlated_forced_outage` adds weather-driven correlation but `CORRELATED_OUTAGE_CURVE` is **ERCOT-only** (no generic fallback, rule 25). Fidelity note: statistical outages will not reproduce Uri — a Phase-B 2021 ERCOT caveat, stated up front. | — (arm posture) |
 | 5 | **Demand — base profile** | PARTIAL | Pool-bounded (`WEATHER_YEAR_POOL_BY_ISO`): ERCOT/NEISO/CAISO/MISO `(2019,2020,2021,2023,2024,2025)`; NYISO/PJM `(2021,2023,2024,2025)`. Fine for both phases; 2018 unavailable. | — |
-| 6 | **Demand — growth path** | **BLOCKER** | `DEMAND_GROWTH_RATES` is a two-era scalar table (`constants.py:1604`) derived from **2025/26** LTLF/Gold Book/CELT/IEPR editions, with `DEMAND_GROWTH_TRANSITION_YEAR = 2030` so every historic year takes the `near` rate. ERCOT mid is **8.5 %/yr** — applied 2021→2023 that is **+17.7 %** against roughly +2 % actual. There are no vintage variants. Compounding defect: `_scale_demand` loops `range(weather_year, year)`, so for `year < weather_year` the factor is silently **1.0** (no de-growth, no error). | **FH-2** (mechanism) + **FH-3** (values) |
+| 6 | **Demand — growth path** | **BLOCKER — mechanism CLOSED (FH-2), values pending (FH-3)** | `DEMAND_GROWTH_RATES` is a two-era scalar table (`constants.py:1604`) derived from **2025/26** LTLF/Gold Book/CELT/IEPR editions, with `DEMAND_GROWTH_TRANSITION_YEAR = 2030` so every historic year takes the `near` rate. ERCOT mid is **8.5 %/yr** — applied 2021→2023 that is **+17.7 %** against roughly +2 % actual. There are no vintage variants. Compounding defect: `_scale_demand` loops `range(weather_year, year)`, so for `year < weather_year` the factor is silently **1.0** (no de-growth, no error). | **FH-2** (mechanism) + **FH-3** (values) |
 | 7 | **Fuel — gas** | PARTIAL | `hindcast_asknown_aeo2021` (AEO2021 Reference) covers 2021/2023/2024/2025 — the only genuine as-known path, and it is flagged NEEDS CITATION in `docs/parameter-citations.md`. **No AEO2023 equivalent exists**, so Arm K at base 2023 is blocked on intake. Trap: `low/mid/high` start at 2023, and `_hold_flat_extrapolate` holds at the *earliest* knot when no earlier one exists — a pre-2023 year on `mid` silently returns the 2023 value ($2.54 vs 2021 actual $3.91, ~35 % wrong) with no warning. | **FH-3** (values), **FH-1** (guard) |
 | 8 | **Fuel — coal / oil** | DISCLOSE | Both trajectory families start **2025**, so `growth_ratio` degenerates to 1.0 and every year ≤2025 resolves to flat `COAL_PRICE_BASE[iso]` / `OIL_PRICE_PER_MMBTU`. Resolves; carries zero historic signal. Optional intake in FH-3; otherwise a stated limitation. | FH-3 (optional) |
 | 9 | **Fuel — nuclear / basis** | RESOLVES | Nuclear historical series covers 2006–2024. `GAS_BASIS_DIFFERENTIAL` is a year-invariant per-ISO scalar — resolves for any year, but was derived from 2023–2025 receipts, so applying it to 2021 is an as-of violation in spirit. Disclose. | — |
 | 10 | **Renewable CF** | PARTIAL | Pinned to `weather_year` (`runner.py:531`), same pool bound as #5. `vintage_capacity_ramp` scales to EIA-860 COD dates and honours the active vintage. | — |
 | 11 | **Hydro** | **LEAK** | `forecast_monthly_hydro` is the correct forward analogue (climatology, not measured level) but `HYDRO_CLIMATOLOGY_YEARS = (2021,…,2025)` is fixed — a 2021-base run builds its climatology from four *future* years, and the window **includes quarantined 2022**. The fix is caller-side: `climatology_years` is already a parameter (`data/hydro.py:214-217`). | **FH-1** |
 | 12 | **Emission rates** | **LEAK** | The forecast branch takes the last N years **present in the artifact**, not the last N ≤ target year (`data/emission_rates.py:288-291`: `years = sorted(...); years = years[-window:]`). A 2021 forecast-mode solve derives its CO2 rates from **2024–2025** CAMPD. One-line fix: `years = [y for y in years if y <= target_year][-window:]`. (Also: the artifact carries 2022 rows for PJM/MISO/NEISO and 2026 for NYISO — quarantined years sitting inside a live forecast input.) | **FH-1** |
-| 13 | **Capacity prices** | RESOLVES* | Genuinely vintage-complete for historic delivery years — PJM 2021/22–2027/28, NEISO 2020-21–2027-28, NYISO/MISO 2021-22–2025-26; CAISO/ERCOT have no table (ERCOT energy-only ⇒ 0). *Binds only with the CR-1 clearing gate armed (`--capacity-market-clearing`, per-ISO) **and** `year` threaded to the screens — today `year` reaches the seam only from storage entry (`model/storage.py:1092`); the thermal retirement and entry call sites need auditing. | **FH-2** |
-| 14 | **Policy (RPS / carbon)** | PARTIAL/LEAK | `STATE_RPS_FLOORS` knots start **2026** and `get_rps_target` edge-holds, so every historic year receives the **2026** target. `projected_price` anchors carbon on the 2025 value for any earlier year. `RGGI_MEMBER_STATES_BY_YEAR` covers **2023–2025 only** — a 2021 run cannot express Virginia's 2021 RGGI participation. IRA §45 PTC vintaging (`wind_ptc_vintage_offers`) is genuinely vintage-native and correct. | **FH-2** (smallest-first), else DISCLOSE |
+| 13 | **Capacity prices** | RESOLVES* — **AUDITED CLEAN (FH-2)** | Genuinely vintage-complete for historic delivery years — PJM 2021/22–2027/28, NEISO 2020-21–2027-28, NYISO/MISO 2021-22–2025-26; CAISO/ERCOT have no table (ERCOT energy-only ⇒ 0). *Binds only with the CR-1 clearing gate armed (`--capacity-market-clearing`, per-ISO) **and** `year` threaded to the screens — today `year` reaches the seam only from storage entry (`model/storage.py:1092`); the thermal retirement and entry call sites need auditing. | **FH-2** |
+| 14 | **Policy (RPS / carbon)** | PARTIAL/LEAK — **PARTLY CLOSED (FH-2)** | `STATE_RPS_FLOORS` knots start **2026** and `get_rps_target` edge-holds, so every historic year receives the **2026** target. `projected_price` anchors carbon on the 2025 value for any earlier year. `RGGI_MEMBER_STATES_BY_YEAR` covers **2023–2025 only** — a 2021 run cannot express Virginia's 2021 RGGI participation. IRA §45 PTC vintaging (`wind_ptc_vintage_offers`) is genuinely vintage-native and correct. | **FH-2** (smallest-first), else DISCLOSE |
 | 15 | **Scoring benches** | RESOLVES for scope | 2023–2025 hourly + annual benches exist for all six ISOs. Pre-2023 is thin (CAISO none before 2023, MISO none before 2022; hourly only NEISO 2022) — **irrelevant, because scoring never leaves 2023–2025.** Capacity-event actuals (`capacity_actuals_*.csv`) span the full window. | — |
 
 **Summary:** two BLOCKERs (#2 planned additions, #6 demand growth), two LEAKs closable in a line
 each (#11 hydro window, #12 emission window), one intake dependency (#7 AEO2023 for Arm K), and a
 short disclose list (#8 coal/oil flat, #9 basis vintage, #14 policy edge-hold). Nothing is
 architecturally missing — which is why this program is tractable.
+
+> **FH-2 UPDATE 2026-08-02 — rows 6 / 13 / 14.** Evidence:
+> `docs/handoffs/fh-2-as-of-driver-plumbing-2026-08.md`.
+>
+> * **Row 6 — mechanism CLOSED, values pending.** `DEMAND_GROWTH_RATES_VINTAGES`
+>   (`{as_of_year: {iso: {low|mid|high: {near, long}}}}`) + `ScenarioConfig.demand_growth_vintage`
+>   (default `None`, cache-neutral, matrix row `demand_growth_vintage`) + the
+>   `resolve_demand_growth_table` seam. **Fail-closed:** an unknown vintage, a vintage missing the
+>   run's ISO, or a vintage in backcast mode all RAISE — never a silent fallback to the current
+>   table. The registry ships EMPTY, so every vintage request raises until **FH-3** lands the cited
+>   per-ISO edition values; **FH-4** then sets `demand_growth_vintage = base_year` on Arm K (not
+>   wired here — nothing to select yet). The compounding half is fixed too: `_scale_demand`'s
+>   backward span no longer returns a silent 1.0 — it hard-errors in the T1-FF lane and de-grows
+>   correctly (exact inverse, logged) elsewhere.
+> * **Row 13 — the "needs auditing" premise is STALE; audited clean.** All three screens already
+>   thread `year` into `capacity_price_per_firm_mw_yr` (retirement `retirements.py:1736` via
+>   `evolve.py:497`; thermal + VRE entry `new_entry.py:902/1012` via `evolve.py:601`; storage
+>   `storage.py:1092`), so `resolve_demand_curve_vintage` does select the historic delivery year.
+>   Verified on the committed PJM 2021/22–2025/26 anchors (117.37 / 95.08 / 100.36 / 107.01 /
+>   83.52 $/kW-yr) and now pinned by regression tests so it cannot silently regress. No default
+>   flipped — the CR-1 clearing gate stays owner-armed. One un-threaded consumer found and
+>   DISCLOSED: `results/plant_financials.py:537` (reporting only, no decision effect).
+> * **Row 14 — partly closed.** LANDED: `RGGI_MEMBER_STATES_BY_YEAR[2021]` (2021 is the seed solve
+>   year; without it `per_generator_membership` fell back to the 2025 post-Virginia-exit set) and
+>   CAISO's statutory historic RPS knots (2021 → 0.33 SB X1-2, 2024 → 0.44 SB 100, both Pub. Util.
+>   Code §399.15(b)(2)(B)); 2026+ knots untouched, and no backcast is affected at all
+>   (`backcast_config` sets `rps_enabled=False`). STILL DISCLOSED: the PJM/MISO/NYISO/NEISO RPS
+>   knots (their 2026 values are this repo's own load-weighted per-state blends — a historic knot
+>   is a cited re-blend, never an interpolation), the carbon `projected_price` anchor (the same
+>   back-hold class FH-1 hard-errored for gas; measured 2021 anchors exist but are an
+>   owner-authorized intake), and RGGI 2022 (the evolved-never-solved bridge year, rule 22).
 
 ---
 
