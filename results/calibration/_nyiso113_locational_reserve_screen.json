@@ -1,0 +1,262 @@
+{
+  "probe": "nyiso-113 locational reserve + ramp-capability screen (no LP)",
+  "keeper_bundle": "results/calibration/nyiso112_combined_D",
+  "domination": {
+    "rows": [
+      {
+        "flag": "nyiso_east_reserve_families",
+        "family": "east_10min_spin",
+        "requirement_mw": 330.0,
+        "requirement_offpeak_mw": null,
+        "reserve_class": 1,
+        "zones": [
+          "Capital_Hudson",
+          "Long_Island",
+          "Lower_Hudson",
+          "NYC"
+        ],
+        "penalty_per_mw": 40.0,
+        "dominated_by": [
+          {
+            "family": "east_10min_total",
+            "req": 1200.0,
+            "zones": [
+              "Capital_Hudson",
+              "Long_Island",
+              "Lower_Hudson",
+              "NYC"
+            ],
+            "penalty": 775.0,
+            "slack_margin_mw": 870.0
+          },
+          {
+            "family": "nyc_10min_total",
+            "req": 500.0,
+            "zones": [
+              "NYC"
+            ],
+            "penalty": 25.0,
+            "slack_margin_mw": 170.0
+          }
+        ],
+        "verdict": "PROVABLY INERT (dominated)"
+      },
+      {
+        "flag": "nyiso_east_reserve_families",
+        "family": "east_30min_total",
+        "requirement_mw": 1200.0,
+        "requirement_offpeak_mw": null,
+        "reserve_class": 0,
+        "zones": [
+          "Capital_Hudson",
+          "Long_Island",
+          "Lower_Hudson",
+          "NYC"
+        ],
+        "penalty_per_mw": 40.0,
+        "dominated_by": [
+          {
+            "family": "seny_30min_total",
+            "req": 1300.0,
+            "zones": [
+              "Long_Island",
+              "Lower_Hudson",
+              "NYC"
+            ],
+            "penalty": 500.0,
+            "slack_margin_mw": 100.0
+          }
+        ],
+        "verdict": "PROVABLY INERT (dominated)"
+      },
+      {
+        "flag": "nyiso_li_locational_reserve",
+        "family": "li_30min_total",
+        "requirement_mw": 540.0,
+        "requirement_offpeak_mw": 270.0,
+        "reserve_class": 0,
+        "zones": [
+          "Long_Island"
+        ],
+        "penalty_per_mw": 25.0,
+        "dominated_by": [],
+        "verdict": "NEW BINDING ROW (not dominated)"
+      },
+      {
+        "flag": "nyiso_li_locational_reserve",
+        "family": "li_10min_total",
+        "requirement_mw": 120.0,
+        "requirement_offpeak_mw": null,
+        "reserve_class": 1,
+        "zones": [
+          "Long_Island"
+        ],
+        "penalty_per_mw": 25.0,
+        "dominated_by": [],
+        "verdict": "NEW BINDING ROW (not dominated)"
+      }
+    ]
+  },
+  "zonal_capability": {
+    "2023": {
+      "quick_start_mw_by_zone": {
+        "Capital_Hudson": 2974.2,
+        "Long_Island": 4334.0,
+        "Lower_Hudson": 57.7,
+        "NYC": 5960.0,
+        "Upstate_West": 2011.6
+      },
+      "full_thermal_mw_by_zone": {
+        "Capital_Hudson": 7970.8,
+        "Long_Island": 5146.5,
+        "Lower_Hudson": 111.0,
+        "NYC": 9190.3,
+        "Upstate_West": 7834.5
+      },
+      "hydro_mw_by_zone": {
+        "Capital_Hudson": 554.3,
+        "Upstate_West": 4094.9
+      },
+      "li_quick_start_mw": 4334.0,
+      "li_hydro_mw": 0.0,
+      "dec_227_3_li_quick_start_removed_mw": 145.5,
+      "li_quick_start_mw_in_ozone_window": 4188.5
+    },
+    "2024": {
+      "quick_start_mw_by_zone": {
+        "Capital_Hudson": 2974.2,
+        "Long_Island": 4334.0,
+        "Lower_Hudson": 57.7,
+        "NYC": 5960.0,
+        "Upstate_West": 2011.6
+      },
+      "full_thermal_mw_by_zone": {
+        "Capital_Hudson": 7970.8,
+        "Long_Island": 5146.5,
+        "Lower_Hudson": 111.0,
+        "NYC": 9190.3,
+        "Upstate_West": 7834.5
+      },
+      "hydro_mw_by_zone": {
+        "Capital_Hudson": 551.9,
+        "Upstate_West": 4035.2
+      },
+      "li_quick_start_mw": 4334.0,
+      "li_hydro_mw": 0.0,
+      "dec_227_3_li_quick_start_removed_mw": 145.5,
+      "li_quick_start_mw_in_ozone_window": 4188.5
+    },
+    "2025": {
+      "quick_start_mw_by_zone": {
+        "Capital_Hudson": 2974.2,
+        "Long_Island": 4334.0,
+        "Lower_Hudson": 57.7,
+        "NYC": 5960.0,
+        "Upstate_West": 2011.6
+      },
+      "full_thermal_mw_by_zone": {
+        "Capital_Hudson": 7970.8,
+        "Long_Island": 5146.5,
+        "Lower_Hudson": 111.0,
+        "NYC": 9190.3,
+        "Upstate_West": 7834.5
+      },
+      "hydro_mw_by_zone": {
+        "Capital_Hudson": 551.9,
+        "Upstate_West": 4035.2
+      },
+      "li_quick_start_mw": 4334.0,
+      "li_hydro_mw": 0.0,
+      "dec_227_3_li_quick_start_removed_mw": 145.5,
+      "li_quick_start_mw_in_ozone_window": 4188.5
+    }
+  },
+  "observed_locational_incidence": {
+    "2023": {
+      "hours_reserve_dual_positive": 17,
+      "max_cross_zone_reserve_spread": 0.0,
+      "hours_with_any_cross_zone_spread": 0,
+      "per_zone_positive_hours": {
+        "Capital_Hudson": 17,
+        "Long_Island": 17,
+        "Lower_Hudson": 17,
+        "NYC": 17,
+        "NYISO_external": 17,
+        "Upstate_West": 17
+      },
+      "interpretation": "a locational family that binds prices its member zones ABOVE non-member zones; a zero cross-zone spread in every hour means only the NYCA-wide families have ever bound"
+    },
+    "2024": {
+      "hours_reserve_dual_positive": 6,
+      "max_cross_zone_reserve_spread": 0.0,
+      "hours_with_any_cross_zone_spread": 0,
+      "per_zone_positive_hours": {
+        "Capital_Hudson": 6,
+        "Long_Island": 6,
+        "Lower_Hudson": 6,
+        "NYC": 6,
+        "NYISO_external": 6,
+        "Upstate_West": 6
+      },
+      "interpretation": "a locational family that binds prices its member zones ABOVE non-member zones; a zero cross-zone spread in every hour means only the NYCA-wide families have ever bound"
+    },
+    "2025": {
+      "hours_reserve_dual_positive": 36,
+      "max_cross_zone_reserve_spread": 0.0,
+      "hours_with_any_cross_zone_spread": 0,
+      "per_zone_positive_hours": {
+        "Capital_Hudson": 36,
+        "Long_Island": 36,
+        "Lower_Hudson": 36,
+        "NYC": 36,
+        "NYISO_external": 36,
+        "Upstate_West": 36
+      },
+      "interpretation": "a locational family that binds prices its member zones ABOVE non-member zones; a zero cross-zone spread in every hour means only the NYCA-wide families have ever bound"
+    }
+  },
+  "ramp_capability_screen": {
+    "2023": {
+      "fleet_units": 460,
+      "units_with_positive_ramp10": 352,
+      "total_ramp10_mw": 12318.4,
+      "nyca_spin_requirement_mw": 655.0,
+      "ratio_fleet_ramp_to_spin_req": 18.81,
+      "ramp10_mw_by_zone": {
+        "Capital_Hudson": 2648.1,
+        "Long_Island": 2730.8,
+        "Lower_Hudson": 57.7,
+        "NYC": 4184.8,
+        "Upstate_West": 2697.0
+      }
+    },
+    "2024": {
+      "fleet_units": 460,
+      "units_with_positive_ramp10": 352,
+      "total_ramp10_mw": 12318.4,
+      "nyca_spin_requirement_mw": 655.0,
+      "ratio_fleet_ramp_to_spin_req": 18.81,
+      "ramp10_mw_by_zone": {
+        "Capital_Hudson": 2648.1,
+        "Long_Island": 2730.8,
+        "Lower_Hudson": 57.7,
+        "NYC": 4184.8,
+        "Upstate_West": 2697.0
+      }
+    },
+    "2025": {
+      "fleet_units": 460,
+      "units_with_positive_ramp10": 352,
+      "total_ramp10_mw": 12318.4,
+      "nyca_spin_requirement_mw": 655.0,
+      "ratio_fleet_ramp_to_spin_req": 18.81,
+      "ramp10_mw_by_zone": {
+        "Capital_Hudson": 2648.1,
+        "Long_Island": 2730.8,
+        "Lower_Hudson": 57.7,
+        "NYC": 4184.8,
+        "Upstate_West": 2697.0
+      }
+    }
+  }
+}
