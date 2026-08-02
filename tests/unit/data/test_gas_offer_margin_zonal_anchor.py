@@ -218,10 +218,35 @@ class TestZonalAnchorRegistry(unittest.TestCase):
     """Registry hygiene (rules 24 / 25)."""
 
     def test_only_zonal_basis_isos_carry_a_table(self):
-        self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO"})
+        # NYISO (nyiso-109) + PJM (pjm-144): the two keepers that arm a
+        # per-zone delivered-gas basis with a derived zone-anchor table.
+        # ERCOT/MISO stay U in the matrix until their own lanes derive one.
+        self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO", "PJM"})
 
     def test_every_model_zone_is_covered(self):
         self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["NYISO"]), set(ZONE_NAMES))
+
+
+class TestPjmZonalAnchorRegistry(unittest.TestCase):
+    """PJM table hygiene (pjm-144): coverage + the mean-zero geometry.
+
+    PJM's applier is the capacity-weighted MEAN-ZERO core
+    (``data.fuel.basis.meanzero``), not NYISO's reference-zone convention, so
+    its zone anchors must straddle the ISO anchor from BOTH sides (premium
+    east, discount west) rather than sit uniformly at or below it.
+    """
+
+    def test_every_pjm_model_zone_is_covered(self):
+        pjm_zones = get_iso_config("PJM").zone_names
+        self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["PJM"]), set(pjm_zones))
+
+    def test_anchors_are_two_sided_around_the_iso_anchor(self):
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        iso_anchor = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["PJM"]
+        table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["PJM"]
+        self.assertTrue(any(v > iso_anchor for v in table.values()))
+        self.assertTrue(any(v < iso_anchor for v in table.values()))
 
 
 if __name__ == "__main__":
