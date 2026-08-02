@@ -172,8 +172,11 @@ closure path, mechanism by mechanism.
    `N ÷ (S+N)` before this is transferred anywhere else, and CAISO/NEISO should
    answer that question in the same breath as the identification one.
 4. **The CAMPD economic-layup defect is upstream of everything** (all six
-   extracts; holdout frozen; MISO/PJM/NYISO re-tune required; downstream
-   derived artifacts not yet re-derived post-guard — an open cross-ISO audit).
+   extracts; holdout frozen; MISO/PJM/NYISO re-tune required). The downstream
+   half is **CLOSED as of xiso-2 (2026-08-02)**: 5/6 committed extracts
+   re-derive byte-identically at HEAD, MISO's mismatch is 2022-only and
+   source-data-attributed, and **no ISO's keeper consumes a stale
+   outage-derived artifact** (§5.7).
 5. **Topology splits are dead at both tested ends** (ERCOT-117, MISO-79):
    missing congestion is sub-zonal; the path forward is data intake (nodal/
    station crosswalks), not invented interfaces.
@@ -1910,9 +1913,61 @@ charter with a new measured identification** before a solve:
   `CALIBRATED` at ~34 % amplitude. Whether the rubric gains a diurnal-amplitude
   criterion is an **OWNER CALL**, filed by neiso-74 and re-filed here; the
   scorer was NOT changed. Matrix row `diurnal_price_amplitude`.
-- Post-guard re-derivation sweep of outage-derived artifacts, all six ISOs
-  (flagged in governance.md 2026-07-26, unaudited) — **still the oldest open
-  audit on this list.**
+- **Post-guard re-derivation sweep of outage-derived artifacts, all six ISOs —
+  DONE 2026-08-02 (xiso-2), and NO KEEPER IS AFFECTED.** The list's oldest open
+  audit (flagged in governance.md 2026-07-26) is closed. Zero LP: the census reads
+  committed bytes and re-runs frozen derive scripts. Probe
+  `scripts/probes/_xiso2_outage_artifact_provenance_census.py`, record
+  `results/calibration/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md`.
+
+  **Byte-reproduction at HEAD**, each ISO re-derived with the committed recipe
+  (`--years 2018 … 2026 --merit-order-guard`) and md5-compared against the
+  guard-on extract from `6a8f285c5` (2026-07-26 00:36Z):
+
+  | ISO | extract reproduces? | verdict |
+  |---|---|---|
+  | ERCOT | **byte-identical** | CLEAN |
+  | CAISO | **byte-identical** | CLEAN (one *inert* pre-guard hygiene item) |
+  | PJM | **byte-identical** | CLEAN |
+  | MISO | mismatch, **2022 only** | CLEAN in the training window |
+  | NYISO | **byte-identical** | CLEAN |
+  | NEISO | **byte-identical** | CLEAN |
+
+  Four consequences. (a) **MISO's mismatch is fully attributed and
+  training-clean** — a strict SUPERSET (+17 windows, 0 lost, **all 2022 COAL**),
+  layup companion byte-identical, **2023–2025 identical row-for-row**, root-caused
+  to commit `5cd937407` (2026-07-31) filling the MISO EIA-930 2022 hourly hole
+  (7 → 8,760 rows). A **source-data** change, so re-derivation is rule-23
+  admissible — non-urgent, must cite the data change, and must not ride along in a
+  calibration session. Against interest: the same commit filled CISO's 2022 hole
+  and **CAISO still reproduces byte-identically**, so this does not generalise
+  (rule 25). (b) **The only keeper-consumed artifact downstream of an extract is
+  NYISO's NYC/LI/Capital `ST_GAS` reliability-floor limbs, and nyiso-81 re-derived
+  them 18 h AFTER the guard the same day** — ancestry-tested, not date-tested.
+  The other ISOs' `reliability_floor_coeffs_*.csv` are **not** downstream of the
+  outage extracts at all, so their 06-30…07-08 dates are not a staleness finding.
+  (c) **Two artifacts are genuinely pre-guard and neither is keeper-consumed**:
+  `MAINTENANCE_MONTHLY_SHAPE` (2026-06-25, forecast-mode only, default on) and
+  `caiso-dam-resource-crosswalk.csv` (2026-07-19, **zero** code consumers —
+  provably inert). (d) **One live code defect found and FIXED**:
+  `derive_maintenance_shape.py` pooled `glob(campd-unit-outages*.csv)`, which
+  since the guard also matches the six `-layup-` companions — the windows the
+  guard *exists to veto*, so pooling them partially inverts it (rule 19) — plus
+  the `-e923-`, `-short-` and `-maxgen-` files: **24 files / 58,744 rows drawn
+  where 6 / 39,755 were intended (+47.8 %)**. The selector now enumerates
+  `_STANDARD_EXTRACTS`. The constant does **not** reproduce under *either*
+  selector and, against interest, the corrected one is **not uniformly closer** —
+  fixing the glob does not restore it; it is genuinely stale w.r.t. the 07-24
+  backfill and the guard. Re-derivation is rule-23 admissible and was
+  **deliberately not done** (a census is not a sweep; it is a forecast-lane input
+  whose refresh belongs to a session that can gate it). Matrix row
+  `outage_artifact_provenance`, cells `IIIOII`.
+
+  Filed, not fixed (rule 24 `[R-REGISTRY]`): `maintenance_monthly_shape` is a
+  solve-affecting `ScenarioConfig` field **absent from the matrix** — CI
+  grandfathers it because `check_mechanism_matrix.py` diffs new fields against the
+  PR base. Its per-ISO forecast-lane verdicts have never been tested, so xiso-2
+  did not invent them.
 - `NG: PS` hydro-pin audit — **ALL SIX ISOs NOW SCREENED** (miso-108 audited
   MISO; miso-109 fixed it and ran the same three-signature screen across the
   rest, `scripts/probes/_miso109_hydro_level_audit.py`). The check is
