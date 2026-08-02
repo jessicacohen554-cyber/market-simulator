@@ -240,6 +240,8 @@ in Phase 3 from re-scored verdicts; until then this audit is the drift record.
 
 ### Phase 2 — owner-decision batch (one sitting; evidence attached from Phases 1/3)
 
+> **Packet (FFR-2D, 2026-08-02):** `docs/handoffs/ffr-owner-sitting-2026-08-02.md` — the assembled batch with per-item evidence status, recommendations, and sign-off lines; D-5/D-6 arrive there as residues (the marker declarations executed 2026-07-31, pack §0a).
+
 | # | Decision | Recommendation & evidence source |
 |---|---|---|
 | D-1 | `retirement_rule` default legacy→**pipeline** | Re-probe FF-1A at post-P1 HEAD (T-R battery + T-R10 no-inversion + LOYO 2023–2025, bands unchanged) — flip on evidence, not on the memo. Expected to clear the FC-3 over-fire family. |
