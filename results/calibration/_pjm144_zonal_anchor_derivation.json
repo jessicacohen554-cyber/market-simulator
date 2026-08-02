@@ -1,0 +1,111 @@
+{
+ "probe": "pjm-144 zonal-anchor derivation record (weights + invariant)",
+ "weights_bundle": "results/calibration/pjm143_hy_level_B",
+ "iso_anchor": 3.3483,
+ "zone_anchor_table": {
+  "PJM_ComEd": 3.2575,
+  "PJM_AEP_Ohio": 3.1201,
+  "PJM_ATSI": 3.1201,
+  "PJM_West_APS": 2.9495,
+  "PJM_Central_PA": 2.9708,
+  "PJM_Dominion": 3.8798,
+  "PJM_EMAAC": 3.4898,
+  "PJM_SWMAAC": 4.4328
+ },
+ "per_year": {
+  "2023": {
+   "gas_capacity_mw_by_zone": {
+    "PJM_ComEd": 13270.7,
+    "PJM_AEP_Ohio": 20556.1,
+    "PJM_ATSI": 4712.6,
+    "PJM_West_APS": 6340.2,
+    "PJM_Central_PA": 18110.8,
+    "PJM_Dominion": 14689.6,
+    "PJM_EMAAC": 15443.9,
+    "PJM_SWMAAC": 5853.4
+   },
+   "raw_basis_vs_hh": {
+    "PJM_ComEd": -0.108,
+    "PJM_AEP_Ohio": -0.246,
+    "PJM_ATSI": -0.246,
+    "PJM_West_APS": -0.573,
+    "PJM_Central_PA": -0.432,
+    "PJM_Dominion": 0.761,
+    "PJM_EMAAC": -0.32,
+    "PJM_SWMAAC": 0.424
+   },
+   "capacity_weighted_mean_removed": -0.1049,
+   "unweighted_mean_basis": -0.0925,
+   "n_gas_rows": 1659,
+   "n_marked_up_tranches": 986,
+   "n_with_band_scoped_anchor": 0
+  },
+  "2024": {
+   "gas_capacity_mw_by_zone": {
+    "PJM_ComEd": 13273.6,
+    "PJM_AEP_Ohio": 20566.6,
+    "PJM_ATSI": 4712.6,
+    "PJM_West_APS": 6340.2,
+    "PJM_Central_PA": 18110.8,
+    "PJM_Dominion": 14689.6,
+    "PJM_EMAAC": 15443.9,
+    "PJM_SWMAAC": 5853.4
+   },
+   "raw_basis_vs_hh": {
+    "PJM_ComEd": 0.12,
+    "PJM_AEP_Ohio": 0.056,
+    "PJM_ATSI": 0.056,
+    "PJM_West_APS": -0.095,
+    "PJM_Central_PA": -0.137,
+    "PJM_Dominion": 0.634,
+    "PJM_EMAAC": 0.125,
+    "PJM_SWMAAC": 0.949
+   },
+   "capacity_weighted_mean_removed": 0.1689,
+   "unweighted_mean_basis": 0.2135,
+   "n_gas_rows": 1666,
+   "n_marked_up_tranches": 994,
+   "n_with_band_scoped_anchor": 0
+  },
+  "2025": {
+   "gas_capacity_mw_by_zone": {
+    "PJM_ComEd": 13273.6,
+    "PJM_AEP_Ohio": 20567.0,
+    "PJM_ATSI": 4712.6,
+    "PJM_West_APS": 6340.2,
+    "PJM_Central_PA": 18110.8,
+    "PJM_Dominion": 14689.6,
+    "PJM_EMAAC": 15443.9,
+    "PJM_SWMAAC": 5853.4
+   },
+   "raw_basis_vs_hh": {
+    "PJM_ComEd": 0.018,
+    "PJM_AEP_Ohio": -0.192,
+    "PJM_ATSI": -0.192,
+    "PJM_West_APS": -0.226,
+    "PJM_Central_PA": -0.261,
+    "PJM_Dominion": 0.502,
+    "PJM_EMAAC": 0.922,
+    "PJM_SWMAAC": 2.183
+   },
+   "capacity_weighted_mean_removed": 0.2386,
+   "unweighted_mean_basis": 0.3443,
+   "n_gas_rows": 1666,
+   "n_marked_up_tranches": 993,
+   "n_with_band_scoped_anchor": 0
+  }
+ },
+ "window_mean_gas_capacity_mw_by_zone": {
+  "PJM_ComEd": 13272.6,
+  "PJM_AEP_Ohio": 20563.2,
+  "PJM_ATSI": 4712.6,
+  "PJM_West_APS": 6340.2,
+  "PJM_Central_PA": 18110.8,
+  "PJM_Dominion": 14689.6,
+  "PJM_EMAAC": 15443.9,
+  "PJM_SWMAAC": 5853.4
+ },
+ "capw_mean_of_zone_anchors": 3.3483,
+ "capw_minus_iso_anchor": 0.0,
+ "note": "capw_mean_of_zone_anchors uses the window-mean weights; the applier's invariant is exact per-year (each year's capacity-weighted mean of the transformed levels equals that year's ISO series mean, up to the 0.10 $/MMBtu gas floor), so the window stat differs from the ISO anchor only through year-to-year weight drift."
+}

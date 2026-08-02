@@ -104,10 +104,14 @@ Three zones sit above the ISO anchor and five below — the two-sided geometry
 capacity-weighted means the applier removes are −0.105 / +0.169 / +0.239
 $/MMBtu (2023/2024/2025) — materially different from zero AND year-varying,
 which is why the derivation carries the keeper's own fleet weights rather
-than a synthetic unweighted mean. Consistency stat (the mean-zero
-invariant): the gas-capacity-weighted mean of the zone anchors is **{CAPW}**
-against the ISO anchor 3.3483 (window-mean weights; the invariant is exact
-per-year, so the residual is year-to-year weight drift only — recorded in
+than a synthetic unweighted mean (whose error — up to 0.106 $/MMBtu in 2025,
+larger than the inertness bar itself — would have shifted every anchor
+uniformly off the solve's own levels). Consistency stat (the mean-zero
+invariant): the gas-capacity-weighted mean of the zone anchors is **3.3483,
+Δ +0.0000** against the ISO anchor (window-mean weights; the invariant is
+exact per-year, so the residual is year-to-year weight drift only, which
+rounds away at 4 decimals — full record, including per-zone gas capacities
+and the 986/994/993 marked-up-tranche census with 0 band-scoped anchors, in
 `results/calibration/_pjm144_zonal_anchor_derivation.json`) — the aggregate
 identification point is preserved and only the cross-section moves, exactly
 as the applier's construction requires.
