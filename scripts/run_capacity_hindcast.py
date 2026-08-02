@@ -58,6 +58,23 @@ Three modes, selected by ``--vintage`` / ``--crossover`` / ``--forward-from-base
   rule-22 marker is spent and the holdout freeze is not implicated — the
   governance record is printed at launch rather than left implicit.
 
+**Capacity-price posture (FFR-2E; audit FR-14).** The harness DEFAULT is the
+SHIPPED production posture: ``capacity_market_clearing_by_iso`` is left at the
+``ScenarioConfig`` default, so a leg for an ISO the forecast ships curve-ON
+(PJM / MISO / CAISO / NEISO today) clears its RA position on that ISO's
+published sloped VRR — the hindcast validates the configuration the forecast
+actually runs. Two explicit arms remain:
+
+* ``--fixed-net-cone`` — the flat net-CONE stub
+  (``capacity_market_clearing_by_iso=None``). This was the harness default
+  BEFORE FFR-2E, so it reproduces the posture every committed pre-2026-08-02
+  leg ran; those legs' FC-3 verdicts stand as scored.
+* ``--capacity-market-clearing`` — the RC-1B force-ON probe (``{iso: True}``),
+  now needed only for an ISO production ships curve-OFF (ERCOT, NYISO).
+
+The two are mutually exclusive. No ``ScenarioConfig`` default moves here: the
+harness selects among postures the config already supports (rule 24).
+
 Rule 12: years run sequentially inside one invocation; independent variants /
 ISOs are launched as concurrent background invocations with separate
 ``--out-dir``s.
@@ -86,6 +103,7 @@ import argparse
 import json
 import logging
 import sys
+from dataclasses import MISSING
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -102,6 +120,9 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+from market_sim.config.capacity_market import (  # noqa: E402
+    resolve_capacity_market_clearing,
+)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
@@ -247,6 +268,62 @@ def _validate_window(
         )
 
 
+def production_capacity_clearing_default() -> dict[str, bool] | None:
+    """Return the SHIPPED ``capacity_market_clearing_by_iso`` default.
+
+    Read off the ``ScenarioConfig`` dataclass field rather than copied here, so
+    an owner flip of the production posture (FFR-3A step 0) is followed by the
+    hindcast harness with no edit in this file — a hardcoded mirror would be a
+    second, silently-diverging tuning channel (rule 24).
+
+    Returns ``None`` when the field carries no ``default_factory`` (i.e. a
+    plain default), which reproduces the pre-FFR-2E harness behaviour.
+    """
+    spec = getattr(ScenarioConfig, "__dataclass_fields__", {}).get(
+        "capacity_market_clearing_by_iso"
+    )
+    factory = getattr(spec, "default_factory", None) if spec is not None else None
+    if factory is None or factory is MISSING:
+        return None
+    return dict(factory())
+
+
+def resolve_capacity_clearing_posture(
+    iso: str, force_on: bool, fixed_net_cone: bool
+) -> tuple[dict[str, bool] | None, str]:
+    """Resolve the leg's capacity-clearing posture (FFR-2E, audit FR-14).
+
+    Returns ``(capacity_market_clearing_by_iso, posture_label)``. Three
+    postures, in precedence order:
+
+    * ``fixed_net_cone`` (``--fixed-net-cone``) → ``None``: the flat net-CONE
+      comparison arm. This was the harness DEFAULT before FFR-2E, so every
+      committed pre-2026-08-02 leg is a leg of this arm and its scored FC-3
+      verdict stands as-scored.
+    * ``force_on`` (``--capacity-market-clearing``, the RC-1B probe) →
+      ``{iso: True}``: arm the CR-1 sloped curve for THIS ISO only, whatever
+      production ships. Retained because it is the only way to exercise the
+      curve for an ISO production leaves OFF (ERCOT, NYISO).
+    * neither (the FFR-2E DEFAULT) → the production default verbatim: the
+      hindcast validates the configuration the forecast actually ships (peer
+      review §3.1). ``__post_init__`` does not coerce this field for a
+      ``hindcast=True`` leg, so it reaches the screens.
+
+    No ``ScenarioConfig`` default moves here — the harness selects among
+    postures the config already supports (rule 24).
+    """
+    if fixed_net_cone and force_on:
+        raise SystemExit(
+            "--fixed-net-cone and --capacity-market-clearing are mutually "
+            "exclusive (they select opposite capacity-price postures)"
+        )
+    if fixed_net_cone:
+        return None, "fixed_net_cone"
+    if force_on:
+        return {iso: True}, "forced_curve"
+    return production_capacity_clearing_default(), "shipped"
+
+
 def build_config(
     iso: str,
     start_year: int,
@@ -262,6 +339,7 @@ def build_config(
     limited_foresight_dispatch: bool = False,
     legacy_renewable_credit: bool = False,
     capacity_market_clearing: bool = False,
+    fixed_net_cone: bool = False,
     correlated_forced_outage: bool = False,
     retirement_rule: str = "legacy",
     entry_screen_diagnostics: bool = False,
@@ -330,6 +408,9 @@ def build_config(
             CROSSOVER_FORWARD_YEAR - 1 if crossover else ScenarioConfig().weather_year
         )
         solve_year_weather = False
+    _clearing_by_iso, _ = resolve_capacity_clearing_posture(
+        iso, capacity_market_clearing, fixed_net_cone
+    )
     return ScenarioConfig(
         iso=iso,
         mode="forecast",
@@ -381,17 +462,18 @@ def build_config(
         # the before/after diagnostic. Default (False) keeps the model
         # default renewable_elcc_curves=True -- the AFTER leg.
         renewable_elcc_curves=not legacy_renewable_credit,
-        # RC-1B probe flag (PROBE, default-off): arm the CR-1 sloped capacity
-        # demand curve for THIS hindcast's OWN ISO only, via the per-ISO
-        # override mapping (RC-1B item 1 -- resolve_capacity_market_clearing).
-        # The scalar capacity_market_clearing stays off, so the arm can never
-        # leak to another ISO even if a future harness runs more than one per
-        # invocation. Default (flag off) => None => byte-identical. Never the
-        # harness default -- see plan §2.2 (the position-calibration measurement
-        # this flag exists to run).
-        capacity_market_clearing_by_iso=(
-            {iso: True} if capacity_market_clearing else None
-        ),
+        # Capacity-price posture (FFR-2E, audit FR-14). The harness DEFAULT is
+        # now the SHIPPED production posture -- the per-ISO clearing dict
+        # ScenarioConfig actually carries -- so FC-3 evidence is scored on the
+        # price formation the forecast runs (sloped VRR wherever the ISO ships
+        # curve-ON), not on a flat net-CONE the production path never sees.
+        # --fixed-net-cone restores the old flat arm (the posture every
+        # committed pre-2026-08-02 leg ran, so their verdicts stand as scored);
+        # --capacity-market-clearing keeps the RC-1B force-ON probe for an ISO
+        # production leaves off. The scalar capacity_market_clearing stays off
+        # in every posture, so an arm can never leak to another ISO.
+        # See resolve_capacity_clearing_posture.
+        capacity_market_clearing_by_iso=_clearing_by_iso,
         # FF-1B probe arm (default-off): the correlated cold-event forced-
         # outage derate (data/outages.apply_correlated_outage_derate), so a
         # hindcast leg's realized deep-cold days (Uri 2021, Heather 2024)
@@ -685,10 +767,25 @@ def main(argv: list[str] | None = None) -> int:
         "--capacity-market-clearing",
         action="store_true",
         help=(
-            "RC-1B PROBE: arm the CR-1 sloped capacity demand curve for THIS "
-            "hindcast's own ISO only, via ScenarioConfig."
+            "RC-1B PROBE (force-ON): arm the CR-1 sloped capacity demand curve "
+            "for THIS hindcast's own ISO only, via ScenarioConfig."
             "capacity_market_clearing_by_iso={iso: True} (the scalar stays "
-            "off). Never the harness default."
+            "off) EVEN IF production ships that ISO curve-OFF. Since FFR-2E "
+            "the harness already defaults to the shipped posture, so this flag "
+            "is only needed for an ISO production leaves off (ERCOT, NYISO). "
+            "Mutually exclusive with --fixed-net-cone."
+        ),
+    )
+    parser.add_argument(
+        "--fixed-net-cone",
+        action="store_true",
+        help=(
+            "FFR-2E comparison arm: price resource adequacy on the FLAT "
+            "net-CONE stub (capacity_market_clearing_by_iso=None) instead of "
+            "the shipped per-ISO posture. This was the harness default before "
+            "FFR-2E, so it reproduces the posture every committed "
+            "pre-2026-08-02 leg ran (audit FR-14). Mutually exclusive with "
+            "--capacity-market-clearing."
         ),
     )
     parser.add_argument(
@@ -826,6 +923,18 @@ def main(argv: list[str] | None = None) -> int:
             "scored, or registered; no marker is spent."
         )
 
+    # FFR-2E posture label for the meta record (pure resolution, no side
+    # effect — build_config resolves the same pair internally). Called here so
+    # the mutual-exclusion check fails BEFORE the solve, not after it.
+    _, _clearing_posture = resolve_capacity_clearing_posture(
+        iso, args.capacity_market_clearing, args.fixed_net_cone
+    )
+    print(
+        f"[posture] capacity-price arm: {_clearing_posture} "
+        f"(FFR-2E / audit FR-14). Pass --fixed-net-cone for the flat "
+        "net-CONE comparison arm."
+    )
+
     config = build_config(
         iso,
         start_year,
@@ -841,6 +950,7 @@ def main(argv: list[str] | None = None) -> int:
         limited_foresight_dispatch=args.limited_foresight_dispatch,
         legacy_renewable_credit=args.legacy_renewable_credit,
         capacity_market_clearing=args.capacity_market_clearing,
+        fixed_net_cone=args.fixed_net_cone,
         correlated_forced_outage=args.correlated_forced_outage,
         retirement_rule=args.retirement_rule,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
@@ -910,8 +1020,19 @@ def main(argv: list[str] | None = None) -> int:
         "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
         "retirement_rule": args.retirement_rule,
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
-        "capacity_market_clearing": bool(args.capacity_market_clearing),
+        # FFR-2E: the RESOLVED per-ISO clearing gate, not the raw force-ON
+        # flag. Downstream (scripts/forecast_verdict._curve_on) reads this key
+        # to classify a leg curve-ON/curve-OFF, and since the harness default
+        # is now the shipped posture a flag-sourced value would mis-classify
+        # every shipped-posture leg as curve-OFF — the FR-14 defect in another
+        # costume. Backward-compatible: on every leg run before FFR-2E the
+        # resolved gate equals the flag (the old default was None → False).
+        "capacity_market_clearing": bool(resolve_capacity_market_clearing(config, iso)),
         "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
+        # Which of the three postures this leg ran (shipped / fixed_net_cone /
+        # forced_curve) — the FC-3 evidence-row discriminator.
+        "capacity_clearing_posture": _clearing_posture,
+        "capacity_market_clearing_forced": bool(args.capacity_market_clearing),
         "correlated_forced_outage": bool(args.correlated_forced_outage),
         "entry_screen_diagnostics": bool(args.entry_screen_diagnostics),
         # FF-2A dampers (FFR-2B): read from the SOLVED config, never from
