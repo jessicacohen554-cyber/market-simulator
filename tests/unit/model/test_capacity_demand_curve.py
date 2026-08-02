@@ -504,6 +504,58 @@ class TestP0BReconciliation(unittest.TestCase):
             design.demand_curve[0].price_frac_net_cone, cap_frac_data, places=1
         )
 
+    def test_miso_py2026_27_aggregation_facts_are_pinned(self):
+        # FFR-2C. MISO's PY2026-27 vintage is deliberately NOT encoded (the
+        # seasonal RBDC parameters are unretrievable; an annual-only vintage
+        # would regress the seasonal grain — see
+        # data/raw/capacity-market/demand-curve/README.md). What IS proven from
+        # the published rows is pinned here so the session that finally encodes
+        # it inherits verified facts instead of re-deriving them.
+        #
+        # (a) North/Central IS the LRZ 1-7 arithmetic mean: on PY2025-26 that
+        #     mean of gross CONE equals MISO's own published North/Central
+        #     SEASONAL CONE annualized (summer $/MW-day x 92 days).
+        r25 = self._rows("MISO", "2025-2026")
+        lrz17 = [f"LRZ {i}" for i in range(1, 8)]
+        gross25 = r25[(r25.metric == "gross_cone") & (r25.area.isin(lrz17))]
+        mean_gross25 = float(gross25.y_value.mean())
+        summer_nc = self._scalar(
+            r25, "net_cone", area="North/Central", season="summer"
+        )  # published seasonal CONE, $/MW-day
+        self.assertAlmostEqual(mean_gross25, summer_nc * 92.0, delta=1.0)
+        #
+        # (b) The E&AS (Inframarginal Rent) offset is ONE value per Planning
+        #     Area, exactly as FERC Docket ER26-139-000 describes: gross - net
+        #     is identical across LRZ 1-7 (First) and across LRZ 8/9/10
+        #     (Second). This is what makes the mean-of-LRZ aggregation MISO's
+        #     own construction rather than an approximation.
+        r26 = self._rows("MISO", "2026-2027")
+        g = {
+            row.area: float(row.y_value)
+            for _, row in r26[r26.metric == "gross_cone"].iterrows()
+        }
+        n = {
+            row.area: float(row.y_value)
+            for _, row in r26[r26.metric == "net_cone"].iterrows()
+        }
+        first = {round(g[z] - n[z], 6) for z in lrz17}
+        second = {round(g[z] - n[z], 6) for z in ("LRZ 8", "LRZ 9", "LRZ 10")}
+        self.assertEqual(first, {52735.0}, "First Planning Area IMR not single-valued")
+        self.assertEqual(
+            second, {47938.0}, "Second Planning Area IMR not single-valued"
+        )
+        #
+        # (c) Hence the derived (not interpolated) PY2026-27 North/Central Net
+        #     CONE, and the size of the stake: +1.5% over the held anchor.
+        derived = sum(n[z] for z in lrz17) / 7.0
+        self.assertAlmostEqual(derived, 81032.142857, places=4)
+        self.assertAlmostEqual(derived / 79800.0 - 1.0, 0.0154, places=4)
+        # Until it is encoded, MISO still holds-last to PY2025-26 with the
+        # seasonal grain intact.
+        held = resolve_demand_curve_vintage("MISO", 2026)
+        self.assertEqual(held.delivery_year, "2025-2026")
+        self.assertIsNotNone(held.seasonal_rbdc)
+
     def test_caiso_proxy_recited_to_cpm_soft_offer_cap(self):
         # CAISO carries no curve; its fixed anchor is re-derived to the CPM
         # soft-offer cap. FF-2C R4 tightened this from within-5% to EXACT: the

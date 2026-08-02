@@ -129,3 +129,24 @@ See `docs/handoffs/capacity-market-intake-2026-07.md` for the original intake
 session (including its "MANUAL DOWNLOADS NEEDED" precedent for the
 PY2026-27/2022-23/2020-21 `cdn.misoenergy.org` HTTP 403 block referenced
 above).
+
+**STATUS (2026-08-02, FFR-2C — PY2026-27 investigated, deliberately NOT encoded).**
+No new rows were added to `miso.csv` in this session. What changed is that the
+PY2026-27 aggregation question is now **settled on published evidence**, and the
+blocker is narrowed to exactly one document. The full write-up (both proofs, the
+derived North/Central Net CONE of 81,032.14 $/MW-yr = +1.5 % over the held
+PY2025-26 anchor, and why a +1.5 % level correction is not worth regressing the
+seasonal grain) is in the parent `../README.md`; the two proofs are machine-checked
+by `tests/unit/model/test_capacity_demand_curve.py::
+test_miso_py2026_27_aggregation_facts_are_pinned`.
+
+The one blocker: the PY2026-27 **seasonal RBDC** parameters, published in
+`cdn.misoenergy.org/2026 PRA Results Posting 20260428754715.pdf`, which returns
+S3 `AccessDenied` from this environment while the 2023/2024/2025 postings on the
+same CDN return 200 — that object's ACL, not a general block. Retrieve it (or
+its RASC results-review deck) and the vintage can be encoded whole.
+
+The earlier code comment in `capacity_market.py` — "PY2026-27 is omitted (per-LRZ
+Net CONE only, no N/C aggregate — rule 5)" — was correct when written and is now
+superseded in its *reason*: the aggregate is derivable on MISO's own construction.
+The refusal stands on the seasonal-grain regression instead.
