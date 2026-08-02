@@ -1,0 +1,233 @@
+{
+ "control": "results/calibration/nyiso111_control_A",
+ "arm": "results/calibration/nyiso111_rampenv_B",
+ "keeper": "results/calibration/nyiso109_zonalanchor_B",
+ "K1": {
+  "config_diff": {
+   "ramp_limits": [
+    false,
+    true
+   ]
+  },
+  "pass": true
+ },
+ "K2": {
+  "max_abs_class_hour_delta_mw": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "pass": true
+ },
+ "K5": {
+  "control_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "arm_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "pass": true
+ },
+ "K3": {
+  "per_year": {
+   "2023": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21809.0
+   },
+   "2024": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21815.1
+   },
+   "2025": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21815.1
+   }
+  },
+  "pass": true
+ },
+ "K6": {
+  "per_year": {
+   "2023": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21809.0,
+    "control_crossings": 5226,
+    "arm_crossings": 2240,
+    "control_infeasible_mwh": 225117.4,
+    "arm_infeasible_mwh": 3888.3,
+    "infeasible_drop_pct": 98.27,
+    "control_crossing_share_pct": 0.9623,
+    "arm_crossing_share_pct": 0.4125
+   },
+   "2024": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21815.1,
+    "control_crossings": 6819,
+    "arm_crossings": 3066,
+    "control_infeasible_mwh": 291436.6,
+    "arm_infeasible_mwh": 4716.5,
+    "infeasible_drop_pct": 98.38,
+    "control_crossing_share_pct": 1.2557,
+    "arm_crossing_share_pct": 0.5646
+   },
+   "2025": {
+    "groups": 62,
+    "enveloped_capacity_mw": 21815.1,
+    "control_crossings": 4057,
+    "arm_crossings": 2169,
+    "control_infeasible_mwh": 274134.1,
+    "arm_infeasible_mwh": 7061.9,
+    "infeasible_drop_pct": 97.42,
+    "control_crossing_share_pct": 0.7471,
+    "arm_crossing_share_pct": 0.3994
+   }
+  },
+  "pass": true
+ },
+ "P1_c3a": {
+  "per_year": {
+   "2023": {
+    "actual_rt_lw": 32.3,
+    "control": 7.508,
+    "arm": 7.501
+   },
+   "2024": {
+    "actual_rt_lw": 38.2,
+    "control": -0.547,
+    "arm": -0.599
+   },
+   "2025": {
+    "actual_rt_lw": 66.53,
+    "control": -9.64,
+    "arm": -9.657
+   }
+  },
+  "pass": true
+ },
+ "P3_c3c": {
+  "per_year": {
+   "2023": {
+    "control_hours_gt300_maxzone": 3,
+    "control_hours_gt300_lw": 0,
+    "arm_hours_gt300_maxzone": 3,
+    "arm_hours_gt300_lw": 0
+   },
+   "2024": {
+    "control_hours_gt300_maxzone": 0,
+    "control_hours_gt300_lw": 0,
+    "arm_hours_gt300_maxzone": 0,
+    "arm_hours_gt300_lw": 0
+   },
+   "2025": {
+    "control_hours_gt300_maxzone": 7,
+    "control_hours_gt300_lw": 0,
+    "arm_hours_gt300_maxzone": 7,
+    "arm_hours_gt300_lw": 0
+   }
+  },
+  "pass": true,
+  "note": "actual >$300 counts are 10/12/42; the keeper models 3/0/7. The gate is 'the arm does not move FURTHER from actual', i.e. arm >= control given the model under-produces."
+ },
+ "P5_feasibility": {
+  "per_year": {
+   "2023": {
+    "control_slack_mwh": 0.0,
+    "control_dump_mwh": 0.0,
+    "arm_slack_mwh": 0.0,
+    "arm_dump_mwh": 0.0
+   },
+   "2024": {
+    "control_slack_mwh": 0.0,
+    "control_dump_mwh": 0.0,
+    "arm_slack_mwh": 0.0,
+    "arm_dump_mwh": 0.0
+   },
+   "2025": {
+    "control_slack_mwh": 0.0,
+    "control_dump_mwh": 0.0,
+    "arm_slack_mwh": 0.0,
+    "arm_dump_mwh": 0.0
+   }
+  },
+  "pass": true
+ },
+ "reported": {
+  "2023": {
+   "control_da_swing_share": 0.6012,
+   "control_da_peak_error": -2.389,
+   "control_da_trough_error": 4.787,
+   "control_rt_swing_share": 0.6678,
+   "control_rt_peak_error": 0.11,
+   "control_rt_trough_error": 5.491,
+   "arm_da_swing_share": 0.6049,
+   "arm_da_peak_error": -2.34,
+   "arm_da_trough_error": 4.77,
+   "arm_rt_swing_share": 0.6719,
+   "arm_rt_peak_error": 0.159,
+   "arm_rt_trough_error": 5.473,
+   "class_energy_delta_twh": {
+    "CC_CHP": 0.0095,
+    "CC_REGULAR": -0.0074,
+    "CT_CHP": 0.0016,
+    "CT_PEAKER": 0.0011,
+    "ST_CHP": 0.0003,
+    "ST_GAS": -0.0048
+   }
+  },
+  "2024": {
+   "control_da_swing_share": 0.5745,
+   "control_da_peak_error": -5.882,
+   "control_da_trough_error": 2.708,
+   "control_rt_swing_share": 0.5693,
+   "control_rt_peak_error": -5.554,
+   "control_rt_trough_error": 3.217,
+   "arm_da_swing_share": 0.5774,
+   "arm_da_peak_error": -5.868,
+   "arm_da_trough_error": 2.662,
+   "arm_rt_swing_share": 0.5723,
+   "arm_rt_peak_error": -5.54,
+   "arm_rt_trough_error": 3.171,
+   "class_energy_delta_twh": {
+    "CC_CHP": 0.0361,
+    "CC_REGULAR": -0.0461,
+    "CT_CHP": 0.0017,
+    "CT_PEAKER": 0.0058,
+    "ST_CHP": 0.0002,
+    "ST_GAS": 0.0023,
+    "oil": 0.0003
+   }
+  },
+  "2025": {
+   "control_da_swing_share": 0.4551,
+   "control_da_peak_error": -17.234,
+   "control_da_trough_error": 2.448,
+   "control_rt_swing_share": 0.4235,
+   "control_rt_peak_error": -19.9,
+   "control_rt_trough_error": 2.477,
+   "arm_da_swing_share": 0.4565,
+   "arm_da_peak_error": -17.207,
+   "arm_da_trough_error": 2.424,
+   "arm_rt_swing_share": 0.4248,
+   "arm_rt_peak_error": -19.873,
+   "arm_rt_trough_error": 2.453,
+   "class_energy_delta_twh": {
+    "CC_CHP": 0.0357,
+    "CC_REGULAR": -0.0347,
+    "CT_CHP": 0.0011,
+    "CT_PEAKER": 0.0047,
+    "ST_CHP": -0.0014,
+    "ST_GAS": -0.0047,
+    "import": -0.0017,
+    "oil": 0.0003
+   }
+  }
+ },
+ "summary": {
+  "construction_gates_pass": true,
+  "kills_clear_preview": true,
+  "note": "P2 (C1) and P4 (C8 forced share) are read from calibration_verdict / legitimacy_diagnostics at registration; the authoritative criterion verdicts come from the registration pipeline, not from this scorer."
+ }
+}

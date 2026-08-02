@@ -143,14 +143,115 @@ own identification, never this transfer. Probe:
 `scripts/probes/_nyiso111_hydro_ror_split_screen.py` →
 `results/calibration/_nyiso111_hydro_ror_split_screen.json`.
 
-## §4 — `ramp_envelopes`: the pjm-140 transfer, pre-registered and solved
+## §4 — `ramp_envelopes`: the pjm-140 transfer, pre-registered, solved, PROMOTED KEEPER
 
-*(filled in below once the A/B completed — see §5.)*
+**The lever.** `ScenarioConfig.ramp_limits = True` — the plant-group hourly
+ramp-envelope rows. Matrix row `ramp_envelopes`, NYISO cell `U`; PJM keeper
+since pjm-140, never tested at NYISO. **Zero new DOF, no code change, no new
+field, no PJM parameter imported** (rule 25): the artifact is derived from
+NYISO's own CAMPD conduct in this session — `derive_campd_ramp_envelopes.py
+--iso NYISO`, **77 rows / 48 well-observed plants**, measured max 1-hour
+up-move fractions **CC median 0.49 × pmax (p90 0.82), ST 0.42 (p90 0.47),
+CT 0.92 (p90 0.94)**. The bound is the **MAX** observed move, never a quantile,
+so it can only remove transitions the real fleet never performed.
 
-## §5 — A/B result
+**The structural claim, which is the case for the arm.** With the flag off the
+NYISO LP asserts that every thermal plant can move from any output to any other
+in one hour — and the model acted on it.
 
-*(pending)*
+**The pre-check honoured pjm-140's all-ISO lesson instead of rediscovering it.**
+The class-aggregate test is reported **uninformative** (it fires in 1 hour of
+26,280); the bound-against-the-bound test is the one quoted, measured on the
+keeper's own per-plant dispatch with groups and envelopes taken from the live
+loader:
+
+| | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| enveloped groups / capacity | 62 / 21,809 MW | 62 / 21,815 MW | 62 / 21,815 MW |
+| transitions crossing the envelope | **5,226 (0.96 %)** | **6,819 (1.26 %)** | **4,057 (0.75 %)** |
+| infeasible ramping | **225,117 MWh** | **291,437 MWh** | **274,134 MWh** |
+
+PJM's superseded keeper crossed in 0.393 / 0.463 / 0.319 % carrying 555,882 /
+587,079 / 536,940 MWh/yr — so NYISO's crossing **rate is 2.1–3.0× PJM's**, and
+~6× PJM's relative to each fleet's own energy.
+
+## §5 — A/B result: every pre-registered gate passes
+
+Control `2026-08-02-nyiso111-control-zerodelta` / arm
+`2026-08-02-nyiso111-ramp-envelopes`, both `[2023, 2024, 2025]` in one bundle
+(rule 16). Scorer: `scripts/probes/_nyiso111_ramp_envelopes_ab.py` →
+`results/calibration/_nyiso111_ramp_envelopes_ab.json`.
+
+**Construction (K1–K6), all PASS:**
+
+- **K1** exactly one config delta: `ramp_limits` `false → true`.
+- **K2 control integrity on the STRICT BYTE basis — 0.0 MW** max class-hour
+  delta against the committed nyiso-109 keeper in **all three years**. The A/B
+  is unconfounded, and the solve-path commits that landed on main since that
+  keeper (pjm-146's RGGI adder, caiso-155/156/157, ercot-150, and the
+  `pipeline/year.py` + `input_completeness` changes) are **measured** NYISO-inert
+  rather than assumed so.
+- **K3** liveness: 62 enveloped groups, 21,809–21,815 MW, every year.
+- **K4** artifact provenance: the frozen derive's own output at this HEAD.
+- **K5** span `[2023, 2024, 2025]` both arms; the holdout spend freeze is ACTIVE
+  and untouched (rule 22).
+- **K6 effectiveness:** infeasible ramping **225,117 → 3,888 (−98.27 %)**,
+  **291,437 → 4,717 (−98.38 %)**, **274,134 → 7,062 (−97.42 %)** — against a
+  pre-registered floor of 70 %, and better than pjm-140's −90.8 / −89.1 /
+  −84.6 %. The residual is **by design**: the availability-edge widening is the
+  row's only slack.
+
+**Kills (P1–P5), none fires:**
+
+| gate | control | arm |
+|---|---|---|
+| **P1** C3a (±10 % band) | +7.508 / −0.547 / −9.640 % | **+7.501 / −0.599 / −9.657 %** — in band all years, ≤ 0.06 pp of movement |
+| **P2** C1 | 14/14 all-class, 10/10 free-class | **14/14, 10/10** |
+| **P3** C3c (>$300 h) | 3 / 0 / 7 | **3 / 0 / 7 — bit-unchanged** (actual 10 / 12 / 42) |
+| **P4** C7 / C8 | PASS | **PASS / PASS** |
+| **P5** slack, dump | 0.0 / 0.0 | **0.0 / 0.0** every zone-hour |
+
+**Determination: CALIBRATED-WITH-CAVEATS**, identical to the superseded keeper —
+C1/C2/C3a/C3b/C4/C6/C7/C8 all PASS, C3c the sole ledgered caveat.
+
+**The price effect is NEAR-INERT, exactly as §3 of the pre-registration
+declared.** That is not a disappointment to be explained away; it is pjm-140's
+all-ISO finding reproduced on NYISO's own fleet — **a MAX-based envelope is a
+correctness bound, not a price lever** — and the pre-registration committed to
+it in advance so the null could not be re-narrated afterwards. No part of the
+promotion rests on gate movement.
+
+**PROMOTED KEEPER** under the standing structural-integrity standard (rule 1
+`[R-STRUCT]` / rule 14 `[R-ACCURATE]`), the same ground pjm-140 was promoted on,
+and per the pre-registration's own §7 promotion rule (all K pass, no P fires,
+infeasible ramping ≥ 70 % down). NYISO is the **second ISO** to carry
+`ramp_limits=True` and the **first transfer** of the mechanism. DOF ledger 27 →
+28 entries with `n_residual` **unchanged at 6**.
 
 ## §6 — governance record and DO-NOT-REDO
 
-*(pending)*
+Rule 28 `[R-MECH-MATRIX]` duties discharged in this session: `ramp_envelopes`
+NYISO `U → K` with the full measurement in the note and the header keeper stamp
+refreshed; `temp_dependent_derate` NYISO `U → G`; `hydro_ror_split` NYISO
+`U → G`; and a **new row created** for `nysdec_peaker_rule_availability`, which
+had none at all — a rule 28(c) hygiene gap on a solve-affecting field.
+
+**DO-NOT-REDO:**
+
+1. **The ramp envelope may not be tuned** (PREREG §6, carried from pjm-140 §5):
+   no quantile swap, no tightening, no scaling, no per-class override, no
+   re-derivation against a residual. There is no second version of this lever —
+   a *binding* ramp representation would be a different mechanism with its own
+   charter.
+2. **`temp_dependent_derate` is closed at NYISO on identification**, not on
+   fit. Re-opening needs a genuinely new capability instrument (unit DMNC test
+   results, or a plant pinned at capability), not a re-run of the CEMS cogen
+   estimator.
+3. **`hydro_ror_split` is closed at NYISO on falsification.** The successor is
+   a *bounded* within-day shaping constraint (a Lewiston-class reservoir-energy
+   bound) under its own charter — never this transfer, and not rescued by the
+   Niagara treaty schedule.
+4. The **C3c frontier declaration (nyiso-104b) is untouched**: C3c is
+   bit-unchanged across this A/B, so no C3c evidence moved and no caveat slot is
+   spent. `diurnal_price_amplitude` NYISO stays `G` (nyiso-110); this arm makes
+   no amplitude claim.
