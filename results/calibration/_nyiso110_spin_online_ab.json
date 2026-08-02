@@ -1,0 +1,163 @@
+{
+ "control": "results/calibration/nyiso110_control_A",
+ "arm": "results/calibration/nyiso110_spinonline_B",
+ "keeper": "results/calibration/nyiso109_zonalanchor_B",
+ "K1_K4": {
+  "config_diff": {
+   "nyiso_spin_reserve_online": [
+    false,
+    true
+   ]
+  },
+  "pass": true
+ },
+ "K2": {
+  "max_abs_class_hour_delta_mw": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "pass": true
+ },
+ "K3": {
+  "per_year": {
+   "2023": {
+    "arm_hours_gt0": 17,
+    "control_hours_gt0": 17,
+    "arm_peak_window_mean": 0.1092,
+    "arm_max": 32.16
+   },
+   "2024": {
+    "arm_hours_gt0": 6,
+    "control_hours_gt0": 6,
+    "arm_peak_window_mean": 0.0571,
+    "arm_max": 28.12
+   },
+   "2025": {
+    "arm_hours_gt0": 34,
+    "control_hours_gt0": 34,
+    "arm_peak_window_mean": 0.4398,
+    "arm_max": 120.02
+   }
+  },
+  "pass": false
+ },
+ "K6": {
+  "per_year": {
+   "2023": {
+    "max_fall": -0.4149,
+    "max_rise": 4.0431,
+    "mean_delta": 0.0017
+   },
+   "2024": {
+    "max_fall": -0.3619,
+    "max_rise": 1.9408,
+    "mean_delta": -0.002
+   },
+   "2025": {
+    "max_fall": -1.7697,
+    "max_rise": 0.2667,
+    "mean_delta": -0.0002
+   }
+  },
+  "pass": false
+ },
+ "P1_P2_c3a_preview": {
+  "per_year": {
+   "2023": {
+    "control": 7.508,
+    "arm": 7.514,
+    "actual_rt_lw": 32.3
+   },
+   "2024": {
+    "control": -0.547,
+    "arm": -0.552,
+    "actual_rt_lw": 38.2
+   },
+   "2025": {
+    "control": -9.64,
+    "arm": -9.64,
+    "actual_rt_lw": 66.53
+   }
+  },
+  "P1_pass": true,
+  "P2_pass": true
+ },
+ "P4": {
+  "per_year": {
+   "2023": {
+    "arm_overnight_gt_mwh": 128543.3,
+    "control_overnight_gt_mwh": 128542.2,
+    "pct_change": 0.001
+   },
+   "2024": {
+    "arm_overnight_gt_mwh": 131644.8,
+    "control_overnight_gt_mwh": 131643.7,
+    "pct_change": 0.001
+   },
+   "2025": {
+    "arm_overnight_gt_mwh": 225410.7,
+    "control_overnight_gt_mwh": 225383.4,
+    "pct_change": 0.012
+   }
+  },
+  "pass": true
+ },
+ "reported": {
+  "2023": {
+   "control_da_swing_share": 0.6012,
+   "control_da_peak_error": -2.389,
+   "control_rt_swing_share": 0.6678,
+   "control_rt_peak_error": 0.11,
+   "arm_da_swing_share": 0.6013,
+   "arm_da_peak_error": -2.387,
+   "arm_rt_swing_share": 0.6679,
+   "arm_rt_peak_error": 0.112,
+   "class_energy_delta_twh": {
+    "CC_CHP": -0.0044,
+    "CC_REGULAR": 0.003,
+    "CT_CHP": -0.0003,
+    "ST_GAS": 0.0017
+   }
+  },
+  "2024": {
+   "control_da_swing_share": 0.5745,
+   "control_da_peak_error": -5.882,
+   "control_rt_swing_share": 0.5693,
+   "control_rt_peak_error": -5.554,
+   "arm_da_swing_share": 0.5744,
+   "arm_da_peak_error": -5.884,
+   "arm_rt_swing_share": 0.5692,
+   "arm_rt_peak_error": -5.556,
+   "class_energy_delta_twh": {
+    "CC_CHP": -0.0004,
+    "CC_REGULAR": 0.001,
+    "CT_PEAKER": -0.0003,
+    "ST_GAS": -0.0006
+   }
+  },
+  "2025": {
+   "control_da_swing_share": 0.4551,
+   "control_da_peak_error": -17.234,
+   "control_rt_swing_share": 0.4235,
+   "control_rt_peak_error": -19.9,
+   "arm_da_swing_share": 0.4551,
+   "arm_da_peak_error": -17.234,
+   "arm_rt_swing_share": 0.4235,
+   "arm_rt_peak_error": -19.9,
+   "class_energy_delta_twh": {
+    "CC_CHP": 0.0017,
+    "CC_REGULAR": -0.0009,
+    "CT_CHP": -0.0002,
+    "ST_CHP": -0.0004,
+    "import": -0.0002
+   }
+  }
+ },
+ "summary": {
+  "construction_gates_pass": false,
+  "K3_live": false,
+  "kills_clear_preview": true,
+  "note": "P3 (C1) and P5 (forced share) are read from calibration_verdict/legitimacy_diagnostics at registration \u2014 authoritative criteria come from the production scorer, never from this preview."
+ }
+}

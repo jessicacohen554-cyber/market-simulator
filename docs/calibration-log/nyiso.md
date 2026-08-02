@@ -3798,6 +3798,43 @@ itself (no run existed when it was written); the A/B that follows registers
 BOTH arms whatever the verdict (rule 15), full span in one invocation each
 (rule 16), post-steps in order, LOYO duty per rule 22.
 
+### 4. OUTCOME (same session): the arm SOLVED — INERT by its own K3 rule; the family is exhausted
+
+Both arms solved at the rebased HEAD (after the ercot-150 landing) and
+registered: `2026-08-01-nyiso110-control-zerodelta` /
+`2026-08-02-nyiso110-spin-online-inert` (retention pruned nyiso-92-control +
+nyiso-92-hydro-envelope). Gate scorer
+`scripts/probes/_nyiso110_spin_online_ab.py` →
+`results/calibration/_nyiso110_spin_online_ab.json`. **K1/K4 pass** (exactly
+one config delta, flag recorded); **K2 = 0.0 MW** max class-hour delta (the
+control byte-reproduces the keeper — main's ercot-150 commits NYISO-inert, as
+pre-registered); **K3 FAILS → INERT**: reserve-dual hours identical to control
+(17/6/34 vs a 500/yr floor), C3a +0.006 pp, swing unchanged to 3 dp, class
+deltas ≤ 4 GWh degenerate-vertex noise (K6's sub-$2 wobbles likewise). No kill
+fired; nothing to kill.
+
+**The E4 liveness reading is CORRECTED on the record** (the nyiso-109 §7
+discipline): the census tested hydro *headroom* (the per-gen binder) while the
+as-built class-2 gate is an **aggregate** ρ·output row — reserve-eligible
+hydro's own output (2–5 GW × ρ ≥ 0.5) keeps it slack in every hour and idle
+quick-start capacity stays admissible per-gen. The same arithmetic refutes the
+nyiso-84 class-widening successor ex-ante (widening only adds slack; a per-gen
+re-scoping stays slack on hydro's certified output; excluding NYPA hydro would
+falsify real eligibility, rule 14). With reserve offers unpublished, MIP
+forbidden, withholding a rule-19 stack and congestion G, **the in-LP
+reserve-formation family at NYISO is exhausted** — the everyday reserve-price
+content (64–131 % of the missing swing) forms only from availability offers
+and sub-hourly co-opt dynamics an hourly LP cannot carry.
+
+**`diurnal_price_amplitude` NYISO O → G** (the PJM/MISO no-build class);
+re-opens behind the owner amplitude-criterion call (now carrying the
+cancellation fact AND this exhaustion), an owner-funded reserve-offer /
+sub-hourly intake, or item 8's Robert Moses resolution (the energy-side hydro
+leg). **Keeper UNCHANGED** (`2026-08-01-nyiso109-zonal-margin-anchor`); the
+arm is NOT a keeper candidate (live-inert — the owner's structural-integrity
+license has nothing to attach to). Item 4 stays blocked (its candidate joint
+summer lever died with the arm). FINDING §10 carries the full addendum.
+
 Next shorthand: nyiso-111.
 
 ## (stub) caiso-155 — 2026-08-02 — NYISO: the HQ firm floor (7.884 TWh/yr) becomes D-2/D-4-visible; a latent G-06 false-FAIL averted
