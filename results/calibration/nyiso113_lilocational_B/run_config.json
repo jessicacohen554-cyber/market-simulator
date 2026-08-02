@@ -1,17 +1,5 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/run_config.json
-  "timestamp": "2026-08-02T23:51:44",
-  "git": {
-    "sha": "64776a0",
-    "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
-    "branch": "claude/caiso-backcast-calibration-6ubjfb",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
-  },
-  "model_changes_note": "caiso-156 arm A (control): PRE-FIX CT heat-rate artifact, hour-grain band screen NOT applied. Same-HEAD zero-delta control per prereg 4; cold solve per ADDENDUM B; re-baselined onto the nyiso112 keeper.",
-========
-  "timestamp": "2026-08-02T22:58:42",
+  "timestamp": "2026-08-02T22:59:52",
   "git": {
     "sha": "3746eda",
     "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
@@ -22,8 +10,7 @@
     ],
     "diffstat": ""
   },
-  "model_changes_note": "nyiso-113 arm A: zero-delta control on the nyiso-112 keeper recipe, solved at this HEAD. Attribution baseline for the nyiso_li_locational_reserve single delta.",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/run_config.json
+  "model_changes_note": "nyiso-113 arm B: single delta nyiso_li_locational_reserve=true. Published NYISO Long Island (Zone K) locational reserve ladder: li_10min_total 120 MW all hours, li_30min_total 270 MW off-peak / 540 MW on-peak, both at the published 25 USD/MW ASM 6.8 demand-curve value. Zero free parameters. PREREG-nyiso113-li-locational-reserve-2026-08-02.md.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -96,7 +83,8 @@
       "measured_chp_heat_rates": true,
       "gas_offer_margin_zonal_anchor": true,
       "ramp_limits": true,
-      "nysdec_peaker_rule_availability": true
+      "nysdec_peaker_rule_availability": true,
+      "nyiso_li_locational_reserve": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -113,11 +101,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/run_config.json
-    "git_sha": "64776a0"
-========
     "git_sha": "3746eda"
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/run_config.json
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -402,7 +386,7 @@
     "nyiso_import_reconciliation": true,
     "nyiso_import_hub_prices": true,
     "nyiso_iroquois_winter_spread": false,
-    "nyiso_li_locational_reserve": false,
+    "nyiso_li_locational_reserve": true,
     "nyiso_incity_commitment_obligation": false,
     "nyiso_east_reserve_families": false,
     "nyiso_gas_commitment_bridge": true,
