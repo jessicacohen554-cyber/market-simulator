@@ -68,6 +68,10 @@ REPO = Path(__file__).resolve().parent.parent
 _SRC = REPO / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+if str(REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a plain script
+    sys.path.insert(0, str(REPO))
+
+from scripts.lib import forecast_provenance as _fp  # noqa: E402  (after sys.path)
 
 # Rubric version implemented by this scorer (rubric §0/§9). v1.0 = the FF-0A
 # initial rubric: categories FC-1..FC-8, tier ladder T0->T3, golden attestation.
@@ -1429,6 +1433,12 @@ def _score_dof_ledger(art: dict, tier: str) -> dict:
     the attestation (``schema: dof-ledger/v1``). Well-formed = entries present,
     each with a name + identification, and every ``residual`` carries an open
     ``root_cause`` (rule 21). Absent ⇒ CAVEAT at t1/t2, FAIL at t3.
+
+    An entry whose ``identification`` is the literal ``unattested`` is a
+    SKELETON row from ``scripts/build_forecast_dof_ledger.py`` (audit FR-27) and
+    scores the SAME status as an absent ledger — enumerating a parameter is not
+    identifying it. What changes is the detail: the CAVEAT names the awaiting
+    entries instead of reporting a bare absence.
     """
     ledger = art.get("dof_ledger")
     if ledger is None:
@@ -1456,9 +1466,19 @@ def _score_dof_ledger(art: dict, tier: str) -> dict:
         )
     malformed = []
     open_residuals = 0
+    unattested = []
     for e in entries:
         if not isinstance(e, dict) or not e.get("name") or not e.get("identification"):
             malformed.append(str(e.get("name", e) if isinstance(e, dict) else e))
+            continue
+        # ``unattested`` is the token scripts/build_forecast_dof_ledger.py writes
+        # for a SKELETON entry (audit FR-27). It is deliberately not one of the
+        # three real identification tokens: enumerating a parameter is not
+        # identifying it, so a skeleton must score exactly as a missing ledger
+        # does. Recognizing it here is what keeps the stub honest — otherwise a
+        # config walk that attests nothing would flip FC-7 CAVEAT -> PASS.
+        if e.get("identification") == "unattested":
+            unattested.append(e["name"])
             continue
         if e.get("identification") == "residual":
             open_residuals += 1
@@ -1466,6 +1486,24 @@ def _score_dof_ledger(art: dict, tier: str) -> dict:
                 malformed.append(f"{e['name']} (residual without root_cause)")
     if malformed:
         return _row("FC-7", "dof ledger", FAIL, f"malformed DOF entries: {malformed}")
+    if unattested:
+        # Same status a missing ledger draws — but now the CAVEAT is specific:
+        # it names how many parameters await attestation, and the artifact
+        # listing them is committed and fillable.
+        status = FAIL if tier == "t3" else CAVEAT
+        shown = ", ".join(sorted(unattested)[:8])
+        more = f", +{len(unattested) - 8} more" if len(unattested) > 8 else ""
+        return _row(
+            "FC-7",
+            "dof ledger",
+            status,
+            f"DOF ledger present as an UNATTESTED SKELETON: "
+            f"{len(unattested)} of {len(entries)} entries carry "
+            f"identification='unattested' ({shown}{more}). Identification is "
+            "unproven exactly as with no ledger — but the artifact now names "
+            "what must be attested (audit FR-27; fill via the ledger's "
+            "how_to_fill).",
+        )
     return _row(
         "FC-7",
         "dof ledger",
@@ -1640,6 +1678,12 @@ def determine_from_artifacts(art: dict, tier: str) -> dict:
     return {
         "rubric_version": RUBRIC_VERSION,
         "schema": "forecast-verdict/v1",
+        # FR-21 staleness machinery: the HEAD sha + UTC time this verdict was
+        # scored, and the config cache epoch of the run it scored (read from the
+        # run's own artifacts, never recomputed). Without it a verdict cannot say
+        # how old it is, which is exactly how the T1 board went ten days dark
+        # after FF-2D while ~20 keepers promoted and the epoch moved twice.
+        _fp.PROVENANCE_KEY: _fp.stamp(art.get("run_config"), art.get("summary")),
         "tier": tier,
         "iso": iso,
         "determination": determination,
@@ -1736,6 +1780,9 @@ def condensed_sidecar(v: dict) -> dict:
     return {
         "schema": v["schema"],
         "rubric_version": v["rubric_version"],
+        # Carried through to ff-verdicts.json — the board's staleness evidence
+        # lives in the sidecar, not only in the full verdict (FR-21).
+        _fp.PROVENANCE_KEY: v.get(_fp.PROVENANCE_KEY),
         "tier": v["tier"],
         "iso": v["iso"],
         "determination": v["determination"],
