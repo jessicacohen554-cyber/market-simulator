@@ -82,10 +82,12 @@ from market_sim.data.renewables import (
 from market_sim.model.capacity import (
     _FIRM_CLEAN_FUELS,
     CumulativeDeployment,
+    _hydro_firm_mw,
     accredited_firm_capacity_mw,
     capacity_reserve_position,
     deliverability_headroom_by_zone,
     evolve_fleet,
+    modelled_hydro_nameplate_mw,
     renewable_credits_applied,
 )
 from market_sim.model.ancillary import (
@@ -2595,12 +2597,38 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             hindcast=bool(config.hindcast),
             bridge=False,
             peak_demand_mw=round(peak_demand, 3),
+            # FFR-1C finding F-5, closed here (FFR-3B): this field summed
+            # ``_FIRM_CLEAN_FUELS`` ("hydro",) over the PERSISTENT fleet, which
+            # structurally never contains hydro — the runner carries hydro only
+            # in the transient dispatch fleet — so every ledger ever written
+            # reported firm_clean_mw = 0.0 for every ISO and year. That is a
+            # DISPLAY seam, not a decision one: nothing reads this field to
+            # decide anything (the adequacy screens read
+            # ``accredited_firm_capacity_mw``, which FFR-1C already corrected),
+            # so the fix is dispatch-inert by construction.
+            #
+            # It now reports the nameplate the model ACTUALLY dispatches —
+            # ``modelled_hydro_nameplate_mw``, the exact population
+            # ``build_hydro_fleet`` puts in the LP, resolved for the solve year
+            # — keeping the field's own nameplate units. Any hydro that DID
+            # reach the persistent fleet is added, mirroring
+            # ``_hydro_firm_mw``'s no-double-count discipline in reverse: there
+            # the pool is netted against the fleet, here the two are summed, so
+            # the total is the same population either way.
             firm_clean_mw=round(
                 float(
-                    sum(g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS)
+                    modelled_hydro_nameplate_mw(iso, year)
+                    + sum(g.pmax_mw for g in fleet if g.fuel_type in _FIRM_CLEAN_FUELS)
                 ),
                 3,
             ),
+            # Companion: the same resources at the ISO's PUBLISHED accreditation
+            # factor — the MW that actually enter ``accredited_firm_capacity_mw``.
+            # Reported alongside rather than replacing the nameplate basis,
+            # because silently changing a field's units is how the next reader
+            # gets misled a second time. Additive: readers of older ledgers must
+            # treat an absent key as backward-compatible, not malformed.
+            firm_clean_accredited_mw=round(float(_hydro_firm_mw(fleet, iso, year)), 3),
             reserve_margin=round(firm_mw / peak_demand - 1.0, 6)
             if peak_demand > 0
             else None,
