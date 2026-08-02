@@ -92,7 +92,25 @@ BASE = "https://api.eia.gov/v2"
 # comment block above HENRY_HUB_TRAJECTORIES in constants.py ("low" = more
 # supply = lower price, etc.) -- reproduced here, not redefined, so a
 # re-derivation session has one source of truth to check.
+#
+# The 2021 and 2023 editions are the AS-KNOWN-THEN vintages the full-forward
+# hindcast (T1-FF) Arm K reads (docs/hindcast-forward-plan-2026-07.md §2.1):
+# AEO2021 (published Feb 2021, real 2020$) for a 2021-base run and AEO2023
+# (published March 2023, real 2022$) for a 2023-base run. Both keep the
+# ``ref<year>`` central-case id and the ``highogs``/``lowogs`` side cases;
+# scenario ids verified against the API's own ``facet/scenario`` listing for
+# each edition (FH-3, 2026-08-02), not guessed.
 SCENARIOS_BY_AEO: dict[int, dict[str, tuple[str, str]]] = {
+    2021: {
+        "ref2021": ("Reference case", "mid"),
+        "highogs": ("High oil and gas supply", "low"),
+        "lowogs": ("Low oil and gas supply", "high"),
+    },
+    2023: {
+        "ref2023": ("Reference case", "mid"),
+        "highogs": ("High Oil and Gas Supply", "low"),
+        "lowogs": ("Low Oil and Gas Supply", "high"),
+    },
     2025: {
         "ref2025": ("Reference case", "mid"),
         "highogs": ("High Oil and Gas Supply", "low"),
@@ -189,6 +207,22 @@ SERIES: list[tuple[str, str, str, str, str]] = [
         "coal",
         "minemouth_by_region",
         "west_of_mississippi",
+    ),
+    # Table 20 (Macroeconomic Indicators): GDP chain-type price index
+    # (2012=1.000). NOT a fuel price -- it is the edition's OWN projected
+    # deflator, and it is what converts that edition's real-dollar fuel
+    # projections into nominal dollars of each projection year. An as-known-then
+    # hindcast path (T1-FF Arm K) must be commensurable with the nominal
+    # realized prices Arm R carries and with the model's nominal cost stack, and
+    # the honest conversion uses the inflation the forecaster ALSO only had as a
+    # projection at the time -- i.e. this series, from the same edition, never a
+    # realized deflator published later (FH-3, plan §2.1).
+    (
+        "18",
+        "eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z",
+        "macro",
+        "gdp_chain_price_index",
+        "usa",
     ),
 ]
 
@@ -336,7 +370,10 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     # Each AEO edition's series begin at its own first projection year.
-    default_start = {2025: 2024, 2026: 2025}
+    # AEO2021's tables run from 2020 (its history year) and AEO2023's from 2022,
+    # so both are pulled from their own history year -- the as-known vintages
+    # need the base year present to anchor the deflator rebasing (FH-3).
+    default_start = {2021: 2020, 2023: 2022, 2025: 2024, 2026: 2025}
     start_year = args.start_year
     if start_year is None:
         start_year = default_start.get(args.aeo_year, args.aeo_year - 1)
