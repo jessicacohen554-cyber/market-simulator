@@ -2282,3 +2282,75 @@ pjm-144; the nyiso-109 baseline's 14th
 (`test_clean_io::test_datatype_list_matches_schemas`) is fixed on main.
 
 Next shorthand: pjm-145.
+
+## 2026-08-02 — pjm-145: `pjm_dam_availability` (queue §5.3 item 7) **REFUSED EX ANTE — no solve spent**, matrix `dam_availability_rebasis` PJM `U → G`. Keeper **unchanged** (`2026-07-31-pjm-143b-hy-level`).
+
+The intaken-but-untested DAM-availability lever, taken as the live head of the
+cross-ISO queue (MISO: no live lever after miso-111/112/113; ERCOT items 7–8
+data-intake-first; NEISO charter-first; CAISO's live items are a charter and a
+derive re-identification). Full protocol: PREREG committed before any
+measurement (`PREREG-pjm145-dam-availability-2026-08-02.md` — kill rules,
+gates K1–K4/P1–P5, direction prediction), then the no-LP ex-ante instrument
+(`_pjm145_damavail_exante.py`, the real `generators_to_fleet_arrays` path via
+`run_year(fleet_only=True)` with the keeper's own meta kwargs), then the
+decomposition addendum (`_pjm145_damavail_decompose.py`).
+
+**Measured, and decisive without an LP:** the armed overlay is a
+**+24.0/+23.7/+18.8 GW mean-availability net RESTORE** (2023/2024/2025;
+restore on 364/364/360 covered days, remove on 0/0/5 — the mechanism as built
+is ~entirely its restore leg), against model covered-class availabilities of
+0.44–0.83 vs the uniform fleet-mean target 0.867–0.887. The addendum
+decomposes the restore-day lift: **66.0/66.6/68.4 % is structural-zero
+resurrection** (17.7/19.2/18.5 GW mean) — units the model's finer measured
+record holds at zero (CAMPD unit/short/partial outage windows, layup, retiree
+CEMS caps, mid-year COD masking, and `cc_outage_derate_from_top`'s
+top-of-stack tranche zeros) revived to λ by the water-fill's `_flat` branch.
+That is the ERCOT-135 §7.2 "destroyed unit resurrected" defect; the ercot137
+pmax-ceiling fix was applied to the ERCOT path only, and the PJM class-grain
+block carries no ceiling.
+
+**Refusal grounds** (rule 1: dominant effect is physically-false capacity
+injection — an A/B would adjudicate the transform's artifact, not the data;
+rule 14 misalignment clause: one RTO-wide whole-fleet unplanned aggregate,
+non-fossil forced MW included, is a wrong-boundary datum for a per-class
+application and overwrites finer measured inputs already armed; rule 19: the
+unit-grain CAMPD stack is the incumbent availability owner — this stacks a
+coarser second owner that mostly UNDOES it). The ERCOT contrast is the grain:
+its 60-Day disclosure is per-class/plant and ceiling-composed, hence
+adoptable; PJM's public aggregate is not. **Honesty record:** none of the
+three pre-registered kill-rule LETTERS fired (the degeneracy mode was
+resurrection-at-λ, not the operationalized cap-saturation/target≤0), and the
+direction prediction (net REMOVE, prices up) was **WRONG** — both scored as
+written in the FINDING. The refusal follows the ERCOT-145/caiso-149
+refused-ex-ante pattern: no arm, no bundle, no dashboard registration; C3c's
+1 h / 2.5 h margins untouched.
+
+**Session preamble outcomes** (the handoff's two standing fixes): (a) the
+drifted default cache key was ALREADY REPAIRED upstream at f58339b (FFR-W1X
+Wave-1 close registered `coal_prb_committed_dispatchable`/`_split`); verified
+`ScenarioConfig().cache_key() == 603c2498bf71d21d` and all three pinned tests
+green, plus an AST field-diff vs the pin commit (all 10 post-pin fields
+registered). (b) Full-suite baseline on origin/main f58339b recorded BEFORE
+any edit: **11 failed / 5869 passed** — the known set
+(`test_measured_chp_heat_rates` ×7, `test_outages` ×1,
+`test_ff_readiness_battery` ×1) plus two additional pre-existing
+(`test_consume_phase3d` zone parity, `test_fleet_arrays_golden` ERCOT
+golden). **Keeper-replay reproducibility on a fresh clone** (recorded for the
+next PJM session): the pjm-143b recipe needs two gitignored inputs
+regenerated first — `data/raw/pjm-da-virtuals/hrl_da_incs_decs_*.parquet`
+(36 monthly files, `scripts/data/fetch_pjm_da_virtuals.py --feeds
+hrl_da_incs_decs`; the keeper arms `pjm_da_virtual_bids`, whose loader
+hard-fails without them) and `data/raw/PJM-AS/pjm_{2023..2025}_as_up_mw.parquet`
+(`scripts/data/build_pjm_as_withholding.py`; the deriver also rewrites the
+committed ≤2022 parquets with byte-churned metadata — `git checkout` them,
+rule 23). The unused A/B chain script (`_pjm145_chain.sh`) stays committed
+for any post-re-open session.
+
+**Re-open conditions** (own charter, PJM-derived parameters, rule 25): (1)
+restore ceiling composed with the structural-derate registry (port the
+ercot137 fix — note the remaining content is then ~9 GW/day of living lift
+toward a still-contaminated fleet-mean target, so (2) or (3) is likely also
+needed); (2) a class-/unit-resolved or fuel-split outage numerator; (3) the
+event-window-cap form (ERCOT-148/149 shape) identified from PJM's own record.
+
+Next shorthand: pjm-146.
