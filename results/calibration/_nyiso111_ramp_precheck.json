@@ -1,0 +1,54 @@
+{
+ "probe": "nyiso-111 ramp-envelope pre-check",
+ "years": [
+  {
+   "year": 2023,
+   "n_groups_with_rows": 62,
+   "enveloped_capacity_mw": 21809.0,
+   "group_transitions": 543058,
+   "crossings_up": 2658,
+   "crossings_dn": 2568,
+   "crossing_share_pct": 0.9623,
+   "infeasible_ramp_mwh_up": 119178.1,
+   "infeasible_ramp_mwh_dn": 105939.3,
+   "infeasible_ramp_mwh_total": 225117.4,
+   "by_family": {
+    "CC_CHP": {
+     "groups": 16,
+     "cap_mw": 3046.2,
+     "crossings": 1274,
+     "crossing_share_pct": 0.4545,
+     "infeasible_mwh": 31204.2
+    },
+    "CC_REGULAR": {
+     "groups": 22,
+     "cap_mw": 8145.4,
+     "crossings": 2778,
+     "crossing_share_pct": 0.7208,
+     "infeasible_mwh": 162063.4
+    },
+    "CT_PEAKER": {
+     "groups": 10,
+     "cap_mw": 1465.7,
+     "crossings": 161,
+     "crossing_share_pct": 0.0919,
+     "infeasible_mwh": 2756.8
+    },
+    "ST_CHP": {
+     "groups": 3,
+     "cap_mw": 249.4,
+     "crossings": 615,
+     "crossing_share_pct": 1.1702,
+     "infeasible_mwh": 7731.8
+    },
+    "ST_GAS": {
+     "groups": 11,
+     "cap_mw": 8902.4,
+     "crossings": 398,
+     "crossing_share_pct": 0.2065,
+     "infeasible_mwh": 21361.2
+    }
+   }
+  }
+ ]
+}

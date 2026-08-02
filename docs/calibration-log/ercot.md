@@ -3983,3 +3983,164 @@ keepers/gates header re-stamped, cell `O → K`, §5.1 heading re-stamped.
 Supersedes `2026-07-31-ercot148-dam-event-cap` (kept on the dashboard as
 the immediate-prior comparison). The ERCOT open-gate set SHRINKS to
 {C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg}.
+
+## 2026-08-02 — ercot-150: the zone-resolved gas-offer margin anchor is a KEEPER at ERCOT — `gas_offer_margin_zonal_anchor` `U → K`, **OWNER-PROMOTED `2026-08-02-ercot150b-zonal-anchor`**
+
+**Session ercot-150** (branch `claude/ercot-150-zonal-anchor-11yf9i`) adjudicated
+the nyiso-109 §7 cross-ISO transfer at ERCOT under ERCOT's own measured
+convention (rule 25 — PJM's `I` transferred nothing). Prereg
+`PREREG-ercot150-zonal-margin-anchor-2026-08-02.md` pushed before either arm
+solved; finding `FINDING-ercot150-zonal-margin-anchor-2026-08-02.md`.
+
+**Convention, measured first (handoff facts 1–3, none assumed).** The keeper
+arms the zonal machinery via the `coal_prb_sigmoid_overrides` channel (the
+env-probe form stays inert in meta — no `replay_keeper` hard-error; `--set`
+works). The applier is `apply_ercot_zonal_gas_basis`: a capacity-weighted
+MEAN-ZERO spread PLUS a flat measured EP level correction (EIA N3045TX3 minus
+the −0.50 scalar: +0.5045/+0.4142/+0.0366 $/MMBtu) — neither NYISO's one-sided
+nor PJM's pure mean-zero geometry. The ISO anchor 2.2494 carries the −0.50
+scalar and none of the EP correction, so five zones were under-marked and West
+over-marked. Zero band-scoped anchors exist; `cc_committed_offer_margin` reads
+the config anchor only (K1-asserted untouched).
+
+**The derive's first run overturned its own template (recorded in the prereg,
+nothing pushed prior).** The keeper's fuel path continues past the zonal basis:
+`ercot_west_netload_gas_shape`'s burner-tip floor lifts realized West gas
+1.62/0.21/0.65 → 1.99/1.15/2.74 $/MMBtu — so a pre-shape West anchor would
+price West markups at a level West units never pay (the very grain-error class
+under repair). The anchors were therefore identified on the keeper
+reconstruction's own resolved `fuel_prices`
+(`derive_gas_offer_margin_anchor.SOLVE_FUEL_ARRAY_ISOS`, exact-reproduction
+check committed in `_ercot150_zonal_anchor_derivation.json`), cutting the West
+leg ~5× (−1.46 → −0.29) — the direction a residual-hunting construction would
+never move. Registered table (zero fitted parameters; DOF n_entries 8 → 9,
+n_residual 6): West 1.9586 / North+Northeast 2.7178 / Houston 2.3111 /
+South_Central 2.7578 / South 3.2778; Panhandle omitted (no gas capacity).
+Default `ScenarioConfig().cache_key()` byte-identical to origin/main.
+
+**A/B (both arms registered; scorer `_ercot150_zonal_anchor_ab.json`).**
+Control `2026-08-01-ercot150a-control-zerodelta` reproduces the keeper's
+scorecard row-for-row; the REPORTED strict-byte basis measured REAL same-HEAD
+drift (class-hour max 2.2/3.5/3.0 GW, hourly zone ΔLMP to $130 in
+757/1443/2115 h, annual lw λ within −0.007/−0.068/−0.054 $/MWh) — the
+regenerated-clean-tree input drift, shared identically by both arms, recorded
+as its own finding. Arm `2026-08-02-ercot150b-zonal-anchor`: construction
+K1–K5 ALL PASS — **K3 liveness passes on the zonal price leg** (max zone
+|ΔLMP| 0.356/0.304/0.319 $/MWh vs the 0.10 gate; system +0.446/+0.329/+0.339):
+**ERCOT prices the LEVEL side its convention carries**, while the mean-zero
+spread half stays price-inert on a coupled topology exactly as at PJM — the
+model's West decouples from North in only 6/17/2 h/yr, and precisely there the
+West delta shows the predicted discount (2024 decoupled-hours mean −0.05 vs
++0.30 coupled), so annual-mean West λ rises with the system (sign agreement
+5/6, the one miss West — a topology outcome, REPORTED as pre-registered).
+Kills P1/P2 (criterion subset AND per-(criterion,year,key) rows — no PASS row
+flips)/P3/P5 PASS. **P4 fired on a template artifact**: the gate demanded
+slack+dump exactly 0.0 (the pjm-144 wording), but the ercot149 keeper ITSELF
+carries slack 3478.9/1114.6/0.0 MWh (dump 0.0 everywhere) and the control
+reproduces it byte-identically — the gate tested the keeper's standing state,
+not the delta; the arm's true delta is +0.97/+0.91/0.00 MWh (~+0.03%), the
+honest directional cost of dearer marked-up offers at the scarcity edge.
+
+**Disposition.** Per the prereg's own escalation branch (kill fired, §4 clean
+→ owner decides with the numbers) and the owner's standing in-session
+instruction (*"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper"*),
+the session's recommendation was YES — the structurally-correct identification
+of an armed mechanism's own anchor at zero fitted parameters, every criterion
+status identical, C1 16/16 · 12/12 held, P4's trip control-shared — and the
+arm was **OWNER-PROMOTED KEEPER** `2026-08-02-ercot150b-zonal-anchor`.
+Supersedes `2026-08-01-ercot149-gas-event-cap` (kept as the immediate-prior
+comparison). Per-year margins (reported, pre-declared NON-EVIDENCE): C3a
+−33.3→−32.6 / +0.6→+1.6 / −9.2→−8.3 %, C3b 0.616→0.607, C3c 2023 54→58 of
+actual 181, C7 lignite r 0.886→0.888.
+
+**Governance.** Registered same-session (rule 15): both bundles + sidecars +
+payloads, keeper shard + `build_status --iso ERCOT` (`[ERCOT:NOT-YET]`),
+`audit_keepers --iso ERCOT` PASS, matrix cell ERCOT `U → K` + keepers/gates
+headers + §5.1 re-stamped, attestations generated from committed JSONs
+(`gen_ercot150_attestation.py`; arm n_entries 9 / n_residual 6). Holdouts
+untouched (2023–25 only; freeze ACTIVE). Test baseline at this HEAD
+re-measured on the complete clean tree: **10 known-red** (chp 7, consume_lmp 1,
+outages 1, ff_readiness marker-state 1) — the pjm-144 cache-key 3 are fixed on
+main; the mid-regen egrid/export/ff_readiness reds were artifacts and pass on
+the settled tree. Top-15 prune retired `2026-07-27-ercot118-gas-rebasis-joint`
+and `2026-07-27-ercot119-econ-rebasis-joint`. Open owner rulings #8/#9/#10
+unchanged (the #9 re-derive would re-trigger the zone-anchor table per rule
+23); successor pointers: the CC econ-band under-dispatch (ERCOT-138/139
+object) and the RT scarcity-formation attribution (C3c). The separate
+re-gate-charter session prompt collides with this session's shorthand — it
+should be re-issued as ercot-151.
+
+Next shorthand: ercot-151.
+
+## 2026-08-02 — ERCOT-151 (Phase 0, no LP, keeper UNCHANGED at ercot150b): the 2023 tail's phantom cheap DEPTH measured at the keeper's own missed hours — 18.1 GW config-collapsed startable-but-OFF CC+CT (13.5 GW of it submitted-DAM ≤$200) vs a ~0.5 GW cushion; the ERCOT-107/108 offline-increment re-pricing successor CONFIRMED identifiable, CHARTERED, and DATA-BLOCKED on an NP3-965 corpus re-upload
+
+**Session scope.** Owner prompt: pick the workstream back up with new ideas for
+the 2023 price gates (C3a level, C3b shape/correlation, C3c scarcity), check
+the cross-ISO queue, research third-party practice. Mid-session the owner also
+directed the PR #3298 integration: the parallel ercot-150 keeper promotion
+(`gas_offer_margin_zonal_anchor` U→K, keeper → `2026-08-02-ercot150b-zonal-anchor`)
+was merged into this branch — one conflict (`frontend/data/backcast/manifest.js`,
+a generated file) resolved by regenerating from the merged sidecars via
+`build_manifest.py`; `audit_keepers --iso ERCOT` PASS.
+
+**Research synthesis (no new lever invented where a closed cell exists).**
+Cross-ISO transfer candidates re-checked against the adjudicated record:
+`dynamic_reserve_requirements` (K at PJM/MISO/NYISO) is already satisfied in
+substance at ERCOT — the multiproduct co-opt holds the measured hourly
+ASPLANNP433 plan and it is slack at the missed hours (ERCOT-102), so there is
+no ERCOT arm to test; `maxgen_emergency_tier_pricing` (K at MISO) has no ERCOT
+instrument (administrative actions already enter via the armed measured RTORDPA
+overlay); `gas_offer_margin_zonal_anchor` was tested/promoted by the parallel
+session (merged here). Third-party: the IMM 2023 SOM's ~$12 B ECRS
+"artificial scarcity" finding is already in the model where it is reserve-side
+(`ercot_ecrs_conservative_deployment` holds the measured plan rigidly at VOLL
+through the 2024-08-01 reform and is the keeper's only working tail-former);
+the missing half is the CONDUCT side — the energy-stack re-offers during those
+windows — which is precisely the attributed 97 %-energy-dual residual
+(ERCOT-103). Commercial-model practice (PLEXOS VoRS / tuned scarcity slices)
+is the rule-13-forbidden version; the admissible construction is measured
+conduct, which ERCOT's 60-day disclosures uniquely license.
+
+**Corpus forensics (why the named unblocker looked closed).** The full-year
+NP3-965 corpus (799 shards, ~3.26 GB, 2023 complete) was owner-uploaded
+2026-07-21 (`docs/handoffs/ercot-sced-fullyear-intake-2026-07.md`), consumed by
+the ERCOT-105 wall re-derive (the wall JSON carries 2022–2025 — the committed
+`_provenance.source` string is stale), and PURGED by the
+`cleanup-large-blobs.yml` history rewrite of 2026-07-22 (FF ledger turn 45) —
+the reason ERCOT-101 (07-24) first wrote "no 2023 SCED source exists". Free-path
+retention starts ~delivery 2024-01, so 2023 is unreachable without the owner's
+copy.
+
+**Phase 0 (committed record `results/calibration/ercot151_offline_phase0.json`;
+probes `scripts/probes/ercot151_offline_phase0{,b}.py`).** Basis: 2023 actual RT
+>$300 = 144 h; missed = ercot150b load-weighted zonal price <$200 = 91 h (model
+mean $105 / actual $860). Config-collapsed (`_site()` max-across-configs, ON
+netted): CC ON 13.66 GW vs startable-OFF increment 10.32 GW (8.24 ≤$200 on the
+submitted DAM curves); CT ON 0.81 vs OFF 7.81 (5.22 ≤$200); ST 3.84 / 3.61
+(1.53). CC+CT increment 18.13 GW, 13.46 GW ≤$200 — reproducing and sharpening
+the ERCOT-107/108 16.94 GW figure at the missed subset. The measured price the
+re-pricing needs is already committed: the ERCOT-88 offline-CT pool ladder runs
+p50 $271–707 / p90 $641–1,010 (2024 bins) — conduct magnitudes; a
+constants-based startup amortization ($20–30/MWh) is refuted ex ante as the
+identification (~30× low).
+
+**Charter (owner-gated, two asks).** (1) Re-upload the NP3-965 corpus (min: the
+~250 shards covering delivery-2023; consumed by the derives, purgeable after —
+the committed deliverables are the compact condbinned JSONs). (2) Authorize the
+design round (the standing ERCOT-89 §7 step-2 gate): re-derive the pool with
+its 2023 block (2024/25 byte-identity as the derive check), widen to a
+slow-start CC(+ST reconciled) tier at its own measured OFF-status ladder, new
+default-off flag, REPLACE-BY-MASK (rule 19 reconciliation vs the gas bridge /
+P1 amortization / RT wall enumerated in the diagnosis §3), zero fitted
+parameters, precommit with the ERCOT-89 zero-spurious+C3a guards, matched-hour
+C3c anatomy, and LOYO 2023–25 pushed before any solve. Full design:
+`docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`.
+
+**Governance.** No mechanism tested, no solve, no registration (ERCOT-142/143
+no-LP pattern). Matrix rule-28(c) repair: `ercot_faststart_pool_offer` had no
+row (predates the guard) — row added, ERCOT cell `O`, citation chain
+ERCOT-88/107-108/151; `check_mechanism_matrix.py` integrity + keeper stamps
+PASS. Holdouts untouched. ERCOT-scoped (rule 25).
+
+Next shorthand: ercot-152.
