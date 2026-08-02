@@ -551,7 +551,8 @@ class TestMarketDesignVintages(unittest.TestCase):
 
     # ---- resolution vs hand values --------------------------------------
     def test_resolve_hold_first_exact_hold_last(self):
-        # PJM spans 2021/2022 .. 2027/2028 (start years 2021..2027).
+        # PJM spans 2021/2022 .. 2028/2029 (start years 2021..2028) — 2028/2029
+        # added by the FFR-2C re-anchor 2026-08-02, so hold-last moved.
         self.assertEqual(
             resolve_demand_curve_vintage("PJM", 2019).delivery_year, "2021/2022"
         )  # hold-first (before the earliest)
@@ -562,7 +563,10 @@ class TestMarketDesignVintages(unittest.TestCase):
             resolve_demand_curve_vintage("PJM", 2026).delivery_year, "2026/2027"
         )
         self.assertEqual(
-            resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2027/2028"
+            resolve_demand_curve_vintage("PJM", 2027).delivery_year, "2027/2028"
+        )  # exact
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2028/2029"
         )  # hold-last (after the latest)
 
     def test_resolve_miso_pre_rbdc_vertical_and_forward_hold_last(self):
@@ -790,6 +794,97 @@ class TestMarketDesignVintages(unittest.TestCase):
                         delta=0.002,
                         msg=f"PJM 2025/26 M18 pct point {row.point_index}",
                     )
+
+    def test_pjm_2028_2029_vintage_reconciles_with_published(self):
+        # FFR-2C re-anchor. 2028/2029 gets its OWN reconciliation because it
+        # breaks three assumptions the loop above bakes in, each published:
+        #  * no ee_addback row (post-CIFP EE is netted in the load forecast),
+        #    so the VRR denominator is reliability_requirement_frr_adj ALONE;
+        #  * FOUR curve points, not three ("The VRR Curve equation has
+        #    changed" — 2028/2029 BRA parameters report, Summary);
+        #  * the last two points sit at the ER26-1556 price FLOOR, so the
+        #    curve's right end is 175/325.69, not 0.
+        r = self._rows("PJM", "2028/2029")
+        nc = self._scalar(r, "net_cone", y_unit="usd_per_mw_day")
+        self.assertAlmostEqual(nc, 325.69, places=2)
+        # The workbook's own construction: gross UCAP - forward net E&AS UCAP.
+        gross = self._scalar(r, "gross_cone", y_unit="usd_per_mw_day")
+        self.assertAlmostEqual(gross - nc, 450.45, delta=0.01)
+        # No EE Addback is published for this vintage.
+        self.assertTrue(r[r.metric == "ee_addback"].empty)
+        denom = self._scalar(r, "reliability_requirement_frr_adj")
+        pts = r[r.metric == "curve_point_ucap"].sort_values("point_index")
+        vintage = resolve_demand_curve_vintage("PJM", 2028)
+        self.assertEqual(vintage.delivery_year, "2028/2029")
+        self.assertEqual(len(pts), 4)
+        self.assertEqual(len(vintage.demand_curve), 4)
+        for cp, (_, row) in zip(vintage.demand_curve, pts.iterrows()):
+            self.assertAlmostEqual(
+                cp.reserve_ratio,
+                float(row.x_value) / denom,
+                places=6,
+                msg=f"PJM 2028/29 x point {row.point_index}",
+            )
+            self.assertAlmostEqual(
+                cp.price_frac_net_cone,
+                float(row.y_value) / nc,
+                places=6,
+                msg=f"PJM 2028/29 y point {row.point_index}",
+            )
+        # PJM's own numbers confirm the FRR-adjusted requirement is the right
+        # denominator: points (b)/(d) land on 1.015 / 1.060 exactly.
+        self.assertAlmostEqual(vintage.demand_curve[1].reserve_ratio, 1.015, places=6)
+        self.assertAlmostEqual(vintage.demand_curve[3].reserve_ratio, 1.060, places=6)
+        # The ER26-1556 collar: cap/floor UCAP = the published ICAP cap/floor
+        # divided by the 0.79 Reference Resource Accredited UCAP Factor.
+        cap_ucap = self._scalar(r, "price_cap", y_unit="usd_per_mw_day")
+        floor_ucap = self._scalar(r, "price_floor", y_unit="usd_per_mw_day")
+        cap_icap = self._scalar(r, "price_cap", y_unit="usd_per_mw_day_icap")
+        floor_icap = self._scalar(r, "price_floor", y_unit="usd_per_mw_day_icap")
+        self.assertAlmostEqual(cap_icap / 0.79, cap_ucap, places=6)
+        self.assertAlmostEqual(floor_icap / 0.79, floor_ucap, places=6)
+        self.assertAlmostEqual(
+            vintage.demand_curve[0].price_frac_net_cone, cap_ucap / nc
+        )
+        self.assertAlmostEqual(
+            vintage.demand_curve[-1].price_frac_net_cone, floor_ucap / nc
+        )
+        # Anchor on the shared PJM convention (UCAP $/MW-day x 365 / 1000).
+        self.assertAlmostEqual(
+            vintage.net_cone_curve_per_kw_yr, 325.69 * 365.0 / 1000.0, places=6
+        )
+
+    def test_pjm_2028_forward_carries_the_published_price_floor(self):
+        # Structural consequence of the ER26-1556 collar (rule 1): a LONG PJM
+        # position in 2028+ no longer earns zero capacity revenue. The pre-
+        # re-anchor hold-last vintage (2027/2028) crossed to zero at 1.045;
+        # 2028/2029 flat-extrapolates its floor point instead. Stated as a
+        # published-design assertion so a future edit that silently restores a
+        # zero-cross fails here.
+        design = MARKET_DESIGN["PJM"]
+        floor_frac = 175.00 / 325.69
+        anchor = 325.69 * 365.0 / 1000.0
+        for pos in (1.06, 1.20, 2.0):
+            self.assertAlmostEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="PJM", year=2028
+                ),
+                floor_frac * anchor * 1000.0,
+                places=6,
+                msg=f"PJM 2028/29 floor at {pos}",
+            )
+            self.assertEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="PJM", year=2027
+                ),
+                0.0,
+            )
+        # The cap plateau is the collar cap, not 1.5x net-CONE.
+        self.assertAlmostEqual(
+            design.capacity_price_per_firm_mw_yr(self.ON, 0.90, iso="PJM", year=2028),
+            (325.00 / 325.69) * anchor * 1000.0,
+            places=6,
+        )
 
     # ---- pricing-seam behavior ------------------------------------------
     def test_reference_year_equals_registry_default(self):

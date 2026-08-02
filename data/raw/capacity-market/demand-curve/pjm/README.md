@@ -43,4 +43,37 @@ A third, unprompted finding: **pre-reform VRR curve points were published as lit
 
 See `docs/handoffs/capacity-market-intake-2026-07.md` for the original (2025/2026–2027/2028) gaps, and the intake session report (2026-07-15) for this addition's manual-download list.
 
+**STATUS (2026-08-02 addition, FFR-2C — the FR-19 re-anchor).** Extended forward
+to **2028/2029**, the delivery year whose BRA cleared in July 2026 and the first
+year of PJM's new Quad/Periodic Review gross-CONE basis (FERC Docket ER26-455,
+approved 2026-01-21). This closes the top row of the forward-vintage backlog in
+the parent `../README.md`: the machine-readable Planning-Parameters workbook IS
+retrievable from this environment (it was not when FF-G3 researched it
+2026-07-20), so the values are taken from the workbook rather than from the
+narrative report's image-only Table 3. A local copy is committed as
+`pjm-2028-2029-planning-parameters.xlsx`
+(sha256 `b1863615b0e366ab605aa26f3e9b84af4380ce924ec42c0c0b31a7a75557ca09`); the
+narrative report re-downloaded byte-identical to FF-G3's pinned
+`ee5375b6e26a09b11fc41d1122b546c358a3d24645faa178682bc11305b641aa`.
+
+Three things about this vintage are unlike every earlier PJM year, all published:
+
+- **Net CONE 325.69 $/MW-day UCAP** (Gross CONE UCAP 776.14 − Forward Net E&AS
+  Revenue Offset UCAP 450.448), **+34.3 %** over 2027/2028's 242.52. A step
+  re-anchoring onto new gross-CONE cost data, not a trend.
+- **Four VRR curve points, not three**, with real (level-MW, price-$/day) pairs
+  published the way the pre-reform vintages were: the report's Summary states
+  "The VRR Curve equation has changed, impacting the prices used and point c of
+  the VRR Curve", so the Manual-18 0.99/1.015/1.045 shape does **not** apply.
+- **No EE Addback row** is published, so the VRR denominator is the Reliability
+  Requirement adjusted for FRR alone (145,149.08535 MW). PJM's own numbers
+  confirm it: points (b) and (d) land on 1.015000 and 1.060000 exactly.
+- **A binding price floor.** ER26-1556 collars the curve at 325.00 / 175.00
+  $/MW-day UCAP (= the workbook's ICAP 256.75 / 138.25 ÷ the 0.79 Reference
+  Resource Accredited UCAP Factor), so points (c) and (d) sit at the floor and
+  the curve never reaches zero.
+
+`forecast_pool_requirement` 0.9401 and `irm` 20.0 % are carried in the same
+intake (both endorsed at the 2026-02-19 MRC meeting).
+
 **2026-07-16 addition (RC-1A) — requirement/EE rows + the 2025/2026 published point prices, 18 rows + the five source workbooks committed alongside this README.** For each of 2021/2022–2025/2026: `reliability_requirement` (RTO, UCAP MW), `reliability_requirement_frr_adj` (adjusted for FRR — the RPM-market requirement the VRR curve is drawn against), and `ee_addback` (UCAP MW), all from the same Planning Period Parameters workbooks already cited above (local copies `pjm-<year>-planning-parameters.xlsx`). Finding: the VRR point UCAP MW levels divided by **(Reliability Requirement adjusted for FRR + EE Addback)** reproduce PJM's own Manual-18 `pct_of_requirement` fractions to ≤0.1 % in every vintage (verified against the committed 2025/2026 pct rows: 0.98912/1.01583/1.06726 vs 0.989/1.016/1.068) — so the pre-CIFP vintages' normalized curve shapes are now derivable from purely published rows (consumed by `MARKET_DESIGN_VINTAGES`, reconciled in `tests/test_capacity_demand_curve.py`). Additionally, the 2025/2026 **workbook** publishes the VRR point prices the narrative PDF leaves formula-defined (Point (a) 451.61, (b) 171.61 $/MW-day UCAP); they are recorded as `curve_point_ucap` rows (absolute UCAP Level MW + Price) so the committed Manual-18 pct-basis `curve_point` rows for that vintage stay unique on the datatype key.

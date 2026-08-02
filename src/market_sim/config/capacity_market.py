@@ -1185,6 +1185,47 @@ _PJM_VRR_CURVE_2027_2028: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(1.045, 0.0),  # zero-cross (published y=0)
 )
 
+# PJM 2028/2029 BRA (FFR-2C re-anchor 2026-08-02; rule 23 — the DATA changed,
+# not a residual: PJM published a new delivery-year parameter set on 2026-03-20,
+# added the VRR curve 2026-04-29, and the BRA itself cleared in July 2026).
+# Source: the machine-readable 2028/2029 RPM BRA Planning Period Parameters
+# workbook (sha256 b1863615b0e366ab605aa26f3e9b84af4380ce924ec42c0c0b31a7a75557ca09
+# committed at data/raw/capacity-market/demand-curve/pjm/, rows in pjm.csv) —
+# the narrative report's Table 3 is an IMAGE, which is what blocked FF-G3 from
+# encoding this vintage at design time.
+#
+# THREE ways this vintage differs from every earlier PJM vintage; each is
+# published, none is a modelling choice:
+#  1. **Level.** Net CONE UCAP = 325.69 $/MW-day (workbook 'Net CONE' sheet RTO
+#     row: Gross CONE UCAP 776.14 − Forward Net E&AS Revenue Offset UCAP
+#     450.448). That is +34.3 % over the 2027/2028 anchor (242.52) — the first
+#     delivery year on the Quad/Periodic Review gross-CONE values (FERC Docket
+#     ER26-455, approved 2026-01-21), not an escalation of the old basis.
+#  2. **Shape.** FOUR published (level, price) points, not the Manual-18
+#     0.99/1.015/1.045 three-point construction: the report's own Summary says
+#     "The VRR Curve equation has changed, impacting the prices used and point c
+#     of the VRR Curve". x = published UCAP Level MW ÷ the published Reliability
+#     Requirement adjusted for FRR (145,149.08535) — NO EE Addback term, because
+#     post-CIFP energy efficiency is netted inside the load forecast and the
+#     2028/29 workbook publishes no such row (the 2021/22-2025/26 vintages add
+#     one). The denominator is confirmed by PJM's own numbers: point (b) lands
+#     on 1.015000 and point (d) on 1.060000 exactly.
+#  3. **A price FLOOR that binds.** FERC Docket ER26-1556 collars the curve at
+#     325.00 / 175.00 $/MW-day UCAP (= the workbook's ICAP cap/floor 256.75 /
+#     138.25 ÷ the 0.79 Reference Resource Accredited UCAP Factor). So points
+#     (c) and (d) sit AT the floor and the curve never reaches zero:
+#     evaluate_demand_curve flat-extrapolates past the last point, so a long
+#     PJM position in 2028+ earns 175/325.69 = 0.5373 × net-CONE rather than 0.
+#     That is the published market design for this delivery year, not a
+#     representation choice — and it is the one structural change (rule 1) the
+#     re-anchor carries beyond the level.
+_PJM_VRR_CURVE_2028_2029: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(146703.0 / 145149.08535, 325.00 / 325.69),  # (a) cap
+    CapacityDemandCurvePoint(147326.3 / 145149.08535, 277.36 / 325.69),  # (b)
+    CapacityDemandCurvePoint(149736.8 / 145149.08535, 175.00 / 325.69),  # (c) floor
+    CapacityDemandCurvePoint(153858.0 / 145149.08535, 175.00 / 325.69),  # (d) floor
+)
+
 # NYISO NYCA "Demand Curve Length" — the zero-crossing offset above the
 # requirement, fixed at 12% for the entire 2021-2025 DCR cycle (Analysis Group
 # DCR report Table 2, C-Central/NYCA), so it is not a per-vintage parameter.
@@ -1316,6 +1357,14 @@ MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
         MarketDesignVintage("2026/2027", 77.431, _PJM_VRR_CURVE),  # registry ref
         MarketDesignVintage(
             "2027/2028", 242.52 * 365.0 / 1000.0, _PJM_VRR_CURVE_2027_2028
+        ),
+        # 2028/2029 — the FFR-2C re-anchor (see _PJM_VRR_CURVE_2028_2029 above
+        # for the three published discontinuities). Anchor = published Net CONE
+        # UCAP 325.69 $/MW-day x 365/1000 = 118.877 $/kW-yr, on the same
+        # per-ISO convention as every other PJM vintage. This is now the
+        # hold-last vintage, so it governs 2028-2050 in a forecast.
+        MarketDesignVintage(
+            "2028/2029", 325.69 * 365.0 / 1000.0, _PJM_VRR_CURVE_2028_2029
         ),
     ),
     "NYISO": (
@@ -2245,6 +2294,11 @@ FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
         "2025/2026": 0.9380,  # (1+0.178) x 0.7963; PPP posted 2024-04-08
         "2026/2027": 0.9170,  # 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09
         "2027/2028": 0.9260,  # (1+0.200) x 0.7717; BRA report 2025-12-17
+        # FFR-2C 2026-08-02: published alongside the 2028/2029 net-CONE
+        # re-anchor. (1+0.200) x 0.7834 (Pool-Wide Accredited UCAP Factor);
+        # both endorsed at the 2026-02-19 MRC meeting. Workbook
+        # 'Planning Parameters' sheet, FPR row, RTO column.
+        "2028/2029": 0.9401,
     },
 }
 
