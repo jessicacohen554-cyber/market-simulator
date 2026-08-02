@@ -159,6 +159,16 @@ config."* That defect would follow T1-FF to any base year. **FH-1 must reproduce
 the T1-FF posture before Phase A results are read as skill** — an over-retiring harness would
 make every downstream metric uninterpretable. This is an explicit acceptance gate, not a footnote.
 
+> **GATE RESULT 2026-08-02 — REPRODUCED. FH-4 / Phase A is BLOCKED.** FH-1's probe (ERCOT, base
+> 2023, vintage 2023, 2023–2025, Arm R, registered `ercot-2023-2025-t1ff-armr-fh1gate`) retires
+> **21.05 GW = 26.8 %** of prior thermal in 2025 — the T1-X 25.6 % property carried over, with
+> the full **I6 FAIL / I7 FAIL / I12 WARN** signature. The run is otherwise mechanically clean,
+> so the defect sits in the retirement layer upstream of T1-FF and follows the harness posture,
+> not the input stack. The probe's dispatch-skill numbers are **gate context only** and must
+> never be quoted as T1-FF skill. The block lifts only when a retirement-lane fix (FF-1A R-NEW /
+> G-31 grain / the FFR retirement-calibration lane) lands **and** a re-probe passes. Evidence:
+> `docs/handoffs/fh-1-full-forward-harness-2026-08.md` §7.
+
 ---
 
 ## 4. Input disposition — what the forecast stack can actually resolve for historic years
@@ -383,6 +393,11 @@ REQUIRES: FH-1 + FH-2 + FH-3 merged; FFR Wave 1 merged and its §W1-X
 cache-epoch bump applied (FR-7/FR-8 corrupt weather-pinned historic runs);
 FH-1's §3.3 harness-defect gate PASSED. Do not start otherwise — say so and
 stop.
+STATUS 2026-08-02: DO NOT DISPATCH. FH-1 merged and the §W1-X bump is applied,
+but the §3.3 gate FAILED — the I6 over-retirement REPRODUCES at the T1-FF
+posture (26.8 % of prior thermal in 2025; I6/I7 FAIL, I12 WARN). See §3.3's
+gate-result block and docs/handoffs/fh-1-full-forward-harness-2026-08.md §7.
+The block lifts only when a retirement-lane fix lands AND a re-probe passes.
 
 Read (beyond the implicit set): docs/hindcast-forward-plan-2026-07.md §2, §3.1,
 §5; scripts/score_crossover.py (the input_gap construction you reuse);
