@@ -504,3 +504,98 @@ ST_CHP model diurnal profile is anti-correlated with its true actual
 `docs/FINDING-bench-multiclass-collapse-2026-07-28.md`;
 `results/calibration/bench_multiclass_collapse.json` +
 `bench_multiclass_migration_report.json`.
+
+## 2026-08-01 — xiso-1: diurnal price-amplitude compression is SYSTEMIC at all six ISOs (cross-cutting audit, NO LP)
+
+**Arm A of the xiso-1 brief. No LP solved, no config changed, no bundle
+produced, no keeper touched, no dashboard registration** (rule 15
+`[R-DASHBOARD]` binds bundles; there is none — same disposition as
+neiso-71/73/74). Record:
+`results/calibration/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`,
+transcript `PROBE-xiso1-diurnal-amplitude-audit-2026-08-01.txt`, probe
+`scripts/probes/_xiso1_diurnal_amplitude_audit.py`.
+
+**The question.** neiso-74 sized NEISO's keeper at 24–30 % of the measured
+diurnal price amplitude with level and phase both correct, and left open
+whether that was NEISO-specific. Two other ISOs already carried a same-shaped
+finding by different routes (miso-89, pjm-139/140/141), but nobody had measured
+all six with one construction.
+
+**The construction** (portable, zero LP, no re-solve): each ISO's CURRENT
+keeper — resolved live from `frontend/data/backcast/keepers/<ISO>.json` through
+the registry, so the probe re-reports against whatever the keepers are —
+`hourly/system_<year>.parquet` `pass == "P1"`, zone duals load-weighted by the
+model's own hourly zonal demand (the C3a basis; `price` is already the
+delivered price, overlays folded in by `_system_frame`), against the committed
+`data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet` hub DA/RT. Both
+sides are already on the model's chronological 8760 calendar, so they pair
+hour-for-hour with no re-keying — that is what makes one construction serve six
+ISOs. Validated by reproducing neiso-74's NEISO numbers exactly on the swapped
+loader.
+
+**The answer: systemic.** All **36** ISO × year × benchmark cells compress, in
+the same direction, with the same signature — daily MAX under-priced in
+**36/36** (−7.5 % … −65.5 %), daily MIN over-priced in **36/36** (+5.9 % …
++146.0 %), hour-of-day amplitude **19.9–92.2 %** of measured (mean **40.5 %**
+vs DA, **43.9 %** vs RT) while the annual LEVEL is right to a mean absolute
+**7.1 %** and the PHASE is right in **34/36** rows (hour-of-day correlation
++0.853…+0.980). Per-ISO amplitude vs DA, 2023/24/25: ERCOT 52.9/38.2/36.7
+(2023 uninterpretable — its level is −36.4 %), CAISO 46.5/52.9/**75.9**, PJM
+31.6/36.5/34.2, MISO 34.0/36.3/25.2, NYISO 52.0/50.9/44.5, NEISO
+27.1/**23.6**/29.9.
+
+**Controls, all reported against interest.** Simple-zone-mean instead of
+load-weighted moves amplitude ≤4.3 pp. MISO's committed hourly ZONAL actual has
+a *smaller* hour-of-day range than the hub, so scoring on it **softens** the
+finding (25.2 → 26.5 % in 2025). $200 body-censoring *raises* several RT ratios
+(MISO 2025 12.2 → 17.9 %), confirming part of the raw RT daily spread is
+genuinely the price tail — which is why the tail-insensitive hour-of-day range
+is the quoted statistic and the raw daily-spread ratio is not. CAISO 2025 vs RT
+reads **92.2 %**, one ISO-year where the defect is nearly absent — the strongest
+evidence against reading this as a mechanical property of a dual-priced LP.
+
+**Reconciliation, not re-discovery (rule 19 `[R-ONE-MECH]`).** pjm-141's
+31/33/32 %, miso-89's 29–47 %, nyiso-109's 69/49/45 % and neiso-74's 24–30 % are
+four constructions of THIS defect at four ISOs. Treat the existing ISO-local
+diagnoses as its local reports; do not re-derive them.
+
+**Cross-ISO attribution.** In every ISO the peaking/oil classes are ALREADY
+ONLINE at the overnight trough (2/4 to 4/4 classes), so the same offer band is
+marginal at both ends of the day. The two ISOs where a zero-MC block absorbs
+95–99 % of the model's own diurnal demand swing (ERCOT/CAISO solar) are the
+LEAST compressed; the four where a thermal class absorbs it are the MOST. Stated
+as an observation on six points — not a mechanism, not a lever.
+
+**Rubric gap re-filed, scorer NOT changed (OWNER CALL).** No load-bearing
+criterion sees this at ANY ISO: C3a is a level test, C3b
+(`calibration_verdict.py::score_price_shape`) is a TWELVE-MONTH load-weighted
+NRMSE for **every** ISO and is structurally blind to hour-of-day, C3c is a
+tail-hour count, and C7/D-1 scores class *dispatch* shape (SKIPPED at NEISO).
+Sharpest statement of the gap: **PJM's keeper is fully `CALIBRATED` —
+`price_mean`/`price_shape`/`price_tail` all PASS — at 31.6/36.5/34.2 %
+amplitude.** neiso-74 filed the question for NEISO; this audit shows it is the
+rubric's at all six. The statistic, if the owner wants it gated, is already
+computed and costs zero LP.
+
+**What this licenses.** A *structural* account is now one cross-ISO question
+rather than six ISO-local ones, and each lane has its own measured size.
+It opens **no adjudicated cell** (PJM's family is owner-closed with an empty
+lever queue; NEISO §5.6 item 1 still needs its own owner charter — neiso-74 gave
+it a target, not a charter, and this audit grants none), **transfers no verdict**
+(rule 25 `[R-ISO-SCOPE]`), and **licenses no parameter** — an adder sized to a
+~38 pp amplitude gap is a value fitted to a residual (rules 5/21/24), and the
+defect being systemic makes that more tempting and no more admissible. A
+successor must not be graded on the amplitude ratio alone: neiso-74's caveat
+generalizes (NEISO's real PS fleet realizes only 45 % of the DA-price
+perfect-foresight optimum).
+
+**Governance.** Years 2023–2025 only; holdout spend freeze ACTIVE, nothing
+outside the training window read (rule 20 `[R-HOLDOUT]`). Matrix row
+`diurnal_price_amplitude` added, cells `UUGGOU` (rule 28c); §5.7 audit row
+updated; keeper stamps re-checked (`check_mechanism_matrix.py` clean).
+
+**DO-NOT-REDO:** do not re-measure cross-ISO diurnal amplitude by hand — re-run
+`scripts/probes/_xiso1_diurnal_amplitude_audit.py`, which reads the live keeper
+store. Next cross-cutting shorthand: **xiso-2** — §5.7's oldest open audit, the
+post-guard re-derivation sweep of outage-derived artifacts across all six ISOs
+(flagged 2026-07-26, still unaudited, mechanical and no-LP).
