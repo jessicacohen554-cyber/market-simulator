@@ -366,15 +366,34 @@ not the HOLD. The T1 board's per-ISO determinations are unaffected.
 
 ## 6. Open blockers (not fixed here)
 
-**B1 — `scripts/run_full_horizon.py` carries the same FR-14 shape, and it is
-the T0 / T1-F runner.** `reference_config()` (`:153`) pins
-`cmc_by_iso = None` unless `--golden-posture` is passed, so a T0 or T1-F leg
-launched with no flag prices adequacy on the flat stub while production clears
-the curve. Its own docstring calls that the deliberate "P-2A probe posture", so
-this is a **default-posture decision, not an oversight** — it belongs with the
-D-1/D-3 batch at FFR-3A step 0, not to this session (rule 24). Flagged, not
-fixed. *(This does not affect the §4 measurement: `--golden-posture` and the
-shipped default agree on PJM.)*
+**B1 — `scripts/run_full_horizon.py` carries the same FR-14 shape in BOTH
+halves, and it is the T0 / T1-F runner.** Two distinct defects, verified:
+
+*(a) the default.* `reference_config()` (`:153`) pins `cmc_by_iso = None` unless
+`--golden-posture` is passed, so a T0 / T1-F leg launched with no flag prices
+adequacy on the flat stub while production clears the curve. Its own docstring
+calls that the deliberate "P-2A probe posture", so this half is a
+**default-posture decision, not an oversight** — it belongs with the D-1/D-3
+batch at FFR-3A step 0 (rule 24).
+
+*(b) the record — this half IS a defect, and it is the one this session fixed on
+the hindcast side.* The summary emitter (`:415`) writes
+`"capacity_market_clearing": bool(config.capacity_market_clearing)` — the
+**scalar**, which stays `False` even under `--golden-posture` (the golden posture
+arms `capacity_market_clearing_by_iso`, never the scalar). So a curve-ON T0/T1-F
+leg is **recorded as curve-OFF**, and `forecast_verdict._curve_on` reads exactly
+that key off the summary (`forecast_verdict.py:442-443`).
+
+The consequence is concrete: **all nine committed T1-F/T0 baseline sidecars
+record `capacity_market_clearing: false`** — every ISO's `ff-t1f-baseline`, plus
+the FFR-2B T1-F pair. Because the recorded field is the scalar, a leg run *with*
+`--golden-posture` and a leg run *without* it are **indistinguishable in the
+record**, so it cannot be determined from the committed evidence which posture
+the T1-F board was scored on. That is strictly worse than a wrong default: the
+run record cannot express the distinction at all. Not fixed here (the brief
+scopes this session to the capacity-hindcast harness and forbids re-interpreting
+committed verdicts), but it is the single highest-value follow-up — a one-line
+emitter change plus a re-read of the T1-F board's posture provenance.
 
 **B2 — `GOLDEN_CMC_BY_ISO` and the shipped `ScenarioConfig` default disagree on
 NYISO.** Golden = `{PJM, MISO, NYISO, NEISO, CAISO}`; shipped =
