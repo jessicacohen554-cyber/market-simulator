@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-02-miso-113b-night-floor",
+  "label": "miso 113b night floor",
+  "date": "2026-08-02",
+  "shorthand": "miso-113b-night-floor",
+  "definition": "miso-113 ARM: regulated-coal within-run NIGHT min-gen floor (miso_coal_night_floor=true), single delta off the 109b keeper recipe. PREREG-miso113-prb-night-floor-2026-08-01.md Phase 3.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-02-miso-113b-night-floor.js",
+  "bundle": "results/calibration/miso113_nightfloor_B"
+}

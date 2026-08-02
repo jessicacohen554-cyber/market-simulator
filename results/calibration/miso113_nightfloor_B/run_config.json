@@ -1,16 +1,14 @@
 {
-  "timestamp": "2026-07-27T22:48:56",
+  "timestamp": "2026-08-02T08:16:57",
   "git": {
-    "sha": "11ebd05",
-    "basis_sha": "f4205352a67b946aa9671449eaf5bd0b3cd602d5",
-    "branch": "claude/miso-97-sector-correction-ab-7qz4yu",
-    "dirty": true,
-    "changed_files": [
-      "ata/raw/_processed-legacy/thermal_tranches_MISO.csv"
-    ],
-    "diffstat": ".../_processed-legacy/thermal_tranches_MISO.csv    | 208 ++++++++++-----------\n 1 file changed, 104 insertions(+), 104 deletions(-)"
+    "sha": "9037ee7",
+    "basis_sha": "9037ee7239fefee94bdde669b52f86e8980b376a",
+    "branch": "claude/next-lane-cross-iso-queue-q1x2ux",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "miso-98 CHP sector A/B, arm A (chp_sector all-NaN (pre-f883346 blob), so BTM falls through to the unsourced merchant 35.0 / ST 90.0 defaults). SINGLE DELTA vs the other arm: the chp_sector column of thermal_tranches_MISO.csv; every other column and file byte-identical. Keeper recipe (2026-07-25-miso-88-egrid-hr) rebuilt from meta.json. Evidence: results/calibration/FINDING-miso97-chp-sector-btm-2026-07.md",
+  "model_changes_note": "miso-113 ARM: regulated-coal within-run NIGHT min-gen floor (miso_coal_night_floor=true), single delta off the 109b keeper recipe. PREREG-miso113-prb-night-floor-2026-08-01.md Phase 3.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -26,6 +24,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
+      "2023": 2.54,
+      "2024": 2.19,
       "2025": 3.52
     },
     "outage_source": "historic",
@@ -55,7 +55,18 @@
       "miso_midwest_subregional_reserves": true,
       "miso_winter_citygate_daily": true,
       "miso_manitoba_seam": true,
-      "miso_seam_envelope_merit_cap": true
+      "miso_seam_envelope_merit_cap": true,
+      "measured_chp_heat_rates": true,
+      "temp_dependent_derate": true,
+      "temp_derate_hourly_grain": true,
+      "temp_derate_mean_anchored": true,
+      "temp_derate_classes": [
+        "ST_CHP",
+        "CT_CHP"
+      ],
+      "temp_derate_slope_st_chp": 0.00141,
+      "temp_derate_slope_ct_chp": 0.00141,
+      "miso_coal_night_floor": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -68,14 +79,14 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "temp_dependent_derate": false,
+    "temp_dependent_derate": true,
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "11ebd05"
+    "git_sha": "9037ee7"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2023,
     "iso": "MISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -235,6 +246,7 @@
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
     "measured_ct_heat_rates": false,
+    "measured_chp_heat_rates": true,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
@@ -283,6 +295,7 @@
     "capacity_market_clearing": false,
     "capacity_market_clearing_by_iso": null,
     "renewable_elcc_curves": true,
+    "ramp_limits": false,
     "local_capacity_constraints": false,
     "planning_reserve_margin": 0.1375,
     "planning_reserve_margin_override": null,
@@ -329,6 +342,7 @@
     "nyiso_local_selfsupply": false,
     "nyiso_li_lcr_tsl": false,
     "nyiso_nyc_lcr_tsl": false,
+    "nyiso_import_sil_retire": false,
     "nyiso_scr_edrp": false,
     "nyiso_scr_edrp_strike": 500.0,
     "nyiso_firm_imports": false,
@@ -346,6 +360,9 @@
     "nyiso_gas_bridge_min_run": false,
     "nyiso_gas_bridge_cc_min_run_hours": null,
     "nyiso_gas_bridge_st_min_run_hours": null,
+    "nyiso_gas_bridge_ct": false,
+    "nyiso_gas_bridge_ct_min_load_frac": 0.238,
+    "nyiso_gas_bridge_ct_min_run_hours": 2.0,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
     "nyiso_spin_headroom_frac": 1.0,
@@ -372,6 +389,10 @@
     "caiso_corridor_flow_limit": false,
     "caiso_firm_import_shape": false,
     "caiso_firm_import_selfschedule": false,
+    "caiso_firm_import_envelope_clip": false,
+    "caiso_firm_import_selfsched_clip": false,
+    "caiso_p1_export_sink_seam": false,
+    "dump_cost_full_offer_domain": false,
     "caiso_demand_clock_realign": false,
     "caiso_supply_consistent_demand": false,
     "caiso_citygate_spot_level": false,
@@ -513,6 +534,9 @@
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": true,
     "coal_committed_takeorpay_sunk_fixed": false,
+    "coal_prb_committed_dispatchable": false,
+    "coal_prb_committed_split": false,
+    "miso_coal_night_floor": true,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -526,6 +550,7 @@
     "coal_lignite_mustrun_override": null,
     "coal_prb_mustrun_override": null,
     "coal_mustrun_per_plant": true,
+    "ercot_coal_min_config_floor": false,
     "retiree_cems_cap": false,
     "ct_mustrun_per_plant": false,
     "ct_mustrun_floor_frac": 1.0,
@@ -581,6 +606,7 @@
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
     "ercot_gas_bridge_da_horizon": true,
+    "ercot_gas_bridge_online_hours": false,
     "ercot_commitment_posture": false,
     "ercot_commitment_posture_min_load_frac": 0.574,
     "ercot_offer_surface_lowcurve_floorscoped": false,
@@ -592,6 +618,8 @@
     "ercot_thermal_dam_availability_hourly": false,
     "ercot_thermal_dam_availability_plant": false,
     "ercot_thermal_dam_availability_coal": false,
+    "ercot_dam_availability_coal_event_cap": false,
+    "ercot_dam_availability_gas_event_cap": false,
     "ercot_noncampd_plant_availability": false,
     "ercot_storage_capability_measured": false,
     "neiso_offer_surface_conditional": false,
@@ -649,13 +677,21 @@
     "gt_ambient_derate_ref_c": 35.0,
     "gt_ambient_derate_slope_cc": 0.004,
     "gt_ambient_derate_slope_ct": 0.006,
-    "temp_dependent_derate": false,
+    "temp_dependent_derate": true,
     "temp_derate_ref_c": 15.0,
     "temp_derate_ref_c_coal": 25.0,
     "temp_derate_slope_cc": 0.0076,
     "temp_derate_slope_ct": 0.0126,
     "temp_derate_slope_st_gas": 0.0054,
     "temp_derate_slope_coal": 0.004,
+    "temp_derate_hourly_grain": true,
+    "temp_derate_mean_anchored": true,
+    "temp_derate_classes": [
+      "CT_CHP",
+      "ST_CHP"
+    ],
+    "temp_derate_slope_st_chp": 0.00141,
+    "temp_derate_slope_ct_chp": 0.00141,
     "gas_st_committed_hr_override": null,
     "gas_st_econ_hr_override": null,
     "gas_st_peak_hr_override": null,
@@ -785,6 +821,18 @@
     },
     "gas_offer_net_revenue_margin": true,
     "gas_offer_margin_anchor": 3.0492,
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null,
+    "coal_offer_net_revenue_margin": false,
+    "coal_offer_margin_anchor": null,
+    "coal_offer_margin_level": null,
+    "cc_committed_offer_margin": false,
+    "cc_committed_offer_level": null,
+    "coal_peak_offer_margin": false,
+    "coal_peak_offer_level": null,
+    "coal_peak_offer_gas_hr": null,
+    "coal_perplant_offer_level": false,
+    "coal_perplant_offer_curves": null,
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
     "offer_curve_smoothing_mid": null,
@@ -796,6 +844,9 @@
     "ercot_gtc_limits_measured": false,
     "pjm_measured_interface_limits": false,
     "pjm_east_interface_cut": false,
+    "pjm_apsouth_interface_cut": false,
+    "pjm_external_net_position_cut": false,
+    "pjm_zonal_loss_surface": false,
     "ercot_wtx_curtailment_driver": false,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
@@ -850,7 +901,7 @@
     "unit_outage_maxgen_events": true,
     "maxgen_emergency_tier_pricing": true,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 3.52,
+    "gas_price_override": 2.54,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null
   },
@@ -865,5 +916,38 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
+  },
+  "reuse": {
+    "source_bundle": "results/calibration/miso113_nightfloor_B_y24",
+    "requested_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": null,
+        "scenario_config_sha256": "2b9cf46624be944b"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": null,
+        "scenario_config_sha256": "9e4a68dc4397cd9b"
+      }
+    },
+    "fresh_years": [
+      2025
+    ],
+    "refusals": {
+      "2025": "year not solved in the prior bundle"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-08-02T06:30:03",
+    "source_git_sha": "9037ee7"
   }
 }
