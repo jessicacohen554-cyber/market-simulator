@@ -117,6 +117,15 @@ VERDICT_MAP = {
     # on the same page (a PASS/FAIL flip) — they render score-only, no verdict.
     "ercot-2023-2027-crossover-ff2d": "ercot-t1x",
     "pjm-2023-2027-crossover-ff2d": "pjm-t1x",
+    # FFR-2A re-solved the T1-X battery at post-Wave-1 HEAD (audit FR-21: the
+    # FF-2D comparators predate ~20 keeper promotions and the Wave-1 forecast
+    # fixes) and added MISO, which FF-2D launched but never registered. Each
+    # carries its OWN re-measured verdict key for exactly the reason the ff2d
+    # comment above gives — a run must never render a verdict its own score
+    # contradicts. The -ff2d rows stay pointed at the -ff2d verdicts.
+    "ercot-2023-2027-crossover-ffr2a": "ercot-t1x-ffr2a",
+    "pjm-2023-2027-crossover-ffr2a": "pjm-t1x-ffr2a",
+    "miso-2023-2027-crossover-ffr2a": "miso-t1x-ffr2a",
     "pjm-2021-2025-curve-ff2c": "pjm-2021-2025-curve-ff2c-t1h",
     "miso-2021-2025-curve-ff2c": "miso-2021-2025-curve-ff2c-t1h",
     "neiso-2021-2025-curve": "neiso-2021-2025-curve-t1h",

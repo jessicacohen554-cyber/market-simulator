@@ -149,6 +149,7 @@ from .trajectories import (
     resolve_annual_coal_price,
     resolve_annual_gas_price,
     resolve_annual_oil_price,
+    resolve_gas_scenario_path,
     resolve_nox_price,
     resolve_nuclear_fuel_price,
 )
@@ -356,6 +357,7 @@ __all__ = [
     "resolve_annual_coal_price",
     "resolve_annual_gas_price",
     "resolve_annual_oil_price",
+    "resolve_gas_scenario_path",
     "resolve_nox_price",
     "resolve_nuclear_fuel_price",
     # hubs

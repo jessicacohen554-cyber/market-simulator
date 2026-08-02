@@ -6,10 +6,14 @@ Consumes a bundle produced by ``scripts/run_capacity_hindcast.py --crossover``
 :class:`DispatchResult` + evolution ledgers, and a top-level ``meta.json`` whose
 ``kind == "crossover"``). Emits, into the bundle's ``<cache_dir>``:
 
-* ``crossover_score.json`` — three parts:
+* ``crossover_score.json`` — three parts, plus the FC-4 rubric contract
+  (``refusal_marker`` + the flat ``metrics`` list
+  :func:`scripts.forecast_verdict.score_fc4` reads; folded in from the FF-2D
+  session's committed adapter, since deleted — see :func:`rubric_metrics`):
   (a) **dispatch skill 2023-2025** vs the committed bench, side by side with the
       ISO's designated keeper backcast scores (the FC-4 *input-gap* columns:
-      ``input_gap = |forecast_err| / |keeper_backcast_err|``);
+      ``input_gap = |forecast_err| / |keeper_backcast_err|``), including the
+      ``gas_twh``/``coal_twh`` family-volume rows FC-4 bands at ±5 %;
   (b) **capacity events 2023-2025** vs the registry actuals, reusing
       :mod:`scripts.score_capacity_hindcast` verbatim (retirements / additions /
       CO2), in the SAME top-level shape the hindcast scorer emits so a crossover
@@ -394,6 +398,91 @@ def _scalar(cid: str, recs: list[dict]) -> dict | None:
     }
 
 
+# FC-4's family-volume rows (rubric §2 FC-4.2, ±5% commercial band) are the
+# GAS and COAL families of the C1 per-class taxonomy, summed. Membership and
+# exclusions are the calibration scorer's own — never a second list to drift
+# (rule 19 [R-ONE-MECH]); ``FUELMIX_EXCLUDED`` drops the same BTM/reconciliation
+# buckets C1 itself never gates.
+_FAMILY_CLASSES: dict[str, tuple[str, ...]] = {
+    "gas_twh": tuple(c for c in V.GAS_CLASSES if c not in V.FUELMIX_EXCLUDED),
+    "coal_twh": tuple(c for c in V.COAL_CLASSES if c not in V.FUELMIX_EXCLUDED),
+}
+
+
+def _family_volume(
+    model_by_class: dict,
+    actual_by_class: dict,
+    classes: tuple[str, ...],
+    iso: str,
+    year: int,
+) -> dict | None:
+    """Fractional family-volume error, summed at FAMILY grain on both sides.
+
+    FC-4 bands ``gas_twh``/``coal_twh`` as FRACTIONS of the family's actual
+    volume, which the C1 per-class records carry but do not aggregate — the gap
+    FF-2D reported as uncovered and routed here (L-VAL follow-up (b)).
+
+    **Aggregated from the class dicts, NOT from the C1 records, because the two
+    sides are not always on the same class GRAIN.** A crossover bundle runs the
+    legacy equal-width heat-rate bins (``use_campd_bins=False``), so its whole
+    coal fleet reports in one unsplit ``COAL`` bucket, while the bench splits
+    coal into ``COAL_PRB``/``COAL_LIGNITE``/``COAL_BIT``/``COAL_WC``. C1 never
+    emits a record for either side of that mismatch (the model's ``COAL`` is
+    unbenchmarked; the bench's split classes have no model), so aggregating the
+    records would report a model coal volume of ZERO — a 100 % error that is a
+    scoring artifact, not a dispatch result (ERCOT 2023: 39.2 TWh read as 0.0
+    against a 60.4 TWh actual). Summing each side over the whole family
+    reconciles the grain, which is exactly what the family row means and the
+    documented rule 14 ``[R-ACCURATE]`` case: real data defined on a different
+    boundary than our representation, reconciled rather than discarded.
+
+    Completeness is read from the SAME predicate C1 gates on
+    (:func:`calibration_verdict.class_is_gated`): a family with any
+    preliminary-vintage member is emitted ``gated: False``, named in
+    ``incomplete_classes`` and reported as UNCOVERED rather than banded (see
+    :func:`rubric_metrics`) — never silently passed.
+
+    Args:
+        model_by_class: Model TWh by class (``ypay["gmModel"]``, or the keeper's
+            per-class record models).
+        actual_by_class: Actual TWh by class (``ybench["classFull"]``, or the
+            keeper's per-class record actuals).
+        classes: The family's class keys.
+        iso: ISO identifier (completeness lookup).
+        year: Scored year (completeness lookup).
+
+    Returns:
+        The family volume record, or ``None`` when the family has no actual for
+        this ISO-year.
+    """
+    present = [c for c in classes if c in model_by_class or c in actual_by_class]
+    if not present:
+        return None
+    model = sum(float(model_by_class.get(c, 0.0) or 0.0) for c in present)
+    actual = sum(float(actual_by_class.get(c, 0.0) or 0.0) for c in present)
+    if actual <= 0.0:
+        return None
+    incomplete = sorted(
+        c
+        for c in present
+        if c in actual_by_class and not V.class_is_gated(iso, c, year)
+    )
+    signed = (model - actual) / actual
+    return {
+        "model_twh": round(model, 3),
+        "actual_twh": round(actual, 3),
+        "err": round(abs(signed), 4),
+        "signed": round(signed, 4),
+        "unit": "frac (|Δ|/actual family TWh)",
+        "classes": sorted(present),
+        "model_only_classes": sorted(
+            c for c in present if c in model_by_class and c not in actual_by_class
+        ),
+        "incomplete_classes": incomplete,
+        "gated": not incomplete,
+    }
+
+
 def _input_gap(forecast: dict | None, keeper: dict | None) -> float | str | None:
     """``|forecast_err| / |keeper_err|`` with a divide-by-zero-safe result.
 
@@ -454,6 +543,7 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
         keeper_note = f"no keeper registered for {iso} in keepers/{iso}.json"
 
     metrics: dict[str, dict] = {cid: {} for cid in _METRIC_LABELS}
+    family: dict[str, dict] = {fam: {} for fam in _FAMILY_CLASSES}
     extras_by_year: dict[int, dict] = {}
     for year in SCORED_YEARS:
         if not (bundle_dir / f"year_{year}.parquet").exists():
@@ -491,10 +581,41 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
                 row["basis"] = "full-plant (bench intensities, BTM added back)"
             metrics[cid][str(year)] = row
 
+        # FC-4 family-volume rows (gas_twh / coal_twh), aggregated at FAMILY
+        # grain on both sides — the forecast from its own gmModel against the
+        # bench's classFull, the keeper from its committed per-class records
+        # (whose grain is already the bench's). See _family_volume for why the
+        # C1 records cannot carry this.
+        k_fuelmix = keeper_recs.get("fuelmix", {}).get(year, [])
+        k_model = {
+            r["key"]: r["model"] for r in k_fuelmix if r.get("model") is not None
+        }
+        k_actual = {
+            r["key"]: r["actual"] for r in k_fuelmix if r.get("actual") is not None
+        }
+        for fam, classes in _FAMILY_CLASSES.items():
+            f_fam = _family_volume(
+                ypay["gmModel"], ybench.get("classFull", {}), classes, iso, year
+            )
+            k_fam = _family_volume(k_model, k_actual, classes, iso, year)
+            if f_fam is None and k_fam is None:
+                continue
+            family[fam][str(year)] = {
+                "forecast_err": None if f_fam is None else f_fam["err"],
+                "forecast_signed": None if f_fam is None else f_fam["signed"],
+                "keeper_backcast_err": None if k_fam is None else k_fam["err"],
+                "input_gap": _input_gap(f_fam, k_fam),
+                "unit": (f_fam or k_fam or {}).get("unit"),
+                "gated": bool(f_fam and f_fam["gated"]),
+                "forecast_detail": f_fam,
+                "keeper_detail": k_fam,
+            }
+
     return {
         "keeper_run_id": keeper_run_id,
         "keeper_note": keeper_note,
         "metrics": metrics,
+        "family_volume": family,
         "deferred": dict(_DEFERRED),
         "reconstruction": {
             "note": (
@@ -506,6 +627,83 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
             "per_year": {str(y): e for y, e in extras_by_year.items()},
         },
     }
+
+
+# The rubric's pre-registered FC-4 metric names (forecast_verdict.
+# CROSSOVER_COMMERCIAL) that this emitter's criteria map onto. ``price_shape``
+# (NRMSE) and the aggregate ``fuelmix`` (TWh Σ|Δ|) have no fractional
+# counterpart in the rubric and are deliberately absent — reported in the score
+# and the report, never re-keyed onto a band they do not mean.
+_RUBRIC_METRIC_NAMES = {"price_mean": "price", "co2": "co2"}
+
+
+def rubric_metrics(dispatch: dict) -> tuple[list[dict], list[str]]:
+    """Flatten the dispatch skill onto the rubric's FC-4 ``metrics`` contract.
+
+    Returns ``(metrics, uncovered)`` where ``metrics`` is the flat
+    ``[{metric, year, forecast_abs_err_frac, keeper_abs_err_frac}]`` list
+    :func:`scripts.forecast_verdict.score_fc4` bands, and ``uncovered`` names
+    every rubric row this run cannot score, with the reason.
+
+    Folded in from the FF-2D scoring session's committed adapter
+    (``scripts/_ff2d_crossover_adapter.py``, now deleted — rule 26
+    ``[R-DELETE]``), which wrote a sibling ``crossover_score.rubric.json``
+    because a findings-only session would not edit this core scorer. Two
+    changes beyond that re-keying, both routed here as L-VAL follow-ups:
+
+    * the ``refusal_marker`` FC-4 row 1 requires is now emitted by
+      :func:`score_crossover` itself, so the quarantine the loaders already
+      enforce structurally is also stated in the artifact;
+    * the ``gas_twh``/``coal_twh`` family-volume rows FC-4 bands at ±5 % are
+      emitted (:func:`_family_volume`). A family with an incomplete-vintage
+      member is listed in ``uncovered`` instead of banded — the row is
+      reported as not-scored, never silently passed.
+
+    Nothing here changes a threshold, a band or a skill number.
+    """
+    metrics: list[dict] = []
+    uncovered: list[str] = []
+    for cid, name in _RUBRIC_METRIC_NAMES.items():
+        for year in SCORED_YEARS:
+            row = dispatch["metrics"].get(cid, {}).get(str(year))
+            if not row or row.get("forecast_err") is None:
+                uncovered.append(f"{name} {year}: criterion unscored for this run")
+                continue
+            k = row.get("keeper_backcast_err")
+            metrics.append(
+                {
+                    "metric": name,
+                    "year": year,
+                    "forecast_abs_err_frac": abs(float(row["forecast_err"])),
+                    "keeper_abs_err_frac": None if k is None else abs(float(k)),
+                }
+            )
+    for fam in _FAMILY_CLASSES:
+        for year in SCORED_YEARS:
+            row = dispatch.get("family_volume", {}).get(fam, {}).get(str(year))
+            if not row or row.get("forecast_err") is None:
+                uncovered.append(f"{fam} {year}: family not benchmarked for this ISO")
+                continue
+            if not row.get("gated"):
+                bad = ", ".join(
+                    (row.get("forecast_detail") or {}).get("incomplete_classes", [])
+                )
+                uncovered.append(
+                    f"{fam} {year}: preliminary EIA-923 vintage — incomplete "
+                    f"class actual(s) [{bad}] would bias the family total; "
+                    "reported, not banded"
+                )
+                continue
+            k = row.get("keeper_backcast_err")
+            metrics.append(
+                {
+                    "metric": fam,
+                    "year": year,
+                    "forecast_abs_err_frac": abs(float(row["forecast_err"])),
+                    "keeper_abs_err_frac": None if k is None else abs(float(k)),
+                }
+            )
+    return metrics, uncovered
 
 
 def _agg_status(records: list[dict]) -> str:
@@ -667,6 +865,40 @@ def write_report(score: dict, report_path: Path) -> None:
                 f"| {label} | {year} | {fe} | {ke} | {ig} | {row.get('forecast_status')} |"
             )
     L.append("")
+    # Family-volume rows (FC-4 gas_twh / coal_twh, ±5% commercial band).
+    fam_block = score["dispatch_skill"].get("family_volume") or {}
+    if any(fam_block.values()):
+        L.append("### Family volume (FC-4 `gas_twh` / `coal_twh`)")
+        L.append("")
+        L.append(
+            "| family | year | model TWh | actual TWh | forecast err | "
+            "keeper backcast err | input-gap | banded |"
+        )
+        L.append("|---|--:|--:|--:|--:|--:|--:|:--|")
+        for fam, by_year in fam_block.items():
+            for year in SCORED_YEARS:
+                row = by_year.get(str(year))
+                if not row:
+                    continue
+                det = row.get("forecast_detail") or {}
+                ig = (
+                    _fmt(row["input_gap"], ".2f")
+                    if not isinstance(row["input_gap"], str)
+                    else row["input_gap"]
+                )
+                L.append(
+                    f"| `{fam}` | {year} | {det.get('model_twh', '—')} | "
+                    f"{det.get('actual_twh', '—')} | "
+                    f"{_fmt(row['forecast_err'], '+.1%')} | "
+                    f"{_fmt(row['keeper_backcast_err'], '+.1%')} | {ig} | "
+                    f"{'yes' if row.get('gated') else 'NO — reported only'} |"
+                )
+        L.append("")
+    if score.get("metrics_uncovered"):
+        L.append("**Rubric rows NOT covered by this run** (reported, never a pass):")
+        for why in score["metrics_uncovered"]:
+            L.append(f"- {why}")
+        L.append("")
     L.append("**Deferred metrics** (not reconstructible from a crossover bundle):")
     for k, why in score["dispatch_skill"]["deferred"].items():
         L.append(f"- `{k}` — {why}")
@@ -754,6 +986,7 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
     forward = forward_invariants(cache_dir, meta)
 
     run_id = bundle.name
+    rubric, uncovered = rubric_metrics(dispatch)
     score = {
         "run_id": run_id,
         "iso": iso,
@@ -770,6 +1003,22 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
         "scored_years": list(SCORED_YEARS),
         "forward_years": forward["years"],
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        # FC-4 rubric contract (forecast_verdict --tier t1x reads these two
+        # directly; the FF-2D adapter that used to synthesize them is deleted).
+        # Row 1 wants the >=2026 refusal marker: SERIALIZED from the same
+        # constants _assert_scoreable_year enforces, so the artifact states the
+        # quarantine the loaders already make structural.
+        "refusal_marker": {
+            "read_ge_2026": False,
+            "scored_max_year": max(SCORED_YEARS),
+            "scored_min_year": min(SCORED_YEARS),
+            "quarantine_from": QUARANTINE_FROM,
+            "enforced_by": "score_crossover._assert_scoreable_year (every bench "
+            "/ actual loader path, before any file is opened)",
+        },
+        # Row 2 wants a flat metric list on the rubric's own names.
+        "metrics": rubric,
+        "metrics_uncovered": uncovered,
         # (a)
         "dispatch_skill": dispatch,
         # (b) — TOP LEVEL, hindcast-scorer shape (register_hindcast compatibility)
@@ -794,6 +1043,12 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
             if r:
                 cells.append(f"{year}:gap={r['input_gap']}")
         print(f"[crossover]   {label}: " + ", ".join(cells))
+    print(
+        f"[crossover]   FC-4 rubric rows: {len(rubric)} banded, "
+        f"{len(uncovered)} uncovered"
+    )
+    for why in uncovered:
+        print(f"[crossover]     uncovered: {why}")
     print(f"[crossover] score.json: {cache_dir / 'crossover_score.json'}")
     print(f"[crossover] report:     {report_path}")
     return score

@@ -55,6 +55,7 @@ from market_sim.config import paths
 from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
 from market_sim.config.interchange_config import INTERFACE_NEIGHBORS, NeighborInterface
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
+from market_sim.data.fuel.trajectories import _hold_flat_extrapolate
 
 if TYPE_CHECKING:
     from market_sim.config.interchange_config import CaisoHubNeighbor
@@ -194,16 +195,28 @@ def neighbor_gas_price(
     Args:
         neighbor: The seam specification.
         year: Calendar year.
-        gas_scenario: Henry Hub trajectory key (``"low"``/``"mid"``/``"high"``);
-            backcast years are identical across keys.
+        gas_scenario: Henry Hub trajectory key (``"low"``/``"mid"``/``"high"``,
+            or a ``hindcast_*`` path on the hindcast harness); backcast years
+            are identical across keys.
 
     Returns:
         Delivered gas price in $/MMBtu.
 
     Raises:
-        KeyError: if ``gas_scenario`` or ``year`` is not in the trajectory.
+        KeyError: if ``gas_scenario`` is not a known trajectory.
     """
-    henry_hub = HENRY_HUB_TRAJECTORIES[gas_scenario][year]
+    # Hold the nearest known knot flat off the ends of the trajectory, exactly
+    # as the ISO's own gas resolver does (data.fuel.resolve_annual_gas_price)
+    # — the docstring's contract is that "a neighbor and its bordering ISO see
+    # the same Henry Hub level", and a raw dict index broke it: the ISO held
+    # flat past the last knot while the seam raised KeyError (audit FR-9,
+    # fixed in FFR-2A). Byte-identical wherever the year is a knot, which is
+    # every backcast year and every AEO forecast year through 2050. WHICH
+    # trajectory a crossover forward year rides is decided upstream by
+    # data.fuel.resolve_gas_scenario_path and asserted per-year by
+    # run_capacity_hindcast.assert_forward_drivers — this hold-flat is the
+    # end-of-trajectory rule, never a licence to hold a measured path forward.
+    henry_hub = _hold_flat_extrapolate(HENRY_HUB_TRAJECTORIES[gas_scenario], year)
     return henry_hub + neighbor.gas_basis
 
 
@@ -478,9 +491,9 @@ def caiso_hub_reference_price(
     shape = caiso_hub_load_shape(spec, year, hours)
     if shape is None:
         return None
-    baseload = (HENRY_HUB_TRAJECTORIES[gas_scenario][year] + spec.gas_basis) * (
-        spec.marginal_heat_rate
-    )
+    # Same end-of-trajectory hold-flat as neighbor_gas_price (audit FR-9).
+    henry_hub = _hold_flat_extrapolate(HENRY_HUB_TRAJECTORIES[gas_scenario], year)
+    baseload = (henry_hub + spec.gas_basis) * (spec.marginal_heat_rate)
     return baseload * shape
 
 

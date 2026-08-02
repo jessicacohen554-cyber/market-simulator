@@ -1,0 +1,43 @@
+{
+  "iso": "MISO",
+  "kind": "crossover",
+  "variant": "realized",
+  "energy_only_floor": false,
+  "entry_lookahead_reprice": false,
+  "retirement_rule": "legacy",
+  "limited_foresight_dispatch": false,
+  "capacity_market_clearing": true,
+  "capacity_market_clearing_by_iso": {
+    "MISO": true
+  },
+  "correlated_forced_outage": false,
+  "entry_screen_diagnostics": false,
+  "entry_vre_capacity_revenue": false,
+  "entry_rate_limits": false,
+  "entry_commissioning_lag": false,
+  "renewable_elcc_curves": true,
+  "gas_price_path": "hindcast_realized",
+  "crossover": true,
+  "crossover_forward_year": 2026,
+  "crossover_forward_gas_path": "mid",
+  "forward_from_base": false,
+  "arm": null,
+  "base_year": null,
+  "weather_posture": null,
+  "holdout_freeze_active_at_launch": true,
+  "vintage_year": 2023,
+  "start_year": 2023,
+  "end_year": 2027,
+  "cache_key": "9277cfc6773d187c",
+  "bundle": "results/hindcast/miso-2023-2027-crossover-ffr2a/MISO/9277cfc6773d187c",
+  "solved_years": [
+    2023,
+    2024,
+    2025,
+    2026,
+    2027
+  ],
+  "bridged_years": [],
+  "leakage_violations": [],
+  "started_utc": "2026-08-02T20:45:02Z"
+}
