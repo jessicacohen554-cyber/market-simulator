@@ -45,7 +45,6 @@ from pathlib import Path
 from market_sim.data.fleet.models import (
     BA_CODE_TO_ISO,
     BINNED_FLEET_COLUMNS,
-    EIA860_OPERABLE_VINTAGE,
     EIA_860_MULTIFUEL_PARQUET_NAME,
     EIA_860_PARQUET_NAME,
     EIA_860_RETIRED_WINDOW_PARQUET_NAME,
@@ -55,6 +54,7 @@ from market_sim.data.fleet.models import (
     _clean_fleet_year,
     _read_clean,
     _use_clean,
+    operable_vintage_year,
 )
 from market_sim.data.fleet.models import _pkg_ns
 
@@ -1806,7 +1806,13 @@ def load_planned_additions(
     status = df["Status"].astype(str).str.strip().str.upper()
     df = df[status.isin(_PLANNED_FIRM_STATUSES)]
     eff_year = pd.to_numeric(df["Effective Year"], errors="coerce")
-    df = df[eff_year > EIA860_OPERABLE_VINTAGE]
+    # Stale-COD bound measured from the ACTIVE snapshot's own vintage, not the
+    # canonical-2025 constant (FH-1 leak fix, hindcast-forward plan §4 row 2):
+    # a vintage_<year> proposed sheet's pipeline lives in <year>+1..<year>+5,
+    # so filtering it against the 2025 constant silently zeroed the whole
+    # planned-additions channel for every vintage-seeded run. Top-level
+    # snapshot resolves to the constant — byte-identical for non-vintage runs.
+    df = df[eff_year > operable_vintage_year(data_dir)]
     if df.empty:
         return []
 

@@ -257,6 +257,18 @@ _POLLUTANT_MASS_COL: dict[str, str] = {
     "so2": "so2_kg",
 }
 
+# Rule-22 quarantined years a T1-FF full-forward hindcast's estimator basis
+# must never touch (FH-1, hindcast-forward plan §4 row 12): 2022 is the
+# validation-tier bridge year (the v2 artifact carries 2022 rows for
+# PJM/MISO/NEISO), and years >= 2026 are the locked-test / forward edge (the
+# artifact carries 2026 rows for NYISO). Mirrors the hindcast bridge set
+# {2022, 2026} (runner.HINDCAST_BRIDGE_YEARS / scripts.lib.holdout_policy —
+# src must not import scripts, so the values are pinned here with the parity
+# asserted in tests). Applied only under ``exclude_quarantined`` so every
+# non-T1-FF run keeps its basis byte-identical.
+QUARANTINED_RATE_BASIS_YEARS: frozenset[int] = frozenset({2022})
+QUARANTINE_RATE_BASIS_FROM: int = 2026
+
 
 def measured_plant_rates(
     v2: pd.DataFrame,
@@ -266,20 +278,40 @@ def measured_plant_rates(
     *,
     window: int | None = None,
     pollutant: str = "co2",
+    as_of_year: int | None = None,
+    exclude_quarantined: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_id, fuel_class): rate_tonnes_per_mwh_net}`` for a pollutant.
 
     Mode-aware source (resolves EM-3): a **backcast** year consumes that year's
     own measured rate; a **forecast** year consumes the estimator base — the
-    gen-weighted trailing average over the available measured history. Rates are
-    aggregated over CEMS units of the same coarse fuel class (the composition
-    mask), so retiring or splitting a unit moves the rate. Built from the v2
-    artifact (``derive_plant_emissions_v2.py``); returns tonnes/MWh net.
+    gen-weighted trailing average over the available measured history. Rates
+    are aggregated over CEMS units of the same coarse fuel class (the
+    composition mask), so retiring or splitting a unit moves the rate. Built
+    from the v2 artifact (``derive_plant_emissions_v2.py``); returns
+    tonnes/MWh net.
 
     ``pollutant`` selects the mass column (``"co2"`` / ``"nox"`` / ``"so2"``);
     the mode/window/composition-mask policy is identical for all three (NOx/SO2
     ride the same path as CO2 — plan §5 R7 / §7). A pollutant whose mass column
     is absent (e.g. a legacy CO2-only v2) yields ``{}``.
+
+    ``as_of_year`` is the FH-1 as-of bound (hindcast-forward plan §4 row 12):
+    when set, only artifact years **at or before** it may enter the trailing
+    window. Unbounded (``None``), the window is the last N years *present in
+    the artifact*, so a pre-2026 forecast-mode solve derives its rates from
+    CAMPD years after the target — e.g. a 2021 solve from 2024-2025
+    measurements. Hindcast-lane callers pass their solve year; the plain
+    forecast lane passes ``None`` and keeps its basis byte-identical (its
+    solve targets are 2026+, but its bins base-fleet build keys this function
+    on ``weather_year``, which an unconditional target bound would shrink).
+
+    ``exclude_quarantined`` (T1-FF full-forward hindcast only — callers pass
+    ``config.is_full_forward_hindcast``) additionally drops the rule-22
+    quarantined years (:data:`QUARANTINED_RATE_BASIS_YEARS` ∪ years ≥
+    :data:`QUARANTINE_RATE_BASIS_FROM`) from the estimator basis: the artifact
+    carries 2022 rows (PJM/MISO/NEISO) and 2026 rows (NYISO), and a T1-FF
+    solve's rate basis must never touch either. Asserted, not just filtered.
     """
     mass_col = _POLLUTANT_MASS_COL[str(pollutant).lower()]
     window = constants.CO2_RATE_TRAILING_WINDOW_YEARS if window is None else window
@@ -290,8 +322,25 @@ def measured_plant_rates(
         df = df[df["year"] == int(target_year)]
     else:
         years = sorted(df["year"].unique())
+        if as_of_year is not None:
+            # FH-1 as-of bound: only history at/before the as-of year may
+            # enter the trailing window (never measurements from the target's
+            # own future).
+            years = [y for y in years if y <= int(as_of_year)]
+        if exclude_quarantined:
+            years = [
+                y
+                for y in years
+                if y not in QUARANTINED_RATE_BASIS_YEARS
+                and y < QUARANTINE_RATE_BASIS_FROM
+            ]
         if window and window > 0:
             years = years[-window:]
+        if exclude_quarantined:
+            assert not any(
+                y in QUARANTINED_RATE_BASIS_YEARS or y >= QUARANTINE_RATE_BASIS_FROM
+                for y in years
+            ), f"quarantined year in T1-FF rate basis: {years}"
         df = df[df["year"].isin(years)]
     if df.empty:
         return {}
