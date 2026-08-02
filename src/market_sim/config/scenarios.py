@@ -220,6 +220,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # dropped from the hash at its default; an armed run enters the key as a
     # distinct scenario.
     "ercot_dam_availability_coal_event_cap",
+    # ERCOT-149 gas widening of the measured-event precedence cap. Default-off
+    # and byte-identical for every existing config (with the gate off no
+    # availability array is touched), so it is dropped from the hash at its
+    # default; an armed run enters the key as a distinct scenario.
+    "ercot_dam_availability_gas_event_cap",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -6787,6 +6792,40 @@ class ScenarioConfig:
     # reconciles layers that are actually applied). Forecast untouched.
     ercot_dam_availability_coal_event_cap: bool = False
 
+    # ERCOT-149 measured-event precedence cap, GAS scope (default off, ERCOT
+    # backcast-gated): widens the ERCOT-148 cap above to the DAM-covered gas
+    # classes (CC_REGULAR / ST_GAS / CT_PEAKER) — the SAME min() block in
+    # arrays.py, its class scope extended, never a second cap layer (rule 19).
+    # The ERCOT-148 coal ruling did NOT transfer by assumption; the gas side
+    # was measured on its own conduct (ERCOT-149 Phase 0/1,
+    # docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md, committed record
+    # results/calibration/ercot149_gas_outage_phase0.json): the keeper
+    # dispatches 4.27 / 5.93 / 4.14 TWh (2023/24/25) of CC_REGULAR + ST_GAS
+    # above the measured event-window ceiling. The gas windows are committed
+    # >= 5-day EVENT-BASED dead spans (every hour < 2% CF — economic idling is
+    # excluded by construction) that survived the armed merit-order guard, and
+    # 81.6% of their GW-days sit at exactly 0.0 out-of-merit share on the
+    # guard's own SRMC-vs-revealed-clearing-cost panel — in merit for weeks
+    # while producing nothing, so "startable but unneeded" is untenable and
+    # the dead stops are mechanical. The deriver's OFF-is-available hourly
+    # convention stays correct and untouched OUTSIDE windows; inside a
+    # committed window the restore is carried by three measured misalignments
+    # of the pin's own site series (diagnosis section 3): config-collapse
+    # train-aliasing (GUADG/KMCHI: live = max across two physical trains, so
+    # a single-train outage is invisible even when the dead train files OUT
+    # honestly), partial site acceptance (JACKCNTY covers train 1 only;
+    # BRAUNIG_VHB3 / GIDEONG3 / OLING_3 / SANDHSYD / DANSBYG1 subsets), and
+    # true OFF-at-HSL filings through certified dead stops at fully-covered
+    # sites (BASTEN / NUECES_B — the Coleto/Limestone conduct signature on
+    # gas). Honest-OUT controls show ~zero phantom (Victoria 0.019 -> 0.004
+    # TWh; V H Braunig 2025 0.075 -> 0.06 vs 2024 0.70 -> 0.64 within-plant).
+    # CT_PEAKER is in scope on principle (every DAM-covered class reconciles
+    # with the window family) and provably inert today — peakers carry no
+    # outage windows by the detector's own design. Zero fitted parameters;
+    # same backcast-only construction as the coal gate (inert unless the DAM
+    # overlay is armed AND outage_source == "historic"). Forecast untouched.
+    ercot_dam_availability_gas_event_cap: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -10314,6 +10353,7 @@ TIER_TAGS: dict[str, int] = {
     "unit_partial_outage_windows": 3,
     "unit_outage_maxgen_events": 3,
     "ercot_dam_availability_coal_event_cap": 3,
+    "ercot_dam_availability_gas_event_cap": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
