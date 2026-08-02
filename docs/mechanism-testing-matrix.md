@@ -1333,7 +1333,38 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), open but not a blocker**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED at nyiso-110 and ACTIVE behind its pre-registration**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
+
+**STATUS 2026-08-02 (nyiso-110).** The peak half is **DECOMPOSED, no LP**, on the
+keeper's own sidecars + NYISO's own posted AS prices
+(`scripts/probes/_nyiso110_peak_half_decomposition.py`): it is **dominated by
+missing everyday reserve-price formation** — the keeper's co-opt reserve dual is
+> $0 in **17/6/34 hours** of 8,760 while the measured DA spin price is > $1 in
+**100 %** of peak-window hours (LW mean $9.72/$8.62/$17.46); the peak−trough
+reserve differential covers **64–89 %** (DA) / **97–131 %** (RT, upper bound) of
+the missing swing at hour-level passthrough slope ≈ 1. **The C3a PASS is a
+cancellation**: strip the measured spin content and the model's energy side
+over-prices BOTH ends by +$3–7 — so the level gate actively penalizes the
+structural repair (full-content formation would land C3a-2023 ≈ +15 %), the
+sharpest input yet to the **open owner amplitude-criterion call** (surfaced, not
+decided; scorer untouched). The energy-side residual (~10–35 % of the missing
+swing, DA) is the flat offer surface (peak marginal set = `econ` 83–85 %, the
+trough's own family) plus the hydro over-peak-shave (model thermal at peak
+0.936× measured — **item 8's territory**, not a new lane). **The lever:** the
+flag-only **`nyiso_spin_reserve_online`** single-delta arm is **PRE-REGISTERED**
+(`PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md`, pushed before any
+solve) — off-queue with cause stated (this queue holds no peak-half lever), the
+nyiso-84 adjudication superseded on both its grounds by new evidence (new
+target: everyday formation, not C3c depth; new supply state: the E4 census on
+the repaired-hydro keeper shows hydro zero-cost headroom covering the 655 MW
+spin requirement in only **36–51 %** of peak-window hours vs 82–89 % of all
+hours, confining the gate's bite to the peak and dissolving the recorded
+overnight-GT-forcing objection in the hours it fired in). Kill P1 is the
+pre-registered **C3a-2023 un-cancellation breach** (> +10 %); P4 re-kills on the
+nyiso-84 forcing signature; K3's liveness floor (500 dual-hours/yr) routes an
+under-forming arm to **INERT**, which would charter the nyiso-84 class-widening
+build with the arm as its control evidence.
+`results/calibration/FINDING-nyiso110-peak-half-decomposition-2026-08-02.md`.
 
 **STATUS CHANGE 2026-08-01 (nyiso-109).** NYISO recovers **NOT-YET -> CALIBRATED-WITH-CAVEATS**,
 and unlike nyiso-108 this promotion is the pre-registration's **OWN verdict** — every construction
@@ -1476,6 +1507,15 @@ condition.
 4. **`nyiso_iroquois_winter_spread` re-arm** — decisive winter fix, but ONLY
    jointly with a summer scarcity lever (its construction conserves the annual
    spread; re-arming alone just moves the miss to summer — adjudicated).
+   *nyiso-110 note (2026-08-02):* the peak-half decomposition gives this item's
+   blocker a measured shape — the DJF peak miss **exceeds** the DJF reserve
+   content in 2023/2025 (+8.08 vs 9.43 is within it, but +32.00 vs 18.72 in
+   2025 is not), so a real winter-specific non-reserve component exists; and
+   the pre-registered spin-online arm, if it lands, IS a summer-capable
+   scarcity lever (measured JJA spin content 10.7–28.8 at peak), which is
+   exactly the joint condition this item waits on. Sequencing stays: this
+   item re-opens only AFTER the nyiso-110 arm's verdict, never beside it
+   (single-delta discipline).
 5. ~~**`unit_outage_short_windows`** — derive for NYISO; cheap grain test.~~
    **CLOSED 2026-07-28 (nyiso-93): INERT ex-ante, no solve.** The detector is
    coal-only and NYISO has no coal — 0 coal unit-years in NY+NJ CAMPD 2023-25
@@ -2010,6 +2050,14 @@ charter with a new measured identification** before a solve:
   `CALIBRATED` at ~34 % amplitude. Whether the rubric gains a diurnal-amplitude
   criterion is an **OWNER CALL**, filed by neiso-74 and re-filed here; the
   scorer was NOT changed. Matrix row `diurnal_price_amplitude`.
+  *nyiso-110 (2026-08-02) decomposed NYISO's cell*: on NYISO's own posted AS
+  prices its face of this defect is dominated by missing everyday
+  reserve-price formation (reserve differential = 64–89 % DA / 97–131 % RT of
+  the missing swing; the C3a level PASS is a cancellation — the level gate
+  penalizes the structural repair), NOT by the energy-side traversal, which
+  owns only the DA residual. A per-ISO decomposition question the other five
+  lanes have not answered (rule 25). NYISO's cell is ACTIVE behind
+  `PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md` (§5.5).
 - **Post-guard re-derivation sweep of outage-derived artifacts, all six ISOs —
   DONE 2026-08-02 (xiso-2), and NO KEEPER IS AFFECTED.** The list's oldest open
   audit (flagged in governance.md 2026-07-26) is closed. Zero LP: the census reads
