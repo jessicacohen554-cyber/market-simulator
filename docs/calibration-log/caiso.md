@@ -4772,3 +4772,107 @@ confined to 2023–2025 and **no marker was written**. Matrix §5.2 live queue a
 this session: item 3, plus the new offer-surface re-identification charter.
 
 Next number: caiso-153.
+
+## 2026-08-02 — CAISO — caiso-153: the offer-surface gas-coupling classifier IS re-identifiable — the defect is the ESTIMATOR, not the body probe; all four FROZEN gates pass, reproducibility is restored, KEEPER PROMOTED
+
+**Runs:** BOTH arms registered — `2026-07-31-caiso153-control` (same-HEAD
+zero-delta control) and `2026-07-31-caiso153-reid-b` (**NEW KEEPER**,
+CALIBRATED-WITH-CAVEATS, 0 FAILs, C1 12/12 · free 8/8, 2 of 3 ledgered
+non-protective slots, protective 0/1). Keeper
+`2026-07-31-caiso-151-firm-selfsched` → `2026-07-31-caiso153-reid-b`.
+Prereg `PREREG-caiso153-offer-classifier-reid-2026-08-01.md`, committed and
+pushed **before any classifier value on this session's corpus existed**.
+Evidence `results/calibration/FINDING-caiso153-offer-classifier-reid-2026-08-02.md`.
+
+**Lever:** mechanism-matrix §5.2 **item 9**, opened NEW/BLOCKING/unowned at
+caiso-152. Now **CLOSED**; item 3 (S2 DA/RT two-settlement) is CAISO's only
+live queue item.
+
+**The charter.** `FINDING-caiso152` §F left an ARMED KEEPER INPUT
+unreproducible: `caiso_offer_curve_measured.json` /
+`caiso_offer_surface_condbinned.json` could not be regenerated from their own
+script and corpus (25 CT units against the recorded 102; G1 CT 0.235 FAILING
+where the artifact records 1.416 PASSING), which also blocked caiso-152's
+`dam-public-bids` grain correction from shipping.
+
+**caiso-152 §I's body-probe lead is REFUTED, on measurement.** A pre-PREREG
+raw-CSV check found `_price_at_frac` falls back to the first step on only
+8.5 % of curve-hours, on near-flat curves — disclosed in PREREG §2 as a
+partial refutation, which is why the grid got a second axis. On the frozen 3×3
+(body probe × slope estimator) over the full contiguous **1,095-day** corpus,
+the body axis moves the implied non-fuel adder **$4.8 and flips nothing**;
+the estimator axis moves it **$25.8 and flips everything**.
+
+**The defect is ESTIMATOR ATTENUATION.** The CA-composite citygate reaches
+**$24.29/MMBtu** in January 2023 against a 2023–25 median near $3–4, so a
+pooled OLS slope is levered on a few days of one month of one year and
+attenuates toward zero for any resource that did not track that spike
+proportionally — a different CA hub, a monthly index, a cost-verified DEB on a
+lagged index — **with its correlation intact**. That is exactly the
+`r ≥ 0.6` / slope < 4 MMBtu/MWh signature caiso-152 §I reported as physically
+impossible for a thermal unit. All three OLS cells are inadmissible
+($32.7–37.5/MWh implied non-fuel adder against a $2.0–3.5 VOM, slope p50
+~6.0); all six Theil-Sen / TRIM cells are admissible ($9.6–12.7, slope p50
+9.2–10.4). The sub-4-slope population falls **32 resources / 10,880 MW → 13 /
+2,692 MW**.
+
+**Selection was declared EX ANTE and is BLIND to both the derive gates and the
+committed artifact** (PREREG §5): physical level-identity admissibility
+applied FIRST — precisely because shrinking every slope toward zero would
+otherwise win outright — then out-of-sample split-half slope stability on an
+alternating-gas-rank split. Winner **`P035_TS`** keeps the INCUMBENT body
+probe (`BODY_FRAC` 0.35) and changes ONLY the slope estimator to Theil-Sen: a
+one-line shipped diff in `derive_caiso_offer_surface.py`.
+
+**No gate moved.** `hr_cut` stays 8.5 and G1–G4 stay frozen (rule 23). The
+**unmodified** deriver then passes all four: G1 CC 0.871 / CT 1.306 (against
+0.876 / 0.235 on the incumbent), G2 PASS, G3 estimation-LOYO PASS on all six
+consumed stats in every held-out year, G4 PASS.
+
+**Two corroborations the selection rule never saw.** (1) The re-derived static
+bands reproduce the COMMITTED artifact within tolerance everywhere (max Δ
++0.053 on CC peak against a 0.133 tolerance) — which **explains §F**: the
+committed artifact was derived with a correctly-identified classifier and the
+deriver drifted to the attenuated OLS form in the eleven days before the
+repo's git history begins. (2) The **shipped** deriver regenerates the
+promoted artifact exactly — reproducibility restored.
+
+**A/B.** No `ScenarioConfig` field changed; the delta is file CONTENT, so the
+arms ran sequentially with the artifacts swapped and both files hashed per
+arm. CC_REGULAR ladder **+0.451…+0.688** per net-load bin, CT_PEAKER
+**−0.317…−0.370**, largely offsetting (system prices +0.17/+0.22/+0.17
+$/MWh). **Every criterion verdict UNCHANGED** against control and against the
+caiso-151 keeper; C7/C8 PASS on both arms.
+
+**Promoted knowing it costs fit** (rule 1 `[R-STRUCT]` + rule 14
+`[R-ACCURATE]`): DA MAE +0.052/+0.060/+0.043 $/MWh on a $12.998/$8.696/$7.093
+base, RT MAE +0.088/+0.102/+0.093, C3a-2025 +9.42 → +9.92 % (+0.50 pp,
+load-weighted system basis, reported as PREREG §7 required and below the 1.0 pp
+trigger its predecessor fixed). C3c bit-identical. It is adopted because the
+incumbent classifier assigned **16,329 MW** of gas-coupled capacity a marginal
+heat rate below 4 MMBtu/MWh — not because a residual moved.
+
+**Also:** the measured offer surface gains its **first DOF ledger entry**
+(identification `measured`) — it had been armed since caiso-51 with none, and
+its `root_cause` records §F's defect as CLOSED. caiso-152's parse correction
+ships with this keeper. **CAISO still holds NO rule-22 calibration-complete
+marker**: 2023/2024/2025 only, no out-of-training year touched, no marker
+written.
+
+**DO-NOT-REDO (binding, new).** Do NOT re-test the body probe as the cause
+(§B settles it across all three estimators; `BODY_FRAC` stays 0.35). Do NOT
+re-rank the estimator grid with a different metric, and do NOT drop
+admissibility so a lower-instability inadmissible cell wins. Do NOT move
+`hr_cut` off 8.5 on the strength of the re-identified slope density — out of
+scope, not examined, and G2 is the frozen test (it PASSES). Do NOT re-derive
+either half against the price residual to recover the +0.05 $/MWh MAE. Do NOT
+quote any OLS arm's absolute band or ladder levels as measured CAISO conduct.
+Do NOT treat §D's reproduction of the committed bands as licence to chase
+committed values — it is a blind corroboration, never a target. Full list:
+`FINDING-caiso153` §G.
+
+**Environment note for successors:** the `dam-public-bids` corpus is
+gitignored and dies with the container; `fetch_caiso_public_bids.py` with no
+arguments regenerates it in ~3 h. Background processes do NOT survive session
+idle here — the fetch was reaped mid-run and had to be resumed in foreground
+chunks.

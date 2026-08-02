@@ -37,6 +37,26 @@ Method (measured, NOT fit to any residual — CLAUDE.md rules 1/13/23)
    renewables fail the correlation gate; verified on 2023 data: gas-like
    resources fit with r 0.90-0.99).
 
+   The slope estimator is THEIL-SEN, not least squares (caiso-153,
+   ``results/calibration/FINDING-caiso153-offer-classifier-reid-2026-08-02.md``).
+   The regressor's variance is dominated by an extreme tail — the citygate
+   reaches $24.29/MMBtu in January 2023 against a 2023-25 median near $3-4 —
+   so an OLS slope is levered on a few days of one month of one year and
+   attenuates toward zero for any resource that did not track that spike
+   proportionally (a different CA hub, a monthly index, a cost-verified DEB
+   on a lagged index) while its correlation survives. Measured over the
+   frozen 3x3 body-probe x estimator grid on the full 1,095-day corpus: all
+   three OLS cells are physically inadmissible (implied non-fuel adder
+   $32.7-37.5/MWh against a $2.0-3.5 VOM, slope p50 ~6.0); all six
+   Theil-Sen / TRIM cells are admissible ($9.6-12.7, slope p50 9.2-10.4).
+   Under OLS the CT bucket collapses to G1 0.235 and 32 resources /
+   10,880 MW sit at r >= 0.6 with a slope below 4 MMBtu/MWh — physically
+   impossible for a thermal unit; under Theil-Sen that population falls to
+   13 / 2,692 MW and G1 reconciles at CC 0.871 / CT 1.306. The BODY PROBE
+   was tested on the same grid and REFUTED as the cause — it moves the
+   statistics far less than the estimator does — so ``BODY_FRAC`` is
+   unchanged at 0.35.
+
    * gas gate: pooled-span regression slope in [4.0, 18.0] MMBtu/MWh,
      r >= 0.6, >= 120 resource-days with gas coverage;
    * class split at ``--hr-cut`` (default 8.4 MMBtu/MWh — the observed
@@ -129,6 +149,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.stats import theilslopes
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
@@ -366,7 +387,16 @@ def _classify(
         if n < GAS_MIN_DAYS or g.gas.std() < 0.5:
             continue
         x, y = g.gas.to_numpy(float), g.p_body.to_numpy(float)
-        slope, _ = np.polyfit(x, y, 1)
+        # Theil-Sen, NOT least squares (caiso-153). The citygate regressor's
+        # variance is dominated by an extreme tail — $24.29/MMBtu in January
+        # 2023 against a 2023-25 median near $3-4 — so an OLS slope is levered
+        # on a few days of one month of one year, and every resource that did
+        # not track that spike proportionally (a different CA hub, a monthly
+        # index, a cost-verified DEB on a lagged index) is attenuated toward
+        # zero with its correlation intact. That is exactly the r >= 0.6 with
+        # slope < 4 MMBtu/MWh signature FINDING-caiso152 §I reported as
+        # physically impossible for a thermal unit.
+        slope, _, _, _ = theilslopes(y, x)
         r = float(np.corrcoef(x, y)[0, 1])
         rows.append({"resource_seq": rid, "slope": float(slope), "r": r, "n_days": n})
     res = pd.DataFrame(rows).set_index("resource_seq")

@@ -1,7 +1,7 @@
 {
  "_provenance": {
   "source": "CAISO OASIS Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked DAM bids), dam-public-bids clean datatype, trade years [2023, 2024, 2025]",
-  "derived_utc": "2026-08-02T03:56:09+00:00",
+  "derived_utc": "2026-08-02T04:52:28+00:00",
   "method": "see scripts/data/derive_caiso_offer_surface.py module docstring",
   "gas_basis": "CA-composite citygate daily on gas FLOW days (trade+1 staircase, caiso-90 semantics), data/raw/gas-prices/caiso_citygate_daily.csv",
   "carbon_basis": {
@@ -293,24 +293,190 @@
  },
  "CC_REGULAR": {
   "base_hr": 7.442,
-  "bands": {
-   "econ_low": 1.066,
-   "econ_high": 1.072,
-   "peak": 1.386
-  },
-  "unarmed": {
-   "committed": 1.03
-  }
+  "peak_p50": 1.565,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.58
+    ],
+    [
+     0.2,
+     1.874
+    ],
+    [
+     0.2,
+     6.4
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.783
+    ],
+    [
+     0.2,
+     5.82
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     2.027
+    ],
+    [
+     0.2,
+     6.049
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.565
+    ],
+    [
+     0.2,
+     1.579
+    ],
+    [
+     0.2,
+     1.747
+    ],
+    [
+     0.2,
+     5.931
+    ]
+   ]
+  ]
  },
  "CT_PEAKER": {
   "base_hr": 10.862,
-  "bands": {
-   "econ_low": 1.145,
-   "econ_high": 1.166,
-   "peak": 1.166
-  },
-  "unarmed": {
-   "committed": 1.166
-  }
+  "peak_p50": 1.234,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.24
+    ],
+    [
+     0.2,
+     1.738
+    ],
+    [
+     0.2,
+     3.698
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.245
+    ],
+    [
+     0.2,
+     1.853
+    ],
+    [
+     0.2,
+     3.438
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.258
+    ],
+    [
+     0.2,
+     2.173
+    ],
+    [
+     0.2,
+     3.864
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.234
+    ],
+    [
+     0.2,
+     1.33
+    ],
+    [
+     0.2,
+     2.352
+    ],
+    [
+     0.2,
+     4.165
+    ]
+   ]
+  ]
  }
 }
