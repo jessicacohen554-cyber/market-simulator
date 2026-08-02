@@ -256,6 +256,12 @@ frontend/data/forecast/program-status.js
 # capacity-price validation JSONs it cites ARE committed, under
 # results/capacity-price-validation/.
 /results/ffr2c/
+# FFR-2E shipped-vs-fixed capacity-price posture T0 arms (PJM 2026-2028,
+# isolated run_full_horizon --out-dir caches). Same class as /results/ffr2c/ —
+# the committed record is the registered sidecar under
+# frontend/data/hindcast/, and the readout lives in
+# docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md §4.
+/results/ffr2e/
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
