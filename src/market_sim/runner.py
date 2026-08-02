@@ -297,11 +297,58 @@ def _scale_demand(
     the weather year and the simulation start (e.g. 2024 actuals presented
     as 2026 demand), an error that then propagated through every forecast
     year. A backcast (``year == weather_year``) still gets a factor of 1.
+
+    **Backward spans (FH-2, hindcast-forward plan §4 row 6).** ``year <
+    config.weather_year`` -- a target year BEFORE the weather base, reachable
+    once the forward boundary drops below 2026 -- used to fall out of
+    ``range(weather_year, year)`` as an empty loop and silently apply factor
+    **1.0**: no de-growth, no error, a 2025 load level presented as 2021's.
+    That silence is the defect class FR-7/FR-8 belong to, so it is gone. Two
+    explicit behaviours replace it:
+
+    * **T1-FF (full-forward hindcast) hard-errors.** Both shipped arms pin the
+      weather base at/below every solve year (Arm R rebinds per solve year, Arm
+      K pins the base year), so a backward span there is a posture
+      misconfiguration -- and de-growing a *later* year's measured load into an
+      "as-of" forecast would import post-base information (rule 13
+      [R-MEASURED]). Raised loudly rather than de-grown.
+    * **Everywhere else it de-grows correctly**, the exact inverse of the
+      forward compounding over the same span (each year's own rate, so the
+      two directions compose to identity), and logs that it fired.
+
+    Raises:
+        ValueError: On a backward span in a full-forward hindcast.
     """
+    if year >= config.weather_year:
+        factor = 1.0
+        for y in range(config.weather_year, year):
+            factor *= 1.0 + _get_growth_rate(config, y)
+        return base_demand * factor
+
+    if config.is_full_forward_hindcast:
+        raise ValueError(
+            f"_scale_demand: target year {year} precedes the weather base "
+            f"{config.weather_year} in a full-forward hindcast. Pin the weather "
+            "year at/below every solve year (Arm K: the base year; Arm R: the "
+            "solve year via crossover_solve_year_weather) -- de-growing a later "
+            "measured weather year into an as-of forecast would import "
+            "post-base information (hindcast-forward plan §4 row 6, rule 13)."
+        )
+
     factor = 1.0
-    for y in range(config.weather_year, year):
+    for y in range(year, config.weather_year):
         factor *= 1.0 + _get_growth_rate(config, y)
-    return base_demand * factor
+    logger.warning(
+        "demand de-growth: target year %d precedes weather base %d -- "
+        "dividing the weather-year load by the compounded growth over "
+        "[%d, %d) (factor %.4f). Previously this span silently applied 1.0.",
+        year,
+        config.weather_year,
+        year,
+        config.weather_year,
+        factor,
+    )
+    return base_demand / factor
 
 
 def _storage_additions_since(
