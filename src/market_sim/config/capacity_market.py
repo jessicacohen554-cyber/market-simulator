@@ -247,10 +247,23 @@ CARB_FLOOR_PRICE: dict[int, float] = {
 # the regional over-bound. 2022 omitted (holdout quarantine, CLAUDE.md rule 22);
 # years beyond 2025 hold the 2025 (post-VA-exit) set — no further membership
 # changes are enacted as of this writing.
+#
+# 2021 ADDED (FH-2, hindcast-forward plan §4 row 14): 2021 is the hindcast SEED
+# solve year (holdout_policy.HINDCAST_SEED_YEARS), so it is a year the model
+# actually solves, and without its own row per_generator_membership fell back to
+# ``max(RGGI_MEMBER_STATES_BY_YEAR)`` — the 2025, post-Virginia-exit set — for a
+# 2021 solve, silently un-enrolling Virginia in the very year it joined. The row
+# is a published legal fact (participating-states list), carries no measured
+# quantity, and is byte-neutral for every 2023-2025 run (a new key only).
+# **2022 is NOT added**: it is the plan's evolved-never-solved bridge year whose
+# contract is that its data is never read (FH-1 §6), and this file's own
+# convention omits 2022/H1-2026 rows under rule 22 whose intake clause requires
+# per-window owner authorization. Recorded on the FH-2 disclose list instead.
 # Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and-
-# design/elements); Virginia Clean Economy and Equity Act repeal, effective
-# 2024-01-01.
+# design/elements); Virginia joined effective 2021-01-01 (9 VAC 5-140, Art. 8);
+# Virginia Clean Economy and Equity Act repeal, effective 2024-01-01.
 RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2021: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
     2023: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
     2024: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
     2025: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
@@ -2409,9 +2422,43 @@ STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 
 # State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
 # Source: CA SB 100.
+#
+# AS-OF STATUS (FH-2, hindcast-forward plan §4 row 14). policy.rps.get_rps_target
+# edge-holds below the first knot, so any year before an ISO's earliest knot
+# receives that knot's target. Only CAISO carries historic (pre-2026) knots
+# today, from the statute itself (see its block). The other five ISOs' earliest
+# knot is still 2026, so a forward-lane run of a historic year (T1-H / T1-X /
+# T1-FF are all mode="forecast") receives the 2026 target — an as-of violation
+# that is DISCLOSED, not fixed here, because their 2026 knots are not published
+# scalars but this repo's own load-weighted blends of per-state renewable-tier
+# schedules (see the PJM/MISO blocks): a historic knot means re-blending each
+# state's THEN-CURRENT schedule on that year's load weights, which is a cited
+# derivation (a bounded FH-3-style intake), never an interpolation of the 2026
+# blend. Backcast keepers are unaffected in every case — pipeline.backcast_config
+# sets rps_enabled=False, so no backcast builds an RPS row.
 STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
     "ERCOT": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},  # No binding state RPS floor
     "CAISO": {  # CA SB 100 — clean energy trajectory
+        # HISTORIC (as-of) knots, FH-2: before these landed the earliest knot was
+        # 2026, and get_rps_target edge-holds below the first knot, so EVERY
+        # pre-2026 year in a forward-lane run (T1-H / T1-X / T1-FF hindcast, all
+        # mode="forecast") received the 2026 target — a 2021 solve compelled to
+        # a 50 % clean share five years before the law required it
+        # (hindcast-forward plan §4 row 14). Both knots are the STATUTORY
+        # procurement targets in force at that date, not an interpolation:
+        #   2021 → 33 %: SB X1-2 (2011), Pub. Util. Code §399.15(b)(2)(B), "33 %
+        #     of retail sales by December 31, 2020" — the standing requirement
+        #     through compliance period 4 (2021-2024).
+        #   2024 → 44 %: SB 100 (2018), same section — "44 % by December 31,
+        #     2024" (its next interim knots are 52 % by 2027 and 60 % by 2030,
+        #     already bracketed by the 2026/2030 knots below).
+        # Rule 13 admissible: a published policy parameter that regenerates for
+        # any year from the statute and responds to conditions. Backcast keepers
+        # are UNAFFECTED — pipeline.backcast_config sets rps_enabled=False, so no
+        # backcast builds an RPS row at all; and every knot at/after 2026 is
+        # untouched, so plain 2026+ forecasts are byte-identical.
+        2021: 0.33,
+        2024: 0.44,
         2026: 0.50,
         2030: 0.60,
         2040: 0.80,
