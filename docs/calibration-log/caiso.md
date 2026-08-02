@@ -5003,4 +5003,81 @@ fleet_only rebuild when its floors carry bridge/solve-state mechanisms; do
 not read pseudo-row floor-energy TWh as at-floor dispatch (different
 statistics — caiso-151 §F's 15.47 vs this session's 22.68, CAISO 2024).
 
-Next number: caiso-156.
+Next number: caiso-156 (the CT heat-rate meter-screen charter, PRE-REGISTERED AND UNEXECUTED) / caiso-158.
+
+
+## caiso-157 — 2026-08-02 — **TWO ABSENT DERIVED CLEAN PARTITIONS SILENTLY RE-ARMED A RETIRED FITTED IMPORT SCALAR ACROSS FIVE KEEPER PROMOTIONS.** Fixed, guarded, and promoted: keeper `2026-08-02-caiso157-partition-restore-b`. The seam's binding hours go 757/472/857 -> **0/0/0** and its congestion rent -$187.2M/-$15.1M/-$26.9M -> **exactly 0.000**. THE PRICE GATE DID NOT CLOSE (C3a-2025 +12.2 % -> +12.0 % against a +/-10 % band) and no closure is claimed
+
+OFF-QUEUE by design, and the reason is stated per rule 28a: the lever came from a
+PROVENANCE AUDIT run before any price statistic was read, not from the lever queue
+(whose live items were item 3 and the pre-registered, unexecuted caiso-156 charter).
+Prereg `PREREG-caiso157-derived-partition-restore-2026-08-02.md`, committed before any
+arm solved. Probes `_caiso157_partition_audit.py` (transcript committed) and
+`_caiso157_arm_compare.py`. Class: input-integrity defect fix (the caiso-152/153/155
+class) — no matrix cell re-tested, no new `ScenarioConfig` field, **no config value
+changed in any arm** (K3 verified). Rules 14 `[R-ACCURATE]`, 20 `[R-DOF]`,
+24 `[R-REGISTRY]`.
+
+**1. The defect.** `data/clean` is derived-and-gitignored, so it dies with the
+container and every environment rebuilds it. Two partitions the CAISO keeper's armed
+flags require were absent at solve time, and both loaders degrade gracefully — the
+mechanism silently no-ops while the run's `meta` still advertises it.
+`meta.shared_inputs` pins exactly these derived inputs
+(`bundle_io.write_derived_solve_inputs`, whose docstring calls this *"the
+silent-degrade trap"*). Auditing all 131 bundles on disk: **24 of 34 armed
+(bundle, mechanism) pairs degraded, every one CAISO**; pinned through caiso-142
+(2026-07-30), absent from caiso-146 (2026-07-31), so the keepers promoted at
+**caiso-146, -147, -148, -151 and -153** all ran with `hydro_ror_split` and
+`capacity_deliverability_limits` armed-but-inert. **The same check on every other
+ISO's designated keeper is clean — the defect is CAISO-exclusive.**
+
+**2. Why it is a governance defect.** With deliverability Part A a no-op the import
+node falls back to `WECC_import_simultaneous.cap_mw = 7,500 MW`, a **residual**-identified
+scalar the keeper's own DOF ledger calls *"Not in the keeper binding path"* and that
+`iso_configs.py` carries expressly *"so this fallback cannot silently re-become the
+binding import limit"*. Measured on the control's own **LP duals**, that claim was
+FALSE: binding **757 / 472 / 857 h** with **-$187.2M / -$15.1M / -$26.9M** of rent,
+p95/p99/max import all exactly 7,500.000 MW, **18.0 % of Sep-Dec 2025** pinned. The
+accurate input is the published branch-group MIC, **16,055 / 16,452 / 16,148 MW**.
+
+**3. Result.** Arm B restores both partitions: seam binding **0/0/0 h**, rent
+**0.000**, and the constraint returns to the MEASURED corridor envelopes (2023 binding
+2,850 -> 3,360 and 3,116 -> 3,273). **The price gate did NOT close**: C3a improves in
+every year but only slightly (2023 +3.4 -> +3.1 %, 2024 +9.3 -> +9.2 %, 2025
++12.2 -> +12.0 %; needed <= +10.0 %), because the measured envelopes bind almost as
+soon as the fitted seam relaxes — realised substitution is +0.456/+0.153/+0.398 TWh of
+import against -0.398/-0.157/-0.398 TWh of CC_REGULAR. Determination
+CALIBRATED-WITH-CAVEATS, unchanged, 0 FAILs, same 2 of 3 ledgered slots; no gate
+regressed; C7/C8/D-4/D-2 PASS. D-1's ST_GAS FAIL rows are bit-comparable to the
+control's and pre-existing on an immaterial class. **Promoted on structural-integrity
+grounds** (rules 1/14): the accurate input goes in because it is accurate, and would
+equally have gone in had the residual worsened.
+
+**4. Unpredicted result worth recording — the RoR half is very nearly INERT at fleet
+level.** Pinning 904.6 MW (13.5 % of the EHA fleet) flat moves the 2023 diurnal profile
+from night 2,972 -> 2,966 MW, evening 3,781 -> 3,779, cv 0.489 -> 0.489. The armed
+`hydro_min_flow_floor` already held that overnight level, so the split re-attributes
+WHICH plants supply it (the accurate D-2 attribution) rather than changing shape. **It
+does not resolve the caiso-125 overnight bang-bang signature** — that stays live.
+
+**5. Root-cause guard shipped.** `market_sim.data.input_completeness.check_clean_partitions`,
+called at `pipeline.year.run_year_solve` (the single per-year seam both orchestrators
+share), RAISES instead of degrading when an armed mechanism's partition is absent. No
+`ScenarioConfig` field, no threshold, no tunable; a no-op for every default-off flag.
+7 unit tests over a tmp `CLEAN_DIR`. Widening it to other armed-flag/partition pairs is
+FILED, not absorbed.
+
+**6. DOF ledger corrected, not quietly fixed.** The `WECC_import_simultaneous.cap_mw`
+row now records that its non-binding claim was FALSE for caiso-146..153 with the
+measured counts, and re-verifies it TRUE on this bundle from this bundle's own duals.
+
+**DO-NOT-REDO (caiso-157, binding — full list FINDING §F):** do not re-test partition
+restoration as a price lever (its effect is measured and small); do not read this as
+reopening C3a-2025 or C3c (both remain the owner's caiso-145 ledger, no closure
+claimed — though caiso-140's "economic import-parity plateau" premise is corrected on
+the record for 18 % of those hours); do not quote the RoR split as a shape fix; do not
+widen the guard by analogy; do not treat the bundle sweep as the durable record
+(retention pruned caiso138/caiso139 during this session — the committed probe
+transcript is permanent); do not assume other ISOs need this fix (measured: they don't).
+
+Next number: caiso-158.
