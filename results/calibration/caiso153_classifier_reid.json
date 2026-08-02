@@ -1,0 +1,201 @@
+{
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "fleet_mw": {
+  "CC_REGULAR": 13708.0,
+  "CT_PEAKER": 7616.0
+ },
+ "selection_rule": {
+  "admissibility": "cap-weighted median |level adder| <= $20.0/MWh",
+  "ranking": "cap-weighted median |slope_A - slope_B| (alternating gas rank)",
+  "hr_cut": "FROZEN 8.5"
+ },
+ "grid": {
+  "P035_OLS": {
+   "level_adder_cwmed_abs": 37.48,
+   "admissible": false,
+   "splithalf_slope_cwmed_abs_dev": 0.586,
+   "n_gas_pass": 126,
+   "gas_pass_mw": 13612.0,
+   "slope_p25_p50_p75": [
+    4.86,
+    6.07,
+    7.91
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 11481.0,
+    "CT_PEAKER": 2130.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 32,
+    "mw": 10880.0
+   }
+  },
+  "P035_TS": {
+   "level_adder_cwmed_abs": 11.71,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.109,
+   "n_gas_pass": 146,
+   "gas_pass_mw": 21885.0,
+   "slope_p25_p50_p75": [
+    7.49,
+    10.03,
+    11.36
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 11935.0,
+    "CT_PEAKER": 9950.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 13,
+    "mw": 2692.0
+   }
+  },
+  "P035_TRIM": {
+   "level_adder_cwmed_abs": 10.13,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.286,
+   "n_gas_pass": 138,
+   "gas_pass_mw": 21487.0,
+   "slope_p25_p50_p75": [
+    7.59,
+    10.3,
+    12.19
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 11833.0,
+    "CT_PEAKER": 9654.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 10,
+    "mw": 2313.0
+   }
+  },
+  "BAND_OLS": {
+   "level_adder_cwmed_abs": 34.77,
+   "admissible": false,
+   "splithalf_slope_cwmed_abs_dev": 0.597,
+   "n_gas_pass": 125,
+   "gas_pass_mw": 15102.0,
+   "slope_p25_p50_p75": [
+    4.71,
+    5.95,
+    7.38
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 13270.0,
+    "CT_PEAKER": 1831.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 33,
+    "mw": 10661.0
+   }
+  },
+  "BAND_TS": {
+   "level_adder_cwmed_abs": 12.65,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.186,
+   "n_gas_pass": 151,
+   "gas_pass_mw": 24759.0,
+   "slope_p25_p50_p75": [
+    7.07,
+    9.2,
+    11.15
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 15238.0,
+    "CT_PEAKER": 9521.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 8,
+    "mw": 1088.0
+   }
+  },
+  "BAND_TRIM": {
+   "level_adder_cwmed_abs": 11.03,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.272,
+   "n_gas_pass": 142,
+   "gas_pass_mw": 24335.0,
+   "slope_p25_p50_p75": [
+    7.16,
+    10.11,
+    12.14
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 14088.0,
+    "CT_PEAKER": 10247.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 6,
+    "mw": 735.0
+   }
+  },
+  "P060_OLS": {
+   "level_adder_cwmed_abs": 32.68,
+   "admissible": false,
+   "splithalf_slope_cwmed_abs_dev": 0.592,
+   "n_gas_pass": 142,
+   "gas_pass_mw": 19232.0,
+   "slope_p25_p50_p75": [
+    4.71,
+    5.95,
+    7.46
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 16222.0,
+    "CT_PEAKER": 3010.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 26,
+    "mw": 8070.0
+   }
+  },
+  "P060_TS": {
+   "level_adder_cwmed_abs": 10.07,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.155,
+   "n_gas_pass": 160,
+   "gas_pass_mw": 26143.0,
+   "slope_p25_p50_p75": [
+    7.23,
+    9.79,
+    11.19
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 16007.0,
+    "CT_PEAKER": 10136.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 9,
+    "mw": 1244.0
+   }
+  },
+  "P060_TRIM": {
+   "level_adder_cwmed_abs": 9.63,
+   "admissible": true,
+   "splithalf_slope_cwmed_abs_dev": 0.326,
+   "n_gas_pass": 149,
+   "gas_pass_mw": 23868.0,
+   "slope_p25_p50_p75": [
+    7.45,
+    10.39,
+    12.17
+   ],
+   "_context_bucket_mw": {
+    "CC_REGULAR": 12502.0,
+    "CT_PEAKER": 11366.0
+   },
+   "_context_below_gate_slope_lt4": {
+    "n": 8,
+    "mw": 1862.0
+   }
+  }
+ },
+ "incumbent": "P035_OLS",
+ "winner": "P035_TS",
+ "verdict": "RE-IDENTIFIED"
+}
