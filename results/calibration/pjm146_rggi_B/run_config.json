@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-28T01:01:06",
+  "timestamp": "2026-08-02T21:48:05",
   "git": {
-    "sha": "b9d2b4d",
-    "basis_sha": "c024f46370a8e12576c7290f4c301b11c977c4b2",
-    "branch": "claude/pjm134-dominion-zonal-inversion-yd4f0a",
+    "sha": "886fbe8",
+    "basis_sha": "886fbe88a9eb0f0831d0dfde5cd385a6c697db56",
+    "branch": "claude/pjm-3300-resolve-conflicts-0t53lc",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "pjm-134 control arm: pjm-121 recipe replayed at HEAD on the corrected envelope (no delta)",
+  "model_changes_note": "pjm-146 arm B: gated PJM RGGI allowance adder armed (pjm_rggi_allowance_pricing=true); single-delta A/B vs 2026-08-02-pjm-146a-control-zerodelta on keeper pjm143_hy_level_B; PREREG-pjm146-rggi-allowance-2026-08-02.md",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "PJM",
@@ -54,7 +54,13 @@
       "pjm_offer_midcurve_segments": [
         "LONG_RUN",
         "CC_LIKE"
-      ]
+      ],
+      "hydro_budget_nameplate_aware": true,
+      "pjm_external_net_position_cut": true,
+      "pjm_zonal_loss_surface": true,
+      "measured_ct_heat_rates": true,
+      "ramp_limits": true,
+      "pjm_rggi_allowance_pricing": true
     },
     "coal_bit_passthrough_sigmoid": true,
     "coal_bit_sigmoid_overrides": {
@@ -155,7 +161,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "b9d2b4d"
+    "git_sha": "886fbe8"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -169,6 +175,7 @@
     "hindcast_fuel_variant": "realized",
     "crossover_forward_year": null,
     "crossover_forward_gas_path": "mid",
+    "crossover_solve_year_weather": false,
     "gas_price_path": "mid",
     "gas_price_factor": 1.0,
     "coal_price_path": "mid",
@@ -178,6 +185,7 @@
     "carbon_price_path": "zero",
     "policy_bundle": "current",
     "state_carbon_pricing": true,
+    "pjm_rggi_allowance_pricing": true,
     "nox_price": 0.0,
     "so2_price": 0.0,
     "mass_cap_enabled": false,
@@ -188,6 +196,7 @@
     "demand_growth_rate": 0.01,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
+    "demand_growth_vintage": null,
     "datacenter_load_path": "off",
     "datacenter_percentile": 0.5,
     "datacenter_load_factor": 0.85,
@@ -200,7 +209,7 @@
     "hydro_dispatch_envelope": false,
     "hydro_min_flow_floor": false,
     "hydro_ror_split": false,
-    "hydro_budget_nameplate_aware": false,
+    "hydro_budget_nameplate_aware": true,
     "eac_price_nuclear": 0.0,
     "eac_price_wind": 0.0,
     "eac_price_solar": 0.0,
@@ -317,7 +326,8 @@
     "plant_emission_rates_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
-    "measured_ct_heat_rates": false,
+    "measured_ct_heat_rates": true,
+    "measured_chp_heat_rates": false,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
@@ -366,6 +376,7 @@
     "capacity_market_clearing": false,
     "capacity_market_clearing_by_iso": null,
     "renewable_elcc_curves": true,
+    "ramp_limits": true,
     "local_capacity_constraints": false,
     "planning_reserve_margin": 0.1375,
     "planning_reserve_margin_override": null,
@@ -412,6 +423,7 @@
     "nyiso_local_selfsupply": false,
     "nyiso_li_lcr_tsl": false,
     "nyiso_nyc_lcr_tsl": false,
+    "nyiso_import_sil_retire": false,
     "nyiso_scr_edrp": false,
     "nyiso_scr_edrp_strike": 500.0,
     "nyiso_firm_imports": false,
@@ -458,6 +470,10 @@
     "caiso_corridor_flow_limit": false,
     "caiso_firm_import_shape": false,
     "caiso_firm_import_selfschedule": false,
+    "caiso_firm_import_envelope_clip": false,
+    "caiso_firm_import_selfsched_clip": false,
+    "caiso_p1_export_sink_seam": false,
+    "dump_cost_full_offer_domain": false,
     "caiso_demand_clock_realign": false,
     "caiso_supply_consistent_demand": false,
     "caiso_citygate_spot_level": false,
@@ -599,6 +615,9 @@
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
     "coal_committed_takeorpay_sunk_fixed": false,
+    "coal_prb_committed_dispatchable": false,
+    "coal_prb_committed_split": false,
+    "miso_coal_night_floor": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -612,6 +631,7 @@
     "coal_lignite_mustrun_override": null,
     "coal_prb_mustrun_override": null,
     "coal_mustrun_per_plant": true,
+    "ercot_coal_min_config_floor": false,
     "retiree_cems_cap": true,
     "ct_mustrun_per_plant": false,
     "ct_mustrun_floor_frac": 1.0,
@@ -667,6 +687,7 @@
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
     "ercot_gas_bridge_da_horizon": true,
+    "ercot_gas_bridge_online_hours": false,
     "ercot_commitment_posture": false,
     "ercot_commitment_posture_min_load_frac": 0.574,
     "ercot_offer_surface_lowcurve_floorscoped": false,
@@ -678,6 +699,8 @@
     "ercot_thermal_dam_availability_hourly": false,
     "ercot_thermal_dam_availability_plant": false,
     "ercot_thermal_dam_availability_coal": false,
+    "ercot_dam_availability_coal_event_cap": false,
+    "ercot_dam_availability_gas_event_cap": false,
     "ercot_noncampd_plant_availability": false,
     "ercot_storage_capability_measured": false,
     "neiso_offer_surface_conditional": false,
@@ -745,6 +768,11 @@
     "temp_derate_slope_ct": 0.0126,
     "temp_derate_slope_st_gas": 0.0054,
     "temp_derate_slope_coal": 0.004,
+    "temp_derate_hourly_grain": false,
+    "temp_derate_mean_anchored": false,
+    "temp_derate_classes": null,
+    "temp_derate_slope_st_chp": null,
+    "temp_derate_slope_ct_chp": null,
     "gas_st_committed_hr_override": null,
     "gas_st_econ_hr_override": null,
     "gas_st_peak_hr_override": null,
@@ -858,6 +886,18 @@
     },
     "gas_offer_net_revenue_margin": true,
     "gas_offer_margin_anchor": 3.3483,
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null,
+    "coal_offer_net_revenue_margin": false,
+    "coal_offer_margin_anchor": null,
+    "coal_offer_margin_level": null,
+    "cc_committed_offer_margin": false,
+    "cc_committed_offer_level": null,
+    "coal_peak_offer_margin": false,
+    "coal_peak_offer_level": null,
+    "coal_peak_offer_gas_hr": null,
+    "coal_perplant_offer_level": false,
+    "coal_perplant_offer_curves": null,
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
     "offer_curve_smoothing_mid": 0.35,
@@ -870,6 +910,8 @@
     "pjm_measured_interface_limits": true,
     "pjm_east_interface_cut": true,
     "pjm_apsouth_interface_cut": false,
+    "pjm_external_net_position_cut": true,
+    "pjm_zonal_loss_surface": true,
     "ercot_wtx_curtailment_driver": false,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
@@ -939,5 +981,38 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
+  },
+  "reuse": {
+    "source_bundle": "results/calibration/pjm146_rggi_B_y24",
+    "requested_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "4219013d68990fcc",
+        "scenario_config_sha256": "75beb52c2ce5a5c1"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "7fecf0ff045d953e",
+        "scenario_config_sha256": "17c3f5d343ddb4d0"
+      }
+    },
+    "fresh_years": [
+      2025
+    ],
+    "refusals": {
+      "2025": "year not solved in the prior bundle"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-08-02T21:34:43",
+    "source_git_sha": "886fbe8"
   }
 }
