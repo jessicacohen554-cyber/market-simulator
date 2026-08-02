@@ -103,12 +103,22 @@ full-forward run is exempt by construction — its boundary IS its base year, FH
 
 ### 2.4 Byte-identity attestation — no keeper can move
 
-Three independent reasons, each sufficient:
+**Measured differential vs `origin/main` @ `579c719`** (a git worktree at the base commit, the
+same surface dumped from both trees and diffed): **396 gas-resolution values compared — every
+ISO × every trajectory × every seam neighbour and CAISO hub × years 2021/2023/2024/2025, plus
+`resolve_annual_gas_price` over 6 ISOs × 3 paths × both modes × 2023–2025.**
 
-1. **The seam change is byte-identical wherever the old code succeeded.** `_hold_flat_extrapolate`
-   returns `trajectory[year]` when the year is a knot. Checked exhaustively over **every**
-   trajectory in `HENRY_HUB_TRAJECTORIES` × years 2019–2050: **zero divergences** at knot years.
-   Every backcast year and every AEO forecast year through 2050 is a knot.
+* `resolve_annual_gas_price`: **0 divergences.** The refactor is pure.
+* Seam + CAISO hub: **48 divergences, every one of them `KeyError → value`** — all at **2021**
+  on a trajectory whose earliest knot is 2023 (`low`/`mid`/`high`/`hindcast_asknown_aeo2023`).
+  **Not one case where the old code returned a number returns a different number.**
+
+No committed run can have depended on the changed cells: they previously *raised*. Then three
+independent reasons no keeper can move, each sufficient:
+
+1. **The seam change is byte-identical wherever the old code succeeded** — the 48 deltas above
+   are exactly the raising cases. Every backcast year and every AEO forecast year through 2050
+   is a knot, so `_hold_flat_extrapolate` returns `trajectory[year]` unchanged there.
 2. **The call-site change cannot fire in a backcast.** `resolve_gas_scenario_path` returns
    `config.gas_price_path` unless `is_crossover_forward_year(year)`, and
    `crossover_forward_year` requires `mode="forecast"` (`__post_init__` raises otherwise).
