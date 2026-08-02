@@ -124,7 +124,17 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
       2023–2025 and re-solve — that is its purpose (model selection). Because it is iterated
       against, a validation number is selection evidence, **NOT** a certified out-of-sample skill
-      number, and must never be quoted as one.
+      number, and must never be quoted as one. **RE-KEY ON PROMOTION** (owner decision D-5(b),
+      signed 2026-08-02, `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1): the
+      `complete` entry's `keeper` field tracks the ISO's CURRENT designated keeper, so every
+      promotion in a `complete` ISO updates it **and re-verifies the entry's `determination`
+      against the new run** (`scripts/calibration_verdict.py --run-id <id>` — committed
+      artifacts only, never a solve) before the promotion commit lands. A re-verified
+      determination that is *worse* stops the promotion and escalates to the owner; it is never
+      silently written. The declaration-time run is preserved in `keeper_at_declaration`, and a
+      SPENT locked-test one-shot keeps its own frozen config in `locked_test_scored_on` and is
+      never re-keyed. Enforced by `scripts/audit_keepers.py` check M1, which the
+      `calibration-keeper-auditor` agent runs on every keeper-shard edit.
     - **Locked test = 2019 and H1-2026.** **Touch-once, ever.** Scored EXACTLY ONCE per ISO with
       the frozen keeper config; the result is recorded whatever it is. **No calibration change may
       respond to a locked-test result** without designating a new never-touched year as its
@@ -400,6 +410,6 @@ the two golden systems: `docs/testing.md`.
 - `docs/binning-methodology.md` — CAMPD per-plant binning & tranche offer curves (ERCOT default)
 - `docs/parameter-citations.md` — every numeric input traced to a primary source
 - `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
-- `docs/calibration-log.md` (frozen archive ≤2026-07-19) + `docs/calibration-log/<iso>.md` per-ISO continuations (`governance.md` for cross-ISO), `docs/calibration-session-log.md` — calibration history. Keeper promotions are per-ISO lanes: edit `frontend/data/backcast/keepers/<ISO>.json` + rebuild `status/<ISO>.js` (`build_status.py --iso`) — never another ISO's files (see `frontend/data/backcast/keepers/README.md`)
+- `docs/calibration-log.md` (frozen archive ≤2026-07-19) + `docs/calibration-log/<iso>.md` per-ISO continuations (`governance.md` for cross-ISO), `docs/calibration-session-log.md` — calibration history. Keeper promotions are per-ISO lanes: edit `frontend/data/backcast/keepers/<ISO>.json` + rebuild `status/<ISO>.js` (`build_status.py --iso`) — never another ISO's files (see `frontend/data/backcast/keepers/README.md`); when the promoted ISO holds a `complete` marker, the same session also re-keys its `calibration-complete.json` entry with a determination re-verification (rule 22, D-5(b))
 - `docs/forecast-development-plan-2026-07.md` — THE forecast program (Forecast Finalization Program): tier ladder, lanes/waves, prompt pack, rubric charter. All prior forecast plans are superseded as coordination docs by it (its §9 migration ledger).
 - **Code is the source of truth.** When docs and code disagree, fix the docs (run `/sync-docs`). When the methodology is genuinely ambiguous, the spec wins.
