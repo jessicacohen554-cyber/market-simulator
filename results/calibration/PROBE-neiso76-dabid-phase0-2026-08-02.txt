@@ -1,0 +1,111 @@
+parsing 1063 day files ...
+  ... 200/1063
+  ... 400/1063
+  ... 600/1063
+  ... 800/1063
+  ... 1000/1063
+
+=== CORPUS COVERAGE ===
+  2023: 359/365 non-empty day files
+  2024: 351/366 non-empty day files
+  2025: 353/365 non-empty day files
+  offer rows 7,397,341; NON-fast-start band 5,607,717 rows / 360 assets; fast-start 1,789,624 rows / 110 assets
+
+=== K5 — 2025 event-day coverage ===
+  corpus: ['20250623', '20250624', '20250625', '20250728', '20250729']
+  missing from corpus: none
+  missing from the NON-fast-start band: none
+  K5 -> PASSES
+
+=== THE FROZEN STATISTIC (charter §4) — within-day movement of the
+    NON-fast-start band's submitted book, $/MWh ===
+  year   movement   K1 bar  hod gap  share of gap    verdict |  unpaired   HE16-19  top-rung  fast-start
+  2023     -1.926     5.00    18.93        -10.2%      FIRES |    -1.926    -1.645    -0.498     -15.916
+  2024     -1.840     5.00    22.14         -8.3%      FIRES |    -1.840    -1.695    -0.273     -14.233
+  2025     -2.274     8.00    31.17         -7.3%      FIRES |    -2.274    -2.040     0.478     -13.652
+  K1 -> FIRES (charter: any year below its bar kills the limb)
+
+=== the book's within-day distribution (paired asset-days) ===
+  year  n asset-days  flat (<$0.01)  |move|<$1      p10      p25      p50      p75      p90  cap-w mean
+  2023        74,779          72.8%      81.5%    -1.71     0.00     0.00     0.00     0.00      -1.926
+  2024        75,553          72.9%      82.3%    -1.59     0.00     0.00     0.00     0.00      -1.840
+  2025        76,701          73.9%      81.5%    -1.93     0.00     0.00     0.00     0.00      -2.274
+
+=== the NON-fast-start band's hour-of-day submitted-offer profile ===
+    (capacity-weighted mean incremental-segment price, $/MWh)
+  2023: min $66.26 (HE20) -> max $68.47 (HE24), hod range $2.20 vs DA $25.96 / model $7.03
+        HE01-24: 68.3 68.3 68.4 68.2 68.1 68.0 67.5 67.3 67.1 67.5 67.7 67.7 67.7 67.8 67.7 67.4 66.8 66.5 66.3 66.3 66.4 67.2 67.9 68.5
+  2024: min $64.92 (HE20) -> max $67.43 (HE24), hod range $2.51 vs DA $28.96 / model $6.82
+        HE01-24: 67.3 67.3 67.3 66.8 66.8 66.7 66.2 65.4 65.2 65.7 65.8 65.8 65.8 66.1 66.2 66.0 65.5 65.3 64.9 64.9 65.0 65.6 66.2 67.4
+  2025: min $76.28 (HE9) -> max $79.95 (HE24), hod range $3.67 vs DA $44.47 / model $13.30
+        HE01-24: 79.8 79.8 79.9 79.7 79.6 79.6 78.5 76.7 76.3 76.9 77.2 77.3 77.3 77.7 77.7 77.5 77.2 76.8 76.4 76.5 76.5 77.2 78.0 79.9
+
+=== composition controls on the frozen statistic ===
+  2023: cap-weighted -1.926 | unweighted -2.026 | median +0.000 | ECONOMIC-only -1.732 | movers (|move|>=$0.01) 20,327 of 74,779
+  2024: cap-weighted -1.840 | unweighted -3.443 | median +0.000 | ECONOMIC-only -1.701 | movers (|move|>=$0.01) 20,450 of 75,553
+  2025: cap-weighted -2.274 | unweighted -3.498 | median +0.000 | ECONOMIC-only -2.733 | movers (|move|>=$0.01) 20,043 of 76,701
+  the five largest capacity-weighted contributions (masked asset IDs):
+    2023: #16639 -0.399 $/MWh (cap 34 MW, 342.0 days); #64891 -0.330 $/MWh (cap 60 MW, 340.0 days); #71233 -0.127 $/MWh (cap 26 MW, 314.0 days); #21292 -0.110 $/MWh (cap 261 MW, 331.0 days); #54465 -0.106 $/MWh (cap 340 MW, 325.0 days)
+    2024: #34578 -0.352 $/MWh (cap 582 MW, 329.0 days); #64891 -0.273 $/MWh (cap 61 MW, 308.0 days); #16639 -0.267 $/MWh (cap 34 MW, 345.0 days); #54465 -0.176 $/MWh (cap 340 MW, 319.0 days); #83798 -0.139 $/MWh (cap 340 MW, 308.0 days)
+    2025: #54465 -0.375 $/MWh (cap 341 MW, 326.0 days); #83798 -0.240 $/MWh (cap 341 MW, 328.0 days); #21292 -0.239 $/MWh (cap 281 MW, 324.0 days); #77459 -0.227 $/MWh (cap 616 MW, 332.0 days); #16639 -0.216 $/MWh (cap 34 MW, 348.0 days)
+
+=== K2 — conditioning admissibility (hour-of-day x net-load x month) ===
+  net-load bin edges (percentile): [np.float64(0.8), np.float64(0.9), np.float64(0.97)]
+  year      bin0      bin1      bin2      bin3
+  2023    -1.675    -2.444    -0.391    -4.408
+  2024    -1.412    -1.378    -4.429    -1.546
+  2025    -1.487    -2.945    -4.707    -1.691
+  conditioned max-cell movement per year (the best any admissible
+  conditioning can deliver without touching price):
+    2023: -0.391 $/MWh vs K1 bar 5.00 -> below the bar
+    2024: -1.378 $/MWh vs K1 bar 5.00 -> below the bar
+    2025: -1.487 $/MWh vs K1 bar 8.00 -> below the bar
+  monthly cap-weighted movement (min / max month per year):
+    2023: min -5.056 (month 2), max -0.577 (month 1)
+    2024: min -4.096 (month 1), max -0.512 (month 4)
+    2025: min -8.354 (month 12), max -0.780 (month 5)
+
+=== K4 — Algonquin fuel-tail robustness (>= $25.00 days excluded) ===
+  tail-day set: 34 days 2023-25; 32 in corpus
+  2023: -1.926 -> -1.721 (+10.7% relative) -> robust
+  2024: -1.840 -> -1.840 (+0.0% relative) -> robust
+  2025: -2.274 -> -1.725 (+24.1% relative) -> FIRES (fuel granularity)
+  K4 -> FIRES
+
+=== AUXILIARY (report-only, price-free): fixed-depth book traversal ===
+  hour-of-day range of the marginal submitted-offer price at fixed depth q of the hour's own offered capacity ($/MWh):
+  year      q=50      q=60      q=70      q=80      q=90      q=95 |   model      DA
+  2023      5.76      7.29     16.22     12.85      9.33      5.55 |    7.03   25.96
+  2024      4.60      6.37     10.86      7.49      2.83      5.93 |    6.82   28.96
+  2025      7.31      6.21      6.34      3.51      1.76      5.84 |   13.30   44.47
+  direction of the fixed-RELATIVE-depth profile (q=80):
+    2023: 12.85 (max HE2 / min HE19)
+    2024: 7.49 (max HE3 / min HE19)
+    2025: 3.51 (max HE6 / min HE11)
+  CONSTANT-QUANTITY read — hour-of-day range of the marginal offer price at fixed ABSOLUTE MW ($/MWh; blank = quantity above the hour's offered capacity somewhere in the year):
+  year     12 GW     14 GW     16 GW     18 GW     20 GW     22 GW |   model      DA
+  2023      7.55      7.64      8.43     10.75        --        -- |    7.03   25.96
+  2024      4.46      5.47      5.92      6.78        --        -- |    6.82   28.96
+  2025      7.35      7.78      6.86      7.66        --        -- |   13.30   44.47
+  direction of the constant-quantity profile (18 GW):
+    2023: 10.75 (max HE1 / min HE19)
+    2024: 6.78 (max HE3 / min HE19)
+    2025: 7.66 (max HE1 / min HE8)
+  TRAVERSAL read — the real book crossed at the REAL hourly quantity (EIA-930 ISNE demand; 'less 3 GW' books a flat import allowance). This is the amplitude a model inherits from the real book with the real traversal, energy-only, no congestion/losses/reserve:
+    2023: at demand      hod range 17.03 (max HE21 / min HE7)   [8326/8327 hours inside the book]
+          at demand-3GW  hod range 9.44 (max HE21 / min HE7)   | model 7.03 · DA 25.96
+    2024: at demand      hod range 21.11 (max HE21 / min HE5)   [8422/8423 hours inside the book]
+          at demand-3GW  hod range 9.73 (max HE21 / min HE7)   | model 6.82 · DA 28.96
+    2025: at demand      hod range 24.06 (max HE20 / min HE7)   [8468/8471 hours inside the book]
+          at demand-3GW  hod range 13.75 (max HE20 / min HE7)   | model 13.30 · DA 44.47
+  hour-of-day range of the hour's TOTAL offered capacity (MW):
+    2023: 26,707 (h1) -> 27,771 (h7), range 1,064 MW
+    2024: 26,552 (h17) -> 26,683 (h9), range 131 MW
+    2025: 25,585 (h22) -> 25,892 (h8), range 308 MW
+
+=== PHASE-0 VERDICT (charter §4 kill rules) ===
+  K1 movement floor : FIRES
+  K2 conditioning    : admissible by construction (no price input)
+  K3 demand limb     : see --check-demand-book
+  K4 fuel-tail       : FIRES
+  K5 event coverage  : passes

@@ -1,0 +1,60 @@
+keeper: 2026-07-31-neiso-72-hy-window
+bundle: results/calibration/neiso72_hy_window_B
+reserve rows: 26,275 ROS hours ({2023: 8759, 2024: 8758, 2025: 8758})
+
+=== A — the model's reserve pricing vs NEISO's own posted prices ===
+                                                    2023        2024        2025
+model reserve dual > 0 (hours of 8,760)                0           0           0
+model dual, peak-window mean                $       0.00$       0.00$       0.00
+measured RT TMSR, peak-window mean          $       4.21$       6.73$       6.21
+  — share of peak-window hours > $1                23.4%       23.4%       20.7%
+  — $200-censored                           $       3.47$       3.95$       4.08
+measured RT TMSR, trough-window mean        $       0.06$       0.10$       0.10
+measured RT TMSR, all-hours mean            $       1.35$       1.68$       1.78
+measured RT TOTAL(30-min), all-hours mean   $       0.46$       0.76$       0.94
+measured RT TMSR, hours > $1 (of 8,760)            1,113       1,070         934
+
+=== B — the swing arithmetic (nyiso-110 §2 construction) ===
+  reserve differential = measured peak-window minus trough-window TMSR;
+  missing swing = (actual peak-trough) minus (model peak-trough).
+  NOTE: the DA row divides by the DA missing swing but uses the
+  REAL-TIME differential — ISO-NE posts no DA reserve price before
+  DASI (§D/§F), so the DA row is an UPPER-BOUND proxy, not a measured
+  DA reserve content. §F measures the DA content where it exists.
+basis                                 2023      2024      2025
+DA    reserve differential            4.15      6.62      6.12
+      missing swing                  14.00     17.28     22.87
+      share owned by reserve         29.6%     38.3%     26.7%
+RT    reserve differential            4.15      6.62      6.12
+      missing swing                  12.45     15.48     19.12
+      share owned by reserve         33.3%     42.8%     32.0%
+
+=== C — passthrough: hourly peak-window miss regressed on TMSR ===
+  DA $200-censored:   slope +0.15 r +0.12  slope +0.46 r +0.30  slope +0.09 r +0.05
+  RT $200-censored:   slope +0.96 r +0.39  slope +1.99 r +0.57  slope +1.29 r +0.51
+
+=== D — the DA-side structural check (DASI go-live 2025-03-01) ===
+  ISO-NE cleared NO day-ahead reserve product before DASI, so the DA
+  LMP carries no reserve content to strip in 2023, 2024 or Jan-Feb 2025.
+    2023: 100% of hours are pre-DASI (no DA reserve product by market design)
+    2024: 100% of hours are pre-DASI (no DA reserve product by market design)
+    2025: 16% of hours are pre-DASI (no DA reserve product by market design)
+
+=== E — energy-basis restatement (nyiso-110 §2.1 construction) ===
+  Strip the measured RT reserve content from the RT actual and the
+  model's own folded dual from the model price, then compare
+  energy-only to energy-only. BOUNDING: the reserve price passes into
+  the LMP only where a reserve-capable unit is marginal, so this
+  strips AT MOST the true content.
+  year  RT energy trough err  RT energy peak err  RT energy swing share
+  2023                 +7.56               -0.75                  43.3%
+  2024                 +9.15               +0.29                  40.9%
+  2025                 +9.93               -3.08                  48.9%
+
+=== F — the MEASURED day-ahead reserve content, where it exists ===
+  DAAS coverage (measured, not assumed): 2025: 7,344 ROS hours from 2025-03-01
+  2025 (post-go-live hours only, n=7,343):
+    DA TMSR peak-window $32.70 · trough-window $6.55 · all-hours $15.25 · share of peak hours > $1 83.8%
+    reserve differential $26.16 vs DA missing swing $22.26 -> share owned by reserve 117.5%
+    passthrough slope +0.60 (r +0.65)
+    energy-basis: model DA energy swing is 150.9% of the reserve-stripped actual's
