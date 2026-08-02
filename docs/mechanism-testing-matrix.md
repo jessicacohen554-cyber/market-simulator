@@ -1139,9 +1139,31 @@ C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
 still real (miso-89's measurement stands) but it no longer breaches any
 criterion; the outage-grain data ask below remains its honest continuation.)*
 
-0. **Night-level min-gen FLOOR on the P0-detected committed run — the
-   miso-113 lane, the queue's live head. The two OFFER-side forms above it
-   are both spent and both R; do not re-test either.** miso-111 rejected the
+0. ~~**Night-level min-gen FLOOR on the P0-detected committed run — the
+   miso-113 lane.**~~ **CLOSED 2026-08-02 (miso-113 Phase 3): `I` — LIVE-INERT
+   on the full-span A/B** (`2026-08-02-miso-113b-night-floor` vs the committed
+   control; COAL_PRB class-hourly L1 9–13 GWh/yr = 0.006–0.010 % of class
+   energy, zero record-status flips, the miso-112 §4 night-level test
+   identical to control). K1's licensing measurement (prereg §8, 6.2 TWh
+   "binding") was an **outage-window artifact** — an availability-blind
+   nameplate-basis floor whose deficit hours are hour-of-day-uniform
+   whole-month shoulder blocks where dispatch sits below even the mustrun
+   band (unit-outage derates), and at the deficit plants the net-of-mustrun
+   writable level is ~zero (1733: ~5 MW). miso-111 PREREG §8's inert
+   conclusion is REINSTATED on corrected grounds: the take-or-pay block
+   already holds the measured night level in every AVAILABLE hour; C7's miss
+   is within-run DOWNWARD cycling variance, which a min-gen floor cannot
+   create. **With the offer family R/R (miso-111/112) and the floor `I`, the
+   C7 COAL_PRB in-model lever queue is EMPTY** — the surviving routes are the
+   two data asks (items 1–2 below). DO-NOT-REDO: no min-gen or offer lever on
+   this class without new source data. Evidence:
+   `results/calibration/FINDING-miso113-prb-night-floor-live-inert-2026-08-02.md`
+   (+ the wiring fix PR #3266: the builder was absent from
+   `run_calibration.py`'s prep chain AND the three-site wiring-guard roster —
+   the first arm solved byte-identical with the flag armed; the roster now
+   enforces every bridge in all three orchestrators). *Original charter,
+   for the record:* the two OFFER-side forms above it
+   are both spent and both R; do not re-test either. miso-111 rejected the
    whole-band repricing (`coal_prb_committed_dispatchable`) and miso-112
    rejected the measured per-plant SPLIT (`coal_prb_committed_split`) on its
    pre-registered G2: the split fixes shape better than miso-111 and

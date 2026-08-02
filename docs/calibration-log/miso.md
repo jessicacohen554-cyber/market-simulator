@@ -2501,3 +2501,78 @@ negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
   Evidence: `results/calibration/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`;
   probes `scripts/probes/_miso111_prb_conduct.py`, `_miso111_chain.sh`.
 * Next number: **miso-112.**
+
+## 2026-08-01 — miso-112 (GAP NOTE, indexed 2026-08-02 by miso-113 from the committed record — the session's own log entry was never written)
+
+* The miso-112 session's full record is committed but its log entry is
+  missing: see `PREREG-miso112-prb-committed-split-2026-07-31.md`,
+  `FINDING-miso112-prb-committed-split-2026-08-01.md`, runs
+  `2026-08-01-miso-112a-control` / `2026-08-01-miso-112b-prb-split`, matrix
+  row `coal_prb_committed_split` (M = R). Headline from the finding:
+  the measured per-plant SPLIT fixes C7 shape (PRB cv_ratio 0.466→0.738 /
+  0.475→0.872, FAIL→PASS 2023/24) but is REJECTED on its pre-registered G2
+  (C1 2024 COAL_PRB −10.23 TWh vs ±8) and on the §4 structural test (it
+  drives the within-run night level BELOW the meter: 0.437→0.374 vs measured
+  0.434). Named successor: the miso-113 night floor.
+
+## 2026-08-02 — miso-113 (Phase 3): the COAL_PRB night floor is LIVE-INERT — the full-span A/B moves NOTHING, K1's licensing measurement was an outage-window artifact, and the C7 in-model lever queue is now EMPTY; keeper UNCHANGED
+
+* Executes the pre-registered arm of
+  `PREREG-miso113-prb-night-floor-2026-08-01.md` (Phases 1–2 and the K1
+  no-fire were the 2026-08-01 session; the prereg, mechanism build and
+  registered control `2026-08-01-miso-113a-control` were already on main).
+* **Wiring incident first (fixed, PR #3266).** The first arm launch solved
+  2023 BYTE-IDENTICAL to the control (class-hourly L1 = 0.000 GWh) with
+  `scenario_config.miso_coal_night_floor = true` recorded — the nyiso-87
+  failure mode: `build_miso_coal_night_floor_p1_prep` was wired into
+  `pipeline/year.py` and `runner.py` but not into
+  `scripts/run_calibration.py`'s own `p1_fleet_prep` chain (the backcast
+  orchestrator), and the three-site guard
+  (`tests/unit/pipeline/test_p1_prep_wiring.py`) was blind because the
+  builder was never added to its roster. Fix: hook composed in
+  run_calibration.py + roster row (all three orchestrators now enforced for
+  every bridge); broken partial solve deleted; chain relaunched fresh.
+* **Arm** `2026-08-02-miso-113b-night-floor` (bundle `miso113_nightfloor_B`),
+  keeper recipe + `miso_coal_night_floor=true`, full span 2023–2025 via the
+  committed rule-12 chain. Detector fires exactly as designed: 197 scoped
+  tranches; 15.892/15.413/17.388 TWh floor volume; 97/79/85 committed
+  blocks, none shorter than 24 h.
+* **Result: `I` — live-inert.** COAL_PRB class-hourly L1 vs control
+  12.7/11.5/9.0 GWh (0.010/0.010/0.006 % of class energy), net 0.00, annual
+  totals unchanged (123.690/118.327/147.137 TWh), D-1 identical
+  (cv_ratio 0.466/0.475/0.314 FAIL×3), ZERO record-status flips across every
+  C-criterion, C1 16/16 free 12/12, the miso-112 §4 night-level test
+  IDENTICAL to control (0.4957/0.4482/0.5666 vs measured 0.4343). Guards:
+  G1 FAIL-unchanged (inert, not regression), G2–G5 PASS, D-4 0.000.
+  NOT a keeper candidate — nothing moves, so the owner's
+  structural-integrity standard has nothing to weigh. Keeper UNCHANGED
+  (`2026-07-31-miso-109b-hy-level`).
+* **Why K1 licensed a dead lever:** its 6.1957/6.1893/2.2705 TWh "binding"
+  was measured against `min(night_p50, mustrun+committed) × NAMEPLATE`,
+  ignoring `availability[g,t]`. The deficit hours are hour-of-day-UNIFORM
+  (night share 0.25 = uniform) whole-month shoulder blocks (plant 1710:
+  October = all 744 h) where dispatch sits below even the mustrun band alone
+  — possible only under unit-outage derates. 91.9 % of the K1 deficit lies
+  INSIDE mech-22-floored hours written at the rule-19 net-of-mustrun level,
+  which at the deficit plants is ~zero (1733: 0.464 − 0.459 → ~5 MW). The
+  floor eliminates none of the statistic (6.1956 → 6.2145 TWh on the
+  identical construction). miso-111 PREREG §8's "provably inert" verdict is
+  REINSTATED on corrected grounds: the take-or-pay committed block already
+  holds the measured night level in every AVAILABLE hour; C7's miss is
+  within-run DOWNWARD cycling variance, which a min-gen floor cannot create
+  (prereg P-A stood; P-C reached at solve cost).
+* **Lane consequence:** offer family R/R (miso-111/112) + floor `I` ⇒ the
+  C7 COAL_PRB in-model lever queue is EMPTY. Surviving routes: the
+  contract-tonnage data ask (§8 Form 580 count) and the miso-78/79 overnight
+  price-formation data ask. Matrix §5.4 item 0 closed DO-NOT-REDO.
+* Operational: the arm's 2025 link OOM-killed a 15 GB box twice
+  (~15.18 GiB ceiling; the floored-fleet copies ≈ 0.4 GiB over a control
+  peak already near it; `MALLOC_ARENA_MAX=2` insufficient) — fixed with a
+  6 GB swapfile (`swapon` permitted in the container). Enable swap BEFORE
+  the 2025 link on any MISO arm adding an (n_gen, T) overlay.
+* Registration: run + slim bundle committed; retention pruned
+  `2026-07-27-miso-98a-sectorabsent-control` (top-15 MISO). Matrix cell
+  `miso_coal_night_floor` M: O → **I** + header re-check note; §5.4 item 0
+  adjudicated. Evidence:
+  `results/calibration/FINDING-miso113-prb-night-floor-live-inert-2026-08-02.md`.
+* Next number: **miso-114.**
