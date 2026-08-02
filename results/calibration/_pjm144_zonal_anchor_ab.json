@@ -1,0 +1,464 @@
+{
+ "probe": "pjm-144 zone-resolved gas-offer margin anchor A/B",
+ "prereg": "results/calibration/PREREG-pjm144-zonal-margin-anchor-2026-08-02.md",
+ "arms": {
+  "A_control": "pjm144_control_A",
+  "B": "pjm144_zonalanchor_B",
+  "keeper": "pjm143_hy_level_B"
+ },
+ "construction_gates": {
+  "K1_flag_fidelity": {
+   "passed": true,
+   "A": {
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null
+   },
+   "B": {
+    "gas_offer_margin_zonal_anchor": true,
+    "gas_offer_margin_anchor_by_zone": {
+     "PJM_ComEd": 3.2575,
+     "PJM_AEP_Ohio": 3.1201,
+     "PJM_ATSI": 3.1201,
+     "PJM_West_APS": 2.9495,
+     "PJM_Central_PA": 2.9708,
+     "PJM_Dominion": 3.8798,
+     "PJM_EMAAC": 3.4898,
+     "PJM_SWMAAC": 4.4328
+    }
+   },
+   "registry": {
+    "PJM_ComEd": 3.2575,
+    "PJM_AEP_Ohio": 3.1201,
+    "PJM_ATSI": 3.1201,
+    "PJM_West_APS": 2.9495,
+    "PJM_Central_PA": 2.9708,
+    "PJM_Dominion": 3.8798,
+    "PJM_EMAAC": 3.4898,
+    "PJM_SWMAAC": 4.4328
+   },
+   "iso_anchor_A": 3.3483,
+   "iso_anchor_B": 3.3483
+  },
+  "K2_control_integrity": {
+   "passed": true,
+   "basis": "scorecard (gate); byte basis reported below",
+   "keeper_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "PASS",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "control_criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "PASS",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "keeper_determination": "CALIBRATED",
+   "control_determination": "CALIBRATED",
+   "byte_basis_identical": true,
+   "byte_basis_by_year": {
+    "2023": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "COAL_BIT": 0.0,
+      "COAL_PRB": 0.0,
+      "COAL_WC": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "VIRTUAL_DEC": 0.0,
+      "VIRTUAL_INC": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    },
+    "2024": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "COAL_BIT": 0.0,
+      "COAL_PRB": 0.0,
+      "COAL_WC": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "VIRTUAL_DEC": 0.0,
+      "VIRTUAL_INC": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    },
+    "2025": {
+     "max_abs_diff_mw": 0.0,
+     "max_by_class_mw": {
+      "CC_CHP": 0.0,
+      "CC_REGULAR": 0.0,
+      "COAL_BIT": 0.0,
+      "COAL_PRB": 0.0,
+      "COAL_WC": 0.0,
+      "CT_CHP": 0.0,
+      "CT_PEAKER": 0.0,
+      "OTHER": 0.0,
+      "ST_CHP": 0.0,
+      "ST_GAS": 0.0,
+      "VIRTUAL_DEC": 0.0,
+      "VIRTUAL_INC": 0.0,
+      "biomass": 0.0,
+      "hydro": 0.0,
+      "import": 0.0,
+      "nuclear": 0.0,
+      "oil": 0.0,
+      "solar": 0.0,
+      "wind": 0.0
+     }
+    }
+   }
+  },
+  "K3_liveness": {
+   "passed": false,
+   "by_year": {
+    "2023": {
+     "max_abs_class_hour_mw": 1317.077515,
+     "max_abs_zone_price_delta": 0.034035,
+     "A_lw_price": 31.4213,
+     "B_lw_price": 31.4515,
+     "delta_system_lw_price_REPORTED": 0.0302,
+     "passed": false
+    },
+    "2024": {
+     "max_abs_class_hour_mw": 1287.712646,
+     "max_abs_zone_price_delta": 0.03183,
+     "A_lw_price": 31.1943,
+     "B_lw_price": 31.2216,
+     "delta_system_lw_price_REPORTED": 0.0273,
+     "passed": false
+    },
+    "2025": {
+     "max_abs_class_hour_mw": 1537.15332,
+     "max_abs_zone_price_delta": 0.025847,
+     "A_lw_price": 42.3679,
+     "B_lw_price": 42.3893,
+     "delta_system_lw_price_REPORTED": 0.0214,
+     "passed": false
+    }
+   },
+   "thresholds": {
+    "mw": 50.0,
+    "zonal_price": 0.1
+   }
+  },
+  "K4_single_delta": {
+   "passed": true,
+   "differing_keys": [
+    "gas_offer_margin_anchor_by_zone",
+    "gas_offer_margin_zonal_anchor"
+   ]
+  },
+  "K5_year_span": {
+   "passed": true,
+   "spans": {
+    "A": [
+     2023,
+     2024,
+     2025
+    ],
+    "B": [
+     2023,
+     2024,
+     2025
+    ]
+   }
+  }
+ },
+ "k6_dropped": "nyiso-109's K6 direction-integrity gate is DROPPED by the prereg: PJM's applier is capacity-weighted mean-zero, so the effect is two-sided and direction is REPORTED, never gated",
+ "kill_gates": {
+  "available": true,
+  "P1_free_class": {
+   "passed": true,
+   "A_free": {
+    "pass": 12,
+    "total": 12
+   },
+   "B_free": {
+    "pass": 12,
+    "total": 12
+   },
+   "A_all": {
+    "pass": 16,
+    "total": 16
+   },
+   "B_all": {
+    "pass": 16,
+    "total": 16
+   }
+  },
+  "P2_no_new_fail": {
+   "passed": true,
+   "A_fails": [],
+   "B_fails": []
+  },
+  "P3_protective": {
+   "passed": true,
+   "B": {
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   }
+  },
+  "P4_slack_dump_zero": {
+   "passed": true,
+   "by_year": {
+    "2023": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    },
+    "2024": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    },
+    "2025": {
+     "A": [
+      0.0,
+      0.0
+     ],
+     "B": [
+      0.0,
+      0.0
+     ]
+    }
+   }
+  },
+  "P5_no_fitted_followup": {
+   "passed": true,
+   "note": "declarative: the zone anchors are the derive script's own output (keeper-fleet weights, runtime applier) and were never swept (rule 23)"
+  }
+ },
+ "reported_never_a_kill": {
+  "anchor_table": {
+   "PJM_ComEd": 3.2575,
+   "PJM_AEP_Ohio": 3.1201,
+   "PJM_ATSI": 3.1201,
+   "PJM_West_APS": 2.9495,
+   "PJM_Central_PA": 2.9708,
+   "PJM_Dominion": 3.8798,
+   "PJM_EMAAC": 3.4898,
+   "PJM_SWMAAC": 4.4328
+  },
+  "premium_zones": [
+   "PJM_Dominion",
+   "PJM_EMAAC",
+   "PJM_SWMAAC"
+  ],
+  "discount_zones": [
+   "PJM_AEP_Ohio",
+   "PJM_ATSI",
+   "PJM_Central_PA",
+   "PJM_ComEd",
+   "PJM_West_APS"
+  ],
+  "zonal_direction_two_sided_REPORTED": {
+   "2023": {
+    "delta_by_zone": {
+     "PJM_AEP_Ohio": 0.027658,
+     "PJM_ATSI": 0.025694,
+     "PJM_Central_PA": 0.021868,
+     "PJM_ComEd": 0.017786,
+     "PJM_Dominion": 0.033049,
+     "PJM_EMAAC": 0.030284,
+     "PJM_SWMAAC": 0.034035,
+     "PJM_West_APS": 0.031093
+    },
+    "premium_zone_mean": 0.032456,
+    "discount_zone_mean": 0.02482,
+    "offer_side_sign_agreement": "3/8"
+   },
+   "2024": {
+    "delta_by_zone": {
+     "PJM_AEP_Ohio": 0.018808,
+     "PJM_ATSI": 0.019783,
+     "PJM_Central_PA": 0.020018,
+     "PJM_ComEd": 0.011387,
+     "PJM_Dominion": 0.03183,
+     "PJM_EMAAC": 0.030299,
+     "PJM_SWMAAC": 0.031395,
+     "PJM_West_APS": 0.027261
+    },
+    "premium_zone_mean": 0.031175,
+    "discount_zone_mean": 0.019451,
+    "offer_side_sign_agreement": "3/8"
+   },
+   "2025": {
+    "delta_by_zone": {
+     "PJM_AEP_Ohio": 0.015913,
+     "PJM_ATSI": 0.014663,
+     "PJM_Central_PA": 0.0078,
+     "PJM_ComEd": 0.012962,
+     "PJM_Dominion": 0.025847,
+     "PJM_EMAAC": 0.018852,
+     "PJM_SWMAAC": 0.024752,
+     "PJM_West_APS": 0.022032
+    },
+    "premium_zone_mean": 0.02315,
+    "discount_zone_mean": 0.014674,
+    "offer_side_sign_agreement": "3/8"
+   }
+  },
+  "class_twh_delta_top": {
+   "2023": {
+    "ST_GAS": 0.4007999897003174,
+    "CC_REGULAR": -0.398499995470047,
+    "CC_CHP": -0.21209999918937683,
+    "CT_PEAKER": 0.11749999970197678,
+    "COAL_BIT": 0.05660000070929527,
+    "VIRTUAL_DEC": 0.036400001496076584,
+    "VIRTUAL_INC": 0.0340999998152256,
+    "import": 0.0284000001847744
+   },
+   "2024": {
+    "CC_REGULAR": -0.7014999985694885,
+    "ST_GAS": 0.5062000155448914,
+    "CT_PEAKER": 0.2249000072479248,
+    "CC_CHP": -0.12929999828338623,
+    "COAL_BIT": 0.07450000196695328,
+    "VIRTUAL_DEC": 0.07119999825954437,
+    "COAL_PRB": 0.021199999377131462,
+    "import": 0.020099999383091927
+   },
+   "2025": {
+    "CC_REGULAR": -0.967199981212616,
+    "ST_GAS": 0.9089000225067139,
+    "CT_PEAKER": 0.12290000170469284,
+    "CC_CHP": -0.062300000339746475,
+    "VIRTUAL_DEC": 0.037700001150369644,
+    "import": 0.01769999973475933,
+    "COAL_BIT": 0.0052999998442828655,
+    "COAL_PRB": 0.002300000051036477
+   }
+  },
+  "criteria_from_calibration_verdict": {
+   "keeper": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "PASS",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "A_control": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "PASS",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   },
+   "B_arm": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "PASS",
+    "price_shape": "PASS",
+    "price_tail": "PASS",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "PASS",
+    "forced_share": "PASS"
+   }
+  },
+  "determination": {
+   "keeper": "CALIBRATED",
+   "A_control": "CALIBRATED",
+   "B_arm": "CALIBRATED"
+  },
+  "grade_summary": {
+   "keeper": {
+    "scored": 9,
+    "target_grade": 9,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 0
+   },
+   "A_control": {
+    "scored": 9,
+    "target_grade": 9,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 0
+   },
+   "B_arm": {
+    "scored": 9,
+    "target_grade": 9,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 0
+   }
+  },
+  "free_class_headline": {
+   "keeper": "C1 all 16/16 \u00b7 free 12/12",
+   "A_control": "C1 all 16/16 \u00b7 free 12/12",
+   "B_arm": "C1 all 16/16 \u00b7 free 12/12"
+  },
+  "price_tail_detail": {
+   "keeper": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "PASS"
+   },
+   "A_control": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "PASS"
+   },
+   "B_arm": {
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "status": "PASS"
+   }
+  }
+ }
+}
