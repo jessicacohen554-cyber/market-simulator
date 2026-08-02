@@ -134,6 +134,7 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "_NYISO_NYCA_CURVE_LENGTH",
         "_PJM_VRR_CURVE",
         "_PJM_VRR_CURVE_2027_2028",
+        "_PJM_VRR_CURVE_2028_2029",
         "_miso_seasonal_curve",
         "_neiso_fca_vintage_curve",
         "_nyiso_icap_vintage_curve",
