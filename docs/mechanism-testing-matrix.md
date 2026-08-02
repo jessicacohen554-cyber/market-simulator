@@ -1236,6 +1236,56 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    on a price-formation residual.
    (`results/calibration/FINDING-miso113-night-floor-inert-2026-08-02.md`; runs
    `2026-08-02-miso-113c-control` / `2026-08-02-miso-113b-night-floor`.)
+0b. **The overnight LEVEL offset — the live C7 target, DECOMPOSED at miso-114
+   (2026-08-02, no LP spent).** miso-113 closed the coal-conduct family and
+   routed the C7 `COAL_PRB` residual to "the data-blocked miso-78/79 congestion
+   + sub-hourly-RT lane". **That routing is now narrowed by measurement:
+   64 / 71 / 73 % of the model's overnight p10 gap to MINN.HUB is the
+   congestion-FREE system ENERGY component** (+8.53/+7.01/+8.54) and only
+   36 / 29 / 27 % is congestion (+4.89/+2.80/+3.24) — MISO publishes a
+   single-reference decomposition, asserted in the probe at max cross-hub std
+   0.000000/0.008345/0.000000 $/MWh. **The overnight window carries TWO
+   defects, not one:** (a) a near-flat **LEVEL offset of +$4 to +$8 across
+   net-load deciles 0-8** — the signature of a mispriced *marginal unit* — and
+   (b) a **convexity/tail deficit in the top overnight decile** (gap flips to
+   −3.11/−7.46 in 2024/2025), which is miso-89's ledgered availability object
+   and stays there. (a) is what starves C7: a flat, too-dear overnight price
+   gives the coal fleet nothing to cycle against, which is why repricing
+   (miso-111), splitting (miso-112) and flooring (miso-113) the band all left
+   `cv_ratio` unmoved. Trough anatomy at h1-3, arithmetic closing: the model
+   fills a 1.5-1.7 GW import hole and a 3.4-3.9 GW gas hole with 2.6-3.7 GW of
+   extra coal while keeping **1,907 / 2,415 / 2,350 MW of `CT_PEAKER` +
+   `ST_GAS` online**. **NEXT STEP IS A NO-LP MEASUREMENT, not a solve:**
+   CAMPD-observed MISO `CT_PEAKER` + `ST_GAS` online MW at h1-3 vs those model
+   figures (EIA-930 does not split gas by prime mover, so miso-114 could
+   measure only the model side). **DO NOT arm `miso_cc_coal_rebalance`** —
+   its target is defined against another *model* quantity ("above the
+   priced-import hurdle") with no measured identification (rules 5/21/24).
+   (`results/calibration/FINDING-miso114-seam-hod-shape-2026-08-02.md`; probe
+   `scripts/probes/_miso114_seam_hod_shape.py`.)
+0c. **Seam hour-of-day shape — REAL, MEASURED, and SIZED OUT OF THE GATE LANE
+   in the same session (miso-114).** The MISO seam reproduces annual
+   net-interchange energy to **1.017 / 1.016 / 0.908** with an **hour-of-day
+   correlation of +0.097 / −0.453 / −0.030** — no hourly skill, inverted in
+   2024 — because the armed backcast overwrite `MISO_SEAM_LADDER_BY_YEAR` is an
+   **8-band hour-INVARIANT** ladder, so bands-in-the-money run 4.4/3.5/2.9
+   overnight vs 6.0/4.9/4.2 at peak, the opposite of measured flow. Signed
+   mis-shape: night short 1,333/1,210/1,206 MW, peak long 1,338/1,147/746 MW.
+   **Sized at the model's own local stack slope it is worth only
+   −$0.32/−$0.39/−$0.44 overnight and +$0.34/+$0.43/+$0.30 at peak = 4-7 % of
+   the residual** — a rule 1 `[R-STRUCT]` structural-fidelity item, **never** a
+   C7/C3a instrument; do not charter it as one. **The obvious fix is REFUTED
+   ex ante:** `miso_pjm_lmp_import_pricing` fails the model-independent test —
+   the *actual* MISO−PJM_WEST spread is ±$1-2 overnight, night-minus-peak only
+   −1.07/+2.16/+3.15 $/MWh, and actual net import correlates with the hourly
+   spread at r = +0.289/+0.240/+0.286 (MISO imports 4,591 MW at h2 on a
+   +$1.0/MWh spread). The seam is a firm/scheduled base, so its shape is a
+   **scheduling** property, not a price property; `miso_firm_import_floor`
+   stays rejected as an outcome pin (rule 13) and this does **not** re-license
+   it. The one admissible successor is hour-of-day-resolved band
+   **availability** at the `(month × hour-of-day)` grain `MISO_SEAM_DIBA`
+   already uses — changing *when* a band may clear, not *how much* flows —
+   which needs its own charter.
 1. **Contract-period tonnage constraint — data-blocked**
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
