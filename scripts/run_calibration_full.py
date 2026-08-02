@@ -3090,6 +3090,7 @@ def solve_and_persist(
     nyiso_east_reserve_families: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
+    miso_coal_night_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
     nyiso_gas_bridge_startup: bool | None = None,
@@ -4001,6 +4002,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge
             )
+        if miso_coal_night_floor is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_coal_night_floor=miso_coal_night_floor
+            )
         if nyiso_gas_bridge_cc_min_load_frac is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac
@@ -4651,6 +4656,7 @@ def solve_and_persist(
             reliability_floor_overrides=reliability_floor_overrides,
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
+            miso_coal_night_floor=miso_coal_night_floor,
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac,
             nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac,
             nyiso_gas_bridge_startup=nyiso_gas_bridge_startup,
@@ -5435,6 +5441,7 @@ def solve_and_persist(
         "nyiso_east_reserve_families": nyiso_east_reserve_families,
         "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
+        "miso_coal_night_floor": miso_coal_night_floor,
         "nyiso_gas_bridge_cc_min_load_frac": nyiso_gas_bridge_cc_min_load_frac,
         "nyiso_gas_bridge_st_min_load_frac": nyiso_gas_bridge_st_min_load_frac,
         "nyiso_gas_bridge_startup": nyiso_gas_bridge_startup,
@@ -10565,6 +10572,20 @@ def main() -> None:
         "resolved absolute curve is recorded in run_config.json.",
     )
     parser.add_argument(
+        "--miso-coal-night-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MISO P1-native regulated-coal WITHIN-RUN NIGHT floor (miso-113): "
+        "hold each regulated PRB/subbituminous plant at its OWN measured "
+        "within-run night level (night_p50, frozen artifact "
+        "coal_prb_committed_split_MISO.csv) over the P0-detected committed "
+        "run, NET of that plant's own _mustrun band so the plant total is "
+        "exactly night_p50 x capacity and never mustrun + night (rule 19). "
+        "The successor to the rejected offer-side arms "
+        "coal_prb_committed_dispatchable (miso-111) and "
+        "coal_prb_committed_split (miso-112) - a floor, not a second price.",
+    )
+    parser.add_argument(
         "--nyiso-gas-commitment-bridge",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11050,6 +11071,7 @@ def main() -> None:
         reliability_floor_overrides=reliability_floor_overrides,
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
+        miso_coal_night_floor=args.miso_coal_night_floor,
         nyiso_gas_bridge_cc_min_load_frac=args.nyiso_gas_bridge_cc_min_load_frac,
         nyiso_gas_bridge_st_min_load_frac=args.nyiso_gas_bridge_st_min_load_frac,
         nyiso_gas_bridge_startup=args.nyiso_gas_bridge_startup,

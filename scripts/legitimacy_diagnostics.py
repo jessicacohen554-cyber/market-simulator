@@ -97,6 +97,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CT_NETLOAD_DRAG,
     MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
+    MECH_MISO_COAL_NIGHT_FLOOR,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
     MECH_HYDRO_ROR_FLAT,
@@ -463,6 +464,47 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   P0 run pattern plus the two measured class constants, which re-derive
     #   only on a CAMPD vintage change (rules 13/23).
     (MECH_NYISO_GAS_COMMITMENT_BRIDGE, "CT_PEAKER"): (0, 24),
+    # miso_coal_night_floor (miso-113, MECH_MISO_COAL_NIGHT_FLOOR —
+    # pipeline.commitment.build_miso_coal_night_floor_p1_prep): the P1-native
+    # within-run NIGHT floor on MISO's regulated PRB/subbituminous coal fleet,
+    # the successor to the two REJECTED offer-side arms (miso-111
+    # coal_prb_committed_dispatchable, miso-112 coal_prb_committed_split).
+    # COAL_PRB is a MATERIAL class (>= 2 % of MISO load), so under rule 20
+    # [R-FORCED-BUDGET] this row is the escalation path a forced share above
+    # the 30 % cap is scored on — it must exist, and it is keyed on the
+    # mechanism alone so the row appears whichever coal class label the
+    # bundle's attribution carries. Rule-12/17 declaration:
+    # * WINDOW — self-windowing by construction, ALL 24 hours by driver. The
+    #   floor exists ONLY inside a P0-detected committed RUN of the plant's
+    #   own `_committed` tranche (the ercot141 online-hours leg), or inside an
+    #   idle gap shorter than that unit's physical min-down — a restart bar,
+    #   not a commitment choice. There is no clock-hour rule anywhere in it,
+    #   so no hour of day is declared off; and because the runs come from the
+    #   MODEL's own P0 pattern, a plant the model has offline is never
+    #   floored. The mechanism cannot start a unit, only refuse to let one
+    #   sink below its measured night level while it is already running —
+    #   which is why it cannot reproduce the failure mode rule 17 exists to
+    #   catch (a floor asserting output in hours its driver says the class is
+    #   offline).
+    # * DRIVER — regulated SELF-COMMITMENT. MISO SOM Table 7: 53-56 % of coal
+    #   starts in the training window are self-committed rather than
+    #   market-committed, i.e. the commitment decision is made by a
+    #   cost-of-service owner outside the energy market's economics, which is
+    #   exactly the decision an economic LP cannot represent. Population =
+    #   the EIA-860 regulated / cost-of-service-majority set
+    #   (eia860_selfcommit_scope_plants), the same scope the take-or-pay
+    #   discount already uses.
+    # * LEVEL — each plant's OWN measured within-run night loading
+    #   (night_p50 = p50 of load/HSL over online hours h0-5, pooled 2023-2025,
+    #   WP-3 loading-when-on), NET of that plant's own `_mustrun` band so the
+    #   plant TOTAL is exactly night_p50 x capacity and never mustrun + night
+    #   (rule 19 [R-ONE-MECH]); composed by MAXIMUM against reliability_floor,
+    #   so the two can never sum on a shared unit-hour.
+    # * FORWARD STORY — regenerates in any forecast year from that year's own
+    #   P0 run pattern plus the frozen measured level, which re-derives only
+    #   on a CAMPD vintage change (rule 23 [R-FROZEN-DERIVE],
+    #   scripts/data/derive_prb_committed_split.py).
+    (MECH_MISO_COAL_NIGHT_FLOOR, None): (0, 24),
     # hydro_min_flow (caiso-124, MECH_HYDRO_MIN_FLOW — data.hydro.
     # build_hydro_fleet / allocate_min_flow_floor -> FleetArrays.min_gen): the
     # conventional-hydro minimum-flow floor. Rule-12/17 declaration:
