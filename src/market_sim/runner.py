@@ -72,6 +72,7 @@ from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
     resolve_fuel_prices,
+    resolve_gas_scenario_path,
 )
 from market_sim.data.curtailment_share import forecast_wtx_curtail_multipliers
 from market_sim.data.renewables import (
@@ -1463,7 +1464,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 iso,
                 year,
                 carbon_price=resolve_carbon_price(config, year),
-                gas_scenario=config.gas_price_path,
+                # Audit FR-9 (fixed FFR-2A): the seam prices off the SAME
+                # trajectory the ISO's own gas does. A T1-X/T1-FF crossover's
+                # forward years resolve to crossover_forward_gas_path; every
+                # other run resolves to config.gas_price_path, unchanged.
+                # Before this the seam took gas_price_path unconditionally, so
+                # a crossover forward year priced its imports off the realized
+                # hindcast path (KeyError on "hindcast_realized", whose keys
+                # stop at 2025) — a measured input reaching a forward year,
+                # rule 13 [R-MEASURED].
+                gas_scenario=resolve_gas_scenario_path(config, year),
                 net_load=_interchange_net_load,
             )
             wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(

@@ -544,6 +544,151 @@ def assert_pipeline_from_vintage(
     return violations
 
 
+def assert_neighbor_seam_drivers(
+    config: ScenarioConfig, forward_years: list[int]
+) -> list[str]:
+    """Assert the NEIGHBOR-PRICE seam prices forward years on forward gas.
+
+    The import/export seam is a second gas consumer beside the ISO's own fuel
+    (``runner.py`` → ``model.interchange.apply_interchange_injections`` →
+    ``data.neighbor_price``), and audit FR-9 found it blind to the crossover
+    boundary: it took ``config.gas_price_path`` unconditionally, so a forward
+    year priced its imports off the realized hindcast path. Both callers now
+    resolve through :func:`~market_sim.data.fuel.resolve_gas_scenario_path`;
+    this asserts the end-to-end consequence — for every armed seam neighbor,
+    the delivered gas the seam will actually charge in year ``y`` equals the
+    declared forward trajectory, and (when the two paths differ) is NOT the
+    realized path's value.
+
+    Only ARMED seams are asserted: the generic reference-price interface
+    (``reference_price_interface``, non-CAISO) and CAISO's two dedicated
+    ladders (``caiso_reference_price_seam`` / ``caiso_intertie_reference_price``).
+    A run with no armed seam never reaches the priced code path, so there is
+    nothing to assert — that is precisely the state the FFR-2A diagnosis found
+    the FF-2D MISO crossover in.
+
+    Args:
+        config: The resolved crossover/full-forward config.
+        forward_years: Solve years at/above the boundary.
+
+    Returns:
+        Violation strings (empty when clean).
+    """
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+    from market_sim.data.fuel import _hold_flat_extrapolate, resolve_gas_scenario_path
+    from market_sim.data.neighbor_price import neighbor_gas_price
+    from market_sim.model.interchange.spec import CAISO_PER_HUB_NEIGHBORS
+
+    from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
+
+    iso = config.iso
+    specs: list[tuple[str, object]] = []
+    if getattr(config, "reference_price_interface", False) and iso != "CAISO":
+        specs += [(n.name, n) for n in INTERFACE_NEIGHBORS.get(iso, [])]
+    if iso == "CAISO" and (
+        getattr(config, "caiso_reference_price_seam", False)
+        or getattr(config, "caiso_intertie_reference_price", False)
+    ):
+        specs += list(CAISO_PER_HUB_NEIGHBORS.items())
+    if not specs:
+        return []
+
+    violations: list[str] = []
+    for y in forward_years:
+        path = resolve_gas_scenario_path(config, y)
+        if path != config.crossover_forward_gas_path:
+            violations.append(
+                f"{y}: neighbor seam would price gas on {path!r}, not the "
+                f"declared forward path {config.crossover_forward_gas_path!r}"
+            )
+            continue
+        fwd = _hold_flat_extrapolate(HENRY_HUB_TRAJECTORIES[path], y)
+        realized = _hold_flat_extrapolate(
+            HENRY_HUB_TRAJECTORIES[config.gas_price_path], y
+        )
+        for name, spec in specs:
+            try:
+                got = neighbor_gas_price(spec, y, path)
+            except (KeyError, TypeError) as e:
+                violations.append(
+                    f"{y}: neighbor seam {name} failed to price gas on "
+                    f"{path!r} ({type(e).__name__}: {e})"
+                )
+                continue
+            basis = float(getattr(spec, "gas_basis", 0.0))
+            if abs(got - (fwd + basis)) > 1e-9:
+                violations.append(
+                    f"{y}: neighbor seam {name} gas {got:.3f} != forward path "
+                    f"{path} {fwd + basis:.3f}"
+                )
+            if config.gas_price_path != path and abs(got - (realized + basis)) <= 1e-9:
+                violations.append(
+                    f"{y}: neighbor seam {name} still on realized path "
+                    f"{config.gas_price_path} (backcast-gated fuel leaked)"
+                )
+    return violations
+
+
+def assert_no_measured_overlays(config: ScenarioConfig) -> list[str]:
+    """Assert no measured (backcast-only) overlay is armed on a forward run.
+
+    Belt-and-braces with the two landed guards this deliberately duplicates —
+    ``ScenarioConfig.__post_init__``'s ``_BACKCAST_ONLY_OVERLAY_FIELDS`` refusal
+    (FFR-1D) and FFR-1B's ``mode == "backcast"`` gate on the ``weather_year``-
+    keyed measured single-event derate table. Both live far from the harness;
+    this states the harness's own contract at run time, so a future loosening
+    of either surfaces here as a leakage-guard violation on the very runs whose
+    validity depends on it, rather than as a silently plausible number.
+
+    Three checks:
+
+    (a) no ``_BACKCAST_ONLY_OVERLAY_FIELDS`` member is armed (each is a
+        specific year's published record with no forward edition — rule 13
+        ``[R-MEASURED]``);
+    (b) ``outage_source`` is not the measured ``"historic"`` record;
+    (c) the ``weather_year`` pin sits strictly BELOW the forward boundary on a
+        T1-X crossover. Every ``weather_year``-keyed lookup (the measured
+        derate table, the temperature/ambient derate 8760s) then refers to a
+        realized year the run is entitled to, and the forward years take the
+        pinned weather shape by declared construction rather than by reaching
+        for a measured record of their own. A T1-FF full-forward run is exempt
+        by construction: its boundary IS its base year, so weather_year ==
+        crossover_forward_year is that harness's contract (FH-1, plan §2.1).
+
+    Args:
+        config: The resolved crossover/full-forward config.
+
+    Returns:
+        Violation strings (empty when clean).
+    """
+    from market_sim.config.scenarios import (
+        _BACKCAST_ONLY_OUTAGE_SOURCE,
+        _BACKCAST_ONLY_OVERLAY_FIELDS,
+    )
+
+    violations = [
+        f"measured overlay {name} armed on a forward run ({why})"
+        for name, why in _BACKCAST_ONLY_OVERLAY_FIELDS.items()
+        if getattr(config, name, None) not in (None, False)
+    ]
+    if config.outage_source == _BACKCAST_ONLY_OUTAGE_SOURCE:
+        violations.append(
+            f'outage_source="{_BACKCAST_ONLY_OUTAGE_SOURCE}" (the ISO\'s '
+            "measured outage record) armed on a forward run"
+        )
+    if (
+        not config.is_full_forward_hindcast
+        and config.crossover_forward_year is not None
+    ):
+        if int(config.weather_year) >= int(config.crossover_forward_year):
+            violations.append(
+                f"weather_year {config.weather_year} is at/above the forward "
+                f"boundary {config.crossover_forward_year}: the weather pin "
+                "must sit in the realized window (plan §2.2)"
+            )
+    return violations
+
+
 def assert_forward_drivers(
     config: ScenarioConfig, start_year: int, end_year: int
 ) -> list[str]:
@@ -569,7 +714,12 @@ def assert_forward_drivers(
         below the trajectory's earliest knot), surfaced here as a violation
         rather than an unhandled exception;
     (c) when the forward path differs from ``gas_price_path``, the resolved
-        value is NOT the realized path's (backcast-gated fuel leak).
+        value is NOT the realized path's (backcast-gated fuel leak);
+    (d) the NEIGHBOR-PRICE seam — the ISO's own fuel was never the only gas
+        consumer — prices those same years on the same forward trajectory
+        (:func:`assert_neighbor_seam_drivers`; audit FR-9, FFR-2A);
+    (e) no measured backcast-only overlay is armed, including the
+        ``weather_year``-keyed ones (:func:`assert_no_measured_overlays`).
 
     Returns violations (empty when clean); no-op for a plain hindcast. Called
     BEFORE the solve (fail fast — a leaked window must not burn a multi-hour
@@ -585,6 +735,9 @@ def assert_forward_drivers(
 
     basis = GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
     violations: list[str] = []
+    # The solved forward years, collected as the loop clears each one's bridge
+    # check, so the seam assertion (d) covers exactly the same set.
+    forward_years: list[int] = []
     for y in range(max(start_year, config.crossover_forward_year), end_year + 1):
         if y in HINDCAST_BRIDGE_YEARS and not (
             # A crossover forward year >= 2026 is un-bridged (solved); a
@@ -593,6 +746,7 @@ def assert_forward_drivers(
             y >= CROSSOVER_FORWARD_YEAR and config.is_crossover_forward_year(y)
         ):
             continue
+        forward_years.append(y)
         if not config.is_crossover_forward_year(y):
             violations.append(
                 f"{y}: not flagged as a crossover-forward year (the measured "
@@ -626,6 +780,8 @@ def assert_forward_drivers(
                 f"{y}: forward gas still on realized path "
                 f"{config.gas_price_path} (backcast-gated fuel leaked)"
             )
+    violations += assert_neighbor_seam_drivers(config, forward_years)
+    violations += assert_no_measured_overlays(config)
     return violations
 
 
