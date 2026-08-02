@@ -70,8 +70,15 @@ TRAIN_WINDOW_HH: dict[int, float] = {2023: 2.54, 2024: 2.19, 2025: 3.52}
 # exact delivered-gas series the registered offer_curve_by_group multipliers
 # were calibrated against (rule 24 — anchors never cross ISO boundaries).
 GAS_SERIES_FLAGS: dict[str, dict[str, bool]] = {
-    # ERCOT keeper (ercot99): annual Henry Hub + seasonality only — no monthly
-    # actuals, no hub-basis overlay (E1: ERCOT stays on annual + shape).
+    # ERCOT keeper (ercot99, still the ercot149 lineage's series): annual Henry
+    # Hub + seasonality only — no monthly actuals, no hub-basis overlay (E1:
+    # ERCOT stays on annual + shape). The keeper's gas_hh_monthly_shape /
+    # gas_daily_shape are exactly mean-preserving (hour-weighted monthly shape;
+    # per-month daily shape), so the ANNUAL mean — hence the anchor — is
+    # identical without them. Its ercot_zonal_gas_basis arming is deliberately
+    # NOT here: that flag also perturbs _gas_series itself (the flat EP level
+    # term), so it is handled via ZONAL_FLAG_PERTURBS_SERIES — the base series
+    # keeps this recipe and the applier call carries the keeper's arming.
     "ERCOT": {
         "gas_seasonality": True,
     },
@@ -149,7 +156,7 @@ def derive_anchor(iso: str) -> tuple[dict[int, float], float]:
 #: unit fuel IS the ISO series, so its single anchor is already identified at
 #: the grain the mechanism's own definition requires. Rule 25 — an entry here is
 #: that ISO's own measured basis table and never transfers.
-ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM"})
+ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM", "ERCOT"})
 
 #: The subset of :data:`ZONAL_BASIS_ISOS` whose applier is the shared
 #: CAPACITY-WEIGHTED MEAN-ZERO core (``data.fuel.basis.meanzero``): the raw
@@ -163,7 +170,35 @@ ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM"})
 #: the same reconstruction every no-LP pre-check uses). NYISO's applier is
 #: absolute (reference-zone-anchored offsets, no weighting), so its synthetic
 #: one-row-per-zone fleet measures the transform exactly and needs no bundle.
-CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM"})
+#: ERCOT's applier (``basis.ercot.apply_ercot_zonal_gas_basis``) is its own
+#: module, not the ``meanzero`` core, but it re-centres the same way (the
+#: per-zone EIA-923 basis minus the gas-capacity-weighted fleet mean) and ADDS
+#: a flat measured LEVEL correction (the TX delivered-to-electric-power basis
+#: replacing the flat GAS_BASIS_DIFFERENTIAL scalar), so it belongs here: the
+#: transform depends on the solve's own per-zone gas capacity.
+CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM", "ERCOT"})
+
+#: ISOs whose zonal-basis config flag ALSO perturbs the ISO-level series
+#: :func:`derive_anchor` reads: ``ercot_zonal_gas_basis`` adds the flat
+#: EP-basis level correction inside ``_gas_series`` itself (the coal-sigmoid
+#: reference path, ``trajectories.py``), while the merit order receives the
+#: SAME correction exactly once — from ``apply_ercot_zonal_gas_basis`` on the
+#: ``(n_gen, T)`` array. Arming the flag on the config the BASE series is read
+#: with would therefore double-count the level term. For these ISOs the base
+#: series keeps the registered ISO-anchor recipe (:data:`GAS_SERIES_FLAGS`,
+#: flag off) and the APPLIER call uses the reconstructed keeper config — which
+#: arms the flag exactly as the solve did, haircut/floor arming included. PJM's
+#: and NYISO's flags never touch ``_gas_series``, so they stay in
+#: :data:`GAS_SERIES_FLAGS` and their paths are unchanged.
+ZONAL_FLAG_PERTURBS_SERIES: frozenset[str] = frozenset({"ERCOT"})
+
+#: Per-ISO flags the reconstructed weights bundle MUST arm for the zonal
+#: derivation to be measuring the keeper's own transform (checked on the
+#: reconstructed config, hard-fail on drift — the GAS_SERIES_FLAGS contract
+#: extended to flags that live outside the base-series recipe).
+ZONAL_KEEPER_REQUIRED_FLAGS: dict[str, tuple[str, ...]] = {
+    "ERCOT": ("ercot_zonal_gas_basis",),
+}
 
 
 def derive_zonal_anchors(
@@ -240,6 +275,7 @@ def derive_zonal_anchors(
             )
         from scripts.lib.bundle_fleet import reconstruct_bundle_fleet
 
+        empty_zone_years: dict[str, list[int]] = {z: [] for z in zone_names}
         for year, hh in sorted(TRAIN_WINDOW_HH.items()):
             state, meta = reconstruct_bundle_fleet(
                 Path(weights_bundle), year, verbose=True
@@ -263,23 +299,67 @@ def derive_zonal_anchors(
                         "deriving (rule 24: the anchor is identified on the "
                         "keeper's own delivered series)"
                     )
+            # Flags outside the base-series recipe the keeper must still arm
+            # (e.g. the zonal-basis gate itself): without them the applier
+            # below would no-op and every "zone anchor" would silently equal
+            # the ISO anchor — measuring nothing.
+            for flag in ZONAL_KEEPER_REQUIRED_FLAGS.get(iso, ()):
+                if bool(getattr(rec_cfg, flag, False)) is not True:
+                    raise SystemExit(
+                        f"--weights-bundle does not arm {flag}: the {iso} "
+                        "keeper does not apply the per-zone basis this "
+                        "derivation measures — there is no zonal anchor to "
+                        "derive from this bundle"
+                    )
             cfg = base.with_overrides(gas_price_override=hh)
             series = _gas_series(cfg, year, HOURS_PER_YEAR)
             n_gen = int(fleet.pmax.shape[0])
             prices = np.repeat(series[None, :], n_gen, axis=0)
-            apply_basis(prices, fleet, cfg, year)
+            # The applier call carries the RECONSTRUCTED KEEPER config for the
+            # ISOs whose zonal flag also perturbs _gas_series (the base series
+            # above deliberately keeps the registered ISO-anchor recipe so the
+            # level term enters exactly once, from the applier — mirroring the
+            # merit path); elsewhere the recipe config already arms the flag.
+            apply_cfg = rec_cfg if iso in ZONAL_FLAG_PERTURBS_SERIES else cfg
+            apply_basis(prices, fleet, apply_cfg, year)
             gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
             for i, zone in enumerate(zone_names):
                 rows = gas_rows[fleet.zone_idx[gas_rows] == i]
                 if rows.size == 0:
-                    raise SystemExit(
-                        f"{zone}: no gas rows in the {year} weights fleet — "
-                        "cannot read the zone's transformed delivered level"
-                    )
+                    # A zone with no gas capacity has no unit to anchor — its
+                    # map entry would be dead weight (assembly.py keeps the
+                    # window anchor for zones absent from the map). Dropped
+                    # AFTER the year loop, and only if empty in EVERY year.
+                    empty_zone_years[zone].append(year)
+                    continue
                 # Every gas row in a zone carries the same additive spread, so
-                # the first row IS the zone's transformed series.
-                by_zone[zone][year] = float(np.nanmean(prices[rows[0]]))
+                # the first row IS the zone's transformed series — guarded: a
+                # per-UNIT transform (e.g. an armed per-plant contract haircut)
+                # would break the zone grain this table is keyed on.
+                row_means = np.nanmean(prices[rows, :], axis=1)
+                if float(np.ptp(row_means)) > 1e-9:
+                    raise SystemExit(
+                        f"{zone} {year}: gas rows in one zone carry DIFFERENT "
+                        "transformed delivered levels (max-min "
+                        f"{float(np.ptp(row_means)):.6f} $/MMBtu) — the "
+                        "keeper's transform is per-unit, not per-zone, and a "
+                        "zone-keyed anchor table cannot represent it"
+                    )
+                by_zone[zone][year] = float(row_means[0])
             del state, prices
+        for zone, missing in empty_zone_years.items():
+            if missing and len(missing) != len(TRAIN_WINDOW_HH):
+                raise SystemExit(
+                    f"{zone}: gas rows present in some years but none in "
+                    f"{missing} — inconsistent weights fleet"
+                )
+            if missing:
+                print(
+                    f"  [{zone}: no gas capacity in any training year — "
+                    "omitted from the table; zones absent from the map keep "
+                    "the ISO window anchor]"
+                )
+                del by_zone[zone]
     else:
         from market_sim.data.fleet import FleetArrays
 
@@ -405,7 +485,8 @@ def main() -> None:
         metavar="BUNDLE",
         help="Keeper bundle whose per-year fleet supplies the gas-capacity "
         "weights (REQUIRED with --by-zone for the capacity-weighted mean-zero "
-        "ISOs, e.g. results/calibration/pjm143_hy_level_B for PJM; rebuilt "
+        "ISOs, e.g. results/calibration/pjm143_hy_level_B for PJM or "
+        "results/calibration/ercot149_gas_event_cap_arm for ERCOT; rebuilt "
         "no-LP via scripts.lib.bundle_fleet.reconstruct_bundle_fleet).",
     )
     args = parser.parse_args()
