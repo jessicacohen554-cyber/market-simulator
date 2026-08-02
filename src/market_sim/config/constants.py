@@ -568,20 +568,49 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # uplift). Resolving the anchor per zone restores the mechanism's own identity
 # in every zone; the reference zone's value is the ISO anchor unchanged.
 #
-# Values are the derive script's output 2026-08-01
-# (``scripts/data/derive_gas_offer_margin_anchor.py --iso NYISO --by-zone``),
+# Values are the derive script's output
+# (``scripts/data/derive_gas_offer_margin_anchor.py --iso <ISO> --by-zone``),
 # which applies the RUNTIME zonal-basis transform to the same delivered series
 # over the same 2023-2025 training window, so these are by construction the
-# levels the solve prices those zones' gas units at:
+# levels the solve prices those zones' gas units at.
+#
+# NYISO (nyiso-109, derived 2026-08-01) — reference-zone convention
+# (``apply_nyiso_zonal_gas_basis`` holds Capital_Hudson / Iroquois Z2 at 0 and
+# shifts every other zone DOWN), so the ISO anchor is the reference level and
+# the pre-fix defect was one-sided over-marking:
 #   Capital_Hudson / Lower_Hudson / Long_Island  3.9046 = mean(3.3566, 2.7969,
 #     5.5602) — the reference hub, identical to the ISO anchor.
 #   NYC          2.7612 = mean(2.0166, 2.0869, 4.1802) — Transco Z6 NY.
 #   Upstate_West 2.0346 = mean(1.8966, 1.7269, 2.4802) — Tenn Z4 200L.
+#
+# PJM (pjm-144, derived 2026-08-02) — capacity-weighted MEAN-ZERO convention
+# (``apply_pjm_zonal_gas_basis`` -> the ``basis.meanzero`` core subtracts the
+# GAS-CAPACITY-weighted fleet mean of the per-zone basis, so the ISO anchor is
+# the fleet centroid and the pre-fix defect was TWO-SIDED: premium eastern
+# zones under-marked, discount western zones over-marked). Because the runtime
+# transform depends on the fleet's per-zone gas capacity, the derive carries
+# the keeper's own per-year fleet weights:
+# ``--weights-bundle results/calibration/pjm143_hy_level_B`` (rebuilt no-LP via
+# scripts.lib.bundle_fleet.reconstruct_bundle_fleet; per-year capacity-weighted
+# means removed: -0.105 / +0.169 / +0.239 $/MMBtu). Basis source is the
+# committed per-zone EIA delivered-to-electric-power table
+# data/raw/pjm_zonal_gas_hub.csv:
+#   PJM_SWMAAC     4.4328 = mean(3.7841, 3.6357, 5.8786) — Transco Z6 (MD).
+#   PJM_Dominion   3.8798 = mean(4.1211, 3.3207, 4.1976) — Transco Z6/TETCO M3 (VA).
+#   PJM_EMAAC      3.4898 = mean(3.0401, 2.8117, 4.6176) — Transco Z6 non-NY (NJ).
+#   PJM_ComEd      3.2575 = mean(3.2521, 2.8067, 3.7136) — Chicago Citygate (IL).
+#   PJM_AEP_Ohio   3.1201 = mean(3.1141, 2.7427, 3.5036) — Appalachian (OH).
+#   PJM_ATSI       3.1201 = mean(3.1141, 2.7427, 3.5036) — Appalachian (OH).
+#   PJM_Central_PA 2.9708 = mean(2.9281, 2.5497, 3.4346) — TETCO M3 (PA).
+#   PJM_West_APS   2.9495 = mean(2.7871, 2.5917, 3.4696) — Appalachian (WV).
+#
 # An identification constant, not a tunable: rule 23 [R-FROZEN-DERIVE], it
-# re-derives ONLY when the gas source data or the per-zone hub table changes,
-# never because a price residual moved. ISOs absent from the registry hard-fail
-# when the zonal gate is armed (never a silent fallback — rule 24), and a zone
-# table is that ISO's own measured basis and never crosses a boundary (rule 25).
+# re-derives ONLY when the gas source data, the per-zone hub table, or (for a
+# capacity-weighted ISO) the keeper fleet recipe the weights are read from
+# changes, never because a price residual moved. ISOs absent from the registry
+# hard-fail when the zonal gate is armed (never a silent fallback — rule 24),
+# and a zone table is that ISO's own measured basis and never crosses a
+# boundary (rule 25).
 GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
     "NYISO": {
         "Upstate_West": 2.0346,
@@ -589,6 +618,16 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
         "Lower_Hudson": 3.9046,
         "NYC": 2.7612,
         "Long_Island": 3.9046,
+    },
+    "PJM": {
+        "PJM_ComEd": 3.2575,
+        "PJM_AEP_Ohio": 3.1201,
+        "PJM_ATSI": 3.1201,
+        "PJM_West_APS": 2.9495,
+        "PJM_Central_PA": 2.9708,
+        "PJM_Dominion": 3.8798,
+        "PJM_EMAAC": 3.4898,
+        "PJM_SWMAAC": 4.4328,
     },
 }
 

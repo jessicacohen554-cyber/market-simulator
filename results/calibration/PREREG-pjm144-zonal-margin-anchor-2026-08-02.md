@@ -90,24 +90,36 @@ ComEd +0.010, AEP_Ohio/ATSI −0.127, Central_PA −0.277, West_APS −0.298 —
 
 | zone | 2023 | 2024 | 2025 | **anchor** | vs ISO 3.3483 |
 |---|---|---|---|---|---|
-| PJM_SWMAAC | {SW23} | {SW24} | {SW25} | **{SWA}** | {SWD} |
-| PJM_Dominion | {DO23} | {DO24} | {DO25} | **{DOA}** | {DOD} |
-| PJM_EMAAC | {EM23} | {EM24} | {EM25} | **{EMA}** | {EMD} |
-| PJM_ComEd | {CO23} | {CO24} | {CO25} | **{COA}** | {COD} |
-| PJM_AEP_Ohio | {AE23} | {AE24} | {AE25} | **{AEA}** | {AED} |
-| PJM_ATSI | {AT23} | {AT24} | {AT25} | **{ATA}** | {ATD} |
-| PJM_Central_PA | {CP23} | {CP24} | {CP25} | **{CPA}** | {CPD} |
-| PJM_West_APS | {WA23} | {WA24} | {WA25} | **{WAA}** | {WAD} |
+| PJM_SWMAAC | 3.7841 | 3.6357 | 5.8786 | **4.4328** | +1.0845 |
+| PJM_Dominion | 4.1211 | 3.3207 | 4.1976 | **3.8798** | +0.5315 |
+| PJM_EMAAC | 3.0401 | 2.8117 | 4.6176 | **3.4898** | +0.1415 |
+| PJM_ComEd | 3.2521 | 2.8067 | 3.7136 | **3.2575** | −0.0909 |
+| PJM_AEP_Ohio | 3.1141 | 2.7427 | 3.5036 | **3.1201** | −0.2282 |
+| PJM_ATSI | 3.1141 | 2.7427 | 3.5036 | **3.1201** | −0.2282 |
+| PJM_Central_PA | 2.9281 | 2.5497 | 3.4346 | **2.9708** | −0.3775 |
+| PJM_West_APS | 2.7871 | 2.5917 | 3.4696 | **2.9495** | −0.3989 |
 
-Consistency stat (the mean-zero invariant): the gas-capacity-weighted mean of
-the zone anchors is **{CAPW}** against the ISO anchor 3.3483 — the aggregate
-identification point is preserved and only the cross-section moves, exactly as
-the applier's construction requires.
+Three zones sit above the ISO anchor and five below — the two-sided geometry
+§1.2 predicted from the applier's construction. The per-year
+capacity-weighted means the applier removes are −0.105 / +0.169 / +0.239
+$/MMBtu (2023/2024/2025) — materially different from zero AND year-varying,
+which is why the derivation carries the keeper's own fleet weights rather
+than a synthetic unweighted mean (whose error — up to 0.106 $/MMBtu in 2025,
+larger than the inertness bar itself — would have shifted every anchor
+uniformly off the solve's own levels). Consistency stat (the mean-zero
+invariant): the gas-capacity-weighted mean of the zone anchors is **3.3483,
+Δ +0.0000** against the ISO anchor (window-mean weights; the invariant is
+exact per-year, so the residual is year-to-year weight drift only, which
+rounds away at 4 decimals — full record, including per-zone gas capacities
+and the 986/994/993 marked-up-tranche census with 0 band-scoped anchors, in
+`results/calibration/_pjm144_zonal_anchor_derivation.json`) — the aggregate
+identification point is preserved and only the cross-section moves, exactly
+as the applier's construction requires.
 
 **Inertness bar (pre-declared in the handoff): if every zone anchor were
 within ~0.1 $/MMBtu of 3.3483 the arm would be recorded `I` ex-ante with no
-solve spent.** Result: max |anchor − 3.3483| = **{MAXD}** $/MMBtu — the arm is
-**LIVE** and the A/B proceeds.
+solve spent.** Result: max |anchor − 3.3483| = **1.0845** $/MMBtu (SWMAAC),
+with 7 of 8 zones beyond the bar — the arm is **LIVE** and the A/B proceeds.
 
 ### 1.4 What the ISO-level identification misprices today
 
