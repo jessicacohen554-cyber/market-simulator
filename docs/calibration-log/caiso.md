@@ -4876,3 +4876,80 @@ gitignored and dies with the container; `fetch_caiso_public_bids.py` with no
 arguments regenerates it in ~3 h. Background processes do NOT survive session
 idle here — the fetch was reaped mid-run and had to be resumed in foreground
 chunks.
+
+## 2026-08-02 — CROSS-ISO — caiso-154: the caiso-153 OLS-attenuation defect is NOT LIVE in PJM or NEISO — the estimator family is structurally absent; the counterfactual transplant is refuted on PJM and data-real-but-admissible on NEISO; all three committed artifacts REPRODUCE; one NEW NEISO tail-sensitivity exposure filed
+
+Adjudicates the `FINDING-caiso153` §H cross-ISO lead. **No LP; nothing
+registered; no derive modified; no artifact rewritten; keepers unchanged**
+(CAISO `2026-07-31-caiso153-reid-b`, PJM `2026-07-31-pjm-143b-hy-level`,
+NEISO `2026-07-31-neiso-72-hy-window`). Pre-registered
+(`PREREG-caiso154-xiso-ols-attenuation-2026-08-02.md`, pushed before any
+estimator value on the session's corpora existed; no addendum needed).
+Explicitly NOT a re-test of the adjudicated `measured_offer_surface` cells
+(PJM `R`, NEISO `I`) — an input-standing audit, the caiso-152/153 class.
+Rule-22 state re-verified and corrected against the handoff prompt: PJM and
+NEISO each hold a `complete` marker; CAISO none; no `final` anywhere; the
+holdout spend freeze is ACTIVE. Instrument:
+`scripts/probes/_caiso154_ols_attenuation_xiso.py` (imports the caiso-153
+core — `_fit`/`_score_resources` — parameterized by ISO, not forked).
+
+**The verdict, in four measured layers** (full write-up:
+`results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`):
+
+1. **L1 structural (disclosed ex ante in the PREREG): FALSE in both ISOs.**
+   No PJM/NEISO offer-surface derive contains ANY regression estimator — all
+   three artifacts are per-unit median-of-daily-ratio ladders with physics
+   segmentation. §H's "same family" premise was imprecise: the shared element
+   is the fuel normalization, not the estimator. Neither top-of-curve surface
+   is armed in its keeper; the one live artifact is the PJM midcurve.
+2. **M2 counterfactual transplant of the CAISO classifier, on each ISO's own
+   corpus + fuel (full refetch: PJM 36/36 months; NEISO 1,058 days — the
+   committed coverage exactly).** PJM: REFUTED — every OLS body-probe cell
+   admissible ($6.3–7.8 |L| vs the $20 bar), slope p50 moves <0.75 OLS→TS,
+   the impossible r≥0.6/slope<4 set does NOT deflate under TS, and the
+   hr-cut split misbuckets 6–11 GW of physics-CC under EVERY estimator; OLS
+   costs only split-half precision (1.9–2.8 vs 0.2–0.45; 53 % of regressor
+   variance sits in 11 Jan-2024/-25 days). NEISO: the caiso-153 signature IS
+   data-real in miniature (slope p50 7.4–8.1 OLS → 9.4–10.2 TS; |L| ~2×
+   TRIM's; the 630 MW physics-fast-start pool splits 303/327 under OLS where
+   TS puts all of it ≥8.5 — the CT-bucket collapse reproduced) — but every
+   OLS body cell stays ADMISSIBLE ($15.2–15.7), so the family's own bar
+   would not have tripped even transplanted.
+3. **M4 reproducibility (anti-caiso-152, never before run for these lanes):
+   ALL THREE artifacts reproduce** — the ARMED PJM midcurve BYTE-IDENTICALLY
+   (1,152/1,152 leaves), PJM top to 0.016 % and NEISO top to 0.023 % (the
+   declared injected-basis rounding; the recorded fleet bundles are absent
+   from the container, so the fleet-replay leg is blocked and reported).
+4. **M3 tail-exclusion at the pre-registered 10 % bar:** PJM ROBUST (max
+   4.8 %). **NEISO TRIPS: 4/42 consumed leaves move +10.1..+13.1 %** —
+   the q0.7/q0.9 rungs of net-load bins 1–3 RISE when the 34 fuel-tail days
+   are excluded (Feb-2023 arctic week + the Dec-2025 plateau, where the
+   Algonquin series holds a single Wednesday $25.00 print ffilled for 28
+   days). The tight-bin "fast-start wall" is attenuated LOW by
+   oil-parity/capped offers divided by spike gas — the ratio analogue of
+   caiso-153. Filed as a NEW unowned NEISO exposure, FILE-AND-STOP per the
+   PREREG: unarmed artifact (neiso-58 dormancy stands), no keeper moved,
+   actionable only through the oil-parity/DA-bid charter NEISO's frontier
+   note already requires.
+
+Matrix duties done in-session: cross-ISO header block + `measured_offer_surface`
+ev/note appended for P and Q (cells stay `KKRUUI`);
+`check_mechanism_matrix.py` green. Cross-reference stubs in
+`docs/calibration-log/pjm.md` and `docs/calibration-log/neiso.md`.
+
+**DO-NOT-REDO (caiso-154, binding — full list `FINDING-caiso154` §H):** do
+not quote any M2 cell as measured PJM/NEISO conduct in absolute terms (only
+contrasts, gate populations, confusions); do not re-run the counterfactual
+grid to "select" an estimator for PJM/NEISO — nothing consumes a slope there,
+and a slope-based identification would be a NEW mechanism owing its own
+charter that inherits the measured warning that hr-cut misbuckets PJM under
+every estimator; do not treat the NEISO §F exposure as licence to re-derive
+the NEISO surface (tail-excluded, re-normalized, or re-estimated) outside its
+charter; do not read the M4 reproductions as a standing guarantee (they
+certify current artifacts against current endpoints); do not re-litigate the
+PJM `R` / NEISO `I` mechanism verdicts on anything here. Environment note:
+the PJM/NEISO offer corpora are gitignored and die with the container —
+refetch ≈65 min (PJM) / ≈3.5 h (NEISO) with one fetcher per year (a
+shared-years invocation races year-scoped ones on the same files).
+
+Next number: caiso-155.
