@@ -142,6 +142,68 @@ class TestAdderSource:
         assert res.price_adder == 0.0
 
 
+class TestPjmGatedAllowance:
+    """pjm-146 gated PJM RGGI adder (PREREG-pjm146-rggi-allowance §2)."""
+
+    def test_default_off_keeps_pjm_adder_zero(self):
+        # The incumbent no-op: PJM has a program but no price series, so the
+        # adder is $0 under the default-True state_carbon_pricing flag.
+        res = resolve_carbon_program(ScenarioConfig(iso="PJM", mode="backcast"), 2024)
+        assert res is not None
+        assert res.price_adder == 0.0
+
+    @pytest.mark.parametrize(
+        "year,expected", [(2023, 14.87), (2024, 22.83), (2025, 24.35)]
+    )
+    def test_gate_arms_metric_converted_series(self, year, expected):
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast", pjm_rggi_allowance_pricing=True),
+            year,
+        )
+        assert res.price_adder == pytest.approx(expected)
+
+    def test_gate_off_series_year_outside_registry_stays_zero(self):
+        # 2021 is a solvable hindcast-seed year with a member-states row but
+        # no measured price registered — the gated lookup must return 0, not
+        # invent an anchor (rule 13: no guessing).
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", mode="backcast", pjm_rggi_allowance_pricing=True),
+            2021,
+        )
+        assert res.price_adder == 0.0
+
+    def test_gate_is_backcast_only(self):
+        # Forecast years stay on projected_price, which has no PJM anchor
+        # (mode B — measured backcast overlay; promotion unifies this later).
+        res = resolve_carbon_program(
+            ScenarioConfig(iso="PJM", pjm_rggi_allowance_pricing=True), 2030
+        )
+        assert res.price_adder == 0.0
+
+    def test_gate_is_pjm_scoped_other_isos_unchanged(self):
+        # The field is inert for a whole-ISO program: NYISO's measured path
+        # resolves before the gate is consulted, byte-identically.
+        on = resolve_carbon_program(
+            ScenarioConfig(
+                iso="NYISO", mode="backcast", pjm_rggi_allowance_pricing=True
+            ),
+            2024,
+        )
+        off = resolve_carbon_program(ScenarioConfig(iso="NYISO", mode="backcast"), 2024)
+        assert on.price_adder == off.price_adder == pytest.approx(20.71)
+
+    def test_default_cache_key_is_unmoved_by_the_field(self):
+        # _CACHE_KEY_OPTIONAL_FIELDS registration: default-valued configs keep
+        # the pinned key; an armed run gets a distinct key.
+        base = ScenarioConfig()
+        armed = ScenarioConfig(pjm_rggi_allowance_pricing=True)
+        assert base.cache_key() != armed.cache_key()
+        assert (
+            ScenarioConfig(pjm_rggi_allowance_pricing=False).cache_key()
+            == base.cache_key()
+        )
+
+
 class TestCapPath:
     """The optional power-sector mass-cap row path (plan §6)."""
 

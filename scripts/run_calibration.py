@@ -3351,6 +3351,48 @@ def run_year(
             n_priced,
         )
     carbon_price = resolve_carbon_price(config, year)
+    # Partial-footprint carbon program (pjm-146): when the ISO's program maps
+    # membership per zone (program.zone_share is not None — today only PJM's
+    # RGGI footprint) and the resolved adder is nonzero, replace the scalar
+    # with the per-generator membership-weighted column assemble_mc already
+    # accepts: emission_rate[g] x m[g] x p_allowance, with m[g] the exact
+    # per-plant EIA-860 state test against the year's member set (VA 2023
+    # only) and the committed PJM_RGGI_ZONE_SHARE fallback for synthetic
+    # rows. Whole-ISO programs (CAISO/NYISO/NEISO, zone_share None) keep the
+    # scalar path BY CONSTRUCTION — membership there is uniform 1.0 on load
+    # zones, so the scalar IS exact and their solves stay byte-identical
+    # (rule 25 lane isolation). zone_names here is the runtime interchange-
+    # extended list (assigned after apply_interchange_topology), matching
+    # fleet_arrays.zone_idx as resolve_carbon_program requires; an external
+    # node absent from the zone_share map takes 0.0 membership.
+    carbon_mc = carbon_price  # what assemble_mc sees; scalar unless below
+    if carbon_price:
+        from market_sim.config.constants import CAP_AND_TRADE_PROGRAMS
+        from market_sim.policy.cap_and_trade import (
+            per_generator_membership,
+            resolve_carbon_program,
+        )
+
+        _carbon_program = CAP_AND_TRADE_PROGRAMS.get(iso)
+        if _carbon_program is not None and _carbon_program.zone_share is not None:
+            _carbon_resolution = resolve_carbon_program(
+                config, year, zone_names=zone_names
+            )
+            if _carbon_resolution is not None and _carbon_resolution.price_adder:
+                carbon_mc = per_generator_membership(
+                    iso, year, _carbon_resolution.membership, fleet_arrays
+                ) * float(_carbon_resolution.price_adder)
+                logger.info(
+                    "%s %d: partial-footprint carbon adder — %d/%d generators "
+                    "carry a nonzero membership-weighted allowance price "
+                    "(program %s, %.2f $/t)",
+                    iso,
+                    year,
+                    int((carbon_mc > 0).sum()),
+                    len(carbon_mc),
+                    _carbon_program.name,
+                    float(_carbon_resolution.price_adder),
+                )
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     if getattr(config, "wind_ptc_vintage_offers", False):
         # ERCOT-65 PTC vintage scoping: the flat -ira_ptc_wind offer becomes
@@ -3369,7 +3411,7 @@ def run_year(
             wind_mc = _vintage_wind_mc
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
     # then the coal take-or-pay tranche discount. No startup-cost markup.
-    mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)
+    mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_mc, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
     apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices, config)
     # Gas-offer net-revenue margin (gas_offer_net_revenue_margin, default
