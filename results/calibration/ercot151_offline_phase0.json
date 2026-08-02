@@ -1,0 +1,48 @@
+{
+ "tail_hours": 144,
+ "missed": 91,
+ "hit": 53,
+ "model_mean_at_missed": 105.11005843953907,
+ "actual_mean_at_missed": 859.918212890625,
+ "off_startable_gw": {
+  "CC": 52.325844705882346,
+  "CT": 8.356449411764705,
+  "ST": 3.860864705882353
+ },
+ "on_gw": {
+  "CC": 15.651271764705882,
+  "CT": 0.8590764705882353,
+  "ST": 4.092435294117647
+ },
+ "off_dam_mw_le_200_gw": {
+  "CC": 17.887819780219782,
+  "CT": 5.215541758241758,
+  "ST": 1.5290296703296704
+ },
+ "config_collapsed": {
+  "per_class_gw": {
+   "CC": {
+    "on": 13.664,
+    "off_inc": 10.324,
+    "off_le200": 8.241,
+    "off_le300": 8.353
+   },
+   "CT": {
+    "on": 0.814,
+    "off_inc": 7.805,
+    "off_le200": 5.216,
+    "off_le300": 5.216
+   },
+   "ST": {
+    "on": 3.836,
+    "off_inc": 3.606,
+    "off_le200": 1.529,
+    "off_le300": 1.532
+   }
+  },
+  "cc_ct_off_increment_gw": 18.129,
+  "cc_ct_off_le200_gw": 13.457
+ },
+ "_note": "off_startable_gw/on_gw at top level are RAW DISCLOSURE-ROW sums (config-INFLATED for CC \u2014 every registered CC configuration counted; kept for transparency). The headline numbers are in config_collapsed (the _site() max-across-configs convention of derive_ercot_thermal_dam_availability.py, ON netted from the OFF increment per site).",
+ "_basis": "91 missed hours = actual RT >$300 (144 h, actual_lmp_hourly_ERCOT 2023) where the ercot150b keeper load-weighted zonal system price < $200. Probes: scripts/probes/ercot151_offline_phase0.py (raw grain) + ercot151_offline_phase0b.py (config-collapsed)."
+}
