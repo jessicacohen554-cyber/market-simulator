@@ -5,7 +5,9 @@ Produced 2026-07-30 against `origin/main` HEAD `fd60eef`. **REFRESHED 2026-07-31
 `7b8c36a`** — §0a records everything that moved in between (all six keepers, the two-block
 marker restructure, the active holdout freeze, determinations); code-side, **zero FFR items
 were executed between the two dates** (re-verified at file:line 2026-07-31), so every prompt's
-technical content stands. The refresh also folds in the commercial-practice peer review
+technical content stands. **§0b (2026-08-02) supersedes that last clause: Wave 1 is now MERGED
+7/7, and §W1-X — the Wave-1 close checklist — is the live gate on Wave 2 and FH-4/FH-5. Read
+§0b before dispatching anything.** The refresh also folds in the commercial-practice peer review
 (`docs/forecast-readiness-peer-review-2026-07.md`): one added session (FFR-2E, the FR-14
 coverage hole), FFR-PA promoted to dispatch-with-Wave-1 (2026-08-22 deadline), and the standing
 disclosure list (peer review §4) that every forecast deliverable now carries. This pack extends
@@ -110,6 +112,73 @@ don't re-diagnose. Also landed: the NYISO D-5 downstate parity wiring (2026-07-3
 generalizes from, and `nyiso_central_east_measured_ttc` adjudicated K-backcast/**G-forecast**
 (measured TTC explicitly refused a forward channel — transmission-expansion registry owns
 forward TTC).
+
+---
+
+## 0b. State delta — 2026-08-02 (Wave 1 is MERGED; §W1-X is the live gate)
+
+Everything below changed between the 2026-07-31 refresh (HEAD `7b8c36a`) and this entry
+(HEAD `a92ae97`). §0a's items 1–7 stand except where superseded here.
+
+**1. WAVE 1 IS FULLY MERGED — 7/7.** The "zero FFR items executed" statement in §0a and the
+pack header is SUPERSEDED. All seven lanes are on `main` with findings docs committed:
+
+| Lane | PR | Merged | Findings doc (`docs/handoffs/`) |
+|---|---|---|---|
+| FFR-1A (FR-1/2/13/23) | #3248 | 2026-08-01 | `ffr-1a-confirmed-exit-accounting-2026-07-31.md` |
+| FFR-1B (FR-7/8/12) | #3239 | 2026-08-01 | `ffr-1b-solve-year-availability-2026-08-01.md` |
+| FFR-1C (FR-3) | #3243 | 2026-08-01 | `ffr-1c-hydro-accreditation-2026-07-31.md` |
+| FFR-1D (FR-10/11/15/24/25/26) | #3245 | **2026-08-02** | `ffr-1d-enforcement-wave-2026-07-31.md` |
+| FFR-1E (FR-22) | #3246 | 2026-08-01 | `ffr-1e-forecast-parity-check-2026-07-31.md` |
+| FFR-PA (FR-18, time-sensitive half) | #3247 | 2026-08-01 | `ffr-pa-confirmed-retirements-refresh-2026-07-31.md` |
+| FFR-PB (FR-20 M1/M2) | #3244 | 2026-08-01 | `ffr-pb-atb-statute-intake-2026-07-31.md` |
+
+Acceptance highlights, for sessions citing rather than re-deriving: 1A arm-1 is dispatch-inert
+on both probe ISOs (NEISO+PJM T1-F 2026–30 value-identical, objective equal to the last
+decimal) and closes I4 on both; 1B proved backcast byte-identity across **all six** keeper
+configs (102/102 input-surface hashes); 1C closed NYISO's I7 gap 98 % (−1,799 → −36 MW), CAISO
+41 %, MISO 20 % with the residuals FILED not closed; 1E resolved **474 armed mechanisms** and
+filed **8 with no forecast-side consumer** (armed in five of six keepers) — filed, not fixed.
+**No keeper moved and no stop-the-line fired in Wave 1.**
+
+**2. §W1-X IS THE LIVE GATE — not yet run.** No `docs/handoffs/ffr-w1x-*` exists; the
+cache-epoch bump (§0a item 6, now also covering the FR-1/2/7/8 output change under unchanged
+keys) is UNTAKEN. Wave 2 and FH-4/FH-5 stay shut until it reports green. Two items beyond the
+checklist's four now belong to it:
+- **FFR-1E's `ci.yml` parity job is still unwired.** 1D owned `ci.yml` in Wave 1 and added only
+  the forecast-INVARIANTS job (FR-24, `ci.yml:99`). `scripts/check_forecast_parity.py` and
+  `scripts/lib/forecast_parity_registry.py` are on `main` and pass, but nothing in CI runs
+  them. The job to add is carried verbatim in the 1E findings doc §6 (`forecast-parity-guard`,
+  stdlib-only), plus its path-filter extension.
+- **1D's attestation describes a PRE-REBASE tree.** PR #3245 was rebased from base `255c015`
+  onto `6e98263` before merging (30 files/+2,136 → 34 files/+2,234), and its `scenarios.py`
+  hunk had to be reconciled against FFR-1B's `__post_init__` commit (`ba49be2`), which merged
+  first. §W1-X re-confirms it against the merged content.
+
+**3. Keepers moved again — ERCOT twice since §0a.** Read the shards at your own HEAD; these are
+recorded only to show the rate of drift:
+
+| ISO | §0a (2026-07-31) | Now (2026-08-02) |
+|---|---|---|
+| ERCOT | ercot145-gas-daily-shape | `2026-08-01-ercot149-gas-event-cap` (via ercot148, PR #3260) |
+| CAISO | caiso148-nuclear-availability | `2026-07-31-caiso-151-firm-selfsched` |
+| NYISO | nyiso105-chp-heat-rates | `2026-08-01-nyiso109-zonal-margin-anchor` |
+| NEISO | neiso-71-nucavail | `2026-07-31-neiso-72-hy-window` |
+| PJM | pjm-143b-hy-level | unchanged |
+| MISO | miso-109b-hy-level | unchanged |
+
+**4. Markers and the freeze are UNCHANGED** from §0a: `complete` = {NEISO, NYISO, PJM},
+`final` = empty, holdout freeze **ACTIVE** (last action 2026-07-26 *held*). Nothing in Wave 1
+touched an out-of-training year.
+
+**5. Wave FH has not launched** — no `docs/handoffs/fh-*` exists. FH-1/FH-2/FH-3 are ungated
+(parallel with Wave 2); FH-4/FH-5 remain gated on §W1-X's epoch bump.
+
+**6. Dispatch state at this entry.** Launchable immediately: **§W1-X close**, **FH-1**, and
+**FFR-2D** (docs-only, reads no cache, so not gated). Staged behind the §W1-X green-light:
+FFR-2A / 2B / 2C / 2E — recommended release 2C+2A first (2C is nearly no-LP), then 2B, then
+2E; 2A and 2B must coordinate their PJM windows explicitly (rule 12: ≤2 concurrent solve
+invocations, PJM and MISO legs never co-run).
 
 ---
 
