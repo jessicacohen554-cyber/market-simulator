@@ -19,6 +19,28 @@ written and committed BEFORE this probe was run:
     Measure MISO's CAMPD-observed CT_PEAKER + ST_GAS generation at h1-h3,
     2023-2025, against the model's 1,907 / 2,415 / 2,350 MW.
 
+**RECORD NOTE (miso-116, 2026-08-02) — numbers below are UNCHANGED and this
+file is left exactly as it ran; two of the results it produced are withdrawn.**
+See ``results/calibration/FINDING-miso116-chp-floor-deriver-2026-08-02.md``:
+
+* The **CHP** ratios (``CC_CHP`` 2.156/2.246/2.555 and the §3 gas
+  reconciliation) divide CAMPD ``grossLoad`` -- the WHOLE plant, host steam
+  load included -- by ``class_hourly.mw``, which for a CHP class is
+  GRID-FACING ONLY (``fleet/assembly.py`` removes the behind-the-meter share as
+  capacity; the bench closes the basis on the actual side instead). Basis-
+  matched, ``CC_CHP`` R = 1.062/1.123/1.234: there is no CC-cogen deficit. The
+  three MERCHANT classes -- the pre-registered verdict scope -- are unaffected,
+  since they carry no BTM hold-out.
+* :func:`model_fleet` calls ``load_fleet_from_csv`` WITHOUT
+  ``measured_chp_heat_rates``, which defaults to False while the keeper arms
+  it, so the §4 ``CC_CHP`` "6.76 MMBtu/MWh" is the pre-correction eGRID
+  steam-credited rate. The keeper's own value is 8.77 against a measured 8.83.
+  ``CT_PEAKER`` is unaffected (the keeper does not arm ``measured_ct_heat_rates``),
+  so §4's CT_PEAKER pricing error stands as published.
+
+A probe that scores against a keeper should build its model side from that
+keeper's ``run_config.json`` (as ``_miso116_chp_floor_deriver_audit.py`` does).
+
 Design notes that matter for the comparison being apples-to-apples:
 
 * The model quantity is ``class_hourly.mw`` — **generation**, not committed
