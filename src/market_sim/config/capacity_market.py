@@ -1381,6 +1381,21 @@ MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
         MarketDesignVintage("2023-2024", 74.13, _nyiso_icap_vintage_curve(7.55, 15.62)),
         MarketDesignVintage("2024-2025", 72.35, _nyiso_icap_vintage_curve(7.41, 17.32)),
         MarketDesignVintage("2025-2026", 50.55, _NYISO_ICAP_CURVE),  # registry ref
+        # 2026-2027 (FFR-2C re-anchor 2026-08-02; rule 23 — the DATA changed:
+        # NYISO posted the second annual update of the 2025-2029 DCR by its
+        # tariff deadline 2025-11-30). Same construction as every ARV-era
+        # vintage: anchor = NYCA Annual Reference Value ($/kW-yr, the F-Capital
+        # representative zone this DCR cycle), shape from the summer
+        # reference-point / max-clearing-price pair and the published 12 %
+        # Demand Curve Length. Source: NYISO "Demand Curve Parameters
+        # CY 2026-2027" (nyiso.csv 2026-2027 rows; sha256 713560dc…207cc).
+        # Gross CONE 131.94 − Net EAS 74.24 = 57.70 reconciles the anchor.
+        # NOTE (disclosure, not a defect): NYISO is deliberately absent from
+        # ScenarioConfig.capacity_market_clearing_by_iso, so the seam prices its
+        # FIXED net_cone_per_kw_yr and this vintage is INERT in the shipped
+        # posture. It is landed for currency and to make the FF-3D flip
+        # decidable on current data, not to change a price today.
+        MarketDesignVintage("2026-2027", 57.70, _nyiso_icap_vintage_curve(6.53, 22.41)),
     ),
     "NEISO": (
         MarketDesignVintage(
