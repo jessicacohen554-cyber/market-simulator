@@ -42,6 +42,7 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
+from market_sim.data.input_completeness import check_clean_partitions
 from market_sim.model.dispatch import DispatchResult  # noqa: F401  (typing/docs)
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
@@ -175,6 +176,16 @@ def run_year_solve(
         A :class:`YearSolveOutput`; ``dispatch_kwargs`` has been extended in
         place with every gated add-on that fired.
     """
+    # Input-completeness guard (caiso-157; rules 20 [R-DOF] / 24 [R-REGISTRY]).
+    # data/clean is derived-and-gitignored, so an armed mechanism whose curated
+    # partition was never built in this environment silently no-ops and the run
+    # advertises a mechanism that never ran — which is how a RETIRED fitted
+    # import scalar re-became CAISO's binding seam limit across five keeper
+    # promotions. Fail here, before the LP, rather than degrade. No config field
+    # and no tunable: a pure config-vs-disk consistency assertion, and a no-op
+    # for every flag left at its default.
+    check_clean_partitions(config, iso)
+
     # Emissions mass-cap rows (policy constraint path, gated; G-29): shared
     # seam for both orchestrators. Default off -> {} -> no dispatch_kwargs
     # change, identical LP. See docs/handoffs/emissions-mass-cap-plan-2026-07.md.

@@ -1,0 +1,56 @@
+==============================================================================
+1. ARMED-BUT-UNPINNED derived partitions, every bundle on disk
+==============================================================================
+  iso           timestamp                bundle                      mechanism  armed  pinned  degraded
+CAISO 2026-07-17T15:51:01       caiso92_repro_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-23T02:02:55    caiso126_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-23T21:05:02    caiso124_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-23T21:28:26     caiso_netrev_base capacity_deliverability_limits   True   False      True
+CAISO 2026-07-29T02:53:21    caiso138_envclip_B capacity_deliverability_limits   True    True     False
+CAISO 2026-07-29T02:53:21    caiso138_envclip_B                hydro_ror_split   True    True     False
+CAISO 2026-07-29T04:51:31    caiso139_control_A capacity_deliverability_limits   True    True     False
+CAISO 2026-07-29T04:51:31    caiso139_control_A                hydro_ror_split   True    True     False
+CAISO 2026-07-29T05:18:59  caiso139_dumpguard_B capacity_deliverability_limits   True    True     False
+CAISO 2026-07-29T05:18:59  caiso139_dumpguard_B                hydro_ror_split   True    True     False
+CAISO 2026-07-30T04:26:31    caiso142_control_A capacity_deliverability_limits   True    True     False
+CAISO 2026-07-30T04:26:31    caiso142_control_A                hydro_ror_split   True    True     False
+CAISO 2026-07-30T04:48:26       caiso142_seam_B capacity_deliverability_limits   True    True     False
+CAISO 2026-07-30T04:48:26       caiso142_seam_B                hydro_ror_split   True    True     False
+CAISO 2026-07-31T04:21:02    caiso153_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T04:21:02    caiso153_control_A                hydro_ror_split   True   False      True
+CAISO 2026-07-31T04:43:41       caiso153_reid_B capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T04:43:41       caiso153_reid_B                hydro_ror_split   True   False      True
+CAISO 2026-07-31T06:57:33    caiso146_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T06:57:33    caiso146_control_A                hydro_ror_split   True   False      True
+CAISO 2026-07-31T07:01:09 caiso146_ctheatrate_B capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T07:01:09 caiso146_ctheatrate_B                hydro_ror_split   True   False      True
+CAISO 2026-07-31T17:19:27    caiso147_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T17:19:27    caiso147_control_A                hydro_ror_split   True   False      True
+CAISO 2026-07-31T17:19:42        caiso147_chp_B capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T17:19:42        caiso147_chp_B                hydro_ror_split   True   False      True
+CAISO 2026-07-31T18:42:04   caiso148_nucavail_B capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T18:42:04   caiso148_nucavail_B                hydro_ror_split   True   False      True
+CAISO 2026-07-31T18:42:12    caiso148_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T18:42:12    caiso148_control_A                hydro_ror_split   True   False      True
+CAISO 2026-07-31T22:51:50       caiso151_clip_B capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T22:51:50       caiso151_clip_B                hydro_ror_split   True   False      True
+CAISO 2026-07-31T22:52:05    caiso151_control_A capacity_deliverability_limits   True   False      True
+CAISO 2026-07-31T22:52:05    caiso151_control_A                hydro_ror_split   True   False      True
+
+  DEGRADED: 24 of 34 armed (bundle, mechanism) pairs; ISOs affected: ['CAISO']
+
+==============================================================================
+2. Does the RETIRED fitted seam (7500 MW) bind? — results/calibration/caiso153_reid_B
+==============================================================================
+ year  hours_at_cap  share_pct  mean_import_mw  p95_import_mw  max_import_mw  top_hours_of_day         top_months  sep_dec_at_cap  sep_dec_hours  sep_dec_share_pct
+ 2023           757       8.64          4130.0         7500.0         7500.0 [0, 1, 2, 23, 18]   [1, 5, 2, 3, 11]              54           2928               1.84
+ 2024           472       5.39          4514.3         7500.0         7500.0   [0, 3, 4, 1, 2]  [6, 11, 12, 5, 7]             215           2904               7.40
+ 2025           864       9.86          4691.5         7500.0         7500.0   [0, 1, 2, 4, 3] [12, 11, 6, 10, 3]             528           2928              18.03
+
+==============================================================================
+3. The PUBLISHED MIC seam the accurate input would apply
+==============================================================================
+ year delivery_year  n_areas  seam_mw  fitted_fallback_mw
+ 2023          2023       36  16055.0              7500.0
+ 2024          2024       36  16452.0              7500.0
+ 2025          2025       33  16148.0              7500.0

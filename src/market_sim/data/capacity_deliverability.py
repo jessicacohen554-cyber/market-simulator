@@ -113,6 +113,29 @@ def _read(iso: str) -> pd.DataFrame | None:
         return None
 
 
+def partition_expected(iso: str) -> bool:
+    """Return whether ``iso`` is one that publishes locational RA parameters.
+
+    ``False`` for an ISO with no such construct (ERCOT is energy-only), where
+    an empty read is the permanent, correct answer rather than missing data.
+    The input-completeness guard uses this to tell "nothing to load" apart from
+    "the curated partition was never built here"
+    (:mod:`market_sim.data.input_completeness`).
+    """
+    return _clean_iso(iso) in _SUPPORTED_ISOS
+
+
+def partition_available(iso: str) -> bool | None:
+    """Return whether the ISO's clean partition is readable.
+
+    ``True``/``False`` for an ISO that publishes these parameters, and ``None``
+    when the question does not apply (:func:`partition_expected` is ``False``).
+    """
+    if not partition_expected(iso):
+        return None
+    return _read(iso) is not None
+
+
 def available_delivery_years(iso: str) -> set[str]:
     """Return the ``delivery_year`` labels present in the ISO's clean partition.
 
