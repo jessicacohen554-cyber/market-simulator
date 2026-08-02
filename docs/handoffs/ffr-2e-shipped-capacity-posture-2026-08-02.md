@@ -139,6 +139,38 @@ market itself would pay nothing for.
 
 ## 3. The fleet-level measurement (paired T1-H legs)
 
+### 3.0 What the ALREADY-COMMITTED evidence says (prior, not this session's)
+
+Before any new solve, the committed sidecars already contain both arms for all
+four curve-capable ISOs. Total thermal retirements 2021–2025, GW:
+
+| ISO | curve arm (run) | model GW | err | fixed arm (run) | model GW | err | actual GW |
+|---|---|--:|--:|---|--:|--:|--:|
+| **PJM** | `pjm-2021-2025-curve-ff2c` | 18.157 | **+63 %** | `pjm-2021-2025-realized` | 4.106 | **−63 %** | 11.121 |
+| **MISO** | `miso-2021-2025-curve-ff2c` | 10.814 | **−29 %** | `miso-2021-2025-realized` | 0.784 | **−95 %** | 15.227 |
+| **NEISO** | `neiso-2021-2025-curve` | 9.325 | **+880 %** | `neiso-2021-2025-fixed` | 0.002 | **−99.8 %** | 0.951 |
+| **NYISO**\* | `nyiso-2021-2025-curve` | 3.318 | +123 % | `nyiso-2021-2025-fixed` | 1.036 | −30 % | 1.488 |
+
+\* NYISO's "curve" leg is a **force-ON probe**, not its shipped posture (§2).
+
+**The posture is the single largest lever on the T1-H retirement result — larger
+than the retirement rule itself.** NEISO moves 0.002 → 9.325 GW (a factor of
+~4,600) on nothing but the capacity-price posture. Every one of the eight legs
+FAILs its retirement band, but the two arms fail in **opposite directions**: the
+shipped arm over-retires (it pays $0 at a long position, so the screen sees no
+RA revenue at all), the fixed arm under-retires to ~nothing (it pays full
+net-CONE to every MW regardless of how long the fleet is). That is the §2
+arithmetic reproduced at fleet level.
+
+**These legs are all PRE-cache-epoch** (2026-07-18 → 2026-07-20), so under the
+Wave-1 epoch they are invalid as current evidence and are cited here as *prior*
+only. FFR-2B's post-epoch cold re-solve of the same curve-ON posture shows how
+much that matters: PJM 18.157 → **29.373 GW** (`pjm-2021-2025-cmc-legacy-ffr2b`,
+2026-08-02) and MISO 10.814 → **15.202 GW** (vs actual 15.227, −0.2 %) with no
+posture or rule change at all.
+
+### 3.1 This session's post-epoch paired legs
+
 <!-- FILLED FROM THE REGISTERED RUNS -->
 
 ---
@@ -151,7 +183,42 @@ market itself would pay nothing for.
 
 ## 5. Per-ISO recommendation — which arm the T1 gate should cite
 
-<!-- FILLED -->
+**Recommendation only.** The rubric-text change, if any, is FFR-3A/3B's; nothing
+in `scripts/forecast_verdict.py` or the rubric was touched here.
+
+The principle is the peer-review row itself: a forecast-readiness gate must cite
+the arm the forecast **ships**. That resolves per ISO from
+`ScenarioConfig.capacity_market_clearing_by_iso`, not from which leg happens to
+exist.
+
+| ISO | shipped posture | arm the T1 gate should cite | currently cited (`ff-t1-gate` §4.1) | action |
+|---|---|---|---|---|
+| **PJM** | curve-ON | **curve** | `pjm-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
+| **MISO** | curve-ON | **curve** | `miso-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
+| **NEISO** | curve-ON | **curve** | `neiso-2021-2025-curve` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
+| **NYISO** | **curve-OFF** | **fixed** | `nyiso-2021-2025-curve` (**force-ON probe**) | ✘ **WRONG ARM — change the citation** |
+| **CAISO** | curve-ON, provably inert | either (the distinction is void) | not scored — no curve leg | ✔ correct as written; add the §2 proof as the reason |
+| **ERCOT** | n/a (energy-only) | n/a | n/a | ✔ |
+
+**The one substantive correction is NYISO.** `ff-t1-gate-2026-07.md` §4.1 lists
+`nyiso-2021-2025-curve` as NYISO's FC-3 evidence, but production ships NYISO
+**curve-OFF** (it is deliberately absent from the clearing mapping — "excluded
+pending re-calibration"). That leg is a `--capacity-market-clearing` force-ON
+probe, so NYISO's FC-3 verdict currently describes a configuration the forecast
+does not run — the exact FR-14 failure, one level up in the evidence chain. Its
+shipped-posture twin `nyiso-2021-2025-fixed` exists and is already committed
+(retire 1.036 GW, −30 % vs +123 % on the probe arm; **both still FAIL**, so no
+determination flips — only the number and the claim it supports change).
+
+**The second correction is uniform: every FC-3 citation in §4.1 is a
+pre-cache-epoch leg** (2026-07-18 → 2026-07-20) and the epoch invalidates all of
+them. §3.1's post-epoch legs are the replacements. FFR-2B's cold re-solve
+already showed the magnitude at stake (PJM 18.157 → 29.373 GW on no posture or
+rule change), so this is not a bookkeeping refresh.
+
+**No FC-3 determination changes.** Every leg in every arm FAILs its retirement
+band; the recommendation changes *which measurement the FAIL is attributed to*,
+not the HOLD. The T1 board's per-ISO determinations are unaffected.
 
 ---
 
@@ -183,6 +250,34 @@ sits past its zero-cross, so the shipped arm pays exactly $0. That is not a
 posture defect — it is the **position/requirement basis** (BLK-3 R2/R3), and it
 means the shipped posture's *quantitative* retirement effect stays gated on that
 lane. Recorded as an open blocker, not closed by any parameter (rules 1 / 14).
+
+**B5 — FR-14 is not only about the capacity curve: the hindcast harness still
+pins TWO more mechanisms OFF that production ships ON.** Comparing
+`build_config("PJM", 2021, 2025, …)` field-by-field against
+`ScenarioConfig(iso="PJM", mode="forecast")` at HEAD, after this session's fix:
+
+| field | production default | hindcast harness | status |
+|---|---|---|---|
+| `capacity_market_clearing_by_iso` | `{PJM,MISO,CAISO,NEISO: True}` | same | **FIXED here** |
+| `correlated_forced_outage` | `True` | `False` | **still pinned off** |
+| `entry_lookahead_reprice` | `True` | `False` | **still pinned off** |
+| `datacenter_load_path` | `"mid"` | `"off"` | legitimate — `__post_init__` coerces it for any hindcast (`scenarios.py:9445`), and a 2021–2025 window has no forward datacenter path to take |
+| `scarcity_pricing_enabled` | `False` | `True` | deliberate and documented — the harness adopts each ISO's *production scarcity footing* via `ISOConfig.default_scenario_overrides` (`build_config` docstring, the s2 root cause); this moves the harness **toward** production, not away |
+
+`correlated_forced_outage` and `entry_lookahead_reprice` are **not** coerced —
+`build_config` passes its own `False` defaults over the production `True`. That
+is the FR-14 pattern on two more fields and it is **not fixed here**, for three
+reasons: it changes what every T1-H leg means (the brief forbids silently
+re-interpreting committed verdicts), it would confound this session's posture
+A/B, and it is a harness-default decision of the same class as B1 — the owner
+batch's, at FFR-3A step 0. Routed there.
+
+Two consequences worth stating plainly: **(a)** FFR-2B's D-1 retirement-rule
+evidence (`{pjm,miso}-2021-2025-cmc-{legacy,pipeline}-ffr2b`, 2026-08-02) also
+ran with both pinned off, so it carries the same caveat; **(b)** this session's
+arms are **unconfounded**, because both pin the two fields identically — the
+only difference between a shipped leg and its fixed twin is the capacity-price
+posture.
 
 **B4 — CAISO cannot be FC-3 scored at all.** There is no
 `data/raw/_validation-source/capacity_actuals_caiso.csv`, so no CAISO T1-H leg
