@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-"""Capacity hindcast + T1-X crossover harness (W2-P5 / FF-0E, plan §1.3, §2.2).
+"""Capacity hindcast + T1-X crossover + T1-FF full-forward harness.
+
+(W2-P5 / FF-0E / FH-1 — plan §1.3, §2.2; T1-FF:
+``docs/hindcast-forward-plan-2026-07.md`` §2.)
 
 Runs the *forecast* machinery from a vintage fleet snapshot to test whether the
 capacity-evolution screens (retirement / economic-entry / storage / CCS)
@@ -8,13 +11,13 @@ reproduce the builds and retirements an ISO actually saw. It is NOT a backcast:
 only switches on vintage fleet init, realized per-year demand (no growth
 scaling), the chosen fuel path, and the 2022 quarantine bridge.
 
-Two modes, selected by ``--vintage`` / ``--crossover``:
+Three modes, selected by ``--vintage`` / ``--crossover`` / ``--forward-from-base``:
 
 * **Plain hindcast** (``--vintage 2020``, default; plan §1.1): initialise from
   the **EIA-860 2020 vintage**, evolve 2021 → 2025. 2021 seeds the price/margin
   signal but is not scored; **2022 is a bridge -- evolved but never solved, its
   data never read** (rule 22); 2023-2025 are solved and scored. Allowed solve
-  years ``{2021, 2023, 2024, 2025}``.
+  years ``{2021, 2023, 2024, 2025}`` (``scripts.lib.holdout_policy``).
 
 * **T1-X crossover** (``--crossover``, requires ``--vintage 2023``; plan §2.2):
   initialise from the **EIA-860 2023 vintage** and run the crossover window
@@ -30,6 +33,31 @@ Two modes, selected by ``--vintage`` / ``--crossover``:
   years >= 2026 are invariants/plausibility only — the scorer REFUSES to read
   any bench/actual for a year >= 2026).
 
+* **T1-FF full-forward hindcast** (``--forward-from-base``; FH-1, hindcast-
+  forward plan §2): the crossover boundary is pointed at the window's OWN
+  start year (``crossover_forward_year = start_year``), so EVERY solve year
+  runs the forward input stack — growth-scaled demand from the pinned weather
+  base, trajectory fuel, statistical outages, estimator emission rates, no
+  measured overlays — while being scored against held actuals. The gap to the
+  ISO's keeper backcast is the measured price of the overlays. Window rules
+  are the PLAIN-hindcast rules (2021 floor, end <= 2025, {2021} seed, 2022
+  bridge); the vintage must be at/before the base year (Phase A: base 2023 /
+  vintage 2023; Phase B: base 2021 / vintage 2020). Two pre-registered arms
+  (plan §2.1), ``--arm``:
+
+  - ``realized`` (Arm R, the default): realized annual Henry Hub
+    (``hindcast_realized``) and per-solve-year weather
+    (``crossover_solve_year_weather`` — given-weather / perfect-foresight-
+    driver posture). Asks: *is the forecast configuration structurally right?*
+  - ``asknown`` (Arm K): the as-known AEO gas vintage as-of the base year
+    (``hindcast_asknown_aeo<base>``; hard error when that trajectory has not
+    been intaken — FH-3) and the BASE year's weather for every solve year.
+    Asks: *what is true ex-ante forecast skill?*
+
+  Scoring never leaves 2023-2025 (the scorer refuses both bounds), so no
+  rule-22 marker is spent and the holdout freeze is not implicated — the
+  governance record is printed at launch rather than left implicit.
+
 Rule 12: years run sequentially inside one invocation; independent variants /
 ISOs are launched as concurrent background invocations with separate
 ``--out-dir``s.
@@ -43,9 +71,13 @@ Usage::
     python scripts/run_capacity_hindcast.py --iso ERCOT --crossover --vintage 2023 \\
         --start-year 2023 --end-year 2027 \\
         --out-dir results/hindcast/ercot-2023-2027-crossover
+    # T1-FF full-forward (Phase A, Arm R)
+    python scripts/run_capacity_hindcast.py --iso ERCOT --forward-from-base \\
+        --arm realized --vintage 2023 --start-year 2023 --end-year 2025 \\
+        --out-dir results/hindcast/ercot-2023-2025-t1ff-armr
 
 Then score with ``scripts/score_capacity_hindcast.py`` (hindcast) or
-``scripts/score_crossover.py`` (crossover).
+``scripts/score_crossover.py`` (crossover / full-forward).
 """
 
 from __future__ import annotations
@@ -74,11 +106,26 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.pipeline.api import run_scenario  # noqa: E402
-from market_sim.runner import HINDCAST_BRIDGE_YEARS  # noqa: E402
+from market_sim.runner import HINDCAST_BRIDGE_YEARS as _RUNNER_BRIDGE_YEARS  # noqa: E402
+from scripts.lib import holdout_policy  # noqa: E402
 
-# The only years a plain hindcast may solve. 2022/2026 are quarantined (rule
-# 22); 2022 is bridged (evolved, not solved), 2026 is out of the window entirely.
-ALLOWED_SOLVE_YEARS = frozenset({2021, 2023, 2024, 2025})
+# Rule-22 carve-outs now live in scripts/lib/holdout_policy.py (FH-1 — moved
+# out of prose and this file's former local literals): the {2021} seed, the
+# {2022, 2026} bridge, and the solvable set. The runner keeps its own bridge
+# constant (src must not import scripts); fail loud here if they ever drift.
+HINDCAST_BRIDGE_YEARS = holdout_policy.HINDCAST_BRIDGE_YEARS
+if HINDCAST_BRIDGE_YEARS != _RUNNER_BRIDGE_YEARS:  # pragma: no cover
+    raise SystemExit(
+        "holdout_policy.HINDCAST_BRIDGE_YEARS and runner.HINDCAST_BRIDGE_YEARS "
+        f"disagree: {sorted(HINDCAST_BRIDGE_YEARS)} vs "
+        f"{sorted(_RUNNER_BRIDGE_YEARS)} — fix the drift before running"
+    )
+
+# The only years a plain (or full-forward) hindcast may solve: the training
+# window plus the {2021} seed (holdout_policy.HINDCAST_SOLVE_YEARS). 2022/2026
+# are quarantined (rule 22); 2022 is bridged (evolved, not solved), 2026 is
+# out of the window entirely.
+ALLOWED_SOLVE_YEARS = holdout_policy.HINDCAST_SOLVE_YEARS
 # A T1-X crossover (FF-0E, plan §2.2) additionally solves 2026/2027 as
 # forecast-mode years (rule-22-legal: no measured H1-2026 actuals are read).
 CROSSOVER_ALLOWED_SOLVE_YEARS = frozenset({2023, 2024, 2025, 2026, 2027})
@@ -86,7 +133,9 @@ CROSSOVER_ALLOWED_SOLVE_YEARS = frozenset({2023, 2024, 2025, 2026, 2027})
 # 2026+ pure forward drivers (plan §2.2).
 CROSSOVER_FORWARD_YEAR = 2026
 # The EIA-860 vintage a plain hindcast seeds from (plan §1.1); a crossover seeds
-# from the 2023 vintage (plan §2.2). Selected by --vintage.
+# from the 2023 vintage (plan §2.2); a full-forward hindcast seeds from any
+# allowed vintage at/before its base year (FH-1: Phase A 2023, Phase B 2020).
+# Selected by --vintage.
 DEFAULT_VINTAGE_YEAR = 2020
 CROSSOVER_VINTAGE_YEAR = 2023
 ALLOWED_VINTAGES = (2020, 2023)
@@ -97,7 +146,37 @@ FUEL_VARIANT_GAS_PATH = {
 }
 
 
-def _validate_window(start_year: int, end_year: int, crossover: bool) -> None:
+def full_forward_gas_path(arm: str, base_year: int) -> str:
+    """Return the T1-FF gas trajectory for an arm at a base year (plan §2.1).
+
+    Arm R prices every (forward) year on realized annual Henry Hub; Arm K on
+    the AEO Reference vintage as-known at the base year. An Arm K base whose
+    as-known trajectory has not been intaken (only AEO2021 exists today;
+    AEO2023 is FH-3's intake) is a HARD error — never a silent fallback to a
+    forecast-edition path, which would be the §4-row-7 back-hold trap wearing
+    a different hat.
+    """
+    from market_sim.config.fuel_trajectories import HENRY_HUB_TRAJECTORIES
+
+    if arm == "realized":
+        return "hindcast_realized"
+    path = f"hindcast_asknown_aeo{int(base_year)}"
+    if path not in HENRY_HUB_TRAJECTORIES:
+        raise SystemExit(
+            f"--arm asknown at base {base_year} needs the as-known gas "
+            f"trajectory {path!r}, which is not in HENRY_HUB_TRAJECTORIES — "
+            "land it first (FH-3 intake, cited to the AEO edition); refusing "
+            "to substitute a different-vintage path (rule 13)"
+        )
+    return path
+
+
+def _validate_window(
+    start_year: int,
+    end_year: int,
+    crossover: bool,
+    forward_from_base: bool = False,
+) -> None:
     """Enforce the rule-22 quarantine on the requested window.
 
     The plain-hindcast guard is unchanged (allowed solve years
@@ -106,10 +185,24 @@ def _validate_window(start_year: int, end_year: int, crossover: bool) -> None:
     requires ``start >= 2023``, and un-bridges its forward years (>= 2026) — so
     the holdout guard stays intact for plain-hindcast mode while the crossover
     window is exactly the rule-22-legal ``{2023, 2024, 2025, 2026, 2027}``.
+
+    A full-forward hindcast (``forward_from_base``, FH-1) keeps the PLAIN
+    window rules exactly — the 2021 floor, the ``end <= 2025`` cap, the
+    ``{2021}`` seed allowance and the 2022 bridge — because pointing the input
+    boundary at the base year changes which STACK a year solves on, never
+    which years may be solved. The solvable set is read from
+    ``scripts.lib.holdout_policy`` (the carve-outs' single home), and every
+    non-bridge year outside it fails closed with its tier named.
     """
     if start_year < 2021:
         raise SystemExit(
             "hindcast start-year must be >= 2021 (demand profiles start 2021)"
+        )
+    if crossover and forward_from_base:
+        raise SystemExit(
+            "--crossover and --forward-from-base are mutually exclusive: a "
+            "crossover's boundary is 2026, a full-forward run's boundary is "
+            "its own start year (one seam, two pointings — rule 19)"
         )
     if crossover:
         if start_year < 2023:
@@ -124,16 +217,34 @@ def _validate_window(start_year: int, end_year: int, crossover: bool) -> None:
                 "no solve/score; use --crossover for the forecast-mode 2026/2027 window)"
             )
         allowed = ALLOWED_SOLVE_YEARS
-    for y in range(start_year, end_year + 1):
-        # A crossover forward year (>= 2026) is a SOLVED forecast-mode year, not
-        # a bridge — so it does not skip the allowed-year check below.
-        if y in HINDCAST_BRIDGE_YEARS and not (
-            crossover and y >= CROSSOVER_FORWARD_YEAR
-        ):
-            continue  # bridged: evolved, never solved
+    solve_years = [
+        y
+        for y in range(start_year, end_year + 1)
+        # A crossover forward year (>= 2026) is a SOLVED forecast-mode year,
+        # not a bridge — so it does not skip the allowed-year check below.
+        if not (
+            y in HINDCAST_BRIDGE_YEARS
+            and not (crossover and y >= CROSSOVER_FORWARD_YEAR)
+        )
+    ]
+    for y in solve_years:
         if y not in allowed:
             kind = "crossover" if crossover else "hindcast"
             raise SystemExit(f"year {y} is not an allowed {kind} solve year")
+    # Fail-closed policy check (FH-1): the hindcast-lane solvable set is owned
+    # by holdout_policy — anything outside training + seed refuses with its
+    # tier named, whatever the local `allowed` literal says. Crossover forward
+    # years (2026+) are the one legal exception (forecast-mode solves reading
+    # no measured actuals, rule 22).
+    _policy_years = [
+        y for y in solve_years if not (crossover and y >= CROSSOVER_FORWARD_YEAR)
+    ]
+    violations = holdout_policy.hindcast_solve_year_violations(_policy_years)
+    if violations:
+        raise SystemExit(
+            "rule-22 holdout policy refuses this window:\n  - "
+            + "\n  - ".join(violations)
+        )
 
 
 def build_config(
@@ -143,6 +254,8 @@ def build_config(
     variant: str,
     vintage: int = DEFAULT_VINTAGE_YEAR,
     crossover: bool = False,
+    forward_from_base: bool = False,
+    arm: str = "realized",
     crossover_forward_gas_path: str = "mid",
     energy_only_floor: bool = False,
     entry_lookahead_reprice: bool = False,
@@ -187,6 +300,33 @@ def build_config(
     over-retire further before any scarcity forms; adopting it as the
     harness footing awaits the G-31 grain fix.
     """
+    # T1-FF full-forward wiring (FH-1, plan §2.1): the boundary is the start
+    # year itself (one seam, re-pointed — rule 19), the gas path is the arm's
+    # (realized Henry Hub / as-known AEO vintage, resolved with a hard error
+    # for a missing as-known intake), and the weather posture is the arm's
+    # (Arm R: per-solve-year weather via crossover_solve_year_weather; Arm K:
+    # the base year's weather for every solve year). hindcast_fuel_variant
+    # records the arm so the meta/variant vocabulary stays one namespace.
+    if forward_from_base:
+        _ff_gas = full_forward_gas_path(arm, start_year)
+        variant = arm
+        gas_path = _ff_gas
+        fwd_gas_path = _ff_gas
+        boundary = start_year
+        weather_year = start_year
+        solve_year_weather = arm == "realized"
+    else:
+        gas_path = FUEL_VARIANT_GAS_PATH[variant]
+        fwd_gas_path = crossover_forward_gas_path
+        boundary = CROSSOVER_FORWARD_YEAR if crossover else None
+        # T1-X: pin the weather year to the last realized year (boundary − 1 =
+        # 2025) so "growth-scaled demand from the last realized year" (plan
+        # §2.2) is exactly what the forward years see. A plain hindcast keeps
+        # the model default weather_year (2024), unchanged.
+        weather_year = (
+            CROSSOVER_FORWARD_YEAR - 1 if crossover else ScenarioConfig().weather_year
+        )
+        solve_year_weather = False
     return ScenarioConfig(
         iso=iso,
         mode="forecast",
@@ -195,21 +335,17 @@ def build_config(
         end_year=end_year,
         eia860_vintage_year=vintage,
         hindcast_fuel_variant=variant,
-        gas_price_path=FUEL_VARIANT_GAS_PATH[variant],
+        gas_price_path=gas_path,
         # T1-X crossover (FF-0E, plan §2.2): set the forward boundary so years
         # >= CROSSOVER_FORWARD_YEAR (2026) run on pure forward drivers (the
         # runner un-bridges them, skips the realized demand loader + the F923
         # overlay, and prices gas on the AEO path below). None for a plain
-        # hindcast (byte-identical). The forward demand is growth-scaled from the
-        # weather-year base; pin the weather year to the last realized year
-        # (boundary − 1 = 2025) so "growth-scaled demand from the last realized
-        # year" (plan §2.2) is exactly what the forward years see. A plain
-        # hindcast keeps the model default weather_year (2024), unchanged.
-        crossover_forward_year=(CROSSOVER_FORWARD_YEAR if crossover else None),
-        crossover_forward_gas_path=crossover_forward_gas_path,
-        weather_year=(
-            CROSSOVER_FORWARD_YEAR - 1 if crossover else ScenarioConfig().weather_year
-        ),
+        # hindcast (byte-identical). A full-forward run (FH-1) points the
+        # boundary at start_year so EVERY solve year is a forward year.
+        crossover_forward_year=boundary,
+        crossover_forward_gas_path=fwd_gas_path,
+        weather_year=weather_year,
+        crossover_solve_year_weather=solve_year_weather,
         # Production scarcity footing (see docstring): ERCOT → ORDC overlay,
         # PJM → capacity-market (no-op). Harness default, not a model default.
         scarcity_pricing_enabled=True,
@@ -328,18 +464,33 @@ def assert_pipeline_from_vintage(
 def assert_forward_drivers(
     config: ScenarioConfig, start_year: int, end_year: int
 ) -> list[str]:
-    """Assert crossover FORWARD years run on forward drivers only (FF-0E §2.2).
+    """Assert every FORWARD solve year runs on forward drivers only.
 
-    A crossover's forward years (>= the boundary) must NOT consult any
-    backcast-gated realized-input loader: the runner skips the realized per-year
-    demand loader and the F923 plant-monthly overlay for them (structurally
-    gated on ``config.is_crossover_forward_year``; covered by the crossover unit
-    test), and gas is priced on the AEO path rather than the realized
-    "hindcast_realized" trajectory held flat. This checks the two observable
-    consequences from the resolved config: (a) each forward year is flagged as a
-    crossover-forward year, and (b) its resolved annual gas equals the AEO
-    forward path (``crossover_forward_gas_path``), NOT the realized path. Returns
-    violations (empty when clean); no-op for a plain hindcast.
+    (FF-0E §2.2, generalized by FH-1 to any boundary — a T1-FF run's boundary
+    is its start year, so this covers EVERY solve year, not just 2026+.)
+
+    A forward year (>= the boundary) must NOT consult any backcast-gated
+    realized-input loader. This asserts the observable consequences from the
+    resolved config, per non-bridge solve year at/above the boundary:
+
+    (a) the year is flagged as a crossover-forward year. This single
+        predicate IS the run-time gate of BOTH measured-input loaders — the
+        realized per-year demand branch (``runner.run_scenario_iso``:
+        ``config.hindcast and not is_crossover_forward_year(y)``) and the
+        F923 plant-monthly overlay (``fuel.plant_prices``: returns before any
+        read when ``is_crossover_forward_year(year)``) — so a year failing it
+        here is exactly a year those loaders would fire for;
+    (b) its resolved annual gas equals the declared forward trajectory
+        (``crossover_forward_gas_path``) — and, in a full-forward run, that
+        resolution itself hard-errors on the §4-row-7 back-hold trap (a year
+        below the trajectory's earliest knot), surfaced here as a violation
+        rather than an unhandled exception;
+    (c) when the forward path differs from ``gas_price_path``, the resolved
+        value is NOT the realized path's (backcast-gated fuel leak).
+
+    Returns violations (empty when clean); no-op for a plain hindcast. Called
+    BEFORE the solve (fail fast — a leaked window must not burn a multi-hour
+    run) and recorded in the meta afterwards.
     """
     if config.crossover_forward_year is None:
         return []
@@ -352,11 +503,25 @@ def assert_forward_drivers(
     basis = GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
     violations: list[str] = []
     for y in range(max(start_year, config.crossover_forward_year), end_year + 1):
-        if not config.is_crossover_forward_year(y):
-            violations.append(f"{y}: not flagged as a crossover-forward year")
+        if y in HINDCAST_BRIDGE_YEARS and not (
+            # A crossover forward year >= 2026 is un-bridged (solved); a
+            # full-forward run inside 2021-2025 keeps the 2022 bridge, which
+            # is never solved — nothing to assert for it.
+            y >= CROSSOVER_FORWARD_YEAR and config.is_crossover_forward_year(y)
+        ):
             continue
-        resolved = resolve_annual_gas_price(config, y)
-        aeo = (
+        if not config.is_crossover_forward_year(y):
+            violations.append(
+                f"{y}: not flagged as a crossover-forward year (the measured "
+                "demand loader and the F923 overlay would both fire for it)"
+            )
+            continue
+        try:
+            resolved = resolve_annual_gas_price(config, y)
+        except ValueError as e:
+            violations.append(f"{y}: {e}")
+            continue
+        fwd = (
             _hold_flat_extrapolate(
                 HENRY_HUB_TRAJECTORIES[config.crossover_forward_gas_path], y
             )
@@ -366,10 +531,10 @@ def assert_forward_drivers(
             _hold_flat_extrapolate(HENRY_HUB_TRAJECTORIES[config.gas_price_path], y)
             + basis
         )
-        if abs(resolved - aeo) > 1e-9:
+        if abs(resolved - fwd) > 1e-9:
             violations.append(
-                f"{y}: forward gas {resolved:.3f} != AEO "
-                f"{config.crossover_forward_gas_path} {aeo:.3f}"
+                f"{y}: forward gas {resolved:.3f} != forward path "
+                f"{config.crossover_forward_gas_path} {fwd:.3f}"
             )
         if config.gas_price_path != config.crossover_forward_gas_path and (
             abs(resolved - realized) <= 1e-9
@@ -429,7 +594,34 @@ def main(argv: list[str] | None = None) -> int:
         help=(
             "AEO Henry Hub path a crossover uses for its FORWARD years (>=2026): "
             "the forecast fuel methodology (plan §2.2). 'mid' = AEO2025 "
-            "Reference. Ignored outside --crossover."
+            "Reference. Ignored outside --crossover (a --forward-from-base run "
+            "derives its forward gas from --arm instead)."
+        ),
+    )
+    parser.add_argument(
+        "--forward-from-base",
+        action="store_true",
+        help=(
+            "T1-FF full-forward hindcast (FH-1, hindcast-forward plan §2): set "
+            "crossover_forward_year = start-year so EVERY solve year runs the "
+            "forward input stack (no measured overlays), scored 2023-2025 "
+            "only. Plain-hindcast window rules (2021 floor, end <= 2025, 2022 "
+            "bridged, {2021} seed); --vintage must be at/before the base "
+            "year. Wire the arm with --arm. Mutually exclusive with "
+            "--crossover."
+        ),
+    )
+    parser.add_argument(
+        "--arm",
+        choices=["realized", "asknown"],
+        default="realized",
+        help=(
+            "T1-FF pre-registered arm (plan §2.1). 'realized' (Arm R): "
+            "realized annual Henry Hub + per-solve-year weather (given-weather "
+            "structural test). 'asknown' (Arm K): as-known AEO gas vintage "
+            "as-of the base year (hindcast_asknown_aeo<base>; HARD ERROR if "
+            "not intaken — FH-3) + base-year weather (pure ex-ante skill). "
+            "Ignored outside --forward-from-base."
         ),
     )
     parser.add_argument("--out-dir", type=Path, required=True)
@@ -523,11 +715,45 @@ def main(argv: list[str] | None = None) -> int:
 
     iso = args.iso.upper()
     crossover = bool(args.crossover)
+    forward_from_base = bool(args.forward_from_base)
+    arm = str(args.arm)
+    if forward_from_base and args.entry_lookahead_reprice:
+        # The G-30 lookahead's hindcast branch reads the NEXT year's measured
+        # demand — a measured-input read every T1-FF solve year is defined to
+        # exclude. (The runner's seam now suppresses that read for forward
+        # next-years too, but a posture contradiction is refused loudly
+        # rather than silently defanged.)
+        raise SystemExit(
+            "--entry-lookahead-reprice is not available with "
+            "--forward-from-base: its hindcast branch consumes measured "
+            "next-year demand, which the full-forward posture excludes"
+        )
     # Vintage default resolves by mode; a crossover MUST seed from the 2023
     # vintage (plan §2.2) — reject a mismatched explicit --vintage loudly rather
-    # than silently seeding a crossover from the wrong fleet.
+    # than silently seeding a crossover from the wrong fleet. A full-forward
+    # run must seed from a vintage at/before its base year (plan §2: "seeded
+    # from an EIA-860 vintage at or before the base year"); its default is the
+    # newest allowed vintage that satisfies that.
     vintage = args.vintage
-    if vintage is None:
+    start_year = args.start_year
+    if forward_from_base:
+        if start_year is None:
+            start_year = 2023  # Phase A default (plan §3.1)
+        if vintage is None:
+            eligible = [v for v in ALLOWED_VINTAGES if v <= start_year]
+            if not eligible:
+                raise SystemExit(
+                    f"no allowed EIA-860 vintage at/before base {start_year} "
+                    f"(allowed: {ALLOWED_VINTAGES})"
+                )
+            vintage = max(eligible)
+        if vintage > start_year:
+            raise SystemExit(
+                f"--forward-from-base requires --vintage <= the base year "
+                f"(a forecast started at {start_year} cannot seed from the "
+                f"{vintage} snapshot; plan §2)"
+            )
+    elif vintage is None:
         vintage = CROSSOVER_VINTAGE_YEAR if crossover else DEFAULT_VINTAGE_YEAR
     if crossover and vintage != CROSSOVER_VINTAGE_YEAR:
         raise SystemExit(
@@ -535,14 +761,36 @@ def main(argv: list[str] | None = None) -> int:
             f"(plan §2.2); got {vintage}"
         )
     # Window defaults by mode (None => mode default; explicit value overrides).
-    start_year = args.start_year
     if start_year is None:
         start_year = 2023 if crossover else 2021
     end_year = args.end_year
     if end_year is None:
         end_year = 2027 if crossover else 2025
-    _validate_window(start_year, end_year, crossover)
+    _validate_window(start_year, end_year, crossover, forward_from_base)
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Governance record (FH-1, plan §5.3): the holdout freeze is read and the
+    # run's legality stated EXPLICITLY at launch — deliberate, not accidental.
+    # A T1-FF/hindcast window is freeze-legal by construction (solves = the
+    # training years + the {2021} seed; scoring never leaves 2023-2025; the
+    # 2022/2026 quarantine is bridged), which _validate_window has already
+    # fail-closed enforced above. The freeze state is recorded in the meta.
+    freeze_path = _ROOT / holdout_policy.FREEZE_FILE
+    freeze_active = False
+    if freeze_path.exists():
+        freeze_active = bool(json.loads(freeze_path.read_text()).get("active"))
+    if freeze_active:
+        print(
+            "[governance] HOLDOUT SPEND FREEZE is ACTIVE "
+            f"({holdout_policy.FREEZE_FILE}). This run remains legal under it: "
+            "solve years are the rule-22 training window "
+            f"{sorted(holdout_policy.CALIBRATION_YEARS)} plus the enumerated "
+            f"seed {sorted(holdout_policy.HINDCAST_SEED_YEARS)} (never scored), "
+            f"bridges {sorted(holdout_policy.HINDCAST_BRIDGE_YEARS)} are never "
+            "solved or read, and scoring is bounded to the training window on "
+            "both sides (score_crossover). No out-of-training year is solved, "
+            "scored, or registered; no marker is spent."
+        )
 
     config = build_config(
         iso,
@@ -551,6 +799,8 @@ def main(argv: list[str] | None = None) -> int:
         args.fuel_variant,
         vintage=vintage,
         crossover=crossover,
+        forward_from_base=forward_from_base,
+        arm=arm,
         crossover_forward_gas_path=args.crossover_forward_gas_path,
         energy_only_floor=args.energy_only_floor,
         entry_lookahead_reprice=args.entry_lookahead_reprice,
@@ -567,25 +817,46 @@ def main(argv: list[str] | None = None) -> int:
     # never see a bundle with a 2021 solve year. Point the cache root here.
     cachemod.CACHE_ROOT = args.out_dir
     started = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    kind = "crossover" if crossover else "hindcast"
+    if forward_from_base:
+        kind = "full_forward"
+    elif crossover:
+        kind = "crossover"
+    else:
+        kind = "hindcast"
     tag = f"[{kind}]"
     print(
-        f"{tag} {iso} {start_year}-{end_year} variant={args.fuel_variant} "
+        f"{tag} {iso} {start_year}-{end_year} variant={config.hindcast_fuel_variant} "
         f"gas={config.gas_price_path} vintage={vintage}"
         + (
             f" forward>={config.crossover_forward_year} "
             f"gas_fwd={config.crossover_forward_gas_path}"
-            if crossover
+            if config.crossover_forward_year is not None
+            else ""
+        )
+        + (
+            f" arm={arm} weather="
+            + ("solve-year" if config.crossover_solve_year_weather else "base-year")
+            if forward_from_base
             else ""
         )
     )
+    # Pre-solve forward-driver guard (FH-1: "at run time, not only in unit
+    # tests"): pure-config checks — the boundary flagging, the resolved gas
+    # path per solve year, and the §4-row-7 back-hold trap — abort BEFORE a
+    # multi-hour solve is burned. Re-asserted after the solve for the meta.
+    pre_violations = assert_forward_drivers(config, start_year, end_year)
+    if pre_violations:
+        print(f"{tag} PRE-SOLVE forward-driver guard violations (aborting):")
+        for v in pre_violations:
+            print("  -", v)
+        return 1
     key = run_scenario(config, iso)
     bundle = args.out_dir / iso / key
     ledgers = load_ledgers_for_run(bundle)
 
     violations = assert_pipeline_from_vintage(iso, args.out_dir, ledgers, vintage)
-    # Crossover forward-driver guard (FF-0E §2.2): the forward years must consult
-    # no backcast-gated realized loader (gas on the AEO path, not realized).
+    # Crossover forward-driver guard (FF-0E §2.2, generalized FH-1): the
+    # forward years must consult no backcast-gated realized loader.
     violations += assert_forward_drivers(config, start_year, end_year)
     if violations:
         print(f"{tag} LEAKAGE GUARD violations:")
@@ -597,7 +868,7 @@ def main(argv: list[str] | None = None) -> int:
     meta = {
         "iso": iso,
         "kind": kind,
-        "variant": args.fuel_variant,
+        "variant": config.hindcast_fuel_variant,
         "energy_only_floor": bool(args.energy_only_floor),
         "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
         "retirement_rule": args.retirement_rule,
@@ -611,8 +882,22 @@ def main(argv: list[str] | None = None) -> int:
         "crossover": crossover,
         "crossover_forward_year": config.crossover_forward_year,
         "crossover_forward_gas_path": (
-            config.crossover_forward_gas_path if crossover else None
+            config.crossover_forward_gas_path
+            if config.crossover_forward_year is not None
+            else None
         ),
+        # T1-FF record (FH-1, plan §2.1): mode + pre-registered arm + base +
+        # weather posture, so a full-forward bundle is self-describing and the
+        # scorer/registry never has to infer the arm from the gas path.
+        "forward_from_base": forward_from_base,
+        "arm": arm if forward_from_base else None,
+        "base_year": start_year if forward_from_base else None,
+        "weather_posture": (
+            ("solve_year" if config.crossover_solve_year_weather else "base_year")
+            if forward_from_base
+            else None
+        ),
+        "holdout_freeze_active_at_launch": freeze_active,
         "vintage_year": vintage,
         "start_year": start_year,
         "end_year": end_year,
