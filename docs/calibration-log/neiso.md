@@ -1029,3 +1029,36 @@ its own owner charter; this audit grants none.**
 full entry in `docs/calibration-log/governance.md` (2026-08-01).
 
 Next shorthand: **neiso-75** (unchanged).
+
+## 2026-08-02 — cross-ISO audit touching NEISO (caiso-154): the caiso-153 OLS-attenuation defect is NOT LIVE in NEISO — but its signature is DATA-REAL counterfactually, and one NEW tail-sensitivity exposure on the Limb-B surface is FILED (unarmed; charter-gated)
+
+No-LP input-standing audit, logged in full in `docs/calibration-log/caiso.md`
+(caiso-154) and `results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
+NEISO outcomes: (1) `derive_neiso_offer_surface.py` contains no regression —
+the caiso-153 family is structurally absent, and
+`neiso_offer_surface_conditional` is off in the keeper (neiso-58 dormancy
+stands); (2) the committed artifact reproduces to 0.023 % from a fully
+refetched corpus at IDENTICAL coverage (353/352/353 days; the 38 absent days
+re-error on retry — the documented endpoint gaps); (3) counterfactually, the
+caiso-153 attenuation IS data-real on NEISO's corpus (Algonquin max/median
+13.0×): OLS slope p50 7.4–8.1 vs TS 9.4–10.2, OLS |L| ~2× TRIM's, and the
+630 MW physics-fast-start pool splits 303/327 under OLS where TS puts all of
+it ≥8.5 — had NEISO been identified the CAISO way, the misbucketing would
+have fired; but every OLS body cell stays ADMISSIBLE ($15.2–15.7 vs $20), so
+NOT LIVE on the family's own bar; (4) **NEW FILED EXPOSURE (unowned):** the
+tight-bin q0.7/q0.9 rungs of `neiso_offer_surface_condbinned.json` are
+levered **+10.1..+13.1 %** by the 34 Algonquin fuel-tail days (Feb-2023
+arctic week + the Dec-2025 weekly-anchor $25.00 ffill plateau — one Wednesday
+print held 28 days, containing the real 2025-12-08 DA>$300 event): on spike
+days, oil-parity/capped offers divide to LOW gas multipliers, so the measured
+"fast-start wall" is biased LOW — the ratio analogue of caiso-153
+attenuation. FILE-AND-STOP per the pre-registration: the artifact is armed in
+no keeper, no number moves anywhere, and any action belongs to the
+oil-parity/import/DA-bid charter class the frontier note (§5.6 item 1)
+already requires — with the added weight that half the excluded mass is
+fuel-series granularity (the weekly-anchor ffill), which any successor must
+weigh before reading the 13 % as pure conduct signal.
+`measured_offer_surface` NEISO stays `I`; keeper
+`2026-07-31-neiso-72-hy-window` untouched; nothing registered.
+
+Next shorthand: **neiso-75** (unchanged).
