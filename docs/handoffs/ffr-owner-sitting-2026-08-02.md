@@ -113,12 +113,80 @@ root-cause term**, not a symptom of the decision rule. So the FH-4 unblock needs
 G-31 lane fix plus a re-probe**; signing D-1 is necessary, is not sufficient, and does not by
 itself lift the block.
 
-**A.5 Attachments still pending:** FFR-2C (**D-3** — not started as of this HEAD: no branch, no
-PR, no handoff), FFR-2E (context for D-1/D-3), FFR-2A (sitting context). D-3's owner box is
-therefore **not yet decidable**; D-5, D-6 and D-7 remain decidable now, as assembled.
+**A.5 Attachments still pending:** ~~FFR-2C (**D-3** — not started as of this HEAD: no branch, no
+PR, no handoff)~~ → **LANDED, see Addendum B; D-3 is now DECIDABLE.** Still pending: FFR-2E
+(context for D-1/D-3), FFR-2A (sitting context). D-5, D-6 and D-7 remain decidable now, as
+assembled.
 
 **A.6 Keeper drift since assembly:** CAISO → `2026-07-31-caiso153-reid-b` (PR #3267). The other
 five are unchanged from the state-basis list above. Re-read the shards at the sitting's own HEAD.
+
+---
+
+## Addendum B — FFR-2C landed; **D-3 is now decidable** (workstream manager, 2026-08-02, HEAD `cb1c416`)
+
+Evidence doc: `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`; the owner box itself is
+written into `ff-g3-net-cone-forward-2026-07.md` §5. **No default was flipped and no escalation
+option was armed** — the shipped mode is still `hold_last` with every real rate at 0.0.
+
+**B.1 The re-anchor (the half that was never yours).** Two of four stale vintages moved, each
+from its published instrument; the other two were adjudicated rather than guessed:
+
+| ISO | held → re-anchored ($/kW-yr) | step | = years of +2 %/yr real |
+|---|---|--:|--:|
+| **PJM** | 88.52 → **118.88** | **+34.3 %** | **14.9 yr** |
+| **NYISO** | 50.55 → **57.70** | **+14.1 %** | **6.7 yr** |
+| MISO | 79.80 held | +1.5 % derivable, **not taken** | 0.8 yr |
+| NEISO | 108.94 held | no newer vintage exists | — |
+
+**The framing this forces on D3-1/D3-2:** currency dominates escalation. A single PJM vintage
+refresh is worth ~15 years of +2 %/yr real, and ~4 more PJM vintages plus ~24 NYISO annual
+updates land inside the 2026–2050 horizon. **Keeping vintages current needs no owner decision at
+all — it is maintenance.** Sign the escalation box knowing it is the smaller lever.
+
+**B.2 A finding that SUPERSEDES a prior conclusion — read before D-3 or D-1.** PJM's new vintage
+carries a **published price floor that removes the demand curve's zero-cross**. That supersedes
+FF-2C's "the PJM curve flip is quantitatively inert" from **solve year 2028 onward**. Any D-3 or
+D-1 reasoning resting on the PJM curve being inert is reasoning from a superseded premise. It
+also raises the value of FFR-2E's still-pending posture-divergence table, which is exactly the
+curve-ON-vs-fixed question.
+
+**B.3 D3-3 (intake authorization) is largely MOOT — the premise was wrong.** FF-G3 filed all four
+vintages as MANUAL DOWNLOADS NEEDED on a bot-wall diagnosis. Re-probed: the PJM Planning-Parameters
+**XLSX returns HTTP 200** (39,244 bytes, a real workbook — every PJM number above comes from it),
+and the NYISO parameters were simply linked from the Installed Capacity Market page rather than
+the demand-curve page. Only MISO is a genuine block, and it is one object's ACL (**HTTP 403** on
+the 2026 PRA posting while 2023/24/25 on the same CDN return 200) — not a host-level wall. The
+session's own lesson, worth adopting program-wide: **re-probe a filed MANUAL-DOWNLOAD row before
+treating it as blocked, and name the exact object that fails, not the host.**
+
+**B.4 The measured D1/D2 spread** (2050 anchor, on each ISO's *re-anchored* base, using each
+ISO's **published** gross−net offset — not an illustration): at r = 2 %, `reindex_gross` vs
+`hold_last` is **+130 % (PJM)**, **+139 % (NYISO)**, **+102 % (MISO)**. NEISO's `reindex_gross`
+cell is **n/a because no FCA-18 gross CONE is on disk** — do not fill it by inference.
+
+**B.5 The recommendations, now evidenced rather than expected.**
+- **D3-2 = 0.0 real central, CONFIRMED by the new data.** PJM's +34.3 % is a *step* PJM itself
+  labels a new cost basis; fitting a real rate to it extrapolates a one-time re-basing across 23
+  years — the exact error the 0.0-central finding exists to prevent. NYISO cuts the same way from
+  the other side: most of its move is a **falling E&AS offset**, which no construction-cost index
+  produces at all.
+- **D3-1 is inert until D3-2 chooses a non-zero rate** (at r = 0.0 all three modes are
+  byte-identical to `hold_last`). Option (a) `reindex_gross` is cheaper to adopt than in July —
+  the published offsets are now on disk for three of four ISOs.
+- **D3-5 gains a natural experiment that argues FOR the coupling** — PJM's step is a new-build
+  capital-cost re-estimate propagating into the capacity anchor, which is what D5 proposes — **but
+  the two ISOs decompose oppositely**, so if D5 is taken it must couple the **gross leg only** and
+  leave E&AS as its own driver. That is also what `reindex_gross` does, making **D5 and D3-1(a)
+  the same decision seen from two ends** — consider signing them together or not at all.
+
+**B.6 Epoch debt, as the D-3 section anticipated.** The re-anchor is a constants-level change:
+forecast output moves under unchanged `ScenarioConfig` cache keys, and it landed *after* §W1-X's
+single bump. **FFR-3A must clear this debt before its consolidated battery** — it is now a
+concrete item, not a hypothetical.
+
+**B.7 What remains pending:** FFR-2E and FFR-2A. D-1, D-2, D-3, D-5, D-6 and D-7 are decidable
+now; only D-4 was never gated on Wave 2.
 
 ---
 
