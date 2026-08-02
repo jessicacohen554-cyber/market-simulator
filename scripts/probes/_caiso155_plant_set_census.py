@@ -88,8 +88,10 @@ def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict
     p3_count = int((dropped & ~floored_anywhere).sum())
 
     rows = []
+    dropped_twh_exact = 0.0
     for r in p1_rows:
         hot = mg[r] > D2_FLOOR_MIN_MW
+        dropped_twh_exact += float(mg[r][hot].sum()) / 1e6
         mech_ids = sorted(set(mech[r][hot].tolist()) - {0})
         rows.append(
             {
@@ -112,12 +114,16 @@ def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict
     head_keys, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
     head_twh = float(np.clip(floor_sum, 0.0, None).sum()) / 1e6
     kept_twh = float(mg[pc > 0].sum()) / 1e6
-    dropped_twh = float(sum(r["floor_twh"] for r in rows))
+    dropped_twh = dropped_twh_exact
     fix_present = any(str(k).startswith("u:") for k in head_keys)
+    # Post-fix, sub-1-MW floor hours on a pseudo row are inside head_twh but
+    # outside the P1 accumulation (which counts only hours > D2_FLOOR_MIN_MW),
+    # so allow that sliver: 8760 h x 1 MW = 0.00876 TWh per pseudo row.
+    slop = 1e-6 + (0.00876 * len(rows) if fix_present else 0.0)
     expected = kept_twh + dropped_twh if fix_present else kept_twh
-    assert abs(head_twh - expected) < 1e-6, (
-        f"{iso} {year}: aggregation {head_twh:.4f} TWh != expected "
-        f"{expected:.4f} TWh (fix_present={fix_present}) — premise broken, stop"
+    assert abs(head_twh - expected) <= slop, (
+        f"{iso} {year}: aggregation {head_twh:.6f} TWh != expected "
+        f"{expected:.6f} TWh (fix_present={fix_present}) — premise broken, stop"
     )
 
     # P2 — the payload cannot carry these rows; dispatch parquet is absent.

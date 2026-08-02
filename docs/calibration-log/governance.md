@@ -784,3 +784,20 @@ from §4.6 (dangling `--ramp-limits`, inert-default flags, the
 keeper-only `BF` mechanisms, and the `thermal_tranches_<ISO>.csv` provenance item
 (blocked at HEAD, miso-95); Arm C's pjm-144 PREREG-without-outcome question also
 remains unclaimed.
+
+## 2026-08-02 — caiso-155: three legitimacy-harness defects fixed (plant-set drop; rebuild override-channel threading; G-06 bridge carve-out); no keeper verdict moved
+
+The caiso-151 §F diagnostics plant-set defect is closed ISO-generically, and
+the census surfaced two deeper reconstruction-fidelity defects (the
+floors-rebuild's dropped generic override channels — which both LOST
+channel-armed floors and HALLUCINATED replaced legacy ones — and G-06's
+RA-only bridge subtraction). All three fixed in
+`scripts/legitimacy_diagnostics.py` with tests; census + A-ladder +
+production-rubric re-score on record. NO committed artifact regenerated:
+both pre-registered regen instruments failed their gates honestly (A1b:
+solve-state floors; D-13: measured degenerate-vertex non-reproduction of the
+caiso153 solve — same duals, class dispatch shuffled ≤2 GW — carrying
+caiso-154 §H's "reproductions are not a standing guarantee" from artifacts
+to solves). Main entry `docs/calibration-log/caiso.md`; record
+`results/calibration/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
+matrix audit row `diagnostics_plant_set`.

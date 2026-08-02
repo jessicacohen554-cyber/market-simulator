@@ -145,11 +145,64 @@ nuclear/hydro/CHP floor applications. Measured consequences:
   license) regenerate the real `floors/<year>_P1.npz` + dispatch parquets,
   gated by D-13 byte-identity of every committed bundle file.
 
-**Replay + re-gate results (CAISO, NYISO):** REPLAY_RESULTS_PLACEHOLDER
+**Replay result: D-13 FAILED — the keeper solve does not reproduce in this
+container, and the failure is PRECISELY MEASURED.** The in-place caiso153
+replay solved 2023 (P0 244 s + P1 249 s) and its persist rewrote two
+committed sidecars. Value-level comparison against git HEAD:
+`hourly/system_2023.parquet` **byte-identical** (max value delta 0 — same
+duals, same prices, same served load), while `class_hourly_2023` and
+`storage_2023` moved by up to **1,997 / 1,516 MW** in single (class, hour)
+cells at identical shapes. That is the degenerate-optimum signature: HEAD (or
+this box's numerics stack) lands a DIFFERENT equal-cost vertex of the same
+LP. The P0-pattern bridges are detected from the P0 SOLUTION, so
+replay-sourced floors are not the keeper's floors wherever the vertex
+drifted — exactly what D-13 exists to catch (and caiso-154 §H's
+"reproductions are not a standing guarantee", now measured on a solve).
+Actions per addendum 2 §C: the replay was killed before any 2024 write, the
+two clobbered sidecars were restored byte-exact from git, the replay's
+`dispatch/` + `floors/2023_P1.npz` were deleted (so no future session
+mistakes drifted floors for keeper floors), and the **NYISO replay was NOT
+attempted** — its bridge has the same P0-state dependence, so the same gate
+would fire; spending ~50 min to re-measure it was declined and is recorded
+here as a deliberate scope decision, not a silent skip.
+
+The firm-tranche floors themselves are vertex-INDEPENDENT (fleet-level,
+availability × config), which the record shows twice over: the replayed 2023
+P1 floors and the threaded REBUILD both carry the same two CAISO tranches
+(`WECC_PNW_PNW_hydro_base` + `WECC_DSW_DSW_solar_PV`) at **17.938 / 22.684 /
+22.494 TWh** — caiso-151 §C's clipped exposure to the 3rd decimal (gate A4,
+two independent reconstructions).
 
 ## §E — the re-gate: verdicts
 
-RE_GATE_RESULTS_PLACEHOLDER
+**No committed `legitimacy_diagnostics.json` changed this session, because
+BOTH pre-registered regen instruments failed their gates honestly**: the
+threaded rebuild fails A1b (it cannot carry the P0-bridge /
+post-fleet-exit floors the committed artifacts truthfully embed — replacing
+them would trade committed truth for a lossy reconstruction), and the replay
+fails D-13 (§D). The committed artifacts remain canonical, and therefore:
+
+* **Every keeper's criterion profile and determination is UNCHANGED** — the
+  A3 baseline (`_xiso3_forced_share_d4_census.py`, re-run in-session against
+  the committed artifacts: all six C8 PASS, PJM/MISO grounded-above-budget,
+  determinations matching FINDING-xiso3) is also the exit state. **Stop rule
+  S1 never fired. No keeper flips, is demoted, or is promoted.**
+* The scored ladder still establishes the rubric-invariance claim the
+  pre-registration made: on the regenerated (scratch) artifacts the new rows
+  are class-`""` / exempt-mechanism D-2 rows and all-hours-window D-4 rows —
+  no D-2 summary row is added or altered, so C8 cannot move; C7 reads D-1,
+  untouched by the fix (the HEAD-vs-committed D-1 drift measured in-session
+  is confined to C7-exempt CHP classes with zero verdict changes and rides
+  ANY future regen, not this fix).
+* **Where the visibility lands:** every FUTURE bundle generated the standard
+  way — the artifact written in-session right after the solve, from the
+  bundle's real `floors/*_P?.npz` (the flow that produced every current
+  keeper's artifact) — now carries the firm-import D-2/D-4 rows
+  automatically. The same holds for any bundle whose floors carry no
+  solve-state mechanism, via the fixed threaded rebuild. The three current
+  keepers' artifacts gain the rows at their next natural regeneration (next
+  solve / next promotion in their lanes); nothing needs to be re-solved for
+  it, and nothing was.
 
 ## §F — what remains open (filed, not fixed)
 

@@ -1,7 +1,7 @@
 caiso-155 plant-set census transcript — 2026-08-02
 Populations/gates: PREREG-caiso155-diagnostics-plant-set-2026-08-02.md (+2 addenda).
 
-########## PHASE 1 — PRE-FIX census (HEAD scorer, standing G-06 rebuild = UNTHREADED; the MISO record is the §C hallucination, NOT keeper exposure) ##########
+########## PHASE 1 — PRE-FIX census (HEAD scorer, standing G-06 rebuild = UNTHREADED; the MISO record is the FINDING §C hallucination, NOT keeper exposure) ##########
 
 ----- CAISO (pre-fix) -----
 caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
@@ -306,7 +306,138 @@ caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot1
 [PJM 2024] BLOCKED (stop rule S3): floors rebuild needs an absent raw input — pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no hrl_da_incs_decs_2024_* parquets — run scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently no-ops)
 [PJM 2025] BLOCKED (stop rule S3): floors rebuild needs an absent raw input — pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no hrl_da_incs_decs_2025_* parquets — run scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently no-ops)
 
-########## PHASE 2 — POST-FIX re-run (fix-aware probe; threaded floors caches where rebuilt) ##########
+########## PHASE 2 — POST-FIX re-run (fix-aware probe; THREADED rebuild caches — Part 0 of the addendum landed) ##########
+
+----- CAISO (post-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== CAISO — keeper 2026-07-31-caiso153-reid-b — bundle results/calibration/caiso153_reid_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "WECC_PNW_PNW_hydro_base",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 7007,
+   "mean_floor_mw": 1098.3,
+   "max_floor_mw": 1958.3,
+   "floor_twh": 7.6956
+  },
+  {
+   "unit_id": "WECC_DSW_DSW_solar_PV",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 7693,
+   "mean_floor_mw": 1331.4,
+   "max_floor_mw": 2285.3,
+   "floor_twh": 10.2422
+  }
+ ],
+ "p1_total_twh": 17.9378,
+ "p3_unfloored_dropped_rows": 9,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 55.9776,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 193
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "WECC_PNW_PNW_hydro_base",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 7725,
+   "mean_floor_mw": 1260.5,
+   "max_floor_mw": 2433.7,
+   "floor_twh": 9.7376
+  },
+  {
+   "unit_id": "WECC_DSW_DSW_solar_PV",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 7994,
+   "mean_floor_mw": 1619.5,
+   "max_floor_mw": 2832.0,
+   "floor_twh": 12.9465
+  }
+ ],
+ "p1_total_twh": 22.6842,
+ "p3_unfloored_dropped_rows": 9,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 58.6399,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 194
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "WECC_PNW_PNW_hydro_base",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 7977,
+   "mean_floor_mw": 1252.6,
+   "max_floor_mw": 2058.6,
+   "floor_twh": 9.9917
+  },
+  {
+   "unit_id": "WECC_DSW_DSW_solar_PV",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8151,
+   "mean_floor_mw": 1533.8,
+   "max_floor_mw": 2682.9,
+   "floor_twh": 12.5023
+  }
+ ],
+ "p1_total_twh": 22.494,
+ "p3_unfloored_dropped_rows": 9,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 55.8552,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 194
+}
 
 ----- MISO (post-fix) -----
 caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
@@ -441,4 +572,11 @@ caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot1
  "payload_plant_count": 107
 }
 
-(CAISO post-fix record appended below after the in-place keeper replay regenerated its real P1 floors — addendum 2.)
+########## PHASE 3 — replay D-13 record (FINDING §D) ##########
+In-place caiso153_reid_B full-span replay, 2023 solved+persisted then ABORTED:
+  hourly/system_2023.parquet: byte-identical (max value delta 0) — same duals/prices
+  hourly/class_hourly_2023.parquet: same shape, max |value delta| 1997.32 MW
+  hourly/storage_2023.parquet:      same shape, max |value delta| 1515.54 MW
+  => degenerate-vertex non-reproduction; D-13 FAIL; committed bytes restored from git;
+     replay dispatch/ + floors/2023_P1.npz deleted; NYISO replay NOT attempted (same
+     P0-pattern-bridge dependence). No committed artifact regenerated this session.

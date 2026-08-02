@@ -2147,6 +2147,45 @@ charter with a new measured identification** before a solve:
   gated today (the provenance leg is only consulted above the cap) and **no
   entry was minted** — a rule-17 declaration needs its own per-ISO driver
   evidence. Matrix row `forced_share_d4_census`, cells `IIIIII`.
+- **D-2/D-4 plant-set + floors-reconstruction fidelity audit — DONE 2026-08-02
+  (caiso-155), the caiso-151 §F filed defect ADJUDICATED AND FIXED; no keeper
+  verdict moved.** Zero LP registered. Probe
+  `scripts/probes/_caiso155_plant_set_census.py` (fix-aware on re-run), record
+  `results/calibration/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`,
+  pre-registration + 2 addenda each committed before the numbers they govern.
+  Three harness defects, all fixed ISO-generically in
+  `scripts/legitimacy_diagnostics.py`:
+
+  1. **The plant-set drop** — floored `plant_code <= 0` interchange tranches
+     now ride D-2/D-4 as `u:<unit_id>` pseudo-plant rows under a
+     pre-registered floor-energy convention (dispatch := min_gen, every
+     path); class `""` + non-thermal exemptions keep C7/C8 structurally
+     invariant (unit-tested).
+  2. **The rebuild's dropped override channels** — `REBUILD_META_RENAMES`
+     threads `coal_prb_sigmoid_overrides`/`coal_bit_*` into `run_year`;
+     unthreaded, the reconstruction LOST CAISO's channel-armed firm floors
+     and HALLUCINATED MISO's pre-miso-74 Manitoba block.
+  3. **G-06's too-narrow bridge carve-out** — `BRIDGE_MECHS` widens the
+     committed-side subtraction from the RA leg to the whole P0-pattern
+     family (nyiso109 would have false-failed by 5.31/3.14 pp CC_REGULAR).
+
+  | ISO | dropped floored tranches at the keeper | TWh/yr |
+  |---|---|---|
+  | CAISO | 2 firm tranches (PNW hydro base + DSW solar PV) | **17.938 / 22.684 / 22.494** (= caiso-151 §C, 2 independent reconstructions) |
+  | NYISO | `NYISO_external_HQ_hydro` (900 MW flat) | **7.884** each year |
+  | MISO | **none** — `miso_manitoba_seam` (miso-74) replaced the firm block; the handoff premise was stale | — |
+  | ERCOT / NEISO | none (`priced_interchange: False`) | — |
+  | PJM | census S3-blocked (`pjm-da-virtuals` uncommitted); static: no firm-floor config | — |
+
+  **No committed artifact was regenerated**: the fleet-only rebuild fails the
+  pre-registered A1b gate (solve-state floors — the P0 bridges,
+  nuclear/hydro/CHP applications — would be silently lost), and an in-place
+  caiso153 replay failed D-13 with a measured degenerate-vertex signature
+  (2023 system duals byte-identical; class/storage dispatch shuffled up to
+  ~2 GW), so replay floors are not keeper floors either. Committed bytes
+  restored; every keeper's determination unchanged (xiso-3 baseline == exit
+  state). The visibility lands automatically on every future in-session
+  artifact generation. Matrix row `diagnostics_plant_set`, cells `IIOIII`.
 - `NG: PS` hydro-pin audit — **ALL SIX ISOs NOW SCREENED** (miso-108 audited
   MISO; miso-109 fixed it and ran the same three-signature screen across the
   rest, `scripts/probes/_miso109_hydro_level_audit.py`). The check is
