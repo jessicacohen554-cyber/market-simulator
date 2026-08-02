@@ -1,0 +1,371 @@
+{
+ "iso": "PJM",
+ "prereg": "PREREG-caiso154-xiso-ols-attenuation-2026-08-02.md \u00a74 M2",
+ "population": "all corpus resources, cap >= 20.0 MW",
+ "family_constants": {
+  "GAS_MIN_DAYS": 120,
+  "GAS_MIN_R": 0.6,
+  "GAS_SLOPE_RANGE": [
+   4.0,
+   18.0
+  ],
+  "hr_cut": 8.5,
+  "level_adder_bar": 20.0,
+  "basis": "gas only (RGGI caveat declared in PREREG)"
+ },
+ "coverage": {
+  "2023": {
+   "months_expected": 12,
+   "files": 12
+  },
+  "2024": {
+   "months_expected": 12,
+   "files": 12
+  },
+  "2025": {
+   "months_expected": 12,
+   "files": 12
+  }
+ },
+ "grid": {
+  "P035_OLS": {
+   "level_adder_cwmed_abs": 7.76,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 2.2,
+   "n_gas_pass": 121,
+   "gas_pass_mw": 35845.0,
+   "slope_p25_p50_p75": [
+    6.97,
+    9.14,
+    13.25
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 20450.0,
+    "CT_ge_8p5": 15394.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 29,
+    "mw": 13294.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 14625.0,
+    "CC_LIKE|CT": 5866.0,
+    "CT_FAST|CC": 181.0,
+    "CT_FAST|CT": 1339.0,
+    "LONG_RUN|CC": 5645.0,
+    "LONG_RUN|CT": 7340.0,
+    "OTHER|CT": 850.0
+   }
+  },
+  "P035_TS": {
+   "level_adder_cwmed_abs": 14.28,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.283,
+   "n_gas_pass": 168,
+   "gas_pass_mw": 43111.0,
+   "slope_p25_p50_p75": [
+    6.72,
+    8.81,
+    10.84
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 27631.0,
+    "CT_ge_8p5": 15480.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 34,
+    "mw": 14497.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 19773.0,
+    "CC_LIKE|CT": 9154.0,
+    "CT_FAST|CC": 1059.0,
+    "CT_FAST|CT": 1850.0,
+    "LONG_RUN|CC": 6798.0,
+    "LONG_RUN|CT": 4476.0
+   }
+  },
+  "P035_TRIM": {
+   "level_adder_cwmed_abs": 11.77,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.792,
+   "n_gas_pass": 155,
+   "gas_pass_mw": 46752.0,
+   "slope_p25_p50_p75": [
+    7.44,
+    9.53,
+    12.3
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 25596.0,
+    "CT_ge_8p5": 21156.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 18,
+    "mw": 5957.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 18885.0,
+    "CC_LIKE|CT": 10769.0,
+    "CT_FAST|CC": 436.0,
+    "CT_FAST|CT": 2009.0,
+    "LONG_RUN|CC": 6274.0,
+    "LONG_RUN|CT": 8379.0
+   }
+  },
+  "BAND_OLS": {
+   "level_adder_cwmed_abs": 6.34,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 2.08,
+   "n_gas_pass": 121,
+   "gas_pass_mw": 37402.0,
+   "slope_p25_p50_p75": [
+    7.05,
+    9.56,
+    13.58
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 23591.0,
+    "CT_ge_8p5": 13811.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 30,
+    "mw": 12362.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 16543.0,
+    "CC_LIKE|CT": 4702.0,
+    "CT_FAST|CC": 21.0,
+    "CT_FAST|CT": 1498.0,
+    "LONG_RUN|CC": 7026.0,
+    "LONG_RUN|CT": 6761.0,
+    "OTHER|CT": 850.0
+   }
+  },
+  "BAND_TS": {
+   "level_adder_cwmed_abs": 13.93,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.29,
+   "n_gas_pass": 179,
+   "gas_pass_mw": 48263.0,
+   "slope_p25_p50_p75": [
+    6.6,
+    9.15,
+    11.33
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 26524.0,
+    "CT_ge_8p5": 21740.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 28,
+    "mw": 11463.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 21081.0,
+    "CC_LIKE|CT": 11736.0,
+    "CT_FAST|CC": 1124.0,
+    "CT_FAST|CT": 1850.0,
+    "LONG_RUN|CC": 4319.0,
+    "LONG_RUN|CT": 8154.0
+   }
+  },
+  "BAND_TRIM": {
+   "level_adder_cwmed_abs": 10.62,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.869,
+   "n_gas_pass": 165,
+   "gas_pass_mw": 50834.0,
+   "slope_p25_p50_p75": [
+    7.1,
+    9.65,
+    12.59
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 28119.0,
+    "CT_ge_8p5": 22715.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 12,
+    "mw": 3348.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 22264.0,
+    "CC_LIKE|CT": 11409.0,
+    "CT_FAST|CC": 412.0,
+    "CT_FAST|CT": 2097.0,
+    "LONG_RUN|CC": 5444.0,
+    "LONG_RUN|CT": 9210.0
+   }
+  },
+  "P060_OLS": {
+   "level_adder_cwmed_abs": 6.44,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 1.906,
+   "n_gas_pass": 123,
+   "gas_pass_mw": 35716.0,
+   "slope_p25_p50_p75": [
+    6.44,
+    9.54,
+    12.9
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 23296.0,
+    "CT_ge_8p5": 12420.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 22,
+    "mw": 11195.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 17609.0,
+    "CC_LIKE|CT": 4806.0,
+    "CT_FAST|CC": 43.0,
+    "CT_FAST|CT": 1472.0,
+    "LONG_RUN|CC": 5645.0,
+    "LONG_RUN|CT": 6143.0
+   }
+  },
+  "P060_TS": {
+   "level_adder_cwmed_abs": 13.74,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.22,
+   "n_gas_pass": 179,
+   "gas_pass_mw": 49982.0,
+   "slope_p25_p50_p75": [
+    6.65,
+    8.92,
+    11.53
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 30040.0,
+    "CT_ge_8p5": 19942.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 24,
+    "mw": 8924.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 21910.0,
+    "CC_LIKE|CT": 11095.0,
+    "CT_FAST|CC": 1054.0,
+    "CT_FAST|CT": 1892.0,
+    "LONG_RUN|CC": 7076.0,
+    "LONG_RUN|CT": 6955.0
+   }
+  },
+  "P060_TRIM": {
+   "level_adder_cwmed_abs": 10.53,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.92,
+   "n_gas_pass": 159,
+   "gas_pass_mw": 49422.0,
+   "slope_p25_p50_p75": [
+    7.25,
+    9.48,
+    12.44
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 26603.0,
+    "CT_ge_8p5": 22819.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 11,
+    "mw": 2702.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 20702.0,
+    "CC_LIKE|CT": 11627.0,
+    "CT_FAST|CC": 457.0,
+    "CT_FAST|CT": 1982.0,
+    "LONG_RUN|CC": 5444.0,
+    "LONG_RUN|CT": 9210.0
+   }
+  },
+  "TOP_OLS": {
+   "level_adder_cwmed_abs": 14.47,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 2.774,
+   "n_gas_pass": 127,
+   "gas_pass_mw": 35181.0,
+   "slope_p25_p50_p75": [
+    7.17,
+    9.7,
+    13.16
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 19076.0,
+    "CT_ge_8p5": 16105.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 5,
+    "mw": 1142.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 13361.0,
+    "CC_LIKE|CT": 6987.0,
+    "CT_FAST|CC": 64.0,
+    "CT_FAST|CT": 915.0,
+    "LONG_RUN|CC": 5651.0,
+    "LONG_RUN|CT": 8203.0
+   }
+  },
+  "TOP_TS": {
+   "level_adder_cwmed_abs": 25.27,
+   "admissible_le_20": false,
+   "splithalf_slope_cwmed_abs_dev": 0.45,
+   "n_gas_pass": 179,
+   "gas_pass_mw": 44056.0,
+   "slope_p25_p50_p75": [
+    7.07,
+    10.08,
+    11.98
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 22876.0,
+    "CT_ge_8p5": 21180.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 8,
+    "mw": 1399.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 15070.0,
+    "CC_LIKE|CT": 11279.0,
+    "CT_FAST|CC": 1118.0,
+    "CT_FAST|CT": 1859.0,
+    "LONG_RUN|CC": 6689.0,
+    "LONG_RUN|CT": 8042.0
+   }
+  },
+  "TOP_TRIM": {
+   "level_adder_cwmed_abs": 23.77,
+   "admissible_le_20": false,
+   "splithalf_slope_cwmed_abs_dev": 0.898,
+   "n_gas_pass": 148,
+   "gas_pass_mw": 37963.0,
+   "slope_p25_p50_p75": [
+    7.86,
+    10.25,
+    13.14
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 14712.0,
+    "CT_ge_8p5": 23252.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 9,
+    "mw": 2186.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "CC_LIKE|CC": 11919.0,
+    "CC_LIKE|CT": 10852.0,
+    "CT_FAST|CC": 364.0,
+    "CT_FAST|CT": 1996.0,
+    "LONG_RUN|CC": 2429.0,
+    "LONG_RUN|CT": 10404.0
+   }
+  }
+ },
+ "note": "DESCRIPTIVE ONLY - no winner, no selection, nothing derived"
+}

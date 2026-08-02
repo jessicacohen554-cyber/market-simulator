@@ -1,0 +1,370 @@
+{
+ "PJM/top": {
+  "committed": "/home/user/market-simulator/data/raw/_validation-source/pjm_offer_surface_condbinned.json",
+  "M4_committed_vs_baseline": {
+   "comparison": "committed -> baseline (repro)",
+   "n_leaves_shared": 84,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.00016,
+   "n_gt_2pct": 0,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/CC_REGULAR/binned_ladder[1][3][1]",
+     0.0002
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[3][3][1]",
+     0.0002
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][4][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][4][1]",
+     0.0001
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[2][4][1]",
+     0.0001
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[1][4][1]",
+     0.0001
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[0][4][1]",
+     0.0001
+    ]
+   ]
+  },
+  "M3_committed_vs_tailx": {
+   "comparison": "committed -> tailx",
+   "n_leaves_shared": 84,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.0477,
+   "n_gt_2pct": 10,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/CC_REGULAR/binned_ladder[0][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[0][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[0][2][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[1][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[1][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[2][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[2][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[3][0][1]",
+     0.0477
+    ]
+   ]
+  },
+  "M3_baseline_vs_tailx": {
+   "comparison": "baseline -> tailx",
+   "n_leaves_shared": 84,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.0477,
+   "n_gt_2pct": 10,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/CC_REGULAR/binned_ladder[0][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[0][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[0][2][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[1][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[1][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[2][0][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[2][1][1]",
+     0.0477
+    ],
+    [
+     "/CC_REGULAR/binned_ladder[3][0][1]",
+     0.0477
+    ]
+   ]
+  }
+ },
+ "PJM/midcurve": {
+  "committed": "/home/user/market-simulator/data/raw/_validation-source/pjm_offer_midcurve_condbinned.json",
+  "M4_committed_vs_baseline": {
+   "comparison": "committed -> baseline (repro)",
+   "n_leaves_shared": 1152,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": true,
+   "max_rel_delta": 0.0,
+   "n_gt_2pct": 0,
+   "n_gt_10pct": 0,
+   "worst_leaves": []
+  },
+  "M3_committed_vs_tailx": {
+   "comparison": "committed -> tailx",
+   "n_leaves_shared": 1152,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.04651,
+   "n_gt_2pct": 20,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/LONG_RUN/years/2025[2][1][1]",
+     0.0465
+    ],
+    [
+     "/LONG_RUN/years/2025[2][2][1]",
+     0.0405
+    ],
+    [
+     "/LONG_RUN/years/2025[2][0][1]",
+     0.0372
+    ],
+    [
+     "/CT_FAST/years/2025[2][10][1]",
+     0.0362
+    ],
+    [
+     "/CT_FAST/years/2025[2][11][1]",
+     0.0328
+    ],
+    [
+     "/CT_FAST/years/2024[2][8][1]",
+     0.0284
+    ],
+    [
+     "/CT_FAST/years/2024[2][10][1]",
+     0.0276
+    ],
+    [
+     "/LONG_RUN/years/2024[2][3][1]",
+     0.0266
+    ]
+   ]
+  },
+  "M3_baseline_vs_tailx": {
+   "comparison": "baseline -> tailx",
+   "n_leaves_shared": 1152,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.04651,
+   "n_gt_2pct": 20,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/LONG_RUN/years/2025[2][1][1]",
+     0.0465
+    ],
+    [
+     "/LONG_RUN/years/2025[2][2][1]",
+     0.0405
+    ],
+    [
+     "/LONG_RUN/years/2025[2][0][1]",
+     0.0372
+    ],
+    [
+     "/CT_FAST/years/2025[2][10][1]",
+     0.0362
+    ],
+    [
+     "/CT_FAST/years/2025[2][11][1]",
+     0.0328
+    ],
+    [
+     "/CT_FAST/years/2024[2][8][1]",
+     0.0284
+    ],
+    [
+     "/CT_FAST/years/2024[2][10][1]",
+     0.0276
+    ],
+    [
+     "/LONG_RUN/years/2024[2][3][1]",
+     0.0266
+    ]
+   ]
+  }
+ },
+ "NEISO/top": {
+  "committed": "/home/user/market-simulator/data/raw/_validation-source/neiso_offer_surface_condbinned.json",
+  "M4_committed_vs_baseline": {
+   "comparison": "committed -> baseline (repro)",
+   "n_leaves_shared": 42,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.00023,
+   "n_gt_2pct": 0,
+   "n_gt_10pct": 0,
+   "worst_leaves": [
+    [
+     "/CT_PEAKER/binned_ladder[0][2][1]",
+     0.0002
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][3][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][3][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][3][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[0][3][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][4][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][4][1]",
+     0.0001
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][4][1]",
+     0.0001
+    ]
+   ]
+  },
+  "M3_committed_vs_tailx": {
+   "comparison": "committed -> tailx",
+   "n_leaves_shared": 42,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.13114,
+   "n_gt_2pct": 9,
+   "n_gt_10pct": 4,
+   "worst_leaves": [
+    [
+     "/CT_PEAKER/binned_ladder[2][3][1]",
+     0.1311
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][4][1]",
+     0.1053
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][4][1]",
+     0.1039
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][3][1]",
+     0.1008
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][2][1]",
+     0.0927
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][4][1]",
+     0.0853
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][2][1]",
+     0.0795
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][2][1]",
+     0.067
+    ]
+   ]
+  },
+  "M3_baseline_vs_tailx": {
+   "comparison": "baseline -> tailx",
+   "n_leaves_shared": 42,
+   "n_leaves_only_a": 0,
+   "n_leaves_only_b": 0,
+   "identical": false,
+   "max_rel_delta": 0.13125,
+   "n_gt_2pct": 9,
+   "n_gt_10pct": 4,
+   "worst_leaves": [
+    [
+     "/CT_PEAKER/binned_ladder[2][3][1]",
+     0.1312
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][4][1]",
+     0.1054
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][4][1]",
+     0.1039
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][3][1]",
+     0.1009
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][2][1]",
+     0.0927
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[1][4][1]",
+     0.0853
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[2][2][1]",
+     0.0795
+    ],
+    [
+     "/CT_PEAKER/binned_ladder[3][2][1]",
+     0.067
+    ]
+   ]
+  }
+ }
+}

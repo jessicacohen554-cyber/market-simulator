@@ -1,0 +1,337 @@
+{
+ "iso": "NEISO",
+ "prereg": "PREREG-caiso154-xiso-ols-attenuation-2026-08-02.md \u00a74 M2",
+ "population": "all corpus resources, cap >= 20.0 MW",
+ "family_constants": {
+  "GAS_MIN_DAYS": 120,
+  "GAS_MIN_R": 0.6,
+  "GAS_SLOPE_RANGE": [
+   4.0,
+   18.0
+  ],
+  "hr_cut": 8.5,
+  "level_adder_bar": 20.0,
+  "basis": "gas only (RGGI caveat declared in PREREG)"
+ },
+ "coverage": {
+  "2023": {
+   "days_in_year": 365,
+   "files": 353
+  },
+  "2024": {
+   "days_in_year": 366,
+   "files": 352
+  },
+  "2025": {
+   "days_in_year": 365,
+   "files": 353
+  }
+ },
+ "grid": {
+  "P035_OLS": {
+   "level_adder_cwmed_abs": 15.74,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.326,
+   "n_gas_pass": 24,
+   "gas_pass_mw": 3652.0,
+   "slope_p25_p50_p75": [
+    5.25,
+    7.52,
+    10.75
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 2995.0,
+    "CT_ge_8p5": 657.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 6,
+    "mw": 1784.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CC": 303.0,
+    "FAST_START|CT": 327.0,
+    "OTHER|CC": 2692.0,
+    "OTHER|CT": 330.0
+   }
+  },
+  "P035_TS": {
+   "level_adder_cwmed_abs": 10.62,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.302,
+   "n_gas_pass": 25,
+   "gas_pass_mw": 4061.0,
+   "slope_p25_p50_p75": [
+    7.86,
+    10.05,
+    12.3
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 2809.0,
+    "CT_ge_8p5": 1252.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 5,
+    "mw": 1375.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 630.0,
+    "OTHER|CC": 2809.0,
+    "OTHER|CT": 622.0
+   }
+  },
+  "P035_TRIM": {
+   "level_adder_cwmed_abs": 6.0,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.327,
+   "n_gas_pass": 20,
+   "gas_pass_mw": 3828.0,
+   "slope_p25_p50_p75": [
+    9.2,
+    11.12,
+    14.52
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 646.0,
+    "CT_ge_8p5": 3182.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 5,
+    "mw": 1375.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 397.0,
+    "OTHER|CC": 646.0,
+    "OTHER|CT": 2785.0
+   }
+  },
+  "BAND_OLS": {
+   "level_adder_cwmed_abs": 15.19,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.58,
+   "n_gas_pass": 26,
+   "gas_pass_mw": 4519.0,
+   "slope_p25_p50_p75": [
+    5.31,
+    7.42,
+    10.79
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 3611.0,
+    "CT_ge_8p5": 908.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 5,
+    "mw": 1436.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CC": 303.0,
+    "FAST_START|CT": 327.0,
+    "OTHER|CC": 3308.0,
+    "OTHER|CT": 581.0
+   }
+  },
+  "BAND_TS": {
+   "level_adder_cwmed_abs": 11.09,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.328,
+   "n_gas_pass": 30,
+   "gas_pass_mw": 5693.0,
+   "slope_p25_p50_p75": [
+    7.58,
+    9.43,
+    12.25
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 4441.0,
+    "CT_ge_8p5": 1252.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 1,
+    "mw": 262.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 630.0,
+    "OTHER|CC": 4441.0,
+    "OTHER|CT": 622.0
+   }
+  },
+  "BAND_TRIM": {
+   "level_adder_cwmed_abs": 7.77,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.362,
+   "n_gas_pass": 26,
+   "gas_pass_mw": 5722.0,
+   "slope_p25_p50_p75": [
+    7.66,
+    10.27,
+    13.98
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 2881.0,
+    "CT_ge_8p5": 2841.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 0,
+    "mw": 0.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 397.0,
+    "OTHER|CC": 2881.0,
+    "OTHER|CT": 2444.0
+   }
+  },
+  "P060_OLS": {
+   "level_adder_cwmed_abs": 15.23,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.576,
+   "n_gas_pass": 26,
+   "gas_pass_mw": 4478.0,
+   "slope_p25_p50_p75": [
+    5.39,
+    8.07,
+    10.7
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 3570.0,
+    "CT_ge_8p5": 908.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 1,
+    "mw": 262.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CC": 303.0,
+    "FAST_START|CT": 327.0,
+    "OTHER|CC": 3267.0,
+    "OTHER|CT": 581.0
+   }
+  },
+  "P060_TS": {
+   "level_adder_cwmed_abs": 9.75,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.284,
+   "n_gas_pass": 26,
+   "gas_pass_mw": 4478.0,
+   "slope_p25_p50_p75": [
+    8.21,
+    10.22,
+    12.39
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 2011.0,
+    "CT_ge_8p5": 2468.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 1,
+    "mw": 262.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 630.0,
+    "OTHER|CC": 2011.0,
+    "OTHER|CT": 1838.0
+   }
+  },
+  "P060_TRIM": {
+   "level_adder_cwmed_abs": 4.4,
+   "admissible_le_20": true,
+   "splithalf_slope_cwmed_abs_dev": 0.12,
+   "n_gas_pass": 22,
+   "gas_pass_mw": 4507.0,
+   "slope_p25_p50_p75": [
+    9.34,
+    11.15,
+    14.49
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 1071.0,
+    "CT_ge_8p5": 3436.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 0,
+    "mw": 0.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 397.0,
+    "OTHER|CC": 1071.0,
+    "OTHER|CT": 3039.0
+   }
+  },
+  "TOP_OLS": {
+   "level_adder_cwmed_abs": 36.39,
+   "admissible_le_20": false,
+   "splithalf_slope_cwmed_abs_dev": 0.621,
+   "n_gas_pass": 30,
+   "gas_pass_mw": 5053.0,
+   "slope_p25_p50_p75": [
+    6.67,
+    9.32,
+    11.44
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 2724.0,
+    "CT_ge_8p5": 2329.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 0,
+    "mw": 0.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CC": 207.0,
+    "FAST_START|CT": 423.0,
+    "OTHER|CC": 2517.0,
+    "OTHER|CT": 1906.0
+   }
+  },
+  "TOP_TS": {
+   "level_adder_cwmed_abs": 28.35,
+   "admissible_le_20": false,
+   "splithalf_slope_cwmed_abs_dev": 0.183,
+   "n_gas_pass": 29,
+   "gas_pass_mw": 4713.0,
+   "slope_p25_p50_p75": [
+    9.57,
+    10.52,
+    13.38
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 411.0,
+    "CT_ge_8p5": 4302.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 1,
+    "mw": 22.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 630.0,
+    "OTHER|CC": 411.0,
+    "OTHER|CT": 3672.0
+   }
+  },
+  "TOP_TRIM": {
+   "level_adder_cwmed_abs": 23.9,
+   "admissible_le_20": false,
+   "splithalf_slope_cwmed_abs_dev": 0.662,
+   "n_gas_pass": 23,
+   "gas_pass_mw": 4408.0,
+   "slope_p25_p50_p75": [
+    12.31,
+    13.38,
+    15.24
+   ],
+   "bucket_mw_hrcut_8p5": {
+    "CC_lt_8p5": 22.0,
+    "CT_ge_8p5": 4386.0
+   },
+   "impossible_r06_slope_lt4": {
+    "n": 0,
+    "mw": 0.0
+   },
+   "confusion_capMW_phys_x_slopebucket": {
+    "FAST_START|CT": 303.0,
+    "OTHER|CC": 22.0,
+    "OTHER|CT": 4083.0
+   }
+  }
+ },
+ "note": "DESCRIPTIVE ONLY - no winner, no selection, nothing derived"
+}
