@@ -504,6 +504,58 @@ class TestP0BReconciliation(unittest.TestCase):
             design.demand_curve[0].price_frac_net_cone, cap_frac_data, places=1
         )
 
+    def test_miso_py2026_27_aggregation_facts_are_pinned(self):
+        # FFR-2C. MISO's PY2026-27 vintage is deliberately NOT encoded (the
+        # seasonal RBDC parameters are unretrievable; an annual-only vintage
+        # would regress the seasonal grain — see
+        # data/raw/capacity-market/demand-curve/README.md). What IS proven from
+        # the published rows is pinned here so the session that finally encodes
+        # it inherits verified facts instead of re-deriving them.
+        #
+        # (a) North/Central IS the LRZ 1-7 arithmetic mean: on PY2025-26 that
+        #     mean of gross CONE equals MISO's own published North/Central
+        #     SEASONAL CONE annualized (summer $/MW-day x 92 days).
+        r25 = self._rows("MISO", "2025-2026")
+        lrz17 = [f"LRZ {i}" for i in range(1, 8)]
+        gross25 = r25[(r25.metric == "gross_cone") & (r25.area.isin(lrz17))]
+        mean_gross25 = float(gross25.y_value.mean())
+        summer_nc = self._scalar(
+            r25, "net_cone", area="North/Central", season="summer"
+        )  # published seasonal CONE, $/MW-day
+        self.assertAlmostEqual(mean_gross25, summer_nc * 92.0, delta=1.0)
+        #
+        # (b) The E&AS (Inframarginal Rent) offset is ONE value per Planning
+        #     Area, exactly as FERC Docket ER26-139-000 describes: gross - net
+        #     is identical across LRZ 1-7 (First) and across LRZ 8/9/10
+        #     (Second). This is what makes the mean-of-LRZ aggregation MISO's
+        #     own construction rather than an approximation.
+        r26 = self._rows("MISO", "2026-2027")
+        g = {
+            row.area: float(row.y_value)
+            for _, row in r26[r26.metric == "gross_cone"].iterrows()
+        }
+        n = {
+            row.area: float(row.y_value)
+            for _, row in r26[r26.metric == "net_cone"].iterrows()
+        }
+        first = {round(g[z] - n[z], 6) for z in lrz17}
+        second = {round(g[z] - n[z], 6) for z in ("LRZ 8", "LRZ 9", "LRZ 10")}
+        self.assertEqual(first, {52735.0}, "First Planning Area IMR not single-valued")
+        self.assertEqual(
+            second, {47938.0}, "Second Planning Area IMR not single-valued"
+        )
+        #
+        # (c) Hence the derived (not interpolated) PY2026-27 North/Central Net
+        #     CONE, and the size of the stake: +1.5% over the held anchor.
+        derived = sum(n[z] for z in lrz17) / 7.0
+        self.assertAlmostEqual(derived, 81032.142857, places=4)
+        self.assertAlmostEqual(derived / 79800.0 - 1.0, 0.0154, places=4)
+        # Until it is encoded, MISO still holds-last to PY2025-26 with the
+        # seasonal grain intact.
+        held = resolve_demand_curve_vintage("MISO", 2026)
+        self.assertEqual(held.delivery_year, "2025-2026")
+        self.assertIsNotNone(held.seasonal_rbdc)
+
     def test_caiso_proxy_recited_to_cpm_soft_offer_cap(self):
         # CAISO carries no curve; its fixed anchor is re-derived to the CPM
         # soft-offer cap. FF-2C R4 tightened this from within-5% to EXACT: the
@@ -551,7 +603,8 @@ class TestMarketDesignVintages(unittest.TestCase):
 
     # ---- resolution vs hand values --------------------------------------
     def test_resolve_hold_first_exact_hold_last(self):
-        # PJM spans 2021/2022 .. 2027/2028 (start years 2021..2027).
+        # PJM spans 2021/2022 .. 2028/2029 (start years 2021..2028) — 2028/2029
+        # added by the FFR-2C re-anchor 2026-08-02, so hold-last moved.
         self.assertEqual(
             resolve_demand_curve_vintage("PJM", 2019).delivery_year, "2021/2022"
         )  # hold-first (before the earliest)
@@ -562,7 +615,10 @@ class TestMarketDesignVintages(unittest.TestCase):
             resolve_demand_curve_vintage("PJM", 2026).delivery_year, "2026/2027"
         )
         self.assertEqual(
-            resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2027/2028"
+            resolve_demand_curve_vintage("PJM", 2027).delivery_year, "2027/2028"
+        )  # exact
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2028/2029"
         )  # hold-last (after the latest)
 
     def test_resolve_miso_pre_rbdc_vertical_and_forward_hold_last(self):
@@ -790,6 +846,147 @@ class TestMarketDesignVintages(unittest.TestCase):
                         delta=0.002,
                         msg=f"PJM 2025/26 M18 pct point {row.point_index}",
                     )
+
+    def test_pjm_2028_2029_vintage_reconciles_with_published(self):
+        # FFR-2C re-anchor. 2028/2029 gets its OWN reconciliation because it
+        # breaks three assumptions the loop above bakes in, each published:
+        #  * no ee_addback row (post-CIFP EE is netted in the load forecast),
+        #    so the VRR denominator is reliability_requirement_frr_adj ALONE;
+        #  * FOUR curve points, not three ("The VRR Curve equation has
+        #    changed" — 2028/2029 BRA parameters report, Summary);
+        #  * the last two points sit at the ER26-1556 price FLOOR, so the
+        #    curve's right end is 175/325.69, not 0.
+        r = self._rows("PJM", "2028/2029")
+        nc = self._scalar(r, "net_cone", y_unit="usd_per_mw_day")
+        self.assertAlmostEqual(nc, 325.69, places=2)
+        # The workbook's own construction: gross UCAP - forward net E&AS UCAP.
+        gross = self._scalar(r, "gross_cone", y_unit="usd_per_mw_day")
+        self.assertAlmostEqual(gross - nc, 450.45, delta=0.01)
+        # No EE Addback is published for this vintage.
+        self.assertTrue(r[r.metric == "ee_addback"].empty)
+        denom = self._scalar(r, "reliability_requirement_frr_adj")
+        pts = r[r.metric == "curve_point_ucap"].sort_values("point_index")
+        vintage = resolve_demand_curve_vintage("PJM", 2028)
+        self.assertEqual(vintage.delivery_year, "2028/2029")
+        self.assertEqual(len(pts), 4)
+        self.assertEqual(len(vintage.demand_curve), 4)
+        for cp, (_, row) in zip(vintage.demand_curve, pts.iterrows()):
+            self.assertAlmostEqual(
+                cp.reserve_ratio,
+                float(row.x_value) / denom,
+                places=6,
+                msg=f"PJM 2028/29 x point {row.point_index}",
+            )
+            self.assertAlmostEqual(
+                cp.price_frac_net_cone,
+                float(row.y_value) / nc,
+                places=6,
+                msg=f"PJM 2028/29 y point {row.point_index}",
+            )
+        # PJM's own numbers confirm the FRR-adjusted requirement is the right
+        # denominator: points (b)/(d) land on 1.015 / 1.060 exactly.
+        self.assertAlmostEqual(vintage.demand_curve[1].reserve_ratio, 1.015, places=6)
+        self.assertAlmostEqual(vintage.demand_curve[3].reserve_ratio, 1.060, places=6)
+        # The ER26-1556 collar: cap/floor UCAP = the published ICAP cap/floor
+        # divided by the 0.79 Reference Resource Accredited UCAP Factor.
+        cap_ucap = self._scalar(r, "price_cap", y_unit="usd_per_mw_day")
+        floor_ucap = self._scalar(r, "price_floor", y_unit="usd_per_mw_day")
+        cap_icap = self._scalar(r, "price_cap", y_unit="usd_per_mw_day_icap")
+        floor_icap = self._scalar(r, "price_floor", y_unit="usd_per_mw_day_icap")
+        self.assertAlmostEqual(cap_icap / 0.79, cap_ucap, places=6)
+        self.assertAlmostEqual(floor_icap / 0.79, floor_ucap, places=6)
+        self.assertAlmostEqual(
+            vintage.demand_curve[0].price_frac_net_cone, cap_ucap / nc
+        )
+        self.assertAlmostEqual(
+            vintage.demand_curve[-1].price_frac_net_cone, floor_ucap / nc
+        )
+        # Anchor on the shared PJM convention (UCAP $/MW-day x 365 / 1000).
+        self.assertAlmostEqual(
+            vintage.net_cone_curve_per_kw_yr, 325.69 * 365.0 / 1000.0, places=6
+        )
+
+    def test_pjm_2028_forward_carries_the_published_price_floor(self):
+        # Structural consequence of the ER26-1556 collar (rule 1): a LONG PJM
+        # position in 2028+ no longer earns zero capacity revenue. The pre-
+        # re-anchor hold-last vintage (2027/2028) crossed to zero at 1.045;
+        # 2028/2029 flat-extrapolates its floor point instead. Stated as a
+        # published-design assertion so a future edit that silently restores a
+        # zero-cross fails here.
+        design = MARKET_DESIGN["PJM"]
+        floor_frac = 175.00 / 325.69
+        anchor = 325.69 * 365.0 / 1000.0
+        for pos in (1.06, 1.20, 2.0):
+            self.assertAlmostEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="PJM", year=2028
+                ),
+                floor_frac * anchor * 1000.0,
+                places=6,
+                msg=f"PJM 2028/29 floor at {pos}",
+            )
+            self.assertEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="PJM", year=2027
+                ),
+                0.0,
+            )
+        # The cap plateau is the collar cap, not 1.5x net-CONE.
+        self.assertAlmostEqual(
+            design.capacity_price_per_firm_mw_yr(self.ON, 0.90, iso="PJM", year=2028),
+            (325.00 / 325.69) * anchor * 1000.0,
+            places=6,
+        )
+
+    def test_nyiso_2026_2027_vintage_reconciles_with_published(self):
+        # FFR-2C re-anchor. The generic anchor/cap-fraction loops above already
+        # cover this vintage; this pins the three things they do not — that
+        # hold-last moved off 2025-2026, that the anchor is the published
+        # Gross CONE − Net EAS identity (so a reindex_gross option has a real
+        # published offset to re-net), and that the shape is built from the
+        # published summer pair + the 12 % Demand Curve Length.
+        r = self._rows("NYISO", "2026-2027")
+        arv = self._scalar(r, "net_cone", area="NYCA")
+        gross = self._scalar(r, "gross_cone", area="NYCA")
+        self.assertAlmostEqual(arv, 57.70, places=2)
+        self.assertAlmostEqual(gross - arv, 74.24, places=2)  # published Net EAS
+        v = resolve_demand_curve_vintage("NYISO", 2026)
+        self.assertEqual(v.delivery_year, "2026-2027")
+        self.assertEqual(
+            resolve_demand_curve_vintage("NYISO", 2040).delivery_year, "2026-2027"
+        )  # hold-last moved forward off 2025-2026
+        self.assertAlmostEqual(v.net_cone_curve_per_kw_yr, arv, places=6)
+        ref = float(
+            r[(r.metric == "curve_point") & (r.area == "NYCA") & (r.season == "summer")]
+            .sort_values("point_index")
+            .y_value.iloc[0]
+        )
+        cap = self._scalar(r, "price_cap", area="NYCA", season="summer")
+        self.assertAlmostEqual(
+            v.demand_curve[0].price_frac_net_cone, cap / ref, places=6
+        )
+        self.assertAlmostEqual(v.demand_curve[1].reserve_ratio, 1.0, places=6)
+        self.assertAlmostEqual(v.demand_curve[2].reserve_ratio, 1.12, places=6)
+
+    def test_nyiso_vintage_is_inert_while_its_clearing_gate_is_off(self):
+        # Disclosure, asserted: NYISO is deliberately absent from the shipped
+        # capacity_market_clearing_by_iso map, so the seam prices the FIXED
+        # registry anchor and the 2026-2027 re-anchor changes no price in the
+        # shipped posture. If a future session adds NYISO to that map, this
+        # test fails and forces the flip to be argued explicitly.
+        from market_sim.config.scenarios import ScenarioConfig
+
+        shipped = ScenarioConfig().capacity_market_clearing_by_iso or {}
+        self.assertNotIn("NYISO", shipped)
+        design = MARKET_DESIGN["NYISO"]
+        off = SimpleNamespace(
+            capacity_market_clearing=False, capacity_market_clearing_by_iso=shipped
+        )
+        for pos in (0.7, 1.0, 1.3):
+            self.assertEqual(
+                design.capacity_price_per_firm_mw_yr(off, pos, iso="NYISO", year=2026),
+                design.net_cone_per_kw_yr * 1000.0,
+            )
 
     # ---- pricing-seam behavior ------------------------------------------
     def test_reference_year_equals_registry_default(self):

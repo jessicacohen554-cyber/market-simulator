@@ -248,6 +248,14 @@ frontend/data/forecast/program-status.js
 # FFR-1A confirmed-exit accounting acceptance probes (isolated run_full_horizon
 # --out-dir caches + logs). Same class as /results/full-horizon/.
 /results/ffr1a/
+# FFR-2C net-CONE re-anchor before/after T0 smoke (NEISO 2026-2028, isolated
+# run_full_horizon --out-dir caches). Same class as /results/ffr1a/ — a T0
+# regression probe, not dashboard-registered. The measured readout (identical
+# cache key, content-identical year parquets, unchanged invariants) lives in
+# docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md §6; the paired
+# capacity-price validation JSONs it cites ARE committed, under
+# results/capacity-price-validation/.
+/results/ffr2c/
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
