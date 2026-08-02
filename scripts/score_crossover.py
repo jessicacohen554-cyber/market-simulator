@@ -409,44 +409,64 @@ _FAMILY_CLASSES: dict[str, tuple[str, ...]] = {
 }
 
 
-def _family_volume(recs: list[dict], classes: tuple[str, ...]) -> dict | None:
-    """Fractional family-volume error from a year's per-class C1 records.
+def _family_volume(
+    model_by_class: dict,
+    actual_by_class: dict,
+    classes: tuple[str, ...],
+    iso: str,
+    year: int,
+) -> dict | None:
+    """Fractional family-volume error, summed at FAMILY grain on both sides.
 
     FC-4 bands ``gas_twh``/``coal_twh`` as FRACTIONS of the family's actual
-    volume, which the C1 records (per-class TWh) carry but do not aggregate —
-    the gap FF-2D reported as uncovered and routed here (L-VAL follow-up (b)).
+    volume, which the C1 per-class records carry but do not aggregate — the gap
+    FF-2D reported as uncovered and routed here (L-VAL follow-up (b)).
 
-    Both GATED and SKIPPED class rows contribute: a SKIPPED row carries a real
-    ``model``/``actual`` pair and is skipped only because its per-class actual
-    is not trustworthy at class grain in a preliminary EIA-923 vintage. Summing
-    only the gated rows would silently compare a partial family against a
-    partial actual. Instead the whole family is summed and the incomplete
-    classes are NAMED: a family with any incomplete member is emitted with
-    ``gated: False`` and is reported as UNCOVERED rather than banded (see
+    **Aggregated from the class dicts, NOT from the C1 records, because the two
+    sides are not always on the same class GRAIN.** A crossover bundle runs the
+    legacy equal-width heat-rate bins (``use_campd_bins=False``), so its whole
+    coal fleet reports in one unsplit ``COAL`` bucket, while the bench splits
+    coal into ``COAL_PRB``/``COAL_LIGNITE``/``COAL_BIT``/``COAL_WC``. C1 never
+    emits a record for either side of that mismatch (the model's ``COAL`` is
+    unbenchmarked; the bench's split classes have no model), so aggregating the
+    records would report a model coal volume of ZERO — a 100 % error that is a
+    scoring artifact, not a dispatch result (ERCOT 2023: 39.2 TWh read as 0.0
+    against a 60.4 TWh actual). Summing each side over the whole family
+    reconciles the grain, which is exactly what the family row means and the
+    documented rule 14 ``[R-ACCURATE]`` case: real data defined on a different
+    boundary than our representation, reconciled rather than discarded.
+
+    Completeness is read from the SAME predicate C1 gates on
+    (:func:`calibration_verdict.class_is_gated`): a family with any
+    preliminary-vintage member is emitted ``gated: False``, named in
+    ``incomplete_classes`` and reported as UNCOVERED rather than banded (see
     :func:`rubric_metrics`) — never silently passed.
 
     Args:
-        recs: One year's ``fuelmix`` criterion records (gated and skipped).
+        model_by_class: Model TWh by class (``ypay["gmModel"]``, or the keeper's
+            per-class record models).
+        actual_by_class: Actual TWh by class (``ybench["classFull"]``, or the
+            keeper's per-class record actuals).
         classes: The family's class keys.
+        iso: ISO identifier (completeness lookup).
+        year: Scored year (completeness lookup).
 
     Returns:
-        The family volume record, or ``None`` when the family is unbenchmarked
-        for this ISO-year (no class carries both a model and an actual).
+        The family volume record, or ``None`` when the family has no actual for
+        this ISO-year.
     """
-    rows = [
-        r
-        for r in recs
-        if r.get("key") in classes
-        and r.get("model") is not None
-        and r.get("actual") is not None
-    ]
-    if not rows:
+    present = [c for c in classes if c in model_by_class or c in actual_by_class]
+    if not present:
         return None
-    model = sum(float(r["model"]) for r in rows)
-    actual = sum(float(r["actual"]) for r in rows)
+    model = sum(float(model_by_class.get(c, 0.0) or 0.0) for c in present)
+    actual = sum(float(actual_by_class.get(c, 0.0) or 0.0) for c in present)
     if actual <= 0.0:
         return None
-    incomplete = sorted(r["key"] for r in rows if r.get("status") == V.SKIPPED)
+    incomplete = sorted(
+        c
+        for c in present
+        if c in actual_by_class and not V.class_is_gated(iso, c, year)
+    )
     signed = (model - actual) / actual
     return {
         "model_twh": round(model, 3),
@@ -454,7 +474,10 @@ def _family_volume(recs: list[dict], classes: tuple[str, ...]) -> dict | None:
         "err": round(abs(signed), 4),
         "signed": round(signed, 4),
         "unit": "frac (|Δ|/actual family TWh)",
-        "classes": sorted(r["key"] for r in rows),
+        "classes": sorted(present),
+        "model_only_classes": sorted(
+            c for c in present if c in model_by_class and c not in actual_by_class
+        ),
         "incomplete_classes": incomplete,
         "gated": not incomplete,
     }
@@ -558,12 +581,23 @@ def score_dispatch_skill(bundle_dir: Path, iso: str, keeper_run_id: str | None) 
                 row["basis"] = "full-plant (bench intensities, BTM added back)"
             metrics[cid][str(year)] = row
 
-        # FC-4 family-volume rows (gas_twh / coal_twh), aggregated from the
-        # SAME per-class C1 records both sides were just scored on.
+        # FC-4 family-volume rows (gas_twh / coal_twh), aggregated at FAMILY
+        # grain on both sides — the forecast from its own gmModel against the
+        # bench's classFull, the keeper from its committed per-class records
+        # (whose grain is already the bench's). See _family_volume for why the
+        # C1 records cannot carry this.
         k_fuelmix = keeper_recs.get("fuelmix", {}).get(year, [])
+        k_model = {
+            r["key"]: r["model"] for r in k_fuelmix if r.get("model") is not None
+        }
+        k_actual = {
+            r["key"]: r["actual"] for r in k_fuelmix if r.get("actual") is not None
+        }
         for fam, classes in _FAMILY_CLASSES.items():
-            f_fam = _family_volume(fc_records["fuelmix"], classes)
-            k_fam = _family_volume(k_fuelmix, classes)
+            f_fam = _family_volume(
+                ypay["gmModel"], ybench.get("classFull", {}), classes, iso, year
+            )
+            k_fam = _family_volume(k_model, k_actual, classes, iso, year)
             if f_fam is None and k_fam is None:
                 continue
             family[fam][str(year)] = {

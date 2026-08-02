@@ -394,40 +394,50 @@ def _fuelmix_rec(key, model, actual, status):
 
 
 def test_family_volume_sums_the_family_fractionally():
-    recs = [
-        _fuelmix_rec("CC_REGULAR", 110.0, 100.0, X.V.PASS),
-        _fuelmix_rec("CT_PEAKER", 12.0, 10.0, X.V.FAIL),
-        _fuelmix_rec("COAL_PRB", 40.0, 50.0, X.V.FAIL),
-    ]
-    gas = X._family_volume(recs, X._FAMILY_CLASSES["gas_twh"])
+    model = {"CC_REGULAR": 110.0, "CT_PEAKER": 12.0, "COAL_PRB": 40.0}
+    actual = {"CC_REGULAR": 100.0, "CT_PEAKER": 10.0, "COAL_PRB": 50.0}
+    gas = X._family_volume(model, actual, X._FAMILY_CLASSES["gas_twh"], "ERCOT", 2023)
     assert gas["model_twh"] == pytest.approx(122.0)
     assert gas["actual_twh"] == pytest.approx(110.0)
     assert gas["signed"] == pytest.approx(12.0 / 110.0, rel=1e-3)
     assert gas["gated"] is True
-    coal = X._family_volume(recs, X._FAMILY_CLASSES["coal_twh"])
+    coal = X._family_volume(model, actual, X._FAMILY_CLASSES["coal_twh"], "ERCOT", 2023)
     assert coal["signed"] == pytest.approx(-0.2)
 
 
-def test_family_volume_counts_skipped_rows_but_flags_them():
-    # A SKIPPED row carries a real model/actual pair: it must count toward the
-    # family total (else the family is compared against a partial actual) AND
-    # be named, so the row is reported rather than banded.
-    recs = [
-        _fuelmix_rec("CC_REGULAR", 110.0, 100.0, X.V.PASS),
-        _fuelmix_rec("ST_GAS", 20.0, 20.0, X.V.SKIPPED),
-    ]
-    gas = X._family_volume(recs, X._FAMILY_CLASSES["gas_twh"])
+def test_family_volume_reconciles_the_unsplit_coal_bucket():
+    """The crossover regression: legacy bins report one ``COAL`` bucket.
+
+    The bench splits coal into PRB/LIGNITE; the crossover's legacy-bin fleet
+    reports the whole coal fleet as ``COAL``. Per-class the two never meet, so
+    a record-based aggregation reads the model coal volume as ZERO (a 100%
+    artifact). At family grain the comparison is real: 39.2 vs 60.4 TWh.
+    """
+    model = {"COAL": 39.24}
+    actual = {"COAL_PRB": 45.09, "COAL_LIGNITE": 15.33}
+    coal = X._family_volume(model, actual, X._FAMILY_CLASSES["coal_twh"], "ERCOT", 2023)
+    assert coal["model_twh"] == pytest.approx(39.24)
+    assert coal["actual_twh"] == pytest.approx(60.42)
+    assert coal["signed"] == pytest.approx(-0.3506, abs=1e-3)
+    assert coal["model_only_classes"] == ["COAL"]
+
+
+def test_family_volume_flags_preliminary_vintage_classes(monkeypatch):
+    monkeypatch.setattr(X.V, "class_is_gated", lambda iso, k, y: k != "ST_GAS")
+    model = {"CC_REGULAR": 110.0, "ST_GAS": 20.0}
+    actual = {"CC_REGULAR": 100.0, "ST_GAS": 20.0}
+    gas = X._family_volume(model, actual, X._FAMILY_CLASSES["gas_twh"], "ERCOT", 2025)
     assert gas["actual_twh"] == pytest.approx(120.0)
     assert gas["incomplete_classes"] == ["ST_GAS"]
     assert gas["gated"] is False
 
 
-def test_family_volume_unbenchmarked_is_none():
-    assert X._family_volume([], X._FAMILY_CLASSES["gas_twh"]) is None
+def test_family_volume_no_actual_is_none():
+    assert X._family_volume({}, {}, X._FAMILY_CLASSES["gas_twh"], "ERCOT", 2023) is None
+    # Model-only family (no benchmarked actual at all) is not scorable.
     assert (
         X._family_volume(
-            [_fuelmix_rec("CC_REGULAR", 1.0, None, X.V.SKIPPED)],
-            X._FAMILY_CLASSES["gas_twh"],
+            {"CC_REGULAR": 1.0}, {}, X._FAMILY_CLASSES["gas_twh"], "ERCOT", 2023
         )
         is None
     )
