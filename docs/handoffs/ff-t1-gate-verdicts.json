@@ -744,5 +744,82 @@
     ]
    }
   }
+ },
+ "miso-t1x-ffr2a": {
+  "tier": "t1x",
+  "iso": "MISO",
+  "determination": "HOLD",
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) FAIL",
+   "FC-4 crossover dispatch skill (T1-X) FAIL"
+  ],
+  "categories": {
+   "FC-1": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "FAIL",
+      "detail": "FAIL ['I9']: I9: 2025: simultaneous chg+dis 0.23% of throughput; 2026: simultaneous chg+dis 0.10% of throughput; 2027: simultaneous chg+dis 0.84% of throughput"
+     }
+    ]
+   },
+   "FC-2": {
+    "status": "PASS"
+   },
+   "FC-3": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "hindcast bands",
+      "status": "SKIPPED",
+      "detail": "no committed capacity-hindcast score for the ISO"
+     }
+    ]
+   },
+   "FC-4": {
+    "status": "FAIL",
+    "gating_rows": [
+     {
+      "row": "dispatch skill",
+      "status": "FAIL",
+      "detail": "K_iso=3.0; price 2023 |13.6%| in (10%, 30.0%] CAVEAT; price 2024 |15.3%| in (10%, 30.0%] CAVEAT; price 2025 |30.3%|>30.0%=K3.0\u00d710% FAIL; co2 2023 |63.3%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |59.9%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |77.1%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2023 |9.5%| in (5%, 15.0%] CAVEAT; gas_twh 2024 |12.1%| in (5%, 15.0%] CAVEAT"
+     }
+    ]
+   },
+   "FC-5": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)"
+     }
+    ]
+   },
+   "FC-6": {
+    "status": "n/a"
+   },
+   "FC-7": {
+    "status": "CAVEAT",
+    "gating_rows": [
+     {
+      "row": "dof ledger",
+      "status": "CAVEAT",
+      "detail": "DOF ledger absent (identification unproven)"
+     }
+    ]
+   },
+   "FC-8": {
+    "status": "SKIPPED",
+    "gating_rows": [
+     {
+      "row": "runtime",
+      "status": "SKIPPED",
+      "detail": "no perf ledger (total_wall_s) in summary"
+     }
+    ]
+   }
+  }
  }
 }
