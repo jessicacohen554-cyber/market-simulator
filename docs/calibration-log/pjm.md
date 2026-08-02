@@ -2367,3 +2367,64 @@ firm-import flag in the keeper meta — no exposure expected. En route this
 session regenerated two derived `data/clean` partitions the rebuild needed
 (`transfer-interface-limits`, `ramp-capability`). Matrix cell `P = O` on the
 `diagnostics_plant_set` audit row until the empirical half runs.
+
+## pjm-146 — 2026-08-02 — RGGI allowance cost: mechanism LIVE and gates pass, but the model's leakage response is too elastic (`U → O`, keeper unchanged)
+
+**Phase 1 (no LP): the matrix-column triage.** All 21 open PJM cells classified —
+4 live candidates, 9 data-/instrument-blocked, 7 forecast-lane, 1
+precedence-superseded (`docs/handoffs/pjm-matrix-column-triage-2026-08.md`).
+`state_carbon_pricing` confirmed rank 1; `measured_chp_heat_rates` rank 2 and the
+named successor for the next PJM session.
+
+**Phase 2: the pre-registered single-delta A/B.** Arms
+`2026-08-02-pjm-146a-control-zerodelta` (`pjm146_control_A`) and
+`2026-08-02-pjm-146b-rggi-allowance` (`pjm146_rggi_B`), both registered.
+One delta: `pjm_rggi_allowance_pricing=true`. Zero fitted parameters — published
+RGGI auction clearing means metric-converted (14.87/22.83/24.35 $/t), exact
+EIA-860 state membership, fleet's own emission rates. DOF ledger 18 → 19 entries,
+**n_residual UNCHANGED at 6**.
+
+**ALL FIVE PRE-REGISTERED GATES PASS.** K1 mc identity exact to 3.7e-13 (tol
+1e-9); K2 control reproduces the keeper to **0.0 MW** on every class-hour, all
+three years; K3 membership audit clean (VA charged in 2023, zero in 2024/25
+across 719 units); K4 sign; K5 liveness. Load-weighted LMP
+**+1.4226/+1.4278/+1.2595 $/MWh** (+4.53/+4.58/+2.97 %), inside the ex-ante E1b
+band. **Not the pjm-144 outcome** — PJM's price coupling TRANSMITS a one-signed
+level shift where it CANCELLED a mean-zero spread, so coupling is not a general
+bar on PJM zonal-cost levers.
+
+**Structure improves:** D-2 clears all three CT_PEAKER forced-share FAILs
+(0.1541/0.1579/0.1591 → 0.1328/0.1203/0.1298); C3a-2025 improves (−9.0 → −6.3 %);
+C3c bit-identical; C3b/C4/C6/C7/C8 PASS. RGGI **leakage is reproduced
+endogenously** — CC_REGULAR −12.80/−14.78/−10.00 TWh to CT_PEAKER, coal, ST_GAS
+and net imports, nuclear/wind/solar/hydro bit-unchanged.
+
+**Gates regress, and the keeper is NOT changed:** determination CALIBRATED →
+NOT-YET. C3a 2023 FAILS at +11.1 % (from +2.99 %) — E1d **pre-declared and
+licensed** this. C1 FAILS on CC_REGULAR **volume** (−16.06 TWh 2023, −13.84 TWh
+2024; C1 16/16 free 12/12 → 14/16 free 10/12) — E1d did **not** license this; no
+C1 magnitude gate was pre-registered, so it is an unpredicted regression on a
+load-bearing criterion in the class carrying ~40 % of ISO load.
+
+**Reading: right in KIND, too elastic in MAGNITUDE.** Real PJM CC units did not
+shed 16 TWh to non-member coal and the measured fuel mix says so. Per rule 14
+the accurate input stays available (default-OFF) and the elasticity becomes the
+root-cause lane, rather than being deleted or armed on the level story alone.
+**Unscored, flagged:** system CO2 likely RISES (~+1.3 Mt/yr 2023, estimate — PJM
+scores no CO2 criterion) and imports rise, moving emissions off-footprint.
+
+**Successor:** the CC→coal substitution elasticity under a partial-footprint
+carbon price, its own charter, identified from PJM's own record — never a haircut
+tuned onto the adder (rule 13, and it would destroy the zero-DOF property).
+
+**Incidental defect carried forward:** D-2's failure list depends on
+uncommitted artifacts — an unregistered run has `load_share: null` (materiality
+untestable) and a full bundle resolves mechanisms the gitignored-slim committed
+tree cannot. Score **both** arms on the committed file set; same class as the
+caiso-155 `diagnostics_plant_set` charter.
+
+`results/calibration/FINDING-pjm146-rggi-allowance-2026-08-02.md`;
+`PREREG-pjm146-rggi-allowance-2026-08-02.md`;
+`results/calibration/_pjm146_rggi_ab.json`.
+
+Next shorthand: pjm-147.
