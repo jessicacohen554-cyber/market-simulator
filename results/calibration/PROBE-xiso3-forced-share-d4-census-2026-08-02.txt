@@ -1,0 +1,213 @@
+xiso-3 forced-share / D-4 window census — six current keepers, zero LP
+exempt mechanism names (never count toward the budget): chp_steam, coal_mustrun, firm_import, hydro_min_flow, hydro_ror_flat, nuclear_mustrun, nyiso_local_selfsupply
+
+==============================================================================
+ERCOT — keeper 2026-08-01-ercot149-gas-event-cap
+  bundle results/calibration/ercot149_gas_event_cap_arm
+  determination NOT-YET (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  ST_GAS            17.8    30    4.2    n/a  LB  PASS
+    2023  CT_PEAKER         10.7    15    1.6    n/a  LB  SKIPPED-immaterial
+    2023  COAL               6.9    30   13.9    n/a  LB  PASS
+    2023  CC_REGULAR         2.1    30   32.0    n/a  LB  PASS
+    2024  ST_GAS            14.8    30    4.1    n/a  LB  PASS
+    2024  COAL               8.6    30   12.5    n/a  LB  PASS
+    2024  CT_PEAKER          0.9    15    1.7    n/a  LB  SKIPPED-immaterial
+    2024  CC_REGULAR         0.8    30   31.1    n/a  LB  PASS
+    2025  ST_GAS            20.1    30    3.1    n/a  LB  PASS
+    2025  COAL               3.4    30   13.2    n/a  LB  PASS
+    2025  CC_REGULAR         1.4    30   29.2    n/a  LB  PASS
+    2025  CT_PEAKER          0.9    15    1.5    n/a  LB  SKIPPED-immaterial
+  over-budget material classes: NONE — every material class within its cap
+  immaterial (reported, never gated): 2023 CT_PEAKER (10.7% forced), 2024 CT_PEAKER (0.9% forced), 2025 CT_PEAKER (0.9% forced)
+  LATENT D-4 coverage gaps (below-budget classes — informational, not gated):
+    2023 CC_REGULAR (2.1% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2024 CC_REGULAR (0.8% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 CC_REGULAR (1.4% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+CAISO — keeper 2026-07-31-caiso153-reid-b
+  bundle results/calibration/caiso153_reid_B
+  determination CALIBRATED-WITH-CAVEATS (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  CC_REGULAR         6.8    30   25.0    n/a  LB  PASS
+    2023  CT_PEAKER          0.1    15    2.0    n/a  LB  SKIPPED-immaterial
+    2023  COAL               0.0    30    0.0    n/a  LB  SKIPPED-immaterial
+    2023  ST_GAS             0.0    30    0.6    n/a  LB  SKIPPED-immaterial
+    2023  hydro              0.0    30   11.7    n/a  LB  PASS
+    2024  CC_REGULAR         7.7    30   21.7    n/a  LB  PASS
+    2024  CT_PEAKER          0.5    15    2.0    n/a  LB  PASS
+    2024  COAL               0.0    30    0.0    n/a  LB  SKIPPED-immaterial
+    2024  ST_GAS             0.0    30    0.3    n/a  LB  SKIPPED-immaterial
+    2024  hydro              0.0    30   10.5    n/a  LB  PASS
+    2025  CC_REGULAR         9.6    30   19.7    n/a  LB  PASS
+    2025  CT_PEAKER          0.1    15    1.2    n/a  LB  SKIPPED-immaterial
+    2025  COAL               0.0    30    0.0    n/a  LB  SKIPPED-immaterial
+    2025  ST_GAS             0.0    30    0.1    n/a  LB  SKIPPED-immaterial
+    2025  hydro              0.0    30   10.4    n/a  LB  PASS
+  over-budget material classes: NONE — every material class within its cap
+  immaterial (reported, never gated): 2023 CT_PEAKER (0.1% forced), 2023 COAL (0.0% forced), 2023 ST_GAS (0.0% forced), 2024 COAL (0.0% forced), 2024 ST_GAS (0.0% forced), 2025 CT_PEAKER (0.1% forced), 2025 COAL (0.0% forced), 2025 ST_GAS (0.0% forced)
+  LATENT D-4 coverage gaps (below-budget classes — informational, not gated):
+    2023 CC_REGULAR (6.8% <= 30%) ra_mustoffer_bridge: no committed D-4 row · HEAD registry NONE
+    2024 CC_REGULAR (7.7% <= 30%) ra_mustoffer_bridge: no committed D-4 row · HEAD registry NONE
+    2024 CT_PEAKER (0.5% <= 15%) ra_mustoffer_bridge: no committed D-4 row · HEAD registry NONE
+    2025 CC_REGULAR (9.6% <= 30%) ra_mustoffer_bridge: no committed D-4 row · HEAD registry NONE
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+PJM — keeper 2026-07-31-pjm-143b-hy-level
+  bundle results/calibration/pjm143_hy_level_B
+  determination CALIBRATED (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  ST_GAS            52.2    30    1.4    n/a  LB  SKIPPED-immaterial
+    2023  CT_PEAKER         15.2    15    2.8    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2023  CC_REGULAR         7.1    30   41.5    n/a  LB  PASS
+    2023  COAL               0.2    30   14.4    n/a  LB  PASS
+    2023  hydro              0.0    30    2.0    n/a  LB  SKIPPED-immaterial
+    2024  ST_GAS            48.7    30    1.6    n/a  LB  SKIPPED-immaterial
+    2024  CT_PEAKER         15.4    15    3.0    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2024  CC_REGULAR         3.2    30   41.3    n/a  LB  PASS
+    2024  COAL               0.3    30   14.2    n/a  LB  PASS
+    2024  hydro              0.0    30    2.0    n/a  LB  SKIPPED-immaterial
+    2025  ST_GAS            40.0    30    2.0    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2025  CT_PEAKER         15.8    15    3.4    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2025  CC_REGULAR         2.9    30   39.7    n/a  LB  PASS
+    2025  COAL               0.1    30   17.0    n/a  LB  PASS
+    2025  hydro              0.0    30    1.8    n/a  LB  SKIPPED-immaterial
+  over-budget material classes (rule-20 escalation detail):
+    2023 CT_PEAKER 15.2% > 15% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.93 (≥0.8) & off-peak CV ratio 0.697 (≥0.5))
+          ct_netload_drag: window h15-21 · floored 2.189 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h15-21
+          st_netload_drag: window h0-23 · floored 6.0596 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+    2024 CT_PEAKER 15.4% > 15% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.963 (≥0.8) & off-peak CV ratio 1.044 (≥0.5))
+          ct_netload_drag: window h15-21 · floored 2.6022 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h15-21
+          st_netload_drag: window h0-23 · floored 5.6609 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+    2025 ST_GAS 40.0% > 30% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.897 (≥0.8) & off-peak CV ratio 2.244 (≥0.5))
+          st_netload_drag: window h0-23 · floored 7.7498 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+    2025 CT_PEAKER 15.8% > 15% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.975 (≥0.8) & off-peak CV ratio 0.812 (≥0.5))
+          ct_netload_drag: window h15-21 · floored 3.189 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h15-21
+          st_netload_drag: window h0-23 · floored 7.7498 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+  grounded-above-budget notes (production verdict):
+    C8 2023 CT_PEAKER: grounded above budget — 15.2% forced (3.3047 of 21.721 TWh) — above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.93 (≥0.8) & off-peak CV ratio 0.697 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+    C8 2024 CT_PEAKER: grounded above budget — 15.4% forced (3.4725 of 22.488 TWh) — above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (≥0.8) & off-peak CV ratio 1.044 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+    C8 2025 CT_PEAKER: grounded above budget — 15.8% forced (4.7637 of 30.1176 TWh) — above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.975 (≥0.8) & off-peak CV ratio 0.812 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+    C8 2025 ST_GAS: grounded above budget — 40.0% forced (6.1205 of 15.2961 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.897 (≥0.8) & off-peak CV ratio 2.244 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+  immaterial (reported, never gated): 2023 ST_GAS (52.2% forced), 2023 hydro (0.0% forced), 2024 ST_GAS (48.7% forced), 2024 hydro (0.0% forced), 2025 hydro (0.0% forced)
+  LATENT D-4 coverage gaps (below-budget classes — informational, not gated):
+    2023 COAL (0.2% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2024 COAL (0.3% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 CC_REGULAR (2.9% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 COAL (0.1% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+MISO — keeper 2026-07-31-miso-109b-hy-level
+  bundle results/calibration/miso109_hy_level_B
+  determination NOT-YET (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  ST_GAS            33.1    30    2.2    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2023  CT_PEAKER         11.6    15    2.7    n/a  LB  PASS
+    2023  COAL               0.3    30   29.0    n/a  LB  PASS
+    2023  CC_REGULAR         0.1    30   22.1    n/a  LB  PASS
+    2023  hydro              0.0    30    1.6    n/a  LB  SKIPPED-immaterial
+    2024  ST_GAS            34.4    30    2.7    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2024  CT_PEAKER          8.2    15    3.1    n/a  LB  PASS
+    2024  COAL               0.4    30   27.4    n/a  LB  PASS
+    2024  CC_REGULAR         0.0    30   22.7    n/a  LB  PASS
+    2024  hydro              0.0    30    1.7    n/a  LB  SKIPPED-immaterial
+    2025  ST_GAS            45.5    30    2.3    n/a  LB  PASS (GROUNDED ABOVE BUDGET)
+    2025  CT_PEAKER          8.7    15    2.9    n/a  LB  PASS
+    2025  COAL               0.2    30   32.0    n/a  LB  PASS
+    2025  CC_REGULAR         0.1    30   20.8    n/a  LB  PASS
+    2025  hydro              0.0    30    1.5    n/a  LB  SKIPPED-immaterial
+  over-budget material classes (rule-20 escalation detail):
+    2023 ST_GAS 33.1% > 30% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.954 (≥0.8) & off-peak CV ratio 1.565 (≥0.5))
+          reliability_floor: window h0-23 · floored 0.2423 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+          st_gas_mustrun_per_plant: window h0-23 · floored 8.0695 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+    2024 ST_GAS 34.4% > 30% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.96 (≥0.8) & off-peak CV ratio 1.278 (≥0.5))
+          reliability_floor: window h0-23 · floored 0.2635 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+          st_gas_mustrun_per_plant: window h0-23 · floored 8.4109 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+    2025 ST_GAS 45.5% > 30% -> D-4 CLEAR (all binding mechanisms clear D-4); D-1 CLEAR (profile r 0.974 (≥0.8) & off-peak CV ratio 1.503 (≥0.5))
+          reliability_floor: window h0-23 · floored 0.284 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+          st_gas_mustrun_per_plant: window h0-23 · floored 10.4379 TWh · off-window 0.0% (<= 5%) pass · HEAD registry h0-23
+  grounded-above-budget notes (production verdict):
+    C8 2023 ST_GAS: grounded above budget — 33.1% forced (8.3118 of 25.1506 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (≥0.8) & off-peak CV ratio 1.565 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+    C8 2024 ST_GAS: grounded above budget — 34.4% forced (8.6744 of 25.2013 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.96 (≥0.8) & off-peak CV ratio 1.278 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+    C8 2025 ST_GAS: grounded above budget — 45.5% forced (10.722 of 23.5541 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (≥0.8) & off-peak CV ratio 1.503 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+  immaterial (reported, never gated): 2023 hydro (0.0% forced), 2024 hydro (0.0% forced), 2025 hydro (0.0% forced)
+  LATENT D-4 coverage gaps (below-budget classes — informational, not gated):
+    2023 COAL (0.3% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2023 CC_REGULAR (0.1% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2024 COAL (0.4% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2024 CC_REGULAR (0.0% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 COAL (0.2% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 CC_REGULAR (0.1% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+NYISO — keeper 2026-08-01-nyiso109-zonal-margin-anchor
+  bundle results/calibration/nyiso109_zonalanchor_B
+  determination CALIBRATED-WITH-CAVEATS (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  ST_GAS            22.5    30    7.8    n/a  LB  PASS
+    2023  CC_REGULAR         5.3    30   24.0    n/a  LB  PASS
+    2023  CT_PEAKER          0.0    15    1.5    n/a  LB  SKIPPED-immaterial
+    2023  hydro              0.0    30   19.1    n/a  LB  PASS
+    2024  ST_GAS            27.5    30    7.4    n/a  LB  PASS
+    2024  CC_REGULAR         3.1    30   25.5    n/a  LB  PASS
+    2024  CT_PEAKER          0.0    15    1.4    n/a  LB  SKIPPED-immaterial
+    2024  hydro              0.0    30   18.2    n/a  LB  PASS
+    2025  ST_GAS            23.0    30   10.6    n/a  LB  PASS
+    2025  CC_REGULAR         3.8    30   23.8    n/a  LB  PASS
+    2025  CT_PEAKER          0.0    15    2.0    n/a  LB  SKIPPED-immaterial
+    2025  hydro              0.0    30   15.9    n/a  LB  PASS
+  over-budget material classes: NONE — every material class within its cap
+  immaterial (reported, never gated): 2023 CT_PEAKER (0.0% forced), 2024 CT_PEAKER (0.0% forced), 2025 CT_PEAKER (0.0% forced)
+  latent D-4 coverage gaps: none — every binding mechanism on a material class is windowed
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+NEISO — keeper 2026-07-31-neiso-72-hy-window
+  bundle results/calibration/neiso72_hy_window_B
+  determination CALIBRATED-WITH-CAVEATS (rubric v2.9) · C8 criterion: PASS
+  C8 census (caps 30% merchant / 15% CT_PEAKER; materiality >= 2% of load, max(model, actual)):
+    year  class           forced%  cap%  load%  baked  lb  status
+    2023  COAL              32.5    30    0.2    0.2      SKIPPED-immaterial
+    2023  CT_PEAKER         19.9    15    0.5    0.6      SKIPPED-immaterial
+    2023  ST_GAS            14.8    30    0.2    0.2      SKIPPED-immaterial
+    2023  CC_REGULAR         0.4    30   54.1   63.9      PASS
+    2023  hydro              0.0    30    8.8   10.4      PASS
+    2024  ST_GAS            23.9    30    0.1    0.1      SKIPPED-immaterial
+    2024  COAL              23.3    30    0.2    0.3      SKIPPED-immaterial
+    2024  CT_PEAKER          7.1    15    0.8    1.0      SKIPPED-immaterial
+    2024  CC_REGULAR         0.8    30   54.5   62.5      PASS
+    2024  hydro              0.0    30    7.1    7.4      PASS
+    2025  ST_GAS            28.4    30    0.3    0.1      SKIPPED-immaterial
+    2025  CT_PEAKER          2.7    15    1.6    2.0      SKIPPED-immaterial
+    2025  COAL               1.7    30    0.3    0.3      SKIPPED-immaterial
+    2025  CC_REGULAR         0.7    30   53.9   62.1      PASS
+    2025  hydro              0.0    30    4.8    5.4      PASS
+  over-budget material classes: NONE — every material class within its cap
+  immaterial (reported, never gated): 2023 COAL (32.5% forced), 2023 CT_PEAKER (19.9% forced), 2023 ST_GAS (14.8% forced), 2024 ST_GAS (23.9% forced), 2024 COAL (23.3% forced), 2024 CT_PEAKER (7.1% forced), 2025 ST_GAS (28.4% forced), 2025 CT_PEAKER (2.7% forced), 2025 COAL (1.7% forced)
+  LATENT D-4 coverage gaps (below-budget classes — informational, not gated):
+    2023 CC_REGULAR (0.4% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2024 CC_REGULAR (0.8% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+    2025 CC_REGULAR (0.7% <= 30%) reliability_floor: no committed D-4 row · HEAD registry NONE
+  D-4 window drift vs HEAD registry: none — every committed row matches HEAD
+
+==============================================================================
+CROSS-ISO SUMMARY
+  ISO     C8       fails grounded ledgered latent drift  verdict
+  ERCOT   PASS         0        0        0      3     0  PASS
+  CAISO   PASS         0        0        0      4     0  PASS
+  PJM     PASS         0        4        0      4     0  GROUNDED-PASS
+  MISO    PASS         0        3        0      6     0  GROUNDED-PASS
+  NYISO   PASS         0        0        0      0     0  PASS
+  NEISO   PASS         0        0        0      3     0  PASS
+
+Census is report-only (rule-20 authority stays with calibration_verdict); exit 0 regardless of verdicts.
