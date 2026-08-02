@@ -1062,3 +1062,93 @@ weigh before reading the 13 % as pure conduct signal.
 `2026-07-31-neiso-72-hy-window` untouched; nothing registered.
 
 Next shorthand: **neiso-75** (unchanged).
+
+---
+
+## neiso-75 — 2026-08-02 — the C3c FRONTIER CHARTER: the miss decomposes (systemic amplitude owns the 2025 gate; 2023 is measured-unreachable and routed to the owner); ONE lever chartered with kill rules; NO LP spent, keeper unchanged
+
+**Session type:** charter (matrix §5.6 frontier discipline — "charter required
+before any lever"). **No solve, no bundle, no registration.** Keeper unchanged
+at `2026-07-31-neiso-72-hy-window`. Deliverable:
+`results/calibration/CHARTER-neiso75-c3c-frontier-2026-08-02.md`; decomposition
+probe `scripts/probes/_neiso75_c3c_decomposition.py` (imports the xiso-1
+loaders — same construction, new statistic) with record
+`PROBE-neiso75-c3c-decomposition-2026-08-02.txt`.
+
+**(a) The decomposition.** Each of the 43 missed RT>$300 hours is split into
+daily level + within-day deviation and tested against three counterfactuals:
+CF-A "gain restored" (the model's own deviation scaled by the year's measured
+hod-range ratio — the *systemic-defect* counterfactual), CF-B "shape graft"
+(the actual's deviation on the model's day level — the upper bound of every
+within-day mechanism), CF-C "level graft" (the actual's day level with the
+model's deviation). Loader check reproduces xiso-1's NEISO row exactly.
+Results: **CF-A closes 13/43 — all summer, 10 of 20 in 2025, zero winter hours
+in any year** (median needed within-day gain 6.8×/32.8×/20.8× vs the systemic
+2.9–4.4×). Full-8760 CF-A counts: 14/1/25 — **2025 lands at 25 h inside
+[10, 40] with every crossing on the five real event days** (Jun-23/24/25,
+Jul-28/29), while 2023's nominal 14 is a mis-timed tail (0 crossings on the
+Feb-4 arctic-blast block; over-prints Sep-5..7 — the caiso-144 hazard shape).
+The winter block (18 h) splits: 2023 is JOINT level+shape (Feb-4 day level:
+model $195 / DA $227 / RT $275; even CF-B closes only 3/10 and CF-C 0/10);
+2025's winter days carry the RIGHT day level (Jan-17 model $206 vs RT $196)
+and miss only RT morning transients. **The decisive ceiling: the real DA — the
+full real book — cleared ≥$300 in 5/5/12 h vs gates ≥8 / ≤18 / ≥10, so the
+2023 gate is unreachable by ANY DA-type formation**; 36/43 tail hours are
+RT-only (the wedge rubric v2.7 itself classes out of representation). 2024
+passes small-count and needs nothing.
+
+**(b) Levers enumerated** (charter §3): L1 DA-book diurnal formation
+(`da_virtual_bids` **U→O**, recommended); L2 import-side scarcity (bounded, NOT
+chartered — owner fidelity option; `priced_interchange` stays U); L3
+declared-window OP-4/M/LCC-2 tiers (`maxgen_emergency_tier_pricing` U — no
+registry on disk + rule-19 tension with the armed co-opt; owner option); L4
+Limb-A promotion (standing owner decision, closes 1/20); L5 storage-side
+(**blocked, xiso-1 standing order**); L6 Limb-B re-arm (`measured_offer_surface`
+I stands; charter draws the boundary — the new identification is within-day
+movement of the *body* band, never a re-conditioning of the tail rungs); L7
+winter fuel-security family (exhausted on record, and §2 shows its target is
+majority out-of-representation); L8 tail-tuned adders (forbidden).
+
+**(c) The ONE lever, pre-registered** (charter §4): item 1, supply-conduct
+limb first on the on-disk `hbdayaheadenergyoffer` corpus, DA-depth limb behind
+its own existence check. Kills: K1 within-day movement ≥ $5/$5/$8 per year
+(≈25 % of the measured hod-range gaps $18.93/$22.14/$31.17); K2 conditioning
+on hour×net-load×month only, never price; K3 nyiso-94 existence + miso-105
+λ0-attractor (≤$2 crossing-price reproduction AND ≥30 % displacement share
+kills); K4 caiso-154 fuel-tail exclusion (>15 % relative = fuel granularity);
+K5 2025 event-day coverage. **This charter authorizes Phase-0 (measurement,
+no LP) ONLY; a solve arm needs its own prereg carrying gates G1–G5**
+(amplitude; C3c-2025 count AND placement ≥ half on event days; C3a/C3b/C1
+neutrality; ±8 % level band; C3b-flip hard kill; LOYO; no storage co-lever; PS
+throughput reported, never graded).
+
+**Reported against interest.** (1) The keeper attestation's 2024 C3c
+event-day names are one calendar day early (Jun-17→Jun-18, "Jul-7 Sun"→Jul-8
+Mon, Jul-31→Aug-1, Dec-2→Dec-3) — a leap-year dating slip in the ledger prose,
+verified against the raw SMD workbook (RT max $2,112.77 = 2024-08-01 HE19);
+counts, hours, parquets and scoring are unaffected. To be corrected at the
+next attestation regeneration, not edited in place. (2) CF-A's 2023 count
+nominally "passes" the gate — the charter rejects it anyway on placement,
+against the naive reading of our own counterfactual. (3) The rubric
+diurnal-amplitude criterion (neiso-74/xiso-1 owner call) is SURFACED with new
+sizing — C3c proxies the amplitude defect in exactly one ISO-year (NEISO-2025)
+— and NOT decided; no scorer changed.
+
+**Governance.** Years 2023–2025 only; holdout freeze ACTIVE; NEISO locked test
+SPENT and untouched; nothing read outside the training window (rule 22). The
+probe feeds nothing back into any solve (rule 13 not engaged). Matrix duties
+(rule 28b): `da_virtual_bids` NEISO U→O + ev; `diurnal_price_amplitude` and
+`measured_offer_surface` NEISO notes updated (boundary drawn, I stamp stands);
+NEISO header re-check stamp; §5.6 header + items 1/2 stamped.
+`check_mechanism_matrix.py --base origin/main` run pre-push. No dashboard
+registration (rule 15 binds bundles; none exists).
+
+**Open / next.** (1) **Owner:** the §5 routing for C3c-2023 (accept ledgered /
+winter-fidelity lane / representation change) + the L1 execution green-light
+(Phase-0 is authorized; a veto re-stamps O→U with the charter as standing
+prereg) + the standing rubric owner call. (2) **Successor session (on owner
+green-light): L1 Phase-0** — run the K1–K5 measurements, stamp the surviving
+limb, and (only on survival) write the Phase-1 prereg with G1–G5 numeric bars.
+(3) Items 2/5 and the Limb-A promotion decision unchanged.
+
+Next shorthand: **neiso-76.**

@@ -1,0 +1,166 @@
+neiso-75 — C3c decomposition: systemic amplitude vs local scarcity/winter (no LP)
+keeper: 2026-07-31-neiso-72-hy-window  bundle: results/calibration/neiso72_hy_window_B
+threshold: $300/MWh (RT actual = the gated basis, rubric v2.7)
+
+==============================================================================
+2023  loader check — level vs DA +3.9 %, amplitude 27.1 % of DA / 27.3 % of RT (xiso-1 row reproduced)
+  hour-of-day mean ranges: model $7.03, DA $25.96, RT $25.75 (gap vs DA $18.93)
+actual RT tail 15 h (DA tail 5 h); model >$300: 0 h, model max $249
+  DA-tail diagnostic: 5 h, 1 also in the RT tail; model at those hours $214-$236; CF-A crosses 3/5
+
+  per-hour decomposition of the 15 missed RT tail hours:
+  date      hod seas   RT$    DA$  model$  m_dm$  rtdm$  DAvis  CF-A$  CF-B$  CF-C$  closable-by
+  02-04      6 WIN     378    319     214    195    275  True     263    299    293  JOINT-ONLY
+  02-04      7 WIN     462    284     214    195    275  False    263    382    293  within-day
+  02-04      8 WIN     334    293     214    195    275  False    263    255    293  JOINT-ONLY
+  02-04      9 WIN     326    265     201    195    275  False    217    247    280  JOINT-ONLY
+  02-04     10 WIN     373    192     188    195    275  False    169    294    267  JOINT-ONLY
+  02-04     14 WIN     354    162     187    195    275  False    165    274    266  JOINT-ONLY
+  02-04     15 WIN     419    190     193    195    275  False    187    340    272  within-day
+  02-04     16 WIN     382    170     199    195    275  False    210    303    279  within-day
+  02-04     17 WIN     378    235     214    195    275  False    263    299    293  JOINT-ONLY
+  02-26     18 WIN     367    160      50     46    201  False     60    212    205  JOINT-ONLY
+  07-05     17 SUM    1162    129      81     44    130  False    182   1075    168  within-day
+  09-05     15 SUM     358    108     153     53    104  False    420    308    204  within-day  [CF-A crosses]
+  09-05     16 SUM     308    125     200     53    104  False    590    258    250  JOINT-ONLY  [CF-A crosses]
+  09-06     16 SUM     326    131     180     44     99  False    542    271    235  JOINT-ONLY  [CF-A crosses]
+  09-06     17 SUM     330    130      73     44     99  False    151    275    128  JOINT-ONLY
+
+  per-event-day daily levels (all days carrying RT tail hours):
+  day     n_tail  m_dm$  da_dm$  rt_dm$   (da-m)$  (rt-da)$
+  02-04      9     195     227     275       +32      +48
+  02-26      1      46     114     201       +68      +87
+  07-05      1      44      64     130       +20      +66
+  09-05      2      53      55     104        +2      +49
+  09-06      2      44      61      99       +18      +38
+
+  hour-matched shares of the 15-h RT tail:
+    CF-A gain-restored (SYSTEMIC amplitude defect closed) crosses: 3/15
+    CF-B any-within-day upper bound crosses:                       5/15
+    CF-C event-day level alone crosses:                            0/15
+    JOINT-ONLY (needs level AND within-day together):              10/15
+
+  full-8760 counterfactual tail counts vs the C3c gate (actual 15, band [8, 30] h):
+    keeper                            0 h  -> FAIL
+    CF-A gain restored (RT)          14 h  -> PASS
+    CF-A gain restored (DA ctrl)     14 h  -> PASS
+    CF-B within-day UB               12 h  -> PASS
+    CF-C event-level graft            0 h  -> FAIL
+    CF-A placement: 3/14 crossing hours land ON actual RT tail hours; crossings by day:
+      02-03 x4, 09-05 x4, 09-06 x1, 09-07 x5
+    gain needed at the 12 CF-A-missed hours (systemic G = 3.66): median 6.8x, 3 hours have non-positive model deviation (no gain closes them)
+    [WIN] 10 h: CF-A 0, CF-B 3, CF-C 0, JOINT-ONLY 7, DA-visible 1
+    [SUM]  5 h: CF-A 3, CF-B 2, CF-C 0, JOINT-ONLY 3, DA-visible 0
+
+==============================================================================
+2024  loader check — level vs DA +5.0 %, amplitude 23.6 % of DA / 23.0 % of RT (xiso-1 row reproduced)
+  hour-of-day mean ranges: model $6.82, DA $28.96, RT $29.68 (gap vs DA $22.14)
+actual RT tail 8 h (DA tail 5 h); model >$300: 0 h, model max $218
+  DA-tail diagnostic: 5 h, 0 also in the RT tail; model at those hours $48-$218; CF-A crosses 1/5
+
+  per-hour decomposition of the 8 missed RT tail hours:
+  date      hod seas   RT$    DA$  model$  m_dm$  rtdm$  DAvis  CF-A$  CF-B$  CF-C$  closable-by
+  06-18     16 SUM     426    175      47     39    109  False     73    356    117  within-day
+  06-18     17 SUM     758    162      46     39    109  False     72    688    116  within-day
+  07-08     17 SUM     500    156      54     44    106  False     89    438    116  within-day
+  07-08     18 SUM     377     94      52     44    106  False     80    315    114  within-day
+  08-01     16 SUM    1107    181      45     39    234  False     66    913    240  within-day
+  08-01     17 SUM    2113    182      48     39    234  False     75   1919    242  within-day
+  08-01     18 SUM     665    135      45     39    234  False     66    471    240  within-day
+  12-03      4 WIN     312    120      90     92    169  False     84    234    167  JOINT-ONLY
+
+  per-event-day daily levels (all days carrying RT tail hours):
+  day     n_tail  m_dm$  da_dm$  rt_dm$   (da-m)$  (rt-da)$
+  06-18      2      39      66     109       +27      +43
+  07-08      2      44      56     106       +12      +50
+  08-01      3      39      76     234       +36     +158
+  12-03      1      92     117     169       +25      +53
+
+  hour-matched shares of the 8-h RT tail:
+    CF-A gain-restored (SYSTEMIC amplitude defect closed) crosses: 0/8
+    CF-B any-within-day upper bound crosses:                       7/8
+    CF-C event-day level alone crosses:                            0/8
+    JOINT-ONLY (needs level AND within-day together):              1/8
+
+  full-8760 counterfactual tail counts vs the C3c gate (actual 8, band |model-8| <= 10):
+    keeper                            0 h  -> PASS
+    CF-A gain restored (RT)           1 h  -> PASS
+    CF-A gain restored (DA ctrl)      1 h  -> PASS
+    CF-B within-day UB                7 h  -> PASS
+    CF-C event-level graft            0 h  -> PASS
+    CF-A placement: 0/1 crossing hours land ON actual RT tail hours; crossings by day:
+      07-16 x1
+    gain needed at the 8 CF-A-missed hours (systemic G = 4.35): median 32.8x, 1 hours have non-positive model deviation (no gain closes them)
+    [WIN]  1 h: CF-A 0, CF-B 0, CF-C 0, JOINT-ONLY 1, DA-visible 0
+    [SUM]  7 h: CF-A 0, CF-B 7, CF-C 0, JOINT-ONLY 0, DA-visible 0
+
+==============================================================================
+2025  loader check — level vs DA +2.8 %, amplitude 29.9 % of DA / 34.2 % of RT (xiso-1 row reproduced)
+  hour-of-day mean ranges: model $13.30, DA $44.47, RT $38.91 (gap vs DA $31.17)
+actual RT tail 20 h (DA tail 12 h); model >$300: 0 h, model max $281
+  DA-tail diagnostic: 12 h, 6 also in the RT tail; model at those hours $100-$281; CF-A crosses 8/12
+
+  per-hour decomposition of the 20 missed RT tail hours:
+  date      hod seas   RT$    DA$  model$  m_dm$  rtdm$  DAvis  CF-A$  CF-B$  CF-C$  closable-by
+  01-17      6 WIN     307    199     213    206    196  False    227    316    203  within-day
+  01-17      7 WIN     338    223     227    206    196  False    269    348    218  within-day
+  01-20     10 WIN     320    220     201    196    163  False    210    353    168  within-day
+  01-22      7 WIN     352    293     194    170    197  False    241    325    221  within-day
+  01-22      8 WIN     307    243     194    170    197  False    241    280    221  JOINT-ONLY
+  02-10     11 WIN     315    124     130    128    176  False    133    267    178  JOINT-ONLY
+  06-23     16 SUM     338    242     259    102    112  False    560    329    268  within-day  [CF-A crosses]
+  06-24     15 SUM     334    343     272    127    242  True     550    220    386  level-only  [CF-A crosses]
+  06-24     16 SUM     741    418     259    127    242  True     513    627    373  either  [CF-A crosses]
+  06-24     17 SUM    1110    475     281    127    242  True     576    996    395  either  [CF-A crosses]
+  06-24     18 SUM    1074    407     281    127    242  True     576    959    395  either  [CF-A crosses]
+  06-24     19 SUM     853    316     281    127    242  True     576    739    395  either  [CF-A crosses]
+  06-25     16 SUM     377    161     272    115    126  False    573    366    283  within-day  [CF-A crosses]
+  06-25     17 SUM     327    199     259    115    126  False    535    316    270  within-day  [CF-A crosses]
+  07-28     17 SUM     350    297     193     81     91  False    409    340    203  within-day  [CF-A crosses]
+  07-29     17 SUM     313    400     256    111    116  True     535    309    261  within-day  [CF-A crosses]
+  08-10     17 SUM     308    132      67     54     68  False     91    295     80  JOINT-ONLY
+  11-23     17 SHL     529    117      77     70    140  False     91    459    147  within-day
+  11-23     18 SHL     865     91      75     70    140  False     85    795    145  within-day
+  12-10      6 WIN     320    269     153    149    160  False    160    309    164  within-day
+
+  per-event-day daily levels (all days carrying RT tail hours):
+  day     n_tail  m_dm$  da_dm$  rt_dm$   (da-m)$  (rt-da)$
+  01-17      2     206     140     196       -66      +56
+  01-20      1     196     204     163        +8      -40
+  01-22      2     170     202     197       +32       -4
+  02-10      1     128     159     176       +31      +17
+  06-23      1     102     111     112        +8       +1
+  06-24      5     127     157     242       +30      +84
+  06-25      2     115      83     126       -32      +43
+  07-28      1      81      97      91       +16       -6
+  07-29      1     111     135     116       +24      -19
+  08-10      1      54      51      68        -3      +17
+  11-23      2      70      75     140        +5      +66
+  12-10      1     149     186     160       +37      -25
+
+  hour-matched shares of the 20-h RT tail:
+    CF-A gain-restored (SYSTEMIC amplitude defect closed) crosses: 10/20
+    CF-B any-within-day upper bound crosses:                       16/20
+    CF-C event-day level alone crosses:                            5/20
+    JOINT-ONLY (needs level AND within-day together):              3/20
+
+  full-8760 counterfactual tail counts vs the C3c gate (actual 20, band [10, 40] h):
+    keeper                            0 h  -> FAIL
+    CF-A gain restored (RT)          25 h  -> PASS
+    CF-A gain restored (DA ctrl)     25 h  -> PASS
+    CF-B within-day UB               18 h  -> PASS
+    CF-C event-level graft            7 h  -> FAIL
+    CF-A placement: 10/25 crossing hours land ON actual RT tail hours; crossings by day:
+      06-23 x5, 06-24 x7, 06-25 x6, 07-28 x2, 07-29 x5
+    gain needed at the 10 CF-A-missed hours (systemic G = 2.92): median 20.8x, 0 hours have non-positive model deviation (no gain closes them)
+    [WIN]  7 h: CF-A 0, CF-B 5, CF-C 0, JOINT-ONLY 2, DA-visible 0
+    [SUM] 11 h: CF-A 10, CF-B 9, CF-C 5, JOINT-ONLY 1, DA-visible 6
+    [SHL]  2 h: CF-A 0, CF-B 2, CF-C 0, JOINT-ONLY 0, DA-visible 0
+
+==============================================================================
+GRAND SUMMARY (43 RT tail hours, 2023-2025)
+  CF-A (systemic gain restored) crosses:  13/43
+  CF-B (any within-day, upper bound):     28/43
+  CF-C (event-day level alone):           5/43
+  JOINT-ONLY:                             14/43
+  DA-visible:                             7/43
