@@ -120,6 +120,36 @@ def main() -> None:
             if field in r["blob"] or field == r["id"]
         ]
 
+    def coverage(field: str) -> str:
+        """How well the matrix covers a field — three materially different states.
+
+        `mention-anywhere` is the CI checker's deliberate escape hatch (rule
+        28(c)): a sub-scalar of an existing family belongs on the family's row,
+        not its own. But a field mentioned ONLY inside an unrelated row's prose
+        has no cell of its own, so no verdict is recorded for it anywhere —
+        the same invisibility the 227-3 gap had, one level subtler. Distinguish:
+
+        * ``own_row``   — the field has a row carrying its own cell + verdict.
+        * ``prose_only`` — mentioned, but only inside some other row's text.
+        * ``absent``    — not mentioned anywhere in the matrix.
+
+        The matrix's own convention is that rows are **ISO-neutral mechanism
+        families** and a per-ISO flag is that ISO's leg of the family (e.g.
+        `nyiso_gas_commitment_bridge` is the NYISO leg of row
+        `gas_commitment_bridge`, whose `def` references it in the short form
+        ``nyiso :2609``). So the stem — the field with its ISO prefix removed —
+        is what identifies the owning row, not the literal flag name. Matching
+        literally would over-report gaps for correctly-registered legs.
+        """
+        stem = field[len("nyiso_") :] if field.startswith("nyiso_") else field
+        for r in rows:
+            if r["id"] in (field, stem):
+                return "own_row"
+            head = r["blob"].split("note:", 1)[0]
+            if field in head or (stem and stem in head):
+                return "own_row"
+        return "prose_only" if field.lower() in blob else "absent"
+
     # --- (1) the NYISO-exclusive family census -------------------------------
     family = sorted(f for f in defaults if f.startswith("nyiso_") or f.startswith("nysdec"))
     family_rows = []
@@ -133,6 +163,7 @@ def main() -> None:
                 "keeper_value": _norm(kv),
                 "keeper_arms_it": bool(kv) if kv != "<absent>" else None,
                 "mentioned_in_matrix": f.lower() in blob,
+                "coverage": coverage(f),
                 "owning_rows": own,
                 "nyiso_cells": sorted({o["nyiso"] for o in own}),
                 "armed_in_bundles": sorted(
@@ -161,8 +192,15 @@ def main() -> None:
             )
     live_invisible.sort(key=lambda d: -d["n_bundles_nondefault"])
 
-    # --- (3) unmentioned NYISO-family fields (the sharp rule-28(c) gap) ------
-    family_gaps = [r for r in family_rows if not r["mentioned_in_matrix"]]
+    # --- (3) NYISO-family fields with no CELL of their own -------------------
+    # Two distinct rule-28(c) gaps: `absent` (the 227-3 shape — invisible
+    # outright) and `prose_only` (named in some other row's note, so the CI
+    # mention-anywhere gate passes, but NO cell records a verdict for it).
+    family_gaps = [r for r in family_rows if r["coverage"] == "absent"]
+    prose_only = [r for r in family_rows if r["coverage"] == "prose_only"]
+    armed_no_cell = [
+        r for r in family_rows if r["coverage"] != "own_row" and r["keeper_arms_it"]
+    ]
 
     result = {
         "probe": "nyiso-113 matrix-gap sweep",
@@ -172,7 +210,9 @@ def main() -> None:
         "n_matrix_rows": len(rows),
         "n_bundles_scanned": len(cfgs),
         "nyiso_family": family_rows,
-        "nyiso_family_matrix_gaps": [r["field"] for r in family_gaps],
+        "nyiso_family_matrix_gaps_absent": [r["field"] for r in family_gaps],
+        "nyiso_family_prose_only": [r["field"] for r in prose_only],
+        "armed_on_keeper_with_no_cell": [r["field"] for r in armed_no_cell],
         "live_but_invisible": live_invisible,
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -193,9 +233,17 @@ def main() -> None:
             f"{len(r['armed_in_bundles'])}"
         )
     print()
-    print(f"=== rule-28(c) GAPS in the NYISO family: {len(family_gaps)} ===")
+    print(f"=== rule-28(c) ABSENT from the matrix: {len(family_gaps)} ===")
     for r in family_gaps:
-        print(f"  {r['field']:<44} keeper={r['keeper_value']} armed_in={r['armed_in_bundles']}")
+        print(f"  {r['field']:<44} keeper={r['keeper_value']} armed_in={len(r['armed_in_bundles'])}")
+    print()
+    print(f"=== PROSE-ONLY (mentioned, but no cell of its own): {len(prose_only)} ===")
+    for r in prose_only:
+        print(f"  {r['field']:<44} keeper={r['keeper_value']} rows={[o['row'] for o in r['owning_rows']]}")
+    print()
+    print(f"=== ARMED ON THE KEEPER WITH NO CELL ANYWHERE: {len(armed_no_cell)} ===")
+    for r in armed_no_cell:
+        print(f"  {r['field']:<44} coverage={r['coverage']}")
     print()
     print(f"=== LIVE-BUT-INVISIBLE (non-default in a NYISO bundle, no matrix mention): {len(live_invisible)} ===")
     for r in live_invisible:
