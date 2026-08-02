@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-28-pjm-134-apsouth",
+  "run_id": "2026-08-02-pjm-146a-control-zerodelta",
   "iso": "PJM",
-  "label": "pjm 134 apsouth",
+  "label": "pjm 146a control zerodelta",
   "target_years": [
     2023,
     2024,
@@ -14,20 +14,19 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "NOT-YET",
-  "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
-  ],
+  "determination": "CALIBRATED",
+  "reasons": [],
   "notes": [
-    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.0% forced (3.4503 of 22.9347 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.928 (\u22650.8) & off-peak CV ratio 0.565 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.4% forced (3.6542 of 23.7502 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (\u22650.8) & off-peak CV ratio 0.886 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.7% forced (4.9482 of 31.4378 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.975 (\u22650.8) & off-peak CV ratio 0.811 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 15.2% forced (3.3047 of 21.721 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.93 (\u22650.8) & off-peak CV ratio 0.697 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.4% forced (3.4725 of 22.488 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (\u22650.8) & off-peak CV ratio 1.044 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.8% forced (4.7637 of 30.1176 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.975 (\u22650.8) & off-peak CV ratio 0.812 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 40.0% forced (6.1205 of 15.2961 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.897 (\u22650.8) & off-peak CV ratio 2.244 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -37,7 +36,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -47,7 +46,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -57,7 +56,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -80,11 +79,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 5,
+    "scored": 9,
+    "target_grade": 9,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 0
   },
   "free_class_score": {
     "iso": "PJM",
@@ -102,13 +101,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 15/16 \u00b7 free 11/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
