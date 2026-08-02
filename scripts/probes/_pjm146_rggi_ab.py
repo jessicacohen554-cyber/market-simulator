@@ -155,7 +155,31 @@ def _run_year_kwargs(meta: dict) -> dict:
     return kwargs
 
 
-def _expected_membership(fa, year: int) -> np.ndarray:
+def _zone_names_from(fa, generators) -> list[str]:
+    """Rebuild the runtime zone-name list from the (generator, ``zone_idx``) pairing.
+
+    ``FleetArrays`` stores only ``zone_idx``; the names live in the caller's
+    ``zone_names`` argument to ``generators_to_fleet_arrays``, which
+    ``run_year(fleet_only=True)`` does not return in its state dict. The
+    reconstruction is exact because ``zone_idx`` is built as
+    ``[zone_to_idx[g.zone] for g in generators]`` (``fleet/arrays.py``), so the
+    generator list and the index array are 1:1 by construction — and the list
+    ``run_year`` hands back is the same post-``apply_interchange_topology``,
+    virtual/DR-extended ``fleet`` object that built the arrays, which is the
+    interchange-extended list PREREG-pjm146 sec.2.4 requires.
+    """
+    idx = np.asarray(fa.zone_idx, dtype=int)
+    if idx.size == 0:
+        return []
+    names: dict[int, str] = {}
+    for gen, j in zip(generators, idx):
+        zone = getattr(gen, "zone", None)
+        if zone is not None:
+            names[int(j)] = str(zone)
+    return [names.get(j, "") for j in range(int(idx.max()) + 1)]
+
+
+def _expected_membership(fa, year: int, zone_names: list[str]) -> np.ndarray:
     """First-principles member mask: plant state test + committed zone fallback."""
     from market_sim.config.capacity_market import (
         PJM_RGGI_ZONE_SHARE,
@@ -165,7 +189,6 @@ def _expected_membership(fa, year: int) -> np.ndarray:
 
     states = plant_state_lookup("PJM")
     members = RGGI_MEMBER_STATES_BY_YEAR[year]
-    zone_names = list(fa.zone_names)
     zone_fallback = np.array(
         [
             float(PJM_RGGI_ZONE_SHARE.get(z, {}).get(year, 0.0))
@@ -214,11 +237,12 @@ def k1_k3_mc_and_membership() -> dict:
             mc_by_arm[arm] = np.asarray(state["mc_base"], dtype=float)
             if arm == "arm":
                 fa = state["fleet_arrays"]
+                gens = state["fleet"]
             else:
                 del state
         rate = np.asarray(fa.emission_rate, dtype=float)
         codes = np.asarray(fa.plant_code, dtype=int)
-        m_expect = _expected_membership(fa, yr)
+        m_expect = _expected_membership(fa, yr, _zone_names_from(fa, gens))
         delta = mc_by_arm["arm"] - mc_by_arm["control"]
         # The adder is hour-invariant; audit on the per-unit max/min spread.
         d_lo, d_hi = delta.min(axis=1), delta.max(axis=1)
