@@ -4,6 +4,7 @@
   "how_to_update": "Registering a run whose sidecar carries a FAIL: add `\"<run_id>\": [\"I4\", ...]` below in the same commit as the registration, and name the finding it belongs to in your findings doc. Removing a run's sidecar, or fixing the defect so the invariant passes, means DELETING its line here \u2014 the checker fails on a stale declaration too.",
   "seeded": "2026-07-31 (FFR-1D) from the invariant blocks committed at that date; re-seeded 2026-08-01 on the rebase onto the merged Wave-1 lanes (FFR-1A/1B/1C registrations). No verdict was changed at either point.",
   "wave1_note": "The FFR-1A arms are visible here as the fix they are: pjm-2026-2030-ffr1a-before and neiso-2026-2030-ffr1a-before carry I4, and neither of their arm1/arm2 successors does \u2014 the confirmed-exit derate ledgering (FR-1) closed I4 on both ISOs. The FFR-1C i7-before/after pairs still carry I7 on CAISO/MISO/NYISO: hydro accreditation narrowed the gap without closing it (that run's own findings doc records the residual). ercot-2026-2028-ffr1a-t0-* carry I3, the standing ERCOT energy-only scarcity-slack finding (FR-6), not anything those arms introduced.",
+  "ffr2b_note": "FFR-2B (2026-08-02) declared five previously-undeclared runs, in the commit that repairs this job. FOUR ARE FFR-2B'S OWN and were the session's own miss \u2014 the runs were registered without their line here: miso-2021-2025-cmc-{legacy,pipeline}-ffr2b carry I9 (storage simultaneity, 0.36/0.56 % of throughput, BIT-IDENTICAL across the two arms and therefore not attributable to retirement_rule); miso-2026-2030-ffr2b-t1f-base carries I7 and -dampers carries I7 + I12. The T1-F pair's I7/I12 are the SUBSTANTIVE D-2 finding, not noise: arming entry_rate_limits + entry_commissioning_lag widens I7 from one failing year (2026) to three (2026-2028) and pushes I12 from WARN to FAIL, because the damped arm stops concealing an adequacy shortfall the base arm closed with an unbuildable 4.9 GW single-year gas_ct wave (MISO's actual 2021-25 gas_ct additions totalled 1.379 GW). Recorded as a disclosed cost of owner decision D-2, not tuned away (rule 1) \u2014 docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md \u00a71.3/\u00a73. THE FIFTH IS NOT FFR-2B'S: ercot-2023-2025-t1ff-armr-fh1gate (I6, I7) is FH-1's \u00a73.3 harness-defect gate probe, registered earlier the same day without a declaration, which left this CI job RED ON MAIN before FFR-2B merged. Declared here because it is accurate and unbreaks main; the verdict is unchanged and remains FH-1's \u2014 the I6 over-retirement REPRODUCES at the T1-FF posture (26.8 % of prior thermal in 2025) and FH-4/Phase A stays BLOCKED until a retirement-lane fix lands and FH-1's gate is re-probed (docs/handoffs/fh-1-full-forward-harness-2026-08.md \u00a77).",
   "dominant_open_causes": {
     "I4": "FR-1 confirmed-exit capacity-accounting leak (derates never ledgered) \u2014 FFR-1A.",
     "I7": "FR-3 hydro absent from the accredited firm-capacity ledger \u2014 FFR-1C.",
@@ -104,6 +105,10 @@
       "I7",
       "I9"
     ],
+    "ercot-2023-2025-t1ff-armr-fh1gate": [
+      "I6",
+      "I7"
+    ],
     "ercot-2023-2027-crossover": [
       "I3",
       "I6",
@@ -135,6 +140,12 @@
     ],
     "ercot-2026-2030-ff-t1f-baseline": [
       "I3"
+    ],
+    "miso-2021-2025-cmc-legacy-ffr2b": [
+      "I9"
+    ],
+    "miso-2021-2025-cmc-pipeline-ffr2b": [
+      "I9"
     ],
     "miso-2021-2025-curve-ff2c": [
       "I9"
@@ -173,6 +184,13 @@
     "miso-2026-2030-ff-t1f-baseline": [
       "I4",
       "I7"
+    ],
+    "miso-2026-2030-ffr2b-t1f-base": [
+      "I7"
+    ],
+    "miso-2026-2030-ffr2b-t1f-dampers": [
+      "I7",
+      "I12"
     ],
     "neiso-2021-2025-curve": [
       "I6"
