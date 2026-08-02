@@ -116,7 +116,106 @@ the water year — the flat-block signature.
 
 ## D. Arms — results
 
-*(pending: filled from the four solved bundles.)*
+**Gates (all pre-registered before any arm solved).** K1 PASS — each arm's own
+`meta.shared_inputs` confirms its intended input state (A: both absent; B: both
+present), never the staging. K2 PASS — arm A reproduces the committed keeper's
+C3a *exactly* (56.00 / 37.82 / 38.60 $/MWh) and its D-1 rows to three decimals,
+so the A/B contrast is clean and the control is the keeper's degraded state.
+K3 PASS — no `ScenarioConfig` field differs between arms. K4 PASS — both carry
+[2023, 2024, 2025]. K5 PASS — arm B logs `seam import cap set to
+16055/16452/16148 MW`, `RoR split — 69/171` (2023) and `61/160` (2025) plants
+flat, and `min-flow floor reconciled with the RoR split … allocated over the
+reservoir class only`.
+
+**The structural result — the seam, read from the LP's own duals:**
+
+| arm | year | seam limit | binding h | congestion rent |
+|---|---|---|---|---|
+| A control | 2023 / 2024 / 2025 | 7,500 MW | **757 / 472 / 857** | −$187.2M / −$15.1M / −$26.9M |
+| B restored | 2023 / 2024 / 2025 | 16,055 / 16,452 / 16,148 MW | **0 / 0 / 0** | **$0.000M** |
+
+The retired fitted DOF is off the binding path in every hour of every year, and
+the binding constraint returns to the measured corridor envelopes, whose own
+binding counts rise to take it back (2023: `+WECC_DSW>SP15_rest` 2,850 → 3,360 h
+reaching its full 6,755 MW; `+WECC_PNW>NP15` 3,116 → 3,273 h reaching 3,846.5 MW).
+
+**The price result — the gate did NOT close, and that is the honest headline.**
+
+| year | model λ A → B | actual RT | miss A → B | verdict |
+|---|---|---|---|---|
+| 2023 | 56.00 → 55.84 | 54.17 | +3.4 % → +3.1 % | PASS |
+| 2024 | 37.82 → 37.79 | 34.60 | +9.3 % → +9.2 % | PASS |
+| 2025 | 38.60 → 38.52 | 34.39 | **+12.2 % → +12.0 %** | **FAIL (band ±10 %)** |
+
+C3a-2025 needed ≤ +10.0 % — a −$0.77/MWh move — and got −$0.08. **No closure of
+the C3a-2025 caveat is claimed**, and the direction being favourable is *not* the
+justification for the promotion (rule 1): the input goes in because it is the
+accurate one, and would equally have gone in had the residual worsened.
+
+**Why the movement is small is measured, not assumed.** Relaxing the seam does
+not buy several TWh of import, because the *measured* corridor envelopes bind
+almost immediately behind it. The realised substitution is small and clean —
+import in, gas CC out, essentially 1:1:
+
+| year | import | CC_REGULAR | CT_PEAKER |
+|---|---|---|---|
+| 2023 | +0.456 TWh | −0.398 | −0.050 |
+| 2024 | +0.153 TWh | −0.157 | — |
+| 2025 | +0.398 TWh | −0.398 | — |
+
+**The hydro half is very nearly inert at fleet level** — an unpredicted result
+worth recording. Restoring the classifier pins 904.6 MW (13.5 % of the EHA
+fleet) flat, but the fleet diurnal profile barely moves: 2023 night
+2,972 → 2,966 MW, belly 1,800 → 1,805, evening 3,781 → 3,779, cv 0.489 → 0.489;
+2025 night 2,983 → 2,972, cv 0.554 → 0.554. The armed `hydro_min_flow_floor`
+already held most of that overnight level, so the RoR split mostly re-attributes
+*which* plants supply it rather than changing the shape. This does not make the
+restoration optional (the attribution is the accurate one, and it is what the
+D-2 mechanism ledger reports), but it does mean the caiso-125 §1 bang-bang
+signature is **not** resolved by the RoR split alone — filed as a live object.
+
+**Determination: CALIBRATED-WITH-CAVEATS, unchanged**, 0 FAILs, the same 2 of 3
+non-protective ledgered slots. No gate regressed; every C3a year improves.
+Protective gates hold on both arms (C7 PASS, C8 PASS, D-4 PASS, D-2 PASS). D-1's
+`ST_GAS` FAIL rows (2024 r 0.158, 2025 r −0.049) are bit-comparable to the
+control's (0.162 / −0.044) and to the committed keeper's — pre-existing, on a
+class the rubric skips as immaterial (0.3 % / 0.1 % of ISO load), **not**
+introduced here.
+
+**Arm B was PROMOTED KEEPER** (`2026-08-02-caiso157-partition-restore-b`) on
+structural-integrity grounds under rules 1/14/20/24, with the price outcome
+recorded above rather than buried. `audit_keepers.py`: 0 failures, 0 warnings.
+
+**Attribution — arm C (seam only) IS the whole effect.** C restores only
+`capacity-deliverability` (K1 verified from its own pins: capdel True, hydro
+False) and reproduces arm B to three decimals in every year:
+
+| year | A (neither) | C (seam only) | B (both) | actual |
+|---|---|---|---|---|
+| 2023 | 55.996 | **55.842** | 55.839 | 54.17 |
+| 2024 | 37.820 | **37.791** | 37.790 | 34.60 |
+| 2025 | 38.599 | **38.524** | 38.524 | 34.39 |
+
+**All four arms, complete.** Arm D restores only `hydro-plant-modes` (K1: capdel
+False, hydro True):
+
+| year | A (neither) | C (seam only) | D (hydro only) | B (both) | actual |
+|---|---|---|---|---|---|
+| 2023 | 55.996 | **55.842** | **55.991** | 55.839 | 54.17 |
+| 2024 | 37.820 | **37.791** | **37.825** | 37.790 | 34.60 |
+| 2025 | 38.599 | **38.524** | **38.596** | 38.524 | 34.39 |
+| seam binding h | [757, 472, 857] | [0, 0, 0] | [758, 471, 857] | [0, 0, 0] | — |
+
+**D ≈ A and C ≈ B, to three decimals.** The pre-registered "B ≈ C + D" check
+resolves with **no meaningful interaction term**: 100 % of the price movement is
+the seam half, and the hydro RoR half is measurably inert at system level —
+independently confirming the fleet-level inertness measured directly on arm B.
+(Arm D's seam still binds [758, 471, 857] h, ±1 h against the control, because
+restoring the classifier marginally perturbs which hours bind, not how many.)
+
+Both attribution arms score `NOT-YET` purely because an attribution arm carries
+no governance attestation — that is not a scored outcome, and their D-1 FAIL is
+the same immaterial `ST_GAS` row the control and the committed keeper carry.
 
 ## E. The root-cause guard
 
@@ -141,6 +240,34 @@ Scope is deliberately the two mechanisms this session proves. **Filed, not
 absorbed:** widening the check to other armed-flag/partition pairs, each of which
 owes its own check that "absent" is distinguishable from a legitimate no-op.
 
-## F. DO-NOT-REDO
+## F. DO-NOT-REDO (binding on successors)
 
-*(pending: written with the arm results.)*
+1. **Do not re-test "restore the partitions" as a price lever.** It is measured:
+   the seam relaxation buys +0.456 / +0.153 / +0.398 TWh of import and −0.08 to
+   −0.16 $/MWh of λ, because the measured corridor envelopes bind behind it.
+   Any successor proposing the import seam as a C3a-2025 lever must bring
+   evidence against *that* measurement.
+2. **Do not read this session as reopening C3a-2025 or C3c-2023/24.** Both
+   remain the owner's ledgered caveats from caiso-145. This session claims no
+   closure of either. It *does* correct one premise in the record — caiso-140's
+   D3 walk-down attributed the Sep–Dec 2025 belly λ to a "2.7–3.0 GW economic
+   import-parity plateau", and §B shows that in 18.0 % of those hours the
+   plateau was partly a hard fitted cap — but correcting the premise did not
+   move the gate, so it is a record correction, not a lever.
+3. **Do not quote the RoR split as a shape fix on the strength of its arming.**
+   §D measures it very nearly inert at fleet level in this configuration. The
+   caiso-125 §1 overnight bang-bang signature is **not** resolved by it.
+4. **Do not widen the input-completeness guard by analogy.** Each added
+   armed-flag/partition pair owes its own demonstration that "partition absent"
+   is distinguishable from a legitimate ISO-level no-op (as `partition_expected`
+   does for ERCOT). A guard that fires on a legitimate no-op would break lanes.
+5. **Do not treat the bundle sweep as the durable record.** Top-15-per-ISO
+   retention pruned `caiso138_envclip_B` and `caiso139_control_A` during this
+   session's registrations, and further CAISO registrations may prune
+   `caiso142_*`. The committed probe transcript
+   (`PROBE-caiso157-partition-audit-2026-08-02.txt`) is the permanent record of
+   every bundle's armed-vs-pinned state; re-running the probe later will show
+   fewer bundles, which is retention, not a change in the finding.
+6. **Do not assume other ISOs need this fix.** §A measured every ISO's
+   designated keeper: CAISO alone was degraded. Re-run
+   `_caiso157_partition_audit.py` section 1b rather than assuming either way.
