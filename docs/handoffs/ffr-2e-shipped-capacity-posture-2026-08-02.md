@@ -35,16 +35,28 @@ the posture question turns out **not** to be a second-order calibration detail:
 4. **PJM's new FFR-2C floor reaches the screens and reverses the sign of the
    posture gap from 2028**: at a long position the curve arm goes from paying
    $0 (2021–2027 vintages) to paying $63,875/firm-MW-yr (2028/29 vintage),
-   i.e. from 100 % below the fixed arm to 17.5 % below it. **This is measured at
-   the pricing seam only — its fleet-level effect remains UNMEASURED (§4).**
+   i.e. from 100 % below the fixed arm to 17.5 % below it. **Measured at the
+   pricing seam. Its fleet-level effect is still UNMEASURED — and §4.2 shows
+   that is now structural: exhibiting the floor needs a LONG fleet in a ≥2028
+   solve year, and no current instrument produces one.**
+5. **The posture changes WHICH MECHANISM builds PJM's 2028 capacity** (§4.1, the
+   T0 leg). Shipped: 2,500 MW `gas_cc` via *economic entry*. Fixed: economic
+   entry collapses to zero and the *reserve-margin backstop* fills 880 MW of
+   `gas_ct`. Worth +1,620 MW thermal, ~0.6 $/MWh lower price and **3.1 Mt/yr
+   less CO₂** — from running the configuration the forecast actually ships.
+6. **The sign of the posture gap inverts between instruments.** PJM is *long*
+   (1.10–1.36) in the T1-H hindcast, where the curve pays $0 — and *short*
+   (0.906–0.915) in the T0 forecast, where it pays 53 % **above** the flat
+   anchor. Any claim of the form "curve-ON over-fires" is a **T1-H property, not
+   a forecast property**, and must not be carried across.
 
-> **⚠ COMPLETION STATE.** Charter items 1 (instrument), 3 (arm recommendation)
-> and the rule-28 matrix duty are DONE. Item 2 (re-run the T1-H legs) and item 4
-> (the PJM T0 leg) are **NOT DONE — no LP was solved and no run was registered**;
-> the container had no `data/clean/` tree and rebuilding it did not finish in
-> session. §3.1 and §4 carry the exact commands. Every quantitative claim below
-> is either exact seam arithmetic (§2) or committed pre-epoch evidence explicitly
-> labelled as prior (§3.0) — none of it is a fresh solve.
+> **⚠ COMPLETION STATE.** Charter items 1 (instrument), 3 (arm recommendation),
+> 4 (the PJM T0 leg) and the rule-28 matrix duty are **DONE**. Item 2 is
+> **PARTIAL**: NEISO and CAISO posture pairs were solved cold post-epoch, scored
+> and registered; **PJM and MISO T1-H pairs were NOT run**, deferred under the
+> rule-12 window split (FFR-2A owns those windows and had not released them).
+> Six runs registered. The PJM **floor** specifically remains unmeasured at fleet
+> level — §4.2 shows why that is now a *structural* result, not an omission.
 
 ---
 
@@ -286,40 +298,66 @@ previously unreachable except by predating the flip.
 
 ---
 
-## 4. PJM's 2028/29 floor — measured at the SEAM, **UNMEASURED at fleet level**
+## 4. PJM T0 2026–2028 — the posture measured at fleet level; the FLOOR still not
 
-This is the one deliverable the session did not produce, stated plainly rather
-than inferred.
+Runs: `pjm-2026-2028-ffr2e-t0-shipped` (cache `cf44d321f36244bd`, via
+`--golden-posture`, which resolves identically to the shipped default for PJM)
+and `pjm-2026-2028-ffr2e-t0-fixed` (`c5054dc0d093da2a`, the runner default →
+`by_iso=None`). Sequential, 3 solve-years each, 0 invariant FAILs / 0 WARNs both
+arms.
 
-**What IS measured** (§2, exact, no LP): the floor reaches the screens. All three
-capacity screens thread `year` into `capacity_price_per_firm_mw_yr`
-(`retirements.py:707`, `new_entry.py:1012`, `storage.py:1092`), so
-`resolve_demand_curve_vintage` selects the 2028/29 vintage for any solve year
-≥ 2028 and holds it forward. At a long position the shipped arm pays
-**$63,875/firm-MW-yr** in 2028 where it paid **$0** under the held 2027/28
-vintage — the posture gap flips from −100 % of the fixed arm to −17.5 %. That
-confirms and quantifies FFR-2C §2.1 independently.
+### 4.1 The result: identical in 2026–2027, and in 2028 the posture changes WHICH MECHANISM builds
 
-**What is NOT measured:** what that does to PJM's build/retire path. The named
-acceptance step — a PJM T0 leg over 2026–2028, which is the only window that
-reaches the new vintage (the T1-H window ends at 2025 by construction) — was
-**not run**, for the §3.1 reason. It is verified schedulable (3 solve-years, under
-the §2.1b cap, no `--full-solve-authorized` needed) and the arms are verified to
-resolve correctly:
+| 2028 | shipped (curve) | fixed net-CONE | Δ |
+|---|--:|--:|--:|
+| economic thermal entry | **2,500.0 MW `gas_cc`** | **0** | −2,500 |
+| reserve-margin backstop | 0 | **880.1 MW `gas_ct`** | +880 |
+| thermal MW | 173,950.3 | 172,330.4 | −1,619.9 |
+| reserve margin | −0.0845 | −0.0924 | −0.0079 |
+| load-weighted price | 38.93 | 39.50 | +0.57 $/MWh |
+| CO₂ | 353.72 Mt | **356.80 Mt** | **+3.09 Mt** |
+| CCS retrofits | 21 | 21 | 0 |
 
-```bash
-# shipped/curve arm — --golden-posture resolves IDENTICALLY to the shipped
-# default for PJM (both True); they differ only on NYISO, see B2
-python scripts/run_full_horizon.py --iso PJM --start-year 2026 --end-year 2028 \
-    --golden-posture --out-dir results/ffr2e/pjm-t0-shipped
-# fixed net-CONE arm — the runner's own default pins by_iso=None (see B1)
-python scripts/run_full_horizon.py --iso PJM --start-year 2026 --end-year 2028 \
-    --out-dir results/ffr2e/pjm-t0-fixed
-```
+**2026 and 2027 are bit-identical between the arms** (both: zero retirements,
+2,500 MW `gas_cc` *economic* entry in 2027, same reserve margin). The arms fork
+in **2028 and only 2028** — the first year the FFR-2C 2028/29 vintage governs.
+Identical CCS retrofit counts (21 both arms) rule that channel out.
 
-Run them **sequentially** (rule 12). Until then, FFR-2C's statement stands
-verbatim: *the fleet-level consequence of the floor is UNMEASURED*. Nothing in
-this document should be read as having closed it.
+The fork is **qualitative, not just a magnitude**: under the shipped posture
+PJM's 2028 capacity need is met by **economic entry of gas_cc**; under the flat
+net-CONE stub economic entry **collapses to zero** and the administrative
+**reserve-margin backstop** fills a smaller, dirtier 880 MW of `gas_ct` instead.
+The higher capacity payment is what keeps gas_cc above the entry bar. Net effect
+of running the posture the forecast actually ships: **+1,620 MW thermal, a better
+reserve margin, ~0.6 $/MWh lower energy price, and 3.1 Mt/yr less CO₂.**
+
+### 4.2 The floor itself does NOT bind here — and that is structural
+
+**PJM's forecast fleet is SHORT, not long.** Its own reserve position in this
+window is ≈ **0.906 / 0.909 / 0.915** (2026/27/28, from the evolution ledgers),
+i.e. on the **cap** segment of the VRR curve. The ER26-1556 floor applies only
+past reserve position **1.0316**. So at the model's own forecast position the
+floor **never binds**, and the 2028 divergence above is driven by the *cap-side*
+price gap ($118,625 vs $77,431, +53 %), not by the floor.
+
+This is the opposite regime from the hindcast window, where PJM's fleet sits
+**long** at 1.10–1.36 (FF-2C §2.2, FFR-2C §2.1) and the curve pays $0. The sign
+of the posture gap therefore **inverts between the two instruments**:
+
+| window | PJM position | shipped vs fixed |
+|---|--:|---|
+| T1-H hindcast 2021–2025 | 1.10–1.36 (long) | curve pays **$0** — 100 % *below* fixed |
+| T0 forecast 2026–2028 | 0.906–0.915 (short) | curve pays **$118,625** — 53 % *above* fixed |
+
+**Consequence, stated plainly: the floor's fleet-level effect remains
+UNMEASURED, and the reason is now structural rather than "we didn't run it."**
+The two instruments that could exhibit it are disjoint from the conditions under
+which it binds — the T1-H window has the long position but *ends at 2025 by
+construction* and can never reach the 2028/29 vintage; the T0 window reaches the
+vintage but the fleet there is short. FFR-2C's sentence therefore stands
+verbatim, and this session can now say *why*: exhibiting the floor needs a
+**long fleet in a ≥2028 solve year**, which no current instrument produces.
+That is a scoping finding for FFR-3A, not a parameter (rules 1 / 14).
 
 ---
 
@@ -366,15 +404,34 @@ not the HOLD. The T1 board's per-ISO determinations are unaffected.
 
 ## 6. Open blockers (not fixed here)
 
-**B1 — `scripts/run_full_horizon.py` carries the same FR-14 shape, and it is
-the T0 / T1-F runner.** `reference_config()` (`:153`) pins
-`cmc_by_iso = None` unless `--golden-posture` is passed, so a T0 or T1-F leg
-launched with no flag prices adequacy on the flat stub while production clears
-the curve. Its own docstring calls that the deliberate "P-2A probe posture", so
-this is a **default-posture decision, not an oversight** — it belongs with the
-D-1/D-3 batch at FFR-3A step 0, not to this session (rule 24). Flagged, not
-fixed. *(This does not affect the §4 measurement: `--golden-posture` and the
-shipped default agree on PJM.)*
+**B1 — `scripts/run_full_horizon.py` carries the same FR-14 shape in BOTH
+halves, and it is the T0 / T1-F runner.** Two distinct defects, verified:
+
+*(a) the default.* `reference_config()` (`:153`) pins `cmc_by_iso = None` unless
+`--golden-posture` is passed, so a T0 / T1-F leg launched with no flag prices
+adequacy on the flat stub while production clears the curve. Its own docstring
+calls that the deliberate "P-2A probe posture", so this half is a
+**default-posture decision, not an oversight** — it belongs with the D-1/D-3
+batch at FFR-3A step 0 (rule 24).
+
+*(b) the record — this half IS a defect, and it is the one this session fixed on
+the hindcast side.* The summary emitter (`:415`) writes
+`"capacity_market_clearing": bool(config.capacity_market_clearing)` — the
+**scalar**, which stays `False` even under `--golden-posture` (the golden posture
+arms `capacity_market_clearing_by_iso`, never the scalar). So a curve-ON T0/T1-F
+leg is **recorded as curve-OFF**, and `forecast_verdict._curve_on` reads exactly
+that key off the summary (`forecast_verdict.py:442-443`).
+
+The consequence is concrete: **all nine committed T1-F/T0 baseline sidecars
+record `capacity_market_clearing: false`** — every ISO's `ff-t1f-baseline`, plus
+the FFR-2B T1-F pair. Because the recorded field is the scalar, a leg run *with*
+`--golden-posture` and a leg run *without* it are **indistinguishable in the
+record**, so it cannot be determined from the committed evidence which posture
+the T1-F board was scored on. That is strictly worse than a wrong default: the
+run record cannot express the distinction at all. Not fixed here (the brief
+scopes this session to the capacity-hindcast harness and forbids re-interpreting
+committed verdicts), but it is the single highest-value follow-up — a one-line
+emitter change plus a re-read of the T1-F board's posture provenance.
 
 **B2 — `GOLDEN_CMC_BY_ISO` and the shipped `ScenarioConfig` default disagree on
 NYISO.** Golden = `{PJM, MISO, NYISO, NEISO, CAISO}`; shipped =
