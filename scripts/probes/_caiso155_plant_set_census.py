@@ -104,15 +104,20 @@ def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict
             }
         )
 
-    # Defect reproduction against the HEAD scorer: the plant aggregation must
-    # carry exactly the plant_code > 0 floored energy and none of P1's.
-    _, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
+    # Defect reproduction against the live scorer. PRE-FIX the plant
+    # aggregation carries exactly the plant_code > 0 floored energy and none
+    # of P1's; POST-FIX (the "u:" pseudo keys exist) it must carry the P1
+    # energy too — so re-running this probe after the caiso-155 fix verifies
+    # the drop is GONE rather than re-measuring it.
+    head_keys, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
     head_twh = float(np.clip(floor_sum, 0.0, None).sum()) / 1e6
     kept_twh = float(mg[pc > 0].sum()) / 1e6
     dropped_twh = float(sum(r["floor_twh"] for r in rows))
-    assert abs(head_twh - kept_twh) < 1e-6, (
-        f"{iso} {year}: HEAD aggregation {head_twh:.4f} TWh != plant_code>0 "
-        f"subtotal {kept_twh:.4f} TWh — premise broken, stop"
+    fix_present = any(str(k).startswith("u:") for k in head_keys)
+    expected = kept_twh + dropped_twh if fix_present else kept_twh
+    assert abs(head_twh - expected) < 1e-6, (
+        f"{iso} {year}: aggregation {head_twh:.4f} TWh != expected "
+        f"{expected:.4f} TWh (fix_present={fix_present}) — premise broken, stop"
     )
 
     # P2 — the payload cannot carry these rows; dispatch parquet is absent.
@@ -139,6 +144,7 @@ def census_year(bundle: Path, iso: str, year: int, sidecar: dict | None) -> dict
         ),
         "p5_window_gaps": p5_gaps,
         "head_scorer_twh": round(head_twh, 4),
+        "fix_present": fix_present,
         "dispatch_parquet_present": dispatch_present,
         "payload_plant_count": len(payload_keys),
     }

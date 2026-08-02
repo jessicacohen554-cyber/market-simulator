@@ -1872,6 +1872,27 @@ def load_dispatch_parquet(bundle: Path, year: int):
     return None, None
 
 
+# meta.json key -> run_year kwarg, where the names differ. The three generic
+# override channels MUST be threaded (caiso-155 addendum Part 0): run_year
+# accepts them as prb_overrides / bit_overrides / coal_bit_sigmoid (the same
+# mapping scripts/replay_keeper.py::_REMAP applies for solve_and_persist), and
+# dropping them rebuilt floors WITHOUT every mechanism armed through the
+# channel — CAISO's firm-import trio rides ONLY there (the caiso-150 §E2
+# silent trap), and five of six keepers arm floor mechanisms through it
+# (PREREG-caiso155-ADDENDUM-rebuild-channel-2026-08-02.md §A). Keys that
+# remain unmapped after this are price/demand-side (no min_gen stamp) and are
+# the rebuild's documented residual fidelity limit, absorbed by G-06's
+# D2_VERIFY_SHARE_TOL. tests/scoring/test_legitimacy_diagnostics.py asserts
+# this map's targets exist in run_year's signature and that it agrees with
+# replay_keeper._REMAP wherever both map a key run_year accepts.
+REBUILD_META_RENAMES: dict[str, str] = {
+    "commitment": "commitment_enabled",
+    "coal_prb_sigmoid_overrides": "prb_overrides",
+    "coal_bit_sigmoid_overrides": "bit_overrides",
+    "coal_bit_passthrough_sigmoid": "coal_bit_sigmoid",
+}
+
+
 def load_or_rebuild_floors(
     bundle: Path, iso: str, year: int, force_rebuild: bool = False
 ) -> tuple[dict, bool]:
@@ -1913,7 +1934,7 @@ def load_or_rebuild_floors(
         "xyear_cache",
         "must_run_mw",
     }
-    rename = {"commitment": "commitment_enabled"}
+    rename = REBUILD_META_RENAMES
     kwargs = {}
     dropped = []
     for k, v in meta.items():
@@ -1963,14 +1984,22 @@ def load_or_rebuild_floors(
     return arrays, True
 
 
+# Key prefix marking a non-plant (pseudo-unit) row in the D-2/D-4 matrices:
+# a unit with ``plant_code <= 0`` that carries a positive floor (interchange
+# firm-import tranches). Cannot collide with the numeric plant keys.
+PSEUDO_PLANT_KEY_PREFIX = "u:"
+
+
 def aggregate_floors_by_plant(
     arrays: dict,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Aggregate unit-level floors to plants: ids, floor sum, binding mech, class.
+    """Aggregate unit-level floors to plants: keys, floor sum, binding mech, class.
 
     The plant floor is the sum of its units' positive floors; the plant-hour
     mechanism is the id of the unit contributing the largest floor that hour
     (maximum-composition at plant level). Loops over plants, never hours.
+    Keys are strings: ``str(plant_code)`` per aggregated plant, plus one
+    ``"u:<unit_id>"`` row per FLOORED ``plant_code <= 0`` pseudo-unit.
 
     The plant class is the **most common non-empty** unit group in the plant —
     NOT the first unit's group. A single plant frequently mixes classified
@@ -1982,6 +2011,18 @@ def aggregate_floors_by_plant(
     A plant whose units are *all* unclassified (nuclear / hydro / renewables,
     which carry no CAMPD plant_group) stays ``''`` — those non-thermal must-run
     rows are excluded from the merchant forced-share summary in ``run_d2``.
+
+    Pseudo-unit rows (caiso-151 §F / caiso-155): a ``plant_code <= 0`` unit
+    with a floor above ``D2_FLOOR_MIN_MW`` in any hour — an interchange
+    firm-import tranche (``MECH_FIRM_IMPORT``: CAISO RA/LTC blocks, MISO
+    Manitoba, NYISO HQ) — was previously DROPPED here, leaving 2-8 TWh/yr of
+    must-flow floor invisible to D-2 and D-4. Each now rides as its own
+    per-unit row (no plant to aggregate to), keyed by unit id, carrying its
+    own ``plant_group`` (empty for interchange tranches, so the ``''``-bucket
+    exclusion above still governs the gated summary). UNFLOORED
+    ``plant_code <= 0`` rows (economic import bands, export sinks, seam
+    bands) stay excluded — they carry no floor and must not perturb any
+    class denominator.
     """
     plant_code = np.asarray(arrays["plant_code"])
     keep = plant_code > 0
@@ -2010,7 +2051,23 @@ def aggregate_floors_by_plant(
         else:
             group_plant[i] = ""
     mech_plant[floor_sum <= 0.0] = 0
-    return pc[starts], floor_sum, mech_plant, group_plant.astype(str)
+    keys = [str(int(p)) for p in pc[starts]]
+
+    dropped = ~keep
+    if dropped.any():
+        pos_d = np.clip(np.asarray(arrays["min_gen"], dtype=float)[dropped], 0.0, None)
+        floored = pos_d.max(axis=1) > D2_FLOOR_MIN_MW
+        if floored.any():
+            uids = np.asarray(arrays["unit_ids"]).astype(str)[dropped][floored]
+            groups_d = np.asarray(arrays["plant_group"]).astype(str)[dropped][floored]
+            mech_d = np.asarray(arrays["mechanism"])[dropped][floored].copy()
+            pos_f = pos_d[floored]
+            mech_d[pos_f <= 0.0] = 0
+            keys += [PSEUDO_PLANT_KEY_PREFIX + u for u in uids]
+            floor_sum = np.vstack([floor_sum, pos_f])
+            mech_plant = np.vstack([mech_plant, mech_d])
+            group_plant = np.concatenate([group_plant, groups_d.astype(object)])
+    return np.array(keys, dtype=object), floor_sum, mech_plant, group_plant.astype(str)
 
 
 # ---------------------------------------------------------------------------
@@ -2241,8 +2298,7 @@ def diagnose_bundle(
                 bundle, iso, year, force_rebuild=rebuild_floors
             )
             pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
-            pid_strs = [str(int(p)) for p in pids]
-            common = [i for i, p in enumerate(pid_strs) if p in model_plants_plant]
+            pid_strs = [str(p) for p in pids]
             # Class totals need EVERY plant of the class, floored or not:
             # rows below carry all model plants, floors zero-filled outside
             # the floored set.
@@ -2252,6 +2308,25 @@ def diagnose_bundle(
             ]
             # plants absent from the floors fleet (e.g. non-thermal payload
             # rows) are excluded — they carry no class in the model fleet.
+            #
+            # Floored pseudo-unit rows ("u:" keys — plant_code <= 0
+            # interchange tranches, caiso-151 §F / caiso-155) have no
+            # dispatch series on ANY committed path (the payload is
+            # CAMPD-keyed by construction; the parquet filter above is
+            # plant_code > 0), so they enter with dispatch := their own
+            # floor — the pre-registered floor-energy convention
+            # (PREREG-caiso155 §3): the artifact reports the MANDATED floor
+            # energy for boundary tranches, path-independently. The true
+            # at-floor dispatch stays a probe-level statistic on unaggregated
+            # LP rows (caiso-151 §F measured 15.47 of 22.68 TWh for CAISO
+            # 2024 — a DIFFERENT, narrower statistic than the 22.68 reported
+            # here).
+            pseudo_pids = [
+                p
+                for p in pid_strs
+                if p.startswith(PSEUDO_PLANT_KEY_PREFIX) and p not in model_plants_plant
+            ]
+            all_pids = all_pids + pseudo_pids
             t = 8760
             disp = np.zeros((len(all_pids), t))
             floors = np.zeros((len(all_pids), t))
@@ -2260,11 +2335,11 @@ def diagnose_bundle(
             npl = np.zeros(len(all_pids))
             index = {p: i for i, p in enumerate(all_pids)}
             for p, i in index.items():
-                disp[i] = model_plants_plant[p][:t]
+                if p in model_plants_plant:
+                    disp[i] = model_plants_plant[p][:t]
                 klass[i] = klass_by_pid.get(p, "")
                 npl[i] = bench_pl.get(p, {}).get("npl", float(disp[i].max()))
-            for j in common:
-                p = pid_strs[j]
+            for j, p in enumerate(pid_strs):
                 if p in index:
                     floors[index[p]] = floor_sum[j][:t]
                     mechs[index[p]] = (
@@ -2272,6 +2347,19 @@ def diagnose_bundle(
                         if mech_plant[j].ndim > 1
                         else mech_plant[j][:t]
                     )
+            for p in pseudo_pids:
+                disp[index[p]] = floors[index[p]]
+            if pseudo_pids:
+                pseudo_note = (
+                    f"{year}: {len(pseudo_pids)} floored pseudo-unit row(s) "
+                    "(plant_code <= 0 interchange tranches) scored under the "
+                    "floor-energy convention (dispatch := min_gen; "
+                    "PREREG-caiso155 §3) — reported TWh is the mandated "
+                    "floor energy, an upper bound on at-floor dispatch: "
+                    + ", ".join(sorted(pseudo_pids))
+                )
+                d2.notes.append(pseudo_note)
+                d4.notes.append(pseudo_note)
             if "D2" in only:
                 total_load_mwh = (
                     load_payload_total_load_mwh(repo_root, sidecar, year)
