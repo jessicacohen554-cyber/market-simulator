@@ -791,6 +791,29 @@ over-pricing is newly exposed, per the untested PREREG §5.3 hypothesis that
 PJM's offer calibration was fitted on the contaminated stack
 (`FINDING-pjm143-hydro-level-923hy-2026-07-31.md`).
 
+**ADJUDICATED `I` AT pjm-144 (2026-08-02): `gas_offer_margin_zonal_anchor` —
+dispatch-live, price-inert; do not re-test without new evidence.** The
+nyiso-109 cross-ISO transfer, tested in PJM's own lane with PJM's own derived
+8-zone anchor table (capacity-weighted mean-zero convention → two-sided
+defect, K6 dropped, K3 priced on the zonal grain, keeper-fleet weights via
+`--weights-bundle`; capw invariant exact at 3.3483; zero fitted parameters).
+A/B vs a same-HEAD control that reproduces the pjm-143b keeper to **0.0 MW on
+every class-hour**: every construction gate except K3 passes and **no kill
+fires** (both arms CALIBRATED 9/9, C1 16/16 free 12/12, C3c identical) — but
+max zonal |Δλ| is **0.034/0.032/0.026 $/MWh** against the pre-registered
+$0.10 liveness gate while dispatch moves 1.3–1.5 GW at the max class-hour
+(CC_REGULAR −0.40/−0.70/−0.97 TWh → ST_GAS/CT_PEAKER): PJM's price-coupled
+zones absorb the mean-zero redistribution. Verdict `I` by the prereg's own
+K3 rule; **keeper unchanged**; the table stays registered in `constants` and
+the flag is one `--gas-offer-margin-zonal-anchor` away. Re-open needs a
+zone-decoupling mechanism under its own charter, a zone-grain scored
+criterion, or an owner override of the prereg's K3 rule. NYISO's `K` is the
+opposite-convention contrast (one-sided reference-zone shift → level effect
+→ closed a failing C3a); neither verdict transfers to ERCOT/MISO (rule 25).
+(`FINDING-pjm144-zonal-margin-anchor-2026-08-02.md`;
+`PREREG-pjm144-zonal-margin-anchor-2026-08-02.md`;
+`results/calibration/_pjm144_zonal_anchor_ab.json`.)
+
 **READ ITEMS 12–13 FIRST (pjm-141, 2026-07-30; item 13 CLOSED at pjm-142,
 2026-07-31).** PJM's remaining structural defect is diagnosed and named: the
 model has **no hour-varying offer conduct** (every thermal LP row's within-day
