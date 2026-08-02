@@ -1,0 +1,286 @@
+eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+==============================================================================
+CAISO — 87 qualifying CT units, 73,346 pooled loaded hours
+  hours below 6.0: 2,537 (3.46 %)   hours above 25.0: 0 (0.000 %)
+  units with any out-of-band loaded hour: 76 / 87; units dropping below 50 valid hours: 0
+  energy-wt unit HR  as-is 8.9695  screened 9.0871
+  units moving > 0.25 MMBtu/MWh: 16
+ plant_code                       plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened    delta
+      58122        Delano Energy Center, LLC    GEN1       212     94       0      118  6.506749     9.327080 2.820331
+      55499       CalPeak Power - Vaca Dixon    GT-1       446    110       0      336  8.425350     9.919877 1.494527
+      55508          CalPeak Power - Panoche    GT-1       908    156       0      752  9.086343    10.058438 0.972095
+      56143 Riverside Energy Resource Center       4       569     81       0      488  8.753137     9.315616 0.562479
+      55513       CalPeak Power - Enterprise    GT-1       342     34       0      308  9.170815     9.667596 0.496781
+      56143 Riverside Energy Resource Center       1       616     64       0      552  9.003975     9.435600 0.431625
+      56143 Riverside Energy Resource Center       3       750     78       0      672  9.077451     9.484134 0.406683
+      56143 Riverside Energy Resource Center       2       709     58       0      651  9.446816     9.820378 0.373561
+      55540        Chula Vista Energy Center      1B        97      4       0       93 13.761347    14.116821 0.355474
+      55540        Chula Vista Energy Center      1A       103      4       0       99 13.543595    13.868381 0.324786
+      57483          Mariposa Energy Project    GT-2       903     75       0      828  9.010448     9.323496 0.313048
+      57483          Mariposa Energy Project    GT-1       907     67       0      840  9.076296     9.381880 0.305585
+      57483          Mariposa Energy Project    GT-3       973     78       0      895  8.935920     9.227795 0.291875
+      55810        Gilroy Energy Center, LLC     S-3       419     40       0      379  8.077187     8.365210 0.288023
+      10350                    Greenleaf One    CTGA       139      5       0      134  9.526260     9.808347 0.282087
+      55538     Escondido Energy Center, LLC    CTG1       668     55       0      613  8.472125     8.737495 0.265369
+  faithfulness: max |probe as-is − committed hr_gross| over 43 applied rows = 0.00005  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 9.6603 -> 9.8362, gen-wt 9.0601 -> 9.1789
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code                       plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+      58122        Delano Energy Center, LLC               60.5     6.5725                9.421293   2.848793                0   ok
+      55499       CalPeak Power - Vaca Dixon               48.0     8.5105               10.020078   1.509578                0   ok
+      55508          CalPeak Power - Panoche               48.0     9.1781               10.160039   0.981939                0   ok
+      55513       CalPeak Power - Enterprise               48.0     9.2634                9.765248   0.501848                0   ok
+      56143 Riverside Energy Resource Center              196.0     9.1721                9.616978   0.444878                0   ok
+      55540        Chula Vista Energy Center               37.2    13.7901               14.133666   0.343566                0   ok
+      57483          Mariposa Energy Project              199.6     9.1230                9.416537   0.293537                0   ok
+      55538     Escondido Energy Center, LLC               54.0     8.5577                8.825752   0.268052                0   ok
+      10350                    Greenleaf One               60.0     9.5462                9.795062   0.248862                0   ok
+      56232          Miramar Energy Facility               94.0     9.4100                9.635788   0.225788                0   ok
+      56471       McGrath Generating Station               49.0     9.3815                9.580239   0.198739                0   ok
+      57001           El Cajon Energy Center               60.5     9.4222                9.615828   0.193628                0   ok
+      55541       Indigo Generation Facility              142.5    10.0029               10.186867   0.183967                0   ok
+      55510           CalPeak Power - Border               48.0     9.4669                9.648620   0.181720                0   ok
+      55810        Gilroy Energy Center, LLC              144.0     8.9884                9.155855   0.167455                0   ok
+      57267 Marsh Landing Generating Station              765.2    10.3840               10.548486   0.164486                0   ok
+      56914             Orange Grove Project               98.2     9.2351                9.398360   0.163260                0   ok
+      57555       Pio Pico Energy Center LLC              318.0     8.5503                8.706154   0.155854                0   ok
+      56472     Grapeland Generating Station               46.0     9.5563                9.692896   0.136596                0   ok
+      56473     Mira Loma Generating Station               49.0     9.3092                9.433603   0.124403                0   ok
+      56475        Center Generating Station               47.0     9.5251                9.645961   0.120861                0   ok
+      56239                     Malaga Power               96.0     8.8542                8.965729   0.111529                0   ok
+      55542         Larkspur Energy Facility               91.6    10.0378               10.148429   0.110629                0   ok
+      57482      Sentinel Energy Center, LLC              800.0     8.7567                8.861137   0.104437                0   ok
+NYISO: CC plant 7314 fleet pmax sum 199.5 MW exceeds trusted bound 170.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.5 MW removed)
+NYISO: CC plant 10190 fleet pmax sum 92.0 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.0 MW removed)
+NYISO: CC plant 56196 fleet pmax sum 662.0 MW exceeds trusted bound 560.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (102.0 MW removed)
+==============================================================================
+NYISO — 80 qualifying CT units, 151,014 pooled loaded hours
+  hours below 6.0: 3,704 (2.45 %)   hours above 25.0: 0 (0.000 %)
+  units with any out-of-band loaded hour: 64 / 80; units dropping below 50 valid hours: 1
+  energy-wt unit HR  as-is 10.2475  screened 10.3566
+  units moving > 0.25 MMBtu/MWh: 33
+ plant_code                   plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened    delta
+       2494   Gowanus Generating Station  CT03-6        57     17       0       40 11.410186    14.655416 3.245230
+       2494   Gowanus Generating Station  CT02-2       164     37       0      127 12.425476    15.207610 2.782135
+       2494   Gowanus Generating Station  CT02-6       177     40       0      137 12.527119    15.226279 2.699160
+       2494   Gowanus Generating Station  CT02-5       201     44       0      157 12.837660    15.504267 2.666607
+       2494   Gowanus Generating Station  CT02-1       163     35       0      128 12.517823    15.122445 2.604622
+       2494   Gowanus Generating Station  CT02-7       235     49       0      186 12.930143    15.457207 2.527065
+       2494   Gowanus Generating Station  CT02-4       143     30       0      113 12.693274    15.160149 2.466875
+       2494   Gowanus Generating Station  CT02-3       225     44       0      181 13.075033    15.441760 2.366727
+       2494   Gowanus Generating Station  CT02-8       176     35       0      141 12.272179    14.501609 2.229431
+       2499   Narrows Generating Station  CT01-2       343     50       0      293 13.809751    15.611067 1.801316
+       2499   Narrows Generating Station  CT01-6       291     42       0      249 13.782305    15.524462 1.742157
+       2494   Gowanus Generating Station  CT03-1       449     56       0      393 15.731010    17.457683 1.726673
+       2499   Narrows Generating Station  CT01-8       352     50       0      302 13.674134    15.400127 1.725993
+       2499   Narrows Generating Station  CT01-1       611     85       0      526 14.174693    15.887705 1.713012
+       2499   Narrows Generating Station  CT01-4       533     76       0      457 14.045264    15.755145 1.709881
+       2499   Narrows Generating Station  CT01-3       399     54       0      345 13.912675    15.535412 1.622737
+       2499   Narrows Generating Station  CT02-7       448     57       0      391 14.516257    16.093125 1.576868
+       2499   Narrows Generating Station  CT01-7       452     57       0      395 14.372077    15.930347 1.558270
+       2494   Gowanus Generating Station  CT03-8       454     53       0      401 15.278226    16.790916 1.512690
+       2499   Narrows Generating Station  CT02-1       488     61       0      427 14.317190    15.807380 1.490190
+       2494   Gowanus Generating Station  CT03-4       476     49       0      427 15.676943    17.106812 1.429870
+       2499   Narrows Generating Station  CT01-5       679     81       0      598 14.421831    15.844437 1.422605
+       2494   Gowanus Generating Station  CT03-5       477     43       0      434 16.098480    17.328404 1.229924
+       2494   Gowanus Generating Station  CT03-2       709     60       0      649 16.433981    17.631874 1.197893
+       2494   Gowanus Generating Station  CT03-7       771     63       0      708 16.138037    17.227868 1.089831
+       2494   Gowanus Generating Station  CT03-3       703     55       0      648 16.566585    17.648751 1.082166
+       2499   Narrows Generating Station  CT02-2      1107     71       0     1036 16.048606    16.875010 0.826404
+       2499   Narrows Generating Station  CT02-8      1089     67       0     1022 16.167115    16.975923 0.808808
+       2499   Narrows Generating Station  CT02-4      1724     97       0     1627 16.354299    17.088368 0.734070
+       2499   Narrows Generating Station  CT02-3      1423     78       0     1345 16.287599    16.999996 0.712397
+       2499   Narrows Generating Station  CT02-5      1766     92       0     1674 16.367367    17.061550 0.694183
+       2499   Narrows Generating Station  CT02-6      1500     58       0     1442 16.726707    17.235378 0.508671
+       2517 Port Jefferson Energy Center  UGT003      2453    120       0     2333  9.321767     9.589416 0.267648
+  faithfulness: max |probe as-is − committed hr_gross| over 19 applied rows = 0.00005  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 12.0769 -> 12.4355, gen-wt 10.6822 -> 10.7950
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code                   plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+       2494   Gowanus Generating Station              282.0    15.2804               16.953808   1.673408                1   ok
+       2499   Narrows Generating Station              269.0    15.7537               16.781436   1.027736                0   ok
+       2517 Port Jefferson Energy Center               82.7     9.3297                9.521427   0.191727                0   ok
+       7913                    Hell Gate               79.5     9.7737                9.918923   0.145223                0   ok
+       7914            Harlem River Yard               79.5     9.6384                9.755365   0.116965                0   ok
+      55786              Edgewood Energy               85.0     9.8062                9.914309   0.108109                0   ok
+PJM: CC plant 7153 fleet pmax sum 1128.0 MW exceeds trusted bound 1098.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.8 MW removed)
+PJM: CC plant 10751 fleet pmax sum 222.7 MW exceeds trusted bound 172.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (49.8 MW removed)
+PJM: CC plant 55297 fleet pmax sum 1586.3 MW exceeds trusted bound 1192.4 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (393.9 MW removed)
+PJM: CC plant 55710 fleet pmax sum 562.6 MW exceeds trusted bound 556.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.6 MW removed)
+PJM: CC plant 60302 fleet pmax sum 1237.1 MW exceeds trusted bound 830.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (406.5 MW removed)
+14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+==============================================================================
+PJM — 281 qualifying CT units, 544,586 pooled loaded hours
+  hours below 6.0: 8,435 (1.55 %)   hours above 25.0: 252 (0.046 %)
+  units with any out-of-band loaded hour: 201 / 281; units dropping below 50 valid hours: 0
+  energy-wt unit HR  as-is 10.8065  screened 10.8774
+  units moving > 0.25 MMBtu/MWh: 53
+ plant_code                          plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened     delta
+      55247   Darby Electric Generating Station     CT4      2992    627       0     2365  9.386605    11.867932  2.481327
+      55247   Darby Electric Generating Station     CT5      2790    508       0     2282  9.579412    11.748201  2.168789
+      55247   Darby Electric Generating Station     CT6      2932    513       0     2419  9.895129    12.021034  2.125905
+      55247   Darby Electric Generating Station     CT3      3392    569       0     2823 10.003107    12.005690  2.002583
+      55247   Darby Electric Generating Station     CT2      3318    461       0     2857 10.239980    11.886685  1.646705
+      55247   Darby Electric Generating Station     CT1      3191    408       0     2783 10.539468    12.099824  1.560355
+       2831       Dicks Creek Power Company LLC       1       110     13       7       90 19.011593    20.153195  1.141602
+      55233                Handsome Lake Energy   EU-2A       388     62       0      326  9.548759    10.615220  1.066461
+      55233                Handsome Lake Energy   EU-5A       563     73       0      490 10.113744    11.049925  0.936181
+      55233                Handsome Lake Energy   EU-2B       396     55       0      341  9.752013    10.687288  0.935275
+      55228     Greenville Electric Gen Station   G3CT2       466     70       0      396  9.539386    10.456820  0.917434
+      55264      AMP-Ohio Gas Turbines Napoleon     CT1       180     23       3      154 14.422477    15.294290  0.871813
+      55228     Greenville Electric Gen Station   G2CT2       447     63       0      384  9.886435    10.756982  0.870547
+      55228     Greenville Electric Gen Station   G1CT2       378     45       0      333 10.552335    11.360497  0.808162
+      55233                Handsome Lake Energy   EU-5B       529     57       0      472 10.686332    11.480352  0.794020
+      55233                Handsome Lake Energy   EU-3A       555     65       0      490 10.153236    10.940316  0.787081
+      55233                Handsome Lake Energy   EU-3B       555     64       0      491 10.194382    10.967076  0.772694
+      55233                Handsome Lake Energy   EU-1A       705     75       0      630 10.279065    11.006547  0.727482
+      55233                Handsome Lake Energy   EU-1B       702     71       0      631 10.330212    11.020609  0.690396
+      55228     Greenville Electric Gen Station   G4CT2       408     45       0      363 10.290038    10.973742  0.683704
+      55228     Greenville Electric Gen Station   G2CT1       422     49       0      373 10.114395    10.787737  0.673342
+      55233                Handsome Lake Energy   EU-4B       525     54       0      471 10.344913    11.015554  0.670641
+      55233                Handsome Lake Energy   EU-4A       664     65       0      599  9.911172    10.539385  0.628213
+      56397                      Hunlock Unit 4       4      2738    361       0     2377  8.614986     9.236138  0.621151
+      55285                   Wolf Hills Energy    WH08      2889    330       0     2559  9.648592    10.267037  0.618445
+      55285                   Wolf Hills Energy    WH06       630     73       0      557  9.388510     9.966039  0.577529
+      55228     Greenville Electric Gen Station   G3CT1       353     33       0      320 10.338055    10.888242  0.550187
+      55285                   Wolf Hills Energy    WH05       614     68       0      546  9.450410     9.999341  0.548931
+      55285                   Wolf Hills Energy    WH04      2836    296       0     2540  9.636488    10.178607  0.542119
+      55228     Greenville Electric Gen Station   G4CT1       373     33       0      340 10.207449    10.740471  0.533023
+      55285                   Wolf Hills Energy    WH01      2923    266       0     2657  9.744100    10.243593  0.499493
+      55285                   Wolf Hills Energy    WH07      2716    254       0     2462  9.777984    10.276986  0.499002
+      55285                   Wolf Hills Energy    WH03      3115    260       0     2855  9.709758    10.165810  0.456053
+      55285                   Wolf Hills Energy    WH02      2495    202       0     2293  9.853623    10.284984  0.431360
+       7318                            Van Sant    **11       128      5       0      123 13.062266    13.455211  0.392945
+      55285                   Wolf Hills Energy    WH10      1689    117       0     1572  9.941723    10.312500  0.370778
+      55285                   Wolf Hills Energy    WH09      1824    122       0     1702  9.903841    10.266316  0.362475
+       3132                              Warren     005       583     16       0      567 13.539368    13.886076  0.346708
+       2404           Kearny Generating Station     123       278     17       0      261  9.844925    10.182446  0.337520
+       2848                       O H Hutchings     H-7       110      2       0      108 21.392691    21.720667  0.327976
+       7138                  Forked River Power  003001       331     12       0      319 12.307631    12.588785  0.281154
+       2404           Kearny Generating Station     121       178     11       0      167  9.243296     9.522262  0.278966
+       2399       Burlington Generating Station     121       700     42       0      658  9.313369     9.592207  0.278838
+       2404           Kearny Generating Station     124       272     15       0      257  9.814871    10.075971  0.261100
+       2393          Gilbert Generating Station       9       222      8       0      214  9.844905    10.097013  0.252107
+      55262 AMP-Ohio Gas Turbines Bowling Green     CT1       183      0       4      179 16.280703    15.820677 -0.460027
+       7032      Gravel Neck Combustion Turbine       4       699      0      43      656 15.229979    14.180558 -1.049421
+       7032      Gravel Neck Combustion Turbine       5       750      2      50      698 15.353386    14.291304 -1.062082
+       7782                  Omega JV2 Hamilton    P001       141      0       3      138 13.389418    12.264328 -1.125090
+       7032      Gravel Neck Combustion Turbine       3       626      0      47      579 15.388093    14.088856 -1.299237
+       7032      Gravel Neck Combustion Turbine       6       565      1      64      500 15.834747    13.970103 -1.864645
+       7783             Omega JV2 Bowling Green    P001       135      0       3      132 14.714030    12.572578 -2.141453
+      55263        AMP-Ohio Gas Turbines Galion     CT1       172      0      27      145 17.860076    14.611643 -3.248433
+  faithfulness: max |probe as-is − committed hr_gross| over 71 applied rows = 0.00005  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 11.5817 -> 11.6511, gen-wt 11.2841 -> 11.3601
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code                          plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+      55247   Darby Electric Generating Station              480.0    10.5885               12.695371   2.106871                0   ok
+       2831       Dicks Creek Power Company LLC              136.2    19.5996               20.776490   1.176890                0   ok
+      55264      AMP-Ohio Gas Turbines Napoleon               38.0    14.8685               15.767309   0.898809                0   ok
+      55233                Handsome Lake Energy              267.5    10.4686               11.287299   0.818699                0   ok
+      55228     Greenville Electric Gen Station              196.0    11.9072               12.690416   0.783216                0   ok
+      56397                      Hunlock Unit 4               44.8     8.8814                9.521791   0.640391                0   ok
+      55285                   Wolf Hills Energy              250.0    11.8015               12.392705   0.591205                0   ok
+       7318                            Van Sant               42.0    13.4663               13.871352   0.405052                0   ok
+       3132                              Warren               62.0    13.9581               14.315542   0.357442                0   ok
+       2848                       O H Hutchings               25.2    22.0543               22.392440   0.338140                0   ok
+       2393          Gilbert Generating Station              152.7    10.1494               10.409291   0.259891                0   ok
+       2399       Burlington Generating Station              171.6     9.4954                9.694107   0.198707                0   ok
+       5083            Cumberland Energy Center              186.9     9.9003               10.076051   0.175751                0   ok
+       2404           Kearny Generating Station              457.9     9.9738               10.147240   0.173440                0   ok
+       2434                       Howard M Down               55.0    10.6911               10.823216   0.132116                0   ok
+      55938                 Ocean Peaking Power              332.8    10.5453               10.673555   0.128255                0   ok
+       7138                  Forked River Power               65.0    13.2789               13.403682   0.124782                0   ok
+      55250              University Park Energy              300.0    10.4517               10.574225   0.122525                0   ok
+      50279               PEI Power Corporation               43.7     9.8353                9.935347   0.100047                0   ok
+      55262 AMP-Ohio Gas Turbines Bowling Green               38.0    16.7842               16.309976  -0.474224                0   ok
+       7782                  Omega JV2 Hamilton               29.0    13.5001               12.365690  -1.134410                0   ok
+       7032      Gravel Neck Combustion Turbine              340.0    16.3897               14.995876  -1.393824                0   ok
+       7783             Omega JV2 Bowling Green               29.0    15.1333               12.930866  -2.202434                0   ok
+      55263        AMP-Ohio Gas Turbines Galion               38.0    18.4124               15.063549  -3.348851                0   ok
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+==============================================================================
+MISO — 250 qualifying CT units, 433,271 pooled loaded hours
+  hours below 6.0: 1,290 (0.30 %)   hours above 25.0: 66 (0.015 %)
+  units with any out-of-band loaded hour: 113 / 250; units dropping below 50 valid hours: 1
+  energy-wt unit HR  as-is 11.2265  screened 11.2372
+  units moving > 0.25 MMBtu/MWh: 12
+ plant_code                      plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened     delta
+      55229 Montpelier Electric Gen Station   G4CT1       583    192       0      391  9.004627    12.763862  3.759235
+       6085 R M Schahfer Generating Station     16B       876    183       0      693 10.615541    12.977099  2.361559
+       1206                     Summit Lake      1G       406     61       0      345 15.466186    17.522946  2.056759
+       6063                     Electrifarm       1        56      8       0       48 11.826627    13.304897  1.478271
+       7863    Elk Mound Generating Station       2      1989    165       1     1823 11.744164    12.661465  0.917300
+       1206                     Summit Lake      2G       193     11       0      182 14.935409    15.689870  0.754461
+      55229 Montpelier Electric Gen Station   G1CT2      1222    148       0     1074  9.951789    10.545311  0.593522
+       1400             Teche Power Station       4       240     14       0      226 11.738989    12.314356  0.575367
+       7844         Minnesota River Station    U001       348     23       0      325  9.660497    10.082282  0.421785
+       7984          Kalkaska CT Project #1      1A      1853     75       0     1778  9.899737    10.154182  0.254445
+       1913                     Inver Hills       2       448      0      12      436 16.685235    15.123748 -1.561487
+       1383                     Robert Reid      RT       194      0      52      142 17.980410    14.969878 -3.010532
+  faithfulness: max |probe as-is − committed hr_gross| over 86 applied rows = 0.00005  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 11.8677 -> 11.8972, gen-wt 11.4266 -> 11.4390
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code                      plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+       1206                     Summit Lake              111.8    15.3681               16.821557   1.453457                0   ok
+       6085 R M Schahfer Generating Station              155.0    15.6617               17.114951   1.453251                0   ok
+       6063                     Electrifarm              190.3    13.9677               14.717950   0.750250                1   ok
+       1400             Teche Power Station               33.6    11.8576               12.438743   0.581143                0   ok
+       7863    Elk Mound Generating Station               64.6    11.8867               12.384093   0.497393                0   ok
+      55229 Montpelier Electric Gen Station              233.1    12.1930               12.623491   0.430491                0   ok
+       7844         Minnesota River Station               39.0     9.7581               10.184123   0.426023                0   ok
+       7984          Kalkaska CT Project #1               48.3    10.2608               10.481497   0.220697                0   ok
+       7145     Pleasant Hill Energy Center              153.6    13.7198               13.838321   0.118521                0   ok
+       1001                          Cayuga               84.0    14.1678               14.267924   0.100124                0   ok
+       1913                     Inver Hills              272.0    14.8214               14.609112  -0.212288                0   ok
+       1383                     Robert Reid               58.0    21.0738               17.545300  -3.528500                0   ok
+NEISO: CC plant 52026 fleet pmax sum 94.3 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.2 MW removed)
+NEISO: CC plant 60903 fleet pmax sum 1156.4 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (358.2 MW removed)
+==============================================================================
+NEISO — 17 qualifying CT units, 15,329 pooled loaded hours
+  hours below 6.0: 311 (2.03 %)   hours above 25.0: 0 (0.000 %)
+  units with any out-of-band loaded hour: 16 / 17; units dropping below 50 valid hours: 1
+  energy-wt unit HR  as-is 9.0910  screened 9.1844
+  units moving > 0.25 MMBtu/MWh: 4
+ plant_code                     plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened    delta
+       1660                         Potter       5       437     47       0      390  8.766656     9.204068 0.437413
+      63559 MMWEC Simple Cycle Gas Turbine       1        51      5       0       46  8.733158     9.136272 0.403113
+       1678                   Waters River       1       243     12       0      231 11.867273    12.234572 0.367299
+       1660                         Potter       4       436     39       0      397  8.804538     9.150121 0.345583
+  faithfulness: max |probe as-is − committed hr_gross| over 8 applied rows = 0.00004  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 9.6291 -> 9.8006, gen-wt 9.1828 -> 9.2771
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code           plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+       1660               Potter              105.2     8.8734                9.271074   0.397674                0   ok
+      56629 Waterbury Generation               96.0     9.0843                9.272558   0.188258                0   ok
+       1678         Waters River               46.0    12.4086               12.564979   0.156379                0   ok
+ERCOT: CC plant 55098 fleet pmax sum 535.0 MW exceeds trusted bound 529.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+==============================================================================
+ERCOT — 137 qualifying CT units, 328,302 pooled loaded hours
+  hours below 6.0: 4,141 (1.26 %)   hours above 25.0: 0 (0.000 %)
+  units with any out-of-band loaded hour: 122 / 137; units dropping below 50 valid hours: 0
+  energy-wt unit HR  as-is 10.9090  screened 10.9626
+  units moving > 0.25 MMBtu/MWh: 4
+ plant_code                              plant_name unit_id  loaded_h  low_h  high_h  valid_h  hr_as_is  hr_screened    delta
+      61966 Victoria Port Power II Peaking Facility     CT2      2981    151       0     2830 10.419882    10.754328 0.334446
+      61966 Victoria Port Power II Peaking Facility     CT1      2753    145       0     2608  9.887860    10.211644 0.323783
+       3548                            Decker Creek   GT-1B      1196     47       0     1149 12.472598    12.787824 0.315227
+       3548                            Decker Creek   GT-1A      1185     42       0     1143 12.666364    12.957898 0.291534
+  faithfulness: max |probe as-is − committed hr_gross| over 34 applied rows = 0.00005  (reproduces)
+  APPLIED plant map (flag==ok, net basis): cap-wt 11.8796 -> 11.9425, gen-wt 11.6779 -> 11.7370
+  plants whose APPLIED net rate moves > 0.10 MMBtu/MWh:
+ plant_code                              plant_name  class_capacity_mw  heat_rate  heat_rate_screened_net  delta_net  n_units_dropped flag
+      61966 Victoria Port Power II Peaking Facility               86.0    12.2040               12.599404   0.395404                0   ok
+      55365              LaPorte Generating Station              144.0    13.9976               14.185949   0.188349                0   ok
+      64383                       Braes Bayou Plant              356.0    10.6356               10.787962   0.152362                0   ok
+      61241          Victoria City Peaking Facility               86.0    10.1345               10.284479   0.149979                0   ok
+       3548                            Decker Creek              208.0    13.2513               13.366291   0.114991                0   ok
+      65372                  Mark One Power Station              356.8    10.9192               11.033278   0.114078                0   ok
+      63688                        Topaz Generating              445.0    10.7588               10.870897   0.112097                0   ok
