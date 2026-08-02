@@ -50,6 +50,24 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key -- the arm must be byte-identical off; an armed run carries a real
     # min-gen floor and so gets a distinct key.
     "ercot_coal_min_config_floor",
+    # MISO regulated-PRB committed-band arms (miso-111 whole-band flex and its
+    # miso-112 measured split successor), both default off. REGISTERED LATE, by
+    # the FFR-W1X Wave-1 close (2026-08-02), as the ROOT-CAUSE repair of the
+    # stale PINNED_DEFAULT_CACHE_KEY the FFR-1B/1D findings docs both handed on:
+    # each field's own docstring promises "Default off -- every existing keeper
+    # byte-identical", and without this registration neither was. Measured: the
+    # default key moved 603c2498bf71d21d -> 8161b094a391de90 when
+    # coal_prb_committed_dispatchable landed (PR #3207, miso-111) and again
+    # 8161b094a391de90 -> 0e9fce2fb55b889f when coal_prb_committed_split landed
+    # (PR #3232, miso-112), orphaning every on-disk cache twice and reddening
+    # four pinned-literal tests in two BLOCKING CI jobs. Occurrences six and
+    # seven of the exact failure scripts/check_cache_key_registration.py exists
+    # to prevent -- and re-pinning the literal is the remedy that script's
+    # docstring names WRONG, because it accepts the orphaned cache instead of
+    # repairing it. Registering restores the pin; an armed run splits or flexes
+    # a real committed band and so still gets a distinct key.
+    "coal_prb_committed_dispatchable",
+    "coal_prb_committed_split",
     # MISO regulated-coal within-run night floor (miso-113, default off): the
     # same one-line remedy as ercot_coal_min_config_floor directly above --
     # dropped from the hash at its default so every pre-existing cached run
@@ -535,6 +553,16 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_thermal_dam_availability_plant": "measured 60-Day DAM awards (per plant)",
     "ercot_thermal_dam_availability_coal": "measured 60-Day DAM awards (coal)",
     "ercot_dam_availability_coal_event_cap": "measured DAM-award coal event cap",
+    # Added by the FFR-W1X Wave-1 close (2026-08-02), not by FFR-1D: the field
+    # landed with ERCOT-149 (73e237a, 2026-08-01) AFTER this family was
+    # written, and it is the literal sibling of the coal entry directly above —
+    # same measured 60-Day DAM-award record, same min() block in
+    # data/fleet/arrays.py, its class scope merely widened to the DAM-covered
+    # gas classes. Omitting it left a one-flag rule-13 hole in a guard whose
+    # whole point is that the family be complete. Blast radius nil: no
+    # committed forecast-mode run_config exists at all, and the only config
+    # arming this field is the backcast ERCOT keeper.
+    "ercot_dam_availability_gas_event_cap": "measured DAM-award gas event cap",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
