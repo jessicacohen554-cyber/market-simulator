@@ -1585,7 +1585,11 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
 # date deterministically. A self-reported planned-retirement year is credible
 # only at the same near-term grain the additions pipeline trusts its U/V/TS
-# statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon
+# statuses: within the ACTIVE operable-snapshot vintage + this many years
+# (vintage-aware since FH-1 — apply_announced_retirements resolves
+# data.fleet.operable_vintage_year, so a vintage-seeded hindcast measures the
+# horizon from its own seed year; non-vintage runs keep
+# EIA860_OPERABLE_VINTAGE + this many years exactly). Beyond the horizon
 # an announced non-fossil date is honored ONLY if the unit carries a binding
 # instrument in the confirmed-retirements registry; otherwise it is ignored, so
 # the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and

@@ -55,6 +55,14 @@ CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
 # so both the message text and the join are identical across the three gates.
 MARKER_FILE: str = "frontend/data/backcast/calibration-complete.json"
 
+# Holdout SPEND FREEZE file (rule 22): while its ``active`` key is true, NO
+# out-of-training year may be solved/scored/registered for ANY ISO — the
+# freeze outranks both marker blocks. Value-equal to
+# ``run_calibration_full.HOLDOUT_FREEZE_FILE`` (kept as a separate literal per
+# this repo's existing convention; a parity test asserts they agree). This
+# module stays import-free, so consumers do their own json read of the file.
+FREEZE_FILE: str = "frontend/data/backcast/holdout-freeze.json"
+
 # Tier names. Also the keys of TIER_MARKER_BLOCK below.
 TIER_TRAIN = "train"
 TIER_VALIDATION = "validation"
@@ -76,6 +84,63 @@ TIER_MARKER_BLOCK: dict[str, str] = {
     TIER_VALIDATION: "complete",
     TIER_LOCKED: "final",
 }
+
+# ---------------------------------------------------------------------------
+# Capacity-hindcast carve-outs (FH-1 — moved here out of prose, hindcast-
+# forward plan §5.2: "asserted today only in prose and a local
+# _validate_window"). These are the ONLY out-of-training allowances the
+# vintage-seeded hindcast harness (scripts/run_capacity_hindcast.py) carries,
+# and they are marker-free BY DESIGN: a 2021 SEED solve prices the first
+# evolution step and is never scored; a BRIDGE year is evolved but never
+# solved, its data never read. Anything else out-of-training needs the tier
+# marker machinery above — the harness fails closed.
+# ---------------------------------------------------------------------------
+
+# Seed years: solvable by the hindcast harness, never scored. (T1-H solves
+# 2021 to seed the price/margin signal for the 2022→2023 evolution.)
+HINDCAST_SEED_YEARS: frozenset[int] = frozenset({2021})
+
+# Bridge years: a hindcast window may SPAN them, evolving the fleet across,
+# but never solves them or reads their data (2022 = validation-tier bridge;
+# 2026 = locked-test/forward edge, un-bridged only by a crossover that solves
+# it as a forecast-mode year reading no measured actuals). Mirrors
+# market_sim.runner.HINDCAST_BRIDGE_YEARS — src must not import scripts, so
+# the runner keeps its own constant and tests assert the parity.
+HINDCAST_BRIDGE_YEARS: frozenset[int] = frozenset({2022, 2026})
+
+# The full solvable set for a plain (or full-forward T1-FF) hindcast window:
+# the training years plus the seed. NOT a scoring set — scoring is
+# CALIBRATION_YEARS only, both bounds (the >=2026 refusal and the FH-1
+# symmetric <2023 lower bound in scripts/score_crossover.py).
+HINDCAST_SOLVE_YEARS: frozenset[int] = CALIBRATION_YEARS | HINDCAST_SEED_YEARS
+
+
+def hindcast_solve_year_violations(years) -> list[str]:
+    """Return the rule-22 violations in a proposed hindcast solve-year set.
+
+    The fail-closed check behind the harness's window validation: every
+    proposed SOLVE year must be either a training year or an enumerated seed
+    year; each violation names the year's tier so the refusal is
+    self-explaining. Bridge years must not be passed here — they are never
+    solve years (the harness skips them before this check).
+
+    Args:
+        years: Iterable of proposed solve years (bridges already excluded).
+
+    Returns:
+        Human-readable violation strings; empty when the set is legal.
+    """
+    out: list[str] = []
+    for y in sorted({int(y) for y in years}):
+        if y in HINDCAST_SOLVE_YEARS:
+            continue
+        tier = tier_for_year(y)
+        out.append(
+            f"year {y} is not a hindcast-solvable year (tier: {tier}; "
+            f"allowed: training {sorted(CALIBRATION_YEARS)} + seed "
+            f"{sorted(HINDCAST_SEED_YEARS)}; rule 22)"
+        )
+    return out
 
 
 def tier_for_year(year: int) -> str:

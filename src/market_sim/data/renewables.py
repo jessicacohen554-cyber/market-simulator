@@ -155,6 +155,7 @@ from market_sim.data.fleet import (
     FUEL_TYPE_MAP,
     FleetArrays,
     _hour_to_month_index,
+    operable_vintage_year as _operable_vintage_year,
 )
 
 logger = logging.getLogger(__name__)
@@ -275,8 +276,10 @@ _PROPOSED_HIGH_CONFIDENCE: frozenset[str] = frozenset({"U", "V", "TS", "P"})
 # Year the operable EIA-860 snapshot was last refreshed; proposed plants
 # with an ``Effective Year`` strictly greater than this are pulled in as
 # augmentations to the operable schedule. Single source of truth lives in
-# data/fleet.py next to the thermal planned-additions loader.
-from market_sim.data.fleet import EIA860_OPERABLE_VINTAGE as _EIA860_OPERABLE_VINTAGE  # noqa: E402, E501
+# data/fleet.py next to the thermal planned-additions loader. Resolved
+# per-call from the ACTIVE snapshot dir (vintage-aware, FH-1 leak fix) so a
+# vintage-seeded run augments from ITS OWN proposed sheet; the top-level
+# snapshot resolves to the canonical constant, byte-identical.
 
 _TECHNOLOGY_TO_FUEL: dict[str, str] = {
     "Solar Photovoltaic": "solar",
@@ -927,7 +930,7 @@ def _eia860_monthly_capacity(
     # reflected in the operable file. We use plant lat/lon (rather than
     # the eGRID ORIS lookup, which doesn't cover newly-assigned plant
     # codes) to assign each plant to a model zone.
-    if cal_year is not None and cal_year > _EIA860_OPERABLE_VINTAGE:
+    if cal_year is not None and cal_year > _operable_vintage_year(data_dir):
         _add_proposed_capacity(monthly, iso, fuel, zone_to_idx, cal_year, data_dir)
 
     if monthly.sum() <= 0.0:
@@ -974,7 +977,7 @@ def _add_proposed_capacity(
     status = df["Status"].astype(str).str.strip().str.upper()
     df = df[status.isin(_PROPOSED_HIGH_CONFIDENCE)]
     eff_year = pd.to_numeric(df["Effective Year"], errors="coerce")
-    df = df[(eff_year > _EIA860_OPERABLE_VINTAGE) & (eff_year <= cal_year)]
+    df = df[(eff_year > _operable_vintage_year(data_dir)) & (eff_year <= cal_year)]
     if df.empty:
         return
 
@@ -1123,7 +1126,7 @@ def wind_ptc_eligible_monthly_share(
 
     # Post-snapshot proposed plants: augment BOTH tallies — a new COD is
     # inside its window for the whole backcast horizon by construction.
-    if cal_year > _EIA860_OPERABLE_VINTAGE:
+    if cal_year > _operable_vintage_year(data_dir):
         _add_proposed_capacity(total, iso, "wind", zone_to_idx, cal_year, data_dir)
         _add_proposed_capacity(eligible, iso, "wind", zone_to_idx, cal_year, data_dir)
 

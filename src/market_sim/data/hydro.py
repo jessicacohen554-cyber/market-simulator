@@ -237,6 +237,44 @@ def eia930_wat_level_folded(iso: str, year: int) -> bool:
     return first_clean is not None and int(year) < int(first_clean)
 
 
+def full_forward_climatology_years(as_of_year: int) -> tuple[int, ...]:
+    """Return the T1-FF as-of hydro climatology window (FH-1, plan §4 row 11).
+
+    A full-forward hindcast standing at ``as_of_year`` may build its
+    normal-water-year climatology only from :data:`HYDRO_CLIMATOLOGY_YEARS`
+    members **at or before** that year — the fixed constant would otherwise
+    average future water years into a historic base (a 2021-base run drew four
+    of its five years from its own future) — and never from quarantined 2022
+    (rule 22; the hindcast bridge year's data is never read). A base-2023
+    window is therefore ``(2021, 2023)`` and a base-2021 window ``(2021,)`` —
+    a single water year, which is a *disclosed thinness finding*, never a
+    reason to widen the window (rule 13: the window regenerates from the
+    as-of date, it is not tuned).
+
+    Args:
+        as_of_year: The information cutoff (the T1-FF base year /
+            ``crossover_forward_year``).
+
+    Returns:
+        The trimmed climatology years, ascending (possibly a single year).
+    """
+    from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+
+    return tuple(
+        y
+        for y in HYDRO_CLIMATOLOGY_YEARS
+        if y <= int(as_of_year) and y not in _HYDRO_QUARANTINED_YEARS
+    )
+
+
+# Rule-22 quarantined years excluded from any as-of hydro climatology (FH-1):
+# 2022 is the hindcast bridge year — evolved, never solved, its data never
+# read. (2026+ never enters a trimmed window because every T1-FF as-of year is
+# <= 2023 by the harness's window validation; membership here is belt-and-
+# braces symmetry with the emission-rate trim.)
+_HYDRO_QUARANTINED_YEARS: frozenset[int] = frozenset({2022, 2026})
+
+
 def forecast_monthly_hydro(
     iso: str,
     hydro_year: str = "normal",
@@ -882,6 +920,7 @@ def build_hydro_fleet(
     min_flow_floor: bool = False,
     ror_split: bool = False,
     nameplate_aware_target: bool = False,
+    as_of_year: int | None = None,
 ) -> tuple[list[Generator], np.ndarray | None]:
     """Return the ISO's conventional-hydro LP units and their monthly budgets.
 
@@ -1036,6 +1075,16 @@ def build_hydro_fleet(
             uniform fleet-wide scale factor (rule 14; FINDING-caiso126 K4).
             Byte-identical below the bound. ``False`` (default) changes no
             existing run.
+        as_of_year: T1-FF information cutoff (FH-1, hindcast-forward plan §4
+            row 11) — set by the full-forward hindcast to its base year. On
+            the ``forecast_budget`` path it (a) trims the normal-water-year
+            climatology to :func:`full_forward_climatology_years` (years at/
+            before the cutoff, quarantined 2022 excluded), and (b) clamps the
+            budget *shape* year to the cutoff, so neither the level nor the
+            per-plant within-month shares read water data from after the
+            base year. ``None`` (default) keeps the full
+            ``HYDRO_CLIMATOLOGY_YEARS`` window and the existing shape clamp —
+            byte-identical for every other run.
 
     Returns:
         Tuple ``(units, monthly_energy)`` where ``units`` is the list of
@@ -1104,8 +1153,17 @@ def build_hydro_fleet(
     elif forecast_budget:
         from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
 
-        target = forecast_monthly_hydro(iso, hydro_year)
-        if any(eia930_wat_level_folded(iso, y) for y in HYDRO_CLIMATOLOGY_YEARS):
+        # T1-FF as-of trim (FH-1): a full-forward hindcast's climatology may
+        # not average water years after its base year, nor quarantined 2022.
+        # None (every other run) keeps the full constant window.
+        _clim_years: "tuple[int, ...] | None" = None
+        if as_of_year is not None:
+            _clim_years = full_forward_climatology_years(as_of_year)
+        _clim_window = (
+            _clim_years if _clim_years is not None else HYDRO_CLIMATOLOGY_YEARS
+        )
+        target = forecast_monthly_hydro(iso, hydro_year, _clim_years)
+        if any(eia930_wat_level_folded(iso, y) for y in _clim_window):
             # miso-110 (flat) / neiso-72 (time split): this BA's forward level
             # comes from the EIA-923 `HY` climatology, not the PS-folded
             # `NG: WAT` one (see forecast_monthly_hydro — the SAME window
@@ -1146,9 +1204,16 @@ def build_hydro_fleet(
         # is already the climatology `target`, so clamping only the shape
         # year keeps the forward methodology intact while restoring the real
         # plant set. Backcast paths (eia930_monthly / bare) are untouched.
+        # T1-FF (as_of_year set): the shape year is additionally clamped to
+        # the base year — a base-2023 run solving 2024/2025 keeps the 2023
+        # within-month shares, exactly as a real 2023-vintage forecast would
+        # (its latest final vintage is <= its base). Same information cutoff
+        # as the climatology trim above, one seam (rule 19).
         from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
 
         shape_year = min(year, EIA923_LATEST_FINAL_VINTAGE)
+        if as_of_year is not None:
+            shape_year = min(shape_year, int(as_of_year))
     else:
         target = None
     try:

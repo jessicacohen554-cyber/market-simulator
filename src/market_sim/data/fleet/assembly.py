@@ -1648,6 +1648,15 @@ def build_dispatch_fleet(
             getattr(config, "hydro_budget_nameplate_aware", False)
         ),
         hydro_year=config.hydro_year if hydro_year is None else hydro_year,
+        # T1-FF information cutoff (FH-1): a full-forward hindcast trims the
+        # hydro climatology and shape year to its base year
+        # (crossover_forward_year == the base). None for every other run —
+        # plain hindcast, T1-X, forecast, backcast — byte-identical.
+        as_of_year=(
+            int(config.crossover_forward_year)
+            if getattr(config, "is_full_forward_hindcast", False)
+            else None
+        ),
     )
     hydro_gen_idx = None
     if hydro_units:
