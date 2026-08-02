@@ -2513,3 +2513,114 @@ firm block, and the keeper carries NO `MECH_FIRM_IMPORT` floor. The census's
 legacy default (harness defect 2, fixed) — never quote it as keeper
 exposure. MISO's committed `legitimacy_diagnostics.json` is correct as
 committed; nothing regenerated, verdict unchanged.
+
+## 2026-08-02 — miso-114: the seam has the RIGHT annual import energy and ZERO hour-of-day skill; and the overnight residual is 64-73 % ENERGY component, not the congestion lane miso-113 routed it to
+
+**No LP solved.** Keeper UNCHANGED (`2026-07-31-miso-109b-hy-level`); nothing to
+register (rule 15 — the miso-103/104/105/107/108 discipline of refusing on
+measurement rather than spending a solve). Probe
+`scripts/probes/_miso114_seam_hod_shape.py`, transcript
+`results/calibration/PROBE-miso114-seam-hod-shape-2026-08-02.txt`, finding
+`results/calibration/FINDING-miso114-seam-hod-shape-2026-08-02.md`.
+
+### Why this is new evidence against a `G` cell
+
+`diurnal_price_amplitude` carries MISO `G` on miso-89, whose enumerated
+instruments were uniform attribution (miso-85), cross-fuel attribution
+(miso-87), congestion (miso-78/79, data-blocked), `gt_ambient_derate` (inert)
+and scarcity (starved, not missing). **Neither the seam's hour-of-day shape nor
+the trough/peak decomposition below is on that list**, and miso-89 is a
+statement about the *peak* half. Rule 28 duty (a) satisfied. Independent
+cross-check of xiso-1 on a different construction: amplitude ratio
+0.354/0.393/0.253 here vs xiso-1's 34.0/36.3/25.2 %.
+
+### The residual is the ENERGY component, not congestion
+
+MISO publishes a single-reference LMP decomposition — asserted, not assumed
+(max cross-hub std of `LMP − MCC − MLC` = 0.000000/0.008345/0.000000 $/MWh).
+The model's overnight p10 gap to MINN.HUB splits:
+
+| year | model dual | actual ENERGY | actual MINN.HUB | ENERGY | congestion |
+|---|---:|---:|---:|---:|---:|
+| 2023 | $24.45 | $15.92 | $11.03 | **+8.53 (64 %)** | +4.89 (36 %) |
+| 2024 | $20.92 | $13.91 | $11.11 | **+7.01 (71 %)** | +2.80 (29 %) |
+| 2025 | $29.61 | $21.07 | $17.83 | **+8.54 (73 %)** | +3.24 (27 %) |
+
+miso-113 §5 routed the C7 `COAL_PRB` residual entirely to the data-blocked
+congestion + sub-hourly lane. Two thirds to three quarters of it is the
+congestion-free system energy price, which is **not** data-blocked.
+
+### Two distinct overnight defects, previously treated as one
+
+Binning overnight hours on net load, deciles 0-8 carry a near-flat **LEVEL
+offset** (+8.20..+5.60 / +6.90..+3.92 / +8.32..+1.54) — a mispriced *marginal
+unit*, not a missing quantity or scarcity mechanism — while the top overnight
+decile flips negative in 2024/2025 (−3.11/−7.46), a convexity/tail deficit that
+**is** miso-89's ledgered availability object. The level half is what starves
+C7: a flat, too-dear overnight price gives the coal fleet nothing to cycle
+against, which is exactly why miso-111 (reprice), miso-112 (split) and
+miso-113 (floor) all left `cv_ratio` unmoved.
+
+Trough anatomy (h1-3, model minus actual, arithmetic closing): the model fills
+a **1.5-1.7 GW import hole and a 3.4-3.9 GW gas hole with 2.6-3.7 GW of extra
+coal**, while keeping **1,907 / 2,415 / 2,350 MW of `CT_PEAKER` + `ST_GAS`
+online** — short on efficient CC, long on peaking/steam, so a peaking-band
+offer is available to set the trough price.
+
+### The seam: right energy, no hourly skill — and sized out of the gate lane
+
+Annual net interchange **1.017 / 1.016 / 0.908** of actual; hour-of-day
+correlation **+0.097 / −0.453 / −0.030**. Cause: `MISO_SEAM_LADDER_BY_YEAR`
+(armed via `miso_seam_measured_ladder`) is an **8-band hour-INVARIANT** ladder,
+so bands-in-the-money run 4.4/3.5/2.9 overnight vs 6.0/4.9/4.2 at peak — the
+opposite of measured flow. Mis-shape: night short 1,333/1,210/1,206 MW, peak
+long 1,338/1,147/746 MW.
+
+**Sized and demoted in the same session** so no future lane charters it as a
+gate instrument: at the model's own local stack slope (0.24-0.40 $/GW) the whole
+correction is worth −$0.32/−$0.39/−$0.44 overnight and +$0.34/+$0.43/+$0.30 at
+peak — **4-7 %** of the residual. Rule 1 `[R-STRUCT]` structural fidelity, not
+a C7/C3a instrument.
+
+### This session's own opening hypothesis, REFUTED and reported in full
+
+`miso_pjm_lmp_import_pricing` (built, default-off; the committed measured hourly
+`PJM_WEST` border LMP has a real $22.9/$24.9/$38.5 diurnal range against the
+ladder's zero) looked decisive and **fails the model-independent test**: the
+*actual* MISO−PJM_WEST spread is ±$1-2 overnight, night-minus-peak only
+−1.07/+2.16/+3.15 $/MWh, and actual net import correlates with the hourly spread
+at r = +0.289/+0.240/+0.286. MISO imports **4,591 MW at h2 on a +$1.0/MWh
+spread**. The PJM/IESO seam is a firm/scheduled base (the ladder's own
+docstring: r = +0.06, 46-56 % of import MWh inside the $2 hurdle band), so
+spot-spread pricing would re-introduce the failure mode the ladder was built to
+fix. The shape is a **scheduling** property, not a price property;
+`miso_firm_import_floor` stays rejected as an outcome pin (rule 13) and this
+does **not** re-license it.
+
+### Left open, and what must not be done
+
+* **Do not arm `miso_cc_coal_rebalance`** for the trough substitution: its
+  target is defined against another *model* quantity ("above the priced-import
+  hurdle") with no measured identification (rules 5 / 21 / 24).
+* **Do not charter the seam mis-shape as the C7 instrument** — it is sized.
+* **Do not re-open the top-decile convexity deficit** — miso-89's object,
+  ledgered.
+* **Named successor is a MEASUREMENT, not a solve:** CAMPD-observed MISO
+  `CT_PEAKER` + `ST_GAS` online MW at h1-3, 2023-2025, against the model's
+  1,907 / 2,415 / 2,350 MW. EIA-930 does not split gas by prime mover, so this
+  session could measure the model side only. Take it before spending any MISO
+  A/B (~3 h, ~15.5 GB peak).
+
+### Governance
+
+* **Rule 15** — no run produced; nothing to register.
+* **Rule 22** — 2023-2025 only; MISO holds no holdout marker, none touched.
+* **Rule 28 duty (b)** — `reference_price_interface` MISO cell annotated (stays
+  `K`, with the hour-of-day limitation and the `miso_pjm_lmp_import_pricing`
+  ex-ante refusal); `diurnal_price_amplitude` MISO cell **stays `G`** (no
+  mechanism was tested) with the decomposition recorded. Both in-session.
+* **Rule 19 / 23** — nothing armed, nothing stacked, no derive re-run.
+* **Contamination declared** — miso-113's finding and the xiso-1 note were read
+  before measuring, so the session was not blind to the compression result;
+  immaterial, since the finding rests on sources that predate both.
+* Next number: **miso-115.**
