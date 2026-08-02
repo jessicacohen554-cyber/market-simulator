@@ -1807,6 +1807,38 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
 # Source: engineering judgment — data center pipeline matures ~2030.
 DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
+# --- As-of-vintage demand-growth tables (FH-2; hindcast-forward plan §4 row 6)
+#
+# DEMAND_GROWTH_RATES above is the CURRENT table: it is derived from the
+# 2025/2026 LTLF / Gold Book / CELT / IEPR editions, so every rate in it encodes
+# what those ISOs knew in 2025-2026 — above all the data-center boom (ERCOT mid
+# near 8.5 %/yr). A full-forward hindcast (T1-FF, plan §2) that starts from a
+# 2021 or 2023 base and grows demand forward MUST use the rates PUBLISHED AT
+# THAT BASE YEAR, or it is not a forecast at all: applying 8.5 %/yr from 2021 to
+# 2023 is +17.7 % against roughly +2 % actual, and the "error" it produces is an
+# information leak wearing the costume of a forecast miss.
+#
+# This registry is the as-of addressing for that table, keyed
+# ``{as_of_year: {iso: {low|mid|high: {near, long}}}}`` — the SAME inner shape
+# as DEMAND_GROWTH_RATES, so one resolver serves both
+# (config.scenario_resolvers.resolve_demand_growth_table) and there is exactly
+# one growth mechanism (rule 19 [R-ONE-MECH]).
+#
+# MECHANISM ONLY — deliberately EMPTY at FH-2. FH-3 lands the values (per-ISO
+# near/long rates read off the ERCOT LTLF / PJM LTLF / NYISO Gold Book / ISO-NE
+# CELT / MISO LTLF / CEC IEPR editions published in the base year, each cited to
+# its edition and table, rule 5 [R-NO-MAGIC]). Until then:
+#
+#   * ``ScenarioConfig.demand_growth_vintage = None`` (the default) resolves
+#     DEMAND_GROWTH_RATES — byte-identical to every existing run; and
+#   * any vintage request RAISES (``resolve_demand_growth_table``), naming the
+#     vintages on offer. It never silently falls back to the current table,
+#     because a silent fallback IS the leak this row exists to close.
+#
+# A vintage must carry every ISO it will be asked for: a missing ISO row also
+# raises rather than borrowing today's rate (same reason).
+DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] = {}
+
 # --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) -------
 # Cumulative data-center MW trajectories per ISO/path, consumed by
 # data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis;
