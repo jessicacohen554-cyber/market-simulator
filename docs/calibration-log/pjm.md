@@ -2186,3 +2186,24 @@ L1 = 0.000 GWh exactly; under the pin it shuffled 1,703/1,147/2,085 GWh — its
 entire apparent signal was the defect). Keeper note 11 CLOSED. Rule 22: only
 2023–2025 touched; 2022 deliberately not spent. Full write-up:
 `results/calibration/FINDING-pjm143-hydro-level-923hy-2026-07-31.md`.
+
+## 2026-08-02 — cross-ISO audit touching PJM (caiso-154): the caiso-153 OLS-attenuation defect is NOT LIVE in PJM; the ARMED midcurve artifact re-derives BYTE-IDENTICALLY
+
+No-LP input-standing audit, logged in full in `docs/calibration-log/caiso.md`
+(caiso-154) and `results/calibration/FINDING-caiso154-xiso-ols-attenuation-not-live-2026-08-02.md`.
+PJM outcomes: (1) neither PJM offer-surface derive contains a regression
+estimator — the caiso-153 family is structurally absent, and
+`pjm_offer_surface_conditional` is off in the keeper anyway; (2) the ARMED
+`pjm_offer_midcurve_condbinned.json` reproduces BYTE-IDENTICALLY from its own
+script + a fully refetched 36/36-month corpus (1,152/1,152 leaves), and the
+top surface to 0.016 % — the caiso-152 unreproducibility class is CLEAR in
+PJM; (3) the counterfactual transplant of the CAISO slope classifier is
+REFUTED on PJM's own corpus: admissible OLS everywhere, no slope collapse,
+and the hr-cut split misbuckets 6–11 GW of physics-CC_LIKE under EVERY
+estimator — the physics segmentation is load-bearing, so any future
+slope-based PJM identification owes its own charter against that measured
+warning; (4) shipped-estimator tail sensitivity ≤4.8 % vs the 10 % bar
+(11 Jan-2024/-25 HH+basis tail days carry 53 % of the fuel regressor's
+variance — a precision, not a level, exposure). `measured_offer_surface` PJM
+stays `R`; keeper `2026-07-31-pjm-143b-hy-level` untouched; nothing
+registered. Do not re-test without new evidence (rule 28a).
