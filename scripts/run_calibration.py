@@ -117,6 +117,7 @@ from market_sim.pipeline import (  # noqa: E402
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
+    build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
@@ -4557,6 +4558,15 @@ def run_year(
     nyiso_bridge_prep = build_nyiso_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native MISO regulated-coal night floor (miso-113): the committed-state
+    # floor on the regulated PRB/subbituminous fleet at each plant's OWN
+    # measured within-run night level, net of its _mustrun band (rule 19), on
+    # the P0-detected committed run. The ISO-exclusive sibling of the
+    # CAISO/ERCOT/NYISO hooks above; None for every non-MISO / gate-off run
+    # (byte-identical).
+    miso_night_floor_prep = build_miso_coal_night_floor_p1_prep(
+        config, iso, fleet, fleet_arrays
+    )
     # P1-native PJM commitment-scoped reserve supply (path B, G-20b): the fleet
     # hook zeroes non-fast-start reserve-eligible units' availability in their
     # plant's P0-offline hours (the fa_p2-style mask), the kwargs hook
@@ -4583,7 +4593,11 @@ def run_year(
         config,
         xyear_cache=xyear_cache,
         p1_fleet_prep=(
-            ra_p1_prep or ercot_bridge_prep or nyiso_bridge_prep or pjm_fleet_prep
+            ra_p1_prep
+            or ercot_bridge_prep
+            or nyiso_bridge_prep
+            or miso_night_floor_prep
+            or pjm_fleet_prep
         ),
         p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
