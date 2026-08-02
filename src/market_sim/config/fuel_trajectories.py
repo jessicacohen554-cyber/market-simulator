@@ -183,18 +183,93 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         2024: 2.19,
         2025: 3.53,
     },
-    # "hindcast_asknown_aeo2021": the AEO2021 Reference case Henry Hub
-    # trajectory (EIA, Annual Energy Outlook 2021, published Feb 2021 — the
-    # contemporaneous as-known-then forecast for a 2021-start hindcast). The
+    # --- As-known-then gas paths (T1-FF Arm K; hindcast plan §2.1) ----------
+    # One entry per AEO edition that a hindcast BASE YEAR can be run from:
+    # ``hindcast_asknown_aeo<edition>``, read by
+    # ``run_capacity_hindcast.full_forward_gas_path(arm="asknown", base_year)``,
+    # which HARD-ERRORS rather than substituting another vintage. The
     # realized−asknown gap isolates fuel-input (gas-forecast) error from
-    # capacity-path error (plan §1.4 baseline (c)). 2022 omitted per the bridge.
-    # Source: AEO2021 Reference, Table "Henry Hub spot price" (2020$ ≈ 2026$ at
-    # this precision; the level is only a sensitivity axis, not a keeper input).
+    # capacity-path error (plan §1.4 baseline (c); §2.1's three-way read).
+    #
+    # DOLLAR BASIS (FH-3, 2026-08-02) — every value below is NOMINAL $/MMBtu of
+    # its own projection year, converted from the AEO's published real-dollar
+    # value by that SAME edition's own projected GDP chain-type price index
+    # (Table 20 Macroeconomic Indicators, series
+    # ``eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z``, 2012=1.000), rebased on the
+    # edition's own history year:
+    #     nominal(y) = real(y) x deflator(y) / deflator(edition history year)
+    # Two reasons this, and not the published real value:
+    #   (a) COMMENSURABILITY. ``hindcast_realized`` above is nominal spot
+    #       ($3.91 in 2021, $2.54 in 2023, ...) and the model's whole cost stack
+    #       (VOM, offer curves, the 2023-2025 price benches) is nominal. Pricing
+    #       Arm K in a stale real-dollar base would put a dollar-year shift
+    #       inside the Arm R -> Arm K spread, which is supposed to measure
+    #       gas-FORECAST error alone. The drift is not second order: AEO2020$
+    #       applied to 2025 understates nominal by 7.6 %, AEO2022$ by 9.0 %.
+    #   (b) AS-OF HONESTY. The deflator used is the edition's own PROJECTION,
+    #       which is all a forecaster had at the time — never a realized
+    #       deflator published later, which would leak post-base-year
+    #       information into an ex-ante path (plan §4's as-of test).
+    # The low/mid/high forecast paths above keep the AEO's published real values
+    # because their edition's dollar year sits alongside the years they price;
+    # an as-known vintage is by construction 2-5 years stale, so it cannot.
+    #
+    # Both entries omit 2022 per the rule-22 bridge (the hindcast never solves
+    # or reads 2022; its 2022 evolution step draws the prior year via
+    # driver_year), matching ``hindcast_realized``.
+    #
+    # Source for both: EIA Annual Energy Outlook, Table 13 (Natural Gas Supply,
+    # Disposition, and Prices), "Henry Hub spot price", Reference case, via the
+    # EIA Open Data API v2 ``aeo`` route. Raw, immutable, re-fetchable:
+    # data/raw/eia-aeo/eia_aeo2021_fuel_prices.csv and
+    # data/raw/eia-aeo/eia_aeo2023_fuel_prices.csv
+    # (scripts/data/fetch_eia_aeo.py --aeo-year 2021|2023). Arithmetic and the
+    # full ledger: docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §2.
+    #
+    # "hindcast_asknown_aeo2021": AEO2021 Reference (``ref2021``), published
+    # 2021-02-03, real 2020$; deflator base 2020 = 1.133393. The
+    # as-known-then forecast for a 2021-base hindcast.
+    #   year  real(2020$)  deflator  ratio     nominal
+    #   2021   3.100730    1.145347  1.010547   3.13
+    #   2023   2.992324    1.174500  1.036269   3.10
+    #   2024   2.801792    1.194232  1.053679   2.95
+    #   2025   2.880324    1.219112  1.075630   3.10
+    # CORRECTED 2026-08-02 (FH-3, rule 23 — the change cites the DATA, not a
+    # residual). The prior values (2021: 3.07, 2023: 2.86, 2024: 2.88, 2025:
+    # 2.93) carried the flag "NEEDS CITATION" in docs/parameter-citations.md and
+    # match NO basis of the AEO2021 Reference series — not the published real
+    # 2020$ figures, not their nominal conversion, and not a uniform offset or
+    # year-shift of either. They are unreconstructible, so they are replaced by
+    # the API-fetched series rather than re-cited. Consequence, stated because
+    # it is not free: the two registered T1-H runs that used this path
+    # (``ercot-2021-2025-asknown``, ``pjm-2021-2025-asknown``) were produced on
+    # the old values and no longer reproduce at HEAD; they stand as historical
+    # artifacts and any re-read of the realized-vs-asknown spread re-solves.
     "hindcast_asknown_aeo2021": {
-        2021: 3.07,
-        2023: 2.86,
-        2024: 2.88,
-        2025: 2.93,
+        2021: 3.13,
+        2023: 3.10,
+        2024: 2.95,
+        2025: 3.10,
+    },
+    # "hindcast_asknown_aeo2023": AEO2023 Reference (``ref2023``), published
+    # 2023-03-16, real 2022$; deflator base 2022 = 1.269200. The as-known-then
+    # forecast for a 2023-base hindcast — Phase A / Arm K (plan §3.1), which
+    # hard-errored before this intake.
+    #   year  real(2022$)  deflator  ratio     nominal
+    #   2023   5.266376    1.321666  1.041338   5.48
+    #   2024   4.072381    1.353926  1.066755   4.34
+    #   2025   3.489514    1.383368  1.089953   3.80
+    # Sanity anchor (not an input): AEO2023's own 2022 history value, 6.524
+    # (2022$, ratio 1.0), sits 1.6 % above the realized 2022 Henry Hub annual
+    # average of $6.42 — confirming the deflator base is the edition's history
+    # year and the rebasing is right. The as-known path is 2.2x the realized
+    # 2023 price ($5.48 vs $2.54): AEO2023 was frozen in late 2022 at the top of
+    # the post-invasion gas spike and did not see the 2023 collapse. That is the
+    # ex-ante driver error Arm K exists to MEASURE, not a value to reconcile.
+    "hindcast_asknown_aeo2023": {
+        2023: 5.48,
+        2024: 4.34,
+        2025: 3.80,
     },
 }
 

@@ -1807,7 +1807,8 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
 # Source: engineering judgment — data center pipeline matures ~2030.
 DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
-# --- As-of-vintage demand-growth tables (FH-2; hindcast-forward plan §4 row 6)
+# --- As-of-vintage demand-growth tables (FH-2 mechanism; FH-3 values) --------
+#     hindcast-forward plan §4 row 6
 #
 # DEMAND_GROWTH_RATES above is the CURRENT table: it is derived from the
 # 2025/2026 LTLF / Gold Book / CELT / IEPR editions, so every rate in it encodes
@@ -1824,20 +1825,141 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # (config.scenario_resolvers.resolve_demand_growth_table) and there is exactly
 # one growth mechanism (rule 19 [R-ONE-MECH]).
 #
-# MECHANISM ONLY — deliberately EMPTY at FH-2. FH-3 lands the values (per-ISO
-# near/long rates read off the ERCOT LTLF / PJM LTLF / NYISO Gold Book / ISO-NE
-# CELT / MISO LTLF / CEC IEPR editions published in the base year, each cited to
-# its edition and table, rule 5 [R-NO-MAGIC]). Until then:
+# The registry SHIPPED EMPTY at FH-2 (mechanism only) and is POPULATED by FH-3
+# (2026-08-02) with per-ISO near/long rates read off the ERCOT LTLF / PJM LTLF /
+# NYISO Gold Book / ISO-NE CELT / MISO LTLF / CEC IEPR editions published in the
+# base year, each cited to its edition and table (rule 5 [R-NO-MAGIC]).
 #
 #   * ``ScenarioConfig.demand_growth_vintage = None`` (the default) resolves
 #     DEMAND_GROWTH_RATES — byte-identical to every existing run; and
-#   * any vintage request RAISES (``resolve_demand_growth_table``), naming the
-#     vintages on offer. It never silently falls back to the current table,
-#     because a silent fallback IS the leak this row exists to close.
+#   * a vintage request outside this dict RAISES
+#     (``resolve_demand_growth_table``), naming the vintages on offer. It never
+#     silently falls back to the current table, because a silent fallback IS the
+#     leak this row exists to close.
 #
 # A vintage must carry every ISO it will be asked for: a missing ISO row also
-# raises rather than borrowing today's rate (same reason).
-DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] = {}
+# raises rather than borrowing today's rate (same reason). FH-3 extended that
+# refusal one level down — a missing CASE inside a present (vintage, ISO) raises
+# too, because most cells below carry ``mid`` alone (see "CASES") and the
+# pre-FH-3 resolver would have fallen back to the scalar
+# ``config.demand_growth_rate`` for a ``low``/``high`` request.
+#
+# CONSTRUCTION RULE (uniform across every cell; no cell is interpolated, per
+# the FH-3 brief — an edition that could not be reached is a MANUAL DOWNLOAD
+# row in docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §4, never a
+# guessed rate):
+#   * METRIC = the edition's own published central ANNUAL ENERGY forecast for
+#     the ISO/planning footprint. Energy, not peak, because ``_scale_demand``
+#     applies a FLAT hourly scalar — the model's growth rate is an energy
+#     growth rate and peak follows mechanically. (This differs from the live
+#     table above, which is peak-CAGR-based for several ISOs; the two bases
+#     diverge wherever an ISO's peak and energy diverge under electrification,
+#     which the NEISO block above already flags. Both T1-FF arms read THIS
+#     table, so no arm-vs-arm comparison is affected — see the findings doc
+#     §3 for the disclosure.)
+#   * near = CAGR from the edition's first forecast year to
+#     DEMAND_GROWTH_TRANSITION_YEAR (2030).
+#   * long = CAGR from 2031 to the edition's last forecast year, but ONLY when
+#     the edition carries >= 3 post-2030 forecast years; otherwise long is
+#     EDGE-HELD to near and marked "(long edge-held)" below. An edge-held long
+#     is not a modelling risk here: T1-FF Phase A (2023-2025) and Phase B
+#     (2021-2025) solve no year past 2030, so ``long`` never binds in any
+#     T1-FF window — it is carried for table-shape completeness only.
+#   * CASES = only what the edition PUBLISHES as a full low/base/high series.
+#     Most ISOs publish a central forecast alone in these vintages, so most
+#     cells carry ``mid`` only. Transporting the live table's band width onto a
+#     vintage central would be inventing a growth rate no edition published.
+# Per-cell arithmetic (source values, ratios, CAGRs) is tabulated in
+# docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §3.
+DEMAND_GROWTH_RATES_VINTAGES: dict[int, dict[str, dict[str, dict[str, float]]]] = {
+    # ===== as-of 2021 (Phase B base; plan §3.1) =====
+    2021: {
+        # ERCOT 2021 Long-Term Load Forecast, "2021 ERCOT Monthly Peak Demand
+        # and Energy Forecast 2021-2030" (posted 2020-12-28), monthly Energy
+        # (MWh) summed to annual: 405,842 GWh (2021) -> 485,143 (2030).
+        # Covers 2021-2030 only => long edge-held.
+        "ERCOT": {"mid": {"near": 0.0200, "long": 0.0200}},
+        # PJM 2021 Load Forecast Report (January 2021), Table E-1 Annual Net
+        # Energy, PJM RTO: 780,068 GWh (2021) -> 804,517 (2030);
+        # 806,729 (2031) -> 819,553 (2036).
+        "PJM": {"mid": {"near": 0.0034, "long": 0.0032}},
+        # NYISO 2021 Load & Capacity Data Report ("Gold Book", April 2021),
+        # Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh
+        # columns Low/Baseline/High — the one edition-published low/mid/high
+        # band in this vintage. Baseline 150,980 (2021) -> 145,960 (2030),
+        # 146,690 (2031) -> 160,980 (2040). The NEGATIVE mid near rate is real
+        # and is the point: the 2021 Gold Book forecast NY energy DECLINING to
+        # 2030 on efficiency/codes, then rising on electrification.
+        "NYISO": {
+            "low": {"near": -0.0111, "long": 0.0054},
+            "mid": {"near": -0.0038, "long": 0.0104},
+            "high": {"near": 0.0050, "long": 0.0215},
+        },
+        # ISO-NE 2021 CELT Report (April 2021), Table 1.5.2 Annual net energy
+        # for load, "Net (reduced for BTM PV and EE)": 121,692 GWh (2021) ->
+        # 133,960 (2030). Horizon ends 2030 => long edge-held.
+        "NEISO": {"mid": {"near": 0.0107, "long": 0.0107}},
+        # MISO 2021 Independent Energy and Peak Demand Forecast (State Utility
+        # Forecasting Group, Purdue, November 2021), Table 49 Gross MISO System
+        # Energy: 643,003 GWh (2021) -> 714,142 (2030); 721,429 (2031) ->
+        # 794,118 (2041). The edition's Table 52 publishes High/Low CAGRs but
+        # no High/Low SERIES (its Appendix D carries no energy table), so no
+        # near/long can be computed for those cases => mid only.
+        # AS-OF CAVEAT: published November 2021, i.e. inside the base year.
+        # See findings doc §3.4.
+        "MISO": {"mid": {"near": 0.0117, "long": 0.0096}},
+        # CAISO: MISSING — the 2020/2021-vintage CEC California Energy Demand
+        # STATE baseline forms are not reachable from the CEC's current
+        # planning-library pages. MANUAL DOWNLOAD (findings doc §4). Left absent
+        # rather than back-filled from the CEDU 2022 vintage below, which would
+        # be a post-base-year leak.
+    },
+    # ===== as-of 2023 (Phase A base; plan §3.1) =====
+    2023: {
+        # ERCOT 2023 Long-Term Load Forecast, "2023 ERCOT Monthly Peak Demand
+        # and Energy Forecast 2023-2032" (posted 2023-01-18), monthly Energy
+        # summed to annual: 445,388 GWh (2023) -> 527,020 (2030). Only 2031-2032
+        # sit past the transition (< 3 years) => long edge-held.
+        "ERCOT": {"mid": {"near": 0.0243, "long": 0.0243}},
+        # PJM 2023 Load Forecast Report (January 2023), Table E-1 Annual Net
+        # Energy, PJM RTO: 788,050 GWh (2023) -> 878,461 (2030);
+        # 889,393 (2031) -> 960,428 (2038).
+        "PJM": {"mid": {"near": 0.0156, "long": 0.0110}},
+        # NYISO 2023 Gold Book (April 2023), Table I-1a, Energy-GWh
+        # Low/Baseline/High. Baseline 151,780 (2023) -> 157,660 (2030),
+        # 160,100 (2031) -> 204,030 (2040).
+        "NYISO": {
+            "low": {"near": 0.0038, "long": 0.0304},
+            "mid": {"near": 0.0054, "long": 0.0273},
+            "high": {"near": 0.0184, "long": 0.0422},
+        },
+        # ISO-NE 2023 CELT Report (May 2023), Table 1.5.2 net annual energy:
+        # 122,057 GWh (2023) -> 140,481 (2030). Horizon ends 2032 (< 3 post-2030
+        # years) => long edge-held.
+        "NEISO": {"mid": {"near": 0.0203, "long": 0.0203}},
+        # MISO 2023 Independent Energy and Peak Demand Forecast (SUFG/Purdue,
+        # November 2023), Table 49 (base) 644,204 GWh (2023) -> 691,462 (2030),
+        # 696,343 (2031) -> 758,334 (2043); Table 80 (High) 667,961 -> 747,235,
+        # 754,268 -> 833,962; Table 86 (Low) 619,522 -> 635,458, 638,396 ->
+        # 683,189. This edition DOES publish full 90/10 High and Low series
+        # (Appendix D), so all three cases are edition-sourced.
+        # AS-OF CAVEAT: published November 2023 (inside the base year), the
+        # latest-published of any driver here. Findings doc §3.4.
+        "MISO": {
+            "low": {"near": 0.0036, "long": 0.0057},
+            "mid": {"near": 0.0102, "long": 0.0071},
+            "high": {"near": 0.0162, "long": 0.0084},
+        },
+        # CAISO — CEC "California Energy Demand Forecast, 2022-2035 Baseline
+        # Forecast" (CEDU 2022), STATE Planning Area forms, January 2023;
+        # Form 1.2 Total_Energy_For_Load: 269,058 GWh (2023) -> 294,482 (2030);
+        # 298,860 (2031) -> 314,982 (2035). FOOTPRINT CAVEAT: the CEC forecast
+        # is STATEWIDE, while the model's CAISO carries ~80 % of California
+        # load; the statewide growth RATE is used as the CAISO proxy, the same
+        # footprint approximation the live CAISO block above makes.
+        "CAISO": {"mid": {"near": 0.0130, "long": 0.0132}},
+    },
+}
 
 # --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) -------
 # Cumulative data-center MW trajectories per ISO/path, consumed by
