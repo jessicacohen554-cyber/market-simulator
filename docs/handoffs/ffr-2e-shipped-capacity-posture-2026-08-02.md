@@ -1,0 +1,205 @@
+# FFR-2E — Validating the SHIPPED capacity-price posture (audit FR-14)
+
+**Session:** FFR-2E, Wave 2 of the forecast-readiness remediation program.
+**Date:** 2026-08-02. **Base:** `origin/main` @ `a900c67`.
+**Charter:** `docs/forecast-readiness-prompt-pack-2026-07.md` §FFR-2E;
+audit `docs/forecast-readiness-audit-2026-07.md` §3.2 FR-14; peer review
+`docs/forecast-readiness-peer-review-2026-07.md` §3.1 ("validate the
+configuration you ship").
+
+**Nothing here tunes anything** (rules 1 / 14). No `ScenarioConfig` default
+moved (rule 24) — the posture flips remain the owner's, executed at FFR-3A
+step 0. No rubric threshold, band or scorer logic was touched.
+
+---
+
+## 0. Headline
+
+The capacity-hindcast instrument now runs the posture the forecast ships, and
+the posture question turns out **not** to be a second-order calibration detail:
+
+1. **For PJM, NEISO and MISO the two arms are not a perturbation of each other
+   — at the model's own reserve position the shipped curve arm pays ZERO
+   capacity revenue in the 2021–2025 window where the fixed arm pays the full
+   net-CONE.** The T1-H "curve-ON over-fire" FC-3 FAILs are the direct
+   arithmetic consequence of removing $77–109 k/firm-MW-yr of going-forward
+   revenue from the retirement screen, not a separate defect.
+2. **CAISO's curve-ON posture is provably inert** — not asserted, proved: the
+   registry carries no published CAISO demand curve, so the shared pricing seam
+   returns the identical float in both arms at every reserve position and every
+   solve year. FF-2C's "pricing no-op" verdict is confirmed at HEAD.
+3. **NYISO's shipped posture IS the fixed arm** (production ships it curve-OFF),
+   so `nyiso-2021-2025-{curve,fixed}` are a force-ON probe pair, not a
+   shipped-vs-fixed pair. The `--golden-posture` used by the full-horizon runner
+   disagrees with the shipped default on exactly this ISO.
+4. **PJM's new FFR-2C floor is measured, and it reverses the sign of the
+   posture gap from 2028**: at a long position the curve arm goes from paying
+   $0 (2021–2027 vintages) to paying $63,875/firm-MW-yr (2028/29 vintage),
+   i.e. from 100 % below the fixed arm to 17.5 % below it.
+
+---
+
+## 1. What was wrong (FR-14) and what changed
+
+`scripts/run_capacity_hindcast.py` passed
+`capacity_market_clearing_by_iso={iso: True} if --capacity-market-clearing else None`.
+The default arm was therefore `None` — the flat net-CONE stub — while the
+production `ScenarioConfig` ships
+`{"PJM": True, "MISO": True, "CAISO": True, "NEISO": True}`. Every FC-3 verdict
+produced without the flag scored a price formation the forecast never runs.
+
+**The change** (commit 1, `scripts/run_capacity_hindcast.py`):
+
+| posture | how selected | `capacity_market_clearing_by_iso` |
+|---|---|---|
+| **shipped** (new default) | no flag | the live `ScenarioConfig` default, read off the dataclass field |
+| **fixed net-CONE** | `--fixed-net-cone` | `None` — byte-identical to the pre-FFR-2E default |
+| **forced curve** (RC-1B probe) | `--capacity-market-clearing` | `{iso: True}` — for an ISO production ships OFF |
+
+The two flags are mutually exclusive and refuse *before* the solve. The
+shipped posture is **read from the dataclass field, never mirrored**, so an
+owner flip at FFR-3A step 0 is followed with no edit here — a hardcoded copy
+would be a second, silently-diverging tuning channel (rule 24).
+
+**One correctness fix rides with it.** `meta["capacity_market_clearing"]` now
+records the **resolved per-ISO gate** instead of the raw flag.
+`scripts/forecast_verdict.py::_curve_on` reads that key to classify a leg
+curve-ON/curve-OFF; with a flag-sourced value every shipped-posture leg would
+have been classified curve-OFF by the rubric — FR-14 in another costume. This
+is backward-compatible on **every** committed sidecar: before FFR-2E the
+resolved gate always equalled the flag (default `None` ⇒ `False`). A new
+`capacity_clearing_posture` key (`shipped` / `fixed_net_cone` / `forced_curve`)
+is the FC-3 evidence-row discriminator.
+
+**Old evidence is untouched.** No committed sidecar is rewritten and no
+committed verdict is re-interpreted; the `--fixed-net-cone` arm reproduces the
+posture those legs ran, so each stands as scored. New runs are new rows.
+
+Contract tests: `tests/scoring/test_capacity_clearing_posture.py` (14 tests,
+LP-free) — default provenance, the three postures and their refusal, the
+resolved gate per ISO, `__post_init__` non-coercion on a hindcast leg, and the
+two price-identity results below.
+
+---
+
+## 2. The input-side measurement (LP-free, exact)
+
+All three capacity screens price adequacy through one seam
+(`MarketDesign.capacity_price_per_firm_mw_yr`, rule 19), so a price identity at
+that seam **is** a screen identity. `scripts/probes/_ffr2e_posture_price_sweep.py`
+sweeps it under both arms across the reserve-position domain and 2021–2028.
+Published registry parameters only (rule 13).
+
+$/firm-MW-yr, **shipped vs fixed**, at four reserve positions:
+
+| ISO | year (DY) | 0.95 | 1.00 | 1.045 | 1.10 |
+|---|---|---|---|---|---|
+| **CAISO** | any | 88,080 vs 88,080 | 88,080 vs 88,080 | 88,080 vs 88,080 | 88,080 vs 88,080 |
+| **NYISO** | any | 110,000 vs 110,000 | 110,000 vs 110,000 | 110,000 vs 110,000 | 110,000 vs 110,000 |
+| **ERCOT** | any | 0 vs 0 | 0 vs 0 | 0 vs 0 | 0 vs 0 |
+| **PJM** | 2023 (2023/24) | 150,541 vs 77,431 | 121,404 vs 77,431 | 30,868 vs 77,431 | **0 vs 77,431** |
+| **PJM** | 2025 (2025/26) | 164,838 vs 77,431 | 123,200 vs 77,431 | 27,112 vs 77,431 | **0 vs 77,431** |
+| **PJM** | 2027 (2027/28) | 121,706 vs 77,431 | 108,431 vs 77,431 | 0 vs 77,431 | **0 vs 77,431** |
+| **PJM** | **2028 (2028/29)** | 118,625 vs 77,431 | 118,625 vs 77,431 | **63,875 vs 77,431** | **63,875 vs 77,431** |
+| **NEISO** | 2023 (2023-24) | 157,188 vs 108,940 | 98,244 vs 108,940 | 44,979 vs 108,940 | **0 vs 108,940** |
+| **NEISO** | 2025 (2025-26) | 148,800 vs 108,940 | 89,616 vs 108,940 | 41,029 vs 108,940 | **0 vs 108,940** |
+| **MISO** | 2023 (2023-24) | 103,040 vs 79,800 | 103,040 vs 79,800 | 0 vs 79,800 | **0 vs 79,800** |
+| **MISO** | 2025 (2025-26) | **509,446** vs 79,800 | 79,800 vs 79,800 | 7,980 vs 79,800 | **0 vs 79,800** |
+
+Three structural readings:
+
+* **CAISO is inert by construction, not by coincidence.** `MARKET_DESIGN["CAISO"]`
+  carries `demand_curve=()` and `seasonal_rbdc=None` (its RA construction is
+  bilateral, not an auction), so the curve branch's own guard is false and the
+  seam falls through to the flat anchor **in both arms**. The clearing gate
+  resolves `True` for CAISO and changes nothing. This is a proof, not a sample.
+* **NYISO is absent from the shipped mapping**, so its gate resolves off the
+  scalar (`False`). Its shipped posture *is* the fixed arm.
+* **MISO's seasonal RBDC makes it the most posture-sensitive ISO on the short
+  side** — the four-season RBDC sum reaches 6.4× net-CONE, so at position 0.95
+  the shipped arm pays 6.4× the fixed arm. On the long side it pays zero. MISO's
+  posture gap is a factor of ~6 in one direction and −100 % in the other.
+
+### 2.1 Why this matters more than a price table
+
+FFR-2C records the model's own PJM hindcast positions at **1.100–1.196**
+(`validate_capacity_prices` Pass 2). Those positions sit in the flat-extrapolated
+tail. So for the 2021–2025 window the shipped PJM posture pays **exactly zero**
+capacity revenue into the step-3 economic-retirement screen, where the fixed arm
+pays $77,431 × (1 − EFORd) per firm MW. The same holds for NEISO and MISO
+wherever their positions clear their zero-crosses (1.083 / 1.05).
+
+That is the arithmetic behind the T1-H "curve-ON over-fire" FC-3 FAILs recorded
+in `ff-t1-gate-2026-07.md` §4.1 — **the curve arm is not a mild re-pricing, it
+removes the entire RA revenue stream at a long position.** It is also why the
+*fixed* arm is the unrepresentative one: it pays full net-CONE to a fleet the
+market itself would pay nothing for.
+
+---
+
+## 3. The fleet-level measurement (paired T1-H legs)
+
+<!-- FILLED FROM THE REGISTERED RUNS -->
+
+---
+
+## 4. PJM's 2028/29 floor at fleet level
+
+<!-- FILLED FROM THE PJM T0 LEG -->
+
+---
+
+## 5. Per-ISO recommendation — which arm the T1 gate should cite
+
+<!-- FILLED -->
+
+---
+
+## 6. Open blockers (not fixed here)
+
+**B1 — `scripts/run_full_horizon.py` carries the same FR-14 shape, and it is
+the T0 / T1-F runner.** `reference_config()` (`:153`) pins
+`cmc_by_iso = None` unless `--golden-posture` is passed, so a T0 or T1-F leg
+launched with no flag prices adequacy on the flat stub while production clears
+the curve. Its own docstring calls that the deliberate "P-2A probe posture", so
+this is a **default-posture decision, not an oversight** — it belongs with the
+D-1/D-3 batch at FFR-3A step 0, not to this session (rule 24). Flagged, not
+fixed. *(This does not affect the §4 measurement: `--golden-posture` and the
+shipped default agree on PJM.)*
+
+**B2 — `GOLDEN_CMC_BY_ISO` and the shipped `ScenarioConfig` default disagree on
+NYISO.** Golden = `{PJM, MISO, NYISO, NEISO, CAISO}`; shipped =
+`{PJM, MISO, CAISO, NEISO}`. Two "the posture we ship" answers exist in the
+tree simultaneously, and which one a run took depends on which runner launched
+it. The mechanism-matrix note already records the NYISO discrepancy; what is
+new here is that it makes "the shipped posture" ambiguous as a *harness
+default*. The hindcast harness now follows `ScenarioConfig` (the config the
+forecast object actually carries); reconciling the two encodings is FFR-3A/3B's.
+
+**B3 — the capacity price cannot reach PJM/NEISO/MISO's retirement screen in
+the T1-H window at all.** At the model's own reserve positions (PJM ~1.10–1.36
+depending on basis; FF-2C §2.2, FFR-2C §2.1) every ISO with a published curve
+sits past its zero-cross, so the shipped arm pays exactly $0. That is not a
+posture defect — it is the **position/requirement basis** (BLK-3 R2/R3), and it
+means the shipped posture's *quantitative* retirement effect stays gated on that
+lane. Recorded as an open blocker, not closed by any parameter (rules 1 / 14).
+
+**B4 — CAISO cannot be FC-3 scored at all.** There is no
+`data/raw/_validation-source/capacity_actuals_caiso.csv`, so no CAISO T1-H leg
+can produce an FC-3 verdict in either arm. Since CAISO's posture divergence is
+provably zero (§2), this costs nothing today — but any future CAISO capacity
+evidence needs the actuals built first.
+
+---
+
+## 7. Standing disclosures (peer review §4)
+
+> This forecast is produced by a chronological full-8760 LP dispatch model with a
+> one-pass annual capacity-evolution loop. It does not include: MIP unit
+> commitment; intertemporal capacity optimization or within-year entry/exit
+> convergence; inter-hour ramp constraints; intra-ISO hurdle rates;
+> demand-responsive fuel pricing. Unless produced by the weather ensemble,
+> results are conditional on a single pinned weather year (stated in the run
+> config). Uncertainty bands are dispatch-conditional: the fleet-path
+> (capacity-expansion) component of structural error is unmeasured and excluded.
+> Deterministic scenario cases are a range, not a probability distribution.
