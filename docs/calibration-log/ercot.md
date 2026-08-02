@@ -3966,3 +3966,20 @@ remove-direction over-removal at partial-coverage plants (V H Braunig
 2025). Successor pointer: the exposed CC econ-band under-dispatch
 (Jack County/Guadalupe now under — the ERCOT-138/139 object) and the
 standing RT-scarcity-formation attribution.
+
+## 2026-08-01 — ERCOT-149 addendum: **OWNER-PROMOTED KEEPER `2026-08-01-ercot149-gas-event-cap`**
+
+The owner ruled on the surfaced disposition (ruling #7) in this session's
+follow-up: *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a
+keeper."* The session's recommendation was YES (the mechanism is
+measured-correct with zero fitted parameters; 10/11 guards held; the single
+spurious-2024 trip is 3 keeper-carried hours + 1 literal $199.9 straddle +
+3 trailing edges of real $958–3,049 events that arrived with matched
+formation 4→13 and C3a-2024 flipping PASS), and the keeper was promoted
+under the standing standard. Keeper shard + `build_status --iso ERCOT`
+rebuilt (`[ERCOT:NOT-YET]`), `audit_keepers --iso ERCOT` PASS, matrix
+keepers/gates header re-stamped, cell `O → K`, §5.1 heading re-stamped.
+Supersedes `2026-07-31-ercot148-dam-event-cap` (kept on the dashboard as
+the immediate-prior comparison). The ERCOT open-gate set SHRINKS to
+{C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg}.
