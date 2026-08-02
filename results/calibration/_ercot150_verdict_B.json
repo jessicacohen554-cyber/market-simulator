@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-01-ercot150a-control-zerodelta",
+  "run_id": "2026-08-02-ercot150b-zonal-anchor",
   "iso": "ERCOT",
-  "label": "ercot150a control zerodelta",
+  "label": "ercot150b zonal anchor",
   "rubric_version": 2.9,
   "target_years": [
     2023,
@@ -34,12 +34,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CC_REGULAR grid-delivered TWh + share of generation",
-          "model": 142.656,
+          "model": 142.354,
           "actual": 141.743,
-          "share_pp": 0.05,
+          "share_pp": -0.02,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+0.91 TWh, share +0.0pp"
+          "magnitude": "+0.61 TWh, share -0.0pp"
         },
         {
           "criterion": "fuelmix",
@@ -48,12 +48,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CC_CHP grid-delivered TWh + share of generation",
-          "model": 26.356,
+          "model": 26.24,
           "actual": 28.514,
-          "share_pp": -0.52,
+          "share_pp": -0.54,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-2.16 TWh, share -0.5pp"
+          "magnitude": "-2.27 TWh, share -0.5pp"
         },
         {
           "criterion": "fuelmix",
@@ -62,12 +62,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CT_PEAKER grid-delivered TWh + share of generation",
-          "model": 6.547,
+          "model": 6.587,
           "actual": 7.098,
-          "share_pp": -0.13,
+          "share_pp": -0.12,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-0.55 TWh, share -0.1pp"
+          "magnitude": "-0.51 TWh, share -0.1pp"
         },
         {
           "criterion": "fuelmix",
@@ -76,12 +76,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS grid-delivered TWh + share of generation",
-          "model": 18.95,
+          "model": 18.997,
           "actual": 16.7,
-          "share_pp": 0.49,
+          "share_pp": 0.5,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+2.25 TWh, share +0.5pp"
+          "magnitude": "+2.30 TWh, share +0.5pp"
         },
         {
           "criterion": "fuelmix",
@@ -104,12 +104,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_PRB grid-delivered TWh + share of generation",
-          "model": 44.559,
+          "model": 44.91,
           "actual": 45.085,
-          "share_pp": -0.17,
+          "share_pp": -0.09,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-0.53 TWh, share -0.2pp"
+          "magnitude": "-0.18 TWh, share -0.1pp"
         },
         {
           "criterion": "fuelmix",
@@ -118,12 +118,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
-          "model": 17.619,
+          "model": 17.63,
           "actual": 15.335,
           "share_pp": 0.5,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+2.28 TWh, share +0.5pp"
+          "magnitude": "+2.29 TWh, share +0.5pp"
         },
         {
           "criterion": "fuelmix",
@@ -132,12 +132,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CC_REGULAR grid-delivered TWh + share of generation",
-          "model": 143.573,
+          "model": 143.304,
           "actual": 143.778,
-          "share_pp": -0.0,
+          "share_pp": -0.06,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-0.20 TWh, share -0.0pp"
+          "magnitude": "-0.47 TWh, share -0.1pp"
         },
         {
           "criterion": "fuelmix",
@@ -146,12 +146,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CC_CHP grid-delivered TWh + share of generation",
-          "model": 28.704,
+          "model": 28.573,
           "actual": 30.03,
-          "share_pp": -0.28,
+          "share_pp": -0.31,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-1.33 TWh, share -0.3pp"
+          "magnitude": "-1.46 TWh, share -0.3pp"
         },
         {
           "criterion": "fuelmix",
@@ -160,12 +160,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "CT_PEAKER grid-delivered TWh + share of generation",
-          "model": 7.678,
+          "model": 7.73,
           "actual": 7.651,
-          "share_pp": 0.01,
+          "share_pp": 0.02,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+0.03 TWh, share +0.0pp"
+          "magnitude": "+0.08 TWh, share +0.0pp"
         },
         {
           "criterion": "fuelmix",
@@ -174,12 +174,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS grid-delivered TWh + share of generation",
-          "model": 19.045,
+          "model": 19.058,
           "actual": 18.102,
           "share_pp": 0.21,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+0.94 TWh, share +0.2pp"
+          "magnitude": "+0.96 TWh, share +0.2pp"
         },
         {
           "criterion": "fuelmix",
@@ -202,12 +202,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_PRB grid-delivered TWh + share of generation",
-          "model": 41.032,
+          "model": 41.407,
           "actual": 43.676,
-          "share_pp": -0.56,
+          "share_pp": -0.48,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "-2.64 TWh, share -0.6pp"
+          "magnitude": "-2.27 TWh, share -0.5pp"
         },
         {
           "criterion": "fuelmix",
@@ -216,12 +216,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
-          "model": 15.178,
+          "model": 15.191,
           "actual": 13.941,
           "share_pp": 0.27,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+1.24 TWh, share +0.3pp"
+          "magnitude": "+1.25 TWh, share +0.3pp"
         },
         {
           "criterion": "fuelmix",
@@ -230,13 +230,13 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "CC_REGULAR grid-delivered TWh + share of generation",
-          "model": 142.27,
+          "model": 142.4,
           "actual": 140.551,
-          "share_pp": 0.05,
+          "share_pp": 0.07,
           "tol": null,
           "completeness": "incomplete",
           "magnitude": "preliminary EIA-923 vintage: incomplete plant data (9/41 prior plants missing (78% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
-          "vintage_gap_twh": 1.719
+          "vintage_gap_twh": 1.85
         },
         {
           "criterion": "fuelmix",
@@ -245,13 +245,13 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "CC_CHP grid-delivered TWh + share of generation",
-          "model": 27.809,
+          "model": 27.713,
           "actual": 28.788,
-          "share_pp": -0.26,
+          "share_pp": -0.28,
           "tol": null,
           "completeness": "incomplete",
           "magnitude": "preliminary EIA-923 vintage: incomplete plant data (3/19 prior plants missing (84% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
-          "vintage_gap_twh": -0.979
+          "vintage_gap_twh": -1.075
         },
         {
           "criterion": "fuelmix",
@@ -260,13 +260,13 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "CT_PEAKER grid-delivered TWh + share of generation",
-          "model": 5.958,
+          "model": 5.762,
           "actual": 7.112,
-          "share_pp": -0.25,
+          "share_pp": -0.29,
           "tol": null,
           "completeness": "incomplete",
           "magnitude": "preliminary EIA-923 vintage: incomplete plant data (24/38 prior plants missing (37% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
-          "vintage_gap_twh": -1.154
+          "vintage_gap_twh": -1.35
         },
         {
           "criterion": "fuelmix",
@@ -275,13 +275,13 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "ST_GAS grid-delivered TWh + share of generation",
-          "model": 15.192,
+          "model": 15.282,
           "actual": 14.814,
-          "share_pp": 0.05,
+          "share_pp": 0.06,
           "tol": null,
           "completeness": "incomplete",
           "magnitude": "preliminary EIA-923 vintage: incomplete plant data (12/22 prior plants missing (45% reporting)); not gated \u2014 C2 family grid reconcile covers this class",
-          "vintage_gap_twh": 0.378
+          "vintage_gap_twh": 0.468
         },
         {
           "criterion": "fuelmix",
@@ -305,12 +305,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_PRB grid-delivered TWh + share of generation",
-          "model": 48.901,
+          "model": 49.017,
           "actual": 47.63,
-          "share_pp": 0.16,
+          "share_pp": 0.18,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+1.27 TWh, share +0.2pp"
+          "magnitude": "+1.39 TWh, share +0.2pp"
         },
         {
           "criterion": "fuelmix",
@@ -319,12 +319,12 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
-          "model": 15.513,
+          "model": 15.529,
           "actual": 14.585,
           "share_pp": 0.16,
           "tol": "\u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
           "completeness": "complete",
-          "magnitude": "+0.93 TWh, share +0.2pp"
+          "magnitude": "+0.94 TWh, share +0.2pp"
         }
       ]
     },
@@ -342,7 +342,7 @@
           "status": "PASS",
           "classification": null,
           "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
-          "model": 194.58,
+          "model": 194.25,
           "actual": 194.22,
           "tol": "per-class \u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
           "magnitude": "all classes in band (C1)",
@@ -356,7 +356,7 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
-          "model": 62.18,
+          "model": 62.54,
           "actual": 60.42,
           "tol": "per-class \u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
           "magnitude": "all classes in band (C1)",
@@ -370,7 +370,7 @@
           "status": "PASS",
           "classification": null,
           "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
-          "model": 199.07,
+          "model": 198.73,
           "actual": 199.72,
           "tol": "per-class \u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
           "magnitude": "all classes in band (C1)",
@@ -384,7 +384,7 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
-          "model": 56.21,
+          "model": 56.6,
           "actual": 57.62,
           "tol": "per-class \u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
           "magnitude": "all classes in band (C1)",
@@ -398,7 +398,7 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "gas family grid-delivered TWh (preliminary vintage diagnostic \u2014 not gated, rubric v2.5)",
-          "model": 196.34,
+          "model": 196.22,
           "actual": 200.49,
           "tol": "\u00b12.5% target / \u00b15.0% commercial (family, no per-class actual)",
           "magnitude": "-2.1%",
@@ -412,7 +412,7 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
-          "model": 64.41,
+          "model": 64.55,
           "actual": 62.21,
           "tol": "per-class \u00b1min(2.0% ISO-load, 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
           "magnitude": "all classes in band (C1)",
@@ -436,10 +436,10 @@
           "classification": "MODEL MISS",
           "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
           "benchmark": "RT",
-          "model": 42.76,
+          "model": 43.21,
           "actual": 64.12,
           "tol": "\u00b110% target / \u00b110% commercial",
-          "magnitude": "-33.3%"
+          "magnitude": "-32.6%"
         },
         {
           "criterion": "price_mean",
@@ -449,10 +449,10 @@
           "classification": null,
           "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
           "benchmark": "DA",
-          "model": 42.76,
+          "model": 43.21,
           "actual": 74.38,
           "tol": "not gated",
-          "magnitude": "-42.5% vs DA (DA\u2212RT premium $+10.26)"
+          "magnitude": "-41.9% vs DA (DA\u2212RT premium $+10.26)"
         },
         {
           "criterion": "price_mean",
@@ -462,10 +462,10 @@
           "classification": null,
           "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
           "benchmark": "RT",
-          "model": 30.91,
+          "model": 31.25,
           "actual": 30.74,
           "tol": "\u00b110% target / \u00b110% commercial",
-          "magnitude": "+0.6%"
+          "magnitude": "+1.6%"
         },
         {
           "criterion": "price_mean",
@@ -475,10 +475,10 @@
           "classification": null,
           "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
           "benchmark": "DA",
-          "model": 30.91,
+          "model": 31.25,
           "actual": 32.64,
           "tol": "not gated",
-          "magnitude": "-5.3% vs DA (DA\u2212RT premium $+1.90)"
+          "magnitude": "-4.3% vs DA (DA\u2212RT premium $+1.90)"
         },
         {
           "criterion": "price_mean",
@@ -488,10 +488,10 @@
           "classification": null,
           "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
           "benchmark": "RT",
-          "model": 32.67,
+          "model": 33.01,
           "actual": 35.98,
           "tol": "\u00b110% target / \u00b110% commercial",
-          "magnitude": "-9.2%"
+          "magnitude": "-8.3%"
         },
         {
           "criterion": "price_mean",
@@ -501,10 +501,10 @@
           "classification": null,
           "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
           "benchmark": "DA",
-          "model": 32.67,
+          "model": 33.01,
           "actual": 33.5,
           "tol": "not gated",
-          "magnitude": "-2.5% vs DA (DA\u2212RT premium $+1.01)"
+          "magnitude": "-1.5% vs DA (DA\u2212RT premium $+1.01)"
         }
       ]
     },
@@ -522,10 +522,10 @@
           "status": "FAIL",
           "classification": "MODEL MISS",
           "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
-          "model": 0.616,
+          "model": 0.607,
           "actual": null,
           "tol": "\u22640.20 target / \u22640.20 commercial",
-          "magnitude": "NRMSE 0.616"
+          "magnitude": "NRMSE 0.607"
         },
         {
           "criterion": "price_shape",
@@ -534,10 +534,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
-          "model": 0.197,
+          "model": 0.199,
           "actual": null,
           "tol": "\u22640.20 target / \u22640.20 commercial",
-          "magnitude": "NRMSE 0.197"
+          "magnitude": "NRMSE 0.199"
         },
         {
           "criterion": "price_shape",
@@ -546,10 +546,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
-          "model": 0.113,
+          "model": 0.106,
           "actual": null,
           "tol": "\u22640.20 target / \u22640.20 commercial",
-          "magnitude": "NRMSE 0.113"
+          "magnitude": "NRMSE 0.106"
         }
       ]
     },
@@ -567,10 +567,10 @@
           "status": "FAIL",
           "classification": "MODEL MISS",
           "metric": "hours RT-expressible LMP > $200/MWh",
-          "model": 54.0,
+          "model": 58.0,
           "actual": 181.0,
           "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
-          "magnitude": "model 54h [energy-only LMP] vs RT actual 181h (0.30\u00d7, >$200)"
+          "magnitude": "model 58h [energy-only LMP] vs RT actual 181h (0.32\u00d7, >$200)"
         },
         {
           "criterion": "price_tail",
@@ -579,10 +579,10 @@
           "status": "SKIPPED",
           "classification": null,
           "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
-          "model": 54.0,
+          "model": 58.0,
           "actual": 311.0,
           "tol": "not gated",
-          "magnitude": "model 54h vs DA actual 311h (out-of-representation companion)"
+          "magnitude": "model 58h vs DA actual 311h (out-of-representation companion)"
         },
         {
           "criterion": "price_tail",
@@ -648,10 +648,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "gas fleet hourly r / NRMSE",
-          "model": "r=0.99 nrmse=0.065",
+          "model": "r=0.99 nrmse=0.066",
           "actual": null,
           "tol": "r\u22650.70, NRMSE\u22640.30",
-          "magnitude": "r=0.99, NRMSE=0.065"
+          "magnitude": "r=0.99, NRMSE=0.066"
         },
         {
           "criterion": "dispatch_corr",
@@ -660,10 +660,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal fleet hourly r / NRMSE",
-          "model": "r=0.885 nrmse=0.19",
+          "model": "r=0.884 nrmse=0.191",
           "actual": null,
           "tol": "r\u22650.70, NRMSE\u22640.30",
-          "magnitude": "r=0.885, NRMSE=0.19"
+          "magnitude": "r=0.884, NRMSE=0.191"
         },
         {
           "criterion": "dispatch_corr",
@@ -684,10 +684,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal fleet hourly r / NRMSE",
-          "model": "r=0.86 nrmse=0.236",
+          "model": "r=0.859 nrmse=0.237",
           "actual": null,
           "tol": "r\u22650.70, NRMSE\u22640.30",
-          "magnitude": "r=0.86, NRMSE=0.236"
+          "magnitude": "r=0.859, NRMSE=0.237"
         },
         {
           "criterion": "dispatch_corr",
@@ -708,10 +708,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "coal fleet hourly r / NRMSE",
-          "model": "r=0.818 nrmse=0.168",
+          "model": "r=0.817 nrmse=0.169",
           "actual": null,
           "tol": "r\u22650.70, NRMSE\u22640.30",
-          "magnitude": "r=0.818, NRMSE=0.168"
+          "magnitude": "r=0.817, NRMSE=0.169"
         }
       ]
     },
@@ -731,7 +731,7 @@
           "model": null,
           "actual": null,
           "tol": "pass/fail",
-          "magnitude": "ercot-150 2026-08-02 SAME-HEAD ZERO-DELTA CONTROL for the gas_offer_margin_zonal_anchor A/B. Recipe identical to the 2026-08-01-ercot149-gas-event-cap keeper, re-solved at this session's HEAD (37cc8e3: origin/main carrying the ercot-150 mechanism-registration commits) so the arm is scored against a control rather than against the committed keeper. K2 control integrity passes on the pre-registered SCORECARD basis; the STRICT BYTE basis measured drift of up to 3532.440918 MW on a class-hour \u2014 same-HEAD drift recorded as its own finding per the prereg, not absorbed \u2014 this despite ~24 src files moving on main since the keeper's 73e237a (FFR-1D/W1X forecast-mode guards incl. the ercot_dam_availability_gas_event_cap backcast-only-overlay entry, miso-113's MISO-gated night floor, pjm-144's PJM-keyed tables, FH-1/FH-2 forecast-vintage mechanisms, the Wave-1 cache-epoch bump), whose ERCOT-backcast inertness the prereg recorded as an expectation the control could falsify. This bundle carries the keeper's own recipe and therefore its DOF ledger unchanged; it is registered as evidence, not as a candidate keeper.",
+          "magnitude": "ercot-150 2026-08-02: the 2026-08-01-ercot149-gas-event-cap recipe with the gas-offer margin anchor RESOLVED PER ZONE (gas_offer_margin_zonal_anchor=true), scored against a same-HEAD zero-delta control rather than the committed keeper. This is a rule 14 [R-ACCURATE] correction of an identification GRAIN, not a mechanism being tuned: apply_gas_offer_margin's own identity is that at fuel == anchor the reformed offer reduces EXACTLY to the registered band multiplier, but the ISO anchor is derived from an ISO-level series carrying the -0.50 scalar and neither the measured EP level correction nor the per-zone spread nor the West net-load shape the keeper's own fuel path applies. ERCOT's convention is NEITHER NYISO's one-sided reference-zone table NOR PJM's pure mean-zero centroid: a TWO-SIDED capacity-weighted spread on a ONE-SIDED measured level correction, so five zones were under-marked (+0.06..+1.03 $/MMBtu) and net-load-shaped West over-marked (-0.29). The anchors are the derive script's own output read from the keeper reconstruction's resolved fuel_prices (zero fitted parameters, n_residual unchanged; committed derivation record with exact solve-array reproduction), pre-registered with the kill set BEFORE either arm solved, and the C3a-2023-friendly direction of the dominant level side was declared as grounds for EXTRA scrutiny in the prereg, never as encouragement. Measured single-delta effect: max class-hour dispatch delta 1073 / 1458 / 1432 MW, max zonal |dLMP| 0.356 / 0.304 / 0.319 $/MWh, system load-weighted dLMP +0.446 / +0.329 / +0.339 $/MWh (2023/24/25). K2 control integrity passes on the pre-registered SCORECARD basis; the STRICT BYTE basis measured drift of up to 3532.440918 MW on a class-hour \u2014 same-HEAD drift recorded as its own finding per the prereg, not absorbed",
           "machine_issues": []
         }
       ]
@@ -750,10 +750,10 @@
           "status": "FAIL",
           "classification": "MODEL MISS",
           "metric": "COAL_LIGNITE hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.884 cv=0.019",
+          "model": "r=0.888 cv=0.019",
           "actual": "cv=0.057",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.884, off-peak CV ratio 0.329"
+          "magnitude": "profile r 0.888, off-peak CV ratio 0.334"
         },
         {
           "criterion": "shape",
@@ -762,10 +762,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_PRB hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.996 cv=0.086",
+          "model": "r=0.996 cv=0.084",
           "actual": "cv=0.115",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.996, off-peak CV ratio 0.752"
+          "magnitude": "profile r 0.996, off-peak CV ratio 0.735"
         },
         {
           "criterion": "shape",
@@ -777,7 +777,7 @@
           "model": null,
           "actual": null,
           "tol": null,
-          "magnitude": "CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.973, off-peak CV ratio 1.21"
+          "magnitude": "CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.974, off-peak CV ratio 1.19"
         },
         {
           "criterion": "shape",
@@ -786,10 +786,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.997 cv=0.598",
+          "model": "r=0.997 cv=0.594",
           "actual": "cv=0.336",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.997, off-peak CV ratio 1.778"
+          "magnitude": "profile r 0.997, off-peak CV ratio 1.767"
         },
         {
           "criterion": "shape",
@@ -798,10 +798,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_LIGNITE hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.975 cv=0.013",
+          "model": "r=0.976 cv=0.013",
           "actual": "cv=0.018",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.975, off-peak CV ratio 0.731"
+          "magnitude": "profile r 0.976, off-peak CV ratio 0.734"
         },
         {
           "criterion": "shape",
@@ -813,7 +813,7 @@
           "model": "r=0.99 cv=0.051",
           "actual": "cv=0.075",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.99, off-peak CV ratio 0.685"
+          "magnitude": "profile r 0.99, off-peak CV ratio 0.677"
         },
         {
           "criterion": "shape",
@@ -825,7 +825,7 @@
           "model": null,
           "actual": null,
           "tol": null,
-          "magnitude": "CT_PEAKER immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.982, off-peak CV ratio 1.407"
+          "magnitude": "CT_PEAKER immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.981, off-peak CV ratio 1.35"
         },
         {
           "criterion": "shape",
@@ -834,10 +834,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.989 cv=0.351",
+          "model": "r=0.989 cv=0.347",
           "actual": "cv=0.21",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.989, off-peak CV ratio 1.673"
+          "magnitude": "profile r 0.989, off-peak CV ratio 1.651"
         },
         {
           "criterion": "shape",
@@ -846,10 +846,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_LIGNITE hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.964 cv=0.026",
+          "model": "r=0.962 cv=0.026",
           "actual": "cv=0.023",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.964, off-peak CV ratio 1.124"
+          "magnitude": "profile r 0.962, off-peak CV ratio 1.122"
         },
         {
           "criterion": "shape",
@@ -858,10 +858,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL_PRB hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.949 cv=0.052",
+          "model": "r=0.948 cv=0.053",
           "actual": "cv=0.068",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.949, off-peak CV ratio 0.775"
+          "magnitude": "profile r 0.948, off-peak CV ratio 0.777"
         },
         {
           "criterion": "shape",
@@ -873,7 +873,7 @@
           "model": null,
           "actual": null,
           "tol": null,
-          "magnitude": "CT_PEAKER immaterial (1.5% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.986, off-peak CV ratio 1.577"
+          "magnitude": "CT_PEAKER immaterial (1.5% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-1 reads profile r 0.986, off-peak CV ratio 1.55"
         },
         {
           "criterion": "shape",
@@ -882,10 +882,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS hour-of-day profile vs CAMPD (D-1)",
-          "model": "r=0.975 cv=0.268",
+          "model": "r=0.975 cv=0.269",
           "actual": "cv=0.155",
           "tol": "profile r \u2265 0.8 & off-peak CV ratio \u2265 0.5 (h0-14); class \u2265 2% of load",
-          "magnitude": "profile r 0.975, off-peak CV ratio 1.728"
+          "magnitude": "profile r 0.975, off-peak CV ratio 1.73"
         }
       ]
     },
@@ -906,7 +906,7 @@
           "model": 0.0206,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "2.1% forced (2.9421 of 142.6562 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "2.1% forced (2.9347 of 142.354 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -915,10 +915,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL energy at binding non-exempt floors (D-2)",
-          "model": 0.0694,
+          "model": 0.068,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "6.9% forced (4.3175 of 62.1778 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "6.8% forced (4.2523 of 62.5392 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -930,7 +930,7 @@
           "model": null,
           "actual": null,
           "tol": null,
-          "magnitude": "CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 10.7% forced"
+          "magnitude": "CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 10.8% forced"
         },
         {
           "criterion": "forced_share",
@@ -939,10 +939,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
-          "model": 0.1774,
+          "model": 0.1738,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "17.7% forced (3.3995 of 19.1603 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "17.4% forced (3.3372 of 19.2057 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -954,7 +954,7 @@
           "model": 0.009,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "0.9% forced (1.2888 of 143.5734 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "0.9% forced (1.292 of 143.3036 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -963,10 +963,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL energy at binding non-exempt floors (D-2)",
-          "model": 0.0862,
+          "model": 0.0842,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "8.6% forced (4.8465 of 56.2107 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "8.4% forced (4.7677 of 56.5979 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -987,10 +987,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
-          "model": 0.1488,
+          "model": 0.1452,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "14.9% forced (2.8813 of 19.3685 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "14.5% forced (2.8139 of 19.3725 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -999,10 +999,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
-          "model": 0.0145,
+          "model": 0.0144,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "1.5% forced (2.0646 of 142.2701 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "1.4% forced (2.0487 of 142.4004 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -1011,10 +1011,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "COAL energy at binding non-exempt floors (D-2)",
-          "model": 0.0346,
+          "model": 0.0342,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "3.5% forced (2.2257 of 64.4139 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "3.4% forced (2.2057 of 64.5453 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         },
         {
           "criterion": "forced_share",
@@ -1026,7 +1026,7 @@
           "model": null,
           "actual": null,
           "tol": null,
-          "magnitude": "CT_PEAKER immaterial (1.5% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.9% forced"
+          "magnitude": "CT_PEAKER immaterial (1.5% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 1.0% forced"
         },
         {
           "criterion": "forced_share",
@@ -1035,10 +1035,10 @@
           "status": "PASS",
           "classification": null,
           "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
-          "model": 0.2024,
+          "model": 0.1963,
           "actual": null,
           "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
-          "magnitude": "20.2% forced (3.1232 of 15.4289 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+          "magnitude": "19.6% forced (3.0455 of 15.5154 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
         }
       ]
     }
