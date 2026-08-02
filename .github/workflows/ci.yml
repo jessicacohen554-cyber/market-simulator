@@ -99,6 +99,32 @@ jobs:
       - name: check_forecast_invariants --sidecar-dir
         run: uv run python scripts/check_forecast_invariants.py --sidecar-dir
 
+  forecast-parity-guard:
+    name: FR-22 backcast->forecast parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # FR-22: a mechanism armed in an ISO's keeper posture must have a
+      # forecast-orchestrator consumer or an explicit backcast-only-by-design
+      # declaration (scripts/lib/forecast_parity_registry.py). The nyiso-102
+      # gap (three NYISO downstate mechanisms wired only in the backcast
+      # orchestrator) was found by accident; this makes it a gate. Stdlib-only,
+      # no LP. Filed gaps (ffr-1e findings doc §4) report but do not fail —
+      # --strict-gaps flips that once they are closed.
+      #
+      # Held back by FFR-1E (which built the checker) because ci.yml was
+      # FFR-1D's file in Wave 1; landed here at the Wave-1 close (§W1-X item 4)
+      # verbatim from ffr-1e-forecast-parity-check-2026-07-31.md §6. The four
+      # path filters that section asks for are already subsumed by the broader
+      # globs at the top of this file — src/market_sim/** and
+      # scripts/{run_calibration*.py,lib/forecast_parity_registry.py} by
+      # `src/**` and `scripts/**`, frontend/data/backcast/keepers/** by
+      # `frontend/data/backcast/**` — so no filter edit is needed; narrower
+      # duplicates would only be noise.
+      - name: check_forecast_parity
+        run: python3 scripts/check_forecast_parity.py
+
   mechanism-matrix-guard:
     name: Rule-28 mechanism-matrix guard
     runs-on: ubuntu-latest
