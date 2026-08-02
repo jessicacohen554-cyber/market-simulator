@@ -218,10 +218,13 @@ class TestZonalAnchorRegistry(unittest.TestCase):
     """Registry hygiene (rules 24 / 25)."""
 
     def test_only_zonal_basis_isos_carry_a_table(self):
-        # NYISO (nyiso-109) + PJM (pjm-144): the two keepers that arm a
-        # per-zone delivered-gas basis with a derived zone-anchor table.
-        # ERCOT/MISO stay U in the matrix until their own lanes derive one.
-        self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO", "PJM"})
+        # NYISO (nyiso-109) + PJM (pjm-144) + ERCOT (ercot-150): the three
+        # keepers that arm a per-zone delivered-gas basis with a derived
+        # zone-anchor table. MISO stays U in the matrix until its own lane
+        # derives one (rule 25).
+        self.assertEqual(
+            set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO", "PJM", "ERCOT"}
+        )
 
     def test_every_model_zone_is_covered(self):
         self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["NYISO"]), set(ZONE_NAMES))
@@ -247,6 +250,44 @@ class TestPjmZonalAnchorRegistry(unittest.TestCase):
         table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["PJM"]
         self.assertTrue(any(v > iso_anchor for v in table.values()))
         self.assertTrue(any(v < iso_anchor for v in table.values()))
+
+
+class TestErcotZonalAnchorRegistry(unittest.TestCase):
+    """ERCOT table hygiene (ercot-150): coverage + the level-plus-spread geometry.
+
+    ERCOT's applier (``data.fuel.basis.ercot.apply_ercot_zonal_gas_basis``) is
+    a capacity-weighted mean-zero spread PLUS a flat measured EP level
+    correction, so its zone anchors are NEITHER NYISO's one-sided table nor
+    PJM's pure centroid straddle: the level term lifts the populated non-Waha
+    zones above the ISO anchor while the Waha discount pulls West far below
+    every other zone. Panhandle carries no gas capacity in any training year
+    and is deliberately absent — the as-built wiring keeps the window anchor
+    for zones absent from the map, a no-op on an empty zone.
+    """
+
+    def test_populated_ercot_zones_are_covered_panhandle_omitted(self):
+        ercot_zones = set(get_iso_config("ERCOT").zone_names)
+        self.assertEqual(
+            set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["ERCOT"]),
+            ercot_zones - {"Panhandle"},
+        )
+
+    def test_west_sits_below_the_anchor_and_below_every_other_zone(self):
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        iso_anchor = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["ERCOT"]
+        table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["ERCOT"]
+        self.assertLess(table["West"], iso_anchor)
+        for zone, anchor in table.items():
+            if zone != "West":
+                self.assertGreater(anchor, table["West"], zone)
+
+    def test_level_term_lifts_some_non_waha_zone_above_the_iso_anchor(self):
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        iso_anchor = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["ERCOT"]
+        table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["ERCOT"]
+        self.assertTrue(any(v > iso_anchor for z, v in table.items() if z != "West"))
 
 
 if __name__ == "__main__":

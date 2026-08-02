@@ -178,27 +178,46 @@ ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM", "ERCOT"})
 #: transform depends on the solve's own per-zone gas capacity.
 CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM", "ERCOT"})
 
-#: ISOs whose zonal-basis config flag ALSO perturbs the ISO-level series
-#: :func:`derive_anchor` reads: ``ercot_zonal_gas_basis`` adds the flat
-#: EP-basis level correction inside ``_gas_series`` itself (the coal-sigmoid
-#: reference path, ``trajectories.py``), while the merit order receives the
-#: SAME correction exactly once — from ``apply_ercot_zonal_gas_basis`` on the
-#: ``(n_gen, T)`` array. Arming the flag on the config the BASE series is read
-#: with would therefore double-count the level term. For these ISOs the base
-#: series keeps the registered ISO-anchor recipe (:data:`GAS_SERIES_FLAGS`,
-#: flag off) and the APPLIER call uses the reconstructed keeper config — which
-#: arms the flag exactly as the solve did, haircut/floor arming included. PJM's
-#: and NYISO's flags never touch ``_gas_series``, so they stay in
-#: :data:`GAS_SERIES_FLAGS` and their paths are unchanged.
-ZONAL_FLAG_PERTURBS_SERIES: frozenset[str] = frozenset({"ERCOT"})
+#: ISOs whose zone anchors are read from the reconstruction's own resolved
+#: ``fuel_prices`` array — the exact ``(n_gen, T)`` block
+#: ``apply_gas_offer_margin`` prices against — instead of the synthetic
+#: series + basis-applier construction. ERCOT needs this for two measured
+#: reasons: (a) ``ercot_zonal_gas_basis`` ALSO adds its flat EP level term
+#: inside ``_gas_series`` (the coal-sigmoid reference path), so a synthetic
+#: series built with the flag armed would double-count the level; and (b) the
+#: keeper's fuel path does not END at the zonal basis — the
+#: ``ercot_west_netload_gas_shape`` two-regime step runs after it, and its
+#: burner-tip delivered floor (0.4 $/MMBtu) lifts the realised West annual
+#: mean far above the post-basis level in the deep-Waha years (measured on
+#: the ercot149 reconstruction: post-basis 1.62/0.21/0.65 → realised
+#: 1.99/1.15/2.74 $/MMBtu in 2023/24/25). An anchor identified pre-shape
+#: would price West markups at a fuel level West units never pay — the same
+#: grain-error class this mechanism exists to fix. Reading the solve's own
+#: array captures every fuel-path stage byte-faithfully. NYISO/PJM keep the
+#: synthetic construction (their zonal basis IS the end of their unit-fuel
+#: modification, so both constructions coincide there).
+SOLVE_FUEL_ARRAY_ISOS: frozenset[str] = frozenset({"ERCOT"})
 
 #: Per-ISO flags the reconstructed weights bundle MUST arm for the zonal
 #: derivation to be measuring the keeper's own transform (checked on the
 #: reconstructed config, hard-fail on drift — the GAS_SERIES_FLAGS contract
 #: extended to flags that live outside the base-series recipe).
 ZONAL_KEEPER_REQUIRED_FLAGS: dict[str, tuple[str, ...]] = {
-    "ERCOT": ("ercot_zonal_gas_basis",),
+    # Both fuel-path stages the ERCOT zone anchors are identified on: a
+    # weights bundle without either would silently identify a different
+    # delivered level (the West value depends materially on the net-load
+    # shape's burner-tip floor).
+    "ERCOT": ("ercot_zonal_gas_basis", "ercot_west_netload_gas_shape"),
 }
+
+#: Within-zone spread ceiling ($/MMBtu) for the SOLVE_FUEL_ARRAY path: gas
+#: rows in one zone may differ slightly (e.g. a dual-fuel unit's oil-parity
+#: cap trimming its winter spikes), and the zone anchor is the MEDIAN row —
+#: the zone's shared systematic level, with per-unit economic caps left to
+#: the margin's own hour-by-hour ``fuel`` tracking. A spread past this
+#: ceiling means the zone grain itself is broken (a per-unit transform), and
+#: the derivation hard-fails rather than averaging over it.
+SOLVE_FUEL_ARRAY_ZONE_PTP_MAX: float = 0.25
 
 
 def derive_zonal_anchors(
@@ -311,17 +330,25 @@ def derive_zonal_anchors(
                         "derivation measures — there is no zonal anchor to "
                         "derive from this bundle"
                     )
-            cfg = base.with_overrides(gas_price_override=hh)
-            series = _gas_series(cfg, year, HOURS_PER_YEAR)
-            n_gen = int(fleet.pmax.shape[0])
-            prices = np.repeat(series[None, :], n_gen, axis=0)
-            # The applier call carries the RECONSTRUCTED KEEPER config for the
-            # ISOs whose zonal flag also perturbs _gas_series (the base series
-            # above deliberately keeps the registered ISO-anchor recipe so the
-            # level term enters exactly once, from the applier — mirroring the
-            # merit path); elsewhere the recipe config already arms the flag.
-            apply_cfg = rec_cfg if iso in ZONAL_FLAG_PERTURBS_SERIES else cfg
-            apply_basis(prices, fleet, apply_cfg, year)
+            if iso in SOLVE_FUEL_ARRAY_ISOS:
+                # The bundle's own gas price must be the training-window value
+                # the ISO anchor is identified on — same contract as the flag
+                # check above, hard-checked instead of assumed.
+                bundle_hh = float((meta.get("gas_prices") or {}).get(str(year), hh))
+                if abs(bundle_hh - hh) > 1e-9:
+                    raise SystemExit(
+                        f"--weights-bundle solved {year} on gas price "
+                        f"{bundle_hh}, not the training-window {hh} the ISO "
+                        "anchor is identified on — the two derivations would "
+                        "not share a series"
+                    )
+                prices = np.asarray(state["fuel_prices"], dtype=float)
+            else:
+                cfg = base.with_overrides(gas_price_override=hh)
+                series = _gas_series(cfg, year, HOURS_PER_YEAR)
+                n_gen = int(fleet.pmax.shape[0])
+                prices = np.repeat(series[None, :], n_gen, axis=0)
+                apply_basis(prices, fleet, cfg, year)
             gas_rows = np.nonzero(np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX))[0]
             for i, zone in enumerate(zone_names):
                 rows = gas_rows[fleet.zone_idx[gas_rows] == i]
@@ -332,20 +359,43 @@ def derive_zonal_anchors(
                     # AFTER the year loop, and only if empty in EVERY year.
                     empty_zone_years[zone].append(year)
                     continue
-                # Every gas row in a zone carries the same additive spread, so
-                # the first row IS the zone's transformed series — guarded: a
-                # per-UNIT transform (e.g. an armed per-plant contract haircut)
-                # would break the zone grain this table is keyed on.
                 row_means = np.nanmean(prices[rows, :], axis=1)
-                if float(np.ptp(row_means)) > 1e-9:
-                    raise SystemExit(
-                        f"{zone} {year}: gas rows in one zone carry DIFFERENT "
-                        "transformed delivered levels (max-min "
-                        f"{float(np.ptp(row_means)):.6f} $/MMBtu) — the "
-                        "keeper's transform is per-unit, not per-zone, and a "
-                        "zone-keyed anchor table cannot represent it"
-                    )
-                by_zone[zone][year] = float(row_means[0])
+                ptp = float(np.ptp(row_means))
+                if iso in SOLVE_FUEL_ARRAY_ISOS:
+                    # The zone anchor is the MEDIAN row — the zone's shared
+                    # systematic level; per-unit economic caps (dual-fuel oil
+                    # parity) stay with the margin's own hourly fuel tracking.
+                    # A spread past the ceiling means the zone grain itself is
+                    # broken (a per-unit transform, e.g. an armed contract
+                    # haircut) — hard-fail rather than average over it.
+                    if ptp > SOLVE_FUEL_ARRAY_ZONE_PTP_MAX:
+                        raise SystemExit(
+                            f"{zone} {year}: gas rows in one zone spread "
+                            f"{ptp:.4f} $/MMBtu (> "
+                            f"{SOLVE_FUEL_ARRAY_ZONE_PTP_MAX}) — the keeper's "
+                            "fuel transform is per-unit, not per-zone, and a "
+                            "zone-keyed anchor table cannot represent it"
+                        )
+                    if ptp > 1e-9:
+                        print(
+                            f"  [{zone} {year}: within-zone gas-row spread "
+                            f"{ptp:.4f} $/MMBtu (per-unit caps); anchor = "
+                            "median row]"
+                        )
+                    by_zone[zone][year] = float(np.median(row_means))
+                else:
+                    # Every gas row in a zone carries the same additive
+                    # spread, so the first row IS the zone's transformed
+                    # series — guarded as above.
+                    if ptp > 1e-9:
+                        raise SystemExit(
+                            f"{zone} {year}: gas rows in one zone carry "
+                            f"DIFFERENT transformed delivered levels (max-min "
+                            f"{ptp:.6f} $/MMBtu) — the keeper's transform is "
+                            "per-unit, not per-zone, and a zone-keyed anchor "
+                            "table cannot represent it"
+                        )
+                    by_zone[zone][year] = float(row_means[0])
             del state, prices
         for zone, missing in empty_zone_years.items():
             if missing and len(missing) != len(TRAIN_WINDOW_HH):
