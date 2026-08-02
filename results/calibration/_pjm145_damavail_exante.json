@@ -1,0 +1,354 @@
+{
+ "prereg": "PREREG-pjm145-dam-availability-2026-08-02.md",
+ "loader": {
+  "2023": {
+   "covered_days": 364,
+   "total_days": 365,
+   "outage_mw": {
+    "p5": 10418.35,
+    "p25": 13468.0,
+    "p50": 15364.5,
+    "p75": 17366.75,
+    "p95": 23071.7,
+    "mean": 15790.3
+   },
+   "avail_fraction": {
+    "p5": 0.8309,
+    "p25": 0.8727,
+    "p50": 0.8874,
+    "p75": 0.9013,
+    "p95": 0.9236,
+    "mean": 0.8843
+   },
+   "frac_le_zero_days": 0
+  },
+  "2024": {
+   "covered_days": 364,
+   "total_days": 365,
+   "outage_mw": {
+    "p5": 10805.65,
+    "p25": 13469.75,
+    "p50": 15003.5,
+    "p75": 17176.0,
+    "p95": 20969.15,
+    "mean": 15379.1
+   },
+   "avail_fraction": {
+    "p5": 0.8463,
+    "p25": 0.8741,
+    "p50": 0.89,
+    "p75": 0.9013,
+    "p95": 0.9208,
+    "mean": 0.8873
+   },
+   "frac_le_zero_days": 0
+  },
+  "2025": {
+   "covered_days": 365,
+   "total_days": 365,
+   "outage_mw": {
+    "p5": 12482.8,
+    "p25": 15654.0,
+    "p50": 17997.0,
+    "p75": 20399.0,
+    "p95": 24879.2,
+    "mean": 18158.8
+   },
+   "avail_fraction": {
+    "p5": 0.8176,
+    "p25": 0.8505,
+    "p50": 0.8681,
+    "p75": 0.8853,
+    "p95": 0.9085,
+    "mean": 0.8669
+   },
+   "frac_le_zero_days": 0
+  }
+ },
+ "fleet": {
+  "2023": {
+   "classes": {
+    "CC_CHP": {
+     "cap_mw": 1538.8,
+     "mean_delta_mw": 1.4,
+     "mean_abs_delta_mw": 136.4,
+     "p95_abs_delta_mw": 416.3,
+     "restore_days": 137,
+     "remove_days": 225,
+     "saturated_day_frac": 0.0
+    },
+    "CC_REGULAR": {
+     "cap_mw": 59856.9,
+     "mean_delta_mw": 6338.8,
+     "mean_abs_delta_mw": 6465.1,
+     "p95_abs_delta_mw": 17131.3,
+     "restore_days": 336,
+     "remove_days": 28,
+     "saturated_day_frac": 0.0
+    },
+    "COAL": {
+     "cap_mw": 38722.3,
+     "mean_delta_mw": 13608.9,
+     "mean_abs_delta_mw": 13608.9,
+     "p95_abs_delta_mw": 20131.4,
+     "restore_days": 364,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    },
+    "CT_CHP": {
+     "cap_mw": 313.3,
+     "mean_delta_mw": 4.1,
+     "mean_abs_delta_mw": 13.2,
+     "p95_abs_delta_mw": 29.8,
+     "restore_days": 231,
+     "remove_days": 119,
+     "saturated_day_frac": 0.0
+    },
+    "CT_PEAKER": {
+     "cap_mw": 25995.8,
+     "mean_delta_mw": 1230.2,
+     "mean_abs_delta_mw": 1481.6,
+     "p95_abs_delta_mw": 2766.0,
+     "restore_days": 307,
+     "remove_days": 57,
+     "saturated_day_frac": 0.0
+    },
+    "ST_CHP": {
+     "cap_mw": 178.2,
+     "mean_delta_mw": 14.8,
+     "mean_abs_delta_mw": 18.7,
+     "p95_abs_delta_mw": 37.6,
+     "restore_days": 255,
+     "remove_days": 100,
+     "saturated_day_frac": 0.0
+    },
+    "ST_GAS": {
+     "cap_mw": 11094.4,
+     "mean_delta_mw": 2821.2,
+     "mean_abs_delta_mw": 2821.2,
+     "p95_abs_delta_mw": 4357.2,
+     "restore_days": 364,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    }
+   },
+   "pooled": {
+    "mean_delta_mw": 24019.5,
+    "mean_abs_delta_mw": 24019.5,
+    "p50_abs_delta_mw": 24718.8,
+    "p95_abs_delta_mw": 40962.2,
+    "max_abs_delta_mw": 48461.0,
+    "restore_days": 364,
+    "remove_days": 0,
+    "monthly_mean_delta_mw": [
+     14127.4,
+     20820.6,
+     26093.6,
+     38491.3,
+     35233.3,
+     25050.3,
+     9695.9,
+     11720.5,
+     22952.9,
+     35490.5,
+     30649.9,
+     18278.2
+    ]
+   }
+  },
+  "2024": {
+   "classes": {
+    "CC_CHP": {
+     "cap_mw": 1538.8,
+     "mean_delta_mw": -7.6,
+     "mean_abs_delta_mw": 120.4,
+     "p95_abs_delta_mw": 317.0,
+     "restore_days": 129,
+     "remove_days": 230,
+     "saturated_day_frac": 0.0
+    },
+    "CC_REGULAR": {
+     "cap_mw": 59856.9,
+     "mean_delta_mw": 5756.2,
+     "mean_abs_delta_mw": 6035.0,
+     "p95_abs_delta_mw": 16973.8,
+     "restore_days": 327,
+     "remove_days": 37,
+     "saturated_day_frac": 0.0
+    },
+    "COAL": {
+     "cap_mw": 38722.3,
+     "mean_delta_mw": 13378.8,
+     "mean_abs_delta_mw": 13378.8,
+     "p95_abs_delta_mw": 21349.6,
+     "restore_days": 364,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    },
+    "CT_CHP": {
+     "cap_mw": 309.2,
+     "mean_delta_mw": 1.5,
+     "mean_abs_delta_mw": 10.6,
+     "p95_abs_delta_mw": 24.5,
+     "restore_days": 204,
+     "remove_days": 140,
+     "saturated_day_frac": 0.0
+    },
+    "CT_PEAKER": {
+     "cap_mw": 26002.8,
+     "mean_delta_mw": 1252.9,
+     "mean_abs_delta_mw": 1379.2,
+     "p95_abs_delta_mw": 2525.7,
+     "restore_days": 324,
+     "remove_days": 40,
+     "saturated_day_frac": 0.0
+    },
+    "ST_CHP": {
+     "cap_mw": 177.0,
+     "mean_delta_mw": 19.6,
+     "mean_abs_delta_mw": 21.2,
+     "p95_abs_delta_mw": 38.4,
+     "restore_days": 325,
+     "remove_days": 37,
+     "saturated_day_frac": 0.0
+    },
+    "ST_GAS": {
+     "cap_mw": 11106.1,
+     "mean_delta_mw": 3288.4,
+     "mean_abs_delta_mw": 3288.4,
+     "p95_abs_delta_mw": 5431.9,
+     "restore_days": 364,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    }
+   },
+   "pooled": {
+    "mean_delta_mw": 23689.7,
+    "mean_abs_delta_mw": 23689.7,
+    "p50_abs_delta_mw": 22670.7,
+    "p95_abs_delta_mw": 41763.2,
+    "max_abs_delta_mw": 45411.0,
+    "restore_days": 364,
+    "remove_days": 0,
+    "monthly_mean_delta_mw": [
+     12845.4,
+     22754.1,
+     32680.2,
+     39425.8,
+     29954.9,
+     13473.6,
+     7653.6,
+     12317.2,
+     25655.2,
+     39451.1,
+     33812.3,
+     14730.9
+    ]
+   }
+  },
+  "2025": {
+   "classes": {
+    "CC_CHP": {
+     "cap_mw": 1538.8,
+     "mean_delta_mw": 33.9,
+     "mean_abs_delta_mw": 167.2,
+     "p95_abs_delta_mw": 456.1,
+     "restore_days": 144,
+     "remove_days": 217,
+     "saturated_day_frac": 0.0
+    },
+    "CC_REGULAR": {
+     "cap_mw": 59856.9,
+     "mean_delta_mw": 4960.7,
+     "mean_abs_delta_mw": 6244.3,
+     "p95_abs_delta_mw": 18147.2,
+     "restore_days": 241,
+     "remove_days": 124,
+     "saturated_day_frac": 0.0
+    },
+    "COAL": {
+     "cap_mw": 38828.3,
+     "mean_delta_mw": 11295.2,
+     "mean_abs_delta_mw": 11295.2,
+     "p95_abs_delta_mw": 19006.6,
+     "restore_days": 365,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    },
+    "CT_CHP": {
+     "cap_mw": 310.3,
+     "mean_delta_mw": -4.8,
+     "mean_abs_delta_mw": 9.9,
+     "p95_abs_delta_mw": 29.7,
+     "restore_days": 130,
+     "remove_days": 207,
+     "saturated_day_frac": 0.0
+    },
+    "CT_PEAKER": {
+     "cap_mw": 26002.1,
+     "mean_delta_mw": 742.1,
+     "mean_abs_delta_mw": 1034.2,
+     "p95_abs_delta_mw": 1906.4,
+     "restore_days": 297,
+     "remove_days": 68,
+     "saturated_day_frac": 0.0
+    },
+    "ST_CHP": {
+     "cap_mw": 177.0,
+     "mean_delta_mw": 41.1,
+     "mean_abs_delta_mw": 41.1,
+     "p95_abs_delta_mw": 62.9,
+     "restore_days": 364,
+     "remove_days": 1,
+     "saturated_day_frac": 0.0
+    },
+    "ST_GAS": {
+     "cap_mw": 11106.1,
+     "mean_delta_mw": 1775.3,
+     "mean_abs_delta_mw": 1775.3,
+     "p95_abs_delta_mw": 2599.8,
+     "restore_days": 365,
+     "remove_days": 0,
+     "saturated_day_frac": 0.0
+    }
+   },
+   "pooled": {
+    "mean_delta_mw": 18843.5,
+    "mean_abs_delta_mw": 18900.6,
+    "p50_abs_delta_mw": 20644.6,
+    "p95_abs_delta_mw": 39592.5,
+    "max_abs_delta_mw": 44160.7,
+    "restore_days": 360,
+    "remove_days": 5,
+    "monthly_mean_delta_mw": [
+     4941.5,
+     8906.6,
+     23391.6,
+     38470.3,
+     30863.1,
+     13557.0,
+     3963.8,
+     8972.5,
+     24080.3,
+     33276.1,
+     27441.7,
+     8205.4
+    ]
+   }
+  }
+ },
+ "kill": {
+  "KILL_COVER": {
+   "fires": false,
+   "years": []
+  },
+  "KILL_INERT": {
+   "fires": false
+  },
+  "KILL_DEGENERATE": {
+   "fires": false,
+   "detail": []
+  },
+  "any_kill": false
+ }
+}
