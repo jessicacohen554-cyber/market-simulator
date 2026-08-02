@@ -65,6 +65,45 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4B | — | 4 | L-VAL | — | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | Honest-unfit list delivered by FF-3E close-out. |
 | FF-4C | — | 4 | L-VAL | owner-gated | **WITHDRAWN-DEFERRED (owner 2026-07-19)** | PB-5 full-horizon band RUN deferred (§2.1b). MACHINERY exercised at T1 by FF-3H. |
 
+### WAVE FI — forward-input deep-research grounding (added 2026-08-02 by FFR-3B; audit FR-21)
+
+These four ran 2026-07-19/20 and were never entered in this ledger; the FF plan
+§6 WAVE FI table carried "prompt issued" for all of them for thirteen days. Both
+are corrected together. **G4 and G5 are memo/registry-only by charter — do not
+read "landed" as "mechanism implemented".**
+
+| FF id | Model | Wave | Lane | Gate | Status | Evidence |
+|---|---|---|---|---|---|---|
+| FF-G1 | FABLE | FI | L-INP | — | **landed (data half 2026-07-19, engine half 2026-07-26)** | Transmission-expansion registry + gated forward-TTC channel, default off. Engine half shipped as an unapplied patch and was applied under fast-tier escalation D2 (`fast-tier-triage-2026-07-26.md` §4-D2). `docs/transmission-expansion-methodology-2026-07.md`. T1-F A/B still pending before any flip. |
+| FF-G2 | OPUS | FI | L-INP | — | **landed 2026-07-20** | `ff-g2-fuel-forward-2026-07.md` + `docs/fuel-forward-methodology-2026-07.md`. AEO2025→AEO2026 bump + STEO/strip triangulation. Its near-term-blend owner box was decided **D-4 = OPTION A (status quo, pure AEO)**, 2026-08-02. |
+| FF-G3 | OPUS | FI | L-CAP | — | **landed 2026-07-20** | `ff-g3-net-cone-forward-2026-07.md` + `docs/capacity-price-forward-methodology-2026-07.md`. Its owner box became **D-3**: (b) 0.0 REAL CENTRAL and (c) vintage intake AUTHORIZED, signed 2026-08-02; **(a) forward-evolution mode still DEFERRED** (condition discharged by FFR-2E, not re-put). Currency follow-up FFR-2C. |
+| FF-G4 | FABLE/OPUS | FI | L-INP | — | **landed 2026-07-20 — MEMO ONLY** | `ff-g4-load-shape-design-memo-2026-07.md`. No code, no default, by charter. The implementing session (audit §4 Phase 5, FR-16 "memo→code, NEISO→PJM first") is **NOT run**. |
+| FF-G5 | OPUS | FI | L-INP | — | **landed 2026-07-20 — REGISTRY + MEMO ONLY** | `ff-g5-nuclear-registry-2026-07.md` + `docs/nuclear-fleet-forward-methodology-2026-07.md`; new datatype `nuclear-license-status`. **No mechanism code, no ScenarioConfig field.** Consuming it is FR-18/BLK-9, open. |
+
+### FFR — forecast-readiness remediation program (added 2026-08-02 by FFR-3B)
+
+Chartered by `docs/forecast-readiness-audit-2026-07.md` §4 and dispatched from
+`docs/forecast-readiness-prompt-pack-2026-07.md`. Its waves are numbered
+independently of the FF waves above.
+
+| FFR id | Model | Wave | Lane | Gate | Status | Evidence |
+|---|---|---|---|---|---|---|
+| FFR-PA | — | P | L-INP | — | **landed 2026-07-31** | `ffr-pa-confirmed-retirements-refresh-2026-07-31.md` — confirmed-retirements registry re-query + Eddystone §202(c) adjudication. |
+| FFR-PB | — | P | L-INP | — | **landed 2026-07-31** | `ffr-pb-atb-statute-intake-2026-07-31.md` — ATB intake landed as **v4.0.0 (there is no 2025/2026 edition)**; §45Y/48E closed against primary statute, values unchanged. What remains is the FFR-SC **re-derive**, not an intake. |
+| FFR-1A | FABLE | 1 | L-CAP | — | **landed 2026-07-31** | `ffr-1a-confirmed-exit-accounting-2026-07-31.md` — closes FR-1/FR-2/FR-13; `confirmed_derates` rows now WRITTEN (the RC-1B schema previously had no writer). |
+| FFR-1B | FABLE | 1 | L-SCAR | — | **landed 2026-08-01** | `ffr-1b-solve-year-availability-2026-08-01.md` — solve-year availability; measured events stay backcast-side. |
+| FFR-1C | — | 1 | L-CAP | — | **landed 2026-07-31** | `ffr-1c-hydro-accreditation-2026-07-31.md` — closes FR-3: hydro enters `accredited_firm_capacity_mw` at published class factors. **I7 still FAILs in CAISO/MISO/NYISO** — residual filed, not closed. Findings **F-5** (`firm_clean_mw` display seam) and **F-6** (year threading) routed to FFR-3B. |
+| FFR-1D | OPUS | 1 | L-VAL | — | **landed 2026-07-31** | `ffr-1d-enforcement-wave-2026-07-31.md` — enforcement wave (FR-24 CI wiring, the golden staleness waiver, forecast namespaces added to the CI path filters). |
+| FFR-1E | — | 1 | L-VAL | — | **landed 2026-07-31** | `ffr-1e-forecast-parity-check-2026-07-31.md` — FR-22 standing backcast→forecast parity check + registry + the eight gaps it found. CI job landed at §W1-X. |
+| FFR-§W1-X | — | 1 | — | — | **landed 2026-08-02 — WAVE 1 CLOSED** | `ffr-w1x-wave1-close-2026-08-02.md` — attestations, the single cache-epoch bump, the held parity CI job. **The epoch bump is why every pre-2026-07-31 forecast leg is a pre-epoch solve.** |
+| FFR-2A | OPUS | 2 | L-VAL | — | **in flight at 2026-08-02** | Crossover seam. The last open Wave-2 lane; Wave 2 closes when it lands. |
+| FFR-2B | OPUS | 2 | L-CAP | — | **landed 2026-08-02** (PR #3277) | `ffr-2b-retirement-entry-evidence-2026-08-02.md` — the D-1/D-2 evidence base. Bar met for D-1; **only PARTLY met for D-2** (rate limit re-phases rather than reduces backstop MW; I12 WARN→FAIL as a disclosed change). Caveat: ran with `correlated_forced_outage` + `entry_lookahead_reprice` pinned OFF by the harness. |
+| FFR-2C | OPUS | 2 | L-CAP | — | **landed 2026-08-02** | `ffr-2c-net-cone-currency-2026-08-02.md` — FR-19 net-CONE currency re-anchor + FF-G3 escalation evidence. Leaves constants-level epoch debt that FFR-3A must clear before its battery. |
+| FFR-2D | OPUS | 2 | — | — | **landed 2026-08-02 → SITTING HELD** | `ffr-owner-sitting-2026-08-02.md`. **All eleven decisions SIGNED** (Addendum C). |
+| FFR-2E | OPUS | 2 | L-CAP | — | **landed 2026-08-02** | `ffr-2e-shipped-capacity-posture-2026-08-02.md` — shipped-vs-fixed capacity posture. Discharged D-3a's defer condition mid-sitting; surfaced B1 (run_full_horizon's own FR-14 shape), the NYISO wrong-arm citation, and the pre-epoch-citation problem. |
+| FFR-3A | OPUS | 3 | L-VAL | ⛔ | **not-sent (next)** | Executes signed D-1 (flip), D-2 (arm both dampers), D-6 (regenerate the NYISO pair as **shipped-vs-fixed**, not the force-ON probe pair), then re-scores the T1 battery and regenerates every board. Must clear FFR-2C's constants-level epoch debt first. |
+| FFR-3B | OPUS | 3 | — | — | **landed 2026-08-02** | `ffr-3b-staleness-bookkeeping-2026-08-02.md` — executes signed D-5(a)/(b)/(c) + D-7(i); FR-21 staleness machinery (provenance stamps + WARN-level CI check); FR-27 forecast DOF-ledger stub; this bookkeeping reconciliation; closes FFR-1C **F-5**. |
+
 ---
 
 ## Owner decisions

@@ -34,6 +34,51 @@ sensitivities (carbon, gas, load, net-CONE, tech-cost — 24/25 Tier-1
 expectations PASS). Absolute entry/exit calls are not yet defensible in any
 ISO, and MISO cannot produce a forecast at all.
 
+> ### HEADLINE RE-GRADE — 2026-08-02 (FFR-3B; audit FR-27, "this doc's headline
+> verdict predates the FF-2C flip")
+>
+> **The one-line verdict above still stands, but its stated MECHANISM is
+> superseded for four of the five capacity-market ISOs, and the re-grade does not
+> soften the verdict — it relocates the failure.**
+>
+> **What FF-2C changed (2026-07-20).** `capacity_market_clearing` was flipped ON
+> for **PJM, MISO, CAISO and NEISO**, so the capacity payment in those four is
+> cleared off each ISO's published VRR/demand curve rather than held at a fixed
+> net-CONE stub. **NYISO was NOT flipped** — it remains curve-OFF, "excluded
+> pending re-calibration" — and **ERCOT is energy-only**, so it has no capacity
+> payment at all. The clause above, "in the five capacity-market ISOs the fixed
+> capacity payment makes fossil retirement *arithmetically impossible*", is
+> therefore true of the pre-flip configuration and of NYISO today, but is **no
+> longer the shipped mechanism in PJM/MISO/CAISO/NEISO**.
+>
+> **What the flip did NOT do: fix the retirement verdict.** FFR-2E measured the
+> two postures against each other and found they are not a perturbation of one
+> another — for **PJM, NEISO and MISO the curve arm pays ZERO capacity revenue
+> across 2021–2025** at the model's own reserve position, where the fixed arm
+> pays full net-CONE ($77–109k/firm-MW-yr). The failure mode therefore **inverted
+> rather than closed**: "arithmetically impossible to retire" became **over-fire**
+> — every curve-ON T1-H leg FAILs FC-3 on the retirement band, which is the direct
+> arithmetic consequence of removing that revenue from the screen. **CAISO's
+> curve-ON is provably inert** (no published CAISO demand curve in the registry).
+> **PJM is the one directional exception**: FFR-2C's floor reverses the sign of the
+> posture gap from 2028 ($0 → $63,875/firm-MW-yr, from 100 % below the fixed arm
+> to 17.5 % below).
+>
+> **What is signed but NOT yet shipped.** The owner signed **D-1** (retirement
+> rule `legacy` → `pipeline`) and **D-2** (arm both entry dampers) on 2026-08-02.
+> Neither default has moved — **FFR-3A executes them**, and only its re-scored
+> battery can re-grade the entry/exit verdict on measured evidence. Until then
+> this doc's narrow list of defensible uses is unchanged.
+>
+> Sources, each claim traceable: FF-2C flip set and NYISO exclusion —
+> `docs/forecast-development-plan-2026-07.md` §6 / `ff-wave-manager-ledger-2026-07.md`
+> FF-2C row; zero-revenue and PJM-floor measurements —
+> `docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md` §§3–5 and
+> `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`; signatures —
+> `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1/C.3. **No number in
+> the body below was re-measured by this re-grade** — the body remains the
+> 2026-07-13 measurement record.
+
 ---
 
 ## 1. What changed since the 2026-06-15 verdict
