@@ -1,0 +1,729 @@
+{
+ "bundle": "results/calibration/nyiso109_zonalanchor_B",
+ "trough_hours": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "peak_hours": [
+  17,
+  18,
+  19
+ ],
+ "eps": 1.0,
+ "years": {
+  "2023": {
+   "A_target": {
+    "da": {
+     "model_trough": 28.827,
+     "model_peak": 39.645,
+     "actual_trough": 24.04,
+     "actual_peak": 42.034,
+     "model_swing": 10.818,
+     "actual_swing": 17.994,
+     "share_reproduced": 0.6012,
+     "trough_error": 4.787,
+     "peak_error": -2.389,
+     "hod_amplitude_model": 11.676,
+     "hod_amplitude_actual": 22.454,
+     "hod_amplitude_share": 0.52,
+     "hod_peak_hour_model": 18,
+     "hod_peak_hour_actual": 17
+    },
+    "rt": {
+     "model_trough": 28.827,
+     "model_peak": 39.645,
+     "actual_trough": 23.336,
+     "actual_peak": 39.535,
+     "model_swing": 10.818,
+     "actual_swing": 16.199,
+     "share_reproduced": 0.6678,
+     "trough_error": 5.491,
+     "peak_error": 0.11,
+     "hod_amplitude_model": 11.676,
+     "hod_amplitude_actual": 18.309,
+     "hod_amplitude_share": 0.6377,
+     "hod_peak_hour_model": 18,
+     "hod_peak_hour_actual": 17
+    }
+   },
+   "B_reserve_formation": {
+    "model_reserve_dual": {
+     "share_hours_gt0": 0.0019,
+     "hours_gt0": 17,
+     "mean_peak_window": 0.1092,
+     "mean_trough_window": 0.0,
+     "mean_all": 0.0255,
+     "max": 32.16
+    },
+    "measured_da": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 5.7036,
+     "spin10_lw_mean_peak": 9.7246,
+     "spin10_lw_mean_trough": 3.356,
+     "spin10_share_gt1_peak": 1.0,
+     "spin10_share_gt10_peak": 0.3096,
+     "spin10_p50_peak": 8.084,
+     "spin10_p90_peak": 15.1442,
+     "stack_lw_mean_peak_crossref": 23.3473,
+     "reserve_gap_peak": 9.6153,
+     "reserve_gap_trough_control": 3.356,
+     "spin10_lw_mean_peak_censored200": 9.7246,
+     "share_peak_hours_spin_gt200": 0.0,
+     "B2_energy_basis": {
+      "trough_error_energy": 8.141,
+      "peak_error_energy": 7.226,
+      "model_energy_swing": 10.709,
+      "actual_energy_swing": 11.624,
+      "energy_swing_share": 0.9213,
+      "reserve_differential_peak_minus_trough": 6.369,
+      "missing_swing": 7.176,
+      "share_of_missing_swing_owned_by_reserve": 0.8874
+     }
+    },
+    "measured_rt": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 2.458,
+     "spin10_lw_mean_peak": 7.2875,
+     "spin10_lw_mean_trough": 0.2493,
+     "spin10_share_gt1_peak": 0.4594,
+     "spin10_share_gt10_peak": 0.1151,
+     "spin10_p50_peak": 0.684,
+     "spin10_p90_peak": 12.0031,
+     "stack_lw_mean_peak_crossref": 13.3712,
+     "reserve_gap_peak": 7.1783,
+     "reserve_gap_trough_control": 0.2493,
+     "spin10_lw_mean_peak_censored200": 5.2624,
+     "share_peak_hours_spin_gt200": 0.00548,
+     "B2_energy_basis": {
+      "trough_error_energy": 5.74,
+      "peak_error_energy": 7.288,
+      "model_energy_swing": 10.709,
+      "actual_energy_swing": 9.161,
+      "energy_swing_share": 1.169,
+      "reserve_differential_peak_minus_trough": 7.038,
+      "missing_swing": 5.381,
+      "share_of_missing_swing_owned_by_reserve": 1.308
+     }
+    }
+   },
+   "C_miss_anatomy": {
+    "da": {
+     "peak_hours": 1095,
+     "mean_miss": 2.389,
+     "p50_miss": 0.189,
+     "share_hours_miss_gt0": 0.5142,
+     "share_hours_miss_gt10": 0.1233,
+     "top_decile_share_of_total_positive": 0.6663,
+     "mean_miss_censored200": 2.077,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": 8.084
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": 0.597
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 0.489
+      }
+     }
+    },
+    "rt": {
+     "peak_hours": 1095,
+     "mean_miss": -0.11,
+     "p50_miss": -5.015,
+     "share_hours_miss_gt0": 0.2995,
+     "share_hours_miss_gt10": 0.1242,
+     "top_decile_share_of_total_positive": 0.8417,
+     "mean_miss_censored200": -0.526,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": -0.147
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": -1.786
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 0.751
+      }
+     }
+    }
+   },
+   "D_day_swing": {
+    "da": {
+     "days": 365,
+     "days_actual_swing_gt1": 364,
+     "median_day_share": 0.5771,
+     "mean_day_share": 0.6334,
+     "share_days_model_lt_half": 0.3626,
+     "share_days_model_inverted": 0.0
+    },
+    "rt": {
+     "days": 365,
+     "days_actual_swing_gt1": 336,
+     "median_day_share": 0.7255,
+     "mean_day_share": 1.1273,
+     "share_days_model_lt_half": 0.2619,
+     "share_days_model_inverted": 0.0
+    }
+   },
+   "E_stack_anatomy": {
+    "n_lp_rows": 747,
+    "n_internal_thermal_rows": 516,
+    "E1_da": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.0,
+     "mean_unreachable_excess": 0.0,
+     "top_of_stack_mean_peak": 418.705,
+     "mean_gw_in_band_model_to_actual": 1.3318,
+     "p50_gw_in_band_model_to_actual": 0.8426,
+     "mean_gw_priced_above_actual": 5.0496
+    },
+    "E1_rt": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.0,
+     "mean_unreachable_excess": 0.0,
+     "top_of_stack_mean_peak": 418.705,
+     "mean_gw_in_band_model_to_actual": 1.9096,
+     "p50_gw_in_band_model_to_actual": 1.2603,
+     "mean_gw_priced_above_actual": 5.1546
+    },
+    "E2_peak_marginal_census": {
+     "share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.1079,
+      "econ": 0.8323,
+      "peak": 0.0583,
+      "_unbinned": 0.0015
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 6505,
+      "CC_REGULAR:econ": 4565,
+      "CC_CHP:econ": 3645,
+      "CT_PEAKER:econ": 2465,
+      "ST_GAS:committed": 735,
+      "CT_CHP:committed": 617,
+      "CC_CHP:peak": 486,
+      "CT_CHP:econ": 474
+     },
+     "detection_rate": 0.9982,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 39.3661,
+      "cap_weighted_burn": 27.8849,
+      "cap_weighted_vom": 3.2425,
+      "cap_weighted_residual_markup": 8.2387
+     }
+    },
+    "E4_spin_dormancy_census": {
+     "spin_requirement_mw": 655.0,
+     "hydro_cap_mean_peak_gw": 4.6492,
+     "hydro_headroom_mean_peak_gw": 0.7808,
+     "hydro_headroom_p05_peak_gw": 0.268,
+     "share_all_hours_hydro_headroom_covers_req": 0.8932,
+     "share_peak_hours_hydro_headroom_covers_req": 0.5114,
+     "hours_hydro_headroom_short": 936,
+     "share_all_hours_conservative_zero_cost_covers_req": 0.8932,
+     "hours_conservative_zero_cost_short": 936
+    },
+    "E3_thermal_volume_peak": {
+     "suspect_zero_gas_hours": 0,
+     "model_mean_gw": 8.0683,
+     "measured_mean_gw": 8.6239,
+     "ratio": 0.9356,
+     "classes": [
+      "CC_CHP",
+      "CC_REGULAR",
+      "CT_CHP",
+      "CT_PEAKER",
+      "ST_CHP",
+      "ST_GAS",
+      "oil"
+     ]
+    }
+   }
+  },
+  "2024": {
+   "A_target": {
+    "da": {
+     "model_trough": 31.539,
+     "model_peak": 43.134,
+     "actual_trough": 28.831,
+     "actual_peak": 49.016,
+     "model_swing": 11.595,
+     "actual_swing": 20.185,
+     "share_reproduced": 0.5745,
+     "trough_error": 2.708,
+     "peak_error": -5.882,
+     "hod_amplitude_model": 12.79,
+     "hod_amplitude_actual": 25.126,
+     "hod_amplitude_share": 0.509,
+     "hod_peak_hour_model": 18,
+     "hod_peak_hour_actual": 17
+    },
+    "rt": {
+     "model_trough": 31.539,
+     "model_peak": 43.134,
+     "actual_trough": 28.322,
+     "actual_peak": 48.689,
+     "model_swing": 11.595,
+     "actual_swing": 20.366,
+     "share_reproduced": 0.5693,
+     "trough_error": 3.217,
+     "peak_error": -5.554,
+     "hod_amplitude_model": 12.79,
+     "hod_amplitude_actual": 26.225,
+     "hod_amplitude_share": 0.4877,
+     "hod_peak_hour_model": 18,
+     "hod_peak_hour_actual": 17
+    }
+   },
+   "B_reserve_formation": {
+    "model_reserve_dual": {
+     "share_hours_gt0": 0.0007,
+     "hours_gt0": 6,
+     "mean_peak_window": 0.0571,
+     "mean_trough_window": 0.0,
+     "mean_all": 0.0136,
+     "max": 28.12
+    },
+    "measured_da": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 5.2794,
+     "spin10_lw_mean_peak": 8.6195,
+     "spin10_lw_mean_trough": 3.0922,
+     "spin10_share_gt1_peak": 1.0,
+     "spin10_share_gt10_peak": 0.1735,
+     "spin10_p50_peak": 6.4387,
+     "spin10_p90_peak": 12.7551,
+     "stack_lw_mean_peak_crossref": 22.155,
+     "reserve_gap_peak": 8.5624,
+     "reserve_gap_trough_control": 3.0922,
+     "spin10_lw_mean_peak_censored200": 8.6195,
+     "share_peak_hours_spin_gt200": 0.0,
+     "B2_energy_basis": {
+      "trough_error_energy": 5.798,
+      "peak_error_energy": 2.681,
+      "model_energy_swing": 11.538,
+      "actual_energy_swing": 14.656,
+      "energy_swing_share": 0.7873,
+      "reserve_differential_peak_minus_trough": 5.527,
+      "missing_swing": 8.589,
+      "share_of_missing_swing_owned_by_reserve": 0.6435
+     }
+    },
+    "measured_rt": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 2.3765,
+     "spin10_lw_mean_peak": 8.7688,
+     "spin10_lw_mean_trough": 0.3021,
+     "spin10_share_gt1_peak": 0.4539,
+     "spin10_share_gt10_peak": 0.1123,
+     "spin10_p50_peak": 0.6945,
+     "spin10_p90_peak": 12.0226,
+     "stack_lw_mean_peak_crossref": 20.7495,
+     "reserve_gap_peak": 8.7117,
+     "reserve_gap_trough_control": 0.3021,
+     "spin10_lw_mean_peak_censored200": 5.4627,
+     "share_peak_hours_spin_gt200": 0.00731,
+     "B2_energy_basis": {
+      "trough_error_energy": 3.519,
+      "peak_error_energy": 3.157,
+      "model_energy_swing": 11.538,
+      "actual_energy_swing": 11.9,
+      "energy_swing_share": 0.9696,
+      "reserve_differential_peak_minus_trough": 8.467,
+      "missing_swing": 8.771,
+      "share_of_missing_swing_owned_by_reserve": 0.9653
+     }
+    }
+   },
+   "C_miss_anatomy": {
+    "da": {
+     "peak_hours": 1095,
+     "mean_miss": 5.882,
+     "p50_miss": 2.073,
+     "share_hours_miss_gt0": 0.6283,
+     "share_hours_miss_gt10": 0.2274,
+     "top_decile_share_of_total_positive": 0.572,
+     "mean_miss_censored200": 5.775,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": 11.274
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": 4.605
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 3.872
+      }
+     }
+    },
+    "rt": {
+     "peak_hours": 1095,
+     "mean_miss": 5.554,
+     "p50_miss": -0.368,
+     "share_hours_miss_gt0": 0.4785,
+     "share_hours_miss_gt10": 0.1863,
+     "top_decile_share_of_total_positive": 0.7666,
+     "mean_miss_censored200": 3.149,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": 4.606
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": 8.428
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 4.576
+      }
+     }
+    }
+   },
+   "D_day_swing": {
+    "da": {
+     "days": 365,
+     "days_actual_swing_gt1": 365,
+     "median_day_share": 0.5641,
+     "mean_day_share": 0.6147,
+     "share_days_model_lt_half": 0.3918,
+     "share_days_model_inverted": 0.0
+    },
+    "rt": {
+     "days": 365,
+     "days_actual_swing_gt1": 339,
+     "median_day_share": 0.6727,
+     "mean_day_share": 0.9105,
+     "share_days_model_lt_half": 0.3628,
+     "share_days_model_inverted": 0.0
+    }
+   },
+   "E_stack_anatomy": {
+    "n_lp_rows": 744,
+    "n_internal_thermal_rows": 521,
+    "E1_da": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.0,
+     "mean_unreachable_excess": 0.0,
+     "top_of_stack_mean_peak": 409.847,
+     "mean_gw_in_band_model_to_actual": 1.3846,
+     "p50_gw_in_band_model_to_actual": 1.0033,
+     "mean_gw_priced_above_actual": 4.1869
+    },
+    "E1_rt": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.0037,
+     "mean_unreachable_excess": 1.3059,
+     "top_of_stack_mean_peak": 409.847,
+     "mean_gw_in_band_model_to_actual": 1.5367,
+     "p50_gw_in_band_model_to_actual": 1.1927,
+     "mean_gw_priced_above_actual": 4.3568
+    },
+    "E2_peak_marginal_census": {
+     "share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.0951,
+      "econ": 0.8368,
+      "peak": 0.0673,
+      "_unbinned": 0.0008
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 7068,
+      "CC_REGULAR:econ": 5459,
+      "CT_PEAKER:econ": 3915,
+      "CC_CHP:econ": 2590,
+      "ST_GAS:committed": 779,
+      "CC_REGULAR:peak": 683,
+      "CT_CHP:committed": 629,
+      "CC_CHP:peak": 604
+     },
+     "detection_rate": 0.9982,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 42.1653,
+      "cap_weighted_burn": 26.715,
+      "cap_weighted_vom": 3.2771,
+      "cap_weighted_residual_markup": 12.1731
+     }
+    },
+    "E4_spin_dormancy_census": {
+     "spin_requirement_mw": 655.0,
+     "hydro_cap_mean_peak_gw": 4.5871,
+     "hydro_headroom_mean_peak_gw": 0.6781,
+     "hydro_headroom_p05_peak_gw": 0.1357,
+     "share_all_hours_hydro_headroom_covers_req": 0.8189,
+     "share_peak_hours_hydro_headroom_covers_req": 0.3562,
+     "hours_hydro_headroom_short": 1586,
+     "share_all_hours_conservative_zero_cost_covers_req": 0.8189,
+     "hours_conservative_zero_cost_short": 1586
+    },
+    "E3_thermal_volume_peak": {
+     "suspect_zero_gas_hours": 1,
+     "model_mean_gw": 8.6993,
+     "measured_mean_gw": 9.2914,
+     "ratio": 0.9363,
+     "classes": [
+      "CC_CHP",
+      "CC_REGULAR",
+      "CT_CHP",
+      "CT_PEAKER",
+      "ST_CHP",
+      "ST_GAS",
+      "oil"
+     ]
+    }
+   }
+  },
+  "2025": {
+   "A_target": {
+    "da": {
+     "model_trough": 50.526,
+     "model_peak": 66.961,
+     "actual_trough": 48.078,
+     "actual_peak": 84.195,
+     "model_swing": 16.436,
+     "actual_swing": 36.117,
+     "share_reproduced": 0.4551,
+     "trough_error": 2.448,
+     "peak_error": -17.234,
+     "hod_amplitude_model": 19.234,
+     "hod_amplitude_actual": 43.266,
+     "hod_amplitude_share": 0.4446,
+     "hod_peak_hour_model": 19,
+     "hod_peak_hour_actual": 17
+    },
+    "rt": {
+     "model_trough": 50.526,
+     "model_peak": 66.961,
+     "actual_trough": 48.049,
+     "actual_peak": 86.861,
+     "model_swing": 16.436,
+     "actual_swing": 38.812,
+     "share_reproduced": 0.4235,
+     "trough_error": 2.477,
+     "peak_error": -19.9,
+     "hod_amplitude_model": 19.234,
+     "hod_amplitude_actual": 46.988,
+     "hod_amplitude_share": 0.4093,
+     "hod_peak_hour_model": 19,
+     "hod_peak_hour_actual": 17
+    }
+   },
+   "B_reserve_formation": {
+    "model_reserve_dual": {
+     "share_hours_gt0": 0.0039,
+     "hours_gt0": 34,
+     "mean_peak_window": 0.4397,
+     "mean_trough_window": 0.0,
+     "mean_all": 0.0775,
+     "max": 120.01
+    },
+    "measured_da": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 9.0906,
+     "spin10_lw_mean_peak": 17.4574,
+     "spin10_lw_mean_trough": 4.876,
+     "spin10_share_gt1_peak": 1.0,
+     "spin10_share_gt10_peak": 0.5233,
+     "spin10_p50_peak": 10.4422,
+     "spin10_p90_peak": 28.8952,
+     "stack_lw_mean_peak_crossref": 46.401,
+     "reserve_gap_peak": 17.0177,
+     "reserve_gap_trough_control": 4.876,
+     "spin10_lw_mean_peak_censored200": 16.2821,
+     "share_peak_hours_spin_gt200": 0.00548,
+     "B2_energy_basis": {
+      "trough_error_energy": 7.321,
+      "peak_error_energy": -0.216,
+      "model_energy_swing": 15.996,
+      "actual_energy_swing": 23.533,
+      "energy_swing_share": 0.6797,
+      "reserve_differential_peak_minus_trough": 12.581,
+      "missing_swing": 19.681,
+      "share_of_missing_swing_owned_by_reserve": 0.6393
+     }
+    },
+    "measured_rt": {
+     "covered_hours": 8759,
+     "spin10_lw_mean_all": 7.5948,
+     "spin10_lw_mean_peak": 25.6685,
+     "spin10_lw_mean_trough": 1.7303,
+     "spin10_share_gt1_peak": 0.6621,
+     "spin10_share_gt10_peak": 0.3132,
+     "spin10_p50_peak": 3.7894,
+     "spin10_p90_peak": 36.6575,
+     "stack_lw_mean_peak_crossref": 67.4195,
+     "reserve_gap_peak": 25.2288,
+     "reserve_gap_trough_control": 1.7303,
+     "spin10_lw_mean_peak_censored200": 12.0731,
+     "share_peak_hours_spin_gt200": 0.02374,
+     "B2_energy_basis": {
+      "trough_error_energy": 4.206,
+      "peak_error_energy": 5.329,
+      "model_energy_swing": 15.996,
+      "actual_energy_swing": 14.873,
+      "energy_swing_share": 1.0755,
+      "reserve_differential_peak_minus_trough": 23.938,
+      "missing_swing": 22.376,
+      "share_of_missing_swing_owned_by_reserve": 1.0698
+     }
+    }
+   },
+   "C_miss_anatomy": {
+    "da": {
+     "peak_hours": 1095,
+     "mean_miss": 17.234,
+     "p50_miss": 9.135,
+     "share_hours_miss_gt0": 0.8082,
+     "share_hours_miss_gt10": 0.4685,
+     "top_decile_share_of_total_positive": 0.4781,
+     "mean_miss_censored200": 15.066,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": 31.998
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": 21.837
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 7.658
+      }
+     }
+    },
+    "rt": {
+     "peak_hours": 1095,
+     "mean_miss": 19.9,
+     "p50_miss": 2.922,
+     "share_hours_miss_gt0": 0.5808,
+     "share_hours_miss_gt10": 0.3616,
+     "top_decile_share_of_total_positive": 0.6974,
+     "mean_miss_censored200": 10.495,
+     "by_season": {
+      "DJF": {
+       "hours": 270,
+       "mean_miss": 28.236
+      },
+      "JJA": {
+       "hours": 276,
+       "mean_miss": 36.611
+      },
+      "shoulder": {
+       "hours": 549,
+       "mean_miss": 7.398
+      }
+     }
+    }
+   },
+   "D_day_swing": {
+    "da": {
+     "days": 365,
+     "days_actual_swing_gt1": 363,
+     "median_day_share": 0.459,
+     "mean_day_share": 0.4968,
+     "share_days_model_lt_half": 0.5675,
+     "share_days_model_inverted": 0.0055
+    },
+    "rt": {
+     "days": 365,
+     "days_actual_swing_gt1": 335,
+     "median_day_share": 0.5639,
+     "mean_day_share": 0.7311,
+     "share_days_model_lt_half": 0.4269,
+     "share_days_model_inverted": 0.003
+    }
+   },
+   "E_stack_anatomy": {
+    "n_lp_rows": 744,
+    "n_internal_thermal_rows": 521,
+    "E1_da": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.0,
+     "mean_unreachable_excess": 0.0,
+     "top_of_stack_mean_peak": 474.902,
+     "mean_gw_in_band_model_to_actual": 1.6764,
+     "p50_gw_in_band_model_to_actual": 1.4324,
+     "mean_gw_priced_above_actual": 3.7149
+    },
+    "E1_rt": {
+     "peak_hours": 1095,
+     "share_actual_above_top_of_stack": 0.011,
+     "mean_unreachable_excess": 4.1306,
+     "top_of_stack_mean_peak": 474.902,
+     "mean_gw_in_band_model_to_actual": 1.8924,
+     "p50_gw_in_band_model_to_actual": 1.6379,
+     "mean_gw_priced_above_actual": 4.005
+    },
+    "E2_peak_marginal_census": {
+     "share_by_tranche": {
+      "mustrun": 0.0,
+      "sync": 0.0,
+      "committed": 0.1015,
+      "econ": 0.8518,
+      "peak": 0.0435,
+      "_unbinned": 0.0032
+     },
+     "top_pairs": {
+      "ST_GAS:econ": 4425,
+      "CT_PEAKER:econ": 3476,
+      "CC_REGULAR:econ": 2520,
+      "CC_CHP:econ": 1080,
+      "ST_GAS:committed": 614,
+      "CT_CHP:committed": 428,
+      "CC_CHP:peak": 251,
+      "CT_CHP:econ": 240
+     },
+     "detection_rate": 0.9616,
+     "marginal_offer_decomposition": {
+      "cap_weighted_offer": 65.6713,
+      "cap_weighted_burn": 54.4961,
+      "cap_weighted_vom": 3.3957,
+      "cap_weighted_residual_markup": 7.7794
+     }
+    },
+    "E4_spin_dormancy_census": {
+     "spin_requirement_mw": 655.0,
+     "hydro_cap_mean_peak_gw": 4.5871,
+     "hydro_headroom_mean_peak_gw": 0.8469,
+     "hydro_headroom_p05_peak_gw": 0.0745,
+     "share_all_hours_hydro_headroom_covers_req": 0.8752,
+     "share_peak_hours_hydro_headroom_covers_req": 0.3927,
+     "hours_hydro_headroom_short": 1093,
+     "share_all_hours_conservative_zero_cost_covers_req": 0.8752,
+     "hours_conservative_zero_cost_short": 1093
+    },
+    "E3_thermal_volume_peak": {
+     "suspect_zero_gas_hours": 0,
+     "model_mean_gw": 8.8689,
+     "measured_mean_gw": 9.5075,
+     "ratio": 0.9328,
+     "classes": [
+      "CC_CHP",
+      "CC_REGULAR",
+      "CT_CHP",
+      "CT_PEAKER",
+      "ST_CHP",
+      "ST_GAS",
+      "oil"
+     ]
+    }
+   }
+  }
+ }
+}

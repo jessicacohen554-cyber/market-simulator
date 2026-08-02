@@ -3719,3 +3719,83 @@ tests** land with the mechanism, all passing.
 `results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md`.
 
 Next shorthand: nyiso-110.
+
+---
+
+## nyiso-110 — the peak half DECOMPOSED: missing everyday reserve-price formation, dollar-for-dollar; the C3a PASS is a cancellation; the flag-only spin-online arm pre-registered (2026-08-02)
+
+**Zero solves at diagnosis time; keeper UNCHANGED
+(`2026-08-01-nyiso109-zonal-margin-anchor`).** The nyiso-109 named successor —
+DIAGNOSIS + PREREG lane, solve only behind its own pre-registration. Probe:
+`scripts/probes/_nyiso110_peak_half_decomposition.py` (A–D committed artifacts
+only, seconds; E replays the keeper fleet per year, no LP). Machine output:
+`results/calibration/_nyiso110_peak_half_decomposition.json`. Finding:
+`results/calibration/FINDING-nyiso110-peak-half-decomposition-2026-08-02.md`.
+Prereg: `results/calibration/PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md`
+(committed and pushed BEFORE either arm solved).
+
+### 1. The decomposition (task a)
+
+The handoff asked how much of the peak-half miss is reserve/scarcity formation
+vs offer-surface level vs the systemic amplitude signature. Answer, measured on
+the keeper's own sidecars + NYISO's own posted AS prices (rule 25):
+
+* **Reserve formation DOMINATES.** The keeper's co-opt reserve dual is > $0 in
+  **17/6/34 hours** of 8,760 (peak-window mean $0.11/$0.06/$0.44); the measured
+  DA spin price is > $1 in **100 %** of peak-window hours (LW mean
+  $9.72/$8.62/$17.46, censoring at $200 moves it ≤ $1.2). The peak−trough
+  reserve differential covers **64–89 %** (DA) / **97–131 %** (RT, upper bound)
+  of the missing swing; hourly passthrough slope of the peak miss on the
+  measured spin ≈ **1** (DA +1.15/+1.31/+0.75; RT censored +0.77/+1.02/+1.09).
+* **The C3a PASS is a CANCELLATION.** Strip the measured spin content from the
+  actual and the model's energy side over-prices BOTH ends (RT energy basis:
+  trough +5.74/+3.52/+4.21, peak +7.29/+3.16/+5.33) with an energy-only swing
+  ≈ 100 % of the reserve-stripped actual (RT). Full-content formation would
+  land C3a-2023 ≈ +15 % — the level gate penalizes the structural repair. The
+  sharpest input yet to the OPEN owner amplitude-criterion call (xiso-1 §6);
+  surfaced, not decided, scorer untouched.
+* **The energy-side/offer leg is the smaller DA residual (~10–35 %).** The
+  actual DA peak is INSIDE the model's stack in 100.0 % of peak hours (top
+  $410–475); 1.33/1.38/1.68 GW sits priced between the model's clearing price
+  and the actual; the peak marginal set is `econ` **83.2/83.7/85.2 %** — the
+  trough's own family (nyiso-109 §8 reproduced on the keeper). Model thermal
+  at peak = **0.936/0.936/0.933 ×** measured (EIA-930 gas+oil,
+  zero-dropout-screened): the LP's perfect-foresight hydro over-peak-shaves,
+  §5.5 item 8's territory, not a new lane.
+* **Winter surplus beyond reserve** (DJF DA miss +8.08/+11.27/+32.00 vs DJF
+  peak spin 9.43/9.79/18.72) — item 4's blocked territory, sequenced behind
+  the arm.
+
+### 2. The adjudication (task b): pre-register ONE lever, off-queue with cause
+
+The §5.5 queue holds no admissible peak-half lever. The E4 liveness census
+(caiso-144 pattern, run to close the route ex-ante if dead) came back **LIVE**:
+hydro's zero-cost headroom (armed reserve-eligible; held reserve spends no
+water) covers the 655 MW NYCA spin requirement in only **51/36/39 %** of
+peak-window hours (82–89 % of all hours) — so an online-gated spin family has a
+formation channel concentrated exactly where the content is missing, and is
+slack at the trough. **Pre-registered:** the flag-only
+**`nyiso_spin_reserve_online`** single-delta arm on the keeper recipe — zero
+new DOF, no code change. nyiso-84's adjudication is superseded on both grounds
+by new evidence, cited against vintage: it scored C3c depth only (not
+contested), and its census ran at the pre-hydro-repair HEAD (2025 hydro = 3
+plants) — on the repaired keeper the recorded overnight-GT-forcing objection
+no longer reaches the hours it fired in, and kill P4 re-kills the arm if the
+signature reappears anyway. Kill P1 is the pre-registered C3a-2023
+un-cancellation breach (> +10 %); K3's liveness floor (500 dual-hours/yr)
+routes an under-forming arm to INERT, which would charter the nyiso-84
+class-widening build with this arm as its control evidence.
+
+### 3. Rule-28 duties discharged
+
+Matrix: header re-stamped; `diurnal_price_amplitude` NYISO stays **O** (lane
+ACTIVE behind the prereg), note + ev extended; `nyiso_rcpf_family` note
+extended (re-open on new evidence, cell stays K); `energy_reserve_coopt` note
+gains the NYISO dormancy sizing (cell stays K). §5.5 header + STATUS block +
+item-4 note; §5.7 xiso-1 entry annotated. `check_mechanism_matrix.py
+--base origin/main` passes. No dashboard registration from the diagnosis
+itself (no run existed when it was written); the A/B that follows registers
+BOTH arms whatever the verdict (rule 15), full span in one invocation each
+(rule 16), post-steps in order, LOYO duty per rule 22.
+
+Next shorthand: nyiso-111.
