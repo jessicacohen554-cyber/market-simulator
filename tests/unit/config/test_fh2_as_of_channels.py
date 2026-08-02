@@ -78,11 +78,35 @@ def _with_vintages(table):
 class TestDemandGrowthVintageMechanism(unittest.TestCase):
     """Plan §4 row 6 — the second BLOCKER's mechanism (values are FH-3's)."""
 
-    def test_registry_ships_empty_at_fh2(self):
-        # Mechanism-only by design: FH-3 lands the cited per-ISO editions. If
-        # this ever fails, the values landed — update the FH-3 handoff, and
-        # keep the fail-closed contract below intact.
-        self.assertEqual(DEMAND_GROWTH_RATES_VINTAGES, {})
+    def test_registry_populated_by_fh3(self):
+        # Was test_registry_ships_empty_at_fh2, per its own instruction: "if
+        # this ever fails, the values landed". FH-3 landed them 2026-08-02
+        # (docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md). The
+        # fail-closed contract below is unchanged and still enforced.
+        self.assertEqual(sorted(DEMAND_GROWTH_RATES_VINTAGES), [2021, 2023])
+        for as_of, table in DEMAND_GROWTH_RATES_VINTAGES.items():
+            for iso, cases in table.items():
+                # Inner shape must match DEMAND_GROWTH_RATES exactly, so one
+                # resolver serves both (rule 19 [R-ONE-MECH]).
+                self.assertIn("mid", cases, f"{as_of}/{iso} must carry a central case")
+                for case, eras in cases.items():
+                    self.assertIn(case, ("low", "mid", "high"), f"{as_of}/{iso}")
+                    self.assertEqual(
+                        sorted(eras), ["long", "near"], f"{as_of}/{iso}/{case}"
+                    )
+
+    def test_no_vintage_cell_inherits_the_current_table(self):
+        # The values must actually be as-of, not copies: every landed near rate
+        # differs from the live 2025/26-vintage rate for that ISO. ERCOT is the
+        # headline (8.5 %/yr live vs 2.0 % as-of-2021).
+        for as_of, table in DEMAND_GROWTH_RATES_VINTAGES.items():
+            for iso, cases in table.items():
+                live = DEMAND_GROWTH_RATES[iso]["mid"]["near"]
+                self.assertNotAlmostEqual(
+                    cases["mid"]["near"],
+                    live,
+                    msg=f"{as_of}/{iso} matches the live table",
+                )
 
     def test_default_none_resolves_current_table(self):
         config = ScenarioConfig(iso="ERCOT")
@@ -104,10 +128,52 @@ class TestDemandGrowthVintageMechanism(unittest.TestCase):
 
     def test_unknown_vintage_raises_at_config_build(self):
         # Fail-closed at build time (the FH-1 pre-solve-guard precedent), not
-        # at the first _scale_demand call hours into a run.
+        # at the first _scale_demand call hours into a run. 2019 is the probe
+        # year: it was 2021 until FH-3 landed that vintage for real.
         with self.assertRaises(ValueError) as ctx:
-            ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)
+            ScenarioConfig(iso="ERCOT", demand_growth_vintage=2019)
         self.assertIn("DEMAND_GROWTH_RATES_VINTAGES", str(ctx.exception))
+
+    def test_landed_vintage_builds_and_resolves(self):
+        # The converse of the guard above: a vintage FH-3 actually landed must
+        # build cleanly and return that edition's rate, not the live table's.
+        config = ScenarioConfig(iso="ERCOT", demand_growth_vintage=2021)
+        self.assertAlmostEqual(resolve_demand_growth_rate(config, 2023), 0.0200)
+        self.assertAlmostEqual(DEMAND_GROWTH_RATES["ERCOT"]["mid"]["near"], 0.085)
+
+    def test_missing_case_in_a_landed_vintage_raises(self):
+        # FH-3: the missing-ISO refusal, one level down. Most vintage cells
+        # carry `mid` alone because the edition published no low/high SERIES
+        # (inventing a band would breach rule 5). Before this guard a low/high
+        # request on such a cell fell through to the scalar
+        # config.demand_growth_rate (1 %/yr) — a silent answer no edition ever
+        # published, i.e. exactly the leak this seam exists to close.
+        for path in ("low", "high"):
+            config = ScenarioConfig(
+                iso="PJM", demand_growth_vintage=2021, demand_growth_path=path
+            )
+            with self.assertRaises(ValueError) as ctx:
+                resolve_demand_growth_rate(config, 2023)
+            self.assertIn(path, str(ctx.exception))
+            self.assertIn("PJM", str(ctx.exception))
+
+    def test_published_band_still_interpolates(self):
+        # ...and where the edition DID publish a full low/base/high series
+        # (NYISO Gold Book Table I-1a), all three cases resolve normally.
+        rates = {
+            p: resolve_demand_growth_rate(
+                ScenarioConfig(
+                    iso="NYISO", demand_growth_vintage=2021, demand_growth_path=p
+                ),
+                2023,
+            )
+            for p in ("low", "mid", "high")
+        }
+        self.assertLess(rates["low"], rates["mid"])
+        self.assertLess(rates["mid"], rates["high"])
+        # The 2021 Gold Book forecast NY energy DECLINING to 2030 on efficiency
+        # and codes — a negative central near rate is real, not a sign error.
+        self.assertLess(rates["mid"], 0.0)
 
     def test_unknown_vintage_raises_at_the_resolver(self):
         # Defence in depth: even a config that got past __post_init__ (e.g. one
