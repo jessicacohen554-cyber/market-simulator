@@ -553,6 +553,16 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_thermal_dam_availability_plant": "measured 60-Day DAM awards (per plant)",
     "ercot_thermal_dam_availability_coal": "measured 60-Day DAM awards (coal)",
     "ercot_dam_availability_coal_event_cap": "measured DAM-award coal event cap",
+    # Added by the FFR-W1X Wave-1 close (2026-08-02), not by FFR-1D: the field
+    # landed with ERCOT-149 (73e237a, 2026-08-01) AFTER this family was
+    # written, and it is the literal sibling of the coal entry directly above —
+    # same measured 60-Day DAM-award record, same min() block in
+    # data/fleet/arrays.py, its class scope merely widened to the DAM-covered
+    # gas classes. Omitting it left a one-flag rule-13 hole in a guard whose
+    # whole point is that the family be complete. Blast radius nil: no
+    # committed forecast-mode run_config exists at all, and the only config
+    # arming this field is the backcast ERCOT keeper.
+    "ercot_dam_availability_gas_event_cap": "measured DAM-award gas event cap",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
