@@ -2003,7 +2003,7 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage)
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**
 
 Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
 
@@ -2047,6 +2047,47 @@ charter with a new measured identification** before a solve:
    count AND placement, neutrality, level band, C3b hard kill, LOYO). Honest
    ceiling, stated ex ante: this lever closes 2025 + the amplitude defect;
    it does NOT close 2023 (charter §2.4/§5).
+   **PHASE-0 RUN AT neiso-76 (2026-08-02, NO LP, NO solve spent) → REFUTED ON
+   BOTH LIMBS; `da_virtual_bids` NEISO `O` → `R`.** The measured sign is
+   **opposite** to the charter's own theory of change.
+   * **Supply-conduct limb — K1 FIRES in all three years.** Within-day
+     movement of the submitted non-fast-start book is **−1.926 / −1.840 /
+     −2.274 $/MWh** against bars of +5/+5/+8: the body band is offered
+     *cheaper* at the peak than overnight. **72.8–73.9 %** of 227,033 paired
+     asset-days are bit-flat and the p25–p90 of the movement distribution is
+     exactly $0.00 — the median NEISO asset submits the identical curve at
+     03:00 and 18:00. The band's own hour-of-day offer profile spans
+     **$2.20 / $2.51 / $3.67** and *troughs* at HE19–20, against measured DA
+     hod ranges of $25.96 / $28.96 / $44.47. Corpus 1,063 day-files
+     (359/351/353). **K5 passes** (all five 2025 event days present, in the
+     band). **K2 cannot rescue it** — the best admissible conditioned cell is
+     negative in every year, and no month or tightness bin is positive.
+     **K4 fires on 2025** (+24.1 % excluding the 34 Algonquin fuel-tail days)
+     but only by moving the statistic toward zero. The fast-start band moves
+     **−13.7 to −15.9** — same sign, larger.
+   * **Demand-depth limb — K3(i) PASSES, K3(ii) does NOT fire, the limb dies
+     on MATERIALITY.** ISO-NE *does* publish a submitted priced DA
+     demand/virtual book (`hbdayaheaddemandbid`: FIXED / PRICE / INC / DEC,
+     ≤50 (price, MW) segments, 165–219 GWh/day priced), so the nyiso-94
+     blocker does not bind and NEISO is the **third** ISO with a submitted
+     curve. λ0 misses the posted DA price by a median **$5.29** (bar ≤ $2) and
+     the displacement share is **12.7 %** median (bar ≥ 30 %) — admissible,
+     not an attractor. But **PJM's premise is FALSE here**: net virtual is
+     **−0.41 / −0.25 / −0.24 GW at the peak** vs +0.13 / +0.02 / +0.07 at the
+     trough, a midday virtual-*supply* convergence play (−1.34 GW at HE13), so
+     arming it faithfully **subtracts $2.76 / $1.37 / $1.60** of diurnal
+     spread. Ladder semantics **identified, not assumed** (no cleared-MW
+     column exists, so the readings were crossed against the published hourly
+     DA cleared demand): cumulative brackets it in **0 of 900** hours,
+     incremental-with-INC-netted in **898**.
+   * **Four ISOs, four answers** (rule 25 doing real work): PJM `K` premise
+     true, MISO `G` attractor, NYISO `G` unidentifiable, NEISO `R`
+     identifiable, non-attracting, net short at the peak.
+   * **No arm pre-registered.** C3c-2023 stays routed to the owner (charter
+     §5); C3c-2025 keeps its neiso-75 sizing but loses its route. Evidence:
+     `results/calibration/FINDING-neiso76-dabid-phase0-2026-08-02.md`; probes
+     `scripts/probes/_neiso76_dabid_phase0.py`,
+     `_neiso76_demand_limb.py`.
 2. **Import-side scarcity identification** (HQ/NB tie behavior in tight
    hours) — second named class. **Ceiling bounded by the neiso-75
    decomposition (NOT chartered):** it is DA-type formation, and the 2023
@@ -2080,6 +2121,44 @@ charter with a new measured identification** before a solve:
    armed, nothing to adjudicate.)
 5. **STEP 3 seam disposition** (owner decision pending): carry the
    layup-vs-outage seam explicitly (recommendation (b) on record).
+
+5b. **NEW — the stack-TRAVERSAL identification (charter REQUESTED at
+    neiso-76, NOT opened).** The one route the Phase-0 measurement points at,
+    and it is a different matrix family (`use_campd_bins` / `plant_level_fleet`
+    / the tranche construction — **not** `da_virtual_bids`). Crossing the real
+    submitted offer book at the real hourly quantity gives a hour-of-day price
+    range of **$17.03 / $21.11 / $24.06** (66 / 73 / 54 % of the measured DA
+    range) peaking at **HE20–21**, against the keeper's own **$7.03 / $6.82 /
+    $13.30** — while *every constant-quantity read of the same book is
+    INVERTED* (marginal price at fixed depth peaks overnight). So the model's
+    within-day offer *surface* is not the binding constraint and the shape of
+    its stack in the **quantity** dimension is the live suspect. It is a
+    rule-14 `[R-ACCURATE]` comparison against a measured book, not a residual
+    fit. **Reported against interest:** the traversal read is depth-sensitive
+    — a flat 3 GW import allowance halves it to 36 / 34 / 31 %, only 4–7 pp
+    above the keeper — so the *direction* survives and the magnitude does not.
+    First task for any successor charter: reconcile the crossing quantity
+    (published DA cleared demand net of scheduled imports and cleared virtual
+    supply). Evidence: `FINDING-neiso76-dabid-phase0-2026-08-02.md` §D.
+
+5c. **NEISO's amplitude decomposition is NOT NYISO's** (neiso-76 task (b), no
+    LP; rule 25 in both directions). On NEISO's own posted AS prices — new
+    gitignored intake `data/raw/NEISO-AS/reserve-prices/` (RT
+    `finalhourlyreserveprice`, DA `daasreservedata`), regenerated by
+    `scripts/probes/_neiso76_reserve_content.py` — reserve owns only
+    **33 / 43 / 32 %** of the missing RT swing (NYISO: 97–131 %); NEISO's RT
+    reserve price is **$0.00 at the median hour** and > $1 in just
+    **23 / 23 / 21 %** of peak-window hours (NYISO DA spin: 100 %); and
+    **ISO-NE cleared no day-ahead reserve product at all before DASI go-live
+    2025-03-01** (measured: the DAAS report is header-only for Jan/Feb 2025,
+    first data row 2025-03-01), so 2023–24's DA gap is 100 % energy-side by
+    market design. Energy-basis restatement: the model's **peak is right to
+    ±$3** and its **overnight trough is $7.6–9.9 too dear** (energy-only swing
+    43 / 41 / 49 % of the reserve-stripped actual). NEISO's defect is an
+    over-priced trough; NYISO's was missing reserve formation. **That
+    disagreement is the material new input to the open owner
+    amplitude-criterion call** — it is not one shared defect with one shared
+    cause. No scorer changed.
 
 6. ~~**`measured_chp_heat_rates` companion floor (the neiso-71 successor).**~~
     **CLOSED at neiso-71 (2026-07-31) with NO LP spent — the cell stays `O`,
