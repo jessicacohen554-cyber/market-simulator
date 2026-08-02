@@ -106,7 +106,104 @@ unchanged at `603c2498bf71d21d`).
 
 ## 1. Measured results
 
-_(populated after the legs land)_
+All numbers below are read from the legs' own committed `score.json` /
+evolution ledgers via `scripts/score_capacity_hindcast.py` (+ `--flip-gate-extras`)
+and `scripts/probes/ffr2b_arm_compare.py`. Nothing is quoted from an absent
+bundle and no band is restated.
+
+### 1.1 MISO T1-H, curve-ON — `legacy` (BEFORE) at post-W1 HEAD
+
+Bundle `results/hindcast/miso-2021-2025-cmc-legacy-ffr2b/MISO/df5c3de1bad16670`;
+report `docs/hindcast-reports/miso-2021-2025-cmc-legacy-ffr2b-2026-08-02.md`.
+
+| quantity | actual | model (`legacy`, post-W1) | FF-1A's `D1=3` BEFORE (pre-W1) | band |
+|---|--:|--:|--:|:--|
+| thermal GW retired (T-R1) | 15.227 | **15.202 (−0 %)** | 12.986 | ✅ PASS |
+| unit recall > 300 MW | 17 | **2 matched (12 %)** | — | ❌ FAIL |
+| false-retire raw | — | **12.920 GW (85 % of model)** | 8.643 | ❌ FAIL |
+| coal econ (cum) | 10.934 | 1.497 (−86 %) | — | under-retire |
+| **gas_st econ (cum)** | **0.0** | **12.920** | **8.643** | inversion |
+| gas_ct / gas_cc / oil econ | 2.435 / 0.521 / 0.502 | 0.0 / 0.0 / 0.0 | — | −100 % |
+| T-R10a / T-R10b | — | **FAIL / FAIL** (first mover `gas_st`) | FAIL / FAIL | ❌ |
+| LOYO holds ≥ 2/3 | — | recall ✗ · T-R10a ✗ · T-R10b ✗ | — | ❌ |
+| BLK-10 backstop fired | — | **0.0 GW** | — | — |
+| I6 worst single year | ≤ 20 % cap | **9.06 % (2023)** | — | ✅ PASS |
+| 2025 system CO₂ (Mt) | 301.4 | 343.7 (+14 %) | — | ❌ FAIL |
+
+**Two findings already, before the AFTER arm.**
+
+1. **E4 fires — Wave 1 moved the legacy leg, and moved it the wrong way.** The
+   MISO `gas_st` false-retire is **8.643 → 12.920 GW (+49 %)** versus FF-1A's
+   committed `D1=3` BEFORE, and cumulative thermal 12.986 → 15.202 GW. Nothing
+   in the decision rule changed between those measurements, so the movement is
+   FR-1/FR-2/FR-7's — most plausibly FR-7 (age-based availability now keys on
+   the solve year, so an aging fleet's screens see lower availability and
+   thinner attainable margins). **The pre-W1 FF-1A numbers are therefore not a
+   valid BEFORE for this decision**, which is exactly why the §0c-9 duty
+   requires the cold re-solve. Any D-1 argument that quotes the 8.643 GW figure
+   as the current baseline is quoting a stale tree.
+2. **The `legacy` thermal LEVEL passes while its composition is entirely
+   wrong.** 15.202 vs 15.227 GW actual is a −0 % T-R1 PASS built from 12.920 GW
+   of a fuel that retired **zero** MW in reality plus 1.497 GW of the coal that
+   actually retired 10.934. This is the sharpest available illustration of why
+   rule 1 orders structure before level: the aggregate band is *passing on a
+   cancellation of two large opposite-signed composition errors*, and a
+   level-only reading of this leg would call it the best MISO retirement result
+   on record.
+
+### 1.2 MISO T1-H, curve-ON — `legacy` → `pipeline`, measured on one tree
+
+Both arms solved cold at the same HEAD, same window, same curve-ON posture;
+the ONLY difference is `retirement_rule`. Bundles
+`…/MISO/df5c3de1bad16670` (legacy) and `…/MISO/0a4455fd0d642364` (pipeline).
+
+| quantity | actual | `legacy` | `pipeline` | verdict |
+|---|--:|--:|--:|:--|
+| **unit recall > 300 MW** | 17 | 2 (12 %) ❌ | **13 (76 %)** ✅ | **restored** |
+| **false-retire raw** | — | 12.920 GW (85 % of model) ❌ | **0.997 GW (8 %)** ✅ | **−92 %** |
+| **gas_st econ (A = 0)** | 0.0 | **12.920 GW** | **0.0 GW** | **inversion closed** |
+| **coal econ (cum)** | 10.934 | 1.497 (−86 %) | **11.932 (+9 %)** | **wave restored** |
+| T-R10a / T-R10b | — | FAIL / FAIL | **PASS / PASS** | first mover `gas_st` → `coal` |
+| LOYO holds ≥ 2/3 (recall · a · b) | — | ✗ · ✗ · ✗ | **✓ · ✓ · ✓** | **rule-22 bar MET** |
+| thermal GW retired (T-R1 level) | 15.227 | 15.202 (−0 %) ✅ | 12.716 (−16 %) ❌ | level regresses |
+| plant-exact recall (report-only) | 17 | 1 (6 %) | **8 (47 %)** | — |
+| 2025 system CO₂ (Mt) | 301.4 | 343.7 (+14 %) ❌ | **322.6 (+7 %)** ✅ | improves |
+| BLK-10 backstop fired | — | 0.0 GW | 0.0 GW | unchanged |
+| I6 worst single year (cap 20 %) | — | 9.06 % (2023) ✅ | 8.37 % (2024) ✅ | both PASS |
+| wind / solar / gas_cc / gas_ct / storage adds (GW) | 7.2 / 18.649 / 3.867 / 1.379 / 0.744 | 8.0 / 0.0 / 4.146 / 2.0 / 4.0 | **8.0 / 0.0 / 4.146 / 2.0 / 4.0** | **byte-identical** |
+
+**LOYO folds (scorer-side, within 2023–2025, no re-solve):**
+
+| fold | `legacy` recall · false raw · T-R10a/b | `pipeline` recall · false raw · T-R10a/b |
+|---|---|---|
+| −2023 | 2/14 FAIL · 0.0 GW · PASS/PASS | **11/14 PASS** · 3.814 GW · PASS/PASS |
+| −2024 | 0/13 FAIL · 12.926 GW · FAIL/FAIL | 0/13 FAIL · **0.006 GW** · PASS/PASS |
+| −2025 | 2/17 FAIL · 12.920 GW · FAIL/FAIL | **13/17 PASS** · 1.012 GW · PASS/PASS |
+
+**Readings.**
+
+- **Flip-gate items 3 and 4 clear for MISO, LOYO-robust.** T-R10a/b hold **3/3**
+  folds and recall holds 2/3 — the rule-22 promotion criterion. The −2024 recall
+  fold is zero for the same measured reason FF-1A recorded: the model's coal
+  wave executes almost entirely in 2024 (decisions 2021 + coal execution lag 3)
+  while the real exits spread 2023–2025. That is a **calendar-spread** finding
+  for the revenue lane, not a membership failure — the wave's membership is
+  fold-robust.
+- **T-R1(e) "additions bands not degraded vs BEFORE" is met in the strongest
+  possible form: they are unchanged to the MW.** The decision rule moves
+  retirements and nothing else on the additions side, so nothing in the D-2
+  entry evidence is confounded by D-1.
+- **The one regression is the aggregate LEVEL band, and it is the honest
+  trade rule 1 predicts.** `legacy`'s −0 % was 12.920 GW of a zero-real fuel
+  cancelling a 9.4 GW coal shortfall; `pipeline`'s −16 % is a coal wave at
+  **+9 % of actual** with the residual carried by gas_ct/gas_cc/oil exits the
+  screens still do not value (2.435 / 0.521 / 0.502 GW actual, 0.0 modelled).
+  That residual is the **known revenue-lane gap** (BLK-6/BLK-9, RD-4: the
+  screens under-value peaking-adjacent classes without scarcity/AS revenue) —
+  it is not closable by the decision rule and must not be closed with a fuel
+  patch (rule 1). Reported as an open blocker, not a parameter (rule 11/21).
+- **CO₂ improves as a by-product**, +14 % → +7 %, crossing back inside the
+  ±10 % band — consistent with retiring the right fuel.
 
 ## 2. D-1 decision box
 
