@@ -1333,7 +1333,37 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-02 (nyiso-111) — the CROSS-ISO TRANSFER sweep: two candidates
+REFUSED ex-ante on NYISO's own data, one SOLVED.** With the in-LP
+reserve-formation family exhausted (nyiso-110) the queue held no peak-half
+lever, so this session went to the **cross-ISO transfer candidates** — the
+matrix's `U` cells where another ISO carries a `K` — and adjudicated the three
+that are live at NYISO. Two die before a solve is spent, each on NYISO's own
+measurement rather than on analogy (rule 25 `[R-ISO-SCOPE]`):
+
+* **`temp_dependent_derate` `U → G`** (CAISO/MISO/NEISO keeper; PJM `R`). The
+  miso-101 identification re-run on NY CAMPD **does not identify**: 2 of 15
+  candidate cogens clear the floor, the capacity-weighted p50 within-day slope
+  is **−0.00745/°C — the wrong sign** (capability rising with temperature),
+  the near-pinned plant (loading 0.80) measures **−0.000086 at r = 0.006**,
+  and the **phase validation fails at best lag −5 h** against MISO's confirmed
+  lag 0. The estimator is reading NYC's air-conditioning *dispatch* shape, not
+  an ambient capability response, and rule 25 forbids importing the literature
+  slopes pjm-95 already refuted.
+* **`hydro_ror_split` `U → G`** — this is **item 8's blocked classifier review,
+  answered**. See item 8 below.
+* **`ramp_envelopes` (`ramp_limits`) — PRE-REGISTERED AND SOLVED.** The pjm-140
+  transfer; NYISO's artifact derives for the first time (77 rows / 48
+  well-observed plants; CC up-envelope median **0.49 × pmax**, ST 0.42, CT
+  0.92) and the bound-against-the-bound pre-check fires: **5,226 of 543,058
+  group-transitions (0.96 %) cross the measured envelope carrying 225,117 MWh
+  of infeasible ramping** in 2023, a crossing rate **2.1–3.0× PJM's** and ~6×
+  PJM's relative to each fleet's own energy. Honouring pjm-140's all-ISO
+  lesson, the class-aggregate test is reported as **uninformative** (1 hour of
+  26,280), not as support. `PREREG-nyiso111-ramp-envelopes-2026-08-02.md`
+  (committed before any solve).
 
 **STATUS 2026-08-02 (nyiso-110).** The peak half is **DECOMPOSED, no LP**, on the
 keeper's own sidecars + NYISO's own posted AS prices
@@ -1623,10 +1653,49 @@ capability envelope/floor pair is now the keeper — cells K above):
    adverse (rule 14, not patched): 2023 `CC_REGULAR` −2.76 → −2.79 of ±2.94,
    in band. Zero fitted scalars.
    `docs/FINDING-nyiso98-nuclear-availability-2026-07-29.md`.
-8. **`hydro_ror_split` NYISO classifier review** — blocked on answering the
+8. ~~**`hydro_ror_split` NYISO classifier review** — blocked on answering the
    Robert Moses Niagara hybrid label (Run-of-river/Peaking, 52% of fleet MW)
    from the treaty scenic-flow schedule; never arm on the CAISO-reviewed rule
-   alone.
+   alone.~~ **CLOSED 2026-08-02 (nyiso-111): the review is ANSWERED and the
+   transfer is FALSIFIED ex-ante by NY hydro's own metered output — cell
+   `U → G`, no solve.** The committed `curate_hydro_plant_modes` rule 1
+   (Peaking / Intermediate Peaking → shapeable; every other label, including
+   every hybrid, → flat) applied to EHA FY2024 on NYISO's own BA flat-pins
+   **3,420.4 of 4,682.0 MW = 73.1 %** of conventional-hydro MW — Robert Moses
+   Niagara alone 2,429.1 MW (51.9 %) — leaving a shapeable bound of
+   **1,261.6 MW**. A flat-pinned plant contributes exactly **zero** diurnal
+   swing by construction, so that is an upper bound on the model's achievable
+   hydro swing under the arm, and **the measured swing exceeds it in every
+   year**: EIA-930 `NYIS` `NG: WAT` hour-of-day mean-profile swing
+   **1,291.9 / 1,396.8 / 1,792.2 MW** (1.02 / 1.11 / 1.42×) and median-**day**
+   within-day range 1,496 / 1,495 / 1,929 MW (1.19 / 1.19 / 1.53×). `NG: WAT`
+   is conventional-only for this BA (nyiso-107 re-verified NYISO's absence
+   from `EIA930_PS_FOLDED_INTO_WAT`), so Lewiston and Blenheim-Gilboa are not
+   in the series.
+   **The label was never the problem — the reading of it was.** EHA itself
+   records the Niagara project's peaking machinery as its **own separate
+   plant** (Lewiston, EIA 2692, `Mode = Peaking`, `PS_MW` 240, same
+   `Water = Niagara River`) alongside Robert Moses Niagara (EIA 2693,
+   `Run-of-river/Peaking`, `CH_MW` 2,429.1). `Run-of-river/Peaking` therefore
+   describes the **powerhouse's hydraulics**, not the project's shapeability,
+   and rule 1's gloss ("a reregulating/RoR powerhouse cannot chase price
+   whatever its upstream neighbours do") is a CAISO-reviewed reading that NY's
+   own metered hydro falsifies. The treaty scenic-flow schedule the queue
+   entry asked for is not needed to decide this and cannot rescue it: it would
+   bound *seasonal daytime diversion*, not restore the 1.3–1.9 GW of within-day
+   swing the flat pin deletes.
+   **Direction is wrong too, and the real defect is an order of magnitude
+   smaller.** The nyiso-110 E3 over-peak-shave is confirmed by an independent
+   construction but is modest: the keeper's hydro exceeds measured at h17–19 by
+   **+293 / +242 / +204 MW** (model hod swing 1,507 / 1,541 / 1,721 vs measured
+   1,195 / 1,292 / 1,593 MW; phase correct — model peak h18/h19/h19 against
+   measured h19; annual volumes pinned to 4 dp). Removing 3.4 GW of shaping
+   capability to correct ~250 MW is not a repair. **Successor, chartered not
+   armed:** a *bounded* within-day shaping constraint (a Lewiston-class
+   reservoir-energy bound) — a new mechanism with its own identification, never
+   this transfer.
+   Probe: `scripts/probes/_nyiso111_hydro_ror_split_screen.py` →
+   `results/calibration/_nyiso111_hydro_ror_split_screen.json`.
 9. ~~**Import hourly shape** (nyiso-86 §3): r_hr 0.45–0.61.~~ **CLOSED
    2026-07-29 (nyiso-99): REFUSED ex-ante, no solve — an attributed C3c
    symptom, not an import lever.** Unlike item 7, **the queue's premise
