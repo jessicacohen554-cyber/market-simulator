@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-01-ercot150a-control-zerodelta",
+  "label": "ercot150a control zerodelta",
+  "date": "2026-08-01",
+  "shorthand": "ercot150a-control-zerodelta",
+  "definition": "ercot-150 same-HEAD zero-delta control",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-01-ercot150a-control-zerodelta.js",
+  "bundle": "results/calibration/ercot150_control_A"
+}
