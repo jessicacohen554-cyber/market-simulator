@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -33,10 +34,16 @@ from market_sim.config.constants import (
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
 )
+from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data import fuel as fuelmod
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
-from market_sim.data.fuel import _hold_flat_extrapolate, resolve_annual_gas_price
+from market_sim.data.fuel import (
+    _hold_flat_extrapolate,
+    resolve_annual_gas_price,
+    resolve_gas_scenario_path,
+)
+from market_sim.data.neighbor_price import neighbor_gas_price
 from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline import solve as pipeline_solve
 from market_sim.results import cache
@@ -282,6 +289,110 @@ class TestHarnessHelpers(unittest.TestCase):
     def test_assert_forward_drivers_noop_plain(self):
         c = H.build_config("ERCOT", 2021, 2025, "realized")
         self.assertEqual(H.assert_forward_drivers(c, 2021, 2025), [])
+
+
+# --------------------------------------------------------------------------- #
+# Neighbor-seam gas path + measured-overlay guard (audit FR-9, FFR-2A)
+# --------------------------------------------------------------------------- #
+class TestNeighborSeamForwardGas(unittest.TestCase):
+    """The import seam is a second gas consumer and must ride forward gas."""
+
+    def _miso(self, **overrides):
+        c = H.build_config(
+            "MISO",
+            2023,
+            2027,
+            "realized",
+            vintage=2023,
+            crossover=True,
+            capacity_market_clearing=True,
+        )
+        return replace(c, **overrides) if overrides else c
+
+    def test_seam_gas_price_holds_flat_instead_of_raising(self):
+        # Pre-fix this raised KeyError: "hindcast_realized" knots stop at 2025.
+        spec = INTERFACE_NEIGHBORS["MISO"][0]
+        self.assertAlmostEqual(
+            neighbor_gas_price(spec, 2026, "hindcast_realized"),
+            HENRY_HUB_TRAJECTORIES["hindcast_realized"][2025] + spec.gas_basis,
+        )
+        # ... and every knot year is byte-identical to the raw index it replaced.
+        for y in (2023, 2024, 2025):
+            self.assertEqual(
+                neighbor_gas_price(spec, y, "hindcast_realized"),
+                HENRY_HUB_TRAJECTORIES["hindcast_realized"][y] + spec.gas_basis,
+            )
+
+    def test_resolver_switches_path_at_the_boundary(self):
+        c = self._miso()
+        self.assertEqual(resolve_gas_scenario_path(c, 2025), "hindcast_realized")
+        self.assertEqual(resolve_gas_scenario_path(c, 2026), "mid")
+        # Non-crossover runs are untouched (backcast + plain forecast).
+        back = ScenarioConfig(iso="ERCOT", mode="backcast", start_year=2024)
+        self.assertEqual(resolve_gas_scenario_path(back, 2024), back.gas_price_path)
+
+    def test_armed_seam_is_clean_at_head(self):
+        self.assertEqual(
+            H.assert_forward_drivers(
+                self._miso(reference_price_interface=True), 2023, 2027
+            ),
+            [],
+        )
+
+    def test_guard_catches_the_pre_fix_seam(self):
+        """Restoring the pre-FFR-2A behaviour must trip the leakage guard."""
+        c = self._miso(reference_price_interface=True)
+        with (
+            patch.object(
+                H, "assert_neighbor_seam_drivers", H.assert_neighbor_seam_drivers
+            ),
+            patch.object(
+                fuelmod, "resolve_gas_scenario_path", lambda cfg, y: cfg.gas_price_path
+            ),
+        ):
+            violations = H.assert_forward_drivers(c, 2023, 2027)
+        self.assertEqual(len(violations), 2)  # 2026 + 2027
+        for v in violations:
+            self.assertIn("hindcast_realized", v)
+
+    def test_disarmed_seam_asserts_nothing(self):
+        # The FF-2D MISO crossover's own posture: no seam armed, so the priced
+        # code path is never reached (FFR-2A diagnosis).
+        c = self._miso()
+        self.assertFalse(c.reference_price_interface)
+        self.assertEqual(H.assert_neighbor_seam_drivers(c, [2026, 2027]), [])
+
+    def test_measured_overlay_guard(self):
+        c = self._miso()
+        self.assertEqual(H.assert_no_measured_overlays(c), [])
+        # A weather pin at/above the boundary is a violation on a T1-X run...
+        self.assertTrue(H.assert_no_measured_overlays(replace(c, weather_year=2026)))
+        # ... but is the declared contract of a T1-FF full-forward run.
+        ff = H.build_config(
+            "ERCOT", 2023, 2025, "realized", vintage=2023, forward_from_base=True
+        )
+        self.assertTrue(ff.is_full_forward_hindcast)
+        self.assertEqual(H.assert_no_measured_overlays(ff), [])
+
+    def test_measured_outage_record_is_refused(self):
+        # ScenarioConfig.__post_init__ refuses this at construction, so the
+        # only way to reach the harness guard is to mutate the (unfrozen)
+        # dataclass afterwards — which is exactly the belt-and-braces case:
+        # the harness restates the contract at run time so a loosened
+        # construction-time guard cannot pass silently.
+        c = self._miso()
+        c.outage_source = "historic"
+        self.assertTrue(
+            any("outage_source" in v for v in H.assert_no_measured_overlays(c))
+        )
+        c.outage_source = "statistical"
+        c.miso_measured_reserve_requirements = True
+        self.assertTrue(
+            any(
+                "miso_measured_reserve_requirements" in v
+                for v in H.assert_no_measured_overlays(c)
+            )
+        )
 
 
 # --------------------------------------------------------------------------- #
