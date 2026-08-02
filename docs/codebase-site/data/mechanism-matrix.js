@@ -732,10 +732,33 @@
  * n_residual 6. NEW open owner rulings #9 (deriver _site() cross-train
  * collapse + gas crosswalk partial acceptance) and #10 (pin remove-direction
  * over-removal at partial-coverage plants).
+ *
+ * CROSS-ISO 2026-08-02 (xiso-2, ZERO LP, NO keeper touched, NO run registered):
+ * new audit row outage_artifact_provenance, cells IIIOII — section 5.7's OLDEST
+ * open audit (the post-guard re-derivation sweep of outage-derived artifacts,
+ * flagged 2026-07-26) is CLOSED, and the campd_outage_windows note's standing
+ * claim that downstream artifacts were unaudited is retired with it. Result:
+ * 5 of the 6 committed guard-on extracts re-derive BYTE-IDENTICALLY at HEAD
+ * (ERCOT/CAISO/PJM/NYISO/NEISO); MISO is the sole mismatch and is a strict
+ * SUPERSET of +17 windows, ALL 2022 COAL, with the 2023-2025 TRAINING window
+ * identical row-for-row and its layup companion byte-identical — root-caused to
+ * commit 5cd937407 (2026-07-31) filling the MISO EIA-930 2022 hourly hole
+ * (7 -> 8,760 rows), a source-data change, NOT detector drift. NO ISO's keeper
+ * consumes a stale outage-derived artifact: the only keeper-consumed one is
+ * NYISO's ST_GAS reliability-floor limbs, re-derived 18 h AFTER the guard by
+ * nyiso-81. Two pre-guard artifacts exist and neither is keeper-consumed
+ * (MAINTENANCE_MONTHLY_SHAPE, forecast-only; caiso-dam-resource-crosswalk.csv,
+ * zero code consumers). One live defect found and FIXED:
+ * derive_maintenance_shape.py globbed campd-unit-outages*.csv and so pooled the
+ * guard's OWN layup vetoes back in (24 files / 58,744 rows vs 6 / 39,755
+ * intended); the selector now enumerates the six standard extracts. The stale
+ * constant was deliberately NOT re-derived — admissible under rule 23, but it
+ * is a forecast-lane input and the arm was a census, not a sweep. Holdout spend
+ * freeze ACTIVE and untouched; only bytes were compared.
  */
 window.MECH_MATRIX = {
   version: 1,
-  updated: "2026-08-01",
+  updated: "2026-08-02",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-08-01-ercot149-gas-event-cap",
@@ -1072,8 +1095,13 @@ window.MECH_MATRIX = {
     { id: "campd_outage_windows", cat: "outage", name: "CAMPD unit outage windows (historic outage source)",
       def: "outage_source=historic :7709", mode: "B",
       cells: "KKKKKK",
-      note: "Backcast baseline all six — WITH the shared defect: the detector books economic layup as mechanical outage in ALL SIX extracts (23-46% of CC capacity-year vs ~10-15% real). Merit-order guard (neiso-64/65) adopted cross-ISO 2026-07-26; re-audit: ERCOT insensitive, NEISO holds, MISO/PJM/NYISO RE-TUNE REQUIRED, CAISO re-derived (caiso-123). Holdout spend FROZEN on this finding. Downstream artifacts NOT re-derived post-guard (flagged, unaudited).",
-      ev: { Q: "neiso-63/64/65", All: "governance.md 2026-07-24/26" } },
+      note: "Backcast baseline all six — WITH the shared defect: the detector books economic layup as mechanical outage in ALL SIX extracts (23-46% of CC capacity-year vs ~10-15% real). Merit-order guard (neiso-64/65) adopted cross-ISO 2026-07-26; re-audit: ERCOT insensitive, NEISO holds, MISO/PJM/NYISO RE-TUNE REQUIRED, CAISO re-derived (caiso-123). Holdout spend FROZEN on this finding. Downstream-artifact staleness AUDITED AND CLOSED at xiso-2 (2026-08-02) — see row outage_artifact_provenance: 5/6 committed extracts re-derive BYTE-IDENTICALLY at HEAD and NO ISO's keeper consumes a stale outage-derived artifact.",
+      ev: { Q: "neiso-63/64/65", All: "governance.md 2026-07-24/26; xiso-2 (FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md)" } },
+    { id: "outage_artifact_provenance", cat: "outage", name: "Post-guard provenance of outage-DERIVED artifacts — CROSS-ISO AUDIT ROW, not a mechanism",
+      def: "(no ScenarioConfig field — provenance property of the committed corpus; probe scripts/probes/_xiso2_outage_artifact_provenance_census.py)", mode: "BF",
+      cells: "IIIOII",
+      note: "SECTION 5.7's OLDEST OPEN AUDIT, CLOSED at xiso-2 (2026-08-02, ZERO LP). Question: which committed artifacts are downstream of the merit-order-guard-corrected extracts (guard commit 6a8f285c5, 2026-07-26 00:36Z), were they produced BEFORE it, do they re-derive at HEAD, and does any keeper consume a stale one. ANSWER: the corpus is in better shape than the 2026-07-26 flag implied and NO KEEPER IS AFFECTED at any ISO. BYTE-REPRODUCTION, all six re-derived at HEAD with the committed recipe (--years 2018..2026 --merit-order-guard) and md5-compared: ERCOT, CAISO, PJM, NYISO, NEISO all BYTE-IDENTICAL; MISO the sole mismatch. MISO IS FULLY ATTRIBUTED AND TRAINING-CLEAN: the re-derivation is a strict SUPERSET (+17 windows, 0 lost), ALL 17 are 2022 COAL, its layup companion is byte-identical (so the guard's own classification reproduces exactly), and the 2023-2025 TRAINING window is IDENTICAL row-for-row (3,659 rows each side). Root cause is a SOURCE-DATA change, not detector drift — no commit has touched the detector or data/raw/campd-unit-level since the guard; commit 5cd937407 (2026-07-31) filled the MISO EIA-930 2022 wide-hourly hole, taking 2022 from 7 rows to 8,760 (8,757 non-null Demand), and the revealed-availability filter needs that system load. AGAINST INTEREST: the SAME commit filled the CISO 2022 hole and CAISO still reproduces byte-identically, so the 930 fill is not a universal invalidator and the MISO result does NOT transfer (rule 25). DEPENDENCY CENSUS, real readers only (a file read, not a docstring mention — 7 scripts excluded by inspection, incl. the whole derive_reliability_coeffs / *_drag family, so the 06-30..07-08 reliability-coeff CSV dates are NOT a staleness finding): the ONLY keeper-consumed artifact downstream of an extract is the NYISO NYC/LI/Capital ST_GAS reliability-floor limbs, and nyiso-81 re-derived them 18 h AFTER the guard the same day (ancestry-tested, not date-tested) — CLEAN. Two artifacts ARE pre-guard and NEITHER is keeper-consumed: MAINTENANCE_MONTHLY_SHAPE (2026-06-25, FORECAST-mode only) and caiso-dam-resource-crosswalk.csv (2026-07-19, ZERO code consumers — provably inert, a docs artifact). data/clean is gitignored and has no staleness surface. LIVE CODE DEFECT FOUND AND FIXED: derive_maintenance_shape.py pooled glob(campd-unit-outages*.csv), which since the guard also matches the six -layup- companions — the economic-idling windows the guard EXISTS to veto, so pooling them partially INVERTS the guard (rule 19) — plus the -e923- non-CAMPD fallback, the -short- and -maxgen- companions: 24 files / 58,744 rows drawn where 6 / 39,755 were intended, +47.8 % row inflation. It was harmless when the constant was baked (no companions existed on 2026-06-25) and went live as they accumulated. Selector now enumerates _STANDARD_EXTRACTS. THE CONSTANT DOES NOT REPRODUCE under EITHER selector, and against interest the corrected one is NOT uniformly closer (CT_CHP 0.595 -> 0.710, ST_GAS 0.350 -> 0.417, ST_CHP 0.362 -> 0.428 max abs delta) — fixing the glob does NOT restore it; it is genuinely stale w.r.t. the 2026-07-24 backfill AND the guard. Both are source-data changes, so re-derivation is rule-23 ADMISSIBLE — and was DELIBERATELY NOT DONE (the arm is a census, not a re-derive-and-commit sweep; the constant is a forecast-lane input whose refresh belongs to a session that can gate it). Its annual POF budget is conserved by construction (month-weighted mean 1), so staleness moves maintenance BETWEEN months, never its total. CELLS: I at ERCOT/CAISO/PJM/NYISO/NEISO — the provenance risk is measured-inert, extract byte-identical and no stale keeper input. MISO O — an admissible, non-urgent 2022-scoped re-derivation is outstanding; it must cite 5cd937407 (rule 23) and must NOT ride along in a calibration session, and rule 20 blocks any 2022 USE while the freeze is active. REGISTRY HYGIENE FILED NOT FIXED (rule 24): maintenance_monthly_shape is a solve-affecting ScenarioConfig field ABSENT from this matrix — CI grandfathers it because check_mechanism_matrix.py diffs new fields against the PR base — and its per-ISO forecast-lane verdicts have never been tested, so this session did not invent them. GOVERNANCE: zero LP, no solve/scoring/registration, holdout spend freeze ACTIVE and untouched; only BYTES were compared, which rule 20 explicitly permits on out-of-training data. DO-NOT-REDO: re-run the probe (census + glob measurement in ~1 min; --verify-extracts DIR for the byte half), do not re-census by hand.",
+      ev: { E: "xiso-2 §4 (byte-identical)", C: "xiso-2 §4 + §6 (byte-identical; crosswalk inert)", P: "xiso-2 §4 (byte-identical)", M: "xiso-2 §4.1 (2022-only superset; root cause 5cd937407)", N: "xiso-2 §3.1 row 3 (nyiso-81 post-guard) + §4", Q: "xiso-2 §4 (byte-identical)", All: "results/calibration/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md + transcript PROBE-xiso2-outage-artifact-provenance-census-2026-08-02.txt" } },
     { id: "dam_availability_rebasis", cat: "outage", name: "Measured DAM/telemetered availability re-basis",
       def: "ercot_thermal_dam_availability* :5976+ / pjm_dam_availability :6030 / neiso_operable :6003 / caiso_dam_outages :7730", mode: "B",
       cells: "KUUR.R",
