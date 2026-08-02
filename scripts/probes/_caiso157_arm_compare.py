@@ -147,6 +147,39 @@ def report_seam(root: Path, years: list[int]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def report_interface_groups(root: Path, years: list[int]) -> pd.DataFrame:
+    """The seam evidence that matters: each interface group's LIMIT and DUAL.
+
+    ``hourly/network_<year>.parquet`` records every link and interface group's
+    hourly flow, dual and bounds, so this reads the constraint *as the LP saw
+    it* rather than inferring it from dispatch. The simultaneous-import group
+    is the row the restoration moves: at the degraded 7,500 MW fitted scalar it
+    binds with a non-zero dual; at the published MIC it should sit above both
+    corridor envelopes and price at exactly 0.000 in every hour (caiso-133).
+    """
+    rows = []
+    for label, name in _ARMS.items():
+        for year in years:
+            path = root / name / "hourly" / f"network_{year}.parquet"
+            if not path.is_file():
+                continue
+            frame = pd.read_parquet(path)
+            frame = frame[(frame["pass"] == "P1") & (frame["kind"] == "group")]
+            for group, part in frame.groupby("name", observed=True):
+                rows.append(
+                    {
+                        "arm": label,
+                        "year": year,
+                        "group": str(group),
+                        "limit_MW": round(float(part["limit_up"].max()), 1),
+                        "binding_h": int((part["dual"].abs() > 1e-6).sum()),
+                        "max_flow_MW": round(float(part["mw"].max()), 1),
+                        "rent_$M": round(float((part["dual"] * part["mw"]).sum()) / 1e6, 3),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
 def _price_frame(bundle: Path, year: int) -> pd.DataFrame | None:
     """Return the P1 zonal price/demand frame for one arm-year."""
     path = bundle / "hourly" / f"system_{year}.parquet"
@@ -227,6 +260,12 @@ def main() -> None:
     print("=" * 78)
     seam = report_seam(root, args.years)
     print(seam.to_string(index=False) if not seam.empty else "no hourly sidecars yet")
+
+    print("\n" + "=" * 78)
+    print("INTERFACE GROUPS — limit, binding hours (|dual| > 0) and congestion rent")
+    print("=" * 78)
+    groups = report_interface_groups(root, args.years)
+    print(groups.to_string(index=False) if not groups.empty else "no network sidecars yet")
 
     print("\n" + "=" * 78)
     print("PRICE — P1 zonal λ, load-weighted and by hour-of-day band ($/MWh)")
