@@ -2501,3 +2501,15 @@ negative `WAT` hours show pumping *is* netted; NYISO's 923 `HY` *exceeds*
   Evidence: `results/calibration/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`;
   probes `scripts/probes/_miso111_prb_conduct.py`, `_miso111_chain.sh`.
 * Next number: **miso-112.**
+
+## (stub) caiso-155 — 2026-08-02 — MISO premise correction: NO firm-import exposure at the current keeper
+
+Cross-ISO scorer audit (main entry: `docs/calibration-log/caiso.md`
+caiso-155). The carried claim "the diagnostics plant-set hole hides MISO's
+Manitoba firm must-flow block" is STALE for `2026-07-31-miso-109b-hy-level`:
+its channel arms `miso_manitoba_seam` (miso-74), which replaces the legacy
+firm block, and the keeper carries NO `MECH_FIRM_IMPORT` floor. The census's
+6.36/4.65/1.96 TWh was the UNTHREADED floors-rebuild hallucinating the
+legacy default (harness defect 2, fixed) — never quote it as keeper
+exposure. MISO's committed `legitimacy_diagnostics.json` is correct as
+committed; nothing regenerated, verdict unchanged.
