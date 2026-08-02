@@ -323,6 +323,16 @@ results/calibration/*/*/flows.parquet
 results/calibration/*/*/solve.log
 results/calibration/*/*/_shared/
 
+# Probe-local CLEAN trees. The offer-surface probes curate into their own clean
+# root under results/calibration/ (the `--clean-root` default of
+# _caiso152_rle_parse_bias.py and _caiso153_offer_classifier_reid.py), which is
+# DERIVED, disposable data in the sense of the data/clean/ contract — ~234 MB
+# for the CAISO 2023-25 dam-public-bids span, regenerable by re-running
+# `curate`. It is never an input to a committed result and must never enter a
+# pack (the remote rejects large packs with HTTP 413).
+results/calibration/clean_*/
+results/calibration/*/clean_*/
+
 # -----------------------------------------------------------------------------
 # 9. results/calibration & results/hindcast scratch families — recurring
 #    throwaway-probe naming (rule 14/16: never registered keepers; regenerable
