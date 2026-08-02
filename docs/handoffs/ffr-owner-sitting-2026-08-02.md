@@ -54,6 +54,74 @@ land (pack §Wave 2 gate: "evidence docs committed → OWNER SITTING"):
 
 ---
 
+## Addendum A — attachments landed after assembly (workstream manager, 2026-08-02, HEAD `d5d5b6f`)
+
+*Appended by the FFR/FH workstream manager, not by FFR-2D. The body of this packet is left as
+assembled; this section carries what moved since `a92ae97` and supersedes the assembly-time
+"pending" rows above. Two of the items below change the evidence base a decision rests on, so
+read this before signing D-1 or D-2.*
+
+**A.1 §W1-X is no longer outstanding — Wave 1 is CLOSED.** The state-basis bullet above was
+true at `a92ae97` and is now stale. §W1-X ran and reported **GREEN** (PR #3265,
+`docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`): the three attestations pass, the single
+operator cache epoch was taken 2026-08-02 (ledger in `src/market_sim/results/cache.py:47+` —
+every pre-2026-08-02 **forecast-mode** cache invalid; backcast caches and all six keeper
+bundles explicitly NOT), the three-part regression audit passes, and FFR-1E's
+`forecast-parity-guard` job is in CI. FFR-3A's battery is therefore unblocked on this axis.
+
+**A.2 D-1 / D-2 attachment has LANDED:** `docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md`
+(PR #3277). Its bottom line, relayed without re-litigation:
+
+- **D-1 — the pre-registered bar is MET in both curve-ON ISOs.** T-R10a and T-R10b go
+  FAIL→PASS holding **3/3** LOYO folds; recall FAIL→PASS (MISO 12 %→76 %, PJM 53 %→76 %);
+  bands imported and never widened; no new invariant failure; additions **byte-identical**
+  across arms. The zero-real-fuel inversions close completely (MISO `gas_st` 12.920→0.0 GW;
+  PJM `gas_st` 10.358→0.0 and `gas_ct` 11.379→0.0). D-1's recommendation above was
+  conditional — *"flip iff FFR-2B's post-W1 probes clear the T-R battery + T-R10 + LOYO with
+  bands unchanged"* — and **that condition is now satisfied on its own terms.**
+- **D-2 — arm, but sign knowing the bar is only PARTLY met.** The FR-13 precondition is
+  confirmed fixed (**I4 stays PASS with the commissioning lag armed** — the latent-defect
+  test). Against that: the rate limit **re-phases rather than reduces** cumulative backstop MW
+  (−0.07 %), I13 had **no cobweb to remove**, and **I12 goes WARN→FAIL** — because the dampers
+  stop concealing a shortfall the base arm was closing with an unbuildable 4.9 GW single-year
+  CT wave. That is a disclosed adequacy change, not a regression to fix by unarming.
+  `entry_vre_capacity_revenue` remains **unprobed** and separately signable.
+
+**A.3 TWO findings that change D-1's evidence base — neither is in the body above.**
+
+1. **Wave 1 made the shipped legacy rule substantially worse, with no rule change.** MISO
+   false-retire 8.643 → **12.920 GW**; PJM 4.097 → **22.342 GW (5.5×)**. Consequence for this
+   sitting: **the pre-W1 FF-1A numbers quoted in D-1's "Why it is in front of you" understate
+   the case**, and they are not a valid baseline for judging the flip. The harm the flip
+   avoids is larger than the packet body says.
+2. **MISO legacy's thermal LEVEL band passed (−0 %) purely by cancellation** of two large
+   opposite-signed composition errors. Reading that pass as the better result is precisely the
+   rule-1 `[R-STRUCT]` failure mode — a right number reached through a wrong mechanism. It
+   should not be counted in legacy's favour.
+
+**A.4 D-1 is now on Wave FH's critical path.** FH-1 merged (PR #3269) and its §3.3
+harness-defect gate **FAILED** — the I6 over-retirement reproduces at the T1-FF posture
+(ERCOT base 2023: 21.05 GW = **26.8 %** of prior thermal retired in 2025; I6/I7 FAIL, I12
+WARN), so **FH-4 / Phase A is BLOCKED** (pack §0d; plan §3.3 gate-result block). FFR-2B's §4
+cross-read measures `pipeline` moving I6 **down** — PJM 12.68→8.55 % (**−33 % relative**),
+MISO 9.06→8.37 % — and is explicit about the limits: neither ISO it could measure ever FAILS
+I6 under either rule, so this **cannot** demonstrate the flip converting a failing case into a
+passing one, and rule 25 `[R-ISO-SCOPE]` forbids assuming the effect transfers to ERCOT.
+Critically, **the single-year lumping SURVIVES the rule change** even though `pipeline` removes
+the consecutive-loss counters outright — which isolates **G-31 screen grain as an independent
+root-cause term**, not a symptom of the decision rule. So the FH-4 unblock needs **D-1 plus a
+G-31 lane fix plus a re-probe**; signing D-1 is necessary, is not sufficient, and does not by
+itself lift the block.
+
+**A.5 Attachments still pending:** FFR-2C (**D-3** — not started as of this HEAD: no branch, no
+PR, no handoff), FFR-2E (context for D-1/D-3), FFR-2A (sitting context). D-3's owner box is
+therefore **not yet decidable**; D-5, D-6 and D-7 remain decidable now, as assembled.
+
+**A.6 Keeper drift since assembly:** CAISO → `2026-07-31-caiso153-reid-b` (PR #3267). The other
+five are unchanged from the state-basis list above. Re-read the shards at the sitting's own HEAD.
+
+---
+
 ## D-1 — Retirement-rule default: `legacy` → `pipeline`
 
 **What it changes.** `ScenarioConfig.retirement_rule` default `"legacy"` → `"pipeline"`
@@ -73,9 +141,13 @@ legs) are its live signature (`ff-t1-gate-2026-07.md` §4.1). The peer review pl
 counter outside commercial practice entirely (no analogue in IPM/ReEDS/PLEXOS-LT, which screen
 going-forward NPV / lifetimes+margin / integer NPV — peer review §3.1).
 
-**Evidence doc.** FFR-2B (pending): pipeline-armed probe arms at post-W1 HEAD — PJM + MISO
-curve-ON T1-H legs, scored on the T-R battery + T-R10 no-inversion + LOYO within 2023–2025,
-bands never restated looser.
+**Evidence doc.** ~~FFR-2B (pending)~~ → **LANDED 2026-08-02**:
+`docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — pipeline-armed probe
+arms at post-W1 HEAD, PJM + MISO curve-ON T1-H legs, scored on the T-R battery + T-R10
+no-inversion + LOYO within 2023–2025, bands never restated looser. **The conditional
+recommendation below is satisfied; see Addendum A.2.** Note also **A.3**: the pre-W1 FF-1A
+figures cited in the paragraph above are now known to UNDERSTATE the legacy rule's harm
+(Wave 1 worsened it — PJM false-retire 5.5×), so do not treat them as the baseline.
 
 **What it re-opens.** Every T1-H FC-3 verdict (a flipped rule re-solves all four curve legs —
 FFR-3A step 1); the FF-3D NYISO pair evidence should be regenerated only **after** this decision
@@ -112,8 +184,12 @@ the detector for exactly this alternation. FF-2A's probe measured the first-wave
 precondition is landed: FR-13 (commissioned pipeline units invisible to I4 when the lag is
 armed) was fixed by FFR-1A (2026-07-31).
 
-**Evidence doc.** FFR-2B (pending): MISO T1-F with pipeline + both dampers armed; verify I4
-stays green with the lag armed (the FR-13 regression check); re-measure I13 and BLK-10.
+**Evidence doc.** ~~FFR-2B (pending)~~ → **LANDED 2026-08-02**:
+`docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — MISO T1-F with
+pipeline + both dampers armed. **I4 stays PASS with the lag armed** (the FR-13 regression check
+passes). I13 and BLK-10 re-measured. **The bar is only PARTLY met — read Addendum A.2 before
+signing:** the rate limit re-phases rather than reduces backstop MW (−0.07 %), I13 had no cobweb
+to remove, and I12 goes WARN→FAIL as a disclosed adequacy change.
 
 **What it re-opens.** FC-2 (I13) verdicts and the BLK-10 backstop-sizing record; nothing else
 expected — all three are identified constructions (published/measured parameters, no free knob).
