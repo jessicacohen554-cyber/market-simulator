@@ -341,6 +341,13 @@ results/calibration/*/*/_shared/
 results/calibration/clean_*/
 results/calibration/*/clean_*/
 
+# Session-local CLEAN staging. A partition-restoration A/B (caiso-157) has to
+# move curated partitions in and out of data/clean around each arm so each arm
+# solves the input state it declares; the holding area is the same DERIVED,
+# disposable data as data/clean itself and is regenerable by re-running the
+# curate scripts. Never an input to a committed result.
+.clean_stash/
+
 # -----------------------------------------------------------------------------
 # 9. results/calibration & results/hindcast scratch families — recurring
 #    throwaway-probe naming (rule 14/16: never registered keepers; regenerable
