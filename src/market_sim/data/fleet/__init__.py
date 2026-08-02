@@ -151,6 +151,7 @@ from market_sim.data.fleet.models import (  # noqa: F401  (historical namespace 
     _hour_to_month_index,
     _read_clean,
     _use_clean,
+    operable_vintage_year,
 )
 
 

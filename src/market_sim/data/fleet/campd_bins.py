@@ -590,7 +590,12 @@ def _plant_emission_rate_map(
 
 @lru_cache(maxsize=8)
 def _measured_plant_rate_map_v2(
-    path: str, iso: str, year: int, mode: str
+    path: str,
+    iso: str,
+    year: int,
+    mode: str,
+    as_of_year: int | None = None,
+    exclude_quarantined: bool = False,
 ) -> dict[tuple[int, str], tuple[float, float, float]]:
     """Cache the mode-aware ``{(plant_id, fuel_class): (tCO2, tNOx, tSO2)/MWh}`` map.
 
@@ -599,13 +604,17 @@ def _measured_plant_rate_map_v2(
     read their own mass column (plan §5 R7). A plant/class missing a pollutant's
     measured mass gets 0.0 for that pollutant, so the caller can preserve the
     fuel-class default (CO2/NOx) rather than overwrite it with a spurious zero.
+    ``as_of_year`` / ``exclude_quarantined`` are the FH-1 hindcast-lane as-of
+    bound and T1-FF quarantine trim — part of the cache key so a bounded run
+    never shares a map with a run that admits the later/quarantined rows.
     """
     from market_sim.data.emission_rates import measured_plant_rates
 
     df = pd.read_parquet(path)
-    co2 = measured_plant_rates(df, iso, year, mode, pollutant="co2")
-    nox = measured_plant_rates(df, iso, year, mode, pollutant="nox")
-    so2 = measured_plant_rates(df, iso, year, mode, pollutant="so2")
+    kw = {"as_of_year": as_of_year, "exclude_quarantined": exclude_quarantined}
+    co2 = measured_plant_rates(df, iso, year, mode, pollutant="co2", **kw)
+    nox = measured_plant_rates(df, iso, year, mode, pollutant="nox", **kw)
+    so2 = measured_plant_rates(df, iso, year, mode, pollutant="so2", **kw)
     keys = set(co2) | set(nox) | set(so2)
     return {k: (co2.get(k, 0.0), nox.get(k, 0.0), so2.get(k, 0.0)) for k in keys}
 
@@ -688,7 +697,20 @@ def apply_plant_emission_rates_v2(
     resolved = Path(path)
     if not resolved.exists():
         return 0
-    rates = _measured_plant_rate_map_v2(str(resolved), str(iso), int(year), str(mode))
+    rates = _measured_plant_rate_map_v2(
+        str(resolved),
+        str(iso),
+        int(year),
+        str(mode),
+        # FH-1 as-of bound, hindcast lane only: the estimator basis may not
+        # contain CAMPD years after the target year. The plain forecast lane
+        # (hindcast False) passes None and keeps its basis byte-identical.
+        int(year) if bool(getattr(config, "hindcast", False)) else None,
+        # T1-FF quarantine trim (FH-1): a full-forward hindcast's estimator
+        # basis additionally drops the rule-22 quarantined artifact years
+        # (2022, >=2026).
+        bool(getattr(config, "is_full_forward_hindcast", False)),
+    )
     if (
         str(mode).lower() != "backcast"
         and config is not None

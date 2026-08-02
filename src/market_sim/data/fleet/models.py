@@ -64,6 +64,43 @@ def _read_clean(*args, **kwargs):
     return clean_io.read_clean(*args, **kwargs)
 
 
+def operable_vintage_year(data_dir: "Path | None" = None) -> int:
+    """Return the operable-snapshot vintage year of an EIA-860 directory.
+
+    The vintage-aware replacement for reading :data:`EIA860_OPERABLE_VINTAGE`
+    directly (FH-1, ``docs/hindcast-forward-plan-2026-07.md`` §4 row 2): a
+    ``vintage_<year>/`` directory IS the ``<year>`` operable snapshot, so every
+    consumer that bounds itself by "the snapshot vintage" — the
+    planned-additions ``Effective Year`` filter, the renewables
+    proposed-capacity augmentation, the announced-retirement data horizon —
+    must bound by the ACTIVE vintage, not the canonical-snapshot constant.
+    (The hardcoded constant silently discarded essentially every unit of a
+    2020/2021/2023 vintage's own proposed sheet: ``eff_year > 2025`` against a
+    sheet whose pipeline lives in 2021-2025.)
+
+    Args:
+        data_dir: EIA-860 directory to resolve. ``None`` resolves the active
+            dir (:func:`market_sim.config.paths.active_eia860_dir`, which
+            honors a ``ScenarioConfig.eia860_vintage_year`` switch).
+
+    Returns:
+        The ``<year>`` of a ``vintage_<year>/`` directory, else
+        :data:`EIA860_OPERABLE_VINTAGE` (the canonical top-level snapshot) —
+        so every non-vintage run is byte-identical to the pre-FH-1 constant.
+    """
+    if data_dir is None:
+        from market_sim.config.paths import active_eia860_dir
+
+        data_dir = active_eia860_dir()
+    name = Path(data_dir).name
+    if name.startswith("vintage_"):
+        try:
+            return int(name.split("_", 1)[1])
+        except ValueError:
+            pass
+    return EIA860_OPERABLE_VINTAGE
+
+
 def _clean_fleet_year(data_dir: Path) -> int:
     """Map an active EIA-860 vintage directory to its clean ``fleet`` partition.
 
@@ -74,18 +111,14 @@ def _clean_fleet_year(data_dir: Path) -> int:
     (:func:`paths.active_eia860_dir`, which honors a
     ``ScenarioConfig.eia860_vintage_year`` switch) to that year is what lets the
     clean fleet read preserve the EIA-860 vintage behavior of the raw loaders —
-    selecting ``vintage_2023`` routes the clean read to ``fleet_2023``.
+    selecting ``vintage_2023`` routes the clean read to ``fleet_2023``. Same
+    dir→year mapping as :func:`operable_vintage_year` (the shared FH-1
+    pattern), kept as its own name for the clean-partition semantics.
     """
-    name = Path(data_dir).name
-    if name.startswith("vintage_"):
-        try:
-            return int(name.split("_", 1)[1])
-        except ValueError:
-            pass
-    return EIA860_OPERABLE_VINTAGE
+    return operable_vintage_year(Path(data_dir))
 
 
-# Vintage year of the operable EIA-860 snapshot behind the committed
+# Vintage year of the CANONICAL operable EIA-860 snapshot behind the committed
 # generators parquet: units online through this year are in the operable
 # schedule. Proposed rows whose Effective Year is at or before it are
 # stale (slipped projects with a past-dated COD), so the planned-additions
@@ -94,6 +127,12 @@ def _clean_fleet_year(data_dir: Path) -> int:
 # Bump this whenever process_eia860.py regenerates the parquets from a
 # newer release. Source: EIA-860 2025 Early Release (eia8602025ER.zip,
 # operating years through 2025).
+# CONSUMERS: never read this constant directly where a vintage-seeded run
+# (``ScenarioConfig.eia860_vintage_year``) can be active — resolve the ACTIVE
+# snapshot's vintage via :func:`operable_vintage_year` instead (FH-1 leak fix:
+# a ``vintage_<year>/`` dir's own proposed sheet was filtered against this
+# 2025 constant and silently zeroed). This constant remains the top-level
+# snapshot's vintage and the fallback for non-vintage runs.
 EIA860_OPERABLE_VINTAGE: int = 2025
 
 

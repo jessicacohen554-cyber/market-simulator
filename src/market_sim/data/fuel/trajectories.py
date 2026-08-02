@@ -109,6 +109,21 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     if config.is_crossover_forward_year(year):
         path = config.crossover_forward_gas_path
     trajectory = HENRY_HUB_TRAJECTORIES[path]
+    # T1-FF back-hold trap (FH-1, hindcast-forward plan §4 row 7): the AEO
+    # low/mid/high paths knot from 2023, so a full-forward year below a
+    # trajectory's earliest knot would silently take the earliest knot's value
+    # (_hold_flat_extrapolate's backward hold — e.g. 2021 priced at the 2023
+    # $2.54 against a $3.91 actual, ~35% wrong, with no warning). In a
+    # full-forward hindcast that is a hard error: the arm must name a
+    # trajectory that actually covers its window (hindcast_realized /
+    # hindcast_asknown_*), never inherit a back-held forecast knot.
+    if getattr(config, "is_full_forward_hindcast", False) and year < min(trajectory):
+        raise ValueError(
+            f"T1-FF gas back-hold trap: year {year} is below the earliest "
+            f"knot ({min(trajectory)}) of gas trajectory {path!r} — a "
+            "full-forward hindcast must price every solve year from a "
+            "trajectory that covers it (FH-1, hindcast-forward plan §4 row 7)"
+        )
     henry_hub = _hold_flat_extrapolate(trajectory, year)
 
     return henry_hub * config.gas_price_factor + basis

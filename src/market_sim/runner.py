@@ -227,8 +227,22 @@ def _chp_measured_co2_inputs(
             v2 = pd.read_parquet(path)
             v2 = v2[v2["iso"].astype(str) == str(iso)]
             if not v2.empty:
-                # Same mode-aware (plant, fuel-class) rate the grid tranches book.
-                rate_map = measured_plant_rates(v2, iso, int(year), str(config.mode))
+                # Same mode-aware (plant, fuel-class) rate the grid tranches
+                # book — including the FH-1 hindcast-lane as-of bound and the
+                # T1-FF quarantine trim, so BTM and grid CO2 intensity stay on
+                # the identical basis in a hindcast/full-forward run.
+                rate_map = measured_plant_rates(
+                    v2,
+                    iso,
+                    int(year),
+                    str(config.mode),
+                    as_of_year=(
+                        int(year) if getattr(config, "hindcast", False) else None
+                    ),
+                    exclude_quarantined=bool(
+                        getattr(config, "is_full_forward_hindcast", False)
+                    ),
+                )
                 by_plant = {int(pid): rate for (pid, _fc), rate in rate_map.items()}
                 # A plant whose CEMS units span classes: the must-run tranche is
                 # gas, so prefer the gas-class rate when present.
@@ -770,6 +784,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # Last year whose LP actually solved. In a capacity hindcast the 2022
     # bridge (plan §1.1) is evolved but never solved, so the year after it
     # keeps consuming the last solved year's prior_results and drivers.
+    # T1-FF Arm R given-weather posture (FH-1, hindcast-forward plan §2.1):
+    # ``wx_config`` is the weather-transient view of the run config used ONLY
+    # at the demand-scaling call sites below. Under
+    # ``crossover_solve_year_weather`` each solved forward year rebinds the
+    # weather base (``base_demand``, ``wind_cf``/``solar_cf``) to its own year
+    # and points ``wx_config.weather_year`` at it, so ``_scale_demand`` spans
+    # zero years — the same transient-``replace`` pattern as ``fleet_config``
+    # below: the run's recorded config and cache key are never mutated. At the
+    # default (posture off) ``wx_config`` IS ``config`` and every path is
+    # byte-identical.
+    wx_config = config
+    loaded_weather_year = config.weather_year
     last_solved_year = start_year
     for year in range(start_year, end_year + 1):
         year_start = time.perf_counter()
@@ -794,6 +820,46 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         )
         driver_year = last_solved_year if is_bridge else year
 
+        # T1-FF Arm R given-weather rebind (FH-1, hindcast-forward plan §2.1):
+        # a solved forward year re-seeds the weather base from ITSELF — the
+        # solve year's demand profile and renewable CF — so the forward stack
+        # (growth-scaled demand, CF × evolving capacity) runs on that year's
+        # own weather with a zero-year growth span. The evolving capacity
+        # state (wind_cap / solar_cap) is untouched: only the resource shapes
+        # rebind. A bridge year never rebinds (its data is never read, rule
+        # 22); it keeps the last solved year's base, grown forward by
+        # ``wx_config``. Field validation guarantees this posture only exists
+        # on a full-forward hindcast, so every other run skips this block.
+        if (
+            config.crossover_solve_year_weather
+            and not is_bridge
+            and year != loaded_weather_year
+        ):
+            base_demand = load_demand(
+                iso,
+                year,
+                iso_config,
+                td_loss_factor=config.td_loss_factor,
+                include_interchange=not import_generators,
+                strict_demand_profile=config.strict_demand_profile,
+            )
+            _wx_wind_cf, _, _wx_solar_cf, _ = load_renewable_profiles(
+                iso, year, iso_config, config
+            )
+            if config.hours < base_demand.shape[1]:
+                base_demand = base_demand[:, : config.hours]
+                _wx_wind_cf = _wx_wind_cf[:, : config.hours]
+                _wx_solar_cf = _wx_solar_cf[:, : config.hours]
+            wind_cf, solar_cf = _wx_wind_cf, _wx_solar_cf
+            wx_config = replace(config, weather_year=year)
+            loaded_weather_year = year
+            logger.info(
+                "year %d: T1-FF Arm R given-weather rebind -- demand profile "
+                "and renewable CF re-seeded from weather year %d",
+                year,
+                year,
+            )
+
         # The entering year's demand is deterministically known before the
         # fleet evolves (_scale_demand is pure config arithmetic), so the
         # capacity screens' peak-anchored mechanisms -- the retirement
@@ -811,7 +877,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # DC already in the total growth rate (FF-1C). Forecast-mode-only and
         # default-off (datacenter_load_path == "off") => same array object,
         # byte-identical.
-        year_demand = _scale_demand(base_demand, config, year)
+        year_demand = _scale_demand(base_demand, wx_config, year)
         year_demand = add_datacenter_block(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
@@ -1146,7 +1212,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # applied on the forecast branch so the LP and results path see the
             # identical demand the screens saw. Default-off => same array,
             # byte-identical.
-            year_demand = _scale_demand(base_demand, config, year)
+            year_demand = _scale_demand(base_demand, wx_config, year)
             year_demand = add_datacenter_block(
                 year_demand, config, iso, year, zone_names
             )
@@ -2257,8 +2323,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Hindcast: the KNOWN entering-year load is the realized next-year
             # demand the LP will actually dispatch (line ~872), not a growth-
             # scaled weather year. Forecast: None → _scale_demand fallback.
+            # A crossover FORWARD next-year must NOT read the measured
+            # per-year loader (the same seam that skips it for the LP demand
+            # above, FF-0E §2.2 / FH-1): it falls to the growth-scaled
+            # ``wx_config`` fallback like a plain forecast.
             demand_next_total = None
-            if config.hindcast:
+            if config.hindcast and not config.is_crossover_forward_year(next_year):
                 _dn = load_demand(
                     iso,
                     next_year,
@@ -2271,7 +2341,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     _dn = _dn[:, : config.hours]
                 demand_next_total = _dn.sum(axis=0)
             price_signal = _lookahead_reprice_signal(
-                config,
+                wx_config,
                 next_year,
                 base_demand,
                 fleet_arrays,

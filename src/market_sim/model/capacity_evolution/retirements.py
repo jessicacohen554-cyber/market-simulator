@@ -66,7 +66,6 @@ from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.confirmed_retirements import ConfirmedExit
 from market_sim.data.fleet import (
-    EIA860_OPERABLE_VINTAGE,
     FleetArrays,
     Generator,
 )
@@ -523,7 +522,7 @@ def apply_announced_retirements(
     year: int,
     fossil_economic: bool = True,
     *,
-    vintage: int = EIA860_OPERABLE_VINTAGE,
+    vintage: int | None = None,
     horizon_years: int | None = None,
     confirmed_plant_codes: frozenset[int] = frozenset(),
     reversed_plant_codes: frozenset[int] = frozenset(),
@@ -561,7 +560,14 @@ def apply_announced_retirements(
         year: The simulation year being evaluated.
         fossil_economic: When ``True``, fossil units ignore their scheduled
             ``retirement_year`` (economic screen governs them).
-        vintage: EIA-860 operable-snapshot vintage the horizon is measured from.
+        vintage: EIA-860 operable-snapshot vintage the horizon is measured
+            from. ``None`` (default) resolves the ACTIVE snapshot's vintage
+            (:func:`market_sim.data.fleet.operable_vintage_year` — FH-1 leak
+            fix): a vintage-seeded hindcast measures the announced horizon
+            from ITS vintage (e.g. 2020 + 5), never the canonical 2025
+            constant, which would honor dates the seed snapshot could not
+            credibly bound. Non-vintage runs resolve to the constant,
+            byte-identical.
         horizon_years: Data-horizon width for honoring non-fossil announced
             dates; ``None`` disables the gate (honor all non-fossil dates).
         confirmed_plant_codes: Plant codes carrying a binding instrument in the
@@ -581,6 +587,13 @@ def apply_announced_retirements(
         A new list excluding generators whose announced retirement is honored
         this year.
     """
+    if vintage is None:
+        # Resolve the ACTIVE snapshot's vintage (FH-1): the runner sets the
+        # vintage dir once at startup (set_eia860_vintage), so a vintage-seeded
+        # hindcast measures the announced horizon from its own seed year.
+        from market_sim.data.fleet import operable_vintage_year
+
+        vintage = operable_vintage_year()
     keep: list[Generator] = []
     for g in fleet:
         r = g.retirement_year

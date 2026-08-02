@@ -106,15 +106,19 @@ _FUEL_TO_CLASS = {
 
 
 # --------------------------------------------------------------------------- #
-# Quarantine guard (rule 22) — refuse any >= 2026 bench/actual read
+# Quarantine guard (rule 22) — refuse any bench/actual read outside 2023-2025
 # --------------------------------------------------------------------------- #
 def _assert_scoreable_year(year: int) -> int:
-    """Raise for any year >= ``QUARANTINE_FROM``; return the int year otherwise.
+    """Raise for any year outside ``SCORED_YEARS``; return the int otherwise.
 
-    Called at the TOP of every bench / actual loader path so that no locked-test
-    or forward-edge file (2026, H1-2026, …) is ever opened. The forward years are
-    invariants/plausibility only (part c) — they never reach a bench or an
-    actual. This is the structural half of the rule-22 quarantine.
+    Called at the TOP of every bench / actual loader path so that no
+    out-of-training file is ever opened. The upper bound refuses the locked
+    test / forward edge (2026, H1-2026, …) — forward crossover years are
+    invariants/plausibility only (part c). The lower bound (FH-1, symmetric by
+    design) refuses anything below the training window: a T1-FF window may
+    SOLVE 2021 as a seed, but the seed is never scored and no pre-2023 bench
+    or actual is ever read (validation/locked tiers both live below 2023 —
+    scripts/lib/holdout_policy.py; scoring never leaves 2023-2025).
     """
     y = int(year)
     if y >= QUARANTINE_FROM:
@@ -122,6 +126,13 @@ def _assert_scoreable_year(year: int) -> int:
             f"year {y} is quarantined (>= {QUARANTINE_FROM}: locked test / "
             "forward edge) — no bench or actual may be read for it (CLAUDE.md "
             "rule 22). Forward crossover years are invariants/plausibility only."
+        )
+    if y < min(SCORED_YEARS):
+        raise ValueError(
+            f"year {y} is below the scoring window (< {min(SCORED_YEARS)}) — "
+            "no bench or actual may be read for it (CLAUDE.md rule 22; FH-1 "
+            "symmetric lower bound: hindcast seed years are solved, never "
+            "scored)."
         )
     return y
 
@@ -716,12 +727,20 @@ def _load_keepers() -> dict:
 
 
 def score_crossover(bundle: Path, report_dir: Path) -> dict:
-    """Score a crossover bundle end to end; write the score.json + report."""
+    """Score a crossover / full-forward bundle end to end (score.json + report).
+
+    A T1-FF ``full_forward`` bundle (FH-1, hindcast-forward plan §2) rides the
+    IDENTICAL scoring path — same benches, same keeper comparison, same
+    ``input_gap`` construction, same 2023-2025 two-sided scoring bound; its
+    window simply contains no >= 2026 forward years, so the part-(c)
+    invariants block is empty.
+    """
     meta = json.loads((bundle / "meta.json").read_text())
-    if meta.get("kind") != "crossover":
+    if meta.get("kind") not in ("crossover", "full_forward"):
         raise SystemExit(
-            f"{bundle}/meta.json is kind={meta.get('kind')!r}, not 'crossover' — "
-            "use scripts/score_capacity_hindcast.py for a plain hindcast."
+            f"{bundle}/meta.json is kind={meta.get('kind')!r}, not 'crossover' "
+            "or 'full_forward' — use scripts/score_capacity_hindcast.py for a "
+            "plain hindcast."
         )
     iso = meta["iso"]
     cache_dir = Path(meta["bundle"])
@@ -738,8 +757,14 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
     score = {
         "run_id": run_id,
         "iso": iso,
-        "kind": "crossover",
+        "kind": meta.get("kind"),
         "variant": meta.get("variant"),
+        # T1-FF provenance (None on a plain crossover): the pre-registered arm
+        # + weather posture ride into the score so the three-way read (keeper
+        # -> Arm R -> Arm K) never infers an arm from the gas path.
+        "arm": meta.get("arm"),
+        "base_year": meta.get("base_year"),
+        "weather_posture": meta.get("weather_posture"),
         "vintage_year": meta.get("vintage_year"),
         "crossover_forward_year": meta.get("crossover_forward_year"),
         "scored_years": list(SCORED_YEARS),
