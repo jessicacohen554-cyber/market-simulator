@@ -109,6 +109,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hindcast).
     "crossover_forward_year",
     "crossover_forward_gas_path",
+    # T1-FF Arm R given-weather posture (FH-1): dropped from the hash at its
+    # False default so every pre-existing cached run keeps its key; an Arm R
+    # full-forward run sets True and so gets a distinct key (a distinct
+    # scenario — its forward years load per-solve-year weather bases).
+    "crossover_solve_year_weather",
     # G-30 first-wave probes (default-off): dropped from the hash at default so
     # every pre-existing cached run keeps its key; a non-default value enters
     # the key (a distinct scenario). (staged_oversupply_thinning /
@@ -714,8 +719,26 @@ class ScenarioConfig:
     # is None. A forward year must NOT inherit the realized-fuel
     # "hindcast_realized" path (which only holds 2025 flat past 2025) — it uses
     # this AEO path, the forecast fuel methodology (plan §2.2). Cache-neutral at
-    # its "mid" default.
+    # its "mid" default. A T1-FF full-forward hindcast (FH-1,
+    # docs/hindcast-forward-plan-2026-07.md §2.1) may instead name a
+    # ``hindcast_*`` trajectory here — Arm R prices its forward years (ALL its
+    # solve years) on realized annual Henry Hub ("hindcast_realized"), Arm K on
+    # the as-known AEO vintage ("hindcast_asknown_aeo<base>"); both are
+    # rule-13-admissible formulaic inputs, validated in ``__post_init__`` to be
+    # full-forward-only so a plain T1-X crossover keeps the AEO-only contract.
     crossover_forward_gas_path: str = "mid"
+    # T1-FF Arm R "given-weather" posture (FH-1, hindcast-forward plan §2.1):
+    # each solved FORWARD year re-seeds its weather base — demand profile and
+    # renewable CF — from THAT solve year instead of the run-scalar
+    # ``weather_year``, so growth scaling spans zero years and the forward
+    # stack runs on the solve year's own weather (perfect-foresight-driver /
+    # weather-normalized validation practice; rule 13: realized weather is a
+    # physical input with a forward analogue, not an outcome fed back). Arm K
+    # (pure ex-ante) leaves this False and pins ``weather_year`` to the base
+    # year. Requires a full-forward hindcast (``is_full_forward_hindcast``);
+    # default False is cache-neutral and byte-identical for every other run
+    # (see ``_CACHE_KEY_OPTIONAL_FIELDS``).
+    crossover_solve_year_weather: bool = False
 
     # Tier 1 (scenario levers)
     gas_price_path: str = "mid"  # "low", "mid", "high" or path to CSV
@@ -9437,12 +9460,44 @@ class ScenarioConfig:
                     "mode='forecast' (the T1-X crossover runs on the hindcast "
                     "harness; plan §2.2)"
                 )
-            if self.crossover_forward_gas_path not in ("low", "mid", "high"):
+            # A T1-FF full-forward hindcast (boundary == start year; FH-1,
+            # hindcast-forward plan §2.1) may price its forward years on a
+            # ``hindcast_*`` trajectory (Arm R realized / Arm K as-known AEO
+            # vintage). A plain T1-X crossover (boundary past the start year)
+            # keeps the AEO-only contract, byte-identical.
+            _fwd_gas_ok: tuple[str, ...] = ("low", "mid", "high")
+            if self.is_full_forward_hindcast:
+                from market_sim.config.fuel_trajectories import (
+                    HENRY_HUB_TRAJECTORIES,
+                )
+
+                _fwd_gas_ok = _fwd_gas_ok + tuple(
+                    k for k in HENRY_HUB_TRAJECTORIES if k.startswith("hindcast_")
+                )
+            if self.crossover_forward_gas_path not in _fwd_gas_ok:
+                if self.is_full_forward_hindcast:
+                    raise ValueError(
+                        "crossover_forward_gas_path must be an AEO path "
+                        "('low', 'mid', 'high') or a hindcast_* trajectory "
+                        f"(full-forward run), got "
+                        f"{self.crossover_forward_gas_path!r}"
+                    )
                 raise ValueError(
                     "crossover_forward_gas_path must be an AEO path "
                     "('low', 'mid', 'high'), got "
                     f"{self.crossover_forward_gas_path!r}"
                 )
+        # The Arm R given-weather posture only has meaning on a full-forward
+        # hindcast (every solve year is a forward year); anywhere else the
+        # per-year weather rebind would silently change a run whose contract
+        # is a single pinned weather year — hard error, never a silent no-op.
+        if self.crossover_solve_year_weather and not self.is_full_forward_hindcast:
+            raise ValueError(
+                "crossover_solve_year_weather (T1-FF Arm R given-weather "
+                "posture) requires a full-forward hindcast: "
+                "crossover_forward_year set at/below start_year (FH-1, "
+                "hindcast-forward plan §2.1)"
+            )
 
         # The two on-line-capacity envelope variants resolve the SAME LP row
         # from different derived tables (base decile vs extreme-peak-resolved);
@@ -9729,6 +9784,29 @@ class ScenarioConfig:
         return (
             self.crossover_forward_year is not None
             and year >= self.crossover_forward_year
+        )
+
+    @property
+    def is_full_forward_hindcast(self) -> bool:
+        """True when this is a T1-FF full-forward hindcast (FH-1).
+
+        A full-forward hindcast points the crossover boundary at the window's
+        own start year (``crossover_forward_year <= start_year``), so EVERY
+        solve year is a forward year: the whole window runs the forecast input
+        stack (growth-scaled demand from the pinned weather base, trajectory
+        fuel, statistical outages, estimator emission rates, NO measured
+        overlays) while being scored against held actuals — the instrument of
+        ``docs/hindcast-forward-plan-2026-07.md`` §2. ``False`` for a plain
+        hindcast (boundary ``None``) and for a T1-X crossover (boundary past
+        the start year), so both stay byte-identical. The as-of information
+        trims that only bite below the 2026 boundary (planned-additions
+        vintage, emission-rate window, hydro climatology) gate on this
+        predicate.
+        """
+        return (
+            self.crossover_forward_year is not None
+            and self.start_year is not None
+            and self.crossover_forward_year <= self.start_year
         )
 
     def _non_default_values(self) -> dict:
