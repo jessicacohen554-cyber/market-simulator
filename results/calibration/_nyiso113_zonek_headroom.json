@@ -1,0 +1,97 @@
+{
+  "probe": "nyiso-113 Zone-K reserve headroom",
+  "arm": "results/calibration/nyiso113_lilocational_B",
+  "per_year": {
+    "2023": {
+      "n_units_zone_k": 132,
+      "n_quick_start_units": 76,
+      "quick_start_headroom_mw": {
+        "min": 596.8,
+        "p1": 1139.5,
+        "median": 1721.6,
+        "hours_below_requirement": 0,
+        "requirement_mw": 120.0,
+        "min_as_multiple_of_requirement": 5.0
+      },
+      "full_thermal_headroom_mw": {
+        "min": 630.5,
+        "p1": 1391.3,
+        "hours_below_onpeak_requirement": 0,
+        "requirement_mw": 540.0,
+        "min_as_multiple_of_requirement": 1.2
+      },
+      "in_tail_hours_price_gt_250": {
+        "n_hours": 10,
+        "min_quick_start_headroom_mw": 596.8,
+        "min_full_headroom_mw": 630.5
+      },
+      "zone_k_dispatch_at_own_peak_hour": {
+        "peak_hour": 5968,
+        "thermal_dispatched_mw": 3333.7,
+        "thermal_available_mw": 4054.3,
+        "utilisation": 0.8223
+      }
+    },
+    "2024": {
+      "n_units_zone_k": 132,
+      "n_quick_start_units": 76,
+      "quick_start_headroom_mw": {
+        "min": 490.7,
+        "p1": 1118.3,
+        "median": 1721.6,
+        "hours_below_requirement": 0,
+        "requirement_mw": 120.0,
+        "min_as_multiple_of_requirement": 4.1
+      },
+      "full_thermal_headroom_mw": {
+        "min": 526.0,
+        "p1": 1379.4,
+        "hours_below_onpeak_requirement": 1,
+        "requirement_mw": 540.0,
+        "min_as_multiple_of_requirement": 1.0
+      },
+      "in_tail_hours_price_gt_250": {
+        "n_hours": 5,
+        "min_quick_start_headroom_mw": 490.7,
+        "min_full_headroom_mw": 526.0
+      },
+      "zone_k_dispatch_at_own_peak_hour": {
+        "peak_hour": 4528,
+        "thermal_dispatched_mw": 3160.7,
+        "thermal_available_mw": 3762.5,
+        "utilisation": 0.8401
+      }
+    },
+    "2025": {
+      "n_units_zone_k": 132,
+      "n_quick_start_units": 76,
+      "quick_start_headroom_mw": {
+        "min": 379.7,
+        "p1": 1139.5,
+        "median": 1591.3,
+        "hours_below_requirement": 0,
+        "requirement_mw": 120.0,
+        "min_as_multiple_of_requirement": 3.2
+      },
+      "full_thermal_headroom_mw": {
+        "min": 410.3,
+        "p1": 1414.4,
+        "hours_below_onpeak_requirement": 5,
+        "requirement_mw": 540.0,
+        "min_as_multiple_of_requirement": 0.8
+      },
+      "in_tail_hours_price_gt_250": {
+        "n_hours": 19,
+        "min_quick_start_headroom_mw": 379.7,
+        "min_full_headroom_mw": 410.3
+      },
+      "zone_k_dispatch_at_own_peak_hour": {
+        "peak_hour": 4218,
+        "thermal_dispatched_mw": 3961.4,
+        "thermal_available_mw": 4371.7,
+        "utilisation": 0.9062
+      }
+    }
+  },
+  "correction": "The pre-registration inferred a headroom collapse from a capacity-vs-demand comparison (Zone-K thermal nameplate 5,146.5 MW vs LI peak demand 5,537 MW). That inference is invalid for two reasons the measurement makes plain: (1) reserve class 1 is IDLE-ALLOWED, so its headroom counts un-dispatched capacity and the binding condition is 'fewer than 120 MW of Zone-K quick-start is idle', not 'Zone K is short of energy'; (2) Long Island IMPORTS a large share of its own peak load, so its local peakers never reach the utilisation the nameplate comparison implies. A capacity-vs-demand screen is not a headroom screen for any importing zone with an idle-allowed reserve class."
+}
