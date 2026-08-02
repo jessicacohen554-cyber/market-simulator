@@ -944,6 +944,26 @@ class TestMechanismThreading:
         assert row["verdict"] == "pass"
         assert row["floored_twh"] == pytest.approx(900.0 * h / 1e6)
 
+    def test_g06_bridge_family_covers_every_p0_pattern_bridge(self):
+        """caiso-155: the G-06 recompute must subtract EVERY P0-run-pattern
+        bridge from the committed side, not just the CAISO RA leg — nyiso109's
+        armed nyiso_gas_commitment_bridge carries 3-5 pp of CC_REGULAR's gated
+        share and no fleet_only rebuild can reproduce it."""
+        from market_sim.data.floor_mechanisms import (
+            MECH_GAS_COMMITMENT_BRIDGE,
+            MECH_MISO_COAL_NIGHT_FLOOR,
+            MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+            MECH_RA_MUSTOFFER,
+        )
+        from scripts.legitimacy_diagnostics import BRIDGE_MECHS
+
+        assert set(BRIDGE_MECHS) == {
+            MECH_RA_MUSTOFFER,
+            MECH_GAS_COMMITMENT_BRIDGE,
+            MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+            MECH_MISO_COAL_NIGHT_FLOOR,
+        }
+
     def test_rebuild_rename_map_threads_generic_override_channels(self):
         """caiso-155 addendum Part 0: the floors rebuild must map the generic
         override channels to run_year kwargs exactly as replay_keeper does —

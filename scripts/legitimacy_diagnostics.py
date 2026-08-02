@@ -194,10 +194,12 @@ D2_REL_TOL: float = 0.02
 # on the per-class GATED forced SHARE (rule-20 units). The keeper recompute is a
 # LOWER-BOUND reconstruction, NOT a bit-faithful replay: it decodes dispatch from
 # the committed dashboard payload (the solve `dispatch/*.parquet` is gitignored-
-# absent) and rebuilds floors via run_year(fleet_only=True), which runs no P2
-# solve and so OMITS the P2 `ra_mustoffer_bridge` (the check excludes that
-# mechanism from the committed side below — it is the only gated floor the
-# fleet_only rebuild cannot reproduce). The residual, once the bridge is
+# absent) and rebuilds floors via run_year(fleet_only=True), which has no P0/P1
+# solution and so OMITS the whole P0-run-pattern commitment-bridge family
+# (ra_mustoffer_bridge, gas_commitment_bridge, nyiso_gas_commitment_bridge,
+# miso_coal_night_floor — the check excludes those mechanisms from the
+# committed side below; caiso-155 widened the exclusion from the RA leg to the
+# family). The residual, once the bridges are
 # excluded, is class-denominator attribution jitter: a boundary plant that bins
 # into a different class across fleet builds shifts a class total by ~0.08 TWh.
 # Measured worst case across the 6 keepers is CAISO CT_PEAKER at 1.65 pp (0.08
@@ -668,6 +670,18 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
     "ST_CHP",
     "CT_PEAKER",
     "CT_CHP",
+)
+
+# The P0-run-pattern commitment-bridge family: all four ride the shared
+# detector (model.commitment.caiso_ra_mustoffer_min_gen) on the model's own
+# P0 solution, so NO fleet_only rebuild can reproduce their floors — the G-06
+# recompute subtracts their committed contributions before comparing
+# (caiso-155 widened the exclusion from the RA leg to the family).
+BRIDGE_MECHS: tuple[int, ...] = (
+    MECH_RA_MUSTOFFER,
+    MECH_GAS_COMMITMENT_BRIDGE,
+    MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+    MECH_MISO_COAL_NIGHT_FLOOR,
 )
 
 # D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE
@@ -1475,17 +1489,20 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
     so the comparison reconciles the two known, structural reasons it cannot
     equal a faithfully-generated committed artifact:
 
-    1. **P2 ``ra_mustoffer_bridge`` (CAISO).** ``run_year(fleet_only=True)``
-       runs no P2 solve, so the P2 RA must-offer bridge floor — which needs
-       the P1 solution — is absent from rebuilt floors (``load_or_rebuild_floors``
-       returns ``ra_floor_missing``; ``run_d2`` flags the summary
-       ``lower_bound``). Its forced energy is real and disclosed on the keeper
-       (e.g. caiso-58 CC_REGULAR 3.24 TWh), so we do NOT demand the recompute
-       reproduce it: the committed side's ``ra_mustoffer_bridge`` contribution
-       is subtracted before comparing, leaving the REBUILDABLE gated share on
-       both sides. (It is the only gated floor the rebuild cannot produce —
+    1. **The P0-run-pattern commitment bridges.** ``run_year(fleet_only=True)``
+       runs no LP, so every bridge detected from the model's own P0 solution
+       (``model.commitment.caiso_ra_mustoffer_min_gen``: CAISO
+       ``ra_mustoffer_bridge``, ERCOT ``gas_commitment_bridge``, NYISO
+       ``nyiso_gas_commitment_bridge``, MISO ``miso_coal_night_floor``) is
+       absent from rebuilt floors (``load_or_rebuild_floors`` returns
+       ``ra_floor_missing``; ``run_d2`` flags the summary ``lower_bound``).
+       Their forced energy is real and disclosed on the keeper (e.g. caiso-58
+       CC_REGULAR 3.24 TWh; nyiso109 CC_REGULAR 3-5 pp), so we do NOT demand
+       the recompute reproduce it: the committed side's bridge contributions
+       are subtracted before comparing, leaving the REBUILDABLE gated share on
+       both sides (caiso-155 widened this from the RA leg to the family —
        ``ct_netload_drag`` / ``reliability_floor`` are fleet-level and rebuild
-       exactly.)
+       exactly).
     2. **Denominator attribution jitter.** A boundary plant can bin into a
        different class across fleet builds, shifting a class total by ~0.08 TWh
        and the forced share by ≤ ~1.65 pp on a small material class (measured
@@ -1502,7 +1519,7 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
     keeper_ids = keeper_store.keeper_list(repo_root)
     if not keeper_ids:
         return res
-    bridge_name = MECH_NAMES[MECH_RA_MUSTOFFER]
+    bridge_names = {MECH_NAMES[m] for m in BRIDGE_MECHS}
     for run_id in keeper_ids:
         side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
         side = json.loads(side_path.read_text())
@@ -1521,12 +1538,18 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
         committed_summary = {
             (row["year"], row["class"]): row for row in committed_d2.get("summary", [])
         }
-        # Committed forced energy attributed to the non-rebuildable P2 bridge,
-        # per (year, class): subtracted from the committed gated share so the
-        # comparison is over the REBUILDABLE floors the recompute can produce.
+        # Committed forced energy attributed to the non-rebuildable commitment
+        # bridges, per (year, class): subtracted from the committed gated share
+        # so the comparison is over the REBUILDABLE floors the recompute can
+        # produce. The whole P0-run-pattern bridge family is excluded, not
+        # just the CAISO RA leg (caiso-155): every bridge detected by
+        # model.commitment.caiso_ra_mustoffer_min_gen needs the P0 solution,
+        # which run_year(fleet_only=True) never has — nyiso109's armed
+        # nyiso_gas_commitment_bridge carries 3-5 pp of CC_REGULAR's gated
+        # share, so subtracting only the RA leg false-fails a faithful keeper.
         committed_bridge_twh: dict[tuple[int, str], float] = {}
         for row in committed_d2.get("rows", []):
-            if row.get("mechanism") == bridge_name:
+            if row.get("mechanism") in bridge_names:
                 k = (row["year"], row["class"])
                 committed_bridge_twh[k] = committed_bridge_twh.get(k, 0.0) + row.get(
                     "forced_twh", 0.0
@@ -1612,7 +1635,7 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
                 res.failures.append(
                     f"{run_id} {year} {klass!r}: committed rebuildable forced "
                     f"share {c_rebuildable:.4f} (of {c_share:.4f} gated, less "
-                    f"{bridge_share:.4f} non-rebuildable ra_mustoffer_bridge) != "
+                    f"{bridge_share:.4f} non-rebuildable commitment bridges) != "
                     f"recomputed {r_share:.4f} beyond {D2_VERIFY_SHARE_TOL:.3f} — "
                     "committed legitimacy_diagnostics.json is stale vs the bundle "
                     "it describes"
