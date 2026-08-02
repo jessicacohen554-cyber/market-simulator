@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-29-nyiso-96-ctamort",
+  "run_id": "2026-08-02-nyiso112-dec-peaker-rule",
   "iso": "NYISO",
-  "label": "nyiso 96 ctamort",
+  "label": "nyiso112 dec peaker rule",
   "target_years": [
     2023,
     2024,
@@ -14,13 +14,11 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)"
   ],
-  "notes": [
-    "C8 2024 ST_GAS: grounded above budget \u2014 30.4% forced (3.377 of 11.096 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 0.961 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -45,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -55,7 +54,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -70,7 +69,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -78,11 +79,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 1
+    "ledgered": 1,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NYISO",

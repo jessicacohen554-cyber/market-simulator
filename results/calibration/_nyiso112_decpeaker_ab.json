@@ -1,0 +1,66 @@
+{
+ "K1": {
+  "config_diff": {
+   "nysdec_peaker_rule_availability": [
+    false,
+    true
+   ]
+  },
+  "pass": true
+ },
+ "K3_K4_window": {
+  "2023": {
+   "ozone_mwh_control": 1509147.5,
+   "ozone_mwh_arm": 1508351.2,
+   "ozone_delta_mwh": -796.2,
+   "nonozone_delta_mwh": 0.0
+  },
+  "2024": {
+   "ozone_mwh_control": 1954360.5,
+   "ozone_mwh_arm": 1953811.4,
+   "ozone_delta_mwh": -549.1,
+   "nonozone_delta_mwh": 0.0
+  },
+  "2025": {
+   "ozone_mwh_control": 3976159.8,
+   "ozone_mwh_arm": 3974271.2,
+   "ozone_delta_mwh": -1888.5,
+   "nonozone_delta_mwh": 0.0
+  }
+ },
+ "P1_c3a_P4": {
+  "2023": {
+   "actual_rt_lw": 32.3,
+   "control": 7.508,
+   "control_h300": 3,
+   "control_slack": 0.0,
+   "control_dump": 0.0,
+   "arm": 7.577,
+   "arm_h300": 3,
+   "arm_slack": 0.0,
+   "arm_dump": 0.0
+  },
+  "2024": {
+   "actual_rt_lw": 38.2,
+   "control": -0.547,
+   "control_h300": 0,
+   "control_slack": 0.0,
+   "control_dump": 0.0,
+   "arm": -0.539,
+   "arm_h300": 0,
+   "arm_slack": 0.0,
+   "arm_dump": 0.0
+  },
+  "2025": {
+   "actual_rt_lw": 66.53,
+   "control": -9.64,
+   "control_h300": 7,
+   "control_slack": 0.0,
+   "control_dump": 0.0,
+   "arm": -9.547,
+   "arm_h300": 14,
+   "arm_slack": 0.0,
+   "arm_dump": 0.0
+  }
+ }
+}
