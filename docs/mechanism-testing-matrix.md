@@ -1385,6 +1385,34 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
 
 ### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
+**STATUS 2026-08-02 (nyiso-112) — THE FIRST C3c MOVEMENT SINCE THE QUEUE WAS
+DECLARED EXHAUSTED, from a mechanism that was never on the queue.** Keeper
+`2026-08-02-nyiso112-ramp-plus-peaker`. The lever is
+**`nysdec_peaker_rule_availability`** — NYSDEC 6 NYCRR Subpart 227-3, the
+ozone-season NOx cap on simple-cycle turbines, applied per unit from the
+curated Gold Book compliance schedule as an **availability-only** overlay
+(rule 13, forward story to the 2030 NYPA phase-out). It was invisible rather
+than adjudicated: **no matrix row at all** (rule 28(c) gap), armed exactly once
+at nyiso-46 inside a three-mechanism probe that stayed a probe for unrelated
+reasons, **no rejection anywhere in the record**, and every bundle since read
+`false`. Rule 19 was checked by measurement — the CAMPD outage overlay does NOT
+already zero these units (the restricted GTs run inside their own windows on
+the superseded keeper's own dispatch). **Result: C3c 2025 moves 7 → 14 hours
+>$300 against a measured 42** (0.17× → 0.33×; 2023/2024 unchanged at 3/0), with
+C3a in band in all three years and 2025 moving *toward* band centre, K4 window
+fidelity exact (out-of-window delta 0.0 MWh every year), zero slack and zero
+dump. **The caveat is not retired** — the model still under-produces the tail —
+but its worst year improves for the mechanism's own dated reason (the
+2025-05-01 second phase removes downstate peaker availability in exactly the
+hours and zones nyiso-92/94 measured the tail in), never sized to the residual.
+Two arms registered: `2026-08-02-nyiso112-dec-peaker-rule` (single delta on
+nyiso-109) and the keeper `2026-08-02-nyiso112-ramp-plus-peaker` (the same
+delta on the nyiso-111 ramp keeper), each attributed against the same
+zero-delta control. `PREREG-nyiso112-nysdec-peaker-rule-2026-08-02.md`.
+**Standing lesson for every ISO lane: the exhausted-queue finding was true of
+the queue, and the queue was incomplete — a solve-affecting field with no
+matrix row is a mechanism nobody can see.**
+
 **STATUS 2026-08-02 (nyiso-111) — the CROSS-ISO TRANSFER sweep: two candidates
 REFUSED ex-ante on NYISO's own data, one SOLVED.** With the in-LP
 reserve-formation family exhausted (nyiso-110) the queue held no peak-half

@@ -1,0 +1,53 @@
+{
+ "2023": {
+  "actual_rt_lw": 32.3,
+  "control_c3a": 7.508,
+  "control_h300": 3,
+  "control_slack": 0.0,
+  "control_dump": 0.0,
+  "keeper_nyiso111_c3a": 7.501,
+  "keeper_nyiso111_h300": 3,
+  "keeper_nyiso111_slack": 0.0,
+  "keeper_nyiso111_dump": 0.0,
+  "combined_D_c3a": 7.572,
+  "combined_D_h300": 3,
+  "combined_D_slack": 0.0,
+  "combined_D_dump": 0.0
+ },
+ "2024": {
+  "actual_rt_lw": 38.2,
+  "control_c3a": -0.547,
+  "control_h300": 0,
+  "control_slack": 0.0,
+  "control_dump": 0.0,
+  "keeper_nyiso111_c3a": -0.599,
+  "keeper_nyiso111_h300": 0,
+  "keeper_nyiso111_slack": 0.0,
+  "keeper_nyiso111_dump": 0.0,
+  "combined_D_c3a": -0.591,
+  "combined_D_h300": 0,
+  "combined_D_slack": 0.0,
+  "combined_D_dump": 0.0
+ },
+ "2025": {
+  "actual_rt_lw": 66.53,
+  "control_c3a": -9.64,
+  "control_h300": 7,
+  "control_slack": 0.0,
+  "control_dump": 0.0,
+  "keeper_nyiso111_c3a": -9.657,
+  "keeper_nyiso111_h300": 7,
+  "keeper_nyiso111_slack": 0.0,
+  "keeper_nyiso111_dump": 0.0,
+  "combined_D_c3a": -9.563,
+  "combined_D_h300": 14,
+  "combined_D_slack": 0.0,
+  "combined_D_dump": 0.0
+ },
+ "delta_vs_keeper": {
+  "nysdec_peaker_rule_availability": [
+   false,
+   true
+  ]
+ }
+}
