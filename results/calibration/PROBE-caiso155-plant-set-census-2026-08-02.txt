@@ -1,0 +1,444 @@
+caiso-155 plant-set census transcript — 2026-08-02
+Populations/gates: PREREG-caiso155-diagnostics-plant-set-2026-08-02.md (+2 addenda).
+
+########## PHASE 1 — PRE-FIX census (HEAD scorer, standing G-06 rebuild = UNTHREADED; the MISO record is the §C hallucination, NOT keeper exposure) ##########
+
+----- CAISO (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== CAISO — keeper 2026-07-31-caiso153-reid-b — bundle results/calibration/caiso153_reid_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 8,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 18.1502,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 193
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 8,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 18.7169,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 194
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 8,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 18.0055,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 194
+}
+
+----- MISO (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== MISO — keeper 2026-07-31-miso-109b-hy-level — bundle results/calibration/miso109_hy_level_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "MISO-West_Manitoba_firmhydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 726.0,
+   "max_floor_mw": 726.0,
+   "floor_twh": 6.3598
+  }
+ ],
+ "p1_total_twh": 6.3598,
+ "p3_unfloored_dropped_rows": 48,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 102.4915,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "MISO-West_Manitoba_firmhydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 531.0,
+   "max_floor_mw": 531.0,
+   "floor_twh": 4.6516
+  }
+ ],
+ "p1_total_twh": 4.6516,
+ "p3_unfloored_dropped_rows": 48,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 105.4743,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "MISO-West_Manitoba_firmhydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 224.0,
+   "max_floor_mw": 224.0,
+   "floor_twh": 1.9622
+  }
+ ],
+ "p1_total_twh": 1.9622,
+ "p3_unfloored_dropped_rows": 48,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 105.9317,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+
+----- NYISO (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== NYISO — keeper 2026-08-01-nyiso109-zonal-margin-anchor — bundle results/calibration/nyiso109_zonalanchor_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 38.921,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 38.148,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 39.0529,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+
+----- ERCOT (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== ERCOT — keeper 2026-08-01-ercot149-gas-event-cap — bundle results/calibration/ercot149_gas_event_cap_arm ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 69.3734,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 173
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 66.7705,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 173
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 67.1379,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 173
+}
+
+----- NEISO (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== NEISO — keeper 2026-07-31-neiso-72-hy-window — bundle results/calibration/neiso72_hy_window_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 23.8713,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 106
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 27.6362,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 0,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 28.8726,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 108
+}
+
+----- PJM (pre-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== PJM — keeper 2026-07-31-pjm-143b-hy-level — bundle results/calibration/pjm143_hy_level_B ===
+[PJM 2023] BLOCKED (stop rule S3): floors rebuild needs an absent raw input — pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no hrl_da_incs_decs_2023_* parquets — run scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently no-ops)
+[PJM 2024] BLOCKED (stop rule S3): floors rebuild needs an absent raw input — pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no hrl_da_incs_decs_2024_* parquets — run scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently no-ops)
+[PJM 2025] BLOCKED (stop rule S3): floors rebuild needs an absent raw input — pjm_da_virtual_bids is on but data/raw/pjm-da-virtuals/ has no hrl_da_incs_decs_2025_* parquets — run scripts/data/fetch_pjm_da_virtuals.py (the mechanism never silently no-ops)
+
+########## PHASE 2 — POST-FIX re-run (fix-aware probe; threaded floors caches where rebuilt) ##########
+
+----- MISO (post-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== MISO — keeper 2026-07-31-miso-109b-hy-level — bundle results/calibration/miso109_hy_level_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 64,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 116.7558,
+ "fix_present": false,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 64,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 119.9997,
+ "fix_present": false,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [],
+ "p1_total_twh": 0.0,
+ "p3_unfloored_dropped_rows": 64,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 121.1675,
+ "fix_present": false,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 419
+}
+
+----- NYISO (post-fix) -----
+caiso-155 plant-set census — keepers at run time: {'ERCOT': '2026-08-01-ercot149-gas-event-cap', 'PJM': '2026-07-31-pjm-143b-hy-level', 'CAISO': '2026-07-31-caiso153-reid-b', 'NYISO': '2026-08-01-nyiso109-zonal-margin-anchor', 'NEISO': '2026-07-31-neiso-72-hy-window', 'MISO': '2026-07-31-miso-109b-hy-level'}
+
+=== NYISO — keeper 2026-08-01-nyiso109-zonal-margin-anchor — bundle results/calibration/nyiso109_zonalanchor_B ===
+{
+ "year": 2023,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 62.408,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+{
+ "year": 2024,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 61.7597,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+{
+ "year": 2025,
+ "ra_floor_missing (rebuilt)": true,
+ "p1_rows": [
+  {
+   "unit_id": "NYISO_external_HQ_hydro",
+   "plant_group": "",
+   "mechanisms": [
+    "firm_import"
+   ],
+   "mech_ids": [
+    12
+   ],
+   "hours_floored": 8760,
+   "mean_floor_mw": 900.0,
+   "max_floor_mw": 900.0,
+   "floor_twh": 7.884
+  }
+ ],
+ "p1_total_twh": 7.884,
+ "p3_unfloored_dropped_rows": 12,
+ "p4_nonempty_groups": [],
+ "p5_window_gaps": [],
+ "head_scorer_twh": 58.8033,
+ "fix_present": true,
+ "dispatch_parquet_present": false,
+ "payload_plant_count": 107
+}
+
+(CAISO post-fix record appended below after the in-place keeper replay regenerated its real P1 floors — addendum 2.)
