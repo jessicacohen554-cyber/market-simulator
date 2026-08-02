@@ -376,3 +376,116 @@ def test_capacity_reuse_score_retirements_passthrough():
     ret = X.CH.score_retirements(model, actuals)
     assert ret["total_gw"]["band"] == "PASS"
     assert abs(ret["total_gw"]["err_frac"] - 0.05) < 1e-9
+
+
+# --------------------------------------------------------------------------- #
+# FC-4 rubric contract — family volume + flat metrics + refusal marker
+# (FFR-2A: folded in from the deleted scripts/_ff2d_crossover_adapter.py)
+# --------------------------------------------------------------------------- #
+def _fuelmix_rec(key, model, actual, status):
+    return {
+        "criterion": "fuelmix",
+        "key": key,
+        "year": 2023,
+        "status": status,
+        "model": model,
+        "actual": actual,
+    }
+
+
+def test_family_volume_sums_the_family_fractionally():
+    recs = [
+        _fuelmix_rec("CC_REGULAR", 110.0, 100.0, X.V.PASS),
+        _fuelmix_rec("CT_PEAKER", 12.0, 10.0, X.V.FAIL),
+        _fuelmix_rec("COAL_PRB", 40.0, 50.0, X.V.FAIL),
+    ]
+    gas = X._family_volume(recs, X._FAMILY_CLASSES["gas_twh"])
+    assert gas["model_twh"] == pytest.approx(122.0)
+    assert gas["actual_twh"] == pytest.approx(110.0)
+    assert gas["signed"] == pytest.approx(12.0 / 110.0, rel=1e-3)
+    assert gas["gated"] is True
+    coal = X._family_volume(recs, X._FAMILY_CLASSES["coal_twh"])
+    assert coal["signed"] == pytest.approx(-0.2)
+
+
+def test_family_volume_counts_skipped_rows_but_flags_them():
+    # A SKIPPED row carries a real model/actual pair: it must count toward the
+    # family total (else the family is compared against a partial actual) AND
+    # be named, so the row is reported rather than banded.
+    recs = [
+        _fuelmix_rec("CC_REGULAR", 110.0, 100.0, X.V.PASS),
+        _fuelmix_rec("ST_GAS", 20.0, 20.0, X.V.SKIPPED),
+    ]
+    gas = X._family_volume(recs, X._FAMILY_CLASSES["gas_twh"])
+    assert gas["actual_twh"] == pytest.approx(120.0)
+    assert gas["incomplete_classes"] == ["ST_GAS"]
+    assert gas["gated"] is False
+
+
+def test_family_volume_unbenchmarked_is_none():
+    assert X._family_volume([], X._FAMILY_CLASSES["gas_twh"]) is None
+    assert (
+        X._family_volume(
+            [_fuelmix_rec("CC_REGULAR", 1.0, None, X.V.SKIPPED)],
+            X._FAMILY_CLASSES["gas_twh"],
+        )
+        is None
+    )
+
+
+def _dispatch_stub(price_err=0.05, co2_err=-0.2, fam_gated=True):
+    return {
+        "metrics": {
+            "price_mean": {
+                "2023": {"forecast_err": price_err, "keeper_backcast_err": 0.01}
+            },
+            "co2": {
+                "2023": {"forecast_err": abs(co2_err), "keeper_backcast_err": None}
+            },
+            "fuelmix": {},
+            "price_shape": {},
+        },
+        "family_volume": {
+            "gas_twh": {
+                "2023": {
+                    "forecast_err": 0.03,
+                    "keeper_backcast_err": 0.01,
+                    "gated": fam_gated,
+                    "forecast_detail": {
+                        "incomplete_classes": [] if fam_gated else ["ST_GAS"]
+                    },
+                }
+            },
+            "coal_twh": {},
+        },
+    }
+
+
+def test_rubric_metrics_emits_the_scorer_contract():
+    metrics, uncovered = X.rubric_metrics(_dispatch_stub())
+    by = {(m["metric"], m["year"]): m for m in metrics}
+    assert by[("price", 2023)]["forecast_abs_err_frac"] == pytest.approx(0.05)
+    assert by[("price", 2023)]["keeper_abs_err_frac"] == pytest.approx(0.01)
+    assert by[("co2", 2023)]["keeper_abs_err_frac"] is None
+    assert by[("gas_twh", 2023)]["forecast_abs_err_frac"] == pytest.approx(0.03)
+    # Everything the run cannot score is NAMED, never silently absent.
+    assert any("coal_twh 2023" in u for u in uncovered)
+    assert any("price 2024" in u for u in uncovered)
+    # Only the rubric's own names are emitted — no re-keying of price_shape
+    # (NRMSE) or aggregate fuelmix (TWh) onto a fractional band.
+    assert {m["metric"] for m in metrics} <= {"price", "co2", "gas_twh", "coal_twh"}
+
+
+def test_rubric_metrics_reports_ungated_family_instead_of_banding_it():
+    metrics, uncovered = X.rubric_metrics(_dispatch_stub(fam_gated=False))
+    assert not any(m["metric"] == "gas_twh" for m in metrics)
+    assert any("gas_twh 2023" in u and "ST_GAS" in u for u in uncovered)
+
+
+def test_rubric_metric_names_match_the_scorer_bands():
+    from scripts import forecast_verdict as FV
+
+    emitted = set(X._RUBRIC_METRIC_NAMES.values()) | set(X._FAMILY_CLASSES)
+    assert emitted == set(FV.CROSSOVER_COMMERCIAL)
+    assert X.QUARANTINE_FROM == FV.CROSSOVER_QUARANTINE_FLOOR
+    assert tuple(X.SCORED_YEARS) == tuple(FV.CROSSOVER_SCORED_YEARS)

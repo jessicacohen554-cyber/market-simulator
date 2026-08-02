@@ -192,11 +192,13 @@ class T2ShakeoutTests(unittest.TestCase):
         self.assertEqual(fv.STABILITY_WINDOW, (2031, 2035))
 
     def test_raw_crossover_shape_trips_quarantine_gate(self):
-        # The committed FF-0E emitter nests refusal_marker under `meta`; the scorer
-        # reads it top-level (bridged by scripts/_ff2d_crossover_adapter.py). Feeding
-        # the RAW shape trips the rule-22 "marker ABSENT => FAIL" gate. Pinned so a
-        # future fold-in of the marker into score_crossover.py is a conscious change,
-        # not a silent verdict flip (FF-2D §4.2 routes that follow-up to L-VAL).
+        # score_crossover.py now emits refusal_marker TOP-LEVEL (FFR-2A folded in
+        # the FF-2D adapter and deleted it), so a current artifact passes row 1.
+        # This pins the other half: a marker nested anywhere else — the shape the
+        # adapter used to bridge — is still ABSENT to the scorer and still FAILs
+        # the rule-22 gate. The fold-in was the conscious change this test was
+        # pinned against (FF-2D §4.2 -> L-VAL); it must not become a way for a
+        # mis-shaped marker to pass.
         raw = {
             "iso": "ERCOT",
             "meta": {
