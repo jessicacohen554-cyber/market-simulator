@@ -262,14 +262,68 @@ is owner decision D-7 (a 15-solve-year reseed).
 
 **9. Dispatch state after the close** (supersedes §0b-6). **Wave 2 is RELEASED** —
 FFR-2A / 2B / 2C / 2E may dispatch on §0b-6's recommended order (2C+2A, then 2B, then 2E;
-2A and 2B coordinate their PJM windows explicitly, rule 12). **FH-4/FH-5 are UNBLOCKED**
-alongside FH-1/2/3. FFR-2D has merged (#3262, the D-1..D-7 owner-sitting packet), so the
+2A and 2B coordinate their PJM windows explicitly, rule 12). ~~**FH-4/FH-5 are UNBLOCKED**
+alongside FH-1/2/3.~~ → **CORRECTED by §0d: the §W1-X condition is discharged, but FH-1's
+§3.3 harness-defect gate FAILED after this section was written — FH-4 is BLOCKED.** FFR-2D has merged (#3262, the D-1..D-7 owner-sitting packet), so the
 owner sitting is the next coordination event, not a Wave-2 prerequisite. Two duties the
 epoch imposes on Wave 2, stated once here so no lane re-derives them: **FFR-2A's T1-X legs
 are exactly what the epoch invalidates** (FR-8 reaches their realized years — purge and
 solve cold), and **FFR-2B may reuse a committed BEFORE leg only if FR-1/2/7/8 provably do
 not touch it** — a forecast leg with capacity evolution, or any aging-sensitive
 availability, is not such a leg.
+
+---
+
+## 0d. FH-1 landed and its acceptance gate FAILED — FH-4 stays blocked (2026-08-02)
+
+**Read this before dispatching FH-4 or FH-5.** §0c was written by the §W1-X session, which
+merged at 04:55; FH-1 merged at 05:11 (PR #3269). §0c's "FH-4/FH-5 are UNBLOCKED" is therefore
+true only of the condition §W1-X owned. FH-4's `REQUIRES` line names **two** conditions, and
+the second has since failed.
+
+**1. The instrument shipped.** `--forward-from-base` (T1-FF) is on `main` with both arms wired,
+the four sub-2026 leaks closed (planned additions, emission-rate window, hydro climatology, the
+silent gas back-hold), the rule-22 carve-outs moved into `scripts/lib/holdout_policy.py` with
+the harness fail-closed against the freeze file, the scorer's symmetric `< 2023` refusal, 28
+contract tests and the rule-28c matrix row. Findings doc:
+`docs/handoffs/fh-1-full-forward-harness-2026-08.md`. Arm K at base 2023 **hard-errors** by
+design until FH-3 lands `hindcast_asknown_aeo2023` — it refuses to substitute a different
+vintage, which would be the §4-row-7 trap in another costume.
+
+**2. The §3.3 harness-defect gate REPRODUCED — stop-the-line for Phase A.** Probe: ERCOT, base
+2023, vintage 2023, 2023–2025, Arm R, 3 solve-years, registered on the hindcast namespace
+(`ercot-2023-2025-t1ff-armr-fh1gate`, `kind="full_forward"`).
+
+| Year | Prior thermal | Econ retired | I6 |
+|---|---|---|---|
+| 2023 | 78.2 GW | 0.00 GW | 0.0 % |
+| 2024 | 78.2 GW | 0.00 GW | 0.0 % |
+| 2025 | 78.5 GW | **21.05 GW** | **26.8 % — FAIL** (cap 20 %) |
+
+The full FC-1 signature reproduces, not just I6: **I6 FAIL / I7 FAIL / I12 WARN** — the same
+triple `ff-t1-gate-2026-07.md` §4.2 adjudicated on the vintage-2023 T1-X crossover (25.6 %).
+The run itself is mechanically clean (zero leakage-guard violations, both Arm R weather rebinds
+fired, hydro pinned to base, gas on `hindcast_realized`, freeze legality printed) — **the defect
+is the retirement layer, upstream of T1-FF**, exactly as the T1-X adjudication said. It follows
+the harness posture, not the input stack. Nothing was tuned in response (rule 1 / rule 14).
+
+**3. Consequences, binding on any session that touches Wave FH:**
+- **FH-4 does not start.** Its own `REQUIRES` demands this gate PASSED. The block lifts only
+  when a retirement-lane fix lands **and** a re-probe passes — not by re-reading the evidence.
+- **The probe's skill numbers are GATE CONTEXT ONLY** (price gaps 2.1/54.0/2.3, fuel-mix gaps
+  9.8/13.6/28.1 vs keeper `ercot149`). They must never be quoted as T1-FF skill: 2024's price
+  is dominated by the pre-wave tight fleet and 2025's mix by the post-wave gutted one.
+- **The fix belongs to the already-chartered retirement lanes** (FF-1A R-NEW pipeline / the G-31
+  screen-grain root cause / the FFR retirement-calibration lane) — **not** to a new FH session
+  and not to a parameter. This is why **FFR-2B is now the highest-value Wave-2 session**: it
+  owns the retirement-rule evidence (D-1/D-2) for the very layer blocking FH-4, so its output
+  feeds both the owner sitting and the FH unblock. Recommended Wave-2 release order is amended
+  to **2B + 2C first**, then 2A, then 2E (2A and 2B still coordinate PJM windows, rule 12).
+- **FH-2 and FH-3 are unaffected** and may dispatch in parallel with Wave 2. FH-3 additionally
+  unblocks Arm K at base 2023.
+
+**4. Keeper drift since §0c:** CAISO → `2026-07-31-caiso153-reid-b` (PR #3267). Read the shards
+at your own HEAD.
 
 ---
 
@@ -283,7 +337,7 @@ availability, is not such a leg.
 | **W3 re-baseline** | 3A (O), 3B (O) | 3B first or parallel (3B lands schema, 3A populates) | the ONE consolidated battery: T1-F ×6 + T1-X folds + T1-H re-scores + FC-6 | boards regenerated & current |
 | **WS structural** | SA (F), SB (F), SC (O) | yes | T0 smoke only; everything ships **default-off/no-solve** so the W3 baseline stays valid | owner arming decisions (later) |
 | **WP intake** | PA (O), PB (O) | parallel-**anytime** (data/docs only, no solve) | none | — |
-| **WFH hindcast** | FH-1 (F), FH-2 (O), FH-3 (O), then FH-4/FH-5 (O) ✅ **UNBLOCKED 2026-08-02** | FH-1/2/3 yes — parallel with W2; **FH-4/5 were GATED on W1 merge + §W1-X epoch bump** (FR-7/FR-8 corrupt weather-pinned historic runs) — **both conditions now MET**, so FH-4/FH-5 may dispatch. Solve **COLD**: the epoch invalidates every pre-2026-08-02 forecast-mode cache, which is exactly what these legs would have re-used (§0c-3 purge) | FH-4: 3 solve-yr × 6 ISOs × 2 arms; FH-5: 4 solve-yr | forward-mode skill measured → feeds §2.1b(c) "worth-the-compute" evidence |
+| **WFH hindcast** | FH-1 (F) ✅ merged, FH-2 (O), FH-3 (O), then FH-4/FH-5 (O) ⛔ **STILL BLOCKED — see §0d** | FH-2/FH-3 yes — parallel with W2. FH-4/5 had TWO conditions: (i) W1 merge + §W1-X epoch bump — **MET 2026-08-02**; (ii) **FH-1's §3.3 harness-defect gate PASSED — FAILED 2026-08-02, the I6 over-retirement REPRODUCES at the T1-FF posture (26.8 % vs the 25.6 % T1-X reference).** FH-4 does **not** dispatch until a retirement-lane fix lands and a re-probe passes. When it does: solve **COLD** — the epoch invalidates every pre-2026-08-02 forecast-mode cache, exactly what these legs would have re-used (§0c-3 purge) | FH-4: 3 solve-yr × 6 ISOs × 2 arms; FH-5: 4 solve-yr | forward-mode skill measured → feeds §2.1b(c) "worth-the-compute" evidence |
 | **WG gate-open** | per-ISO, order: PJM → NEISO → MISO → ERCOT → NYISO → CAISO | — | **HELD.** Prompts re-authored at gate-open per §2.1b(d); not included here by design (FF Wave-4 withdrawal stands) | — |
 
 **Lane threads (sequential per lane across waves):**
@@ -531,9 +585,11 @@ Deliver: parity report for all six ISOs + the registry + findings doc.
 3. Confirm no Wave-1 session widened a band, moved a default (other than the enumerated
    guard/coercion/deletion set), or touched an out-of-training year.
    → **PASS / PASS / PASS**, per-merge evidence in the close doc §3.
-4. Green-light Wave 2. → **GREEN**, and **FH-4/FH-5 unblocked**. Two carry-forward duties:
-   FFR-2A's T1-X legs are exactly what the epoch invalidates (solve cold), and FFR-2B may
-   reuse a committed BEFORE leg only if FR-1/2/7/8 provably do not touch it.
+4. Green-light Wave 2. → **GREEN**, and **FH-4/FH-5 unblocked** *(the §W1-X condition only —
+   see §0d: FH-1's own §3.3 gate has since FAILED, and FH-4 remains blocked on that separate
+   condition)*. Two carry-forward duties: FFR-2A's T1-X legs are exactly what the epoch
+   invalidates (solve cold), and FFR-2B may reuse a committed BEFORE leg only if FR-1/2/7/8
+   provably do not touch it.
 
 ---
 
