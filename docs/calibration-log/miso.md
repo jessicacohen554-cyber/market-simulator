@@ -2624,3 +2624,126 @@ does **not** re-license it.
   before measuring, so the session was not blind to the compression result;
   immaterial, since the finding rests on sources that predate both.
 * Next number: **miso-115.**
+
+## 2026-08-02 — miso-115: the trough marginal unit is **NOT** mis-specified — REFUSED ON MEASUREMENT against a pre-registered bar, and the overnight gas hole is RELOCATED to `CC_CHP`, NO SOLVE SPENT, keeper UNCHANGED
+
+miso-114 named one successor and called it decisive: measure MISO's
+CAMPD-observed `CT_PEAKER` + `ST_GAS` at h1–h3 against the model's
+1,907 / 2,415 / 2,350 MW. It is measured, and **the hypothesis is refuted.**
+
+Pre-registration (`results/calibration/PREREG-miso115-trough-marginal-unit-2026-08-02.md`)
+was written and committed **before** the probe ran, fixing the quantity, the
+decision rule and five kills. Probe
+`scripts/probes/_miso115_trough_marginal_unit.py`; transcript
+`PROBE-miso115-trough-marginal-unit-2026-08-02.txt`; finding
+`FINDING-miso115-trough-marginal-unit-2026-08-02.md`.
+
+### The verdict
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| model `CT_PEAKER`+`ST_GAS` (MW, h1–3) | 1,907 | 2,415 | 2,350 |
+| **CAMPD measured** | **1,810** | **2,395** | **2,243** |
+| **R** | **0.949** | **0.992** | **0.955** |
+
+Against a pre-registered MIS-SPECIFIED bar of `R ≤ 0.60` in ≥2 of 3 years, this
+is **COMPARABLE** — the model runs the right amount of peaking/steam gas
+overnight, and because CAMPD `grossLoad` is **gross** against the model's
+**net**, the real fleet is if anything closer still. The level offset is a
+*pricing* question on correctly-sized units, and the session stops, as the
+prereg's COMPARABLE branch requires.
+
+Robust to the estimator: the pre-registered mixed-plant sensitivity gives
+`CT_PEAKER` 0.842/0.638/0.601 and `ST_GAS` 0.589/0.761/0.739 — MIS-SPECIFIED
+fires on **neither** construction. Kills all resolved: K1 coverage 90.2 % /
+99.9–100 %; K2 footprint by **EIA-860 BA code** (609 plants, 131,748 MW, 15
+states — *not* by state, which would have been wrong on both sides); K3 clock
+**measured** (CAMPD MISO fossil troughs at h2, peaks h17–18); K4 leap day
+dropped via the repo's own `_hour_index_8760`; K5 family agreement 96–97 %.
+
+### It also refutes miso-114's stated reason, then relocates the defect
+
+`CC_REGULAR` R = **1.035 / 0.992 / 1.052** (K1 94.8 %, K5 95–96 %). The model
+reproduces **all three merchant gas classes** at the trough — it is not "short
+on efficient CC and long on peaking/steam" (miso-114 §2.3), so no
+peaking-band-sets-the-trough-price story survives.
+
+That forced a reconciliation, because miso-114's 3.4–3.9 GW gas hole cannot
+coexist with three ratios near 1.0 (h1–3, MW):
+
+| year | model all-gas | CAMPD metered | EIA-930 `NG: NG` | **CAMPD−EIA930** |
+|---|---:|---:|---:|---:|
+| 2023 | 19,158 | 22,169 | 22,352 | **−183** |
+| 2024 | 20,904 | 23,565 | 24,185 | **−620** |
+| 2025 | 18,865 | 22,471 | 22,526 | **−55** |
+
+**CAMPD agrees with EIA-930 to 0.2–2.6 %** — the hole is real, and it is
+**CHP**. `CC_CHP` R = **2.156 / 2.246 / 2.555**: the model runs *less than half*
+its own gas-cogen CC plants' metered overnight output, a deficit of
+**2,086 / 2,274 / 2,446 MW** — the largest identified component of the hole,
+kill-clean (K1 83.2 %, K5 97 %, 8.7 % multi-class; single-class sensitivity
+moves it *away* from error), a **lower bound** since 83 % coverage understates
+it, with the units genuinely on (`opTime > 0` in 78–80 % of trough plant-hours).
+
+`CT_CHP` (R 0.272/0.356/0.269) and `ST_CHP` (R 0.000) are **VOID on the
+pre-registered K1 kill** — coverage 10.4 % and 26.9 %. `ST_CHP`'s measured zero
+is a Part-75 artifact, **not** evidence the model runs steam CHP the market
+doesn't. Do not quote those two ratios.
+
+### One audit-grade input error, sized and not acted on
+
+`CT_PEAKER` trough heat rate: measured **gross** 11.13/11.25/11.26 vs model
+**net** 12.37 MMBtu/MWh — the model is **+9.9…+11.1 % too dear**, and *not* a
+weighting artifact (trough-selection control +0.2…+0.5 %, class-average control
++0.6 %; gross-vs-net makes the true gap larger). Worth $3.15/$2.45/$3.91 per
+MWh. But `CT_PEAKER` is online in only **1.9–3.2 %** of trough plant-hours, so
+it is **not** offered as the level-offset fix and no causal claim is made — it
+is a rule 14 `[R-ACCURATE]` input-accuracy item on its own merits. `ST_GAS` is
+already right (−3.4…−0.0 %), so the defect is CT-specific.
+
+### What this licenses — nothing
+
+* **Not `miso_cc_coal_rebalance`.** Still no measured identification (rules
+  5/21/24), and §2 removes its stated premise.
+* **Not a CHP floor set to metered output** — that is an outcome pin (rule 13).
+  The admissible object is a floor identified from **steam host demand** per
+  prime mover, which has a forward analogue. That is a charter, not a flag flip.
+* `miso_pjm_lmp_import_pricing` stays refuted; the seam hod mis-shape stays a
+  rule 1 item at 4–7 % of the residual; the top-decile convexity deficit stays
+  miso-89's; `miso_firm_import_floor` stays rejected.
+
+### Named successor
+
+A **no-LP Phase 0 on the CHP floor's own deriver**: does `chp_steam` /
+`chp_export_floor_measured` identify a per-prime-mover steam-host export
+obligation, and does its construction explain a CC-cogen floor at under half of
+metered output while CT-cogen is over-forced? Answerable from the deriver and
+its coefficients — exactly how miso-107 settled the reliability-floor question
+with zero solves. D-2 supports the framing: `chp_steam` forces 19.5 % of
+`CC_CHP`, 35.6 % of `CT_CHP`, 5.5 % of `ST_CHP`, and a class priced 23 % *too
+cheap* that still under-runs is being held down by a floor, not by economics.
+
+### Governance
+
+* **Rule 15** — no run produced; nothing to register.
+* **Rule 16** — no bundle; 2023–2025 measured in one pass.
+* **Rule 22** — 2023–2025 only; MISO holds no holdout marker, none touched.
+* **Rule 24** — every crosswalk is the repo's own (`states_for_iso`,
+  `_hour_index_8760`, `bench_multiclass.unit_family`, `ISO_TO_BA_CODE`); no hand
+  map, and in particular not the 11-state list the handoff carried.
+* **Rule 28 duty (b)** — `diurnal_price_amplitude` MISO **stays `G`** (nothing
+  armed) with miso-114's named successor now answered in-cell;
+  `measured_ct_heat_rates` MISO **stays `U`** with the measured motivation
+  added. Both in-session.
+* **Rule 19 / 23** — nothing armed, nothing stacked, no derive re-run.
+* **Record correction** — the `measured_ct_heat_rates` row's "Still untested in
+  MISO" and the `reliability_floor` row's account of miso-106 arming it are
+  both true: miso-106's arm and artifacts are in **PR #3140, open and
+  unmerged**, so no merged MISO result exists and `U` is correct. The keeper
+  does **not** arm the flag, which is what makes this session's model-side heat
+  rates keeper-matched.
+* **Contamination declared** — miso-114's finding and the matrix notes were read
+  before measuring, so the session was **not** blind to the expected direction.
+  The prereg was written first and the verdict went **against** the handoff's
+  hypothesis — the direction contamination does not explain.
+* Next number: **miso-116.**

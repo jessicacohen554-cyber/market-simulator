@@ -1,0 +1,223 @@
+==============================================================================
+miso-115 Phase-1 — MISO trough marginal unit: measured vs modelled
+==============================================================================
+
+Pre-registered decision rule (R = measured/model):
+  MIS-SPECIFIED  R <= 0.60 in >=2/3 years AND R < 1 in all 3
+  COMPARABLE     R >= 0.75 in >=2/3 years
+  INCONCLUSIVE   otherwise -> refuse, no charter
+
+
+------------------------------------------------------------------------------
+YEAR 2023
+------------------------------------------------------------------------------
+
+  MISO fleet (BA code): 609 plants, 131,748 MW across 15 states
+
+  CT_PEAKER  model     545 MW | measured     544 MW | R = 0.998
+    K1 coverage   90.2% of model capacity (20,095 / 22,289 MW) across 90/168 plants
+    K5 family     31.5% of matched-plant CAMPD MWh is 'CT'  (other families: CC=29.8%, ST_COAL=30.6%, ST_GAS=8.2%)
+    K5 mixed      12.4% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 146 | plant-hours with opTime>0: 1.9%
+
+  ST_GAS     model   1,362 MW | measured   1,266 MW | R = 0.929
+    K1 coverage   99.9% of model capacity (10,984 / 10,991 MW) across 22/24 plants
+    K5 family     63.5% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=20.7%, CT=2.7%, ST_COAL=13.1%)
+    K5 mixed      39.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 21 | plant-hours with opTime>0: 29.3%
+
+  CC_REGULAR model  14,677 MW | measured  15,197 MW | R = 1.035
+    K1 coverage   94.8% of model capacity (25,998 / 27,410 MW) across 41/44 plants
+    K5 family     96.1% of matched-plant CAMPD MWh is 'CC'  (other families: CT=1.4%, ST_GAS=2.5%)
+    K5 mixed      13.2% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 77 | plant-hours with opTime>0: 62.3%
+
+  CC_CHP     model   1,805 MW | measured   3,891 MW | R = 2.156
+    K1 coverage   83.2% of model capacity (5,852 / 7,036 MW) across 14/24 plants
+    K5 family     97.4% of matched-plant CAMPD MWh is 'CC'  (other families: CT=2.6%, ST_GAS=0.0%)
+    K5 mixed       8.7% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 35 | plant-hours with opTime>0: 78.5%
+
+  CT_CHP     model     553 MW | measured     150 MW | R = 0.272
+    K1 coverage   10.4% of model capacity (274 / 2,626 MW) across 4/52 plants
+    K5 family     13.6% of matched-plant CAMPD MWh is 'CT'  (other families: CC=68.3%, ST_GAS=18.2%)
+    K5 mixed      51.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 6 | plant-hours with opTime>0: 72.8%
+
+  ST_CHP     model     216 MW | measured       0 MW | R = 0.000
+    K1 coverage   26.9% of model capacity (520 / 1,932 MW) across 6/54 plants
+    K5 family      0.0% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=77.7%, CT=0.9%, ST_COAL=21.4%)
+    K5 mixed      58.5% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 16 | plant-hours with opTime>0: 49.2%
+
+  COMBINED CT_PEAKER+ST_GAS  model   1,907 MW | measured   1,810 MW | R = 0.949
+    K3 clock: CAMPD MISO fossil diurnal min at h2, max at h17 (trough window h1-3 is CONSISTENT)
+
+  -- Phase 1b: robustness + measured heat rate ------------------------------
+    CT_PEAKER  single-class-plant R = 0.842 (on 88% of class capacity, scaled to full)
+    CT_PEAKER  trough heat rate: measured GROSS 11.13 vs model NET 12.37 MMBtu/MWh -> model is +11.1%
+    CT_PEAKER    controls: measured all-hours 11.11 (trough selection +0.2%) | model over ever-running plants 12.30 (class-average bias +0.6%)
+    ST_GAS     single-class-plant R = 0.589 (on 61% of class capacity, scaled to full)
+    ST_GAS     trough heat rate: measured GROSS 11.29 vs model NET 11.27 MMBtu/MWh -> model is -0.2%
+    ST_GAS       controls: measured all-hours 10.38 (trough selection +8.7%) | model over ever-running plants 11.05 (class-average bias +1.9%)
+    CC_REGULAR single-class-plant R = 1.003 (on 87% of class capacity, scaled to full)
+    CC_REGULAR trough heat rate: measured GROSS  7.04 vs model NET  7.29 MMBtu/MWh -> model is +3.5%
+    CC_REGULAR   controls: measured all-hours  7.04 (trough selection +0.0%) | model over ever-running plants  7.32 (class-average bias -0.4%)
+    CC_CHP     single-class-plant R = 2.182 (on 91% of class capacity, scaled to full)
+    CC_CHP     trough heat rate: measured GROSS  8.83 vs model NET  6.76 MMBtu/MWh -> model is -23.4%
+    CC_CHP       controls: measured all-hours  8.83 (trough selection -0.0%) | model over ever-running plants  6.72 (class-average bias +0.7%)
+    CT_CHP     single-class-plant R = 0.314 (on 49% of class capacity, scaled to full)
+    CT_CHP     trough heat rate: measured GROSS  8.58 vs model NET  6.62 MMBtu/MWh -> model is -22.9%
+    CT_CHP       controls: measured all-hours  8.89 (trough selection -3.4%) | model over ever-running plants  7.28 (class-average bias -9.2%)
+    ST_CHP     single-class-plant R = 0.000 (on 42% of class capacity, scaled to full)
+    ST_CHP     trough heat rate: measured GROSS   nan vs model NET  7.84 MMBtu/MWh -> model is +nan%
+    ST_CHP       controls: measured all-hours   nan (trough selection +nan%) | model over ever-running plants   nan (class-average bias +nan%)
+    Phase 1c gas reconciliation (h1-3, MW): model all-gas  19,158 | CAMPD metered  22,169 | EIA-930 NG:NG  22,352
+      model - CAMPD  -3,011 | model - EIA930  -3,194 | CAMPD - EIA930    -183
+
+------------------------------------------------------------------------------
+YEAR 2024
+------------------------------------------------------------------------------
+
+  MISO fleet (BA code): 609 plants, 131,748 MW across 15 states
+
+  CT_PEAKER  model     912 MW | measured     822 MW | R = 0.901
+    K1 coverage   90.2% of model capacity (20,095 / 22,289 MW) across 90/168 plants
+    K5 family     35.2% of matched-plant CAMPD MWh is 'CT'  (other families: CC=29.8%, ST_COAL=25.6%, ST_GAS=9.5%)
+    K5 mixed      12.4% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 146 | plant-hours with opTime>0: 3.2%
+
+  ST_GAS     model   1,503 MW | measured   1,573 MW | R = 1.047
+    K1 coverage  100.0% of model capacity (10,987 / 10,987 MW) across 23/23 plants
+    K5 family     71.5% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=17.4%, CT=3.3%, ST_COAL=7.8%)
+    K5 mixed      39.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 26 | plant-hours with opTime>0: 34.1%
+
+  CC_REGULAR model  15,807 MW | measured  15,688 MW | R = 0.992
+    K1 coverage   94.8% of model capacity (25,998 / 27,410 MW) across 41/44 plants
+    K5 family     95.0% of matched-plant CAMPD MWh is 'CC'  (other families: CT=1.7%, ST_GAS=3.3%)
+    K5 mixed      13.2% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 77 | plant-hours with opTime>0: 63.2%
+
+  CC_CHP     model   1,824 MW | measured   4,098 MW | R = 2.246
+    K1 coverage   83.2% of model capacity (5,852 / 7,036 MW) across 14/24 plants
+    K5 family     97.0% of matched-plant CAMPD MWh is 'CC'  (other families: CT=3.0%, ST_GAS=0.0%)
+    K5 mixed       8.7% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 35 | plant-hours with opTime>0: 80.1%
+
+  CT_CHP     model     573 MW | measured     204 MW | R = 0.356
+    K1 coverage   10.4% of model capacity (274 / 2,626 MW) across 4/52 plants
+    K5 family     13.6% of matched-plant CAMPD MWh is 'CT'  (other families: CC=66.1%, ST_GAS=20.3%)
+    K5 mixed      51.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 6 | plant-hours with opTime>0: 80.9%
+
+  ST_CHP     model     284 MW | measured       0 MW | R = 0.000
+    K1 coverage   26.7% of model capacity (517 / 1,935 MW) across 5/55 plants
+    K5 family      0.0% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=79.1%, CT=0.8%, ST_COAL=20.1%)
+    K5 mixed      58.3% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 11 | plant-hours with opTime>0: 54.0%
+
+  COMBINED CT_PEAKER+ST_GAS  model   2,415 MW | measured   2,395 MW | R = 0.992
+    K3 clock: CAMPD MISO fossil diurnal min at h2, max at h18 (trough window h1-3 is CONSISTENT)
+
+  -- Phase 1b: robustness + measured heat rate ------------------------------
+    CT_PEAKER  single-class-plant R = 0.638 (on 88% of class capacity, scaled to full)
+    CT_PEAKER  trough heat rate: measured GROSS 11.25 vs model NET 12.37 MMBtu/MWh -> model is +9.9%
+    CT_PEAKER    controls: measured all-hours 11.20 (trough selection +0.5%) | model over ever-running plants 12.30 (class-average bias +0.6%)
+    ST_GAS     single-class-plant R = 0.761 (on 61% of class capacity, scaled to full)
+    ST_GAS     trough heat rate: measured GROSS 11.28 vs model NET 11.27 MMBtu/MWh -> model is -0.0%
+    ST_GAS       controls: measured all-hours 10.43 (trough selection +8.1%) | model over ever-running plants 11.05 (class-average bias +1.9%)
+    CC_REGULAR single-class-plant R = 0.971 (on 87% of class capacity, scaled to full)
+    CC_REGULAR trough heat rate: measured GROSS  7.03 vs model NET  7.29 MMBtu/MWh -> model is +3.7%
+    CC_REGULAR   controls: measured all-hours  7.05 (trough selection -0.3%) | model over ever-running plants  7.32 (class-average bias -0.4%)
+    CC_CHP     single-class-plant R = 2.263 (on 91% of class capacity, scaled to full)
+    CC_CHP     trough heat rate: measured GROSS  8.80 vs model NET  6.76 MMBtu/MWh -> model is -23.2%
+    CC_CHP       controls: measured all-hours  8.83 (trough selection -0.4%) | model over ever-running plants  6.72 (class-average bias +0.7%)
+    CT_CHP     single-class-plant R = 0.314 (on 49% of class capacity, scaled to full)
+    CT_CHP     trough heat rate: measured GROSS  8.85 vs model NET  6.62 MMBtu/MWh -> model is -25.2%
+    CT_CHP       controls: measured all-hours  8.95 (trough selection -1.1%) | model over ever-running plants  7.28 (class-average bias -9.2%)
+    ST_CHP     single-class-plant R = 0.000 (on 42% of class capacity, scaled to full)
+    ST_CHP     trough heat rate: measured GROSS   nan vs model NET  7.85 MMBtu/MWh -> model is +nan%
+    ST_CHP       controls: measured all-hours   nan (trough selection +nan%) | model over ever-running plants   nan (class-average bias +nan%)
+    Phase 1c gas reconciliation (h1-3, MW): model all-gas  20,904 | CAMPD metered  23,565 | EIA-930 NG:NG  24,185
+      model - CAMPD  -2,661 | model - EIA930  -3,281 | CAMPD - EIA930    -620
+
+------------------------------------------------------------------------------
+YEAR 2025
+------------------------------------------------------------------------------
+
+  MISO fleet (BA code): 609 plants, 131,748 MW across 15 states
+
+  CT_PEAKER  model     950 MW | measured     733 MW | R = 0.771
+    K1 coverage   90.2% of model capacity (20,095 / 22,289 MW) across 90/168 plants
+    K5 family     37.6% of matched-plant CAMPD MWh is 'CT'  (other families: CC=26.2%, ST_COAL=27.4%, ST_GAS=8.9%)
+    K5 mixed      12.4% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 146 | plant-hours with opTime>0: 3.0%
+
+  ST_GAS     model   1,400 MW | measured   1,510 MW | R = 1.079
+    K1 coverage  100.0% of model capacity (10,987 / 10,987 MW) across 23/23 plants
+    K5 family     66.3% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=18.5%, CT=3.1%, ST_COAL=12.0%)
+    K5 mixed      39.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 26 | plant-hours with opTime>0: 37.0%
+
+  CC_REGULAR model  14,163 MW | measured  14,897 MW | R = 1.052
+    K1 coverage   94.8% of model capacity (25,998 / 27,410 MW) across 41/44 plants
+    K5 family     95.5% of matched-plant CAMPD MWh is 'CC'  (other families: CT=1.5%, ST_GAS=3.0%)
+    K5 mixed      13.2% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 77 | plant-hours with opTime>0: 59.3%
+
+  CC_CHP     model   1,572 MW | measured   4,018 MW | R = 2.555
+    K1 coverage   83.2% of model capacity (5,852 / 7,036 MW) across 14/24 plants
+    K5 family     98.0% of matched-plant CAMPD MWh is 'CC'  (other families: CT=2.0%, ST_GAS=0.0%)
+    K5 mixed       8.7% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 35 | plant-hours with opTime>0: 78.1%
+
+  CT_CHP     model     589 MW | measured     158 MW | R = 0.269
+    K1 coverage   10.4% of model capacity (274 / 2,626 MW) across 4/52 plants
+    K5 family     12.2% of matched-plant CAMPD MWh is 'CT'  (other families: CC=69.0%, ST_GAS=18.8%)
+    K5 mixed      51.0% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 6 | plant-hours with opTime>0: 78.1%
+
+  ST_CHP     model     190 MW | measured       0 MW | R = 0.000
+    K1 coverage   26.7% of model capacity (517 / 1,935 MW) across 5/55 plants
+    K5 family      0.0% of matched-plant CAMPD MWh is 'ST_GAS'  (other families: CC=73.6%, CT=1.1%, ST_COAL=25.2%)
+    K5 mixed      58.3% of model capacity sits on a multi-class plant
+    trough hours 1095 | units 11 | plant-hours with opTime>0: 56.0%
+
+  COMBINED CT_PEAKER+ST_GAS  model   2,350 MW | measured   2,243 MW | R = 0.955
+    K3 clock: CAMPD MISO fossil diurnal min at h2, max at h18 (trough window h1-3 is CONSISTENT)
+
+  -- Phase 1b: robustness + measured heat rate ------------------------------
+    CT_PEAKER  single-class-plant R = 0.601 (on 88% of class capacity, scaled to full)
+    CT_PEAKER  trough heat rate: measured GROSS 11.26 vs model NET 12.37 MMBtu/MWh -> model is +9.9%
+    CT_PEAKER    controls: measured all-hours 11.22 (trough selection +0.3%) | model over ever-running plants 12.30 (class-average bias +0.6%)
+    ST_GAS     single-class-plant R = 0.739 (on 61% of class capacity, scaled to full)
+    ST_GAS     trough heat rate: measured GROSS 11.67 vs model NET 11.27 MMBtu/MWh -> model is -3.4%
+    ST_GAS       controls: measured all-hours 10.79 (trough selection +8.1%) | model over ever-running plants 11.05 (class-average bias +1.9%)
+    CC_REGULAR single-class-plant R = 1.029 (on 87% of class capacity, scaled to full)
+    CC_REGULAR trough heat rate: measured GROSS  7.02 vs model NET  7.29 MMBtu/MWh -> model is +3.8%
+    CC_REGULAR   controls: measured all-hours  7.05 (trough selection -0.5%) | model over ever-running plants  7.31 (class-average bias -0.4%)
+    CC_CHP     single-class-plant R = 2.633 (on 91% of class capacity, scaled to full)
+    CC_CHP     trough heat rate: measured GROSS  8.82 vs model NET  6.76 MMBtu/MWh -> model is -23.4%
+    CC_CHP       controls: measured all-hours  8.86 (trough selection -0.4%) | model over ever-running plants  6.72 (class-average bias +0.7%)
+    CT_CHP     single-class-plant R = 0.305 (on 49% of class capacity, scaled to full)
+    CT_CHP     trough heat rate: measured GROSS  8.76 vs model NET  6.62 MMBtu/MWh -> model is -24.5%
+    CT_CHP       controls: measured all-hours  8.90 (trough selection -1.5%) | model over ever-running plants  7.28 (class-average bias -9.2%)
+    ST_CHP     single-class-plant R = 0.000 (on 42% of class capacity, scaled to full)
+    ST_CHP     trough heat rate: measured GROSS   nan vs model NET  7.85 MMBtu/MWh -> model is +nan%
+    ST_CHP       controls: measured all-hours   nan (trough selection +nan%) | model over ever-running plants   nan (class-average bias +nan%)
+    Phase 1c gas reconciliation (h1-3, MW): model all-gas  18,865 | CAMPD metered  22,471 | EIA-930 NG:NG  22,526
+      model - CAMPD  -3,606 | model - EIA930  -3,661 | CAMPD - EIA930     -55
+
+==============================================================================
+VERDICT
+==============================================================================
+  CT_PEAKER  R = 0.998 / 0.901 / 0.771
+  ST_GAS     R = 0.929 / 1.047 / 1.079
+  CC_REGULAR R = 1.035 / 0.992 / 1.052
+  CC_CHP     R = 2.156 / 2.246 / 2.555
+  CT_CHP     R = 0.272 / 0.356 / 0.269
+  ST_CHP     R = 0.000 / 0.000 / 0.000
+  COMBINED (pre-registered scope: CT_PEAKER+ST_GAS)   R = 0.949 / 0.992 / 0.955
+
+  Pre-registered verdict: COMPARABLE -> pricing question on the same units; REFUSE, no solve
