@@ -7,7 +7,10 @@ marker restructure, the active holdout freeze, determinations); code-side, **zer
 were executed between the two dates** (re-verified at file:line 2026-07-31), so every prompt's
 technical content stands. **§0b (2026-08-02) supersedes that last clause: Wave 1 is now MERGED
 7/7, and §W1-X — the Wave-1 close checklist — is the live gate on Wave 2 and FH-4/FH-5. Read
-§0b before dispatching anything.** The refresh also folds in the commercial-practice peer review
+§0b before dispatching anything. §0c (2026-08-02) then DISCHARGES that gate: §W1-X is closed,
+the single cache epoch is taken, and Wave 2 + FH-4/FH-5 are released — so read §0b for the
+state Wave 1 left and §0c for what the close changed, §0c winning wherever they differ.** The
+refresh also folds in the commercial-practice peer review
 (`docs/forecast-readiness-peer-review-2026-07.md`): one added session (FFR-2E, the FR-14
 coverage hole), FFR-PA promoted to dispatch-with-Wave-1 (2026-08-22 deadline), and the standing
 disclosure list (peer review §4) that every forecast deliverable now carries. This pack extends
@@ -141,10 +144,13 @@ configs (102/102 input-surface hashes); 1C closed NYISO's I7 gap 98 % (−1,799 
 filed **8 with no forecast-side consumer** (armed in five of six keepers) — filed, not fixed.
 **No keeper moved and no stop-the-line fired in Wave 1.**
 
-**2. §W1-X IS THE LIVE GATE — not yet run.** No `docs/handoffs/ffr-w1x-*` exists; the
-cache-epoch bump (§0a item 6, now also covering the FR-1/2/7/8 output change under unchanged
-keys) is UNTAKEN. Wave 2 and FH-4/FH-5 stay shut until it reports green. Two items beyond the
-checklist's four now belong to it:
+**2. §W1-X — ~~THE LIVE GATE, not yet run~~ → DISCHARGED 2026-08-02, see §0c.**
+*(This item is kept as written because it is the brief §W1-X was dispatched against; §0c
+reports what each of its points came to. Both flagged extras were closed: the parity job is
+in `ci.yml`, and 1D's attestation was re-confirmed against the merged tree.)* No
+`docs/handoffs/ffr-w1x-*` exists; the cache-epoch bump (§0a item 6, now also covering the
+FR-1/2/7/8 output change under unchanged keys) is UNTAKEN. Wave 2 and FH-4/FH-5 stay shut
+until it reports green. Two items beyond the checklist's four now belong to it:
 - **FFR-1E's `ci.yml` parity job is still unwired.** 1D owned `ci.yml` in Wave 1 and added only
   the forecast-INVARIANTS job (FR-24, `ci.yml:99`). `scripts/check_forecast_parity.py` and
   `scripts/lib/forecast_parity_registry.py` are on `main` and pass, but nothing in CI runs
@@ -172,13 +178,98 @@ recorded only to show the rate of drift:
 touched an out-of-training year.
 
 **5. Wave FH has not launched** — no `docs/handoffs/fh-*` exists. FH-1/FH-2/FH-3 are ungated
-(parallel with Wave 2); FH-4/FH-5 remain gated on §W1-X's epoch bump.
+(parallel with Wave 2); ~~FH-4/FH-5 remain gated on §W1-X's epoch bump~~ → **FH-4/FH-5 are
+UNBLOCKED as of 2026-08-02** (§0c-3 for the epoch's scope, §0c-9 for dispatch). They must
+solve **cold** — the epoch invalidates exactly the caches they would re-use.
 
-**6. Dispatch state at this entry.** Launchable immediately: **§W1-X close**, **FH-1**, and
-**FFR-2D** (docs-only, reads no cache, so not gated). Staged behind the §W1-X green-light:
-FFR-2A / 2B / 2C / 2E — recommended release 2C+2A first (2C is nearly no-LP), then 2B, then
-2E; 2A and 2B must coordinate their PJM windows explicitly (rule 12: ≤2 concurrent solve
-invocations, PJM and MISO legs never co-run).
+**6. Dispatch state at this entry** *(superseded by §0c-9 — §W1-X has since closed and
+FFR-2D has merged; the release ORDER below still stands)*. Launchable immediately:
+~~**§W1-X close**~~, **FH-1**, and ~~**FFR-2D**~~ (docs-only, reads no cache, so not
+gated). Staged behind the §W1-X green-light: FFR-2A / 2B / 2C / 2E — recommended release
+2C+2A first (2C is nearly no-LP), then 2B, then 2E; 2A and 2B must coordinate their PJM
+windows explicitly (rule 12: ≤2 concurrent solve invocations, PJM and MISO legs never
+co-run).
+
+---
+
+## 0c. §W1-X close report — 2026-08-02, WAVE 1 IS CLOSED
+
+**This is the discharge of the §0b-2 gate.** §0b records the merged Wave-1 state as the
+§W1-X session found it; §0c reports what that session did and what every downstream wave
+must now carry. Where the two disagree, §0c wins. Full record:
+`docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`.
+
+**1. All seven Wave-1 lanes are MERGED** — merge shas, for the per-merge audits below:
+FFR-1A `1eeef40` (#3248) · 1B `255c015` (#3239) · 1C `50c5193` (#3243) · 1D `24665ee`
+(#3245) · 1E `f5c462b` (#3246) · PA `5118288` (#3247) · PB `64905b4` (#3244). (§0b-1 has
+the lane/finding/doc table.)
+
+**2. §W1-X is DISCHARGED — all four items.** (a) The 1A-arm-1 / 1B / 1D keeper
+byte-identity attestations are present and re-confirmed against the *merged* tree and the
+*current* keeper set; **no keeper moved** (all six cache keys byte-identical across each of
+the three `scenarios.py`-touching merges, verified in one path context per comparison). 1D's
+post-rebase `scenarios.py` reconciles cleanly with 1B's earlier-merged `__post_init__`
+commit: every guard and coercion in the merged file is attested by exactly one findings doc.
+(b) **THE SINGLE CACHE EPOCH IS TAKEN — 2026-08-02**, for FR-1/FR-2/FR-7/FR-8. (c) The
+three-limb regression audit passes: no band widened, **zero** `ScenarioConfig` fields
+added/removed/re-defaulted across the entire wave (668 either side of all seven merges), no
+out-of-training year solved, scored or registered — every Wave-1 registration is
+forecast-mode 2026+ on `frontend/data/hindcast/`, ≤5 solve-years. (d) FFR-1E's held
+`forecast-parity-guard` job is in `ci.yml`.
+
+**3. The cache epoch — scope, because every downstream solve depends on it.** The epoch is a
+dated ledger entry in `src/market_sim/results/cache.py`'s docstring (there is deliberately
+no `CACHE_EPOCH` token — see the close doc §2.1 for why, and for the two-surface split
+between key *advances* and same-key *invalidations*). It invalidates **every cached bundle
+produced in forecast mode** (`mode="forecast"`, including `hindcast=True` and T1-X crossover
+legs) before the Wave-1 merges — **any solve year, not only 2026+**, because FR-8 reaches a
+crossover's realized 2023–2025 legs. It does **not** invalidate backcast caches or any
+keeper bundle. It subsumes the §0a-6 debt. **Run the purge in the ledger on any checkout
+predating 2026-08-02 before your first solve; solve cold.**
+
+**4. The stale `PINNED_DEFAULT_CACHE_KEY` is REPAIRED at its root**, closing the item 1B §6
+and 1D §8.2 both handed here. Cause: `coal_prb_committed_dispatchable` (#3207, miso-111) and
+`coal_prb_committed_split` (#3232, miso-112) shipped default-off but unregistered in
+`_CACHE_KEY_OPTIONAL_FIELDS`, moving the default key twice. Registered, not re-pinned; the
+key is back at `603c2498bf71d21d` and four pinned-literal tests across two BLOCKING CI jobs
+are green. `check_cache_key_registration.py` only fires its new-field check with `--base` —
+i.e. on the PR that adds the field — so **a lane adding a `ScenarioConfig` field must not
+rely on a later session noticing**.
+
+**5. One rule-13 hole closed, three judgement calls filed.**
+`ercot_dam_availability_gas_event_cap` (ERCOT-149, landed after 1D wrote the family) is now
+in `_BACKCAST_ONLY_OVERLAY_FIELDS` beside its coal sibling. `caiso_firm_import_selfsched_clip`,
+`coal_prb_committed_split` and the `gas_offer_margin_*` anchors are filed for their own lanes
+(close doc §5.2). **The FR-11 family has no CI guard of its own** — a standing hazard for
+every parallel lane that adds a measured overlay; a checker is proposed to L-INP.
+
+**6. Two tests are RED on `origin/main`, neither from Wave 1** (close doc §5.4):
+`test_ff_readiness_battery.py::test_marker_state_reflects_committed_markers` (the fixture
+still encodes `complete = {NEISO, NYISO}`; PJM declared 2026-07-31 — governance lane) and
+`test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty` (data
+lane). Both in the fast tier. Do not attribute them to Wave 1.
+
+**7. Unchanged from §0a/§0b:** the keeper set (ERCOT `2026-08-01-ercot149-gas-event-cap` · PJM
+`2026-07-31-pjm-143b-hy-level` · CAISO `2026-07-31-caiso-151-firm-selfsched` · NYISO
+`2026-08-01-nyiso109-zonal-margin-anchor` · NEISO `2026-07-31-neiso-72-hy-window` · MISO
+`2026-07-31-miso-109b-hy-level` — still read them at your own HEAD), the two-block marker
+restructure (`complete` = {NEISO, NYISO, PJM}, `final` EMPTY), the **active holdout freeze**,
+and `program-status.json`'s internal inconsistency (still FFR-3A's to regenerate).
+
+**8. One dated deadline to carry into a wave plan:** `tests/golden/staleness_waiver.json`
+hard-fails `test_golden_fixture_config_identity_is_current` on **2026-10-31**; resolving it
+is owner decision D-7 (a 15-solve-year reseed).
+
+**9. Dispatch state after the close** (supersedes §0b-6). **Wave 2 is RELEASED** —
+FFR-2A / 2B / 2C / 2E may dispatch on §0b-6's recommended order (2C+2A, then 2B, then 2E;
+2A and 2B coordinate their PJM windows explicitly, rule 12). **FH-4/FH-5 are UNBLOCKED**
+alongside FH-1/2/3. FFR-2D has merged (#3262, the D-1..D-7 owner-sitting packet), so the
+owner sitting is the next coordination event, not a Wave-2 prerequisite. Two duties the
+epoch imposes on Wave 2, stated once here so no lane re-derives them: **FFR-2A's T1-X legs
+are exactly what the epoch invalidates** (FR-8 reaches their realized years — purge and
+solve cold), and **FFR-2B may reuse a committed BEFORE leg only if FR-1/2/7/8 provably do
+not touch it** — a forecast leg with capacity evolution, or any aging-sensitive
+availability, is not such a leg.
 
 ---
 
@@ -186,13 +277,13 @@ invocations, PJM and MISO legs never co-run).
 
 | Wave | Sessions (model) | Parallel? | Solves? | Gate to next wave |
 |---|---|---|---|---|
-| **W1 fix** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) **+ PA (O, promoted from WP — 2026-08-22 deadline)** | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | all five merged + **Wave-1 close checklist** (§W1-X: single cache-epoch bump) |
+| **W1 fix** ✅ **CLOSED 2026-08-02** | 1A (F), 1B (F), 1C (O), 1D (O), 1E (O) **+ PA (O, promoted from WP — 2026-08-22 deadline)** | yes — file-disjoint; 1D's `ci.yml` hunk precedes 1C's (flag §W1) | T0 probes + ≤2-ISO T1-F acceptance probes only | **MET.** All seven lanes merged; **§W1-X discharged 2026-08-02** — attestations confirmed (no keeper moved), **cache epoch bumped ONCE** (FR-1/2/7/8; invalidates every pre-Wave-1 **forecast-mode** cache at ANY solve year, backcast/keepers untouched), regression audit 3/3 PASS, FFR-1E's parity job in CI. Record: `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`; scope + purge: §0c-3 |
 | **W2 evidence** | 2A (O), 2B (O), 2C (O), 2D (F), 2E (O) | yes — ≤2 concurrent solve invocations (rule 12) | T1-X ×3, T1-H probe legs, T0/T1 probes, capacity-hindcast re-runs (no-LP-heavy) | evidence docs committed → **OWNER SITTING** |
 | **⛔ OWNER** | decision batch D-1..D-7 (audit §4 Phase 2) | one sitting | none | signed decisions |
 | **W3 re-baseline** | 3A (O), 3B (O) | 3B first or parallel (3B lands schema, 3A populates) | the ONE consolidated battery: T1-F ×6 + T1-X folds + T1-H re-scores + FC-6 | boards regenerated & current |
 | **WS structural** | SA (F), SB (F), SC (O) | yes | T0 smoke only; everything ships **default-off/no-solve** so the W3 baseline stays valid | owner arming decisions (later) |
 | **WP intake** | PA (O), PB (O) | parallel-**anytime** (data/docs only, no solve) | none | — |
-| **WFH hindcast** | FH-1 (F), FH-2 (O), FH-3 (O), then FH-4/FH-5 (O) ⛔ | FH-1/2/3 yes — parallel with W2; **FH-4/5 GATED on W1 merge + §W1-X epoch bump** (FR-7/FR-8 corrupt weather-pinned historic runs) | FH-4: 3 solve-yr × 6 ISOs × 2 arms; FH-5: 4 solve-yr | forward-mode skill measured → feeds §2.1b(c) "worth-the-compute" evidence |
+| **WFH hindcast** | FH-1 (F), FH-2 (O), FH-3 (O), then FH-4/FH-5 (O) ✅ **UNBLOCKED 2026-08-02** | FH-1/2/3 yes — parallel with W2; **FH-4/5 were GATED on W1 merge + §W1-X epoch bump** (FR-7/FR-8 corrupt weather-pinned historic runs) — **both conditions now MET**, so FH-4/FH-5 may dispatch. Solve **COLD**: the epoch invalidates every pre-2026-08-02 forecast-mode cache, which is exactly what these legs would have re-used (§0c-3 purge) | FH-4: 3 solve-yr × 6 ISOs × 2 arms; FH-5: 4 solve-yr | forward-mode skill measured → feeds §2.1b(c) "worth-the-compute" evidence |
 | **WG gate-open** | per-ISO, order: PJM → NEISO → MISO → ERCOT → NYISO → CAISO | — | **HELD.** Prompts re-authored at gate-open per §2.1b(d); not included here by design (FF Wave-4 withdrawal stands) | — |
 
 **Lane threads (sequential per lane across waves):**
@@ -424,14 +515,25 @@ its own session — this session builds the detector).
 Deliver: parity report for all six ISOs + the registry + findings doc.
 ```
 
-### §W1-X — Wave-1 close checklist (run by whichever session merges last, or the dispatcher)
+### §W1-X — Wave-1 close checklist ✅ **DISCHARGED 2026-08-02** — `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`
 
 1. All five merged; keeper byte-identity attestations from 1A-arm-1/1B/1D present.
+   → **PASS ×3.** All seven lanes merged. Attestations re-confirmed against the *merged*
+   tree and the *current* keeper set; 1D's post-rebase `scenarios.py` reconciles cleanly
+   with 1B's earlier-merged `__post_init__` hunk. **No keeper moved.**
 2. **Bump the operator cache epoch ONCE** (`results/cache.py` documented mechanism) — FR-1/2/7/8
    change forecast output under unchanged keys; stale 2026+ cached bundles must not be reused.
+   → **TAKEN 2026-08-02** as a dated ledger entry in `results/cache.py`'s docstring (no
+   `CACHE_EPOCH` token — close doc §2.1). Invalidates every pre-Wave-1 **forecast-mode**
+   cache at **any** solve year (FR-8 reaches a crossover's realized years); backcast caches
+   and keeper bundles untouched. Purge command in the ledger — **solve cold**. Root-cause
+   repair of the stale `PINNED_DEFAULT_CACHE_KEY` landed with it (§0b-4).
 3. Confirm no Wave-1 session widened a band, moved a default (other than the enumerated
    guard/coercion/deletion set), or touched an out-of-training year.
-4. Green-light Wave 2.
+   → **PASS / PASS / PASS**, per-merge evidence in the close doc §3.
+4. Green-light Wave 2. → **GREEN**, and **FH-4/FH-5 unblocked**. Two carry-forward duties:
+   FFR-2A's T1-X legs are exactly what the epoch invalidates (solve cold), and FFR-2B may
+   reuse a committed BEFORE leg only if FR-1/2/7/8 provably do not touch it.
 
 ---
 
