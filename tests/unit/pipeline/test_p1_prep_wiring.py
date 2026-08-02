@@ -34,6 +34,11 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     "build_caiso_ra_p1_prep": "ra_p1_prep",
     "build_ercot_gas_bridge_p1_preps": "ercot_bridge_prep",
     "build_nyiso_gas_bridge_p1_prep": "nyiso_bridge_prep",
+    # miso-113: absent from this roster, the MISO night floor repeated the
+    # exact nyiso-87 failure mode this file exists to prevent — wired into
+    # pipeline/year.py and runner.py but not the backcast orchestrator, so the
+    # first arm solved byte-identical to its control with the flag armed.
+    "build_miso_coal_night_floor_p1_prep": "miso_night_floor_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (
