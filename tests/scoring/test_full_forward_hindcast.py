@@ -167,11 +167,20 @@ class TestHarness(unittest.TestCase):
         self.assertEqual(c.weather_year, 2021)
         self.assertFalse(c.crossover_solve_year_weather)
 
+    def test_arm_k_base_2023_intake_landed(self):
+        # FH-3 landed the AEO2023 Reference vintage, so Arm K at base 2023
+        # resolves instead of refusing (this is what unblocked Phase A's Arm K).
+        self.assertEqual(
+            H.full_forward_gas_path("asknown", 2023), "hindcast_asknown_aeo2023"
+        )
+
     def test_arm_k_missing_intake_hard_errors(self):
-        # AEO2023 is FH-3's intake; until it lands, Arm K at base 2023 refuses
-        # rather than falling back to a different-vintage path.
-        with pytest.raises(SystemExit, match="hindcast_asknown_aeo2023"):
-            H.full_forward_gas_path("asknown", 2023)
+        # The refusal itself must survive the intake: a base year whose AEO
+        # vintage has NOT been intaken still hard-errors rather than falling
+        # back to a different-vintage path (rule 13). 2022 is such a base — no
+        # hindcast solves it (rule-22 bridge), so no AEO2022 path exists.
+        with pytest.raises(SystemExit, match="hindcast_asknown_aeo2022"):
+            H.full_forward_gas_path("asknown", 2022)
 
     def test_policy_parity(self):
         self.assertEqual(

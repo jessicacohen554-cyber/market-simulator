@@ -118,6 +118,43 @@ refresh `HENRY_HUB_TRAJECTORIES` / `COAL_PRICE_TRAJECTORIES` /
 `OIL_PRICE_TRAJECTORIES` (forecast years only; gas keeps its ≤2025 historical
 actuals). Full grounding: `docs/fuel-forward-methodology-2026-07.md`.
 
+## AEO2021 + AEO2023 — the AS-KNOWN-THEN vintages (landed FH-3, 2026-08-02)
+
+`eia_aeo2021_fuel_prices.csv` (1,116 rows) and `eia_aeo2023_fuel_prices.csv`
+(1,044 rows), fetched by `fetch_eia_aeo.py --aeo-year 2021|2023`. These are
+**not** forecast inputs — they are the contemporaneous AEO editions a
+full-forward hindcast (T1-FF) **Arm K** prices its fuel on, one per base year
+(`docs/hindcast-forward-plan-2026-07.md` §2.1): AEO2021 (published 2021-02-03)
+for a 2021-base run, AEO2023 (published 2023-03-16) for a 2023-base run.
+Scenario ids `ref2021` / `ref2023` (central), `highogs` / `lowogs` — verified
+against each edition's own `facet/scenario` listing, not guessed.
+
+Edition differences from the forecast vintages above:
+
+- **Dollar year is the edition's, and it is stale by construction.** AEO2021 is
+  real **2020$**, AEO2023 real **2022$**. An as-known path is 2–5 years behind
+  the years it prices, so `HENRY_HUB_TRAJECTORIES["hindcast_asknown_aeo<yr>"]`
+  carries the **nominal** conversion, not the published real value — see the
+  comment block on those entries in `config/fuel_trajectories.py` for the
+  reasoning and the per-year arithmetic.
+- **The GDP deflator is part of the pull.** `SERIES` now includes AEO Table 20
+  Macroeconomic Indicators, GDP chain-type price index
+  (`eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z`, `fuel=macro`,
+  `metric=gdp_chain_price_index`, `2012=1.000`) — the edition's **own
+  projected** deflator, which is what rebases its real values to nominal
+  without leaking a post-base-year realized deflator into an ex-ante path.
+  AEO2025/2026 will pick this series up on their next re-fetch; their committed
+  CSVs predate it and are unchanged.
+- **Series start at the edition's history year** (2020 for AEO2021, 2022 for
+  AEO2023), which is the deflator rebasing anchor — hence the
+  `default_start` entries in the fetch script.
+
+No year is withheld: AEO trajectories are forward projections, not measured
+actuals for a solve/scoring year, so the rule-22 quarantine does not apply
+(same reasoning as the AEO2025 note above). The 2022 *row* is present in the
+raw CSV and deliberately **omitted** from the derived trajectory dicts, which
+follow the hindcast's 2022 bridge.
+
 ## What this doesn't cover
 
 - **Gas forward strips (N13)** — CME Henry Hub futures for a near-term blend —

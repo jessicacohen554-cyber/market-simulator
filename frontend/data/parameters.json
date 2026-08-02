@@ -12358,24 +12358,23 @@
       "param_id": "henry_hub_trajectories.hindcast_asknown_aeo2021",
       "display_name": "Henry Hub Trajectories / Hindcast Asknown Aeo2021",
       "value": {
-        "2021": 3.07,
-        "2023": 2.86,
-        "2024": 2.88,
-        "2025": 2.93
+        "2021": 3.13,
+        "2023": 3.1,
+        "2024": 2.95,
+        "2025": 3.1
       },
-      "unit": "",
+      "unit": "$/MMBtu",
       "domain": "Fuel Prices",
       "tier": 2,
-      "source": "NEEDS CITATION — no source comment found in code",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "EIA Annual Energy Outlook 2021, Reference case (scenario ref2021), Table 13 Natural Gas Supply, Disposition, and Prices — Henry Hub spot price, published real 2020$ (3.100730 / 2.992324 / 2.801792 / 2.880324), converted to NOMINAL $/MMBtu of each projection year with the same edition's own projected GDP chain-type price index (Table 20, series eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z) rebased on its 2020 history year. Raw: data/raw/eia-aeo/eia_aeo2021_fuel_prices.csv.",
+      "source_date": "2021-02",
+      "page_or_table": "AEO2021 Table 13 (Henry Hub spot); Table 20 (GDP price index)",
+      "url": "https://www.eia.gov/opendata/documentation.php",
+      "notes": "FH-3 CORRECTED 2026-08-02 (rule 23 — cites the data, not a residual). Prior values (3.07/2.86/2.88/2.93) were flagged NEEDS CITATION and match no basis of the AEO2021 Reference series. The two registered T1-H asknown runs predate the correction and do not reproduce at HEAD.",
       "old_repo_location": "",
-      "last_verified": "",
+      "last_verified": "2026-08-02",
       "flags": [
-        "auto-generated",
-        "needs-citation"
+        "modeled"
       ]
     },
     {
@@ -12387,19 +12386,40 @@
         "2024": 2.19,
         "2025": 3.53
       },
-      "unit": "",
+      "unit": "$/MMBtu",
       "domain": "Fuel Prices",
       "tier": 2,
-      "source": "NEEDS CITATION — no source comment found in code",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "EIA Henry Hub Natural Gas Spot Price, annual mean of monthly series (data/raw/gas-prices/henry_hub_monthly.csv). Realized-fuel arm (T1-FF Arm R) of the capacity/full-forward hindcast. 2022 omitted per the rule-22 bridge.",
+      "source_date": "2026-08",
+      "page_or_table": "Henry Hub spot price, annual average",
+      "url": "https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm",
+      "notes": "FH-3: closed a standing NEEDS CITATION flag; values unchanged.",
       "old_repo_location": "",
-      "last_verified": "",
+      "last_verified": "2026-08-02",
       "flags": [
-        "auto-generated",
-        "needs-citation"
+        "measured"
+      ]
+    },
+    {
+      "param_id": "henry_hub_trajectories.hindcast_asknown_aeo2023",
+      "display_name": "Henry Hub Trajectories / Hindcast Asknown Aeo2023",
+      "value": {
+        "2023": 5.48,
+        "2024": 4.34,
+        "2025": 3.8
+      },
+      "unit": "$/MMBtu",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "EIA Annual Energy Outlook 2023, Reference case (scenario ref2023), Table 13 Natural Gas Supply, Disposition, and Prices — Henry Hub spot price, published real 2022$ (5.266376 / 4.072381 / 3.489514), converted to NOMINAL $/MMBtu of each projection year with the same edition's own projected GDP chain-type price index (Table 20, series eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z) rebased on its 2022 history year. Raw: data/raw/eia-aeo/eia_aeo2023_fuel_prices.csv.",
+      "source_date": "2023-03",
+      "page_or_table": "AEO2023 Table 13 (Henry Hub spot); Table 20 (GDP price index)",
+      "url": "https://www.eia.gov/opendata/documentation.php",
+      "notes": "FH-3 intake (2026-08-02): the as-known-then gas path for a 2023-base T1-FF Arm K, which hard-errored before this landed. 2.2x the realized 2023 price — AEO2023 was frozen at the top of the post-invasion gas spike. That ex-ante error is what Arm K measures, not a defect.",
+      "old_repo_location": "",
+      "last_verified": "2026-08-02",
+      "flags": [
+        "modeled"
       ]
     },
     {
@@ -33839,6 +33859,24 @@
       "old_repo_location": "",
       "last_verified": "2026-07-31",
       "flags": []
+    },
+    {
+      "param_id": "demand_growth_rates_vintages",
+      "display_name": "Demand Growth Rates Vintages",
+      "value": "see per-cell rows demand_growth_rates_vintages.<year>.<iso>.<case>.*",
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "As-of-vintage demand-growth rates for the full-forward hindcast (T1-FF), one block per base year. Sources per cell: ERCOT Long-Term Load Forecast; PJM Load Forecast Report Table E-1; NYISO Gold Book Table I-1a; ISO-NE CELT Table 1.5.2; MISO Independent Energy and Peak Demand Forecast (SUFG/Purdue) Tables 49/80/86; CEC California Energy Demand Baseline Forecast Form 1.2.",
+      "source_date": "2026-08",
+      "page_or_table": "per-cell; see the constant's comment block",
+      "url": "",
+      "notes": "FH-3 intake (2026-08-02). As-of-vintage demand-growth rate for the full-forward hindcast (T1-FF); near = CAGR of the edition's published central ANNUAL ENERGY forecast from its first forecast year to 2030, long = CAGR 2031 -> the edition's last forecast year (edge-held to near when the edition carries < 3 post-2030 years). Never binds past 2030 in any T1-FF window. Arithmetic: docs/handoffs/fh-3-asknown-driver-vintages-2026-08.md §3.",
+      "old_repo_location": "",
+      "last_verified": "2026-08-02",
+      "flags": [
+        "modeled"
+      ]
     }
   ]
 }

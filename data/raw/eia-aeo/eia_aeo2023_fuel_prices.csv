@@ -1,0 +1,1045 @@
+fuel,metric,region,scenario,scenario_name,year,value,unit,series_id,table_id,table_name
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2022,2.138107,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2023,2.058677,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2024,2.044415,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2025,2.009958,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2026,1.986209,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2027,1.970233,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2028,1.940071,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2029,1.928914,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2030,1.912535,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2031,1.90594,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2032,1.878064,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2033,1.867136,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2034,1.845429,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2035,1.834325,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2036,1.829161,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2037,1.813898,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2038,1.835251,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2039,1.833948,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2040,1.835625,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2041,1.830769,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2042,1.820224,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2043,1.81937,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2044,1.816796,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2045,1.813837,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2046,1.809492,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2047,1.802854,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2048,1.786411,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2049,1.775899,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,highogs,High Oil and Gas Supply,2050,1.769043,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2022,2.138077,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2023,2.089329,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2024,2.109733,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2025,2.108766,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2026,2.118274,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2027,2.125709,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2028,2.120131,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2029,2.108499,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2030,2.085528,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2031,2.073342,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2032,2.056495,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2033,2.048496,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2034,2.04313,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2035,2.038133,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2036,2.039415,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2037,2.037925,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2038,2.06447,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2039,2.067976,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2040,2.072708,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2041,2.075867,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2042,2.080748,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2043,2.081792,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2044,2.087121,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2045,2.094822,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2046,2.098602,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2047,2.100433,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2048,2.101931,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2049,2.112936,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,lowogs,Low Oil and Gas Supply,2050,2.120454,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2022,2.134762,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2023,2.057127,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2024,2.05386,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2025,2.037131,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2026,2.008164,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2027,1.988704,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2028,1.964183,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2029,1.952749,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2030,1.954107,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2031,1.947204,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2032,1.91757,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2033,1.906071,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2034,1.904636,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2035,1.897833,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2036,1.891512,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2037,1.889286,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2038,1.914712,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2039,1.91035,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2040,1.912446,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2041,1.911104,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2042,1.909412,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2043,1.909024,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2044,1.903793,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2045,1.899784,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2046,1.900499,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2047,1.895365,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2048,1.886729,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2049,1.890216,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,delivered_electric_power,usa,ref2023,Reference case,2050,1.88728,2022 $/MMBtu,prce_NA_elep_NA_cl_NA_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2022,1.850261,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2023,1.833152,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2024,1.938223,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2025,2.047777,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2026,2.163355,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2027,2.312507,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2028,2.414175,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2029,2.447684,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2030,2.648786,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2031,2.543557,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2032,2.529912,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2033,2.53781,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2034,2.594373,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2035,2.602003,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2036,2.659323,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2037,2.701988,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2038,2.762049,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2039,2.762043,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2040,2.835838,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2041,2.846538,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2042,2.875866,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2043,2.915051,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2044,2.949184,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2045,2.986474,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2046,3.027046,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2047,3.070223,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2048,3.126873,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2049,3.143046,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,highogs,High Oil and Gas Supply,2050,3.165833,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2022,1.850157,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2023,1.816047,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2024,1.880855,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2025,1.914141,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2026,1.930327,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2027,1.982004,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2028,2.078174,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2029,2.132493,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2030,2.269028,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2031,2.306269,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2032,2.30921,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2033,2.312582,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2034,2.348149,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2035,2.369852,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2036,2.419256,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2037,2.453447,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2038,2.489986,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2039,2.47793,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2040,2.496166,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2041,2.508069,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2042,2.499862,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2043,2.54293,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2044,2.564963,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2045,2.596489,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2046,2.638509,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2047,2.701432,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2048,2.714473,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2049,2.70717,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,lowogs,Low Oil and Gas Supply,2050,2.706689,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2022,1.853989,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2023,1.835992,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2024,1.949069,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2025,1.971774,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2026,2.075296,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2027,2.208372,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2028,2.306122,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2029,2.357656,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2030,2.457956,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2031,2.593634,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2032,2.477518,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2033,2.476679,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2034,2.486898,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2035,2.488834,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2036,2.523628,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2037,2.575216,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2038,2.63626,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2039,2.656385,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2040,2.708991,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2041,2.70876,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2042,2.716106,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2043,2.761281,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2044,2.804768,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2045,2.847011,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2046,2.88458,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2047,2.905447,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2048,2.918446,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2049,2.943681,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2023,Reference case,2050,2.976179,2022 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2022,82.608475,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2023,85.366684,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2024,92.205086,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2025,96.055702,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2026,99.722374,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2027,103.179459,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2028,106.36068,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2029,114.164612,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2030,117.797806,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2031,117.528023,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2032,118.253418,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2033,120.317368,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2034,124.166191,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2035,127.88076,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2036,130.525955,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2037,127.022835,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2038,127.498543,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2039,127.271904,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2040,130.713516,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2041,131.550018,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2042,134.059982,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2043,135.735321,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2044,137.816193,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2045,139.274658,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2046,141.601624,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2047,143.285172,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2048,146.398224,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2049,148.060364,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2050,149.80365,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2022,82.603088,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2023,84.09388,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2024,90.870361,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2025,91.640808,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2026,91.701874,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2027,95.147224,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2028,99.902954,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2029,101.446388,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2030,105.459541,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2031,107.435089,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2032,107.93148,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2033,108.882706,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2034,110.335472,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2035,112.371902,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2036,114.433571,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2037,114.432739,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2038,114.962791,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2039,115.547241,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2040,117.033058,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2041,117.908897,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2042,118.57515,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2043,119.188553,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2044,120.011505,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2045,121.47599,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2046,122.390396,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2047,122.890869,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2048,124.443161,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2049,123.720055,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2050,124.530457,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2022,83.103851,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2023,84.413155,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2024,93.222145,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2025,95.733116,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2026,98.094872,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2027,102.106453,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2028,105.560181,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2029,110.034592,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2030,115.434761,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2031,116.859245,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2032,117.617233,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2033,120.288322,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2034,124.093979,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2035,125.399818,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2036,126.776741,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2037,127.282738,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2038,127.166916,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2039,127.62661,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2040,128.6371,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2041,129.34874,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2042,130.300446,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2043,131.34761,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2044,132.381653,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2045,133.766571,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2046,134.932983,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2047,135.684296,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2048,137.148102,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2049,137.814453,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2023,Reference case,2050,141.738968,2022 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2022,67.731392,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2023,69.92115,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2024,74.338058,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2025,74.828346,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2026,75.575348,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2027,77.304123,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2028,80.703957,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2029,95.710938,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2030,97.949303,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2031,96.801041,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2032,96.745239,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2033,98.242569,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2034,100.80143,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2035,102.75106,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2036,104.078278,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2037,103.458214,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2038,103.316963,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2039,103.166908,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2040,104.653435,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2041,105.068245,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2042,107.048813,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2043,107.865158,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2044,108.881943,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2045,109.653084,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2046,111.188965,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2047,112.229294,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2048,115.393616,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2049,116.849739,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2050,118.213158,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2022,67.72673,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2023,69.026512,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2024,72.231796,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2025,71.74855,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2026,71.967766,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2027,73.462791,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2028,75.733421,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2029,78.000198,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2030,83.39151,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2031,86.568703,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2032,86.033295,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2033,87.122978,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2034,87.80442,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2035,88.794785,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2036,88.882042,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2037,88.560951,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2038,89.614075,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2039,90.438416,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2040,92.92215,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2041,93.693893,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2042,94.134636,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2043,94.770432,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2044,95.452957,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2045,96.083206,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2046,96.383171,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2047,97.150917,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2048,98.05513,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2049,97.99366,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2050,98.614136,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2022,69.717995,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2023,70.201004,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2024,75.155235,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2025,75.055634,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2026,75.369232,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2027,77.106949,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2028,80.433586,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2029,91.680031,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2030,95.216217,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2031,95.84549,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2032,96.232887,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2033,97.474915,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2034,99.092346,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2035,99.715706,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2036,101.088348,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2037,101.94812,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2038,101.27298,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2039,101.015625,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2040,102.326569,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2041,103.34169,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2042,103.848503,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2043,104.412849,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2044,105.538834,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2045,106.100273,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2046,107.134209,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2047,108.103424,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2048,109.51796,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2049,110.011162,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2023,Reference case,2050,112.318764,2022 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2022,39.511292,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2023,39.240082,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2024,40.514412,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2025,41.218449,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2026,40.961464,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2027,41.469105,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2028,41.366146,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2029,42.971481,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2030,42.493317,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2031,42.200645,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2032,41.959789,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2033,42.59478,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2034,42.581356,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2035,42.38866,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2036,42.459152,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2037,43.109631,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2038,41.469589,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2039,41.583076,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2040,41.413155,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2041,41.297905,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2042,41.248123,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2043,41.178005,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2044,41.177631,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2045,41.255016,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2046,41.330704,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2047,41.446873,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2048,41.502655,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2049,41.694145,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,highogs,High Oil and Gas Supply,2050,41.732887,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2022,39.513718,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2023,39.329693,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2024,41.307812,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2025,42.264046,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2026,41.881161,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2027,41.865696,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2028,41.894199,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2029,42.017265,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2030,42.420086,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2031,42.540661,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2032,42.033791,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2033,42.354771,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2034,42.042683,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2035,41.987141,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2036,40.718418,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2037,40.79966,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2038,40.609554,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2039,40.935802,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2040,40.516602,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2041,40.628757,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2042,40.639915,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2043,40.772133,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2044,41.113705,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2045,41.412964,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2046,41.734123,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2047,41.87793,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2048,41.812832,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2049,41.683353,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,lowogs,Low Oil and Gas Supply,2050,41.58147,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2022,36.638512,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2023,36.763046,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2024,40.559639,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2025,41.47319,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2026,41.248493,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2027,41.61116,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2028,41.198967,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2029,42.351547,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2030,42.294701,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2031,42.20599,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2032,42.086502,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2033,42.551788,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2034,42.440865,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2035,42.299156,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2036,42.517216,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2037,43.09589,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2038,41.652611,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2039,41.631329,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2040,41.621319,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2041,41.641922,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2042,41.640125,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2043,41.707432,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2044,41.659992,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2045,41.720879,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2046,41.841656,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2047,41.97966,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2048,42.196777,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2049,42.387402,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,interior,ref2023,Reference case,2050,42.586746,2022 $/st,prce_NA_NA_NA_cl_mnmth_intr_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2022,17.581081,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2023,16.994528,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2024,16.983444,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2025,16.182173,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2026,16.412952,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2027,16.882318,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2028,16.564957,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2029,16.050777,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2030,19.569407,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2031,15.761987,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2032,14.84638,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2033,14.605083,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2034,14.627208,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2035,14.405724,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2036,14.064842,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2037,14.97653,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2038,14.910574,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2039,14.975923,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2040,15.238621,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2041,15.145457,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2042,14.99641,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2043,14.994845,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2044,14.972347,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2045,14.972472,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2046,14.916077,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2047,14.838459,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2048,14.726699,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2049,14.687546,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,highogs,High Oil and Gas Supply,2050,14.682963,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2022,17.578951,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2023,17.092026,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2024,17.031668,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2025,15.845291,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2026,15.708445,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2027,15.908785,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2028,16.772575,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2029,16.937437,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2030,16.611444,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2031,16.687244,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2032,16.248232,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2033,15.991887,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2034,16.140512,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2035,16.07839,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2036,16.267759,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2037,16.462725,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2038,16.400236,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2039,16.339703,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2040,16.254528,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2041,16.172192,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2042,16.073578,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2043,16.285551,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2044,16.402372,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2045,16.64291,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2046,16.946194,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2047,17.425697,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2048,17.572546,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2049,17.636005,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,lowogs,Low Oil and Gas Supply,2050,17.890394,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2022,17.184614,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2023,17.007332,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2024,17.000214,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2025,15.91742,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2026,16.16209,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2027,16.434387,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2028,15.973893,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2029,15.887492,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2030,15.693959,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2031,20.168091,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2032,14.994071,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2033,14.724809,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2034,14.577668,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2035,14.556267,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2036,14.5438,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2037,14.290366,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2038,14.845646,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2039,14.980317,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2040,15.135213,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2041,15.127209,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2042,15.124365,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2043,15.276147,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2044,15.415563,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2045,15.607475,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2046,15.638789,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2047,15.530545,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2048,15.350166,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2049,15.238518,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west,ref2023,Reference case,2050,15.134103,2022 $/st,prce_NA_NA_NA_cl_mnmth_west_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2022,17.716227,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2023,17.126009,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2024,17.065819,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2025,16.299688,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2026,16.435982,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2027,16.913231,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2028,16.600006,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2029,16.081264,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2030,19.598511,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2031,15.792753,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2032,14.876882,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2033,14.635095,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2034,14.657401,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2035,14.43437,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2036,14.093948,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2037,15.004845,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2038,14.940942,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2039,15.006107,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2040,15.269756,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2041,15.176102,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2042,15.026763,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2043,15.027586,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2044,15.012282,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2045,15.021865,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2046,14.970336,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2047,14.893643,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2048,14.782103,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2049,14.741564,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,highogs,High Oil and Gas Supply,2050,14.736141,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2022,17.714146,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2023,17.220514,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2024,17.106287,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2025,15.945392,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2026,15.728628,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2027,15.926435,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2028,16.782461,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2029,16.943115,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2030,16.617287,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2031,16.688929,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2032,16.251104,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2033,15.994164,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2034,16.138033,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2035,16.073236,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2036,16.201279,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2037,16.380922,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2038,16.296473,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2039,16.22283,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2040,16.133797,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2041,16.047215,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2042,15.944761,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2043,16.137316,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2044,16.253361,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2045,16.481537,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2046,16.765848,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2047,17.211859,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2048,17.350672,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2049,17.411522,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,lowogs,Low Oil and Gas Supply,2050,17.659655,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2022,17.294209,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2023,17.128519,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2024,17.077793,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2025,16.023603,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2026,16.186203,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2027,16.458336,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2028,16.001799,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2029,15.913884,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2030,15.721938,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2031,20.19268,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2032,15.021651,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2033,14.751942,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2034,14.603982,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2035,14.58148,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2036,14.568552,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2037,14.315582,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2038,14.871753,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2039,15.006787,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2040,15.162105,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2041,15.153334,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2042,15.149895,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2043,15.301718,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2044,15.441179,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2045,15.633231,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2046,15.664526,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2047,15.559914,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2048,15.395982,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2049,15.284636,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,west_of_mississippi,ref2023,Reference case,2050,15.179919,2022 $/st,prce_NA_NA_NA_cl_mnmth_wom_y13dlrptn,94,Table 64.  Coal Production and Minemouth Prices by Region
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2022,6.525716,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2023,4.646784,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2024,3.454426,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2025,2.922888,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2026,2.629622,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2027,2.49751,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2028,2.437122,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2029,2.484949,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2030,2.583117,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2031,2.715877,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2032,2.844869,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2033,2.977083,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2034,2.941463,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2035,2.944506,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2036,2.914487,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2037,2.902356,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2038,2.927316,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2039,2.914196,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2040,2.949807,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2041,2.971447,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2042,2.939125,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2043,2.89959,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2044,2.901336,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2045,2.860397,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2046,2.833848,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2047,2.836398,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2048,2.860765,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2049,2.821516,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,highogs,High Oil and Gas Supply,2050,2.782194,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2022,6.525814,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2023,6.270362,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2024,5.761162,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2025,5.468947,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2026,5.10622,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2027,4.87744,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2028,4.89762,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2029,4.976821,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2030,5.016172,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2031,5.224202,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2032,5.496799,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2033,5.733007,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2034,5.906424,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2035,6.020131,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2036,6.10884,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2037,6.148142,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2038,6.20834,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2039,6.241935,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2040,6.302901,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2041,6.298086,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2042,6.272649,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2043,6.187098,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2044,6.237051,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2045,6.200979,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2046,6.23027,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2047,6.253665,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2048,6.281643,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2049,6.346571,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,lowogs,Low Oil and Gas Supply,2050,6.365038,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2022,6.523997,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2023,5.266376,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2024,4.072381,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2025,3.489514,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2026,3.065508,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2027,2.853001,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2028,2.799904,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2029,2.825097,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2030,2.91248,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2031,3.043758,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2032,3.208004,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2033,3.416918,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2034,3.56943,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2035,3.681824,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2036,3.694155,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2037,3.737596,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2038,3.866561,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2039,3.78878,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2040,3.938065,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2041,4.022155,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2042,4.014737,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2043,3.950616,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2044,3.913768,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2045,3.910706,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2046,3.907083,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2047,3.870706,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2048,3.849094,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2049,3.783895,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+gas,henry_hub_spot,usa,ref2023,Reference case,2050,3.771015,2022 $/MMBtu,prce_hhp_NA_NA_ng_NA_usa_y13dlrpmmbtu,13,"Table 13.  Natural Gas Supply, Disposition, and Prices"
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2022,1.2692,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2023,1.32152,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2024,1.35355,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2025,1.382341,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2026,1.410098,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2027,1.43808,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2028,1.467406,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2029,1.498352,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2030,1.530641,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2031,1.564551,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2032,1.599235,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2033,1.636454,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2034,1.675224,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2035,1.714285,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2036,1.753794,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2037,1.793542,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2038,1.834182,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2039,1.876198,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2040,1.920511,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2041,1.966078,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2042,2.013463,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2043,2.062801,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2044,2.114171,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2045,2.167892,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2046,2.223855,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2047,2.282748,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2048,2.34422,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2049,2.409183,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,highogs,High Oil and Gas Supply,2050,2.477483,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2022,1.2692,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2023,1.320651,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2024,1.351809,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2025,1.382167,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2026,1.412078,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2027,1.439889,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2028,1.467352,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2029,1.495966,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2030,1.524704,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2031,1.55387,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2032,1.583105,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2033,1.613752,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2034,1.645318,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2035,1.676294,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2036,1.706373,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2037,1.735208,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2038,1.763207,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2039,1.790876,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2040,1.818717,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2041,1.845752,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2042,1.872119,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2043,1.897714,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2044,1.922174,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2045,1.944919,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2046,1.966066,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2047,1.985427,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2048,2.002912,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2049,2.017951,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,lowogs,Low Oil and Gas Supply,2050,2.030915,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2022,1.2692,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2023,1.321666,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2024,1.353926,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2025,1.383368,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2026,1.412863,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2027,1.443384,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2028,1.474568,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2029,1.506907,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2030,1.540544,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2031,1.575792,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2032,1.611911,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2033,1.650084,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2034,1.689615,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2035,1.729179,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2036,1.769006,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2037,1.808601,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2038,1.84859,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2039,1.889188,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2040,1.931319,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2041,1.974622,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2042,2.019222,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2043,2.065509,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2044,2.113204,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2045,2.162444,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2046,2.213462,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2047,2.266049,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2048,2.32037,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2049,2.376063,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+macro,gdp_chain_price_index,usa,ref2023,Reference case,2050,2.433421,2012=1.000,eci_indx_NA_NA_gdp_NA_NA_y09eq1d3z,18,Table 20.  Macroeconomic Indicators
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2022,4.847997,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2023,4.526372,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2024,4.12465,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2025,3.670748,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2026,3.434429,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2027,3.212029,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2028,2.99355,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2029,3.015151,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2030,3.022533,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2031,3.008143,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2032,3.012359,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2033,3.017572,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2034,3.003284,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2035,2.984714,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2036,3.005987,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2037,3.02906,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2038,3.034693,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2039,3.051885,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2040,3.061432,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2041,3.070461,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2042,3.053587,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2043,3.042148,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2044,3.069559,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2045,3.064424,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2046,3.065308,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2047,3.083151,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2048,3.121494,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2049,3.143279,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,highogs,High Oil and Gas Supply,2050,3.153168,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2022,4.847733,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2023,4.525924,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2024,4.333781,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2025,3.948783,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2026,3.751963,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2027,3.542452,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2028,3.35457,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2029,3.397856,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2030,3.420784,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2031,3.452258,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2032,3.47814,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2033,3.526709,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2034,3.557742,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2035,3.571043,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2036,3.607425,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2037,3.683484,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2038,3.692769,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2039,3.703719,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2040,3.607274,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2041,3.599612,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2042,3.625495,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2043,3.632097,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2044,3.638906,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2045,3.672697,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2046,3.691254,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2047,3.693836,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2048,3.71397,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2049,3.733296,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,lowogs,Low Oil and Gas Supply,2050,3.741878,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2022,4.84869,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2023,4.525443,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2024,4.224105,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2025,3.833661,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2026,3.612307,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2027,3.390611,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2028,3.180557,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2029,3.205377,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2030,3.224476,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2031,3.222797,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2032,3.238401,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2033,3.237236,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2034,3.256133,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2035,3.269407,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2036,3.279118,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2037,3.286015,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2038,3.291461,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2039,3.301774,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2040,3.314584,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2041,3.336381,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2042,3.33529,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2043,3.350739,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2044,3.342742,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2045,3.358575,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2046,3.391547,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2047,3.396712,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2048,3.403445,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2049,3.41991,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_distillate,usa,ref2023,Reference case,2050,3.420777,2022 $/gal,prce_NA_elep_NA_dfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2022,3.25489,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2023,2.781042,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2024,2.688507,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2025,2.474677,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2026,2.447379,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2027,2.459756,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2028,2.444707,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2029,2.440554,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2030,2.450988,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2031,2.458503,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2032,2.466896,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2033,2.482997,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2034,2.457517,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2035,2.435937,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2036,2.458481,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2037,2.469616,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2038,2.483711,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2039,2.499311,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2040,2.491479,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2041,2.482324,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2042,2.453856,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2043,2.41913,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2044,2.41506,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2045,2.36626,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2046,2.370948,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2047,2.393808,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2048,2.446862,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2049,2.469961,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,highogs,High Oil and Gas Supply,2050,2.478726,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2022,3.25494,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2023,2.780846,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2024,2.882906,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2025,2.738069,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2026,2.739794,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2027,2.749469,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2028,2.768513,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2029,2.796088,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2030,2.81698,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2031,2.857676,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2032,2.857462,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2033,2.893625,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2034,2.906871,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2035,2.919086,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2036,2.938184,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2037,2.970003,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2038,2.965835,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2039,2.970105,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2040,2.983094,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2041,2.964851,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2042,2.951156,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2043,2.937537,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2044,2.912632,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2045,2.886952,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2046,2.898338,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2047,2.901675,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2048,2.929711,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2049,2.948923,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,lowogs,Low Oil and Gas Supply,2050,2.9719,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2022,3.255268,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2023,2.781786,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2024,2.759954,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2025,2.608609,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2026,2.604036,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2027,2.612232,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2028,2.611425,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2029,2.620187,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2030,2.63236,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2031,2.638705,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2032,2.651569,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2033,2.662893,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2034,2.673555,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2035,2.69133,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2036,2.699205,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2037,2.708483,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2038,2.719111,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2039,2.727715,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2040,2.729606,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2041,2.725908,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2042,2.710297,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2043,2.692606,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2044,2.663948,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2045,2.631525,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2046,2.664361,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2047,2.668427,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2048,2.684157,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2049,2.698447,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,electric_power_residual,usa,ref2023,Reference case,2050,2.708278,2022 $/gal,prce_NA_elep_NA_rfo_NA_usa_y13dlrpgln,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2022,95.875999,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2023,85.792381,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2024,88.248062,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2025,78.665314,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2026,77.140961,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2027,76.003052,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2028,75.684959,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2029,75.761894,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2030,75.330788,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2031,76.355888,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2032,77.042366,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2033,77.690376,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2034,77.738258,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2035,77.699837,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2036,78.599579,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2037,79.647034,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2038,80.415443,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2039,80.813316,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2040,80.593117,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2041,81.722107,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2042,81.502563,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2043,80.258713,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2044,82.234787,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2045,81.213936,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2046,81.600395,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2047,82.17057,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2048,83.768311,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2049,85.064293,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,highogs,High Oil and Gas Supply,2050,84.992462,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2022,95.875999,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2023,85.848839,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2024,98.448059,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2025,93.599342,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2026,93.642914,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2027,94.737,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2028,96.536682,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2029,97.535233,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2030,98.415192,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2031,99.404106,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2032,104.86657,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2033,106.154167,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2034,107.360161,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2035,108.159477,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2036,109.675156,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2037,112.26667,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2038,113.052628,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2039,113.433632,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2040,112.696945,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2041,112.825699,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2042,114.205528,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2043,114.728127,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2044,115.240974,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2045,116.599991,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2046,117.414062,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2047,117.746696,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2048,118.615982,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2049,119.421104,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,lowogs,Low Oil and Gas Supply,2050,119.976501,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2022,95.875999,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2023,85.782883,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2024,91.164047,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2025,85.233162,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2026,85.255096,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2027,85.532898,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2028,86.264732,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2029,86.738144,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2030,87.188271,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2031,87.748749,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2032,88.512123,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2033,88.937447,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2034,89.608727,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2035,90.03215,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2036,90.825806,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2037,91.434029,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2038,91.807198,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2039,92.341896,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2040,92.759918,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2041,93.263626,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2042,93.719948,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2043,94.111893,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2044,94.517479,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2045,94.856956,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2046,95.591454,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2047,96.024887,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2048,96.717949,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2049,97.444786,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
+oil,wti_spot_crude,usa,ref2023,Reference case,2050,97.681374,2022 $/b,prce_NA_NA_NA_cr_wti_usa_y13dlrpbbl,12,Table 12.  Petroleum and Other Liquids Prices
