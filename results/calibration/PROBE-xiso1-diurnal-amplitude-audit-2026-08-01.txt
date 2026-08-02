@@ -1,0 +1,303 @@
+
+==============================================================================
+xiso-1 — cross-ISO diurnal price-amplitude audit (six ISOs, no LP)
+==============================================================================
+keepers audited (live keeper store at HEAD):
+  ERCOT  2026-07-31-ercot148-dam-event-cap            results/calibration/ercot148_dam_event_cap_arm
+  PJM    2026-07-31-pjm-143b-hy-level                 results/calibration/pjm143_hy_level_B
+  CAISO  2026-07-31-caiso-151-firm-selfsched          results/calibration/caiso151_clip_B
+  NYISO  2026-08-01-nyiso109-zonal-margin-anchor      results/calibration/nyiso109_zonalanchor_B
+  NEISO  2026-07-31-neiso-72-hy-window                results/calibration/neiso72_hy_window_B
+  MISO   2026-07-31-miso-109b-hy-level                results/calibration/miso109_hy_level_B
+
+measured side: data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet  (hub-mean DA/RT, model's chronological 8760 calendar)
+body censor $200/MWh (miso-89 convention); arbitrage hurdle 1.25x
+
+==============================================================================
+1. per-ISO diurnal amplitude — model P1 vs measured DA and RT
+==============================================================================
+
+  ERCOT 2023  model P1   level $  35.56   daily max $ 128.97  min $  17.23  spread $ 111.74 (med $ 17.20, cen $ 31.75)
+              hod range $ 98.76  peak h18 trough h02  ratio p50  1.93  days>hurdle 362/365
+           vs DA  level $  55.94 ( -36.4%)   daily max $ 235.85 ( -45.3%)  min $  14.49 ( +18.9%)
+                 hod range $186.70 -> AMPLITUDE  52.9%   daily spread $ 221.36 ->  50.5% (censored  40.8%)   peak h18 trough h02  hod corr +0.927  days>hurdle 365/365
+           vs RT  level $  48.36 ( -26.5%)   daily max $ 259.29 ( -50.3%)  min $  10.82 ( +59.2%)
+                 hod range $177.51 -> AMPLITUDE  55.6%   daily spread $ 248.46 ->  45.0% (censored  41.3%)   peak h18 trough h02  hod corr +0.967  days>hurdle 365/365
+
+  ERCOT 2024  model P1   level $  25.92   daily max $  48.50  min $  17.60  spread $  30.90 (med $ 14.93, cen $ 20.74)
+              hod range $ 25.56  peak h19 trough h02  ratio p50  1.88  days>hurdle 364/365
+           vs DA  level $  28.11 (  -7.8%)   daily max $ 101.46 ( -52.2%)  min $  11.29 ( +55.8%)
+                 hod range $ 66.82 -> AMPLITUDE  38.2%   daily spread $  90.17 ->  34.3% (censored  33.8%)   peak h18 trough h02  hod corr +0.927  days>hurdle 365/365
+           vs RT  level $  26.82 (  -3.4%)   daily max $ 107.34 ( -54.8%)  min $   8.57 (+105.3%)
+                 hod range $ 62.29 -> AMPLITUDE  41.0%   daily spread $  98.77 ->  31.3% (censored  32.6%)   peak h18 trough h09  hod corr +0.946  days>hurdle 365/365
+
+  ERCOT 2025  model P1   level $  31.00   daily max $  45.71  min $  22.14  spread $  23.57 (med $ 19.44, cen $ 23.57)
+              hod range $ 17.77  peak h19 trough h10  ratio p50  1.79  days>hurdle 363/365
+           vs DA  level $  33.50 (  -7.4%)   daily max $  79.66 ( -42.6%)  min $  15.96 ( +38.7%)
+                 hod range $ 48.41 -> AMPLITUDE  36.7%   daily spread $  63.69 ->  37.0% (censored  39.5%)   peak h18 trough h09  hod corr +0.925  days>hurdle 365/365
+           vs RT  level $  32.49 (  -4.6%)   daily max $  89.70 ( -49.0%)  min $  12.90 ( +71.6%)
+                 hod range $ 44.63 -> AMPLITUDE  39.8%   daily spread $  76.80 ->  30.7% (censored  36.9%)   peak h18 trough h09  hod corr +0.951  days>hurdle 365/365
+
+  PJM 2023  model P1   level $  30.93   daily max $  36.40  min $  26.93  spread $   9.46 (med $  7.84, cen $  9.46)
+            hod range $  7.40  peak h16 trough h02  ratio p50  1.29  days>hurdle 258/365
+         vs DA  level $  29.33 (  +5.5%)   daily max $  49.39 ( -26.3%)  min $  18.18 ( +48.1%)
+               hod range $ 23.46 -> AMPLITUDE  31.6%   daily spread $  31.21 ->  30.3% (censored  30.8%)   peak h17 trough h02  hod corr +0.980  days>hurdle 365/365
+         vs RT  level $  28.44 (  +8.8%)   daily max $  64.28 ( -43.4%)  min $  15.56 ( +73.1%)
+               hod range $ 22.71 -> AMPLITUDE  32.6%   daily spread $  48.72 ->  19.4% (censored  20.3%)   peak h17 trough h02  hod corr +0.964  days>hurdle 365/365
+
+  PJM 2024  model P1   level $  30.17   daily max $  38.25  min $  25.56  spread $  12.69 (med $  8.45, cen $ 12.69)
+            hod range $ 10.17  peak h16 trough h02  ratio p50  1.34  days>hurdle 306/365
+         vs DA  level $  29.79 (  +1.3%)   daily max $  54.23 ( -29.5%)  min $  17.14 ( +49.1%)
+               hod range $ 27.88 -> AMPLITUDE  36.5%   daily spread $  37.09 ->  34.2% (censored  34.4%)   peak h17 trough h02  hod corr +0.947  days>hurdle 365/365
+         vs RT  level $  29.53 (  +2.2%)   daily max $  77.67 ( -50.8%)  min $  14.22 ( +79.8%)
+               hod range $ 31.68 -> AMPLITUDE  32.1%   daily spread $  63.45 ->  20.0% (censored  20.9%)   peak h17 trough h02  hod corr +0.938  days>hurdle 365/365
+
+  PJM 2025  model P1   level $  40.78   daily max $  52.73  min $  34.64  spread $  18.09 (med $ 10.72, cen $ 16.59)
+            hod range $ 14.08  peak h17 trough h02  ratio p50  1.32  days>hurdle 303/365
+         vs DA  level $  43.71 (  -6.7%)   daily max $  81.31 ( -35.1%)  min $  26.78 ( +29.4%)
+               hod range $ 41.18 -> AMPLITUDE  34.2%   daily spread $  54.53 ->  33.2% (censored  32.0%)   peak h18 trough h02  hod corr +0.915  days>hurdle 365/365
+         vs RT  level $  42.89 (  -4.9%)   daily max $ 114.18 ( -53.8%)  min $  22.59 ( +53.3%)
+               hod range $ 44.18 -> AMPLITUDE  31.9%   daily spread $  91.59 ->  19.8% (censored  22.6%)   peak h18 trough h02  hod corr +0.867  days>hurdle 365/365
+
+  CAISO 2023  model P1   level $  54.14   daily max $  69.37  min $  31.39  spread $  37.99 (med $ 29.45, cen $ 37.99)
+              hod range $ 32.79  peak h19 trough h12  ratio p50  1.60  days>hurdle 342/365
+           vs DA  level $  58.79 (  -7.9%)   daily max $ 107.72 ( -35.6%)  min $  29.63 (  +5.9%)
+                 hod range $ 70.53 -> AMPLITUDE  46.5%   daily spread $  78.08 ->  48.7% (censored  54.1%)   peak h18 trough h11  hod corr +0.877  days>hurdle 360/360
+           vs RT  level $  52.27 (  +3.6%)   daily max $  98.08 ( -29.3%)  min $  19.61 ( +60.1%)
+                 hod range $ 49.59 -> AMPLITUDE  66.1%   daily spread $  78.47 ->  48.4% (censored  55.2%)   peak h18 trough h12  hod corr +0.968  days>hurdle 363/363
+
+  CAISO 2024  model P1   level $  35.75   daily max $  49.15  min $  15.94  spread $  33.21 (med $ 26.61, cen $ 33.21)
+              hod range $ 27.70  peak h19 trough h13  ratio p50  1.57  days>hurdle 360/365
+           vs DA  level $  35.85 (  -0.3%)   daily max $  69.82 ( -29.6%)  min $  12.52 ( +27.3%)
+                 hod range $ 52.37 -> AMPLITUDE  52.9%   daily spread $  57.30 ->  58.0% (censored  62.5%)   peak h18 trough h12  hod corr +0.903  days>hurdle 365/365
+           vs RT  level $  32.98 (  +8.4%)   daily max $  63.63 ( -22.8%)  min $   6.48 (+146.0%)
+                 hod range $ 37.89 -> AMPLITUDE  73.1%   daily spread $  57.15 ->  58.1% (censored  63.2%)   peak h18 trough h12  hod corr +0.968  days>hurdle 365/365
+
+  CAISO 2025  model P1   level $  36.80   daily max $  49.80  min $  16.98  spread $  32.82 (med $ 25.49, cen $ 32.82)
+              hod range $ 27.64  peak h22 trough h12  ratio p50  1.59  days>hurdle 360/365
+           vs DA  level $  34.62 (  +6.3%)   daily max $  53.83 (  -7.5%)  min $  13.80 ( +23.1%)
+                 hod range $ 36.43 -> AMPLITUDE  75.9%   daily spread $  40.03 ->  82.0% (censored  82.0%)   peak h18 trough h12  hod corr +0.956  days>hurdle 363/365
+           vs RT  level $  33.63 (  +9.4%)   daily max $  59.18 ( -15.9%)  min $   9.26 ( +83.3%)
+                 hod range $ 29.97 -> AMPLITUDE  92.2%   daily spread $  49.92 ->  65.7% (censored  69.0%)   peak h18 trough h13  hod corr +0.976  days>hurdle 365/365
+
+  NYISO 2023  model P1   level $  33.59   daily max $  41.28  min $  27.92  spread $  13.35 (med $ 10.66, cen $ 13.35)
+              hod range $ 11.68  peak h18 trough h03  ratio p50  1.40  days>hurdle 308/365
+           vs DA  level $  31.11 (  +8.0%)   daily max $  48.00 ( -14.0%)  min $  21.73 ( +28.5%)
+                 hod range $ 22.45 -> AMPLITUDE  52.0%   daily spread $  26.27 ->  50.8% (censored  52.1%)   peak h17 trough h03  hod corr +0.909  days>hurdle 365/365
+           vs RT  level $  30.28 ( +10.9%)   daily max $  66.76 ( -38.2%)  min $  18.13 ( +54.0%)
+                 hod range $ 18.31 -> AMPLITUDE  63.8%   daily spread $  48.63 ->  27.5% (censored  33.2%)   peak h17 trough h03  hod corr +0.939  days>hurdle 365/365
+
+  NYISO 2024  model P1   level $  36.58   daily max $  44.80  min $  30.38  spread $  14.42 (med $ 11.00, cen $ 14.42)
+              hod range $ 12.79  peak h18 trough h03  ratio p50  1.39  days>hurdle 322/365
+           vs DA  level $  36.71 (  -0.4%)   daily max $  55.22 ( -18.9%)  min $  26.42 ( +15.0%)
+                 hod range $ 25.13 -> AMPLITUDE  50.9%   daily spread $  28.80 ->  50.1% (censored  50.5%)   peak h17 trough h03  hod corr +0.911  days>hurdle 365/365
+           vs RT  level $  35.97 (  +1.7%)   daily max $  76.44 ( -41.4%)  min $  22.37 ( +35.8%)
+                 hod range $ 26.22 -> AMPLITUDE  48.8%   daily spread $  54.07 ->  26.7% (censored  33.5%)   peak h17 trough h03  hod corr +0.886  days>hurdle 365/365
+
+  NYISO 2025  model P1   level $  57.22   daily max $  70.62  min $  47.85  spread $  22.77 (med $ 18.92, cen $ 22.16)
+              hod range $ 19.23  peak h19 trough h03  ratio p50  1.45  days>hurdle 315/365
+           vs DA  level $  60.71 (  -5.8%)   daily max $  93.29 ( -24.3%)  min $  43.41 ( +10.2%)
+                 hod range $ 43.27 -> AMPLITUDE  44.5%   daily spread $  49.89 ->  45.6% (censored  47.9%)   peak h17 trough h02  hod corr +0.890  days>hurdle 365/365
+           vs RT  level $  60.73 (  -5.8%)   daily max $ 129.83 ( -45.6%)  min $  35.14 ( +36.2%)
+                 hod range $ 46.99 -> AMPLITUDE  40.9%   daily spread $  94.69 ->  24.0% (censored  32.8%)   peak h17 trough h02  hod corr +0.865  days>hurdle 364/364
+
+  NEISO 2023  model P1   level $  38.26   daily max $  43.60  min $  35.49  spread $   8.11 (med $  5.93, cen $  7.77)
+              hod range $  7.03  peak h17 trough h02  ratio p50  1.18  days>hurdle  45/365
+           vs DA  level $  36.82 (  +3.9%)   daily max $  59.06 ( -26.2%)  min $  25.08 ( +41.5%)
+                 hod range $ 25.96 -> AMPLITUDE  27.1%   daily spread $  33.98 ->  23.9% (censored  23.4%)   peak h17 trough h02  hod corr +0.949  days>hurdle 363/364
+           vs RT  level $  35.70 (  +7.2%)   daily max $  73.67 ( -40.8%)  min $  18.24 ( +94.6%)
+                 hod range $ 25.75 -> AMPLITUDE  27.3%   daily spread $  55.43 ->  14.6% (censored  15.9%)   peak h17 trough h02  hod corr +0.941  days>hurdle 362/364
+
+  NEISO 2024  model P1   level $  43.60   daily max $  48.06  min $  40.65  spread $   7.41 (med $  6.27, cen $  7.36)
+              hod range $  6.82  peak h17 trough h02  ratio p50  1.18  days>hurdle  43/365
+           vs DA  level $  41.51 (  +5.0%)   daily max $  64.29 ( -25.2%)  min $  29.03 ( +40.0%)
+                 hod range $ 28.96 -> AMPLITUDE  23.6%   daily spread $  35.26 ->  21.0% (censored  21.7%)   peak h17 trough h02  hod corr +0.968  days>hurdle 365/365
+           vs RT  level $  39.54 ( +10.3%)   daily max $  80.15 ( -40.0%)  min $  22.61 ( +79.8%)
+                 hod range $ 29.68 -> AMPLITUDE  23.0%   daily spread $  57.54 ->  12.9% (censored  15.2%)   peak h17 trough h03  hod corr +0.930  days>hurdle 365/365
+
+  NEISO 2025  model P1   level $  69.75   daily max $  78.57  min $  63.95  spread $  14.62 (med $  9.35, cen $ 13.73)
+              hod range $ 13.30  peak h17 trough h02  ratio p50  1.19  days>hurdle  86/365
+           vs DA  level $  67.86 (  +2.8%)   daily max $ 106.51 ( -26.2%)  min $  48.24 ( +32.6%)
+                 hod range $ 44.47 -> AMPLITUDE  29.9%   daily spread $  58.27 ->  25.1% (censored  27.2%)   peak h17 trough h02  hod corr +0.955  days>hurdle 365/365
+           vs RT  level $  65.88 (  +5.9%)   daily max $ 119.32 ( -34.2%)  min $  36.06 ( +77.3%)
+                 hod range $ 38.91 -> AMPLITUDE  34.2%   daily spread $  83.26 ->  17.6% (censored  20.0%)   peak h17 trough h03  hod corr +0.938  days>hurdle 365/365
+
+  MISO 2023  model P1   level $  31.93   daily max $  37.18  min $  26.81  spread $  10.38 (med $  9.25, cen $ 10.36)
+             hod range $  7.87  peak h17 trough h02  ratio p50  1.35  days>hurdle 292/365
+          vs DA  level $  32.98 (  -3.2%)   daily max $  51.89 ( -28.3%)  min $  21.34 ( +25.6%)
+                hod range $ 23.16 -> AMPLITUDE  34.0%   daily spread $  30.56 ->  34.0% (censored  33.9%)   peak h16 trough h01  hod corr +0.925  days>hurdle 365/365
+          vs RT  level $  31.79 (  +0.5%)   daily max $  84.70 ( -56.1%)  min $  18.19 ( +47.4%)
+                hod range $ 22.36 -> AMPLITUDE  35.2%   daily spread $  66.51 ->  15.6% (censored  17.5%)   peak h16 trough h01  hod corr +0.879  days>hurdle 364/365
+
+  MISO 2024  model P1   level $  29.36   daily max $  35.59  min $  24.22  spread $  11.37 (med $  9.20, cen $ 10.55)
+             hod range $  9.20  peak h17 trough h02  ratio p50  1.39  days>hurdle 309/365
+          vs DA  level $  31.37 (  -6.4%)   daily max $  52.59 ( -32.3%)  min $  19.63 ( +23.4%)
+                hod range $ 25.34 -> AMPLITUDE  36.3%   daily spread $  32.96 ->  34.5% (censored  32.5%)   peak h16 trough h02  hod corr +0.927  days>hurdle 365/365
+          vs RT  level $  30.80 (  -4.7%)   daily max $  95.21 ( -62.6%)  min $  16.63 ( +45.6%)
+                hod range $ 28.59 -> AMPLITUDE  32.2%   daily spread $  78.58 ->  14.5% (censored  16.6%)   peak h16 trough h02  hod corr +0.891  days>hurdle 365/365
+
+  MISO 2025  model P1   level $  38.13   daily max $  46.27  min $  32.75  spread $  13.52 (med $ 11.51, cen $ 13.52)
+             hod range $ 10.57  peak h18 trough h02  ratio p50  1.36  days>hurdle 297/365
+          vs DA  level $  43.73 ( -12.8%)   daily max $  81.58 ( -43.3%)  min $  27.32 ( +19.9%)
+                hod range $ 41.95 -> AMPLITUDE  25.2%   daily spread $  54.26 ->  24.9% (censored  26.3%)   peak h17 trough h01  hod corr +0.901  days>hurdle 364/364
+          vs RT  level $  42.85 ( -11.0%)   daily max $ 134.26 ( -65.5%)  min $  23.47 ( +39.6%)
+                hod range $ 53.15 -> AMPLITUDE  19.9%   daily spread $ 110.79 ->  12.2% (censored  17.9%)   peak h17 trough h01  hod corr +0.853  days>hurdle 363/364
+
+==============================================================================
+2. THE ANSWER — amplitude as % of measured, six ISOs x three years
+==============================================================================
+
+  vs measured DA  (hour-of-day range, model as % of actual)
+  ISO       2023     2024     2025     level %
+  ERCOT    52.9%    38.2%    36.7%   -36.4   -7.8   -7.4
+  PJM      31.6%    36.5%    34.2%    +5.5   +1.3   -6.7
+  CAISO    46.5%    52.9%    75.9%    -7.9   -0.3   +6.3
+  NYISO    52.0%    50.9%    44.5%    +8.0   -0.4   -5.8
+  NEISO    27.1%    23.6%    29.9%    +3.9   +5.0   +2.8
+  MISO     34.0%    36.3%    25.2%    -3.2   -6.4  -12.8
+  ALL    mean amplitude  40.5%   min  23.6%   max  75.9%   mean |level err|  7.1%
+
+  vs measured RT  (hour-of-day range, model as % of actual)
+  ISO       2023     2024     2025     level %
+  ERCOT    55.6%    41.0%    39.8%   -26.5   -3.4   -4.6
+  PJM      32.6%    32.1%    31.9%    +8.8   +2.2   -4.9
+  CAISO    66.1%    73.1%    92.2%    +3.6   +8.4   +9.4
+  NYISO    63.8%    48.8%    40.9%   +10.9   +1.7   -5.8
+  NEISO    27.3%    23.0%    34.2%    +7.2  +10.3   +5.9
+  MISO     35.2%    32.2%    19.9%    +0.5   -4.7  -11.0
+  ALL    mean amplitude  43.9%   min  19.9%   max  92.2%   mean |level err|  7.2%
+
+==============================================================================
+2b. phase — does the model put the peak and trough in the right hour?
+==============================================================================
+  ISO    year  kind  peak model/actual   trough model/actual   hod corr
+  ERCOT  2023  DA    h18 / h18  OK           h02 / h02  OK          +0.927
+  ERCOT  2023  RT    h18 / h18  OK           h02 / h02  OK          +0.967
+  ERCOT  2024  DA    h19 / h18  OK           h02 / h02  OK          +0.927
+  ERCOT  2024  RT    h19 / h18  OK           h02 / h09  OFF         +0.946
+  ERCOT  2025  DA    h19 / h18  OK           h10 / h09  OK          +0.925
+  ERCOT  2025  RT    h19 / h18  OK           h10 / h09  OK          +0.951
+  PJM    2023  DA    h16 / h17  OK           h02 / h02  OK          +0.980
+  PJM    2023  RT    h16 / h17  OK           h02 / h02  OK          +0.964
+  PJM    2024  DA    h16 / h17  OK           h02 / h02  OK          +0.947
+  PJM    2024  RT    h16 / h17  OK           h02 / h02  OK          +0.938
+  PJM    2025  DA    h17 / h18  OK           h02 / h02  OK          +0.915
+  PJM    2025  RT    h17 / h18  OK           h02 / h02  OK          +0.867
+  CAISO  2023  DA    h19 / h18  OK           h12 / h11  OK          +0.877
+  CAISO  2023  RT    h19 / h18  OK           h12 / h12  OK          +0.968
+  CAISO  2024  DA    h19 / h18  OK           h13 / h12  OK          +0.903
+  CAISO  2024  RT    h19 / h18  OK           h13 / h12  OK          +0.968
+  CAISO  2025  DA    h22 / h18  OFF          h12 / h12  OK          +0.956
+  CAISO  2025  RT    h22 / h18  OFF          h12 / h13  OK          +0.976
+  NYISO  2023  DA    h18 / h17  OK           h03 / h03  OK          +0.909
+  NYISO  2023  RT    h18 / h17  OK           h03 / h03  OK          +0.939
+  NYISO  2024  DA    h18 / h17  OK           h03 / h03  OK          +0.911
+  NYISO  2024  RT    h18 / h17  OK           h03 / h03  OK          +0.886
+  NYISO  2025  DA    h19 / h17  OFF          h03 / h02  OK          +0.890
+  NYISO  2025  RT    h19 / h17  OFF          h03 / h02  OK          +0.865
+  NEISO  2023  DA    h17 / h17  OK           h02 / h02  OK          +0.949
+  NEISO  2023  RT    h17 / h17  OK           h02 / h02  OK          +0.941
+  NEISO  2024  DA    h17 / h17  OK           h02 / h02  OK          +0.968
+  NEISO  2024  RT    h17 / h17  OK           h02 / h03  OK          +0.930
+  NEISO  2025  DA    h17 / h17  OK           h02 / h02  OK          +0.955
+  NEISO  2025  RT    h17 / h17  OK           h02 / h03  OK          +0.938
+  MISO   2023  DA    h17 / h16  OK           h02 / h01  OK          +0.925
+  MISO   2023  RT    h17 / h16  OK           h02 / h01  OK          +0.879
+  MISO   2024  DA    h17 / h16  OK           h02 / h02  OK          +0.927
+  MISO   2024  RT    h17 / h16  OK           h02 / h02  OK          +0.891
+  MISO   2025  DA    h18 / h17  OK           h02 / h01  OK          +0.901
+  MISO   2025  RT    h18 / h17  OK           h02 / h01  OK          +0.853
+
+==============================================================================
+3. control — is the compression a load-weighting artifact? (simple zone mean)
+==============================================================================
+  ISO    year   hod range: load-wtd / simple-mean / measured DA
+  ERCOT  2023   $ 98.76 / $ 99.27 / $186.70   amplitude load-wtd  52.9%  simple  53.2%
+  ERCOT  2024   $ 25.56 / $ 25.68 / $ 66.82   amplitude load-wtd  38.2%  simple  38.4%
+  ERCOT  2025   $ 17.77 / $ 16.70 / $ 48.41   amplitude load-wtd  36.7%  simple  34.5%
+  PJM    2023   $  7.40 / $  7.13 / $ 23.46   amplitude load-wtd  31.6%  simple  30.4%
+  PJM    2024   $ 10.17 / $  9.62 / $ 27.88   amplitude load-wtd  36.5%  simple  34.5%
+  PJM    2025   $ 14.08 / $ 13.13 / $ 41.18   amplitude load-wtd  34.2%  simple  31.9%
+  CAISO  2023   $ 32.79 / $ 33.27 / $ 70.53   amplitude load-wtd  46.5%  simple  47.2%
+  CAISO  2024   $ 27.70 / $ 29.14 / $ 52.37   amplitude load-wtd  52.9%  simple  55.6%
+  CAISO  2025   $ 27.64 / $ 29.21 / $ 36.43   amplitude load-wtd  75.9%  simple  80.2%
+  NYISO  2023   $ 11.68 / $ 11.86 / $ 22.45   amplitude load-wtd  52.0%  simple  52.8%
+  NYISO  2024   $ 12.79 / $ 12.93 / $ 25.13   amplitude load-wtd  50.9%  simple  51.5%
+  NYISO  2025   $ 19.23 / $ 19.34 / $ 43.27   amplitude load-wtd  44.5%  simple  44.7%
+  NEISO  2023   $  7.03 / $  7.03 / $ 25.96   amplitude load-wtd  27.1%  simple  27.1%
+  NEISO  2024   $  6.82 / $  6.82 / $ 28.96   amplitude load-wtd  23.6%  simple  23.6%
+  NEISO  2025   $ 13.30 / $ 13.30 / $ 44.47   amplitude load-wtd  29.9%  simple  29.9%
+  MISO   2023   $  7.87 / $  7.79 / $ 23.16   amplitude load-wtd  34.0%  simple  33.6%
+  MISO   2024   $  9.20 / $  9.16 / $ 25.34   amplitude load-wtd  36.3%  simple  36.2%
+  MISO   2025   $ 10.57 / $ 10.48 / $ 41.95   amplitude load-wtd  25.2%  simple  25.0%
+
+==============================================================================
+3b. control — is the MEASURED side understated by using a hub? (MISO, the only committed hourly zonal actual)
+==============================================================================
+  MISO 2023  measured hod range: hub-mean $ 23.16 / 5-zone mean $ 21.75   ->  model amplitude vs hub  34.0%  vs zone-mean  36.2%
+  MISO 2024  measured hod range: hub-mean $ 25.34 / 5-zone mean $ 22.56   ->  model amplitude vs hub  36.3%  vs zone-mean  40.8%
+  MISO 2025  measured hod range: hub-mean $ 41.95 / 5-zone mean $ 39.93   ->  model amplitude vs hub  25.2%  vs zone-mean  26.5%
+
+==============================================================================
+4. attribution — who absorbs the model's diurnal swing, and what is already online at the trough
+==============================================================================
+
+  ERCOT 2025: demand h3 47,071 MW -> h16 63,189 MW  (swing 16,118 MW)
+    solar          h03        10 MW -> h16    16,017 MW  ( +16,007 MW,  99.3% of swing; online at trough: YES)
+    ST_GAS         h03     1,096 MW -> h16     1,980 MW  (    +884 MW,   5.5% of swing; online at trough: YES)
+    CC_REGULAR     h03    15,658 MW -> h16    16,540 MW  (    +882 MW,   5.5% of swing; online at trough: YES)
+    CT_PEAKER      h03       244 MW -> h16       783 MW  (    +539 MW,   3.3% of swing; online at trough: YES)
+    CC_CHP         h03     3,056 MW -> h16     3,192 MW  (    +136 MW,   0.8% of swing; online at trough: YES)
+    COAL_LIGNITE   h03     1,765 MW -> h16     1,764 MW  (      -1 MW,  -0.0% of swing; online at trough: YES)
+    wind           h03    14,843 MW -> h16    12,090 MW  (  -2,753 MW, -17.1% of swing; online at trough: YES)
+    -> peaking/oil classes ONLINE at the overnight trough: 3/4 (CT_CHP, CT_PEAKER, ST_GAS) carrying 1,865 MW
+
+  PJM 2025: demand h3 84,701 MW -> h17 105,440 MW  (swing 20,739 MW)
+    CT_PEAKER      h03       831 MW -> h17     7,372 MW  (  +6,541 MW,  31.5% of swing; online at trough: YES)
+    CC_REGULAR     h03    35,288 MW -> h17    41,574 MW  (  +6,287 MW,  30.3% of swing; online at trough: YES)
+    solar          h03        18 MW -> h17     2,473 MW  (  +2,455 MW,  11.8% of swing; online at trough: YES)
+    COAL_BIT       h03    13,814 MW -> h17    16,245 MW  (  +2,431 MW,  11.7% of swing; online at trough: YES)
+    ST_GAS         h03     1,036 MW -> h17     3,063 MW  (  +2,027 MW,   9.8% of swing; online at trough: YES)
+    VIRTUAL_INC    h03     2,275 MW -> h17       349 MW  (  -1,926 MW,  -9.3% of swing; online at trough: YES)
+    VIRTUAL_DEC    h03      -659 MW -> h17    -5,634 MW  (  -4,975 MW, -24.0% of swing; online at trough: no)
+    -> peaking/oil classes ONLINE at the overnight trough: 3/4 (CT_CHP, CT_PEAKER, ST_GAS) carrying 1,983 MW
+
+  CAISO 2025: demand h3 20,396 MW -> h17 28,859 MW  (swing 8,463 MW)
+    solar          h03         2 MW -> h17     8,080 MW  (  +8,078 MW,  95.5% of swing; online at trough: YES)
+    CC_REGULAR     h03     4,296 MW -> h17     5,076 MW  (    +780 MW,   9.2% of swing; online at trough: YES)
+    CT_PEAKER      h03        14 MW -> h17        86 MW  (     +72 MW,   0.9% of swing; online at trough: YES)
+    ST_GAS         h03         0 MW -> h17        24 MW  (     +24 MW,   0.3% of swing; online at trough: no)
+    CT_CHP         h03       174 MW -> h17       174 MW  (      +1 MW,   0.0% of swing; online at trough: YES)
+    hydro          h03     2,840 MW -> h17     2,398 MW  (    -441 MW,  -5.2% of swing; online at trough: YES)
+    import         h03     6,602 MW -> h17     5,131 MW  (  -1,471 MW, -17.4% of swing; online at trough: YES)
+    -> peaking/oil classes ONLINE at the overnight trough: 2/4 (CT_CHP, CT_PEAKER) carrying 187 MW
+
+  NYISO 2025: demand h4 14,832 MW -> h19 19,865 MW  (swing 5,033 MW)
+    hydro          h04     1,995 MW -> h19     3,881 MW  (  +1,886 MW,  37.5% of swing; online at trough: YES)
+    ST_GAS         h04       889 MW -> h19     1,816 MW  (    +926 MW,  18.4% of swing; online at trough: YES)
+    CC_REGULAR     h04     3,773 MW -> h19     4,569 MW  (    +796 MW,  15.8% of swing; online at trough: YES)
+    CC_CHP         h04     1,637 MW -> h19     1,968 MW  (    +330 MW,   6.6% of swing; online at trough: YES)
+    CT_PEAKER      h04        43 MW -> h19       271 MW  (    +228 MW,   4.5% of swing; online at trough: YES)
+    wind           h04       813 MW -> h19       781 MW  (     -32 MW,  -0.6% of swing; online at trough: YES)
+    import         h04     2,118 MW -> h19     2,058 MW  (     -60 MW,  -1.2% of swing; online at trough: YES)
+    -> peaking/oil classes ONLINE at the overnight trough: 4/4 (CT_CHP, CT_PEAKER, ST_GAS, oil) carrying 1,096 MW
+
+  NEISO 2025: demand h2 10,504 MW -> h17 14,621 MW  (swing 4,117 MW)
+    CC_REGULAR     h02     5,752 MW -> h17     7,797 MW  (  +2,045 MW,  49.7% of swing; online at trough: YES)
+    hydro          h02       282 MW -> h17     1,091 MW  (    +809 MW,  19.6% of swing; online at trough: YES)
+    CT_PEAKER      h02       114 MW -> h17       323 MW  (    +209 MW,   5.1% of swing; online at trough: YES)
+    oil            h02       159 MW -> h17       259 MW  (     +99 MW,   2.4% of swing; online at trough: YES)
+    solar          h02         3 MW -> h17        68 MW  (     +65 MW,   1.6% of swing; online at trough: YES)
+    nuclear        h02     3,152 MW -> h17     3,152 MW  (      +0 MW,   0.0% of swing; online at trough: YES)
+    wind           h02       547 MW -> h17       533 MW  (     -14 MW,  -0.3% of swing; online at trough: YES)
+    -> peaking/oil classes ONLINE at the overnight trough: 4/4 (CT_CHP, CT_PEAKER, ST_GAS, oil) carrying 329 MW
+
+  MISO 2025: demand h2 65,802 MW -> h17 83,225 MW  (swing 17,423 MW)
+    CT_PEAKER      h02       922 MW -> h17     4,063 MW  (  +3,141 MW,  18.0% of swing; online at trough: YES)
+    solar          h02         6 MW -> h17     2,353 MW  (  +2,347 MW,  13.5% of swing; online at trough: YES)
+    ST_GAS         h02     1,365 MW -> h17     3,415 MW  (  +2,050 MW,  11.8% of swing; online at trough: YES)
+    import         h02     1,067 MW -> h17     3,012 MW  (  +1,944 MW,  11.2% of swing; online at trough: YES)
+    COAL_PRB       h02    15,895 MW -> h17    17,765 MW  (  +1,871 MW,  10.7% of swing; online at trough: YES)
+    nuclear        h02    10,341 MW -> h17    10,341 MW  (      +0 MW,   0.0% of swing; online at trough: YES)
+    wind           h02    12,714 MW -> h17    11,380 MW  (  -1,334 MW,  -7.7% of swing; online at trough: YES)
+    -> peaking/oil classes ONLINE at the overnight trough: 3/4 (CT_CHP, CT_PEAKER, ST_GAS) carrying 2,874 MW
