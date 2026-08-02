@@ -3852,3 +3852,72 @@ rebuild can reproduce, so the RA-only carve-out would have false-failed a
 faithful keeper on the full `--keepers` recompute. `MECH_NYISO_SELFSUPPLY`'s
 missing D4_WINDOWS row is FILED, not minted (it rides real plants — not part
 of this defect; non-thermal, never gated).
+
+---
+
+## nyiso-111 / nyiso-112 — the CROSS-ISO TRANSFER SWEEP: two candidates refused ex-ante on NYISO's own data, two keepers promoted, and the first C3c movement since the queue was declared exhausted (2026-08-02)
+
+**Keeper `2026-08-01-nyiso109-zonal-margin-anchor` → `2026-08-02-nyiso111-ramp-envelopes`
+→ `2026-08-02-nyiso112-ramp-plus-peaker`.** Both promotions are their
+pre-registrations' own verdicts (`PREREG-nyiso111-ramp-envelopes-2026-08-02.md`,
+`PREREG-nyiso112-nysdec-peaker-rule-2026-08-02.md`, both committed and pushed
+before any arm solved). Finding:
+`results/calibration/FINDING-nyiso111-ramp-envelopes-2026-08-02.md`.
+
+### 1. Why the transfer candidates
+
+nyiso-110 left the §5.5 queue with no admissible peak-half lever
+(`diurnal_price_amplitude` NYISO `O → G`). So this session worked rule 28 §4:
+the matrix cells where NYISO reads `U` and another ISO reads `K`.
+
+### 2. Two refused ex-ante, on NYISO's own measurement (no solve spent)
+
+* **`temp_dependent_derate` `U → G`.** The miso-101 identification re-run on NY
+  CAMPD does not identify: 2 of 15 candidate cogens clear the floor, the
+  capacity-weighted p50 within-day slope is **−0.00745/°C (wrong sign)**, the
+  near-pinned plant measures −0.000086 at r = 0.006, and **phase validation
+  fails at best lag −5 h** against MISO's confirmed 0. It is reading NYC's
+  air-conditioning dispatch shape, not an ambient capability response.
+* **`hydro_ror_split` `U → G`, queue item 8 CLOSED.** The committed classifier
+  flat-pins **73.1 %** of NYISO conventional-hydro MW (Robert Moses Niagara
+  alone 51.9 %), leaving a 1,261.6 MW shapeable bound that NY's own measured
+  hour-of-day swing exceeds in every year (1,291.9 / 1,396.8 / 1,792.2 MW =
+  1.02 / 1.11 / 1.42×; median-day 1.19–1.53×). EHA itself files the peaking
+  machinery as a separate plant (Lewiston, EIA 2692, `Mode = Peaking`, 240 MW),
+  so the hybrid label describes hydraulics, not shapeability. Direction is wrong
+  too: the keeper over-peaks hydro by only +293 / +242 / +204 MW at h17–19.
+
+### 3. nyiso-111 — the pjm-140 `ramp_envelopes` transfer, PROMOTED
+
+NYISO's artifact derives for the first time (77 rows / 48 well-observed plants;
+CC up-envelope median 0.49 × pmax, ST 0.42, CT 0.92). pjm-140's all-ISO lesson
+was honoured, not rediscovered: the class-aggregate pre-check is reported
+**uninformative** (1 hour of 26,280) and the bound-against-the-bound test is the
+one quoted — the superseded keeper's own dispatch crosses the envelope in
+0.96 / 1.26 / 0.75 % of ~543k group-transitions carrying 225,117 / 291,437 /
+274,134 MWh/yr, a crossing rate **2.1–3.0× PJM's**. Arming cuts it to 3,888 /
+4,717 / 7,062 MWh (**−98.27 / −98.38 / −97.42 %**). K2 control integrity is
+**0.0 MW** on the strict byte basis. Price effect near-inert exactly as
+pre-registered; promoted on rule 1 / rule 14, not on gate movement.
+
+### 4. nyiso-112 — the NYSDEC 227-3 peaker rule, PROMOTED, and C3c moves
+
+Off-queue with cause: the mechanism had **no matrix row at all** (rule 28(c)
+gap), was armed exactly once at nyiso-46 inside a three-mechanism probe that
+stayed a probe for unrelated reasons, and carries **no rejection anywhere in the
+record** — every bundle since read `false`. Rule 19 checked by measurement: the
+CAMPD outage overlay does not already zero these units.
+
+**C3c 2025: 7 → 14 hours >$300 against a measured 42** (2023/2024 unchanged at
+3/0), C3a in band all years with 2025 moving toward band centre, K4 window
+fidelity exact (out-of-window delta 0.0 MWh every year), zero slack and dump.
+The caveat is not retired; its worst year improves for the regulation's own
+dated reason.
+
+### 5. Standing lesson
+
+The exhausted-queue finding was true of the queue, and the queue was
+incomplete. **A solve-affecting field with no matrix row is a mechanism nobody
+can see** — worth a sweep in every ISO lane.
+
+Next shorthand: nyiso-113.
