@@ -381,3 +381,65 @@ Measurements A–D read only committed artifacts and run in seconds
 no LP, run sequentially; a fresh container needs `pip install -e .`, the
 pinned wheels, and a full `scripts/regenerate_clean.py` first (the nyiso-108
 environment note).
+
+---
+
+## §10 — ADDENDUM (same session, post-solve): the pre-registered arm is INERT, and the E4 liveness reading is corrected
+
+The A/B ran at the rebased HEAD (both arms after the ercot-150 landing;
+registered `2026-08-01-nyiso110-control-zerodelta` /
+`2026-08-02-nyiso110-spin-online-inert`; gate scorer
+`scripts/probes/_nyiso110_spin_online_ab.py`, output
+`results/calibration/_nyiso110_spin_online_ab.json`).
+
+**Verdict: INERT, by the prereg's own K3 rule.** K1/K4 pass (the flag is armed
+and recorded, exactly one config delta); K2 passes at **0.0 MW** max
+class-hour delta (the control byte-reproduces the committed keeper — main's
+ercot-150 commits are NYISO-inert, as the prereg's falsifiable expectation
+stated); and the arm's reserve-dual hours are **IDENTICAL to control**
+(17/6/34 of 8,760 against the 500/yr liveness floor). C3a moves **+0.006 pp**
+(2023), swing shares are unchanged to 3 dp, and the class-energy deltas
+(≤ 4 GWh) plus K6's sub-$2 single-hour dual wobbles are degenerate-vertex
+noise from an added-but-never-binding constraint, not signal. No kill fired
+and none was needed — there is nothing to kill.
+
+**The E4 census tested the wrong binder — corrected on the record (the
+nyiso-109 §7 discipline).** E4 measured hydro *headroom* (the per-gen
+constraint) short of 655 MW in 49–64 % of peak hours and read that as a live
+formation channel. The as-built class-2 gate is an **aggregate** row —
+`R[2] ≤ ρ·Σ P` over the eligible fleet — and reserve-eligible hydro's
+**output** alone (2–5 GW × ρ ≥ 0.5) keeps it slack in every hour of all
+three years, while idle quick-start capacity remains admissible on the
+per-gen side once the aggregate row is satisfied. The "conservative
+min(headroom, ρ·P)" leg applied the composition to hydro alone instead of to
+the pool, which is why it did not catch this. nyiso-84's observed binding
+(652–1,589 h gate-only) was real at ITS HEAD because that fleet state
+differed; on today's keeper the construction cannot bind.
+
+**The refutation generalizes past the flag — the in-LP reserve-formation
+family at NYISO is exhausted:**
+
+* the **nyiso-84 class-widening successor is refuted ex-ante** by the same
+  arithmetic: adding online CC/ST to the eligible set only ADDS aggregate
+  output and per-gen headroom (more slack, not less);
+* a **per-gen re-scoping** (`R_g ≤ ρ·P_g`) stays slack on hydro's own
+  certified output, and **excluding hydro** would falsify its real NYISO
+  reserve eligibility (rule 14) to manufacture a binding constraint (rule 1);
+* **reserve offers** remain unidentifiable (§6.3) and **MIP** remains
+  forbidden (§6.5).
+
+Reality prices everyday spin positively DESPITE abundant zero-opportunity
+hydro because providers submit availability offers and the RT co-opt prices
+sub-hourly opportunity costs — neither exists in an hourly LP with $0
+reserve offers, and NYISO publishes no offer data to measure. **The peak
+half's dominant component is therefore not formable in-model at NYISO under
+current rules.** `diurnal_price_amplitude` NYISO moves **O → G** (the
+PJM/MISO no-build class): the decomposition stands, every route is
+adjudicated on NYISO's own solved or measured evidence, and the lane
+re-opens only behind (i) the owner amplitude-criterion call (§7 — now
+carrying the cancellation fact AND this exhaustion), (ii) an owner-funded
+reserve-offer / sub-hourly data intake, or (iii) the item-8 Robert Moses
+resolution for the separate energy-side hydro leg. Keeper unchanged:
+`2026-08-01-nyiso109-zonal-margin-anchor`. The owner's structural-integrity
+promotion license (offered for this arm) has nothing to attach to — the arm
+changes no structure and is not recommended as a keeper.

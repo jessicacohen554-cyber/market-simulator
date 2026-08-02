@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-02-nyiso110-spin-online-inert",
+ "label": "nyiso110 spin online inert",
+ "date": "2026-08-02",
+ "shorthand": "nyiso110-spin-online-inert",
+ "definition": "(PROBE - INERT, adjudicated by its own pre-registration) The flag-only nyiso_spin_reserve_online single-delta arm on the nyiso-109 keeper recipe (PREREG-nyiso110-spin-online-peak-formation-2026-08-02.md), the nyiso-110 peak-half lever. K1/K4 confirm the flag armed and recorded; K2 control byte-clean; verdict INERT by the prereg's own K3 rule: reserve-dual hours IDENTICAL to control (17/6/34 of 8,760 vs a 500/yr liveness floor), C3a moves +0.006 pp, swing shares unchanged to 3 dp, class deltas are GWh-scale degenerate-vertex noise. ROOT CAUSE (recorded in FINDING-nyiso110 addendum): the class-2 online gate is an AGGREGATE rho*output row and reserve-eligible hydro's output alone (2-5 GW x rho >= 0.5) covers the 655 MW NYCA spin requirement in every hour, with idle quick-start capacity still admissible on the per-gen side - so the constraint never binds on the repaired-hydro keeper. This also refutes the nyiso-84 class-widening successor ex-ante: widening the eligible set only ADDS slack, and excluding certified NYPA hydro would falsify real eligibility (rule 14). The in-LP reserve-formation family at NYISO is exhausted; the peak half's dominant component (the measured everyday reserve-price content, 64-131 pct of the missing swing) is not formable in the hourly LP under current rules.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-02-nyiso110-spin-online-inert.js",
+ "bundle": "results/calibration/nyiso110_spinonline_B"
+}
