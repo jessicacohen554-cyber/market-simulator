@@ -103,16 +103,76 @@ def resolve_new_entry_costs(config: "ScenarioConfig") -> dict[str, dict[str, flo
     return resolved
 
 
+def resolve_demand_growth_table(
+    config: "ScenarioConfig",
+) -> dict[str, dict[str, dict[str, float]]]:
+    """Return the demand-growth rate table governing this config's as-of vintage.
+
+    The FH-2 as-of seam (hindcast-forward plan §4 row 6). One mechanism, two
+    addresses (rule 19 [R-ONE-MECH]):
+
+    * ``config.demand_growth_vintage is None`` (the default) →
+      :data:`constants.DEMAND_GROWTH_RATES`, the current published table. Every
+      pre-FH-2 run takes this branch, byte-identical.
+    * a vintage year → that year's entry in
+      :data:`constants.DEMAND_GROWTH_RATES_VINTAGES`, i.e. the growth rates the
+      ISOs had actually PUBLISHED as of that base year — what a genuine
+      as-known forecast launched from that base would have grown load on.
+
+    An unknown vintage **raises**; it never falls back to the current table.
+    A silent fallback would hand a 2021-base hindcast the 2025-vintage
+    data-center boom and call the resulting +17.7 %/2yr a forecast miss — the
+    exact information leak this seam exists to close (rule 13 [R-MEASURED]).
+    The registry ships EMPTY at FH-2 (mechanism only; FH-3 lands the cited
+    values), so today every vintage request raises — fail-closed by design.
+
+    Args:
+        config: Scenario config supplying ``demand_growth_vintage``.
+
+    Returns:
+        The ``{iso: {low|mid|high: {near, long}}}`` table for this vintage.
+
+    Raises:
+        ValueError: When ``demand_growth_vintage`` names a vintage absent from
+            :data:`constants.DEMAND_GROWTH_RATES_VINTAGES`.
+    """
+    from market_sim.config.constants import (
+        DEMAND_GROWTH_RATES,
+        DEMAND_GROWTH_RATES_VINTAGES,
+    )
+
+    vintage = getattr(config, "demand_growth_vintage", None)
+    if vintage is None:
+        return DEMAND_GROWTH_RATES
+    table = DEMAND_GROWTH_RATES_VINTAGES.get(int(vintage))
+    if table is None:
+        available = sorted(DEMAND_GROWTH_RATES_VINTAGES)
+        raise ValueError(
+            f"demand_growth_vintage={vintage!r} has no entry in "
+            "DEMAND_GROWTH_RATES_VINTAGES (available: "
+            f"{available or 'none — FH-3 lands the values'}). An as-of vintage "
+            "NEVER falls back to the current DEMAND_GROWTH_RATES table: that "
+            "would grow a historic-base hindcast on rates published years after "
+            "its base (hindcast-forward plan §4 row 6)."
+        )
+    return table
+
+
 def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
     """Return the demand growth rate for ``year`` under the PB-1 load lever.
 
     Selects the near/long era from ``constants.DEMAND_GROWTH_TRANSITION_YEAR``,
-    then interpolates :data:`constants.DEMAND_GROWTH_RATES`' low/mid/high era
-    rates at the effective percentile from ``config.demand_growth_path``/
+    then interpolates the resolved growth table's low/mid/high era rates at the
+    effective percentile from ``config.demand_growth_path``/
     ``config.demand_growth_percentile`` (PB-1 §1.1/§2.1; both eras move
-    together). Falls back to ``config.demand_growth_rate`` exactly as the
-    legacy path-only lookup did, when the config's ISO or
-    ``demand_growth_path`` has no entry in the table (e.g. MISO).
+    together). The table is :data:`constants.DEMAND_GROWTH_RATES` unless
+    ``config.demand_growth_vintage`` selects an as-of vintage
+    (:func:`resolve_demand_growth_table`, FH-2). Falls back to
+    ``config.demand_growth_rate`` exactly as the legacy path-only lookup did,
+    when the config's ISO or ``demand_growth_path`` has no entry in the CURRENT
+    table (e.g. an ISO absent from it) — an as-of VINTAGE instead raises on a
+    missing ISO, since borrowing today's rate there is the same leak
+    :func:`resolve_demand_growth_table` refuses.
 
     Args:
         config: Scenario config supplying the ISO and both growth levers.
@@ -120,13 +180,25 @@ def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
 
     Returns:
         The annual demand growth rate (fraction, e.g. 0.03 = 3%/yr).
-    """
-    from market_sim.config.constants import (
-        DEMAND_GROWTH_RATES,
-        DEMAND_GROWTH_TRANSITION_YEAR,
-    )
 
-    iso_rates = DEMAND_GROWTH_RATES.get(config.iso, {})
+    Raises:
+        ValueError: When an as-of vintage is selected and carries no row for
+            this config's ISO (or an unknown vintage — see
+            :func:`resolve_demand_growth_table`).
+    """
+    from market_sim.config.constants import DEMAND_GROWTH_TRANSITION_YEAR
+
+    table = resolve_demand_growth_table(config)
+    vintage = getattr(config, "demand_growth_vintage", None)
+    if vintage is not None and config.iso not in table:
+        raise ValueError(
+            f"demand_growth_vintage={vintage!r} carries no "
+            f"row for ISO {config.iso!r} (has: {sorted(table)}). An as-of "
+            "vintage never borrows the current table's rate for a missing ISO "
+            "(hindcast-forward plan §4 row 6)."
+        )
+
+    iso_rates = table.get(config.iso, {})
     path_rates = iso_rates.get(config.demand_growth_path)
     if not isinstance(path_rates, dict):
         return config.demand_growth_rate
