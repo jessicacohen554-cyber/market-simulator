@@ -1,0 +1,281 @@
+{
+ "2023": {
+  "classes": {
+   "CC_CHP": {
+    "cap_mw": 1538.8,
+    "restore_days": 139,
+    "mean_lift_zero_mw": 95.6,
+    "mean_lift_live_mw": 85.4,
+    "zero_share_of_lift": 0.5281,
+    "units_ever_zero_on_restore_days": 7,
+    "cap_of_those_units_mw": 570.1,
+    "n_units": 71,
+    "model_capw_avail_mean": 0.8833,
+    "target_mean": 0.8843
+   },
+   "CC_REGULAR": {
+    "cap_mw": 59856.9,
+    "restore_days": 336,
+    "mean_lift_zero_mw": 6547.6,
+    "mean_lift_live_mw": 803.8,
+    "zero_share_of_lift": 0.8907,
+    "units_ever_zero_on_restore_days": 506,
+    "cap_of_those_units_mw": 54913.4,
+    "n_units": 543,
+    "model_capw_avail_mean": 0.7719,
+    "target_mean": 0.8843
+   },
+   "COAL": {
+    "cap_mw": 38722.3,
+    "restore_days": 364,
+    "mean_lift_zero_mw": 8589.2,
+    "mean_lift_live_mw": 5610.5,
+    "zero_share_of_lift": 0.6049,
+    "units_ever_zero_on_restore_days": 250,
+    "cap_of_those_units_mw": 29084.3,
+    "n_units": 375,
+    "model_capw_avail_mean": 0.5175,
+    "target_mean": 0.8843
+   },
+   "CT_CHP": {
+    "cap_mw": 313.3,
+    "restore_days": 240,
+    "mean_lift_zero_mw": 1.1,
+    "mean_lift_live_mw": 12.1,
+    "zero_share_of_lift": 0.0821,
+    "units_ever_zero_on_restore_days": 3,
+    "cap_of_those_units_mw": 4.1,
+    "n_units": 105,
+    "model_capw_avail_mean": 0.871,
+    "target_mean": 0.8843
+   },
+   "CT_PEAKER": {
+    "cap_mw": 25995.8,
+    "restore_days": 314,
+    "mean_lift_zero_mw": 139.1,
+    "mean_lift_live_mw": 1484.1,
+    "zero_share_of_lift": 0.0857,
+    "units_ever_zero_on_restore_days": 36,
+    "cap_of_those_units_mw": 757.5,
+    "n_units": 838,
+    "model_capw_avail_mean": 0.8342,
+    "target_mean": 0.8843
+   },
+   "ST_CHP": {
+    "cap_mw": 178.2,
+    "restore_days": 258,
+    "mean_lift_zero_mw": 9.0,
+    "mean_lift_live_mw": 14.8,
+    "zero_share_of_lift": 0.3773,
+    "units_ever_zero_on_restore_days": 13,
+    "cap_of_those_units_mw": 89.7,
+    "n_units": 38,
+    "model_capw_avail_mean": 0.8007,
+    "target_mean": 0.8843
+   },
+   "ST_GAS": {
+    "cap_mw": 11094.4,
+    "restore_days": 364,
+    "mean_lift_zero_mw": 2348.3,
+    "mean_lift_live_mw": 1126.3,
+    "zero_share_of_lift": 0.6758,
+    "units_ever_zero_on_restore_days": 32,
+    "cap_of_those_units_mw": 5717.3,
+    "n_units": 64,
+    "model_capw_avail_mean": 0.5711,
+    "target_mean": 0.8843
+   }
+  },
+  "pooled": {
+   "mean_lift_zero_mw": 17729.9,
+   "mean_lift_live_mw": 9137.0,
+   "zero_share_of_lift": 0.6599
+  }
+ },
+ "2024": {
+  "classes": {
+   "CC_CHP": {
+    "cap_mw": 1538.8,
+    "restore_days": 131,
+    "mean_lift_zero_mw": 53.1,
+    "mean_lift_live_mw": 104.1,
+    "zero_share_of_lift": 0.3377,
+    "units_ever_zero_on_restore_days": 14,
+    "cap_of_those_units_mw": 918.9,
+    "n_units": 71,
+    "model_capw_avail_mean": 0.8922,
+    "target_mean": 0.8873
+   },
+   "CC_REGULAR": {
+    "cap_mw": 59856.9,
+    "restore_days": 327,
+    "mean_lift_zero_mw": 5859.3,
+    "mean_lift_live_mw": 769.0,
+    "zero_share_of_lift": 0.884,
+    "units_ever_zero_on_restore_days": 526,
+    "cap_of_those_units_mw": 57457.5,
+    "n_units": 543,
+    "model_capw_avail_mean": 0.7901,
+    "target_mean": 0.8873
+   },
+   "COAL": {
+    "cap_mw": 38722.3,
+    "restore_days": 364,
+    "mean_lift_zero_mw": 9561.4,
+    "mean_lift_live_mw": 5955.3,
+    "zero_share_of_lift": 0.6162,
+    "units_ever_zero_on_restore_days": 248,
+    "cap_of_those_units_mw": 27378.2,
+    "n_units": 375,
+    "model_capw_avail_mean": 0.4866,
+    "target_mean": 0.8873
+   },
+   "CT_CHP": {
+    "cap_mw": 309.2,
+    "restore_days": 214,
+    "mean_lift_zero_mw": 0.0,
+    "mean_lift_live_mw": 10.3,
+    "zero_share_of_lift": 0.0,
+    "units_ever_zero_on_restore_days": 0,
+    "cap_of_those_units_mw": 0.0,
+    "n_units": 102,
+    "model_capw_avail_mean": 0.8823,
+    "target_mean": 0.8873
+   },
+   "CT_PEAKER": {
+    "cap_mw": 26002.8,
+    "restore_days": 324,
+    "mean_lift_zero_mw": 150.3,
+    "mean_lift_live_mw": 1444.5,
+    "zero_share_of_lift": 0.0943,
+    "units_ever_zero_on_restore_days": 35,
+    "cap_of_those_units_mw": 450.5,
+    "n_units": 845,
+    "model_capw_avail_mean": 0.8351,
+    "target_mean": 0.8873
+   },
+   "ST_CHP": {
+    "cap_mw": 177.0,
+    "restore_days": 327,
+    "mean_lift_zero_mw": 7.8,
+    "mean_lift_live_mw": 15.0,
+    "zero_share_of_lift": 0.3413,
+    "units_ever_zero_on_restore_days": 14,
+    "cap_of_those_units_mw": 93.8,
+    "n_units": 37,
+    "model_capw_avail_mean": 0.7765,
+    "target_mean": 0.8873
+   },
+   "ST_GAS": {
+    "cap_mw": 11106.1,
+    "restore_days": 364,
+    "mean_lift_zero_mw": 3613.6,
+    "mean_lift_live_mw": 1356.7,
+    "zero_share_of_lift": 0.727,
+    "units_ever_zero_on_restore_days": 52,
+    "cap_of_those_units_mw": 9633.3,
+    "n_units": 68,
+    "model_capw_avail_mean": 0.4397,
+    "target_mean": 0.8873
+   }
+  },
+  "pooled": {
+   "mean_lift_zero_mw": 19245.5,
+   "mean_lift_live_mw": 9654.9,
+   "zero_share_of_lift": 0.6659
+  }
+ },
+ "2025": {
+  "classes": {
+   "CC_CHP": {
+    "cap_mw": 1538.8,
+    "restore_days": 147,
+    "mean_lift_zero_mw": 183.7,
+    "mean_lift_live_mw": 66.0,
+    "zero_share_of_lift": 0.7358,
+    "units_ever_zero_on_restore_days": 16,
+    "cap_of_those_units_mw": 594.2,
+    "n_units": 71,
+    "model_capw_avail_mean": 0.8449,
+    "target_mean": 0.8669
+   },
+   "CC_REGULAR": {
+    "cap_mw": 59856.9,
+    "restore_days": 241,
+    "mean_lift_zero_mw": 7768.7,
+    "mean_lift_live_mw": 768.4,
+    "zero_share_of_lift": 0.91,
+    "units_ever_zero_on_restore_days": 504,
+    "cap_of_those_units_mw": 54795.3,
+    "n_units": 543,
+    "model_capw_avail_mean": 0.7834,
+    "target_mean": 0.8669
+   },
+   "COAL": {
+    "cap_mw": 38828.3,
+    "restore_days": 365,
+    "mean_lift_zero_mw": 8616.4,
+    "mean_lift_live_mw": 5126.6,
+    "zero_share_of_lift": 0.627,
+    "units_ever_zero_on_restore_days": 279,
+    "cap_of_those_units_mw": 28775.1,
+    "n_units": 378,
+    "model_capw_avail_mean": 0.513,
+    "target_mean": 0.8669
+   },
+   "CT_CHP": {
+    "cap_mw": 310.3,
+    "restore_days": 141,
+    "mean_lift_zero_mw": 0.0,
+    "mean_lift_live_mw": 6.6,
+    "zero_share_of_lift": 0.0,
+    "units_ever_zero_on_restore_days": 0,
+    "cap_of_those_units_mw": 0.0,
+    "n_units": 103,
+    "model_capw_avail_mean": 0.8823,
+    "target_mean": 0.8669
+   },
+   "CT_PEAKER": {
+    "cap_mw": 26002.1,
+    "restore_days": 297,
+    "mean_lift_zero_mw": 118.9,
+    "mean_lift_live_mw": 1091.5,
+    "zero_share_of_lift": 0.0983,
+    "units_ever_zero_on_restore_days": 35,
+    "cap_of_those_units_mw": 450.5,
+    "n_units": 844,
+    "model_capw_avail_mean": 0.8346,
+    "target_mean": 0.8669
+   },
+   "ST_CHP": {
+    "cap_mw": 177.0,
+    "restore_days": 364,
+    "mean_lift_zero_mw": 25.4,
+    "mean_lift_live_mw": 15.9,
+    "zero_share_of_lift": 0.6153,
+    "units_ever_zero_on_restore_days": 25,
+    "cap_of_those_units_mw": 119.6,
+    "n_units": 37,
+    "model_capw_avail_mean": 0.6347,
+    "target_mean": 0.8669
+   },
+   "ST_GAS": {
+    "cap_mw": 11106.1,
+    "restore_days": 365,
+    "mean_lift_zero_mw": 1759.8,
+    "mean_lift_live_mw": 1470.3,
+    "zero_share_of_lift": 0.5448,
+    "units_ever_zero_on_restore_days": 36,
+    "cap_of_those_units_mw": 6387.0,
+    "n_units": 68,
+    "model_capw_avail_mean": 0.5761,
+    "target_mean": 0.8669
+   }
+  },
+  "pooled": {
+   "mean_lift_zero_mw": 18472.9,
+   "mean_lift_live_mw": 8545.3,
+   "zero_share_of_lift": 0.6837
+  }
+ }
+}

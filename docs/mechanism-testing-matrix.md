@@ -773,7 +773,7 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED)
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent)
 
 C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
 pjm-136** and is UNCHANGED through pjm-143 (tail counts byte-identical in both
@@ -891,12 +891,38 @@ lever on the AMPLITUDE, never on the annual mean.**
 6. **C3c margin** — still passes by **1 h** (2024) and **2.5 h** (2025) against a
    0.5× floor, untouched by pjm-137 and by pjm-138 (which solved nothing). Any
    delta must report its C3c effect explicitly.
-7. **`pjm_dam_availability`** (**U**) — intaken but untested. pjm-137 measured
+7. ~~**`pjm_dam_availability`** (**U**) — intaken but untested. pjm-137 measured
    that Dominion's real turbines are synchronised in 68.3 / 54.4 / 62.4 % of all
    hours, so the CT leg is **not** an availability defect; this lever now stands
    on the outage-envelope story alone. Note the ERCOT precedent before
    chartering it: the measured envelope there is *measured-correct* and was
-   rejected twice on level (ERCOT-116/134).
+   rejected twice on level (ERCOT-116/134).~~
+   **▶ CLOSED AT pjm-145 (2026-08-02) — REFUSED EX ANTE, NO SOLVE SPENT; CELL
+   STAMPED `G`. DO NOT RE-ARM the uniform class-grain form.**
+   `results/calibration/FINDING-pjm145-dam-availability-2026-08-02.md`
+   (PREREG + both probe instruments committed before measurement; ex-ante
+   run through the real `generators_to_fleet_arrays` path). Measured: the
+   armed overlay is a **+19–24 GW mean-availability net RESTORE** (remove leg
+   fires 0/0/5 days in three years) and **66–68 % of the restore-day lift is
+   structural-zero resurrection** — capacity the model's finer measured
+   unit-grain record (CAMPD outage windows, layup, retiree CEMS caps, COD
+   masking, `cc_outage_derate_from_top` tranche zeros) holds at zero, revived
+   to λ by the water-fill's `_flat` branch (the ERCOT-135 §7.2 defect; the
+   ercot137 pmax-ceiling fix was never ported to the PJM class-grain block).
+   Model covered-class availabilities run 0.44–0.83 against the uniform
+   fleet-mean target 0.867–0.887 — PJM's single whole-fleet aggregate
+   (non-fossil forced MW included) is a wrong-boundary datum for a per-class
+   application (rule 14 misalignment clause), and the unit-grain CAMPD stack
+   is the incumbent availability owner (rule 19). The ERCOT contrast: its
+   analogue was adoptable because the 60-Day disclosure is measured at
+   per-class/plant grain and its restore is ceiling-composed with the
+   forced-derate registry. Direction prediction (net REMOVE) scored WRONG —
+   the model's availability basis is already measured, not statistical, which
+   is exactly why the fleet-mean target misfits. Re-open only under a new
+   charter with (1) the restore ceiling composed with the structural-derate
+   registry, and/or (2) a class-/unit-resolved or fuel-split outage numerator,
+   or (3) the event-window-cap form (ERCOT-148/149 shape) identified from
+   PJM's own record.
 8. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
    overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
    42–55 % forced). ~~**Newly motivated by pjm-138**: the model runs
