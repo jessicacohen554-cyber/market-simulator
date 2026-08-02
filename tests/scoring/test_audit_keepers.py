@@ -132,5 +132,95 @@ class D6ParityTests(unittest.TestCase):
         self.assertEqual(ak.CALIBRATION_YEARS, frozenset({2023, 2024, 2025}))
 
 
+class MarkerCurrencyTests(unittest.TestCase):
+    """M1: marker_currency_failures (owner decision D-5(b), signed 2026-08-02).
+
+    The `complete`-block marker must name the ISO's CURRENT designated keeper
+    (M1a) and its recorded determination must still re-verify against that run
+    (M1b), so a promotion can never transfer a determination onto a run it was
+    never scored against. Both halves are stubbed here (keeper shard + live
+    verdict) so the test never touches the committed registry or solves.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.marker = Path(self._tmp.name) / "calibration-complete.json"
+        ak.MARKER_FILE = self.marker
+        self._real_keeper_ids = ak.keeper_store.keeper_ids
+        self._real_determine = ak.cv.determine
+
+    def tearDown(self):
+        ak.MARKER_FILE = _REAL_MARKER_FILE
+        ak.keeper_store.keeper_ids = self._real_keeper_ids
+        ak.cv.determine = self._real_determine
+        self._tmp.cleanup()
+
+    def _stub(self, keepers, determinations):
+        ak.keeper_store.keeper_ids = lambda: keepers
+        ak.cv.determine = lambda rid: {"determination": determinations[rid]}
+
+    def _write_marker(self, complete):
+        self.marker.write_text(json.dumps({"complete": complete}))
+
+    def test_current_marker_with_matching_determination_passes(self):
+        self._stub({"PJM": "run-b"}, {"run-b": "CALIBRATED"})
+        self._write_marker(
+            {"PJM": {"keeper": "run-b", "determination": "CALIBRATED on run-b."}}
+        )
+        self.assertEqual(ak.marker_currency_failures(), [])
+
+    def test_stale_marker_keeper_flags_m1a(self):
+        self._stub({"PJM": "run-b"}, {"run-b": "CALIBRATED"})
+        self._write_marker(
+            {"PJM": {"keeper": "run-a", "determination": "CALIBRATED on run-a."}}
+        )
+        fails = ak.marker_currency_failures()
+        self.assertEqual([f[1] for f in fails], ["M1a"])
+        self.assertIn("run-b", fails[0][2])
+
+    def test_determination_that_no_longer_holds_flags_m1b(self):
+        # The dangerous case the owner's "re-verify, don't just re-key" clause
+        # targets: the field was updated but the determination was not re-scored.
+        self._stub({"PJM": "run-b"}, {"run-b": "NOT-YET"})
+        self._write_marker(
+            {"PJM": {"keeper": "run-b", "determination": "CALIBRATED on run-b."}}
+        )
+        fails = ak.marker_currency_failures()
+        self.assertEqual([f[1] for f in fails], ["M1b"])
+        self.assertIn("NOT-YET", fails[0][2])
+
+    def test_iso_without_a_complete_entry_is_not_checked(self):
+        # An ISO with no `complete` marker (e.g. ERCOT) has nothing to re-key.
+        self._stub({"ERCOT": "run-x"}, {"run-x": "NOT-YET"})
+        self._write_marker({})
+        self.assertEqual(ak.marker_currency_failures(), [])
+
+    def test_scoping_to_isos_isolates_lanes(self):
+        self._stub(
+            {"PJM": "run-b", "NEISO": "run-d"},
+            {"run-b": "CALIBRATED", "run-d": "CALIBRATED"},
+        )
+        self._write_marker(
+            {
+                "PJM": {"keeper": "run-a", "determination": "CALIBRATED on run-a."},
+                "NEISO": {"keeper": "run-c", "determination": "CALIBRATED on run-c."},
+            }
+        )
+        self.assertEqual(len(ak.marker_currency_failures()), 2)
+        self.assertEqual([f[0] for f in ak.marker_currency_failures(["PJM"])], ["PJM"])
+
+    def test_underscore_keys_are_metadata_not_isos(self):
+        # The `final` block carries a "_note" key; the same shape must never be
+        # read as an ISO in `complete`.
+        self._stub({"PJM": "run-b"}, {"run-b": "CALIBRATED"})
+        self._write_marker(
+            {
+                "_note": "block documentation",
+                "PJM": {"keeper": "run-b", "determination": "CALIBRATED on run-b."},
+            }
+        )
+        self.assertEqual(ak.marker_currency_failures(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

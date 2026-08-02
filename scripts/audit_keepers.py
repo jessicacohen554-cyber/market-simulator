@@ -40,6 +40,14 @@ parsed as a fallback) it verifies:
       forcing-legitimacy rests on the DOF ledger + ``legitimacy_diagnostics``).
       Absence of a twin is OK; only a dangling link — a sidecar naming a twin
       with no registry payload — FAILs, as a data-integrity check.
+  M1  ``complete``-marker currency + determination re-verification (owner
+      decision D-5(b), signed 2026-08-02): every ISO holding a ``complete``
+      entry in ``calibration-complete.json`` has that entry's ``keeper`` field
+      pointing at its CURRENT designated keeper (M1a), and the determination the
+      entry asserts still matches the LIVE verdict of the run it names (M1b), so
+      a promotion can never silently transfer a determination onto a run it was
+      never scored against. Costs no solve — ``calibration_verdict`` reads
+      committed artifacts only.
   S1  the ``status/`` parts are in sync with the current verdicts
       (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -130,6 +138,90 @@ def holdout_quarantine_failures() -> list[str]:
                 "(CLAUDE.md rule 22)"
             )
     return fails
+
+
+def marker_currency_failures(
+    isos: list[str] | None = None,
+) -> list[tuple[str, str, str]]:
+    """Return M1 findings: `complete`-block markers vs the designated keepers.
+
+    D-5(b) (owner decision, signed 2026-08-02 —
+    ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum C.1, OPTION B) made
+    the marker's ``keeper`` field **track the ISO's current designated dashboard
+    keeper** instead of freezing the declaration-time snapshot, and required the
+    ``determination`` to be RE-VERIFIED against the newly named run on every
+    promotion — "so the marker never asserts an unscored determination".
+
+    This check enforces both halves, and it does so **without a solve**:
+    ``calibration_verdict`` reads committed artifacts only and never re-solves the
+    LP, so re-verifying a determination is a seconds-long, byte-reproducible read.
+
+      M1a  the ``complete`` entry's ``keeper`` == the ISO's keeper shard.
+      M1b  the determination token the entry's ``determination`` prose asserts ==
+           the LIVE verdict of the run the entry names.
+
+    A SPENT locked-test one-shot is never re-keyed (``locked_test_scored_on`` holds
+    its frozen config, rule 22) and is not read here. Returns ``(iso, code, msg)``
+    triples; empty means both halves hold for every audited ``complete`` ISO.
+    """
+    marker_doc = _load_json(MARKER_FILE) or {}
+    complete = {
+        k: v
+        for k, v in (marker_doc.get("complete") or {}).items()
+        if not k.startswith("_") and isinstance(v, dict)
+    }
+    want = {s.upper() for s in isos} if isos else None
+    keeper_map = keeper_store.keeper_ids()
+    out: list[tuple[str, str, str]] = []
+    for iso in sorted(complete):
+        if want and iso.upper() not in want:
+            continue
+        entry = complete[iso]
+        marker_keeper = entry.get("keeper")
+        designated = keeper_map.get(iso)
+        if designated and marker_keeper != designated:
+            out.append(
+                (
+                    iso,
+                    "M1a",
+                    f"{MARKER_FILE.name} 'complete'.{iso}.keeper = {marker_keeper!r} but "
+                    f"the designated keeper is {designated!r} — re-key the marker and "
+                    "re-verify its determination against the new run (owner decision "
+                    "D-5(b), 2026-08-02; `python scripts/calibration_verdict.py "
+                    f"--run-id {designated}` — no solve).",
+                )
+            )
+            # M1a short-circuits M1b: the recorded determination belongs to the
+            # superseded run, so re-verifying it there answers a stale question.
+            # The re-key procedure carries the re-verification, and this audit
+            # re-runs after it — so the fresh M1b check happens then.
+            continue
+        asserted = _asserted_determination(entry.get("determination") or "")
+        if asserted and marker_keeper:
+            try:
+                live = cv.determine(marker_keeper).get("determination")
+            except Exception as exc:  # noqa: BLE001 - report, never crash the audit
+                out.append(
+                    (
+                        iso,
+                        "M1b",
+                        f"cannot re-verify {iso}'s marker determination against "
+                        f"{marker_keeper}: {exc}",
+                    )
+                )
+                continue
+            if live and asserted != live:
+                out.append(
+                    (
+                        iso,
+                        "M1b",
+                        f"{MARKER_FILE.name} 'complete'.{iso}.determination asserts "
+                        f"{asserted!r} but the live verdict of {marker_keeper} is "
+                        f"{live!r} — the marker asserts a determination that was never "
+                        "scored against the run it names (owner decision D-5(b)).",
+                    )
+                )
+    return out
 
 
 def ablation_twin_finding(
@@ -434,6 +526,21 @@ def audit(isos: list[str] | None) -> Report:
             "H1",
             f"no registered bundle breaches the {sorted(CALIBRATION_YEARS)} "
             "holdout quarantine",
+        )
+
+    # M1: `complete`-marker currency + determination re-verification, scoped to
+    # the audited ISOs (owner decision D-5(b), 2026-08-02). No solve — the
+    # verdict is recomputed from committed artifacts.
+    m1 = marker_currency_failures(isos)
+    for iso, code, msg in m1:
+        rep.fail("marker", iso, code, msg)
+    if not m1:
+        rep.ok(
+            "marker",
+            "-",
+            "M1",
+            "every audited 'complete' marker names its ISO's designated keeper and "
+            "its determination re-verifies against that run (owner decision D-5(b))",
         )
 
     # S1: status-part sync check, scoped to the audited ISOs so a stale part
