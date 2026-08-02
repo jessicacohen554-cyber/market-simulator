@@ -598,6 +598,29 @@ solve-affecting fields had no matrix row.
 | `tests/scoring/test_crossover_harness.py` | contract test: dampers default-off **and** arm for real | the defect FFR-1D removed the old flags over must not recur |
 | `scripts/probes/ffr2b_arm_compare.py` | ledger → D-1/D-2 rows; **imports** the I6 cap from `check_forecast_invariants` rather than restating it | a diagnostic must not be able to quote a looser bound than the checker enforces |
 
+**Post-merge correction — a miss by this session (2026-08-02).** PR #3277 merged
+with the `forecast-invariant-artifacts` CI job failing. **Four of the five
+flagged runs are this session's own**: the runs were registered without their
+line in `frontend/data/hindcast/invariant-failures.json`, which is exactly the
+"a new failure must not land silently" guard FFR-1D built for audit FR-24.
+Declared in the follow-up commit, with the substance recorded rather than just
+the identifier:
+
+| run | FAILs | what it is |
+|---|---|---|
+| `miso-2021-2025-cmc-legacy-ffr2b` | I9 | storage simultaneity, 0.36/0.56 % of throughput — **bit-identical across both arms**, so not attributable to `retirement_rule` |
+| `miso-2021-2025-cmc-pipeline-ffr2b` | I9 | as above |
+| `miso-2026-2030-ffr2b-t1f-base` | I7 | the base-year adequacy residual (§1.3) |
+| `miso-2026-2030-ffr2b-t1f-dampers` | I7, I12 | **the substantive D-2 finding** — §1.3/§3's disclosed adequacy cost, not noise |
+
+The PJM arms carry no FAIL (the pipeline arm's I12 is a WARN) and correctly
+need no line. **The fifth flagged run is not this session's**:
+`ercot-2023-2025-t1ff-armr-fh1gate` (I6, I7) is FH-1's gate probe, registered
+earlier the same day undeclared — **so this CI job was already red on main
+before FFR-2B merged**. It is declared in the same commit because the
+declaration is accurate and it unbreaks main; FH-1's verdict is untouched and
+FH-4 remains blocked.
+
 **What this session did NOT do**, deliberately: change any default; widen any
 band; register anything on the backcast registry; touch an out-of-training
 year; add a GitHub Actions workflow; schedule a full-horizon run; re-run FH-1's
