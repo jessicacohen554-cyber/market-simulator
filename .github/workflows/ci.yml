@@ -25,6 +25,12 @@ on:
       - ".python-version"
       - "conftest.py"
       - "frontend/data/backcast/**"
+      # FFR-1D (audit FR-24): the forecast namespaces were absent from these
+      # filters entirely, so a forecast-registration commit triggered NO CI at
+      # all — not even the registry gates that keep the two namespaces apart.
+      - "frontend/data/hindcast/**"
+      - "frontend/data/forecast/**"
+      - "tests/golden/**"
       - "docs/codebase-site/data/mechanism-matrix.js"
       - "CLAUDE.md"
       - ".github/workflows/ci.yml"
@@ -62,6 +68,36 @@ jobs:
       # ids (scripts/lib/known_unsynced_keepers.py); any new gap fails.
       - name: check_registry_payload_parity
         run: uv run python scripts/check_registry_payload_parity.py
+
+  forecast-invariant-artifacts:
+    name: Forecast-invariant artifact audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: uv sync
+      # FR-24: check_forecast_invariants.py had NO CI wiring anywhere — the
+      # standalone forecast-invariants.yml workflow was deleted 2026-07-14 and
+      # never restored, while the FF plan claimed the invariants were
+      # "CI-wired". Re-running the checker over a run needs that run's cache
+      # directory (per-year parquet + ledgers, gigabytes, uncommitted), so it
+      # can NEVER be a CI job — but auditing the invariant verdicts each
+      # registration COMMITS can. This is that gate: schema + full-battery
+      # coverage + a declared-failure ledger, so a newly registered run that
+      # fails an invariant is a reviewed line in
+      # frontend/data/hindcast/invariant-failures.json rather than a number
+      # that lands on the forecast dashboard unremarked.
+      #
+      # ARTIFACT-LEVEL, NO LP, NO SOLVE, NO data fetch — it reads committed
+      # JSON only, and runs in seconds (repo CI cost policy). The `uv sync`
+      # above is for the checker module's own imports, not for the audit.
+      - name: check_forecast_invariants --sidecar-dir
+        run: uv run python scripts/check_forecast_invariants.py --sidecar-dir
 
   mechanism-matrix-guard:
     name: Rule-28 mechanism-matrix guard

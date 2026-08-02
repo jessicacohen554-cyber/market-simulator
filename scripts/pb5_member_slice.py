@@ -34,6 +34,10 @@ from dataclasses import replace
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.pipeline.members import run_pair
 from market_sim.uncertainty import UncertaintySpec, draw_to_config, sample_draws
+from market_sim.config.schedulable import (
+    add_authorization_flag,
+    assert_config_schedulable,
+)
 
 logger = logging.getLogger("pb5_member_slice")
 
@@ -56,6 +60,11 @@ def main() -> None:
         "--offset", type=int, default=0, help="Slice offset (this invocation's lane)."
     )
     ap.add_argument("--iso", default=None, help="ISO; defaults to the config's own.")
+    add_authorization_flag(
+        ap,
+        "PB-5 is DEFERRED behind §2.1b, so this driver refuses an over-cap "
+        "window even though its members are individually cached.",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(
@@ -63,6 +72,14 @@ def main() -> None:
     )
 
     base = ScenarioConfig.from_yaml(args.config)
+    # §2.1b window cap (audit FR-25): PB-5 was named DEFERRED by the plan yet
+    # this driver would silently solve uncached members over whatever horizon
+    # the base YAML carries. Checked FIRST — before the sampler spec is even
+    # read — because every member solves the same window, so one over-cap
+    # window is an over-cap campaign n_draws times over.
+    assert_config_schedulable(
+        base, args.full_solve_authorized, "pb5_member_slice (PB-5 member slice)"
+    )
     spec = UncertaintySpec.from_yaml(args.sampler)
     overrides = {}
     if args.draws is not None:

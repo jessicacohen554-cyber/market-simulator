@@ -765,6 +765,10 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
 
         base = ScenarioConfig(
             iso="PJM",
+            # The measured EIA-923 ISO-month gas series is a backcast-only
+            # overlay (FFR-1D rule-13 guard, audit FR-11), and the
+            # `.with_overrides(gas_monthly_actuals=True)` leg below arms it.
+            mode="backcast",
             hours=8760,
             gas_price_override=2.19,
             coal_bit_passthrough_sigmoid=True,

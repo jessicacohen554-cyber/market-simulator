@@ -77,6 +77,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "ERCOT_AS_SATURATION_REF_GW",
         "FORECAST_POOL_REQUIREMENT_BY_ISO",
         "HISTORIC_OUTAGE_OVERLAY_BY_ISO",
+        # FFR-1C (2026-07-31) added this to capacity_market.py and DID
+        # re-export it from the constants facade, but left it out of this
+        # frozen inventory — so test_moved_surface_is_complete went red on
+        # main in the BLOCKING refactor-guards job. Registered 2026-08-01.
+        "HYDRO_ACCREDITATION_CREDIT_BY_ISO",
         "MARKET_DESIGN",
         "MARKET_DESIGN_VINTAGES",
         "MISOSeasonRBDC",

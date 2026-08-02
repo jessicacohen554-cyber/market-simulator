@@ -20,6 +20,17 @@ behind:
   dead payload committed forever (it is never rendered, since only registered
   runs appear in the manifest).
 
+It also asserts the namespace BOUNDARY (audit FR-24, added by FFR-1D): a
+forecast-family run — T1-F / T1-X / T1-H / crossover / CES-POC / readiness —
+must never be registered into the backcast registry. Those runs belong to the
+separate forecast namespace (`frontend/data/forecast/**`, registered via
+`scripts/register_forecast_run.py`), and CLAUDE.md rule 15 plus forecast plan
+§7.5 say the two never mix: a forecast run in the backcast registry would put a
+2026-2050 solve in front of `audit_keepers` and the rule-22 quarantine gates,
+which reason about calibration years. The check reads only the backcast entry's
+OWN fields — it never opens the forecast namespace, so the backcast gates stay
+blind to it exactly as §7.5 requires.
+
 Usage: ``python scripts/check_registry_payload_parity.py`` (exit 1 on any gap).
 """
 
@@ -41,6 +52,61 @@ from scripts.lib.known_unsynced_keepers import (  # noqa: E402
 REGISTRY_DIR = ba.REGISTRY
 RUNS_DIR = ba.RUNS
 
+# Namespace-boundary vocabulary (FR-24). `kind`/`mode` are FORECAST-sidecar
+# fields — a backcast registry entry has neither — so their presence with a
+# forecast value is a registration that went to the wrong namespace.
+FORECAST_KINDS = frozenset(
+    {"t1f", "t1x", "t1h", "crossover", "hindcast", "ces-poc", "adequacy", "readiness"}
+)
+# Result-tree roots the forecast/hindcast harnesses write to. A backcast bundle
+# lives under results/calibration/.
+FORECAST_BUNDLE_PREFIXES = (
+    "results/hindcast/",
+    "results/full-horizon/",
+    "results/crossover/",
+    "results/ff-",
+    "results/ces-",
+)
+BACKCAST_RUNS_PREFIX = "frontend/data/backcast/runs/"
+
+
+def check_namespace_boundary(rid: str, rec: dict) -> list[str]:
+    """Return problems if ``rec`` is a forecast-family run in the backcast registry.
+
+    Args:
+        rid: The run id.
+        rec: The registry sidecar's parsed contents.
+
+    Returns:
+        A list of human-readable problems; empty when the entry is a backcast
+        registration.
+    """
+    problems: list[str] = []
+    remedy = (
+        "Forecast-family runs register on the forecast namespace via "
+        "scripts/register_forecast_run.py (CLAUDE.md rule 15; forecast plan "
+        "§7.5 — the backcast gates must never see a forecast run)."
+    )
+    kind = rec.get("kind") or (rec.get("meta") or {}).get("kind")
+    mode = rec.get("mode") or (rec.get("meta") or {}).get("mode")
+    if kind in FORECAST_KINDS:
+        problems.append(f"{rid}: kind={kind!r} is a FORECAST run kind. {remedy}")
+    if mode == "forecast":
+        problems.append(f"{rid}: mode='forecast' in the BACKCAST registry. {remedy}")
+    bundle = str(rec.get("bundle") or "")
+    if bundle.startswith(FORECAST_BUNDLE_PREFIXES):
+        problems.append(
+            f"{rid}: bundle {bundle!r} is under a forecast/hindcast results "
+            f"root. {remedy}"
+        )
+    file_ref = str(rec.get("file") or "")
+    if file_ref and not file_ref.startswith(BACKCAST_RUNS_PREFIX):
+        problems.append(
+            f"{rid}: file {file_ref!r} points outside "
+            f"{BACKCAST_RUNS_PREFIX} — a backcast payload lives there. {remedy}"
+        )
+    return problems
+
 
 def main() -> int:
     problems: list[str] = []
@@ -58,6 +124,7 @@ def main() -> int:
             continue
         rid = rec.get("id", path.stem)
         sidecars[rid] = rec
+        problems.extend(check_namespace_boundary(rid, rec))
         if not (RUNS_DIR / f"{rid}.js").exists():
             msg = (
                 f"{path.name}: registry sidecar has no matching "

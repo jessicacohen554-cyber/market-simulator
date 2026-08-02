@@ -39,6 +39,11 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 # The four flags that decide which availability branch a class takes, read from
 # results/calibration/miso88_egrid_hr/run_config.json (the MISO keeper).
 KEEPER_FLAGS = dict(
+    # mode="backcast": outage_source="historic" is the ISO's MEASURED outage
+    # record, a backcast-only overlay (FFR-1D rule-13 guard, audit FR-11) — and
+    # the keeper these flags are read from is a backcast, so saying so here just
+    # makes the fixture honest about the run it mirrors.
+    mode="backcast",
     outage_source="historic",
     wefor_residual=None,
     coal_drop_pof=True,

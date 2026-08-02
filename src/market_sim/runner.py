@@ -2537,6 +2537,52 @@ def run_sweep(sweep_def: SweepDefinition, workers: int | None = None) -> list[st
     return run_pairs(pairs, workers=workers)
 
 
+def _add_authorization_flag(subparser: argparse.ArgumentParser) -> None:
+    """Attach the shared §2.1b ``--full-solve-authorized`` flag to a subcommand.
+
+    Every ``market-sim`` subcommand can schedule a forecast horizon (the
+    scenario YAML carries it, and a YAML with no year fields inherits the
+    2026-2050 module default), so every one of them carries the cap and its
+    authorization flag. See :mod:`market_sim.config.schedulable`.
+
+    Args:
+        subparser: The subcommand parser to extend.
+    """
+    from market_sim.config.schedulable import add_authorization_flag
+
+    add_authorization_flag(
+        subparser,
+        "Without it this CLI REFUSES a config whose forecast horizon is wider "
+        "than the cap (audit FR-25).",
+    )
+
+
+def _assert_cli_schedulable(
+    config: ScenarioConfig, args: argparse.Namespace, entry_point: str
+) -> None:
+    """Refuse an over-cap forecast horizon before any solve begins.
+
+    The §2.1b cap (plan §7.9) was enforced only in ``run_full_horizon.py`` and
+    ``run_ces_leg.py``; a ``market-sim run/sweep/ensemble/matrix`` invocation
+    over a default 2026-2050 YAML scheduled 25 solve-years with no refusal
+    anywhere (forecast-readiness audit FR-25). Backcast configs are untouched —
+    their windows are rule-22's holdout gate, not §2.1b's.
+
+    Args:
+        config: The scenario about to be solved.
+        args: Parsed CLI arguments (supplies ``full_solve_authorized``).
+        entry_point: Label naming the subcommand in the refusal message.
+
+    Raises:
+        SystemExit: When the window exceeds the cap and is unauthorized.
+    """
+    from market_sim.config.schedulable import assert_config_schedulable
+
+    assert_config_schedulable(
+        config, getattr(args, "full_solve_authorized", False), entry_point
+    )
+
+
 def _build_parser() -> argparse.ArgumentParser:
     """Return the ``market-sim`` argument parser with its subcommands."""
     parser = argparse.ArgumentParser(
@@ -2554,6 +2600,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="ISO to run; defaults to the config's own ISO.",
     )
+    _add_authorization_flag(run_parser)
 
     sweep_parser = subparsers.add_parser("sweep", help="Run a parameter sweep.")
     sweep_parser.add_argument(
@@ -2565,6 +2612,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Worker processes; defaults to min(2, cpu_count - 1) (rule 12).",
     )
+    _add_authorization_flag(sweep_parser)
 
     ensemble_parser = subparsers.add_parser(
         "ensemble",
@@ -2630,6 +2678,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "(PB-3), producing the published dispatch-conditional band alongside "
         "the parametric one. Requires --sampler and --out-dir.",
     )
+    _add_authorization_flag(ensemble_parser)
 
     matrix_parser = subparsers.add_parser(
         "matrix",
@@ -2662,6 +2711,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Output directory; defaults to results/ensemble/<matrix_id>/.",
     )
+    _add_authorization_flag(matrix_parser)
 
     return parser
 
@@ -2681,12 +2731,22 @@ def main(argv: list[str] | None = None) -> None:
     if args.command == "run":
         config = ScenarioConfig.from_yaml(args.config)
         iso = args.iso or config.iso
+        _assert_cli_schedulable(config, args, "market-sim run")
         run_scenario_iso(config, iso)
     elif args.command == "sweep":
-        run_sweep(SweepDefinition.from_yaml(args.sweep), args.workers)
+        sweep_def = SweepDefinition.from_yaml(args.sweep)
+        # A sweep member may override start_year/end_year, so check every
+        # expanded config, not just the (default) base.
+        for member in sweep_def.generate():
+            _assert_cli_schedulable(member, args, "market-sim sweep")
+        run_sweep(sweep_def, args.workers)
     elif args.command == "ensemble":
         config = ScenarioConfig.from_yaml(args.config)
         iso = args.iso or config.iso
+        # An ensemble solves the window once PER MEMBER, so an over-cap window
+        # is over-cap many times over; the cap is checked on the window (the
+        # §2.1b unit) and the member count is reported by the drivers.
+        _assert_cli_schedulable(config, args, "market-sim ensemble")
         if args.sampler:
             from dataclasses import replace
 
@@ -2720,6 +2780,13 @@ def main(argv: list[str] | None = None) -> None:
     elif args.command == "matrix":
         from market_sim.matrix import run_matrix_cli
 
+        # The matrix CLI takes no year arguments at all — the horizon rides the
+        # base YAML (and its cases may override it), which is exactly why an
+        # unguarded `market-sim matrix` was the audit's headline FR-25 hole.
+        base_config = ScenarioConfig.from_yaml(args.config)
+        _assert_cli_schedulable(base_config, args, "market-sim matrix")
+        for case in SweepDefinition.from_yaml(args.matrix).generate(base_config):
+            _assert_cli_schedulable(case, args, "market-sim matrix")
         run_matrix_cli(args.config, args.matrix, args.iso, args.workers, args.out_dir)
 
 
