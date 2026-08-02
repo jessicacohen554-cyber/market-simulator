@@ -265,6 +265,23 @@ def resolve_carbon_program(
     # Adder path — the faithful RGGI/CARB representation.
     if config.mode == "backcast":
         price = measured_price(config.iso, year)
+        if (
+            price is None
+            and program.price_key is None
+            and config.iso == "PJM"
+            and getattr(config, "pjm_rggi_allowance_pricing", False)
+        ):
+            # pjm-146 gated PJM series: the same measured RGGI auction
+            # clearing prices as NYISO/NEISO, metric-converted, kept OUT of
+            # STATE_CARBON_PRICE_BY_ISO so the default-True
+            # state_carbon_pricing flag cannot arm it silently (same-key
+            # cache invalidation; promotion path documented at the registry).
+            from market_sim.config.fuel_trajectories import (
+                PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE,
+            )
+
+            year_price = PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE.get(year)
+            price = None if year_price is None else float(year_price)
     else:
         # Forecast: an explicit exogenous RFF path (non-default) wins so
         # pre-EM-6 forecast configs keep their behaviour; otherwise carry the
