@@ -611,7 +611,7 @@ def _stack_anatomy(bundle: Path, year: int) -> dict:
         [str(f) for f in np.asarray(getattr(fa, "fuel_type_names", []))], dtype=object
     )
     if fuel_names.size != mc.shape[0]:
-        from market_sim.config.constants import FUEL_TYPE_NAMES
+        from market_sim.data.fleet.models import FUEL_TYPE_NAMES
 
         fuel_names = np.array(
             [FUEL_TYPE_NAMES[i] for i in np.asarray(fa.fuel_type_idx, dtype=int)],
