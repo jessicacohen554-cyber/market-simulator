@@ -57,6 +57,39 @@ def _hold_flat_extrapolate(trajectory: dict[int, float], year: int) -> float:
     return trajectory[min(trajectory)]
 
 
+def resolve_gas_scenario_path(config: ScenarioConfig, year: int) -> str:
+    """Return the ``HENRY_HUB_TRAJECTORIES`` key this scenario-year prices on.
+
+    The one place the crossover fuel seam is decided (rule 19 ``[R-ONE-MECH]``):
+    a T1-X/T1-FF crossover's FORWARD years (``>= crossover_forward_year``) price
+    gas on ``config.crossover_forward_gas_path`` — the AEO trajectory a pure
+    forecast uses — while its in-sample years keep ``config.gas_price_path``
+    (the realized hindcast fuel). Every non-crossover run
+    (``crossover_forward_year is None``) returns ``config.gas_price_path``
+    unchanged, so backcast and plain-forecast callers are byte-identical.
+
+    Split out of :func:`resolve_annual_gas_price` (FFR-2A / audit FR-9) because
+    the ISO's own gas price was not the only consumer: the neighbor-seam
+    reference price (``runner.py`` → ``apply_interchange_injections`` →
+    ``data.neighbor_price``) passed ``config.gas_price_path`` unconditionally,
+    so a crossover's forward years priced the import seam off the realized
+    path — a ``KeyError`` on ``hindcast_realized`` (keys 2021/2023–2025), or a
+    measured level held flat into a forward year, depending on the caller. Both
+    callers now resolve the path here.
+
+    Args:
+        config: Scenario configuration supplying the two path fields and the
+            crossover boundary.
+        year: Calendar year to resolve.
+
+    Returns:
+        The trajectory key to index ``HENRY_HUB_TRAJECTORIES`` with.
+    """
+    if config.is_crossover_forward_year(year):
+        return config.crossover_forward_gas_path
+    return config.gas_price_path
+
+
 def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     """Return the delivered annual gas price ($/MMBtu) for the scenario year.
 
@@ -104,10 +137,10 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     # must price gas on the AEO trajectory (config.crossover_forward_gas_path),
     # the same forward driver a pure forecast uses. In-sample years (< boundary)
     # keep config.gas_price_path (the realized hindcast fuel). No-op for every
-    # non-crossover run (crossover_forward_year is None).
-    path = config.gas_price_path
-    if config.is_crossover_forward_year(year):
-        path = config.crossover_forward_gas_path
+    # non-crossover run (crossover_forward_year is None). Since FFR-2A the
+    # choice itself lives in resolve_gas_scenario_path, shared with the
+    # neighbor-seam reference price (audit FR-9) — one mechanism, one key.
+    path = resolve_gas_scenario_path(config, year)
     trajectory = HENRY_HUB_TRAJECTORIES[path]
     # T1-FF back-hold trap (FH-1, hindcast-forward plan §4 row 7): the AEO
     # low/mid/high paths knot from 2023, so a full-forward year below a
