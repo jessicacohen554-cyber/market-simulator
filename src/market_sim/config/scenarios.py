@@ -376,9 +376,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and gas-offer blocks above record). Registered together — the fa9fc78
     # pair as the repair, the nyiso-84 pair on arrival — so every pre-existing
     # cache key is byte-stable again; an armed run enters the key as a
-    # distinct scenario.
-    "nyiso_li_locational_reserve",
-    "nyiso_incity_commitment_obligation",
+    # distinct scenario. (The fa9fc78 pair — nyiso_li_locational_reserve /
+    # nyiso_incity_commitment_obligation — is registered ONCE, in the nyiso-83
+    # block above; the duplicate copies that sat here were removed by FFR-1D,
+    # audit FR-15. A duplicated literal in a hand-maintained 100+-entry tuple
+    # is how a "did I register it?" grep answers yes twice and the real gap
+    # elsewhere stays invisible; test_cache_key_optional_fields_are_unique
+    # now holds the invariant.)
     "nyiso_east_reserve_families",
     "nyiso_spin_reserve_online",
     # NYISO gas commitment bridge (nyiso-87) — the flag plus every parameter it
@@ -477,6 +481,88 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # registration; only default-valued configs move, and they move BACK.
     "nyiso_import_sil_retire",
 )
+
+
+# --------------------------------------------------------------------------- #
+# Backcast-only measured overlays — the rule-13 hard-error family (FR-11).
+# --------------------------------------------------------------------------- #
+# Each entry is a field whose ARMED state swaps a forward-derivable construction
+# for a SAME-YEAR MEASURED RECORD: the ISO's published outage/DAM-award file for
+# that year, that year's metered fuel prints, that year's cleared reserve MW,
+# that year's observed per-plant operating levels. None of them has a forward
+# analogue — the file simply does not exist for 2031 — so under rule 13 they may
+# only ever fire in a backcast.
+#
+# Until FFR-1D that was enforced ONLY by the front end: nothing stopped a YAML,
+# a sweep member or a probe script from arming one in `mode="forecast"`, where
+# the overlay would either silently no-op (making the run quietly different from
+# the backcast it is meant to validate) or, worse, reach for a measured artifact
+# and pin a forecast year to observed history. The symmetric pattern already
+# existed for exactly two levers (`gas_price_factor`, `federal_ces_enabled`);
+# this generalizes it to the whole family (forecast-readiness audit 2026-07-30,
+# FR-11).
+#
+# The guard fires for mode=="forecast" INCLUDING the hindcast harness
+# (hindcast=True): a capacity hindcast / T1-X crossover is the FORECAST path
+# being validated, so feeding it the measured record is precisely the
+# self-fulfilling validation rule 13 forbids. No committed forecast-mode config
+# or YAML arms any field below (verified over `results/**/run_config.json` +
+# `configs/**/*.yaml`, FFR-1D), so this is a no-op for every existing run.
+#
+# Deliberately NOT in this family (reviewed, listed in the FFR-1D findings doc):
+# measured PHYSICAL parameters with a forward story — measured heat rates,
+# measured GTC/interface limits, measured ramp capability — which rule 14 tells
+# us to PREFER, and the offer-curve tuning knobs, which are contained by rule 25
+# and the run_config registry rather than by mode.
+_BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
+    # --- measured delivered-fuel prints (that year's receipts/spot series) ---
+    "gas_monthly_actuals": "measured EIA-923 ISO-month delivered gas",
+    "gas_daily_shape": "measured daily Henry Hub prints",
+    "gas_hub_basis_overlay": "measured constrained-hub month spot basis",
+    "gas_hub_basis_daily": "daily resolution of the same measured hub basis",
+    "miso_winter_citygate_daily": "measured Chicago Citygate daily prints",
+    "caiso_citygate_spot_level": "measured CA daily citygate spot series",
+    "caiso_citygate_flow_date": "flow-date placement of that measured series",
+    "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
+    # --- measured availability / outage records ---
+    "caiso_dam_outages": "CAISO's published DAM outage record for the year",
+    "miso_native_outage_source": "MISO's published outage record for the year",
+    "unit_outage_short_windows": "measured unit-grain outage windows",
+    "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
+    "unit_outage_maxgen_events": "measured declared-event unit derates",
+    "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
+    "ercot_thermal_dam_availability_hourly": "measured 60-Day DAM awards (hourly)",
+    "ercot_thermal_dam_availability_plant": "measured 60-Day DAM awards (per plant)",
+    "ercot_thermal_dam_availability_coal": "measured 60-Day DAM awards (coal)",
+    "ercot_dam_availability_coal_event_cap": "measured DAM-award coal event cap",
+    "pjm_dam_availability": "measured PJM DAM availability record",
+    "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
+    # --- measured per-plant operating conduct ---
+    "coal_mustrun_per_plant": "measured per-plant coal operating floors",
+    "ct_mustrun_per_plant": "measured per-plant CT operating floors",
+    "cc_mustrun_per_plant": "measured per-plant CC operating floors",
+    "st_gas_mustrun_per_plant": "measured per-plant ST-gas operating floors",
+    "st_gas_mustrun_p25_level": "measured per-plant ST-gas p25 operating level",
+    "coal_lignite_mustrun_override": "measured lignite must-run level",
+    "coal_prb_mustrun_override": "measured PRB must-run level",
+    "chp_export_floor_measured": "measured steam-host export floor",
+    "carry_operating_mothballs": "measured mothball state (INERT since 2026-07-17)",
+    # --- measured cleared reserve requirements ---
+    "miso_measured_reserve_requirements": "measured hourly cleared MISO reserve MW",
+    "nyiso_ordc_measured_step_span": "measured as-enforced NYISO ORDC step widths",
+    # --- measured seam / envelope / dispatch records ---
+    "miso_seam_measured_ladder": "measured per-year MISO seam price ladder",
+    "pjm_seam_measured_ladder": "measured per-year PJM seam price ladder",
+    "ercot_online_capacity_envelope_measured": "measured-fleet on-line capacity envelope",
+    "hydro_dispatch_envelope": "measured hydro month x hour-of-day dispatch percentiles",
+    "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
+    "pjm_ct_measured_max_reprice": "measured PJM CT max-offer repricing",
+}
+
+# ``outage_source`` is the same family but is a STRING axis, not a flag: only the
+# "historic" value is the measured record (the "statistical" default is the
+# WEFOR/POF availability model, which is exactly the forward construction).
+_BACKCAST_ONLY_OUTAGE_SOURCE = "historic"
 
 
 # Sentinels the cache-key payload uses in place of the machine-specific
@@ -9144,6 +9230,36 @@ class ScenarioConfig:
                 "must be False in backcast mode (rule 13): a federal CES "
                 "premium never enters a scored backcast."
             )
+        # The backcast-only MEASURED-OVERLAY family (audit FR-11). Same
+        # construction as the two guards above, generalized: rule 13 lets a
+        # measured input in only when it would regenerate for a forward year,
+        # and every field in _BACKCAST_ONLY_OVERLAY_FIELDS is keyed to a
+        # specific year's published record that has no forward edition. Before
+        # this, "never fires in forecast" was enforced only by the front end —
+        # a YAML or sweep member could arm any of them in a forecast and the
+        # overlay would silently no-op or reach for measured history.
+        _armed_overlays = [
+            f"{name} ({why})"
+            for name, why in _BACKCAST_ONLY_OVERLAY_FIELDS.items()
+            if getattr(self, name, None) not in (None, False)
+        ]
+        if self.outage_source == _BACKCAST_ONLY_OUTAGE_SOURCE:
+            _armed_overlays.append(
+                'outage_source="historic" (the ISO\'s measured outage record)'
+            )
+        if self.mode == "forecast" and _armed_overlays:
+            raise ValueError(
+                "backcast-only measured overlays cannot be armed in forecast "
+                "mode (rule 13 — a measured input must regenerate from forward "
+                "drivers, and these are keyed to a specific year's published "
+                "record): "
+                + "; ".join(sorted(_armed_overlays))
+                + ". This applies to the capacity-hindcast/crossover harness "
+                "too (mode='forecast', hindcast=True): that IS the forecast "
+                "path being validated, so feeding it the measured record makes "
+                "the validation self-fulfilling."
+            )
+
         if self.federal_ces_crediting not in ("clean_capture", "cesa_ci"):
             raise ValueError(
                 "ScenarioConfig.federal_ces_crediting must be one of "
@@ -9262,6 +9378,25 @@ class ScenarioConfig:
         # screen, so probe legs stay armable and existing legs byte-identical.
         if self.mode == "backcast":
             self.entry_lookahead_reprice = False
+
+        # FF-1B correlated cold-event forced-outage derate: the mechanism is
+        # gated forecast/hindcast-only inside
+        # data.outages.apply_correlated_outage_derate (a backcast's measured
+        # CAMPD overlays already carry the actual cold-event outages, so the
+        # statistical model would double-count them — charter D.5), so it is a
+        # guaranteed no-op in a backcast. It was pinned False only by the
+        # backcast CONFIG BUILDER (pipeline/backcast_config.py), which means a
+        # backcast constructed any other way (a YAML, a sweep member, a test
+        # fixture) inherits the FF-1F default-ON flip and gets a spuriously
+        # DISTINCT cache key for a byte-identical solve — orphaning its cached
+        # years. The field is not in _CACHE_KEY_OPTIONAL_FIELDS, so the value
+        # always enters the key. Coerce it here, at the config seam every
+        # construction path passes through (audit FR-10; the exact
+        # datacenter_load_path / entry_lookahead_reprice pattern above). NOT
+        # coerced when hindcast (mode=="forecast", hindcast=True): the FF-1B
+        # probe legs arm it explicitly on the hindcast harness.
+        if self.mode == "backcast":
+            self.correlated_forced_outage = False
 
         # Forward transmission-expansion channel (FF-G1): forecast-forward
         # only. A backcast's transmission is the measured overlays

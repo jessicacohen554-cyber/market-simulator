@@ -699,6 +699,21 @@
  *   PS lever (adder / RTE / duration / AS value) until the diurnal amplitude
  *   defect closes. FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md; probe
  *   scripts/probes/_neiso74_ps_cycling_screen.py.
+ *
+ * ENFORCEMENT STAMP 2026-07-31 (FFR-1D, forecast-readiness audit FR-10/FR-11;
+ *   NO mechanism tested, NO cell verdict changed, NO solve). This matrix's
+ *   `mode` column is now EXECUTABLE rather than documentary for the B rows
+ *   that are measured overlays: ScenarioConfig.__post_init__ hard-errors when
+ *   any member of `_BACKCAST_ONLY_OVERLAY_FIELDS` (36 fields — measured fuel
+ *   prints, published outage/DAM-award records, measured per-plant conduct
+ *   floors, measured cleared reserve MW, measured seam ladders/envelopes) or
+ *   `outage_source="historic"` is armed in mode="forecast", the hindcast
+ *   harness included (rule 13). A row marked `mode: "B"` whose mechanism is
+ *   such an overlay can therefore no longer be silently armed on the forecast
+ *   path; the fields deliberately left OUT of that family (measured heat
+ *   rates, measured GTC/interface limits, measured ramp capability — rule-14
+ *   accurate PHYSICAL inputs with a forward story) are itemized in
+ *   docs/handoffs/ffr-1d-enforcement-wave-2026-07-31.md §4.
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -1077,7 +1092,7 @@ window.MECH_MATRIX = {
     { id: "correlated_forced_outage", cat: "outage", name: "Correlated cold-event forced-outage curve (forecast)",
       def: "scenarios.py:2169; curve registry ERCOT-only constants.py:1054", mode: "F",
       cells: "K.....", fc: "KIIIII",
-      note: "Default TRUE globally but the curve registry is ERCOT-only (rule 25) — silently inert for the other five. Forecast-lane gap: winter-event availability correlation unbuilt outside ERCOT." },
+      note: "Default TRUE globally but the curve registry is ERCOT-only (rule 25) — silently inert for the other five. Forecast-lane gap: winter-event availability correlation unbuilt outside ERCOT. FFR-1D 2026-07-31 (audit FR-10, no verdict change): the flag is now COERCED OFF in mode='backcast' by __post_init__ — the mechanism already no-opped there (a backcast's measured CAMPD overlays carry the real cold events), but only pipeline/backcast_config.py pinned it, so a backcast built from a YAML/sweep got a distinct cache key for a byte-identical solve. Hindcast legs (mode='forecast', hindcast=True) still arm it explicitly." },
     { id: "retiree_cems_cap", cat: "outage", name: "Retiree CEMS envelope cap (within-window retirees)",
       def: "scenarios.py:5273", mode: "B",
       cells: "..K...", note: "PJM keeper; ISO-agnostic engine, others untested/immaterial." },

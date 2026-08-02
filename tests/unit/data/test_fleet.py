@@ -2162,6 +2162,9 @@ class TestStGasP25LevelFloor(unittest.TestCase):
 
     def _fa(self, gens, p25_on=True, per_plant_on=True, level=100.0, frac=0.5):
         cfg = ScenarioConfig(
+            # Measured per-plant ST_GAS operating levels are a backcast-only
+            # overlay (FFR-1D rule-13 guard, audit FR-11).
+            mode="backcast",
             weather_year=2024,
             st_gas_mustrun_per_plant=per_plant_on,
             st_gas_mustrun_p25_level=p25_on,
