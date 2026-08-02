@@ -186,10 +186,36 @@ introduced here.
 structural-integrity grounds under rules 1/14/20/24, with the price outcome
 recorded above rather than buried. `audit_keepers.py`: 0 failures, 0 warnings.
 
-**Attribution arms C (seam only) and D (hydro only)** run after B and are
-registered when they land; if the session is cut before they complete, that is
-stated here rather than omitted. Their expected reading, given the fleet-level
-hydro inertness above, is that arm C ≈ arm B and arm D ≈ arm A.
+**Attribution — arm C (seam only) IS the whole effect.** C restores only
+`capacity-deliverability` (K1 verified from its own pins: capdel True, hydro
+False) and reproduces arm B to three decimals in every year:
+
+| year | A (neither) | C (seam only) | B (both) | actual |
+|---|---|---|---|---|
+| 2023 | 55.996 | **55.842** | 55.839 | 54.17 |
+| 2024 | 37.820 | **37.791** | 37.790 | 34.60 |
+| 2025 | 38.599 | **38.524** | 38.524 | 34.39 |
+
+**All four arms, complete.** Arm D restores only `hydro-plant-modes` (K1: capdel
+False, hydro True):
+
+| year | A (neither) | C (seam only) | D (hydro only) | B (both) | actual |
+|---|---|---|---|---|---|
+| 2023 | 55.996 | **55.842** | **55.991** | 55.839 | 54.17 |
+| 2024 | 37.820 | **37.791** | **37.825** | 37.790 | 34.60 |
+| 2025 | 38.599 | **38.524** | **38.596** | 38.524 | 34.39 |
+| seam binding h | [757, 472, 857] | [0, 0, 0] | [758, 471, 857] | [0, 0, 0] | — |
+
+**D ≈ A and C ≈ B, to three decimals.** The pre-registered "B ≈ C + D" check
+resolves with **no meaningful interaction term**: 100 % of the price movement is
+the seam half, and the hydro RoR half is measurably inert at system level —
+independently confirming the fleet-level inertness measured directly on arm B.
+(Arm D's seam still binds [758, 471, 857] h, ±1 h against the control, because
+restoring the classifier marginally perturbs which hours bind, not how many.)
+
+Both attribution arms score `NOT-YET` purely because an attribution arm carries
+no governance attestation — that is not a scored outcome, and their D-1 FAIL is
+the same immaterial `ST_GAS` row the control and the committed keeper carry.
 
 ## E. The root-cause guard
 

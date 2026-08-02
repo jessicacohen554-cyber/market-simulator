@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-30-caiso142-control",
+  "run_id": "2026-08-02-caiso157-ror-only-d",
   "iso": "CAISO",
-  "label": "caiso142 control",
+  "label": "caiso157 ror only d",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -53,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -76,8 +76,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 7,
+    "scored": 8,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 2
