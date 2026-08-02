@@ -2354,3 +2354,16 @@ needed); (2) a class-/unit-resolved or fuel-split outage numerator; (3) the
 event-window-cap form (ERCOT-148/149 shape) identified from PJM's own record.
 
 Next shorthand: pjm-146.
+
+## (stub) caiso-155 — 2026-08-02 — PJM: plant-set census S3-blocked on pjm-da-virtuals; static census clean; two clean partitions regenerated
+
+Cross-ISO scorer audit (main entry: `docs/calibration-log/caiso.md`
+caiso-155). The empirical floors census for `2026-07-31-pjm-143b-hy-level`
+is blocked on the documented uncommitted raw (`data/raw/pjm-da-virtuals/` —
+fetchable via `scripts/data/fetch_pjm_da_virtuals.py` in a PJM-lane
+session); the G-06 CI recompute shares the blind spot (notes-and-skips).
+Static census: no firm-floor config exists on any PJM neighbor and no
+firm-import flag in the keeper meta — no exposure expected. En route this
+session regenerated two derived `data/clean` partitions the rebuild needed
+(`transfer-interface-limits`, `ramp-capability`). Matrix cell `P = O` on the
+`diagnostics_plant_set` audit row until the empirical half runs.

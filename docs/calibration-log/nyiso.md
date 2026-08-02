@@ -3799,3 +3799,19 @@ BOTH arms whatever the verdict (rule 15), full span in one invocation each
 (rule 16), post-steps in order, LOYO duty per rule 22.
 
 Next shorthand: nyiso-111.
+
+## (stub) caiso-155 — 2026-08-02 — NYISO: the HQ firm floor (7.884 TWh/yr) becomes D-2/D-4-visible; a latent G-06 false-FAIL averted
+
+Cross-ISO scorer audit (main entry: `docs/calibration-log/caiso.md`
+caiso-155). `NYISO_external_HQ_hydro` (900 MW flat, 7.884 TWh/yr,
+MECH_FIRM_IMPORT) was dropped by the D-2/D-4 plant matrix — fixed
+ISO-generically; the row appears on any faithfully-floored artifact
+generation (the keeper's committed artifact is unchanged this session: both
+regen instruments failed their pre-registered gates, see FINDING §D/§E).
+Also fixed for NYISO's benefit: the G-06 recompute now subtracts the whole
+P0-pattern bridge family — nyiso109's committed CC_REGULAR gated share
+carries 5.31/3.14 pp of `nyiso_gas_commitment_bridge` forcing no fleet_only
+rebuild can reproduce, so the RA-only carve-out would have false-failed a
+faithful keeper on the full `--keepers` recompute. `MECH_NYISO_SELFSUPPLY`'s
+missing D4_WINDOWS row is FILED, not minted (it rides real plants — not part
+of this defect; non-thermal, never gated).
