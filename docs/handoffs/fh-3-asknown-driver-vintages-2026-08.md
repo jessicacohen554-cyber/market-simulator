@@ -32,12 +32,11 @@ solve/scoring year.
 | Registry citations | `frontend/data/parameters.json`, `docs/parameter-citations.md` | 2 added, 2 repaired |
 | Raw README | `data/raw/eia-aeo/README.md` | as-known section |
 
-**FH-2 had not merged at this session's HEAD**, so per the brief the values are staged against its
-declared shape — `DEMAND_GROWTH_RATES_VINTAGES: {as_of_year: {iso: {low|mid|high: {near, long}}}}`
-in `constants.py`, exactly as written in plan §6/FH-2 step 1. **No second table was invented.**
-FH-2 still owns the `demand_growth_vintage` ScenarioConfig field, the resolver, the cache-key
-registration and the mechanism-matrix row. Two resolver requirements this table imposes are
-recorded in §5.
+**FH-2 merged mid-session (PR #3278)**, shipping `DEMAND_GROWTH_RATES_VINTAGES = {}` plus
+`ScenarioConfig.demand_growth_vintage` and `resolve_demand_growth_table` — mechanism only, values
+explicitly left to FH-3. This branch was rebased onto that and **populates the same table**; no
+second table was invented and no part of FH-2's mechanism was redesigned. FH-3's one change to
+FH-2's code is the case-level refusal in §5, which the values themselves made reachable.
 
 ---
 
@@ -230,19 +229,47 @@ rather than seeded from the CEDU 2022 vintage, which would be a post-base-year l
 
 ---
 
-## 5. Handoff to FH-2 (mechanism owner) — two requirements
+## 5. A silent fallback the values made reachable — found and closed
 
-1. **The resolver must RAISE on a missing CASE, not only a missing vintage.** FH-2's brief already
-   specifies that an unknown `demand_growth_vintage` raises. This table adds a second axis: most
-   `(vintage, iso)` cells carry `mid` only, so a run asking for `low`/`high` at, say,
-   `(2021, "PJM")` must hard-error naming the cell — never silently fall back to the live table or
-   to `mid`. Silent fallback here would be the §4-row-7 back-hold trap in a different costume.
-2. **`(2021, "CAISO")` is absent entirely** and must raise the same way until M1 lands.
+Landing values into FH-2's mechanism exposed a live gap in `resolve_demand_growth_rate`
+(`config/scenario_resolvers.py`). FH-2 refuses an unknown **vintage** and a missing **ISO**, but
+the **case** axis fell through:
 
-Also for FH-2/FH-4: `demand_growth_vintage` still needs its cache-key registration and its
-mechanism-matrix row (rule 26 duty c). **This session added no `ScenarioConfig` field**, so
-`scripts/check_mechanism_matrix.py` passes at HEAD (verified) — the matrix duty travels with FH-2's
-field, not with these values.
+```python
+path_rates = iso_rates.get(config.demand_growth_path)
+if not isinstance(path_rates, dict):
+    return config.demand_growth_rate      # <-- 1 %/yr scalar default
+```
+
+While the registry was empty this was unreachable. It is not unreachable now: most vintage cells
+carry **`mid` alone** (§3.1 — no edition-published low/high series, and inventing a band would
+breach rule 5), so a perfectly ordinary `--demand-growth-path low` run against
+`(2021, "PJM")` **silently returned 0.01/yr** — a number no edition ever published, answering an
+as-of question with today's scalar default. Demonstrated before the fix:
+
+```
+PJM 2021 path=mid   -> 0.0034
+PJM 2021 path=low   -> 0.01   ← silent
+PJM 2021 path=high  -> 0.01   ← silent
+```
+
+That is the same leak class the seam exists to close, so it is fixed rather than documented: a
+missing case inside a present `(vintage, ISO)` now **raises**, naming the case and the cases on
+offer, exactly parallel to the missing-ISO refusal. The non-vintage lane is untouched — with
+`demand_growth_vintage=None` the scalar fallback still applies, byte-identical, and FH-2's
+`test_default_rate_unchanged_by_the_seam` still passes.
+
+Two FH-2 tests asserted the pre-FH-3 state and were updated, not deleted:
+`test_registry_ships_empty_at_fh2` → `test_registry_populated_by_fh3` (per its own instruction,
+*"if this ever fails, the values landed"*), now shape-checking every cell; and
+`test_unknown_vintage_raises_at_config_build`, whose probe year was 2021 — a **real** vintage since
+this intake — retargeted to 2019 so the guard keeps its meaning. Four tests added: the landed
+vintage builds and resolves, the missing-case refusal, the published NYISO band still interpolates
+(including its negative central near rate), and no vintage cell inherits the live table's value.
+**32 passed** in that suite; **465 passed** across `tests/unit/config/` + the T1-FF harness suite.
+
+Still open for FH-4, unchanged by this: **`(2021, "CAISO")` is absent entirely** and raises as a
+missing ISO until M1 lands.
 
 ---
 
@@ -283,7 +310,8 @@ missing.*
 
 ## 7. Verification performed
 
-- `tests/unit/config/test_fuel_trajectory_consistency.py` + `tests/scoring/test_full_forward_hindcast.py`: **39 passed**.
+- `tests/unit/config/` + `tests/scoring/test_full_forward_hindcast.py`: **465 passed, 18 subtests**
+  (post-rebase onto FH-2). FH-2's own contract suite `test_fh2_as_of_channels.py`: **32 passed**.
 - The Arm-K refusal test was **retargeted, not deleted**: it now asserts base **2022** (a year with
   no intaken vintage) still hard-errors, and a new test asserts base 2023 resolves. The guard keeps
   its coverage after the intake.
@@ -301,7 +329,9 @@ missing.*
 - No solve, no score, no dashboard registration, no PR.
 - No default changed. `DEMAND_GROWTH_RATES_VINTAGES` is inert until FH-2's field reads it; the
   corrected `hindcast_asknown_aeo2021` is reachable only through `--arm asknown`.
-- No `ScenarioConfig` field, no resolver, no cache-key entry, no mechanism-matrix row — all FH-2's.
+- No `ScenarioConfig` field, no cache-key entry, no mechanism-matrix row — all FH-2's, and all
+  landed in PR #3278. The one resolver change is the case-level refusal in §5, which is a
+  fail-closed guard on FH-2's existing seam, not a new mechanism.
 - No CI workflow, no GitHub-Actions job.
 - FH-4 / Phase A remains **BLOCKED** on the separate §3.3 harness-defect gate (I6 over-retirement,
   26.8 % of prior thermal in 2025). That is a retirement-lane defect and is untouched here. What

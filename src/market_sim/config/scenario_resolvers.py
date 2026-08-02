@@ -183,8 +183,10 @@ def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
 
     Raises:
         ValueError: When an as-of vintage is selected and carries no row for
-            this config's ISO (or an unknown vintage — see
-            :func:`resolve_demand_growth_table`).
+            this config's ISO, or no entry for its ``demand_growth_path`` case
+            (FH-3 — most vintage cells carry ``mid`` alone, because the edition
+            published no low/high series), or an unknown vintage — see
+            :func:`resolve_demand_growth_table`.
     """
     from market_sim.config.constants import DEMAND_GROWTH_TRANSITION_YEAR
 
@@ -201,6 +203,22 @@ def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
     iso_rates = table.get(config.iso, {})
     path_rates = iso_rates.get(config.demand_growth_path)
     if not isinstance(path_rates, dict):
+        if vintage is not None:
+            # FH-3: the refusal above, one level down. Most vintage cells carry
+            # `mid` ALONE — an edition that published no low/high SERIES gets no
+            # invented band (rule 5 [R-NO-MAGIC]) — so a low/high request on such
+            # a cell is reachable, and falling through to the scalar
+            # `config.demand_growth_rate` would answer an as-of question with a
+            # 1 %/yr default that no edition ever published. Same leak as a
+            # missing ISO, same refusal.
+            raise ValueError(
+                f"demand_growth_vintage={vintage!r} carries no "
+                f"{config.demand_growth_path!r} case for ISO {config.iso!r} "
+                f"(has: {sorted(iso_rates)}). That edition published no such "
+                "scenario series; an as-of vintage never substitutes the "
+                "scalar demand_growth_rate default or another case for a "
+                "missing one (hindcast-forward plan §4 row 6)."
+            )
         return config.demand_growth_rate
 
     era = "near" if year <= DEMAND_GROWTH_TRANSITION_YEAR else "long"
