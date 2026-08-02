@@ -510,6 +510,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # in the on-disk cache. The KEEPER'S OWN KEY IS UNCHANGED by this
     # registration; only default-valued configs move, and they move BACK.
     "nyiso_import_sil_retire",
+    # pjm-146 gated PJM RGGI allowance adder (default off): dropped from the
+    # hash at its default so every pre-existing cached run keeps its key (the
+    # pinned default 603c2498bf71d21d stays byte-stable); an armed run charges
+    # member-state fossil units a real measured allowance cost and so gets a
+    # distinct key -- which keeps the A/B candidate independent of its
+    # zero-delta control in the on-disk cache
+    # (PREREG-pjm146-rggi-allowance-2026-08-02.md §2.1).
+    "pjm_rggi_allowance_pricing",
 )
 
 
@@ -812,12 +820,33 @@ class ScenarioConfig:
     # so every field keeps its own legislated-default value (OBBBA IRA
     # schedule, carbon_price_path="zero", state_carbon_pricing=True).
     state_carbon_pricing: bool = True  # Charge the ISO's state carbon-program
-    # allowance cost (CA cap-and-trade for CAISO; STATE_CARBON_PRICE_BY_ISO)
-    # when carbon_price is 0.0 and the year has a measured allowance price.
-    # Only CAISO 2023-2025 is registered, so this is default-on for CAISO
-    # backcasts and a no-op everywhere else (ERCOT/PJM have no state program;
-    # forward years have no entry and fall through to carbon_price_path).
+    # allowance cost (CA cap-and-trade for CAISO; RGGI for NYISO/NEISO;
+    # STATE_CARBON_PRICE_BY_ISO) when carbon_price is 0.0 and the year has a
+    # measured allowance price. CAISO/NYISO/NEISO 2023-2025 are registered, so
+    # this is default-on for those backcasts and a no-op everywhere else
+    # (ERCOT/MISO have no program; PJM's partial-footprint RGGI program is
+    # registered but ships with price_key=None, so its adder stays $0 unless
+    # pjm_rggi_allowance_pricing below arms the gated measured series).
     # See market_sim.policy.carbon.resolve_carbon_price.
+    pjm_rggi_allowance_pricing: bool = False  # pjm-146 (GATED, default off,
+    # PJM-only, backcast-only): charge PJM's RGGI-member fossil units the
+    # measured RGGI auction clearing price
+    # (fuel_trajectories.PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE, metric-converted)
+    # through the unified carbon resolver's adder path, membership-weighted
+    # PER GENERATOR: an exact per-plant EIA-860 state test against
+    # RGGI_MEMBER_STATES_BY_YEAR (NJ/MD/DE all years; VA 2023 only — the
+    # 2024-01-01 exit), with the committed PJM_RGGI_ZONE_SHARE fractional
+    # fallback for synthetic rows (policy.cap_and_trade.
+    # per_generator_membership). Zero fitted parameters — prices, membership
+    # and emission rates are all measured inputs (rules 13/14). Deliberately
+    # NOT folded into STATE_CARBON_PRICE_BY_ISO this session: that would
+    # re-arm every PJM backcast under default-True state_carbon_pricing (a
+    # same-key cache invalidation, results/cache.py epoch policy) — promotion
+    # to default is an owner decision on the pjm-146 A/B numbers
+    # (PREREG-pjm146-rggi-allowance-2026-08-02.md). Forecast years are
+    # untouched (projected_price still returns 0.0 for PJM — mode B, like
+    # every measured backcast overlay). Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS: byte-identical off, distinct key armed.
     nox_price: float = 0.0  # $/ton NOx
     so2_price: float = 0.0  # $/ton SO2
     # Emissions mass-cap / cap-and-trade LP row (PP-2.1 IPM parity). GATED,
@@ -10176,6 +10205,7 @@ TIER_TAGS: dict[str, int] = {
     "carbon_price_path": 1,
     "policy_bundle": 1,
     "state_carbon_pricing": 1,
+    "pjm_rggi_allowance_pricing": 1,
     "nox_price": 1,
     "so2_price": 1,
     "mass_cap_enabled": 1,

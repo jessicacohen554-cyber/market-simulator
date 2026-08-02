@@ -1187,6 +1187,33 @@ STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
     "NEISO": {2023: 14.87, 2024: 22.83, 2025: 24.35},
 }
 
+# PJM — the SAME RGGI auction clearing prices as the NYISO/NEISO blocks above
+# (RGGI, Inc. auction results A59-A70, sources cited there), stored METRIC-
+# CONVERTED like NEISO (1 short ton = 0.907185 t, x 1.10231 — unit-exact
+# against the model's per-tonne emission_rate; the harmonization note above
+# applies). Kept in a SEPARATE registry rather than STATE_CARBON_PRICE_BY_ISO
+# because PJM's program is partial-footprint and its arming is GATED
+# (ScenarioConfig.pjm_rggi_allowance_pricing, default off, pjm-146): a bare
+# STATE_CARBON_PRICE_BY_ISO["PJM"] entry would silently re-arm every PJM
+# backcast under the default-True state_carbon_pricing flag — a same-cache-key
+# behavior change (results/cache.py epoch policy) and an uncontrolled keeper-
+# semantics change. Folding this into STATE_CARBON_PRICE_BY_ISO (+
+# price_key="PJM") and retiring the gate is the named promotion path, an owner
+# decision on the pjm-146 A/B numbers
+# (results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md §2.2).
+# Membership is NOT priced here: the per-generator member mask (NJ/MD/DE all
+# years, VA 2023 only, exact per-plant EIA-860 state test with the committed
+# PJM_RGGI_ZONE_SHARE fallback) is applied at the mc seam via
+# policy.cap_and_trade.per_generator_membership.
+#   2023: $13.49/short ton -> $14.87/t
+#   2024: $20.71/short ton -> $22.83/t
+#   2025: $22.09/short ton -> $24.35/t
+PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE: dict[int, float] = {
+    2023: 14.87,
+    2024: 22.83,
+    2025: 24.35,
+}
+
 # CARB default emission factor for unspecified-source imported electricity
 # (tCO2e/MWh). CAISO levies a border carbon adjustment on unspecified WECC
 # imports at this factor x the allowance price; applied to the WECC import

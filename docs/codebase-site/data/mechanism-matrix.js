@@ -1513,7 +1513,7 @@ window.MECH_MATRIX = {
       cells: "KKKKKK", fc: "KKKKKK",
       note: "Forecast-lane structural row (never a force-build step); backcast keepers disable it (measured years carry realized builds). ACP caps the dual." },
     { id: "state_carbon_pricing", cat: "policy", name: "State allowance cost in dispatch (CARB/RGGI)",
-      def: "state_carbon_pricing :487 (True); registry CAISO/NYISO/NEISO only", mode: "B",
+      def: "state_carbon_pricing (True); registry CAISO/NYISO/NEISO; PJM via the GATED pjm_rggi_allowance_pricing (default off, pjm-146) + PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE + per_generator_membership at the run_calibration mc seam", mode: "B",
       cells: ".KUUKK",
       note: "Registry prices exist for CAISO/NYISO/NEISO (no-op ERCOT/PJM/MISO). PJM's RGGI states (MD/NJ/VA-era) and MISO's are not represented — a documented modeling choice worth an explicit verdict; CAISO's border-carbon rung on imports was separately refuted as the belly price-setter (caiso-121)." },
     { id: "mass_cap_lp_row", cat: "policy", name: "Emissions mass-cap / cap-and-trade LP row",
