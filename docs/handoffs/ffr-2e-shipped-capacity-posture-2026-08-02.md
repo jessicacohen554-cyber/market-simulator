@@ -232,9 +232,45 @@ So on NEISO the shipped posture is not merely the one production runs; it is the
 only arm that detects the real event at all. **Both still FAIL overall — no
 determination flips.**
 
-#### CAISO / PJM / MISO / PJM T0
+#### CAISO — `caiso-2021-2025-shipped-ffr2e` / `caiso-2021-2025-fixed-ffr2e`
 
-Not completed in session — see §4 and the report-back. The commands are:
+**The §2 inertness proof is confirmed at fleet level.** Cache keys
+`831634d4252ceed0` (shipped) / `42927055c50f4df0` (fixed) — genuinely different
+configs, two independent cold solves — and `_ffr2e_arm_diff.py` reports:
+
+```
+(no metric differs — the two arms produced the same fleet path)
+ARMS DIVERGE: False
+```
+
+Identical across **every** metric in **every** solve year: retirements by reason,
+additions by channel (thermal/renewable/storage, incl. the thermal source split),
+reserve margin, peak demand, firm-clean MW, storage/wind/solar capacity, and the
+end-of-year fleet by fuel. This is the empirical confirmation of the analytic
+claim — CAISO's clearing gate resolves **on**, computes a reserve position, feeds
+it to the seam, and the seam returns the same flat $88,080/firm-MW-yr either way,
+so nothing downstream can move.
+
+It also validates the proof *method* used throughout §2: seam identity ⇒ screen
+identity ⇒ fleet identity. That chain is what lets the rest of this document
+reason from exact seam arithmetic rather than from solves.
+
+Neither leg carries an FC-3 score — `capacity_actuals_caiso.csv` does not exist
+(blocker B4), so `score_capacity_hindcast.py` refuses both arms. They are
+registered as unscored evidence rows; **no CAISO FC-3 verdict is claimed.**
+
+#### PJM / MISO T1-H — **NOT RUN** (window coordination)
+
+Deferred under the rule-12 split: FFR-2A owns the PJM and MISO windows first, and
+at session end it had **not** yet registered its heavy legs (checked repeatedly
+against `origin/main`'s `frontend/data/hindcast/`). Rather than co-run, these are
+left for a successor. Note that FFR-2B's `{pjm,miso}-2021-2025-cmc-legacy-ffr2b`
+(2026-08-02) are already **post-epoch curve-ON legs whose `{iso: True}` posture
+resolves identically to the shipped default for those ISOs** — so a successor
+needs only the *fixed* arm for each, provided it verifies no solve-affecting
+change landed in between (otherwise run both, one tree, as was done for NEISO).
+
+The commands are:
 
 ```bash
 python scripts/run_capacity_hindcast.py --iso <ISO> --fuel-variant realized \
