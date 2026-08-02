@@ -15,6 +15,41 @@ flips are the owner's, executed at FFR-3A step 0. Rules 1, 5, 11, 12, 14, 15,
 
 ---
 
+## 0a. Bottom line
+
+- **D-1 (`retirement_rule` → `pipeline`): FLIP.** The pre-registered bar is met
+  in **both** curve-ON ISOs — T-R10a and T-R10b go FAIL→PASS and hold **3/3**
+  LOYO folds, recall goes FAIL→PASS (MISO 12 %→76 %, PJM 53 %→76 %), bands
+  imported and never widened, **no new invariant failure**, and additions are
+  **byte-identical** across the arms. The zero-real-fuel inversions close
+  completely (MISO gas_st 12.920→0.0 GW; PJM gas_st 10.358→0.0 and gas_ct
+  11.379→0.0).
+- **D-2 (arm `entry_rate_limits` + `entry_commissioning_lag`): ARM, as a
+  disclosed adequacy change.** The FR-13 precondition is confirmed fixed —
+  **I4 stays PASS with the commissioning lag armed**. But the packet's bar is
+  only partly met and should be signed knowing so: the rate limit **re-phases
+  rather than reduces** cumulative backstop MW (−0.07 %), I13 had **no cobweb
+  to remove**, and I12 goes **WARN→FAIL** because the dampers stop concealing
+  a shortfall the base arm closed with an unbuildable 4.9 GW single-year CT
+  wave. `entry_vre_capacity_revenue` is **unprobed** and stays separately
+  signable.
+- **Two findings the owner packet does not yet carry.** (1) **Wave 1 made the
+  shipped legacy rule substantially worse** with no rule change — MISO
+  false-retire 8.643→**12.920 GW**, PJM 4.097→**22.342 GW (5.5×)** — so FR-4's
+  evidence base is *understated*, and the pre-W1 FF-1A numbers are not a valid
+  baseline for this decision. (2) **MISO legacy's thermal LEVEL band passed
+  (−0 %) purely by cancellation** of two large opposite-signed composition
+  errors; reading that as the better result is the exact rule-1 failure mode.
+- **FH-4 cross-read: `pipeline` moves I6 DOWN** (PJM 12.68 %→8.55 %, −33 %
+  relative; MISO 9.06 %→8.37 %) — **but neither curve-ON ISO ever FAILS I6**,
+  so this cannot show a failing I6 converted to passing and makes no claim
+  about FH-1's ERCOT gate. **The block is not lifted.** New evidence for the
+  lane: the **single-year lumping survives removing the legacy counters
+  entirely**, so the concentration is upstream of the decision rule — G-31
+  screen grain, separable from FF-1A magnitude.
+
+---
+
 ## 0. Pre-registration (written and committed BEFORE any leg was solved)
 
 Registered here so the §3 grading protocol of
@@ -522,3 +557,55 @@ reduction); MISO −0.69 pp. In both ISOs the concentration year also moves
 independently justified by §2 and cuts the magnitude), then re-run FH-1's gate
 probe unchanged. If it still fails, the residual is G-31's by elimination, and
 the measurement above is the evidence for that attribution.
+
+## 5. Governance & scope record
+
+**Rule 22.** Every leg is inside the training window plus the enumerated
+`{2021}` hindcast seed. Solved years: T1-H `[2021, 2023, 2024, 2025]` with
+**2022 bridged and never solved** in all four arms; T1-F `[2026 … 2030]`,
+forecast-mode, reading no measured actuals. The **holdout freeze was active and
+is recorded in every bundle's meta** (`holdout_freeze_active_at_launch: true`).
+**No out-of-training year was solved, scored or registered; no marker was
+spent.** Leakage guards: **zero violations** on all four T1-H legs.
+
+**Rule 12.** Strictly one invocation at a time (FFR-2C held the program's other
+slot), years sequential within each invocation, ≤ 5 solve-years per invocation.
+PJM and MISO legs never co-ran.
+
+**Rule 24 / 28c.** **No `ScenarioConfig` default was changed.**
+`ScenarioConfig().cache_key()` is unchanged at `603c2498bf71d21d`;
+`check_cache_key_registration.py` reports 669 fields / 113 registered, all
+resolving. No field was added, so no new cache-key registration was needed.
+
+**Rule 15.** All six probe runs are registered on the **forecast-validation
+namespace** (`frontend/data/hindcast/`), never the backcast registry:
+`miso-2021-2025-cmc-{legacy,pipeline}-ffr2b`,
+`pjm-2021-2025-cmc-{legacy,pipeline}-ffr2b`,
+`miso-2026-2030-ffr2b-t1f-{base,dampers}`.
+
+**Rule 28.** `economic_retirement_screen` and the newly-added `entry_dampers`
+rows are updated in `docs/codebase-site/data/mechanism-matrix.js` in this
+session, with evidence citations. No keeper moved, so the matrix header is not
+restamped. The `entry_dampers` row is itself a rule-28c repair: three
+solve-affecting fields had no matrix row.
+
+**Harness changes made (both byte-identical at defaults, neither a flip).**
+
+| file | change | why |
+|---|---|---|
+| `scripts/run_capacity_hindcast.py` | wired `--entry-vre-capacity-revenue` / `--entry-rate-limits` / `--entry-commissioning-lag` for real; meta entries read from the **solved config**, not `args` | FFR-1D deleted the previous flags because they wrote state into a bundle's meta while arming nothing, and left this exact instruction for the successor session |
+| `scripts/run_full_horizon.py` | `reference_config()` forwards `retirement_rule` + the three dampers, with CLI flags | the T1-F runner had no retirement arm at all, so D-2 could not be asked on a forecast-mode window |
+| `tests/scoring/test_crossover_harness.py` | contract test: dampers default-off **and** arm for real | the defect FFR-1D removed the old flags over must not recur |
+| `scripts/probes/ffr2b_arm_compare.py` | ledger → D-1/D-2 rows; **imports** the I6 cap from `check_forecast_invariants` rather than restating it | a diagnostic must not be able to quote a looser bound than the checker enforces |
+
+**What this session did NOT do**, deliberately: change any default; widen any
+band; register anything on the backcast registry; touch an out-of-training
+year; add a GitHub Actions workflow; schedule a full-horizon run; re-run FH-1's
+gate probe; probe `entry_vre_capacity_revenue`; or attempt a fix in the
+retirement layer (findings are routed, per charter).
+
+**Open blockers recorded, not closed (rule 11/21):** the MISO
+gas_ct/gas_cc/oil under-retirement and the PJM coal-depth over-retirement are
+signal-LEVEL residuals owned by the revenue lane (BLK-6/BLK-9, RD-4 — the
+58.5 vs ≈ 92 $/kW-yr going-forward bar). Neither is closable by the decision
+rule and neither may be closed by a fuel-specific value.
