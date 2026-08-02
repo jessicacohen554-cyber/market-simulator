@@ -53,13 +53,16 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     cache_dir = Path(meta["bundle"])
     if not cache_dir.exists():
         cache_dir = bundle_dir / meta["iso"] / meta["cache_key"]
-    # A T1-X crossover (FF-0E, plan §2.2) is scored by scripts/score_crossover.py
-    # into ``crossover_score.json`` (it carries the extra dispatch-skill/input-gap
-    # + forward-invariant blocks on top of the hindcast retirements/additions/co2
-    # shape). A plain hindcast keeps ``score.json``. Same forecast-validation
-    # namespace, distinct kind.
+    # A T1-X crossover (FF-0E, plan §2.2) — and a T1-FF full-forward hindcast
+    # (FH-1), which rides the identical scorer — is scored by
+    # scripts/score_crossover.py into ``crossover_score.json`` (it carries the
+    # extra dispatch-skill/input-gap + forward-invariant blocks on top of the
+    # hindcast retirements/additions/co2 shape). A plain hindcast keeps
+    # ``score.json``. Same forecast-validation namespace, distinct kinds.
     score_name = (
-        "crossover_score.json" if meta.get("kind") == "crossover" else "score.json"
+        "crossover_score.json"
+        if meta.get("kind") in ("crossover", "full_forward")
+        else "score.json"
     )
     score_path = cache_dir / score_name
     score = json.loads(score_path.read_text()) if score_path.exists() else None
@@ -182,7 +185,8 @@ def render_page(sidecars: list[dict]) -> str:
       if(m.limited_foresight_dispatch) arms.push('ltd-foresight');
       if(m.energy_only_floor) arms.push('energy-only-floor');
       const armStr = arms.length ? ' &middot; '+arms.join(' + ') : '';
-      const kindStr = (m.kind==='crossover') ? ' &middot; <b>crossover</b> (fwd &ge; '+(m.crossover_forward_year||2026)+')' : '';
+      const kindStr = (m.kind==='crossover') ? ' &middot; <b>crossover</b> (fwd &ge; '+(m.crossover_forward_year||2026)+')'
+        : (m.kind==='full_forward') ? ' &middot; <b>full-forward</b> (T1-FF, arm '+(m.arm||'?')+', base '+(m.base_year||'?')+')' : '';
       return '<div class="fv-card"><h2>'+ esc(d.run_id||m.iso||'?') +'</h2>'+
              '<p class="bc-page-sub">'+ (m.iso||'?') +' &middot; '+ (m.start_year||'') +'–'+ (m.end_year||'') +
              ' &middot; '+ (m.variant||'') +' fuel'+ kindStr + armStr +'</p>'+
