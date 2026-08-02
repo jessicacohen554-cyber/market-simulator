@@ -1365,6 +1365,10 @@ window.MECH_MATRIX = {
     { id: "transmission_expansion", cat: "capacity", name: "Committed-instrument transmission expansion (FF-G1)",
       def: "scenarios.py:7369 (default off)", mode: "F",
       cells: "UUUUUU", fc: "UUUUUU", note: "Built, untested in any lane." },
+    { id: "t1ff_solve_year_weather", cat: "capacity", name: "T1-FF Arm R given-weather posture (per-solve-year weather rebind)",
+      def: "crossover_solve_year_weather (scenarios.py, default off; FH-1)", mode: "F",
+      cells: "......", fc: "UUUUUU",
+      note: "T1-FF full-forward hindcast instrument (hindcast-forward plan §2.1): each solved forward year re-seeds its demand profile + renewable CF from ITSELF, so the forward stack runs given-weather (perfect-foresight-driver validation, rule 13 admissible). Requires crossover_forward_year == start_year (__post_init__ refuses elsewhere) — structurally unreachable in a backcast, hence the n/a backcast row. Arm K leaves it off (base-year weather, pure ex-ante)." },
 
     /* ============ policy ============ */
     { id: "rps_lp_constraint", cat: "policy", name: "RPS as an annual LP constraint (dual = REC price)",
