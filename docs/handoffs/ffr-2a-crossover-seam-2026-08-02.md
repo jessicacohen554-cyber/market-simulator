@@ -9,11 +9,13 @@ to catch a regression at run time. **The audit's MISO hypothesis is REFUTED** �
 KeyError is real but was never reachable in the config FF-2D launched. The two FF-2D L-VAL
 follow-ups are folded in and the adapter is deleted. The T1-X battery is re-solved COLD for
 ERCOT, PJM and MISO at post-Wave-1 HEAD; **all three determinations are HOLD**, unchanged in
-kind from FF-2D. **No keeper moved** (the fix cannot reach a backcast — see §2.4). Nothing was
-tuned: two residuals are written up as open blockers in §7 rather than closed.
+kind from FF-2D. **No keeper moved** — attested by measured before/after diff against
+`origin/main`, not by argument (§2.4). Nothing was tuned: three residuals are written up as
+open blockers in §7 rather than closed.
 
 Commits: `3255dd7` (FR-9) · `d12b4a8` (adapter fold-in + FC-4 family volume) · `efe981d`
-(family-grain correction) · `5a1183e` (ERCOT/PJM registration) · MISO registration + this doc.
+(family-grain correction) · `5a1183e` (ERCOT/PJM registration) · `31e16c6` (MISO registration
++ this doc) · `32c1d80` (matrix note + attestation).
 
 ---
 
