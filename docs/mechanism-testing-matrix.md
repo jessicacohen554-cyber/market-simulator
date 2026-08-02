@@ -1771,9 +1771,24 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — charter required first); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage)
+### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage)
 
 Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
+
+**The C3c frontier charter (neiso-75, 2026-08-02 — no LP):**
+`results/calibration/CHARTER-neiso75-c3c-frontier-2026-08-02.md`, decomposition
+probe `scripts/probes/_neiso75_c3c_decomposition.py`. The 43-hour RT tail miss
+splits: the **systemic amplitude defect closes 13/43 hours and owns the 2025
+gate alone** (gain restoration prints 25 h inside [10, 40], all on the five
+real event days); the **2023 gate is measured-unreachable by any DA-type
+formation** (9/10 winter hours RT-only; the real DA's own ceiling is 5 h vs
+the 8-h gate floor) and is **routed to the owner** (accept the ledgered
+caveat / winter-fidelity lane / representation change — charter §5); **2024
+already passes** on the small-count rule. ONE lever chartered: **item 1**
+(below), kills K1–K5 pre-registered, Phase-0 measurement-only. Against
+interest: the keeper attestation's 2024 C3c event-day names are one calendar
+day early (leap-year prose slip; raw SMD verified Jun-18/Jul-8/Aug-1/Dec-3;
+data and scoring unaffected).
 
 Frontier discipline: every named admissible mechanism in the winter/summer
 scarcity family is already on record. Anything below needs its **own new
@@ -1785,9 +1800,29 @@ charter with a new measured identification** before a solve:
    **neiso-74 gave this item a measured target** (item 8 below): the model's
    diurnal price amplitude is 24–30 % of measured with the level and the phase
    both correct, split ≈ −26 % on the daily peak and ≈ +33–41 % on the daily
-   trough, stable 2023–2025. Charter still required.
+   trough, stable 2023–2025. **CHARTERED at neiso-75 (2026-08-02) → matrix
+   `da_virtual_bids` NEISO `U → O`.** The ONE recommended C3c lever:
+   supply-conduct limb first (within-day peak-vs-trough movement of the
+   submitted `hbdayaheadenergyoffer` book's non-fast-start body band — the
+   corpus is already on disk, 1,058/1,096 days, 2025 event days verified),
+   DA-depth limb second behind its own existence check. Kill rules
+   pre-registered (charter §4): K1 movement floor $5/$5/$8 per year (≈ 25 %
+   of the measured hod-range gap $18.93/$22.14/$31.17); K2 no
+   price-conditioning; K3 nyiso-94 submitted-curve existence + miso-105
+   λ0-attractor kill; K4 caiso-154 Algonquin fuel-tail exclusion (15 %
+   relative); K5 event-day coverage. **Phase-0 is measurement-only; a solve
+   arm needs its own prereg carrying gates G1–G5** (amplitude, C3c-2025
+   count AND placement, neutrality, level band, C3b hard kill, LOYO). Honest
+   ceiling, stated ex ante: this lever closes 2025 + the amplitude defect;
+   it does NOT close 2023 (charter §2.4/§5).
 2. **Import-side scarcity identification** (HQ/NB tie behavior in tight
-   hours) — second named class.
+   hours) — second named class. **Ceiling bounded by the neiso-75
+   decomposition (NOT chartered):** it is DA-type formation, and the 2023
+   winter block it would target is 9/10 RT-only with the real DA's ceiling
+   (5 h) below the gate floor (8 h) — it cannot close any C3c gate item 1
+   doesn't. Remains an owner option for winter *fidelity* (the −$32
+   Feb-4-2023 model-vs-DA day-level share), not for C3c (charter §3 L2/§5);
+   `priced_interchange` NEISO stays `U` (the keeper runs fixed HQ tranches).
 3. ~~**`measured_ct_heat_rates`** — audit-grade, no charter needed.~~
    **DONE at neiso-70 → `K`, PROMOTED to keeper** (2026-07-31). Same
    determination as the outgoing neiso-61 keeper (CALIBRATED-WITH-CAVEATS,
