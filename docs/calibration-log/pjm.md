@@ -2207,3 +2207,78 @@ warning; (4) shipped-estimator tail sensitivity ≤4.8 % vs the 10 % bar
 variance — a precision, not a level, exposure). `measured_offer_surface` PJM
 stays `R`; keeper `2026-07-31-pjm-143b-hy-level` untouched; nothing
 registered. Do not re-test without new evidence (rule 28a).
+
+## 2026-08-02 — pjm-144: `gas_offer_margin_zonal_anchor` transferred to PJM, A/B'd and adjudicated **`I` — dispatch-live, price-inert**. Keeper **unchanged** (`2026-07-31-pjm-143b-hy-level`).
+
+The nyiso-109 cross-ISO charter (its §7: the gas-offer margin anchor is
+ISO-level while the solve prices per-zone fuel; PJM arms
+`pjm_zonal_gas_basis=true` with the second-largest measured spread,
+1.483 $/MMBtu). **The admissibility check reshaped the experiment before any
+solve**: PJM's applier is the capacity-weighted MEAN-ZERO core (not NYISO's
+reference-zone-down convention), so the ISO anchor 3.3483 is the fleet
+centroid, the defect is TWO-SIDED (east premium under-marked / west discount
+over-marked), nyiso-109's one-sided K6 direction gate was **dropped ex
+ante**, K3 liveness was priced on the ZONAL grain, and — because the applier
+weights by per-zone gas capacity — the derive gained `--weights-bundle`: the
+keeper's own per-year fleet rebuilt no-LP supplies the weights (removed means
+−0.105/+0.169/+0.239 $/MMBtu; an unweighted synthetic fleet would be off by
+up to 0.106, larger than the 0.1 inertness bar). Anchor table registered in
+`constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["PJM"]` (SWMAAC 4.4328 /
+Dominion 3.8798 / EMAAC 3.4898 / ComEd 3.2575 / AEP_Ohio+ATSI 3.1201 /
+Central_PA 2.9708 / West_APS 2.9495; capw invariant EXACT at 3.3483
+Δ+0.0000; zero fitted parameters; +1 derived DOF entry 18→19, n_residual
+6 unchanged; 13/13 mechanism tests; default cache_key byte-identical to
+main at 0e9fce2fb55b889f).
+
+**Pre-registered** (PREREG-pjm144-zonal-margin-anchor-2026-08-02.md, pushed
+before either arm solved). Two solves, three years each, sequential (recipe
+peaks ~15.5 GB; swap re-asserted per keeper note 14; 34–35 min/arm).
+Control `2026-07-31-pjm-144a-control-zerodelta` reproduces the committed
+keeper **byte-for-byte** (0.0 MW max class-hour delta, all three years;
+legitimacy diagnostics content-identical) despite 27 src files landing on
+main since the keeper's HEAD — the prereg's PJM-inertness expectation held.
+Arm `2026-08-02-pjm-144b-zonal-anchor`: K1/K2/K4/K5 PASS, **no kill fires**
+— both arms CALIBRATED 9/9, C1 16/16 free 12/12, zero FAILs, C3c statuses
+and tail counts identical, slack/dump 0.0 — but **K3 FAILS its zonal-price
+leg**: max zonal |Δλ| 0.034/0.032/0.026 $/MWh vs the 0.10 gate (system
++0.030/+0.027/+0.021), while dispatch moves 1317/1288/1537 MW at the max
+class-hour (CC_REGULAR −0.40/−0.70/−0.97 TWh → ST_GAS +0.40/+0.51/+0.91,
+CT_PEAKER +0.12/+0.22/+0.12 — both standing class-accuracy notes nudged
+toward actual; REPORTED, never banked). PJM's price-coupled zones absorb the
+mean-zero redistribution: same mechanism as NYISO, opposite convention,
+opposite verdict — the rule-25 case study in miniature.
+
+**Disposition is the prereg's own K3 rule: verdict `I`, keeper unchanged,
+NOT a promotion** — the owner's standing promote-if-recommended instruction
+was answered NO on that rule (no gate regressed; there is nothing a
+promotion would change that any gate can see, and the escalation branch was
+pre-committed for P-kills only). The structural correction is preserved, not
+lost: table registered, derive standing, flag one CLI switch away; re-open
+conditions named in the finding (zone-decoupling mechanism / zone-grain
+criterion / owner override). Matrix cell PJM `U→I` with both A/B ids and
+artifacts cited; §5.3 adjudication added; ERCOT/MISO stay `U` (ERCOT's West
+decouples under GTCs — measure, don't assume PJM's inertness transfers).
+
+**Registered per rule 15**: both bundles on the dashboard (labels
+"pjm 144a control zerodelta" / "pjm 144b zonal anchor"); top-15 retention
+pruned `2026-07-27-pjm-133-control` and `2026-07-27-pjm-133-nameplate`.
+Artifacts: `_pjm144_zonal_anchor_ab.json` (scorer, criteria straight from
+calibration_verdict metrics — the nyiso-108 scorer-bug class avoided),
+`_pjm144_zonal_anchor_derivation.json` (weights + invariant + marked-up
+census 986/994/993, 0 band-scoped), attestations generated from the
+committed A/B JSON (gen_pjm144_attestation.py — nothing hand-transcribed;
+arm 19 entries / 6 residual). Holdout: 2023–2025 only, freeze ACTIVE, 2022
+not spent.
+
+**Test baseline at this HEAD** (tests/{curation,scoring,unit} after a full
+`regenerate_clean`): **13 failed / 4550 passed / 14 skipped / 1 xfailed /
+254 subtests passed** in 11m50s. All 13 are the standing known-red set
+(`test_measured_chp_heat_rates` 7, the three stale-pinned cache-key
+byte-stability tests — the default `ScenarioConfig().cache_key()` is
+byte-identical to origin/main at `0e9fce2fb55b889f`, re-verified after this
+session's constants addition — `test_consume_lmp` 1,
+`test_ff_readiness_battery` 1, `test_outages` 1). Zero attributable to
+pjm-144; the nyiso-109 baseline's 14th
+(`test_clean_io::test_datatype_list_matches_schemas`) is fixed on main.
+
+Next shorthand: pjm-145.
