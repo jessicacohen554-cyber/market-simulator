@@ -697,3 +697,90 @@ hygiene fixes from §4.6 (dangling `--ramp-limits`, inert-default flags — now 
 by the `maintenance_monthly_shape` matrix gap above) and the forecast-lane
 inheritance review of keeper-only `BF` mechanisms; the `thermal_tranches_<ISO>.csv`
 provenance item remains blocked at HEAD (miso-95).
+
+## 2026-08-02 — xiso-3: rule-20 forced-share / D-4 window census on all six current keepers — ALL SIX PASS C8 (cross-cutting audit, NO LP)
+
+**Arm A of the xiso-3 charter** (primary/recommended): the first census of rule 20
+`[R-FORCED-BUDGET]`'s **full conditional-pass logic** across every current keeper at
+once, scored entirely from the committed `legitimacy_diagnostics.json` artifacts.
+Zero LP by construction — the C8 gate is scorer-only. Probe
+`scripts/probes/_xiso3_forced_share_d4_census.py`, transcript
+`results/calibration/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt`, record
+`results/calibration/FINDING-xiso3-forced-share-d4-census-2026-08-02.md`.
+
+**Method is the production scorer, not a re-implementation.** The probe loads each
+keeper's committed artifacts via `calibration_verdict.load_artifacts`, runs the full
+`determine_from_artifacts` verdict, and re-derives every escalation through the
+rubric's own helpers (`score_forced_share`, `_binding_merchant_mechs`,
+`_d4_provenance`, `_d1_shape`, `_class_load_share`). It reads the keeper ids LIVE
+from `frontend/data/backcast/keepers/<ISO>.json`, so a re-run after any keeper swap
+re-scores the new keeper automatically. It additionally cross-checks every committed
+D-4 row against the HEAD `D4_WINDOWS` registry (window drift) and sweeps latent D-4
+coverage on material classes below their caps.
+
+**The answer: ALL SIX KEEPERS PASS C8 — zero FAILs, zero exceptions-ledger flips,
+zero D-4 window drift.** Reported against interest: full compliance is the
+deliverable. ERCOT / CAISO / NYISO / NEISO pass on volume alone (every material
+class within its cap; closest anywhere: NYISO ST_GAS 27.5 % vs 30 % in 2024, ERCOT
+ST_GAS 20.1 % vs 30 % in 2025; NEISO's over-cap shares all sit on immaterial
+classes, reported never gated). **PJM and MISO pass through the
+grounded-above-budget escalation** (7 class-years, clean passes surfaced as report
+notes per the rule): PJM CT_PEAKER 15.2/15.4/15.8 % vs the 15 % peaker cap
+(`ct_netload_drag` h15-21 + `st_netload_drag` h0-23, both 0.0 % off-window; D-1
+profile_r 0.930–0.975, cv_ratio 0.697–1.044) and PJM ST_GAS-2025 40.0 % vs 30 %
+(all-hours drag; r 0.897, cv 2.244) — its 2023/24 shares (52.2/48.7 %) are
+immaterial-skipped at 1.4/1.6 % of load, the 2 % materiality line doing exactly the
+work the 2026-07-06 owner amendment specified; MISO ST_GAS 33.1/34.4/45.5 % vs 30 %
+(`reliability_floor × ST_GAS` + `st_gas_mustrun_per_plant`, both all-hours BY
+DRIVER, 0.0 % off-window; r 0.954–0.974, cv 1.278–1.565), material by only
+0.2–0.7 pp. MISO COAL — 27–32 % of load, the fleet the rule most exists for — is
+forced 0.2–0.4 %.
+
+**Informational yield: a five-fact LATENT D-4 coverage map** (nothing gated today —
+the provenance leg is only consulted above the cap; each fact is where a FUTURE
+escalation would fail C8 for a missing declaration, correctly per rules 12/17):
+`reliability_floor` binds material CC_REGULAR (ERCOT 0.8–2.1 %, PJM-2025 2.9 %,
+MISO ≤0.1 %, NEISO 0.4–0.8 %) and COAL (PJM 0.1–0.3 %, MISO 0.2–0.4 %) with no
+class-applicable `D4_WINDOWS` entry (the registry covers CT_PEAKER / CT_CHP /
+ST_GAS only); and CAISO's `ra_mustoffer_bridge` — its **sole** non-exempt binder
+(CC_REGULAR 6.8–9.6 %, the closest latent class at 9.6 vs 30) — is the only
+mechanism binding a material class with **no `D4_WINDOWS` entry of any kind**. The
+natural declaration, if ever needed, is the all-hours-by-driver shape the other
+commitment bridges carry, plus a regenerated CAISO bundle so the row exists
+(rule 20's regeneration clause). **No entry was minted this session** — a rule-17
+declaration needs its own per-ISO driver evidence, and a census is not the session
+to mint five. Headroom is large everywhere; no keeper is one re-tune away from an
+undeclared-window FAIL.
+
+**Two artifact-vintage observations, neither a defect.** (a) The baked
+`lower_bound` label over-hedges: the committed D-2 rows DO attribute the P1-native
+seam bridges where armed (CAISO `ra_mustoffer_bridge` 3.3–3.4 TWh/yr, ERCOT
+`gas_commitment_bridge`, NYISO `nyiso_gas_commitment_bridge`) — which the
+`run_year(fleet_only=True)` recompute path cannot reconstruct (the G-06 comment in
+`scripts/legitimacy_diagnostics.py`) — so the artifacts were generated from
+solve-time floors and the quoted shares are solve-exact; the label is conservative
+legacy-P2-era text. (b) The baked D-2 verdicts read `FAIL` for the seven escalated
+rows; the HEAD scorer re-scores them into grounded passes — the rubric-v2.2
+measured-share-overrides-baked-verdict design working as built, not drift.
+
+**Context, not census news:** full determinations at HEAD are PJM CALIBRATED,
+CAISO/NYISO/NEISO CALIBRATED-WITH-CAVEATS, ERCOT and MISO NOT-YET — on the
+C3-family/C7 gates the matrix per-ISO headers already record (ERCOT: C3a/C3b/C3c +
+C7 2023-lignite; MISO: C7 COAL_PRB, its sole failing criterion). C8 is not among
+any ISO's failing criteria, and nothing moved this session.
+
+**Governance.** Zero LP; nothing solved, scored-new, or registered (the
+neiso-71/73/74 + xiso-1 + xiso-2 disposition, rule 15). Every scored year is inside
+2023–2025 (probe-asserted), so the **holdout spend freeze remains ACTIVE and
+untouched**. No keeper changed, no `ScenarioConfig` field added or changed, rule 25
+throughout — verdicts, windows and grounded passes are strictly per-ISO. Matrix row
+`forced_share_d4_census` added, cells `IIIIII`; §5.7 updated.
+
+**DO-NOT-REDO:** do not re-census by hand — re-run the probe (~1 min, zero LP; it
+re-scores the live keepers). Next cross-cutting shorthand: **xiso-4** — §5.7's
+remaining open items are unchanged from xiso-2's list: the registry hygiene fixes
+from §4.6 (dangling `--ramp-limits`, inert-default flags, the
+`maintenance_monthly_shape` matrix gap), the forecast-lane inheritance review of
+keeper-only `BF` mechanisms, and the `thermal_tranches_<ISO>.csv` provenance item
+(blocked at HEAD, miso-95); Arm C's pjm-144 PREREG-without-outcome question also
+remains unclaimed.

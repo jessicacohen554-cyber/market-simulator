@@ -1968,6 +1968,40 @@ charter with a new measured identification** before a solve:
   grandfathers it because `check_mechanism_matrix.py` diffs new fields against the
   PR base. Its per-ISO forecast-lane verdicts have never been tested, so xiso-2
   did not invent them.
+- **Rule-20 forced-share / D-4 window census, all six current keepers — DONE
+  2026-08-02 (xiso-3), and ALL SIX PASS C8.** The first census of rule 20
+  `[R-FORCED-BUDGET]`'s full conditional-pass logic across every keeper at once.
+  Zero LP: scored through the **production rubric itself**
+  (`calibration_verdict.score_forced_share` + `_d4_provenance` / `_d1_shape` /
+  `_class_load_share`) on the committed `legitimacy_diagnostics.json` +
+  payload/bench artifacts — never re-implemented. Probe
+  `scripts/probes/_xiso3_forced_share_d4_census.py` (reads the keeper shards
+  live, so it re-scores automatically on any keeper swap), record
+  `results/calibration/FINDING-xiso3-forced-share-d4-census-2026-08-02.md`.
+
+  | ISO | C8 | grounded-above-budget | latent D-4 gaps | drift | verdict |
+  |---|---|---|---|---|---|
+  | ERCOT | PASS | 0 | 3 | 0 | PASS |
+  | CAISO | PASS | 0 | 4 | 0 | PASS |
+  | PJM | PASS | **4** | 4 | 0 | **GROUNDED-PASS** |
+  | MISO | PASS | **3** | 6 | 0 | **GROUNDED-PASS** |
+  | NYISO | PASS | 0 | 0 | 0 | PASS |
+  | NEISO | PASS | 0 | 3 | 0 | PASS |
+
+  Zero FAILs, zero exceptions-ledger flips, zero D-4 window drift vs the HEAD
+  registry. PJM (CT_PEAKER 15.2/15.4/15.8 % vs 15 %; ST_GAS-2025 40.0 % vs
+  30 %) and MISO (ST_GAS 33.1/34.4/45.5 % vs 30 %) pass through the
+  grounded-above-budget escalation — every binding mechanism windowed with
+  **0.0 % off-window binding** and D-1 clear everywhere (worst `profile_r`
+  0.897, worst `cv_ratio` 0.697) — **clean passes surfaced as report notes,
+  never caveats**, per the rule. Informational yield: a five-fact **latent D-4
+  coverage map** (classes below cap whose binding mechanisms hold no
+  class-applicable `D4_WINDOWS` entry — `reliability_floor` on CC/COAL at
+  ERCOT/PJM/MISO/NEISO; CAISO's `ra_mustoffer_bridge` with **no entry of any
+  kind**, its sole non-exempt binder at 6.8–9.6 % vs 30). Nothing there is
+  gated today (the provenance leg is only consulted above the cap) and **no
+  entry was minted** — a rule-17 declaration needs its own per-ISO driver
+  evidence. Matrix row `forced_share_d4_census`, cells `IIIIII`.
 - `NG: PS` hydro-pin audit — **ALL SIX ISOs NOW SCREENED** (miso-108 audited
   MISO; miso-109 fixed it and ran the same three-signature screen across the
   rest, `scripts/probes/_miso109_hydro_level_audit.py`). The check is
