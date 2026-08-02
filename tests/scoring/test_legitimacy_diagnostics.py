@@ -16,6 +16,7 @@ import pytest
 from market_sim.data.fleet import FleetArrays, apply_netload_reliability_floor
 from market_sim.data.floor_mechanisms import (
     MECH_CT_NETLOAD_DRAG,
+    MECH_FIRM_IMPORT,
     MECH_NUCLEAR,
     MECH_RELIABILITY_FLOOR,
     ensure_mechanism,
@@ -828,7 +829,7 @@ class TestMechanismThreading:
             "plant_group": np.array(["CT_PEAKER", "CT_PEAKER"]),
         }
         pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
-        assert pids.tolist() == [7]
+        assert pids.tolist() == ["7"]  # string keys since caiso-155
         assert (floor_sum[0] == 40.0).all()
         assert (mech_plant[0] == MECH_RELIABILITY_FLOOR).all()
         assert groups[0] == "CT_PEAKER"
@@ -869,6 +870,124 @@ class TestMechanismThreading:
         }
         _, _, _, groups = aggregate_floors_by_plant(arrays)
         assert groups.tolist() == [""]
+
+    def test_floored_pseudo_unit_rides_as_own_row(self):
+        """caiso-151 §F / caiso-155: a plant_code-0 tranche carrying a firm
+        floor was DROPPED from the plant matrix; it now rides as its own
+        ``u:<unit_id>`` row with its floor, mechanism and (empty) class, while
+        the plant_code > 0 aggregation is byte-identical to before."""
+        h = HOURS
+        arrays = {
+            "min_gen": np.array([[30.0] * h, [900.0] * h]),
+            "mechanism": np.array(
+                [[MECH_RELIABILITY_FLOOR] * h, [MECH_FIRM_IMPORT] * h],
+                dtype=np.int8,
+            ),
+            "unit_ids": np.array(["p7_committed", "NYISO_external_HQ_hydro"]),
+            "plant_code": np.array([7, 0]),
+            "plant_group": np.array(["CT_PEAKER", ""]),
+        }
+        pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
+        assert pids.tolist() == ["7", "u:NYISO_external_HQ_hydro"]
+        assert (floor_sum[0] == 30.0).all()
+        assert (floor_sum[1] == 900.0).all()
+        assert (mech_plant[1] == MECH_FIRM_IMPORT).all()
+        assert groups.tolist() == ["CT_PEAKER", ""]
+
+    def test_unfloored_pseudo_units_stay_excluded(self):
+        """plant_code <= 0 rows with NO floor (economic import bands, export
+        sinks) stay out of the matrix — they must not perturb any denominator
+        (PREREG-caiso155 §2 P3)."""
+        h = HOURS
+        arrays = {
+            "min_gen": np.array([[5.0] * h, [0.0] * h, [0.5] * h]),
+            "mechanism": np.array(
+                [[MECH_RELIABILITY_FLOOR] * h, [0] * h, [0] * h], dtype=np.int8
+            ),
+            "unit_ids": np.array(["p9_econ", "WECC_import_spot", "WECC_export"]),
+            "plant_code": np.array([9, 0, 0]),
+            "plant_group": np.array(["ST_GAS", "", ""]),
+        }
+        pids, floor_sum, _, _ = aggregate_floors_by_plant(arrays)
+        assert pids.tolist() == ["9"]
+        assert floor_sum.shape[0] == 1
+
+    def test_pseudo_unit_rows_report_but_never_gate_d2(self):
+        """The pseudo-unit floor appears in D-2 DETAIL rows (visibility) under
+        its non-thermal mechanism and the ``''`` class, and produces NO gated
+        summary row — C8 arithmetic is invariant (PREREG-caiso155 §3.4)."""
+        h = HOURS
+        disp = np.array([[50.0] * h, [900.0] * h])
+        floors = np.array([[0.0] * h, [900.0] * h])
+        mechs = np.array([[0] * h, [MECH_FIRM_IMPORT] * h], dtype=np.int8)
+        klass = np.array(["CT_PEAKER", ""], dtype=object)
+        res = run_d2(disp, floors, mechs, klass, year=2024)
+        firm_rows = [r for r in res.rows if r["mechanism"] == "firm_import"]
+        assert len(firm_rows) == 1
+        assert firm_rows[0]["class"] == ""
+        assert firm_rows[0]["forced_twh"] == pytest.approx(900.0 * h / 1e6)
+        assert all(row["class"] != "" for row in res.summary)
+        assert res.passed
+
+    def test_pseudo_unit_rows_visible_to_d4_all_hours_window(self):
+        """The firm_import floor is D-4-visible under its all-hours window
+        (caiso-151 added the D4_WINDOWS row; caiso-155 makes the rows reach
+        it) and cannot fail off-window by construction."""
+        h = HOURS
+        disp = np.array([[900.0] * h])
+        floors = np.array([[900.0] * h])
+        mechs = np.array([[MECH_FIRM_IMPORT] * h], dtype=np.int8)
+        klass = np.array([""], dtype=object)
+        res = run_d4(disp, floors, mechs, klass, year=2024)
+        row = next(r for r in res.rows if r["floor"] == "firm_import")
+        assert row["offwindow_share"] == 0.0
+        assert row["verdict"] == "pass"
+        assert row["floored_twh"] == pytest.approx(900.0 * h / 1e6)
+
+    def test_g06_bridge_family_covers_every_p0_pattern_bridge(self):
+        """caiso-155: the G-06 recompute must subtract EVERY P0-run-pattern
+        bridge from the committed side, not just the CAISO RA leg — nyiso109's
+        armed nyiso_gas_commitment_bridge carries 3-5 pp of CC_REGULAR's gated
+        share and no fleet_only rebuild can reproduce it."""
+        from market_sim.data.floor_mechanisms import (
+            MECH_GAS_COMMITMENT_BRIDGE,
+            MECH_MISO_COAL_NIGHT_FLOOR,
+            MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+            MECH_RA_MUSTOFFER,
+        )
+        from scripts.legitimacy_diagnostics import BRIDGE_MECHS
+
+        assert set(BRIDGE_MECHS) == {
+            MECH_RA_MUSTOFFER,
+            MECH_GAS_COMMITMENT_BRIDGE,
+            MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+            MECH_MISO_COAL_NIGHT_FLOOR,
+        }
+
+    def test_rebuild_rename_map_threads_generic_override_channels(self):
+        """caiso-155 addendum Part 0: the floors rebuild must map the generic
+        override channels to run_year kwargs exactly as replay_keeper does —
+        dropping them rebuilt floors without any channel-armed mechanism
+        (CAISO's firm-import trio rides ONLY there, caiso-150 §E2)."""
+        from inspect import signature
+
+        from scripts.legitimacy_diagnostics import REBUILD_META_RENAMES
+        from scripts.run_calibration import run_year
+
+        params = signature(run_year).parameters
+        for meta_key, kwarg in REBUILD_META_RENAMES.items():
+            assert kwarg in params, f"{meta_key} -> {kwarg} not a run_year kwarg"
+        for channel in (
+            "coal_prb_sigmoid_overrides",
+            "coal_bit_sigmoid_overrides",
+            "coal_bit_passthrough_sigmoid",
+        ):
+            assert channel in REBUILD_META_RENAMES
+        from scripts.replay_keeper import _REMAP
+
+        for meta_key, kwarg in _REMAP.items():
+            if meta_key in REBUILD_META_RENAMES and kwarg in params:
+                assert REBUILD_META_RENAMES[meta_key] == kwarg
 
 
 class TestD2ClassTotalInvariant:

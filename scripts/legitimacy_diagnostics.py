@@ -194,10 +194,12 @@ D2_REL_TOL: float = 0.02
 # on the per-class GATED forced SHARE (rule-20 units). The keeper recompute is a
 # LOWER-BOUND reconstruction, NOT a bit-faithful replay: it decodes dispatch from
 # the committed dashboard payload (the solve `dispatch/*.parquet` is gitignored-
-# absent) and rebuilds floors via run_year(fleet_only=True), which runs no P2
-# solve and so OMITS the P2 `ra_mustoffer_bridge` (the check excludes that
-# mechanism from the committed side below — it is the only gated floor the
-# fleet_only rebuild cannot reproduce). The residual, once the bridge is
+# absent) and rebuilds floors via run_year(fleet_only=True), which has no P0/P1
+# solution and so OMITS the whole P0-run-pattern commitment-bridge family
+# (ra_mustoffer_bridge, gas_commitment_bridge, nyiso_gas_commitment_bridge,
+# miso_coal_night_floor — the check excludes those mechanisms from the
+# committed side below; caiso-155 widened the exclusion from the RA leg to the
+# family). The residual, once the bridges are
 # excluded, is class-denominator attribution jitter: a boundary plant that bins
 # into a different class across fleet builds shifts a class total by ~0.08 TWh.
 # Measured worst case across the 6 keepers is CAISO CT_PEAKER at 1.65 pp (0.08
@@ -668,6 +670,18 @@ D9_GENERIC_SHARE_GROUPS: tuple[str, ...] = (
     "ST_CHP",
     "CT_PEAKER",
     "CT_CHP",
+)
+
+# The P0-run-pattern commitment-bridge family: all four ride the shared
+# detector (model.commitment.caiso_ra_mustoffer_min_gen) on the model's own
+# P0 solution, so NO fleet_only rebuild can reproduce their floors — the G-06
+# recompute subtracts their committed contributions before comparing
+# (caiso-155 widened the exclusion from the RA leg to the family).
+BRIDGE_MECHS: tuple[int, ...] = (
+    MECH_RA_MUSTOFFER,
+    MECH_GAS_COMMITMENT_BRIDGE,
+    MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+    MECH_MISO_COAL_NIGHT_FLOOR,
 )
 
 # D-6 holdout quarantine (CLAUDE.md rule 22, amended 2026-07-04; TIER-AWARE
@@ -1475,17 +1489,20 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
     so the comparison reconciles the two known, structural reasons it cannot
     equal a faithfully-generated committed artifact:
 
-    1. **P2 ``ra_mustoffer_bridge`` (CAISO).** ``run_year(fleet_only=True)``
-       runs no P2 solve, so the P2 RA must-offer bridge floor — which needs
-       the P1 solution — is absent from rebuilt floors (``load_or_rebuild_floors``
-       returns ``ra_floor_missing``; ``run_d2`` flags the summary
-       ``lower_bound``). Its forced energy is real and disclosed on the keeper
-       (e.g. caiso-58 CC_REGULAR 3.24 TWh), so we do NOT demand the recompute
-       reproduce it: the committed side's ``ra_mustoffer_bridge`` contribution
-       is subtracted before comparing, leaving the REBUILDABLE gated share on
-       both sides. (It is the only gated floor the rebuild cannot produce —
+    1. **The P0-run-pattern commitment bridges.** ``run_year(fleet_only=True)``
+       runs no LP, so every bridge detected from the model's own P0 solution
+       (``model.commitment.caiso_ra_mustoffer_min_gen``: CAISO
+       ``ra_mustoffer_bridge``, ERCOT ``gas_commitment_bridge``, NYISO
+       ``nyiso_gas_commitment_bridge``, MISO ``miso_coal_night_floor``) is
+       absent from rebuilt floors (``load_or_rebuild_floors`` returns
+       ``ra_floor_missing``; ``run_d2`` flags the summary ``lower_bound``).
+       Their forced energy is real and disclosed on the keeper (e.g. caiso-58
+       CC_REGULAR 3.24 TWh; nyiso109 CC_REGULAR 3-5 pp), so we do NOT demand
+       the recompute reproduce it: the committed side's bridge contributions
+       are subtracted before comparing, leaving the REBUILDABLE gated share on
+       both sides (caiso-155 widened this from the RA leg to the family —
        ``ct_netload_drag`` / ``reliability_floor`` are fleet-level and rebuild
-       exactly.)
+       exactly).
     2. **Denominator attribution jitter.** A boundary plant can bin into a
        different class across fleet builds, shifting a class total by ~0.08 TWh
        and the forced share by ≤ ~1.65 pp on a small material class (measured
@@ -1502,7 +1519,7 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
     keeper_ids = keeper_store.keeper_list(repo_root)
     if not keeper_ids:
         return res
-    bridge_name = MECH_NAMES[MECH_RA_MUSTOFFER]
+    bridge_names = {MECH_NAMES[m] for m in BRIDGE_MECHS}
     for run_id in keeper_ids:
         side_path = repo_root / "frontend/data/backcast/registry" / f"{run_id}.json"
         side = json.loads(side_path.read_text())
@@ -1521,12 +1538,18 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
         committed_summary = {
             (row["year"], row["class"]): row for row in committed_d2.get("summary", [])
         }
-        # Committed forced energy attributed to the non-rebuildable P2 bridge,
-        # per (year, class): subtracted from the committed gated share so the
-        # comparison is over the REBUILDABLE floors the recompute can produce.
+        # Committed forced energy attributed to the non-rebuildable commitment
+        # bridges, per (year, class): subtracted from the committed gated share
+        # so the comparison is over the REBUILDABLE floors the recompute can
+        # produce. The whole P0-run-pattern bridge family is excluded, not
+        # just the CAISO RA leg (caiso-155): every bridge detected by
+        # model.commitment.caiso_ra_mustoffer_min_gen needs the P0 solution,
+        # which run_year(fleet_only=True) never has — nyiso109's armed
+        # nyiso_gas_commitment_bridge carries 3-5 pp of CC_REGULAR's gated
+        # share, so subtracting only the RA leg false-fails a faithful keeper.
         committed_bridge_twh: dict[tuple[int, str], float] = {}
         for row in committed_d2.get("rows", []):
-            if row.get("mechanism") == bridge_name:
+            if row.get("mechanism") in bridge_names:
                 k = (row["year"], row["class"])
                 committed_bridge_twh[k] = committed_bridge_twh.get(k, 0.0) + row.get(
                     "forced_twh", 0.0
@@ -1612,7 +1635,7 @@ def run_d2_keepers_verify(repo_root: Path) -> GateResult:
                 res.failures.append(
                     f"{run_id} {year} {klass!r}: committed rebuildable forced "
                     f"share {c_rebuildable:.4f} (of {c_share:.4f} gated, less "
-                    f"{bridge_share:.4f} non-rebuildable ra_mustoffer_bridge) != "
+                    f"{bridge_share:.4f} non-rebuildable commitment bridges) != "
                     f"recomputed {r_share:.4f} beyond {D2_VERIFY_SHARE_TOL:.3f} — "
                     "committed legitimacy_diagnostics.json is stale vs the bundle "
                     "it describes"
@@ -1872,6 +1895,27 @@ def load_dispatch_parquet(bundle: Path, year: int):
     return None, None
 
 
+# meta.json key -> run_year kwarg, where the names differ. The three generic
+# override channels MUST be threaded (caiso-155 addendum Part 0): run_year
+# accepts them as prb_overrides / bit_overrides / coal_bit_sigmoid (the same
+# mapping scripts/replay_keeper.py::_REMAP applies for solve_and_persist), and
+# dropping them rebuilt floors WITHOUT every mechanism armed through the
+# channel — CAISO's firm-import trio rides ONLY there (the caiso-150 §E2
+# silent trap), and five of six keepers arm floor mechanisms through it
+# (PREREG-caiso155-ADDENDUM-rebuild-channel-2026-08-02.md §A). Keys that
+# remain unmapped after this are price/demand-side (no min_gen stamp) and are
+# the rebuild's documented residual fidelity limit, absorbed by G-06's
+# D2_VERIFY_SHARE_TOL. tests/scoring/test_legitimacy_diagnostics.py asserts
+# this map's targets exist in run_year's signature and that it agrees with
+# replay_keeper._REMAP wherever both map a key run_year accepts.
+REBUILD_META_RENAMES: dict[str, str] = {
+    "commitment": "commitment_enabled",
+    "coal_prb_sigmoid_overrides": "prb_overrides",
+    "coal_bit_sigmoid_overrides": "bit_overrides",
+    "coal_bit_passthrough_sigmoid": "coal_bit_sigmoid",
+}
+
+
 def load_or_rebuild_floors(
     bundle: Path, iso: str, year: int, force_rebuild: bool = False
 ) -> tuple[dict, bool]:
@@ -1913,7 +1957,7 @@ def load_or_rebuild_floors(
         "xyear_cache",
         "must_run_mw",
     }
-    rename = {"commitment": "commitment_enabled"}
+    rename = REBUILD_META_RENAMES
     kwargs = {}
     dropped = []
     for k, v in meta.items():
@@ -1963,14 +2007,22 @@ def load_or_rebuild_floors(
     return arrays, True
 
 
+# Key prefix marking a non-plant (pseudo-unit) row in the D-2/D-4 matrices:
+# a unit with ``plant_code <= 0`` that carries a positive floor (interchange
+# firm-import tranches). Cannot collide with the numeric plant keys.
+PSEUDO_PLANT_KEY_PREFIX = "u:"
+
+
 def aggregate_floors_by_plant(
     arrays: dict,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Aggregate unit-level floors to plants: ids, floor sum, binding mech, class.
+    """Aggregate unit-level floors to plants: keys, floor sum, binding mech, class.
 
     The plant floor is the sum of its units' positive floors; the plant-hour
     mechanism is the id of the unit contributing the largest floor that hour
     (maximum-composition at plant level). Loops over plants, never hours.
+    Keys are strings: ``str(plant_code)`` per aggregated plant, plus one
+    ``"u:<unit_id>"`` row per FLOORED ``plant_code <= 0`` pseudo-unit.
 
     The plant class is the **most common non-empty** unit group in the plant —
     NOT the first unit's group. A single plant frequently mixes classified
@@ -1982,6 +2034,18 @@ def aggregate_floors_by_plant(
     A plant whose units are *all* unclassified (nuclear / hydro / renewables,
     which carry no CAMPD plant_group) stays ``''`` — those non-thermal must-run
     rows are excluded from the merchant forced-share summary in ``run_d2``.
+
+    Pseudo-unit rows (caiso-151 §F / caiso-155): a ``plant_code <= 0`` unit
+    with a floor above ``D2_FLOOR_MIN_MW`` in any hour — an interchange
+    firm-import tranche (``MECH_FIRM_IMPORT``: CAISO RA/LTC blocks, MISO
+    Manitoba, NYISO HQ) — was previously DROPPED here, leaving 2-8 TWh/yr of
+    must-flow floor invisible to D-2 and D-4. Each now rides as its own
+    per-unit row (no plant to aggregate to), keyed by unit id, carrying its
+    own ``plant_group`` (empty for interchange tranches, so the ``''``-bucket
+    exclusion above still governs the gated summary). UNFLOORED
+    ``plant_code <= 0`` rows (economic import bands, export sinks, seam
+    bands) stay excluded — they carry no floor and must not perturb any
+    class denominator.
     """
     plant_code = np.asarray(arrays["plant_code"])
     keep = plant_code > 0
@@ -2010,7 +2074,23 @@ def aggregate_floors_by_plant(
         else:
             group_plant[i] = ""
     mech_plant[floor_sum <= 0.0] = 0
-    return pc[starts], floor_sum, mech_plant, group_plant.astype(str)
+    keys = [str(int(p)) for p in pc[starts]]
+
+    dropped = ~keep
+    if dropped.any():
+        pos_d = np.clip(np.asarray(arrays["min_gen"], dtype=float)[dropped], 0.0, None)
+        floored = pos_d.max(axis=1) > D2_FLOOR_MIN_MW
+        if floored.any():
+            uids = np.asarray(arrays["unit_ids"]).astype(str)[dropped][floored]
+            groups_d = np.asarray(arrays["plant_group"]).astype(str)[dropped][floored]
+            mech_d = np.asarray(arrays["mechanism"])[dropped][floored].copy()
+            pos_f = pos_d[floored]
+            mech_d[pos_f <= 0.0] = 0
+            keys += [PSEUDO_PLANT_KEY_PREFIX + u for u in uids]
+            floor_sum = np.vstack([floor_sum, pos_f])
+            mech_plant = np.vstack([mech_plant, mech_d])
+            group_plant = np.concatenate([group_plant, groups_d.astype(object)])
+    return np.array(keys, dtype=object), floor_sum, mech_plant, group_plant.astype(str)
 
 
 # ---------------------------------------------------------------------------
@@ -2241,8 +2321,7 @@ def diagnose_bundle(
                 bundle, iso, year, force_rebuild=rebuild_floors
             )
             pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
-            pid_strs = [str(int(p)) for p in pids]
-            common = [i for i, p in enumerate(pid_strs) if p in model_plants_plant]
+            pid_strs = [str(p) for p in pids]
             # Class totals need EVERY plant of the class, floored or not:
             # rows below carry all model plants, floors zero-filled outside
             # the floored set.
@@ -2252,6 +2331,25 @@ def diagnose_bundle(
             ]
             # plants absent from the floors fleet (e.g. non-thermal payload
             # rows) are excluded — they carry no class in the model fleet.
+            #
+            # Floored pseudo-unit rows ("u:" keys — plant_code <= 0
+            # interchange tranches, caiso-151 §F / caiso-155) have no
+            # dispatch series on ANY committed path (the payload is
+            # CAMPD-keyed by construction; the parquet filter above is
+            # plant_code > 0), so they enter with dispatch := their own
+            # floor — the pre-registered floor-energy convention
+            # (PREREG-caiso155 §3): the artifact reports the MANDATED floor
+            # energy for boundary tranches, path-independently. The true
+            # at-floor dispatch stays a probe-level statistic on unaggregated
+            # LP rows (caiso-151 §F measured 15.47 of 22.68 TWh for CAISO
+            # 2024 — a DIFFERENT, narrower statistic than the 22.68 reported
+            # here).
+            pseudo_pids = [
+                p
+                for p in pid_strs
+                if p.startswith(PSEUDO_PLANT_KEY_PREFIX) and p not in model_plants_plant
+            ]
+            all_pids = all_pids + pseudo_pids
             t = 8760
             disp = np.zeros((len(all_pids), t))
             floors = np.zeros((len(all_pids), t))
@@ -2260,11 +2358,11 @@ def diagnose_bundle(
             npl = np.zeros(len(all_pids))
             index = {p: i for i, p in enumerate(all_pids)}
             for p, i in index.items():
-                disp[i] = model_plants_plant[p][:t]
+                if p in model_plants_plant:
+                    disp[i] = model_plants_plant[p][:t]
                 klass[i] = klass_by_pid.get(p, "")
                 npl[i] = bench_pl.get(p, {}).get("npl", float(disp[i].max()))
-            for j in common:
-                p = pid_strs[j]
+            for j, p in enumerate(pid_strs):
                 if p in index:
                     floors[index[p]] = floor_sum[j][:t]
                     mechs[index[p]] = (
@@ -2272,6 +2370,19 @@ def diagnose_bundle(
                         if mech_plant[j].ndim > 1
                         else mech_plant[j][:t]
                     )
+            for p in pseudo_pids:
+                disp[index[p]] = floors[index[p]]
+            if pseudo_pids:
+                pseudo_note = (
+                    f"{year}: {len(pseudo_pids)} floored pseudo-unit row(s) "
+                    "(plant_code <= 0 interchange tranches) scored under the "
+                    "floor-energy convention (dispatch := min_gen; "
+                    "PREREG-caiso155 §3) — reported TWh is the mandated "
+                    "floor energy, an upper bound on at-floor dispatch: "
+                    + ", ".join(sorted(pseudo_pids))
+                )
+                d2.notes.append(pseudo_note)
+                d4.notes.append(pseudo_note)
             if "D2" in only:
                 total_load_mwh = (
                     load_payload_total_load_mwh(repo_root, sidecar, year)

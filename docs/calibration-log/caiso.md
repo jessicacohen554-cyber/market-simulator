@@ -4953,3 +4953,54 @@ refetch ≈65 min (PJM) / ≈3.5 h (NEISO) with one fetcher per year (a
 shared-years invocation races year-scoped ones on the same files).
 
 Next number: caiso-155.
+
+## caiso-155 — 2026-08-02 — the diagnostics-harness PLANT-SET defect (caiso-151 §F): FIXED, plus two more harness defects the census found; no keeper verdict moved
+
+AUDIT/SCORER session, not a mechanism lever (rule 28a): no cell re-tested, no
+mechanism armed, no ScenarioConfig field, ZERO LP registered, no marker, no
+dashboard registration (the caiso-136/143/144/149/150/152/154 no-solve
+disposition — one aborted, discarded replay year notwithstanding). Record:
+`results/calibration/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
+probe `scripts/probes/_caiso155_plant_set_census.py`; pre-registration + two
+addenda, each committed before the numbers they govern. Matrix audit row
+`diagnostics_plant_set` (cells `IIOIII`) + §5.7 entry, in-session (rule 28b).
+
+1. **Defect 1 (the charter defect)** — `aggregate_floors_by_plant` dropped
+   every `plant_code <= 0` row, so interchange firm-import floors were
+   invisible to D-2/D-4 (the caiso-151 D4_WINDOWS row was necessary, not
+   sufficient). Fixed ISO-generically: floored pseudo-units ride as
+   `u:<unit_id>` rows under a pre-registered floor-energy convention
+   (dispatch := min_gen on every path — path-independent, and the CAISO
+   number is exactly the caiso-151 §C exposure statistic); unfloored
+   pseudo rows stay excluded; class `""` + non-thermal exemptions keep
+   C7/C8 structurally invariant (unit-tested). CAISO census: the two firm
+   tranches carry **17.938 / 22.684 / 22.494 TWh** — caiso-151 §C to the
+   3rd decimal, reproduced by two independent reconstructions.
+2. **Defect 2 (found by the census)** — the floors REBUILD dropped the
+   generic override channels; CAISO's firm trio rides ONLY there
+   (caiso-150 §E2's trap, measured on the G-06 path), and the unthreaded
+   rebuild HALLUCINATED MISO's pre-miso-74 Manitoba block. Fixed:
+   `REBUILD_META_RENAMES` (test-pinned to `replay_keeper._REMAP`).
+3. **Defect 3 (exposed by the A1b gate)** — G-06 subtracted only the RA
+   bridge; the whole P0-pattern bridge family is unrebuildable
+   (nyiso109 false-FAIL by 5.31/3.14 pp averted). Fixed: `BRIDGE_MECHS`.
+
+**Re-gate outcome:** NO committed artifact regenerated — the rebuild fails
+A1b (solve-state floors would be lost) and an in-place caiso153 replay
+failed D-13 with a measured degenerate-vertex signature (system duals
+byte-identical, class/storage dispatch shuffled ≤2 GW; committed bytes
+restored; NYISO replay declined on the same dependence). Every keeper's
+criterion profile and determination is UNCHANGED (xiso-3 production-rubric
+baseline == exit state; stop rule S1 never fired). The visibility lands
+automatically on every future in-session artifact generation.
+
+**DO-NOT-REDO (caiso-155, binding — full list FINDING §G):** do not quote
+the census MISO 6.36/4.65/1.96 TWh as keeper exposure (the unthreaded
+rebuild's hallucination — MISO's keeper has NO firm floor, miso-74 seam);
+do not re-measure by hand (re-run the fix-aware probe); do not narrow
+BRIDGE_MECHS back to the RA leg; do not regen a keeper artifact from the
+fleet_only rebuild when its floors carry bridge/solve-state mechanisms; do
+not read pseudo-row floor-energy TWh as at-floor dispatch (different
+statistics — caiso-151 §F's 15.47 vs this session's 22.68, CAISO 2024).
+
+Next number: caiso-156.
