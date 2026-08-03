@@ -2675,9 +2675,12 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**
+### 5.6 NEISO — keeper `2026-08-03-neiso-caiso156-meter-screen` (**keeper id corrected at neiso-78** — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**
 
-Keeper `2026-07-31-neiso-72-hy-window` (neiso-72).
+Keeper `2026-08-03-neiso-caiso156-meter-screen` (corrected at neiso-78; the
+neiso-72 hydro-window mechanism and its C3c frontier declaration are carried
+forward unchanged — caiso-159 changed only the shared measured CT heat-rate
+artifact's content, per `frontend/data/backcast/keepers/NEISO.json`).
 
 **The C3c frontier charter (neiso-75, 2026-08-02 — no LP):**
 `results/calibration/CHARTER-neiso75-c3c-frontier-2026-08-02.md`, decomposition
@@ -2831,6 +2834,51 @@ charter with a new measured identification** before a solve:
     disagreement is the material new input to the open owner
     amplitude-criterion call** — it is not one shared defect with one shared
     cause. No scorer changed.
+
+5d. **RULE-28(c) COLUMN CLOSED (neiso-78, 2026-08-03; no LP, no solve, keeper
+    UNCHANGED, no queue item touched, no cell verdict flipped).** NEISO's
+    census debt — **10 `neiso_*` fields absent from the matrix, 8 of them
+    ARMED ON THE KEEPER with no cell anywhere** — is **0/0/0**, making NEISO
+    the **third closed column** after NYISO (nyiso-114) and ERCOT (ercot-156).
+    All ten closed as literal registrations on **three existing family rows'**
+    `def`s (the nyiso-114 escape-hatch template): `gas_coldsnap_derate` takes
+    the three derate shape sub-scalars, `winter_fuelsec_posture` takes the six
+    winter/oil fields, `dam_availability_rebasis` takes
+    `neiso_operable_capacity_availability` (its `def` had carried the truncated
+    stem `neiso_operable`, which no literal-match census can resolve). Ratchet
+    baseline NEISO 10 → 0, shrink-only; the full six-ISO sweep confirms **no
+    other column grew**. A **fourth, cross-ISO** gap was found while closing
+    them and registered in the same session: the shared, solve-affecting
+    `unit_partial_outage_windows` had **no matrix mention at all**, because its
+    owning row `unit_outage_short_windows` named it only as a bare parenthetical
+    line number. Every line number encountered in the four `def`s was **stale**
+    (`:2138`→`:2878`, `:2286`→`:3026`, `:7771`/`:7796`→`:9419`/`:9444`).
+    **THE LIVE DEFECT the census surfaced:** `neiso_oil_burn_budget` and its
+    successor `neiso_winter_fuel_inventory` are both armed on the keeper away
+    from a `False` default and both feed the **same** LP builder
+    (`_build_oil_budget_rows`), so rule 19 `[R-ONE-MECH]` asks whether the
+    keeper double-counts the winter oil-burn constraint. **It does not** —
+    `run_calibration.py:4250` is a single `if`/`elif` (proven by `ast`, not
+    read off the comment) in which the successor wins, so the superseded F923
+    limb is **unreachable**: all **15/15** NEISO bundles arm both, and the limb
+    is reachable in **0 of the 120** committed bundles across all six ISOs. It
+    is NEISO's backcast default (`backcast_config.py:1549`), which is why it
+    reads as armed, and it has **never once built a row**. Against interest:
+    the field's own `scenarios.py` docstring calls it "not a keeper path",
+    which is **false as written** — it is unreachable, not unarmed. **FILED NOT
+    FIXED, routed to the owner:** it is a rule-26 `[R-DELETE]` candidate
+    (armed-by-default *and* rule-13-inadmissible on its own docstring's
+    account — EIA-923 petroleum *receipts*, a measured outcome with no forward
+    analogue), and it joins nyiso-115's `campd_facility_outages` as the
+    **second rule-26 candidate** in the same cross-lane queue; they should be
+    decided together. Deleting it touches a NEISO backcast default and is not a
+    census's call. Evidence:
+    `results/calibration/FINDING-neiso78-matrix-census-close-2026-08-03.md`;
+    probe `scripts/probes/_neiso78_oil_budget_reachability.py`. **Also
+    corrected here:** §5.6's header and the neiso-78 prompt both named
+    `2026-07-31-neiso-72-hy-window` as the NEISO keeper; the shard designates
+    **`2026-08-03-neiso-caiso156-meter-screen`** (neiso-72 SUPERSEDED-NOT-
+    RETRACTED at caiso-159).
 
 6. ~~**`measured_chp_heat_rates` companion floor (the neiso-71 successor).**~~
     **CLOSED at neiso-71 (2026-07-31) with NO LP spent — the cell stays `O`,

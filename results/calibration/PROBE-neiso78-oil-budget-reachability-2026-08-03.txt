@@ -1,0 +1,138 @@
+==============================================================================
+neiso-78 — NEISO oil-burn budget precedence / reachability probe
+==============================================================================
+
+[1] SOURCE-LEVEL PRECEDENCE (ast over scripts/run_calibration.py)
+  if-statement line          : 4250
+  if   gate                  : neiso_winter_fuel_inventory
+  elif gate                  : neiso_oil_burn_budget
+  single if/elif chain       : True
+  VERDICT                    : NO DOUBLE-COUNT — the superseded limb is unreachable whenever the successor is armed
+
+[2] BUNDLE CENSUS (120 committed bundles record the field)
+  both gates armed           : 15/120
+  F923 limb REACHABLE in     : 0/120 bundles
+    _nyiso114_baseattrib_2024          oil=False winter=False inert
+    caiso124_control_A                 oil=False winter=False inert
+    caiso126_control_A                 oil=False winter=False inert
+    caiso146_control_A                 oil=False winter=False inert
+    caiso146_ctheatrate_B              oil=False winter=False inert
+    caiso147_chp_B                     oil=False winter=False inert
+    caiso147_control_A                 oil=False winter=False inert
+    caiso148_control_A                 oil=False winter=False inert
+    caiso148_nucavail_B                oil=False winter=False inert
+    caiso151_clip_B                    oil=False winter=False inert
+    caiso153_control_A                 oil=False winter=False inert
+    caiso153_reid_B                    oil=False winter=False inert
+    caiso156_meter_control_A           oil=False winter=False inert
+    caiso156_meter_screen_B            oil=False winter=False inert
+    caiso157_capdel_C                  oil=False winter=False inert
+    caiso157_control_A                 oil=False winter=False inert
+    caiso157_restore_B                 oil=False winter=False inert
+    caiso157_ror_D                     oil=False winter=False inert
+    caiso92_repro_A                    oil=False winter=False inert
+    caiso_netrev_base                  oil=False winter=False inert
+    ercot116_regate_arm                oil=False winter=False inert
+    ercot116_regate_base               oil=False winter=False inert
+    ercot122_offerlevel                oil=False winter=False inert
+    ercot128_unit_grain                oil=False winter=False inert
+    ercot129_conditional               oil=False winter=False inert
+    ercot137_margin_arm                oil=False winter=False inert
+    ercot139_cc_committed_arm          oil=False winter=False inert
+    ercot140_coal_peak_arm             oil=False winter=False inert
+    ercot141_online_hours_arm          oil=False winter=False inert
+    ercot144_perplant_arm              oil=False winter=False inert
+    ercot145_gas_daily_arm             oil=False winter=False inert
+    ercot148_dam_event_cap_arm         oil=False winter=False inert
+    ercot149_gas_event_cap_arm         oil=False winter=False inert
+    ercot150_control_A                 oil=False winter=False inert
+    ercot150_zonalanchor_B             oil=False winter=False inert
+    ercot71_availability_fullspan      oil=False winter=False inert
+    ercot73_state_wall_fullspan        oil=False winter=False inert
+    ercot76_ne_import_fullspan         oil=False winter=False inert
+    ercot86_rtwall_2025_A              oil=False winter=False inert
+    miso102_control_A                  oil=False winter=False inert
+    miso102_sunkfixed_B                oil=False winter=False inert
+    miso106_control_A                  oil=False winter=False inert
+    miso109_control_A                  oil=False winter=False inert
+    miso109_hy_level_B                 oil=False winter=False inert
+    miso111_control_A                  oil=False winter=False inert
+    miso111_prbdispatch_B              oil=False winter=False inert
+    miso112_control_A                  oil=False winter=False inert
+    miso112_prbsplit_B                 oil=False winter=False inert
+    miso113_control_A                  oil=False winter=False inert
+    miso113b_control_A                 oil=False winter=False inert
+    miso113b_nightfloor_B              oil=False winter=False inert
+    miso117_control_A                  oil=False winter=False inert
+    miso117_ctheatrate_B               oil=False winter=False inert
+    miso65_outage_regen                oil=False winter=False inert
+    miso66_coalconduct                 oil=False winter=False inert
+    miso67_stgas_vlr_level             oil=False winter=False inert
+    miso71_midwest                     oil=False winter=False inert
+    miso71_midwest-base                oil=False winter=False inert
+    miso72_winter_citygate             oil=False winter=False inert
+    miso72_winter_citygate-base        oil=False winter=False inert
+    miso73_seam_meritcap               oil=False winter=False inert
+    miso73_seam_meritcap-base          oil=False winter=False inert
+    miso74_manitoba_base               oil=False winter=False inert
+    miso74_manitoba_seam               oil=False winter=False inert
+    miso75_manitoba_meritcap           oil=False winter=False inert
+    miso75_meritcap_base               oil=False winter=False inert
+    miso76_loss_base                   oil=False winter=False inert
+    miso76_loss_surface                oil=False winter=False inert
+    miso81_phantom_outage              oil=False winter=False inert
+    miso99_chp_hr_A                    oil=False winter=False inert
+    miso99_chp_hr_B                    oil=False winter=False inert
+    miso_gasshape_interpfix_base       oil=False winter=False inert
+    miso_gasshape_interpfix_main       oil=False winter=False inert
+    neiso61_netrev_base                oil=True  winter=True  inert
+    neiso61_netrev_margin              oil=True  winter=True  inert
+    neiso61_netrev_margin_2022         oil=True  winter=True  inert
+    neiso64_meritguard_a1              oil=True  winter=True  inert
+    neiso69_control                    oil=True  winter=True  inert
+    neiso69_shortpartial               oil=True  winter=True  inert
+    neiso70_chpheatrate_B              oil=True  winter=True  inert
+    neiso70_control_A                  oil=True  winter=True  inert
+    neiso70_ctheatrate_B               oil=True  winter=True  inert
+    neiso71_control_A                  oil=True  winter=True  inert
+    neiso71_nucavail_B                 oil=True  winter=True  inert
+    neiso72_control_A                  oil=True  winter=True  inert
+    neiso72_hy_window_B                oil=True  winter=True  inert
+    neiso_c156_meter_control_A         oil=True  winter=True  inert
+    neiso_c156_meter_screen_B          oil=True  winter=True  inert
+    nyiso110_spinonline_B              oil=False winter=False inert
+    nyiso111_control_A                 oil=False winter=False inert
+    nyiso111_rampenv_B                 oil=False winter=False inert
+    nyiso112_combined_D                oil=False winter=False inert
+    nyiso112_decpeaker_C               oil=False winter=False inert
+    nyiso114_lilocational_confirm      oil=False winter=False inert
+    nyiso115_control                   oil=False winter=False inert
+    nyiso115_nyc_stepcurve             oil=False winter=False inert
+    nyiso116_c3c_unitlayer             oil=False winter=False inert
+    nyiso117_control                   oil=False winter=False inert
+    nyiso117_nyc_stepcurve             oil=False winter=False inert
+    nyiso160_ctmeter_control_A         oil=False winter=False inert
+    nyiso160_ctmeter_screen_B          oil=False winter=False inert
+    nyiso83_control_2024               oil=False winter=False inert
+    nyiso83_control_2025               oil=False winter=False inert
+    nyiso_c156_meter_control_A         oil=False winter=False inert
+    nyiso_c156_meter_screen_B          oil=False winter=False inert
+    pjm135_netpos_keeper_C             oil=False winter=False inert
+    pjm136_control_A                   oil=False winter=False inert
+    pjm136_lossurf_B                   oil=False winter=False inert
+    pjm137_control_A                   oil=False winter=False inert
+    pjm137_ctheatrate_B                oil=False winter=False inert
+    pjm140_control_A                   oil=False winter=False inert
+    pjm140_rampenv_B                   oil=False winter=False inert
+    pjm143_control_A                   oil=False winter=False inert
+    pjm143_hy_level_B                  oil=False winter=False inert
+    pjm144_control_A                   oil=False winter=False inert
+    pjm144_zonalanchor_B               oil=False winter=False inert
+    pjm146_control_A                   oil=False winter=False inert
+    pjm146_rggi_B                      oil=False winter=False inert
+    pjm147_chp_B                       oil=False winter=False inert
+    pjm147_control_A                   oil=False winter=False inert
+
+  CONCLUSION: neiso_oil_burn_budget is armed on every NEISO bundle (it is the
+  NEISO backcast default, backcast_config.py) and is INERT on every one of them,
+  because neiso_winter_fuel_inventory is armed too and wins the if/elif.

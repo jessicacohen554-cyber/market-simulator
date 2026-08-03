@@ -1343,3 +1343,106 @@ a fit claim — the scorecard did not move in either direction.
 Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
 
 Next shorthand: **neiso-78.**
+
+---
+
+## neiso-78 — 2026-08-03 — RULE-28(c) COLUMN CLOSED (10 absent / 8 armed-with-no-cell → 0), and the census surfaced a live defect: `neiso_oil_burn_budget` is armed on every NEISO bundle ever registered and is UNREACHABLE on all of them
+
+**Session type:** governance/registry census, **no LP, no solve, no bundle, no
+dashboard registration, no `ScenarioConfig` change, no default altered, no
+derive re-run.** Keeper unchanged at `2026-08-03-neiso-caiso156-meter-screen`.
+Deliverable:
+`results/calibration/FINDING-neiso78-matrix-census-close-2026-08-03.md`; probe
+`scripts/probes/_neiso78_oil_budget_reachability.py` with records
+`PROBE-neiso78-matrix-gap-census-` and
+`PROBE-neiso78-oil-budget-reachability-2026-08-03.txt`.
+
+**Shorthand note.** The session prompt was issued as *neiso-77*; that shorthand
+had already been consumed by caiso-159's cross-lane promotion entry above, so
+this work is filed as **neiso-78** per this log's own ledger. (The prompt's
+keeper id was stale for the same reason — see below.)
+
+**(0) Fork.** The prompt's Fork A (§5.6 item 5b, the neiso-76 stack-traversal
+charter) **requires an owner green-light and none was in hand**, so under §5.6
+frontier discipline it stays unopened. Fork B directs the session to the
+highest-value **non-owner-gated** box. **ERCOT was checked first and does not
+offer one** — it is the only NOT-YET ISO, but item 9 needs owner authorization
+(uncharered structural LP change), item 8's intake is explicitly three-part
+owner-authorized, and item 7's intake has **no source on disk** (`data/raw`
+carries nodal curtailment corpora for CAISO/MISO/NYISO and nothing nodal for
+ERCOT). §5.7's `matrix_gap_census` row records that the five non-NYISO columns
+"are their own lanes' work (rule 25/28(d))"; NEISO's share was 10, and rule
+28(c) is explicit that a mechanism missing from the matrix "is an unregistered
+tuning channel in spirit (rule 24)".
+
+**(a) The close.** `mechanism_matrix_gap_sweep.py --iso NEISO`: absent
+**10 → 0**, armed-with-no-cell **8 → 0**, prose-only 0, live-but-invisible
+**1 → 0**. **NEISO is the third closed column** after NYISO (nyiso-114) and
+ERCOT (ercot-156). All ten closed as **literal registrations on three existing
+family rows' `def`s** — the nyiso-114 escape-hatch template — so **no row was
+added, no cell verdict was flipped, and no `U` was minted** (rule 25 bars a
+census from adjudicating, and none needed it: each owning row already carried
+the right verdict). `gas_coldsnap_derate` (NEISO `K`) took the three NERC-
+anchored derate sub-scalars; `winter_fuelsec_posture` (`K`) took the six
+winter/oil fields; `dam_availability_rebasis` (`R`, neiso-62) took
+`neiso_operable_capacity_availability`, whose `def` had carried the truncated
+stem `neiso_operable` that no literal-match census can resolve. Ratchet
+baseline regenerated **shrink-only** (exactly the ten); the full six-ISO sweep
+confirms **no other column grew** (CAISO 0/5, ERCOT 0/14, MISO 11/17, NYISO
+0/0, PJM 15/18). CI gates pass.
+
+**(b) A fourth, CROSS-ISO gap found while closing them.** The shared,
+solve-affecting `GATED CHANGE` flag `unit_partial_outage_windows` had **no
+matrix mention at all**: its owning row `unit_outage_short_windows` named it
+only as a bare parenthetical line number. Registered literally; NEISO cell `R`
+(neiso-69) unchanged. **Every line number encountered in the four `def`s was
+stale** — `:2138`→`:2878`, `:2286`→`:3026`, `:7771`/`:7796`→`:9419`/`:9444`.
+
+**(c) THE LIVE DEFECT.** Two of the eight armed-with-no-cell fields are bool
+gates the keeper arms **away from a `False` default** —
+`neiso_winter_fuel_inventory` and `neiso_oil_burn_budget` — the nyiso-112
+live-but-invisible shape. Both feed the **same** LP builder
+(`model/lp/rows.py::_build_oil_budget_rows`) via the same `oil_*` kwargs, so
+rule 19 `[R-ONE-MECH]` asks whether the keeper **double-counts** the winter
+oil-burn constraint. **It does not, and the reconciliation is already in the
+wiring:** `scripts/run_calibration.py:4250` is a single `if`/`elif` whose `if`
+gate is the successor and whose `elif` gate is the superseded limb — proven
+**mechanically** (the probe parses with `ast` and asserts the two gates are the
+test and the `orelse` test of *one* `If` node; two independent `if`s would
+double-count), not read off the comment. Bundle census: **15/15** NEISO bundles
+arm both, and the F923 limb is reachable in **0 of the 120** committed bundles
+across all six ISOs. It is NEISO's backcast default
+(`backcast_config.py:1549`), which is why it reads as armed, and it has
+**never once built a row**.
+
+**Reported against interest.** The field's own `scenarios.py` docstring calls
+it "not a keeper path" — **false as written** against the current keeper, where
+it is `True`. It is *unreachable*, not *unarmed*, and the distinction matters:
+it would begin building rows the moment a bundle turned its successor off.
+
+**(d) FILED NOT FIXED, routed to the owner.** `neiso_oil_burn_budget` is a
+rule-26 `[R-DELETE]` candidate — armed-by-default *and* rule-13-inadmissible on
+its own docstring's account (EIA-923 petroleum **receipts**, a measured
+deliveries-to-tank outcome with no forward analogue). It joins nyiso-115's
+`campd_facility_outages` as the **second rule-26 candidate** in the same
+cross-lane queue and they should be decided together. Not done here because
+deletion touches a **NEISO backcast default** — a solve-affecting recipe change
+to 15 bundles' recorded configs — which is not a census's call. Second, smaller
+filing: `check_mechanism_matrix.py` could assert that a `scenarios.py:N`
+reference in a `def` resolves to a line actually defining a field; bare line
+numbers rot silently and are invisible to the ratchet.
+
+**(e) Keeper-id correction.** The prompt and §5.6's header both named
+`2026-07-31-neiso-72-hy-window`. The shard designates
+**`2026-08-03-neiso-caiso156-meter-screen`** (neiso-72 SUPERSEDED-NOT-RETRACTED
+at caiso-159). §5.6's header and body line are corrected; every number in this
+entry is read against the current keeper.
+
+**Governance.** 2023–2025 only; **no year outside the training window was
+read**. Holdout spend freeze untouched; NEISO's locked test remains SPENT and
+untouched (rule 22). No mechanism adopted, demoted or re-scoped; no parameter
+introduced or re-derived; the NEISO frontier declaration and the C3c owner
+routing (CHARTER-neiso75 §5) are exactly where neiso-76 left them. **This
+licenses nothing.**
+
+Next shorthand: **neiso-79.**

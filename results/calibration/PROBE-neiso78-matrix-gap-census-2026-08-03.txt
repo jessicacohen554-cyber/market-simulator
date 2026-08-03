@@ -1,0 +1,15 @@
+ScenarioConfig fields : 671
+matrix rows           : 181
+
+==============================================================================
+NEISO: keeper 2026-08-03-neiso-caiso156-meter-screen (671 config fields), 15 bundles scanned
+==============================================================================
+  family fields   20 | ABSENT    0 | prose-only    0 | ARMED-NO-CELL    0 | live-but-invisible    0
+  --- shared census EXCLUSIONS (declared false positives, SHARED_CENSUS_EXCLUSIONS) ---
+    weather_year
+
+==============================================================================
+SUMMARY
+==============================================================================
+ISO       family   absent   prose   armed-no-cell  shared-gap   invisible
+NEISO         20        0       0               0           0           0

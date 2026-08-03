@@ -57,10 +57,18 @@
       "default": 0.2,
       "keeper_value": 0.2,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -84,10 +92,18 @@
       "default": 0.018,
       "keeper_value": 0.018,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -111,10 +127,23 @@
       "default": -7.0,
       "keeper_value": -7.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        },
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -233,10 +262,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -260,10 +297,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -293,10 +338,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -355,10 +408,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -366,10 +427,18 @@
       "default": 1.0,
       "keeper_value": 1.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -393,10 +462,18 @@
       "default": 0.4,
       "keeper_value": 0.4,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -420,10 +497,18 @@
       "default": -7.0,
       "keeper_value": -7.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "neiso61_netrev_base",
         "neiso61_netrev_margin",
@@ -443,29 +528,9 @@
       ]
     }
   ],
-  "family_matrix_gaps_absent": [
-    "neiso_gas_derate_cap",
-    "neiso_gas_derate_slope_per_c",
-    "neiso_gas_derate_t0_c",
-    "neiso_oil_burn_budget",
-    "neiso_operable_capacity_availability",
-    "neiso_winter_fuel_inventory",
-    "neiso_winter_fuel_start_fill_bbl",
-    "neiso_winter_fuelsec_commit_frac",
-    "neiso_winter_fuelsec_min_stable_pct",
-    "neiso_winter_fuelsec_tmin_c"
-  ],
+  "family_matrix_gaps_absent": [],
   "family_prose_only": [],
-  "armed_on_keeper_with_no_cell": [
-    "neiso_gas_derate_cap",
-    "neiso_gas_derate_slope_per_c",
-    "neiso_gas_derate_t0_c",
-    "neiso_oil_burn_budget",
-    "neiso_winter_fuel_inventory",
-    "neiso_winter_fuelsec_commit_frac",
-    "neiso_winter_fuelsec_min_stable_pct",
-    "neiso_winter_fuelsec_tmin_c"
-  ],
+  "armed_on_keeper_with_no_cell": [],
   "shared_armed_on_keeper": [
     {
       "field": "capacity_market_clearing_by_iso",
@@ -2918,43 +2983,5 @@
   "shared_excluded": [
     "weather_year"
   ],
-  "live_but_invisible": [
-    {
-      "field": "neiso_oil_burn_budget",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "neiso61_netrev_base": true,
-        "neiso61_netrev_margin": true,
-        "neiso61_netrev_margin_2022": true,
-        "neiso64_meritguard_a1": true,
-        "neiso69_control": true,
-        "neiso69_shortpartial": true
-      }
-    },
-    {
-      "field": "neiso_winter_fuel_inventory",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "neiso61_netrev_base": true,
-        "neiso61_netrev_margin": true,
-        "neiso61_netrev_margin_2022": true,
-        "neiso64_meritguard_a1": true,
-        "neiso69_control": true,
-        "neiso69_shortpartial": true
-      }
-    },
-    {
-      "field": "unit_partial_outage_windows",
-      "default": false,
-      "keeper_value": false,
-      "n_bundles_nondefault": 1,
-      "bundles": {
-        "neiso69_shortpartial": true
-      }
-    }
-  ]
+  "live_but_invisible": []
 }
