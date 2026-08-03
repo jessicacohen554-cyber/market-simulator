@@ -27205,6 +27205,22 @@
       ]
     },
     {
+      "param_id": "scenario.exit_rate_limits",
+      "display_name": "Exit Rate Limits",
+      "value": false,
+      "unit": "",
+      "domain": "Capacity Expansion",
+      "tier": 1,
+      "source": "EIA-860 retired sheet (measured per-ISO max single-year thermal deactivation) x NREL ReEDS growth-constraint hard bound (200% of prior maximum), transferred from the entry side's ENTRY_GROWTH_LIMIT_MULTIPLE",
+      "source_date": "2026-08",
+      "page_or_table": "EIA-860 eia860_generator_retired_and_canceled (Status == 'RE'); NREL ReEDS Model Documentation 2025, growth-constraints section",
+      "url": "",
+      "notes": "GATED default-OFF. The exit half of the deactivation queue, chartered by owner decision D-8 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum F.1, signed 2026-08-03): queue LATENCY (retirement_execution_lag_*) and queue THROUGHPUT (this) are TWO mechanisms for rule 19 [R-ONE-MECH], so arming both is not a stacked floor -- the lag sets WHEN a decided unit becomes eligible to leave, this sets HOW MANY MW may leave in one year. Cap = retirement_config.EXIT_THROUGHPUT_LIMIT_MULTIPLE (2.0) x data.build_exit_throughput.max_annual_exit_gw(iso, vintage, EXIT_THROUGHPUT_WINDOW_YEARS=11). Externally identified, never fitted (rule 13 [R-MEASURED]); re-derives ONLY on an EIA-860 vintage update, never because a residual moved (rule 23 [R-FROZEN-DERIVE]). Measured seeds at vintage 2023: ERCOT 4.42 GW/yr, PJM 5.24, MISO 7.46, CAISO 2.39, NEISO 0.98, NYISO 0.31 -- and for ERCOT/PJM/MISO the seed is invariant across the 11-yr window, the entry side's 10-yr window, and the unwindowed full retired record, so the windowing choice carries no DOF there. The 2.0 multiplier is the entry side's own value transferred rather than chosen: FFR-3C 1.4's finding is the ASYMMETRY (exit uncapped while entry is capped at 2x its measured record), so one envelope binds both halves of one queue and no exit-side multiplier exists to fit. An ISO with no measured deactivation carries NO cap (rule 25 neutral fallback -- a missing measurement must not invent a zero that forbids exit). Pipeline retirement rule only; default off is byte-identical.",
+      "old_repo_location": "",
+      "last_verified": "2026-08-03",
+      "flags": []
+    },
+    {
       "param_id": "scenario.fixed_om_gas_cc_ccs",
       "display_name": "Fixed Om Gas Cc Ccs",
       "value": 25.0,
