@@ -467,6 +467,51 @@ same §3.5 censoring that pushed NEISO's storage to zero also trims NYISO's wind
 session cannot separate "better entry decisions" from "entry deferred past the scoring
 window" without the control arm named above.
 
+### 3.8 Refreshed FC-3 — PJM, where D-1 fires hard and REPRODUCES FFR-3C's split
+
+Determination **unchanged: FC-3 FAIL**. But PJM is the leg where the retirement screen
+actually fires, and what it does is the D-1 signature — recomposing *which fuel* exits
+while making the *level* worse.
+
+| metric | actual | OLD (`pjm-2021-2025-curve-ff2c`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 11.121 | 18.157 FAIL | **22.415** FAIL | **worse level** (2.0× actual) |
+| `retire.unit_recall_gt300` | — | **FAIL** | **PASS** | **better membership** |
+| `retire.false_retire` | — | FAIL | FAIL | unchanged |
+
+Per-fuel model GW — a wholesale recomposition, not a rescaling:
+
+| fuel | OLD | NEW |
+|---|---|---|
+| **coal** | 0.0 | **18.309** |
+| **gas_st** | 10.358 | **0.0** |
+| **gas_ct** | 3.693 | **0.0** |
+| nuclear | 4.097 | 4.097 (announced — unmoved) |
+| biomass | 0.009 | 0.009 |
+
+**This is attributable to D-1, and the corroboration is external.** FFR-2B measured the
+legacy→pipeline flip in PJM **against a paired control** and recorded *"PJM gas_st 10.358
+→ 0.0 and gas_ct 11.379 → 0.0, coal 3.530 → 14.756, recall 9/17 → 13/17"*. This session's
+independent, post-epoch, shipped-posture re-solve reproduces that signature — **`gas_st`
+10.358 → 0.0 to the megawatt** — plus the recall band flipping FAIL → PASS. The
+mechanism, the direction and the magnitude all match a result that *was* controlled, so
+naming D-1 here is not a bare inference from one arm.
+
+**⚠ It independently reproduces FFR-3C's MEMBERSHIP-vs-CALENDAR split** (§4 of that
+memo), which is the finding the owner's decision rests on:
+
+| FFR-3C term | its verdict | what PJM's refreshed FC-3 shows |
+|---|---|---|
+| *which* units retire | **REAL** economics; the corrected rule identifies them better | `unit_recall_gt300` **FAIL → PASS** |
+| *when* they leave / how deep | **GRAIN ARTIFACT** | `retire.total_gw` **18.157 → 22.415** against 11.121 actual — the level gets **worse** |
+
+So the same leg gets **more right about membership and more wrong about depth**, in one
+measurement, exactly as FFR-3C's split predicts. **This is corroboration of the existing
+attribution, not a new one, and it changes nothing about the owner's decision** — rule 1
+`[R-STRUCT]`: a structurally better mechanism is not reverted because a level band moved
+against it, and the depth residual is the chartered G-31 lane's (Addendum F.1), not
+this session's to touch.
+
 ---
 
 ## 4. T1-X crossover fold
