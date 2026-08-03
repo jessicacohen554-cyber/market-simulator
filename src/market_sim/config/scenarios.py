@@ -187,6 +187,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "entry_vre_capacity_revenue",
     "entry_rate_limits",
     "entry_commissioning_lag",
+    # FFR-3F exit-throughput cap (GATED default-off): dropped from the hash at
+    # its default so every pre-existing cache key is byte-stable; an armed run
+    # bounds the deactivation queue and so gets a distinct key. Owner decision
+    # D-8 (ffr-owner-sitting-2026-08-02.md Addendum F.1).
+    "exit_rate_limits",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -644,6 +649,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_vre_capacity_revenue": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
+    "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
     "federal_ces_premium_escalation_real": "0.0",
@@ -1561,9 +1567,21 @@ class ScenarioConfig:
     retirement_fom_multiplier_nuclear: float = 1.0
     # (staged_oversupply_thinning / staged_thinning_max_gw_per_year were
     # DELETED at the FF-1A flip — owner D2, rule 26: deleted, not zeroed. The
-    # R-NEW execution-lag pipeline below carries the same physical
-    # deactivation queue once; a throughput/rate cap on top would double-count
-    # it — rule 19; RC-0B §a.6; ff-retirement-rule-redesign-2026-07.md §3.3.)
+    # stated reason was that "the R-NEW execution-lag pipeline below carries
+    # the same physical deactivation queue once; a throughput/rate cap on top
+    # would double-count it" — rule 19; RC-0B §a.6;
+    # ff-retirement-rule-redesign-2026-07.md §3.3.
+    #   THAT REASONING IS SUPERSEDED. Owner decision D-8, signed 2026-08-03
+    # (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum F.1), ruled that
+    # queue LATENCY and queue THROUGHPUT are TWO mechanisms for rule-19
+    # purposes, on FFR-3C §1.2's measurement: the execution lag is a rigid
+    # time-shift operator, so with only the latency term exit-wave width is
+    # invariant at exactly one year no matter how many units fail. The
+    # deletion removed the only throughput model and left the latency model
+    # standing alone. The throughput half is restored — as a NEW, externally
+    # identified, default-off gate, not a revival of the deleted fitted knob
+    # (rule 26 stands: staged_oversupply_thinning is gone for good) — by
+    # exit_rate_limits below.
     retirement_rule: str = "pipeline"  # "legacy" | "pipeline" (FF-1A, owner
     # D1 = Option B, 2026-07-17 — ff-retirement-rule-redesign-2026-07.md
     # §3.6/§6). DEFAULT FLIPPED "legacy" -> "pipeline" by owner decision D-1,
@@ -1615,6 +1633,44 @@ class ScenarioConfig:
     # inherits retirement_execution_lag_gas_cc when None (no CCS retirement
     # exists anywhere, §a.4; the inheritance is the §5 disposition, not a
     # tunable).
+    exit_rate_limits: bool = False  # GATED, default-OFF. The exit half of the
+    # deactivation queue (FFR-3F; owner decision D-8, signed 2026-08-03 —
+    # ffr-owner-sitting-2026-08-02.md Addendum F.1: queue LATENCY and queue
+    # THROUGHPUT are TWO mechanisms for rule 19, so this may be armed ALONGSIDE
+    # retirement_execution_lag_* without constituting a stacked floor).
+    #
+    # THE RULE-19 SEAM, stated explicitly because that is what D-8 turned on:
+    # the execution lag owns WHEN a decided unit becomes eligible to leave
+    # (a rigid per-fuel time shift, decided_year + L_f); this cap owns HOW MANY
+    # MW may actually leave in one year. They cannot double-count because they
+    # act on different quantities in sequence — the lag decides membership of
+    # the year's DUE set, the cap decides how much of that due set is
+    # processed. A unit deferred by the cap STAYS PIPELINED and executes in a
+    # later year through the identical "execution deferred, re-latched next
+    # year" path the reliability floor already uses (pipeline component 5), so
+    # no new deferral mechanism is introduced either (rule 19 again).
+    #
+    # Identification is EXTERNAL and measured, never fitted (rule 13
+    # [R-MEASURED], rule 23 [R-FROZEN-DERIVE]): the ISO's maximum single-year
+    # thermal deactivation from the EIA-860 retired sheet at the run's vintage
+    # (data.build_exit_throughput.max_annual_exit_gw, trailing
+    # EXIT_THROUGHPUT_WINDOW_YEARS window), times
+    # EXIT_THROUGHPUT_LIMIT_MULTIPLE (2.0 — the entry side's own
+    # ENTRY_GROWTH_LIMIT_MULTIPLE, transferred rather than chosen, so ONE
+    # envelope binds both halves of one queue; config/retirement_config.py).
+    # Measured seeds at vintage 2023: ERCOT 4.42 GW/yr -> 8.84 cap, PJM 5.24
+    # -> 10.49, MISO 7.46 -> 14.92. WINDOW, DRIVER AND FORWARD STORY (rule 17
+    # [R-FLOOR-WINDOW] analogue): the driver is RTO deactivation-queue
+    # processing capacity (deactivation studies, RMR determinations,
+    # decommissioning logistics); it may bind ONLY in a year whose decided-and-
+    # due exit volume exceeds 2x the ISO's historical single-year record, so it
+    # is inert over the historical window by construction (the seed IS that
+    # record); and it regenerates in a forecast year from the EIA-860 vintage,
+    # rising automatically if a future edition records a larger deactivation
+    # year. An ISO with no measured deactivation carries NO cap (neutral
+    # fallback, rule 25 [R-ISO-SCOPE] — a missing measurement must not invent a
+    # zero that forbids exit). Pipeline rule only; a no-op under
+    # retirement_rule="legacy". Default off is byte-identical.
     limited_foresight_dispatch: bool = False  # GATED, default-OFF (G-30 in-year
     # scarcity fix). When True, the in-year dispatch LP is denied perfect annual
     # foresight for flexible resources: storage/hydro cannot bank energy across
@@ -10998,6 +11054,7 @@ TIER_TAGS: dict[str, int] = {
     "entry_vre_capacity_revenue": 1,
     "entry_rate_limits": 1,
     "entry_commissioning_lag": 1,
+    "exit_rate_limits": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "cc_committed_hr_mult": 3,
