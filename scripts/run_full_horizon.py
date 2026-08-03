@@ -59,6 +59,9 @@ from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
 from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
+from scripts.lib.forecast_posture import (  # noqa: E402
+    shipped_capacity_clearing_by_iso,
+)
 from market_sim.config.schedulable import (  # noqa: E402,F401  (re-export)
     MAX_UNAUTHORIZED_SOLVE_YEARS,
     assert_schedulable,
@@ -145,21 +148,30 @@ def reference_config(
     ``correlated_forced_outage=True``, ``entry_lookahead_reprice=True``) are the
     ScenarioConfig defaults and therefore already active here (plan §2.1a c/d/e).
 
-    ``golden_posture`` (FF-3E) layers on the ONE §2.1a decision the defaults do
-    NOT carry: decision (a), per-ISO capacity-market clearing ON for every ISO
-    with a real capacity market (PJM/MISO/NYISO/NEISO/CAISO; energy-only ERCOT
-    stays OFF). Executed here through ``capacity_market_clearing_by_iso`` (the
-    FF-2C per-ISO seam), so a golden solve launched through this runner takes the
-    frozen §2.1a posture instead of the pre-flip probe posture. Default False =
-    byte-identical to the P-3A probe (the field stays ``None``); the constant is
-    imported lazily from the FF-3E battery, the single authoritative encoding of
-    the §2.1a decision, so this module's import time is unchanged.
+    ``golden_posture`` (FF-3E) carries §2.1a decision (a), the per-ISO
+    capacity-market clearing gate, through ``capacity_market_clearing_by_iso``
+    (the FF-2C per-ISO seam). Since owner decision **C.4(a) B1** (signed
+    2026-08-03) it reads the SHIPPED ``ScenarioConfig`` field via
+    ``scripts.lib.forecast_posture`` — the ONE reader — instead of the parallel
+    ``GOLDEN_CMC_BY_ISO`` constant, which is DELETED (rule 26).
+
+    **This changes what a --golden-posture NYISO leg solves.** The deleted
+    constant carried ``NYISO: True``; the shipped field deliberately omits
+    NYISO ("excluded pending re-calibration"), so it resolves curve-**OFF**.
+    Every prior --golden-posture NYISO leg therefore solved a curve-ON posture
+    production does not run — audit FR-14 in the T1-F lane, and the signature
+    states the correction explicitly: "NYISO must resolve curve-OFF, matching
+    production." Every other ISO's resolved gate is unchanged.
+
+    Default ``False`` stays byte-identical to the P-3A probe (the field stays
+    ``None``). With it True the value is now identical to the inherited
+    default — which is the point of C.4(a): golden posture and shipped posture
+    are one answer, not two. It remains explicit so the run's config records
+    the posture it ran.
     """
     cmc_by_iso = None
     if golden_posture:
-        from scripts.ff_readiness_battery import GOLDEN_CMC_BY_ISO
-
-        cmc_by_iso = dict(GOLDEN_CMC_BY_ISO)
+        cmc_by_iso = shipped_capacity_clearing_by_iso()
     # D-1 / D-2 arms (audit FR-4 / FR-5). ``None`` means INHERIT THE SHIPPED
     # ScenarioConfig DEFAULT — the field is simply not passed. FFR-2B wrote
     # these as literal "legacy"/False mirrors of the then-shipped defaults, with
