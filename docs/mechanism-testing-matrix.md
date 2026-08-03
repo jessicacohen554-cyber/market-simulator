@@ -646,15 +646,38 @@ rule-13-admissible mechanism available to carry it.
 >      years) and ship SP15 midday solar north past the real 3,000 MW Path-26
 >      limit, suppressing the measured NP15-over-SP15 premium. Registered on
 >      `measured_interface_limits`.
->    - **`caiso_per_year_import_caps`** — per-year published LCT pocket import
->      caps (LA_BASIN 12,008/15,224/15,174, SDGE 1,436/2,074/2,071 MW) replacing
->      the static 2023 tightest-year bake the SP15 split froze in. Registered on
->      `lcr_tsl_published` (CAISO cell minted `U`).
+>    - **`caiso_per_year_import_caps`** — ~~per-year published LCT pocket import
+>      caps~~ **CLOSED (TESTED) 2026-08-03 by caiso-162; CAISO cell `U` → `O`.**
+>      The lever was tested and works, but the headline was a **wiring defect**:
+>      `apply_caiso_local_import_limits` had **no call site in the backcast
+>      lane** — it was invoked only from `runner.py:1627` inside
+>      `run_scenario_iso`, the *forecast* path — so the field was structurally
+>      unreachable from every calibration solve, including via the
+>      `ScenarioConfig` field this queue entry assumed worked. Caught because
+>      the treatment arm recorded the flag `true` and came back **byte-identical
+>      to its control**, with pocket flows pinned at exactly the static
+>      12,008/1,436 MW. **Prices alone would have written a false `I`.** Fixed in
+>      `run_calibration.py`; re-solved. Measured: 2023 byte-identical (provable
+>      no-op, the zero-delta control), 2024 −0.167% and 2025 −0.124% of level,
+>      C3a-2025 +12.1% → +12.0%, zero gate flips. Bounded ex ante at ≤0.22 pp of
+>      the 12.2 pp C3a residual, so it **cannot** close that gate and does **not**
+>      materially undermine the caiso-141 A2 attribution. Kept under rule 14
+>      (published beats frozen estimate regardless of fit); **recommended for
+>      promotion**, which is a separate governance act. Evidence:
+>      `FINDING-caiso162-per-year-import-caps-2026-08-03.md`,
+>      `PRECHECK-caiso162-per-year-import-caps-2026-08-03.md` + ADDENDUM A.
+>      **Standing lesson:** a `run_config.json` recording a mechanism as armed is
+>      not evidence the LP saw it — confirm a **call site exists on the lane
+>      being solved**, and verify on a **flow/observable**, not on price.
 >
->    Both are **default-off, armed in zero bundles**. A session taking either
+>    `caiso_asymmetric_path_ratings` remains **default-off, armed in zero
+>    bundles** and untested. A session taking it
 >    pre-registers it as its own single-delta arm (gates + kills + no-tuning
 >    clause, pushed **before** solving) and honours rule 16 — 2023–2025 in ONE
->    bundle. Neither was solved here: a census does not test levers.
+>    bundle. (The "neither was solved here" note belonged to the caiso-161
+>    census; `caiso_per_year_import_caps` has since been solved and closed by
+>    caiso-162 above, leaving the asymmetric-path item as the queue's only
+>    untested member.)
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
