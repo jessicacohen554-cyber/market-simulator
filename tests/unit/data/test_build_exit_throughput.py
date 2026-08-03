@@ -15,6 +15,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import pandas as pd
 
@@ -45,9 +46,13 @@ class TestMaxAnnualExit(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.dir = Path(self._tmp.name)
+        # Stands in for the canonical release in the fallback tests, so they
+        # never read the real data/raw tree.
+        self._canon = tempfile.TemporaryDirectory()
 
     def tearDown(self):
         self._tmp.cleanup()
+        self._canon.cleanup()
 
     def _write(self, retired: pd.DataFrame, plants: pd.DataFrame) -> None:
         retired.to_parquet(
@@ -139,8 +144,33 @@ class TestMaxAnnualExit(unittest.TestCase):
         )
         self.assertIsNone(max_annual_exit_gw("NYISO", 2023, 5, self.dir))
 
-    def test_missing_sheets_return_none(self):
-        self.assertIsNone(max_annual_exit_gw("ERCOT", 2023, 5, self.dir))
+    def test_reduced_vintage_dir_falls_back_to_the_canonical_release(self):
+        # The committed vintage_<year>/ directories are REDUCED sets and the
+        # 2023 vintage ships no retired sheet at all, so a vintage-addressed
+        # hindcast would silently get NO cap. The fallback is as-of-safe
+        # because the window bound is on RETIREMENT YEAR, not publication
+        # vintage: a canonical sheet contributes no post-cutoff event.
+        canonical = Path(self._canon.name)
+        _retired([(100, 700.0, "BIT", "ST", 2018, "RE")]).to_parquet(
+            canonical / "eia860_generator_retired_and_canceled.parquet", index=False
+        )
+        _plants([(100, "ERCO")]).to_parquet(
+            canonical / "eia860_plant.parquet", index=False
+        )
+        with mock.patch("market_sim.data.build_exit_throughput.EIA_860_DIR", canonical):
+            # self.dir is an empty "reduced vintage" directory.
+            self.assertAlmostEqual(max_annual_exit_gw("ERCOT", 2023, 11, self.dir), 0.7)
+            # The window still bounds the fallback: a 2018 event is out of a
+            # 3-yr window ending 2023, so the as-of cut is enforced by the
+            # window and not by which directory the sheet came from.
+            self.assertIsNone(max_annual_exit_gw("ERCOT", 2023, 3, self.dir))
+
+    def test_missing_sheets_everywhere_return_none(self):
+        with mock.patch(
+            "market_sim.data.build_exit_throughput.EIA_860_DIR",
+            Path(self._canon.name),
+        ):
+            self.assertIsNone(max_annual_exit_gw("ERCOT", 2023, 5, self.dir))
 
 
 if __name__ == "__main__":
