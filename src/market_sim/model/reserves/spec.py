@@ -342,6 +342,46 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     },
 }
 
+# --- NYISO SENY 30-minute demand curve: the published INCREMENT tier --------
+# The SOM sentence transcribed above decomposes the SENY 30-minute product into
+# TWO published tiers, and ``NYISO_RCPF_LOCATIONAL`` carries only the first:
+#   * a BASE of "at least 1,300 MW" for all hours at **$500/MW** — the
+#     ``("seny_30min_total", 1300.0, 0.0, 500.0)`` row above;
+#   * an ADDITIONAL condition-varying increment, binding a subset of hours, at
+#     **$40/MW** — the requirement ABOVE that 1,300 MW base, which the #1344
+#     measured as-enforced hourly series (``nyiso_dynamic_reserve_requirements``)
+#     already puts on the reserve balance row (1,300 MW HB0-5, 1,550 MW HB6,
+#     1,800 MW HB7-21, 1,550 MW HB22, 1,300 MW HB23; zero in Thunderstorm
+#     Alerts). The model enforces that increment as a REQUIREMENT and has never
+#     PRICED it: its whole shortfall is charged against the $500 base curve.
+# The 2023 SOM p. A-132 states the pair as one object — "SENY $500+$40" — in the
+# same table that gives the NYCA 30-minute 9-step $40..$750 curve, as the
+# as-enforced 2022-2023 curves (transcribed in NYISO_RCPF_EAST_FAMILIES below).
+#
+# LEVEL PROVENANCE — the $40 is NOT a new number and is NOT derived here. It is
+# the SAME NYISO Ancillary Services Manual §6.8 item 12 already pinned for the
+# East 30-minute family below: "Eastern, **Southeastern**, New York City, or
+# Long Island 30-Minute Reserves ... shall be $40/MW" — the clause names
+# Southeastern (SENY) explicitly, and item 2 does the same for the spinning
+# tier. Same vintage trail: $25 in the July-2019 ASM, $40 from the July-2021
+# reserve-procurement enhancement package (FERC accepted 2021-06-23, effective
+# 2021-07-13 — the same regime change that introduced the SENY hourly steps), so
+# the $40 regime spans ALL of 2023-2025.
+#
+# MEASURED CORROBORATION, ex ante and with no solve spent (nyiso-117,
+# results/calibration/nyiso117_seny_rcpf_curve_screen.json): the isolated
+# SENY-only 30-minute adder on NYISO's OWN posted zonal DA prices caps at
+# $23.92/$30.37/$40.00 in 2023/24/25, with 52 hours of 2025 at EXACTLY $40.00
+# and ZERO hours above it in any year — the published increment realised as an
+# atom at its ceiling. The $500 base is never reached in 26,301 hours, so the
+# BASE tier's curve shape stays UNIDENTIFIED by that instrument and is left
+# exactly as it is (the nyiso-115 discipline: an unidentified shape keeps the
+# ramp). This constant adds the missing tier; it re-levels nothing.
+NYISO_SENY_30MIN_INCREMENT_RCPF: float = 40.0
+
+#: The NYISO locational family carrying that two-tier published curve.
+NYISO_SENY_30MIN_FAMILY: str = "seny_30min_total"
+
 # The published NYC locational families whose demand curve is a single STEP at
 # the RCPF rather than the linear ramp ``critical_mw = 0`` builds
 # (``nyiso_nyc_rcpf_step_curve``). MEASURED, ex ante and with no solve spent, on
@@ -2679,6 +2719,14 @@ def _nyiso_design(
       ``or`` in that guard is boolean, so the global flag finds nothing left to
       scale and does NOT double-apply (nyiso-118 K-A, discharged ex ante).
 
+    ``config.nyiso_seny_rcpf_increment_step`` (default off) is a SEPARATE
+    mechanism on the same family: it adds the published SENY $40/MW INCREMENT
+    tier the model has never carried, so the requirement above the 1,300 MW
+    published base prices at $40 instead of climbing the $500 base ramp. It
+    supersedes the span translation FOR SENY ONLY (the two-tier construction
+    carries the hourly requirement natively, in the increment band); every
+    other family's span behaviour is untouched.
+
     Rule-19 reconciliation: the post-solve RCPF overlay (``results.rcpf``,
     ``config.nyiso_rcpf_enabled``) prices the same phenomenon these in-LP
     families do. Enabling both is a hard error — the overlay is the
@@ -2700,6 +2748,9 @@ def _nyiso_design(
         )
 
     measured_step_span = bool(getattr(config, "nyiso_ordc_measured_step_span", False))
+    # Published SENY two-tier curve ($500 base + $40 increment) — see the
+    # branch in the family loop below and NYISO_SENY_30MIN_INCREMENT_RCPF.
+    seny_increment = bool(getattr(config, "nyiso_seny_rcpf_increment_step", False))
     # Families whose ORDC step widths translate with their hourly requirement.
     # The global flag opts in every measured family; the published LI diurnal
     # family opts itself in below (its two levels ARE the published curve span).
@@ -2869,7 +2920,56 @@ def _nyiso_design(
             # zonal prices show it applied (NYISO_RCPF_STEP_CURVE_FAMILIES).
             crit = req
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
-        if name in dynamic_req and (measured_step_span or name in span_scaled):
+        if seny_increment and name == NYISO_SENY_30MIN_FAMILY:
+            # PUBLISHED TWO-TIER SENY CURVE (nyiso_seny_rcpf_increment_step).
+            # The SOM states the SENY 30-minute product as a $500/MW base of
+            # "at least 1,300 MW for all hours" PLUS an additional
+            # condition-varying increment at $40/MW (2023 SOM p. A-132 prints
+            # the pair as "SENY $500+$40"). The model enforces that increment
+            # as part of the requirement — the #1344 measured hourly series is
+            # 1,550/1,800 MW for most of the day against a 1,300 MW base — but
+            # has never PRICED it: the whole shortfall is charged against the
+            # base curve, whose very first rung ($500/8 = $62.50) already sits
+            # above the ENTIRE measured $23.92/$30.37/$40.00 SENY envelope.
+            # This is a rule 14 [R-ACCURATE] OMISSION fix of the same class as
+            # nyiso-83/84's missing LI and East families — a published tier the
+            # model did not carry — not a re-levelling of the base (rule 23:
+            # the $500, its critical_mw = 0 and the n_ramp discretization are
+            # untouched, and the base tier's shape is UNIDENTIFIED by the
+            # posted-price instrument, so it keeps the ramp).
+            #
+            # Construction: shortfall bands ascend cheapest-first, so the
+            # increment tier — the requirement ABOVE the published base — is
+            # the shallowest band and prices FIRST at the published $40, and
+            # only a shortfall deep enough to eat into the 1,300 MW base
+            # reaches the base ramp. Total step width stays EXACTLY the hour's
+            # requirement (the identity nyiso_ordc_measured_step_span restored)
+            # in every hour, including the Thunderstorm-Alert hours where the
+            # measured requirement is zero: the base tier is clipped to
+            # min(1300, requirement[t]) and the increment band is
+            # max(0, requirement[t] - 1300), which sum to requirement[t] for
+            # ANY requirement, above or below the base.
+            #
+            # Rule 19 [R-ONE-MECH] reconciliation with
+            # nyiso_ordc_measured_step_span: that flag exists to make a
+            # SINGLE-tier curve span the hour's measured requirement. This
+            # construction carries the hourly requirement natively — in the
+            # increment band, which is what the requirement above the base
+            # physically IS — so span-scaling on top would double-count it.
+            # SENY therefore takes this branch INSTEAD of the span branch,
+            # exactly as li_30min_total's family-scoped ladder already opts
+            # itself out of the global flag via `span_scaled`. The span flag's
+            # own behaviour, on SENY when this flag is off and on every other
+            # family always, is untouched.
+            base_mw = float(req)
+            req_t = np.asarray(requirement_arr, dtype=float)
+            base_scale = np.minimum(1.0, req_t / base_mw)  # (T,)
+            increment_w = np.maximum(0.0, req_t - base_mw)  # (T,)
+            p = np.concatenate(
+                (np.array([NYISO_SENY_30MIN_INCREMENT_RCPF], dtype=float), p)
+            )
+            w = np.vstack((increment_w[None, :], w[:, None] * base_scale[None, :]))
+        elif name in dynamic_req and (measured_step_span or name in span_scaled):
             # Construction-consistency fix (nyiso_ordc_measured_step_span):
             # the balance RHS above enforces the MEASURED requirement, so the
             # demand curve priced against it must span the measured MW too.
