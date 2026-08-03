@@ -19,7 +19,6 @@ from market_sim.data.datacenter import (
     add_datacenter_block,
     datacenter_block_mw_by_zone,
     datacenter_zone_shares,
-    electrification_shape,
     resolve_datacenter_mw,
     validate_datacenter_config,
 )
@@ -397,10 +396,8 @@ def test_unknown_path_label_raises():
 
 
 # --------------------------------------------------------------------------
-# 7. Electrification adder — deferred interface returns a zero (no-op) profile.
+# 7. Electrification layers — the deferred CX-4 stub is SUPERSEDED by the
+#    FF-G4 machinery (tests/unit/data/test_electrification_layers.py); the
+#    all-zero ``electrification_shape`` interface was removed with it
+#    (rule 26 [R-DELETE]).
 # --------------------------------------------------------------------------
-def test_electrification_shape_is_zero_stub():
-    cfg = ScenarioConfig(iso="ERCOT")
-    prof = electrification_shape(cfg, "ERCOT", 2035, 8760)
-    assert prof.shape == (8760,)
-    assert not prof.any()

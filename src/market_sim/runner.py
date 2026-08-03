@@ -35,7 +35,7 @@ from market_sim.config.scenarios import (
     resolve_demand_growth_rate,
     resolve_policy_bundle,
 )
-from market_sim.data.datacenter import add_datacenter_block
+from market_sim.data.datacenter import add_load_layers
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     Generator,
@@ -919,16 +919,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # deletion, not foresight). The price-driven screens still see only
         # prior-year outcomes (one-pass, rule 10).
         #
-        # The data-center flat load block (G-34) is folded in immediately after
-        # _scale_demand and before peak is taken, so every peak-anchored
-        # capacity screen (retirement floor, reserve-margin backstop) sees the
-        # reshaped DC load for free. When on, add_datacenter_block RELOCATES the
-        # block (energy-invariant, flattens peak) rather than double-counting the
-        # DC already in the total growth rate (FF-1C). Forecast-mode-only and
-        # default-off (datacenter_load_path == "off") => same array object,
+        # The additive load layers — the data-center flat block (G-34) plus the
+        # FF-G4 electrification end-use layers (heat_pump/ev) — are folded in
+        # immediately after _scale_demand and before peak is taken, so every
+        # peak-anchored capacity screen (retirement floor, reserve-margin
+        # backstop) sees the reshaped load for free. When on, add_load_layers
+        # RELOCATES each layer's energy (jointly energy-invariant: the total
+        # growth rate is DC- and electrification-inclusive, FF-1C/FF-G4) onto
+        # the layer's own shape rather than double-counting it. Forecast-mode-
+        # only; with every layer off/unsourced => same array object,
         # byte-identical.
         year_demand = _scale_demand(base_demand, wx_config, year)
-        year_demand = add_datacenter_block(year_demand, config, iso, year, zone_names)
+        year_demand = add_load_layers(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
         # CR-1 sloped capacity demand-curve reserve position (default-off gate).
@@ -1252,20 +1254,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # (year_base_demand) governs the solve, not the forecast scalar.
         if config.hindcast and not config.is_crossover_forward_year(year):
             # Measured/pinned historical load governs the hindcast LP; the
-            # forecast-only DC block is never added on top of measured actuals
-            # (and datacenter_load_path is "off" in any hindcast anyway). A
-            # crossover forward year (>= boundary) falls to the forecast branch
-            # below — growth-scaled demand, no measured overlay (FF-0E §2.2).
+            # forecast-only load layers are never added on top of measured
+            # actuals (and datacenter_load_path/electrification_path are "off"
+            # in any hindcast anyway). A crossover forward year (>= boundary)
+            # falls to the forecast branch below — growth-scaled demand, no
+            # measured overlay (FF-0E §2.2).
             year_demand = year_base_demand
         else:
-            # Same DC block relocation as the capacity-screen seam above (G-34),
-            # applied on the forecast branch so the LP and results path see the
-            # identical demand the screens saw. Default-off => same array,
-            # byte-identical.
+            # Same joint layer relocation as the capacity-screen seam above
+            # (G-34 + FF-G4), applied on the forecast branch so the LP and
+            # results path see the identical demand the screens saw. All
+            # layers off/unsourced => same array, byte-identical.
             year_demand = _scale_demand(base_demand, wx_config, year)
-            year_demand = add_datacenter_block(
-                year_demand, config, iso, year, zone_names
-            )
+            year_demand = add_load_layers(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
         # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors --

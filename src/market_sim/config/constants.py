@@ -2210,6 +2210,121 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {
     },
 }
 
+# --- FF-G4 Option-B electrification end-use layers (additive load layers) ---
+# docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md §4.2/§5 (the DECIDED
+# design; owner box D1 = Option B). Per-ISO, per-layer ANNUAL-ENERGY adoption
+# anchors, {iso: {layer: {path: {year: GWh}}}} — the same {year: value} anchor
+# grammar + low/mid/high path axis as DATACENTER_ADDITIONS_MW directly above,
+# resolved by data.datacenter.resolve_electrification_gwh with the identical
+# interpolation/fallback chain (piecewise-linear between anchors, flat-hold
+# outside; low/high collapse onto mid when unpublished — never an invented
+# band).
+#
+# Each layer is a real end-use with a published forward adoption trajectory and
+# a physical hourly shape (memo §4.2; rule 1 [R-STRUCT]); rule-13 [R-MEASURED]
+# admissibility: the anchors are published ISO forecast components that
+# regenerate every vintage and respond to changed conditions — never a realized
+# outcome fed back. Layers are INCREMENTAL TO THE WEATHER-YEAR BASE: the
+# weather year's measured 8760 already contains realized electrification load,
+# and the near-era DEMAND_GROWTH_RATES are TOTAL (electrification-inclusive),
+# so add_load_layers RELOCATES each layer's energy out of the peaky-grown total
+# onto the layer's own shape (energy-invariant, the DC-block algebra
+# generalized — no double-count; memo §4.2 "DC interaction: clean by design").
+# Anchor convention: {first-forecast-era year: 0.0, horizon year: published
+# component GWh}; 0.0 at the near anchor because the component is incremental
+# to the measured base (the source's own starting-year component value is the
+# D4-1 intake's refinement). Flat-hold after the last anchor (the
+# DATACENTER_ADDITIONS_MW convention) — a documented understatement past the
+# source horizon, never an invented extension.
+#
+# "No published component => ship {}" (memo §4.2, the CX-4 §2.2 rule verbatim):
+# an ISO with an empty layer dict is an honest no-op — the flat-scalar status
+# quo persists there until its source lands (D4 intake rows, memo §8-D4).
+# PROFILES are NOT stored here: the heat_pump layer's hourly shape is computed
+# from the run weather year's measured NOAA GHCN daily zone temperatures
+# (heating-degree construction, data.datacenter.heat_pump_layer_profile); a
+# layer with no profile source registered in data.datacenter refuses to arm
+# (fail-closed), which is why the ev anchors below ship {} — see each note.
+ELECTRIFICATION_LAYERS: dict[str, dict[str, dict[str, dict[int, float]]]] = {
+    # NEISO — ISO-NE 2026 CELT (May 2026), the memo §2.2 grounding row: heating
+    # electrification (HEF) 7,165 GWh/yr and 5,533 MW of the 2035/36 50/50
+    # winter peak; transportation electrification (TEF) 7,074 GWh/yr, 594 MW
+    # summer / 1,509 MW winter peak. Named standing source documents: CELT 2026
+    # forecast-data workbook; Final 2026 Heat Pump Forecast
+    # (heatfx2026final.pdf); Final 2026 Electric Vehicle Forecast
+    # (transfx2026final.pdf) — bot-walled manual downloads (memo §8-D4 item 1),
+    # so the anchors carry the memo's fetched [F] headline figures; the
+    # MW-by-year workbook refines them when the D4-1 intake lands (rule 23
+    # [R-FROZEN-DERIVE]: re-derive on source update only, never on a residual).
+    #
+    # heat_pump: mid-only ({2026: 0, 2035: 7165 GWh}); low/high collapse onto
+    # mid until the CELT scenario band is read (the resolver's documented
+    # fallback — never an invented band). THIS is the layer that produces the
+    # published ISO-NE winter-peaking flip (winter 2035/36) endogenously: its
+    # winter-concentrated heating-degree shape grows with the trajectory and
+    # the flip emerges from the driver instead of being painted on (memo §4.2).
+    # The CELT 5,533 MW winter-peak contribution is RECONCILIATION CONTEXT for
+    # the modeled contribution, never a fit target (rule 13 posture, memo §4.4).
+    #
+    # ev: {} — the TEF ADOPTION anchors are published (7,074 GWh / 594 MW
+    # summer / 1,509 MW winter at 2035, recorded here for the intake session),
+    # but NO NEISO-specific hourly CHARGING profile has been read from a
+    # fetched source (the TEF PDF is bot-walled; NREL EFS profiles are the D4-7
+    # intake). A shape we cannot cite is an open blocker, not a parameter
+    # (rule 5 [R-NO-MAGIC]) — the layer arms only when its profile source
+    # lands, so it ships {} rather than half-armed anchors.
+    "NEISO": {
+        "heat_pump": {
+            "mid": {2026: 0.0, 2035: 7165.0},
+        },
+        "ev": {},
+    },
+    # PJM — the 2026 Load Forecast Report publishes EV/electrification
+    # component attributions, but the component MW-by-year tables are in the
+    # bot-walled report PDF/XLSX (memo §2.2 / §8-D4 item 2, audit row M11) —
+    # nothing transcribed from memory (rule 5). Ships {} => honest no-op; the
+    # PJM shape story (energy growing FASTER than peak, load factor RISING) is
+    # carried by the flat DC block already armed via DATACENTER_ADDITIONS_MW —
+    # exactly the published direction (memo §2.1), so the absent layers are the
+    # smaller residual there.
+    "PJM": {"heat_pump": {}, "ev": {}},
+    # NYISO — 2026 Gold Book publishes PEAK-MW components (heat pumps +19 GW
+    # winter / +2 GW summer by 2050; EV winter ~1.4x summer, charging
+    # concentrated 22:00-03:00 peaking ~01:00) but the memo records no annual
+    # ENERGY component series [F], and converting peak MW to layer energy needs
+    # a load-factor assumption we refuse to invent. {} until the Gold Book
+    # energy tables land (memo §8-D4 item 3).
+    "NYISO": {"heat_pump": {}, "ev": {}},
+    # CAISO — the CEC CED 2025 publishes downloadable 8760 hourly demand
+    # forecast files (the planner's own future shape; memo §2.2) — the right
+    # CAISO treatment is that intake (D4 item 4), not hand anchors here.
+    "CAISO": {"heat_pump": {}, "ev": {}},
+    # MISO — 2026 LTLF publishes EV energy (62 TWh of the 426 TWh 20-yr growth)
+    # but no heat-pump split and no profile; DC dominates MISO's shape story
+    # (its own block above). {} until the D4 item 5 intake.
+    "MISO": {"heat_pump": {}, "ev": {}},
+    # ERCOT — no published end-use decomposition (large loads are embedded in
+    # the hourly LTLF files); growth is DC-dominated and the DC block carries
+    # most of the shape story (memo §5.5 — ERCOT is last in the rollout order).
+    "ERCOT": {"heat_pump": {}, "ev": {}},
+}
+
+# Balance-point (base) temperature for the heat_pump layer's heating-degree
+# hourly shape, deg C. 18.3 C = 65 F, the standard NOAA/EIA degree-day base
+# temperature (NOAA NCEI degree-day methodology; EIA heating-degree-day
+# definition uses the same 65 F base). The layer's hourly profile is
+# HDH(h) = max(0, base - T(h)) on the run weather year's measured NOAA GHCN
+# zone temperatures with the Parton & Logan (1981) diurnal reconstruction
+# (data.eia930.weather.diurnal_drybulb_from_daily) — a physics construction
+# that regenerates for any weather year and responds to changed conditions
+# (rule 13). Frozen physical input (rule 23): moves only on a source update.
+# DOCUMENTED LIMITATION (conservative): linear degree-hours omit cold-climate
+# heat-pump COP rolloff and resistance-backup switchover, so the profile
+# UNDERSTATES extreme-cold sharpening relative to the CELT HEF winter-peak
+# contribution; the refinement channel is a published cold-climate HP
+# performance curve (memo §8-D4 items 1/7), never a residual fit.
+HEAT_PUMP_BALANCE_POINT_C: float = 18.3
+
 # --- Fuel-price trajectories, availability shapes & carbon price paths ------
 # MOVED to config/fuel_trajectories.py (constants split, 2026-07-20).
 # All names re-exported at the top of this module.

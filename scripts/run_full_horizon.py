@@ -129,6 +129,7 @@ def reference_config(
     entry_vre_capacity_revenue: bool = False,
     entry_rate_limits: bool = False,
     entry_commissioning_lag: bool = False,
+    electrification_path: str = "off",
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -172,6 +173,10 @@ def reference_config(
         entry_vre_capacity_revenue=entry_vre_capacity_revenue,
         entry_rate_limits=entry_rate_limits,
         entry_commissioning_lag=entry_commissioning_lag,
+        # FF-G4 probe arm (audit FR-16, owner box §8-D2 pending): the
+        # electrification end-use layers stay at the shipped default "off"
+        # unless a T0/T1 probe arms them explicitly — no default moves here.
+        electrification_path=electrification_path,
     )
 
 
@@ -546,6 +551,18 @@ def main(argv: list[str] | None = None) -> int:
             "anti-cobweb."
         ),
     )
+    ap.add_argument(
+        "--electrification-path",
+        choices=["off", "low", "mid", "high"],
+        default="off",
+        help=(
+            "FF-G4 PROBE arm (audit FR-16, owner box §8-D2): additive "
+            "electrification end-use layers (heat_pump/ev) over the "
+            "weather-8760, relocated energy-invariantly like the DC block. "
+            "Default off = the shipped posture; arming is per-ISO owner "
+            "evidence-first (NEISO first, memo §8-D3)."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -567,6 +584,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
+        electrification_path=args.electrification_path,
     )
     summary = solve_and_summarize(
         config,
