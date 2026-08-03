@@ -253,19 +253,33 @@ class TestHarnessHelpers(unittest.TestCase):
         self.assertEqual(c.eia860_vintage_year, H.DEFAULT_VINTAGE_YEAR)
         self.assertEqual(c.weather_year, ScenarioConfig().weather_year)
 
-    def test_entry_dampers_default_off_and_arm_for_real(self):
-        """FFR-2B: the FF-2A damper flags arm their fields, or they don't exist.
+    def test_entry_dampers_inherit_shipped_default_and_arm_for_real(self):
+        """FFR-2B/FFR-3A: the damper flags arm their fields, or they don't exist.
 
         FFR-1D deleted the previous flags because they wrote ``true`` into a
         bundle's meta while arming nothing (audit FR-15). The replacement
         passthrough is only legitimate if the ScenarioConfig the solve runs on
-        actually carries the state — so assert both halves: default-off, and
-        armed-when-asked.
+        actually carries the state — so assert every half.
+
+        The unpassed half is now an INHERITANCE assertion, not a literal one.
+        FFR-3A executed owner decision D-2 (2026-08-02), arming
+        entry_rate_limits and entry_commissioning_lag by default; the harness
+        must READ the shipped default rather than mirror it, or a signed
+        default flip would be silently overridden in exactly the T1-H/T1-X legs
+        launched through this harness. Comparing against ``ScenarioConfig()``
+        instead of a hardcoded False is what pins that: this test now fails if
+        anyone re-introduces a mirrored literal, and keeps passing across any
+        future owner flip.
         """
+        shipped = ScenarioConfig()
         off = H.build_config("MISO", 2021, 2025, "realized")
-        self.assertFalse(off.entry_vre_capacity_revenue)
-        self.assertFalse(off.entry_rate_limits)
-        self.assertFalse(off.entry_commissioning_lag)
+        self.assertEqual(
+            off.entry_vre_capacity_revenue, shipped.entry_vre_capacity_revenue
+        )
+        self.assertEqual(off.entry_rate_limits, shipped.entry_rate_limits)
+        self.assertEqual(off.entry_commissioning_lag, shipped.entry_commissioning_lag)
+        # D-2' is signed HOLD, so the VRE leg is the one still shipping OFF.
+        self.assertFalse(shipped.entry_vre_capacity_revenue)
 
         on = H.build_config(
             "MISO",
@@ -279,6 +293,19 @@ class TestHarnessHelpers(unittest.TestCase):
         self.assertTrue(on.entry_vre_capacity_revenue)
         self.assertTrue(on.entry_rate_limits)
         self.assertTrue(on.entry_commissioning_lag)
+
+        # The explicit-OFF control path (--no-entry-*) must reach the config
+        # too, otherwise an armed default would be unfalsifiable.
+        forced_off = H.build_config(
+            "MISO",
+            2021,
+            2025,
+            "realized",
+            entry_rate_limits=False,
+            entry_commissioning_lag=False,
+        )
+        self.assertFalse(forced_off.entry_rate_limits)
+        self.assertFalse(forced_off.entry_commissioning_lag)
 
     def test_assert_forward_drivers_clean(self):
         c = H.build_config(
