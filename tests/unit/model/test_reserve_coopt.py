@@ -1605,6 +1605,64 @@ class TestPerGenReserveCoopt(unittest.TestCase):
         # RTO family met (zone sums >= 300).
         self.assertTrue(np.all(r.reserve_dispatch.sum(axis=0) >= 300.0 - 1e-6))
 
+    def test_per_family_shortfall_partitions_the_ordc_block(self):
+        # The per-family reserve sidecar's second column. Same two-family
+        # nested layout, but family 1's zone-1-only requirement (400 MW) now
+        # EXCEEDS zone 1's entire capability (200 MW cap == 200 MW ramp10), so
+        # exactly one family shortfalls. The gate is the LP identity
+        #   sum_{z in f} R[z] + shortfall[f] == requirement[f]
+        # per family per hour — which is what makes a persisted family dual
+        # interpretable (a positive dual at zero shortfall is the requirement
+        # binding on real headroom; a positive shortfall names the ORDC step
+        # that set the price). nyiso-113 §8: no bundle in any ISO could
+        # observe this before the reserve_family sidecar.
+        import scipy.sparse as sp
+
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([2000.0, 200.0], [10.0, 30.0], zone_idx=[0, 1])
+        incidence = sp.csr_matrix(np.array([[1.0], [-1.0]]))
+        r = solve_dispatch(
+            fleet,
+            np.array([[800.0] * T, [100.0] * T]),
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+            fuel_prices=np.ones((2, T)),
+            voll=2000.0,
+            incidence=incidence,
+            ttc=np.array([1000.0]),
+            reserve_requirement=np.vstack([np.full(T, 300.0), np.full(T, 400.0)]),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0, 300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 300.0, 190.0, 150.0]),
+            reserve_balance_zone_mask=np.array([[True, True], [False, True]]),
+            reserve_balance_ordc_counts=np.array([2, 2]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_ramp10=np.array([500.0, 200.0]),
+        )
+        self.assertEqual(r.status, "Optimal")
+        sf = r.reserve_shortfall_by_family
+        self.assertIsNotNone(sf)
+        self.assertEqual(sf.shape, (T, 2))
+        # The RTO family is met from the 2 GW zone-0 unit: no shortfall.
+        self.assertTrue(np.allclose(sf[:, 0], 0.0, atol=1e-6))
+        # Zone 1 can hold at most its 200 MW, so the subzone family is 200 MW
+        # short in every hour and prices at its own $850 second step.
+        self.assertTrue(np.allclose(sf[:, 1], 200.0, atol=1e-6))
+        self.assertTrue(np.allclose(r.reserve_price_by_family[:, 1], 850.0, atol=1e-6))
+        # The partition identity, per family.
+        self.assertTrue(
+            np.allclose(r.reserve_dispatch.sum(axis=0) + sf[:, 0], 300.0, atol=1e-6)
+        )
+        self.assertTrue(np.allclose(r.reserve_dispatch[1] + sf[:, 1], 400.0, atol=1e-6))
+        # The persisted (T,) reserve_price stays the cross-family SUM — the
+        # exact reason it cannot answer "which family bound" on its own.
+        self.assertTrue(
+            np.allclose(r.reserve_price, r.reserve_price_by_family.sum(axis=1))
+        )
+
     def test_plant_aggregated_column_shares_headroom(self):
         # Two tranches of ONE plant (cheap $10 600 MW + expensive $50 500 MW)
         # share an R column via pergen_col=[0,0]: the joint row sums BOTH

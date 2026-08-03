@@ -18,9 +18,14 @@ A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
     for every year and pass.
   * ``hourly/class_hourly_<year>.parquet`` + ``hourly/system_<year>.parquet``
     + ``hourly/storage_<year>.parquet`` + ``hourly/unit_hourly_<year>.parquet``
-    + ``hourly/network_<year>.parquet`` — committable slim sidecars (class-hour
+    + ``hourly/network_<year>.parquet`` + ``hourly/reserve_family_<year>.parquet``
+    — committable slim sidecars (class-hour
     dispatch aggregate; per-year system slices; per-tech storage; per-unit
-    dispatch AND availability cap; per-link/per-group flow, dual and limit).
+    dispatch AND availability cap; per-link/per-group flow, dual and limit;
+    per-reserve-family balance dual, requirement and ORDC shortfall — the only
+    artifact in which a LOCATIONAL reserve family's binding is observable,
+    since ``system``'s ``reserve_price`` is the cross-family sum broadcast
+    identically to every zone).
     ``dispatch/``, ``system.parquet`` and ``flows.parquet`` are gitignored by
     the slim-bundle rules, so KEEPER bundles commit ``hourly/`` and
     diagnostics read it instead of replaying the solve. Every sidecar is
@@ -1035,6 +1040,90 @@ def _system_frame(
             cols["ordc_adder"] = ordc_adder
         rows.append(pd.DataFrame(cols))
     return pd.concat(rows, ignore_index=True)
+
+
+def _reserve_family_frame(
+    year: int,
+    pass_label: str,
+    result,
+    design,
+) -> "pd.DataFrame | None":
+    """Return the long per-reserve-family hourly dual / requirement frame.
+
+    One row per (reserve family, hour): the family's own balance-row dual, its
+    hourly requirement MW, and its cleared ORDC shortfall MW.
+
+    **Why this exists (nyiso-113 §8, the standing all-ISO gap).** Until this
+    sidecar, NO bundle in ANY ISO persisted a per-family reserve dual.
+    ``DispatchResult.reserve_price_by_family`` is ``(T, n_fam)`` in memory (it
+    is what ``results/scarcity.py`` consumes) and was discarded at persist
+    time, while ``system_<year>.parquet``'s ``reserve_price`` is the per-hour
+    SUM across families, a single ``(T,)`` system-level series broadcast
+    IDENTICALLY into every zone's rows (:func:`_system_frame`). It therefore
+    has no zone index and no family index: a locational family's binding is
+    invisible in it *by construction*, and a gate written against it reads
+    inert whatever the LP did. nyiso-113's own pre-registered K3/K4 gates were
+    invalid for exactly this reason. Any question of the form "does family X
+    ever bind, and when" needs this frame or a re-solve.
+
+    The two measured columns answer different questions and are both needed:
+    ``dual`` is the family's shadow price (its marginal contribution to the
+    energy LMPs of its member zones through the shared-headroom rows), while
+    ``shortfall_mw`` says whether the price came from the requirement binding
+    against real headroom (shortfall 0) or from an ORDC step clearing
+    (shortfall > 0).
+
+    ``requirement_mw`` is read from the ``ReserveDesign``, not the LP — the LP
+    reports duals positionally and only the design knows which column is
+    ``li_30min_total`` and what its hourly (on/off-peak-stepped) requirement
+    was. Returns ``None`` when the co-opt is off, when the design is
+    unavailable (an older pickled ``p2_state`` predates the key), or when the
+    solved dual's family count disagrees with the design's — a shape mismatch
+    would mislabel every row, so no frame is preferable to a wrong one.
+    """
+    rpf = getattr(result, "reserve_price_by_family", None)
+    families = getattr(design, "families", None)
+    if rpf is None or not families:
+        return None
+    duals = np.asarray(rpf, dtype=float)
+    if duals.ndim != 2 or duals.shape[1] != len(families):
+        logger.warning(
+            "reserve-family sidecar skipped (%d, %s): dual shape %s vs %d "
+            "design families — refusing to mislabel families",
+            year,
+            pass_label,
+            duals.shape,
+            len(families),
+        )
+        return None
+    T = duals.shape[0]
+    shortfall = getattr(result, "reserve_shortfall_by_family", None)
+    sf = (
+        np.zeros_like(duals)
+        if shortfall is None
+        else np.asarray(shortfall, dtype=float)[:T, : duals.shape[1]]
+    )
+    rows = []
+    for f, fam in enumerate(families):
+        req = np.asarray(fam.requirement, dtype=float).ravel()[:T]
+        rows.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "pass": pass_label,
+                    "family": str(fam.name),
+                    "reserve_class": np.int8(int(fam.reserve_class)),
+                    "hour": np.arange(T, dtype=np.int32),
+                    "dual": duals[:, f].astype(np.float32),
+                    "requirement_mw": req.astype(np.float32),
+                    "shortfall_mw": sf[:, f].astype(np.float32),
+                }
+            )
+        )
+    df = pd.concat(rows, ignore_index=True)
+    for col in ("pass", "family"):
+        df[col] = df[col].astype("category")
+    return df
 
 
 def _storage_frame(
@@ -4738,6 +4827,7 @@ def solve_and_persist(
         # fleet build — never carried across the year boundary.
         unit_frames: list[pd.DataFrame] = []
         network_frames: list[pd.DataFrame] = []
+        reserve_family_frames: list[pd.DataFrame] = []
 
         for label, res in labelled:
             passes_seen.add(label)
@@ -4828,6 +4918,18 @@ def solve_and_persist(
             if _netf is not None:
                 network_frames.append(_netf)
             del _netf
+            # Per-family reserve duals + requirement + ORDC shortfall. Always
+            # written when the co-opt is on (not env-gated like the npz dump
+            # below): a locational reserve family's binding is not observable
+            # from any other committed artifact — system.parquet's
+            # reserve_price is the cross-family SUM broadcast to every zone
+            # (nyiso-113 §8). Tiny (n_fam x 8,760 rows) and committable.
+            _rfamf = _reserve_family_frame(
+                year, label, res, p2_state.get("reserve_design")
+            )
+            if _rfamf is not None:
+                reserve_family_frames.append(_rfamf)
+            del _rfamf
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
@@ -4966,9 +5068,10 @@ def solve_and_persist(
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
+        _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
-        del unit_frames, network_frames
+        del unit_frames, network_frames, reserve_family_frames
         gc.collect()
         # Hand the freed solve heap back to the kernel. gc.collect() returns the
         # LP's memory to glibc, but glibc holds large fragmented arenas instead
