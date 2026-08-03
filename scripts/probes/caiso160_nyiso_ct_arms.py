@@ -154,7 +154,9 @@ def main() -> None:
         if args.arm == "A":
             restore_artifact(stash)
             shutil.rmtree(stash, ignore_errors=True)
-            print(f"[arm A] restored post-fix artifact: md5 {md5(PROCESSED / STEMS[0])}")
+            print(
+                f"[arm A] restored post-fix artifact: md5 {md5(PROCESSED / STEMS[0])}"
+            )
 
 
 if __name__ == "__main__":
