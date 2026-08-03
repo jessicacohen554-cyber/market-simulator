@@ -204,3 +204,55 @@ locational prices.
   `ScenarioConfig` field, seeded `O`, and is updated to `K` in this session; the
   header keeper stamp re-stamped.
 * **Rule 27** — every push touching a file ≥ 300 lines blob-verified.
+
+---
+
+## §11 — C3c (brief item 4): both admissible routes closed on measurement, NO lever proposed
+
+The brief allowed C3c only if items 1–3 left room, and admitted exactly two
+routes: **(a)** Long Island genuinely tighter than the model has it — a load /
+import-limit / availability **data** question — or **(b)** a different oil offer
+level, which rule 1 forbids unless it arrives from **measured oil-offer data**.
+It also required a **source named in advance**. Both are now closed, with no
+solve spent.
+
+**Route (a), leg 1 — LOAD. Named source: NYISO's own posted zonal load actuals**
+(`data/raw/zone-specific-demand/NYISO/NYISO_load_actuals_<year>.csv`). The model
+does not under-carry Long Island:
+
+| year | LI model mean | LI measured mean | Δ | LI model peak | LI measured peak | Δ |
+|---|--:|--:|--:|--:|--:|--:|
+| 2023 | 2,212.8 | 2,212.8 | **−0.00 %** | 5,053.9 | 5,048.0 | **+0.12 %** |
+| 2024 | 2,254.7 | 2,254.8 | **−0.01 %** | 4,925.1 | 4,932.8 | **−0.16 %** |
+| 2025 | 2,278.2 | 2,278.2 | **−0.00 %** | 5,537.2 | 5,530.5 | **+0.12 %** |
+
+NYC matches to the same tolerance (−0.01 % … +0.00 % mean). **Long Island
+tightness is not a load question.**
+
+**Route (a), leg 2 — IMPORT LIMITS.** nyiso-114 already measured that both LI
+import paths saturate together in the pinned hours (`NYC>Long_Island` 275/275 MW,
+`NYISO_external>Long_Island` 1200/1200 MW). Those limits are the **published
+Zone-K LCR/TSL locality import cap**, already a measured input, and the matrix
+cell `nyiso_gj_locality_tsl` is **G** — governance-refused, so DO-NOT-REDO
+(rule 28a) bars re-opening it without new evidence, which this session does not
+have.
+
+**Route (a), leg 3 — AVAILABILITY.** Also already measured by nyiso-114: **596.9
+MW sits idle at the annual peak-price hour** (561.6 MW oil across 12 tranches plus
+35.3 MW of demand response), all *available* and all offered **above** the
+marginal rung. The capacity is present and unforced; it is a price question, not
+an availability one.
+
+**Route (b) — a different oil offer level — has no admissible source.** §Task-3 of
+this session established on the record (and set the matrix cells `G`
+accordingly) that **NYISO publishes no submitted-offer disclosure at any grain**.
+Without measured oil-offer data, changing the oil rung is exactly the residual
+tune rule 1 `[R-STRUCT]` forbids — the model already reaches $503.74 (2023) and
+$489.62 (2025) on the same fleet and the same curves, so the ladder demonstrably
+extends far above $300 and 2024 simply never calls the next rung.
+
+**Conclusion: C3c stays a ledgered caveat, unchanged at 3/0/14, and NO lever is
+proposed.** The novelty here is only that route (a)'s load leg is now *measured*
+rather than merely unexamined — it was the one leg nobody had checked, and it is
+clean. The exhausted-queue finding for the C3c / peak-half lane is untouched and
+still stands.
