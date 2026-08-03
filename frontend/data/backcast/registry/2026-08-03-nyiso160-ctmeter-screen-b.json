@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-nyiso160-ctmeter-screen-b",
+  "label": "nyiso160 ctmeter screen b",
+  "date": "2026-08-03",
+  "shorthand": "nyiso160-ctmeter-screen-b",
+  "definition": "caiso-160 arm B (treatment): nyiso-113 keeper recipe replayed at HEAD against the POST-FIX CT heat-rate artifact (hour-grain physical band applied, cap-weighted 12.4355). Zero config delta vs the keeper -- no --set. Cold solve. The promotion candidate.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-nyiso160-ctmeter-screen-b.js",
+  "bundle": "results/calibration/nyiso160_ctmeter_screen_B"
+}
