@@ -414,6 +414,38 @@ Two things this does **not** yet mean, both stated because they are easy to over
   is not that. It is exactly the kind of change that must be scored leave-one-year-out before
   anyone promotes anything (§5.5), and it is why nothing here is promoted.
 
+### 5.4b PJM throughput-armed pair — a measured null, and why
+
+The second half of PJM's pairing, and the last arm the charter asked for. Armed at the measured
+cap of **10,485 MW/yr** (5.243 GW × 2.0), cache key `cf02ef1bdccb4b1b` distinct from the
+control's `d9c20dd23ee81f0a`, `meta.json` recording `exit_rate_limits: true` from the config the
+solve ran on.
+
+| PJM 2024 screen | control (cap off) | armed (cap 10,485 MW/yr) |
+|---|--:|--:|
+| `decided` | 9 / 1.056 GW | **9 / 1.056 GW** |
+| `entry_capped` | 1,190 / 108.207 GW | **1,190 / 108.207 GW** |
+| **`throughput_deferred`** | 0 | **0** |
+| 2025 `reversed` | 9 / 1.056 GW | 9 / 1.056 GW |
+| executed economic exits | 0.000 GW | 0.000 GW |
+| reserve margin (2023/24/25) | −1.29 / −4.88 / −9.28 % | −1.29 / −4.88 / −9.28 % |
+| invariants | 0 FAIL, 0 WARN | **0 FAIL, 0 WARN** |
+| dispatch skill (C1 / C3a) | 12.230 / 18.843 · 0.318 / 49.688 / 2.564 | identical |
+
+**Identical, and the reason is a code path rather than a coincidence:** the cap acts on the
+year's **`due`** set — units that have reached `decided_year + L_f` — and
+`_apply_exit_throughput_cap` is only invoked `if exit_rate_cap_mw is not None and due`. PJM
+executes **0.000 GW** in every window year, so `due` is empty every year and the cap is never
+called. This was predictable from the code before the run; it is reported here because
+**predicted-inert and measured-inert are different claims**, and the charter asked for the
+measurement.
+
+**So the throughput cap is a measured NULL in BOTH test ISOs** — for the same underlying reason
+in each (nothing executes), reached by different routes (ERCOT never decides anything; PJM
+decides, then reverses). It has still never bound in a full solve. That is the honest state of
+Task 2's validation, and it is why §10.2 says its first real test needs a posture with
+executions.
+
 ### 5.5 Leave-one-year-out (rule 22)
 
 LOYO is **degenerate on this evidence, and that is the honest report rather than a fold table.**
