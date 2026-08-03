@@ -500,6 +500,7 @@ def run_year(
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
     caiso_per_year_import_caps: bool | None = None,
+    caiso_asymmetric_path_ratings: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -1233,6 +1234,10 @@ def run_year(
     if caiso_per_year_import_caps is not None:
         config = config.with_overrides(
             caiso_per_year_import_caps=caiso_per_year_import_caps
+        )
+    if caiso_asymmetric_path_ratings is not None:
+        config = config.with_overrides(
+            caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings
         )
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
