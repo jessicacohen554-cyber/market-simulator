@@ -1,0 +1,56 @@
+replaying results/calibration/caiso157_restore_B (CAISO [2023, 2024, 2025]) ...
+WARNING: eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+WARNING: CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+WARNING: CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+WARNING: CAISO TAC-area load for 2023 covers 744/8760 hours; uncovered hours use the sample-average zone shares
+INFO: solving CAISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: CAISO 2023: capacity_deliverability_limits — seam import cap set to 16055 MW (summed per-area import_limit, delivery year 2023)
+INFO: CAISO 2023: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: CAISO 2023: WECC corridor deliverability cap on 2 link(s) — measured p95 ATC proxy; median import DSW 5.2 GW / PNW 1.3 GW; midday tighter; export-direction cap on (evening net-export ~0 → no wheel-out): median export DSW 0.0 GW / PNW 1.4 GW
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+WARNING: CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+WARNING: CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: CAISO: measured power-only CHP heat rates applied to 57 generator(s) across 30 (plant, class) pair(s)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: CAISO nuclear unit-availability overlay (2023): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+WARNING: CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+WARNING: CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: unit-outage derate (CAISO 2023): 275 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 135 unit-months masked offline (mid-year COD / retirement), 11 unit(s) fully not-yet-built/retired
+WARNING: CAISO: CC plant 55985 fleet pmax sum 581.4 MW exceeds trusted bound 559.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (22.4 MW removed)
+WARNING: CAISO: CC plant 56041 fleet pmax sum 139.0 MW exceeds trusted bound 130.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (9.0 MW removed)
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: CAISO: measured power-only CHP heat rates applied to 57 generator(s) across 30 (plant, class) pair(s)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: CAISO 2023 hydro budget: backfilled 5 non-reporting plants (418.5 GWh) from 2024
+INFO: CAISO 2023 hydro budget: nameplate-aware rescale re-allocated 130.2 GWh over 70 clipped plant-months (0.0 GWh physically unattainable)
+INFO: CAISO 2023 hydro budget pinned to monthly target total 24401.6 GWh (was 24320.4 GWh)
+INFO: Loaded CAISO 2023 hydro budget: 171 plants, 24401.6 GWh annual, 6620 MW nameplate
+INFO: CAISO 2023: RoR split — 69/171 plants flat at their monthly water (12.2% of the 24.40 TWh budget; fleet flat base 148-509 MW by month; 1 plants unclassified -> shapeable)
+INFO: CAISO 2023: min-flow floor reconciled with the RoR split — fleet Q95 level reduced by the RoR flat base (148-509 MW by month) and allocated over the reservoir class only
+INFO: CAISO 2023: hydro min-flow floor on 102 units — fleet level 373-1593 MW by month (8.32 TWh, 34% of the 24.40 TWh budget)
+INFO: CAISO 2023: 171 hydro plants in LP (6620 MW, 24.40 TWh monthly budget)
+INFO: CAISO 2023: priced import/export node — 6 import tranches (12171 MW), 2 export sinks (15423 MW)
+INFO: CAISO nuclear unit-availability overlay (2023): 2 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: unit-outage derate (CAISO 2023): 275 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 146 unit-months masked offline (mid-year COD / retirement), 11 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2023: 81 generators priced from their own plant, 1149 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2023, daily): 1405 gas generators repriced at the measured hub spot in 12/12 months (winter max 24.75 $/MMBtu)
+INFO: gas offer net-revenue margin: 1275 tranches compressed at anchor 4.7964 $/MMBtu (median fixed margin 16.21 $/MWh, max 298.38)
+INFO: CAISO conditional offer surface: repriced 380 gas peak-rung rows across 4 net-load bins (tightest bin binds 263/8760 hours); P1-only, loose hours byte-identical
+INFO: CAISO 2023: firm import blocks shaped by the measured revealed base profile (DMM level × unit-mean (month × hod) median of measured corridor net imports; flat block replaced by an hour-varying capability) — capability clipped at each corridor's measured deliverability envelope (caiso-138)
+INFO: CAISO 2023: firm import blocks floored at their shaped capability (self-scheduled must-flow contracted base; MECH_FIRM_IMPORT) — floor clipped at the measured price-insensitive intertie ceiling from CAISO's own DAM bids (caiso-151)
+INFO: CAISO 2023: south-corridor surplus-clean import depth armed (WEIM clean transfer: measured depth-in-surplus 5312.0 MW net of the shaped firm block, surplus-trigger hours only, EF 0)
+INFO: CAISO 2023: south-corridor OVERNIGHT clean import depth armed (WEIM clean transfer: measured unconditional overnight depth 5870.0 MW net of the shaped firm block + surplus tranche, hod 0-5 measured-hub hours, EF 0, raw hub)
+INFO: CAISO 2023: south-corridor DAYTIME trigger-OFF clean import depth armed (WEIM clean transfer: measured daytime trigger-OFF depth 4994.0 MW net of the shaped firm block + surplus + overnight tranches, hod 6-17 measured-hub trigger-OFF hours, EF 0, raw hub)
+INFO: CAISO 2023: per-hub WECC intertie — two signed corridors (Malin/COI → NP15, Palo Verde/Path-46 → SP15), each priced at its OWN measured hub (per-hub basis + per-hub netting, arbitrage-free, one direction per hour per corridor) — firm/contracted tranches held at contract cost (caiso_perhub_firm_base)
+INFO: CAISO storage shape envelope (2023): belly(10-14) charge cap mean 4443 MW vs fleet power 7602 MW; evening(17-21) discharge cap mean 4702 MW
+INFO: CAISO 2023: hydro deliverability envelope on 171 units (evening p95 5578 MW)
