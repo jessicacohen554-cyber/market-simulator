@@ -56,6 +56,7 @@ import argparse
 import datetime as dt
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -80,18 +81,33 @@ CSV_BASE = (
 #: Train years only (CLAUDE.md rule 22).
 DEFAULT_YEARS = (2023, 2024, 2025)
 
-#: The endpoint answers a missing/unpublished operating day with a stub body
-#: (~31 bytes) rather than a 404 -- the same publication-gap pattern the
-#: sibling ``da-energy-offers`` and ``da-demand-bids`` READMEs document.
+#: The endpoint answers a missing/unpublished operating day either with a stub
+#: body (~31 bytes) or with a bare 404 -- the same publication-gap pattern the
+#: sibling ``da-energy-offers`` and ``da-demand-bids`` READMEs document.  A 404
+#: here is an ABSENT DAY, not a transport failure: it is recorded and skipped
+#: without the session refresh a real error triggers.
 MIN_REAL_BYTES = 5_000
 
 
+class DayNotPublished(Exception):
+    """The operating day is absent from the static historical-report tree."""
+
+
 def fetch_day(opener: urllib.request.OpenerDirector, day: dt.date) -> bytes:
-    """Fetch one operating day's import/export CSV, validating the preamble."""
+    """Fetch one operating day's import/export CSV, validating the preamble.
+
+    Raises:
+        DayNotPublished: the report tree has no file for this operating day.
+    """
     url = CSV_BASE % f"{day:%Y%m%d}"
     req = urllib.request.Request(url, headers={"Referer": REPORT_PAGE})
-    with opener.open(req, timeout=180) as resp:
-        body = resp.read()
+    try:
+        with opener.open(req, timeout=180) as resp:
+            body = resp.read()
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            raise DayNotPublished(f"{day:%Y-%m-%d}") from None
+        raise
     if len(body) >= MIN_REAL_BYTES and b"Import and Export" not in body[:200]:
         raise RuntimeError(f"unexpected response (not the impexp CSV) from {url}")
     return body
@@ -114,7 +130,7 @@ def main(argv: list[str] | None = None) -> int:
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     opener = _opener()
-    n_new = n_skip = n_err = n_empty = 0
+    n_new = n_skip = n_err = n_empty = n_absent = 0
     for year in args.years:
         day = dt.date(year, 1, 1)
         while day.year == year:
@@ -124,6 +140,10 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 try:
                     body = fetch_day(opener, day)
+                except DayNotPublished:  # a source gap, not a failure
+                    n_absent += 1
+                    day += dt.timedelta(days=1)
+                    continue
                 except Exception as e:  # transient endpoint hiccups: log, go on
                     print(f"ERROR {day}: {e}", flush=True)
                     n_err += 1
@@ -140,8 +160,8 @@ def main(argv: list[str] | None = None) -> int:
                 time.sleep(0.3)  # be polite to the public endpoint
             day += dt.timedelta(days=1)
     print(
-        f"done: {n_new} fetched ({n_empty} empty postings), "
-        f"{n_skip} present, {n_err} errors -> {RAW_DIR}"
+        f"done: {n_new} fetched ({n_empty} empty postings), {n_skip} present, "
+        f"{n_absent} not published (404), {n_err} errors -> {RAW_DIR}"
     )
     return 1 if n_err else 0
 
