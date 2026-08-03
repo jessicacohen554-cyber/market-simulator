@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from market_sim.config.paths import active_eia860_dir
+from market_sim.config.paths import EIA_860_DIR, active_eia860_dir
 from market_sim.data.fleet import BA_CODE_TO_ISO, _map_fuel_type
 
 logger = logging.getLogger(__name__)
@@ -99,6 +99,36 @@ def max_annual_exit_gw(
 
     plant_path = data_dir / "eia860_plant.parquet"
     retired_path = data_dir / "eia860_generator_retired_and_canceled.parquet"
+    if not retired_path.exists():
+        # The committed ``vintage_<year>/`` directories are REDUCED sets — the
+        # 2023 vintage ships 10 sheets and the retired sheet is not among them
+        # (only the canonical release carries it). Falling back to the
+        # canonical release is as-of-safe HERE and only here, because the
+        # window bound is on RETIREMENT YEAR, not on publication vintage:
+        # ``through_year`` already excludes every deactivation after the
+        # vintage cutoff, so the canonical sheet contributes no post-vintage
+        # EVENT. The residual exposure is reporting COMPLETENESS at the
+        # boundary year — a unit that retired in the cutoff year may be
+        # reported only in a later edition. Measured and immaterial for the
+        # ISOs this cap is armed on (FFR-3F §2.3): the binding maximum
+        # predates the 2023 boundary by 5-8 years in every case (ERCOT 4.42 GW
+        # in 2018, PJM 5.24 in 2015, MISO 7.46 in 2016), so no boundary-year
+        # revision can move the seed. Logged at WARNING, never silent.
+        canonical = EIA_860_DIR / retired_path.name
+        if canonical.exists() and canonical != retired_path:
+            logger.warning(
+                "exit throughput seed for %s: vintage dir %s has no %s "
+                "(reduced vintage set) — falling back to the canonical "
+                "release, which is as-of-safe because the window bound is on "
+                "retirement year (<= %d), not publication vintage",
+                iso,
+                data_dir,
+                retired_path.name,
+                through_year,
+            )
+            retired_path = canonical
+            if not plant_path.exists():
+                plant_path = EIA_860_DIR / plant_path.name
     if not plant_path.exists() or not retired_path.exists():
         logger.warning(
             "exit throughput seed unavailable for %s: missing %s",

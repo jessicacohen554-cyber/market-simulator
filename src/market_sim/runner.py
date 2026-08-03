@@ -843,9 +843,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             iso, _exit_seed_through, EXIT_THROUGHPUT_WINDOW_YEARS
         )
         if _exit_prior_max_gw is None:
-            logger.info(
-                "exit throughput cap (%s): no measured thermal deactivation in "
-                "the %d-yr window through %d — NO cap applied (rule 25)",
+            logger.warning(
+                "exit throughput cap (%s): seed UNRESOLVED for the %d-yr "
+                "window through %d (no measured thermal deactivation, or the "
+                "EIA-860 retired sheet is absent — see the reader's own log "
+                "line for which) — NO cap applied (rule 25 neutral fallback). "
+                "The arm is INERT this run; do not read it as a tested cap.",
                 iso,
                 EXIT_THROUGHPUT_WINDOW_YEARS,
                 _exit_seed_through,
