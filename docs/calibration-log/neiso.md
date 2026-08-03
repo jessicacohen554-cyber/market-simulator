@@ -1282,4 +1282,49 @@ do not re-open the DA-depth limb without new evidence overturning the net-short
 measurement. The neiso-74 storage DO-NOT-REDO and the xiso-1 standing order are
 untouched.
 
-Next shorthand: **neiso-77.**
+## neiso-77 — 2026-08-03 (via caiso-159) — **THE CT HEAT-RATE METER SCREEN IS PROMOTED TO KEEPER** (`2026-08-03-neiso-caiso156-meter-screen`), score-identical to neiso-72 on every criterion, D-gate flag and D-row verdict; `complete` marker re-keyed with re-verification
+
+**Keeper NEISO -> `2026-08-03-neiso-caiso156-meter-screen`** (bundle
+`neiso_c156_meter_screen_B`). Determination CALIBRATED-WITH-CAVEATS, verified
+IDENTICAL to the neiso-72 incumbent — all 9 criteria (1 ledgered C3c caveat, C7
+unscored-protective as since neiso-70, 0 FAILs), grade summary (8/7, ledgered 1),
+C1 headline (all 12/12 free 8/8), all six D-gate pass flags and all 54 D-row
+verdicts. The neiso-72 hydro-window mechanism and the C3c frontier declaration
+are carried forward unchanged; no C3c evidence moved in either direction and no
+new caveat slot is spent.
+
+**Seven ScenarioConfig fields differ from the incumbent and ALL SEVEN ARE SCHEMA
+DRIFT, not a config change** (`caiso_firm_import_selfsched_clip`,
+`coal_prb_committed_split`, `crossover_solve_year_weather`,
+`ercot_dam_availability_gas_event_cap`, `gas_offer_margin_zonal_anchor`,
+`miso_coal_night_floor`, `pjm_rggi_allowance_pricing`): each was ADDED to
+ScenarioConfig after the neiso-72 solve, each defaults to False, and this arm
+records every one as False — the incumbent simply predates the field.
+
+**What changed:** the CONTENT of the shared CT heat-rate artifact (caiso-158's
+hour-grain band screen). Cap-weighted applied rate 9.6291 -> 9.8006 MMBtu/MWh
+net over 7/7 plants; the committed artifact's md5 `293c6f6c52be...` matches the
+K1 arm-B pin recorded at solve time. P1 CT_PEAKER energy 0.3088->0.2877 /
+0.8433->0.7566 / 1.7174->1.6163 TWh, up to 150.4 MW in one class-hour and 2,566
+of 8,760 hours changed in 2025 — live, and score-neutral. Load-weighted lambda
++0.045/+0.055/+0.083 % of level, far inside the 1.0 pp trigger.
+
+**K6 — the correction is not driven by drops.** NEISO is the tightest of the six
+ISOs here because it drops one unit (63559); recomputing the applied-map delta
+with that unit RETAINED at its screened rate still gives +0.1319 against the
+shipped +0.1715 — 23.1 % divergence against a pre-committed 25 % bar, same sign.
+Meter hygiene, not selection.
+
+**Rule 22 D-5(b):** NEISO holds a `complete` (validation-tier) marker, so the
+entry is re-keyed to this run with a fresh determination re-verification from
+committed artifacts (no solve). `locked_test_scored_on`
+(`2026-07-07-neiso53-winter-fuelsec-coldsnap`) is deliberately NOT re-keyed —
+that SPENT one-shot stands as taken. `keeper_at_declaration` preserved. The
+holdout spend freeze is ACTIVE and unspent; 2023-2025 only (rule 16).
+
+Zero free parameters (DOF ledger unchanged at 12 entries / 5 residual, asserted
+by the generator rather than trusted). Promoted on rule 14 [R-ACCURATE], not on
+a fit claim — the scorecard did not move in either direction.
+Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+
+Next shorthand: **neiso-78.**
