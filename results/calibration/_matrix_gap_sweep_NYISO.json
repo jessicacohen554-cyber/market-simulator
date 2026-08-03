@@ -1,6 +1,6 @@
 {
   "iso": "NYISO",
-  "keeper": "2026-08-03-nyiso-117-nyc-rcpf",
+  "keeper": "2026-08-03-nyiso-118-seny-span",
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 671,
   "n_matrix_rows": 181,
@@ -44,7 +44,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -55,11 +54,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -73,8 +73,8 @@
       "owning_rows": [
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "tsa_transfer_derate",
@@ -84,11 +84,10 @@
       ],
       "cells": [
         "G",
-        "U"
+        "K"
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -99,11 +98,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -151,7 +151,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -162,11 +161,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -208,7 +208,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -219,9 +218,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -244,7 +244,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -255,9 +254,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -299,7 +299,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -310,9 +309,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -335,7 +335,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -346,9 +345,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -371,7 +371,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -382,9 +381,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -407,7 +407,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -418,9 +417,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -443,7 +443,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -454,9 +453,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -479,7 +479,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -490,9 +489,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -515,7 +515,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -526,9 +525,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -567,7 +567,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -578,9 +577,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -603,7 +603,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -614,11 +613,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -647,7 +647,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -658,11 +657,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -685,7 +685,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -696,11 +695,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -723,7 +723,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -734,9 +733,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -819,7 +819,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -830,11 +829,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -853,8 +853,8 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "measured_ct_heat_rates",
@@ -863,8 +863,7 @@
         }
       ],
       "cells": [
-        "K",
-        "U"
+        "K"
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
@@ -874,6 +873,8 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B"
       ]
@@ -902,7 +903,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -913,11 +913,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -951,7 +952,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -962,11 +962,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -985,24 +986,25 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         }
       ],
       "cells": [
-        "K",
-        "U"
+        "K"
       ],
       "armed_in_bundles": [
         "nyiso115_nyc_stepcurve",
-        "nyiso117_nyc_stepcurve"
+        "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span"
       ]
     },
     {
       "field": "nyiso_ordc_measured_step_span",
       "default": false,
-      "keeper_value": false,
-      "keeper_arms_it": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
@@ -1013,15 +1015,16 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         }
       ],
       "cells": [
-        "K",
-        "U"
+        "K"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "nyiso118_seny_span"
+      ]
     },
     {
       "field": "nyiso_rcpf_enabled",
@@ -1110,7 +1113,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -1121,11 +1123,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -1148,7 +1151,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -1159,11 +1161,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -1186,7 +1189,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -1197,11 +1199,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -1224,7 +1227,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -1235,11 +1237,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -1266,9 +1269,7 @@
         "I",
         "U"
       ],
-      "armed_in_bundles": [
-        "nyiso110_spinonline_B"
-      ]
+      "armed_in_bundles": []
     },
     {
       "field": "nyiso_synchronised_reserve",
@@ -1313,7 +1314,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso110_spinonline_B",
         "nyiso111_control_A",
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
@@ -1324,11 +1324,12 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     },
@@ -1364,9 +1365,10 @@
         "nyiso116_c3c_unitlayer",
         "nyiso117_control",
         "nyiso117_nyc_stepcurve",
+        "nyiso118_control",
+        "nyiso118_seny_span",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
-        "nyiso_c156_meter_control_A",
         "nyiso_c156_meter_screen_B"
       ]
     }
@@ -2124,8 +2126,8 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "gas_commitment_bridge",
@@ -2819,8 +2821,8 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "gas_commitment_bridge",
