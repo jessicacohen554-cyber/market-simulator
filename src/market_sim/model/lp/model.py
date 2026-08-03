@@ -916,9 +916,6 @@ class DispatchModel:
         solution = h.getSolution()
         col_value = np.asarray(solution.col_value, dtype=float)
         row_dual = np.asarray(solution.row_dual, dtype=float)
-        # Row ACTIVITY (Ax), needed only by the per-family reserve sidecar's
-        # held-MW column; every other output reads columns or duals.
-        row_value = np.asarray(solution.row_value, dtype=float)
 
         block = col_value.reshape(T, layout.vars_per_hour)
         dispatch = block[:, layout._p_off : layout._w_off].T
@@ -1036,10 +1033,14 @@ class DispatchModel:
             # slack says how far a non-binding family was from binding — which
             # ``reserve_dispatch`` cannot answer, being itself discarded at
             # persist time and having no family index.
-            reserve_held_by_family = (
-                row_value[-(n_fam * T) :].reshape(T, n_fam)
-                - reserve_shortfall_by_family
-            )
+            # Row ACTIVITY (Ax) — the only output that needs it, so it is
+            # materialised HERE rather than beside row_dual: converting the full
+            # row vector costs a copy proportional to the row count on every
+            # solve, and an energy-only LP would pay it for nothing.
+            balance_activity = np.asarray(
+                solution.row_value[-(n_fam * T) :], dtype=float
+            ).reshape(T, n_fam)
+            reserve_held_by_family = balance_activity - reserve_shortfall_by_family
             # Reserve-supply cap duals (zonal spec): the cap block sits directly
             # before [online_cap | storage_gate | balance] at the row tail, one
             # system-wide <= row per headroom tier per hour (hour-major). A
