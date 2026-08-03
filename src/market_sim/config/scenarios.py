@@ -518,6 +518,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # zero-delta control in the on-disk cache
     # (PREREG-pjm146-rggi-allowance-2026-08-02.md §2.1).
     "pjm_rggi_allowance_pricing",
+    # FF-G4 Option-B electrification end-use layers (FR-16, default off /
+    # neutral 0.5): dropped from the hash at their defaults so every
+    # pre-existing cached run keeps its key (the pinned default cache_key is
+    # byte-stable) — the fields' own docstrings promise "off = byte-identical"
+    # and this registration is what makes that true of the cache too. An armed
+    # run (a non-off path, or a moved percentile) reshapes demand on the
+    # published adoption trajectories and so gets a distinct key (a distinct
+    # scenario). Backcast/hindcast-coerced off in __post_init__ regardless.
+    "electrification_path",
+    "electrification_percentile",
 )
 
 
@@ -938,6 +948,37 @@ class ScenarioConfig:
     # Source: LBNL 2024 US Data Center Energy Usage Report (Shehabi et al.,
     # Dec 2024); EPRI 2024 Powering Intelligence load-factor range 0.8-0.95.
     # Frozen physical input (moves only on a source update, never a residual).
+    # --- FF-G4 Option-B electrification end-use layers (FR-16). Forecast-mode-
+    # only; "off" = today, byte-identical. See docs/handoffs/
+    # ff-g4-load-shape-design-memo-2026-07.md §4.2/§5 and data/datacenter.py
+    # (add_load_layers). ---
+    electrification_path: str = "off"  # "off" | "low" | "mid" | "high" —
+    # deterministic scenario-matrix axis selecting the per-ISO, per-layer
+    # incremental-energy adoption trajectories from
+    # constants.ELECTRIFICATION_LAYERS (NEISO heat_pump: ISO-NE 2026 CELT HEF;
+    # ev ships {} pending a citable charging profile) via
+    # data.datacenter.resolve_electrification_gwh. The layers are additive
+    # end-use demand layers (EV + heat-pump) folded in by
+    # data.datacenter.add_load_layers under the SAME energy-relocation algebra
+    # as the DC block (the growth rates are TOTAL, electrification-inclusive —
+    # relocation prevents the double-count; memo §4.2), each on its own
+    # physical hourly shape (heat_pump: heating-degree profile on the run
+    # weather year's measured NOAA GHCN temperatures). This is the mechanism
+    # that makes peak-CAGR ≠ energy-CAGR and the published ISO-NE winter-peak
+    # flip EXPRESSIBLE (audit FR-16). DEFAULT "off" (owner box §8-D2: posture
+    # flip is per-ISO, evidence-first — the datacenter_load_path precedent);
+    # single field doubles as gate and path selector, the exact
+    # datacenter_load_path grammar (memo §5.1's master-gate + shared path
+    # collapsed onto the on-main one-field pattern). FORECAST-ONLY axis:
+    # __post_init__ coerces it to "off" in backcast/hindcast (a non-forward
+    # run pins measured load, which already CONTAINS realized
+    # electrification), keeping every backcast keeper and hindcast
+    # BYTE-IDENTICAL. Registered in _CACHE_KEY_OPTIONAL_FIELDS: off runs keep
+    # their cache key; an armed run reshapes demand and gets a distinct key.
+    electrification_percentile: float = 0.5  # Continuous PB-2 sampler lever
+    # (0.0=low, 0.5=mid, 1.0=high), mirroring datacenter_percentile /
+    # demand_growth_percentile. Neutral 0.5 => electrification_path governs;
+    # only takes effect when the sampler moves it off 0.5.
     tech_cost_path: str = "mid"  # "low"/"mid"/"high" -> NREL ATB 2024
     # Advanced/Moderate/Conservative technology-cost cases. The PB-1
     # deterministic scenario-matrix T axis (probability-bounds-plan-2026-07.md
@@ -9445,6 +9486,25 @@ class ScenarioConfig:
         if self.mode == "backcast" or self.hindcast:
             self.datacenter_load_path = "off"
 
+        # FF-G4 electrification end-use layers: validate the label, then COERCE
+        # it inert in any non-forward run — the EXACT datacenter_load_path
+        # pattern directly above, for the same reason: a backcast/hindcast pins
+        # measured load, which already CONTAINS realized electrification, so a
+        # non-off path there would double-count it (and contaminate a scored
+        # keeper, rule 22). Coercing at the config seam keeps every backcast
+        # keeper and hindcast leg BYTE-IDENTICAL whatever the field default.
+        # The standalone data.datacenter.validate_electrification_config still
+        # hard-errors on a non-off path reaching a scored backcast (defense in
+        # depth against a post-construction mutation/bypass).
+        if self.electrification_path not in ("off", "low", "mid", "high"):
+            raise ValueError(
+                "ScenarioConfig.electrification_path must be one of "
+                "('off', 'low', 'mid', 'high'), got "
+                f"{self.electrification_path!r}"
+            )
+        if self.mode == "backcast" or self.hindcast:
+            self.electrification_path = "off"
+
         # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
         # "hold_last" in a plain backcast. Capacity evolution / the capacity-price
         # seam run only in forecast mode, so the escalation axis is meaningless in
@@ -10220,6 +10280,8 @@ TIER_TAGS: dict[str, int] = {
     "datacenter_load_path": 2,
     "datacenter_percentile": 2,
     "datacenter_load_factor": 2,
+    "electrification_path": 2,
+    "electrification_percentile": 2,
     "tech_cost_path": 1,
     "tech_cost_percentile": 1,
     "renewable_buildout_pace": 1,
