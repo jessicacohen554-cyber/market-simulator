@@ -1,0 +1,278 @@
+{
+ "prereg": "results/calibration/PREREG-pjm150-ct-heat-rate-regate-2026-08-03.md",
+ "iso": "PJM",
+ "keeper": "results/calibration/pjm147_chp_B",
+ "arm": "results/calibration/pjm150_ctmeter_regate_A",
+ "ct_heat_rate_artifact": {
+  "pre_fix": {
+   "md5": "8d48c2bb98d2ce044bed2a438d4b87ec",
+   "rows": 71,
+   "applied": 71,
+   "applied_capacity_mw": 23161.8,
+   "cap_weighted_heat_rate": 11.5817
+  },
+  "post_fix": {
+   "md5": "32c26167d83869cff798a2f5cb274106",
+   "rows": 71,
+   "applied": 71,
+   "applied_capacity_mw": 23161.8,
+   "cap_weighted_heat_rate": 11.6511
+  },
+  "delta_cap_weighted": 0.0694,
+  "on_disk_md5": "32c26167d83869cff798a2f5cb274106",
+  "on_disk_is_post_fix": true
+ },
+ "premise": {
+  "keeper_basis_sha": "217e5b19c40afd0241d5c109e74775d75f87ded8",
+  "artifact_md5_at_keeper_basis": "32c26167d83869cff798a2f5cb274106",
+  "keeper_already_on_corrected_artifact": true
+ },
+ "K1_config_drift": {
+  "arm_only": [
+   "electrification_path",
+   "electrification_percentile",
+   "nyiso_nyc_rcpf_step_curve"
+  ],
+  "keeper_only": [
+   "ct_committed_hr_override",
+   "ct_econ_hr_override",
+   "ct_peak_hr_override"
+  ],
+  "value_diffs": [
+   "caiso_ra_min_load_frac",
+   "entry_commissioning_lag",
+   "entry_rate_limits",
+   "net_cone_forward_escalation",
+   "retirement_rule"
+  ],
+  "value_diff_detail": {
+   "caiso_ra_min_load_frac": {
+    "keeper": 0.26,
+    "arm": 0.4
+   },
+   "entry_commissioning_lag": {
+    "keeper": false,
+    "arm": true
+   },
+   "entry_rate_limits": {
+    "keeper": false,
+    "arm": true
+   },
+   "net_cone_forward_escalation": {
+    "keeper": "hold_last",
+    "arm": "reindex_gross"
+   },
+   "retirement_rule": {
+    "keeper": "legacy",
+    "arm": "pipeline"
+   }
+  },
+  "default_moves_exempted": {
+   "caiso_ra_min_load_frac": "a0fc302 task 3(b) made it CAISO-SCOPED under rule 25 [R-ISO-SCOPE]; backcast_config now assigns 0.26 only when iso == 'CAISO' and the neutral shipped 0.40 otherwise, so PJM re-records 0.40 where the keeper recorded a CAISO-fitted 0.26. Verified for PJM rather than inherited from caiso-160's NYISO entry: BOTH readers (pipeline/commitment.py:207 and :1582) sit behind `caiso_ra_mustoffer and iso == \"CAISO\"`, and this bundle carries caiso_ra_mustoffer=False AND iso='PJM' \u2014 either condition alone closes it. A RECORDING change, not a solve change. NOTE it also overrides the replayed meta.json kwarg (the keeper records it at top level), so a replay cannot re-assert the old value.",
+   "entry_commissioning_lag": "3e33f15 armed it by default. Same step-5 entry path (new_entry.py:1118 pending-queue netting), unreachable for the same reason.",
+   "entry_rate_limits": "3e33f15 armed it by default. Read only by capacity_evolution/new_entry.py + adequacy.py (evolution step 5, economic new entry); the calibration harness builds nothing and never enters step 5.",
+   "net_cone_forward_escalation": "e6f0cdb (owner decision D-3a) moved the default hold_last -> reindex_gross. Read only by config/capacity_market.py's forward net-CONE escalation, which prices the capacity-market revenue stream consumed by the evolution screens \u2014 forecast/hindcast machinery with no backcast reader.",
+   "retirement_rule": "24b1602 flipped the default legacy -> pipeline. Read only by model/capacity_evolution/retirements.py inside apply_economic_retirements (evolution step 3), which the calibration harness never calls \u2014 it solves each backcast year standalone via run_calibration.run_year, not runner.py's evolution loop."
+  },
+  "unexplained_value_diffs": []
+ },
+ "K1_passed": true,
+ "K2_max_abs_mw_by_year": {
+  "2023": 0.0,
+  "2024": 0.0,
+  "2025": 0.0
+ },
+ "K2_years_measured": [
+  "2023",
+  "2024",
+  "2025"
+ ],
+ "K2_passed": true,
+ "K2_complete": true,
+ "class_twh_keeper": {
+  "2023": {
+   "CC_CHP": 8.6064,
+   "CC_REGULAR": 322.9677,
+   "COAL_BIT": 104.0299,
+   "COAL_PRB": 3.156,
+   "COAL_WC": 5.7676,
+   "CT_CHP": 1.3003,
+   "CT_PEAKER": 19.6588,
+   "OTHER": 7.2251,
+   "ST_CHP": 0.988,
+   "ST_GAS": 10.896,
+   "VIRTUAL_DEC": -11.5117,
+   "VIRTUAL_INC": 19.1783,
+   "biomass": 5.2975,
+   "hydro": 8.903,
+   "import": -29.1638,
+   "nuclear": 272.0222,
+   "oil": 0.0002,
+   "solar": 8.9757,
+   "wind": 29.6306
+  },
+  "2024": {
+   "CC_CHP": 8.0727,
+   "CC_REGULAR": 336.5216,
+   "COAL_BIT": 104.9395,
+   "COAL_PRB": 4.0105,
+   "COAL_WC": 5.6177,
+   "CT_CHP": 1.5477,
+   "CT_PEAKER": 21.1337,
+   "OTHER": 7.321,
+   "ST_CHP": 1.0996,
+   "ST_GAS": 10.9364,
+   "VIRTUAL_DEC": -14.2216,
+   "VIRTUAL_INC": 21.1133,
+   "biomass": 5.2484,
+   "hydro": 8.8608,
+   "import": -22.7753,
+   "nuclear": 270.5943,
+   "oil": 0.0037,
+   "solar": 15.8519,
+   "wind": 30.9544
+  },
+  "2025": {
+   "CC_CHP": 6.8352,
+   "CC_REGULAR": 335.5537,
+   "COAL_BIT": 131.2681,
+   "COAL_PRB": 6.3276,
+   "COAL_WC": 5.6876,
+   "CT_CHP": 1.2414,
+   "CT_PEAKER": 27.9442,
+   "OTHER": 4.7776,
+   "ST_CHP": 0.943,
+   "ST_GAS": 17.2427,
+   "VIRTUAL_DEC": -18.4103,
+   "VIRTUAL_INC": 17.9266,
+   "biomass": 2.1722,
+   "hydro": 8.4636,
+   "import": -26.1714,
+   "nuclear": 269.3312,
+   "oil": 0.0236,
+   "solar": 24.6247,
+   "wind": 32.1232
+  }
+ },
+ "class_twh_arm": {
+  "2023": {
+   "CC_CHP": 8.6064,
+   "CC_REGULAR": 322.9677,
+   "COAL_BIT": 104.0299,
+   "COAL_PRB": 3.156,
+   "COAL_WC": 5.7676,
+   "CT_CHP": 1.3003,
+   "CT_PEAKER": 19.6588,
+   "OTHER": 7.2251,
+   "ST_CHP": 0.988,
+   "ST_GAS": 10.896,
+   "VIRTUAL_DEC": -11.5117,
+   "VIRTUAL_INC": 19.1783,
+   "biomass": 5.2975,
+   "hydro": 8.903,
+   "import": -29.1638,
+   "nuclear": 272.0222,
+   "oil": 0.0002,
+   "solar": 8.9757,
+   "wind": 29.6306
+  },
+  "2024": {
+   "CC_CHP": 8.0727,
+   "CC_REGULAR": 336.5216,
+   "COAL_BIT": 104.9395,
+   "COAL_PRB": 4.0105,
+   "COAL_WC": 5.6177,
+   "CT_CHP": 1.5477,
+   "CT_PEAKER": 21.1337,
+   "OTHER": 7.321,
+   "ST_CHP": 1.0996,
+   "ST_GAS": 10.9364,
+   "VIRTUAL_DEC": -14.2216,
+   "VIRTUAL_INC": 21.1133,
+   "biomass": 5.2484,
+   "hydro": 8.8608,
+   "import": -22.7753,
+   "nuclear": 270.5943,
+   "oil": 0.0037,
+   "solar": 15.8519,
+   "wind": 30.9544
+  },
+  "2025": {
+   "CC_CHP": 6.8352,
+   "CC_REGULAR": 335.5537,
+   "COAL_BIT": 131.2681,
+   "COAL_PRB": 6.3276,
+   "COAL_WC": 5.6876,
+   "CT_CHP": 1.2414,
+   "CT_PEAKER": 27.9442,
+   "OTHER": 4.7776,
+   "ST_CHP": 0.943,
+   "ST_GAS": 17.2427,
+   "VIRTUAL_DEC": -18.4103,
+   "VIRTUAL_INC": 17.9266,
+   "biomass": 2.1722,
+   "hydro": 8.4636,
+   "import": -26.1714,
+   "nuclear": 269.3312,
+   "oil": 0.0236,
+   "solar": 24.6247,
+   "wind": 32.1232
+  }
+ },
+ "K4_keeper_scorecard": {
+  "determination": "CALIBRATED",
+  "grade_summary": {
+   "scored": 9,
+   "target_grade": 9,
+   "commercial_grade": 0,
+   "ledgered": 0,
+   "fails": 0
+  },
+  "criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  }
+ },
+ "K4_arm_scorecard": {
+  "determination": "NOT-YET",
+  "grade_summary": {
+   "scored": 8,
+   "target_grade": 8,
+   "commercial_grade": 0,
+   "ledgered": 0,
+   "fails": 0
+  },
+  "criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "UNATTESTED",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  }
+ },
+ "K4_criterion_flips": [
+  "governance"
+ ],
+ "K4a_model_criterion_flips": [],
+ "K4a_passed": true,
+ "K4b_governance_flip": true,
+ "K4b_reason": "probe arm carries no rule-21 attestation; C6 is attestation-presence bookkeeping, not a model verdict. With K2 = 0.000000 MW on every P1 class-hour the eight model-determined criteria are not merely equal but PROVABLY equal \u2014 identical dispatch cannot score differently.",
+ "K4_passed": false,
+ "K5_years": [
+  2023,
+  2024,
+  2025
+ ],
+ "K5_passed": true
+}

@@ -2600,4 +2600,112 @@ refusal + DO-NOT-REDO + the path-dependence (rule 28b).
 `results/calibration/_pjm148_screen.json`, `_pjm148_floor_binding.json`;
 `scripts/probes/_pjm148_floor_binding.py`.
 
-Next shorthand: pjm-149.
+## 2026-08-03 — pjm-150: the CT meter screen was ALREADY promoted; the re-gate proves the keeper still reproduces BIT-IDENTICALLY
+
+**No promotion, none needed. Keeper unchanged at `2026-08-03-pjm-147b-chp-heat`.**
+Registered `2026-08-03-pjm-150-ct-regate` (bundle `pjm150_ctmeter_regate_A`).
+
+**The chartered task was moot before the session opened.** The handoff (carried
+from `FINDING-caiso160` §7 item 1) said PJM was the last artifact-consuming ISO
+not re-based onto the caiso-156 CT heat-rate meter screen. It was already false:
+`pjm-147` ran PJM's leg the same day. Verified from the repo's own bytes — the
+artifact has exactly **two** commits on any ref (`c9a370d`, then the fix
+`f6238a5` at 00:05:32); the keeper's `basis_sha` `217e5b1` (01:57:04) is a
+**descendant** of the fix; and `git show 217e5b1:…campd_ct_heat_rates_PJM.csv`
+is md5 `32c26167…`, the POST-FIX blob. `_pjm147_k2_drift.json` and
+`mechanism-testing-matrix.md` §5.3 both already say so ("now discharged").
+
+Artifact delta re-measured rather than trusted: applied cap-weighted
+**11.5817 → 11.6511 (+0.0694)**, 71/71 applied both sides, 63 changed
+(58 dearer / 5 cheaper), **zero flag changes**. Over the 63 changed rows alone it
+is **11.4749 → 11.5556**, which reproduces pjm-147's note exactly — the two
+figure-pairs in circulation are ONE measurement over TWO populations, never a
+discrepancy.
+
+**So the compute went to the gate pjm-147 could not run.** Its own K2 strict-byte
+gate FAILED by construction (its comparison spanned two HEADs), and **11
+`src/market_sim` commits** landed after the keeper solved, leaving PJM the one
+consumer ISO with no bit-identity evidence and the caiso-146 HEAD-drift item
+untested. One arm: the keeper recipe replayed COLD at HEAD against the SAME
+artifact, no `--set`.
+
+**K2 PASSES — max |ΔMW| = 0.000000 in 2023, 2024 and 2025**, across 499,320 P1
+class-hours (787.9277 / 816.8304 / 847.9046 TWh, equal to the last digit).
+**THE caiso-146 HEAD-DRIFT ITEM IS ANSWERED IN THE NEGATIVE FOR PJM.** It is now
+closed for NYISO (caiso-160) and PJM, and **stays open for CAISO** — the only ISO
+where a keeper's sidecars have actually been seen to diverge (up to 3.2 GW).
+
+K1 PASSES with five value diffs, every one an enumerated moved default, derived
+for PJM and not inherited: `retirement_rule` (`24b1602`), `entry_rate_limits` +
+`entry_commissioning_lag` (`3e33f15`), `net_cone_forward_escalation` (`e6f0cdb`),
+`caiso_ra_min_load_frac` (`a0fc302` 3b). **The shared justification is firmer
+than caiso-160's**: NOT "forecast-mode only" — `evolve_fleet` has no mode branch
+and `runner.py` enters it every year after the first — but that **the calibration
+harness never calls it**, because `solve_and_persist` loops years through
+`run_calibration.run_year`, a standalone per-year backcast solve. Schema drift
+only elsewhere: 3 arm-only fields added since, and the `ct_*_hr_override` triple
+`a0fc302` deleted (checked against PJM's own recipe — its readers sat in the
+`else` of `if offer is not None` and PJM carries a truthy
+`offer_curve_by_group["CT_CHP"]`). **Every entry is a hypothesis; K2 is the
+evidence.**
+
+K4: **all EIGHT model-determined criteria identical** to the keeper, C1 headline
+`all 16/16 · free 12/12` identical. C6 flips `PASS → UNATTESTED` because a probe
+carries no rule-21 attestation (caiso-159 §3) — reported, not absorbed, and no
+attestation was authored since nothing is promoted.
+
+**SECOND RESULT, free and zero-confound: the pjm-149 D-2 attribution fix measured
+exactly.** Because the dispatch is bit-identical, every difference between the
+keeper's committed `legitimacy_diagnostics.json` and the arm's is
+*definitionally* not a solve difference. D-1/D-4/D-5/D-9/D-10 are row-for-row
+unchanged; **D-2 goes 32 → 42 rows** (nuclear_mustrun ×3 at 272.02/270.59/269.33
+TWh exactly as pjm-149 predicted, plus CC_CHP/ST_CHP/COAL `chp_steam` and
+`reliability_floor` rows), and **32 shared rows change value** —
+`CT_CHP:chp_steam` share **0.0024 → 0.2399 / 0.0013 → 0.1804 / 0.0153 → 0.2780**
+on a `class_total_twh` re-basis 4.558 → 1.5256. **This exceeds pjm-149 §7's
+projection for PJM** (`+3 / +0 / +0`, gate A2 "additions only"). Stated carefully:
+that session's baseline was a pre-fix regen at ITS HEAD, mine is committed-vs-now,
+so my delta spans the whole diagnostics-code distance and `f46bdfd` is the leading
+but not provably sole contributor. **No gate moves** — C8's own class barely
+shifts (`CT_PEAKER:ct_netload_drag` 0.1072→0.1058 / 0.1221→0.1194 /
+0.1097→0.1088) and the big movers are CT_CHP/ST_CHP/CC_CHP, all C7- and
+C8-exempt. Confirming the attribution is the pjm-149 lane's, not PJM's.
+
+**Environment findings that cost real time.** (1) The handoff's rule-12 chain
+`--out-dir X --reuse-solved X` raises `shutil.SameFileError` at
+`_copy_reused_year:2978`; pjm-147 avoided it only by chaining through a separate
+dir. (2) `--reuse-solved` refuses on THREE independent cleanliness conditions —
+dirty tree, prior bundle solved dirty, and **any `src`/`scripts`/`data` commit
+between the prior bundle and HEAD**, including the session's own — and the first
+only surfaces as a WARNING that silently re-solves every year. (3)
+`pjm_da_virtual_bids` needs `data/raw/pjm-da-virtuals/`, which is gitignored and
+was EMPTY; `virtual_bids.py` correctly hard-fails rather than no-opping, so **any
+PJM session on a fresh container must re-fetch it first**
+(`scripts/data/fetch_pjm_da_virtuals.py --years 2023 2024 2025 --feeds
+hrl_da_incs_decs`). (4) `regenerate_clean` ran **50/50 with zero failures** — the
+documented `ancillary-services exit -6` teardown false alarm did not fire, so it
+is not deterministic.
+
+**DO-NOT-REDO.** Do not run the PJM CT meter-screen A/B — it is done and in the
+keeper. Do not re-test `measured_ct_heat_rates` as a mechanism (input correction,
+no `ScenarioConfig` surface; PJM cell stays `K`). Do not read K2 = 0 as "the
+screen does nothing" — that is a statement about the keeper reproducing, and
+pjm-147 measured the artifact as dispatch-live and score-neutral. Do not justify
+a `DEFAULT_MOVES` entry with "forecast-mode only."
+
+Rule 15 `[R-DASHBOARD]`: registered, and the top-15 PJM retention re-applied
+(pruned `2026-07-28-pjm-135-netpos-keeper`). Rule 16: 2023-2025 in ONE bundle.
+Rule 22 `[R-HOLDOUT]`: 2023-2025 only; PJM's `complete` marker unspent, `final`
+absent, `holdout-freeze.json` untouched; no keeper change, so no M1 re-key.
+Matrix: `measured_ct_heat_rates` PJM stays `K`, note/evidence extended (rule 28b).
+
+**Session ordinal note:** the handoff issued this session as *pjm-149*, but
+`d338ba6` had already spent that ordinal on the D-2 floor-attribution session
+(filed in `governance.md`, which is why this log's counter never advanced).
+
+`results/calibration/FINDING-pjm150-ct-heat-rate-regate-2026-08-03.md`;
+`PREREG-pjm150-ct-heat-rate-regate-2026-08-03.md`;
+`results/calibration/_pjm150_regate_gates.json`;
+`scripts/probes/pjm150_ct_regate_arm.py`, `scripts/probes/pjm150_regate_gates.py`.
+
+Next shorthand: pjm-151.
