@@ -2984,3 +2984,121 @@ not a kill, cause filed not guessed.
   before the prereg was written. What was fixed in advance is the decision rule,
   the gates and the predictions — **three of which the result refuted**.
 * Next number: **miso-118**.
+
+## 2026-08-03 — miso-118: the four `CC_CHP` plant outliers are ONE basis artifact, proven by an exact decomposition — the comparator's denominator reports LESS gross electricity than the plants make net. No charter, NO LP, keeper UNCHANGED; and a genuinely new single-plant defect found in the sweep, pointing the OTHER way
+
+**Lane.** miso-116 §7 item 2, the per-plant rule 14 `[R-ACCURATE]` residual left
+open inside the already-armed `measured_chp_heat_rates`: 4 of 14 matched
+`CC_CHP` plants (10745 / 55089 / 55259 / 55088 — **52.7 % of matched capacity**)
+sitting below 0.85× CAMPD gross. Phase 0 as chartered: **no LP**, establish
+basis-artifact vs real per-plant input error *before* chartering an arm.
+Pre-registration `PREREG-miso118-cchp-plant-outliers-2026-08-03.md` written,
+committed and **pushed** (`d94905f`) before the probe ran; probe
+`scripts/probes/_miso118_cchp_plant_outlier_basis.py`; transcript
+`PROBE-miso118-cchp-plant-outliers-2026-08-03.txt`.
+
+**Verdict: BASIS-ARTIFACT on all four. No charter, no solve.** Keeper stays
+`2026-08-03-miso-117b-ct-heat`. Rule 15: no run produced, nothing to register.
+
+**The decomposition closes exactly, so nothing is left for a model defect.**
+`ratio = A_cems × F_family × G_gross` reproduces miso-116's published ratio to
+`max |Δ| = 2×10⁻⁶` on all 12 plant-years. For three of the four plants the whole
+gap is a single term: **`G_gross` = CEMS gross load ÷ eGRID `PLNGENAN` =
+0.8088 / 0.6526 / 0.8024** (55088 additionally truncates, `F_family` 1.65).
+
+**`G_gross < 1` is a proof, not an estimate.** Gross generation is never below
+net — station service is subtracted from gross to get net. Measured it is
+0.65–0.81, so the comparator's denominator reports *less electricity than the
+plants demonstrably produced*. The unit anatomy says why: every CEMS unit at
+these plants is a **fuel-burning** one, and the steam turbines that convert CT
+exhaust into power burn no fuel, are not Part-75 monitored, and contribute **no
+`grossLoad` at all** while EIA-923 counts every MWh they make. This is exactly
+the defect `FINDING-miso98` §6.1 named as the reason the CEMS route was
+abandoned for CHP; miso-116 §3 compared against that channel anyway, one layer
+down at plant grain.
+
+**Independently corroborated by a different derive.**
+`parasitic_load_factors.parquet` (`derive_parasitic_factors`, EIA-923 net over
+CAMPD gross) carries these plants at **net/gross 1.195–1.366**, every row
+flagged `out_of_band`, every row fallen back to the class default; 55089 has no
+row at all. The comparator was already known broken at these plants.
+
+**On a basis-matched comparator the model input is right.** `R_basis` =
+loaded rate ÷ (CAMPD fuel ÷ EIA-923 net MWh) — two independent meters, neither
+of them the eGRID number the model loads: **1.000/1.006/0.995**,
+**1.000/0.998/1.013**, **1.000/1.071/1.026**, **1.000/1.006/0.942**, all inside
+the pre-registered `[0.90, 1.10]` band in 3 of 3 years. **2023 is 1.000 by
+construction and is not evidence** (eGRID total heat = CEMS total heat, and
+`net923(2023)` = `PLNGENAN`); the informative years are 2024–2025, in band 2/2
+for every plant.
+
+**The REAL-branch hypotheses all fail.** H-C vintage staleness does not fire —
+own-rate year-on-year movement **1.1 / 1.4 / 6.6 / 6.7 %** against a 10 % bar, so
+one frozen eGRID-2023 vintage is a fair 2024–2025 rate. H-D mis-key does not
+fire — **0** mismatches over 3 years, within-plant spread exactly 0.0000, and
+55088's `CT_CHP` row correctly takes the plant-level rate the artifact
+publishes for it.
+
+**A pre-registered kill was mis-specified, and is reported both ways.** K3 as
+written required `|net923(year)/PLNGENAN − 1| ≤ 0.02` in *every* year;
+`PLNGENAN` is the frozen eGRID-2023 vintage, so in 2024/2025 it compares two
+different years' net generation and fires mechanically. The identity the derive
+actually claims is the **same-year** one, `net923(2023)/PLNGENAN = 1.000000`,
+which passes exactly at all four. The probe prints the verdict under **both**
+readings (as-written → INDETERMINATE ×4; corrected → BASIS-ARTIFACT ×4) so a
+fired kill is not quietly re-specified into one that does not fire.
+
+**ONE GENUINELY NEW ITEM, NAMED BUT NOT CHARTERED — and it points the OTHER
+way.** Plant **55088 Dearborn** burns **13–17 % of its CEMS fuel in three
+`Other boiler` units that report ZERO gross load** — direct-fired host process
+fuel — and that fuel sits inside the topping-cycle rate charged to its `CC_CHP`
+(350 MW) *and* `CT_CHP` (165 MW) tranches: loaded **8.3465** vs power-train-only
+**6.9573 / 7.0704 / 7.3702**, i.e. **+20.0 / +18.0 / +13.2 % TOO DEAR**. eGRID's
+plant-level `thermal_share` (0.2396) cannot see the hybrid, so the derive's 0.50
+unfired-topping ceiling passes it; CEMS can, at unit grain. **It does not
+generalise** — swept across all 14 `ok`-flagged MISO CHP plants CEMS covers,
+exactly one exceeds 1 % zero-output fuel (**515 of 6,357 MW**; MCV is next at
+0.09 %). Not chartered here: it is a different question with no decision rule in
+this prereg, it needs a derive **scope-gate** change with its own
+pre-registration, and it is one plant. Admissible on rule 14 `[R-ACCURATE]`
+grounds **only** — never on what it does to a residual.
+
+**Predictions: 4 of 5 confirmed, 1 refuted.** H-A fires 4/4 (predicted ≥3);
+the identity closes at 2×10⁻⁶ (predicted ≤0.005); `R_basis` in band on all four;
+H-C does not fire. **Prediction 4 is refuted in substance** — 55088 *is* the one
+plant with a real defect, but not the predicted prime-mover-sharing one, and the
+actual defect hits its `CC_CHP` row as hard as its `CT_CHP` one.
+
+**DO-NOT-REDO.** Do not re-open the four outliers on the CAMPD gross
+comparator, and **do not quote the 0.810 / 0.653 / 0.802 / 0.817 ratios as a
+model result** — they measure the CEMS gross-load channel, not the model. Every
+standing MISO bar carries forward unchanged: the h14-21 `CT_PEAKER` floor limb
+is not relaxed and `min_stable_pct` is not re-derived (rules 1/14/23/25); the
+`CC_CHP` volume and `CT_PEAKER`/`ST_GAS`/`CC_REGULAR` trough-quantity questions
+stay closed and the `CT_CHP`/`ST_CHP` ratios stay VOID; `miso_cc_coal_rebalance`
+stays unarmed, `miso_firm_import_floor` and `miso_pjm_lmp_import_pricing` stay
+refused, the seam hod mis-shape stays unchartered, miso-89's convexity deficit
+stays ledgered, and the regulated-PRB self-commitment family stays SPENT.
+**C7 `COAL_PRB` is untouched by this session** and still needs the overnight
+dispatch *distribution* WIDENED (miso-113) — the data-blocked miso-78/79
+congestion + sub-hourly-RT lane. No derive script was re-run (rule 23).
+
+**Rule duties.** Rule 15 — no run, nothing to register, stated not assumed.
+Rule 16 — 2023–2025 measured in one pass. Rule 22 `[R-HOLDOUT]` — 2023–2025
+only; MISO holds no `calibration-complete` marker and no holdout year was
+solved, scored or read. Rule 23 — no derive re-run. Rules 24/26 — every
+crosswalk the repo's own; the three retired `CT_CHP` override keys still in the
+keeper's `run_config.json` (deleted 2026-08-03 by nyiso-114 under rule 26
+`[R-DELETE]`) are dropped only via the repo's own `_CACHE_KEY_RETIRED_FIELDS`
+registry, and any other unknown key hard-fails the probe. Rule 28 duty (b) —
+the `measured_chp_heat_rates` MISO cell is annotated in this session and
+**stays `K`**: no mechanism was armed, rejected or promoted; the correction is
+to the *evidence about* the mechanism. **Contamination declared** — not blind
+(miso-115/116/117, the log and the matrix were read first, the handoff named the
+hypothesis, and PREREG §8 records that an arithmetic check on plant 10745 was
+run *before* the prereg was written).
+
+**Live queue head:** item 5 `dual_fuel_switching` (cell `U`), then
+`gas_offer_margin_zonal_anchor` (cell `U`, whose ex-ante `I` screen on the no-LP
+bar comes before any solve).
+* Next number: **miso-119**.
