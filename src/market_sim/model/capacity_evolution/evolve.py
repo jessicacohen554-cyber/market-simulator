@@ -92,6 +92,7 @@ def evolve_fleet(
     reserve_position: float | None = None,
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
+    exit_rate_cap_mw: float | None = None,
 ) -> tuple[
     list[Generator],
     dict[str, int],
@@ -214,6 +215,12 @@ def evolve_fleet(
             the new-entry screen appends this year's lagged decisions and
             nets pending MW from the queue caps. ``None`` (default) keeps
             in-year commissioning byte-identically.
+        exit_rate_cap_mw: The year's deactivation-throughput budget in MW
+            (``exit_rate_limits`` — resolved by the runner from the measured
+            EIA-860 retired-sheet seed × EXIT_THROUGHPUT_LIMIT_MULTIPLE), the
+            exit-side counterpart of ``entry_rate_caps_mw`` on the SAME
+            queue. Threaded into the step-3 retirement screen (pipeline rule
+            only). ``None`` (default) is byte-identical.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
@@ -496,6 +503,7 @@ def evolve_fleet(
             storage_firm_mw=storage_firm_mw,
             year=year,
             event_sink=_econ_sink,
+            exit_rate_cap_mw=exit_rate_cap_mw,
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
@@ -506,6 +514,15 @@ def evolve_fleet(
                 {**e, "reason": "economic"} for e in _econ_sink.get("retired", [])
             )
             events["floor_retained"].extend(_econ_sink.get("floor_retained", []))
+            # Kept a SEPARATE ledger key from floor_retained (FFR-3F): a
+            # throughput deferral is a queue rate limit, a floor retention is
+            # an adequacy backstop. Both also appear in pipeline_events, but
+            # forwarding this one keeps the two deferral channels readable
+            # side by side in the ledger, as the D-2 attribution needs.
+            if _econ_sink.get("throughput_deferred"):
+                events.setdefault("throughput_deferred", []).extend(
+                    _econ_sink["throughput_deferred"]
+                )
             # R-NEW ledger attribution (FF-1A component 6): the pipeline's
             # decided/re_confirmed/reversed/entry_capped/executed rows.
             # Empty under retirement_rule="legacy".

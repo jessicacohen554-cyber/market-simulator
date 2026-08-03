@@ -57,6 +57,7 @@ build/
 /scratchpad_logs/
 /scratch_hindcast/
 /scratch_logs/
+/scratch-logs/
 /logs/
 /logs_g10/
 # Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
