@@ -1,5 +1,6 @@
 {
   "gate": "K2 strict byte (PREREG-pjm147 \u00a74)",
+  "correction": "The changed CT artifact is caiso-158 executing PREREG-caiso156, a CHARTERED input correction that pre-registered PJM's own +0.0693 delta and declared the PJM scope cut (its \u00a75). No governance breach; an earlier framing at commit c19a385 said otherwise and is withdrawn. What stands: PJM's keeper was never re-gated against the corrected artifact, and this comparison is the PJM leg caiso-158 deferred as its follow-up item 2.",
   "keeper": "results/calibration/pjm143_hy_level_B",
   "control": "results/calibration/pjm147_control_A",
   "keeper_git_sha": null,
