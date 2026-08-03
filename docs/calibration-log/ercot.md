@@ -4613,4 +4613,24 @@ concurrent launch OOM'd on this 15 GB box (rule 12's cap-2 memory caveat
 binds at 1 here; single-solve RSS peaks ~10 GB). Holdouts untouched
 (2023–2025 only). ERCOT-scoped (rule 25).
 
+**ADDENDUM — OWNER PROMOTION (same session, 2026-08-03).** On the owner's
+standing standard re-given in-session ("Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates
+regress that may still be a keeper"), the session recommended YES for Run B
+and executed the promotion: **ERCOT keeper → `2026-08-03-ercot158-pool-arm`**
+(supersedes ercot150b, kept on the dashboard as the immediate-prior
+comparison). Basis: the promotion rests on the IDENTIFICATION, not the A/B —
+ERCOT-87 adjudicated that the real mid-band prices on the offline startable
+CT pool, so an online-basis wall price on those rows is refuted by status;
+arming prices that capability at its measured conduct (zero fitted
+parameters; C6 n_entries 10 / n_residual 6). Gate cost REPORTED: rubric C3a
+2023 −32.6→−32.8 % (−0.2 pp); every criterion status identical to ercot150b;
+all pre-registered kill gates held. The inert-at-target finding stands as the
+recorded honest result and sharpens the successor: the 2023 tail is a
+COMMITMENT-STATE gap on the CC offline block. Keeper lane executed: shard +
+`build_status --iso ERCOT` (NOT-YET) + keeper-auditor + matrix header
+re-stamp + cell I→K + sidecar `market_story`; ERCOT holds no `complete`
+marker, so no re-key duty. Branch rebased onto origin/main (9aca82b8;
+manifest/benchmark conflicts regenerated from sidecars).
+
 Next shorthand: ercot-159.
