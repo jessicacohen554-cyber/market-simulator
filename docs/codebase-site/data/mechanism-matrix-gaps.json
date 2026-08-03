@@ -9,32 +9,13 @@
       "miso_pjm_border_anchor",
       "miso_rpe_pricing",
       "miso_seam_envelope_merit_cap",
-      "miso_seam_export_limit",
-      "miso_seam_flow_limit",
-      "miso_seam_flow_percentile",
       "miso_south_seam_split",
       "miso_zonal_reserve_zones",
       "miso_zonal_reserves"
     ],
     "NEISO": [],
     "NYISO": [],
-    "PJM": [
-      "pjm_ct_measured_max_reprice",
-      "pjm_da_virtual_surface_path",
-      "pjm_offer_midcurve_level_segments",
-      "pjm_offer_midcurve_path",
-      "pjm_offer_midcurve_peak_segments",
-      "pjm_offer_midcurve_segments",
-      "pjm_offer_surface_within_season",
-      "pjm_reserve_commitment_scoped",
-      "pjm_reserve_online_gated",
-      "pjm_reserve_online_rho",
-      "pjm_reserve_pergen_size_split",
-      "pjm_reserve_pergen_sync",
-      "pjm_seam_export_limit",
-      "pjm_seam_flow_limit",
-      "pjm_seam_flow_percentile"
-    ]
+    "PJM": []
   },
   "shared_armed_on_keeper": {
     "CAISO": [
