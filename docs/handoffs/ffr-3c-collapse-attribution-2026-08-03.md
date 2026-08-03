@@ -232,3 +232,247 @@ predictions follow from the code alone:
 
 If P1/P2 hold, **MISO cannot reproduce the ERCOT pattern**, because the ERCOT pattern requires
 the exit half to fire and in MISO's window it does not.
+
+### 3.1 Both arms, measured
+
+Paired MISO T1-F 2026–2030, `--golden-posture` (MISO resolves **curve-ON** = its shipped arm),
+5/5 years each, `error: None`, cold post-epoch, run **sequentially** (rule 12 — MISO solo at
+9.3 GB peak). Cache keys verified **distinct before either arm was solved**.
+
+| leg | yrs | wall | peak RSS | curve | cache key | FAIL | WARN |
+|---|---|---|---|---|---|---|---|
+| MISO **treatment** (D-1+D-2, shipped) | 5/5 | 23.4 m | 9.31 GB | `True` ✓ | `b3d33a1955c7854d` | I7 | I12 |
+| MISO ***control*** (pre-decision) | 5/5 | 19.6 m | 9.30 GB | `True` ✓ | `3a0061377cba3d34` | I7 | I12 |
+
+**The invariants the packet asked for, in FFR-3A's table shape:**
+
+| invariant | TREATMENT (D-1+D-2, shipped) | CONTROL (pre-decision) | |
+|---|---|---|---|
+| **I12** reserve margin | **WARN** — 2 yr out (2026 5.3 %, 2027 7.1 %; band [10.0 %, 25.0 %]) | **WARN** — 1 yr out (2026 5.3 %) | **the 2027 leg is D-2's** |
+| **I7** accredited firm | FAIL — 2026 short **6,037 MW**, 2027 short **3,659 MW** | FAIL — 2026 short **6,037 MW** only | 2026 **IDENTICAL**; 2027 is D-2's |
+| **I3** unserved/dump | **PASS** | **PASS** | unchanged — no unserved energy in either arm |
+| I1–I6, I8–I11, I13, I14 | PASS | PASS | unchanged |
+| **rubric FC-2** | **CAVEAT** | **CAVEAT** | **DOES NOT MOVE** |
+| determination | HOLD (FC-1, FC-7) | HOLD (FC-1, FC-7) | unchanged |
+
+### 3.2 Answer 1 — MISO does NOT reproduce the ERCOT pattern, and its I12 did NOT flip
+
+Three separations, each measured:
+
+**(a) MISO's reserve margin RECOVERS; ERCOT's declines.** The two trajectories are opposite in
+sign, not merely different in degree:
+
+| | 2026 | 2027 | 2028 | 2029 | 2030 |
+|---|--:|--:|--:|--:|--:|
+| MISO treatment RM | 5.26 % | 7.13 % | **10.83 %** | **13.79 %** | **12.34 %** |
+| *vs the model's own floor (9.95 %)* | −4.70 | −2.82 | **+0.88** | **+3.84** | **+2.39** |
+| *ERCOT treatment RM (FFR-3A §6.4)* | *9.1 %* | *3.8 %* | *3.0 %* | *−1.5 %* | — |
+
+MISO is below its floor for two years and **above it from 2028 onward**. It never goes
+negative, and I3 shows **no unserved energy at all**. There is no collapse in MISO.
+
+**(b) I12 is WARN in BOTH arms — it never FAILs, under either configuration.** I12 FAILs on
+`>= 3` consecutive out-of-band years; the treatment has exactly 2. So the consequence D-2 was
+signed against — *"MISO's I12 goes WARN→FAIL"* — **does not reproduce even against its own
+paired control**. FFR-3A measured this without a control and correctly declined to attribute
+it; with the control, the finding is now attributed: **MISO's I12 does not flip because the
+mechanism that would flip it never fires** (see (c)), not because some offsetting input hid it.
+
+**(c) The reason is structural: D-1 is PROVABLY INERT in MISO's T1-F window.** Not "small" —
+literally zero events, in both arms:
+
+| | treatment | control |
+|---|---|---|
+| economic retirements | **0 MW, 0 units, every year** | **0 MW, 0 units, every year** |
+| R-NEW pipeline events (decided / re_confirmed / entry_capped / executed) | **NONE** | n/a (legacy) |
+| reliability-floor retentions | NONE | NONE |
+| announced retirements | 633 MW (3 units) | **633 MW (3 units) — identical** |
+
+The retirement pipeline is never entered by a single unit. This is the mechanical consequence
+pre-registered in §3.0: `pipeline_state` starts empty, `decided_year = year − 1`, and
+`L_coal = 3` / `L_gas_ct = 2`, so nothing decided in 2026 can execute before 2028 — and in fact
+nothing was ever decided, because no MISO unit failed the bar. **P1 CONFIRMED.**
+
+**Therefore the ERCOT pattern is not reproducible in MISO's window on this evidence, and no
+conclusion about D-1 can be drawn from MISO either way.** MISO is a valid control for D-2 and
+an *uninformative* one for D-1. That is a real limit on what the highest-value second
+attribution could deliver, and it was not knowable before the run.
+
+### 3.3 Answer 2 — MISO's entire arm delta is D-2, and it is a TIMING effect
+
+**2026 is identical in both arms**, to the megawatt: accredited firm 135,304 MW, RM 5.26 %,
+peak 128,549 MW, zero exits, zero additions of any kind (thermal, renewable, storage), and
+`fleet_by_fuel_before == fleet_by_fuel_after` — **the fleet does not change at all in the first
+solve year**. So MISO's 2026 I7 shortfall of 6,037 MW is a **base-fleet / accreditation
+starting condition and is attributable to NEITHER signed decision.** It is present in the
+pre-decision configuration exactly as it is in the shipped one.
+
+**2027 is the whole delta, and it is the commissioning lag:**
+
+| 2027 | treatment | control |
+|---|--:|--:|
+| reserve margin | 7.13 % (−2.82 pp vs floor) | **13.40 % (+3.45 pp)** |
+| thermal additions: planned | 55 MW | 55 MW |
+| thermal additions: **economic** | **0 MW** | **5,000 MW** |
+| thermal additions: **reserve backstop** | **0 MW** | **2,873 MW** |
+| I7 | short 3,659 MW | **cleared** |
+
+The control closes the gap in 2027 by building 7,873 MW. The treatment cannot: with
+`entry_commissioning_lag` armed, a build decided in 2026–27 commissions
+`ENTRY_COD_LAG_YEARS = 2` later. And that is exactly where the treatment's capacity appears —
+**2,049 MW of backstop in 2028 and 4,350 MW of economic entry in 2029**, arriving after the
+two-year miss rather than during it.
+
+**So D-2 converts a one-year I7 miss into a two-year one by deferring the fix, not by making
+the system shorter.** MISO's adequacy problem is a *starting condition* the model closes either
+way; the dampers govern how fast. Under rule 1 `[R-STRUCT]` the damped arm is the faithful one
+— the control closes its 2027 gap with a 5,000 MW single-year economic thermal build plus a
+2,873 MW backstop against a MISO record whose largest-ever single-year gas_cc build is
+1.723 GW (§1.4), i.e. the control's fix is not buildable. **The damper is not the defect; it is
+what makes the undamped arm's answer visible as unbuildable.**
+
+**Cumulative build, with its censoring caveat stated.** Over the 5-year window the treatment
+builds **7,819 MW** of thermal against the control's **13,643 MW** (−43 %), with storage moving
+the other way (10,400 vs 8,000 MW). **This window under-counts the treatment by construction**:
+a 2-year COD lag means decisions taken in 2029–2030 commission in 2031–2032, outside the
+window entirely. The cumulative figures are therefore *not* evidence that the dampers reduce
+total build — FFR-2B measured the cumulative backstop as re-phased, not reduced (−0.07 %), and
+nothing here contradicts that. Only the *timing* claim is supported by this window.
+
+---
+
+## 4. The answer to the owner's question
+
+**(c) — both, with a measured split. The split is MEMBERSHIP (real) vs CALENDAR (artifact).**
+
+| term | verdict | evidence |
+|---|---|---|
+| **Which units the screen retires** | **REAL going-forward economics.** The corrected rule identifies the right units better than the rule it replaced. | FFR-2B recall MISO 2/17→13/17, PJM 9/17→13/17; T-R10a/b FAIL→PASS holding 3/3 LOYO |
+| **WHEN they leave (one lumped year)** | **GRAIN ARTIFACT.** D = 0 decision + per-fuel constant lag = a translation operator with no spreading term; the only spreading mechanism the model ever had was deleted at the same commit. | §1.2 G1/G2 (all 12 decided in one year, all executed in one year); §1.3 |
+| **The DEPTH of the reserve-margin trough** | **THE INTERACTION**, and it is an asymmetry nobody measured before arming both halves: exit throughput uncapped, entry throughput capped at 2× the measured record. | §1.4 (model single-year exits 1.6×–4.8× the historical envelope; MISO entry cap 4.8 GW/yr) |
+| **ERCOT's headline −1.5 % specifically** | **Overstated by 6.65 pp** by a basis mismatch — but the I12 FAIL is robust and does not go away. | §2.1 |
+| **CAISO's −3.1 %** | **NOT a basis artifact.** Scored on the model's own basis; an 18.1 pp shortfall within the model. | §2.1 |
+| **MISO** | **NEITHER.** Its 2026 miss is a base-fleet starting condition present in both arms; its 2027 miss is D-2 deferring the fix. No collapse, no I12 flip, D-1 provably inert. | §3.2, §3.3 |
+
+**Why "artifact" is the right word for the calendar and not a hedge.** A lag and a rate cap are
+different operators. The R-NEW redesign replaced a mechanism that had both (`the counter's
+delay` + `staged_oversupply_thinning`'s throughput cap) with one that has only the delay, on an
+argument — rule 19, "the same physical queue, carried once" — that treats queue latency and
+queue throughput as the same quantity. §1.2 shows they are not: with only the latency term,
+exit-wave width is invariant at exactly one year no matter how many units fail. The model
+therefore has no representation of the constraint that stops a real ISO deactivating 21 GW in a
+single year, while it *does* have one — armed, measured, and correct — for the constraint that
+stops it building 21 GW in a single year.
+
+---
+
+## 5. What this evidence does NOT separate — stated plainly
+
+The charter asked for an honest "not separated" where the evidence does not reach. Three things
+it does not:
+
+1. **The split is not quantified as a fraction of the ERCOT/CAISO trough.** Saying "the calendar
+   is an artifact" is not the same as saying "X pp of the −1.5 % is the artifact." Separating
+   them requires solving ERCOT with the exit wave *spread* and holding everything else fixed —
+   i.e. arming a throughput mechanism. **That is a fix, and the charter forbids shipping one
+   here.** What would settle it is stated in §6.
+2. **MISO cannot adjudicate D-1 at all.** Zero economic exits in the window means the second
+   attribution the owner commissioned returns *no information* about the retirement half — only
+   about the entry half. ERCOT remains the **only** ISO where D-1 is attributed against a
+   control. A D-1 attribution in a capacity-market ISO still does not exist, and rule 25
+   `[R-ISO-SCOPE]` forbids importing ERCOT's.
+3. **Nothing here re-measures ERCOT or CAISO.** Their numbers are FFR-3A's, quoted. §2.1's
+   6.65 pp correction is computed from the shipped constants and is arithmetic on the band, not
+   a re-solve. The re-solve that would confirm it is not in this charter either.
+
+---
+## 6. What a G-31 fix lane would need to charter
+
+Written as a specification, not a recommendation to arm anything — the fix is a successor lane
+with its own charter and its own owner decision (packet: *"Characterize it; the fix is a
+successor lane"*).
+
+1. **The identification already exists and is measured.** The redesign memo named the source —
+   *"max observed single-year per-ISO thermal deactivation from the EIA-860 retired sheet"* —
+   and §1.4 measures it (MISO 7.57 GW, PJM 5.24, ERCOT 4.42, CAISO 1.48, NEISO 0.45, NYISO
+   0.31; medians 3.54 / 1.32 / 0.39 / 0.05 / 0.02 / 0.03). A throughput term would be
+   externally identified from source data, not fitted to a residual — rule 13 `[R-MEASURED]`
+   admissible and rule 23 `[R-FROZEN-DERIVE]` compliant (re-derives on an EIA-860 vintage
+   update, never on a residual). The reader is
+   `scratchpad/measure_exit_throughput.py` in this session's record; a lane would move it to a
+   `data/` module beside `build_throughput.py`, its exact entry-side analogue.
+2. **It must resolve the rule-19 question head-on, not route around it.** The lane's first
+   deliverable is an adjudication: are queue *latency* and queue *throughput* one mechanism or
+   two? §1.2 is the evidence that they are two. If the owner rules them one, the lane closes and
+   G-31 is instead routed to whatever else can spread a wave. **A throughput cap must not be
+   armed by a session that has not obtained that ruling** — otherwise it is exactly the
+   stacked-floor pattern rule 19 exists to prevent.
+3. **The G3 cap-grain defect is separable and cheaper.** The pipeline's admission cap tests the
+   **decision** year's requirement against exits that execute 1–3 years later (§1.2, +10.3 % of
+   requirement unseen in the synthetic). Threading the execution year into that one call is a
+   much smaller change than a new mechanism, needs no new parameter, and is a candidate for
+   being fixed *first* so a throughput lane is measured against a correct cap.
+4. **It must be scored leave-one-year-out within 2023–2025 before promotion** (rule 22), and the
+   T1-F re-measurement must be paired against a control, because §3.2 shows an ISO can be
+   structurally incapable of exercising the mechanism under test.
+5. **Two ISOs are the right test set, and MISO is not one of them.** ERCOT (the failing I6 case,
+   26.8 %) and PJM (12.68 % legacy → 8.55 % pipeline, the largest measured wave). MISO retires
+   nothing economically in a T1-F window and cannot exercise an exit-throughput mechanism at
+   all.
+
+## 7. Open blockers
+
+**Carried forward unchanged from FFR-3A** (none was in this charter to fix): blocker 0 (the
+collapse itself — this document is its attribution, not its resolution), 1 (`data/clean`
+prerequisite), 2 (C.4(a) B1 posture source — *signed at Addendum D.1, not yet executed*),
+3 (C.4(c) harness pins — *signed UN-PIN at Addendum D.1, not yet executed*), 4 (optional-field
+cache-key hazard), 5 (zero-year console line), 6 (pre-existing test failures), 7
+(`run_full_horizon` never writes `run_config.json`), 8 (FC-2 row4 SKIPPED).
+
+**Blocker 7 is now measured as universal, not ISO-specific.** FC-7 FAILs on **both** MISO arms
+for the identical reason (`run_config.json absent`), exactly as it did on all six FFR-3A legs.
+Every T1-F leg this runner produces is unpromotable on provenance **by construction**, so the
+determination `HOLD` in §3.1 carries no information about either arm's quality. Left as found,
+for the same reason FFR-3A left it: authoring the artifact after seeing the score is what
+rubric §4 forbids.
+
+**New from this session:**
+
+9. **`data/clean` regeneration is NOT 50/50 clean on a fresh container.** `ercot-wtx-congestion`
+   fails with `ZoneInfoNotFoundError: No time zone found with key ...` because the image ships
+   no `tzdata` package. Fixed in-session with `pip install tzdata` (2026.3), after which the
+   datatype curates cleanly (7 year files). FFR-3A's *"50 datatypes, 0 failures"* is **not
+   reproducible without that package** — this belongs with blocker 1, and the failure is loud
+   and ERCOT-only, so it does not silently corrupt a MISO leg. Measured cost of the
+   prerequisite here: **≈65 min, 50 datatypes, 1.6 GB, 404+ parquet files** on a 4-core/15 GB
+   container, dominated by the CAMPD `emissions` extract at ~27 M rows/year.
+10. **The evolution ledgers are NOT in `--out-dir`.** `run_full_horizon` rebases the cache root
+    under `--out-dir`, so a leg's per-year `evolution_<year>.json` lives at
+    `<out-dir>/<ISO>/<cache_key>/`, not the out-dir root and not `results/<ISO>/<key>/`. Any
+    successor reading ledgers by the documented `load_ledgers_for_run(cache_dir)` contract will
+    find an empty result and, because the function returns `{}` rather than raising, will read
+    it as "no evolution happened." Recorded because that failure mode is silent.
+11. **`--golden-posture` reproduces MISO's shipped curve arm correctly** (`capacity_market_
+    clearing` resolves `True` on both arms, matching FFR-3A §4.3). No new posture defect found.
+
+## 8. What this session does NOT claim
+
+* **No promotion, no registration.** `frontend/data/forecast/` is untouched; `ff-verdicts.json`
+  and `program-status.json` are unchanged; the backcast registry was never touched. Both arms
+  are HOLD and stay HOLD. Nothing here is a keeper or a candidate.
+* **No default changed.** `retirement_rule` is still `pipeline`; both entry dampers are still
+  armed; no band was widened, restated, or reinterpreted; no threshold moved. The control arm
+  reaches the pre-decision configuration through **CLI flags only**.
+* **No keeper moved.** All six shards re-read at this HEAD match the packet exactly (ERCOT
+  `2026-08-02-ercot150b-zonal-anchor`, PJM `2026-08-03-pjm-147b-chp-heat`, CAISO
+  `2026-08-03-caiso156-meter-screen-b`, NYISO `2026-08-02-nyiso-113-li-locational`, NEISO
+  `2026-08-03-neiso-caiso156-meter-screen`, MISO `2026-08-03-miso-117b-ct-heat`), and
+  `git status frontend/` is empty. Forecast-mode gates cannot reach a backcast keeper anyway
+  (FFR-3A §2), but the check was run rather than assumed.
+* **No holdout year touched.** Both arms are forecast-mode 2026–2030, which the freeze
+  explicitly does not restrict. No backcast year was solved, scored, or read.
+* **No G-31 fix.** §6 is a charter for a successor lane, not a change. Nothing in `src/` was
+  modified by this session at all — the two measurement scripts are session-record scratch, not
+  shipped modules.
+* **Cross-ISO causation is still not claimed.** ERCOT remains the only ISO where D-1 is
+  attributed against a control, and §3.2 explains why MISO could not extend that.
