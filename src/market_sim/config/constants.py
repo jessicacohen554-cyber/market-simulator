@@ -1841,15 +1841,44 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
         "mid": {"near": 0.036, "long": 0.024},
         "high": {"near": 0.060, "long": 0.040},
     },
-    # NYISO — 2025 Load & Capacity Data Report ("Gold Book") vintage bump (exact
-    # per-zone MW-by-year is FF-0D §7.3 M4). Central ~1.8%/yr near / 1.2%/yr long
-    # (electrification + the >3 GW large-load adjustment carried as the DC block).
-    # Implied organic-ex-DC near ~-1.0%/yr (organic NY load is efficiency-flat).
-    # Source: NYISO 2025 Gold Book; FF-0D audit §1.1.
+    # NYISO — 2026 Load & Capacity Data Report ("Gold Book", released April 2026),
+    # Table I-1a "NYCA Baseline Energy and Demand Forecasts", Energy-GWh
+    # Lower/Baseline/Higher columns. RE-DERIVED 2026-08-03 (FFR-SC) on the
+    # EDITION BUMP alone (rule 23 [R-FROZEN-DERIVE]) — the 2025 edition this row
+    # previously cited was superseded, and FF-G4 §8-D4 item 3 flagged it stale;
+    # no residual was consulted and none moved. The document landed at
+    # data/raw/NYISO/2026-Gold-Book-Public.pdf.
+    #
+    # Basis, now formulaic instead of the FF-1C "~1.8 %/yr" reading (rule 5
+    # [R-NO-MAGIC]): each case is the compound annual growth of that column's
+    # own published GWh series — near = 2026 -> 2030, long = 2031 -> 2050,
+    # matching DEMAND_GROWTH_TRANSITION_YEAR and the identical construction the
+    # as-of-vintage registry below already uses for every NYISO row.
+    #   low   150,720 -> 149,300 ; 149,510 -> 157,740  => -0.24 % / +0.28 %
+    #   mid   152,600 -> 160,160 ; 161,830 -> 205,760  => +1.22 % / +1.27 %
+    #   high  153,420 -> 170,180 ; 174,220 -> 251,930  => +2.63 % / +1.96 %
+    # Cross-check against the edition's own published CAGR block: baseline
+    # energy 2026-31 = 1.18 % and 2026-46 = 1.30 %, bracketing the 1.22/1.27
+    # computed here.
+    #
+    # Two substantive changes beyond the level, both rule 14 [R-ACCURATE]:
+    # (1) low/high are now the edition's OWN Lower/Higher Demand series rather
+    # than prior-vintage band ratios re-centred on the mid — the "exact
+    # published low/high tables" the header comment records as unavailable at
+    # FF-1C are in this edition; (2) the low case's near rate is NEGATIVE
+    # because the 2026 Gold Book's Lower Demand forecast really does have NY
+    # energy declining to 2030 on efficiency/codes (the same sign the 2021
+    # vintage carries below — supported, not a defect).
+    # Long now slightly EXCEEDS near for the baseline: NY growth accelerates
+    # post-2030 on electrification, which the near/long split represents fine.
+    # Figures are TOTAL (large-load- and electrification-inclusive), the
+    # convention every layer relocates out of exactly once (see
+    # data.datacenter.add_load_layers).
+    # Source: NYISO 2026 Gold Book, Table I-1a; supersedes FF-0D audit §1.1.
     "NYISO": {
-        "low": {"near": 0.008, "long": 0.006},
-        "mid": {"near": 0.018, "long": 0.012},
-        "high": {"near": 0.030, "long": 0.020},
+        "low": {"near": -0.0024, "long": 0.0028},
+        "mid": {"near": 0.0122, "long": 0.0127},
+        "high": {"near": 0.0263, "long": 0.0196},
     },
     # NEISO — ISO-NE 2026 CELT (May 2026): net energy 116,679 (2025) -> 127,660
     # GWh (2035) ~1.0%/yr, winter net peak 20,483 (2026/27) -> 26,411 MW (2035/36)

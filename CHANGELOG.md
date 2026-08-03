@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-08-03 — FFR-SC input refreshes: ATB derivation pin → 2024 v4.0.0 (no-op); NYISO demand anchor → 2026 Gold Book
+
+Two rule-23 `[R-FROZEN-DERIVE]` re-derivations, each triggered by a **source-data
+vintage change and nothing else** — no residual was consulted and none moved.
+
+- **ATB derivation pin `v3.0.0` → `v4.0.0`** (`curate_nrel_atb.DERIVATION_PINNED_VERSION`),
+  closing audit FR-20's open half after FFR-PB landed the v4.0.0 extract. **A measured
+  no-op on every committed constant**: `derive_entry_costs_from_atb`
+  (`NEW_ENTRY_COSTS`, `TECH_COST_MULTIPLIERS`) and `derive_cost_benchmark_envelope`
+  (envelope table + multipliers, `STORAGE_TECHS` li-ion, `OFFSHORE_WIND_PARAMS`,
+  `derive_egs_fom` = 163.4) return byte-identical output under both versions, so
+  `constants.py` is unchanged. Of 3,858 rows on an identical key index, 56 differ
+  materially and **all** are `Geothermal`/`DeepEGSFlash`/`Moderate` (CAPEX
+  +1.50…+6.14 %, Fixed O&M +0.13…+2.00 %) — a class no derive script reads; the
+  other 16 are ~1e-14 float noise. `test_parse_defaults_to_the_pinned_derivation_version`
+  is rewritten against `DERIVATION_PINNED_VERSION` instead of the literal `v3.0.0`,
+  so a future pin move re-points it rather than failing it.
+- **`DEMAND_GROWTH_RATES["NYISO"]` re-derived from the 2026 Gold Book**
+  (NYISO Load & Capacity Data Report, released April 2026), landed at
+  `data/raw/NYISO/2026-Gold-Book-Public.pdf` — closing FF-G4 §8-D4 item 3, which
+  flagged the 2025 edition this row cited as stale. Basis is now **formulaic**
+  (rule 5 `[R-NO-MAGIC]`) instead of the FF-1C "~1.8 %/yr" reading: per-case CAGR
+  of Table I-1a's own Energy-GWh series, near = 2026→2030, long = 2031→2050 —
+  the identical construction `DEMAND_GROWTH_RATES_VINTAGES` already uses for every
+  NYISO row. mid `near 0.018 → 0.0122`, `long 0.012 → 0.0127`; low
+  `0.008/0.006 → -0.0024/0.0028`; high `0.030/0.020 → 0.0263/0.0196`. Two rule-14
+  `[R-ACCURATE]` improvements beyond the level: low/high are now the edition's own
+  Lower/Higher Demand series rather than prior-vintage band ratios re-centred on the
+  mid (the "exact published low/high tables" FF-1C recorded as unavailable are in
+  this edition), and the low case's **negative** near rate is the Lower Demand
+  forecast's real sign. `parameters.json` / `parameter-citations.md` re-cited to the
+  edition, table, URL and file sha256.
+- **MISO's 2026 LTLF anchor is NOT refreshed** — `cdn.misoenergy.org` and
+  `misoenergy.org/planning/…` both return HTTP 403 to a non-browser client, exactly
+  the bot-wall FF-G4 §8-D4 item 5 marks ⬇. Handed forward as a manual download; the
+  row keeps its cited Sept-2025 LTLF basis rather than an uncited estimate.
+
+Full session record incl. the CAISO transmission-expansion A/B:
+`docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md`.
+
 ## 2026-08-03 — ERCOT-157: NP3-965 delivery-2023 corpus re-upload verified + wired; 2023 SCED blocks completed (pool/wall/steam)
 
 The ERCOT-151 §4 data blocker is resolved: the owner re-uploaded the 60-Day
