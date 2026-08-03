@@ -1,0 +1,468 @@
+{
+  "probe": "nyiso-118 pre-registered gate scoring",
+  "prereg": "results/calibration/PREREG-nyiso118-seny-span-2026-08-03.md \u00a76",
+  "control": "results/calibration/nyiso118_control",
+  "treatment": "results/calibration/nyiso118_seny_span",
+  "instrument_note": "requirement legs + LP row identity from reserve_family parquet; WIDTH legs from the committed construction probe + ordc_steps.log (the parquet carries no width vectors); dual/held/shortfall REPORTED, never gated",
+  "years": {
+    "2023": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 17,
+          "hours_dual_pos_treatment": 17,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 306.03472900390625,
+          "max_shortfall_treatment": 306.03472900390625
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 3,
+          "hours_dual_pos_treatment": 3,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 29.16004180908203,
+          "max_shortfall_treatment": 29.16004180908203
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 2,
+          "hours_dual_pos_treatment": 2,
+          "max_dual_control": 62.5,
+          "max_dual_treatment": 62.5,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 61.30720520019531,
+          "max_shortfall_treatment": 61.30720520019531
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    },
+    "2024": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 6,
+          "hours_dual_pos_treatment": 6,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 342.7153625488281,
+          "max_shortfall_treatment": 342.7153625488281
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 6,
+          "hours_dual_pos_treatment": 6,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 388.7153625488281,
+          "max_shortfall_treatment": 388.7153625488281
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    },
+    "2025": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 62.5,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 1.4210854715202004e-14,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 1,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": 1.4210854715202004e-14,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 5,
+          "hours_dual_pos_treatment": 5,
+          "max_dual_control": 6.25,
+          "max_dual_treatment": 6.25,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 129.72532653808594,
+          "max_shortfall_treatment": 129.72532653808594
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 0.0007886886596679688,
+          "hours_dual_pos_control": 29,
+          "hours_dual_pos_treatment": 30,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 74.25828552246094,
+          "max_abs_shortfall_delta": 74.25827026367188,
+          "max_shortfall_control": 316.52203369140625,
+          "max_shortfall_treatment": 316.52203369140625
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 25.0,
+          "hours_dual_pos_control": 9,
+          "hours_dual_pos_treatment": 10,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 62.5,
+          "max_abs_shortfall_delta": 47.8569450378418,
+          "max_shortfall_control": 286.7086486816406,
+          "max_shortfall_treatment": 286.7086486816406
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 1.4210854715202004e-14,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 62.5,
+          "hours_dual_pos_control": 8,
+          "hours_dual_pos_treatment": 8,
+          "max_dual_control": 125.0,
+          "max_dual_treatment": 87.06556701660156,
+          "max_abs_held_delta": 62.5,
+          "max_abs_shortfall_delta": 62.5,
+          "max_shortfall_control": 199.9113006591797,
+          "max_shortfall_treatment": 225.0
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    }
+  },
+  "gates": {
+    "G1_span_live_and_identity_restored": {
+      "pass": true,
+      "seny_hours_totalwidth_ne_requirement_control": [
+        6239,
+        6249,
+        6231
+      ],
+      "seny_hours_totalwidth_ne_requirement_treatment": [
+        0,
+        0,
+        0
+      ],
+      "seny_reachable_price_changed": true,
+      "source": "construction probe (widths are not in the sidecar)"
+    },
+    "G2a_scope_requirement_identity": {
+      "pass": true,
+      "claim": "every family's requirement_mw float32-EXACT between arms"
+    },
+    "G2b_li_no_double_apply": {
+      "pass": true,
+      "li_widths_identical": true,
+      "li_requirement_identical": true,
+      "li_penalties_identical": true
+    },
+    "G2c_ordc_step_count_unchanged": {
+      "pass": true,
+      "control": [
+        59,
+        59,
+        59
+      ],
+      "treatment": [
+        59,
+        59,
+        59
+      ]
+    },
+    "G3_lp_row_identity": {
+      "pass": true
+    },
+    "G4_no_feasibility_damage": {
+      "pass": true
+    }
+  },
+  "kills": {
+    "K_A_li_double_apply": {
+      "fired": false
+    },
+    "K_B_frozen_nyc_disturbed": {
+      "fired": false
+    },
+    "K_C_scope_leak": {
+      "fired": false
+    },
+    "K_D_feasibility_damage": {
+      "fired": false
+    },
+    "K_E_identity_not_restored": {
+      "fired": false
+    }
+  },
+  "ordc_steps": {
+    "control": [
+      59,
+      59,
+      59
+    ],
+    "treatment": [
+      59,
+      59,
+      59
+    ],
+    "identical": true
+  },
+  "all_gates_pass": true,
+  "any_kill_fired": false
+}
