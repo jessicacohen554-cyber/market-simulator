@@ -1,0 +1,450 @@
+{
+  "_what": "pjm-151 Phase 2: PJM seam deliverability-cap attribution, keeper construction (per-zone bucket summed over border_zones) vs the direct per-neighbour construction. No LP, no solve.",
+  "percentile": 90.0,
+  "years": {
+    "2023": {
+      "zone_bucket_mean_mw": {
+        "PJM_AEP_Ohio": {
+          "import": 0.0,
+          "export": 2511.5
+        },
+        "PJM_ATSI": {
+          "import": 1455.0,
+          "export": 1527.2
+        },
+        "PJM_ComEd": {
+          "import": 83.2,
+          "export": 3482.6
+        },
+        "PJM_Dominion": {
+          "import": 2076.7,
+          "export": 93.3
+        },
+        "PJM_EMAAC": {
+          "import": 0.0,
+          "export": 2833.4
+        }
+      },
+      "neighbors": {
+        "MISO": {
+          "border_zones": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "zones_with_ties": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "interface_limit_mw": 7300.0,
+          "import": {
+            "keeper_mean_mw": 1538.2,
+            "direct_mean_mw": 0.1,
+            "ratio": 19260.743,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 7521.3,
+            "direct_mean_mw": 5558.9,
+            "ratio": 1.353,
+            "keeper_binds_frac": 0.455,
+            "direct_binds_frac": 0.99
+          }
+        },
+        "NYISO": {
+          "border_zones": [
+            "PJM_EMAAC"
+          ],
+          "zones_with_ties": [
+            "PJM_EMAAC"
+          ],
+          "interface_limit_mw": 3900.0,
+          "import": {
+            "keeper_mean_mw": 0.0,
+            "direct_mean_mw": 0.0,
+            "ratio": 0.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2833.4,
+            "direct_mean_mw": 2833.4,
+            "ratio": 1.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "Carolinas": {
+          "border_zones": [
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 2400.0,
+          "import": {
+            "keeper_mean_mw": 2076.7,
+            "direct_mean_mw": 1162.1,
+            "ratio": 1.787,
+            "keeper_binds_frac": 0.681,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 93.3,
+            "direct_mean_mw": 140.4,
+            "ratio": 0.665,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "TVA": {
+          "border_zones": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 1600.0,
+          "import": {
+            "keeper_mean_mw": 2076.7,
+            "direct_mean_mw": 1014.4,
+            "ratio": 2.047,
+            "keeper_binds_frac": 0.167,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2604.8,
+            "direct_mean_mw": 21.0,
+            "ratio": 123.93,
+            "keeper_binds_frac": 0.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "LGEE": {
+          "border_zones": [
+            "PJM_West_APS",
+            "PJM_AEP_Ohio"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio"
+          ],
+          "interface_limit_mw": 1100.0,
+          "import": {
+            "keeper_mean_mw": 0.0,
+            "direct_mean_mw": 518.3,
+            "ratio": 0.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2511.5,
+            "direct_mean_mw": 76.1,
+            "ratio": 33.019,
+            "keeper_binds_frac": 0.0,
+            "direct_binds_frac": 1.0
+          }
+        }
+      }
+    },
+    "2024": {
+      "zone_bucket_mean_mw": {
+        "PJM_AEP_Ohio": {
+          "import": 0.0,
+          "export": 2688.0
+        },
+        "PJM_ATSI": {
+          "import": 1875.2,
+          "export": 1015.3
+        },
+        "PJM_ComEd": {
+          "import": 264.1,
+          "export": 2919.5
+        },
+        "PJM_Dominion": {
+          "import": 2287.7,
+          "export": 177.1
+        },
+        "PJM_EMAAC": {
+          "import": 0.0,
+          "export": 2867.7
+        }
+      },
+      "neighbors": {
+        "MISO": {
+          "border_zones": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "zones_with_ties": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "interface_limit_mw": 7300.0,
+          "import": {
+            "keeper_mean_mw": 2139.3,
+            "direct_mean_mw": 11.1,
+            "ratio": 192.723,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 6622.9,
+            "direct_mean_mw": 4468.0,
+            "ratio": 1.482,
+            "keeper_binds_frac": 0.698,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "NYISO": {
+          "border_zones": [
+            "PJM_EMAAC"
+          ],
+          "zones_with_ties": [
+            "PJM_EMAAC"
+          ],
+          "interface_limit_mw": 3900.0,
+          "import": {
+            "keeper_mean_mw": 0.0,
+            "direct_mean_mw": 0.0,
+            "ratio": 0.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2867.7,
+            "direct_mean_mw": 2867.7,
+            "ratio": 1.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "Carolinas": {
+          "border_zones": [
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 2400.0,
+          "import": {
+            "keeper_mean_mw": 2287.7,
+            "direct_mean_mw": 1323.0,
+            "ratio": 1.729,
+            "keeper_binds_frac": 0.531,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 177.1,
+            "direct_mean_mw": 183.0,
+            "ratio": 0.968,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "TVA": {
+          "border_zones": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 1600.0,
+          "import": {
+            "keeper_mean_mw": 2287.7,
+            "direct_mean_mw": 1039.1,
+            "ratio": 2.202,
+            "keeper_binds_frac": 0.125,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2865.2,
+            "direct_mean_mw": 54.4,
+            "ratio": 52.69,
+            "keeper_binds_frac": 0.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "LGEE": {
+          "border_zones": [
+            "PJM_West_APS",
+            "PJM_AEP_Ohio"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio"
+          ],
+          "interface_limit_mw": 1100.0,
+          "import": {
+            "keeper_mean_mw": 0.0,
+            "direct_mean_mw": 538.5,
+            "ratio": 0.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2688.0,
+            "direct_mean_mw": 64.3,
+            "ratio": 41.799,
+            "keeper_binds_frac": 0.0,
+            "direct_binds_frac": 1.0
+          }
+        }
+      }
+    },
+    "2025": {
+      "zone_bucket_mean_mw": {
+        "PJM_AEP_Ohio": {
+          "import": 58.4,
+          "export": 2478.8
+        },
+        "PJM_ATSI": {
+          "import": 1986.6,
+          "export": 755.7
+        },
+        "PJM_ComEd": {
+          "import": 278.2,
+          "export": 3082.9
+        },
+        "PJM_Dominion": {
+          "import": 2279.7,
+          "export": 312.3
+        },
+        "PJM_EMAAC": {
+          "import": 0.0,
+          "export": 3046.1
+        }
+      },
+      "neighbors": {
+        "MISO": {
+          "border_zones": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "zones_with_ties": [
+            "PJM_ComEd",
+            "PJM_AEP_Ohio",
+            "PJM_ATSI"
+          ],
+          "interface_limit_mw": 7300.0,
+          "import": {
+            "keeper_mean_mw": 2323.1,
+            "direct_mean_mw": 23.8,
+            "ratio": 97.591,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 6317.3,
+            "direct_mean_mw": 4219.7,
+            "ratio": 1.497,
+            "keeper_binds_frac": 0.812,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "NYISO": {
+          "border_zones": [
+            "PJM_EMAAC"
+          ],
+          "zones_with_ties": [
+            "PJM_EMAAC"
+          ],
+          "interface_limit_mw": 3900.0,
+          "import": {
+            "keeper_mean_mw": 0.0,
+            "direct_mean_mw": 0.0,
+            "ratio": 0.0,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 3046.1,
+            "direct_mean_mw": 3046.1,
+            "ratio": 1.0,
+            "keeper_binds_frac": 0.972,
+            "direct_binds_frac": 0.972
+          }
+        },
+        "Carolinas": {
+          "border_zones": [
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 2400.0,
+          "import": {
+            "keeper_mean_mw": 2279.7,
+            "direct_mean_mw": 1365.3,
+            "ratio": 1.67,
+            "keeper_binds_frac": 0.635,
+            "direct_binds_frac": 0.958
+          },
+          "export": {
+            "keeper_mean_mw": 312.3,
+            "direct_mean_mw": 386.0,
+            "ratio": 0.809,
+            "keeper_binds_frac": 1.0,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "TVA": {
+          "border_zones": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio",
+            "PJM_Dominion"
+          ],
+          "interface_limit_mw": 1600.0,
+          "import": {
+            "keeper_mean_mw": 2338.0,
+            "direct_mean_mw": 983.8,
+            "ratio": 2.377,
+            "keeper_binds_frac": 0.24,
+            "direct_binds_frac": 0.979
+          },
+          "export": {
+            "keeper_mean_mw": 2791.1,
+            "direct_mean_mw": 69.6,
+            "ratio": 40.079,
+            "keeper_binds_frac": 0.097,
+            "direct_binds_frac": 1.0
+          }
+        },
+        "LGEE": {
+          "border_zones": [
+            "PJM_West_APS",
+            "PJM_AEP_Ohio"
+          ],
+          "zones_with_ties": [
+            "PJM_AEP_Ohio"
+          ],
+          "interface_limit_mw": 1100.0,
+          "import": {
+            "keeper_mean_mw": 58.4,
+            "direct_mean_mw": 549.3,
+            "ratio": 0.106,
+            "keeper_binds_frac": 0.986,
+            "direct_binds_frac": 1.0
+          },
+          "export": {
+            "keeper_mean_mw": 2478.8,
+            "direct_mean_mw": 94.0,
+            "ratio": 26.378,
+            "keeper_binds_frac": 0.014,
+            "direct_binds_frac": 1.0
+          }
+        }
+      }
+    }
+  }
+}
