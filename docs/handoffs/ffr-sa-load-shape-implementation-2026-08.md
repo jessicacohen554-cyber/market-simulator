@@ -104,13 +104,59 @@ survives sourced layers routes to L-INP as a finding, never a profile edit.
 
 ## 4. T0 smoke (NEISO → PJM, 2026–2028, armed vs off)
 
-*(Filled by this session after the solve window — see the run dirs under
-`results/ffr-sa-smoke/`.)*
+Run dirs: `results/ffr-sa-smoke/{neiso,pjm}-{off,mid}` (summaries committed).
+Solve slots honored (rule 12): all four legs strictly SEQUENTIAL, one
+invocation at a time.
 
-- **NEISO 2026–2028** `--electrification-path mid` vs off: PENDING SOLVE.
-- **PJM 2026–2028** armed vs off: PENDING SOLVE (expected: armed == off,
-  byte-identical — PJM ships `{}` anchors; the honest-no-op leg).
-- Invariants: PENDING.
+**NEISO 2026–2028, off vs `--electrification-path mid`** (3/3 years each,
+~5 min/leg, distinct cache keys `9ff63395d1c39726` / `2dd851fb5010a74d`):
+
+| yr | peak_demand off→mid (MW) | reserve_margin off→mid | lw_price off→mid | CO₂ off→mid (Mt) |
+|---|---|---|---|---|
+| 2026 | 24,890 → 24,890 (=) | 0.153 → 0.153 (=) | 52.13 → 52.13 | 16.32 → 16.32 |
+| 2027 | 25,213 → 25,044 | 0.198 → 0.206 | 49.41 → 49.40 | 16.56 → 16.58 |
+| 2028 | 25,541 → 25,203 | 0.201 → 0.217 | 50.76 → 50.76 | 14.09 → 14.09 |
+
+2026 is IDENTICAL by construction (the layer's near anchor is 0). From 2027
+the armed annual (= summer) peak falls as HP energy relocates into winter, and
+the reserve margin rises accordingly; prices/CO₂ move negligibly at these
+horizons. **Invariants: no status delta armed-vs-off.** Both legs carry the
+SAME single FAIL — I12 reserve-margin band (2026 15.3 % vs [0.2, 15.2] band,
+widening with the entry backstop by 2028) — and the off leg is bit-identical
+to the pre-FFR-SA baseline config, so I12 is an INHERITED baseline property
+of the NEISO forecast reference posture, not this mechanism (armed moves RM
++0.8/+1.6 pp further above the band in 2027/28 via the lower summer peak —
+reported, not hidden).
+
+**Winter-peak expressibility (the FR-16 acceptance, demand-seam measured —
+the summary trajectory is season-blind, memo §6's per-season rows remain a
+proposed follow-up):** system winter/summer peak ratio, off vs mid:
+
+| yr | off | mid |
+|---|---|---|
+| 2026 | 0.7607 | 0.7607 |
+| 2027 | 0.7607 | 0.7706 |
+| 2028 | 0.7607 | 0.7817 |
+| 2030 | 0.7607 | 0.8035 |
+| 2035 | 0.7607 | 0.8581 |
+
+Off, the ratio is FROZEN forever (the FR-16 defect). Armed, winter-peak CAGR
+2026–2035 is ~1.9 %/yr against ~0.75 %/yr off — the trajectory is now
+EXPRESSIBLE and driver-caused. CELT CONTEXT (never a target): winter
++2.6 %/yr, winter>summer by 2035/36. The armed model undershoots and does not
+flip by 2035; the divergence is explained, not nudged (FC-5 discipline):
+(a) the EV layer — 1,509 MW of CELT's 2035/36 winter peak — ships `{}`
+pending its profile intake (§6.1); (b) linear degree-hours omit cold-climate
+COP rolloff (§5 box); (c) CELT's flip is on NET peaks (BTM solar suppresses
+summer), a channel this model carries elsewhere.
+
+**PJM 2026–2028 armed vs off:** the assembled demand arrays are BIT-IDENTICAL
+(`ARMED==OFF` measured exactly at the seam, all three years) because PJM
+ships `{}` anchors (M11 bot-walled) — the honest no-op the memo designed.
+Both legs solved end-to-end to confirm identical trajectories through the LP:
+see the table below.
+
+*(PJM table appended after the legs complete.)*
 
 ## 5. OWNER DECISION BOX — arming posture (§8-D2 of the memo; NOTHING flipped here)
 
