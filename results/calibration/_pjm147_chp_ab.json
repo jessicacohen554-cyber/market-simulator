@@ -1,0 +1,809 @@
+{
+ "prereg": "results/calibration/PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md",
+ "arms": {
+  "control": "/home/user/market-simulator/results/calibration/pjm147_control_A",
+  "arm": "/home/user/market-simulator/results/calibration/pjm147_chp_B",
+  "keeper": "/home/user/market-simulator/results/calibration/pjm143_hy_level_B"
+ },
+ "flag_fidelity": {
+  "passed": true,
+  "A": false,
+  "B": true
+ },
+ "K0_wiring_liveness_presolve": {
+  "passed": true,
+  "source": "results/calibration/_pjm147_flag_fidelity.json",
+  "per_year": {
+   "2023": {
+    "n_generators": 3407,
+    "n_moved": 68,
+    "moved_mw": 1339.929,
+    "moved_plant_class_pairs": 19,
+    "moved_classes": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "CC_CHP_mw": 1538.772,
+    "CC_CHP_capw_hr_off": 7.713,
+    "CC_CHP_capw_hr_on": 8.1415,
+    "CT_CHP_mw": 313.306,
+    "CT_CHP_capw_hr_off": 8.99,
+    "CT_CHP_capw_hr_on": 9.0221
+   },
+   "2024": {
+    "n_generators": 3413,
+    "n_moved": 68,
+    "moved_mw": 1339.929,
+    "moved_plant_class_pairs": 19,
+    "moved_classes": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "CC_CHP_mw": 1538.772,
+    "CC_CHP_capw_hr_off": 7.713,
+    "CC_CHP_capw_hr_on": 8.1415,
+    "CT_CHP_mw": 309.246,
+    "CT_CHP_capw_hr_off": 8.9776,
+    "CT_CHP_capw_hr_on": 9.0101
+   },
+   "2025": {
+    "n_generators": 3416,
+    "n_moved": 68,
+    "moved_mw": 1339.929,
+    "moved_plant_class_pairs": 19,
+    "moved_classes": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "CC_CHP_mw": 1538.772,
+    "CC_CHP_capw_hr_off": 7.713,
+    "CC_CHP_capw_hr_on": 8.1415,
+    "CT_CHP_mw": 310.266,
+    "CT_CHP_capw_hr_off": 8.9736,
+    "CT_CHP_capw_hr_on": 9.0061
+   }
+  }
+ },
+ "K1_mechanism_live": {
+  "passed": true,
+  "rule": "max |delta class-hour MW| on ('CC_CHP', 'CT_CHP') > 1.0 in >=1 year",
+  "per_year": {
+   "2023": {
+    "CC_CHP": 291.7284,
+    "CC_REGULAR": 460.5664,
+    "COAL_BIT": 688.5166,
+    "COAL_PRB": 220.0425,
+    "COAL_WC": 61.3412,
+    "CT_CHP": 53.509,
+    "CT_PEAKER": 244.9907,
+    "ST_CHP": 15.6049,
+    "ST_GAS": 464.1299,
+    "VIRTUAL_DEC": 591.6836,
+    "VIRTUAL_INC": 529.7158,
+    "hydro": 392.4865,
+    "import": 912.4998
+   },
+   "2024": {
+    "CC_CHP": 252.3011,
+    "CC_REGULAR": 519.2109,
+    "COAL_BIT": 973.2979,
+    "COAL_PRB": 216.6399,
+    "COAL_WC": 68.728,
+    "CT_CHP": 57.3632,
+    "CT_PEAKER": 256.7781,
+    "ST_CHP": 14.8292,
+    "ST_GAS": 348.5118,
+    "VIRTUAL_DEC": 845.6967,
+    "VIRTUAL_INC": 685.417,
+    "hydro": 525.6,
+    "import": 558.8014,
+    "oil": 1.71
+   },
+   "2025": {
+    "CC_CHP": 440.6807,
+    "CC_REGULAR": 927.3555,
+    "COAL_BIT": 628.2969,
+    "COAL_PRB": 331.1929,
+    "COAL_WC": 48.4935,
+    "CT_CHP": 65.9998,
+    "CT_PEAKER": 303.6628,
+    "ST_CHP": 15.9018,
+    "ST_GAS": 317.0615,
+    "VIRTUAL_DEC": 1229.9556,
+    "VIRTUAL_INC": 713.1367,
+    "hydro": 504.9382,
+    "import": 785.9077
+   }
+  }
+ },
+ "K2_control_integrity": {
+  "passed": true,
+  "basis": "scorecard (gate); strict byte basis reported below",
+  "byte": {
+   "2023": {
+    "max_abs_diff_mw": 943.476318,
+    "max_by_class_mw": {
+     "CC_CHP": 238.6372,
+     "CC_REGULAR": 436.5,
+     "COAL_BIT": 418.7871,
+     "COAL_PRB": 290.9463,
+     "COAL_WC": 73.6039,
+     "CT_CHP": 65.105,
+     "CT_PEAKER": 567.124,
+     "ST_CHP": 15.8347,
+     "ST_GAS": 464.2014,
+     "VIRTUAL_DEC": 943.4763,
+     "VIRTUAL_INC": 539.5061,
+     "hydro": 546.1001,
+     "import": 912.5
+    }
+   },
+   "2024": {
+    "max_abs_diff_mw": 1030.580078,
+    "max_by_class_mw": {
+     "CC_CHP": 138.1649,
+     "CC_REGULAR": 606.8086,
+     "COAL_BIT": 1021.6255,
+     "COAL_PRB": 331.1929,
+     "COAL_WC": 46.2082,
+     "CT_CHP": 55.6347,
+     "CT_PEAKER": 688.7285,
+     "ST_CHP": 15.9308,
+     "ST_GAS": 378.177,
+     "VIRTUAL_DEC": 1030.5801,
+     "VIRTUAL_INC": 624.2439,
+     "hydro": 493.0335,
+     "import": 819.8125,
+     "oil": 0.7146
+    }
+   },
+   "2025": {
+    "max_abs_diff_mw": 1244.626953,
+    "max_by_class_mw": {
+     "CC_CHP": 263.7273,
+     "CC_REGULAR": 487.1973,
+     "COAL_BIT": 469.2871,
+     "COAL_PRB": 331.1929,
+     "COAL_WC": 84.6574,
+     "CT_CHP": 69.1286,
+     "CT_PEAKER": 681.0117,
+     "ST_CHP": 8.1971,
+     "ST_GAS": 542.3447,
+     "VIRTUAL_DEC": 1244.627,
+     "VIRTUAL_INC": 838.7458,
+     "hydro": 530.7999,
+     "import": 912.5,
+     "oil": 10.7865
+    }
+   }
+  },
+  "keeper_criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "control_criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  }
+ },
+ "K3_scope_integrity": {
+  "passed": true,
+  "artifact_applied_pairs": 21,
+  "years": {
+   "2023": {
+    "n_moved_pairs": 19,
+    "moved_mw": 1339.926,
+    "classes_moved": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "pairs_not_in_artifact": [],
+    "ok": true
+   },
+   "2024": {
+    "n_moved_pairs": 19,
+    "moved_mw": 1339.926,
+    "classes_moved": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "pairs_not_in_artifact": [],
+    "ok": true
+   },
+   "2025": {
+    "n_moved_pairs": 19,
+    "moved_mw": 1339.926,
+    "classes_moved": [
+     "CC_CHP",
+     "CT_CHP"
+    ],
+    "out_of_scope_classes": [],
+    "pairs_not_in_artifact": [],
+    "ok": true
+   }
+  }
+ },
+ "K4_sign": {
+  "passed": true,
+  "rule": "CC_CHP is one-sided dearer at the seam; a RISE is a defect signal"
+ },
+ "K5_overshoot_and_C1": {
+  "band_twh": 1.5,
+  "e1b_band_twh": [
+   -2.0,
+   -0.3
+  ],
+  "years": {
+   "2023": {
+    "CC_REGULAR": {
+     "control": {
+      "model": 322.778,
+      "actual": 325.67,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 322.968,
+      "actual": 325.67,
+      "status": "PASS"
+     },
+     "delta_twh": 0.19,
+     "abs_err_control": 2.892,
+     "abs_err_arm": 2.702,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "CC_CHP": {
+     "control": {
+      "model": 9.062,
+      "actual": 6.115,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 8.606,
+      "actual": 6.115,
+      "status": "PASS"
+     },
+     "delta_twh": -0.456,
+     "abs_err_control": 2.947,
+     "abs_err_arm": 2.491,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "CT_PEAKER": {
+     "control": {
+      "model": 19.593,
+      "actual": 21.663,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 19.659,
+      "actual": 21.663,
+      "status": "PASS"
+     },
+     "delta_twh": 0.066,
+     "abs_err_control": 2.07,
+     "abs_err_arm": 2.004,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "ST_GAS": {
+     "control": {
+      "model": 10.879,
+      "actual": 8.883,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 10.896,
+      "actual": 8.883,
+      "status": "PASS"
+     },
+     "delta_twh": 0.017,
+     "abs_err_control": 1.996,
+     "abs_err_arm": 2.013,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "ST_CHP": {
+     "control": {
+      "model": 0.926,
+      "actual": 2.198,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 0.926,
+      "actual": 2.198,
+      "status": "PASS"
+     },
+     "delta_twh": 0.0,
+     "abs_err_control": 1.272,
+     "abs_err_arm": 1.272,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_PRB": {
+     "control": {
+      "model": 3.149,
+      "actual": 3.55,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 3.156,
+      "actual": 3.55,
+      "status": "PASS"
+     },
+     "delta_twh": 0.007,
+     "abs_err_control": 0.401,
+     "abs_err_arm": 0.394,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "COAL_BIT": {
+     "control": {
+      "model": 103.965,
+      "actual": 103.026,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 104.03,
+      "actual": 103.026,
+      "status": "PASS"
+     },
+     "delta_twh": 0.065,
+     "abs_err_control": 0.939,
+     "abs_err_arm": 1.004,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_WC": {
+     "control": {
+      "model": 5.764,
+      "actual": 5.895,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 5.768,
+      "actual": 5.895,
+      "status": "PASS"
+     },
+     "delta_twh": 0.004,
+     "abs_err_control": 0.131,
+     "abs_err_arm": 0.127,
+     "abs_err_improves": true,
+     "status_flip": false
+    }
+   },
+   "2024": {
+    "CC_REGULAR": {
+     "control": {
+      "model": 336.301,
+      "actual": 335.124,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 336.522,
+      "actual": 335.124,
+      "status": "PASS"
+     },
+     "delta_twh": 0.221,
+     "abs_err_control": 1.177,
+     "abs_err_arm": 1.398,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "CC_CHP": {
+     "control": {
+      "model": 8.71,
+      "actual": 7.283,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 8.071,
+      "actual": 7.283,
+      "status": "PASS"
+     },
+     "delta_twh": -0.639,
+     "abs_err_control": 1.427,
+     "abs_err_arm": 0.788,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "CT_PEAKER": {
+     "control": {
+      "model": 21.019,
+      "actual": 24.019,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 21.134,
+      "actual": 24.019,
+      "status": "PASS"
+     },
+     "delta_twh": 0.115,
+     "abs_err_control": 3.0,
+     "abs_err_arm": 2.885,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "ST_GAS": {
+     "control": {
+      "model": 10.914,
+      "actual": 13.107,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 10.936,
+      "actual": 13.107,
+      "status": "PASS"
+     },
+     "delta_twh": 0.022,
+     "abs_err_control": 2.193,
+     "abs_err_arm": 2.171,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "ST_CHP": {
+     "control": {
+      "model": 1.038,
+      "actual": 2.373,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 1.038,
+      "actual": 2.373,
+      "status": "PASS"
+     },
+     "delta_twh": 0.0,
+     "abs_err_control": 1.335,
+     "abs_err_arm": 1.335,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_PRB": {
+     "control": {
+      "model": 4.001,
+      "actual": 4.411,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 4.011,
+      "actual": 4.411,
+      "status": "PASS"
+     },
+     "delta_twh": 0.01,
+     "abs_err_control": 0.41,
+     "abs_err_arm": 0.4,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "COAL_BIT": {
+     "control": {
+      "model": 104.836,
+      "actual": 105.097,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 104.939,
+      "actual": 105.097,
+      "status": "PASS"
+     },
+     "delta_twh": 0.103,
+     "abs_err_control": 0.261,
+     "abs_err_arm": 0.158,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "COAL_WC": {
+     "control": {
+      "model": 5.612,
+      "actual": 5.688,
+      "status": "PASS"
+     },
+     "arm": {
+      "model": 5.618,
+      "actual": 5.688,
+      "status": "PASS"
+     },
+     "delta_twh": 0.006,
+     "abs_err_control": 0.076,
+     "abs_err_arm": 0.07,
+     "abs_err_improves": true,
+     "status_flip": false
+    }
+   },
+   "2025": {
+    "CC_REGULAR": {
+     "control": {
+      "model": 335.188,
+      "actual": 330.361,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 335.554,
+      "actual": 330.361,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.366,
+     "abs_err_control": 4.827,
+     "abs_err_arm": 5.193,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "CC_CHP": {
+     "control": {
+      "model": 7.806,
+      "actual": 6.445,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 6.835,
+      "actual": 6.445,
+      "status": "SKIPPED"
+     },
+     "delta_twh": -0.971,
+     "abs_err_control": 1.361,
+     "abs_err_arm": 0.39,
+     "abs_err_improves": true,
+     "status_flip": false
+    },
+    "CT_PEAKER": {
+     "control": {
+      "model": 27.758,
+      "actual": 23.825,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 27.944,
+      "actual": 23.825,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.186,
+     "abs_err_control": 3.933,
+     "abs_err_arm": 4.119,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "ST_GAS": {
+     "control": {
+      "model": 17.191,
+      "actual": 14.788,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 17.243,
+      "actual": 14.788,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.052,
+     "abs_err_control": 2.403,
+     "abs_err_arm": 2.455,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "ST_CHP": {
+     "control": {
+      "model": 0.881,
+      "actual": 1.836,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 0.881,
+      "actual": 1.836,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.0,
+     "abs_err_control": 0.955,
+     "abs_err_arm": 0.955,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_PRB": {
+     "control": {
+      "model": 6.315,
+      "actual": 6.032,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 6.328,
+      "actual": 6.032,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.013,
+     "abs_err_control": 0.283,
+     "abs_err_arm": 0.296,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_BIT": {
+     "control": {
+      "model": 131.124,
+      "actual": 125.429,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 131.268,
+      "actual": 125.429,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.144,
+     "abs_err_control": 5.695,
+     "abs_err_arm": 5.839,
+     "abs_err_improves": false,
+     "status_flip": false
+    },
+    "COAL_WC": {
+     "control": {
+      "model": 5.683,
+      "actual": 5.403,
+      "status": "SKIPPED"
+     },
+     "arm": {
+      "model": 5.688,
+      "actual": 5.403,
+      "status": "SKIPPED"
+     },
+     "delta_twh": 0.005,
+     "abs_err_control": 0.28,
+     "abs_err_arm": 0.285,
+     "abs_err_improves": false,
+     "status_flip": false
+    }
+   }
+  },
+  "e1b_pass": true,
+  "e1c_pass": true,
+  "e1d_pass": true,
+  "k5_overshoot_pass": true
+ },
+ "price_deltas": {
+  "2023": {
+   "lw_control": 31.4788,
+   "lw_arm": 31.5008,
+   "lw_delta": 0.0221
+  },
+  "2024": {
+   "lw_control": 31.2383,
+   "lw_arm": 31.264,
+   "lw_delta": 0.0258
+  },
+  "2025": {
+   "lw_control": 42.445,
+   "lw_arm": 42.4979,
+   "lw_delta": 0.0529
+  }
+ },
+ "class_energy_delta_twh": {
+  "2023": {
+   "CC_CHP": -0.4554,
+   "CC_REGULAR": 0.1899,
+   "COAL_BIT": 0.0653,
+   "COAL_PRB": 0.0069,
+   "COAL_WC": 0.0037,
+   "CT_CHP": 0.0244,
+   "CT_PEAKER": 0.0656,
+   "ST_CHP": 0.0003,
+   "ST_GAS": 0.017,
+   "VIRTUAL_DEC": 0.0193,
+   "VIRTUAL_INC": 0.0329,
+   "import": 0.0311
+  },
+  "2024": {
+   "CC_CHP": -0.6392,
+   "CC_REGULAR": 0.2209,
+   "COAL_BIT": 0.1032,
+   "COAL_PRB": 0.0097,
+   "COAL_WC": 0.0058,
+   "CT_CHP": 0.0509,
+   "CT_PEAKER": 0.1147,
+   "ST_CHP": 0.0005,
+   "ST_GAS": 0.0225,
+   "VIRTUAL_DEC": 0.033,
+   "VIRTUAL_INC": 0.0494,
+   "import": 0.0397
+  },
+  "2025": {
+   "CC_CHP": -0.9716,
+   "CC_REGULAR": 0.3658,
+   "COAL_BIT": 0.1439,
+   "COAL_PRB": 0.0127,
+   "COAL_WC": 0.0045,
+   "CT_CHP": 0.0127,
+   "CT_PEAKER": 0.1862,
+   "ST_CHP": 0.0003,
+   "ST_GAS": 0.0519,
+   "VIRTUAL_DEC": 0.056,
+   "VIRTUAL_INC": 0.076,
+   "import": 0.0774
+  }
+ },
+ "criteria": {
+  "keeper": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "control": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "arm": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "determinations": {
+   "keeper": "CALIBRATED",
+   "control": "CALIBRATED",
+   "arm": "CALIBRATED"
+  }
+ },
+ "slack_dump": {
+  "2023": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  },
+  "2024": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  },
+  "2025": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  }
+ }
+}
