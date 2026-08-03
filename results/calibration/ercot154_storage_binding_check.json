@@ -1,0 +1,285 @@
+{
+ "_provenance": {
+  "session": "ERCOT-154 Phase 1b (no LP built, no year solved)",
+  "keeper": "2026-08-02-ercot150b-zonal-anchor",
+  "inputs": [
+   "results/calibration/ercot150_zonalanchor_B/hourly/{system,storage}_<year>.parquet (committed keeper sidecars)",
+   "results/calibration/ercot154_storage_offer_surface.json"
+  ],
+  "rung": "p30 (index 1) \u2014 the only rung the Phase-1a year-pair test identifies",
+  "keeper_battery_dispatch_adder": 10.0,
+  "note": "2023 carries NO measured surface (no 2023 SCED corpus on disk; re-upload owner-declined 2026-08-02), so its coverage is 0 by construction and it is reported for contrast only"
+ },
+ "years": {
+  "2023": {
+   "annual_discharge_gwh": 833.5,
+   "annual_charge_gwh": 980.6,
+   "hours_discharging": 1933,
+   "hours_storage_near_marginal": 1,
+   "covered_share_of_hours": 0.0,
+   "withheld_gwh": 0.0,
+   "withheld_share_of_annual_discharge": 0.0,
+   "by_block": [
+    {
+     "block": "overnight_h0_5",
+     "discharge_gwh": 3.0,
+     "share_of_annual_discharge": 0.0036,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 20.97,
+     "mean_measured_level": NaN
+    },
+    {
+     "block": "morning_h6_10",
+     "discharge_gwh": 64.7,
+     "share_of_annual_discharge": 0.0776,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 25.09,
+     "mean_measured_level": NaN
+    },
+    {
+     "block": "midday_h11_15",
+     "discharge_gwh": 171.0,
+     "share_of_annual_discharge": 0.2052,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 83.61,
+     "mean_measured_level": NaN
+    },
+    {
+     "block": "evening_h16_21",
+     "discharge_gwh": 592.4,
+     "share_of_annual_discharge": 0.7107,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 135.67,
+     "mean_measured_level": NaN
+    },
+    {
+     "block": "late_h22_23",
+     "discharge_gwh": 2.4,
+     "share_of_annual_discharge": 0.0029,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 29.46,
+     "mean_measured_level": NaN
+    }
+   ]
+  },
+  "2024": {
+   "annual_discharge_gwh": 2150.2,
+   "annual_charge_gwh": 2529.7,
+   "hours_discharging": 1933,
+   "hours_storage_near_marginal": 12,
+   "covered_share_of_hours": 0.74,
+   "withheld_gwh": 1898.9,
+   "withheld_share_of_annual_discharge": 0.8831,
+   "by_block": [
+    {
+     "block": "overnight_h0_5",
+     "discharge_gwh": 14.9,
+     "share_of_annual_discharge": 0.0069,
+     "covered_share_of_hours": 0.0,
+     "withheld_gwh": 0.0,
+     "withheld_share_of_block": 0.0,
+     "mean_model_price_when_discharging": 43.95,
+     "mean_measured_level": NaN
+    },
+    {
+     "block": "morning_h6_10",
+     "discharge_gwh": 84.2,
+     "share_of_annual_discharge": 0.0391,
+     "covered_share_of_hours": 0.986,
+     "withheld_gwh": 74.3,
+     "withheld_share_of_block": 0.8829,
+     "mean_model_price_when_discharging": 39.25,
+     "mean_measured_level": 85.69
+    },
+    {
+     "block": "midday_h11_15",
+     "discharge_gwh": 90.6,
+     "share_of_annual_discharge": 0.0421,
+     "covered_share_of_hours": 1.0,
+     "withheld_gwh": 90.4,
+     "withheld_share_of_block": 0.9985,
+     "mean_model_price_when_discharging": 42.67,
+     "mean_measured_level": 74.98
+    },
+    {
+     "block": "evening_h16_21",
+     "discharge_gwh": 1944.3,
+     "share_of_annual_discharge": 0.9042,
+     "covered_share_of_hours": 1.0,
+     "withheld_gwh": 1722.3,
+     "withheld_share_of_block": 0.8858,
+     "mean_model_price_when_discharging": 73.15,
+     "mean_measured_level": 66.44
+    },
+    {
+     "block": "late_h22_23",
+     "discharge_gwh": 16.2,
+     "share_of_annual_discharge": 0.0075,
+     "covered_share_of_hours": 0.914,
+     "withheld_gwh": 11.8,
+     "withheld_share_of_block": 0.7311,
+     "mean_model_price_when_discharging": 41.12,
+     "mean_measured_level": 976.85
+    }
+   ]
+  },
+  "2025": {
+   "annual_discharge_gwh": 4483.3,
+   "annual_charge_gwh": 5274.5,
+   "hours_discharging": 2539,
+   "hours_storage_near_marginal": 7,
+   "covered_share_of_hours": 0.98,
+   "withheld_gwh": 4203.5,
+   "withheld_share_of_annual_discharge": 0.9376,
+   "by_block": [
+    {
+     "block": "overnight_h0_5",
+     "discharge_gwh": 59.1,
+     "share_of_annual_discharge": 0.0132,
+     "covered_share_of_hours": 0.974,
+     "withheld_gwh": 56.0,
+     "withheld_share_of_block": 0.9473,
+     "mean_model_price_when_discharging": 34.23,
+     "mean_measured_level": 77.52
+    },
+    {
+     "block": "morning_h6_10",
+     "discharge_gwh": 146.7,
+     "share_of_annual_discharge": 0.0327,
+     "covered_share_of_hours": 1.0,
+     "withheld_gwh": 131.5,
+     "withheld_share_of_block": 0.8962,
+     "mean_model_price_when_discharging": 50.39,
+     "mean_measured_level": 67.78
+    },
+    {
+     "block": "midday_h11_15",
+     "discharge_gwh": 90.3,
+     "share_of_annual_discharge": 0.0201,
+     "covered_share_of_hours": 0.994,
+     "withheld_gwh": 90.3,
+     "withheld_share_of_block": 1.0,
+     "mean_model_price_when_discharging": 32.31,
+     "mean_measured_level": 72.15
+    },
+    {
+     "block": "evening_h16_21",
+     "discharge_gwh": 4134.8,
+     "share_of_annual_discharge": 0.9223,
+     "covered_share_of_hours": 1.0,
+     "withheld_gwh": 3878.1,
+     "withheld_share_of_block": 0.9379,
+     "mean_model_price_when_discharging": 46.3,
+     "mean_measured_level": 65.7
+    },
+    {
+     "block": "late_h22_23",
+     "discharge_gwh": 52.4,
+     "share_of_annual_discharge": 0.0117,
+     "covered_share_of_hours": 0.858,
+     "withheld_gwh": 47.6,
+     "withheld_share_of_block": 0.9092,
+     "mean_model_price_when_discharging": 47.03,
+     "mean_measured_level": 117.59
+    }
+   ]
+  }
+ },
+ "may_shoulder_guard": {
+  "2023": {
+   "may_mean_price": 26.4,
+   "may_amplitude": 16.7,
+   "may_peak_hour": 19,
+   "may_discharge_gwh": 63.5
+  },
+  "2024": {
+   "may_mean_price": 44.32,
+   "may_amplitude": 178.71,
+   "may_peak_hour": 19,
+   "may_discharge_gwh": 144.1
+  },
+  "2025": {
+   "may_mean_price": 30.11,
+   "may_amplitude": 21.38,
+   "may_peak_hour": 19,
+   "may_discharge_gwh": 357.8
+  }
+ },
+ "supply_curve_slope": {
+  "2023": {
+   "cells": 72,
+   "median_usd_per_mwh_per_gw": 1.383,
+   "p25_usd_per_mwh_per_gw": 1.036,
+   "p75_usd_per_mwh_per_gw": 2.826,
+   "p90_usd_per_mwh_per_gw": 54.309,
+   "mean_evening_discharge_mw": 270.5,
+   "price_gain_if_all_evening_storage_withheld_median_cell": 0.37,
+   "price_gain_if_all_evening_storage_withheld_p90_cell": 14.69,
+   "evening_price_mean": 65.3,
+   "evening_price_median": 32.47,
+   "evening_hours_above_66_usd_share": 0.0977,
+   "evening_thermal_mean_mw": 35718.0
+  },
+  "2024": {
+   "cells": 72,
+   "median_usd_per_mwh_per_gw": 1.557,
+   "p25_usd_per_mwh_per_gw": 1.093,
+   "p75_usd_per_mwh_per_gw": 2.256,
+   "p90_usd_per_mwh_per_gw": 7.417,
+   "mean_evening_discharge_mw": 887.8,
+   "price_gain_if_all_evening_storage_withheld_median_cell": 1.38,
+   "price_gain_if_all_evening_storage_withheld_p90_cell": 6.58,
+   "evening_price_mean": 46.3,
+   "evening_price_median": 31.73,
+   "evening_hours_above_66_usd_share": 0.0562,
+   "evening_thermal_mean_mw": 35718.0
+  },
+  "2025": {
+   "cells": 72,
+   "median_usd_per_mwh_per_gw": 1.616,
+   "p25_usd_per_mwh_per_gw": 1.259,
+   "p75_usd_per_mwh_per_gw": 1.911,
+   "p90_usd_per_mwh_per_gw": 2.494,
+   "mean_evening_discharge_mw": 1888.0,
+   "price_gain_if_all_evening_storage_withheld_median_cell": 3.05,
+   "price_gain_if_all_evening_storage_withheld_p90_cell": 4.71,
+   "evening_price_mean": 40.53,
+   "evening_price_median": 38.92,
+   "evening_hours_above_66_usd_share": 0.0534,
+   "evening_thermal_mean_mw": 35257.0
+  }
+ },
+ "eia930_volume_benchmark": {
+  "2023": {
+   "reported_hours": 0,
+   "total_hours": 8760,
+   "coverage": 0.0,
+   "measured_discharge_gwh": null,
+   "usable_as_guard": false
+  },
+  "2024": {
+   "reported_hours": 1680,
+   "total_hours": 8784,
+   "coverage": 0.191,
+   "measured_discharge_gwh": 722.4,
+   "usable_as_guard": false
+  },
+  "2025": {
+   "reported_hours": 8712,
+   "total_hours": 8760,
+   "coverage": 0.995,
+   "measured_discharge_gwh": 5444.8,
+   "usable_as_guard": true
+  }
+ }
+}
