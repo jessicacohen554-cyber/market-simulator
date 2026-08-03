@@ -70,7 +70,6 @@ def _control_text(g: dict) -> str:
 
 def _treatment_text(g: dict, s: dict) -> str:
     g1 = g["G1_curve_armed"]["per_year"]
-    g2 = g["G2_scope"]
     px = g["price_effect_treatment_vs_control"]
     meas = s["measured"]
     model = s["model"]
@@ -94,9 +93,7 @@ def _treatment_text(g: dict, s: dict) -> str:
     )
     under10 = _fmt(model[y]["nyc_10min_total"]["underprice_factor"] for y in YEARS)
     under30 = _fmt(model[y]["nyc_30min_total"]["underprice_factor"] for y in YEARS)
-    pctdelta = _fmt(
-        "{:+.4f}%".format(px[y]["mean_price_pct_delta"]) for y in YEARS
-    )
+    pctdelta = _fmt("{:+.4f}%".format(px[y]["mean_price_pct_delta"]) for y in YEARS)
     nycmax = _fmt(
         f"{px[y]['NYC_max_control']}->{px[y]['NYC_max_treatment']}" for y in YEARS
     )
