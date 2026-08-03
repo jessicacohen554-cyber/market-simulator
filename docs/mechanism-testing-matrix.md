@@ -781,7 +781,30 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent)
+### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER, keeper unchanged**
+
+**pjm-146 (2026-08-02): the RGGI allowance adder is BUILT, SOLVED and REGISTERED —
+all five pre-registered gates PASS — and LEFT PENDING, not armed.** Arms
+`2026-08-02-pjm-146a-control-zerodelta` / `2026-08-02-pjm-146b-rggi-allowance`;
+`pjm_rggi_allowance_pricing` stays default-**off**. Zero fitted parameters
+(published auction clearing means, exact EIA-860 state membership, fleet's own
+emission rates); DOF ledger 18 → 19 with `n_residual` unchanged at 6. K1 mc
+identity 3.7e-13, K2 **0.0 MW** vs the keeper, K3 membership clean (VA in 2023,
+out 2024/25), K4/K5 pass; load-weighted LMP **+$1.42/+$1.43/+$1.26** inside the
+ex-ante band. **D-2 IMPROVES** — all three CT_PEAKER forced-share FAILs clear.
+**But** determination goes CALIBRATED → NOT-YET: C3a-2023 +11.1 % (pre-declared
+and licensed by E1d) and **C1 CC_REGULAR volume −16.06/−13.84 TWh (NOT
+licensed — no C1 magnitude gate was pre-registered)**. Right in kind, too elastic
+in magnitude: the model reproduces RGGI leakage (member CC → non-member coal/CT/
+imports) but ~13–16 TWh where reality moves less. **Successor: the CC→coal
+substitution elasticity, own charter, identified from PJM's own record — never a
+haircut tuned onto the adder.** Two reusable results: (1) PJM's price coupling
+**transmits** a one-signed level shift where it **cancelled** pjm-144's mean-zero
+spread, so coupling is not a general bar on PJM zonal-cost levers; (2) score both
+A/B arms' `legitimacy_diagnostics` on the **committed slim file set** — an
+unregistered run has `load_share: null` and a full bundle resolves mechanisms the
+gitignored committed tree cannot (the caiso-155 `diagnostics_plant_set` class).
+(`FINDING-pjm146-rggi-allowance-2026-08-02.md`.)
 
 C1 CC_REGULAR-2023 and C3a-2025 closed at pjm-135; **C3c-24/25 closed at
 pjm-136** and is UNCHANGED through pjm-143 (tail counts byte-identical in both
