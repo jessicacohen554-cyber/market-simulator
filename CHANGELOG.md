@@ -36,6 +36,15 @@ identified by shard forensics and re-supplied same-day. Full record:
   solve. One steam artifact test year-scoped: the mid-band RT>DAM q90
   invariant is strict on its measured years (2024/25); 2023 sits at parity
   in bin −3 (−0.14%).
+- **Corpus slimmed in place** (owner directive, same session): all 315
+  shards projected to the audited `SCED_KEEP` 79 columns at zstd-15 —
+  896.1 → 490.5 MB (45% saved). Verified lossless for consumers: per-shard
+  rows/ranges match the raw baseline (315/315), full delivery-day scan
+  reproduces exactly, and both the pool artifact (entire JSON) and the
+  wall's 2023 block re-derive byte-identical from the slimmed shards. The
+  108 dropped columns for 2023 survive only in the owner's local raw
+  archive (2023 is past free MIS retention); the raw-blob history purge is
+  the owner's follow-up.
 
 No solve, no registration, keeper unchanged (`2026-08-02-ercot150b-zonal-anchor`).
 Surfaced owner decisions: keeper full-span re-solve on the completed inputs

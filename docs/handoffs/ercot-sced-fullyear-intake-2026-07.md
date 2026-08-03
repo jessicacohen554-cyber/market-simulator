@@ -4,7 +4,11 @@
 > the 2026-07-22 large-blob history rewrite. The delivery-2023 window
 > (publications 2023-03..2024-03) was re-uploaded by the owner to
 > `data/raw/ercot/SCED/` and verified complete; the derives now scan both
-> locations. See `docs/calibration-log/ercot.md` ERCOT-157.
+> locations. The re-uploaded shards were then slimmed in place to the
+> audited `SCED_KEEP` set (79 of 187 columns, zstd-15; 896 → 490 MB) with
+> consumers verified byte-identical — the owner's local raw copy is the only
+> remaining full-column 2023 archive. See `docs/calibration-log/ercot.md`
+> ERCOT-157.
 
 ## What landed
 
