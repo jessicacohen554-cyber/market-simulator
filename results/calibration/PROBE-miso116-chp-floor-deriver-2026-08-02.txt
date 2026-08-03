@@ -1,0 +1,316 @@
+==============================================================================
+miso-116 Phase 0 — CHP steam-floor deriver audit (NO LP)
+==============================================================================
+
+  keeper miso109_hy_level_B: chp_steam_following=True, chp_export_floor_measured=False, chp_steam_floor_p25=False, measured_chp_heat_rates=True
+eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+  2023: fleet 609 plants, CAMPD rows 5,639,208
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+  2024: fleet 609 plants, CAMPD rows 5,566,872
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+  2025: fleet 609 plants, CAMPD rows 5,492,328
+
+==============================================================================
+A. APPORTIONMENT STRUCTURE — what does the floor identify?
+==============================================================================
+
+  A3 floor provenance — artifact rows for MISO CHP groups
+    artifact rows total 282, CHP rows 104
+      CC_CHP   status=eia923_cf      n= 10  with chp_pmin_cf=10
+      CC_CHP   status=ok             n= 14  with chp_pmin_cf=14
+      CT_CHP   status=eia923_cf      n= 36  with chp_pmin_cf=36
+      CT_CHP   status=ok             n=  5  with chp_pmin_cf=5
+      ST_CHP   status=eia923_cf      n= 38  with chp_pmin_cf=38
+      ST_CHP   status=ok             n=  1  with chp_pmin_cf=1
+
+  A1 key grain — artifact key vs consumer key
+    artifact rows keyed (plant_code, plant_group): 104 rows over 104 plants; 0 plant(s) carry >1 CHP artifact row
+    chp_overrides() collapses to plant_code only -> 104 entries (one CF per PLANT, no class dimension)
+    model CHP plants with >=2 CHP classes: 17 (2,284 / 11,593 MW = 19.7% of CHP cap)
+      plant 10319: classes CT_CHP(34MW)/CT_CHP(39MW)/ST_CHP(7MW)  -> ALL receive chp_pmin_cf=36.2  [artifact has: CT_CHP:36.2(eia923_cf)]
+      plant 10328: classes ST_CHP(12MW)/ST_CHP(12MW)/ST_CHP(15MW)/ST_CHP(21MW)/ST_CHP(24MW)/CT_CHP(13MW)/CT_CHP(9MW)/CT_CHP(9MW)/CT_CHP(9MW)  -> ALL receive chp_pmin_cf=15.3  [artifact has: ST_CHP:15.3(eia923_cf)]
+      plant 50489: classes CT_CHP(55MW)/CT_CHP(55MW)/ST_CHP(52MW)/CT_CHP(71MW)/CT_CHP(71MW)  -> ALL receive chp_pmin_cf=8.4  [artifact has: CT_CHP:8.4(eia923_cf)]
+      plant 50625: classes ST_CHP(25MW)/ST_CHP(39MW)/CT_CHP(32MW)/ST_CHP(25MW)/ST_CHP(20MW)/ST_CHP(30MW)/CT_CHP(145MW)/CT_CHP(145MW)/CT_CHP(145MW)  -> ALL receive chp_pmin_cf=104.5  [artifact has: CT_CHP:104.5(ok)]
+      plant 50846: classes CT_CHP(15MW)/CT_CHP(21MW)/ST_CHP(17MW)/ST_CHP(17MW)/ST_CHP(6MW)  -> ALL receive chp_pmin_cf=14.3  [artifact has: ST_CHP:14.3(eia923_cf)]
+      plant 50969: classes ST_CHP(0MW)/ST_CHP(12MW)/ST_CHP(19MW)/ST_CHP(13MW)/CT_CHP(11MW)/CT_CHP(11MW)  -> ALL receive chp_pmin_cf=5.1  [artifact has: ST_CHP:5.1(eia923_cf)]
+      plant 50973: classes CT_CHP(16MW)/CC_CHP(39MW)/CC_CHP(36MW)/CC_CHP(36MW)/CC_CHP(36MW)/CC_CHP(36MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: CC_CHP:0.0(eia923_cf)]
+      plant 54262: classes CT_CHP(4MW)/ST_CHP(3MW)  -> ALL receive chp_pmin_cf=34.0  [artifact has: CT_CHP:34.0(eia923_cf)]
+      plant 54321: classes CT_CHP(4MW)/ST_CHP(13MW)/CT_CHP(5MW)/CT_CHP(5MW)/CT_CHP(4MW)  -> ALL receive chp_pmin_cf=60.5  [artifact has: CT_CHP:60.5(eia923_cf)]
+      plant 54518: classes CT_CHP(33MW)/ST_CHP(8MW)/ST_CHP(8MW)  -> ALL receive chp_pmin_cf=62.0  [artifact has: CT_CHP:62.0(eia923_cf)]
+      plant 54775: classes CT_CHP(2MW)/ST_CHP(6MW)/ST_CHP(10MW)/ST_CHP(15MW)/CT_CHP(2MW)/CT_CHP(2MW)/CT_CHP(2MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: ST_CHP:0.0(eia923_cf)]
+      plant 54780: classes ST_CHP(3MW)/ST_CHP(8MW)/ST_CHP(12MW)/ST_CHP(7MW)/ST_CHP(3MW)/ST_CHP(3MW)/ST_CHP(3MW)/ST_CHP(8MW)/ST_CHP(8MW)/CT_CHP(12MW)/CT_CHP(12MW)  -> ALL receive chp_pmin_cf=5.6  [artifact has: ST_CHP:5.6(eia923_cf)]
+      plant 55088: classes CC_CHP(175MW)/CC_CHP(175MW)/CT_CHP(165MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: CC_CHP:0.0(ok)]
+      plant 55096: classes CT_CHP(34MW)/ST_CHP(19MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: CT_CHP:0.0(ok)]
+      plant 56190: classes CT_CHP(3MW)/ST_CHP(1MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: CT_CHP:0.0(eia923_cf)]
+      plant 56309: classes CC_CHP(6MW)/CC_CHP(6MW)/CT_CHP(1MW)/CC_CHP(18MW)/ST_CHP(2MW)/ST_CHP(2MW)  -> ALL receive chp_pmin_cf=0.0  [artifact has: CC_CHP:0.0(eia923_cf)]
+      plant 58161: classes CT_CHP(1MW)/CT_CHP(2MW)/CT_CHP(2MW)/CC_CHP(4MW)/CC_CHP(4MW)/CC_CHP(1MW)  -> ALL receive chp_pmin_cf=39.4  [artifact has: CC_CHP:39.4(eia923_cf)]
+
+  A2 BTM share — does it resolve by prime mover?
+    CC_CHP   cap-weighted BTM  50.9 %  | distinct values [np.float64(35.0), np.float64(65.0), np.float64(70.0)] over 85 plants
+    CT_CHP   cap-weighted BTM  65.5 %  | distinct values [np.float64(35.0), np.float64(65.0), np.float64(70.0)] over 96 plants
+    ST_CHP   cap-weighted BTM  63.6 %  | distinct values [np.float64(35.0), np.float64(65.0), np.float64(70.0), np.float64(90.0)] over 98 plants
+    within-plant variation across prime movers:
+      plant 10319: {'CT_CHP': 70.0, 'ST_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 10328: {'ST_CHP': 65.0, 'CT_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 50489: {'CT_CHP': 70.0, 'ST_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 50625: {'ST_CHP': 70.0, 'CT_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 50846: {'CT_CHP': 70.0, 'ST_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 50969: {'ST_CHP': 65.0, 'CT_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 50973: {'CT_CHP': 70.0, 'CC_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 54262: {'CT_CHP': 65.0, 'ST_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 54321: {'CT_CHP': 70.0, 'ST_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 54518: {'CT_CHP': 70.0, 'ST_CHP': 70.0}  -> IDENTICAL across prime movers
+      plant 54775: {'CT_CHP': 65.0, 'ST_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 54780: {'ST_CHP': 65.0, 'CT_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 55088: {'CC_CHP': 35.0, 'CT_CHP': 35.0}  -> IDENTICAL across prime movers
+      plant 55096: {'CT_CHP': 35.0, 'ST_CHP': 35.0}  -> IDENTICAL across prime movers
+      plant 56190: {'CT_CHP': 65.0, 'ST_CHP': 65.0}  -> IDENTICAL across prime movers
+      plant 56309: {'CC_CHP': 35.0, 'CT_CHP': 35.0, 'ST_CHP': 35.0}  -> IDENTICAL across prime movers
+      plant 58161: {'CT_CHP': 65.0, 'CC_CHP': 65.0}  -> IDENTICAL across prime movers
+
+  K1 BTM provenance — exposure to the unsourced merchant default
+    CC_CHP:
+      merchant                                            3,841 MW (54.6%)
+      industrial                                          3,140 MW (44.6%)
+      commercial                                             55 MW ( 0.8%)
+    CT_CHP:
+      industrial                                          2,141 MW (81.5%)
+      merchant                                              278 MW (10.6%)
+      commercial                                            170 MW ( 6.5%)
+      NO SECTOR -> merchant default (unsourced 35.0)         36 MW ( 1.4%)
+    ST_CHP:
+      industrial                                            599 MW (31.0%)
+      merchant                                              567 MW (29.4%)
+      NO SECTOR -> merchant default (unsourced 35.0)        451 MW (23.3%)
+      commercial                                            314 MW (16.3%)
+
+==============================================================================
+B. BASIS TEST — miso-115's R on a basis-matched denominator
+==============================================================================
+
+  miso-115 divided CAMPD grossLoad (WHOLE-PLANT output) by the model's
+  class_hourly.mw. For a CHP class the model's LP capacity is only the
+  GRID-FACING share: fleet/assembly.py builds grid_cap = nameplate x
+  (1 - btm), and the behind-the-meter host self-supply is never created
+  as a Generator (K4, verified in code). The basis-matched comparable is
+  therefore CAMPD gross x parasitic x (1 - btm).
+
+  --------------------------------------------------------------------------
+  YEAR 2023
+  --------------------------------------------------------------------------
+
+    CC_CHP   model   1,805 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)    3,891 MW -> R_raw   = 2.156   [K3 vs published 2.156: REPRODUCED]
+      x (1 - btm)         upper bound     1,921 MW -> R_btm   = 1.065
+      x parasitic x (1 - btm)  MATCHED    1,917 MW -> R_basis = 1.062
+      K2 parasitic coverage:  24.1% of model class capacity (5,339 MW unmapped, factor=1.0); matched-plant cap 5,852/7,036 MW
+      K1 split [sourced ] grid_cap share 20.5% -> R_basis = 1.409
+      K1 split [merchant] grid_cap share 79.5% -> R_basis = 0.973
+
+    CT_CHP   model     553 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)      150 MW -> R_raw   = 0.272   [K3 vs published 0.272: REPRODUCED]
+      x (1 - btm)         upper bound        68 MW -> R_btm   = 0.123
+      x parasitic x (1 - btm)  MATCHED       67 MW -> R_basis = 0.121
+      K2 parasitic coverage:  93.0% of model class capacity (183 MW unmapped, factor=1.0); matched-plant cap 274/2,626 MW
+
+    ST_CHP   model     216 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)        0 MW -> R_raw   = 0.000   [K3 vs published 0.000: REPRODUCED]
+      x (1 - btm)         upper bound         0 MW -> R_btm   = 0.000
+      x parasitic x (1 - btm)  MATCHED        0 MW -> R_basis = 0.000
+      K2 parasitic coverage:  76.2% of model class capacity (460 MW unmapped, factor=1.0); matched-plant cap 520/1,932 MW
+
+  --------------------------------------------------------------------------
+  YEAR 2024
+  --------------------------------------------------------------------------
+
+    CC_CHP   model   1,824 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)    4,098 MW -> R_raw   = 2.246   [K3 vs published 2.246: REPRODUCED]
+      x (1 - btm)         upper bound     2,053 MW -> R_btm   = 1.125
+      x parasitic x (1 - btm)  MATCHED    2,048 MW -> R_basis = 1.123
+      K2 parasitic coverage:  24.1% of model class capacity (5,339 MW unmapped, factor=1.0); matched-plant cap 5,852/7,036 MW
+      K1 split [sourced ] grid_cap share 20.5% -> R_basis = 1.399
+      K1 split [merchant] grid_cap share 79.5% -> R_basis = 1.052
+
+    CT_CHP   model     573 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)      204 MW -> R_raw   = 0.356   [K3 vs published 0.356: REPRODUCED]
+      x (1 - btm)         upper bound       102 MW -> R_btm   = 0.178
+      x parasitic x (1 - btm)  MATCHED      101 MW -> R_basis = 0.176
+      K2 parasitic coverage:  93.0% of model class capacity (183 MW unmapped, factor=1.0); matched-plant cap 274/2,626 MW
+
+    ST_CHP   model     284 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)        0 MW -> R_raw   = 0.000   [K3 vs published 0.000: REPRODUCED]
+      x (1 - btm)         upper bound         0 MW -> R_btm   = 0.000
+      x parasitic x (1 - btm)  MATCHED        0 MW -> R_basis = 0.000
+      K2 parasitic coverage:  76.2% of model class capacity (460 MW unmapped, factor=1.0); matched-plant cap 517/1,935 MW
+
+  --------------------------------------------------------------------------
+  YEAR 2025
+  --------------------------------------------------------------------------
+
+    CC_CHP   model   1,572 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)    4,018 MW -> R_raw   = 2.555   [K3 vs published 2.555: REPRODUCED]
+      x (1 - btm)         upper bound     1,945 MW -> R_btm   = 1.237
+      x parasitic x (1 - btm)  MATCHED    1,941 MW -> R_basis = 1.234
+      K2 parasitic coverage:  24.1% of model class capacity (5,339 MW unmapped, factor=1.0); matched-plant cap 5,852/7,036 MW
+      K1 split [sourced ] grid_cap share 20.5% -> R_basis = 1.774
+      K1 split [merchant] grid_cap share 79.5% -> R_basis = 1.095
+
+    CT_CHP   model     589 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)      158 MW -> R_raw   = 0.269   [K3 vs published 0.269: REPRODUCED]
+      x (1 - btm)         upper bound        72 MW -> R_btm   = 0.122
+      x parasitic x (1 - btm)  MATCHED       71 MW -> R_basis = 0.121
+      K2 parasitic coverage:  93.0% of model class capacity (183 MW unmapped, factor=1.0); matched-plant cap 274/2,626 MW
+
+    ST_CHP   model     190 MW (grid-facing LP dispatch)
+      CAMPD gross (miso-115 estimator)        0 MW -> R_raw   = 0.000   [K3 vs published 0.000: REPRODUCED]
+      x (1 - btm)         upper bound         0 MW -> R_btm   = 0.000
+      x parasitic x (1 - btm)  MATCHED        0 MW -> R_basis = 0.000
+      K2 parasitic coverage:  76.2% of model class capacity (460 MW unmapped, factor=1.0); matched-plant cap 517/1,935 MW
+
+==============================================================================
+C. CEILING TEST — floor-held or capacity-capped?
+==============================================================================
+
+  A min_gen floor is a LOWER bound: it cannot hold a class DOWN. If a
+  too-cheap class still under-runs, the binding constraint is an UPPER
+  bound. For CHP that ceiling is grid_cap = nameplate x (1 - btm).
+
+  YEAR 2023
+    CC_CHP   trough   1,805 MW | nameplate    7,036 | grid_cap(analytic)    3,458
+      util vs nameplate  25.6% | util vs grid_cap  52.2% | analytic floor   1,021 MW =  56.6% of trough MW
+      D-1 profile_r 0.989 cv_ratio 2.102 | D-2 chp_steam forced share 0.1952 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    CT_CHP   trough     553 MW | nameplate    2,626 | grid_cap(analytic)      906
+      util vs nameplate  21.1% | util vs grid_cap  61.0% | analytic floor     397 MW =  71.8% of trough MW
+      D-1 profile_r 0.691 cv_ratio 4.466 | D-2 chp_steam forced share 0.3561 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    ST_CHP   trough     216 MW | nameplate    1,932 | grid_cap(analytic)      704
+      util vs nameplate  11.2% | util vs grid_cap  30.7% | analytic floor      91 MW =  41.9% of trough MW
+      D-1 profile_r -0.616 cv_ratio 0.277 | D-2 chp_steam forced share 0.0553 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+
+  YEAR 2024
+    CC_CHP   trough   1,824 MW | nameplate    7,036 | grid_cap(analytic)    3,458
+      util vs nameplate  25.9% | util vs grid_cap  52.8% | analytic floor   1,021 MW =  56.0% of trough MW
+      D-1 profile_r 0.987 cv_ratio 2.969 | D-2 chp_steam forced share 0.1865 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    CT_CHP   trough     573 MW | nameplate    2,626 | grid_cap(analytic)      906
+      util vs nameplate  21.8% | util vs grid_cap  63.3% | analytic floor     397 MW =  69.3% of trough MW
+      D-1 profile_r -0.021 cv_ratio 5.751 | D-2 chp_steam forced share 0.331 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    ST_CHP   trough     284 MW | nameplate    1,935 | grid_cap(analytic)      704
+      util vs nameplate  14.7% | util vs grid_cap  40.3% | analytic floor      91 MW =  32.0% of trough MW
+      D-1 profile_r -0.676 cv_ratio 1.078 | D-2 chp_steam forced share 0.0306 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+
+  YEAR 2025
+    CC_CHP   trough   1,572 MW | nameplate    7,036 | grid_cap(analytic)    3,458
+      util vs nameplate  22.3% | util vs grid_cap  45.5% | analytic floor   1,021 MW =  64.9% of trough MW
+      D-1 profile_r 0.967 cv_ratio 2.618 | D-2 chp_steam forced share 0.2961 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    CT_CHP   trough     589 MW | nameplate    2,626 | grid_cap(analytic)      906
+      util vs nameplate  22.4% | util vs grid_cap  65.0% | analytic floor     397 MW =  67.4% of trough MW
+      D-1 profile_r 0.318 cv_ratio 2.135 | D-2 chp_steam forced share 0.3644 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+    ST_CHP   trough     190 MW | nameplate    1,935 | grid_cap(analytic)      704
+      util vs nameplate   9.8% | util vs grid_cap  27.0% | analytic floor      91 MW =  47.7% of trough MW
+      D-1 profile_r -0.679 cv_ratio 0.66 | D-2 chp_steam forced share 0.0416 (MECH_CHP_STEAM is in D2_EXEMPT_MECHS — K5)
+
+==============================================================================
+D. MODEL-DEPENDENCE — does any term read an LP price/dispatch/residual?
+==============================================================================
+
+  chp_pmin_cf (status=ok)
+      source : derive_thermal_tranches.py:717 — p2 of CAMPD available-CF, outage-derated
+      verdict: MEASURED (CEMS + measured outage overlay)
+  chp_pmin_cf (status=eia923_cf)
+      source : derive_thermal_tranches.py:_chp_f923_floor_cf — EIA-923 class CF
+      verdict: MEASURED (EIA-923)
+  parasitic factor
+      source : campd.compute_parasitic_factors — EIA-923 net / CAMPD gross
+      verdict: MEASURED
+  chp_sector
+      source : EIA-860 Plant.Sector (or EIA-923 Page 1), 100% agreement on 232 plants
+      verdict: MEASURED
+  CHP_BTM_PCT_BY_SECTOR['industrial'/'commercial']
+      source : constants.py:405-406 — EIA-923 Schedule 8 useful-thermal share
+      verdict: MEASURED (cited)
+  CHP_BTM_PCT_BY_SECTOR['merchant'] = 35.0
+      source : constants.py:404 — 'residual-identified, forecast-risk — no independent source yet'
+      verdict: *** UNSOURCED CONSTANT, residual-identified ***
+  steam_level_cf (chp_steam_floor_p25, OFF in keeper)
+      source : derive_thermal_tranches.py:727 — on-freq x p50 loading-when-on
+      verdict: MEASURED
+  chp_class_netgen_mwh (chp_export_floor_measured, OFF in keeper)
+      source : chp.py:329 — same-year EIA-923 per-(plant,class) net generation
+      verdict: MEASURED (backcast overlay; same-year 923 CF)
+  measured_chp_heat_rates (ON in keeper)
+      source : eGRID (PLHTIAN + CHPCHTI) / PLNGENAN
+      verdict: MEASURED
+
+  No term in the chain reads an LP price, an LP dispatch or a scored
+  residual: the floor chain is a pure function of committed measured
+  inputs. The single non-measured term is the merchant BTM default.
+
+  Q4 — CC_CHP heat rate provenance (keeper arms measured_chp_heat_rates)
+    CC_CHP   measured-HR coverage  81.8% of capacity | cap-weighted AS-KEEPER HR 8.77 MMBtu/MWh
+      repriced to measured  9.16   |   left on eGRID steam-credited rate 7.02
+    CT_CHP   measured-HR coverage  37.2% of capacity | cap-weighted AS-KEEPER HR 7.75 MMBtu/MWh
+      repriced to measured  9.43   |   left on eGRID steam-credited rate 6.75
+    ST_CHP   measured-HR coverage   0.0% of capacity | cap-weighted AS-KEEPER HR 7.84 MMBtu/MWh
+      repriced to measured  nan   |   left on eGRID steam-credited rate 7.84
+    steam_level_cf artifact covers 0 (plant, class) pairs; chp_steam_floor_p25 is OFF in the keeper
+    chp_class_netgen_mwh(2023) covers 718 CHP (plant, class) pairs (chp_export_floor_measured is OFF in the keeper)
+    chp_class_netgen_mwh(2024) covers 709 CHP (plant, class) pairs (chp_export_floor_measured is OFF in the keeper)
+    chp_class_netgen_mwh(2025) covers 344 CHP (plant, class) pairs (chp_export_floor_measured is OFF in the keeper)
+
+==============================================================================
+E. Q4 PLANT-MATCHED — CC_CHP heat rate, model vs CAMPD measured
+==============================================================================
+
+  2023: 14 matched CC_CHP plants, 5,852 MW
+    cap-weighted model HR 9.12 | CAMPD gross HR 9.48 | cap-weighted ratio 1.056
+    plants where model < 0.85 x CAMPD: 4/14 (52.7% of matched capacity); on measured artifact: 4/4
+      plant 10745   1,479 MW  model  8.82  CAMPD gross 10.90  ratio 0.810  artifact=True
+      plant 55089     739 MW  model  8.01  CAMPD gross 12.27  ratio 0.653  artifact=True
+      plant 55259     513 MW  model  9.39  CAMPD gross 11.70  ratio 0.802  artifact=True
+      plant 55088     350 MW  model  8.35  CAMPD gross 10.22  ratio 0.817  artifact=True
+
+  2024: 14 matched CC_CHP plants, 5,852 MW
+    cap-weighted model HR 9.12 | CAMPD gross HR 9.48 | cap-weighted ratio 1.054
+    plants where model < 0.85 x CAMPD: 4/14 (52.7% of matched capacity); on measured artifact: 4/4
+
+  2025: 14 matched CC_CHP plants, 5,852 MW
+    cap-weighted model HR 9.12 | CAMPD gross HR 9.48 | cap-weighted ratio 1.032
+    plants where model < 0.85 x CAMPD: 4/14 (52.7% of matched capacity); on measured artifact: 4/4
+
+  Basis note: CAMPD's rate is total heat input over GROSS load; the
+  model's eGRID-derived rate is (PLHTIAN + CHPCHTI) over NET generation.
+  A NET denominator is the smaller one, so the as-keeper rate sitting
+  just ABOVE the CAMPD gross rate is the expected ordering — which is
+  what the flag-on comparison shows and the flag-off one inverted.
+
+==============================================================================
+VERDICT — pre-registered decision rule
+==============================================================================
+  CC_CHP   R_raw   = 2.156 / 2.246 / 2.555
+           R_basis = 1.062 / 1.123 / 1.234
+  CT_CHP   R_raw   = 0.272 / 0.356 / 0.269
+           R_basis = 0.121 / 0.176 / 0.121
+  ST_CHP   R_raw   = 0.000 / 0.000 / 0.000
+           R_basis = 0.000 / 0.000 / 0.000
+
+  Scope: CC_CHP is the only kill-clean class (miso-115 K1: CT_CHP 10.4 %, ST_CHP 26.9 % coverage -> VOID, not quoted).
+
+  Pre-registered verdict: BASIS-ARTIFACT -> miso-115's CC_CHP deficit is a reporting-basis mismatch. REFUSE, no solve; correct the record.
