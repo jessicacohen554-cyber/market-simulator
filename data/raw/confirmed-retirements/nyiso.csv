@@ -74,4 +74,31 @@
 # The correct number of rows for this ISO remains ZERO. Revisit if/when NYISO
 # posts a completed deactivation notice with an unconditional date that is not
 # followed by a return-to-service, withdrawal, or retention determination.
+# ===========================================================================
+# RE-QUERY PASS 2026-08-03 (FFR-PA refresh). STILL AN HONEST ZERO. No row was
+# manufactured to make this ISO look covered, and none should be.
+#
+#   - Danskammer (Zone G) remains the only candidate near the bar and remains
+#     HELD OUT, for the same structural reason as the previous pass: the NYISO
+#     determination fixes no date at which the instrument REQUIRES the unit
+#     offline. Restating it precisely from this pass's sources, because the two
+#     framings differ in emphasis and both are in circulation: the deactivation
+#     notice was submitted in December 2025; reporting this pass describes it as
+#     targeting a closing date of 2027-01-14, and the determination as barring
+#     deactivation before 2026-08-01 while contemplating retention into
+#     mid-January 2027 — and, if the Lower Hudson Valley solutions slip, further
+#     retention for 2029/2030 needs. Conditional in both directions either way,
+#     which is not a confirmation class. Danskammer HoldCo's Chapter 11 (filed
+#     2026-06-10, ~$13M owed including ~$11.8M to NYISO) is financial distress,
+#     not a binding retirement instrument.
+#     WATCH, NEW AND NEAR-TERM: the 2026-08-01 contingency date has JUST PASSED
+#     (two days before this pass). Whether the identified solutions went into
+#     service on time determines whether Danskammer may now deactivate or is
+#     held to mid-January 2027. Re-query this specifically at the next pass — it
+#     is the single likeliest source of NYISO's first registry row.
+#   - Gowanus 2-3 / Narrows 1-2, Far Rockaway GT1/GT2, Pinelawn: re-queried,
+#     unchanged (retained / withdrawn / deferred respectively).
+#   - No NYISO unit appears in the DOE 2026 202(c) log with a
+#     retirement-deferring order (the sole 2026 NYISO entry, No. 202-26-08, is a
+#     one-week January 2026 winter-event order naming no unit).
 iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes

@@ -559,6 +559,37 @@ mid-window reversal ever lands.
   every `superseded=true` row carries a `superseding_instrument_date` (the
   Eddystone null it caught), and a machine-readable
   `superseding_instrument_expiry` column (schema-v3 question).
+  * **AMENDED 2026-08-03 (FFR-PA refresh; still PROPOSED, still owner decision
+    pending, still nothing automated) — the cadence needs a DISCOVERY leg, not
+    only a REFRESH leg.** The 2026-07-31 formulation above re-queries *the rows
+    the registry already has*. That is structurally blind to a whole class of
+    change, and the 2026-08-03 pass demonstrated it concretely: enumerating the
+    DOE 2026 §202(c) order log **in full** — rather than searching it for the two
+    plants already registered — surfaced two MISO coal clusters under rolling
+    §202(c) orders that three prior passes had never seen (R M Schahfer 17 & 18,
+    F B Culley 2; 950.7 MW; both ultimately held out, but only after
+    adjudication). A refresh-only pass finds none of that, because there is no
+    row whose expiry it would have checked. So each quarterly pass should run
+    **two legs**:
+    1. **Refresh** — every existing row against its own source; stamp `accessed`
+       whether or not it changed; bump the README vintage.
+    2. **Discovery** — enumerate the small number of registries that *create*
+       confirmations and counter-instruments, end to end, independent of what is
+       already registered: the DOE §202(c) order logs (both year pages, read as a
+       full list), each RTO's deactivation/retirement posting, and the ISO-specific
+       state channels. Record what was enumerated and found-nothing, so a later
+       pass can tell "checked, empty" from "never checked".
+    The near-term expiry calendar this pass leaves behind, in date order —
+    **2026-08-16** Campbell (DOE 202-26-22), **2026-08-19** Wagner 4 (DOE
+    202-26-25, run-hour relief), **2026-08-22** Eddystone (DOE 202-26-24, FR-18),
+    **2026-09-19** Schahfer 17/18 and Culley 2 (DOE 202-26-29 / 202-26-30, watch
+    items only — held out), **2026-12-31** CAISO OTC (2.86 GW, the first date in
+    the registry that actually *binds*) — plus one non-expiry trigger that does
+    not fit the quarterly rhythm at all: **FERC's pending decision on the Brandon
+    Shores / H.A. Wagner 2031-05 RMR extension**, which PJM asked to be decided by
+    early August 2026 and which would move four PJM rows from 2029-05 to 2031-05.
+    A decision window is as much a re-query trigger as an expiry, and neither is
+    visible to any code in the repo today.
 * Month-precise forecast exits by un-gating the COD ramp for forecast years (also
   fixes the comment/code drift at `fleet.py:1983-1992`, whose comment already
   claims forecast support the gate denies).
