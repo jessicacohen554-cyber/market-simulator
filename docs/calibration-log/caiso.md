@@ -5307,4 +5307,103 @@ Evidence: `results/calibration/FINDING-caiso162-per-year-import-caps-2026-08-03.
 `PRECHECK-caiso162-per-year-import-caps-2026-08-03.md`,
 `PRECHECK-caiso162-ADDENDUM-A-samehead-control-2026-08-03.md`.
 
-Next number: caiso-163 (caiso-160 unclaimed, see above).
+---
+
+## caiso-163 — asymmetric WECC path ratings (2026-08-03) — **KEPT, PROMOTED**
+
+**Keeper → `2026-08-03-caiso163-asym-path-ratings`** (control
+`2026-08-03-caiso163-control-asymoff`). Determination **CALIBRATED-WITH-CAVEATS**,
+carried over unchanged: 2 ledgered / 0 FAILs / protective 0 of 1, no new slot spent.
+`audit_keepers.py --iso CAISO` PASS (0 failures, 0 warnings).
+
+**Mechanism.** `caiso_asymmetric_path_ratings` — CAISO's two INTERNAL north–south
+paths move from the **symmetric** TTC estimate the reduced topology ships
+(`iso_configs.py:369-378`: Path 15 5,400 MW, Path 26 4,000 MW) to their
+**published WECC Path Rating Catalog directional ratings**: Path 15
+(Midway–Los Banos) **3,265 N→S / 5,400 S→N**, Path 26 (Midway–Vincent)
+**4,000 N→S / 3,000 S→N**. Each shipped `ttc_mw` was only ONE direction's rating,
+leaving the reverse direction up to **65 % too loose**. Rule 14 `[R-ACCURATE]`
+measured-over-estimate; **zero free parameters** (all four numbers already
+committed in `CAISO_PATH_DIRECTIONAL_RATINGS`; nothing swept, no residual
+consulted; DOF ledger carried verbatim at 11 entries / 9 residual, asserted by
+`scripts/gen_caiso163_attestation.py`).
+
+**Wiring, checked BEFORE solving — and the answer differed from caiso-162's.**
+The backcast call site already existed: `interchange/spec.py:1988` inside
+`apply_interchange_topology`, reached from `run_calibration.py:2037` in the
+`priced_interchange` branch the CAISO keeper takes. A no-LP probe
+(`scripts/probes/caiso163_wiring_probe.py`) replayed the calibration lane's exact
+topology sequence and resolved **2 directional limits to non-empty LP flow-column
+groups** in all three years. What was missing was only the CLI/kwarg channel,
+wired across **seven** sites (five in `run_calibration_full.py` plus the argparse
+flag, and the two `run_calibration.py` sites caiso-162 lost a solve to).
+
+**No zero-delta year exists** — the published ratings are year-invariant, so every
+solve year is live. The prereg replaced the free control with a **pre-solve
+structural assertion**, passing before either arm solved: with the flag off,
+`apply_caiso_asymmetric_path_limits` returns the **SAME OBJECT** (identity, not
+equality). That is what licenses arm A as a clean control.
+
+**Liveness — on FLOWS, never on prices (the caiso-162 lesson, applied ex ante).**
+
+| path · year | control max N→S | h over cap | control max S→N | h over cap | arm h over ANY cap |
+|---|---:|---:|---:|---:|---:|
+| Path 15 · 2023/24/25 | 4,119 / 4,443 / 4,597 | **294 / 450 / 380** | 5,400 / 5,400 / 5,400 | 0 / 0 / 0 | **0 / 0 / 0** |
+| Path 26 · 2023/24/25 | 4,000 / 4,000 / 4,000 | 0 / 0 / 0 | 3,514 / 4,000 / 2,946 | **6 / 11 / 0** | **0 / 0 / 0** |
+
+The incumbent configuration moved power **past a published WECC rating in 1,141
+path-hours**; under the keeper that is **zero in every hour of every year**, and
+the paths bind as real paths do (Path 15 N→S 307/489/411 h; Path 26 N→S
+1,656/1,987/2,213 h — roughly a quarter of hours, the midday solar belly).
+
+**Structural gates.** Path 15 binds at all for the first time: hours with
+NP15 ≠ ZP26 go **3 → 237**, **0 → 414**, **1 → 284**, and the 2024
+byte-identity breaks. Level effect nil: **−0.0036 % / −0.0147 % / +0.0102 %**.
+**Zero gate flips** — all nine criteria identical to the control, C3a-2025
+unchanged at **+12.0 %**, protective C6/C7/C8 PASS.
+
+**THE ROOT-CAUSE ISSUE THIS OPENS — the session's real finding.** S3/S4 move
+marginally the **wrong** way and the published ratings **stay in anyway**, exactly
+as the prereg §4.4 pre-committed before any arm solved. Prereg §3 also registered,
+before solving, that the two legs push the ISO mean in **opposite** directions and
+predicted **no** sign; the solve resolves it — the Path-15 N→S leg dominates,
+trapping cheap northern energy in NP15. But the magnitudes are what matter: the
+**real** Path 15 separates NP15 from ZP26 in **~100 %** of hours by
+**+5.95 / +8.58 / +5.73 $/MWh**, against this keeper's **−0.077 / −0.109 /
+−0.084**; NP15 − SP15 goes −1.168/−0.913/−0.770 → −1.226/−0.983/−0.822 against a
+measured **+2.34 / +7.99 / +6.01**. So the published ratings are **NOT** the
+binding cause of the model's missing north–south basis — fixing them recovers
+~1 % of it. Under rules 14 and 1 `[R-STRUCT]` that is a **discovered bug**, not a
+revert: the symmetric estimate was silently absorbing a defect that lives
+elsewhere. **Named open successor (hypothesis, NOT adjudicated, no solve spent):**
+the reduced **two-link N–S topology and zonal aggregation**, which cannot
+reproduce hourly Path-15 congestion whatever the ratings are. It needs its own
+pre-registration and its own arm. No compensating adder, haircut or offset was
+added to hide the gap (rules 1/13), and the gap is **not** claimed as closed.
+
+**NOT A C3a ARM** and must not be reported as one — C3a-2025 is unchanged and the
+level effect is 0.01 %.
+
+**Governance.** Config drift is **exactly one field** against **both** the
+incumbent and the same-HEAD control, with zero schema drift on either side. The
+four owner-decision default flips (D-1/D-2/D-3a) were already carried by the
+incumbent so they do not even appear as a drift; asserted anyway on both grounds
+(forecast-gated, unreachable at `mode="backcast"`; identical across arms). CAISO
+holds **no** `complete` marker, so no `calibration-complete` re-key (rule 22
+D-5(b) applies to `complete` ISOs only) and no marker written; the **holdout spend
+freeze is ACTIVE** — 2023/2024/2025 only (rule 16, one invocation and one bundle
+per arm, years sequential, in-session).
+
+**Correction to the caiso-161 census's premise, recorded not buried.**
+"NP15==ZP26 byte-identical all years" holds for **2024 only** — 2023 and 2025
+differ in 3 and 1 hours (max |Δ| 1.14 and 4.29 $/MWh). The finding that Path 15
+essentially never bound is unchanged; the prereg's gates were written against the
+measured 0.034 % / 0 % / 0.011 % rather than against zero.
+
+**DO-NOT-REDO:** do not re-test `caiso_asymmetric_path_ratings` (keeper). The
+caiso-161 lever queue is now **empty of never-adjudicated items**.
+
+Evidence: `results/calibration/FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
+`PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md`.
+
+Next number: caiso-164 (caiso-160 unclaimed, see above).

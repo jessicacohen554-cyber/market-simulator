@@ -670,14 +670,57 @@ rule-13-admissible mechanism available to carry it.
 >      not evidence the LP saw it — confirm a **call site exists on the lane
 >      being solved**, and verify on a **flow/observable**, not on price.
 >
->    `caiso_asymmetric_path_ratings` remains **default-off, armed in zero
->    bundles** and untested. A session taking it
->    pre-registers it as its own single-delta arm (gates + kills + no-tuning
->    clause, pushed **before** solving) and honours rule 16 — 2023–2025 in ONE
->    bundle. (The "neither was solved here" note belonged to the caiso-161
->    census; `caiso_per_year_import_caps` has since been solved and closed by
->    caiso-162 above, leaving the asymmetric-path item as the queue's only
->    untested member.)
+>    **`caiso_asymmetric_path_ratings` — CLOSED (TESTED AND PROMOTED)
+>    2026-08-03 by caiso-163; CAISO cell stays `K`, now on a second armed leg.**
+>    This was the queue's last never-adjudicated item, so the CAISO lever queue
+>    is now EMPTY of untested members. Published WECC Path Rating Catalog
+>    directional ratings replace the symmetric TTC estimate on both internal
+>    N–S paths (Path 15 3,265 N→S / 5,400 S→N; Path 26 4,000 N→S / 3,000
+>    S→N). Rule 14 `[R-ACCURATE]`, **zero free parameters** — all four numbers
+>    were already committed in `CAISO_PATH_DIRECTIONAL_RATINGS`; nothing swept,
+>    no residual consulted, DOF ledger carried verbatim at 11/9.
+>    **MEASURED ON FLOWS, NOT PRICES.** Against a same-HEAD flag-off control
+>    the incumbent configuration moved power **past a published WECC rating in
+>    1,141 path-hours** across 2023–2025 (Path 15 N→S peaking at
+>    4,119/4,443/4,597 MW against the published 3,265, 294/450/380 h over;
+>    Path 26 S→N at 3,514/4,000/2,946 against 3,000, 6/11/0 h over). Under the
+>    keeper that count is **zero in every hour of every year**, and the paths
+>    bind as real paths do (Path 15 N→S 307/489/411 h; Path 26 N→S
+>    1,656/1,987/2,213 h). Path 15 binds at all for the first time — NP15
+>    separates from ZP26 in 237/414/284 h, up from 3/0/1, and the 2024
+>    byte-identity breaks. **Zero gate flips** on all nine criteria, C3a-2025
+>    unchanged at +12.0 %, level effect nil (−0.004 % / −0.015 % / +0.010 %).
+>    **PROMOTED** to `2026-08-03-caiso163-asym-path-ratings`.
+>    **NO ZERO-DELTA YEAR EXISTS** for this mechanism (the ratings are
+>    year-invariant), so the prereg replaced it with a pre-solve structural
+>    assertion — flag-off returns the SAME OBJECT (identity, not equality) —
+>    which passed before either arm solved. Wiring was checked **before**
+>    solving and, unlike caiso-162's mechanism, the backcast call site already
+>    existed (`interchange/spec.py:1988` inside `apply_interchange_topology`,
+>    reached from `run_calibration.py:2037`); only the CLI/kwarg channel was
+>    missing, wired across seven sites.
+>    **IT OPENS A ROOT-CAUSE ISSUE RATHER THAN CLOSING ONE**, which is the more
+>    useful result: the *real* Path 15 separates the hubs in ~100 % of hours by
+>    +5.95/+8.58/+5.73 $/MWh, against the keeper's −0.077/−0.109/−0.084, and
+>    the NP15-over-SP15 basis moves marginally **further** from the measured
+>    +2.34/+7.99/+6.01 (the Path-15 N→S leg dominates the Path-26 S→N leg —
+>    the prereg §3 registered the opposing-legs ambiguity and predicted NO
+>    sign, so this is a resolved ambiguity, not a surprise). Under rules 14 and
+>    1 `[R-STRUCT]` the published ratings **stay in** and the worse basis is a
+>    **discovered bug**: the symmetric estimate was silently absorbing a defect
+>    that lives elsewhere.
+>    **NAMED OPEN SUCCESSOR (hypothesis, NOT adjudicated — no solve was spent
+>    on it):** the reduced **two-link N–S topology and zonal aggregation**,
+>    which cannot reproduce hourly Path-15 congestion whatever the ratings are.
+>    It needs its own pre-registration and its own arm.
+>    **DO-NOT-REDO:** do not re-test `caiso_asymmetric_path_ratings` itself
+>    (keeper), and do **not** pitch the successor as a C3a lever — this arm
+>    moved level by 0.01 %. Corrected on the record: the census's
+>    "NP15==ZP26 byte-identical all years" holds for **2024 only** (2023/2025
+>    differ in 3 and 1 hours), which does not change the finding that Path 15
+>    essentially never bound. Evidence:
+>    `FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
+>    `PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md`.
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
