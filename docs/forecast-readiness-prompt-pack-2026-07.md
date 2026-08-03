@@ -327,6 +327,72 @@ at your own HEAD.
 
 ---
 
+## 0e. State delta — 2026-08-03: the T1-F half is COMPLETE, the instruments are REPAIRED, G-31 is CHARTERED, and rule-12 concurrency is per-PROMPT
+
+**Read this before dispatching anything.** It corrects two things earlier records got wrong and
+records two owner decisions. HEAD at writing: **`01b6a6a`**, zero open PRs. Re-verify at your own
+HEAD — this program's state has moved ~200 commits inside a single manager session.
+
+**1. Correction: the FFR-3A T1-F half is COMPLETE for ALL SIX ISOs.** Manager notes carried
+forward a "PJM and MISO were still solving at write-up" claim. The committed record disagrees:
+`docs/handoffs/ffr-t1-regate-2026-08-02.md` §6.5 tables NEISO, NYISO, PJM, MISO, ERCOT and CAISO
+all at **5/5 solve-years**, plus the ERCOT pre-decision control. PJM and MISO landed before the
+doc was committed. **All six determinations are HOLD; nothing is promoted; nothing is
+registered.** FFR-3C has since added the **MISO control arm** that §6.5b named as the single
+highest-value next measurement, so that item is closed too.
+
+**2. Correction: FFR-3D REPAIRED four of FFR-3A's blockers — it was not triage-only.**
+`docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md`: blocker 5 (dishonest zero-year console
+line), **blocker 7** (`run_full_horizon` never wrote `run_config.json`, so **FC-7 failed on every
+T1-F leg by construction**) and **blocker 8** (FC-2 row 4 SKIPPED everywhere; BLK-10 now scorable)
+are all fixed at `34c2f25`; blocker 4 (optional-field cache-key hazard) is repaired structurally
+at `0233913`. Only **blocker 6** (24 pre-existing test failures on main) is triage-without-fix.
+Plus the three signed instrument decisions: **C.4(c) un-pin** (`36ef1a1`), **C.4(a) single posture
+reader** (`83efe6c`, NYISO now resolves curve-OFF), **D-3a `reindex_gross`** (`e6f0cdb` — its
+byte-identity claim was **FALSE as shipped**, was repaired, then confirmed exactly; read FFR-3D §4
+before quoting it).
+
+*Consequence for the battery's remaining half:* the four T1-H curve legs must **RE-SOLVE, not
+re-score** — `36ef1a1` moves their solved config from harness-local `False` to the shipped `True`
+on `correlated_forced_outage` and `entry_lookahead_reprice`. The FFR-3A confound (regate §6.2) is
+therefore gone, and the T1-H legs are measured on the shipped posture for the first time.
+
+**3. Owner decision D-8 (sitting Addendum F.1) — queue latency and queue throughput are TWO
+mechanisms; the G-31 fix lane is CHARTERED.** Bounds: the cheap **G3 cap-grain** fix lands first
+(thread the execution year into the pipeline admission cap; no new parameter); any throughput term
+is **externally identified from the EIA-860 retired sheet**, never fitted to a residual; test set
+is **ERCOT + PJM only** (MISO retires nothing economically in a T1-F window and cannot exercise the
+mechanism — FFR-3C §3.2); LOYO within 2023–2025 and a **paired control** before promotion. This
+does **not** lift the FH-4/FH-5 block, promote anything, or unarm D-1/D-2 — Addendum D's HOLD
+PROMOTION, FIND ROOT CAUSE stands and both mechanisms **stay armed**.
+
+**4. Owner decision (sitting Addendum F.2) — rule 12's concurrency cap is PER PROMPT, not per
+program.** Owner, verbatim: *"These run in separate sessions so there's no limit to solve slots as
+long as there's only 2 per PROMPT."* Each dispatched session may run ~2 concurrent solve
+invocations; independent sessions do not contend, because they do not share a container.
+Unchanged, because they are per-container limits: years **sequential within an invocation**,
+**≤2 concurrent invocations within one session**, **PJM and MISO never co-run within a session**
+(~8.6 GB each), **≤5 solve-years per invocation**. *Dispatch consequence:* lanes queued **solely**
+for slot contention — **FFR-SC** and the **FFR-SA close-out** — dispatch concurrently with the
+battery, not behind it. A lane is now held only for evidence dependency or an owner decision.
+
+**5. Standing, unchanged.** HOLDOUT FREEZE **ACTIVE** (all ISOs, both tiers) — it blocks
+out-of-training **backcast** years and does **not** block forecast-mode 2026+, T1-F/T1-X/T1-H/T1-FF
+work, or in-sample 2023–2025. `complete` = {NEISO, NYISO, PJM}; `final` = **EMPTY**, deliberately;
+NEISO's locked test is SPENT and never re-grantable. **CACHE EPOCH 2026-08-02** — every pre-epoch
+forecast cache is invalid, so forecast work solves COLD by design. **FH-4/FH-5 stay BLOCKED**: the
+block lifts only when a retirement-lane fix **lands** and FH-1's §3.3 gate **re-probes green**.
+`data/clean` is a hard prerequisite for every forecast leg (≈65 min / 50 datatypes / 1.6 GB) and
+needs `pip install tzdata` or `ercot-wtx-congestion` fails with `ZoneInfoNotFoundError`.
+
+**6. Keeper drift since §0d.** All six moved. Read the shards at your own HEAD
+(`frontend/data/backcast/keepers/<ISO>.json`); at `01b6a6a` they are ERCOT
+`2026-08-02-ercot150b-zonal-anchor` · PJM `2026-08-03-pjm-147b-chp-heat` (CALIBRATED 9/9) · CAISO
+`2026-08-03-caiso156-meter-screen-b` · NYISO `2026-08-03-nyiso-117-nyc-rcpf` · NEISO
+`2026-08-03-neiso-caiso156-meter-screen` · MISO `2026-08-03-miso-117b-ct-heat`.
+
+---
+
 ## 0. Wave map (dispatch at a glance)
 
 | Wave | Sessions (model) | Parallel? | Solves? | Gate to next wave |
