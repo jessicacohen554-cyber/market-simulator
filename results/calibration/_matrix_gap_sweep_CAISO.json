@@ -4,7 +4,7 @@
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 671,
   "n_matrix_rows": 181,
-  "n_bundles_scanned": 19,
+  "n_bundles_scanned": 20,
   "family": [
     {
       "field": "caiso_asymmetric_path_ratings",
@@ -88,13 +88,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -103,6 +101,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -127,13 +128,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -142,6 +141,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -207,13 +209,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -222,6 +222,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -265,13 +268,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -280,6 +281,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -304,13 +308,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -319,6 +321,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso_netrev_base"
       ]
     },
@@ -342,13 +347,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -357,6 +360,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso_netrev_base"
       ]
     },
@@ -380,13 +386,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -395,6 +399,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso_netrev_base"
       ]
     },
@@ -418,13 +425,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -433,6 +438,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -479,13 +487,11 @@
         "K"
       ],
       "armed_in_bundles": [
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -493,7 +499,10 @@
         "caiso157_capdel_C",
         "caiso157_control_A",
         "caiso157_restore_B",
-        "caiso157_ror_D"
+        "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2"
       ]
     },
     {
@@ -520,7 +529,6 @@
         "O"
       ],
       "armed_in_bundles": [
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -528,7 +536,10 @@
         "caiso157_capdel_C",
         "caiso157_control_A",
         "caiso157_restore_B",
-        "caiso157_ror_D"
+        "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2"
       ]
     },
     {
@@ -562,13 +573,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -577,6 +586,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -601,13 +613,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -616,6 +626,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -669,13 +682,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -684,6 +695,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -846,13 +860,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -861,6 +873,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -891,13 +906,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -906,6 +919,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -957,13 +973,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -972,6 +986,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -996,13 +1013,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1011,6 +1026,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1065,13 +1083,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1080,6 +1096,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1099,15 +1118,18 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
-          "cell": "U"
+          "cells": ".OUUK.",
+          "cell": "O"
         }
       ],
       "cells": [
         "K",
-        "U"
+        "O"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2"
+      ]
     },
     {
       "field": "caiso_perhub_firm_base",
@@ -1129,13 +1151,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1144,6 +1164,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1187,13 +1210,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1202,6 +1223,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1226,13 +1250,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1241,6 +1263,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1265,13 +1290,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1280,6 +1303,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1310,13 +1336,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1325,6 +1349,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1368,13 +1395,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1383,6 +1408,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1407,13 +1435,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1422,6 +1448,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso_netrev_base"
       ]
     },
@@ -1538,13 +1567,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1553,6 +1580,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1601,13 +1631,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1616,6 +1644,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1645,13 +1676,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1660,6 +1689,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1689,13 +1721,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1704,6 +1734,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1733,13 +1766,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1748,6 +1779,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1777,13 +1811,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1792,6 +1824,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1821,13 +1856,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1836,6 +1869,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1879,13 +1915,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1894,6 +1928,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso_netrev_base"
       ]
     },
@@ -1917,13 +1954,11 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_control_A",
         "caiso146_ctheatrate_B",
         "caiso147_chp_B",
         "caiso147_control_A",
         "caiso148_control_A",
         "caiso148_nucavail_B",
-        "caiso151_clip_B",
         "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
@@ -1932,6 +1967,9 @@
         "caiso157_control_A",
         "caiso157_restore_B",
         "caiso157_ror_D",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1975,8 +2013,8 @@
       "owning_rows": [
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
-          "cell": "U"
+          "cells": ".OUUK.",
+          "cell": "O"
         },
         {
           "row": "capacity_deliverability",
@@ -3150,8 +3188,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
-          "cell": "U"
+          "cells": ".OUUK.",
+          "cell": "O"
         },
         {
           "row": "demand_repairs",
@@ -3970,8 +4008,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
-          "cell": "U"
+          "cells": ".OUUK.",
+          "cell": "O"
         },
         {
           "row": "demand_repairs",

@@ -5236,4 +5236,75 @@ its caiso-144 DO-NOT-SOLVE, `cc_mustrun_per_plant` `R`, `wecc_endogenous_node`
 `netload_drag_floors` `R` all untouched).
 Evidence: `results/calibration/FINDING-caiso161-matrix-column-closure-2026-08-03.md`.
 
-Next number: caiso-162 (caiso-160 unclaimed, see above).
+## caiso-162 — per-year LCT pocket import caps: a WIRING DEFECT, then a small real lever (2026-08-03)
+
+**Mechanism** `caiso_per_year_import_caps` · **matrix** `lcr_tsl_published`
+CAISO `U` -> `O` · **keeper UNCHANGED** at `2026-08-03-caiso156-meter-screen-b`.
+
+**Registered:** `2026-08-03-caiso162-control` (arm A, flag off,
+`caiso162_control_A`) and `2026-08-03-caiso162-per-year-import` (arm B v2, flag
+on, `caiso162_peryear_import_caps_v2`).
+
+**HEADLINE — the mechanism had NO CALL SITE IN THE BACKCAST LANE.**
+`apply_caiso_local_import_limits` was invoked only from `runner.py:1627` inside
+`run_scenario_iso`, the FORECAST path; a calibration solve reaches the LP via
+`run_calibration.py::run_year` -> `pipeline.solve.run_energy_solve` and never
+called it (the symbol appeared nowhere in `scripts/` or
+`src/market_sim/pipeline/`). The field was therefore unreachable from EVERY
+backcast — including via the `ScenarioConfig` field directly, the route
+caiso-161 assumed worked when it minted the cell `U`.
+
+**How it was caught.** Arm B v1 recorded `caiso_per_year_import_caps=true` in
+its own `run_config.json` and came back BYTE-IDENTICAL to the flag-off control
+in all three years. On prices that is a clean `INERT` read — it would have
+written a FALSE `I` (a DO-NOT-REDO code) on a mechanism that had never executed.
+The FLOWS falsified it: B v1's pocket links topped out at exactly 12008.00 /
+1436.00 MW, the static caps. **Standing lesson, generalising caiso-161 lesson
+(a): a `run_config.json` recording a mechanism as armed is NOT evidence the LP
+saw it — confirm a CALL SITE EXISTS ON THE LANE BEING SOLVED, and verify on a
+flow/observable rather than on price.**
+
+**Second defect, self-inflicted.** Prereg section 7 asserted 2023 must match THE
+KEEPER byte-for-byte. The keeper (sha `69e0e30`) is 13 `src/market_sim` commits
+behind this session's basis, several solve-affecting, so keeper-vs-treatment
+measures HEAD drift plus the arm. Withdrawn in ADDENDUM A and replaced by a
+same-HEAD control. Scale of the drift: arm A scores C3a-2025 at +12.1% where the
+committed keeper scores +12.2% — comparable to the effect under test, so without
+arm A the lever's whole signal would have sat inside the drift.
+
+**Measured (arm A vs arm B v2, same head, single flag delta).** Flows: 2024
+LA_BASIN 12008 -> 13319, SDGE 1436 -> 2074 (binding at the published cap); 2025
+LA_BASIN 12008 -> 14405, SDGE 1436 -> 2071. Load-weighted mean LMP: 2023
+BYTE-IDENTICAL (provable no-op — the zero-delta control, PASSED), 2024 -0.1670%
+of level, 2025 -0.1236%. C3a-2025 +12.1% -> +12.0%. ZERO gate flips on all nine
+criteria. Zonal signature is the mechanism's own: SDGE (binds 11.5% of hours)
+-0.958/-0.626 $/MWh while LA_BASIN barely moves despite carrying 83% of the MW
+loosening (binds 0.7% of hours) — reproducing the pre-registered pre-check.
+
+**Ceiling held.** Prereg section 3 pre-committed that removing the pocket premium
+ENTIRELY moves 2025 by at most $0.084/MWh (0.22% of level) against the
+$0.76/MWh needed for the +-10% band; realised -$0.0477/MWh, 57% of the ceiling.
+PARTIAL CREDIT against the pre-registered bars; the PASS bar was pre-registered
+as unattainable and was not attained.
+
+**Governance note the owner asked for.** The caiso-141 A2 pumped-storage wall was
+NOT reopened. Bound on what this lever could have taken from it: <=0.22 pp of a
+12.2 pp residual, under 2% — **the A2 attribution is NOT materially undermined.**
+
+**Disposition (rule 14, pre-committed before the result).** The published input
+is measured, same-convention and forward-reproducible; it beats the frozen 2023
+estimate REGARDLESS of fit and is neither reverted nor parked. Zero free
+parameters, no new caveat, no ledger slot. The cell is `O` not `K` only because
+promotion is a separate governance act (a replay probe bundle carries no
+`calibration_attestation.json`). **RECOMMENDED FOR PROMOTION** — LOYO-clean by
+construction (2023 a no-op, 2024 and 2025 both improve).
+
+**DO-NOT-REDO:** do not re-test that the mechanism works, and do not propose it
+for C3a-2025 (ceiling ~11% of the gap). `caiso_asymmetric_path_ratings` remains
+the untested caiso-161 queue item and gets its own arm.
+
+Evidence: `results/calibration/FINDING-caiso162-per-year-import-caps-2026-08-03.md`,
+`PRECHECK-caiso162-per-year-import-caps-2026-08-03.md`,
+`PRECHECK-caiso162-ADDENDUM-A-samehead-control-2026-08-03.md`.
+
+Next number: caiso-163 (caiso-160 unclaimed, see above).
