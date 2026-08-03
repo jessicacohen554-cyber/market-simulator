@@ -106,7 +106,8 @@ legitimately have fired:
   sitting on its own floor is invisible whenever its neighbours run above
   theirs. It is not corroboration and is not used as any. What it *does*
   establish validly is the unchanged floor level above, and that the class runs
-  at 2.29–2.42× its aggregate floor.
+  at **1.94–2.29×** its aggregate floor across 2023–2025 on the current keeper
+  (2.29 / 2.07 / 1.94; the superseded keeper's 2023 reads 2.42).
 * **Limb (a), the committed D-2, is produced by a lossy path.**
 
 **The defect (new, and not PJM-specific).** D-2's floor attribution is joined to
