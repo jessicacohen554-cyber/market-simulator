@@ -190,8 +190,28 @@ jobs:
       # pinned-literal test failure in an unrelated session, whose tempting and
       # WRONG remedy is to re-pin the literal. This moves detection to the PR
       # that adds the field. Stdlib-only — no uv sync needed, runs in seconds.
+      #
+      # FFR-3D added check 3, the DEFAULT-FLIP half (FFR-3A blocker 4). A
+      # registration is only meaningful against a fixed default: cache_key()
+      # drops a registered field when it equals the LIVE default, so MOVING that
+      # default makes the new-default run hash identically to the old-default run
+      # it supersedes — a silent same-key collision the registration itself
+      # cannot see. It has already happened once (the D-1/D-2 flips left the
+      # default key at 603c2498bf71d21d across a behavioral change). Check 3
+      # requires every registered field's live default to match its declared
+      # entry in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS, so a flip cannot land until
+      # it is declared and its collision classified (byte-identical, or a
+      # cache-epoch entry + purge).
+      #
+      # Check 3 is a HEAD-only invariant, so the first step already covers it.
+      # The second re-runs it base-less so the invariant still holds if the
+      # PR-base fetch fails — a lane must not depend on a later session noticing
+      # a moved default (blocker 4 is "structural, needs a decision not a patch").
       - name: check_cache_key_registration
         run: python3 scripts/check_cache_key_registration.py --base ${{ github.event.pull_request.base.sha }}
+      - name: check_cache_key_declared_defaults (HEAD-only invariant)
+        if: always()
+        run: python3 scripts/check_cache_key_registration.py
 
   lint:
     name: Ruff lint + format
