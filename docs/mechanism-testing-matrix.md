@@ -1558,7 +1558,62 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-02-nyiso-113-li-locational`, **CALIBRATED-WITH-CAVEATS** (header keeper id corrected at nyiso-116 — it had gone stale at the nyiso-113 promotion); ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-116) — TWO C3c LANES CLOSED BY MEASUREMENT, AND THE
+$2.46 KNIFE-EDGE RETIRED AS A TARGET.** Keeper **UNCHANGED**
+(`2026-08-02-nyiso-113-li-locational`). **No lever proposed; no parameter
+introduced, changed or fitted.** One diagnostic run registered
+(`2026-08-03-nyiso-116-unit-layer`, CALIBRATED-WITH-CAVEATS, C3c the sole
+ledgered caveat — identical to the keeper).
+
+**(1) THE SETTLEMENT BASIS IS INERT.** C3c scores an energy-only model series
+against an actual that embeds RCPF (`calibration_verdict.py`'s own G-20a comment
+names "NYISO RCPF-into-LBMP"), and the post-solve overlay that would supply the
+settlement basis is cell **G** under rule 19 — so NYISO sat in the gap between
+two individually correct decisions. The admissible route is the **co-opt's own
+locational duals**, readable from a bundle only since nyiso-114. Rebuilt that
+way, C3c is **3/0/14, unchanged in every year**, and it is **proved rather than
+observed**: the best settlement price attainable in *any* sub-threshold hour is
+**$286.42/$297.54/$276.42** — margins **$13.58/$2.46/$23.58**. In 2024 the adder
+is exactly **$0.00** in all three pinned hours. `nyiso_rcpf_postsolve_overlay`
+note extended; **cell stays G**. **DO-NOT-REDO — this lane is closed.**
+
+**(2) THE KNIFE-EDGE IS NOT THE GATE.** C3c bands at `[0.5×, 2×]`, so the model
+needs **5/6/21 hours**, and the hour that must clear sits at
+**$286.42/$201.69/$235.73** (**+$13.58/+$98.31/+$64.27**). C3c fails in **all
+three years**; **2023 is the nearest miss, not 2024**; and closing the pin leaves
+2024 at **0.25×**, still failing. Worse, the pinned hours are **not real tail
+hours** (actual **$282.83/$179.20/$128.43**) while **h4526 — reality $511.30,
+model $201.69 — IS one**, so a pin-sized lever books **three false positives**
+and misses the true hour. That is the caiso-144 pattern and a rule 1
+`[R-STRUCT]` violation by construction. nyiso-85 §7d's SRMC-roof attribution
+**stands**, corroborated as a rate (model tail precision **67 % / n-a / 79 %**)
+and refined: inside the June 2024 episode the model's peak is **phase-shifted
+~2 h late and clipped**.
+
+**(3) NEW INSTRUMENT ROW `unit_network_layer_sidecar` (cells `IIIKKI`).**
+nyiso-114 §6's pin attribution rested on gitignored artifacts nobody could
+re-derive. Both stated grounds for that exclusion measured **false**:
+*"regenerable by a replay"* (nyiso-114 §2 — a P0-bridge keeper is not
+replay-recoverable, so the layer is **permanently** unrecoverable) and
+*"~58 MB/bundle"* (measured **3.2 MB** for a whole 3-year NYISO bundle, ~18×
+overstated; the figure predates `DELTA_BINARY_PACKED`). Layer committed via
+`git add -f`; default unchanged for ordinary bundles. **All four §6 claims
+re-verified to the decimal** (both LI paths saturated, pin energy-side, one
+part-loaded LI unit `7146_1` at 68.9346/73.8 MW, **596.9 MW** idle).
+
+**STANDING LESSON FOR EVERY LANE: G1 is a PER-GATE property, not a bundle
+property.** This arm fails G1 globally ($10.51/$10.56/$9.04) yet its C3c tail is
+**bit-identical** in 2023/2024 and its C3c count identical in all three years —
+so it IS the right instrument for that gate. Show it per gate; never assume it.
+**And a third gate-instrument failure, disclosed:** G3/P4 first failed on a
+`1e-6` MW tolerance against **float32** columns whose spacing is 7.6e-06–6.1e-05
+MW — numerically unsatisfiable. nyiso-113's K3/K4 and nyiso-114's `held_mw` were
+about a column's **semantics**; this one is about its **dtype**. Checking that
+the writer emits the column is not enough — the column must be able to
+*represent* the tolerance the gate asserts.
+`results/calibration/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`.
 
 **STATUS 2026-08-03 (nyiso-114) — THE PER-FAMILY RESERVE DUAL IS PERSISTED, THE
 CENSUS RAN IN ALL SIX LANES, AND TWO DEAD KNOBS ARE GONE.** Keeper **UNCHANGED**
