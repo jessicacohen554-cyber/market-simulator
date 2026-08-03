@@ -62,22 +62,41 @@ class TestForwardNetConeAnchor(unittest.TestCase):
         self.assertIsNone(forward_net_cone_anchor("PJM", None))
 
     def test_central_rate_collapses_every_mode_to_hold_last(self):
-        # NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO is 0.0 for every ISO (the cited
-        # inflation-only / field central finding), so with no explicit rate every
-        # reindex mode equals hold_last — the honest central result and a second
-        # byte-identity guarantee.
+        """At the shipped 0.0 real rate every mode is EXACTLY hold_last.
+
+        NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO is 0.0 for every ISO (the cited
+        inflation-only / field central finding), so with no explicit rate every
+        reindex mode must equal hold_last. This is the byte-identity guarantee
+        owner decision **D-3a** rests on ("byte-identical to hold_last at the
+        signed 0.0 real rate"), so it is asserted with assertEqual across the
+        whole forecast horizon and a spread of offsets — NOT assertAlmostEqual.
+
+        It was `assertAlmostEqual(..., places=12)` at ONE year and ONE offset,
+        and that hid a real miss: `(base + eas) - eas` is not `base` in IEEE
+        754, so reindex_gross was off by ~1.4e-14 on 233 of the swept
+        combinations (PJM 2029+: 118.87685 -> 118.87684999999999). FFR-3D
+        repaired it with an exact zero-rate short-circuit; this test is what
+        keeps the guarantee true.
+        """
         for iso in _CAPACITY_ISOS:
-            hl = forward_net_cone_anchor(iso, 2045, "hold_last")
-            self.assertAlmostEqual(
-                forward_net_cone_anchor(iso, 2045, "reindex_net"), hl, places=12
-            )
-            self.assertAlmostEqual(
-                forward_net_cone_anchor(
-                    iso, 2045, "reindex_gross", eas_offset_per_kw_yr=50.0
-                ),
-                hl,
-                places=12,
-            )
+            for year in range(2026, 2051):
+                hl = forward_net_cone_anchor(iso, year, "hold_last")
+                self.assertEqual(
+                    forward_net_cone_anchor(iso, year, "reindex_net"),
+                    hl,
+                    msg=f"{iso} {year} reindex_net",
+                )
+                # Including eas=None: at r == 0 the offset provably cancels, so
+                # it must not be REQUIRED — no caller supplies one until FF-2C
+                # wires the seam, and a default-posture call must not raise.
+                for eas in (None, 0.0, 12.5, 50.0, 118.877, 199.99):
+                    self.assertEqual(
+                        forward_net_cone_anchor(
+                            iso, year, "reindex_gross", eas_offset_per_kw_yr=eas
+                        ),
+                        hl,
+                        msg=f"{iso} {year} reindex_gross eas={eas}",
+                    )
 
     def test_reindex_net_arithmetic_identity(self):
         # A hand rate escalates ONLY the years past the last published vintage,
@@ -130,9 +149,18 @@ class TestForwardNetConeAnchor(unittest.TestCase):
             got, forward_net_cone_anchor("PJM", year, "reindex_net", rate=rate)
         )
 
-    def test_reindex_gross_requires_offset(self):
+    def test_reindex_gross_requires_offset_at_a_nonzero_rate(self):
+        # The offset determines the answer only when the rate is non-zero, so
+        # that is where it is demanded. At r == 0 it cancels exactly and is
+        # optional (see test_central_rate_collapses_every_mode_to_hold_last) —
+        # which is what lets reindex_gross be the shipped default before FF-2C
+        # wires an E&AS offset into the seam.
         with self.assertRaises(ValueError):
             forward_net_cone_anchor("PJM", 2050, "reindex_gross", rate=0.02)
+        self.assertEqual(
+            forward_net_cone_anchor("PJM", 2050, "reindex_gross", rate=0.0),
+            forward_net_cone_anchor("PJM", 2050, "hold_last"),
+        )
 
     def test_unknown_escalation_raises(self):
         with self.assertRaises(ValueError):
@@ -164,10 +192,20 @@ class TestEscalationRegistryHygiene(unittest.TestCase):
 
 
 class TestScenarioConfigField(unittest.TestCase):
-    """The default-OFF ScenarioConfig switch + cache/backcast invariants."""
+    """The shipped ScenarioConfig posture + cache/backcast invariants.
 
-    def test_default_is_hold_last(self):
-        self.assertEqual(ScenarioConfig().net_cone_forward_escalation, "hold_last")
+    The default was ``"hold_last"`` until owner decision **D-3a** (signed
+    2026-08-03) flipped it to ``"reindex_gross"``, the field construction (every
+    ISO escalates GROSS CONE and re-nets E&AS; net-CONE is never indexed
+    directly). The flip is byte-identical because the shipped real rate is 0.0
+    for every ISO — asserted EXACTLY in
+    :meth:`TestForwardNetConeAnchor.test_central_rate_collapses_every_mode_to_hold_last`,
+    not almost-equal, after FFR-3D repaired the zero-rate identity.
+    """
+
+    def test_default_is_reindex_gross(self):
+        # D-3a. hold_last is now the explicit status-quo CONTROL arm.
+        self.assertEqual(ScenarioConfig().net_cone_forward_escalation, "reindex_gross")
 
     def test_field_is_cache_optional(self):
         self.assertIn("net_cone_forward_escalation", _CACHE_KEY_OPTIONAL_FIELDS)
@@ -177,26 +215,37 @@ class TestScenarioConfigField(unittest.TestCase):
         # bare default config (the field is dropped from the hash at default).
         self.assertEqual(
             ScenarioConfig().cache_key(),
-            ScenarioConfig(net_cone_forward_escalation="hold_last").cache_key(),
-        )
-
-    def test_reindex_mode_changes_cache_key(self):
-        # A reindex run IS a distinct forward-capacity-price scenario → distinct
-        # key (so it never collides with a cached hold_last run).
-        self.assertNotEqual(
-            ScenarioConfig().cache_key(),
-            ScenarioConfig(net_cone_forward_escalation="reindex_net").cache_key(),
-        )
-        self.assertNotEqual(
-            ScenarioConfig(net_cone_forward_escalation="reindex_net").cache_key(),
             ScenarioConfig(net_cone_forward_escalation="reindex_gross").cache_key(),
         )
 
-    def test_backcast_coerces_to_hold_last(self):
-        # A backcast has no capacity evolution → the axis is inert; coerce to
-        # hold_last so a backcast that sets it non-default stays byte-identical.
+    def test_non_default_mode_changes_cache_key(self):
+        # Any non-default mode IS a distinct forward-capacity-price scenario →
+        # distinct key. Post-D-3a that includes the hold_last CONTROL arm, which
+        # is what keeps a status-quo comparison separable from the shipped run.
+        for value in ("hold_last", "reindex_net"):
+            self.assertNotEqual(
+                ScenarioConfig().cache_key(),
+                ScenarioConfig(net_cone_forward_escalation=value).cache_key(),
+                msg=value,
+            )
+        self.assertNotEqual(
+            ScenarioConfig(net_cone_forward_escalation="reindex_net").cache_key(),
+            ScenarioConfig(net_cone_forward_escalation="hold_last").cache_key(),
+        )
+
+    def test_backcast_coerces_to_the_shipped_default(self):
+        # A backcast has no capacity evolution → the axis is inert; coerce so a
+        # backcast that sets it non-default stays byte-identical. The target is
+        # the DATACLASS DEFAULT, never a literal: the field is cache-neutral at
+        # the default ONLY, so a literal that stops being the default would
+        # enter the hash and re-key every backcast keeper (measured at the D-3a
+        # flip: 35b6dc12f97968f1 -> 512c2fffbb61414e). Asserted against the live
+        # default so this test cannot go stale on the next flip either.
         bc = ScenarioConfig(mode="backcast", net_cone_forward_escalation="reindex_net")
-        self.assertEqual(bc.net_cone_forward_escalation, "hold_last")
+        self.assertEqual(
+            bc.net_cone_forward_escalation,
+            ScenarioConfig().net_cone_forward_escalation,
+        )
         self.assertEqual(bc.cache_key(), ScenarioConfig(mode="backcast").cache_key())
 
     def test_hindcast_forecast_path_not_coerced(self):
