@@ -1,0 +1,49 @@
+==============================================================================
+miso-117 A/B — measured_ct_heat_rates vs a same-HEAD zero-delta control
+==============================================================================
+artifact: 86/86 plants applied, 0 excluded by the physical band, 19,120.7 MW
+  56 plants / 13,801.1 MW cheaper, 30 / 5,319.6 MW dearer; cap-wt -0.3927 MMBtu/MWh, gen-wt +0.0030
+  K1_flag_fidelity             PASS
+  K3_liveness                  PASS
+  K4_single_delta              PASS
+  K5_year_span                 PASS
+  K2 strict-byte control drift   max 3,728.4990 MW (DRIFT — reported, not a kill)
+
+protective (prereg §6.1):
+  D-1 CT_PEAKER A: 2023: r=0.972 cv=0.981  2024: r=0.971 cv=0.836  2025: r=0.985 cv=0.799
+  D-1 CT_PEAKER B: 2023: r=0.973 cv=1.219  2024: r=0.971 cv=0.917  2025: r=0.986 cv=1.042
+  D-1 COAL_PRB A: 2023: r=0.988 cv=0.466 FAIL  2024: r=0.978 cv=0.475 FAIL  2025: r=0.971 cv=0.314 FAIL
+  D-1 COAL_PRB B: 2023: r=0.988 cv=0.462 FAIL  2024: r=0.979 cv=0.474 FAIL  2025: r=0.971 cv=0.309 FAIL
+  D-2 CT_PEAKER forced share A: {'2023': 0.1157, '2024': 0.0821, '2025': 0.0867}
+  D-2 CT_PEAKER forced share B: {'2023': 0.1407, '2024': 0.0999, '2025': 0.1043}  (cap 0.15)
+
+reported (never a kill — rules 1 / 14):
+  2023: lambda 32.4804 -> 32.5458 (+0.0654 $/MWh) | slack 0.0 -> 0.0 | dump 0.0 -> 0.0
+      CT_PEAKER        15.4683 ->   14.2348 TWh (-1.2335) (actual 17.0383)
+      import           38.5458 ->   38.8599 TWh (+0.3141)
+      CC_REGULAR      140.1496 ->  140.4587 TWh (+0.3091) (actual 141.817)
+      COAL_PRB        123.6900 ->  123.9807 TWh (+0.2907) (actual 121.671)
+      ST_GAS           21.0889 ->   21.2064 TWh (+0.1175) (actual 13.9398)
+      CC_CHP           19.2914 ->   19.4058 TWh (+0.1144) (actual 21.3113)
+      COAL_BIT         52.4556 ->   52.4890 TWh (+0.0334) (actual 57.0694)
+      CT_CHP            5.2793 ->    5.2939 TWh (+0.0146) (actual 8.3415)
+  2024: lambda 30.1906 -> 30.2496 (+0.0590 $/MWh) | slack 19059.283 -> 19059.283 | dump 0.0 -> 0.0
+      CT_PEAKER        19.8376 ->   18.8276 TWh (-1.0100) (actual 19.2249)
+      CC_REGULAR      147.2023 ->  147.4638 TWh (+0.2615) (actual 143.4737)
+      import           23.4324 ->   23.6431 TWh (+0.2107)
+      COAL_PRB        118.3274 ->  118.5181 TWh (+0.1907) (actual 116.4629)
+      CC_CHP           19.3021 ->   19.4531 TWh (+0.1510) (actual 21.3389)
+      ST_GAS           21.2688 ->   21.3965 TWh (+0.1277) (actual 17.5682)
+      COAL_BIT         50.0657 ->   50.1060 TWh (+0.0403) (actual 53.3316)
+      CT_CHP            5.4232 ->    5.4380 TWh (+0.0148) (actual 8.5034)
+  2025: lambda 38.9662 -> 38.9863 (+0.0201 $/MWh) | slack 0.0 -> 0.0 | dump 0.0 -> 0.0
+      CT_PEAKER        19.0883 ->   17.8623 TWh (-1.2260) (actual 19.2905)
+      CC_REGULAR      130.1674 ->  130.7185 TWh (+0.5511) (actual 137.9596)
+      COAL_PRB        147.1368 ->  147.3639 TWh (+0.2271) (actual 145.8605)
+      import           17.2155 ->   17.3962 TWh (+0.1807)
+      CC_CHP           16.1612 ->   16.3269 TWh (+0.1657) (actual 17.7504)
+      COAL_BIT         59.3853 ->   59.5056 TWh (+0.1203) (actual 60.1758)
+      ST_GAS           20.4278 ->   20.3619 TWh (-0.0659) (actual 15.5672)
+      CT_CHP            5.4012 ->    5.4154 TWh (+0.0142) (actual 5.0586)
+
+wrote results/probes/miso117_ctheatrate_ab.json
