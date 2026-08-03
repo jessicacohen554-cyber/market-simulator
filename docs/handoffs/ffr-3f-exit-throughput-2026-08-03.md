@@ -387,6 +387,8 @@ differ only in whether `_admission_cap_horizon` exists. **The 2024 screen is whe
 | un-admitted (`entry_capped`) | 1,116 / 94.496 GW | 1,190 / 108.207 GW | +74 / +13.710 GW |
 | peak demand | 153,121 MW | 153,121 MW | identical |
 | reserve margin | −4.8754 % | −4.8754 % | identical |
+| 2025 `reversed` (soft latch) | 83 / 14.766 GW | 9 / 1.056 GW | the admitted set, recovering |
+| **executed economic exits, 2023–2025** | **0.000 GW** | **0.000 GW** | **identical** |
 
 **The cap-grain fix is emphatically NOT inert — ERCOT simply had nothing for it to act on.** In
 PJM it changes the admitted exit set by an order of magnitude, and in exactly the direction
@@ -396,10 +398,16 @@ low**, so it over-admitted; resolving the requirement at the year the exits actu
 
 Two things this does **not** yet mean, both stated because they are easy to overread:
 
-* **It does not change realized exits inside this window.** Both arms still execute **0.000 GW**
-  of economic retirement in 2023–2025: the 9 (resp. 83) admitted units either reverse through the
-  soft latch in 2025 or have not reached `decided_year + L_f`. The membership change would first
-  become visible as executions in **2026+**, outside a 3-year T1-FF window.
+* **It does not change realized exits inside this window.** Both arms execute **0.000 GW** of
+  economic retirement in 2023–2025. The 2025 screen shows why, and it is the soft latch rather
+  than the lag: **every** admitted unit re-clears the bar and leaves the pipeline — 83 `reversed`
+  / 14.766 GW in the pre-fix arm against 9 `reversed` / 1.056 GW in the cap-fix arm, exactly the
+  sets each admitted the year before. So within this window the corrected grain changes *who is
+  in the pipeline*, and the pipeline then empties itself either way. The membership change would
+  first become visible as executions in **2026+**, outside a 3-year T1-FF window.
+* **In-window dispatch skill is untouched.** Both PJM arms score identically (C1 fuel-mix
+  12.230 / 18.843, C3a price 0.318 / 49.688 / 2.564), which follows from the exits never
+  executing — nothing the corrected grain changes reaches the LP inside this window.
 * **It is not validated against actuals.** A 93 % swing in pipeline membership is a large,
   correct-by-construction mechanism change; whether the corrected level is *closer to what PJM
   actually retired* is a scoring question on a posture where the exits execute, and this posture
