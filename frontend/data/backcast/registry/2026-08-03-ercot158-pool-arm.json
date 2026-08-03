@@ -1,15 +1,16 @@
 {
-  "id": "2026-08-03-ercot158-pool-arm",
-  "label": "ercot158 pool arm",
-  "date": "2026-08-03",
-  "shorthand": "ercot158-pool-arm",
-  "definition": "(PROBE \u2014 INERT) ERCOT-158 Run B: single delta off the ercot150b keeper config \u2014 ercot_faststart_pool_offer=true (the ERCOT-88 offline fast-start CT pool exactly as merged, first solve with its 2023 year block; ERCOT-157 data landing). ENGAGED all three years (173/173/91 pool rows, 2025 matching the ERCOT-88 record) and INERT at the target: at the keeper's 91 missed 2023 >$300 hours the missed-set model mean is BIT-IDENTICAL to the control ($105.163 -> $105.163, 0 flips) \u2014 the marginal unit there is never a pool-owned CT row; the un-repriced cheap CC offline block (~8 GW <=$200, ERCOT-152 measured-no-op refusal upheld) keeps the cushion, exactly the Phase-0 arithmetic. ALL pre-registered gates HELD every year (PRECOMMIT-ercot158: C3a delta -0.2/-0.0/+0.0 pp, zero spurious, tail counts identical, NRMSE 2.870->2.866 / 2.947->2.946 / 0.955); scorecard 73 verdict rows zero PASS->FAIL; D-2 mechanism sets identical, zero forced-energy delta (offer-availability confirmed vacuous). Only measurable motion: slight 2023 softening (hit-set mean -$16) where the pool ladder REPLACES a higher wall markup. DETERMINATION: NOT-YET, keeper-identical fail set. Matrix cell O -> I; mechanism stays default-off; keeper unchanged (ercot150b).",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "ERCOT",
-  "file": "frontend/data/backcast/runs/2026-08-03-ercot158-pool-arm.js",
-  "bundle": "results/calibration/ercot158_poolarm_B"
+ "id": "2026-08-03-ercot158-pool-arm",
+ "label": "ercot158 pool arm",
+ "date": "2026-08-03",
+ "shorthand": "ercot158-pool-arm",
+ "definition": "KEEPER (OWNER-PROMOTED 2026-08-03, ercot-158). ERCOT-158 Run B: single delta off the ercot150b keeper config — ercot_faststart_pool_offer=true (the ERCOT-88 offline fast-start CT pool exactly as merged, first solve with its 2023 year block; ERCOT-157 data landing). ENGAGED all three years (173/173/91 pool rows, 2025 matching the ERCOT-88 record) and INERT at the target: at the keeper's 91 missed 2023 >$300 hours the missed-set model mean is BIT-IDENTICAL to the control ($105.163 -> $105.163, 0 flips) — the marginal unit there is never a pool-owned CT row; the un-repriced cheap CC offline block (~8 GW <=$200, ERCOT-152 measured-no-op refusal upheld) keeps the cushion, exactly the Phase-0 arithmetic. ALL pre-registered gates HELD every year (PRECOMMIT-ercot158: C3a delta -0.2/-0.0/+0.0 pp, zero spurious, tail counts identical, NRMSE 2.870->2.866 / 2.947->2.946 / 0.955); scorecard 73 verdict rows zero PASS->FAIL; D-2 mechanism sets identical, zero forced-energy delta (offer-availability confirmed vacuous). Only measurable motion: slight 2023 softening (hit-set mean -$16) where the pool ladder REPLACES a higher wall markup. DETERMINATION: NOT-YET, keeper-identical fail set. PROMOTED on the standing standard (structural integrity outranks gate regression): the promotion rests on the identification — ERCOT-87 adjudicated that the real mid-band prices on the offline startable CT pool, so an online-basis wall price on those rows is refuted by status; arming prices that capability at its measured conduct (zero fitted parameters, C6 n_entries 10 / n_residual 6). Matrix cell O -> K; supersedes 2026-08-02-ercot150b-zonal-anchor (kept as the immediate-prior comparison). The inert-at-target A/B is the recorded honest finding: the 2023 tail residual is a COMMITMENT-STATE gap (the CC offline block), the chartered successor lane.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-03-ercot158-pool-arm.js",
+ "bundle": "results/calibration/ercot158_poolarm_B",
+ "market_story": "CT_PEAKER (offer surface only, no dispatch change): in the real market the $150-500 moderate-tightness band prices on OFFLINE startable fast-start CTs — 12-18 CT starts per covered band hour, telemetered OFFQS/OFFNS, ~5x the online spare’s in-band offer mass (ERCOT-87) — because a start-inclusive offer must recover startup + min-load cost, which is why the measured pool ladder runs hundreds of $/MWh where the online wall runs tens. The keeper now offers that top-of-curve CT capability (173/173/91 rows, 2023/24/25) at exactly that measured conduct instead of an online-basis price its telemetered status refutes. Dispatch and every scored criterion are unchanged in status — at the 2023 missed tail hours the model’s marginal supply is the un-repriced cheap CC offline block (a commitment-state gap, the chartered successor), so the pool’s correctness shows as price-formation structure, not as bought residual: nothing is forced (no min_gen, D-2/D-4 vacuous), and the only motion is a small honest softening where the measured pool price sits BELOW the wall markup it replaces."
 }
