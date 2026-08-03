@@ -4496,10 +4496,14 @@ treatment bit-identical to nyiso-115's treatment — `max |ΔMW| = 0.000000`,
 `max |Δprice| = 0.000000`, every class-hour and zone-hour, all three years. That
 is not a claim the CT fix is inert: caiso-160's own pre-fix vs post-fix arms
 differ by max |ΔMW| 508.19/628.89/387.23 and max |Δprice| $10.50/$10.56/$9.04.
-The artifact vintage had been *assumed* from commit ordering; the git ancestry
-test that would settle it degrades **silently to "unknown"** in a fresh container
-because other branches' commits are not fetched, so it cannot observe its own
-claim — compare the dispatch instead. Yielding the keeper at nyiso-115 was
+The artifact vintage had been *assumed* from commit ordering. Precisely: in a
+fresh container `git merge-base --is-ancestor` cannot see other branches' commits
+and **says so** (exit 128, `fatal: Not a valid object name`) — git does
+distinguish that from a genuine negative (exit 1). What collapses the two is the
+ordinary `cmd && yes || no` idiom, which maps every non-zero exit to "not an
+ancestor"; the shortcut is unsound *as usually invoked*, the same failure mode as
+reading a pipeline's exit status instead of the process's. Compare the dispatch
+instead. Yielding the keeper at nyiso-115 was
 therefore unnecessary; reasonable on what was known, but the record should say
 nyiso-115's keeper was never stale. Relatedly, FINDING-nyiso114 §2's drift
 caution did **not** fire here: control-vs-keeper drift measured exactly 0.0. The
