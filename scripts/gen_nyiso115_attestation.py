@@ -94,9 +94,7 @@ def _treatment_text(g: dict, s: dict) -> str:
     )
     under10 = _fmt(model[y]["nyc_10min_total"]["underprice_factor"] for y in YEARS)
     under30 = _fmt(model[y]["nyc_30min_total"]["underprice_factor"] for y in YEARS)
-    pctdelta = _fmt(
-        "{:+.4f}%".format(px[y]["mean_price_pct_delta"]) for y in YEARS
-    )
+    pctdelta = _fmt("{:+.4f}%".format(px[y]["mean_price_pct_delta"]) for y in YEARS)
     nycmax = _fmt(
         f"{px[y]['NYC_max_control']}->{px[y]['NYC_max_treatment']}" for y in YEARS
     )
