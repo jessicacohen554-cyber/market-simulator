@@ -3246,4 +3246,119 @@ measured *identification* (does MISO's own data identify dual-fuel capability,
 switch price and event windows?), **not** a solve, and needs its own
 pre-registration before any arm — then the 55088 Dearborn hybrid-cogen scope
 gate (miso-118 §5, named not chartered).
-* Next number: **miso-121**.
+
+
+---
+
+## miso-121 — `dual_fuel_switching`: FULLY IDENTIFIED but PRICE-INERT → cell `U` → `I` (2026-08-03)
+
+**Keeper UNCHANGED** (`2026-08-03-miso-117b-ct-heat`). Arms registered:
+`2026-08-03-miso-121a-control`, `2026-08-03-miso-121b-dual-fuel`.
+
+**Phase 0 was a measured identification, no LP, and it returned LIVE on all
+four legs** — which is what authorized the two solves. Nothing in that
+identification is retracted, and all of it is MISO's **own** data with **zero
+free parameters**: capability 371/371/369 gas tranches = **15,827 MW = 23.3 %
+of MISO gas** (EIA-860 Multifuel switch flag, per-plant); switch price **12/12
+measured MISO F923 Petroleum months in every year** (20.36/18.22/17.21
+$/MMBtu — the flat national `OIL_PRICE_PER_MMBTU` fallback is never reached, so
+rule 13's forward-regeneration test passes); event windows **observable in
+MISO's own CAMPD feed**, 90/459/452 gas-labelled unit-hours across 25/43/40
+distinct units lifting from p50 53.91 kg CO₂/MMBtu (pipeline gas) into the
+70–80 distillate band, validated against CAMPD's **own** diesel-labelled units
+at p50 73.65/73.46/73.65. The mechanism **genuinely fires** — the solve logs
+the cap on 371/371/369 tranches (15,827/15,827/15,825 MW), matching the census
+exactly, so the miso-113 *"hook wired into `runner.py` only, invisible to the
+calibration path"* hazard was checked in advance and is **cleared by
+measurement**. Fuel deltas reach **197.8 $/MMBtu** (gas 218.9 vs oil 17.7).
+
+**And it moves nothing.** K3's price leg FAILS in every year — max zonal |Δλ|
+**0.0000 / 0.0003 / 0.0000 $/MWh** against the 0.10 bar (system
+0.0000/−0.0003/0.0000) — while the dispatch leg clears 50 MW in **2024 alone**
+(0.0/912.5/16.0 MW, ~0.2 GWh). K1/K2/K4/K5/K6 PASS, no kill fires (P1–P6).
+Both arms score the **identical** nine criterion statuses and NOT-YET, C7
+`COAL_PRB` the sole FAIL in both. **K2 is the strongest form:** the same-HEAD
+zero-delta control reproduces the committed keeper at **max |ΔMW| = 0.000000**
+on every one of 148,920 class-hours, all three years. Disposition is the
+prereg's own K3 rule, applied verbatim: `U` → `I`, **not promoted**.
+
+**Inert for a DIFFERENT reason than the zonal anchor — do not conflate them**
+(rule 25 applied *within* an ISO). `gas_offer_margin_zonal_anchor` is inert
+because a mean-zero perturbation never reaches the price-setting tranches
+(*where the perturbation lands*). **This** is inert because **the underlying
+physical phenomenon is negligible at MISO's scale** (*how big the real thing
+is*): CAMPD's own meters put observed dual-fuel oil generation at
+**0.0023/0.0113/0.0128 TWh a year** against ~17–23 TWh of capable-unit
+generation and a MISO load in the hundreds of TWh — **of order 0.002 % of ISO
+energy**.
+
+**The pre-registered over-switching risk did NOT materialise.** K7 is now
+same-grain in MWh (the Phase-1 bundles carry `unit_hourly` sidecars the keeper
+lacks): model switched **0.00013/0.03757/0.01096 TWh** vs CAMPD's own observed
+**0.00233/0.01133/0.01284 TWh** — 0.06×/3.3×/0.85×, CAMPD a **stated lower
+bound** (49 of 89 capable plants report). The model does not systematically
+over-switch; in 2023 it under-switches.
+
+**DO-NOT-REDO, extending miso-119's and reported against interest.** miso-119
+established `max |Δoffer|` is an upper bound only and named the capw p50 *"the
+predictive statistic"*. **The p50 over BINDING hours is not predictive either —
+binding is not marginality.** This session's §8.1 substitute (binding-hour
+Δoffer p50 **64.30/93.93/108.23 $/MWh** vs a 0.10 bar) over-predicted the
+realized **0.0003 $/MWh** by **five orders of magnitude**. Measured on the arms'
+own `unit_hourly`: the share of binding tranche-hours **also partially loaded**
+(`0 < mw < cap_mw`, genuinely price-setting) is **0.00 % / 1.24 % / 0.54 %**
+(0 of 15,792; 225 of 18,192; 63 of 11,568) — in 2023 **no** capable tranche is
+ever both binding and marginal, which is exactly why that year's price delta is
+an *exact* 0.0000. The literal L5 calls 2023 correctly but would still not have
+prevented these solves. **The predictive ex-ante statistic is the MARGINAL
+SHARE of binding hours**, not any percentile of the offer delta.
+
+**Reported, never banked:** the cap is one-sided so system λ never rises (K6
+PASS), and the **entire** price effect sits in **winter 2024 (−0.0013 $/MWh)**
+with an exact 0.0000 in every other season-year — right locus, right sign,
+inert magnitude. C7 untouched exactly as pre-declared (P6 forbade any C7 claim
+in either direction); P4 slack+dump **identical** between arms.
+
+**Governance.** Rule 15 — both arms registered, top-15 retention honoured
+(pruned `2026-07-28-miso-99b-chp-power`, `2026-07-29-miso-102b-sunkfixed`).
+Rule 16 — one bundle each, `[2023, 2024, 2025]`, one invocation; **a per-year
+invocation chain was DISCARDED and both arms re-solved from scratch** because
+`replay_keeper` sets `kwargs["years"] = args.years`, so the finished bundle
+would have claimed `years: [2025]` and mis-stated K5 and rule 16. Rule 19 —
+both sibling cells (`dual_fuel_oil_reattribution`, `dual_fuel_oil_daily_parity`)
+OFF in both arms, neither adjudicated. Rule 21 — arm B's one new DOF entry is
+`measured/published`, `free_parameters_added: 0`, `n_residual` unchanged.
+Rule 23 — neither leg swept, neither re-derived against the inert outcome.
+Rule 22 — 2023–2025 only; Elliott (Dec 2022) declared out of scope at §3 and
+never read. Rule 28 duty (b) — matrix cell stamped this session.
+**Two probe defects were caught BEFORE adjudication**, both of which would have
+produced a wrong `I` on leg (c): CAMPD's `facilityId` is string-typed so an
+int-valued filter matched **zero** rows (a hard-fail guard now prevents route
+I-D firing on an empty query), and the roster keys **plants**, so coal units at
+mixed plants (93–97 kg CO₂/MMBtu, *above* oil) were booked as oil and
+over-counted **13×** (6,181 → 459 in 2024).
+
+**Note for a rule-1 revisit (an OWNER call, not a session call):** the
+mechanism is structurally faithful, measured, zero-free-parameter and
+reproduces observed MISO behaviour at the right order of magnitude — it is
+*costless* to arm and changes no score. Whether a keeper should carry it as
+correct market structure anyway was **not** decided here; the prereg's rule was
+`I`, keeper unchanged, and that is what was applied.
+
+**Evidence:** `FINDING-miso121-dual-fuel-switching-2026-08-03.md`,
+`PREREG-miso121-dual-fuel-switching-2026-08-03.md`,
+`_miso121_dual_fuel_ab.json`, `_miso121_switched_volume.json`,
+`_miso121_dual_fuel_screen.json`,
+`PROBE-miso121-dual-fuel-screen-2026-08-03.txt`,
+`scripts/probes/_miso121_dual_fuel_screen.py`,
+`scripts/probes/_miso121_dual_fuel_ab.py`,
+`scripts/probes/_miso121_switched_volume.py`,
+`scripts/gen_miso121_attestation.py`.
+
+**Live queue head:** the **55088 Dearborn hybrid-cogen scope gate** (miso-118
+§5, named not chartered) — 13–17 % of CEMS fuel in zero-output boilers inside
+the topping rate, so `CC_CHP`/`CT_CHP` tranches are +13–20 % too dear; 1 of 14
+plants, 515 MW. Needs its own pre-registration plus a derive SCOPE-GATE change,
+admissible on rule 14 `[R-ACCURATE]` only; rule 23 forbids re-deriving at a
+residual.
+* Next number: **miso-122**.

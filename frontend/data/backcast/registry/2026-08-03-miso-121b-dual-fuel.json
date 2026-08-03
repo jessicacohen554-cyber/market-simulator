@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-miso-121b-dual-fuel",
+  "label": "miso 121b dual fuel",
+  "date": "2026-08-03",
+  "shorthand": "miso-121b-dual-fuel",
+  "definition": "miso-121 arm B TREATMENT \u2014 dual_fuel_switching=true, single delta vs arm A (PREREG-miso121 \u00a78.2)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-miso-121b-dual-fuel.js",
+  "bundle": "results/calibration/miso121_dualfuel_B"
+}
