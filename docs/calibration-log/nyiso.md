@@ -4150,3 +4150,112 @@ left to their own lanes. The merge-conflict markers committed inside three NYISO
 bundles' JSON by caiso-158 were already repaired upstream by caiso-159.
 
 Next shorthand: nyiso-115.
+
+## 2026-08-03 — nyiso-116: the C3c SETTLEMENT BASIS measured INERT, the $2.46 knife-edge retired as a target, and the unit/network layer COMMITTED
+
+**Keeper UNCHANGED** (`2026-08-02-nyiso-113-li-locational`); nothing promoted,
+demoted or re-keyed. **No lever proposed and no parameter introduced, changed or
+fitted** (pre-registered kill K-C held). Pre-registration
+`PREREG-nyiso116-c3c-unit-layer-2026-08-03.md` pushed before the solve; full
+write-up `results/calibration/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`;
+every number read from the committed `_nyiso116_c3c_unit_layer_gates.json`.
+
+### 1. The settlement basis is INERT for C3c — and this is the first session that could test it
+
+C3c scores the model's **energy-only** max-zonal LMP against an actual RT series
+that at NYISO **embeds RCPF by market design** — `calibration_verdict.py`'s own
+G-20a comment names it ("NYISO RCPF-into-LBMP"). Its designed remedy never fires
+here: the keeper's payload carries `ordc.hoursGt200 = {model, actual}` with **no
+`overlay`**, because the post-solve RCPF overlay is refused under rule 19
+(matrix cell **G**). NYISO therefore sits in the gap between two individually
+correct decisions.
+
+The admissible route is not a second mechanism but the **co-opt's own locational
+duals**, readable from a bundle only since nyiso-114 persisted
+`reserve_family_<year>.parquet`. Rebuilt that way (zone adder = sum of duals of
+every containing region), C3c is **3/0/14 — unchanged in every year**. **Proved,
+not observed:** the best settlement price attainable in *any* hour the
+energy-only series leaves below the gate is **$286.42 / $297.54 / $276.42**,
+margins **$13.58 / $2.46 / $23.58**. The reserve families never arrive before the
+energy price; in 2024 the adder is exactly **$0.00** in all three pinned hours
+and every family-binding hour has max-zonal ≤ $250. Cell stays **G**, note
+extended. **DO-NOT-REDO: the settlement-basis question for NYISO C3c is closed.**
+
+### 2. The $2.46 knife-edge is not the gate, and closing it would score false positives
+
+C3c bands within `[0.5×, 2.0×]` of the RT actual, so the model needs **5 / 6 / 21
+hours**, and the hour that must clear sits at **$286.42 / $201.69 / $235.73** —
+**+$13.58 (+4.7 %) / +$98.31 (+48.7 %) / +$64.27 (+27.3 %)**. Three consequences:
+C3c fails in **all three years**, not just 2024; **2023 is the nearest miss, not
+2024** (two sessions organised around the year farthest from its gate); and
+closing the pin leaves 2024 at **0.25×**, still failing.
+
+Worse, the pinned hours are **not real tail hours** — actual RT at h4528–4530 is
+**$282.83 / $179.20 / $128.43** — while **h4526, which reality priced $511.30 and
+which IS one of 2024's twelve tail hours, the model prices at $201.69** (it is
+hour #6). A pin-sized lever books **three false positives** and still misses the
+true hour inside its own range: the caiso-144 pattern, and a rule 1 `[R-STRUCT]`
+violation by construction. This **corroborates** nyiso-85 §7d's "not timing" as a
+rate — of the model's *own* tail hours, **67 % (2/3) in 2023 and 79 % (11/14) in
+2025** are real — and refines it: inside the June 2024 episode the model's peak is
+**phase-shifted ~2 h late and clipped**. The SRMC-roof attribution stands, and the
+residual belongs to the owner-gated peak-half amplitude question (nyiso-110).
+
+### 3. A globally-failing replay can still be a faithful instrument — per gate
+
+| year | all zone-hours max \|Δp\| | top-20 tail max \|Δp\| | C3c keeper / arm |
+|---|--:|--:|--:|
+| 2023 | $10.5045 | **$0.000000** | 3 / 3 |
+| 2024 | $10.5637 | $0.000000 | 0 / 0 |
+| 2025 | $9.0424 | $4.744358 | 14 / 14 |
+
+The G1 divergence is a marginal-tie reshuffle in the **body** of the
+distribution; the tail is untouched. **Standing lesson for every ISO lane: G1 is
+a PER-GATE property, not a bundle property** — a replay failing G1 globally may
+still be the right instrument for one gate, but that must be *shown* for that
+gate, never assumed.
+
+### 4. The attribution was not reproducible; now it is
+
+nyiso-114 §6 named a unit, an offer rung and two transmission limits — **none of
+it reproducible from any committed artifact**, since `unit_hourly` / `network`
+are gitignored. Both stated grounds for that exclusion measured **false**:
+*"regenerable by a replay"* (nyiso-114 §2 measured that a P0-bridge keeper is not
+replay-recoverable — so that layer is **permanently** unrecoverable) and
+*"~58 MB/bundle"* (measured **920 KB/yr** unit + **170 KB/yr** network =
+**3.2 MB** for the whole 3-year bundle, ~18× overstated; the figure predates the
+`DELTA_BINARY_PACKED` encoding that took CAISO's unit frame 12.60 → 1.74 MB).
+Layer committed via `git add -f`; the gitignore default stands for ordinary
+bundles and its comment is corrected. New matrix row
+`unit_network_layer_sidecar` (cells `IIIKKI`).
+
+**All four §6 claims re-verified** from the committed layer: both LI import paths
+saturated (275/275, 1200/1200), pin energy-side (`reserve_price` 0.0), **one**
+part-loaded LI unit (`7146_1` oil, **68.9346 of 73.8 MW**) and **596.9 MW** idle
+— reproducing §6 to the decimal. One honest divergence: this arm finds **1**
+LI-family-binding hour in 2024 (h3762) where nyiso-114 reported 0 — the G1
+divergence reaching the reserve layer; it does not touch the pin.
+
+### 5. A disclosed post-hoc gate correction
+
+**G3 and P4 first FAILED, and the fault was the gate's.** Both used an absolute
+`1e-6` MW tolerance while `_unit_hourly_frame` stores `mw`/`cap_mw` as
+**float32**, whose spacing is **7.6e-06 MW at 113 MW and 6.1e-05 MW at 838 MW** —
+8–60× *below* representable precision, so no float32 column could satisfy it.
+Measured: **131,038 cells (2.0 %)** read as over-cap with a **maximum excess of
+1e-04 MW (1.2e-07 relative)**, and **15** units read as part-loaded of which
+**14 sat exactly at their cap**. Corrected to **1e-3 MW (1 kW)** *after* seeing
+the result; both readings are reported. This is the third instance in three
+sessions of gating on an instrument that cannot observe the claim — the first two
+(nyiso-113's K3/K4, nyiso-114's `held_mw`) were about a column's **semantics**;
+this one is about its **dtype**, a distinct check: confirming the writer emits the
+column is not enough, the column must be able to *represent* the tolerance.
+
+### 6. Rule 28(c) census
+
+Re-run for NYISO on current main: **0 absent / 0 prose-only / 0 armed-no-cell**,
+unchanged. The ratchet baseline is **not widened**. The 12 "live-but-invisible"
+fields are ISO-agnostic (`coal_prb_*`, `cc_*`, `gas_st_startup_spread`, …) and
+belong to whichever lane owns them — rule 25/28(d) forbid minting them here.
+
+Next shorthand: nyiso-117.

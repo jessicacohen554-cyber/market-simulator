@@ -322,8 +322,24 @@ results/calibration/*/model_changes.diff
 results/calibration/*/dispatch/
 results/calibration/*/*.parquet
 results/calibration/*/floors/
-# Heavy per-unit / per-link hourly sidecars (~58 MB/bundle) — regenerable by a
-# replay; bundles commit only hourly/{class_hourly,storage,system} (rule 15).
+# Per-unit / per-link hourly sidecars — excluded BY DEFAULT; bundles normally
+# commit only hourly/{class_hourly,storage,system,reserve_family} (rule 15).
+#
+# The two grounds this exclusion used to state ("~58 MB/bundle", "regenerable by
+# a replay") were both MEASURED FALSE at nyiso-116 (2026-08-03) and are corrected
+# here rather than left to mislead:
+#   * SIZE — NYISO measures 920 KB/yr (unit) + 170 KB/yr (network) = 3.2 MB for a
+#     whole 3-year bundle. The ~58 MB figure predates the DELTA_BINARY_PACKED
+#     ``hour`` encoding (see _write_hourly_sidecar's docstring: CAISO's unit frame
+#     went 12.60 MB -> 1.74 MB from that change alone).
+#   * REPLAY — nyiso-114 §2 measured that a keeper arming a P0-run-pattern bridge
+#     CANNOT be re-solved into byte-identity once main has moved (caiso-155 vertex
+#     dependence), so for such a keeper this layer is PERMANENTLY unrecoverable.
+#
+# So the default stays (these are still the bundle's largest frames and most
+# bundles are never interrogated at unit grain), but a lane that WILL interrogate
+# a bundle commits its layer deliberately with ``git add -f`` — see the
+# unit_network_layer_sidecar matrix row. Opt-in per bundle, not a policy flip.
 results/calibration/*/hourly/unit_hourly_*.parquet
 results/calibration/*/hourly/network_*.parquet
 results/calibration/*/*/hourly/unit_hourly_*.parquet
