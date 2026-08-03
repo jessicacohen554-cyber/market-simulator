@@ -2655,7 +2655,29 @@ def _nyiso_design(
     above zero reserve. With it on, each dynamic family's width vector is
     scaled by ``requirement[t] / requirement_static`` into an hourly
     ``(n_steps, T)`` array; the RCPF penalties are requirement-independent and
-    are untouched. No-op wherever measured == static (NYCA, East, NYC).
+    are untouched.
+
+    Blast radius, MEASURED on construction (nyiso-118,
+    ``scripts/probes/_nyiso118_span_construction_probe.py``) rather than assumed
+    — this previously read "No-op wherever measured == static (NYCA, East,
+    NYC)", which is **false for NYC**:
+
+    * ``seny_30min_total`` — widths change in 6,239/6,249/6,231 h of 2023/24/25,
+      and its **price** function changes with them (the intended target).
+    * ``nyc_10min_total`` / ``nyc_30min_total`` — widths DO change (NYC's
+      measured requirement dips *below* its static base in 185/227/120 h), but
+      the reachable **price** is pointwise IDENTICAL. Shortfall is bounded by
+      the hour's requirement (``held >= 0``), so width beyond it is unreachable
+      padding, and under ``nyiso_nyc_rcpf_step_curve`` that family is a single
+      flat band at the published $25 RCPF — trimming padding off a flat band
+      cannot move a price. Re-represented, not re-priced.
+    * ``east_10min_total``, ``li_10min_total``, ``nyca_10min_spin``,
+      ``nyca_10min_total``, ``nyca_30min_total`` — genuine no-ops (measured ==
+      static).
+    * ``li_30min_total`` — no-op *because the LI ladder already span-scaled it*
+      family-scoped (``span_scaled`` below), not because it is static. The
+      ``or`` in that guard is boolean, so the global flag finds nothing left to
+      scale and does NOT double-apply (nyiso-118 K-A, discharged ex ante).
 
     Rule-19 reconciliation: the post-solve RCPF overlay (``results.rcpf``,
     ``config.nyiso_rcpf_enabled``) prices the same phenomenon these in-LP
