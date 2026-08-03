@@ -1,5 +1,11 @@
 # ERCOT full-year 60-Day SCED Disclosure intake + SCED-basis extension to 2023 (2026-07-21)
 
+> **Update 2026-08-03 (ercot-157):** this corpus was purged from the repo by
+> the 2026-07-22 large-blob history rewrite. The delivery-2023 window
+> (publications 2023-03..2024-03) was re-uploaded by the owner to
+> `data/raw/ercot/SCED/` and verified complete; the derives now scan both
+> locations. See `docs/calibration-log/ercot.md` ERCOT-157.
+
 ## What landed
 
 The owner uploaded the full-year **60-Day SCED Disclosure — Gen Resource Data

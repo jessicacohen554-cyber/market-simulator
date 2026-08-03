@@ -7,7 +7,10 @@ adjudicated that the actual $150-500 moderate-tightness band prices on the
 **offline startable CT pool** (``Telemetered Resource Status`` OFFQS/OFFNS:
 full SCED curves disclosed, SCED-startable intra-hour), not on any online
 spare or unmitigated-CC surface. This derive promotes that measurement to a
-model input, from the same NP3-965 60-Day SCED sample-day parquets on disk:
+model input, from the NP3-965 60-Day SCED Gen Resource parquets on disk —
+per year, the full-year publication-month corpus when it majority-covers the
+delivery year (2023, via the wall derive's ``_sced_source_files``), else the
+legacy sample-day extracts (2024/2025):
 
 * Pool rows: CT-class resources (SCGT90/SCLE90) telemetered OFFQS or OFFNS.
 * **Above-LSL startable increment only** (charter §8.2 caveat c): per
@@ -32,14 +35,16 @@ ex-ante posted offer or a telemetered status; the driver is the year's own
 net-load percentile (forward-native); zero fitted scalars; the eligibility
 gate at apply time is unit physics (min-down <= 2 h), never a class tuple.
 The artifact is **YEAR-SCOPED**: no pooled fallback — a year absent from the
-artifact gets NO pool leg (the wall basis is retained byte-identical); a
-2024/2025-derived ladder is barred from 2023's post-Uri conservative-ops
-regime (the RT wall's own bar).
+artifact gets NO pool leg (the wall basis is retained byte-identical), and a
+2024/2025-derived ladder remains barred from 2023's post-Uri conservative-ops
+regime (the RT wall's own bar): 2023 gets its OWN block from its own conduct
+(the ERCOT-105 owner authorization + the ERCOT-151 §4 corpus re-upload of
+2026-08-03).
 
 Coverage is DISCLOSED, never silently capped: per-(year x bin) interval/day
-counts and mean pool MW are recorded, so a thin bin (the corpus is scoped
-sample days; the Jan-2024 winter cluster is not in it) is visible at the
-artifact level.
+counts and mean pool MW are recorded, so a thin bin (2024/2025 are scoped
+sample days; the Jan-2024 winter cluster is not in that basis) is visible at
+the artifact level.
 
 FROZEN AGAINST RESIDUALS (rule 23): re-derive only when the SCED disclosure
 source files update; never because a residual moved. Re-derivation commits
@@ -48,7 +53,7 @@ must cite the data change.
 Usage::
 
     python scripts/data/derive_ercot_faststart_pool.py \
-        [--years 2024 2025] \
+        [--years 2023 2024 2025] \
         [--out data/raw/_validation-source/ercot_faststart_pool_condbinned.json]
 """
 
@@ -79,7 +84,11 @@ from derive_ercot_dam_cleared_share import (  # noqa: E402
     _netload_pct,
     _weighted_quantiles,
 )
-from derive_ercot_sced_offer_wall import SCED_DIR  # noqa: E402
+from derive_ercot_sced_offer_wall import (  # noqa: E402
+    _coerce_sced_numeric,
+    _delivery_year_rows,
+    _sced_source_files,
+)
 
 DEFAULT_OUT = CALIBRATION_DIR / "ercot_faststart_pool_condbinned.json"
 
@@ -108,20 +117,59 @@ _READ_COLS = [
 ] + [c for pair in zip(_S2_MW, _S2_PR) for c in pair]
 
 
-def _load_year(year: int) -> tuple[pd.DataFrame, list[str]]:
-    """ALL-status CT-class SCED rows for ``year`` + source file names."""
-    files = sorted(
-        SCED_DIR.glob(
-            f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*.parquet"
-        )
-    )
-    frames: list[pd.DataFrame] = []
+# The live-capability sum + interval->hoy map need only these columns for
+# every CT row; the 70 SCED2 curve columns are kept ONLY for the rare
+# OFFQS/OFFNS pool rows (the whole-year corpus holds ~10M CT rows — a
+# full-column concat OOMs, the wall derive's own streaming lesson).
+_LIVE_COLS = ["SCED Time Stamp", "Telemetered Resource Status", "HSL"]
+
+
+def _load_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
+    """``(live_df, pool_df, files)`` of CT-class SCED rows for ``year``.
+
+    ``live_df`` carries ALL CT rows at ``_LIVE_COLS`` (for the non-OUT live
+    HSL sum and the interval->hoy map); ``pool_df`` carries the OFFQS/OFFNS
+    rows at full ``_READ_COLS`` (status stripped before matching — the same
+    normalization ``derive_year`` applies).
+
+    Sources via the wall derive's ``_sced_source_files``: the full-year
+    publication-month corpus when it majority-covers the delivery year (the
+    2023 block, per the ERCOT-151 §4 re-upload), else the legacy
+    delivery-labeled sample-day extracts (2024/2025 — the corpus for those
+    years was purged 2026-07-22, so their blocks stay on the sample-day
+    basis, byte-identical). Corpus shards are a string-typed raw copy with
+    ~60-day-lagged delivery, so rows are delivery-year-filtered
+    (``_delivery_year_rows``, rule 22) and numerics coerced
+    (``_coerce_sced_numeric``); both are no-ops on the already-typed,
+    delivery-labeled legacy extracts. Streams one shard at a time.
+    """
+    files = _sced_source_files(year)
+    live_frames: list[pd.DataFrame] = []
+    pool_frames: list[pd.DataFrame] = []
     for path in files:
         df = pd.read_parquet(path, columns=_READ_COLS)
-        frames.append(df[df["Resource Type"].isin(CT_RESTYPES)].copy())
-    if not frames:
-        return pd.DataFrame(columns=_READ_COLS), []
-    return pd.concat(frames, ignore_index=True), [p.name for p in files]
+        df = _delivery_year_rows(df, year)
+        df = df[df["Resource Type"].isin(CT_RESTYPES)]
+        stat = df["Telemetered Resource Status"].astype(str).str.strip()
+        live_frames.append(_coerce_sced_numeric(df[_LIVE_COLS].copy()))
+        pool_frames.append(_coerce_sced_numeric(df[stat.isin(OFFLINE_POOL)].copy()))
+    if not live_frames:
+        empty = pd.DataFrame(columns=_READ_COLS)
+        return empty, empty, []
+    # Drop zero-row shard slices before concat: an empty slice keeps its
+    # pre-coercion string dtype (pandas-3 default for parquet strings) and
+    # would promote the whole concat back to object, undoing the coercion.
+    live = [f for f in live_frames if len(f)]
+    pools = [f for f in pool_frames if len(f)]
+    return (
+        pd.concat(live, ignore_index=True)
+        if live
+        else pd.DataFrame(columns=_LIVE_COLS),
+        pd.concat(pools, ignore_index=True)
+        if pools
+        else pd.DataFrame(columns=_READ_COLS),
+        [p.name for p in files],
+    )
 
 
 def _pool_segments(df: pd.DataFrame) -> pd.DataFrame:
@@ -170,13 +218,14 @@ def _pool_segments(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[str]]:
-    """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``."""
-    df, files = _load_year(year)
-    if df.empty:
-        return {}, [], files
+def _prep_clock_gas(df: pd.DataFrame, gas_day: pd.Series) -> pd.DataFrame:
+    """CPT -> fixed CST -> non-leap hour-of-year + gas-day join (wall clock).
 
-    # CPT -> fixed CST -> non-leap hour-of-year (the wall derive's clock).
+    Adds ``hoy``/``_date``/``_ts``/``stat``/``gas_day`` and drops Feb-29 and
+    gasless days — the exact row-level prep the pool construction has always
+    applied, factored out so the light live frame and the full-column pool
+    frame are prepped identically (the streaming split of ``_load_year``).
+    """
     ts = pd.to_datetime(df["SCED Time Stamp"])
     cst = ts.dt.tz_localize(
         "America/Chicago", ambiguous=True, nonexistent="shift_forward"
@@ -191,23 +240,31 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[s
     df["_ts"] = pd.to_datetime(df["SCED Time Stamp"]).to_numpy()[np.asarray(ok)]
     df["stat"] = df["Telemetered Resource Status"].astype(str).str.strip()
     df["gas_day"] = gas_day.reindex(pd.DatetimeIndex(df["_date"])).to_numpy(float)
-    df = df[df["gas_day"] > 0].copy()
+    return df[df["gas_day"] > 0].copy()
 
-    pool = df[df["stat"].isin(OFFLINE_POOL)].copy()
+
+def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[str]]:
+    """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``."""
+    live_df, pool_df, files = _load_year(year)
+    if live_df.empty:
+        return {}, [], files
+
+    live_all = _prep_clock_gas(live_df, gas_day)
+    pool = _prep_clock_gas(pool_df, gas_day)
     segments = _pool_segments(pool)
 
     # Per-interval pool share of the class's LIVE capability: pool above-LSL
     # startable MW / sum HSL over non-OUT CT rows (only-OUT-is-out — the
     # measured DAM availability's own convention, so the share maps onto the
     # capacity that overlay leaves in the LP).
-    live = df[df["stat"] != "OUT"]
+    live = live_all[live_all["stat"] != "OUT"]
     live_mw = live.groupby("_ts")["HSL"].sum()
     pool_startable = (
         segments.groupby("ts")["mw"].sum() if len(segments) else pd.Series(dtype=float)
     )
     frac_iv = (pool_startable / live_mw.reindex(pool_startable.index)).dropna()
     frac_iv = frac_iv.clip(0.0, 1.0)
-    hoy_of_ts = dict(zip(df["_ts"], df["hoy"]))
+    hoy_of_ts = dict(zip(live_all["_ts"], live_all["hoy"]))
 
     pct = _netload_pct(year)
     edges = np.asarray(NETLOAD_PCT_EDGES)
@@ -264,7 +321,7 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[s
 def main() -> None:
     """Derive and write the fast-start pool ladder + share JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--years", type=int, nargs="+", default=[2024, 2025])
+    ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = ap.parse_args()
 
@@ -285,8 +342,13 @@ def main() -> None:
     result: dict = {
         "_provenance": {
             "source": (
-                "ERCOT 60-Day SCED Disclosure Gen Resource Data, scoped sample "
-                "days, delivery years " + "-".join(str(y) for y in args.years)
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "delivery years " + "-".join(str(y) for y in args.years) + "; "
+                "per-year basis as disclosed in source_files — the full-year "
+                "publication-month corpus where it majority-covers the "
+                "delivery year (2023: the 2026-08-03 re-upload under "
+                "data/raw/ercot/SCED/, rows delivery-year-filtered), else the "
+                "scoped sample-day extracts (2024/2025)"
             ),
             "method": (
                 "per-interval above-LSL startable segments (max(LSL,0) -> "
@@ -315,15 +377,22 @@ def main() -> None:
             "year_scoped": (
                 "NO pooled fallback by design (rule 13): a year absent from "
                 "this artifact gets NO pool leg (the wall basis is retained "
-                "byte-identical); a 2024/2025-derived ladder is barred from "
-                "2023's post-Uri conservative-operations regime"
+                "byte-identical), and each year's ladder derives only from "
+                "that year's own posted conduct — a 2024/2025-derived ladder "
+                "remains barred from 2023's post-Uri conservative-operations "
+                "regime. 2023 now carries its OWN measured block: the owner "
+                "authorized the SCED-basis extension to 2023 (ERCOT-105) and "
+                "the 2026-08-03 corpus re-upload (ERCOT-151 §4) supplies "
+                "complete delivery-2023 coverage"
             ),
-            "sample_day_files": sources,
+            "source_files": sources,
             "coverage": coverage,
             "corpus_caveat": (
-                "scoped sample days (ERCOT-74/75/86 intake): the Jan-2024 "
-                "winter-morning mid-band cluster is NOT in the corpus — "
-                "disclosed unmeasured (charter §8)"
+                "2024/2025 remain on scoped sample days (ERCOT-74/75/86 "
+                "intake): the Jan-2024 winter-morning mid-band cluster is NOT "
+                "in that basis — disclosed unmeasured (charter §8). 2023 "
+                "derives from the full-year publication-month corpus "
+                "(complete delivery-year coverage, all 365 days)"
             ),
             "frozen": (
                 "rule 23 — re-derive only on a SCED disclosure source-data "
