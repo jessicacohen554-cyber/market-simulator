@@ -1052,10 +1052,33 @@
  *   CALIBRATED-WITH-CAVEATS, C3c the sole ledgered caveat and UNCHANGED at
  *   3/0/14 h; every scored criterion identical to the same-HEAD control's, so
  *   the arm regresses nothing. Ledger 29 -> 30, n_residual 6.
+ * NYISO column re-checked 2026-08-03 by nyiso-114 — KEEPER UNCHANGED
+ *   (2026-08-02-nyiso-113-li-locational; nothing promoted, demoted or re-keyed).
+ *   Two INSTRUMENT/AUDIT rows added, no mechanism cell verdict touched:
+ *   reserve_family_dual_sidecar (per-family reserve dual now PERSISTED, closing
+ *   the all-ISO gap nyiso-113 section 8 filed) and matrix_gap_census (the
+ *   rule-28(c) census run in all six lanes + the shrink-only CI ratchet
+ *   mechanism-matrix-gaps.json). NYISO's own column is now CLOSED — 0 absent,
+ *   0 prose-only, 0 armed-with-no-cell — its nine gaps being nyiso_gas_bridge_*
+ *   sub-scalars, registered literally on the gas_commitment_bridge row's def,
+ *   plus nyiso_iroquois_winter_spread (previously named ONLY in this header
+ *   comment and in no row), now on gas_hub_basis_overlay. The other five
+ *   columns hold 146 enumerated gaps and are their own lanes' work (rule
+ *   25/28(d)); the ratchet stops them growing. FIRST RESULT OFF THE NEW
+ *   INSTRUMENT: NYISO's binding reserve constraint is overwhelmingly the NYC
+ *   locational pair (nyc_10min_total priced in 17/6/29 hours of 2023/24/25),
+ *   every NYCA-wide family is SLACK IN EVERY HOUR of all three years, and
+ *   li_30min_total binds in EXACTLY the five 2025 hours nyiso-113's Zone-K
+ *   headroom screen predicted ex ante. It also CORRECTS nyiso-113 section 7:
+ *   the two 2023 reserve-dual hours attributed there to the LI mechanism were
+ *   seny_30min_total — the LI families bind in ZERO hours of 2023. Also this
+ *   stamp: ct_committed/econ/peak_hr_override DELETED (rule 26 — armed on all
+ *   119 bundles in all six ISOs, reachable on none) and caiso_ra_min_load_frac
+ *   made CAISO-scoped (rule 25).
  */
 window.MECH_MATRIX = {
   version: 1,
-  updated: "2026-08-02",
+  updated: "2026-08-03",
   isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"],
   keepers: {
     ERCOT: "2026-08-02-ercot150b-zonal-anchor",
