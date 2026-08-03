@@ -3921,3 +3921,109 @@ incomplete. **A solve-affecting field with no matrix row is a mechanism nobody
 can see** — worth a sweep in every ISO lane.
 
 Next shorthand: nyiso-113.
+
+---
+
+## nyiso-113 — THE RULE-28(c) MATRIX-GAP SWEEP: 13 rows added, three cells adjudicated with no solve, the 227-3 phase reading inverted, and the published Zone-K reserve ladder PROMOTED (2026-08-02)
+
+**Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → `2026-08-02-nyiso-113-li-locational`, CALIBRATED-WITH-CAVEATS.** Pre-registration
+`PREREG-nyiso113-li-locational-reserve-2026-08-02.md` (committed and pushed
+before either arm solved). Finding:
+`results/calibration/FINDING-nyiso113-matrix-gap-sweep-2026-08-02.md`.
+Registered: `2026-08-02-nyiso-113-control-zerodelta` +
+`2026-08-02-nyiso-113-li-locational` (both non-keeper; retention pruned
+nyiso-98-nucavail + nyiso-99-demandfix).
+
+### 1. The sweep — the nyiso-112 lesson made mechanical
+
+nyiso-112's standing lesson ("a solve-affecting field with no matrix row is a
+mechanism nobody can see") became an instrument: every `ScenarioConfig` field
+imported from the live class, crossed against `mechanism-matrix.js`, classified
+`own_row` / `prose_only` / `absent` — matching on the **stem**, because the
+matrix's own convention is that rows are ISO-neutral mechanism FAMILIES and a
+per-ISO flag is that ISO's leg.
+
+**25 `nyiso_*` fields absent, 5 prose-only, 17 of them ARMED ON THE KEEPER WITH
+NO CELL ANYWHERE** — four of those declared in the keeper's own DOF ledger and
+still cell-less. **CI never caught it because the diff gate only fires on fields
+added in the same PR**: everything predating the gate is invisible to it. That
+is a standing blind spot in every ISO column, and the sweep is cheap.
+**13 rows added**, 1 cell updated.
+
+### 2. Three cells adjudicated, NO SOLVE SPENT
+
+* **`nyiso_east_reserve_families` → I.** Provably inert by domination algebra:
+  `east_10min_spin` (330 MW, class 1) is dominated by `nyc_10min_total`
+  (500 MW, NYC ⊂ East) by 170 MW and by `east_10min_total` (1,200 MW) by 870 MW;
+  `east_30min_total` (1,200 MW, class 0) by `seny_30min_total` (1,300 MW,
+  SENY ⊂ East) by 100 MW. Arithmetic on the family rows, not empirical.
+* **`measured_ramp_capability` NYISO U → I.** Fleet 10-minute deliverable ramp
+  12,318.4 MW = **18.8×** the 655 MW NYCA spin requirement.
+* **`nyiso_spin_reserve_online` → I.** nyiso-110's solved verdict finally has a
+  cell to live in.
+
+### 3. `nyiso_li_locational_reserve` — SOLVED, LIVE, C3c unchanged
+
+The published Zone-K ladder (120 MW 10-min; 270/540 MW 30-min at $25/MW),
+absent from the model entirely — a rule 14 omission, zero DOF. It clears the
+rule-19 gate on NYISO's own data: not dominated (no armed family is Zone-K
+scoped), and the nyiso-110 hydro-slack refutation **cannot reach it** because
+NYISO hydro is 100 % upstate (Upstate_West ~4.0–4.1 GW, Capital_Hudson ~0.55 GW)
+while **Long Island carries exactly 0.0 MW**.
+
+K1 PASS, **K2 PASS byte-identical** (0.0 MW over 122,640 class-hours × 3 years).
+The family **binds exactly where its own requirement says it should**: Zone-K
+headroom falls below the hourly requirement in exactly 5 hours of 2025
+(h4193–4195, h4217–4218 — the June 24–25 event, the five highest LI prices) and
+0 hours of 2023/2024 once the on/off-peak step is honoured; the solved reserve
+dual moves in exactly those hours. Effect is small — **2025 LI max 483.37 →
+489.62 (+$6.25)**, everything else unchanged, zero slack and dump. **C3c
+UNCHANGED at 3/0/14.**
+
+**PROMOTED (cell K).** Determination **CALIBRATED-WITH-CAVEATS**, C3c the sole
+ledgered caveat. **No kill gate fires and every scored criterion is identical to
+the same-HEAD control's** — C1 14/14 all / 10/10 free, C2, C3a, C3b, C4, C6, C7,
+C8 all PASS in both arms; C3c FAILs in both at 3/0/14. Ledger 29 → 30 entries,
+`n_residual` unchanged at 6, zero free parameters added. Promoted on rule 1
+`[R-STRUCT]` / rule 14 `[R-ACCURATE]`, not on gate movement.
+
+### 4. The 227-3 phase reading, INVERTED
+
+The received read was that only the 2025 phase touches binding downstate
+capacity. The opposite is true: the **2023-05-01 phase removes 203.1 MW of which
+145.5 MW (72 %) is Long Island**; the **2025 increment is 14.5 MW, all NYC, none
+on LI** (Astoria 1 and Arthur Kill GT1 are no-ops, absent from the fleet
+vintage). And the 2023 phase did **not** do nothing — it moved 570 LI hours, all
+inside the ozone window, lifted the LI max 400.07 → 503.74 and moved >$250 from
+7 → 10. It simply did not cross the $300 line C3c counts. **2024 is the genuinely
+inert year, and its three highest LI hours are pinned at $297.54 in both arms —
+$2.46 below the gate.** C3c-2024 currently turns on $2.46.
+
+### 5. Two corrections this session owes its own record
+
+1. **The pre-registered K3/K4 instrument was invalid.** Both were specified on
+   the per-zone `reserve_price` column, which is a **system-level `(T,)` series
+   broadcast identically to every zone** (`run_calibration_full.py:925/1028`) —
+   0.0 across zones by construction, incapable of observing a locational dual.
+   The arm's first reading ("INERT") was an artifact. Gates re-run on unit-hourly
+   headroom and the solved dual's timing. **This retracts the screen's "no
+   locational family has ever bound" claim**; the east-families domination
+   verdict is untouched.
+2. **A capacity-vs-demand screen is not a headroom screen.** The prereg argued
+   from LI peak demand (5,537 MW) exceeding Zone-K thermal nameplate
+   (5,146.5 MW) to a headroom collapse. Invalid: class 1 is **idle-allowed**, and
+   **Long Island imports a large share of its own peak**, so Zone-K quick-start
+   headroom never falls below **3.2×** the 120 MW requirement. Generalises to
+   every importing zone in every ISO.
+
+### 6. Standing gap for every ISO
+
+**No bundle persists a per-family reserve dual.**
+`DispatchResult.reserve_price_by_family` exists in memory and is discarded at
+persist time, so no locational reserve family's binding is observable from a
+committed bundle in any ISO. Every claim of the form "family X never binds" rests
+on the aggregate series or a re-solve. A per-family dual sidecar is the
+prerequisite for adjudicating locational reserve mechanisms from bundles — and
+the array already exists.
+
+Next shorthand: nyiso-114.

@@ -1416,6 +1416,65 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
 
 ### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
+**STATUS 2026-08-02 (nyiso-113) — THE MATRIX-GAP SWEEP, and the queue's own
+blind spot measured.** Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → **`2026-08-02-nyiso-113-li-locational`**.
+nyiso-112 found a promotable mechanism only because it had no matrix row; this
+session made that a census. **25 `nyiso_*` fields absent from the matrix, 5
+prose-only, and 17 of them ARMED ON THE KEEPER WITH NO CELL ANYWHERE** (four
+declared in the keeper's own DOF ledger and still cell-less). CI never caught it:
+`check_mechanism_matrix.py`'s diff gate only fires on fields **added in the same
+PR**, so everything predating the gate is structurally invisible to it — a
+standing blind spot in *every* ISO column. **13 rows added, 1 cell updated.**
+
+Three cells adjudicated **with no solve spent**, each on NYISO's own data:
+`nyiso_east_reserve_families` **→ I** (provably inert by domination algebra —
+`east_10min_spin` 330 MW is dominated by `nyc_10min_total` 500 MW by 170 MW and
+by `east_10min_total` 1,200 MW by 870 MW; `east_30min_total` 1,200 MW by
+`seny_30min_total` 1,300 MW by 100 MW); `measured_ramp_capability` **U → I**
+(fleet 10-min ramp 12,318.4 MW = **18.8×** the 655 MW NYCA spin requirement);
+`nyiso_spin_reserve_online` **→ I** (nyiso-110's solved verdict finally has a
+cell).
+
+**`nyiso_li_locational_reserve` SOLVED, LIVE and PROMOTED — cell K, keeper `2026-08-02-nyiso-113-li-locational`.** The
+published Zone-K ladder the model omits entirely (rule 14, zero DOF). It clears
+the rule-19 gate on measurement: not dominated (no armed family is Zone-K
+scoped), and the nyiso-110 hydro-slack refutation **cannot reach it** — NYISO
+hydro is 100 % upstate and **Long Island carries exactly 0.0 MW**. K2 is
+**byte-identical** (0.0 MW over 122,640 class-hours × 3 yr) and the family binds
+**exactly where its own requirement says it should**: Zone-K headroom falls below
+the hourly requirement in exactly 5 hours of 2025 (h4193–4195, h4217–4218 — the
+June 24–25 event) and 0 hours of 2023/2024 once the on/off-peak step is honoured;
+the solved dual moves in exactly those hours. Effect small (2025 LI max
+483.37 → 489.62), **C3c UNCHANGED at 3/0/14**, zero slack and dump. Determination
+**CALIBRATED-WITH-CAVEATS**: no kill gate fires and **every scored criterion is
+identical to the same-HEAD control's** (C1 14/14 all / 10/10 free, C2, C3a, C3b,
+C4, C6, C7, C8 PASS in both arms), ledger 29 → 30 with `n_residual` 6. Promoted
+on rule 1 / rule 14, not on gate movement.
+
+**C3c, item 2 of the brief — the received reading is INVERTED by measurement.**
+The 2023-05-01 227-3 phase removes **203.1 MW of which 145.5 MW (72 %) is Long
+Island**; the 2025 increment is **14.5 MW, all NYC, none on LI**. The 2023 phase
+did *not* do nothing — 570 LI hours moved, all inside the ozone window, LI max
+400.07 → 503.74, >$250 7 → 10 — it just did not cross the $300 line C3c counts.
+**2024 is the genuinely inert year and its three highest LI hours are pinned at
+$297.54 in both arms, $2.46 below the gate.**
+
+**TWO METHOD CORRECTIONS THIS SESSION OWES ITS OWN RECORD, both general.**
+(i) The pre-registered K3/K4 gates were specified on the per-zone
+`reserve_price`, which is a **system-level `(T,)` series broadcast identically to
+every zone** — 0.0 across zones by construction, incapable of observing a
+locational dual. The arm's first reading ("INERT") was an artifact; this
+**retracts** the screen's "no locational family has ever bound" claim (the
+east-families domination verdict is untouched, being arithmetic).
+(ii) **A capacity-vs-demand screen is not a headroom screen** for an importing
+zone with an idle-allowed reserve class: Zone-K quick-start headroom never falls
+below **3.2×** its 120 MW requirement despite LI peak demand exceeding Zone-K
+thermal nameplate. **Standing gap for all six ISOs: no bundle persists a
+per-family reserve dual** (`DispatchResult.reserve_price_by_family` is discarded
+at persist time), so no locational family's binding is observable from a
+committed bundle anywhere.
+`results/calibration/FINDING-nyiso113-matrix-gap-sweep-2026-08-02.md`.
+
 **STATUS 2026-08-02 (nyiso-112) — THE FIRST C3c MOVEMENT SINCE THE QUEUE WAS
 DECLARED EXHAUSTED, from a mechanism that was never on the queue.** Keeper
 `2026-08-02-nyiso112-ramp-plus-peaker`. The lever is

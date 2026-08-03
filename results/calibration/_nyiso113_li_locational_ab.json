@@ -1,0 +1,128 @@
+{
+  "probe": "nyiso-113 nyiso_li_locational_reserve A/B",
+  "prereg": "PREREG-nyiso113-li-locational-reserve-2026-08-02.md",
+  "arm_A": "results/calibration/nyiso113_control_A",
+  "arm_B": "results/calibration/nyiso113_lilocational_B",
+  "K1_single_delta": {
+    "n_deltas": 1,
+    "deltas": {
+      "nyiso_li_locational_reserve": [
+        false,
+        true
+      ]
+    },
+    "verdict": "PASS"
+  },
+  "K2_control_integrity": {
+    "2023": {
+      "rows_compared": 122640,
+      "max_abs_class_hour_delta_mw": 0.0,
+      "sum_abs_delta_mwh": 0.0
+    },
+    "2024": {
+      "rows_compared": 122640,
+      "max_abs_class_hour_delta_mw": 0.0,
+      "sum_abs_delta_mwh": 0.0
+    },
+    "2025": {
+      "rows_compared": 122640,
+      "max_abs_class_hour_delta_mw": 0.0,
+      "sum_abs_delta_mwh": 0.0
+    },
+    "worst_max_abs_delta_mw": 0.0,
+    "verdict": "PASS (byte-identical)"
+  },
+  "K3_K4_liveness_scoping": {
+    "2023": {
+      "control_hours_reserve_dual_positive": 17,
+      "arm_hours_reserve_dual_positive": 17,
+      "control_max_cross_zone_spread": 0.0,
+      "arm_max_cross_zone_spread": 0.0,
+      "arm_hours_LI_dual_above_rest": 0,
+      "arm_max_LI_excess_per_mw": 0.0,
+      "arm_sum_LI_excess": 0.0,
+      "k4_max_non_LI_reserve_dual_delta": 0.000725837
+    },
+    "2024": {
+      "control_hours_reserve_dual_positive": 6,
+      "arm_hours_reserve_dual_positive": 6,
+      "control_max_cross_zone_spread": 0.0,
+      "arm_max_cross_zone_spread": 0.0,
+      "arm_hours_LI_dual_above_rest": 0,
+      "arm_max_LI_excess_per_mw": 0.0,
+      "arm_sum_LI_excess": 0.0,
+      "k4_max_non_LI_reserve_dual_delta": 0.0
+    },
+    "2025": {
+      "control_hours_reserve_dual_positive": 36,
+      "arm_hours_reserve_dual_positive": 36,
+      "control_max_cross_zone_spread": 0.0,
+      "arm_max_cross_zone_spread": 0.0,
+      "arm_hours_LI_dual_above_rest": 0,
+      "arm_max_LI_excess_per_mw": 0.0,
+      "arm_sum_LI_excess": 0.0,
+      "k4_max_non_LI_reserve_dual_delta": 6.25
+    },
+    "K3_verdict": "INERT (no LI dual in any hour)",
+    "K4_verdict": "FAIL (non-LI reserve duals moved)"
+  },
+  "price_and_feasibility": {
+    "2023": {
+      "measured_h300": 10,
+      "control": {
+        "li_h300": 3,
+        "li_h250": 10,
+        "li_max": 503.74,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 33.6437
+      },
+      "arm": {
+        "li_h300": 3,
+        "li_h250": 10,
+        "li_max": 503.74,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 33.6443
+      }
+    },
+    "2024": {
+      "measured_h300": 12,
+      "control": {
+        "li_h300": 0,
+        "li_h250": 5,
+        "li_max": 297.54,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 36.593
+      },
+      "arm": {
+        "li_h300": 0,
+        "li_h250": 5,
+        "li_max": 297.54,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 36.5923
+      }
+    },
+    "2025": {
+      "measured_h300": 42,
+      "control": {
+        "li_h300": 14,
+        "li_h250": 19,
+        "li_max": 483.37,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 57.1949
+      },
+      "arm": {
+        "li_h300": 14,
+        "li_h250": 19,
+        "li_max": 489.62,
+        "slack_total": 0.0,
+        "dump_total": 0.0,
+        "mean_price_all_zones": 57.1934
+      }
+    }
+  }
+}

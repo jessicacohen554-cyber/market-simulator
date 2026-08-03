@@ -991,6 +991,67 @@
  * stays routed to the owner (charter §5) and C3c-2025 keeps its neiso-75
  * sizing but loses its route.
  * FINDING-neiso76-dabid-phase0-2026-08-02.md.
+ * NYISO column re-checked 2026-08-02 by nyiso-113 — THE RULE-28(c) MATRIX-GAP
+ *   SWEEP, generalising the nyiso-112 standing lesson ("a solve-affecting field
+ *   with no matrix row is a mechanism nobody can see") from an anecdote into a
+ *   mechanical census. Method: every ScenarioConfig field (imported, so the
+ *   defaults are the shipped ones) crossed against this file, classified
+ *   own_row / prose_only / absent — where the matrix's own convention is that
+ *   rows are ISO-NEUTRAL mechanism FAMILIES and a per-ISO flag is that ISO's
+ *   leg (nyiso_gas_commitment_bridge is the NYISO leg of row
+ *   gas_commitment_bridge), so the stem identifies the owning row, not the
+ *   literal flag name. RESULT: 25 nyiso_* fields ABSENT from the matrix and 5
+ *   prose-only, of which 17 are ARMED ON THE KEEPER WITH NO CELL ANYWHERE.
+ *   THIRTEEN ROWS ADDED this session; the CI checker never caught them because
+ *   its diff gate only fires on fields ADDED in the same PR, so anything that
+ *   predates the gate is invisible to it — a standing blind spot worth sweeping
+ *   in every ISO lane. Three cells adjudicated with NO SOLVE SPENT, each on
+ *   NYISO's own data (rule 25): nyiso_east_reserve_families -> I (PROVABLY
+ *   INERT by domination algebra — east_10min_spin 330 MW is dominated by
+ *   nyc_10min_total 500 MW by 170 MW AND by east_10min_total 1,200 MW by
+ *   870 MW; east_30min_total 1,200 MW is dominated by seny_30min_total
+ *   1,300 MW by 100 MW — arithmetic on the family rows, independent of any
+ *   dual measurement); measured_ramp_capability NYISO U -> I
+ *   (fleet 10-min deliverable ramp 12,318.4 MW = 18.8x the 655 MW NYCA spin
+ *   requirement, so a per-asset qualifier cannot bind the row);
+ *   nyiso_spin_reserve_online -> I (nyiso-110's solved verdict, which had no
+ *   cell to live in). nyiso_li_locational_reserve -> O, pre-registered and
+ *   solving: it is the ONE candidate that clears the brief's rule-19 gate by
+ *   measurement — NOT dominated (no armed family is Zone-K-scoped), and the
+ *   nyiso-110 hydro-slack refutation CANNOT reach it because NYISO hydro is
+ *   100 % upstate (Upstate_West ~4.0-4.1 GW + Capital_Hudson ~0.55 GW) while
+ *   Long Island carries EXACTLY 0.0 MW. IT SOLVED, AND IT IS LIVE: Zone-K
+ *   headroom falls below the family's own hourly requirement in exactly 5 hours
+ *   of 2025 and the solved reserve dual moves in exactly those hours; the price
+ *   effect is small (2025 LI max +$6.25) and C3c is UNCHANGED at 3/0/14.
+ *   TWO CORRECTIONS THIS SESSION OWES ITS OWN RECORD: (i) the pre-registered
+ *   K3/K4 gates were specified on the persisted per-zone reserve_price, which
+ *   is a SYSTEM-LEVEL series broadcast identically to every zone — it is 0.0
+ *   across zones by construction and CANNOT observe a locational dual, so the
+ *   screen's 'no locational family has ever bound' claim is RETRACTED and the
+ *   gates were re-run on the unit-hourly headroom instead; (ii) the screen's
+ *   capacity-vs-demand argument (LI peak demand 5,537 MW vs Zone-K thermal
+ *   5,146.5 MW) does NOT imply a headroom collapse, because reserve class 1 is
+ *   IDLE-ALLOWED and Long Island imports a large share of its own peak — Zone-K
+ *   quick-start headroom never falls below 3.2x the 120 MW requirement. A
+ *   capacity-vs-demand screen is not a headroom screen for any importing zone.
+ *   STANDING GAP FOR EVERY ISO: no bundle persists a per-family reserve dual
+ *   (DispatchResult.reserve_price_by_family is discarded at persist time), so
+ *   no locational reserve family's binding is observable from a committed
+ *   bundle at all.
+ *   ALSO CORRECTED BY MEASUREMENT, and the correction inverts the received
+ *   reading of nyiso-112: the 227-3 phase that moved C3c (2025, 7 -> 14 h) adds
+ *   only 14.5 MW and NONE of it on Long Island, while the 2023-05-01 phase
+ *   removes 203.1 MW of which 145.5 MW (72 %) IS Long Island. The 2023 phase
+ *   did NOT do nothing — it moved 570 LI hours, ALL inside the ozone window,
+ *   and lifted the LI max 400.07 -> 503.74 with >$250 going 7 -> 10; it simply
+ *   did not cross the $300 threshold C3c counts. 2024 is the genuinely inert
+ *   year: its three highest LI hours are pinned at $297.54 in BOTH arms,
+ *   $2.46 below the gate. KEEPER PROMOTED at this stamp: NYISO ->
+ *   2026-08-02-nyiso-113-li-locational (nyiso_li_locational_reserve K),
+ *   CALIBRATED-WITH-CAVEATS, C3c the sole ledgered caveat and UNCHANGED at
+ *   3/0/14 h; every scored criterion identical to the same-HEAD control's, so
+ *   the arm regresses nothing. Ledger 29 -> 30, n_residual 6.
  */
 window.MECH_MATRIX = {
   version: 1,
@@ -1001,7 +1062,7 @@ window.MECH_MATRIX = {
     CAISO: "2026-08-02-caiso157-partition-restore-b",
     PJM: "2026-07-31-pjm-143b-hy-level",
     MISO: "2026-07-31-miso-109b-hy-level",
-    NYISO: "2026-08-02-nyiso112-ramp-plus-peaker",
+    NYISO: "2026-08-02-nyiso-113-li-locational",
     NEISO: "2026-07-31-neiso-72-hy-window"
   },
   gates: {
@@ -1130,13 +1191,79 @@ window.MECH_MATRIX = {
       ev: { N: "nyiso-70", M: "miso-71", Q: "neiso-57", P: "pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.3)" } },
     { id: "measured_ramp_capability", cat: "reserves", name: "Measured per-plant ramp capability (EIA-860 10M)",
       def: "scenarios.py:4435", mode: "BF",
-      cells: "UUKUUU",
-      note: "ISO-generic input, armed only in PJM despite feeding every per-asset co-opt. Cheap audit-grade transfer for any ISO arming pergen reserves." },
+      cells: "UUKUIU",
+      note: "ISO-generic input, armed only in PJM despite feeding every per-asset co-opt. Cheap audit-grade transfer for any ISO arming pergen reserves. NYISO U -> I 2026-08-02 (nyiso-113): SCREENED INERT EX-ANTE, NO SOLVE SPENT. nyiso-110 section 10 refuted the aggregate rho*P online binder but NOT a measured-MW per-asset qualifier, so this transfer was screened on its own terms — can a per-asset 10-minute ramp qualifier bind NYISO's reserve rows? The NYISO reserve-eligible fleet's total 10-minute deliverable ramp is 12,318.4 MW over 352 of 460 units, which is 18.8x the 655 MW NYCA 10-minute SPINNING requirement (and 9.4x the 1,310 MW 10-minute total). A qualifier that reduces admissible headroom from ~19x the requirement cannot make the row bind, so the measured input cannot change any dual. It remains admissible as an accuracy improvement under rule 14 if ever armed for its own sake, but it is not a lever and must not be re-tested as one without new evidence (rule 28a).",
+      ev: { N: "nyiso-113 (results/calibration/_nyiso113_locational_reserve_screen.json section 4)" } },
     { id: "reserve_deliverability_scoping", cat: "reserves", name: "Reserve deliverability / online-quality scoping",
       def: "pjm ramp10 scoping; caiso_reserve_online_scoped :3875; caiso_locational_as_families :3908", mode: "BF",
       cells: ".IIR..",
       note: "PJM ramp10 scoping CLOSED INERT no-solve (bound stays 9.7-10.5x requirement); commitment-scoped framing PARTIAL but insufficient (5.0-5.6x). CAISO online-scoping measured inert (12.9 GW vs 2.2 GW req); locational AS families ex-ante inert (~15x oversupply). MISO zone-aggregate co-opt scoping refuted empirically. PJM I CONFIRMED with the measured counterpart pjm-124/125 lacked (pjm-138, no-LP): PJM's own market clears Primary reserve at a cover ratio of 1.00-1.01 and Synchronized at 1.04-1.11, against the model's 5.0-10.5x AFTER the best scoping tested — so no further scoping brings the model's reserve supply into PJM's regime. What separates them is not a deliverability rule but the no-MIP boundary: a continuous commitment variable makes fractional online capacity free, so EVERY idle unit's headroom is synchronized-reserve-eligible in the LP and none of it is in PJM.",
       ev: { P: "pjm-124/125; pjm-138 (FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29 §3.2/§3.3)", C: "caiso-91; FINDING-caiso71" } },
+    { id: "nyiso_li_locational_reserve", cat: "reserves", name: "NYISO published Long Island (Zone K) locational reserve ladder",
+      def: "nyiso_li_locational_reserve (scenarios.py); reserves/spec.py::NYISO_RCPF_LOCATIONAL_LI + NYISO_LI_30MIN_ONPEAK_MW", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. The published LI rows of the SAME Locational Reserve Requirements posting that already grounds the model's NYC and East families (data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv, region=LI; regime v2021 spans all of 2023-2025): li_10min_total 120 MW all hours (class 1, quick-start) and li_30min_total 270 MW off-peak / 540 MW on-peak (class 0, full thermal), both at the published 25 USD/MW demand-curve value (Ancillary Services Manual 6.8 items 10 and 15). The on/off-peak boundary resolves to the tariff's own MST 2.15 On-Peak calendar (07:00-23:00 EPT Mon-Fri excl. NERC holidays) — a published calendar rule that regenerates for any forward year, so rule 13 [R-MEASURED] admissible. The model carries NO Zone-K family at all: a rule 14 [R-ACCURATE] omission of a published requirement, the same class nyiso-83/84 fixed one tier up. ROW ADDED 2026-08-02 (nyiso-113) — this field had NO matrix row, one of 25 nyiso_* fields the session's rule-28(c) census found absent. RULE-19 PRECONDITION DISCHARGED BY MEASUREMENT BEFORE ANY SOLVE (the brief's gate: a locational requirement is a new lever only if it binds where the NYCA aggregate does not). (a) NOT DOMINATED: no armed family is Zone-K-scoped — the smallest armed regions containing Zone K are SENY and East, whose R-sums run over strictly more zones. (b) The nyiso-110 hydro-slack refutation CANNOT REACH IT: NYISO hydro is 4,094.9/4,035.2/4,035.2 MW Upstate_West + 554.3/551.9/551.9 MW Capital_Hudson and Long Island carries EXACTLY 0.0 MW in all three years, so the resource that keeps the aggregate rows slack cannot supply this one. (c) [RETRACTED — see the solved result below: the screen's cross-zone reserve-dual statistic is vacuous, because the persisted reserve_price is a system-level series broadcast to every zone and cannot observe a locational dual.] (d) Zone-K headroom can physically collapse: LI thermal capacity 5,146.5 MW (quick-start 4,334.0) against LI peak demand 5,054/4,925/5,537 MW, with 227-3 removing a further 145.5 MW of Zone-K quick-start inside the ozone window. SOLVED at nyiso-113 as a pre-registered single-delta A/B (runs 2026-08-02-nyiso-113-control-zerodelta / 2026-08-02-nyiso-113-li-locational). K1 PASS (exactly one delta). K2 PASS BYTE-IDENTICAL — the control reproduces the committed keeper at 0.0 MW over 122,640 class-hours in each of the three years. THE MECHANISM IS LIVE, AND THE PRE-REGISTERED K3/K4 INSTRUMENT WAS INVALID: K3/K4 were specified on the per-zone reserve_price column, which is a SYSTEM-LEVEL series broadcast identically to every zone, so it reported 'no LI dual in any hour' by construction. Measured properly on the arm's own unit-hourly sidecar, Zone-K thermal headroom falls BELOW the family's own hourly requirement in exactly 5 hours of 2025 (h4193-4195, h4217-4218) and in 0 hours of 2023/2024 once the published on/off-peak step is honoured (the single sub-540 MW hour in 2024 is OFF-peak, where the requirement is 270 MW) — and the solved system reserve dual moves in EXACTLY those five hours plus five more, against 2 hours in 2023 and 0 in 2024. The family binds where and only where its own requirement exceeds Zone-K headroom. EFFECT IS SMALL AND C3c IS UNCHANGED: LI >$300 stays 3/0/14, >$250 stays 10/5/19, the 2025 LI max moves 483.37 -> 489.62 (+$6.25, the $25/MW demand-curve tier doing exactly what its published value permits), zero slack and zero dump in every zone-hour (P3 PASS). CELL K: PROMOTED KEEPER 2026-08-02 (nyiso-113, 2026-08-02-nyiso-113-li-locational). The bundles were scored with scripts/calibration_verdict.py + legitimacy_diagnostics.py and the arm's determination is CALIBRATED-WITH-CAVEATS with C3c the sole ledgered caveat, UNCHANGED. NO KILL GATE FIRES AND EVERY SCORED CRITERION IS IDENTICAL TO THE SAME-HEAD CONTROL'S: C1 14/14 all-class and 10/10 free-class, C2, C3a, C3b, C4, C6, C7, C8 all PASS in BOTH arms; C3c FAILs in both at the same 3/0/14 h against a measured 10/12/42. The arm therefore regresses nothing and spends no caveat slot. Ledger 29 -> 30 entries, n_residual unchanged at 6. Promoted on rule 1 [R-STRUCT] / rule 14 [R-ACCURATE] — the published requirement belongs in the model because NYISO enforces it — and NOT on gate movement, the same ground pjm-140 and nyiso-111 were promoted on. TWO CORRECTIONS REPORTED, NOT HIDDEN (rule 14): (i) the pre-registered K3/K4 gates were specified on the per-zone reserve_price column, a SYSTEM-LEVEL (T,) series broadcast identically to every zone, which cannot observe a locational dual — scored on it the arm first read INERT, an artifact of the instrument; the gates were re-scored on Zone-K unit-hourly headroom and the solved dual's timing. (ii) The prereg's capacity-vs-demand screen (LI peak demand 5,537 MW vs Zone-K thermal nameplate 5,146.5 MW) does NOT imply a headroom collapse, because reserve class 1 is idle-allowed and Long Island imports a large share of its own peak — a capacity-vs-demand screen is not a headroom screen for any importing zone, in any ISO. PREREQUISITE FOR ANY FUTURE LOCATIONAL ADJUDICATION AT NYISO (and a gap in every ISO): there is NO committed per-family reserve-dual sidecar, so no locational reserve family's binding can be observed from a bundle. DispatchResult.reserve_price_by_family exists in memory and is discarded at persist time.",
+      ev: { N: "nyiso-113 (PREREG-nyiso113-li-locational-reserve-2026-08-02; screen results/calibration/_nyiso113_locational_reserve_screen.json)" } },
+    { id: "nyiso_east_reserve_families", cat: "reserves", name: "NYISO published EAST spin_10 + total_30 reserve families",
+      def: "nyiso_east_reserve_families (scenarios.py); reserves/spec.py::NYISO_RCPF_EAST_FAMILIES", mode: "BF",
+      cells: "....I.",
+      note: "NYISO-EXCLUSIVE. The two published EAST rows the model omits (east_10min_spin 330 MW, east_30min_total 1,200 MW, both 40 USD/MW per ASM 6.8 items 2 and 12) — built at nyiso-84 as a rule-14 omission fix and NEVER ARMED IN ANY BUNDLE. ROW ADDED 2026-08-02 (nyiso-113) — no matrix row existed. Cell I: PROVABLY INERT EX-ANTE, NO SOLVE SPENT, by domination algebra on the family rows themselves. A family row is sum over member zones of R[c,z] + shortfall >= requirement, so an armed family with the SAME reserve class, a SUBSET region and a requirement AT LEAST AS LARGE forces the candidate slack. east_10min_spin (330 MW, class 1, East) is dominated by nyc_10min_total (500 MW, class 1, NYC subset East) with a 170 MW margin AND by east_10min_total (1,200 MW, class 1, same region) with an 870 MW margin — it can only bind once the NYC family is short by >170 MW, i.e. deep inside a state the 775 USD/MW East tier already prices. east_30min_total (1,200 MW, class 0, East) is dominated by seny_30min_total (1,300 MW, class 0, SENY subset East) with a 100 MW margin. (RETRACTED 2026-08-02, same session: an earlier draft of this note cited a max cross-zone reserve-dual spread of 0.0 as corroboration that neither dominating family had ever bound. That statistic is VACUOUS — the system_<year>.parquet reserve_price column is a single system-level (T,) series BROADCAST identically to every zone (run_calibration_full.py:925-1028), so it is 0.0 by construction and cannot observe a locational dual. The domination verdict is unaffected: it is arithmetic on the family rows, not empirical.) Adding these rows is structurally correct and costs nothing; it also buys nothing, and that is the honest verdict rather than a promotion claim. DO NOT re-test without new evidence (rule 28a) — the domination is arithmetic, not empirical, so only a change to the armed family set could reopen it.",
+      ev: { N: "nyiso-113 (results/calibration/_nyiso113_locational_reserve_screen.json section 1); built nyiso-84" } },
+    { id: "nyiso_synchronised_reserve", cat: "reserves", name: "NYISO online-gated NYC spinning reserve (path A/B)",
+      def: "nyiso_synchronised_reserve + nyiso_spin_headroom_frac (scenarios.py)", mode: "BF",
+      cells: "....U.",
+      note: "NYISO-EXCLUSIVE. Adds a hand-scoped NYC locational 10-minute SPINNING family on the ONLINE-gated reserve class (class 2), requirement = half the NYC 10-min total per the published NYISO spinning ratio. ROW ADDED 2026-08-02 (nyiso-113) — no matrix row existed; never armed in any bundle. U, not a lever: it is MUTUALLY EXCLUSIVE (hard ValueError) with BOTH nyiso_spin_reserve_online and nyiso_incity_commitment_obligation under rule 19 [R-ONE-MECH] — all three hold spin on online capacity — and it is a construction of exactly the class-2 online-gate family nyiso-110 measured EXHAUSTED at NYISO: the class-2 row is an AGGREGATE rho*output row that reserve-eligible hydro's own 2-5 GW of output keeps slack in every hour, which is why the nyiso-110 spin-online arm solved INERT (reserve-dual hours identical to control, K2 = 0.0 MW). Its sub-scalar nyiso_spin_headroom_frac (1.0 = commit exactly to the measured requirement) rides this row. Re-opening needs the owner amplitude-criterion call or a reserve-offer/sub-hourly data intake, not a re-test.",
+      ev: { N: "nyiso-84 (built); nyiso-110 section 10 (class-2 family exhausted); nyiso-113 (row added)" } },
+    { id: "nyiso_spin_reserve_online", cat: "reserves", name: "NYISO online-gate on the PUBLISHED spinning families",
+      def: "nyiso_spin_reserve_online (scenarios.py); reserves/spec.py::NYISO_SPIN_ONLINE_FAMILIES", mode: "BF",
+      cells: "....I.",
+      note: "NYISO-EXCLUSIVE. Re-classes the published NYCA 10-minute spinning family (655 MW, 775 USD/MW) onto the ONLINE-gated class 2, on the product definition (spinning reserve is supplied by synchronized resources, ASM 2) rather than on fit. ROW ADDED 2026-08-02 (nyiso-113) — the mechanism was TESTED AND ADJUDICATED at nyiso-110 but had no cell of its own, only passing prose mentions. Cell I: SOLVED INERT by its own pre-registered K3 liveness rule (run 2026-08-02-nyiso110-spin-online-inert against control 2026-08-01-nyiso110-control-zerodelta) — reserve-dual hours identical to control at 17/6/34 of 8,760, C3a +0.006 pp, swing shares unchanged to 3 dp, K2 = 0.0 MW. Root cause on the record: the class-2 gate is an AGGREGATE rho*output row that reserve-eligible hydro's output keeps slack in every hour, with idle quick-start still admissible per-gen; the E4 census had tested the per-gen headroom binder, not this one. The same arithmetic refutes the nyiso-84 class-widening successor ex-ante. With this INERT verdict the in-LP reserve-FORMATION family at NYISO is EXHAUSTED and diurnal_price_amplitude moved NYISO O -> G.",
+      ev: { N: "nyiso-110 (FINDING-nyiso110-peak-half-decomposition-2026-08-02.md section 10); nyiso-113 (row added)" } },
+    { id: "nyiso_incity_commitment_obligation", cat: "reserves", name: "NYISO in-city (Zone J/K) commitment obligation",
+      def: "nyiso_incity_commitment_obligation (scenarios.py); iso_configs._INCITY_OBLIGATION_OWNED_LIMBS", mode: "BF",
+      cells: "....U.",
+      note: "NYISO-EXCLUSIVE. Re-classes the published NYC + LI 10-minute families onto an ONLINE-GATED in-pocket obligation class (steam union fast-start GT), so meeting the published requirement forces in-pocket units to be DISPATCHED rather than merely present — a COMMITMENT driver, not a pricing lever. ROW ADDED 2026-08-02 (nyiso-113) — previously prose-only inside the st_gas_mustrun_p25 row, with no cell of its own; never armed in any bundle. U with a standing caveat: it is mutually exclusive with nyiso_synchronised_reserve (hard error, rule 19) and it is a class-2 online-gate construction of the family nyiso-110 measured exhausted, so the same aggregate-rho-row arithmetic applies; per its charter it must also be run with the NYC/LI ST_GAS reliability_floor limbs DISABLED via reliability_floor_overrides (rule 19 substitution, never stacked). nyiso-105 named it the rule-19-compliant replacement path for the ST_GAS p25 floor lane.",
+      ev: { N: "nyiso-105 section A (named as the compliant replacement path); nyiso-113 (row added)" } },
+    { id: "nyiso_hydro_reserve_eligible", cat: "reserves", name: "NYISO conventional hydro as an operating-reserve provider",
+      def: "nyiso_hydro_reserve_eligible (scenarios.py); reserves/spec.py::_nyiso_design eligibility union", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. Unions conventional hydro into BOTH the full (30-min) and quick-start (10-min) reserve-eligibility classes: hydro governors deliver full headroom inside the 10-minute window and NYPA Niagara/St-Lawrence + Capital hydro are certified NYISO reserve providers. Held reserve spends no water — the monthly energy budget bounds only DISPATCHED energy — so budget and reserve headroom compose correctly. ROW ADDED 2026-08-02 (nyiso-113): ARMED ON THE KEEPER since the issue-#1344 lever-3 work and carried in the keeper's DOF ledger (identification measured/published), but it had NO matrix row and therefore no cell — one of 17 fields the nyiso-113 census found armed on the keeper with no cell anywhere. Cell K on that basis. CONSEQUENCE WORTH CARRYING: this row is the reason the NYCA aggregate reserve families almost never bind — nyiso-110 section 10 measured that hydro's own 2-5 GW of output keeps the class-2 aggregate row slack in every hour, which is what made the spin-online arm INERT. It is also why a Zone-K-scoped requirement is a structurally different proposition: NYISO hydro is 100 % upstate (Upstate_West ~4.0-4.1 GW, Capital_Hudson ~0.55 GW) and Long Island carries exactly 0.0 MW (nyiso-113).",
+      ev: { N: "issue #1344 lever 3; nyiso-110 section 10; nyiso-113 (row added, zonal census)" } },
+    { id: "nyiso_scr_edrp_reserve_eligible", cat: "reserves", name: "NYISO SCR/EDRP demand response as a 30-minute reserve provider",
+      def: "nyiso_scr_edrp_reserve_eligible + nyiso_scr_edrp_strike (scenarios.py)", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. Special Case Resources are NYISO-certified 30-minute operating-reserve providers (ASM 4 / MST 15), so the demand_response block is unioned into the FULL (30-min) class ONLY — never the 10-min quick-start class, since SCR responds on a 30-minute activation and is not spinning — scoped to the downstate zones (NYC, Long_Island, Lower_Hudson) where the SENY/NYC 30-min families and the unclosed downstate tail live. The hydro union is East/NYCA and cannot reach the SENY tail (no downstate hydro). ROW ADDED 2026-08-02 (nyiso-113): armed on the keeper and DOF-ledgered (identification measured/published) but with no matrix cell. Its sub-scalar nyiso_scr_edrp_strike (500 USD/MWh DR block marginal cost) rides this row; the parent nyiso_scr_edrp flag is the demand-response fleet itself.",
+      ev: { N: "issue #1344 lever 3 step 2; nyiso-113 (row added)" } },
+    { id: "nyiso_import_reconciliation", cat: "structure", name: "NYISO priced import-node monthly reconciliation band",
+      def: "nyiso_import_reconciliation (+ nyiso_forward_net_import_twh for the forecast band)", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. Bands the priced import node's monthly net interchange to the measured EIA-930 monthly total in backcast, with nyiso_forward_net_import_twh supplying the forward-year band where no measured series exists (the mode seam). ROW ADDED 2026-08-02 (nyiso-113): armed on the keeper in 17 of 17 bundles on disk with NO matrix cell. Cell K on that basis. STANDING CAVEAT from nyiso-99, carried here because it belongs on this row: the reconciled monthly quota is met at the WRONG HOURS — the model's internal price swing is 0.58/0.52/0.46 of the real one while the measured seam price is correct, so subtracting a correctly-peaked seam price from a too-flat internal price drives the spread to its MINIMUM at the real peak and the LP buys its quota overnight instead. That defect is attributed to C3c (import_shape_lever G, the seam exonerated), NOT to this reconciliation.",
+      ev: { N: "nyiso-99 (FINDING-nyiso99-import-shape-attributed-to-c3c-2026-07-29.md); nyiso-113 (row added)" } },
+    { id: "nyiso_downstate_ct_gas_basis", cat: "fuel", name: "NYISO downstate CT gas basis / daily settlement",
+      def: "nyiso_downstate_ct_gas_basis + nyiso_downstate_ct_gas_daily (scenarios.py)", mode: "B",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. The daily leg (nyiso_downstate_ct_gas_daily) prices downstate CT gas on the daily rather than monthly settlement basis and is ARMED on the keeper in 17 of 17 bundles, carried in the DOF ledger (identification measured). The basis leg (nyiso_downstate_ct_gas_basis) has never been armed. ROW ADDED 2026-08-02 (nyiso-113): both were absent from the matrix, and the armed daily leg is a live-but-invisible solve-affecting field of exactly the class the nyiso-112 227-3 gap belonged to. Cell K reflects the armed daily leg; the unarmed basis leg is filed on this row rather than given its own, per the sub-scalar convention.",
+      ev: { N: "keeper DOF ledger (nyiso_downstate_ct_gas_daily, measured); nyiso-113 (row added)" } },
+    { id: "nyiso_local_selfsupply", cat: "structure", name: "NYISO Long Island local self-supply obligation",
+      def: "nyiso_local_selfsupply (scenarios.py); NYISO_LOCAL_SELFSUPPLY_FRAC", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. Zone-K local self-supply: a share of Long Island load must be served by Zone-K resources rather than imported. ARMED on the keeper and carried in the DOF ledger, where NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island'] is one of the ledger's residual-identified entries. ROW ADDED 2026-08-02 (nyiso-113) — previously prose-only inside the lcr_tsl_published row with no cell of its own. Cell K. Its D-2 mechanism id MECH_NYISO_SELFSUPPLY has a FILED (not minted) D4_WINDOWS row — it rides real plants, is non-thermal and is never gated (caiso-155 stub entry in the NYISO log).",
+      ev: { N: "keeper DOF ledger (residual); caiso-155 (D-4 filing); nyiso-113 (row added)" } },
+    { id: "nyiso_firm_imports", cat: "structure", name: "NYISO firm (must-flow) import baseload",
+      def: "nyiso_firm_imports (scenarios.py); MECH_FIRM_IMPORT", mode: "BF",
+      cells: "....K.",
+      note: "NYISO-EXCLUSIVE. The HQ firm import floor (NYISO_external_HQ_hydro, 900 MW flat = 7.884 TWh/yr) enters as a must-flow baseload on the external node. ARMED on the keeper in 17 of 17 bundles. ROW ADDED 2026-08-02 (nyiso-113) — previously prose-only inside an unrelated CAISO row, with no cell of its own. Cell K. caiso-155 fixed the D-2/D-4 plant matrix ISO-generically so this floor is now diagnostics-visible; the row appears on any faithfully-floored artifact generation.",
+      ev: { N: "caiso-155 stub (D-2/D-4 visibility fix); nyiso-113 (row added)" } },
+    { id: "nyiso_rcpf_postsolve_overlay", cat: "reserves", name: "NYISO post-solve RCPF scarcity overlay (co-opt comparator)",
+      def: "nyiso_rcpf_enabled + nyiso_rcpf_products + nyiso_rcpf_locational (scenarios.py); results/scarcity.py", mode: "B",
+      cells: "....G.",
+      note: "NYISO-EXCLUSIVE. The POST-SOLVE RCPF overlay prices reserve-shortage rent into the LBMP after the fact. ROW ADDED 2026-08-02 (nyiso-113) — absent from the matrix. Cell G, structurally rather than by adjudication: reserves/spec.py::_nyiso_design raises a hard ValueError when nyiso_rcpf_enabled is set alongside energy_reserve_coopt, because the in-LP RCPF families price the SAME phenomenon (rule 19 [R-ONE-MECH]). The keeper carries energy_reserve_coopt=True, so this overlay is unreachable in the keeper lineage by construction — it survives only as the comparator for co-opt-OFF runs. The two override knobs (nyiso_rcpf_products, nyiso_rcpf_locational) let an operator replace the published product/region tables wholesale; both are None on every bundle on disk and are filed here rather than given their own rows.",
+      ev: { N: "reserves/spec.py::_nyiso_design rule-19 guard; nyiso-113 (row added)" } },
+    { id: "nyiso_ordc_measured_step_span", cat: "reserves", name: "NYISO ORDC step-width translation to the measured requirement",
+      def: "nyiso_ordc_measured_step_span (scenarios.py)", mode: "B",
+      cells: "....U.",
+      note: "NYISO-EXCLUSIVE. A construction-consistency flag, not a lever: when nyiso_dynamic_reserve_requirements enforces a MEASURED hourly requirement on the balance RHS, the ORDC demand curve priced against it is still built off the STATIC published MW, so a family whose measured requirement exceeds its published base (SENY 1,800 vs 1,300 MW) prices its shortfall on a curve ~38 % too steep that saturates above zero reserve. This flag scales each dynamic family's width vector by requirement[t]/requirement_static, translating the published curve without touching its requirement-independent penalties. ROW ADDED 2026-08-02 (nyiso-113) — absent from the matrix; never armed. U: default off and untested at ISO scope, BUT NOTE it is already applied family-scoped and unconditionally to li_30min_total by the LI locational ladder (nyiso_li_locational_reserve), deliberately without flipping this global flag, so that arming the LI ladder does not silently re-span SENY's curve too. A future arm of this flag is a SENY-curve change and needs its own pre-registration.",
+      ev: { N: "nyiso-113 (row added); construction documented in reserves/spec.py::_nyiso_design" } },
 
     /* ============ commit ============ */
     { id: "gas_commitment_bridge", cat: "commit", name: "Gas commitment bridge (min-gen from P0 run pattern)",

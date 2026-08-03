@@ -1,0 +1,528 @@
+{
+  "probe": "nyiso-113 227-3 phase attribution",
+  "keeper_bundle": "results/calibration/nyiso112_combined_D",
+  "control_bundle": "results/calibration/nyiso111_rampenv_B",
+  "phase_composition": {
+    "2023": {
+      "rows": [
+        {
+          "plant_code": 2487,
+          "plant_name": "Coxsackie",
+          "zone_letter": "G",
+          "model_zone": "Lower_Hudson",
+          "scope": "gas_ct",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 19.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2482,
+          "plant_name": "South Cairo",
+          "zone_letter": "G",
+          "model_zone": "Lower_Hudson",
+          "scope": "gas_ct",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 0,
+          "restricted_mw": 0.0,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": "unit absent from fleet vintage"
+        },
+        {
+          "plant_code": 2516,
+          "plant_name": "Northport",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 11.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2517,
+          "plant_name": "Port Jefferson",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 12.9,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2518,
+          "plant_name": "Shoreham",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 65.7,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2514,
+          "plant_name": "Glenwood",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 55.1,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2504,
+          "plant_name": "74th Street",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 37.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        }
+      ],
+      "restricted_mw_by_model_zone": {
+        "Long_Island": 145.5,
+        "Lower_Hudson": 19.8,
+        "NYC": 37.8
+      },
+      "restricted_mw_by_phase": {
+        "2023-05-01": 203.1
+      },
+      "total_restricted_mw": 203.1
+    },
+    "2024": {
+      "rows": [
+        {
+          "plant_code": 2487,
+          "plant_name": "Coxsackie",
+          "zone_letter": "G",
+          "model_zone": "Lower_Hudson",
+          "scope": "gas_ct",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 19.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2516,
+          "plant_name": "Northport",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 11.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2517,
+          "plant_name": "Port Jefferson",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 12.9,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2518,
+          "plant_name": "Shoreham",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 65.7,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2514,
+          "plant_name": "Glenwood",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 55.1,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2504,
+          "plant_name": "74th Street",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 37.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        }
+      ],
+      "restricted_mw_by_model_zone": {
+        "Long_Island": 145.5,
+        "Lower_Hudson": 19.8,
+        "NYC": 37.8
+      },
+      "restricted_mw_by_phase": {
+        "2023-05-01": 203.1
+      },
+      "total_restricted_mw": 203.1
+    },
+    "2025": {
+      "rows": [
+        {
+          "plant_code": 2487,
+          "plant_name": "Coxsackie",
+          "zone_letter": "G",
+          "model_zone": "Lower_Hudson",
+          "scope": "gas_ct",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 19.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2516,
+          "plant_name": "Northport",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 11.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2517,
+          "plant_name": "Port Jefferson",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 12.9,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2518,
+          "plant_name": "Shoreham",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 65.7,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2514,
+          "plant_name": "Glenwood",
+          "zone_letter": "K",
+          "model_zone": "Long_Island",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 55.1,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 2504,
+          "plant_name": "74th Street",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "oil",
+          "phases": [
+            "2023-05-01"
+          ],
+          "n_units_in_fleet": 2,
+          "restricted_mw": 37.8,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        },
+        {
+          "plant_code": 8906,
+          "plant_name": "Astoria Generating Station",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "gas_ct",
+          "phases": [
+            "2025-05-01"
+          ],
+          "n_units_in_fleet": 0,
+          "restricted_mw": 0.0,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": "unit absent from fleet vintage"
+        },
+        {
+          "plant_code": 2490,
+          "plant_name": "Arthur Kill Generating Station",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "gas_ct",
+          "phases": [
+            "2025-05-01"
+          ],
+          "n_units_in_fleet": 0,
+          "restricted_mw": 0.0,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": "unit absent from fleet vintage"
+        },
+        {
+          "plant_code": 2503,
+          "plant_name": "59th Street",
+          "zone_letter": "J",
+          "model_zone": "NYC",
+          "scope": "gas_ct",
+          "phases": [
+            "2025-05-01"
+          ],
+          "n_units_in_fleet": 1,
+          "restricted_mw": 14.5,
+          "window_hours": [
+            2880,
+            6552
+          ],
+          "no_op_reason": null
+        }
+      ],
+      "restricted_mw_by_model_zone": {
+        "Long_Island": 145.5,
+        "Lower_Hudson": 19.8,
+        "NYC": 52.3
+      },
+      "restricted_mw_by_phase": {
+        "2023-05-01": 203.1,
+        "2025-05-01": 14.5
+      },
+      "total_restricted_mw": 217.6
+    }
+  },
+  "price_effect": {
+    "2023": {
+      "li_counts_control": {
+        "100": 64,
+        "150": 38,
+        "200": 12,
+        "250": 7,
+        "275": 7,
+        "300": 3,
+        "350": 3,
+        "400": 1
+      },
+      "li_counts_keeper": {
+        "100": 64,
+        "150": 38,
+        "200": 12,
+        "250": 10,
+        "275": 7,
+        "300": 3,
+        "350": 3,
+        "400": 2
+      },
+      "li_max_control": 400.07,
+      "li_max_keeper": 503.74,
+      "n_hours_moved": 570,
+      "n_hours_moved_in_ozone": 570,
+      "moved_all_inside_ozone": true,
+      "max_price_delta": 117.06,
+      "sum_abs_delta": 400.84,
+      "mainland_max_dual": 185.61,
+      "li_gap_to_gate_at_250_300": {
+        "n": 7,
+        "closest_below_300": 13.58
+      },
+      "measured_h300": 10
+    },
+    "2024": {
+      "li_counts_control": {
+        "100": 188,
+        "150": 80,
+        "200": 8,
+        "250": 5,
+        "275": 3,
+        "300": 0,
+        "350": 0,
+        "400": 0
+      },
+      "li_counts_keeper": {
+        "100": 189,
+        "150": 80,
+        "200": 8,
+        "250": 5,
+        "275": 5,
+        "300": 0,
+        "350": 0,
+        "400": 0
+      },
+      "li_max_control": 297.54,
+      "li_max_keeper": 297.54,
+      "n_hours_moved": 274,
+      "n_hours_moved_in_ozone": 274,
+      "moved_all_inside_ozone": true,
+      "max_price_delta": 17.53,
+      "sum_abs_delta": 49.31,
+      "mainland_max_dual": 197.34,
+      "li_gap_to_gate_at_250_300": {
+        "n": 5,
+        "closest_below_300": 2.46
+      },
+      "measured_h300": 12
+    },
+    "2025": {
+      "li_counts_control": {
+        "100": 738,
+        "150": 228,
+        "200": 68,
+        "250": 16,
+        "275": 15,
+        "300": 7,
+        "350": 4,
+        "400": 2
+      },
+      "li_counts_keeper": {
+        "100": 738,
+        "150": 228,
+        "200": 68,
+        "250": 19,
+        "275": 18,
+        "300": 14,
+        "350": 6,
+        "400": 5
+      },
+      "li_max_control": 430.7,
+      "li_max_keeper": 483.37,
+      "n_hours_moved": 872,
+      "n_hours_moved_in_ozone": 872,
+      "moved_all_inside_ozone": true,
+      "max_price_delta": 101.54,
+      "sum_abs_delta": 852.67,
+      "mainland_max_dual": 253.52,
+      "li_gap_to_gate_at_250_300": {
+        "n": 5,
+        "closest_below_300": 23.58
+      },
+      "measured_h300": 42
+    }
+  }
+}

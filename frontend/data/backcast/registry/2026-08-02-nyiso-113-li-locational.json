@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-02-nyiso-113-li-locational",
+  "label": "nyiso 113 li locational",
+  "date": "2026-08-02",
+  "shorthand": "nyiso-113-li-locational",
+  "definition": "nyiso-113 arm B: single delta nyiso_li_locational_reserve=true. Published NYISO Long Island (Zone K) locational reserve ladder: li_10min_total 120 MW all hours, li_30min_total 270 MW off-peak / 540 MW on-peak, both at the published 25 USD/MW ASM 6.8 demand-curve value. Zero free parameters. PREREG-nyiso113-li-locational-reserve-2026-08-02.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-02-nyiso-113-li-locational.js",
+  "bundle": "results/calibration/nyiso113_lilocational_B"
+}
