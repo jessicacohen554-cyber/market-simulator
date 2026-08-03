@@ -1,0 +1,678 @@
+{
+  "probe": "nyiso-119 pre-registered gate scoring",
+  "prereg": "results/calibration/PREREG-nyiso119-seny-increment-2026-08-03.md \u00a77",
+  "control": "results/calibration/nyiso119_control",
+  "treatment": "results/calibration/nyiso119_seny_increment",
+  "published_increment_rcpf": 40.0,
+  "published_base_mw": 1300.0,
+  "instrument_note": "requirement legs + LP row identity + the \u00a75 price prediction from the reserve_family parquet; every CURVE SHAPE/LEVEL leg from the committed construction probe + ordc_steps.log (the parquet carries no width or penalty vectors); non-SENY dual/held/shortfall REPORTED, never gated",
+  "years": {
+    "2023": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 110.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 0.002179265022277832,
+          "hours_dual_pos_control": 17,
+          "hours_dual_pos_treatment": 17,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 306.03472900390625,
+          "max_shortfall_treatment": 306.03472900390625
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 0.0021791458129882812,
+          "hours_dual_pos_control": 3,
+          "hours_dual_pos_treatment": 3,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 29.16004180908203,
+          "max_shortfall_treatment": 29.16004180908203
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 22.5,
+          "hours_dual_pos_control": 2,
+          "hours_dual_pos_treatment": 2,
+          "max_dual_control": 62.5,
+          "max_dual_treatment": 40.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 8.700004577636719,
+          "max_shortfall_control": 61.30720520019531,
+          "max_shortfall_treatment": 70.00720977783203
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    },
+    "2024": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 110.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 6,
+          "hours_dual_pos_treatment": 6,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 342.7153625488281,
+          "max_shortfall_treatment": 342.7153625488281
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 6,
+          "hours_dual_pos_treatment": 6,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 388.7153625488281,
+          "max_shortfall_treatment": 388.7153625488281
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    },
+    "2025": {
+      "families": {
+        "east_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 110.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 1.4210854715202004e-14,
+          "hours_dual_pos_control": 1,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": 1.4210854715202004e-14,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "li_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 5,
+          "hours_dual_pos_treatment": 5,
+          "max_dual_control": 6.25,
+          "max_dual_treatment": 6.25,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 129.72532653808594,
+          "max_shortfall_treatment": 129.72532653808594
+        },
+        "nyc_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 0.2371540069580078,
+          "hours_dual_pos_control": 30,
+          "hours_dual_pos_treatment": 29,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 1190.0,
+          "max_abs_shortfall_delta": 200.6034393310547,
+          "max_shortfall_control": 316.52203369140625,
+          "max_shortfall_treatment": 316.52203369140625
+        },
+        "nyc_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 25.0,
+          "hours_dual_pos_control": 10,
+          "hours_dual_pos_treatment": 11,
+          "max_dual_control": 25.0,
+          "max_dual_treatment": 25.0,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 289.2650947570801,
+          "max_shortfall_control": 286.7086486816406,
+          "max_shortfall_treatment": 337.1220397949219
+        },
+        "nyca_10min_spin": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_10min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 1.4210854715202004e-14,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "nyca_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": true,
+          "max_abs_dual_delta": 0.0,
+          "hours_dual_pos_control": 0,
+          "hours_dual_pos_treatment": 0,
+          "max_dual_control": -0.0,
+          "max_dual_treatment": -0.0,
+          "max_abs_held_delta": 0.0,
+          "max_abs_shortfall_delta": 0.0,
+          "max_shortfall_control": 0.0,
+          "max_shortfall_treatment": 0.0
+        },
+        "seny_30min_total": {
+          "requirement_identical": true,
+          "dual_identical": false,
+          "max_abs_dual_delta": 29.7872314453125,
+          "hours_dual_pos_control": 8,
+          "hours_dual_pos_treatment": 8,
+          "max_dual_control": 87.06556701660156,
+          "max_dual_treatment": 62.5,
+          "max_abs_held_delta": 2350.0,
+          "max_abs_shortfall_delta": 292.1201171875,
+          "max_shortfall_control": 225.0,
+          "max_shortfall_treatment": 517.1201171875
+        }
+      },
+      "feasibility": {
+        "control_max_slack": 0.0,
+        "control_max_dump": 0.0,
+        "treatment_max_slack": 0.0,
+        "treatment_max_dump": 0.0
+      }
+    }
+  },
+  "gates": {
+    "G1_increment_tier_live": {
+      "pass": true,
+      "seny_n_steps": {
+        "2023": [
+          8,
+          9
+        ],
+        "2024": [
+          8,
+          9
+        ],
+        "2025": [
+          8,
+          9
+        ]
+      },
+      "seny_first_rung": {
+        "2023": [
+          62.5,
+          40.0
+        ],
+        "2024": [
+          62.5,
+          40.0
+        ],
+        "2025": [
+          62.5,
+          40.0
+        ]
+      },
+      "base_ramp_penalties_unchanged": {
+        "2023": true,
+        "2024": true,
+        "2025": true
+      },
+      "increment_band_width_matches_published": {
+        "2023": true,
+        "2024": true,
+        "2025": true
+      },
+      "base_band_total_matches_published": {
+        "2023": true,
+        "2024": true,
+        "2025": true
+      },
+      "seny_reachable_price_changed": true,
+      "seny_price_never_increases": true,
+      "source": "construction probe (widths/penalties are not in the sidecar)"
+    },
+    "G2_nyiso118_identity_survives": {
+      "pass": true,
+      "seny_hours_totalwidth_ne_requirement_control": [
+        0,
+        0,
+        0
+      ],
+      "seny_hours_totalwidth_ne_requirement_treatment": [
+        0,
+        0,
+        0
+      ],
+      "claim": "total step width == requirement_mw in EVERY hour of BOTH arms"
+    },
+    "G3a_scope_construction": {
+      "pass": true,
+      "non_seny_widths_identical": true,
+      "non_seny_penalties_identical": true,
+      "non_seny_requirement_identical_construction": true,
+      "non_seny_requirement_identical_sidecar": true,
+      "non_seny_reachable_price_identical": true
+    },
+    "G3b_frozen_nyc_and_li_undisturbed": {
+      "pass": true,
+      "families": [
+        "nyc_10min_total",
+        "nyc_30min_total",
+        "li_30min_total"
+      ]
+    },
+    "G3c_ordc_step_count_plus_one": {
+      "pass": true,
+      "control": [
+        59,
+        59,
+        59
+      ],
+      "treatment": [
+        60,
+        60,
+        60
+      ]
+    },
+    "G4_increment_tier_prices_at_published_40": {
+      "pass": true,
+      "as_prereregistered_closed_interval_pass": false,
+      "respecification_note": "G4 AS PRE-REGISTERED (\u00a77) FAILED and that is RECORDED, not quietly redefined (the nyiso-115 G2 / nyiso-117 G2a precedent). It demanded an exact $40.00 dual for every hour with shortfall in the CLOSED interval (0, band] \u2014 asymmetric, because it excluded the LOWER kink (`s > 0`) while including the UPPER one (`s == band`). At either kink the LP is degenerate and the dual is legitimately anywhere between the adjacent bands' prices; that is exactly why the zero-shortfall hours price at $7.75/$17.31 rather than $0, which the pre-registered form already tolerated. Re-specified onto what K-G actually asks \u2014 the STRICT interior must price at the published increment, and the band edge must be BRACKETED by the two adjacent band prices. The mechanism is unchanged; only the gate's boundary handling is.",
+      "years": {
+        "2023": {
+          "hours_binding_treatment": 2,
+          "prereg_hours_shortfall_in_closed_band": 2,
+          "prereg_hours_priced_exactly_at_published_40": 2,
+          "hours_shortfall_strictly_inside_band": 2,
+          "hours_interior_priced_exactly_at_published_40": 2,
+          "hours_shortfall_exactly_at_band_edge": 0,
+          "edge_duals": [],
+          "edge_duals_bracketed_by_adjacent_bands": true,
+          "edge_bracket": [
+            40.0,
+            62.5
+          ],
+          "hours_shortfall_deeper_than_band": 0,
+          "deeper_duals": [],
+          "hours_shortfall_zero_with_positive_dual": 0,
+          "zero_shortfall_duals": [],
+          "max_dual_treatment": 40.0,
+          "max_shortfall_treatment": 70.00720977783203,
+          "distinct_duals_when_binding": [
+            40.0
+          ]
+        },
+        "2024": {
+          "hours_binding_treatment": 0,
+          "prereg_hours_shortfall_in_closed_band": 0,
+          "prereg_hours_priced_exactly_at_published_40": 0,
+          "hours_shortfall_strictly_inside_band": 0,
+          "hours_interior_priced_exactly_at_published_40": 0,
+          "hours_shortfall_exactly_at_band_edge": 0,
+          "edge_duals": [],
+          "edge_duals_bracketed_by_adjacent_bands": true,
+          "edge_bracket": [
+            40.0,
+            62.5
+          ],
+          "hours_shortfall_deeper_than_band": 0,
+          "deeper_duals": [],
+          "hours_shortfall_zero_with_positive_dual": 0,
+          "zero_shortfall_duals": [],
+          "max_dual_treatment": -0.0,
+          "max_shortfall_treatment": 0.0,
+          "distinct_duals_when_binding": []
+        },
+        "2025": {
+          "hours_binding_treatment": 8,
+          "prereg_hours_shortfall_in_closed_band": 5,
+          "prereg_hours_priced_exactly_at_published_40": 4,
+          "hours_shortfall_strictly_inside_band": 4,
+          "hours_interior_priced_exactly_at_published_40": 4,
+          "hours_shortfall_exactly_at_band_edge": 1,
+          "edge_duals": [
+            57.278336
+          ],
+          "edge_duals_bracketed_by_adjacent_bands": true,
+          "edge_bracket": [
+            40.0,
+            62.5
+          ],
+          "hours_shortfall_deeper_than_band": 1,
+          "deeper_duals": [
+            62.5
+          ],
+          "hours_shortfall_zero_with_positive_dual": 2,
+          "zero_shortfall_duals": [
+            7.749622,
+            17.311499
+          ],
+          "max_dual_treatment": 62.5,
+          "max_shortfall_treatment": 517.1201171875,
+          "distinct_duals_when_binding": [
+            7.749622,
+            17.311499,
+            40.0,
+            57.278336,
+            62.5
+          ]
+        }
+      }
+    },
+    "G5_lp_row_identity": {
+      "pass": true
+    },
+    "G6_no_feasibility_damage": {
+      "pass": true
+    }
+  },
+  "kills": {
+    "K_A_scope_leak": {
+      "fired": false
+    },
+    "K_B_frozen_nyc_or_li_disturbed": {
+      "fired": false
+    },
+    "K_C_nyiso118_identity_broken": {
+      "fired": false
+    },
+    "K_D_base_tier_relevelled": {
+      "fired": false
+    },
+    "K_E_fitted_level_needed": {
+      "fired": false,
+      "why": "no number in the mechanism outside the published $40 (ASM \u00a76.8 item 12), the published 1,300 MW base read from NYISO_RCPF_LOCATIONAL, and the already-committed measured hourly series \u2014 prereg \u00a72.1"
+    },
+    "K_F_feasibility_damage": {
+      "fired": false
+    },
+    "K_G_tier_not_reachable": {
+      "fired": false
+    }
+  },
+  "ordc_steps": {
+    "control": [
+      59,
+      59,
+      59
+    ],
+    "treatment": [
+      60,
+      60,
+      60
+    ],
+    "delta_is_plus_one_everywhere": true
+  },
+  "s_over_narrowing": {
+    "note": "REPORTED, NOT GATED (rule 1 [R-STRUCT]). 'Above the measured ceiling' uses each year's OWN realized ceiling from the nyiso-117 screen; 'above the published increment' uses the $40 RCPF the tier is built from. The two differ because 2023/2024's REALIZED ceilings ($23.92/$30.37) sit BELOW the published $40 cap \u2014 the market never drove those years to full band saturation \u2014 so pricing at the published cap is still above the realized ceiling in those years. That residual is an INCIDENCE/DEPTH question, not a curve-construction one, and this run does NOT claim to close it.",
+    "years": {
+      "2023": {
+        "measured_ceiling": 23.92,
+        "control": {
+          "hours_binding": 2,
+          "hours_above_measured_ceiling": 2,
+          "hours_above_published_increment_40": 2,
+          "max_dual": 62.5
+        },
+        "treatment": {
+          "hours_binding": 2,
+          "hours_above_measured_ceiling": 2,
+          "hours_above_published_increment_40": 0,
+          "max_dual": 40.0
+        }
+      },
+      "2024": {
+        "measured_ceiling": 30.37,
+        "control": {
+          "hours_binding": 0,
+          "hours_above_measured_ceiling": 0,
+          "hours_above_published_increment_40": 0,
+          "max_dual": -0.0
+        },
+        "treatment": {
+          "hours_binding": 0,
+          "hours_above_measured_ceiling": 0,
+          "hours_above_published_increment_40": 0,
+          "max_dual": -0.0
+        }
+      },
+      "2025": {
+        "measured_ceiling": 40.0,
+        "control": {
+          "hours_binding": 8,
+          "hours_above_measured_ceiling": 6,
+          "hours_above_published_increment_40": 6,
+          "max_dual": 87.06556701660156
+        },
+        "treatment": {
+          "hours_binding": 8,
+          "hours_above_measured_ceiling": 2,
+          "hours_above_published_increment_40": 2,
+          "max_dual": 62.5
+        }
+      }
+    },
+    "totals_binding_aboveMeasured_abovePublished40": {
+      "control": [
+        10,
+        8,
+        8
+      ],
+      "treatment": [
+        10,
+        4,
+        2
+      ]
+    }
+  },
+  "all_gates_pass": true,
+  "any_kill_fired": false
+}
