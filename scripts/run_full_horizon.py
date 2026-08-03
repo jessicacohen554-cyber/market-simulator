@@ -21,6 +21,20 @@ Nothing here tunes anything or changes a threshold (findings only, rules
 caller runs at most two ISO invocations concurrently, each with its own
 ``--out-dir``.
 
+PREREQUISITE — ``data/clean`` MUST EXIST (FFR-3A blocker 1, documented FFR-3D).
+``data/clean`` is derived and gitignored, so a fresh container has none of it,
+and this runner does NOT degrade gracefully without it: the confirmed-exits
+loader REFUSES ("clean partition for <ISO> is absent while
+confirmed_exits_enabled is on in forecast mode … refusing to silently degrade
+to the economic screen") and the leg aborts at fleet build. Building it costs
+**≈ 55 min / 50 datatypes / ≈ 1.6 GB** — budget it into the FIRST leg in a
+container (one-time per container, not per leg); the wall-clock anchors in
+``docs/forecast-development-plan-2026-07.md`` §2.4 all assume it is already
+built. A PARTIAL tree is the trap: "the directory exists" is not the check::
+
+    PYTHONPATH=. python scripts/regenerate_clean.py          # all datatypes
+    PYTHONPATH=. python scripts/regenerate_clean.py --list   # what would be built
+
 Memory: per-plant multi-zone forecast years are RAM-heavy and OOM without a
 glibc arena cap (precedent: the NEISO/PJM/MISO per-plant probes). Launch with
 ``MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1`` when running
@@ -41,6 +55,7 @@ import sys
 import threading
 import time
 import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -57,6 +72,7 @@ from market_sim.config.capacity_market import (  # noqa: E402
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
+from market_sim.pipeline.persist import environment_block, git_state  # noqa: E402
 from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
@@ -280,6 +296,27 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
         def _sum_ledger(key: str, mwkey: str = "mw") -> float:
             return float(sum(float(r.get(mwkey, 0.0)) for r in led.get(key, [])))
 
+        # Per-CHANNEL split of the thermal additions (FFR-3D, FFR-3A blocker 8).
+        # The evolution ledger has always tagged every thermal_additions row with
+        # its `source` — "planned" | "economic" | "reserve_backstop"
+        # (results/evolution_ledger.py; evolve.py writes all three) — but the
+        # trajectory summed them into one builds_thermal_mw, so the split never
+        # reached a scorer. forecast_verdict.score_fc2 row 4 (backstop share of
+        # additions) reads exactly `builds_thermal_backstop_mw` or
+        # `builds_by_source["reserve_backstop"]`, so with the channel ARMED and
+        # no split present it SKIPped on every run with the message "needs
+        # builds_thermal_backstop_mw / builds_by_source from run_full_horizon".
+        # That made BLK-10 backstop sizing — the evidence owner decision D-2 was
+        # meant to re-open — unscorable anywhere. Emitting the split makes row 4
+        # score; it changes no solve and no threshold (rule 1: this is an
+        # instrument, not a lever).
+        builds_by_source: dict[str, float] = {}
+        for r in led.get("thermal_additions", []):
+            src = str(r.get("source") or "unattributed")
+            builds_by_source[src] = builds_by_source.get(src, 0.0) + float(
+                r.get("mw", 0.0) or 0.0
+            )
+
         rows.append(
             {
                 "year": year,
@@ -299,6 +336,17 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
                 "total_cap_mw": round(sum(cap.values()), 1),
                 "storage_mw": round(cap.get("storage", 0.0), 1),
                 "builds_thermal_mw": _sum_ledger("thermal_additions"),
+                # FC-2 row 4 reads builds_thermal_backstop_mw first, then
+                # builds_by_source["reserve_backstop"]. Both are emitted: the
+                # scalar is what the scorer keys on, the map keeps the full
+                # channel attribution (planned / economic / reserve_backstop) in
+                # the artifact so the share is auditable rather than asserted.
+                "builds_thermal_backstop_mw": round(
+                    builds_by_source.get("reserve_backstop", 0.0), 6
+                ),
+                "builds_by_source": {
+                    k: round(v, 6) for k, v in sorted(builds_by_source.items())
+                },
                 "builds_renew_mw": _sum_ledger("renewable_additions"),
                 "builds_storage_mw": _sum_ledger("storage_additions"),
                 "retire_mw": _sum_ledger("retirements"),
@@ -306,6 +354,71 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
             }
         )
     return rows
+
+
+def write_run_config(out_dir: Path, run_dir: "Path | None", **extra) -> "Path | None":
+    """Write ``<out_dir>/run_config.json`` from the RUN'S OWN resolved config.
+
+    **Why this exists (FFR-3A blocker 7).** ``forecast_verdict.score_fc7`` row 1
+    requires a ``run_config`` artifact with a full ``ScenarioConfig`` flag
+    surface, and this runner wrote only the cache's ``config.yaml`` — so **no
+    bundle it produced could pass FC-7 provenance**: the row read "run_config.json
+    absent" and FAILed by construction, on every T1-F leg, for reasons having
+    nothing to do with the run. FF-2D worked around it with a scoring-time helper
+    (``scripts/_ff2d_emit_run_config.py``); that keeps the producer broken and
+    puts artifact authorship next to the score.
+
+    **Provenance, which is the whole point.** The payload's ``scenario_config``
+    is the cache directory's own ``config.yaml``, read VERBATIM — the dump
+    ``results.cache.save_result`` wrote from the config the solve actually ran.
+    That is deliberately NOT the object handed to :func:`solve_and_summarize`:
+    ``runner.run_scenario_iso`` re-binds the ISO, applies
+    ``resolve_policy_bundle`` and may apply per-ISO overrides, so the pre-solve
+    object is a REQUEST and the on-disk dump is the RESOLUTION. Recording the
+    request would be exactly the rule-24 divergence FC-7 is meant to detect. No
+    value is reconstructed, normalized, or defaulted here.
+
+    Returns ``None`` — writing nothing — when there is no resolved dump to read
+    (a zero-year run, a solve that raised before its first save). A run that
+    produced no years has no provenance to record, and FC-7 FAILing on it is the
+    truthful verdict; fabricating a config from the request would manufacture a
+    pass. Rubric §4 forbids authoring an artifact to move a score, and this
+    lands BEFORE the next scoring battery precisely so the instrument is fixed
+    rather than the number.
+
+    Args:
+        out_dir: Directory to write ``run_config.json`` into (beside the
+            summary, where ``forecast_verdict --run-config`` expects it).
+        run_dir: The solve's cache directory, or ``None`` if it never resolved.
+        **extra: Additional top-level keys recorded verbatim (``iso``,
+            ``cache_key``, ``solved_years`` …).
+
+    Returns:
+        The path written, or ``None``.
+    """
+    if run_dir is None:
+        return None
+    cfg_yaml = Path(run_dir) / "config.yaml"
+    if not cfg_yaml.exists():
+        return None
+    import yaml
+
+    resolved = yaml.safe_load(cfg_yaml.read_text())
+    if not isinstance(resolved, dict) or not resolved:
+        return None
+    payload = {
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "git": git_state(),
+        # Names the file this was taken from, so a reader can re-verify the
+        # provenance claim above rather than trust it.
+        "scenario_config_source": str(cfg_yaml),
+        "scenario_config": resolved,
+        "environment": environment_block(),
+        **extra,
+    }
+    path = Path(out_dir) / "run_config.json"
+    path.write_text(json.dumps(payload, indent=2, default=str) + "\n")
+    return path
 
 
 # --------------------------------------------------------------------------- #
@@ -479,6 +592,17 @@ def solve_and_summarize(
         "invariants": invariants,
         "trajectory": trajectory,
     }
+    # FC-7 provenance artifact, from the run's OWN resolved config (blocker 7).
+    run_config_path = write_run_config(
+        out_dir,
+        run_dir,
+        iso=iso,
+        cache_key=cache_key,
+        solved_years=solved_years,
+        run_dir=str(run_dir) if run_dir else None,
+    )
+    summary["run_config_path"] = str(run_config_path) if run_config_path else None
+
     if extra_summary:
         summary.update(extra_summary)
     summary_path = out_dir / "full_horizon_summary.json"
@@ -501,14 +625,34 @@ def solve_and_summarize(
         print(
             f"  median year wall: {med:.1f}s   max per-year peak RSS: {maxrss / 1024:.2f} GB"
         )
-    n_fail = sum(1 for i in invariants if i["status"] == "FAIL")
-    n_warn = sum(1 for i in invariants if i["status"] == "WARN")
-    print(f"  invariants: {n_fail} FAIL, {n_warn} WARN")
+    # Invariant line (FFR-3A blocker 5). An empty `invariants` list means the
+    # gate was NOT EVALUATED — no run directory, or the invariant load itself
+    # failed — but the counts of an empty list are 0 and 0, so this printed
+    # "invariants: 0 FAIL, 0 WARN" on a ZERO-YEAR run: a hard failure rendered
+    # as a clean gate. The JSON summary was always honest (`"invariants": []`);
+    # only the console lied, which is the surface an operator reads first.
+    if invariants:
+        n_fail = sum(1 for i in invariants if i["status"] == "FAIL")
+        n_warn = sum(1 for i in invariants if i["status"] == "WARN")
+        print(f"  invariants: {n_fail} FAIL, {n_warn} WARN  ({len(invariants)} scored)")
+    else:
+        why = (
+            "solve raised before any result was cached"
+            if error
+            else "no run directory / no cached years to score"
+            if not solved_years
+            else "invariant checker returned no rows"
+        )
+        print(f"  invariants: NOT SCORED — {why}. The gate was not evaluated.")
     for i in invariants:
         if i["status"] in ("FAIL", "WARN"):
             print(
                 f"    [{i['status']}] {i['id']:<4} {i['name']:<26} {i['detail'][:120]}"
             )
+    if run_config_path:
+        print(f"  wrote {run_config_path}")
+    else:
+        print("  run_config.json NOT written — no resolved config.yaml to read")
     print(f"  wrote {summary_path}")
     return summary
 
