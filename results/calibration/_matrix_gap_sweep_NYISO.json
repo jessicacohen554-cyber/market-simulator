@@ -1,9 +1,9 @@
 {
   "iso": "NYISO",
-  "keeper": "2026-08-03-nyiso-118-seny-span",
-  "keeper_bundle_fields": 671,
-  "n_scenario_fields": 673,
-  "n_matrix_rows": 182,
+  "keeper": "2026-08-03-nyiso-119-seny-increment",
+  "keeper_bundle_fields": 672,
+  "n_scenario_fields": 674,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 18,
   "family": [
     {
@@ -44,8 +44,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -56,6 +54,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -78,8 +78,8 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "tsa_transfer_derate",
@@ -89,13 +89,10 @@
       ],
       "cells": [
         "G",
-        "K",
-        "U"
+        "K"
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -106,6 +103,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -157,8 +156,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -169,6 +166,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -214,8 +213,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -226,6 +223,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -250,8 +249,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -262,6 +259,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -305,8 +304,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -317,6 +314,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -341,8 +340,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -353,6 +350,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -377,8 +376,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -389,6 +386,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -413,8 +412,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -425,6 +422,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -449,8 +448,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -461,6 +458,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -485,8 +484,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -497,6 +494,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -521,8 +520,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -533,6 +530,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -573,8 +572,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -585,6 +582,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -609,8 +608,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -621,6 +618,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -653,8 +652,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -665,6 +662,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -691,8 +690,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -703,6 +700,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -729,8 +728,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -741,6 +738,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -825,8 +824,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -837,6 +834,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -881,6 +880,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B"
       ]
@@ -909,8 +910,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -921,6 +920,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -958,8 +959,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -970,6 +969,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1003,7 +1004,9 @@
         "nyiso115_nyc_stepcurve",
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
-        "nyiso118_seny_span"
+        "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment"
       ]
     },
     {
@@ -1026,16 +1029,17 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         }
       ],
       "cells": [
-        "K",
-        "U"
+        "K"
       ],
       "armed_in_bundles": [
-        "nyiso118_seny_span"
+        "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment"
       ]
     },
     {
@@ -1125,8 +1129,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -1137,6 +1139,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1163,8 +1167,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -1175,6 +1177,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1201,8 +1205,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -1213,6 +1215,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1223,21 +1227,23 @@
     {
       "field": "nyiso_seny_rcpf_increment_step",
       "default": false,
-      "keeper_value": "<absent>",
-      "keeper_arms_it": null,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         }
       ],
       "cells": [
-        "U"
+        "K"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "nyiso119_seny_increment"
+      ]
     },
     {
       "field": "nyiso_spin_headroom_frac",
@@ -1258,8 +1264,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -1270,6 +1274,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1345,8 +1351,6 @@
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
-        "nyiso111_control_A",
-        "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
         "nyiso114_lilocational_confirm",
@@ -1357,6 +1361,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso83_control_2024",
@@ -1398,6 +1404,8 @@
         "nyiso117_nyc_stepcurve",
         "nyiso118_control",
         "nyiso118_seny_span",
+        "nyiso119_control",
+        "nyiso119_seny_increment",
         "nyiso160_ctmeter_control_A",
         "nyiso160_ctmeter_screen_B",
         "nyiso_c156_meter_screen_B"
@@ -1636,7 +1644,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -1651,7 +1659,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -1666,7 +1674,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -1714,6 +1722,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "R"
+        },
         {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
@@ -1848,6 +1861,11 @@
         {
           "row": "zonal_gas_basis",
           "cells": "KKKKK.",
+          "cell": "K"
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -2162,8 +2180,8 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "gas_commitment_bridge",
@@ -2344,6 +2362,11 @@
           "row": "winter_citygate_daily",
           "cells": "U.UK..",
           "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KIKK",
+          "cell": "K"
         },
         {
           "row": "campd_outage_windows",
@@ -2862,8 +2885,8 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
-          "cell": "U"
+          "cells": "....K.",
+          "cell": "K"
         },
         {
           "row": "gas_commitment_bridge",
@@ -2992,7 +3015,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -3107,7 +3130,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         },
         {
@@ -3439,6 +3462,11 @@
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "U"
         },
         {
           "row": "entry_dampers",
