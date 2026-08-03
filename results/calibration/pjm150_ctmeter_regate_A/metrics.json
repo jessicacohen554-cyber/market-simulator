@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-28-pjm-135-netpos-keeper",
+  "run_id": "2026-08-03-pjm-150-ct-regate",
   "iso": "PJM",
-  "label": "pjm 135 netpos keeper",
+  "label": "pjm 150 ct regate",
   "target_years": [
     2023,
     2024,
@@ -16,11 +16,13 @@
   "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.0% forced (3.6146 of 24.0407 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.959 (\u22650.8) & off-peak CV ratio 0.85 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.4% forced (4.8822 of 31.6575 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (\u22650.8) & off-peak CV ratio 0.664 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 16.0% forced (3.3306 of 20.8659 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.926 (\u22650.8) & off-peak CV ratio 0.711 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 16.0% forced (3.5054 of 21.9468 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.06 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 16.3% forced (4.8022 of 29.4066 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 0.824 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 39.2% forced (6.0658 of 15.4534 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.897 (\u22650.8) & off-peak CV ratio 2.237 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -46,7 +48,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -56,7 +58,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -79,11 +81,11 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
+    "scored": 8,
     "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 0
   },
   "free_class_score": {
     "iso": "PJM",

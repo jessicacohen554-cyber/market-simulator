@@ -34,9 +34,12 @@ is what OOMs the box, not any single year.
 
 Usage::
 
-    python scripts/probes/pjm150_ct_regate_arm.py --year 2023
-    python scripts/probes/pjm150_ct_regate_arm.py --year 2023 2024
-    python scripts/probes/pjm150_ct_regate_arm.py --year 2023 2024 2025
+    python scripts/probes/pjm150_ct_regate_arm.py --year 2023 \\
+        --out pjm150_regate_y23
+    python scripts/probes/pjm150_ct_regate_arm.py --year 2023 2024 \\
+        --out pjm150_regate_y24 --reuse-from pjm150_regate_y23
+    python scripts/probes/pjm150_ct_regate_arm.py --year 2023 2024 2025 \\
+        --out pjm150_ctmeter_regate_A --reuse-from pjm150_regate_y24
 """
 
 from __future__ import annotations
@@ -51,7 +54,6 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 PROCESSED = REPO / "data/raw/_processed-legacy"
 KEEPER = REPO / "results/calibration/pjm147_chp_B"
-OUT_DIR = REPO / "results/calibration/pjm150_ctmeter_regate_A"
 
 #: Only the plant-level artifact reaches the LP (``campd_bins.py:266``); the
 #: units file carries no pin for the same reason caiso-160 gave.
@@ -103,10 +105,30 @@ def main() -> None:
         type=int,
         required=True,
         help="years for THIS invocation of the rule-12 chain; every year but "
-        "the last is byte-copied forward from the bundle's own prior solve",
+        "the last is byte-copied forward from the PRIOR link's bundle",
+    )
+    ap.add_argument(
+        "--out",
+        required=True,
+        help="bundle dir for THIS link, relative to results/calibration",
+    )
+    ap.add_argument(
+        "--reuse-from",
+        default=None,
+        help="prior link's bundle dir (relative to results/calibration) whose "
+        "already-solved years byte-copy forward. MUST NOT be --out: "
+        "run_calibration_full._copy_reused_year shutil.copy2's each dispatch "
+        "parquet from the source into the destination, so a self-reuse "
+        "(--out-dir X --reuse-solved X) raises SameFileError. The chain "
+        "therefore walks SEPARATE directories, which is what pjm-147 did "
+        "(its meta records source_bundle pjm147_chp_B_y24).",
     )
     args = ap.parse_args()
     years = [int(y) for y in args.year]
+    out_dir = REPO / "results/calibration" / args.out
+    reuse = REPO / "results/calibration" / args.reuse_from if args.reuse_from else None
+    if reuse is not None and reuse.resolve() == out_dir.resolve():
+        raise SystemExit("--reuse-from must differ from --out (SameFileError)")
 
     got = md5(PROCESSED / ARTIFACT)
     if got != EXPECTED_MD5:
@@ -116,8 +138,7 @@ def main() -> None:
         )
     print(f"[pjm-150] CT artifact verified: md5 {got}")
 
-    first = len(years) == 1
-    if first:
+    if reuse is None:
         scrub_cache()
     else:
         print("[cold] chained invocation -- results/PJM kept for --reuse-solved")
@@ -127,16 +148,16 @@ def main() -> None:
         "scripts/replay_keeper.py",
         str(KEEPER.relative_to(REPO)),
         "--out-dir",
-        str(OUT_DIR.relative_to(REPO)),
+        str(out_dir.relative_to(REPO)),
         "--years",
         *[str(y) for y in years],
         "--note",
         NOTE,
     ]
-    if not first:
-        cmd += ["--reuse-solved", str(OUT_DIR.relative_to(REPO))]
+    if reuse is not None:
+        cmd += ["--reuse-solved", str(reuse.relative_to(REPO))]
 
-    print(f"[pjm-150] years={years} reuse={not first}")
+    print(f"[pjm-150] years={years} out={args.out} reuse={args.reuse_from}")
     subprocess.run(cmd, cwd=REPO, check=True)
 
 
