@@ -11,10 +11,18 @@
       "default": 1.0,
       "keeper_value": 1.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -42,10 +50,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -53,10 +69,18 @@
       "default": 0.0,
       "keeper_value": 0.0,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -64,10 +88,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -75,10 +107,18 @@
       "default": 12,
       "keeper_value": 12,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -151,10 +191,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -162,10 +210,18 @@
       "default": 0.574,
       "keeper_value": 0.574,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -190,10 +246,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -248,10 +312,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -279,10 +351,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -290,10 +370,18 @@
       "default": 2023,
       "keeper_value": 2023,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -325,12 +413,18 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "K"
+        },
+        {
           "row": "ercot_faststart_pool_offer",
           "cells": "O.....",
           "cell": "O"
         }
       ],
       "cells": [
+        "K",
         "O"
       ],
       "armed_in_bundles": []
@@ -340,10 +434,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_faststart_pool_offer",
+          "cells": "O.....",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "O"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -422,7 +524,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "gas_commitment_bridge",
@@ -504,10 +606,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -515,10 +625,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -565,10 +683,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -596,10 +722,18 @@
       "default": 2023,
       "keeper_value": 2023,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -627,10 +761,18 @@
       "default": "auto",
       "keeper_value": "auto",
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -658,10 +800,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -689,10 +839,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -720,10 +878,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -787,10 +953,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -798,10 +972,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -809,10 +991,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -821,8 +1011,13 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
         {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
@@ -858,10 +1053,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -869,10 +1072,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -897,10 +1108,18 @@
       "default": "replace",
       "keeper_value": "replace",
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -925,10 +1144,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -936,10 +1163,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -951,10 +1186,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -962,10 +1205,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -974,8 +1225,13 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
         {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
@@ -1013,8 +1269,13 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
         {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
@@ -1031,10 +1292,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1042,10 +1311,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1054,7 +1331,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "pjm_midcurve_belt",
@@ -1072,10 +1349,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1083,10 +1368,18 @@
       "default": 0,
       "keeper_value": 0,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1102,10 +1395,18 @@
         0.97
       ],
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1133,10 +1434,18 @@
       "default": 0.95,
       "keeper_value": 0.95,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1164,10 +1473,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1175,10 +1492,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1186,10 +1511,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1197,10 +1530,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1208,10 +1549,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1243,6 +1592,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        },
+        {
           "row": "measured_ramp_capability",
           "cells": "IUKUIU",
           "cell": "I"
@@ -1255,6 +1609,7 @@
       ],
       "cells": [
         "I",
+        "K",
         "U"
       ],
       "armed_in_bundles": [
@@ -1284,10 +1639,18 @@
       "default": 2023,
       "keeper_value": 2023,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1315,10 +1678,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
@@ -1330,10 +1701,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1341,10 +1720,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1352,10 +1739,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1383,10 +1778,18 @@
       "default": 2023,
       "keeper_value": 2023,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1414,10 +1817,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1425,10 +1836,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1436,10 +1855,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1467,10 +1894,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1498,10 +1933,18 @@
       "default": 2025,
       "keeper_value": 2023,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1568,10 +2011,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1622,7 +2073,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "dam_availability_rebasis",
@@ -1652,10 +2103,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1679,10 +2138,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1706,10 +2173,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1717,10 +2192,18 @@
       "default": null,
       "keeper_value": 0.4,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1748,10 +2231,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1759,10 +2250,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1771,11 +2270,16 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
+          "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
           "cell": "K"
         }
       ],
@@ -1828,10 +2332,18 @@
       "default": 0.1637,
       "keeper_value": 0.1637,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wtx_curtailment_driver",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1859,10 +2371,18 @@
       "default": 0.1004,
       "keeper_value": 0.1004,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wtx_curtailment_driver",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "ercot116_regate_arm",
         "ercot116_regate_base",
@@ -1936,6 +2456,11 @@
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
           "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
         }
       ],
       "cells": [
@@ -1964,110 +2489,9 @@
       ]
     }
   ],
-  "family_matrix_gaps_absent": [
-    "ercot_as_adequacy_frac",
-    "ercot_as_aware_commitment",
-    "ercot_as_critical_frac",
-    "ercot_as_forward_requirement",
-    "ercot_as_n_ramp",
-    "ercot_commitment_posture",
-    "ercot_commitment_posture_min_load_frac",
-    "ercot_ct_offer_surface",
-    "ercot_ecrs_conservative_deployment",
-    "ercot_ecrs_requirement",
-    "ercot_ecrs_requirement_from_year",
-    "ercot_faststart_pool_offer_path",
-    "ercot_gas_contract_haircut",
-    "ercot_gas_delivered_floor_basis",
-    "ercot_load_resource_reserve",
-    "ercot_load_resource_reserve_from_year",
-    "ercot_market_design",
-    "ercot_multiproduct_as_coopt",
-    "ercot_noncampd_plant_availability",
-    "ercot_nonreleasable_as_withholding",
-    "ercot_offer_hrmult_ep_rebasis",
-    "ercot_offer_hrmult_ep_rebasis_bands",
-    "ercot_offer_surface_binned_path",
-    "ercot_offer_surface_cleared_share_path",
-    "ercot_offer_surface_cleared_share_rt",
-    "ercot_offer_surface_cleared_share_rt_mode",
-    "ercot_offer_surface_cleared_share_rt_path",
-    "ercot_offer_surface_cleared_share_state",
-    "ercot_offer_surface_cleared_share_state_path",
-    "ercot_offer_surface_cleared_share_steam",
-    "ercot_offer_surface_lowcurve_floorscoped",
-    "ercot_offer_surface_lowcurve_path",
-    "ercot_offer_surface_midcurve_path",
-    "ercot_offer_surface_min_bin",
-    "ercot_offer_surface_netload_pcts",
-    "ercot_offer_surface_price_cap_frac",
-    "ercot_online_capacity_envelope_extreme",
-    "ercot_online_capacity_envelope_measured",
-    "ercot_ordc_only_scarcity",
-    "ercot_ordc_total_reserve",
-    "ercot_reserve_supply_cap_from_year",
-    "ercot_reserve_supply_forward",
-    "ercot_shoulder_online_span",
-    "ercot_shoulder_online_span_path",
-    "ercot_storage_as_deployment",
-    "ercot_storage_as_deployment_from_year",
-    "ercot_storage_as_duration_gate",
-    "ercot_storage_as_endogenous",
-    "ercot_storage_as_product_credit",
-    "ercot_storage_as_reserve",
-    "ercot_storage_as_reserve_from_year",
-    "ercot_thermal_as_endogenous",
-    "ercot_thermal_dam_availability_hourly",
-    "ercot_thermal_dam_availability_plant",
-    "ercot_west_gas_collapse_freq",
-    "ercot_west_gas_delivered_floor",
-    "ercot_west_gas_endogenous_collapse",
-    "ercot_west_gas_firm_basis",
-    "ercot_wtx_curtail_depth_solar",
-    "ercot_wtx_curtail_depth_wind"
-  ],
-  "family_prose_only": [
-    "ercot_gas_bridge_online_hours",
-    "ercot_offer_surface_cleared_share",
-    "ercot_offer_surface_conditional",
-    "ercot_offer_surface_lowcurve",
-    "ercot_offer_surface_midcurve_conditional",
-    "ercot_thermal_dam_availability_coal",
-    "ercot_west_netload_gas_shape"
-  ],
-  "armed_on_keeper_with_no_cell": [
-    "ercot_as_adequacy_frac",
-    "ercot_as_n_ramp",
-    "ercot_commitment_posture_min_load_frac",
-    "ercot_ecrs_conservative_deployment",
-    "ercot_ecrs_requirement_from_year",
-    "ercot_load_resource_reserve",
-    "ercot_load_resource_reserve_from_year",
-    "ercot_market_design",
-    "ercot_multiproduct_as_coopt",
-    "ercot_noncampd_plant_availability",
-    "ercot_nonreleasable_as_withholding",
-    "ercot_offer_surface_cleared_share",
-    "ercot_offer_surface_cleared_share_rt",
-    "ercot_offer_surface_cleared_share_rt_mode",
-    "ercot_offer_surface_conditional",
-    "ercot_offer_surface_netload_pcts",
-    "ercot_offer_surface_price_cap_frac",
-    "ercot_ordc_total_reserve",
-    "ercot_reserve_supply_cap_from_year",
-    "ercot_storage_as_deployment",
-    "ercot_storage_as_deployment_from_year",
-    "ercot_storage_as_product_credit",
-    "ercot_storage_as_reserve",
-    "ercot_storage_as_reserve_from_year",
-    "ercot_thermal_dam_availability_coal",
-    "ercot_thermal_dam_availability_hourly",
-    "ercot_thermal_dam_availability_plant",
-    "ercot_west_gas_delivered_floor",
-    "ercot_west_netload_gas_shape",
-    "ercot_wtx_curtail_depth_solar",
-    "ercot_wtx_curtail_depth_wind"
-  ],
+  "family_matrix_gaps_absent": [],
+  "family_prose_only": [],
+  "armed_on_keeper_with_no_cell": [],
   "shared_armed_on_keeper": [
     {
       "field": "battery_dispatch_adder",
@@ -3368,6 +3792,11 @@
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
           "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -3387,6 +3816,11 @@
         {
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
+          "cell": "K"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
           "cell": "K"
         },
         {
@@ -3554,8 +3988,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
-          "cell": "O"
+          "cells": "KOOOKO",
+          "cell": "K"
         },
         {
           "row": "energy_reserve_coopt",
@@ -4645,8 +5079,14 @@
       "field": "storage_as_commitment",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -4675,6 +5115,11 @@
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
           "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -4684,8 +5129,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     },
@@ -4708,8 +5159,14 @@
       "field": "wefor_residual",
       "default": null,
       "keeper_value": 0.02,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -4736,172 +5193,18 @@
     "gas_st_startup_cost",
     "offer_curve_smoothing_mid",
     "oil_primary_bin_fuel",
-    "storage_as_commitment",
-    "wefor_residual",
     "wefor_residual_groups"
   ],
   "shared_prose_only": [
     "chp_export_floor_measured",
-    "gas_hh_monthly_shape"
+    "gas_hh_monthly_shape",
+    "storage_as_commitment",
+    "wefor_residual"
   ],
   "shared_excluded": [
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": 2023,
-        "ercot116_regate_base": 2023,
-        "ercot122_offerlevel": 2023,
-        "ercot128_unit_grain": 2023,
-        "ercot129_conditional": 2023,
-        "ercot137_margin_arm": 2023
-      }
-    },
-    {
-      "field": "ercot_load_resource_reserve",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_storage_as_reserve",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_storage_as_reserve_from_year",
-      "default": 2025,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": 2023,
-        "ercot116_regate_base": 2023,
-        "ercot122_offerlevel": 2023,
-        "ercot128_unit_grain": 2023,
-        "ercot129_conditional": 2023,
-        "ercot137_margin_arm": 2023
-      }
-    },
-    {
-      "field": "ercot_multiproduct_as_coopt",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_ecrs_conservative_deployment",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_ordc_total_reserve",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_storage_as_product_credit",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "storage_as_commitment",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_storage_as_deployment",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "wefor_residual",
-      "default": null,
-      "keeper_value": 0.02,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": 0.02,
-        "ercot116_regate_base": 0.02,
-        "ercot122_offerlevel": 0.02,
-        "ercot128_unit_grain": 0.02,
-        "ercot129_conditional": 0.02,
-        "ercot137_margin_arm": 0.02
-      }
-    },
     {
       "field": "coal_prb_passthrough_floor",
       "default": null,
@@ -5022,20 +5325,6 @@
       }
     },
     {
-      "field": "ercot_noncampd_plant_availability",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
       "field": "coal_nameplate_summer_derate",
       "default": false,
       "keeper_value": true,
@@ -5078,77 +5367,7 @@
       }
     },
     {
-      "field": "ercot_west_gas_delivered_floor",
-      "default": null,
-      "keeper_value": 0.4,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": 0.4,
-        "ercot116_regate_base": 0.4,
-        "ercot122_offerlevel": 0.4,
-        "ercot128_unit_grain": 0.4,
-        "ercot129_conditional": 0.4,
-        "ercot137_margin_arm": 0.4
-      }
-    },
-    {
-      "field": "ercot_nonreleasable_as_withholding",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 16,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_offer_surface_cleared_share_rt",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 16,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
       "field": "gas_st_drag_seasonal",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_thermal_dam_availability_hourly",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_thermal_dam_availability_plant",
       "default": false,
       "keeper_value": true,
       "n_bundles_nondefault": 15,
@@ -5173,28 +5392,6 @@
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
         "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "ercot_reserve_supply_forward",
-      "default": false,
-      "keeper_value": false,
-      "n_bundles_nondefault": 3,
-      "bundles": {
-        "ercot71_availability_fullspan": true,
-        "ercot73_state_wall_fullspan": true,
-        "ercot76_ne_import_fullspan": true
-      }
-    },
-    {
-      "field": "ercot_offer_surface_cleared_share_state",
-      "default": false,
-      "keeper_value": false,
-      "n_bundles_nondefault": 3,
-      "bundles": {
-        "ercot73_state_wall_fullspan": true,
-        "ercot76_ne_import_fullspan": true,
-        "ercot86_rtwall_2025_A": true
       }
     },
     {

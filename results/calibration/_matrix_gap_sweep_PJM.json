@@ -31,7 +31,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "online_capacity_envelope",
@@ -364,7 +364,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -375,7 +375,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -386,7 +386,7 @@
       "keeper_value": 0,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -405,7 +405,7 @@
       ],
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -432,7 +432,7 @@
       "keeper_value": 0.95,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -807,11 +807,6 @@
     "pjm_offer_midcurve_path",
     "pjm_offer_midcurve_peak_segments",
     "pjm_offer_midcurve_segments",
-    "pjm_offer_surface_binned_path",
-    "pjm_offer_surface_conditional",
-    "pjm_offer_surface_min_bin",
-    "pjm_offer_surface_netload_pcts",
-    "pjm_offer_surface_price_cap_frac",
     "pjm_offer_surface_within_season",
     "pjm_reserve_commitment_scoped",
     "pjm_reserve_online_gated",
@@ -823,13 +818,10 @@
     "pjm_seam_flow_percentile"
   ],
   "family_prose_only": [
-    "pjm_commitment_posture",
     "pjm_seam_measured_ladder"
   ],
   "armed_on_keeper_with_no_cell": [
     "pjm_offer_midcurve_segments",
-    "pjm_offer_surface_netload_pcts",
-    "pjm_offer_surface_price_cap_frac",
     "pjm_reserve_online_rho",
     "pjm_seam_export_limit",
     "pjm_seam_flow_limit",
@@ -1407,6 +1399,11 @@
           "cell": "I"
         },
         {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
           "cell": "U"
@@ -1610,7 +1607,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -1979,6 +1976,11 @@
           "cell": "."
         },
         {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "U"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "."
@@ -2219,9 +2221,9 @@
           "cell": "K"
         },
         {
-          "row": "storage_measured_anchors",
-          "cells": "KK....",
-          "cell": "."
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "U"
         }
       ],
       "excluded": false,
@@ -2315,7 +2317,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -3472,8 +3474,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     },
@@ -3496,8 +3504,14 @@
       "field": "wefor_residual",
       "default": null,
       "keeper_value": 0.015,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     }
@@ -3518,44 +3532,16 @@
     "gas_st_drag_intercept",
     "gas_st_drag_slope_per_gw",
     "offer_curve_smoothing_mid",
-    "tranche_startup_conditional_runs",
-    "wefor_residual"
+    "tranche_startup_conditional_runs"
   ],
   "shared_prose_only": [
-    "cc_outage_derate_from_top"
+    "cc_outage_derate_from_top",
+    "wefor_residual"
   ],
   "shared_excluded": [
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "pjm135_netpos_keeper_C": 2023,
-        "pjm136_control_A": 2023,
-        "pjm136_lossurf_B": 2023,
-        "pjm137_control_A": 2023,
-        "pjm137_ctheatrate_B": 2023,
-        "pjm140_control_A": 2023
-      }
-    },
-    {
-      "field": "wefor_residual",
-      "default": null,
-      "keeper_value": 0.015,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "pjm135_netpos_keeper_C": 0.015,
-        "pjm136_control_A": 0.015,
-        "pjm136_lossurf_B": 0.015,
-        "pjm137_control_A": 0.015,
-        "pjm137_ctheatrate_B": 0.015,
-        "pjm140_control_A": 0.015
-      }
-    },
     {
       "field": "coal_sub_passthrough_sigmoid",
       "default": false,

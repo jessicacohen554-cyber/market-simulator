@@ -1409,7 +1409,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "K"
         },
         {
@@ -1868,6 +1868,11 @@
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
           "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1887,6 +1892,11 @@
         {
           "row": "gas_offer_margin_zonal_anchor",
           "cells": "K.IUK.",
+          "cell": "K"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
           "cell": "K"
         },
         {
@@ -2071,7 +2081,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "K"
         },
         {
@@ -2440,6 +2450,11 @@
           "cell": "."
         },
         {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "I"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "."
@@ -2756,7 +2771,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "K"
         },
         {
@@ -3893,8 +3908,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     },
@@ -3919,20 +3940,5 @@
   "shared_excluded": [
     "weather_year"
   ],
-  "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "nyiso109_control_A": 2023,
-        "nyiso109_zonalanchor_B": 2023,
-        "nyiso110_control_A": 2023,
-        "nyiso110_spinonline_B": 2023,
-        "nyiso111_control_A": 2023,
-        "nyiso111_rampenv_B": 2023
-      }
-    }
-  ]
+  "live_but_invisible": []
 }

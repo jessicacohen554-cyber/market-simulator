@@ -57,7 +57,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -923,7 +923,6 @@
     }
   ],
   "family_matrix_gaps_absent": [
-    "miso_commitment_posture",
     "miso_midwest_subregional_reserves",
     "miso_native_outage_source",
     "miso_pjm_border_anchor",
@@ -1367,6 +1366,11 @@
           "cell": "U"
         },
         {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
           "cell": "U"
@@ -1531,7 +1535,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -1900,6 +1904,11 @@
           "cell": "."
         },
         {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "U"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "."
@@ -2231,7 +2240,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -3511,8 +3520,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     }
@@ -3542,20 +3557,6 @@
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso102_control_A": 2025,
-        "miso102_sunkfixed_B": 2025,
-        "miso106_control_A": 2023,
-        "miso109_control_A": 2023,
-        "miso109_hy_level_B": 2023,
-        "miso111_control_A": 2023
-      }
-    },
     {
       "field": "miso_seam_flow_limit",
       "default": false,

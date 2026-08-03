@@ -139,7 +139,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -150,7 +150,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -161,7 +161,7 @@
       "keeper_value": 0,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -180,7 +180,7 @@
       ],
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -207,7 +207,7 @@
       "keeper_value": 0.95,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -447,11 +447,6 @@
     "neiso_gas_derate_cap",
     "neiso_gas_derate_slope_per_c",
     "neiso_gas_derate_t0_c",
-    "neiso_offer_surface_binned_path",
-    "neiso_offer_surface_conditional",
-    "neiso_offer_surface_min_bin",
-    "neiso_offer_surface_netload_pcts",
-    "neiso_offer_surface_price_cap_frac",
     "neiso_oil_burn_budget",
     "neiso_operable_capacity_availability",
     "neiso_winter_fuel_inventory",
@@ -465,8 +460,6 @@
     "neiso_gas_derate_cap",
     "neiso_gas_derate_slope_per_c",
     "neiso_gas_derate_t0_c",
-    "neiso_offer_surface_netload_pcts",
-    "neiso_offer_surface_price_cap_frac",
     "neiso_oil_burn_budget",
     "neiso_winter_fuel_inventory",
     "neiso_winter_fuelsec_commit_frac",
@@ -906,6 +899,11 @@
           "cell": "."
         },
         {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
           "cell": "U"
@@ -1052,7 +1050,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -1421,6 +1419,11 @@
           "cell": "."
         },
         {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "K"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "."
@@ -1717,7 +1720,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -2824,6 +2827,11 @@
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
           "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -2863,8 +2871,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     },
@@ -2890,20 +2904,6 @@
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "neiso61_netrev_base": 2023,
-        "neiso61_netrev_margin": 2023,
-        "neiso61_netrev_margin_2022": 2022,
-        "neiso64_meritguard_a1": 2023,
-        "neiso69_control": 2023,
-        "neiso69_shortpartial": 2023
-      }
-    },
     {
       "field": "neiso_oil_burn_budget",
       "default": false,
