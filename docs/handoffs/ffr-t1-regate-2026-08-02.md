@@ -1,4 +1,4 @@
-# FFR-3A — owner decisions executed; T1 re-gate battery **BLOCKED, not run**
+# FFR-3A — owner decisions executed; T1-F battery run; **D-1/D-2 cause an adequacy collapse**
 
 **Session.** FFR Wave 3, the owner-execution + consolidated-battery lane
 (`docs/forecast-readiness-prompt-pack-2026-07.md` §FFR-3A). Branch
@@ -7,11 +7,17 @@
 
 **One-line result.** **Step 0 is complete and pushed**: every signed decision is executed,
 and executing them surfaced **four defects, three of which would have silently invalidated
-this session's own battery**. **Step 1 (the battery) did NOT run** — it is blocked on an
-unmet prerequisite the plan did not anticipate: `data/clean` is empty on a fresh container
-and the whole curated tree must be regenerated first. **No verdict, no scorecard and no
-board regeneration is reported here, because none was measured.** §6 states exactly what a
-successor needs.
+this session's own battery**. The T1-F half of the battery then **ran** (after clearing an
+unanticipated `data/clean` prerequisite, §6.1) and returns a **headline finding the owner
+needs before anything is promoted: the signed decisions D-1 + D-2 drive a severe
+capacity-adequacy degradation across every ISO measured** — in ERCOT, attributed against a
+paired control arm. **Nothing is tuned, nothing is unarmed, nothing is registered** (rules
+1/14): the finding is written up in §6.4 as an open blocker for the owner, not acted on.
+
+> **⚠ READ §6.4 BEFORE PROMOTING ANYTHING.** ERCOT's reserve margin reaches **−1.5 %** and
+> CAISO's **−3.1 %**. The owner signed D-2 accepting a *disclosed adequacy change* (MISO's
+> I12 going WARN→FAIL); what was measured is materially larger and broader than that
+> disclosure. This is a finding, not a recommendation — the call is the owner's.
 
 ---
 
@@ -213,9 +219,9 @@ the regenerated pair is the **plain-default** leg (per §4.3), not `--capacity-m
 
 ---
 
-## 6. Why the battery did not run, and what a successor needs
+## 6. The battery — prerequisite, results, and the headline finding
 
-### 6.1 THE BLOCKER — `data/clean` is empty on a fresh container
+### 6.1 THE PREREQUISITE (cleared) — `data/clean` is empty on a fresh container
 
 The first T1-F pair (NEISO + NYISO) was launched and **failed within seconds**, correctly and
 loudly:
@@ -267,7 +273,72 @@ decision, so it was left exactly as found; but any T1-H leg the successor runs i
 confound, and the re-gate cannot claim to measure the shipped configuration on that half
 until it is signed either way.
 
-### 6.3 Nothing was registered, and nothing should be
+### 6.3 T1-F measured results (2026–2030, shipped posture per §4.3)
+
+Every leg cold-solved post-epoch, 5/5 years, `error: None`. **Read `n_solved_years`, never
+the console `invariants:` line** (§6.1). `curve` is the RESOLVED per-ISO arm now recorded
+correctly by the §3.4 fix — each matches its ISO's shipped arm, which is what the §4.3
+posture split was built to achieve.
+
+| leg | yrs | wall | peak RSS | curve | shipped? | cache key | FAIL | WARN |
+|---|---|---|---|---|---|---|---|---|
+| NEISO | 5/5 | 6.7 m | 3.32 GB | `True` | ✓ ON | `bc01afd6e7866422` | I7 | I12 |
+| NYISO | 5/5 | 9.7 m | 3.84 GB | `False` | ✓ OFF | `2bd878d87848785c` | I7 | I12 |
+| ERCOT | 5/5 | 8.6 m | 4.01 GB | `False` | ✓ energy-only | `ab1d074828bebabe` | I3, **I12** | I14 |
+| CAISO | 5/5 | 18.1 m | 5.06 GB | `True` | ✓ ON | `862d176d609252f9` | I3, **I7**, **I12** | — |
+| *ERCOT **control*** | *5/5* | *8.8 m* | *4.02 GB* | *`False`* | *pre-decision* | `e9e5e1c911c6424c` | *I3* | *I12, I14* |
+
+PJM and MISO were still solving when this was written; §9 records what that leaves open.
+
+### 6.4 ⚠ HEADLINE FINDING — D-1 + D-2 cause a capacity-adequacy collapse
+
+**Every ISO measured fails an adequacy invariant** (I7 accredited-firm floor and/or I12
+reserve-margin band). Two are severe:
+
+* **ERCOT** — reserve margin declines monotonically **9.1 % → 3.8 % → 3.0 % → −1.5 %**
+  (band [13.8 %, 28.7 %]) with unserved energy rising to **0.41 % of load**.
+* **CAISO** — reserve margin **negative from 2027** (1.8 %, −3.1 %, −0.3 %, …; band
+  [15.0 %, 30.0 %]) and accredited firm capacity short by **6.6 GW in 2026 widening to
+  9.2 GW**.
+
+**Attribution — ERCOT, against a paired control arm.** The control re-runs the identical
+leg at the *pre-decision* defaults (`--retirement-rule legacy --no-entry-rate-limits
+--no-entry-commissioning-lag`) and takes a distinct cache key, confirming it is genuinely a
+different scenario (the §3.1 separability property doing its job):
+
+| invariant | TREATMENT (D-1+D-2, shipped) | CONTROL (pre-decision) | |
+|---|---|---|---|
+| **I12** reserve margin | **FAIL** — 4-year decline to **−1.5 %** | **WARN** — one year only (2030: 12.4 %) | **MOVED** |
+| **I3** unserved | FAIL — up to **0.41 %** of load | FAIL — flat **0.02–0.03 %** | ~**14×** worse |
+| I14 price | WARN | WARN | unchanged |
+
+So in ERCOT the signed decisions **cause** the collapse. I3 fails in *both* arms, so a small
+slack is pre-existing on main — but its magnitude is D-1/D-2. Causal commits: **`24b1602`**
+(D-1) and **`3e33f15`** (D-2), first reachable in a T1-F leg via **`f5da701`**.
+
+**Mechanism (coherent, not a bug).** The pipeline rule screens
+`net_revenue < going_forward_cost`; in energy-only ERCOT there is no capacity revenue to
+offset it, so it retires readily, while `entry_rate_limits` caps how fast replacement can
+arrive. Retirement accelerates and replacement is throttled — exactly the two halves the
+owner armed together.
+
+**Why this still needs the owner.** D-2 was signed accepting a *disclosed adequacy change* —
+specifically **MISO's I12 going WARN→FAIL**. What was measured is materially larger
+(negative reserve margins, ~14× unserved energy) and broader (every ISO measured). **CAISO
+matters most for scope**: it *pays* a capacity price (the flat CPM proxy — FFR-2E proved its
+curve arm inert for want of a published demand curve) and still goes negative, so this is
+**not** confined to energy-only markets.
+
+**Scope limit, stated plainly.** Only **ERCOT** is attributed. One control does not license a
+causal claim about five other markets, and CAISO's capacity-market structure differs
+materially. The cross-ISO pattern is an **observation**; MISO is the highest-value second
+control, since the sitting predicted its I12 flip by name.
+
+**Nothing was tuned, unarmed, or band-widened in response (rules 1/14).** A structurally
+grounded mechanism does not get reverted because a metric moved; the correct output is this
+finding, with its evidence, for the owner.
+
+### 6.5 Nothing was registered, and nothing should be
 
 No forecast run was registered; `frontend/data/forecast/` is untouched, `ff-verdicts.json`
 and `program-status.json` are unchanged, and the FF-3E scorecard was not regenerated —
@@ -314,8 +385,13 @@ tested this session, so there is nothing to adjudicate.
 
 ## 8. Open blockers (not fixed, per rules 1/14)
 
-1. **`data/clean` is a hard, undocumented prerequisite** for every forecast leg and takes
-   substantial wall time to rebuild on a fresh container (§6.1).
+0. **⚠ D-1 + D-2 cause a capacity-adequacy collapse (§6.4)** — ERCOT reserve margin to
+   **−1.5 %**, CAISO to **−3.1 %**, unserved energy ~14× the control in ERCOT; every ISO
+   measured fails an adequacy invariant. Attributed against a paired control **in ERCOT
+   only**. Larger and broader than the adequacy change D-2 was signed against. **Owner
+   decision — do not promote on these legs without reading §6.4.**
+1. **`data/clean` is a hard, undocumented prerequisite** for every forecast leg; measured at
+   **≈55 min / 50 datatypes / 1.6 GB** on a fresh container (§6.1).
 2. **C.4(a) B1** — no flag combination expresses the shipped per-ISO posture for all six
    ISOs; `GOLDEN_CMC_BY_ISO` and the shipped dict disagree on NYISO (§4.3). Unsigned.
 3. **C.4(c)** — the T1-H harness pins two fields against production (§6.2). Unsigned.
@@ -331,6 +407,24 @@ tested this session, so there is nothing to adjudicate.
 
 ## 9. What this session does NOT claim
 
-No T1-F, T1-H, T1-X, FC-6 or FF-3E result. No per-ISO §2.1b gate scorecard. No regression
-against FF-2D. No promotion recommendation. No verdict flip. Those require the battery, and
-the battery did not run.
+**Measured and reported:** the T1-F half — NEISO, NYISO, ERCOT, CAISO at the shipped posture,
+plus an ERCOT pre-decision control (§6.3/§6.4). PJM and MISO were still solving at write-up.
+
+**NOT measured, and therefore not claimed:**
+
+* **No T1-H re-scores.** The four curve legs D-1 re-opens were not re-solved, so **every
+  FC-3 verdict in `ff-t1-gate-2026-07.md` §4.1 remains a pre-epoch citation** and none is
+  refreshed here. The T1-H half also carries the unsigned C.4(c) confound (§6.2).
+* **No T1-X fold, no FC-6 driver battery, no FF-3E readiness re-run.**
+* **No per-ISO §2.1b gate scorecard, and no regression table against FF-2D.** Producing
+  either needs `forecast_verdict` scoring over the full battery, which needs PJM/MISO and the
+  T1-H legs.
+* **No board regeneration and no registration** — `ff-verdicts.json`, `program-status.json`,
+  the FF-3E scorecard and `frontend/data/forecast/` are all untouched (§6.5). The backcast
+  registry was never touched.
+* **No mechanism-matrix verdict change.** Only the two `def:` stamps were refreshed (§7.4);
+  no cell was adjudicated, because the T1-F legs are one lane of a battery that did not
+  complete.
+* **No promotion recommendation.** §6.4 is a measured finding routed to the owner; the
+  promotion and gate-open calls remain the owner's.
+* **Cross-ISO causation is NOT claimed.** Only ERCOT is attributed against a control.
