@@ -1,6 +1,6 @@
 {
   "iso": "CAISO",
-  "keeper": "2026-08-03-caiso156-meter-screen-b",
+  "keeper": "2026-08-03-caiso162-per-year-import",
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 671,
   "n_matrix_rows": 181,
@@ -1106,8 +1106,8 @@
     {
       "field": "caiso_per_year_import_caps",
       "default": false,
-      "keeper_value": false,
-      "keeper_arms_it": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
@@ -1118,13 +1118,12 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".OUUK.",
-          "cell": "O"
+          "cells": ".KUUK.",
+          "cell": "K"
         }
       ],
       "cells": [
-        "K",
-        "O"
+        "K"
       ],
       "armed_in_bundles": [
         "caiso162_peryear_import_caps",
@@ -1281,6 +1280,11 @@
         {
           "row": "gas_commitment_bridge",
           "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
           "cell": "K"
         }
       ],
@@ -2013,8 +2017,8 @@
       "owning_rows": [
         {
           "row": "lcr_tsl_published",
-          "cells": ".OUUK.",
-          "cell": "O"
+          "cells": ".KUUK.",
+          "cell": "K"
         },
         {
           "row": "capacity_deliverability",
@@ -2351,21 +2355,6 @@
       "exclusion_reason": null
     },
     {
-      "field": "entry_commissioning_lag",
-      "default": true,
-      "keeper_value": false,
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "entry_dampers",
-          "cells": "UUUOUU",
-          "cell": "U"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
       "field": "entry_lookahead_reprice",
       "default": true,
       "keeper_value": false,
@@ -2375,26 +2364,6 @@
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
           "cell": "K"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
-      "field": "entry_rate_limits",
-      "default": true,
-      "keeper_value": false,
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "reserve_margin_backstop",
-          "cells": ".KKKKK",
-          "cell": "K"
-        },
-        {
-          "row": "entry_dampers",
-          "cells": "UUUOUU",
-          "cell": "U"
         }
       ],
       "excluded": false,
@@ -2468,7 +2437,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         }
       ],
@@ -2488,7 +2457,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -2668,7 +2637,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -2808,7 +2777,7 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -3188,8 +3157,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".OUUK.",
-          "cell": "O"
+          "cells": ".KUUK.",
+          "cell": "K"
         },
         {
           "row": "demand_repairs",
@@ -3353,7 +3322,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -3503,7 +3472,7 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -4008,8 +3977,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".OUUK.",
-          "cell": "O"
+          "cells": ".KUUK.",
+          "cell": "K"
         },
         {
           "row": "demand_repairs",
@@ -4180,21 +4149,6 @@
           "row": "negative_renewable_offers",
           "cells": "GK....",
           "cell": "K"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
-      "field": "net_cone_forward_escalation",
-      "default": "reindex_gross",
-      "keeper_value": "hold_last",
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "net_cone_forward_vintages",
-          "cells": "..OOOO",
-          "cell": "."
         }
       ],
       "excluded": false,
@@ -4493,21 +4447,6 @@
           "row": "measured_ct_heat_rates",
           "cells": "IKKKKK",
           "cell": "K"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
-      "field": "retirement_rule",
-      "default": "pipeline",
-      "keeper_value": "legacy",
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "economic_retirement_screen",
-          "cells": "OORRRR",
-          "cell": "O"
         }
       ],
       "excluded": false,
