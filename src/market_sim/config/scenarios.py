@@ -2205,6 +2205,61 @@ class ScenarioConfig:
     # NYISO-only. Promotion gate: leave-one-year-out within 2023-2025
     # (rule 22). See docs/handoffs/nyiso-overrun-underrun-2026-07.md §4.
 
+    nyiso_seny_rcpf_increment_step: bool = False  # GATED, default-OFF
+    # NYISO SENY 30-minute demand curve as the PUBLISHED TWO TIERS — a $500/MW
+    # base over 1,300 MW PLUS the $40/MW increment above it — instead of the
+    # base-only curve the model carries. A rule 14 [R-ACCURATE] OMISSION fix of
+    # the same class as nyiso-83/84's missing Long Island and East families: a
+    # published tier the model never carried, NOT a re-levelling of the base
+    # (rule 23 — the $500, its critical_mw = 0 and the n_ramp discretization are
+    # untouched, and this flag adds no rung to the base ramp).
+    #
+    # THE PUBLISHED CURVE. The NYISO SOM states the SENY 30-minute product as
+    # "at least 1,300 MW for all hours" at $500/MW PLUS an additional
+    # condition-varying increment binding a subset of hours at $40/MW, and the
+    # 2023 SOM p. A-132 prints the pair as one object — "SENY $500+$40" — as
+    # the as-enforced 2022-2023 curves. The $40 is NOT a new number (rule 5):
+    # it is the SAME Ancillary Services Manual §6.8 item 12 already pinned for
+    # the East 30-minute family, whose clause names Southeastern explicitly
+    # ("Eastern, SOUTHEASTERN, New York City, or Long Island 30-Minute Reserves
+    # ... shall be $40/MW"), on the same July-2021 vintage that spans all of
+    # 2023-2025. The breakpoint is the published 1,300 MW base already in
+    # NYISO_RCPF_LOCATIONAL, read from that registry rather than re-typed.
+    #
+    # THE DEFECT. nyiso_dynamic_reserve_requirements already ENFORCES the
+    # increment — the measured #1344 series runs 1,550/1,800 MW against the
+    # 1,300 MW base for most of the day — but nothing ever PRICED it: the whole
+    # shortfall is charged against the base curve, whose very first rung
+    # ($500/8 = $62.50) already sits above the ENTIRE measured SENY envelope.
+    # MEASURED ex ante with no solve spent (nyiso-117,
+    # results/calibration/nyiso117_seny_rcpf_curve_screen.json): the isolated
+    # SENY-only adder on NYISO's OWN posted zonal DA prices caps at
+    # $23.92/$30.37/$40.00 in 2023/24/25, with 52 hours of 2025 at EXACTLY
+    # $40.00 and ZERO hours above it in any year — the published increment
+    # realised as an atom at its ceiling — while the $500 base is never reached
+    # in 26,301 hours. That is why the BASE tier keeps its ramp: its shape is
+    # UNIDENTIFIED by the instrument, and nyiso-115's discipline is that an
+    # unidentified shape is left alone.
+    #
+    # CONSTRUCTION. Shortfall bands ascend cheapest-first, so the increment tier
+    # is the shallowest band and prices FIRST at $40; only a shortfall deep
+    # enough to eat into the 1,300 MW base reaches the base ramp. Total step
+    # width stays EXACTLY the hour's requirement in every hour — base clipped to
+    # min(1300, requirement[t]), increment max(0, requirement[t] - 1300), which
+    # sum to requirement[t] for any requirement, including the zero-requirement
+    # Thunderstorm-Alert hours.
+    #
+    # RULE 19 [R-ONE-MECH] vs nyiso_ordc_measured_step_span (armed on the
+    # keeper): that flag exists to make a SINGLE-tier curve span the hour's
+    # measured requirement. This construction carries the hourly requirement
+    # natively, in the increment band — which is what the requirement above the
+    # base physically IS — so SENY takes this branch INSTEAD of the span branch,
+    # exactly as li_30min_total's family-scoped ladder already opts itself out
+    # of the global flag. SUBSTITUTION, never stacking; every other family's
+    # span behaviour is untouched, and with this flag off the span flag behaves
+    # on SENY exactly as it does today. Default off, byte-identical when off;
+    # NYISO-only; requires --energy-reserve-coopt.
+
     nyiso_hydro_reserve_eligible: bool = False  # GATED, default-OFF
     # NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, lever 3).
     # When on (NYISO + energy_reserve_coopt), NYISO's in-fleet conventional
