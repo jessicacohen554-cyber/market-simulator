@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-31-caiso146-control",
+  "run_id": "2026-08-03-caiso162-control",
   "iso": "CAISO",
-  "label": "caiso146 control",
+  "label": "caiso162 control",
   "target_years": [
     2023,
     2024,

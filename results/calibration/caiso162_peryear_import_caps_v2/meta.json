@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T22:51:50",
+  "timestamp": "2026-08-03T19:11:19",
   "iso": "CAISO",
   "years": [
     2023,
@@ -37,6 +37,7 @@
   "tranche_startup_measured_runs": false,
   "tranche_startup_conditional_runs": false,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": false,
   "coal_offer_margin": false,
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
@@ -73,7 +74,8 @@
     "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": true,
     "nuclear_unit_availability": true,
-    "caiso_firm_import_selfsched_clip": true
+    "caiso_firm_import_selfsched_clip": true,
+    "caiso_per_year_import_caps": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -236,6 +238,7 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": true,
   "capacity_deliverability_limits": true,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -252,6 +255,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -297,10 +301,11 @@
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet"
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet",
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
   },
-  "git_sha": "902c05c",
-  "basis_sha": "902c05c5f8bc772534908e9fc5c6e79d55f2db54",
+  "git_sha": "951f869",
+  "basis_sha": "de504ad54d7119131073c751538be71267698c99",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
