@@ -244,3 +244,99 @@ phenomenon MISO's own data does not exhibit at scoreable scale.
 **Artifacts this session will produce:** this pre-registration,
 `scripts/probes/_miso121_dual_fuel_screen.py`, its JSON + text output, and
 `results/calibration/FINDING-miso121-dual-fuel-switching-2026-08-03.md`.
+
+---
+
+## 8 — AMENDMENT (Phase-0 outcome + Phase-1 gates), written BEFORE Phase 1 solves
+
+### 8.1 Phase 0 returned **LIVE** — no inertness route fired
+
+| leg | measured (2023 / 2024 / 2025) | route |
+|---|---|---|
+| **A** capability | 371 / 371 / 369 tranches, 89 / 89 / 88 plants, **15,827 / 15,827 / 15,825 MW = 23.34 / 23.30 / 23.49 %** of MISO gas capacity | I-A does **not** fire (bar 500 MW / 1.0 %) |
+| **B** switch price | **12/12** measured MISO F923 Petroleum months every year; **20.36 / 18.22 / 17.21** $/MMBtu; the national fallback constant (18.0) is never used | I-B does **not** fire (bar 50 %) |
+| **C** binding | `max Δ_fuel` **197.83 / 107.85 / 45.87** $/MMBtu over **15,792 / 18,192 / 11,568** binding gen-hours of 3.25 M | I-C does **not** fire (bar ≤ 1e-9) |
+| **D** windows | **90 / 459 / 452** gas-labelled CAMPD unit-hours across **25 / 43 / 40** distinct units lift from p50 **53.91** (pipeline gas) into the 70–80 distillate band | I-D does **not** fire |
+
+**I-E / L5 (marginality).** L5 as literally written restricts to tranches the
+keeper's own P1 leaves partially loaded, which needs **generator-grain** P1
+dispatch — an artifact the keeper bundle does **not** commit (it carries
+`class_hourly` only). L5 is therefore evaluated on **the statistic the miso-119
+DO-NOT-REDO named as predictive**: the **p50 of `Δ_offer` over binding
+gen-hours** = **64.30 / 93.93 / 108.23 $/MWh**, against the 0.10 $/MWh bar —
+clearing it by ~3 orders of magnitude. This is explicitly **not** a
+`max |Δ_offer|` argument (that max is 2,539.8 / 4,531.1 / 1,927.1 and is
+disclaimed as an upper bound only, per the standing DO-NOT-REDO). The
+substitution is **recorded as a deviation from §5.2's literal text**, forced by
+a missing artifact, and it is a *stricter* statistic than the one it replaces.
+
+**Two probe defects were found and fixed BEFORE any adjudication**, both of
+which would have produced a **wrong `I`**: (i) `facilityId` is string-typed so
+an int-valued filter matched zero CAMPD rows — a hard-fail guard now prevents
+route I-D firing on an empty query; (ii) the roster keys **plants**, and MISO
+dual-fuel plants host **coal** units whose CO2 intensity (93–97 kg/MMBtu) sits
+**above** oil, so the original open-ended `≥ 63.5` threshold booked coal as oil
+and over-counted **13×** (6,181 → 459 in 2024). Leg D is now scored on
+gas-labelled units inside a **bounded** 70–80 band, with CAMPD's own
+diesel-labelled units (p50 **73.65 / 73.46 / 73.65**) as the internal control
+that places the band.
+
+**§5.3 therefore authorizes Phase 1.**
+
+### 8.2 Phase-1 construction
+
+Same-HEAD two-arm A/B via `scripts/replay_keeper.py` on
+`results/calibration/miso117_ctheatrate_B`, `2023 2024 2025` per arm in one
+bundle, **arms sequential**:
+
+* **A (control)** — `miso121_control_A`, no `--set`; a zero-delta replay.
+* **B (treatment)** — `miso121_dualfuel_B`, `--set dual_fuel_switching=true`.
+
+### 8.3 Phase-1 gates (BINDING, fixed here before either arm solves)
+
+* **K1 flag fidelity** — B records `dual_fuel_switching=true`, A records
+  `false`; **both** record the two siblings OFF
+  (`dual_fuel_oil_reattribution`, `dual_fuel_oil_daily_parity`) — rules 19/26.
+* **K2 control integrity** — A reproduces the committed miso-117b keeper on the
+  scorecard basis (same determination, all nine criterion statuses). The
+  strict-byte class-hour basis is **REPORTED**; any same-HEAD drift is shared
+  identically by both arms, leaving the A/B unconfounded (the ercot-150
+  precedent).
+* **K3 liveness** — **dispatch leg** max class-hour `|ΔMW| ≥ 50` in ≥1 year
+  **and** **price leg** max zonal `|Δλ| ≥ 0.10 $/MWh` in ≥1 year. Phase 0
+  predicts a decisive pass; **the prediction is not the gate**.
+* **K4 single delta** — the two scenario blocks differ in **exactly one** key.
+* **K5 year span** — both bundles `[2023, 2024, 2025]` (rules 16 / 22).
+* **K6 direction integrity** — the cap is **strictly one-sided**: it can only
+  ever *lower* a capable unit's fuel price. So **no capable tranche's offer may
+  rise anywhere**, and system λ must not rise on net in any year. (A one-sided
+  direction gate is right here for the same reason pjm-144 correctly *dropped*
+  it for the mean-zero zonal anchor: that mechanism was two-sided, this one is
+  not.) A violation stops the session for investigation; it is never waived.
+* **K7 switched-volume plausibility — REPORTED, NOT A GATE.** Phase 0 measured
+  90 / 459 / 452 oil-signature **unit**-hours in CAMPD against 15,792 / 18,192 /
+  11,568 binding **tranche**-hours in the model. **These are different grains**
+  (tranche vs unit; 89 capable plants vs the 49 carrying CAMPD coverage) and no
+  ratio between them is a gate. The arm must nonetheless **report the switched
+  generation (TWh)** so any over-switching is visible and quantified rather than
+  buried. An implausible volume is named as an open issue.
+
+### 8.4 Disposition (pre-committed)
+
+* **K3 fails** → cell `U` → **`I`**, keeper unchanged, arm registered.
+* **K6 fails** → stop, investigate, **no promotion**.
+* **K1–K6 all pass** → arm B is a keeper **candidate**, and the rubric
+  (`calibration_verdict`) decides. **Rule 1 `[R-STRUCT]` governs the promotion
+  argument in both directions, and this is fixed now because the direction is
+  known in advance:** the cap only *lowers* winter offers, which is plausibly
+  the direction MISO's ledgered C3a/C3c caveats want. **A favourable residual
+  move is therefore declared NON-EVIDENCE in advance** — the lever stands or
+  falls on its measured identification (EIA-860 capability + MISO's own F923
+  oil price + CAMPD-observed switching, **zero free parameters**). Symmetrically,
+  an *unfavourable* residual move does **not** by itself reject it: a
+  structurally-correct, measured mechanism stays in, and the real root cause is
+  then pursued separately. Any criterion regression is **REPORTED, never
+  hidden**, and a promotion recommendation that rests on the residual rather
+  than the identification is inadmissible.
+* **Rule 21 `[R-DOF]`** — the mechanism adds **zero free parameters**; `n_residual`
+  must be unchanged.
