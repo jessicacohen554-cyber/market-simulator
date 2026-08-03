@@ -530,3 +530,31 @@ cap is derived from its own market's EIA-860 record.
   having pre-judged it.
 * **No ISO's verdict transferred to another** (rule 25). ERCOT's null says nothing about PJM, and
   neither says anything about the four ISOs not tested.
+
+---
+
+## 10. What would actually settle this — for the successor charter
+
+Written as observations, not as a recommendation to arm or promote anything.
+
+1. **The T1-FF 3-year window is the wrong instrument for testing exit mechanisms, and that is
+   now measured rather than suspected.** Both test ISOs execute **0.000 GW** of economic
+   retirement across 2023–2025. The reasons differ and both are structural: ERCOT never enters
+   the pipeline at all, and PJM enters it but every admitted unit re-clears the bar and reverses
+   before its execution year. Any successor that wants to measure an exit mechanism against
+   actuals needs a posture whose window actually produces executions — the T1-H 2021–2025
+   vintage-2020 posture FFR-2B used (where PJM's pipeline coal wave was 14.756 GW) is the
+   obvious candidate, because a 5-year window clears `L_coal` = 3 with room to spare.
+2. **The throughput cap has still never bound in a full solve.** It is correct against a
+   synthetic cohort and inert in both measured ISOs, for the same reason: the cap acts on the
+   *due* set, and the due set is empty everywhere in this window. Its first real test needs
+   executions, i.e. the same posture change as (1).
+3. **The cap-grain fix's 93 % PJM effect deserves a scoring pass, not a promotion.** It is a
+   large, structurally-motivated change to pipeline membership with no measured skill
+   consequence yet. Under rule 22 it needs leave-one-year-out on a posture where the exits
+   execute; under rule 1 it stays in regardless of whether the residual moves, because the grain
+   it corrects is a defect either way.
+4. **The FH-1 §3.3 gate's I12 inversion is a live question this lane did not own.** The harness
+   now runs 40.2 % reserve margin against a 28.7 % ceiling in ERCOT while retiring nothing.
+   Whether that is the pipeline rule under-retiring, the entry side over-building, or the ERCOT
+   band's known 6.65 pp basis mismatch (FFR-3C §2.1) is unattributed here.
