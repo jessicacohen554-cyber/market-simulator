@@ -884,7 +884,50 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**
+
+**pjm-148 (2026-08-03): the host-steam holdout lane is REFUSED with evidence — no LP
+solved, keeper untouched.** Prereg
+`PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md` committed before any measurement;
+finding `FINDING-pjm148-chp-host-steam-refused-2026-08-03.md`. The lane pjm-147 §8 named
+(`chp_btm_pct` / `chp_grid_pmin_mw` / the `chp_steam` floor **level**, to close CC_CHP
++2.49/+0.79/+0.39 TWh) has **no admissible arm**:
+
+* **κ refutes the capacity/BTM half, harder than at pjm-131** — 0.0101/0.0404/0.0236 on
+  the *current* keeper vs the inherited ≤ 0.20 rule; 2023 more than **halved** from
+  pjm-131's 0.0226 because pjm-147's dearer offer moved CC_CHP further from its ceiling.
+* **No measured host share exists for PJM, and the repair is bigger than pjm-131 scoped** —
+  `chp-btm-share` re-curates to 35 rows, **35 degenerate AND zero CC_CHP rows** (all 35
+  `ST_CHP`, because the steam-reporting CEMS unit is a **boiler**; 1,754/1,755 PJM
+  steam-reporting unit-years carry zero MWh). Fixing the electrical-channel limb alone
+  still leaves CC_CHP at **0 % coverage**.
+* **The floor DOES bind and the keeper's own artifact under-reports it** — 0.994/0.692/
+  0.815 TWh (11.0/7.9/10.4 %, the figure the handoff quoted) on a floor **verified
+  unchanged** into the current keeper (436.4 MW mean, 2023), which nonetheless carries
+  **no CC_CHP `chp_steam` row at all**.
+* **Refused on identification, not liveness** — only a floor *reduction* helps (CC_CHP is
+  over in all three years, so raising it, incl. deriving the WP-3 `steam_level_cf` PJM
+  lacks, is wrong-signed by construction), and both channels are closed: `chp_pmin_cf` by
+  rule 23 `[R-FROZEN-DERIVE]`, `btm_share` by the artifact. Anything else is sized by the
+  gap — the neiso-71 kill, rules 21/24. Deleting the floor entirely reaches only ~0.99 of
+  2.49 TWh anyway, and is separately barred by rules 1/14.
+
+**DO-NOT-REDO:** do not re-derive a PJM CC_CHP host-steam floor or BTM share against this
+residual; do not arm `chp_steam_floor_p25` for PJM (pre-WP-3 artifact ⇒ inert, and
+wrong-signed regardless). **Structural reading:** κ ≈ 0.01 plus an ~11 % floor means ~89 %
+of PJM CC_CHP is *voluntary economic clearing* — a merit-order residual, not a quantity one.
+
+**Side finding, needs its own cross-ISO charter (not PJM's to land):** D-2 floor
+attribution is **path-dependent**. The dispatch join at `legitimacy_diagnostics.py:2325-2327`
+(predating caiso-155 — not a regression from it) uses `dispatch/*.parquet` when present,
+else the dashboard **run payload**, which is CAMPD-bench-keyed and holds **none** of PJM's
+14 CC_CHP plant codes (311 plants, PJM 2023). The protocol *mandates* the slim/payload
+path, so CC_CHP/ST_CHP/nuclear silently lose all D-2/D-4 attribution — pjm-146 onward
+dropped 10 rows vs pjm-144, incl. a **272 TWh `nuclear_mustrun`** row. Proven by running
+current code over `pjm144_control_A`, whose own committed file records
+`CC_CHP chp_steam 0.9938 TWh`, and getting zero CC_CHP rows. **No verdict moves** (all
+three classes are C8-exempt), but rule 18 `[R-FORCED-BUDGET]` is scored entirely from this
+file, so it is expected to affect **every ISO's slim-scored keeper**.
 
 **pjm-147 (2026-08-03): the triage's rank-2 lever is BUILT, SOLVED, PROMOTED — and the
 session also closes caiso-158's deferred PJM re-gate.** New keeper
