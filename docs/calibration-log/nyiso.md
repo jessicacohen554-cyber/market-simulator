@@ -3924,9 +3924,9 @@ Next shorthand: nyiso-113.
 
 ---
 
-## nyiso-113 — THE RULE-28(c) MATRIX-GAP SWEEP: 13 rows added, three cells adjudicated with no solve, the 227-3 phase reading inverted, and a locational reserve family shown live (2026-08-02)
+## nyiso-113 — THE RULE-28(c) MATRIX-GAP SWEEP: 13 rows added, three cells adjudicated with no solve, the 227-3 phase reading inverted, and the published Zone-K reserve ladder PROMOTED (2026-08-02)
 
-**Keeper UNCHANGED at `2026-08-02-nyiso112-ramp-plus-peaker`.** Pre-registration
+**Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → `2026-08-02-nyiso-113-li-locational`, CALIBRATED-WITH-CAVEATS.** Pre-registration
 `PREREG-nyiso113-li-locational-reserve-2026-08-02.md` (committed and pushed
 before either arm solved). Finding:
 `results/calibration/FINDING-nyiso113-matrix-gap-sweep-2026-08-02.md`.
@@ -3978,9 +3978,14 @@ headroom falls below the hourly requirement in exactly 5 hours of 2025
 0 hours of 2023/2024 once the on/off-peak step is honoured; the solved reserve
 dual moves in exactly those hours. Effect is small — **2025 LI max 483.37 →
 489.62 (+$6.25)**, everything else unchanged, zero slack and dump. **C3c
-UNCHANGED at 3/0/14.** Cell stays **O, not promoted**: kill gates P1/P2/P4 need
-scorer output the replay path does not produce, and claiming a verdict without
-them would breach the prereg.
+UNCHANGED at 3/0/14.**
+
+**PROMOTED (cell K).** Determination **CALIBRATED-WITH-CAVEATS**, C3c the sole
+ledgered caveat. **No kill gate fires and every scored criterion is identical to
+the same-HEAD control's** — C1 14/14 all / 10/10 free, C2, C3a, C3b, C4, C6, C7,
+C8 all PASS in both arms; C3c FAILs in both at 3/0/14. Ledger 29 → 30 entries,
+`n_residual` unchanged at 6, zero free parameters added. Promoted on rule 1
+`[R-STRUCT]` / rule 14 `[R-ACCURATE]`, not on gate movement.
 
 ### 4. The 227-3 phase reading, INVERTED
 
