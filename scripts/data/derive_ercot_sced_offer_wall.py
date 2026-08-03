@@ -8,7 +8,9 @@ real $150-800 moderate-tightness band cleared on the RT (SCED) offers of the
 ~3 GW online spare beyond the AS carve-out — a surface the 60-Day DAM
 disclosure genuinely does not contain. This derive measures that surface from
 the 60-Day **SCED** Gen Resource Data full-year corpus on disk (the
-publication-month shards ``data/raw/ercot/YYYY-MM.part*.parquet``):
+publication-month shards ``YYYY-MM.part*.parquet`` under ``data/raw/ercot/``
+and/or ``data/raw/ercot/SCED/`` — see ``_CORPUS_DIRS``; the 2026-08-03
+delivery-2023 re-upload lives in the subdirectory):
 
 * Per SCED interval, per merchant gas class (CCGT90/CCLE90 -> CC,
   SCGT90/SCLE90 -> CT; ST_GAS deliberately EXCLUDED — rule 19, the steam class
@@ -134,6 +136,25 @@ def _coerce_sced_numeric(df: pd.DataFrame) -> pd.DataFrame:
 # years — a rule-22 holdout leak.
 _PUB_SHARD_RE = re.compile(r"(\d{4})-(\d{2})\.part\d+\.parquet$")
 
+# Where the publication-month corpus may live: the top-level MIS directory
+# (the original 2026-07-21 full-corpus upload, purged from the repo by the
+# 2026-07-22 large-blob history rewrite) and the ``SCED/`` subdirectory (the
+# 2026-08-03 owner re-upload of the delivery-2023 window, ERCOT-151 §4 ask 1).
+# Both are scanned; a filename present in both resolves to the LAST directory
+# listed (the re-upload wins over a stale top-level copy).
+_CORPUS_DIRS: tuple[Path, ...] = (SCED_DIR, SCED_DIR / "SCED")
+
+# A publication-month corpus supersedes the legacy sample-day extracts for a
+# delivery year ONLY when it covers a majority of that year's 12 delivery
+# months, judged from filenames alone by the exact 60-day lag (delivery month
+# M's primary publication month is M+2). This guards the partial-window
+# footgun the 2026-08-03 re-upload created: its edge months (2024-01..03)
+# fall inside delivery-2024's publication window but carry only Jan-2024
+# deliveries — 1 of 12 months must NOT silently replace 2024's sample-day
+# basis. The July-2026 full corpus covered 12/12/10 delivery months for
+# 2023/2024/2025, so every historical derive selects exactly as before.
+_CORPUS_MIN_DELIVERY_MONTHS = 7
+
 
 def _sced_source_files(year: int) -> list[Path]:
     """Parquet shards that may contain SCED delivery rows for ``year``.
@@ -142,28 +163,43 @@ def _sced_source_files(year: int) -> list[Path]:
 
     * legacy delivery-labeled sample-day files
       (``60_DAY_SCED_DISCLOSURE_..._{year}_*.parquet``), and
-    * full-year publication-month shards (``YYYY-MM.partNNNN.parquet``) whose
-      publication month falls in ``[(year, Feb) .. (year+1, Mar)]`` — the
-      window that brackets delivery year ``year`` (delivery month M publishes
-      ~M+2; ±1 month margin for the 60-day lag straddling month boundaries).
+    * full-year publication-month shards (``YYYY-MM.partNNNN.parquet``, in any
+      of ``_CORPUS_DIRS``) whose publication month falls in
+      ``[(year, Feb) .. (year+1, Mar)]`` — the window that brackets delivery
+      year ``year`` (delivery month M publishes ~M+2; ±1 month margin for the
+      60-day lag straddling month boundaries).
 
     Row-level delivery-year filtering (`_delivery_year_rows`) is still applied
     after read, so an over-wide window only costs a wasted read, never a leak.
     """
     lo = year * 12 + 1  # (year, Feb), 0-based month index
     hi = (year + 1) * 12 + 2  # (year+1, Mar)
-    pub: list[Path] = []
-    for p in SCED_DIR.glob("[0-9][0-9][0-9][0-9]-[0-1][0-9].part*.parquet"):
-        m = _PUB_SHARD_RE.search(p.name)
-        if m and lo <= int(m.group(1)) * 12 + (int(m.group(2)) - 1) <= hi:
-            pub.append(p)
+    by_name: dict[str, Path] = {}
+    for d in _CORPUS_DIRS:
+        for p in d.glob("[0-9][0-9][0-9][0-9]-[0-1][0-9].part*.parquet"):
+            m = _PUB_SHARD_RE.search(p.name)
+            if m and lo <= int(m.group(1)) * 12 + (int(m.group(2)) - 1) <= hi:
+                by_name[p.name] = p  # later _CORPUS_DIRS entries win
+    pub = sorted(by_name.values(), key=lambda p: p.name)
     # The full-year publication-month corpus SUPERSEDES the legacy
     # delivery-labeled sample-day extracts: those specific days also appear in
     # the full-year shards (and the legacy extracts are hour-windowed subsets),
-    # so unioning both would double-weight them. Fall back to legacy only when
-    # no full-year shard covers the year's publication window.
+    # so unioning both would double-weight them. Supersede only on MAJORITY
+    # delivery-month coverage (see _CORPUS_MIN_DELIVERY_MONTHS): a fragmentary
+    # publication bleed from an adjacent year's window falls back to legacy.
     if pub:
-        return sorted(pub)
+        months = {
+            (int(m.group(1)), int(m.group(2)))
+            for p in pub
+            if (m := _PUB_SHARD_RE.search(p.name))
+        }
+        covered = 0
+        for dm in range(1, 13):  # delivery month -> primary publication month
+            idx = year * 12 + (dm - 1) + 2
+            if (idx // 12, idx % 12 + 1) in months:
+                covered += 1
+        if covered >= _CORPUS_MIN_DELIVERY_MONTHS:
+            return pub
     legacy = SCED_DIR.glob(
         f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{year}_*.parquet"
     )

@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-08-03 — ERCOT-157: NP3-965 delivery-2023 corpus re-upload verified + wired; 2023 SCED blocks completed (pool/wall/steam)
+
+The ERCOT-151 §4 data blocker is resolved: the owner re-uploaded the 60-Day
+SCED Gen Resource corpus for delivery-2023 to `data/raw/ercot/SCED/` (315
+publication-month shards, 187-column raw schema). Session verification: all
+shards readable, all 365 delivery days of 2023 present at full weight (35.8M
+rows); two failed upload batches (deliveries 2023-04-10..19, 2023-09-08..17)
+identified by shard forensics and re-supplied same-day. Full record:
+`docs/calibration-log/ercot.md` ERCOT-157.
+
+- **`derive_ercot_sced_offer_wall._sced_source_files`** (shared by the CC/CT
+  wall, steam wall and fast-start pool derives): scans both corpus locations
+  (`data/raw/ercot/` + `data/raw/ercot/SCED/`, subdirectory copy wins name
+  collisions) and supersedes the legacy sample-day extracts only on MAJORITY
+  delivery-month coverage (≥7/12 by the exact 60-day publication lag) — the
+  re-upload's edge months (pubs 2024-01..03, 1/12 of delivery-2024) must not
+  silently replace 2024's sample-day basis. Historical selections unchanged
+  (July full corpus: 12/12/10). Tests:
+  `tests/curation/test_sced_corpus_selection.py` (5).
+- **`derive_ercot_faststart_pool`**: `_load_year` sources via the shared
+  helper (streaming with a light live frame; full columns only for the
+  OFFQS/OFFNS pool rows); the artifact gains its 2023 CT year block (the
+  ERCOT-151 charter deliverable; 2024/2025 blocks verified byte-identical —
+  the charter's derive check). Cell `ercot_faststart_pool_offer` stays `O`:
+  arming remains owner-gated (ERCOT-89 §7 step 2), LOYO at arming time.
+- **`ercot_sced_offer_wall_condbinned.json`**: the committed 2023 block was
+  the post-purge partial slice (deliveries Jan–Oct 2023 only, per its own
+  `ercot105_added` note); refreshed full-year from the re-upload — matches
+  the 2026-07-21 full-corpus verification (8,751 intervals/bin 0). Net-load
+  bins 5–6 (the scarcity tail) byte-identical; 2022/2024/2025 blocks
+  byte-identical.
+- **`ercot_sced_offer_wall_steam_condbinned.json`**: first ST 2023 block
+  (16 fleet plants, none absent). Measure-first, no apply path — changes no
+  solve. One steam artifact test year-scoped: the mid-band RT>DAM q90
+  invariant is strict on its measured years (2024/25); 2023 sits at parity
+  in bin −3 (−0.14%).
+
+No solve, no registration, keeper unchanged (`2026-08-02-ercot150b-zonal-anchor`).
+Surfaced owner decisions: keeper full-span re-solve on the completed inputs
+(ercot98 pattern) and the standing pool arming gate.
+
 ## 2026-08-03 — FFR-SA: FF-G4 Option-B electrification load-shape layers (FR-16), DEFAULT OFF
 
 Implements the decided design of

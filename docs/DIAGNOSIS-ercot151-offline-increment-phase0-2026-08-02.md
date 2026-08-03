@@ -1,5 +1,17 @@
 # ERCOT-151 — the 2023 tail's phantom cheap DEPTH is measured at the missed hours; the offline-increment re-pricing lane (ERCOT-107/108 scope-correction successor) is CONFIRMED identifiable and chartered; the identification is DATA-BLOCKED on an NP3-965 corpus re-upload
 
+> **§4 ask 1 RESOLVED 2026-08-03 (ercot-157).** The owner re-uploaded the
+> delivery-2023 NP3-965 corpus to `data/raw/ercot/SCED/` (315 shards, verified
+> complete: all 365 delivery days, 35.8M rows; two failed upload batches caught
+> and re-supplied same-day). The pool's 2023 CT year block is derived and
+> committed (`ercot_faststart_pool_condbinned.json`), the CC/CT wall's 2023
+> block refreshed full-year (the committed block was the Jan–Oct post-purge
+> slice; scarcity-tail bins 5–6 byte-identical), and the steam wall gained its
+> first 2023 block. The ERCOT-152 refusal of the CC tier stands (the pool is
+> CT-only by measured conduct). **§4 ask 2 — the ERCOT-89 §7 step-2 design
+> round / arming decision — remains open and owner-gated.** Full record:
+> `docs/calibration-log/ercot.md` ERCOT-157.
+
 **Session 2026-08-02. Keeper: `2026-08-02-ercot150b-zonal-anchor` (NOT-YET; open
 gates C3a 2023-only −32.6 %, C3b 2023-only 0.616, C3c, C7 2023-lignite cv-leg).
 Phase 0 only — NO LP built, NO year solved, NO mechanism armed, keeper
