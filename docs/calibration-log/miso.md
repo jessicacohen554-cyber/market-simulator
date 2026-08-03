@@ -2867,3 +2867,120 @@ carries a docstring note pointing here, with its numbers left exactly as run.
   was allowed, and the verdict went **against** the handoff's framing (which
   expected a mis-apportioned floor).
 * Next number: **miso-117.**
+
+## 2026-08-03 — miso-117: `measured_ct_heat_rates` armed, **KEEPER** — and the prereg's headline prediction is REFUTED: a class-average-cheaper re-price makes the class run **less**
+
+Pre-registration (`results/calibration/PREREG-miso117-ct-heat-rates-2026-08-03.md`)
+written, committed **and pushed** before either arm solved. Finding
+`FINDING-miso117-measured-ct-heat-rates-2026-08-03.md`; probes
+`scripts/probes/_miso117_flag_fidelity.py` (Phase 0, no LP) and
+`_miso117_ctheatrate_ab.py` (scorer); transcripts
+`PROBE-miso117-flag-fidelity-2026-08-03.txt`,
+`PROBE-miso117-ctheatrate-ab-2026-08-03.txt`.
+
+**KEEPER `2026-08-03-miso-117b-ct-heat`** (bundle `miso117_ctheatrate_B`),
+promoted under the owner's explicit in-session instruction — *"If so plz
+promote. If structural integrity improves but gates regress that may still be a
+keeper"* — which is an **override of the prereg's own promotion blocker**, not a
+re-reading of it. Control `2026-08-03-miso-117a-control`.
+
+### What it replaces
+
+eGRID's plant-average **annual** heat rate → MISO's own measured per-plant CAMPD
+**loaded** rate on **86 plants / 19,120.7 MW = 85.8 % of `CT_PEAKER` capacity**,
+all 86 rows `flag == "ok"`, **zero excluded by the physical band**. Artifact NOT
+re-derived (rule 23). Charter is rule 14 `[R-ACCURATE]` on miso-115 §4's measured
+**+9.9…+11.1 % over-pricing** (gross 11.13/11.25/11.26 vs model net 12.37),
+re-audited intact by miso-116. Explicitly **not** a C7 `COAL_PRB` instrument.
+
+### Phase 0 — the ERCOT-146 wiring hazard, checked before a solve was spent
+
+509 tranches / 19,120.7 of 22,281.8 `CT_PEAKER` MW move at the LP seam,
+`classes touched == ['CT_PEAKER']` only, plant grain **12.3720 → 12.0351**,
+reproducing miso-115's published **12.37 exactly** — the check that the probe is
+keeper-matched. Both probe arms built from the **keeper's own `run_config.json`**
+(the miso-116 §7 discipline; the MISO keeper arms `measured_chp_heat_rates`).
+
+### The refuted prediction — the transferable lesson
+
+| B − A, TWh | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| `CT_PEAKER` | **−1.234** | **−1.010** | **−1.226** |
+
+The prereg predicted a **rise** of +0.2…+1.5 TWh. It falls. The explanation was
+in the artifact all along: the re-price is **capacity-weighted cheaper
+(−0.393 MMBtu/MWh)** but **generation-weighted slightly DEARER (+0.003)** — the
+13,801 MW that got cheaper barely runs; the 5,320 MW that got dearer is what
+clears. **A class-average heat rate is the wrong statistic for a dispatch
+prediction**; a future ISO arming this mechanism should pre-register on the
+generation-weighted delta. Predictions 2 (C1 direction, wrong in both years) and
+4 (λ predicted down, moves **up** +0.065/+0.059/+0.020 $/MWh) also failed.
+
+### miso-107 confirmed, NEISO-70 in reverse
+
+h14-21 `reliability_floor × CT_PEAKER` forced energy **1.1819 → 1.7361 TWh
+(+46.9 %)**, against miso-107's independent **+47 %**. D-2 share
+0.1157/0.0821/0.0867 → **0.1407/0.0999/0.1043**, **under** the 0.15 peaker cap in
+all three years — **C8 PASSES outright**, the rule-20 conditional-pass route was
+not needed, D-4 off-window 0.000 on every limb, and **the limb was not touched**.
+
+### Gates
+
+No criterion verdict changes in either direction. C1 all 16/16 free 12/12; C3c
+**bit-identical** (1/6/0 h); C3a-2025 −14.2 → −14.1 %; determination NOT-YET on
+the same C7 `COAL_PRB` issue; ledgered caveats unchanged at 2/3 {C3a, C3c}.
+**Improves:** C7 `CT_PEAKER` cv_ratio 0.981/0.836/0.799 → **1.219/0.917/1.042**.
+**Cost, disclosed:** C7 `COAL_PRB` cv_ratio 0.466/0.475/0.314 → 0.462/0.474/0.309
+— the standing failing criterion gets marginally worse, and per rules 1/14 the
+accurate input is **not** reverted for it.
+
+K1/K3/K4/K5 pass; **K2 passes on the scorecard basis** (the control reproduces
+the keeper's determination and all nine statuses). Strict-byte drift vs the
+committed miso-109b sidecars is **3,728.5 MW** max on a class-hour — reported,
+not a kill, cause filed not guessed.
+
+### Two defects fixed en route
+
+* `replay_keeper._restore_display_date` did not test `--out-dir`, so a
+  **zero-delta control** (no `--set`) inherited the keeper's date — solved
+  2026-08-03, stamped 2026-07-31, three days before its own treatment arm. Fixed;
+  in-place replays still preserve id stability. **Applies to every control arm
+  produced this way in other ISOs' lanes** — flagged, not touched (rule 25).
+* `run_calibration_full.py --help` crashed on a pre-existing argparse bug (bare
+  `%` in three help strings). Escaped; `--help` renders.
+
+### DO-NOT-REDO
+
+* The `measured_ct_heat_rates` row is **CLOSED across all six ISOs** (ERCOT `I`
+  by wiring; CAISO/PJM/NYISO/NEISO/MISO `K`). Do not re-test a cell.
+* **Do not relax the h14-21 `CT_PEAKER` limb** to buy back C1 volume, and do not
+  re-derive `min_stable_pct` against a residual (rules 1/14/23/25).
+* C7 `COAL_PRB` is **not** closed by this lever and no successor should expect it
+  to be — it still needs the overnight dispatch *distribution* WIDENED
+  (miso-113), i.e. the data-blocked miso-78/79 congestion + sub-hourly-RT lane.
+* miso-115/116 closures stand: `CC_CHP` volume and heat rate WITHDRAWN, trough
+  quantity refused, `CT_CHP`/`ST_CHP` ratios VOID, `miso_cc_coal_rebalance` /
+  `miso_firm_import_floor` / `miso_pjm_lmp_import_pricing` refused, regulated-PRB
+  self-commitment family SPENT.
+
+### Governance
+
+* **Rule 15** — both arms registered, bundles + sidecars + payloads + bench
+  pushed; top-15 MISO retention pruned miso-101a/101b.
+* **Rule 16** — both arms `[2023, 2024, 2025]` in one bundle each.
+* **Rule 22 `[R-HOLDOUT]`** — 2023–2025 only; MISO holds no
+  `calibration-complete` marker, none touched.
+* **Rule 21 `[R-DOF]`** — one `measured-physical` row added, zero residual rows
+  (26 entries, still 2 residual).
+* **Rule 28 duty (b)** — `measured_ct_heat_rates` MISO cell stamped `U → K` and
+  the matrix keeper header re-stamped, in this session;
+  `check_mechanism_matrix.py` passes.
+* **Process correction** — the diagnostics were first generated *before*
+  registration, which silently disables D-2's materiality guard (the caiso-158
+  note). Regenerated after registration and both arms re-scored; `CT_PEAKER` is
+  2.5–3.0 % of load, genuinely gated, and every number above is from the
+  corrected pass.
+* **Contamination declared** — miso-115/116, the log and the matrix were read
+  before the prereg was written. What was fixed in advance is the decision rule,
+  the gates and the predictions — **three of which the result refuted**.
+* Next number: **miso-118**.
