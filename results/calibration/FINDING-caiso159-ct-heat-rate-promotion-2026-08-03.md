@@ -102,16 +102,32 @@ that was current when the arms were chartered — gives:
 | ISO | arm B vs CURRENT keeper | verdict |
 |---|---|---|
 | CAISO | **0** field diffs vs `caiso157_restore_B` | promotable |
-| NEISO | 7 diffs, all schema drift | promotable |
+| NEISO | **9** arm-only keys (671 vs 662), **0** value diffs | promotable |
 | NYISO | **1 real diff**: `nyiso_li_locational_reserve` keeper=`True` arm=`False` | **NOT promotable** |
 
-NEISO's seven (`caiso_firm_import_selfsched_clip`, `coal_prb_committed_split`,
-`crossover_solve_year_weather`, `ercot_dam_availability_gas_event_cap`,
+NEISO's nine (`caiso_firm_import_selfsched_clip`, `coal_prb_committed_split`,
+`crossover_solve_year_weather`, `demand_growth_vintage`,
+`ercot_dam_availability_gas_event_cap`, `gas_offer_margin_anchor_by_zone`,
 `gas_offer_margin_zonal_anchor`, `miso_coal_night_floor`,
 `pjm_rggi_allowance_pricing`) were each ADDED to `ScenarioConfig` after the
-neiso-72 solve, each defaults to `False`, and the arm records every one as
-`False` — the incumbent simply predates the field. Schema drift, zero
+neiso-72 solve and are recorded at their declared default — seven `False`, two
+`None`. The incumbent simply predates the field. Schema drift, zero
 behavioural delta.
+
+**Corrected on the record (caught by the NEISO keeper auditor, not by me).**
+The first cut of this promotion said *seven*, and the count was wrong because
+the diff was wrong: `a.get(k) != b.get(k)` collapses "key absent" and "key
+present with value `None`", so the two `None`-valued fields were invisible.
+The substance is unaffected — all nine are schema drift and there are still
+zero value diffs — but the method was unsound, so it is now
+`config_drift()` in `gen_caiso159_attestation.py`: a sentinel-based,
+absence-aware diff that **computes** the count and field list into the
+attestation (`config_drift_vs_incumbent`) instead of taking them from prose,
+and **raises** if any shared key differs in value. Re-run against the NYISO
+pair it isolates exactly `nyiso_li_locational_reserve` — i.e. the guard would
+have stopped the NYISO promotion on its own, without the manual catch in §2.
+CAISO re-verified under the corrected diff: 671 keys both sides, zero
+differences of any kind.
 
 NYISO's one is real. The keeper moved to nyiso-113 on 2026-08-02, which arms
 the **published NYISO Long Island (Zone K) locational reserve ladder**. The
