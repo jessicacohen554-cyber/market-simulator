@@ -83,6 +83,19 @@ DEFAULT_MOVES = {
         "consumed by the evolution screens — forecast/hindcast machinery with "
         "no backcast reader."
     ),
+    "caiso_ra_min_load_frac": (
+        "a0fc302 task 3(b) made it CAISO-SCOPED under rule 25 [R-ISO-SCOPE]; "
+        "backcast_config now assigns 0.26 only when iso == 'CAISO' and the "
+        "neutral shipped 0.40 otherwise, so PJM re-records 0.40 where the "
+        "keeper recorded a CAISO-fitted 0.26. Verified for PJM rather than "
+        "inherited from caiso-160's NYISO entry: BOTH readers "
+        "(pipeline/commitment.py:207 and :1582) sit behind "
+        '`caiso_ra_mustoffer and iso == "CAISO"`, and this bundle carries '
+        "caiso_ra_mustoffer=False AND iso='PJM' — either condition alone "
+        "closes it. A RECORDING change, not a solve change. NOTE it also "
+        "overrides the replayed meta.json kwarg (the keeper records it at "
+        "top level), so a replay cannot re-assert the old value."
+    ),
     "capacity_market_clearing_by_iso": (
         "the FF-2C per-ISO capacity-clearing flip arms PJM by default at HEAD "
         "(keeper recorded None). Listed for completeness only: "
@@ -293,6 +306,25 @@ def main() -> None:
             if ks["criteria"].get(key) != as_["criteria"].get(key)
         )
         rec["K4_criterion_flips"] = flips
+        # K4 splits, because exactly one of the nine criteria is not
+        # model-determined. C6 `governance` reads the bundle's rule-21
+        # attestation, which a probe arm does not carry and which no solve can
+        # produce — caiso-159 §3 documents the same UNATTESTED -> NOT-YET
+        # bookkeeping on arms that reproduced their incumbent exactly. It is
+        # reported, never absorbed: K4a is the gate on model behaviour, K4b
+        # discloses the bookkeeping difference.
+        rec["K4a_model_criterion_flips"] = [k for k in flips if k != "governance"]
+        rec["K4a_passed"] = not rec["K4a_model_criterion_flips"]
+        rec["K4b_governance_flip"] = "governance" in flips
+        rec["K4b_reason"] = (
+            "probe arm carries no rule-21 attestation; C6 is attestation-"
+            "presence bookkeeping, not a model verdict. With K2 = 0.000000 MW "
+            "on every P1 class-hour the eight model-determined criteria are "
+            "not merely equal but PROVABLY equal — identical dispatch cannot "
+            "score differently."
+            if "governance" in flips
+            else ""
+        )
         rec["K4_passed"] = (
             not flips
             and ks["determination"] == as_["determination"]
