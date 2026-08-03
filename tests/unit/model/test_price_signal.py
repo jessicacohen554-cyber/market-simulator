@@ -141,7 +141,13 @@ class TestScreensConsumeSignal(unittest.TestCase):
         # the screens in place of raw prices). coal=1 pinned (D1 default 3) so
         # a single loss year retires the coal — this test isolates which price
         # series the screen consumes, not the loss-year threshold.
-        config = ScenarioConfig(iso="ERCOT", retirement_years_coal=1)
+        # retirement_rule="legacy" pinned with it (D-1 flipped the default to
+        # "pipeline" 2026-08-02): retirement_years_coal is a LEGACY-rule
+        # parameter, and this test isolates WHICH PRICE SERIES the screen
+        # consumes, not the decision rule.
+        config = ScenarioConfig(
+            iso="ERCOT", retirement_years_coal=1, retirement_rule="legacy"
+        )
         coal = [
             Generator(
                 unit_id="C0",

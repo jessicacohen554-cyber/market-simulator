@@ -740,7 +740,15 @@ class TestRetirementWiring(unittest.TestCase):
         # $2,000 going-forward cost (0.02 $/kW-yr × 100 MW × 1000): the
         # unit retires without the CES and is retained with a $15 premium
         # ($15 × 100 MWh = $1,500 attribute revenue → $2,500 > $2,000).
-        base = dict(retirement_years_nuclear=1, fixed_om_nuclear=0.02)
+        # retirement_rule="legacy" pinned with it (D-1 flipped the default to
+        # "pipeline" 2026-08-02): retirement_years_nuclear is a LEGACY-rule
+        # parameter and this asserts same-year deactivation, which the R-NEW
+        # pipeline defers by the measured execution lag.
+        base = dict(
+            retirement_years_nuclear=1,
+            fixed_om_nuclear=0.02,
+            retirement_rule="legacy",
+        )
         without = ScenarioConfig(**base)
         self.assertEqual(self._survivors(without, "nuclear", 0.0), [])
         with_ces = ScenarioConfig(
