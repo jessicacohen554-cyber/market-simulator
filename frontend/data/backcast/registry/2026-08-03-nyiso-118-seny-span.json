@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-nyiso-118-seny-span",
+  "label": "nyiso 118 seny span",
+  "date": "2026-08-03",
+  "shorthand": "nyiso-118-seny-span",
+  "definition": "nyiso-118 TREATMENT: arm nyiso_ordc_measured_step_span (SENY ORDC width re-span to the measured hourly requirement)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-nyiso-118-seny-span.js",
+  "bundle": "results/calibration/nyiso118_seny_span"
+}
