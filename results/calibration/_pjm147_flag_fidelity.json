@@ -1,0 +1,1492 @@
+{
+  "flag": "measured_chp_heat_rates",
+  "years": {
+    "2023": {
+      "n_generators": 3407,
+      "n_moved": 68,
+      "moved_mw": 1339.929,
+      "moved_plant_class_pairs": 19,
+      "moved_classes": [
+        "CC_CHP",
+        "CT_CHP"
+      ],
+      "out_of_scope_classes": [],
+      "CC_CHP_mw": 1538.772,
+      "CC_CHP_capw_hr_off": 7.713,
+      "CC_CHP_capw_hr_on": 8.1415,
+      "CT_CHP_mw": 313.306,
+      "CT_CHP_capw_hr_off": 8.99,
+      "CT_CHP_capw_hr_on": 9.0221,
+      "moved_rows": [
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 21.352,
+          "hr_off": 6.9872,
+          "hr_on": 9.9292
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0076,
+          "hr_on": 9.9582
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0483,
+          "hr_on": 10.0161
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0891,
+          "hr_on": 10.074
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.1473,
+          "hr_on": 10.1567
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.223,
+          "hr_on": 10.2643
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.2987,
+          "hr_on": 10.3719
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 8.976,
+          "hr_off": 11.3192,
+          "hr_on": 16.0853
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 13.2,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 3.08,
+          "hr_off": 12.6776,
+          "hr_on": 10.0086
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.612,
+          "hr_off": 9.2983,
+          "hr_on": 9.1626
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.2,
+          "hr_off": 10.8481,
+          "hr_on": 10.6897
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 98.154,
+          "hr_off": 7.6963,
+          "hr_on": 9.0239
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7188,
+          "hr_on": 9.0502
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7637,
+          "hr_on": 9.1029
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8086,
+          "hr_on": 9.1555
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8727,
+          "hr_on": 9.2307
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.9561,
+          "hr_on": 9.3285
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 8.0395,
+          "hr_on": 9.4262
+        },
+        {
+          "plant_code": 10805,
+          "klass": "CC_CHP",
+          "pmax_mw": 15.955,
+          "hr_off": 7.0789,
+          "hr_on": 10.2164
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.86,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.51,
+          "hr_off": 10.1407,
+          "hr_on": 10.7003
+        },
+        {
+          "plant_code": 50463,
+          "klass": "CT_CHP",
+          "pmax_mw": 31.2,
+          "hr_off": 8.7457,
+          "hr_on": 8.8098
+        },
+        {
+          "plant_code": 54790,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.83,
+          "hr_off": 12.0077,
+          "hr_on": 13.3782
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 78.353,
+          "hr_off": 8.4689,
+          "hr_on": 8.4945
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.4936,
+          "hr_on": 8.5193
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.543,
+          "hr_on": 8.5688
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.5924,
+          "hr_on": 8.6184
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.6629,
+          "hr_on": 8.6892
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.7547,
+          "hr_on": 8.7812
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.8464,
+          "hr_on": 8.8732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 242.271,
+          "hr_off": 6.8314,
+          "hr_on": 7.0118
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8514,
+          "hr_on": 7.0323
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8912,
+          "hr_on": 7.0732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.9311,
+          "hr_on": 7.1141
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.988,
+          "hr_on": 7.1725
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.062,
+          "hr_on": 7.2484
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.136,
+          "hr_on": 7.3244
+        },
+        {
+          "plant_code": 58181,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.135,
+          "hr_off": 9.3431,
+          "hr_on": 10.363
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 5.699,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.14,
+          "hr_off": 10.9968,
+          "hr_on": 13.2553
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.82,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.658,
+          "hr_off": 11.2292,
+          "hr_on": 11.2303
+        },
+        {
+          "plant_code": 59373,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.356,
+          "hr_off": 8.1676,
+          "hr_on": 8.2382
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.697,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.074,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.503,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.29,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.182,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.54,
+          "hr_off": 10.5131,
+          "hr_on": 12.6369
+        }
+      ]
+    },
+    "2024": {
+      "n_generators": 3413,
+      "n_moved": 68,
+      "moved_mw": 1339.929,
+      "moved_plant_class_pairs": 19,
+      "moved_classes": [
+        "CC_CHP",
+        "CT_CHP"
+      ],
+      "out_of_scope_classes": [],
+      "CC_CHP_mw": 1538.772,
+      "CC_CHP_capw_hr_off": 7.713,
+      "CC_CHP_capw_hr_on": 8.1415,
+      "CT_CHP_mw": 309.246,
+      "CT_CHP_capw_hr_off": 8.9776,
+      "CT_CHP_capw_hr_on": 9.0101,
+      "moved_rows": [
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 21.352,
+          "hr_off": 6.9872,
+          "hr_on": 9.9292
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0076,
+          "hr_on": 9.9582
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0483,
+          "hr_on": 10.0161
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0891,
+          "hr_on": 10.074
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.1473,
+          "hr_on": 10.1567
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.223,
+          "hr_on": 10.2643
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.2987,
+          "hr_on": 10.3719
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 8.976,
+          "hr_off": 11.3192,
+          "hr_on": 16.0853
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 13.2,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 3.08,
+          "hr_off": 12.6776,
+          "hr_on": 10.0086
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.612,
+          "hr_off": 9.2983,
+          "hr_on": 9.1626
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.2,
+          "hr_off": 10.8481,
+          "hr_on": 10.6897
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 98.154,
+          "hr_off": 7.6963,
+          "hr_on": 9.0239
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7188,
+          "hr_on": 9.0502
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7637,
+          "hr_on": 9.1029
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8086,
+          "hr_on": 9.1555
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8727,
+          "hr_on": 9.2307
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.9561,
+          "hr_on": 9.3285
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 8.0395,
+          "hr_on": 9.4262
+        },
+        {
+          "plant_code": 10805,
+          "klass": "CC_CHP",
+          "pmax_mw": 15.955,
+          "hr_off": 7.0789,
+          "hr_on": 10.2164
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.86,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.51,
+          "hr_off": 10.1407,
+          "hr_on": 10.7003
+        },
+        {
+          "plant_code": 50463,
+          "klass": "CT_CHP",
+          "pmax_mw": 31.2,
+          "hr_off": 8.7457,
+          "hr_on": 8.8098
+        },
+        {
+          "plant_code": 54790,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.83,
+          "hr_off": 12.0077,
+          "hr_on": 13.3782
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 78.353,
+          "hr_off": 8.4689,
+          "hr_on": 8.4945
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.4936,
+          "hr_on": 8.5193
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.543,
+          "hr_on": 8.5688
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.5924,
+          "hr_on": 8.6184
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.6629,
+          "hr_on": 8.6892
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.7547,
+          "hr_on": 8.7812
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.8464,
+          "hr_on": 8.8732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 242.271,
+          "hr_off": 6.8314,
+          "hr_on": 7.0118
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8514,
+          "hr_on": 7.0323
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8912,
+          "hr_on": 7.0732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.9311,
+          "hr_on": 7.1141
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.988,
+          "hr_on": 7.1725
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.062,
+          "hr_on": 7.2484
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.136,
+          "hr_on": 7.3244
+        },
+        {
+          "plant_code": 58181,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.135,
+          "hr_off": 9.3431,
+          "hr_on": 10.363
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 5.699,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.14,
+          "hr_off": 10.9968,
+          "hr_on": 13.2553
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.82,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.658,
+          "hr_off": 11.2292,
+          "hr_on": 11.2303
+        },
+        {
+          "plant_code": 59373,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.356,
+          "hr_off": 8.1676,
+          "hr_on": 8.2382
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.697,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.074,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.503,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.29,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.182,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.54,
+          "hr_off": 10.5131,
+          "hr_on": 12.6369
+        }
+      ]
+    },
+    "2025": {
+      "n_generators": 3416,
+      "n_moved": 68,
+      "moved_mw": 1339.929,
+      "moved_plant_class_pairs": 19,
+      "moved_classes": [
+        "CC_CHP",
+        "CT_CHP"
+      ],
+      "out_of_scope_classes": [],
+      "CC_CHP_mw": 1538.772,
+      "CC_CHP_capw_hr_off": 7.713,
+      "CC_CHP_capw_hr_on": 8.1415,
+      "CT_CHP_mw": 310.266,
+      "CT_CHP_capw_hr_off": 8.9736,
+      "CT_CHP_capw_hr_on": 9.0061,
+      "moved_rows": [
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 21.352,
+          "hr_off": 6.9872,
+          "hr_on": 9.9292
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0076,
+          "hr_on": 9.9582
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0483,
+          "hr_on": 10.0161
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.0891,
+          "hr_on": 10.074
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.1473,
+          "hr_on": 10.1567
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.223,
+          "hr_on": 10.2643
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 2.312,
+          "hr_off": 7.2987,
+          "hr_on": 10.3719
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CC_CHP",
+          "pmax_mw": 8.976,
+          "hr_off": 11.3192,
+          "hr_on": 16.0853
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 13.2,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.16,
+          "hr_off": 10.8665,
+          "hr_on": 8.5788
+        },
+        {
+          "plant_code": 10030,
+          "klass": "CT_CHP",
+          "pmax_mw": 3.08,
+          "hr_off": 12.6776,
+          "hr_on": 10.0086
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 6.612,
+          "hr_off": 9.2983,
+          "hr_on": 9.1626
+        },
+        {
+          "plant_code": 10129,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.2,
+          "hr_off": 10.8481,
+          "hr_on": 10.6897
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 98.154,
+          "hr_off": 7.6963,
+          "hr_on": 9.0239
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7188,
+          "hr_on": 9.0502
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.7637,
+          "hr_on": 9.1029
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8086,
+          "hr_on": 9.1555
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.8727,
+          "hr_on": 9.2307
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 7.9561,
+          "hr_on": 9.3285
+        },
+        {
+          "plant_code": 10633,
+          "klass": "CC_CHP",
+          "pmax_mw": 26.866,
+          "hr_off": 8.0395,
+          "hr_on": 9.4262
+        },
+        {
+          "plant_code": 10805,
+          "klass": "CC_CHP",
+          "pmax_mw": 15.955,
+          "hr_off": 7.0789,
+          "hr_on": 10.2164
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.86,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.6,
+          "hr_off": 8.692,
+          "hr_on": 9.1717
+        },
+        {
+          "plant_code": 50411,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.51,
+          "hr_off": 10.1407,
+          "hr_on": 10.7003
+        },
+        {
+          "plant_code": 50463,
+          "klass": "CT_CHP",
+          "pmax_mw": 31.2,
+          "hr_off": 8.7457,
+          "hr_on": 8.8098
+        },
+        {
+          "plant_code": 54790,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.83,
+          "hr_off": 12.0077,
+          "hr_on": 13.3782
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 78.353,
+          "hr_off": 8.4689,
+          "hr_on": 8.4945
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.4936,
+          "hr_on": 8.5193
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.543,
+          "hr_on": 8.5688
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.5924,
+          "hr_on": 8.6184
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.6629,
+          "hr_on": 8.6892
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.7547,
+          "hr_on": 8.7812
+        },
+        {
+          "plant_code": 54832,
+          "klass": "CC_CHP",
+          "pmax_mw": 45.08,
+          "hr_off": 8.8464,
+          "hr_on": 8.8732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 242.271,
+          "hr_off": 6.8314,
+          "hr_on": 7.0118
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8514,
+          "hr_on": 7.0323
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.8912,
+          "hr_on": 7.0732
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.9311,
+          "hr_on": 7.1141
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 6.988,
+          "hr_on": 7.1725
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.062,
+          "hr_on": 7.2484
+        },
+        {
+          "plant_code": 55801,
+          "klass": "CC_CHP",
+          "pmax_mw": 54.63,
+          "hr_off": 7.136,
+          "hr_on": 7.3244
+        },
+        {
+          "plant_code": 58181,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.135,
+          "hr_off": 9.3431,
+          "hr_on": 10.363
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 5.699,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.571,
+          "hr_off": 9.4258,
+          "hr_on": 11.3617
+        },
+        {
+          "plant_code": 58207,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.14,
+          "hr_off": 10.9968,
+          "hr_on": 13.2553
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.82,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.316,
+          "hr_off": 9.625,
+          "hr_on": 9.626
+        },
+        {
+          "plant_code": 58947,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.658,
+          "hr_off": 11.2292,
+          "hr_on": 11.2303
+        },
+        {
+          "plant_code": 59373,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.356,
+          "hr_off": 8.1676,
+          "hr_on": 8.2382
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.697,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 61282,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.582,
+          "hr_off": 8.2862,
+          "hr_on": 15.376
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.074,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63347,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.588,
+          "hr_off": 8.7982,
+          "hr_on": 11.5824
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.503,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63483,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 7.3959,
+          "hr_on": 14.6413
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 1.29,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63485,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.602,
+          "hr_off": 7.615,
+          "hr_on": 14.4171
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 2.182,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.529,
+          "hr_off": 9.0112,
+          "hr_on": 10.8316
+        },
+        {
+          "plant_code": 63501,
+          "klass": "CT_CHP",
+          "pmax_mw": 0.54,
+          "hr_off": 10.5131,
+          "hr_on": 12.6369
+        }
+      ]
+    }
+  },
+  "k0_live": true,
+  "k0_scope_ok": true
+}
