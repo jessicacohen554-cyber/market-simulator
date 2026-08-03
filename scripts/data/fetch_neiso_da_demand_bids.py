@@ -61,7 +61,11 @@ sys.path.insert(0, str(REPO_ROOT))
 
 from market_sim.config.paths import NEISO_AS_DIR  # noqa: E402
 
-from scripts.data.fetch_neiso_da_energy_offers import _opener  # noqa: E402
+from scripts.data.fetch_neiso_da_energy_offers import (  # noqa: E402
+    DEFAULT_WORKERS,
+    _opener,
+    fetch_days_concurrent,
+)
 
 RAW_DIR = NEISO_AS_DIR / "da-demand-bids"
 
@@ -93,6 +97,11 @@ def fetch_day(opener: urllib.request.OpenerDirector, day: dt.date) -> bytes:
     if len(body) >= MIN_REAL_BYTES and b"Demand Bid" not in body[:200]:
         raise RuntimeError(f"unexpected response (not the demand-bid CSV) from {url}")
     return body
+
+
+def _dest_for(day: dt.date) -> Path:
+    """Destination path for one operating day's demand-bid CSV."""
+    return RAW_DIR / f"hbdayaheaddemandbid_{day:%Y%m%d}.csv"
 
 
 def fetch_cleared(opener: urllib.request.OpenerDirector, years: list[int]) -> int:
@@ -143,6 +152,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="fetch only the published cleared-demand month files",
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_WORKERS,
+        help=f"concurrent ISO Express sessions (default: {DEFAULT_WORKERS})",
+    )
     args = parser.parse_args(argv)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
@@ -151,11 +166,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.cleared_only:
         print(f"done: {n_cleared} cleared-demand month files -> {RAW_DIR}")
         return 0
-    n_new = n_skip = n_err = n_empty = 0
+
+    todo, n_skip = [], 0
     for year in args.years:
         day = dt.date(year, 1, 1)
         while day.year == year:
-            dest = RAW_DIR / f"hbdayaheaddemandbid_{day:%Y%m%d}.csv"
+            dest = _dest_for(day)
             if (
                 dest.exists()
                 and dest.stat().st_size > MIN_REAL_BYTES
@@ -163,26 +179,19 @@ def main(argv: list[str] | None = None) -> int:
             ):
                 n_skip += 1
             else:
-                try:
-                    body = fetch_day(opener, day)
-                except Exception as e:  # transient endpoint hiccups: log, go on
-                    print(f"ERROR {day}: {e}", flush=True)
-                    n_err += 1
-                    time.sleep(5.0)
-                    opener = _opener()  # refresh the session
-                    day += dt.timedelta(days=1)
-                    continue
-                dest.write_bytes(body)
-                n_new += 1
-                if len(body) < MIN_REAL_BYTES:
-                    n_empty += 1
-                if n_new % 50 == 0:
-                    print(f"fetched {n_new} days (at {day})", flush=True)
-                time.sleep(0.3)  # be polite to the public endpoint
+                todo.append(day)
             day += dt.timedelta(days=1)
+
+    n_new, n_empty, n_err = fetch_days_concurrent(
+        todo,
+        _dest_for,
+        fetch_day,
+        workers=args.workers,
+        min_real_bytes=MIN_REAL_BYTES,
+    )
     print(
-        f"done: {n_new} fetched ({n_empty} empty postings), "
-        f"{n_skip} present, {n_err} errors -> {RAW_DIR}"
+        f"done: {n_new} fetched ({n_empty} empty postings), {n_skip} present, "
+        f"{n_err} errors, {n_cleared} cleared-demand month files -> {RAW_DIR}"
     )
     return 1 if n_err else 0
 
