@@ -2,7 +2,7 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 9,
+  "n_entries": 10,
   "n_residual": 6,
   "entries": [
    {
@@ -189,6 +189,78 @@
     "rule_19_reconciliation": "One mechanism, one identification point. A band-scoped rebasis anchor (ERCOT-118/119 margin_anchor_* keys) keeps precedence over the zone anchor by construction, so the two channels never stack; the ercot149 curve carries no such key (derivation record: 0 band-scoped anchors on 1132/1132/1135 marked-up tranches), so every marked-up gas tranche resolves to its zone. The ERCOT-139 cc_committed_offer_margin reads the CONFIG-level ISO anchor only and is untouched by this delta (asserted equal in both arms by K1).",
     "rule_25_scope": "constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE carries NYISO, PJM and now ERCOT, each derived from its own basis data and its own keeper fleet; an ISO without a table hard-fails rather than borrowing one. MISO also arms a zonal gas basis on its keeper \u2014 its cell stays U and its exposure is never acted on here. Panhandle carries no gas capacity in any training year and is omitted from the map; absent zones keep the window anchor (a no-op on an empty zone).",
     "measured_effect": "Anchors span 1.9586 (West, Waha-priced and net-load-shaped) to 3.2778 (South) around the ISO anchor 2.2494; the flat EP level correction the applier adds is +0.5045 / +0.4142 / +0.0366 $/MMBtu (2023/24/25) and the West net-load burner-tip floor lift inside the West anchor is +0.3650 / +1.0466 / +2.1010 $/MMBtu \u2014 both read from the committed derivation record. Measured A/B effect: max class-hour dispatch delta 1073 / 1458 / 1432 MW, max zonal |dLMP| 0.356 / 0.304 / 0.319 $/MWh, system load-weighted dLMP +0.446 / +0.329 / +0.339 $/MWh (2023/24/25; committed A/B JSON)."
+   },
+   {
+    "name": "ercot_faststart_pool_offer (ERCOT-88) \u2014 the telemetered-offline startable fast-start CT pool offered to the LP at its measured start-inclusive above-LSL SCED2 ladder, REPLACE-BY-MASK over the cleared-share wall's row pricing on the row-hours whose within-plant capacity midpoint lies above the hour-bin's measured pool boundary (1 \u2212 pool_frac)",
+    "where": "run_config.scenario_config.ercot_faststart_pool_offer (+ ercot_faststart_pool_offer_path default data/raw/_validation-source/ercot_faststart_pool_condbinned.json)",
+    "identification": "measured/published",
+    "lineage_solves": "1 (ercot-158 arm B, against the same-HEAD honest-inputs control A)",
+    "value": {
+     "pool_frac_by_bin": {
+      "2023": [
+       0.0953,
+       0.0902,
+       0.0873,
+       0.0906,
+       0.0868,
+       0.0754,
+       0.0353
+      ],
+      "2024": [
+       0.0774,
+       0.0724,
+       0.0562,
+       0.0504,
+       0.048,
+       0.0498,
+       0.0548
+      ],
+      "2025": [
+       0.0336,
+       0.0383,
+       0.0349,
+       0.0376,
+       0.0401,
+       0.0326,
+       0.0403
+      ]
+     },
+     "ladder_q50_mult_by_bin": {
+      "2023": [
+       308.3,
+       370.8,
+       405.3,
+       431.5,
+       427.6,
+       158.5,
+       171.8
+      ],
+      "2024": [
+       644.0,
+       707.2,
+       523.5,
+       529.3,
+       474.6,
+       525.9,
+       271.5
+      ],
+      "2025": [
+       245.2,
+       251.4,
+       275.4,
+       235.3,
+       232.5,
+       232.3,
+       56.6
+      ]
+     }
+    },
+    "source": "scripts/data/derive_ercot_faststart_pool.py over the NP3-965 60-Day SCED Gen Resource disclosures (delivery-2023 corpus: the ERCOT-157 owner re-upload, 315 shards verified complete \u2014 all 365 delivery days; 2024/2025 blocks byte-identical to the ERCOT-88 artifact, the derive-integrity check). The pool share and ladder are the telemetered OFFQS/OFFNS fleet's own submitted SCED2 above-LSL curves conditioned on net-load bin \u2014 measured market conduct with a forward story (regenerates from forward net load exactly as the DAM/RT walls do), rule-13-admissible, rule-23 frozen.",
+    "free_parameters_added": 0,
+    "why_zero": "This arms an ALREADY-BUILT measured mechanism (ERCOT-88, merged default-off 2026-07-19) whose only change since is a new YEAR BLOCK of the same measured artifact (ERCOT-157). Eligibility is unit physics (min_down_hours <= FASTSTART_POOL_MIN_DOWN_HOURS), the boundary and ladder are per-bin measured quantities, the markup is max(0, min(ladder-interp x gas_day, 0.95 x VOLL) \u2212 mc_base) with no scalar anywhere between the disclosure data and the LP column. Nothing is swept; rule 23 re-derives only on source-data update (this block's trigger was the ERCOT-157 corpus landing, not a residual). The arming decision itself is the pre-registered owner-authorized ERCOT-89 \u00a77 step-2 round with kill gates pushed before either arm solved.",
+    "rule_19_reconciliation": "One owner per row-hour, enforced at the composition site: the pool's own_mask REPLACES every other offer surface's markup (conditional peak surface, cleared-share DA wall, RT leg alike) in pool-owned row-hours; it hard-errors unless the cleared-share wall is armed (the enumeration context). ercot_gas_commitment_bridge owns the ON committed CC min-gen state (disjoint \u2014 the pool prices OFFLINE fast-start CT rows only); P1 startup amortization owns started-run pricing (replaced, never stacked, in the mask); the RT wall owns the ON fleet's ladder (disjoint by status). An offer-availability, never a floor: no min_gen is touched, so D-2/D-4 forced-energy exposure is vacuous by construction.",
+    "rule_25_scope": "ERCOT-only by construction (gates on config.iso == 'ERCOT'); the artifact derives from ERCOT's own NP3-965 disclosure instrument, which no other modeled ISO publishes \u2014 other ISOs' matrix cells stay '.' (no comparable RT offline-conduct disclosure).",
+    "measured_effect": "Pool artifact (frozen, year-scoped): per-net-load-bin pool_frac 2023 0.035\u20130.095; 2024 0.048\u20130.077; 2025 0.033\u20130.040; ladder q0.5 delivered-gas multipliers 2023 159\u2013432; 2024 271\u2013707; 2025 57\u2013275 \u2014 2023's post-Uri conservative-ops conduct sits ~2/3 of 2024's ladder level (ERCOT-157 derive record). Measured A/B effect (committed _ercot158_pool_ab.json): C3a -24.3%\u2192-24.5% / +10.2%\u2192+10.2% / -0.7%\u2192-0.7% (2023/24/25); matched-hour 2023 missed-set model mean $105\u2192$105 vs actual $860, 0 of 91 missed hours flipped to tail; kills fired: none."
    }
   ]
  },
@@ -197,6 +269,6 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "ercot-158 2026-08-03 Run A \u2014 HONEST-INPUTS REPLAY of the 2026-08-02-ercot150b-zonal-anchor keeper recipe (config UNCHANGED, meta.json kwargs replay) on the ERCOT-157-completed inputs, and the same-HEAD zero-delta CONTROL for the ercot_faststart_pool_offer A/B. The only physical input delta vs the committed keeper bundle is the armed RT wall's 2023 block completed full-year (ercot_sced_offer_wall_condbinned.json: the committed block was the Jan-Oct post-purge slice; the refresh moves net-load bins 0-4 only, scarcity-tail bins 5-6 byte-identical \u2014 ERCOT-157). This bundle carries the keeper's own recipe and therefore its DOF ledger unchanged; it is registered as evidence (the ercot98 honest-inputs pattern), and any keeper-candidate standing is scored on its own rubric numbers vs the committed keeper, never assumed. Measured A/B (committed _ercot158_pool_ab.json): C3a -24.3%->-24.5% / +10.2%->+10.2% / -0.7%->-0.7% (2023/24/25); kills fired: none; all pre-registered gates HELD."
+  "attested_by": "ercot-158 2026-08-03 Run B \u2014 the 2026-08-02-ercot150b-zonal-anchor recipe with ONE delta: ercot_faststart_pool_offer=true (the ERCOT-88 offline fast-start CT pool, exactly as merged 2026-07-19, first solve with its 2023 year block \u2014 ERCOT-157). Scored against the same-HEAD honest-inputs control ercot158_honest_A, gates pre-registered in docs/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md BEFORE either arm solved (the owner-authorized ERCOT-89 \u00a77 step-2 design round, ERCOT-151 \u00a74 ask 2). The CC slow-start tier is NOT built (ERCOT-152 ex-ante refusal on measured conduct stands); ercot_shoulder_online_span stays OFF (rejected as armed, ERCOT-89 \u00a79.4) \u2014 this arm runs the static ERCOT-88 boundary. Zero fitted parameters added; n_residual unchanged. Measured A/B (committed _ercot158_pool_ab.json): C3a -24.3%->-24.5% / +10.2%->+10.2% / -0.7%->-0.7% (2023/24/25); kills fired: none; all pre-registered gates HELD."
  }
 }
