@@ -19,9 +19,18 @@ with the eGRID figure for a peaker, and this artifact fixes both:
 Method — per unit, over the pooled window:
 
     cap       = p95 of that unit's gross load
-    loaded    = hours with grossLoad >= _LOADED_FRAC x cap  (>= _MIN_LOADED_HOURS)
-    hr_gross  = sum(heatInput) / sum(grossLoad) over ``loaded``
+    loaded    = hours with grossLoad >= _LOADED_FRAC x cap
+    valid     = loaded hours whose OWN heatInput/grossLoad is inside
+                [_HR_MIN, _HR_MAX]                     (>= _MIN_LOADED_HOURS)
+    hr_gross  = sum(heatInput) / sum(grossLoad) over ``valid``
     hr_net    = hr_gross / parasitic_factor(plant)
+
+The hour-grain band screen (caiso-156) is what makes ``valid`` narrower than
+``loaded``. The physical band is a meter guard, so it is applied per hour and
+not only to the plant aggregate: an hour whose implied rate is physically
+impossible for a simple cycle is a broken heat-input channel, and before the
+screen such hours silently diluted the sums while the plant still flagged
+``ok``. It introduces no new parameter.
 
 and the plant value is the generation-weighted mean of its units' ``hr_net``.
 
@@ -113,9 +122,13 @@ _MIN_LOADED_HOURS: int = 50
 #: Physical plausibility band (MMBtu/MWh, HHV, net) for a simple-cycle gas
 #: turbine. This is a DATA-INTEGRITY guard on the meter, not a tuning knob:
 #: below ~6.0 the row is a mis-tagged combined cycle, above ~25.0 it is a
-#: broken heat-input or gross-load channel. Rows outside the band are written
-#: with their measured value and a ``flag``, and excluded from the applied map
-#: (the loader reads ``flag == "ok"``). Bounds bracket the published
+#: broken heat-input or gross-load channel. Applied at BOTH grains: per loaded
+#: HOUR inside :func:`unit_loaded_heat_rates` (an out-of-band hour cannot inform
+#: the rate, caiso-156) and to the resulting PLANT aggregate, whose rows outside
+#: the band are written with their measured value and a ``flag`` and excluded
+#: from the applied map (the loader reads ``flag == "ok"``). Screening only the
+#: aggregate was the caiso-146 §2.4 meter defect: impossible hours diluted the
+#: sums while the plant still flagged ok. Bounds bracket the published
 #: simple-cycle range with margin: an aeroderivative LM6000 sits near 9,
 #: 1960s-70s FT4 peaking twin-pacs near 16-17.
 _HR_MIN: float = 6.0
@@ -237,6 +250,27 @@ def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.Da
     for (code, unit), g in pooled.groupby(["facilityId", "unitId"], sort=True):
         cap = float(np.percentile(g["grossLoad"], _CAP_PCTILE))
         loaded = g[g["grossLoad"] >= _LOADED_FRAC * cap]
+        # caiso-156 rule 14 [R-ACCURATE]: apply the physical band at the grain
+        # the meter defect lives at -- the HOUR. The band below is a
+        # data-integrity guard on the meter, so a loaded hour whose own implied
+        # rate falls outside it is a broken heat-input channel by this module's
+        # own declaration and cannot inform the rate. Screening only the plant
+        # aggregate (below) let such hours dilute sum(heatInput)/sum(grossLoad)
+        # while the plant still flagged "ok": Delano Energy Center (58122) has
+        # loaded-hour rates at p05 = 0.81 and p25 = 3.20 against a 7.89 median
+        # -- physically impossible for a simple cycle (> 56 % HHV efficiency)
+        # -- dragging the plant to 6.5725, under every real machine yet over
+        # the 6.0 plant floor. Measured bias across the six committed
+        # artifacts: CAISO +0.176, NYISO +0.359, NEISO +0.171, PJM +0.069
+        # cap-weighted (PROBE-caiso156-band-screen-2026-08-02.txt). ZERO new
+        # parameters -- the same _HR_MIN/_HR_MAX the aggregate already uses.
+        hourly_hr = loaded["heatInput"] / loaded["grossLoad"]
+        loaded = loaded[(hourly_hr >= _HR_MIN) & (hourly_hr <= _HR_MAX)]
+        # The trust gate is evaluated on the IN-BAND hours: a unit whose meter
+        # is so defective that fewer than _MIN_LOADED_HOURS trustworthy loaded
+        # hours remain has no measured rate and drops, exactly as a unit that
+        # never reached its loaded window drops. Its plant falls back to eGRID
+        # (the loader's existing behaviour for an absent row).
         if len(loaded) < _MIN_LOADED_HOURS:
             continue
         rows.append(
@@ -244,7 +278,10 @@ def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.Da
                 "plant_code": int(code),
                 "plant_name": str(g["facilityName"].iloc[0]),
                 "unit_id": str(unit),
+                # All-hours generation weight, deliberately NOT screened: it
+                # weights units within a plant, it does not price them.
                 "gross_mwh": float(g["grossLoad"].sum()),
+                # In-band count -- the hours actually backing hr_gross.
                 "loaded_hours": int(len(loaded)),
                 "cap_mw": cap,
                 "hr_gross": float(
@@ -326,14 +363,14 @@ def plant_table(
         "EPA CAMPD unit-level hourly grossLoad + heatInput "
         f"(data/raw/campd-unit-level), unitType == '{CT_UNIT_TYPE}'; per unit "
         f"heat_rate = sum(heatInput)/sum(grossLoad) over hours >= {_LOADED_FRAC} "
-        f"x p{_CAP_PCTILE} of that unit's gross load (>= {_MIN_LOADED_HOURS} "
-        "qualifying hours), converted to a NET basis by the committed "
+        f"x p{_CAP_PCTILE} of that unit's gross load whose OWN implied rate is "
+        f"inside the physical band [{_HR_MIN}, {_HR_MAX}] MMBtu/MWh "
+        f"(>= {_MIN_LOADED_HOURS} such qualifying hours), converted to a NET basis by the committed "
         "parasitic factor (parasitic_load_factors.parquet, the same map the "
         "benchmark's net actual uses; class default "
         f"{campd.DEFAULT_PARASITIC_LOAD_PCT[TARGET_CLASS]}); plant value is the "
-        f"generation-weighted mean across its turbines. Physical band "
-        f"[{_HR_MIN}, {_HR_MAX}] MMBtu/MWh flags meter defects; only flag=='ok' "
-        "rows are applied."
+        f"generation-weighted mean across its turbines. The same physical band "
+        "also flags the plant aggregate; only flag=='ok' rows are applied."
     )
     return out
 
