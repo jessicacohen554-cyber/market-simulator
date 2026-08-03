@@ -826,6 +826,7 @@ def run_d2(
     ra_floor_missing: bool = False,
     total_load_mwh: float | None = None,
     actual_by_class: dict[str, float] | None = None,
+    dispatch_substituted: np.ndarray | None = None,
 ) -> GateResult:
     """D-2 forced-energy attribution over aligned (n, T) row arrays.
 
@@ -846,9 +847,22 @@ def run_d2(
     exact ``max(model, actual)`` denominator ``calibration_verdict``'s C7/C8
     scorer (``_class_load_share`` / ``score_shape``) uses. ``None`` (or a class
     absent from it) falls back to the model side alone.
+
+    ``dispatch_substituted`` (bool per row) marks rows whose dispatch IS their
+    own floor because the active dispatch source carries no series for them
+    (:func:`build_plant_matrices`, pjm-149 §3.2). Such a row contributes an
+    UPPER bound to the numerator and a LOWER bound to the denominator, so every
+    class holding one is stamped ``upper_bound: True`` on its summary row: the
+    share is sound as a PASS, INDETERMINATE as a FAIL. ``None`` = none
+    substituted (the parquet path, and every direct caller).
     """
     res = GateResult("D-2 forced-energy attribution")
     mask = at_floor_mask(dispatch, min_gen, npl)
+    substituted = (
+        np.zeros(dispatch.shape[0], dtype=bool)
+        if dispatch_substituted is None
+        else np.asarray(dispatch_substituted, dtype=bool)
+    )
     classes = np.unique(klass)
     mechs = [m for m in np.unique(mechanism[mask]) if m != 0]
     total_by_class = {
@@ -910,6 +924,12 @@ def run_d2(
         )
         immaterial = load_share is not None and load_share < PROTECTIVE_MIN_LOAD_FRAC
         breach = share > limit and not immaterial
+        # pjm-149 §3.2: does this class hold a floor-substituted row? A breach
+        # is NOT suppressed when it does — silently weakening rule 18 would be
+        # worse than an over-strict flag, and the substitution can only inflate
+        # the share — but the flag travels with the number so a breach on such
+        # a class reads as INDETERMINATE and escalates rather than convicting.
+        is_upper_bound = bool(substituted[klass == k].any())
         res.summary.append(
             {
                 "year": year,
@@ -921,6 +941,10 @@ def run_d2(
                 "load_share": round(load_share, 4) if load_share is not None else None,
                 "immaterial": bool(immaterial),
                 "lower_bound": bool(ra_floor_missing),
+                # pjm-149 §3.2: the class holds >= 1 plant whose dispatch was
+                # substituted by its own floor, so this share is an upper bound
+                # — a pass is sound, a breach is indeterminate.
+                "upper_bound": is_upper_bound,
                 "verdict": "FAIL" if breach else "pass",
             }
         )
@@ -929,6 +953,12 @@ def run_d2(
                 f"{year} {k}: forced share {share:.1%} > {limit:.0%} "
                 f"({forced_gated[k] / 1e6:.2f} of {total_by_class[k] / 1e6:.2f} TWh "
                 "at binding non-exempt floors)"
+                + (
+                    " [UPPER BOUND — the class holds a floor-substituted plant "
+                    "(pjm-149 §3.2); indeterminate, escalate rather than convict]"
+                    if is_upper_bound
+                    else ""
+                )
             )
     if ra_floor_missing:
         res.notes.append(
@@ -2009,6 +2039,127 @@ def load_or_rebuild_floors(
 PSEUDO_PLANT_KEY_PREFIX = "u:"
 
 
+@dataclass(frozen=True)
+class PlantMatrices:
+    """The aligned (n, T) D-2/D-4 input matrices plus each row's provenance.
+
+    ``substituted`` marks rows whose dispatch was SUBSTITUTED by their own
+    floor because the active dispatch source carries no series for them
+    (pjm-149 §3.2). ``substituted_pseudo`` / ``substituted_plants`` split those
+    keys by kind for the two disclosure notes.
+    """
+
+    pids: list[str]
+    disp: np.ndarray
+    floors: np.ndarray
+    mechs: np.ndarray
+    klass: np.ndarray
+    npl: np.ndarray
+    substituted: np.ndarray
+    substituted_pseudo: list[str]
+    substituted_plants: list[str]
+
+
+def build_plant_matrices(
+    model_plants_plant: dict[str, np.ndarray],
+    pid_strs: list[str],
+    floor_sum: np.ndarray,
+    mech_plant: np.ndarray,
+    groups: np.ndarray,
+    bench_pl: dict[str, dict],
+    t: int = 8760,
+) -> PlantMatrices:
+    """Assemble the D-2/D-4 row matrices from a dispatch map and a floors fleet.
+
+    **The row set is PATH-INDEPENDENT** (pjm-149 §3.1): it is every dispatch-map
+    plant that carries a class in the floors fleet, UNION every floored key —
+    whether or not the active dispatch source happens to cover it. Before
+    pjm-149 the set was a comprehension over the dispatch map alone, so a plant
+    that was floored but absent from that map was dropped silently, with no row,
+    no failure and no note. The map is the solve's own
+    ``dispatch/<year>_<pass>.parquet`` (every model plant; gitignored, so absent
+    from every committed bundle) or, failing that, the CAMPD-bench-keyed
+    dashboard run payload — which carries only plants with a CEMS meter, so at
+    PJM it dropped all 14 CC_CHP plants and at every ISO the nuclear must-run
+    block (17-90 TWh/yr). The committed keeper corpus is SPLIT across the two
+    paths, which is what made the attribution silently non-comparable between
+    bundles (FINDING-pjm149 §2).
+
+    **Dispatch for a floored plant the map does not cover is its OWN FLOOR**
+    (``disp := min_gen``) — PREREG-caiso155 §3's floor-energy convention,
+    generalized from ``plant_code <= 0`` pseudo-units to real plants, and
+    justified by a one-sided bound rather than by availability alone
+    (PREREG-pjm149 §3.2):
+
+    * forced energy sums ``dispatch`` over at-floor hours only, and at-floor
+      means ``dispatch ~= min_gen``, so true forced energy <= the floor energy
+      — substituting the floor is an UPPER bound on the D-2 numerator;
+    * LP feasibility gives ``P >= min_gen`` whenever the unit is available, so
+      the plant's true dispatch >= its floor energy — substituting the floor
+      UNDERSTATES the class denominator.
+
+    The reported ``forced_share`` is therefore an UPPER BOUND on the true
+    share. Rule 18 ``[R-FORCED-BUDGET]`` fails HIGH, so the bound is sound on a
+    pass (under the cap proves under the cap) and INDETERMINATE on a fail —
+    never a valid FAIL on its own. ``run_d2`` stamps ``upper_bound`` on the
+    summary row of every class holding such a plant so the bound travels with
+    the number.
+
+    UNFLOORED plants absent from the map stay excluded: they carry no floor and
+    must not perturb any class denominator (PREREG-caiso155 §2 P3 / pjm-149 C5,
+    which counted 5-381 such plants per ISO-year).
+    """
+    klass_by_pid = dict(zip(pid_strs, groups))
+    # Class totals need EVERY plant of the class, floored or not: rows below
+    # carry all model plants, floors zero-filled outside the floored set.
+    # Plants absent from the FLOORS fleet (e.g. non-thermal payload rows) are
+    # excluded — they carry no class in the model fleet.
+    covered = [p for p in model_plants_plant if p in klass_by_pid or p in pid_strs]
+    absent_floored = [
+        p
+        for j, p in enumerate(pid_strs)
+        if p not in model_plants_plant and floor_sum[j].max() > D2_FLOOR_MIN_MW
+    ]
+    all_pids = covered + absent_floored
+
+    disp = np.zeros((len(all_pids), t))
+    floors = np.zeros((len(all_pids), t))
+    mechs = np.zeros((len(all_pids), t), dtype=np.int8)
+    klass = np.empty(len(all_pids), dtype=object)
+    npl = np.zeros(len(all_pids))
+    index = {p: i for i, p in enumerate(all_pids)}
+    for p, i in index.items():
+        if p in model_plants_plant:
+            disp[i] = model_plants_plant[p][:t]
+        klass[i] = klass_by_pid.get(p, "")
+        npl[i] = bench_pl.get(p, {}).get("npl", float(disp[i].max()))
+    for j, p in enumerate(pid_strs):
+        if p in index:
+            floors[index[p]] = floor_sum[j][:t]
+            mechs[index[p]] = (
+                mech_plant[j][:, :t] if mech_plant[j].ndim > 1 else mech_plant[j][:t]
+            )
+    substituted = np.zeros(len(all_pids), dtype=bool)
+    for p in absent_floored:
+        disp[index[p]] = floors[index[p]]
+        substituted[index[p]] = True
+    return PlantMatrices(
+        pids=all_pids,
+        disp=disp,
+        floors=floors,
+        mechs=mechs,
+        klass=klass,
+        npl=npl,
+        substituted=substituted,
+        substituted_pseudo=[
+            p for p in absent_floored if p.startswith(PSEUDO_PLANT_KEY_PREFIX)
+        ],
+        substituted_plants=[
+            p for p in absent_floored if not p.startswith(PSEUDO_PLANT_KEY_PREFIX)
+        ],
+    )
+
+
 def aggregate_floors_by_plant(
     arrays: dict,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -2244,6 +2395,10 @@ def diagnose_bundle(
         # D-2/D-4 consume (floors are per plant).
         model_plants: dict[str, np.ndarray] = {}
         model_plants_plant: dict[str, np.ndarray] = {}
+        # Names the resolved dispatch source for the pjm-149 coverage note, so
+        # a reader of the artifact can see WHICH source a floor-substituted row
+        # was missing from.
+        dispatch_source: str | None = None
         if frame is not None:
             sub = frame[frame["plant_code"] > 0]
             wide = (
@@ -2277,6 +2432,7 @@ def diagnose_bundle(
                     model_plants[key] = series.reindex(
                         range(8760), fill_value=0.0
                     ).to_numpy(dtype=float)
+            dispatch_source = f"dispatch/{year}_{pass_label}.parquet"
             logger.info(
                 "%s %s: model dispatch from dispatch/%s_%s.parquet (%d plants)",
                 iso,
@@ -2288,6 +2444,7 @@ def diagnose_bundle(
         elif sidecar is not None and {"D1", "D2", "D4"} & only:
             model_plants = load_payload_plants(repo_root, sidecar, year, bench)
             model_plants_plant = aggregate_model_plants(model_plants)
+            dispatch_source = f"run payload {sidecar['file']}"
             logger.info(
                 "%s %s: model dispatch from run payload %s (%d plants)",
                 iso,
@@ -2318,67 +2475,63 @@ def diagnose_bundle(
             )
             pids, floor_sum, mech_plant, groups = aggregate_floors_by_plant(arrays)
             pid_strs = [str(p) for p in pids]
-            # Class totals need EVERY plant of the class, floored or not:
-            # rows below carry all model plants, floors zero-filled outside
-            # the floored set.
             klass_by_pid = dict(zip(pid_strs, groups))
-            all_pids = [
-                p for p in model_plants_plant if p in klass_by_pid or p in pid_strs
-            ]
-            # plants absent from the floors fleet (e.g. non-thermal payload
-            # rows) are excluded — they carry no class in the model fleet.
-            #
-            # Floored pseudo-unit rows ("u:" keys — plant_code <= 0
-            # interchange tranches, caiso-151 §F / caiso-155) have no
-            # dispatch series on ANY committed path (the payload is
-            # CAMPD-keyed by construction; the parquet filter above is
-            # plant_code > 0), so they enter with dispatch := their own
-            # floor — the pre-registered floor-energy convention
-            # (PREREG-caiso155 §3): the artifact reports the MANDATED floor
-            # energy for boundary tranches, path-independently. The true
-            # at-floor dispatch stays a probe-level statistic on unaggregated
-            # LP rows (caiso-151 §F measured 15.47 of 22.68 TWh for CAISO
-            # 2024 — a DIFFERENT, narrower statistic than the 22.68 reported
-            # here).
-            pseudo_pids = [
-                p
-                for p in pid_strs
-                if p.startswith(PSEUDO_PLANT_KEY_PREFIX) and p not in model_plants_plant
-            ]
-            all_pids = all_pids + pseudo_pids
-            t = 8760
-            disp = np.zeros((len(all_pids), t))
-            floors = np.zeros((len(all_pids), t))
-            mechs = np.zeros((len(all_pids), t), dtype=np.int8)
-            klass = np.empty(len(all_pids), dtype=object)
-            npl = np.zeros(len(all_pids))
-            index = {p: i for i, p in enumerate(all_pids)}
-            for p, i in index.items():
-                if p in model_plants_plant:
-                    disp[i] = model_plants_plant[p][:t]
-                klass[i] = klass_by_pid.get(p, "")
-                npl[i] = bench_pl.get(p, {}).get("npl", float(disp[i].max()))
-            for j, p in enumerate(pid_strs):
-                if p in index:
-                    floors[index[p]] = floor_sum[j][:t]
-                    mechs[index[p]] = (
-                        mech_plant[j][:, :t]
-                        if mech_plant[j].ndim > 1
-                        else mech_plant[j][:t]
-                    )
-            for p in pseudo_pids:
-                disp[index[p]] = floors[index[p]]
-            if pseudo_pids:
+            # The D-2/D-4 row set and the floor-energy convention for rows the
+            # dispatch source does not cover both live in build_plant_matrices
+            # (pjm-149 §3.1/§3.2) — a pure function so the path behaviour is
+            # unit-testable without a bundle.
+            mats = build_plant_matrices(
+                model_plants_plant, pid_strs, floor_sum, mech_plant, groups, bench_pl
+            )
+            all_pids = mats.pids
+            disp, floors, mechs = mats.disp, mats.floors, mats.mechs
+            klass, npl = mats.klass, mats.npl
+            t = disp.shape[1]
+            if mats.substituted_pseudo:
+                # caiso-151 §F / caiso-155: plant_code <= 0 interchange
+                # tranches have no dispatch series on ANY path (the payload is
+                # CAMPD-keyed by construction; the parquet filter is
+                # plant_code > 0), so the convention is path-independent for
+                # them. The true at-floor dispatch stays a probe-level
+                # statistic on unaggregated LP rows (caiso-151 §F measured
+                # 15.47 of 22.68 TWh for CAISO 2024 — a DIFFERENT, narrower
+                # statistic than the 22.68 reported here).
                 pseudo_note = (
-                    f"{year}: {len(pseudo_pids)} floored pseudo-unit row(s) "
-                    "(plant_code <= 0 interchange tranches) scored under the "
-                    "floor-energy convention (dispatch := min_gen; "
-                    "PREREG-caiso155 §3) — reported TWh is the mandated "
-                    "floor energy, an upper bound on at-floor dispatch: "
-                    + ", ".join(sorted(pseudo_pids))
+                    f"{year}: {len(mats.substituted_pseudo)} floored "
+                    "pseudo-unit row(s) (plant_code <= 0 interchange tranches) "
+                    "scored under the floor-energy convention "
+                    "(dispatch := min_gen; PREREG-caiso155 §3) — reported TWh "
+                    "is the mandated floor energy, an upper bound on at-floor "
+                    "dispatch: " + ", ".join(sorted(mats.substituted_pseudo))
                 )
                 d2.notes.append(pseudo_note)
                 d4.notes.append(pseudo_note)
+            if mats.substituted_plants:
+                # pjm-149: REAL plants the active dispatch source does not
+                # cover. Unlike the pseudo-unit family this IS path-sensitive
+                # — the same plant carries true dispatch when
+                # dispatch/<year>_<pass>.parquet exists — so the note names the
+                # source, and every affected class's summary row is stamped
+                # upper_bound below.
+                by_klass: dict[str, int] = {}
+                for p in mats.substituted_plants:
+                    k = klass_by_pid.get(p, "") or "(unclassified)"
+                    by_klass[k] = by_klass.get(k, 0) + 1
+                plant_note = (
+                    f"{year}: {len(mats.substituted_plants)} floored plant(s) "
+                    f"carry NO dispatch series in the active source "
+                    f"({dispatch_source or 'unknown'}) and are scored under the "
+                    "floor-energy convention (dispatch := min_gen; "
+                    "PREREG-pjm149 §3.2) — their forced TWh is the MANDATED "
+                    "floor energy and every affected class's forced_share is an "
+                    "UPPER BOUND, sound on a pass and indeterminate on a fail. "
+                    "By class: "
+                    + ", ".join(f"{k} x{n}" for k, n in sorted(by_klass.items()))
+                    + ". Plants: "
+                    + ", ".join(sorted(mats.substituted_plants))
+                )
+                d2.notes.append(plant_note)
+                d4.notes.append(plant_note)
             if "D2" in only:
                 total_load_mwh = (
                     load_payload_total_load_mwh(repo_root, sidecar, year)
@@ -2408,6 +2561,7 @@ def diagnose_bundle(
                     ra_floor_missing=ra_missing,
                     total_load_mwh=total_load_mwh,
                     actual_by_class=actual_by_class,
+                    dispatch_substituted=mats.substituted,
                 )
                 d2.rows.extend(sub_res.rows)
                 d2.failures.extend(sub_res.failures)

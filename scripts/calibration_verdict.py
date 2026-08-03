@@ -1976,6 +1976,16 @@ def score_forced_share(
     bound, never an upper one. SKIPPED when the artifact or the year is
     absent.
 
+    ``upper_bound`` (pjm-149 §3.2) is the mirror flag and is likewise
+    ANNOTATED, never acted on: the class holds a plant whose dispatch the
+    diagnostics substituted with its own floor because the active dispatch
+    source carried no series for it, which bounds the numerator above and the
+    denominator below. A PASS under an upper bound is therefore SOUND (under
+    the cap proves under the cap) while a breach is INDETERMINATE and escalates
+    to the owner rather than convicting — the status logic below is deliberately
+    unchanged, so this text arms only on artifacts written after pjm-149 and
+    re-scores every existing keeper byte-identically.
+
     Grounded-above-budget escalation (rubric v2.2, 2026-07-07): a class ABOVE
     its cap is no longer an automatic FAIL. It escalates to a conditional pass
     on PROVENANCE (every binding merchant mechanism clears D-4 off-window
@@ -2031,6 +2041,13 @@ def score_forced_share(
         lb = (
             " (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)"
             if r.get("lower_bound")
+            else ""
+        )
+        # pjm-149 §3.2 — annotation only, deliberately not a status change.
+        lb += (
+            " (holds a floor-substituted plant absent from the dispatch source "
+            "— share is an UPPER bound: a pass is sound, a breach indeterminate)"
+            if r.get("upper_bound")
             else ""
         )
         base = f"{fs * 100:.1f}% forced ({r.get('forced_twh')} of {r.get('class_total_twh')} TWh)"
