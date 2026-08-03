@@ -317,6 +317,70 @@ sitting) · PJM `2026-07-31-pjm-143b-hy-level` · CAISO `2026-07-31-caiso153-rei
 
 ---
 
+## Addendum D — **Post-execution sitting: the four items FFR-3A raised are SIGNED** (workstream manager, 2026-08-03, HEAD `195ff18`)
+
+*Appended by the FFR/FH workstream manager. Addendum C recorded the eleven decisions of the
+2026-08-02 sitting. Executing them surfaced four more that nobody had authority over; the owner
+signed all four on 2026-08-03. **Where this section and anything earlier disagree, this wins.***
+
+### D.1 The signed set
+
+| Item | Origin | **SIGNED** |
+|---|---|---|
+| **Adequacy collapse response** | FFR-3A §6.4 / §8 blocker 0 | **HOLD PROMOTION, FIND ROOT CAUSE** — keep D-1 and D-2 armed, promote nothing on these legs, dispatch the MISO control arm and the G-31 screen-grain investigation. |
+| **C.4(c) harness pins** | FFR-2E §6.2, confirmed FFR-3A | **UN-PIN — MATCH PRODUCTION.** `correlated_forced_outage` and `entry_lookahead_reprice` stop being forced `False` against production `True`. |
+| **C.4(a) B1 posture source** | FFR-2E B1/B2, FFR-3A §4.3 | **SINGLE SOURCE OF TRUTH.** Runners read the shipped `ScenarioConfig` field; the parallel `GOLDEN_CMC_BY_ISO` constant stops being a second answer. NYISO resolves curve-OFF, matching production. |
+| **D-3a net-CONE evolution mode** | deferred at the 2026-08-02 sitting, condition discharged when FFR-2E landed | **(a) `reindex_gross`** — escalate gross by the published index, re-net the model's own simulated E&AS margin. **Byte-identical to `hold_last` at the signed 0.0 real rate**, so it changes no output until a non-zero rate is ever set. |
+
+### D.2 The collapse decision, stated so no session mistakes it for a revert
+
+The owner did **not** revert, un-arm, or widen anything. Both signed mechanisms **stay armed**.
+What is withheld is **promotion**, and what is commissioned is **attribution**:
+
+- **The MISO control arm** is the highest-value second attribution because the 2026-08-02 sitting
+  predicted MISO's I12 flip **by name** — so MISO is the one ISO where a control tests a
+  pre-registered expectation rather than fishing.
+- **G-31 screen grain** was already isolated as an **independent root-cause term** in Addendum
+  A.4: the single-year lumping **survives** the rule change even though `pipeline` removes the
+  consecutive-loss counters outright. It was a live suspect before the collapse was measured.
+
+A session that responds to this by reverting a default, unarming a damper, widening a band, or
+tuning a parameter has misread it — that is precisely the rule 1 / rule 14 failure FFR-3A
+avoided. **The deliverable is attribution, not a smaller number.**
+
+### D.3 What the un-pin costs, acknowledged at signature
+
+Un-pinning changes what every **committed T1-H verdict** means. Those verdicts become **legacy
+evidence scored on a superseded posture** — they are not silently reinterpreted and not deleted.
+Any FC-3 citation resting on them says so. This is the same "validate the configuration you
+ship" principle that justified FFR-2E's lane (audit FR-14); the cost was known when signed.
+
+### D.4 Still open after this addendum
+
+- **FFR-SB's nuclear-registry owner box** (4 sub-decisions; the memo recommends candidate (c),
+  grades (a) NON-VIABLE, (b) narrow-instrument-only). Not put to the owner yet.
+- **FFR-3A blocker 4** — the optional-field cache-key hazard *"will silently recur on the next
+  default flip; structural, needs a decision not a patch."* D-3a's mode flip is the next default
+  flip, so this is now live rather than hypothetical.
+- **FFR-3A blockers 1, 5, 6, 7, 8** — `data/clean` prerequisite (≈55 min/1.6 GB, undocumented),
+  the T1-F console line reporting `0 FAIL, 0 WARN` on a zero-year run, 24 pre-existing test
+  failures on main, `run_full_horizon.py` never writing `run_config.json` (so **FC-7 fails on
+  every T1-F leg by construction**), and FC-2 row4 SKIPPED everywhere (so **BLK-10 backstop
+  sizing, which D-2 was meant to re-open, cannot be scored at all**).
+- **The battery is half-run.** No T1-H re-scores, no T1-X fold, no FC-6 driver battery, no FF-3E
+  re-run, no §2.1b gate scorecard, no regression table vs FF-2D, no board regeneration, no
+  registration. Every leg scored so far is **HOLD**.
+
+### D.5 State at signature
+
+HEAD `195ff18`. Keepers: ERCOT `2026-08-02-ercot150b-zonal-anchor` · **PJM
+`2026-08-03-pjm-147b-chp-heat` (CALIBRATED 9/9)** · CAISO `2026-08-03-caiso156-meter-screen-b` ·
+NYISO `2026-08-02-nyiso-113-li-locational` · NEISO `2026-08-03-neiso-caiso156-meter-screen` ·
+MISO `2026-08-03-miso-117b-ct-heat`. Markers unchanged (`complete` = {NEISO, NYISO, PJM},
+`final` empty). **Holdout freeze ACTIVE and untouched.**
+
+---
+
 ## D-1 — Retirement-rule default: `legacy` → `pipeline`
 
 **What it changes.** `ScenarioConfig.retirement_rule` default `"legacy"` → `"pipeline"`
