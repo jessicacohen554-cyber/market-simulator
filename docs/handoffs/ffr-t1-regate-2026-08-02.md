@@ -9,15 +9,16 @@
 and executing them surfaced **four defects, three of which would have silently invalidated
 this session's own battery**. The T1-F half of the battery then **ran** (after clearing an
 unanticipated `data/clean` prerequisite, §6.1) and returns a **headline finding the owner
-needs before anything is promoted: the signed decisions D-1 + D-2 drive a severe
-capacity-adequacy degradation across every ISO measured** — in ERCOT, attributed against a
-paired control arm. **Nothing is tuned, nothing is unarmed, nothing is registered** (rules
+needs before anything is promoted: the signed decisions D-1 + D-2 degrade capacity adequacy
+in every one of the six ISOs, severely in ERCOT and CAISO** — in ERCOT, attributed against a
+paired control arm. **All six determinations are HOLD.** **Nothing is tuned, nothing is unarmed, nothing is registered** (rules
 1/14): the finding is written up in §6.4 as an open blocker for the owner, not acted on.
 
-> **⚠ READ §6.4 BEFORE PROMOTING ANYTHING.** ERCOT's reserve margin reaches **−1.5 %** and
-> CAISO's **−3.1 %**. The owner signed D-2 accepting a *disclosed adequacy change* (MISO's
-> I12 going WARN→FAIL); what was measured is materially larger and broader than that
-> disclosure. This is a finding, not a recommendation — the call is the owner's.
+> **⚠ READ §6.4 AND §6.5b BEFORE PROMOTING ANYTHING.** ERCOT's reserve margin reaches
+> **−1.5 %** and CAISO's **−3.1 %**. The owner signed D-2 accepting one *disclosed adequacy
+> change* — **MISO's I12 going WARN→FAIL**. That specific consequence **did NOT reproduce**
+> (MISO's I12 is WARN here, §6.5b), while two consequences nobody was warned about **did**.
+> These are findings, not recommendations — the call is the owner's.
 
 ---
 
@@ -288,7 +289,8 @@ posture split was built to achieve.
 | CAISO | 5/5 | 18.1 m | 5.06 GB | `True` | ✓ ON | `862d176d609252f9` | I3, **I7**, **I12** | — |
 | *ERCOT **control*** | *5/5* | *8.8 m* | *4.02 GB* | *`False`* | *pre-decision* | `e9e5e1c911c6424c` | *I3* | *I12, I14* |
 
-PJM and MISO were still solving when this was written; §9 records what that leaves open.
+All six ISOs are in; the T1-F half of the battery is COMPLETE. §9 records what the other
+halves (T1-H / T1-X / FC-6 / FF-3E) still leave open.
 
 ### 6.4 ⚠ HEADLINE FINDING — D-1 + D-2 cause a capacity-adequacy collapse
 
@@ -343,16 +345,26 @@ finding, with its evidence, for the owner.
 Scored from **committed artifacts only, no LP re-solve**. Artifacts:
 `results/ffr3a/scorecard/<leg>.{json,txt}`.
 
-| leg | ISO | **determination** | FC-1 | FC-2 | FC-3 | FC-5 | FC-6 | FC-7 | FC-8 |
-|---|---|---|---|---|---|---|---|---|---|
-| NEISO | NEISO | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | PASS |
-| NYISO | NYISO | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | PASS |
-| ERCOT | ERCOT | **HOLD** | FAIL | **FAIL** | n/a | SKIP | SKIP | FAIL | PASS |
-| CAISO | CAISO | **HOLD** | FAIL | **FAIL** | n/a | SKIP | SKIP | FAIL | PASS |
-| PJM | PJM | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | CAVEAT |
-| *ERCOT **control*** | *ERCOT* | ***HOLD*** | *FAIL* | ***CAVEAT*** | *n/a* | *SKIP* | *SKIP* | *FAIL* | *PASS* |
+**ALL SIX ISOs solved 5/5 years.** Determination and the two differentiating categories:
 
-**Every leg is HOLD. Nothing is promotable, and nothing is promoted.**
+| leg | ISO | **determination** | FC-1 | **FC-2** | FC-3 | FC-7 | invariant FAIL | WARN |
+|---|---|---|---|---|---|---|---|---|
+| NEISO | NEISO | **HOLD** | FAIL | CAVEAT | n/a | FAIL | I7 | I12 |
+| NYISO | NYISO | **HOLD** | FAIL | CAVEAT | n/a | FAIL | I7 | I12 |
+| PJM | PJM | **HOLD** | FAIL | CAVEAT | n/a | FAIL | I7 | I12 |
+| MISO | MISO | **HOLD** | FAIL | CAVEAT | n/a | FAIL | I7 | I12 |
+| **ERCOT** | ERCOT | **HOLD** | FAIL | **FAIL** | n/a | FAIL | I3, I12 | I14 |
+| **CAISO** | CAISO | **HOLD** | FAIL | **FAIL** | n/a | FAIL | I3, I7, I12 | — |
+| *ERCOT **control*** | *ERCOT* | ***HOLD*** | *FAIL* | ***CAVEAT*** | *n/a* | *FAIL* | *I3* | *I12, I14* |
+
+**Every leg is HOLD. Nothing is promotable, and nothing is promoted.** FC-5/FC-6 are SKIPPED
+on every leg (no committed corridor table; no driver battery), FC-8 PASS everywhere except
+PJM (CAVEAT, runtime).
+
+**Severity is NOT uniform, and that matters.** Four ISOs (NEISO, NYISO, PJM, MISO) sit at
+FC-2 CAVEAT with an I7 miss and an I12 WARN; only **ERCOT and CAISO** reach FC-2 FAIL with
+negative reserve margins. PJM's miss is marginal — **366 MW on a 150 GW requirement (0.24 %),
+in 2030 only**. Any statement that "the forecast collapses everywhere" would be wrong.
 
 **FC-7 fails on EVERY leg for the same instrument reason, so it does not
 differentiate anything.** `run_full_horizon.py` writes `config.yaml` into the cache dir but
@@ -378,6 +390,30 @@ under the paired control:
 The signed decisions do not merely widen an excursion — they introduce a **new** failure mode
 the control never exhibits: sustained scarcity pricing at 1,137 hours/year ≥ $500/MWh, the
 price signature of a structurally short system.
+
+### 6.5b ⚠ THE DISCLOSED CONSEQUENCE DID NOT REPRODUCE — MISO's I12 is WARN, not FAIL
+
+The owner signed D-2 against a specific, named disclosure (sitting Addendum A.2 / C.1):
+*"I12 goes WARN→FAIL as a disclosed adequacy change, not a regression to unarm"* — **in
+MISO**, measured by FFR-2B.
+
+**At this HEAD, shipped posture, cold post-epoch, MISO's I12 is `WARN`** (2026: 5.3 %,
+2027: 7.1 %, band [10.0 %, 25.0 %]), **not FAIL**, and MISO's FC-2 is **CAVEAT**, not FAIL.
+MISO's determination is HOLD on FC-1 (I7: short 6.0 GW in 2026, 3.7 GW in 2027) and FC-7,
+neither of which is the disclosed effect.
+
+So the adequacy picture **inverted relative to the disclosure**:
+
+* the consequence the owner *was* warned about (MISO I12 → FAIL) **did not reproduce here**;
+* the consequences the owner was *not* warned about (ERCOT and CAISO to **negative reserve
+  margins**, ERCOT sustained-VOLL at 1,137 h/yr) **did**.
+
+**Do not read this as "FFR-2B was wrong."** The two measurements differ in more than one
+input — this session's legs run the FFR-2C net-CONE re-anchor and the §4.3 shipped posture,
+neither of which FFR-2B's probe carried, and this battery has no MISO control arm to isolate
+the difference. What is established is narrow and sufficient for the owner: **the disclosure
+that D-2 was signed against does not describe what the shipped configuration now does.**
+A MISO control arm is the single highest-value next measurement.
 
 ### 6.6 Nothing was registered, and nothing should be
 
@@ -456,8 +492,9 @@ tested this session, so there is nothing to adjudicate.
 
 ## 9. What this session does NOT claim
 
-**Measured and reported:** the T1-F half — NEISO, NYISO, ERCOT, CAISO at the shipped posture,
-plus an ERCOT pre-decision control (§6.3/§6.4). PJM and MISO were still solving at write-up.
+**Measured and reported:** the T1-F half, COMPLETE — all six ISOs (NEISO, NYISO, ERCOT,
+CAISO, PJM, MISO) at the shipped posture, 5/5 years each, plus an ERCOT pre-decision control
+arm; scored with `forecast_verdict --tier t1f` (§6.3/§6.4/§6.5).
 
 **NOT measured, and therefore not claimed:**
 
@@ -476,4 +513,7 @@ plus an ERCOT pre-decision control (§6.3/§6.4). PJM and MISO were still solvin
   complete.
 * **No promotion recommendation.** §6.4 is a measured finding routed to the owner; the
   promotion and gate-open calls remain the owner's.
-* **Cross-ISO causation is NOT claimed.** Only ERCOT is attributed against a control.
+* **Cross-ISO causation is NOT claimed.** Only ERCOT is attributed against a control. In
+  particular §6.5b (MISO's I12 not reproducing the disclosure) is a *measurement*, not an
+  attribution — there is no MISO control arm, and this session's legs differ from FFR-2B's
+  probe in more than one input.
