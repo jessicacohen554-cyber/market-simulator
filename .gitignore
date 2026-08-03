@@ -539,6 +539,15 @@ results/calibration/caiso154_slopes_PJM.csv
 # ever applies to untracked paths.
 /results/ffr3c/
 
+# FFR-3A-2 consolidated T1 battery close (run_full_horizon / run_capacity_hindcast
+# / run_driver_battery --out-dir caches and their loose run logs). Same class as
+# /results/ffr3a/ and /results/ffr3c/ — forecast legs are registered to
+# frontend/data/forecast/ via scripts/register_forecast_run.py, never as tracked
+# bundles here (CLAUDE.md rule 15). results/ffr3a2/README.md stays TRACKED (it is
+# the lane's record, not an output) and is unaffected by this rule, which only
+# ever applies to untracked paths.
+/results/ffr3a2/
+
 # Transient CT-artifact stash written by scripts/probes/caiso160_nyiso_ct_arms.py
 # while a control arm solves against a prior artifact revision; the driver
 # restores the working copy and removes this in a finally.
