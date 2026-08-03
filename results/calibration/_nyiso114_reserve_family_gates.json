@@ -1,0 +1,555 @@
+{
+  "probe": "nyiso-114 reserve-family sidecar gates",
+  "arm_bundle": "results/calibration/nyiso114_lilocational_confirm",
+  "keeper_bundle": "results/calibration/nyiso113_lilocational_B",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "G1_replay_fidelity": {
+    "per_year": {
+      "2023": {
+        "max_abs_dprice": 10.504474683699911,
+        "max_abs_dreserve_price": 4.607820059512221,
+        "n_zone_hours": 52560,
+        "n_differing": 14374,
+        "share_differing": 0.2734779299847793,
+        "mean_abs_dprice_over_differing": 0.035291133561482974,
+        "mean_price_replay": 33.651594839369615,
+        "mean_price_keeper": 33.6442979044825,
+        "mean_price_pct_delta": 0.02168847424853911,
+        "pass": false
+      },
+      "2024": {
+        "max_abs_dprice": 10.563730429788578,
+        "max_abs_dreserve_price": 0.0,
+        "n_zone_hours": 52560,
+        "n_differing": 18630,
+        "share_differing": 0.3544520547945205,
+        "mean_abs_dprice_over_differing": 0.046146700063828726,
+        "mean_price_replay": 36.59671370688793,
+        "mean_price_keeper": 36.592261143113674,
+        "mean_price_pct_delta": 0.012168047655879824,
+        "pass": false
+      },
+      "2025": {
+        "max_abs_dprice": 9.042433421228353,
+        "max_abs_dreserve_price": 7.828315928102228,
+        "n_zone_hours": 52560,
+        "n_differing": 24247,
+        "share_differing": 0.46132039573820394,
+        "mean_abs_dprice_over_differing": 0.10991405045635816,
+        "mean_price_replay": 57.22482345503659,
+        "mean_price_keeper": 57.19341086859648,
+        "mean_price_pct_delta": 0.05492343604455302,
+        "pass": false
+      }
+    },
+    "pass": false
+  },
+  "G1_attribution": {
+    "available": true,
+    "year": 2024,
+    "sidecar_vs_base_max_abs_dprice": 0.0,
+    "sidecar_vs_base_n_differing": 0,
+    "base_vs_keeper_max_abs_dprice": 10.563730429788578,
+    "base_vs_keeper_n_differing": 18630,
+    "verdict": "SIDECAR IS NOT THE CAUSE \u2014 base code reproduces the replay exactly; the keeper divergence is present WITHOUT this session's diff"
+  },
+  "G2_G3_G4": {
+    "per_year": {
+      "2023": {
+        "n_families": 9,
+        "n_rows": 78840,
+        "rows_expected": 78840,
+        "any_nan": false,
+        "g2_pass": true,
+        "g3_min_row_slack_mw": 0.0,
+        "g3_max_slack_where_binding_mw": 0.0,
+        "g3_pass": true,
+        "g4_max_abs_sum_gap": 5.249630419257301e-08,
+        "g4_pass": true,
+        "n_hours_reserve_price_positive": 17
+      },
+      "2024": {
+        "n_families": 9,
+        "n_rows": 78840,
+        "rows_expected": 78840,
+        "any_nan": false,
+        "g2_pass": true,
+        "g3_min_row_slack_mw": 0.0,
+        "g3_max_slack_where_binding_mw": 0.0,
+        "g3_pass": true,
+        "g4_max_abs_sum_gap": 0.0,
+        "g4_pass": true,
+        "n_hours_reserve_price_positive": 6
+      },
+      "2025": {
+        "n_families": 9,
+        "n_rows": 78840,
+        "rows_expected": 78840,
+        "any_nan": false,
+        "g2_pass": true,
+        "g3_min_row_slack_mw": 0.0,
+        "g3_max_slack_where_binding_mw": 0.0,
+        "g3_pass": true,
+        "g4_max_abs_sum_gap": 6.0795587160100695e-06,
+        "g4_pass": true,
+        "n_hours_reserve_price_positive": 29
+      }
+    },
+    "g2_pass": true,
+    "g3_pass": true,
+    "g4_pass": true
+  },
+  "per_family_binding": {
+    "2023": {
+      "east_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1200.0,
+        "requirement_max_mw": 1200.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 120.0,
+        "requirement_max_mw": 120.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 270.0,
+        "requirement_max_mw": 540.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "nyc_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 500.0,
+        "n_hours_dual_positive": 17,
+        "max_dual": 15.625,
+        "n_hours_shortfall": 15,
+        "max_shortfall_mw": 307.3847351074219,
+        "min_headroom_to_requirement_mw": -307.3847351074219,
+        "binding_hours": [
+          4459,
+          5942,
+          5943,
+          5944,
+          5945,
+          5946,
+          5947,
+          5966,
+          5967,
+          5968,
+          5969,
+          5970,
+          5971,
+          5990,
+          5991,
+          5992,
+          5993
+        ]
+      },
+      "nyc_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1000.0,
+        "n_hours_dual_positive": 8,
+        "max_dual": 6.25,
+        "n_hours_shortfall": 8,
+        "max_shortfall_mw": 176.99069213867188,
+        "min_headroom_to_requirement_mw": -176.99066162109375,
+        "binding_hours": [
+          5943,
+          5944,
+          5945,
+          5946,
+          5968,
+          5969,
+          5970,
+          5971
+        ]
+      },
+      "nyca_10min_spin": {
+        "reserve_class": 1,
+        "requirement_min_mw": 655.0,
+        "requirement_max_mw": 655.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 655.0,
+        "binding_hours": []
+      },
+      "nyca_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1310.0,
+        "requirement_max_mw": 1310.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "nyca_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 2620.0,
+        "requirement_max_mw": 2620.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "seny_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1800.0,
+        "n_hours_dual_positive": 2,
+        "max_dual": 62.5,
+        "n_hours_shortfall": 2,
+        "max_shortfall_mw": 61.30720520019531,
+        "min_headroom_to_requirement_mw": -61.3072509765625,
+        "binding_hours": [
+          5968,
+          5969
+        ]
+      }
+    },
+    "2024": {
+      "east_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1200.0,
+        "requirement_max_mw": 1200.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 120.0,
+        "requirement_max_mw": 120.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": 1.4210854715202004e-14,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 270.0,
+        "requirement_max_mw": 540.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "nyc_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 500.0,
+        "n_hours_dual_positive": 6,
+        "max_dual": 18.75,
+        "n_hours_shortfall": 6,
+        "max_shortfall_mw": 357.70379638671875,
+        "min_headroom_to_requirement_mw": -357.70379638671875,
+        "binding_hours": [
+          4455,
+          4456,
+          4457,
+          5752,
+          5753,
+          5754
+        ]
+      },
+      "nyc_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1000.0,
+        "n_hours_dual_positive": 6,
+        "max_dual": 12.5,
+        "n_hours_shortfall": 6,
+        "max_shortfall_mw": 403.70379638671875,
+        "min_headroom_to_requirement_mw": -403.70379638671875,
+        "binding_hours": [
+          4455,
+          4456,
+          4457,
+          5752,
+          5753,
+          5754
+        ]
+      },
+      "nyca_10min_spin": {
+        "reserve_class": 1,
+        "requirement_min_mw": 655.0,
+        "requirement_max_mw": 655.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 655.0,
+        "binding_hours": []
+      },
+      "nyca_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1310.0,
+        "requirement_max_mw": 1310.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "nyca_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 2620.0,
+        "requirement_max_mw": 2620.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "seny_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1800.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      }
+    },
+    "2025": {
+      "east_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1200.0,
+        "requirement_max_mw": 1200.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 120.0,
+        "requirement_max_mw": 120.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "li_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 270.0,
+        "requirement_max_mw": 540.0,
+        "n_hours_dual_positive": 5,
+        "max_dual": 6.25,
+        "n_hours_shortfall": 5,
+        "max_shortfall_mw": 129.72532653808594,
+        "min_headroom_to_requirement_mw": -129.72531127929688,
+        "binding_hours": [
+          4193,
+          4194,
+          4195,
+          4217,
+          4218
+        ]
+      },
+      "nyc_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 500.0,
+        "n_hours_dual_positive": 29,
+        "max_dual": 18.75,
+        "n_hours_shortfall": 28,
+        "max_shortfall_mw": 316.52203369140625,
+        "min_headroom_to_requirement_mw": -316.52203369140625,
+        "binding_hours": [
+          4171,
+          4172,
+          4190,
+          4191,
+          4192,
+          4193,
+          4194,
+          4195,
+          4196,
+          4214,
+          4215,
+          4216,
+          4217,
+          4218,
+          4219,
+          4934,
+          5006,
+          5007,
+          5008,
+          5009,
+          5010,
+          5011,
+          5031,
+          5032,
+          5033,
+          5034,
+          5035,
+          5036,
+          5055
+        ]
+      },
+      "nyc_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1000.0,
+        "n_hours_dual_positive": 10,
+        "max_dual": 9.375,
+        "n_hours_shortfall": 10,
+        "max_shortfall_mw": 286.7086486816406,
+        "min_headroom_to_requirement_mw": -286.70867919921875,
+        "binding_hours": [
+          4196,
+          4216,
+          4217,
+          4934,
+          5007,
+          5008,
+          5009,
+          5011,
+          5035,
+          5036
+        ]
+      },
+      "nyca_10min_spin": {
+        "reserve_class": 1,
+        "requirement_min_mw": 655.0,
+        "requirement_max_mw": 655.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 655.0,
+        "binding_hours": []
+      },
+      "nyca_10min_total": {
+        "reserve_class": 1,
+        "requirement_min_mw": 1310.0,
+        "requirement_max_mw": 1310.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "nyca_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 2620.0,
+        "requirement_max_mw": 2620.0,
+        "n_hours_dual_positive": 0,
+        "max_dual": -0.0,
+        "n_hours_shortfall": 0,
+        "max_shortfall_mw": 0.0,
+        "min_headroom_to_requirement_mw": 0.0,
+        "binding_hours": []
+      },
+      "seny_30min_total": {
+        "reserve_class": 0,
+        "requirement_min_mw": 0.0,
+        "requirement_max_mw": 1800.0,
+        "n_hours_dual_positive": 8,
+        "max_dual": 125.0,
+        "n_hours_shortfall": 6,
+        "max_shortfall_mw": 199.9113006591797,
+        "min_headroom_to_requirement_mw": -199.9112548828125,
+        "binding_hours": [
+          4192,
+          4193,
+          4194,
+          4195,
+          4196,
+          4216,
+          4217,
+          4218
+        ]
+      }
+    }
+  },
+  "predictions": {
+    "P1_2025_li30_binds_the_predicted_hours": {
+      "predicted": [
+        4193,
+        4194,
+        4195,
+        4217,
+        4218
+      ],
+      "measured": [
+        4193,
+        4194,
+        4195,
+        4217,
+        4218
+      ],
+      "verdict": "CONFIRMED (exact)"
+    },
+    "P2_every_priced_hour_attributable": {
+      "unattributed_hours_by_year": {
+        "2023": [],
+        "2024": [],
+        "2025": []
+      },
+      "verdict": "CONFIRMED"
+    },
+    "P3_li10_never_binds": {
+      "measured_binding_hours": {
+        "2023": [],
+        "2024": [],
+        "2025": []
+      },
+      "verdict": "CONFIRMED"
+    },
+    "P4_no_li_family_binds_in_2024": {
+      "verdict": "CONFIRMED"
+    },
+    "P5_li_binds_2_hours_in_2023": {
+      "predicted_n": 2,
+      "measured_n": 0,
+      "measured_hours": [],
+      "verdict": "REFUTED"
+    }
+  }
+}
