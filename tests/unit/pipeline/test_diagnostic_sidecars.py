@@ -300,13 +300,24 @@ class TestReserveFamilySidecar(unittest.TestCase):
             np.testing.assert_allclose(
                 rows["requirement_mw"].to_numpy(), fam.requirement, atol=1e-6
             )
-            # sum_{z in f} R + shortfall == requirement, the LP row itself.
-            held = res.reserve_dispatch[np.asarray(fam.zone_mask)].sum(axis=0)
-            np.testing.assert_allclose(
-                held + rows["shortfall_mw"].to_numpy(),
-                fam.requirement,
-                atol=1e-3,
+            # held + shortfall >= requirement — the LP row itself, now
+            # checkable from the persisted frame alone (held_mw is the balance
+            # row's own activity net of its ORDC steps, so no re-derivation of
+            # the row's layout-dependent coefficients is needed).
+            slack = (
+                rows["held_mw"].to_numpy()
+                + rows["shortfall_mw"].to_numpy()
+                - fam.requirement
             )
+            self.assertTrue((slack >= -1e-3).all())
+            # And it is TIGHT exactly where the family prices.
+            binds = rows["dual"].to_numpy() > 1e-9
+            if binds.any():
+                np.testing.assert_allclose(slack[binds], 0.0, atol=1e-3)
+            # Cross-check held_mw against the zone-summed reserve dispatch on
+            # this simple single-class layout, where the two must agree.
+            zsum = res.reserve_dispatch[np.asarray(fam.zone_mask)].sum(axis=0)
+            np.testing.assert_allclose(rows["held_mw"].to_numpy(), zsum, atol=1e-3)
 
     def test_locational_binding_is_visible_where_the_system_column_is_not(self):
         # The whole point. The zone-1-only family prices at its own $850 step

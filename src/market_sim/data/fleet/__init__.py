@@ -62,8 +62,6 @@ from market_sim.config.constants import (
     CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
     COAL_MAX_CF_BY_PLANT,
-    CT_ECON_HR_OVERRIDE_DEFAULT,
-    CT_PEAK_HR_OVERRIDE_DEFAULT,
     EFORD,
     FUEL_CO2_FACTOR_PER_MMBTU,
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,

@@ -1,0 +1,1399 @@
+{
+  "iso": "MISO",
+  "keeper": "2026-07-31-miso-109b-hy-level",
+  "keeper_bundle_fields": 658,
+  "n_scenario_fields": 670,
+  "n_matrix_rows": 171,
+  "n_bundles_scanned": 34,
+  "family": [
+    {
+      "field": "miso_cc_coal_rebalance",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "diurnal_price_amplitude",
+          "cells": "UUGGGO",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_coal_night_floor",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "miso_coal_night_floor",
+          "cells": "...I..",
+          "cell": "I"
+        },
+        {
+          "row": "diagnostics_plant_set",
+          "cells": "IIOIII",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": [
+        "miso113b_nightfloor_B"
+      ]
+    },
+    {
+      "field": "miso_commitment_posture",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_firm_import_floor",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_firm_imports",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_node_export_constraint",
+          "cells": ".G..UU",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        "."
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_manitoba_seam",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "diagnostics_plant_set",
+          "cells": "IIOIII",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_measured_reserve_requirements",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dynamic_reserve_requirements",
+          "cells": "UUKKKR",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_midwest_subregional_reserves",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso71_midwest",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_native_outage_source",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_pjm_border_anchor",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_pjm_lmp_import_pricing",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_rdt_tcdc",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "rdt_tcdc",
+          "cells": "...K..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_reserve_pergen",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_rpe_pricing",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_seam_envelope_merit_cap",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso73_seam_meritcap",
+        "miso75_manitoba_meritcap",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_seam_export_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_seam_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_seam_flow_percentile",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_seam_measured_ladder",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_south_seam_split",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_winter_citygate_daily",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.UK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso72_winter_citygate",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_zonal_gas_basis",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    },
+    {
+      "field": "miso_zonal_loss_surface",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_loss_surface",
+          "cells": "..KR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": [
+        "miso76_loss_surface"
+      ]
+    },
+    {
+      "field": "miso_zonal_reserve_zones",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "miso_zonal_reserves",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "miso101_control_A",
+        "miso101_tempgrain_B",
+        "miso102_control_A",
+        "miso102_sunkfixed_B",
+        "miso106_control_A",
+        "miso109_control_A",
+        "miso109_hy_level_B",
+        "miso111_control_A",
+        "miso111_prbdispatch_B",
+        "miso112_control_A",
+        "miso112_prbsplit_B",
+        "miso113_control_A",
+        "miso113b_control_A",
+        "miso113b_nightfloor_B",
+        "miso65_outage_regen",
+        "miso66_coalconduct",
+        "miso67_stgas_vlr_level",
+        "miso71_midwest",
+        "miso71_midwest-base",
+        "miso72_winter_citygate",
+        "miso72_winter_citygate-base",
+        "miso73_seam_meritcap",
+        "miso73_seam_meritcap-base",
+        "miso74_manitoba_base",
+        "miso74_manitoba_seam",
+        "miso75_manitoba_meritcap",
+        "miso75_meritcap_base",
+        "miso76_loss_base",
+        "miso76_loss_surface",
+        "miso81_phantom_outage",
+        "miso99_chp_hr_A",
+        "miso99_chp_hr_B",
+        "miso_gasshape_interpfix_base",
+        "miso_gasshape_interpfix_main"
+      ]
+    }
+  ],
+  "family_matrix_gaps_absent": [
+    "miso_commitment_posture",
+    "miso_midwest_subregional_reserves",
+    "miso_native_outage_source",
+    "miso_pjm_border_anchor",
+    "miso_rpe_pricing",
+    "miso_seam_envelope_merit_cap",
+    "miso_seam_export_limit",
+    "miso_seam_flow_limit",
+    "miso_seam_flow_percentile",
+    "miso_south_seam_split",
+    "miso_zonal_reserve_zones",
+    "miso_zonal_reserves"
+  ],
+  "family_prose_only": [
+    "miso_cc_coal_rebalance",
+    "miso_firm_import_floor",
+    "miso_manitoba_seam",
+    "miso_pjm_lmp_import_pricing",
+    "miso_seam_measured_ladder"
+  ],
+  "armed_on_keeper_with_no_cell": [
+    "miso_manitoba_seam",
+    "miso_midwest_subregional_reserves",
+    "miso_pjm_border_anchor",
+    "miso_rpe_pricing",
+    "miso_seam_envelope_merit_cap",
+    "miso_seam_export_limit",
+    "miso_seam_flow_limit",
+    "miso_seam_measured_ladder",
+    "miso_south_seam_split",
+    "miso_zonal_reserves"
+  ],
+  "live_but_invisible": [
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": 2025,
+        "miso101_tempgrain_B": 2025,
+        "miso102_control_A": 2025,
+        "miso102_sunkfixed_B": 2025,
+        "miso106_control_A": 2023,
+        "miso109_control_A": 2023
+      }
+    },
+    {
+      "field": "miso_seam_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_pjm_border_anchor",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_seam_export_limit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_zonal_reserves",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_south_seam_split",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_rpe_pricing",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "coal_takeorpay_from_data",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "ct_intermediate_split",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "st_gas_intermediate_split",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "cc_intermediate_split",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_startup_cost",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "tranche_startup_measured_runs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "tranche_startup_conditional_runs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_wefor_base_override",
+      "default": null,
+      "keeper_value": 0.1,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": 0.1,
+        "miso101_tempgrain_B": 0.1,
+        "miso102_control_A": 0.1,
+        "miso102_sunkfixed_B": 0.1,
+        "miso106_control_A": 0.1,
+        "miso109_control_A": 0.1
+      }
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "coal_warm_committed",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+        "miso101_tempgrain_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+        "miso102_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+        "miso102_sunkfixed_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+        "miso106_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv",
+        "miso109_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv"
+      }
+    },
+    {
+      "field": "cc_peaking_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "class_aware_fuel_price_fallback",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_zonal_gas_basis",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 34,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "carry_operating_mothballs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 31,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "unit_outage_maxgen_events",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 31,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_midwest_subregional_reserves",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 30,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "miso_seam_envelope_merit_cap",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 23,
+      "bundles": {
+        "miso101_control_A": true,
+        "miso101_tempgrain_B": true,
+        "miso102_control_A": true,
+        "miso102_sunkfixed_B": true,
+        "miso106_control_A": true,
+        "miso109_control_A": true
+      }
+    },
+    {
+      "field": "retirement_years_coal",
+      "default": 3,
+      "keeper_value": 3,
+      "n_bundles_nondefault": 3,
+      "bundles": {
+        "miso65_outage_regen": 1,
+        "miso66_coalconduct": 1,
+        "miso67_stgas_vlr_level": 1
+      }
+    },
+    {
+      "field": "federal_ces_ccs_capture_fraction",
+      "default": 0.95,
+      "keeper_value": 0.95,
+      "n_bundles_nondefault": 2,
+      "bundles": {
+        "miso71_midwest": 0.9,
+        "miso71_midwest-base": 0.9
+      }
+    },
+    {
+      "field": "coal_bit_committed_takeorpay",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 1,
+      "bundles": {
+        "miso65_outage_regen": true
+      }
+    },
+    {
+      "field": "coal_committed_takeorpay_sunk_fixed",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 1,
+      "bundles": {
+        "miso102_sunkfixed_B": true
+      }
+    }
+  ]
+}

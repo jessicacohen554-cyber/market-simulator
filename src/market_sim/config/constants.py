@@ -140,6 +140,7 @@ from market_sim.config.fuel_trajectories import (
     NUCLEAR_FUEL_PRICE_HISTORICAL,
     OIL_PRICE_PER_MMBTU,
     OIL_PRICE_TRAJECTORIES,
+    PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE,
     PRB_COMMODITY_DECLINE,
     PRB_COMMODITY_FLAT_THROUGH,
     PRB_COMMODITY_SHARE,
@@ -480,8 +481,10 @@ CC_ECON_HR_OVERRIDE_DEFAULT: float = 1.2  # CC economic band ≈ 1.2× base HR
 CC_PEAK_HR_OVERRIDE_DEFAULT: float = 1.8  # CC duct-firing peak ≈ 1.8× base HR
 GAS_ST_ECON_HR_OVERRIDE_DEFAULT: float = 1.0  # gas-steam econ ≈ flat full-load HR
 GAS_ST_PEAK_HR_OVERRIDE_DEFAULT: float = 1.5  # gas-steam peak ≈ 1.5× base HR
-CT_ECON_HR_OVERRIDE_DEFAULT: float = 1.1  # CT_CHP economic band ≈ 1.1× base HR
-CT_PEAK_HR_OVERRIDE_DEFAULT: float = 1.3  # CT_CHP peak band ≈ 1.3× base HR
+# (CT_ECON_HR_OVERRIDE_DEFAULT / CT_PEAK_HR_OVERRIDE_DEFAULT deleted 2026-08-03
+# with the ct_*_hr_override triple they backed — rule 26 [R-DELETE], nyiso-114;
+# see the ScenarioConfig note at the deleted fields. The CC and gas-steam
+# defaults above are untouched: their triples are still reachable.)
 
 # Gas offer-curve tranche SHARES (committed / economic / peaking) of nameplate
 # by group, for the generic (non-CAMPD) offer curve

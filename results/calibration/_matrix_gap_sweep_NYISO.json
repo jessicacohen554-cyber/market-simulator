@@ -1,0 +1,1456 @@
+{
+  "iso": "NYISO",
+  "keeper": "2026-08-02-nyiso-113-li-locational",
+  "keeper_bundle_fields": 671,
+  "n_scenario_fields": 670,
+  "n_matrix_rows": 171,
+  "n_bundles_scanned": 17,
+  "family": [
+    {
+      "field": "nyiso_downstate_ct_gas_basis",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_downstate_ct_gas_basis",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_downstate_ct_gas_daily",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_downstate_ct_gas_basis",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_dynamic_reserve_requirements",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_ordc_measured_step_span",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
+          "row": "tsa_transfer_derate",
+          "cells": "....G.",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G",
+        "U"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_east_reserve_families",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_east_reserve_families",
+          "cells": "....I.",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_firm_imports",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_firm_imports",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_node_export_constraint",
+          "cells": ".G..UU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "K",
+        "U"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_forward_net_import_twh",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_import_reconciliation",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_gas_bridge_cc_min_load_frac",
+      "default": 0.523,
+      "keeper_value": 0.523,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_cc_min_run_hours",
+      "default": null,
+      "keeper_value": 21,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_ct",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_gas_bridge_ct_min_load_frac",
+      "default": 0.238,
+      "keeper_value": 0.238,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_ct_min_run_hours",
+      "default": 2.0,
+      "keeper_value": 2.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_da_horizon",
+      "default": true,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_min_run",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_st_min_load_frac",
+      "default": 0.239,
+      "keeper_value": 0.239,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_st_min_run_hours",
+      "default": null,
+      "keeper_value": 13,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_bridge_startup",
+      "default": true,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_gas_commitment_bridge",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..UKIU",
+          "cell": "I"
+        },
+        {
+          "row": "forced_share_d4_census",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "diagnostics_plant_set",
+          "cells": "IIOIII",
+          "cell": "I"
+        },
+        {
+          "row": "caiso_p1_export_sink_seam",
+          "cells": "IR..OU",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "I",
+        "O"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_hydro_reserve_eligible",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_hydro_reserve_eligible",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_import_hub_prices",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_import_reconciliation",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_import_reconciliation",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_import_sil_retire",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_import_sil_retire",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_incity_commitment_obligation",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
+          "row": "nyiso_incity_commitment_obligation",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..UKIU",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I",
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_iroquois_winter_spread",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_li_lcr_tsl",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_import_sil_retire",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "nyiso_gj_locality_tsl",
+          "cells": "....G.",
+          "cell": "G"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": "..UUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "G",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_li_locational_reserve",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_li_locational_reserve",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "nyiso_ordc_measured_step_span",
+          "cells": "....U.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "K",
+        "U"
+      ],
+      "armed_in_bundles": [
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm"
+      ]
+    },
+    {
+      "field": "nyiso_local_selfsupply",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_local_selfsupply",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": "..UUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_nyc_lcr_tsl",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_import_sil_retire",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "nyiso_gj_locality_tsl",
+          "cells": "....G.",
+          "cell": "G"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": "..UUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "G",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_ordc_measured_step_span",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_ordc_measured_step_span",
+          "cells": "....U.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_rcpf_enabled",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_rcpf_postsolve_overlay",
+          "cells": "....G.",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_rcpf_locational",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_rcpf_postsolve_overlay",
+          "cells": "....G.",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_rcpf_products",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_rcpf_postsolve_overlay",
+          "cells": "....G.",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_scr_edrp",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_scr_edrp_reserve_eligible",
+          "cells": "....K.",
+          "cell": "K"
+        },
+        {
+          "row": "scr_edrp_dr",
+          "cells": "G...K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_scr_edrp_reserve_eligible",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_scr_edrp_reserve_eligible",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_scr_edrp_strike",
+      "default": 500.0,
+      "keeper_value": 500.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_scr_edrp_reserve_eligible",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_spin_headroom_frac",
+      "default": 1.0,
+      "keeper_value": 1.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nyiso_spin_reserve_online",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
+          "row": "nyiso_spin_reserve_online",
+          "cells": "....I.",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I",
+        "U"
+      ],
+      "armed_in_bundles": [
+        "nyiso110_spinonline_B"
+      ]
+    },
+    {
+      "field": "nyiso_synchronised_reserve",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
+          "row": "nyiso_incity_commitment_obligation",
+          "cells": "....U.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "nyiso_zonal_gas_basis",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso105_chpheatrate_B",
+        "nyiso105_control_A",
+        "nyiso108_control_A",
+        "nyiso108_hydrorepair_B",
+        "nyiso109_control_A",
+        "nyiso109_zonalanchor_B",
+        "nyiso110_control_A",
+        "nyiso110_spinonline_B",
+        "nyiso111_control_A",
+        "nyiso111_rampenv_B",
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso83_control_2024",
+        "nyiso83_control_2025",
+        "nyiso_c156_meter_control_A"
+      ]
+    },
+    {
+      "field": "nysdec_peaker_rule_availability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "OOOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "nysdec_peaker_rule_availability",
+          "cells": "....K.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "nyiso112_combined_D",
+        "nyiso112_decpeaker_C",
+        "nyiso113_lilocational_B",
+        "nyiso114_lilocational_confirm",
+        "nyiso_c156_meter_control_A"
+      ]
+    }
+  ],
+  "family_matrix_gaps_absent": [],
+  "family_prose_only": [],
+  "armed_on_keeper_with_no_cell": [],
+  "live_but_invisible": [
+    {
+      "field": "coal_prb_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_tiered",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso105_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso108_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso108_hydrorepair_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso109_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso109_zonalanchor_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv"
+      }
+    },
+    {
+      "field": "cc_peaking_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "cc_nameplate_summer_derate",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "dual_fuel_oil_daily_parity",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 17,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    },
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "nyiso105_chpheatrate_B": 2023,
+        "nyiso105_control_A": 2023,
+        "nyiso108_control_A": 2023,
+        "nyiso108_hydrorepair_B": 2023,
+        "nyiso109_control_A": 2023,
+        "nyiso109_zonalanchor_B": 2023
+      }
+    },
+    {
+      "field": "tranche_startup_measured_runs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 15,
+      "bundles": {
+        "nyiso105_chpheatrate_B": true,
+        "nyiso105_control_A": true,
+        "nyiso108_control_A": true,
+        "nyiso108_hydrorepair_B": true,
+        "nyiso109_control_A": true,
+        "nyiso109_zonalanchor_B": true
+      }
+    }
+  ]
+}

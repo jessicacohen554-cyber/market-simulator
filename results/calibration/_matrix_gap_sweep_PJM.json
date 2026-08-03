@@ -1,0 +1,1340 @@
+{
+  "iso": "PJM",
+  "keeper": "2026-07-31-pjm-143b-hy-level",
+  "keeper_bundle_fields": 660,
+  "n_scenario_fields": 670,
+  "n_matrix_rows": 171,
+  "n_bundles_scanned": 16,
+  "family": [
+    {
+      "field": "pjm_apsouth_interface_cut",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_apsouth_cut",
+          "cells": "..I...",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_commitment_posture",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_congestion",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_congestion_star",
+          "cells": "..K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_ct_measured_max_reprice",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_da_virtual_bids",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "da_virtual_bids",
+          "cells": ".UKGGR",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_da_virtual_surface_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_dam_availability",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_east_interface_cut",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_congestion_star",
+          "cells": "..K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_external_net_position_cut",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_external_net_position_cut",
+          "cells": "..K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_measured_interface_limits",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_offer_midcurve_conditional",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_offer_midcurve_level_segments",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_midcurve_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_midcurve_peak_segments",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_midcurve_segments",
+      "default": null,
+      "keeper_value": [
+        "LONG_RUN",
+        "CC_LIKE"
+      ],
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_offer_surface_binned_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_surface_conditional",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_surface_min_bin",
+      "default": 0,
+      "keeper_value": 0,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_offer_surface_netload_pcts",
+      "default": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_offer_surface_price_cap_frac",
+      "default": 0.95,
+      "keeper_value": 0.95,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_offer_surface_within_season",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_reserve_commitment_scoped",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_reserve_online_gated",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_reserve_online_rho",
+      "default": 1.0,
+      "keeper_value": 1.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_reserve_pergen",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_reserve_pergen_size_split",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_reserve_pergen_sync",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_reserve_supply_cap",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_rggi_allowance_pricing",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "state_carbon_pricing",
+          "cells": ".KOUKK",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "O"
+      ],
+      "armed_in_bundles": [
+        "pjm146_rggi_B"
+      ]
+    },
+    {
+      "field": "pjm_seam_export_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_seam_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_seam_flow_percentile",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "pjm_seam_measured_ladder",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_zonal_gas_basis",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IUK.",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": [
+        "pjm135_control_A",
+        "pjm135_netpos_B",
+        "pjm135_netpos_keeper_C",
+        "pjm136_control_A",
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    },
+    {
+      "field": "pjm_zonal_loss_surface",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_loss_surface",
+          "cells": "..KR..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "pjm136_lossurf_B",
+        "pjm137_control_A",
+        "pjm137_ctheatrate_B",
+        "pjm140_control_A",
+        "pjm140_rampenv_B",
+        "pjm143_control_A",
+        "pjm143_hy_level_B",
+        "pjm144_control_A",
+        "pjm144_zonalanchor_B",
+        "pjm146_control_A",
+        "pjm146_rggi_B",
+        "pjm147_control_A"
+      ]
+    }
+  ],
+  "family_matrix_gaps_absent": [
+    "pjm_ct_measured_max_reprice",
+    "pjm_da_virtual_surface_path",
+    "pjm_offer_midcurve_level_segments",
+    "pjm_offer_midcurve_path",
+    "pjm_offer_midcurve_peak_segments",
+    "pjm_offer_midcurve_segments",
+    "pjm_offer_surface_binned_path",
+    "pjm_offer_surface_conditional",
+    "pjm_offer_surface_min_bin",
+    "pjm_offer_surface_netload_pcts",
+    "pjm_offer_surface_price_cap_frac",
+    "pjm_offer_surface_within_season",
+    "pjm_reserve_commitment_scoped",
+    "pjm_reserve_online_gated",
+    "pjm_reserve_online_rho",
+    "pjm_reserve_pergen_size_split",
+    "pjm_reserve_pergen_sync",
+    "pjm_reserve_supply_cap",
+    "pjm_seam_export_limit",
+    "pjm_seam_flow_limit",
+    "pjm_seam_flow_percentile"
+  ],
+  "family_prose_only": [
+    "pjm_commitment_posture",
+    "pjm_seam_measured_ladder"
+  ],
+  "armed_on_keeper_with_no_cell": [
+    "pjm_offer_midcurve_segments",
+    "pjm_offer_surface_netload_pcts",
+    "pjm_offer_surface_price_cap_frac",
+    "pjm_reserve_online_rho",
+    "pjm_reserve_supply_cap",
+    "pjm_seam_export_limit",
+    "pjm_seam_flow_limit",
+    "pjm_seam_measured_ladder"
+  ],
+  "live_but_invisible": [
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 2023,
+        "pjm135_netpos_B": 2023,
+        "pjm135_netpos_keeper_C": 2023,
+        "pjm136_control_A": 2023,
+        "pjm136_lossurf_B": 2023,
+        "pjm137_control_A": 2023
+      }
+    },
+    {
+      "field": "pjm_reserve_supply_cap",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "wefor_residual",
+      "default": null,
+      "keeper_value": 0.015,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.015,
+        "pjm135_netpos_B": 0.015,
+        "pjm135_netpos_keeper_C": 0.015,
+        "pjm136_control_A": 0.015,
+        "pjm136_lossurf_B": 0.015,
+        "pjm137_control_A": 0.015
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_tiered",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_sub_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_sub_passthrough_floor",
+      "default": null,
+      "keeper_value": 1.1,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 1.1,
+        "pjm135_netpos_B": 1.1,
+        "pjm135_netpos_keeper_C": 1.1,
+        "pjm136_control_A": 1.1,
+        "pjm136_lossurf_B": 1.1,
+        "pjm137_control_A": 1.1
+      }
+    },
+    {
+      "field": "coal_bit_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_bit_passthrough_floor",
+      "default": null,
+      "keeper_value": 0.65,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.65,
+        "pjm135_netpos_B": 0.65,
+        "pjm135_netpos_keeper_C": 0.65,
+        "pjm136_control_A": 0.65,
+        "pjm136_lossurf_B": 0.65,
+        "pjm137_control_A": 0.65
+      }
+    },
+    {
+      "field": "coal_mustrun_online_pmin",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "ct_intermediate_split",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "ct_intermediate_cf_threshold",
+      "default": 50.0,
+      "keeper_value": 30.0,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 30.0,
+        "pjm135_netpos_B": 30.0,
+        "pjm135_netpos_keeper_C": 30.0,
+        "pjm136_control_A": 30.0,
+        "pjm136_lossurf_B": 30.0,
+        "pjm137_control_A": 30.0
+      }
+    },
+    {
+      "field": "tranche_startup_measured_runs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "tranche_startup_conditional_runs",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_sync_srmc_tranche",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_drag_slope_per_gw",
+      "default": 0.00906,
+      "keeper_value": 0.01029,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.01029,
+        "pjm135_netpos_B": 0.01029,
+        "pjm135_netpos_keeper_C": 0.01029,
+        "pjm136_control_A": 0.01029,
+        "pjm136_lossurf_B": 0.01029,
+        "pjm137_control_A": 0.01029
+      }
+    },
+    {
+      "field": "gas_st_drag_intercept",
+      "default": -0.1376,
+      "keeper_value": -0.7263,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": -0.7263,
+        "pjm135_netpos_B": -0.7263,
+        "pjm135_netpos_keeper_C": -0.7263,
+        "pjm136_control_A": -0.7263,
+        "pjm136_lossurf_B": -0.7263,
+        "pjm137_control_A": -0.7263
+      }
+    },
+    {
+      "field": "gas_st_drag_cap",
+      "default": 0.34,
+      "keeper_value": 0.39,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.39,
+        "pjm135_netpos_B": 0.39,
+        "pjm135_netpos_keeper_C": 0.39,
+        "pjm136_control_A": 0.39,
+        "pjm136_lossurf_B": 0.39,
+        "pjm137_control_A": 0.39
+      }
+    },
+    {
+      "field": "ct_drag_slope_per_gw",
+      "default": 0.00703,
+      "keeper_value": 0.01108,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.01108,
+        "pjm135_netpos_B": 0.01108,
+        "pjm135_netpos_keeper_C": 0.01108,
+        "pjm136_control_A": 0.01108,
+        "pjm136_lossurf_B": 0.01108,
+        "pjm137_control_A": 0.01108
+      }
+    },
+    {
+      "field": "ct_drag_intercept",
+      "default": -0.1427,
+      "keeper_value": -0.9987,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": -0.9987,
+        "pjm135_netpos_B": -0.9987,
+        "pjm135_netpos_keeper_C": -0.9987,
+        "pjm136_control_A": -0.9987,
+        "pjm136_lossurf_B": -0.9987,
+        "pjm137_control_A": -0.9987
+      }
+    },
+    {
+      "field": "ct_drag_cap",
+      "default": 0.47,
+      "keeper_value": 0.46,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.46,
+        "pjm135_netpos_B": 0.46,
+        "pjm135_netpos_keeper_C": 0.46,
+        "pjm136_control_A": 0.46,
+        "pjm136_lossurf_B": 0.46,
+        "pjm137_control_A": 0.46
+      }
+    },
+    {
+      "field": "pjm_offer_midcurve_segments",
+      "default": null,
+      "keeper_value": [
+        "LONG_RUN",
+        "CC_LIKE"
+      ],
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ],
+        "pjm135_netpos_B": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ],
+        "pjm135_netpos_keeper_C": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ],
+        "pjm136_control_A": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ],
+        "pjm136_lossurf_B": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ],
+        "pjm137_control_A": [
+          "LONG_RUN",
+          "CC_LIKE"
+        ]
+      }
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+        "pjm135_netpos_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+        "pjm135_netpos_keeper_C": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+        "pjm136_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+        "pjm136_lossurf_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv",
+        "pjm137_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv"
+      }
+    },
+    {
+      "field": "cc_peaking_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "cc_duct_peaking_cap_pct",
+      "default": null,
+      "keeper_value": 18.0,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 18.0,
+        "pjm135_netpos_B": 18.0,
+        "pjm135_netpos_keeper_C": 18.0,
+        "pjm136_control_A": 18.0,
+        "pjm136_lossurf_B": 18.0,
+        "pjm137_control_A": 18.0
+      }
+    },
+    {
+      "field": "cc_nameplate_summer_derate",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "offer_curve_smoothing_mid",
+      "default": null,
+      "keeper_value": 0.35,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": 0.35,
+        "pjm135_netpos_B": 0.35,
+        "pjm135_netpos_keeper_C": 0.35,
+        "pjm136_control_A": 0.35,
+        "pjm136_lossurf_B": 0.35,
+        "pjm137_control_A": 0.35
+      }
+    },
+    {
+      "field": "pjm_seam_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    },
+    {
+      "field": "pjm_seam_export_limit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "pjm135_control_A": true,
+        "pjm135_netpos_B": true,
+        "pjm135_netpos_keeper_C": true,
+        "pjm136_control_A": true,
+        "pjm136_lossurf_B": true,
+        "pjm137_control_A": true
+      }
+    }
+  ]
+}
