@@ -703,9 +703,84 @@ this session did not run.
 
 ---
 
-## 7. The per-ISO §2.1b gate scorecard
+## 7. Regression vs FF-2D — every moved metric with its causal commit
 
-*(pending)*
+Diffed against the FF-2D rubric snapshot, preserved verbatim by this session under
+`<iso>-t1f-ff2d` before the bare keys were refreshed (§6 of the merge tool's rationale).
+
+**No determination moved. All six were HOLD at FF-2D; all six are HOLD now.** FC-1, FC-3,
+FC-4, FC-5, FC-6 and FC-7 are unchanged in every ISO. **Every movement is inside FC-2**,
+and it splits cleanly into three causes that must not be conflated:
+
+### 7.1 GENUINE metric movement — the signed decisions
+
+| ISO | row | FF-2D | now | causal commit |
+|---|---|---|---|---|
+| **ERCOT** | row1 reserve-margin | CAVEAT | **FAIL** | `24b1602` (D-1) + `3e33f15` (D-2) — **attributed against the paired control** (§2.1) |
+| **ERCOT** | row6 sustained-VOLL | *did not fire* | **FAIL** (1,137 h/yr) | `24b1602` + `3e33f15` — control does not fire it (63 h/yr) |
+| **CAISO** | row1 reserve-margin | CAVEAT | **FAIL** | `24b1602` + `3e33f15` — **observation, not attributed** (no CAISO control) |
+| **PJM** | row1 reserve-margin | *PASS* | CAVEAT | I12 WARN appears; **not attributed** (no control) |
+| **NEISO** | row1 reserve-margin | *PASS* | CAVEAT | I12 WARN appears; **not attributed** (no control) |
+| MISO / NYISO | row1 | CAVEAT | CAVEAT | unchanged |
+
+### 7.2 ⚠ NEWLY SCORABLE — not regressions, previously invisible
+
+**FC-2 row 4 was SKIPPED on every leg** at FF-2D and FFR-3A (blocker 8: the trajectory
+carried no `reserve_backstop` split). It is scorable for the first time here, so its
+values are **new measurements, not movements**:
+
+| ISO | row 4 now | causal commits |
+|---|---|---|
+| **CAISO** | **FAIL 65.5 %** | `34c2f25` (FFR-3D — emit the split) + `0830d134` (this session — actually read it) |
+| NYISO | CAVEAT 23.8 % | same |
+| PJM | CAVEAT 23.6 % | same |
+| NEISO | CAVEAT 11.7 % | same |
+| MISO | PASS 9.2 % | same |
+| ERCOT (+control) | PASS 0.0 % | same |
+
+Reading these as "FC-2 got worse" would be wrong: **the metric did not move, the
+instrument started reporting it.** Without `0830d134` every one of them would have read a
+false `PASS 0 %` (§2.2).
+
+### 7.3 ⚠ A GENUINE IMPROVEMENT, and the first positive evidence for D-2
+
+| ISO | row | FF-2D | now |
+|---|---|---|---|
+| **MISO** | row3 cobweb | **FAIL** — `cobweb (I13 WARN ⇒ row FAIL): gas_ct(3)` | **PASS** — `no cobweb (I13 PASS)` |
+
+This is the FF-2C-induced MISO gas_ct cobweb the mechanism matrix records (*"MISO … induced
+the I13 gas_ct cobweb → FC-2 FAIL, routed to BLK-10"*). **At this HEAD it is gone.**
+
+`entry_commissioning_lag` is D-2's **structural anti-cobweb** — decide in year Y, commission
+at Y+2, so decision and commissioning separate and the oscillation damps. FFR-2B could not
+test it and said so: *"(c) The anti-cobweb claim is UNTESTED, not won — I13 PASSES in BOTH
+arms, so this window contained no cobweb to damp."* **MISO's FF-2D leg did have one**, and
+it is the one case in the program where the claim was testable at all.
+
+**Stated at the right strength: this is CONSISTENT WITH the anti-cobweb claim, not an
+attribution.** The FF-2D leg differs from this one in more than D-2 — cache epoch, the
+FFR-2C net-CONE re-anchor, the C.4(c) un-pin and D-1 all moved too — and no paired control
+was run. What is established is narrow and worth the owner's attention anyway: **the only
+measured cobweb in the program has disappeared under the configuration D-2 armed**, which is
+the first evidence pointing *for* D-2 in a battery otherwise dominated by adverse D-2
+findings (§2.1 adequacy, §3.5 additions censoring).
+
+### 7.4 FC-7 — against FFR-3A rather than FF-2D
+
+FF-2D reads FC-7 CAVEAT, but only because it worked around the missing artifact with a
+scoring-time helper (`scripts/_ff2d_emit_run_config.py`). Measured against **FFR-3A**,
+which scored the producer as it actually was:
+
+| | FFR-3A | now | causal commits |
+|---|---|---|---|
+| FC-7, every T1-F leg | **FAIL** (`run_config.json` absent by construction) | **CAVEAT** (only the DOF ledger remains) | `34c2f25` (FFR-3D) + `05690366` (this session — without which the emitter never ran) |
+
+---
+
+## 8. The per-ISO §2.1b gate scorecard
+
+*(see `results/ffr3a2/scorecard/scorecard.{json,txt}`; assembled by
+`scripts/build_ffr3a2_scorecard.py` from committed artifacts only, no re-solve)*
 
 ---
 
