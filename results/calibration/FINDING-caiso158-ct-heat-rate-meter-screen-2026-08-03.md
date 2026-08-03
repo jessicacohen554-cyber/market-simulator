@@ -73,6 +73,15 @@ ledgered caveats cannot be downgraded `FAIL → CAVEAT`. Not dispatch. PASS.
 | NEISO | 2023 | 118.840 MW | 705 / 8760 | 0.3088 → 0.2877 (−0.0211) |
 | NEISO | 2024 | 118.873 MW | 2081 / 8760 | 0.8433 → 0.7566 (−0.0867) |
 | NEISO | 2025 | 150.403 MW | 2566 / 8760 | 1.7174 → 1.6163 (−0.1011) |
+| NYISO | 2023 | 469.266 MW | 398 / 8760 | 0.4240 → 0.4118 (−0.0121) |
+| NYISO | 2024 | 170.659 MW | 185 / 8760 | 0.3353 → 0.3307 (−0.0045) |
+| NYISO | 2025 | 237.474 MW | 789 / 8760 | 1.1046 → 1.0687 (−0.0359) |
+
+**Nine ISO-years, nine negative CT_PEAKER deltas, zero criterion flips, zero
+D-gate flips.** NYISO's A/B carries the largest artifact movement of the three
+(+0.359 cap-weighted) yet the smallest dispatch response — its CT fleet is
+already largely out of merit, so re-pricing it moves fewer hours (185–789)
+than CAISO's (1774–4117).
 
 **K4 config equality** — NEISO arm A vs arm B `run_config.json` differ in
 exactly four keys, all provenance (`git.sha`, `calibration_flags.git_sha`,
@@ -102,7 +111,8 @@ Sign agrees everywhere. The screen is meter hygiene, not selection.
 2. **λ / C3a nudges UP** (§5.3) — CONFIRMED, and well inside tolerance.
    Load-weighted mean LMP, arm A → arm B:
    CAISO +0.195 % / +0.099 % / +0.111 % of level (2023/24/25);
-   NEISO +0.045 % / +0.055 % / +0.083 %.
+   NEISO +0.045 % / +0.055 % / +0.083 %;
+   NYISO +0.028 % / +0.020 % / +0.080 %.
    The prereg pre-committed that an adverse C3a move ≥ 1.0 pp would trigger the
    ledger discipline and a LOYO check. **The largest move is +0.20 pp**, so the
    trigger is not reached and no LOYO escalation is owed. CAISO's ledgered
@@ -209,7 +219,7 @@ flag when a session registers several arms at once.
 ## 9. Promotion assessment
 
 On the prereg §7 promotion rule, the corrected artifact is a **recommended
-keeper candidate for CAISO and NEISO** (and NYISO pending its arm B):
+keeper candidate for all three solved ISOs — CAISO, NEISO and NYISO**:
 
 * K1–K6 all PASS.
 * Arm B carries **no protective FAIL** — C7 `shape` PASS (CAISO), C8
