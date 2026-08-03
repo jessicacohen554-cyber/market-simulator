@@ -3102,3 +3102,148 @@ run *before* the prereg was written).
 `gas_offer_margin_zonal_anchor` (cell `U`, whose ex-ante `I` screen on the no-LP
 bar comes before any solve).
 * Next number: **miso-119**.
+
+## 2026-08-03 — miso-119/120: `gas_offer_margin_zonal_anchor` is **DISPATCH-LIVE, PRICE-INERT** at MISO — cell `U` → **`I`** by the pre-registration's own K3 rule. Keeper UNCHANGED, no gate regressed, and the screen's own liveness argument is the thing that failed
+
+**Session split across two numbers.** miso-119 (PR #3365, merged) wrote and
+pushed `PREREG-miso119-zonal-anchor-screen-2026-08-03.md`, extended
+`derive_gas_offer_margin_anchor.py` to MISO, ran the **Phase-0 ex-ante screen
+with ZERO LP** — verdict **LIVE**, neither pre-declared inertness route fired
+— registered the zone anchors in `constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE`
+and staged the A/B scorer, then ended without running Phase 1. **miso-120
+completed Phase 1 exactly per §5 — no re-design; the pre-registration is
+binding.**
+
+**Keeper under test and UNCHANGED:** `2026-08-03-miso-117b-ct-heat`
+(NOT-YET, sole FAIL C7 `COAL_PRB` ×3y, ledgered caveats 2/3 `{C3a, C3c}`).
+
+**Registered (rule 15):** `2026-08-03-miso-119a-control` (zero-delta control,
+`miso119_control_A`) and `2026-08-03-miso-119b-zonal-anchor`
+(`miso119_zonalanchor_B`), both `[2023, 2024, 2025]` in one invocation each,
+arms sequential. Top-15 MISO retention honoured (pruned
+`2026-07-28-miso-102a-control`, `2026-07-28-miso-99a-chp-hr`).
+
+### Gates
+
+`K1` PASS · `K2` PASS · **`K3` FAIL** · `K4` PASS · `K5` PASS; kills
+`P1`–`P5` **all PASS, no kill fires**.
+
+**K2 is the strongest control this lane has produced:** the same-HEAD
+zero-delta replay reproduces the committed miso-117b keeper at **max |Δ MW| =
+0.000000 on every class-hour in all three years** — miso-117's own control
+carried 3.7 GW of real drift, so the A/B here is unconfounded on the byte
+basis as well as the scorecard basis.
+
+**K3 splits exactly as PJM's did.** The dispatch leg passes with room
+(912.5 / 912.5 / 912.5 MW vs a 50 MW bar); the **zonal price leg fails in
+every year — max zonal |Δλ| 0.027 / 0.030 / 0.050 $/MWh vs the 0.10 bar**
+(system load-weighted −0.016 / −0.021 / −0.035, ≈ −0.06 %). Under §5's
+pre-committed rule — *"K3 fails → `I`, registered, keeper unchanged"* — the
+cell is **`I`** and arm B is **not promoted**. The owner's standing
+"structural integrity improves but gates regress" instruction is **not**
+invoked: nothing regressed, and nothing was measurably corrected at the grain
+the rubric scores. Every criterion is identical across keeper, control and
+arm (NOT-YET; C1 all 16/16, free 12/12).
+
+### The transferable lesson — Route B's bound was valid and useless
+
+Phase 0 authorized these two solves because `max_g |Δoffer_g| = 11.54 $/MWh`
+could not be ruled ex ante unable to move a zonal annual mean by 0.10 $/MWh.
+The reasoning is sound — a zonal dual is set within the span of the perturbed
+offers — and it **over-bounds the realized effect by two orders of
+magnitude**. The large per-tranche deltas sit on peaking tranches
+(`markup_hr` to 75.8 — St Clair peak, Northeast (MI) peak, New Orleans Power
+peak) that are marginal in very few hours. The capacity-weighted **p50 0.384 /
+p95 0.977 $/MWh** were the predictive statistics; the max was not.
+**DO-NOT-REDO:** in this row `max |Δoffer|` is an **upper** bound only and must
+never again be read as a price-side lower bound. A sharper screen prices the
+perturbation on the tranches the **P0 run actually sets price with**, not on
+the capacity census.
+
+### MISO is inert for a DIFFERENT reason than PJM (rule 25 in both directions)
+
+The "coupled topology" prior this row carried into MISO from pjm-144 §7 is
+**FALSIFIED** on the keeper's own committed sidecars: MISO's zones decouple by
+>$1/MWh in **21.3 / 24.4 / 50.1 %** of hours (>$5 in 6.7 / 9.0 / 31.8 %). PJM's
+stated absorption mechanism — price-coupled zones absorb the mean-zero
+redistribution — is simply **absent here**, and MISO is inert anyway. The
+measured MISO reason is threefold: (a) `apply_miso_zonal_gas_basis` delegates
+to the capacity-weighted **mean-zero** core (verified to 4.4×10⁻¹⁶ $/MMBtu), so
+the level half ERCOT's convention carries and prices does not exist; (b) the
+surviving spread is small — max |anchor_z − ISO| **0.1799** $/MMBtu vs PJM's
+1.483 raw window spread (anchors: South 3.2291 / West+Plains 2.9641 /
+Illinois+Indiana+East 2.8971, ISO anchor 3.0492 unmoved); (c) the repositioned
+tranches are not the price-setting ones. **Neither ISO's `I` is evidence for
+the other's.**
+
+### Reported, never banked
+
+Direction is exactly as pre-registered (§6's two-sided geometry), **sign
+agreement 6/6 in all three years**: premium-zone mean Δλ +0.0137 / +0.0051 /
++0.0117, discount-zone −0.0275 / −0.0302 / −0.0504 $/MWh. A correct sign at an
+inert magnitude is a correct sign at an inert magnitude, and it is **not** a
+reason to promote. Dispatch: `CT_PEAKER` +0.277 / +0.293 / +0.243 TWh against
+small offsetting `ST_GAS` / `COAL_PRB` / `import` / `CC_REGULAR` / `CC_CHP`
+reductions; no class-accuracy row changes verdict. **C7 `COAL_PRB` untouched
+as pre-declared** — cv_ratio 0.462 / 0.474 / 0.309 → 0.462 / 0.474 / 0.310
+against the 0.50 bound, `profile_r` unchanged; this lever was never a C7
+instrument and did not become one. P4: slack+dump identical between arms
+(0.0 / 19,059.283 / 0.0 MWh).
+
+### DO-NOT-REDO
+
+Do not re-test this cell without **new** evidence, and the admissible kinds are
+named: a zone-**grain** scored criterion (the rubric has none — C3a/C3b/C3c are
+all ISO-level), a zone-decoupling mechanism arriving under its own charter that
+changes which tranches set zonal price, or an owner override of the K3 rule.
+**Not** admissible: re-running the arm, sweeping the anchor table (rule 23 —
+the table is expressly not re-derived against this outcome), or arguing from
+the 6/6 sign agreement. The table stays registered and the flag stays
+default-off, one CLI switch away. With MISO adjudicated the row is **closed at
+all six ISOs** (ERCOT `K` / CAISO n/a / PJM `I` / MISO `I` / NYISO `K` /
+NEISO n/a).
+
+Every standing MISO bar carries forward unchanged: the h14-21 `CT_PEAKER` floor
+limb is not relaxed and `min_stable_pct` is not re-derived (rules 1/14/23/25);
+`CC_CHP` volume/heat-rate closed (miso-116/118); trough quantity closed
+(miso-115/116); `CT_CHP`/`ST_CHP` ratios VOID; `miso_cc_coal_rebalance`,
+`miso_firm_import_floor`, `miso_pjm_lmp_import_pricing` refused; seam hod
+mis-shape unchartered; miso-89 ledgered; regulated-PRB family SPENT. C7
+`COAL_PRB` still needs the overnight dispatch *distribution* widened — the
+data-blocked miso-78/79 congestion + sub-hourly-RT lane — and a cost-side lever
+is pre-declared not to reach it.
+
+### Governance
+
+Rule 15 — both arms registered in-session. Rule 16 — 2023–2025, one bundle
+each. Rule 19 — nothing stacked; the zonal anchor *resolves*
+`gas_offer_net_revenue_margin`'s identification point and that mechanism is
+armed and unchanged (anchor 3.0492) in both arms; 0 band-scoped tranches, so
+the two identification channels never met. Rule 21 — both arms carry a DOF
+ledger; arm B's one new entry is `measured/published` with
+`free_parameters_added: 0` and `n_residual` unchanged
+(`scripts/gen_miso119_attestation.py`). Rule 23 — the derive was **not**
+re-run and the table is **not** re-derived against this result (P5). Rule 25 —
+MISO's anchors from MISO's own basis data and MISO's own keeper fleet weights;
+nothing imported from NYISO/PJM/ERCOT. Rule 26 — the arming is recorded in
+`run_config.json` with the fully resolved six-zone map, never a lookup
+indirection. Rule 22 `[R-HOLDOUT]` — 2023–2025 only; MISO holds no
+`calibration-complete` marker and no holdout year was solved, scored or read.
+Rule 28 duty (b) — the matrix cell is stamped in this session with its
+citation. **Contamination declared** — not blind (the miso-119 prereg, its
+probe transcript, this log and the matrix row were all read first); what
+protects the result is that the decision rule was fixed by a pre-registration
+written before any of the measured quantities existed, and was applied verbatim.
+
+**Evidence:** `FINDING-miso119-zonal-anchor-2026-08-03.md`,
+`_miso119_zonal_anchor_ab.json`,
+`PREREG-miso119-zonal-anchor-screen-2026-08-03.md`,
+`PROBE-miso119-zonal-anchor-screen-2026-08-03.txt`,
+`scripts/probes/_miso119_zonal_anchor_ab.py`.
+
+**Live queue head:** item 5 `dual_fuel_switching` (cell `U`) — Phase 0 is the
+measured *identification* (does MISO's own data identify dual-fuel capability,
+switch price and event windows?), **not** a solve, and needs its own
+pre-registration before any arm — then the 55088 Dearborn hybrid-cogen scope
+gate (miso-118 §5, named not chartered).
+* Next number: **miso-121**.
