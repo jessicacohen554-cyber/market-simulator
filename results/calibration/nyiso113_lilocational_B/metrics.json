@@ -1,13 +1,7 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/metrics.json
   "run_id": "2026-08-02-nyiso-113-li-locational",
   "iso": "NYISO",
   "label": "nyiso 113 li locational",
-========
-  "run_id": "2026-08-03-nyiso-caiso156-meter-screen",
-  "iso": "NYISO",
-  "label": "nyiso caiso156 meter screen",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/metrics.json
   "target_years": [
     2023,
     2024,
@@ -22,11 +16,7 @@
   "rubric_version": 2.9,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/metrics.json
     "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)"
-========
-    "governance gate UNATTESTED: no governance attestation in bundle"
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/metrics.json
   ],
   "notes": [],
   "criteria": {
@@ -64,7 +54,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -89,8 +79,8 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 1,
     "fails": 0
