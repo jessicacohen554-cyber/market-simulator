@@ -299,6 +299,19 @@ here**; the brief asked what sets the pin, and this is the answer.
   failures in `tests/scoring/test_ff_readiness_battery.py` and
   `tests/unit/data/test_outages.py` were verified pre-existing on this session's
   base and are **left alone** — they belong to their own lanes.
+* **Reported, not fixed — a regression that landed on main mid-session.** The
+  FFR-3A owner-decisions PR (`24b1602`, "D-1: flip retirement_rule default
+  legacy -> pipeline") reddens
+  `tests/iso/ercot/test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion`
+  (both cases), because `apply_economic_retirements` raises
+  `retirement_rule='pipeline' requires a simulation year` and that test calls it
+  with `year=None`. This session's diff touches neither `retirement_rule` nor
+  `capacity_evolution/retirements.py` (0 lines in either), and the failures
+  appear only after rebasing onto that PR. Left to the FFR-3A lane: the fix is a
+  judgement call between threading a year into the test and pinning it to the
+  legacy rule, and that call belongs to whoever flipped the default. Final tier
+  after rebase: **7 failed / 5,972 passed — 5 pre-existing, 2 from `24b1602`,
+  0 attributable here.**
 * **Also found and NOT introduced here:** unresolved merge-conflict markers were
   committed inside three NYISO bundles' JSON (including the keeper's
   `metrics.json` and `legitimacy_diagnostics.json`) by a rename-conflict in
