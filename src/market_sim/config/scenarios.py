@@ -220,6 +220,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key is byte-stable; True enters the key (a distinct commitment scenario).
     "nyiso_li_locational_reserve",
     "nyiso_incity_commitment_obligation",
+    # NYISO NYC RCPF step-curve SHAPE correction (nyiso-115): default False and
+    # dropped from the hash so every pre-existing cache key is byte-stable; True
+    # enters the key (a distinct reserve-demand-curve scenario).
+    "nyiso_nyc_rcpf_step_curve",
     # NYISO SCR/EDRP demand-response axis (commit 62aac3b). Both fields are
     # default-off / a market-design constant and were intended "byte-identical
     # for every other config", but they reach asdict() and were not registered
@@ -3336,6 +3340,30 @@ class ScenarioConfig:
     # [R-ONE-MECH]); per the charter's rule-19 substitution requirement it is
     # meant to be run with the NYC/LI ST_GAS reliability_floor limbs DISABLED
     # via reliability_floor_overrides, never stacked on them. Default off
+    # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
+    nyiso_nyc_rcpf_step_curve: bool = False  # NYISO NYC locational reserve
+    # demand curve as the published single STEP at the RCPF instead of the
+    # linear ramp `critical_mw = 0` builds. A rule 14 [R-ACCURATE] SHAPE
+    # correction to an already-correct LEVEL — the $25/MW RCPF is unchanged and
+    # no new number is introduced; only the depth at which it applies moves.
+    # MEASURED ex ante on NYISO's OWN posted zonal DA ancillary-service prices
+    # (data/raw/NYISO-AS/NYISO_as_da_<year>.csv), no solve spent: the NYC-only
+    # locational adder (zone J differenced against a zone sharing every nested
+    # region except NYC) shows one ATOM exactly at $25.00 in 17/45/141 hours of
+    # 2023/24/25 and essentially NO mass at the interior rungs of the model's
+    # 8-step ramp (0/1/2 of 103/167/428 material hours), which is the signature
+    # of a step and not of a ramp. The model's own NYC duals sit on those rungs
+    # and NEVER reach the published $25.00 in any of 26,280 hours, under-pricing
+    # a 307-358 MW shortfall by 1.5-2.4x (10-min) and 3.7-7.1x (30-min) — the
+    # 30-minute family worse purely because its 1,000 MW requirement makes the
+    # ramp shallower, an artifact of the construction with no market basis.
+    # Scoped to the NYC pair (model.reserves.spec.NYISO_RCPF_STEP_CURVE_FAMILIES)
+    # because that is where the measurement identifies: East's $775 is never
+    # approached, LI shows no material adder at all, and SENY caps at $40 rather
+    # than its modelled $500 (the #1344 increment — nyiso_ordc_measured_step_span
+    # territory, rule 19 [R-ONE-MECH], not this flag's). Changes the LEVEL of the
+    # reserve price in hours the family already binds, NOT how many hours bind:
+    # a step and a ramp are both $0 at or above the requirement. Default off
     # (byte-identical); NYISO-only; requires --energy-reserve-coopt.
     nyiso_east_reserve_families: bool = False  # NYISO published EAST spin_10
     # (330 MW) + total_30 (1,200 MW) reserve families — the nyiso-84 rule-14
