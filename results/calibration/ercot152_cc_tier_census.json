@@ -1,0 +1,150 @@
+{
+ "2024_ercot74_tail_days": {
+  "intervals": 1200,
+  "cc_mean_mw_by_status": {
+   "ON": 19738.5,
+   "OUT": 2748.2,
+   "ONREG": 1266.3,
+   "ONOS": 854.4,
+   "OFF": 361.3,
+   "ONTEST": 275.3,
+   "STARTUP": 155.1,
+   "EMRSWGR": 67.4,
+   "ONRUC": 57.7,
+   "OFFNS": 45.1
+  },
+  "cc_offqs_offns_mean_mw": 45.1,
+  "cc_off_curve_quantiles": {
+   "p10": 3.3,
+   "p30": 12.4,
+   "p50": 19.5,
+   "p70": 33.1,
+   "p90": 83.9
+  },
+  "cc_on_curve_quantiles": {
+   "p10": 5.2,
+   "p30": 9.3,
+   "p50": 12.3,
+   "p70": 15.7,
+   "p90": 22.9
+  },
+  "cc_startup_curve_quantiles": {
+   "p10": 4.5,
+   "p30": 10.0,
+   "p50": 14.0,
+   "p70": 21.7,
+   "p90": 40.9
+  }
+ },
+ "2024_ercot75_control_days": {
+  "intervals": 1056,
+  "cc_mean_mw_by_status": {
+   "ON": 19295.7,
+   "OUT": 2088.6,
+   "OFF": 1481.7,
+   "ONREG": 1237.1,
+   "ONOS": 838.9,
+   "ONTEST": 263.4,
+   "EMRSWGR": 212.0,
+   "STARTUP": 178.8,
+   "OFFNS": 67.3,
+   "SHUTDOWN": 40.8
+  },
+  "cc_offqs_offns_mean_mw": 67.3,
+  "cc_off_curve_quantiles": {
+   "p10": 5.0,
+   "p30": 16.4,
+   "p50": 22.7,
+   "p70": 34.1,
+   "p90": 97.7
+  },
+  "cc_on_curve_quantiles": {
+   "p10": 6.4,
+   "p30": 10.0,
+   "p50": 13.0,
+   "p70": 16.7,
+   "p90": 24.0
+  },
+  "cc_startup_curve_quantiles": {
+   "p10": 7.5,
+   "p30": 13.7,
+   "p50": 22.1,
+   "p70": 31.5,
+   "p90": 50.8
+  }
+ },
+ "2025_ercot75_control_days": {
+  "intervals": 1345,
+  "cc_mean_mw_by_status": {
+   "ON": 20268.7,
+   "OFF": 1988.1,
+   "OUT": 1836.8,
+   "ONREG": 449.5,
+   "STARTUP": 309.6,
+   "ONOS": 300.5,
+   "ONTEST": 211.3,
+   "ONHOLD": 124.4,
+   "EMRSWGR": 51.8,
+   "OFFNS": 24.2
+  },
+  "cc_offqs_offns_mean_mw": 24.2,
+  "cc_off_curve_quantiles": {
+   "p10": 13.8,
+   "p30": 23.4,
+   "p50": 31.1,
+   "p70": 37.7,
+   "p90": 57.5
+  },
+  "cc_on_curve_quantiles": {
+   "p10": 13.4,
+   "p30": 17.3,
+   "p50": 21.1,
+   "p70": 26.0,
+   "p90": 38.1
+  },
+  "cc_startup_curve_quantiles": {
+   "p10": 16.6,
+   "p30": 21.0,
+   "p50": 27.8,
+   "p70": 32.2,
+   "p90": 47.5
+  }
+ },
+ "2025_ercot86_tail_days": {
+  "intervals": 1250,
+  "cc_mean_mw_by_status": {
+   "ON": 24263.8,
+   "OUT": 1093.7,
+   "OFF": 987.9,
+   "ONREG": 675.9,
+   "ONOS": 330.9,
+   "ONTEST": 275.3,
+   "STARTUP": 113.9,
+   "ONHOLD": 80.8,
+   "ONRUC": 36.0,
+   "OFFNS": 23.4
+  },
+  "cc_offqs_offns_mean_mw": 23.4,
+  "cc_off_curve_quantiles": {
+   "p10": 16.9,
+   "p30": 25.3,
+   "p50": 34.7,
+   "p70": 42.5,
+   "p90": 75.0
+  },
+  "cc_on_curve_quantiles": {
+   "p10": 14.3,
+   "p30": 19.2,
+   "p50": 23.1,
+   "p70": 29.5,
+   "p90": 45.6
+  },
+  "cc_startup_curve_quantiles": {
+   "p10": 16.7,
+   "p30": 25.8,
+   "p50": 32.7,
+   "p70": 42.5,
+   "p90": 61.8
+  }
+ }
+}

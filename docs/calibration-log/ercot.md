@@ -4144,3 +4144,49 @@ ERCOT-88/107-108/151; `check_mechanism_matrix.py` integrity + keeper stamps
 PASS. Holdouts untouched. ERCOT-scoped (rule 25).
 
 Next shorthand: ercot-152.
+
+## 2026-08-02 — ERCOT-152/153 (owner directive "proceed without this data"; both no-LP, keeper UNCHANGED at ercot150b): the CC offline-tier widening REFUSES EX ANTE on the committed corpus's own conduct; the diurnal-amplitude deficit DECOMPOSED — ~80 % peak-half, collapsing exactly where the co-opt is silent; measured STORAGE evening-offer identification confirmed available from committed data (chartered successor)
+
+**ERCOT-152 (the ercot-151 charter's committed-data leg — REFUSED, cell note
+stamped).** Probe `scripts/probes/ercot152_cc_tier_census.py` → committed
+record `results/calibration/ercot152_cc_tier_census.json`. Two measurements,
+both against the CC tier: (1) CC OFFQS/OFFNS ≈ 0 MW in all four committed
+sample-day extracts — the ERCOT-88 intra-hour-startable pool construction has
+NO measured CC object; the offline-startable pool is CT-only in reality.
+(2) Plain-OFF CC rows carry disclosed SCED2 curves at 100 % coverage and they
+are CHEAP — above-LSL MW-weighted p50 $19.5–34.7 / p90 $57.5–97.7 across the
+four extracts, ~$7–12 over the ON fleet's own curve and ~30× below the
+OFFQS/OFFNS CT pool ladder ($271–1,010). Re-pricing the offline CC increment
+at "its true start-inclusive offer" is therefore a measured NO-OP: the CC
+block's phantom depth is a COMMITMENT-STATE gap (units not online, multi-hour
+start lead — RT telemetry on tail days shows the DAM-OFF CC block largely
+STARTED by RT, 24.3 GW ON on 2025 tail days), whose cap-side expression is the
+closed ercot41/43/106/108 envelope family. No arm built, no solve spent. The
+full-corpus ask (owner-declined 2026-08-02, repo-size risk) now buys primarily
+the **2023 CT-pool year block**, not a CC tier.
+
+**ERCOT-153 (diurnal-amplitude decomposition — the xiso-1 ERCOT follow-on,
+C3b/correlation lane).** Probe `scripts/probes/ercot153_diurnal_amplitude.py`
+→ `results/calibration/ercot153_amplitude.json`, on the ercot150b keeper's own
+committed hourly sidecars vs the actual RT/DA parquet. Findings: (a) the
+amplitude deficit is ~80 % PEAK-HALF everywhere (peak-excess gaps dwarf trough
+gaps in 11 of 12 year×season cells); (b) it collapses exactly where the
+reserve co-opt is silent — 2023 summer (reserve price $247 at h17–21) reaches
+0.58 of actual hour-of-day amplitude, while 2024 summer is **0.264** and 2025
+runs 0.38–0.49 with reserve price ≈ $0 at the peak hours: the **everyday
+evening-ramp premium** in ordinary months (actual peak excess $20–66/MWh) has
+NO former in the model — the nyiso-110 finding at ERCOT scale, but ERCOT still
+has an unspent lane; (c) 2024 shoulder OVER-amplifies (1.295, reserve $105 —
+the known May-2024 over-fire family); (d) a systematic +1–2 h peak-hour LAG
+(model h19–20 vs actual h18) in 2024/25 outside deep-scarcity months.
+**Chartered successor (Phase 0 verified executable from committed data):** the
+measured STORAGE evening discharge-offer surface — PWRSTR rows are in the
+committed sample-day corpus (254k rows in the 2025 tail-days file alone,
+SCED2 curves disclosed), the model's `battery_dispatch_adder` default 0 +
+ε-cost perfect-foresight arbitrage flattens exactly the evening peak that
+real batteries price ($100s opportunity-cost offers), and a net-load-binned
+measured ESR ladder is the same rule-13 construction family as the walls.
+2024/2025-scoped (no 2023 SCED); rule-19 reconciliation vs the storage AS
+credit/deployment stack required in the precommit.
+
+Next shorthand: ercot-154.
