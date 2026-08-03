@@ -16,9 +16,12 @@ script asserts that rather than trusting it (rule 21 ``[R-DOF]``).
 
 Promotion premise, re-verified before this script was written: each arm's
 ``ScenarioConfig`` is equal to its ISO's CURRENT designated keeper's. CAISO
-differs in zero fields; NEISO differs in seven, every one a field ADDED to
-``ScenarioConfig`` after the neiso-72 solve whose default is ``False`` and
-which the arm records as ``False`` — schema drift, not a config change.
+differs in zero fields; NEISO in nine, every one a field ADDED to
+``ScenarioConfig`` after the neiso-72 solve and recorded here at its declared
+default (seven ``False``, two ``None``) — schema drift, not a config change.
+The count and the field list are COMPUTED by :func:`config_drift`, not typed:
+a ``dict.get(k)`` diff collapses "absent" and "present-but-``None``", which is
+exactly how the first cut of this promotion undercounted the nine as seven.
 **NYISO is deliberately absent**: its keeper moved to nyiso-113, which arms
 ``nyiso_li_locational_reserve``, and the caiso-158 NYISO arm was controlled
 against the superseded nyiso-112 recipe with that field ``False``. Promoting
@@ -158,10 +161,57 @@ def price_tail(bundle: Path) -> dict[int, dict]:
     return out
 
 
+#: Sentinel distinguishing "key absent" from "key present with value None".
+#: `dict.get(k)` collapses the two, which is exactly how the first cut of this
+#: promotion undercounted NEISO's schema drift as 7 when it is 9 — the two
+#: missed fields (demand_growth_vintage, gas_offer_margin_anchor_by_zone) are
+#: present-and-None in the arm and absent in the older keeper.
+_MISSING = object()
+
+
+def config_drift(arm: Path, keeper: Path) -> dict:
+    """Return the ScenarioConfig delta between two bundles, absence-aware.
+
+    Splits the delta into keys only one side declares (schema drift: the older
+    bundle predates the field) and keys both declare with different values (a
+    real config change). An input-correction promotion must have zero of the
+    latter.
+    """
+    a = json.loads((arm / "run_config.json").read_text())["scenario_config"]
+    k = json.loads((keeper / "run_config.json").read_text())["scenario_config"]
+    changed = [
+        key
+        for key in sorted(set(a) | set(k))
+        if a.get(key, _MISSING) != k.get(key, _MISSING)
+    ]
+    return {
+        "arm_only": [key for key in changed if key not in k],
+        "keeper_only": [key for key in changed if key not in a],
+        "value_diffs": [key for key in changed if key in a and key in k],
+    }
+
+
 def build_attested_by(
-    iso: str, art: dict, ct_a: dict, ct_b: dict, lam_a: dict, lam_b: dict
+    iso: str,
+    art: dict,
+    ct_a: dict,
+    ct_b: dict,
+    lam_a: dict,
+    lam_b: dict,
+    drift: dict,
 ) -> str:
     """Compose the governance narrative from the measured arm bytes."""
+    n_drift = len(drift["arm_only"]) + len(drift["keeper_only"])
+    drift_clause = (
+        "differs in zero fields"
+        if not n_drift
+        else (
+            f"differs in {n_drift} field(s), every one a field ADDED to "
+            "ScenarioConfig after that keeper solved and recorded here at its "
+            f"declared default ({', '.join(drift['arm_only'] + drift['keeper_only'])}) "
+            "— schema drift, not a config change"
+        )
+    )
     ct = " / ".join(f"{ct_a.get(y, 0):.4f}->{ct_b.get(y, 0):.4f}" for y in YEARS)
     delta = " / ".join(f"{ct_b.get(y, 0) - ct_a.get(y, 0):+.4f}" for y in YEARS)
     lam = " / ".join(f"{lam_a.get(y, 0):.2f}->{lam_b.get(y, 0):.2f}" for y in YEARS)
@@ -170,11 +220,9 @@ def build_attested_by(
     )
     return (
         f"caiso-159 (2026-08-03): the incumbent {iso} keeper recipe with NO "
-        "CONFIG CHANGE AT ALL — the ScenarioConfig this arm solved is equal to "
-        "the committed keeper's (CAISO differs in zero fields; NEISO in seven, "
-        "every one a field added to ScenarioConfig after the neiso-72 solve "
-        "whose default is False and which this arm records as False — schema "
-        "drift, not a config change). The delta is the CONTENT of the shared "
+        "CONFIG CHANGE AT ALL — the ScenarioConfig this arm solved carries "
+        f"ZERO value differences from the committed keeper's, and {drift_clause}. "
+        "The delta is the CONTENT of the shared "
         "measured CT heat-rate artifact the keeper already consumes. THE "
         "DEFECT IT FIXES (caiso-146 §2.4): "
         "scripts/data/derive_campd_ct_heat_rates.py declares a physical band "
@@ -264,6 +312,21 @@ def generate(iso: str) -> dict:
     lam_a, lam_b = lw_lambda(control), lw_lambda(target_bundle)
     tail_a, tail_b = price_tail(control), price_tail(target_bundle)
 
+    # The promotion premise, MEASURED not asserted: an input correction may
+    # differ from the incumbent only by fields the older bundle predates.
+    # Any shared key with a different value is a real config change and
+    # disqualifies the arm as a drop-in keeper.
+    keeper_bundle = REPO / f"results/calibration/{wiring['source']}"
+    drift = config_drift(target_bundle, keeper_bundle)
+    if drift["value_diffs"]:
+        raise SystemExit(
+            f"{iso}: {len(drift['value_diffs'])} ScenarioConfig VALUE "
+            f"difference(s) vs {wiring['source']}: "
+            f"{', '.join(drift['value_diffs'])}. An input-correction promotion "
+            "must carry zero value diffs — this arm was controlled against a "
+            "different recipe than the one it would replace."
+        )
+
     att = json.loads(source.read_text())
     before = (
         att["free_parameters"]["n_entries"],
@@ -271,9 +334,10 @@ def generate(iso: str) -> dict:
     )
 
     att["governance"]["attested_by"] = build_attested_by(
-        iso, art, ct_a, ct_b, lam_a, lam_b
+        iso, art, ct_a, ct_b, lam_a, lam_b, drift
     )
     att["ct_heat_rate_artifact"] = art
+    att["config_drift_vs_incumbent"] = drift
     carry_exceptions(
         att, wiring["target"], wiring["carried_from"], lam_a, lam_b, tail_a, tail_b
     )

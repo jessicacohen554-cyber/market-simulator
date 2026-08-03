@@ -1293,13 +1293,28 @@ verdicts. The neiso-72 hydro-window mechanism and the C3c frontier declaration
 are carried forward unchanged; no C3c evidence moved in either direction and no
 new caveat slot is spent.
 
-**Seven ScenarioConfig fields differ from the incumbent and ALL SEVEN ARE SCHEMA
+**NINE ScenarioConfig fields differ from the incumbent and ALL NINE ARE SCHEMA
 DRIFT, not a config change** (`caiso_firm_import_selfsched_clip`,
 `coal_prb_committed_split`, `crossover_solve_year_weather`,
-`ercot_dam_availability_gas_event_cap`, `gas_offer_margin_zonal_anchor`,
+`demand_growth_vintage`, `ercot_dam_availability_gas_event_cap`,
+`gas_offer_margin_anchor_by_zone`, `gas_offer_margin_zonal_anchor`,
 `miso_coal_night_floor`, `pjm_rggi_allowance_pricing`): each was ADDED to
-ScenarioConfig after the neiso-72 solve, each defaults to False, and this arm
-records every one as False — the incumbent simply predates the field.
+ScenarioConfig after the neiso-72 solve and is recorded at its declared default
+— seven False, two None — the incumbent simply predates the field. The arm
+declares 671 keys against the incumbent's 662, and there are ZERO value
+differences on the 662 shared keys.
+
+CORRECTED ON THE RECORD: this entry first said SEVEN. The count was wrong
+because the diff was wrong — `a.get(k) != b.get(k)` collapses "key absent" and
+"key present with value None", hiding the two None-valued fields. Caught by the
+NEISO keeper auditor, not by the promoting session. Substance unaffected (all
+nine are drift; still zero value diffs), but the method is now
+`config_drift()` in scripts/gen_caiso159_attestation.py: sentinel-based and
+absence-aware, it COMPUTES the count and field list into the attestation
+(`config_drift_vs_incumbent`) rather than taking them from prose, and RAISES on
+any shared-key value difference. Against the NYISO pair it isolates exactly
+`nyiso_li_locational_reserve` — the guard would have stopped that promotion by
+itself.
 
 **What changed:** the CONTENT of the shared CT heat-rate artifact (caiso-158's
 hour-grain band screen). Cap-weighted applied rate 9.6291 -> 9.8006 MMBtu/MWh
