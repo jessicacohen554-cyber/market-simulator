@@ -421,6 +421,52 @@ honestly:
   attributed**. A paired T1-H control at explicit pre-decision defaults is the single
   measurement that would separate them.
 
+### 3.7 Refreshed FC-3 — NYISO, and here D-1 IS attributed: it is PROVABLY INERT
+
+Determination **unchanged: FC-3 FAIL**. But NYISO admits a real attribution that NEISO
+does not, and it comes from the retirement side being **exactly unmoved**.
+
+| metric | actual | OLD (`nyiso-2021-2025-fixed`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 1.488 | 1.036 FAIL | **1.036** FAIL | **IDENTICAL** |
+| `retire.unit_recall_gt300` | — | PASS | PASS | unchanged |
+| `retire.false_retire` | — | PASS | PASS | unchanged |
+| `add.by_tech.wind` | 0.890 | 4.0 FAIL | **0.951 PASS** | **improved to PASS** |
+| `add.by_tech.solar` | 2.197 | 8.0 FAIL | **0.891** FAIL | much closer (now under) |
+| `add.by_tech.gas_ct` | 0.072 | 0.0 FAIL | 0.5 FAIL | over |
+| `add.by_tech.storage` | 0.184 | 0.0 FAIL | 0.0 FAIL | unchanged |
+
+**The retirement total is identical to three decimals across the cache epoch, D-1, the
+C.4(c) un-pin AND D-2.** The evolution ledgers say why:
+
+| per-fuel model retirement | OLD | NEW |
+|---|---|---|
+| nuclear | 1.036 | **1.036** |
+| biomass / gas_cc / gas_ct / oil | 0.0 | **0.0** |
+
+and across all five ledger years the run books **exactly one retirement event**, in 2022,
+with reason **`announced`**. **Zero economic retirements in any year, in either arm.**
+
+**Attribution, and this one is real:**
+
+* **D-1 is PROVABLY INERT in NYISO's T1-H window.** The economic-retirement screen never
+  fires, so the rule that governs it cannot move anything. This is the same structural
+  inertness FFR-3C established for MISO in T1-F — but derived independently from NYISO's
+  own evidence, so it is rule-25 `[R-ISO-SCOPE]` clean and is **not** imported.
+* **NYISO's FC-3 retirement bands are therefore NOT evidence about D-1.** They measure
+  the announced-exit channel against actuals: 1.036 GW booked vs 1.488 GW actual, a −30 %
+  miss that is entirely "the economic screen retires nothing in NYISO 2023–2025".
+* **The additions movement is D-2 plus the §3.5 censoring**, with the
+  `correlated_forced_outage` half of the un-pin ruled out structurally (§3.2b) — leaving
+  `entry_lookahead_reprice` and the epoch as the only unseparated candidates on that half.
+
+**A first PASS in the T1-H set.** `add.by_tech.wind` moves 4.0 → 0.951 GW against 0.890
+actual — from a 4.5× over-build to inside the band. That is the only band in either
+refreshed leg to reach PASS, and it is reported as measured, not claimed as skill: the
+same §3.5 censoring that pushed NEISO's storage to zero also trims NYISO's wind, and this
+session cannot separate "better entry decisions" from "entry deferred past the scoring
+window" without the control arm named above.
+
 ---
 
 ## 4. T1-X crossover fold
