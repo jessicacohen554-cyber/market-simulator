@@ -854,3 +854,87 @@ keeper it was controlled on: re-diff at PROMOTION time, because a parallel
 per-ISO session can promote underneath you while your arms solve.**
 
 Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+
+---
+
+## 2026-08-03 — pjm-149: D-2/D-4 floor attribution was DISPATCH-PATH-dependent; fixed, and the committed corpus was found split across both paths
+
+Cross-ISO scoring-infrastructure charter opened from the pjm-148 side finding.
+**Zero LP, no keeper touched, no artifact regenerated, no determination moved at
+any of the six ISOs.** Evidence:
+`results/calibration/FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`;
+pre-registration pushed at `01cb248` before any measurement that decided the
+contract; machine record `results/calibration/_pjm149_census.json`.
+
+**(1) The defect.** `scripts/legitimacy_diagnostics.py` built the D-2/D-4 row set
+as a comprehension over the *dispatch map*, so a plant that was FLOORED but
+absent from that map was dropped silently — no row, no failure, no note. The map
+is the solve's `dispatch/<year>_<pass>.parquet` (gitignored ⇒ absent from every
+committed bundle) or else the CAMPD-bench-keyed run payload, which carries only
+metered plants. Measured at all six current keepers: **2–130 dropped floored
+plants per ISO-year, 23–272 TWh/yr** of floor energy invisible to a file that
+rule 18 `[R-FORCED-BUDGET]` is scored *entirely* from. caiso-155's `pseudo_pids`
+had re-admitted only the `plant_code <= 0` family; the general rule now **subsumes**
+it (rule 19 `[R-ONE-MECH]`, not a second parallel mechanism).
+
+**(2) The finding nobody could see: the committed corpus is SPLIT across both
+paths.** `legitimacy_diagnostics.json` is written *during* the producing run,
+while `dispatch/` still exists, but re-scored later from the committed slim file
+set. Which path an artifact was born on is recorded nowhere. Fingerprinted on the
+`''` bucket: **CAISO / MISO / NEISO / NYISO are parquet-born** (complete);
+**ERCOT / PJM are payload-born** (missing the nuclear block). Two keepers' and
+four keepers' artifacts were never comparable documents. **Standing consequence:
+a scorer whose output depends on which gitignored artifact happens to be on disk
+must say so in the artifact — path provenance is now recorded in the D-2/D-4
+notes.**
+
+**(3) Why nothing was regenerated — the transferable call.** The obvious cleanup
+(re-scoring every keeper under the fix) is exactly wrong here: four of six
+committed artifacts are parquet-born, so regenerating them on the only path now
+available would **replace measured dispatch with a bound** — a rule 14
+`[R-ACCURATE]` regression performed in the name of tidiness. The per-ISO delta was
+measured and *reported* instead (FINDING §7). **A scorer fix does not entitle you
+to re-run the scorer over artifacts that were produced with better inputs than
+you now have.**
+
+**(4) The contract, justified rather than inherited.** A floored plant the
+dispatch map does not cover enters with `disp := its own floor`. This extends
+caiso-155's floor-energy convention, but on a stronger footing: forced energy
+sums dispatch over at-floor hours only ⇒ floor energy is an **upper bound on the
+numerator**; LP feasibility (`P ≥ min_gen`) ⇒ it **understates the denominator**.
+So the reported `forced_share` is an **UPPER BOUND**, and since rule 18 fails
+HIGH the bound is *sound on a pass* and *indeterminate on a fail*. A breach is
+deliberately **not** suppressed — silently weakening rule 18 would be worse than
+an over-strict flag — it is stamped `upper_bound: true`, annotated in
+`calibration_verdict.score_forced_share`, and escalates. Validated against ground
+truth: on the parquet-born `pjm144_control_A` the convention reproduces the true
+nuclear row **exactly** (272.0222 / 270.5943 / 269.3312, delta +0.0000 in all
+three years).
+
+**(5) A side finding's example was wrong, and checking it was the charter's
+job.** pjm-148 §4 attributed PJM's missing `CC_CHP chp_steam` row to those 14
+plants being absent from the payload. **All 14 are PRESENT** in the payloads of
+pjm-144, pjm-146 and pjm-147 alike; PJM's dropped population is 17 plants, every
+one nuclear. The real cause is a **distinct second defect** — the payload-decoded
+and parquet dispatch series disagree about whether a *covered* plant is at its
+floor (6–7 CC_CHP plants carry a 3.7–4.0 TWh `chp_steam` floor and clear it by
+8.9–239 MW in all 8,760 hours, far outside quantization). Settling it needs both
+series for one bundle, i.e. a solve; filed as the named successor, not chased.
+**A defect report's mechanism claim is a hypothesis; the charter that inherits it
+verifies the example before building on it.**
+
+**(6) A third path asymmetry, recorded not fixed.** The D-2 materiality guard
+reads `total_load_mwh` from the payload sidecar, so an in-run parquet-path
+generation has `load_share = None` and gates *every* class. At
+`pjm144_control_A` that alone flips ST_GAS 2023–25 between FAIL and
+pass-immaterial while the shares agree to ~1 pp. Not a keeper; pre-dates this
+session's change.
+
+Gates: A2 confined-delta PASS (additions only; D-1 byte-identical at all six);
+**A3 determination invariance PASS at all six ISOs** through the production
+rubric — zero criterion-record status differences, identical `grade_summary`;
+A4 parquet-path no-op tested rather than asserted, with its two structural
+exceptions recorded; A5 eight new tests including a regression guard that
+reproduces the *old* comprehension and asserts it loses the plant; A6
+`tests/scoring/` 900 passed with 4 pre-existing `test_ff_readiness_battery.py`
+failures verified pre-existing by re-running with the changes stashed.

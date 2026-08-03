@@ -1,0 +1,2395 @@
+[
+ {
+  "kind": "C6",
+  "iso": "CAISO",
+  "committed_artifact": "results/calibration/caiso156_meter_screen_B/legitimacy_diagnostics.json",
+  "d2_row_count": 24,
+  "d2_classes": [
+   "",
+   "CC_CHP",
+   "CC_REGULAR",
+   "CT_CHP",
+   "CT_PEAKER",
+   "hydro"
+  ],
+  "unclassified_rows": 6,
+  "unclassified_twh": 116.4199,
+  "chp_rows": 6,
+  "chp_twh": 17.9591,
+  "path_fingerprint": "parquet",
+  "d2_notes": [
+   "2023: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: 2 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:WECC_DSW_DSW_solar_PV, u:WECC_PNW_PNW_hydro_base",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "keeper": "2026-08-03-caiso156-meter-screen-b"
+ },
+ {
+  "iso": "CAISO",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-03-caiso156-meter-screen-b.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 193,
+  "n_fleet_plants": 457,
+  "n_floored_real_plants": 183,
+  "C1_n": 128,
+  "C1_twh": 28.75549,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 17.62631,
+   "hydro|hydro_min_flow": 11.12914
+  },
+  "C3a_n": 127,
+  "C3a_twh": 11.12918,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 193,
+  "C4_present_floored": 55,
+  "C5_absent_unfloored": 136,
+  "keeper": "2026-08-03-caiso156-meter-screen-b",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6099",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2012.14,
+    "max_mw": 2240.0,
+    "floor_twh": 17.62631,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "454",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 89.67,
+    "max_mw": 187.36,
+    "floor_twh": 0.78555,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "437",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 79.0,
+    "max_mw": 181.38,
+    "floor_twh": 0.69202,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "436",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8016,
+    "mean_mw": 68.46,
+    "max_mw": 99.72,
+    "floor_twh": 0.54881,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54555",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 51.14,
+    "max_mw": 127.13,
+    "floor_twh": 0.448,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "7907",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 7296,
+    "mean_mw": 52.79,
+    "max_mw": 90.13,
+    "floor_twh": 0.38519,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "268",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 35.6,
+    "max_mw": 84.22,
+    "floor_twh": 0.31184,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "272",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 33.81,
+    "max_mw": 74.87,
+    "floor_twh": 0.2962,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 128,
+  "C3a_gated_class_rows_n": 127
+ },
+ {
+  "iso": "CAISO",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-03-caiso156-meter-screen-b.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 193,
+  "n_fleet_plants": 446,
+  "n_floored_real_plants": 185,
+  "C1_n": 130,
+  "C1_twh": 27.59199,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 18.19286,
+   "hydro|hydro_min_flow": 9.3991
+  },
+  "C3a_n": 129,
+  "C3a_twh": 9.39913,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 193,
+  "C4_present_floored": 55,
+  "C5_absent_unfloored": 123,
+  "keeper": "2026-08-03-caiso156-meter-screen-b",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6099",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2076.81,
+    "max_mw": 2240.0,
+    "floor_twh": 18.19286,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "437",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 107.19,
+    "max_mw": 179.16,
+    "floor_twh": 0.93895,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "454",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 67.01,
+    "max_mw": 129.26,
+    "floor_twh": 0.58703,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "436",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 41.47,
+    "max_mw": 86.01,
+    "floor_twh": 0.36328,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "319",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 32.4,
+    "max_mw": 57.7,
+    "floor_twh": 0.28384,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "275",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 30.27,
+    "max_mw": 59.35,
+    "floor_twh": 0.26517,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54555",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 26.72,
+    "max_mw": 60.63,
+    "floor_twh": 0.2341,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "272",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 7296,
+    "mean_mw": 31.98,
+    "max_mw": 61.58,
+    "floor_twh": 0.2333,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 130,
+  "C3a_gated_class_rows_n": 129
+ },
+ {
+  "iso": "CAISO",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-03-caiso156-meter-screen-b.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 193,
+  "n_fleet_plants": 446,
+  "n_floored_real_plants": 179,
+  "C1_n": 125,
+  "C1_twh": 24.92781,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 17.48465,
+   "hydro|hydro_min_flow": 7.44316
+  },
+  "C3a_n": 124,
+  "C3a_twh": 7.44316,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 193,
+  "C4_present_floored": 54,
+  "C5_absent_unfloored": 128,
+  "keeper": "2026-08-03-caiso156-meter-screen-b",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6099",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1995.96,
+    "max_mw": 2240.0,
+    "floor_twh": 17.48465,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "437",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 63.75,
+    "max_mw": 189.79,
+    "floor_twh": 0.55843,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "454",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 6552,
+    "mean_mw": 76.67,
+    "max_mw": 176.73,
+    "floor_twh": 0.50233,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "436",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 29.99,
+    "max_mw": 51.84,
+    "floor_twh": 0.26272,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "275",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8016,
+    "mean_mw": 30.53,
+    "max_mw": 57.38,
+    "floor_twh": 0.24471,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "319",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8016,
+    "mean_mw": 30.42,
+    "max_mw": 48.77,
+    "floor_twh": 0.24383,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "249",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 27.0,
+    "max_mw": 53.89,
+    "floor_twh": 0.23651,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "380",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 7296,
+    "mean_mw": 31.89,
+    "max_mw": 62.15,
+    "floor_twh": 0.2327,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 125,
+  "C3a_gated_class_rows_n": 124
+ },
+ {
+  "kind": "C6",
+  "iso": "ERCOT",
+  "committed_artifact": "results/calibration/ercot150_zonalanchor_B/legitimacy_diagnostics.json",
+  "d2_row_count": 24,
+  "d2_classes": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "unclassified_rows": 0,
+  "unclassified_twh": 0,
+  "chp_rows": 9,
+  "chp_twh": 43.7184,
+  "path_fingerprint": "payload-or-no-unclassified-floor",
+  "d2_notes": [
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "keeper": "2026-08-02-ercot150b-zonal-anchor"
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-02-ercot150b-zonal-anchor.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 173,
+  "n_fleet_plants": 193,
+  "n_floored_real_plants": 82,
+  "C1_n": 2,
+  "C1_twh": 40.39273,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 40.39274
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 173,
+  "C4_present_floored": 80,
+  "C5_absent_unfloored": 18,
+  "keeper": "2026-08-02-ercot150b-zonal-anchor",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6251",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2405.72,
+    "max_mw": 2580.0,
+    "floor_twh": 21.07408,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6145",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2205.33,
+    "max_mw": 2400.0,
+    "floor_twh": 19.31865,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-02-ercot150b-zonal-anchor.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 173,
+  "n_fleet_plants": 191,
+  "n_floored_real_plants": 83,
+  "C1_n": 2,
+  "C1_twh": 38.28719,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 38.28719
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 173,
+  "C4_present_floored": 81,
+  "C5_absent_unfloored": 16,
+  "keeper": "2026-08-02-ercot150b-zonal-anchor",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6145",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2245.61,
+    "max_mw": 2400.0,
+    "floor_twh": 19.67153,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6251",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2125.08,
+    "max_mw": 2580.0,
+    "floor_twh": 18.61566,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "ERCOT",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-02-ercot150b-zonal-anchor.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 173,
+  "n_fleet_plants": 180,
+  "n_floored_real_plants": 65,
+  "C1_n": 2,
+  "C1_twh": 41.30358,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 41.30358
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 173,
+  "C4_present_floored": 63,
+  "C5_absent_unfloored": 5,
+  "keeper": "2026-08-02-ercot150b-zonal-anchor",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "6251",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2445.16,
+    "max_mw": 2580.0,
+    "floor_twh": 21.4196,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6145",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2269.86,
+    "max_mw": 2400.0,
+    "floor_twh": 19.88398,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "kind": "C6",
+  "iso": "MISO",
+  "committed_artifact": "results/calibration/miso117_ctheatrate_B/legitimacy_diagnostics.json",
+  "d2_row_count": 27,
+  "d2_classes": [
+   "",
+   "CC_CHP",
+   "CC_REGULAR",
+   "COAL",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "unclassified_rows": 3,
+  "unclassified_twh": 267.9427,
+  "chp_rows": 9,
+  "chp_twh": 18.4467,
+  "path_fingerprint": "parquet",
+  "d2_notes": [
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "keeper": "2026-08-03-miso-117b-ct-heat"
+ },
+ {
+  "iso": "MISO",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-03-miso-117b-ct-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 384,
+  "n_fleet_plants": 775,
+  "n_floored_real_plants": 142,
+  "C1_n": 10,
+  "C1_twh": 87.15225,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 87.15226
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 384,
+  "C4_present_floored": 132,
+  "C5_absent_unfloored": 381,
+  "keeper": "2026-08-03-miso-117b-ct-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "8055",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1560.65,
+    "max_mw": 1807.0,
+    "floor_twh": 13.67133,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6072",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1206.29,
+    "max_mw": 1396.7,
+    "floor_twh": 10.5671,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6153",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1027.77,
+    "max_mw": 1190.0,
+    "floor_twh": 9.00325,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4046",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1027.34,
+    "max_mw": 1189.5,
+    "floor_twh": 8.99947,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1729",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 985.45,
+    "max_mw": 1141.0,
+    "floor_twh": 8.63253,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4270",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 938.72,
+    "max_mw": 1086.9,
+    "floor_twh": 8.22322,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "204",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 935.27,
+    "max_mw": 1082.9,
+    "floor_twh": 8.19296,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1925",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 898.22,
+    "max_mw": 1040.0,
+    "floor_twh": 7.86839,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 10,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "MISO",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-03-miso-117b-ct-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 384,
+  "n_fleet_plants": 771,
+  "n_floored_real_plants": 141,
+  "C1_n": 10,
+  "C1_twh": 90.19889,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 90.19888
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 384,
+  "C4_present_floored": 131,
+  "C5_absent_unfloored": 377,
+  "keeper": "2026-08-03-miso-117b-ct-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "8055",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1615.21,
+    "max_mw": 1807.0,
+    "floor_twh": 14.14924,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6072",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1248.46,
+    "max_mw": 1396.7,
+    "floor_twh": 10.9365,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6153",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1063.7,
+    "max_mw": 1190.0,
+    "floor_twh": 9.31799,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4046",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1063.25,
+    "max_mw": 1189.5,
+    "floor_twh": 9.31407,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1729",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1019.9,
+    "max_mw": 1141.0,
+    "floor_twh": 8.9343,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4270",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 971.54,
+    "max_mw": 1086.9,
+    "floor_twh": 8.51069,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "204",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 967.96,
+    "max_mw": 1082.9,
+    "floor_twh": 8.47937,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1925",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 929.62,
+    "max_mw": 1040.0,
+    "floor_twh": 8.14345,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 10,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "MISO",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-03-miso-117b-ct-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 383,
+  "n_fleet_plants": 770,
+  "n_floored_real_plants": 131,
+  "C1_n": 10,
+  "C1_twh": 90.59147,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 90.59146
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 383,
+  "C4_present_floored": 121,
+  "C5_absent_unfloored": 377,
+  "keeper": "2026-08-03-miso-117b-ct-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "8055",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1622.24,
+    "max_mw": 1807.0,
+    "floor_twh": 14.21083,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6072",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1253.89,
+    "max_mw": 1396.7,
+    "floor_twh": 10.9841,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6153",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1068.33,
+    "max_mw": 1190.0,
+    "floor_twh": 9.35854,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4046",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1067.88,
+    "max_mw": 1189.5,
+    "floor_twh": 9.35461,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1729",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1024.34,
+    "max_mw": 1141.0,
+    "floor_twh": 8.97319,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "4270",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 975.77,
+    "max_mw": 1086.9,
+    "floor_twh": 8.54773,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "204",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 972.18,
+    "max_mw": 1082.9,
+    "floor_twh": 8.51627,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "1925",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 933.66,
+    "max_mw": 1040.0,
+    "floor_twh": 8.17889,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 10,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "kind": "C6",
+  "iso": "NEISO",
+  "committed_artifact": "results/calibration/neiso_c156_meter_screen_B/legitimacy_diagnostics.json",
+  "d2_row_count": 18,
+  "d2_classes": [
+   "",
+   "CC_REGULAR",
+   "COAL",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_GAS"
+  ],
+  "unclassified_rows": 3,
+  "unclassified_twh": 77.251,
+  "chp_rows": 3,
+  "chp_twh": 0.09,
+  "path_fingerprint": "parquet",
+  "d2_notes": [],
+  "keeper": "2026-08-03-neiso-caiso156-meter-screen"
+ },
+ {
+  "iso": "NEISO",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-03-neiso-caiso156-meter-screen.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 100,
+  "n_fleet_plants": 364,
+  "n_floored_real_plants": 43,
+  "C1_n": 2,
+  "C1_twh": 23.15889,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 23.15888
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 100,
+  "C4_present_floored": 41,
+  "C5_absent_unfloored": 262,
+  "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "566",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8064,
+    "mean_mw": 1700.03,
+    "max_mw": 2108.4,
+    "floor_twh": 13.70906,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6115",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 7728,
+    "mean_mw": 1222.8,
+    "max_mw": 1247.0,
+    "floor_twh": 9.44983,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "NEISO",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-03-neiso-caiso156-meter-screen.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 101,
+  "n_fleet_plants": 360,
+  "n_floored_real_plants": 42,
+  "C1_n": 2,
+  "C1_twh": 26.48158,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 26.48158
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 101,
+  "C4_present_floored": 40,
+  "C5_absent_unfloored": 257,
+  "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "566",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1927.69,
+    "max_mw": 2108.4,
+    "floor_twh": 16.88658,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6115",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 7872,
+    "mean_mw": 1218.88,
+    "max_mw": 1247.0,
+    "floor_twh": 9.595,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "NEISO",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-03-neiso-caiso156-meter-screen.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 101,
+  "n_fleet_plants": 360,
+  "n_floored_real_plants": 42,
+  "C1_n": 2,
+  "C1_twh": 27.61053,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 27.61053
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 101,
+  "C4_present_floored": 40,
+  "C5_absent_unfloored": 257,
+  "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "566",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1911.16,
+    "max_mw": 2108.4,
+    "floor_twh": 16.74176,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6115",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1240.73,
+    "max_mw": 1247.0,
+    "floor_twh": 10.86877,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 2,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "kind": "C6",
+  "iso": "NYISO",
+  "committed_artifact": "results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json",
+  "d2_row_count": 24,
+  "d2_classes": [
+   "",
+   "CC_CHP",
+   "CC_REGULAR",
+   "CT_CHP",
+   "ST_GAS",
+   "hydro"
+  ],
+  "unclassified_rows": 6,
+  "unclassified_twh": 106.4339,
+  "chp_rows": 6,
+  "chp_twh": 1.4921,
+  "path_fingerprint": "parquet",
+  "d2_notes": [
+   "2023: 1 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:NYISO_external_HQ_hydro",
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: 1 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:NYISO_external_HQ_hydro",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: 1 floored pseudo-unit row(s) (plant_code <= 0 interchange tranches) scored under the floor-energy convention (dispatch := min_gen; PREREG-caiso155 \u00a73) \u2014 reported TWh is the mandated floor energy, an upper bound on at-floor dispatch: u:NYISO_external_HQ_hydro",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "keeper": "2026-08-02-nyiso-113-li-locational"
+ },
+ {
+  "iso": "NYISO",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-02-nyiso-113-li-locational.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 100,
+  "n_fleet_plants": 305,
+  "n_floored_real_plants": 141,
+  "C1_n": 127,
+  "C1_twh": 46.07634,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 27.48714,
+   "hydro|hydro_min_flow": 18.58917
+  },
+  "C3a_n": 124,
+  "C3a_twh": 18.5892,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 100,
+  "C4_present_floored": 14,
+  "C5_absent_unfloored": 78,
+  "keeper": "2026-08-02-nyiso-113-li-locational",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "2589",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1776.59,
+    "max_mw": 1903.1,
+    "floor_twh": 15.56289,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2693",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1192.77,
+    "max_mw": 1396.04,
+    "floor_twh": 10.44865,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "6110",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 831.76,
+    "max_mw": 844.0,
+    "floor_twh": 7.28621,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2694",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 537.82,
+    "max_mw": 601.43,
+    "floor_twh": 4.71127,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "6122",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8160,
+    "mean_mw": 568.39,
+    "max_mw": 578.8,
+    "floor_twh": 4.63804,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "54580",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 29.86,
+    "max_mw": 39.53,
+    "floor_twh": 0.26153,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "2612",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 19.17,
+    "max_mw": 28.96,
+    "floor_twh": 0.16791,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54953",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 18.4,
+    "max_mw": 24.64,
+    "floor_twh": 0.1612,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 127,
+  "C3a_gated_class_rows_n": 124
+ },
+ {
+  "iso": "NYISO",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-02-nyiso-113-li-locational.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 100,
+  "n_fleet_plants": 297,
+  "n_floored_real_plants": 138,
+  "C1_n": 125,
+  "C1_twh": 45.70027,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 26.95321,
+   "hydro|hydro_min_flow": 18.74705
+  },
+  "C3a_n": 122,
+  "C3a_twh": 18.74706,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 100,
+  "C4_present_floored": 13,
+  "C5_absent_unfloored": 72,
+  "keeper": "2026-08-02-nyiso-113-li-locational",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "2589",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1761.06,
+    "max_mw": 1903.1,
+    "floor_twh": 15.42687,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2693",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1207.86,
+    "max_mw": 1366.47,
+    "floor_twh": 10.58086,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "6110",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8400,
+    "mean_mw": 804.18,
+    "max_mw": 844.0,
+    "floor_twh": 6.75511,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2694",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 572.12,
+    "max_mw": 633.53,
+    "floor_twh": 5.01177,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "6122",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8376,
+    "mean_mw": 569.63,
+    "max_mw": 578.8,
+    "floor_twh": 4.77123,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "54580",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 25.52,
+    "max_mw": 42.24,
+    "floor_twh": 0.22353,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54953",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 16.47,
+    "max_mw": 27.99,
+    "floor_twh": 0.14424,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "2551",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 15.2,
+    "max_mw": 21.43,
+    "floor_twh": 0.13312,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 125,
+  "C3a_gated_class_rows_n": 122
+ },
+ {
+  "iso": "NYISO",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-02-nyiso-113-li-locational.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 100,
+  "n_fleet_plants": 297,
+  "n_floored_real_plants": 131,
+  "C1_n": 120,
+  "C1_twh": 43.26245,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 28.3416,
+   "hydro|hydro_min_flow": 14.92081
+  },
+  "C3a_n": 117,
+  "C3a_twh": 14.92085,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 100,
+  "C4_present_floored": 11,
+  "C5_absent_unfloored": 77,
+  "keeper": "2026-08-02-nyiso-113-li-locational",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "2589",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 1824.05,
+    "max_mw": 1903.1,
+    "floor_twh": 15.97863,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2693",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 954.0,
+    "max_mw": 1260.5,
+    "floor_twh": 8.35703,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "6110",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 836.36,
+    "max_mw": 844.0,
+    "floor_twh": 7.3265,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6122",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 574.94,
+    "max_mw": 578.8,
+    "floor_twh": 5.03647,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2694",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 448.08,
+    "max_mw": 616.48,
+    "floor_twh": 3.92518,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54580",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 21.86,
+    "max_mw": 38.71,
+    "floor_twh": 0.19151,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "54953",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 14.12,
+    "max_mw": 25.65,
+    "floor_twh": 0.12371,
+    "gated_class": true,
+    "gated_mech": false
+   },
+   {
+    "plant": "2551",
+    "klass": "hydro",
+    "mechanisms": [
+     "hydro_min_flow"
+    ],
+    "mech_ids": [
+     18
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 12.9,
+    "max_mw": 19.64,
+    "floor_twh": 0.11302,
+    "gated_class": true,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 120,
+  "C3a_gated_class_rows_n": 117
+ },
+ {
+  "kind": "C6",
+  "iso": "PJM",
+  "committed_artifact": "results/calibration/pjm147_chp_B/legitimacy_diagnostics.json",
+  "d2_row_count": 32,
+  "d2_classes": [
+   "CC_REGULAR",
+   "COAL",
+   "CT_CHP",
+   "CT_PEAKER",
+   "ST_CHP",
+   "ST_GAS"
+  ],
+  "unclassified_rows": 0,
+  "unclassified_twh": 0,
+  "chp_rows": 5,
+  "chp_twh": 0.0758,
+  "path_fingerprint": "payload-or-no-unclassified-floor",
+  "d2_notes": [
+   "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+   "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+  ],
+  "keeper": "2026-08-03-pjm-147b-chp-heat"
+ },
+ {
+  "iso": "PJM",
+  "year": 2023,
+  "dispatch_source": "payload 2026-08-03-pjm-147b-chp-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 311,
+  "n_fleet_plants": 606,
+  "n_floored_real_plants": 276,
+  "C1_n": 17,
+  "C1_twh": 272.02217,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 272.02217
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 311,
+  "C4_present_floored": 259,
+  "C5_absent_unfloored": 278,
+  "keeper": "2026-08-03-pjm-147b-chp-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "3166",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2421.79,
+    "max_mw": 2549.4,
+    "floor_twh": 21.21488,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6103",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2369.16,
+    "max_mw": 2494.0,
+    "floor_twh": 20.75387,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6022",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2215.56,
+    "max_mw": 2332.3,
+    "floor_twh": 19.40828,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6023",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2184.87,
+    "max_mw": 2300.0,
+    "floor_twh": 19.1395,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2410",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2170.34,
+    "max_mw": 2284.7,
+    "floor_twh": 19.01218,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6026",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2151.06,
+    "max_mw": 2264.4,
+    "floor_twh": 18.84325,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6105",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2129.59,
+    "max_mw": 2241.8,
+    "floor_twh": 18.65518,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6000",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2068.03,
+    "max_mw": 2177.0,
+    "floor_twh": 18.11595,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 17,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "PJM",
+  "year": 2024,
+  "dispatch_source": "payload 2026-08-03-pjm-147b-chp-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 311,
+  "n_fleet_plants": 605,
+  "n_floored_real_plants": 271,
+  "C1_n": 17,
+  "C1_twh": 270.59431,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 270.59431
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 311,
+  "C4_present_floored": 254,
+  "C5_absent_unfloored": 277,
+  "keeper": "2026-08-03-pjm-147b-chp-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "3166",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2409.08,
+    "max_mw": 2549.4,
+    "floor_twh": 21.10353,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6103",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2356.73,
+    "max_mw": 2494.0,
+    "floor_twh": 20.64493,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6022",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2203.93,
+    "max_mw": 2332.3,
+    "floor_twh": 19.30641,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6023",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2173.41,
+    "max_mw": 2300.0,
+    "floor_twh": 19.03903,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2410",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2158.95,
+    "max_mw": 2284.7,
+    "floor_twh": 18.91238,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6026",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2139.76,
+    "max_mw": 2264.4,
+    "floor_twh": 18.74434,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6105",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2118.41,
+    "max_mw": 2241.8,
+    "floor_twh": 18.55726,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6000",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2057.18,
+    "max_mw": 2177.0,
+    "floor_twh": 18.02086,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 17,
+  "C3a_gated_class_rows_n": 0
+ },
+ {
+  "iso": "PJM",
+  "year": 2025,
+  "dispatch_source": "payload 2026-08-03-pjm-147b-chp-heat.js",
+  "floors_rebuilt": true,
+  "n_dispatch_plants": 311,
+  "n_fleet_plants": 605,
+  "n_floored_real_plants": 264,
+  "C1_n": 17,
+  "C1_twh": 269.33121,
+  "C2_lost_rows": {
+   "(unclassified)|nuclear_mustrun": 269.33121
+  },
+  "C3a_n": 0,
+  "C3a_twh": 0,
+  "C3b_gated_mech_rows": [],
+  "C3b_n": 0,
+  "C3b_twh": 0,
+  "C4_present_plants": 311,
+  "C4_present_floored": 247,
+  "C5_absent_unfloored": 277,
+  "keeper": "2026-08-03-pjm-147b-chp-heat",
+  "kind": "year",
+  "C1_absent_floored_sample": [
+   {
+    "plant": "3166",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2397.83,
+    "max_mw": 2549.4,
+    "floor_twh": 21.00502,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6103",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2345.73,
+    "max_mw": 2494.0,
+    "floor_twh": 20.54857,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6022",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2193.64,
+    "max_mw": 2332.3,
+    "floor_twh": 19.21629,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6023",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2163.26,
+    "max_mw": 2300.0,
+    "floor_twh": 18.95016,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "2410",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2148.87,
+    "max_mw": 2284.7,
+    "floor_twh": 18.8241,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6026",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2129.78,
+    "max_mw": 2264.4,
+    "floor_twh": 18.65684,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6105",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2108.52,
+    "max_mw": 2241.8,
+    "floor_twh": 18.47064,
+    "gated_class": false,
+    "gated_mech": false
+   },
+   {
+    "plant": "6000",
+    "klass": "",
+    "mechanisms": [
+     "nuclear_mustrun"
+    ],
+    "mech_ids": [
+     1
+    ],
+    "hours_floored": 8760,
+    "mean_mw": 2047.57,
+    "max_mw": 2177.0,
+    "floor_twh": 17.93674,
+    "gated_class": false,
+    "gated_mech": false
+   }
+  ],
+  "C1_absent_floored_n": 17,
+  "C3a_gated_class_rows_n": 0
+ }
+]
