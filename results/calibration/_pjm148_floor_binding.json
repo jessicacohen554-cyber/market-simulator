@@ -1,0 +1,73 @@
+{
+  "bundle": "results/calibration/pjm147_chp_B",
+  "class": "CC_CHP",
+  "by_year": {
+    "2023": {
+      "limb_a_committed_d2": {
+        "d2_chp_steam_row_present": false,
+        "d2_chp_steam_forced_twh": 0.0,
+        "d2_chp_steam_share_of_class": 0.0,
+        "d2_any_mechanism_rows_for_class": []
+      },
+      "limb_b_hourly_reconstruction": {
+        "hours": 8760,
+        "class_twh": 8.606417759613038,
+        "chp_steam_floor_mw_mean": 436.42927471445205,
+        "chp_steam_floor_mw_max": 485.2750434249999,
+        "chp_steam_floor_energy_twh_if_always_binding": 3.8231204464985997,
+        "hours_with_live_floor": 8760,
+        "hours_at_floor": 0,
+        "share_hours_at_floor": 0.0,
+        "share_energy_at_floor": 0.0,
+        "mean_dispatch_over_floor_ratio": 2.291728271783116
+      },
+      "limb_a_below_threshold": true,
+      "limb_b_below_threshold": true
+    },
+    "2024": {
+      "limb_a_committed_d2": {
+        "d2_chp_steam_row_present": false,
+        "d2_chp_steam_forced_twh": 0.0,
+        "d2_chp_steam_share_of_class": 0.0,
+        "d2_any_mechanism_rows_for_class": []
+      },
+      "limb_b_hourly_reconstruction": {
+        "hours": 8760,
+        "class_twh": 8.072660393951416,
+        "chp_steam_floor_mw_mean": 456.1254696459589,
+        "chp_steam_floor_mw_max": 485.2750434249999,
+        "chp_steam_floor_energy_twh_if_always_binding": 3.9956591140986,
+        "hours_with_live_floor": 8760,
+        "hours_at_floor": 21,
+        "share_hours_at_floor": 0.002397260273972603,
+        "share_energy_at_floor": 0.0012623911088154068,
+        "mean_dispatch_over_floor_ratio": 2.0653970318038093
+      },
+      "limb_a_below_threshold": true,
+      "limb_b_below_threshold": true
+    },
+    "2025": {
+      "limb_a_committed_d2": {
+        "d2_chp_steam_row_present": false,
+        "d2_chp_steam_forced_twh": 0.0,
+        "d2_chp_steam_share_of_class": 0.0,
+        "d2_any_mechanism_rows_for_class": []
+      },
+      "limb_b_hourly_reconstruction": {
+        "hours": 8760,
+        "class_twh": 6.83515873147583,
+        "chp_steam_floor_mw_mean": 419.22634870020545,
+        "chp_steam_floor_mw_max": 481.2671178249999,
+        "chp_steam_floor_energy_twh_if_always_binding": 3.6724228146137996,
+        "hours_with_live_floor": 8760,
+        "hours_at_floor": 17,
+        "share_hours_at_floor": 0.0019406392694063927,
+        "share_energy_at_floor": 0.0011978873415720128,
+        "mean_dispatch_over_floor_ratio": 1.9380524853873022
+      },
+      "limb_a_below_threshold": true,
+      "limb_b_below_threshold": true
+    }
+  },
+  "Q1_verdict": "DEAD \u2014 floor is inert; lowering it is a no-op"
+}
