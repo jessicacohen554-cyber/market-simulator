@@ -24,7 +24,20 @@ widened and no threshold moved.
    demonstration is decisive: FFR-3C's 12-unit cohort exits in **one** year uncapped and over
    **three** capped, with the **total identical** — the cap moves the calendar and does not
    touch the level.
-3. **Measurement and the FH-1 §3.3 re-probe: see §5 and §6.**
+3. **The ERCOT measurement is a NULL, not a pass, and the pairing is what proves it.** All three
+   ERCOT arms — pre-fix control, cap-fix control, throughput-armed — are identical to the
+   megawatt across all three years, identical on dispatch skill, with **zero `pipeline_events` in
+   any year**. No ERCOT unit fails the going-forward bar in the T1-FF window, so neither
+   mechanism has any work to do there.
+4. **The FH-1 §3.3 re-probe reads I6 PASS / I7 PASS / I12 WARN** against the recorded FAIL /
+   FAIL / WARN — but the pre-fix control returns the identical PASS/PASS/WARN, so **the flip is
+   measured NOT to be this lane's**, and I12's WARN has *inverted* (the margin is now too high,
+   40.2 % against a 28.7 % ceiling, where FH-1's was too low). **FH-4/FH-5 is NOT declared
+   unblocked.** §6.
+5. **PJM is where the cap-grain fix actually bites, and it bites hard.** Against a pre-fix
+   control at the identical peak and reserve margin, the corrected grain cuts exits admitted to
+   the retirement pipeline from **14.766 GW to 1.056 GW — a 93 % reduction (−13.71 GW)** in PJM's
+   2024 screen. The fix is not inert; ERCOT simply had no candidates for it to act on. §5.3–§5.4.
 
 ---
 
@@ -361,6 +374,38 @@ in 2025 through the soft latch, so PJM's realized economic exits are 0.000 GW as
 So the ERCOT null does **not** generalise: the cap-grain fix has a live, heavily-loaded seam in
 PJM. What that seam does under the corrected grain versus the old one is the pre-fix pair below.
 
+### 5.4 PJM pre-fix pair — the cap-grain fix cuts admitted exits by 93 %
+
+The decisive measurement of this lane. Same posture, same data, PJM's shipped posture; the arms
+differ only in whether `_admission_cap_horizon` exists. **The 2024 screen is where the cap binds**
+(the 2023 screen has no candidates, and by 2025 the survivors have recovered):
+
+| PJM 2024 screen | PRE-FIX (`edf5c5a`, decision-year grain) | CAP-FIX (this branch, execution horizon) | delta |
+|---|--:|--:|--:|
+| units failing the bar | 1,199 | 1,199 | — |
+| **admitted to the pipeline (`decided`)** | **83 units / 14.766 GW** | **9 units / 1.056 GW** | **−74 units / −13.710 GW (−93 %)** |
+| un-admitted (`entry_capped`) | 1,116 / 94.496 GW | 1,190 / 108.207 GW | +74 / +13.710 GW |
+| peak demand | 153,121 MW | 153,121 MW | identical |
+| reserve margin | −4.8754 % | −4.8754 % | identical |
+
+**The cap-grain fix is emphatically NOT inert — ERCOT simply had nothing for it to act on.** In
+PJM it changes the admitted exit set by an order of magnitude, and in exactly the direction
+FFR-3C §1.2 G3 predicted: the old grain tested the schedule against a requirement **~10 % too
+low**, so it over-admitted; resolving the requirement at the year the exits actually land retains
+13.7 GW more capacity in the pipeline screen.
+
+Two things this does **not** yet mean, both stated because they are easy to overread:
+
+* **It does not change realized exits inside this window.** Both arms still execute **0.000 GW**
+  of economic retirement in 2023–2025: the 9 (resp. 83) admitted units either reverse through the
+  soft latch in 2025 or have not reached `decided_year + L_f`. The membership change would first
+  become visible as executions in **2026+**, outside a 3-year T1-FF window.
+* **It is not validated against actuals.** A 93 % swing in pipeline membership is a large,
+  correct-by-construction mechanism change; whether the corrected level is *closer to what PJM
+  actually retired* is a scoring question on a posture where the exits execute, and this posture
+  is not that. It is exactly the kind of change that must be scored leave-one-year-out before
+  anyone promotes anything (§5.5), and it is why nothing here is promoted.
+
 ### 5.5 Leave-one-year-out (rule 22)
 
 LOYO is **degenerate on this evidence, and that is the honest report rather than a fold table.**
@@ -421,11 +466,12 @@ Mirrors FFR-3C §5, because the same discipline applies to a fix lane as to an a
    implying otherwise.** The arm that would have done it — ERCOT with the throughput cap armed —
    is a measured **null**: there is no exit wave to spread at the FH-1 gate posture, because no
    ERCOT unit enters the retirement pipeline at all. The question FFR-3C left open is still open.
-2. **It does not validate either mechanism.** The cap-grain fix is pinned by a discriminating
-   unit test and the throughput cap by a synthetic cohort; neither has been shown to improve any
-   ISO's agreement with actuals, because neither has yet fired in a full solve that produces
-   economic exits. A mechanism that is *correct by construction* and *inert in the measured
-   posture* is exactly that, and no more.
+2. **It does not validate either mechanism against actuals.** The cap-grain fix now has a
+   measured, live effect in PJM (−93 % of admitted exit MW, §5.4) — but a large correct-by-
+   construction change is not evidence of improved *skill*. Neither mechanism has been shown to
+   move any ISO closer to what it actually retired, because in both test ISOs the window executes
+   **0.000 GW** of economic exits, so there is nothing to score against. The throughput cap in
+   particular has still never bound in a full solve.
 3. **It does not re-measure CAISO, MISO, NYISO or NEISO.** Their seeds are computed and tabled
    (§2.2) but no arm was run for any of them. MISO is excluded by evidence per D-8 bound 3;
    the other three were never in scope. Rule 25 `[R-ISO-SCOPE]`: nothing measured here transfers
