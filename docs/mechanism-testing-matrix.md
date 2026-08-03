@@ -205,7 +205,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-08-02-ercot150b-zonal-anchor`, C6 PASSES); **LIVE QUEUE AS OF ERCOT-154 (2026-08-03): item 7 (data-intake first) and item 8 (data-intake first) — every other named item is struck. The one live *object* with no lever is the mid-merit evening price-DISPERSION target opened at ERCOT-154 (item 7b).** Open gates unchanged in kind: C3a 2023-only (−32.6%; 2024 +1.6%, 2025 −8.3% away from the edge), C3b 2023-only (0.607), C3c (58/20/0 vs 181/53/31), C7 2023-lignite cv-leg (r 0.888, cv 0.334); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap; ERCOT-149 (the §6.1 successor / owner ruling #7) measured the GAS-side collision MATERIAL, adjudicated it a defect on the gas fleet's own conduct, and was OWNER-PROMOTED (`ercot_dam_availability_gas_event_cap` cell `K`); **ercot-150 (2026-08-02, the nyiso-109 §7 cross-ISO transfer adjudicated at ERCOT per rule 25) resolved the gas-offer margin anchor PER ZONE (`gas_offer_margin_zonal_anchor` cell `K`) and was OWNER-PROMOTED under the standing in-session instruction**: ERCOT's convention is a capacity-weighted mean-zero spread PLUS a flat measured EP level correction, the anchors were identified on the keeper reconstruction's own resolved fuel_prices (the West net-load floor lift cut the West leg ~5× before anything was pushed), all five construction gates passed incl. zonal K3 liveness (max zone |ΔLMP| 0.356/0.304/0.319 $/MWh — ERCOT prices the LEVEL side its convention carries while the mean-zero spread half stays price-inert on its coupled topology, West decoupling only 6/17/2 h/yr), P1/P2/P3/P5 passed, and P4 fired on a template artifact (the keeper itself carries slack 3478.9/1114.6/0.0 MWh; true arm delta +0.97/+0.91/0.00 MWh ≈ +0.03%). The availability lane is measured-precedence-correct on COAL AND GAS and the gas offer surface is now zone-grain-identified; the un-masked residuals are the CC econ-band under-dispatch (ERCOT-138/139 object: Jack County/Guadalupe now under) and the coal LOADING-CONDUCT under-run (ERCOT-126 object); OPEN owner rulings #9 (deriver `_site()` cross-train collapse + gas crosswalk partial acceptance — the root-cause derive lane; its re-derive would also re-trigger the zone-anchor table per rule 23) and #10 (pin remove-direction over-removal)
+### 5.1 ERCOT — NOT-YET (keeper `2026-08-02-ercot150b-zonal-anchor`, C6 PASSES); **LIVE QUEUE AS OF ERCOT-155 (2026-08-03): item 9 (the named successor — UNCHARTERED, owner authorization required), item 7 (data-intake first) and item 8 (data-intake first) — every other named item is struck. ERCOT-155 measured item 7b's dispersion object and RE-POINTED it: it is a COMMITMENT-STATE defect, not an offer-slope or fleet-composition one, the offer-dispersion arm is REFUSED (rules 1/13/20), and the "flat ~25 GW at 1.6 $/MWh per GW" framing is CORRECTED (item 7c) — do not quote it forward.** Open gates unchanged in kind: C3a 2023-only (−32.6%; 2024 +1.6%, 2025 −8.3% away from the edge), C3b 2023-only (0.607), C3c (58/20/0 vs 181/53/31), C7 2023-lignite cv-leg (r 0.888, cv 0.334); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap; ERCOT-149 (the §6.1 successor / owner ruling #7) measured the GAS-side collision MATERIAL, adjudicated it a defect on the gas fleet's own conduct, and was OWNER-PROMOTED (`ercot_dam_availability_gas_event_cap` cell `K`); **ercot-150 (2026-08-02, the nyiso-109 §7 cross-ISO transfer adjudicated at ERCOT per rule 25) resolved the gas-offer margin anchor PER ZONE (`gas_offer_margin_zonal_anchor` cell `K`) and was OWNER-PROMOTED under the standing in-session instruction**: ERCOT's convention is a capacity-weighted mean-zero spread PLUS a flat measured EP level correction, the anchors were identified on the keeper reconstruction's own resolved fuel_prices (the West net-load floor lift cut the West leg ~5× before anything was pushed), all five construction gates passed incl. zonal K3 liveness (max zone |ΔLMP| 0.356/0.304/0.319 $/MWh — ERCOT prices the LEVEL side its convention carries while the mean-zero spread half stays price-inert on its coupled topology, West decoupling only 6/17/2 h/yr), P1/P2/P3/P5 passed, and P4 fired on a template artifact (the keeper itself carries slack 3478.9/1114.6/0.0 MWh; true arm delta +0.97/+0.91/0.00 MWh ≈ +0.03%). The availability lane is measured-precedence-correct on COAL AND GAS and the gas offer surface is now zone-grain-identified; the un-masked residuals are the CC econ-band under-dispatch (ERCOT-138/139 object: Jack County/Guadalupe now under) and the coal LOADING-CONDUCT under-run (ERCOT-126 object); OPEN owner rulings #9 (deriver `_site()` cross-train collapse + gas crosswalk partial acceptance — the root-cause derive lane; its re-derive would also re-trigger the zone-anchor table per rule 23) and #10 (pin remove-direction over-removal)
 
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
@@ -494,13 +494,76 @@ rule-13-admissible mechanism available to carry it.
    `_ercot_multiproduct_design` at zero mentions — a bit-identical A/B (the
    ERCOT-146 outcome, before the solve). ERCOT's deliverable-reserve row is
    already held by the measured RTOLCAP series.
-   **THE NAMED SUCCESSOR OBJECT** (unowned, no lever yet): the **dispatchable
-   stack's price DISPERSION in the mid-merit evening region** — ~25 GW of
-   thermal headroom priced within 1.6 $/MWh per GW is why the evening premium
-   has no former. It is the ERCOT-145 §5 under-dispersion / near-tail-frequency
-   signature on a second, independent instrument. It is **not** an offer LEVEL
-   object (that program is closed) and **not** reachable from the storage or
-   reserve-supply side; a successor must bring a *slope* mechanism.
+   ~~**THE NAMED SUCCESSOR OBJECT** (unowned, no lever yet): the dispatchable
+   stack's price DISPERSION in the mid-merit evening region — ~25 GW of
+   thermal headroom priced within 1.6 $/MWh per GW … a successor must bring a
+   *slope* mechanism.~~
+   **▶ MEASURED AND RE-POINTED AT ERCOT-155 (2026-08-03) — NO ARM, NO SOLVE,
+   KEEPER UNCHANGED. The dispersion framing is SUPERSEDED; see item 9.**
+7c. **The ERCOT-155 correction to 7b, binding on successors**
+   (`docs/DIAGNOSIS-ercot155-evening-dispersion-2026-08-03.md`; probe
+   `scripts/probes/ercot155_dispersion_census.py`; record
+   `results/calibration/ercot155_dispersion_census.json`).
+   - **7b's premise was wrong in two ways.** The evening thermal headroom is
+     **15.3–17.5 GW**, not ~25 GW (that figure was annual-max thermal dispatch
+     60.4–61.1 GW minus the evening mean 35.3–35.7 GW — a *cross-hour*
+     difference, not headroom available in an evening hour), and the stack over
+     it is **convex, not flat**: 1.1–1.2 $/MWh per GW for the first ~5 GW,
+     7.8–13.4 by 60–90 % of headroom, reaching **$103–116** at the 90 % rung
+     before a 38 MW West CT tail (HR 155.17) jumps to $2,797.56. The
+     1.557/1.616 figure is a correctly-measured **local** slope at the
+     operating point. **Do not quote the "flat 25 GW" framing forward.**
+   - **An offer-side dispersion/slope arm is REFUSED** (rules 1/13/20, not on
+     fit) — see item 9 for the grounds.
+9. **THE NAMED SUCCESSOR (ERCOT-155): the evening object is a COMMITMENT-STATE
+   defect, and the lever is an energy-side measured online-capability ceiling.**
+   Matrix row `energy_online_capability_cap` (ERCOT `U`). **UNCHARTERED — needs
+   owner authorization and its own precommit; it is a structural LP change, not
+   a Phase-2 offer arm.**
+   - **The measurement.** In the evening ERCOT holds **159–224** thermal
+     resources online at **92.0–96.2 % of HSL**, leaving **0.92–2.80 GW** of
+     energy headroom, with **128–196** resources / **17.05–22.94 GW** of thermal
+     HSL **offline** and absent from the 5-minute stack. The model has
+     **53.1–54.4 GW** of available thermal at **65.7–68.0 %** loading =
+     **15.3–17.5 GW** of headroom — **5.5–19×** the real market's — all
+     dispatchable from zero at marginal cost in any hour, because the LP carries
+     no integer commitment. Same MWh from the same classes (C1 16/16, C2 PASS)
+     by the wrong route.
+   - **Why the offer arm is refused.** The MW it would re-price are MW ERCOT
+     keeps **cold**; assigning event-day conduct prices to them is a fitted
+     proxy for a missing physical constraint (rule 1, no forward analogue under
+     rule 13, no identification source under rule 20). It could not reach the
+     object anyway: the measured across-resource spread on the comparable 1 GW
+     band is **$2.66–47.43** (SCED) vs **$0.71–2.18** (model) — tens of dollars
+     where the C3c tail needs hundreds. On event evenings ERCOT prices
+     **24–53 %** of its first marginal GW above \$100; the model prices **none**
+     of it above \$75.
+   - **The precedent and the instrument.** `results/scarcity.py::
+     ercot_rtolcap_supply_cap_mw` already diagnoses the identical defect on the
+     **reserve** side ("count every reserve-eligible thermal unit's *full
+     installed* headroom … including cold slow-start units a perfect-foresight
+     LP leaves idle but still scores as available") and the keeper arms
+     `ercot_reserve_supply_cap=True` to fix it. Nothing constrains **energy**.
+     The measured series is already committed for all three years in the same
+     file: `ercot_<year>_ordc_reserves_hourly.parquet` carries **`rtolhsl`**
+     (online HSL, evening mean 58.87/62.64/67.81 GW).
+   - **Downstream — one gap, several standing residuals.** C3a-2023 (−32.6 %) is
+     ~entirely tail wedge (capped at \$200 the model is within −5.1 %; hours
+     >\$200 **63 vs 181**; wedge \$7.21 vs \$18.61/MWh). The **correctly-armed
+     and correctly-dated** ECRS mechanism (`ercot_ecrs_conservative_deployment`,
+     measured ASPLANNP433 onset 2023 h3839 ≈ June 9–10, published 2024-08-01
+     reform at `ERCOT_ECRS_RELEASE_REFORM_HOUR = 5088`) under-delivers because
+     withdrawing 1–3 GW from a 15 GW cushion cannot move a dual. ERCOT-153's
+     evening-ramp premium and ERCOT-154's \$1.38/\$3.05 storage ceiling are the
+     same cushion on other instruments.
+   - **Before chartering:** rule 19 reconciliation against the availability lane
+     (which models **outages**, not online state) and the commitment bridges
+     (which own the **lower** bound) — explicit precedence, never a stacked
+     layer; identification from ERCOT's own measured online state only
+     (rules 13/20/23); an availability-shaped bound, since the pure-LP
+     architecture forbids MIP; and the validating SCED corpus is **2024/2025
+     only** (no 2023 corpus — NP3-965 OWNER-DECLINED 2026-08-02), a 47-day
+     event/control-split sample.
 8. **The CT-band re-identification reopen intake** (ERCOT-147, 2026-07-31 —
    Phase 0 REFUSED ex ante, no solve spent, keeper unchanged;
    `docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`, probe
