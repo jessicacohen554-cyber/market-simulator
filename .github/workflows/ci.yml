@@ -99,6 +99,39 @@ jobs:
       - name: check_forecast_invariants --sidecar-dir
         run: uv run python scripts/check_forecast_invariants.py --sidecar-dir
 
+  forecast-staleness-warn:
+    name: FR-21 forecast-board staleness (WARN only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Fetch full history: the check measures the commit distance from the
+      # board's newest scored-at sha to HEAD, and a shallow clone cannot reach
+      # a sha more than one commit back. With fetch-depth unset the distance
+      # reads "(unknown)" — honestly reported, but useless as a signal.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # FR-21: the T1 gate evidence went stale and NOTHING detected it. FF-2D
+      # scored 2026-07-20; over the following ten days ~20 keeper promotions
+      # landed, the pinned default config cache key moved twice and was
+      # broken-and-restored once, and the NYISO forecast orchestrator was
+      # rewired — with no FC verdict re-scored and no signal anywhere. This
+      # step is the signal: it reads the provenance stamps
+      # (scripts/lib/forecast_provenance.py) off the committed board artifacts
+      # and reports how far solve-affecting paths have moved past the newest
+      # scored sha.
+      #
+      # WARN-LEVEL BY DESIGN — the step never fails the build (the script exits
+      # 0 unless --fail-on-stale, which is deliberately NOT passed). Backcast
+      # calibration velocity must not be blocked by forecast-board freshness:
+      # the two lanes run concurrently, and the backcast lane is the one
+      # producing the keepers that make the board stale. Visibility, not a gate.
+      #
+      # Stdlib-only, no uv sync, no LP, no data fetch — it reads committed JSON
+      # and runs `git rev-list`, in seconds (repo CI cost policy).
+      - name: check_forecast_staleness
+        run: python3 scripts/check_forecast_staleness.py
+
   forecast-parity-guard:
     name: FR-22 backcast->forecast parity
     runs-on: ubuntu-latest

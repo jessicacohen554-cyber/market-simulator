@@ -66,6 +66,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+if str(REPO) not in sys.path:  # resolve ``scripts.lib`` when run as a plain script
+    sys.path.insert(0, str(REPO))
+
+from scripts.lib import forecast_provenance as fp  # noqa: E402  (after sys.path)
 
 # --- namespaces -----------------------------------------------------------
 HINDCAST_DIR = REPO / "frontend" / "data" / "hindcast"  # canonical per-run record
@@ -262,6 +266,38 @@ def _full_invariants(sidecar: dict) -> list[dict]:
 # --------------------------------------------------------------------------- #
 # Per-run artifacts (registry sidecar + runs payload) — verdict baked in.
 # --------------------------------------------------------------------------- #
+def _run_provenance(sidecar: dict, meta: dict, verdict: dict | None) -> dict:
+    """Resolve one run's scoring-provenance stamp — PRESERVE, never mint (FR-21).
+
+    Precedence: the rubric verdict's own stamp (the authoritative "when was this
+    scored", populated when the battery is re-scored) > the canonical hindcast
+    sidecar's stamp (written once at registration, when "now" is honest) > an
+    explicitly UNSCORED stamp.
+
+    The unscored stamp records ``scored_at_sha``/``scored_at_date`` as ``None``
+    with a note, but still carries ``cache_epoch`` — the run's own config
+    identity IS recoverable from its artifacts at any time, and it is the second
+    staleness signal. Minting a fresh sha/date here would make every ``--reindex``
+    reset the board's apparent freshness, which is the FR-21 failure itself.
+    """
+    for source in (verdict, sidecar):
+        existing = fp.read_stamp(source)
+        if existing and existing.get("scored_at_date"):
+            return existing
+    return {
+        "schema": fp.SCHEMA,
+        "scored_at_sha": None,
+        "scored_at_date": None,
+        "cache_epoch": fp.cache_epoch_from(meta, sidecar),
+        "note": (
+            "UNSCORED under the FR-21 staleness machinery: this run predates it, "
+            "or its verdict carries no stamp. Not evidence of freshness — it is "
+            "the absence of evidence. A re-score through scripts/forecast_verdict.py "
+            "stamps it."
+        ),
+    }
+
+
 def build_run_artifacts(sidecar: dict, verdicts: dict) -> tuple[dict, dict]:
     """Return ``(registry_entry, run_payload)`` for one canonical sidecar.
 
@@ -315,6 +351,15 @@ def build_run_artifacts(sidecar: dict, verdicts: dict) -> tuple[dict, dict]:
         "n_inv": len(invariants),
         "file": f"frontend/data/forecast/runs/{run_id}.js",
         "registered_utc": sidecar.get("registered_utc") or _now(),
+        # FR-21 staleness machinery: WHEN and against WHAT this run's board entry
+        # was SCORED. `registered_utc` cannot answer that — --reindex refreshes
+        # it without re-scoring anything. So the stamp is PRESERVED, never
+        # minted here: it comes from the verdict that scored the run (FFR-3A
+        # populates those), else from the run's own canonical sidecar. A run
+        # predating the machinery records sha/date None with a note — stamping
+        # a reindex as "scored now" would make the board perpetually look fresh,
+        # which is precisely the failure FR-21 names.
+        fp.PROVENANCE_KEY: _run_provenance(sidecar, meta, verdict),
     }
 
     # Full payload — everything the per-run detail view renders. Top-level stub
@@ -350,6 +395,10 @@ def build_run_artifacts(sidecar: dict, verdicts: dict) -> tuple[dict, dict]:
         "score": sidecar.get("score"),
         "extras": extras or None,
         "registered_utc": registry_entry["registered_utc"],
+        # Same stamp object as the registry sidecar, so the payload the run
+        # explorer renders and the index the manifest is built from can never
+        # disagree about when this run was scored (FR-21).
+        fp.PROVENANCE_KEY: registry_entry[fp.PROVENANCE_KEY],
     }
     return registry_entry, run_payload
 
@@ -405,6 +454,32 @@ def _load_registry_entries(registry_dir: Path) -> list[dict]:
     return entries
 
 
+def _board_provenance(entries: list[dict]) -> dict:
+    """Summarize the scoring provenance across every registered run (FR-21).
+
+    Returns the manifest-level block: when the board was assembled, the NEWEST
+    ``scored_at_date``/``scored_at_sha`` any run carries (the board's freshness
+    frontier — what the CI staleness check measures HEAD against), the distinct
+    ``cache_epoch`` values in play, and how many runs are unstamped. The
+    distinct-epoch count is the second signal: more than one means the board is
+    comparing runs solved under different config identities.
+    """
+    stamps = [s for s in (fp.read_stamp(e) for e in entries) if isinstance(s, dict)]
+    dated = [s for s in stamps if s.get("scored_at_date")]
+    newest = max(dated, key=lambda s: s["scored_at_date"], default=None)
+    epochs = sorted({s["cache_epoch"] for s in stamps if s.get("cache_epoch")})
+    return {
+        "schema": fp.SCHEMA,
+        "assembled_at": fp.utc_now(),
+        "assembled_at_sha": fp.head_sha(),
+        "newest_scored_at_date": (newest or {}).get("scored_at_date"),
+        "newest_scored_at_sha": (newest or {}).get("scored_at_sha"),
+        "cache_epochs": epochs,
+        "n_stamped": len(stamps),
+        "n_unstamped": len(entries) - len(stamps),
+    }
+
+
 def _manifest_meta(entries: list[dict]) -> dict:
     """Assemble the ``window.FF.meta`` facet block from the entries."""
     isos = sorted({e["iso"] for e in entries})
@@ -423,6 +498,11 @@ def _manifest_meta(entries: list[dict]) -> dict:
         "schema_ready": schema_ready,
         "inv_names": INV_NAMES,
         "n_runs": len(entries),
+        # FR-21: the board's OWN staleness position — the newest scored sha and
+        # epoch across every registered run, plus when the manifest was
+        # assembled. This is what makes "the board has been dark for ten days"
+        # a readable number instead of an archaeology exercise.
+        fp.PROVENANCE_KEY: _board_provenance(entries),
     }
 
 
@@ -516,6 +596,21 @@ def reindex(site_dir: Path = REPO) -> int:
         f"{_runs_dir(site_dir)}; assembled manifest.js + program-status.js"
     )
     return n
+
+
+def _stamp_sidecar(sidecar: dict) -> dict:
+    """Stamp a FRESHLY-BUILT canonical sidecar with its scoring provenance.
+
+    This is the one place "now" is an honest answer: the sidecar was just built
+    from a bundle that just finished, at this HEAD. Mutates and returns
+    ``sidecar`` so the caller writes the stamped object. An already-stamped
+    sidecar is left alone (re-registering an existing run must not reset its
+    scoring date). ``--reindex`` never reaches here — it PRESERVES stamps via
+    :func:`_run_provenance`.
+    """
+    if not fp.read_stamp(sidecar):
+        sidecar[fp.PROVENANCE_KEY] = fp.stamp(sidecar.get("meta"), sidecar)
+    return sidecar
 
 
 def register_one(sidecar: dict) -> str:
@@ -617,6 +712,7 @@ def main(argv: list[str] | None = None) -> int:
         sidecar = RH.build_sidecar(
             args.bundle, preserve_invariants=args.preserve_invariants
         )
+        _stamp_sidecar(sidecar)
         (RH.SIDECAR_DIR / f"{sidecar['run_id']}.json").write_text(
             json.dumps(sidecar, indent=2) + "\n"
         )
@@ -632,6 +728,7 @@ def main(argv: list[str] | None = None) -> int:
         sidecar = RB.build_sidecar(
             args.summary, args.label, kind=args.kind, extra_meta=extra
         )
+        _stamp_sidecar(sidecar)
         HINDCAST_DIR.mkdir(parents=True, exist_ok=True)
         (HINDCAST_DIR / f"{sidecar['run_id']}.json").write_text(
             json.dumps(sidecar, indent=2, ensure_ascii=False) + "\n"

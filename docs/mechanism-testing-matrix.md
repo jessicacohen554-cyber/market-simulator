@@ -18,6 +18,14 @@ Built 2026-07-27 from a five-way audit: the full `ScenarioConfig` inventory
 conventions. Keeper snapshot at build: ercot115 / caiso-130 / pjm-133 /
 miso-88 / nyiso-89 / neiso-61.
 
+> **That keeper list is the 2026-07-27 BUILD SNAPSHOT — a historical record of
+> what the matrix was first audited against, not the current keeper set.** All
+> six ISOs have promoted since. The LIVE keeper set is the `keepers:` object in
+> `docs/codebase-site/data/mechanism-matrix.js`, which the promoting session
+> re-stamps under rule 28; read it there, never from this paragraph. (Header
+> hygiene, FFR-3B 2026-08-02 — audit FR-21 bookkeeping desync. No cell verdict
+> was touched.)
+
 ---
 
 ## 1. What the matrix is for, and the update protocol (binding)
