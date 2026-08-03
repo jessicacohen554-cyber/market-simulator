@@ -88,11 +88,15 @@ measured.** A second re-solve of 2024 was run in a worktree at this session's
 | replay **with** the sidecar diff vs keeper | 10.5637 | 18,630 / 52,560 | +0.0122 % |
 | **base code, no sidecar diff** vs keeper | **10.5637** | **18,630 / 52,560** | **+0.0122 %** |
 
-The divergence is **identical with and without this session's code**. It is
-attributable entirely to the 58 commits that landed on main between the keeper's
-solve basis (`0d49cc4a`) and this session's base (`5885248`); the environment is
+The divergence is **identical with and without this session's code**, and the
+two re-solves are **bit-identical to each other**: over all **122,640 class-hours
+of 2024** the sidecar replay and the base-code re-solve differ by
+**max 0.000e+00 MW in zero cells**, while the base-code re-solve alone differs
+from the keeper in **2,187 class-hours by up to 628.9 MW**. It is attributable
+entirely to the 58 commits that landed on main between the keeper's solve basis
+(`0d49cc4a`) and this session's base (`5885248`); the environment is
 byte-identical (same Python, HiGHS 1.14.0, numpy, scipy, pandas, pyarrow).
-**K-A does not fire.** Every §3 result is therefore reported as measured on a
+**K-A does not fire, on a measurement rather than a code reading.** Every §3 result is therefore reported as measured on a
 **re-solve of the keeper recipe, not on the keeper bundle** — and the keeper's
 own committed artifacts are untouched.
 
