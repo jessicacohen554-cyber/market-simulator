@@ -259,3 +259,165 @@ as FFR-3C §1.4 scoped it.
    merged-branch restart was needed.
 
 ---
+
+## 5. Task 3 — paired measurement, ERCOT
+
+All arms are **T1-FF full-forward hindcast, ERCOT, base 2023, vintage 2023, 2023–2025, Arm R,
+3 solve years** — the FH-1 §3.3 gate posture exactly. Cache keys verified **distinct before any
+arm was read**, and the paired configs verified to differ in **exactly one field**.
+
+| arm | code | `exit_rate_limits` | cache key |
+|---|---|---|---|
+| **PRE-FIX control** | `origin/main` `edf5c5a` (no cap-grain fix) | absent | `418b7bc4ead77d09` |
+| **cap-fix control** | this branch | off (shipped default) | `5de5e8b320b525eb` |
+| **throughput armed** | this branch | **on**, cap 8,840 MW/yr | `2fe6094ebc317548` |
+
+> **Pairing check.** The pre-fix arm runs in a `git worktree` at `edf5c5a` with
+> `MARKET_SIM_DATA_ROOT` pointed at the main tree, so both arms read byte-identical data. Its
+> cache key differs for a reason that is **not** a config difference: `MARKET_SIM_DATA_ROOT`
+> pointing outside `REPO_ROOT` changes the key (the worktree at `edf5c5a` with `DATA_ROOT` unset
+> returns `973a0acdef818e91`, identical to this branch's). A diff of the two logged config dicts
+> shows **exactly one** differing entry — `exit_rate_limits` present vs absent — and that field
+> is dropped from the hash at its default, verified by swapping `edf5c5a`'s `scenarios.py` into
+> this tree and getting the identical default key. **That `DATA_ROOT`-outside-`REPO_ROOT` shifts
+> the cache key is a latent hazard of the data-root seam and is reported as a new finding.**
+
+### 5.1 The result: both mechanisms are PROVABLY INERT in ERCOT's T1-FF window
+
+| year | thermal before | econ retired | I6 | reserve margin |
+|---|--:|--:|--:|--:|
+| 2023 | 78.171 GW | **0.000 GW** | 0.0 % | 26.84 % |
+| 2024 | 78.171 GW | **0.000 GW** | 0.0 % | 32.26 % |
+| 2025 | 78.527 GW | **0.000 GW** | 0.0 % | 40.19 % |
+
+**The cap-fix control and the throughput-armed arm are identical to the megawatt in every year,
+with ZERO throughput deferrals** — the cap resolved and logged correctly (8,840 MW/yr) and never
+bound. The reason is stronger than "small": the ledgers carry **no `pipeline_events` at all** in
+any year of either arm — not one `decided`, `entry_capped`, or `executed` row. **No ERCOT unit
+fails the going-forward bar anywhere in the window, so the retirement pipeline is never
+entered.** An admission cap that is never consulted with a non-empty candidate set, and a
+throughput cap with nothing due, cannot do anything.
+
+This is FFR-3C §3.2's structure — *"an ISO can be structurally incapable of exercising the
+mechanism under test"* — now measured for **ERCOT**, the ISO that lane nominated *because* it was
+the failing I6 case. **Per this lane's own charter, that is a NULL and must not be read as a
+pass.** The pairing is what makes it legible: without the control arm, "0.000 GW, I6 PASS" would
+look like the fix working.
+
+There is also a mechanical reason no `pipeline` exit can land in this window at all: a unit
+decided at the 2024 screen (loss year 2023) with `L_coal` = 3 executes in **2027**, and one
+decided at the 2025 screen executes in 2028 — both outside a 2023–2025 window. Even if units had
+failed the bar, the pipeline rule cannot produce an execution inside a 3-year T1-FF window.
+
+### 5.2 Attribution: the cap-grain fix is INERT here, and the gate flip is NOT this lane's
+
+The pre-fix control settles it. Against `origin/main` `edf5c5a` — the identical posture, the
+identical data, the cap-grain fix absent:
+
+| arm | 2023 | 2024 | 2025 | pipeline events | I6 | I7 | I12 |
+|---|--:|--:|--:|---|---|---|---|
+| **FH-1 recorded** (legacy rule, 2026-08-02) | 0.00 GW | 0.00 GW | **21.05 GW (26.8 %)** | n/a | **FAIL** | **FAIL** | WARN |
+| **PRE-FIX control** (`edf5c5a`) | 0.000 | 0.000 | **0.000** | **NONE** | PASS | PASS | WARN |
+| **cap-fix control** (this branch) | 0.000 | 0.000 | **0.000** | **NONE** | PASS | PASS | WARN |
+| **throughput armed** (cap 8,840 MW/yr) | 0.000 | 0.000 | **0.000** | **NONE** | PASS | PASS | WARN |
+
+All three of my arms are **identical to the megawatt**, including reserve margin to six decimal
+places (0.2684 / 0.322638 / 0.401939). So:
+
+* **The cap-grain fix changes nothing at this posture — measured against a control, not
+  inferred.** It is correct by construction and pinned by a discriminating test, and it is inert
+  here for a specific, checkable reason: the screen never produces a candidate, so the admission
+  cap is never consulted.
+* **The I6/I7 FAIL → PASS flip versus the recorded gate is NOT this lane's doing**, and I am not
+  claiming it. It is already present in the pre-fix control, so it was produced by something that
+  landed between FH-1's probe and `edf5c5a`. The overwhelmingly likely cause is **owner decision
+  D-1's `legacy` → `pipeline` default flip, signed 2026-08-02 — after FH-1's gate ran.** FH-1's
+  own §7 reading names the legacy machinery explicitly (*"once the two-consecutive-loss counters
+  mature"*), and the pipeline rule cannot reproduce that behaviour. **I did not isolate D-1
+  itself** (that would need a `--retirement-rule legacy` arm, which is FFR-2B's territory and not
+  this charter's), so this is attribution by elimination plus mechanism, not a measured D-1 arm.
+
+## 6. Task 4 — the FH-1 §3.3 acceptance re-probe, stated plainly
+
+**Posture:** ERCOT, base 2023, vintage 2023, 2023–2025, Arm R, 3 solve years, hindcast namespace,
+`kind="full_forward"` — FH-1 §3.3's gate posture exactly, re-run at this branch's HEAD.
+
+| invariant | recorded (FH-1 §3.3) | this re-probe | verdict |
+|---|---|---|---|
+| **I6** single-year econ retirement | **FAIL** — 21.05 GW = 26.8 % in 2025 | **PASS** — 0.00 GW, 0.0 % every year | **flipped to PASS** |
+| **I7** reliability floor / accredited firm | **FAIL** — 2025 thermal 57.5 GW < floor 78.5 GW | **PASS** — held every year | **flipped to PASS** |
+| **I12** reserve-margin band | **WARN** — band exits | **WARN** — band exits | **unchanged, but INVERTED** |
+
+**Does it pass? On the letter of the gate, yes — and I do not think that should be read as the
+gate being satisfied.** Three reasons, stated because the charter asked for the finding rather
+than the verdict:
+
+1. **The pass is not this lane's.** The pre-fix control returns the identical PASS/PASS/WARN
+   (§5.2). Nothing FFR-3F built moved I6 or I7.
+2. **I12's WARN has inverted sign, which is a new problem wearing the old problem's label.** FH-1
+   exited the band *downward* (an over-retiring harness). This re-probe exits it *upward* —
+   2024 at 32.3 % and 2025 at **40.2 %** against a ceiling of 28.7 %. The harness has swung from
+   retiring 26.8 % of its thermal fleet in one year to retiring **nothing at all** while capacity
+   keeps being added. An I12 WARN that used to mean "too short" now means "far too long", and the
+   gate's own wording — *"an over-retiring harness would make every downstream metric
+   uninterpretable"* — applies with equal force to a harness that cannot retire anything.
+3. **The gate cannot exercise what it was re-probed to test.** Zero `pipeline_events` in any year
+   means the retirement layer is untested at this posture, not validated by it.
+
+**I therefore do NOT declare FH-4/FH-5 unblocked, and no part of this report should be read as
+doing so.** The lift is the manager's, on a landed fix plus a green re-probe; what I can report
+is that the fix landed, the re-probe's I6/I7 are green, and the greenness is attributable to a
+decision taken before this lane started rather than to the fix. **Nothing was tuned toward the
+gate** — the arms differ only in code version and one boolean.
+
+## 7. What this evidence does NOT separate — stated plainly
+
+Mirrors FFR-3C §5, because the same discipline applies to a fix lane as to an attribution lane.
+
+1. **It does not quantify the calendar artifact as a fraction of the ERCOT/CAISO trough.**
+   FFR-3C §5.1 said the only thing that would settle that is *"solving ERCOT with the exit wave
+   spread and everything else held fixed."* **I did not do that, and I say so rather than
+   implying otherwise.** The arm that would have done it — ERCOT with the throughput cap armed —
+   is a measured **null**: there is no exit wave to spread at the FH-1 gate posture, because no
+   ERCOT unit enters the retirement pipeline at all. The question FFR-3C left open is still open.
+2. **It does not validate either mechanism.** The cap-grain fix is pinned by a discriminating
+   unit test and the throughput cap by a synthetic cohort; neither has been shown to improve any
+   ISO's agreement with actuals, because neither has yet fired in a full solve that produces
+   economic exits. A mechanism that is *correct by construction* and *inert in the measured
+   posture* is exactly that, and no more.
+3. **It does not re-measure CAISO, MISO, NYISO or NEISO.** Their seeds are computed and tabled
+   (§2.2) but no arm was run for any of them. MISO is excluded by evidence per D-8 bound 3;
+   the other three were never in scope. Rule 25 `[R-ISO-SCOPE]`: nothing measured here transfers
+   to any of them.
+4. **It does not establish the 2.0 multiplier as correct for the exit side** — only as the
+   *same* discipline already armed on the entry side, which is what makes the pair symmetric.
+   Whether a real deactivation queue's throughput ceiling is 2× its historical maximum is not
+   something this lane measured, and the value must not be moved to close a residual if it later
+   proves loose (rules 11/23).
+5. **It does not touch the FH-4/FH-5 block.** Lifting that is the manager's, on a landed fix
+   **plus** a green re-probe. §6 reports the re-probe honestly; it does not claim the lift.
+
+## 9. What this session does NOT claim
+
+* **No promotion, no default flipped.** `exit_rate_limits` ships **default-OFF**;
+  `retirement_rule` is still `pipeline`; both entry dampers stay armed exactly as Addendum D
+  left them. Nothing here is a keeper or a candidate. Both are owner boxes and neither was
+  opened.
+* **No band widened, no threshold moved, no damper unarmed.** Addendum D's *HOLD PROMOTION, FIND
+  ROOT CAUSE* stands untouched.
+* **Nothing tuned to a residual.** The cap-grain fix introduces no parameter at all. The
+  throughput cap's two constants are the entry side's own multiple and a declared window whose
+  choice is measured to carry no DOF for the tested ISOs. Neither was chosen by looking at an
+  output.
+* **Nothing registered to the backcast registry.** `frontend/data/backcast/` is untouched; no
+  keeper shard, `calibration-complete.json` entry, or `holdout-freeze.json` was read for writing
+  or modified.
+* **No holdout year touched.** Every arm is forecast-mode T1-FF over **2023–2025** — the rule-22
+  training window — which the freeze explicitly does not restrict. Each leg printed its own
+  governance line at launch confirming legality. No out-of-training year (2022, 2019, ≤2021,
+  H1-2026) was solved, scored, or read, and no marker was spent.
+* **The FH-4/FH-5 block is NOT lifted.** That is the manager's call on a landed fix plus a green
+  re-probe, and §6 is deliberately written so the re-probe can be read either way without me
+  having pre-judged it.
+* **No ISO's verdict transferred to another** (rule 25). ERCOT's null says nothing about PJM, and
+  neither says anything about the four ISOs not tested.
