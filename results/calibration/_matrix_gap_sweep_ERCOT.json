@@ -1,0 +1,2626 @@
+{
+  "iso": "ERCOT",
+  "keeper": "2026-08-02-ercot150b-zonal-anchor",
+  "keeper_bundle_fields": 670,
+  "n_scenario_fields": 670,
+  "n_matrix_rows": 171,
+  "n_bundles_scanned": 19,
+  "family": [
+    {
+      "field": "ercot_as_adequacy_frac",
+      "default": 1.0,
+      "keeper_value": 1.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_as_aware_commitment",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_as_critical_frac",
+      "default": 0.0,
+      "keeper_value": 0.0,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_as_forward_requirement",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_as_n_ramp",
+      "default": 12,
+      "keeper_value": 12,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_coal_min_config_floor",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_min_load_floor",
+          "cells": "K.....",
+          "cell": "K"
+        },
+        {
+          "row": "coal_econ_bound",
+          "cells": "K..K..",
+          "cell": "K"
+        },
+        {
+          "row": "coal_offer_net_revenue_margin",
+          "cells": "K.UU..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_commitment_posture",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_commitment_posture_min_load_frac",
+      "default": 0.574,
+      "keeper_value": 0.574,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_ct_offer_surface",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_dam_availability_coal_event_cap",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_dam_availability_coal_event_cap",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_dam_availability_gas_event_cap",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_dam_availability_gas_event_cap",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_ecrs_conservative_deployment",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_ecrs_requirement",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_ecrs_requirement_from_year",
+      "default": 2023,
+      "keeper_value": 2023,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_faststart_pool_offer",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_faststart_pool_offer",
+          "cells": "O.....",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "O"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_faststart_pool_offer_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_gas_bridge_da_horizon",
+      "default": true,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_gas_bridge_min_load_frac",
+      "default": 0.574,
+      "keeper_value": 0.574,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_gas_bridge_online_hours",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot141_online_hours_arm"
+      ]
+    },
+    {
+      "field": "ercot_gas_bridge_startup",
+      "default": true,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_gas_commitment_bridge",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_gas_contract_haircut",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_gas_delivered_floor_basis",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_gtc_limits_measured",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_load_resource_reserve",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_load_resource_reserve_from_year",
+      "default": 2023,
+      "keeper_value": 2023,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_market_design",
+      "default": "auto",
+      "keeper_value": "auto",
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_multiproduct_as_coopt",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_noncampd_plant_availability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_nonreleasable_as_withholding",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_nuclear_unit_availability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_hrmult_ep_rebasis",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_hrmult_ep_rebasis_bands",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_binned_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_rt",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_rt_mode",
+      "default": "replace",
+      "keeper_value": "replace",
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_rt_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_state",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_state_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_steam",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_conditional",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_lowcurve",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUUU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_lowcurve_floorscoped",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_lowcurve_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_midcurve_conditional",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_midcurve_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_min_bin",
+      "default": 0,
+      "keeper_value": 0,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_offer_surface_netload_pcts",
+      "default": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_offer_surface_price_cap_frac",
+      "default": 0.95,
+      "keeper_value": 0.95,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_online_capacity_envelope",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_online_capacity_envelope_extreme",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_online_capacity_envelope_measured",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_ordc_only_scarcity",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_ordc_total_reserve",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_reserve_supply_cap",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_reserve_supply_cap_from_year",
+      "default": 2023,
+      "keeper_value": 2023,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_reserve_supply_forward",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan"
+      ]
+    },
+    {
+      "field": "ercot_shoulder_online_span",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_shoulder_online_span_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_storage_as_deployment",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_storage_as_deployment_from_year",
+      "default": 2023,
+      "keeper_value": 2023,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_storage_as_duration_gate",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_storage_as_endogenous",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_storage_as_product_credit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_storage_as_reserve",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_storage_as_reserve_from_year",
+      "default": 2025,
+      "keeper_value": 2023,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_storage_capability_measured",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_thermal_as_endogenous",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_thermal_dam_availability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_thermal_dam_availability_coal",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_thermal_dam_availability_hourly",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_thermal_dam_availability_plant",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B"
+      ]
+    },
+    {
+      "field": "ercot_west_gas_collapse_freq",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_west_gas_delivered_floor",
+      "default": null,
+      "keeper_value": 0.4,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_west_gas_endogenous_collapse",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_west_gas_firm_basis",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_west_netload_gas_shape",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_wind_zone_shape",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ercot_wind_zone_shape",
+          "cells": "K.KKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_wtx_curtail_depth_solar",
+      "default": 0.1637,
+      "keeper_value": 0.1637,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_wtx_curtail_depth_wind",
+      "default": 0.1004,
+      "keeper_value": 0.1004,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_wtx_curtailment_driver",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wtx_curtailment_driver",
+          "cells": "K.....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    },
+    {
+      "field": "ercot_zonal_gas_basis",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "ercot116_regate_arm",
+        "ercot116_regate_base",
+        "ercot122_offerlevel",
+        "ercot128_unit_grain",
+        "ercot129_conditional",
+        "ercot137_margin_arm",
+        "ercot139_cc_committed_arm",
+        "ercot140_coal_peak_arm",
+        "ercot141_online_hours_arm",
+        "ercot144_perplant_arm",
+        "ercot145_gas_daily_arm",
+        "ercot148_dam_event_cap_arm",
+        "ercot149_gas_event_cap_arm",
+        "ercot150_control_A",
+        "ercot150_zonalanchor_B",
+        "ercot71_availability_fullspan",
+        "ercot73_state_wall_fullspan",
+        "ercot76_ne_import_fullspan",
+        "ercot86_rtwall_2025_A"
+      ]
+    }
+  ],
+  "family_matrix_gaps_absent": [
+    "ercot_as_adequacy_frac",
+    "ercot_as_aware_commitment",
+    "ercot_as_critical_frac",
+    "ercot_as_forward_requirement",
+    "ercot_as_n_ramp",
+    "ercot_commitment_posture",
+    "ercot_commitment_posture_min_load_frac",
+    "ercot_ct_offer_surface",
+    "ercot_ecrs_conservative_deployment",
+    "ercot_ecrs_requirement",
+    "ercot_ecrs_requirement_from_year",
+    "ercot_faststart_pool_offer_path",
+    "ercot_gas_contract_haircut",
+    "ercot_gas_delivered_floor_basis",
+    "ercot_load_resource_reserve",
+    "ercot_load_resource_reserve_from_year",
+    "ercot_market_design",
+    "ercot_multiproduct_as_coopt",
+    "ercot_noncampd_plant_availability",
+    "ercot_nonreleasable_as_withholding",
+    "ercot_offer_hrmult_ep_rebasis",
+    "ercot_offer_hrmult_ep_rebasis_bands",
+    "ercot_offer_surface_binned_path",
+    "ercot_offer_surface_cleared_share_path",
+    "ercot_offer_surface_cleared_share_rt",
+    "ercot_offer_surface_cleared_share_rt_mode",
+    "ercot_offer_surface_cleared_share_rt_path",
+    "ercot_offer_surface_cleared_share_state",
+    "ercot_offer_surface_cleared_share_state_path",
+    "ercot_offer_surface_cleared_share_steam",
+    "ercot_offer_surface_lowcurve_floorscoped",
+    "ercot_offer_surface_lowcurve_path",
+    "ercot_offer_surface_midcurve_path",
+    "ercot_offer_surface_min_bin",
+    "ercot_offer_surface_netload_pcts",
+    "ercot_offer_surface_price_cap_frac",
+    "ercot_online_capacity_envelope_extreme",
+    "ercot_online_capacity_envelope_measured",
+    "ercot_ordc_only_scarcity",
+    "ercot_ordc_total_reserve",
+    "ercot_reserve_supply_cap",
+    "ercot_reserve_supply_cap_from_year",
+    "ercot_reserve_supply_forward",
+    "ercot_shoulder_online_span",
+    "ercot_shoulder_online_span_path",
+    "ercot_storage_as_deployment",
+    "ercot_storage_as_deployment_from_year",
+    "ercot_storage_as_duration_gate",
+    "ercot_storage_as_endogenous",
+    "ercot_storage_as_product_credit",
+    "ercot_storage_as_reserve",
+    "ercot_storage_as_reserve_from_year",
+    "ercot_thermal_as_endogenous",
+    "ercot_thermal_dam_availability_hourly",
+    "ercot_thermal_dam_availability_plant",
+    "ercot_west_gas_collapse_freq",
+    "ercot_west_gas_delivered_floor",
+    "ercot_west_gas_endogenous_collapse",
+    "ercot_west_gas_firm_basis",
+    "ercot_wtx_curtail_depth_solar",
+    "ercot_wtx_curtail_depth_wind"
+  ],
+  "family_prose_only": [
+    "ercot_gas_bridge_online_hours",
+    "ercot_offer_surface_cleared_share",
+    "ercot_offer_surface_conditional",
+    "ercot_offer_surface_lowcurve",
+    "ercot_offer_surface_midcurve_conditional",
+    "ercot_thermal_dam_availability_coal",
+    "ercot_west_netload_gas_shape"
+  ],
+  "armed_on_keeper_with_no_cell": [
+    "ercot_as_adequacy_frac",
+    "ercot_as_n_ramp",
+    "ercot_commitment_posture_min_load_frac",
+    "ercot_ecrs_conservative_deployment",
+    "ercot_ecrs_requirement_from_year",
+    "ercot_load_resource_reserve",
+    "ercot_load_resource_reserve_from_year",
+    "ercot_market_design",
+    "ercot_multiproduct_as_coopt",
+    "ercot_noncampd_plant_availability",
+    "ercot_nonreleasable_as_withholding",
+    "ercot_offer_surface_cleared_share",
+    "ercot_offer_surface_cleared_share_rt",
+    "ercot_offer_surface_cleared_share_rt_mode",
+    "ercot_offer_surface_conditional",
+    "ercot_offer_surface_netload_pcts",
+    "ercot_offer_surface_price_cap_frac",
+    "ercot_ordc_total_reserve",
+    "ercot_reserve_supply_cap",
+    "ercot_reserve_supply_cap_from_year",
+    "ercot_storage_as_deployment",
+    "ercot_storage_as_deployment_from_year",
+    "ercot_storage_as_product_credit",
+    "ercot_storage_as_reserve",
+    "ercot_storage_as_reserve_from_year",
+    "ercot_thermal_dam_availability_coal",
+    "ercot_thermal_dam_availability_hourly",
+    "ercot_thermal_dam_availability_plant",
+    "ercot_west_gas_delivered_floor",
+    "ercot_west_netload_gas_shape",
+    "ercot_wtx_curtail_depth_solar",
+    "ercot_wtx_curtail_depth_wind"
+  ],
+  "live_but_invisible": [
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 2023,
+        "ercot116_regate_base": 2023,
+        "ercot122_offerlevel": 2023,
+        "ercot128_unit_grain": 2023,
+        "ercot129_conditional": 2023,
+        "ercot137_margin_arm": 2023
+      }
+    },
+    {
+      "field": "ercot_load_resource_reserve",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_storage_as_reserve",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_storage_as_reserve_from_year",
+      "default": 2025,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 2023,
+        "ercot116_regate_base": 2023,
+        "ercot122_offerlevel": 2023,
+        "ercot128_unit_grain": 2023,
+        "ercot129_conditional": 2023,
+        "ercot137_margin_arm": 2023
+      }
+    },
+    {
+      "field": "ercot_multiproduct_as_coopt",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_ecrs_conservative_deployment",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_ordc_total_reserve",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_storage_as_product_credit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_reserve_supply_cap",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "storage_as_commitment",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_storage_as_deployment",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "wefor_residual",
+      "default": null,
+      "keeper_value": 0.02,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.02,
+        "ercot116_regate_base": 0.02,
+        "ercot122_offerlevel": 0.02,
+        "ercot128_unit_grain": 0.02,
+        "ercot129_conditional": 0.02,
+        "ercot137_margin_arm": 0.02
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_floor",
+      "default": null,
+      "keeper_value": 0.76,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.76,
+        "ercot116_regate_base": 0.76,
+        "ercot122_offerlevel": 0.76,
+        "ercot128_unit_grain": 0.76,
+        "ercot129_conditional": 0.76,
+        "ercot137_margin_arm": 0.76
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_tiered",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "coal_prb_follower_floor",
+      "default": null,
+      "keeper_value": 0.76,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.76,
+        "ercot116_regate_base": 0.76,
+        "ercot122_offerlevel": 0.76,
+        "ercot128_unit_grain": 0.76,
+        "ercot129_conditional": 0.76,
+        "ercot137_margin_arm": 0.76
+      }
+    },
+    {
+      "field": "gas_st_startup_cost",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "coal_lignite_passthrough_floor",
+      "default": null,
+      "keeper_value": 0.675,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.675,
+        "ercot116_regate_base": 0.675,
+        "ercot122_offerlevel": 0.675,
+        "ercot128_unit_grain": 0.675,
+        "ercot129_conditional": 0.675,
+        "ercot137_margin_arm": 0.675
+      }
+    },
+    {
+      "field": "coal_lignite_passthrough_ceil",
+      "default": null,
+      "keeper_value": 1.0,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 1.0,
+        "ercot116_regate_base": 1.0,
+        "ercot122_offerlevel": 1.0,
+        "ercot128_unit_grain": 1.0,
+        "ercot129_conditional": 1.0,
+        "ercot137_margin_arm": 1.0
+      }
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "wefor_residual_groups",
+      "default": null,
+      "keeper_value": [
+        "ST_CHP",
+        "ST_GAS"
+      ],
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot116_regate_base": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot122_offerlevel": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot128_unit_grain": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot129_conditional": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot137_margin_arm": [
+          "ST_CHP",
+          "ST_GAS"
+        ]
+      }
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_gas_commitment_bridge",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_noncampd_plant_availability",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+        "ercot116_regate_base": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+        "ercot122_offerlevel": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+        "ercot128_unit_grain": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+        "ercot129_conditional": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+        "ercot137_margin_arm": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv"
+      }
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "coal_nameplate_summer_derate",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "offer_curve_smoothing_mid",
+      "default": null,
+      "keeper_value": 0.35,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.35,
+        "ercot116_regate_base": 0.35,
+        "ercot122_offerlevel": 0.35,
+        "ercot128_unit_grain": 0.35,
+        "ercot129_conditional": 0.35,
+        "ercot137_margin_arm": 0.35
+      }
+    },
+    {
+      "field": "oil_primary_bin_fuel",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_west_gas_delivered_floor",
+      "default": null,
+      "keeper_value": 0.4,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "ercot116_regate_arm": 0.4,
+        "ercot116_regate_base": 0.4,
+        "ercot122_offerlevel": 0.4,
+        "ercot128_unit_grain": 0.4,
+        "ercot129_conditional": 0.4,
+        "ercot137_margin_arm": 0.4
+      }
+    },
+    {
+      "field": "ercot_nonreleasable_as_withholding",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_rt",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 16,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "gas_st_drag_seasonal",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 15,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_thermal_dam_availability_hourly",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 15,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_thermal_dam_availability_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 15,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 13,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "coal_lignite_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 13,
+      "bundles": {
+        "ercot116_regate_arm": true,
+        "ercot116_regate_base": true,
+        "ercot122_offerlevel": true,
+        "ercot128_unit_grain": true,
+        "ercot129_conditional": true,
+        "ercot137_margin_arm": true
+      }
+    },
+    {
+      "field": "ercot_reserve_supply_forward",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 3,
+      "bundles": {
+        "ercot71_availability_fullspan": true,
+        "ercot73_state_wall_fullspan": true,
+        "ercot76_ne_import_fullspan": true
+      }
+    },
+    {
+      "field": "ercot_offer_surface_cleared_share_state",
+      "default": false,
+      "keeper_value": false,
+      "n_bundles_nondefault": 3,
+      "bundles": {
+        "ercot73_state_wall_fullspan": true,
+        "ercot76_ne_import_fullspan": true,
+        "ercot86_rtwall_2025_A": true
+      }
+    },
+    {
+      "field": "retirement_years_coal",
+      "default": 3,
+      "keeper_value": 3,
+      "n_bundles_nondefault": 2,
+      "bundles": {
+        "ercot71_availability_fullspan": 1,
+        "ercot73_state_wall_fullspan": 1
+      }
+    }
+  ]
+}

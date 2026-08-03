@@ -38,6 +38,29 @@ from market_sim.config.scenario_resolvers import (  # noqa: F401
 )
 from market_sim.config.sweeps import SweepDefinition  # noqa: F401
 
+# Config fields DELETED from ``ScenarioConfig``, mapped to the default value
+# they carried while they existed. ``cache_key`` re-inserts each before hashing,
+# so removing a dead knob does NOT move the default key or orphan any on-disk
+# cache — the mirror image of ``_CACHE_KEY_OPTIONAL_FIELDS`` below, which keeps
+# the key stable when a field is ADDED.
+#
+# This exists so rule 26 ``[R-DELETE]`` ("deprecated fitted knobs are removed,
+# not zeroed") is affordable. Without it, deleting a dead field would move the
+# default cache key, orphan every cached run, and redden the pinned-literal
+# tests — whose only remedy would be re-pinning the literal, which the
+# cache-key guard's own docstring names as the WRONG fix. A retired entry is not
+# a zombie knob: it exists only inside the hash, cannot be assigned, cannot be
+# read by any solve path, and so can never be re-armed — which is exactly the
+# failure mode rule 26 targets. Entries are append-only; never delete one, or
+# the key it was protecting moves after all.
+_CACHE_KEY_RETIRED_FIELDS: dict[str, object] = {
+    # CT_CHP tranche heat-rate override triple (1.1 / 1.2 / 1.4 on all six ISOs'
+    # bundles, reachable on none — deleted 2026-08-03, nyiso-114).
+    "ct_committed_hr_override": None,
+    "ct_econ_hr_override": None,
+    "ct_peak_hr_override": None,
+}
+
 # Config fields introduced after the results cache existed. ``cache_key`` omits
 # each from its hash while it holds its default value, keeping every historical
 # cache key byte-stable; a non-default value still enters the key.
@@ -7744,12 +7767,19 @@ class ScenarioConfig:
     gas_st_econ_hr_override: float | None = None
     gas_st_peak_hr_override: float | None = None
 
-    # CT_CHP tranche heat-rate overrides (relative to base HR), applied to the
-    # grid-facing tranches above the must-run BTM + steam-following floor. None
-    # leaves the CSV HR_Mult columns in place.
-    ct_committed_hr_override: float | None = None
-    ct_econ_hr_override: float | None = None
-    ct_peak_hr_override: float | None = None
+    # (The CT_CHP tranche heat-rate override triple — ct_committed_hr_override
+    # / ct_econ_hr_override / ct_peak_hr_override, 1.1 / 1.2 / 1.4 — was DELETED
+    # 2026-08-03 under rule 26 [R-DELETE], nyiso-114. It was armed non-default on
+    # ALL 119 committed bundles across ALL SIX ISOs and REACHABLE ON NONE of
+    # them: its only two readers sat inside the ``else`` of ``if offer is not
+    # None`` gated on ``group == "CT_CHP"``, and every bundle carries a truthy
+    # ``offer_curve_by_group["CT_CHP"]``, which resolves plant-code-independently
+    # and takes the ``if``. The source already documented it as inert — and that
+    # is precisely the re-armable answer key rule 26 forbids: the CT_CHP curve
+    # is all-1.0, so a future arm dropping CT_CHP from ``offer_curve_by_group``
+    # would have silently re-armed 1.1 / 1.2 / 1.4 with no session intending it.
+    # The CC and ST_GAS triples above are NOT affected — they remain live where
+    # their own group has no offer curve.)
 
     # Economic-tranche split. Maps a CAMPD bin's Plant_Group to a 3-element
     # list ``[split_frac, lo_hr_mult, hi_hr_mult]``: the single economic tranche
@@ -9956,6 +9986,12 @@ class ScenarioConfig:
         for name in _CACHE_KEY_OPTIONAL_FIELDS:
             if payload_dict.get(name) == getattr(defaults, name):
                 payload_dict.pop(name, None)
+        # Re-insert DELETED fields at the default they carried, so removing a
+        # dead knob (rule 26 [R-DELETE]) leaves every historical key byte-stable
+        # instead of orphaning the cache. Hash-only: nothing can set or read
+        # these, so they cannot be re-armed.
+        for name, retired_default in _CACHE_KEY_RETIRED_FIELDS.items():
+            payload_dict.setdefault(name, retired_default)
         # Fold checkout-absolute paths to sentinels LAST, so the drop-at-default
         # comparison above still sees the raw stored values (both sides are
         # computed in this process, so they carry the same absolute prefix).
@@ -10715,9 +10751,6 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_committed_hr_override": 3,
     "gas_st_econ_hr_override": 3,
     "gas_st_peak_hr_override": 3,
-    "ct_committed_hr_override": 3,
-    "ct_econ_hr_override": 3,
-    "ct_peak_hr_override": 3,
     "chp_steam_following": 3,
     "chp_btm_floor_pct": 3,
     "chp_export_floor_measured": 3,

@@ -1,0 +1,2031 @@
+{
+  "iso": "CAISO",
+  "keeper": "2026-08-02-caiso157-partition-restore-b",
+  "keeper_bundle_fields": 671,
+  "n_scenario_fields": 670,
+  "n_matrix_rows": 171,
+  "n_bundles_scanned": 19,
+  "family": [
+    {
+      "field": "caiso_asymmetric_path_ratings",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_bidir_intertie",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_charge_allocation_schedule",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_citygate_flow_date",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_citygate_spot_level",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_commitment_posture",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_corridor_atc_forward",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_corridor_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_corridor_export_path",
+          "cells": ".R....",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "K",
+        "R"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dam_outages",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_demand_clock_realign",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_daytime_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_daytime_evening_trim",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_overnight_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_surplus_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_endogenous_wecc_node",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wecc_endogenous_node",
+          "cells": ".R....",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_firm_import_envelope_clip",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_selfsched_clip",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
+      ],
+      "armed_in_bundles": [
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_selfschedule",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_shape",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_gas_commitment_floor",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_gas_floor_frac",
+      "default": 1.0,
+      "keeper_value": 0.8,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_import_gas_coupling",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_import_hub_prices",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_import_solar_shape",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_intertie_reference_price",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_lcr_commitment_credit",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_locational_as_families",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_binned_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_conditional",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_measured",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_min_bin",
+      "default": 0,
+      "keeper_value": 0,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_netload_pcts",
+      "default": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_price_cap_frac",
+      "default": 0.95,
+      "keeper_value": 0.95,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_p1_export_sink_seam",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_p1_export_sink_seam",
+          "cells": "IR..OU",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_per_hub_intertie",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_per_year_import_caps",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_perhub_firm_base",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_bridge_curtailment_release",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_ra_bridge_decommit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_bridge_startup_aware",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_min_load_frac",
+      "default": 0.4,
+      "keeper_value": 0.26,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_mustoffer",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "miso_coal_night_floor",
+          "cells": "...I..",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        ".",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_mustoffer_quantity_gate",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_ra_startup_bridge",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_startup_trajectory",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_reference_price_seam",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKUU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_reserve_coopt",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "I"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "I",
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_reserve_online_scoped",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_scarcity_import_headroom",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_scarcity_pricing",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_cap_at_delivered",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_solar_deliverability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_deliverability_floor",
+      "default": 0.5,
+      "keeper_value": 0.5,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_deliverability_k",
+      "default": 0.15,
+      "keeper_value": 0.15,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_endogenous_spill",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_shape_nl_hi_pct",
+      "default": 30.0,
+      "keeper_value": 30.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_shape_nl_lo_pct",
+      "default": 10.0,
+      "keeper_value": 10.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_storage_as_reservation",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "absent",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_storage_shape_anchor",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_supply_consistent_demand",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso146_control_A",
+        "caiso146_ctheatrate_B",
+        "caiso147_chp_B",
+        "caiso147_control_A",
+        "caiso148_control_A",
+        "caiso148_nucavail_B",
+        "caiso151_clip_B",
+        "caiso153_control_A",
+        "caiso153_reid_B",
+        "caiso156_meter_control_A",
+        "caiso156_meter_screen_B",
+        "caiso157_capdel_C",
+        "caiso157_control_A",
+        "caiso157_restore_B",
+        "caiso157_ror_D",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_zonal_gas_basis",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    }
+  ],
+  "family_matrix_gaps_absent": [
+    "caiso_asymmetric_path_ratings",
+    "caiso_bidir_intertie",
+    "caiso_charge_allocation_schedule",
+    "caiso_citygate_flow_date",
+    "caiso_citygate_spot_level",
+    "caiso_commitment_posture",
+    "caiso_corridor_atc_forward",
+    "caiso_dsw_daytime_clean",
+    "caiso_dsw_daytime_evening_trim",
+    "caiso_dsw_overnight_clean",
+    "caiso_dsw_surplus_clean",
+    "caiso_gas_commitment_floor",
+    "caiso_gas_floor_frac",
+    "caiso_import_gas_coupling",
+    "caiso_import_solar_shape",
+    "caiso_intertie_reference_price",
+    "caiso_lcr_commitment_credit",
+    "caiso_offer_surface_binned_path",
+    "caiso_offer_surface_conditional",
+    "caiso_offer_surface_min_bin",
+    "caiso_offer_surface_netload_pcts",
+    "caiso_offer_surface_price_cap_frac",
+    "caiso_per_hub_intertie",
+    "caiso_per_year_import_caps",
+    "caiso_perhub_firm_base",
+    "caiso_ra_bridge_curtailment_release",
+    "caiso_ra_bridge_decommit",
+    "caiso_ra_bridge_startup_aware",
+    "caiso_ra_startup_trajectory",
+    "caiso_scarcity_import_headroom",
+    "caiso_solar_cap_at_delivered",
+    "caiso_solar_deliverability_floor",
+    "caiso_solar_deliverability_k",
+    "caiso_solar_endogenous_spill",
+    "caiso_solar_shape_nl_hi_pct",
+    "caiso_solar_shape_nl_lo_pct",
+    "caiso_storage_as_reservation"
+  ],
+  "family_prose_only": [
+    "caiso_offer_surface_measured",
+    "caiso_reference_price_seam"
+  ],
+  "armed_on_keeper_with_no_cell": [
+    "caiso_citygate_flow_date",
+    "caiso_citygate_spot_level",
+    "caiso_dsw_daytime_clean",
+    "caiso_dsw_daytime_evening_trim",
+    "caiso_dsw_overnight_clean",
+    "caiso_dsw_surplus_clean",
+    "caiso_gas_floor_frac",
+    "caiso_offer_surface_conditional",
+    "caiso_offer_surface_measured",
+    "caiso_offer_surface_netload_pcts",
+    "caiso_offer_surface_price_cap_frac",
+    "caiso_per_hub_intertie",
+    "caiso_perhub_firm_base",
+    "caiso_ra_bridge_decommit",
+    "caiso_ra_bridge_startup_aware",
+    "caiso_ra_startup_trajectory",
+    "caiso_solar_deliverability_floor",
+    "caiso_solar_deliverability_k",
+    "caiso_solar_endogenous_spill",
+    "caiso_solar_shape_nl_hi_pct",
+    "caiso_solar_shape_nl_lo_pct"
+  ],
+  "live_but_invisible": [
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": 2023,
+        "caiso126_control_A": 2023,
+        "caiso146_control_A": 2023,
+        "caiso146_ctheatrate_B": 2023,
+        "caiso147_chp_B": 2023,
+        "caiso147_control_A": 2023
+      }
+    },
+    {
+      "field": "caiso_gas_floor_frac",
+      "default": 1.0,
+      "keeper_value": 0.8,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": 0.8,
+        "caiso126_control_A": 0.8,
+        "caiso146_control_A": 0.8,
+        "caiso146_ctheatrate_B": 0.8,
+        "caiso147_chp_B": 0.8,
+        "caiso147_control_A": 0.8
+      }
+    },
+    {
+      "field": "caiso_ra_bridge_decommit",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_ra_bridge_startup_aware",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_per_hub_intertie",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_perhub_firm_base",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_citygate_spot_level",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_citygate_flow_date",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_dsw_surplus_clean",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_solar_endogenous_spill",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "coal_prb_passthrough_tiered",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "ct_drag_slope_per_gw",
+      "default": 0.00703,
+      "keeper_value": 0.00901,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": 0.00901,
+        "caiso126_control_A": 0.00901,
+        "caiso146_control_A": 0.00901,
+        "caiso146_ctheatrate_B": 0.00901,
+        "caiso147_chp_B": 0.00901,
+        "caiso147_control_A": 0.00901
+      }
+    },
+    {
+      "field": "ct_drag_intercept",
+      "default": -0.1427,
+      "keeper_value": -0.1124,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": -0.1124,
+        "caiso126_control_A": -0.1124,
+        "caiso146_control_A": -0.1124,
+        "caiso146_ctheatrate_B": -0.1124,
+        "caiso147_chp_B": -0.1124,
+        "caiso147_control_A": -0.1124
+      }
+    },
+    {
+      "field": "ct_drag_cap",
+      "default": 0.47,
+      "keeper_value": 0.36,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": 0.36,
+        "caiso126_control_A": 0.36,
+        "caiso146_control_A": 0.36,
+        "caiso146_ctheatrate_B": 0.36,
+        "caiso147_chp_B": 0.36,
+        "caiso147_control_A": 0.36
+      }
+    },
+    {
+      "field": "caiso_offer_surface_conditional",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+        "caiso126_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+        "caiso146_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+        "caiso146_ctheatrate_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+        "caiso147_chp_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+        "caiso147_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv"
+      }
+    },
+    {
+      "field": "cc_peaking_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "cc_nameplate_summer_derate",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 19,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_ra_startup_trajectory",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 18,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_dsw_overnight_clean",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 18,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_dsw_daytime_clean",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 18,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "caiso_dsw_daytime_evening_trim",
+      "default": false,
+      "keeper_value": true,
+      "n_bundles_nondefault": 18,
+      "bundles": {
+        "caiso124_control_A": true,
+        "caiso126_control_A": true,
+        "caiso146_control_A": true,
+        "caiso146_ctheatrate_B": true,
+        "caiso147_chp_B": true,
+        "caiso147_control_A": true
+      }
+    },
+    {
+      "field": "forecast_xyear_warmstart",
+      "default": true,
+      "keeper_value": true,
+      "n_bundles_nondefault": 1,
+      "bundles": {
+        "caiso124_control_A": false
+      }
+    }
+  ]
+}

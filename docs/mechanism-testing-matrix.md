@@ -1456,6 +1456,81 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
 
 ### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
+**STATUS 2026-08-03 (nyiso-114) — THE PER-FAMILY RESERVE DUAL IS PERSISTED, THE
+CENSUS RAN IN ALL SIX LANES, AND TWO DEAD KNOBS ARE GONE.** Keeper **UNCHANGED**
+(`2026-08-02-nyiso-113-li-locational`); nothing promoted, demoted or re-keyed.
+
+**(1) The all-ISO gap nyiso-113 §8 filed is CLOSED.** New write-only sidecar
+`hourly/reserve_family_<year>.parquet` — `family`, `reserve_class`, `dual`,
+`requirement_mw`, `held_mw`, `shortfall_mw` — so the LP row itself
+(`held + shortfall ≥ requirement`, tight exactly where the family prices) is
+checkable from a bundle. `held_mw` comes from the **balance row's own activity**,
+not a per-family R re-sum, because that re-sum would have to re-derive five
+layout-dependent coefficient structures. Instrument, not a lever: no
+`ScenarioConfig` field, no CLI flag, no LP row/column, zero DOF, 46 KB/ISO-year.
+Row `reserve_family_dual_sidecar`, cells `IIIIKI` — `I` is "this lane's committed
+bundles still cannot answer a locational-family question", and each lane's next
+solve mints the artifact with nothing to arm. **Not backfillable:** a keeper
+arming a P0-run-pattern mechanism cannot be re-solved into byte-identity once
+main moves (measured — see (2)).
+
+**FIRST RESULTS, previously unobservable in any ISO.** NYISO's binding reserve
+constraint is **overwhelmingly the NYC locational pair** (`nyc_10min_total`
+priced in **17/6/29** hours of 2023/24/25, `nyc_30min_total` 8/6/10,
+`seny_30min_total` 2/0/8), and **every NYCA-wide family is slack in every hour of
+all three years** — a direct measurement of nyiso-110's inference.
+`li_30min_total` binds in **exactly** the five 2025 hours (h4193–4195, h4217–4218)
+nyiso-113's Zone-K headroom screen predicted *ex ante*, and nowhere else.
+**It also CORRECTS nyiso-113 §7:** the two 2023 reserve-dual hours attributed
+there to the LI mechanism were **`seny_30min_total`** — the LI families bind in
+**zero** hours of 2023. An error in reading a summed series, not a defect in the
+keeper, and precisely the error class the sidecar makes impossible.
+
+**(2) The pre-registered kill was discharged by MEASUREMENT.** Gate G1 (replay
+reproduces the keeper) **FAILED** — max |Δprice| $9.0–10.6, mean LMP
++0.012/+0.012/+0.055 %, a CT_PEAKER↔ST_GAS tie reshuffle with total conserved.
+Kill K-A required attribution, so a 2024 re-solve was run at the session's
+**base commit** with the entire session diff absent: it reproduces the
+**identical** divergence (10.5637 $/MWh over 18,630 zone-hours, both legs). The
+divergence belongs to the 58 commits between the keeper's solve basis and this
+base, **not** to the instrument. **Standing lesson for every lane: G1 is a
+labelling gate — a failing replay makes results "measured on the recipe", never
+"measured on the keeper".**
+
+**(3) The census, all six lanes, + a shrink-only CI ratchet.**
+`scripts/mechanism_matrix_gap_sweep.py` (promoted from probe, `--iso`).
+Absent-from-matrix / armed-on-keeper-with-no-cell: **ERCOT 64/35, CAISO 39/23,
+PJM 21/8, NEISO 15/10, MISO 12/10, NYISO 10/9 — 161 and 95.** CI saw none of
+them (the diff gate fires only on same-PR additions). **NYISO's column is now
+CLOSED — 0/0/0**: its nine were `nyiso_gas_bridge_*` sub-scalars, registered
+literally on the `gas_commitment_bridge` row's `def`, plus
+`nyiso_iroquois_winter_spread`, which lived only in the matrix file's header
+comment and now rides `gas_hub_basis_overlay`. **The other five columns are their
+own lanes' work** (rule 25/28(d) — a census can mint a `U` and nothing more), but
+`docs/codebase-site/data/mechanism-matrix-gaps.json` enumerates all 146 and
+`check_mechanism_matrix.py` now **FAILS** any PR whose ISO-scoped field is in
+neither the matrix nor that baseline. Row `matrix_gap_census`, cells `OOOOKO`.
+
+**(4) Two dead knobs removed.** `ct_committed/econ/peak_hr_override` **DELETED**
+(rule 26): armed at 1.1/1.2/1.4 on **all 119 bundles in all six ISOs** and
+**reachable on none** — both readers sit inside the `else` of `if offer is not
+None` gated on `CT_CHP`, and every bundle carries a truthy
+`offer_curve_by_group["CT_CHP"]`. Rule 26 was made *affordable* by
+`_CACHE_KEY_RETIRED_FIELDS`, which re-inserts a deleted field at its historical
+default **inside `cache_key()` only** — so deleting orphans no cache and re-pins
+no literal. `caiso_ra_min_load_frac` is now **CAISO-scoped** (rule 25): inert
+elsewhere, but a CAISO-fitted 0.26 was riding all 119 bundles' recipes.
+
+**(5) C3c 2024, measured not proposed.** Both LI import paths saturate together
+(`NYC>Long_Island` 275/275, `NYISO_external>Long_Island` 1200/1200) while the
+mainland clears $72–75. The pin is **energy-side** (`reserve_price` 0.0, no LI
+family binds in 2024) and its marginal unit is **`7146_1`, an OIL tranche** —
+the only part-loaded LI generator of 132 — with **596.9 MW idle** at the annual
+peak-price hour. The same fleet/curves reach $503.74 (2023) and $489.62 (2025),
+so **2024 is not a missing-mechanism year**; it never calls the next oil rung.
+**No lever proposed.**
+`results/calibration/FINDING-nyiso114-reserve-family-sidecar-2026-08-03.md`.
+
 **STATUS 2026-08-02 (nyiso-113) — THE MATRIX-GAP SWEEP, and the queue's own
 blind spot measured.** Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → **`2026-08-02-nyiso-113-li-locational`**.
 nyiso-112 found a promotable mechanism only because it had no matrix row; this

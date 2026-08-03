@@ -1,0 +1,410 @@
+"""Rule-28(c) MATRIX-GAP SWEEP — the cross-ISO census, for any ISO lane.
+
+**Why this exists.** nyiso-112 promoted a mechanism
+(`nysdec_peaker_rule_availability`) that was found only because it had **no row
+in the cross-ISO mechanism matrix at all** — a solve-affecting, ISO-live field
+invisible to every session since it was written. nyiso-113 turned that anecdote
+into a mechanical census for NYISO and measured the damage: **25 `nyiso_*`
+fields absent from the matrix, 5 prose-only, and 17 of them ARMED ON THE KEEPER
+with no cell anywhere**, four of which were carried in the keeper's own DOF
+ledger and still had no cell.
+
+**Why CI could not find them.** `check_mechanism_matrix.py`'s diff gate enforces
+rule 28(c) only for fields **added in the same PR**. Every field predating the
+gate is structurally invisible to it. That is a standing blind spot in *every*
+ISO column, not a NYISO accident — which is what makes this a standing tool
+rather than the one-lane probe it started as
+(`scripts/probes/_nyiso113_matrix_gap_sweep.py`, superseded).
+
+**What it measures**, per ISO, against the live `ScenarioConfig` (imported, so
+the defaults are the *shipped* ones and not a parse of the source):
+
+* **the ISO family** — every field carrying that ISO's own stem: is it mentioned
+  in the matrix at all, which row owns it, what does that row's cell for this
+  ISO say, and does the ISO's current keeper arm it?
+* **live-but-invisible** — any field (ISO-exclusive or shared) that some bundle
+  of this ISO sets **away from its shipped default** while the matrix never
+  mentions it. That is exactly the shape of the 227-3 gap, and it is the one
+  class that can hide a promotable mechanism.
+
+The output is evidence for adding matrix rows (rule 28(c)); it never adjudicates
+a verdict on its own — a `U` cell is the most a census can mint (rule 25).
+
+Usage:
+    PYTHONPATH=.:src python scripts/mechanism_matrix_gap_sweep.py            # all six
+    PYTHONPATH=.:src python scripts/mechanism_matrix_gap_sweep.py --iso PJM
+    PYTHONPATH=.:src python scripts/mechanism_matrix_gap_sweep.py --write-baseline
+
+Writes ``results/calibration/_matrix_gap_sweep_<ISO>.json`` per ISO scanned, and
+(with ``--write-baseline``) refreshes the committed ratchet baseline
+``docs/codebase-site/data/mechanism-matrix-gaps.json`` that
+``check_mechanism_matrix.py`` enforces — see that script's ratchet leg.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+MATRIX = REPO / "docs/codebase-site/data/mechanism-matrix.js"
+KEEPER_SHARD_DIR = REPO / "frontend/data/backcast/keepers"
+CALIB_DIR = REPO / "results/calibration"
+REGISTRY = REPO / "frontend/data/backcast/registry"
+BASELINE = REPO / "docs/codebase-site/data/mechanism-matrix-gaps.json"
+
+# Matrix cell order (the `isos[]` array of mechanism-matrix.js).
+ISO_INDEX = {"ERCOT": 0, "CAISO": 1, "PJM": 2, "MISO": 3, "NYISO": 4, "NEISO": 5}
+
+# Each ISO's own `ScenarioConfig` field stems. Beyond the ISO name itself these
+# are the REGULATOR prefixes whose fields are that ISO's exclusively — NYSDEC
+# rules bind only New York units, so `nysdec_*` is a NYISO field just as much as
+# `nyiso_*` is. Stems are matched as `<stem>_`, never as a bare substring, so
+# `carbon_price` is never mistaken for a CARB field.
+ISO_STEMS: dict[str, tuple[str, ...]] = {
+    "ERCOT": ("ercot",),
+    "CAISO": ("caiso",),
+    "PJM": ("pjm",),
+    "MISO": ("miso",),
+    "NYISO": ("nyiso", "nysdec"),
+    "NEISO": ("neiso",),
+}
+
+
+def scenario_defaults() -> dict[str, object]:
+    """Shipped ``ScenarioConfig`` defaults, from the live class (not a parse)."""
+    import dataclasses  # noqa: PLC0415
+
+    from market_sim.config.scenarios import ScenarioConfig  # noqa: PLC0415
+
+    out: dict[str, object] = {}
+    for f in dataclasses.fields(ScenarioConfig):
+        if f.default is not dataclasses.MISSING:
+            out[f.name] = f.default
+        elif f.default_factory is not dataclasses.MISSING:  # type: ignore[misc]
+            out[f.name] = f.default_factory()  # type: ignore[misc]
+        else:
+            out[f.name] = "<required>"
+    return out
+
+
+def matrix_rows() -> list[dict]:
+    """Every matrix row as ``{id, cells, blob}`` — blob is the row's source."""
+    src = MATRIX.read_text()
+    chunks = re.split(r'\n\s*\{\s*id:\s*"', src)[1:]
+    rows = []
+    for ch in chunks:
+        rid = ch.split('"', 1)[0]
+        body = ch.split('"', 1)[1]
+        m = re.search(r'cells:\s*"([KRIGOU.]{6})"', body)
+        rows.append({"id": rid, "cells": m.group(1) if m else None, "blob": body})
+    return rows
+
+
+def run_configs(iso: str) -> dict[str, dict]:
+    """Every bundle's ``ScenarioConfig`` for this ISO, keyed by bundle name.
+
+    Selection is by the config's OWN ``iso`` field, not by the bundle's name
+    prefix: bundle naming is a per-lane convention (``pjm134_…``) that some
+    bundles do not follow, and both the flat
+    (``results/calibration/<name>/``) and ISO-scoped
+    (``results/calibration/<ISO>/<name>/``) layouts are in use.
+    ``run_config.json`` wraps the config under ``scenario_config`` alongside
+    provenance blocks (``git``, ``calibration_flags``, ``environment``); the
+    census only cares about the config itself.
+    """
+    out: dict[str, dict] = {}
+    for pattern in ("*/run_config.json", "*/*/run_config.json"):
+        for cfg in sorted(CALIB_DIR.glob(pattern)):
+            try:
+                doc = json.loads(cfg.read_text())
+            except Exception:  # noqa: BLE001 - a corrupt bundle must not stop the census
+                continue
+            sc = doc.get("scenario_config", doc)
+            if str(sc.get("iso", "")).upper() != iso:
+                continue
+            out[cfg.parent.name] = sc
+    return out
+
+
+def keeper_config(iso: str, cfgs: dict[str, dict]) -> tuple[str, dict]:
+    """The ISO's designated keeper id and the bundle config behind it."""
+    shard = KEEPER_SHARD_DIR / f"{iso}.json"
+    if not shard.exists():
+        return "", {}
+    keeper_id = json.loads(shard.read_text()).get("keeper", "")
+    reg = REGISTRY / f"{keeper_id}.json"
+    if reg.exists():
+        bundle = json.loads(reg.read_text()).get("bundle", "")
+        if bundle:
+            return keeper_id, cfgs.get(Path(bundle).name, {})
+    return keeper_id, {}
+
+
+def _norm(v: object) -> object:
+    """Normalise a config value for cross-source comparison (JSON vs python)."""
+    if isinstance(v, tuple):
+        return list(v)
+    return v
+
+
+def _stem_of(field: str, stems: tuple[str, ...]) -> str:
+    """The field with its ISO prefix removed, or the field itself."""
+    for s in stems:
+        if field.startswith(f"{s}_"):
+            return field[len(s) + 1 :]
+    return field
+
+
+def coverage(field: str, rows: list[dict], blob: str, stems: tuple[str, ...]) -> str:
+    """How well the matrix covers a field — three materially different states.
+
+    ``mention-anywhere`` is the CI checker's deliberate escape hatch (rule
+    28(c)): a sub-scalar of an existing family belongs on the family's row, not
+    its own. But a field mentioned ONLY inside an unrelated row's prose has no
+    cell of its own, so no verdict is recorded for it anywhere — the same
+    invisibility the 227-3 gap had, one level subtler. Distinguish:
+
+    * ``own_row``    — the field has a row carrying its own cell + verdict.
+    * ``prose_only`` — mentioned, but only inside some other row's text.
+    * ``absent``     — not mentioned anywhere in the matrix.
+
+    The matrix's own convention is that rows are **ISO-neutral mechanism
+    families** and a per-ISO flag is that ISO's leg of the family (e.g.
+    ``nyiso_gas_commitment_bridge`` is the NYISO leg of row
+    ``gas_commitment_bridge``, whose ``def`` references it in the short form
+    ``nyiso :2609``). So the STEM — the field with its ISO prefix removed — is
+    what identifies the owning row, not the literal flag name. Matching
+    literally would over-report gaps for correctly-registered legs.
+    """
+    stem = _stem_of(field, stems)
+    for r in rows:
+        if r["id"] in (field, stem):
+            return "own_row"
+        head = r["blob"].split("note:", 1)[0]
+        if field in head or (stem and stem in head):
+            return "own_row"
+    return "prose_only" if field.lower() in blob else "absent"
+
+
+def sweep_iso(iso: str, defaults: dict, rows: list[dict], blob: str) -> dict:
+    """Run the census for one ISO and return its result document."""
+    stems = ISO_STEMS[iso]
+    idx = ISO_INDEX[iso]
+    cfgs = run_configs(iso)
+    keeper_id, keeper_cfg = keeper_config(iso, cfgs)
+
+    def owners(field: str) -> list[dict]:
+        """Matrix rows whose source text mentions this field."""
+        return [
+            {"row": r["id"], "cells": r["cells"], "cell": (r["cells"] or "??????")[idx]}
+            for r in rows
+            if field in r["blob"] or field == r["id"]
+        ]
+
+    family = sorted(f for f in defaults if any(f.startswith(f"{s}_") for s in stems))
+    family_rows = []
+    for f in family:
+        own = owners(f)
+        kv = keeper_cfg.get(f, "<absent>")
+        family_rows.append(
+            {
+                "field": f,
+                "default": _norm(defaults[f]),
+                "keeper_value": _norm(kv),
+                "keeper_arms_it": bool(kv) if kv != "<absent>" else None,
+                "mentioned_in_matrix": f.lower() in blob,
+                "coverage": coverage(f, rows, blob, stems),
+                "owning_rows": own,
+                "cells": sorted({o["cell"] for o in own}),
+                "armed_in_bundles": sorted(
+                    b for b, c in cfgs.items() if _norm(c.get(f)) not in (None, False)
+                ),
+            }
+        )
+
+    # live-but-invisible: non-default in a bundle of this ISO, absent from matrix
+    live_invisible = []
+    for f, dflt in defaults.items():
+        if f.lower() in blob:
+            continue
+        movers = {
+            b: _norm(c[f])
+            for b, c in cfgs.items()
+            if f in c and _norm(c[f]) != _norm(dflt)
+        }
+        if movers:
+            live_invisible.append(
+                {
+                    "field": f,
+                    "default": _norm(dflt),
+                    "keeper_value": _norm(keeper_cfg.get(f, "<absent>")),
+                    "n_bundles_nondefault": len(movers),
+                    "bundles": dict(sorted(movers.items())[:6]),
+                }
+            )
+    live_invisible.sort(key=lambda d: -d["n_bundles_nondefault"])
+
+    # Two distinct rule-28(c) gaps: `absent` (the 227-3 shape — invisible
+    # outright) and `prose_only` (named in some other row's note, so the CI
+    # mention-anywhere gate passes, but NO cell records a verdict for it).
+    absent = [r["field"] for r in family_rows if r["coverage"] == "absent"]
+    prose_only = [r["field"] for r in family_rows if r["coverage"] == "prose_only"]
+    armed_no_cell = [
+        r["field"]
+        for r in family_rows
+        if r["coverage"] != "own_row" and r["keeper_arms_it"]
+    ]
+    return {
+        "iso": iso,
+        "keeper": keeper_id,
+        "keeper_bundle_fields": len(keeper_cfg),
+        "n_scenario_fields": len(defaults),
+        "n_matrix_rows": len(rows),
+        "n_bundles_scanned": len(cfgs),
+        "family": family_rows,
+        "family_matrix_gaps_absent": absent,
+        "family_prose_only": prose_only,
+        "armed_on_keeper_with_no_cell": armed_no_cell,
+        "live_but_invisible": live_invisible,
+    }
+
+
+def _report(res: dict) -> None:
+    """Print one ISO's census."""
+    iso = res["iso"]
+    print(f"\n{'=' * 78}")
+    print(
+        f"{iso}: keeper {res['keeper'] or '<none>'} "
+        f"({res['keeper_bundle_fields']} config fields), "
+        f"{res['n_bundles_scanned']} bundles scanned"
+    )
+    print(f"{'=' * 78}")
+    print(
+        f"  family fields {len(res['family']):>4} | "
+        f"ABSENT {len(res['family_matrix_gaps_absent']):>4} | "
+        f"prose-only {len(res['family_prose_only']):>4} | "
+        f"ARMED-NO-CELL {len(res['armed_on_keeper_with_no_cell']):>4} | "
+        f"live-but-invisible {len(res['live_but_invisible']):>4}"
+    )
+    if res["armed_on_keeper_with_no_cell"]:
+        print("  --- ARMED ON THE KEEPER WITH NO CELL ANYWHERE (the 227-3 shape) ---")
+        for f in res["armed_on_keeper_with_no_cell"]:
+            row = next(r for r in res["family"] if r["field"] == f)
+            print(
+                f"    {f:<46} = {str(row['keeper_value'])[:28]:<30} ({row['coverage']})"
+            )
+    if res["family_matrix_gaps_absent"]:
+        print("  --- ABSENT from the matrix ---")
+        for f in res["family_matrix_gaps_absent"]:
+            row = next(r for r in res["family"] if r["field"] == f)
+            print(
+                f"    {f:<46} keeper={str(row['keeper_value'])[:20]:<22}"
+                f"armed_in={len(row['armed_in_bundles'])}"
+            )
+    if res["family_prose_only"]:
+        print("  --- PROSE-ONLY (mentioned, but no cell of its own) ---")
+        for f in res["family_prose_only"]:
+            row = next(r for r in res["family"] if r["field"] == f)
+            print(f"    {f:<46} rows={[o['row'] for o in row['owning_rows']][:3]}")
+    if res["live_but_invisible"]:
+        print(
+            "  --- LIVE-BUT-INVISIBLE (non-default in a bundle, no matrix mention) ---"
+        )
+        for r in res["live_but_invisible"][:20]:
+            print(
+                f"    {r['field']:<46} dflt={str(r['default'])[:16]:<18}"
+                f"keeper={str(r['keeper_value'])[:20]:<22}n={r['n_bundles_nondefault']}"
+            )
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--iso",
+        nargs="+",
+        default=sorted(ISO_INDEX),
+        choices=sorted(ISO_INDEX),
+        help="ISOs to sweep (default: all six).",
+    )
+    ap.add_argument(
+        "--write-baseline",
+        action="store_true",
+        help="refresh the committed ratchet baseline enforced by "
+        "check_mechanism_matrix.py (docs/codebase-site/data/mechanism-matrix-gaps.json). "
+        "The baseline may only SHRINK — closing a gap is what refreshes it.",
+    )
+    args = ap.parse_args()
+
+    defaults = scenario_defaults()
+    rows = matrix_rows()
+    blob = MATRIX.read_text().lower()
+    print(f"ScenarioConfig fields : {len(defaults)}")
+    print(f"matrix rows           : {len(rows)}")
+
+    results = {}
+    for iso in args.iso:
+        res = sweep_iso(iso, defaults, rows, blob)
+        results[iso] = res
+        out = CALIB_DIR / f"_matrix_gap_sweep_{iso}.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(res, indent=2, default=str))
+        _report(res)
+
+    print(f"\n{'=' * 78}\nSUMMARY\n{'=' * 78}")
+    print(
+        f"{'ISO':<8}{'family':>8}{'absent':>9}{'prose':>8}{'armed-no-cell':>16}{'invisible':>12}"
+    )
+    for iso, res in results.items():
+        print(
+            f"{iso:<8}{len(res['family']):>8}{len(res['family_matrix_gaps_absent']):>9}"
+            f"{len(res['family_prose_only']):>8}"
+            f"{len(res['armed_on_keeper_with_no_cell']):>16}"
+            f"{len(res['live_but_invisible']):>12}"
+        )
+
+    if args.write_baseline:
+        if sorted(args.iso) != sorted(ISO_INDEX):
+            raise SystemExit(
+                "--write-baseline requires all six ISOs (a partial sweep would "
+                "silently drop the un-swept ISOs' entries from the ratchet)"
+            )
+        prior = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
+        prior_gaps = prior.get("absent", {})
+        doc = {
+            "_comment": (
+                "Rule-28(c) ratchet baseline, enforced by "
+                "scripts/check_mechanism_matrix.py. Each ISO lists the "
+                "<iso>_* ScenarioConfig fields that have NO mention in "
+                "mechanism-matrix.js. CI FAILS if a field appears here that "
+                "this file does not already allow, so the list can only "
+                "SHRINK — a new ISO-scoped field must land with its matrix "
+                "registration (rule 28(c)), and closing a legacy gap is what "
+                "refreshes this file. Regenerate with "
+                "scripts/mechanism_matrix_gap_sweep.py --write-baseline."
+            ),
+            "absent": {
+                iso: sorted(results[iso]["family_matrix_gaps_absent"])
+                for iso in sorted(ISO_INDEX)
+            },
+        }
+        BASELINE.write_text(json.dumps(doc, indent=2) + "\n")
+        grew = {
+            iso: sorted(set(doc["absent"][iso]) - set(prior_gaps.get(iso, [])))
+            for iso in sorted(ISO_INDEX)
+            if set(doc["absent"][iso]) - set(prior_gaps.get(iso, []))
+        }
+        print(f"\nwrote {BASELINE.relative_to(REPO)}")
+        for iso in sorted(ISO_INDEX):
+            n_new, n_old = len(doc["absent"][iso]), len(prior_gaps.get(iso, []))
+            mark = "  <-- GREW" if iso in grew else ""
+            print(f"  {iso:<8} {n_old:>4} -> {n_new:>4}{mark}")
+        if grew:
+            print("\nWARNING: the ratchet GREW for " + ", ".join(grew))
+            print("Rule 28(c) says a new mechanism lands with its row in the SAME PR.")
+
+
+if __name__ == "__main__":
+    main()
