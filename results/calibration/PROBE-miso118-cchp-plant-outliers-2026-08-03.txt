@@ -1,0 +1,209 @@
+miso-118 Phase-0 probe — CC_CHP plant-level outliers (NO LP)
+
+  keeper bundle: miso117_ctheatrate_B
+  K2 flag fidelity (READ from run_config.json): measured_chp_heat_rates=True, measured_ct_heat_rates=True
+
+  K4 CEMS completeness (artifact's own cems_vs_egrid_total):
+    plant 10745   1.00000
+    plant 55089   1.00000
+    plant 55259   1.00000
+    plant 55088   1.00000
+==============================================================================
+A. K1 REPRODUCTION — miso-116 part E on miso-116's own basis
+==============================================================================
+
+  2023: 14 matched CC_CHP plants, 5,852 MW | below 0.85x: 4/14 (52.7% of matched cap) | on artifact 4/4
+      plant 10745   1,479 MW  model  8.82  CAMPD gross 10.90  ratio 0.810
+      plant 55089     739 MW  model  8.01  CAMPD gross 12.27  ratio 0.653
+      plant 55259     513 MW  model  9.39  CAMPD gross 11.70  ratio 0.802
+      plant 55088     350 MW  model  8.35  CAMPD gross 10.22  ratio 0.817
+
+  2024: 14 matched CC_CHP plants, 5,852 MW | below 0.85x: 4/14 (52.7% of matched cap) | on artifact 4/4
+
+  2025: 14 matched CC_CHP plants, 5,852 MW | below 0.85x: 4/14 (52.7% of matched cap) | on artifact 4/4
+
+  K1 REPRODUCTION: PASS
+
+==============================================================================
+B/C. DECOMPOSITION and the BASIS-MATCHED comparator
+==============================================================================
+
+  ratio (miso-116)  =  model_hr / (CEMS_heat_CC / CEMS_gross_CC)
+                    =  A_cems  x  F_family  x  G_gross   [exact]
+    A_cems   = eGRID total heat / CEMS total heat   (meter agreement)
+    F_family = CEMS total heat / CEMS heat in family CC  (truncation)
+    G_gross  = CEMS gross load in family CC / PLNGENAN   (coverage)
+  G_gross < 1.0 is PHYSICALLY IMPOSSIBLE for a matched population:
+  gross generation is never below net generation.
+
+  B. Decomposition of the miso-116 ratio (exact identity)
+
+    yr   plant     ratio   A_cems  F_family  G_gross    A*F*G      err
+    2023 10745     0.810   1.0000    1.0009   0.8088    0.810  0.00000
+    2023 55089     0.653   1.0000    1.0000   0.6526    0.653  0.00000
+    2023 55259     0.802   1.0000    1.0000   0.8024    0.802  0.00000
+    2023 55088     0.817   1.0000    1.6465   0.4960    0.817  0.00000
+    2024 10745     0.799   0.9117    1.0009   0.8761    0.799  0.00000
+    2024 55089     0.674   1.2009    1.0000   0.5612    0.674  0.00000
+    2024 55259     0.823   0.9893    1.0000   0.8322    0.823  0.00000
+    2024 55088     0.826   0.9339    1.6341   0.5412    0.826  0.00000
+    2025 10745     0.814   1.0076    1.0005   0.8077    0.814  0.00000
+    2025 55089     0.668   1.0281    1.0000   0.6495    0.668  0.00000
+    2025 55259     0.808   1.0632    1.0000   0.7599    0.808  0.00000
+    2025 55088     0.831   1.3097    1.6275   0.3897    0.831  0.00000
+
+    max |A*F*G - ratio| = 0.000002
+
+  B. Where the comparator's two sides lose population
+
+    yr   plant     fuel out CC  gross out CC  CEMS gross/net923
+    2023 10745           0.1%          0.0%             0.8088
+    2023 55089           0.0%          0.0%             0.6526
+    2023 55259           0.0%          0.0%             0.8024
+    2023 55088          39.3%         28.5%             0.6936
+    2024 10745           0.1%          0.0%             0.7938
+    2024 55089           0.0%          0.0%             0.6751
+    2024 55259           0.0%          0.0%             0.7686
+    2024 55088          38.8%         29.0%             0.7084
+    2025 10745           0.1%          0.0%             0.8176
+    2025 55089           0.0%          0.0%             0.6595
+    2025 55259           0.0%          0.0%             0.7872
+    2025 55088          38.6%         27.0%             0.7422
+
+  C. Basis-matched comparator — CAMPD fuel over EIA-923 net MWh
+
+    yr   plant     model_hr  HR_match  R_basis  net923/PLNGENAN
+    2023 10745       8.8243    8.8243    1.000         1.000000
+    2023 55089       8.0097    8.0097    1.000         1.000000
+    2023 55259       9.3906    9.3906    1.000         1.000000
+    2023 55088       8.3465    8.3465    1.000         1.000000
+    2024 10745       8.8243    8.7709    1.006         1.103567
+    2024 55089       8.0097    8.0240    0.998         0.831242
+    2024 55259       9.3906    8.7668    1.071         1.082766
+    2024 55088       8.3465    8.3007    1.006         1.076651
+    2025 10745       8.8243    8.8650    0.995         0.987887
+    2025 55089       8.0097    7.9103    1.013         0.984929
+    2025 55259       9.3906    9.1489    1.026         0.965367
+    2025 55088       8.3465    8.8604    0.942         0.719230
+
+==============================================================================
+D/E/F. THE REAL-BRANCH HYPOTHESES
+==============================================================================
+
+  D (H-C). Year-on-year move of the plant's OWN measured rate
+     vs the model's frozen 2023-vintage eGRID rate.
+
+    plant        2023     2024     2025   max |yoy|    
+    10745      8.8243   8.7709   8.8650       1.1%
+    55089      8.0097   8.0240   7.9103       1.4%
+    55259      9.3906   8.7668   9.1489       6.6%
+    55088      8.3465   8.3007   8.8604       6.7%
+
+  E (H-D). Loaded heat rate vs the artifact's published rate
+
+    2023 plant 10745  CC_CHP    n=14  cap 1,479.4 MW  loaded  8.8243 (spread 0.0000)  artifact  8.8243
+    2023 plant 55089  CC_CHP    n=4   cap   738.9 MW  loaded  8.0097 (spread 0.0000)  artifact  8.0097
+    2023 plant 55259  CC_CHP    n=3   cap   513.0 MW  loaded  9.3906 (spread 0.0000)  artifact  9.3906
+    2023 plant 55088  CC_CHP    n=2   cap   350.0 MW  loaded  8.3465 (spread 0.0000)  artifact  8.3465
+    2023 plant 55088  CT_CHP    n=1   cap   165.0 MW  loaded  8.3465 (spread 0.0000)  artifact  8.3465
+
+    H-D: 0 (plant, class, year) mismatches over all 3 years
+
+  F (H-E). 55088 Dearborn — one plant rate over two prime movers
+
+    2023  family CC       heat     26,663,156 MMBtu  gross    2,608,616 MWh  gross HR  10.221
+    2023  family CT       heat      9,931,137 MMBtu  gross    1,039,524 MWh  gross HR   9.554
+    2023  family ST_GAS   heat      7,306,886 MMBtu  gross            0 MWh  gross HR     nan
+    2024  family CC       heat     28,766,105 MMBtu  gross    2,846,506 MWh  gross HR  10.106
+    2024  family CT       heat     11,273,642 MMBtu  gross    1,165,079 MWh  gross HR   9.676
+    2024  family ST_GAS   heat      6,967,354 MMBtu  gross            0 MWh  gross HR     nan
+    2025  family CC       heat     20,595,944 MMBtu  gross    2,049,929 MWh  gross HR  10.047
+    2025  family CT       heat      7,285,592 MMBtu  gross      757,666 MWh  gross HR   9.616
+    2025  family ST_GAS   heat      5,637,389 MMBtu  gross            0 MWh  gross HR     nan
+
+==============================================================================
+H/I/J. CORROBORATION
+==============================================================================
+
+  H. CEMS unit anatomy at the four plants (2023), by unitType
+
+    plant 10745:
+      CC       Combined cycle                       n=12.0 heat    86,006,520  gross    7,890,512
+      ST_GAS   Other boiler                         n=6.0 heat        80,561  gross            0   <-- FUEL, NO GROSS LOAD
+    plant 55089:
+      CC       Combined cycle                       n=3.0 heat    47,395,166  gross    3,861,558
+    plant 55259:
+      CC       Combined cycle                       n=2.0 heat    26,537,100  gross    2,267,488
+    plant 55088:
+      CC       Combined cycle                       n=2.0 heat    26,663,156  gross    2,608,616
+      CT       Combustion turbine                   n=1.0 heat     9,931,137  gross    1,039,524
+      ST_GAS   Other boiler                         n=3.0 heat     7,306,886  gross            0   <-- FUEL, NO GROSS LOAD
+
+  I. The parasitic-factor artifact's OWN record for these plants
+     (a different derive, written for a different purpose — derive_parasitic_factors)
+
+      plant 10745   year 2022   gross    6,145,519  net    7,411,985  net/gross  1.206  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55088   year 2022   gross    3,256,234  net    4,447,879  net/gross  1.366  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55259   year 0      gross    6,766,720  net    8,613,789  net/gross  1.273  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55259   year 2022   gross    2,038,277  net    2,435,601  net/gross  1.195  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55259   year 2023   gross    2,267,488  net    2,825,923  net/gross  1.246  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55259   year 2024   gross    2,351,750  net    3,059,814  net/gross  1.301  class_default/out_of_band  net > gross: IMPOSSIBLE
+      plant 55259   year 2025   gross    2,147,482  net    2,728,052  net/gross  1.270  class_default/out_of_band  net > gross: IMPOSSIBLE
+
+      Plants absent from the table carry no measured factor at all;
+      every row that IS present is out_of_band and fell back to the
+      class default. The comparator's denominator was already known bad.
+
+  J. 55088 Dearborn — the direct-fired boiler inside a topping rate
+
+    2023: total CEMS fuel    43,901,179 MMBtu | zero-output boiler fuel    7,306,886 (16.6%) | net923   5,259,825 MWh
+          loaded rate 8.3465 vs power-train-only 6.9573 MMBtu/MWh (+20.0%)
+    2024: total CEMS fuel    47,007,101 MMBtu | zero-output boiler fuel    6,967,354 (14.8%) | net923   5,662,997 MWh
+          loaded rate 8.3465 vs power-train-only 7.0704 MMBtu/MWh (+18.0%)
+    2025: total CEMS fuel    33,518,925 MMBtu | zero-output boiler fuel    5,637,389 (16.8%) | net923   3,783,022 MWh
+          loaded rate 8.3465 vs power-train-only 7.3702 MMBtu/MWh (+13.2%)
+
+      eGRID thermal_share for this plant is 0.2396,
+      UNDER the derive's 0.50 unfired-topping ceiling, so its scope gate
+      passes the plant. CEMS says a share of the fuel is burned in units
+      that make no electricity at all.
+
+==============================================================================
+K. DOES J GENERALISE? — zero-output fuel inside every ok-flagged rate
+==============================================================================
+
+  14 ok-flagged plants matched in CEMS 2023; 1 carry >1 % of their fuel in zero-output units, 515 of 6,357 MW.
+
+    plant   classes              cap MW  dark fuel  loaded HR  power-only  over-charge
+    55088   CC_CHP+CT_CHP         515.0      16.6%     8.3465      6.9573        20.0%
+
+    (power-only = CEMS fuel EXCLUDING zero-output units, over EIA-923
+     net MWh. Plants with no zero-output units are omitted — for them
+     the loaded rate and the power-only rate are the same number.)
+
+==============================================================================
+G. VERDICT — pre-registered per-plant decision rule
+==============================================================================
+
+  NOTE on 2023: R_basis is 1.000 in 2023 BY CONSTRUCTION — eGRID total
+  heat equals CEMS total heat (the artifact's own cems_vs_egrid_total)
+  and net923(2023) equals PLNGENAN, so the 2023 column carries no
+  information. 2024 and 2025 are the informative years: the model holds
+  a frozen 2023 vintage while both meters move independently.
+
+  plant 10745: R_basis 1.000 / 1.006 / 0.995  | in band 3/3 (informative years 2/2) | H-A True | H-B False
+    K3 as written  (False) -> INDETERMINATE (K3 fired)
+    K3 corrected   (True) -> BASIS-ARTIFACT — no charter, no solve
+
+  plant 55089: R_basis 1.000 / 0.998 / 1.013  | in band 3/3 (informative years 2/2) | H-A True | H-B False
+    K3 as written  (False) -> INDETERMINATE (K3 fired)
+    K3 corrected   (True) -> BASIS-ARTIFACT — no charter, no solve
+
+  plant 55259: R_basis 1.000 / 1.071 / 1.026  | in band 3/3 (informative years 2/2) | H-A True | H-B False
+    K3 as written  (False) -> INDETERMINATE (K3 fired)
+    K3 corrected   (True) -> BASIS-ARTIFACT — no charter, no solve
+
+  plant 55088: R_basis 1.000 / 1.006 / 0.942  | in band 3/3 (informative years 2/2) | H-A True | H-B True
+    K3 as written  (False) -> INDETERMINATE (K3 fired)
+    K3 corrected   (True) -> BASIS-ARTIFACT — no charter, no solve
+
