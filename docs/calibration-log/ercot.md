@@ -4375,3 +4375,60 @@ ERCOT-scoped (rule 25). Keeper disposition surfaced to the owner, not
 self-decided.
 
 Next shorthand: ercot-156.
+
+## ercot-156 (2026-08-03) — the ERCOT matrix column is CLOSED (60 absent + 7 prose-only + 31 armed-no-cell → 0/0/0); zero new rows, zero verdicts minted; ratchet baseline ERCOT 61 → 0; no LP, no solve, keeper UNCHANGED (ercot150b)
+
+**Session ercot-156** (branch `claude/ercot-matrix-column-closure-umdyn2`)
+executed the rule-28(c) census closure the nyiso-113/114 lane chartered for
+every column, on the largest remaining debt. Measured on current main
+(`scripts/mechanism_matrix_gap_sweep.py --iso ERCOT`): 84 `ercot_*`
+`ScenarioConfig` fields, **60 absent** from the mechanism matrix, **7
+prose-only**, **31 armed on the ercot150b keeper with no cell anywhere** — the
+227-3 shape CI cannot see (the diff gate fires only on same-PR fields). After
+this session: **0 / 0 / 0**, verified by re-sweep;
+`docs/codebase-site/data/mechanism-matrix-gaps.json` ERCOT **61 → 0** (the
+full-six rewrite also recorded shrinkage other lanes had already earned:
+CAISO 37→31, PJM 21→15, NEISO 15→10, MISO 12→11; no list grew).
+
+**Method — the NYISO template, no more.** Every one of the 67 fields
+adjudicated to a sub-scalar/leg of an existing, already-adjudicated family row
+and was closed by naming it LITERALLY in that row's `def` (the checker's
+documented escape hatch): 14 on `ercot_multiproduct_as`, 19 on
+`measured_offer_surface`, 7 each on `storage_measured_anchors` and
+`zonal_gas_basis` (the West delivered-gas legs), 5 on
+`online_capacity_envelope`, 3 on `dam_availability_rebasis`, 2 each on
+`pjm_midcurve_belt` (the ERCOT U leg), `wtx_curtailment_driver`,
+`gas_offer_net_revenue_margin` and `legacy_p2`, 1 each on
+`campd_outage_windows`, `ordc_scarcity_overlay` (`ercot_market_design`),
+`ercot_faststart_pool_offer` and `gas_commitment_bridge`. **No
+live-but-invisible lever surfaced** — the nyiso-112 shape (armed-or-armable,
+never adjudicated) did not occur; every armed field is a leg of a family whose
+ERCOT cell already carries a tested verdict. The only verdict text added
+TRANSCRIBES recorded adjudications with citations: `ercot_commitment_posture`
+(+ 0.574 scalar) probe-INERT (`2026-07-18-ercot83-commitment-posture-probe`);
+`ercot_shoulder_online_span` rejected-as-armed (ERCOT-89);
+`ercot_offer_hrmult_ep_rebasis`/`_bands` ERCOT-118/119 rejections — **closing
+the rule-28(c) gap ERCOT-138 filed** and four later entries carried open;
+`ercot_noncampd_plant_availability` keeper since ercot71. Exactly one cell
+changed: the audit row `matrix_gap_census` ERCOT `O → K` (audit status, not a
+mechanism verdict; nyiso-114's `K` is the precedent). Every mechanism row's
+cell string is byte-unchanged.
+
+**Left open, filed not closed:** 20 remaining live-but-invisible fields are
+all SHARED-stem (`weather_year`, `wefor_residual`, coal passthrough floors,
+`storage_as_commitment`, `gas_st_startup_*`, …) armed identically across
+multiple ISOs — a cross-ISO hygiene lane (the xiso pattern), not one column's
+session; filed in the `matrix_gap_census` note. DO-NOT-REDO respected: no
+R/I/G cell re-tested (offer-dispersion R, item 6 I, items-5/6 reopen refusal,
+`ordc_scarcity_overlay` R all untouched); the struck ercot-154 framing is not
+quoted forward.
+
+**Governance.** No LP, no solve, no registration owed (rule 15 — no run
+produced); holdout freeze trivially respected (no year touched). Rule 28(b):
+matrix header + `matrix_gap_census` row + 14 family defs updated this session;
+§5.1 stamped; finding
+`results/calibration/FINDING-ercot156-matrix-column-closure-2026-08-03.md`.
+Guards `check_mechanism_matrix.py` + `check_registry_payload_parity.py` PASS
+before push. Next-largest column: CAISO (31) — its own lane.
+
+Next shorthand: ercot-157.
