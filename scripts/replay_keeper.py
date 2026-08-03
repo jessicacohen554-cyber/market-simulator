@@ -348,14 +348,27 @@ def main() -> None:
 
     # Preserve the original run id: restore the meta.json timestamp date so the
     # dashboard id (<date>-<shorthand>) is unchanged. Only for byte-faithful
-    # full-span replays — an overridden run (--set / --offer-curve-json) or a
-    # partial-years chain invocation (--years) is a NEW run, not the keeper
+    # full-span replays IN PLACE — an overridden run (--set /
+    # --offer-curve-json), a partial-years chain invocation (--years), or a
+    # solve redirected to a different --out-dir is a NEW run, not the keeper
     # fixed in place, and must mint its own dated id.
+    #
+    # The --out-dir clause is miso-117: a ZERO-DELTA CONTROL arm takes no
+    # --set, so it satisfied every other condition and inherited the keeper's
+    # date — dating a bundle solved 2026-08-03 as 2026-07-31, three days before
+    # its own treatment arm (which carries --set and is dated correctly). One
+    # A/B, two dates, and the control's dashboard id claiming a solve date it
+    # does not have. The bundle is not the keeper's, so its id is not the
+    # keeper's either.
+    redirected = args.out_dir is not None and Path(args.out_dir).resolve() != (
+        bundle.resolve()
+    )
     if (
         orig_ts
         and not args.overrides
         and args.offer_curve_json is None
         and args.years is None
+        and not redirected
     ):
         _restore_display_date(run_dir, orig_ts)
         print(f"restored meta timestamp date -> {orig_ts[:10]}")
