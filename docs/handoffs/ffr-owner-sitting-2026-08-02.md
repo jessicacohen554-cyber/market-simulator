@@ -790,3 +790,96 @@ epoch debt is cleared, and the consolidated re-baseline battery re-scores every 
 post-decision HEAD (audit §4 Phase 3). Deferrals re-scope FFR-3A step 0 to the signed subset.
 Nothing here touches the holdout freeze, whose lift remains a separate owner act outside this
 program.
+
+---
+
+## Addendum F — **The G-31 rule-19 ruling is SIGNED, and the rule-12 concurrency reading is CORRECTED** (workstream manager, 2026-08-03, HEAD `01b6a6a`)
+
+Read this addendum with C, D and E; together they supersede the packet body. Two owner
+decisions were taken 2026-08-03, one substantive and one procedural. The procedural one
+changes how much of this program can run at once, so it is recorded with the same weight.
+
+### F.1 — D-8: queue latency and queue throughput are **TWO mechanisms**. The G-31 fix lane is **CHARTERED**.
+
+**The question put.** FFR-3C (`docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md` §1.2,
+§6.2) established that the R-NEW retirement redesign replaced a mechanism carrying **both** a
+queue-latency term and a queue-throughput cap with one carrying **only** the latency term, on
+the argument that rule 19 `[R-ONE-MECH]` — *"the same physical queue, carried once"* — makes
+them one phenomenon. The consequence is measured and is not small: with only a latency term,
+**exit-wave width is invariant at exactly one year no matter how many units fail**. The model
+therefore has no representation of the constraint that stops a real ISO deactivating 21 GW in
+a single year, while it *does* have one, armed and correct, for the constraint that stops it
+**building** 21 GW in a single year. That asymmetry — exit throughput uncapped, entry
+throughput capped at 2× the measured record — is what FFR-3C attributes the **depth** of the
+reserve-margin trough to (ERCOT −1.5 %, CAISO −3.1 %; model single-year exits run **1.6×–4.8×
+the largest single-year deactivation these ISOs have ever recorded**).
+
+FFR-3C's §6.2 made the ruling a precondition: *"A throughput cap must not be armed by a session
+that has not obtained that ruling — otherwise it is exactly the stacked-floor pattern rule 19
+exists to prevent."*
+
+**SIGNED: TWO MECHANISMS.** Latency and throughput are distinct phenomena for rule-19 purposes.
+A throughput term may be armed alongside the existing lag without constituting a stacked floor.
+
+**What this authorizes, and its bounds.** The G-31 fix lane is chartered to FFR-3C §6's
+specification, with these bounds carried from that specification and from the standing rules:
+
+1. **The G3 cap-grain defect is fixed FIRST and separately.** The pipeline's admission cap tests
+   the *decision* year's requirement against exits that execute 1–3 years later (§1.2: **+10.3 %
+   of requirement unseen** in the synthetic). Threading the execution year into that one call
+   needs **no new parameter** and is cheaper than the cap; the throughput mechanism is measured
+   against a corrected cap, not a broken one.
+2. **The throughput term is EXTERNALLY IDENTIFIED, never fitted.** Source: max observed
+   single-year per-ISO thermal deactivation from the EIA-860 retired sheet — measured at MISO
+   7.57 GW, PJM 5.24, ERCOT 4.42, CAISO 1.48, NEISO 0.45, NYISO 0.31 (medians 3.54 / 1.32 /
+   0.39 / 0.05 / 0.02 / 0.03). Rule 13 `[R-MEASURED]` admissible (it regenerates for a forward
+   year from source data and responds to changed conditions) and rule 23 `[R-FROZEN-DERIVE]`
+   compliant (re-derives on an EIA-860 vintage update, **never** because a residual moved).
+   The reader exists as `scratchpad/measure_exit_throughput.py` in FFR-3C's record and moves to
+   a `data/` module beside `build_throughput.py`, its exact entry-side analogue.
+3. **Test set is ERCOT + PJM. MISO is excluded, by evidence.** ERCOT is the failing I6 case
+   (26.8 %) and the only ISO where D-1 is attributed against a control; PJM carries the largest
+   measured wave (12.68 % legacy → 8.55 % pipeline). MISO retires **nothing** economically in a
+   T1-F window and is structurally incapable of exercising an exit-throughput mechanism —
+   FFR-3C §3.2. Rule 25 `[R-ISO-SCOPE]` forbids importing any ISO's verdict to another.
+4. **Leave-one-year-out within 2023–2025 before promotion** (rule 22), and the T1-F
+   re-measurement is **paired against a control** — FFR-3C §3.2 is the standing proof that an
+   ISO can be structurally incapable of exercising the mechanism under test, which an unpaired
+   measurement cannot detect.
+
+**What this decision does NOT do.** It does not lift the FH-4/FH-5 block, promote anything,
+unarm D-1 or D-2 (Addendum D's HOLD PROMOTION, FIND ROOT CAUSE stands — both mechanisms **stay
+armed**), or license tuning the cap to close the ERCOT/CAISO trough. The block lifts only when
+a retirement-lane fix **lands** and FH-1's §3.3 gate **re-probes green** — characterizing was
+never sufficient, and neither is chartering.
+
+### F.2 — Rule 12 `[R-PARALLEL]` concurrency: the cap is **per prompt, not per program**
+
+**Owner, verbatim:** *"These run in separate sessions so there's no limit to solve slots as long
+as there's only 2 per PROMPT."*
+
+The manager had been reading rule 12's concurrency cap as a **program-wide** budget of two
+simultaneous solve invocations, and had been serializing lanes and pairing only no-solve work
+against a solve lane on that basis. **That reading was wrong and is corrected here.** The cap is
+**per session**: each dispatched session may run up to ~2 concurrent solve invocations, and
+independent sessions do not draw against each other, because they do not share a container.
+
+**What survives unchanged — the machine limits, which are per-container and therefore per
+session:**
+
+- Years run **sequentially within a single invocation**, always. The `runner.py` year loop is
+  intentionally sequential and is never parallelized; one year's LP already holds several GB.
+- **≤2 concurrent solve invocations WITHIN one session**, and **≤2** for per-plant multi-zone LPs.
+- **PJM and MISO legs never co-run within a session** (~8.6 GB peak RSS each).
+- **≤5 solve-years per invocation** (owner standing instruction + forecast plan §2.1b) —
+  untouched by this correction.
+
+**Consequence for dispatch, stated plainly:** the program is no longer throughput-limited to one
+solve lane at a time. Lanes that were queued *solely* because "the battery owns the solve slots"
+— FFR-SC (FF-G1 transmission A/B) and the FFR-SA close-out (PJM smoke table) — dispatch
+concurrently with the battery rather than behind it. The reason to hold a lane back is now
+evidence dependency or owner decision, never slot contention.
+
+**Bookkeeping.** Where an earlier record in this program says a lane waits for a solve slot, that
+statement rests on the superseded reading. It is corrected by this addendum and not by rewriting
+the earlier record — the same convention as Addenda A–E.
