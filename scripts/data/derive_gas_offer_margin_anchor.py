@@ -108,6 +108,14 @@ GAS_SERIES_FLAGS: dict[str, dict[str, bool]] = {
     "MISO": {
         "gas_seasonality": True,
         "gas_daily_shape": True,
+        # The zonal-basis flag mirrors the keeper (miso117_ctheatrate_B
+        # run_config miso_zonal_gas_basis=true) and is required so
+        # ZONAL_BASIS_APPLIERS["MISO"] fires when :func:`derive_zonal_anchors`
+        # applies the runtime transform — like PJM's it does not change
+        # ``_gas_series`` (the basis applies on the (n_gen, T) array, never
+        # the ISO series), so the ISO anchor is unchanged by it (miso-119
+        # gate S2 checks that instead of assuming it).
+        "miso_zonal_gas_basis": True,
     },
     # NYISO keeper: monthly actuals + the (mean-zero) zonal pipeline-hub basis +
     # the Transco Z6 daily hub overlay + daily shape.
@@ -156,7 +164,7 @@ def derive_anchor(iso: str) -> tuple[dict[int, float], float]:
 #: unit fuel IS the ISO series, so its single anchor is already identified at
 #: the grain the mechanism's own definition requires. Rule 25 — an entry here is
 #: that ISO's own measured basis table and never transfers.
-ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM", "ERCOT"})
+ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM", "ERCOT", "MISO"})
 
 #: The subset of :data:`ZONAL_BASIS_ISOS` whose applier is the shared
 #: CAPACITY-WEIGHTED MEAN-ZERO core (``data.fuel.basis.meanzero``): the raw
@@ -176,7 +184,7 @@ ZONAL_BASIS_ISOS: frozenset[str] = frozenset({"NYISO", "PJM", "ERCOT"})
 #: a flat measured LEVEL correction (the TX delivered-to-electric-power basis
 #: replacing the flat GAS_BASIS_DIFFERENTIAL scalar), so it belongs here: the
 #: transform depends on the solve's own per-zone gas capacity.
-CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM", "ERCOT"})
+CAPWEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM", "ERCOT", "MISO"})
 
 #: ISOs whose zone anchors are read from the reconstruction's own resolved
 #: ``fuel_prices`` array — the exact ``(n_gen, T)`` block
@@ -208,6 +216,14 @@ ZONAL_KEEPER_REQUIRED_FLAGS: dict[str, tuple[str, ...]] = {
     # delivered level (the West value depends materially on the net-load
     # shape's burner-tip floor).
     "ERCOT": ("ercot_zonal_gas_basis", "ercot_west_netload_gas_shape"),
+    # The zonal-basis gate itself: without it the MISO applier no-ops and
+    # every "zone anchor" silently equals the ISO anchor. MISO deliberately
+    # does NOT join SOLVE_FUEL_ARRAY_ISOS — its per-plant gas pricing
+    # (gas_plant_monthly_fuel_pricing) would put per-plant idiosyncrasies
+    # into a zone-median anchor (and trip the within-zone ptp guard); the
+    # synthetic-series construction measures exactly the zone-spread term
+    # the zonal resolution corrects (miso-119 prereg §2).
+    "MISO": ("miso_zonal_gas_basis",),
 }
 
 #: Within-zone spread ceiling ($/MMBtu) for the SOLVE_FUEL_ARRAY path: gas
