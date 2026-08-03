@@ -23,6 +23,31 @@ at this HEAD. It does not invalidate the A/B, because both arms solve at the
 same HEAD and the arm-minus-control delta still isolates the single flag (the
 neiso-69 / caiso-146 same-HEAD-drift precedent).
 
+CORRECTION (2026-08-03, on reading ``origin/main`` after this probe first ran).
+An earlier revision of this docstring, and the commit message at ``c19a385``,
+framed the changed input as an UNCHARTERED cross-ISO change made in a CAISO
+session against the matrix's own warning. **That framing is wrong and is
+withdrawn.** The change is caiso-158 executing
+``PREREG-caiso156-ct-heat-rate-meter-screen-2026-08-02.md`` — it HAS its own
+charter, exactly as the matrix demanded; it pre-registered PJM's own delta
+(cap-weighted applied map 11.5817 -> 11.6511, **+0.0693**) and reproduced it to
+4 dp; and it DECLARED the PJM scope cut on the record (its §5: PJM's arm A was
+not launched because PJM is the largest LP in the set, ~15.5 GB peak RSS
+against a 15 GB box **with no swap available**, and carried the smallest
+predicted effect). There is no governance breach. What remains true is narrower
+and is what this probe actually measures: PJM's keeper was never RE-GATED
+against the corrected artifact, so its committed dispatch no longer reproduces
+at HEAD.
+
+That makes this probe's keeper-vs-control comparison the PJM leg caiso-158
+deferred — its follow-up item 2, which asked for "a successor session on a
+larger box ... or the ``--years`` + ``--reuse-solved`` per-year invocation
+chain". This session has 12 GB of swap and used exactly that chain. The
+comparison is a clean single-delta measurement of the meter screen for PJM:
+pjm-146's control reproduced this keeper at 0.0 MW from ``7cc95fa``, proving
+everything before it inert, and over ``7cc95fa..HEAD`` the only PJM-solve-
+relevant data change is the CT artifact.
+
     PYTHONPATH=.:src uv run python scripts/probes/_pjm147_k2_drift.py
 """
 
@@ -71,6 +96,15 @@ def _git(*args: str) -> str:
 def main() -> int:
     out: dict = {
         "gate": "K2 strict byte (PREREG-pjm147 §4)",
+        "correction": (
+            "The changed CT artifact is caiso-158 executing PREREG-caiso156, a "
+            "CHARTERED input correction that pre-registered PJM's own +0.0693 "
+            "delta and declared the PJM scope cut (its §5). No governance "
+            "breach; an earlier framing at commit c19a385 said otherwise and is "
+            "withdrawn. What stands: PJM's keeper was never re-gated against the "
+            "corrected artifact, and this comparison is the PJM leg caiso-158 "
+            "deferred as its follow-up item 2."
+        ),
         "keeper": str(KEEPER.relative_to(REPO)),
         "control": str(CONTROL.relative_to(REPO)),
         "keeper_git_sha": json.loads((KEEPER / "run_config.json").read_text()).get("git_sha"),

@@ -1,0 +1,150 @@
+{
+  "gate": "K2 strict byte (PREREG-pjm147 \u00a74)",
+  "correction": "The changed CT artifact is caiso-158 executing PREREG-caiso156, a CHARTERED input correction that pre-registered PJM's own +0.0693 delta and declared the PJM scope cut (its \u00a75). No governance breach; an earlier framing at commit c19a385 said otherwise and is withdrawn. What stands: PJM's keeper was never re-gated against the corrected artifact, and this comparison is the PJM leg caiso-158 deferred as its follow-up item 2.",
+  "keeper": "results/calibration/pjm143_hy_level_B",
+  "control": "results/calibration/pjm147_control_A",
+  "keeper_git_sha": null,
+  "control_git_sha": null,
+  "years": {
+    "2023": {
+      "max_abs_diff_mw": 943.476318,
+      "max_by_class_mw": {
+        "CC_CHP": 238.6372,
+        "CC_REGULAR": 436.5,
+        "COAL_BIT": 418.7871,
+        "COAL_PRB": 290.9463,
+        "COAL_WC": 73.6039,
+        "CT_CHP": 65.105,
+        "CT_PEAKER": 567.124,
+        "ST_CHP": 15.8347,
+        "ST_GAS": 464.2014,
+        "VIRTUAL_DEC": 943.4763,
+        "VIRTUAL_INC": 539.5061,
+        "hydro": 546.1001,
+        "import": 912.5
+      },
+      "class_twh_control_minus_keeper": {
+        "CC_CHP": 0.0148,
+        "CC_REGULAR": 0.3708,
+        "COAL_BIT": 0.1993,
+        "COAL_PRB": 0.0151,
+        "COAL_WC": 0.0118,
+        "CT_CHP": 0.0109,
+        "CT_PEAKER": -0.9238,
+        "ST_GAS": 0.0569,
+        "VIRTUAL_DEC": 0.0786,
+        "VIRTUAL_INC": 0.0769,
+        "import": 0.1041
+      },
+      "lw_price_keeper": 31.4213,
+      "lw_price_control": 31.4788,
+      "lw_price_delta": 0.057445
+    },
+    "2024": {
+      "max_abs_diff_mw": 1030.580078,
+      "max_by_class_mw": {
+        "CC_CHP": 138.1649,
+        "CC_REGULAR": 606.8086,
+        "COAL_BIT": 1021.6255,
+        "COAL_PRB": 331.1929,
+        "COAL_WC": 46.2082,
+        "CT_CHP": 55.6347,
+        "CT_PEAKER": 688.7285,
+        "ST_CHP": 15.9308,
+        "ST_GAS": 378.177,
+        "VIRTUAL_DEC": 1030.5801,
+        "VIRTUAL_INC": 624.2439,
+        "hydro": 493.0335,
+        "import": 819.8125,
+        "oil": 0.7146
+      },
+      "class_twh_control_minus_keeper": {
+        "CC_CHP": 0.0141,
+        "CC_REGULAR": 0.2402,
+        "COAL_BIT": 0.1477,
+        "COAL_PRB": 0.0193,
+        "COAL_WC": 0.0051,
+        "CT_PEAKER": -0.657,
+        "ST_GAS": 0.0502,
+        "VIRTUAL_DEC": 0.0863,
+        "VIRTUAL_INC": 0.0501,
+        "import": 0.0489
+      },
+      "lw_price_keeper": 31.1943,
+      "lw_price_control": 31.2383,
+      "lw_price_delta": 0.043936
+    },
+    "2025": {
+      "max_abs_diff_mw": 1244.626953,
+      "max_by_class_mw": {
+        "CC_CHP": 263.7273,
+        "CC_REGULAR": 487.1973,
+        "COAL_BIT": 469.2871,
+        "COAL_PRB": 331.1929,
+        "COAL_WC": 84.6574,
+        "CT_CHP": 69.1286,
+        "CT_PEAKER": 681.0117,
+        "ST_CHP": 8.1971,
+        "ST_GAS": 542.3447,
+        "VIRTUAL_DEC": 1244.627,
+        "VIRTUAL_INC": 838.7458,
+        "hydro": 530.7999,
+        "import": 912.5,
+        "oil": 10.7865
+      },
+      "class_twh_control_minus_keeper": {
+        "CC_CHP": 0.0208,
+        "CC_REGULAR": 0.3563,
+        "COAL_BIT": 0.1298,
+        "COAL_PRB": 0.0223,
+        "CT_CHP": 0.0074,
+        "CT_PEAKER": -0.8988,
+        "ST_GAS": 0.1058,
+        "VIRTUAL_DEC": 0.1225,
+        "VIRTUAL_INC": 0.0629,
+        "import": 0.0776
+      },
+      "lw_price_keeper": 42.3679,
+      "lw_price_control": 42.445,
+      "lw_price_delta": 0.077064
+    }
+  },
+  "k2_strict_byte_passed": false,
+  "data_diff_since_pjm146_control": [
+    "data/raw/NEISO-AS/da-demand-bids/README.md         |  52 +++",
+    " data/raw/NEISO-AS/reserve-prices/README.md         |  49 +++",
+    " .../campd_ct_heat_rates_CAISO.csv                  |  86 ++---",
+    " .../campd_ct_heat_rates_CAISO_units.csv            | 152 ++++----",
+    " .../campd_ct_heat_rates_ERCOT.csv                  |  68 ++--",
+    " .../campd_ct_heat_rates_ERCOT_units.csv            | 244 ++++++-------",
+    " .../_processed-legacy/campd_ct_heat_rates_MISO.csv | 172 ++++-----",
+    " .../campd_ct_heat_rates_MISO_units.csv             | 225 ++++++------",
+    " .../campd_ct_heat_rates_NEISO.csv                  |  15 +-",
+    " .../campd_ct_heat_rates_NEISO_units.csv            |  31 +-",
+    " .../campd_ct_heat_rates_NYISO.csv                  |  38 +-",
+    " .../campd_ct_heat_rates_NYISO_units.csv            | 127 ++++---",
+    " .../_processed-legacy/campd_ct_heat_rates_PJM.csv  | 142 ++++----",
+    " .../campd_ct_heat_rates_PJM_units.csv              | 402 ++++++++++-----------",
+    " .../campd_ramp_envelopes_NYISO.csv                 |  78 ++++",
+    " .../campd_temp_derate_params_NYISO.csv             |   5 +",
+    " .../campd_temp_derate_params_NYISO_onset.csv       |   8 +",
+    " .../campd_temp_derate_params_NYISO_phase.csv       |  14 +",
+    " .../chp_power_only_heat_rates_PJM.csv              |  66 ++++",
+    " 19 files changed, 1121 insertions(+), 853 deletions(-)"
+  ],
+  "ct_artifact_commits": [
+    "f6238a5 caiso-156 fix: apply the CT heat-rate physical band at the HOUR, not only the plant aggregate"
+  ],
+  "ct_artifact_delta": {
+    "applied_rows_old": 71,
+    "applied_rows_new": 71,
+    "rows_with_changed_rate": 63,
+    "changed_capacity_mw": 19887.2,
+    "capw_heat_rate_old": 11.4749,
+    "capw_heat_rate_new": 11.5556,
+    "capw_pct_change": 0.7038,
+    "flag_transitions": {
+      "ok->ok": 71
+    }
+  }
+}
