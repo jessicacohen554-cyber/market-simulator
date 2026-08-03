@@ -602,7 +602,59 @@ rule-13-admissible mechanism available to carry it.
    Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
    existing four extracts.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-07-31-caiso148-nuclear-availability`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-03-caiso156-meter-screen-b`, CALIBRATED-WITH-CAVEATS)
+
+> **Keeper id corrected at caiso-161** — this heading had gone stale at
+> `2026-07-31-caiso148-nuclear-availability`; `frontend/data/backcast/keepers/CAISO.json`
+> and the matrix header both read `2026-08-03-caiso156-meter-screen-b`. (The
+> `check_mechanism_matrix.py` stamp guard covers the `.js` header only, so prose
+> drift here is invisible to CI — the same class of staleness nyiso-116 fixed.)
+
+> **CAISO MATRIX COLUMN CLOSED — caiso-161 (2026-08-03), no LP, no solve, keeper
+> UNCHANGED.** `mechanism_matrix_gap_sweep.py --iso CAISO` went **31 absent / 2
+> prose-only / 18 armed-on-the-keeper-with-no-cell → 0 / 0 / 0**; ratchet baseline
+> `mechanism-matrix-gaps.json` CAISO **31 → 0** with no other ISO's list growing.
+> All 33 fields closed as **literal sub-scalar registrations** on 10 existing
+> family rows plus `lcr_tsl_published`; **zero new rows, zero mechanism verdicts**
+> (rule 28(d)) — the only cell mints are the audit row `matrix_gap_census`
+> CAISO `O → K` and `lcr_tsl_published` CAISO `. → U`. Full record:
+> `results/calibration/FINDING-caiso161-matrix-column-closure-2026-08-03.md`.
+>
+> **Two findings this queue must carry forward:**
+>
+> 1. **Six keeper fields are armed-looking but PROVABLY INERT** — non-default in
+>    all 19 CAISO bundles' `run_config.json` yet unreadable by any code path in
+>    the keeper's configuration. `caiso_gas_floor_frac` 0.80 (only read inside
+>    `if caiso_gas_commitment_floor:`, which is `False`);
+>    `caiso_solar_deliverability_k` 0.15 + `caiso_solar_deliverability_floor` 0.50
+>    (both derate call sites skip when `caiso_solar_endogenous_spill` is on, which
+>    it is); `caiso_solar_shape_nl_hi_pct` 30.0 + `caiso_solar_shape_nl_lo_pct`
+>    10.0 (only read by `inject_caiso_import_solar_shape`, gated on
+>    `caiso_import_solar_shape`, which is `False`). **Do not read a CAISO
+>    `run_config.json` as an inventory of what is armed.** The first is the rule
+>    26 `[R-DELETE]` shape — the scalar of the *retired, rule-13-inadmissible*
+>    NG:NG midday gas floor, still shipped at 0.80 by the standard backcast recipe
+>    (`pipeline/backcast_config.py:1499`) — and is **FILED for the owner as a
+>    deletion candidate**; a census lane may not remove a `ScenarioConfig` field.
+> 2. **NEW QUEUE ITEMS (never adjudicated anywhere in the record; rule 14
+>    `[R-ACCURATE]` measured-over-estimate candidates, surfaced NOT tested):**
+>    - **`caiso_asymmetric_path_ratings`** — published WECC Path Rating Catalog
+>      directional limits for the *internal* N-S paths (Path 15 3,265 MW N→S vs
+>      5,400 S→N; Path 26 4,000 N→S vs 3,000 S→N) replacing the symmetric TTC
+>      estimates the reduced topology ships. The loose directions let the LP
+>      equalise the zones (Path 15 never binds; NP15==ZP26 byte-identical all
+>      years) and ship SP15 midday solar north past the real 3,000 MW Path-26
+>      limit, suppressing the measured NP15-over-SP15 premium. Registered on
+>      `measured_interface_limits`.
+>    - **`caiso_per_year_import_caps`** — per-year published LCT pocket import
+>      caps (LA_BASIN 12,008/15,224/15,174, SDGE 1,436/2,074/2,071 MW) replacing
+>      the static 2023 tightest-year bake the SP15 split froze in. Registered on
+>      `lcr_tsl_published` (CAISO cell minted `U`).
+>
+>    Both are **default-off, armed in zero bundles**. A session taking either
+>    pre-registers it as its own single-delta arm (gates + kills + no-tuning
+>    clause, pushed **before** solving) and honours rule 16 — 2023–2025 in ONE
+>    bundle. Neither was solved here: a census does not test levers.
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in

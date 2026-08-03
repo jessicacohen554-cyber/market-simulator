@@ -5130,3 +5130,110 @@ Holdout untouched (2023-2025 only, no LP ran, spend freeze unspent).
 Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
 
 Next number: caiso-160.
+
+## 2026-08-03 — CAISO — caiso-161: the CAISO mechanism-matrix column CLOSED (31 absent + 2 prose-only + 18 armed-no-cell → 0/0/0); ZERO new rows, ZERO mechanism verdicts; six keeper fields found ARMED-BUT-PROVABLY-INERT and two never-adjudicated rule-14 candidates queued — NO LP, keeper unchanged
+
+**Session number:** this entry is **caiso-161**, not caiso-160. The previous
+entry's footer reads "Next number: caiso-160"; the handoff prompt for this lane
+named caiso-161, so **caiso-160 is deliberately left UNCLAIMED** rather than
+risk colliding with an in-flight session. The gap is intentional, not a lost
+entry.
+
+**No LP, no solve, no registration** (rule 15 has nothing to register — no
+bundle was produced). Keeper UNCHANGED at `2026-08-03-caiso156-meter-screen-b`.
+Rule 22: **no year touched at all**, holdout spend freeze unspent.
+
+The rule-28(c) census lane, after NYISO (nyiso-114) and ERCOT (ercot-156).
+`scripts/mechanism_matrix_gap_sweep.py --iso CAISO` went **31 absent / 2
+prose-only / 18 armed-on-the-keeper-with-no-cell → 0 / 0 / 0**; ratchet baseline
+`docs/codebase-site/data/mechanism-matrix-gaps.json` CAISO **31 → 0**, no other
+ISO's list grew (`--write-baseline` re-swept all six).
+
+**How.** All 33 fields closed as **literal sub-scalar registrations** on 10
+existing family rows (`gas_commitment_bridge`, `import_hub_pricing`,
+`solar_deliverability`, `measured_offer_surface`, `gas_hub_basis_overlay`,
+`storage_measured_anchors`, `measured_interface_limits`,
+`reference_price_interface`, `ordc_scarcity_overlay`, `legacy_p2`) plus
+`lcr_tsl_published`. **Zero new rows.** Cell changes: **exactly two**, both
+rule-28(d)-admissible — audit row `matrix_gap_census` CAISO `O → K`, and
+`lcr_tsl_published` CAISO `. → U` (a census may mint a `U` and nothing else).
+Every mechanism row's `cells` and every `fc:` string is otherwise byte-unchanged.
+All verdict-bearing text added is **transcription with citations** of
+adjudications already on the record (caiso-74 storage-AS INERT + the
+caiso-127/129 family refutation; caiso-104 M1 charge-allocation REJECTED;
+caiso-137b DO-NOT-REDO on the scarcity import-headroom leg; caiso-84/-87/-90/
+-93/-94/-97 keeper legs) — never a new judgement.
+
+**Mechanical cause of most of the gap: abbreviated short-forms in a row's
+`def`.** The coverage test matches literally. Four ARMED keeper fields sat in
+`gas_commitment_bridge` written as `caiso_ra_startup_bridge / _bridge_decommit /
+_bridge_startup_aware / _startup_trajectory / _bridge_curtailment_release`, so
+`caiso_ra_bridge_decommit`, `caiso_ra_bridge_startup_aware`,
+`caiso_ra_startup_trajectory` and `caiso_ra_bridge_curtailment_release` read
+absent while three of them shape the keeper; `solar_deliverability` had the same
+defect (`_endogenous_spill`). **Write registrations as full literals** — this
+session's own census note reproduced the bug once and was corrected.
+
+**THE FINDING THAT MATTERS FOR EVERY FUTURE CAISO SESSION: a CAISO
+`run_config.json` is NOT an inventory of what is armed.** Six of the 18
+"armed on the keeper" fields are non-default in all 19 bundles yet **unreadable
+by any code path** in the keeper's configuration — verified at every call site,
+not inferred from prose: `caiso_gas_floor_frac` 0.80 (sole read inside
+`if caiso_gas_commitment_floor:`, which is `False` —
+`scripts/run_calibration.py:2964-2969`); `caiso_solar_deliverability_k` 0.15 +
+`caiso_solar_deliverability_floor` 0.50 (both derate call sites skip when
+`caiso_solar_endogenous_spill` is on, which it is — `runner.py:1556-1570` gates
+on `not _endogenous_spill`, `scripts/run_calibration.py:272-283` early-returns
+on the spill branch **before** the derate); `caiso_solar_shape_nl_hi_pct` 30.0 +
+`caiso_solar_shape_nl_lo_pct` 10.0 (sole read `inject_caiso_import_solar_shape`,
+gated on `caiso_import_solar_shape`, `False` on the keeper).
+
+**FILED FOR THE OWNER (not acted on): `caiso_gas_floor_frac` is the rule 26
+`[R-DELETE]` shape.** It is the fitted scalar of the *retired,
+rule-13-inadmissible* measured-outcome NG:NG midday gas floor that the RA
+must-offer bridge replaced (`scenarios.py:2706` "Step-1 replacement for the
+measured-outcome gas floor"; `:2740` "the removed NG:NG floor"), still shipped
+at 0.80 by the **standard** CAISO backcast recipe
+(`pipeline/backcast_config.py:1499`) and by ~40 committed probe drivers — i.e.
+it propagates into every new CAISO run by default. "A deprecated parameter that
+still parses is a re-armable answer key." Removing a `ScenarioConfig` field is a
+mechanism change, which a census lane may not make (rule 28(d)).
+
+**TWO NEW QUEUE ITEMS — surfaced, NOT tested** (rule 14 `[R-ACCURATE]`
+measured-over-estimate candidates, default-off, armed in zero bundles,
+adjudicated in no log entry, finding or cell anywhere):
+`caiso_asymmetric_path_ratings` (published WECC Path Rating Catalog directional
+limits for the internal N-S paths — Path 15 3,265 MW N→S vs 5,400 S→N, Path 26
+4,000 N→S vs 3,000 S→N — against the symmetric TTC estimates whose loose
+directions let the LP equalise the zones, Path 15 never binding and NP15==ZP26
+byte-identical all years, and ship SP15 midday solar north past the real
+3,000 MW Path-26 limit) and `caiso_per_year_import_caps` (per-year published LCT
+pocket caps LA_BASIN 12,008/15,224/15,174 and SDGE 1,436/2,074/2,071 MW against
+the static 2023 bake `scenarios.py:8955` itself calls "the deferred end state").
+Queued in `docs/mechanism-testing-matrix.md` §5.2. A session taking either
+**pre-registers it as its own single-delta arm and pushes the prereg BEFORE
+solving**, rule 16 (2023-2025 in ONE bundle).
+
+**Left open, deliberately:** the 5 shared-stem fields CAISO's keeper arms with
+no row (`ct_drag_cap`, `ct_drag_intercept`, `ct_drag_slope_per_gw`,
+`cc_outage_derate_from_top`, `chp_steam_floor_p25`) are non-ISO-prefixed and
+armed across multiple ISOs' keepers — a **cross-ISO hygiene lane**, not one
+column's session. Baseline `shared_armed_on_keeper` CAISO unchanged at 5; the
+"CAISO 0" claim is exact for the ISO-stem ratchet, which is what CI enforces.
+
+Also corrected: `docs/mechanism-testing-matrix.md` §5.2's heading keeper id had
+gone stale at `2026-07-31-caiso148-nuclear-availability` (the
+`check_mechanism_matrix.py` stamp guard covers the `.js` header only, so prose
+drift is invisible to CI — the nyiso-116 class of staleness).
+
+DO-NOT-REDO: do not re-run the CAISO census expecting new gaps (closed — the
+per-ISO JSON is `results/calibration/_matrix_gap_sweep_CAISO.json`); do not read
+a non-default `caiso_*` entry in a `run_config.json` as evidence a mechanism is
+armed without checking its gate; do not close the 5 shared-stem fields in a
+CAISO lane. No `R`/`I`/`G` cell was re-tested (`energy_reserve_coopt` `I` with
+its caiso-144 DO-NOT-SOLVE, `cc_mustrun_per_plant` `R`, `wecc_endogenous_node`
+`R`, `caiso_corridor_export_path` `R`, `caiso_p1_export_sink_seam` `R`,
+`netload_drag_floors` `R` all untouched).
+Evidence: `results/calibration/FINDING-caiso161-matrix-column-closure-2026-08-03.md`.
+
+Next number: caiso-162 (caiso-160 unclaimed, see above).
