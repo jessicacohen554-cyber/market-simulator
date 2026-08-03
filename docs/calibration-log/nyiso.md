@@ -4448,3 +4448,85 @@ Evidence: `results/calibration/FINDING-nyiso115-nyc-rcpf-step-curve-2026-08-03.m
 `PREREG-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
 `nyiso115_nyc_rcpf_curve_screen.json`, `_nyiso115_stepcurve_gates.json`,
 `nyiso115_transfer_queue_adjudication.json`.
+
+## 2026-08-03 — nyiso-117: the NYC RCPF step curve composed onto the corrected CT artifact — KEEPER; and the supersession that ordered it never happened
+
+**Keeper `2026-08-03-nyiso160-ctmeter-screen-b` → `2026-08-03-nyiso-117-nyc-rcpf`.**
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole ledgered caveat, unchanged at
+3/0/14. One config delta (`nyiso_nyc_rcpf_step_curve`), **zero free parameters** —
+DOF ledger 30 → 31 entries, `n_residual` unchanged at 6. Both arms registered
+(`2026-08-03-nyiso-117-control-zerodelta` + the keeper), 2023–2025 in one bundle
+each (rule 16). Pre-registered and pushed before either solve
+(`PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md`).
+
+**What it does.** It composes the two orthogonal rule 14 `[R-ACCURATE]`
+corrections that had been split across two lanes and neither of which contains
+the other: caiso-160's CT heat-rate meter-artifact **input** fix (already on the
+incumbent keeper) and nyiso-115's NYC locational RCPF demand-curve **shape**
+mechanism. The mechanism was **not** re-derived, re-levelled or re-scoped (rule
+23) — the $25/MW value is the published ASM §6.8 RCPF and the NYC-pair scope is
+the measurement's own boundary. This was a re-solve on a corrected input.
+
+**Gates — all pass.** G1: the NYC families reach exactly $25.00 in 14/6/19
+(10-min) and 2/6/8 (30-min) hours and sit on an interior ramp rung in **zero**
+hours. **G2a, the scope kill, is written on CONSTRUCTION**: all seven non-NYC
+families' `requirement_mw` — the balance-row RHS, the one pure input in the
+sidecar — are float32-**exactly** identical to control in all three years. That
+inherits nyiso-115's lesson (its G2 demanded byte-identity of `dual` and
+`held_mw`, solved outputs of a co-optimization, so it could only pass when the
+mechanism did nothing) and nyiso-116's (equality asserted as `np.array_equal`,
+not against a 1e-6 MW tolerance float32 cannot represent). **G2b** corroborates
+from an instrument that never touches the parquet: solve-log ORDC steps 73 → 59
+in each year, a drop of exactly 14 = 2 families × 7 rungs, family count unchanged
+at 9. G3/G4/G5/G6 pass; zero slack and zero dump in both arms; **all 18 scored
+numeric fields equal** between arms; K-A…K-E do not fire.
+
+**The null was pre-registered, and K-E measures it directly.** A step and a ramp
+are both $0 at or above the requirement, so this moves the **level** in hours a
+family already binds and **cannot add binding hours** — binding hours *gained* =
+**zero** in every family and year (the 30-min family loses 5 h in 2023 and 1 h in
+2025, a shortfall crossing zero, also anticipated in advance). C3c is unchanged;
+this does **not** reach nyiso-110's everyday-reserve-formation gap and is not
+reported as closing it.
+
+**The session's other result: the supersession premise was false.** nyiso-115's
+arms were **already** on the post-fix CT artifact. This session's control is
+bit-identical to nyiso-115's control *and* to the incumbent keeper, and its
+treatment bit-identical to nyiso-115's treatment — `max |ΔMW| = 0.000000`,
+`max |Δprice| = 0.000000`, every class-hour and zone-hour, all three years. That
+is not a claim the CT fix is inert: caiso-160's own pre-fix vs post-fix arms
+differ by max |ΔMW| 508.19/628.89/387.23 and max |Δprice| $10.50/$10.56/$9.04.
+The artifact vintage had been *assumed* from commit ordering; the git ancestry
+test that would settle it degrades **silently to "unknown"** in a fresh container
+because other branches' commits are not fetched, so it cannot observe its own
+claim — compare the dispatch instead. Yielding the keeper at nyiso-115 was
+therefore unnecessary; reasonable on what was known, but the record should say
+nyiso-115's keeper was never stale. Relatedly, FINDING-nyiso114 §2's drift
+caution did **not** fire here: control-vs-keeper drift measured exactly 0.0. The
+same-HEAD control was still the right design — drift is not knowable in advance —
+and its value is that it turned an assumption into a number.
+
+**Task 2, ex ante, no solve — SENY is `S-OVER`, recorded not acted on.** The
+isolated SENY-only 30-min adder (`DUNWOD − CAPITL`) caps at $23.92/$30.37/$40.00,
+with 52 hours of 2025 at exactly the published $40 increment and **zero above in
+any year**; the modelled $500 base is never reached in 26,301 hours. The model
+prices SENY in 2/0/8 hours at $62.50–$125.00 — its first rung ($500/8) already
+above the entire measured envelope, so 9 of 10 binding hours are **over**-priced,
+the opposite direction to NYC. Span confirmed: measured requirement mean
+1,602/1,594/1,613 MW (max 1,800) against static widths of 1,300, mis-spanned in
+69 % of hours. `nyiso_ordc_measured_step_span` stays `U`; a SENY change needs its
+own pre-registration and arm (rule 19). **Instrument honesty:** the screen's
+intended negative control degenerates on the 30-min product (the East 30-min
+adder is identically $0.00 in every hour), so it is reported as *uninformative,
+not as a pass*, and the reference pair is validated instead on the 10-min product
+where East does bind (4,603/6,993/6,611 hours, max $27.00/$36.05/$46.22).
+
+**Task 3.** Nothing on NYISO's (empty) transfer queue was re-tested; the
+shared-field ratchet still reports 0 for NYISO. The ERCOT/PJM/MISO/CAISO
+backlogs are their lanes' work (rule 25 / 28(d)).
+
+Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
+2023–2025 solved, scored or read. `complete.NYISO` re-keyed with a determination
+re-verification on committed artifacts only (D-5(b)); identical, not worse.
+Evidence: `results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`,
+`_nyiso117_stepcurve_gates.json`, `nyiso117_seny_rcpf_curve_screen.json`.
