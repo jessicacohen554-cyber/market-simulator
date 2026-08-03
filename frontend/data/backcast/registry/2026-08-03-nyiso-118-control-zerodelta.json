@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-nyiso-118-control-zerodelta",
+  "label": "nyiso 118 control zerodelta",
+  "date": "2026-08-03",
+  "shorthand": "nyiso-118-control-zerodelta",
+  "definition": "nyiso-118 CONTROL: same-HEAD zero-delta replay of the nyiso117_nyc_stepcurve keeper recipe",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-nyiso-118-control-zerodelta.js",
+  "bundle": "results/calibration/nyiso118_control"
+}
