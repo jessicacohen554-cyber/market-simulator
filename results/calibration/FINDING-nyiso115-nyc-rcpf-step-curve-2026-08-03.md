@@ -92,6 +92,20 @@ The 30-minute family is worse **purely because its requirement is larger** (1,00
 MW vs 500), which makes the same ramp shallower — an artifact of the construction
 with no market basis whatsoever.
 
+**A confound checked and excluded.** The NYC families do not carry a static
+requirement — `nyiso_dynamic_reserve_requirements` is armed, so their RHS is the
+measured as-enforced #1344 hourly series, while the ORDC step *widths* are built
+off the STATIC published MW. Where the two differ, the curve is mis-spanned
+(exactly the defect `nyiso_ordc_measured_step_span` exists to fix for SENY), and
+that would be an alternative explanation for the under-pricing above. It is not
+the explanation here: in **every hour in which `nyc_10min_total` actually binds,
+in both arms and both years, the hourly requirement is exactly 500 MW** — the
+static value — so the widths and the RHS agree wherever it matters, and
+`nyiso_ordc_measured_step_span` is `False` on both arms so no width scaling was
+applied either way. The shortfall reaches 0.61–0.63 of the requirement, which the
+ramp prices at its 5th–6th rung and the published step prices at the full $25.
+**The shape is the whole effect.**
+
 ## §5 — scope is the measurement's own boundary, not a choice
 
 NYC is the **only** locational region whose published RCPF the measured market
