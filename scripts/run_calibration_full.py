@@ -1047,14 +1047,16 @@ def _reserve_family_frame(
     pass_label: str,
     result,
     design,
+    zone_names=None,
 ) -> "pd.DataFrame | None":
     """Return the long per-reserve-family hourly dual / requirement frame.
 
     One row per (reserve family, hour): the family's own balance-row dual, its
-    hourly requirement MW, the reserve MW it actually held, and its cleared
-    ORDC shortfall MW — so the LP row itself, ``held + shortfall >=
-    requirement``, is checkable from the bundle, with equality iff the family
-    binds and the slack saying how far a non-binding family was from binding.
+    hourly requirement MW, the reserve MW it actually held, its cleared ORDC
+    shortfall MW, and the ZONES its requirement is scoped over — so the LP row
+    itself, ``held + shortfall >= requirement``, is checkable from the bundle,
+    with equality iff the family binds and the slack saying how far a
+    non-binding family was from binding.
 
     **Why this exists (nyiso-113 §8, the standing all-ISO gap).** Until this
     sidecar, NO bundle in ANY ISO persisted a per-family reserve dual.
@@ -1111,6 +1113,22 @@ def _reserve_family_frame(
 
     sf = _col("reserve_shortfall_by_family")
     held = _col("reserve_held_by_family")
+    # The family's own REGION, its zone mask resolved to names. A locational
+    # family is only legible with it: `li_30min_total` and `nyca_30min_total`
+    # are the same row shape and the same columns, and nothing else in the
+    # frame distinguishes a Zone-K requirement from an NYCA-wide one — the
+    # name is a convention, the mask is the LP's actual scoping. Empty string
+    # when the caller passes no zone list or the mask does not match it, so a
+    # shape disagreement degrades this column rather than mislabelling a family.
+    zones = list(zone_names or [])
+    labels = []
+    for fam in families:
+        mask = np.asarray(getattr(fam, "zone_mask", np.zeros(0)), dtype=bool)
+        labels.append(
+            "|".join(z for z, m in zip(zones, mask) if m)
+            if zones and mask.size == len(zones)
+            else ""
+        )
     rows = []
     for f, fam in enumerate(families):
         req = np.asarray(fam.requirement, dtype=float).ravel()[:T]
@@ -1121,6 +1139,7 @@ def _reserve_family_frame(
                     "pass": pass_label,
                     "family": str(fam.name),
                     "reserve_class": np.int8(int(fam.reserve_class)),
+                    "zones": labels[f],
                     "hour": np.arange(T, dtype=np.int32),
                     "dual": duals[:, f].astype(np.float32),
                     "requirement_mw": req.astype(np.float32),
@@ -1130,7 +1149,7 @@ def _reserve_family_frame(
             )
         )
     df = pd.concat(rows, ignore_index=True)
-    for col in ("pass", "family"):
+    for col in ("pass", "family", "zones"):
         df[col] = df[col].astype("category")
     return df
 
@@ -4934,7 +4953,7 @@ def solve_and_persist(
             # reserve_price is the cross-family SUM broadcast to every zone
             # (nyiso-113 §8). Tiny (n_fam x 8,760 rows) and committable.
             _rfamf = _reserve_family_frame(
-                year, label, res, p2_state.get("reserve_design")
+                year, label, res, p2_state.get("reserve_design"), zone_names
             )
             if _rfamf is not None:
                 reserve_family_frames.append(_rfamf)
