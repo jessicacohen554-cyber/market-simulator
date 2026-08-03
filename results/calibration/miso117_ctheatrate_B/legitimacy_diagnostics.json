@@ -550,7 +550,7 @@
      "class_total_twh": 144.7432,
      "forced_share": 0.0009,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.2815,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -562,7 +562,7 @@
      "class_total_twh": 176.8176,
      "forced_share": 0.0031,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3606,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -574,7 +574,7 @@
      "class_total_twh": 12.342,
      "forced_share": 0.1407,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0292,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -586,7 +586,7 @@
      "class_total_twh": 24.9126,
      "forced_share": 0.3292,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.0473,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -598,8 +598,8 @@
      "class_total_twh": 8.7225,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0165,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -610,7 +610,7 @@
      "class_total_twh": 151.285,
      "forced_share": 0.0001,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.2683,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -622,7 +622,7 @@
      "class_total_twh": 168.4553,
      "forced_share": 0.0035,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3285,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -634,7 +634,7 @@
      "class_total_twh": 16.901,
      "forced_share": 0.0999,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0299,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -646,7 +646,7 @@
      "class_total_twh": 25.1692,
      "forced_share": 0.3403,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.0483,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -658,8 +658,8 @@
      "class_total_twh": 8.9721,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0159,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -670,7 +670,7 @@
      "class_total_twh": 135.5333,
      "forced_share": 0.0008,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.2298,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -682,7 +682,7 @@
      "class_total_twh": 206.8632,
      "forced_share": 0.0019,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3501,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -694,7 +694,7 @@
      "class_total_twh": 15.8471,
      "forced_share": 0.1043,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0263,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -706,7 +706,7 @@
      "class_total_twh": 23.2999,
      "forced_share": 0.4582,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.0426,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -718,8 +718,8 @@
      "class_total_twh": 9.0084,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0149,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     }

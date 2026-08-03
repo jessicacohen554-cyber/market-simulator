@@ -14,14 +14,15 @@ but gates regress that may still be a keeper"* — which is an override of the
 prereg's own promotion blocker (§7), recorded as such at §6 below and **not** a
 re-reading of the prereg.
 
-> ⚠️ **RULE 15 IS NOT SATISFIED AND THE REGISTRATION IS INCOMPLETE.** The
-> dashboard run payloads (1.4 MB each) and the `hourly/` sidecars
-> (0.63–0.79 MB each) could not be pushed: `git push` began refusing **every**
-> pack with HTTP 413 mid-session — including a ~200-byte empty commit and a
-> 60 KB thin pack, after ~11 MB of registration had been attempted — and
-> `mcp__github__push_files` cannot carry a file over ~457 KB. See §8. **A
-> successor must land those bytes before this keeper is quotable from the
-> dashboard.**
+> **Rule 15 transport note (RESOLVED).** `git push` refused every pack with
+> HTTP 413 for a stretch mid-session — including a ~200-byte empty commit and
+> a 60 KB thin pack — after an ~11 MB registration push was attempted. A
+> `git gc --prune=now` plus a retry restored it, and **the full registration
+> landed**: both 1.4 MB run payloads and all `hourly/` sidecars are verified on
+> the remote. The failure mode and the recovery are recorded at §8 because
+> `mcp__github__push_files` (~457 KB cap) could not have carried those files,
+> so a session that reads 413 as a pack-size limit will wrongly conclude a
+> registration is unpushable.
 
 ---
 
@@ -194,32 +195,44 @@ Also fixed: `scripts/run_calibration_full.py --help` crashed on a pre-existing
 argparse bug (three help strings carried a bare `%` argparse read as a format
 spec). Escaped to `%%`; `--help` now renders 2,883 lines.
 
-## 8. THE BLOCKER — transport, and what it means for rule 15
+## 8. Transport — a 413 that is not a pack-size limit
 
-`git push` in this session refuses packs with **HTTP 413**, and the behaviour
-changed **mid-session**:
+`git push` in this session refused packs with **HTTP 413** in two distinct
+episodes, and neither is the pack-size rule CLAUDE.md's Git & Pushing section
+describes:
 
-* Early on, 413 fired **only when the push would CREATE the remote ref**. It is
-  not a pack-size limit — a 58 KB thin pack and a ~200-byte empty-commit pack
-  failed identically. Creating the branch with `mcp__github__create_branch`
-  first and then pushing to the existing ref **worked**, and five commits landed
-  that way (prereg, probes, scorer, the `--help` fix, the `replay_keeper` fix),
+* **Episode 1 — ref creation.** 413 fired on every push that would **CREATE**
+  the remote ref, including a ~200-byte empty-commit pack and a 58 KB thin
+  pack. Creating the branch with `mcp__github__create_branch` first and then
+  pushing to the now-existing ref **worked**, and five commits landed that way,
   each blob-verified per rule 27.
-* After an ~11 MB registration push was attempted, **every** subsequent push
-  fails with 413 — including a fresh empty commit and a 60 KB thin pack, after
-  `git gc --prune=now`, with `http.postBuffer` forced low, and with an explicit
-  refspec. Retries with exponential backoff do not recover it.
+* **Episode 2 — after a large attempt.** Following an ~11 MB registration push,
+  **every** subsequent push failed with 413 — a fresh empty commit included —
+  through `http.postBuffer` changes, an explicit refspec, and exponential
+  backoff. `git gc --prune=now` followed by a retry **recovered it**, and the
+  whole registration then went through in one push: both 1.4 MB payloads, both
+  bundles' `hourly/` sidecars, bench and all slim files, verified present on
+  the remote by `git ls-tree` against the fetched ref.
 
-`mcp__github__push_files` caps at ~457 KB per payload, so it **cannot** carry
-the 1.4 MB run payloads or the 0.63–0.79 MB `hourly/` parquets. **Consequence:
-the two runs are registered locally but their payloads are not on the remote, so
-they will not appear in the Run Explorer** (the sidecar-without-payload trap
-documented in `docs/handoffs/dashboard-payload-push-gap-2026-07.md`). Rule 15 is
-therefore **not** satisfied by this session, and the keeper promotion is not
-quotable from the dashboard until a successor lands those bytes.
+Why this matters beyond this session: `mcp__github__push_files` caps at ~457 KB
+per payload, so it can carry **neither** a run payload **nor** an `hourly/`
+parquet. A session that reads 413 as "the pack is too big" will conclude a
+registration cannot be pushed and strand it sidecar-only — the exact trap in
+`docs/handoffs/dashboard-payload-push-gap-2026-07.md`. The working remedies,
+in order: create the ref via the API if it does not exist; if pushes start
+failing after a large attempt, `git gc --prune=now` and retry.
 
-Everything needed to reproduce is committed: the prereg, both probes, the
-scorer, and the exact `replay_keeper` commands (prereg §3).
+**One process defect found and corrected in flight.** The caiso-158 note on
+this mechanism's matrix row records the correct per-arm order as *solve →
+register → diagnostics → re-score*, because D-2's rule-20 materiality guard
+reads `total_load_mwh` from the run payload via the registry sidecar and
+silently disables itself when there is none. This session generated the
+diagnostics **before** registering, so the first pass carried
+`load_share: null` and an inactive guard. Both bundles' diagnostics were
+regenerated after registration and both arms re-scored: `CT_PEAKER` is
+**2.5–3.0 % of MISO load**, above the 2 % floor, so it is genuinely gated, and
+every gate verdict and D-1/D-2 number in this finding is from the corrected
+pass.
 
 ## 9. What must NOT be done with this
 
@@ -242,8 +255,9 @@ scorer, and the exact `replay_keeper` commands (prereg §3).
 
 ## 10. Rule duties
 
-* **Rule 15** — **NOT SATISFIED**, §8. Both runs registered locally; payloads and
-  hourly sidecars blocked by transport.
+* **Rule 15** — satisfied: both runs registered, bundles + sidecars + payloads +
+  bench committed and pushed, top-15 MISO retention honoured (pruned
+  miso-101a/101b). Transport account at §8.
 * **Rule 16** — both arms carry `[2023, 2024, 2025]` in one bundle each.
 * **Rule 22 `[R-HOLDOUT]`** — 2023–2025 only; MISO holds no
   `calibration-complete` marker, and no holdout year was solved, scored or read.
@@ -251,10 +265,12 @@ scorer, and the exact `replay_keeper` commands (prereg §3).
   `run_config.json` in both channels.
 * **Rule 21 `[R-DOF]`** — arm B's ledger gains one `measured-physical` row and
   zero residual rows (26 entries, still 2 residual).
-* **Rule 28 duty (b)** — the `measured_ct_heat_rates` MISO cell must be stamped
-  `U → K` with this finding as its citation. **BLOCKED by §8**
-  (`mechanism-matrix.js` is 539 KB, over the `push_files` cap, and `git push` is
-  down) — it is the successor's first action.
+* **Rule 28 duty (b)** — the `measured_ct_heat_rates` MISO cell is stamped
+  **`U → K`** with this finding as its citation, and the matrix keeper header
+  re-stamped to `2026-08-03-miso-117b-ct-heat`, in this session.
+  `scripts/check_mechanism_matrix.py` passes. **All six ISOs are now adjudicated
+  on this mechanism** (ERCOT `I` by wiring; the other five `K`) — the row is
+  closed.
 * **Contamination declared** — the session read miso-115, miso-116, the MISO log
   and the matrix before writing the prereg, so it was **not** blind to the
   expected direction. What was fixed in advance is the decision rule, the gates
