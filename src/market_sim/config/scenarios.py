@@ -653,7 +653,16 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_incity_commitment_obligation": "False",
     "nyiso_scr_edrp": "False",
     "nyiso_scr_edrp_strike": "500.0",
-    "net_cone_forward_escalation": "'hold_last'",
+    # DECLARED FLIP, owner decision D-3a signed 2026-08-03: "hold_last" ->
+    # "reindex_gross". Classified BYTE-IDENTICAL, so no cache-epoch entry is
+    # owed: the field has no live consumer (forward_net_cone_anchor is not yet
+    # wired into the pricing seam — FF-2C owns that) AND reindex_gross is now
+    # EXACTLY hold_last at the shipped 0.0 real rate, asserted over 1,984
+    # ISO x year x offset x mode comparisons after FFR-3D repaired the
+    # zero-rate identity. The same-key collision this flip creates is therefore
+    # between two runs with identical output. First use of the check-3
+    # declaration channel this ledger exists for.
+    "net_cone_forward_escalation": "'reindex_gross'",
     "caiso_endogenous_wecc_node": "False",
     "nyiso_hydro_reserve_eligible": "False",
     "nyiso_scr_edrp_reserve_eligible": "False",
@@ -1066,18 +1075,43 @@ class ScenarioConfig:
     # named_program_price, P-1D), an explicit alternative to the default
     # single floor-band escalator (policy.cap_and_trade.projected_price).
     # None (default) keeps today's behavior exactly; "mid" reproduces it too.
-    net_cone_forward_escalation: str = "hold_last"  # "hold_last" |
+    net_cone_forward_escalation: str = "reindex_gross"  # "hold_last" |
     # "reindex_net" | "reindex_gross" — FF-G3 forward net-CONE evolution beyond
     # the last published capacity-market vintage (constants.
-    # forward_net_cone_anchor). "hold_last" (default) is the status quo the
-    # pricing seam reads today (resolve_demand_curve_vintage holds the last
-    # published anchor flat forward), byte-identical. The reindex modes escalate
-    # the anchor at constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real
-    # by default → collapses to hold_last; a positive rate is a structural-
-    # tightness sensitivity). Forecast-only screen input; __post_init__ coerces
-    # it to "hold_last" in backcast (no capacity evolution there). NOT yet wired
-    # into capacity_price_per_firm_mw_yr — FF-2C owns that + the clearing flips
-    # (scope guard). See docs/capacity-price-forward-methodology-2026-07.md.
+    # forward_net_cone_anchor). The reindex modes escalate the anchor at
+    # constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real for every ISO
+    # that carries a rate → collapses EXACTLY to hold_last; a positive rate is a
+    # structural-tightness sensitivity, never a fit). Forecast-only screen input;
+    # __post_init__ coerces it to "hold_last" in backcast (no capacity evolution
+    # there). NOT yet wired into capacity_price_per_firm_mw_yr — FF-2C owns that
+    # + the clearing flips (scope guard).
+    # See docs/capacity-price-forward-methodology-2026-07.md.
+    #
+    #   OWNER DECISION D-3a, signed 2026-08-03 (ffr-owner-sitting-2026-08-02.md
+    # Addendum D.1): default "hold_last" → "reindex_gross" — "escalate gross by
+    # the published index, re-net the model's own simulated E&AS margin.
+    # Byte-identical to hold_last at the signed 0.0 real rate, so it changes no
+    # output until a non-zero rate is ever set." reindex_gross is the FIELD
+    # construction (PJM OATT Att. DD §5.10(a)(iv), NYISO MST 5.14.1.2.2.1,
+    # ISO-NE Tariff §III.13, MISO Tariff §69A.8 all escalate GROSS CONE and
+    # re-net E&AS annually; net-CONE is a derived residual, never indexed
+    # directly), so the shipped posture is now the field-standard one and
+    # hold_last is the explicit status-quo control arm.
+    #   The byte-identity was ASSERTED, not assumed, and it FAILED as shipped:
+    # (base + eas) − eas is not base in IEEE 754, missing by ~1.4e-14 on 233 of
+    # the swept ISO×year×offset combinations. FFR-3D repaired the identity FIRST
+    # (an exact zero-rate short-circuit in forward_net_cone_anchor, which also
+    # removes the offset requirement where the offset provably cancels — no
+    # caller supplies one yet), re-asserted it exactly across 1,984 comparisons,
+    # and only then flipped this default.
+    #   CACHE: registered in _CACHE_KEY_OPTIONAL_FIELDS, so this flip makes a
+    # post-flip default run hash identically to a pre-flip one (the blocker-4
+    # collision). DECLARED in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS, and classified
+    # BYTE-IDENTICAL: the field has no live consumer (forward_net_cone_anchor is
+    # unwired) AND the mode is exactly hold_last at 0.0, so the collision is
+    # between two runs with identical output. No cache-epoch entry is owed.
+    # An explicit hold_last is now non-default and hashes distinctly, so the
+    # status-quo control arm stays separable.
     demand_growth_rate: float = (
         0.01  # flat override used only when no structured rates exist
     )
@@ -9738,16 +9772,30 @@ class ScenarioConfig:
             self.electrification_path = "off"
 
         # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
-        # "hold_last" in a plain backcast. Capacity evolution / the capacity-price
-        # seam run only in forecast mode, so the escalation axis is meaningless in
-        # a backcast; coercing keeps every backcast keeper's cache_key +
-        # run_config.json byte-identical even though the field is a scenario axis
-        # (mirrors the datacenter_load_path / entry_lookahead_reprice patterns).
-        # NOT coerced when hindcast (mode=="forecast", hindcast=True): the
-        # capacity-hindcast harness is the forecast path and arms forecast screens
-        # explicitly. (The field is also in _CACHE_KEY_OPTIONAL_FIELDS, so the
-        # default is cache-neutral regardless — this is belt-and-braces so a
-        # backcast that sets it non-default cannot shift its key.)
+        # the shipped DEFAULT in a plain backcast. Capacity evolution / the
+        # capacity-price seam run only in forecast mode, so the escalation axis
+        # is meaningless in a backcast; coercing keeps every backcast keeper's
+        # cache_key + run_config.json byte-identical even though the field is a
+        # scenario axis (mirrors the datacenter_load_path /
+        # entry_lookahead_reprice patterns). NOT coerced when hindcast
+        # (mode=="forecast", hindcast=True): the capacity-hindcast harness is
+        # the forecast path and arms forecast screens explicitly.
+        #
+        #   COERCE TO THE DEFAULT, NEVER TO A LITERAL (FFR-3D). The coercion's
+        # whole purpose is cache-neutrality, and the field is in
+        # _CACHE_KEY_OPTIONAL_FIELDS, which is neutral AT THE DEFAULT ONLY. This
+        # read `= "hold_last"`, which was the default — until owner decision
+        # D-3a moved it to "reindex_gross". A literal that stops being the
+        # default stops being neutral and ENTERS the hash, re-keying every
+        # backcast bundle: measured at the flip, the coerced-literal form moved
+        # the default backcast key 35b6dc12f97968f1 -> 512c2fffbb61414e and
+        # ERCOT's 2023 backcast key df386bca96a1d288 -> f3ee0af68fa72303, which
+        # would have orphaned every keeper's on-disk cache. Reading the
+        # dataclass default instead makes the coercion neutral by construction
+        # and immune to the next flip. This is the SECOND face of the blocker-4
+        # hazard — the cache-key guard catches an undeclared flip, and the
+        # pinned backcast key in tests/regression/test_persisted_identity.py
+        # catches this one.
         if self.net_cone_forward_escalation not in (
             "hold_last",
             "reindex_net",
@@ -9759,7 +9807,9 @@ class ScenarioConfig:
                 f"{self.net_cone_forward_escalation!r}"
             )
         if self.mode == "backcast":
-            self.net_cone_forward_escalation = "hold_last"
+            self.net_cone_forward_escalation = (
+                type(self).__dataclass_fields__["net_cone_forward_escalation"].default
+            )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
         # signal (the runner reads it only under mode=="forecast"; a backcast
