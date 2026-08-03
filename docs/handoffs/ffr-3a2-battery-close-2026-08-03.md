@@ -173,6 +173,37 @@ fields. Field-level diff of each `meta.json` against shipped `ScenarioConfig()`:
 Identical for all four legs (`pjm-2021-2025-curve-ff2c`, `miso-2021-2025-curve-ff2c`,
 `neiso-2021-2025-curve`, `nyiso-2021-2025-fixed`). A re-score cannot reach any of it.
 
+### 3.2b PRE-REGISTERED attribution — half the un-pin is structurally inert in all four legs
+
+Recorded **before** the legs were scored, from the constants alone, so it is a
+pre-registration and not a post-hoc reading.
+
+`CORRELATED_OUTAGE_CURVE` (`constants.py:1747`) contains **`['ERCOT']` and nothing else**,
+and its own header states the rule-25 reason: *"ERCOT-fitted; the table carries no generic
+fallback — a curve fitted on one ISO's events never crosses an ISO boundary."* The
+mechanism matrix already carries this as `correlated_forced_outage` cells `K.....` /
+fc `KIIIII` — **inert in the five non-ERCOT ISOs**.
+
+**All four T1-H curve legs are PJM / MISO / NEISO / NYISO. None is ERCOT.** Therefore
+`correlated_forced_outage=True` — half of what C.4(c) un-pinned — is **structurally
+inert in every one of them**: the flag flips, and no curve exists for it to apply.
+
+**Consequence for the per-verdict attribution scope item 1 asks for.** In these four legs
+an FC-3 movement can only come from:
+
+| candidate | can it move these legs? |
+|---|---|
+| `correlated_forced_outage` (un-pin half 1) | **NO — structurally inert, no curve for these ISOs** |
+| `entry_lookahead_reprice` (un-pin half 2) | yes |
+| `retirement_rule` → `pipeline` (D-1) | yes |
+| `entry_rate_limits` + `entry_commissioning_lag` (D-2) | yes |
+| the cache epoch (cold post-epoch re-solve) | yes — and it is not a rule change |
+
+So "moved because of the un-pin" can only ever mean the **`entry_lookahead_reprice`
+half** in these four legs. That halves the un-pin's attributable surface before a single
+leg is scored, and it means an ERCOT-only mechanism must never be credited with a PJM,
+MISO, NEISO or NYISO movement (rule 25 `[R-ISO-SCOPE]`).
+
 ### 3.3 Rule-22 legality of the 2021–2025 window — checked, not assumed
 
 The window spans out-of-training years while the **holdout freeze is ACTIVE**, so it was
