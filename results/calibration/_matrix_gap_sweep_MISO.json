@@ -3,7 +3,7 @@
   "keeper": "2026-08-03-miso-117b-ct-heat",
   "keeper_bundle_fields": 673,
   "n_scenario_fields": 671,
-  "n_matrix_rows": 180,
+  "n_matrix_rows": 181,
   "n_bundles_scanned": 34,
   "family": [
     {
@@ -72,7 +72,7 @@
       "owning_rows": [
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         }
       ],
@@ -342,7 +342,7 @@
       "owning_rows": [
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         }
       ],
@@ -659,7 +659,7 @@
       "owning_rows": [
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         }
       ],
@@ -1368,7 +1368,7 @@
         },
         {
           "row": "cc_committed_offer_margin",
-          "cells": "KUUUUU",
+          "cells": "KUUUGU",
           "cell": "U"
         },
         {
@@ -1481,7 +1481,7 @@
         },
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         },
         {
@@ -1511,7 +1511,7 @@
         },
         {
           "row": "maxgen_emergency_tier_pricing",
-          "cells": "U..KUU",
+          "cells": "U..KIU",
           "cell": "K"
         },
         {
@@ -1523,6 +1523,11 @@
           "row": "reserve_family_dual_sidecar",
           "cells": "IIIIKI",
           "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
+          "cell": "K"
         },
         {
           "row": "matrix_gap_census",
@@ -1736,13 +1741,18 @@
         },
         {
           "row": "measured_offer_surface",
-          "cells": "KKRUUI",
+          "cells": "KKRUGI",
           "cell": "U"
         },
         {
           "row": "coal_econ_bound",
           "cells": "K..K..",
           "cell": "K"
+        },
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUGU",
+          "cell": "U"
         },
         {
           "row": "coal_perplant_offer_level",
@@ -2076,7 +2086,7 @@
       "owning_rows": [
         {
           "row": "maxgen_emergency_tier_pricing",
-          "cells": "U..KUU",
+          "cells": "U..KIU",
           "cell": "K"
         }
       ],
@@ -2166,7 +2176,7 @@
         },
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         },
         {
@@ -2201,7 +2211,7 @@
         },
         {
           "row": "maxgen_emergency_tier_pricing",
-          "cells": "U..KUU",
+          "cells": "U..KIU",
           "cell": "K"
         },
         {
@@ -2213,6 +2223,11 @@
           "row": "reserve_family_dual_sidecar",
           "cells": "IIIIKI",
           "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
+          "cell": "K"
         },
         {
           "row": "matrix_gap_census",
@@ -2456,7 +2471,7 @@
         },
         {
           "row": "measured_offer_surface",
-          "cells": "KKRUUI",
+          "cells": "KKRUGI",
           "cell": "U"
         },
         {
@@ -2481,7 +2496,7 @@
         },
         {
           "row": "cc_committed_offer_margin",
-          "cells": "KUUUUU",
+          "cells": "KUUUGU",
           "cell": "U"
         },
         {
@@ -2696,7 +2711,7 @@
         },
         {
           "row": "storage_vintage_ramp",
-          "cells": "KKUUUK",
+          "cells": "KKUUIK",
           "cell": "U"
         },
         {
@@ -2989,6 +3004,21 @@
       "exclusion_reason": null
     },
     {
+      "field": "net_cone_forward_escalation",
+      "default": "reindex_gross",
+      "keeper_value": "hold_last",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "net_cone_forward_vintages",
+          "cells": "..OOOO",
+          "cell": "O"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
       "field": "offer_curve_by_group",
       "default": {},
       "keeper_value": {
@@ -3195,7 +3225,7 @@
       "owning_rows": [
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "K"
         }
       ],

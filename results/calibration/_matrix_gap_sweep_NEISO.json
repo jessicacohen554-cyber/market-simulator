@@ -3,7 +3,7 @@
   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 671,
-  "n_matrix_rows": 180,
+  "n_matrix_rows": 181,
   "n_bundles_scanned": 15,
   "family": [
     {
@@ -907,7 +907,7 @@
         },
         {
           "row": "cc_committed_offer_margin",
-          "cells": "KUUUUU",
+          "cells": "KUUUGU",
           "cell": "U"
         },
         {
@@ -1002,7 +1002,7 @@
         },
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "U"
         },
         {
@@ -1032,7 +1032,7 @@
         },
         {
           "row": "maxgen_emergency_tier_pricing",
-          "cells": "U..KUU",
+          "cells": "U..KIU",
           "cell": "U"
         },
         {
@@ -1043,6 +1043,11 @@
         {
           "row": "reserve_family_dual_sidecar",
           "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
           "cell": "I"
         },
         {
@@ -1257,13 +1262,18 @@
         },
         {
           "row": "measured_offer_surface",
-          "cells": "KKRUUI",
+          "cells": "KKRUGI",
           "cell": "I"
         },
         {
           "row": "coal_econ_bound",
           "cells": "K..K..",
           "cell": "."
+        },
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUGU",
+          "cell": "U"
         },
         {
           "row": "coal_perplant_offer_level",
@@ -1652,7 +1662,7 @@
         },
         {
           "row": "reference_price_interface",
-          "cells": ".UKKUU",
+          "cells": ".UKKGU",
           "cell": "U"
         },
         {
@@ -1687,7 +1697,7 @@
         },
         {
           "row": "maxgen_emergency_tier_pricing",
-          "cells": "U..KUU",
+          "cells": "U..KIU",
           "cell": "U"
         },
         {
@@ -1698,6 +1708,11 @@
         {
           "row": "reserve_family_dual_sidecar",
           "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
           "cell": "I"
         },
         {
@@ -1942,7 +1957,7 @@
         },
         {
           "row": "measured_offer_surface",
-          "cells": "KKRUUI",
+          "cells": "KKRUGI",
           "cell": "I"
         },
         {
@@ -1967,7 +1982,7 @@
         },
         {
           "row": "cc_committed_offer_margin",
-          "cells": "KUUUUU",
+          "cells": "KUUUGU",
           "cell": "U"
         },
         {
@@ -2182,7 +2197,7 @@
         },
         {
           "row": "storage_vintage_ramp",
-          "cells": "KKUUUK",
+          "cells": "KKUUIK",
           "cell": "K"
         },
         {
@@ -2469,6 +2484,21 @@
           "row": "gas_plant_monthly_pricing",
           "cells": "GKKKKK",
           "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "net_cone_forward_escalation",
+      "default": "reindex_gross",
+      "keeper_value": "hold_last",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "net_cone_forward_vintages",
+          "cells": "..OOOO",
+          "cell": "O"
         }
       ],
       "excluded": false,
@@ -2792,7 +2822,7 @@
       "owning_rows": [
         {
           "row": "storage_vintage_ramp",
-          "cells": "KKUUUK",
+          "cells": "KKUUIK",
           "cell": "K"
         }
       ],
