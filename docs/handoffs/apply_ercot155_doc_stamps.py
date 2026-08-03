@@ -224,8 +224,8 @@ MTM_HEADER_NEW = (
     "first) and item 8 (data-intake first) — every other named item is struck. "
     "ERCOT-155 measured item 7b's dispersion object and RE-POINTED it: it is a "
     "COMMITMENT-STATE defect, not an offer-slope or fleet-composition one, the "
-    "offer-dispersion arm is REFUSED (rules 1/13/20), and the \"flat ~25 GW at "
-    "1.6 $/MWh per GW\" framing is CORRECTED (item 7c) — do not quote it "
+    'offer-dispersion arm is REFUSED (rules 1/13/20), and the "flat ~25 GW at '
+    '1.6 $/MWh per GW" framing is CORRECTED (item 7c) — do not quote it '
     "forward.**"
 )
 
