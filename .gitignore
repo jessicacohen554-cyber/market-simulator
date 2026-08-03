@@ -513,3 +513,12 @@ results/calibration/caiso154_slopes_PJM.csv
 # TRACKED (it is the lane's record, not an output) and is unaffected by this
 # rule, which only ever applies to untracked paths.
 /results/ffr3a/
+
+# FFR-3C collapse-attribution lane (run_full_horizon --out-dir caches and their
+# loose run logs for the paired MISO arms). Same class as /results/ffr3a/ and
+# /results/full-horizon/ — forecast legs are registered to
+# frontend/data/forecast/ via scripts/register_forecast_run.py, never as tracked
+# bundles here (CLAUDE.md rule 15). results/ffr3c/README.md stays TRACKED (it is
+# the lane's record, not an output) and is unaffected by this rule, which only
+# ever applies to untracked paths.
+/results/ffr3c/
