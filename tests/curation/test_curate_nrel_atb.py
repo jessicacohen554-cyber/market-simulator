@@ -112,14 +112,22 @@ class TestCurateNrelAtb(unittest.TestCase):
         This is what keeps the derive scripts (and their rule-23 constants
         consistency tests) seeing exactly one row per key when a newer ATB
         version lands beside the one they were built against.
+
+        Written against ``DERIVATION_PINNED_VERSION`` rather than a literal, so
+        a deliberate pin move (FFR-SC moved it v3.0.0 -> v4.0.0) re-points this
+        test instead of failing it — the property under test is "parse reads
+        the pin, and an explicit version overrides it", not which pin is set.
         """
-        newer = _CSV.replace("1407.953224", "1500.0")
-        _write_fixture(self.raw_root, _CSV, "v3.0.0")
-        _write_fixture(self.raw_root, newer, "v4.0.0")
+        pinned_version = curate_mod.DERIVATION_PINNED_VERSION
+        other_version = next(v for v in ("v3.0.0", "v4.0.0") if v != pinned_version)
+        _write_fixture(self.raw_root, _CSV, pinned_version)
+        _write_fixture(
+            self.raw_root, _CSV.replace("1407.953224", "1500.0"), other_version
+        )
 
         pinned = curate_mod.parse(self.raw_root)
         self.assertEqual(len(pinned), 3)
-        self.assertEqual(set(pinned["atb_version"]), {"v3.0.0"})
+        self.assertEqual(set(pinned["atb_version"]), {pinned_version})
         self.assertEqual(
             float(
                 pinned[pinned["parameter"] == "CAPEX"]["value"].iloc[0],
@@ -127,8 +135,8 @@ class TestCurateNrelAtb(unittest.TestCase):
             1407.953224,
         )
 
-        explicit = curate_mod.parse(self.raw_root, "v4.0.0")
-        self.assertEqual(set(explicit["atb_version"]), {"v4.0.0"})
+        explicit = curate_mod.parse(self.raw_root, other_version)
+        self.assertEqual(set(explicit["atb_version"]), {other_version})
         self.assertEqual(
             float(explicit[explicit["parameter"] == "CAPEX"]["value"].iloc[0]), 1500.0
         )
