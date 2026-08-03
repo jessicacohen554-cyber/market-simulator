@@ -1,0 +1,93 @@
+{
+  "iso": "MISO",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "by_year": {
+    "2023": {
+      "n_capable_plant_groups": 93,
+      "L5_literal_on_control": {
+        "n_marginal_binding": 0,
+        "passed": false
+      },
+      "model_switched_arm_B": {
+        "capable_twh": 17.454605,
+        "switched_twh": 0.000129,
+        "switched_share": 7e-06,
+        "switched_unit_hours_dispatching": 52
+      },
+      "model_switched_control_A_counterfactual": {
+        "capable_twh": 17.454605,
+        "switched_twh": 0.000129,
+        "switched_share": 7e-06,
+        "switched_unit_hours_dispatching": 52
+      },
+      "campd_observed": {
+        "observed_switched_twh": 0.002325,
+        "observed_switched_unit_hours": 90,
+        "capable_gas_winter_twh": 4.297842,
+        "coverage_note": "CAMPD covers only the capable plants that report to it; this is a LOWER bound on fleet-wide observed switching"
+      }
+    },
+    "2024": {
+      "n_capable_plant_groups": 93,
+      "L5_literal_on_control": {
+        "n_marginal_binding": 225,
+        "n_binding_total": 18192,
+        "marginal_share_of_binding": 0.012368,
+        "capw_p50_doffer": 1.2862,
+        "bar": 0.1,
+        "passed": true
+      },
+      "model_switched_arm_B": {
+        "capable_twh": 23.307177,
+        "switched_twh": 0.037567,
+        "switched_share": 0.001612,
+        "switched_unit_hours_dispatching": 821
+      },
+      "model_switched_control_A_counterfactual": {
+        "capable_twh": 23.306727,
+        "switched_twh": 0.036993,
+        "switched_share": 0.001587,
+        "switched_unit_hours_dispatching": 756
+      },
+      "campd_observed": {
+        "observed_switched_twh": 0.011328,
+        "observed_switched_unit_hours": 459,
+        "capable_gas_winter_twh": 5.298597,
+        "coverage_note": "CAMPD covers only the capable plants that report to it; this is a LOWER bound on fleet-wide observed switching"
+      }
+    },
+    "2025": {
+      "n_capable_plant_groups": 92,
+      "L5_literal_on_control": {
+        "n_marginal_binding": 63,
+        "n_binding_total": 11568,
+        "marginal_share_of_binding": 0.005446,
+        "capw_p50_doffer": 18.7356,
+        "bar": 0.1,
+        "passed": true
+      },
+      "model_switched_arm_B": {
+        "capable_twh": 22.278,
+        "switched_twh": 0.010962,
+        "switched_share": 0.000492,
+        "switched_unit_hours_dispatching": 208
+      },
+      "model_switched_control_A_counterfactual": {
+        "capable_twh": 22.277984,
+        "switched_twh": 0.010946,
+        "switched_share": 0.000491,
+        "switched_unit_hours_dispatching": 206
+      },
+      "campd_observed": {
+        "observed_switched_twh": 0.01284,
+        "observed_switched_unit_hours": 452,
+        "capable_gas_winter_twh": 4.99819,
+        "coverage_note": "CAMPD covers only the capable plants that report to it; this is a LOWER bound on fleet-wide observed switching"
+      }
+    }
+  }
+}
