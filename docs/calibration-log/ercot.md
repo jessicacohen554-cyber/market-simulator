@@ -4290,3 +4290,88 @@ touched, and the CAISO/NEISO storage verdicts were neither imported nor
 exported.
 
 Next shorthand: ercot-155.
+
+---
+
+## ercot-155 (2026-08-03) — the evening "dispersion" object is a COMMITMENT-STATE defect, not an offer-slope or fleet-composition one; the chartered arm is REFUSED and ERCOT-154 §4's premise is corrected
+
+**Phase 1 only. NO LP built, NO year solved, NO mechanism armed, NO flag added,
+keeper UNCHANGED (`2026-08-02-ercot150b-zonal-anchor`).** Probe
+`scripts/probes/ercot155_dispersion_census.py`; committed record
+`results/calibration/ercot155_dispersion_census.json`; diagnosis
+`docs/DIAGNOSIS-ercot155-evening-dispersion-2026-08-03.md`. Inputs all
+already committed: the keeper's `meta.json` + hourly sidecars, the four 60-Day
+SCED extracts, `ercot_<year>_ordc_reserves_hourly.parquet`.
+
+**ERCOT-154 §4's premise is CORRECTED.** "~25 GW of thermal headroom priced
+within 1.6 \$/MWh per GW" took annual-max thermal dispatch (60.4–61.1 GW) minus
+the evening mean (35.3–35.7 GW) — a *cross-hour* difference — as if it were
+headroom in an evening hour. Measured on the keeper's own arrays the evening
+headroom is **17.49 / 15.51 / 15.34 GW**, and the stack over it is **convex**:
+1.1–1.2 \$/MWh per GW for the first ~5 GW, 7.8–13.4 by 60–90 % of headroom,
+reaching only **\$103–116** at the 90 % rung before a 38 MW West CT tail
+(HR 155.17) jumps to \$2,797.56. The 1.557/1.616 figure is a correctly-measured
+**local** slope at the operating point. Instrument validated independently: the
+P0 `mc_base` near-margin slope (1.2–1.9 \$/MWh per GW over the first 1 GW)
+reproduces ERCOT-154's P1 *realized* matched-hour slope, so the startup markup
+is second-order here.
+
+**THE FINDING — commitment state, not pricing.** Against ERCOT's own 60-Day
+SCED conduct on **matched calendar days** (event and control day-files never
+pooled): in the evening ERCOT holds **159–224** thermal resources online at
+**92.0–96.2 % of HSL**, leaving **0.92–2.80 GW** of energy headroom, with
+**128–196** resources / **17.05–22.94 GW** of thermal HSL **offline** and absent
+from the 5-minute stack. The model has **53.1–54.4 GW** of available thermal at
+**65.7–68.0 %** loading = **15.3–17.5 GW** of headroom — **5.5–19×** the real
+market's — all dispatchable from zero at marginal cost in any hour, because the
+LP carries no integer commitment. The model gets the **right MWh from the right
+classes by the wrong route** (evening thermal dispatch 35.70/36.09/36.09 GW vs a
+real Base-Point sum of 34.33 control / 41.02 event; C1 16/16, C2 PASS).
+
+**The chartered offer-dispersion arm is REFUSED — rules 1/13/20, not on fit.**
+The MW it would re-price are MW ERCOT keeps **cold**; assigning event-day
+conduct prices to them is a fitted proxy for a missing physical constraint with
+no forward analogue. It could not reach the object anyway: the measured
+across-resource spread on the comparable 1 GW band is **\$2.66–47.43** (SCED)
+vs **\$0.71–2.18** (model) — tens of dollars where the C3c tail needs hundreds.
+On event evenings ERCOT prices **24–53 %** of its first marginal GW above \$100;
+the model prices **none** of it above \$75. Composition is exonerated: same
+fleet, stable band occupancy (CT_PEAKER 0.265–0.299, ST_GAS 0.271–0.289,
+CC_REGULAR 0.211–0.252, COAL 0.071–0.111), and the LEVEL program's closure is
+corroborated (capped at \$200 the model is within −5.1/+0.5/−4.5 %).
+
+**The successor, and why it is credible.** `results/scarcity.py::
+ercot_rtolcap_supply_cap_mw` already diagnoses the identical defect on the
+**reserve** side in its own words — the co-opt "count[s] every reserve-eligible
+thermal unit's *full installed* headroom … including cold slow-start units a
+perfect-foresight LP leaves idle but still scores as available" — and the keeper
+arms `ercot_reserve_supply_cap=True` to fix it. **Nothing constrains energy.**
+The measured instrument is already committed for all three years in the same
+file: `rtolhsl` (online HSL, evening mean 58.87/62.64/67.81 GW). New matrix row
+`energy_online_capability_cap` (ERCOT `U`), §5.1 queue item 9. **UNCHARTERED —
+a structural LP change needing owner authorization, its own precommit, and a
+rule-19 precedence reconciliation against the availability lane (outages) and
+the commitment bridges (which own the lower bound).**
+
+**Downstream — one gap behind several standing residuals.** C3a-2023 (−32.6 %)
+is ~entirely tail wedge (capped at \$200 within −5.1 %; hours >\$200 **63 vs
+181**; wedge \$7.21 vs \$18.61/MWh). The ECRS mechanism is **correctly armed and
+correctly dated** — `ercot_ecrs_conservative_deployment=True`, measured
+ASPLANNP433 onset 2023 h3839 ≈ June 9–10 (ECRS go-live June 10 2023), published
+2024-08-01 operating-procedure reform at `ERCOT_ECRS_RELEASE_REFORM_HOUR =
+5088`, and scarcity does collapse across the years as the reform says (reserve
+price >\$1 in 54/14/0 h; LMP >\$1000 in 22/7/0 h) — but withdrawing 1–3 GW from
+a **15 GW cushion** cannot move a dual. ERCOT-153's evening-ramp premium and
+ERCOT-154's \$1.38/\$3.05 storage ceiling are the same cushion on other
+instruments.
+
+**Governance.** No mechanism tested in the LP sense, no flag added, no
+`ScenarioConfig` field, no solve, no registration (the
+ERCOT-142/143/145/147/152/154 no-LP pattern). Rule-28(b) duty discharged: new
+row `energy_online_capability_cap` + §5.1 items 7b struck / 7c correction /
+9 opened; `check_mechanism_matrix.py` integrity + keeper stamps PASS. Holdouts
+untouched — 2023–2025 only; the SCED corpus is 2024/2025 by construction.
+ERCOT-scoped (rule 25). Keeper disposition surfaced to the owner, not
+self-decided.
+
+Next shorthand: ercot-156.
