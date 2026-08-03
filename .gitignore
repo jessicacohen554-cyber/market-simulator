@@ -504,3 +504,12 @@ tmp_*.bin
 /scratch_logs/
 .comp_cache/
 results/calibration/caiso154_slopes_PJM.csv
+
+# FFR-3A owner-decision execution + T1 re-gate battery (run_full_horizon /
+# run_capacity_hindcast --out-dir caches and their loose run logs). Same class
+# as /results/ffr1a/ and /results/full-horizon/ — forecast legs are registered
+# to frontend/data/forecast/ via scripts/register_forecast_run.py, never as
+# tracked bundles here (CLAUDE.md rule 15). results/ffr3a/README.md stays
+# TRACKED (it is the lane's record, not an output) and is unaffected by this
+# rule, which only ever applies to untracked paths.
+/results/ffr3a/
