@@ -38,13 +38,70 @@ unit reverts to the economic screen.
 
 ## Vintage
 
-**Registry vintage: 2026-07-31** (FFR-PA re-query pass; every row's `accessed`
-stamp carries it). Previous vintage 2026-07-05. See
-`docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md` for the
-per-ISO findings, the Eddystone §202(c) adjudication, and the proposed
-quarterly re-query cadence.
+**Registry vintage: 2026-08-03** (FFR-PA refresh pass; every row's `accessed`
+stamp carries it). Previous vintages 2026-07-31, 2026-07-05. See
+`docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-08-03.md` for the
+per-ISO findings, the FR-18 Eddystone §202(c) adjudication, the Schahfer /
+Culley hold-out, and the proposed quarterly re-query cadence.
 
-## Status — 2026-07-31 re-query pass (current)
+## Status — 2026-08-03 refresh pass (current)
+
+**Zero rows changed exit behaviour.** No row was added, deleted, or had its
+`exit_year` moved. Every row's `accessed` stamp advanced to 2026-08-03, one
+citation was strengthened, and two new candidates were adjudicated and held
+out. In a registry that bypasses the reliability floor, a pass that correctly
+changes nothing is a result, not a non-event.
+
+- **PJM** (14 rows, 8 live) — **Eddystone 3–4 (FR-18): successor state STILL
+  NOT PUBLISHED.** The DOE 2026 §202(c) log remains current through
+  No. 202-26-37 (2026-07-26) with no Eddystone order after No. 202-26-24, which
+  stays operative **through 2026-08-22 (19 days out)**. The honest entry is
+  *pending*; nothing was recorded speculatively and the rows stay
+  `superseded=true`. (Trap noted for the next pass: a numbering search surfaces
+  "202-26-38/39/40" — those are the DOE **natural-gas** order series, not
+  §202(c) electric, and are not a successor.) Provenance strengthened only:
+  DOE Orders **No. 202-25-4A** (2025-08-01, denial of rehearing by operation of
+  law) and **No. 202-25-4B** (2026-01-10, order addressing rehearing arguments)
+  added to the chain — they show it survived rehearing, and change no field.
+  **Brandon Shores / Wagner's 2031-05 extension is still un-approved at FERC**,
+  so those four rows stay 2029-05 — but this is now the registry's
+  most-likely-to-move row: PJM asked FERC to decide by **early August 2026**.
+  Cardinal 3 and West Lorain 1A/1B stay held out (deactivation letters posted,
+  **no reliability determination** — PJM's page is unchanged since 2026-07-30).
+- **MISO** (7 rows, 4 live) — Campbell's DOE No. 202-26-22 has **no published
+  successor** and expires **2026-08-16 (13 days out)**, the nearest expiry in
+  the registry. **Two §202(c)-deferred coal clusters the prior passes never
+  saw were found and HELD OUT: R M Schahfer 17 & 18 (846 MW) and F B Culley 2
+  (103.7 MW).** Both are held out on a *bar* question, not a sourcing one: a
+  `superseded` row still needs an underlying **binding** instrument, and DOE's
+  own orders source these units' exit dates to **EIA-860 Schedule 3** — the
+  owner's self-reported plan. IURC Cause No. 46198 was read directly and does
+  not order the Schahfer retirement (it is a Templeton Wind CPCN order that
+  merely recites the date in testimony). See the Attachment Y note below.
+- **ERCOT** (3 rows, 3 live) — re-queried, **unchanged**. Braunig 3's RMR term
+  is still Start 2025-03-02 / Stop 2027-03-01 with no extension executed.
+- **CAISO** (10 rows, 8 live) — re-queried, **unchanged**. OTC final compliance
+  stays 2026-12-31 for all six OTC units (2.86 GW binding in ~4 months). The
+  NRC's April 2026 Diablo Canyon licence renewals to 2044/2045 were found and
+  **deliberately not applied**: SB 846's statutory ceiling (2029/2030) is the
+  instrument, and under Addendum E licence dates are not an exit channel.
+- **NEISO** (2 rows) — re-queried, **unchanged** (consent decree, 2028-06).
+- **NYISO** (0 rows) — **still an honest zero.** Danskammer remains held out:
+  its determination fixes no date requiring the unit offline. Near-term watch —
+  its **2026-08-01 contingency date has just passed**.
+
+### MANUAL DOWNLOADS NEEDED — 2026-08-03 update
+
+The MISO blocker is **re-characterised** this pass: it is two *different*
+blockers on two hosts, and the OASIS half is not what the previous pass assumed.
+
+| Source | Blocker (verified 2026-08-03) | What it would unblock |
+|---|---|---|
+| **MISO Attachment Y** approved-retirements posting + per-request Attachment Y Study Reports | **Two distinct blockers.** (a) `www.misoenergy.org` → HTTP **403** on every path (site-side WAF); `cdn.misoenergy.org` 403s on directories but **serves individual documents fine**, which is how this pass read MISO's LOLE, MTEP and IMM materials — none publishes the unit list. (b) `www.oasis.oati.com` → **not a WAF: TLS chain validation failure** (`unable to get local issuer certificate`), identical with the system trust store and with the agent-proxy CA bundle, and the proxy reports no relay failures — so it is the OATI origin's own chain. TLS verification is never disabled, so the route is closed. This pass **confirmed OASIS is the canonical home** by locating a real published example (`…/MISOdocs/Presque_Isle_Att_Y_Study_Report_2014-08-15_PUBLIC.pdf`); that named document is blocked by the same TLS failure, so the block is total. | The standing never-done cross-check — now with **named targets**: query **Schahfer 17/18 (plant 6085)** and **Culley 2 (plant 1012)** first. If either carries an approved Attachment Y *retirement*, it becomes a `superseded=true` row on the Campbell pattern and this registry is currently missing **950.7 MW** of confirmed MISO exits. |
+| PJM tabular generator-deactivation list | Unchanged: renders client-side and partly behind `pjmsignin`; only the document index is machine-readable. `deactivation-mothballed-units.xlsx` is retrievable but lists only mothballed units (currently none). | Adjudicating Cardinal 3 and West Lorain 1A/1B against real deactivation dates rather than document-posting dates. |
+| ISO-NE nonprice-retirement / de-list-bid tracker | Unchanged: no current edition linked from the reachable FCM qualification pages; the cited copy self-reports 2024-02-28. | Re-checking the de-list candidates held out for want of an EIA-860 identity match. |
+
+## Status — 2026-07-31 re-query pass (superseded by the pass above; retained for the audit trail)
 
 Two rows changed exit behaviour, both by **adding** a row a prior pass had held
 out; **no existing `exit_year` moved** and no row was deleted.
