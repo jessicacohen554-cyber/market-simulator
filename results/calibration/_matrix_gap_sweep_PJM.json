@@ -965,6 +965,11 @@
       "coverage": "prose_only",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        },
+        {
           "row": "dam_availability_rebasis",
           "cells": "KUGR.R",
           "cell": "G"
@@ -1156,8 +1161,14 @@
       "field": "ct_drag_cap",
       "default": 0.47,
       "keeper_value": 0.46,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1165,8 +1176,14 @@
       "field": "ct_drag_intercept",
       "default": -0.1427,
       "keeper_value": -0.9987,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1174,8 +1191,14 @@
       "field": "ct_drag_slope_per_gw",
       "default": 0.00703,
       "keeper_value": 0.01108,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1272,6 +1295,11 @@
           "row": "nuclear_unit_availability",
           "cells": "KKUUKK",
           "cell": "U"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -1400,7 +1428,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -1607,7 +1635,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -1702,7 +1730,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2087,7 +2115,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
+          "cells": ".UUUK.",
           "cell": "U"
         },
         {
@@ -2317,7 +2345,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -2417,7 +2445,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2927,7 +2955,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
+          "cells": ".UUUK.",
           "cell": "U"
         },
         {
@@ -3321,6 +3349,16 @@
           "row": "reference_price_interface",
           "cells": ".UKKGU",
           "cell": "K"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".UUUK.",
+          "cell": "U"
         }
       ],
       "excluded": false,
@@ -3418,6 +3456,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "R"
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -3478,7 +3521,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         }
       ],
@@ -3508,7 +3551,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         }
       ],
@@ -3523,9 +3566,6 @@
     "coal_sub_passthrough_floor",
     "coal_sub_passthrough_sigmoid",
     "coal_sync_srmc_tranche",
-    "ct_drag_cap",
-    "ct_drag_intercept",
-    "ct_drag_slope_per_gw",
     "ct_intermediate_cf_threshold",
     "ct_intermediate_split",
     "gas_st_drag_cap",
@@ -3536,6 +3576,9 @@
   ],
   "shared_prose_only": [
     "cc_outage_derate_from_top",
+    "ct_drag_cap",
+    "ct_drag_intercept",
+    "ct_drag_slope_per_gw",
     "wefor_residual"
   ],
   "shared_excluded": [
@@ -3708,48 +3751,6 @@
         "pjm137_control_A": 0.39,
         "pjm137_ctheatrate_B": 0.39,
         "pjm140_control_A": 0.39
-      }
-    },
-    {
-      "field": "ct_drag_slope_per_gw",
-      "default": 0.00703,
-      "keeper_value": 0.01108,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "pjm135_netpos_keeper_C": 0.01108,
-        "pjm136_control_A": 0.01108,
-        "pjm136_lossurf_B": 0.01108,
-        "pjm137_control_A": 0.01108,
-        "pjm137_ctheatrate_B": 0.01108,
-        "pjm140_control_A": 0.01108
-      }
-    },
-    {
-      "field": "ct_drag_intercept",
-      "default": -0.1427,
-      "keeper_value": -0.9987,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "pjm135_netpos_keeper_C": -0.9987,
-        "pjm136_control_A": -0.9987,
-        "pjm136_lossurf_B": -0.9987,
-        "pjm137_control_A": -0.9987,
-        "pjm137_ctheatrate_B": -0.9987,
-        "pjm140_control_A": -0.9987
-      }
-    },
-    {
-      "field": "ct_drag_cap",
-      "default": 0.47,
-      "keeper_value": 0.46,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "pjm135_netpos_keeper_C": 0.46,
-        "pjm136_control_A": 0.46,
-        "pjm136_lossurf_B": 0.46,
-        "pjm137_control_A": 0.46,
-        "pjm137_ctheatrate_B": 0.46,
-        "pjm140_control_A": 0.46
       }
     },
     {

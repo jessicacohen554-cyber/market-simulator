@@ -414,7 +414,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         },
         {
@@ -3650,6 +3650,11 @@
           "row": "nuclear_unit_availability",
           "cells": "KKUUKK",
           "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -3820,7 +3825,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         },
         {
@@ -3988,7 +3993,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         },
         {
@@ -4088,7 +4093,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -4598,7 +4603,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
+          "cells": ".UUUK.",
           "cell": "."
         },
         {
@@ -5083,7 +5088,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         }
       ],
@@ -5133,7 +5138,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         }
       ],
@@ -5163,7 +5168,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "K"
         }
       ],
