@@ -1,0 +1,393 @@
+{
+ "prereg": "results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md",
+ "arms": {
+  "control": "/home/user/market-simulator/results/calibration/pjm146_control_A",
+  "arm": "/home/user/market-simulator/results/calibration/pjm146_rggi_B",
+  "keeper": "/home/user/market-simulator/results/calibration/pjm143_hy_level_B"
+ },
+ "flag_fidelity": {
+  "passed": true,
+  "A": false,
+  "B": true
+ },
+ "K1_mechanism_live": {
+  "passed": true,
+  "years": {
+   "2023": {
+    "price_per_tonne": 14.87,
+    "n_units_nonzero_adder": 871,
+    "n_units_adder_gt_0p5": 871,
+    "member_capacity_mw": 58545.6,
+    "mc_identity_worst_abs_err": 3.7481129311345285e-13,
+    "mc_hour_invariance_worst": 4.547473508864641e-13,
+    "adder_by_class_capwtd": {
+     "": 14.87,
+     "CC_CHP": 8.045,
+     "CC_REGULAR": 6.082,
+     "COAL": 17.157,
+     "CT_CHP": 8.636,
+     "CT_PEAKER": 9.125,
+     "ST_CHP": 4.902,
+     "ST_GAS": 10.124
+    },
+    "k3": {
+     "va_membership_ok": true,
+     "va_expected": 1.0,
+     "n_va_units": 719,
+     "nonmember_zero_ok": true,
+     "member_core_one_ok": true,
+     "n_member_core_units": 523,
+     "n_zone_fallback_rows": 236
+    },
+    "k1_ok": true
+   },
+   "2024": {
+    "price_per_tonne": 22.83,
+    "n_units_nonzero_adder": 456,
+    "n_units_adder_gt_0p5": 456,
+    "member_capacity_mw": 32094.1,
+    "mc_identity_worst_abs_err": 5.861977570020827e-14,
+    "mc_hour_invariance_worst": 1.4210854715202004e-13,
+    "adder_by_class_capwtd": {
+     "": 22.83,
+     "CC_CHP": 10.889,
+     "CC_REGULAR": 9.531,
+     "COAL": 25.862,
+     "CT_CHP": 13.209,
+     "CT_PEAKER": 21.793,
+     "ST_CHP": 6.294,
+     "ST_GAS": 14.954
+    },
+    "k3": {
+     "va_membership_ok": true,
+     "va_expected": 0.0,
+     "n_va_units": 719,
+     "nonmember_zero_ok": true,
+     "member_core_one_ok": true,
+     "n_member_core_units": 523,
+     "n_zone_fallback_rows": 236
+    },
+    "k1_ok": true
+   },
+   "2025": {
+    "price_per_tonne": 24.35,
+    "n_units_nonzero_adder": 457,
+    "n_units_adder_gt_0p5": 457,
+    "member_capacity_mw": 32673.0,
+    "mc_identity_worst_abs_err": 7.460698725481052e-14,
+    "mc_hour_invariance_worst": 1.4210854715202004e-13,
+    "adder_by_class_capwtd": {
+     "": 24.35,
+     "CC_CHP": 11.445,
+     "CC_REGULAR": 10.181,
+     "COAL": 25.617,
+     "CT_CHP": 14.057,
+     "CT_PEAKER": 14.576,
+     "ST_CHP": 6.713,
+     "ST_GAS": 15.226
+    },
+    "k3": {
+     "va_membership_ok": true,
+     "va_expected": 0.0,
+     "n_va_units": 719,
+     "nonmember_zero_ok": true,
+     "member_core_one_ok": true,
+     "n_member_core_units": 524,
+     "n_zone_fallback_rows": 236
+    },
+    "k1_ok": true
+   }
+  }
+ },
+ "K2_control_integrity": {
+  "passed": true,
+  "basis": "scorecard (gate); strict byte basis reported below",
+  "byte": {
+   "2023": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "COAL_BIT": 0.0,
+     "COAL_PRB": 0.0,
+     "COAL_WC": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "VIRTUAL_DEC": 0.0,
+     "VIRTUAL_INC": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2024": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "COAL_BIT": 0.0,
+     "COAL_PRB": 0.0,
+     "COAL_WC": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "VIRTUAL_DEC": 0.0,
+     "VIRTUAL_INC": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   },
+   "2025": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {
+     "CC_CHP": 0.0,
+     "CC_REGULAR": 0.0,
+     "COAL_BIT": 0.0,
+     "COAL_PRB": 0.0,
+     "COAL_WC": 0.0,
+     "CT_CHP": 0.0,
+     "CT_PEAKER": 0.0,
+     "OTHER": 0.0,
+     "ST_CHP": 0.0,
+     "ST_GAS": 0.0,
+     "VIRTUAL_DEC": 0.0,
+     "VIRTUAL_INC": 0.0,
+     "biomass": 0.0,
+     "hydro": 0.0,
+     "import": 0.0,
+     "nuclear": 0.0,
+     "oil": 0.0,
+     "solar": 0.0,
+     "wind": 0.0
+    }
+   }
+  },
+  "keeper_criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "control_criteria": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  }
+ },
+ "K3_membership_audit": {
+  "passed": true
+ },
+ "K4_sign": {
+  "passed": true
+ },
+ "K5_liveness": {
+  "passed": true,
+  "rule": "lw |delta| >= $0.1 in >=1 year; all-years miss => verdict I"
+ },
+ "price_deltas": {
+  "2023": {
+   "lw_control": 31.4213,
+   "lw_arm": 32.8439,
+   "lw_delta": 1.4226,
+   "zone_delta": {
+    "PJM_AEP_Ohio": 1.3408,
+    "PJM_ATSI": 1.3582,
+    "PJM_Central_PA": 1.3981,
+    "PJM_ComEd": 1.2042,
+    "PJM_Dominion": 1.4086,
+    "PJM_EMAAC": 1.5652,
+    "PJM_SWMAAC": 1.4268,
+    "PJM_West_APS": 1.3766
+   }
+  },
+  "2024": {
+   "lw_control": 31.1943,
+   "lw_arm": 32.6222,
+   "lw_delta": 1.4278,
+   "zone_delta": {
+    "PJM_AEP_Ohio": 1.2995,
+    "PJM_ATSI": 1.3608,
+    "PJM_Central_PA": 1.4278,
+    "PJM_ComEd": 1.1554,
+    "PJM_Dominion": 1.4151,
+    "PJM_EMAAC": 1.5858,
+    "PJM_SWMAAC": 1.4582,
+    "PJM_West_APS": 1.3968
+   }
+  },
+  "2025": {
+   "lw_control": 42.3679,
+   "lw_arm": 43.6275,
+   "lw_delta": 1.2595,
+   "zone_delta": {
+    "PJM_AEP_Ohio": 1.0844,
+    "PJM_ATSI": 1.1415,
+    "PJM_Central_PA": 1.208,
+    "PJM_ComEd": 1.0076,
+    "PJM_Dominion": 1.1836,
+    "PJM_EMAAC": 1.452,
+    "PJM_SWMAAC": 1.2133,
+    "PJM_West_APS": 1.163
+   }
+  }
+ },
+ "member_state_energy": {
+  "2023": {
+   "control_twh": null,
+   "arm_twh": null,
+   "delta_twh": null
+  },
+  "2024": {
+   "control_twh": null,
+   "arm_twh": null,
+   "delta_twh": null
+  },
+  "2025": {
+   "control_twh": null,
+   "arm_twh": null,
+   "delta_twh": null
+  }
+ },
+ "class_energy_delta_twh": {
+  "2023": {
+   "CC_CHP": -1.3023,
+   "CC_REGULAR": -12.7955,
+   "COAL_BIT": 2.7741,
+   "COAL_PRB": 0.4638,
+   "COAL_WC": 0.3058,
+   "CT_CHP": 0.0607,
+   "CT_PEAKER": 3.6679,
+   "ST_CHP": -0.0359,
+   "ST_GAS": 1.1598,
+   "VIRTUAL_DEC": 1.4129,
+   "VIRTUAL_INC": 2.032,
+   "import": 2.4184
+  },
+  "2024": {
+   "CC_CHP": -0.5094,
+   "CC_REGULAR": -14.7789,
+   "COAL_BIT": 1.5518,
+   "COAL_PRB": 0.4508,
+   "COAL_WC": 0.289,
+   "CT_CHP": -0.0019,
+   "CT_PEAKER": 5.8856,
+   "ST_CHP": 0.0133,
+   "ST_GAS": 1.2697,
+   "VIRTUAL_DEC": 1.8594,
+   "VIRTUAL_INC": 2.5293,
+   "import": 1.9631
+  },
+  "2025": {
+   "CC_CHP": -0.2267,
+   "CC_REGULAR": -10.0033,
+   "COAL_BIT": -0.4218,
+   "COAL_PRB": 0.244,
+   "COAL_WC": 0.0557,
+   "CT_CHP": 0.0438,
+   "CT_PEAKER": 5.0925,
+   "ST_CHP": -0.0124,
+   "ST_GAS": 1.4313,
+   "VIRTUAL_DEC": 1.7216,
+   "VIRTUAL_INC": 1.2069,
+   "import": 1.3225,
+   "oil": -0.0011
+  }
+ },
+ "criteria": {
+  "keeper": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "control": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "PASS",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "arm": {
+   "fuelmix": "FAIL",
+   "sysvol": "PASS",
+   "price_mean": "FAIL",
+   "price_shape": "PASS",
+   "price_tail": "PASS",
+   "dispatch_corr": "PASS",
+   "governance": "PASS",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "determinations": {
+   "keeper": "CALIBRATED",
+   "control": "CALIBRATED",
+   "arm": "NOT-YET"
+  }
+ },
+ "slack_dump": {
+  "2023": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  },
+  "2024": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  },
+  "2025": {
+   "control": [
+    0.0,
+    0.0
+   ],
+   "arm": [
+    0.0,
+    0.0
+   ]
+  }
+ }
+}
