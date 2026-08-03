@@ -317,6 +317,88 @@ sitting) · PJM `2026-07-31-pjm-143b-hy-level` · CAISO `2026-07-31-caiso153-rei
 
 ---
 
+## Addendum E — **FFR-SB's nuclear box is SIGNED; the licence ceiling is DECLINED by owner decision** (workstream manager, 2026-08-03, HEAD `bfeddc6`)
+
+*Appended by the FFR/FH workstream manager. Records the owner's answers to FFR-SB's DB-A…DB-E
+box, and the FFR-3C attribution that landed in the same window. **The DB-A answer declines the
+memo's primary recommendation** — that is an owner decision, taken twice, and it is recorded here
+as a deliberate simplification, not an oversight.*
+
+### E.1 The signed set
+
+| Item | **SIGNED** | Status |
+|---|---|---|
+| **DB-A** — primary design | **IGNORE LICENCE EXPIRATIONS ENTIRELY.** A reactor runs as long as it is economic. The registry feeds nothing in the exit path. | **Declines memo candidate (c).** Owner words: *"Ignore license expirations and assume the plants can continue running so long as its economic."* Re-put once with the measured consequence below and **REAFFIRMED**. |
+| **DB-B** — SLR/renewal base case | **ASSUME RENEWAL** | **Signed but INERT** — with no ceiling to extend, there is nothing for the renewal assumption to act on. Recorded so a later reader does not mistake its inertness for an omission. |
+| **DB-C** — non-renewal vocabulary | **REUSE the existing `regulatory_order` class** | **LIVE, and now load-bearing.** See E.3. |
+| **DB-D** — sequencing and arming | **CONFIRM the ordering** | **Largely MOOT** for licence ceilings (nothing to implement or arm). Retains meaning only for the DB-C channel. |
+| **DB-E** — chartering | — | **NO implementing session is chartered** for licence-ceiling consumption. `data/nuclear_license.py` and the 59-unit registry remain a curated data asset consumed by nothing in the solve path. |
+
+### E.2 The measured consequence of DB-A, for the standing disclosure list
+
+Put to the owner before the reaffirmation, computed from
+`data/raw/nuclear-license-status/*.csv` (59 units):
+
+- Only **11 of 59** reactors hold a *granted* subsequent licence renewal; **47 units / 51.2 GW**
+  have a current licence expiring inside the 2026–2050 horizon without one.
+- **Today the decision is nearly inert**: there are **zero** units that have declined to renew, so
+  a ceiling would bind on nothing now. DB-A and the memo's candidate (c) are observationally
+  identical across most of the horizon.
+- They diverge for exactly **7 units / 6.04 GW, all in 2046–2050**: Perry 1 (2046), Clinton 1
+  (2047), Nine Mile Point 1 (2049), Ginna 1 (2049), **Dresden 2 (2049)**, **Monticello 1 (2050)**,
+  **Point Beach 1 (2050)**.
+- **Three of those seven — Dresden 2, Monticello 1, Point Beach 1, 2.34 GW — hold an NRC-*granted*
+  80-year endpoint**, and no regulatory pathway past 80 years currently exists. Under DB-A the
+  model may dispatch them beyond the date their licence ends.
+
+**This is a deliberate, owner-stated simplification.** It carries a rule 14 `[R-ACCURATE]` tension
+— the licence dates are accurate measured data with a clean forward analogue — and the owner's
+stated basis is that a plant should run so long as it is economic. **Any forecast quoting
+post-2046 nuclear capacity in PJM, MISO or NYISO carries this assumption**, so it belongs in the
+peer-review §4 standing disclosure list, not only in this packet.
+
+### E.3 What still removes a reactor, under DB-A
+
+DB-A removes the *paper-date* channel only. A nuclear unit can still exit exogenously through
+**step 0 confirmed exits** when a licensee files permanent cessation (10 CFR 50.82) or withdraws a
+renewal with a shutdown date — entered under the existing `regulatory_order` class per DB-C. That
+is now the **only** exogenous nuclear exit channel, which raises DB-C from a schema footnote to
+the load-bearing path. Economic retirement (step 3) is otherwise the sole determinant, as signed.
+
+### E.4 FFR-3C landed in the same window — blocker 0 is ANSWERED
+
+`docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md` (PR #3360). Nothing was tuned, unarmed,
+widened, promoted or registered; both signed mechanisms stay armed. Its answer to the owner's
+question is **(c) — both, with a measured split, and the split is MEMBERSHIP vs CALENDAR**:
+
+- **WHICH units retire = REAL going-forward economics.** The corrected rule identifies them better
+  than the rule it replaced (recall MISO 2/17→13/17, PJM 9/17→13/17, T-R10a/b FAIL→PASS on 3/3 LOYO).
+- **WHEN they leave = GRAIN ARTIFACT.** The R-NEW redesign replaced a mechanism that had *both* a
+  latency term and a throughput cap with one that has **only** the latency term, on the rule-19
+  argument that queue latency and queue throughput are the same quantity. They are not: with only
+  latency, **exit-wave width is invariant at exactly one year no matter how many units fail.**
+- **The trough DEPTH is the INTERACTION — an asymmetry nobody measured before arming both halves:**
+  **exit throughput uncapped, entry throughput capped at 2× the measured record** by D-2. Model
+  single-year exits run **1.6×–4.8× the largest single-year thermal deactivation these ISOs have
+  ever recorded**. The reserve-margin trough is the integral of that asymmetry.
+- **MISO did NOT reproduce the ERCOT pattern and its I12 did NOT flip** — contradicting the
+  sitting's own by-name prediction. MISO has **zero economic exits in the window**, so the second
+  attribution the owner commissioned returns **no information about the retirement half**. **ERCOT
+  remains the only ISO where D-1 is attributed at all**, and rule 25 `[R-ISO-SCOPE]` forbids
+  importing it.
+- **Instrument defect (§2.1): ERCOT's I12 band is on a different basis from the floor the model
+  enforces** — a **6.65 pp** gap. FFR-3A's ERCOT headline is **overstated in magnitude**: the
+  deepest excursion is **−8.65 pp, not −15.3 pp**, and it breaches in **three** years, not four.
+  **The I12 FAIL verdict is robust and does not go away.** **CAISO's −3.1 % is NOT a basis
+  artifact** — scored on the model's own basis, an 18.1 pp shortfall within the model.
+
+**The new owner question this raises** (not signed, not put): whether to charter a G-31 fix lane
+arming an **exit-throughput** mechanism to restore the symmetry D-2 broke. FFR-3C explicitly did
+**not** ship one — the charter forbade it — and states that quantifying the artifact's share of
+the ERCOT/CAISO trough *requires* one. §6 of its doc carries what such a lane would need.
+
+---
+
 ## Addendum D — **Post-execution sitting: the four items FFR-3A raised are SIGNED** (workstream manager, 2026-08-03, HEAD `195ff18`)
 
 *Appended by the FFR/FH workstream manager. Addendum C recorded the eleven decisions of the
