@@ -103,7 +103,6 @@ import argparse
 import json
 import logging
 import sys
-from dataclasses import MISSING
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -129,6 +128,9 @@ from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E4
 from market_sim.pipeline.api import run_scenario  # noqa: E402
 from market_sim.runner import HINDCAST_BRIDGE_YEARS as _RUNNER_BRIDGE_YEARS  # noqa: E402
 from scripts.lib import holdout_policy  # noqa: E402
+from scripts.lib.forecast_posture import (  # noqa: E402
+    shipped_capacity_clearing_by_iso,
+)
 
 # Rule-22 carve-outs now live in scripts/lib/holdout_policy.py (FH-1 — moved
 # out of prose and this file's former local literals): the {2021} seed, the
@@ -271,21 +273,14 @@ def _validate_window(
 def production_capacity_clearing_default() -> dict[str, bool] | None:
     """Return the SHIPPED ``capacity_market_clearing_by_iso`` default.
 
-    Read off the ``ScenarioConfig`` dataclass field rather than copied here, so
-    an owner flip of the production posture (FFR-3A step 0) is followed by the
-    hindcast harness with no edit in this file — a hardcoded mirror would be a
-    second, silently-diverging tuning channel (rule 24).
-
-    Returns ``None`` when the field carries no ``default_factory`` (i.e. a
-    plain default), which reproduces the pre-FFR-2E harness behaviour.
+    Thin alias over :func:`scripts.lib.forecast_posture.
+    shipped_capacity_clearing_by_iso`, which FFR-3D made the ONE reader of the
+    shipped posture across every runner (owner decision C.4(a) B1, signed
+    2026-08-03). The implementation moved out of this file unchanged; the name
+    is retained because ``resolve_capacity_clearing_posture`` and the FFR-2E
+    posture tests are written against it.
     """
-    spec = getattr(ScenarioConfig, "__dataclass_fields__", {}).get(
-        "capacity_market_clearing_by_iso"
-    )
-    factory = getattr(spec, "default_factory", None) if spec is not None else None
-    if factory is None or factory is MISSING:
-        return None
-    return dict(factory())
+    return shipped_capacity_clearing_by_iso()
 
 
 def resolve_capacity_clearing_posture(
