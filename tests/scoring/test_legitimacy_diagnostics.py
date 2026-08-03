@@ -26,6 +26,7 @@ from scripts.legitimacy_diagnostics import (
     D6_CALIBRATION_YEARS,
     D6_MARKER_FILE,
     aggregate_floors_by_plant,
+    build_plant_matrices,
     at_floor_mask,
     d1_shape_metrics,
     run_d1,
@@ -1551,3 +1552,225 @@ class TestD2KeepersVerify:
         res = ld.run_d2_keepers_verify(root)
         assert not res.passed
         assert any("CT_PEAKER" in f for f in res.failures)
+
+
+# ---------------------------------------------------------------------------
+# pjm-149 — the D-2/D-4 DISPATCH-PATH attribution drop
+# ---------------------------------------------------------------------------
+
+
+class TestDispatchPathIndependence:
+    """``build_plant_matrices`` must not lose a floored plant because the
+    active dispatch source happens not to cover it (PREREG-pjm149 §3.1/§3.2).
+
+    Before pjm-149 the row set was a comprehension over the dispatch map alone,
+    so on the CAMPD-bench-keyed run payload every floored plant with no CEMS
+    meter — PJM's 14 CC_CHP plants, the nuclear must-run block at all six ISOs,
+    CAISO/NYISO's hydro min-flow fleet — silently lost all D-2/D-4 attribution.
+    """
+
+    @staticmethod
+    def _floors(codes, level, mech, groups, hours=HOURS):
+        """One floored unit per plant code; returns aggregate_floors_by_plant."""
+        n = len(codes)
+        return aggregate_floors_by_plant(
+            {
+                "min_gen": np.array([[level] * hours] * n, dtype=float),
+                "mechanism": np.array([[mech] * hours] * n, dtype=np.int8),
+                "unit_ids": np.array([f"u{c}" for c in codes]),
+                "plant_code": np.array(codes),
+                "plant_group": np.array(groups, dtype=object),
+            }
+        )
+
+    def _matrices(self, dispatch_map, codes, level, mech, groups, hours=HOURS):
+        pids, floor_sum, mech_plant, grp = self._floors(
+            codes, level, mech, groups, hours
+        )
+        return build_plant_matrices(
+            dispatch_map,
+            [str(p) for p in pids],
+            floor_sum,
+            mech_plant,
+            grp,
+            {},
+            t=hours,
+        )
+
+    def test_floored_plant_absent_from_dispatch_map_keeps_its_rows(self):
+        """A4/A5: the payload path drops plant 20; its rows must survive.
+
+        Plant 10 is payload-present and dispatches above its floor; plant 20 is
+        payload-ABSENT. On HEAD before pjm-149 the D-2 output carried plant 10
+        only and 20's forced energy vanished with no failure and no note.
+        """
+        h = HOURS
+        payload_only = {"10": np.full(h, 80.0)}  # plant 20 missing by construction
+        mats = self._matrices(
+            payload_only, [10, 20], 30.0, MECH_CT_NETLOAD_DRAG, ["CT_PEAKER"] * 2
+        )
+        assert mats.pids == ["10", "20"]
+        assert mats.substituted_plants == ["20"]
+        assert not mats.substituted[0] and mats.substituted[1]
+        # §3.2: the absent plant enters with dispatch := its own floor.
+        assert (mats.disp[1] == 30.0).all()
+        assert (mats.disp[0] == 80.0).all()
+
+        res = run_d2(
+            mats.disp,
+            mats.floors,
+            mats.mechs,
+            mats.klass,
+            year=2024,
+            dispatch_substituted=mats.substituted,
+        )
+        drag = [r for r in res.rows if r["mechanism"] == "ct_netload_drag"]
+        assert len(drag) == 1
+        # Plant 20's floor energy is attributed; plant 10 runs above its floor
+        # so it contributes nothing to the numerator but does to the class total.
+        # the artifact rounds TWh to 4 dp — compare on the reported grain
+        assert drag[0]["forced_twh"] == round(30.0 * h / 1e6, 4)
+        assert drag[0]["class_total_twh"] == round((80.0 + 30.0) * h / 1e6, 4)
+
+    def test_absent_floored_plant_stamps_upper_bound_on_its_class(self):
+        """The bound travels with the number: any class holding a substituted
+        row is stamped ``upper_bound`` so a breach reads as indeterminate."""
+        h = HOURS
+        mats = self._matrices(
+            {"10": np.full(h, 80.0)},
+            [10, 20],
+            30.0,
+            MECH_CT_NETLOAD_DRAG,
+            ["CT_PEAKER", "ST_GAS"],
+        )
+        res = run_d2(
+            mats.disp,
+            mats.floors,
+            mats.mechs,
+            mats.klass,
+            year=2024,
+            dispatch_substituted=mats.substituted,
+        )
+        by_class = {r["class"]: r for r in res.summary}
+        assert by_class["ST_GAS"]["upper_bound"] is True
+        assert by_class["CT_PEAKER"]["upper_bound"] is False
+
+    def test_upper_bound_defaults_false_without_substitution(self):
+        """Every direct caller (and the parquet path) omits the argument, and
+        must keep a plain, un-flagged summary row."""
+        h = HOURS
+        res = run_d2(
+            np.array([[30.0] * h]),
+            np.array([[30.0] * h]),
+            np.array([[MECH_CT_NETLOAD_DRAG] * h], dtype=np.int8),
+            np.array(["CT_PEAKER"], dtype=object),
+            year=2024,
+        )
+        assert all(row["upper_bound"] is False for row in res.summary)
+
+    def test_no_op_when_the_dispatch_source_covers_the_floored_fleet(self):
+        """A4: the parquet path carries every model plant, so the fix must be a
+        NO-OP there — same rows, same values, nothing substituted."""
+        h = HOURS
+        full_map = {"10": np.full(h, 80.0), "20": np.full(h, 45.0)}
+        mats = self._matrices(
+            full_map, [10, 20], 30.0, MECH_CT_NETLOAD_DRAG, ["CT_PEAKER"] * 2
+        )
+        assert mats.substituted_plants == []
+        assert not mats.substituted.any()
+        assert (mats.disp[0] == 80.0).all() and (mats.disp[1] == 45.0).all()
+        res = run_d2(
+            mats.disp,
+            mats.floors,
+            mats.mechs,
+            mats.klass,
+            year=2024,
+            dispatch_substituted=mats.substituted,
+        )
+        assert all(row["upper_bound"] is False for row in res.summary)
+
+    def test_unfloored_absent_plants_stay_excluded(self):
+        """C5 control: a plant absent from the dispatch map with NO floor must
+        NOT be dragged in — it would perturb its class denominator with a
+        fabricated zero (PREREG-caiso155 §2 P3, carried forward)."""
+        h = HOURS
+        pids, floor_sum, mech_plant, grp = self._floors(
+            [10, 20], 0.0, 0, ["CT_PEAKER"] * 2
+        )
+        mats = build_plant_matrices(
+            {"10": np.full(h, 80.0)},
+            [str(p) for p in pids],
+            floor_sum,
+            mech_plant,
+            grp,
+            {},
+            t=h,
+        )
+        assert mats.pids == ["10"]
+        assert mats.substituted_plants == []
+
+    def test_pseudo_units_still_ride_under_the_same_convention(self):
+        """caiso-155's ``u:`` family is SUBSUMED by the generalized rule, not
+        handled by a second parallel mechanism (rule 19 [R-ONE-MECH])."""
+        h = HOURS
+        arrays = {
+            "min_gen": np.array([[30.0] * h, [900.0] * h]),
+            "mechanism": np.array(
+                [[MECH_CT_NETLOAD_DRAG] * h, [MECH_FIRM_IMPORT] * h], dtype=np.int8
+            ),
+            "unit_ids": np.array(["p7_committed", "NYISO_external_HQ_hydro"]),
+            "plant_code": np.array([7, 0]),
+            "plant_group": np.array(["CT_PEAKER", ""], dtype=object),
+        }
+        pids, floor_sum, mech_plant, grp = aggregate_floors_by_plant(arrays)
+        mats = build_plant_matrices(
+            {"7": np.full(h, 80.0)},
+            [str(p) for p in pids],
+            floor_sum,
+            mech_plant,
+            grp,
+            {},
+            t=h,
+        )
+        assert mats.substituted_pseudo == ["u:NYISO_external_HQ_hydro"]
+        assert mats.substituted_plants == []
+        assert (mats.disp[mats.pids.index("u:NYISO_external_HQ_hydro")] == 900.0).all()
+
+    def test_absent_floored_plant_reaches_d4(self):
+        """D-4 window testing must see the row too — a floor invisible to D-4
+        is a rule-17 [R-FLOOR-WINDOW] declaration that is never checked."""
+        h = HOURS
+        mats = self._matrices(
+            {"10": np.full(h, 80.0)},
+            [10, 20],
+            30.0,
+            MECH_CT_NETLOAD_DRAG,
+            ["CT_PEAKER"] * 2,
+        )
+        res = run_d4(mats.disp, mats.floors, mats.mechs, mats.klass, year=2024)
+        row = next(r for r in res.rows if r["floor"] == "ct_netload_drag")
+        assert row["floored_twh"] == round(30.0 * h / 1e6, 4)
+
+    def test_prefix_comprehension_is_the_defect_regression_guard(self):
+        """Pins WHAT WAS WRONG so it cannot be reintroduced.
+
+        The pre-pjm-149 row set was literally
+        ``[p for p in model_plants_plant if p in klass_by_pid or p in pid_strs]``
+        — a comprehension over the DISPATCH map. Reproduced here against the
+        same fixture, it drops the floored payload-absent plant; the shipped
+        builder keeps it. If a future edit re-derives the row set from the
+        dispatch map, the second assertion fails.
+        """
+        h = HOURS
+        dispatch_map = {"10": np.full(h, 80.0)}
+        pids, floor_sum, mech_plant, grp = self._floors(
+            [10, 20], 30.0, MECH_CT_NETLOAD_DRAG, ["CT_PEAKER"] * 2
+        )
+        pid_strs = [str(p) for p in pids]
+        klass_by_pid = dict(zip(pid_strs, grp))
+        prefix_rows = [p for p in dispatch_map if p in klass_by_pid or p in pid_strs]
+        assert prefix_rows == ["10"]  # the defect: plant 20 is gone
+        mats = build_plant_matrices(
+            dispatch_map, pid_strs, floor_sum, mech_plant, grp, {}, t=h
+        )
+        assert mats.pids == ["10", "20"]  # the fix: it is not
