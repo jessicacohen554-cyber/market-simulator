@@ -342,6 +342,47 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     },
 }
 
+# The published NYC locational families whose demand curve is a single STEP at
+# the RCPF rather than the linear ramp ``critical_mw = 0`` builds
+# (``nyiso_nyc_rcpf_step_curve``). MEASURED, ex ante and with no solve spent, on
+# NYISO's OWN posted zonal Day-Ahead ancillary-service prices
+# (data/raw/NYISO-AS/NYISO_as_da_<year>.csv) — nyiso-115,
+# scripts/probes/_nyiso115_nyc_rcpf_curve_screen.py ->
+# results/calibration/nyiso115_nyc_rcpf_curve_screen.json.
+#
+# The locational regions NEST (NYCA ⊃ East ⊃ SENY ⊃ NYC), so differencing zone J
+# against a zone sharing every region EXCEPT NYC isolates the NYC-only shadow
+# price. All three such references (DUNWOD/MILLWD/HUD VL) agree EXACTLY and a
+# non-SENY reference does not, so the isolation is checked rather than assumed.
+#
+# LEVEL — CONFIRMED, the model's $25 is right. The isolated NYC adder never
+# exceeds $25.00 in any of 26,301 hours of 2023-2025, and the 10-minute product
+# stacks to exactly $50.00 in precisely the hours the 30-minute one sits at
+# $25.00 (5/5, 16/16, 98/98) — a 10-minute reserve also satisfies the 30-minute
+# requirement, so its price carries both duals.
+#
+# SHAPE — REFUTED. The measured distribution is a smooth opportunity-cost
+# continuum below the ceiling plus one ATOM exactly AT it (17/45/141 hours of
+# 2023/24/25), with essentially NO mass at the interior rungs of the model's
+# 8-step ramp (0/1/2 hours of 103/167/428 material hours). A linear ramp would
+# place atoms at every rung; a single step at the RCPF places exactly this. The
+# model's own NYC duals land on those rungs ($3.125 … $18.75) and NEVER reach
+# the published $25.00 in any hour of any year, under-pricing a 307-358 MW
+# shortfall by 1.5-2.4x (10-minute) and 3.7-7.1x (30-minute).
+#
+# SCOPE — the NYC pair ONLY, and that is the measurement's own boundary rather
+# than a choice: NYC is the sole locational region whose published RCPF the
+# measured market ever reaches. East's $775 is never approached (isolated adder
+# max $27/$36/$46), LI shows no material adder in any hour of any year, and
+# SENY caps at exactly $40 — never its modelled $500 — which is the #1344
+# dynamic-requirement increment and belongs to ``nyiso_ordc_measured_step_span``
+# and its own pre-registration, NOT here (rule 19 [R-ONE-MECH]). Their curve
+# shape is UNIDENTIFIED by this instrument, so they keep the ramp.
+NYISO_RCPF_STEP_CURVE_FAMILIES: tuple[str, ...] = (
+    "nyc_10min_total",
+    "nyc_30min_total",
+)
+
 # --- NYISO Long Island (Zone K) locational reserve ladder -------------------
 # The published LI limb of the SAME "Locational Reserve Requirements" posting
 # that grounds NYISO_RCPF_LOCATIONAL above, and the ONE in-city/load-pocket
@@ -2683,6 +2724,7 @@ def _nyiso_design(
         # carries the published diurnal on/off-peak step, installed as an hourly
         # requirement below.
         locational = {**locational, **NYISO_RCPF_LOCATIONAL_LI}
+    nyc_step_curve = bool(getattr(config, "nyiso_nyc_rcpf_step_curve", False))
     east_families = bool(getattr(config, "nyiso_east_reserve_families", False))
     if east_families:
         # Published EAST spin_10 (330 MW, $40) + total_30 (1,200 MW, $40)
@@ -2794,6 +2836,16 @@ def _nyiso_design(
             requirement_arr = dynamic_req[name]
         else:
             requirement_arr = np.full(T, req, dtype=float)
+        if nyc_step_curve and name in NYISO_RCPF_STEP_CURVE_FAMILIES:
+            # Published NYC demand curve is a single STEP at the RCPF, not the
+            # ramp critical=0 builds: setting critical == requirement collapses
+            # the ramp region to zero width and leaves one flat band of width
+            # `requirement` priced at `pen`, which is exactly what
+            # nyiso_rcpf_product_shortfall_steps already emits for that input.
+            # No new construction and no new number — the SAME published $25
+            # RCPF, applied to the whole shortfall the way NYISO's own posted
+            # zonal prices show it applied (NYISO_RCPF_STEP_CURVE_FAMILIES).
+            crit = req
         p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
         if name in dynamic_req and (measured_step_span or name in span_scaled):
             # Construction-consistency fix (nyiso_ordc_measured_step_span):
