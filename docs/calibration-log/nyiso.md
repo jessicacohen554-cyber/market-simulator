@@ -4054,7 +4054,7 @@ K3/K4, caught before it shipped.
 Instrument, not a lever: no `ScenarioConfig` field, no CLI flag, no LP row or
 column, zero free parameters, read off the already-solved primal. The writer
 refuses to emit a frame on a family-count mismatch (no sidecar beats a
-mislabelled one). **12 KB per ISO-year.** Not backfilled — written forward.
+mislabelled one). **46 KB per ISO-year.** Not backfilled — written forward.
 
 ### 2. What it shows, and the correction it forces
 

@@ -1467,7 +1467,7 @@ CENSUS RAN IN ALL SIX LANES, AND TWO DEAD KNOBS ARE GONE.** Keeper **UNCHANGED**
 checkable from a bundle. `held_mw` comes from the **balance row's own activity**,
 not a per-family R re-sum, because that re-sum would have to re-derive five
 layout-dependent coefficient structures. Instrument, not a lever: no
-`ScenarioConfig` field, no CLI flag, no LP row/column, zero DOF, 12 KB/ISO-year.
+`ScenarioConfig` field, no CLI flag, no LP row/column, zero DOF, 46 KB/ISO-year.
 Row `reserve_family_dual_sidecar`, cells `IIIIKI` — `I` is "this lane's committed
 bundles still cannot answer a locational-family question", and each lane's next
 solve mints the artifact with nothing to arm. **Not backfillable:** a keeper

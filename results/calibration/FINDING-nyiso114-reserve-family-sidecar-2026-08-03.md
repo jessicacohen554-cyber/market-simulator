@@ -51,8 +51,8 @@ LP row, column or cost; every value is read off the already-solved primal.
 Rule 24 `[R-REGISTRY]` is not engaged (there is no tunable) and rule 21
 `[R-DOF]` adds nothing (no free parameter). The writer **refuses to emit a
 frame** when the design's family count disagrees with the solved dual's column
-count — no sidecar beats a mislabelled one. **12 KB per ISO-year** (NYISO,
-9 families × 8,760 h), so a keeper bundle carries it freely. **Not backfilled**
+count — no sidecar beats a mislabelled one. **46 KB per ISO-year** (NYISO,
+9 families × 8,760 h × 6 measured columns), so a keeper bundle carries it freely. **Not backfilled**
 — written going forward; see §2 for why a backfill by re-solve would not be
 faithful anyway.
 
