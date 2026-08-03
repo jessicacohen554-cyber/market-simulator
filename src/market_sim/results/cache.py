@@ -46,6 +46,23 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).**
+``constants.DEMAND_GROWTH_RATES["NYISO"]`` is re-derived from the 2026 Gold Book
+(``docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md`` §7): mid near
+``0.018 → 0.0122``, long ``0.012 → 0.0127``, low ``0.008/0.006 → -0.0024/0.0028``,
+high ``0.030/0.020 → 0.0263/0.0196``. A **constants-level** change with no
+``ScenarioConfig`` field, so **no key moves** — measured: ``ScenarioConfig()``
+hashes to ``973a0acdef818e91`` both with and without it (the move from the
+ledger entry below's ``603c2498bf71d21d`` is upstream field additions, not this).
+
+*Invalidated:* cached **NYISO forecast-mode** bundles (including ``hindcast=True``
+and T1-X crossover legs) solved before this commit — their demand trajectory is
+the superseded 2025-Gold-Book one. *NOT invalidated:* every other ISO (only the
+NYISO row moved), and **every backcast bundle in every ISO** — the backcast path
+takes measured load and never reads this table, so no keeper is touched. The
+concurrent ATB pin move (v3.0.0 → v4.0.0) invalidates nothing at all: every
+derived constant is byte-identical under both versions.
+
 **Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.**
 Taken at FFR-3A step 0 (`docs/handoffs/ffr-t1-regate-2026-08-02.md`), clearing
 the epoch debt the owner sitting recorded as outstanding
