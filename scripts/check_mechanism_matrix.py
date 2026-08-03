@@ -40,6 +40,7 @@ promotion, or malformed matrix).
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import subprocess
@@ -274,6 +275,117 @@ def gap_ratchet(matrix_text: str, source: str) -> list[str]:
     return out
 
 
+def _scenarioconfig_defaults(source: str) -> dict[str, object]:
+    """``ScenarioConfig`` field -> shipped default, parsed WITHOUT importing.
+
+    The mechanism-matrix guard runs stdlib-only (no ``uv sync``), so the default
+    values have to come out of the source text. Only simple literal defaults are
+    parsed — ``bool``/``int``/``float``/``str``/``None``/tuple. Anything the
+    parser cannot read (a ``field(default_factory=...)``, a computed default) is
+    OMITTED, which makes the shared ratchet below CONSERVATIVE by construction:
+    it can only ever gate fewer fields than
+    ``mechanism_matrix_gap_sweep``, which imports the live class and writes the
+    baseline. That direction matters — a checker STRICTER than the sweep would
+    demand a baseline the sweep can never write, which is precisely how the
+    ``\\b``-vs-substring mismatch made the earlier ratchet unsatisfiable.
+    """
+    out: dict[str, object] = {}
+    for m in re.finditer(
+        r"^    (?P<name>[a-z_][a-z0-9_]*)\s*:\s*[^=\n]+?=\s*(?P<default>.+?)\s*$",
+        source,
+        re.MULTILINE,
+    ):
+        raw = m.group("default").split("  #")[0].strip()
+        try:
+            out[m.group("name")] = ast.literal_eval(raw)
+        except (ValueError, SyntaxError):
+            continue  # not a literal — omitted on purpose (see docstring)
+    return out
+
+
+def _keeper_run_config(iso: str) -> dict:
+    """The ISO's designated keeper's committed ``run_config.json`` scenario block.
+
+    keepers/<ISO>.json -> registry/<id>.json -> the bundle's run_config.json,
+    every hop a committed file, so this stays stdlib-only and needs no solve.
+    Returns ``{}`` when any hop is missing, which SKIPS the shared ratchet for
+    that ISO rather than failing it — a keeper whose bundle is not in the
+    checkout is not evidence of a matrix gap.
+    """
+    try:
+        shard = json.loads(
+            (REPO / "frontend/data/backcast/keepers" / f"{iso}.json").read_text("utf-8")
+        )
+        reg = (
+            REPO / "frontend/data/backcast/registry" / f"{shard.get('keeper', '')}.json"
+        )
+        bundle = json.loads(reg.read_text("utf-8")).get("bundle", "")
+        cfg = REPO / "results/calibration" / Path(bundle).name / "run_config.json"
+        doc = json.loads(cfg.read_text("utf-8"))
+    except (OSError, ValueError, KeyError):
+        return {}
+    return doc.get("scenario_config", doc)
+
+
+def shared_gap_ratchet(matrix_text: str, source: str) -> list[str]:
+    """Errors for SHARED fields a keeper ARMS that no matrix row mentions.
+
+    The nyiso-115 blind spot. :func:`gap_ratchet` above only ever looks at
+    ``<iso>_*`` fields, so a SHARED mechanism armed on a designated keeper with
+    no row anywhere is invisible to it — the same 227-3 shape, one class wider.
+    nyiso-114 closed NYISO's ISO-scoped column to 0 absent / 0 prose-only /
+    0 armed-no-cell while **twelve** shared fields sat armed on its keeper with
+    zero matrix mention, and every other lane carries the same class (CAISO 28,
+    ERCOT 40, MISO 33, PJM 34, NEISO 13).
+
+    Keyed on the DESIGNATED KEEPER, not on "any bundle": a keeper is the
+    configuration an ISO is actually calibrated at, so a field it arms with no
+    cell is a mechanism shaping a published result that no session can see.
+
+    Same ratchet contract as the ISO-scoped leg — the baseline may only SHRINK —
+    and the same escape hatch: naming the field in an owning family row's
+    ``def``/``note`` counts as registration. Declared false positives come from
+    the baseline's ``shared_census_exclusions`` block, which
+    ``mechanism_matrix_gap_sweep --write-baseline`` writes from its own
+    ``SHARED_CENSUS_EXCLUSIONS``, so the two cannot drift apart.
+    """
+    path = REPO / GAPS_BASELINE_PATH
+    if not path.exists():
+        return []
+    try:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return [f"{GAPS_BASELINE_PATH} is unreadable ({exc})"]
+    allowed = doc.get("shared_armed_on_keeper", {})
+    excluded = set(doc.get("shared_census_exclusions", {}))
+    defaults = _scenarioconfig_defaults(source)
+    iso_prefixes = tuple(f"{s}_" for stems in ISO_STEMS.values() for s in stems)
+    out: list[str] = []
+    for iso in sorted(ISO_STEMS):
+        keeper_cfg = _keeper_run_config(iso)
+        if not keeper_cfg:
+            continue
+        allow = set(allowed.get(iso, ()))
+        for field, default in sorted(defaults.items()):
+            if field.startswith(iso_prefixes) or field in excluded:
+                continue
+            if field not in keeper_cfg:
+                continue
+            value = keeper_cfg[field]
+            # JSON has no tuple; the sweep normalises the same way.
+            if value == (list(default) if isinstance(default, tuple) else default):
+                continue
+            if field in matrix_text or field in allow:
+                continue
+            out.append(
+                f"shared field `{field}` is ARMED on the {iso} keeper "
+                f"({default!r} -> {value!r}) but is in neither {MATRIX_PATH} nor "
+                f"the {GAPS_BASELINE_PATH} shared ratchet (rule 28c). Add its "
+                f"row, or name it in the owning family row's def/note."
+            )
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", help="git ref to diff against (PR base sha)")
@@ -346,6 +458,17 @@ def main() -> int:
         print(f"::error file={SCENARIOS_PATH}::mechanism-matrix gap ratchet: {e}")
     if not ratchet:
         print("mechanism-matrix: gap ratchet OK (no new ISO-scoped field is invisible)")
+
+    # --- rule 28(c) RATCHET, SHARED leg: a keeper-armed shared field with no row
+    shared = shared_gap_ratchet(matrix_text, (REPO / SCENARIOS_PATH).read_text("utf-8"))
+    for e in shared:
+        failed = True
+        print(f"::error file={SCENARIOS_PATH}::mechanism-matrix shared ratchet: {e}")
+    if not shared:
+        print(
+            "mechanism-matrix: shared ratchet OK "
+            "(no keeper arms an unregistered shared field)"
+        )
 
     # --- rule 28(b) advisories ----------------------------------------------
     added = _git(

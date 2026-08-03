@@ -1685,6 +1685,95 @@ about a column's **semantics**; this one is about its **dtype**. Checking that
 the writer emits the column is not enough — the column must be able to
 *represent* the tolerance the gate asserts.
 `results/calibration/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`.
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-115-nyc-rcpf`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-115) — THE NYC RESERVE DEMAND CURVE WAS THE WRONG
+SHAPE, AND NYISO'S OWN POSTED PRICES SAY SO.** Keeper
+`2026-08-02-nyiso-113-li-locational` → **`2026-08-03-nyiso-115-nyc-rcpf`**.
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole caveat, UNCHANGED at 3/0/14.
+One delta (`nyiso_nyc_rcpf_step_curve`), **zero free parameters** (ledger 30 → 31,
+`n_residual` 6).
+
+**(1) SCREENED EX ANTE, NO SOLVE SPENT REACHING THE HYPOTHESIS.** nyiso-114's
+per-family sidecar showed the binding constraint is the NYC pair, with 307–358 MW
+shortfalls of a 500 MW requirement clearing at $15.63/$18.75 — a rule 14
+`[R-ACCURATE]` question about a MEASURED input. NYISO's posted **zonal** DA
+ancillary-service prices answer it: the regions nest (NYCA ⊃ East ⊃ SENY ⊃ NYC),
+so zone J minus a zone sharing every region *except* NYC isolates the NYC-only
+dual. All three qualifying references agree **exactly** (max $25.00, same 45/141
+hours at $25.00, **zero** above); the two non-SENY controls do not ($65 = $25 NYC
++ $40 SENY). **LEVEL CONFIRMED** — never exceeds $25.00 in 26,301 hours, and the
+10-min product stacks to exactly $50.00 in precisely the hours the 30-min sits at
+$25.00 (5/5, 16/16, 98/98). **SHAPE REFUTED** — a smooth opportunity-cost
+continuum plus ONE ATOM exactly at the ceiling (17/45/141 h) and essentially no
+mass at the model ramp's interior rungs (0/1/2 of 103/167/428). The model's duals
+sat on those rungs and **never reached $25.00 in 26,280 hours**, under-pricing by
+1.5–2.4× (10-min) and 3.7–7.1× (30-min). Also checked and CLOSED: no NYC
+locational **spin** family is enforced (continuum, max $20.91–29.72, zero hours at
+$40), so the model is right to omit it. Scope is the measurement's boundary — East
+($775) never approached, LI no material adder, SENY caps at the $40 #1344
+increment (**reported, not acted on** — `nyiso_ordc_measured_step_span`'s lane,
+rule 19). Row `nyiso_nyc_rcpf_step_curve`, cell `....K.`.
+
+**(2) A SCOPE GATE BELONGS ON THE CONSTRUCTION, NOT THE DUALS — a general
+lesson.** Pre-registered G2 demanded every non-NYC family be byte-identical in
+`dual`, `requirement_mw`, `held_mw`, `shortfall_mw`. Three of those are **solved
+outputs of a co-optimization**, so the gate can only pass when the mechanism does
+nothing: it FAILED and was uninformative. Decomposed onto what kill K-C actually
+asks, every non-NYC family's `requirement_mw` and `shortfall_mw` are
+byte-identical in all three years, and the solve logs confirm it independently
+(**73 → 59 ORDC steps** = 2 families × 7 lost rungs). K-C does not fire; the
+mis-specification is recorded rather than quietly redefined.
+
+**(3) THE NULL WAS PRE-REGISTERED.** Prereg §4 said in advance that a step and a
+ramp are BOTH $0 at or above the requirement, so this moves the **level** in hours
+a family already binds and **cannot add binding hours**. C3c unchanged; it does
+**not** reach nyiso-110's everyday-reserve-formation gap and is **not** reported
+as closing it. All twelve scored numeric fields EQUAL to the same-HEAD control's.
+Promoted on rule 1 / rule 14, not on gate movement. **Not a DO-NOT-REDO breach:**
+the June-2026 `nyiso 25 rcpf-steep` probe transferred the NYCA-30min
+`critical = 0.75 × requirement` anchor (a different parameterization, different
+family), had **no matrix row**, and was rejected on the C3c tail COUNT — i.e. on
+fit, which rule 1 forbids as grounds for rejecting a correct mechanism.
+
+**(4) THE SHARED-FIELD BLIND SPOT IS CLOSED FOR NYISO AND RATCHETED FOR ALL SIX.**
+The ISO-scoped census only sees `<iso>_*` fields, so a shared mechanism armed on a
+keeper with no row was invisible to sweep AND CI — nyiso-114 closed NYISO's
+ISO-scoped column to 0/0/0 while **twelve** shared fields sat armed on its keeper
+with zero matrix mention. `mechanism_matrix_gap_sweep.py` gains a keeper-keyed
+shared census (`SHARED_CENSUS_EXCLUSIONS` holds the declared false positives —
+only `weather_year`), and `check_mechanism_matrix.py` a shared ratchet that stays
+stdlib-only by parsing defaults from source and reading each keeper's committed
+`run_config.json`, **omitting whatever it cannot read as a literal** so it can
+never be stricter than the sweep that writes the baseline (the failure mode that
+made nyiso-114's `\b`-vs-substring ratchet unsatisfiable). **NYISO 12 → 0**: six
+sub-scalars named literally on their family rows, five given honest rows
+(`coal_drop_pof`, `gas_st_startup_spread`, `cc_duct_peaking`,
+`cc_nameplate_summer_derate`, `cc_capacity_reconcile_path`), one false positive.
+Three more surfaced by a stricter prose-only criterion, also closed — including
+`historic_outage_overlay`, whose row records it is **INERT on the dispatch**
+(re-verified against the tree: four references, no consumer reads it back); its
+rule-26 deletion question is **raised, not acted on**. The minted rows being
+ISO-neutral also closed NEISO (2 → 0) and shrank CAISO 6 → 5, MISO 18 → 17,
+PJM 19 → 18, **with no other ISO's cell given a verdict** (rule 25/28(d)).
+
+**(5) THE CROSS-ISO TRANSFER QUEUE IS EMPTY — five candidates, ZERO solves.**
+`maxgen_emergency_tier_pricing` **→ I** (across 5,347 messages of NYISO's own
+operational record in 2023–2025: **zero** MaxGen declarations, **zero** EEA
+alerts — a declared-*window* floor with no window, rule 17 before a solve).
+`cc_committed_offer_margin` **→ G** and `measured_offer_surface` **→ G** (both
+derive from submitted unit-level offer curves; NYISO publishes none at any grain,
+so the only route left is importing the donor's fitted level — rule 25).
+`reference_price_interface` **→ G** (rule 19 — NYISO already carries this
+phenomenon ARMED ON THE KEEPER as `nyiso_import_hub_prices`, whose own definition
+names it "the NYISO analogue of `miso_pjm_lmp_import_pricing` and
+`caiso_import_hub_prices`"). `storage_vintage_ramp` **→ I** by magnitude
+(lithium-ion 200.5 → 252.7 MW across the whole window, pumped storage flat at
+1,220 MW; the entire increment mis-timed by half a year is ≤ 0.057 TWh against
+~150 TWh). **NOTE: this is NOT the C3c queue** — §5.5's exhausted-queue finding is
+about the C3c / peak-half lane and still stands.
+`results/calibration/FINDING-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`.
+
 
 **STATUS 2026-08-03 (nyiso-114) — THE PER-FAMILY RESERVE DUAL IS PERSISTED, THE
 CENSUS RAN IN ALL SIX LANES, AND TWO DEAD KNOBS ARE GONE.** Keeper **UNCHANGED**

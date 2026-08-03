@@ -1,0 +1,375 @@
+{
+  "probe": "nyiso-115 NYC locational RCPF curve screen",
+  "measured_source": "data/raw/NYISO-AS/NYISO_as_da_<year>.csv (NYISO posted DA AS prices, per zone)",
+  "model_source": "results/calibration/nyiso114_lilocational_confirm/hourly/reserve_family_<year>.parquet",
+  "model_construction": {
+    "max_penalty": 25.0,
+    "critical_mw": 0.0,
+    "n_ramp": 8,
+    "rungs": [
+      3.125,
+      6.25,
+      9.375,
+      12.5,
+      15.625,
+      18.75,
+      21.875,
+      25.0
+    ]
+  },
+  "measured": {
+    "2023": {
+      "reference_zone_agreement": {
+        "DUNWOD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 17,
+          "hours_above_25": 0
+        },
+        "MILLWD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 17,
+          "hours_above_25": 0
+        },
+        "HUD VL": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 17,
+          "hours_above_25": 0
+        },
+        "CAPITL": {
+          "in_seny": false,
+          "max": 48.92,
+          "hours_at_25": 12,
+          "hours_above_25": 5
+        },
+        "WEST": {
+          "in_seny": false,
+          "max": 48.92,
+          "hours_at_25": 12,
+          "hours_above_25": 5
+        }
+      },
+      "products": {
+        "nyc_30min_total": {
+          "material_hours": 103,
+          "hours_at_ceiling": 17,
+          "hours_at_model_interior_rungs": 0,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 53,
+          "sub_ceiling_quantiles": [
+            4.3,
+            11.5,
+            18.45,
+            23.99
+          ],
+          "max": 25.0,
+          "hours_above_ceiling": 0
+        },
+        "nyc_10min_total_stacked": {
+          "material_hours": 572,
+          "hours_at_ceiling": 5,
+          "hours_at_model_interior_rungs": 0,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 434,
+          "sub_ceiling_quantiles": [
+            7.14,
+            12.26,
+            19.87,
+            32.32
+          ],
+          "max": 50.0,
+          "hours_above_ceiling": 0
+        }
+      },
+      "stacking_check": {
+        "hours_a10_at_50": 5,
+        "of_which_a30_at_25": 5,
+        "hours_a10_at_25": 13,
+        "of_which_a30_at_0": 13
+      },
+      "nyc_spin_family_probe": {
+        "max": 29.72,
+        "hours_positive": 2738,
+        "hours_at_40": 0
+      }
+    },
+    "2024": {
+      "reference_zone_agreement": {
+        "DUNWOD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 45,
+          "hours_above_25": 0
+        },
+        "MILLWD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 45,
+          "hours_above_25": 0
+        },
+        "HUD VL": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 45,
+          "hours_above_25": 0
+        },
+        "CAPITL": {
+          "in_seny": false,
+          "max": 35.17,
+          "hours_at_25": 42,
+          "hours_above_25": 4
+        },
+        "WEST": {
+          "in_seny": false,
+          "max": 35.17,
+          "hours_at_25": 42,
+          "hours_above_25": 4
+        }
+      },
+      "products": {
+        "nyc_30min_total": {
+          "material_hours": 167,
+          "hours_at_ceiling": 45,
+          "hours_at_model_interior_rungs": 1,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 73,
+          "sub_ceiling_quantiles": [
+            3.0,
+            8.67,
+            15.24,
+            22.88
+          ],
+          "max": 25.0,
+          "hours_above_ceiling": 0
+        },
+        "nyc_10min_total_stacked": {
+          "material_hours": 490,
+          "hours_at_ceiling": 16,
+          "hours_at_model_interior_rungs": 2,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 358,
+          "sub_ceiling_quantiles": [
+            6.21,
+            11.63,
+            21.31,
+            40.41
+          ],
+          "max": 50.0,
+          "hours_above_ceiling": 0
+        }
+      },
+      "stacking_check": {
+        "hours_a10_at_50": 16,
+        "of_which_a30_at_25": 16,
+        "hours_a10_at_25": 5,
+        "of_which_a30_at_0": 5
+      },
+      "nyc_spin_family_probe": {
+        "max": 24.13,
+        "hours_positive": 3257,
+        "hours_at_40": 0
+      }
+    },
+    "2025": {
+      "reference_zone_agreement": {
+        "DUNWOD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 141,
+          "hours_above_25": 0
+        },
+        "MILLWD": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 141,
+          "hours_above_25": 0
+        },
+        "HUD VL": {
+          "in_seny": true,
+          "max": 25.0,
+          "hours_at_25": 141,
+          "hours_above_25": 0
+        },
+        "CAPITL": {
+          "in_seny": false,
+          "max": 65.0,
+          "hours_at_25": 71,
+          "hours_above_25": 110
+        },
+        "WEST": {
+          "in_seny": false,
+          "max": 65.0,
+          "hours_at_25": 71,
+          "hours_above_25": 110
+        }
+      },
+      "products": {
+        "nyc_30min_total": {
+          "material_hours": 428,
+          "hours_at_ceiling": 141,
+          "hours_at_model_interior_rungs": 2,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 172,
+          "sub_ceiling_quantiles": [
+            4.48,
+            11.68,
+            17.95,
+            24.41
+          ],
+          "max": 25.0,
+          "hours_above_ceiling": 0
+        },
+        "nyc_10min_total_stacked": {
+          "material_hours": 1462,
+          "hours_at_ceiling": 98,
+          "hours_at_model_interior_rungs": 14,
+          "model_interior_rungs": [
+            3.125,
+            6.25,
+            9.375,
+            12.5,
+            15.625,
+            18.75,
+            21.875
+          ],
+          "distinct_values_below_ceiling": 881,
+          "sub_ceiling_quantiles": [
+            10.73,
+            24.08,
+            27.24,
+            45.94
+          ],
+          "max": 50.0,
+          "hours_above_ceiling": 0
+        }
+      },
+      "stacking_check": {
+        "hours_a10_at_50": 98,
+        "of_which_a30_at_25": 98,
+        "hours_a10_at_25": 124,
+        "of_which_a30_at_0": 122
+      },
+      "nyc_spin_family_probe": {
+        "max": 20.91,
+        "hours_positive": 1668,
+        "hours_at_40": 0
+      }
+    }
+  },
+  "model": {
+    "2023": {
+      "nyc_10min_total": {
+        "hours_dual_positive": 17,
+        "max_dual": 15.625,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 307.38,
+        "requirement_mw": 500.0,
+        "mean_dual_when_binding": 11.3852,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 2.196
+      },
+      "nyc_30min_total": {
+        "hours_dual_positive": 8,
+        "max_dual": 6.25,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 176.99,
+        "requirement_mw": 1000.0,
+        "mean_dual_when_binding": 3.5156,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 7.111
+      }
+    },
+    "2024": {
+      "nyc_10min_total": {
+        "hours_dual_positive": 6,
+        "max_dual": 18.75,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 357.7,
+        "requirement_mw": 500.0,
+        "mean_dual_when_binding": 16.1458,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 1.548
+      },
+      "nyc_30min_total": {
+        "hours_dual_positive": 6,
+        "max_dual": 12.5,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 403.7,
+        "requirement_mw": 1000.0,
+        "mean_dual_when_binding": 6.7708,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 3.692
+      }
+    },
+    "2025": {
+      "nyc_10min_total": {
+        "hours_dual_positive": 29,
+        "max_dual": 18.75,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 316.52,
+        "requirement_mw": 500.0,
+        "mean_dual_when_binding": 10.474,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 2.387
+      },
+      "nyc_30min_total": {
+        "hours_dual_positive": 10,
+        "max_dual": 9.375,
+        "published_rcpf": 25.0,
+        "hours_at_published_rcpf": 0,
+        "max_shortfall_mw": 286.71,
+        "requirement_mw": 1000.0,
+        "mean_dual_when_binding": 4.6875,
+        "step_curve_would_charge": 25.0,
+        "underprice_factor": 5.333
+      }
+    }
+  }
+}

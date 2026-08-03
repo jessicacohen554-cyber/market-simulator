@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T23:28:19",
+  "timestamp": "2026-08-03T05:26:52",
   "iso": "NYISO",
   "years": [
     2023,
@@ -37,11 +37,12 @@
   "tranche_startup_measured_runs": true,
   "tranche_startup_conditional_runs": false,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": true,
   "coal_offer_margin": false,
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
   "coal_perplant_offer_level": false,
-  "nysdec_peaker_rule_availability": false,
+  "nysdec_peaker_rule_availability": true,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
   "st_gas_intermediate_cf_threshold": null,
@@ -85,7 +86,11 @@
     "hydro_min_flow_floor": true,
     "nuclear_unit_availability": true,
     "nyiso_import_sil_retire": true,
-    "measured_chp_heat_rates": true
+    "measured_chp_heat_rates": true,
+    "gas_offer_margin_zonal_anchor": true,
+    "ramp_limits": true,
+    "nysdec_peaker_rule_availability": true,
+    "nyiso_li_locational_reserve": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -249,7 +254,7 @@
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
   "capacity_deliverability_limits": null,
-  "ramp_limits": null,
+  "ramp_limits": true,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": true,
   "nyiso_scr_edrp": true,
@@ -259,7 +264,7 @@
   "nyiso_import_hub_prices": true,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
-  "nyiso_li_locational_reserve": null,
+  "nyiso_li_locational_reserve": true,
   "nyiso_incity_commitment_obligation": null,
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": {
@@ -280,6 +285,7 @@
     }
   },
   "nyiso_gas_commitment_bridge": true,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": true,
@@ -328,8 +334,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-  "git_sha": "e1a4bc6",
-  "basis_sha": "e1a4bc6a7f4796cd122a0691cc1b991a1ec020a6",
+  "git_sha": "4f4b8ed",
+  "basis_sha": "50576148a127f17a7ede985513a681740ca54969",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

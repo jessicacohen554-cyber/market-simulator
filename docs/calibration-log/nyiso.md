@@ -4324,3 +4324,127 @@ Evidence: `results/calibration/FINDING-caiso160-nyiso-ct-heat-rate-rebase-2026-0
 `PREREG-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`.
 
 Next shorthand: nyiso-117.
+## 2026-08-03 — nyiso-115 keeper: the NYC RCPF demand curve as the PUBLISHED STEP; the shared-field ratchet; five transfer candidates adjudicated with zero solves
+
+**Keeper `2026-08-02-nyiso-113-li-locational` → `2026-08-03-nyiso-115-nyc-rcpf`.**
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole ledgered caveat, UNCHANGED at
+3/0/14 h >$300. One delta: `nyiso_nyc_rcpf_step_curve=true`. Zero free parameters
+(ledger 30 → 31 entries, `n_residual` unchanged at 6).
+
+**The lead nyiso-114's instrument opened, screened EX ANTE with no solve spent.**
+The per-family reserve-dual sidecar showed NYISO's binding reserve constraint is
+overwhelmingly the NYC pair, with 307–358 MW shortfalls of a 500 MW requirement
+clearing at $15.63/$18.75. That is a rule 14 `[R-ACCURATE]` question about a
+measured input, and NYISO's own posted **zonal** DA ancillary-service prices
+answer it. The locational regions nest (NYCA ⊃ East ⊃ SENY ⊃ NYC), so differencing
+zone J against a zone sharing every region *except* NYC isolates the NYC-only
+shadow price; all three such references (DUNWOD/MILLWD/HUD VL) agree **exactly**
+(max $25.00, the same 45/141 hours at $25.00, **zero** hours above) and the two
+non-SENY controls do **not** ($65.00 = $25 NYC + $40 SENY), so the isolation is
+checked rather than assumed.
+
+**LEVEL CONFIRMED — the model's $25/MW is right.** The isolated adder never
+exceeds $25.00 in any of 26,301 hours, and the 10-minute product stacks to exactly
+$50.00 in precisely the hours the 30-minute one sits at $25.00 (5/5, 16/16,
+98/98). A potential omission was checked and **closed** at the same time: no NYC
+locational *spin* family is enforced (a 1,668–3,257 h continuum, max $20.91–29.72,
+**zero** hours at the $40 ASM value), so the model is correct to omit it.
+
+**SHAPE REFUTED.** The measured distribution is a smooth opportunity-cost
+continuum below the ceiling plus **one atom exactly AT it** (17/45/141 h), with
+essentially **no mass at the interior rungs** of the model's 8-step ramp (0/1/2 of
+103/167/428 material hours). The model's own NYC duals sat on those rungs and
+**never reached the published $25.00 in any of 26,280 hours**, under-pricing the
+measured shortfalls by 2.20/1.55/2.39× (10-min) and 7.11/3.69/5.33× (30-min) — the
+30-minute worse purely because its 1,000 MW requirement makes the same ramp
+shallower, an artifact of the construction with no market basis. **Scope is the
+measurement's own boundary:** NYC is the only locational region whose published
+RCPF the market ever reaches (East's $775 never approached, LI no material adder
+in any hour, SENY caps at the $40 #1344 increment — reported for
+`nyiso_ordc_measured_step_span`'s lane, **not acted on**, rule 19).
+
+**Gates.** G1 PASS (the families reach exactly $25.00 in 14/6/19 and 2/6/8 hours
+and sit on an interior rung in **zero** hours of all three years), G3/G4/G5 PASS,
+zero slack and zero dump in both arms. K-A discharged by construction of the
+comparison — every attribution is against the same-HEAD zero-delta control
+`2026-08-03-nyiso-115-control-zerodelta`, never the keeper bundle.
+
+**G2 as pre-registered was MIS-SPECIFIED and FAILS — recorded, not redefined.**
+It demanded byte-identity of `dual` and `held_mw` for every non-NYC family, but
+those are **solved outputs of a co-optimization**, so the gate can only pass when
+the mechanism does nothing. Decomposed onto the **construction** leg kill K-C
+actually asks about: every non-NYC family's `requirement_mw` and `shortfall_mw`
+are byte-identical in all three years (0.00e+00), and the solve logs
+independently confirm only the NYC pair's steps changed (**73 → 59 ORDC steps** =
+2 families × 7 lost rungs). K-C does not fire. *Standing lesson: a scope gate
+belongs on the CONSTRUCTION (requirement + step vectors), never on the solved
+duals — in a co-optimization those move by design.*
+
+**The null was pre-registered.** Prereg §4 stated in advance that a step and a
+ramp are *both* $0 at or above the requirement, so this changes the **level** in
+hours a family already binds and **cannot add binding hours**. C3c is unchanged;
+this does **not** reach nyiso-110's everyday-reserve-formation gap (17/6/34
+model hours vs a measured DA spin price >$1 in 100 % of peak-window hours) and is
+**not** reported as closing it. All twelve scored numeric fields are EQUAL to the
+same-HEAD control's. Promoted on rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`.
+
+**Not a DO-NOT-REDO breach.** The June-2026 `nyiso 25 rcpf-steep` probe
+transferred the NYCA-30min curve's `critical = 0.75 × requirement` anchor to the
+locational products — a different parameterization from a different family —
+carried **no matrix row**, and was rejected on the C3c tail **count**, i.e. on
+fit, which rule 1 forbids as grounds for rejecting a structurally-correct
+mechanism. This value is measured from NYISO's own locational prices.
+
+**Rule 22 D-5(b):** NYISO's `complete` marker re-keyed with the determination
+re-verified on committed artifacts only (identical, not worse);
+`keeper_at_declaration` preserved; NYISO stays absent from `final`; the holdout
+spend freeze is ACTIVE and untouched.
+
+**Two further deliverables, no solve spent on either.**
+
+**(a) The rule-28(c) ratchet now covers the SHARED-field class.** The ISO-scoped
+census only ever looks at `<iso>_*` fields, so a shared mechanism armed on a
+designated keeper with no matrix row was invisible to both the sweep and CI —
+nyiso-114 closed NYISO's ISO-scoped column to 0/0/0 while **twelve** shared fields
+sat armed on its keeper with zero matrix mention. The sweep gains a keeper-keyed
+shared census with declared false positives in `SHARED_CENSUS_EXCLUSIONS` (only
+`weather_year`, which a backcast pins by construction), and
+`check_mechanism_matrix.py` gains a shared ratchet that stays stdlib-only by
+parsing defaults from source and reading each keeper's committed `run_config.json`
+— omitting anything it cannot read as a literal, so it is **conservative by
+construction** and can never be stricter than the sweep that writes the baseline
+(the failure mode that made nyiso-114's `\b`-vs-substring ratchet unsatisfiable).
+Exclusions are single-sourced through the baseline and pinned by test.
+**NYISO's shared column: 12 → 0** — six sub-scalars named literally on their
+family rows, five given honest rows of their own (`coal_drop_pof`,
+`gas_st_startup_spread`, `cc_duct_peaking`, `cc_nameplate_summer_derate`,
+`cc_capacity_reconcile_path`), one declared false positive. A stricter prose-only
+criterion surfaced three more, also closed — including `historic_outage_overlay`,
+given a row recording that it is **INERT on the dispatch**, re-verified against
+the tree rather than taken from its comment (four references total, no consumer
+reads it back); its rule-26 deletion question is **raised, not acted on**, since
+it touches all six ISOs' recipes. Because the minted rows are ISO-neutral, this
+also closed NEISO (2 → 0) and shrank CAISO 6 → 5, MISO 18 → 17, PJM 19 → 18 — with
+no other ISO's cell given a verdict (rule 25/28(d)).
+
+**(b) The cross-ISO transfer queue: all five remaining candidates adjudicated,
+zero solves.** `maxgen_emergency_tier_pricing` (MISO K) **→ I** — across 2023–2025
+and 5,347 messages of NYISO's own published operational record there are **zero**
+Maximum Generation declarations and **zero** emergency-energy alerts, so a
+declared-*window* offer floor has no window to bind in (rule 17 applied before a
+solve). `cc_committed_offer_margin` (ERCOT K) and `measured_offer_surface`
+(ERCOT/CAISO K) **→ G** on identification — both derive from submitted unit-level
+offer curves and NYISO publishes none at any grain, so the only route left is
+importing the donor's fitted level (rule 25). `reference_price_interface`
+(PJM/MISO K) **→ G** under rule 19 — NYISO already carries this phenomenon
+**armed on the keeper** as `nyiso_import_hub_prices`, whose own definition names
+it "the NYISO analogue of `miso_pjm_lmp_import_pricing` and
+`caiso_import_hub_prices`". `storage_vintage_ramp` (ERCOT/CAISO/NEISO K) **→ I**
+by magnitude — NYISO lithium-ion moves 200.5 → 252.7 MW across the whole window
+and pumped storage is flat at 1,220 MW, so mis-placing the entire increment by
+half a year mis-allocates at most 0.057 TWh against ~150 TWh of load.
+
+Evidence: `results/calibration/FINDING-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
+`PREREG-nyiso115-nyc-rcpf-step-curve-2026-08-03.md`,
+`nyiso115_nyc_rcpf_curve_screen.json`, `_nyiso115_stepcurve_gates.json`,
+`nyiso115_transfer_queue_adjudication.json`.
