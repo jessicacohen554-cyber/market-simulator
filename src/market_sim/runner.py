@@ -796,7 +796,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # evolve_fleet, the same seam pattern as the evolution-ledger events).
     entry_prior_max_gw: dict[str, float] | None = None
     if getattr(config, "entry_rate_limits", False):
-        _seed_through = config.eia860_vintage_year or (config.start_year - 1)
+        # Anchor on the RESOLVED horizon start (line ~505), not the raw
+        # config field: ``ScenarioConfig.start_year`` defaults to None, so
+        # ``config.start_year - 1`` raised TypeError for every config that did
+        # not set an explicit horizon. That path was unreachable while
+        # entry_rate_limits was default-off and became live when owner decision
+        # D-2 armed it (2026-08-02) — a latent defect the arming exposed, not a
+        # behaviour change. Configs that DO set start_year are unaffected: the
+        # local is identical to config.start_year whenever the field is set.
+        _seed_through = config.eia860_vintage_year or (start_year - 1)
         entry_prior_max_gw = max_annual_build_gw_by_tech(
             iso, _seed_through, ENTRY_THROUGHPUT_WINDOW_YEARS
         )
