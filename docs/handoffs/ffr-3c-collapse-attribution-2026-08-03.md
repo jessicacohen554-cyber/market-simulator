@@ -455,6 +455,21 @@ rubric §4 forbids.
 11. **`--golden-posture` reproduces MISO's shipped curve arm correctly** (`capacity_market_
     clearing` resolves `True` on both arms, matching FFR-3A §4.3). No new posture defect found.
 
+## 7b. Mechanism matrix (rule 28)
+
+Two cells were exercised this session; **neither verdict was changed**, because the owner
+withheld adjudication and because a 5-year forecast window is not a verdict on a mechanism.
+Both notes and both `ev` citations were updated in-session, per duty (b).
+`scripts/check_mechanism_matrix.py` passes.
+
+| row | MISO cell | action |
+|---|---|---|
+| `economic_retirement_screen` | **R — unchanged** (still the shipped-legacy verdict FFR-2B recorded) | note records the G-31 grain characterization and the measured zero-exit/zero-pipeline-event result; **FFR-3C adjudicates nothing here** |
+| `entry_dampers` | **O — unchanged** | note records the paired-arm measurement: 2026 identical, 2027 delta is the commissioning lag, I12 WARN in both arms, FC-2 CAVEAT in both |
+
+No new `ScenarioConfig` field was added, so duty (c) does not apply. No run was registered, so
+the duty-(b) registration half is moot — the evidence is this document.
+
 ## 8. What this session does NOT claim
 
 * **No promotion, no registration.** `frontend/data/forecast/` is untouched; `ff-verdicts.json`
