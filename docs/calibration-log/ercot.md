@@ -4190,3 +4190,103 @@ measured ESR ladder is the same rule-13 construction family as the walls.
 credit/deployment stack required in the precommit.
 
 Next shorthand: ercot-154.
+
+## 2026-08-03 — ERCOT-154 (the ercot-153 chartered arm + its named fallback; no-LP, keeper UNCHANGED at ercot150b): the measured STORAGE evening discharge-offer surface IS identified and the arm is REFUSED anyway — the model's evening supply curve is flat (1.6 $/MWh per GW), so re-pricing storage buys $1.38–$3.05/MWh while withholding ~90 % of a fleet already 17.7 % under its measured volume; `measured_ramp_capability` is INERT BY WIRING; the object is re-pointed at mid-merit price DISPERSION
+
+**Phase 1 only — NO LP built, NO year solved, NO mechanism armed, NO
+`ScenarioConfig` field added, keeper UNCHANGED.** Probes
+`scripts/probes/ercot154_storage_offer_surface.py`,
+`ercot154_storage_binding_check.py`, `ercot154_ramp_capability_census.py` →
+committed records `results/calibration/ercot154_storage_offer_surface.json`,
+`ercot154_storage_binding_check.json`,
+`ercot154_ramp_capability_census.json`. Full write-up:
+`docs/DIAGNOSIS-ercot154-storage-offer-surface-2026-08-03.md`. All inputs were
+already committed (the four 60-Day SCED sample-day parquets, the ercot150b
+keeper hourly sidecars, `data/raw/eia-930-hourly/ERCO hourly.parquet`).
+
+**The surface IS identified — this is not an identification failure.** From
+the committed PWRSTR corpus (ONLINE states only; ONTEST excluded and
+disclosed), above-LSL discharge segments capped at **HASL** so the ladder
+prices only the energy headroom the measured AS stack leaves to energy — that
+stack already reserves **49.6 % / 30.9 %** of online battery HSL in 2024/2025,
+which is the rule-19 boundary, measured. The p30 rung clears the ERCOT-147
+year-pair bar in **absolute $/MWh**: median 2025/2024 ratio **0.969**, rel IQR
+**0.143**, range 0.74–1.33 over the 14 cells both years populate at ≥40 SCED
+intervals. The wall's **gas-multiple basis is REFUTED** at every rung (median
+ratios 0.31–0.62 while delivered gas went ×2.17, $1.52 → $3.30/MMBtu) — a
+battery has no heat rate, and the measurement says so. The defect the charter
+named is real, in the ERCOT-138 §2.3 construction: the real fleet offers
+**6–9 %** of its evening energy headroom at ≤\$20 and **22–29 %** at ≤\$50; the
+model offers **100 %** at \$10.
+
+**Refused on three other measured grounds** (rule 1 checked explicitly — none
+of these is "the residual didn't move"): **(a) REPRESENTATION** — the measured
+object is a rising ladder (evening p10 \$21–45 → p30 \$52–100 → p90 pinned at
+the \$5,000 HCAP) and the LP carries ONE discharge column per storage unit, so
+any arm collapses it to a single price; the rungs a multi-tranche form needs
+are unidentified (p70 ratio **0.111**, rel IQR 1.07; p90's ratio of exactly
+1.000 is a HCAP artifact). **(b) THE LEVER CANNOT PRODUCE THE PHENOMENON** —
+the keeper's own matched (month × hour-of-day) evening supply-curve slope is
+**1.557 / 1.616 \$/MWh per GW**, so withholding the model's ENTIRE evening
+storage discharge buys **\$1.38 / \$3.05** at the median cell (\$6.58 / \$4.71
+at p90) against ERCOT-153's **\$20–66/MWh** object. **(c) IT BREAKS A MEASURED
+QUANTITY ALREADY SHORT** — 88.3 % / 93.8 % of keeper discharge sits below the
+measured level for its own cell and only 5.3–5.6 % of evening hours clear above
+\$66, so the arm withholds ~90 % of a fleet already **17.7 %** under EIA-930 in
+2025 (model 4,483.3 vs measured 5,444.8 GWh, 100 % series coverage; the 2024
+guard is UNUSABLE — the ERCOT `NG: BAT` series begins 2024-10-23, 1,680/8,784
+hours). Rule 14 `[R-ACCURATE]`'s explicit grain-misalignment exception governs:
+the measurement lives on a per-resource 35-step curve, the representation is
+one aggregated unit per zone with one price.
+
+**DO-NOT-REDO from this session:** the single-price storage arm; the
+gas-multiple basis for any storage offer; and arming the **p10** rung "because
+the model can absorb it" — a value selected on the model's own output, i.e. a
+fitted parameter in a measurement's clothes (rules 13/20). Note also that
+storage is essentially never the model's marginal unit today (the price sits
+within \$1 of the \$10 offer in **12 / 7 hours** of 2024 / 2025), so the arm's
+price channel was always displacement.
+
+**The named fallback is CLOSED TOO — `measured_ramp_capability` → `I`, inert by
+wiring.** It changes exactly one array (`FleetArrays.ramp10`), so it can only
+matter where something reads it. An AST census (parsed, so docstrings cannot
+inflate the count) finds **5 functional read sites, every one behind a
+non-ERCOT gate**: `pjm_pergen_structure` :1860 + `pjm_pergen_pool_ramp10` :1937
+(`pjm_reserve_pergen`), `_miso_design` :2528 (`miso_reserve_pergen`),
+`caiso_pergen_structure` :3105 (`caiso_reserve_coopt`),
+`pjm_reserve_deliverable_supply_cap_mw` `scarcity.py`:1686
+(`pjm_reserve_supply_cap`) — all False in the ERCOT keeper. `_ercot_design` and
+`_ercot_multiproduct_design` contain **0** occurrences of `ramp10`, and
+`model/lp/bounds.py` only ever receives `reserve_pergen_ramp10`, populated
+exclusively by those three pergen designs. Arming it yields a **bit-identical
+bundle** — the ERCOT-146 outcome, reached before a solve was spent. The row is
+already held by a better measured input: `ercot_rtolcap_supply_cap_mw` on the
+measured ERCOT RTOLCAP series (`ercot_reserve_supply_cap=True`). Distinct from
+the REFUTED `ramp_envelopes` cell (ERCOT-127) — not re-tested.
+
+**THE FINDING, and the re-pointed object.** ERCOT-153's evening-ramp premium
+has no former in the model **because the model's mid-merit evening supply curve
+is flat** — 1.6 \$/MWh per GW across ~25 GW of thermal headroom above its own
+mean evening dispatch (evening thermal 35.3–35.7 GW vs a 60.4–61.1 GW annual
+max). The reserve side is confirmed silent and quantified: of 1,825 evening
+h17–21 hours per year the co-opt prices reserve above \$1 in **34 / 13 / 0**
+hours (2023/24/25), and in 2025 it is silent all year. Neither storage offers
+nor reserve deliverability can manufacture an amplitude the energy stack's own
+dispersion does not contain. This is the ERCOT-145 §5 under-dispersion /
+near-tail-frequency signature on a second, independent instrument. **The
+successor object is mid-merit price DISPERSION (a slope mechanism); it is NOT
+an offer LEVEL object** — that program is closed (ERCOT-99/100/118/119/136–140/
+144/150).
+
+**Governance.** No mechanism tested in the LP sense, no flag added, no solve,
+no registration (the ERCOT-142/143/145/147/152 no-LP pattern). Rule-28(b) duty
+discharged in-session on both cells: `battery_dispatch_adder` (ERCOT cell stays
+`K` — the incumbent is unchanged; this session adjudicated its *replacement*)
+and `measured_ramp_capability` (ERCOT `U` → `I`);
+`check_mechanism_matrix.py` integrity + keeper stamps PASS. §5.1 queue item 7b
+added and struck. Holdouts untouched — 2023–2025 only, and 2023 carries no
+measured surface by construction. ERCOT-scoped (rule 25): no other ISO's cell
+touched, and the CAISO/NEISO storage verdicts were neither imported nor
+exported.
+
+Next shorthand: ercot-155.
