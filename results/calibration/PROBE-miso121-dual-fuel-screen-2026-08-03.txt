@@ -1,0 +1,258 @@
+==============================================================================
+miso-121 PHASE 0 — dual_fuel_switching measured identification (no LP)
+==============================================================================
+
+EIA-860 Multifuel capable (plant, group) pairs, ALL ISOs: 577
+MISO plant codes in the zone lookup: 2861; of those, EIA-860 switch-capable: 96
+
+------------------------------------------------------------------------------
+2023
+------------------------------------------------------------------------------
+reconstructing MISO 2023 fleet from /home/user/market-simulator/results/calibration/miso117_ctheatrate_B (no LP) ...
+INFO: MISO 2023: miso_south_seam_split — South seam re-homed onto its own external zone (RDT wheel-through bypass severed)
+INFO: MISO 2023: miso_rdt_tcdc — RDT pair replaced with 92% default derate + $40/$500 TCDC tiers (2024 SOM §III.B) + RPE $200 additive on violation tiers (miso_rpe_pricing, 2024 SOM §II.E/§III.B)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2023: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/data/curate_capacity_deliverability.py
+WARNING: eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: re-carried 11 mothballed-but-operating units for MISO 2023 (608 MW; OA in the snapshot, OP in vintage_2023; plants [941, 10234, 50772, 50936, 55358, 58052, 58330])
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 16 / capped 7 plant(s) to demonstrated peak (+10 MW total) from cc_capacity_reconcile_MISO.csv
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: unit-outage derate (MISO 2023): 779 plant-tranches derated
+INFO: short unit-outage derate (MISO 2023): 265 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2023): 1212 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2023): floored 16 plant(s), 20.03 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2023): 476 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: MISO 2023: EIA-930 NG: WAT level pin REFUSED — this BA folds pumped storage into NG: WAT (no NG: PS column); the monthly hydro level stays on EIA-923 HY, the same population as the LP units (rule 14)
+INFO: Loaded MISO 2023 hydro budget: 163 plants, 8789.4 GWh annual, 2465 MW nameplate
+INFO: MISO 2023: 163 hydro plants in LP (2465 MW, 8.79 TWh monthly budget)
+INFO: MISO 2023: priced import/export node — 32 import tranches (17200 MW), 32 export sinks (17200 MW)
+INFO: unit-outage derate (MISO 2023): 779 plant-tranches derated
+INFO: short unit-outage derate (MISO 2023): 265 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2023): 1212 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2023): floored 16 plant(s), 14.32 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2023): 515 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+INFO: MISO 2023: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2023: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2023: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 997 generators priced from their own plant, 1813 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2023): 652 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.88..1.42 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2023): 1477 gas units; cap-weighted mean +0.15 removed, zonal spread -0.26..0.31 $/MMBtu
+INFO: gas offer net-revenue margin: 558 tranches compressed at anchor 3.0492 $/MMBtu (median fixed margin 10.16 $/MWh, max 260.43)
+INFO: MISO 2023: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+  LEG A capability: 371 tranches / 89 plants / 15827.4 MW (23.34 % of 67804 MW gas)
+        1403    2114.9 MW  CC_REGULAR,ST_GAS
+        1702    1199.8 MW  ST_GAS
+        1402     916.5 MW  ST_GAS
+        6035     785.0 MW  ST_GAS
+       56104     709.8 MW  CC_REGULAR
+        6137     597.9 MW  CT_PEAKER
+        7925     497.4 MW  CT_PEAKER
+       55391     489.0 MW  CT_PEAKER
+         913     486.0 MW  CT_PEAKER
+        7843     424.1 MW  CT_PEAKER
+        8056     417.3 MW  ST_GAS
+        7159     367.2 MW  CT_PEAKER
+  LEG B switch price: measured months 12/12  mean 20.3584 $/MMBtu  (fallback constant 18.0)
+INFO: F923 fuel costs for 2023: 997 generators priced from their own plant, 1813 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2023): 652 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.88..1.42 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2023): 1477 gas units; cap-weighted mean +0.15 removed, zonal spread -0.26..0.31 $/MMBtu
+  LEG C binding: max Δ_fuel = 197.8272172853708 $/MMBtu  binding gen-hours = 15792 / 3249960
+      capable gas: mean 4.8004 max 218.8564 $/MMBtu  |  oil: min 17.6867 mean 20.3514
+
+------------------------------------------------------------------------------
+2024
+------------------------------------------------------------------------------
+reconstructing MISO 2024 fleet from /home/user/market-simulator/results/calibration/miso117_ctheatrate_B (no LP) ...
+INFO: MISO 2024: miso_south_seam_split — South seam re-homed onto its own external zone (RDT wheel-through bypass severed)
+INFO: MISO 2024: miso_rdt_tcdc — RDT pair replaced with 92% default derate + $40/$500 TCDC tiers (2024 SOM §III.B) + RPE $200 additive on violation tiers (miso_rpe_pricing, 2024 SOM §II.E/§III.B)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2024: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/data/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: re-carried 9 mothballed-but-operating units for MISO 2024 (587 MW; OA in the snapshot, OP in vintage_2024; plants [941, 10234, 50936, 55358, 58330])
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 16 / capped 7 plant(s) to demonstrated peak (+10 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: unit-outage derate (MISO 2024): 789 plant-tranches derated
+INFO: short unit-outage derate (MISO 2024): 221 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2024): 1215 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2024): floored 16 plant(s), 20.23 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2024): 707 unit-months masked offline (mid-year COD / retirement), 41 unit(s) fully not-yet-built/retired
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: MISO 2024: EIA-930 NG: WAT level pin REFUSED — this BA folds pumped storage into NG: WAT (no NG: PS column); the monthly hydro level stays on EIA-923 HY, the same population as the LP units (rule 14)
+INFO: Loaded MISO 2024 hydro budget: 160 plants, 9042.0 GWh annual, 2372 MW nameplate
+INFO: MISO 2024: 160 hydro plants in LP (2372 MW, 9.04 TWh monthly budget)
+INFO: MISO 2024: priced import/export node — 32 import tranches (17200 MW), 32 export sinks (17200 MW)
+INFO: unit-outage derate (MISO 2024): 789 plant-tranches derated
+INFO: short unit-outage derate (MISO 2024): 221 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2024): 1215 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2024): floored 16 plant(s), 14.60 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2024): 904 unit-months masked offline (mid-year COD / retirement), 50 unit(s) fully not-yet-built/retired
+INFO: MISO 2024: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2024: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2024: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2024: 983 generators priced from their own plant, 1873 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2024): 656 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.16..5.77 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2024): 1481 gas units; cap-weighted mean +0.27 removed, zonal spread -0.15..0.12 $/MMBtu
+INFO: gas offer net-revenue margin: 564 tranches compressed at anchor 3.0492 $/MMBtu (median fixed margin 10.02 $/MWh, max 260.43)
+INFO: MISO 2024: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2024: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+  LEG A capability: 371 tranches / 89 plants / 15827.4 MW (23.30 % of 67938 MW gas)
+        1403    2114.9 MW  CC_REGULAR,ST_GAS
+        1702    1199.8 MW  ST_GAS
+        1402     916.5 MW  ST_GAS
+        6035     785.0 MW  ST_GAS
+       56104     709.8 MW  CC_REGULAR
+        6137     597.9 MW  CT_PEAKER
+        7925     497.4 MW  CT_PEAKER
+       55391     489.0 MW  CT_PEAKER
+         913     486.0 MW  CT_PEAKER
+        7843     424.1 MW  CT_PEAKER
+        8056     417.3 MW  ST_GAS
+        7159     367.2 MW  CT_PEAKER
+  LEG B switch price: measured months 12/12  mean 18.2161 $/MMBtu  (fallback constant 18.0)
+INFO: F923 fuel costs for 2024: 983 generators priced from their own plant, 1873 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2024): 656 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.16..5.77 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2024): 1481 gas units; cap-weighted mean +0.27 removed, zonal spread -0.15..0.12 $/MMBtu
+  LEG C binding: max Δ_fuel = 107.85278284395926 $/MMBtu  binding gen-hours = 18192 / 3249960
+      capable gas: mean 3.5417 max 126.2489 $/MMBtu  |  oil: min 16.0902 mean 18.2073
+
+------------------------------------------------------------------------------
+2025
+------------------------------------------------------------------------------
+reconstructing MISO 2025 fleet from /home/user/market-simulator/results/calibration/miso117_ctheatrate_B (no LP) ...
+INFO: MISO 2025: miso_south_seam_split — South seam re-homed onto its own external zone (RDT wheel-through bypass severed)
+INFO: MISO 2025: miso_rdt_tcdc — RDT pair replaced with 92% default derate + $40/$500 TCDC tiers (2024 SOM §III.B) + RPE $200 additive on violation tiers (miso_rpe_pricing, 2024 SOM §II.E/§III.B)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/data/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2025: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/data/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 16 / capped 7 plant(s) to demonstrated peak (+10 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: unit-outage derate (MISO 2025): 862 plant-tranches derated
+INFO: short unit-outage derate (MISO 2025): 273 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2025): 1211 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2025): floored 16 plant(s), 21.40 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2025): 988 unit-months masked offline (mid-year COD / retirement), 69 unit(s) fully not-yet-built/retired
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: MISO: measured power-only CHP heat rates applied to 72 generator(s) across 25 (plant, class) pair(s)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: MISO 2025: EIA-930 NG: WAT level pin REFUSED — this BA folds pumped storage into NG: WAT (no NG: PS column); the monthly hydro level stays on EIA-923 HY, the same population as the LP units (rule 14)
+INFO: MISO 2025 hydro budget: backfilled 146 non-reporting plants (8107.5 GWh) from 2024
+INFO: Loaded MISO 2025 hydro budget: 160 plants, 9077.2 GWh annual, 2372 MW nameplate
+INFO: MISO 2025: 160 hydro plants in LP (2372 MW, 9.08 TWh monthly budget)
+INFO: MISO 2025: priced import/export node — 32 import tranches (17200 MW), 32 export sinks (17200 MW)
+INFO: unit-outage derate (MISO 2025): 862 plant-tranches derated
+INFO: short unit-outage derate (MISO 2025): 273 plant-tranches derated (< 5-day baseload-coal windows)
+INFO: maxgen event-window derate (MISO 2025): 1211 plant-tranches derated (declared-window revealed unit derates)
+INFO: ST_GAS p25-level floor (MISO 2025): floored 16 plant(s), 15.37 TWh in measured online windows (level = p25_cf x nameplate, cheapest-first, clipped to pmax*availability)
+INFO: COD ramp (MISO 2025): 1372 unit-months masked offline (mid-year COD / retirement), 101 unit(s) fully not-yet-built/retired
+INFO: MISO 2025: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2025: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: MISO 2025: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2025: 976 generators priced from their own plant, 1795 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2025): 654 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.42..2.33 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2025): 1479 gas units; cap-weighted mean +0.06 removed, zonal spread -0.65..0.28 $/MMBtu
+INFO: gas offer net-revenue margin: 562 tranches compressed at anchor 3.0492 $/MMBtu (median fixed margin 10.07 $/MWh, max 260.43)
+INFO: MISO 2025: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2025: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+  LEG A capability: 369 tranches / 88 plants / 15824.8 MW (23.49 % of 67363 MW gas)
+        1403    2114.9 MW  CC_REGULAR,ST_GAS
+        1702    1199.8 MW  ST_GAS
+        1402     916.5 MW  ST_GAS
+        6035     785.0 MW  ST_GAS
+       56104     709.8 MW  CC_REGULAR
+        6137     597.9 MW  CT_PEAKER
+        7925     497.4 MW  CT_PEAKER
+       55391     489.0 MW  CT_PEAKER
+         913     486.0 MW  CT_PEAKER
+        7843     424.1 MW  CT_PEAKER
+        8056     417.3 MW  ST_GAS
+        7159     367.2 MW  CT_PEAKER
+  LEG B switch price: measured months 12/12  mean 17.205 $/MMBtu  (fallback constant 18.0)
+INFO: F923 fuel costs for 2025: 976 generators priced from their own plant, 1795 gap-filled from nearby (state/zone) plants
+INFO: MISO winter citygate daily (2025): 654 Chicago-hub gas units (zones MISO-East,MISO-Illinois,MISO-Indiana) repriced at the measured Chicago daily shape in 90 winter days; correction 0.42..2.33 (winter peak on the cold-snap flow days)
+INFO: MISO zonal gas basis (2025): 1479 gas units; cap-weighted mean +0.06 removed, zonal spread -0.65..0.28 $/MMBtu
+  LEG C binding: max Δ_fuel = 45.869241808838055 $/MMBtu  binding gen-hours = 11568 / 3232440
+      capable gas: mean 4.0224 max 63.2496 $/MMBtu  |  oil: min 15.4199 mean 17.1974
+
+------------------------------------------------------------------------------
+LEG D — CAMPD observability
+------------------------------------------------------------------------------
+  2023: {"n_unit_hours": 1392768, "n_units": 160, "n_plants_found": 49, "label_units_with_varying_fuel": 0, "label_values": ["Coal", "Diesel Oil", "Natural Gas", "Other Gas", "Pipeline Natural Gas"], "gas_winter_unit_hours_burning": 28764, "gas_winter_co2_rate_p50": 53.909, "gas_winter_co2_rate_p99": 55.827, "oil_signature_unit_hours": 90, "oil_signature_share_of_gas": 0.003129, "n_units_with_oil_signature": 25, "above_band_coal_like_unit_hours": 5, "diesel_labelled_unit_hours": 28, "diesel_labelled_co2_rate_p50": 73.646}
+  2024: {"n_unit_hours": 1365840, "n_units": 158, "n_plants_found": 49, "label_units_with_varying_fuel": 0, "label_values": ["Coal", "Diesel Oil", "Natural Gas", "Other Gas", "Pipeline Natural Gas"], "gas_winter_unit_hours_burning": 36474, "gas_winter_co2_rate_p50": 53.91, "gas_winter_co2_rate_p99": 73.43, "oil_signature_unit_hours": 459, "oil_signature_share_of_gas": 0.012584, "n_units_with_oil_signature": 43, "above_band_coal_like_unit_hours": 7, "diesel_labelled_unit_hours": 110, "diesel_labelled_co2_rate_p50": 73.455}
+  2025: {"n_unit_hours": 1300536, "n_units": 156, "n_plants_found": 49, "label_units_with_varying_fuel": 0, "label_values": ["Coal", "Diesel Oil", "Natural Gas", "Other Gas", "Pipeline Natural Gas"], "gas_winter_unit_hours_burning": 37154, "gas_winter_co2_rate_p50": 53.912, "gas_winter_co2_rate_p99": 73.374, "oil_signature_unit_hours": 452, "oil_signature_share_of_gas": 0.012166, "n_units_with_oil_signature": 40, "above_band_coal_like_unit_hours": 5, "diesel_labelled_unit_hours": 186, "diesel_labelled_co2_rate_p50": 73.646}
+
+==============================================================================
+ROUTE EVALUATION (PREREG §5)
+==============================================================================
+  I_A_capability_absent              does not fire
+  I_B_switch_price_unidentified      does not fire
+  I_C_byte_identity                  does not fire
+  I_D_unobservable_windows           does not fire
+
+PHASE-0 VERDICT: LIVE — Phase 1 A/B authorized
+
+wrote results/calibration/_miso121_dual_fuel_screen.json
