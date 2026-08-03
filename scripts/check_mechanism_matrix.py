@@ -52,6 +52,21 @@ SCENARIOS_PATH = "src/market_sim/config/scenarios.py"
 CALIB_CLI_PATH = "scripts/run_calibration_full.py"
 REGISTRY_PREFIX = "frontend/data/backcast/registry/"
 KEEPER_SHARD = "frontend/data/backcast/keepers/{iso}.json"
+GAPS_BASELINE_PATH = "docs/codebase-site/data/mechanism-matrix-gaps.json"
+
+# Each ISO's own ScenarioConfig field stems, incl. the regulator prefixes whose
+# fields are that ISO's exclusively (NYSDEC rules bind only New York units).
+# Matched as `<stem>_`, never as a bare substring, so `carbon_price` is never
+# mistaken for a CARB field. Kept in sync with
+# scripts/mechanism_matrix_gap_sweep.py::ISO_STEMS.
+ISO_STEMS = {
+    "ERCOT": ("ercot",),
+    "CAISO": ("caiso",),
+    "PJM": ("pjm",),
+    "MISO": ("miso",),
+    "NYISO": ("nyiso", "nysdec"),
+    "NEISO": ("neiso",),
+}
 
 CELL_CHARS = set("KRIGOU.")
 N_ISOS = 6
@@ -202,6 +217,63 @@ def cli_flags(source: str) -> set[str]:
     return set(re.findall(r'add_argument\(\s*"(--[a-z0-9-]+)"', source))
 
 
+def gap_ratchet(matrix_text: str, source: str) -> list[str]:
+    """Errors for ISO-scoped fields absent from BOTH the matrix and the baseline.
+
+    Closes the standing blind spot the nyiso-113/114 census measured: the diff
+    gate above enforces rule 28(c) only for fields **added in the same PR**, so
+    every field predating that gate is structurally invisible to it. The census
+    found **161 ISO-scoped fields absent from the matrix across the six ISOs,
+    95 of them armed on a keeper** — none of which any CI run could see.
+
+    A full audit cannot be a hard gate today (that backlog is each ISO lane's
+    own work, and rule 25/28(d) forbid one lane minting verdict-bearing rows for
+    another's market). So this is a RATCHET: the committed baseline
+    ``mechanism-matrix-gaps.json`` enumerates the known-absent fields per ISO,
+    and a field absent from the matrix AND absent from the baseline FAILS. The
+    list can only shrink — a new ISO-scoped field must land with its
+    registration, and closing a legacy gap refreshes the baseline
+    (``scripts/mechanism_matrix_gap_sweep.py --write-baseline``).
+
+    Stdlib-only by the same contract as the rest of this checker: field names
+    come from the ``scenarios.py`` regex, not from importing ``market_sim``.
+    """
+    path = REPO / GAPS_BASELINE_PATH
+    if not path.exists():
+        return []
+    try:
+        allowed = json.loads(path.read_text(encoding="utf-8")).get("absent", {})
+    except (OSError, ValueError) as exc:
+        return [f"{GAPS_BASELINE_PATH} is unreadable ({exc})"]
+    fields = scenarioconfig_fields(source)
+    out: list[str] = []
+    for iso, stems in ISO_STEMS.items():
+        allow = set(allowed.get(iso, ()))
+        for f in sorted(fields):
+            if not any(f.startswith(f"{s}_") for s in stems):
+                continue
+            # Same stem convention as the matrix itself: a per-ISO flag is that
+            # ISO's leg of an ISO-neutral family row, so the family name (the
+            # field minus its ISO prefix) counts as registration.
+            #
+            # SUBSTRING, not `\b`: a stem sits mid-identifier in the row that
+            # owns it (`gas_bridge_startup` inside `nyiso_gas_bridge_startup`),
+            # where the preceding `_` is a word character and `\b` never
+            # matches. Using `\b` here made the ratchet fire on seven fields the
+            # sweep counts as registered — so the two disagreed and the baseline
+            # could never be satisfied. This must stay identical to
+            # ``mechanism_matrix_gap_sweep.coverage``, which writes the baseline.
+            stem = next((f[len(s) + 1 :] for s in stems if f.startswith(f"{s}_")), f)
+            named = f in matrix_text or (stem and stem in matrix_text)
+            if not named and f not in allow:
+                out.append(
+                    f"{iso}-scoped field `{f}` is in neither {MATRIX_PATH} nor "
+                    f"the {GAPS_BASELINE_PATH} ratchet (rule 28c). Add its row "
+                    f"(or name it in the owning family row's def/note)."
+                )
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", help="git ref to diff against (PR base sha)")
@@ -266,6 +338,14 @@ def main() -> int:
                 )
         if new_fields and not failed:
             print(f"mechanism-matrix: {len(new_fields)} new field(s) all registered")
+
+    # --- rule 28(c) RATCHET: ISO-scoped fields absent from matrix AND baseline
+    ratchet = gap_ratchet(matrix_text, (REPO / SCENARIOS_PATH).read_text("utf-8"))
+    for e in ratchet:
+        failed = True
+        print(f"::error file={SCENARIOS_PATH}::mechanism-matrix gap ratchet: {e}")
+    if not ratchet:
+        print("mechanism-matrix: gap ratchet OK (no new ISO-scoped field is invisible)")
 
     # --- rule 28(b) advisories ----------------------------------------------
     added = _git(

@@ -43,6 +43,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "NUCLEAR_FUEL_PRICE_HISTORICAL",
         "OIL_PRICE_PER_MMBTU",
         "OIL_PRICE_TRAJECTORIES",
+        # Added to fuel_trajectories by the PJM RGGI lane without the paired
+        # facade re-export, which left this frozen inventory red on main
+        # (nyiso-114 hit it as a pre-existing failure). Restored to contract:
+        # inventory entry + `constants.py` re-export, no value touched.
+        "PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE",
         "PRB_COMMODITY_DECLINE",
         "PRB_COMMODITY_FLAT_THROUGH",
         "PRB_COMMODITY_SHARE",

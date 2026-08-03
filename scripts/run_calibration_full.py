@@ -1051,7 +1051,10 @@ def _reserve_family_frame(
     """Return the long per-reserve-family hourly dual / requirement frame.
 
     One row per (reserve family, hour): the family's own balance-row dual, its
-    hourly requirement MW, and its cleared ORDC shortfall MW.
+    hourly requirement MW, the reserve MW it actually held, and its cleared
+    ORDC shortfall MW — so the LP row itself, ``held + shortfall >=
+    requirement``, is checkable from the bundle, with equality iff the family
+    binds and the slack saying how far a non-binding family was from binding.
 
     **Why this exists (nyiso-113 §8, the standing all-ISO gap).** Until this
     sidecar, NO bundle in ANY ISO persisted a per-family reserve dual.
@@ -1097,12 +1100,17 @@ def _reserve_family_frame(
         )
         return None
     T = duals.shape[0]
-    shortfall = getattr(result, "reserve_shortfall_by_family", None)
-    sf = (
-        np.zeros_like(duals)
-        if shortfall is None
-        else np.asarray(shortfall, dtype=float)[:T, : duals.shape[1]]
-    )
+
+    def _col(name):
+        v = getattr(result, name, None)
+        return (
+            np.zeros_like(duals)
+            if v is None
+            else np.asarray(v, dtype=float)[:T, : duals.shape[1]]
+        )
+
+    sf = _col("reserve_shortfall_by_family")
+    held = _col("reserve_held_by_family")
     rows = []
     for f, fam in enumerate(families):
         req = np.asarray(fam.requirement, dtype=float).ravel()[:T]
@@ -1116,6 +1124,7 @@ def _reserve_family_frame(
                     "hour": np.arange(T, dtype=np.int32),
                     "dual": duals[:, f].astype(np.float32),
                     "requirement_mw": req.astype(np.float32),
+                    "held_mw": held[:, f].astype(np.float32),
                     "shortfall_mw": sf[:, f].astype(np.float32),
                 }
             )

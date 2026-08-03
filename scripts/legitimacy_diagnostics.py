@@ -652,14 +652,10 @@ D9_HR_FALLBACKS: tuple[tuple[tuple[str, ...], str, str, float, str, float], ...]
         "gas_st_peak_hr_override",
         1.5,
     ),
-    (
-        ("CT_CHP",),
-        "ct_committed_hr_override",
-        "ct_econ_hr_override",
-        1.1,
-        "ct_peak_hr_override",
-        1.3,
-    ),
+    # (The CT_CHP row stood here on the ct_*_hr_override triple; deleted
+    # 2026-08-03 with the fields themselves — rule 26 [R-DELETE], nyiso-114.
+    # The triple was unreachable on every committed bundle in every ISO, so
+    # this D-9 row could never have reported a non-neutral band.)
 )
 # The ERCOT-mirrored generic gas tranche shares (offer_curves.py:130-143)
 # engaged by config.gas_offer_curve on non-CAMPD fleets.

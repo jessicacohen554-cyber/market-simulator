@@ -916,6 +916,9 @@ class DispatchModel:
         solution = h.getSolution()
         col_value = np.asarray(solution.col_value, dtype=float)
         row_dual = np.asarray(solution.row_dual, dtype=float)
+        # Row ACTIVITY (Ax), needed only by the per-family reserve sidecar's
+        # held-MW column; every other output reads columns or duals.
+        row_value = np.asarray(solution.row_value, dtype=float)
 
         block = col_value.reshape(T, layout.vars_per_hour)
         dispatch = block[:, layout._p_off : layout._w_off].T
@@ -968,7 +971,7 @@ class DispatchModel:
         # shared-headroom constraint transfers into each zone's energy LMP above.
         reserve_dispatch = reserve_price = reserve_price_by_family = None
         reserve_supply_cap_dual = None
-        reserve_shortfall_by_family = None
+        reserve_shortfall_by_family = reserve_held_by_family = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
             if self._pergen:
@@ -1019,6 +1022,24 @@ class DispatchModel:
                 reserve_shortfall_by_family = ordc_block @ membership
             else:
                 reserve_shortfall_by_family = np.zeros((T, n_fam), dtype=float)
+            # Per-family HELD reserve MW, (T, n_fam) — the row's reserve-column
+            # activity. Taken as (balance-row activity − shortfall) rather than
+            # by re-summing R columns per family, because that re-sum would have
+            # to re-derive the row's own coefficient structure (per-class blocks,
+            # storage RS columns, per-generator columns with a product mask, and
+            # the ERCOT all-class family that draws on every class) — five
+            # layouts, each a chance to attribute one family's MW to another.
+            # The row activity is exactly Σ_{z∈f} R + Σ_{k∈f} ORDC by
+            # construction, so this is layout-independent and exact. Persisting
+            # it is what makes the family row READABLE from a bundle: the
+            # inequality `held + shortfall ≥ requirement` is checkable, and its
+            # slack says how far a non-binding family was from binding — which
+            # ``reserve_dispatch`` cannot answer, being itself discarded at
+            # persist time and having no family index.
+            reserve_held_by_family = (
+                row_value[-(n_fam * T) :].reshape(T, n_fam)
+                - reserve_shortfall_by_family
+            )
             # Reserve-supply cap duals (zonal spec): the cap block sits directly
             # before [online_cap | storage_gate | balance] at the row tail, one
             # system-wide <= row per headroom tier per hour (hour-major). A
@@ -1123,6 +1144,7 @@ class DispatchModel:
             reserve_price=reserve_price,
             reserve_price_by_family=reserve_price_by_family,
             reserve_shortfall_by_family=reserve_shortfall_by_family,
+            reserve_held_by_family=reserve_held_by_family,
             reserve_supply_cap_dual=reserve_supply_cap_dual,
             storage_reserve_dispatch=storage_reserve_dispatch,
             posture_online_mw=posture_online,

@@ -19,8 +19,6 @@ from market_sim.config.constants import (
     CC_ECON_HR_OVERRIDE_DEFAULT,
     CC_PEAK_HR_OVERRIDE_DEFAULT,
     CHP_BTM_PCT_BY_SECTOR,
-    CT_ECON_HR_OVERRIDE_DEFAULT,
-    CT_PEAK_HR_OVERRIDE_DEFAULT,
     GAS_ST_ECON_HR_OVERRIDE_DEFAULT,
     GAS_ST_PEAK_HR_OVERRIDE_DEFAULT,
     HOURS_PER_YEAR,
@@ -571,15 +569,10 @@ def bins_to_fleet(
                 peak_hr = base_hr * _hr_override(
                     config.gas_st_peak_hr_override, GAS_ST_PEAK_HR_OVERRIDE_DEFAULT
                 )
-            ct_mc = config.ct_committed_hr_override
-            if group == "CT_CHP" and ct_mc is not None:
-                committed_hr = base_hr * ct_mc
-                econ_hr = base_hr * _hr_override(
-                    config.ct_econ_hr_override, CT_ECON_HR_OVERRIDE_DEFAULT
-                )
-                peak_hr = base_hr * _hr_override(
-                    config.ct_peak_hr_override, CT_PEAK_HR_OVERRIDE_DEFAULT
-                )
+            # (A CT_CHP limb stood here on the ct_*_hr_override triple. Deleted
+            # 2026-08-03, rule 26 [R-DELETE], nyiso-114: unreachable on every
+            # committed bundle in every ISO — CT_CHP always resolves an offer
+            # curve, so control never reaches this ``else``.)
         if ov is not None:
             # Per-plant sheet wins: all band heat rates are base_HR x the sheet's
             # multipliers (econ-low/-high set in the econ split below).

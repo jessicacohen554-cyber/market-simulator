@@ -1513,7 +1513,18 @@ def backcast_config(
         #   would drive a committed unit cold; the midday ~$0 must come from real
         #   oversupply (Lever D), not the floor. Other ISOs stay off (byte-
         #   identical). Toggle with --no-caiso-ra-mustoffer.
-        caiso_ra_min_load_frac=0.26,  # min stable load of a committed gas unit
+        # CAISO-SCOPED since 2026-08-03 (rule 25 [R-ISO-SCOPE], nyiso-114). This
+        # was assigned unconditionally, so a CAISO-fitted 0.26 rode the recorded
+        # recipe of ALL 119 committed bundles in all six ISOs. It is provably
+        # inert outside CAISO — every reader (pipeline/commitment.py:207 and
+        # :1582) sits behind `caiso_ra_mustoffer and iso == "CAISO"`, and
+        # `caiso_ra_mustoffer` is False on every non-CAISO bundle — but an inert
+        # cross-ISO value is exactly the channel rule 25 exists to close: it
+        # re-arms the moment any other ISO's lane tries the RA bridge, carrying
+        # CAISO's measured CC turn-down into a fleet it was never measured on.
+        # Non-CAISO now records the neutral shipped default (0.40).
+        caiso_ra_min_load_frac=(0.26 if iso.upper() == "CAISO" else 0.40),
+        #   min stable load of a committed gas unit
         #   (fraction of available capacity) for the RA bridge above. Grounded in
         #   the CAMPD/CEMS-measured CAISO combined-cycle minimum stable load
         #   (P5 of net CF over online hours, scripts/data/derive_thermal_tranches.py;
@@ -1745,11 +1756,13 @@ def backcast_config(
         #   inside a net-summer-capped range. ERCOT (CAMPD-bin nameplate) and
         #   CAISO/MISO/SPP keep their prior behaviour. Wired for the winter-
         #   fidelity CC ISOs (PJM first; NYISO/NEISO share the per-plant path).
-        ct_committed_hr_override=1.1,  # CT_CHP supply curve above its must-run
-        ct_econ_hr_override=1.2,  # BTM + steam-following floor; raised in
-        ct_peak_hr_override=1.4,  # run9 (CT_CHP was running too much). NOTE:
-        #   these are INERT for CT_CHP now — its offer is the offer_curve_by_group
-        #   ["CT_CHP"] curve below (the CAISO EOR power-only-HR multipliers).
+        # (The ct_committed/econ/peak_hr_override triple, 1.1/1.2/1.4, was set
+        # here and DELETED 2026-08-03 under rule 26 [R-DELETE], nyiso-114. This
+        # recipe's own comment already recorded them as INERT — CT_CHP's offer is
+        # the offer_curve_by_group["CT_CHP"] curve below — and a knob that is
+        # documented dead but still parses is exactly the re-armable answer key
+        # rule 26 forbids. Measured before deleting: armed on all 119 committed
+        # bundles across all six ISOs, reachable on none.)
         # Unified thermal offer curve (operator-supplied band multipliers on
         # AHR x fuel_price; VOM constant across bands). The economic block is a
         # rising ramp from econ_low to econ_high (its slope set by those two
