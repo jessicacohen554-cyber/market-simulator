@@ -16,18 +16,7 @@
       "miso_zonal_reserve_zones",
       "miso_zonal_reserves"
     ],
-    "NEISO": [
-      "neiso_gas_derate_cap",
-      "neiso_gas_derate_slope_per_c",
-      "neiso_gas_derate_t0_c",
-      "neiso_oil_burn_budget",
-      "neiso_operable_capacity_availability",
-      "neiso_winter_fuel_inventory",
-      "neiso_winter_fuel_start_fill_bbl",
-      "neiso_winter_fuelsec_commit_frac",
-      "neiso_winter_fuelsec_min_stable_pct",
-      "neiso_winter_fuelsec_tmin_c"
-    ],
+    "NEISO": [],
     "NYISO": [],
     "PJM": [
       "pjm_ct_measured_max_reprice",
