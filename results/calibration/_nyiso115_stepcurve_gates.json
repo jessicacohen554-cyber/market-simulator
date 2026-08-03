@@ -1,0 +1,347 @@
+{
+  "probe": "nyiso-115 step-curve gates (prereg discharge)",
+  "control": "results/calibration/nyiso115_control",
+  "treatment": "results/calibration/nyiso115_nyc_stepcurve",
+  "G1_curve_armed": {
+    "pass": true,
+    "per_year": {
+      "2023": {
+        "nyc_10min_total": {
+          "hours_at_published_rcpf": 14,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 17,
+          "max_dual": 25.0
+        },
+        "nyc_30min_total": {
+          "hours_at_published_rcpf": 2,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 3,
+          "max_dual": 25.0
+        }
+      },
+      "2024": {
+        "nyc_10min_total": {
+          "hours_at_published_rcpf": 6,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 6,
+          "max_dual": 25.0
+        },
+        "nyc_30min_total": {
+          "hours_at_published_rcpf": 6,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 6,
+          "max_dual": 25.0
+        }
+      },
+      "2025": {
+        "nyc_10min_total": {
+          "hours_at_published_rcpf": 19,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 29,
+          "max_dual": 25.0
+        },
+        "nyc_30min_total": {
+          "hours_at_published_rcpf": 8,
+          "hours_on_ramp_interior_rungs": 0,
+          "hours_dual_positive": 9,
+          "max_dual": 25.0
+        }
+      }
+    }
+  },
+  "G2_scope": {
+    "pass": true,
+    "pass_as_prereg_written": false,
+    "note": "pass = the CONSTRUCTION leg (requirement_mw and shortfall_mw byte-identical for every non-NYC family), which is what K-C asks. pass_as_prereg_written = the literal \u00a77 text, which additionally demanded byte-identity of dual and held_mw \u2014 solved outputs of a co-optimization, so it cannot hold whenever the mechanism does anything at all. Reported separately rather than redefined.",
+    "per_year": {
+      "2023": {
+        "east_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 110.0,
+          "shortfall_mw": 0.0
+        },
+        "li_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 1190.0,
+          "shortfall_mw": 0.0
+        },
+        "li_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_spin": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "seny_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        }
+      },
+      "2024": {
+        "east_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 110.0,
+          "shortfall_mw": 0.0
+        },
+        "li_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 1190.0,
+          "shortfall_mw": 0.0
+        },
+        "li_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_spin": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "seny_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        }
+      },
+      "2025": {
+        "east_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 110.0,
+          "shortfall_mw": 0.0
+        },
+        "li_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 1190.0,
+          "shortfall_mw": 0.0
+        },
+        "li_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_spin": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_10min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "nyca_30min_total": {
+          "dual": 0.0,
+          "requirement_mw": 0.0,
+          "held_mw": 0.0,
+          "shortfall_mw": 0.0
+        },
+        "seny_30min_total": {
+          "dual": 40.71801758,
+          "requirement_mw": 0.0,
+          "held_mw": 2350.0,
+          "shortfall_mw": 0.0
+        }
+      }
+    }
+  },
+  "G3_lp_row_identity": {
+    "pass": true,
+    "per_year": {
+      "2023": {
+        "min_slack_mw": 0.0,
+        "max_abs_slack_where_priced": 0.0,
+        "n_priced_rows": 22
+      },
+      "2024": {
+        "min_slack_mw": 0.0,
+        "max_abs_slack_where_priced": 0.0,
+        "n_priced_rows": 12
+      },
+      "2025": {
+        "min_slack_mw": 0.0,
+        "max_abs_slack_where_priced": 0.0,
+        "n_priced_rows": 51
+      }
+    }
+  },
+  "G4_feasibility": {
+    "pass": true,
+    "per_year": {
+      "2023": {
+        "control": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "treatment": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        }
+      },
+      "2024": {
+        "control": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "treatment": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        }
+      },
+      "2025": {
+        "control": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "treatment": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        }
+      }
+    }
+  },
+  "K_A_drift_attribution": {
+    "fires": false,
+    "note": "The keeper carries no reserve_family sidecar (FINDING-nyiso114 \u00a71: written going forward only, and a P0-run-pattern keeper cannot be re-solved into byte-identity once main moves). K-A is therefore discharged the only way it can be: every number reported is TREATMENT vs the same-HEAD CONTROL, and the control is the baseline for price attribution too \u2014 the keeper bundle is never differenced.",
+    "per_year": {
+      "2023": {
+        "nyc_10min_total": {
+          "treatment_vs_control_max_abs_ddual": 21.875,
+          "treatment_vs_control_hours_differing": 17
+        },
+        "nyc_30min_total": {
+          "treatment_vs_control_max_abs_ddual": 21.875,
+          "treatment_vs_control_hours_differing": 8
+        },
+        "keeper_carries_sidecar": false
+      },
+      "2024": {
+        "nyc_10min_total": {
+          "treatment_vs_control_max_abs_ddual": 12.5,
+          "treatment_vs_control_hours_differing": 6
+        },
+        "nyc_30min_total": {
+          "treatment_vs_control_max_abs_ddual": 21.875,
+          "treatment_vs_control_hours_differing": 6
+        },
+        "keeper_carries_sidecar": false
+      },
+      "2025": {
+        "nyc_10min_total": {
+          "treatment_vs_control_max_abs_ddual": 18.75,
+          "treatment_vs_control_hours_differing": 29
+        },
+        "nyc_30min_total": {
+          "treatment_vs_control_max_abs_ddual": 21.875,
+          "treatment_vs_control_hours_differing": 10
+        },
+        "keeper_carries_sidecar": false
+      }
+    }
+  },
+  "price_effect_treatment_vs_control": {
+    "2023": {
+      "mean_price_control": 33.6516,
+      "mean_price_treatment": 33.6553,
+      "mean_price_pct_delta": 0.0111,
+      "max_abs_dprice": 21.875,
+      "zone_hours_differing": 13256,
+      "zone_hours": 52560,
+      "NYC_mean_control": 33.2976,
+      "NYC_mean_treatment": 33.3138,
+      "NYC_hours_gt_300_control": 0,
+      "NYC_hours_gt_300_treatment": 0,
+      "NYC_max_control": 185.61,
+      "NYC_max_treatment": 207.49,
+      "Long_Island_mean_control": 36.358,
+      "Long_Island_mean_treatment": 36.3596,
+      "Long_Island_hours_gt_300_control": 3,
+      "Long_Island_hours_gt_300_treatment": 3,
+      "Long_Island_max_control": 503.74,
+      "Long_Island_max_treatment": 503.74
+    },
+    "2024": {
+      "mean_price_control": 36.5967,
+      "mean_price_treatment": 36.599,
+      "mean_price_pct_delta": 0.0062,
+      "max_abs_dprice": 31.0417,
+      "zone_hours_differing": 15541,
+      "zone_hours": 52560,
+      "NYC_mean_control": 36.2995,
+      "NYC_mean_treatment": 36.3122,
+      "NYC_hours_gt_300_control": 0,
+      "NYC_hours_gt_300_treatment": 0,
+      "NYC_max_control": 199.13,
+      "NYC_max_treatment": 199.13,
+      "Long_Island_mean_control": 39.3704,
+      "Long_Island_mean_treatment": 39.3783,
+      "Long_Island_hours_gt_300_control": 0,
+      "Long_Island_hours_gt_300_treatment": 0,
+      "Long_Island_max_control": 297.54,
+      "Long_Island_max_treatment": 297.54
+    },
+    "2025": {
+      "mean_price_control": 57.2248,
+      "mean_price_treatment": 57.237,
+      "mean_price_pct_delta": 0.0213,
+      "max_abs_dprice": 40.718,
+      "zone_hours_differing": 13030,
+      "zone_hours": 52560,
+      "NYC_mean_control": 57.1242,
+      "NYC_mean_treatment": 57.1665,
+      "NYC_hours_gt_300_control": 0,
+      "NYC_hours_gt_300_treatment": 0,
+      "NYC_max_control": 253.51,
+      "NYC_max_treatment": 293.33,
+      "Long_Island_mean_control": 59.4491,
+      "Long_Island_mean_treatment": 59.4515,
+      "Long_Island_hours_gt_300_control": 14,
+      "Long_Island_hours_gt_300_treatment": 14,
+      "Long_Island_max_control": 489.62,
+      "Long_Island_max_treatment": 489.62
+    }
+  }
+}
