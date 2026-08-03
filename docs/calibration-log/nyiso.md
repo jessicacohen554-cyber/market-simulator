@@ -4026,4 +4026,127 @@ on the aggregate series or a re-solve. A per-family dual sidecar is the
 prerequisite for adjudicating locational reserve mechanisms from bundles — and
 the array already exists.
 
-Next shorthand: nyiso-114.
+## 2026-08-03 — nyiso-114: the per-family reserve dual is PERSISTED (all-ISO gap closed); the census run in six lanes + a CI ratchet; two dead knobs removed
+
+Keeper **UNCHANGED** at `2026-08-02-nyiso-113-li-locational`. This session
+promotes nothing, demotes nothing and re-keys nothing.
+`results/calibration/FINDING-nyiso114-reserve-family-sidecar-2026-08-03.md`;
+`PREREG-nyiso114-reserve-family-sidecar-2026-08-03.md` pushed before any solve.
+
+### 1. The instrument (item 1 of the brief) — §6's standing gap, closed
+
+`hourly/reserve_family_<year>.parquet`, long form, one row per (family, hour):
+`family`, `reserve_class`, `dual`, `requirement_mw`, **`held_mw`**,
+`shortfall_mw`. Two new LP outputs: `shortfall_mw` partitions the family-major
+ORDC block by an `(n_steps, n_fam)` membership matmul (`reduceat` collides
+boundaries for a zero-step family), and `held_mw` is the **balance row's own
+activity** minus that shortfall — taken from the activity rather than by
+re-summing R columns, because the row's coefficients are layout-dependent
+(per-class blocks, storage RS columns, per-generator product masks, ERCOT's
+all-class family) and each layout is a chance to mislabel a family.
+
+Together they make the LP row **checkable from the bundle**: `held + shortfall ≥
+requirement`, tight exactly where the family prices. `held_mw` was added
+mid-session precisely because the pre-registered G3 gate would otherwise have
+been unmeasurable from committed artifacts — the same error class as nyiso-113's
+K3/K4, caught before it shipped.
+
+Instrument, not a lever: no `ScenarioConfig` field, no CLI flag, no LP row or
+column, zero free parameters, read off the already-solved primal. The writer
+refuses to emit a frame on a family-count mismatch (no sidecar beats a
+mislabelled one). **46 KB per ISO-year.** Not backfilled — written forward.
+
+### 2. What it shows, and the correction it forces
+
+| family | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| `nyc_10min_total` | **17** | **6** | **29** |
+| `nyc_30min_total` | **8** | **6** | **10** |
+| `seny_30min_total` | **2** | 0 | **8** |
+| `li_30min_total` | 0 | 0 | **5** |
+| `li_10min_total`, all three `nyca_*`, `east_10min_total` | 0 | 0 | 0 |
+
+NYISO's binding reserve constraint is **overwhelmingly the NYC locational pair**,
+and **every NYCA-wide family is slack in every hour of all three years** — a
+direct measurement of what nyiso-110 could only infer from the summed series.
+
+**P1 CONFIRMED EXACTLY:** `li_30min_total` binds in exactly 2025 h4193–4195 and
+h4217–4218 — the five hours nyiso-113's Zone-K headroom screen predicted *ex
+ante* — and in no other hour of any year. **P3/P4/P2 CONFIRMED. P5 REFUTED:**
+nyiso-113 §7 attributed 2023's two reserve-dual hours to the LI mechanism; the
+per-family dual says the LI families bind in **zero** hours of 2023 and those two
+were **`seny_30min_total`**. An error in reading a summed series, not a defect in
+the keeper (whose promotion rested on rules 1/14, not on those hours) — and
+exactly the error class the sidecar makes impossible.
+
+**G1 FAILED, and the kill was discharged by measurement.** The replay does not
+reproduce the keeper (max |Δprice| $9.0–10.6, mean LMP +0.012/+0.012/+0.055 %, a
+CT_PEAKER↔ST_GAS tie reshuffle with total conserved). Pre-registered kill K-A
+required attribution: a 2024 re-solve at the session's **base commit**, with the
+entire session diff absent, reproduces the **identical** divergence (10.5637
+$/MWh over 18,630 zone-hours, both). It belongs to the 58 commits between the
+keeper's solve basis and this base — not to this session's code. **Standing
+caveat: a keeper arming a P0-run-pattern mechanism cannot be re-solved into
+byte-identity once main moves, so the sidecar cannot be backfilled faithfully.**
+
+### 3. The census in all six lanes + a ratchet (item 2)
+
+`scripts/mechanism_matrix_gap_sweep.py` (promoted from probe, `--iso`). Absent
+from matrix / armed-on-keeper-with-no-cell: **ERCOT 64/35, CAISO 39/23, PJM 21/8,
+NEISO 15/10, MISO 12/10, NYISO 10/9 — 161 and 95.** CI saw none: the diff gate
+fires only on fields added in the same PR.
+
+**NYISO's column is CLOSED (0/0/0)** — its nine were all `nyiso_gas_bridge_*`
+sub-scalars, registered literally in the `gas_commitment_bridge` row's `def`;
+`nyiso_iroquois_winter_spread` (named only in the matrix file's header comment)
+now rides `gas_hub_basis_overlay`. The other five lanes are their own work (rule
+25/28(d)). **What stops the backlog growing:** `mechanism-matrix-gaps.json`
+enumerates the 146 remaining, and `check_mechanism_matrix.py` now FAILS any PR
+whose ISO-scoped field is in neither the matrix nor that baseline. Shrink-only.
+
+### 4. Hygiene (item 3), both closed
+
+**(a) `ct_committed/econ/peak_hr_override` DELETED (rule 26).** Traced: two
+readers, both inside the `else` of `if offer is not None` gated on
+`group == "CT_CHP"`; CT_CHP resolves its offer curve plant-code-independently;
+**all 119 bundles in all six ISOs arm the triple and all 119 carry a truthy
+`offer_curve_by_group["CT_CHP"]`** — reachable on none. The curve is all-1.0, so
+a future arm dropping CT_CHP would have silently re-armed 1.1/1.2/1.4.
+**Rule 26 made affordable:** `_CACHE_KEY_RETIRED_FIELDS` re-inserts a deleted
+field at its historical default *inside `cache_key()` only* — hash-only,
+unassignable, unreadable by any solve path — so no cache is orphaned and no
+pinned literal is re-pinned (the remedy the cache-key guard names wrong).
+
+**(b) `caiso_ra_min_load_frac` is now CAISO-scoped (rule 25).** Confirmed inert
+elsewhere (every reader behind `caiso_ra_mustoffer and iso == "CAISO"`), but a
+CAISO-fitted 0.26 rode all 119 bundles' recorded recipes. Non-CAISO now records
+the neutral 0.40; CAISO unchanged.
+
+### 5. C3c — what sets the 2024 Long Island pin (item 4)
+
+Measured, not proposed. **Both** LI import paths saturate together
+(`NYC>Long_Island` 275/275 MW, `NYISO_external>Long_Island` 1200/1200 MW) while
+the mainland clears at $72.11–74.57. The pin is **energy-side** (`reserve_price`
+= 0.0; no LI reserve family binds in 2024). The marginal unit at $297.538777 is
+**`7146_1`, an OIL tranche** (68.93 of 73.80 MW) — the only part-loaded LI
+generator among 132 tranches / 106 running; the $279.966487 rung is a different
+unit (`CT_PEAKER_Long_Island_p2511_peak`). **596.9 MW sits idle** at the annual
+peak-price hour (561.6 MW oil + 35.3 MW DR).
+
+**So 2024 is not a missing-mechanism year.** The same fleet and curves reach
+$503.74 (2023) and $489.62 (2025), so the LI ladder extends far above $300; 2024
+simply never calls the next oil rung. Closing it needs either genuinely tighter
+Long Island load/imports/availability, or a different oil offer level — the
+second being a residual tune rule 1 forbids absent measured oil-offer data. **No
+lever proposed.**
+
+### 6. Also repaired, not introduced here
+
+`PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE` was added to `config/fuel_trajectories.py`
+without its `constants.py` facade re-export, leaving `test_constants_facade` red
+on main; restored to contract, no value touched. Five further failures
+(`test_ff_readiness_battery`, `test_outages`) verified pre-existing on base and
+left to their own lanes. The merge-conflict markers committed inside three NYISO
+bundles' JSON by caiso-158 were already repaired upstream by caiso-159.
+
+Next shorthand: nyiso-115.

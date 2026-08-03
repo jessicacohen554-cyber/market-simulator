@@ -36,6 +36,7 @@ from market_sim.model.transmission import (  # noqa: E402
 )
 from run_calibration_full import (  # noqa: E402
     _network_frame,
+    _reserve_family_frame,
     _unit_hourly_frame,
     _write_hourly_sidecar,
 )
@@ -215,4 +216,161 @@ class TestSidecarEncoding(unittest.TestCase):
             back = pd.read_parquet(out)
             np.testing.assert_array_equal(
                 back["hour"].to_numpy(), frame["hour"].to_numpy()
+            )
+
+
+class TestReserveFamilySidecar(unittest.TestCase):
+    """``hourly/reserve_family_<year>.parquet`` — the per-family reserve dual.
+
+    The third write-only sidecar, and the one that closes a standing all-ISO
+    blind spot (nyiso-113 §8): ``DispatchResult.reserve_price_by_family`` is
+    ``(T, n_fam)`` in memory but was discarded at persist time, while
+    ``system``'s ``reserve_price`` is the cross-family SUM broadcast
+    identically into every zone's rows. So NO committed bundle in ANY ISO
+    could show whether a LOCATIONAL reserve family ever bound — and a gate
+    written against the system column reads inert by construction.
+    """
+
+    @staticmethod
+    def _fam(name, req, zone_mask, reserve_class=0):
+        from market_sim.model.reserves.spec import ReserveFamily
+
+        return ReserveFamily(
+            name=name,
+            requirement=np.asarray(req, dtype=float),
+            zone_mask=np.asarray(zone_mask, dtype=bool),
+            ordc_penalties=np.array([300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 300.0]),
+            reserve_class=reserve_class,
+        )
+
+    def _solved_two_family(self, T=6, sub_req=400.0):
+        """2 zones, 2 nested families; ``sub_req`` sizes the zone-1-only one."""
+        from types import SimpleNamespace
+
+        zone_names = ["Z0", "Z1"]
+        fleet = _make_fleet(
+            ["Z0", "Z1"], zone_names, hours=T, pmax=10000.0, pmin=0.0, eford=0.0
+        )
+        # Zone 1's unit is small, so a large zone-1-only requirement must
+        # shortfall while the system-wide family is met from zone 0.
+        fleet.pmax = np.array([2000.0, 200.0])
+        links = [TransferLink(from_zone="Z0", to_zone="Z1", ttc_mw=1000.0)]
+        res = solve_dispatch(
+            fleet,
+            np.array([np.full(T, 800.0), np.full(T, 100.0)]),
+            mc=np.vstack([np.full(T, 10.0), np.full(T, 30.0)]),
+            T=T,
+            incidence=build_incidence_matrix(links, zone_names),
+            ttc=get_ttc_array(links),
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+            reserve_requirement=np.vstack([np.full(T, 300.0), np.full(T, sub_req)]),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0, 300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 300.0, 190.0, 300.0]),
+            reserve_balance_zone_mask=np.array([[True, True], [False, True]]),
+            reserve_balance_ordc_counts=np.array([2, 2]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_ramp10=np.array([500.0, 200.0]),
+        )
+        design = SimpleNamespace(
+            families=[
+                self._fam("system_10min", np.full(T, 300.0), [True, True]),
+                self._fam("z1_10min", np.full(T, sub_req), [False, True]),
+            ]
+        )
+        return res, design, T
+
+    def test_frame_names_each_family_and_closes_the_lp_identity(self):
+        res, design, T = self._solved_two_family()
+        df = _reserve_family_frame(2025, "P1", res, design)
+        self.assertEqual(len(df), 2 * T)
+        self.assertEqual(sorted(df["family"].unique()), ["system_10min", "z1_10min"])
+        for f, fam in enumerate(design.families):
+            rows = df[df["family"] == fam.name].sort_values("hour")
+            np.testing.assert_allclose(
+                rows["dual"].to_numpy(),
+                res.reserve_price_by_family[:, f],
+                rtol=0,
+                atol=1e-3,
+            )
+            np.testing.assert_allclose(
+                rows["requirement_mw"].to_numpy(), fam.requirement, atol=1e-6
+            )
+            # held + shortfall >= requirement — the LP row itself, now
+            # checkable from the persisted frame alone (held_mw is the balance
+            # row's own activity net of its ORDC steps, so no re-derivation of
+            # the row's layout-dependent coefficients is needed).
+            slack = (
+                rows["held_mw"].to_numpy()
+                + rows["shortfall_mw"].to_numpy()
+                - fam.requirement
+            )
+            self.assertTrue((slack >= -1e-3).all())
+            # And it is TIGHT exactly where the family prices.
+            binds = rows["dual"].to_numpy() > 1e-9
+            if binds.any():
+                np.testing.assert_allclose(slack[binds], 0.0, atol=1e-3)
+            # Cross-check held_mw against the zone-summed reserve dispatch on
+            # this simple single-class layout, where the two must agree.
+            zsum = res.reserve_dispatch[np.asarray(fam.zone_mask)].sum(axis=0)
+            np.testing.assert_allclose(rows["held_mw"].to_numpy(), zsum, atol=1e-3)
+
+    def test_locational_binding_is_visible_where_the_system_column_is_not(self):
+        # The whole point. The zone-1-only family prices at its own $850 step
+        # while the system-wide family is slack — a distinction the persisted
+        # per-zone ``reserve_price`` (the family SUM, broadcast to every zone)
+        # cannot express.
+        res, design, _T = self._solved_two_family(sub_req=400.0)
+        df = _reserve_family_frame(2025, "P1", res, design)
+        sysrow = df[df["family"] == "system_10min"]
+        subrow = df[df["family"] == "z1_10min"]
+        self.assertTrue(np.allclose(sysrow["shortfall_mw"].to_numpy(), 0.0, atol=1e-6))
+        self.assertTrue(np.all(subrow["shortfall_mw"].to_numpy() > 0.0))
+        self.assertTrue(np.allclose(subrow["dual"].to_numpy(), 850.0, atol=1e-3))
+        # And the system-level series every bundle already had is their sum,
+        # so it cannot attribute the $850 to a zone.
+        np.testing.assert_allclose(
+            res.reserve_price,
+            res.reserve_price_by_family.sum(axis=1),
+            atol=1e-6,
+        )
+
+    def test_slack_family_is_recorded_too_not_just_binding_ones(self):
+        # A family that never binds must still appear with dual 0 — "family X
+        # never bound" is only a readable claim if non-binding rows exist.
+        res, design, T = self._solved_two_family(sub_req=100.0)
+        df = _reserve_family_frame(2025, "P1", res, design)
+        self.assertEqual(len(df), 2 * T)
+        self.assertTrue(np.allclose(df["shortfall_mw"].to_numpy(), 0.0, atol=1e-6))
+        self.assertTrue(np.allclose(df["dual"].to_numpy(), 0.0, atol=1e-6))
+
+    def test_returns_none_without_a_design_or_a_coopt(self):
+        res, design, _T = self._solved_two_family()
+        self.assertIsNone(_reserve_family_frame(2025, "P1", res, None))
+        res.reserve_price_by_family = None
+        self.assertIsNone(_reserve_family_frame(2025, "P1", res, design))
+
+    def test_shape_mismatch_degrades_to_no_frame_never_a_mislabelled_one(self):
+        # Family labels come from the design and duals from the LP positionally.
+        # If they disagree the frame would attribute one family's dual to
+        # another's name, which is worse than having no sidecar.
+        res, design, _T = self._solved_two_family()
+        design.families = design.families[:1]
+        self.assertIsNone(_reserve_family_frame(2025, "P1", res, design))
+
+    def test_round_trips_through_the_hourly_writer(self):
+        res, design, _T = self._solved_two_family()
+        a = _reserve_family_frame(2023, "P1", res, design)
+        b = _reserve_family_frame(2024, "P1", res, design)
+        with tempfile.TemporaryDirectory() as td:
+            out = _write_hourly_sidecar(Path(td), 2024, "reserve_family", [a, b])
+            self.assertEqual(out.name, "reserve_family_2024.parquet")
+            back = pd.read_parquet(out)
+            self.assertEqual(set(back["year"].unique()), {2024})
+            pd.testing.assert_frame_equal(
+                back.reset_index(drop=True), b.reset_index(drop=True), check_like=True
             )

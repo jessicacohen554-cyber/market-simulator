@@ -4729,6 +4729,13 @@ def run_year(
         # ercot_ordc_only_scarcity computed one above): the frame writer adds
         # it to the settled price (P1 rows only).
         "ercot_ordc_realized_adder": ercot_ordc_realized,
+        # The resolved ``ReserveDesign`` (None when the co-opt is off), so the
+        # bundle can name each reserve family and persist its requirement
+        # alongside its solved balance-row dual — the
+        # ``hourly/reserve_family_<year>.parquet`` sidecar. The LP reports duals
+        # positionally, (T, n_fam); only the design knows which column is
+        # ``li_30min_total`` and what its hourly requirement was.
+        "reserve_design": reserve_design,
         "_timing": {
             "energy_solve_s": _t_solve_end - _t_solve_start,
             "build_s": energy_solve.p1.build_time,
