@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-28-pjm-135-netpos",
+  "run_id": "2026-08-03-pjm-147b-chp-heat",
   "iso": "PJM",
-  "label": "pjm 135 netpos",
+  "label": "pjm 147b chp heat",
   "target_years": [
     2023,
     2024,
@@ -14,12 +14,13 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "NOT-YET",
-  "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
-  ],
+  "determination": "CALIBRATED",
+  "reasons": [],
   "notes": [
-    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.3% forced (4.8661 of 31.8492 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (\u22650.8) & off-peak CV ratio 0.662 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 16.2% forced (3.3759 of 20.8656 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.926 (\u22650.8) & off-peak CV ratio 0.711 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 16.3% forced (3.5842 of 21.9467 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.06 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 16.4% forced (4.8297 of 29.405 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 0.824 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 39.3% forced (6.068 of 15.4527 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.897 (\u22650.8) & off-peak CV ratio 2.239 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -45,7 +46,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -55,7 +56,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -78,11 +79,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 7,
+    "scored": 9,
+    "target_grade": 9,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 0
   },
   "free_class_score": {
     "iso": "PJM",
