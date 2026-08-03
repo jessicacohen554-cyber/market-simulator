@@ -207,6 +207,22 @@ repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
 ### 5.1 ERCOT — NOT-YET (keeper `2026-08-02-ercot150b-zonal-anchor`, C6 PASSES); **LIVE QUEUE AS OF ERCOT-155 (2026-08-03): item 9 (the named successor — UNCHARTERED, owner authorization required), item 7 (data-intake first) and item 8 (data-intake first) — every other named item is struck. ERCOT-155 measured item 7b's dispersion object and RE-POINTED it: it is a COMMITMENT-STATE defect, not an offer-slope or fleet-composition one, the offer-dispersion arm is REFUSED (rules 1/13/20), and the "flat ~25 GW at 1.6 $/MWh per GW" framing is CORRECTED (item 7c) — do not quote it forward.** Open gates unchanged in kind: C3a 2023-only (−32.6%; 2024 +1.6%, 2025 −8.3% away from the edge), C3b 2023-only (0.607), C3c (58/20/0 vs 181/53/31), C7 2023-lignite cv-leg (r 0.888, cv 0.334); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap; ERCOT-149 (the §6.1 successor / owner ruling #7) measured the GAS-side collision MATERIAL, adjudicated it a defect on the gas fleet's own conduct, and was OWNER-PROMOTED (`ercot_dam_availability_gas_event_cap` cell `K`); **ercot-150 (2026-08-02, the nyiso-109 §7 cross-ISO transfer adjudicated at ERCOT per rule 25) resolved the gas-offer margin anchor PER ZONE (`gas_offer_margin_zonal_anchor` cell `K`) and was OWNER-PROMOTED under the standing in-session instruction**: ERCOT's convention is a capacity-weighted mean-zero spread PLUS a flat measured EP level correction, the anchors were identified on the keeper reconstruction's own resolved fuel_prices (the West net-load floor lift cut the West leg ~5× before anything was pushed), all five construction gates passed incl. zonal K3 liveness (max zone |ΔLMP| 0.356/0.304/0.319 $/MWh — ERCOT prices the LEVEL side its convention carries while the mean-zero spread half stays price-inert on its coupled topology, West decoupling only 6/17/2 h/yr), P1/P2/P3/P5 passed, and P4 fired on a template artifact (the keeper itself carries slack 3478.9/1114.6/0.0 MWh; true arm delta +0.97/+0.91/0.00 MWh ≈ +0.03%). The availability lane is measured-precedence-correct on COAL AND GAS and the gas offer surface is now zone-grain-identified; the un-masked residuals are the CC econ-band under-dispatch (ERCOT-138/139 object: Jack County/Guadalupe now under) and the coal LOADING-CONDUCT under-run (ERCOT-126 object); OPEN owner rulings #9 (deriver `_site()` cross-train collapse + gas crosswalk partial acceptance — the root-cause derive lane; its re-derive would also re-trigger the zone-anchor table per rule 23) and #10 (pin remove-direction over-removal)
 
+**RULE-28(c) COLUMN CLOSED (ercot-156, 2026-08-03; no LP, no solve, keeper
+UNCHANGED, no queue item touched).** The ERCOT census debt — 60 `ercot_*`
+fields absent from the matrix, 7 prose-only, **31 armed on the keeper with no
+cell anywhere** — is **0/0/0**: all 67 closed as literal sub-scalar
+registrations on 14 existing family rows' `def`s (the nyiso-114 escape-hatch
+template), ratchet baseline ERCOT 61 → 0, `matrix_gap_census` ERCOT cell
+`O → K`. **Zero new rows, zero verdicts minted** — no live-but-invisible lever
+surfaced (every armed field is a leg of an already-adjudicated family); the
+only verdict text added transcribes recorded adjudications
+(ercot83 posture probe `I`, ERCOT-89 shoulder-span rejection, ERCOT-118/119
+rebasis rejections — closing the gap ERCOT-138 filed — ercot71 noncampd
+keeper). The 20 remaining live-but-invisible fields are shared-stem
+(cross-ISO) and filed for a cross-ISO hygiene lane, not this queue. Evidence:
+`results/calibration/FINDING-ercot156-matrix-column-closure-2026-08-03.md`.
+The lever queue above is UNCHANGED by this closure.
+
 **QUEUE ITEM 2 IS PARTIALLY EXECUTED (ERCOT-144, 2026-07-31).** The DOF half
 landed: the ERCOT-144 lane retired the residual-identified coal offer DOF onto
 measured PER-PLANT levels (`coal_perplant_offer_level` — every CAMPD coal
