@@ -499,6 +499,7 @@ def run_year(
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
+    caiso_per_year_import_caps: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -1228,6 +1229,10 @@ def run_year(
     if caiso_reference_price_seam is not None:
         config = config.with_overrides(
             caiso_reference_price_seam=caiso_reference_price_seam
+        )
+    if caiso_per_year_import_caps is not None:
+        config = config.with_overrides(
+            caiso_per_year_import_caps=caiso_per_year_import_caps
         )
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
