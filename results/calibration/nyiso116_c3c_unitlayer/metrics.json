@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-31-nyiso108-control-zerodelta",
+  "run_id": "2026-08-03-nyiso-116-unit-layer",
   "iso": "NYISO",
-  "label": "nyiso108 control zerodelta",
+  "label": "nyiso 116 unit layer",
   "target_years": [
     2023,
     2024,
