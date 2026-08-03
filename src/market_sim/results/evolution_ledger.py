@@ -30,6 +30,7 @@ The schema (one object per scenario-year)::
       "storage_additions":  [{"unit_id","tech","mw","zone","duration_h"}],
       "fleet_by_fuel_before": {fuel: mw}, "fleet_by_fuel_after": {fuel: mw},
       "peak_demand_mw": float, "firm_clean_mw": float,
+      "firm_clean_accredited_mw": float,
       "reserve_margin": float, "rps_dual": float,
       "solve_counts": {"P0": 1, "P1": 1, "P2": 0}
     }
@@ -47,6 +48,19 @@ FFR-1A (2026-07-31): :func:`new_events` creates the key and
 bundles committed before FFR-1A still carry ``known`` rows and no
 ``confirmed_derates`` key — both readers must treat an absent/legacy value as
 backward-compatible, not malformed.
+
+``firm_clean_mw`` is the model's dispatched conventional-hydro NAMEPLATE and
+``firm_clean_accredited_mw`` the same resources at the ISO's published
+accreditation factor — the MW that actually enter
+``accredited_firm_capacity_mw``. Both landed with FFR-3B (2026-08-02, closing
+FFR-1C finding F-5): before it, ``firm_clean_mw`` summed the PERSISTENT fleet,
+which structurally never contains hydro, so **every ledger written before that
+date reports 0.0 regardless of the ISO's real hydro fleet** — read those values
+as "not measured", not as zero hydro. The change is a display seam only (nothing
+decides on either field; the adequacy screens read
+``accredited_firm_capacity_mw``), and ``firm_clean_accredited_mw`` is absent
+from every pre-FFR-3B bundle — treat it as backward-compatible, like
+``confirmed_derates``.
 """
 
 from __future__ import annotations

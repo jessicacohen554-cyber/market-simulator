@@ -195,17 +195,22 @@ def test_guard_boundary_six_years_refused():
 # Registration & §2.1b gate scorecard (no LP)
 # --------------------------------------------------------------------------- #
 def test_marker_state_reflects_committed_markers():
-    # NEISO + NYISO complete, the four frontier ISOs none — read from the
+    # NEISO + NYISO + PJM complete, the three frontier ISOs none — read from the
     # committed calibration-complete.json (no re-derivation).
     #
     # NYISO was `withdrawn` (2026-07-19 phantom-outage re-audit) until nyiso-104b
     # RE-DECLARED it 2026-07-31 on the post-correction keeper, alongside the
-    # CALIBRATED-WITH-CAVEATS determination. Both markers are VALIDATION-tier
-    # only: the two-tier split means `complete` no longer authorizes the
-    # touch-once locked test, which now needs the separate `final` block.
-    assert B._marker_state("NEISO")["marker"] == "complete"
-    assert B._marker_state("NYISO")["marker"] == "complete"
-    for iso in ("ERCOT", "CAISO", "PJM", "MISO"):
+    # CALIBRATED-WITH-CAVEATS determination. PJM was DECLARED the same day
+    # (session pjm-142) at CALIBRATED with zero failing criteria; this test kept
+    # asserting PJM == "none" for two days afterwards — an FR-21-class
+    # bookkeeping desync, corrected by FFR-3B (2026-08-02).
+    #
+    # All three markers are VALIDATION-tier only: the two-tier split means
+    # `complete` no longer authorizes the touch-once locked test, which now needs
+    # the separate `final` block (EMPTY at HEAD).
+    for iso in ("NEISO", "NYISO", "PJM"):
+        assert B._marker_state(iso)["marker"] == "complete", iso
+    for iso in ("ERCOT", "CAISO", "MISO"):
         assert B._marker_state(iso)["marker"] == "none", iso
 
 

@@ -159,6 +159,47 @@ config freezes, never inside this program's iterations (§2.3).
     unexpressible → FF-G4 (memo-first); (5) nuclear license/uprate/restart lifetimes
     ungrounded past ~2030 (only Diablo Canyon in the confirmed registry; BLK-9
 
+> **§1.2 STATUS RECONCILIATION — FFR-3B, 2026-08-02 (audit FR-21).** The rows
+> above are the 2026-07-19/20 measured frontier and are left as written (they are
+> the measurement record). What has LANDED since, per row — each claim naming
+> where the truth now lives:
+>
+> - **Row 1 (retirement-rule inversion).** FF-0C's redesign and FF-1A's
+>   implementation both landed: `retirement_rule="pipeline"` exists and is
+>   cache-key-registered. The owner **SIGNED D-1 = FLIP** (`legacy` → `pipeline`)
+>   on 2026-08-02 (`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1),
+>   on FFR-2B's evidence (`ffr-2b-retirement-entry-evidence-2026-08-02.md`).
+>   **The default has NOT moved yet — FFR-3A step 0 executes it** (rule 24). Note
+>   the row's own figures now UNDERSTATE the legacy rule's harm: Wave 1 worsened
+>   it (PJM false-retire 5.5×; sitting Addendum A.3). A disclosed caveat rides
+>   the evidence — `correlated_forced_outage` and `entry_lookahead_reprice` ship
+>   `True` but the hindcast harness pinned both `False` (Addendum C.4(c)).
+> - **Row 3 (entry stack).** The owner **SIGNED D-2 = ARM BOTH** dampers
+>   (`entry_rate_limits`, `entry_commissioning_lag`), knowing the bar is only
+>   partly met and that I12 goes WARN→FAIL as a disclosed adequacy change.
+>   `entry_vre_capacity_revenue` is **D-2′ HOLD** — separable, unprobed. Again:
+>   defaults unmoved here; FFR-3A step 0 arms them.
+> - **Row 5 (base-year adequacy / hydro).** **CLOSED as routed:** FFR-1C landed
+>   2026-07-31 (`docs/handoffs/ffr-1c-hydro-accreditation-2026-07-31.md`) — hydro
+>   now enters `accredited_firm_capacity_mw` at each ISO's published class factor.
+>   **The row's gap magnitudes are superseded**: CAISO 3.6 / NYISO 3.3 GW were
+>   measured when the hydro vintage resolved to the 2025 EIA-923 *early release*;
+>   on the complete 2024 census the dispatched hydro nameplate is CAISO 6,568 /
+>   NYISO 4,587 / NEISO 1,899 / MISO 2,371 / PJM 3,301 / ERCOT 546 MW. **I7 still
+>   FAILS** in CAISO/MISO/NYISO — residual filed as a finding, not closed (rules
+>   1/11). The ledger's `firm_clean_mw` display seam (F-5) is closed by FFR-3B.
+> - **Row 11 (forward-input provenance).** All four remaining WAVE FI sessions
+>   LANDED 2026-07-20 — see the WAVE FI table in §6 for the per-row deliverable.
+>   **(2) FF-G2** and **(3) FF-G3** shipped methodology docs and owner boxes now
+>   decided as **D-4 = Option A** and **D-3(b)/(c)**; **(4) FF-G4** and **(5)
+>   FF-G5** are **memo/registry only — no code, no mechanism, no default** — so
+>   the load-shape channel and the nuclear forward channel remain UNBUILT (audit
+>   §4 Phase 5). Do not read "landed" as "implemented" for those two.
+>
+> **FLAGGED, not fixed:** item (5) of row 11 ends mid-sentence at "BLK-9" — text
+> is missing from the source, and this session could not source what it said, so
+> it is reported rather than invented (rule 1 / findings-first).
+
 ### 1.3 Absorbed workstreams (state + what remains)
 
 | Lane (old id) | Detailed spec (still citable) | Done | Remaining (now chartered here) |
@@ -253,12 +294,22 @@ wave manager:
    gate opens for the ISO in question.
 2. **Gate conditions — ALL required, per ISO, evidence committed before the ask:**
    - **(a) Backcast calibration proof.** The ISO's backcast calibration is complete: a
-     designated full-span keeper (rule 16) on the calibration dashboard AND the ISO's
-     calibration-complete marker present (the same
-     `frontend/data/backcast/calibration-complete.json` object rule 22 keys on; a
-     withdrawn marker — e.g. NYISO, 2026-07-19 — closes this gate until
-     re-calibration). The model first proves it can reproduce reality where reality
-     is known.
+     designated full-span keeper (rule 16) on the calibration dashboard AND an entry for the
+     ISO in the **`complete` block** of `frontend/data/backcast/calibration-complete.json`
+     (the validation-tier block of the two-block marker structure, owner decision 2026-07-31
+     — the same object rule 22 keys on). The **`final`** (locked-test) block is **never
+     required for forecast work**: locked-test years are backcast holdout instruments, and no
+     forecast instrument reads them. A withdrawn or never-declared `complete` entry closes
+     this gate until the owner (re-)declares. The holdout spend freeze is orthogonal: it
+     suspends out-of-training solves, not the marker's role as calibration attestation, so an
+     active freeze does not by itself close gate (a). The model first proves it can reproduce
+     reality where reality is known.
+
+     *Gate (a) status under this text (owner decision D-5(a), signed 2026-08-02,
+     `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1): it reads as **met by three
+     ISOs — NEISO, NYISO, PJM** — the current membership of the `complete` block. Conditions
+     (b)–(d) still gate every full solve independently, and the holdout spend freeze still
+     gates every holdout spend.*
    - **(b) POC gates green.** The FF-2D T1 battery rubric verdict at the T1→T2 bar
      (FC-1 PASS, FC-2 no-FAIL, FC-3/FC-4 in-band, FC-6 green).
    - **(c) Worth-the-compute evidence.** The T1-X crossover input gap (FC-4) measured
@@ -1032,10 +1083,15 @@ the FF-G1 session (2026-07-19); the owner dispatches each in its own session.
 | ID | Model | Scope | Lane | Status |
 |---|---|---|---|---|
 | **FF-G1** | FABLE | transmission-expansion registry + forward TTC channel | L-INP | **DATA HALF LANDED 2026-07-19; ENGINE HALF 2026-07-26.** The gate + coercion + cache-key entry and the runner per-year seam shipped as `docs/handoffs/patches/ff-g1-core-wiring.patch` and were never applied — everything data-side was inert until the fast-tier escalation D2 apply (`docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D2). Gate default-off; `cache_key(ScenarioConfig())` re-verified at `edbc1b103207170a`; T1-F A/B still pending before any flip. |
-| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | prompt issued |
-| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | prompt issued |
-| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | prompt issued |
-| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | prompt issued |
+| **FF-G2** | OPUS | fuel forward trajectories: AEO2026 re-derive + STEO/strip triangulation + methodology doc (executes audit §7.2-P1) | L-INP | **LANDED 2026-07-20** — `docs/handoffs/ff-g2-fuel-forward-2026-07.md`; standing deliverable `docs/fuel-forward-methodology-2026-07.md`. Its near-term-blend owner box was decided **2026-08-02 as D-4 = OPTION A (status quo, pure AEO)** — sitting Addendum C.1. |
+| **FF-G3** | OPUS | forward net-CONE vintages + beyond-published evolution methodology (CR-2 follow-up; NO flip execution — FF-2C owns flips) | L-CAP | **LANDED 2026-07-20** — `docs/handoffs/ff-g3-net-cone-forward-2026-07.md`; standing deliverable `docs/capacity-price-forward-methodology-2026-07.md`. Its owner box became **D-3**: (b) forward real escalation **0.0 REAL CENTRAL** and (c) vintage intake **AUTHORIZED**, both signed 2026-08-02; **(a) the forward-evolution mode remains DEFERRED** — its FFR-2E defer condition is discharged but it was not re-put to the owner. Currency follow-up: `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`. |
+| **FF-G4** | FABLE/OPUS | load-shape evolution design memo (FF-0C memo pattern, NO code; reuses audit M3–M7/M11–M13) | L-INP | **LANDED 2026-07-20, MEMO ONLY — `docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md`.** By charter it moved no code and no default; the implementing session is chartered from its §8 decision boxes and is **NOT yet run** (audit §4 Phase 5, "FF-G4 Option B load-shape implementation, FR-16: memo→code, NEISO→PJM first"). Do not read this row as an implemented load-shape channel. |
+| **FF-G5** | OPUS | nuclear license/uprate/restart registry + forward-channel design memo (coordinates BLK-9 / R-NEW; rule 19 — no second exit mechanism) | L-INP | **LANDED 2026-07-20** — `docs/handoffs/ff-g5-nuclear-registry-2026-07.md`; new datatype `nuclear-license-status` + `docs/nuclear-fleet-forward-methodology-2026-07.md`. Registry + design memo only: **no mechanism code, no ScenarioConfig field**. Consuming it is FR-18/BLK-9, open at audit §4 Phase 5. |
+
+*(Status rows corrected 2026-08-02 by FFR-3B — audit FR-21 bookkeeping desync:
+all four read "prompt issued" for thirteen days after they landed. Each row now
+names the committed deliverable that is the truth. G4/G5 are deliberately marked
+memo/registry-only so a landed row is not misread as a landed mechanism.)*
 
 
 ### Wave 5 — FF-5A dashboard: BUILT 2026-07-20 (see §8 — run explorer + status board + forecast namespace).
@@ -1045,8 +1101,18 @@ the FF-G1 session (2026-07-19); the owner dispatches each in its own session.
 ## 7. Standing constraints (every FF session)
 
 1. **Models:** OPUS or FABLE only, per the §6 label. Never Sonnet (rule 27).
-2. **Git:** fresh branch off latest `origin/main`; push via `mcp__github__push_files`
-   ONLY (never `git push`); after any push touching a file ≥300 lines, verify the blob
+2. **Git:** fresh branch off latest `origin/main`; **choose the transport by PACK
+   size, per CLAUDE.md "Git & Pushing"** — `git push` is PERMITTED for a small pack
+   (and is the only transport that can carry a ~400 KB–1 MB dashboard run payload,
+   which exceeds `push_files`' ~457 KB per-payload cap), while
+   `mcp__github__push_files` stays preferred for small multi-file commits and
+   neither is licensed for a full bundle directory or a divergent branch.
+   *(Corrected 2026-08-02 by FFR-3B: this clause read "push via
+   `mcp__github__push_files` ONLY (never `git push`)", which CLAUDE.md superseded
+   on 2026-07-25 after PR #2878 pushed a 434,784-byte single-blob payload over
+   `git push` with no 413. Following the old text would strand run payloads
+   sidecar-only — `docs/handoffs/dashboard-payload-push-gap-2026-07.md`.)*
+   After any push touching a file ≥300 lines, verify the blob
    (fetch-back compare, or `git fetch origin <branch>` + empty `git diff`) before the
    next commit; no placeholder/partial versions of existing files, ever.
 3. **No CI offload:** no new GitHub Actions workflows; no solves/intakes on runners;

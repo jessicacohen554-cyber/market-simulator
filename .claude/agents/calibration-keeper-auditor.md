@@ -54,7 +54,9 @@ Three keeper-text surfaces, in descending trust:
    prose not the auto-placeholder (E4); any determination token the definition
    asserts matches the **live** verdict (E5); exactly one keeper per ISO and the
    shard names a run whose sidecar agrees on the iso (E6); the keeper is the
-   newest run for its ISO (E7, warn); and that the ISO's status part is in sync
+   newest run for its ISO (E7, warn); **the ISO's `complete` holdout marker names
+   the current designated keeper (M1a) and its recorded determination still
+   re-verifies against that run (M1b)**; and that the ISO's status part is in sync
    (S1, scoped to `--iso` when given). Exit 1 ⇒ at least one FAIL.
 
 2. **Fix every FAIL** (warnings are reported, not auto-fixed — see below):
@@ -78,6 +80,36 @@ Three keeper-text surfaces, in descending trust:
      designated or a sidecar field is wrong. Fix the sidecar field if it is a
      plain typo backed by the bundle; otherwise STOP and report — do not silently
      change which run is the keeper.
+   - **M1a stale marker keeper / M1b determination mismatch** → this ISO holds a
+     `complete` entry in `frontend/data/backcast/calibration-complete.json` and a
+     promotion has moved past it. **Owner decision D-5(b), signed 2026-08-02**
+     (`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1, OPTION B):
+     re-key on promotion **with a determination re-verification**, so the marker
+     never asserts a determination that was never scored against the run it names.
+     Do this in TWO steps, in this order — never the field update alone:
+
+     1. **Re-verify first, no solve:**
+        `python scripts/calibration_verdict.py --run-id <new keeper id>`.
+        It reads committed artifacts only and never re-solves the LP, so it is a
+        seconds-long, byte-reproducible read (that property is exactly what makes
+        this policy affordable at keeper cadence).
+     2. **Then re-key**, editing ONLY the promoted ISO's `complete` entry: set
+        `keeper` to the new id and rewrite `determination` to state the verdict you
+        just re-verified, naming the run and the words "RE-VERIFIED <date> without
+        a solve". Leave `keeper_at_declaration`, `locked_test_scored_on` and every
+        other field untouched — a SPENT locked-test one-shot is **never** re-keyed
+        (its score stands as taken, rule 22).
+
+     **STOP and escalate to the caller — do not write the marker — if the
+     re-verified determination is WORSE than the recorded one** (e.g. recorded
+     CALIBRATED, live CALIBRATED-WITH-CAVEATS or NOT-YET), or if the caveat count
+     rose. A marker downgrade is an owner-facing calibration event, not marker
+     bookkeeping, and the promotion itself is then in question. An unchanged or
+     improved determination you may record directly.
+
+     This file is the repo's most sensitive governance object: touch one ISO's
+     entry, never another lane's, never the `final` block, never the `note`, and
+     never the `intake_log`.
 
 3. **Re-run `python scripts/audit_keepers.py` until it exits 0** (warnings allowed).
 
@@ -96,6 +128,7 @@ repaired. Finally list the warnings (staleness / metadata) for the user to weigh
 If you changed any committed file (`registry/<id>.json`, `status/<ISO>.js`),
 list the exact files so the caller can stage them — commit per the
 `calibration-report` skill's per-run-file rules (registry sidecar +
-`status/<ISO>.js` + `keepers/<ISO>.json`; `status/shared.js` only if the rubric
+`status/<ISO>.js` + `keepers/<ISO>.json`; `calibration-complete.json` when M1
+re-keyed a `complete` marker; `status/shared.js` only if the rubric
 changed — NEVER another ISO's lane). Do not commit the gitignored
 shell/manifest. Do not edit the model or `config/`.

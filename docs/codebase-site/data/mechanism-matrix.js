@@ -26,7 +26,14 @@
  * across a boundary; transfer candidates enter the target ISO's cell as U.
  * Methodology, lever queues & glossary: docs/mechanism-testing-matrix.md.
  * Last full audit: 2026-07-27 (keepers ercot115 / caiso-130 / pjm-133 / miso-88 /
- * nyiso-89 / neiso-61; forecast board of 2026-07-20). NYISO column re-checked
+ * nyiso-89 / neiso-61; forecast board of 2026-07-20).
+ *   ^^ HISTORICAL BUILD SNAPSHOT, NOT THE CURRENT KEEPERS. All six ISOs have
+ *   promoted since; the LIVE set is the `keepers:` object below, which each
+ *   promoting session re-stamps (rule 28). The 2026-07-20 forecast board is
+ *   likewise a snapshot — its own freshness is now measurable from the
+ *   provenance stamps (scripts/check_forecast_staleness.py, audit FR-21).
+ *   (Header hygiene, FFR-3B 2026-08-02. No cell verdict touched.)
+ * NYISO column re-checked
  * 2026-07-28 on the nyiso-92 keeper promotion (hydro envelope/floor cells -> K)
  *   and again 2026-07-28 by nyiso-93 (unit_outage_short_windows U -> I, ex-ante)
  *   and by nyiso-95 (new row tsa_transfer_derate -> G, ex-ante, no solve).
