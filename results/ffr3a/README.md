@@ -1,13 +1,18 @@
-# FFR-3A — FAILED LEG DEBRIS. **NOT A RUN. NOT A RESULT. NEVER REGISTER THIS.**
+# FFR-3A lane record — run outputs here are **gitignored and unregistered**
 
-These four files are the aborted first attempt at the FFR-3A T1-F battery
-(2026-08-03). They are kept **only** as primary evidence for the blocker written up
-in `docs/handoffs/ffr-t1-regate-2026-08-02.md` §6.1. Nothing here was solved,
-scored, registered, or cited as a measurement.
+This directory is the `--out-dir` root for the FFR-3A T1 re-gate battery
+(2026-08-03). Everything under it except this file is **gitignored**, matching the
+convention for every other forecast lane (`/results/ffr1a/`, `/results/full-horizon/`,
+`/results/d9-ab/`, …): forecast legs are registered to `frontend/data/forecast/` via
+`scripts/register_forecast_run.py`, **never** as tracked bundles here (CLAUDE.md rule 15).
 
-## What happened
+**Nothing in this directory is a registered result.** The lane's findings live in
+`docs/handoffs/ffr-t1-regate-2026-08-02.md`.
 
-Two T1-F legs (NEISO, NYISO; 2026–2030) were launched and died within ~33 s on:
+## History of this directory
+
+**First attempt — aborted (blocker).** Two T1-F legs (NEISO, NYISO) were launched and died
+within ~33 s because `data/clean` was **entirely empty** on a fresh container:
 
 ```
 RuntimeError: confirmed-retirements: clean partition for <ISO> is absent while
@@ -17,30 +22,36 @@ to the economic screen (W1-B B3: ERCOT's 2026 fleet gains 477 MW — V H Braunig
 backlog)
 ```
 
-`data/clean` was **entirely empty** on this container. That is the blocker; the
-loader behaved correctly by failing loud rather than silently degrading.
+The loader was right to fail loud. Those four debris files were briefly committed as
+evidence and are now untracked — superseded by a real run, with the error preserved verbatim
+above and in the handoff §6.1.
 
-## How to read these files WITHOUT being misled
+**Blocker cleared.** `scripts/regenerate_clean.py` completed: **50 datatypes, 0 failures,
+≈55 min wall, 446 parquet files / 1.6 GB**, dominated by the CAMPD `emissions` extract at
+~26.5 M rows per year. This is a **prerequisite, not a step** — budget for it.
 
-Each `full_horizon_summary.json` is honest — it carries the full `error` string,
+## Reading a leg's output without being misled
+
+Each `full_horizon_summary.json` is honest: on failure it carries the full `error` string,
 `"n_solved_years": 0`, `"solved_years": []` and a null `cache_key`.
 
-**The console line in the `.log` files is the trap.** Both print:
+**The console line in the `.log` files is the trap.** A failed leg still prints:
 
 ```
 invariants: 0 FAIL, 0 WARN
 ```
 
-Invariant scoring over a **zero-year** run passes trivially, so a hard failure
-reads as a clean gate at a glance. **Key on `n_solved_years`, never on the
-invariant line.**
+because invariant scoring over a **zero-year** run passes trivially — a hard failure reads as
+a clean gate at a glance. **Key on `n_solved_years`, never on the invariant line.**
 
-## Before re-running the battery
+## Battery posture (handoff §4.3)
 
-Run `scripts/regenerate_clean.py` to completion and confirm it finished — it
-executes ~50 per-datatype curation scripts sequentially and is a **prerequisite,
-not a step**. The battery specification (per-ISO posture flags included) is fixed
-in `docs/handoffs/ffr-t1-regate-2026-08-02.md` §4.3, §5 and §6.
+Neither available flag reproduces the shipped per-ISO capacity arm for all six ISOs, so the
+battery splits them — this reproduces the **shipped** arm everywhere using existing flags
+only, executing no unsigned decision:
 
-Delete this directory once a real battery has run; it has no value beyond the
-blocker record.
+* `--golden-posture` → ERCOT, PJM, CAISO, NEISO, MISO
+* plain default (no flag) → **NYISO** (production ships NYISO curve-OFF)
+
+Rule 12: light ISOs pair, PJM solo, MISO solo, PJM and MISO never co-run, years sequential
+within an invocation, ≤5 solve-years per invocation.
