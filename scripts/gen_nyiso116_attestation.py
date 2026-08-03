@@ -39,7 +39,7 @@ def _attested_by(g: dict) -> str:
     """Assemble the attestation line from the committed gate measurements."""
     s0 = g["section0_no_lp"]
     g1, g2, g3 = g["G1_replay_fidelity"], g["G2_c3c_tail_fidelity"], g["G3_sidecars"]
-    g4, preds = g["G4_section6_reverification"], g["predictions"]
+    g4 = g["G4_section6_reverification"]
 
     dprice = " / ".join(f"{g1['per_year'][y]['max_abs_dprice']:.3f}" for y in YEARS)
     c3c = " / ".join(str(g2["per_year"][y]["c3c_arm"]) for y in YEARS)

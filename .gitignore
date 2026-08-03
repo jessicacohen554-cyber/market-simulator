@@ -538,3 +538,8 @@ results/calibration/caiso154_slopes_PJM.csv
 # the lane's record, not an output) and is unaffected by this rule, which only
 # ever applies to untracked paths.
 /results/ffr3c/
+
+# Transient CT-artifact stash written by scripts/probes/caiso160_nyiso_ct_arms.py
+# while a control arm solves against a prior artifact revision; the driver
+# restores the working copy and removes this in a finally.
+.caiso160_artifact_stash_*/
