@@ -413,6 +413,10 @@ def write_run_config(out_dir: Path, run_dir: "Path | None", **extra) -> "Path | 
         # provenance claim above rather than trust it.
         "scenario_config_source": str(cfg_yaml),
         "scenario_config": resolved,
+        # Recorded here, from the positional argument, so a caller never has to
+        # pass it again through **extra — doing so collides with this
+        # function's own parameter name and raises TypeError at bind time.
+        "run_dir": str(run_dir),
         "environment": environment_block(),
         **extra,
     }
@@ -593,13 +597,18 @@ def solve_and_summarize(
         "trajectory": trajectory,
     }
     # FC-7 provenance artifact, from the run's OWN resolved config (blocker 7).
+    # NB: ``run_dir`` is passed ONLY positionally. It used to be passed again
+    # inside **extra to get it into the payload, which made every real call
+    # raise `TypeError: write_run_config() got multiple values for argument
+    # 'run_dir'` — after a full 5-year solve and before the summary was
+    # written, so the leg lost its summary AND its FC-7 artifact. The function
+    # now records the key itself (see its payload), so the caller must not.
     run_config_path = write_run_config(
         out_dir,
         run_dir,
         iso=iso,
         cache_key=cache_key,
         solved_years=solved_years,
-        run_dir=str(run_dir) if run_dir else None,
     )
     summary["run_config_path"] = str(run_config_path) if run_config_path else None
 
