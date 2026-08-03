@@ -2,8 +2,8 @@
   "iso": "ERCOT",
   "keeper": "2026-08-02-ercot150b-zonal-anchor",
   "keeper_bundle_fields": 670,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 673,
+  "n_matrix_rows": 182,
   "n_bundles_scanned": 19,
   "family": [
     {
@@ -414,7 +414,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2274,7 +2274,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -2454,7 +2454,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -3667,6 +3667,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "I"
+        },
+        {
           "row": "entry_dampers",
           "cells": "UUUOUU",
           "cell": "U"
@@ -3696,6 +3701,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "I"
+        },
         {
           "row": "reserve_margin_backstop",
           "cells": ".KKKKK",
@@ -3758,7 +3768,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         }
       ],
@@ -3780,7 +3790,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         }
       ],
@@ -3795,7 +3805,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -3820,12 +3830,12 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -3948,7 +3958,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -3993,7 +4003,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -4099,6 +4109,11 @@
         {
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
           "cell": "."
         },
         {
@@ -4603,7 +4618,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "."
         },
         {
@@ -4756,6 +4771,11 @@
       "keeper_value": "hold_last",
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "I"
+        },
         {
           "row": "net_cone_forward_vintages",
           "cells": "..OOOO",
@@ -4976,8 +4996,14 @@
       "field": "offer_curve_smoothing_mid",
       "default": null,
       "keeper_value": 0.35,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -5057,6 +5083,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "I"
+        },
+        {
           "row": "economic_retirement_screen",
           "cells": "OORRRR",
           "cell": "O"
@@ -5088,7 +5119,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -5138,7 +5169,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -5168,7 +5199,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -5196,13 +5227,13 @@
     "coal_prb_passthrough_floor",
     "gas_st_drag_seasonal",
     "gas_st_startup_cost",
-    "offer_curve_smoothing_mid",
     "oil_primary_bin_fuel",
     "wefor_residual_groups"
   ],
   "shared_prose_only": [
     "chp_export_floor_measured",
     "gas_hh_monthly_shape",
+    "offer_curve_smoothing_mid",
     "storage_as_commitment",
     "wefor_residual"
   ],
@@ -5341,20 +5372,6 @@
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
         "ercot137_margin_arm": true
-      }
-    },
-    {
-      "field": "offer_curve_smoothing_mid",
-      "default": null,
-      "keeper_value": 0.35,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot116_regate_arm": 0.35,
-        "ercot116_regate_base": 0.35,
-        "ercot122_offerlevel": 0.35,
-        "ercot128_unit_grain": 0.35,
-        "ercot129_conditional": 0.35,
-        "ercot137_margin_arm": 0.35
       }
     },
     {

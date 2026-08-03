@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-03-caiso163-asym-path-ratings",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 673,
+  "n_matrix_rows": 182,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -16,7 +16,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -647,7 +647,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -671,7 +671,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -754,7 +754,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1117,7 +1117,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1626,7 +1626,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1671,7 +1671,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1716,7 +1716,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1761,7 +1761,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1806,7 +1806,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1851,7 +1851,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2123,7 +2123,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2158,7 +2158,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2293,7 +2293,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -2308,7 +2308,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -2323,7 +2323,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],
@@ -2403,7 +2403,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2468,7 +2468,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2683,7 +2683,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2784,6 +2784,11 @@
         {
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
           "cell": "."
         },
         {
@@ -3373,7 +3378,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -3479,6 +3484,11 @@
         {
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
           "cell": "."
         },
         {
@@ -4531,7 +4541,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],

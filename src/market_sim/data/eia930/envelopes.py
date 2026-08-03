@@ -1208,6 +1208,99 @@ def pjm_zonal_interchange_envelope(
     return import_cap, export_cap
 
 
+def pjm_neighbor_interchange(year: int, neighbor_names: list[str]) -> np.ndarray | None:
+    """Return PJM's hourly net export by NAMED interface (``(n_neighbors, T)``, MW).
+
+    The per-counterparty sibling of :func:`pjm_zonal_interchange`. Each tie in
+    PJM's settlement-grade tie-line file is summed into the reference-price
+    interface it belongs to
+    (:data:`~market_sim.model.interchange.spec.PJM_TIE_NEIGHBOR`) rather than
+    into a model border zone, so a neighbour's series holds that neighbour's
+    ties and nothing else. Export-positive, on the model's fixed non-leap
+    8760-hour clock, row order matching ``neighbor_names``. ``None`` when the
+    measured file is absent (a forecast year).
+
+    Rule 14 ``[R-ACCURATE]``: this is the grain the seam deliverability cap
+    actually needs. Obtaining it by summing a per-zone envelope over a
+    neighbour's ``border_zones`` mixes counterparties, because a zone bucket
+    holds every tie that lands in it (pjm-151; see ``PJM_TIE_NEIGHBOR``).
+    """
+    from market_sim.model.interchange.spec import PJM_TIE_NEIGHBOR
+
+    path = _PJM_INTERCHANGE_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(
+        path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
+    )
+    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
+    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+    df, ts = df[keep], ts[keep]
+    hoy = (
+        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+        + (ts.dt.day.to_numpy() - 1) * 24
+        + ts.dt.hour.to_numpy()
+    )
+    out = np.zeros((len(neighbor_names), HOURS_PER_YEAR), dtype=float)
+    flow = df["actual_flow"].to_numpy(dtype=float)
+    tie_nb = df["tie_line"].map(lambda t: PJM_TIE_NEIGHBOR.get(str(t))).to_numpy()
+    valid = (hoy >= 0) & (hoy < HOURS_PER_YEAR) & ~np.isnan(flow)
+    for i, nb in enumerate(neighbor_names):
+        sel = valid & (tie_nb == nb)
+        if sel.any():
+            np.add.at(out[i], hoy[sel], -flow[sel])  # export-positive
+    return out
+
+
+def pjm_neighbor_interchange_envelope(
+    year: int, neighbor_names: list[str], hours: int, percentile: float = 90.0
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return PJM's per-INTERFACE (month×hod) import/export envelope (MW).
+
+    Identical construction to :func:`pjm_zonal_interchange_envelope` — the
+    ``percentile`` of measured net interchange within each (month, hour-of-day)
+    bucket, split into the two directions — but taken on the per-counterparty
+    series of :func:`pjm_neighbor_interchange`::
+
+        import_cap[n, t] = P_pctile( max(0, -interchange) | n, month(t), hod(t) )
+        export_cap[n, t] = P_pctile( max(0, +interchange) | n, month(t), hod(t) )
+
+    The percentile is taken on the neighbour's SUMMED tie flow, so it is the
+    deliverability of the seam as a whole rather than a sum of per-tie
+    marginals (the same joint-vs-marginal distinction
+    :func:`pjm_net_interchange_envelope` documents one level up).
+
+    Returns ``(import_cap, export_cap)``, each ``(n_neighbors, hours)`` MW with
+    row order matching ``neighbor_names``, or ``None`` when the measured file is
+    absent — in which case the caller leaves the seam uncapped.
+    """
+    series = pjm_neighbor_interchange(year, neighbor_names)
+    if series is None:
+        return None
+    src_hours = series.shape[1]
+    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    s_month = src_clock.month.to_numpy()
+    s_hod = src_clock.hour.to_numpy()
+    n = len(neighbor_names)
+    imp_tab = np.zeros((n, 12, 24))
+    exp_tab = np.zeros((n, 12, 24))
+    for ni in range(n):
+        e = series[ni]
+        imp = np.clip(-e, 0.0, None)  # import into PJM across this seam
+        exp = np.clip(e, 0.0, None)  # export out of PJM across this seam
+        for m in range(1, 13):
+            for h in range(24):
+                sel = (s_month == m) & (s_hod == h)
+                if not sel.any():
+                    continue
+                imp_tab[ni, m - 1, h] = np.percentile(imp[sel], percentile)
+                exp_tab[ni, m - 1, h] = np.percentile(exp[sel], percentile)
+    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    rm = clock.month.to_numpy() - 1
+    rh = clock.hour.to_numpy()
+    return imp_tab[:, rm, rh], exp_tab[:, rm, rh]
+
+
 def pjm_net_interchange_envelope(
     year: int, hours: int, percentile: float = 95.0
 ) -> np.ndarray | None:
