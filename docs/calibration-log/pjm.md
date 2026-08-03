@@ -2514,3 +2514,90 @@ with zero `src/`/`data/raw/` commits between them. **Do not commit to
 `_pjm147_flag_fidelity.json`.
 
 Next shorthand: pjm-148.
+
+## 2026-08-03 — pjm-148: the CHP host-steam holdout lane REFUSED (no LP spent); D-2 floor attribution found path-dependent
+
+**Verdict: REFUSE.** No solve, no bundle, no registration; keeper
+`2026-08-03-pjm-147b-chp-heat` untouched. Pre-registration
+`results/calibration/PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`
+committed at `6f14dbc` **before any measurement that decides a verdict** (its
+push failed transiently and landed later in-session; the content was never
+edited after). Rule 25 `[R-ISO-SCOPE]`: reached independently of nyiso-105, on
+PJM's own data.
+
+The lane pjm-147 §8 named — move `chp_btm_pct` / `chp_grid_pmin_mw` / the
+`chp_steam` floor **level** to close CC_CHP +2.491/+0.788/+0.390 TWh — has **no
+admissible arm**, on four pre-registered questions:
+
+* **Q2 (κ) REFUTED, harder than at pjm-131.** κ = **0.0101 / 0.0404 / 0.0236**
+  on the *current* keeper against the inherited ≤ 0.20 rule. 2023 more than
+  **halved** from pjm-131's 0.0226 — pjm-147's +7 % dearer offer moved CC_CHP
+  further from its ceiling. A capacity pull-out is absorbed while the bench
+  actual (identical share) falls in full ⇒ the overshoot would **worsen**.
+* **Q3 DEAD on both limbs, and the repair is bigger than pjm-131 scoped.**
+  `chp-btm-share` re-curates to 35 rows, **35 degenerate** (`btm_share == 1.0`,
+  `campd_net_mwh == 0`) **and zero CC_CHP rows** — every one `ST_CHP`, because
+  the steam-reporting CEMS unit is a **boiler** (1,754 of 1,755 PJM
+  steam-reporting unit-years carry `gross_mwh = net_mwh = 0`; census 655
+  dry-bottom wall-fired / 490 other boiler / 254 CFB / 217 stoker / 102
+  tangential vs 8 CTs). Fixing the electrical-channel limb pjm-131 named would
+  **still** leave CC_CHP at 0 % coverage. `CHP_BTM_PCT_BY_SECTOR['merchant'] =
+  35.0` correctly stands as PJM's only available input.
+* **Q1 SURVIVES — the floor binds, and the handoff's figure was right while the
+  keeper's own artifact is wrong.** PJM CC_CHP `chp_steam` forces **0.994 /
+  0.692 / 0.815 TWh = 11.0 / 7.9 / 10.4 %** (superseded keeper
+  `pjm143_hy_level_B`), on a floor **verified unchanged** into the current
+  keeper (436.4 MW mean / 485.3 MW max, 2023, identical to 1 dp) — yet
+  `pjm147_chp_B` carries **no CC_CHP `chp_steam` row at all**. Both of Q1's
+  pre-registered limbs proved to be invalid instruments and are reported as
+  such: limb (b) is insensitive (0/8,760 hours on the superseded keeper too,
+  because it compares class-aggregate dispatch to the summed floor), and limb
+  (a) reads an artifact produced by the lossy path below.
+* **Q4 — no identification.** Only a floor *reduction* helps (CC_CHP is over in
+  all three years, so raising it — including deriving the WP-3 `steam_level_cf`
+  PJM's pre-WP-3 artifact lacks, a `max(level, p2)` swap — is wrong-signed by
+  construction, declared in the prereg before anything was measured). Both
+  channels are closed: `chp_pmin_cf` by rule 23 `[R-FROZEN-DERIVE]`,
+  `btm_share` by Q3. Anything else is a level sized by the 2.49 TWh gap — the
+  neiso-71 kill, rules 21 `[R-DOF]` / 24 `[R-REGISTRY]`. The magnitude does not
+  reach anyway: deleting the floor *entirely* releases ~0.99 of 2.49 TWh, and
+  deleting a measured rule-13 input to improve a fit is barred by rules 1/14.
+
+**Structural reading.** κ ≈ 0.01 plus an ~11 % floor together say ~**89 % of PJM
+CC_CHP is voluntary economic clearing** between cap and floor — a merit-order
+residual, not a quantity one. That is where pjm-131 landed and what pjm-147
+tightened by measuring the offer.
+
+**SIDE FINDING — D-2 floor attribution is PATH-DEPENDENT (own cross-ISO charter
+needed; deliberately not fixed here).** The dispatch join at
+`scripts/legitimacy_diagnostics.py:2325-2327` — the equivalent filter **predates
+caiso-155**, so this is not a regression from it — resolves per-plant dispatch
+from `dispatch/<year>_<pass>.parquet` when present, else from the dashboard
+**run payload**, which is CAMPD-bench-keyed: **311 plants** for PJM 2023,
+containing **none** of PJM's 14 CC_CHP plant codes. The calibration protocol
+*mandates* scoring on the committed slim file set — the payload path — so
+CC_CHP / ST_CHP / nuclear silently lose all D-2/D-4 attribution with no failure
+raised. pjm-146 onward dropped **10 rows** vs pjm-144, including a **272 TWh
+`nuclear_mustrun`** row every year. Proven by running **current** code over
+`pjm144_control_A`, whose own committed file records `CC_CHP chp_steam
+0.9938 TWh`, and getting **zero** CC_CHP rows (log: `model dispatch from run
+payload … (311 plants)`). **No verdict moves and no keeper is invalidated** —
+all three classes are C8-exempt — but rule 18 `[R-FORCED-BUDGET]` is scored
+*entirely* from this file, so it is an invisible attribution channel expected to
+affect **every ISO's slim-scored keeper**.
+
+**DO-NOT-REDO.** Do not re-derive a PJM CC_CHP host-steam floor or BTM share
+against this residual; do not arm `chp_steam_floor_p25` for PJM (pre-WP-3
+artifact ⇒ inert, the NEISO position, and wrong-signed regardless).
+
+Rule 15 `[R-DASHBOARD]`: no solve completed ⇒ nothing to register (pjm-131 /
+neiso-71 precedent). Rule 22 `[R-HOLDOUT]`: 2023–2025 only, `holdout-freeze.json`
+untouched. Matrix: `chp_steam_following` PJM stays `K`, cell re-stamped with the
+refusal + DO-NOT-REDO + the path-dependence (rule 28b).
+
+`results/calibration/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md`;
+`PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`;
+`results/calibration/_pjm148_screen.json`, `_pjm148_floor_binding.json`;
+`scripts/probes/_pjm148_floor_binding.py`.
+
+Next shorthand: pjm-149.
