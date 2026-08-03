@@ -1,16 +1,4 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/run_config.json
-  "timestamp": "2026-08-02T23:51:44",
-  "git": {
-    "sha": "64776a0",
-    "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
-    "branch": "claude/caiso-backcast-calibration-6ubjfb",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
-  },
-  "model_changes_note": "caiso-156 arm A (control): PRE-FIX CT heat-rate artifact, hour-grain band screen NOT applied. Same-HEAD zero-delta control per prereg 4; cold solve per ADDENDUM B; re-baselined onto the nyiso112 keeper.",
-========
   "timestamp": "2026-08-02T22:58:42",
   "git": {
     "sha": "3746eda",
@@ -23,7 +11,6 @@
     "diffstat": ""
   },
   "model_changes_note": "nyiso-113 arm A: zero-delta control on the nyiso-112 keeper recipe, solved at this HEAD. Attribution baseline for the nyiso_li_locational_reserve single delta.",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/run_config.json
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -113,11 +100,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/run_config.json
-    "git_sha": "64776a0"
-========
     "git_sha": "3746eda"
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/run_config.json
   },
   "scenario_config": {
     "weather_year": 2023,

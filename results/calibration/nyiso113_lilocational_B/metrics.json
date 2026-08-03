@@ -1,13 +1,7 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/metrics.json
-  "run_id": "2026-08-02-nyiso-caiso156-meter-control",
-  "iso": "NYISO",
-  "label": "nyiso caiso156 meter control",
-========
   "run_id": "2026-08-02-nyiso-113-li-locational",
   "iso": "NYISO",
   "label": "nyiso 113 li locational",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_lilocational_B/metrics.json
   "target_years": [
     2023,
     2024,
@@ -20,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
@@ -49,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -59,22 +54,24 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -82,16 +79,11 @@
     }
   },
   "grade_summary": {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/metrics.json
-    "scored": 8,
-    "target_grade": 7,
-========
-    "scored": 6,
-    "target_grade": 5,
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_lilocational_B/metrics.json
+    "scored": 9,
+    "target_grade": 8,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 1
+    "ledgered": 1,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NYISO",

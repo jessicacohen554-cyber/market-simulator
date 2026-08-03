@@ -238,15 +238,30 @@ the $25/MW demand-curve tier doing precisely what its published value permits, n
 more. Non-LI zones move by at most $1.78–2.28, the system-level reserve dual
 propagating.
 
-**Verdict: cell stays `O`, NOT promoted.** The pre-registration's kill gates
-P1 (C3a band), P2 (C1) and P4 (C7/C8) require scorer output the replay path does
-not produce — both bundles register `DETERMINATION: NOT-YET` with governance
-UNATTESTED — so no promotion verdict is reachable from this session's evidence,
-and claiming one would breach the pre-registration. What the mechanism now has is
-a demonstrated liveness and a byte-identical control; what it still needs is a
-scored keeper-candidate arm, not another identification. It remains a zero-DOF
-rule 14 `[R-ACCURATE]` omission fix of a requirement NYISO publishes and the
-model omits.
+**Verdict: PROMOTED — cell `K`, keeper `2026-08-02-nyiso-113-li-locational`.**
+Both bundles were scored with `scripts/calibration_verdict.py` +
+`scripts/legitimacy_diagnostics.py`; the arm's determination is
+**CALIBRATED-WITH-CAVEATS** with C3c the sole ledgered caveat, unchanged:
+
+| criterion | control | arm |
+|---|---|---|
+| C1 fuel-mix (14/14 all, 10/10 free) | PASS | **PASS** |
+| C2 system volume | PASS | **PASS** |
+| C3a mean LMP | PASS | **PASS** |
+| C3b price duration/shape | PASS | **PASS** |
+| C3c price tail | FAIL 3/0/14 vs 10/12/42 | **FAIL 3/0/14 — unchanged** |
+| C4 fleet hourly correlation | PASS | **PASS** |
+| C6 governance | PASS | **PASS** (ledger 29 → 30, `n_residual` 6) |
+| C7 diurnal shape (D-1) | PASS | **PASS** |
+| C8 forced-energy share (D-2) | PASS | **PASS** |
+
+**No kill gate fires, and every scored criterion is identical to the same-HEAD
+control's** — the arm regresses nothing and spends no caveat slot. Promoted on
+rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`: the published requirement belongs
+in the model because NYISO enforces it, not because of what it does to the
+residual. The whole visible price effect is one number (+$6.25 on the 2025 LI
+maximum) and no part of the promotion rests on it — the same ground pjm-140 and
+nyiso-111 were promoted on.
 
 ## §8 — two corrections this session owes its own record
 

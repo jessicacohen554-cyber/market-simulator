@@ -1417,7 +1417,7 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
 ### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-01-nyiso109-zonal-margin-anchor`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
 **STATUS 2026-08-02 (nyiso-113) — THE MATRIX-GAP SWEEP, and the queue's own
-blind spot measured.** Keeper UNCHANGED (`2026-08-02-nyiso112-ramp-plus-peaker`).
+blind spot measured.** Keeper `2026-08-02-nyiso112-ramp-plus-peaker` → **`2026-08-02-nyiso-113-li-locational`**.
 nyiso-112 found a promotable mechanism only because it had no matrix row; this
 session made that a census. **25 `nyiso_*` fields absent from the matrix, 5
 prose-only, and 17 of them ARMED ON THE KEEPER WITH NO CELL ANYWHERE** (four
@@ -1435,7 +1435,7 @@ by `east_10min_total` 1,200 MW by 870 MW; `east_30min_total` 1,200 MW by
 `nyiso_spin_reserve_online` **→ I** (nyiso-110's solved verdict finally has a
 cell).
 
-**`nyiso_li_locational_reserve` SOLVED and is LIVE — cell O, NOT promoted.** The
+**`nyiso_li_locational_reserve` SOLVED, LIVE and PROMOTED — cell K, keeper `2026-08-02-nyiso-113-li-locational`.** The
 published Zone-K ladder the model omits entirely (rule 14, zero DOF). It clears
 the rule-19 gate on measurement: not dominated (no armed family is Zone-K
 scoped), and the nyiso-110 hydro-slack refutation **cannot reach it** — NYISO
@@ -1445,8 +1445,11 @@ hydro is 100 % upstate and **Long Island carries exactly 0.0 MW**. K2 is
 the hourly requirement in exactly 5 hours of 2025 (h4193–4195, h4217–4218 — the
 June 24–25 event) and 0 hours of 2023/2024 once the on/off-peak step is honoured;
 the solved dual moves in exactly those hours. Effect small (2025 LI max
-483.37 → 489.62), **C3c UNCHANGED at 3/0/14**, zero slack and dump. Not promoted
-because kill gates P1/P2/P4 need scorer output the replay path does not produce.
+483.37 → 489.62), **C3c UNCHANGED at 3/0/14**, zero slack and dump. Determination
+**CALIBRATED-WITH-CAVEATS**: no kill gate fires and **every scored criterion is
+identical to the same-HEAD control's** (C1 14/14 all / 10/10 free, C2, C3a, C3b,
+C4, C6, C7, C8 PASS in both arms), ledger 29 → 30 with `n_residual` 6. Promoted
+on rule 1 / rule 14, not on gate movement.
 
 **C3c, item 2 of the brief — the received reading is INVERTED by measurement.**
 The 2023-05-01 227-3 phase removes **203.1 MW of which 145.5 MW (72 %) is Long

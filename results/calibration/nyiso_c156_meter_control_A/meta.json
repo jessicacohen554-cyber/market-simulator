@@ -1,9 +1,5 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/meta.json
   "timestamp": "2026-08-02T23:51:44",
-========
-  "timestamp": "2026-08-02T22:58:42",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/meta.json
   "iso": "NYISO",
   "years": [
     2023,
@@ -337,11 +333,7 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/meta.json
   "git_sha": "64776a0",
-========
-  "git_sha": "3746eda",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_control_A/meta.json
   "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
   "highspy_version": "1.14.0",
   "environment": {

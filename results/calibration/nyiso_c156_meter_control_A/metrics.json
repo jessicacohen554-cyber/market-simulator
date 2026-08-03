@@ -1,13 +1,7 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/metrics.json
   "run_id": "2026-08-02-nyiso-caiso156-meter-control",
   "iso": "NYISO",
   "label": "nyiso caiso156 meter control",
-========
-  "run_id": "2026-08-02-nyiso-113-li-locational",
-  "iso": "NYISO",
-  "label": "nyiso 113 li locational",
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_lilocational_B/metrics.json
   "target_years": [
     2023,
     2024,
@@ -64,12 +58,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -82,13 +76,8 @@
     }
   },
   "grade_summary": {
-<<<<<<<< HEAD:results/calibration/nyiso_c156_meter_control_A/metrics.json
     "scored": 8,
     "target_grade": 7,
-========
-    "scored": 6,
-    "target_grade": 5,
->>>>>>>> 60a62ce (nyiso-113: LI locational reserve solved LIVE; retract an invalid instrument):results/calibration/nyiso113_lilocational_B/metrics.json
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 1
