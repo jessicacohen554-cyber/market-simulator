@@ -337,6 +337,47 @@ places (0.2684 / 0.322638 / 0.401939). So:
   itself** (that would need a `--retirement-rule legacy` arm, which is FFR-2B's territory and not
   this charter's), so this is attribution by elimination plus mechanism, not a measured D-1 arm.
 
+### 5.3 PJM — the ISO that DOES exercise the admission cap
+
+Same posture (T1-FF, base 2023, vintage 2023, 2023–2025, Arm R), PJM's shipped curve-ON capacity
+posture (the harness default).
+
+| year | thermal before | econ retired | pipeline events | reserve margin |
+|---|--:|--:|---|--:|
+| 2023 | 168.540 GW | 0.000 GW | none | −1.29 % |
+| 2024 | 168.540 GW | 0.000 GW | **9 decided (1.056 GW)**, **1,190 `entry_capped` (108.207 GW)** | −4.88 % |
+| 2025 | 168.547 GW | 0.000 GW | 9 `reversed` (1.056 GW) | −9.28 % |
+
+Invariants: **0 FAIL, 0 WARN — all 14 PASS**, including I12 in-band on the requirement-implied
+floor `[−12.9 %, 2.1 %]`.
+
+**This is the arm where the cap-grain fix actually operates.** 1,199 PJM units fail the
+going-forward bar in the 2024 screen, and the admission cap admits **9 of them (1.056 GW)** while
+un-admitting **1,190 (108.2 GW)**. The cap is the binding constraint on PJM's exit membership by
+two orders of magnitude — which is precisely the quantity FFR-3C §1.2 G3 said was being evaluated
+against the wrong year's requirement. (The 9 admitted units then *recover* and leave the pipeline
+in 2025 through the soft latch, so PJM's realized economic exits are 0.000 GW as well.)
+
+So the ERCOT null does **not** generalise: the cap-grain fix has a live, heavily-loaded seam in
+PJM. What that seam does under the corrected grain versus the old one is the pre-fix pair below.
+
+### 5.5 Leave-one-year-out (rule 22)
+
+LOYO is **degenerate on this evidence, and that is the honest report rather than a fold table.**
+Rule 22's LOYO is scorer-side within 2023–2025 (FFR-2B §, "no re-solve"): each fold drops one
+year from the *scored* capacity-event set and re-computes recall / false-retire / the T-R10
+bands. Every arm measured here produces **0.000 GW of economic retirement in every year of both
+ISOs**, so every fold's model-exit set is empty and every fold returns the identical degenerate
+result — recall 0, false-retire 0 — regardless of which year is held out. A fold table would be
+three identical rows of zeros and would imply a robustness check that was never actually
+exercised.
+
+**This does not clear the rule-22 bar; it means the bar cannot be evaluated from these runs.**
+That is a statement about the posture, not about the mechanisms. Neither mechanism is being
+recommended for promotion, so no LOYO-gated decision is pending — and if either is proposed for
+promotion later, LOYO must be run on a posture that actually produces economic exits, which the
+3-year T1-FF window does not.
+
 ## 6. Task 4 — the FH-1 §3.3 acceptance re-probe, stated plainly
 
 **Posture:** ERCOT, base 2023, vintage 2023, 2023–2025, Arm R, 3 solve years, hindcast namespace,
