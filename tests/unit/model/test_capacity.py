@@ -1366,6 +1366,126 @@ class TestPipelineRetirementRule(unittest.TestCase):
         self.assertLess(base + 250.0, req_execution)
         self.assertGreaterEqual(base + 500.0, req_execution)
 
+    def _cohort_schedule(self, cap, n=12, mw=500.0, years=range(2026, 2036)):
+        """Exit schedule of an all-failing coal cohort under ``exit_rate_cap_mw``.
+
+        ``peak_demand=0`` makes the reliability floor inert, so what is left
+        is the queue alone. Returns ``[(year, executed_gw, deferred_units)]``.
+        """
+        fleet = [
+            _gen(f"C{i:02d}", "coal", pmax=mw, heat_rate=10.0 + i) for i in range(n)
+        ]
+        config = ScenarioConfig(retirement_rule="pipeline", iso="ERCOT")
+        state: dict[str, int] = {}
+        schedule = []
+        for year in years:
+            if not fleet:
+                schedule.append((year, 0.0, 0))
+                continue
+            arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+            sink: dict = {}
+            fleet, state, _ = apply_economic_retirements(
+                fleet,
+                arrays,
+                SimpleNamespace(dispatch=np.full((len(fleet), self.T), 10.0)),
+                np.full((1, self.T), 10.0),
+                config,
+                state,
+                peak_demand=0.0,
+                year=year,
+                event_sink=sink,
+                exit_rate_cap_mw=cap,
+            )
+            events = sink["pipeline_events"]
+            schedule.append(
+                (
+                    year,
+                    sum(e["mw"] for e in events if e["event"] == "executed") / 1000.0,
+                    sum(1 for e in events if e["event"] == "throughput_deferred"),
+                )
+            )
+        return schedule
+
+    def test_exit_throughput_cap_spreads_the_wave_without_shrinking_it(self):
+        # The mechanism owner decision D-8 authorized (2026-08-03,
+        # ffr-owner-sitting-2026-08-02.md Addendum F.1). FFR-3C §1.2 G2
+        # measured what the pipeline lacks: a per-fuel constant execution lag
+        # is a rigid TIME-SHIFT operator, so an all-failing cohort's exit wave
+        # is one year wide however many units fail. A throughput cap is the
+        # missing second property of the same queue.
+        #
+        # 12 x 500 MW coal (6 GW), all failing, lag 3. Uncapped the whole
+        # cohort leaves in ONE year; capped at 2 GW/yr it leaves over THREE —
+        # and the TOTAL is identical. That invariant is the point: a
+        # throughput cap moves the calendar, it does not adjudicate the level
+        # (which is the revenue lane's, FFR-3C §1.4).
+        uncapped = self._cohort_schedule(None)
+        capped = self._cohort_schedule(2000.0)
+
+        self.assertEqual(sum(1 for _y, gw, _d in uncapped if gw > 0), 1)
+        self.assertEqual(sum(1 for _y, gw, _d in capped if gw > 0), 3)
+        self.assertAlmostEqual(sum(gw for _y, gw, _d in uncapped), 6.0)
+        self.assertAlmostEqual(sum(gw for _y, gw, _d in capped), 6.0)
+        # No year exceeds the budget, and deferrals are recorded as their own
+        # event kind (never folded into floor retention).
+        self.assertTrue(all(gw <= 2.0 + 1e-9 for _y, gw, _d in capped))
+        self.assertTrue(any(d > 0 for _y, _gw, d in capped))
+        # Default off is byte-identical to the shipped no-cap behaviour.
+        self.assertEqual(self._cohort_schedule(None), uncapped)
+
+    def test_exit_throughput_cap_is_strict_fifo_by_decided_year(self):
+        # A deactivation queue is processed oldest-request-first. The unit
+        # decided earlier leaves first even though the later-decided unit is
+        # the less efficient one (which is the order the ledger sort would
+        # otherwise impose).
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        old = _gen("OLD", "coal", pmax=500.0, heat_rate=9.0)
+        new = _gen("NEW", "coal", pmax=500.0, heat_rate=15.0)
+        due = sorted([old, new], key=lambda g: (g.fuel_type, -g.heat_rate))
+        self.assertEqual([g.unit_id for g in due], ["NEW", "OLD"])  # ledger order
+        executing, deferred = _apply_exit_throughput_cap(
+            due, {"OLD": 2028, "NEW": 2030}, cap_mw=500.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["OLD"])
+        self.assertEqual([g.unit_id for g in deferred], ["NEW"])
+
+    def test_exit_throughput_cap_never_makes_a_unit_immortal(self):
+        # A unit larger than the whole annual budget must still leave — at the
+        # head of the queue — or the cap silently becomes an immortality rule
+        # instead of a rate limit.
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        huge = _gen("HUGE", "coal", pmax=9000.0)
+        small = _gen("SMALL", "coal", pmax=100.0)
+        executing, deferred = _apply_exit_throughput_cap(
+            [huge, small], {"HUGE": 2028, "SMALL": 2029}, cap_mw=1000.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["HUGE"])
+        self.assertEqual([g.unit_id for g in deferred], ["SMALL"])
+
+    def test_exit_throughput_cap_does_not_backfill_remaining_headroom(self):
+        # Strict FIFO: the year stops at the first unit that does not fit; a
+        # smaller LATER request is not promoted to pack the year. Reordering
+        # the queue by size is not something a real deactivation queue does,
+        # and it would make exit composition depend on unit size.
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        first = _gen("A", "coal", pmax=600.0)
+        big = _gen("B", "coal", pmax=900.0)
+        tiny = _gen("C", "coal", pmax=100.0)
+        executing, deferred = _apply_exit_throughput_cap(
+            [first, big, tiny], {"A": 2028, "B": 2029, "C": 2030}, cap_mw=1000.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["A"])
+        self.assertEqual([g.unit_id for g in deferred], ["B", "C"])
+
     def test_gas_cc_ccs_lag_inherits_gas_cc(self):
         # §5 open-DOF disposition: no CCS retirement exists anywhere (§a.4),
         # so gas_cc_ccs inherits the gas_cc lag when its own field is None.

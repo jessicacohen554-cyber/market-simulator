@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1661 parameters registered** (872 flagged `needs-citation`).
+**1662 parameters registered** (872 flagged `needs-citation`).
 
 
 ## Calibration
@@ -66,6 +66,7 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
 | `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
 | `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.exit_rate_limits` | False | 1 | EIA-860 retired sheet (measured per-ISO max single-year thermal dea… | 2026-08 |  |
 | `scenario.renewable_buildout_pace` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_aggressiveness` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_consecutive_years` | 2 | 2 | Market simulator model design decision | 2026-05 | modeled |
