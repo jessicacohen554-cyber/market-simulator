@@ -4258,4 +4258,69 @@ unchanged. The ratchet baseline is **not widened**. The 12 "live-but-invisible"
 fields are ISO-agnostic (`coal_prb_*`, `cc_*`, `gas_st_startup_spread`, …) and
 belong to whichever lane owns them — rule 25/28(d) forbid minting them here.
 
+
+---
+
+## caiso-160 (2026-08-03) — CT meter screen re-based onto nyiso-113; **KEEPER PROMOTED**
+
+**Keeper → `2026-08-03-nyiso160-ctmeter-screen-b`** (bundle
+`nyiso160_ctmeter_screen_B`). Control `2026-08-03-nyiso160-ctmeter-control`.
+Cross-ISO lane, run from the CAISO chair; closes caiso-159 §8 item 1, so the
+caiso-156 CT heat-rate meter screen (`f6238a5`) is now promoted in **all four
+ISOs that consume the artifact**.
+
+**Promoted on rule 14 [R-ACCURATE], not on fit.** Zero recipe changes, zero free
+parameters, DOF ledger carried verbatim at (30, 6). Determination
+CALIBRATED-WITH-CAVEATS and **all nine criterion verdicts, the grade summary
+(9/8, 1 ledgered, 0 fails), the C1 headline (all 14/14, free 10/10) and the
+caveat list are IDENTICAL** to the superseded `2026-08-02-nyiso-113-li-locational`,
+whose Zone-K ladder, ramp envelopes and NYSDEC 227-3 mechanisms all carry forward.
+
+**Why nyiso-113 had to be the base.** The caiso-158 NYISO arm was controlled on
+nyiso-112 and nyiso-113 promoted underneath it mid-solve, leaving it carrying
+`nyiso_li_locational_reserve=False` against a keeper that arms it — promoting it
+would have dropped a published Zone-K reserve requirement to gain an input
+correction. Both arms here replay the nyiso-113 recipe via `replay_keeper.py`
+with **no `--set`**, so the zero delta is structural.
+
+**Artifact:** cap-weighted 12.0769 → 12.4355 (**+0.3586, the largest of the six
+ISOs**) and **one-sided dearer** — 17 plants dearer, 0 cheaper, 2 unchanged,
+19/19 applied, no flag changes, 80 → 79 unit rows. Only Gowanus
+(15.2804 → 16.9538) and Narrows (15.7537 → 16.7814) move past 0.5.
+
+**K3 reproduces caiso-158's independent prediction almost exactly** — predicted
+CT_PEAKER −0.012/−0.005/−0.036 TWh and λ +0.028/+0.020/+0.080 % on the nyiso-112
+base; measured −0.0121/−0.0047/−0.0359 TWh and +0.030/+0.024/+0.079 % on the
+nyiso-113 base. C3c untouched (12/8/68 h > $200, identical max λ).
+
+**K2 — a control was solved against the handoff's instruction, and it earned its
+compute.** The handoff said none was needed because the committed keeper *is* the
+control; that holds only if the keeper solved at this HEAD, and it did not (seven
+`src/market_sim` commits landed after `3746eda`). The control reproduces the
+committed nyiso-113 bundle **BIT-IDENTICALLY** — max |ΔMW| = 0.000000 on every P1
+class-hour of all three years (147.1621/150.6234/151.7383 TWh). That makes the
+A/B delta the artifact's alone **and answers the standing caiso-146 HEAD-drift
+item in the negative for NYISO** (it stays open for CAISO, where the outgoing
+keeper's sidecars diverged up to 3.2 GW on a class-hour).
+
+**NEW GENERAL DEFECT — `config_drift` cannot see a moved default.** The premise
+guard fired on four value diffs (`retirement_rule`, `entry_rate_limits`,
+`entry_commissioning_lag`, `caiso_ra_min_load_frac`). None is a recipe choice:
+every one is a **shipped default that moved on main** after the keeper solved
+(`24b1602`, `3e33f15`, `a0fc302`), recorded identically by both arms.
+Absence-awareness does not help — a moved default and a changed recipe are
+byte-indistinguishable. Remedy: `gen_caiso160_attestation.DEFAULT_MOVES`, an
+allowlist naming each field, its commit and why it cannot reach a backcast,
+honoured **only when the K2 bit-identity holds**. **Any ISO promoted after a
+default move will hit this**; it belongs in every lane's promotion path.
+
+**Rule 22 D-5(b):** `calibration-complete.json` re-keyed with a determination
+re-verified from committed artifacts only (no solve); every criterion verdict
+matches, so the marker transfers a determination onto a run scored against it.
+`locked_test_scored_on` untouched, NYISO stays absent from `final`, holdout spend
+freeze ACTIVE. `audit_keepers --iso NYISO --check`: PASS, 0 failures, 0 warnings.
+
+Evidence: `results/calibration/FINDING-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`,
+`PREREG-caiso160-nyiso-ct-heat-rate-rebase-2026-08-03.md`.
+
 Next shorthand: nyiso-117.
