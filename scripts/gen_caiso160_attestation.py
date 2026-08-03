@@ -38,6 +38,8 @@ import json
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
@@ -75,6 +77,67 @@ CARRY = (
     "creates no new caveat and spends no new ledger slot. "
 )
 
+#: ScenarioConfig fields whose SHIPPED DEFAULT moved on main after the incumbent
+#: keeper solved, so both arms record a different value than the keeper bundle
+#: WITHOUT anyone having changed the recipe. :func:`config_drift` cannot tell
+#: this apart from a real recipe change -- the field is present on both sides
+#: with different values either way -- so each one is enumerated here with the
+#: commit that moved it and the reason it cannot reach a NYISO BACKCAST.
+#:
+#: This allowlist is NOT self-certifying. It is honoured only when the K2
+#: control bit-identity below holds; if the control diverges from the keeper by
+#: so much as one MW on one class-hour, one of these moved defaults DID reach
+#: the backcast and the promotion stops. The evidence is the measurement, never
+#: the entry.
+DEFAULT_MOVES = {
+    "retirement_rule": (
+        "24b1602 flipped the default legacy -> pipeline. Capacity-evolution "
+        "step 3 (economic retirement), forecast-mode only -- a backcast solves "
+        "a fixed historical fleet per year and never runs the evolution loop."
+    ),
+    "entry_rate_limits": (
+        "3e33f15 armed it by default. Capacity-evolution step 5 (economic new "
+        "entry), forecast-mode only; a backcast builds nothing."
+    ),
+    "entry_commissioning_lag": (
+        "3e33f15 armed it by default. Same step-5 forecast-only entry path."
+    ),
+    "caiso_ra_min_load_frac": (
+        "a0fc302 task 3(b) made it CAISO-SCOPED under rule 25 [R-ISO-SCOPE]. It "
+        "had been assigned unconditionally, so a CAISO-fitted 0.26 rode the "
+        "recorded recipe of all 119 bundles in every ISO; non-CAISO now records "
+        "the neutral shipped 0.40. Every reader sits behind "
+        "`caiso_ra_mustoffer and iso == 'CAISO'`, and NYISO carries "
+        "caiso_ra_mustoffer=False -- a RECORDING change, not a solve change."
+    ),
+}
+
+
+def control_bit_identity(control: Path, keeper: Path) -> dict[int, float]:
+    """Return per-year max |ΔMW| on any P1 class-hour, control vs keeper.
+
+    The K2 gate. The control arm replays the keeper's recipe at THIS HEAD
+    against the keeper's OWN (pre-fix) artifact, so any non-zero entry means
+    something that landed after the keeper solved -- a moved default in
+    :data:`DEFAULT_MOVES`, or one of the src/market_sim commits since -- reached
+    the backcast. Zero everywhere is what licenses reading the A/B delta as the
+    CT artifact's alone.
+    """
+    out: dict[int, float] = {}
+    for year in YEARS:
+        a_path = control / "hourly" / f"class_hourly_{year}.parquet"
+        k_path = keeper / "hourly" / f"class_hourly_{year}.parquet"
+        if not (a_path.is_file() and k_path.is_file()):
+            continue
+        a = pd.read_parquet(a_path)
+        k = pd.read_parquet(k_path)
+        a, k = a[a["pass"] == "P1"], k[k["pass"] == "P1"]
+        merged = a.merge(
+            k, on=["klass", "hour"], suffixes=("_a", "_k"), how="outer"
+        ).fillna(0.0)
+        out[year] = float((merged["mw_a"] - merged["mw_k"]).abs().max())
+    return out
+
 
 def build_attested_by(
     art: dict,
@@ -85,17 +148,35 @@ def build_attested_by(
     drift: dict,
 ) -> str:
     """Compose the NYISO governance narrative from the measured arm bytes."""
-    n_drift = len(drift["arm_only"]) + len(drift["keeper_only"])
-    drift_clause = (
-        "differs in zero fields"
-        if not n_drift
-        else (
-            f"differs in {n_drift} field(s), every one a ScenarioConfig schema "
-            "change that post-dates the keeper's solve and is recorded here at "
-            f"its declared default ({', '.join(drift['arm_only'] + drift['keeper_only'])})"
-            " — schema drift, not a config change"
+    n_schema = len(drift["arm_only"]) + len(drift["keeper_only"])
+    moved = drift.get("default_moves_exempted", {})
+    identity = drift.get("k2_control_bit_identity_max_abs_mw", {})
+    parts = []
+    if n_schema:
+        parts.append(
+            f"differs in {n_schema} field(s) present on only one side "
+            f"({', '.join(drift['arm_only'] + drift['keeper_only'])}) — schema "
+            "drift, not a config change"
         )
-    )
+    if moved:
+        parts.append(
+            f"records a different value for {len(moved)} field(s) whose SHIPPED "
+            f"DEFAULT moved on main after the keeper solved ({', '.join(sorted(moved))}), "
+            "none of them a recipe choice by this session and none reachable "
+            "from a NYISO backcast — three are forecast-only capacity-evolution "
+            "fields (a backcast solves a fixed historical fleet and never runs "
+            "the evolution loop) and caiso_ra_min_load_frac was re-scoped to "
+            "CAISO under rule 25, so non-CAISO now records the neutral shipped "
+            "0.40 behind a reader gate NYISO never opens. THAT CLAIM IS "
+            "MEASURED, NOT ASSERTED: the same-HEAD cold-solved control "
+            "reproduces the committed keeper BIT-IDENTICALLY, max |ΔMW| = "
+            + ", ".join(f"{y}: {v:.6f}" for y, v in sorted(identity.items()))
+            + " on every one of its P1 class-hours, which also clears the seven "
+            "src/market_sim commits that landed after the keeper solved and "
+            "answers the standing caiso-146 HEAD-drift item in the negative for "
+            "this ISO"
+        )
+    drift_clause = "differs in zero fields" if not parts else "; ".join(parts)
     ct = " / ".join(f"{ct_a.get(y, 0):.4f}->{ct_b.get(y, 0):.4f}" for y in YEARS)
     delta = " / ".join(f"{ct_b.get(y, 0) - ct_a.get(y, 0):+.4f}" for y in YEARS)
     lam = " / ".join(f"{lam_a.get(y, 0):.2f}->{lam_b.get(y, 0):.2f}" for y in YEARS)
@@ -176,14 +257,35 @@ def generate() -> dict:
     # means this arm was controlled against a different recipe than the one it
     # would replace.
     drift = config_drift(target_bundle, keeper_bundle)
-    if drift["value_diffs"]:
+    unexplained = [k for k in drift["value_diffs"] if k not in DEFAULT_MOVES]
+    if unexplained:
         raise SystemExit(
-            f"{ISO}: {len(drift['value_diffs'])} ScenarioConfig VALUE "
-            f"difference(s) vs {WIRING['source']}: "
-            f"{', '.join(drift['value_diffs'])}. An input-correction promotion "
-            "must carry zero value diffs — this arm was controlled against a "
-            "different recipe than the one it would replace."
+            f"{ISO}: {len(unexplained)} UNEXPLAINED ScenarioConfig value "
+            f"difference(s) vs {WIRING['source']}: {', '.join(unexplained)}. An "
+            "input-correction promotion must carry zero recipe changes — this "
+            "arm was controlled against a different recipe than the one it "
+            "would replace."
         )
+
+    # K2. Every remaining diff is a shipped default that moved after the keeper
+    # solved; the allowlist ASSERTS they cannot reach a NYISO backcast and this
+    # MEASURES it. A single non-zero MW voids the exemption and the promotion.
+    identity = control_bit_identity(control, keeper_bundle)
+    if not identity:
+        raise SystemExit(f"{ISO}: no class hourlies to verify K2 control identity")
+    worst = max(identity.values())
+    if worst != 0.0:
+        raise SystemExit(
+            f"{ISO}: K2 control integrity FAILED — the control diverges from "
+            f"{WIRING['source']} by up to {worst:.6f} MW on a class-hour "
+            f"({identity}). A moved default or a post-keeper src/market_sim "
+            "commit reached the backcast, so the A/B delta is not the CT "
+            "artifact's alone and the DEFAULT_MOVES exemption is void."
+        )
+    drift["default_moves_exempted"] = {
+        k: DEFAULT_MOVES[k] for k in drift["value_diffs"]
+    }
+    drift["k2_control_bit_identity_max_abs_mw"] = identity
 
     att = json.loads(source.read_text())
     before = (
