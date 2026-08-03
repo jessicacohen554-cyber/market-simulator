@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-pjm-150-ct-regate",
+  "label": "pjm 150 ct regate",
+  "date": "2026-08-03",
+  "shorthand": "pjm-150-ct-regate",
+  "definition": "pjm-150 K2 re-gate arm: the pjm-147 keeper recipe replayed COLD at HEAD against the SAME (corrected) CT heat-rate artifact it solved on (f6238a5, applied cap-weighted 11.6511). Zero config delta vs the keeper -- no --set. NOT an A/B arm: PREREG-pjm150 measures that the keeper already consumed the corrected bytes, so this single arm is both control and treatment, and its only question is bit-identity against the committed keeper across the 11 src/market_sim commits that landed after it solved (charter K2; the caiso-146 HEAD-drift item, untested in PJM).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-08-03-pjm-150-ct-regate.js",
+  "bundle": "results/calibration/pjm150_ctmeter_regate_A"
+}
