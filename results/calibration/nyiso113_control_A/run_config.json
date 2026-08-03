@@ -1,5 +1,4 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso113_control_A/run_config.json
   "timestamp": "2026-08-02T22:58:42",
   "git": {
     "sha": "3746eda",
@@ -12,18 +11,6 @@
     "diffstat": ""
   },
   "model_changes_note": "nyiso-113 arm A: zero-delta control on the nyiso-112 keeper recipe, solved at this HEAD. Attribution baseline for the nyiso_li_locational_reserve single delta.",
-========
-  "timestamp": "2026-08-03T00:52:37",
-  "git": {
-    "sha": "dcc5279",
-    "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
-    "branch": "claude/caiso-backcast-calibration-6ubjfb",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
-  },
-  "model_changes_note": "caiso-156 arm B (treatment): POST-FIX CT heat-rate artifact with the hour-grain physical-band screen applied. Zero config delta vs arm A (K4); cold solve per ADDENDUM B.",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/run_config.json
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -113,11 +100,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-<<<<<<<< HEAD:results/calibration/nyiso113_control_A/run_config.json
     "git_sha": "3746eda"
-========
-    "git_sha": "dcc5279"
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/run_config.json
   },
   "scenario_config": {
     "weather_year": 2023,

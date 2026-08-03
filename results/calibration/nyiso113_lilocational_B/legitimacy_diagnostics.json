@@ -1,10 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
  "bundle": "/home/user/market-simulator/results/calibration/nyiso113_lilocational_B",
-========
- "bundle": "/home/user/market-simulator/results/calibration/nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
  "iso": "NYISO",
  "years": [
   2023,
@@ -22,11 +18,7 @@
      "profile_r": 0.965,
      "model_offpeak_cv": 0.088,
      "actual_offpeak_cv": 0.114,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 0.772,
-========
-     "cv_ratio": 0.773,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -36,11 +28,7 @@
      "profile_r": 0.977,
      "model_offpeak_cv": 0.079,
      "actual_offpeak_cv": 0.073,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 1.078,
-========
-     "cv_ratio": 1.079,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -57,17 +45,10 @@
     {
      "year": 2023,
      "class": "CT_PEAKER",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.927,
      "model_offpeak_cv": 1.356,
      "actual_offpeak_cv": 0.689,
      "cv_ratio": 1.968,
-========
-     "profile_r": 0.928,
-     "model_offpeak_cv": 1.352,
-     "actual_offpeak_cv": 0.689,
-     "cv_ratio": 1.963,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": true,
      "verdict": "pass"
     },
@@ -75,11 +56,7 @@
      "year": 2023,
      "class": "ST_CHP",
      "profile_r": 0.323,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "model_offpeak_cv": 0.211,
-========
-     "model_offpeak_cv": 0.21,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "actual_offpeak_cv": 0.106,
      "cv_ratio": 1.994,
      "gated": false,
@@ -101,11 +78,7 @@
      "profile_r": 0.968,
      "model_offpeak_cv": 0.08,
      "actual_offpeak_cv": 0.08,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 0.998,
-========
-     "cv_ratio": 0.999,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -113,26 +86,16 @@
      "year": 2024,
      "class": "CC_REGULAR",
      "profile_r": 0.974,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "model_offpeak_cv": 0.061,
      "actual_offpeak_cv": 0.061,
      "cv_ratio": 0.998,
-========
-     "model_offpeak_cv": 0.06,
-     "actual_offpeak_cv": 0.061,
-     "cv_ratio": 0.996,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "CT_CHP",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.146,
-========
-     "profile_r": 0.145,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "model_offpeak_cv": 0.114,
      "actual_offpeak_cv": 0.061,
      "cv_ratio": 1.872,
@@ -142,34 +105,20 @@
     {
      "year": 2024,
      "class": "CT_PEAKER",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.971,
      "model_offpeak_cv": 1.07,
      "actual_offpeak_cv": 0.749,
      "cv_ratio": 1.428,
-========
-     "profile_r": 0.972,
-     "model_offpeak_cv": 1.067,
-     "actual_offpeak_cv": 0.749,
-     "cv_ratio": 1.424,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "ST_CHP",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.276,
      "model_offpeak_cv": 0.211,
      "actual_offpeak_cv": 0.097,
      "cv_ratio": 2.176,
-========
-     "profile_r": 0.275,
-     "model_offpeak_cv": 0.21,
-     "actual_offpeak_cv": 0.097,
-     "cv_ratio": 2.174,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -177,32 +126,19 @@
      "year": 2024,
      "class": "ST_GAS",
      "profile_r": 0.962,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "model_offpeak_cv": 0.196,
      "actual_offpeak_cv": 0.199,
      "cv_ratio": 0.985,
-========
-     "model_offpeak_cv": 0.197,
-     "actual_offpeak_cv": 0.199,
-     "cv_ratio": 0.986,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "CC_CHP",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.953,
      "model_offpeak_cv": 0.035,
      "actual_offpeak_cv": 0.046,
      "cv_ratio": 0.757,
-========
-     "profile_r": 0.954,
-     "model_offpeak_cv": 0.035,
-     "actual_offpeak_cv": 0.046,
-     "cv_ratio": 0.758,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -212,11 +148,7 @@
      "profile_r": 0.96,
      "model_offpeak_cv": 0.041,
      "actual_offpeak_cv": 0.045,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 0.909,
-========
-     "cv_ratio": 0.906,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -226,45 +158,27 @@
      "profile_r": 0.182,
      "model_offpeak_cv": 0.125,
      "actual_offpeak_cv": 0.062,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 2.018,
-========
-     "cv_ratio": 2.019,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "CT_PEAKER",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.968,
      "model_offpeak_cv": 0.366,
      "actual_offpeak_cv": 0.488,
      "cv_ratio": 0.751,
-========
-     "profile_r": 0.969,
-     "model_offpeak_cv": 0.367,
-     "actual_offpeak_cv": 0.488,
-     "cv_ratio": 0.753,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "ST_CHP",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "profile_r": 0.126,
      "model_offpeak_cv": 0.099,
      "actual_offpeak_cv": 0.099,
      "cv_ratio": 0.999,
-========
-     "profile_r": 0.129,
-     "model_offpeak_cv": 0.099,
-     "actual_offpeak_cv": 0.099,
-     "cv_ratio": 1.001,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": false,
      "verdict": "pass"
     },
@@ -274,11 +188,7 @@
      "profile_r": 0.959,
      "model_offpeak_cv": 0.133,
      "actual_offpeak_cv": 0.177,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "cv_ratio": 0.748,
-========
-     "cv_ratio": 0.751,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "gated": true,
      "verdict": "pass"
     }
@@ -311,81 +221,49 @@
      "year": 2023,
      "class": "CC_CHP",
      "mechanism": "chp_steam",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.0454,
      "class_total_twh": 12.5819,
-========
-     "forced_twh": 0.0449,
-     "class_total_twh": 12.5864,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.0036
     },
     {
      "year": 2023,
      "class": "CC_REGULAR",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.5997,
      "class_total_twh": 31.3106,
      "share_of_class": 0.0511
-========
-     "forced_twh": 1.5976,
-     "class_total_twh": 31.3092,
-     "share_of_class": 0.051
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2023,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
      "forced_twh": 0.4201,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "class_total_twh": 1.4526,
-========
-     "class_total_twh": 1.4529,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.2892
     },
     {
      "year": 2023,
      "class": "ST_GAS",
      "mechanism": "reliability_floor",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 2.8764,
      "class_total_twh": 13.6341,
      "share_of_class": 0.211
-========
-     "forced_twh": 2.8793,
-     "class_total_twh": 13.6354,
-     "share_of_class": 0.2112
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2023,
      "class": "ST_GAS",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.1805,
      "class_total_twh": 13.6341,
-========
-     "forced_twh": 0.1804,
-     "class_total_twh": 13.6354,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.0132
     },
     {
      "year": 2023,
      "class": "hydro",
      "mechanism": "hydro_min_flow",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 8.1815,
      "class_total_twh": 26.8328,
      "share_of_class": 0.3049
-========
-     "forced_twh": 8.1938,
-     "class_total_twh": 26.8328,
-     "share_of_class": 0.3054
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2024,
@@ -407,83 +285,49 @@
      "year": 2024,
      "class": "CC_CHP",
      "mechanism": "chp_steam",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.0621,
      "class_total_twh": 14.071,
-========
-     "forced_twh": 0.0617,
-     "class_total_twh": 14.0717,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.0044
     },
     {
      "year": 2024,
      "class": "CC_REGULAR",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.1082,
      "class_total_twh": 36.5313,
-========
-     "forced_twh": 1.108,
-     "class_total_twh": 36.5292,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.0303
     },
     {
      "year": 2024,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.553,
      "class_total_twh": 1.4402,
      "share_of_class": 0.3839
-========
-     "forced_twh": 0.5533,
-     "class_total_twh": 1.4396,
-     "share_of_class": 0.3843
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2024,
      "class": "ST_GAS",
      "mechanism": "reliability_floor",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 3.0252,
      "class_total_twh": 12.1897,
      "share_of_class": 0.2482
-========
-     "forced_twh": 3.0244,
-     "class_total_twh": 12.1948,
-     "share_of_class": 0.248
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2024,
      "class": "ST_GAS",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.2873,
      "class_total_twh": 12.1897,
      "share_of_class": 0.0236
-========
-     "forced_twh": 0.2947,
-     "class_total_twh": 12.1948,
-     "share_of_class": 0.0242
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2024,
      "class": "hydro",
      "mechanism": "hydro_min_flow",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 7.9957,
      "class_total_twh": 26.739,
      "share_of_class": 0.299
-========
-     "forced_twh": 7.9776,
-     "class_total_twh": 26.739,
-     "share_of_class": 0.2983
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2025,
@@ -505,99 +349,58 @@
      "year": 2025,
      "class": "CC_CHP",
      "mechanism": "chp_steam",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.0951,
      "class_total_twh": 15.7233,
-========
-     "forced_twh": 0.0955,
-     "class_total_twh": 15.7261,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "share_of_class": 0.0061
     },
     {
      "year": 2025,
      "class": "CC_REGULAR",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.218,
      "class_total_twh": 34.6104,
      "share_of_class": 0.0352
-========
-     "forced_twh": 1.2165,
-     "class_total_twh": 34.6163,
-     "share_of_class": 0.0351
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2025,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.3164,
      "class_total_twh": 1.9323,
      "share_of_class": 0.1637
-========
-     "forced_twh": 0.315,
-     "class_total_twh": 1.9336,
-     "share_of_class": 0.1629
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2025,
      "class": "ST_GAS",
      "mechanism": "reliability_floor",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 2.7684,
      "class_total_twh": 13.4969,
      "share_of_class": 0.2051
-========
-     "forced_twh": 2.7794,
-     "class_total_twh": 13.5141,
-     "share_of_class": 0.2057
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2025,
      "class": "ST_GAS",
      "mechanism": "nyiso_gas_commitment_bridge",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 0.3163,
      "class_total_twh": 13.4969,
      "share_of_class": 0.0234
-========
-     "forced_twh": 0.322,
-     "class_total_twh": 13.5141,
-     "share_of_class": 0.0238
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     },
     {
      "year": 2025,
      "class": "hydro",
      "mechanism": "hydro_min_flow",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 6.8248,
      "class_total_twh": 24.0589,
      "share_of_class": 0.2837
-========
-     "forced_twh": 6.8315,
-     "class_total_twh": 24.0589,
-     "share_of_class": 0.284
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
     }
    ],
    "summary": [
     {
      "year": 2023,
      "class": "CC_REGULAR",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.5997,
      "class_total_twh": 31.3106,
      "forced_share": 0.0511,
-========
-     "forced_twh": 1.5976,
-     "class_total_twh": 31.3092,
-     "forced_share": 0.051,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "limit": 0.3,
      "load_share": 0.4562,
      "immaterial": false,
@@ -608,11 +411,7 @@
      "year": 2023,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "class_total_twh": 0.2708,
-========
-     "class_total_twh": 0.2661,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": 0.0272,
@@ -623,15 +422,9 @@
     {
      "year": 2023,
      "class": "ST_GAS",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 3.0568,
      "class_total_twh": 13.6341,
      "forced_share": 0.2242,
-========
-     "forced_twh": 3.0597,
-     "class_total_twh": 13.6354,
-     "forced_share": 0.2244,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "limit": 0.3,
      "load_share": 0.1966,
      "immaterial": false,
@@ -653,13 +446,8 @@
     {
      "year": 2024,
      "class": "CC_REGULAR",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.1082,
      "class_total_twh": 36.5313,
-========
-     "forced_twh": 1.108,
-     "class_total_twh": 36.5292,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "forced_share": 0.0303,
      "limit": 0.3,
      "load_share": 0.462,
@@ -671,11 +459,7 @@
      "year": 2024,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "class_total_twh": 0.2345,
-========
-     "class_total_twh": 0.2314,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": 0.0222,
@@ -686,15 +470,9 @@
     {
      "year": 2024,
      "class": "ST_GAS",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 3.3125,
      "class_total_twh": 12.1897,
      "forced_share": 0.2717,
-========
-     "forced_twh": 3.3192,
-     "class_total_twh": 12.1948,
-     "forced_share": 0.2722,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "limit": 0.3,
      "load_share": 0.1743,
      "immaterial": false,
@@ -716,15 +494,9 @@
     {
      "year": 2025,
      "class": "CC_REGULAR",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 1.218,
      "class_total_twh": 34.6104,
      "forced_share": 0.0352,
-========
-     "forced_twh": 1.2165,
-     "class_total_twh": 34.6163,
-     "forced_share": 0.0351,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "limit": 0.3,
      "load_share": 0.4066,
      "immaterial": false,
@@ -735,11 +507,7 @@
      "year": 2025,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "class_total_twh": 0.8464,
-========
-     "class_total_twh": 0.8191,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": 0.026,
@@ -750,15 +518,9 @@
     {
      "year": 2025,
      "class": "ST_GAS",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "forced_twh": 3.0847,
      "class_total_twh": 13.4969,
      "forced_share": 0.2285,
-========
-     "forced_twh": 3.1014,
-     "class_total_twh": 13.5141,
-     "forced_share": 0.2295,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "limit": 0.3,
      "load_share": 0.2033,
      "immaterial": false,
@@ -796,11 +558,7 @@
      "year": 2023,
      "floor": "chp_steam",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 0.4656,
-========
-     "floored_twh": 0.4651,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -818,11 +576,7 @@
      "year": 2023,
      "floor": "reliability_floor \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 2.8764,
-========
-     "floored_twh": 2.8793,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -831,11 +585,7 @@
      "year": 2023,
      "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 1.5997,
-========
-     "floored_twh": 1.5976,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -844,11 +594,7 @@
      "year": 2023,
      "floor": "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 0.1805,
-========
-     "floored_twh": 0.1804,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -857,11 +603,7 @@
      "year": 2023,
      "floor": "hydro_min_flow",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 8.1815,
-========
-     "floored_twh": 8.1938,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -888,11 +630,7 @@
      "year": 2024,
      "floor": "reliability_floor \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 3.0252,
-========
-     "floored_twh": 3.0244,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -901,11 +639,7 @@
      "year": 2024,
      "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 1.1082,
-========
-     "floored_twh": 1.108,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -914,11 +648,7 @@
      "year": 2024,
      "floor": "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 0.2873,
-========
-     "floored_twh": 0.2947,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -927,11 +657,7 @@
      "year": 2024,
      "floor": "hydro_min_flow",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 7.9957,
-========
-     "floored_twh": 7.9776,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -940,11 +666,7 @@
      "year": 2025,
      "floor": "chp_steam",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 0.4115,
-========
-     "floored_twh": 0.4105,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -962,11 +684,7 @@
      "year": 2025,
      "floor": "reliability_floor \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 2.7684,
-========
-     "floored_twh": 2.7794,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -975,11 +693,7 @@
      "year": 2025,
      "floor": "nyiso_gas_commitment_bridge \u00d7 CC_REGULAR",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 1.218,
-========
-     "floored_twh": 1.2165,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -988,11 +702,7 @@
      "year": 2025,
      "floor": "nyiso_gas_commitment_bridge \u00d7 ST_GAS",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 0.3163,
-========
-     "floored_twh": 0.322,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -1001,11 +711,7 @@
      "year": 2025,
      "floor": "hydro_min_flow",
      "window": "h0-23",
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "floored_twh": 6.8248,
-========
-     "floored_twh": 6.8315,
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -1117,51 +823,31 @@
    "passed": true,
    "rows": [
     {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "bundle": "nyiso113_lilocational_B",
-========
-     "bundle": "nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "bundle": "nyiso113_lilocational_B",
-========
-     "bundle": "nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "bundle": "nyiso113_lilocational_B",
-========
-     "bundle": "nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "bundle": "nyiso113_lilocational_B",
-========
-     "bundle": "nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso113_lilocational_B/legitimacy_diagnostics.json
      "bundle": "nyiso113_lilocational_B",
-========
-     "bundle": "nyiso_c156_meter_screen_B",
->>>>>>>> 794e42f (caiso-158: NYISO arm B completes the three-ISO A/B — nine ISO-years, one direction):results/calibration/nyiso_c156_meter_screen_B/legitimacy_diagnostics.json
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"
