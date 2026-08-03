@@ -32,6 +32,7 @@ def sweep_fields():
 
     return _dc_fields(ScenarioConfig)
 
+
 REPO = Path(__file__).resolve().parents[3]
 BASELINE = REPO / "docs/codebase-site/data/mechanism-matrix-gaps.json"
 
