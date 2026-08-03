@@ -1,0 +1,35 @@
+NYIS 2024: repairing 3 demand-dropout hour(s) reported as exactly 0 MW -- EIA-930 reporting gap posted as a value, not an absent row
+eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+NYISO: CC plant 7314 fleet pmax sum 199.5 MW exceeds trusted bound 170.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.5 MW removed)
+NYISO: CC plant 10190 fleet pmax sum 92.0 MW exceeds trusted bound 72.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.0 MW removed)
+NYISO: CC plant 56196 fleet pmax sum 662.0 MW exceeds trusted bound 560.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (102.0 MW removed)
+Traceback (most recent call last):
+  File "/home/user/market-simulator/src/market_sim/data/confirmed_retirements.py", line 165, in load_confirmed_exits
+    df = read_clean(DATATYPE, iso=iso.upper())
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/scripts/lib/clean_io.py", line 442, in read_clean
+    raise FileNotFoundError(
+FileNotFoundError: no clean confirmed-retirements at /home/user/market-simulator/data/clean/confirmed-retirements/NYISO/confirmed-retirements.parquet — regenerate from raw with `python scripts/data/curate_confirmed_retirements.py` (or scripts/regenerate_clean.py)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/user/market-simulator/scripts/run_full_horizon.py", line 369, in solve_and_summarize
+    cache_key = run_scenario(config, iso)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/pipeline/api.py", line 66, in run_scenario
+    return runner.run_scenario_iso(config, iso)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/runner.py", line 756, in run_scenario_iso
+    confirmed_exits = load_confirmed_exits(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/data/confirmed_retirements.py", line 168, in load_confirmed_exits
+    raise RuntimeError(
+RuntimeError: confirmed-retirements: clean partition for NYISO is absent while confirmed_exits_enabled is on in forecast mode. data/clean is derived and gitignored, so a fresh checkout has no registry; refusing to silently degrade to the economic screen (W1-B B3: ERCOT's 2026 fleet gains 477 MW — V H Braunig backlog); run `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py` from the repo root to regenerate data/clean/confirmed-retirements, then delete any results/<ISO>/<key>/ caches solved before it existed (cache_key hashes config only, never data-file state).
+
+===== NYISO 2026-2030 summary =====
+  years solved: 0 / 5  ([]..[])
+  total wall: 0.6 min   global peak RSS: 0.45 GB
+  ERROR: RuntimeError: confirmed-retirements: clean partition for NYISO is absent while confirmed_exits_enabled is on in forecast mode. data/clean is derived and gitignored, so a fresh checkout has no registry; refusing to silently degrade to the economic screen (W1-B B3: ERCOT's 2026 fleet gains 477 MW — V H Braunig backlog); run `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py` from the repo root to regenerate data/clean/confirmed-retirements, then delete any results/<ISO>/<key>/ caches solved before it existed (cache_key hashes config only, never data-file state).
+  invariants: 0 FAIL, 0 WARN
+  wrote results/ffr3a/t1f/nyiso/full_horizon_summary.json
