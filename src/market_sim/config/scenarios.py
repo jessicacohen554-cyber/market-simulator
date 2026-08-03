@@ -2304,8 +2304,18 @@ class ScenarioConfig:
     # Default off is byte-identical (VRE capacity revenue stays the measured $0
     # the BLK-8 decomposition attributed — blk8-solar-entry-decomposition
     # 2026-07-15 §4: ~$8-11k/MW-yr would-be payment, pivotal in PJM 2023).
-    entry_rate_limits: bool = False  # GATED, default-OFF (FF-2A item 2 / BLK-10
-    # + term e). When on, annual economic-entry builds and the reserve-margin
+    entry_rate_limits: bool = True  # ARMED by owner decision D-2, signed
+    # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
+    # "ARM BOTH"). Was GATED default-OFF (FF-2A item 2 / BLK-10
+    # + term e). The owner signed knowing the bar is only PARTLY met (sitting
+    # Addendum A.2): the rate limit RE-PHASES rather than reduces backstop MW
+    # (MISO cumulative 11,195.3 -> 11,187.7, -0.07%; first wave 4,894 -> 1,350
+    # MW, -72%), I13 had no cobweb to remove in the tested window, and I12 goes
+    # WARN -> FAIL as a DISCLOSED ADEQUACY CHANGE, not a regression to unarm.
+    # Rule 1 rationale: the undamped arm closes MISO's 2027 gap by building
+    # 4,894 MW of gas_ct in one year in an ISO whose ACTUAL 2021-25 gas_ct
+    # additions totalled 1.379 GW, so an I12 that passes on that build is
+    # passing on a fiction. When on, annual economic-entry builds and the reserve-margin
     # backstop are rate-limited by a measured interconnection-throughput
     # ladder: each tech's annual build is capped at
     # ENTRY_GROWTH_LIMIT_MULTIPLE (2.0 — the ReEDS growth-constraint hard
@@ -2321,7 +2331,18 @@ class ScenarioConfig:
     # with no measured build history carries NO ladder cap (neutral fallback,
     # rule 25 — a missing measurement must not invent a zero that forbids
     # entry). Default off is byte-identical.
-    entry_commissioning_lag: bool = False  # GATED, default-OFF (FF-2A item 3).
+    entry_commissioning_lag: bool = True  # ARMED by owner decision D-2, signed
+    # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
+    # "ARM BOTH"). Was GATED default-OFF (FF-2A item 3). Its precondition is
+    # landed: FR-13 (commissioned pipeline units invisible to I4 when the lag
+    # is armed) was fixed by FFR-1A 2026-07-31, and FFR-2B re-verified that I4
+    # stays PASS with the lag armed. Measured effect: the identical economic
+    # package moves COD 2027 -> 2029, a clean +2-year shift matching
+    # ENTRY_COD_LAG_YEARS. NOTE the hindcast caveat retained below — a
+    # vintage-start run has no seed of the real in-flight queue at the vintage
+    # cutoff, so an armed lag shifts a HINDCAST entry path late by
+    # construction; that is a property of the T1-H instrument, not of this
+    # default.
     # When on, economic-entry builds DECIDE in year Y but commission (enter the
     # fleet / renewable pools) at Y + ENTRY_COD_LAG_YEARS[tech] — the measured
     # clearance→COD lag (LBNL "Queued Up" 2024: median IA→COD ≈ 25 months for
