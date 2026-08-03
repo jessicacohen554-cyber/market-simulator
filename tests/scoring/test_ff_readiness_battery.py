@@ -52,19 +52,52 @@ def test_golden_posture_default_flips():
 
 
 def test_golden_posture_capacity_clearing_per_iso():
+    """The golden posture resolves EXACTLY what production ships (C.4(a) B1).
+
+    Was: "every real-capacity-market ISO curve-ON, ERCOT OFF", asserted against
+    the hand-maintained ``GOLDEN_CMC_BY_ISO``. That dict listed NYISO ON while
+    the shipped ``ScenarioConfig`` field omits it, so the old assertion was
+    green on a divergence — it tested the second answer against itself. Owner
+    decision C.4(a) B1 (2026-08-03) deleted the dict and made the shipped field
+    the one source; this now asserts parity with it.
+    """
     from market_sim.config.capacity_market import resolve_capacity_market_clearing
+    from market_sim.config.scenarios import ScenarioConfig
 
-    # §2.1a decision (a): every real-capacity-market ISO curve-ON, ERCOT OFF.
-    for iso in ("CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+    shipped = ScenarioConfig().capacity_market_clearing_by_iso or {}
+    for iso in ALL_ISOS:
         cfg = B.golden_posture_config(iso)
-        assert resolve_capacity_market_clearing(cfg, iso) is True, iso
-    cfg = B.golden_posture_config("ERCOT")
-    assert resolve_capacity_market_clearing(cfg, "ERCOT") is False
+        want = bool(shipped.get(iso, False))
+        assert resolve_capacity_market_clearing(cfg, iso) is want, iso
+
+    # The two the signature names by hand, pinned so a silent re-add of either
+    # to the shipped mapping is a visible test change and not a quiet flip.
+    assert (
+        resolve_capacity_market_clearing(B.golden_posture_config("ERCOT"), "ERCOT")
+        is False
+    )
+    assert (
+        resolve_capacity_market_clearing(B.golden_posture_config("NYISO"), "NYISO")
+        is False
+    )
 
 
-def test_golden_cmc_covers_the_five_non_ercot_isos():
-    assert set(B.GOLDEN_CMC_BY_ISO) == set(ALL_ISOS) - {"ERCOT"}
-    assert all(v is True for v in B.GOLDEN_CMC_BY_ISO.values())
+def test_golden_posture_is_value_identical_to_the_shipped_default():
+    # C.4(a) B1: golden posture and shipped posture are ONE answer. Passing the
+    # mapping explicitly must equal inheriting it, on every ISO.
+    from market_sim.config.scenarios import ScenarioConfig
+
+    for iso in ALL_ISOS:
+        assert (
+            B.golden_posture_config(iso).capacity_market_clearing_by_iso
+            == ScenarioConfig().capacity_market_clearing_by_iso
+        ), iso
+
+
+def test_golden_cmc_constant_is_deleted():
+    # Rule 26 [R-DELETE]: the parallel constant is removed, not zeroed — a
+    # second answer that still parses is a re-armable second answer.
+    assert not hasattr(B, "GOLDEN_CMC_BY_ISO")
 
 
 # --------------------------------------------------------------------------- #

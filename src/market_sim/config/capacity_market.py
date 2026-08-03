@@ -1566,9 +1566,30 @@ def forward_net_cone_anchor(
     ISO has no vintage table (CAISO/ERCOT) — the caller then keeps the fixed
     registry proxy, exactly as :func:`resolve_demand_curve_vintage` does.
 
-    Not consumed by the live pricing seam this session (scope guard); exercised
-    only by tests and the offline divergence quantification in the methodology
-    doc until FF-2C wires it.
+    **The zero-rate identity is EXACT, by short-circuit (FFR-3D).** At ``r ==
+    0`` the escalation factor is exactly ``1``, so every mode is mathematically
+    ``base`` and the function returns ``base`` unchanged. Computing it instead
+    — ``(base + eas) * 1.0 ** n − eas`` — does NOT reproduce ``base`` in binary
+    floating point: the re-netting cancels in real arithmetic but not in IEEE
+    754, and it missed by ~1.4e-14 on 233 of the ISO×year×offset combinations
+    swept at the published anchors (PJM 2029+: ``118.87685`` →
+    ``118.87684999999999``). The docstring promised the identity; the
+    arithmetic did not deliver it. The short-circuit removes round-off from a
+    cancellation, changing no mathematics — and it is what lets
+    ``net_cone_forward_escalation`` default to ``"reindex_gross"`` (owner D-3a,
+    signed 2026-08-03 "byte-identical to hold_last at the signed 0.0 real
+    rate") without that default quietly perturbing the anchor.
+
+    It also removes the spurious ``eas_offset_per_kw_yr`` requirement at
+    ``r == 0``, where the offset provably cancels. That matters for the flipped
+    default: no caller supplies an offset yet (FF-2C owns the wiring), so a
+    default-posture call would otherwise RAISE the moment the seam is wired.
+    The requirement still holds for a non-zero rate, where the offset genuinely
+    determines the answer.
+
+    Not consumed by the live pricing seam yet (scope guard: FF-2C owns
+    :meth:`MarketDesign.capacity_price_per_firm_mw_yr`); exercised by tests and
+    the offline divergence quantification in the methodology doc.
     """
     vintage = resolve_demand_curve_vintage(iso, year)
     if vintage is None or year is None:
@@ -1576,6 +1597,12 @@ def forward_net_cone_anchor(
     base = vintage.net_cone_curve_per_kw_yr
     if escalation == "hold_last":
         return base
+    if escalation not in ("reindex_net", "reindex_gross"):
+        raise ValueError(
+            "forward_net_cone_anchor: escalation must be one of "
+            "('hold_last', 'reindex_net', 'reindex_gross'), got "
+            f"{escalation!r}"
+        )
     last_start = int(vintage.delivery_year[:4])
     n = year - last_start
     if n <= 0:
@@ -1583,22 +1610,24 @@ def forward_net_cone_anchor(
         # anchor, never escalated (rule 13: the measured parameter governs).
         return base
     r = NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO.get(iso, 0.0) if rate is None else rate
+    if r == 0.0:
+        # EXACT zero-rate identity (see docstring). (1 + 0) ** n == 1, so both
+        # reindex modes are `base` in real arithmetic; returning it directly
+        # avoids the float round-off that the gross re-netting would otherwise
+        # introduce into a cancellation. This is BEFORE the offset check on
+        # purpose: at r == 0 the offset cancels, so demanding it would be a
+        # requirement for a value that cannot affect the result.
+        return base
     if escalation == "reindex_net":
         return base * (1.0 + r) ** n
-    if escalation == "reindex_gross":
-        if eas_offset_per_kw_yr is None:
-            raise ValueError(
-                "forward_net_cone_anchor(escalation='reindex_gross') requires "
-                "eas_offset_per_kw_yr (the published gross−net gap, or the "
-                "model's simulated E&AS offset once FF-2C wires it)"
-            )
-        gross = base + eas_offset_per_kw_yr
-        return gross * (1.0 + r) ** n - eas_offset_per_kw_yr
-    raise ValueError(
-        "forward_net_cone_anchor: escalation must be one of "
-        "('hold_last', 'reindex_net', 'reindex_gross'), got "
-        f"{escalation!r}"
-    )
+    if eas_offset_per_kw_yr is None:
+        raise ValueError(
+            "forward_net_cone_anchor(escalation='reindex_gross') requires "
+            "eas_offset_per_kw_yr at a non-zero rate (the published gross−net "
+            "gap, or the model's simulated E&AS offset once FF-2C wires it)"
+        )
+    gross = base + eas_offset_per_kw_yr
+    return gross * (1.0 + r) ** n - eas_offset_per_kw_yr
 
 
 # Target planning reserve margin per ISO for the reserve-margin adequacy

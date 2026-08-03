@@ -90,6 +90,10 @@ from market_sim.data.fuel import (  # noqa: E402
 from market_sim.policy import federal_ces  # noqa: E402
 from market_sim.policy.carbon import resolve_carbon_price  # noqa: E402
 from market_sim.policy.rps import get_rps_acp, get_rps_target  # noqa: E402
+from scripts.lib.forecast_posture import (  # noqa: E402
+    shipped_capacity_clearing,
+    shipped_capacity_clearing_by_iso,
+)
 
 # --------------------------------------------------------------------------- #
 # Golden posture (§2.1a) — the single authoritative encoding
@@ -97,21 +101,21 @@ from market_sim.policy.rps import get_rps_acp, get_rps_target  # noqa: E402
 GOLDEN_ISOS: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO")
 HORIZON_START, HORIZON_END = 2026, 2050
 
-# §2.1a decision (a): per-ISO capacity-market clearing ON for every ISO with a
-# real capacity market — PJM, MISO, NYISO, NEISO, CAISO — and OFF for energy-only
-# ERCOT. This is the frozen decision a golden run would carry; whether an ISO's
-# *gate* actually opens (§2.1b: flip execution + calibration-complete marker) is
-# a separate scorecard question (NYISO's marker was withdrawn 2026-07-19; FF-2C
-# has executed the flip for CAISO/MISO/NEISO/PJM only). The DECISION set is the
-# five non-ERCOT ISOs; the config reflects the decision, the scorecard reflects
-# readiness.
-GOLDEN_CMC_BY_ISO: dict[str, bool] = {
-    "PJM": True,
-    "MISO": True,
-    "NYISO": True,
-    "NEISO": True,
-    "CAISO": True,
-}
+# §2.1a decision (a), per-ISO capacity-market clearing, is read from the SHIPPED
+# ``ScenarioConfig.capacity_market_clearing_by_iso`` through
+# ``scripts.lib.forecast_posture`` — the ONE reader (owner decision C.4(a) B1,
+# signed 2026-08-03).
+#
+# It used to be a hand-maintained ``GOLDEN_CMC_BY_ISO`` dict here, listing all
+# five non-ERCOT ISOs ON. That had DIVERGED from what production ships: the
+# shipped field deliberately omits **NYISO** ("excluded pending re-calibration"
+# ⇒ gate OFF), so every --golden-posture leg solved NYISO curve-ON against a
+# production path that runs it curve-OFF. The owner signed SINGLE SOURCE OF
+# TRUTH, with "NYISO must resolve curve-OFF, matching production" stated
+# explicitly. The dict is DELETED rather than corrected (rule 26 [R-DELETE]: a
+# second answer that still parses is a re-armable second answer); the readiness
+# scorecard's own §2.1b gate — whether an ISO's flip has executed and its
+# calibration-complete marker stands — is unchanged and still separate.
 
 # The §2.1a c/d/e default flips a golden-posture config must carry (ScenarioConfig
 # defaults since FF-1F/FF-2A). Checked by part b.
@@ -140,9 +144,18 @@ def golden_posture_config(
 
     Forecast mode, the full 2026-2050 horizon, the FF-1F/FF-2A default flips
     (carried by the ScenarioConfig defaults), and the §2.1a decision-(a) per-ISO
-    capacity-market clearing (:data:`GOLDEN_CMC_BY_ISO`). ``resolve_policy_bundle``
-    is applied so the ``ira_*_last_year`` fields are the resolved forecast values a
-    run would use.
+    capacity-market clearing read from the SHIPPED
+    ``ScenarioConfig.capacity_market_clearing_by_iso``
+    (:func:`scripts.lib.forecast_posture.shipped_capacity_clearing_by_iso` —
+    owner decision C.4(a) B1). ``resolve_policy_bundle`` is applied so the
+    ``ira_*_last_year`` fields are the resolved forecast values a run would use.
+
+    Passing the shipped mapping explicitly is value-identical to inheriting it,
+    so this is byte-identical to a bare ``ScenarioConfig(mode="forecast", …)``
+    on the posture axis — which is the POINT of C.4(a): the golden posture and
+    the shipped posture are one answer, not two. It stays an explicit argument
+    so the config records the posture it ran rather than relying on the reader
+    to know the default.
 
     Args:
         iso: Model ISO name.
@@ -157,7 +170,7 @@ def golden_posture_config(
         mode="forecast",
         start_year=start_year,
         end_year=end_year,
-        capacity_market_clearing_by_iso=dict(GOLDEN_CMC_BY_ISO),
+        capacity_market_clearing_by_iso=shipped_capacity_clearing_by_iso(),
     )
     return resolve_policy_bundle(cfg)
 
@@ -717,13 +730,21 @@ def config_completeness(iso: str) -> dict:
         got = getattr(cfg, fname, None)
         _add(f"posture:{fname}", got == want, f"want={want!r} got={got!r}")
 
-    # §2.1a decision (a): per-ISO capacity-market clearing.
-    want_cmc = GOLDEN_CMC_BY_ISO.get(iso, False)
+    # §2.1a decision (a): per-ISO capacity-market clearing. Both sides now
+    # descend from the shipped ScenarioConfig field (C.4(a) B1), so what this
+    # asserts is PARITY between the config this battery builds and the posture
+    # production ships — it catches a builder that drops, overrides, or
+    # re-orders the mapping, which is exactly the divergence that let NYISO run
+    # curve-ON here while production ran it OFF. `want` goes through the same
+    # resolver a solve uses, so an ISO absent from the mapping resolves OFF by
+    # the model's own fallthrough rather than by a special case here.
+    want_cmc = shipped_capacity_clearing(iso)
     got_cmc = resolve_capacity_market_clearing(cfg, iso)
     _add(
         "posture:capacity_market_clearing",
         got_cmc == want_cmc,
-        f"want={want_cmc} got={got_cmc} (ERCOT energy-only OFF; §2.1a decision-a)",
+        f"want={want_cmc} got={got_cmc} (shipped posture; ERCOT energy-only and "
+        f"NYISO both resolve OFF; §2.1a decision-a / owner C.4(a) B1)",
     )
 
     # Full flag surface dumpable (rule 24 — every tunable visible in run_config).

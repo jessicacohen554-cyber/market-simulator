@@ -553,6 +553,182 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "electrification_percentile",
 )
 
+# The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
+# source text of its default expression. **The registration is only meaningful
+# relative to a fixed default, and this is the record of that default.**
+#
+# THE HAZARD IT MAKES VISIBLE (FFR-3A blocker 4, structural). ``cache_key()``
+# drops a registered field when it equals ``getattr(ScenarioConfig(), name)`` —
+# the **LIVE** default, recomputed on every call, not a frozen sentinel. So when
+# a registered field's default MOVES:
+#
+#   * a post-flip run at the NEW default is dropped from the hash, exactly as a
+#     pre-flip run at the OLD default was — the two hash IDENTICALLY and the
+#     post-flip run silently re-uses the pre-flip bundle. The key does not move;
+#   * an EXPLICIT old value becomes non-default and hashes distinctly, which is
+#     why control arms stay separable.
+#
+# The first half is a silent same-key invalidation, and nothing in the code could
+# see it. It has already happened: the D-1/D-2 flips (``retirement_rule``,
+# ``entry_rate_limits``, ``entry_commissioning_lag``) left
+# ``cache_key(ScenarioConfig())`` at ``603c2498bf71d21d`` on both sides of a
+# behavioral change, and the signed packet asserted the opposite ("cache-key
+# registered at non-default, so the flip moves forecast cache keys by
+# construction"). FFR-3A measured it, wrote it into the cache-epoch ledger
+# (``results/cache.py``), and closed with "it will silently recur on the next
+# default flip; structural, needs a decision not a patch."
+#
+# THE MECHANISM. This ledger is that decision, in its cheapest honest form: it
+# makes the registration-time default an explicit, diffable declaration.
+# ``scripts/check_cache_key_registration.py`` check 3 compares every registered
+# field's live default against the entry here and FAILS when they differ — with
+# no ``--base``, so it fires on every CI run and every local run, not only on the
+# PR that first adds the field. A default flip therefore cannot land silently:
+# the guard stops it until the flip is DECLARED here, and the declaration commit
+# is where the operator must decide whether the same-key collision is acceptable
+# (byte-identical flip) or needs a cache-epoch entry + purge (behavioral flip).
+#
+# It deliberately does NOT change ``cache_key()`` semantics. Freezing the
+# comparison against these values instead of the live default would be the
+# deeper fix, but it re-keys every config whose default has already moved — a
+# measured, cache-invalidating change that needs solves to validate, which the
+# FFR-3D lane did not run. Recorded as the open follow-up in
+# docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md §4.
+#
+# MAINTENANCE. Source text, compared after ``ast.unparse`` normalization, so
+# reformatting and comment churn are invisible and any default form (a literal,
+# a ``field(default_factory=...)``, an expression) is expressible. Adding a field
+# to ``_CACHE_KEY_OPTIONAL_FIELDS`` means adding it here in the same commit; the
+# guard enforces both directions.
+_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
+    "start_year": "None",
+    "end_year": "None",
+    "hindcast": "False",
+    "hindcast_fuel_variant": "'realized'",
+    "ercot_coal_min_config_floor": "False",
+    "coal_prb_committed_dispatchable": "False",
+    "coal_prb_committed_split": "False",
+    "miso_coal_night_floor": "False",
+    "pjm_apsouth_interface_cut": "False",
+    "pjm_external_net_position_cut": "False",
+    "temp_derate_classes": "None",
+    "temp_derate_hourly_grain": "False",
+    "temp_derate_mean_anchored": "False",
+    "temp_derate_slope_st_chp": "None",
+    "temp_derate_slope_ct_chp": "None",
+    "ramp_limits": "False",
+    "measured_ct_heat_rates": "False",
+    "measured_chp_heat_rates": "False",
+    "crossover_forward_year": "None",
+    "crossover_forward_gas_path": "'mid'",
+    "crossover_solve_year_weather": "False",
+    "demand_growth_vintage": "None",
+    "limited_foresight_dispatch": "False",
+    "retirement_rule": "'pipeline'",
+    "retirement_execution_lag_coal": "3",
+    "retirement_execution_lag_gas_ct": "2",
+    "retirement_execution_lag_gas_cc": "1",
+    "retirement_execution_lag_gas_st": "1",
+    "retirement_execution_lag_gas_cc_ccs": "None",
+    "retirement_execution_lag_oil": "1",
+    "retirement_execution_lag_nuclear": "3",
+    "entry_vre_capacity_revenue": "False",
+    "entry_rate_limits": "True",
+    "entry_commissioning_lag": "True",
+    "federal_ces_enabled": "False",
+    "federal_ces_premium_usd_per_mwh": "0.0",
+    "federal_ces_premium_escalation_real": "0.0",
+    "federal_ces_premium_by_year": "None",
+    "federal_ces_crediting": "'clean_capture'",
+    "federal_ces_ccs_capture_fraction": "0.95",
+    "federal_ces_ci_benchmark_t_per_mwh": "0.82",
+    "federal_ces_unabated_ci_threshold_t_per_mwh": "0.45",
+    "federal_ces_eligible_fuels": "field(default_factory=lambda: ['nuclear', 'wind', 'solar', 'hydro', 'geothermal', 'offshore_wind', 'gas_cc_ccs', 'hydrogen_ct', 'hydrogen_ccgt'])",
+    "federal_ces_storage_eligible": "False",
+    "federal_ces_replaces_state_rps": "False",
+    "ira_45q_credit_window_years": "12",
+    "per_tech_wacc_enabled": "False",
+    "transmission_expansion_enabled": "False",
+    "nyiso_li_locational_reserve": "False",
+    "nyiso_incity_commitment_obligation": "False",
+    "nyiso_scr_edrp": "False",
+    "nyiso_scr_edrp_strike": "500.0",
+    # DECLARED FLIP, owner decision D-3a signed 2026-08-03: "hold_last" ->
+    # "reindex_gross". Classified BYTE-IDENTICAL, so no cache-epoch entry is
+    # owed: the field has no live consumer (forward_net_cone_anchor is not yet
+    # wired into the pricing seam — FF-2C owns that) AND reindex_gross is now
+    # EXACTLY hold_last at the shipped 0.0 real rate, asserted over 1,984
+    # ISO x year x offset x mode comparisons after FFR-3D repaired the
+    # zero-rate identity. The same-key collision this flip creates is therefore
+    # between two runs with identical output. First use of the check-3
+    # declaration channel this ledger exists for.
+    "net_cone_forward_escalation": "'reindex_gross'",
+    "caiso_endogenous_wecc_node": "False",
+    "nyiso_hydro_reserve_eligible": "False",
+    "nyiso_scr_edrp_reserve_eligible": "False",
+    "nyiso_ordc_measured_step_span": "False",
+    "dual_fuel_oil_daily_parity": "False",
+    "ercot_thermal_dam_availability_hourly": "False",
+    "ercot_thermal_dam_availability_plant": "False",
+    "ercot_thermal_dam_availability_coal": "False",
+    "ercot_dam_availability_coal_event_cap": "False",
+    "ercot_dam_availability_gas_event_cap": "False",
+    "coal_econ_marginal_hr_bound": "False",
+    "ercot_wind_zone_shape": "False",
+    "gas_offer_net_revenue_margin": "False",
+    "gas_offer_margin_anchor": "None",
+    "gas_offer_margin_zonal_anchor": "False",
+    "gas_offer_margin_anchor_by_zone": "None",
+    "coal_offer_net_revenue_margin": "False",
+    "coal_offer_margin_anchor": "None",
+    "coal_offer_margin_level": "None",
+    "cc_committed_offer_margin": "False",
+    "cc_committed_offer_level": "None",
+    "coal_peak_offer_margin": "False",
+    "coal_peak_offer_level": "None",
+    "coal_peak_offer_gas_hr": "None",
+    "coal_perplant_offer_level": "False",
+    "coal_perplant_offer_curves": "None",
+    "hydro_min_flow_floor": "False",
+    "hydro_ror_split": "False",
+    "hydro_budget_nameplate_aware": "False",
+    "caiso_firm_import_envelope_clip": "False",
+    "dump_cost_full_offer_domain": "False",
+    "caiso_p1_export_sink_seam": "False",
+    "caiso_firm_import_selfsched_clip": "False",
+    "caiso_dam_outages": "False",
+    "miso_native_outage_source": "False",
+    "neiso_operable_capacity_availability": "False",
+    "pjm_dam_availability": "False",
+    "pjm_offer_midcurve_level_segments": "None",
+    "pjm_offer_midcurve_peak_segments": "None",
+    "pjm_ct_measured_max_reprice": "False",
+    "nyiso_east_reserve_families": "False",
+    "nyiso_spin_reserve_online": "False",
+    "nyiso_gas_commitment_bridge": "False",
+    "nyiso_gas_bridge_cc_min_load_frac": "0.523",
+    "nyiso_gas_bridge_st_min_load_frac": "0.239",
+    "nyiso_gas_bridge_startup": "True",
+    "nyiso_gas_bridge_da_horizon": "True",
+    "nyiso_gas_bridge_min_run": "False",
+    "nyiso_gas_bridge_cc_min_run_hours": "None",
+    "nyiso_gas_bridge_st_min_run_hours": "None",
+    "nyiso_gas_bridge_ct": "False",
+    "nyiso_gas_bridge_ct_min_load_frac": "0.238",
+    "nyiso_gas_bridge_ct_min_run_hours": "2.0",
+    "ercot_gas_bridge_online_hours": "False",
+    "forecast_xyear_warmstart": "True",
+    "ercot_offer_hrmult_ep_rebasis": "False",
+    "ercot_offer_hrmult_ep_rebasis_bands": "None",
+    "pjm_offer_surface_within_season": "False",
+    "coal_committed_takeorpay_sunk_fixed": "False",
+    "pjm_zonal_loss_surface": "False",
+    "nyiso_import_sil_retire": "False",
+    "pjm_rggi_allowance_pricing": "False",
+    "electrification_path": "'off'",
+    "electrification_percentile": "0.5",
+}
+
 
 # --------------------------------------------------------------------------- #
 # Backcast-only measured overlays — the rule-13 hard-error family (FR-11).
@@ -899,18 +1075,43 @@ class ScenarioConfig:
     # named_program_price, P-1D), an explicit alternative to the default
     # single floor-band escalator (policy.cap_and_trade.projected_price).
     # None (default) keeps today's behavior exactly; "mid" reproduces it too.
-    net_cone_forward_escalation: str = "hold_last"  # "hold_last" |
+    net_cone_forward_escalation: str = "reindex_gross"  # "hold_last" |
     # "reindex_net" | "reindex_gross" — FF-G3 forward net-CONE evolution beyond
     # the last published capacity-market vintage (constants.
-    # forward_net_cone_anchor). "hold_last" (default) is the status quo the
-    # pricing seam reads today (resolve_demand_curve_vintage holds the last
-    # published anchor flat forward), byte-identical. The reindex modes escalate
-    # the anchor at constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real
-    # by default → collapses to hold_last; a positive rate is a structural-
-    # tightness sensitivity). Forecast-only screen input; __post_init__ coerces
-    # it to "hold_last" in backcast (no capacity evolution there). NOT yet wired
-    # into capacity_price_per_firm_mw_yr — FF-2C owns that + the clearing flips
-    # (scope guard). See docs/capacity-price-forward-methodology-2026-07.md.
+    # forward_net_cone_anchor). The reindex modes escalate the anchor at
+    # constants.NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO (0.0 real for every ISO
+    # that carries a rate → collapses EXACTLY to hold_last; a positive rate is a
+    # structural-tightness sensitivity, never a fit). Forecast-only screen input;
+    # __post_init__ coerces it to "hold_last" in backcast (no capacity evolution
+    # there). NOT yet wired into capacity_price_per_firm_mw_yr — FF-2C owns that
+    # + the clearing flips (scope guard).
+    # See docs/capacity-price-forward-methodology-2026-07.md.
+    #
+    #   OWNER DECISION D-3a, signed 2026-08-03 (ffr-owner-sitting-2026-08-02.md
+    # Addendum D.1): default "hold_last" → "reindex_gross" — "escalate gross by
+    # the published index, re-net the model's own simulated E&AS margin.
+    # Byte-identical to hold_last at the signed 0.0 real rate, so it changes no
+    # output until a non-zero rate is ever set." reindex_gross is the FIELD
+    # construction (PJM OATT Att. DD §5.10(a)(iv), NYISO MST 5.14.1.2.2.1,
+    # ISO-NE Tariff §III.13, MISO Tariff §69A.8 all escalate GROSS CONE and
+    # re-net E&AS annually; net-CONE is a derived residual, never indexed
+    # directly), so the shipped posture is now the field-standard one and
+    # hold_last is the explicit status-quo control arm.
+    #   The byte-identity was ASSERTED, not assumed, and it FAILED as shipped:
+    # (base + eas) − eas is not base in IEEE 754, missing by ~1.4e-14 on 233 of
+    # the swept ISO×year×offset combinations. FFR-3D repaired the identity FIRST
+    # (an exact zero-rate short-circuit in forward_net_cone_anchor, which also
+    # removes the offset requirement where the offset provably cancels — no
+    # caller supplies one yet), re-asserted it exactly across 1,984 comparisons,
+    # and only then flipped this default.
+    #   CACHE: registered in _CACHE_KEY_OPTIONAL_FIELDS, so this flip makes a
+    # post-flip default run hash identically to a pre-flip one (the blocker-4
+    # collision). DECLARED in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS, and classified
+    # BYTE-IDENTICAL: the field has no live consumer (forward_net_cone_anchor is
+    # unwired) AND the mode is exactly hold_last at 0.0, so the collision is
+    # between two runs with identical output. No cache-epoch entry is owed.
+    # An explicit hold_last is now non-default and hashes distinctly, so the
+    # status-quo control arm stays separable.
     demand_growth_rate: float = (
         0.01  # flat override used only when no structured rates exist
     )
@@ -9571,16 +9772,30 @@ class ScenarioConfig:
             self.electrification_path = "off"
 
         # FF-G3 forward net-CONE evolution: validate the label, then COERCE it to
-        # "hold_last" in a plain backcast. Capacity evolution / the capacity-price
-        # seam run only in forecast mode, so the escalation axis is meaningless in
-        # a backcast; coercing keeps every backcast keeper's cache_key +
-        # run_config.json byte-identical even though the field is a scenario axis
-        # (mirrors the datacenter_load_path / entry_lookahead_reprice patterns).
-        # NOT coerced when hindcast (mode=="forecast", hindcast=True): the
-        # capacity-hindcast harness is the forecast path and arms forecast screens
-        # explicitly. (The field is also in _CACHE_KEY_OPTIONAL_FIELDS, so the
-        # default is cache-neutral regardless — this is belt-and-braces so a
-        # backcast that sets it non-default cannot shift its key.)
+        # the shipped DEFAULT in a plain backcast. Capacity evolution / the
+        # capacity-price seam run only in forecast mode, so the escalation axis
+        # is meaningless in a backcast; coercing keeps every backcast keeper's
+        # cache_key + run_config.json byte-identical even though the field is a
+        # scenario axis (mirrors the datacenter_load_path /
+        # entry_lookahead_reprice patterns). NOT coerced when hindcast
+        # (mode=="forecast", hindcast=True): the capacity-hindcast harness is
+        # the forecast path and arms forecast screens explicitly.
+        #
+        #   COERCE TO THE DEFAULT, NEVER TO A LITERAL (FFR-3D). The coercion's
+        # whole purpose is cache-neutrality, and the field is in
+        # _CACHE_KEY_OPTIONAL_FIELDS, which is neutral AT THE DEFAULT ONLY. This
+        # read `= "hold_last"`, which was the default — until owner decision
+        # D-3a moved it to "reindex_gross". A literal that stops being the
+        # default stops being neutral and ENTERS the hash, re-keying every
+        # backcast bundle: measured at the flip, the coerced-literal form moved
+        # the default backcast key 35b6dc12f97968f1 -> 512c2fffbb61414e and
+        # ERCOT's 2023 backcast key df386bca96a1d288 -> f3ee0af68fa72303, which
+        # would have orphaned every keeper's on-disk cache. Reading the
+        # dataclass default instead makes the coercion neutral by construction
+        # and immune to the next flip. This is the SECOND face of the blocker-4
+        # hazard — the cache-key guard catches an undeclared flip, and the
+        # pinned backcast key in tests/regression/test_persisted_identity.py
+        # catches this one.
         if self.net_cone_forward_escalation not in (
             "hold_last",
             "reindex_net",
@@ -9592,7 +9807,9 @@ class ScenarioConfig:
                 f"{self.net_cone_forward_escalation!r}"
             )
         if self.mode == "backcast":
-            self.net_cone_forward_escalation = "hold_last"
+            self.net_cone_forward_escalation = (
+                type(self).__dataclass_fields__["net_cone_forward_escalation"].default
+            )
 
         # entry_lookahead_reprice is a FORECAST-only capacity-screen price
         # signal (the runner reads it only under mode=="forecast"; a backcast
