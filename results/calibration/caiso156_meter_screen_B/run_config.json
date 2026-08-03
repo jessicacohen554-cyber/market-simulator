@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-07-31T22:52:05",
+  "timestamp": "2026-08-03T00:39:05",
   "git": {
-    "sha": "902c05c",
-    "basis_sha": "902c05c5f8bc772534908e9fc5c6e79d55f2db54",
-    "branch": "claude/caiso-firm-selfsched-clip-ixccie",
+    "sha": "69e0e30",
+    "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
+    "branch": "claude/caiso-backcast-calibration-6ubjfb",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso-151 CONTROL: zero-delta same-HEAD replay of the caiso148 keeper, the A-arm baseline for caiso_firm_import_selfsched_clip",
+  "model_changes_note": "caiso-156 arm B (treatment): POST-FIX CT heat-rate artifact with the hour-grain physical-band screen applied. Zero config delta vs arm A (K4); cold solve per ADDENDUM B.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -65,7 +65,8 @@
       "dump_cost_full_offer_domain": true,
       "measured_ct_heat_rates": true,
       "measured_chp_heat_rates": true,
-      "nuclear_unit_availability": true
+      "nuclear_unit_availability": true,
+      "caiso_firm_import_selfsched_clip": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -82,7 +83,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "902c05c"
+    "git_sha": "69e0e30"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -96,6 +97,7 @@
     "hindcast_fuel_variant": "realized",
     "crossover_forward_year": null,
     "crossover_forward_gas_path": "mid",
+    "crossover_solve_year_weather": false,
     "gas_price_path": "mid",
     "gas_price_factor": 1.0,
     "coal_price_path": "mid",
@@ -105,6 +107,7 @@
     "carbon_price_path": "zero",
     "policy_bundle": "current",
     "state_carbon_pricing": true,
+    "pjm_rggi_allowance_pricing": false,
     "nox_price": 0.0,
     "so2_price": 0.0,
     "mass_cap_enabled": false,
@@ -115,6 +118,7 @@
     "demand_growth_rate": 0.01,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
+    "demand_growth_vintage": null,
     "datacenter_load_path": "off",
     "datacenter_percentile": 0.5,
     "datacenter_load_factor": 0.85,
@@ -389,7 +393,7 @@
     "caiso_firm_import_shape": true,
     "caiso_firm_import_selfschedule": true,
     "caiso_firm_import_envelope_clip": true,
-    "caiso_firm_import_selfsched_clip": false,
+    "caiso_firm_import_selfsched_clip": true,
     "caiso_p1_export_sink_seam": false,
     "dump_cost_full_offer_domain": true,
     "caiso_demand_clock_realign": true,
@@ -534,6 +538,8 @@
     "coal_committed_takeorpay_regulated": false,
     "coal_committed_takeorpay_sunk_fixed": false,
     "coal_prb_committed_dispatchable": false,
+    "coal_prb_committed_split": false,
+    "miso_coal_night_floor": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -616,6 +622,7 @@
     "ercot_thermal_dam_availability_plant": false,
     "ercot_thermal_dam_availability_coal": false,
     "ercot_dam_availability_coal_event_cap": false,
+    "ercot_dam_availability_gas_event_cap": false,
     "ercot_noncampd_plant_availability": false,
     "ercot_storage_capability_measured": false,
     "neiso_offer_surface_conditional": false,
@@ -695,9 +702,9 @@
     "offer_curve_by_group": {
       "CC_REGULAR": {
         "committed": 1.0,
-        "econ_low": 1.051,
-        "econ_high": 1.053,
-        "peak": 1.333,
+        "econ_low": 1.066,
+        "econ_high": 1.072,
+        "peak": 1.386,
         "econ_low_share": 0.5,
         "pct_peaking": 8.0,
         "phys_committed": 1.103,
@@ -707,23 +714,23 @@
         "peak_ladder": [
           [
             0.2,
-            1.333
+            1.386
           ],
           [
             0.2,
-            1.333
+            1.386
           ],
           [
             0.2,
-            1.333
+            1.386
           ],
           [
             0.2,
-            1.333
+            1.386
           ],
           [
             0.2,
-            1.333
+            1.386
           ]
         ]
       },
@@ -760,9 +767,9 @@
       },
       "CT_PEAKER": {
         "committed": 1.35,
-        "econ_low": 1.147,
-        "econ_high": 1.182,
-        "peak": 1.176,
+        "econ_low": 1.145,
+        "econ_high": 1.166,
+        "peak": 1.166,
         "econ_low_share": 0.526,
         "pct_peaking": 7.0,
         "phys_committed": 0.991,
@@ -772,23 +779,23 @@
         "peak_ladder": [
           [
             0.2,
-            1.176
+            1.166
           ],
           [
             0.2,
-            1.176
+            1.166
           ],
           [
             0.2,
-            1.176
+            1.166
           ],
           [
             0.2,
-            1.176
+            1.166
           ],
           [
             0.2,
-            1.176
+            1.166
           ]
         ]
       },
@@ -858,6 +865,8 @@
     },
     "gas_offer_net_revenue_margin": true,
     "gas_offer_margin_anchor": 4.7964,
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null,
     "coal_offer_net_revenue_margin": false,
     "coal_offer_margin_anchor": null,
     "coal_offer_margin_level": null,

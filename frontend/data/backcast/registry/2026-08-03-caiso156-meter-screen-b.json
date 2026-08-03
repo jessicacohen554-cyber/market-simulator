@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-caiso156-meter-screen-b",
+  "label": "caiso156 meter screen b",
+  "date": "2026-08-03",
+  "shorthand": "caiso156-meter-screen-b",
+  "definition": "caiso-156 arm B (treatment): POST-FIX CT heat-rate artifact with the hour-grain physical-band screen applied. Zero config delta vs arm A (K4); cold solve per ADDENDUM B.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-caiso156-meter-screen-b.js",
+  "bundle": "results/calibration/caiso156_meter_screen_B"
+}

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T22:52:05",
+  "timestamp": "2026-08-03T00:39:05",
   "iso": "CAISO",
   "years": [
     2023,
@@ -37,6 +37,7 @@
   "tranche_startup_measured_runs": false,
   "tranche_startup_conditional_runs": false,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": false,
   "coal_offer_margin": false,
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
@@ -72,7 +73,8 @@
     "dump_cost_full_offer_domain": true,
     "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": true,
-    "nuclear_unit_availability": true
+    "nuclear_unit_availability": true,
+    "caiso_firm_import_selfsched_clip": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -251,6 +253,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -296,10 +299,12 @@
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet"
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet",
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
+    "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "902c05c",
-  "basis_sha": "902c05c5f8bc772534908e9fc5c6e79d55f2db54",
+  "git_sha": "69e0e30",
+  "basis_sha": "0d49cc4ab8e978dd5ba5b05862354eb782345109",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
