@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-ercot158-honest-replay",
+  "label": "ercot158 honest replay",
+  "date": "2026-08-03",
+  "shorthand": "ercot158-honest-replay",
+  "definition": "ERCOT-158 Run A: honest-inputs replay of the ercot150b keeper config (UNCHANGED) on the ERCOT-157-completed inputs; A/B control for the pool arm.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-03-ercot158-honest-replay.js",
+  "bundle": "results/calibration/ercot158_honest_A"
+}

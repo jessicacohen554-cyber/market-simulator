@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-28-ercot116-regate-arm",
+  "run_id": "2026-08-03-ercot158-honest-replay",
   "iso": "ERCOT",
-  "label": "ercot116 regate arm",
+  "label": "ercot158 honest replay",
   "target_years": [
     2023,
     2024,
@@ -16,14 +16,14 @@
   "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail, shape"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -53,17 +53,17 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -76,8 +76,8 @@
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 2,
+    "scored": 9,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 4
@@ -98,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 16,
       "total": 16
     },
     "free": {
-      "pass": 11,
+      "pass": 12,
       "total": 12
     },
-    "headline": "C1 all 15/16 \u00b7 free 11/12"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
