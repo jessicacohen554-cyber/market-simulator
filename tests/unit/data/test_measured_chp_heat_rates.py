@@ -46,6 +46,11 @@ class TestDerive(unittest.TestCase):
     def _table(self, **kw) -> pd.DataFrame:
         caps = kw.pop("caps", {(1, "CC_CHP"): 500.0})
         model = kw.pop("model", {(1, "CC_CHP"): 6.0})
+        # The basis gate reads the rate AT THE REPLACEMENT SEAM, not the shipped
+        # rate (caiso-147). Outside CHP_STEAM_CREDIT_HR_CORRECTION_ISOS the two
+        # are the same object, so defaulting basis to ``model`` keeps every
+        # non-hand-factor case reading exactly as it did.
+        basis = kw.pop("basis", model)
         egrid = kw.pop(
             "egrid",
             _egrid(
@@ -64,7 +69,7 @@ class TestDerive(unittest.TestCase):
             ),
         )
         return plant_table(
-            "FAKEISO", 2023, caps, model, egrid, kw.pop("cems", {}), **kw
+            "FAKEISO", 2023, caps, model, basis, egrid, kw.pop("cems", {}), **kw
         )
 
     def test_credit_is_added_back_on_the_same_denominator(self) -> None:
@@ -155,6 +160,25 @@ class TestDerive(unittest.TestCase):
             .loc[(1, "CC_CHP")]
         )
         self.assertEqual(row["flag"], "basis_mismatch")
+
+    def test_hand_factored_shipped_rate_is_gated_at_the_seam_not_the_ship(self) -> None:
+        """A hand-corrected ISO's plants must not read as ``basis_mismatch``.
+
+        In ``CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`` (CAISO, PJM) the shipped rate
+        is eGRID's credited rate times an off-registry hand factor, so gating on
+        it excluded precisely the population the mechanism exists to fix
+        (caiso-147). The gate compares ``basis_heat_rate`` — after the eGRID join
+        and boundary repairs, BEFORE the hand factor.
+        """
+        row = (
+            # 6.0 credited, shipped at the x1.15 CC_CHP hand factor.
+            self._table(model={(1, "CC_CHP"): 6.9}, basis={(1, "CC_CHP"): 6.0})
+            .set_index(["plant_code", "plant_group"])
+            .loc[(1, "CC_CHP")]
+        )
+        self.assertEqual(row["flag"], "ok")
+        self.assertAlmostEqual(float(row["basis_heat_rate"]), 6.0, places=4)
+        self.assertAlmostEqual(float(row["model_heat_rate"]), 6.9, places=4)
 
     def test_scope_is_topping_cycles_only(self) -> None:
         """``ST_CHP`` is out of scope — a boiler-first cogen's fuel is host fuel."""
