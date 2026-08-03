@@ -1324,10 +1324,24 @@ class ScenarioConfig:
     # R-NEW execution-lag pipeline below carries the same physical
     # deactivation queue once; a throughput/rate cap on top would double-count
     # it — rule 19; RC-0B §a.6; ff-retirement-rule-redesign-2026-07.md §3.3.)
-    retirement_rule: str = "legacy"  # "legacy" | "pipeline" (FF-1A, owner D1 =
-    # Option B, 2026-07-17 — ff-retirement-rule-redesign-2026-07.md §3.6/§6).
+    retirement_rule: str = "pipeline"  # "legacy" | "pipeline" (FF-1A, owner
+    # D1 = Option B, 2026-07-17 — ff-retirement-rule-redesign-2026-07.md
+    # §3.6/§6). DEFAULT FLIPPED "legacy" -> "pipeline" by owner decision D-1,
+    # signed 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md
+    # Addendum C.1), on FFR-2B's met evidence bar (T-R battery + T-R10
+    # no-inversion + LOYO within 2023-2025, bands never restated looser —
+    # ffr-2b-retirement-entry-evidence-2026-08-02.md). The legacy counter is
+    # the configuration measured to eliminate PJM's coal wave (recall 76% ->
+    # 0) and false-retire 8.6 GW of MISO gas_st, and the peer review places it
+    # outside commercial practice entirely (no analogue in IPM/ReEDS/
+    # PLEXOS-LT). DISCLOSED CAVEAT ON THAT EVIDENCE (sitting Addendum C.4(c)):
+    # FFR-2B's probes ran with correlated_forced_outage and
+    # entry_lookahead_reprice pinned False by the hindcast harness while
+    # production ships both True; the caveat does not overturn D-1 but the
+    # harness-default question it raises is an UNSIGNED owner decision.
     # "legacy": per-fuel consecutive-loss counters (retirement_years_*),
-    # byte-identical to every committed run. "pipeline": the R-NEW
+    # byte-identical to every run committed before this flip. "pipeline": the
+    # R-NEW
     # decision/execution split — uniform one-screen decision at the unchanged
     # net_revenue < going_forward_cost bar, joint adequacy-capped cross-fuel
     # pipeline entry (worst-first margin depth, cheapest-firm-adequacy

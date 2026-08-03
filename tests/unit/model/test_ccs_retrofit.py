@@ -521,9 +521,14 @@ class TestJointRetrofitOrRetire(unittest.TestCase):
         # Cap-displaced with only one prior loss year: the counter
         # increments (2 of 3) but the unit does NOT retire this year — the
         # loss-year semantics are preserved, not short-circuited.
+        # retirement_rule="legacy" pinned (D-1 flipped the default to "pipeline"
+        # 2026-08-02): the loss-year counter asserted below is a LEGACY-rule
+        # construct the R-NEW pipeline does not keep.
         eff = _gas_cc("EFF", heat_rate=6.5)
         old = _gas_cc("OLD", heat_rate=7.4)
-        cfg = ScenarioConfig(iso="ERCOT", ccs_retrofit_max_gw_per_year=0.5)
+        cfg = ScenarioConfig(
+            iso="ERCOT", ccs_retrofit_max_gw_per_year=0.5, retirement_rule="legacy"
+        )
         fleet, tracker, _, retrofit_log, _ = self._evolve(
             [eff, old], {"EFF": 2, "OLD": 1}, config=cfg
         )

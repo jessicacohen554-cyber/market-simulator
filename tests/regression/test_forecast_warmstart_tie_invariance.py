@@ -84,7 +84,14 @@ def test_retirement_screen_invariant_to_dispatch_reshuffle():
     # eac_price_nuclear sized so the attribute term is decision-relevant: the
     # unit clears going-forward cost on attainable generation but a realized
     # reader would straddle it across the reshuffle (see module docstring).
-    config = ScenarioConfig(iso="ERCOT", eac_price_nuclear=15.0)
+    # retirement_rule="legacy" pinned (D-1 flipped the default to "pipeline"
+    # 2026-08-02). The basis-independence invariant under test is rule-agnostic,
+    # but it is asserted THROUGH the legacy loss counter, which the R-NEW
+    # pipeline does not keep — unpinned, both sides collapse to {} and the
+    # assertion passes vacuously instead of exercising the screen.
+    config = ScenarioConfig(
+        iso="ERCOT", eac_price_nuclear=15.0, retirement_rule="legacy"
+    )
     fleet = [_nuclear()]
     arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=_T)
 
@@ -121,7 +128,14 @@ def test_attainable_attribute_generation_ignores_realized_dispatch():
     """
     prices = np.full((1, _T), 6.0)
     mc = np.full((1, _T), 5.0)
-    config = ScenarioConfig(iso="ERCOT", eac_price_nuclear=15.0)
+    # retirement_rule="legacy" pinned (D-1 flipped the default to "pipeline"
+    # 2026-08-02). The basis-independence invariant under test is rule-agnostic,
+    # but it is asserted THROUGH the legacy loss counter, which the R-NEW
+    # pipeline does not keep — unpinned, both sides collapse to {} and the
+    # assertion passes vacuously instead of exercising the screen.
+    config = ScenarioConfig(
+        iso="ERCOT", eac_price_nuclear=15.0, retirement_rule="legacy"
+    )
     fleet = [_nuclear()]
     arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=_T)
 

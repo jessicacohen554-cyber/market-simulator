@@ -298,7 +298,14 @@ class TestScreenByteIdentity(unittest.TestCase):
         # pinned (D1 default 3) so this single-pass screen can express the
         # capacity-payment retire/keep decision in one loss year — this suite
         # isolates the demand-curve gate, not the loss-year threshold.
-        config = config.with_overrides(retirement_years_coal=1)
+        # retirement_rule="legacy" pinned with it (D-1 flipped the default to
+        # "pipeline" 2026-08-02): the loss-year threshold above is a LEGACY-rule
+        # parameter, and this suite isolates the demand-curve gate, not the
+        # decision rule. The pipeline rule's own coverage is
+        # test_capacity.py::TestPipelineRetirementRule.
+        config = config.with_overrides(
+            retirement_years_coal=1, retirement_rule="legacy"
+        )
         fleet = [
             Generator(
                 unit_id=f"C{i}",
