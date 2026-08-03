@@ -3191,6 +3191,7 @@ def solve_and_persist(
     caiso_intertie_reference_price: bool | None = None,
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
+    caiso_per_year_import_caps: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -4357,6 +4358,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 gas_hub_basis_overlay=gas_hub_basis_overlay
             )
+        if caiso_per_year_import_caps is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_per_year_import_caps=caiso_per_year_import_caps
+            )
         if capacity_deliverability_limits is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 capacity_deliverability_limits=capacity_deliverability_limits
@@ -4756,6 +4761,7 @@ def solve_and_persist(
             caiso_intertie_reference_price=caiso_intertie_reference_price,
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
             caiso_reference_price_seam=caiso_reference_price_seam,
+            caiso_per_year_import_caps=caiso_per_year_import_caps,
             capacity_deliverability_limits=capacity_deliverability_limits,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -5556,6 +5562,7 @@ def solve_and_persist(
         "caiso_intertie_reference_price": caiso_intertie_reference_price,
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
         "caiso_reference_price_seam": caiso_reference_price_seam,
+        "caiso_per_year_import_caps": caiso_per_year_import_caps,
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -10062,6 +10069,26 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--caiso-per-year-import-caps",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Swap the two internal SP15-pocket import-link TTCs "
+        "(SP15_rest->LA_BASIN, SP15_rest->SDGE) from the static 2023 "
+        "tightest-year value baked in by the SP15 split to EACH SOLVE YEAR's "
+        "own published CAISO LCT import_cap = peak_load - requirement "
+        "(ScenarioConfig.caiso_per_year_import_caps). LA_BASIN "
+        "12,008/15,224/15,174 and SDGE 1,436/2,074/2,071 MW for 2023/24/25, "
+        "read from data/raw/capacity-deliverability/caiso/caiso.csv via "
+        "data.local_capacity.load_lcr_parameters. Same convention as the "
+        "static bake, never the reserve-margin gross-up, zero free parameters "
+        "(CLAUDE.md #24). Measured limit over frozen estimate (CLAUDE.md #14); "
+        "per-year was the deferred end state of the 2026-07-09 SP15 split. "
+        "2023's published row EQUALS the static default, so 2023 is a "
+        "byte-identical no-op and serves as the same-head zero-delta control. "
+        "A year with no published row keeps the static default. CAISO-only. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--capacity-deliverability-limits",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11184,6 +11211,7 @@ def main() -> None:
         caiso_intertie_reference_price=args.caiso_intertie_reference_price,
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
         caiso_reference_price_seam=args.caiso_reference_price_seam,
+        caiso_per_year_import_caps=args.caiso_per_year_import_caps,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
