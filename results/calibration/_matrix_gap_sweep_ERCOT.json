@@ -2,8 +2,8 @@
   "iso": "ERCOT",
   "keeper": "2026-08-02-ercot150b-zonal-anchor",
   "keeper_bundle_fields": 670,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 673,
+  "n_matrix_rows": 182,
   "n_bundles_scanned": 19,
   "family": [
     {
@@ -4109,6 +4109,11 @@
         {
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
           "cell": "."
         },
         {

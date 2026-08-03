@@ -2,8 +2,8 @@
   "iso": "NYISO",
   "keeper": "2026-08-03-nyiso-118-seny-span",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 673,
+  "n_matrix_rows": 182,
   "n_bundles_scanned": 18,
   "family": [
     {
@@ -77,6 +77,11 @@
           "cell": "K"
         },
         {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
           "row": "tsa_transfer_derate",
           "cells": "....G.",
           "cell": "G"
@@ -84,7 +89,8 @@
       ],
       "cells": [
         "G",
-        "K"
+        "K",
+        "U"
       ],
       "armed_in_bundles": [
         "_nyiso114_baseattrib_2024",
@@ -1017,10 +1023,16 @@
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
           "cell": "K"
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "U"
         }
       ],
       "cells": [
-        "K"
+        "K",
+        "U"
       ],
       "armed_in_bundles": [
         "nyiso118_seny_span"
@@ -1207,6 +1219,25 @@
         "nyiso83_control_2025",
         "nyiso_c156_meter_screen_B"
       ]
+    },
+    {
+      "field": "nyiso_seny_rcpf_increment_step",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
     },
     {
       "field": "nyiso_spin_headroom_frac",
@@ -2130,6 +2161,11 @@
           "cell": "K"
         },
         {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "U"
+        },
+        {
           "row": "gas_commitment_bridge",
           "cells": "KKRUKK",
           "cell": "K"
@@ -2823,6 +2859,11 @@
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
           "cell": "K"
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "U"
         },
         {
           "row": "gas_commitment_bridge",

@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-03-caiso162-per-year-import",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 673,
+  "n_matrix_rows": 182,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -2781,6 +2781,11 @@
           "cell": "."
         },
         {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
           "row": "gas_commitment_bridge",
           "cells": "KKRUKK",
           "cell": "K"
@@ -3473,6 +3478,11 @@
         {
           "row": "nyiso_ordc_measured_step_span",
           "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....U.",
           "cell": "."
         },
         {
