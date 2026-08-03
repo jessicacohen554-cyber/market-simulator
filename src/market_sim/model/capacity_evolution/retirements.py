@@ -61,7 +61,7 @@ from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
 )
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import ScenarioConfig, resolve_demand_growth_rate
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.confirmed_retirements import ConfirmedExit
@@ -161,6 +161,92 @@ def _execution_lag_years(config: ScenarioConfig, fuel_type: str) -> int:
     if lag is None and fuel_type == "gas_cc_ccs":
         lag = getattr(config, "retirement_execution_lag_gas_cc")
     return int(lag)
+
+
+def _admission_cap_horizon(
+    config: ScenarioConfig,
+    scheduled: set[str],
+    state: dict[str, int],
+    decided_year: int,
+    fleet: list[Generator],
+    peak_demand: float,
+    year: int,
+) -> tuple[int, float]:
+    """Return the (year, peak MW) the pipeline's admission cap is tested at.
+
+    The G-31 cap-grain correction (FFR-3F task 1, chartered by owner decision
+    D-8 / FFR-3C §6.3). The admission cap in
+    :func:`_apply_pipeline_retirements` is a test on ONE counterfactual fleet:
+    the current fleet with the WHOLE scheduled exit set removed at once. That
+    fleet state is not realized at the decision ``year`` — it is realized at
+    the LAST execution year in the schedule, ``max(decided_year + L_f)``, one
+    to three years later. Testing it against the decision year's requirement
+    measured the exits against a requirement they never land against (FFR-3C
+    §1.2 G3: the cap saw a 2026 requirement of 21,990 MW while the exits it
+    admitted landed against 2028's 24,244 MW — **+10.3 % of requirement the
+    cap never saw**). This function returns the horizon that makes the two
+    halves of the test consistent: the fleet-with-all-exits-gone is paired
+    with the requirement at the year that fleet actually exists.
+
+    Both inputs to :func:`resolve_adequacy_requirement_mw` move to that
+    horizon, because both are year-dependent:
+
+    * the **year**, which selects the ISO's published-FPR delivery year
+      (:func:`resolve_forecast_pool_requirement`); and
+    * the **peak** the requirement is a fraction of, projected from the
+      entering year's peak by compounding the run's own demand-growth path
+      (:func:`resolve_demand_growth_rate` — the identical per-year rate
+      ``runner._scale_demand`` compounds to build each year's load).
+
+    No new parameter enters: the horizon is a function of the per-fuel
+    execution lags (``retirement_execution_lag_*``, already identified) and
+    the growth path already driving demand, so it regenerates for any forward
+    year and responds to changed conditions (rule 13 ``[R-MEASURED]``).
+
+    Two deliberate limits, stated because they are silent otherwise:
+
+    * The projection compounds growth only. ``runner.add_load_layers``
+      relocates each additive load layer's energy onto its own shape *after*
+      scaling and is jointly energy-invariant, so its effect on the peak is
+      second-order and is not reproduced here; the growth path itself is
+      DC- and electrification-inclusive.
+    * The **fleet** side stays at the decision year — entry that commissions
+      between decision and execution is not credited. That is the pre-existing
+      grain of the cap and is out of this correction's scope; it biases the
+      cap conservative (toward retaining), and it is recorded as an open item
+      rather than silently closed.
+
+    Args:
+        config: Scenario config supplying the per-fuel execution lags and the
+            demand-growth path.
+        scheduled: Unit ids of the whole scheduled exit set (pending state
+            plus this year's admitted candidates).
+        state: Pipeline state ``unit_id -> decided_year`` for pending units.
+        decided_year: The loss year stamped on units decided at this screen.
+        fleet: The current fleet, supplying each scheduled unit's fuel type.
+        peak_demand: The entering year's peak demand in MW.
+        year: The screen (decision) year.
+
+    Returns:
+        ``(cap_year, cap_peak_demand_mw)``. With an empty schedule, or when
+        every scheduled exit executes in ``year`` itself (all lags 1, the
+        gas/oil case), this is exactly ``(year, peak_demand)`` — the
+        pre-correction behaviour, unchanged.
+    """
+    fuel_of = {g.unit_id: g.fuel_type for g in fleet}
+    cap_year = year
+    for uid in scheduled:
+        fuel_type = fuel_of.get(uid)
+        if fuel_type is None:  # left the fleet through another channel
+            continue
+        execute_year = state.get(uid, decided_year) + _execution_lag_years(
+            config, fuel_type
+        )
+        cap_year = max(cap_year, execute_year)
+    cap_peak_demand = peak_demand
+    for growth_year in range(year, cap_year):
+        cap_peak_demand *= 1.0 + resolve_demand_growth_rate(config, growth_year)
+    return cap_year, cap_peak_demand
 
 
 # Per-fuel ScenarioConfig field names for the effective-FOM multiplier.
@@ -1211,7 +1297,12 @@ def _apply_pipeline_retirements(
        and cheapest-firm-adequacy metric) retains candidates until the
        scheduled post-pipeline firm capacity clears the shared PRM
        requirement. Removes the D1 defects 2 and 3 (the cross-fuel race and
-       the fuel-partitioned eligible set).
+       the fuel-partitioned eligible set). The cap is tested at the
+       schedule's EXECUTION horizon, not the decision year
+       (:func:`_admission_cap_horizon` — the G-31 cap-grain correction,
+       FFR-3F/D-8): the counterfactual fleet it screens is realized when the
+       last scheduled exit leaves, so the requirement is resolved at that
+       year and that year's projected peak.
     3. **Soft latch.** A pipelined unit is re-screened annually and leaves
        the pipeline ONLY by re-clearing the same bar (economic recovery; the
        policy-rescue reversal channel stays the confirmed registry's). No
@@ -1298,20 +1389,23 @@ def _apply_pipeline_retirements(
     # in prior years are not re-litigated here — the realized-year floor
     # below remains their backstop.
     scheduled: set[str] = set(state) | {g.unit_id for g in new_units}
+    decided_year = year - 1  # the loss year whose dispatch failed this screen
+    cap_year, cap_peak_demand = _admission_cap_horizon(
+        config, scheduled, state, decided_year, fleet, peak_demand, year
+    )
     _apply_reliability_floor(
         fleet,
         new_units,
         scheduled,
         state,
         config,
-        peak_demand,
+        cap_peak_demand,
         wind_pool_mw,
         solar_pool_mw,
         storage_firm_mw,
         deliverability_headroom,
-        year,
+        cap_year,
     )
-    decided_year = year - 1  # the loss year whose dispatch failed this screen
     for g in new_units:
         if g.unit_id in scheduled:
             state[g.unit_id] = decided_year
