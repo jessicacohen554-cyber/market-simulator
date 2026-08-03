@@ -1,6 +1,6 @@
 {
  "_provenance": {
-  "source": "ERCOT 60-Day SCED Disclosure Gen Resource Data, scoped sample days, delivery years 2024-2025",
+  "source": "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), full-year publication-month corpus, rows filtered to delivery year (~60-day publication lag; validation-holdout 2022 and locked-test 2026 rows in adjacent publication files excluded from training years). Per-year basis: 2024/2025 from the 2026-07-21 full-corpus intake (2024-05 sparse; 2025 Nov partial / Dec absent \u2014 disclosed in coverage); 2022 (validation-holdout, data-only) from the post-purge partial slice; 2023 refreshed 2026-08-03 (ercot-157) from the complete delivery-2023 re-upload under data/raw/ercot/SCED/ (315 shards, all 365 delivery days)",
   "method": "per-interval Base Point -> HASL segments of the SCED2 (as-dispatched) offer curve of ON-status merchant gas (the energy-dispatchable online spare, net of AS responsibility), MW-weighted quantile ladder of segment prices as effective-HR multipliers (price / HH-daily+ERCOT-basis gas), derived within net-load-percentile bins",
   "driver": "system net-load percentile within year (EIA-930 demand - wind - solar), forward-native (a forecast year's bins regenerate from its own load+VRE)",
   "netload_pct_edges": [
@@ -273,29 +273,29 @@
    "2023": {
     "CC": [
      {
-      "intervals": 6479,
-      "days": 135,
-      "mean_spare_gw": 2.836
+      "intervals": 8751,
+      "days": 187,
+      "mean_spare_gw": 2.913
      },
      {
-      "intervals": 6248,
-      "days": 188,
-      "mean_spare_gw": 2.912
+      "intervals": 8763,
+      "days": 253,
+      "mean_spare_gw": 2.773
      },
      {
-      "intervals": 5588,
-      "days": 220,
-      "mean_spare_gw": 2.618
+      "intervals": 7008,
+      "days": 268,
+      "mean_spare_gw": 2.403
      },
      {
-      "intervals": 3060,
-      "days": 183,
-      "mean_spare_gw": 1.996
+      "intervals": 3504,
+      "days": 211,
+      "mean_spare_gw": 1.888
      },
      {
-      "intervals": 3432,
-      "days": 156,
-      "mean_spare_gw": 1.55
+      "intervals": 3504,
+      "days": 162,
+      "mean_spare_gw": 1.543
      },
      {
       "intervals": 2456,
@@ -310,28 +310,28 @@
     ],
     "CT": [
      {
-      "intervals": 6479,
-      "days": 135,
-      "mean_spare_gw": 0.075
+      "intervals": 8751,
+      "days": 187,
+      "mean_spare_gw": 0.076
      },
      {
-      "intervals": 6248,
-      "days": 188,
-      "mean_spare_gw": 0.125
+      "intervals": 8763,
+      "days": 253,
+      "mean_spare_gw": 0.118
      },
      {
-      "intervals": 5588,
-      "days": 220,
-      "mean_spare_gw": 0.114
+      "intervals": 7008,
+      "days": 268,
+      "mean_spare_gw": 0.119
      },
      {
-      "intervals": 3060,
-      "days": 183,
-      "mean_spare_gw": 0.126
+      "intervals": 3504,
+      "days": 211,
+      "mean_spare_gw": 0.127
      },
      {
-      "intervals": 3432,
-      "days": 156,
+      "intervals": 3504,
+      "days": 162,
       "mean_spare_gw": 0.181
      },
      {
@@ -348,7 +348,8 @@
    }
   },
   "frozen": "rule 23 \u2014 re-derive only on a SCED disclosure source-data update, never because a residual moved",
-  "ercot105_added": "2022 (validation-holdout, data-only) + 2023 RT SCED wall added from re-uploaded corpus (pub 2022-01..2023-12; 2023 delivery Jan-Oct, summer scarcity covered); 2024/2025 ladders+coverage byte-identical to main"
+  "ercot105_added": "2022 (validation-holdout, data-only) + 2023 RT SCED wall added from re-uploaded corpus (pub 2022-01..2023-12; 2023 delivery Jan-Oct, summer scarcity covered); 2024/2025 ladders+coverage byte-identical to main",
+  "ercot157_refreshed": "2023 CC/CT blocks re-derived 2026-08-03 from the complete delivery-2023 corpus re-upload (data/raw/ercot/SCED/, ERCOT-151 \u00a74 ask 1): the prior 2023 block's source slice ended at publication 2023-12, covering deliveries Jan-Oct 2023 only (see ercot105_added) \u2014 Nov-Dec 2023 deliveries enter the 2023 wall for the first time (intervals 28,315 -> 35,038; upper net-load bins 5-6 byte-identical, matching the 2026-07-21 full-corpus verification of 8751 intervals/bin). 2022/2024/2025 blocks byte-identical."
  },
  "CC": {
   "years": {
@@ -831,51 +832,51 @@
      [
       [
        0.1,
-       5.246
+       5.382
       ],
       [
        0.3,
-       7.156
+       7.229
       ],
       [
        0.5,
-       8.782
+       8.799
       ],
       [
        0.7,
-       10.624
+       10.644
       ],
       [
        0.9,
-       14.209
+       14.454
       ]
      ],
      [
       [
        0.1,
-       6.834
+       6.923
       ],
       [
        0.3,
-       9.0
+       9.005
       ],
       [
        0.5,
-       10.585
+       10.588
       ],
       [
        0.7,
-       12.652
+       12.598
       ],
       [
        0.9,
-       22.773
+       27.881
       ]
      ],
      [
       [
        0.1,
-       8.547
+       8.493
       ],
       [
        0.3,
@@ -883,51 +884,51 @@
       ],
       [
        0.5,
-       12.054
+       12.047
       ],
       [
        0.7,
-       14.051
+       14.14
       ],
       [
        0.9,
-       44.643
+       43.109
       ]
      ],
      [
       [
        0.1,
-       10.054
+       9.962
       ],
       [
        0.3,
-       12.01
+       11.95
       ],
       [
        0.5,
-       13.454
+       13.422
       ],
       [
        0.7,
-       16.611
+       16.765
       ],
       [
        0.9,
-       80.645
+       70.423
       ]
      ],
      [
       [
        0.1,
-       10.332
+       10.307
       ],
       [
        0.3,
-       12.646
+       12.624
       ],
       [
        0.5,
-       14.281
+       14.26
       ],
       [
        0.7,
@@ -935,7 +936,7 @@
       ],
       [
        0.9,
-       105.702
+       104.338
       ]
      ],
      [
@@ -1467,33 +1468,33 @@
      [
       [
        0.1,
-       4.548
+       4.923
       ],
       [
        0.3,
-       7.571
+       7.409
       ],
       [
        0.5,
-       14.157
+       13.352
       ],
       [
        0.7,
-       35.245
+       37.735
       ],
       [
        0.9,
-       2631.579
+       2604.167
       ]
      ],
      [
       [
        0.1,
-       6.219
+       6.385
       ],
       [
        0.3,
-       8.331
+       8.382
       ],
       [
        0.5,
@@ -1501,29 +1502,29 @@
       ],
       [
        0.7,
-       21.8
+       23.788
       ],
       [
        0.9,
-       1886.792
+       2145.923
       ]
      ],
      [
       [
        0.1,
-       7.95
+       8.101
       ],
       [
        0.3,
-       12.765
+       13.112
       ],
       [
        0.5,
-       16.584
+       17.831
       ],
       [
        0.7,
-       26.792
+       35.52
       ],
       [
        0.9,
@@ -1533,45 +1534,45 @@
      [
       [
        0.1,
-       9.159
+       9.252
       ],
       [
        0.3,
-       14.246
+       14.273
       ],
       [
        0.5,
-       18.232
+       18.384
       ],
       [
        0.7,
-       28.09
+       31.0
       ],
       [
        0.9,
-       2232.143
+       2252.248
       ]
      ],
      [
       [
        0.1,
-       10.861
+       10.888
       ],
       [
        0.3,
-       14.637
+       14.603
       ],
       [
        0.5,
-       17.455
+       17.46
       ],
       [
        0.7,
-       24.226
+       24.546
       ],
       [
        0.9,
-       496.029
+       511.941
       ]
      ],
      [
