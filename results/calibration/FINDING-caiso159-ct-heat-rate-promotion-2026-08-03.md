@@ -57,6 +57,42 @@ pair of near-identical generated JSON files will interleave hunks *and*
 silently splice the non-conflicting remainder. For bundle artifacts, never
 hand-resolve: restore each side's blob whole.
 
+### 1a. The first repair of the *arm* was incomplete — corrected
+
+Side-selection recovers the conflicted hunks exactly, but it **cannot undo
+git's auto-merge of the non-conflicting regions**, because by then both output
+files already carry the same blend. The keeper was safe (a clean blob existed
+at `81d61f1`); `nyiso_c156_meter_screen_B` had none, so its reconstruction
+inherited the blend and the first repair left it wrong.
+
+The blend was self-contradicting and therefore detectable: the file asserted
+`determination: CALIBRATED-WITH-CAVEATS`, `price_tail: CAVEAT`, `ledgered: 1`,
+`fails: 0` (all the **keeper's** values) while its `reasons` and
+`governance.status` said `UNATTESTED` (the **arm's**). A bundle with no
+attestation cannot have a ledgered caveat at all — `_apply_ledger` needs an
+attestation to downgrade `FAIL → CAVEAT`. Re-scored from its own bytes, the
+arm is `NOT-YET` / `price_tail: FAIL` / `fails: 1`, exactly as caiso-158
+described an unattested probe arm.
+
+Two checks close it out. The keeper's whole-blob restore is **validated
+against the live scorer** (committed `CALIBRATED-WITH-CAVEATS`, governance
+PASS, grade 9/8 — identical to a fresh `calibration_verdict` run). And a sweep
+of every bundle in the blast radius plus the three superseded keepers finds
+committed-vs-live agreement everywhere:
+
+| bundle | committed | live |
+|---|---|---|
+| `caiso156_meter_screen_B` / `neiso_c156_meter_screen_B` | CAL-W-CAVEATS | match |
+| `nyiso113_lilocational_B` / `nyiso113_control_A` | CAL-W-CAVEATS | match |
+| `nyiso_c156_meter_screen_B` | NOT-YET | match (after re-score) |
+| the three `*_meter_control_A` arms | NOT-YET | match |
+| `caiso157_restore_B` / `neiso72_hy_window_B` / `nyiso112_combined_D` | CAL-W-CAVEATS | match |
+
+**The rule that falls out:** after any conflict repair on a bundle, re-derive
+`metrics.json` with the scorer rather than trusting the reconstructed bytes.
+The scorer is deterministic over the bundle, so it is the only authority that
+cannot inherit a blend.
+
 ## 2. The promotion premise had expired for one ISO
 
 The caiso-158 handoff listed three promotable ISOs. Re-diffing each arm's
@@ -180,7 +216,9 @@ no `complete` marker; the holdout spend freeze is ACTIVE and unspent.
   and an invalid keeper candidate. It needs a re-solve on the nyiso-113
   recipe; anything else drops a published Zone-K requirement.
 * **Do not hand-resolve a rename/rename conflict in bundle JSON** (§1).
-  Restore whole blobs per side.
+  Restore whole blobs per side — and where no clean blob exists, **re-derive
+  `metrics.json` with the scorer** rather than trusting reconstructed bytes
+  (§1a). Side-selection cannot undo an auto-merge.
 * **Do not read the two promotions as evidence the screen improves the fit.**
   It does not move the scorecard in either ISO, and was never expected to.
 
