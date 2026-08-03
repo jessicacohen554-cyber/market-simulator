@@ -404,10 +404,178 @@
      }
     },
     "fleet_plants_absent": []
+   },
+   "2023": {
+    "bins": [
+     {
+      "intervals": 7976,
+      "days": 179,
+      "mean_spare_gw": 0.454
+     },
+     {
+      "intervals": 8529,
+      "days": 252,
+      "mean_spare_gw": 0.896
+     },
+     {
+      "intervals": 6948,
+      "days": 266,
+      "mean_spare_gw": 1.888
+     },
+     {
+      "intervals": 3500,
+      "days": 211,
+      "mean_spare_gw": 2.285
+     },
+     {
+      "intervals": 3498,
+      "days": 162,
+      "mean_spare_gw": 2.032
+     },
+     {
+      "intervals": 2456,
+      "days": 105,
+      "mean_spare_gw": 1.211
+     },
+     {
+      "intervals": 1036,
+      "days": 48,
+      "mean_spare_gw": 0.467
+     }
+    ],
+    "plants": {
+     "Barney M Davis [ST]": {
+      "on_rows": 8187,
+      "on_spare_share": 0.0266
+     },
+     "Cedar Bayou": {
+      "on_rows": 31188,
+      "on_spare_share": 0.1585
+     },
+     "Dansby": {
+      "on_rows": 22268,
+      "on_spare_share": 0.0321
+     },
+     "Graham": {
+      "on_rows": 21387,
+      "on_spare_share": 0.0448
+     },
+     "Handley": {
+      "on_rows": 30669,
+      "on_spare_share": 0.119
+     },
+     "Lake Hubbard": {
+      "on_rows": 13193,
+      "on_spare_share": 0.0642
+     },
+     "Mountain Creek": {
+      "on_rows": 24306,
+      "on_spare_share": 0.0628
+     },
+     "O W Sommers": {
+      "on_rows": 35485,
+      "on_spare_share": 0.127
+     },
+     "R W Miller": {
+      "on_rows": 24211,
+      "on_spare_share": 0.0506
+     },
+     "Ray Olinger": {
+      "on_rows": 7211,
+      "on_spare_share": 0.0059
+     },
+     "Sim Gideon": {
+      "on_rows": 45953,
+      "on_spare_share": 0.0757
+     },
+     "Spencer": {
+      "on_rows": 5632,
+      "on_spare_share": 0.0025
+     },
+     "Stryker Creek": {
+      "on_rows": 20716,
+      "on_spare_share": 0.0629
+     },
+     "Trinidad (TX)": {
+      "on_rows": 8011,
+      "on_spare_share": 0.0132
+     },
+     "V H Braunig": {
+      "on_rows": 35451,
+      "on_spare_share": 0.0912
+     },
+     "W A Parish [ST]": {
+      "on_rows": 33527,
+      "on_spare_share": 0.0629
+     }
+    },
+    "status_rows": {
+     "ON": 254826,
+     "ONRUC": 6024,
+     "ONREG": 69685,
+     "ONTEST": 5891,
+     "ONOS": 28921,
+     "ONOPTOUT": 1768,
+     "ONHOLD": 280
+    },
+    "excluded_non_fleet": {
+     "DOWGEN_DOW_ST64": {
+      "rows": 35039,
+      "max_hsl_mw": 0.0,
+      "on_spare_mw_sum": 0.0
+     },
+     "DOWGEN_DOW_ST65": {
+      "rows": 35039,
+      "max_hsl_mw": 0.0,
+      "on_spare_mw_sum": 0.0
+     },
+     "DOWGEN_DOW_ST84": {
+      "rows": 35039,
+      "max_hsl_mw": 58.0,
+      "on_spare_mw_sum": 11964.8
+     },
+     "DOWGEN_DOW_ST95": {
+      "rows": 35039,
+      "max_hsl_mw": 24.0,
+      "on_spare_mw_sum": 11464.1
+     },
+     "PR_PR_G2": {
+      "rows": 35039,
+      "max_hsl_mw": 10.3,
+      "on_spare_mw_sum": 10.3
+     },
+     "SL_SL_G3": {
+      "rows": 29179,
+      "max_hsl_mw": 0.0,
+      "on_spare_mw_sum": 0.0
+     },
+     "SL_SL_G4": {
+      "rows": 29179,
+      "max_hsl_mw": 0.0,
+      "on_spare_mw_sum": 0.0
+     },
+     "STEAM_STEAM_2": {
+      "rows": 35039,
+      "max_hsl_mw": 21.5,
+      "on_spare_mw_sum": 15266.3
+     },
+     "STEAM_STEAM_3": {
+      "rows": 35039,
+      "max_hsl_mw": 38.0,
+      "on_spare_mw_sum": 44001.8
+     },
+     "STEAM1A_STEAM_1": {
+      "rows": 12960,
+      "max_hsl_mw": 20.0,
+      "on_spare_mw_sum": 7641.4
+     }
+    },
+    "fleet_plants_absent": []
    }
   },
   "adjudication": "ERCOT-92: supersedes the ERCOT-89 \u00a78.3 working note 'the corpus lacks ST restypes' \u2014 the raw corpus carries GSNONR/GSREH/GSSUP with full curves and statuses; only the derived CC/CT artifact excluded them (rule-19 scope). The CC/CT artifact (ercot_sced_offer_wall_condbinned.json) stays byte-identical and ST-free; this artifact is the steam-owner seam's basis",
-  "frozen": "rule 23 \u2014 re-derive only on a SCED disclosure source-data update, never because a residual moved"
+  "frozen": "rule 23 \u2014 re-derive only on a SCED disclosure source-data update, never because a residual moved",
+  "ercot157_added": "ST 2023 block added 2026-08-03 (ercot-157) from the complete delivery-2023 corpus re-upload (data/raw/ercot/SCED/) \u2014 the steam wall never carried 2023 (its 2024/2025 blocks predate the SCED-basis 2023 extension). Measure-first, no apply path in src/ (ERCOT-92 step-2 owner-gated): changes no solve. 2024/2025 blocks byte-identical."
  },
  "ST": {
   "years": {
@@ -723,6 +891,164 @@
       [
        0.9,
        537.109
+      ]
+     ]
+    ]
+   },
+   "2023": {
+    "ladder": [
+     [
+      [
+       0.1,
+       9.517
+      ],
+      [
+       0.3,
+       12.469
+      ],
+      [
+       0.5,
+       13.908
+      ],
+      [
+       0.7,
+       16.539
+      ],
+      [
+       0.9,
+       44.649
+      ]
+     ],
+     [
+      [
+       0.1,
+       10.298
+      ],
+      [
+       0.3,
+       12.688
+      ],
+      [
+       0.5,
+       14.639
+      ],
+      [
+       0.7,
+       26.831
+      ],
+      [
+       0.9,
+       79.389
+      ]
+     ],
+     [
+      [
+       0.1,
+       11.523
+      ],
+      [
+       0.3,
+       13.0
+      ],
+      [
+       0.5,
+       15.979
+      ],
+      [
+       0.7,
+       40.112
+      ],
+      [
+       0.9,
+       436.675
+      ]
+     ],
+     [
+      [
+       0.1,
+       12.072
+      ],
+      [
+       0.3,
+       13.505
+      ],
+      [
+       0.5,
+       20.49
+      ],
+      [
+       0.7,
+       53.422
+      ],
+      [
+       0.9,
+       522.306
+      ]
+     ],
+     [
+      [
+       0.1,
+       12.467
+      ],
+      [
+       0.3,
+       14.948
+      ],
+      [
+       0.5,
+       27.914
+      ],
+      [
+       0.7,
+       66.738
+      ],
+      [
+       0.9,
+       702.226
+      ]
+     ],
+     [
+      [
+       0.1,
+       13.382
+      ],
+      [
+       0.3,
+       20.567
+      ],
+      [
+       0.5,
+       34.884
+      ],
+      [
+       0.7,
+       55.563
+      ],
+      [
+       0.9,
+       569.534
+      ]
+     ],
+     [
+      [
+       0.1,
+       16.141
+      ],
+      [
+       0.3,
+       25.393
+      ],
+      [
+       0.5,
+       36.946
+      ],
+      [
+       0.7,
+       50.251
+      ],
+      [
+       0.9,
+       510.204
       ]
      ]
     ]

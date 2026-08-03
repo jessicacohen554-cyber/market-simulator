@@ -4432,3 +4432,88 @@ Guards `check_mechanism_matrix.py` + `check_registry_payload_parity.py` PASS
 before push. Next-largest column: CAISO (31) — its own lane.
 
 Next shorthand: ercot-157.
+
+## 2026-08-03 — ERCOT-157 (the ercot-151 §4 data blocker RESOLVED; no LP, keeper UNCHANGED at ercot150b): the NP3-965 delivery-2023 corpus re-upload landed and VERIFIED complete; the fast-start pool's 2023 CT year block derived and committed (2024/25 byte-identical); the committed CC/CT wall's 2023 block found to be the Jan–Oct partial slice and REFRESHED full-year (tail bins byte-identical); steam gains its first 2023 block
+
+**The intake (owner upload, this session's verification).** The owner re-uploaded the
+NP3-965 60-Day SCED Gen Resource corpus for delivery-2023 to `data/raw/ercot/SCED/`
+(publication months 2023-03..2024-03, `YYYY-MM.partNNNN.parquet`, the original
+187-column all-string raw schema). Two upload-batch failures were caught by shard
+forensics (part-sequence holes + a full delivery-day scan) and re-supplied same-day:
+`2023-06.part0004-0008` (deliveries 2023-04-10..19) and `2023-11.part0006-0015`
+(deliveries 2023-09-08..17, the week after the Sep-6 scarcity event). Final state
+VERIFIED: **315 shards, 0 unreadable, 35.82M delivery-2023 rows, all 365 delivery
+days present at full weight** (median 98,016 rows/day, zero light days; bleed
+2022-12-31..2024-01-09 delivery-year-filtered by every consumer, rule 22).
+
+**Selection wiring (code; one seam shared by both walls + the pool).**
+`derive_ercot_sced_offer_wall._sced_source_files` now scans BOTH corpus locations
+(`data/raw/ercot/` — the purged original's home — and `data/raw/ercot/SCED/`, the
+re-upload; filename collisions resolve to the subdirectory copy), and the corpus
+supersedes the legacy sample-day extracts only on MAJORITY delivery-month coverage
+(≥7/12, judged from pub-month filenames by the exact 60-day lag). The guard closes
+the footgun the re-upload itself created: its edge months (pubs 2024-01..03) fall
+inside delivery-2024's publication window but cover 1/12 delivery months — 2024/2025
+keep their sample-day basis (verified live: 2024 → ercot74/75 extracts, 2025 →
+ercot75/86). The July full corpus covered 12/12/10 months for 2023/24/25, so every
+historical selection is unchanged. `derive_ercot_faststart_pool._load_year` sources
+via the same helper — streaming, with a light 3-column live frame for every CT row
+and full columns only for the rare OFFQS/OFFNS pool rows (the full-column year
+concat OOM'd, the wall's own July lesson), delivery-year filtering, string-numerics
+coercion, and empty shard slices dropped pre-concat (a pandas-3 string-dtype empty
+would promote the coerced concat back to object). Tests:
+`tests/curation/test_sced_corpus_selection.py` (5, incl. the dual-module patch
+gotcha — scripts flat-import the wall module while tests package-import it).
+
+**Corpus equivalence + the wall finding.** Re-deriving the CC/CT wall's 2023 block
+from the re-upload reproduces the 2026-07-21 full-corpus verification EXACTLY —
+8,751 intervals in bin 0 (the `ercot-sced-fullyear-intake` doc's own recorded
+number), 35,038 total. The COMMITTED artifact's 2023 block carried 28,315: its own
+`ercot105_added` note records it was rebuilt post-purge from a partial slice ending
+publication 2023-12 — **deliveries Jan–Oct 2023 only**. The refresh completes
+Nov–Dec 2023: the interval deficit sat entirely in net-load bins 0–4
+(winter/shoulder); **bins 5–6 (the scarcity tail) are byte-identical**, so the
+keeper's 2023 tail-pricing inputs are untouched; low/mid-bin rungs move at the
+0.02–0.1-mult scale (CT bin-2 q70 +8.7 the largest; CT bin-1 q90 1,886.8→2,145.9 —
+winter conduct entering). 2022/2024/2025 blocks byte-identical (asserted by the
+surgical merge; the `_provenance.source` staleness ERCOT-151 flagged is fixed).
+Steam (`ST`) gains its FIRST 2023 block — 16 fleet plants, `fleet_plants_absent`
+[], p50 mult 13.9→36.9 rising by bin; measure-first, no apply path (ERCOT-92
+step-2 owner-gated) — changes no solve. One steam artifact test re-scoped: the
+"RT q90 > DAM q90 at mid-band" invariant was measured on 2024/25; 2023 sits at
+PARITY in bin −3 (569.534 vs 570.319, −0.14%) — strict for 2024/25, parity-bounded
+for 2023, the measured data never suppressed.
+
+**The pool 2023 block (the ercot-151 charter deliverable).**
+`ercot_faststart_pool_condbinned.json` now carries CT 2023/2024/2025. The 2023
+block derives from the complete corpus (all 315 shards): full-year interval counts
+by bin [8750, 8759, 7002, 3504, 3500, 2408, 809], pool_frac 0.035–0.095 (top
+scarcity bin thinnest — the fleet gets started), p70 mult 449.6–482.1 across bins —
+2023's post-Uri conservative-ops conduct, ~2/3 of 2024's ladder level and ~1.4× of
+2025's. **2024/2025 blocks, coverage and source lists verified byte-identical to
+the committed artifact** — the charter's derive check — so the lean-loader rewrite
+is validated end-to-end on the legacy path. No NaN bins; the artifact sanity gates
+(pool_frac ∈ (0,1), rungs ≥ 0) hold for all three years.
+
+**Keeper impact & the surfaced owner decisions.** No solve, no registration, keeper
+UNCHANGED. The RT wall is armed in the keeper config, so its refreshed 2023 block
+changes what a REPLAY of 2023 would read — but only in bins 0–4 (the tail bins are
+byte-identical). Surfaced, not decided: (a) re-solve the keeper config full-span on
+the completed inputs and register (the ercot98 honest-inputs pattern); (b) the
+standing ERCOT-89 §7 step-2 arming decision for `ercot_faststart_pool_offer`, now
+data-unblocked with its 2023 CT block committed (the ERCOT-152 refusal of the CC
+tier stands — the pool is CT-only by measured conduct). Rule-24 LOYO 2023–25
+scoring applies at arming time, not to this data landing.
+
+**Session mechanics note.** The session git gateway's upstream push relay wedged
+mid-session (send-pack disconnect; the branch never appeared on the remote while
+the gateway's stale mirror advertised it "up-to-date"), so this session's commits
+went via `mcp__github__push_files` with rule-27 blob verification — both ≥300-line
+derive scripts fetched back byte-identical (`git hash-object` sha match).
+
+**Governance.** No mechanism tested (cell `ercot_faststart_pool_offer` stays `O`;
+matrix def/note updated to record the blocker's resolution). Holdouts untouched:
+the corpus bleed rows (2022-12-31, 2024-01-01..09) are delivery-year-filtered at
+every consumer; no out-of-training year solved or scored. ERCOT-scoped (rule 25).
+
+Next shorthand: ercot-158.
