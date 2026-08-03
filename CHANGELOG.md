@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-08-03 — FFR-SA: FF-G4 Option-B electrification load-shape layers (FR-16), DEFAULT OFF
+
+Implements the decided design of
+`docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md` (§8-D1 = Option B):
+additive EV + heat-pump end-use layers over the weather-8760, folded in by the
+generalized DC-relocation algebra. Session handoff (DC seam reconciliation,
+DOF ledger, T0 smoke, owner arming box):
+`docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md`.
+
+- **New scenario axis** `electrification_path` (default **"off"**) +
+  `electrification_percentile` (0.5) — the `datacenter_load_path` grammar;
+  backcast/hindcast-coerced off in `__post_init__`; registered in
+  `_CACHE_KEY_OPTIONAL_FIELDS` (pinned default cache_key `603c2498bf71d21d`
+  measured unmoved) and `TIER_TAGS`; mechanism-matrix row
+  `electrification_layers` in the same PR (rule 28c).
+- **`data/datacenter.py::add_load_layers`** — ONE fold-in for all additive
+  load layers (rule 19): DC block = layer #1, electrification layers share the
+  energy-invariant relocation under a single sum-of-layers guard; the DC-only
+  path is **bit-identical** to `add_datacenter_block` (tested), so the armed
+  DC "mid" forecast default is unchanged. Both runner seams switched. The
+  CX-4 zero stub `electrification_shape` is deleted (rule 26).
+- **`constants.ELECTRIFICATION_LAYERS`** adoption anchors (incremental to the
+  weather-year base, {} where unsourced): NEISO `heat_pump` mid
+  {2026: 0, 2035: 7,165 GWh} from the ISO-NE 2026 CELT HEF; `ev` ships `{}`
+  everywhere — a citable charging profile is an open D4 intake, and a layer
+  with anchors but no profile source FAILS CLOSED.
+  `HEAT_PUMP_BALANCE_POINT_C` = 18.3 °C (NOAA/EIA 65 °F degree-day base).
+- **Heat-pump profile** = heating-degree hours on the run weather year's
+  measured NOAA GHCN daily zone temperatures, Parton & Logan (1981) diurnal
+  bridge (the on-main miso-101 reconstruction). Winter-morning ridge emerges
+  from the weather; energy relocation is invariant to machine precision.
+- **Probe arm** `run_full_horizon.py --electrification-path`; T0 NEISO/PJM
+  2026-2028 armed-vs-off smoke registered in the handoff §4. Citations added
+  to `frontend/data/parameters.json` (+ registry regen, which also
+  auto-registered 56 pre-existing uncited constants — `validate_parameters.py`
+  is green again). Tests: `tests/unit/data/test_electrification_layers.py`.
+- **No default moved; no keeper touched** — arming posture is the owner's box
+  (memo §8-D2), pending NEISO T0 evidence review.
+
 ## 2026-07-24 — CAMPD outage backfill 2018-2026 (all six ISOs) + EIA-923 non-CAMPD fallback (backup data)
 
 Out-of-training DATA-INTAKE session (owner-authorized, logged in

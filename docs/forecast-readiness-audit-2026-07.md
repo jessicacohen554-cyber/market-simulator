@@ -161,13 +161,13 @@ before re-solving (`results/cache.py:15-28` documents exactly this).
 | `net_cone_forward_escalation` + `NET_CONE_FORWARD_ESCALATION_REAL_BY_ISO` (FF-G3) | design landed, all rates 0.0, **no vintage re-anchored** | FR-19 (PJM 34 % stale anchor held flat 23 years) |
 | `transmission_expansion_enabled` (FF-G1, engine applied 2026-07-26) | default-off, T1-F A/B never run | frozen base-year TTC for 25 years |
 | Nuclear license/SLR registry (FF-G5: 59 units, loader built) | **consumed by nothing** in the solve path | ungrounded 2035–2050 clean-firm lifetimes (BLK-9) |
-| FF-G4 load-shape memo (Option B recommended) | memo only; `electrification_shape()` returns zeros | FR-20 (peak≡energy CAGR; winter-flip unexpressible) |
+| FF-G4 load-shape memo (Option B recommended) | **BUILT 2026-08-03 (FFR-SA), default-off**: `electrification_path` + `add_load_layers` (DC = layer #1, joint relocation); NEISO heat_pump layer sourced (CELT HEF), ev/{other ISOs} ship `{}` pending D4 intakes; the zero stub is deleted | FR-16 (winter-flip now EXPRESSIBLE when armed; arming = owner box) |
 
 ### 3.4 Forward-input currency (top risks for a 2026–2050 BAU)
 
 | ID | Sev | Finding |
 |---|---|---|
-| **FR-16** | HIGH | **Load-shape evolution absent**: one flat compound scalar on a frozen `weather_year` 8760 (`runner.py:274-289`); peak-CAGR ≡ energy-CAGR by construction; ISO-NE/NYISO published winter-peak flips (2035/36, ~2039) are unexpressible in any model year. |
+| **FR-16** | HIGH | **Load-shape evolution absent**: one flat compound scalar on a frozen `weather_year` 8760 (`runner.py:274-289`); peak-CAGR ≡ energy-CAGR by construction; ISO-NE/NYISO published winter-peak flips (2035/36, ~2039) are unexpressible in any model year. **MECHANISM BUILT 2026-08-03 (FFR-SA, default-off)**: FF-G4 Option-B additive end-use layers (`electrification_path`, `data/datacenter.py::add_load_layers`) make the divergence expressible where a layer is sourced (NEISO heat_pump today); the finding stays open as a POSTURE gap until the owner arms it per ISO (§8-D2) and the remaining D4 intakes land (ev profiles; PJM/NYISO/CAISO/MISO anchors). |
 | **FR-17** | HIGH | **Single pinned weather year (2024) for demand *and* renewables CF** across all 25 years; the widened per-ISO weather pool exists but is ensemble-only. One year's wind drought/heat event is presented as the 2026–2050 climate. Compounded by FR-7/FR-8 (the same pin drives fleet age and event derates). |
 | **FR-18** | HIGH | **Confirmed-retirements registry horizon ends 2032; NYISO registry is empty (honest zero); vintage 2026-07-05 (25 days stale)** — and the PJM Eddystone §202(c) order expires **2026-08-22** (~3 weeks), flipping a supersession. 2033–2050 exits ride the economic screen alone — i.e., on FR-4's legacy rule today. |
 | **FR-19** | HIGH | **Net-CONE anchors stale and frozen**: PJM last vintage 2027/28 (242.52 $/MW-day) vs the published 2028/29 clearing at 325.69 (+34 %), held flat 23 years; NYISO/MISO frozen at 2025-26 for 25 years. FF-G3's escalation machinery is inert at default. Direct driver of over-retirement/under-entry in the largest capacity market. |
