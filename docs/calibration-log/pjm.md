@@ -2427,4 +2427,90 @@ caiso-155 `diagnostics_plant_set` charter.
 `PREREG-pjm146-rggi-allowance-2026-08-02.md`;
 `results/calibration/_pjm146_rggi_ab.json`.
 
-Next shorthand: pjm-147.
+---
+
+## pjm-147 (2026-08-03) — measured power-only CHP heat rates: `U → K`, **PROMOTED**
+
+**New keeper `2026-08-03-pjm-147b-chp-heat`** (owner instruction in-session).
+Arms `2026-08-03-pjm-147a-control-zerodelta` / `-147b-chp-heat`; single delta
+`measured_chp_heat_rates=true`; years 2023/2024/2025 in one bundle per arm.
+Charter: matrix-triage §2.2 (rank 2). Rule 25 — PJM entered as `U` and was
+judged on PJM's own artifact; MISO/CAISO/NYISO `K` and NEISO `O` transferred
+nothing.
+
+**Two prerequisites, both real.** The 7 `TestDerive` failures were ONE stale
+harness signature (`plant_table()` grew `basis_hr` in the caiso-147 seam fix,
+call site never updated) — repaired, plus the missing case that a hand-factored
+shipped rate whose *seam* rate matches eGRID's credited rate must flag `ok`; 15
+passed. And PJM's artifact had never been derived: 65 (plant,class) rows, 21
+applied, CC_CHP 5/14 plants = 74.0 % of class capacity but **82.5 % of the
+class's own metered CAMPD energy**; CEMS 11/12 within 1 %, median 1.00000.
+
+**Keeper note 13 CLOSED** ("PJM CC_CHP runs +42 %", carried from pjm-135):
+
+| year | CC_CHP model → | actual | \|C1 error\| control → arm |
+|---|---|---|---|
+| 2023 | 9.062 → 8.606 | 6.115 | 2.947 → **2.491** |
+| 2024 | 8.710 → 8.071 | 7.283 | 1.427 → **0.788** |
+| 2025 | 7.806 → 6.835 | 6.445 | 1.361 → **0.390** |
+
+Improving every year, **never crossing under** — the pre-registered neiso-70
+overshoot kill (K5) does not fire. CALIBRATED 9/9, C1 all 16/16 · free 12/12,
+zero fails, zero caveats. **Zero fitted parameters**; DOF 18 → 19 with
+`n_residual` UNCHANGED at 6; the off-registry ×1.8 / ×1.15 hand factor RETIRED
+on covered plants (rules 21/24).
+
+**The pre-registration closed pjm-146's own named gap.** E1d declared ex ante
+that no C1-gated class may move > 1.5 TWh; largest non-CC_CHP move was
+CC_REGULAR **+0.366** TWh. pjm-146 licensed a C3a move but registered no C1
+magnitude gate, which is exactly why its CC_REGULAR regression could not be
+adjudicated on its prereg alone.
+
+**K2 FAILED, and this promotion is what fixes it.** The control does not
+reproduce the outgoing keeper (943/1031/1245 MW; +$0.057/+$0.044/+$0.077).
+Cause: caiso-158's CT hour-grain meter screen moved PJM's
+`campd_ct_heat_rates` artifact on 63 of 71 applied plants / 19,887 MW
+(11.4749 → 11.5556, +0.70 %), and PJM arms `measured_ct_heat_rates`.
+**A framing this session got wrong and withdrew:** an earlier commit called it
+an unchartered CAISO-lane change violating the matrix's "own charter" warning —
+false. caiso-158 executed `PREREG-caiso156`, pre-registered PJM's own +0.0693
+delta (reproduced here to 4 dp independently), and **declared the PJM scope cut
+on the record** (its §5: PJM not launched for want of swap on a 15 GB box).
+**So the control arm IS caiso-158's follow-up item 2**, now discharged with
+12 GB of swap and the `--years`/`--reuse-solved` chain: CT_PEAKER
+−0.924/−0.657/−0.899 TWh, dispatch-live and **score-neutral** (control
+CALIBRATED 9/9, scorecard identical to the outgoing keeper) — the same shape
+caiso-158 measured in CAISO/NEISO/NYISO. One adverse diagnostic row, stated:
+D-2 CT_PEAKER **rises** 15.2/15.4/15.8 % → 16.3/16.4/16.5 %, GROUNDED ABOVE
+BUDGET PASS throughout.
+
+**Binding on successors.** (1) The caiso-147 seam defect is **measured SMALL**
+in PJM — 4 applied rows / 182.2 MW vs CAISO's 59 / 3,089 MW. (2) **CC_CHP is a
+PINNED class** (audit L4) excluded from the free-class score, so the lever
+cannot move PJM's headline and equally cannot be gate-chasing — rule-1
+`[R-STRUCT]` work only. (3) The **CT_CHP half is NOT identified** (32.6 %
+capacity / 25.1 % of its own metered energy), NOT scored (`FUELMIX_EXCLUDED`)
+and nearly INERT at the seam (+0.36 %) — not citable in either direction.
+
+**Not fully closed, and the successor is named.** 2023 still runs +2.49 TWh
+over; the offer is now measured, so the residual is a **quantity** question —
+the host-steam holdout (`chp_btm_pct` / `chp_grid_pmin_mw`) and the `chp_steam`
+floor level, nyiso-105's named lane. **DO NOT re-derive the heat rate against
+that residual** (rule 23 `[R-FROZEN-DERIVE]`). Separately chartered, not done
+here: the caiso-147 sub-6.0-MMBtu/MWh **meter-hour** screen on the shared CHP
+derive (PJM 1.55 % of loaded hours, +0.081 energy-weighted) — the CHP analogue
+of the CT screen caiso-158 shipped, cross-ISO, not a PJM session.
+
+**Process note.** Arm B's link 3 refused `--reuse-solved` and re-solved all
+three years because this session committed probe files under `scripts/` while
+the chain ran (the gate checks `src/`, `scripts/`, `data/`). Conservative
+failure — cost was time, not correctness; both arms record `git.dirty=false`
+with zero `src/`/`data/raw/` commits between them. **Do not commit to
+`scripts/` mid-chain.**
+
+`results/calibration/FINDING-pjm147-measured-chp-heat-rates-2026-08-03.md`;
+`PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md`;
+`results/calibration/_pjm147_chp_ab.json`, `_pjm147_k2_drift.json`,
+`_pjm147_flag_fidelity.json`.
+
+Next shorthand: pjm-148.

@@ -821,7 +821,48 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-07-31-pjm-143b-hy-level`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER, keeper unchanged**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**
+
+**pjm-147 (2026-08-03): the triage's rank-2 lever is BUILT, SOLVED, PROMOTED — and the
+session also closes caiso-158's deferred PJM re-gate.** New keeper
+`2026-08-03-pjm-147b-chp-heat` (owner instruction in-session); arms
+`2026-08-03-pjm-147a-control-zerodelta` / `-147b-chp-heat`. PJM's own artifact derived for
+the first time (rule 25 — MISO/CAISO/NYISO `K` and NEISO `O` transferred nothing): 65
+(plant,class) rows, 21 applied, CC_CHP 74.0 % of class capacity but **82.5 % of the class's
+own metered CAMPD energy**, CEMS 11/12 within 1 % at median 1.00000. **Zero fitted
+parameters** and an off-registry hand factor RETIRED (DOF 18 → 19, `n_residual` unchanged
+at 6). Keeper note 13 ("PJM CC_CHP runs +42 %", carried from pjm-135) is **CLOSED**:
+|C1 CC_CHP error| **2.947 → 2.491, 1.427 → 0.788, 1.361 → 0.390** TWh, improving in all
+three years and never crossing under — the neiso-70 overshoot kill (pre-registered as K5)
+does not fire. CALIBRATED 9/9, C1 all 16/16 · free 12/12, zero fails, zero caveats.
+**The pre-registration closed pjm-146's named gap**: E1d declared ex ante that no C1-gated
+class may move > 1.5 TWh (largest non-CC_CHP move CC_REGULAR +0.366, PASS).
+
+Three results binding on successors: (1) the caiso-147 seam defect is **measured SMALL** in
+PJM — 4 applied rows / 182.2 MW against CAISO's 59 / 3,089 MW, correcting the triage's
+expectation; (2) **CC_CHP is a PINNED class** (audit L4) excluded from the free-class score,
+so this lever cannot move PJM's headline and equally cannot be gate-chasing — rule-1 work
+only; (3) the **CT_CHP half is NOT identified** (32.6 % capacity / 25.1 % of its own metered
+energy), NOT scored (`CT_CHP ∈ FUELMIX_EXCLUDED`) and nearly INERT at the seam (+0.36 %) —
+do not cite it in either direction. **Not fully closed**: 2023 still runs +2.49 TWh over,
+but the offer is now measured, so the residual is a QUANTITY question — the host-steam
+holdout (`chp_btm_pct` / `chp_grid_pmin_mw`) and the `chp_steam` floor level, nyiso-105's
+named successor lane. **DO NOT re-derive the heat rate against that residual** (rule 23).
+
+**The control arm is caiso-158's follow-up item 2, now discharged.** caiso-158 §5 deferred
+PJM's CT-meter-screen A/B for want of swap on a 15 GB box; this session ran it with 12 GB of
+swap and the `--years`/`--reuse-solved` chain. Keeper → control: CT_PEAKER
+**−0.924/−0.657/−0.899 TWh**, lw price +$0.057/+$0.044/+$0.077 — **dispatch-live and
+score-neutral** (control is CALIBRATED 9/9 with a scorecard identical to the outgoing
+keeper), the same shape caiso-158 measured in CAISO/NEISO/NYISO. One adverse diagnostic
+row, stated: D-2 CT_PEAKER **rises** 15.2/15.4/15.8 % → 16.3/16.4/16.5 %, a GROUNDED
+ABOVE BUDGET PASS throughout so no determination moves. This is why pjm-147's K2
+strict-byte gate FAILED — a control on the corrected artifact cannot reproduce a keeper
+built on the pre-screen one — and promoting arm B is what resolves it.
+(`FINDING-pjm147-measured-chp-heat-rates-2026-08-03.md`;
+`PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md`;
+`results/calibration/_pjm147_chp_ab.json`, `_pjm147_k2_drift.json`,
+`_pjm147_flag_fidelity.json`.)
 
 **pjm-146 (2026-08-02): the RGGI allowance adder is BUILT, SOLVED and REGISTERED —
 all five pre-registered gates PASS — and LEFT PENDING, not armed.** Arms
