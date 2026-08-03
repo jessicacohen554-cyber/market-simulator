@@ -1545,9 +1545,37 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    displacement and ~63 % at the steepest 2025 summer ventile**. Evidence:
    `results/calibration/FINDING-miso105-da-virtual-attractor-2026-07-29.md`.
    Do not re-open on this data; the DO-NOT-REDO list is that finding's §10.
-4. **`measured_ct_heat_rates`** — audit-grade.
+4. ~~**`measured_ct_heat_rates`** — audit-grade.~~ **EXECUTED-with-keeper at
+   miso-117 (2026-08-03), cell `U` → `K`; the row is now CLOSED across all six
+   ISOs** (ERCOT `I` by wiring, the other five `K`) — do not re-test any cell.
+4b. ~~**The four plant-level `CC_CHP` heat-rate outliers**~~ (miso-116 §7 item 2:
+   plants 10745 / 55089 / 55259 / 55088, 52.7 % of matched capacity below
+   0.85× CAMPD gross). **CLOSED 2026-08-03 (miso-118): ADJUDICATED A BASIS
+   ARTIFACT, no charter, NO LP SPENT, keeper UNCHANGED.** All four are one
+   defect in the *comparator*, and the ratio decomposes exactly
+   (`ratio = A_cems × F_family × G_gross`, closing to 2×10⁻⁶ on all 12
+   plant-years): for three of the four the whole gap is **`G_gross` = CEMS
+   gross load ÷ eGRID `PLNGENAN` = 0.653–0.809**, and `G_gross < 1` is
+   **physically impossible** for a matched population — the steam turbines that
+   convert CT exhaust into power burn no fuel, are not Part-75 monitored and
+   contribute **no `grossLoad`**, while EIA-923 counts every MWh they make.
+   That is the `FINDING-miso98` §6.1 defect one layer down, and
+   `parasitic_load_factors.parquet` had already recorded it independently
+   (net/gross 1.195–1.366, every row `out_of_band`, fallen back to the class
+   default). On a basis-matched comparator from two independent meters (CAMPD
+   fuel ÷ EIA-923 net MWh) all four sit inside the pre-registered
+   `[0.90, 1.10]` band in 3 of 3 years. **DO NOT re-open on the CAMPD gross
+   comparator, and do not quote the 0.810 / 0.653 / 0.802 / 0.817 ratios as a
+   model result.** One new single-plant item is NAMED BUT NOT CHARTERED and
+   points the *other* way: 55088 Dearborn burns 13–17 % of its CEMS fuel in
+   zero-electric-output boilers, so its `CC_CHP`+`CT_CHP` tranches are charged
+   **+13…+20 % too dear**; it does not generalise (1 of 14 `ok`-flagged plants,
+   515 of 6,357 MW) and needs its own pre-registration plus a derive scope-gate
+   change (rule 23 `[R-FROZEN-DERIVE]`).
+   (`results/calibration/FINDING-miso118-cchp-plant-outliers-2026-08-03.md`;
+   probe `scripts/probes/_miso118_cchp_plant_outlier_basis.py`.)
 5. **`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
-   untested in MISO.
+   untested in MISO. **The live head of the MISO queue as of miso-118.**
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
