@@ -253,7 +253,9 @@ def _split_within_across(
     across = (
         0.0
         if len(lev) < 2
-        else float(np.percentile(lev.to_numpy(), 90) - np.percentile(lev.to_numpy(), 10))
+        else float(
+            np.percentile(lev.to_numpy(), 90) - np.percentile(lev.to_numpy(), 10)
+        )
     )
     spans = df.groupby("k")["p"].agg(
         lambda s: float(np.percentile(s, 90) - np.percentile(s, 10))
@@ -642,9 +644,7 @@ def _fmt(r: dict) -> str:
         f"{o:g}GW=" + ("  n/a" if v is None else f"${v:.0f}")
         for o, v in zip(BAND_OFFSETS_GW, r["ladder_median_usd"])
     )
-    return (
-        f"{r['intervals']:6d} iv, headroom {r['headroom_gw_median']:5.2f} GW | {lad}"
-    )
+    return f"{r['intervals']:6d} iv, headroom {r['headroom_gw_median']:5.2f} GW | {lad}"
 
 
 def main(argv: list[str] | None = None) -> int:
