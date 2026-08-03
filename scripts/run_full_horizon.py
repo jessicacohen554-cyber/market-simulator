@@ -52,8 +52,12 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
+from market_sim.config.capacity_market import (  # noqa: E402
+    resolve_capacity_market_clearing,
+)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
+from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 from market_sim.config.schedulable import (  # noqa: E402,F401  (re-export)
     MAX_UNAUTHORIZED_SOLVE_YEARS,
@@ -432,7 +436,26 @@ def solve_and_summarize(
         "iso": iso,
         "start_year": start_year,
         "end_year": end_year,
-        "capacity_market_clearing": bool(config.capacity_market_clearing),
+        # The RESOLVED per-ISO clearing gate, not the scalar flag. FFR-2E fixed
+        # exactly this in the sibling harness (run_capacity_hindcast) and gave
+        # the reason: forecast_verdict._curve_on reads this key, so a
+        # flag-sourced value "would have mis-classified every shipped-posture
+        # leg as curve-OFF". The same defect was live here — under
+        # --golden-posture the scalar stays False while
+        # capacity_market_clearing_by_iso carries {PJM,MISO,CAISO,NEISO,NYISO:
+        # True}, so every curve-ON T1-F leg recorded itself curve-OFF. Records
+        # what ACTUALLY ran (rule 24: the run record may not diverge from the
+        # solved config).
+        "capacity_market_clearing": bool(resolve_capacity_market_clearing(config, iso)),
+        "capacity_market_clearing_by_iso": (
+            dict(config.capacity_market_clearing_by_iso)
+            if config.capacity_market_clearing_by_iso
+            else None
+        ),
+        # Owner decision D-7(ii), signed 2026-08-02: a single-draw forecast
+        # deliverable carries the weather-conditional label WITH the artifact.
+        "weather_posture": WEATHER_POSTURE,
+        "weather_year": getattr(config, "weather_year", None),
         "cache_key": cache_key,
         "run_dir": str(run_dir) if run_dir else None,
         "error": error,

@@ -22,7 +22,7 @@
       "tol": 0.02
     }
   },
-  "description": "Golden-scenario band regression fixture (forecast-validation program W2-P5, plan §2.3; horizon extended 2032->2040 in P-3A, 2026-07-12, for a deeper checkpoint). Pins an ERCOT reference forecast, 2026-2040, on real HiGHS; check_bands() compares a fresh solve of the same REFERENCE_SCENARIO_KWARGS against the values below.",
+  "description": "Golden-scenario band regression fixture (forecast-validation program W2-P5, plan \u00a72.3; horizon extended 2032->2040 in P-3A, 2026-07-12, for a deeper checkpoint). Pins an ERCOT reference forecast, 2026-2040, on real HiGHS; check_bands() compares a fresh solve of the same REFERENCE_SCENARIO_KWARGS against the values below.",
   "golden": {
     "annual_co2_tons": {
       "2026": 151466476.4605254,
@@ -115,9 +115,9 @@
     ]
   },
   "provenance": {
-    "notes": "confirmed_exits_enabled default-ON as of PR #1434 (commit bc4a3f3, 2026-07-05) is baked into these golden values -- ScenarioConfig.confirmed_exits_enabled defaults True and REFERENCE_SCENARIO_KWARGS does not override it. Never auto-regenerate on a band exit (this is a finding, not a widening target -- see docs/handoffs/forecast-validation-program-2026-07.md §2.3 and CLAUDE.md rule 23's frozen-against-residuals spirit). To regenerate: run `python scripts/golden_forecast_bands.py seed --force --reason \"<explicit citation of the causal code change>\"` and commit the new tests/golden/ercot_2026_2040*.json alongside that change.",
+    "notes": "confirmed_exits_enabled default-ON as of PR #1434 (commit bc4a3f3, 2026-07-05) is baked into these golden values -- ScenarioConfig.confirmed_exits_enabled defaults True and REFERENCE_SCENARIO_KWARGS does not override it. Never auto-regenerate on a band exit (this is a finding, not a widening target -- see docs/handoffs/forecast-validation-program-2026-07.md \u00a72.3 and CLAUDE.md rule 23's frozen-against-residuals spirit). To regenerate: run `python scripts/golden_forecast_bands.py seed --force --reason \"<explicit citation of the causal code change>\"` and commit the new tests/golden/ercot_2026_2040*.json alongside that change.",
     "run_config_file": "ercot_2026_2040.run_config.json",
-    "seed_reason": "P-3A full-horizon findings 2026-07-12: extend reference golden horizon 2026-2032 -> 2026-2040 for a deeper mid-horizon (2040) checkpoint (plan §2 G1). Seeded --allow-dirty with the horizon edit uncommitted on top of origin/main f0f7c67; the end_year=2040 change ships in this same commit. No model behavior change.",
+    "seed_reason": "P-3A full-horizon findings 2026-07-12: extend reference golden horizon 2026-2032 -> 2026-2040 for a deeper mid-horizon (2040) checkpoint (plan \u00a72 G1). Seeded --allow-dirty with the horizon edit uncommitted on top of origin/main f0f7c67; the end_year=2040 change ships in this same commit. No model behavior change.",
     "seeded_by": "scripts/golden_forecast_bands.py seed",
     "seeded_git_commit_date": "2026-07-11T22:51:13-07:00",
     "seeded_git_sha": "f0f7c67d937c11e487255784e8298faf3c98c0c1",
@@ -131,5 +131,11 @@
     "start_year": 2026,
     "use_campd_bins": false
   },
-  "schema_version": 1
+  "schema_version": 1,
+  "weather_posture": {
+    "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
+    "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md \u00a74",
+    "label": "Unless produced by the weather ensemble, results are conditional on a single pinned weather year (stated in the run config).",
+    "posture": "single_draw"
+  }
 }

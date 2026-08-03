@@ -111,6 +111,25 @@ BANDS: dict[str, dict] = {
     },
 }
 
+# Owner decision D-7(ii), signed 2026-08-02 (docs/handoffs/
+# ffr-owner-sitting-2026-08-02.md Addendum C.1): posture (a), a SINGLE-DRAW
+# golden carrying the weather-conditional label. The peer review's position is
+# that a single-draw golden is defensible ONLY with the label, so the label
+# travels WITH the artifact rather than living only in prose. Sentence is
+# quoted verbatim from the standing disclosure list
+# (docs/forecast-readiness-peer-review-2026-07.md §4) and must stay verbatim —
+# the disclosure list is the single wording authority.
+WEATHER_POSTURE_LABEL = (
+    "Unless produced by the weather ensemble, results are conditional on a "
+    "single pinned weather year (stated in the run config)."
+)
+WEATHER_POSTURE = {
+    "posture": "single_draw",
+    "label": WEATHER_POSTURE_LABEL,
+    "decision": "owner D-7(ii), signed 2026-08-02 (ffr-owner-sitting-2026-08-02.md C.1)",
+    "disclosure_source": "docs/forecast-readiness-peer-review-2026-07.md §4",
+}
+
 REGEN_POLICY = (
     "Never auto-regenerate on a band exit (this is a finding, not a widening "
     "target -- see docs/handoffs/forecast-validation-program-2026-07.md §2.3 "
@@ -322,6 +341,7 @@ def cmd_seed(args: argparse.Namespace) -> int:
                 "against the values below."
             ),
             "scenario": REFERENCE_SCENARIO_KWARGS,
+            "weather_posture": WEATHER_POSTURE,
             "provenance": {
                 "seeded_git_sha": sha,
                 "seeded_git_sha_short": sha[:12],
