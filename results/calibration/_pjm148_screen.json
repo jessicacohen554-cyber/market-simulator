@@ -1,0 +1,68 @@
+{
+  "Q2_kappa": {
+    "threshold": 0.2,
+    "by_year": {
+      "2023": {
+        "kappa": 0.010132673693389178,
+        "model_cc_chp_twh": 8.606417759613038,
+        "actual_cc_chp_twh": 6.1148,
+        "mean_class_utilization": 0.72276957823617
+      },
+      "2024": {
+        "kappa": 0.04040461513437574,
+        "model_cc_chp_twh": 8.072660393951416,
+        "actual_cc_chp_twh": 7.283,
+        "mean_class_utilization": 0.6710306727209076
+      },
+      "2025": {
+        "kappa": 0.023599779104358183,
+        "model_cc_chp_twh": 6.83515873147583,
+        "actual_cc_chp_twh": 6.4446,
+        "mean_class_utilization": 0.6001695829050404
+      }
+    },
+    "verdict": "REFUTED \u2014 capacity/BTM lever cannot bind"
+  },
+  "Q3_btm_artifact": {
+    "rows": 35,
+    "degenerate_btm_share_eq_1": 35,
+    "campd_net_mwh_zero": 35,
+    "plant_group_census": {
+      "ST_CHP": 35
+    },
+    "cc_chp_rows": 0,
+    "cc_chp_capacity_coverage_frac": 0.0,
+    "verdict": "DEAD on BOTH limbs \u2014 100% degenerate AND zero CC_CHP coverage"
+  },
+  "Q1_floor": {
+    "committed_d2_current_keeper": {
+      "2023": 0.0,
+      "2024": 0.0,
+      "2025": 0.0
+    },
+    "floor_mw_mean": {
+      "2023": 436.42927471445205,
+      "2024": 456.1254696459589,
+      "2025": 419.22634870020545
+    },
+    "superseded_keeper_pjm143b_committed_d2_share": {
+      "2023": 0.1097,
+      "2024": 0.0794,
+      "2025": 0.1045
+    },
+    "superseded_keeper_forced_twh": {
+      "2023": 0.9938,
+      "2024": 0.6918,
+      "2025": 0.8147
+    },
+    "both_prereg_limbs": "INVALID \u2014 see finding \u00a74",
+    "verdict": "SURVIVES \u2014 the floor DOES bind (~0.99/0.69/0.81 TWh)"
+  },
+  "Q4_identification": {
+    "verdict": "NONE ADMISSIBLE",
+    "chp_pmin_cf": "rule 23 [R-FROZEN-DERIVE] \u2014 re-derives only on source-data change",
+    "btm_share": "Q3-dead \u2014 no measured replacement exists",
+    "residual": "any other level = a number sized by the 2.49 TWh gap = neiso-71 kill, rules 21/24"
+  },
+  "SESSION_VERDICT": "REFUSE \u2014 no LP spent, zero solves"
+}
