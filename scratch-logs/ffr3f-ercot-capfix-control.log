@@ -51,3 +51,12 @@
 2026-08-03 21:34:16,175 INFO market_sim.data.fleet: ERCOT 2025: 14 hydro plants in LP (552 MW, 0.39 TWh monthly budget)
 2026-08-03 21:34:16,427 INFO market_sim.data.outages: ERCOT 2025: correlated forced-outage derate (weather year 2025, era post) — no cold event below t0 in the weather year; winter event-share add-back only
 2026-08-03 21:37:10,647 INFO market_sim.model.lp.model: Matrix build: 0.624s, Solve: 164.742s (cold)
+2026-08-03 21:38:47,915 INFO market_sim.model.lp.model: Matrix build: 0.624s, Solve: 95.436s (warm)
+2026-08-03 21:38:54,758 INFO market_sim.runner: year 2025 phase timing: data_prep=4.1s solve_p0=164.7s markup=17.2s solve_p1=95.4s results_write=0.3s total=281.7s (results_write: legacy_p2=0.0s parquet=0.3s)
+2026-08-03 21:38:54,796 INFO market_sim.runner: year 2025: CHP must-run post-processing -- 45 bins, 64568 GWh, 36444 kt CO2 (asset-level, outside the LP)
+2026-08-03 21:38:55,145 INFO market_sim.runner: year 2025: ORDC scarcity adder for capacity economics -- mean $0.00/MWh, >$10 in 0 h, max $0
+2026-08-03 21:38:55,324 INFO market_sim.data.hydro: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+2026-08-03 21:38:55,326 INFO market_sim.runner: run_scenario_iso done: iso=ERCOT cache_key=5de5e8b320b525eb
+[full_forward] done. solved [2023, 2024, 2025], bridged []
+[full_forward] bundle: results/hindcast/ffr3f-ercot-capfix-control/ERCOT/5de5e8b320b525eb
+[full_forward] meta:   results/hindcast/ffr3f-ercot-capfix-control/meta.json

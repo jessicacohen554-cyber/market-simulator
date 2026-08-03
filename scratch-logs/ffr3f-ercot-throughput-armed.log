@@ -37,3 +37,28 @@
 2026-08-03 21:34:47,724 INFO market_sim.data.outages: ERCOT 2024: correlated forced-outage derate (weather year 2024, era post) — peak 3283 MW removed at hour 360
 2026-08-03 21:37:00,817 INFO market_sim.model.lp.model: Matrix build: 0.727s, Solve: 124.312s (cold)
 2026-08-03 21:37:47,459 INFO market_sim.model.lp.model: Matrix build: 0.727s, Solve: 44.915s (warm)
+2026-08-03 21:37:55,302 INFO market_sim.runner: year 2024 phase timing: data_prep=3.2s solve_p0=124.3s markup=17.0s solve_p1=44.9s results_write=0.6s total=190.0s (results_write: legacy_p2=0.0s parquet=0.6s)
+2026-08-03 21:37:55,343 INFO market_sim.runner: year 2024: CHP must-run post-processing -- 45 bins, 64568 GWh, 35728 kt CO2 (asset-level, outside the LP)
+2026-08-03 21:37:55,659 INFO market_sim.runner: year 2024: ORDC scarcity adder for capacity economics -- mean $0.00/MWh, >$10 in 0 h, max $0
+2026-08-03 21:37:55,677 INFO market_sim.runner: year 2024: lookahead stack re-price for 2025 capacity screens -- mean $61.50/MWh (raw duals+overlay mean $15.07); pro-forma scarcity >$200 in 108 h, >$1000 in 83 h, max $5000
+2026-08-03 21:37:55,821 INFO market_sim.data.hydro: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+2026-08-03 21:37:58,797 INFO market_sim.runner: year 2025: T1-FF Arm R given-weather rebind -- demand profile and renewable CF re-seeded from weather year 2025
+2026-08-03 21:37:58,849 INFO market_sim.model.capacity_evolution.retirements: screen revenue stack [coal]: net_rev=316.0 $/kW-yr, going_forward_bar=58.5 $/kW-yr, cap=13964 MW, n=40
+2026-08-03 21:37:58,849 INFO market_sim.model.capacity_evolution.retirements: screen revenue stack [gas_cc]: net_rev=349.8 $/kW-yr, going_forward_bar=30.0 $/kW-yr, cap=37241 MW, n=160
+2026-08-03 21:37:58,849 INFO market_sim.model.capacity_evolution.retirements: screen revenue stack [gas_ct]: net_rev=282.1 $/kW-yr, going_forward_bar=21.0 $/kW-yr, cap=11045 MW, n=356
+2026-08-03 21:37:58,849 INFO market_sim.model.capacity_evolution.retirements: screen revenue stack [gas_st]: net_rev=230.4 $/kW-yr, going_forward_bar=35.0 $/kW-yr, cap=11296 MW, n=50
+2026-08-03 21:37:58,849 INFO market_sim.model.capacity_evolution.retirements: screen revenue stack [nuclear]: net_rev=574.5 $/kW-yr, going_forward_bar=130.0 $/kW-yr, cap=4980 MW, n=4
+2026-08-03 21:37:58,983 INFO market_sim.data.hydro: ERCOT 2023 hydro budget pinned to monthly target total 390.0 GWh (was 349.6 GWh)
+2026-08-03 21:37:58,983 INFO market_sim.data.hydro: Loaded ERCOT 2023 hydro budget: 14 plants, 390.0 GWh annual, 552 MW nameplate
+2026-08-03 21:37:58,984 INFO market_sim.data.fleet: ERCOT 2025: 14 hydro plants in LP (552 MW, 0.39 TWh monthly budget)
+2026-08-03 21:37:59,257 INFO market_sim.data.outages: ERCOT 2025: correlated forced-outage derate (weather year 2025, era post) — no cold event below t0 in the weather year; winter event-share add-back only
+2026-08-03 21:40:44,574 INFO market_sim.model.lp.model: Matrix build: 0.588s, Solve: 155.816s (cold)
+2026-08-03 21:42:26,981 INFO market_sim.model.lp.model: Matrix build: 0.588s, Solve: 100.607s (warm)
+2026-08-03 21:42:34,502 INFO market_sim.runner: year 2025 phase timing: data_prep=4.1s solve_p0=155.8s markup=17.9s solve_p1=100.6s results_write=0.3s total=278.7s (results_write: legacy_p2=0.0s parquet=0.3s)
+2026-08-03 21:42:34,541 INFO market_sim.runner: year 2025: CHP must-run post-processing -- 45 bins, 64568 GWh, 36444 kt CO2 (asset-level, outside the LP)
+2026-08-03 21:42:34,787 INFO market_sim.runner: year 2025: ORDC scarcity adder for capacity economics -- mean $0.00/MWh, >$10 in 0 h, max $0
+2026-08-03 21:42:34,921 INFO market_sim.data.hydro: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+2026-08-03 21:42:34,922 INFO market_sim.runner: run_scenario_iso done: iso=ERCOT cache_key=2fe6094ebc317548
+[full_forward] done. solved [2023, 2024, 2025], bridged []
+[full_forward] bundle: results/hindcast/ffr3f-ercot-throughput-armed/ERCOT/2fe6094ebc317548
+[full_forward] meta:   results/hindcast/ffr3f-ercot-throughput-armed/meta.json
