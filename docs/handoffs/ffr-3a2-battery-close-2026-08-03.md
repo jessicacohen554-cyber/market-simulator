@@ -591,9 +591,61 @@ Two of the five (`correlated_forced_outage`, `entry_lookahead_reprice`) move dis
 **every** year; three (D-1/D-2) move capacity evolution in the forward years 2026–2027.
 **No leg folds as-is.**
 
-### 4.2 Measured results
+### 4.2 Measured results — ERCOT
 
-*(pending)*
+Re-run at vintage 2023, window 2023–2027 (5 solve-years), all damper/un-pin flags omitted
+so each inherits the shipped default. **Determination HOLD**; FC-4 **FAIL**.
+
+**Rule-22 compliance is verified by the scorer, not asserted:** FC-4 row 1
+*quarantine* → **PASS**, *"≥2026 refusal marker present and clean"*. The forward years
+2026–2027 are solved as pure forecast years and no bench/actual is read for them.
+
+| FC-4 row | verdict | |
+|---|---|---|
+| quarantine | **PASS** | ≥2026 refusal marker present and clean |
+| dispatch skill | **FAIL** | see below |
+| input-gap ratio | PASS | report-only |
+
+#### ⚠ The price convergence FF-2D reported is GONE
+
+| metric | FF-2D (`ercot-t1x`) | **now** | |
+|---|---|---|---|
+| price 2023 | 69.2 % | **68.7 %** | unchanged |
+| price 2024 | 42.7 % | **41.2 %** | unchanged |
+| **price 2025** | **8.6 % — PASS** | **22.5 % — FAIL** | **REGRESSED** |
+
+FF-2D's headline for this leg was *"ERCOT converges 69 % → 9 % by 2025"*, and that
+convergence — the cleanest positive dispatch-skill signal in the whole T1-X set — **no
+longer holds**. 2023 and 2024 are essentially unmoved, so this is specifically the
+terminal year losing its fit.
+
+**Not attributed.** The crossover's scored years are hindcast years on realized inputs, but
+its fleet is evolved across 2023 → 2025, so D-1's retirement recomposition (measured hard
+in PJM and MISO, §3.8/§3.9) is a plausible route to a changed 2025 fleet and therefore a
+changed 2025 price. It is only plausible: **no T1-X control arm was run**, and the leg also
+crosses the cache epoch. Recorded as an open regression (§9 blocker), not a claim.
+
+#### Family-volume rows are newly COVERED — not a regression
+
+FF-2D reported these **uncovered**: *"the emitter computes only aggregate `fuelmix` …
+neither of which maps to the rubric's fractional `gas_twh`/`coal_twh` family-volume bands —
+so FC-4 scores price + CO2 only; the family-volume rows are uncovered and reported here,
+never silently passed."* That L-VAL follow-up has since landed (`d12b4a8` folded the
+adapter into `score_crossover.py`), and this run bands **11 rows with 1 uncovered**:
+
+| newly banded | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| `gas_twh` | 19.6 % FAIL | 10.0 % FAIL | *uncovered — preliminary EIA-923 vintage* |
+| `coal_twh` | 35.0 % FAIL | 44.1 % FAIL | 37.2 % FAIL |
+
+These are **new coverage, not new failures** — the same distinction as FC-2 row 4 (§7.2).
+The one remaining `uncovered` row is declared with its reason (incomplete 2025 class
+actuals would bias the band) rather than silently passed, which is the correct behaviour.
+
+CO2 stays FAIL at 49.2 / 42.7 / 50.6 %, and FF-2D's caveat still applies: crossover CO2 is
+reconstructed on the keeper's full-plant basis via bench intensities, so it is directional.
+**Price remains the load-bearing input-gap measurement** — which is exactly why the 2025
+regression above matters.
 
 ---
 
