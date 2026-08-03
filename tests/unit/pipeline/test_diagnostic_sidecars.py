@@ -284,6 +284,37 @@ class TestReserveFamilySidecar(unittest.TestCase):
         )
         return res, design, T
 
+    def test_zones_column_names_each_family_region(self):
+        """``zones`` resolves the family's own mask — what makes it LOCATIONAL.
+
+        Without it the frame cannot distinguish a zone-scoped requirement from
+        a system-wide one: the two carry the same columns and the same row
+        shape, and the family NAME is only a convention while the zone mask is
+        the LP's actual scoping. A reader asking "did a LOCATIONAL family
+        bind?" needs the region, not a naming habit.
+        """
+        res, design, T = self._solved_two_family()
+        df = _reserve_family_frame(2025, "P1", res, design, ["Z0", "Z1"])
+        got = dict(
+            df.drop_duplicates(subset=["family"])[["family", "zones"]].values
+        )
+        self.assertEqual(got["system_10min"], "Z0|Z1")
+        self.assertEqual(got["z1_10min"], "Z1")
+
+    def test_zones_degrades_to_empty_rather_than_mislabelling(self):
+        """A missing or mismatched zone list empties the column, never guesses.
+
+        The mask is positional, so pairing it with the wrong-length zone list
+        would silently attach one family's region to another. Degrading beats
+        mislabelling: every other column stays usable.
+        """
+        res, design, T = self._solved_two_family()
+        for zones in (None, [], ["Z0", "Z1", "Z2"]):
+            df = _reserve_family_frame(2025, "P1", res, design, zones)
+            self.assertEqual(
+                set(df["zones"].unique()), {""}, f"zone list {zones!r}"
+            )
+
     def test_frame_names_each_family_and_closes_the_lp_identity(self):
         res, design, T = self._solved_two_family()
         df = _reserve_family_frame(2025, "P1", res, design)
