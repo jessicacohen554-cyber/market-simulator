@@ -229,14 +229,25 @@ screen (W1-B B3: ERCOT's 2026 fleet gains 477 MW — V H Braunig backlog)
 
 `data/clean` held **zero** datatypes. This is the same class of defect the CAISO keeper note
 records (*"data/clean is gitignored and dies with the container"*) — here it blocks the
-forecast path entirely. `scripts/regenerate_clean.py` was started and runs the ~50
-per-datatype curation scripts **sequentially**; it reached 6 datatypes in ~25 minutes and did
-not finish within the session. `confirmed-retirements` was curated out-of-band to unblock
-that specific error (5 partitions; NYISO is a legitimate **researched zero** and degrades to
-a warning once the registry exists).
+forecast path entirely. `confirmed-retirements` was curated out-of-band to unblock that
+specific error (5 partitions; NYISO is a legitimate **researched zero** and degrades to a
+warning once the registry exists), and `scripts/regenerate_clean.py` was run to completion.
 
-> **A successor must run `scripts/regenerate_clean.py` to completion — and confirm it — before
-> launching any leg.** Budget for it explicitly; it is a prerequisite, not a step.
+**MEASURED COST OF THE PREREQUISITE (budget for it explicitly — it is a prerequisite, not a
+step):**
+
+| | |
+|---|---|
+| wall time | **≈55 min** (first parquet → last), sequential, on a 4-core / 15 GB container |
+| datatypes | **50 regenerated, 0 failures** |
+| output | **446 parquet files, 1.6 GB** |
+| dominant cost | the CAMPD `emissions` extract — **≈26.5 M rows per year**, written year by year |
+
+The heavy EIA-930-scale curations (`lmp`, `load`, `generation`, `emissions`, `renewables`)
+account for most of the wall time; the ~40 remaining reference tables complete quickly.
+
+> **A successor must run `scripts/regenerate_clean.py` to completion — and confirm the
+> `regenerated N datatype(s)` line — before launching any leg.**
 
 **Do not mistake the two summaries those failed legs left behind for results.** Both legs
 wrote a `full_horizon_summary.json`. To the runner's credit these are **honest** — each
