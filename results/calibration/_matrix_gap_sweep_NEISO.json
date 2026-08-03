@@ -824,6 +824,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "entry_dampers",
           "cells": "UUUOUU",
           "cell": "U"
@@ -853,6 +858,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
         {
           "row": "reserve_margin_backstop",
           "cells": ".KKKKK",
@@ -910,7 +920,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "O"
         },
         {
@@ -950,7 +960,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         }
       ],
@@ -970,12 +980,12 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "O"
         },
         {
@@ -1085,7 +1095,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -1125,7 +1135,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "O"
         },
         {
@@ -1605,7 +1615,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "."
         },
         {
@@ -1750,7 +1760,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -1795,7 +1805,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "O"
         },
         {
@@ -2405,7 +2415,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "."
         },
         {
@@ -2573,6 +2583,11 @@
       "keeper_value": "hold_last",
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
         {
           "row": "net_cone_forward_vintages",
           "cells": "..OOOO",
@@ -2839,6 +2854,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "economic_retirement_screen",
           "cells": "OORRRR",
           "cell": "R"
@@ -2939,6 +2959,11 @@
           "cell": "I"
         },
         {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "."
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -2955,7 +2980,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "O"
         }
       ],

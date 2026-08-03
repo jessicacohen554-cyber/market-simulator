@@ -809,7 +809,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "K"
         }
       ],
@@ -894,7 +894,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "K"
         }
       ],
@@ -942,7 +942,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "K"
         }
       ],
@@ -1305,7 +1305,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         }
       ],
@@ -1343,7 +1343,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1735,7 +1735,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1775,7 +1775,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         }
       ],
@@ -1796,7 +1796,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         }
       ],
@@ -1811,7 +1811,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -1836,12 +1836,12 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -1986,7 +1986,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -2026,7 +2026,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -2506,7 +2506,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "K"
         },
         {
@@ -2671,7 +2671,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "K"
         },
         {
@@ -2716,7 +2716,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         },
         {
@@ -3326,7 +3326,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "K"
         },
         {
@@ -3816,6 +3816,11 @@
           "cell": "G"
         },
         {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "."
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -3847,7 +3852,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKOKO",
           "cell": "K"
         }
       ],

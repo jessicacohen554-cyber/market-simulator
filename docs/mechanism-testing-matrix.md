@@ -975,7 +975,52 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**
+
+**pjm-151 (2026-08-03): the PJM matrix column is CLOSED.** Ratchet
+`docs/codebase-site/data/mechanism-matrix-gaps.json` PJM **15 → 0**; sweep
+`scripts/mechanism_matrix_gap_sweep.py --iso PJM` returns `0 absent / 0 prose-only /
+0 armed-no-cell / 0 live-but-invisible`. All 16 fields closed as **literal sub-scalar
+registrations on 6 existing family rows** (`pjm_midcurve_belt`,
+`measured_offer_surface`, `da_virtual_bids`, `reserve_pergen`,
+`reserve_deliverability_scoping`, `seam_flow_envelopes`) — **zero new rows, zero
+mechanism verdicts**, one cell mint (`matrix_gap_census` PJM `O → K`, an audit status,
+the ercot-156 / caiso-161 precedent). Five of the sixteen shape the **published
+keeper** and had no cell anywhere: `pjm_offer_midcurve_segments`, `pjm_seam_flow_limit`,
+`pjm_seam_export_limit`, `pjm_seam_measured_ladder`, `pjm_reserve_online_rho`.
+
+* **Mechanical cause:** the seam family sat behind the glob `pjm_seam_* :7371+` in
+  `seam_flow_envelopes`' `def` — natural to a human, invisible to a checker that matches
+  literals — and the `:7371` anchor was itself stale (the fields live at `:9019+`). Same
+  defect caiso-161 §2 recorded. **Registrations must be full literals.**
+* **PJM's instance of the caiso-161 §5 "armed-looking but dead" shape:**
+  `pjm_reserve_online_rho = 1.0` is recorded in every PJM `run_config.json` and is
+  **unobservable on the keeper** — sole read `reserves/spec.py:2291`, inside
+  `if pjm_reserve_online_gated:` at `:2290`, which the keeper sets `False`. **NOT** a rule
+  26 `[R-DELETE]` candidate (a built, reachable, default-off mechanism at its own
+  documented default — not a retired mechanism's fitted residue), so **nothing is filed
+  for the owner from PJM's column.**
+* **Filed as an observation for a lane that may adjudicate, NOT adjudicated here:** the
+  keeper arms `pjm_reserve_supply_cap=True` alongside `pjm_reserve_pergen=True`, and
+  **both** of that flag's read paths are gated off by pergen —
+  `reserves/spec.py` returns the pergen `ReserveDesign` at `:2280` *before* the
+  `supply_cap` computation at `:2286` (its own docstring at `:2018`: "the zone-aggregate
+  scoping flags are ignored in this mode"), and
+  `pipeline/commitment.py::build_pjm_reserve_p1_prep` returns `(None, None)` at `:1374`
+  because `pjm_reserve_commitment_scoped` is `False`. Whether that is cosmetic or a rule
+  19 `[R-ONE-MECH]` question is not a census's call (rule 28(d)).
+* **No armable candidate was surfaced**, consistent with the owner-declared PJM frontier
+  (pjm-142). The census did not manufacture a successor.
+* **MISO's ratchet moves 11 → 8 in the same commit and this is NOT a MISO census.** The
+  PJM seam literals would have substring-shadowed three `miso_seam_*` fields into
+  "covered" (`pjm_seam_flow_limit` contains the matched stem `seam_flow_limit`), silently
+  dropping them from MISO's list with nobody having registered them. Those three are
+  written out as real literals on the same row so the coverage is true; **no MISO cell or
+  verdict is touched**, and MISO's remaining 8 are referenced by line number only so that
+  naming them cannot count as registering them. **MISO is now the last open column.**
+* **PJM's 18 shared-stem keeper-armed fields stay open** as a cross-ISO hygiene lane
+  (ERCOT 14, CAISO 5, MISO 17 of the same class) — one column's session does not touch
+  rows whose cells span all six.
 
 **pjm-148 (2026-08-03): the host-steam holdout lane is REFUSED with evidence — no LP
 solved, keeper untouched.** Prereg

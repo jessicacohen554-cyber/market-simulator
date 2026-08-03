@@ -2,9 +2,9 @@
   "iso": "PJM",
   "keeper": "2026-08-03-pjm-147b-chp-heat",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
+  "n_scenario_fields": 672,
   "n_matrix_rows": 181,
-  "n_bundles_scanned": 17,
+  "n_bundles_scanned": 15,
   "family": [
     {
       "field": "pjm_apsouth_interface_cut",
@@ -76,9 +76,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -86,10 +84,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -124,9 +130,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -134,10 +138,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "da_virtual_bids",
+          "cells": ".UKGGR",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -191,9 +203,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -228,9 +238,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -265,9 +273,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -302,9 +308,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -312,10 +316,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -323,10 +335,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -334,10 +354,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -348,10 +376,18 @@
         "CC_LIKE"
       ],
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "pjm136_control_A",
         "pjm136_lossurf_B",
@@ -367,9 +403,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -388,10 +422,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -437,9 +479,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -466,9 +506,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -476,10 +514,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -487,10 +533,24 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I",
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -498,10 +558,24 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I",
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -509,10 +583,24 @@
       "default": 1.0,
       "keeper_value": 1.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I",
+        "K"
+      ],
       "armed_in_bundles": [
         "pjm136_control_A",
         "pjm136_lossurf_B",
@@ -528,9 +616,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -541,6 +627,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
         {
           "row": "reserve_pergen",
           "cells": ".IKK..",
@@ -570,9 +661,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -580,10 +669,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -591,10 +688,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -605,6 +710,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
         {
           "row": "measured_ramp_capability",
           "cells": "IUKUIU",
@@ -629,9 +739,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -656,14 +764,46 @@
       ]
     },
     {
+      "field": "pjm_seam_envelope_by_neighbor",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
       "field": "pjm_seam_export_limit",
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "pjm136_control_A",
         "pjm136_lossurf_B",
@@ -679,9 +819,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -689,10 +827,23 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "pjm136_control_A",
         "pjm136_lossurf_B",
@@ -708,9 +859,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -718,10 +867,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -730,8 +887,18 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        },
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        },
         {
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
@@ -739,6 +906,7 @@
         }
       ],
       "cells": [
+        "K",
         "U"
       ],
       "armed_in_bundles": [
@@ -756,9 +924,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -771,7 +937,7 @@
       "owning_rows": [
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "I"
         }
       ],
@@ -793,9 +959,7 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     },
     {
@@ -829,39 +993,13 @@
         "pjm146_rggi_B",
         "pjm147_chp_B",
         "pjm147_control_A",
-        "pjm150_ctmeter_regate_A",
-        "pjm150_regate_y23",
-        "pjm150_regate_y24"
+        "pjm150_ctmeter_regate_A"
       ]
     }
   ],
-  "family_matrix_gaps_absent": [
-    "pjm_ct_measured_max_reprice",
-    "pjm_da_virtual_surface_path",
-    "pjm_offer_midcurve_level_segments",
-    "pjm_offer_midcurve_path",
-    "pjm_offer_midcurve_peak_segments",
-    "pjm_offer_midcurve_segments",
-    "pjm_offer_surface_within_season",
-    "pjm_reserve_commitment_scoped",
-    "pjm_reserve_online_gated",
-    "pjm_reserve_online_rho",
-    "pjm_reserve_pergen_size_split",
-    "pjm_reserve_pergen_sync",
-    "pjm_seam_export_limit",
-    "pjm_seam_flow_limit",
-    "pjm_seam_flow_percentile"
-  ],
-  "family_prose_only": [
-    "pjm_seam_measured_ladder"
-  ],
-  "armed_on_keeper_with_no_cell": [
-    "pjm_offer_midcurve_segments",
-    "pjm_reserve_online_rho",
-    "pjm_seam_export_limit",
-    "pjm_seam_flow_limit",
-    "pjm_seam_measured_ladder"
-  ],
+  "family_matrix_gaps_absent": [],
+  "family_prose_only": [],
+  "armed_on_keeper_with_no_cell": [],
   "shared_armed_on_keeper": [
     {
       "field": "capacity_market_clearing_by_iso",
@@ -1001,8 +1139,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         },
         {
           "row": "dam_availability_rebasis",
@@ -1047,8 +1185,14 @@
       "field": "coal_bit_passthrough_floor",
       "default": null,
       "keeper_value": 0.65,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1056,8 +1200,14 @@
       "field": "coal_bit_passthrough_sigmoid",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1085,8 +1235,14 @@
       "field": "coal_mustrun_online_pmin",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1149,8 +1305,14 @@
       "field": "coal_sub_passthrough_floor",
       "default": null,
       "keeper_value": 1.1,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1158,8 +1320,14 @@
       "field": "coal_sub_passthrough_sigmoid",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1167,8 +1335,14 @@
       "field": "coal_sync_srmc_tranche",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1200,8 +1374,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1215,8 +1389,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1230,8 +1404,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1241,8 +1415,14 @@
       "field": "ct_intermediate_cf_threshold",
       "default": 50.0,
       "keeper_value": 30.0,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1250,8 +1430,14 @@
       "field": "ct_intermediate_split",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1448,7 +1634,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "I"
         }
       ],
@@ -1468,13 +1654,13 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "I"
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         },
         {
           "row": "cc_committed_offer_margin",
@@ -1524,8 +1710,14 @@
       "field": "gas_st_drag_cap",
       "default": 0.34,
       "keeper_value": 0.39,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1533,8 +1725,14 @@
       "field": "gas_st_drag_intercept",
       "default": -0.1376,
       "keeper_value": -0.7263,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1542,8 +1740,14 @@
       "field": "gas_st_drag_slope_per_gw",
       "default": 0.00906,
       "keeper_value": 0.01029,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1640,7 +1844,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "I"
         },
         {
@@ -1680,8 +1884,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         },
         {
           "row": "energy_reserve_coopt",
@@ -2160,7 +2364,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "U"
         },
         {
@@ -2345,7 +2549,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "I"
         },
         {
@@ -2390,8 +2594,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         },
         {
           "row": "energy_reserve_coopt",
@@ -3000,7 +3204,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "U"
         },
         {
@@ -3324,8 +3528,14 @@
       "field": "offer_curve_smoothing_mid",
       "default": null,
       "keeper_value": 0.35,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3402,12 +3612,12 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "U"
         }
       ],
@@ -3516,6 +3726,11 @@
           "cell": "R"
         },
         {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "K"
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -3528,8 +3743,14 @@
       "field": "tranche_startup_conditional_runs",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3576,8 +3797,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         }
       ],
       "excluded": true,
@@ -3606,284 +3827,37 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
-          "cell": "O"
+          "cells": "KKKOKO",
+          "cell": "K"
         }
       ],
       "excluded": false,
       "exclusion_reason": null
     }
   ],
-  "shared_matrix_gaps_absent": [
+  "shared_matrix_gaps_absent": [],
+  "shared_prose_only": [
+    "cc_outage_derate_from_top",
     "coal_bit_passthrough_floor",
     "coal_bit_passthrough_sigmoid",
     "coal_mustrun_online_pmin",
     "coal_sub_passthrough_floor",
     "coal_sub_passthrough_sigmoid",
     "coal_sync_srmc_tranche",
+    "ct_drag_cap",
+    "ct_drag_intercept",
+    "ct_drag_slope_per_gw",
     "ct_intermediate_cf_threshold",
     "ct_intermediate_split",
     "gas_st_drag_cap",
     "gas_st_drag_intercept",
     "gas_st_drag_slope_per_gw",
     "offer_curve_smoothing_mid",
-    "tranche_startup_conditional_runs"
-  ],
-  "shared_prose_only": [
-    "cc_outage_derate_from_top",
-    "ct_drag_cap",
-    "ct_drag_intercept",
-    "ct_drag_slope_per_gw",
+    "tranche_startup_conditional_runs",
     "wefor_residual"
   ],
   "shared_excluded": [
     "weather_year"
   ],
-  "live_but_invisible": [
-    {
-      "field": "coal_sub_passthrough_sigmoid",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "coal_sub_passthrough_floor",
-      "default": null,
-      "keeper_value": 1.1,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 1.1,
-        "pjm136_lossurf_B": 1.1,
-        "pjm137_control_A": 1.1,
-        "pjm137_ctheatrate_B": 1.1,
-        "pjm140_control_A": 1.1,
-        "pjm140_rampenv_B": 1.1
-      }
-    },
-    {
-      "field": "coal_bit_passthrough_sigmoid",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "coal_bit_passthrough_floor",
-      "default": null,
-      "keeper_value": 0.65,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 0.65,
-        "pjm136_lossurf_B": 0.65,
-        "pjm137_control_A": 0.65,
-        "pjm137_ctheatrate_B": 0.65,
-        "pjm140_control_A": 0.65,
-        "pjm140_rampenv_B": 0.65
-      }
-    },
-    {
-      "field": "coal_mustrun_online_pmin",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "ct_intermediate_split",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "ct_intermediate_cf_threshold",
-      "default": 50.0,
-      "keeper_value": 30.0,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 30.0,
-        "pjm136_lossurf_B": 30.0,
-        "pjm137_control_A": 30.0,
-        "pjm137_ctheatrate_B": 30.0,
-        "pjm140_control_A": 30.0,
-        "pjm140_rampenv_B": 30.0
-      }
-    },
-    {
-      "field": "tranche_startup_conditional_runs",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "coal_sync_srmc_tranche",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "gas_st_drag_slope_per_gw",
-      "default": 0.00906,
-      "keeper_value": 0.01029,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 0.01029,
-        "pjm136_lossurf_B": 0.01029,
-        "pjm137_control_A": 0.01029,
-        "pjm137_ctheatrate_B": 0.01029,
-        "pjm140_control_A": 0.01029,
-        "pjm140_rampenv_B": 0.01029
-      }
-    },
-    {
-      "field": "gas_st_drag_intercept",
-      "default": -0.1376,
-      "keeper_value": -0.7263,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": -0.7263,
-        "pjm136_lossurf_B": -0.7263,
-        "pjm137_control_A": -0.7263,
-        "pjm137_ctheatrate_B": -0.7263,
-        "pjm140_control_A": -0.7263,
-        "pjm140_rampenv_B": -0.7263
-      }
-    },
-    {
-      "field": "gas_st_drag_cap",
-      "default": 0.34,
-      "keeper_value": 0.39,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 0.39,
-        "pjm136_lossurf_B": 0.39,
-        "pjm137_control_A": 0.39,
-        "pjm137_ctheatrate_B": 0.39,
-        "pjm140_control_A": 0.39,
-        "pjm140_rampenv_B": 0.39
-      }
-    },
-    {
-      "field": "pjm_offer_midcurve_segments",
-      "default": null,
-      "keeper_value": [
-        "LONG_RUN",
-        "CC_LIKE"
-      ],
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ],
-        "pjm136_lossurf_B": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ],
-        "pjm137_control_A": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ],
-        "pjm137_ctheatrate_B": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ],
-        "pjm140_control_A": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ],
-        "pjm140_rampenv_B": [
-          "LONG_RUN",
-          "CC_LIKE"
-        ]
-      }
-    },
-    {
-      "field": "offer_curve_smoothing_mid",
-      "default": null,
-      "keeper_value": 0.35,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": 0.35,
-        "pjm136_lossurf_B": 0.35,
-        "pjm137_control_A": 0.35,
-        "pjm137_ctheatrate_B": 0.35,
-        "pjm140_control_A": 0.35,
-        "pjm140_rampenv_B": 0.35
-      }
-    },
-    {
-      "field": "pjm_seam_flow_limit",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    },
-    {
-      "field": "pjm_seam_export_limit",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 17,
-      "bundles": {
-        "pjm136_control_A": true,
-        "pjm136_lossurf_B": true,
-        "pjm137_control_A": true,
-        "pjm137_ctheatrate_B": true,
-        "pjm140_control_A": true,
-        "pjm140_rampenv_B": true
-      }
-    }
-  ]
+  "live_but_invisible": []
 }
