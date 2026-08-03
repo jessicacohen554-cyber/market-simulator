@@ -54,13 +54,19 @@ at the HOUR, not only the plant aggregate", committed 2026-08-03 00:05:32), whic
 is the only commit that has ever changed
 `data/raw/_processed-legacy/campd_ct_heat_rates_NYISO.csv`.
 
-**A caution against the tempting shortcut.** The ancestry test that would have
-answered this from git alone (`git merge-base --is-ancestor f6238a5 <sha>`)
-returns "not an ancestor" for *every* other session's HEAD in a fresh
-container — not because the fix is absent but because those branch commits are
-**not fetched locally**, so the test silently degrades to "unknown". It is a
-gate that cannot observe what it claims. The dispatch comparison above can, and
-that is why it is the evidence quoted.
+**A caution against the tempting shortcut, stated precisely.** The test that
+looks like it would answer this from git alone —
+`git merge-base --is-ancestor f6238a5 <sha>` — reports "not an ancestor" for
+*every* other session's HEAD in a fresh container, because those branch commits
+are **not fetched locally**. **Git itself does distinguish the two cases**: a
+missing object exits **128** with `fatal: Not a valid object name`, while a
+genuine negative exits **1**. What collapses them is the *caller* — the ordinary
+`cmd && echo yes || echo no` idiom (and a `2>/dev/null`) maps every non-zero exit
+to "no", turning "I cannot see that commit" into "the fix is absent". So the
+shortcut is not unsound in git; it is unsound as usually invoked, and that is the
+same failure mode as reading a pipeline's exit status instead of the process's.
+The dispatch comparison above needs no such care, and that is why it is the
+evidence quoted.
 
 ## §3 — a standing caution that did NOT fire, and was measured rather than assumed
 
@@ -220,9 +226,11 @@ more) and were not adjudicated here.
   pair) are frozen under rule 23 and confirmed twice on measurement.
 * **Do not re-run this composition.** It is now solved twice, bit-identically,
   at two HEADs.
-* **Do not infer a bundle's artifact vintage from commit ordering** — in a fresh
-  container the git ancestry test degrades silently to "unknown" (§2). Compare
-  the dispatch.
+* **Do not infer a bundle's artifact vintage from commit ordering.** In a fresh
+  container `git merge-base --is-ancestor` cannot see other branches' commits; it
+  says so (exit 128, `fatal: Not a valid object name`), but the usual
+  `&&`/`||` idiom discards that and reports a plain negative (§2). Compare the
+  dispatch instead — and if you do use the ancestry test, check the exit code.
 * **SENY is open** (`nyiso_ordc_measured_step_span`, `U`), with its measurement
   already done and recorded in
   `results/calibration/nyiso117_seny_rcpf_curve_screen.json`. It needs a
