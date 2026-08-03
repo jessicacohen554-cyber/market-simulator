@@ -512,6 +512,66 @@ attribution, not a new one, and it changes nothing about the owner's decision** 
 against it, and the depth residual is the chartered G-31 lane's (Addendum F.1), not
 this session's to touch.
 
+### 3.9 Refreshed FC-3 — MISO: **every retirement band now PASSES**
+
+Determination **unchanged: FC-3 FAIL** — but *why* it fails has changed completely, and
+this is the cleanest T1-H result in the set.
+
+| metric | actual | OLD (`miso-2021-2025-curve-ff2c`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 15.227 | 10.814 **FAIL** | **13.734 PASS** | **FLIPPED** |
+| `retire.unit_recall_gt300` | — | **FAIL** | **PASS** | **FLIPPED** |
+| `retire.false_retire` | — | **FAIL** | **PASS** | **FLIPPED** |
+
+Per-fuel: **coal 1.387 → 12.95 GW**, **gas_st 8.643 → 0.0**, nuclear 0.768 and biomass
+0.016 unmoved (announced). Same D-1 signature as PJM, and the same one FFR-2B measured in
+MISO **against a paired control** (*"gas_st econ exits 12.920 → 0.0 GW and coal 1.497 →
+11.932, recall 2/17 → 13/17, false-retire 12.920 → 0.997"*) — the fuel inversion the
+legacy rule caused is gone.
+
+**MISO's FC-3 now fails on the ADDITIONS half ALONE:**
+
+```
+band FAIL: add.by_tech.{wind, solar, gas_cc, gas_ct, storage}
+           add.shares.{wind, solar, storage}
+```
+
+**Every failing band is an additions band, and additions are exactly what §3.5 shows
+D-2's commissioning lag censors inside this scoring window.** So MISO's refreshed FC-3
+reads: *the retirement half is fully passing under D-1, and the only thing still holding
+FC-3 at FAIL is the half this session independently showed to be mechanically suppressed
+by D-2.*
+
+**The two signed decisions pull in opposite directions on FC-3**, and MISO is where that
+is cleanest. Neither is tuned or unarmed here (Addendum D.1); the observation is routed
+to the owner, and the additions-censoring question is an instrument/design decision
+(§3.5), not a parameter.
+
+### 3.10 T1-H summary — all four curve legs refreshed
+
+| leg | det | FC-3 | FC-7 | retirement bands | additions | what moved it |
+|---|---|---|---|---|---|---|
+| **MISO** | HOLD | FAIL | FAIL* | **3/3 PASS** | all FAIL | D-1 (attributed, FFR-2B-corroborated); additions censored by D-2 |
+| **PJM** | HOLD | FAIL | FAIL* | recall **FAIL→PASS**, level worse | FAIL | D-1 (attributed); reproduces FFR-3C's membership/calendar split |
+| **NYISO** | HOLD | FAIL | FAIL* | **identical** (1.036 GW) | wind→**PASS** | **D-1 PROVABLY INERT** (zero economic exits) |
+| **NEISO** | HOLD | FAIL | FAIL* | recall PASS→FAIL | FAIL | refreshed, **NOT attributed** (3 candidates, no control) |
+
+\* FC-7 is FAIL on all four for the same instrument reason (§3.4) and differentiates
+nothing.
+
+**Every FC-3 verdict in `ff-t1-gate-2026-07.md` §4.1 is now REFRESHED** — post-epoch
+**and** shipped-posture, clearing both stacked invalidations that table records. **No
+determination flipped: all four were FC-3 FAIL and all four remain FC-3 FAIL.** What
+changed is the *composition* of the failure — and in MISO's case it is now confined
+entirely to the censored half.
+
+**The FFR-3A confound is gone** (§3.1). But note what limits attribution in its place:
+with `correlated_forced_outage` structurally inert in all four ISOs (§3.2b), the un-pin's
+attributable surface is only `entry_lookahead_reprice`, and **no T1-H control arm was
+run** — so each ISO's attribution rests on structural inertness (NYISO), external
+corroboration from a controlled experiment (PJM, MISO via FFR-2B), or is **withheld**
+(NEISO).
+
 ---
 
 ## 4. T1-X crossover fold
