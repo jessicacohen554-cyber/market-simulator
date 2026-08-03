@@ -339,9 +339,87 @@ carries an explicit, enumerated capacity-hindcast carve-out:
 the freeze file at launch and prints an explicit governance line. **No marker is spent,
 no out-of-training year is scored, and the freeze is not implicated.**
 
-### 3.4 Measured results
+### 3.4 FC-7 fails on EVERY T1-H leg by construction — the unfixed analogue of blocker 7
 
-*(pending)*
+`run_capacity_hindcast.py` writes **`run_config.yaml`** at the bundle root. FC-7 row 1
+requires **`run_config.json`**. So every T1-H bundle this runner produces FAILs FC-7
+*"run_config.json absent"* for reasons having nothing to do with the run — exactly the
+defect FFR-3D fixed in `run_full_horizon.py` (blocker 7, `34c2f25`) and **did not fix in
+the hindcast runner**.
+
+Consequences, both worth stating:
+
+* **FC-7 does not differentiate anything at T1-H.** It is FAIL on every leg, so it
+  carries no information about leg quality and must not be read as one.
+* **It is deliberately NOT fixed here.** Authoring the artifact *after* seeing the score
+  is what rubric §4 forbids, and it is precisely why FFR-3A left the T1-F case open for a
+  successor rather than patching it mid-battery. Logged as blocker §8.5 for an
+  instrument lane to fix **before** the next T1-H battery, the same sequencing that made
+  FFR-3D's T1-F fix admissible.
+
+### 3.5 ⚠ D-2's commissioning lag CENSORS the T1-H additions bands — they no longer measure what they used to
+
+This is a methodological finding, and it changes how the additions half of FC-3 must be
+read across the D-2 boundary.
+
+T1-H solves `{2021, 2023, 2024, 2025}` and **scores `{2023, 2024, 2025}`**. D-2's
+`entry_commissioning_lag` commissions entry at `decision_year + ENTRY_COD_LAG_YEARS (2)`.
+So:
+
+| decision year | COD | inside the scored window? |
+|---|---|---|
+| 2021 | 2023 | yes |
+| 2023 | 2025 | yes |
+| **2024** | **2026** | **NO** |
+| **2025** | **2027** | **NO** |
+
+**Half the solved decision years now commission outside the scored window by
+construction.** In-window additions are therefore mechanically suppressed relative to any
+pre-D-2 bundle, independently of whether the model's entry *decisions* got better or
+worse. Measured in NEISO: `storage` additions 0.72 → **0.0 GW** and `gas_ct` 0.5 → **0.0
+GW`, both flipping their bands adverse, while the model still decides entry — it just
+decides it into 2026/2027.
+
+**Consequence:** an additions band that moves across the D-2 boundary is **not**
+attributable to entry skill without correcting for this censoring, and a
+pre-D-2-vs-post-D-2 additions comparison is not like-for-like. FFR-3C recorded the same
+mechanism as a caveat on *cumulative* T1-F reads (§3(d)); here it bites the T1-H
+**scoring window** directly. Reported, not corrected — correcting it means either
+scoring COD-shifted additions or lengthening the window, both of which are design
+decisions, not this session's to take.
+
+### 3.6 Refreshed FC-3 — NEISO
+
+Determination **unchanged: FC-3 FAIL** (as at FF-2D). Band-level movement, old committed
+bundle (`neiso-2021-2025-curve`, pre-epoch, both mechanisms pinned OFF) vs this session's
+(post-epoch, shipped posture):
+
+| metric | actual | OLD model / band | NEW model / band | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 0.951 | 9.325 FAIL | **8.221** FAIL | closer, still 8.6× actual |
+| `retire.unit_recall_gt300` | — | **PASS** | **FAIL** | **adverse** |
+| `retire.false_retire` | — | FAIL | FAIL | unchanged |
+| `add.by_tech.wind` | 0.225 | 4.0 FAIL | **1.0** FAIL | much closer |
+| `add.by_tech.solar` | 1.947 | 8.0 FAIL | **1.028** FAIL | much closer (now under) |
+| `add.by_tech.gas_ct` | 0.163 | 0.5 FAIL | **0.0** FAIL | **adverse — censored (§3.5)** |
+| `add.by_tech.storage` | 0.642 | 0.72 **PASS** | **0.0 FAIL** | **adverse — censored (§3.5)** |
+
+**Attribution — un-pin, D-1/D-2, or neither?** Stated per the scope item, and stated
+honestly:
+
+* **NOT the `correlated_forced_outage` half of the un-pin.** Pre-registered in §3.2b and
+  it holds: NEISO has no entry in `CORRELATED_OUTAGE_CURVE`, so that flag is structurally
+  inert here. **Ruled out, not merely unlikely.**
+* **The additions movement is consistent with D-2**, and its storage/gas_ct legs are at
+  least partly the §3.5 censoring artifact rather than a skill change.
+* **The retirement movement is consistent with D-1**, whose whole purpose is to change
+  which units the screen retires.
+* **But NONE of it is ATTRIBUTED**, because this session ran **no T1-H control arm** and
+  the legs also cross the **cache epoch** — and FFR-2B measured that the epoch alone
+  moved PJM's retirement total 18.157 → 29.373 GW with *no* rule or posture change. With
+  three candidate causes and one measurement, the honest verdict is **refreshed, not
+  attributed**. A paired T1-H control at explicit pre-decision defaults is the single
+  measurement that would separate them.
 
 ---
 
