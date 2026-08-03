@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-29-nyiso-98-nucavail",
+  "run_id": "2026-08-02-nyiso-caiso156-meter-control",
   "iso": "NYISO",
-  "label": "nyiso 98 nucavail",
+  "label": "nyiso caiso156 meter control",
   "target_years": [
     2023,
     2024,
@@ -16,11 +16,9 @@
   "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [
-    "C8 2024 ST_GAS: grounded above budget \u2014 30.5% forced (3.3805 of 11.0936 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 0.957 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -55,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -78,8 +76,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 8,
+    "scored": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 1
