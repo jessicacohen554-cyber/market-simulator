@@ -341,11 +341,11 @@ def build_config(
     capacity_market_clearing: bool = False,
     fixed_net_cone: bool = False,
     correlated_forced_outage: bool = False,
-    retirement_rule: str = "legacy",
+    retirement_rule: "str | None" = None,
     entry_screen_diagnostics: bool = False,
-    entry_vre_capacity_revenue: bool = False,
-    entry_rate_limits: bool = False,
-    entry_commissioning_lag: bool = False,
+    entry_vre_capacity_revenue: "bool | None" = None,
+    entry_rate_limits: "bool | None" = None,
+    entry_commissioning_lag: "bool | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -452,11 +452,6 @@ def build_config(
         # (staged_oversupply_thinning was DELETED at the FF-1A R-NEW commit,
         # rule 26 -- the execution-lag pipeline carries the deactivation queue.)
         limited_foresight_dispatch=limited_foresight_dispatch,
-        # FF-1A R-NEW probe arm (default "legacy" = byte-identical): the
-        # decision/execution retirement pipeline, ff-retirement-rule-redesign-
-        # 2026-07.md §3.6 (owner D1 = Option B). Never the harness default
-        # pending the FF-2C flip decision.
-        retirement_rule=retirement_rule,
         # CR-3.1 frozen-penetration byte-compat arm: pin the VRE adequacy
         # credits back to the pre-curve flat constants for the BEFORE leg of
         # the before/after diagnostic. Default (False) keeps the model
@@ -481,25 +476,40 @@ def build_config(
         # (the G-31 question). Measured frozen curves, zero fitted parameters
         # -- see scenarios.py:correlated_forced_outage.
         correlated_forced_outage=correlated_forced_outage,
-        # FF-2A entry-stack dampers (GATED, default-off; audit FR-5 / owner
-        # decision D-2). History: FFR-1D deleted the three CLI flags on
-        # 2026-07-31 (rule 26) because FF-3D had dropped their passthrough while
-        # keeping the flags, so a leg launched with --entry-rate-limits recorded
-        # `entry_rate_limits: true` in its meta on a solve that never armed it —
-        # an inert flag that falsifies the run record. FFR-1D's own instruction
-        # for the successor was "a session that needs them wires the passthrough
-        # for real, one line each; it does not resurrect a flag that lies".
-        # FFR-2B (2026-08-02) is that session: the fields are consumed at
-        # runner.py:733,746 and new_entry.py:781,1104,1118, so each flag below
-        # now genuinely arms its mechanism and the meta it writes is true.
-        # Defaults stay False — no ScenarioConfig default moves here (rule 24;
-        # the flip is the owner's, executed at FFR-3A step 0).
-        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
-        entry_rate_limits=entry_rate_limits,
-        entry_commissioning_lag=entry_commissioning_lag,
         # RC-0C decision-neutral per-candidate entry-screen decomposition
         # (byte-identical fleet outcome; lands in evolution_<year>.json).
         entry_screen_diagnostics=entry_screen_diagnostics,
+        # D-1 retirement rule + FF-2A entry-stack dampers (audit FR-4 / FR-5,
+        # owner decisions D-1 / D-2 / D-2'). ``None`` means INHERIT THE SHIPPED
+        # ScenarioConfig DEFAULT — the field is simply not passed.
+        #
+        # History: FFR-1D deleted the three entry CLI flags on 2026-07-31
+        # (rule 26) because FF-3D had dropped their passthrough while keeping
+        # the flags, so a leg launched with --entry-rate-limits recorded
+        # `entry_rate_limits: true` in its meta on a solve that never armed it —
+        # an inert flag that falsifies the run record. FFR-2B re-wired the
+        # passthrough for real, mirroring the then-shipped defaults as literals
+        # and noting "the flip is the owner's, executed at FFR-3A step 0".
+        #
+        # This IS that step. The owner signed D-1 (retirement_rule ->
+        # "pipeline") and D-2 (both dampers -> True) on 2026-08-02; a mirrored
+        # literal here would have silently overridden both flips and made the
+        # signed decisions inert in exactly the T1-H / T1-X legs launched
+        # through this harness — the same class of defect as the flag that
+        # lied, one layer up. Reading the live default instead of mirroring it
+        # is the FFR-2E instrument pattern already used for the capacity
+        # posture above, and keeps ScenarioConfig the single source of truth
+        # for a default (rule 24).
+        **{
+            k: v
+            for k, v in {
+                "retirement_rule": retirement_rule,
+                "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
+                "entry_rate_limits": entry_rate_limits,
+                "entry_commissioning_lag": entry_commissioning_lag,
+            }.items()
+            if v is not None
+        },
     )
 
 
@@ -888,14 +898,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--retirement-rule",
         choices=["legacy", "pipeline"],
-        default="legacy",
+        default=None,
         help=(
-            "FF-1A PROBE arm: economic-retirement decision rule. 'legacy' "
-            "(default) = per-fuel consecutive-loss counters, byte-identical. "
-            "'pipeline' = the R-NEW decision/execution split (uniform bar, "
-            "joint adequacy-capped entry, soft latch, measured per-fuel "
-            "execution lags) -- ff-retirement-rule-redesign-2026-07.md §3.6. "
-            "Never the harness default pending the FF-2C flip decision."
+            "Economic-retirement decision rule (audit FR-4 / owner D-1). OMIT "
+            "to inherit the SHIPPED ScenarioConfig default, which owner "
+            "decision D-1 flipped to 'pipeline' on 2026-08-02 (the R-NEW "
+            "decision/execution split: uniform bar, joint adequacy-capped "
+            "entry, soft latch, measured per-fuel execution lags) -- "
+            "ff-retirement-rule-redesign-2026-07.md §3.6. Pass 'legacy' to "
+            "force the retired per-fuel counters as a CONTROL arm."
         ),
     )
     parser.add_argument(
@@ -967,35 +978,43 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--entry-vre-capacity-revenue",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
             "FF-2A item 1 PROBE arm (audit FR-5 / owner D-2): wind+solar entry "
             "candidates earn capacity_price_per_firm_mw_yr x the published "
             "ELCC credit at the model's own installed nameplate -- the SAME "
             "price seam thermal entry uses. Structural no-op in energy-only "
-            "ISOs (capacity price 0). Never the harness default."
+            "ISOs (capacity price 0). OMIT to inherit the shipped default -- owner "
+            "decision D-2' is signed HOLD, so that is OFF."
         ),
     )
     parser.add_argument(
         "--entry-rate-limits",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
             "FF-2A item 2 PROBE arm (audit FR-5 / BLK-10): cap per-tech annual "
             "economic entry AND the reserve-margin backstop at "
             "ENTRY_GROWTH_LIMIT_MULTIPLE (2.0) x the prior-max annual build, "
             "seeded from the measured EIA-860 record at the run's vintage "
-            "(ReEDS relative-growth constraint). Never the harness default."
+            "(ReEDS relative-growth constraint). OMIT to inherit the shipped "
+            "default, ARMED by owner decision D-2 (2026-08-02); "
+            "--no-entry-rate-limits forces the undamped control."
         ),
     )
     parser.add_argument(
         "--entry-commissioning-lag",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
             "FF-2A item 3 PROBE arm (audit FR-5 / FR-13): economic entry "
             "decides in year Y and commissions at Y+ENTRY_COD_LAG_YEARS (2, "
             "the LBNL 'Queued Up' IA->COD median); pending decided-not-online "
-            "MW net against later years' caps. The structural anti-cobweb. "
-            "Never the harness default."
+            "MW net against later years' caps. The structural anti-cobweb. OMIT to "
+            "inherit the shipped default, ARMED by owner decision D-2 "
+            "(2026-08-02); --no-entry-commissioning-lag forces the un-lagged "
+            "control."
         ),
     )
     args = parser.parse_args(argv)

@@ -125,10 +125,10 @@ def reference_config(
     cmc: bool,
     golden_posture: bool = False,
     transmission_expansion: bool = False,
-    retirement_rule: str = "legacy",
-    entry_vre_capacity_revenue: bool = False,
-    entry_rate_limits: bool = False,
-    entry_commissioning_lag: bool = False,
+    retirement_rule: "str | None" = None,
+    entry_vre_capacity_revenue: "bool | None" = None,
+    entry_rate_limits: "bool | None" = None,
+    entry_commissioning_lag: "bool | None" = None,
     electrification_path: str = "off",
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
@@ -156,6 +156,23 @@ def reference_config(
         from scripts.ff_readiness_battery import GOLDEN_CMC_BY_ISO
 
         cmc_by_iso = dict(GOLDEN_CMC_BY_ISO)
+    # D-1 / D-2 arms (audit FR-4 / FR-5). ``None`` means INHERIT THE SHIPPED
+    # ScenarioConfig DEFAULT — the field is simply not passed. FFR-2B wrote
+    # these as literal "legacy"/False mirrors of the then-shipped defaults, with
+    # the note "the flips are the owner's, executed at FFR-3A step 0". This IS
+    # that step: the owner signed D-1 (retirement_rule -> "pipeline") and D-2
+    # (both entry dampers -> True) on 2026-08-02, and a mirrored literal here
+    # would have silently overridden both flips, making the signed decisions
+    # inert in exactly the T1-F legs launched through this runner. Reading the
+    # live default instead of mirroring it is the FFR-2E instrument pattern
+    # (ffr-2e-shipped-capacity-posture-2026-08-02.md §3(3)) and keeps
+    # ScenarioConfig the single source of truth for a default (rule 24).
+    arms = {
+        "retirement_rule": retirement_rule,
+        "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
+        "entry_rate_limits": entry_rate_limits,
+        "entry_commissioning_lag": entry_commissioning_lag,
+    }
     return ScenarioConfig(
         iso=iso.upper(),
         mode="forecast",
@@ -164,19 +181,16 @@ def reference_config(
         capacity_market_clearing=cmc,
         capacity_market_clearing_by_iso=cmc_by_iso,
         transmission_expansion_enabled=transmission_expansion,
-        # FFR-2B probe arms for owner decisions D-1 / D-2 (audit FR-4 / FR-5).
-        # All four default to the shipped ScenarioConfig values, so a call that
-        # passes none of them is byte-identical to the pre-FFR-2B reference
-        # config. No default moves here (rule 24) — the flips are the owner's,
-        # executed at FFR-3A step 0.
-        retirement_rule=retirement_rule,
-        entry_vre_capacity_revenue=entry_vre_capacity_revenue,
-        entry_rate_limits=entry_rate_limits,
-        entry_commissioning_lag=entry_commissioning_lag,
         # FF-G4 probe arm (audit FR-16, owner box §8-D2 pending): the
         # electrification end-use layers stay at the shipped default "off"
         # unless a T0/T1 probe arms them explicitly — no default moves here.
+        # NOTE (FFR-3A): this is the same mirrored-literal shape the four arms
+        # below just moved OFF of. It is left alone deliberately — §8-D2 is
+        # UNSIGNED, so there is no flip for it to override yet. If the owner
+        # ever signs an electrification default, this line must become a
+        # None-sentinel too or it will silently override that signature.
         electrification_path=electrification_path,
+        **{k: v for k, v in arms.items() if v is not None},
     )
 
 
@@ -512,43 +526,52 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--retirement-rule",
         choices=["legacy", "pipeline"],
-        default="legacy",
+        default=None,
         help=(
-            "FF-1A PROBE arm (audit FR-4 / owner D-1): economic-retirement "
-            "decision rule. 'legacy' (default, shipped) = per-fuel "
-            "consecutive-loss counters. 'pipeline' = the R-NEW "
-            "decision/execution split (uniform bar, joint adequacy-capped "
-            "entry, soft latch, measured per-fuel execution lags). Never the "
-            "runner default pending the owner flip."
+            "Economic-retirement decision rule (audit FR-4 / owner D-1). "
+            "OMIT to inherit the SHIPPED ScenarioConfig default, which owner "
+            "decision D-1 flipped to 'pipeline' on 2026-08-02 (the R-NEW "
+            "decision/execution split: uniform bar, joint adequacy-capped "
+            "entry, soft latch, measured per-fuel execution lags). Pass "
+            "'legacy' to force the retired per-fuel consecutive-loss counters "
+            "as a CONTROL arm."
         ),
     )
     ap.add_argument(
         "--entry-vre-capacity-revenue",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "FF-2A item 1 PROBE arm (audit FR-5 / owner D-2): VRE entry "
+            "FF-2A item 1 PROBE arm (audit FR-5 / owner D-2'): VRE entry "
             "candidates earn the capacity price x published ELCC credit on the "
-            "same seam thermal entry uses. No-op in energy-only ISOs."
+            "same seam thermal entry uses. No-op in energy-only ISOs. OMIT to "
+            "inherit the shipped default — D-2' is signed HOLD, so that is OFF."
         ),
     )
     ap.add_argument(
         "--entry-rate-limits",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "FF-2A item 2 PROBE arm (audit FR-5 / BLK-10): per-tech annual "
+            "FF-2A item 2 arm (audit FR-5 / BLK-10): per-tech annual "
             "economic entry AND the reserve-margin backstop capped at "
             "ENTRY_GROWTH_LIMIT_MULTIPLE (2.0) x prior-max annual build "
-            "(ReEDS relative-growth constraint, EIA-860-seeded)."
+            "(ReEDS relative-growth constraint, EIA-860-seeded). OMIT to "
+            "inherit the shipped default, ARMED by owner decision D-2 "
+            "(2026-08-02); --no-entry-rate-limits forces the undamped control."
         ),
     )
     ap.add_argument(
         "--entry-commissioning-lag",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "FF-2A item 3 PROBE arm (audit FR-5 / FR-13): entry decides in "
+            "FF-2A item 3 arm (audit FR-5 / FR-13): entry decides in "
             "year Y, commissions at Y+ENTRY_COD_LAG_YEARS (2, LBNL IA->COD "
             "median); pending MW net against later caps. The structural "
-            "anti-cobweb."
+            "anti-cobweb. OMIT to inherit the shipped default, ARMED by owner "
+            "decision D-2 (2026-08-02); --no-entry-commissioning-lag forces "
+            "the un-lagged control."
         ),
     )
     ap.add_argument(

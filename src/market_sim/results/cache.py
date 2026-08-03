@@ -46,6 +46,76 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-03 — FFR Wave-2 constants + the D-1/D-2 owner default flips.**
+Taken at FFR-3A step 0 (`docs/handoffs/ffr-t1-regate-2026-08-02.md`), clearing
+the epoch debt the owner sitting recorded as outstanding
+(`ffr-owner-sitting-2026-08-02.md` Addendum B.6, "FFR-3A must clear this debt
+before its consolidated battery — it is now a concrete item, not a
+hypothetical"). Three causes, all of which move forecast output under
+**unchanged cache keys**:
+
+* **FFR-2C net-CONE re-anchor** (`ffr-2c-net-cone-currency-2026-08-02.md`,
+  commits `5dcba9c` PJM / `aaa6a25` NYISO) — a **constants-level** change that
+  landed AFTER the single 2026-08-02 bump. Two forward net-CONE vintages are
+  re-anchored from their published instruments: **PJM 2027/28 → 2028/29
+  (88.520 → 118.877 $/kW-yr, +34.3 %)** and **NYISO 2025-26 → 2026-27
+  (+14.1 %)**. No ``ScenarioConfig`` field changed, so no key moved.
+  **Behavioral** in every forecast year the new vintage governs (PJM: solve
+  year 2028+), through all three capacity screens, which price on the one
+  ``capacity_price_per_firm_mw_yr`` seam. PJM additionally gains a published
+  price floor that removes the curve's zero-cross from 2028.
+* **Owner decision D-1** (this session) — ``retirement_rule`` default
+  ``"legacy"`` → ``"pipeline"``. **Behavioral in every forecast year** (a
+  different retirement decision rule).
+* **Owner decision D-2** (this session) — ``entry_rate_limits`` and
+  ``entry_commissioning_lag`` defaults ``False`` → ``True``. **Behavioral in
+  every forecast year** (rate-limited entry, +2-year COD lag). The same commit
+  fixed a latent ``TypeError`` in the growth-ladder seed that the arming made
+  reachable (``runner.py``), so no pre-flip cache of an armed run can exist.
+
+**Why D-1/D-2 are same-key invalidations and NOT key advances — correcting a
+premise in the signed packet.** The sitting's D-1 section states the field is
+"cache-key-registered at non-default, so the flip moves forecast cache keys by
+construction — no silent reuse". **That is not how the registration behaves.**
+``cache_key()`` drops a ``_CACHE_KEY_OPTIONAL_FIELDS`` member when it equals
+``getattr(ScenarioConfig(), name)`` — the **LIVE** default, recomputed on every
+call, not a frozen sentinel. Flipping such a field's default therefore drops the
+NEW value from the hash and the key does **not** move: measured this session,
+``cache_key(ScenarioConfig())`` is ``603c2498bf71d21d`` both before and after
+all three flips. A pre-flip legacy-rule bundle and a post-flip pipeline-rule
+config are the same key. The inverse also holds and is useful: an EXPLICIT
+``retirement_rule="legacy"`` is now non-default and hashes distinctly
+(``0e49083ebacb2612``), so control arms in the FFR-3A battery are safely
+separable. **Structural note for any future default flip of an optional-
+registered field: it will silently recur, and the ledger is the only thing that
+can see it.**
+
+*Invalidated:* every cached bundle produced in **forecast mode**
+(``mode="forecast"``, including ``hindcast=True`` and T1-X crossover legs) at a
+commit before this epoch — in particular every FC-3 citation in
+``ff-t1-gate-2026-07.md`` §4.1, which FFR-2E already flagged as pre-epoch legs.
+Purge exactly as the 2026-08-02 entry below directs.
+
+.. warning::
+
+   **Purge only what git does not track.** The ``find ... -delete`` loop below
+   is safe for the directories it names, but ``results/`` also holds COMMITTED
+   evidence bundles from earlier lanes (e.g. ``results/ff2b-after/``,
+   ``results/ffr1c/`` — registered ``evolution_<year>.json`` and
+   ``full_horizon_summary.json`` artifacts cited by their handoffs). Extending
+   the loop to those directories deletes tracked files: FFR-3A did exactly that
+   and had to ``git checkout -- results/`` to restore 410 of them. Check
+   ``git status --short`` after any purge, and restore anything showing ``D``.
+   The actual invalidated artifacts are the gitignored per-ISO cache roots and
+   ``year_*.parquet`` files, which is all the loop below needs to reach.
+
+*NOT invalidated:* **backcast** caches and every keeper bundle. The two
+re-anchored vintages are forecast-only forward capacity parameters; ``retirement
+_rule`` and both entry gates drive forecast-mode capacity evolution, which does
+not run in a backcast. The six current keepers' cache keys are unmoved (the
+default key is byte-stable at ``603c2498bf71d21d``, and no keeper sets any of
+the three fields).
+
 **Epoch 2026-08-02 — FFR Wave-1 forecast fixes (FR-1, FR-2, FR-7, FR-8).**
 Taken once at the Wave-1 close (`docs/forecast-readiness-prompt-pack-2026-07.md`
 §W1-X; `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`). Four merged fixes
