@@ -107,7 +107,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -665,7 +665,7 @@
       "keeper_value": null,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -676,7 +676,7 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -746,7 +746,7 @@
       "keeper_value": 0,
       "keeper_arms_it": false,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
@@ -765,7 +765,7 @@
       ],
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -796,7 +796,7 @@
       "keeper_value": 0.95,
       "keeper_arms_it": true,
       "mentioned_in_matrix": false,
-      "coverage": "absent",
+      "coverage": "own_row",
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
@@ -1593,7 +1593,6 @@
     "caiso_charge_allocation_schedule",
     "caiso_citygate_flow_date",
     "caiso_citygate_spot_level",
-    "caiso_commitment_posture",
     "caiso_corridor_atc_forward",
     "caiso_dsw_daytime_clean",
     "caiso_dsw_daytime_evening_trim",
@@ -1605,11 +1604,6 @@
     "caiso_import_solar_shape",
     "caiso_intertie_reference_price",
     "caiso_lcr_commitment_credit",
-    "caiso_offer_surface_binned_path",
-    "caiso_offer_surface_conditional",
-    "caiso_offer_surface_min_bin",
-    "caiso_offer_surface_netload_pcts",
-    "caiso_offer_surface_price_cap_frac",
     "caiso_per_hub_intertie",
     "caiso_per_year_import_caps",
     "caiso_perhub_firm_base",
@@ -1638,10 +1632,7 @@
     "caiso_dsw_overnight_clean",
     "caiso_dsw_surplus_clean",
     "caiso_gas_floor_frac",
-    "caiso_offer_surface_conditional",
     "caiso_offer_surface_measured",
-    "caiso_offer_surface_netload_pcts",
-    "caiso_offer_surface_price_cap_frac",
     "caiso_per_hub_intertie",
     "caiso_perhub_firm_base",
     "caiso_ra_bridge_decommit",
@@ -2123,6 +2114,11 @@
           "cell": "."
         },
         {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
           "cell": "U"
@@ -2334,7 +2330,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -2703,6 +2699,11 @@
           "cell": "K"
         },
         {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "K"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "K"
@@ -3019,7 +3020,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "OOOOKO",
+          "cells": "KOOOKO",
           "cell": "O"
         },
         {
@@ -4174,6 +4175,11 @@
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
           "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -4198,8 +4204,14 @@
       "field": "weather_year",
       "default": 2024,
       "keeper_value": 2023,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KOOOKO",
+          "cell": "O"
+        }
+      ],
       "excluded": true,
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     },
@@ -4232,20 +4244,6 @@
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "weather_year",
-      "default": 2024,
-      "keeper_value": 2023,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": 2023,
-        "caiso126_control_A": 2023,
-        "caiso146_control_A": 2023,
-        "caiso146_ctheatrate_B": 2023,
-        "caiso147_chp_B": 2023,
-        "caiso147_control_A": 2023
-      }
-    },
     {
       "field": "caiso_gas_floor_frac",
       "default": 1.0,
