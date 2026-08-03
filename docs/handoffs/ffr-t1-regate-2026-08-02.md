@@ -338,7 +338,48 @@ control, since the sitting predicted its I12 flip by name.
 grounded mechanism does not get reverted because a metric moved; the correct output is this
 finding, with its evidence, for the owner.
 
-### 6.5 Nothing was registered, and nothing should be
+### 6.5 T1-F gate scorecard (`forecast_verdict --tier t1f`, rubric v1.0)
+
+Scored from **committed artifacts only, no LP re-solve**. Artifacts:
+`results/ffr3a/scorecard/<leg>.{json,txt}`.
+
+| leg | ISO | **determination** | FC-1 | FC-2 | FC-3 | FC-5 | FC-6 | FC-7 | FC-8 |
+|---|---|---|---|---|---|---|---|---|---|
+| NEISO | NEISO | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | PASS |
+| NYISO | NYISO | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | PASS |
+| ERCOT | ERCOT | **HOLD** | FAIL | **FAIL** | n/a | SKIP | SKIP | FAIL | PASS |
+| CAISO | CAISO | **HOLD** | FAIL | **FAIL** | n/a | SKIP | SKIP | FAIL | PASS |
+| PJM | PJM | **HOLD** | FAIL | CAVEAT | n/a | SKIP | SKIP | FAIL | CAVEAT |
+| *ERCOT **control*** | *ERCOT* | ***HOLD*** | *FAIL* | ***CAVEAT*** | *n/a* | *SKIP* | *SKIP* | *FAIL* | *PASS* |
+
+**Every leg is HOLD. Nothing is promotable, and nothing is promoted.**
+
+**FC-7 fails on EVERY leg for the same instrument reason, so it does not
+differentiate anything.** `run_full_horizon.py` writes `config.yaml` into the cache dir but
+never a `run_config.json`, which is the artifact FC-7 requires — so a T1-F bundle produced by
+this runner **cannot** pass FC-7 by construction. This was left as found: authoring that file
+now, *after* seeing the score, is precisely the "tuned into a band" move the rubric forbids
+(§4). It is logged as open blocker §8.7 for a successor to fix in the instrument, not in a
+bundle.
+
+**FC-3 is `n/a` on every leg** because no T1-H hindcast was run (§9) — the four curve legs
+D-1 re-opens are still unscored.
+
+**⚠ The rubric-level attribution — ERCOT FC-2 moves CAVEAT → FAIL.** This is stronger evidence
+than the raw invariants in §6.4, because it is the scorer's own category verdict changing
+under the paired control:
+
+| FC-2 row | TREATMENT (D-1+D-2) | CONTROL (pre-decision) |
+|---|---|---|
+| row1 reserve-margin band | **FAIL** — I12 FAIL, 4 years out, to −1.5 % | **CAVEAT** — I12 WARN, 2030 only (12.4 %) |
+| row6 sustained-VOLL *(report)* | **FAIL** — `hours_ge_500` peaks **1,137 h/yr** > 800 | *row does not fire* |
+| row4 backstop split | SKIPPED (instrument gap, both arms) | SKIPPED (same) |
+
+The signed decisions do not merely widen an excursion — they introduce a **new** failure mode
+the control never exhibits: sustained scarcity pricing at 1,137 hours/year ≥ $500/MWh, the
+price signature of a structurally short system.
+
+### 6.6 Nothing was registered, and nothing should be
 
 No forecast run was registered; `frontend/data/forecast/` is untouched, `ff-verdicts.json`
 and `program-status.json` are unchanged, and the FF-3E scorecard was not regenerated —
@@ -402,6 +443,14 @@ tested this session, so there is nothing to adjudicate.
    clean gate.
 6. **20 + 4 pre-existing test failures on `origin/main`** (§4.1), untouched and unexplained
    by this session.
+7. **`run_full_horizon.py` never writes `run_config.json`**, so **FC-7 fails on every T1-F
+   leg by construction** (§6.5) and no bundle this runner produces can be promoted on
+   provenance. Deliberately not fixed here — authoring the artifact after seeing the score is
+   the move rubric §4 forbids. It is an instrument fix for a successor.
+8. **FC-2 row4 is SKIPPED on every leg** — the backstop channel is armed but the trajectory
+   carries no `reserve_backstop` split (needs `builds_thermal_backstop_mw` / `builds_by_source`
+   from `run_full_horizon`). So the BLK-10 backstop-sizing evidence D-2 was supposed to
+   re-open **cannot be scored at all** from these bundles.
 
 ---
 
