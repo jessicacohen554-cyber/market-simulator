@@ -1474,6 +1474,27 @@ C3a + C3c, 2/3. The diurnal-spread compression DEFECT the old target named is
 still real (miso-89's measurement stands) but it no longer breaches any
 criterion; the outage-grain data ask below remains its honest continuation.)*
 
+*(Queue stamp 2026-08-03, miso-119/120: **`gas_offer_margin_zonal_anchor` is
+CLOSED at MISO, cell `U` → `I`** — DISPATCH-LIVE (912.5 MW at the max
+class-hour, every year) but PRICE-INERT (max zonal |ΔLMP| 0.027/0.030/0.050
+$/MWh vs the pre-registered 0.10 K3 bar), adjudicated by
+`PREREG-miso119-zonal-anchor-screen-2026-08-03.md` §5's own rule. K1/K2/K4/K5
+PASS, no kill fires, keeper UNCHANGED, and the arm is **not** a keeper
+candidate — nothing regressed and nothing was corrected at any scored grain.
+MISO is inert for a **different** reason than PJM: the carried "coupled
+topology" prior is FALSIFIED (zones decouple >$1/MWh in 21.3/24.4/50.1 % of
+hours); the measured reason is the mean-zero applier convention + a small
+surviving spread (max |anchor_z − ISO| 0.1799 vs PJM's 1.483) + repositioned
+tranches that do not set price. **DO-NOT-REDO:** `max |Δoffer|` is an UPPER
+bound only and must never again be read as a price-side lower bound — Phase 0's
+11.54 $/MWh over-bounded the realized effect by two orders of magnitude because
+the large deltas sit on rarely-marginal peaking tranches (capw p50 0.384 / p95
+0.977 were the predictive statistics). Re-open needs a zone-GRAIN scored
+criterion, a zone-decoupling mechanism under its own charter, or an owner
+override — not a re-run and not an anchor sweep (rule 23).
+`FINDING-miso119-zonal-anchor-2026-08-03.md`. **Item 5 `dual_fuel_switching`
+is now the live queue head.**)*
+
 0. ~~**Night-level min-gen FLOOR on the P0-detected committed run.**~~
    **RETIRED 2026-08-02 (miso-113 phase 2, `miso_coal_night_floor`, cell I) —
    and with it THE WHOLE REGULATED-PRB SELF-COMMITMENT FAMILY. All three
