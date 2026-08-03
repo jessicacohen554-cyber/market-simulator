@@ -3049,6 +3049,59 @@ charter with a new measured identification** before a solve:
     First task for any successor charter: reconcile the crossing quantity
     (published DA cleared demand net of scheduled imports and cleared virtual
     supply). Evidence: `FINDING-neiso76-dabid-phase0-2026-08-02.md` §D.
+    **PREREQUISITE DISCHARGED AT neiso-79 (2026-08-03, NO LP, no solve, no
+    cell verdict; item 5b STILL NOT OPENED — no owner green-light).** The
+    crossing quantity is reconciled and the reconciliation **removes the depth
+    parameter rather than re-assuming it**: imports enter ISO-NE's DA market as
+    PRICED supply offers, so the probe crosses the **combined** book (internal
+    offers + import offers + INC virtuals) against the published cleared-demand
+    line and import depth clears **endogenously**.
+    * **The DA CLEARED external series does not exist.** Verified against the
+      full ISO Express Pricing / Grid / Load & Demand trees and Web Services
+      v1.1: every interchange report is real-time/actual; the only DA external
+      data ISO-NE publishes is the SUBMITTED import-offer/export-bid book. New
+      gitignored corpus `data/raw/NEISO-AS/da-import-export/` (1,090 day-files,
+      13 empty postings, 0 unpublished) + committed fetcher. **EIA-930
+      interchange was NOT substituted** — actual net interchange is a different
+      quantity at a different grain (rule 14 grain-misalignment trap).
+    * **THE NUMBER:** crossed correctly, the real book's hour-of-day range is
+      **$7.71 / $10.63 / $16.78 = 29.7 / 36.7 / 37.7 %** of the measured DA
+      range — against §D's **65.6 / 72.9 / 54.1 %** at metered demand and the
+      keeper's own **27.1 / 23.5 / 29.9 %**. 864 days in all three books,
+      20,733 hours (300 / 288 / 276).
+    * **The CONTROL makes this a statement about the QUANTITY, not the
+      sample:** neiso-76's own §D read recomputed on the SAME 864 days gives
+      **68.6 / 79.8 / 59.3 %** — at or ABOVE its full-corpus anchors in every
+      year. §D was crossing the book **~4–5 GW too deep** (measured DA import
+      depth ~4–4.4 GW plus 1.3–1.9 GW of INC), in a flatter part of the stack.
+      neiso-76's own 3 GW sensitivity was the right instinct; the correct
+      endogenous depth confirms its **pessimistic end**.
+    * **Kill rules (pre-registered before the numbers existed):** **KQ1 does
+      NOT fire** (0/3 at-or-below keeper) — the traversal lane is **NOT
+      refuted**; **KQ2 FIRES** (3/3 below 40 %) — **DIRECTION-ONLY; the
+      magnitude does not survive**; **KQ3 fires on 2025** ($11.12 vs a $10.00
+      bar; 2023 $7.86 / 2024 $8.33 clear it) so the three-year headline share
+      is **withheld** per the prereg; **KQ4 does NOT fire** — removing the
+      import book recovers **49.6 / 61.0 / 49.4 %**, so the import
+      reconciliation carries the bulk of the correction.
+    * **Against interest:** the session's own `Must Take Energy` refinement is
+      **REFUTED** (those MW are a subset of the ladder — every carrying
+      unit-hour is MUST_RUN with a ladder already spanning EcoMax — and
+      re-pricing them to the floor worsens the identification in all three
+      years); the crossing sits a median $7.8–11.0 BELOW the posted DA
+      (commitment cost, reserve co-opt, congestion, losses — reported as a
+      bound, not tuned away); and a DA reserve reservation, which would have
+      flattered the lane, was refused on neiso-76 §B3's measurement that ISO-NE
+      cleared **no DA reserve product before 2025-03-01**.
+    * **OWNER ROUTING for the 5b green-light:** the margin over the keeper is
+      **+2.6 / +13.2 / +7.8 pp**, so a perfect traversal lever recovers at most
+      **a third to a half** of NEISO's amplitude gap and **cannot close
+      C3c-2025**; neiso-75 §2.4 already showed it cannot close C3c-2023.
+      **Charter 5b only if the target is amplitude FIDELITY, not the C3c
+      gate.** Evidence:
+      `results/calibration/FINDING-neiso79-crossing-quantity-2026-08-03.md`;
+      prereg `PREREG-neiso79-crossing-quantity-2026-08-03.md`; probe
+      `scripts/probes/_neiso79_crossing_quantity.py`.
 
 5c. **NEISO's amplitude decomposition is NOT NYISO's** (neiso-76 task (b), no
     LP; rule 25 in both directions). On NEISO's own posted AS prices — new
