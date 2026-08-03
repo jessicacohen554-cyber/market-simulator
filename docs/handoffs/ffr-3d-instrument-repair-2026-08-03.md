@@ -320,6 +320,22 @@ lane's changes.
 governance-lane failure. The single largest fix available is **building `data/clean`** — which is
 blocker 1, and is why the two were routed together.
 
+### 6.1 A 20th failure, outside pytest — and this one WAS fixed
+
+`scripts/ci_refactor_guards.py` (the blocking `refactor-guards` CI step) has been **RED on
+`origin/main`** since commit `d12b4a8`, which folded `scripts/_ff2d_crossover_adapter.py` into
+`score_crossover.py` and deleted it. The two surviving references are the comments **recording
+that deletion** (`score_crossover.py:649` "now deleted — rule 26";
+`test_score_crossover.py:383` "folded in from the deleted …"), so the scanner is matching a path
+inside the prose documenting its own removal.
+
+Confirmed pre-existing (`git ls-tree origin/main` has no such file, and the guard fails
+identically at `origin/main`). It is **not a test**, it reddens the gate for **every** PR
+including this one, and the guard ships a designed channel for exactly this case — so it was
+allowlisted (`KNOWN_DANGLING`, 9 → 10 entries) rather than left for a later session.
+Allowlisted rather than reworded because rule 26 `[R-DELETE]` wants a deleted module's
+provenance legible, and naming it is how. `refactor-guards` now passes.
+
 ---
 
 ## 7. What still needs a solve
