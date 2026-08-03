@@ -4,7 +4,7 @@
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 670,
   "n_matrix_rows": 171,
-  "n_bundles_scanned": 17,
+  "n_bundles_scanned": 18,
   "family": [
     {
       "field": "nyiso_downstate_ct_gas_basis",
@@ -43,8 +43,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -55,11 +54,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -86,8 +87,7 @@
         "U"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -98,11 +98,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -148,8 +150,7 @@
         "U"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -160,11 +161,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -204,8 +207,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -216,9 +218,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -239,8 +243,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -251,9 +254,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -293,8 +298,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -305,9 +309,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -328,8 +334,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -340,9 +345,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -363,8 +370,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -375,9 +381,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -398,8 +406,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -410,9 +417,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -433,8 +442,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -445,9 +453,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -468,8 +478,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -480,9 +489,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -503,8 +514,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -515,9 +525,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -554,8 +566,7 @@
         "O"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -566,9 +577,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -589,8 +602,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -601,11 +613,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -626,8 +640,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -638,11 +651,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -663,8 +678,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -675,11 +689,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -700,8 +716,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -712,9 +727,11 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -795,8 +812,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -807,11 +823,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -838,6 +856,7 @@
         "U"
       ],
       "armed_in_bundles": [
+        "_nyiso114_baseattrib_2024",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm"
       ]
@@ -865,8 +884,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -877,11 +895,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -913,8 +933,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -925,11 +944,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1031,8 +1052,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -1043,11 +1063,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1068,8 +1090,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -1080,11 +1101,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1105,8 +1128,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -1117,11 +1139,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1142,8 +1166,7 @@
         "U"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -1154,11 +1177,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1230,8 +1255,7 @@
         "K"
       ],
       "armed_in_bundles": [
-        "nyiso105_chpheatrate_B",
-        "nyiso105_control_A",
+        "_nyiso114_baseattrib_2024",
         "nyiso108_control_A",
         "nyiso108_hydrorepair_B",
         "nyiso109_control_A",
@@ -1242,11 +1266,13 @@
         "nyiso111_rampenv_B",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
         "nyiso83_control_2024",
         "nyiso83_control_2025",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     },
     {
@@ -1272,11 +1298,14 @@
         "K"
       ],
       "armed_in_bundles": [
+        "_nyiso114_baseattrib_2024",
         "nyiso112_combined_D",
         "nyiso112_decpeaker_C",
+        "nyiso113_control_A",
         "nyiso113_lilocational_B",
         "nyiso114_lilocational_confirm",
-        "nyiso_c156_meter_control_A"
+        "nyiso_c156_meter_control_A",
+        "nyiso_c156_meter_screen_B"
       ]
     }
   ],
@@ -1288,140 +1317,140 @@
       "field": "coal_prb_passthrough_sigmoid",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "coal_prb_passthrough_tiered",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "coal_drop_pof",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "gas_st_startup_spread",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "cc_committed_per_plant",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "cc_capacity_reconcile_path",
       "default": null,
       "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
-        "nyiso105_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "_nyiso114_baseattrib_2024": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
         "nyiso108_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
         "nyiso108_hydrorepair_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
         "nyiso109_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
-        "nyiso109_zonalanchor_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv"
+        "nyiso109_zonalanchor_B": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+        "nyiso110_control_A": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv"
       }
     },
     {
       "field": "cc_peaking_per_plant",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "cc_duct_peaking",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "cc_nameplate_summer_derate",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
       "field": "dual_fuel_oil_daily_parity",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 17,
+      "n_bundles_nondefault": 18,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     },
     {
@@ -1430,26 +1459,26 @@
       "keeper_value": 2023,
       "n_bundles_nondefault": 16,
       "bundles": {
-        "nyiso105_chpheatrate_B": 2023,
-        "nyiso105_control_A": 2023,
         "nyiso108_control_A": 2023,
         "nyiso108_hydrorepair_B": 2023,
         "nyiso109_control_A": 2023,
-        "nyiso109_zonalanchor_B": 2023
+        "nyiso109_zonalanchor_B": 2023,
+        "nyiso110_control_A": 2023,
+        "nyiso110_spinonline_B": 2023
       }
     },
     {
       "field": "tranche_startup_measured_runs",
       "default": false,
       "keeper_value": true,
-      "n_bundles_nondefault": 15,
+      "n_bundles_nondefault": 16,
       "bundles": {
-        "nyiso105_chpheatrate_B": true,
-        "nyiso105_control_A": true,
+        "_nyiso114_baseattrib_2024": true,
         "nyiso108_control_A": true,
         "nyiso108_hydrorepair_B": true,
         "nyiso109_control_A": true,
-        "nyiso109_zonalanchor_B": true
+        "nyiso109_zonalanchor_B": true,
+        "nyiso110_control_A": true
       }
     }
   ]
