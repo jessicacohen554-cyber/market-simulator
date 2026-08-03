@@ -4505,6 +4505,35 @@ data-unblocked with its 2023 CT block committed (the ERCOT-152 refusal of the CC
 tier stands — the pool is CT-only by measured conduct). Rule-24 LOYO 2023–25
 scoring applies at arming time, not to this data landing.
 
+**Post-landing slim (same session, owner directive).** The 315 raw shards were
+slimmed IN PLACE to the audited `SCED_KEEP` registry (79 of 187 columns,
+zstd-15 + dictionary, `slim_ercot_dam_disclosure.slim_file` — row-count-asserted
+atomic rewrites; the already-slim DAM family and the top-level legacy sample-day
+extracts were not touched): **896.1 → 490.5 MB (45 % saved)**. Verified lossless
+for every consumer before committing: per-shard row counts and delivery ranges
+match the raw-upload baseline exactly (315/315); the full delivery-day scan
+reproduces (365 days, 35,820,203 rows, zero light days); the pool artifact
+re-derives BYTE-IDENTICAL from the slimmed shards (the entire JSON — all three
+year blocks, coverage, sources), and the wall's 2023 block re-derives
+byte-identical too. **Irreversibility disclosed:** the 108 dropped columns
+(`SCED1 Curve-*`, `Submitted TPO-*`, `Min Gen Cost`, startup offers, AS
+responsibilities, `Output Schedule`, …) are now gone from the repo's 2023 corpus
+copy and 2023 is past ERCOT's free MIS retention — the owner's local raw archive
+is the only remaining full-column source; the ercot136/139/152 TPO/Min-Gen
+instruments are unaffected (they live in the top-level sample-day extracts,
+untouched). The raw-blob history purge (cleanup-large-blobs rewrite) is the
+owner's follow-up step; the slimmed committed state is what survives it.
+**Transport limit, measured:** the slimmed shards (1.2–2.5 MB each) could NOT
+be pushed from the session — the git gateway 413s every pack ≥ ~1.3 MB while
+~1 MB doc packs pass, which sharpens the Git & Pushing lore (the prior
+measured-safe point was 434 KB; the corpus-scale uploads have always been
+owner-side for this reason). The slimmed shards therefore land via the owner's
+local slim+push (deterministic: `slim_ercot_dam_disclosure.SCED_KEEP` over
+`data/raw/ercot/SCED/`, expected 896.1 → 490.5 MB / 315 files, then the
+byte-identity checks above), or stay out of git per the ERCOT-151 §4
+outside-git clause — the committed condbinned JSONs are the deliverables
+either way.
+
 **Session mechanics note.** The session git gateway's upstream push relay wedged
 mid-session (send-pack disconnect; the branch never appeared on the remote while
 the gateway's stale mirror advertised it "up-to-date"), so this session's commits
