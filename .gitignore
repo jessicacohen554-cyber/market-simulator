@@ -148,11 +148,16 @@ data/raw/NEISO-AS/requirements/requirements_*.csv
 # ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
 # precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
 data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
-# ISO-NE DA demand-bid daily CSVs (~2.3 MB/day) + the DA cleared-demand window
-# files: same precedent; regenerate with
-# scripts/probes/_neiso76_demand_limb.py --fetch (README.md in that dir).
+# ISO-NE DA demand-bid daily CSVs (~2.3 MB/day, ~2.5 GB for the full 2023-2025
+# corpus) + the DA cleared-demand window files: same precedent; regenerate with
+# scripts/data/fetch_neiso_da_demand_bids.py (full corpus) or
+# scripts/probes/_neiso76_demand_limb.py --fetch (the 41-day Phase-0 sample).
 data/raw/NEISO-AS/da-demand-bids/hbdayaheaddemandbid_*.csv
 data/raw/NEISO-AS/da-demand-bids/cleared_*.csv
+# ISO-NE DA SUBMITTED import-offer / export-bid daily CSVs (~0.35 MB/day,
+# ~380 MB for 2023-2025): same precedent; regenerate with
+# scripts/data/fetch_neiso_da_import_export.py (README.md in that dir).
+data/raw/NEISO-AS/da-import-export/hbdayaheadimpexp_*.csv
 # ISO-NE reserve CLEARING-PRICE window CSVs (RT final RZPD + DAAS day-ahead):
 # validation-only measured prices, same precedent; regenerate with
 # scripts/probes/_neiso76_reserve_content.py --fetch (README.md in that dir).
