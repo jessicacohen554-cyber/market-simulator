@@ -1,0 +1,74 @@
+{
+  "_provenance": {
+    "session": "ERCOT-154 Phase 0, fallback lane (no LP, no solve)",
+    "question": "is ScenarioConfig.measured_ramp_capability REACHABLE at ERCOT? It changes exactly one array (FleetArrays.ramp10), so the answer is whether any ERCOT-reachable path reads it",
+    "method": "AST census of every functional read of .ramp10 in src/market_sim (docstrings/comments excluded by parsing, not grepping), plus the gate each read sits behind evaluated against the ERCOT keeper's own run_config",
+    "keeper": "2026-08-02-ercot150b-zonal-anchor",
+    "precedent": "ERCOT-146 measured_ct_heat_rates \u2014 a flag whose consumer is not on ERCOT's path is INERT BY WIRING and its A/B is bit-identical by construction; ask before the solve"
+  },
+  "keeper_gate_flags": {
+    "pjm_reserve_pergen": false,
+    "caiso_reserve_coopt": false,
+    "miso_reserve_pergen": false,
+    "pjm_reserve_supply_cap": false,
+    "energy_reserve_coopt": true,
+    "ercot_multiproduct_as_coopt": true,
+    "ercot_thermal_as_endogenous": false,
+    "ercot_reserve_supply_cap": true,
+    "measured_ramp_capability": false
+  },
+  "ramp10_read_sites": [
+    {
+      "file": "src/market_sim/model/reserves/spec.py",
+      "line": 1860,
+      "function": "pjm_pergen_structure"
+    },
+    {
+      "file": "src/market_sim/model/reserves/spec.py",
+      "line": 3105,
+      "function": "caiso_pergen_structure"
+    },
+    {
+      "file": "src/market_sim/model/reserves/spec.py",
+      "line": 2528,
+      "function": "_miso_design"
+    },
+    {
+      "file": "src/market_sim/model/reserves/spec.py",
+      "line": 1937,
+      "function": "pjm_pergen_pool_ramp10"
+    },
+    {
+      "file": "src/market_sim/results/scarcity.py",
+      "line": 1686,
+      "function": "pjm_reserve_deliverable_supply_cap_mw"
+    }
+  ],
+  "ercot_reserve_design_ramp10_mentions": {
+    "_ercot_design": 0,
+    "_ercot_multiproduct_design": 0
+  },
+  "evening_reserve_symptom": {
+    "2023": {
+      "evening_h17_21_mean_reserve_price": 82.44,
+      "evening_h17_21_hours_reserve_price_gt_1": 34,
+      "evening_h17_21_hours": 1825,
+      "annual_mean_reserve_price": 22.92,
+      "annual_hours_reserve_price_gt_1": 54
+    },
+    "2024": {
+      "evening_h17_21_mean_reserve_price": 44.2,
+      "evening_h17_21_hours_reserve_price_gt_1": 13,
+      "evening_h17_21_hours": 1825,
+      "annual_mean_reserve_price": 9.4,
+      "annual_hours_reserve_price_gt_1": 14
+    },
+    "2025": {
+      "evening_h17_21_mean_reserve_price": 0.0,
+      "evening_h17_21_hours_reserve_price_gt_1": 0,
+      "evening_h17_21_hours": 1825,
+      "annual_mean_reserve_price": 0.0,
+      "annual_hours_reserve_price_gt_1": 0
+    }
+  }
+}
