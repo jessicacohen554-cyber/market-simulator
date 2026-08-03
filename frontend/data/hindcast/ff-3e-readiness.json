@@ -10,7 +10,7 @@
       2050
     ]
   },
-  "green": true,
+  "green": false,
   "input_resolution": {
     "green": true,
     "hard_fail_count": 0,
@@ -25,9 +25,10 @@
       "PJM:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
       "PJM:datacenter_block_mw — constant from 2030 through 2050 (held-flat horizon tail)",
       "PJM:rps_target — constant from 2045 through 2050 (held-flat horizon tail)",
-      "PJM:capacity_price_firm — constant from 2027 through 2050 (held-flat horizon tail)",
+      "PJM:capacity_price_firm — constant from 2028 through 2050 (held-flat horizon tail)",
       "MISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
-      "MISO:datacenter_block_mw — constant from 2030 through 2050 (held-flat horizon tail)",
+      "MISO:datacenter_block_mw — constant from 2046 through 2050 (held-flat horizon tail)",
+      "MISO:rps_target — constant from 2040 through 2050 (held-flat horizon tail)",
       "MISO:capacity_price_firm — constant from 2026 through 2050 (held-flat horizon tail)",
       "NYISO:demand_growth_rate — constant from 2031 through 2050 (held-flat horizon tail)",
       "NYISO:datacenter_block_mw — constant from 2031 through 2050 (held-flat horizon tail)",
@@ -68,6 +69,7 @@
         "plateaus": [
           "demand_growth_rate",
           "datacenter_block_mw",
+          "rps_target",
           "capacity_price_firm"
         ]
       },
@@ -116,28 +118,28 @@
       2026,
       2027
     ],
-    "result_identical": true,
-    "green": true,
+    "result_identical": false,
+    "green": false,
     "per_year": [
       {
         "year": 2026,
         "equal": true,
         "resumed_from_cache": true,
         "control": {
-          "dispatch_sum": 110210243.53,
-          "dispatch_hash": "6da403dd81affee9",
-          "price_sum": 2251755.833,
-          "price_hash": "ec5c1b7a8a58be31",
+          "dispatch_sum": 110209668.869,
+          "dispatch_hash": "f27cdfdda9b46cd8",
+          "price_sum": 2252019.757,
+          "price_hash": "b359d8d250fd3416",
           "n_retire": 0,
           "n_thermal_add": 0,
           "n_renew_add": 0,
           "n_storage_add": 0
         },
         "resume": {
-          "dispatch_sum": 110210243.53,
-          "dispatch_hash": "6da403dd81affee9",
-          "price_sum": 2251755.833,
-          "price_hash": "ec5c1b7a8a58be31",
+          "dispatch_sum": 110209668.869,
+          "dispatch_hash": "f27cdfdda9b46cd8",
+          "price_sum": 2252019.757,
+          "price_hash": "b359d8d250fd3416",
           "n_retire": 0,
           "n_thermal_add": 0,
           "n_renew_add": 0,
@@ -149,48 +151,48 @@
         "equal": true,
         "resumed_from_cache": true,
         "control": {
-          "dispatch_sum": 106597423.75,
-          "dispatch_hash": "2aa84ba41082b548",
-          "price_sum": 2182072.244,
-          "price_hash": "52f376f2eeaf96fb",
-          "n_retire": 0,
+          "dispatch_sum": 111813229.113,
+          "dispatch_hash": "a37606a73c21b9d7",
+          "price_sum": 2333288.622,
+          "price_hash": "56afbf26e9aada37",
+          "n_retire": 38,
           "n_thermal_add": 0,
-          "n_renew_add": 2,
+          "n_renew_add": 0,
           "n_storage_add": 0
         },
         "resume": {
-          "dispatch_sum": 106597423.75,
-          "dispatch_hash": "2aa84ba41082b548",
-          "price_sum": 2182072.244,
-          "price_hash": "52f376f2eeaf96fb",
-          "n_retire": 0,
+          "dispatch_sum": 111813229.113,
+          "dispatch_hash": "a37606a73c21b9d7",
+          "price_sum": 2333288.622,
+          "price_hash": "56afbf26e9aada37",
+          "n_retire": 38,
           "n_thermal_add": 0,
-          "n_renew_add": 2,
+          "n_renew_add": 0,
           "n_storage_add": 0
         }
       },
       {
         "year": 2028,
-        "equal": true,
+        "equal": false,
         "resumed_from_cache": false,
         "control": {
-          "dispatch_sum": 103093111.805,
-          "dispatch_hash": "ab795c5f9bb759b9",
-          "price_sum": 2260666.599,
-          "price_hash": "e043337bdab9d32c",
-          "n_retire": 99,
-          "n_thermal_add": 0,
-          "n_renew_add": 2,
+          "dispatch_sum": 113465187.662,
+          "dispatch_hash": "07da96b1976cd1eb",
+          "price_sum": 2554741.327,
+          "price_hash": "146f329e9191c1e1",
+          "n_retire": 0,
+          "n_thermal_add": 1,
+          "n_renew_add": 0,
           "n_storage_add": 0
         },
         "resume": {
-          "dispatch_sum": 103093111.805,
-          "dispatch_hash": "ab795c5f9bb759b9",
-          "price_sum": 2260666.599,
-          "price_hash": "e043337bdab9d32c",
-          "n_retire": 99,
-          "n_thermal_add": 0,
-          "n_renew_add": 2,
+          "dispatch_sum": 113465187.662,
+          "dispatch_hash": "187752af2f6ce8e9",
+          "price_sum": 2554741.327,
+          "price_hash": "75009894c995fd14",
+          "n_retire": 0,
+          "n_thermal_add": 1,
+          "n_renew_add": 0,
           "n_storage_add": 0
         }
       }
@@ -322,8 +324,9 @@
     },
     "PJM": {
       "gate_a_backcast": {
-        "marker": "none",
-        "keeper": null
+        "marker": "complete",
+        "keeper": "2026-08-03-pjm-147b-chp-heat",
+        "declared": "2026-07-31"
       },
       "gate_b_t1f": {
         "determination": "HOLD",
@@ -361,9 +364,9 @@
     },
     "NYISO": {
       "gate_a_backcast": {
-        "marker": "withdrawn",
-        "keeper": "2026-07-11-nyiso-61-downstate-import",
-        "withdrawn": "2026-07-19"
+        "marker": "complete",
+        "keeper": "2026-08-03-nyiso-118-seny-span",
+        "declared": "2026-07-31"
       },
       "gate_b_t1f": {
         "determination": "HOLD",
@@ -382,7 +385,7 @@
     "NEISO": {
       "gate_a_backcast": {
         "marker": "complete",
-        "keeper": "2026-07-08-neiso-54-steamgas-ct",
+        "keeper": "2026-08-03-neiso-caiso156-meter-screen",
         "declared": "2026-07-07"
       },
       "gate_b_t1f": {
