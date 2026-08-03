@@ -671,6 +671,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nyiso_hydro_reserve_eligible": "False",
     "nyiso_scr_edrp_reserve_eligible": "False",
     "nyiso_ordc_measured_step_span": "False",
+    # Added by nyiso-117: the field was registered in _CACHE_KEY_OPTIONAL_FIELDS
+    # at nyiso-115 (with the mechanism) but never given its recorded default
+    # here, so a flip of it was undetectable — exactly the hole this ledger
+    # exists to close (rule 24 [R-REGISTRY]). Caught by the flip guard's own
+    # HEAD-only check 3, which had been failing on main since that commit.
+    "nyiso_nyc_rcpf_step_curve": "False",
     "dual_fuel_oil_daily_parity": "False",
     "ercot_thermal_dam_availability_hourly": "False",
     "ercot_thermal_dam_availability_plant": "False",
