@@ -70,6 +70,11 @@ REPORT_PAGE = (
 )
 CSV_ENDPOINT = "https://www.iso-ne.com/transform/csv/hbdayaheaddemandbid"
 
+#: The companion CLEARED series -- *Day-Ahead Energy Market Hourly Demand
+#: Report*, one column (``Day-Ahead Cleared Demand``, MWh).  A bare ``?start=``
+#: 500s, so it is pulled a calendar month at a time.
+CLEARED_ENDPOINT = "https://www.iso-ne.com/transform/csv/hourlydayaheaddemand"
+
 #: Train years only (CLAUDE.md rule 22).
 DEFAULT_YEARS = (2023, 2024, 2025)
 
@@ -90,6 +95,36 @@ def fetch_day(opener: urllib.request.OpenerDirector, day: dt.date) -> bytes:
     return body
 
 
+def fetch_cleared(opener: urllib.request.OpenerDirector, years: list[int]) -> int:
+    """Download the published DA cleared-demand series, one file per month.
+
+    Returns the number of month files written.  This is the *validation
+    target* side of the corpus (rule 13) and the vertical quantity line any
+    crossing of the submitted books is read against.
+    """
+    n = 0
+    for year in years:
+        for month in range(1, 13):
+            start = dt.date(year, month, 1)
+            end = (
+                dt.date(year + 1, 1, 1) if month == 12 else dt.date(year, month + 1, 1)
+            ) - dt.timedelta(days=1)
+            dest = RAW_DIR / f"cleared_{start:%Y%m%d}_{end:%Y%m%d}.csv"
+            if dest.exists() and dest.stat().st_size > 1_000:
+                continue
+            url = f"{CLEARED_ENDPOINT}?start={start:%Y%m%d}&end={end:%Y%m%d}"
+            req = urllib.request.Request(url, headers={"Referer": REPORT_PAGE})
+            with opener.open(req, timeout=300) as resp:
+                dest.write_bytes(resp.read())
+            print(
+                f"  cleared {year}-{month:02d}: {dest.stat().st_size:,} bytes",
+                flush=True,
+            )
+            n += 1
+            time.sleep(0.3)
+    return n
+
+
 def main(argv: list[str] | None = None) -> int:
     """Download the DA submitted demand-bid corpus for the requested years."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -103,10 +138,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--force", action="store_true", help="re-download existing days"
     )
+    parser.add_argument(
+        "--cleared-only",
+        action="store_true",
+        help="fetch only the published cleared-demand month files",
+    )
     args = parser.parse_args(argv)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     opener = _opener()
+    n_cleared = fetch_cleared(opener, args.years)
+    if args.cleared_only:
+        print(f"done: {n_cleared} cleared-demand month files -> {RAW_DIR}")
+        return 0
     n_new = n_skip = n_err = n_empty = 0
     for year in args.years:
         day = dt.date(year, 1, 1)
