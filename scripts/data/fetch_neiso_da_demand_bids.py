@@ -65,6 +65,7 @@ from scripts.data.fetch_neiso_da_energy_offers import (  # noqa: E402
     DEFAULT_WORKERS,
     _opener,
     fetch_days_concurrent,
+    stratified,
 )
 
 RAW_DIR = NEISO_AS_DIR / "da-demand-bids"
@@ -153,6 +154,16 @@ def main(argv: list[str] | None = None) -> int:
         help="fetch only the published cleared-demand month files",
     )
     parser.add_argument(
+        "--stride",
+        type=int,
+        default=1,
+        help=(
+            "interleave the fetch order by day-of-year mod STRIDE so any "
+            "partial pull is a seasonally unbiased sample (default: 1, plain "
+            "date order)"
+        ),
+    )
+    parser.add_argument(
         "--workers",
         type=int,
         default=DEFAULT_WORKERS,
@@ -182,6 +193,7 @@ def main(argv: list[str] | None = None) -> int:
                 todo.append(day)
             day += dt.timedelta(days=1)
 
+    todo = stratified(todo, args.stride)
     n_new, n_empty, n_err = fetch_days_concurrent(
         todo,
         _dest_for,

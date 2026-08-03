@@ -160,6 +160,24 @@ def _dest_for(day: dt.date) -> Path:
     return RAW_DIR / f"hbdayaheadenergyoffer_{day:%Y%m%d}.csv"
 
 
+def stratified(days: list[dt.date], stride: int) -> list[dt.date]:
+    """Reorder ``days`` so any prefix of the result is seasonally UNBIASED.
+
+    The ISO Express endpoint throttles a sustained bulk pull to a rate that is
+    neither predictable nor fast, so a run may have to stop before the corpus
+    is complete.  Walking the calendar in date order makes every such prefix a
+    contiguous block of months -- useless for an hour-of-day statistic, which
+    needs every season represented.  Interleaving by ``day-of-year mod stride``
+    means a partial pull is an evenly-spaced sample of the whole window
+    instead, so the run can be stopped at any point and still be reportable.
+
+    With ``stride=1`` this is the plain date order.
+    """
+    if stride <= 1:
+        return days
+    return sorted(days, key=lambda d: (d.toordinal() % stride, d))
+
+
 def main(argv: list[str] | None = None) -> int:
     """Download the DA energy-offer corpus for the requested years."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -172,6 +190,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--force", action="store_true", help="re-download existing days"
+    )
+    parser.add_argument(
+        "--stride",
+        type=int,
+        default=1,
+        help=(
+            "interleave the fetch order by day-of-year mod STRIDE so any "
+            "partial pull is a seasonally unbiased sample (default: 1, plain "
+            "date order)"
+        ),
     )
     parser.add_argument(
         "--workers",
@@ -192,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
                 todo.append(day)
             day += dt.timedelta(days=1)
 
+    todo = stratified(todo, args.stride)
     n_new, _, n_err = fetch_days_concurrent(
         todo, _dest_for, fetch_day, workers=args.workers
     )
