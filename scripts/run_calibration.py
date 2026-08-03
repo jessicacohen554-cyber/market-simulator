@@ -1953,6 +1953,27 @@ def run_year(
     # Transmission project in service Dec 2023) — applied before the import
     # node joins so the corrected links flow through the whole solve.
     iso_config = _apply_iso_year_ttc(iso_config, iso, year)
+    # CAISO per-year SP15-pocket import caps (config.caiso_per_year_import_caps,
+    # default off -> byte-identical no-op). The SP15 split (2026-07-09) baked the
+    # two internal import-limited links (SP15_rest -> LA_BASIN, SP15_rest -> SDGE)
+    # at the STATIC 2023 tightest-year LCT import_cap; this swaps each solve
+    # year's link TTC to that year's own published row. Measured limit over a
+    # frozen estimate (CLAUDE.md #14), zero free parameters (#24).
+    #
+    # WHY THIS CALL SITE EXISTS (caiso-162): the mechanism was previously wired
+    # ONLY into runner.py::run_scenario_iso -- the forecast/scenario path -- so a
+    # BACKCAST solve, which reaches the LP through this module and
+    # pipeline.solve.run_energy_solve, silently ignored the flag. Arm B of
+    # caiso-162 recorded caiso_per_year_import_caps=true in its run_config.json
+    # and still bounded both pocket links at the static 12,008 / 1,436 MW,
+    # proving the calibration lane never saw it. Applied here, immediately after
+    # _apply_iso_year_ttc and BEFORE the import node joins, so the corrected
+    # links flow through incidence, interface groups and the TTC array alike --
+    # the same placement rationale as the year-varying interface limits above.
+    if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        iso_config = apply_caiso_local_import_limits(iso_config, iso, year)
     # Priced import/export node (orchestrator-unification Stage 5): the
     # builder choice — reference-price seam vs CAISO per-hub / bidirectional
     # intertie vs the static year-grounded tranche ladder, plus the Manitoba
