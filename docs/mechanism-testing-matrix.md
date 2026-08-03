@@ -1774,8 +1774,46 @@ is now the live queue head.**)*
    change (rule 23 `[R-FROZEN-DERIVE]`).
    (`results/calibration/FINDING-miso118-cchp-plant-outliers-2026-08-03.md`;
    probe `scripts/probes/_miso118_cchp_plant_outlier_basis.py`.)
-5. **`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
-   untested in MISO. **The live head of the MISO queue as of miso-118.**
+5. ~~**`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
+   untested in MISO.~~ **CLOSED 2026-08-03 (miso-121, cell `U` → `I`): FULLY
+   IDENTIFIED but PRICE-INERT.** All three legs are measured from MISO's **own**
+   data with zero free parameters — capability 371/371/369 gas tranches =
+   **15,827 MW = 23.3 % of MISO gas** (EIA-860 Multifuel switch flag,
+   per-plant); switch price **12/12 measured MISO F923 Petroleum months every
+   year** (20.36/18.22/17.21 $/MMBtu, the flat national fallback never reached,
+   so rule 13's forward-regeneration test passes); event windows **observable in
+   MISO's own CAMPD feed** — 90/459/452 gas-labelled unit-hours across 25/43/40
+   distinct units lifting from p50 53.91 kg CO₂/MMBtu (pipeline gas) into the
+   70–80 distillate band, validated against CAMPD's **own** diesel-labelled
+   units at p50 73.65/73.46/73.65. The mechanism **genuinely fires** (the solve
+   logs the cap on 371/371/369 tranches, matching the census exactly — the
+   miso-113 "hook invisible to the calibration path" hazard is **cleared by
+   measurement**) with fuel deltas to **197.8 $/MMBtu**, and still moves
+   nothing: K3's price leg fails every year, max zonal |Δλ|
+   **0.0000/0.0003/0.0000** vs the 0.10 bar, dispatch clearing 50 MW in 2024
+   alone. **Inert for a DIFFERENT reason than the zonal anchor** (rule 25 within
+   an ISO): that lever's perturbation never reached price-setting tranches;
+   **this one's underlying phenomenon is negligible at MISO scale** — CAMPD's
+   own meters put observed dual-fuel oil generation at 0.0023/0.0113/0.0128
+   TWh/yr, **~0.002 % of ISO energy**. The pre-registered over-switching risk
+   **did not materialise**: same-grain K7 gives model 0.00013/0.03757/0.01096
+   TWh vs CAMPD 0.00233/0.01133/0.01284 TWh (0.06×/3.3×/0.85×, CAMPD a lower
+   bound). **DO-NOT-REDO, extending miso-119's:** the binding-hour Δoffer p50
+   (64.30/93.93/108.23 $/MWh) over-predicted the realized 0.0003 by **five
+   orders of magnitude** — *binding is not marginality*. Only **0.00 %/1.24 %/
+   0.54 %** of binding tranche-hours are also partially loaded, and 2023's exact
+   0.0000 is because **no** capable tranche is ever both binding and marginal.
+   The predictive ex-ante statistic is the **marginal share of binding hours**,
+   never a percentile of the offer delta. Re-open needs a **winter-event-grain
+   scored criterion** (the rubric has none), a chartered mechanism raising
+   MISO's delivered winter gas further past parity, or an owner override — not
+   a re-run, not a sweep (both legs are measured registries).
+   (`results/calibration/FINDING-miso121-dual-fuel-switching-2026-08-03.md`;
+   prereg `PREREG-miso121-dual-fuel-switching-2026-08-03.md`; probes
+   `scripts/probes/_miso121_dual_fuel_screen.py`, `_miso121_dual_fuel_ab.py`,
+   `_miso121_switched_volume.py`.)
+   **The live head of the MISO queue is now the 55088 Dearborn hybrid-cogen
+   scope gate (item 4 above, named not chartered).**
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
