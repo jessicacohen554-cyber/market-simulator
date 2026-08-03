@@ -22,6 +22,7 @@ an expression.
 """
 
 import ast
+import re
 import unittest
 from pathlib import Path
 
@@ -39,6 +40,11 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     # pipeline/year.py and runner.py but not the backcast orchestrator, so the
     # first arm solved byte-identical to its control with the flag armed.
     "build_miso_coal_night_floor_p1_prep": "miso_night_floor_prep",
+    # miso-114: likewise absent until the self-deriving check below found
+    # it. PJM's builder returns (fleet_prep, kwargs_prep) and its fleet
+    # half reaches the p1_fleet_prep chain in all three orchestrators, so
+    # it is a bridge this file must cover like any other.
+    "build_pjm_reserve_p1_prep": "pjm_fleet_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (
@@ -115,6 +121,76 @@ class TestP1PrepWiring(unittest.TestCase):
                         "there — the nyiso-87 failure mode"
                     ),
                 )
+
+    def test_roster_is_complete_without_hand_maintenance(self):
+        """A builder feeding a fleet chain anywhere must be in the roster.
+
+        miso-114 addition. The three tests above are only as good as
+        ``_BRIDGE_BUILDERS``, and that roster is HAND-MAINTAINED — which is
+        exactly how the MISO night floor got through: the builder shipped
+        wired into two orchestrators, the roster never gained its row, and
+        every roster-driven assertion passed while the mechanism was inert in
+        the backcast orchestrator. A guard whose coverage depends on someone
+        remembering to extend it does not cover the case where they forgot.
+
+        So the roster is cross-checked against the source, by BEHAVIOUR rather
+        than by an exemption list: find every ``build_*`` call in an
+        orchestrator, bind it to the local name(s) it assigns, and require a
+        roster row for any builder whose local name reaches a
+        ``p1_fleet_prep=`` chain in ANY orchestrator. Builders whose result
+        only ever reaches ``p1_kwargs_prep=`` (e.g.
+        ``build_caiso_reserve_p1_prep``) are out of scope for this file's
+        fleet-chain assertions and are excluded automatically — no allowlist
+        to forget.
+
+        Wiring a new bridge into one orchestrator and no other now fails HERE,
+        and the failure names the missing row.
+        """
+        # builder -> local names it binds, across all orchestrators
+        bound: dict[str, set[str]] = {}
+        chain_text: list[str] = []
+        for rel in _ORCHESTRATORS:
+            tree, _ = self._tree(rel)
+            chain_text.extend(_p1_fleet_prep_sources(tree))
+            for node in ast.walk(tree):
+                if not isinstance(node, ast.Assign):
+                    continue
+                call = node.value
+                if not (isinstance(call, ast.Call) and isinstance(call.func, ast.Name)):
+                    continue
+                if not call.func.id.startswith("build_"):
+                    continue
+                names: set[str] = set()
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        names.add(tgt.id)
+                    elif isinstance(tgt, ast.Tuple):
+                        names.update(
+                            e.id for e in tgt.elts if isinstance(e, ast.Name)
+                        )
+                bound.setdefault(call.func.id, set()).update(names)
+
+        joined = " ".join(chain_text)
+        # A builder is in scope iff one of its bound locals appears in a chain.
+        feeds_fleet_chain = {
+            builder
+            for builder, locals_ in bound.items()
+            if any(re.search(rf"\b{re.escape(loc)}\b", joined) for loc in locals_)
+        }
+        missing = sorted(feeds_fleet_chain - set(_BRIDGE_BUILDERS))
+        self.assertEqual(
+            missing,
+            [],
+            msg=(
+                "P1-prep builder(s) whose result reaches a p1_fleet_prep chain "
+                f"but which carry no _BRIDGE_BUILDERS row: {missing}. Add a row "
+                "for each (builder -> the local name its result binds to) so "
+                "the wiring assertions above cover it in ALL THREE "
+                "orchestrators. An unrostered fleet-prep builder is the "
+                "miso-113 failure mode: wired in some orchestrators, inert in "
+                "others, and green in CI."
+            ),
+        )
 
     def test_run_energy_solve_call_sites_are_the_known_three(self):
         """A NEW call site must be added to _ORCHESTRATORS, not left unwired."""
