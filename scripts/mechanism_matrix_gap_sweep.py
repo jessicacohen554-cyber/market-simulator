@@ -72,6 +72,27 @@ ISO_STEMS: dict[str, tuple[str, ...]] = {
     "NEISO": ("neiso",),
 }
 
+# Fields the SHARED census must not count, each with the reason it is a false
+# positive rather than a gap. Keep this list SHORT and every entry justified:
+# it is an exemption from a rule-28(c) duty, so an unjustified entry is exactly
+# the off-registry channel rule 24 [R-REGISTRY] exists to close. The admissible
+# shape is a field that the RUN'S IDENTITY sets rather than a mechanism CHOICE —
+# something every bundle of its kind necessarily moves, so "non-default" carries
+# no information about which mechanisms are armed.
+#
+# The census reports these separately rather than dropping them silently, so an
+# exemption stays visible and arguable instead of becoming invisible again.
+SHARED_CENSUS_EXCLUSIONS: dict[str, str] = {
+    "weather_year": (
+        "run identity, not a mechanism: a backcast pins the weather year to the "
+        "solve year by construction (ScenarioConfig.mode='backcast'), so every "
+        "multi-year bundle necessarily records a non-default value for two of "
+        "its three years. Nothing is armed and nothing is tunable — the pinning "
+        "IS the backcast, and it is already governed by rule 13 [R-MEASURED] "
+        "and the mode field rather than by a matrix cell."
+    ),
+}
+
 
 def scenario_defaults() -> dict[str, object]:
     """Shipped ``ScenarioConfig`` defaults, from the live class (not a parse)."""
@@ -247,6 +268,48 @@ def sweep_iso(iso: str, defaults: dict, rows: list[dict], blob: str) -> dict:
             )
     live_invisible.sort(key=lambda d: -d["n_bundles_nondefault"])
 
+    # THE SHARED-FIELD BLIND SPOT (nyiso-115). The `family` census above only
+    # ever sees fields carrying an ISO's own stem, and the ratchet built on it
+    # inherits that blindness — so a SHARED mechanism armed on a keeper with no
+    # matrix row anywhere is invisible to both, which is the same 227-3 shape
+    # one class wider. nyiso-114 closed NYISO's ISO-scoped column to 0/0/0 while
+    # twelve shared fields sat armed on its keeper with zero matrix mention.
+    #
+    # Keyed on the ISO's DESIGNATED KEEPER rather than on "any bundle": a
+    # keeper is the configuration the ISO is actually calibrated at, so a field
+    # it arms with no cell is a mechanism shaping a published result that no
+    # session can see. (`live_but_invisible` below stays the broader, noisier
+    # any-bundle view and is reported, not ratcheted.)
+    iso_scoped = tuple(s for ss in ISO_STEMS.values() for s in ss)
+    shared_rows = []
+    for f, dflt in sorted(defaults.items()):
+        if any(f.startswith(f"{s}_") for s in iso_scoped):
+            continue  # an ISO's own field — the `family` census owns it
+        kv = keeper_cfg.get(f, "<absent>")
+        if kv == "<absent>" or _norm(kv) == _norm(dflt):
+            continue  # not armed on this keeper
+        shared_rows.append(
+            {
+                "field": f,
+                "default": _norm(dflt),
+                "keeper_value": _norm(kv),
+                "coverage": coverage(f, rows, blob, ()),
+                "owning_rows": owners(f),
+                "excluded": f in SHARED_CENSUS_EXCLUSIONS,
+                "exclusion_reason": SHARED_CENSUS_EXCLUSIONS.get(f),
+            }
+        )
+    shared_absent = [
+        r["field"]
+        for r in shared_rows
+        if r["coverage"] == "absent" and not r["excluded"]
+    ]
+    shared_prose_only = [
+        r["field"]
+        for r in shared_rows
+        if r["coverage"] == "prose_only" and not r["excluded"]
+    ]
+
     # Two distinct rule-28(c) gaps: `absent` (the 227-3 shape — invisible
     # outright) and `prose_only` (named in some other row's note, so the CI
     # mention-anywhere gate passes, but NO cell records a verdict for it).
@@ -268,6 +331,10 @@ def sweep_iso(iso: str, defaults: dict, rows: list[dict], blob: str) -> dict:
         "family_matrix_gaps_absent": absent,
         "family_prose_only": prose_only,
         "armed_on_keeper_with_no_cell": armed_no_cell,
+        "shared_armed_on_keeper": shared_rows,
+        "shared_matrix_gaps_absent": shared_absent,
+        "shared_prose_only": shared_prose_only,
+        "shared_excluded": [r["field"] for r in shared_rows if r["excluded"]],
         "live_but_invisible": live_invisible,
     }
 
@@ -304,6 +371,20 @@ def _report(res: dict) -> None:
                 f"    {f:<46} keeper={str(row['keeper_value'])[:20]:<22}"
                 f"armed_in={len(row['armed_in_bundles'])}"
             )
+    if res["shared_matrix_gaps_absent"] or res["shared_prose_only"]:
+        print("  --- SHARED fields ARMED ON THE KEEPER with no matrix row ---")
+        for f in res["shared_matrix_gaps_absent"] + res["shared_prose_only"]:
+            row = next(r for r in res["shared_armed_on_keeper"] if r["field"] == f)
+            print(
+                f"    {f:<46} = {str(row['keeper_value'])[:28]:<30} ({row['coverage']})"
+            )
+    if res["shared_excluded"]:
+        print(
+            "  --- shared census EXCLUSIONS (declared false positives, "
+            "SHARED_CENSUS_EXCLUSIONS) ---"
+        )
+        for f in res["shared_excluded"]:
+            print(f"    {f}")
     if res["family_prose_only"]:
         print("  --- PROSE-ONLY (mentioned, but no cell of its own) ---")
         for f in res["family_prose_only"]:
@@ -355,13 +436,15 @@ def main() -> None:
 
     print(f"\n{'=' * 78}\nSUMMARY\n{'=' * 78}")
     print(
-        f"{'ISO':<8}{'family':>8}{'absent':>9}{'prose':>8}{'armed-no-cell':>16}{'invisible':>12}"
+        f"{'ISO':<8}{'family':>8}{'absent':>9}{'prose':>8}{'armed-no-cell':>16}"
+        f"{'shared-gap':>12}{'invisible':>12}"
     )
     for iso, res in results.items():
         print(
             f"{iso:<8}{len(res['family']):>8}{len(res['family_matrix_gaps_absent']):>9}"
             f"{len(res['family_prose_only']):>8}"
             f"{len(res['armed_on_keeper_with_no_cell']):>16}"
+            f"{len(res['shared_matrix_gaps_absent']) + len(res['shared_prose_only']):>12}"
             f"{len(res['live_but_invisible']):>12}"
         )
 
@@ -373,34 +456,71 @@ def main() -> None:
             )
         prior = json.loads(BASELINE.read_text()) if BASELINE.exists() else {}
         prior_gaps = prior.get("absent", {})
+        prior_shared = prior.get("shared_armed_on_keeper", {})
         doc = {
             "_comment": (
                 "Rule-28(c) ratchet baseline, enforced by "
-                "scripts/check_mechanism_matrix.py. Each ISO lists the "
-                "<iso>_* ScenarioConfig fields that have NO mention in "
-                "mechanism-matrix.js. CI FAILS if a field appears here that "
-                "this file does not already allow, so the list can only "
-                "SHRINK — a new ISO-scoped field must land with its matrix "
-                "registration (rule 28(c)), and closing a legacy gap is what "
-                "refreshes this file. Regenerate with "
+                "scripts/check_mechanism_matrix.py. TWO blocks, because a "
+                "mechanism can be invisible in two different ways. `absent` "
+                "lists each ISO's <iso>_* ScenarioConfig fields with NO "
+                "mention in mechanism-matrix.js. `shared_armed_on_keeper` "
+                "lists the SHARED (non-ISO-prefixed) fields that an ISO's "
+                "DESIGNATED KEEPER arms away from its shipped default while "
+                "the matrix never mentions them — the nyiso-115 blind spot: "
+                "the ISO-scoped ratchet cannot see these at all, so a shared "
+                "mechanism shaping a published keeper had no cell anywhere. "
+                "CI FAILS if a field appears in either census that this file "
+                "does not already allow, so both lists can only SHRINK — a "
+                "new mechanism must land with its matrix registration (rule "
+                "28(c)), and closing a legacy gap is what refreshes this "
+                "file. Declared false positives live in the sweep's own "
+                "SHARED_CENSUS_EXCLUSIONS, not here, so an exemption stays "
+                "visible and arguable. Regenerate with "
                 "scripts/mechanism_matrix_gap_sweep.py --write-baseline."
             ),
             "absent": {
                 iso: sorted(results[iso]["family_matrix_gaps_absent"])
                 for iso in sorted(ISO_INDEX)
             },
+            "shared_armed_on_keeper": {
+                iso: sorted(
+                    results[iso]["shared_matrix_gaps_absent"]
+                    + results[iso]["shared_prose_only"]
+                )
+                for iso in sorted(ISO_INDEX)
+            },
+            # Declared false positives, written here so the CI checker — which
+            # is stdlib-only and cannot import this module — reads the SAME
+            # exclusions this sweep applied, instead of carrying a second copy
+            # that could drift out of sync (the `\b`-vs-substring lesson).
+            "shared_census_exclusions": SHARED_CENSUS_EXCLUSIONS,
         }
         BASELINE.write_text(json.dumps(doc, indent=2) + "\n")
         grew = {
-            iso: sorted(set(doc["absent"][iso]) - set(prior_gaps.get(iso, [])))
+            iso: sorted(
+                (set(doc["absent"][iso]) - set(prior_gaps.get(iso, [])))
+                | (
+                    set(doc["shared_armed_on_keeper"][iso])
+                    - set(prior_shared.get(iso, []))
+                )
+            )
             for iso in sorted(ISO_INDEX)
-            if set(doc["absent"][iso]) - set(prior_gaps.get(iso, []))
+            if (set(doc["absent"][iso]) - set(prior_gaps.get(iso, [])))
+            or (
+                set(doc["shared_armed_on_keeper"][iso]) - set(prior_shared.get(iso, []))
+            )
         }
         print(f"\nwrote {BASELINE.relative_to(REPO)}")
+        print(f"  {'ISO':<8}{'iso-scoped':>16}{'shared-on-keeper':>20}")
         for iso in sorted(ISO_INDEX):
             n_new, n_old = len(doc["absent"][iso]), len(prior_gaps.get(iso, []))
+            s_new = len(doc["shared_armed_on_keeper"][iso])
+            s_old = len(prior_shared.get(iso, []))
             mark = "  <-- GREW" if iso in grew else ""
-            print(f"  {iso:<8} {n_old:>4} -> {n_new:>4}{mark}")
+            print(
+                f"  {iso:<8}{f'{n_old} -> {n_new}':>16}"
+                f"{f'{s_old} -> {s_new}':>20}{mark}"
+            )
         if grew:
             print("\nWARNING: the ratchet GREW for " + ", ".join(grew))
             print("Rule 28(c) says a new mechanism lands with its row in the SAME PR.")
