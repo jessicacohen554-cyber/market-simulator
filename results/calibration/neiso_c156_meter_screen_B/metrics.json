@@ -1,18 +1,22 @@
 {
-  "run_id": "2026-07-23-neiso-2022-holdout-validation",
+  "run_id": "2026-08-03-neiso-caiso156-meter-screen",
   "iso": "NEISO",
-  "label": "neiso 2022 holdout validation",
+  "label": "neiso caiso156 meter screen",
   "target_years": [
-    2022
+    2023,
+    2024,
+    2025
   ],
   "scorable_years": [
-    2022
+    2023,
+    2024,
+    2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
+  "rubric_version": 2.9,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -29,12 +33,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -46,15 +50,10 @@
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -64,7 +63,7 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -77,11 +76,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 5,
+    "scored": 7,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NEISO",
@@ -99,13 +98,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 6,
-      "total": 6
+      "pass": 12,
+      "total": 12
     },
     "free": {
-      "pass": 4,
-      "total": 4
+      "pass": 8,
+      "total": 8
     },
-    "headline": "C1 all 6/6 · free 4/4"
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
   }
 }
