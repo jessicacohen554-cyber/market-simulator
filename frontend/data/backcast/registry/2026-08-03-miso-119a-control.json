@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-miso-119a-control",
+  "label": "miso 119a control",
+  "date": "2026-08-03",
+  "shorthand": "miso-119a-control",
+  "definition": "miso-119 same-HEAD zero-delta control",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-miso-119a-control.js",
+  "bundle": "results/calibration/miso119_control_A"
+}
