@@ -19,7 +19,7 @@ session, whose tempting and WRONG remedy is to re-pin the literal — which
 silently accepts the orphaned cache instead of fixing it. This guard moves the
 detection to the PR that adds the field and states the correct remedy inline.
 
-Two checks:
+Three checks:
 
 **1. New-field registration (FAILS the PR).** Every ``ScenarioConfig`` field
 present at HEAD but absent at the merge base must appear in
@@ -30,13 +30,37 @@ present at HEAD but absent at the merge base must appear in
 a later rename makes the registration a silent no-op — the field re-enters the
 hash and the same breakage returns with the guard showing green.
 
+**3. Declared default (FAILS always) — the default-flip hazard.** A registration
+is only meaningful relative to a fixed default, because ``cache_key()`` drops a
+registered field when it equals the **LIVE** default. Move that default and the
+new-default run hashes identically to the old-default run it supersedes: a
+silent same-key collision, invisible to every other surface. This has already
+happened — the D-1/D-2 flips left ``cache_key(ScenarioConfig())`` at
+``603c2498bf71d21d`` across a behavioral change, and the signed packet asserted
+the opposite. FFR-3A recorded it and closed with *"it will silently recur on the
+next default flip; structural, needs a decision not a patch."*
+
+So every registered field's live default must match its declared entry in
+``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``, and the two collections must cover each
+other exactly. A default flip then cannot land silently: this check stops it
+until the flip is declared, and the declaring commit is where the operator
+decides whether the same-key collision is acceptable (a byte-identical flip) or
+needs a cache-epoch entry plus a purge (a behavioral flip — see the ledger in
+``src/market_sim/results/cache.py``). Unlike check 1 this needs no ``--base``, so
+it fires on every CI run and every local run — a lane cannot rely on a later
+session noticing.
+
+Defaults are compared as ``ast.unparse``-normalized SOURCE TEXT, so reformatting
+and comment churn are invisible, and any default form (a literal, a
+``field(default_factory=...)``, an expression) is expressible.
+
 Stdlib only (``ast`` + ``git show``): no import of the package, no ``uv sync``,
 runs in seconds and cannot itself be broken by a config-module import error.
 
 Usage::
 
-    python3 scripts/check_cache_key_registration.py                  # check 2 only
-    python3 scripts/check_cache_key_registration.py --base <sha>     # checks 1 + 2
+    python3 scripts/check_cache_key_registration.py                  # checks 2 + 3
+    python3 scripts/check_cache_key_registration.py --base <sha>     # checks 1 + 2 + 3
 """
 
 from __future__ import annotations
@@ -50,17 +74,42 @@ _REPO = Path(__file__).resolve().parents[1]
 _CONFIG_REL = "src/market_sim/config/scenarios.py"
 _CLASS = "ScenarioConfig"
 _REGISTRY = "_CACHE_KEY_OPTIONAL_FIELDS"
+_DECLARED = "_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS"
+_EPOCH_LEDGER_REL = "src/market_sim/results/cache.py"
 
 
-def _fields_and_registry(source: str) -> tuple[set[str], set[str]]:
-    """Return (``ScenarioConfig`` field names, ``_CACHE_KEY_OPTIONAL_FIELDS``).
+def _norm(expr: str) -> str:
+    """Normalize a default expression to comparable source text.
+
+    Round-tripped through ``ast`` so formatting, line breaks and quote style
+    cannot make an unchanged default look moved (or a moved one look
+    unchanged). Unparseable text is returned verbatim, which then fails the
+    comparison loudly rather than silently matching.
+    """
+    try:
+        return ast.unparse(ast.parse(expr, mode="eval").body)
+    except SyntaxError:
+        return expr
+
+
+def _fields_and_registry(
+    source: str,
+) -> tuple[dict[str, str], set[str], dict[str, str]]:
+    """Return (field → default source, ``_CACHE_KEY_OPTIONAL_FIELDS``, declared).
 
     Parsed with ``ast`` rather than imported so this runs against an arbitrary
     git blob and against a tree whose config module may not even import.
+
+    ``field → default source`` maps every ``ScenarioConfig`` annotated
+    assignment to its ``ast.unparse``d default expression; a field declared
+    with no default maps to ``""``. ``declared`` is
+    ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS``, likewise normalized, and is empty
+    for a blob predating that ledger.
     """
     tree = ast.parse(source)
-    fields: set[str] = set()
+    fields: dict[str, str] = {}
     registry: set[str] = set()
+    declared: dict[str, str] = {}
 
     for node in ast.walk(tree):
         # The dataclass' annotated assignments are its fields.
@@ -69,15 +118,34 @@ def _fields_and_registry(source: str) -> tuple[set[str], set[str]]:
                 if isinstance(stmt, ast.AnnAssign) and isinstance(
                     stmt.target, ast.Name
                 ):
-                    fields.add(stmt.target.id)
-        # Module-level `_CACHE_KEY_OPTIONAL_FIELDS = (...)` of string literals.
+                    fields[stmt.target.id] = (
+                        ast.unparse(stmt.value) if stmt.value is not None else ""
+                    )
+        # Module-level `_CACHE_KEY_OPTIONAL_FIELDS = (...)` of string literals,
+        # and `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS = {name: "<default src>"}`.
         if isinstance(node, ast.Assign):
-            for tgt in node.targets:
-                if isinstance(tgt, ast.Name) and tgt.id == _REGISTRY:
-                    for elt in getattr(node.value, "elts", []):
-                        if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
-                            registry.add(elt.value)
-    return fields, registry
+            targets = [t.id for t in node.targets if isinstance(t, ast.Name)]
+            if _REGISTRY in targets:
+                for elt in getattr(node.value, "elts", []):
+                    if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                        registry.add(elt.value)
+        # The ledger carries an annotation, so it is an AnnAssign at module level.
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            tgts = (
+                [node.target] if isinstance(node, ast.AnnAssign) else list(node.targets)
+            )
+            if any(isinstance(t, ast.Name) and t.id == _DECLARED for t in tgts):
+                val = node.value
+                if isinstance(val, ast.Dict):
+                    for k, v in zip(val.keys, val.values):
+                        if (
+                            isinstance(k, ast.Constant)
+                            and isinstance(k.value, str)
+                            and isinstance(v, ast.Constant)
+                            and isinstance(v.value, str)
+                        ):
+                            declared[k.value] = _norm(v.value)
+    return fields, registry, declared
 
 
 def _blob(ref: str, rel: str) -> str | None:
@@ -104,13 +172,34 @@ _REMEDY = f"""
     fix and it has been applied before -- see this script's docstring."""
 
 
+_FLIP_REMEDY = f"""
+    WHY THIS FAILS (it is not bookkeeping). cache_key() drops a registered field
+    when it equals the LIVE default. Moving that default makes a NEW-default run
+    hash IDENTICALLY to the OLD-default run it supersedes -- a silent same-key
+    collision, so the flipped config re-uses the pre-flip bundle. Nothing else in
+    the codebase can see this; that is why the guard exists.
+
+    REMEDY (in the SAME commit as the flip):
+      1. update the field's entry in {_DECLARED} ({_CONFIG_REL})
+         to the new default's source text -- this is the declaration;
+      2. decide, and record, what the collision means:
+         * BYTE-IDENTICAL flip (no solve output moves) -> say so in the commit
+           message and in the entry's comment; nothing further is needed.
+         * BEHAVIORAL flip -> the collision is a same-key invalidation. Add a
+           dated cache-epoch ledger entry in {_EPOCH_LEDGER_REL}
+           naming what is invalidated, and purge/segregate the affected caches.
+
+    Do NOT "fix" this by removing the field from {_REGISTRY}: that
+    re-enters it into the hash at every value and orphans every historical key."""
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--base", help="merge-base sha; enables the new-field check")
     args = ap.parse_args(argv)
 
     head_src = (_REPO / _CONFIG_REL).read_text()
-    head_fields, head_registry = _fields_and_registry(head_src)
+    head_fields, head_registry, head_declared = _fields_and_registry(head_src)
     if not head_fields:
         print(f"FAIL: parsed 0 fields from {_CLASS} in {_CONFIG_REL}")
         return 1
@@ -118,7 +207,7 @@ def main(argv: list[str] | None = None) -> int:
     failures: list[str] = []
 
     # --- check 2: registry integrity (always) -------------------------------
-    stale = sorted(head_registry - head_fields)
+    stale = sorted(head_registry - set(head_fields))
     if stale:
         failures.append(
             f"{_REGISTRY} lists {len(stale)} name(s) that are NOT "
@@ -129,14 +218,48 @@ def main(argv: list[str] | None = None) -> int:
             "was removed."
         )
 
+    # --- check 3: a registered field's default may not move silently --------
+    missing_decl = sorted(head_registry - set(head_declared))
+    extra_decl = sorted(set(head_declared) - head_registry)
+    moved = sorted(
+        (name, _norm(head_fields[name]), head_declared[name])
+        for name in head_registry & set(head_declared)
+        if name in head_fields and _norm(head_fields[name]) != head_declared[name]
+    )
+    if missing_decl:
+        failures.append(
+            f"{len(missing_decl)} field(s) in {_REGISTRY} have no entry in "
+            f"{_DECLARED}, so their registration has no recorded default and a "
+            f"flip of it could not be detected:\n      "
+            + "\n      ".join(missing_decl)
+            + f"\n    REMEDY: add each to {_DECLARED} in {_CONFIG_REL} with the "
+            "source text of its current default."
+        )
+    if extra_decl:
+        failures.append(
+            f"{len(extra_decl)} entr(y/ies) in {_DECLARED} are not in "
+            f"{_REGISTRY} -- a stale declaration protects nothing:\n      "
+            + "\n      ".join(extra_decl)
+            + "\n    REMEDY: drop the stale entry, or re-register the field."
+        )
+    if moved:
+        failures.append(
+            f"{len(moved)} registered field(s) had their DEFAULT MOVED without "
+            f"declaring it in {_DECLARED}:\n      "
+            + "\n      ".join(
+                f"{n}: declared {d} -> now {live}" for n, live, d in moved
+            )
+            + _FLIP_REMEDY
+        )
+
     # --- check 1: new fields must be registered (PR only) -------------------
     if args.base:
         base_src = _blob(args.base, _CONFIG_REL)
         if base_src is None:
             print(f"note: {_CONFIG_REL} absent at {args.base}; new-field check skipped")
         else:
-            base_fields, _ = _fields_and_registry(base_src)
-            added = head_fields - base_fields
+            base_fields, _, _ = _fields_and_registry(base_src)
+            added = set(head_fields) - set(base_fields)
             unregistered = sorted(added - head_registry)
             if unregistered:
                 failures.append(
@@ -162,7 +285,8 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"ok: {len(head_fields)} {_CLASS} fields, "
-        f"{len(head_registry)} registered in {_REGISTRY}, all resolve"
+        f"{len(head_registry)} registered in {_REGISTRY}, all resolve; "
+        f"{len(head_declared)} declared defaults all match HEAD"
     )
     return 0
 

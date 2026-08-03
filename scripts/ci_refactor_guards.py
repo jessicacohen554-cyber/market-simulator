@@ -92,6 +92,17 @@ KNOWN_DANGLING: dict[str, str] = {
     "scripts/old_name.py": "file-integrity-guard test fixture path, not a reference",
     "scripts/render.py": "file-integrity-guard test fixture path, not a reference",
     "scripts/small.py": "file-integrity-guard test fixture path, not a reference",
+    # Deleted at FFR-2A (commit d12b4a8, "Fold the FF-2D crossover adapter into
+    # score_crossover.py"); the fold was the point, and the two remaining
+    # references are the comments RECORDING the deletion —
+    # score_crossover.py:649 ("now deleted — rule 26") and
+    # test_score_crossover.py:383 ("folded in from the deleted ..."). So the
+    # scanner is matching a path inside the prose that documents its own
+    # removal. Allowlisted rather than reworded: rule 26 [R-DELETE] wants the
+    # provenance of a deleted module kept legible, and naming it is how. Found
+    # 2026-08-03 by FFR-3D — it had been failing refactor-guards on main since
+    # d12b4a8, reddening the gate for every PR (nobody's PR caused it).
+    "scripts/_ff2d_crossover_adapter.py": "deleted at FFR-2A d12b4a8; deletion-provenance comments only",
 }
 
 

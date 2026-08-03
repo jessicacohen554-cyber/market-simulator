@@ -368,6 +368,27 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
             "src/market_sim/config/paths.py",
         ),
     ),
+    ParityDeclaration(
+        fields=("net_cone_forward_escalation",),
+        disposition=SCENARIO_INPUT,
+        why="FORECAST-ONLY capacity-price axis that a backcast never chooses — "
+        "__post_init__ coerces it in mode='backcast' (no capacity evolution "
+        "runs there), so its value in a keeper's run_config.json is the "
+        "coercion, not an armed lever. Surfaced 2026-08-03 when owner decision "
+        "D-3a moved the default 'hold_last' -> 'reindex_gross': every keeper's "
+        "COMMITTED run_config.json still records the pre-flip coerced "
+        "'hold_last', which reads as non-default and so as 'armed' in all six "
+        "ISOs at once. Nothing on either path consumes it yet in any case — "
+        "capacity_market.forward_net_cone_anchor is not wired into "
+        "capacity_price_per_firm_mw_yr (FF-2C owns that seam), so there is no "
+        "fork for a parity gap to open in. Re-check this row WHEN FF-2C WIRES "
+        "IT: at that point it becomes a real forecast mechanism and must "
+        "resolve to a forecast-orchestrator consumer like any other.",
+        evidence=(
+            "src/market_sim/config/scenarios.py",
+            "src/market_sim/config/capacity_market.py",
+        ),
+    ),
     # -- FILED GAPS ----------------------------------------------------------
     # Each of these is armed in a CURRENT keeper and has no forecast-side
     # consumer and no by-design reason to lack one. FFR-1E files them; wiring

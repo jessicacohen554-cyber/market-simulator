@@ -90,6 +90,28 @@ FROZEN_PICKLE_PATHS: dict[str, list[str]] = {
 # behavior change — the solve path is untouched).
 PINNED_DEFAULT_CACHE_KEY = "603c2498bf71d21d"
 
+# The BACKCAST default key, pinned by FFR-3D (2026-08-03) because the forecast
+# pin above CANNOT see a whole class of re-key: `__post_init__` coerces several
+# forecast-only fields in `mode="backcast"`, so a backcast config's payload is
+# not the default config's payload, and the pin above is explicitly a
+# mode="forecast" object ("no __post_init__ backcast coercion", see the FF-2C
+# note). Every backcast keeper's on-disk bundle is addressed by THIS key.
+#
+# The gap was not hypothetical. Owner decision D-3a moved
+# `net_cone_forward_escalation`'s default "hold_last" -> "reindex_gross" while
+# `__post_init__` coerced backcasts to the LITERAL "hold_last". That literal had
+# been the default (and so cache-neutral via _CACHE_KEY_OPTIONAL_FIELDS); the
+# moment it stopped being the default it entered the hash, moving this key
+# 35b6dc12f97968f1 -> 512c2fffbb61414e and ERCOT's 2023 backcast key
+# df386bca96a1d288 -> f3ee0af68fa72303 — orphaning every keeper's cache, with
+# NO test red. The repair coerces to the dataclass default rather than a
+# literal, which is neutral by construction; this pin is what would have caught
+# it, and what will catch the next one.
+#
+# Same discipline as the pin above: do NOT re-baseline this literal to silence a
+# failure. A genuine advance is recorded here with a dated cause block.
+PINNED_BACKCAST_CACHE_KEY = "35b6dc12f97968f1"
+
 
 @pytest.mark.parametrize(
     ("module_path", "class_name"),
@@ -181,6 +203,51 @@ def test_default_scenario_config_cache_key_is_pinned() -> None:
             "breaks keeper reproducibility. Do not update the literal to "
             f"silence this — find what changed.{blame}"
         )
+
+
+def test_backcast_scenario_config_cache_key_is_pinned() -> None:
+    """``ScenarioConfig(mode="backcast").cache_key()`` equals the pinned literal.
+
+    Every backcast keeper's bundle is addressed by this key, and the forecast
+    pin above cannot see it (that object takes no ``__post_init__`` backcast
+    coercion). See the ``PINNED_BACKCAST_CACHE_KEY`` block for the D-3a
+    near-miss this exists to catch.
+    """
+    actual = ScenarioConfig(mode="backcast").cache_key()
+    assert actual == PINNED_BACKCAST_CACHE_KEY, (
+        f"The default BACKCAST ScenarioConfig cache_key changed: {actual} != "
+        f"{PINNED_BACKCAST_CACHE_KEY}. This orphans every backcast keeper's "
+        "on-disk cache. The usual cause is a field that __post_init__ coerces "
+        "to a LITERAL in backcast, where that literal has stopped being the "
+        "field's default and so stopped being cache-neutral — coerce to the "
+        "dataclass default instead. Do not re-baseline the literal."
+    )
+
+
+def test_no_registered_optional_field_is_backcast_coerced_off_its_default() -> None:
+    """Backcast coercion must land every registered field on its default.
+
+    The general form of the invariant above. ``_CACHE_KEY_OPTIONAL_FIELDS`` is
+    cache-neutral **at the default only**, so a backcast coercion that lands on
+    anything else silently re-keys every backcast bundle. Checking the property
+    (rather than only the digest) names the offending field directly.
+    """
+    from market_sim.config import scenarios as scen
+
+    defaults = ScenarioConfig()
+    backcast = ScenarioConfig(mode="backcast")
+    offenders = {
+        name: (getattr(defaults, name), getattr(backcast, name))
+        for name in scen._CACHE_KEY_OPTIONAL_FIELDS
+        if getattr(backcast, name) != getattr(defaults, name)
+    }
+    assert not offenders, (
+        "registered cache-key-optional field(s) are coerced OFF their default "
+        f"in backcast, so they enter the backcast hash: {offenders}. Coerce to "
+        "the dataclass default (see net_cone_forward_escalation in "
+        "scenarios.py::__post_init__), or accept the re-key deliberately and "
+        "advance PINNED_BACKCAST_CACHE_KEY with a dated cause block."
+    )
 
 
 def test_default_cache_key_is_checkout_path_invariant(monkeypatch) -> None:
