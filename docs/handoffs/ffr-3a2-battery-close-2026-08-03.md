@@ -169,7 +169,94 @@ rubric §4 forbids and is exactly why FFR-3A left this open.
 
 ## 2. T1-F re-run — results
 
-*(pending; filled from `results/ffr3a2/t1f/*/full_horizon_summary.json`)*
+All legs cold-solved post-epoch, 2026–2030, shipped posture per regate §4.3
+(`--golden-posture` everywhere except NYISO, which takes the plain default so it
+resolves curve-OFF). `curve` is the RESOLVED per-ISO gate.
+
+| leg | yrs | resolved cache key | curve | determination | FC-1 | FC-2 | FC-7 | invariant FAIL | WARN |
+|---|---|---|---|---|---|---|---|---|---|
+| ERCOT | 5/5 | `a55b0e43fdc2f990` | OFF ✓ | **HOLD** | FAIL | **FAIL** | CAVEAT | I3, **I12** | I14 |
+| CAISO | 5/5 | `e5822277b72184f6` | ON ✓ | **HOLD** | FAIL | **FAIL** | CAVEAT | I3, **I7**, **I12** | — |
+| NYISO | 5/5 | `2bd878d87848785c` | OFF ✓ | **HOLD** | FAIL | CAVEAT | CAVEAT | I7 | I12 |
+| NEISO | 5/5 | `9f2cc6ecd30704ca` | ON ✓ | **HOLD** | FAIL | CAVEAT | CAVEAT | I7 | I12 |
+| *ERCOT **control*** | *5/5* | `e80c9b0c1a20c651` | *OFF* | ***HOLD*** | *FAIL* | *CAVEAT* | *CAVEAT* | *I3* | *I12, I14* |
+
+*(PJM and MISO run solo after phase 1 — see §9 for whether they landed.)*
+
+### 2.1 The D-1/D-2 adequacy collapse REPRODUCES, cold and post-epoch
+
+Independently re-measured at a different HEAD, with the C.4(c) un-pin and D-3a landed,
+and it matches FFR-3A **to the digit**:
+
+| quantity | FFR-3A (regate §6.4) | **this session** | match |
+|---|---|---|---|
+| ERCOT reserve margin | 9.1 → 3.8 → 3.0 → −1.5 % | 14.8 → **9.1 → 3.8 → 3.0 → −1.5 %** | **exact** |
+| ERCOT unserved (I3) | to 0.41 % of load | to **0.41 %** of load | **exact** |
+| ERCOT `hours_ge_500` | 1,137 h/yr | **1,137** h/yr | **exact** |
+| CAISO reserve margin | 1.8 %, −3.1 %, −0.3 %, … | **1.8, −3.1, −0.3**, 12.3, 15.3 % | **exact** |
+
+**The paired ERCOT attribution reproduces at rubric level**, which is the stronger
+evidence because it is the scorer's own category verdict moving under the control:
+
+| | TREATMENT (D-1+D-2, shipped) | CONTROL (pre-decision) |
+|---|---|---|
+| **FC-2** | **FAIL** | **CAVEAT** |
+| I12 reserve margin | **FAIL** — 4-yr decline to **−1.5 %** | **WARN** — 2030 only, **12.4 %** |
+| reserve margin path | 14.8 / 9.1 / 3.8 / 3.0 / **−1.5** % | 14.8 / 14.1 / 14.2 / 14.7 / 12.4 % |
+| `hours_ge_500` (max) | **1,137** | **63** |
+| FC-2 row 6 sustained-VOLL | **FAIL** (>800 h/yr) | *does not fire* |
+
+Both arms took distinct resolved keys (`a55b0e43fdc2f990` vs `e80c9b0c1a20c651`),
+confirming they are genuinely different scenarios. **Nothing was tuned or unarmed in
+response** (Addendum D.1: HOLD PROMOTION, FIND ROOT CAUSE).
+
+### 2.2 ⚠ NEW — BLK-10 backstop sizing is measurable for the first time, and CAISO FAILs it
+
+This is the evidence **D-2 was meant to re-open** and that **could not be scored at all**
+before: FC-2 row 4 SKIPPED on every leg at FF-2D and FFR-3A because the trajectory
+carried no per-channel split. FFR-3D `34c2f25` made the split emit; a second defect then
+kept it unread (§2.3). With both closed, the numbers are:
+
+| ISO | cumulative reserve-backstop / total additions | row 4 |
+|---|---|---|
+| **CAISO** | **65.5 %** | **FAIL — administrative over-build** (>30 %) |
+| NYISO | 23.8 % | CAVEAT |
+| NEISO | 11.7 % | CAVEAT |
+| ERCOT | 0.0 % | PASS |
+| ERCOT control | 0.0 % | PASS |
+
+**CAISO builds roughly two-thirds of its capacity additions through the administrative
+reliability backstop** — a channel the rubric's own pre-registered rationale calls "a
+single-digit-percent residual in real markets" (`BACKSTOP_SHARE_PASS = 0.10`). That is
+what drives CAISO's FC-2 to FAIL alongside its negative reserve margins, and it is a
+structural finding about *how* the model closes CAISO's adequacy gap, not a band problem.
+**It is reported, not fixed** (rules 1/14).
+
+**A sharpening of FFR-3C's ERCOT attribution, worth stating.** ERCOT's backstop share is
+**0.0 % in BOTH arms**. So ERCOT's collapse is **not** a backstop-sizing story at all —
+it is entirely the retirement/entry asymmetry FFR-3C attributes it to (exit throughput
+uncapped, entry throughput capped). The backstop finding is CAISO's and the downstate/
+New-England ISOs', and rule 25 `[R-ISO-SCOPE]` forbids carrying any of it across.
+
+### 2.3 The recorded-vs-measured key comparison (the like-for-like one)
+
+Resolved on-disk key at this HEAD against regate §6.3's recorded resolved key:
+
+| leg | recorded (§6.3) | measured here | moved? |
+|---|---|---|---|
+| **NYISO** (plain default) | `2bd878d87848785c` | **`2bd878d87848785c`** | **NO — exact** |
+| ERCOT | `ab1d074828bebabe` | `a55b0e43fdc2f990` | yes |
+| CAISO | `862d176d609252f9` | `e5822277b72184f6` | yes |
+| NEISO | `bc01afd6e7866422` | `9f2cc6ecd30704ca` | yes |
+| ERCOT control | `e9e5e1c911c6424c` | `e80c9b0c1a20c651` | yes |
+
+**NYISO's key is unmoved and exact** — the one leg that passes no
+`capacity_market_clearing_by_iso` mapping. Every leg that DOES pass that mapping moved,
+and `83efe6c` (C.4(a) B1) is the change that altered it, dropping NYISO from the shipped
+dict. That is consistent with the request-side analysis in §1.3 and with the observation
+that request and resolution coincide precisely for the leg that takes no posture
+override. **A cold re-solve was required for all of them regardless** (§1.1), so no work
+was lost to the movement.
 
 ---
 
