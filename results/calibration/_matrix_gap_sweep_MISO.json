@@ -1254,6 +1254,11 @@
           "row": "nuclear_unit_availability",
           "cells": "KKUUKK",
           "cell": "U"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -1367,7 +1372,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -1535,7 +1540,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -1630,7 +1635,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2015,7 +2020,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
+          "cells": ".UUUK.",
           "cell": "U"
         },
         {
@@ -2240,7 +2245,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         },
         {
@@ -2340,7 +2345,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2850,7 +2855,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
+          "cells": ".UUUK.",
           "cell": "U"
         },
         {
@@ -3236,6 +3241,16 @@
           "row": "reference_price_interface",
           "cells": ".UKKGU",
           "cell": "K"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "O"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".UUUK.",
+          "cell": "U"
         }
       ],
       "excluded": false,
@@ -3455,6 +3470,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "U"
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -3524,7 +3544,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
+          "cells": "KKOOKO",
           "cell": "O"
         }
       ],

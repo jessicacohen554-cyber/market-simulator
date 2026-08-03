@@ -11,10 +11,23 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -22,10 +35,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -33,10 +54,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -44,10 +73,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -75,10 +112,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -117,10 +162,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -236,10 +289,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -266,10 +327,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -296,10 +365,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -326,10 +403,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -540,10 +625,23 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -551,10 +649,23 @@
       "default": 1.0,
       "keeper_value": 0.8,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -582,10 +693,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -612,10 +731,23 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -623,10 +755,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -634,10 +774,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        "."
+      ],
       "armed_in_bundles": []
     },
     {
@@ -664,10 +812,18 @@
       "default": null,
       "keeper_value": null,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -675,10 +831,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -707,8 +871,13 @@
       "keeper_value": true,
       "keeper_arms_it": true,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
         {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
@@ -716,7 +885,8 @@
         }
       ],
       "cells": [
-        "G"
+        "G",
+        "K"
       ],
       "armed_in_bundles": [
         "caiso124_control_A",
@@ -745,10 +915,18 @@
       "default": 0,
       "keeper_value": 0,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -764,10 +942,18 @@
         0.97
       ],
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -795,10 +981,18 @@
       "default": 0.95,
       "keeper_value": 0.95,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
+      "mentioned_in_matrix": true,
       "coverage": "own_row",
-      "owning_rows": [],
-      "cells": [],
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -845,10 +1039,29 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K",
+        "U"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -876,10 +1089,24 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".UUUK.",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "K",
+        "U"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -887,10 +1114,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -918,10 +1153,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -929,10 +1172,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -960,10 +1211,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1133,10 +1392,18 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1164,7 +1431,7 @@
       "keeper_value": false,
       "keeper_arms_it": false,
       "mentioned_in_matrix": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "reference_price_interface",
@@ -1232,10 +1499,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1287,10 +1562,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1301,6 +1584,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
         {
           "row": "solar_deliverability",
           "cells": "UK....",
@@ -1337,10 +1625,23 @@
       "default": 0.5,
       "keeper_value": 0.5,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1368,10 +1669,23 @@
       "default": 0.15,
       "keeper_value": 0.15,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1399,10 +1713,23 @@
       "default": false,
       "keeper_value": true,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1430,10 +1757,23 @@
       "default": 30.0,
       "keeper_value": 30.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1461,10 +1801,23 @@
       "default": 10.0,
       "keeper_value": 10.0,
       "keeper_arms_it": true,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
@@ -1492,10 +1845,18 @@
       "default": false,
       "keeper_value": false,
       "keeper_arms_it": false,
-      "mentioned_in_matrix": false,
-      "coverage": "absent",
-      "owning_rows": [],
-      "cells": [],
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
       "armed_in_bundles": []
     },
     {
@@ -1587,63 +1948,9 @@
       "armed_in_bundles": []
     }
   ],
-  "family_matrix_gaps_absent": [
-    "caiso_asymmetric_path_ratings",
-    "caiso_bidir_intertie",
-    "caiso_charge_allocation_schedule",
-    "caiso_citygate_flow_date",
-    "caiso_citygate_spot_level",
-    "caiso_corridor_atc_forward",
-    "caiso_dsw_daytime_clean",
-    "caiso_dsw_daytime_evening_trim",
-    "caiso_dsw_overnight_clean",
-    "caiso_dsw_surplus_clean",
-    "caiso_gas_commitment_floor",
-    "caiso_gas_floor_frac",
-    "caiso_import_gas_coupling",
-    "caiso_import_solar_shape",
-    "caiso_intertie_reference_price",
-    "caiso_lcr_commitment_credit",
-    "caiso_per_hub_intertie",
-    "caiso_per_year_import_caps",
-    "caiso_perhub_firm_base",
-    "caiso_ra_bridge_curtailment_release",
-    "caiso_ra_bridge_decommit",
-    "caiso_ra_bridge_startup_aware",
-    "caiso_ra_startup_trajectory",
-    "caiso_scarcity_import_headroom",
-    "caiso_solar_cap_at_delivered",
-    "caiso_solar_deliverability_floor",
-    "caiso_solar_deliverability_k",
-    "caiso_solar_endogenous_spill",
-    "caiso_solar_shape_nl_hi_pct",
-    "caiso_solar_shape_nl_lo_pct",
-    "caiso_storage_as_reservation"
-  ],
-  "family_prose_only": [
-    "caiso_offer_surface_measured",
-    "caiso_reference_price_seam"
-  ],
-  "armed_on_keeper_with_no_cell": [
-    "caiso_citygate_flow_date",
-    "caiso_citygate_spot_level",
-    "caiso_dsw_daytime_clean",
-    "caiso_dsw_daytime_evening_trim",
-    "caiso_dsw_overnight_clean",
-    "caiso_dsw_surplus_clean",
-    "caiso_gas_floor_frac",
-    "caiso_offer_surface_measured",
-    "caiso_per_hub_intertie",
-    "caiso_perhub_firm_base",
-    "caiso_ra_bridge_decommit",
-    "caiso_ra_bridge_startup_aware",
-    "caiso_ra_startup_trajectory",
-    "caiso_solar_deliverability_floor",
-    "caiso_solar_deliverability_k",
-    "caiso_solar_endogenous_spill",
-    "caiso_solar_shape_nl_hi_pct",
-    "caiso_solar_shape_nl_lo_pct"
-  ],
+  "family_matrix_gaps_absent": [],
+  "family_prose_only": [],
+  "armed_on_keeper_with_no_cell": [],
   "shared_armed_on_keeper": [
     {
       "field": "battery_dispatch_adder",
@@ -1668,8 +1975,8 @@
       "owning_rows": [
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
-          "cell": "."
+          "cells": ".UUUK.",
+          "cell": "U"
         },
         {
           "row": "capacity_deliverability",
@@ -1767,6 +2074,11 @@
       "coverage": "prose_only",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
           "row": "dam_availability_rebasis",
           "cells": "KUGR.R",
           "cell": "U"
@@ -1796,6 +2108,11 @@
       "keeper_value": true,
       "coverage": "prose_only",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
         {
           "row": "chp_steam_following",
           "cells": "KKKKKK",
@@ -1924,8 +2241,14 @@
       "field": "ct_drag_cap",
       "default": 0.47,
       "keeper_value": 0.36,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1933,8 +2256,14 @@
       "field": "ct_drag_intercept",
       "default": -0.1427,
       "keeper_value": -0.1124,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1942,8 +2271,14 @@
       "field": "ct_drag_slope_per_gw",
       "default": 0.00703,
       "keeper_value": 0.00901,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -2054,6 +2389,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKOOKO",
+          "cell": "K"
+        },
+        {
           "row": "gas_hub_basis_overlay",
           "cells": "UK.UKK",
           "cell": "K"
@@ -2115,8 +2455,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
-          "cell": "O"
+          "cells": "KKOOKO",
+          "cell": "K"
         },
         {
           "row": "cc_committed_offer_margin",
@@ -2330,8 +2670,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
-          "cell": "O"
+          "cells": "KKOOKO",
+          "cell": "K"
         },
         {
           "row": "energy_reserve_coopt",
@@ -2425,7 +2765,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2810,8 +3150,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
-          "cell": "."
+          "cells": ".UUUK.",
+          "cell": "U"
         },
         {
           "row": "demand_repairs",
@@ -3020,8 +3360,8 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
-          "cell": "O"
+          "cells": "KKOOKO",
+          "cell": "K"
         },
         {
           "row": "energy_reserve_coopt",
@@ -3120,7 +3460,7 @@
         },
         {
           "row": "nyiso_nyc_rcpf_step_curve",
-          "cells": "....O.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -3630,8 +3970,8 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": "..UUK.",
-          "cell": "."
+          "cells": ".UUUK.",
+          "cell": "U"
         },
         {
           "row": "demand_repairs",
@@ -4208,8 +4548,8 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KOOOKO",
-          "cell": "O"
+          "cells": "KKOOKO",
+          "cell": "K"
         }
       ],
       "excluded": true,
@@ -4231,257 +4571,18 @@
       "exclusion_reason": null
     }
   ],
-  "shared_matrix_gaps_absent": [
+  "shared_matrix_gaps_absent": [],
+  "shared_prose_only": [
+    "cc_outage_derate_from_top",
+    "chp_steam_floor_p25",
     "ct_drag_cap",
     "ct_drag_intercept",
     "ct_drag_slope_per_gw"
-  ],
-  "shared_prose_only": [
-    "cc_outage_derate_from_top",
-    "chp_steam_floor_p25"
   ],
   "shared_excluded": [
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "caiso_gas_floor_frac",
-      "default": 1.0,
-      "keeper_value": 0.8,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": 0.8,
-        "caiso126_control_A": 0.8,
-        "caiso146_control_A": 0.8,
-        "caiso146_ctheatrate_B": 0.8,
-        "caiso147_chp_B": 0.8,
-        "caiso147_control_A": 0.8
-      }
-    },
-    {
-      "field": "caiso_ra_bridge_decommit",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_ra_bridge_startup_aware",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_per_hub_intertie",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_perhub_firm_base",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_citygate_spot_level",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_citygate_flow_date",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_dsw_surplus_clean",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_solar_endogenous_spill",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "ct_drag_slope_per_gw",
-      "default": 0.00703,
-      "keeper_value": 0.00901,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": 0.00901,
-        "caiso126_control_A": 0.00901,
-        "caiso146_control_A": 0.00901,
-        "caiso146_ctheatrate_B": 0.00901,
-        "caiso147_chp_B": 0.00901,
-        "caiso147_control_A": 0.00901
-      }
-    },
-    {
-      "field": "ct_drag_intercept",
-      "default": -0.1427,
-      "keeper_value": -0.1124,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": -0.1124,
-        "caiso126_control_A": -0.1124,
-        "caiso146_control_A": -0.1124,
-        "caiso146_ctheatrate_B": -0.1124,
-        "caiso147_chp_B": -0.1124,
-        "caiso147_control_A": -0.1124
-      }
-    },
-    {
-      "field": "ct_drag_cap",
-      "default": 0.47,
-      "keeper_value": 0.36,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": 0.36,
-        "caiso126_control_A": 0.36,
-        "caiso146_control_A": 0.36,
-        "caiso146_ctheatrate_B": 0.36,
-        "caiso147_chp_B": 0.36,
-        "caiso147_control_A": 0.36
-      }
-    },
-    {
-      "field": "caiso_offer_surface_conditional",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_ra_startup_trajectory",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 18,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_dsw_overnight_clean",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 18,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_dsw_daytime_clean",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 18,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
-    {
-      "field": "caiso_dsw_daytime_evening_trim",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 18,
-      "bundles": {
-        "caiso124_control_A": true,
-        "caiso126_control_A": true,
-        "caiso146_control_A": true,
-        "caiso146_ctheatrate_B": true,
-        "caiso147_chp_B": true,
-        "caiso147_control_A": true
-      }
-    },
     {
       "field": "forecast_xyear_warmstart",
       "default": true,
