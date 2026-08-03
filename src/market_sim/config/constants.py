@@ -638,6 +638,28 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 #   zones absent from the map keep the window anchor, a no-op on an empty
 #   zone.)
 #
+# MISO (miso-119, derived 2026-08-03) — capacity-weighted MEAN-ZERO convention
+# (``apply_miso_zonal_gas_basis`` -> the same ``basis.meanzero`` core as PJM,
+# no level term), so the ISO anchor is the fleet centroid and the pre-fix
+# defect is TWO-SIDED: the Gulf-premium South (persistent +0.30/+0.39/+0.34
+# raw basis) under-marked, the Chicago-basis eastern-Midwest zones and the
+# MidCon West/Plains over-marked. Derived on the keeper's own per-year fleet
+# weights: ``--weights-bundle results/calibration/miso117_ctheatrate_B``
+# (rebuilt no-LP via scripts.lib.bundle_fleet.reconstruct_bundle_fleet;
+# per-year capacity-weighted means removed +0.154 / +0.272 / +0.061 $/MMBtu).
+# MISO is deliberately NOT in ``SOLVE_FUEL_ARRAY_ISOS``: its per-plant gas
+# pricing (``gas_plant_monthly_fuel_pricing``) lives in the margin's own
+# hour-by-hour ``fuel`` tracking, and the zonal anchor corrects exactly the
+# zone-spread term the zonal basis adds (miso-119 prereg §2). Basis source is
+# the committed per-zone EIA delivered-to-electric-power table
+# data/raw/miso_zonal_gas_hub.csv:
+#   MISO-South    3.2291 = mean(2.9807, 2.6052, 4.1013) — Gulf Coast (LA).
+#   MISO-West     2.9641 = mean(3.1447, 2.5742, 3.1733) — MidCon/N. Natural (IA).
+#   MISO-Plains   2.9641 = mean(3.1447, 2.5742, 3.1733) — MidCon/N. Natural (IA).
+#   MISO-Illinois 2.8971 = mean(2.5777, 2.3372, 3.7763) — Chicago Citygate (IL).
+#   MISO-Indiana  2.8971 = mean(2.5777, 2.3372, 3.7763) — Chicago Citygate (IL).
+#   MISO-East     2.8971 = mean(2.5777, 2.3372, 3.7763) — Chicago Citygate (IL).
+#
 # An identification constant, not a tunable: rule 23 [R-FROZEN-DERIVE], it
 # re-derives ONLY when the gas source data, the per-zone hub table, the EP
 # series, or (for a capacity-weighted ISO) the keeper fleet recipe the weights
@@ -670,6 +692,14 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
         "Houston": 2.3111,
         "South_Central": 2.7578,
         "South": 3.2778,
+    },
+    "MISO": {
+        "MISO-West": 2.9641,
+        "MISO-Plains": 2.9641,
+        "MISO-Illinois": 2.8971,
+        "MISO-Indiana": 2.8971,
+        "MISO-East": 2.8971,
+        "MISO-South": 3.2291,
     },
 }
 
