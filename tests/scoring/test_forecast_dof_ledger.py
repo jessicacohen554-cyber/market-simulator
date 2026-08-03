@@ -30,13 +30,24 @@ _spec.loader.exec_module(bl)
 
 
 class SkeletonNeverImprovesAVerdictTests(unittest.TestCase):
-    """The stub's whole contract, pinned."""
+    """The stub's whole contract, pinned.
+
+    NOTE on the fixture values below: the ledger deliberately EXCLUDES fields
+    sitting at their shipped default ("an un-armed mechanism flag is not a free
+    parameter OF THIS RUN"), so every fixture here has to supply a genuinely
+    NON-default value or it produces no entries at all. These fixtures used
+    ``entry_rate_limits: True`` / ``entry_commissioning_lag: True`` until owner
+    decision D-2 armed both by default on 2026-08-02 (FFR-3A), which inverted
+    which value is the non-default one — hence ``False`` now. The assertions
+    are unchanged: nothing here depends on WHICH value is armed, only that the
+    value differs from the shipped default.
+    """
 
     def _skeleton(self, sc):
         return bl.build_ledger({"scenario_config": sc})
 
     def test_all_unattested_scores_exactly_as_an_absent_ledger(self):
-        led = self._skeleton({"iso": "PJM", "entry_rate_limits": True})
+        led = self._skeleton({"iso": "PJM", "entry_rate_limits": False})
         self.assertTrue(led["entries"], "skeleton produced no entries to test")
         for tier in ("t1", "t2", "t3"):
             with self.subTest(tier=tier):
@@ -46,13 +57,13 @@ class SkeletonNeverImprovesAVerdictTests(unittest.TestCase):
 
     def test_the_caveat_detail_names_what_must_be_attested(self):
         # The gain over an absent ledger is specificity, not status.
-        led = self._skeleton({"iso": "PJM", "entry_rate_limits": True})
+        led = self._skeleton({"iso": "PJM", "entry_rate_limits": False})
         row = fv._score_dof_ledger({"dof_ledger": led}, "t1")
         self.assertIn("UNATTESTED SKELETON", row["detail"])
         self.assertIn("entry_rate_limits", row["detail"])
 
     def test_builder_writes_only_the_unattested_token(self):
-        led = self._skeleton({"iso": "MISO", "entry_commissioning_lag": True})
+        led = self._skeleton({"iso": "MISO", "entry_commissioning_lag": False})
         self.assertTrue(led["entries"])
         for e in led["entries"]:
             self.assertEqual(e["identification"], bl.UNATTESTED)
@@ -61,7 +72,7 @@ class SkeletonNeverImprovesAVerdictTests(unittest.TestCase):
     def test_a_filled_entry_can_pass(self):
         # The form must actually be fillable: replacing the token with a real
         # identification + source is what retires an entry.
-        led = self._skeleton({"iso": "PJM", "entry_rate_limits": True})
+        led = self._skeleton({"iso": "PJM", "entry_rate_limits": False})
         for e in led["entries"]:
             e["identification"] = "published"
             e["source"] = "NREL ReEDS documentation, growth-constraint bound"
@@ -71,7 +82,7 @@ class SkeletonNeverImprovesAVerdictTests(unittest.TestCase):
     def test_a_filled_residual_without_a_root_cause_still_fails(self):
         # Rule 21 is not weakened by the new branch: a residual entry with no
         # open root cause is malformed, whatever else the ledger contains.
-        led = self._skeleton({"iso": "PJM", "entry_rate_limits": True})
+        led = self._skeleton({"iso": "PJM", "entry_rate_limits": False})
         led["entries"][0]["identification"] = "residual"
         for e in led["entries"][1:]:
             e["identification"] = "published"
@@ -81,7 +92,7 @@ class SkeletonNeverImprovesAVerdictTests(unittest.TestCase):
 
     def test_a_partly_filled_ledger_still_caveats(self):
         led = self._skeleton(
-            {"iso": "PJM", "entry_rate_limits": True, "entry_commissioning_lag": True}
+            {"iso": "PJM", "entry_rate_limits": False, "entry_commissioning_lag": False}
         )
         self.assertGreaterEqual(len(led["entries"]), 2)
         led["entries"][0]["identification"] = "published"
@@ -126,7 +137,7 @@ class SkeletonScopeTests(unittest.TestCase):
                     # Deliberately non-default (the shipped default is 3), so the
                     # default-value filter keeps it.
                     "retirement_years_coal": 7,
-                    "entry_rate_limits": True,
+                    "entry_rate_limits": False,
                     "ercot_gas_commitment_bridge": True,
                 }
             }
@@ -151,7 +162,7 @@ class CliTests(unittest.TestCase):
             bundle = Path(tmp)
             (bundle / "run_config.json").write_text(
                 json.dumps(
-                    {"scenario_config": {"iso": "PJM", "entry_rate_limits": True}}
+                    {"scenario_config": {"iso": "PJM", "entry_rate_limits": False}}
                 )
             )
             self.assertEqual(bl.main([str(bundle)]), 0)

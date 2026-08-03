@@ -346,7 +346,15 @@ class TestCapacityRevenueRetirementScreen(unittest.TestCase):
         # coal=1 pinned (D1 default 3): this screen runs a single pass, so the
         # coal units must be eligible on one loss year to isolate the
         # capacity-revenue monotonicity / ERCOT negative-control response.
-        config = ScenarioConfig(iso=iso, retirement_years_coal=1)
+        # retirement_rule="legacy" pinned with it (D-1 flipped the default to
+        # "pipeline" 2026-08-02): retirement_years_coal is a LEGACY-rule
+        # parameter, and the single-pass same-year deactivation this driver
+        # probe counts is legacy semantics — the R-NEW pipeline is dated and
+        # defers execution by the measured per-fuel lag. The DRIVER under test
+        # (capacity revenue) is upstream of the decision rule and unchanged.
+        config = ScenarioConfig(
+            iso=iso, retirement_years_coal=1, retirement_rule="legacy"
+        )
         # Preserve the real capacity_market flag for the ISO, vary only net-CONE.
         base = MARKET_DESIGN.get(iso)
         patched = MarketDesign(
