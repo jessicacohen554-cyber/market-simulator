@@ -1697,7 +1697,71 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-117-nyc-rcpf`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-118-seny-span`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-118) — THE SENY ORDC SPAN FIX IS ARMED AND
+PROMOTED, ON STRUCTURE, WITH THE RESIDUAL DELIBERATELY UNMOVED.** Keeper
+`2026-08-03-nyiso-117-nyc-rcpf` → **`2026-08-03-nyiso-118-seny-span`**.
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **UNCHANGED**. One
+delta (`nyiso_ordc_measured_step_span`, matrix cell **`U` → `K`**), **zero free
+parameters** (ledger 31 → 32, `n_residual` 6). Two runs registered
+(`2026-08-03-nyiso-118-control-zerodelta` + the keeper).
+
+**(1) A CONSTRUCTION-CONSISTENCY FIX, NOT A LEVER.** `nyiso_dynamic_reserve_
+requirements` already put the **measured** hourly requirement on the balance row,
+but the ORDC curve priced against it was still built off the **static published**
+MW. The flag scales each dynamic family's width vector by `requirement[t] /
+requirement_static`, restoring **total step width == the hour's requirement**.
+SENY violated that identity in **6,239/6,249/6,231** hours of 2023/24/25 in the
+control and **0/0/0** in the treatment. It introduces **no new number** — the
+scale factor is the ratio of two already-committed measured inputs and the
+published RCPF penalties are requirement-**independent** (measured unchanged).
+
+**(2) THE ONE LIVE COUPLING WAS DISCHARGED EX ANTE, ON CONSTRUCTION.** The LI
+ladder already applies this same span translation family-scoped to
+`li_30min_total` without flipping the global flag, so arming it globally could
+have **double-applied**. `scripts/probes/_nyiso118_span_construction_probe.py`
+builds the `ReserveDesign` **twice at one HEAD** and diffs every family's
+requirement, penalties and width vectors — **no LP, no dual**, because those are
+solved co-optimization outputs whose byte-identity can only pass when the
+mechanism does nothing (the nyiso-115 G2 error). **`li_30min_total` is
+byte-identical in all three vectors: K-A did not fire.**
+
+**(3) TWO CORRECTIONS TO THE RECORD, BOTH MEASURED.** The blast radius is
+**three** families, not one — `_nyiso_design`'s docstring claimed a no-op for
+NYC, which is **false** (NYC's measured requirement dips *below* static in
+**185/227/120** hours); docstring corrected. **But NYC is re-REPRESENTED, not
+re-PRICED**: shortfall is bounded by the hour's requirement, so width beyond it
+is unreachable padding, and the frozen step curve makes that family a single flat
+band — reachable price **pointwise identical ($0.000)**, so **K-B did not fire**
+and the rule-23 freeze holds. That three-way split (SENY re-priced, NYC
+re-represented, LI untouched) is what proves the instrument **has discriminating
+power**.
+
+**(4) ALL SIX GATES PASS, K-A…K-E SILENT.** G2c is an instrument that never
+touches the parquet: the solve log's ORDC step count is **unchanged at 59/59/59
+in both arms** — the flag re-spans widths and adds no steps. Zero slack and zero
+dump in both arms. **All 18 scored numeric fields equal** the same-HEAD control's.
+
+**(5) IT IS A PARTIAL, PRE-REGISTERED AS ONE — IT DOES NOT CLOSE S-OVER.** The
+flag re-spans **widths only**; SENY's penalties are unchanged and its **first
+rung is still $62.50**, already above the entire measured **$23.92/$30.37/$40.00**
+envelope. **Measured effect: 2023 and 2024 are BIT-IDENTICAL; only 2025 moves,
+downward** (SENY max dual **125.00 → 87.07**, the shallower ramp and the
+pre-registered direction). Small because **SENY binds in almost no hours (2/0/8)**,
+*not* because the curve barely changed — its reachable price differs in ~6,100
+hours per year, but a demand curve can only price where there is a shortfall.
+
+**(6) THE NAMED OPEN SUCCESSOR** is the **SENY LEVEL/STEP mechanism**: the
+published curve is a **$500 base PLUS a $40 increment** while the model carries
+only the base as a `critical_mw = 0` ramp. That is a **second mechanism** needing
+its own pre-registration and its own arm (rule 19 `[R-ONE-MECH]`); nothing was
+introduced, changed or fitted for it here. Promotion rested on rule 1
+`[R-STRUCT]` / rule 14 `[R-ACCURATE]` — the static 1,300 MW span was an
+**estimate leaking into a curve whose balance row is measured**. Evidence:
+`results/calibration/FINDING-nyiso118-seny-span-2026-08-03.md`,
+`PREREG-nyiso118-seny-span-2026-08-03.md`, `nyiso118_gate_scores.json`,
+`nyiso118_span_construction_probe.json`.
 
 **STATUS 2026-08-03 (nyiso-117) — THE TWO ORTHOGONAL FIXES ARE COMPOSED AND
 PROMOTED, AND THE SUPERSESSION THAT ORDERED IT NEVER HAPPENED.** Keeper
