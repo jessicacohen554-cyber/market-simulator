@@ -1645,6 +1645,86 @@ criterion; the outage-grain data ask below remains its honest continuation.)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-117-nyc-rcpf`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-117) — THE TWO ORTHOGONAL FIXES ARE COMPOSED AND
+PROMOTED, AND THE SUPERSESSION THAT ORDERED IT NEVER HAPPENED.** Keeper
+`2026-08-03-nyiso160-ctmeter-screen-b` → **`2026-08-03-nyiso-117-nyc-rcpf`**.
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **UNCHANGED at
+3/0/14**. One delta (`nyiso_nyc_rcpf_step_curve`), **zero free parameters**
+(ledger 30 → 31, `n_residual` 6). Two runs registered
+(`2026-08-03-nyiso-117-control-zerodelta` + the keeper).
+
+**(1) EVERY GATE PASSES, AND G2 IS RE-SPECIFIED ON CONSTRUCTION.** G1: the NYC
+families reach exactly **$25.00** in **14/6/19** (10-min) and **2/6/8** (30-min)
+hours and sit on an interior ramp rung in **zero** hours. **G2a — the scope
+KILL** — all **seven** non-NYC families' `requirement_mw` (the balance-row RHS,
+the one **pure input** in the sidecar) are **float32-exactly identical** to
+control in all three years. That specification is nyiso-115's lesson inherited
+rather than re-learned: its G2 demanded byte-identity of `dual` and `held_mw`,
+which are **solved outputs of a co-optimization** and so could only be identical
+when the mechanism did nothing. **G2b** corroborates from an instrument that
+never touches the parquet — solve-log ORDC steps **73 → 59 in each year**, a drop
+of exactly **14 = 2 families × 7 rungs**, family count unchanged at 9. `dual` and
+`held_mw` are reported and **explicitly not gated**; `shortfall_mw` is demoted to
+reported (**G2c**) because it too is a solved LP variable. G3/G4/G5/G6 PASS, zero
+slack and zero dump in both arms, **all 18 scored numeric fields EQUAL** between
+arms, K-A…K-E do not fire. Cell `nyiso_nyc_rcpf_step_curve` **`O` → `K`**.
+
+**(2) THE NULL WAS PRE-REGISTERED AND IS NOW MEASURED DIRECTLY.** Prereg §5 said
+in advance that a step and a ramp are BOTH $0 at or above the requirement, so
+this moves the **level** in hours a family already binds and **cannot add binding
+hours**. **K-E measures exactly that: binding hours GAINED = ZERO** in every
+family and every year (the 30-min family *loses* 5 h in 2023 and 1 h in 2025 — a
+shortfall crossing zero, also anticipated). C3c unchanged; it does **not** reach
+nyiso-110's everyday-reserve-formation gap and is **not** reported as closing it.
+
+**(3) THE SUPERSESSION PREMISE WAS FALSE, AND THE CONTROL IS WHAT CAUGHT IT.**
+nyiso-115's arms were **already** on the POST-fix CT artifact: this session's
+control is **bit-identical** to nyiso-115's control *and* to the caiso-160
+keeper, and its treatment **bit-identical** to nyiso-115's treatment —
+`max |ΔMW| = 0.000000`, `max |Δprice| = 0.000000`, every class-hour and
+zone-hour, all three years. That is **not** "the CT fix is inert": caiso-160's
+own pre-fix vs post-fix arms differ by max |ΔMW| **508.19/628.89/387.23** and
+max |Δprice| **$10.50/$10.56/$9.04**. The artifact vintage had been **assumed
+from commit ordering**. Precisely: in a fresh container
+`git merge-base --is-ancestor` cannot see other branches' commits and **says so**
+(exit **128**, `fatal: Not a valid object name`) — git *does* distinguish that
+from a genuine negative (exit **1**). What collapses the two is the ordinary
+`cmd && yes || no` idiom, which maps every non-zero exit to "not an ancestor".
+The shortcut is unsound **as usually invoked**, the same failure mode as reading
+a pipeline's exit status instead of the process's. **Compare the dispatch.**
+Yielding the keeper was unnecessary. Relatedly, FINDING-nyiso114 §2's drift
+caution did **not** fire: control-vs-keeper drift measured **exactly 0.0**. The
+same-HEAD control was still the right design (drift is not knowable in advance);
+its value here is that it turned an assumption into a number. **DO-NOT-REDO —
+this composition is now solved twice, bit-identically, at two HEADs.**
+
+**(4) SENY SCREENED EX ANTE, NO SOLVE — `S-OVER`, RECORDED NOT ACTED ON.**
+Pre-registered with its **own** kill set so it is never folded into the NYC flag
+(rule 19). The isolated SENY-only 30-min adder (`DUNWOD − CAPITL`) caps at
+**$23.92/$30.37/$40.00**, with **52 hours of 2025 at exactly the published $40**
+increment and **zero above in any year**; the modelled **$500 base is never
+reached in 26,301 hours**. The model prices SENY in 2/0/8 hours at
+**$62.50–$125.00** — its very first rung ($500/8) is already **above the whole
+measured envelope**, so **9 of 10** binding hours are **over**-priced, the
+**opposite** direction to NYC. SPAN confirmed: measured requirement mean
+1,602/1,594/1,613 MW (max 1,800) against static widths of 1,300 — mis-spanned in
+**69 %** of hours. `nyiso_ordc_measured_step_span` stays **`U`** (nothing armed);
+it needs its own pre-registration and arm. **Instrument honesty:** the screen's
+intended negative control **degenerates** on the 30-min product (the East 30-min
+adder is identically **$0.00** in every hour), so it is reported as
+**uninformative, not as a pass**, and the reference pair is validated instead on
+the 10-min product where East does bind (**4,603/6,993/6,611** hours, max
+**$27.00/$36.05/$46.22**).
+
+**(5) CROSS-ISO: NOTHING RE-TESTED.** NYISO's transfer queue stays empty and the
+shared-field ratchet still reports **0** for NYISO (40 family fields; 0 absent /
+0 prose-only / 0 armed-no-cell / 0 shared-gap; the lone "live-but-invisible" row
+is the declared `weather_year` exclusion). ERCOT/PJM/MISO/CAISO backlogs are
+their lanes' work (rule 25 / 28(d)).
+`results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`.
+
 ### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-02-nyiso-113-li-locational`, **CALIBRATED-WITH-CAVEATS** (header keeper id corrected at nyiso-116 — it had gone stale at the nyiso-113 promotion); ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
 **STATUS 2026-08-03 (nyiso-116) — TWO C3c LANES CLOSED BY MEASUREMENT, AND THE

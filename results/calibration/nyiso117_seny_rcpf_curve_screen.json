@@ -1,0 +1,315 @@
+{
+  "probe": "nyiso-117 SENY locational RCPF curve screen (EX ANTE, no solve)",
+  "prereg": "results/calibration/PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md \u00a76",
+  "mechanism_screened": "nyiso_ordc_measured_step_span (matrix cell U, never armed)",
+  "measured_source": "data/raw/NYISO-AS/NYISO_as_da_<year>.csv (NYISO posted DA AS prices, per zone); SENY-only = DUNWOD minus CAPITL (East, not SENY)",
+  "span_source": "data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_<year>.csv (the measured as-enforced #1344 hourly requirement)",
+  "model_source": "results/calibration/nyiso160_ctmeter_screen_B/hourly/reserve_family_<year>.parquet",
+  "model_construction": {
+    "family": "seny_30min_total",
+    "static_requirement_mw": 1300.0,
+    "critical_mw": 0.0,
+    "max_penalty": 500.0,
+    "n_ramp": 8,
+    "rungs": [
+      62.5,
+      125.0,
+      187.5,
+      250.0,
+      312.5,
+      375.0,
+      437.5,
+      500.0
+    ],
+    "published_increment_the_model_does_not_carry": 40.0
+  },
+  "measured": {
+    "2023": {
+      "isolation_control": {
+        "DUNWOD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 23.92,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "MILLWD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 23.92,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "HUD VL-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 23.92,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "DUNWOD-WEST": {
+          "in_seny": true,
+          "reference_in_east": false,
+          "max": 23.92,
+          "hours_at_40": 0,
+          "hours_above_40": 0,
+          "role": "intended NEGATIVE CONTROL \u2014 but DEGENERATE on this product, see east_component_control below"
+        }
+      },
+      "east_component_control": {
+        "op_30_capitl_minus_west_max": 0.0,
+        "op_30_hours_nonzero": 0,
+        "op_30_reading": "IDENTICALLY ZERO \u2014 the East 30-minute family never binds, so the negative control degenerates on this product and is reported as uninformative, not as a pass",
+        "nonsync_10_capitl_minus_west_max": 27.0,
+        "nonsync_10_hours_nonzero": 4603,
+        "nonsync_10_reading": "POSITIVE CONTROL \u2014 the same reference pair separates on the 10-minute product, where east_10min_total does bind, proving the pair can detect an East component when one is present",
+        "published_east_10min_rcpf": 775.0,
+        "published_east_30min_rcpf": 40.0
+      },
+      "seny_30min_adder": {
+        "material_hours": 272,
+        "measured_ceiling": 23.92,
+        "hours_at_measured_ceiling": 1,
+        "hours_at_published_increment_40": 0,
+        "hours_at_model_rungs": {
+          "$62.50": 0,
+          "$125.00": 0,
+          "$187.50": 0,
+          "$250.00": 0,
+          "$312.50": 0,
+          "$375.00": 0,
+          "$437.50": 0,
+          "$500.00": 0
+        },
+        "hours_at_any_model_rung": 0,
+        "hours_above_model_first_rung_62_50": 0,
+        "hours_above_published_increment_40": 0,
+        "distinct_values_below_ceiling": 143,
+        "sub_ceiling_quantiles": [
+          4.02,
+          4.53,
+          9.12,
+          18.38
+        ]
+      }
+    },
+    "2024": {
+      "isolation_control": {
+        "DUNWOD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 30.37,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "MILLWD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 30.37,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "HUD VL-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 30.37,
+          "hours_at_40": 0,
+          "hours_above_40": 0
+        },
+        "DUNWOD-WEST": {
+          "in_seny": true,
+          "reference_in_east": false,
+          "max": 30.37,
+          "hours_at_40": 0,
+          "hours_above_40": 0,
+          "role": "intended NEGATIVE CONTROL \u2014 but DEGENERATE on this product, see east_component_control below"
+        }
+      },
+      "east_component_control": {
+        "op_30_capitl_minus_west_max": 0.0,
+        "op_30_hours_nonzero": 0,
+        "op_30_reading": "IDENTICALLY ZERO \u2014 the East 30-minute family never binds, so the negative control degenerates on this product and is reported as uninformative, not as a pass",
+        "nonsync_10_capitl_minus_west_max": 36.05,
+        "nonsync_10_hours_nonzero": 6993,
+        "nonsync_10_reading": "POSITIVE CONTROL \u2014 the same reference pair separates on the 10-minute product, where east_10min_total does bind, proving the pair can detect an East component when one is present",
+        "published_east_10min_rcpf": 775.0,
+        "published_east_30min_rcpf": 40.0
+      },
+      "seny_30min_adder": {
+        "material_hours": 133,
+        "measured_ceiling": 30.37,
+        "hours_at_measured_ceiling": 1,
+        "hours_at_published_increment_40": 0,
+        "hours_at_model_rungs": {
+          "$62.50": 0,
+          "$125.00": 0,
+          "$187.50": 0,
+          "$250.00": 0,
+          "$312.50": 0,
+          "$375.00": 0,
+          "$437.50": 0,
+          "$500.00": 0
+        },
+        "hours_at_any_model_rung": 0,
+        "hours_above_model_first_rung_62_50": 0,
+        "hours_above_published_increment_40": 0,
+        "distinct_values_below_ceiling": 104,
+        "sub_ceiling_quantiles": [
+          3.71,
+          7.5,
+          10.85,
+          17.72
+        ]
+      }
+    },
+    "2025": {
+      "isolation_control": {
+        "DUNWOD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 40.0,
+          "hours_at_40": 52,
+          "hours_above_40": 0
+        },
+        "MILLWD-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 40.0,
+          "hours_at_40": 52,
+          "hours_above_40": 0
+        },
+        "HUD VL-CAPITL": {
+          "in_seny": true,
+          "reference_in_east": true,
+          "max": 40.0,
+          "hours_at_40": 52,
+          "hours_above_40": 0
+        },
+        "DUNWOD-WEST": {
+          "in_seny": true,
+          "reference_in_east": false,
+          "max": 40.0,
+          "hours_at_40": 52,
+          "hours_above_40": 0,
+          "role": "intended NEGATIVE CONTROL \u2014 but DEGENERATE on this product, see east_component_control below"
+        }
+      },
+      "east_component_control": {
+        "op_30_capitl_minus_west_max": 0.0,
+        "op_30_hours_nonzero": 0,
+        "op_30_reading": "IDENTICALLY ZERO \u2014 the East 30-minute family never binds, so the negative control degenerates on this product and is reported as uninformative, not as a pass",
+        "nonsync_10_capitl_minus_west_max": 46.22,
+        "nonsync_10_hours_nonzero": 6611,
+        "nonsync_10_reading": "POSITIVE CONTROL \u2014 the same reference pair separates on the 10-minute product, where east_10min_total does bind, proving the pair can detect an East component when one is present",
+        "published_east_10min_rcpf": 775.0,
+        "published_east_30min_rcpf": 40.0
+      },
+      "seny_30min_adder": {
+        "material_hours": 510,
+        "measured_ceiling": 40.0,
+        "hours_at_measured_ceiling": 52,
+        "hours_at_published_increment_40": 52,
+        "hours_at_model_rungs": {
+          "$62.50": 0,
+          "$125.00": 0,
+          "$187.50": 0,
+          "$250.00": 0,
+          "$312.50": 0,
+          "$375.00": 0,
+          "$437.50": 0,
+          "$500.00": 0
+        },
+        "hours_at_any_model_rung": 0,
+        "hours_above_model_first_rung_62_50": 0,
+        "hours_above_published_increment_40": 0,
+        "distinct_values_below_ceiling": 334,
+        "sub_ceiling_quantiles": [
+          8.0,
+          12.65,
+          20.99,
+          35.3
+        ]
+      }
+    }
+  },
+  "span": {
+    "2023": {
+      "hours": 8760,
+      "static_published_mw": 1300.0,
+      "measured_min_mw": 0.0,
+      "measured_mean_mw": 1602.31,
+      "measured_max_mw": 1800.0,
+      "hours_above_static": 6061,
+      "share_hours_above_static": 0.6919,
+      "max_ratio_measured_to_static": 1.3846,
+      "mean_ratio_measured_to_static": 1.2325
+    },
+    "2024": {
+      "hours": 8760,
+      "static_published_mw": 1300.0,
+      "measured_min_mw": 0.0,
+      "measured_mean_mw": 1593.7,
+      "measured_max_mw": 1800.0,
+      "hours_above_static": 6027,
+      "share_hours_above_static": 0.688,
+      "max_ratio_measured_to_static": 1.3846,
+      "mean_ratio_measured_to_static": 1.2259
+    },
+    "2025": {
+      "hours": 8760,
+      "static_published_mw": 1300.0,
+      "measured_min_mw": 0.0,
+      "measured_mean_mw": 1613.12,
+      "measured_max_mw": 1800.0,
+      "hours_above_static": 6115,
+      "share_hours_above_static": 0.6981,
+      "max_ratio_measured_to_static": 1.3846,
+      "mean_ratio_measured_to_static": 1.2409
+    }
+  },
+  "model": {
+    "2023": {
+      "hours_dual_positive": 2,
+      "max_dual": 62.5,
+      "mean_dual_when_binding": 62.5,
+      "hours_above_measured_ceiling_40": 2,
+      "hours_at_or_below_40": 0,
+      "model_first_rung": 62.5,
+      "model_max_penalty": 500.0,
+      "requirement_mw_max": 1800.0,
+      "requirement_mw_mean": 1602.31,
+      "max_shortfall_mw": 61.31
+    },
+    "2024": {
+      "hours_dual_positive": 0,
+      "max_dual": -0.0,
+      "mean_dual_when_binding": null,
+      "hours_above_measured_ceiling_40": 0,
+      "hours_at_or_below_40": 0,
+      "model_first_rung": 62.5,
+      "model_max_penalty": 500.0,
+      "requirement_mw_max": 1800.0,
+      "requirement_mw_mean": 1593.7,
+      "max_shortfall_mw": 0.0
+    },
+    "2025": {
+      "hours_dual_positive": 8,
+      "max_dual": 125.0,
+      "mean_dual_when_binding": 77.9046,
+      "hours_above_measured_ceiling_40": 7,
+      "hours_at_or_below_40": 1,
+      "model_first_rung": 62.5,
+      "model_max_penalty": 500.0,
+      "requirement_mw_max": 1800.0,
+      "requirement_mw_mean": 1613.12,
+      "max_shortfall_mw": 199.91
+    }
+  },
+  "verdict": {
+    "outcome": "S-OVER",
+    "why": "the model prices SENY above the measured ceiling in 9 of 10 binding hours across 2023-2025 (measured ceilings $23.92/$30.37/$40.00); the model's very first ramp rung is $62.50, already above the entire measured envelope",
+    "model_binding_hours_total": 10,
+    "model_hours_above_measured_ceiling": 9,
+    "action_per_prereg_section_6": "RECORD ONLY. No solve is spent in this session and no parameter is introduced, changed or fitted: a SENY curve change is nyiso_ordc_measured_step_span's mechanism and needs its own pre-registration and its own arm (rule 19 [R-ONE-MECH]). This screen mints evidence, not a lever."
+  }
+}
