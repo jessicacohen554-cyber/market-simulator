@@ -67,10 +67,36 @@ fresh. **So every leg is a cold solve regardless of its key**, and "expect cache
 cannot hold for any leg in a fresh container. This is a property of the lane's storage
 design, not a defect.
 
-### 1.2 The recorded golden-posture keys are NOT reproducible — at ANY FFR-3A commit
+### 1.2 A REQUEST-side key is not the key a run is cached under — the measurement that matters
+
+> **⚠ CORRECTION, made in-session before any conclusion was carried forward.** The
+> analysis in §1.2/§1.3 hashes the config `reference_config` **returns**. That is the
+> **REQUEST**. The key a run is actually cached and recorded under is the **RESOLVED**
+> key: `runner.run_scenario_iso` re-binds the ISO, applies `resolve_policy_bundle` and may
+> apply per-ISO overrides before the solve, and `save_result` dumps *that* config. FFR-3D
+> §5.2 states the distinction explicitly, and this session measured it: ERCOT's
+> request-side key is **`b1bf77e3fcf7f7aa`** while its on-disk resolved key is
+> **`a55b0e43fdc2f990`**.
+>
+> **regate §6.3's recorded keys are RESOLVED keys.** So comparing them against
+> request-side hashes — which is what the table immediately below does — compares two
+> different quantities, and its "NOT reproducible at any FFR-3A commit" conclusion is
+> **RETRACTED**. It was measured on the wrong object.
+>
+> **What replaces it is a direct like-for-like comparison** — this session's resolved
+> on-disk key against regate §6.3's recorded resolved key, per leg — reported in §2.
+> ERCOT's is already in: recorded `ab1d074828bebabe` vs measured **`a55b0e43fdc2f990`**,
+> so that key **did** move; the cause is not established by the request-side analysis and
+> is not claimed here.
+>
+> The request-side analysis is **retained below, demoted to an instrument note**, because
+> it still establishes something true and useful: *which config fields enter the hash at
+> all*. Its D-3a / new-NYISO-field / CT_CHP conclusions in §1.3 are statements about the
+> hashing rules and stand on their own.
 
 Method (no LP): rebuild each leg's config with `reference_config` and hash it, at HEAD
-and in a worktree pinned to each FFR-3A in-session commit.
+and in a worktree pinned to each FFR-3A in-session commit. **Request-side hashes** —
+see the correction above.
 
 > **Instrument note for successors.** `ScenarioConfig.cache_key()` is path-invariant
 > **only when `DATA_ROOT == REPO_ROOT`**. Setting `MARKET_SIM_DATA_ROOT` adds a second
@@ -91,14 +117,19 @@ for the golden legs. The probe is demonstrably live rather than inert: at `3e33f
 exactly the ERCOT **control** key at `05a367e` — the pre-fix mirrored literals *were* the
 control config, and the probe sees that.
 
-**Finding.** The five golden-posture T1-F cache keys recorded in regate §6.3 cannot be
-re-derived from the repository at any commit in FFR-3A's session. The one plain-default
-leg reproduces exactly, at FFR-3A's HEAD *and* at current HEAD — so the harness, the
-config path and the hashing are sound; it is those five recorded values specifically
-that are unanchored. **They should not be used as provenance anchors.** Open blocker
-(§8.1).
+**What this table does and does not show, after the correction.** It shows that the
+**request-side** hash of the golden-posture legs is stable across FFR-3A's whole commit
+range and differs from the recorded values — which is now expected, because the recorded
+values are resolved keys and these are not. It is **not** evidence that FFR-3A's records
+are unanchored, and that claim is withdrawn.
 
-### 1.3 HEAD vs FFR-3A HEAD: the golden keys move, and the cause is `83efe6c` ALONE
+One observation does survive intact and is worth keeping: **NYISO's plain-default
+request-side key equals its recorded key exactly** (`2bd878d87848785c`), at FFR-3A's HEAD
+and at current HEAD. For that leg request and resolution evidently coincide — consistent
+with it being the one leg that passes no `capacity_market_clearing_by_iso` mapping and
+takes no per-ISO posture override.
+
+### 1.3 Which fields enter the hash at all (request-side; an instrument note)
 
 Substituting the pre-`83efe6c` five-ISO `GOLDEN_CMC_BY_ISO`
 (`{PJM,MISO,NYISO,NEISO,CAISO}`, all `True`) into the **current** config reproduces
@@ -364,10 +395,14 @@ this session did not run.
 
 ## 8. Open blockers
 
-1. **The five recorded golden-posture T1-F cache keys are unanchored** (§1.2) — not
-   reproducible at any FFR-3A commit under any posture variant, while the one
-   plain-default leg reproduces exactly. Cause not established here. Until it is, regate
-   §6.3's keys are not provenance anchors.
+1. **A request-side `cache_key()` is not the key a run is recorded under, and nothing
+   says so at the call site** (§1.2). `reference_config(...).cache_key()` returns
+   `b1bf77e3fcf7f7aa` for ERCOT; the run lands at `a55b0e43fdc2f990`. The distinction is
+   documented only inside `write_run_config`'s docstring (FFR-3D §5.2). Any successor who
+   pre-computes a key to "check whether it moved" — as this session did, and as the
+   dispatch packet's "re-run each leg at its recorded cache key" instruction invites —
+   will compare the wrong object and reach a wrong conclusion. A `resolved_cache_key()`
+   helper, or a loud note on `reference_config`, would close it.
 2. **`uv sync` is an undocumented hard prerequisite** (§0.2) — the container ships no
    Python environment, and the resulting failure mode reads as a `data/clean` failure
    (*"50/50 datatype(s) failed"*), which sends a successor to debug the wrong thing.
