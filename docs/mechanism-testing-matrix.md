@@ -1926,7 +1926,82 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-118-seny-span`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-119-seny-increment`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-119) — THE PUBLISHED SENY $40 INCREMENT TIER IS
+ARMED AND PROMOTED; nyiso-118's PARTIAL IS NOW COMPLETED ON CONSTRUCTION.**
+Keeper `2026-08-03-nyiso-118-seny-span` →
+**`2026-08-03-nyiso-119-seny-increment`**. Determination
+CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **UNCHANGED**. One delta
+(`nyiso_seny_rcpf_increment_step`, matrix cell **`U` → `K`**, row added **with
+the field** per rule 28(c)), **zero free parameters** (ledger 32 → 33,
+`n_residual` 6). Two runs registered
+(`2026-08-03-nyiso-119-control-zerodelta` + the keeper).
+
+**(1) A PUBLISHED TIER THE MODEL NEVER CARRIED.** The SOM states SENY 30-minute
+as a **$500/MW base over 1,300 MW PLUS a $40/MW increment above it**, and the
+2023 SOM p. A-132 prints the pair as one object — **"SENY $500+$40"**. That
+transcription **already existed in the codebase**
+(`NYISO_RCPF_EAST_FAMILIES`' provenance block) before this session.
+`nyiso_dynamic_reserve_requirements` has **always ENFORCED** the increment
+(measured 1,550/1,800 MW against a 1,300 MW base for most of the day) and
+**nothing ever PRICED it** — the whole shortfall was charged against the base
+curve, whose first rung **$62.50** already sat above the entire measured
+**$23.92/$30.37/$40.00** envelope. A rule 14 `[R-ACCURATE]` **omission** of the
+nyiso-83/84 class, not a lever.
+
+**(2) NO NEW NUMBER — it clears the NYC-precedent bar.** The $40 is the **same
+ASM §6.8 item 12** already pinned for `east_30min_total`, whose clause names
+**Southeastern explicitly**; the 1,300 MW breakpoint is **read from**
+`NYISO_RCPF_LOCATIONAL`; the hourly requirement was already on the balance row.
+The **$500 base, `critical_mw = 0` and `n_ramp = 8` are untouched** — the
+posted-price instrument never reaches the base, so its shape stays
+**unidentified** and keeps its ramp (nyiso-115's discipline).
+
+**(3) RULE 19 BY SUBSTITUTION, NEVER STACKING.** The two-tier construction
+carries the hourly requirement **natively**, in the increment band, so SENY takes
+this branch **instead of** `nyiso_ordc_measured_step_span`'s — exactly as
+`li_30min_total`'s ladder already opts itself out of the global flag. Every other
+family's span behaviour is untouched.
+
+**(4) ALL EIGHT GATES PASS, K-A…K-G SILENT.** Blast radius **exactly one
+family**: the other eight are byte-identical in widths, requirement **and**
+penalties at **$0.000** reachable price delta, so the rule-23 freezes on the NYC
+curve and the LI ladder hold. Steps **8 → 9**, first rung **$62.50 → $40.00**,
+base-ramp penalties **byte-identical**. **The nyiso-118 identity SURVIVES** —
+total width == requirement at **0/0/0** violating hours in both arms. Solve-log
+ORDC steps **59 → 60**, exactly +1 in one family. Zero slack, zero dump.
+
+**(5) G4 AS PRE-REGISTERED FAILED AND IS RECORDED, NOT REDEFINED.** It demanded
+exact $40.00 on the **closed** interval `(0, band]` — asymmetric, since it
+excluded the lower kink (`s > 0`) but included the upper one (`s == band`). At
+either kink the LP is degenerate and the dual sits legitimately between adjacent
+band prices; that is why the zero-shortfall hours price $7.75/$17.31 and the
+pre-registered form already tolerated **that**. Re-specified onto what K-G asks:
+the **strict interior** prices at the published increment (**2/0/4** hours, every
+one at exactly **$40.00**) and the band **edge** is **bracketed** (**$57.28** ∈
+[$40.00, $62.50]). Same class as the nyiso-115 G2 and nyiso-117 G2a lessons.
+
+**(6) STRUCTURAL CORROBORATION FROM THE SOLVE.** In the treatment's deepest 2025
+hour the LP stops holding SENY reserve at **exactly `held_mw = 1300.0` — the
+published base** — because past it the $40 tier no longer justifies more; the
+control stopped at **1575.0** (= 1800 − one control band width), a number with no
+market meaning. **The published curve's own breakpoint is where the dispatch now
+stops.**
+
+**(7) S-OVER NARROWED, NOT CLOSED — reported, not gated.** SENY max dual
+**62.50 → 40.00** (2023), none (2024), **87.07 → 62.50** (2025). Of **10**
+binding hours, those above the year's **measured** ceiling go **8 → 4** and those
+above the **published $40** go **8 → 2**. **Not closed:** 2023/2024's *realized*
+ceilings ($23.92/$30.37) sit **below** the published $40 cap, so pricing **at**
+the cap is still above them — an **incidence/depth** question, not a
+curve-construction one, and it belongs with the open peak-half lane in (3) above.
+**All 18 scored numeric fields equal** the control's; the ISO-scope null was
+pre-registered (SENY binds in 2/0/8 hours). **C3c UNCHANGED** — also
+pre-registered; this does **not** reach nyiso-110's reserve-formation gap.
+Evidence: `results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
+`PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
+`nyiso119_seny_increment_construction_probe.json`.
 
 **STATUS 2026-08-03 (nyiso-118) — THE SENY ORDC SPAN FIX IS ARMED AND
 PROMOTED, ON STRUCTURE, WITH THE RESIDUAL DELIBERATELY UNMOVED.** Keeper

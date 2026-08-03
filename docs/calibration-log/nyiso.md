@@ -4534,3 +4534,94 @@ Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
 re-verification on committed artifacts only (D-5(b)); identical, not worse.
 Evidence: `results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`,
 `_nyiso117_stepcurve_gates.json`, `nyiso117_seny_rcpf_curve_screen.json`.
+
+## 2026-08-03 — nyiso-119: the published SENY $40 increment tier — **KEEPER**; and a price gate that failed on its own boundary
+
+**Keeper `2026-08-03-nyiso-118-seny-span` → `2026-08-03-nyiso-119-seny-increment`.**
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **unchanged**. One
+delta (`nyiso_seny_rcpf_increment_step`, cell `U` → `K`), **zero free parameters**
+(ledger 32 → 33, `n_residual` 6). Both arms registered.
+
+**The mechanism.** The SOM states SENY 30-minute as a **$500/MW base over
+1,300 MW plus a $40/MW increment above it**; the 2023 SOM p. A-132 prints the
+pair as one object, "SENY $500+$40". `nyiso_dynamic_reserve_requirements` has
+**always enforced** that increment — the measured #1344 series runs 1,550/1,800 MW
+against the 1,300 MW base for most of the day — and **nothing ever priced it**.
+The whole shortfall was charged against the base curve, whose first rung
+($500/8 = **$62.50**) already sat above the entire measured $23.92/$30.37/$40.00
+envelope. That is precisely why nyiso-118 was a partial: it re-spanned the
+*widths*, and the RCPF penalties are requirement-independent.
+
+**No new number** (rule 5), clearing the bar the NYC step curve cleared: the $40
+is the same **ASM §6.8 item 12** already pinned for `east_30min_total`, whose
+clause names **Southeastern explicitly**; the 1,300 MW breakpoint is read from
+`NYISO_RCPF_LOCATIONAL`; the hourly requirement was already on the balance row.
+The **$500 base, `critical_mw = 0` and `n_ramp = 8` are untouched** — the
+posted-price instrument never reaches the base, so its shape stays *unidentified*
+and keeps its ramp (nyiso-115's discipline). Rule 19 is reconciled by
+**substitution**: the two-tier construction carries the hourly requirement
+natively in the increment band, so SENY takes this branch *instead of* the span
+branch, exactly as `li_30min_total` already opts itself out of the global flag.
+
+**Every kill discharged ex ante, on construction, before the solve.** The probe
+builds the `ReserveDesign` twice at one HEAD and diffs requirement, penalties and
+widths — no LP, no dual. Blast radius **exactly one family**: the other eight are
+byte-identical in all three vectors at **$0.000** reachable price delta, so the
+rule-23 freezes on the NYC curve and the LI ladder hold. Steps **8 → 9**, first
+rung **$62.50 → $40.00**, base-ramp penalties byte-identical, and **nyiso-118's
+total-width == requirement identity survives at 0/0/0 violating hours in both
+arms** — including the zero-requirement TSA hours. Solve-log ORDC steps
+**59 → 60**, exactly +1 in one family. Zero slack, zero dump.
+
+**G4 as pre-registered FAILED, and that is recorded rather than quietly
+redefined** (the nyiso-115 G2 / nyiso-117 G2a lesson, now on a price gate rather
+than a scope gate). It demanded an exact $40.00 dual on the **closed** interval
+`(0, band]` — asymmetric, since it excluded the lower kink (`s > 0`) while
+including the upper one (`s == band`). At either kink the LP is degenerate and
+the dual sits legitimately between the adjacent bands' prices; that is exactly
+why the zero-shortfall hours price $7.75/$17.31 rather than $0, which the
+pre-registered form already tolerated. Re-specified onto what K-G actually asks:
+the **strict interior** prices at the published increment — **2/0/4** hours, every
+one at exactly **$40.00** — and the band **edge** is **bracketed**, $57.28 inside
+[$40.00, $62.50]. The mechanism is unchanged; only the gate's boundary handling is.
+
+**Structural corroboration the gates did not ask for.** In the treatment's
+deepest 2025 hour the LP stops holding SENY reserve at **exactly
+`held_mw = 1300.0` — the published base** — because past that point the $40 tier
+no longer justifies holding more. In the control it stopped at **1575.0**, which
+is 1800 minus one control band width and has no market meaning. The published
+demand curve's own breakpoint is now where the dispatch stops.
+
+**Effect, and the honest limit.** SENY max dual **62.50 → 40.00** (2023), no
+binding hours (2024), **87.07 → 62.50** (2025). S-OVER is **narrowed, not closed**
+and is reported rather than gated (rule 1): of 10 binding hours, those above the
+year's *measured* ceiling go **8 → 4** and those above the *published* $40 go
+**8 → 2**. It is not closed because 2023/2024's **realized** ceilings
+($23.92/$30.37) sit **below** the published $40 cap — the market never drove those
+years to full band saturation — so pricing *at* the cap is still above them. That
+residual is an **incidence/depth** question, not a curve-construction one, and it
+belongs with the open peak-half reserve-formation lane. **My own prereg §5 said
+this would put SENY "inside the measured envelope"; that is right for 2025 only,
+and the precise claim is that the model now prices at the published $40 cap and
+never above it, where before its floor was $62.50.**
+
+**All 18 scored numeric fields are equal** to the same-HEAD control's — the
+pre-registered ISO-scope null, since SENY binds in only 2/0/8 hours and a demand
+curve can only price where there is a shortfall. **C3c unchanged**, also
+pre-registered; this does not reach nyiso-110's everyday-reserve-formation gap
+and is not reported as closing it. Promotion rests on rule 1 `[R-STRUCT]` /
+rule 14 `[R-ACCURATE]`.
+
+**Task 2.** `mechanism_matrix_gap_sweep.py --iso NYISO` re-confirmed at **41
+family / 0 / 0 / 0 / 0**, sole exclusion the declared `weather_year`; the 40 → 41
+is this session's own new field and row, not drift. NYISO's column stays closed
+and its transfer queue empty. No other ISO's cell adjudicated (rule 25 / 28(d)).
+
+Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
+2023–2025 solved, scored or read. `complete.NYISO` re-keyed with a determination
+re-verification on committed artifacts only (D-5(b)): identical to the superseded
+keeper on all 18 fields, all 9 criterion verdicts and the grade summary — nothing
+worse, so the promotion proceeded. Evidence:
+`results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
+`PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
+`nyiso119_seny_increment_construction_probe.json`.
