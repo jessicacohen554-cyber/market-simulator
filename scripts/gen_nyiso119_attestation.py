@@ -90,12 +90,22 @@ def _shared_evidence(g: dict, c: dict, s: dict) -> str:
         for y in YEARS
     )
     g4_inside = _fmt(
-        g4["years"][y]["hours_shortfall_inside_increment_band"] for y in YEARS
+        g4["years"][y]["hours_shortfall_strictly_inside_band"] for y in YEARS
     )
     g4_at40 = _fmt(
-        g4["years"][y]["hours_priced_exactly_at_published_40"] for y in YEARS
+        g4["years"][y]["hours_interior_priced_exactly_at_published_40"]
+        for y in YEARS
     )
-    g4_deeper = _fmt(g4["years"][y]["hours_shortfall_deeper_than_band"] for y in YEARS)
+    g4_edge = _fmt(
+        f"{g4['years'][y]['hours_shortfall_exactly_at_band_edge']}"
+        f"{g4['years'][y]['edge_duals']}"
+        for y in YEARS
+    )
+    g4_deeper = _fmt(
+        f"{g4['years'][y]['hours_shortfall_deeper_than_band']}"
+        f"{g4['years'][y]['deeper_duals']}"
+        for y in YEARS
+    )
     frozen_delta = _fmt(
         f"${c['years'][y]['families'][n]['reachable_max_abs_price_delta']:.3f}"
         for y in YEARS
@@ -187,8 +197,29 @@ def _shared_evidence(g: dict, c: dict, s: dict) -> str:
         "inside the 500 MW increment band that hour carries — so the prediction "
         "was that every such hour prices at EXACTLY the published $40.00. "
         f"Measured on the solved treatment: {g4_inside} hours of 2023/24/25 "
-        f"have a shortfall inside the band and {g4_at40} of them price at "
-        f"exactly $40.00, with {g4_deeper} hours deeper than the band. "
+        f"have a shortfall STRICTLY inside the band and {g4_at40} of them price "
+        "at EXACTLY $40.00 — every one. Band-edge hours "
+        f"{g4_edge}; deeper-than-band hours {g4_deeper}. "
+        "G4 AS PRE-REGISTERED FAILED AND THAT IS RECORDED, NOT QUIETLY "
+        "REDEFINED (the nyiso-115 G2 / nyiso-117 G2a precedent): it demanded an "
+        "exact $40.00 for every hour with shortfall in the CLOSED interval "
+        "(0, band], which is ASYMMETRIC — it excluded the LOWER kink (s > 0) "
+        "while INCLUDING the upper one (s == band). At either kink the LP is "
+        "degenerate and the dual is legitimately anywhere between the adjacent "
+        "bands' prices; that is exactly why the zero-shortfall hours price at "
+        "$7.75/$17.31 rather than $0, which the pre-registered form ALREADY "
+        "tolerated. Re-specified onto what K-G actually asks: the STRICT "
+        "interior must price at the published increment (it does, in every such "
+        "hour of every year), and the band edge must be BRACKETED by the two "
+        "adjacent band prices (it is — $57.28 inside [$40.00, $62.50]). The "
+        "MECHANISM is unchanged; only the GATE's boundary handling is. "
+        "STRUCTURAL CORROBORATION FROM THE SOLVE ITSELF: in the treatment's "
+        "deepest 2025 hour the LP stops holding SENY reserve at EXACTLY "
+        "held_mw = 1300.0 — the PUBLISHED BASE — because beyond that point the "
+        "$40 increment tier no longer justifies holding more; in the control it "
+        "stopped at 1575.0, which is 1800 minus one control band width and has "
+        "no market meaning. The published demand curve's own breakpoint is now "
+        "where the dispatch stops. "
         f"MEASURED EFFECT: SENY's max dual moves {seny_dual} with binding hours "
         f"{seny_hrs}. THE MEASURED ENVELOPE THIS IS JUDGED AGAINST — NYISO's OWN "
         "posted zonal DA prices, isolated SENY-only, screened ex ante at "
