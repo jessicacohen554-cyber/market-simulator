@@ -322,6 +322,29 @@ half** in these four legs. That halves the un-pin's attributable surface before 
 leg is scored, and it means an ERCOT-only mechanism must never be credited with a PJM,
 MISO, NEISO or NYISO movement (rule 25 `[R-ISO-SCOPE]`).
 
+#### CONFIRMED AT RUNTIME — the model says so itself
+
+The pre-registration above was derived from the constants. The solves then **confirmed it
+empirically**, which upgrades it from inference to measurement. Each of the four T1-H legs
+logs, once per solved year:
+
+```
+correlated forced-outage derate armed but no curve/weather coverage — no-op
+```
+
+| leg | occurrences (solve years 2021, 2023, 2024, 2025) |
+|---|---|
+| PJM | **4** |
+| MISO | **4** |
+| NEISO | **4** |
+| NYISO | **4** |
+
+Four legs × four solved years = **16/16 solve-years explicitly no-op**. The flag is armed
+and the mechanism does nothing, exactly as predicted and now stated by the model rather
+than by me. (The same line appears in the T1-X PJM leg's forward years.) This makes the
+"not the `correlated_forced_outage` half" clause of every attribution below **airtight
+rather than merely argued**.
+
 ### 3.3 Rule-22 legality of the 2021–2025 window — checked, not assumed
 
 The window spans out-of-training years while the **holdout freeze is ACTIVE**, so it was
