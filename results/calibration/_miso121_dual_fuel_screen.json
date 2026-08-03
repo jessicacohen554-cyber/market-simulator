@@ -1,0 +1,2120 @@
+{
+  "iso": "MISO",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "keeper_bundle": "results/calibration/miso117_ctheatrate_B",
+  "n_capable_pairs_all_iso": 577,
+  "n_capable_miso_plants_eia860": 96,
+  "bands": {
+    "BAR_CAPABLE_MW": 500.0,
+    "BAR_CAPABLE_SHARE": 0.01,
+    "BAR_MEASURED_MONTH_FRAC": 0.5,
+    "BAR_BINDING_GENHOURS": 100,
+    "BAR_BYTE_IDENTITY": 1e-09,
+    "BAR_MARGINAL_P50_DOFFER": 0.1
+  },
+  "by_year": {
+    "2023": {
+      "leg_a": {
+        "n_capable_tranches": 371,
+        "n_capable_plants": 89,
+        "capable_mw": 15827.419468,
+        "gas_mw": 67804.17639800001,
+        "capable_share_of_gas": 0.23342838610848246,
+        "roster": {
+          "1403": {
+            "mw": 2114.9,
+            "groups": [
+              "CC_REGULAR",
+              "ST_GAS"
+            ],
+            "tranches": 15
+          },
+          "1702": {
+            "mw": 1199.8,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1402": {
+            "mw": 916.5,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "6035": {
+            "mw": 785.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "56104": {
+            "mw": 709.8,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "6137": {
+            "mw": 597.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7925": {
+            "mw": 497.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55391": {
+            "mw": 489.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "913": {
+            "mw": 486.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7843": {
+            "mw": 424.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8056": {
+            "mw": 417.3,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "7159": {
+            "mw": 367.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7270": {
+            "mw": 359.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7237": {
+            "mw": 343.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8027": {
+            "mw": 328.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7203": {
+            "mw": 326.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56241": {
+            "mw": 316.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "990": {
+            "mw": 288.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "56164": {
+            "mw": 286.4,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "1913": {
+            "mw": 272.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55011": {
+            "mw": 261.0,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "55229": {
+            "mw": 233.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2070": {
+            "mw": 209.0,
+            "groups": [
+              "CT_PEAKER",
+              "ST_GAS"
+            ],
+            "tranches": 7
+          },
+          "2039": {
+            "mw": 208.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6063": {
+            "mw": 190.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56505": {
+            "mw": 177.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7964": {
+            "mw": 168.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55029": {
+            "mw": 166.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7818": {
+            "mw": 164.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55010": {
+            "mw": 163.2,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "7145": {
+            "mw": 153.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2038": {
+            "mw": 152.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7268": {
+            "mw": 145.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "8029": {
+            "mw": 140.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "976": {
+            "mw": 140.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "203": {
+            "mw": 134.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1206": {
+            "mw": 111.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7425": {
+            "mw": 109.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7991": {
+            "mw": 85.7,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "1001": {
+            "mw": 84.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6253": {
+            "mw": 79.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6058": {
+            "mw": 77.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "2176": {
+            "mw": 74.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7863": {
+            "mw": 64.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1734": {
+            "mw": 62.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1383": {
+            "mw": 58.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55836": {
+            "mw": 54.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56480": {
+            "mw": 53.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "60559": {
+            "mw": 50.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "4014": {
+            "mw": 47.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1404": {
+            "mw": 45.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7947": {
+            "mw": 40.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "957": {
+            "mw": 37.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "54780": {
+            "mw": 27.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "2177": {
+            "mw": 23.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50969": {
+            "mw": 23.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "1867": {
+            "mw": 22.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7795": {
+            "mw": 22.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "944": {
+            "mw": 19.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1743": {
+            "mw": 19.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1881": {
+            "mw": 18.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1194": {
+            "mw": 16.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50431": {
+            "mw": 15.9,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 1
+          },
+          "1162": {
+            "mw": 15.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7399": {
+            "mw": 15.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "971": {
+            "mw": 13.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7398": {
+            "mw": 12.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "59197": {
+            "mw": 11.7,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 4
+          },
+          "1829": {
+            "mw": 11.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6554": {
+            "mw": 10.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1844": {
+            "mw": 8.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1203": {
+            "mw": 7.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "2020": {
+            "mw": 6.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1997": {
+            "mw": 6.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "2009": {
+            "mw": 5.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54851": {
+            "mw": 5.5,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 2
+          },
+          "54224": {
+            "mw": 3.5,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 3
+          },
+          "2004": {
+            "mw": 3.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "941": {
+            "mw": 2.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1187": {
+            "mw": 2.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "50088": {
+            "mw": 2.2,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "1998": {
+            "mw": 2.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1176": {
+            "mw": 1.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1827": {
+            "mw": 1.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54408": {
+            "mw": 1.0,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "56190": {
+            "mw": 1.0,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "62117": {
+            "mw": 0.9,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "54604": {
+            "mw": 0.8,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "4107": {
+            "mw": 0.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 1
+          }
+        }
+      },
+      "leg_b": {
+        "series_present": true,
+        "n_measured_months": 12,
+        "n_months": 12,
+        "monthly_usd_mmbtu": [
+          22.4175,
+          21.0292,
+          19.7391,
+          18.4477,
+          18.1979,
+          18.2253,
+          18.8714,
+          22.833,
+          23.9789,
+          21.543,
+          21.3307,
+          17.6867
+        ],
+        "measured_mean_usd_mmbtu": 20.3584,
+        "measured_min_usd_mmbtu": 17.6867,
+        "fallback_usd_mmbtu": 18.0
+      },
+      "leg_c": {
+        "max_delta_fuel": 197.8272172853708,
+        "max_gas_price": 218.85639484137113,
+        "capable_gas_mean": 4.800398415492993,
+        "oil_min": 17.686731713158316,
+        "oil_mean": 20.351356594020515,
+        "n_binding_genhours": 15792,
+        "n_capable_genhours": 3249960,
+        "headroom_to_parity_min": -197.8272172853708,
+        "binding_doffer_max": 2539.7897571587746,
+        "binding_doffer_p50": 64.29722294611986,
+        "binding_doffer_p95": 2129.333174733024
+      }
+    },
+    "2024": {
+      "leg_a": {
+        "n_capable_tranches": 371,
+        "n_capable_plants": 89,
+        "capable_mw": 15827.419468,
+        "gas_mw": 67937.673728,
+        "capable_share_of_gas": 0.23296970001309966,
+        "roster": {
+          "1403": {
+            "mw": 2114.9,
+            "groups": [
+              "CC_REGULAR",
+              "ST_GAS"
+            ],
+            "tranches": 15
+          },
+          "1702": {
+            "mw": 1199.8,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1402": {
+            "mw": 916.5,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "6035": {
+            "mw": 785.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "56104": {
+            "mw": 709.8,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "6137": {
+            "mw": 597.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7925": {
+            "mw": 497.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55391": {
+            "mw": 489.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "913": {
+            "mw": 486.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7843": {
+            "mw": 424.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8056": {
+            "mw": 417.3,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "7159": {
+            "mw": 367.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7270": {
+            "mw": 359.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7237": {
+            "mw": 343.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8027": {
+            "mw": 328.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7203": {
+            "mw": 326.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56241": {
+            "mw": 316.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "990": {
+            "mw": 288.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "56164": {
+            "mw": 286.4,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "1913": {
+            "mw": 272.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55011": {
+            "mw": 261.0,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "55229": {
+            "mw": 233.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2070": {
+            "mw": 209.0,
+            "groups": [
+              "CT_PEAKER",
+              "ST_GAS"
+            ],
+            "tranches": 7
+          },
+          "2039": {
+            "mw": 208.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6063": {
+            "mw": 190.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56505": {
+            "mw": 177.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7964": {
+            "mw": 168.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55029": {
+            "mw": 166.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7818": {
+            "mw": 164.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55010": {
+            "mw": 163.2,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "7145": {
+            "mw": 153.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2038": {
+            "mw": 152.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7268": {
+            "mw": 145.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "8029": {
+            "mw": 140.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "976": {
+            "mw": 140.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "203": {
+            "mw": 134.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1206": {
+            "mw": 111.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7425": {
+            "mw": 109.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7991": {
+            "mw": 85.7,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "1001": {
+            "mw": 84.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6253": {
+            "mw": 79.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6058": {
+            "mw": 77.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "2176": {
+            "mw": 74.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7863": {
+            "mw": 64.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1734": {
+            "mw": 62.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1383": {
+            "mw": 58.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55836": {
+            "mw": 54.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56480": {
+            "mw": 53.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "60559": {
+            "mw": 50.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "4014": {
+            "mw": 47.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1404": {
+            "mw": 45.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7947": {
+            "mw": 40.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "957": {
+            "mw": 37.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "54780": {
+            "mw": 27.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "2177": {
+            "mw": 23.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50969": {
+            "mw": 23.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "1867": {
+            "mw": 22.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7795": {
+            "mw": 22.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "944": {
+            "mw": 19.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1743": {
+            "mw": 19.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1881": {
+            "mw": 18.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1194": {
+            "mw": 16.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50431": {
+            "mw": 15.9,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 1
+          },
+          "1162": {
+            "mw": 15.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7399": {
+            "mw": 15.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "971": {
+            "mw": 13.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7398": {
+            "mw": 12.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "59197": {
+            "mw": 11.7,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 4
+          },
+          "1829": {
+            "mw": 11.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6554": {
+            "mw": 10.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1844": {
+            "mw": 8.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1203": {
+            "mw": 7.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "2020": {
+            "mw": 6.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1997": {
+            "mw": 6.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "2009": {
+            "mw": 5.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54851": {
+            "mw": 5.5,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 2
+          },
+          "54224": {
+            "mw": 3.5,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 3
+          },
+          "2004": {
+            "mw": 3.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "941": {
+            "mw": 2.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1187": {
+            "mw": 2.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "50088": {
+            "mw": 2.2,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "1998": {
+            "mw": 2.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1176": {
+            "mw": 1.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1827": {
+            "mw": 1.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54408": {
+            "mw": 1.0,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "56190": {
+            "mw": 1.0,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "62117": {
+            "mw": 0.9,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "54604": {
+            "mw": 0.8,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "4107": {
+            "mw": 0.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 1
+          }
+        }
+      },
+      "leg_b": {
+        "series_present": true,
+        "n_measured_months": 12,
+        "n_months": 12,
+        "monthly_usd_mmbtu": [
+          18.3961,
+          19.8745,
+          20.2378,
+          20.1352,
+          17.8013,
+          17.8044,
+          19.0277,
+          17.9362,
+          16.6852,
+          18.1197,
+          16.4853,
+          16.0902
+        ],
+        "measured_mean_usd_mmbtu": 18.2161,
+        "measured_min_usd_mmbtu": 16.0902,
+        "fallback_usd_mmbtu": 18.0
+      },
+      "leg_c": {
+        "max_delta_fuel": 107.85278284395926,
+        "max_gas_price": 126.24887085736101,
+        "capable_gas_mean": 3.541695062143544,
+        "oil_min": 16.09022033367404,
+        "oil_mean": 18.20730317474724,
+        "n_binding_genhours": 18192,
+        "n_capable_genhours": 3249960,
+        "headroom_to_parity_min": -107.85278284395926,
+        "binding_doffer_max": 4531.111112840417,
+        "binding_doffer_p50": 93.9263534039457,
+        "binding_doffer_p95": 1161.0972226653566
+      }
+    },
+    "2025": {
+      "leg_a": {
+        "n_capable_tranches": 369,
+        "n_capable_plants": 88,
+        "capable_mw": 15824.815468,
+        "gas_mw": 67362.619728,
+        "capable_share_of_gas": 0.23491983435172495,
+        "roster": {
+          "1403": {
+            "mw": 2114.9,
+            "groups": [
+              "CC_REGULAR",
+              "ST_GAS"
+            ],
+            "tranches": 15
+          },
+          "1702": {
+            "mw": 1199.8,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1402": {
+            "mw": 916.5,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "6035": {
+            "mw": 785.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "56104": {
+            "mw": 709.8,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "6137": {
+            "mw": 597.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7925": {
+            "mw": 497.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55391": {
+            "mw": 489.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "913": {
+            "mw": 486.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7843": {
+            "mw": 424.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8056": {
+            "mw": 417.3,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "7159": {
+            "mw": 367.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7270": {
+            "mw": 359.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7237": {
+            "mw": 343.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "8027": {
+            "mw": 328.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7203": {
+            "mw": 326.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56241": {
+            "mw": 316.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "990": {
+            "mw": 288.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "56164": {
+            "mw": 286.4,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "1913": {
+            "mw": 272.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55011": {
+            "mw": 261.0,
+            "groups": [
+              "CC_REGULAR"
+            ],
+            "tranches": 8
+          },
+          "55229": {
+            "mw": 233.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2070": {
+            "mw": 209.0,
+            "groups": [
+              "CT_PEAKER",
+              "ST_GAS"
+            ],
+            "tranches": 7
+          },
+          "2039": {
+            "mw": 208.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6063": {
+            "mw": 190.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56505": {
+            "mw": 177.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7964": {
+            "mw": 168.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55029": {
+            "mw": 166.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7818": {
+            "mw": 164.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55010": {
+            "mw": 163.2,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "7145": {
+            "mw": 153.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "2038": {
+            "mw": 152.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7268": {
+            "mw": 145.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "8029": {
+            "mw": 140.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "976": {
+            "mw": 140.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "203": {
+            "mw": 134.0,
+            "groups": [
+              "ST_GAS"
+            ],
+            "tranches": 4
+          },
+          "1206": {
+            "mw": 111.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "7425": {
+            "mw": 109.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "7991": {
+            "mw": 85.7,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 4
+          },
+          "1001": {
+            "mw": 84.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6253": {
+            "mw": 79.8,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "6058": {
+            "mw": 77.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "2176": {
+            "mw": 74.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7863": {
+            "mw": 64.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1734": {
+            "mw": 62.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1383": {
+            "mw": 58.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "55836": {
+            "mw": 54.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 4
+          },
+          "56480": {
+            "mw": 53.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "60559": {
+            "mw": 50.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "4014": {
+            "mw": 47.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "1404": {
+            "mw": 45.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7947": {
+            "mw": 40.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 8
+          },
+          "957": {
+            "mw": 37.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "54780": {
+            "mw": 27.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "2177": {
+            "mw": 23.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50969": {
+            "mw": 23.3,
+            "groups": [
+              "CT_CHP",
+              "ST_CHP"
+            ],
+            "tranches": 5
+          },
+          "1867": {
+            "mw": 22.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7795": {
+            "mw": 22.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "944": {
+            "mw": 19.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1743": {
+            "mw": 19.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1881": {
+            "mw": 18.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1194": {
+            "mw": 16.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "50431": {
+            "mw": 15.9,
+            "groups": [
+              "CC_CHP"
+            ],
+            "tranches": 1
+          },
+          "1162": {
+            "mw": 15.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7399": {
+            "mw": 15.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "971": {
+            "mw": 13.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "7398": {
+            "mw": 12.2,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "59197": {
+            "mw": 11.7,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 4
+          },
+          "1829": {
+            "mw": 11.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "6554": {
+            "mw": 10.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1844": {
+            "mw": 8.9,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "1203": {
+            "mw": 7.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 3
+          },
+          "2020": {
+            "mw": 6.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1997": {
+            "mw": 6.4,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "2009": {
+            "mw": 5.6,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54851": {
+            "mw": 5.5,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 2
+          },
+          "54224": {
+            "mw": 3.5,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 3
+          },
+          "2004": {
+            "mw": 3.1,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1187": {
+            "mw": 2.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "50088": {
+            "mw": 2.2,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "1998": {
+            "mw": 2.0,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1176": {
+            "mw": 1.7,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "1827": {
+            "mw": 1.3,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 2
+          },
+          "54408": {
+            "mw": 1.0,
+            "groups": [
+              "ST_CHP"
+            ],
+            "tranches": 1
+          },
+          "56190": {
+            "mw": 1.0,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "62117": {
+            "mw": 0.9,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "54604": {
+            "mw": 0.8,
+            "groups": [
+              "CT_CHP"
+            ],
+            "tranches": 1
+          },
+          "4107": {
+            "mw": 0.5,
+            "groups": [
+              "CT_PEAKER"
+            ],
+            "tranches": 1
+          }
+        }
+      },
+      "leg_b": {
+        "series_present": true,
+        "n_measured_months": 12,
+        "n_months": 12,
+        "monthly_usd_mmbtu": [
+          17.3804,
+          17.678,
+          16.7391,
+          16.6547,
+          16.3421,
+          17.9161,
+          17.9071,
+          17.9528,
+          17.6355,
+          16.8749,
+          17.9592,
+          15.4199
+        ],
+        "measured_mean_usd_mmbtu": 17.205,
+        "measured_min_usd_mmbtu": 15.4199,
+        "fallback_usd_mmbtu": 18.0
+      },
+      "leg_c": {
+        "max_delta_fuel": 45.869241808838055,
+        "max_gas_price": 63.24961879151809,
+        "capable_gas_mean": 4.022381737098495,
+        "oil_min": 15.419890431500026,
+        "oil_mean": 17.197409266090418,
+        "n_binding_genhours": 11568,
+        "n_capable_genhours": 3232440,
+        "headroom_to_parity_min": -45.869241808838055,
+        "binding_doffer_max": 1927.0585868729047,
+        "binding_doffer_p50": 108.23026852628412,
+        "binding_doffer_p95": 422.49699318389855
+      }
+    }
+  },
+  "leg_d": {
+    "tested": true,
+    "by_year": {
+      "2023": {
+        "n_unit_hours": 1392768,
+        "n_units": 160,
+        "n_plants_found": 49,
+        "label_units_with_varying_fuel": 0,
+        "label_values": [
+          "Coal",
+          "Diesel Oil",
+          "Natural Gas",
+          "Other Gas",
+          "Pipeline Natural Gas"
+        ],
+        "gas_winter_unit_hours_burning": 28764,
+        "gas_winter_co2_rate_p50": 53.909,
+        "gas_winter_co2_rate_p99": 55.827,
+        "oil_signature_unit_hours": 90,
+        "oil_signature_share_of_gas": 0.003129,
+        "n_units_with_oil_signature": 25,
+        "above_band_coal_like_unit_hours": 5,
+        "diesel_labelled_unit_hours": 28,
+        "diesel_labelled_co2_rate_p50": 73.646
+      },
+      "2024": {
+        "n_unit_hours": 1365840,
+        "n_units": 158,
+        "n_plants_found": 49,
+        "label_units_with_varying_fuel": 0,
+        "label_values": [
+          "Coal",
+          "Diesel Oil",
+          "Natural Gas",
+          "Other Gas",
+          "Pipeline Natural Gas"
+        ],
+        "gas_winter_unit_hours_burning": 36474,
+        "gas_winter_co2_rate_p50": 53.91,
+        "gas_winter_co2_rate_p99": 73.43,
+        "oil_signature_unit_hours": 459,
+        "oil_signature_share_of_gas": 0.012584,
+        "n_units_with_oil_signature": 43,
+        "above_band_coal_like_unit_hours": 7,
+        "diesel_labelled_unit_hours": 110,
+        "diesel_labelled_co2_rate_p50": 73.455
+      },
+      "2025": {
+        "n_unit_hours": 1300536,
+        "n_units": 156,
+        "n_plants_found": 49,
+        "label_units_with_varying_fuel": 0,
+        "label_values": [
+          "Coal",
+          "Diesel Oil",
+          "Natural Gas",
+          "Other Gas",
+          "Pipeline Natural Gas"
+        ],
+        "gas_winter_unit_hours_burning": 37154,
+        "gas_winter_co2_rate_p50": 53.912,
+        "gas_winter_co2_rate_p99": 73.374,
+        "oil_signature_unit_hours": 452,
+        "oil_signature_share_of_gas": 0.012166,
+        "n_units_with_oil_signature": 40,
+        "above_band_coal_like_unit_hours": 5,
+        "diesel_labelled_unit_hours": 186,
+        "diesel_labelled_co2_rate_p50": 73.646
+      }
+    }
+  },
+  "screen": {
+    "min_capable_mw": 15824.815468,
+    "min_capable_share_of_gas": 0.23296970001309966,
+    "measured_month_frac": 1.0,
+    "max_delta_fuel_all_years": 197.8272172853708,
+    "max_binding_genhours_any_year": 18192,
+    "leg_d_oil_signature_unit_hours": 1001,
+    "leg_d_label_units_with_varying_fuel": 0,
+    "routes": {
+      "I_A_capability_absent": false,
+      "I_B_switch_price_unidentified": false,
+      "I_C_byte_identity": false,
+      "I_D_unobservable_windows": false
+    },
+    "verdict": "LIVE"
+  }
+}
