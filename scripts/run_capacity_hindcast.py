@@ -335,12 +335,12 @@ def build_config(
     arm: str = "realized",
     crossover_forward_gas_path: str = "mid",
     energy_only_floor: bool = False,
-    entry_lookahead_reprice: bool = False,
+    entry_lookahead_reprice: "bool | None" = None,
     limited_foresight_dispatch: bool = False,
     legacy_renewable_credit: bool = False,
     capacity_market_clearing: bool = False,
     fixed_net_cone: bool = False,
-    correlated_forced_outage: bool = False,
+    correlated_forced_outage: "bool | None" = None,
     retirement_rule: "str | None" = None,
     entry_screen_diagnostics: bool = False,
     entry_vre_capacity_revenue: "bool | None" = None,
@@ -434,16 +434,6 @@ def build_config(
         # PJM → capacity-market (no-op). Harness default, not a model default.
         scarcity_pricing_enabled=True,
         market_design_retirement_floor=energy_only_floor,
-        # G-30 corrective arm (probe, default-off): re-price each entering
-        # year's KNOWN realized net load against the current (post-retirement)
-        # fleet stack with the published ORDC curve, and feed that pro-forma to
-        # the retirement / new-entry / storage screens. Tempers the perfect-
-        # foresight LP's screen signal: where the thinned fleet is genuinely
-        # short against next year's realized load, the screen sees scarcity the
-        # over-supplied in-year dispatch never forms. Zero fitted parameters
-        # (rule 13); screens-only, never dispatch. See scenarios.py:
-        # entry_lookahead_reprice and the runner call site.
-        entry_lookahead_reprice=entry_lookahead_reprice,
         # G-31 first-wave corrective arm (PROBE, default-off):
         #   limited_foresight_dispatch -- deny the in-year LP perfect annual
         #     storage/hydro foresight so peak/net-load-ramp hours tighten and the
@@ -469,13 +459,6 @@ def build_config(
         # in every posture, so an arm can never leak to another ISO.
         # See resolve_capacity_clearing_posture.
         capacity_market_clearing_by_iso=_clearing_by_iso,
-        # FF-1B probe arm (default-off): the correlated cold-event forced-
-        # outage derate (data/outages.apply_correlated_outage_derate), so a
-        # hindcast leg's realized deep-cold days (Uri 2021, Heather 2024)
-        # physically thin the fleet and the in-year ORDC can form scarcity
-        # (the G-31 question). Measured frozen curves, zero fitted parameters
-        # -- see scenarios.py:correlated_forced_outage.
-        correlated_forced_outage=correlated_forced_outage,
         # RC-0C decision-neutral per-candidate entry-screen decomposition
         # (byte-identical fleet outcome; lands in evolution_<year>.json).
         entry_screen_diagnostics=entry_screen_diagnostics,
@@ -500,6 +483,23 @@ def build_config(
         # is the FFR-2E instrument pattern already used for the capacity
         # posture above, and keeps ScenarioConfig the single source of truth
         # for a default (rule 24).
+        #
+        # ``correlated_forced_outage`` and ``entry_lookahead_reprice`` JOINED
+        # this dict at FFR-3D, executing owner decision C.4(c) (signed
+        # 2026-08-03, ffr-owner-sitting-2026-08-02.md Addendum D.1): "UN-PIN --
+        # MATCH PRODUCTION". Both are ScenarioConfig defaults ``True`` (the
+        # FF-1F / FF-2A flips), and both were passed here as harness-local
+        # ``False`` literals -- so every hindcast leg validated a posture the
+        # forecast does not ship, the audit FR-14 defect FFR-2E fixed for the
+        # capacity posture and FFR-2E §6.2 flagged for these two. They are now
+        # ``None``-sentinel like the four above: OMIT = inherit the shipped
+        # default; ``--no-*`` forces the control arm explicitly.
+        #
+        # COST, acknowledged at signature (Addendum D.3): every T1-H verdict
+        # COMMITTED before this commit was scored with both forced OFF, so
+        # those verdicts are LEGACY EVIDENCE on a superseded posture. They are
+        # not reinterpreted and not deleted; an FC-3 citation resting on them
+        # says so. See docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md §2.
         **{
             k: v
             for k, v in {
@@ -507,6 +507,23 @@ def build_config(
                 "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
+                # G-30 entering-year stack re-price: the capacity screens see
+                # the entering year's net load re-priced against the current
+                # (post-retirement) fleet with the published ORDC curve, so a
+                # genuinely-short thinned fleet is screened on scarcity the
+                # over-supplied in-year dispatch never forms. Screens-only,
+                # never dispatch; zero fitted parameters (rule 13). In a
+                # FULL-FORWARD leg the runner's own seam falls to the growth-
+                # scaled fallback rather than reading measured next-year demand
+                # (runner.py, is_crossover_forward_year branch), so inheriting
+                # the shipped ``True`` introduces no measured read (rule 22).
+                "entry_lookahead_reprice": entry_lookahead_reprice,
+                # FF-1B correlated cold-event forced-outage derate
+                # (data/outages.apply_correlated_outage_derate): a leg's deep-
+                # cold days (Uri 2021, Heather 2024) physically thin the fleet
+                # so in-year ORDC can form scarcity (the G-31 question).
+                # Measured frozen curves (constants.CORRELATED_OUTAGE_CURVE).
+                "correlated_forced_outage": correlated_forced_outage,
             }.items()
             if v is not None
         },
@@ -885,14 +902,15 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--entry-lookahead-reprice",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "G-30 corrective arm (PROBE): enable entry_lookahead_reprice so the "
-            "capacity screens see each entering year's realized net load "
-            "re-priced against the current fleet with the published ORDC curve. "
-            "Tests whether tempering the perfect-foresight screen signal lets "
-            "scarcity form so solar entry clears / over-retirement drops. "
-            "Probe-only -- see build_config."
+            "G-30 entering-year stack re-price: the capacity screens see each "
+            "entering year's net load re-priced against the current fleet with "
+            "the published ORDC curve, tempering the perfect-foresight screen "
+            "signal. OMIT to inherit the shipped default, ON since the FF-2A "
+            "flip and UN-PINNED here by owner decision C.4(c) (2026-08-03); "
+            "--no-entry-lookahead-reprice forces the un-repriced control."
         ),
     )
     parser.add_argument(
@@ -957,13 +975,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--correlated-forced-outage",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=None,
         help=(
-            "FF-1B PROBE: arm the correlated cold-event forced-outage "
-            "availability derate (correlated_forced_outage=True) so realized "
-            "deep-cold days physically thin the fleet and in-year ORDC "
-            "scarcity can form (the G-31 question). Measured frozen curves "
-            "(constants.CORRELATED_OUTAGE_CURVE); see build_config."
+            "FF-1B correlated cold-event forced-outage availability derate, so "
+            "deep-cold days physically thin the fleet and in-year ORDC scarcity "
+            "can form (the G-31 question). Measured frozen curves "
+            "(constants.CORRELATED_OUTAGE_CURVE). OMIT to inherit the shipped "
+            "default, ON since the FF-1F flip and UN-PINNED here by owner "
+            "decision C.4(c) (2026-08-03); --no-correlated-forced-outage "
+            "forces the underated control."
         ),
     )
     parser.add_argument(
@@ -1023,12 +1044,19 @@ def main(argv: list[str] | None = None) -> int:
     crossover = bool(args.crossover)
     forward_from_base = bool(args.forward_from_base)
     arm = str(args.arm)
-    if forward_from_base and args.entry_lookahead_reprice:
+    if forward_from_base and args.entry_lookahead_reprice is True:
         # The G-30 lookahead's hindcast branch reads the NEXT year's measured
         # demand — a measured-input read every T1-FF solve year is defined to
-        # exclude. (The runner's seam now suppresses that read for forward
-        # next-years too, but a posture contradiction is refused loudly
+        # exclude. (The runner's seam suppresses that read for forward
+        # next-years, but a posture contradiction is refused loudly
         # rather than silently defanged.)
+        #
+        # ``is True`` since FFR-3D's C.4(c) un-pin: the flag is now tri-state,
+        # and only an EXPLICIT --entry-lookahead-reprice is the contradiction
+        # this refuses. Omitting it inherits the shipped default (True), which
+        # the runner's is_crossover_forward_year branch resolves to the
+        # growth-scaled fallback — no measured read, so no refusal. Testing
+        # the resolved value here instead would refuse every T1-FF leg.
         raise SystemExit(
             "--entry-lookahead-reprice is not available with "
             "--forward-from-base: its hindcast branch consumes measured "
@@ -1192,7 +1220,12 @@ def main(argv: list[str] | None = None) -> int:
         "kind": kind,
         "variant": config.hindcast_fuel_variant,
         "energy_only_floor": bool(args.energy_only_floor),
-        "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
+        # Read from the SOLVED config, not from args (FFR-3D / C.4(c)): the
+        # flag is tri-state now, so an omitted flag is `None` and `bool(None)`
+        # would record `false` on a leg that ran the shipped `True` — the
+        # FFR-1D "meta entry sourced from a flag that armed nothing" defect
+        # inverted. Same sourcing rule as the FF-2A dampers below.
+        "entry_lookahead_reprice": bool(config.entry_lookahead_reprice),
         "retirement_rule": args.retirement_rule,
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         # FFR-2E: the RESOLVED per-ISO clearing gate, not the raw force-ON
@@ -1208,7 +1241,9 @@ def main(argv: list[str] | None = None) -> int:
         # forced_curve) — the FC-3 evidence-row discriminator.
         "capacity_clearing_posture": _clearing_posture,
         "capacity_market_clearing_forced": bool(args.capacity_market_clearing),
-        "correlated_forced_outage": bool(args.correlated_forced_outage),
+        # Solved-config sourced for the same reason as entry_lookahead_reprice
+        # above (FFR-3D / C.4(c)).
+        "correlated_forced_outage": bool(config.correlated_forced_outage),
         "entry_screen_diagnostics": bool(args.entry_screen_diagnostics),
         # FF-2A dampers (FFR-2B): read from the SOLVED config, never from
         # args — the FFR-1D defect was a meta entry sourced from a flag that
