@@ -1,0 +1,187 @@
+# MISO confirmed-retirement registry.
+# Source of truth: MISO's OASIS-posted "Approved Generator Retirements"
+# listing (Attachment Y approvals; https://www.oasis.oati.com/woa/docs/MISO/
+# MISOdocs/, filenames dated e.g. 2025-09-30) + state PUC-approved settlement
+# orders + federal consent decrees. Direct fetch of MISO's own posting failed
+# in this research pass (TLS/access errors on oasis.oati.com and
+# misoenergy.org) — a human with browser access should pull the current
+# edition directly and cross-check the seeded row below against it.
+#
+# Researched 2026-07-05. Only ONE candidate cleared the enforceable-instrument
+# bar out of a ~13.5 GW EIA-860-flagged 2026-2028 coal cluster investigated:
+#   - DTE Monroe Units 1-4 (plant 1733): CONFIRMED — see rows below. Michigan
+#     PSC Case No. U-21193 settlement order.
+#
+# Evaluated and held OUT (announced/IRP-stage/contested, no approved
+# Attachment Y or PUC order with a binding date found):
+#   - AES Indiana Petersburg Units 3 & 4 (plant 994): IURC-approved, but this
+#     is a coal-to-GAS REPOWERING (completing ~2026), not a retirement — per
+#     the schema, a fuel conversion is not a retirement row for the plant
+#     (only a coal-unit identity exiting would be); the generating units
+#     continue operating on gas. Do NOT add.
+#   - Consumers Energy J.H. Campbell (MI): planned 2025-05-30 retirement is
+#     currently OVERRIDDEN by three successive DOE FPA §202(c) emergency
+#     orders (most recent through 2026-02-17), under litigation. No binding
+#     retirement date currently exists — the opposite of confirmed.
+#   - We Energies Oak Creek Units 7 & 8 (WI): PSC has approved replacement gas
+#     capacity, not a binding coal-exit order; the company's own target date
+#     has moved repeatedly (2024->2025->2026->2027). Announced/unstable only.
+#   - Vistra Baldwin (IL, 1,185 MW): originally 2025, extended to 2027 by the
+#     company citing MISO reliability risk — no Attachment Y approval or
+#     consent decree found. Company operating decision, not an instrument.
+#   - Duke Energy Indiana Gibson Units 3 & 4, Cayuga Station coal units:
+#     IRP-stage / IURC-approved gas-conversion settlements that leave the
+#     existing coal units' exit date open (third-party sale option, no fixed
+#     shutdown date). Ambiguous; do not add.
+#   - NIPSCO Schahfer/Michigan City: IURC order found but exact per-unit dates
+#     could not be extracted from the (binary/unreadable) order PDF in this
+#     pass; needs a follow-up direct read of the IURC docket before seeding.
+#   - Ameren Missouri Sioux/Labadie, IL CEJA-generic (P.A. 102-0662, statute
+#     does not name specific plants — resolved per-unit via IL EPA CAAPP
+#     compliance schedules, not extracted in this pass): IRP-stated targets
+#     only, no PSC order or Attachment Y approval found.
+#   - Ameren Missouri Rush Island: ALREADY RETIRED 2024-10-15 under a federal
+#     Clean Air Act court injunction (E.D. Mo., upheld 8th Cir. 2021) —
+#     historical, predates this forward registry's practical value (already
+#     gone from the base fleet); not seeded.
+#   - Sibley, Iatan (Evergy, SPP footprint) and Waukegan (ComEd, PJM
+#     footprint, already retired 2022): confirmed NOT MISO-footprint;
+#     excluded regardless of retirement status.
+# ===========================================================================
+# RE-QUERY PASS 2026-07-31 (FFR-PA).
+#
+#   - DTE Monroe 1-4: re-queried, unchanged (no amending MPSC order found).
+#   - J H Campbell 1-3 (plant 1710): **ADDED this pass as superseded=true
+#     rows**, reversing the 2026-07-05 hold-out. That pass excluded Campbell
+#     reasoning "no binding retirement date currently exists — the opposite of
+#     confirmed". That is the definition of a SUPERSEDED row, not an absent
+#     one: the binding date does exist (MPSC Case No. U-21090, order issued
+#     2022-06-23, retirement 2025-05-31) and is overridden by a rolling DOE
+#     FPA §202(c) chain (202-25-3 -> 202-25-7 -> 202-25-9 -> 202-26-16 ->
+#     202-26-22, currently through 2026-08-16, under litigation). This is
+#     exactly PJM's Eddystone pattern, and the schema's superseded flag exists
+#     for it. Behaviourally inert under the default config (the loader ignores
+#     superseded rows; Campbell is coal, so the announced channel is a no-op
+#     while forecast_fossil_retirement_economic=True) — the value is the audit
+#     trail plus reversal suppression of the stale EIA-860
+#     planned_retirement_year=2026 for a plant that is still running under
+#     federal compulsion. Re-query after 2026-08-16.
+#
+# ATTACHMENT Y CROSS-CHECK (the standing never-done item): ATTEMPTED AND
+# STILL BLOCKED — but the blocker is now characterised rather than guessed.
+# www.misoenergy.org returns HTTP 403 to this environment for every path
+# tried, with and without a browser User-Agent (it is a WAF/bot block, not a
+# proxy fault: the agent proxy reports no relay failures and cdn.misoenergy.org
+# serves fine over the same path). Two CDN-hosted MISO planning documents were
+# pulled and read instead — the PY 2026-2027 LOLE Study Report and the MTEP25
+# Report — and both confirm MISO *consumes* Attachment Y approved
+# retirements/suspensions ("MISO obtained information on generating resources
+# with approved suspensions or retirements (as of June 1, 2025) through MISO's
+# Attachment Y process") without publishing the unit-level list in either
+# document. So the cross-check cannot be completed from this environment by
+# any route found.
+# >>> MANUAL DOWNLOAD NEEDED: the Attachment Y / approved generator
+#     retirements-and-suspensions posting, pulled by a human with browser
+#     access from www.misoenergy.org (or the OASIS mirror at
+#     https://www.oasis.oati.com/woa/docs/MISO/MISOdocs/). Until it lands,
+#     this registry's MISO coverage is "everything a state PUC order or
+#     consent decree made public", NOT "everything MISO has approved". <<<
+# ===========================================================================
+# RE-QUERY PASS 2026-08-03 (FFR-PA refresh). No exit_year changed; no row
+# added or deleted. Two NEW 202(c)-deferred clusters found and HELD OUT.
+#
+#   - Monroe 1-4: re-queried, unchanged (no amending MPSC order).
+#   - J H Campbell 1-3: successor to DOE No. 202-26-22 NOT PUBLISHED. The DOE
+#     2026 202(c) log is current through No. 202-26-37 (2026-07-26) and carries
+#     no later Campbell order; 202-26-22 remains operative through 2026-08-16 —
+#     the nearest-term expiry anywhere in this registry. Rows unchanged.
+#
+# NEW THIS PASS — TWO MISO §202(c)-DEFERRED COAL CLUSTERS THE PRIOR PASSES
+# NEVER SAW (950.7 MW). Found by enumerating the DOE 2026 202(c) log in full
+# rather than only searching it for the two plants already registered; the IMM's
+# 2025 State of the Market presentation corroborates the scale ("the DOE
+# directed 2.2 GW of coal-fired resources to remain online" in MISO, which
+# Campbell's 1,560.8 MW alone does not account for). BOTH ARE HELD OUT:
+#
+#   - R M Schahfer Units 17 & 18 (plant 6085, 423.5 MW each, EIA-860 status OP).
+#     DOE chain: No. 202-25-12 (2025-12-23, 90 days through 2026-03-23) ->
+#     No. 202-26-19 (2026-03-23, effective 2026-03-24 through 2026-06-21) ->
+#     No. 202-26-29 (2026-06-18, effective 2026-06-22 through 2026-09-19).
+#   - F B Culley Unit 2 (plant 1012, 103.7 MW, EIA-860 status OP). DOE chain:
+#     No. 202-25-13 (through 2026-03-23) -> No. 202-26-20 (2026-03-23, effective
+#     2026-03-24 through 2026-06-21) -> No. 202-26-30 (2026-06-18, effective
+#     2026-06-22 through 2026-09-19).
+#
+#   WHY HELD OUT (this is the whole point, and it is a bar question, not a
+#   sourcing question): a superseded row still requires an underlying BINDING
+#   instrument — that is what distinguishes Eddystone (PJM-approved
+#   deactivation) and Campbell (MPSC Case No. U-21090) from an announcement
+#   that a DOE order happens to have overridden. For Schahfer and Culley the
+#   underlying exit is ANNOUNCED-GRADE, on the primary documents themselves:
+#     * DOE Order No. 202-25-12 (Schahfer), Background: "Unit 17 and Unit 18 are
+#       both slated to cease operations in December 2025", footnoted to
+#       "U.S. Energy Information Administration, Form EIA-860, Schedule 3:
+#       Generator Data (2024)" — i.e. to the OWNER'S SELF-REPORTED planned date.
+#     * DOE Order No. 202-26-20 (Culley), Background: "Unit 2 was slated to
+#       cease operations in December 2025", same EIA-860 Schedule 3 footnote.
+#     * The word "Attachment Y" appears ZERO times in all three DOE orders read
+#       in full this pass (202-25-12, 202-26-19, 202-26-20), and zero times in
+#       the Illinois Commerce Commission's FERC Docket EL26-36 comments on the
+#       Schahfer order or in the Organization of MISO States' motion to
+#       intervene/stay at DOE. No public document reachable from here asserts a
+#       MISO Attachment Y approval for either plant.
+#     * IURC Cause No. 46198 (order issued 2025-09-24) was read as a primary
+#       document and does NOT order the Schahfer retirement: it is a CPCN /
+#       build-transfer order for NIPSCO's Templeton Wind Project that merely
+#       RECITES the date in witness testimony ("Units 17 and 18 will retire on
+#       December 31, 2025"). Indiana IRPs are acknowledged, not approved, so no
+#       IURC instrument binds these units to a date. NIPSCO had already moved
+#       the date once on its own (2023 -> 2025), which is what a company plan
+#       does and an instrument does not.
+#   Behaviourally this costs nothing at the default config: both plants are
+#   coal, so with forecast_fossil_retirement_economic=True the announced channel
+#   is a no-op for them and the economic screen governs either way.
+#   >>> These two are now the NAMED instances of the Attachment Y gap: if MISO
+#       did approve Attachment Y retirement requests for them (which the tariff's
+#       advance-notice requirement makes likely for a December-2025 exit), they
+#       are registrable rows and this registry is missing 950.7 MW of confirmed
+#       MISO exits. That inference is NOT acted on here — the bar takes
+#       instruments, not likelihoods. Resolve it with the manual download. <<<
+#
+# ATTACHMENT Y CROSS-CHECK 2026-08-03: ATTEMPTED AGAIN, STILL BLOCKED — but the
+# blocker is now SHARPER than the previous pass recorded, and it is a DIFFERENT
+# blocker on the two hosts:
+#   (a) www.misoenergy.org — HTTP 403 to every path (site-side WAF), confirmed
+#       again this pass on both the Attachment Y dashboard page and the
+#       generator-interconnection path. cdn.misoenergy.org 403s on directory
+#       paths but SERVES INDIVIDUAL DOCUMENTS normally (a 4.5 MB LOLE study
+#       PDF pulled clean over the same route), so MISO's own stakeholder decks
+#       are reachable when their exact filename is known — that is how the LOLE,
+#       MTEP and IMM documents were read. None of them publishes the unit list.
+#   (b) www.oasis.oati.com — NOT a WAF and NOT the same failure the prior pass
+#       assumed. It fails TLS CHAIN VALIDATION: "SSL certificate problem: unable
+#       to get local issuer certificate", identically with the system trust
+#       store and with the agent proxy's CA bundle (/root/.ccr/ca-bundle.crt).
+#       The proxy reports no relay failures, so this is the OATI origin's own
+#       chain, not our egress. Per the environment's standing rule TLS
+#       verification is never disabled, so this route is closed from here.
+#       IMPORTANT: this pass CONFIRMED that OASIS is the canonical home of the
+#       posting, by finding a real published example at
+#       https://www.oasis.oati.com/woa/docs/MISO/MISOdocs/Presque_Isle_Att_Y_Study_Report_2014-08-15_PUBLIC.pdf
+#       ("ATTACHMENT Y STUDY REPORT", PUBLIC). That named document is blocked by
+#       the same TLS failure as the directory index, so the block is total.
+# >>> MANUAL DOWNLOAD NEEDED (unchanged in substance, now precisely targeted):
+#     MISO's Attachment Y approved retirements-and-suspensions posting and the
+#     per-request Attachment Y Study Reports, pulled by a human with browser
+#     access from www.misoenergy.org or the OASIS document root above. FIRST
+#     TWO QUERIES WHEN IT LANDS: Schahfer 17/18 (plant 6085) and Culley 2
+#     (plant 1012) — if either carries an approved Attachment Y RETIREMENT
+#     request, it becomes a superseded=true row on the Campbell pattern. <<<
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes,superseding_instrument_date
+MISO,1733,3,Monroe 3,822.6,2028,12,regulatory_order,mipsc-u21193-monroe-3,Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 3 & 4 no later than 2028-12-31 and Units 1 & 2 no later than 2032-12-31,2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-08-03,EIA-860 self-reported planned_retirement_year/month (2028-12) matches this order's date exactly. | Re-queried 2026-07-31 (FFR-PA): MPSC Case No. U-21193 settlement unchanged; no amending order found. | Re-queried 2026-08-03 (FFR-PA refresh): MPSC Case No. U-21193 settlement unchanged; no amending order found.,
+MISO,1733,4,Monroe 4,817.2,2028,12,regulatory_order,mipsc-u21193-monroe-4,Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 3 & 4 no later than 2028-12-31 and Units 1 & 2 no later than 2032-12-31,2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-08-03,See Monroe 3's note (same order). | Re-queried 2026-07-31 (FFR-PA): MPSC Case No. U-21193 settlement unchanged; no amending order found. | Re-queried 2026-08-03 (FFR-PA refresh): unchanged.,
+MISO,1733,1,Monroe 1,817.2,2032,12,regulatory_order,mipsc-u21193-monroe-1,Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 1 & 2 no later than 2032-12-31 (Units 3 & 4 no later than 2028-12-31),2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-08-03,EIA-860 self-reported planned_retirement_year/month (2032-12) matches this order's date exactly. Outside the near-term 2026-2029 window investigated but same binding order as Units 3/4. | Re-queried 2026-07-31 (FFR-PA): MPSC Case No. U-21193 settlement unchanged; no amending order found. | Re-queried 2026-08-03 (FFR-PA refresh): unchanged.,
+MISO,1733,2,Monroe 2,822.6,2032,12,regulatory_order,mipsc-u21193-monroe-2,Michigan Public Service Commission Case No. U-21193 settlement agreement (DTE Electric integrated resource plan settlement) — retires Monroe Units 1 & 2 no later than 2032-12-31 (Units 3 & 4 no later than 2028-12-31),2023-07-26,false,,https://www.michigan.gov/mpsc/commission/news-releases/2023/07/26/commission-approves-settlement-agreement-on-dte-electric-co-integrated-resource-plan,"MPSC news release, Case No. U-21193 (approved 2023-07-26)",2026-08-03,See Monroe 1's note (same order). | Re-queried 2026-07-31 (FFR-PA): MPSC Case No. U-21193 settlement unchanged; no amending order found. | Re-queried 2026-08-03 (FFR-PA refresh): unchanged.,
+MISO,1710,1,J H Campbell 1,265.2,2025,5,regulatory_order,mipsc-u21090-campbell-1,"Michigan Public Service Commission Case No. U-21090 — order issued 2022-06-23 approving Consumers Energy's contested integrated-resource-plan settlement agreement, which provides for closure of the three J.H. Campbell coal units; the settlement's retirement date is 2025-05-31",2022-06-23,true,"DOE Emergency Orders under FPA §202(c) compelling continued operation — order chain: No. 202-25-3 (issued 2025-05-23), No. 202-25-7 (2025-08-20, through 2025-11-19), No. 202-25-9 (2025-11-18, through 2026-02-17), No. 202-26-16 (2026-02-17, through 2026-05-18), No. 202-26-22 (2026-05-18, through 2026-08-16); under litigation (Michigan Attorney General petition for review and rehearing requests)",https://www.michigan.gov/mpsc/commission/news-releases/2022/06/23/mpsc-approves-consumers-irp_takes-steps-improve-capacity,"MPSC news release for the Case No. U-21090 order, issued 2022-06-23 ('Closure of three units at the J.H. Campbell coal-fired power plant in Ottawa County's Port Sheldon Township in 2025'); the day-precise 2025-05-31 date is stated in the Michigan Attorney General's federal filings against the DOE orders ('The retirement of J.H. Campbell on May 31, 2025, was a provision agreed to as part of a settlement agreement in MPSC Case No. U-21090'). Counter-instrument chain verified 2026-07-31 against the DOE 202(c) order logs (https://www.energy.gov/ceser/2025-doe-202c-orders and https://www.energy.gov/ceser/2026-doe-202c-orders)",2026-08-03,"ADDED 2026-07-31 (FFR-PA re-query) as the MISO analogue of PJM's Eddystone rows. The 2026-07-05 pass held Campbell out entirely, reasoning 'no binding retirement date currently exists — the opposite of confirmed'. That is the definition of a SUPERSEDED row, not of an absent one: the binding date does exist (MPSC U-21090, 2025-05-31) and is currently overridden by a rolling DOE §202(c) order chain, exactly the Eddystone pattern the schema's superseded flag was designed around. Registering it superseded=true (a) preserves the audit trail the plan §2.2 requires for counter-instruments, (b) keeps the loader ignoring it so the economic screen governs — no change to any exit, and (c) makes plant 1710 fully-superseded, so load_announced_reversal_plants suppresses the stale EIA-860 planned_retirement_year=2026 for a plant that is demonstrably still running under federal compulsion. Campbell is coal, so under the default forecast_fossil_retirement_economic=True the announced channel is a no-op for it either way: this row changes no default-config result. Current order 202-26-22 expires 2026-08-16 — re-query then, alongside Eddystone's 2026-08-22. | Re-queried 2026-08-03 (FFR-PA refresh): SUCCESSOR STATE STILL NOT PUBLISHED. The DOE 2026 202(c) log is current through No. 202-26-37 (2026-07-26) and carries no Campbell order after No. 202-26-22, which stays operative through 2026-08-16 (13 days out) — the nearest-term expiry in this registry. Row UNCHANGED at superseded=true; nothing recorded speculatively. Re-query immediately after 2026-08-16.",2025-05-23
+MISO,1710,2,J H Campbell 2,378.8,2025,5,regulatory_order,mipsc-u21090-campbell-2,"Michigan Public Service Commission Case No. U-21090 — order issued 2022-06-23 approving Consumers Energy's contested integrated-resource-plan settlement agreement, which provides for closure of the three J.H. Campbell coal units; the settlement's retirement date is 2025-05-31",2022-06-23,true,"DOE Emergency Orders under FPA §202(c) compelling continued operation — order chain: No. 202-25-3 (issued 2025-05-23), No. 202-25-7 (2025-08-20, through 2025-11-19), No. 202-25-9 (2025-11-18, through 2026-02-17), No. 202-26-16 (2026-02-17, through 2026-05-18), No. 202-26-22 (2026-05-18, through 2026-08-16); under litigation (Michigan Attorney General petition for review and rehearing requests)",https://www.michigan.gov/mpsc/commission/news-releases/2022/06/23/mpsc-approves-consumers-irp_takes-steps-improve-capacity,"MPSC news release for the Case No. U-21090 order, issued 2022-06-23 ('Closure of three units at the J.H. Campbell coal-fired power plant in Ottawa County's Port Sheldon Township in 2025'); the day-precise 2025-05-31 date is stated in the Michigan Attorney General's federal filings against the DOE orders ('The retirement of J.H. Campbell on May 31, 2025, was a provision agreed to as part of a settlement agreement in MPSC Case No. U-21090'). Counter-instrument chain verified 2026-07-31 against the DOE 202(c) order logs (https://www.energy.gov/ceser/2025-doe-202c-orders and https://www.energy.gov/ceser/2026-doe-202c-orders)",2026-08-03,"See J H Campbell 1's note (same MPSC U-21090 order and same DOE §202(c) counter-instrument chain). | Re-queried 2026-08-03: see J H Campbell 1's note (same order chain, same 2026-08-16 expiry, successor not published).",2025-05-23
+MISO,1710,3,J H Campbell 3,916.8,2025,5,regulatory_order,mipsc-u21090-campbell-3,"Michigan Public Service Commission Case No. U-21090 — order issued 2022-06-23 approving Consumers Energy's contested integrated-resource-plan settlement agreement, which provides for closure of the three J.H. Campbell coal units; the settlement's retirement date is 2025-05-31",2022-06-23,true,"DOE Emergency Orders under FPA §202(c) compelling continued operation — order chain: No. 202-25-3 (issued 2025-05-23), No. 202-25-7 (2025-08-20, through 2025-11-19), No. 202-25-9 (2025-11-18, through 2026-02-17), No. 202-26-16 (2026-02-17, through 2026-05-18), No. 202-26-22 (2026-05-18, through 2026-08-16); under litigation (Michigan Attorney General petition for review and rehearing requests)",https://www.michigan.gov/mpsc/commission/news-releases/2022/06/23/mpsc-approves-consumers-irp_takes-steps-improve-capacity,"MPSC news release for the Case No. U-21090 order, issued 2022-06-23 ('Closure of three units at the J.H. Campbell coal-fired power plant in Ottawa County's Port Sheldon Township in 2025'); the day-precise 2025-05-31 date is stated in the Michigan Attorney General's federal filings against the DOE orders ('The retirement of J.H. Campbell on May 31, 2025, was a provision agreed to as part of a settlement agreement in MPSC Case No. U-21090'). Counter-instrument chain verified 2026-07-31 against the DOE 202(c) order logs (https://www.energy.gov/ceser/2025-doe-202c-orders and https://www.energy.gov/ceser/2026-doe-202c-orders)",2026-08-03,"See J H Campbell 1's note (same MPSC U-21090 order and same DOE §202(c) counter-instrument chain). | Re-queried 2026-08-03: see J H Campbell 1's note (same order chain, same 2026-08-16 expiry, successor not published).",2025-05-23
