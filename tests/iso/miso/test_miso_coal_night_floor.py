@@ -28,6 +28,7 @@ successor to the two REJECTED offer-side arms, ``coal_prb_committed_dispatchable
 """
 
 import unittest
+from pathlib import Path
 
 import numpy as np
 
@@ -299,6 +300,96 @@ class TestGating(unittest.TestCase):
         # The sink keeps its negative lower bound and is never tagged.
         self.assertLess(float(out.min_gen[1, 12]), 0.0)
         self.assertEqual(int(out.min_gen_mechanism[1, 12]), 0)
+
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+class TestP1PrepCallSiteParity(unittest.TestCase):
+    """Every ``run_energy_solve`` call site must WIRE the hook, not just import it.
+
+    miso-114 regression guard. The mechanism shipped in PR #3256 wired
+    ``src/market_sim/runner.py`` and ``src/market_sim/pipeline/year.py`` but
+    MISSED the third call site, ``scripts/run_calibration.py::run_year`` —
+    which is the path every calibration/replay solve actually takes. The arm
+    therefore solved with the floor silently absent: no log line, no
+    ``MECH_MISO_COAL_NIGHT_FLOOR`` row in the floors sidecar, and a P1 that
+    warm-re-solved the P0 model, i.e. a full 3-year A/B that would have read
+    as a clean null result. Unit tests over the builder all passed, because
+    the builder was never the broken part.
+
+    This asserts CALL-SITE PARITY for the whole ``p1_fleet_prep`` family: any
+    hook named in one chain must be named in all three.
+    """
+
+    SITES = (
+        "scripts/run_calibration.py",
+        "src/market_sim/runner.py",
+        "src/market_sim/pipeline/year.py",
+    )
+
+    def _chain_names(self, path):
+        """Return the identifiers composed inside a file's ``p1_fleet_prep=(``."""
+        src = (REPO_ROOT / path).read_text()
+        self.assertIn("p1_fleet_prep=(", src, f"{path}: no p1_fleet_prep call site")
+        chain = src.split("p1_fleet_prep=(", 1)[1].split(")", 1)[0]
+        return {tok.strip() for tok in chain.split(" or ") if tok.strip()}
+
+    def test_miso_night_floor_hook_is_wired_at_every_call_site(self):
+        for path in self.SITES:
+            with self.subTest(path=path):
+                src = (REPO_ROOT / path).read_text()
+                self.assertIn(
+                    "build_miso_coal_night_floor_p1_prep(",
+                    src,
+                    f"{path}: builder never called",
+                )
+                self.assertIn(
+                    "miso_night_floor_prep",
+                    self._chain_names(path),
+                    f"{path}: hook built but not composed into p1_fleet_prep",
+                )
+
+    def test_every_call_site_can_RESOLVE_the_builder_name(self):
+        """Text parity is not enough — the name must actually BIND at runtime.
+
+        Second miso-114 regression. After the call site was added, ruff's
+        F401 autofix stripped the now-"unused" import from
+        ``scripts/run_calibration.py`` at the moment the import was added
+        ahead of its use, leaving a call to an unbound global. Every text
+        check above still passed, ``import scripts.run_calibration``
+        succeeded (a NameError in a function body is raised at CALL time,
+        not import time), and the arm died ~25 minutes into the solve. So
+        this resolves the attribute on the imported module objects.
+        """
+        import importlib
+
+        for module_name in (
+            "scripts.run_calibration",
+            "market_sim.runner",
+            "market_sim.pipeline.year",
+        ):
+            with self.subTest(module=module_name):
+                mod = importlib.import_module(module_name)
+                self.assertTrue(
+                    callable(getattr(mod, "build_miso_coal_night_floor_p1_prep", None)),
+                    f"{module_name}: calls build_miso_coal_night_floor_p1_prep "
+                    "but the name does not resolve in module scope — the call "
+                    "would raise NameError mid-solve",
+                )
+
+    def test_p1_fleet_prep_chains_agree_across_call_sites(self):
+        chains = {path: self._chain_names(path) for path in self.SITES}
+        reference = chains[self.SITES[0]]
+        for path, names in chains.items():
+            with self.subTest(path=path):
+                self.assertEqual(
+                    names,
+                    reference,
+                    f"{path}: p1_fleet_prep chain diverges from "
+                    f"{self.SITES[0]} — a hook wired in one solve path and "
+                    "not another is invisible in the path it is missing from",
+                )
 
 
 if __name__ == "__main__":
