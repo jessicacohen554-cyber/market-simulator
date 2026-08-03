@@ -14,7 +14,7 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "CALIBRATED-WITH-CAVEATS",
+  "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
@@ -43,8 +43,7 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -69,9 +68,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -82,8 +79,8 @@
     "scored": 8,
     "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 0
+    "ledgered": 0,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",

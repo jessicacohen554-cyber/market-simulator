@@ -5080,4 +5080,53 @@ widen the guard by analogy; do not treat the bundle sweep as the durable record
 (retention pruned caiso138/caiso139 during this session — the committed probe
 transcript is permanent); do not assume other ISOs need this fix (measured: they don't).
 
-Next number: caiso-158.
+## caiso-159 — 2026-08-03 — **THE CT HEAT-RATE METER SCREEN IS PROMOTED TO KEEPER** (`2026-08-03-caiso156-meter-screen-b`), score-identical to caiso-157 on every criterion, D-gate flag and D-row verdict; and a **COMMITTED MERGE-CONFLICT CORRUPTION INSIDE THE NYISO KEEPER'S BUNDLE** was found and repaired first
+
+**Keeper CAISO -> `2026-08-03-caiso156-meter-screen-b`** (bundle
+`caiso156_meter_screen_B`). Determination CALIBRATED-WITH-CAVEATS, verified
+IDENTICAL to the caiso-157 incumbent — all 9 criteria, grade summary (9/7,
+ledgered 2, 0 fails), C1 headline (all 12/12 free 8/8), all six D-gate pass
+flags and all 58 D-row verdicts. ZERO ScenarioConfig deltas vs the incumbent
+(field-by-field diff), and `meta.shared_inputs` pins the same two derived
+partitions, so the caiso-157 silent-degrade trap is not re-armed.
+
+**What changed:** the CONTENT of the shared measured CT heat-rate artifact,
+corrected at caiso-158 — the derive's declared physical band [6.0, 25.0]
+MMBtu/MWh now applies PER LOADED HOUR instead of only to the plant aggregate.
+Zero new parameters, zero ScenarioConfig surface. Artifact cap-weighted applied
+rate 9.6603 -> 9.8362 MMBtu/MWh net over 43/43 plants, zero units dropped.
+
+**Live and score-neutral are different claims.** P1 CT_PEAKER energy
+1.9217->1.6599 / 0.7132->0.6370 / 0.5333->0.4157 TWh, up to 601.6 MW in one
+class-hour and 4,117 of 8,760 hours changed in 2023 — while flipping zero
+criteria and zero D-gates. Load-weighted lambda +0.195/+0.099/+0.111 % of level
+against a pre-committed 1.0 pp escalation trigger, so no LOYO is owed. The
+promotion rests on rule 14 [R-ACCURATE], not on a fit claim: the incumbent was
+solving against an artifact diluted low by physically impossible meter hours,
+and the corrected input would equally have gone in had the residual worsened.
+REPORTED NOT HIDDEN: the ledgered C3a-2025 caveat moves ADVERSELY +0.11 pp —
+immaterial against the bar, and not a reason to revert an accurate input.
+
+**The blocker was mechanical, not evidentiary.** A probe bundle carries no
+rule-21 attestation, so C6 scored UNATTESTED and ledgered caveats could not
+downgrade FAIL -> CAVEAT. `scripts/gen_caiso159_attestation.py` carries the
+incumbent's attestation forward with every magnitude RE-MEASURED from the arm's
+own sidecars, pins the artifact's md5/coverage, and RAISES if the DOF ledger
+moves (it does not: 11 entries / 9 residual, unchanged).
+
+**Stop-the-line, done first:** eight committed JSON files across three NYISO
+bundles carried live conflict markers on main, including the designated NYISO
+keeper `nyiso113_lilocational_B`. Worse than the markers, git auto-merged the
+NON-conflicting regions from the wrong side, so the keeper's committed
+scorecard claimed `governance: UNATTESTED` and grade 8/7 when the truth is PASS
+and 9/8. Repaired by whole-blob restore (markers are not the whole defect).
+Blast radius measured: the run payload embeds no scorecard and `status/NYISO.js`
+re-runs the scorer, so the dashboard never showed a wrong number.
+
+DO-NOT-REDO: do not re-open whether the band belongs at hour grain (caiso-158);
+do not read "zero criterion flips" as inert (thousands of hours move); do not
+hand-resolve a rename/rename conflict in bundle JSON — restore whole blobs.
+Holdout untouched (2023-2025 only, no LP ran, spend freeze unspent).
+Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+
+Next number: caiso-160.
