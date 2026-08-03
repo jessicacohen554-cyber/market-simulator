@@ -397,6 +397,20 @@ Mirrors FFR-3C §5, because the same discipline applies to a fix lane as to an a
 5. **It does not touch the FH-4/FH-5 block.** Lifting that is the manager's, on a landed fix
    **plus** a green re-probe. §6 reports the re-probe honestly; it does not claim the lift.
 
+## 8. Mechanism matrix (rule 28)
+
+Two cells exercised, **neither verdict status changed**, both notes and citations updated
+in-session per duty (b); the new field's row added in the same PR per duty (c).
+`scripts/check_mechanism_matrix.py` passes.
+
+| row | cell | action |
+|---|---|---|
+| `exit_rate_limits` (**NEW ROW**, duty c) | ERCOT **O**, PJM **O**, others **U**; `fc` all-**U** | Row added with the new `ScenarioConfig` field in the same PR. ERCOT note records the measured **null** — armed and control identical to the megawatt, zero deferrals, no `pipeline_events` at all — and says explicitly that a null is not a pass. Cell stays **O** because a 3-year window that never enters the pipeline is a verdict on the *posture*, not the mechanism. DO-NOT-REDO marker left for the next session. |
+| `economic_retirement_screen` | **unchanged** | Note records the landed G3 cap-grain correction, that it is provably inert at the FH-1 gate posture, and that the recorded I6/I7 FAIL does not reproduce at this HEAD — with the attribution split into what is *measured* (not FFR-3F's, via the pre-fix control) and what is *inferred* (D-1, by elimination). |
+
+Rule 25 `[R-ISO-SCOPE]` observed throughout: no verdict transferred between ISOs, and each ISO's
+cap is derived from its own market's EIA-860 record.
+
 ## 9. What this session does NOT claim
 
 * **No promotion, no default flipped.** `exit_rate_limits` ships **default-OFF**;
