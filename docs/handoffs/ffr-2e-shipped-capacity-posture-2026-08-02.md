@@ -50,13 +50,12 @@ the posture question turns out **not** to be a second-order calibration detail:
    anchor. Any claim of the form "curve-ON over-fires" is a **T1-H property, not
    a forecast property**, and must not be carried across.
 
-> **⚠ COMPLETION STATE.** Charter items 1 (instrument), 3 (arm recommendation),
-> 4 (the PJM T0 leg) and the rule-28 matrix duty are **DONE**. Item 2 is
-> **PARTIAL**: NEISO and CAISO posture pairs were solved cold post-epoch, scored
-> and registered; **PJM and MISO T1-H pairs were NOT run**, deferred under the
-> rule-12 window split (FFR-2A owns those windows and had not released them).
-> Six runs registered. The PJM **floor** specifically remains unmeasured at fleet
-> level — §4.2 shows why that is now a *structural* result, not an omission.
+> **⚠ COMPLETION STATE.** All four charter items are **DONE**, plus the rule-28
+> matrix duty. **Ten runs registered**: T1-H shipped/fixed pairs for NEISO,
+> CAISO, PJM and MISO (all cold post-epoch solves, all scored except CAISO which
+> has no actuals — blocker B4), plus the PJM T0 2026–2028 pair. The PJM **floor**
+> specifically remains unmeasured at fleet level — §4.2 shows why that is now a
+> *structural* result about the instruments, not an omission.
 
 ---
 
@@ -271,30 +270,46 @@ Neither leg carries an FC-3 score — `capacity_actuals_caiso.csv` does not exis
 (blocker B4), so `score_capacity_hindcast.py` refuses both arms. They are
 registered as unscored evidence rows; **no CAISO FC-3 verdict is claimed.**
 
-#### PJM / MISO T1-H — **NOT RUN** (window coordination)
+#### PJM and MISO — run after FFR-2A released the windows
 
-Deferred under the rule-12 split: FFR-2A owns the PJM and MISO windows first, and
-at session end it had **not** yet registered its heavy legs (checked repeatedly
-against `origin/main`'s `frontend/data/hindcast/`). Rather than co-run, these are
-left for a successor. Note that FFR-2B's `{pjm,miso}-2021-2025-cmc-legacy-ffr2b`
-(2026-08-02) are already **post-epoch curve-ON legs whose `{iso: True}` posture
-resolves identically to the shipped default for those ISOs** — so a successor
-needs only the *fixed* arm for each, provided it verifies no solve-affecting
-change landed in between (otherwise run both, one tree, as was done for NEISO).
+Held until FFR-2A registered its PJM/MISO T1-X legs on `main`
+(`{pjm,miso,ercot}-2023-2027-crossover-ffr2a`), then run **strictly
+sequentially**, one leg at a time, PJM never co-running with MISO (rule 12,
+~8.6 GB/leg). Runs: `{pjm,miso}-2021-2025-{shipped,fixed}-ffr2e`, all four
+solved [2021, 2023, 2024, 2025] with 2022 bridged, all `exit=0`.
 
-The commands are:
+| ISO | arm | retire GW (actual) | err | recall | false-retire | additions GW (actual) |
+|---|---|--:|--:|--:|--:|--:|
+| **PJM** | shipped | 33.716 (11.121) | **+203 %** | 0.235 | 30.215 | 44.155 (24.092) |
+| **PJM** | fixed | 4.106 (11.121) | −63 % | **0.000** | 4.097 | 36.618 (24.092) |
+| **MISO** | shipped | 17.985 (15.227) | **+18 %** | 0.176 | 14.437 | 16.546 (31.981) |
+| **MISO** | fixed | 0.784 (15.227) | −95 % | **0.000** | 0.000 | 12.146 (31.981) |
 
-```bash
-python scripts/run_capacity_hindcast.py --iso <ISO> --fuel-variant realized \
-    --vintage 2020 --start-year 2021 --end-year 2025 [--fixed-net-cone] \
-    --out-dir results/hindcast/<iso>-2021-2025-{shipped,fixed}-ffr2e
-```
+Every cell FAILs its band except MISO-fixed's vacuous `false_retire` PASS. Two
+things are worth pulling out:
 
-then `score_capacity_hindcast.py --bundle …` → `forecast_verdict.py --tier t1h`
-→ `register_forecast_run.py --bundle …`, plus `_ffr2e_arm_diff.py`. PJM and MISO
-pairs run **sequentially** (~8.6 GB/leg) and never co-run with each other.
-**`--fixed-net-cone` did not exist before this session**, so the fixed arm was
-previously unreachable except by predating the flip.
+* **MISO's shipped arm has the best retirement LEVEL of any arm in any ISO**
+  (+18 % against actual, vs −95 % for its fixed twin). The fixed arm retires
+  0.784 GW against a 15.227 GW actual — it essentially does not retire.
+* **PJM shipped 33.716 GW** vs FFR-2B's 29.373 GW for the same posture on
+  2026-08-02. Same qualitative signal (large over-fire); the gap is a
+  different-tree/HEAD difference and is *not* attributed here.
+
+The fleet paths diverge structurally, not just in totals — PJM shipped economic-
+retires 29.6 GW in 2023 alone (fixed: 0.000) and by 2025 is leaning on
+7.5 GW of **reserve-backstop** thermal that the fixed arm never needs; MISO
+shipped economic-retires 17.2 GW in 2023 (fixed: 0.000) and builds 2.4 GW of
+storage the fixed arm does not (the RA value the curve creates — the same
+mechanism FF-2C credited).
+
+#### The pattern that holds in all four ISOs
+
+**The fixed net-CONE arm's retirement recall is 0.000 in PJM, MISO and NEISO,
+and its `false_retire` "PASS" is vacuous wherever it appears.** It is not a
+conservative alternative to the shipped posture — it is a configuration that
+never identifies a single real >300 MW retirement, in any ISO tested. The
+shipped arm has non-zero recall everywhere (NEISO 1.00, PJM 0.235, MISO 0.176)
+and buys that by over-firing.
 
 ---
 
@@ -373,12 +388,20 @@ exist.
 
 | ISO | shipped posture | arm the T1 gate should cite | currently cited (`ff-t1-gate` §4.1) | action |
 |---|---|---|---|---|
-| **PJM** | curve-ON | **curve** | `pjm-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
-| **MISO** | curve-ON | **curve** | `miso-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
-| **NEISO** | curve-ON | **curve** | `neiso-2021-2025-curve` (curve) | ✔ correct arm — **re-point to a post-epoch leg** (§3.1) |
+| **PJM** | curve-ON | **curve** | `pjm-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to `pjm-2021-2025-shipped-ffr2e`** (§3.1) |
+| **MISO** | curve-ON | **curve** | `miso-2021-2025-curve-ff2c` (curve) | ✔ correct arm — **re-point to `miso-2021-2025-shipped-ffr2e`** (§3.1) |
+| **NEISO** | curve-ON | **curve** | `neiso-2021-2025-curve` (curve) | ✔ correct arm — **re-point to `neiso-2021-2025-shipped-ffr2e`** (§3.1) |
 | **NYISO** | **curve-OFF** | **fixed** | `nyiso-2021-2025-curve` (**force-ON probe**) | ✘ **WRONG ARM — change the citation** |
-| **CAISO** | curve-ON, provably inert | either (the distinction is void) | not scored — no curve leg | ✔ correct as written; add the §2 proof as the reason |
+| **CAISO** | curve-ON, provably inert | either (the distinction is void) | not scored — no curve leg | ✔ correct as written; add the §2/§3.1 proof as the reason |
 | **ERCOT** | n/a (energy-only) | n/a | n/a | ✔ |
+
+**The measured evidence strengthens the "cite the curve arm" recommendation
+beyond the shipped-posture argument alone.** Across PJM, MISO and NEISO the
+fixed arm's retirement recall is **0.000** — it identifies not one real >300 MW
+retirement in any ISO — and its `false_retire` PASSes are vacuous consequences
+of retiring nothing. Citing it would mean grading the program's capacity-
+evolution skill on a configuration that both (a) production does not run and
+(b) cannot detect a retirement at all.
 
 **The one substantive correction is NYISO.** `ff-t1-gate-2026-07.md` §4.1 lists
 `nyiso-2021-2025-curve` as NYISO's FC-3 evidence, but production ships NYISO
