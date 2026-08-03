@@ -586,6 +586,17 @@ def share(rng: float, year: int) -> float:
 
 
 
+def scored_years(df: pd.DataFrame) -> list[int]:
+    """Years carrying enough operating days to be scored at all (prereg §3).
+
+    A year below ``MIN_DAYS_ANY`` days in the three-book intersection "is not
+    given a headline share at all", so it must not drive the identification or
+    the kill rules either -- it is reported separately as under-floor.
+    """
+    days = df.groupby("year")["day"].nunique()
+    return [y for y in YEARS if int(days.get(y, 0)) >= MIN_DAYS_ANY]
+
+
 def _identify(df: pd.DataFrame, suffix: str) -> tuple[str, bool, dict]:
     """Pick the composition reproducing the posted DA best (prereg §2.2).
 
@@ -593,7 +604,7 @@ def _identify(df: pd.DataFrame, suffix: str) -> tuple[str, bool, dict]:
     same composition wins in every scored year.
     """
     fits = {c: fit_stats(df, c + suffix) for c in COMPOSITIONS}
-    years = [y for y in YEARS if y in set(df["year"].unique())]
+    years = scored_years(df)
     best = min(
         COMPOSITIONS,
         key=lambda c: np.mean([fits[c][y]["median"] for y in years if y in fits[c]]),
@@ -643,8 +654,19 @@ def _hod_table(df: pd.DataFrame, col: str, label: str) -> dict[int, dict]:
 
 
 def _kill_rules(df: pd.DataFrame, col: str, noimp_col: str, label: str) -> None:
-    """Score the pre-registered kill rules on one construction."""
-    print(f"\n  --- KILL RULES on {label} ---")
+    """Score the pre-registered kill rules on one construction.
+
+    Only years clearing the prereg §3 day floor are scored; an under-floor
+    year cannot decide a kill rule it is not reportable for.
+    """
+    keep_years = scored_years(df)
+    print(f"\n  --- KILL RULES on {label} (years scored: {keep_years}) ---")
+    if len(keep_years) < len(YEARS):
+        print(
+            f"    NOTE: {len(keep_years)}/{len(YEARS)} years reportable, so the"
+            ' ">= 2 of 3 years" kill rules are UNDECIDED, not passed.'
+        )
+    df = df[df["year"].isin(keep_years)]
     st = hod_stats(df, col)
     shares = {y: share(st[y]["range"], y) for y in st}
     keep = {y: share(ANCHOR_KEEPER[y], y) for y in st}
@@ -723,7 +745,7 @@ def main(argv: list[str] | None = None) -> int:
         " Must Take Energy MW re-priced to the floor",
     )
 
-    years = [y for y in YEARS if y in set(df["year"].unique())]
+    years = scored_years(df)
     for lbl, b, i_, f in (
         ("FROZEN", best, ident, fits),
         ("MT", best_mt, ident_mt, fits_mt),
