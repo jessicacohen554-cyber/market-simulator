@@ -295,9 +295,7 @@ class TestReserveFamilySidecar(unittest.TestCase):
         """
         res, design, T = self._solved_two_family()
         df = _reserve_family_frame(2025, "P1", res, design, ["Z0", "Z1"])
-        got = dict(
-            df.drop_duplicates(subset=["family"])[["family", "zones"]].values
-        )
+        got = dict(df.drop_duplicates(subset=["family"])[["family", "zones"]].values)
         self.assertEqual(got["system_10min"], "Z0|Z1")
         self.assertEqual(got["z1_10min"], "Z1")
 
@@ -311,9 +309,7 @@ class TestReserveFamilySidecar(unittest.TestCase):
         res, design, T = self._solved_two_family()
         for zones in (None, [], ["Z0", "Z1", "Z2"]):
             df = _reserve_family_frame(2025, "P1", res, design, zones)
-            self.assertEqual(
-                set(df["zones"].unique()), {""}, f"zone list {zones!r}"
-            )
+            self.assertEqual(set(df["zones"].unique()), {""}, f"zone list {zones!r}")
 
     def test_frame_names_each_family_and_closes_the_lp_identity(self):
         res, design, T = self._solved_two_family()
