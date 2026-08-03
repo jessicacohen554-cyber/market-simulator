@@ -218,12 +218,12 @@ class TestZonalAnchorRegistry(unittest.TestCase):
     """Registry hygiene (rules 24 / 25)."""
 
     def test_only_zonal_basis_isos_carry_a_table(self):
-        # NYISO (nyiso-109) + PJM (pjm-144) + ERCOT (ercot-150): the three
-        # keepers that arm a per-zone delivered-gas basis with a derived
-        # zone-anchor table. MISO stays U in the matrix until its own lane
-        # derives one (rule 25).
+        # NYISO (nyiso-109) + PJM (pjm-144) + ERCOT (ercot-150) + MISO
+        # (miso-119): the four keepers that arm a per-zone delivered-gas basis
+        # with a derived zone-anchor table, each derived in its own lane from
+        # its own basis data and keeper fleet (rule 25).
         self.assertEqual(
-            set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO", "PJM", "ERCOT"}
+            set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE), {"NYISO", "PJM", "ERCOT", "MISO"}
         )
 
     def test_every_model_zone_is_covered(self):
@@ -288,6 +288,28 @@ class TestErcotZonalAnchorRegistry(unittest.TestCase):
         iso_anchor = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["ERCOT"]
         table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["ERCOT"]
         self.assertTrue(any(v > iso_anchor for z, v in table.items() if z != "West"))
+
+
+class TestMisoZonalAnchorRegistry(unittest.TestCase):
+    """MISO table hygiene (miso-119): coverage + the mean-zero geometry.
+
+    MISO's applier delegates to the same capacity-weighted MEAN-ZERO core as
+    PJM (``data.fuel.basis.meanzero``, no level term), so its zone anchors
+    must straddle the ISO anchor from BOTH sides: the Gulf-premium South
+    above it, the Chicago-basis eastern-Midwest zones below.
+    """
+
+    def test_every_miso_model_zone_is_covered(self):
+        miso_zones = get_iso_config("MISO").zone_names
+        self.assertEqual(set(GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["MISO"]), set(miso_zones))
+
+    def test_anchors_are_two_sided_around_the_iso_anchor(self):
+        from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ISO
+
+        iso_anchor = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["MISO"]
+        table = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["MISO"]
+        self.assertGreater(table["MISO-South"], iso_anchor)
+        self.assertLess(table["MISO-Illinois"], iso_anchor)
 
 
 if __name__ == "__main__":
