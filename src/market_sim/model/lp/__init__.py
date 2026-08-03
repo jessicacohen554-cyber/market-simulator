@@ -132,6 +132,14 @@ class DispatchResult:
     # (T, n_families) per-family balance-row dual — the per-product AS clearing
     # price for ERCOT's multi-product co-opt; the per-hour max is the binding MCPC.
     reserve_price_by_family: np.ndarray | None = None
+    # (T, n_families) per-family cleared ORDC shortfall MW — the sum of each
+    # family's own slice of the family-major ORDC block. Reported alongside
+    # ``reserve_price_by_family`` so a family's dual is interpretable: a
+    # positive dual at zero shortfall is the family binding on its requirement,
+    # while a positive shortfall names the ORDC step that set the price. None
+    # unless the co-opt is on. Persisted by the calibration bundle's
+    # ``hourly/reserve_family_<year>.parquet`` sidecar.
+    reserve_shortfall_by_family: np.ndarray | None = None
     # (n_headroom_rows, T) dual of the reserve-supply cap rows (ERCOT RTOLCAP
     # re-scope), sign-flipped to >= 0. This is the UNINTERNALIZED part of the
     # reserve scarcity price: when the cap row is the binding reserve

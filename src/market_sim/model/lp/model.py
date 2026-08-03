@@ -674,6 +674,18 @@ class DispatchModel:
         # NYISO per-class layout and the additive-spec row count for ERCOT
         # multi-product.
         self._n_families = n_families
+        # ORDC shortfall steps owned by each family, in the family-major order
+        # ``_build_reserve_rows`` partitions the ORDC block with (family f owns
+        # the next ``counts[f]`` columns of ``[_ordc_off, _ordc_off+n_steps)``).
+        # Kept so ``solve()`` can report each family's own cleared shortfall MW
+        # alongside its balance dual — the per-family reserve sidecar
+        # (``hourly/reserve_family_<year>.parquet``). ``None`` = the legacy
+        # single-family layout, where every step belongs to family 0.
+        self._reserve_ordc_counts: np.ndarray | None = (
+            None
+            if reserve_balance_ordc_counts is None
+            else np.asarray(reserve_balance_ordc_counts, dtype=int).ravel()
+        )
         # Reserve-supply cap (ERCOT RTOLCAP re-scope) inserts one system-wide row
         # per headroom tier per hour, between the headroom and balance blocks
         # (so the balance dual stays the final n_families*T rows).
@@ -956,6 +968,7 @@ class DispatchModel:
         # shared-headroom constraint transfers into each zone's energy LMP above.
         reserve_dispatch = reserve_price = reserve_price_by_family = None
         reserve_supply_cap_dual = None
+        reserve_shortfall_by_family = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
             if self._pergen:
@@ -977,6 +990,35 @@ class DispatchModel:
             # DAM-AS overlay reads — recovered here from the LP balance-row duals,
             # never an exogenous adder.
             reserve_price_by_family = balance_duals
+            # Per-family cleared ORDC SHORTFALL MW, (T, n_fam). The ORDC block
+            # is family-major — family f owns the next ``counts[f]`` columns of
+            # ``[_ordc_off, _ordc_off + n_ordc_steps)`` (_build_reserve_rows) —
+            # so a family's shortfall is the sum of its own steps. This is what
+            # makes a family's balance dual READABLE: a positive dual with zero
+            # shortfall is a family binding on the requirement itself, while a
+            # positive shortfall names the ORDC step that set the price. Persisted
+            # with the dual in ``hourly/reserve_family_<year>.parquet`` — without
+            # it the sidecar cannot distinguish the two (nyiso-113 §8).
+            if layout.n_ordc_steps:
+                ordc_block = block[
+                    :, layout._ordc_off : layout._ordc_off + layout.n_ordc_steps
+                ]
+                counts = self._reserve_ordc_counts
+                if counts is None:
+                    counts = np.array([layout.n_ordc_steps], dtype=int)
+                # (n_steps, n_fam) 0/1 membership, so the partition sum is one
+                # matmul. Preferred over np.add.reduceat because a family with
+                # ZERO ORDC steps (legal — a family may carry no shortfall
+                # curve) collides its reduceat boundary with its neighbour's;
+                # the membership matrix gives it an all-zero column instead.
+                fam_of_step = np.repeat(
+                    np.arange(counts.size), np.asarray(counts, dtype=int)
+                )
+                membership = np.zeros((layout.n_ordc_steps, n_fam), dtype=float)
+                membership[np.arange(fam_of_step.size), fam_of_step] = 1.0
+                reserve_shortfall_by_family = ordc_block @ membership
+            else:
+                reserve_shortfall_by_family = np.zeros((T, n_fam), dtype=float)
             # Reserve-supply cap duals (zonal spec): the cap block sits directly
             # before [online_cap | storage_gate | balance] at the row tail, one
             # system-wide <= row per headroom tier per hour (hour-major). A
@@ -1080,6 +1122,7 @@ class DispatchModel:
             reserve_dispatch=reserve_dispatch,
             reserve_price=reserve_price,
             reserve_price_by_family=reserve_price_by_family,
+            reserve_shortfall_by_family=reserve_shortfall_by_family,
             reserve_supply_cap_dual=reserve_supply_cap_dual,
             storage_reserve_dispatch=storage_reserve_dispatch,
             posture_online_mw=posture_online,
