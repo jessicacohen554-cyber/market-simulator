@@ -373,6 +373,40 @@ Runs register on the forecast-validation namespace (`frontend/data/hindcast/`) w
 
 ### 2.4 Wall-clock & memory budget (measured anchors; rule 12 binds)
 
+> #### ⚠ PREREQUISITE, BEFORE ANY BUDGET: `data/clean` must exist
+>
+> **`data/clean` is a HARD prerequisite for every forecast leg, and it is
+> gitignored — a fresh container has none of it.** Not a soft degradation: the
+> confirmed-exits loader *refuses* rather than silently falling back —
+> `RuntimeError: confirmed-retirements: clean partition for <ISO> is absent
+> while confirmed_exits_enabled is on in forecast mode … refusing to silently
+> degrade to the economic screen`. Any T1-F / T1-H / T1-X leg dispatched
+> without it aborts at fleet build, having burned only startup — but the
+> session that budgeted "45 min for ERCOT" has budgeted wrong.
+>
+> **Measured cost of the build (FFR-3A, fresh container): ≈ 55 min, 50
+> datatypes, ≈ 1.6 GB.** Add it to the wall-clock budget of the FIRST leg in a
+> container; it is one-time per container, not per leg. It is *not* covered by
+> any anchor below — every figure below assumes `data/clean` already built.
+>
+> ```
+> PYTHONPATH=. python scripts/regenerate_clean.py            # all datatypes (~55 min)
+> PYTHONPATH=. python scripts/regenerate_clean.py --list     # what would be built
+> ```
+>
+> **A partial tree is the trap.** A container can carry a few partitions
+> (`egrid`, `reference`, …) and still fail on the one a leg needs, so "the
+> directory exists" is not the check — verify the datatype. This is also the
+> single largest cause of red tests on a fresh checkout: **15 of the 19 test
+> failures FFR-3D triaged were this and nothing else** (`test_soundness`,
+> `test_export`, the `ff_readiness_battery` integration walks,
+> `test_consume_phase3d`) — see `docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md`
+> §6. Build `data/clean` before concluding the suite is broken.
+>
+> *(Documented by FFR-3D, closing FFR-3A blocker 1: the prerequisite was
+> measured but written nowhere a dispatching session would look before
+> budgeting.)*
+
 Measured: ERCOT ~3–8 min/yr (~3.6 GB); NEISO ~85 s median/yr (25 yr = 72 min, 3.9 GB);
 CAISO ~470 s median/yr (25 yr = 179 min, 5.3 GB); PJM 2026 ≈ 380 s / 8.7 GB, late years
 30–40 min / 9–10 GB (25 yr > 8 h); per-plant multi-zone LPs ≈ 8.6 GB each — **two cannot
