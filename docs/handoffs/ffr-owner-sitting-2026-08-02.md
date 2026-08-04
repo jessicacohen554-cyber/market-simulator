@@ -1612,3 +1612,291 @@ scoped it out correctly and named the remedy: a refuse-if-exists guard. Small la
 **D-2′** (`entry_vre_capacity_revenue`) unprobed — note it is now adjacent to M.2's finding and
 a successor may want it sequenced after FFR-3V/FFR-3W rather than before. Pre-existing test
 failures on main unowned.
+
+---
+
+## Addendum N — Wave 3 lanes all closed; D-11 discharged; the open decision register
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `a9df3b99`.** Records landed
+facts only; the decisions in N.5 are OPEN and unsigned.
+
+### N.1 — every lane chartered in Addenda K/L/M has LANDED
+
+| lane | PR | outcome |
+|---|---|---|
+| **FFR-3K** | #3502 | FC-7 fixed. `run_capacity_hindcast.py` emits `run_config.json` from the bundle's OWN resolved config; the `.yaml` kept because something reads it. Census + inertness proof committed |
+| **FFR-3S** | #3501 | D-9(ii) landed — additions scored on the DECISION basis, `additions_basis` recorded via FFR-3R's `RecordSpec` |
+| **FFR-3T** | #3498/#3504 | D-10 landed as a FORECAST-PATH OVERRIDE, not a default flip; backcast untouched; cache epoch 2026-08-04 declared |
+| **FFR-3U** | #3526 | The seam is FIXED and **D-11 is fully DISCHARGED** — see N.2 |
+| **FFR-3V** | #3527/#3528/#3530 | MISO solar diagnosed: a MARGIN finding. Five ranked proposals, none applied — see N.4 |
+| **FFR-3W** | #3519 | CAISO gas_ct decomposed; the verdict is real, the magnitude is a defect, and the obvious fix is a rule-1 trap — see N.3 |
+| **FFR-3X** | #3518 | Refuse-if-exists guard landed; FFR-3R §6.1 closed |
+
+### N.2 — FFR-3U: the seam is closed and **ERCOT 2022 STAYS UNSPENT**
+
+The un-bridging clause is **scoped, not deleted**: at base 2021 the runner again bridges 2022
+(validation) and 2026 (locked test), and the illegal window now FAILS CLOSED. Three predicates
+became one — `_validate_window` policy-checks the set the **runner** will actually solve, via
+the runner's own predicate over the boundary `build_config` sets. The banner's promise is
+derived from that same predicate and **asserted against the realized evolution ledgers at
+completion**; a mismatch is a hard `SystemExit`.
+
+**D-11's three conditions (Addendum L.2): (a) DISCHARGED by verified absence, (b) DISCHARGED
+mechanically, (c) DISCHARGED.** Condition (b) — the one identified as protecting the tier — was
+discharged **better than chartered**: a refusal in code at the single cache-path seam rather
+than a ledger note, so `b99600bceb8cb6b8` / `5c352508039513da` cannot be cache-hit at all.
+**The no-spend determination therefore stands and ERCOT's 2022 validation year remains
+available** once properly authorized.
+
+**Exposure audit: 0 affected artifacts, as a MEASUREMENT** — all **82** committed
+hindcast-harness legs replayed through the fixed predicate using each leg's own recorded window
+and boundary. FFR-3Q §2.2.4 asked for this precisely because the nil result had been *reasoned*
+rather than measured. Solve-inert: seven cache keys byte-identical, no keeper moved. One finding
+reported rather than a threshold relaxed: the FC-7 fixture was asserting a solve-year set
+inconsistent with its own declared window; the fixture was made honest and the new parity
+assertion was **not** weakened.
+
+**Consequence for FH-4/FH-5: the blocker has CHANGED, not cleared.** It is no longer "the
+posture cannot legally be solved" — it is again "the re-probe is unreported". The gate re-cut is
+now legal to run and FFR-3Q §2.1's pre-registration is reusable verbatim. The lift remains a
+manager box (Addendum I.1).
+
+### N.3 — FFR-3W: the CAISO fix that would have been a rule-1 trap
+
+1. **The `unprofitable` verdict is a REAL market signal.** A new merchant CT breaks even at
+   **$10.88–11.36/kW-month** against CAISO's published transacted RA price of
+   **$11.10–14.51/kW-month**, in a market **6.9 % long** on RA.
+2. **The $40 k magnitude IS a defect, and ~100 % one term.** ≥94 % of the gap in every year is
+   the capacity-price anchor — the CPM soft-offer cap, whose own FERC provenance is the
+   *going-forward fixed cost of a 550 MW **CC** reference unit × 1.20*: a **retention** cost for
+   an existing combined-cycle used as the **entry** price for a new combustion turbine. Energy,
+   AS and the cost stack are ≤27 % of the gap in the best year and ≤0.1 % in the worst.
+3. **Fixing it would turn FC-2 row 4 green FOR THE WRONG REASON.** Row 4's real driver is a
+   base-year fleet **11,711 MW short** of the real CAISO (FFR-3P Table 1.1) — **1.78×** the
+   6,577 MW deficit driving the whole 14,043.6 MW build. Correcting the `gas_ct` term moves row
+   4 just as far by building *the same 14 GW of CTs California does not need*, through the
+   economic channel instead of the administrative one. **Row 4 would read PASS while the model
+   still over-builds 14 GW into a long market** — the right number through a mechanism that
+   isn't real, which is rule 1 `[R-STRUCT]` exactly.
+
+**FFR-3W's recommendation, unmodified: do NOT charter the capacity-anchor correction as a row-4
+fix.** If chartered at all it stands on its own rule-14 merits, and row 4 is chartered against
+the fleet-vintage cause (FFR-3P **B-1**).
+
+### N.4 — FFR-3V: MISO solar is a margin finding, plus a structural knife-edge
+
+**It is a MARGIN finding — not candidate-set, not damper.** Solar reaches the screen every
+decision year; the per-tech queue cap (6.0 GW) and growth-ladder cap (1.236 GW) are both
+non-zero; it is rejected on economics *before* any cap is consulted. The internal control is
+decisive: **wind built 4.0 GW in the same window through the same code path, the same zonal-CF
+mechanism and the same caps.** The distinction this lane was chartered to draw was drawn, twice.
+
+Solar's only revenue is merchant energy (~$60–75 k/MW-yr) against $84.8–99.0 k/MW-yr annualized
+fixed. RPS is **structurally zero** (MISO's 11 % target is slack against a 16.9 % modelled VRE
+share). **`entry_vre_capacity_revenue` is default-OFF and would be worth $14,364/MW-yr** — and
+the thermal branch already takes the same payment **ungated** at $75.8 k–117.3 k/MW-yr, so the
+asymmetry sits inside one function.
+
+**The second, independent blocker — and it is structural.** With a COD lag of `L`, `(L−1)` years
+of decisions are pending when the screen runs, so `remaining = (K − L + 1) × D_prev`. **At the
+shipped `K = 2.0` and `L = 2` that is exactly `1 × D_prev`: the doubling and the pending netting
+cancel EXACTLY, and economic entry is pinned at 2× the measured seed forever.** The knife-edge
+is `K = L` and the shipped values sit on it. MISO solar's ceiling is therefore **2.473 GW
+in-window — a −86.7 % FC-3 band at best, even with a perfect revenue side.** Removing only the
+lag lifts it to 14.655 GW (−21.4 %), at which point the 6.0 GW queue cap binds instead.
+
+This reconciles with FFR-2B's observation that MISO's gas_ct ladder *did* double
+(1,350 → 2,700 → 5,241 MW): that is the **reserve-margin backstop**, which commissions **in-year**
+and so never nets a pending row. **The same ladder ratchets for the backstop and freezes for
+economic entry.** Nothing was unarmed and no revert is recommended (Addendum D holds).
+
+### N.5 — OPEN DECISION REGISTER (unsigned; do not read any of these as taken)
+
+* **D-2′ — arm `entry_vre_capacity_revenue`?** HELD since Addendum C "pending its own probe
+  row". **The probe row now exists** (FFR-3V §7 proposal 1). Note its size is decided by the
+  next item, so the two should be considered together.
+* **D-12 — wire MISO's published solar accreditation** from the already-intaken
+  `elcc/miso/miso.csv` into `RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]`, and settle the
+  seasonal→annual selection rule. Rule 14: the accurate value is **on disk and cited**. Unwired
+  0.18 moves solar's 2023 break-even to $37.59; the season-weighted 0.3875 moves it to $29.41.
+* **D-13 — window the §45 wind PTC to its statutory 10 years.** Zero free parameters, one
+  published number, and an existing precedent in the same file (`_ccs_45q_window_years`).
+  **Expect wind additions to FALL** — under rule 1 that is the faithful direction, not a
+  regression, and it must not be judged by whether the band improves.
+* **D-14 — is the `K = L` ladder freeze a defect or intended conservatism?** Owner call. Even
+  with D-2′/D-12/D-13 all taken, FC-3 solar cannot clear −15 % while the ceiling is ~3.7 GW.
+* **D-15 — the CAISO capacity anchor.** Take FFR-3W's recommendation (N.3) or overrule it.
+* **The FH-1 gate re-probe** needs re-dispatching now that FFR-3U has landed.
+
+Lower-ranked and unowned from FFR-3V §7: the VRE screen's siting-zone CF (proposal 3, needs its
+own derivation) and the hindcast renewable-pool vintage leak (proposal 4 — a one-line gate
+widening that changes every hindcast's base fleet, so it belongs to whoever owns the T1-H lane).
+Carried forward: pre-existing test failures on main remain unowned.
+
+---
+
+## Addendum N-cards — the six open decisions, as sign-off cards
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `a9df3b99`.** These are the
+N.5 register entries in card form. **Take them in the order given** — D-14 changes what D-12
+and D-2′ are worth, and D-12 sizes D-2′.
+
+---
+
+### CARD D-14 — Is the entry growth ladder's `K = L` freeze a defect or intended conservatism?
+
+**TAKE THIS FIRST.** It determines what every other MISO entry decision is worth.
+
+**Measured.** The ladder lets year *Y* build `K ×` the prior year's decisions, then nets off
+decisions already pending. With a COD lag of `L` years, `(L−1)` cohorts are always pending when
+the screen runs, so `remaining = (K − L + 1) × D_prev`. **At the shipped `K = 2.0` and `L = 2`
+that is exactly `1 × D_prev`** — the doubling and the netting cancel *exactly*, and economic
+entry is pinned at 2× the measured seed forever. The knife-edge is `K = L`; the shipped values
+sit on it. MISO solar's ceiling is **2.473 GW in-window = a −86.7 % FC-3 band at best, even with
+a perfect revenue side.** Removing only the lag lifts it to 14.655 GW (−21.4 %), at which point
+the 6.0 GW per-tech queue cap binds instead. Corroboration: MISO's gas_ct ladder *does* double
+(1,350 → 2,700 → 5,241 MW, FFR-2B) — but that is the reserve-margin **backstop**, which
+commissions **in-year** and so never nets a pending row. **The same ladder ratchets for the
+backstop and freezes for economic entry.**
+
+**Recommendation: (a) CHARTER IT AS A DEFECT**, on the grounds that a cancellation this exact is
+an accident of two independently-chosen parameters, not a designed conservatism — and that a
+mechanism which ratchets in one channel and freezes in another is one mechanism doing two things
+(rule 19 `[R-ONE-MECH]`). Charter a lane to derive the intended relationship between `K` and `L`
+from the measured build record; **do not simply move `K` off 2.0** — that is tuning a knife-edge
+to taste.
+
+**The option I think is wrong, with its real cost: (b) ACCEPT IT AS INTENDED.** Cheap today, and
+defensible as "the model should not out-build the historical record." The cost is that
+**FC-3 additions can never pass in MISO** — the ceiling is ~3.7 GW against 18.649 GW actual — so
+the band stops being an instrument and becomes a permanent known-fail. You would also be
+accepting that D-2's entry-side skill is unmeasurable in this ISO, which is the same predicament
+D-9 was re-opened over.
+
+**Sign-off D-14:** ☐ (a) charter as defect  ☐ (b) accept as intended  ☐ other: ____________
+owner: ________  date: ____
+
+---
+
+### CARD D-12 + D-2′ — MISO's solar revenue side. **One decision, two parts.**
+
+They are paired because **D-12 sizes D-2′**: the accreditation value is the multiplier on the
+capacity payment D-2′ switches on. Deciding D-2′ alone would be picking a number before knowing
+which number it is.
+
+**D-12 — wire MISO's published solar accreditation.** The rows are **already intaken and cited**
+at `elcc/miso/miso.csv` and are simply not read into
+`RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]`. Unwired the model uses **0.18**; the season-weighted
+published value is **0.3875**. Effect on solar's 2023 break-even: **$37.59/MWh at 0.18 vs
+$29.41/MWh at 0.3875**, against a MISO modelled price level of ~$30–40/MWh — i.e. the wiring
+decides whether solar clears at all. Rule 14 `[R-ACCURATE]`: the accurate value is on disk.
+Wiring it also forces a seasonal→annual selection rule, which must be settled in the same lane
+rather than left implicit.
+
+**D-2′ — arm `entry_vre_capacity_revenue`.** HELD since Addendum C "pending its own probe row";
+**the probe row now exists.** The payment resolves cleanly today ($79,800 × 0.18 =
+**$14,364/MW-yr**) and moves solar's break-even from $41.9–48.9 to **$34.8–41.8/MWh**. The
+decisive asymmetry: **the thermal branch already takes the same payment UNGATED at
+$75.8 k–117.3 k/MW-yr** — VRE is gated off and thermal is not, inside one function.
+
+**Recommendation: take BOTH, D-12 first, in one lane, with a paired control.** D-12 is a rule-14
+obligation independent of its effect. D-2′ then becomes a correction of an asymmetry rather than
+a new mechanism. Scope it to MISO and re-examine other ISOs where `MARKET_DESIGN` has a capacity
+market **as separate per-ISO decisions** (rule 25 `[R-ISO-SCOPE]` — no cross-ISO transfer).
+
+**The option I think is wrong, with its real cost: arm D-2′ alone and leave D-12 unwired.** It
+looks like the cautious half-step, and it is the worst of both: you switch on a capacity payment
+sized by an **estimate the ISO has already published a better number for**, so the resulting
+build is an artifact of the wrong multiplier — and if the fit improves, rule 14's warning applies
+in full, because an inaccurate input would be silently compensating for something.
+
+**Note before signing:** if D-14 goes (b), this pair moves MISO solar from a −100 % band to
+−86.7 %. Still FAIL. It is worth doing on rule-14 grounds regardless, but it will not buy a pass.
+
+**Sign-off D-12:** ☐ wire it  ☐ leave unwired  ☐ other: ____________
+**Sign-off D-2′:** ☐ arm (MISO-scoped)  ☐ hold  ☐ other: ____________
+owner: ________  date: ____
+
+---
+
+### CARD D-13 — Window the §45 wind PTC to its statutory 10 years
+
+**Measured.** The wind PTC is credited over the plant's **full 30-year book life** with no
+statutory window; the solar ITC in the same file is booked correctly. The remedy has **zero free
+parameters** — one published statutory number (10 years) — and an existing precedent to copy in
+the same file (`_ccs_45q_window_years`).
+
+**Recommendation: TAKE IT.** This is a straightforward correctness fix under rule 5
+`[R-NO-MAGIC]` and rule 14, not a calibration lever.
+
+**Read this before signing, because it is the part that gets mis-handled: EXPECT WIND ADDITIONS
+TO FALL.** MISO's leg currently builds 4.0 GW of wind against 7.2 GW actual, so the correction
+moves a passing-ish number *further from* the actual. **Under rule 1 `[R-STRUCT]` that is the
+faithful direction and the fix stays in.** If the band worsens, that is a discovered
+under-build elsewhere on wind's revenue side — an open root cause to write up, **not** a reason
+to revert. A lane that reverts this because the residual moved has misread the rule.
+
+**The option I think is wrong, with its real cost: defer it until the revenue side is fixed, so
+the two land together and the band never visibly worsens.** That is exactly the reasoning rule 1
+forbids — sequencing a correctness fix around its effect on a fit — and it would leave a
+30-year credit on a 10-year statute in the shipped model in the meantime.
+
+**Sign-off D-13:** ☐ take it now  ☐ defer  ☐ other: ____________
+owner: ________  date: ____
+
+---
+
+### CARD D-15 — The CAISO capacity anchor, and what may NOT be chartered against FC-2 row 4
+
+**Measured (FFR-3W).** The `unprofitable` **verdict is a real market signal** — a new merchant CT
+breaks even at $10.88–11.36/kW-month against CAISO's published transacted RA price of
+$11.10–14.51/kW-month, in a market **6.9 % long** on RA. But the **$40 k magnitude is a defect
+and ~100 % one term**: ≥94 % of the gap in every year is the capacity-price anchor, the CPM
+soft-offer cap, whose own FERC provenance is *"the going-forward fixed cost of a 550 MW **CC**
+reference unit × 1.20"* — a **retention** cost for an existing combined-cycle used as the
+**entry** price for a new combustion turbine. Energy, AS and the cost stack together are ≤27 % of
+the gap in the best year and ≤0.1 % in the worst.
+
+**The trap, and it is the decision.** Row 4's actual driver is a base-year fleet **11,711 MW
+short** of the real CAISO — **1.78×** the 6,577 MW deficit that drives the entire 14,043.6 MW
+build. Correcting the fleet alone moves the reserve position 0.8852 → 1.0896 (11.5 % short →
+9.0 % long) and collapses row 4's numerator. **Correcting the `gas_ct` anchor instead moves row 4
+just as far — by building the same 14 GW of CTs California does not need, through the economic
+channel rather than the administrative one. Row 4 would read PASS while the model still
+over-builds 14 GW of firm capacity into a market that is already long.**
+
+**Recommendation: (a) ADOPT FFR-3W's RECOMMENDATION UNMODIFIED.** Charter FC-2 row 4 against the
+**fleet-vintage** cause (FFR-3P **B-1**). The anchor correction may be chartered *separately*, on
+its own rule-14 merits as a mis-specified published input, and **its charter must state that it
+is not a row-4 fix** so no later session quotes a row-4 improvement as its justification.
+
+**The option I think is wrong, with its real cost: (b) charter the anchor correction as the row-4
+fix** — one lane, one obviously-wrong input, row 4 goes green. The cost is that you would be
+buying the right number through a mechanism that isn't real, which is rule 1 `[R-STRUCT]`
+verbatim, and you would **lose the signal**: with row 4 green, the 11,711 MW fleet shortfall
+stops being visible in any gate and survives into the forecast.
+
+**Sign-off D-15:** ☐ (a) fleet-vintage cause; anchor separate and labelled  ☐ (b) anchor as the
+row-4 fix  ☐ other: ____________
+owner: ________  date: ____
+
+---
+
+### CARD — Re-dispatch the FH-1 §3.3 gate re-probe
+
+Not a design decision; a go/no-go on spending a lane. **FFR-3U has landed**, so the base-2021
+T1-FF window is now legal and fails closed where it should. FFR-3Q §2.1's pre-registration
+survives verbatim and is reusable — posture, pairing (arms A `pipeline` / B `legacy`), and all
+four pre-registered reads. What is still unknown is the thing the re-cut was authorized to find
+out: **whether the 2021/2022 screens produce any exit candidates at all**, or whether
+`pipeline_events` is zero a third time.
+
+**Recommendation: dispatch it.** Both prior probes were uninformative for the same reason and
+G.5(a) was signed specifically to make the retirement layer observable; leaving it unexercised
+means D-1 stays unvalidated on the exit side indefinitely. **The lift itself remains a manager
+box** (Addendum I.1) and the reading is bound by Addendum G.2's three constraints — the earlier
+green was not the fix's, I12's WARN had inverted sign, and zero `pipeline_events` means UNTESTED,
+not validated.
+
+**Sign-off:** ☐ dispatch now  ☐ hold  ☐ other: ____________
+owner: ________  date: ____
