@@ -125,6 +125,30 @@ queue — unlike `caiso-161`, which surfaced two.
 That one fragment accounts for **two of the twelve gaps** — exactly as `pjm_seam_* :7371+`
 did for PJM and the `_intercept` short form did for CAISO.
 
+**ALL 20 MISO LINE ANCHORS WERE STALE, AND ARE REPAIRED.** Re-verified mechanically against
+`scenarios.py` on the final rebase; **20 of 20 did not resolve.** Two causes:
+
+* **8 were PRE-EXISTING and stale by ~1,000 lines** — `miso_seam_flow_limit` :3618 for a
+  field at :3761, `miso_rdt_tcdc` :3726 for :4799, `miso_reserve_pergen` :3639 for :4712,
+  `miso_zonal_loss_surface` :3837 for :4839, `miso_measured_reserve_requirements` :3691 for
+  :4764, `miso_winter_citygate_daily` :7278 for :9101, plus
+  `miso_seam_flow_percentile` and `miso_seam_export_limit`. Several were written by the very
+  sessions that wrote literals out *for truthfulness* — which is the point: **a correct
+  literal on a wrong anchor still sends a reader to unrelated code.**
+* **12 were this census's own**, correct when written and shifted by **one line** by a
+  concurrent main-side commit landing between authoring and merge.
+
+**The general lesson.** A line anchor is a **pointer into a file every lane edits**, so it
+decays with nobody touching the matrix, and **nothing in CI checks it** —
+`check_mechanism_matrix.py` validates structure and keeper stamps, not whether an anchor
+resolves. **The literal field name is the durable identifier; the anchor is a convenience
+that must be re-verified, not trusted.** A standing anchor-resolution check is the obvious
+fix; it is **filed as a suggestion, not built here** — tooling work, not a census's.
+
+The one deliberately-unrepaired anchor is `miso_pjm_lmp :2914` inside the
+`import_hub_pricing` repair note: it **quotes the defect being described** and must not be
+"fixed".
+
 **A NEW variant, worth recording because no checker looks for it.**
 `miso_manitoba_seam` — **ARMED on the keeper** — was prose-only inside the
 **`diagnostics_plant_set`** row, a row about *probe plant sets*. **A mention on the WRONG
@@ -225,7 +249,7 @@ should trust `_matrix_gap_sweep_<ISO>.json` over the row's text.
 | 1 | MISO sweep 25 family / 0 / 0 / 0 | **PASS** |
 | 2 | `check_mechanism_matrix.py` passes | **PASS** — integrity OK, keeper stamps match |
 | 3 | every `cells:` byte-identical except `matrix_gap_census` | **PASS** — sole change `KKKOKO` → `KKKKKO`; 169 → 169 rows, **0 new**; predicted string corrected (§6.1) |
-| 4 | five other ISOs' counts unchanged | **PASS after the §6.2 correction** — CAISO 61/0/0/0/5/1, ERCOT 84/0/0/0/14/12, NEISO 20/0/0/0/0/0, NYISO 41/0/0/0/0/0, PJM 36/0/0/0/18/0 |
+| 4 | five other ISOs' counts unchanged | **PASS after the §6.2 correction** — CAISO 62/0/0/0/5/1, ERCOT 84/0/0/0/14/12, NEISO 20/0/0/0/0/0, NYISO 41/0/0/0/0/0, PJM 35/0/0/0/18/0. **The two family-count movements are MAIN-SIDE, not this census's:** `pjm-152` deleted `pjm_seam_envelope_by_neighbor` under rule 26 (36 → 35) and `caiso-164` added a field (61 → 62). What criterion 4 actually guards — the absent / prose-only / armed-no-cell columns, and ERCOT's live-but-invisible count — is **zero and 12 respectively, unchanged**, in every ISO. |
 | 5 | G-1 reported with its positive control | **PASS** — §5 |
 
 Kills K-1 (zero mechanism-cell changes), K-2 (one audit mint), K-3 (transcription only) and

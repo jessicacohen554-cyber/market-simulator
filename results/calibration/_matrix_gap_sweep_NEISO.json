@@ -2,7 +2,7 @@
   "iso": "NEISO",
   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 673,
+  "n_scenario_fields": 674,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
@@ -1560,7 +1560,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "."
         },
         {
@@ -2370,7 +2370,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "."
         },
         {

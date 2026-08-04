@@ -2,7 +2,7 @@
   "iso": "CAISO",
   "keeper": "2026-08-03-caiso163-asym-path-ratings",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 673,
+  "n_scenario_fields": 674,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 20,
   "family": [
@@ -1994,6 +1994,25 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_zonal_loss_surface",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".OKR..",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "O"
+      ],
+      "armed_in_bundles": []
     }
   ],
   "family_matrix_gaps_absent": [],
@@ -3103,8 +3122,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".OKR..",
+          "cell": "O"
         },
         {
           "row": "rdt_tcdc",
@@ -3933,8 +3952,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".OKR..",
+          "cell": "O"
         },
         {
           "row": "rdt_tcdc",

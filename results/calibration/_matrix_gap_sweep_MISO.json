@@ -2,7 +2,7 @@
   "iso": "MISO",
   "keeper": "2026-08-04-miso-122b-scope-gate",
   "keeper_bundle_fields": 674,
-  "n_scenario_fields": 673,
+  "n_scenario_fields": 674,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 34,
   "family": [
@@ -215,6 +215,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
         {
           "row": "dynamic_reserve_requirements",
           "cells": "UUKKKR",
@@ -432,6 +437,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "rdt_tcdc",
           "cells": "...K..",
           "cell": "K"
@@ -485,6 +495,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
         {
           "row": "reserve_pergen",
           "cells": ".IKK..",
@@ -643,6 +658,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "seam_flow_envelopes",
           "cells": "..KK..",
           "cell": "K"
@@ -697,6 +717,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "seam_flow_envelopes",
           "cells": "..KK..",
           "cell": "K"
@@ -750,6 +775,11 @@
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
         {
           "row": "seam_flow_envelopes",
           "cells": "..KK..",
@@ -888,6 +918,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "winter_citygate_daily",
           "cells": "U.UK..",
           "cell": "K"
@@ -990,12 +1025,18 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "R"
         }
       ],
       "cells": [
+        "K",
         "R"
       ],
       "armed_in_bundles": [
@@ -2061,7 +2102,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "R"
         },
         {
@@ -2906,7 +2947,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "R"
         },
         {

@@ -2,7 +2,7 @@
   "iso": "NYISO",
   "keeper": "2026-08-03-nyiso-119-seny-increment",
   "keeper_bundle_fields": 672,
-  "n_scenario_fields": 673,
+  "n_scenario_fields": 674,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 18,
   "family": [
@@ -2495,7 +2495,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "."
         },
         {
@@ -3325,7 +3325,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "."
         },
         {

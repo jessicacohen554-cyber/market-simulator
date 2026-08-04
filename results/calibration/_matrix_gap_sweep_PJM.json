@@ -2,7 +2,7 @@
   "iso": "PJM",
   "keeper": "2026-08-03-pjm-151-seam-envelope",
   "keeper_bundle_fields": 673,
-  "n_scenario_fields": 673,
+  "n_scenario_fields": 674,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
@@ -953,7 +953,7 @@
       "owning_rows": [
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         }
       ],
@@ -2246,7 +2246,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         },
         {
@@ -3096,7 +3096,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         },
         {
