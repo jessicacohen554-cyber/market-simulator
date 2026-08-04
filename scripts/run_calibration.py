@@ -141,6 +141,7 @@ from market_sim.model.transmission import (  # noqa: E402
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_caiso_link_loss,
     build_miso_link_loss,
     build_pjm_link_loss,
     get_link_bidirectional_array,
@@ -501,6 +502,7 @@ def run_year(
     caiso_reference_price_seam: bool | None = None,
     caiso_per_year_import_caps: bool | None = None,
     caiso_asymmetric_path_ratings: bool | None = None,
+    caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -1238,6 +1240,10 @@ def run_year(
     if caiso_asymmetric_path_ratings is not None:
         config = config.with_overrides(
             caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings
+        )
+    if caiso_zonal_loss_surface is not None:
+        config = config.with_overrides(
+            caiso_zonal_loss_surface=caiso_zonal_loss_surface
         )
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
@@ -4390,7 +4396,13 @@ def run_year(
             else (
                 build_pjm_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
                 if getattr(config, "pjm_zonal_loss_surface", False)
-                else None
+                else (
+                    build_caiso_link_loss(
+                        iso_config.links, iso, year, int(demand.shape[1])
+                    )
+                    if getattr(config, "caiso_zonal_loss_surface", False)
+                    else None
+                )
             )
         ),
         hydro_monthly_energy=hydro_monthly_energy,
