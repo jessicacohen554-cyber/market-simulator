@@ -3,7 +3,7 @@
   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
   "keeper_bundle_fields": 671,
   "n_scenario_fields": 673,
-  "n_matrix_rows": 182,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
     {
@@ -760,7 +760,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -775,7 +775,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         }
       ],
@@ -788,6 +788,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
         {
           "row": "energy_reserve_coopt",
           "cells": "KIKKKK",
@@ -843,6 +848,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "R"
+        },
         {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
@@ -920,7 +930,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -985,7 +995,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1135,7 +1145,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1240,7 +1250,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -1422,6 +1432,11 @@
           "row": "winter_citygate_daily",
           "cells": "U.UK..",
           "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KIKK",
+          "cell": "K"
         },
         {
           "row": "campd_outage_windows",
@@ -1679,6 +1694,11 @@
           "cell": "."
         },
         {
+          "row": "transmission_expansion",
+          "cells": "......",
+          "cell": "."
+        },
+        {
           "row": "state_carbon_pricing",
           "cells": ".KOUKK",
           "cell": "K"
@@ -1810,7 +1830,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1920,7 +1940,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2050,7 +2070,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -2165,7 +2185,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "K"
         },
         {
@@ -2499,6 +2519,11 @@
           "cell": "K"
         },
         {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "U"
+        },
+        {
           "row": "entry_dampers",
           "cells": "UUUOUU",
           "cell": "U"
@@ -2525,8 +2550,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -2990,7 +3015,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         }
       ],

@@ -2,7 +2,7 @@
   "iso": "NYISO",
   "keeper": "2026-08-03-nyiso-119-seny-increment",
   "keeper_bundle_fields": 672,
-  "n_scenario_fields": 674,
+  "n_scenario_fields": 673,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 18,
   "family": [
@@ -1380,7 +1380,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1688,6 +1688,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "energy_reserve_coopt",
           "cells": "KIKKKK",
           "cell": "K"
@@ -1779,7 +1784,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1890,7 +1895,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2075,7 +2080,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2624,6 +2629,11 @@
           "cell": "."
         },
         {
+          "row": "transmission_expansion",
+          "cells": "......",
+          "cell": "."
+        },
+        {
           "row": "state_carbon_pricing",
           "cells": ".KOUKK",
           "cell": "K"
@@ -2775,7 +2785,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -3495,8 +3505,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -3921,7 +3931,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
