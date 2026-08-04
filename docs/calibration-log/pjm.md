@@ -2796,4 +2796,123 @@ declared explicitly under 28(a) as a NEW measured identification.
 `scripts/probes/pjm151_seam_arm.py`, `scripts/probes/pjm151_seam_envelope_attribution.py`,
 `scripts/probes/pjm151_seam_gates.py`, `scripts/gen_pjm151_attestation.py`.
 
-Next shorthand: pjm-152.
+## pjm-153 — the lever queue is CLEARED (no LP, no bundle, keeper unchanged)
+
+**SHORTHAND RENUMBERED.** This session was dispatched as `pjm-152`; that label is
+**SPENT**. A separate merged session (`claude/pjm-152-backcast-calibration-gaq8jv`)
+already consumed it for the rule-26 `pjm_seam_envelope_by_neighbor` collapse and a
+Task-C item-15 scoping probe, but logged nothing here — which is why the line above
+still read "Next shorthand: pjm-152". Renumbered off the spent label per the
+nyiso-121 precedent.
+
+**Keeper UNCHANGED at `2026-08-03-pjm-151-seam-envelope`**, re-verified at head
+from committed artifacts alone (`scripts/calibration_verdict.py --run-id`, no
+solve): **CALIBRATED, 9/9, zero FAILs, zero CAVEATs**, C1 `all 16/16 · free
+12/12`. No promotion, so no rule-22 D-5(b) re-key is owed —
+`calibration-complete.json`'s PJM `complete` entry already keys this run.
+
+**Zero LP solved. Zero bundles produced. No year touched outside 2023–2025 in any
+mode** (PJM holds `complete`, is absent from `final`, and the holdout spend freeze
+is ACTIVE and outranks both). Rule 15 has no run to register.
+
+Every remaining PJM lever-queue item reaches a terminal state:
+
+* **Root cause (15-new) → CLOSED by measured refutation, no charter.** It is not an
+  independent defect but the flat-stack amplitude defect measured on the seam. The
+  2025 "runs long" clause is a **benchmark artifact** (EIA-930 `Total interchange`
+  fails its own Net-gen − Demand identity by 14.762 TWh in 2025, hourly r 0.373);
+  on PJM's own settlement record the model **under-exports in all three years**
+  (−9.57/−9.17/−5.40 TWh). The envelope ceiling has **34–36 TWh of headroom** so it
+  cannot bind; the binding side is the model's own price duration curve, which
+  explains **86.6/65.3/76.9 %** of the shortfall because the model is too dear at
+  the bottom (p5 +$7.32/+$7.57/+$7.36).
+* **Item 5 / root cause (6b) remnant → ROUTED.** The §7.2 within-window tight-hour
+  memo is **written** (`MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`),
+  with the evidence stated both ways and kills K1–K4 pre-registered. Owner sign-off
+  pending; nothing armed, no guard parameter moved.
+* **`state_carbon_pricing` → UNCHANGED at `O`, PENDING OWNER**; restated for
+  decision, not armed, cell not flipped.
+* **Item 8 `st_gas_mustrun_p25_level` → CLOSED, cell `U` → `I`** (provably inert:
+  ST_GAS `online_frac` 0/10 on PJM's committed artifact).
+* **Item 10 `winter_citygate_daily` → CLOSED, cell `U` → `R`**, premise refuted at
+  Phase 0 with no intake required — the keeper prices PJM gas off **measured
+  EIA-923 delivered receipts**, not Henry Hub.
+* **Item 3 (Dominion split) → BLOCKED, re-confirmed and narrowed** — `DOM` is one
+  `load_area`, but six other zones do subdivide, so the old "the feed stops at the
+  transmission zone" framing is corrected.
+* **Items 4 and 6 → RECLASSIFIED as watch items** in `keepers/PJM.json`; C8
+  CT_PEAKER re-measured at **16.2/16.4/16.7 %** (grounded pass), C3c **3/10/32 h**,
+  and a **newly surfaced** C8 2025 ST_GAS 39.9 % added to the watch list.
+* **`pjm_reserve_supply_cap` → ADJUDICATED** as a rule 19 `[R-ONE-MECH]`
+  **enforcement gap** (not cosmetic, not a rule 26 delete candidate). Proved with
+  `ast`; all 15 committed PJM bundles are armed-and-unobservable. **Filed for the
+  owner, not deleted** — the closing guard would make the keeper's own recorded
+  config raise.
+
+**Two corrections made against the record rather than inherited.** (1) The D-2
+attribution defect pjm-148 routed as needing a cross-ISO charter **does not
+reproduce** — it was fixed at pjm-149, which also refuted pjm-148's own CC_CHP
+example; the routing paragraph is struck. (2) The `seam_flow_envelopes` matrix row
+asserted the pjm-152 collapse's E1 gate had been scored, citing a token
+(`PJM152_COLLAPSE_DMW`) that **exists nowhere in the repository**. Filed as an
+open verification debt — and then **DISCHARGED mid-session**: main advanced from
+`a96f9743` to `6fbd3f28` while this session worked, the arm landed, and **E1
+PASSES absolutely** (`max_abs_class_hour_dMW = 0.0`, `n_nonzero = 0` across all
+166,440 class-hours in each of 2023/2024/2025, zero breaches;
+`_pjm152_collapse_gates.json`; bundle registered as
+`2026-08-04-pjm-152-collapse`). K2's `FAIL` is environment drift only. **Nothing
+is owed.** The row's original claim was true, merely un-evidenced at the commit
+this session measured; its citation is now the real gate record. Recorded rather
+than quietly dropped — a claim with no committed artifact is *unverified*, not
+false.
+
+The keeper-note duplicate ordinal **(15)** is disambiguated to **(15a)/(15b)**
+without renumbering either, so existing references to "item 15" still resolve.
+
+`results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md`;
+`results/calibration/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`;
+`results/calibration/_pjm153_item15_attribution.json`,
+`_pjm153_supply_cap_reachability.json`, `_pjm153_queue_screens.json`;
+`scripts/probes/pjm153_item15_ladder_attribution.py`,
+`scripts/probes/pjm153_reserve_supply_cap_reachability.py`,
+`scripts/probes/pjm153_queue_screens.py`.
+
+### pjm-153 addendum — KEEPER PROMOTED to `2026-08-04-pjm-152-collapse`
+
+**KEEPER → `2026-08-04-pjm-152-collapse`** (was `2026-08-03-pjm-151-seam-envelope`).
+A **rule 26 `[R-DELETE]` debt discharge, not a mechanism and not a lever** — and the
+only kind of promotion that carries zero model risk.
+
+**Why the keeper moves.** The superseded bundle's recorded recipe names
+`pjm_seam_envelope_by_neighbor`, a `ScenarioConfig` field HEAD no longer has, so it
+is **not replayable as recorded**. The collapse arm's recipe is. Structural
+integrity improves and **nothing regresses**.
+
+**Measured, not asserted.** Recipe: **zero value diffs** on every shared field; the
+only deltas are the deleted flag and four fields `ScenarioConfig` gained after the
+incumbent solved, each at a falsy default and PJM-unreachable. Dispatch: E1
+**`max |dMW| = 0.0`, 0 nonzero class-hours across all 166,440 class-hours in each of
+2023/2024/2025**, zero breaches (`_pjm152_collapse_gates.json`). K5 passes, no
+holdout year touched. K2's `FAIL` is **environment drift only** (platform string +
+basis SHA from re-solving at a moved HEAD — the pjm-147 template artifact).
+
+**Determination: CALIBRATED, 9/9, C1 all 16/16 · free 12/12, zero fails, zero
+caveats** — identical criterion-for-criterion to the superseded keeper, as
+bit-identical dispatch requires. DOF ledger carried **verbatim** (n_entries 19,
+n_residual 6), asserted rather than claimed.
+
+**The gap pjm-153 closed.** pjm-152 shipped the bundle and the gate record but
+**never wrote the governance attestation**, so C6 scored UNATTESTED and held the run
+short of a determination while all eight model-determined criteria passed
+identically. `scripts/gen_pjm153_collapse_attestation.py` generates it with every
+premise **computed** from the committed bundles and gate record — recipe identity,
+E1 byte identity, and the DOF ledger — aborting without writing if any assertion
+fails. That is what made the promotion scoreable.
+
+**Rule 22 D-5(b) discharged**: `calibration-complete.json`'s PJM `complete` entry
+re-keyed to the new run with a determination **re-verification** (not a
+re-assertion); the re-verified determination is **not worse** — it is identical.
+`scripts/audit_keepers.py --iso PJM` passes (check M1), matrix keeper stamp and
+§5.3 prose header re-stamped.
+
+Next shorthand: pjm-154.
