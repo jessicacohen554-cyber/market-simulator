@@ -34,6 +34,7 @@ from market_sim.model.capacity import (
     evolve_fleet,
     resolve_adequacy_requirement_mw,
     resolve_forecast_pool_requirement,
+    wind_ptc_levelized_per_mwh,
     wright_cost,
 )
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
@@ -3321,10 +3322,101 @@ class TestStorageLearningCurve(unittest.TestCase):
 class TestIRACreditsToLCOE(unittest.TestCase):
     """IRA investment-credit adjustment to candidate LCOE."""
 
-    def test_wind_ptc_subtracts_flat_amount(self):
-        config = ScenarioConfig()  # ira_ptc_wind = 26.0
+    @staticmethod
+    def _wind_window_factor(config, window_years):
+        """CRF(life)/CRF(window) at the screen's own wind rate and life."""
+        from market_sim.config.scenario_resolvers import resolve_new_entry_costs
+        from market_sim.config.scenarios import resolve_real_discount_rate
+
+        rate = resolve_real_discount_rate(config, "wind")
+        life = float(resolve_new_entry_costs(config)["wind"]["lifetime_yr"])
+        return _capital_recovery_factor(rate, life) / _capital_recovery_factor(
+            rate, window_years
+        )
+
+    def test_wind_ptc_subtracts_levelized_statutory_window(self):
+        # FFR-4C (owner decision D-13): the §45 credit runs 10 statutory
+        # years from placed-in-service (26 U.S.C. §45(a)(2)(A)(ii)), so the
+        # screen books ira_ptc_wind x CRF(life)/CRF(10) per MWh — never the
+        # full nominal rate over the plant's whole book life.
+        config = ScenarioConfig()  # ira_ptc_wind = 26.0, window = 10
+        expected_credit = 26.0 * self._wind_window_factor(config, 10.0)
         adjusted = apply_ira_credits_to_lcoe("wind", 50.0, 2027, config)
-        self.assertAlmostEqual(adjusted, 50.0 - 26.0)
+        self.assertAlmostEqual(adjusted, 50.0 - expected_credit)
+        # Magnitude anchor from the statute arithmetic at the shipped wind
+        # cost record (30-yr life, 5.675% real): $13.63/MWh, factor 0.5243
+        # (ffr-3v-miso-entry-screen-2026-08-04.md §6.2).
+        self.assertAlmostEqual(expected_credit, 13.63, places=2)
+
+    def test_wind_ptc_credit_stops_at_year_10_of_life(self):
+        # The chartered semantic, asserted in present-value terms: what the
+        # LCOE books, paid over the FULL book life, discounts to the same PV
+        # as the nominal rate paid over ONLY the first 10 years — i.e. years
+        # 11..30 contribute nothing. An unwindowed credit (the pre-4C defect)
+        # would carry PV(nominal over 30), 1.91x larger.
+        from market_sim.config.scenario_resolvers import resolve_new_entry_costs
+        from market_sim.config.scenarios import resolve_real_discount_rate
+
+        config = ScenarioConfig()
+        rate = resolve_real_discount_rate(config, "wind")
+        life = float(resolve_new_entry_costs(config)["wind"]["lifetime_yr"])
+        booked = wind_ptc_levelized_per_mwh(config)
+        pv_booked = booked / _capital_recovery_factor(rate, life)
+        pv_ten_year_stream = config.ira_ptc_wind / _capital_recovery_factor(rate, 10.0)
+        pv_full_life_stream = config.ira_ptc_wind / _capital_recovery_factor(rate, life)
+        self.assertAlmostEqual(pv_booked, pv_ten_year_stream)
+        self.assertLess(pv_booked, pv_full_life_stream)
+
+    def test_wind_ptc_window_none_restores_full_life_credit(self):
+        # None is the indefinite-extension / paired-control scenario: the
+        # factor collapses to CRF(life)/CRF(life) = 1 and the pre-4C flat
+        # crediting is reproduced exactly.
+        config = ScenarioConfig(ira_ptc_credit_window_years=None)
+        self.assertEqual(wind_ptc_levelized_per_mwh(config), 26.0)
+        self.assertAlmostEqual(
+            apply_ira_credits_to_lcoe("wind", 50.0, 2027, config), 24.0
+        )
+
+    def test_wind_ptc_window_at_or_past_life_clips_to_life(self):
+        # A window >= book life clips to the life: no year past the plant's
+        # own horizon can earn, so the factor is exactly 1.
+        config = ScenarioConfig(ira_ptc_credit_window_years=30)
+        self.assertAlmostEqual(wind_ptc_levelized_per_mwh(config), 26.0)
+        config_over = ScenarioConfig(ira_ptc_credit_window_years=45)
+        self.assertAlmostEqual(wind_ptc_levelized_per_mwh(config_over), 26.0)
+
+    def test_wind_ptc_window_rejects_nonpositive(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(ira_ptc_credit_window_years=0)
+
+    def test_solar_itc_path_unchanged_by_ptc_window(self):
+        # The chartered no-regression assert: the solar ITC path (capex
+        # discount inside compute_lcoe) is byte-identical whatever the wind
+        # PTC window is set to — the window touches wind's post-hoc credit
+        # only.
+        base = ScenarioConfig()
+        control = ScenarioConfig(ira_ptc_credit_window_years=None)
+        short = ScenarioConfig(ira_ptc_credit_window_years=4)
+        for year in (2024, 2027, 2028, 2035):
+            lcoe_base = compute_lcoe("solar", year, base)
+            self.assertEqual(lcoe_base, compute_lcoe("solar", year, control))
+            self.assertEqual(lcoe_base, compute_lcoe("solar", year, short))
+
+    def test_compute_lcoe_and_apply_ira_agree_on_wind_credit(self):
+        # Both call sites delegate to the ONE computation site
+        # (wind_ptc_levelized_per_mwh) — the credited $/MWh must be identical
+        # through either path (rule 19 [R-ONE-MECH]).
+        config = ScenarioConfig()
+        credit_via_apply = 50.0 - apply_ira_credits_to_lcoe("wind", 50.0, 2027, config)
+        control = ScenarioConfig(ira_ptc_credit_window_years=None)
+        # The windowed LCOE sits ABOVE the unwindowed control by exactly the
+        # credit reduction (nominal - levelized).
+        credit_via_lcoe = compute_lcoe("wind", 2027, config) - compute_lcoe(
+            "wind", 2027, control
+        )
+        # compute_lcoe(control) - compute_lcoe(windowed) = nominal - levelized;
+        # rearrange against the apply-path credit (= levelized).
+        self.assertAlmostEqual(credit_via_lcoe, config.ira_ptc_wind - credit_via_apply)
 
     def test_solar_itc_not_applied_post_hoc(self):
         # The solar ITC is a capital credit: it is applied to capex inside
@@ -3336,9 +3428,10 @@ class TestIRACreditsToLCOE(unittest.TestCase):
 
     def test_credit_expires_after_expiry_year(self):
         config = ScenarioConfig()  # ira_wind_solar_last_year = 2027
-        # The last eligible year itself still carries the credit.
+        # The last eligible year itself still carries the (levelized) credit.
         self.assertAlmostEqual(
-            apply_ira_credits_to_lcoe("wind", 50.0, 2027, config), 24.0
+            apply_ira_credits_to_lcoe("wind", 50.0, 2027, config),
+            50.0 - 26.0 * self._wind_window_factor(config, 10.0),
         )
         # The year after the cliff leaves LCOE untouched.
         self.assertEqual(apply_ira_credits_to_lcoe("wind", 50.0, 2028, config), 50.0)

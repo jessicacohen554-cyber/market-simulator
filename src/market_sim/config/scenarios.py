@@ -218,6 +218,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # are byte-stable; a non-default window (None = indefinite extension, or
     # a sensitivity value) enters the key as a distinct scenario.
     "ira_45q_credit_window_years",
+    # §45 wind-PTC credit window (FFR-4C, owner decision D-13): statutory
+    # default 10 dropped from the hash so every pre-existing cache key is
+    # byte-stable. NOTE this default is NOT byte-identical to the pre-field
+    # behavior it replaces (the unwindowed full-book-life credit) — that is a
+    # deliberate same-key invalidation of pre-4C forecast-mode bundles,
+    # recorded as cache epoch 2026-08-04d in results/cache.py. A non-default
+    # window (None = the unwindowed control arm, or a sensitivity value)
+    # enters the key as a distinct scenario.
+    "ira_ptc_credit_window_years",
     # Per-tech WACC option (FF-1E §3.6): default False dropped from the hash so
     # every pre-existing cache key is byte-stable; True enters the key (a
     # distinct financing scenario).
@@ -740,6 +749,13 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "federal_ces_storage_eligible": "False",
     "federal_ces_replaces_state_rps": "False",
     "ira_45q_credit_window_years": "12",
+    "ira_ptc_credit_window_years": "10",
+    # Added by FFR-4C as a DRIVE-BY REPAIR (pre-existing on main, found by the
+    # guard's own check 1): ercot-162 registered the field in
+    # _CACHE_KEY_OPTIONAL_FIELDS without its recorded default here — the same
+    # nyiso-115 miss documented below, leaving a flip of it undetectable and
+    # the registration guard red on every run (rule 24 [R-REGISTRY]).
+    "ercot_storage_rt_offer_surface": "False",
     "per_tech_wacc_enabled": "False",
     "transmission_expansion_enabled": "False",
     "nyiso_li_locational_reserve": "False",
@@ -1930,6 +1946,21 @@ class ScenarioConfig:
     # 2027. For an annual model, treat 2027 as the last year wind/solar
     # credits are available.
     ira_wind_solar_last_year: int = 2027
+    # §45 wind PTC credit window: years of credit from placed-in-service. 10
+    # is statutory — 26 U.S.C. §45(a)(2)(A)(ii) ("during the 10-year period
+    # beginning on the date the facility was originally placed in service");
+    # §45Y(b)(1)(B) carries the identical 10-year period for the tech-neutral
+    # successor credit. None models an indefinite legislative extension and
+    # reproduces the pre-window full-book-life crediting exactly (the FFR-4C
+    # paired-control arm). Consumed by the new-entry screen's wind LCOE ONLY,
+    # via wind_ptc_levelized_per_mwh (credit levelized over min(window, book
+    # life) at the screen discount rate, CRF(life)/CRF(window) — the same
+    # construction the §45Q window applies to new-build CCS). The DISPATCH-
+    # side PTC offer (compute_dispatch_credits and the default-off
+    # wind_ptc_vintage_offers) is a separately-adjudicated surface this field
+    # does not touch. Owner decision D-13 (FFR-4C, 2026-08-04); defect
+    # measured in docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §6.2.
+    ira_ptc_credit_window_years: int | None = 10
     # §45U zero-emission (existing) nuclear PTC: credited for electricity
     # produced and sold after 2023, terminating for electricity produced
     # after Dec 31, 2032 — so 2032 is the last year the credit is available.
@@ -10339,6 +10370,21 @@ class ScenarioConfig:
                 f"{self.ira_45q_credit_window_years!r}"
             )
 
+        # §45 wind-PTC credit window (FFR-4C): same contract as the §45Q
+        # window directly above — a set window must be a positive year count;
+        # None is the indefinite-extension / unwindowed-control scenario. A
+        # zero or negative window would silently zero the credit through the
+        # levelization arithmetic — fail loudly instead.
+        if (
+            self.ira_ptc_credit_window_years is not None
+            and self.ira_ptc_credit_window_years < 1
+        ):
+            raise ValueError(
+                "ScenarioConfig.ira_ptc_credit_window_years must be a positive "
+                "number of years or None (indefinite extension scenario); got "
+                f"{self.ira_ptc_credit_window_years!r}"
+            )
+
         # Data-center load block (CX-4): forecast-only scenario axis. Validate
         # the label, then COERCE it inert in any non-forward run. Since FF-1F
         # (2026-07-18) the field default is the forecast posture "mid", so a
@@ -11335,6 +11381,7 @@ TIER_TAGS: dict[str, int] = {
     "ira_h2_45v_last_year": 2,
     "ira_ccus_45q_last_year": 2,
     "ira_45q_credit_window_years": 2,
+    "ira_ptc_credit_window_years": 2,
     "electrolyzer_efficiency_override": 2,
     "ccs_capture_rate": 2,
     "co2_transport_storage_cost": 2,

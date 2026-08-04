@@ -46,6 +46,40 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-04d — FFR-4C §45 wind-PTC statutory window (owner decision
+D-13). NO KEY MOVES AT THE DEFAULT.** The new-entry screen's wind LCOE now
+levelizes the §45 PTC over ``min(10 statutory years, book life)`` instead of
+crediting the full rate for the plant's whole 30-year book life
+(``docs/handoffs/ffr-4c-wind-ptc-window-2026-08-04.md``; the defect and its
+arithmetic: ``ffr-3v-miso-entry-screen-2026-08-04.md`` §6.2). The window is the
+new ``ScenarioConfig.ira_ptc_credit_window_years`` (default 10, statutory —
+26 U.S.C. §45(a)(2)(A)(ii)), registered in ``_CACHE_KEY_OPTIONAL_FIELDS``, so a
+run at the statutory default hashes exactly as a pre-4C run did — measured:
+the default key is byte-stable at ``603c2498bf71d21d``, and the registration
+drops the field at its live default from EVERY config's hash, so no existing
+key moves anywhere — while wind entry economics CHANGED (effective screened
+PTC $26.00 → $13.63/MWh at the shipped wind cost record, factor
+CRF(30)/CRF(10) = 0.5243). This is the deliberate same-key-invalidation form
+the 2026-08-03 D-1/D-2 entry predicted would recur; per that entry's inverse
+clause, an EXPLICIT ``ira_ptc_credit_window_years=None`` control arm is
+non-default, hashes distinctly (``5da240df77d9a933`` on the otherwise-default
+config) and reproduces the pre-4C unwindowed crediting exactly.
+
+*Invalidated:* every cached bundle produced in **forecast mode**
+(``mode="forecast"``, including ``hindcast=True`` capacity-hindcast and T1-X
+crossover legs) at a commit before this epoch whose evolution reaches the
+entry screen — its wind entry margins, decisions, and every ledger row
+downstream of them carry the unwindowed credit. Purge exactly as the
+2026-08-02 entry below directs (and heed its tracked-file warning).
+
+*NOT invalidated:* **every backcast bundle and every keeper.** The screen-side
+PTC sites (``compute_lcoe`` / ``apply_ira_credits_to_lcoe``, now both
+delegating to ``wind_ptc_levelized_per_mwh``) are consumed only by
+forecast-mode capacity evolution, which does not run in a backcast (the
+2026-08-03 entry's clause). The DISPATCH-side PTC offer — the flat
+``-ira_ptc_wind`` wind MC from ``compute_dispatch_credits`` and the
+default-off ``wind_ptc_vintage_offers`` — is untouched on every path.
+
 **Epoch 2026-08-04c — FFR-4D CAISO base-fleet re-vintage. NO KEY MOVES; CAISO
 BUNDLES IN BOTH MODES ARE INVALIDATED.** Three CAISO-scoped changes
 (``docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md``), all of which move

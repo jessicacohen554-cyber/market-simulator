@@ -38,6 +38,7 @@ from market_sim.model.capacity import (
     _make_new_generator,
     _new_entry_candidates,
     apply_economic_new_entry,
+    wind_ptc_levelized_per_mwh,
 )
 from market_sim.model.capacity import compute_lcoe
 from market_sim.model.dispatch import solve_dispatch
@@ -496,13 +497,21 @@ class TestEmergingIRACredits(unittest.TestCase):
         )
         self.assertLess(with_credit, after_expiry)
 
-    def test_geothermal_ptc_matches_wind_ptc(self):
-        # Within the full-credit window both earn the same flat PTC.
+    def test_geothermal_ptc_still_flat_wind_ptc_windowed(self):
+        # FFR-4C windowed the WIND PTC to its statutory 10 years (owner
+        # decision D-13); the geothermal branch deliberately still books the
+        # flat unwindowed rate — a KNOWN, REPORTED defect awaiting its own
+        # charter (the §45/§45Y 10-year period applies to geothermal too; see
+        # apply_ira_credits_to_lcoe's docstring). This test pins the current
+        # split so the geothermal fix, when chartered, changes it knowingly.
         config = ScenarioConfig()  # ira_ptc_wind = 26.0
         geo = apply_ira_credits_to_lcoe("geothermal", 50.0, 2027, config)
         wind = apply_ira_credits_to_lcoe("wind", 50.0, 2027, config)
-        self.assertAlmostEqual(geo, wind)
         self.assertAlmostEqual(geo, 50.0 - config.ira_ptc_wind)
+        self.assertAlmostEqual(wind, 50.0 - wind_ptc_levelized_per_mwh(config))
+        # The unwindowed geothermal credit is strictly larger, so its
+        # adjusted LCOE sits strictly lower.
+        self.assertLess(geo, wind)
 
     def test_geothermal_ptc_expires(self):
         config = ScenarioConfig()

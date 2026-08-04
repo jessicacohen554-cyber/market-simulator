@@ -403,6 +403,46 @@ def _capital_recovery_factor(rate: float, lifetime_yr: float) -> float:
     return rate * growth / (growth - 1.0)
 
 
+def wind_ptc_levelized_per_mwh(config: ScenarioConfig) -> float:
+    """Return the §45 wind PTC levelized over the plant's book life, in $/MWh.
+
+    The statutory credit runs ``min(config.ira_ptc_credit_window_years, book
+    life)`` years from placed-in-service — 10 years, 26 U.S.C.
+    §45(a)(2)(A)(ii); §45Y(b)(1)(B) is identical for the tech-neutral
+    successor — so its $/MWh value is levelized over the full book life at
+    the screen's own discount rate: PV(window annuity)/PV(life annuity) =
+    CRF(life)/CRF(window), exactly the construction the new-build CCS LCOE
+    applies to the §45Q window (W2-C; rule 19 ``[R-ONE-MECH]`` — one
+    levelization pattern, reused). ``None`` (the indefinite-extension /
+    unwindowed-control scenario) leaves the rate unscaled, reproducing the
+    pre-FFR-4C full-life crediting exactly.
+
+    Eligibility is the CALLER's gate, unchanged: the
+    ``ira_wind_solar_last_year`` OBBBA cliff decides *whether* a vintage
+    earns the credit; this function only decides *how much* an earning
+    vintage's credit is worth per levelized MWh. This is the single
+    computation site for the screen-side wind PTC — ``compute_lcoe`` and
+    ``policy.ira.apply_ira_credits_to_lcoe`` both delegate here. The
+    dispatch-side PTC offer is a separate surface and does not use it.
+
+    Args:
+        config: Scenario config supplying the PTC rate, the credit window,
+            the wind cost record (book life) and the discount rate.
+
+    Returns:
+        The levelized §45 credit in $/MWh of plant output.
+    """
+    costs = resolve_new_entry_costs(config)["wind"]
+    rate = resolve_real_discount_rate(config, "wind")
+    life = float(costs["lifetime_yr"])
+    window = config.ira_ptc_credit_window_years
+    window_years = life if window is None else min(float(window), life)
+    factor = _capital_recovery_factor(rate, life) / _capital_recovery_factor(
+        rate, window_years
+    )
+    return config.ira_ptc_wind * factor
+
+
 def compute_lcoe(
     tech_type: str,
     year: int,
@@ -456,10 +496,12 @@ def compute_lcoe(
     annual_mwh_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
     lcoe = annual_cost_per_kw / annual_mwh_per_kw
 
-    # Wind PTC: a per-MWh production credit, correctly subtracted post-hoc.
+    # Wind PTC: a per-MWh production credit, correctly subtracted post-hoc —
+    # levelized over min(statutory window, book life), never credited for the
+    # plant's whole life (FFR-4C, D-13; see wind_ptc_levelized_per_mwh).
     if tech_type == "wind":
         if year <= config.ira_wind_solar_last_year:
-            lcoe -= config.ira_ptc_wind
+            lcoe -= wind_ptc_levelized_per_mwh(config)
 
     return lcoe
 
@@ -1081,6 +1123,14 @@ def apply_economic_new_entry(
                 ),
                 "ptc_wind": float(
                     config.ira_ptc_wind
+                    if tech == "wind" and year <= config.ira_wind_solar_last_year
+                    else 0.0
+                ),
+                # The §45 credit the LCOE actually books: the nominal rate
+                # above levelized over min(statutory window, book life) with
+                # the SAME helper compute_lcoe uses (FFR-4C, no drift).
+                "ptc_wind_levelized_per_mwh": float(
+                    wind_ptc_levelized_per_mwh(config)
                     if tech == "wind" and year <= config.ira_wind_solar_last_year
                     else 0.0
                 ),
