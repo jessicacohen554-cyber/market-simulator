@@ -5514,4 +5514,103 @@ Evidence: `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md
 `PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md`,
 `results/calibration/_caiso164_ab_gates.json`.
 
-Next number: caiso-165 (caiso-160 unclaimed, see above).
+---
+
+## caiso-165 (2026-08-04) — CAISO DLAP component intake; the intra-SP15 corridor MEASURED. NO LP, NO SOLVE, keeper UNCHANGED.
+
+**Keeper unchanged** at `2026-08-04-caiso164-zonal-loss-surface`. No run
+produced, so none registered (the caiso-161 / nyiso-121 no-LP precedent). Prereg
+`results/calibration/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`
+pushed **before the probe ran on intaken data**; record
+`results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`.
+
+**caiso-164 §6's attribution is CONFIRMED.** It was an *inference* from prices
+and energy balances; it is now measured on CAISO's own published
+`MCE/MCC/MCL` decomposition. Pre-registered rule (prereg §4), belly window
+(Pacific 09-16), congestion component only, on the two full-coverage years:
+**3 CONFIRMED, 1 PARTIAL, ZERO FALSIFIED.**
+
+| year | corridor | sep % | mean \|dMCC\| | pocket-dearer % | verdict |
+|---|---|---:|---:|---:|---|
+| 2024 | SCE − SP15 gen | 89.31 % | 1.038 | 52.4 % | PARTIAL |
+| 2025 | SCE − SP15 gen | **98.05 %** | **1.999** | **84.0 %** | **CONFIRMED** |
+| 2024 | SDGE − SP15 gen | **94.23 %** | **4.038** | **96.8 %** | **CONFIRMED** |
+| 2025 | SDGE − SP15 gen | **99.69 %** | **6.451** | **99.1 %** | **CONFIRMED** |
+
+Belly-timed (2025 SCE ~0.8-1.0 overnight → 1.79-2.11 in h08-16; SDGE ~1.2-1.8 →
+5.58-7.38 in h08-17) and growing fast (belly mean `dMCC` +0.701 → +1.912 SCE,
++3.924 → +6.420 SDGE, 2024 → 2025). The single PARTIAL is a **direction** split
+not rounded up: SCE-2024 clears frequency and magnitude but binds both ways at
+52.4 % pocket-dearer, settling into the pocket-dearer direction only in 2025.
+2023's rows carry **no** weight — 176 belly hours, all January, declared partial
+in prereg §2.2 *before* the fetch.
+
+**Why caiso-164 could not see it, which is the transferable part.** A
+`TH_*_GEN` hub prices where power is **injected**; a DLAP prices where load is
+**withdrawn**. With one southern hub in the record an intra-SP15 corridor has no
+degree of freedom in any hub-to-hub basis — it was **unobservable**, not merely
+unmeasured.
+
+**Against the model** (this keeper's own committed P1 sidecars, no replay):
+`LA_BASIN − SP15_rest` separates in **0.00 % of belly hours in all three years
+(0 of 8,760)** against a measured 89-98 % — a perfect copper-plate on the named
+corridor. And `SDGE − SP15_rest` is **INVERTED**, not merely under-separated:
+model mean **−2.6345 / −5.3152** $/MWh at pocket-dearer 0.0 / 1.0 %, against a
+measured **+3.924 / +6.420** at 96.8 / 99.1 % — error ≈ **$6.6 / $11.7 per
+MWh**. **That second defect was invisible to caiso-164** and is not in its
+finding.
+
+**The intake.** Four `DLAP_*-APND` load aggregation points now flow through
+`fetch_caiso_oasis.py` (`DLAPS`, `--nodes`), `fold_caiso_oasis_grp_zips.py`
+(`NODES`, `--refold`) and the already-node-agnostic postprocess into
+`CAISO_dam_hourly_<year>.csv`: **8,784 / 8,760 complete 7-node hours in
+2024/2025** (exact — 61,488 = 7 × 8,784, 61,320 = 7 × 8,760; 120 OASIS windows,
+**zero failures**), 528 hours in 2023 from the committed Jan `DAM_LMP_GRP` bulk
+zips. **Additivity proven:** identity guards hold with DLAPs included (MCE
+spread `0.00e+00` across all seven nodes, LMP reconstruction ≤`5e-05`), and
+`derive_caiso_loss_surface --acceptance` re-runs **6/6 pair-years in band with
+`CAISO_loss_surface.csv` byte-unchanged**, before and after.
+
+**NOT delivered, and withheld deliberately.** **Neither arm was solved** — the
+OASIS diagnosis below consumed the budget, so the lane's charter was left intact
+rather than half-run. **Arm A** (five *measured* loss zones) is fully chartered
+in prereg §5.1 — crosswalk disposition (`DLAP_SDGE → SDGE` a near-identity;
+**`DLAP_SCE → LA_BASIN` a RECONCILIATION**, since SCE spans both the LA basin
+and much of the `SP15_rest` desert/Kern belt; `DLAP_PGAE` deliberately **not**
+substituted for NP15 or ZP26, which it straddles), a **strengthened** acceptance
+gate (`NP15↔LA_BASIN` + `NP15↔SDGE` added — as written it benchmarked only pairs
+Arm A does not change), and a pre-committed rule-14 ruling that the substitution
+is kept whatever it does to the backcast. Its justification is now quantified:
+the `dMCL` the two `interpolated=True` zones **miss** by inheriting the SP15
+*generation* hub is **+0.924 / +0.969 (SCE)** and **+1.211 / +1.310 (SDGE)**
+$/MWh — comparable to, and for SDGE larger than, the entire NP15−ZP26 loss
+component (+1.102 / +1.049) this keeper was promoted for representing.
+**Arm B** (an intra-SP15 transfer limit) is **not armed and remains blocked**:
+no published physical limit was located, so per prereg §5.2 it is **filed, not
+approximated**. A limit chosen to reproduce the frequencies or magnitudes above
+is an **OUTCOME PIN** (rule 13 `[R-MEASURED]`, rules 5/21/24) — and knowing
+those numbers precisely makes that bind **harder**, not softer.
+
+**OASIS operational facts, paid for once.** (a) The `PRC_LMP` retention boundary
+**moved during the session** — 2023-04-19 (recorded 2026-07-31) → ~2023-04-24 —
+and is a property of the **report, not the node** (`TH_SP15_GEN` and `DLAP_SCE`
+fail and succeed at the same dates); near-boundary windows are ~5× slower and
+genuinely gappy, so 2023 DLAP coverage is **partial by construction**.
+(b) A throttled OASIS **hangs rather than 429s**, and `urlopen(timeout=)` is
+per-socket-operation so it never trips — a stalled read sat **>10 min** inside a
+`timeout=180` call — and **stalled readers hold the per-IP connection slots**, so
+it looks exactly like an IP ban and is not one; killing the local clients
+restored full speed immediately. `REQUEST_WALL_CLOCK_S` (SIGALRM) now makes such
+a request fail so backoff can run.
+
+**DO-NOT-REDO:** the DLAP intake is DONE for 2024-2025 — do not re-fetch it. Do
+not re-run the intra-SP15 measurement expecting a different verdict without new
+data. Do **not** charter an N-S topology lever (unchanged); the corridor measured
+here is **INTRA-SP15**, a different object. Do not arm Arm B from the residual.
+
+Evidence: `results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
+`PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
+`results/calibration/_caiso165_intra_sp15.json`,
+`scripts/probes/caiso165_intra_sp15_decomp.py`.
+
+Next number: caiso-166 (caiso-160 unclaimed, see above).
