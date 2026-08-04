@@ -272,6 +272,12 @@ frontend/data/forecast/program-status.js
 # frontend/data/hindcast/, and the readout lives in
 # docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md §4.
 /results/ffr2e/
+# FFR-SA FF-G4 load-shape T0 smoke arms (NEISO + PJM 2026-2028, armed-vs-off,
+# isolated run_full_horizon --out-dir caches). Same class as /results/ffr2e/ —
+# a default-off T0 acceptance probe, not dashboard-registered (rules 15/16), so
+# the run dirs regenerate from config. The committed record is the readout in
+# docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4.
+/results/ffr-sa-smoke/
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
