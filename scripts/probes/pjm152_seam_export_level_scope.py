@@ -30,17 +30,27 @@ It measures three independent things, all off committed artifacts:
    a p90 cap is by construction exceeded by the measured flow in ~10 % of that
    cell's hours, and the energy in that upper tail is unreachable.
 
-2. **The ladder's clearing side.** Each export band ``k`` is priced at
-   ``p_k``, the DA quantile whose exceedance duration equals the measured
-   duration of the seam flowing deeper than band ``k``'s midpoint. So the
-   ladder's own duration curve says band ``k`` should flow in ``D_k`` of hours.
-   We compare ``D_k`` with the fraction of hours the KEEPER's own modelled PJM
-   price clears ``p_k``. ``D_model << D_k`` means the model's price duration
-   curve sits below the one the ladder was identified on, and the bands simply
-   do not clear.
+2. **The ladder's clearing side.** An EXPORT band is a negative-output
+   pseudo-unit offered at ``p_k``: it dispatches when PJM's own internal price
+   sits **at or BELOW** ``p_k`` (PJM exports when it is cheap relative to the
+   neighbour), so the clearing duration is ``P(price <= p_k)``, NOT the
+   exceedance. The identification confirms the polarity on the data: for every
+   band, the measured flow duration ``D_k`` and the measured DA LMP's
+   *exceedance* of ``p_k`` sum to 1.0, i.e. ``p_k`` is exactly the quantile at
+   which ``P(LMP <= p_k) = D_k``. We therefore compare ``D_k`` against
+   ``P(model price <= p_k)``. ``P_model < D_k`` means the model's price
+   duration curve sits ABOVE the one the ladder was identified on in the
+   region that matters, and the deep bands simply never clear.
 
-3. **The two together.** Per seam and per year: measured export, the envelope
-   ceiling, and the ladder-clearing estimate, so the binding side is named
+3. **The benchmark the residual is measured against.** Item 15's numbers come
+   from the ``interchange`` family row, whose actual is EIA-930's
+   ``Total interchange``, while the seam envelopes AND the ladder are both
+   identified on PJM's settlement-grade tie-line file. The probe reports both
+   series per year plus EIA-930's OWN internal identity
+   (``Net generation - Demand``), so a year in which the two measured sources
+   disagree is visible rather than silently charged to the model.
+
+4. **The three together.** Per seam and per year, so the binding side is named
    rather than inferred.
 
 Reads only committed artifacts + ``data/raw``. No solve, no floor rebuild.
@@ -201,13 +211,15 @@ def ladder_clearing(year: int) -> dict:
                 if series is not None
                 else None
             )
+            # An export band clears when the internal price is at or BELOW
+            # its offer, so the clearing duration is P(price <= p_k).
             d_model = (
-                float(np.count_nonzero(model_p >= float(p_k))) / HOURS
+                float(np.count_nonzero(model_p <= float(p_k))) / HOURS
                 if model_p is not None
                 else None
             )
             d_actual_lmp = (
-                float(np.count_nonzero(meas_p >= float(p_k))) / HOURS
+                float(np.count_nonzero(meas_p <= float(p_k))) / HOURS
                 if meas_p is not None
                 else None
             )
@@ -219,7 +231,9 @@ def ladder_clearing(year: int) -> dict:
                     "ladder_price": float(p_k),
                     # what the measured record says this band flows
                     "duration_measured": None if d_meas is None else round(d_meas, 4),
-                    # the ladder's identification target, reproduced
+                    # the ladder's identification target, reproduced: this must
+                    # come back ~= duration_measured, which is what proves the
+                    # polarity above and that p_k is the P(LMP <= p_k) quantile
                     "duration_actual_lmp_clears": (
                         None if d_actual_lmp is None else round(d_actual_lmp, 4)
                     ),
@@ -227,6 +241,7 @@ def ladder_clearing(year: int) -> dict:
                     "duration_model_price_clears": (
                         None if d_model is None else round(d_model, 4)
                     ),
+                    # NEGATIVE = the model under-clears this band
                     "model_minus_measured_duration": (
                         None
                         if (d_model is None or d_meas is None)
@@ -250,8 +265,63 @@ def ladder_clearing(year: int) -> dict:
     return out
 
 
+def benchmark_basis(year: int) -> dict:
+    """Cross-source the interchange ACTUAL the item-15 residual is measured on.
+
+    The ``interchange`` family row's actual is EIA-930's ``Total interchange``.
+    The seam envelopes and the measured ladder are both identified on PJM's
+    settlement-grade tie-line file. Those are different meters, and the ladder's
+    own source comment already records that they disagree per-seam. This reports
+    both totals, their hourly correlation, and EIA-930's OWN internal identity
+    (``Net generation - Demand``, which must equal ``Total interchange``) so a
+    year in which one source is internally inconsistent is visible.
+    """
+    import pandas as pd
+
+    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+    from market_sim.data.eia930.actuals import load_eia_hourly_benchmark
+    from market_sim.data.eia_loader import pjm_neighbor_interchange
+
+    names = [n.name for n in INTERFACE_NEIGHBORS.get("PJM", [])]
+    tie = pjm_neighbor_interchange(year, names)
+    bench = load_eia_hourly_benchmark("PJM", year)
+    ix = None if bench is None else bench.get("interchange")
+    out: dict[str, object] = {}
+    if ix is not None:
+        out["eia930_total_interchange_twh"] = round(float(np.sum(ix)) / 1e6, 3)
+    if tie is not None:
+        out["pjm_tie_file_net_export_twh"] = round(float(tie.sum()) / 1e6, 3)
+    if ix is not None and tie is not None:
+        a = np.asarray(ix, dtype=float)
+        b = tie.sum(axis=0)
+        out["difference_twh"] = round(
+            out["eia930_total_interchange_twh"] - out["pjm_tie_file_net_export_twh"], 3
+        )
+        out["hourly_correlation"] = round(float(np.corrcoef(a, b)[0, 1]), 4)
+
+    # EIA-930's own identity: Net generation - Demand must equal Total
+    # interchange. A break localises the disagreement to the interchange COLUMN
+    # rather than to the tie file.
+    raw = REPO / "data/raw/eia-930-hourly/PJM hourly.parquet"
+    if raw.is_file():
+        df = pd.read_parquet(raw)
+        sub = df[df["Local date"].dt.year == year]
+        if len(sub) and {"Net generation", "Demand", "Total interchange"} <= set(
+            sub.columns
+        ):
+            ng = float(sub["Net generation"].interpolate().bfill().ffill().sum()) / 1e6
+            dem = float(sub["Demand"].interpolate().bfill().ffill().sum()) / 1e6
+            tix = float(sub["Total interchange"].interpolate().bfill().ffill().sum())
+            tix /= 1e6
+            out["eia930_net_generation_twh"] = round(ng, 3)
+            out["eia930_demand_twh"] = round(dem, 3)
+            out["eia930_netgen_minus_demand_twh"] = round(ng - dem, 3)
+            out["eia930_identity_residual_twh"] = round((ng - dem) - tix, 3)
+    return out
+
+
 def main() -> None:
-    """Measure both candidate binding sides and write the JSON record."""
+    """Measure every candidate binding side and write the JSON record."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="results/calibration/_pjm152_item15_scope.json")
     args = ap.parse_args()
@@ -266,6 +336,7 @@ def main() -> None:
     }
     for year in YEARS:
         rec["years"][str(year)] = {
+            "benchmark_basis": benchmark_basis(year),
             "envelope_ceiling": envelope_ceiling(year),
             "ladder_clearing": ladder_clearing(year),
         }
@@ -276,10 +347,19 @@ def main() -> None:
         if "seams" not in ec:
             print(y, ec)
             continue
+        bb = rec["years"][str(y)]["benchmark_basis"]
         print(
-            f"{y}: measured net export {ec['total_measured_net_export_twh']} TWh | "
-            f"envelope export ceiling {ec['total_envelope_export_ceiling_twh']} TWh | "
+            f"{y}: tie-file net export {ec['total_measured_net_export_twh']} TWh | "
+            f"envelope ceiling {ec['total_envelope_export_ceiling_twh']} TWh | "
             f"headroom {ec['net_export_headroom_twh']} TWh"
+        )
+        print(
+            f"      benchmark basis: EIA-930 total interchange "
+            f"{bb.get('eia930_total_interchange_twh')} TWh vs tie file "
+            f"{bb.get('pjm_tie_file_net_export_twh')} TWh "
+            f"(EIA-930 identity residual "
+            f"{bb.get('eia930_identity_residual_twh')} TWh, hourly r "
+            f"{bb.get('hourly_correlation')})"
         )
 
 
