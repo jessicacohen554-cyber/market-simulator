@@ -1,9 +1,9 @@
 {
   "iso": "CAISO",
-  "keeper": "2026-08-04-caiso164-zonal-loss-surface",
-  "keeper_bundle_fields": 675,
-  "n_scenario_fields": 678,
-  "n_matrix_rows": 187,
+  "keeper": "2026-08-04-caiso-166-measured-dlap",
+  "keeper_bundle_fields": 678,
+  "n_scenario_fields": 679,
+  "n_matrix_rows": 189,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -835,8 +835,8 @@
     {
       "field": "caiso_nqc_accreditation",
       "default": false,
-      "keeper_value": "<absent>",
-      "keeper_arms_it": null,
+      "keeper_value": false,
+      "keeper_arms_it": false,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
@@ -1959,9 +1959,15 @@
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "K"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K"
       ],
       "armed_in_bundles": [
@@ -2086,6 +2092,11 @@
           "row": "battery_dispatch_adder",
           "cells": "KK....",
           "cell": "K"
+        },
+        {
+          "row": "ercot_storage_rt_offer_surface",
+          "cells": "R.....",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -2313,6 +2324,11 @@
           "cell": "K"
         },
         {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..IKIU",
+          "cell": "."
+        },
+        {
           "row": "coal_econ_bound",
           "cells": "K..K..",
           "cell": "."
@@ -2499,7 +2515,7 @@
         },
         {
           "row": "winter_citygate_daily",
-          "cells": "U.UK..",
+          "cells": "U.RK..",
           "cell": "."
         }
       ],
@@ -2541,6 +2557,11 @@
           "row": "gas_daily_shape",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -2611,6 +2632,11 @@
           "row": "gas_plant_monthly_pricing",
           "cells": "GKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
         }
       ],
       "excluded": false,
@@ -2622,6 +2648,11 @@
       "keeper_value": 2.54,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        },
         {
           "row": "gas_price_override",
           "cells": "KKKKKK",
@@ -2964,7 +2995,7 @@
         },
         {
           "row": "st_gas_mustrun_p25",
-          "cells": "..UKIU",
+          "cells": "..IKIU",
           "cell": "."
         },
         {
@@ -3124,7 +3155,7 @@
         },
         {
           "row": "winter_citygate_daily",
-          "cells": "U.UK..",
+          "cells": "U.RK..",
           "cell": "."
         },
         {
@@ -3236,6 +3267,11 @@
           "row": "pumped_storage_cycling_depth",
           "cells": ".UGUUG",
           "cell": "U"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
         },
         {
           "row": "measured_interface_limits",
@@ -3734,7 +3770,7 @@
         },
         {
           "row": "st_gas_mustrun_p25",
-          "cells": "..UKIU",
+          "cells": "..IKIU",
           "cell": "."
         },
         {
@@ -3929,7 +3965,7 @@
         },
         {
           "row": "winter_citygate_daily",
-          "cells": "U.UK..",
+          "cells": "U.RK..",
           "cell": "."
         },
         {
@@ -4063,6 +4099,11 @@
           "cell": "K"
         },
         {
+          "row": "ercot_storage_rt_offer_surface",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
           "cell": "K"
@@ -4081,6 +4122,11 @@
           "row": "pumped_storage_cycling_depth",
           "cells": ".UGUUG",
           "cell": "U"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
         },
         {
           "row": "measured_interface_limits",
@@ -4677,7 +4723,7 @@
         },
         {
           "row": "st_gas_mustrun_p25",
-          "cells": "..UKIU",
+          "cells": "..IKIU",
           "cell": "."
         },
         {

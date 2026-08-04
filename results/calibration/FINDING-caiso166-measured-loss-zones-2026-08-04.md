@@ -10,6 +10,31 @@
 
 ---
 
+> ## ⬆ SUPERSEDED IN PART — PROMOTED 2026-08-04 BY OWNER DECISION
+>
+> **The CAISO keeper is now `2026-08-04-caiso-166-measured-dlap`**
+> (CALIBRATED-WITH-CAVEATS, 2 of 3 ledger slots, **0 FAILs**).
+>
+> §0 below records what this session concluded **on its own authority**, and it
+> stands unaltered: caiso-166 declined to promote and **refused to re-cut its own
+> fired gate**. The owner — holding promotion authority — re-chartered gate S3 and
+> ledgered the 2024 `price_mean` exception, recorded in
+> `AMENDMENT-caiso166-S3-recharter-2026-08-04.md` and **pushed at `89be6559`
+> BEFORE the attestation generator was re-run**.
+>
+> **No re-solve.** Both bundles are byte-unchanged; only the gate threshold and
+> the exception ledger moved. Under S3′ — the SAME frozen miso-76 B1 band
+> `[0.5×, 1.5×]` the derive's own `--acceptance` gate applies to the same measured
+> quantity — the realised ratios are **0.949–1.054×** on all four pocket
+> pair-years. §3's analysis is why the re-charter is defensible: the 1.00×
+> ceiling was **unsatisfiable by a correct implementation**.
+>
+> Everything in §§1–2 and §§4–8 stands as written. §7's delivery gap is **CLOSED**:
+> `git push` recovered once the branch was a proper descendant of the remote tip,
+> and all bundles, sidecars and payloads are on `main`.
+
+---
+
 ## 0. VERDICT — Arm A is **NOT PROMOTED**. The CAISO keeper is UNCHANGED at `2026-08-04-caiso164-zonal-loss-surface`.
 
 Two **pre-registered** gates block promotion. Neither was relaxed after it
