@@ -163,6 +163,7 @@ def parse_offers(
     ``Must Take Energy`` MW are re-priced to the floor (see
     ``_reprice_must_take``).  Both are reported; the MT variant is disclosed
     as a post-hoc refinement (prereg KQ5).
+
     """
     base: dict[int, list[tuple[float, float]]] = {}
     mt: dict[int, list[tuple[float, float]]] = {}
@@ -485,7 +486,9 @@ def run(days: list[str]) -> pd.DataFrame:
     rows = []
     for i, tag in enumerate(days, 1):
         day = pd.Timestamp(tag)
-        gen_d, gen_mt_d = parse_offers(OFFER_DIR / f"hbdayaheadenergyoffer_{tag}.csv")
+        gen_d, gen_mt_d = parse_offers(
+            OFFER_DIR / f"hbdayaheadenergyoffer_{tag}.csv"
+        )
         ext_d = parse_impexp(IMPEXP_DIR / f"hbdayaheadimpexp_{tag}.csv")
         bid_d = parse_bids(BID_DIR / f"hbdayaheaddemandbid_{tag}.csv")
         for he in range(1, 25):
