@@ -698,6 +698,7 @@ def evolve_fleet(
             iso=config.iso,
             peak_demand_mw=peak_demand_used,
             elcc_curves_enabled=config.renewable_elcc_curves,
+            nqc_curves_enabled=config.caiso_nqc_accreditation,
         )
         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         # FF-2A item 2 (BLK-10): the backstop's gas_ct build draws the SAME
