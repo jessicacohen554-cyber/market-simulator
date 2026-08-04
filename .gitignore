@@ -322,6 +322,17 @@ frontend/data/forecast/program-status.js
 # docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §2.
 /results/ffr3v/**/year_*.parquet
 /results/ffr3v/**/config.yaml
+
+# FFR-4B MISO solar-revenue 2x2 (four isolated run_capacity_hindcast --out-dir
+# caches: ctl / gate / wire / both). Same class as /results/ffr3v/ — only the
+# HEAVY regenerable LP output is ignored; the slim per-arm record the handoff
+# cites (the evolution_<year>.json ledgers carrying the entry_screen_diagnostics
+# rows, the year_<year>_floor_retentions.json, and each arm's run_config/meta)
+# IS committed, because those ledgers ARE the deliverable's evidence.
+# Regenerate the parquets with the command in
+# docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md §3 / the arms README.
+/results/ffr4b/**/year_*.parquet
+/results/ffr4b/**/config.yaml
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
