@@ -1,0 +1,52 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "firm_clean_accredited_mw": 4624.808,
+  "firm_clean_mw": 6568.396,
+  "fleet_by_fuel_after": {
+    "biomass": 745.5,
+    "coal": 50.0,
+    "gas_cc": 16383.42,
+    "gas_ct": 9556.801,
+    "gas_st": 2858.8,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 745.5,
+    "coal": 50.0,
+    "gas_cc": 16383.42,
+    "gas_ct": 9556.801,
+    "gas_st": 2858.8,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "CAISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 49831.238,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.2096,
+    "wind": 0.2202
+  },
+  "reserve_margin": 0.039549,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "solar_cap_mw": 22000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 7432.168,
+  "storage_power_mw": 10077.6,
+  "thermal_additions": [],
+  "wind_cap_mw": 7000.0,
+  "year": 2026
+}
