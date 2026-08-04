@@ -819,7 +819,57 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; FRONTIER ASSESSED AND MET — `complete` RECOMMENDED **YES**, PENDING THE OWNER** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; caiso-171's ONE OUTSTANDING ITEM IS CLOSED BY MEASUREMENT, NOT BY A WALL** (keeper `2026-08-04-caiso-172-measured-path15`, CALIBRATED-WITH-CAVEATS)
+
+> **caiso-172 (2026-08-04) — THE FRONTIER QUESTION IS ANSWERED, AND THE ANSWER IS
+> YES: CAISO DOES RESOLVE SUB-TAC LOAD.** `ASSESSMENT-caiso171` §5 item 3 named
+> exactly one unresolved item gating the `complete` declaration — *does CAISO
+> publish load at NP15/ZP26 grain at all?* — and stated the stakes: if yes, limb
+> (b) of `complete` ("we have tested everything we could have") is **FALSE**
+> while the model carries a residual-fitted split. **The second branch fired.**
+> Not as a load MW series (five routes walled and re-checkable in
+> `scripts/probes/_caiso172_subtac_load_survey.py`: `SLD_FCST` is TAC-grain
+> under EVERY `market_run_id`; `ENE_SLRS`'s `TAC_NORTH/NCNTR/ECNTR/SOUTH`
+> geography merely LOOKS sub-TAC and `ATL_TAC_AREA_MAP` proves `TAC_NORTH` spans
+> Path 15, carrying Gates/Midway/Panoche/Elk Hills/Helms alongside Moss
+> Landing/Geysers; DLAPs carry price and no MW; FERC-714 still 403; EIA-930
+> sub-BA demand-only) — but as the two PUBLISHED HALVES of the split:
+> **`ATL_LDF`**'s per-pnode load distribution factors inside `DLAP_PGAE-APND`
+> (1,668 load pnodes summing to exactly 100.000) joined by substation to
+> **`ATL_PNODE_MAP`**'s authoritative `TH_NP15_GEN` / `TH_ZP26_GEN` membership —
+> **CAISO's own Path-15 geography**, i.e. the very boundary the model's
+> `NP15↔ZP26` link represents. `CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']` moves
+> **0.86/0.14 → 0.883951/0.116049**; the estimate put **17 % too much PG&E load
+> in ZP26**. **NEW MATRIX ROW `path15_load_split`, CAISO `K`** — minted
+> deliberately with **no `ScenarioConfig` field**, on the `demand_dropout_screen`
+> precedent (a rule-14 source-data correction is not a tunable); the other five
+> cells are `.` **by STRUCTURE, not transfer** (rule 25): CAISO's is the only
+> fractional load-area split in the zonal-shares layer, every other ISO's map
+> being a 1:1 `dict[str,str]`. **RULE 20 `[R-DOF]` CLOSURE, not a new parameter:**
+> `n_entries` 11 UNCHANGED, `n_residual` **9 → 8**, CAISO's ISO-specific residual
+> count **4 → 3** (it had been the highest of any ISO measured). Issue #1372 /
+> audit C-16 CLOSED. **DETERMINATION-NEUTRAL against its own bit-identical
+> same-head control** (max |Δprice| = max |Δdemand| = 0.000000 vs the caiso-166
+> keeper): CALIBRATED-WITH-CAVEATS, 0 FAILs, same 2 ledgered caveats, C3a
+> +11.5 %/+14.4 % unmoved — it costs nothing and buys a DOF. **Effect measured on
+> QUANTITIES, not asserted** (the caiso-162 lesson, and the first call-site check
+> patched the wrong binding and was caught): ZP26 served energy **−17.11 %** and
+> NP15 **+2.79 %** every year at ISO total unchanged to 0.0000 %; Path-15 N→S
+> flow **−13.2/−12.2/−12.0 %** (10.27→8.92, 12.19→10.70, 12.23→10.77 TWh), bound
+> hours 2025 **21 → 13**. **REPORTED, NOT GATED** (pre-registered as such): the
+> NP15−ZP26 basis moves TOWARD measured (+0.236→+0.333, +0.127→+0.217,
+> +0.109→+0.179 = 4.0→5.6 %, 1.5→2.5 %, 1.9→3.1 % of the measured
+> +5.947/+8.576/+5.727) — **KNOWN-OPEN 1 STAYS WIDE OPEN**, no N–S topology lever
+> is chartered off it (caiso-164 §0/§6 stands). **NEWLY OPENED AND NAMED:**
+> `MWD-TAC` (~208 MW, ~0.9 % of ISO load) is a real CAISO TAC area **absent** from
+> the committed TAC load series and from `CAISO_TAC_ZONE_WEIGHTS` — an SP15-side
+> demand-input gap, not a Path-15 object, out of scope here but a future
+> `complete` assessment should account for it. `calibration-complete.json` and
+> `holdout-freeze.json` UNTOUCHED (owner acts); 2023/2024/2025 only. Evidence:
+> `results/calibration/FINDING-caiso172-path15-load-split-2026-08-04.md`,
+> `PRECHECK-caiso172-path15-load-split-2026-08-04.md`.
+>
+> *(caiso-171's assessment block, unedited, follows.)*
 
 > **caiso-171 (2026-08-04) — FRONTIER + `complete`-DECLARATION ASSESSMENT.
 > RECOMMENDATION: **YES.**** No LP, no solve, no derive, no `ScenarioConfig` field,

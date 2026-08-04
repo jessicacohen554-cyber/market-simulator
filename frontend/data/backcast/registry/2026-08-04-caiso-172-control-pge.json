@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-caiso-172-control-pge",
+  "label": "caiso 172 control pge",
+  "date": "2026-08-04",
+  "shorthand": "caiso-172-control-pge",
+  "definition": "(CONTROL, not a candidate) caiso-172 Arm A. A SAME-HEAD, freshly solved baseline carrying the INCUMBENT residual-identified CAISO_TAC_ZONE_WEIGHTS['PGE-TAC'] = {NP15 0.86, ZP26 0.14}, so the measured arm's delta is attributable to the weight change and nothing else. It reproduces the then-incumbent keeper 2026-08-04-caiso-166-measured-dlap BIT-IDENTICALLY \u2014 max |dprice| = 0.000000 and max |ddemand| = 0.000000 over all P1 zone-hours of 2023/2024/2025 \u2014 which is what licenses reading the A/B delta as the mechanism's own effect. Determination CALIBRATED-WITH-CAVEATS, identical to the keeper criterion-for-criterion. Its ledger still carries the PGE-TAC entry as residual (n_residual 9); the measured arm 2026-08-04-caiso-172-measured-path15 closes it to 8.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-caiso-172-control-pge.js",
+  "bundle": "results/calibration/caiso172_control_pge_estimate"
+}

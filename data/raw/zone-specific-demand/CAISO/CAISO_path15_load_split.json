@@ -1,0 +1,50 @@
+{
+  "source": [
+    "OASIS ATL_LDF (DLAP_PGAE-APND)",
+    "OASIS ATL_PNODE_MAP (TH_*_GEN)"
+  ],
+  "derived_by": "scripts/data/derive_caiso_path15_load_split.py",
+  "session": "caiso-172",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "np15_weight": 0.883951,
+  "zp26_weight": 0.116049,
+  "per_year": [
+    {
+      "year": 2023,
+      "np15_pts": 86.1544,
+      "zp26_pts": 11.3723,
+      "unassigned_pts": 2.4733,
+      "ldf_sum": 100.0,
+      "n_tier1_nodes": 483,
+      "n_windows": 6,
+      "np15_weight": 0.883393,
+      "zp26_weight": 0.116607
+    },
+    {
+      "year": 2024,
+      "np15_pts": 86.5433,
+      "zp26_pts": 11.305,
+      "unassigned_pts": 2.1518,
+      "ldf_sum": 100.0,
+      "n_tier1_nodes": 488,
+      "n_windows": 8,
+      "np15_weight": 0.884464,
+      "zp26_weight": 0.115536
+    },
+    {
+      "year": 2025,
+      "np15_pts": 86.4968,
+      "zp26_pts": 11.3507,
+      "unassigned_pts": 2.1525,
+      "ldf_sum": 100.0,
+      "n_tier1_nodes": 492,
+      "n_windows": 6,
+      "np15_weight": 0.883996,
+      "zp26_weight": 0.116004
+    }
+  ]
+}
