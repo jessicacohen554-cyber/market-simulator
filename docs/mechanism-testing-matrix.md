@@ -605,11 +605,73 @@ rule-13-admissible mechanism available to carry it.
    Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
    existing four extracts.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-03-caiso156-meter-screen-b`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
-> **Keeper id corrected at caiso-161** — this heading had gone stale at
-> `2026-07-31-caiso148-nuclear-availability`; `frontend/data/backcast/keepers/CAISO.json`
-> and the matrix header both read `2026-08-03-caiso156-meter-screen-b`. (The
+> **caiso-164 (2026-08-04) — NEW LANE OPENED AND CLOSED IN ONE SESSION; KEEPER
+> PROMOTED to `2026-08-04-caiso164-zonal-loss-surface`.** The CAISO queue was
+> EMPTY of never-adjudicated items after caiso-163, so this session opened a new
+> lane — and chose it from a MEASUREMENT rather than from caiso-163 §5's named
+> hypothesis. Full record:
+> `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md`;
+> prereg `PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md` pushed at
+> `eda8ebe8` **before either arm solved**.
+>
+> **§0, no LP.** CAISO publishes the congestion/loss split directly (`LMP = MCE
+> + MCC + MCL`, MCE identical at every node to `0.00e+00`), so the hub basis is
+> EXACTLY `dMCC + dMCL`. NP15−ZP26 is **80.2/87.2/81.7 % congestion, 19.8/12.8/
+> 18.3 % loss** (+1.176/+1.102/+1.049 of +5.947/+8.576/+5.727 $/MWh). The
+> congestion majority is a **FREQUENCY-AND-DIRECTION** miss, not magnitude (freq
+> 0.035–0.054× vs magnitude 0.26–0.44×): in the top decile of measured `|dMCC|`
+> — **100/100/99.9 % of it S→N** — the pre-arm model separated in **0 of
+> 864/879/876 hours** across the whole lag sweep, and its rare separations ran
+> 99–100 % N→S, the opposite direction.
+>
+> **The arm.** `caiso_zonal_loss_surface` (matrix row `zonal_loss_surface`,
+> CAISO `U → K`) — the model was LOSSLESS, i.e. carrying the *estimate* that
+> losses are zero, so rule 14 `[R-ACCURATE]` governs. Zero free parameters: the
+> frozen MISO/PJM estimator on CAISO's own committed DAM component record. Per
+> rule 28(d) the PJM `K` / MISO `R` verdicts did **not** fill CAISO's cell.
+> **Headline is the sign:** mean NP15−ZP26 −0.0768/−0.1086/−0.0841 →
+> **+0.2362/+0.1258/+0.1113** — correct for the first time; separated hours
+> 2.7/4.7/3.2 % → **38.0/28.8/27.3 %**; hours NP15 *dearer* 3/0/1 →
+> **3,082/2,120/2,108**. Zero criterion flips, no new caveat spent.
+>
+> **TWO NEW QUEUE FACTS THIS LANE MUST CARRY FORWARD:**
+>
+> 1. **NEW DATA BLOCKER — CAISO intra-zonal congestion (FINDING §6).** The
+>    ~80–87 % congestion majority is NOT reachable from `data/raw`. §0 attributes
+>    it to an **intra-SP15** corridor: `LA_BASIN` carries 77–83 TWh of load at a
+>    0.11–0.12 belly renewable/load ratio and absorbs the entire
+>    ZP26+SP15_rest belly surplus (their own ratios are 2.1–3.5, local surplus in
+>    ~2,850 of 2,920 belly hours) through a **never-binding 12,008 MW one-way
+>    link**, so no surplus reaches Path 15 and it never binds S→N with a positive
+>    dual. Needs CAISO nodal/DLAP LMP components or published intra-SP15 transfer
+>    limits; `data/raw/lmp-data/CAISO/` has only the three `TH_*_GEN-APND` hubs
+>    hourly (the 22 nodal `DAM_LMP_GRP` zips are single days, fetched to patch a
+>    2023 hole). **NOT closable by an adder, haircut or residual-tuned value**
+>    (rules 1/13). Joins C3a-2025 (non-public hourly pumped-storage) and
+>    C3c-2023/24 (SoCalGas OFO record). **Do not charter an N–S topology lever
+>    against this residual** — §0 measured that topology is not where the
+>    recoverable component was.
+> 2. **The loss surface's two interpolated zones are the same blocker.**
+>    `LA_BASIN` and `SDGE` carry `interpolated=True` (they inherit the SP15
+>    generation hub's deviation under rule 14's reconciliation clause, since
+>    CAISO's DLAP component record is absent). A DLAP intake would close both
+>    this and item 1. The three zones carrying the quantity under test (NP15,
+>    ZP26, SP15_rest) each have their own measured hub.
+>
+> **DO-NOT-REDO additions:** `caiso_zonal_loss_surface` is now `K` — do not
+> re-test it. Its S4-2023 miss (NP15−SP15_rest −1.2265 → −1.5665, away from the
+> measured +2.337, while 2024/2025 move toward) is a **recorded carried caveat**,
+> pre-committed in prereg §5 as a measurement rather than a promotion criterion;
+> it is not an open lever.
+
+
+> **Keeper id corrected at caiso-161, re-stamped at caiso-164** — this heading
+> had gone stale at `2026-07-31-caiso148-nuclear-availability`, was corrected to
+> `2026-08-03-caiso156-meter-screen-b`, and now reads
+> `2026-08-04-caiso164-zonal-loss-surface` in step with
+> `frontend/data/backcast/keepers/CAISO.json` and the matrix header. (The
 > `check_mechanism_matrix.py` stamp guard covers the `.js` header only, so prose
 > drift here is invisible to CI — the same class of staleness nyiso-116 fixed.)
 
