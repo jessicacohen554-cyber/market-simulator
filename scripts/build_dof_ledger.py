@@ -85,6 +85,10 @@ _ISSUE_NYISO_LI_LCR_MISMATCH = (
 )
 # Root-cause issues opened during the 2026-07 scalar-remediation B-CAI-1 batch
 # (CAISO C-16 PGE-TAC Path-15 split; C-5/C-14 WECC seam forecast-path fallbacks).
+# C-16 / #1372 is CLOSED by caiso-172 (2026-08-04): the PGE-TAC split is now
+# MEASURED from OASIS ATL_LDF x ATL_PNODE_MAP, so its entry below is
+# identification="measured" and carries no root_cause. The constant is retained
+# for the historical citation only — do NOT re-attach it to a residual entry.
 _ISSUE_C16_PGE_TAC_SPLIT = (
     "https://github.com/jessicacohen554-cyber/market-simulator/issues/1372"
 )
@@ -446,26 +450,34 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
             _entry(
                 "CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']",
                 "constants.py CAISO_TAC_ZONE_WEIGHTS",
-                "residual",
+                "measured",
                 iso,
-                value={"NP15": 0.86, "ZP26": 0.14},
-                source="PG&E TAC load split across Path 15 — preserves a prior "
-                "ratio of unverified provenance (audit C-16; W1d marker). "
-                "B-CAI-1 intake attempt (2026-07-05): FERC-714 unreachable "
-                "(403/502 via proxy); CEC reachable but planning-area geography "
-                "(PG&E Bay Area / PG&E Valley) is boundary-mismatched to Path 15 "
-                "(rule-14); the direct NP15/ZP26 zonal load lives in CAISO OASIS "
-                "(unreachable at the time — needs fetch-caiso-oasis.yml). "
-                "RE-CHECKED 2026-07-07 (G-26 scalar sweep): OASIS "
-                "(oasis.caiso.com SingleZip) IS now reachable — a SLD_FCST/"
-                "ACTUAL zipped-XML load file fetched successfully, contradicting "
-                "the 2026-07-05 finding. Re-opened as actionable; still not "
-                "done (finding the NP15/ZP26 sub-TAC report + parse + validate "
-                "is a data-intake project, not this session's scope). No refit.",
-                root_cause="audit C-16: refine when NP15/ZP26 zonal load lands "
-                "via the OASIS fetch workflow (rule-23 trigger; OASIS confirmed "
-                "reachable 2026-07-07, unblocking that workflow); open: "
-                + _ISSUE_C16_PGE_TAC_SPLIT,
+                value={"NP15": 0.883951, "ZP26": 0.116049},
+                source="PG&E TAC load split across Path 15 — MEASURED "
+                "(caiso-172, 2026-08-04), closing audit C-16. Derived by "
+                "scripts/data/derive_caiso_path15_load_split.py (rule 23 "
+                "[R-FROZEN-DERIVE]) from two published OASIS Atlas reports: "
+                "ATL_LDF's per-pnode load distribution factors inside "
+                "DLAP_PGAE-APND (1,668 load pnodes summing to exactly 100.000 "
+                "— CAISO's own weighting for distributing PG&E LAP load onto "
+                "nodes), joined by substation to ATL_PNODE_MAP's authoritative "
+                "TH_NP15_GEN / TH_ZP26_GEN membership, which IS the Path-15 "
+                "geography as CAISO defines it. Two-tier assignment (direct "
+                "substation match; else the node's PG&E sub-LAP dominant hub — "
+                "SLAP_PGZP and SLAP_PGKN are 100% ZP26, the other thirteen "
+                "~100% NP15); ~2.2 residue points reported and EXCLUDED from "
+                "the normalisation; day-weighted over every live effective "
+                "window. Per-year ZP26 0.11644/0.11554/0.11600 (2023/24/25), "
+                "backcast-mean 0.116049, spread 0.0011, acceptance 10/10. "
+                "Supersedes the 0.86/0.14 estimate, which put 17% too much "
+                "PG&E load in ZP26. Artifact: data/raw/zone-specific-demand/"
+                "CAISO/CAISO_path15_load_split.{csv,json}. RECONCILIATION, not "
+                "identity (rule 14's clause): an LDF is a *typical* "
+                "distribution factor, so this is a measured STATIC scalar "
+                "replacing an assumed static scalar — NOT an hourly NP15/ZP26 "
+                "load series, which no source publishes (five alternatives "
+                "walled and re-checkable in "
+                "scripts/probes/_caiso172_subtac_load_survey.py).",
             )
         )
         # C-5 (audit): the 7,500 MW WECC_import_simultaneous cap. Superseded in
