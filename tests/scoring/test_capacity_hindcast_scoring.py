@@ -9,6 +9,7 @@ logic is verified without a real solve.
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 from scripts import score_capacity_hindcast as S
 
@@ -641,3 +642,262 @@ def test_loyo_fold_drops_year_from_both_sides():
     assert lo["folds"]["2024"]["tr10a"] == "FAIL"
     assert lo["folds"]["2025"]["tr10a"] == "FAIL"
     assert lo["holds_2of3"]["tr10a_pass"] is False  # 1/3 < 2/3
+
+
+# --------------------------------------------------------------------------- #
+# D-9(ii) additions attribution basis (FFR-3S) — decision year, not COD year
+# --------------------------------------------------------------------------- #
+def _lagged_wind_ledgers():
+    """A 2021→2025 window whose economic wind entry runs on a 2-year COD lag.
+
+    2 GW of wind is DECIDED every year 2021-2025 (10 GW of decisions inside the
+    window). With ``ENTRY_COD_LAG_YEARS['wind'] == 2`` the 2021-2023 cohorts
+    commission at 2023-2025 and land in that year's ``renewable_additions``;
+    the 2024 and 2025 cohorts commission at 2026/2027 — outside every
+    admissible hindcast window (FFR-3Q §3.2) — so the COD basis can never see
+    them. Mirrors exactly what ``evolve_fleet`` writes: a ``decided`` row in
+    the decision year, a ``commissioned`` row plus the pool addition at COD.
+    """
+    ledgers = {}
+    for year in range(2021, 2026):
+        pipeline = [
+            {
+                "tech": "wind",
+                "mw": 2000.0,
+                "zone": "Z",
+                "decision_year": year,
+                "cod_year": year + 2,
+                "seq": 0,
+                "kind": "vre",
+                "event": "decided",
+            }
+        ]
+        renewables = []
+        if year >= 2023:  # the 2021+ cohorts arriving
+            renewables = [{"zone": "Z", "tech": "wind", "mw": 2000.0}]
+            pipeline.append(
+                {
+                    "tech": "wind",
+                    "mw": 2000.0,
+                    "zone": "Z",
+                    "decision_year": year - 2,
+                    "cod_year": year,
+                    "seq": 0,
+                    "kind": "vre",
+                    "event": "commissioned",
+                }
+            )
+        ledgers[year] = {
+            "retirements": [],
+            "thermal_additions": [],
+            "renewable_additions": renewables,
+            "storage_additions": [],
+            "entry_pipeline": pipeline,
+        }
+    return ledgers
+
+
+def test_decision_basis_scores_cohorts_the_cod_basis_censors():
+    """D-9(ii): the same solve FAILS on COD and PASSES on decision basis.
+
+    10 GW of wind is decided in-window against a 10 GW actual. The COD basis
+    sees only the 6 GW that commissions by 2025 (-40%, FAIL) because the 2024
+    and 2025 decision cohorts commission in 2026/2027; the decision basis sees
+    all 10 GW (0%, PASS). This is the defect FFR-3S closes, not a band change —
+    ``BANDS['add_gw_frac_default']`` is untouched at 15%.
+    """
+    ledgers = _lagged_wind_ledgers()
+    actuals = _actuals(
+        [{"kind": "addition", "fuel": "wind", "mw": 10000, "year": 2023}]
+    )
+
+    cod = S.score_additions(
+        S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_COD),
+        actuals,
+        basis=S.ADDITIONS_BASIS_COD,
+    )
+    assert cod["by_tech"]["wind"]["model_gw"] == 6.0
+    assert cod["by_tech"]["wind"]["err_frac"] == -0.4
+    assert cod["by_tech"]["wind"]["band"] == "FAIL"
+
+    dec = S.score_additions(
+        S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_DECISION),
+        actuals,
+        basis=S.ADDITIONS_BASIS_DECISION,
+    )
+    assert dec["by_tech"]["wind"]["model_gw"] == 10.0
+    assert dec["by_tech"]["wind"]["err_frac"] == 0.0
+    assert dec["by_tech"]["wind"]["band"] == "PASS"
+
+
+def test_decision_basis_is_the_default():
+    """The shipped default is the decision basis, and the verdict says so."""
+    ledgers = _lagged_wind_ledgers()
+    actuals = _actuals(
+        [{"kind": "addition", "fuel": "wind", "mw": 10000, "year": 2023}]
+    )
+    assert S.ADDITIONS_BASIS_DEFAULT == S.ADDITIONS_BASIS_DECISION
+    default = S.score_additions(S.model_additions(ledgers), actuals)
+    assert default["basis"] == "decision"
+    assert default["by_tech"]["wind"]["model_gw"] == 10.0
+
+
+def test_decision_basis_drops_pre_window_decisions():
+    """A commissioning whose decision predates the window is not this window's.
+
+    Under the COD basis it counts (it commissioned in-window); under the
+    decision basis it is reversed out and never re-added, because no ledger in
+    the window carries its ``decided`` row.
+    """
+    ledgers = {
+        2023: {
+            "retirements": [],
+            "thermal_additions": [
+                {
+                    "unit_id": "gas_cc_new_2021c2023_0",
+                    "fuel": "gas_cc",
+                    "mw": 500.0,
+                    "zone": "Z",
+                    "source": "economic",
+                    "eia860_id": None,
+                }
+            ],
+            "renewable_additions": [],
+            "storage_additions": [],
+            "entry_pipeline": [
+                {
+                    "tech": "gas_cc",
+                    "mw": 500.0,
+                    "zone": "Z",
+                    "decision_year": 2021,
+                    "cod_year": 2023,
+                    "seq": 0,
+                    "kind": "thermal",
+                    "event": "commissioned",
+                }
+            ],
+        }
+    }
+    cod = S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_COD)
+    assert cod["mw"].sum() == 500.0
+    dec = S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_DECISION)
+    assert dec["mw"].sum() == 0.0
+
+    rec = S.additions_basis_record(ledgers, S.ADDITIONS_BASIS_DECISION)
+    assert rec["commissioned_in_window_decided_before_window_gw"] == {"gas_cc": 0.5}
+
+
+def test_bases_coincide_when_no_pipeline_rows():
+    """A lag-off (or pre-FF-2A) bundle carries no ``entry_pipeline`` key.
+
+    The absent key is backward-compatible, and with no pipeline the two bases
+    are identical by construction — including for storage, whose build channel
+    never enters the entry pipeline at all.
+    """
+    ledgers = {
+        2024: {
+            "retirements": [],
+            "thermal_additions": [
+                {"unit_id": "u1", "fuel": "gas_ct", "mw": 300.0, "zone": "Z"}
+            ],
+            "renewable_additions": [{"zone": "Z", "tech": "solar", "mw": 900.0}],
+            "storage_additions": [{"unit_id": "s1", "tech": "battery", "mw": 100.0}],
+        }
+    }
+    cod = S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_COD)
+    dec = S.model_additions(ledgers, basis=S.ADDITIONS_BASIS_DECISION)
+    assert cod["mw"].sum() == dec["mw"].sum() == 1300.0
+    assert set(dec["channel"]) == {"ledger"}
+
+
+def test_additions_basis_record_is_explicit_and_quantified():
+    """Scope item 2: the basis is readable off the sidecar, without the code."""
+    rec = S.additions_basis_record(_lagged_wind_ledgers(), S.ADDITIONS_BASIS_DECISION)
+    assert rec["additions_basis"] == "decision"
+    assert rec["ledger_year_span"] == [2021, 2025]
+    assert rec["pipeline_rows"] == {"decided": 5, "commissioned": 3}
+    # The 2024 and 2025 cohorts (COD 2026/2027) are exactly what the COD basis
+    # censored — 4 GW of decisions no admissible window can ever see.
+    assert rec["decided_in_window_cod_after_window_gw"] == {"wind": 4.0}
+    assert rec["commissioned_in_window_decided_before_window_gw"] == {}
+    assert "NOT comparable" in rec["note"]
+    # No run_config.yaml to check against ⇒ recorded as unmeasured, not "off".
+    assert rec["entry_commissioning_lag"] is None
+    assert "not verifiable" in rec["config_source"]
+
+
+def test_additions_basis_record_checked_against_solved_config():
+    """FFR-3R: the lag gate is read off the SOLVED config, never guessed."""
+    rec = S.additions_basis_record(
+        _lagged_wind_ledgers(),
+        S.ADDITIONS_BASIS_DECISION,
+        solved_config={"entry_commissioning_lag": True},
+    )
+    assert rec["entry_commissioning_lag"] is True
+    assert "config_source" not in rec
+
+
+def test_unknown_basis_rejected():
+    with pytest.raises(ValueError, match="unknown additions basis"):
+        S.model_additions({}, basis="commissioning")
+
+
+def test_retirements_scoring_untouched_by_the_basis_change():
+    """Scope item 4b: D-9(ii) is additions-only.
+
+    Retirement comparability is explicitly preserved — the retirement channel
+    has no COD lag and reads no ``entry_pipeline`` row. The same ledgers score
+    identically with the pipeline key present and absent, and ``model_additions``
+    is the only reader of it.
+    """
+    base = {
+        2023: {
+            "retirements": [
+                {"unit_id": "6183_1", "fuel": "coal", "mw": 500.0, "reason": "economic"}
+            ],
+            "thermal_additions": [],
+            "renewable_additions": [],
+            "storage_additions": [],
+        },
+        2024: {
+            "retirements": [
+                {"unit_id": "869_2", "fuel": "coal", "mw": 400.0, "reason": "announced"}
+            ],
+            "thermal_additions": [],
+            "renewable_additions": [],
+            "storage_additions": [],
+        },
+    }
+    withpipe = {
+        y: {
+            **led,
+            "entry_pipeline": [
+                {
+                    "tech": "wind",
+                    "mw": 2000.0,
+                    "zone": "Z",
+                    "decision_year": y,
+                    "cod_year": y + 2,
+                    "seq": 0,
+                    "kind": "vre",
+                    "event": "decided",
+                }
+            ],
+        }
+        for y, led in base.items()
+    }
+    actuals = _actuals(
+        [
+            {"kind": "retirement", "fuel": "coal", "mw": 500, "year": 2023},
+            {"kind": "retirement", "fuel": "coal", "mw": 400, "year": 2024},
+        ]
+    )
+    plain = S.model_retirements(base)
+    piped = S.model_retirements(withpipe)
+    pd.testing.assert_frame_equal(plain, piped)
+    assert S.score_retirements(plain, actuals) == S.score_retirements(piped, actuals)
+    assert S.score_channels(plain, actuals) == S.score_channels(piped, actuals)
+    assert S.score_tr10(plain, actuals) == S.score_tr10(piped, actuals)
+    # ...and the pipeline rows do move additions, so the fixture is not vacuous.
+    assert S.model_additions(withpipe)["mw"].sum() == 4000.0
+    assert S.model_additions(base)["mw"].sum() == 0.0
