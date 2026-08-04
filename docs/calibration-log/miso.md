@@ -3701,3 +3701,85 @@ ask, not a solve**.
 `scripts/gen_miso124_attestation.py`,
 `results/calibration/miso124_dualfuel_B/{run_config,meta,metrics,legitimacy_diagnostics,calibration_attestation}.json`.
 * Next number: **miso-125**.
+
+---
+
+## miso-125 — the CHP prime-mover rate split: `R` on the repair, redirected on the cause (2026-08-04, NO LP)
+
+**Lever.** §5.4's queue head as stamped by miso-123: miso-118's `CT_CHP`-side
+plant-level rate at 55088 Dearborn — one eGRID rate spanning two prime movers at
+a mixed facility. Rule 14 `[R-ACCURATE]` grounds only. A **grain** change inside
+the already-armed `measured_chp_heat_rates`, so no new `ScenarioConfig` field and
+no new matrix row (the miso-122 shape, rule 19 `[R-ONE-MECH]`-correct).
+
+**Outcome: adjudicated with ZERO solves, and nothing shipped.** Keeper unchanged
+at `2026-08-04-miso-124-dualfuel-rearm`; the derive script is unmodified and all
+five ISO artifacts are byte-identical.
+
+**The defect is real** (KE2): 55088 is the **only** applied multi-class plant in
+MISO — `CC_CHP` 350.0 MW + `CT_CHP` 165.0 MW = 515.0 MW, both `ok`, both carrying
+the same plant-grain **6.9573**, which is at the floor of MISO's `CC_CHP` band and
+**below the entire `CT_CHP` band**. (50973 / 56309 / 58161 are multi-class too but
+`not_unfired_topping` on every row, so they apply nothing.)
+
+**The pre-registered repair is refuted by its own stated assumption.** The
+construction — `hr_m = hr_plant × (f_m/g_m)` over CEMS power-train units, chosen
+because it preserves `Σ_m g_m·hr_m = hr_plant` exactly (measured identity error
+3.0e-05) and needs no gross-to-net *level* reconciliation — rests on the
+gross-to-net factor being common **across families at one plant** (prereg §2
+property 2). KE3 measured it **LIVE** (max |rel delta| 4.76 / 3.05 / 3.17 % vs a
+pre-declared 2 % band) but **backwards from turbine physics**: `hr_CC` 7.09 >
+`hr_CT` 6.63, matching the per-unit CEMS gross rates (GT3100 10.47, GT2100 9.94
+vs GTP1 9.55). KE4 did not rescue it either — `CT_CHP` takes **8,466 distinct
+values in 8,760 hours**, so the class is nearly a free variable, not pinned.
+
+**KE-R (not pre-registered; forced by the sign) found the cause in arithmetic.**
+eGRID `PLNGENAN` 5,259,825 net MWh ÷ CEMS power-train **gross** 3,648,140 =
+**1.4418** — net cannot exceed gross on the same machines — leaving 1,611,685 MWh
+inside eGRID and outside CEMS; the implied capacity factor on the LP's own
+515 MW is **116.6 %**. EIA-860 names the machine: **`ST1`, prime mover `CA`, Unit
+Code `SINT` shared with the two NG `CT` turbines, 250 MW, Energy Source 1
+`BFG`** — the steam part of the combined-cycle block, with no CEMS stack and no
+fleet row. `classify_plant` keys on Energy Source 1, so `BFG` falls to the
+residual `OTHER` bucket. `g_CC` is therefore structurally understated while
+`f_CC` carries the fuel, and GTP1 (standalone simple-cycle) has no such omission.
+
+**No repaired split was shipped**, because attributing `ST1`'s output would decide
+the answer and is not measurable here: CAMPD `unitType` argues the steam belongs
+to the `CC` family, but a let-down turbine on the three dark process boilers
+(7.3 M MMBtu) cannot be excluded. Rule 14's named different-boundary exception —
+not applied, and not replaced by a guess.
+
+**Successor NAMED, not chartered.** The census generalises the diagnostic (a `CA`
+generator whose Energy Source 1 is not `NG` but which shares a Unit Code with `NG`
+`CT` siblings), with presence decided against each plant's **EIA-860 totals**
+rather than block siblings: **MISO carries 290.4 MW measurably missing** — 55088
+`ST1` 250.0 MW `BFG` and 50973 Motiva `GN31`/`GN32`/`GN33` 40.4 MW `OG`. **1004
+Edwardsport is NOT a defect** (its 555 MW `SGC` steam part is represented, as
+`COAL`) — it would have been a 555 MW false positive, and only the fleet-presence
+cross-check caught it. This is a fleet-build change at a different seam and needs
+its own prereg; its A/B must re-derive 55088's rate onto the repaired denominator
+in the same change, since the two defects share one cause.
+
+**Rule duties.** Rule 15 — **no run was produced**; no LP was built, no solve
+launched, no bundle created, so no dashboard registration is owed, stated
+explicitly rather than left implicit. Rule 16 — n/a (no solve). Rule 22 —
+training years only; MISO holds no `calibration-complete` marker and no
+out-of-training year was solved, scored or read. Rule 23 `[R-FROZEN-DERIVE]` —
+the measured grounds **refuse** the change, so the derive stays frozen. Rule 25 —
+only MISO is stamped; 54912 Martinez 20.0 MW (CAISO) and 6081 Stony Brook 96.0 MW
+(NEISO, undetermined) are handed off unadjudicated. Rule 28b — the
+`measured_chp_heat_rates` MISO evidence and the §5.4 queue prose are stamped in
+this session. **Nothing is claimed for any criterion**; C7 `COAL_PRB` untouched.
+
+**Method note worth carrying.** Both pre-declared zero-solve inertness routes
+failed to fire, and the lever was still killed with zero solves — by a
+**validity** check on the construction's own written-down assumption, not by a
+magnitude. Writing the assumption into the prereg is what made it falsifiable.
+
+**Evidence:** `PREREG-miso125-chp-prime-mover-split-2026-08-04.md` (commit
+`77f18a37`), `FINDING-miso125-chp-prime-mover-split-2026-08-04.md`,
+`scripts/probes/_miso125_chp_prime_mover_split.py`,
+`_miso125_prime_mover_split.json`,
+`PROBE-miso125-chp-prime-mover-split-2026-08-04.txt`.
+* Next number: **miso-126**.
