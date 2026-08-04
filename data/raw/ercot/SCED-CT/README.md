@@ -3,9 +3,14 @@
 ERCOT MIS **NP3-965-ER "60-Day SCED Disclosure Reports"** (`reportTypeId=13052`),
 `60d_SCED_Gen_Resource_Data-*` member, **scoped to the CT fleet** — the published
 `Resource Type` codes `SCLE90` (simple-cycle large, ≥90 MW) and `SCGT90`
-(simple-cycle gas turbine, ≥90 MW). One Parquet per **delivery** month:
+(simple-cycle gas turbine, ≥90 MW). **One Parquet per delivery DAY:**
 
-    60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_ct_fullspan_<YYYY-MM>.parquet
+    60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_ct_fullspan_<YYYY-MM-DD>.parquet
+
+Per-day rather than per-month on purpose: a delivery day that never turns up in
+any publication is then **visible as a missing file**, instead of being silently
+absent from inside a month shard. `_processed_docs.json` records which
+publication documents have already been mined so a resume skips them.
 
 Every column of the published CSV is kept (188 in the current vintage): the
 `SCED1`/`SCED2 Curve-MW1..35`/`-Price1..35` energy offer curves SCED actually
@@ -60,19 +65,39 @@ delivery 2024-01-24; publication = delivery + 60 days). Gap 1 therefore *grows*
 over time: re-running this fetch later recovers fewer early-2024 days, never
 more.
 
+## Two publication quirks this intake had to handle (verified 2026-08-04)
+
+Both were discovered by the fetch failing loudly rather than producing quiet
+nonsense, and both are why the span is scanned by **publication** rather than
+by delivery day:
+
+1. **The member filename is the PUBLICATION stamp, not the delivery day.** The
+   member `60d_SCED_Gen_Resource_Data-04-OCT-24.csv` inside the 2024-10-04
+   publication carries `SCED Time Stamp` values of `08/05/2024` — delivery =
+   publication − 60. Naming an output after the member's own filename would
+   mislabel every single day by 60 days. The delivery day is therefore read
+   from the file's own stamps; the filename is only ever a cheap hint.
+2. **A publication day can carry more than one document, and a document more
+   than one delivery day.** 2024-10-04 has both the ordinary ~10 MB daily
+   document AND a ~245 MB `Supplemental_60_Day_SCED_Disclosure` holding 32
+   members. Code that took "the newest document published that day" got the
+   supplemental and then failed on its 32 members. Supplementals are detected
+   by name, are exempt from the nominal-lag skip test, and every member they
+   carry is read for its true delivery days.
+
 ## Regeneration
 
 ```bash
 python scripts/data/fetch_ercot_60day_sced_gen_resource.py \
     --delivery-range 2024-01-10 2025-12-31 \
     --resource-types SCLE90 SCGT90 \
-    --shard-by-month --skip-existing \
     --window-label ct_fullspan --out-dir data/raw/ercot/SCED-CT
 ```
 
-`--skip-existing` makes the span resumable at month granularity — an
-interrupted run re-fetches at most the month it was inside. `--zip-cache <dir>`
-additionally caches the daily zips if the same span will be re-scoped.
+Spans **resume by default** at day granularity — an interrupted run re-fetches
+only the days it had not written (pass `--no-resume` to force a full re-fetch).
+The run prints every delivery day it could NOT find in any listed publication,
+grouped into contiguous runs, so gaps are reported rather than inferred.
 
 **Contents are gitignored** (see `.gitignore`) — ~360 MB of Parquet, well past
 what the push path carries, and deterministically re-fetchable by the command
