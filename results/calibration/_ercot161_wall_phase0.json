@@ -1,0 +1,2204 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot161_afternoon_wall_phase0.py",
+  "session": "ercot-161 Phase 0 (no LP, no solve)",
+  "bundle": "results/calibration/ercot158_poolarm_B",
+  "keeper": "2026-08-03-ercot158-pool-arm",
+  "year": 2023,
+  "finding": "results/calibration/FINDING-ercot-2023-summer-underrun-2026-08-04.md"
+ },
+ "hour_set": {
+  "definition": "top-N hours of (actual_rt - model_loadweighted_price) x system_load; the FINDING-ercot-2023-summer-underrun-2026-08-04 construction",
+  "top_n": 100,
+  "lw_model": 43.08,
+  "lw_actual": 61.97,
+  "gap_share_pct": 98.3,
+  "actual_mean": 1487.84,
+  "model_mean": 441.27,
+  "lambda_mean": 1470.16,
+  "rtorpa_mean": 36.03,
+  "n_aug_sep": 83,
+  "n_actual_gt_1000": 53,
+  "month_counts": {
+   "3": 1,
+   "5": 1,
+   "6": 6,
+   "7": 6,
+   "8": 64,
+   "9": 19,
+   "10": 2,
+   "11": 1
+  },
+  "hod_counts": {
+   "12": 2,
+   "13": 7,
+   "14": 11,
+   "15": 18,
+   "16": 13,
+   "17": 19,
+   "18": 20,
+   "19": 10
+  },
+  "hours": [
+   2058,
+   2971,
+   3999,
+   4001,
+   4095,
+   4096,
+   4098,
+   4099,
+   4577,
+   4578,
+   4623,
+   4626,
+   5081,
+   5082,
+   5173,
+   5174,
+   5175,
+   5176,
+   5177,
+   5178,
+   5226,
+   5227,
+   5246,
+   5247,
+   5248,
+   5249,
+   5250,
+   5270,
+   5271,
+   5274,
+   5275,
+   5298,
+   5317,
+   5318,
+   5319,
+   5320,
+   5321,
+   5322,
+   5342,
+   5343,
+   5344,
+   5345,
+   5346,
+   5369,
+   5370,
+   5394,
+   5395,
+   5484,
+   5485,
+   5486,
+   5487,
+   5488,
+   5491,
+   5563,
+   5653,
+   5654,
+   5655,
+   5656,
+   5657,
+   5658,
+   5677,
+   5678,
+   5679,
+   5680,
+   5681,
+   5683,
+   5701,
+   5702,
+   5703,
+   5704,
+   5728,
+   5730,
+   5754,
+   5755,
+   5777,
+   5778,
+   5801,
+   5823,
+   5943,
+   5945,
+   5946,
+   5964,
+   5965,
+   5966,
+   5967,
+   5968,
+   5969,
+   5970,
+   5971,
+   5991,
+   5993,
+   6014,
+   6015,
+   6016,
+   6017,
+   6377,
+   6399,
+   7001,
+   7145,
+   7480
+  ]
+ },
+ "q1_bin_resolution": {
+  "apply_time_model_bins": {
+   "2": 1,
+   "3": 3,
+   "4": 1,
+   "5": 9,
+   "6": 86
+  },
+  "derive_time_eia930_bins": {
+   "2": 3,
+   "3": 2,
+   "5": 13,
+   "6": 82
+  },
+  "bin_agreement_pct": 93.0,
+  "n_bin6_hours_year_model": 263,
+  "n_bin6_hours_year_eia930": 263,
+  "top100_share_of_bin6_model": 0.327,
+  "gas_day_mean_at_gap_hours": 2.041,
+  "rt_ladder_bin6_usd": {
+   "CC": [
+    18.6,
+    25.4,
+    37.0,
+    75.6,
+    412.8
+   ],
+   "CT": [
+    27.6,
+    41.1,
+    78.1,
+    315.8,
+    1216.2
+   ]
+  },
+  "rt_ladder_bin5_usd": {
+   "CC": [
+    20.0,
+    26.6,
+    35.0,
+    75.4,
+    378.7
+   ],
+   "CT": [
+    25.6,
+    32.9,
+    42.2,
+    74.7,
+    356.0
+   ]
+  }
+ },
+ "q2_q3_marginal_rows": {
+  "merit_crossing": {
+   "by_class": {
+    "CC_REGULAR": 46,
+    "CT_PEAKER": 28,
+    "ST_GAS": 19,
+    "CC_CHP": 4,
+    "COAL": 2,
+    "CT_CHP": 1
+   },
+   "by_owner": {
+    "cleared_share_rt_wall": 41,
+    "base_cost": 39,
+    "conditional_peak": 20
+   },
+   "by_class_owner": {
+    "CC_CHP|conditional_peak": 4,
+    "CC_REGULAR|base_cost": 19,
+    "CC_REGULAR|cleared_share_rt_wall": 27,
+    "COAL|base_cost": 2,
+    "CT_CHP|base_cost": 1,
+    "CT_PEAKER|base_cost": 14,
+    "CT_PEAKER|cleared_share_rt_wall": 14,
+    "ST_GAS|base_cost": 3,
+    "ST_GAS|conditional_peak": 16
+   },
+   "median_bid": 161.69,
+   "mean_bid": 167.76
+  },
+  "price_bracket": {
+   "by_class": {
+    "CC_REGULAR": 48,
+    "CT_PEAKER": 26,
+    "ST_GAS": 18,
+    "CC_CHP": 7,
+    "COAL": 1
+   },
+   "by_owner": {
+    "base_cost": 48,
+    "conditional_peak": 32,
+    "cleared_share_rt_wall": 20
+   },
+   "by_class_owner": {
+    "CC_CHP|conditional_peak": 7,
+    "CC_REGULAR|base_cost": 31,
+    "CC_REGULAR|cleared_share_rt_wall": 9,
+    "CC_REGULAR|conditional_peak": 8,
+    "COAL|base_cost": 1,
+    "CT_PEAKER|base_cost": 15,
+    "CT_PEAKER|cleared_share_rt_wall": 11,
+    "ST_GAS|base_cost": 1,
+    "ST_GAS|conditional_peak": 17
+   },
+   "median_bid": 147.74,
+   "mean_bid": 441.72
+  },
+  "bracket_median_abs_dev": 0.544,
+  "merit_bid_vs_price_median_dev": 9.07,
+  "class_utilisation_at_gap_hours": {
+   "CC_CHP": 0.8746,
+   "CC_REGULAR": 0.9128,
+   "COAL": 0.9887,
+   "CT_CHP": 0.9901,
+   "CT_PEAKER": 0.7144,
+   "ST_CHP": 1.0,
+   "ST_GAS": 0.9132
+  },
+  "sidecar_class_utilisation": {
+   "CC_REGULAR": 0.9128,
+   "CC_CHP": 0.8746,
+   "CT_PEAKER": 0.7144,
+   "CT_CHP": 0.9901,
+   "ST_GAS": 0.9132,
+   "ST_CHP": 1.0
+  }
+ },
+ "q2_per_hour_merit": [
+  {
+   "hour": 2058,
+   "g": 750,
+   "bid": 43.94039577959979,
+   "class": "CC_REGULAR",
+   "suffix": "econc04",
+   "owner": "base_cost",
+   "model_price": 49.302244968132484,
+   "thermal_target_mw": 32821.6328125
+  },
+  {
+   "hour": 2971,
+   "g": 1675,
+   "bid": 30.58161750736592,
+   "class": "CC_REGULAR",
+   "suffix": "econc04",
+   "owner": "base_cost",
+   "model_price": 32.439831826263614,
+   "thermal_target_mw": 35728.35546875
+  },
+  {
+   "hour": 3999,
+   "g": 848,
+   "bid": 63.394616191999994,
+   "class": "CC_REGULAR",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 64.45481811330829,
+   "thermal_target_mw": 52729.22265625
+  },
+  {
+   "hour": 4001,
+   "g": 848,
+   "bid": 63.394616191999994,
+   "class": "CC_REGULAR",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 60.89336952801463,
+   "thermal_target_mw": 52752.8828125
+  },
+  {
+   "hour": 4095,
+   "g": 646,
+   "bid": 240.5324327885861,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 2388.822529347187,
+   "thermal_target_mw": 55273.90234375
+  },
+  {
+   "hour": 4096,
+   "g": 782,
+   "bid": 278.1405607609168,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 3636.8054925818865,
+   "thermal_target_mw": 56051.5078125
+  },
+  {
+   "hour": 4098,
+   "g": 410,
+   "bid": 324.1757505630678,
+   "class": "CC_CHP",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 3346.3838330236727,
+   "thermal_target_mw": 57276.15625
+  },
+  {
+   "hour": 4099,
+   "g": 782,
+   "bid": 278.1405607609168,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 2809.347003457319,
+   "thermal_target_mw": 56889.18359375
+  },
+  {
+   "hour": 4577,
+   "g": 906,
+   "bid": 80.12685298517611,
+   "class": "COAL",
+   "suffix": "econ",
+   "owner": "base_cost",
+   "model_price": 91.18567441374756,
+   "thermal_target_mw": 54834.5
+  },
+  {
+   "hour": 4578,
+   "g": 906,
+   "bid": 80.12685298517611,
+   "class": "COAL",
+   "suffix": "econ",
+   "owner": "base_cost",
+   "model_price": 81.95611382865911,
+   "thermal_target_mw": 54972.234375
+  },
+  {
+   "hour": 4623,
+   "g": 1001,
+   "bid": 48.554276019013486,
+   "class": "CT_CHP",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 47.59055338951002,
+   "thermal_target_mw": 49808.59765625
+  },
+  {
+   "hour": 4626,
+   "g": 1205,
+   "bid": 53.41509299072325,
+   "class": "CT_PEAKER",
+   "suffix": "econc02",
+   "owner": "base_cost",
+   "model_price": 50.76043860335608,
+   "thermal_target_mw": 50631.37109375
+  },
+  {
+   "hour": 5081,
+   "g": 579,
+   "bid": 83.7101377604863,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 80.12685298517613,
+   "thermal_target_mw": 57801.74609375
+  },
+  {
+   "hour": 5082,
+   "g": 1615,
+   "bid": 103.84203568767585,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 99.29568672655273,
+   "thermal_target_mw": 58890.52734375
+  },
+  {
+   "hour": 5173,
+   "g": 709,
+   "bid": 105.80198586839006,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 99.50807468296723,
+   "thermal_target_mw": 56999.53515625
+  },
+  {
+   "hour": 5174,
+   "g": 1603,
+   "bid": 103.59859067578142,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 99.52239524570251,
+   "thermal_target_mw": 57018.66796875
+  },
+  {
+   "hour": 5175,
+   "g": 710,
+   "bid": 105.80198586839006,
+   "class": "CC_REGULAR",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 99.50489932494729,
+   "thermal_target_mw": 57238.0859375
+  },
+  {
+   "hour": 5176,
+   "g": 1615,
+   "bid": 103.13577194587539,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 98.65018287146414,
+   "thermal_target_mw": 57121.91015625
+  },
+  {
+   "hour": 5177,
+   "g": 1761,
+   "bid": 98.64828610080471,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 98.3108753296455,
+   "thermal_target_mw": 56836.84765625
+  },
+  {
+   "hour": 5178,
+   "g": 1725,
+   "bid": 154.8402752675348,
+   "class": "ST_GAS",
+   "suffix": "peak",
+   "owner": "conditional_peak",
+   "model_price": 154.41380178117467,
+   "thermal_target_mw": 57873.3046875
+  },
+  {
+   "hour": 5226,
+   "g": 1555,
+   "bid": 115.60458454616617,
+   "class": "CT_PEAKER",
+   "suffix": "econc03",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 101.80844319370235,
+   "thermal_target_mw": 56036.109375
+  },
+  {
+   "hour": 5227,
+   "g": 592,
+   "bid": 86.6267628296455,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 84.13919427178607,
+   "thermal_target_mw": 55250.57421875
+  },
+  {
+   "hour": 5246,
+   "g": 1715,
+   "bid": 149.9863298771681,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 131.2748754573755,
+   "thermal_target_mw": 56698.8359375
+  },
+  {
+   "hour": 5247,
+   "g": 567,
+   "bid": 171.39386173800045,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 138.2477186150806,
+   "thermal_target_mw": 56876.28515625
+  },
+  {
+   "hour": 5248,
+   "g": 1715,
+   "bid": 149.9863298771681,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 129.45612783198627,
+   "thermal_target_mw": 56786.59765625
+  },
+  {
+   "hour": 5249,
+   "g": 735,
+   "bid": 125.53249798657939,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 106.36230923439781,
+   "thermal_target_mw": 56444.68359375
+  },
+  {
+   "hour": 5250,
+   "g": 1703,
+   "bid": 192.63015768581084,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 183.16862221515433,
+   "thermal_target_mw": 57439.09375
+  },
+  {
+   "hour": 5270,
+   "g": 665,
+   "bid": 147.30811496325157,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 127.9619745852777,
+   "thermal_target_mw": 56093.03125
+  },
+  {
+   "hour": 5271,
+   "g": 567,
+   "bid": 180.96003076523772,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 143.82651967318444,
+   "thermal_target_mw": 56331.09765625
+  },
+  {
+   "hour": 5274,
+   "g": 1645,
+   "bid": 143.01392861863403,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 119.88252090544431,
+   "thermal_target_mw": 56214.5078125
+  },
+  {
+   "hour": 5275,
+   "g": 1714,
+   "bid": 105.48667342990487,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 96.27704044011072,
+   "thermal_target_mw": 55634.84375
+  },
+  {
+   "hour": 5298,
+   "g": 1646,
+   "bid": 209.3669304302484,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 196.45521015956504,
+   "thermal_target_mw": 57430.83203125
+  },
+  {
+   "hour": 5317,
+   "g": 567,
+   "bid": 185.74311527885632,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 149.5614569301306,
+   "thermal_target_mw": 57425.63671875
+  },
+  {
+   "hour": 5318,
+   "g": 1350,
+   "bid": 195.336,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 183.48105200633603,
+   "thermal_target_mw": 57682.2109375
+  },
+  {
+   "hour": 5319,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 227.71091250698203,
+   "thermal_target_mw": 58070.60546875
+  },
+  {
+   "hour": 5320,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 229.03589084031606,
+   "thermal_target_mw": 58017.8515625
+  },
+  {
+   "hour": 5321,
+   "g": 1703,
+   "bid": 198.54506009875865,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 197.10417242267684,
+   "thermal_target_mw": 57750.00390625
+  },
+  {
+   "hour": 5322,
+   "g": 1317,
+   "bid": 251.60447570422562,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 289.23610968167486,
+   "thermal_target_mw": 58323.15625
+  },
+  {
+   "hour": 5342,
+   "g": 399,
+   "bid": 103.56411909987064,
+   "class": "CC_CHP",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 98.61644477314847,
+   "thermal_target_mw": 56133.0234375
+  },
+  {
+   "hour": 5343,
+   "g": 398,
+   "bid": 103.56411909987064,
+   "class": "CC_CHP",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 98.61644477314847,
+   "thermal_target_mw": 56093.2265625
+  },
+  {
+   "hour": 5344,
+   "g": 581,
+   "bid": 85.13275265483315,
+   "class": "CC_REGULAR",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 82.12069639922328,
+   "thermal_target_mw": 55205.94140625
+  },
+  {
+   "hour": 5345,
+   "g": 430,
+   "bid": 86.3790737627356,
+   "class": "CC_CHP",
+   "suffix": "peak",
+   "owner": "conditional_peak",
+   "model_price": 85.41128539064852,
+   "thermal_target_mw": 55330.80078125
+  },
+  {
+   "hour": 5346,
+   "g": 1626,
+   "bid": 127.71488740061578,
+   "class": "ST_GAS",
+   "suffix": "peak",
+   "owner": "conditional_peak",
+   "model_price": 131.03549140025,
+   "thermal_target_mw": 56623.5
+  },
+  {
+   "hour": 5369,
+   "g": 1443,
+   "bid": 75.4594634412978,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "base_cost",
+   "model_price": 74.01145881789131,
+   "thermal_target_mw": 54664.6640625
+  },
+  {
+   "hour": 5370,
+   "g": 569,
+   "bid": 86.81950415797468,
+   "class": "CC_REGULAR",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 101.24896325481998,
+   "thermal_target_mw": 55585.45703125
+  },
+  {
+   "hour": 5394,
+   "g": 615,
+   "bid": 199.8619804928663,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 173.44854533630902,
+   "thermal_target_mw": 57383.3359375
+  },
+  {
+   "hour": 5395,
+   "g": 1677,
+   "bid": 128.6062801795167,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 139.13782028101548,
+   "thermal_target_mw": 56529.09765625
+  },
+  {
+   "hour": 5484,
+   "g": 546,
+   "bid": 82.35201986730881,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 81.39266126267748,
+   "thermal_target_mw": 56816.3125
+  },
+  {
+   "hour": 5485,
+   "g": 1646,
+   "bid": 195.80093729353308,
+   "class": "ST_GAS",
+   "suffix": "peak3",
+   "owner": "conditional_peak",
+   "model_price": 193.60712790413544,
+   "thermal_target_mw": 59238.6171875
+  },
+  {
+   "hour": 5486,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 327.699930686034,
+   "thermal_target_mw": 59479.203125
+  },
+  {
+   "hour": 5487,
+   "g": 653,
+   "bid": 266.505627099006,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 1242.1597653561926,
+   "thermal_target_mw": 60232.0546875
+  },
+  {
+   "hour": 5488,
+   "g": 1567,
+   "bid": 362.8365,
+   "class": "CT_PEAKER",
+   "suffix": "econc03",
+   "owner": "base_cost",
+   "model_price": 2485.461146498731,
+   "thermal_target_mw": 61147.203125
+  },
+  {
+   "hour": 5491,
+   "g": 1080,
+   "bid": 250.6099044600943,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 2372.1493964851325,
+   "thermal_target_mw": 60007.5859375
+  },
+  {
+   "hour": 5563,
+   "g": 529,
+   "bid": 235.3883718201464,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 240.36633699091206,
+   "thermal_target_mw": 59546.0546875
+  },
+  {
+   "hour": 5653,
+   "g": 721,
+   "bid": 115.1564902505435,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 100.89261948564314,
+   "thermal_target_mw": 58314.3359375
+  },
+  {
+   "hour": 5654,
+   "g": 1207,
+   "bid": 154.83585352112695,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 152.01746001782362,
+   "thermal_target_mw": 59097.09375
+  },
+  {
+   "hour": 5655,
+   "g": 646,
+   "bid": 245.65014412451347,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 234.59683971839834,
+   "thermal_target_mw": 59854.515625
+  },
+  {
+   "hour": 5656,
+   "g": 646,
+   "bid": 245.65014412451347,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 1107.9280575792104,
+   "thermal_target_mw": 60118.015625
+  },
+  {
+   "hour": 5657,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 671.4782477769133,
+   "thermal_target_mw": 60247.6015625
+  },
+  {
+   "hour": 5658,
+   "g": 1583,
+   "bid": 324.6007510333333,
+   "class": "CT_PEAKER",
+   "suffix": "peak2",
+   "owner": "base_cost",
+   "model_price": 2402.159280538136,
+   "thermal_target_mw": 61255.74609375
+  },
+  {
+   "hour": 5677,
+   "g": 529,
+   "bid": 237.81505606571488,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 202.44497714382044,
+   "thermal_target_mw": 59100.26953125
+  },
+  {
+   "hour": 5678,
+   "g": 1419,
+   "bid": 238.4443751173705,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 211.96241381412878,
+   "thermal_target_mw": 59131.5
+  },
+  {
+   "hour": 5679,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 239.7418949013482,
+   "thermal_target_mw": 59441.1953125
+  },
+  {
+   "hour": 5680,
+   "g": 646,
+   "bid": 250.76785546044084,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 665.1857276891207,
+   "thermal_target_mw": 59691.83984375
+  },
+  {
+   "hour": 5681,
+   "g": 782,
+   "bid": 289.97632930393456,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 1675.0659624457571,
+   "thermal_target_mw": 60361.03515625
+  },
+  {
+   "hour": 5683,
+   "g": 1565,
+   "bid": 308.07270000000005,
+   "class": "CT_PEAKER",
+   "suffix": "econc01",
+   "owner": "base_cost",
+   "model_price": 2058.1450777185078,
+   "thermal_target_mw": 60733.37890625
+  },
+  {
+   "hour": 5701,
+   "g": 468,
+   "bid": 208.4087006830954,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 180.33771545154062,
+   "thermal_target_mw": 59494.671875
+  },
+  {
+   "hour": 5702,
+   "g": 1080,
+   "bid": 238.4443751173713,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 238.07803725340196,
+   "thermal_target_mw": 59674.3828125
+  },
+  {
+   "hour": 5703,
+   "g": 646,
+   "bid": 250.76785546044084,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 662.3054576288324,
+   "thermal_target_mw": 60034.73046875
+  },
+  {
+   "hour": 5704,
+   "g": 1104,
+   "bid": 238.44437511737127,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 238.46256654286867,
+   "thermal_target_mw": 59786.75
+  },
+  {
+   "hour": 5728,
+   "g": 529,
+   "bid": 237.81505606571488,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 203.0949864506445,
+   "thermal_target_mw": 58621.91796875
+  },
+  {
+   "hour": 5730,
+   "g": 1563,
+   "bid": 246.636,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 243.15634893361758,
+   "thermal_target_mw": 59019.359375
+  },
+  {
+   "hour": 5754,
+   "g": 1726,
+   "bid": 156.2392635736397,
+   "class": "ST_GAS",
+   "suffix": "peak2",
+   "owner": "conditional_peak",
+   "model_price": 135.74773348788852,
+   "thermal_target_mw": 57484.5703125
+  },
+  {
+   "hour": 5755,
+   "g": 1602,
+   "bid": 104.75474383812313,
+   "class": "ST_GAS",
+   "suffix": "peak",
+   "owner": "conditional_peak",
+   "model_price": 99.99597145975417,
+   "thermal_target_mw": 56895.5
+  },
+  {
+   "hour": 5777,
+   "g": 579,
+   "bid": 72.86050802139064,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 69.71608455308566,
+   "thermal_target_mw": 53905.546875
+  },
+  {
+   "hour": 5778,
+   "g": 792,
+   "bid": 97.134839923054,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 91.13726739661513,
+   "thermal_target_mw": 55061.4296875
+  },
+  {
+   "hour": 5801,
+   "g": 653,
+   "bid": 256.1558940077825,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 1203.291987615757,
+   "thermal_target_mw": 55707.1953125
+  },
+  {
+   "hour": 5823,
+   "g": 1747,
+   "bid": 166.1259678403758,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 161.833691808098,
+   "thermal_target_mw": 55424.7734375
+  },
+  {
+   "hour": 5943,
+   "g": 1317,
+   "bid": 70.14450897931732,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 68.13273308290778,
+   "thermal_target_mw": 55090.69140625
+  },
+  {
+   "hour": 5945,
+   "g": 1151,
+   "bid": 79.01708450704216,
+   "class": "CT_PEAKER",
+   "suffix": "econc03",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 81.72553642621982,
+   "thermal_target_mw": 55307.0703125
+  },
+  {
+   "hour": 5946,
+   "g": 594,
+   "bid": 87.19757008902157,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 94.69468269775899,
+   "thermal_target_mw": 57059.62890625
+  },
+  {
+   "hour": 5964,
+   "g": 759,
+   "bid": 85.74903798277467,
+   "class": "CC_REGULAR",
+   "suffix": "peak",
+   "owner": "base_cost",
+   "model_price": 83.73676383876811,
+   "thermal_target_mw": 57307.109375
+  },
+  {
+   "hour": 5965,
+   "g": 1644,
+   "bid": 137.1276094563063,
+   "class": "ST_GAS",
+   "suffix": "peak",
+   "owner": "conditional_peak",
+   "model_price": 125.8054375820202,
+   "thermal_target_mw": 58651.625
+  },
+  {
+   "hour": 5966,
+   "g": 615,
+   "bid": 188.49542236057064,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 181.76302130023288,
+   "thermal_target_mw": 59388.4453125
+  },
+  {
+   "hour": 5967,
+   "g": 1419,
+   "bid": 242.09403392018743,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 655.4866280930297,
+   "thermal_target_mw": 59838.390625
+  },
+  {
+   "hour": 5968,
+   "g": 1152,
+   "bid": 242.09403392018717,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 244.10453536806318,
+   "thermal_target_mw": 59899.734375
+  },
+  {
+   "hour": 5969,
+   "g": 1080,
+   "bid": 242.0940339201882,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 248.18200625031395,
+   "thermal_target_mw": 60027.1328125
+  },
+  {
+   "hour": 5970,
+   "g": 751,
+   "bid": 286.23976142239525,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 2256.24807261855,
+   "thermal_target_mw": 61050.734375
+  },
+  {
+   "hour": 5971,
+   "g": 1298,
+   "bid": 195.13079999999997,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 651.9684938654395,
+   "thermal_target_mw": 59742.984375
+  },
+  {
+   "hour": 5991,
+   "g": 1188,
+   "bid": 157.25516373239458,
+   "class": "CT_PEAKER",
+   "suffix": "econc04",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 144.42417636143543,
+   "thermal_target_mw": 58306.1171875
+  },
+  {
+   "hour": 5993,
+   "g": 646,
+   "bid": 249.488427626459,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 258.41905945771134,
+   "thermal_target_mw": 59697.890625
+  },
+  {
+   "hour": 6014,
+   "g": 1033,
+   "bid": 195.336,
+   "class": "CT_PEAKER",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 186.79300754144265,
+   "thermal_target_mw": 58468.578125
+  },
+  {
+   "hour": 6015,
+   "g": 529,
+   "bid": 246.30845092520468,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 656.6737356527929,
+   "thermal_target_mw": 58759.10546875
+  },
+  {
+   "hour": 6016,
+   "g": 1399,
+   "bid": 205.8686802930668,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 205.96525432973675,
+   "thermal_target_mw": 58758.4453125
+  },
+  {
+   "hour": 6017,
+   "g": 468,
+   "bid": 215.85186856463446,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 197.38218880709124,
+   "thermal_target_mw": 58869.359375
+  },
+  {
+   "hour": 6377,
+   "g": 761,
+   "bid": 87.39519915593024,
+   "class": "CC_REGULAR",
+   "suffix": "peak3",
+   "owner": "base_cost",
+   "model_price": 85.91864498853762,
+   "thermal_target_mw": 53343.1953125
+  },
+  {
+   "hour": 6399,
+   "g": 579,
+   "bid": 77.59644104278104,
+   "class": "CC_REGULAR",
+   "suffix": "econc05",
+   "owner": "cleared_share_rt_wall",
+   "model_price": 76.32304317930176,
+   "thermal_target_mw": 52922.91796875
+  },
+  {
+   "hour": 7001,
+   "g": 1658,
+   "bid": 40.98391828327269,
+   "class": "ST_GAS",
+   "suffix": "committed",
+   "owner": "base_cost",
+   "model_price": 41.554328541410385,
+   "thermal_target_mw": 43453.41796875
+  },
+  {
+   "hour": 7145,
+   "g": 1650,
+   "bid": 38.74234414681454,
+   "class": "ST_GAS",
+   "suffix": "econ",
+   "owner": "base_cost",
+   "model_price": 38.63635178404179,
+   "thermal_target_mw": 38247.359375
+  },
+  {
+   "hour": 7480,
+   "g": 1663,
+   "bid": 44.005053578715064,
+   "class": "ST_GAS",
+   "suffix": "econc04",
+   "owner": "base_cost",
+   "model_price": 43.28511650419348,
+   "thermal_target_mw": 35817.0625
+  }
+ ],
+ "q4_ceiling_rungs": {
+  "stack_census": {
+   "bands": {
+    "0-120": {
+     "mean_mw": 56392.9,
+     "by_owner_mean_mw": {
+      "base_cost": 49480.9,
+      "conditional_peak": 881.8,
+      "cleared_share_rt_wall": 6030.2,
+      "faststart_pool": 0.0
+     }
+    },
+    "120-300": {
+     "mean_mw": 2474.3,
+     "by_owner_mean_mw": {
+      "base_cost": 470.5,
+      "conditional_peak": 482.5,
+      "cleared_share_rt_wall": 1515.6,
+      "faststart_pool": 5.6
+     }
+    },
+    "300-500": {
+     "mean_mw": 1114.2,
+     "by_owner_mean_mw": {
+      "base_cost": 275.5,
+      "conditional_peak": 295.1,
+      "cleared_share_rt_wall": 371.7,
+      "faststart_pool": 171.9
+     }
+    },
+    "500-1000": {
+     "mean_mw": 916.1,
+     "by_owner_mean_mw": {
+      "base_cost": 0.0,
+      "conditional_peak": 385.8,
+      "cleared_share_rt_wall": 507.3,
+      "faststart_pool": 23.0
+     }
+    },
+    "1000-2000": {
+     "mean_mw": 433.0,
+     "by_owner_mean_mw": {
+      "base_cost": 0.0,
+      "conditional_peak": 328.5,
+      "cleared_share_rt_wall": 23.8,
+      "faststart_pool": 80.7
+     }
+    },
+    "2000-3000": {
+     "mean_mw": 377.6,
+     "by_owner_mean_mw": {
+      "base_cost": 10.6,
+      "conditional_peak": 334.1,
+      "cleared_share_rt_wall": 12.8,
+      "faststart_pool": 20.1
+     }
+    },
+    "3000-inf": {
+     "mean_mw": 416.1,
+     "by_owner_mean_mw": {
+      "base_cost": 0.0,
+      "conditional_peak": 407.9,
+      "cleared_share_rt_wall": 8.2,
+      "faststart_pool": 0.0
+     }
+    }
+   },
+   "max_bid_by_group": {
+    "CC_CHP": 4780.78,
+    "CC_REGULAR": 4751.74,
+    "COAL": 80.13,
+    "CT_CHP": 53.21,
+    "CT_PEAKER": 4405.81,
+    "ST_CHP": 17.91,
+    "ST_GAS": 4772.81
+   }
+  },
+  "rel_clamp": {
+   "CC_REGULAR": {
+    "boundary_bin6": 0.6145,
+    "rt_ladder_bin6_mult": [
+     9.12,
+     12.45,
+     18.14,
+     37.07,
+     202.32
+    ],
+    "rt_ladder_bin6_usd_at_gap_gas": [
+     18.6,
+     25.4,
+     37.0,
+     75.6,
+     412.8
+    ],
+    "n_econ_rows": 252,
+    "n_above_boundary": 126,
+    "mw_above_boundary": 10480.0,
+    "mw_by_rel_segment": {
+     "0-0.1": 1473.2,
+     "0.1-0.3": 2367.0,
+     "0.3-0.5": 2773.9,
+     "0.5-0.7": 2059.9,
+     "0.7-0.9": 1800.0,
+     "0.9-1.0": 6.0
+    },
+    "max_rel": 0.9027,
+    "max_mult_reached": 202.32,
+    "max_target_usd": 412.8,
+    "mw_reaching_p90_rung": 6.0,
+    "mw_weighted_mean_mult": 33.99
+   },
+   "CT_PEAKER": {
+    "boundary_bin6": 0.4675,
+    "rt_ladder_bin6_mult": [
+     13.53,
+     20.15,
+     38.27,
+     154.74,
+     596.0
+    ],
+    "rt_ladder_bin6_usd_at_gap_gas": [
+     27.6,
+     41.1,
+     78.1,
+     315.8,
+     1216.2
+    ],
+    "n_econ_rows": 336,
+    "n_above_boundary": 302,
+    "mw_above_boundary": 3869.0,
+    "mw_by_rel_segment": {
+     "0-0.1": 390.1,
+     "0.1-0.3": 870.9,
+     "0.3-0.5": 1040.6,
+     "0.5-0.7": 811.9,
+     "0.7-0.9": 740.6,
+     "0.9-1.0": 15.0
+    },
+    "max_rel": 0.9192,
+    "max_mult_reached": 596.0,
+    "max_target_usd": 1216.2,
+    "mw_reaching_p90_rung": 15.0,
+    "mw_weighted_mean_mult": 102.16
+   }
+  },
+  "pool_bin6": {
+   "pool_frac": 0.0353,
+   "boundary": 0.9647,
+   "ladder_usd_at_gap_gas": [
+    171.9,
+    284.4,
+    350.5,
+    966.7,
+    1164.5
+   ]
+  }
+ },
+ "part_c_corpus": {
+  "n_files_read": 315,
+  "gap_hours_ladder": {
+   "CC": {
+    "quantiles": {
+     "p10": 8.13,
+     "p30": 10.33,
+     "p50": 13.81,
+     "p70": 31.34,
+     "p90": 197.0,
+     "p95": 602.94,
+     "p99": 2463.05
+    },
+    "max_mult": 3424.66,
+    "n_intervals": 400,
+    "n_hours": 100,
+    "mean_spare_gw": 0.354
+   },
+   "CT": {
+    "quantiles": {
+     "p10": 12.73,
+     "p30": 33.04,
+     "p50": 94.67,
+     "p70": 481.67,
+     "p90": 2463.05,
+     "p95": 2550.51,
+     "p99": 2604.17
+    },
+    "max_mult": 3424.66,
+    "n_intervals": 400,
+    "n_hours": 100,
+    "mean_spare_gw": 0.101
+   }
+  },
+  "bin6_rest_ladder": {
+   "CC": {
+    "quantiles": {
+     "p10": 8.87,
+     "p30": 12.5,
+     "p50": 21.78,
+     "p70": 37.69,
+     "p90": 194.41,
+     "p95": 628.62,
+     "p99": 2463.05
+    },
+    "max_mult": 2659.57,
+    "n_intervals": 708,
+    "n_hours": 177,
+    "mean_spare_gw": 0.477
+   },
+   "CT": {
+    "quantiles": {
+     "p10": 13.48,
+     "p30": 21.0,
+     "p50": 38.28,
+     "p70": 162.28,
+     "p90": 738.92,
+     "p95": 2463.05,
+     "p99": 2577.32
+    },
+    "max_mult": 2659.57,
+    "n_intervals": 708,
+    "n_hours": 177,
+    "mean_spare_gw": 0.216
+   }
+  },
+  "per_hour_gap": [
+   {
+    "hoy": 2058,
+    "spare_p10_mult": 11.05,
+    "spare_p50_mult": 48.7,
+    "lambda_over_gas": 456.4,
+    "spare_gw": 0.502
+   },
+   {
+    "hoy": 2971,
+    "spare_p10_mult": 14.3,
+    "spare_p50_mult": 99.18,
+    "lambda_over_gas": 349.07,
+    "spare_gw": 0.272
+   },
+   {
+    "hoy": 3999,
+    "spare_p10_mult": 8.83,
+    "spare_p50_mult": 62.03,
+    "lambda_over_gas": 301.97,
+    "spare_gw": 0.328
+   },
+   {
+    "hoy": 4001,
+    "spare_p10_mult": 11.9,
+    "spare_p50_mult": 46.06,
+    "lambda_over_gas": 319.69,
+    "spare_gw": 0.697
+   },
+   {
+    "hoy": 4095,
+    "spare_p10_mult": -10.64,
+    "spare_p50_mult": 12.14,
+    "lambda_over_gas": 2222.45,
+    "spare_gw": 0.134
+   },
+   {
+    "hoy": 4096,
+    "spare_p10_mult": -10.64,
+    "spare_p50_mult": 11.6,
+    "lambda_over_gas": 2277.34,
+    "spare_gw": 0.245
+   },
+   {
+    "hoy": 4098,
+    "spare_p10_mult": 33.18,
+    "spare_p50_mult": 958.06,
+    "lambda_over_gas": 2532.21,
+    "spare_gw": 0.214
+   },
+   {
+    "hoy": 4099,
+    "spare_p10_mult": 39.89,
+    "spare_p50_mult": 191.75,
+    "lambda_over_gas": 1526.83,
+    "spare_gw": 0.357
+   },
+   {
+    "hoy": 4577,
+    "spare_p10_mult": 10.13,
+    "spare_p50_mult": 45.32,
+    "lambda_over_gas": 295.86,
+    "spare_gw": 0.825
+   },
+   {
+    "hoy": 4578,
+    "spare_p10_mult": 8.04,
+    "spare_p50_mult": 36.59,
+    "lambda_over_gas": 979.58,
+    "spare_gw": 0.387
+   },
+   {
+    "hoy": 4623,
+    "spare_p10_mult": 9.28,
+    "spare_p50_mult": 16.87,
+    "lambda_over_gas": 308.42,
+    "spare_gw": 1.353
+   },
+   {
+    "hoy": 4626,
+    "spare_p10_mult": 7.73,
+    "spare_p50_mult": 13.79,
+    "lambda_over_gas": 318.03,
+    "spare_gw": 1.375
+   },
+   {
+    "hoy": 5081,
+    "spare_p10_mult": 10.15,
+    "spare_p50_mult": 29.22,
+    "lambda_over_gas": 645.59,
+    "spare_gw": 0.52
+   },
+   {
+    "hoy": 5082,
+    "spare_p10_mult": 12.02,
+    "spare_p50_mult": 36.06,
+    "lambda_over_gas": 1120.63,
+    "spare_gw": 0.377
+   },
+   {
+    "hoy": 5173,
+    "spare_p10_mult": 9.5,
+    "spare_p50_mult": 22.67,
+    "lambda_over_gas": 260.7,
+    "spare_gw": 0.52
+   },
+   {
+    "hoy": 5174,
+    "spare_p10_mult": 9.36,
+    "spare_p50_mult": 12.19,
+    "lambda_over_gas": 463.64,
+    "spare_gw": 0.634
+   },
+   {
+    "hoy": 5175,
+    "spare_p10_mult": 9.55,
+    "spare_p50_mult": 14.45,
+    "lambda_over_gas": 1017.44,
+    "spare_gw": 0.401
+   },
+   {
+    "hoy": 5176,
+    "spare_p10_mult": 9.5,
+    "spare_p50_mult": 14.45,
+    "lambda_over_gas": 656.23,
+    "spare_gw": 0.381
+   },
+   {
+    "hoy": 5177,
+    "spare_p10_mult": 9.33,
+    "spare_p50_mult": 10.3,
+    "lambda_over_gas": 697.41,
+    "spare_gw": 0.482
+   },
+   {
+    "hoy": 5178,
+    "spare_p10_mult": 8.71,
+    "spare_p50_mult": 9.85,
+    "lambda_over_gas": 633.27,
+    "spare_gw": 0.617
+   },
+   {
+    "hoy": 5226,
+    "spare_p10_mult": 1.38,
+    "spare_p50_mult": 10.12,
+    "lambda_over_gas": 741.4,
+    "spare_gw": 0.986
+   },
+   {
+    "hoy": 5227,
+    "spare_p10_mult": 7.25,
+    "spare_p50_mult": 11.95,
+    "lambda_over_gas": 272.73,
+    "spare_gw": 1.143
+   },
+   {
+    "hoy": 5246,
+    "spare_p10_mult": 8.4,
+    "spare_p50_mult": 18.99,
+    "lambda_over_gas": 244.5,
+    "spare_gw": 0.558
+   },
+   {
+    "hoy": 5247,
+    "spare_p10_mult": 8.4,
+    "spare_p50_mult": 11.82,
+    "lambda_over_gas": 638.34,
+    "spare_gw": 0.561
+   },
+   {
+    "hoy": 5248,
+    "spare_p10_mult": 1.01,
+    "spare_p50_mult": 9.53,
+    "lambda_over_gas": 369.51,
+    "spare_gw": 1.107
+   },
+   {
+    "hoy": 5249,
+    "spare_p10_mult": 8.41,
+    "spare_p50_mult": 11.82,
+    "lambda_over_gas": 313.62,
+    "spare_gw": 1.116
+   },
+   {
+    "hoy": 5250,
+    "spare_p10_mult": 6.9,
+    "spare_p50_mult": 9.53,
+    "lambda_over_gas": 494.77,
+    "spare_gw": 0.961
+   },
+   {
+    "hoy": 5270,
+    "spare_p10_mult": 9.27,
+    "spare_p50_mult": 36.3,
+    "lambda_over_gas": 385.56,
+    "spare_gw": 0.553
+   },
+   {
+    "hoy": 5271,
+    "spare_p10_mult": 7.63,
+    "spare_p50_mult": 13.15,
+    "lambda_over_gas": 237.4,
+    "spare_gw": 1.02
+   },
+   {
+    "hoy": 5274,
+    "spare_p10_mult": 1.33,
+    "spare_p50_mult": 11.01,
+    "lambda_over_gas": 703.74,
+    "spare_gw": 0.957
+   },
+   {
+    "hoy": 5275,
+    "spare_p10_mult": 7.95,
+    "spare_p50_mult": 11.92,
+    "lambda_over_gas": 181.64,
+    "spare_gw": 1.22
+   },
+   {
+    "hoy": 5298,
+    "spare_p10_mult": 8.12,
+    "spare_p50_mult": 10.33,
+    "lambda_over_gas": 512.44,
+    "spare_gw": 0.649
+   },
+   {
+    "hoy": 5317,
+    "spare_p10_mult": 9.03,
+    "spare_p50_mult": 16.58,
+    "lambda_over_gas": 662.69,
+    "spare_gw": 0.395
+   },
+   {
+    "hoy": 5318,
+    "spare_p10_mult": 5.25,
+    "spare_p50_mult": 14.29,
+    "lambda_over_gas": 1417.87,
+    "spare_gw": 0.417
+   },
+   {
+    "hoy": 5319,
+    "spare_p10_mult": 5.27,
+    "spare_p50_mult": 10.36,
+    "lambda_over_gas": 1254.71,
+    "spare_gw": 0.927
+   },
+   {
+    "hoy": 5320,
+    "spare_p10_mult": 8.89,
+    "spare_p50_mult": 10.64,
+    "lambda_over_gas": 904.7,
+    "spare_gw": 0.771
+   },
+   {
+    "hoy": 5321,
+    "spare_p10_mult": 8.41,
+    "spare_p50_mult": 11.88,
+    "lambda_over_gas": 399.83,
+    "spare_gw": 1.088
+   },
+   {
+    "hoy": 5322,
+    "spare_p10_mult": 8.77,
+    "spare_p50_mult": 10.73,
+    "lambda_over_gas": 278.23,
+    "spare_gw": 0.82
+   },
+   {
+    "hoy": 5342,
+    "spare_p10_mult": 9.57,
+    "spare_p50_mult": 28.91,
+    "lambda_over_gas": 308.66,
+    "spare_gw": 0.571
+   },
+   {
+    "hoy": 5343,
+    "spare_p10_mult": 1.16,
+    "spare_p50_mult": 9.81,
+    "lambda_over_gas": 484.75,
+    "spare_gw": 0.74
+   },
+   {
+    "hoy": 5344,
+    "spare_p10_mult": 1.16,
+    "spare_p50_mult": 8.57,
+    "lambda_over_gas": 721.58,
+    "spare_gw": 0.934
+   },
+   {
+    "hoy": 5345,
+    "spare_p10_mult": 8.58,
+    "spare_p50_mult": 12.8,
+    "lambda_over_gas": 320.99,
+    "spare_gw": 0.677
+   },
+   {
+    "hoy": 5346,
+    "spare_p10_mult": 8.13,
+    "spare_p50_mult": 11.85,
+    "lambda_over_gas": 590.83,
+    "spare_gw": 0.771
+   },
+   {
+    "hoy": 5369,
+    "spare_p10_mult": 8.38,
+    "spare_p50_mult": 20.57,
+    "lambda_over_gas": 315.74,
+    "spare_gw": 0.943
+   },
+   {
+    "hoy": 5370,
+    "spare_p10_mult": 11.75,
+    "spare_p50_mult": 17.15,
+    "lambda_over_gas": 666.66,
+    "spare_gw": 0.638
+   },
+   {
+    "hoy": 5394,
+    "spare_p10_mult": 11.61,
+    "spare_p50_mult": 28.54,
+    "lambda_over_gas": 323.96,
+    "spare_gw": 0.537
+   },
+   {
+    "hoy": 5395,
+    "spare_p10_mult": 11.61,
+    "spare_p50_mult": 21.9,
+    "lambda_over_gas": 296.28,
+    "spare_gw": 0.677
+   },
+   {
+    "hoy": 5484,
+    "spare_p10_mult": 12.21,
+    "spare_p50_mult": 36.95,
+    "lambda_over_gas": 270.78,
+    "spare_gw": 0.313
+   },
+   {
+    "hoy": 5485,
+    "spare_p10_mult": 9.25,
+    "spare_p50_mult": 26.2,
+    "lambda_over_gas": 1202.47,
+    "spare_gw": 0.101
+   },
+   {
+    "hoy": 5486,
+    "spare_p10_mult": 2.84,
+    "spare_p50_mult": 46.88,
+    "lambda_over_gas": 1030.74,
+    "spare_gw": 0.14
+   },
+   {
+    "hoy": 5487,
+    "spare_p10_mult": 11.36,
+    "spare_p50_mult": 467.16,
+    "lambda_over_gas": 1122.61,
+    "spare_gw": 0.106
+   },
+   {
+    "hoy": 5488,
+    "spare_p10_mult": 12.21,
+    "spare_p50_mult": 2426.7,
+    "lambda_over_gas": 1809.84,
+    "spare_gw": 0.054
+   },
+   {
+    "hoy": 5491,
+    "spare_p10_mult": 15.77,
+    "spare_p50_mult": 29.13,
+    "lambda_over_gas": 453.02,
+    "spare_gw": 0.285
+   },
+   {
+    "hoy": 5563,
+    "spare_p10_mult": 12.78,
+    "spare_p50_mult": 594.42,
+    "lambda_over_gas": 314.73,
+    "spare_gw": 0.229
+   },
+   {
+    "hoy": 5653,
+    "spare_p10_mult": 13.76,
+    "spare_p50_mult": 39.07,
+    "lambda_over_gas": 493.63,
+    "spare_gw": 0.267
+   },
+   {
+    "hoy": 5654,
+    "spare_p10_mult": 14.09,
+    "spare_p50_mult": 41.15,
+    "lambda_over_gas": 860.87,
+    "spare_gw": 0.182
+   },
+   {
+    "hoy": 5655,
+    "spare_p10_mult": 11.62,
+    "spare_p50_mult": 39.56,
+    "lambda_over_gas": 862.34,
+    "spare_gw": 0.163
+   },
+   {
+    "hoy": 5656,
+    "spare_p10_mult": 11.33,
+    "spare_p50_mult": 45.04,
+    "lambda_over_gas": 997.43,
+    "spare_gw": 0.084
+   },
+   {
+    "hoy": 5657,
+    "spare_p10_mult": 25.97,
+    "spare_p50_mult": 40.62,
+    "lambda_over_gas": 583.92,
+    "spare_gw": 0.22
+   },
+   {
+    "hoy": 5658,
+    "spare_p10_mult": 9.29,
+    "spare_p50_mult": 2603.65,
+    "lambda_over_gas": 1507.87,
+    "spare_gw": 0.064
+   },
+   {
+    "hoy": 5677,
+    "spare_p10_mult": 8.52,
+    "spare_p50_mult": 38.28,
+    "lambda_over_gas": 380.91,
+    "spare_gw": 0.359
+   },
+   {
+    "hoy": 5678,
+    "spare_p10_mult": 7.73,
+    "spare_p50_mult": 18.16,
+    "lambda_over_gas": 451.95,
+    "spare_gw": 0.193
+   },
+   {
+    "hoy": 5679,
+    "spare_p10_mult": 12.56,
+    "spare_p50_mult": 38.32,
+    "lambda_over_gas": 445.36,
+    "spare_gw": 0.139
+   },
+   {
+    "hoy": 5680,
+    "spare_p10_mult": 10.88,
+    "spare_p50_mult": 13.39,
+    "lambda_over_gas": 940.27,
+    "spare_gw": 0.086
+   },
+   {
+    "hoy": 5681,
+    "spare_p10_mult": 12.68,
+    "spare_p50_mult": 1822.74,
+    "lambda_over_gas": 1330.47,
+    "spare_gw": 0.033
+   },
+   {
+    "hoy": 5683,
+    "spare_p10_mult": 21.04,
+    "spare_p50_mult": 2550.51,
+    "lambda_over_gas": 965.85,
+    "spare_gw": 0.06
+   },
+   {
+    "hoy": 5701,
+    "spare_p10_mult": 8.25,
+    "spare_p50_mult": 45.77,
+    "lambda_over_gas": 1125.24,
+    "spare_gw": 0.091
+   },
+   {
+    "hoy": 5702,
+    "spare_p10_mult": 10.53,
+    "spare_p50_mult": 38.28,
+    "lambda_over_gas": 461.38,
+    "spare_gw": 0.194
+   },
+   {
+    "hoy": 5703,
+    "spare_p10_mult": 9.61,
+    "spare_p50_mult": 38.27,
+    "lambda_over_gas": 887.16,
+    "spare_gw": 0.056
+   },
+   {
+    "hoy": 5704,
+    "spare_p10_mult": 33.85,
+    "spare_p50_mult": 38.31,
+    "lambda_over_gas": 376.78,
+    "spare_gw": 0.177
+   },
+   {
+    "hoy": 5728,
+    "spare_p10_mult": 38.27,
+    "spare_p50_mult": 45.49,
+    "lambda_over_gas": 349.53,
+    "spare_gw": 0.174
+   },
+   {
+    "hoy": 5730,
+    "spare_p10_mult": 423.98,
+    "spare_p50_mult": 493.55,
+    "lambda_over_gas": 316.23,
+    "spare_gw": 0.26
+   },
+   {
+    "hoy": 5754,
+    "spare_p10_mult": 19.32,
+    "spare_p50_mult": 456.36,
+    "lambda_over_gas": 992.6,
+    "spare_gw": 0.154
+   },
+   {
+    "hoy": 5755,
+    "spare_p10_mult": 19.32,
+    "spare_p50_mult": 456.35,
+    "lambda_over_gas": 334.23,
+    "spare_gw": 0.219
+   },
+   {
+    "hoy": 5777,
+    "spare_p10_mult": 37.5,
+    "spare_p50_mult": 480.16,
+    "lambda_over_gas": 267.93,
+    "spare_gw": 0.362
+   },
+   {
+    "hoy": 5778,
+    "spare_p10_mult": 20.61,
+    "spare_p50_mult": 484.58,
+    "lambda_over_gas": 432.85,
+    "spare_gw": 0.215
+   },
+   {
+    "hoy": 5801,
+    "spare_p10_mult": 15.77,
+    "spare_p50_mult": 135.66,
+    "lambda_over_gas": 1571.41,
+    "spare_gw": 0.055
+   },
+   {
+    "hoy": 5823,
+    "spare_p10_mult": 20.73,
+    "spare_p50_mult": 42.19,
+    "lambda_over_gas": 295.94,
+    "spare_gw": 0.201
+   },
+   {
+    "hoy": 5943,
+    "spare_p10_mult": 7.92,
+    "spare_p50_mult": 36.95,
+    "lambda_over_gas": 278.18,
+    "spare_gw": 0.502
+   },
+   {
+    "hoy": 5945,
+    "spare_p10_mult": 10.72,
+    "spare_p50_mult": 40.66,
+    "lambda_over_gas": 457.71,
+    "spare_gw": 0.779
+   },
+   {
+    "hoy": 5946,
+    "spare_p10_mult": 7.91,
+    "spare_p50_mult": 31.07,
+    "lambda_over_gas": 741.77,
+    "spare_gw": 0.439
+   },
+   {
+    "hoy": 5964,
+    "spare_p10_mult": 8.03,
+    "spare_p50_mult": 37.86,
+    "lambda_over_gas": 233.64,
+    "spare_gw": 0.338
+   },
+   {
+    "hoy": 5965,
+    "spare_p10_mult": 8.14,
+    "spare_p50_mult": 482.91,
+    "lambda_over_gas": 326.75,
+    "spare_gw": 0.253
+   },
+   {
+    "hoy": 5966,
+    "spare_p10_mult": -0.97,
+    "spare_p50_mult": 19.37,
+    "lambda_over_gas": 1859.2,
+    "spare_gw": 0.059
+   },
+   {
+    "hoy": 5967,
+    "spare_p10_mult": 10.29,
+    "spare_p50_mult": 2512.56,
+    "lambda_over_gas": 2079.7,
+    "spare_gw": 0.088
+   },
+   {
+    "hoy": 5968,
+    "spare_p10_mult": 10.23,
+    "spare_p50_mult": 23.18,
+    "lambda_over_gas": 340.21,
+    "spare_gw": 0.714
+   },
+   {
+    "hoy": 5969,
+    "spare_p10_mult": 8.02,
+    "spare_p50_mult": 37.68,
+    "lambda_over_gas": 1147.35,
+    "spare_gw": 0.74
+   },
+   {
+    "hoy": 5970,
+    "spare_p10_mult": 11.69,
+    "spare_p50_mult": 39.2,
+    "lambda_over_gas": 2454.87,
+    "spare_gw": 0.192
+   },
+   {
+    "hoy": 5971,
+    "spare_p10_mult": 11.43,
+    "spare_p50_mult": 17.34,
+    "lambda_over_gas": 261.45,
+    "spare_gw": 1.361
+   },
+   {
+    "hoy": 5991,
+    "spare_p10_mult": 11.68,
+    "spare_p50_mult": 38.21,
+    "lambda_over_gas": 645.91,
+    "spare_gw": 0.222
+   },
+   {
+    "hoy": 5993,
+    "spare_p10_mult": 10.87,
+    "spare_p50_mult": 34.17,
+    "lambda_over_gas": 1145.15,
+    "spare_gw": 0.203
+   },
+   {
+    "hoy": 6014,
+    "spare_p10_mult": 18.64,
+    "spare_p50_mult": 36.99,
+    "lambda_over_gas": 510.34,
+    "spare_gw": 0.258
+   },
+   {
+    "hoy": 6015,
+    "spare_p10_mult": -2.0,
+    "spare_p50_mult": 20.38,
+    "lambda_over_gas": 1758.26,
+    "spare_gw": 0.088
+   },
+   {
+    "hoy": 6016,
+    "spare_p10_mult": -4.88,
+    "spare_p50_mult": 20.38,
+    "lambda_over_gas": 966.3,
+    "spare_gw": 0.071
+   },
+   {
+    "hoy": 6017,
+    "spare_p10_mult": -9.85,
+    "spare_p50_mult": 23.34,
+    "lambda_over_gas": 1019.71,
+    "spare_gw": 0.094
+   },
+   {
+    "hoy": 6377,
+    "spare_p10_mult": 11.31,
+    "spare_p50_mult": 19.83,
+    "lambda_over_gas": 288.22,
+    "spare_gw": 0.242
+   },
+   {
+    "hoy": 6399,
+    "spare_p10_mult": 12.84,
+    "spare_p50_mult": 20.01,
+    "lambda_over_gas": 329.32,
+    "spare_gw": 0.2
+   },
+   {
+    "hoy": 7001,
+    "spare_p10_mult": 9.66,
+    "spare_p50_mult": 44.24,
+    "lambda_over_gas": 323.48,
+    "spare_gw": 0.324
+   },
+   {
+    "hoy": 7145,
+    "spare_p10_mult": 7.5,
+    "spare_p50_mult": 14.21,
+    "lambda_over_gas": 270.3,
+    "spare_gw": 0.444
+   },
+   {
+    "hoy": 7480,
+    "spare_p10_mult": 4.76,
+    "spare_p50_mult": 19.35,
+    "lambda_over_gas": 357.59,
+    "spare_gw": 0.339
+   }
+  ],
+  "spare_p10_vs_lambda_corr": -0.101,
+  "gap_hours_covered": 100,
+  "bin6_rest_hours_covered": 177
+ }
+}
