@@ -170,10 +170,14 @@ class TestPjmSeamExportInjection(unittest.TestCase):
 class TestPjmSeamEnvelopeByNeighbor(unittest.TestCase):
     """The pjm-151 per-neighbour envelope construction (rule 14 repair).
 
-    The legacy path sums a per-model-ZONE envelope over each neighbour's
-    ``border_zones``; a zone bucket holds every tie that lands in it, so the
-    caps absorb other counterparties' ties. ``by_neighbor=True`` builds each
-    seam's envelope from that seam's own ties instead.
+    A zone-summed construction preceded it: a per-model-ZONE envelope summed
+    over each neighbour's ``border_zones``. A zone bucket holds every tie that
+    lands in it, so the caps absorbed other counterparties' ties. The seam
+    envelope is now built from that seam's OWN ties, unconditionally — the
+    ``pjm_seam_envelope_by_neighbor`` gate and the zone-summed branch were
+    deleted at pjm-152 under rule 26 ``[R-DELETE]`` once the repair became the
+    keeper's armed path. The zone-summed cap is reconstructed inline below so
+    the regression evidence survives the flag's deletion.
     """
 
     def _fleet(self):
@@ -227,46 +231,72 @@ class TestPjmSeamEnvelopeByNeighbor(unittest.TestCase):
         netted_import = np.clip(-series[0], 0.0, None)
         self.assertLess(float(netted_import.mean()), 500.0)
 
-    def test_by_neighbor_changes_the_tva_and_lgee_export_caps(self):
-        """Liveness: the two single-tie seams the zone path mis-attributes."""
-        caps = {}
-        for by_nb in (False, True):
-            _, fleet = self._fleet()
-            self.assertTrue(
-                inject_pjm_seam_flow_limit(
-                    fleet,
-                    "PJM",
-                    2024,
-                    PJM_ZONE_NAMES,
-                    T,
-                    direction="export",
-                    by_neighbor=by_nb,
-                )
-            )
-            for name in ("TVA", "LGEE"):
-                rows = [
-                    r
-                    for r, uid in enumerate(fleet.unit_ids)
-                    if _REF_EXPORT_MARK in uid
-                    and uid.rsplit(_REF_EXPORT_MARK, 1)[1].partition("#")[0] == name
-                ]
-                caps[(by_nb, name)] = float(
-                    (-fleet.min_gen[rows, :].sum(axis=0)).mean()
-                )
-        for name in ("TVA", "LGEE"):
-            self.assertLess(
-                caps[(True, name)],
-                caps[(False, name)],
-                f"{name} export cap should tighten under the direct construction",
-            )
+    def test_export_cap_is_the_seam_s_own_envelope_not_a_zone_sum(self):
+        """The injected export cap IS the neighbour's own row, with no summation.
 
-    def test_legacy_path_is_unchanged(self):
-        """``by_neighbor=False`` reproduces the pre-repair caps exactly."""
-        _, a = self._fleet()
-        inject_pjm_seam_flow_limit(a, "PJM", 2024, PJM_ZONE_NAMES, T)
-        _, b = self._fleet()
-        inject_pjm_seam_flow_limit(b, "PJM", 2024, PJM_ZONE_NAMES, T, by_neighbor=False)
-        np.testing.assert_array_equal(a.availability, b.availability)
+        Pins the repaired construction directly rather than against a flag: for
+        every seam the applied cap must equal that seam's own envelope row
+        (clipped to the band's total capacity), never a sum over
+        ``border_zones``.
+        """
+        names = [n.name for n in PJM_NEIGHBORS]
+        env = pjm_neighbor_interchange_envelope(2024, names, T)
+        self.assertIsNotNone(env)
+        _, export_cap = env
+        _, fleet = self._fleet()
+        self.assertTrue(
+            inject_pjm_seam_flow_limit(
+                fleet, "PJM", 2024, PJM_ZONE_NAMES, T, direction="export"
+            )
+        )
+        for i, name in enumerate(names):
+            rows = [
+                r
+                for r, uid in enumerate(fleet.unit_ids)
+                if _REF_EXPORT_MARK in uid
+                and uid.rsplit(_REF_EXPORT_MARK, 1)[1].partition("#")[0] == name
+            ]
+            if not rows:
+                continue
+            total = -float(fleet.pmin[rows].sum())
+            expected = np.minimum(np.clip(export_cap[i], 0.0, None), total)
+            applied = -fleet.min_gen[rows, :].sum(axis=0)
+            np.testing.assert_allclose(applied, expected, rtol=0, atol=1e-6)
+
+    def test_the_zone_summed_cap_was_looser_on_tva_and_lgee(self):
+        """The defect the repair closed, reconstructed without the deleted flag.
+
+        TVA and LGEE are the two seams the zone path mis-attributes worst (the
+        whole tie lands in one border zone while the interface names two, so
+        their caps absorbed every other tie in those buckets). The zone-summed
+        export cap is rebuilt here from the still-public
+        :func:`pjm_zonal_interchange_envelope` and must sit strictly above the
+        per-neighbour one the injector now applies.
+        """
+        names = [n.name for n in PJM_NEIGHBORS]
+        by_nb = pjm_neighbor_interchange_envelope(2024, names, T)
+        by_zone = pjm_zonal_interchange_envelope(2024, PJM_ZONE_NAMES, T)
+        self.assertIsNotNone(by_nb)
+        self.assertIsNotNone(by_zone)
+        _, nb_export = by_nb
+        _, zone_export = by_zone
+        z_idx = {z: i for i, z in enumerate(PJM_ZONE_NAMES)}
+        for neighbor in PJM_NEIGHBORS:
+            if neighbor.name not in ("TVA", "LGEE"):
+                continue
+            legacy = np.clip(
+                zone_export[
+                    [z_idx[z] for z in neighbor.border_zones if z in z_idx]
+                ].sum(axis=0),
+                0.0,
+                None,
+            )
+            direct = np.clip(nb_export[names.index(neighbor.name)], 0.0, None)
+            self.assertGreater(
+                float(legacy.mean()),
+                float(direct.mean()),
+                f"{neighbor.name}: the zone-summed export cap should be looser",
+            )
 
 
 if __name__ == "__main__":

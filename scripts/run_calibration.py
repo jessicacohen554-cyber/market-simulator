@@ -2944,7 +2944,6 @@ def run_year(
         from market_sim.model.transmission import inject_pjm_seam_flow_limit
 
         _pjm_pct = getattr(config, "pjm_seam_flow_percentile", None)
-        _pjm_by_nb = getattr(config, "pjm_seam_envelope_by_neighbor", False)
         if inject_pjm_seam_flow_limit(
             fleet_arrays,
             iso,
@@ -2952,18 +2951,16 @@ def run_year(
             zone_names,
             hours,
             percentile=_pjm_pct,
-            by_neighbor=_pjm_by_nb,
         ):
             from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
 
             logger.info(
                 "%s %d: reference-price seam import capped at measured PJM "
                 "tie-line deliverability envelope (p%g); each neighbor's "
-                "import bands derated to the %s envelope",
+                "import bands derated to its PER-NEIGHBOR (own ties) envelope",
                 iso,
                 year,
                 PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
-                "PER-NEIGHBOR (own ties)" if _pjm_by_nb else "border-zone summed",
             )
     # PJM seam export cap: symmetric mirror — cap each seam's net export at
     # the measured per-neighbor export envelope.
@@ -2973,7 +2970,6 @@ def run_year(
         from market_sim.model.transmission import inject_pjm_seam_flow_limit
 
         _pjm_pct = getattr(config, "pjm_seam_flow_percentile", None)
-        _pjm_by_nb = getattr(config, "pjm_seam_envelope_by_neighbor", False)
         if inject_pjm_seam_flow_limit(
             fleet_arrays,
             iso,
@@ -2982,18 +2978,16 @@ def run_year(
             hours,
             percentile=_pjm_pct,
             direction="export",
-            by_neighbor=_pjm_by_nb,
         ):
             from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
 
             logger.info(
                 "%s %d: reference-price seam export capped at measured PJM "
                 "tie-line net-export envelope (p%g); each neighbor's export "
-                "bands floored to the %s envelope",
+                "bands floored to its PER-NEIGHBOR (own ties) envelope",
                 iso,
                 year,
                 PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
-                "PER-NEIGHBOR (own ties)" if _pjm_by_nb else "border-zone summed",
             )
     # ── end of the backcast measured interchange overlays (availability) ──
     # (the measured PRICE overlays live in _backcast_measured_interchange_
