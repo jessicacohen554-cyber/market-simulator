@@ -1,9 +1,9 @@
 {
   "iso": "ERCOT",
-  "keeper": "2026-08-02-ercot150b-zonal-anchor",
-  "keeper_bundle_fields": 670,
-  "n_scenario_fields": 673,
-  "n_matrix_rows": 182,
+  "keeper": "2026-08-03-ercot158-pool-arm",
+  "keeper_bundle_fields": 671,
+  "n_scenario_fields": 674,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 19,
   "family": [
     {
@@ -24,8 +24,6 @@
         "G"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -39,6 +37,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -120,8 +120,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -135,6 +133,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -169,8 +169,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -183,7 +181,9 @@
         "ercot148_dam_event_cap_arm",
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -223,8 +223,6 @@
         "R"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -238,6 +236,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot86_rtwall_2025_A"
       ]
     },
@@ -281,7 +281,9 @@
         "ercot148_dam_event_cap_arm",
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -304,7 +306,9 @@
       "armed_in_bundles": [
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -325,8 +329,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -340,6 +342,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -383,8 +387,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -398,6 +400,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -407,27 +411,28 @@
     {
       "field": "ercot_faststart_pool_offer",
       "default": false,
-      "keeper_value": false,
-      "keeper_arms_it": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
-          "cell": "O"
+          "cells": "K.....",
+          "cell": "K"
         }
       ],
       "cells": [
-        "K",
-        "O"
+        "K"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "ercot158_poolarm_B"
+      ]
     },
     {
       "field": "ercot_faststart_pool_offer_path",
@@ -439,12 +444,12 @@
       "owning_rows": [
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
-          "cell": "O"
+          "cells": "K.....",
+          "cell": "K"
         }
       ],
       "cells": [
-        "O"
+        "K"
       ],
       "armed_in_bundles": []
     },
@@ -458,8 +463,6 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -473,6 +476,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -497,8 +502,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -512,6 +515,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -549,8 +554,6 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -564,6 +567,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -580,8 +585,6 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -595,6 +598,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -657,8 +662,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -672,6 +675,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -696,8 +701,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -711,6 +714,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -735,8 +740,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -750,6 +753,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -774,8 +779,6 @@
         "R"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -789,6 +792,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -813,8 +818,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -828,6 +831,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -852,8 +857,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -867,6 +870,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -891,8 +896,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -906,6 +909,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot86_rtwall_2025_A"
       ]
     },
@@ -927,8 +932,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -942,6 +945,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1028,8 +1033,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1043,6 +1046,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
         "ercot86_rtwall_2025_A"
@@ -1085,8 +1090,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1100,6 +1103,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot86_rtwall_2025_A"
       ]
     },
@@ -1121,8 +1126,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1136,6 +1139,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot86_rtwall_2025_A"
       ]
     },
@@ -1242,8 +1247,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1257,6 +1260,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1408,8 +1413,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1423,6 +1426,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1447,8 +1452,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1462,6 +1465,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1562,8 +1567,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1577,6 +1580,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1613,8 +1618,6 @@
         "U"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1628,6 +1631,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1652,8 +1657,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1667,6 +1670,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1752,8 +1757,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1767,6 +1770,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1791,8 +1796,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1806,6 +1809,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1868,8 +1873,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1883,6 +1886,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1907,8 +1912,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1922,6 +1925,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1946,8 +1951,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -1961,6 +1964,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -1985,8 +1990,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2000,6 +2003,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2049,8 +2054,6 @@
         "U"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2064,6 +2067,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot86_rtwall_2025_A"
       ]
     },
@@ -2085,7 +2090,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
         "ercot137_margin_arm",
         "ercot139_cc_committed_arm",
         "ercot140_coal_peak_arm",
@@ -2095,7 +2099,9 @@
         "ercot148_dam_event_cap_arm",
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -2116,8 +2122,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2130,7 +2134,9 @@
         "ercot148_dam_event_cap_arm",
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -2151,8 +2157,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2165,7 +2169,9 @@
         "ercot148_dam_event_cap_arm",
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
-        "ercot150_zonalanchor_B"
+        "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B"
       ]
     },
     {
@@ -2205,8 +2211,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2220,6 +2224,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2287,8 +2293,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2302,6 +2306,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2345,8 +2351,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2360,6 +2364,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2384,8 +2390,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2399,6 +2403,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2423,8 +2429,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2438,6 +2442,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -2467,8 +2473,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "ercot116_regate_arm",
-        "ercot116_regate_base",
         "ercot122_offerlevel",
         "ercot128_unit_grain",
         "ercot129_conditional",
@@ -2482,6 +2486,8 @@
         "ercot149_gas_event_cap_arm",
         "ercot150_control_A",
         "ercot150_zonalanchor_B",
+        "ercot158_honest_A",
+        "ercot158_poolarm_B",
         "ercot71_availability_fullspan",
         "ercot73_state_wall_fullspan",
         "ercot76_ne_import_fullspan",
@@ -3632,6 +3638,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "energy_reserve_coopt",
           "cells": "KIKKKK",
           "cell": "K"
@@ -3661,60 +3672,20 @@
       "exclusion_reason": null
     },
     {
-      "field": "entry_commissioning_lag",
-      "default": true,
-      "keeper_value": false,
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "measured_ct_heat_rates",
-          "cells": "IKKKKK",
-          "cell": "I"
-        },
-        {
-          "row": "entry_dampers",
-          "cells": "UUUOUU",
-          "cell": "U"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
       "field": "entry_lookahead_reprice",
       "default": true,
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
+        {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
           "cell": "K"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
-      "field": "entry_rate_limits",
-      "default": true,
-      "keeper_value": false,
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "measured_ct_heat_rates",
-          "cells": "IKKKKK",
-          "cell": "I"
-        },
-        {
-          "row": "reserve_margin_backstop",
-          "cells": ".KKKKK",
-          "cell": "."
-        },
-        {
-          "row": "entry_dampers",
-          "cells": "UUUOUU",
-          "cell": "U"
         }
       ],
       "excluded": false,
@@ -3812,6 +3783,11 @@
           "row": "zonal_gas_basis",
           "cells": "KKKKK.",
           "cell": "K"
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KIKK",
+          "cell": "U"
         }
       ],
       "excluded": false,
@@ -3835,7 +3811,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -4003,7 +3979,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -4113,7 +4089,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -4243,8 +4219,8 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
-          "cell": "O"
+          "cells": "K.....",
+          "cell": "K"
         },
         {
           "row": "measured_offer_surface",
@@ -4358,7 +4334,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "U"
         },
         {
@@ -4543,7 +4519,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "."
         },
         {
@@ -4692,6 +4668,11 @@
           "cell": "K"
         },
         {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "O"
+        },
+        {
           "row": "entry_dampers",
           "cells": "UUUOUU",
           "cell": "U"
@@ -4718,8 +4699,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -4760,26 +4741,6 @@
           "row": "startup_co2_reporting",
           "cells": "UUUUUU",
           "cell": "U"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
-      "field": "net_cone_forward_escalation",
-      "default": "reindex_gross",
-      "keeper_value": "hold_last",
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "measured_ct_heat_rates",
-          "cells": "IKKKKK",
-          "cell": "I"
-        },
-        {
-          "row": "net_cone_forward_vintages",
-          "cells": "..OOOO",
-          "cell": "."
         }
       ],
       "excluded": false,
@@ -5000,7 +4961,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -5077,26 +5038,6 @@
       "exclusion_reason": null
     },
     {
-      "field": "retirement_rule",
-      "default": "pipeline",
-      "keeper_value": "legacy",
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "measured_ct_heat_rates",
-          "cells": "IKKKKK",
-          "cell": "I"
-        },
-        {
-          "row": "economic_retirement_screen",
-          "cells": "OORRRR",
-          "cell": "O"
-        }
-      ],
-      "excluded": false,
-      "exclusion_reason": null
-    },
-    {
       "field": "rps_enabled",
       "default": true,
       "keeper_value": false,
@@ -5119,7 +5060,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -5169,7 +5110,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -5199,7 +5140,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -5247,12 +5188,12 @@
       "keeper_value": 0.76,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": 0.76,
-        "ercot116_regate_base": 0.76,
         "ercot122_offerlevel": 0.76,
         "ercot128_unit_grain": 0.76,
         "ercot129_conditional": 0.76,
-        "ercot137_margin_arm": 0.76
+        "ercot137_margin_arm": 0.76,
+        "ercot139_cc_committed_arm": 0.76,
+        "ercot140_coal_peak_arm": 0.76
       }
     },
     {
@@ -5261,12 +5202,12 @@
       "keeper_value": 0.76,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": 0.76,
-        "ercot116_regate_base": 0.76,
         "ercot122_offerlevel": 0.76,
         "ercot128_unit_grain": 0.76,
         "ercot129_conditional": 0.76,
-        "ercot137_margin_arm": 0.76
+        "ercot137_margin_arm": 0.76,
+        "ercot139_cc_committed_arm": 0.76,
+        "ercot140_coal_peak_arm": 0.76
       }
     },
     {
@@ -5275,12 +5216,12 @@
       "keeper_value": true,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {
@@ -5289,12 +5230,12 @@
       "keeper_value": 0.675,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": 0.675,
-        "ercot116_regate_base": 0.675,
         "ercot122_offerlevel": 0.675,
         "ercot128_unit_grain": 0.675,
         "ercot129_conditional": 0.675,
-        "ercot137_margin_arm": 0.675
+        "ercot137_margin_arm": 0.675,
+        "ercot139_cc_committed_arm": 0.675,
+        "ercot140_coal_peak_arm": 0.675
       }
     },
     {
@@ -5303,12 +5244,12 @@
       "keeper_value": 1.0,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": 1.0,
-        "ercot116_regate_base": 1.0,
         "ercot122_offerlevel": 1.0,
         "ercot128_unit_grain": 1.0,
         "ercot129_conditional": 1.0,
-        "ercot137_margin_arm": 1.0
+        "ercot137_margin_arm": 1.0,
+        "ercot139_cc_committed_arm": 1.0,
+        "ercot140_coal_peak_arm": 1.0
       }
     },
     {
@@ -5320,14 +5261,6 @@
       ],
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot116_regate_base": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
         "ercot122_offerlevel": [
           "ST_CHP",
           "ST_GAS"
@@ -5343,6 +5276,14 @@
         "ercot137_margin_arm": [
           "ST_CHP",
           "ST_GAS"
+        ],
+        "ercot139_cc_committed_arm": [
+          "ST_CHP",
+          "ST_GAS"
+        ],
+        "ercot140_coal_peak_arm": [
+          "ST_CHP",
+          "ST_GAS"
         ]
       }
     },
@@ -5352,12 +5293,12 @@
       "keeper_value": true,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {
@@ -5366,12 +5307,12 @@
       "keeper_value": true,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {
@@ -5380,12 +5321,12 @@
       "keeper_value": true,
       "n_bundles_nondefault": 19,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {
@@ -5394,26 +5335,26 @@
       "keeper_value": true,
       "n_bundles_nondefault": 15,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {
       "field": "coal_lignite_passthrough_sigmoid",
       "default": false,
       "keeper_value": false,
-      "n_bundles_nondefault": 13,
+      "n_bundles_nondefault": 11,
       "bundles": {
-        "ercot116_regate_arm": true,
-        "ercot116_regate_base": true,
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,
         "ercot129_conditional": true,
-        "ercot137_margin_arm": true
+        "ercot137_margin_arm": true,
+        "ercot139_cc_committed_arm": true,
+        "ercot140_coal_peak_arm": true
       }
     },
     {

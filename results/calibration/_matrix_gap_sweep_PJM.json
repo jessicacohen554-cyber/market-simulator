@@ -4,7 +4,7 @@
   "keeper_bundle_fields": 673,
   "n_scenario_fields": 674,
   "n_matrix_rows": 183,
-  "n_bundles_scanned": 17,
+  "n_bundles_scanned": 15,
   "family": [
     {
       "field": "pjm_apsouth_interface_cut",
@@ -76,9 +76,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -132,9 +130,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -207,9 +203,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -244,9 +238,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -281,9 +273,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -318,9 +308,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -415,9 +403,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -493,9 +479,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -522,9 +506,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -556,7 +538,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -581,7 +563,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -606,7 +588,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -634,9 +616,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -649,7 +629,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -681,9 +661,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -734,7 +712,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -761,9 +739,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -788,29 +764,6 @@
       ]
     },
     {
-      "field": "pjm_seam_envelope_by_neighbor",
-      "default": false,
-      "keeper_value": true,
-      "keeper_arms_it": true,
-      "mentioned_in_matrix": true,
-      "coverage": "own_row",
-      "owning_rows": [
-        {
-          "row": "seam_flow_envelopes",
-          "cells": "..KK..",
-          "cell": "K"
-        }
-      ],
-      "cells": [
-        "K"
-      ],
-      "armed_in_bundles": [
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
-      ]
-    },
-    {
       "field": "pjm_seam_export_limit",
       "default": false,
       "keeper_value": true,
@@ -820,7 +773,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -847,9 +800,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -862,7 +813,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -889,9 +840,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -923,7 +872,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -956,9 +905,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -993,9 +940,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     },
     {
@@ -1008,7 +953,7 @@
       "owning_rows": [
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         }
       ],
@@ -1030,9 +975,7 @@
         "pjm147_chp_B",
         "pjm147_control_A",
         "pjm150_ctmeter_regate_A",
-        "pjm151_seam_B",
-        "pjm151_seam_y23",
-        "pjm151_seam_y24"
+        "pjm151_seam_B"
       ]
     }
   ],
@@ -1178,7 +1121,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1228,7 +1171,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1243,7 +1186,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1278,7 +1221,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1348,7 +1291,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1363,7 +1306,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1378,7 +1321,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1413,7 +1356,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1428,7 +1371,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1443,7 +1386,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1458,7 +1401,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1473,7 +1416,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1537,6 +1480,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "energy_reserve_coopt",
           "cells": "KIKKKK",
           "cell": "K"
@@ -1571,6 +1519,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "R"
+        },
         {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
@@ -1653,7 +1606,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1708,7 +1661,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1723,7 +1676,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1738,7 +1691,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -1878,7 +1831,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1983,7 +1936,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2293,7 +2246,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         },
         {
@@ -2423,6 +2376,11 @@
         },
         {
           "row": "electrification_layers",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "transmission_expansion",
           "cells": "......",
           "cell": "."
         },
@@ -2598,7 +2556,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2708,7 +2666,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2838,7 +2796,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -3138,7 +3096,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".OKR..",
           "cell": "K"
         },
         {
@@ -3318,8 +3276,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -3526,7 +3484,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -3606,7 +3564,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -3721,7 +3679,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -3771,7 +3729,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -3801,7 +3759,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKKOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],

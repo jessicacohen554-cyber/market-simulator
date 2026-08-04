@@ -3,16 +3,7 @@
   "absent": {
     "CAISO": [],
     "ERCOT": [],
-    "MISO": [
-      "miso_midwest_subregional_reserves",
-      "miso_native_outage_source",
-      "miso_pjm_border_anchor",
-      "miso_rpe_pricing",
-      "miso_seam_envelope_merit_cap",
-      "miso_south_seam_split",
-      "miso_zonal_reserve_zones",
-      "miso_zonal_reserves"
-    ],
+    "MISO": [],
     "NEISO": [],
     "NYISO": [],
     "PJM": []

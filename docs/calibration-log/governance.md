@@ -938,3 +938,68 @@ exceptions recorded; A5 eight new tests including a regression guard that
 reproduces the *old* comprehension and asserts it loses the plant; A6
 `tests/scoring/` 900 passed with 4 pre-existing `test_ff_readiness_battery.py`
 failures verified pre-existing by re-running with the changes stashed.
+
+---
+
+## nyiso-121 (2026-08-04) — MISO's rule-28(c) matrix column CLOSED; the six-lane census backlog is discharged
+
+**Cross-ISO audit action, logged here rather than in `miso.md`** because it was performed
+from the NYISO lane on MISO's column and touches no MISO mechanism, keeper or determination
+— and because a MISO calibration session may be active (the keeper is same-day).
+**Zero solves. Zero years touched. No `ScenarioConfig` value, constant or derive script
+changed. Both ISOs' keepers unchanged.**
+
+**What closed.** MISO was the **last** ISO with an open own-family column. All **8 absent +
+4 prose-only** `miso_*` fields — **7 ARMED on keeper `2026-08-04-miso-122b-scope-gate` with
+no cell anywhere**, the 227-3 shape — are registered as **literal sub-scalar entries on 7
+existing family rows**. **169 → 169 rows (zero new).** One cell mint: `matrix_gap_census`
+MISO `O` → `K`, an **audit status**, per the ercot-156 / caiso-161 / pjm-151 precedent.
+**Zero mechanism verdicts** — every verdict-bearing sentence transcribes an adjudication
+already on the record with its citation. Ratchet baseline MISO **8 → 0**.
+
+With ERCOT, CAISO, NEISO, PJM and NYISO already closed, **the six-lane backlog nyiso-113/114
+measured (161 absent, 95 armed-but-cell-less) is fully discharged.**
+
+**A new invisibility variant, recorded for every lane.** Beyond the caiso-161 §2
+abbreviation/stale-anchor defect (which recurred here as `miso_pjm_lmp :2914`, not a
+`ScenarioConfig` field, anchored on an unrelated comment block), `miso_manitoba_seam` —
+ARMED on the keeper — was prose-only inside **`diagnostics_plant_set`**, a row about probe
+plant sets. **A mention on the wrong family row is as invisible as no mention, and unlike a
+glob or a stale anchor it reads as correct coverage to a human auditor.**
+
+**A governance correction that binds the next lane (FINDING §6.2).** The pre-registered
+criterion "the other five ISOs' counts must not move" **fired on this session's own first
+draft**: enumerating MISO's 17 shared-stem literals — as ercot-156, caiso-161 and pjm-151
+each did — took **ERCOT from 12 to 11**, because a field armed on both keepers was newly
+counted "mentioned". **One lane's prose silently dropped a field from BOTH lanes' lists with
+no ERCOT session registering anything.** Naming a shared field as a bare literal makes the
+sweep count it mentioned — the very "a mention is not a registration" defect the census
+exists to close — and it **leaks across columns**. The enumeration was withdrawn for a count
+plus a pointer to the committed `_matrix_gap_sweep_<ISO>.json`.
+
+> **Standing consequence: the enumerated shared-field lists left in `matrix_gap_census` by
+> the earlier column closures are PROSE, NOT REGISTRATIONS. Trust
+> `results/calibration/_matrix_gap_sweep_<ISO>.json` over the row's text.**
+
+**Two armed-but-dead observations, filed and NOT adjudicated (rule 28(d)).** Measured on
+**construction** — no LP, no solve, no dual (the nyiso-115 G2 / nyiso-118 lesson):
+`miso_pjm_border_anchor` is **provably unobservable** on the MISO keeper, displaced by
+`miso_seam_measured_ladder`; all 48 seam rows exactly equal (`np.array_equal`, float32) in
+all three years, with a positive control that separates. Likewise `miso_firm_imports` is
+dropped by `miso_manitoba_seam`. **Neither is a rule 26 `[R-DELETE]` candidate** (both are
+built, reachable, default-off mechanisms at their documented defaults, displaced by
+documented alternatives). Whether arming both halves of an either/or pair is cosmetic or a
+rule 19 `[R-ONE-MECH]` question **belongs to a lane that may adjudicate MISO.**
+
+**A pre-registered prediction recorded as WRONG rather than redefined (FINDING §6.1):** the
+prereg predicted the cells string `KKKOKO` → `KKKKKK`, assuming NEISO's audit cell was
+already `K`. It is not; minting it is NEISO's lane's call. Only index 3 moved.
+
+**Named successor:** the **cross-ISO shared-stem backlog** (PJM 18, MISO 17, ERCOT 14,
+CAISO 5, overlapping, all armed on keepers with no cell) is the only remaining rule-28(c)
+debt. That lane must **register these fields on rows, not enumerate them in prose.**
+
+Evidence: `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md` (pushed
+before any row was written) · `FINDING-nyiso121-miso-matrix-column-2026-08-04.md` ·
+`scripts/probes/_nyiso121_miso_border_anchor_displacement_probe.py` →
+`nyiso121_miso_border_anchor_displacement_probe.json` · sweeps `_matrix_gap_sweep_*.json`.
