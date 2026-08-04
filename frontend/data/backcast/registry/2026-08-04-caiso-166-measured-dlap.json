@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-caiso-166-measured-dlap",
+  "label": "caiso 166 measured dlap",
+  "date": "2026-08-04",
+  "shorthand": "caiso-166-measured-dlap",
+  "definition": "measured DLAP loss zones caiso166: LA_BASIN takes its own measured deviation at DLAP_SCE-APND and SDGE at DLAP_SDGE-APND, replacing the TH_SP15_GEN generation-hub stand-in. Rule 14 [R-ACCURATE] measured-over-reconciled upgrade on the caiso-165 intake; caiso_zonal_loss_surface is True in BOTH arms, so the only object that differs from the control is CAISO_loss_surface.csv.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-caiso-166-measured-dlap.js",
+  "bundle": "results/calibration/caiso166_measured_loss_zones"
+}
