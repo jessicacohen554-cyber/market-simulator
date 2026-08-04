@@ -1,0 +1,1074 @@
+{
+ "scored_at_sha": "2dd75a96",
+ "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+ "holdout_freeze_active": true,
+ "criterion_a_backcast_calibration": {
+  "ERCOT": {
+   "keeper": "2026-08-02-ercot150b-zonal-anchor",
+   "marker_complete": false,
+   "marker_final": false,
+   "determination": "NOT-YET",
+   "determination_source": "keepers/ERCOT.json (promotion note)",
+   "determination_full": null
+  },
+  "CAISO": {
+   "keeper": "2026-08-03-caiso163-asym-path-ratings",
+   "marker_complete": false,
+   "marker_final": false,
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "determination_source": "keepers/CAISO.json (promotion note)",
+   "determination_full": null
+  },
+  "PJM": {
+   "keeper": "2026-08-03-pjm-151-seam-envelope",
+   "marker_complete": true,
+   "marker_final": false,
+   "determination": "CALIBRATED",
+   "determination_source": "calibration-complete.json",
+   "determination_full": "CALIBRATED on 2026-08-03-pjm-151-seam-envelope, RE-VERIFIED 2026-08-03 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only): every criterion PASS, C1 all 16/16 free 12/12, zero caveats, zero fails. Four C8 grounded-above-budget report notes (CT_PEAKER 2023/2024/2025, ST_GAS 2025) are clean PASSes under rule 21's grounded-pass clause, not caveats. Re-keyed on promotion per owner decision D-5(b) (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1) -- OPTION B, re-key on promotion WITH per-promotion determination re-verification. The re-verified determination is NOT WORSE than the superseded 2026-08-03-pjm-147b-chp-heat basis (also CALIBRATED, 16/16 free 12/12, zero caveats) -- the two scorecards are IDENTICAL criterion for criterion -- so the promotion proceeds rather than escalating to the owner. pjm-151 promoted ONE zero-fitted-parameter measured repair: pjm_seam_envelope_by_neighbor, the rule 14 [R-ACCURATE] internal-consistency fix closing keeper-note item 12 (each reference-price seam's deliverability envelope built from that seam's OWN ties instead of summing a per-model-ZONE envelope over its border_zones). The DOF ledger is carried VERBATIM (n_entries 19, n_residual 6), asserted by scripts/gen_pjm151_attestation.py. NOTE FOR ANY 2022 VALIDATION SPEND: this keeper's structural gain is paid for with an INTERCHANGE trade recorded openly in keepers/PJM.json root-cause item 15 -- net export falls in all three years, improving 2025 and worsening 2023-24 -- and that trade was PRE-REGISTERED before the arm solved, so it is a confirmed expectation, not a discovered surprise."
+  },
+  "MISO": {
+   "keeper": "2026-08-03-miso-117b-ct-heat",
+   "marker_complete": false,
+   "marker_final": false,
+   "determination": "NOT-YET",
+   "determination_source": "keepers/MISO.json (promotion note)",
+   "determination_full": null
+  },
+  "NYISO": {
+   "keeper": "2026-08-03-nyiso-118-seny-span",
+   "marker_complete": true,
+   "marker_final": false,
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "determination_source": "calibration-complete.json",
+   "determination_full": "CALIBRATED-WITH-CAVEATS on 2026-08-03-nyiso-118-seny-span, RE-VERIFIED 2026-08-03 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only, rule 22 D-5(b)): every criterion PASS except C3c, ledgered as an accepted representation-frontier limitation. 1 ledgered caveat of a budget of 3 -- UNCHANGED from the superseded 2026-08-03-nyiso-117-nyc-rcpf. The re-verification is not merely equal in determination: all 9 criterion verdicts, the grade summary (9 scored / 8 target / 1 ledgered / 0 fails) and the C1 headline (all 14/14, free 10/10) are identical to the superseded keeper's, and ALL 18 SCORED NUMERIC FIELDS are equal to this run's own same-HEAD zero-delta control. Nothing is worse, so the promotion proceeds; had any been worse it would have stopped the promotion and escalated to the owner rather than being silently written. The promotion is a rule 1 [R-STRUCT] / rule 14 [R-ACCURATE] CONSTRUCTION-CONSISTENCY fix (nyiso_ordc_measured_step_span: the ORDC step widths now span the MEASURED hourly requirement the balance row already enforced, instead of the static published MW), carrying ZERO free parameters -- the DOF ledger moves 31 -> 32 entries with n_residual UNCHANGED at 6. Holdout status is UNAFFECTED and nothing was spent: NYISO keeps `complete`, stays ABSENT from `final`, no year outside 2023-2025 was solved, scored or read, and the ACTIVE holdout spend freeze is untouched."
+  },
+  "NEISO": {
+   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+   "marker_complete": true,
+   "marker_final": false,
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "determination_source": "calibration-complete.json",
+   "determination_full": "CALIBRATED-WITH-CAVEATS on 2026-08-03-neiso-caiso156-meter-screen, RE-VERIFIED 2026-08-03 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only): 1 ledgered measured-input caveat (C3c price tail / scarcity, RT hourly); C7 shape unscored-protective; 0 FAILs. IDENTICAL to the superseded 2026-07-31-neiso-72-hy-window basis on every criterion, every grade-summary field and the C1 headline -- caiso-159 promotes an input correction with zero free parameters, so the determination could not have moved and is verified not to have. Re-keyed on promotion per owner decision D-5(b), signed 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1) -- OPTION B, re-key on promotion WITH per-promotion determination re-verification. NOTE: `locked_test_scored_on` (2026-07-07-neiso53-winter-fuelsec-coldsnap) is the SPENT one-shot's frozen config and is deliberately NOT re-keyed -- that score stands as taken (rule 22)."
+  }
+ },
+ "criterion_b_t1_gates": {
+  "ERCOT": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "FAIL",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "PASS"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL",
+     "FC-2 adequacy & equilibrium behavior FAIL"
+    ]
+   },
+   "t1h": null,
+   "t1x": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "SKIPPED",
+     "FC-3": "SKIPPED",
+     "FC-4": "FAIL",
+     "FC-5": "SKIPPED",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+     "FC-4 crossover dispatch skill (T1-X) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   }
+  },
+  "CAISO": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "FAIL",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "PASS"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL",
+     "FC-2 adequacy & equilibrium behavior FAIL"
+    ]
+   },
+   "t1h": null,
+   "t1x": null
+  },
+  "PJM": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "CAVEAT",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "CAVEAT"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL"
+    ]
+   },
+   "t1h": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "n/a",
+     "FC-3": "FAIL",
+     "FC-4": "n/a",
+     "FC-5": "n/a",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   },
+   "t1x": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "SKIPPED",
+     "FC-3": "SKIPPED",
+     "FC-4": "FAIL",
+     "FC-5": "SKIPPED",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+     "FC-4 crossover dispatch skill (T1-X) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   }
+  },
+  "MISO": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "CAVEAT",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "CAVEAT"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL"
+    ]
+   },
+   "t1h": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "n/a",
+     "FC-3": "FAIL",
+     "FC-4": "n/a",
+     "FC-5": "n/a",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   },
+   "t1x": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "SKIPPED",
+     "FC-3": "SKIPPED",
+     "FC-4": "FAIL",
+     "FC-5": "SKIPPED",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+     "FC-4 crossover dispatch skill (T1-X) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   }
+  },
+  "NYISO": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "CAVEAT",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "PASS"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL"
+    ]
+   },
+   "t1h": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "n/a",
+     "FC-3": "FAIL",
+     "FC-4": "n/a",
+     "FC-5": "n/a",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   },
+   "t1x": null
+  },
+  "NEISO": {
+   "t1f": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "FAIL",
+     "FC-2": "CAVEAT",
+     "FC-3": "n/a",
+     "FC-4": "n/a",
+     "FC-5": "SKIPPED",
+     "FC-6": "SKIPPED",
+     "FC-7": "CAVEAT",
+     "FC-8": "PASS"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) FAIL"
+    ]
+   },
+   "t1h": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "n/a",
+     "FC-3": "FAIL",
+     "FC-4": "n/a",
+     "FC-5": "n/a",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   },
+   "t1x": null
+  }
+ },
+ "criterion_c_worth_the_compute": {
+  "ERCOT": {
+   "projected_hours": 2.0,
+   "lower_hours": 1.0,
+   "peak_gb": 4.6,
+   "must_run_solo": false,
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/ercot-2023-2027-crossover-ffr3a2/ERCOT/d0d1e9713593b6a9/crossover_score.json"
+  },
+  "CAISO": {
+   "projected_hours": 2.78,
+   "lower_hours": 1.39,
+   "peak_gb": 5.5,
+   "must_run_solo": false
+  },
+  "PJM": {
+   "projected_hours": 7.34,
+   "lower_hours": 1.63,
+   "peak_gb": 10.0,
+   "must_run_solo": true,
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/pjm-2023-2027-crossover-ffr3a2/PJM/6ecd18c0306db6a6/crossover_score.json"
+  },
+  "MISO": {
+   "projected_hours": 10.12,
+   "lower_hours": 2.25,
+   "peak_gb": 10.5,
+   "must_run_solo": true,
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/miso-2023-2027-crossover-ffr3a2/MISO/f3f09241576623ba/crossover_score.json"
+  },
+  "NYISO": {
+   "projected_hours": 1.09,
+   "lower_hours": 0.62,
+   "peak_gb": 4.2,
+   "must_run_solo": false
+  },
+  "NEISO": {
+   "projected_hours": 0.95,
+   "lower_hours": 0.54,
+   "peak_gb": 4.3,
+   "must_run_solo": false
+  }
+ },
+ "criterion_d_owner_authorization": "NOT MEASURED HERE \u2014 an explicit, per-campaign owner decision. No ISO carries one; `final` is empty by design.",
+ "regression_vs_ff2d": {
+  "ERCOT": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "ercot-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "FAIL",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     },
+     {
+      "id": "ercot-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "FAIL",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "PASS"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL",
+      "FC-2 adequacy & equilibrium behavior FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [],
+    "now": null
+   },
+   "t1x": {
+    "ff2d": [
+     {
+      "id": "ercot-t1x",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "ercot-t1x-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "FAIL",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "ercot-t1x-ffr2a",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "FAIL",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "SKIPPED",
+      "FC-3": "SKIPPED",
+      "FC-4": "FAIL",
+      "FC-5": "SKIPPED",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+      "FC-4 crossover dispatch skill (T1-X) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   }
+  },
+  "CAISO": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "caiso-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "FAIL",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     },
+     {
+      "id": "caiso-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "FAIL",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "PASS"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL",
+      "FC-2 adequacy & equilibrium behavior FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [],
+    "now": null
+   },
+   "t1x": {
+    "ff2d": [],
+    "now": null
+   }
+  },
+  "PJM": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "pjm-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "CAVEAT"
+      }
+     },
+     {
+      "id": "pjm-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "PASS",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "CAVEAT"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "CAVEAT",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "CAVEAT"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [
+     {
+      "id": "pjm-2021-2025-curve-ff2c-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-3": "FAIL",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "pjm-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "pjm-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "n/a",
+      "FC-3": "FAIL",
+      "FC-4": "n/a",
+      "FC-5": "n/a",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   },
+   "t1x": {
+    "ff2d": [
+     {
+      "id": "pjm-t1x",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "pjm-t1x-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "PASS",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "pjm-t1x-ffr2a",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "PASS",
+       "FC-2": "PASS",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "SKIPPED",
+      "FC-3": "SKIPPED",
+      "FC-4": "FAIL",
+      "FC-5": "SKIPPED",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+      "FC-4 crossover dispatch skill (T1-X) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   }
+  },
+  "MISO": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "miso-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "CAVEAT"
+      }
+     },
+     {
+      "id": "miso-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "FAIL",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "CAVEAT"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "CAVEAT",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "CAVEAT"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [
+     {
+      "id": "miso-2021-2025-curve-ff2c-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-3": "FAIL",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "miso-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "miso-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "n/a",
+      "FC-3": "FAIL",
+      "FC-4": "n/a",
+      "FC-5": "n/a",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   },
+   "t1x": {
+    "ff2d": [
+     {
+      "id": "miso-t1x",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "miso-t1x-ffr2a",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "PASS",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "SKIPPED",
+      "FC-3": "SKIPPED",
+      "FC-4": "FAIL",
+      "FC-5": "SKIPPED",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+      "FC-4 crossover dispatch skill (T1-X) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   }
+  },
+  "NYISO": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "nyiso-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     },
+     {
+      "id": "nyiso-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "CAVEAT",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "PASS"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [
+     {
+      "id": "nyiso-2021-2025-curve-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-3": "FAIL",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "nyiso-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "nyiso-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "n/a",
+      "FC-3": "FAIL",
+      "FC-4": "n/a",
+      "FC-5": "n/a",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   },
+   "t1x": {
+    "ff2d": [],
+    "now": null
+   }
+  },
+  "NEISO": {
+   "t1f": {
+    "ff2d": [
+     {
+      "id": "neiso-t1f",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "CAVEAT",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     },
+     {
+      "id": "neiso-t1f-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "FAIL",
+       "FC-2": "PASS",
+       "FC-3": "n/a",
+       "FC-4": "n/a",
+       "FC-5": "SKIPPED",
+       "FC-6": "SKIPPED",
+       "FC-7": "CAVEAT",
+       "FC-8": "PASS"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "FAIL",
+      "FC-2": "CAVEAT",
+      "FC-3": "n/a",
+      "FC-4": "n/a",
+      "FC-5": "SKIPPED",
+      "FC-6": "SKIPPED",
+      "FC-7": "CAVEAT",
+      "FC-8": "PASS"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) FAIL"
+     ]
+    }
+   },
+   "t1h": {
+    "ff2d": [
+     {
+      "id": "neiso-2021-2025-curve-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-3": "FAIL",
+       "FC-7": "CAVEAT",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "neiso-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "neiso-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     }
+    ],
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "n/a",
+      "FC-3": "FAIL",
+      "FC-4": "n/a",
+      "FC-5": "n/a",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
+   },
+   "t1x": {
+    "ff2d": [],
+    "now": null
+   }
+  }
+ }
+}
