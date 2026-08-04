@@ -32,11 +32,25 @@ K5  direction integrity— the repair ADDS 250 MW of deep-inframarginal capacity
                          $28-35), so ``CC_CHP`` energy must RISE and the system
                          demand-weighted lambda must never rise. Checked, not
                          assumed.
-K6  energy conservation— demand is exogenous and identical in both arms, so the
-                         summed class-energy delta must be ~0: whatever the
-                         restored block generates has to displace something.
-                         This is the integrity check a CAPACITY lever gets that
-                         a re-pricing lever does not.
+K6  energy conservation— demand is exogenous and identical in both arms, so
+                         supply must re-balance exactly: whatever the restored
+                         block generates has to displace something. This is the
+                         integrity check a CAPACITY lever gets that a
+                         re-pricing lever does not.
+                         THE PRE-REGISTERED STATISTIC WAS INCOMPLETE AND IS
+                         REPORTED AS SUCH. The prereg wrote it as "the summed
+                         CLASS-energy delta must be ~0", but the class sidecar
+                         is not the whole balance: storage charge/discharge
+                         lives in ``hourly/storage_<year>.parquet`` and unserved
+                         energy in ``hourly/system_<year>.parquet``, so a lever
+                         that shifts storage cycling or scarcity slack moves the
+                         class-only sum legitimately. Both figures are reported;
+                         the VERDICT is on the full identity
+                         ``d_class + d_discharge - d_charge + d_slack - d_dump
+                         - d_demand == 0``. This is the session's own miso-125
+                         lesson turned on itself: a magnitude that violates a
+                         conservation law is a BOUNDARY defect in the statistic
+                         before it is a result about the mechanism.
 K7  no gate regression — the nine criterion statuses, determination, ledgered
                          caveats AND every legitimacy-diagnostic verdict
                          (miso-124's K6, reused verbatim).
@@ -92,6 +106,46 @@ def _system(bundle: Path, year: int) -> tuple[pd.DataFrame, pd.DataFrame]:
         s.pivot_table(index="hour", columns="zone", values="price").sort_index(),
         s.pivot_table(index="hour", columns="zone", values="demand").sort_index(),
     )
+
+
+def _balance(year: int) -> dict:
+    """Full supply/demand energy-balance delta between the two arms, in GWh.
+
+    ``d_class + d_discharge - d_charge + d_slack - d_dump - d_demand`` must be
+    zero: demand is exogenous and identical, so every MWh the restored block
+    adds has to displace another supply term. The three sidecars are separate
+    artifacts, which is exactly why the class-only form of this check (the one
+    the pre-registration wrote) is incomplete.
+    """
+
+    def totals(bundle: Path) -> dict[str, float]:
+        c = pd.read_parquet(bundle / "hourly" / f"class_hourly_{year}.parquet")
+        s = pd.read_parquet(bundle / "hourly" / f"storage_{year}.parquet")
+        q = pd.read_parquet(bundle / "hourly" / f"system_{year}.parquet")
+        c, s, q = c[c["pass"] == "P1"], s[s["pass"] == "P1"], q[q["pass"] == "P1"]
+        return {
+            "class": float(c["mw"].sum()) / 1e3,
+            "discharge": float(s["discharge_mw"].sum()) / 1e3,
+            "charge": float(s["charge_mw"].sum()) / 1e3,
+            "slack": float(q["slack"].sum()) / 1e3,
+            "dump": float(q["dump"].sum()) / 1e3,
+            "demand": float(q["demand"].sum()) / 1e3,
+        }
+
+    a, b = totals(ARM_A), totals(ARM_B)
+    d = {k: b[k] - a[k] for k in a}
+    residual = (
+        d["class"] + d["discharge"] - d["charge"] + d["slack"] - d["dump"] - d["demand"]
+    )
+    return {
+        "class_delta_gwh": round(d["class"], 6),
+        "discharge_delta_gwh": round(d["discharge"], 6),
+        "charge_delta_gwh": round(d["charge"], 6),
+        "slack_delta_gwh": round(d["slack"], 6),
+        "dump_delta_gwh": round(d["dump"], 6),
+        "demand_delta_gwh": round(d["demand"], 6),
+        "residual_gwh": round(residual, 6),
+    }
 
 
 def _diagnostic_verdicts(bundle: Path) -> dict:
@@ -217,7 +271,7 @@ def main() -> None:  # noqa: C901 — one linear gate sequence, kept together
 
     # ---- K4-K6: liveness, direction, conservation -------------------------
     max_dmw, max_dlmp, d_sys, energy, price_hours = {}, {}, {}, {}, {}
-    cc_chp, net_energy = {}, {}
+    cc_chp, net_energy, balance = {}, {}, {}
     for year in YEARS:
         ca, cb = _classes(ARM_A, year), _classes(ARM_B, year)
         cb = cb.reindex(columns=ca.columns, fill_value=0.0)
@@ -243,6 +297,7 @@ def main() -> None:  # noqa: C901 — one linear gate sequence, kept together
             "zone_hours_price_rose": int((dl > 1e-9).sum()),
             "zone_hours_price_fell": int((dl < -1e-9).sum()),
         }
+        balance[str(year)] = _balance(year)
 
     res["K4_liveness"] = {
         "class_energy_delta_gwh": energy,
@@ -281,13 +336,35 @@ def main() -> None:  # noqa: C901 — one linear gate sequence, kept together
     # sidecar) cannot hide inside it.
     res["K6_energy_conservation"] = {
         "net_class_energy_delta_gwh": net_energy,
+        "net_class_only_within_tolerance": all(
+            abs(v) <= 0.5 for v in net_energy.values()
+        ),
+        "full_balance_residual_gwh": {
+            y: v["residual_gwh"] for y, v in balance.items()
+        },
+        "components_gwh": balance,
         "tolerance_gwh": 0.5,
         "rule": (
-            "demand is exogenous and identical in both arms, so whatever the "
-            "restored block generates must displace something; a non-zero net "
-            "is an accounting leak, not a result"
+            "demand is exogenous and identical in both arms, so supply must "
+            "re-balance exactly: d_class + d_discharge - d_charge + d_slack "
+            "- d_dump - d_demand == 0"
         ),
-        "verdict": "PASS" if all(abs(v) <= 0.5 for v in net_energy.values()) else "FAIL",
+        "prereg_statistic_note": (
+            "The pre-registration wrote this gate on the summed CLASS-energy "
+            "delta alone, and AS WRITTEN it fails (see "
+            "net_class_only_within_tolerance). The defect is in the statistic's "
+            "boundary, not in the mechanism: the class sidecar excludes storage "
+            "charge/discharge (hourly/storage_<year>.parquet) and unserved "
+            "energy (hourly/system_<year>.parquet), both of which this lever "
+            "legitimately moves — it displaces expensive energy, so storage "
+            "cycles differently and scarcity slack falls. The full identity is "
+            "reported and carries the verdict. Recorded as a corrected "
+            "statistic rather than a loosened band."
+        ),
+        "verdict": "PASS"
+        if all(abs(v["residual_gwh"]) <= 0.5 for v in balance.values())
+        and all(v["demand_delta_gwh"] == 0.0 for v in balance.values())
+        else "FAIL",
     }
 
     # ---- K7: gate regression (miso-124's K6, verbatim) --------------------
@@ -350,6 +427,11 @@ def main() -> None:  # noqa: C901 — one linear gate sequence, kept together
           f"{'PASS' if res['blocking_gates_pass'] else 'FAIL'}")
     print("\n  CC_CHP energy delta (GWh):   ", cc_chp)
     print("  net class energy delta (GWh):", net_energy)
+    print("  FULL balance residual (GWh): ",
+          {y: v["residual_gwh"] for y, v in balance.items()})
+    print("  storage/slack deltas (GWh):  ",
+          {y: {k: v[k] for k in ("discharge_delta_gwh", "charge_delta_gwh",
+                                 "slack_delta_gwh")} for y, v in balance.items()})
     print("  max zonal |dLMP| ($/MWh):    ", max_dlmp)
     print("  d system demand-wtd lambda:  ", d_sys)
     print("  determination:", res["K7_no_gate_regression"]["determination"])
