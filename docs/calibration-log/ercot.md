@@ -5285,13 +5285,12 @@ verdict, no matrix row due; §5.1 item 7 re-stamped with this outcome. Scope
 fence held: item 8 untouched, topology split not re-opened (families are
 share-table resolution, sub-zonal by construction).
 
-## 2026-08-04 — ERCOT-165 (the FINDING-ercot164 §6 charter BUILT and A/B-tested, owner-authorized by the dispatch prompt; two full-span solves, BOTH registered, keeper UNCHANGED at ercot158 — promotion RECOMMENDED for arm SHARE, PENDING OWNER): the diurnal-family split is IDENTIFIED and LOYO-stable and every pre-registered kill gate is CLEAR, but the charter's SHAPE target is MISSED — the added curtailment lands OVERNIGHT
+## 2026-08-04 — ERCOT-165 (the FINDING-ercot164 §6 charter BUILT and A/B-tested, owner-authorized by the dispatch prompt; two full-span solves, BOTH registered, KEEPER PROMOTED to arm SHARE): the diurnal-family split is IDENTIFIED and LOYO-stable and every pre-registered kill gate is CLEAR, but the charter's SHAPE target is MISSED — the added curtailment lands OVERNIGHT
 
-**Lane** ercot165-curtailment-unpooling · keeper **unchanged**
-(`2026-08-03-ercot158-pool-arm`, NOT-YET; open gates C3a 2023-only, C3b
-2023-only, C3c, C7 2023-lignite cv-leg) · matrix cell `wtx_curtail_unpooled`
-ERCOT **`O`** (built, tested, promotion pending owner — the pjm
-`state_carbon_pricing` precedent) · runs
+**Lane** ercot165-curtailment-unpooling · **KEEPER → `2026-08-04-ercot165-unpooled-share`**
+(superseding `2026-08-03-ercot158-pool-arm`; NOT-YET, open gates UNCHANGED in
+kind: C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg) · matrix cell
+`wtx_curtail_unpooled` ERCOT **`K`** · runs
 `2026-08-04-ercot165-unpooled-tie` + `2026-08-04-ercot165-unpooled-share` ·
 PRECOMMIT `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`
 (pushed BEFORE either arm solved) · finding
@@ -5365,19 +5364,20 @@ mean share moving < 0.002). Also declared
 `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` — a pre-existing ercot-162 registration gap
 that failed the cache-key guard on main; pure guard repair, no solve change.
 
-**Recommendation, NOT executed.** Promote arm B
-(`2026-08-04-ercot165-unpooled-share`) on rule 1 structural fidelity — it
-removes a real rule-19 defect (two mechanisms owning the Panhandle, both
-overnight) and a share whose diurnal shape is a measured artifact of union
-saturation, at zero new DOF, with no criterion regressed. It was not executed
-in-session because the build was authorized to deliver the mid-afternoon mode
-and does not: a promotion justified by a volume gain traceable to depth
-re-centring, while the named target is missed and 2023 moves into
-over-curtailment, is a materially different outcome from what the charter
-described and belongs in front of the owner first. If promoted: generate the
-bundle attestation, set `keepers/ERCOT.json`, `build_status.py --iso ERCOT`,
-then the `calibration-keeper-auditor` agent scoped `--iso ERCOT` (no re-key duty
-— ERCOT holds no `complete` marker).
+**PROMOTION EXECUTED.** The session recommended arm B and the owner promoted it
+in-session on the standing standard ("If structural integrity improves but gates
+regress that may still be a keeper"). The basis is rule 1 structural fidelity,
+NOT the fit: the arm removes a real rule-19 defect (two mechanisms owning the
+Panhandle, both overnight) and a share whose diurnal shape is a measured
+artifact of union saturation, at ZERO new DOF, with no criterion regressed and
+two marginally improved. The missed SHAPE target is carried verbatim in the
+bundle attestation and in the keeper's `market_story` as an OPEN ROOT-CAUSE
+ISSUE, never as a calibrated behaviour. Executed: attestation generated
+(n_entries 10 → 11, n_residual UNCHANGED at 6 — the added entry is
+measured/published), `keepers/ERCOT.json` set, `build_status.py --iso ERCOT`,
+`audit_keepers.py --iso ERCOT` PASS (0 failures, 0 warnings), and the
+`calibration-keeper-auditor` agent run scoped `--iso ERCOT`. No re-key duty —
+ERCOT holds no `complete` marker.
 
 **Successor, named not chartered.** The daytime mode remains unexplained by any
 armed mechanism. The signals that carry it (PNHNDL enforcement incidence, 2025
