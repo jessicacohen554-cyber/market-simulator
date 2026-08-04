@@ -3782,4 +3782,96 @@ magnitude. Writing the assumption into the prereg is what made it falsifiable.
 `scripts/probes/_miso125_chp_prime_mover_split.py`,
 `_miso125_prime_mover_split.json`,
 `PROBE-miso125-chp-prime-mover-split-2026-08-04.txt`.
-* Next number: **miso-126**.
+
+## miso-126 — the missing `CA` combined-cycle STEAM part: 250 MW restored, KEEPER
+
+**KEEPER PROMOTED: `2026-08-04-miso-126-steampart-b`** (bundle
+`results/calibration/miso126_steampart_B`), determination **NOT-YET**, sole FAIL
+C7 `COAL_PRB` ×3y, ledgered caveats 2/3 {C3a, C3c} — all unchanged from the
+predecessor `2026-08-04-miso-124-dualfuel-rearm`. `audit_keepers --iso MISO`
+0/0. Runs registered (rule 15): `2026-08-04-miso-126-steampart-control` (arm A,
+same-HEAD zero-delta control) and `2026-08-04-miso-126-steampart-b`.
+
+**The defect.** EIA-860's `Energy Source 1` on a `CA` (combined-cycle steam
+part) row names the block's **supplementary / duct fuel**, not its primary
+energy input, which arrives as its own combustion turbines' exhaust. So a
+duct-fired steam part reports an exotic code, `fleet.eia860._map_fuel_type`
+returns `None`, the row is skipped and **its capacity never reaches the LP at
+all**. MISO 55088 Dearborn `ST1` — prime mover `CA`, Unit Code `SINT` shared
+with the two `NG` `CT` turbines that drive it, `BFG`, **250.0 MW** — sat outside
+the fleet, which held 515.0 MW against a published 765.0 MW.
+
+**The rate needed no change and got none.** eGRID's `PLNGENAN` of 5,259,825 net
+MWh implies an **impossible 116.6 %** capacity factor on 515.0 MW and **78.5 %**
+on the repaired 765.0 MW: the incumbent measured-CHP rate's denominator already
+counted the missing machine — a **block** rate charged to two thirds of the
+block. The paired re-derive (rule 23, cited to the fleet/denominator change)
+moves **one cell**, `class_capacity_mw` (55088, `CC_CHP`) 350.0 → 600.0; every
+applied rate and flag is byte-identical and a flag-off control re-derive
+reproduces the committed artifact byte-for-byte.
+
+**Identification is the pre-registration, not the result.** Five numbered
+properties, each with its own falsifier, all evaluated before any solve: P1
+absence PASS; **P2 falsified at 50973 Motiva** (present-fleet implied CF already
+80.1 %, so the denominator evidence is *absent — insufficient, not contrary*),
+so the lever is **250.0 MW, not the 290.4 MW miso-125 named**; **P3 closes
+miso-125 §4's let-down-turbine doubt BY MEASUREMENT** (`ST1`'s implied
+generation share of its block 0.4173 vs its EIA-860 **nameplate** design share
+0.4307, gap 0.0134 vs a pre-declared 0.10 band); P4 artifact stability PASS; P5
+ISO scope PASS (MISO +1 generator, five other ISOs byte-identical). The
+predicate's **vintage clause** — a steam part is not older than the turbines
+whose exhaust drives it — excludes 50973 independently (`CA` rows 1957/1962/1978
+vs `NG` `CT` siblings 1983/2011). **1004 Edwardsport is not a defect** and is
+untouched: already in the fleet as `COAL` 555.0 MW. **Zero free parameters.**
+
+**A WIRING GAP WAS FOUND AND CLOSED BEFORE THE RESULT WAS BELIEVED.** The first
+arm-B solve came back **exactly** inert — zero class-energy and zero price delta
+to machine precision — because the flag was not forwarded at the BACKCAST's own
+copy of the bin synthesis (`scripts/run_calibration.py`), the nyiso-89
+regression class the comment at that site warns about verbatim. The pre-existing
+wiring guard pinned **only** `measured_ct_heat_rates`, which is why it did not
+stop this; it is now generalised to **every** boolean `ScenarioConfig`-backed
+keyword of `load_fleet_from_csv`, verified to FAIL against the pre-fix source.
+Prereg KE6's two-grain firing proof — loader check **and** post-arm class-energy
+delta — is the only reason this was caught rather than published as "inert".
+
+**Measured, against the zero-delta control.** `CC_CHP` **+1,013.7 / +1,149.7 /
++1,073.3 GWh**, displacing CT_PEAKER, CC_REGULAR, COAL_PRB, imports, ST_GAS and
+COAL_BIT; max zonal |ΔLMP| **18.578 / 1.328 / 12.267** $/MWh over 7,179 / 7,608
+/ 8,077 hours; system demand-weighted Δλ **−0.0805 / −0.0812 / −0.1005** $/MWh,
+one-sided downward as adding deep-inframarginal capacity requires. Full
+energy-balance residual −0.010 / +0.054 / +0.031 GWh on a ~650 TWh system.
+**C1 `CC_CHP` error collapses −1.55 → −0.53 (2023) and −1.61 → −0.46 TWh
+(2024)** — 68 % / 71 % of the class's whole error, because the EIA-923 benchmark
+target always counted this machine; summed C1 |error| **37.20 → 35.46 TWh**.
+**Nothing regresses**: determination, all nine criterion statuses, the ledgered
+caveats and every legitimacy-diagnostic verdict identical. C3a drifts 0.3 pp
+further negative with no status change and is **kept** per rules 1 / 14, routed
+to MISO's already-ledgered C3a root cause. A/B gates K0–K7 all PASS.
+
+**One pre-registered statistic was wrong and is recorded as CORRECTED, not
+loosened.** K6 was written on the summed **class**-energy delta and as written
+fails (+0.39 / +2.06 / −1.31 GWh vs a 0.5 GWh band) — because the class sidecar
+excludes storage charge/discharge and unserved energy, both of which this lever
+legitimately moves. The full identity carries the verdict. The session's own
+miso-125 lesson turned on itself: a magnitude that violates a conservation law
+is a **boundary defect in the statistic** before it is a result.
+
+**Rule duties.** Rule 15 — both runs registered in-session. Rule 16 — 2023 2024
+2025, one bundle, one invocation, both arms. Rule 22 — training years only;
+MISO holds no `calibration-complete` marker, so no out-of-training year was
+solved, scored or read and no D-5(b) re-key applies. LOO: zero fitted
+parameters, effect independently present and same-signed in all three years,
+C1 improving in both scored years separately. Rule 23 — re-derive cites the
+fleet/denominator change. Rule 25 — **CAISO 54912 Martinez `STG1` 20.0 MW and
+NEISO 6081 Stony Brook `CA1` 96.0 MW are handed off UNSTAMPED**. Rule 26 —
+arming visible in `run_config.json`. Rule 28b/28c — cell stamped `K` and the new
+row minted in the same PR. **Nothing is claimed for any criterion**; C7
+`COAL_PRB` untouched.
+
+**Evidence:** `PREREG-miso126-cc-steam-part-capacity-2026-08-04.md` (commit
+`6d936130`), `FINDING-miso126-cc-steam-part-capacity-2026-08-04.md`,
+`scripts/probes/_miso126_cc_steam_part_screen.py`,
+`scripts/probes/_miso126_steam_part_ab.py`,
+`_miso126_cc_steam_part_screen.json`, `_miso126_steam_part_ab.json`.
+* Next number: **miso-127**.

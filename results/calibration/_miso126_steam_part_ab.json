@@ -1,0 +1,328 @@
+{
+ "session": "miso-126",
+ "prereg": "results/calibration/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md",
+ "incumbent_keeper": {
+  "bundle": "miso124_dualfuel_B",
+  "run_id": "2026-08-04-miso-124-dualfuel-rearm"
+ },
+ "arm_A": {
+  "bundle": "miso126_steampart_A",
+  "delta": "none (same-HEAD zero-delta control)"
+ },
+ "arm_B": {
+  "bundle": "miso126_steampart_B",
+  "delta": "cc_steam_part_capacity=true"
+ },
+ "restored_machine": {
+  "plant_code": 55088,
+  "plant_name": "Dearborn Industrial Generation",
+  "generator_id": "ST1",
+  "summer_mw": 250.0,
+  "prime_mover": "CA",
+  "unit_code": "SINT",
+  "energy_source_1": "BFG",
+  "plant_group": "CC_CHP",
+  "zone": "MISO-East"
+ },
+ "K0_control_integrity": {
+  "incumbent": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "control": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "scorecard_identical": true,
+  "max_abs_class_hour_mw_vs_incumbent": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "note": "caiso-146 found an outgoing keeper's committed sidecars no longer reproducing at HEAD (a zero-delta control diverging by up to 3.2 GW on a class-hour), so this is MEASURED. A non-zero sidecar delta here is a HEAD-drift finding about the incumbent bundle, NOT a result of this session's mechanism, and it is reported as such.",
+  "verdict": "PASS"
+ },
+ "K1_flag_fidelity": {
+  "arm_A_cc_steam_part_capacity": false,
+  "arm_B_cc_steam_part_capacity": true,
+  "verdict": "PASS"
+ },
+ "K2_single_delta": {
+  "n_differing_keys": 1,
+  "keys": {
+   "cc_steam_part_capacity": [
+    false,
+    true
+   ]
+  },
+  "verdict": "PASS"
+ },
+ "K3_year_span": {
+  "arm_A_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "arm_B_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "verdict": "PASS"
+ },
+ "K4_liveness": {
+  "class_energy_delta_gwh": {
+   "2023": {
+    "CC_CHP": 1013.701563,
+    "CC_REGULAR": -216.453172,
+    "COAL_BIT": -56.755645,
+    "COAL_LIGNITE": -14.636824,
+    "COAL_PRB": -187.641969,
+    "CT_CHP": -5.770597,
+    "CT_PEAKER": -246.723281,
+    "ST_CHP": -10.249993,
+    "ST_GAS": -89.719125,
+    "hydro": 1e-06,
+    "import": -185.283062,
+    "oil": -0.084435
+   },
+   "2024": {
+    "CC_CHP": 1149.714375,
+    "CC_REGULAR": -243.592297,
+    "COAL_BIT": -54.679875,
+    "COAL_LIGNITE": -7.491837,
+    "COAL_PRB": -201.546969,
+    "CT_CHP": -10.774479,
+    "CT_PEAKER": -306.746344,
+    "ST_CHP": -8.978224,
+    "ST_GAS": -86.907008,
+    "hydro": -2e-06,
+    "import": -226.944016,
+    "oil": -0.008116
+   },
+   "2025": {
+    "CC_CHP": 1073.2735,
+    "CC_REGULAR": -209.709109,
+    "COAL_BIT": -110.825063,
+    "COAL_LIGNITE": -7.215313,
+    "COAL_PRB": -184.891453,
+    "CT_CHP": -9.013347,
+    "CT_PEAKER": -301.189906,
+    "ST_CHP": -7.621001,
+    "ST_GAS": -62.645016,
+    "hydro": 5e-06,
+    "import": -181.401875,
+    "oil": -0.085849
+   }
+  },
+  "max_abs_class_hour_mw": {
+   "2023": 912.5,
+   "2024": 926.5003051757812,
+   "2025": 912.5000610351562
+  },
+  "max_abs_class_hour_mw_note": "NOT a mechanism magnitude at MISO (miso-122 DO-NOT-MISREAD): it reads 912.5 MW for unrelated levers because it lands on the import class where one seam band flips. Read class_energy_delta_gwh.",
+  "max_zonal_abs_dlmp": {
+   "2023": 18.57783864393727,
+   "2024": 1.3282808511387145,
+   "2025": 12.266775560993239
+  },
+  "price_delta_hours": {
+   "2023": {
+    "hours_with_any_zonal_delta": 7179,
+    "zone_hours_price_rose": 6376,
+    "zone_hours_price_fell": 34464
+   },
+   "2024": {
+    "hours_with_any_zonal_delta": 7608,
+    "zone_hours_price_rose": 5290,
+    "zone_hours_price_fell": 37795
+   },
+   "2025": {
+    "hours_with_any_zonal_delta": 8077,
+    "zone_hours_price_rose": 7228,
+    "zone_hours_price_fell": 36318
+   }
+  },
+  "verdict": "LIVE"
+ },
+ "max_zonal_abs_dlmp": {
+  "2023": 18.57783864393727,
+  "2024": 1.3282808511387145,
+  "2025": 12.266775560993239
+ },
+ "K5_direction_integrity": {
+  "cc_chp_energy_delta_gwh": {
+   "2023": 1013.711875,
+   "2024": 1149.727375,
+   "2025": 1073.2875
+  },
+  "d_system_demand_weighted_lambda": {
+   "2023": -0.08053184739204063,
+   "2024": -0.08117840768760012,
+   "2025": -0.100489627721758
+  },
+  "rule": "the repair ADDS 250 MW of deep-inframarginal CC_CHP capacity (block marginal cost $17-27/MWh against median MISO-East LMPs of $28-35), so CC_CHP energy must RISE and the system demand-weighted lambda must never rise",
+  "verdict": "PASS"
+ },
+ "K6_energy_conservation": {
+  "net_class_energy_delta_gwh": {
+   "2023": 0.394214,
+   "2024": 2.058265,
+   "2025": -1.310645
+  },
+  "net_class_only_within_tolerance": false,
+  "full_balance_residual_gwh": {
+   "2023": -0.01025,
+   "2024": 0.05383,
+   "2025": 0.031
+  },
+  "components_gwh": {
+   "2023": {
+    "class_delta_gwh": 0.384,
+    "discharge_delta_gwh": 1.49575,
+    "charge_delta_gwh": 1.89,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": -0.01025
+   },
+   "2024": {
+    "class_delta_gwh": 2.112,
+    "discharge_delta_gwh": 4.942,
+    "charge_delta_gwh": 6.15075,
+    "slack_delta_gwh": -0.84942,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": 0.05383
+   },
+   "2025": {
+    "class_delta_gwh": -1.28,
+    "discharge_delta_gwh": -5.3105,
+    "charge_delta_gwh": -6.6215,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": 0.031
+   }
+  },
+  "tolerance_gwh": 0.5,
+  "rule": "demand is exogenous and identical in both arms, so supply must re-balance exactly: d_class + d_discharge - d_charge + d_slack - d_dump - d_demand == 0",
+  "prereg_statistic_note": "The pre-registration wrote this gate on the summed CLASS-energy delta alone, and AS WRITTEN it fails (see net_class_only_within_tolerance). The defect is in the statistic's boundary, not in the mechanism: the class sidecar excludes storage charge/discharge (hourly/storage_<year>.parquet) and unserved energy (hourly/system_<year>.parquet), both of which this lever legitimately moves \u2014 it displaces expensive energy, so storage cycles differently and scarcity slack falls. The full identity is reported and carries the verdict. Recorded as a corrected statistic rather than a loosened band.",
+  "verdict": "PASS"
+ },
+ "K7_no_gate_regression": {
+  "determination": {
+   "control": "NOT-YET",
+   "arm": "NOT-YET"
+  },
+  "ledgered_caveats": {
+   "control": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ],
+   "arm": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "criteria": {
+   "dispatch_corr": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "forced_share": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "fuelmix": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "governance": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_mean": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "price_shape": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_tail": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "shape": {
+    "control": "FAIL",
+    "arm": "FAIL",
+    "changed": false
+   },
+   "sysvol": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   }
+  },
+  "criteria_changed": [],
+  "diagnostic_verdict_changes": {},
+  "n_diagnostic_rows_compared": 52,
+  "note": "prereg \u00a73 KE7: a regression is REPORTED and is NOT grounds to revert the capacity repair (rules 1 [R-STRUCT] / 14 [R-ACCURATE] \u2014 a worse fit from a more accurate input is a discovered root-cause item, never a reason to bury the error back inside an inaccurate input). An improvement is likewise not the ship criterion.",
+  "verdict": "PASS"
+ },
+ "gates": {
+  "K0_control_integrity": "PASS",
+  "K1_flag_fidelity": "PASS",
+  "K2_single_delta": "PASS",
+  "K3_year_span": "PASS",
+  "K4_liveness": "LIVE",
+  "K5_direction_integrity": "PASS",
+  "K6_energy_conservation": "PASS",
+  "K7_no_gate_regression": "PASS"
+ },
+ "blocking_gates_pass": true
+}
