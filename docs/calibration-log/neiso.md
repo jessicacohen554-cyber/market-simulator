@@ -1579,4 +1579,103 @@ verdict is stamped and no `U` is minted** — `da_virtual_bids` NEISO stays `R`
 reconciliation result and stays **charter-requested, NOT opened**.
 **This licenses nothing.**
 
-Next shorthand: **neiso-80.**
+---
+
+## neiso-80 — the CHP dark-fuel scope gate lands; Stony Brook's steam part was never missing (2026-08-04)
+
+**NO LP. NO SOLVE. NO RUN REGISTERED** (rule 15 `[R-DASHBOARD]`, stated
+explicitly rather than left implied). **Keeper UNCHANGED** at
+`2026-08-03-neiso-caiso156-meter-screen`. Both of NEISO's cross-ISO queue items
+were adjudicated from committed EIA-860 / eGRID / CAMPD artifacts plus one
+fleet-loader diff.
+
+Prereg `results/calibration/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`
+(commit `e89d08b5`, pushed **before** any arm and before any adjudicating
+statistic); finding
+`results/calibration/FINDING-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`;
+probe `scripts/probes/_neiso80_stonybrook_presence.py`; record
+`_neiso80_stonybrook_presence.json`.
+
+**Item 1 — the miso-122 dark-fuel scope gate, APPLIED at NEISO; the cell STAYS
+`O`.** NEISO's `chp_power_only_heat_rates` artifact was the last of the three
+dark-fuel-carrying ISOs still written pre-gate-3 (19 columns, no
+`dark_fuel_share`); miso-122 re-derived only MISO's and nyiso-120 only NYISO's,
+each handing NEISO's off with a number under rule 25. Re-derived at
+`--vintage 2023`, all five pre-registered properties hold — **P1** the artifact
+has exactly one caller and it is flag-gated; **P2** six frozen columns
+bit-identical on all 40 rows, only `(1595, CC_CHP)`'s `heat_rate` moves and only
+downward, flag census unchanged 22/12/5/1; **P3** reproduces to 4 dp
+(`dark_fuel_share` 0.012142, **9.5584 → 9.4423**); **P4** `cems_vs_egrid_total`
+1.0, in band; **P5** exactly one file changed. Measured on NEISO's own CAMPD the
+share is **0.012142 / 0.009584 / 0.014798** across 2023/24/25 — the hand-off
+series 1.21/0.96/1.48 % exactly — so the gate is a stable physical feature of the
+plant, not a one-year artifact (2023 is the committed vintage and the only
+applied one; no vintage mixing).
+
+**The item is SCORE-INERT ON THE DESIGNATED KEEPER BY CONSTRUCTION, NOT BY
+MEASUREMENT:** the keeper's `run_config` records
+`measured_chp_heat_rates=false`, so the artifact is not read on its solve path
+at all. No solve is owed and none could show otherwise. **Ceiling pre-declared,
+then measured:** the gate walks the repriced seam +36.08 % → +35.31 % (CC_CHP
+only, 3 rows / 378.2 MW: +36.72 % → +35.81 %) — **2.15 %, about one part in
+forty-six, of the seam move that produced the neiso-70 `CC_CHP` overshoot.** It
+cannot and does not flip the cell and was never offered as a route. Rule 23
+`[R-FROZEN-DERIVE]` citation is the **miso-122 gate-3 scope change on measured
+grounds**, never a residual; rule 14 `[R-ACCURATE]` governs in both directions.
+
+**Item 2 — `cc_steam_part_capacity` NEISO `U` → `I`.** 6081 Stony Brook `CA1`,
+96.0 MW `DFO`: **presence resolves `REPRESENTED`, not `MISSING`.** The
+pre-registered **Q4 falsifier fires** —
+`_map_fuel_type("Petroleum Liquids", "DFO", "CA")` returns **`oil`, not
+`None`** — so the fuel map never drops the row and **`6081_CA1` is already in
+the fleet at 96.0 MW**. Q3 passes (predicate matches: uc `CC1`, three `NG`/`CT`
+siblings, all 1981), which is the miso-126 1004 Edwardsport pattern exactly: the
+repair only ever *restores* a row the fuel map drops. **Inertness proven at the
+loader grain, not inferred** (miso-126 §4's discipline mirrored): with
+`CC_STEAM_PART_REPAIR_ISOS` patched to `{MISO, NEISO}` and the flag armed, the
+NEISO fleet is **byte-identical** — 431 generators both sides, 0 added /
+0 removed / 0 changed. **NEISO is NOT added to `CC_STEAM_PART_REPAIR_ISOS`.**
+Q5/Q6 are not reached, both being downstream of a `MISSING` verdict that did not
+occur.
+
+**Why the TOTALS test could not decide it — a real limit of the miso-125/126
+presence test, recorded rather than worked around.** Stony Brook carries
+**10.9 MW** of rows a thermal fleet loader legitimately never loads (`5051S`
+6.9 MW PV solar + `BS#1`/`BS#2` 2.0 MW blackstart IC sets), so the plant total
+sits 10.9 MW above the fleet's in **both** directions and
+**446.6 − 10.9 = 435.7 == the fleet total exactly**. Both capacity bases agree
+(zero NaN-summer rows), so miso-126's hand-off is **reproduced, not
+overwritten**. Totals decide a *dropped* row; at a plant with
+legitimately-excluded rows the question must move to **row grain**. The two
+tests are complements, not substitutes.
+
+**NAMED SUCCESSOR, gathered but deliberately NOT adjudicated and NOT stamped.**
+`6081_CA1` sits in the LP as a 96.0 MW **`oil`** generator with an empty
+`plant_group` while its three `CC1`-block `CT` siblings are
+`CC_REGULAR`/`gas_cc`, and CAMPD meters the block's fuel as **Pipeline Natural
+Gas** at units 001/002/003 (`unitType` "Combined cycle") with **no CAMPD unit
+for `CA1` at all** — miso-126's own ONE METER, ONE RATE picture. That is a
+**classification/repricing** question in a different matrix family and needs its
+own charter with its own measured identification. Sizing note stated so it is
+not oversold: the plant meters only 73–91 GWh/yr gross, so it is a correctness
+question before it is a magnitude one.
+
+**DO-NOT-REDO.** Do not re-test `cc_steam_part_capacity` at NEISO — it is `I`
+and the proof is a byte-identical armed fleet, not an argument. Do not re-open
+`measured_chp_heat_rates` NEISO on the gate-3 correction: its `O` blocker is
+unchanged (the neiso-70 `CC_CHP` overshoot, closed by neiso-71 as a REAL FLEET
+DIFFERENCE — NEISO's merchant `CC_CHP` genuinely carries no host-steam
+obligation — whose DO-NOT-REDO stands). Do not re-derive a `CC_CHP` host-steam
+floor for NEISO. Kendall's capacity basis stays ADJUDICATED-ARTIFACT (neiso-73);
+item 1 changed a *heat rate*, not a capacity.
+
+**Governance.** 2023–2025 only; **no year outside the training window was read
+and no solve was run at all**. NEISO's locked test remains SPENT and untouched;
+the holdout spend freeze is ACTIVE and unspent (rule 22). Rule 25
+`[R-ISO-SCOPE]`: only NEISO's artifact was re-derived and only NEISO's cells are
+stamped — PJM's and CAISO's CHP artifacts stay un-gated and handed off, and
+CAISO 54912 Martinez stays CAISO's. Rule 28b: **both tested cells are stamped in
+this session**, the inert verdict included. Rule 28c: no new `ScenarioConfig`
+field. Rule 27 `[R-PUSH]`: exact on-disk bytes; blob-verified after push.
+
+Next shorthand: **neiso-81.**
