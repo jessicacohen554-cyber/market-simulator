@@ -1,0 +1,22 @@
+eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+PJM: CC plant 7153 fleet pmax sum 1128.0 MW exceeds trusted bound 1098.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.8 MW removed)
+PJM: CC plant 10751 fleet pmax sum 222.7 MW exceeds trusted bound 172.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (49.8 MW removed)
+PJM: CC plant 55297 fleet pmax sum 1586.3 MW exceeds trusted bound 1192.4 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (393.9 MW removed)
+PJM: CC plant 55710 fleet pmax sum 562.6 MW exceeds trusted bound 556.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.6 MW removed)
+PJM: CC plant 60302 fleet pmax sum 1237.1 MW exceeds trusted bound 830.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (406.5 MW removed)
+14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+3 of 4 PJM generators not in eGRID lookup — assigned fallback zone
+PJM: CC plant 7153 fleet pmax sum 1128.0 MW exceeds trusted bound 1098.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.8 MW removed)
+PJM: CC plant 10751 fleet pmax sum 222.7 MW exceeds trusted bound 172.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (49.8 MW removed)
+PJM: CC plant 55297 fleet pmax sum 1586.3 MW exceeds trusted bound 1192.4 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (393.9 MW removed)
+PJM: CC plant 55710 fleet pmax sum 562.6 MW exceeds trusted bound 556.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.6 MW removed)
+PJM: CC plant 60302 fleet pmax sum 1237.1 MW exceeds trusted bound 830.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (406.5 MW removed)
+14 of 1922 PJM generators not in eGRID lookup — assigned fallback zone
+
+===== PJM 2026-2028 summary =====
+  years solved: 3 / 3  ([2026]..[2028])
+  total wall: 11.1 min   global peak RSS: 8.65 GB
+  median year wall: 112.9s   max per-year peak RSS: 8.65 GB
+  invariants: 0 FAIL, 0 WARN  (14 scored)
+  wrote results/ffr-sa-smoke/pjm-off/run_config.json
+  wrote results/ffr-sa-smoke/pjm-off/full_horizon_summary.json
