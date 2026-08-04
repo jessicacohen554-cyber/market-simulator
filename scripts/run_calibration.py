@@ -2231,6 +2231,34 @@ def run_year(
         else:
             ttc, ttc_import = tif_out
 
+    # NYISO external seam deliverability envelope (nyiso-125, ScenarioConfig.
+    # nyiso_seam_deliverability_envelope): the two border links whose external
+    # ties land unambiguously in ONE NYISO load zone -- NYISO_external>NYC
+    # (Zone J) and NYISO_external>Long_Island (Zone K) -- trade their flat
+    # SYMMETRIC static rating for NYISO's own measured DIRECTIONAL HOURLY
+    # envelope off the MIS P-32 posting. Upstate_West and Capital_Hudson keep
+    # their statics: their envelopes are refused on identification because
+    # SCH - PJ - NY spans the Central-East cutset and no public source splits it
+    # (data.nyiso_seam_envelope docstring; rule 20 [R-DOF]). Applied here, after
+    # the monthly/LCR overrides, so the measured envelope supersedes the
+    # statics on its two links while every other link keeps the run's own TTC.
+    if getattr(config, "nyiso_seam_deliverability_envelope", False) and iso == "NYISO":
+        from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
+        from market_sim.data.nyiso_seam_envelope import nyiso_seam_ttc_hourly
+
+        ttc, ttc_import = nyiso_seam_ttc_hourly(
+            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+        )
+        logger.info(
+            "%s %d: nyiso_seam_deliverability_envelope — NYC / Long_Island "
+            "border links follow the measured p%.0f directional seam envelope "
+            "(Upstate_West / Capital_Hudson keep their statics: refused on "
+            "identification, nyiso-125 Phase 0)",
+            iso,
+            year,
+            NYISO_SEAM_FLOW_PERCENTILE,
+        )
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B): a
     # per-(zone, hour) ceiling on West/Panhandle wind & solar reproducing the
     # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot resolve.
