@@ -49,6 +49,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 MATRIX_PATH = "docs/codebase-site/data/mechanism-matrix.js"
+MATRIX_DOC_PATH = "docs/mechanism-testing-matrix.md"
 SCENARIOS_PATH = "src/market_sim/config/scenarios.py"
 CALIB_CLI_PATH = "scripts/run_calibration_full.py"
 REGISTRY_PREFIX = "frontend/data/backcast/registry/"
@@ -196,6 +197,58 @@ def keeper_drift(text: str) -> list[tuple[str, str, str]]:
         if header.get(iso, "") != shard:
             drift.append((iso, header.get(iso, "<missing>"), shard))
     return drift
+
+
+# A §5.x per-ISO prose section header, e.g. "### 5.4 MISO — target C7 ...".
+DOC_SECTION_RE = re.compile(r"^### 5\.\d+ ([A-Z]+)\b.*$", re.M)
+# A run id as it appears in the prose, backtick-quoted: `2026-08-04-miso-124-...`.
+DOC_RUN_ID_RE = re.compile(r"`(20\d\d-\d\d-\d\d-[A-Za-z0-9._-]+)`")
+
+
+def doc_header_sections(doc_text: str) -> dict[str, list[str]]:
+    """Return `{ISO: [full header line, ...]}` for the §5.x prose sections.
+
+    A list, not a single line, because duplicates are a real failure mode: §5.5
+    NYISO had accumulated THREE `### 5.5` headers from merge races (sessions
+    prepending a header + STATUS block instead of re-stamping the one header).
+    """
+    out: dict[str, list[str]] = {}
+    for m in DOC_SECTION_RE.finditer(doc_text):
+        out.setdefault(m.group(1), []).append(m.group(0))
+    return out
+
+
+def doc_header_drift(doc_text: str) -> list[tuple[str, str, str]]:
+    """Return `(iso, reason, shard_id)` per §5.x prose header that is stale.
+
+    Rule 28 [R-MECH-MATRIX] makes the promoting session re-stamp "the matrix
+    header". `keeper_drift` above has always guarded the machine-readable
+    `keepers:` map in the matrix JS — but NOT the prose per-ISO headers in
+    ``docs/mechanism-testing-matrix.md``, and that asymmetry is precisely how
+    four of six drifted undetected while CI stayed green (xiso-4, 2026-08-04:
+    PJM and NYISO carried superseded keeper ids, NYISO's header additionally
+    asserted a superseded DETERMINATION — CALIBRATED-WITH-CAVEATS after
+    nyiso-120 moved it to NOT-YET — MISO carried no live stamp at all, and
+    §5.5 carried three duplicate headers).
+
+    Deliberately WEAK: it asserts only that the shard's keeper id appears
+    somewhere in that ISO's header line, and that there is exactly one header
+    per ISO. It does not police wording, determination text or ordering —
+    catching staleness without dictating prose.
+    """
+    out: list[tuple[str, str, str]] = []
+    for iso, headers in sorted(doc_header_sections(doc_text).items()):
+        shard = shard_keeper(iso)
+        if shard is None:
+            continue  # no shard on disk: not this guard's business
+        if len(headers) > 1:
+            out.append(
+                (iso, f"{len(headers)} duplicate `### 5.x {iso}` headers", shard)
+            )
+            continue
+        if shard not in DOC_RUN_ID_RE.findall(headers[0]):
+            out.append((iso, "header does not name the designated keeper", shard))
+    return out
 
 
 def scenarioconfig_fields(source: str) -> set[str]:
@@ -664,6 +717,13 @@ def main() -> int:
     drift = keeper_drift(matrix_text)
     if not drift:
         print("mechanism-matrix: keeper stamps match every keepers/<ISO>.json")
+
+    # Same rule, the PROSE half (added xiso-4 2026-08-04 — see doc_header_drift).
+    doc_text = (REPO / MATRIX_DOC_PATH).read_text(encoding="utf-8")
+    doc_drift = doc_header_drift(doc_text)
+    if not doc_drift:
+        print("mechanism-matrix: §5.x prose headers match every keepers/<ISO>.json")
+
     if not args.base:
         for f in anchor_errs:
             print(
@@ -675,6 +735,12 @@ def main() -> int:
                 f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift: header "
                 f"`{header}` != keepers/{iso}.json `{shard}` (rule 28). The "
                 f"promoting session re-stamps the header in the same session."
+            )
+        for iso, reason, shard in doc_drift:
+            print(
+                f"::warning file={MATRIX_DOC_PATH}::{iso} §5.x prose header drift: "
+                f"{reason} (designated keeper `{shard}`, rule 28). The promoting "
+                f"session re-stamps the prose header in the same session."
             )
         return 0
 
@@ -730,6 +796,25 @@ def main() -> int:
                 f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift (pre-existing, "
                 f"not this PR): header `{header}` != keepers/{iso}.json `{shard}`. "
                 f"Belongs to the {iso} lane."
+            )
+
+    # Prose half, same escalation: a PR that MOVES a keeper shard owns that
+    # ISO's §5.x prose header. Drift it did not create only warns — it belongs
+    # to the owning ISO's lane, not to whichever PR happens to run next.
+    for iso, reason, shard in doc_drift:
+        if KEEPER_SHARD.format(iso=iso) in changed:
+            failed = True
+            print(
+                f"::error file={MATRIX_DOC_PATH}::{iso} keeper promoted to `{shard}` "
+                f"in this PR but its §5.x prose header is stale: {reason}. Rule 28 "
+                f"[R-MECH-MATRIX]: the promoting session re-stamps the header (and "
+                f"re-checks that ISO's column) in the SAME session."
+            )
+        else:
+            print(
+                f"::warning file={MATRIX_DOC_PATH}::{iso} §5.x prose header drift "
+                f"(pre-existing, not this PR): {reason} (designated keeper "
+                f"`{shard}`). Belongs to the {iso} lane."
             )
     if SCENARIOS_PATH in changed:
         base_src = _git("show", f"{args.base}:{SCENARIOS_PATH}")
