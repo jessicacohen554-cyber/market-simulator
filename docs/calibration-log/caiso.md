@@ -5824,3 +5824,80 @@ proper descendant of the remote tip, and all bundles, sidecars and payloads are 
 main. CAISO gap sweep is now 0/0/0/0/0.
 
 Next number: caiso-168 (caiso-160 unclaimed, see above).
+
+---
+
+## caiso-169 (2026-08-04) — S2's cheap substitute REFUSED EX ANTE; item 3 stays live, its real charter is specified. NO SOLVE, keeper unchanged
+
+Lever: mechanism-matrix §5.2 **item 3** (S2, the DA/RT two-settlement charter) on
+its **own** object — the caiso-127 evening/overnight spread compression — after
+caiso-168 closed the *belly* route into it. Measurement-only Phase 0 on committed
+artifacts; **no LP, no solve, no derive, no `ScenarioConfig` field, no prereg**
+(nothing was armed), nothing registered. Keeper stays
+`2026-08-04-caiso-166-measured-dlap`.
+
+**Rule 19 `[R-ONE-MECH]` settled it before any new mechanism could be proposed.**
+The instrument S2 needs already exists: `storage_daily_cycling` →
+`model/lp/rows.py::_build_storage_daily_cycle_rows`, a zero-parameter
+bounded-foresight SOC constraint — "the LP's single-market perfect-foresight
+arbitrage itself", which is how caiso-129 §5 *defined* S2. **Unarmed on CAISO**,
+matrix cell `.` (n/a), with a rule-19 note this session measures to be wrong.
+
+**The model's storage foresight horizon, measured for the first time.** SOC
+integrated from the LP's own dynamics off the keeper's sidecars (exact at tech
+level — `eta = rte**0.5` is common within a tech), validated **three** ways: the
+LP's annual cyclic row returns **−0.004/−0.010/+0.043 MWh** on 4.7/9.0/13.3 TWh;
+the PS swing recovers **20,776.02 MWh** against the model's own 2,077.6 MW × 10 h
+= 20,776.0 (**ratio 1.0000010**, a number the reconstruction never sees); and the
+clock is **verified LOCAL** (demand peak hod 17 / trough hod 3, solar peak hod 11).
+`li_ion` daily storage-side net sd **4,977/7,951/8,799 MWh/day**; day-start SOC
+dispersion **equals its own mean**; annual SOC swing ≈**85 %** of year-end fleet
+energy — a **seasonal** arbitrage. The mechanism is **LIVE, not inert**.
+
+**REFUSED on two independent grounds.** *Reach* — read off the shipped row
+builder: 365 ν-breaks, **all** at local midnight, **zero** strictly inside the
+caiso-127 coupling (hod [0,7) ↔ [17,22), same local day), so the pinned-day
+identity `λ_ev = λ_on` **survives it exactly**; its one residual channel is
+measured near-empty (corr(day-start SOC, overnight draw) **+0.254/+0.135/+0.059**,
+falling). *Premise* — its own justification ("a day-ahead operator cannot shift
+across days either") is **false for this fleet**: measured CAISO batteries bank at
+sd **2,482/3,685/4,029 MWh/day**, so exact day-neutrality is a **different wrong
+of the same size** (incumbent +2,495/+4,266/+4,770 vs 24 h-cycle
+−2,482/−3,685/−4,029). Robustness stated: model net-collapse moves its sd
+**< 0.02 %**, measured sd moves **±1 %** across RTE 0.80/0.85/0.90.
+
+**The generalisation is the result.** The horizon family admits exactly **two**
+non-fitted values — 24 h (CAISO's IFM trade day) and ∞ (the incumbent) — and the
+measured fleet is **strictly between** them, so the interior point needs an
+explicit uncertainty representation. **That is S2 proper**: two 8,760 solves per
+year on a DA information set plus a measured DA-vs-actual forecast-error input
+(two perfect-foresight settlements are algebraically identical to one). **Owner
+charter, not a session lever.** The pinned-day instrument space is now closed
+completely; new corollary — a **scalar** `battery_dispatch_adder` cancels
+**exactly** from the identity, so it cannot open the spread at any level,
+independent of caiso-100/101's throughput guard.
+
+Corroboration nobody aimed at: the overnight metered net on the **caiso-166**
+keeper (**+113/+106/+344 MW**) reproduces caiso-127 §2's **+98/+104/+365 MW**
+measured on the **caiso-126** keeper thirteen keeper generations earlier.
+
+**Bookkeeping repairs made in the same session** (neither is an adjudication):
+**item 9 struck** — it was CLEARED AND SPENT at **caiso-153** (2026-08-02;
+Theil-Sen re-identification, G1 CT 0.235 FAIL → 1.306 PASS, keeper
+`2026-07-31-caiso153-reid-b`) but the queue entry read "BLOCKING, unowned" for two
+days; and the **§5.2 prose header re-stamped** from `caiso164-zonal-loss-surface`
+to the designated keeper. Also filed, **reported not repaired**:
+`limited_foresight_dispatch` is documented as "the same machinery" and ORs into
+the same kwarg at `runner.py:1840` (forecast) but the **backcast** path
+`run_calibration.py:4376` reads `storage_daily_cycling` alone — the caiso-162
+wiring-defect class again.
+
+Matrix: `storage_daily_cycling` CAISO `.` → **`G`**; ERCOT's `K` undisturbed
+(rule 25). CAISO still holds **no** rule-22 `complete` marker; 2023–2025 only,
+hard-filtered fail-closed.
+
+Evidence: `results/calibration/FINDING-caiso169-storage-foresight-horizon-2026-08-04.md`,
+probe `scripts/probes/caiso169_storage_foresight_phase0.py`,
+artifact `results/calibration/_caiso169_storage_foresight_phase0.json`.
+
+Next number: caiso-170.

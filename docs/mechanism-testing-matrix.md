@@ -768,7 +768,107 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
+
+> *Header re-stamped at caiso-169: it still named `2026-08-04-caiso164-zonal-loss-surface`
+> after caiso-166's promotion (rule 26 header duty, missed by the promoting
+> session). No verdict below is affected — the re-stamp is a name repair.*
+
+> **caiso-169 (2026-08-04) — S2's CHEAP SUBSTITUTE IS REFUSED EX ANTE ON TWO
+> INDEPENDENT GROUNDS; ITEM 3 STAYS LIVE AND ITS REAL CHARTER IS NOW SPECIFIED.**
+> No LP, no solve, no derive, no `ScenarioConfig` field, no prereg (nothing was
+> armed), keeper unchanged. Record
+> `results/calibration/FINDING-caiso169-storage-foresight-horizon-2026-08-04.md`;
+> probe `scripts/probes/caiso169_storage_foresight_phase0.py` (committed
+> artifacts only — the keeper's `hourly/storage_<y>.parquet` +
+> `system_<y>.parquet` + `class_hourly_<y>.parquet`, EIA-930 CISO `NG: OTH`, and
+> the LP row builder itself). Artifact
+> `results/calibration/_caiso169_storage_foresight_phase0.json`.
+>
+> **RULE 19 `[R-ONE-MECH]` DECIDED IT BEFORE ANY NEW MECHANISM COULD BE
+> PROPOSED.** The instrument S2 would need already exists:
+> `storage_daily_cycling` → `_build_storage_daily_cycle_rows`, a zero-parameter
+> bounded-foresight constraint — literally "the LP's single-market
+> perfect-foresight arbitrage itself", which is how caiso-129 §5 *defined* S2.
+> It is **unarmed on CAISO** and its matrix cell read `.` (n/a) with a rule-19
+> note this session measures to be **wrong**.
+>
+> **THE MODEL'S STORAGE FORESIGHT HORIZON, MEASURED FOR THE FIRST TIME.** SOC is
+> integrated from the LP's own dynamics off the committed sidecars (exact at
+> tech level: `eta = rte**0.5` is common within a tech) and validated **three**
+> ways — the LP's annual cyclic row returns **−0.004/−0.010/+0.043 MWh** on
+> 4.7/9.0/13.3 TWh of charge; the pumped-storage swing recovers
+> **20,776.02 MWh** against the model's own 2,077.6 MW × 10 h = **20,776.0**,
+> ratio **1.0000010**, a number the reconstruction never sees; and the clock is
+> **verified LOCAL, not assumed** (keeper demand peaks hod 17 / troughs hod 3,
+> solar peaks hod 11 — a UTC index would put solar at hod 19–20). The model's
+> `li_ion` daily storage-side net has sd **4,977/7,951/8,799 MWh/day**, the
+> day-start SOC dispersion **equals its own mean** (sd/mean 0.96/1.13/0.89), and
+> the annual SOC swing is ≈**85 %** of the year-end fleet energy — a **seasonal**
+> arbitrage, not a diurnal one. So the mechanism is **LIVE, not inert**.
+>
+> **GROUND 1 — REACH, read off the SHIPPED row builder rather than its
+> docstring.** The rows touch SOC at **365 hours, ALL local midnight**, and
+> **ZERO** fall strictly inside the caiso-127 pinned-day coupling, which joins
+> hod [0,7) to hod [17,22) of the **same local day**. On a pinned day
+> `λ_t = c_dis,t − ν_t/η_d` in both windows and interior SOC gives
+> `ν_t = ν_{t+1}`, so **`λ_ev = λ_on` survives the constraint exactly** — the
+> same *form* of refutation as caiso-129 §3(c) "a floor can only ADD". Its one
+> residual channel is the day-to-day variation of the day-start SOC, measured
+> near-empty: corr(day-start SOC, overnight draw) = **+0.254/+0.135/+0.059**,
+> near zero and **falling as the defect grows**.
+>
+> **GROUND 2 — PREMISE, and it is the sharper half.** The mechanism's own stated
+> justification — *"a day-ahead operator cannot shift across days either"* — is
+> **FALSE for the fleet it would be applied to**. The measured CAISO battery
+> fleet banks at sd **2,482/3,685/4,029 MWh/day**; the incumbent overshoots by
+> **+2,495/+4,266/+4,770** and a hard 24 h cycle undershoots by
+> **−2,482/−3,685/−4,029**. A **different wrong of the same size** (closer by
+> 14–16 % in 2024/25, a wash in 2023); adopting it on that margin is metric
+> selection, not structure (rule 1 `[R-STRUCT]`). Robustness **stated**:
+> net-collapsing the MODEL onto the measured basis moves its sd **< 0.02 %**
+> (7–12 both-leg hours of 8,760), and the measured sd moves **±1 %** across RTE
+> 0.80/0.85/0.90.
+>
+> **THE GENERALISATION IS THE RESULT.** The bounded-foresight horizon family
+> admits exactly **TWO** non-fitted values — **24 h** (CAISO's IFM trade day) and
+> **∞** (the incumbent annual cyclic) — and the measured fleet sits **STRICTLY
+> BETWEEN** them. Any intermediate horizon must be *picked*: against the measured
+> dispersion it is a fitted DOF (rule 24), against the price residual an outcome
+> pin (rule 13). **The interior point is reachable only with an explicit
+> uncertainty representation — that is S2 proper**, and it is an owner charter
+> (two 8,760 solves per year on a DA information set plus a measured
+> DA-vs-actual forecast-error input, because two *perfect-foresight* settlements
+> are algebraically identical to one), not a session lever.
+>
+> **THE PINNED-DAY INSTRUMENT SPACE IS NOW CLOSED COMPLETELY**, by the same
+> identity. Exactly two routes: **R1** differentiate `c_dis` by hour — a
+> *shaped* price, refuted by caiso-129 §5 and rule 13, **and a new corollary
+> sharper than the reason on file: a SCALAR `battery_dispatch_adder` cancels
+> EXACTLY from the identity, so it cannot open the spread at ANY level**,
+> independent of caiso-100/101's throughput guard; **R2** break `ν_ev = ν_on`,
+> which needs a binding SOC event strictly between hod 6 and hod 17 — the SOC
+> bound already does this on the non-pinned days (103/127/105 days bottom out
+> overnight), a belly-phase SOC anchor is **barred** (a phase chosen *because* it
+> separates the windows is an outcome pin; hod 0 is the only phase the IFM trade
+> day grounds), and the third is the two-market structure above.
+>
+> **CORROBORATION NOBODY AIMED AT:** the overnight metered net measured here on
+> the **caiso-166** keeper — **+113/+106/+344 MW** — reproduces caiso-127 §2's
+> **+98/+104/+365 MW** measured on the **caiso-126** keeper thirteen keeper
+> generations earlier. The defect is a property of the LP's storage structure,
+> not of any one calibration.
+>
+> **WIRING ASYMMETRY, reported not repaired:** `limited_foresight_dispatch` is
+> documented as "the same machinery" and ORs into the same kwarg at
+> `runner.py:1840` (forecast), but the **backcast** path
+> `run_calibration.py:4376` reads `storage_daily_cycling` alone — so
+> `limited_foresight_dispatch` is **inert on the storage limb in backcast mode**.
+> Repairing it would make a mechanism this session refuses newly reachable, which
+> is that flag's own lane. Matrix row `storage_daily_cycling` CAISO → `G`; its
+> prior note is corrected (`caiso_storage_shape_anchor` is a per-hour **power**
+> cap and constrains **zero MWh** of cross-day **energy** banking — different
+> objects, different rows). **ERCOT's `K` is undisturbed** (rule 25).
 
 > **caiso-168 (2026-08-04) — THE caiso-167 POINTER IS CONFIRMED AND QUANTIFIED,
 > AND ITS LEVER IS SHUT: ITEM 3's S2 CHARTER IS *NOT* THE SUCCESSOR FOR THE
@@ -1235,9 +1335,15 @@ target C5a and the standing structural/offer questions. Items 1, 4, 5 and 6 are
 struck through — 1, 4 and 5 were adjudicated and closed **without spending a
 solve** (caiso-144, caiso-149 and caiso-136), and **6 was spent and PROMOTED at
 caiso-146**. They are kept in place so the numbering stays stable and none is
-re-proposed. **LIVE QUEUE AS OF caiso-168 (2026-08-04): item 3 (scope
-unchanged, its BELLY route closed at caiso-168 — see its body), plus item 9
-(BLOCKING). Item 2 is now STRUCK — CLOSED AND SPENT at caiso-167**, both halves
+re-proposed. **LIVE QUEUE AS OF caiso-169 (2026-08-04): item 3, and item 3
+ALONE.** Its scope is unchanged and it is NOT spent, but two routes into it are
+now shut — the **BELLY** route at caiso-168 and its **cheap substitute**
+(`storage_daily_cycling`, the already-built bounded-foresight instrument) at
+caiso-169, which also specifies what the real S2 charter costs. **Item 9 is now
+STRUCK — it was CLEARED AND SPENT at caiso-153 (2026-08-02)** and this paragraph
+wrongly carried it as "(BLOCKING)" for two days; struck at caiso-169 as a
+bookkeeping repair, not an adjudication. **Item 2 is STRUCK — CLOSED AND SPENT
+at caiso-167**, both halves
 (export at caiso-142/143, import here), no solve spent; read the caiso-167 block
 at the top of §5.2 before proposing any successor. (Item 7 was SPENT and
 PROMOTED at caiso-147; **item 8 was SPENT and PROMOTED at caiso-148**; **item 4
@@ -1251,10 +1357,40 @@ was REFUSED EX ANTE at caiso-149**.)
 > firm-block elasticity), **not** item 2's corridor/export-path family. Item 2
 > remained live through caiso-166 and is closed by caiso-167, above.
 
-9. **Re-identify the CAISO measured offer surface's gas-coupling classifier**
-   — **NEW at caiso-152 (2026-08-01), BLOCKING, unowned.** This is a
-   prerequisite, not a price lever, and it blocks a correction the model
-   demonstrably needs.
+9. ~~**Re-identify the CAISO measured offer surface's gas-coupling
+   classifier**~~ — **CLEARED AND SPENT at caiso-153 (2026-08-02); struck at
+   caiso-169 (2026-08-04) as a STALE-TEXT REPAIR.** This entry read "NEW at
+   caiso-152, BLOCKING, unowned" for two days after it had been closed, because
+   caiso-153 cleared it (`FINDING-caiso153` §H: "the mechanism-matrix §5.2 item
+   9 blocker is CLEARED") without striking the queue entry. **Nothing in
+   caiso-169 adjudicates it; this is a bookkeeping correction only.**
+   What caiso-153 found: the defect was the **ESTIMATOR, not the body probe**
+   (caiso-152 §I's lead is **refuted** — across a frozen 3×3 grid the body axis
+   moves the implied non-fuel adder $4.8 and flips nothing, the estimator axis
+   moves it $25.8 and flips admissibility). A pooled OLS slope is levered on the
+   CA-composite citygate's **$24.29/MMBtu** January 2023 spike against a 2023–25
+   median near $3–4, attenuating every resource that did not track it
+   proportionally **with its correlation intact** — exactly caiso-152's
+   physically-impossible `r ≥ 0.6, slope < 4 MMBtu/MWh` population, which falls
+   from 32 resources / 10,880 MW under OLS to 13 / 2,692 MW under Theil-Sen.
+   Winner by the ex-ante frozen rule: **`P035_TS`** (incumbent body probe,
+   `BODY_FRAC` unmoved at 0.35; one line plus its citation in
+   `derive_caiso_offer_surface.py`, shipping `theilslopes` at :399 on main
+   today). **G1 CT_PEAKER 1,786 MW / 0.235 FAIL → 9,950 MW / 1.306 PASS**, CC
+   0.876 → 0.871 PASS, G2–G4 all PASS, **no gate relaxed and `hr_cut` unmoved at
+   8.5** (rule 23). Two out-of-sample corroborations the selection rule never
+   saw: the re-derived static bands reproduce the **committed** artifact inside
+   tolerance on all six, and the **shipped** deriver regenerates the promoted
+   JSONs exactly — closing `FINDING-caiso152` §F's reproducibility defect, whose
+   cause was this estimator drift and never a corpus mystery. **caiso-152's
+   parse correction ships**, carried by keeper `2026-07-31-caiso153-reid-b`
+   (promoted; cost recorded, DA MAE +0.052/+0.060/+0.043 $/MWh, kept under rules
+   1/14). See `FINDING-caiso153-offer-classifier-reid-2026-08-02.md` and its §G
+   DO-NOT-REDO (do not re-test the body probe; do not re-run the estimator grid
+   to pick a different cell; do not move `hr_cut` on the re-identified slope
+   density).
+   *Historical scope record of the blocker as filed, kept so nothing below is
+   re-proposed:*
    `results/calibration/FINDING-caiso152-dam-bid-rle-parse-2026-08-01.md`.
 
    caiso-152 fixed the `dam-public-bids` RLE parse defect (`FINDING-caiso150`
@@ -1405,6 +1541,33 @@ sign argument to every basis and bound.
    evening/overnight scope**; read the caiso-168 block at the top of §5.2 and
    `FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` before proposing any
    belly-scoped successor.
+
+   **STILL LIVE AND STILL NOT SPENT after caiso-169 (2026-08-04, no solve) — but
+   its CHEAP SUBSTITUTE IS NOW REFUSED and its REAL CHARTER IS SPECIFIED.** Read
+   the caiso-169 block at the top of §5.2 and
+   `FINDING-caiso169-storage-foresight-horizon-2026-08-04.md` **before proposing
+   any successor**. Three things bind a successor:
+   - **`storage_daily_cycling` is the already-built bounded-foresight instrument
+     and it is REFUSED for this object** (cell `G`), on reach (its 365 ν-breaks
+     are all at local midnight; **zero** fall inside the hod [0,7)↔[17,22)
+     coupling, so the pinned-day identity survives it exactly) and on premise
+     (the measured CAISO fleet banks at sd **2,482/3,685/4,029 MWh/day**, so
+     exact day-neutrality is a different wrong of the same size). Do not re-file
+     it, and do not file `limited_foresight_dispatch` in its place — same
+     machinery, and it is inert on the storage limb in backcast mode anyway.
+   - **The instrument space for a pinned day is CLOSED to two routes**, R1
+     (shaped `c_dis` — refuted) and R2 (break `ν_ev = ν_on`). Within R2 a
+     belly-phase SOC anchor is **barred as an outcome pin**, and a **scalar**
+     storage price cancels **exactly** from the identity at any level. **No
+     intermediate SOC horizon** (48/72 h, rolling-N): the family has exactly two
+     non-fitted values and the measured fleet is strictly between them.
+   - **What S2 actually costs, so it is chartered rather than gestured at:** two
+     perfect-foresight settlements are algebraically identical to one, so the
+     separation bites only through an explicit information difference — a second
+     8,760 LP on a day-ahead information set plus a **measured** DA-vs-actual
+     forecast-error input (rule-13 admissible in principle; CAISO publishes DA
+     forecasts and actuals), and a decision about which λ is the scored price.
+     That is an **owner charter**, not a session lever.
 4. ~~**`tranche_startup_amortization`** — evening-ramp start economics~~ —
    **CLOSED, cell is `G`: REFUSED EX ANTE at caiso-149 (2026-07-31, no-LP, no
    solve spent).** Three independent grounds and, unusually, **no reopen
