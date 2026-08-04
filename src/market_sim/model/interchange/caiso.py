@@ -1929,14 +1929,29 @@ CAISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
 def _caiso_internal(from_zone: str, to_zone: str) -> bool:
     """Whether a link joins two internal CAISO zones (WECC nodes excluded).
 
-    The WECC import/export nodes — ``WECC_import`` and the per-hub nodes it
-    expands into under ``caiso_per_hub_intertie`` (``WECC_PNW``, ``WECC_DSW``,
-    …) — are fictitious pricing nodes with no location, so they have no
-    published delivery-factor deviation to derive one from, and inventing one
-    would be a fitted scalar (rule 5 ``[R-NO-MAGIC]``). Their links keep the
-    seam's own mechanisms (measured hub prices, corridor groups, ATC
-    envelopes) and stay lossless — the same exclusion PJM applies to its
-    external star node.
+    The pooled ``WECC_import`` node is a fictitious pricing node with no
+    location, so it has no published delivery-factor deviation to derive one
+    from and inventing one would be a fitted scalar (rule 5 ``[R-NO-MAGIC]``).
+    Its links keep the seam's own mechanisms (measured hub prices, corridor
+    groups, ATC envelopes) and stay lossless — the same exclusion PJM applies
+    to its external star node.
+
+    **The per-hub nodes are excluded for a different, measured reason
+    (caiso-167).** Under ``caiso_per_hub_intertie`` the seam expands into
+    ``WECC_PNW`` / ``WECC_DSW``, which are NOT locationless: they are priced off
+    ``MALIN_5_N101`` and ``PALOVRDE_ASR-APND``, real CAISO APNodes whose
+    ``MCE/MCC/MCL`` CAISO publishes, so the frozen caiso-164 estimator DOES
+    yield a deviation for them with zero fitted scalars (measured seam ``eps``
+    0.01242 PNW / 0.02514 DSW, and a real unrepresented loss component of
+    +$1.13–2.43/MWh). They stay lossless because that mechanism was measured
+    unable to REACH the defect it would be built for: it moves the corridor
+    dual gap by 1.6/0.1/1.4 % of the surplus-regime basis error and in the
+    wrong direction, and ≤39.5 % even at an ``eps`` above any value in any
+    committed loss surface. Cell ``caiso_seam_loss_surface`` = ``G``, refused
+    ex ante, no solve spent;
+    ``results/calibration/FINDING-caiso167-import-price-basis-2026-08-04.md``
+    §4–§5. Do not re-derive it against a residual (rule 23
+    ``[R-FROZEN-DERIVE]``).
     """
     return not (from_zone.startswith("WECC") or to_zone.startswith("WECC"))
 
