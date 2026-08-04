@@ -5825,6 +5825,7 @@ main. CAISO gap sweep is now 0/0/0/0/0.
 
 Next number: caiso-168 (caiso-160 unclaimed, see above).
 
+<<<<<<< HEAD
 ---
 
 ## caiso-169 (2026-08-04) — S2's cheap substitute REFUSED EX ANTE; item 3 stays live, its real charter is specified. NO SOLVE, keeper unchanged
@@ -5901,3 +5902,147 @@ probe `scripts/probes/caiso169_storage_foresight_phase0.py`,
 artifact `results/calibration/_caiso169_storage_foresight_phase0.json`.
 
 Next number: caiso-170.
+=======
+## 2026-08-04 — CAISO — caiso-170: S2's REAL CHARTER has ~2 pp of rent to buy — with the concurrent caiso-170's substitute refusal this CLOSES lever-queue item 3 and the CAISO in-model lever queue is EMPTY. The real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling. No LP, no solve, keeper unchanged — the real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling; item 9 was STALE and is corrected; the CAISO in-model lever queue is now EMPTY. Prompt PRECONDITION did not reproduce — NO promotion made. No LP, no solve, keeper unchanged
+
+> **Lane numbering.** This lane opened as **caiso-169** and its precheck merged
+> under that id (PR #3517). A **parallel session** took the same queue item
+> concurrently and landed first (PR #3525, the entry directly above, which itself
+> signs off "Next number: caiso-170"), so this lane renumbers to **caiso-170**.
+> **The two sessions agree and are complementary:** caiso-169 refused S2's
+> *cheap substitute* (`storage_daily_cycling` → `G`) on reach and premise and
+> left the real charter LIVE; caiso-170 measures that the charter has ~2 pp of
+> rent to buy. **Neither closes item 3 alone.**
+
+**Runs:** NONE. No LP was built, no year was solved, nothing was registered on
+the dashboard (the caiso-136/143/144/149/150/167/168 pattern). This session
+changed no keeper and made no promotion; the keeper advanced
+`2026-08-04-caiso164-zonal-loss-surface` -> **`2026-08-04-caiso-166-measured-dlap`**
+independently mid-session via the caiso-166/167 continuation lane's
+owner-authorised promotion (PR #3514). caiso-170 rebased onto it, re-verified
+its determination from committed artifacts (CALIBRATED-WITH-CAVEATS, C3a
+2024/2025 both ledgered, 0 FAILs, `audit_keepers --iso CAISO` PASS) and re-ran
+the probe against it.
+
+**Prereg** `results/calibration/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`,
+pushed before any value in it existed. **Record**
+`results/calibration/FINDING-caiso170-s2-foresight-phase0-2026-08-04.md`.
+**Probe** `scripts/probes/caiso170_s2_foresight_phase0.py`. **Artifact**
+`results/calibration/_caiso170_s2_foresight_phase0.json`.
+
+**The dispatching prompt's PRECONDITION was AHEAD OF THE REPOSITORY, not wrong
+— and it resolved mid-session.** At open, none of it was on `main`: the keeper
+was `caiso164-zonal-loss-surface`, the S3′ amendment was absent, and the
+caiso-166 branch was deleted (PR #3506 had merged only the finding, the
+registration and the matrix cell). Re-verified with
+`scripts/calibration_verdict.py` (no solve), Arm A scored **NOT-YET** —
+"undocumented out-of-tolerance (FAIL) criteria: price_mean" (C3a 2024
+**+11.5 %** vs ±10 %; the then-ledgered exception covered **2025 only**) — so
+caiso-170 **did not promote**, on rule 22 D-5(b): a re-verified determination
+that is worse stops a promotion and escalates. That was recorded in PRECHECK §0
+**before any measurement** and stands unaltered.
+
+**The owner's own act then landed it, independently and in parallel:**
+`89be6559` the S3′ re-charter (pushed **before** the attestation generator was
+re-run; its §4 **ledgers the 2024 `price_mean`** on measured grounds — losses
+consume MWh so λ must rise, CAISO was already +9.5 % hot with the control 0.5 pp
+inside the band, and on CAISO's own **day-ahead** basis the arm sits +1.8 % in
+2024), `7141ae46` the promotion, `e7955858` the log entry, merged as **PR
+#3514**. Re-verified here after rebasing:
+`2026-08-04-caiso-166-measured-dlap` → **CALIBRATED-WITH-CAVEATS**, C3a 2024
++11.5 % and 2025 +14.4 % both `[ledgered]`, C3c ledgered, **0 FAILs**, all other
+criteria PASS, `audit_keepers --iso CAISO` **PASS (0 failures / 0 warnings)**.
+
+**caiso-170's own S3′ amendment draft is WITHDRAWN** — it was a reconstruction
+from the prompt's description; the owner's document is the real act, was pushed
+before the generator re-ran, and carries the 2024 ledger the reconstruction did
+not. On rebase the reconstruction was dropped; there is exactly one amendment
+file. **`FINDING-caiso166` §5 is CLOSED by the promotion** — the keeper now
+reproduces from the repository, resolved the way §5 itself named as natural.
+
+**The lever — item 3 (S2, the DA/RT two-settlement separation), REFUTED.**
+caiso-129 §5 named S2 — "the LP's single-market perfect-foresight arbitrage
+itself" — as the last candidate for the evening/overnight over-position and
+required a separate charter. This session measured the prior question that
+charter rests on. Scoring the model's `li_ion` dispatch and the **measured**
+battery fleet (EIA-930 CISO `NG: OTH`, PS-free by construction — the caiso-168
+§H basis) on the **same** measured price series, as a discharge-MWh-weighted
+**within-day price percentile**: the model beats the real fleet by
+**−0.014 / +0.019 / +0.007** on RT, against a pre-registered `≥ 0.10 in ≥ 2 of
+3 years`. **0 of 3**, max +0.019, and in 2023 the model is *worse* timed. The
+energy-neutral form agrees and is stronger — against each series' **own**
+perfect-foresight ceiling (same energy, same power profile, only the order of
+hours re-placed) the **measured** fleet already achieves **0.922 / 0.917 /
+0.907** on RT and **0.970 / 0.942 / 0.962** on DA, the model **0.924 / 0.941 /
+0.923** and **0.972 / 0.987 / 0.984**; gap **+0.002 / +0.024 / +0.016**. **The
+real CAISO fleet, which faces exactly the DA/RT structure S2 would represent, is
+already within ~2 pp of perfect foresight**, so a second settlement cannot
+recover a rent nobody is paying. Volume confound measured rather than assumed
+away: annual discharge energy model vs measured 4,023/4,024, 7,637/7,586,
+11,308/11,255 GWh (ratios 1.00/1.01/1.00). Statistic self-checked before use —
+the model's own dispatch on the model's own dual returns capture efficiency
+0.978/0.983/0.981, near its ceiling as perfect foresight requires.
+
+**The verdict is ROBUST to the keeper change, and that is measured.** The probe
+was re-run against the promoted `caiso166_measured_loss_zones` bundle (its
+`--bundle` switch re-points it, so both runs reproduce): **both verdicts
+identical**, F1 advantage moving ≤ 0.0004, F2 not moving at all (it reads only
+measured DA/RT prices), and 2023 **bit-identical** — the caiso-166 placebo year.
+
+**The second falsifier PASSES, and that is what makes this a refutation rather
+than a null.** Mean within-day DA/RT Spearman rank correlation
+**0.849 / 0.822 / 0.769** (mean **0.813**, inside the pre-registered `≤ 0.90`),
+with RT offering 25 % more within-day spread than DA by 2025. CAISO's two
+settlements genuinely do order the day differently — the fleet is simply not
+losing anything to it.
+
+**Re-pointed, explicitly as a pointer and not a verdict.** The defect is a
+within-day **placement** object: the model over-charges the belly
+(+359/+179/+262 MW/h), under-charges overnight (−167/−159/−149) and
+over-discharges the evening (+130/+678/+902) on the **same annual energy**. It
+is **not a bound** — in the 2,920/2,555/2,190 overnight hours whose armed
+`caiso_storage_shape_anchor` cap is LIVE the model charges 23.3/40.8/21.8 MW
+against a bound of 632/803/833 MW and is at it in 1.4/0.7/0.6 % of them, and the
+anchor's hard-zero hours hold only 0.2/0.3/0.4 % of the measured fleet's annual
+charge. The untested pointer is the **aggregated** battery representation
+(pooled power and energy, so nothing forces the spread a duration-limited fleet
+must make); **not claimed here**.
+
+**⚠ Framing correction that successors must carry.** On a like-for-like battery
+basis the "overnight OVER-position" **reverses sign in 2024 and 2025** — the
+model is UNDER by −227/−306 MW/h (still under with the PS limb added), over only
+in 2023. This does **not** refute `FINDING-caiso127` §2, which measured a **pin**
+statistic and not a window volume; it is a different measurement and is reported
+as one. But no successor should scope itself to "remove overnight discharge"
+without reading it.
+
+**Item 9's stale text — struck by the concurrent caiso-169 lane; independently found here, and only this lane paid for it.** The matrix carried
+"Re-identify the CAISO measured offer surface's gas-coupling classifier — NEW at
+caiso-152, BLOCKING, unowned". It was **SPENT AND PROMOTED at caiso-153**
+(`FINDING-caiso153-offer-classifier-reid-2026-08-02.md`): the defect was the
+**estimator** (OLS leverage on the Jan-2023 citygate spike), `_price_at_frac`
+was refuted as the cause, Theil-Sen makes all four frozen gates PASS,
+reproducibility was restored, and the re-derived surface became the keeper.
+This session started the ~2 h OASIS corpus fetch to redo that closed work before
+reading caiso-153; the fetch was abandoned and the partial corpus deleted. The
+cost of a stale queue entry is recorded because that is what rule 28's
+DO-NOT-REDO discipline exists to prevent.
+
+**With item 3 struck and item 9 corrected the CAISO in-model lever queue is
+EMPTY** (items 1/4/5/6/7/8 already discharged, refused or promoted; item 2
+closed on both halves at caiso-167). The honest successors are data blockers or
+owner decisions, not levers: Arm B (no published intra-SP15 limit in
+`data/raw` — FILED, never approximated), C3a-2025 (non-public hourly pumped
+storage, the caiso-141 wall) and C3c-2023/24 (the SoCalGas OFO declaration
+record). The `FINDING-caiso166` §5 inconsistency is CLOSED by the promotion.
+
+**Matrix (rule 28 duty b/c):** new row `caiso_da_rt_two_settlement` CAISO → `R`
+with its evidence citation and a cross-reference to caiso-169's complementary
+`storage_daily_cycling` `G`; §5.2 gains the caiso-170 block above caiso-169's;
+item 3 restated as closed by the two sessions together, with caiso-169's
+"STILL LIVE" verdict marked superseded and everything it binds on a successor
+left standing. Item 9's strike is caiso-169's and is left as they wrote it. **Rule 22:** CAISO holds no `complete`
+marker and the holdout spend freeze is ACTIVE — only 2023/2024/2025 were read,
+no out-of-training year was solved, scored or touched, and **no marker was
+written**. **Rule 25:** every number is CAISO's own, from CAISO's own
+disclosures.
