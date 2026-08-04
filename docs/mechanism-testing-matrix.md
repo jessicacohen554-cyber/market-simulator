@@ -2341,7 +2341,68 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-119-seny-increment`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the 2025 C3a FAIL, decomposed at nyiso-122 into TWO seasonally-separable objects that BOTH resolve to the downstate locational boundary**; keeper `2026-08-04-nyiso-120-c119-scope`, **NOT-YET** (C3a-2025 −10.1 %, a criterion failure deliberately NOT ledgered; C3c the sole ledgered caveat, budget 1 of 3); ~~item 4~~ CLOSED at nyiso-122 (re-opened, then REFUSED ex ante on reach — no solve), which leaves **the NYISO lever queue EMPTY**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-04 (nyiso-122) — THE 2025 C3a FAILURE IS TWO OBJECTS, NOT ONE,
+AND BOTH RESOLVE TO THE DOWNSTATE LOCATIONAL BOUNDARY. NO SOLVE, KEEPER
+UNCHANGED, LEVER QUEUE NOW EMPTY.** Keeper `2026-08-04-nyiso-120-c119-scope`,
+determination **NOT-YET**, untouched. Zero solves, zero `ScenarioConfig` /
+constant / derive / artifact changes, no run registered (there is none to
+register). C3c's ledger budget stays **1 of 3, unspent**.
+
+**(1) THE DECOMPOSITION.** Month x actual-price-band, on the keeper's committed
+`hourly/` sidecars and the committed hourly actual (the model side reproduces the
+scorer byte-for-byte at 34.64 / 37.85 / 59.84): **Jan+Feb −3.58**, of which
+**−3.60** is the **$100–300 band** and only −0.18 the tail; **Jun+Jul −3.76**, of
+which **−3.81** is the **>$300 tail** (33 of 2025's 42 tail hours); every other
+month nets **+0.81**. Counterfactual bounds: matching the tail exactly would give
+C3a **−3.51 % (PASS)**, matching every non-tail hour **−6.33 % (still FAIL)** —
+neither half is sufficient alone.
+
+**(2) WHY 2023/2024 PASS AND 2025 DOES NOT — no new defect, a removed mask.** The
+compression is present in all three years (p90/p10 model **2.697** vs actual
+**4.430** in 2025). The model's trough over-pricing used to offset its peak miss:
+the $0–25 band was **39.1 %** of load in 2023 (+3.41) and is **7.2 %** in 2025
+(+0.92). **Rule 19 check — the peak half IS nyiso-110's object**, confirmed from
+the committed `reserve_family` sidecars: the model's reserve price is **$0.00 in
+99.7 %** of 2025 hours, including **1,037 of the 1,041** hours the market cleared
+$100–200. No second mechanism is proposed for it.
+
+**(3) THE WINTER HALF IS LOCATIONAL, NOT FUEL.** The model prices its four
+mainland zones **IDENTICALLY in 100.0 %** of Jan+Feb 2025 hours; the actual all-5
+zonal spread was **$44.28** (Jan) / **$27.09** (Feb). Upstate_West January is
+nearly exact (**−0.35**) while NYC is short **$44.63**, Capital_Hudson **$37.21**,
+Long_Island **$39.15**. **NYC alone carries 49 %** of the winter gap.
+
+**(4) ITEM 4 RE-OPENED, THEN REFUSED EX ANTE ON REACH.** See the queue entry: its
+construction gates PASS (annual conservation **0.00000**, NYC unchanged in all 36
+months) and it is refused anyway because it cannot touch NYC, would cut
+Upstate-January gas by **$7.48/MMBtu**, over-shoots an already-exact December by
+**+$3.67/MMBtu**, and commands at most **$12.75–17.00/MWh** of a **$44.28**
+premium. Rule 1 `[R-STRUCT]`. **Deliberately NOT adjudicated `R`** — its
+standalone rule 14 case is an open **owner question**.
+
+**(5) REPORTED AGAINST INTEREST — the session's own successor hypothesis is
+refuted by the same data.** Re-grounding the **Tier-3** interface TTC estimates on
+NYISO's measured as-enforced limits is **not** data-blocked (2023–2025 on disk with
+`positive_limit_mw` per interface-hour) but **is** refuted: UPNY-CONED and
+SPR/DUN-SOUTH bind >95 % in **0.0 %** of 2025 hours at medians **looser** than the
+model's estimates. Only CENTRAL EAST binds (17.8 % of Jan+Feb hours) and the
+model's 2850 is already tighter than the measured 3100. The measured limits are
+**NOT adopted** — rule 14's named misalignment clause (one reduced link standing
+for several parallel paths).
+
+**(6) WHAT THIS CONTRIBUTES.** The actual NYC-over-Upstate premium (**$44.28**)
+exceeds any plausible fuel-spread x heat-rate (**$12.75–17.00**) by 2.6–3.5x with
+**no interface flow-limited**, so the residual is **sub-zonal in-city price
+formation** — nyiso-97's identification closure. The `Capital_Hudson` →
+Zone-F/Zone-G **topology split** was chartered against **C3c alone**; it now owns
+the **winter level miss** too, which is **not** a scarcity phenomenon. Any charter
+should be scoped to both. Evidence:
+`results/calibration/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
+`PREREG-nyiso122-iroquois-winter-spread-2026-08-04.md`,
+`_nyiso122_c3a_2025_decomp.json`, `_nyiso122_iroquois_construction.json`,
+`_nyiso122_winter_zonal_spread.json`.
 
 **STATUS 2026-08-03 (nyiso-119) — THE PUBLISHED SENY $40 INCREMENT TIER IS
 ARMED AND PROMOTED; nyiso-118's PARTIAL IS NOW COMPLETED ON CONSTRUCTION.**
@@ -3086,9 +3147,44 @@ condition.
    keeper `2026-07-29-nyiso-96-ctamort`). Do not re-test; do not read the
    cell K as a structural endorsement — the finding's §5 adjudication
    stands.**
-4. **`nyiso_iroquois_winter_spread` re-arm** — decisive winter fix, but ONLY
-   jointly with a summer scarcity lever (its construction conserves the annual
-   spread; re-arming alone just moves the miss to summer — adjudicated).
+4. ~~**`nyiso_iroquois_winter_spread` re-arm** — decisive winter fix, but ONLY
+   jointly with a summer scarcity lever.~~ **RE-OPENED AND THEN REFUSED EX ANTE
+   2026-08-04 (nyiso-122), NO SOLVE — on REACH, not on construction.** Re-opened
+   legitimately: the old blocker ("re-arming alone just moves the miss to summer")
+   is **inapplicable**, because nyiso-122's month × band decomposition shows the
+   summer miss is **entirely the >$300 tail** (−3.81 of the −3.76 Jun+Jul gap; 33
+   of 2025's 42 tail hours), which a monthly gas-basis reallocation cannot move in
+   either direction. Its **construction gates PASS** — annual conservation
+   Δ = **0.00000** in all three years, NYC delivered gas unchanged in all 36
+   months, blast radius the eastern trio + Upstate_West only. **It is refused
+   because it cannot reach the defect:** the winter half of C3a-2025 is
+   **LOCATIONAL, not fuel** — the model prices its four mainland zones
+   **identically in 100.0 %** of Jan+Feb 2025 hours against an actual all-5 zonal
+   spread of **$44.28/$27.09** — so (a) NYC carries **49 %** of the winter gap and
+   its delivered gas is unchanged **by construction**, (b) it **cuts**
+   Upstate-January gas by **$7.48/MMBtu**, the one zone that is right (−0.35), (c)
+   it lifts **December** by **+$3.67/MMBtu**, the year's largest single monthly
+   move, on a month already accurate to **−0.06**, and (d) the entire measured
+   NYC−Upstate gas spread is worth **$12.75–17.00/MWh** against a **$44.28** actual
+   premium. Arming it would reach a better number through a mechanism that is not
+   the real one (rule 1 `[R-STRUCT]`). **NOT adjudicated `R`:** its standalone
+   rule 14 `[R-ACCURATE]` case survives untested by solve and is an **owner
+   question** — arming it improves a measured input while **degrading** C3a-2025,
+   which is a rule 22 D-5(b) escalation, not a session decision. **Successor
+   lever refuted in the same session:** re-grounding the Tier-3 interface TTC
+   estimates on NYISO's measured as-enforced limits (on disk, 2023–2025,
+   `data/raw/NYISO/interface-flows/`) is **not** data-blocked but **is** refuted —
+   UPNY-CONED and SPR/DUN-SOUTH bind >95 % in **0.0 %** of 2025 hours at medians
+   (6385/4600 MW) **looser** than the model's own estimates (5150/3900), so
+   re-grounding would *loosen* them. **The winter residual joins C3c's re-open
+   condition:** it is sub-zonal in-city price formation (nyiso-97's identification
+   closure), so the `Capital_Hudson` → Zone-F/Zone-G **topology split** now carries
+   a **second, independent and larger** motivation than the summer tail it was
+   chartered against. Evidence:
+   `results/calibration/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
+   `PREREG-nyiso122-iroquois-winter-spread-2026-08-04.md`.
+   *(superseded framing, kept for genealogy:)* its construction conserves the
+   annual spread; re-arming alone just moves the miss to summer — adjudicated.
    *nyiso-110 note (2026-08-02):* the peak-half decomposition gives this item's
    blocker a measured shape — the DJF peak miss **exceeds** the DJF reserve
    content in 2023/2025 (+8.08 vs 9.43 is within it, but +32.00 vs 18.72 in
