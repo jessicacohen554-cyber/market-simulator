@@ -165,9 +165,7 @@ class TestP1PrepWiring(unittest.TestCase):
                     if isinstance(tgt, ast.Name):
                         names.add(tgt.id)
                     elif isinstance(tgt, ast.Tuple):
-                        names.update(
-                            e.id for e in tgt.elts if isinstance(e, ast.Name)
-                        )
+                        names.update(e.id for e in tgt.elts if isinstance(e, ast.Name))
                 bound.setdefault(call.func.id, set()).update(names)
 
         joined = " ".join(chain_text)
