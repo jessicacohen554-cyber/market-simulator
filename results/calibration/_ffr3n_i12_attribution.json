@@ -1,0 +1,232 @@
+{
+  "band": {
+    "band_width_pp": 15.0,
+    "basis_gap_pp": 6.597499999999995,
+    "iso": "ERCOT",
+    "model_ceiling_gross_basis": 0.22152500000000006,
+    "model_floor_gross_basis": 0.07152500000000006,
+    "scored_ceiling": 0.2875,
+    "scored_floor": 0.1375
+  },
+  "iso": "ERCOT",
+  "legacy": {
+    "cache_key": "d24d0c24213e07d4",
+    "years": [
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 0,
+          "thermal_by_source": {}
+        },
+        "firm_legs_mw": {
+          "hydro": 275.75,
+          "solar": 7980.0,
+          "storage": 11687.5,
+          "thermal": 78170.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 107328.2028,
+        "firm_mw_reconstructed": 106513.807,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 84617.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 814.3957999999984,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.2684,
+        "retirements_mw_by_reason": {},
+        "year": 2023
+      },
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 5000.0,
+          "thermal_by_source": {
+            "planned": 356.0
+          }
+        },
+        "firm_legs_mw": {
+          "hydro": 273.15,
+          "solar": 7980.0,
+          "storage": 16427.5,
+          "thermal": 78526.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 112424.23,
+        "firm_mw_reconstructed": 111607.207,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 85000.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 817.023000000001,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.322638,
+        "retirements_mw_by_reason": {},
+        "year": 2024
+      },
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 5000.0,
+          "thermal_by_source": {}
+        },
+        "firm_legs_mw": {
+          "hydro": 273.15,
+          "solar": 7980.0,
+          "storage": 21167.5,
+          "thermal": 78526.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 117164.248047,
+        "firm_mw_reconstructed": 116347.207,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 83573.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 817.0410470000061,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.401939,
+        "retirements_mw_by_reason": {},
+        "year": 2025
+      }
+    ]
+  },
+  "pipeline": {
+    "cache_key": "d9a630ade1c48216",
+    "years": [
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 0,
+          "thermal_by_source": {}
+        },
+        "firm_legs_mw": {
+          "hydro": 275.75,
+          "solar": 7980.0,
+          "storage": 11687.5,
+          "thermal": 78170.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 107328.2028,
+        "firm_mw_reconstructed": 106513.807,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 84617.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 814.3957999999984,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.2684,
+        "retirements_mw_by_reason": {},
+        "year": 2023
+      },
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 5000.0,
+          "thermal_by_source": {
+            "planned": 356.0
+          }
+        },
+        "firm_legs_mw": {
+          "hydro": 273.15,
+          "solar": 7980.0,
+          "storage": 16427.5,
+          "thermal": 78526.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 112424.23,
+        "firm_mw_reconstructed": 111607.207,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 85000.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 817.023000000001,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.322638,
+        "retirements_mw_by_reason": {},
+        "year": 2024
+      },
+      {
+        "additions_mw": {
+          "renewable_by_tech": {},
+          "storage": 5000.0,
+          "thermal_by_source": {}
+        },
+        "firm_legs_mw": {
+          "hydro": 273.15,
+          "solar": 7980.0,
+          "storage": 21167.5,
+          "thermal": 78526.557,
+          "wind": 8400.0
+        },
+        "firm_mw_implied": 117164.248047,
+        "firm_mw_reconstructed": 116347.207,
+        "floor_retained_n": 0,
+        "nameplate_pools_mw": {
+          "solar": 38000.0,
+          "wind": 42000.0
+        },
+        "peak_demand_mw": 83573.0,
+        "pipeline_event_counts": {},
+        "reconstruction_residual_mw": 817.0410470000061,
+        "renewable_credit_applied": {
+          "solar": 0.21,
+          "wind": 0.2
+        },
+        "reserve_margin": 0.401939,
+        "retirements_mw_by_reason": {},
+        "year": 2025
+      }
+    ]
+  },
+  "rule_delta": [
+    {
+      "d_rm_pp": 0.0,
+      "exit_lg": 0,
+      "exit_pl": 0,
+      "year": 2023
+    },
+    {
+      "d_rm_pp": 0.0,
+      "exit_lg": 0,
+      "exit_pl": 0,
+      "year": 2024
+    },
+    {
+      "d_rm_pp": 0.0,
+      "exit_lg": 0,
+      "exit_pl": 0,
+      "year": 2025
+    }
+  ]
+}
