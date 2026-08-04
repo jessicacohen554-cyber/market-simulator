@@ -282,6 +282,27 @@ artifact to 6 dp (so the attestation cannot claim "measured" over a hand-typed
 number); and the ledger must show exactly this closure — `measured`,
 `n_entries` unchanged, `n_residual` down by exactly one.
 
+### 5.1 A departure from my own pre-registration, recorded
+
+PRECHECK §8 said this session would **not** mint a matrix row and would register
+on the existing `demand_repairs` row. **I did mint one** (`path15_load_split`,
+CAISO `K`), and the prereg's stated reasoning was wrong on the facts.
+
+That reasoning was: *"minting a row for a table with no flag would put an
+unarmable cell in the matrix and misreport the mechanism inventory."* The matrix
+already carries exactly such a row — **`demand_dropout_screen`**, whose own note
+says *"this is a source-data repair under rule 14 `[R-ACCURATE]`, not a tunable,
+so there is no `ScenarioConfig` field to arm."* An unarmable rule-14 row is
+established practice, not a defect. And `demand_repairs` is a poor host: its
+`def` names two specific flags (`caiso_demand_clock_realign` /
+`caiso_supply_consistent_demand`), and folding a zonal *apportionment* change
+into a demand-*series repair* row would have hidden it.
+
+The departure is **independent of the A/B outcome** — it turns on a precedent in
+the matrix, not on anything the solve produced — which is the only reason it is
+a permissible change to a pre-registered plan. Flagged here rather than left for
+a reader to notice.
+
 **Rule 22 leave-one-year-out:** this session fits nothing and moves no free
 parameter, so LOYO reduces to the no-held-out-degradation check — all three
 years carry the same correction in the same direction and no criterion flips in
