@@ -1737,3 +1737,239 @@ for D-11 a/b/c with HOW each was verified; the exposure audit as a result; and t
 key measurements. Rule 28: stamp any mechanism-matrix cell you touch in THIS session. State
 plainly that the gate re-cut is a LATER lane and that FH-4/FH-5 remains a manager box.
 ```
+
+---
+
+## §0h — Wave-3 status refresh and three new lanes (2026-08-04 @ `bf43122e`)
+
+Read after §0g. Decision record: sitting **Addendum M**.
+
+**Status corrections to §0f/§0g:** **FFR-3K LANDED** (PR #3502) — its "never dispatched" status
+line in §0f and sitting K.4 is retired. **FFR-3S LANDED** (#3501). **FFR-3T LANDED** (#3498/#3504).
+**FFR-3U has NEVER STARTED** — no branch, no doc, seam open at `runner.py:927`, and D-11's
+conditions are undischarged. **~~FFR-3Q-2~~ remains STRUCK** (§0g).
+
+**Rule 25 notice for FFR-3V and FFR-3W:** they investigate the same *shape* of defect in two
+markets. They are **two lanes**. Neither imports the other's verdict, parameters or diagnosis,
+and neither may cite the other as evidence. If run concurrently they must not share a session.
+
+### FFR-3V [OPUS] — MISO's entry screen decided ZERO solar for three straight cohorts
+
+```
+[OPUS] FFR-3V — Find out why MISO's entry screen builds NO solar in an ISO that added 18.6 GW
+of it. This is a DIAGNOSIS lane. You are not permitted to close the residual by tuning.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main bf43122e — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO moved 7x in 4 days):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-03-pjm-151-seam-envelope ·
+CAISO 2026-08-04-caiso164-zonal-loss-surface · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: calibration-complete.json `complete` = {NEISO, NYISO, PJM} — MISO IS NOT IN IT;
+`final` = EMPTY. HOLDOUT FREEZE ACTIVE — out-of-training BACKCAST solve/score/registration only;
+it does NOT block forecast-mode 2026+, T1 windows, or in-sample 2023-2025 work.
+Cache epochs 2026-08-02, 2026-08-03b, and NEW 2026-08-04 (D-10 warm-start OFF for forecast
+bundles — EVERY FORECAST KEY MOVED; see src/market_sim/results/cache.py). Forecast work solves
+COLD and results/ is gitignored, so "expect cache hits" is never a valid budget.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is not one), THEN scripts/regenerate_clean.py (~63-65 min, 50 datatypes,
+1.6 GB). Rule 12 is PER PROMPT (Addendum F.2): years sequential within an invocation, <=2
+concurrent invocations, <=5 solve-years each, and MISO is ~8.6 GB per solve — NEVER co-run it
+with PJM in one session. Rule 27: Opus/Fable only for src/market_sim/ and scripts/run_*.
+
+=== THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
+docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md §6. MISO's registered T1-H leg
+`miso-2021-2025-realized-ffr3a3` (entry_commissioning_lag: true) fails FC-3 additions on ALL
+FIVE techs; solar is model 0.0 GW vs actual 18.649 GW (-100%). It is also the ONLY registered
+T1-H leg of any ISO with an EMPTY retirement-FAIL set — its retirement half passes cleanly.
+FFR-3S PROVED the new decision-year basis cannot explain it: with a 2-year COD lag and a 2021
+window start, the 2021/2022/2023 decision cohorts commission in 2023/2024/2025 — INSIDE the
+window, already visible under the OLD COD basis. The COD-basis solar total is 0.0 GW, so those
+three cohorts decided ZERO solar. Only 2024/2025 were censored. A 2-year shift cannot explain
+a zero. THIS IS AN ENTRY-SCREEN ROOT CAUSE, NOT A SCORING ARTIFACT — that is established, and
+re-arguing it is not your lane.
+
+=== YOUR QUESTION ===
+Why does the entry screen decide zero solar in MISO for three consecutive decision years?
+Work the screen, not the score. Candidate directions, none privileged — enumerate and TEST,
+do not pick the first plausible one:
+  - the screen's solar revenue side (energy value at MISO's solar-hour prices; whether RA /
+    capacity value is credited, and at what accreditation);
+  - its cost side (capex vintage, IRA/ITC treatment, financing assumptions);
+  - eligibility/gating — is solar reaching the screen at all, or filtered before it
+    (queue/interconnection representation, resource availability, a zero build cap, a share cap
+    such as STORAGE_TECH_BUILD_SHARE_CAP's analogue);
+  - the D-2 dampers (entry_rate_limits / entry_commissioning_lag) suppressing it — note
+    Addendum D's HOLD PROMOTION: you may measure them in an EXPLICITLY LABELLED paired control,
+    and you may NOT unarm them anywhere else or recommend a revert;
+  - whether MISO's planned-additions channel (EIA-860 proposed pipeline, step 4) is delivering
+    solar that the ECONOMIC screen (step 5) then never adds to.
+Instrument the screen directly — dump the per-technology screen inputs and the pass/fail margin
+per decision year. A margin of "-$X/MW-yr in every year" is a finding; "solar never entered the
+candidate set" is a DIFFERENT finding. Distinguish them explicitly; they have different fixes.
+
+=== RULES THAT BIND THIS LANE HARDEST ===
+Rule 1 [R-STRUCT] and rule 11: DO NOT tune a parameter to make solar build. A residual closable
+only by an unidentified value is an OPEN BLOCKER you write up, not a knob you turn. If you find
+the screen is right and the INPUT is wrong (a capex, a CF, an accreditation), rule 14
+[R-ACCURATE] says use the accurate value and open the root cause — and if the fit gets worse,
+that is a discovered bug, not a reason to revert.
+Rule 25 [R-ISO-SCOPE]: CAISO has a structurally similar finding under FFR-3W. DO NOT read it as
+evidence, do not import its parameters, do not cite it. Derive MISO's answer from MISO's data.
+Rule 28: stamp any mechanism-matrix cell you test in THIS session, rejections included.
+
+=== SCOPE DISCIPLINE ===
+Diagnose and write up. Do NOT promote a keeper, do NOT flip a default, do NOT widen a band.
+If the fix is obvious and small, PROPOSE it with its evidence and let the owner charter it —
+a diagnosis lane that also lands the fix has no independent check on the fix.
+If you need a solve: MISO, in-sample years only (2023-2025 backcast, or forecast-mode 2026+),
+<=5 solve-years, sequential, and NEVER 2022/2019/2020/2026-backcast — MISO holds no marker and
+the freeze is ACTIVE. If your question genuinely requires an out-of-training year, STOP and
+escalate; that is exactly the breach Addendum L records.
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files. The
+documented cache-purge command deletes TRACKED files; `git status --short` after. Evolution
+ledgers live at <out-dir>/<ISO>/<cache_key>/, NOT the out-dir root, and load_ledgers_for_run
+returns {} rather than raising — a wrong path silently reads as "no evolution happened", which
+in THIS lane would look exactly like your finding. Verify the path before believing a zero.
+A REQUEST-side cache_key() is NOT the key a run is recorded under (FFR-3A-2 §1.2).
+MARKET_SIM_DATA_ROOT outside REPO_ROOT SHIFTS the cache key (FFR-3F §5) — check `env | grep
+MARKET_SIM` is empty. Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3v-miso-entry-screen-<date>.md — the instrumented screen dump,
+the candidate directions you tested and eliminated, the distinguished finding (margin vs
+candidate-set), and what you did NOT separate.
+```
+
+### FFR-3W [OPUS] — CAISO's entry screen prices a gas_ct $40k/MW-yr underwater, every year
+
+```
+[OPUS] FFR-3W — Diagnose why CAISO's entry screen finds a gas_ct unprofitable by ~$40,000/MW-yr
+in every year of every arm, and what that does to FC-2 row 4. DIAGNOSIS lane; no tuning.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main bf43122e — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT 2026-08-03-ercot158-
+pool-arm · PJM 2026-08-03-pjm-151-seam-envelope · CAISO 2026-08-04-caiso164-zonal-loss-surface
+· NYISO 2026-08-04-nyiso-120-c119-scope · NEISO 2026-08-03-neiso-caiso156-meter-screen ·
+MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM} — CAISO IS NOT IN IT; `final` = EMPTY. HOLDOUT FREEZE
+ACTIVE (out-of-training BACKCAST only; forecast-mode 2026+ and in-sample 2023-2025 unrestricted).
+Cache epochs 2026-08-02, 2026-08-03b, and NEW 2026-08-04 (D-10 warm-start OFF for forecast
+bundles — EVERY FORECAST KEY MOVED; src/market_sim/results/cache.py). Forecast solves COLD.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — no Python env ships in the container;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which is NOT a data
+problem), THEN scripts/regenerate_clean.py (~63-65 min). Rule 12 is PER PROMPT (Addendum F.2):
+years sequential, <=2 concurrent invocations, <=5 solve-years each. Rule 27: Opus/Fable only.
+
+=== THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
+FFR-3H cause 2: a CAISO gas_ct is unprofitable in the entry screen in EVERY YEAR OF EVERY ARM
+by $39,974-45,316/MW-yr. Diagnosed and unowned since sitting Addendum J. Related, and read
+before you start:
+  - FFR-3P (docs/handoffs/ffr-3p-caiso-accreditation-*.md): arming the IDENTIFIED VRE
+    accreditation moved FC-2 row 4 from 65.48% to 63.23% — still FAIL — with ZERO invariant
+    flips, and retirements / renewable builds / storage builds / CO2 identical to the digit.
+    Its non-obvious result: 2027-2029 do not move by a megawatt because the backstop is
+    RATE-limited there, not need-limited, so the entire -1,312 MW lands in 2030. FFR-3P ALSO
+    RETRACTED TWO OF ITS OWN CLAIMS (a "+1,735.8 MW thermal under-credit" and a "+1,681 MW hydro
+    under-credit"): CAISO's published fleet thermal credit is 0.9537 vs the model's 0.9457, so
+    the model is 0.8% ABOVE, and published fleet hydro is 0.6936 vs the model's 0.7041, already
+    1.1pp generous. Both errors came from inferring a partition where the ISO publishes the
+    whole class's realized ratio. DO NOT REINSTATE EITHER CLAIM.
+  - The CAISO keeper enables capacity_deliverability_limits (caiso-51 lineage); in a backcast
+    only the measured-seam-import half fires (MIC -> WECC_import). The RA-saturation half is
+    UNVALIDATED in any keeper. If your diagnosis touches it, say which half.
+
+=== YOUR QUESTION ===
+Is the $40k/MW-yr gap a REAL market signal or a screen defect? CAISO is a market where new
+gas_ct genuinely is hard to justify, so "unprofitable" may be CORRECT — in which case the
+finding is that FC-2 row 4's failure is NOT caused by the gas_ct screen and the real cause is
+elsewhere, and saying so is a complete and valuable result.
+Decompose the $40k. Per year, per arm, report the screen's revenue stack against its cost
+stack: energy margin, RESERVE/AS value (screen_reserve_value_enabled and which pricing path
+fired), CAPACITY value (does CAISO's RA payment reach this unit, and does
+capacity_deliverability_limits' RA-saturation half zero it?), against FOM + capex + financing.
+A gap that is 90% one term is a different finding from one spread evenly. Then answer whether
+FC-2 row 4 moves at all if the gas_ct term were corrected — bound it from committed artifacts
+first, and only solve if the bound is not decisive.
+
+=== RULES THAT BIND THIS LANE HARDEST ===
+Rule 1 [R-STRUCT] / rule 11: no adder, no haircut, no value tuned to close the 63.23% residual.
+Rule 14 [R-ACCURATE]: if an input is an estimate where CAISO publishes the real number, use the
+real one even if the fit worsens, and open the root cause. FFR-3P's retraction is the standing
+warning here: prefer the ISO's PUBLISHED whole-class realized ratio over any partition you
+infer, and if you find yourself deriving a component the ISO publishes in aggregate, stop.
+Rule 25 [R-ISO-SCOPE]: MISO has a structurally similar entry-screen finding under FFR-3V. DO NOT
+read it, cite it, or import its parameters. CAISO's answer comes from CAISO's data.
+Rule 19 [R-ONE-MECH]: before proposing anything, enumerate what ALREADY prices this unit's
+capacity and reserve value; replace or reconcile, never stack.
+Rule 28: stamp any matrix cell you test in THIS session, rejections included.
+
+=== SCOPE DISCIPLINE ===
+Diagnose and write up. Do NOT promote, do NOT flip a default, do NOT widen a band. Propose a
+fix with evidence and let the owner charter it. In-sample or forecast-mode years only; CAISO
+holds no marker and the freeze is ACTIVE — an out-of-training year is the Addendum L breach.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST.
+Never push a >=300-line file via push_files. The documented cache-purge command deletes TRACKED
+files; `git status --short` after. Evolution ledgers live at <out-dir>/<ISO>/<cache_key>/, and
+load_ledgers_for_run returns {} rather than raising — a wrong path reads as "no evolution
+happened". MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the cache key (FFR-3F §5). Shell cwd
+persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3w-caiso-entry-screen-<date>.md — the per-term decomposition of
+the $40k, the real-signal-vs-defect determination, the bound on FC-2 row 4, and what you did
+NOT separate.
+```
+
+### FFR-3X [FABLE] — stop the FF-2D helper from overwriting a producer artifact
+
+```
+[FABLE] FFR-3X — Add the refuse-if-exists guard FFR-3K identified, and close FFR-3R §6.1.
+Small lane. Do not expand it.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main bf43122e — RE-VERIFY AT YOUR OWN HEAD) ===
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE. Cache epochs
+2026-08-02, 2026-08-03b, 2026-08-04 (D-10). PREREQUISITE: `uv sync` FIRST (~2 min — the
+container ships NO Python environment). You should not need regenerate_clean.py; if you think
+you do, you have over-scoped. Rule 27: Opus/Fable only for scripts/ — never a full-file rewrite
+from response content.
+
+=== THE DEFECT (FFR-3K §6, measured) ===
+FFR-3K made the capacity-hindcast and full-horizon harnesses write their own `run_config.json`
+from the SOLVED config. `scripts/_ff2d_emit_run_config.py` is now a HISTORICAL-bundle helper —
+but run on a post-fix bundle it will SILENTLY OVERWRITE the producer-written artifact with a
+`meta.json`-reconstructed one. That is a provenance DOWNGRADE and it is exactly the defect class
+FFR-3R closed structurally (scripts/lib/run_record.py, 0f788c29): a record field sourced from
+something other than the config the solve actually ran on.
+
+=== SCOPE ===
+1. REFUSE IF EXISTS. The helper must not overwrite a producer-written run_config.json. Fail
+   loudly with a message naming the bundle and saying why, rather than skipping quietly — a
+   silent skip and a silent overwrite are both invisible, and only one of them is safe.
+   Provide an explicit override flag ONLY if you can name a real use for it; if you cannot,
+   do not add one.
+2. Close FFR-3R §6.1: the helper's HINDCAST arm still reads `meta.json` rather than the
+   producer artifact. Read FFR-3R §6.1 for what it says is open and fix that arm's source.
+3. A test that fails without the guard: run the helper against a bundle that already has a
+   producer-written run_config.json and assert the file is unchanged (compare hash) and the
+   helper errored.
+4. Solve-inert by construction, but PROVE it: report cache_key(ScenarioConfig()) before and
+   after. This touches no ScenarioConfig field, so rule 28 needs no matrix cell — say so
+   explicitly rather than leaving it unstated.
+
+=== WHAT NOT TO DO ===
+Do NOT retro-edit any committed bundle. Do NOT re-run the helper across historical bundles to
+"normalize" them — that is the overwrite you are preventing, applied at scale. Do NOT rewrite
+run_record.py; build on it.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST.
+Never push a >=300-line file via push_files. The documented cache-purge command deletes TRACKED
+files; `git status --short` after. Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3x-emit-guard-<date>.md. Keep it short.
+```
