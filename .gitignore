@@ -107,6 +107,16 @@ data/raw/pjm-zonal-lmp/*
 !data/raw/pjm-zonal-lmp/README.md
 !data/raw/pjm-zonal-lmp/SHA256SUMS.txt
 
+# ERCOT NP3-965-ER 60-Day SCED disclosure, CT-scoped full-span shards
+# (SCLE90/SCGT90, delivery 2024-01-24..2025-12-31): ~360 MB of parquet, past
+# what the push path carries, and deterministically re-fetchable with
+# scripts/data/fetch_ercot_60day_sced_gen_resource.py --delivery-range ...
+# (see data/raw/ercot/SCED-CT/README.md). The sha256 manifest IS committed as
+# the provenance record for the shards.
+data/raw/ercot/SCED-CT/*
+!data/raw/ercot/SCED-CT/README.md
+!data/raw/ercot/SCED-CT/SHA256SUMS.txt
+
 # PJM DataMiner2 day-ahead BINDING TRANSMISSION CONSTRAINTS (da_marginal_value
 # / da_transconstraints — monitored facility, contingency, shadow price): same
 # non-member redistribution restriction; refetch with
