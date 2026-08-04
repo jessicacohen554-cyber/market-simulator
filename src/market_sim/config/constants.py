@@ -3307,6 +3307,18 @@ MISO_SEAM_FLOW_PERCENTILE: float = 90.0
 # neighbor level via pjm_zonal_interchange_envelope). Same convention as MISO.
 PJM_SEAM_FLOW_PERCENTILE: float = 90.0
 
+# NYISO analogue (nyiso-125): per-(month × hod) percentile of the measured net
+# schedule on each border link's OWN external ties, from NYISO's MIS P-32
+# "Interface Limits and Flows" posting (data.nyiso_seam_envelope). Same
+# DEFINITIONAL convention as MISO/PJM above and as
+# eia930.envelopes.measured_interchange_envelope's default — a deliverability-
+# headroom choice fixed ex ante, NOT tuned to any NYISO residual, and
+# pre-registered as never-swept (PREREG-nyiso125-seam-envelope-2026-08-04 §4.1).
+# Rule 25 [R-ISO-SCOPE] is satisfied because only the CONVENTION is shared: the
+# capped MW are derived entirely from NYISO's own postings. Sweeping this in
+# response to a score would be a rule 1 [R-STRUCT] / rule 11 violation.
+NYISO_SEAM_FLOW_PERCENTILE: float = 90.0
+
 # PJM measured-offer-surface family: the season a calendar month belongs to,
 # for the within-SEASON tightness conditioning authorized by the owner
 # 2026-07-27 (docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md §3,
