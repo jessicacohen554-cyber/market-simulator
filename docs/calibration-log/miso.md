@@ -4059,3 +4059,97 @@ open DOF item (#1336), explicitly **not** swept against the C7 residual.
 lowest actual off-peak CV (0.074) and the lowest model CV (0.026); a
 level-of-variability question in the year the fleet cycled least, **not** a
 sizing knob on this mechanism.
+
+---
+
+## 2026-08-04 — miso-128: the 2025-only C7 gap is ONE DIMENSION, not one year; the last named lever is inert by wiring
+
+**NO LP SOLVED. NO ARM BUILT. NO MECHANISM ARMED. NO RUN REGISTERED. KEEPER
+UNCHANGED** at `2026-08-04-miso-127-onlinepmin` (**NOT-YET**, C7 `COAL_PRB` 2025
+still the sole FAIL, ledgered caveats 2/3 {C3a, C3c}). Rule 15 is satisfied by
+this statement: the pre-registration's §3 P10 successor screen fired its declared
+default and no run was produced. Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO
+holds no `complete` marker, so no out-of-training year was solved, scored **or
+read**.
+
+**Prereg** `results/calibration/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md`
+(pushed at `010e22ba`, **before** any adjudicating statistic, with §0 disclosing
+in full every number already measured in exploration). **Finding**
+`FINDING-miso128-c7-2025-diurnal-organization-2026-08-04.md`. **Probe**
+`scripts/probes/_miso128_c7_diurnal_organization.py`; **record**
+`_miso128_c7_diurnal_organization.json`. All ten pre-registered properties PASS.
+
+**The gated statistic factors exactly.** D-1's cv_ratio is taken on the
+hour-of-day **mean profile** over h0–h14, so `cv = prof_std/mean` and
+`prof_std = tot_std × dfrac` give **`cv_ratio = R_tot × R_dfrac × R_level`**
+(exact to < 1e-6). **Two factors improve into 2025 and one collapses:** `R_tot`
+0.907/0.877/**0.952** — 2025 is the model's **best** year, its off-peak
+dispersion reaching **95 %** of reality's; `R_level` 1.077/1.091/**1.025** (the
+level shortfall nearly closes, 1,140 → 399 MW); `R_dfrac` 0.524/0.549/**0.354**.
+**The whole failure is diurnal ORGANISATION** — the model carries as much
+off-peak variability as reality and organises almost none of it by hour of day.
+**Binding consequence for every successor: a mechanism that adds variability
+without organising it hour-of-day cannot move the gate.**
+
+**The defect is year-invariant; only the denominator moved.** The absolute
+amplitude deficit falls monotonically on all three normalisations —
+**1145.2/858.4/800.3 MW**, 0.0812/0.0629/**0.0488** of the actual off-peak mean,
+0.0755/0.0576/**0.0482** in CV terms. On fully-online days (outages removed both
+sides) the model reproduces **82–83 %** of reality's non-diurnal day-to-day coal
+variation in **every** year (0.825/0.808/0.829, drift 0.021) while the diurnal
+amplitude alone drops 0.473/0.483/**0.315**. Not fleet-wide: `COAL_BIT`'s
+`R_dfrac` moves the **other** way in 2025 (0.506 → **1.111**); immaterial
+`COAL_LIGNITE` collapses (0.920 → 0.424).
+
+**The driver is reproduced.** MISO gas **2.54/2.19/3.52 $/MMBtu (+61 %)** loads
+coal up on both sides — actual off-peak mean **+20.1 %**, model **+27.8 %** —
+which is why **reality's** off-peak CV is also lowest in 2025. The model
+over-responds by about a third, and that is what closes its level shortfall.
+**DO NOT open a 2025-specific lane: there is no 2025 driver to find.**
+
+**The mechanism-level statement, and the target statistic a successor must be
+pre-registered against.** Reality's per-plant off-peak amplitude **rises with
+loading** (capacity-weighted LS over 92 plant-years,
+`std_frac = +0.0558 × cf_off + 0.0289`, wR² **0.429**); the model's does **not
+respond at all** (**−0.0028**, wR² **0.003**). Flat-plant census (off-peak profile
+std < 1 % of nameplate; the uint8 quantization floor is 1.5 % of that threshold):
+model **26.0/27.4/59.4 %** of PRB nameplate vs actual **0.0/7.5/12.3 %**, with
+**10 plants / 11,958 MW newly flat in 2025 and nine of the ten going flat while
+their model loading RISES**. The flat set sits at higher loading than the varying
+set (cap-wtd `cf_off` 0.534 vs 0.440) — a saturation signature — while their
+**measured** counterparts are indistinguishable (0.0410 vs 0.0401): **reality
+does not go flat where the model does.**
+
+**`coal_tranche_1/2/3_frac` is INERT BY WIRING at MISO.** The brief's named
+"best-identified open lever" — ERCOT-fitted, open issue **#1336**, carried by
+miso-127 §4 as the standing DOF debt on the C7 mechanism — is not a MISO tuning
+channel. Proven at two grains, no LP built. **Grain 1:** MISO's own fleet
+synthesis produces a **non-empty** `campd_bins` frame (**423 rows**), and
+`build_dispatch_fleet` branches on `if campd_bins is not None` while
+`split_coal_tranches` — the sole consumer of the fractions
+(`data/offer_curves.py:70-72`) — exists only in the **else** limb. **Grain 2:**
+the real MISO 2025 dispatch fleet assembled twice at HEAD, committed vs perturbed
+to 0.10/0.15/0.75 — **2,923 generators, max |Δpmax| = 0.0, max |Δfuel_frac| = 0.0,
+zero elements changed.** **#1336 is a split-fleet-ISO debt, not a MISO one**, and
+there is no rule-25 breach at MISO to repair: MISO's tranche split comes from
+`thermal_tranches_MISO.csv`, MISO's own measured CAMPD conduct. **DO NOT charter
+a `coal_tranche_*_frac` re-derive as a MISO lane.**
+
+**Why nothing was solved.** The P10 screen required all four of {not in a closed
+family, identification that is not the C7 residual, wiring proven at two grains,
+targets `R_dfrac` specifically}. Every candidate fails at least one — the
+take-or-pay period-budget family (closed by proof, miso-127 §1.2), take-or-pay
+removal (R twice, miso-102), the regulated-self-commitment forcing family
+(miso-111 R / 112 R / 113 I; rule 19 forbids a fourth), receipts-derived tonnage
+(miso-103), `coal_mustrun_online_pmin` (out of scope by pre-registration; zero
+free parameters, and re-sizing it against one year is the forbidden fitted path),
+and `coal_tranche_*_frac` (wiring). **No successor was manufactured** — rule 19
+`[R-ONE-MECH]`, and PREREG KILL-4 forbids sizing anything on any Δ measured here.
+
+**Named, NOT chartered** (written down so it is not re-derived from scratch; not
+licensed by this finding): the model's coal offer band has **no within-band
+incremental cost slope**, so a plant is bang-bang in whichever band is marginal
+and saturates flat once loading clears a step — precisely what the
+newly-flat-at-higher-loading set shows. Identification would have to come from
+MISO's own measured unit-level incremental heat rate versus load, with its own
+prereg, derive, two-grain wiring proof and LOYO.
