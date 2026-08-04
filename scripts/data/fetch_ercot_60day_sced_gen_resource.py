@@ -74,6 +74,8 @@ from __future__ import annotations
 
 import argparse
 import io
+import json
+import re
 import zipfile
 from datetime import date, datetime, timedelta
 import sys
@@ -140,16 +142,73 @@ def _list_docs() -> list[dict]:
     return [d["Document"] for d in resp.json()["ListDocsByRptTypeRes"]["DocumentList"]]
 
 
-def _read_gen_csv(zip_bytes: bytes) -> pd.DataFrame:
-    """Extract the Gen Resource Data member of a daily bundle as strings."""
+_MONTH_ABBR = {
+    m: i
+    for i, m in enumerate(
+        "JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC".split(), start=1
+    )
+}
+# 60d_SCED_Gen_Resource_Data-DD-MMM-YY.csv. VERIFIED 2026-08-04: that date is
+# the PUBLICATION stamp, NOT the delivery day — the member named -04-OCT-24 in
+# the 2024-10-04 publication carries SCED stamps of 08/05/2024, i.e. delivery
+# = publication - 60. So the name is a HINT and never the answer; the delivery
+# day is read from the file's own SCED Time Stamp.
+_MEMBER_STAMP_RE = re.compile(
+    re.escape(MEMBER_PREFIX) + r"(\d{2})-([A-Za-z]{3})-(\d{2})\.csv$"
+)
+
+
+def _member_stamp_day(name: str) -> date | None:
+    """Publication day encoded in a Gen Resource Data member name, or None."""
+    match = _MEMBER_STAMP_RE.search(name)
+    if not match:
+        return None
+    day, mon, year = match.groups()
+    month = _MONTH_ABBR.get(mon.upper())
+    if month is None:
+        return None
+    return date(2000 + int(year), month, int(day))
+
+
+def _gen_member_names(zip_bytes: bytes) -> list[str]:
+    """Every Gen Resource Data member in a publication zip.
+
+    ERCOT usually posts one per publication, but NOT always: the 2024-10-04
+    publication day carries TWO documents — the ordinary 10 MB daily one, and a
+    245 MB ``Supplemental_60_Day_SCED_Disclosure`` holding 32 members. A
+    reader that assumes one member, or that assumes one document per
+    publication day, breaks on those.
+    """
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
-        members = [n for n in zf.namelist() if n.startswith(MEMBER_PREFIX)]
-        if len(members) != 1:
-            raise ValueError(
-                f"expected exactly one {MEMBER_PREFIX}* member, got {members}"
-            )
-        with zf.open(members[0]) as fh:
+        return [n for n in zf.namelist() if n.startswith(MEMBER_PREFIX)]
+
+
+def _member_delivery_days(zip_bytes: bytes, member: str) -> list[date]:
+    """Delivery day(s) a member actually contains, read from its own stamps."""
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        with zf.open(member) as fh:
+            stamps = pd.read_csv(
+                fh, dtype=str, usecols=["SCED Time Stamp"], keep_default_na=False
+            )["SCED Time Stamp"]
+    days = pd.to_datetime(stamps.str.slice(0, 10), format="%m/%d/%Y").dt.date
+    return sorted(set(days))
+
+
+def _read_member(zip_bytes: bytes, member: str) -> pd.DataFrame:
+    """Read one named Gen Resource Data member as strings."""
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        with zf.open(member) as fh:
             return pd.read_csv(fh, dtype=str, keep_default_na=False)
+
+
+def _read_gen_csv(zip_bytes: bytes) -> pd.DataFrame:
+    """Extract the Gen Resource Data member of a single-day publication zip."""
+    members = _gen_member_names(zip_bytes)
+    if len(members) != 1:
+        raise ValueError(
+            f"expected exactly one {MEMBER_PREFIX}* member, got {sorted(members)}"
+        )
+    return _read_member(zip_bytes, members[0])
 
 
 def _coerce_schema(df: pd.DataFrame) -> pd.DataFrame:
@@ -162,6 +221,168 @@ def _coerce_schema(df: pd.DataFrame) -> pd.DataFrame:
         else:
             out[col] = pd.to_numeric(s, errors="raise").astype("float64")
     return pd.DataFrame(out)
+
+
+def fetch_span(
+    delivery_start: date,
+    delivery_end: date,
+    window_label: str,
+    out_dir: Path,
+    max_delivery_date: date,
+    hod_start: int = 0,
+    hod_end: int = 23,
+    resource_types: tuple[str, ...] | None = None,
+    skip_existing: bool = True,
+) -> list[Path]:
+    """Fetch a full delivery-day span by scanning PUBLICATIONS, one file per day.
+
+    Why publication-driven rather than delivery-driven: ERCOT's nominal
+    publication = delivery + 60 does not always hold. The 2024-10-04
+    publication is a catch-up BUNDLE carrying 32 delivery days at lags 9-39,
+    and the days it displaced are not in the zip their nominal lag points at —
+    a delivery-driven loop simply cannot find them. Scanning publications and
+    harvesting whatever delivery days each zip declares is the only complete
+    method, and it downloads each zip exactly once either way.
+
+    One parquet per DELIVERY day, so a day that never turns up anywhere is
+    visible as a missing file rather than silently absent from a month shard.
+    ``skip_existing`` then resumes at day granularity, and a per-doc index
+    (``_processed_docs.json``) lets a resume skip publications already mined.
+
+    Holdout hygiene (rule 22): a harvested member is kept ONLY if its delivery
+    day is inside [delivery_start, delivery_end] and <= max_delivery_date, so a
+    bundle spilling into a quarantined year cannot smuggle a day in.
+    """
+    if delivery_end > max_delivery_date:
+        raise SystemExit(
+            f"--delivery-range end {delivery_end} beyond --max-delivery-date "
+            f"{max_delivery_date} (holdout hygiene, CLAUDE.md rule 22)"
+        )
+    wanted = {
+        delivery_start + timedelta(days=i)
+        for i in range((delivery_end - delivery_start).days + 1)
+    }
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    def _day_path(day: date) -> Path:
+        return (
+            out_dir / "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_"
+            f"{window_label}_{day.isoformat()}.parquet"
+        )
+
+    index_path = out_dir / "_processed_docs.json"
+    processed: set[str] = set()
+    if skip_existing and index_path.exists():
+        processed = set(json.loads(index_path.read_text()).get("doc_ids", []))
+
+    # A publication can only carry deliveries at a positive lag, so bound the
+    # scan generously on both sides rather than assuming the nominal 60.
+    pub_lo = delivery_start
+    pub_hi = delivery_end + timedelta(days=PUBLICATION_LAG_DAYS + 15)
+    docs = []
+    for doc in _list_docs():
+        pub = datetime.strptime(doc["PublishDate"][:10], "%Y-%m-%d").date()
+        if pub_lo <= pub <= pub_hi:
+            docs.append((pub, doc))
+    docs.sort(key=lambda pd_: pd_[0])
+    print(
+        f"scanning {len(docs)} publications ({pub_lo}..{pub_hi}) for "
+        f"{len(wanted)} delivery days",
+        flush=True,
+    )
+
+    written: list[Path] = []
+    have = {d for d in wanted if _day_path(d).exists()} if skip_existing else set()
+    if have:
+        print(f"  {len(have)} delivery day(s) already on disk — skipping", flush=True)
+
+    for pub, doc in docs:
+        if skip_existing and doc["DocID"] in processed:
+            continue
+        if not (wanted - have):
+            break
+        # Cheap pre-download skip. An ORDINARY publication obeys delivery =
+        # publication - 60 (verified live), so one outside the wanted range
+        # need not be downloaded at all. A SUPPLEMENTAL is exempt: its lag is
+        # not the nominal one, so it is always opened and read.
+        name = doc.get("ConstructedName") or doc.get("FriendlyName") or ""
+        is_supplemental = "supplemental" in name.lower()
+        nominal = pub - timedelta(days=PUBLICATION_LAG_DAYS)
+        if not is_supplemental and nominal not in wanted:
+            processed.add(doc["DocID"])
+            continue
+        resp = _get_with_retries(DOWNLOAD_URL, {"doclookupId": doc["DocID"]})
+        names = _gen_member_names(resp.content)
+        # Delivery day comes from the member's own SCED stamps, never its
+        # filename (which is the publication stamp). For the ordinary
+        # one-member document the nominal publication-60 is used first as a
+        # cheap skip test, then VERIFIED against the content before writing.
+        member_days: dict[date, str] = {}
+        for name in names:
+            stamp = _member_stamp_day(name)
+            nominal = stamp - timedelta(days=PUBLICATION_LAG_DAYS) if stamp else None
+            if len(names) == 1 and nominal is not None and nominal not in wanted:
+                continue
+            for day in _member_delivery_days(resp.content, name):
+                member_days.setdefault(day, name)
+        take = sorted((wanted - have) & set(member_days))
+        if len(names) > 1:
+            print(
+                f"  pub {pub}: SUPPLEMENTAL bundle, {len(names)} members "
+                f"covering delivery {min(member_days, default='-')}.."
+                f"{max(member_days, default='-')}; {len(take)} wanted",
+                flush=True,
+            )
+        for day in take:
+            df = _read_member(resp.content, member_days[day])
+            # A supplemental member can hold more than one delivery day; keep
+            # only the day this file is being written for.
+            stamp_day = pd.to_datetime(
+                df["SCED Time Stamp"].str.slice(0, 10), format="%m/%d/%Y"
+            ).dt.date
+            df = df[stamp_day == day]
+            if (hod_start, hod_end) != (0, 23):
+                hod = pd.to_datetime(
+                    df["SCED Time Stamp"], format="%m/%d/%Y %H:%M:%S"
+                ).dt.hour
+                df = df[(hod >= hod_start) & (hod <= hod_end)]
+            if resource_types is not None:
+                present = sorted(set(df["Resource Type"].unique()))
+                df = df[df["Resource Type"].isin(resource_types)]
+                if df.empty:
+                    print(
+                        f"  {day}: 0 rows after resource scope "
+                        f"{sorted(resource_types)} — day carried {present}",
+                        flush=True,
+                    )
+                    continue
+            path = _day_path(day)
+            _coerce_schema(df).to_parquet(path, index=False)
+            written.append(path)
+            have.add(day)
+            print(f"  {day} (pub {pub}): {len(df):,} rows -> {path.name}", flush=True)
+        processed.add(doc["DocID"])
+        index_path.write_text(json.dumps({"doc_ids": sorted(processed)}, indent=0))
+
+    missing = sorted(wanted - have)
+    print(
+        f"\nwrote {len(written)} day file(s); {len(have)}/{len(wanted)} delivery "
+        f"days present; {len(missing)} NOT FOUND in any listed publication"
+    )
+    if missing:
+        runs = []
+        start = prev = missing[0]
+        for day in missing[1:]:
+            if (day - prev).days == 1:
+                prev = day
+                continue
+            runs.append((start, prev))
+            start = prev = day
+        runs.append((start, prev))
+        for lo, hi in runs:
+            span = (hi - lo).days + 1
+            print(f"  MISSING {lo} .. {hi}  ({span} day{'s' if span > 1 else ''})")
+    return written
 
 
 def fetch_days(
@@ -350,6 +571,12 @@ def main() -> None:
         help="with --shard-by-month, leave already-written month shards alone "
         "and never re-fetch their days",
     )
+    ap.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="with --delivery-range, re-fetch every day even if its parquet "
+        "already exists (spans resume by default)",
+    )
     args = ap.parse_args()
 
     if bool(args.delivery_days) == bool(args.delivery_range):
@@ -360,9 +587,23 @@ def main() -> None:
         )
         if end < start:
             ap.error(f"--delivery-range END {end} precedes START {start}")
-        days = [start + timedelta(days=i) for i in range((end - start).days + 1)]
-    else:
-        days = [datetime.strptime(d, "%Y-%m-%d").date() for d in args.delivery_days]
+        # A span goes through the PUBLICATION-driven scanner: ERCOT's nominal
+        # delivery+60 does not hold across its catch-up bundles, so a
+        # delivery-driven loop cannot find the displaced days.
+        fetch_span(
+            start,
+            end,
+            args.window_label,
+            Path(args.out_dir),
+            datetime.strptime(args.max_delivery_date, "%Y-%m-%d").date(),
+            hod_start=args.hod_start,
+            hod_end=args.hod_end,
+            resource_types=tuple(args.resource_types) if args.resource_types else None,
+            skip_existing=args.skip_existing or not args.no_resume,
+        )
+        return
+
+    days = [datetime.strptime(d, "%Y-%m-%d").date() for d in args.delivery_days]
     if args.skip_existing and not args.shard_by_month:
         ap.error("--skip-existing requires --shard-by-month")
 
