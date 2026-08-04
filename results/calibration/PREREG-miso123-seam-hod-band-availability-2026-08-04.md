@@ -328,5 +328,3 @@ finding and the matrix `import_shape_lever` / `seam_flow_envelopes` rows before
 measuring, so it is **not** blind to the hod-correlation result or to NYISO's
 refusal. Immaterial to Q1–Q6, which rest on the committed EIA-930 directed-flow
 series, the keeper's own solved duals, and the model's own seam construction.
-</content>
-</invoke>
