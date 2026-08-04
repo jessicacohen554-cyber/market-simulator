@@ -4635,11 +4635,164 @@ manifest/benchmark conflicts regenerated from sidecars).
 
 Next shorthand: ercot-159.
 
-*(Bookkeeping note, ercot-160: **ercot-159 landed on main without a log entry
-here** — commits `935c33dd` / `824052a6` / `bbf0c2fa`, the
-`ercot_energy_online_capability_cap` build. The shorthand is therefore SPENT
-and this session is ercot-160; the gap is recorded rather than silently
-renumbered, and reconstructing ercot-159's entry belongs to that lane.)*
+## 2026-08-04 — ERCOT-159 (queue item 9 chartered and executed, owner-authorized; 2 full-span solves, keeper UNCHANGED at ercot158): the energy-side measured online-capability cap REACHES the 2023 tail no prior lever could move — missed-set $105→$813 against actual $860, 27/91 hours flipped, 46 new tail hours inside the actual tail — but OVER-FIRES on 4 pre-registered kill gates (33 fabricated tail hours, +39 spurious mid-band, C3a −24.5→+44.7 %); matrix cell U→R; the cushion diagnosis is CONFIRMED CAUSALLY and the successor is re-pointed at ORDINARY-HOUR commitment level
+
+**Session scope.** The owner prompt authorized chartering AND executing §5.1
+queue item 9 — the ERCOT-155 named successor, matrix row
+`energy_online_capability_cap` (ERCOT `U`): an energy-side measured
+online-capability ceiling, the analogue of the keeper-armed
+`ercot_reserve_supply_cap`. This is a structural LP change, so the round ran
+the full measure-first discipline:
+`docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md` (mechanism
+statement, rule-19 precedence reconciliation, rule-13/20/23 statement, the
+guard family, the K/R/I decision rule, and a DO-NOT-REDO fence against both the
+refused offer-dispersion arm and the closed ercot41/43/106/108 envelope family)
+was pushed with the Phase-0 census and the A/B scorer **before any LP was
+built**.
+
+**Phase 0 (no LP, on the keeper's own committed sidecars).** Probe
+`scripts/probes/ercot159_capability_phase0.py` → committed record
+`results/calibration/_ercot159_capability_phase0.json`. The raw per-hour
+telemetered ceiling — the rule-13-FORBIDDEN form — binds **3,838 hours**
+(3,615 of them at actual < $150): the forbidden form is also the mechanically
+broken one. The chosen conditional envelope binds **667** hours, covering
+**66 of the 91** missed tail hours at ~2× the depth of its ordinary-hour binds
+(missed p50 1.84 GW vs ordinary 1.10 GW). Seven further grain/statistic
+variants were computed and **disclosed in the precommit** (§5); the shipped
+construction was fixed a priori, never selected on a residual.
+
+**The mechanism.** `ercot_energy_online_capability_cap` (default off) fills the
+**existing** `ReserveDesign.online_capacity_cap` row block on the **fast tier
+only**: Σ P(gas_cc/gas_st/coal/nuclear) + Σ R(RegUp/RRS/ECRS) ≤ the measured
+conditional envelope; the all tier keeps the uncapped sentinel so NonSpin and
+quick-start capability retain their own owners (rule 19) and the ORDC total
+family keeps an escape valve. The ceiling is the per-cell **maximum** of
+slow-fossil + nuclear online HSL + quick-start online headroom over
+(season × hour-block × 14 net-load percentile bins), derived by
+`scripts/data/derive_ercot_energy_online_capability.py` from the **full-year
+delivery-2023 corpus** (315 shards, all 365 delivery days — the ERCOT-157
+landing; **this is the data blocker the §5.1 item-9 charter block recorded as
+open, and it is now CLOSED — that stale "2024/2025 only, NP3-965
+OWNER-DECLINED" clause is corrected in this session**). 225 cells, zero fitted
+scalars, frozen rule 23; 2024/2025 carry no block and are byte-inert by
+construction.
+
+**Run A — `2026-08-04-159-control-zerodelta`** (bundle `ercot159_control_A`):
+zero-delta replay of the ercot158 keeper recipe, fresh out-dir, same HEAD.
+Reproduces the committed keeper **to the cent** in all three years
+(2023 $36.52 / h>200 58 / h>500 30 / slack 3,476.5 MWh; 2024 $29.55 / 20 / 11;
+2025 $32.27 / 0 / 0) — same-HEAD drift is nil, so it is a clean A/B base (the
+ercot150 K2 lesson honoured).
+
+**Run B — `2026-08-04-159-energy-capability-cap`** (bundle `ercot159_cap_B`;
+single delta `--set ercot_energy_online_capability_cap=true`).
+
+**ADJUDICATION: R — REJECTED on the pre-declared decision rule.** Four kill
+gates fired, **all in 2023**:
+
+| gate | Run A | Run B | verdict |
+|---|---|---|---|
+| C3a level (grace +1.0 pp) | −24.5 % | **+44.7 %** | DEGRADED |
+| zero-spurious mid-band | — | **+39 h** | TRIPPED |
+| NRMSE (+0.005) | 2.866 | **6.584** | DEGRADED |
+| new tail outside actual | 0 | **33 h** | KILL |
+| tail count (not-away) | 58 | 158 (act 181) | HELD |
+
+**2024/2025 are BIT-IDENTICAL** — price and dispatch max|Δ| exactly 0.0,
+confirming the pre-registered inertness (no artifact block ⇒ no constraint).
+Scorecard clean at **both** grains (zero PASS→FAIL at criterion and at
+per-(criterion, year, key) row grain; both arms NOT-YET with the identical fail
+set price_mean/price_shape/price_tail/shape). **D-2 clean**: NO new forcing
+mechanism, `gas_commitment_bridge` forced 1.8668 → 1.8662 TWh, every delta
+under the 0.05 TWh floor — the cap is an upper bound and adds no forced energy,
+so C8/D-4 exposure is genuinely nil (unlike ERCOT-158, where it was vacuous by
+construction, here it is nil by measurement). Slack guard HELD but moved hard:
+3,476.5 → **81,256.1 MWh** (23×, inside the 0.1 %-of-demand bound).
+
+**THE FINDING THE REJECTION CARRIES — the most important ERCOT result since
+ERCOT-155.** The mechanism **reaches the object no prior ERCOT lever has
+moved**. At the 91 missed 2023 >$300 hours (Phase-0 split re-derived on the
+control's own prices: 91 missed / 53 hit, exactly the committed split) the
+missed-set model mean goes **$105.2 → $813.3 against an actual $859.9**
+(+$708.1; p50 $98.7 → $171.9), **27 of the 91 FLIP into the tail**, and **46**
+of the new tail hours land **INSIDE** the actual >$300 set (model tail 32 →
+111 vs actual 144). ERCOT-155's cushion diagnosis is thereby **confirmed
+CAUSALLY, not merely by measurement**: capping the phantom slow-start online
+capability is what forms the missing 2023 scarcity tail, and it forms it at
+very nearly the right **level**. Every prior instrument — ECRS conservative
+deployment, ERCOT-153's ramp premium, ERCOT-154's storage re-pricing,
+ERCOT-158's fast-start pool — was measuring this same cushion and could not
+move it.
+
+**THE DEFECT IS PRECISION, NOT PHYSICS.** The same ceiling binds where it must
+not: 33 fabricated tail hours, 39 spurious mid-band hours, the year mean
+overshooting to +44.7 %, and the **already-caught** hit set over-pricing
+$1,331 → $4,610 (3.5×). That is the ercot41/43/106/108 bistable over-fire
+signature recurring in far milder form (+44.7 % vs +680–700 %) **despite** the
+four precommit-§0 design distinctions — so those distinctions bought a ~15×
+reduction in over-fire but did not eliminate it. The Phase-0 census **predicted
+this branch and named it R-shaped**: 523 of the 667 binding hours sat at
+actual < $150, and the stated hypothesis that the online CT buffer would absorb
+them at marginal cost is now **REFUTED** — they cascade into reserve shortage
+and price at VOLL instead.
+
+**Not a keeper, and the "structural integrity improves, gates regress" clause
+does not rescue it.** A run that fabricates 33 scarcity events and overshoots
+the annual mean by 45 % is not more structurally faithful than one that
+undershoots the tail — it is *differently* wrong, and worse downstream, since
+phantom scarcity would flow straight into the entry/retirement net-revenue
+screens (spec §5.2's attainable inframarginal margin is computed from exactly
+these prices). Keeper **UNCHANGED** (`2026-08-03-ercot158-pool-arm`).
+
+**DO-NOT-REDO, and the re-pointed successor.** Do not re-run this construction
+hoping for a different result, and **do not re-grain the envelope in response
+to these residuals** — a re-grain chosen against a measured price residual is a
+fitted parameter (rule 20), and the precommit forbids post-hoc re-selection by
+name. The successor must attack the **ordinary-hour binding** on its own
+evidence. The open question the A/B hands forward: *why do 523 ordinary hours
+reach a measured per-cell **maximum** of attained online capability at all?*
+That points at the model's **committed-fleet LEVEL in non-scarcity hours** — it
+commits more slow-start capability than ERCOT did, so it sits against the
+ceiling — rather than at the ceiling's height. **The next object is the
+commitment level in ordinary hours, not the cap.** Any such successor needs its
+own owner authorization and precommit.
+
+**Governance.** Mechanism merged **default-off** and stays merged (built,
+reachable, adjudicated, measured-identified) — explicitly **not** a rule-26
+deletion candidate. One implementation correction mid-session, recorded: the
+co-opt requirement was moved from `ScenarioConfig.__post_init__` to the
+provider, because the replay path applies `prb_overrides` before the trailing
+co-opt kwargs (the ERCOT-65 channel mechanics), so an intermediate config
+legitimately holds the flag with the co-opt fields at defaults — Run B's first
+launch died on exactly that. Both runs registered on the dashboard with
+attestations (Run A n_entries 10, Run B 11 — the cap's measured entry;
+n_residual 6 unchanged both) + legitimacy diagnostics + metrics; retention
+pruned `ercot122-offerlevel` and `ercot128-unit-grain-coal` (top-15). Solves ran
+SEQUENTIALLY (~8–10 GB RSS each; rule 12's cap-2 caveat binds at 1 on this
+15 GB box). Holdouts untouched — 2023–2025 only (rule 22). ERCOT-scoped
+(rule 25). Rule 28(b) discharged: cell `energy_online_capability_cap` ERCOT
+`U → R` with the citation, and the §5.1 item-9 stale corpus clause corrected.
+
+**TRANSPORT INCIDENT (open, owner action needed).** The session git gateway's
+upstream push relay **wedged**: `git push` reported `* [new branch]` and later
+`Everything up-to-date` while the branch **never reached github.com** (the
+GitHub API lists only `main`; even a small text-only probe commit fails with
+`send-pack: unexpected disconnect`). This is the ERCOT-157 failure mode,
+recurring. Consequence for this session's rule-15 duty: the deliverables were
+re-pushed via `mcp__github__push_files` (direct API), which has a ~457 KB
+per-payload cap — so **`src/market_sim/config/scenarios.py` (765 KB) and
+`docs/codebase-site/data/mechanism-matrix.js` (724 KB) could not cross either
+transport**, and the binary parquet bundle sidecars cannot cross `push_files`
+at all. Those files' committed state exists in this session's local git history
+only; the owner's local push is the recovery path (the ERCOT-157 precedent).
+
+*(Bookkeeping note: **ercot-159's code landed on main ahead of its log entry**
+— commits `935c33dd` / `824052a6` / `bbf0c2fa`, the
+`ercot_energy_online_capability_cap` build — so the ercot-160 session took the
+next shorthand before this entry existed. The entry directly above is that
+reconstruction, written by the ercot-159 lane itself from its committed A/B
+record; the numbering gap is recorded rather than silently renumbered, and the
+two entries are in chronological order.)*
 
 ## ercot-160 (2026-08-04) — the ERCOT item-7/item-8 DATA INTAKES: item 7's blocker dissolved (ERCOT publishes the crosswalk), item 8(a) delivered at 98.7 % of the training span, item 8(b) BLOCKED on licensing, item 8(c) reshaped; no LP, no solve, no cell, keeper UNCHANGED (ercot158)
 
