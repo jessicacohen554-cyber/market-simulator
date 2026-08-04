@@ -193,6 +193,162 @@
   ],
   "tier": "t1f"
  },
+ "ercot-2023-2027-crossover-ffr3a3-t1x": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "optional",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band: I12 absent from invariant record",
+      "gating": true,
+      "row": "row1",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "cobweb: I13 absent from invariant record",
+      "gating": true,
+      "row": "row3",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "backstop share: no trajectory rows",
+      "gating": true,
+      "row": "row4",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "scarcity: no hours_ge_500 in trajectory",
+      "gating": false,
+      "row": "row6",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-3": {
+    "applicability": "report",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "no committed capacity-hindcast score for the ISO",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-4": {
+    "applicability": "required",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [
+     {
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true,
+      "row": "quarantine",
+      "status": "PASS"
+     },
+     {
+      "detail": "K_iso=1.5; price 2023 |68.7%|>15.0%=K1.5\u00d710% FAIL; price 2024 |41.2%|>15.0%=K1.5\u00d710% FAIL; price 2025 |22.5%|>15.0%=K1.5\u00d710% FAIL; co2 2023 |49.2%|>15.0%=K1.5\u00d710% FAIL; co2 2024 |42.7%|>15.0%=K1.5\u00d710% FAIL; co2 2025 |50.6%|>15.0%=K1.5\u00d710% FAIL; gas_twh 2023 |19.6%|>7.5%=K1.5\u00d75% FAIL; gas_twh 2024 |10.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2023 |35.0%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2024 |44.1%|>7.5%=K1.5\u00d75% FAIL; coal_twh 2025 |37.2%|>7.5%=K1.5\u00d75% FAIL",
+      "gating": true,
+      "row": "dispatch skill",
+      "status": "FAIL"
+     },
+     {
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false,
+      "row": "input-gap ratio",
+      "status": "PASS"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "ERCOT",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+   "FC-4 crossover dispatch skill (T1-X) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1x"
+ },
  "ercot-t1f": {
   "categories": {
    "FC-1": {
@@ -735,6 +891,110 @@
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
+  "tier": "t1h"
+ },
+ "miso-2021-2025-realized-ffr3a3-t1h": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "MISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
   "tier": "t1h"
  },
  "miso-t1f": {
@@ -1408,6 +1668,110 @@
   ],
   "tier": "t1h"
  },
+ "neiso-2021-2025-realized-ffr3a3-t1h": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.unit_recall_gt300', 'retire.false_retire', 'add.by_tech.wind', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NEISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
  "neiso-t1f": {
   "categories": {
    "FC-1": {
@@ -1831,6 +2195,110 @@
   "reasons": [
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
+  "tier": "t1h"
+ },
+ "nyiso-2021-2025-realized-ffr3a3-t1h": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'add.by_tech.solar', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.solar', 'add.shares.gas_cc', 'add.shares.gas_ct', 'add.shares.storage']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "NYISO",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
   "tier": "t1h"
  },
  "nyiso-t1f": {
@@ -2264,6 +2732,260 @@
    "FC-3 capacity-evolution skill (T1-H hindcast) FAIL"
   ],
   "tier": "t1h"
+ },
+ "pjm-2021-2025-realized-ffr3a3-t1h": {
+  "categories": {
+   "FC-1": {
+    "applicability": "optional",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "n/a",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-3": {
+    "applicability": "required",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "band FAIL: ['retire.total_gw', 'retire.false_retire', 'add.by_tech.solar', 'add.by_tech.gas_cc', 'add.by_tech.gas_ct', 'add.by_tech.storage', 'add.shares.wind', 'add.shares.solar', 'add.shares.gas_ct']",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "FAIL"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-4": {
+    "applicability": "n/a",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-5": {
+    "applicability": "n/a",
+    "label": "FC-5 external corridor",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "PJM",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-3 capacity-evolution skill (T1-H hindcast) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1h"
+ },
+ "pjm-2023-2027-crossover-ffr3a3-t1x": {
+  "categories": {
+   "FC-1": {
+    "applicability": "required",
+    "label": "FC-1 structural integrity (I1-I14)",
+    "rows": [
+     {
+      "detail": "no committed invariant record (summary.invariants / --invariants)",
+      "gating": true,
+      "row": "invariants I1-I14",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-2": {
+    "applicability": "optional",
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "rows": [
+     {
+      "detail": "reserve-margin band: I12 absent from invariant record",
+      "gating": true,
+      "row": "row1",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "cobweb: I13 absent from invariant record",
+      "gating": true,
+      "row": "row3",
+      "status": "SKIPPED"
+     },
+     {
+      "detail": "backstop share: no trajectory rows",
+      "gating": true,
+      "row": "row4",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-3": {
+    "applicability": "report",
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "rows": [
+     {
+      "detail": "no committed capacity-hindcast score for the ISO",
+      "gating": true,
+      "row": "hindcast bands",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-4": {
+    "applicability": "required",
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "rows": [
+     {
+      "detail": "\u22652026 refusal marker present and clean",
+      "gating": true,
+      "row": "quarantine",
+      "status": "PASS"
+     },
+     {
+      "detail": "K_iso=3.0; price 2025 |15.7%| in (10%, 30.0%] CAVEAT; co2 2023 |45.1%|>30.0%=K3.0\u00d710% FAIL; co2 2024 |40.4%|>30.0%=K3.0\u00d710% FAIL; co2 2025 |54.2%|>30.0%=K3.0\u00d710% FAIL; gas_twh 2024 |6.7%| in (5%, 15.0%] CAVEAT; coal_twh 2023 |13.0%| in (5%, 15.0%] CAVEAT; coal_twh 2024 |23.9%|>15.0%=K3.0\u00d75% FAIL",
+      "gating": true,
+      "row": "dispatch skill",
+      "status": "FAIL"
+     },
+     {
+      "detail": "forecast/keeper input-gap ratios reported (report-only)",
+      "gating": false,
+      "row": "input-gap ratio",
+      "status": "PASS"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-5": {
+    "applicability": "report",
+    "label": "FC-5 external corridor",
+    "rows": [
+     {
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true,
+      "row": "corridor",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   },
+   "FC-6": {
+    "applicability": "n/a",
+    "label": "FC-6 driver response",
+    "rows": [],
+    "status": "n/a"
+   },
+   "FC-7": {
+    "applicability": "required",
+    "label": "FC-7 provenance & DOF",
+    "rows": [
+     {
+      "detail": "run_config.json absent",
+      "gating": true,
+      "row": "run_config",
+      "status": "FAIL"
+     },
+     {
+      "detail": "DOF ledger absent (identification unproven)",
+      "gating": true,
+      "row": "dof ledger",
+      "status": "CAVEAT"
+     }
+    ],
+    "status": "FAIL"
+   },
+   "FC-8": {
+    "applicability": "runtime",
+    "label": "FC-8 runtime feasibility",
+    "rows": [
+     {
+      "detail": "no perf ledger (total_wall_s) in summary",
+      "gating": true,
+      "row": "runtime",
+      "status": "SKIPPED"
+     }
+    ],
+    "status": "SKIPPED"
+   }
+  },
+  "caveats": [],
+  "determination": "HOLD",
+  "iso": "PJM",
+  "notes": [],
+  "provenance": {
+   "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
+   "note": "Re-measured at the post-FFR-3F HEAD (G3 cap-grain fix 2adfb49 in force), which FFR-3A-2's provenance ceiling flagged as superseding its own T1-H findings. Scored like-for-like with FFR-3A-2: --run-config deliberately NOT passed, so FC-7 stays FAIL on the same instrument gap (blocker 5) rather than appearing improved.",
+   "scored_at_sha": "e2a422c1",
+   "session": "FFR-3A-3",
+   "solved_at_sha": "941f4983"
+  },
+  "reasons": [
+   "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+   "FC-4 crossover dispatch skill (T1-X) FAIL",
+   "FC-7 provenance & DOF FAIL"
+  ],
+  "rubric_version": "1.0",
+  "schema": "forecast-verdict/v1",
+  "tier": "t1x"
  },
  "pjm-t1f": {
   "categories": {

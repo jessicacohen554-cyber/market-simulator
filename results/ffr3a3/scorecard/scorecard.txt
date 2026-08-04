@@ -1,0 +1,10 @@
+§2.1b GATE SCORECARD (FFR-3A-3) — scored_at_sha=e2a422c1 cache_epoch=Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only). holdout_freeze_active=True
+re-measured at this sha: t1h, t1x   ^ = carried forward, see carried_from_sha
+
+ISO    (a) backcast                       mk   (b) t1f   t1h       t1x       (c) proj h solo
+ERCOT  NOT-YET                            --   HOLD^     —         HOLD      2.0^       False
+CAISO  CALIBRATED-WITH-CAVEATS            --   HOLD^     —         —         2.78^      False
+PJM    CALIBRATED                         C-   HOLD^     HOLD      HOLD      7.34^      True
+MISO   —                                  --   HOLD^     HOLD      —         10.12^     True
+NYISO  NOT-YET                            C-   HOLD^     HOLD      —         1.09^      False
+NEISO  CALIBRATED-WITH-CAVEATS            C-   HOLD^     HOLD      —         0.95^      False
