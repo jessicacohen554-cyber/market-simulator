@@ -1,9 +1,10 @@
-# FINDING — ercot-165: WP-B v2 is BUILT and A/B-tested. The diurnal-family split is identified and LOYO-stable, both arms clear every pre-registered kill gate and improve [3e] wind curtailment volume — but the charter's SHAPE target is MISSED: the added curtailment lands overnight, not in the mid-afternoon mode the layer exists to close. Arm SHARE dominates arm TIE. Keeper NOT moved; promotion PENDING OWNER.
+# FINDING — ercot-165: WP-B v2 is BUILT and A/B-tested. The diurnal-family split is identified and LOYO-stable, both arms clear every pre-registered kill gate and improve [3e] wind curtailment volume — but the charter's SHAPE target is MISSED: the added curtailment lands overnight, not in the mid-afternoon mode the layer exists to close. Arm SHARE dominates arm TIE, and is PROMOTED to keeper.
 
 **Session ercot-165, 2026-08-04.** Two full-span 2023–2025 solves, both
-registered (rule 15). Keeper UNCHANGED at `2026-08-03-ercot158-pool-arm`
-(NOT-YET; open gates C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite
-cv-leg). Charter: `FINDING-ercot164-wpb-nodal-identification-2026-08-04.md` §6,
+registered (rule 15). **KEEPER → `2026-08-04-ercot165-unpooled-share`**
+(arm B), superseding `2026-08-03-ercot158-pool-arm`; determination NOT-YET and
+the fail set IDENTICAL in kind (C3a 2023-only, C3b 2023-only, C3c, C7
+2023-lignite cv-leg). Charter: `FINDING-ercot164-wpb-nodal-identification-2026-08-04.md` §6,
 authorized by the ercot-165 dispatch prompt (the ercot-159/162 precedent).
 Pre-registration: `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`,
 written and pushed **before either arm solved**.
@@ -54,8 +55,9 @@ Rule 22: 2023–2025 only. No holdout year solved, scored or read.
    over-constrains the tie does not survive: measured active-hour p50 over
    static rating is **0.963 / 1.209 / 1.048** for PNHNDL (WESTEX 1.000–1.038,
    NE_LOB 0.966–1.191). The level is right. No `gtc.py` change was built.
-8. **Keeper NOT moved. Promotion is a recommendation to the owner, not an
-   action taken** — see §5.
+8. **Keeper MOVED to arm B**, owner-promoted in-session under the standing
+   standard ("If structural integrity improves but gates regress that may
+   still be a keeper") on this session's YES recommendation — see §5.
 
 ---
 
@@ -226,26 +228,28 @@ UNATTESTED only because a candidate bundle carries no
 
 ---
 
-## 5. Recommendation — NOT executed
+## 5. Promotion — RECOMMENDED and EXECUTED
 
-**Recommend promoting arm B (`2026-08-04-ercot165-unpooled-share`), pending the
-owner.** The case is rule 1 structural fidelity, not the fit: the keeper
+**Arm B (`2026-08-04-ercot165-unpooled-share`) is the ERCOT keeper.** The
+session recommended it; the owner promoted it in-session on the standing
+standard. The case is rule 1 structural fidelity, not the fit: the keeper
 carries a rule-19 defect (two mechanisms owning the Panhandle, both overnight)
 and a share whose diurnal shape is a measured artifact of union saturation;
 arm B removes both, at zero new DOF, with every kill gate clear, no criterion
 regressed, two criteria marginally improved, and the [3e] criterion it is
 judged on improved from 0.124 to 0.083 mean absolute error.
 
-**Why it was not executed in-session.** The build was authorized to deliver the
-mid-afternoon mode and it does not deliver it. A promotion whose headline
-justification would be a volume gain traceable to depth re-centring — while the
-named target is missed and 2023 moves into over-curtailment — is a materially
-different outcome from what the charter described, and the owner should see
-that before the ISO's designated keeper moves. If promoted, the remaining steps
-are: generate the bundle's `calibration_attestation.json`, set
-`frontend/data/backcast/keepers/ERCOT.json`, run
-`scripts/build_status.py --iso ERCOT`, and run the `calibration-keeper-auditor`
-agent scoped `--iso ERCOT` (no re-key duty — ERCOT holds no `complete` marker).
+**What the promotion does NOT claim.** The build was authorized to deliver the
+mid-afternoon mode and it does not deliver it. The promotion is NOT justified by
+the volume gain — that gain is traceable to depth re-centring — and the missed
+target is carried verbatim in the bundle's `calibration_attestation.json` and in
+the keeper's `market_story`, where the daytime mode is named an OPEN ROOT-CAUSE
+ISSUE rather than a calibrated behaviour. Executed: attestation generated
+(`n_entries` 10 → 11, `n_residual` UNCHANGED at 6 — the added entry is
+measured/published, not residual), `frontend/data/backcast/keepers/ERCOT.json`
+set, `scripts/build_status.py --iso ERCOT`, `scripts/audit_keepers.py --iso
+ERCOT` PASS (0 failures, 0 warnings), and the `calibration-keeper-auditor` agent
+run scoped `--iso ERCOT`. No re-key duty — ERCOT holds no `complete` marker.
 
 **Successor question, named not chartered.** The daytime mode remains
 unexplained by any armed mechanism. Phase 0 shows the signal that carries it is
