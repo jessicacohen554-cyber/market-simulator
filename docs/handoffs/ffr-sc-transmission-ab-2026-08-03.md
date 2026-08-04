@@ -431,3 +431,51 @@ completes. Two additions to what that note records:
 * `pip install -r requirements.txt` needs `--ignore-installed PyYAML` on this image
   (the Debian-packaged PyYAML has no RECORD file and blocks the uninstall step).
 
+
+---
+
+## 10. Independent replication (FFR-SC-2, 2026-08-04)
+
+**The A/B above was re-run end-to-end by a second session that did not see this one's
+results, and it reproduces.** FFR-SC-2 was dispatched to finish §§2–5 from a revision
+that still carried the "INCOMPLETE AS COMMITTED" banner; by the time its arms finished
+solving, this document had already landed on `main` complete. Rather than overwrite it,
+the replication is recorded here and its duplicate artifacts were dropped — §§1–9 above
+are the primary record and stand unchanged.
+
+**Independent in the ways that matter.** Different container, freshly regenerated
+`data/clean` (50/50 datatypes, zero failures), and **different cache keys** —
+`e5822277b72184f6` (OFF) / `2151ad0baeec83a2` (ON) against this document's
+`fe814896444d8ed7` / `f4a79a86d61336f8`. Keys embed absolute data paths, so cross-checkout
+comparison is meaningless (grounding doc §4.2); the divergence is the environment, not the
+scenario. Same posture (`--golden-posture`, 2026–2030, 5/5 years both arms, cold
+post-epoch). Wall clock differed ~33× (1,474 s vs 44.6 s per arm) purely from thread
+pinning — the replication ran `MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1` with two arms
+concurrent.
+
+**Every load-bearing claim reproduced:**
+
+| claim | §§2–5 | replication |
+|---|---|---|
+| 2026/2027 pre-COD arms array-identical | yes | yes, max │Δ│ exactly 0.0 |
+| **2028 bit-identical WITH the uplift applied** | yes | yes, max │Δ│ exactly 0.0 |
+| zonal prices identical | 4.3e-14 | 4.26e-14 |
+| total unserved identical | 3 dp | 23,704.996603 / 42,320.299237 MWh, exact |
+| fleet trajectory identical every year | yes | yes, to the raw float `4268.7792924043915` |
+| 2029/2030 primal differ at identical duals | yes | yes, ~27.5k / 37.1k cells |
+| `WECC_import_simultaneous` never binds | yes | 0 binding hours in all 43,800 |
+| peak flow vs cap, 2030 | 6,832 / 7,500 | 6,831.6 / 7,500 (headroom 668.4 MW) |
+| NP15 leg pinned at its −4,800 MW export bound | 4,164 h (2030) | 4,164 h (2030); also 5,038 / 5,301 h in 2028 / 2029 |
+| SP15_rest leg at its +10,623 MW TTC | 994 h (2030) | 994 h (2030) |
+| PJM is-identical every year 2026–2050 | yes | re-verified, 6 rows all `delta_mw = 0.0` |
+
+**The structural reading reproduced independently too** — that the binding limits are the
+**per-leg TTCs** while the signed-sum envelope stays slack, so the registry uplifted the one
+element that cannot bind (§4's finding). Two sessions reaching that from separate solves is
+the strongest form this evidence takes.
+
+Numbers above: `results/ffrsc/ffrsc-txexp-ab-replication.json` (per-year applied cap,
+interface peak/headroom/binding hours, per-leg own-TTC binding counts, per-array arm diffs,
+capacity trajectory). The replication's own run bundles were **not** registered — the
+dashboard carries one pair of arms for this question, the pair this document cites, and a
+second pair of ids for a settled result would be noise.
