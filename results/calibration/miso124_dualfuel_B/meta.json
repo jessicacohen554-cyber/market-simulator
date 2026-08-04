@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-31T20:37:22",
+  "timestamp": "2026-08-04T02:21:27",
   "iso": "MISO",
   "years": [
     2023,
@@ -37,6 +37,7 @@
   "tranche_startup_measured_runs": true,
   "tranche_startup_conditional_runs": true,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": false,
   "coal_offer_margin": false,
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
@@ -72,7 +73,9 @@
       "CT_CHP"
     ],
     "temp_derate_slope_st_chp": 0.00141,
-    "temp_derate_slope_ct_chp": 0.00141
+    "temp_derate_slope_ct_chp": 0.00141,
+    "measured_ct_heat_rates": true,
+    "dual_fuel_switching": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -238,6 +241,8 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
   "capacity_deliverability_limits": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -254,6 +259,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -299,11 +305,10 @@
     "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
-    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet",
-    "capacity_deliverability": "../_shared/MISO/capacity_deliverability-8949cf5d0c5b.parquet"
+    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "7a32901",
-  "basis_sha": "7a329015a010b47885e4de1fa121fc6f0835336d",
+  "git_sha": "6040f28c",
+  "basis_sha": "6040f28c01eb18ded2b353d507dbc6939619f879",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -316,38 +321,5 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
-  },
-  "reuse": {
-    "source_bundle": "results/calibration/miso111_control_A_y24",
-    "requested_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "ef64ead2ffef6c8f"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "f5b371ed5a2e1962"
-      }
-    },
-    "fresh_years": [
-      2025
-    ],
-    "refusals": {
-      "2025": "year not solved in the prior bundle"
-    },
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-31T20:19:26",
-    "source_git_sha": "7a32901"
   }
 }

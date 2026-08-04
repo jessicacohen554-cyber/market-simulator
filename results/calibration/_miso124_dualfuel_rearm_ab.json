@@ -1,0 +1,192 @@
+{
+ "session": "miso-124",
+ "keeper": {
+  "bundle": "miso122_scopegate_B",
+  "run_id": "2026-08-04-miso-122b-scope-gate"
+ },
+ "arm": {
+  "bundle": "miso124_dualfuel_B",
+  "run_id": "2026-08-04-miso-124-dualfuel-rearm"
+ },
+ "K1_flag_fidelity": {
+  "keeper_dual_fuel_switching": false,
+  "arm_dual_fuel_switching": true,
+  "siblings_off_both": {
+   "dual_fuel_oil_reattribution": [
+    false,
+    false
+   ],
+   "dual_fuel_oil_daily_parity": [
+    false,
+    false
+   ]
+  },
+  "verdict": "PASS"
+ },
+ "K2_single_delta": {
+  "n_differing_keys": 1,
+  "keys": {
+   "dual_fuel_switching": [
+    false,
+    true
+   ]
+  },
+  "verdict": "PASS"
+ },
+ "K3_year_span": {
+  "keeper_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "arm_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "verdict": "PASS"
+ },
+ "K4_liveness": {
+  "max_abs_class_hour_mw": {
+   "2023": 0.0,
+   "2024": 912.5,
+   "2025": 15.958984375
+  },
+  "max_abs_class_hour_mw_note": "NOT a mechanism magnitude at MISO (miso-122 DO-NOT-MISREAD): it lands on the import class where a single 912.5 MW seam band flips. Read class_energy_delta_gwh instead.",
+  "max_zonal_abs_dlmp": {
+   "2023": 0.0,
+   "2024": 1.3826687587551447,
+   "2025": 0.0
+  },
+  "class_energy_delta_gwh": {
+   "2023": {},
+   "2024": {
+    "CC_CHP": -0.015958,
+    "CC_REGULAR": -0.337331,
+    "COAL_BIT": 4e-06,
+    "COAL_LIGNITE": 0.0,
+    "COAL_PRB": -3e-06,
+    "CT_PEAKER": 0.317852,
+    "ST_CHP": 0.062824,
+    "ST_GAS": -0.025593,
+    "hydro": -1e-06,
+    "import": 2e-06,
+    "oil": -0.001784
+   },
+   "2025": {
+    "CC_CHP": -0.015959,
+    "CT_PEAKER": 0.015959
+   }
+  },
+  "price_delta_hours": {
+   "2023": {
+    "hours_with_any_zonal_delta": 0,
+    "zone_hours_price_rose": 0,
+    "zone_hours_price_fell": 0
+   },
+   "2024": {
+    "hours_with_any_zonal_delta": 6,
+    "zone_hours_price_rose": 6,
+    "zone_hours_price_fell": 23
+   },
+   "2025": {
+    "hours_with_any_zonal_delta": 0,
+    "zone_hours_price_rose": 0,
+    "zone_hours_price_fell": 0
+   }
+  }
+ },
+ "max_zonal_abs_dlmp": {
+  "2023": 0.0,
+  "2024": 1.3826687587551447,
+  "2025": 0.0
+ },
+ "K5_direction_integrity": {
+  "d_system_demand_weighted_lambda": {
+   "2023": 0.0,
+   "2024": -0.00015865422518066675,
+   "2025": 0.0
+  },
+  "rule": "a min(gas, oil) cap can only lower a delivered cost; system lambda must never rise",
+  "verdict": "PASS"
+ },
+ "K6_no_gate_regression": {
+  "determination": {
+   "keeper": "NOT-YET",
+   "arm": "NOT-YET"
+  },
+  "ledgered_caveats": {
+   "keeper": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ],
+   "arm": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "criteria": {
+   "dispatch_corr": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "forced_share": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "fuelmix": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "governance": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_mean": {
+    "keeper": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "price_shape": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_tail": {
+    "keeper": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "shape": {
+    "keeper": "FAIL",
+    "arm": "FAIL",
+    "changed": false
+   },
+   "sysvol": {
+    "keeper": "PASS",
+    "arm": "PASS",
+    "changed": false
+   }
+  },
+  "criteria_changed": [],
+  "diagnostic_verdict_changes": {},
+  "n_diagnostic_rows_compared": 52,
+  "verdict": "PASS"
+ },
+ "gates": {
+  "K1_flag_fidelity": "PASS",
+  "K2_single_delta": "PASS",
+  "K3_year_span": "PASS",
+  "K5_direction_integrity": "PASS",
+  "K6_no_gate_regression": "PASS"
+ },
+ "all_pass": true
+}
