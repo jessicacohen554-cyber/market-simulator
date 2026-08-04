@@ -1098,3 +1098,59 @@ before any row was written, any anchor repaired or the probe run) ·
 `scripts/probes/_xiso3_shared_stem_gate_probe.py` → `xiso3_shared_stem_gate_probe.json` ·
 sweeps `_matrix_gap_sweep_*.json` · ratchets `mechanism-matrix-gaps.json` (shared block now
 empty) + `mechanism-matrix-anchors.json` (empty).
+
+## xiso-4 — the shared-stem lane arrived after xiso-3 had closed it: independent VERIFICATION, plus one live-but-mislabelled cell (2026-08-04)
+
+**No matrix byte written. No cell minted. No registration made. No LP, no solve, no keeper,
+default or band moved.** This lane opened against `d7363b0e` on the same charter xiso-3 was
+already executing; main moved to `fe90fb8f` mid-session and the collision surfaced on the
+first push, **before any edit**. The correct response to finding your lane already closed is
+to verify it and stop.
+
+**Verified independently at `fe90fb8f`:** shared-gap **0 in all six ISOs**, both ratchet
+blocks 0, `check_mechanism_matrix.py` PASS (integrity OK, **0 unresolvable anchors**, keeper
+stamps match every shard), and all 46 fields `own_row` with **exactly one `def:` home each**.
+
+**The cross-check, and why the earlier commit's timestamp is what makes it worth anything.**
+This session derived its own home-row map from the code before seeing xiso-3's (committed as
+`PREREG-xiso4-…` prior to the collision). The two maps **agree on 43 of 46**. The three that
+differ — `oil_primary_bin_fuel`, `gas_hh_monthly_shape`, `cc_outage_derate_from_top` — are
+defensible either way, and in two of them **xiso-3's tie-breaker is the better rule**: match
+the home row's cell to the ISO's actual arming, which avoids the leg mismatch xiso-3 then had
+to declare for `coal_nameplate_summer_derate`. Two counts in the xiso-4 prereg were wrong and
+xiso-3's are right (nine double-armed fields, not seven; `coal_lignite_passthrough_sigmoid`
+already in the 45) — corrected in place rather than edited away. Pre-registered criterion 4a
+— the six post-closure live-but-invisible counts **and the six surviving fields by name**,
+predicted before the closure was known — measured **EXACT**.
+
+**THE NEW ITEM, on a row no census can see.** `gas_st_startup_spread` has its **own row**, so
+`coverage()` returns `own_row` and both halves of the rule-28(c) sweep are blind to it by
+construction — the ratchet reads zero and is correct to. Proven on CONSTRUCTION (no LP, no
+solve, no dual): `backcast_config.py:1692` arms it for **every** ISO unconditionally;
+`solve.py:259` is its only plumbing; `commitment.py:321` is its only read and sits **nine
+lines after** `:312-313`'s `if gen.fuel_type == "gas_st" and not gas_st_startup_cost:
+continue`; and `eia860.py:1897` maps `ST_GAS → gas_st`, so that skip is **total for exactly
+the class the flag selects**. ⇒ with `gas_st_startup_cost` off the flag cannot move one LP
+coefficient. At the six keepers it is **UNREACHABLE in CAISO, PJM, NYISO and NEISO** — and
+**NYISO's `K` is the row's only non-`U` cell** (armed-looking but dead, the caiso-161 §5 /
+pjm-151 / nyiso-121 G-1 / xiso-3 §4 shape, reaching a matrix *cell* for the first time rather
+than an unregistered scalar) — while **ERCOT's and MISO's `U` are the mirror error**, sitting
+on a mechanism both keepers actually run. **NOT ADJUDICATED, no cell moved (rule 28(d)):**
+three lanes' calls. The confirming A/B is xiso-3's own instrument, cheap and LP-free.
+
+**Also filed, reported not fixed:** `scenarios.py:850` describes `carry_operating_mothballs`
+as "INERT since 2026-07-17" — an annotation belonging to `historic_outage_overlay` (`:1928`),
+whose comment block (`:1913-1927`) sits between them. The field is live on the MISO keeper
+with its own `measured-physical` DOF entry, and miso-88 measured its effect. A live measured
+overlay labelled inert is a rule-13 `[R-MEASURED]` provenance hazard, not a census's
+unilateral core-file edit.
+
+**The sharpened standing risk.** Both ratchets now read zero, and a mechanism can still be
+mislabelled in the matrix without either moving. The remaining exposure is no longer
+*unregistered* mechanisms — it is **registered ones whose cell asserts something the code
+contradicts**, and nothing in CI looks for that. xiso-3's gate-reachability probe, run across
+every keeper-armed flag that has a gate, would be the third ratchet.
+
+Evidence: `results/calibration/PREREG-xiso4-cross-iso-shared-stem-2026-08-04.md` (committed
+before any matrix byte and before the collision was known; carries the independently-derived
+map) · `FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md`.
