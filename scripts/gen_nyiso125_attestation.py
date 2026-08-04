@@ -155,6 +155,7 @@ def main() -> int:
     g = json.loads(GATES.read_text())
     p0 = json.loads(PHASE0.read_text())
     shared = _shared_evidence(g, p0)
+    prior_mag = {int(e["year"]): e.get("magnitude", "") for e in prior["exceptions"]}
 
     ctl = json.loads(json.dumps(prior))
     ctl["governance"] = dict(prior["governance"])
@@ -172,7 +173,6 @@ def main() -> int:
         "provenance caveat. Both arms commit hourly/network_<year>.parquet with "
         "git add -f. " + shared
     )
-    (CONTROL / "calibration_attestation.json").write_text(json.dumps(ctl, indent=1))
 
     trt = json.loads(json.dumps(prior))
     trt["governance"] = dict(prior["governance"])
@@ -237,6 +237,34 @@ def main() -> int:
         "free": False,
         "residual_tuned": False,
     }
+    # The C3c ledger entries carry forward, but their MAGNITUDE must state THIS
+    # run's measured tail, not the prior keeper's. Carrying the incumbent's
+    # magnitude verbatim would have this bundle's own ledger cite a DIFFERENT
+    # run (nyiso160_ctmeter_screen_B, 12/8/68 h at a $200 threshold) while the
+    # scorer independently reports 18/2/21 h at the gated $300 — an attestation
+    # that disagrees with its own bundle. Re-stated per arm from the committed
+    # tail counts, with the prior magnitude preserved as lineage.
+    tails = {
+        "control": {2023: (3, 10), 2024: (0, 12), 2025: (14, 42)},
+        "treatment": {2023: (18, 10), 2024: (2, 12), 2025: (21, 42)},
+    }
+    for arm, obj in (("control", ctl), ("treatment", trt)):
+        rebuilt = []
+        for e in json.loads(json.dumps(prior["exceptions"])):
+            year = int(e["year"])
+            model, actual = tails[arm][year]
+            e["magnitude"] = (
+                f"RE-MEASURED on this bundle (nyiso-125 {arm}): model {model} h "
+                f"> $300/MWh against RT actual {actual} h "
+                f"({model / actual:.2f}x). The prior keeper's magnitude, "
+                "carried as lineage only: "
+                + str(prior_mag.get(year, "")).split(" PRIOR MAGNITUDE: ")[0]
+            )
+            rebuilt.append(e)
+        obj["exceptions"] = rebuilt
+
+    (CONTROL / "calibration_attestation.json").write_text(json.dumps(ctl, indent=1))
+
     trt["free_parameters"] = json.loads(json.dumps(prior["free_parameters"]))
     trt["free_parameters"]["entries"] = list(prior["free_parameters"]["entries"]) + [
         entry
