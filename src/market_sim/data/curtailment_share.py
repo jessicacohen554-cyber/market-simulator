@@ -65,6 +65,30 @@ WEST_CORRIDOR_ZONES = ("West", "Panhandle")
 SHARE_TABLE_NAME = "ercot_wtx_curtailment_share.csv"
 _SHARE_KEY = ["net_load_decile", "hour_of_day", "season"]
 
+# --- unpooled diurnal-family products (ercot-165) ---------------------------
+# The pooled table above is a UNION over every corridor element, so it saturates
+# (2025 mean 0.64) and inherits the shape of whichever family carries the most
+# binding weight — measured 0.70-0.77 overnight. Its hod shape is therefore
+# ANTI-correlated with the mid-afternoon curtailment mode it exists to close
+# (2025 gap-shape corr -0.67, worsening as solar grows; FINDING-ercot164 §3).
+# The family table splits that union on the same (decile x hod x season) axis:
+#   D       daytime / solar-flood elements (+ WESTEX, which its own measured
+#           lift 1.074-1.216 puts in D every year)
+#   N       the overnight / wind-export tail
+#   PNHNDL  the Panhandle export GTC, held OUT of the split because its owner is
+#           a mechanism choice, not a family.
+FAMILY_SHARE_TABLE_NAME = "ercot_wtx_curtailment_share_family.csv"
+FAMILY_LABELS = ("D", "N", "PNHNDL")
+# Which zone carries which share once unpooled. West always takes the D+N sum
+# (additive corridor pressure, NOT the saturating OR); the Panhandle zone's
+# owner is the pre-registered A/B (FINDING-ercot164 §6.2):
+#   "tie"    the endogenous Panhandle->North tie at measured PNHNDL limits is
+#            the SOLE Panhandle mechanism — no driver ceiling there (rule 19).
+#   "share"  a Panhandle-scoped ceiling shaped by the measured PNHNDL
+#            enforcement incidence owns the SUB-LIMIT pressure; the tie keeps
+#            only the network limit, so the two bind in different hours.
+PANHANDLE_OWNERS = ("tie", "share")
+
 
 def net_load_decile(net_load: np.ndarray) -> np.ndarray:
     """Within-year net-load percentile bin (0..NET_LOAD_N_DECILE-1) per hour.
@@ -178,22 +202,181 @@ def forecast_wtx_curtail_multipliers(
         - (np.asarray(wind_cap, dtype=float)[:, None] * wind_cf).sum(axis=0)
         - (np.asarray(solar_cap, dtype=float)[:, None] * solar_cf).sum(axis=0)
     )
-    mult = wtx_curtail_multipliers(
-        net_load,
-        list(zone_names),
-        depth_wind=float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
-        depth_solar=float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
-        reference_dir=_paths.RAW_DIR / "reference",
-    )
+    depth_wind = float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0))
+    depth_solar = float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0))
+    # ercot-165: the UNPOOLED diurnal-family variant. Forward-admissible on the
+    # same terms as the pooled share — the family tables live on the model's own
+    # net-load decile x hod x season axis and family membership re-derives
+    # whenever a new NP6-86 year lands (rule 13 / rule 23).
+    if bool(getattr(config, "ercot_wtx_curtail_unpooled", False)):
+        mult = wtx_family_curtail_multipliers(
+            net_load,
+            list(zone_names),
+            depth_wind=depth_wind,
+            depth_solar=depth_solar,
+            panhandle_owner=str(getattr(config, "ercot_wtx_panhandle_owner", "tie")),
+            reference_dir=_paths.RAW_DIR / "reference",
+        )
+    else:
+        mult = wtx_curtail_multipliers(
+            net_load,
+            list(zone_names),
+            depth_wind=depth_wind,
+            depth_solar=depth_solar,
+            reference_dir=_paths.RAW_DIR / "reference",
+        )
     if mult is not None:
         logger.info(
             "ercot_wtx_curtailment_driver: %d forecast West/Panhandle VRE "
             "ceiling active (depth wind=%.4f solar=%.4f)",
             year,
-            float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
-            float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
+            depth_wind,
+            depth_solar,
         )
     return mult
+
+
+def load_family_share_table(reference_dir) -> pd.DataFrame | None:
+    """Load the derived per-family congestion-share table, or ``None`` when absent.
+
+    ``reference_dir`` is ``paths.RAW_DIR / "reference"``. Returns a long-format
+    frame keyed by ``(family, net_load_decile, hour_of_day, season)`` carrying
+    ``congestion_share`` in [0,1]; ``None`` (with a log line) when the derived
+    CSV has not been generated, so the caller degrades to the static bound
+    rather than failing the solve.
+    """
+    from pathlib import Path
+
+    path = Path(reference_dir) / FAMILY_SHARE_TABLE_NAME
+    if not path.is_file():
+        logger.info(
+            "ercot-wtx-curtailment: no family share table at %s (run "
+            "scripts/data/derive_ercot_wtx_curtailment_share.py --family) — "
+            "unpooled driver inert",
+            path,
+        )
+        return None
+    return pd.read_csv(path)
+
+
+def family_share_lookup(
+    table: pd.DataFrame, net_load: np.ndarray
+) -> dict[str, np.ndarray]:
+    """Map each hour to every family's congestion share.
+
+    Returns ``{family: (T,) share}`` for each label in :data:`FAMILY_LABELS`; a
+    family absent from the table (or an unseen (decile, hour, season) cell,
+    sparse in a short derive) falls back to 0 congestion — never a fabricated
+    value, the same convention as the pooled lookup.
+    """
+    n = len(net_load)
+    dec = net_load_decile(net_load)
+    hod, season = hour_axes(n)
+    key = pd.DataFrame({"net_load_decile": dec, "hour_of_day": hod, "season": season})
+    out: dict[str, np.ndarray] = {}
+    for fam in FAMILY_LABELS:
+        sub = table[table["family"] == fam]
+        if sub.empty:
+            out[fam] = np.zeros(n, dtype=float)
+            continue
+        merged = key.merge(
+            sub[_SHARE_KEY + ["congestion_share"]], on=_SHARE_KEY, how="left"
+        )
+        out[fam] = np.nan_to_num(
+            merged["congestion_share"].to_numpy(dtype=float), nan=0.0
+        )
+    return out
+
+
+def corridor_zone_shares(
+    family_share: dict[str, np.ndarray], panhandle_owner: str
+) -> dict[str, np.ndarray]:
+    """Per-corridor-zone congestion share from the unpooled family shares.
+
+    THE single binning authority for the unpooled driver: both the solve-time
+    consumer and the derive script's depth identification call this, so the
+    level coefficient is centred on exactly the pressure the LP applies.
+
+    The West zone takes ``D + N`` — the ADDITIVE corridor pressure, not the
+    saturating OR the pooled table takes. Saturation is precisely what made the
+    pooled union inherit the overnight family's shape (its mean reaches 0.64 in
+    2025, so a daytime element binding adds nothing to the union); summing the
+    two family unions keeps each family's own measured incidence visible.
+
+    ``panhandle_owner`` selects the pre-registered A/B arm — see
+    :data:`PANHANDLE_OWNERS`. Raises ``ValueError`` on an unknown owner rather
+    than silently defaulting (rule 24: no off-registry fallback literals).
+    """
+    if panhandle_owner not in PANHANDLE_OWNERS:
+        raise ValueError(
+            f"unknown panhandle_owner {panhandle_owner!r}; "
+            f"expected one of {PANHANDLE_OWNERS}"
+        )
+    n = len(next(iter(family_share.values())))
+    west = np.asarray(family_share["D"], dtype=float) + np.asarray(
+        family_share["N"], dtype=float
+    )
+    panhandle = (
+        np.asarray(family_share["PNHNDL"], dtype=float)
+        if panhandle_owner == "share"
+        else np.zeros(n, dtype=float)
+    )
+    return {"West": np.clip(west, 0.0, 1.0), "Panhandle": np.clip(panhandle, 0.0, 1.0)}
+
+
+def wtx_family_curtail_multipliers(
+    net_load: np.ndarray,
+    zone_names: list[str],
+    *,
+    depth_wind: float,
+    depth_solar: float,
+    panhandle_owner: str,
+    reference_dir,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Unpooled per-(zone, hour) curtailment ceiling multipliers (ercot-165).
+
+    The unpooled analogue of :func:`wtx_curtail_multipliers`: instead of
+    broadcasting ONE pooled share identically to West and Panhandle, each
+    corridor zone gets the share :func:`corridor_zone_shares` assigns it, so the
+    Panhandle interface has exactly one owner (rule 19 [R-ONE-MECH]) and the
+    West zone's pressure no longer carries the mis-broadcast PNHNDL component.
+
+    Parameters
+    ----------
+    net_load:
+        The model's own system net-load ``(T,)`` (demand - wind_pot - solar_pot).
+    zone_names:
+        Ordered model zone names; only West/Panhandle rows get a ceiling.
+    depth_wind, depth_solar:
+        The per-tech level coefficients (ScenarioConfig) — still exactly TWO
+        free scalars, re-identified against the unpooled shares. ``0`` -> inert.
+    panhandle_owner:
+        ``"tie"`` or ``"share"`` (:data:`PANHANDLE_OWNERS`).
+    reference_dir:
+        ``paths.RAW_DIR / "reference"``.
+
+    Returns
+    -------
+    ``(wind_mult, solar_mult)`` each ``(n_zones, T)`` in (0,1], or ``None`` when
+    the family table is absent (caller keeps the static uncurtailed bound).
+    """
+    table = load_family_share_table(reference_dir)
+    if table is None:
+        return None
+    nl = np.asarray(net_load, dtype=float)
+    T = len(nl)
+    n_zones = len(zone_names)
+    zone_share = corridor_zone_shares(family_share_lookup(table, nl), panhandle_owner)
+
+    wind_mult = np.ones((n_zones, T), dtype=float)
+    solar_mult = np.ones((n_zones, T), dtype=float)
+    for i, z in enumerate(zone_names):
+        share = zone_share.get(z)
+        if share is None:
+            continue
+        wind_mult[i, :] = np.clip(1.0 - float(depth_wind) * share, 0.0, 1.0)
+        solar_mult[i, :] = np.clip(1.0 - float(depth_solar) * share, 0.0, 1.0)
+    return wind_mult, solar_mult
 
 
 def wtx_curtail_multipliers(

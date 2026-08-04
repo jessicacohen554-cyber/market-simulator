@@ -39,6 +39,15 @@ how many had at least one West-corridor constraint binding (and the resulting
 congestion fraction), the interface-only binding fraction, and the mean positive
 West shadow price.
 
+Since ercot-165 the row ALSO carries the **diurnal-family decomposition** of
+that union (schema v2): ``congestion_frac_family_d`` (the daytime / solar-flood
+elements), ``congestion_frac_family_n`` (the overnight / wind-export tail) and
+``congestion_frac_pnhndl`` (the Panhandle export GTC, held out of the split
+because its model-side owner is a mechanism choice, not a family). Family
+membership is derived per year from each element's own binding-hod placement by
+the threshold-free lift test documented at :data:`DAYTIME_HOURS`. The pooled
+``congestion_frac`` is unchanged and remains the armed keeper's input.
+
 Rule #13/#14 admissibility: this is measured ERCOT SCED transmission-congestion
 incidence — a reproducible market/physical INPUT that regenerates every year and
 responds to changed grid conditions (more West VRE build -> deeper net-load
@@ -90,6 +99,36 @@ INTERFACE_GTCS = ("WESTEX", "PNHNDL")
 CORRIDOR_KV = (138.0, 345.0)
 
 HOURS_PER_YEAR = 8760
+
+# --- diurnal FAMILY split (ercot-165 / FINDING-ercot164 §6.1) ---------------
+# The pooled ``congestion_frac`` is a UNION over every corridor element, so it
+# saturates and inherits the shape of whichever family carries the most binding
+# weight — measured at 0.70-0.77 overnight, which is why the driver's hod shape
+# is ANTI-correlated with the mid-afternoon curtailment mode it exists to close
+# (2025 gap-shape corr -0.67; ERCOT-164 §3). The families below split that union
+# by each element's OWN measured binding-hod placement, so the daytime
+# solar-flood family stops being averaged away.
+#
+# The rule is a pure LIFT test against the year's measured SCED-execution
+# exposure, so the boundary is the NULL and carries no threshold to tune
+# (rule 23 [R-FROZEN-DERIVE] — this re-derives when a new NP6-86 year lands,
+# never because a residual moved):
+#
+#     day_share(c) = share of element c's binding executions in DAYTIME_HOURS
+#     exposure(y)  = share of ALL of year y's SCED executions in DAYTIME_HOURS
+#     family(c)    = "D" if day_share(c) > exposure(y) else "N"
+#
+# Measured separation (ercot-165 Phase 0,
+# results/calibration/ercot165_family_split_phase0.json): family D peaks h14-15
+# and correlates +0.775..+0.959 with ACTUAL solar curtailment in every year;
+# family N peaks h21-23 and correlates -0.838..-0.961 with it. LOYO membership
+# agreement (binding-weighted) 0.755 / 0.942 / 0.968 with held-out family-share
+# hod corr +0.744..+0.999.
+DAYTIME_HOURS = tuple(range(9, 18))  # h9-17
+# PNHNDL is never pooled into D/N: it is the Panhandle export interface, whose
+# ownership (endogenous tie vs driver share) is the ercot-165 A/B. WESTEX DOES
+# take a family from its own measured shape (lift 1.074-1.216 -> D every year).
+FAMILY_SPLIT_EXCLUDE = ("PNHNDL",)
 
 # NP6-86 columns consumed. ``RepeatedHourFlag`` disambiguates the DST fall-back
 # repeated hour for the CPT->CST conversion (read defensively — absent in some
@@ -174,6 +213,48 @@ def _west_corridor_mask(binding: pd.DataFrame, sub2zone: dict[str, str]) -> pd.S
     return is_iface | west_nodal
 
 
+def assign_families(
+    df: pd.DataFrame, corridor: pd.Series
+) -> tuple[dict[str, str], float]:
+    """Classify each corridor element into its diurnal family for one year.
+
+    Args:
+        df: One year's NP6-86 rows carrying ``ts``, ``ConstraintName`` and
+            ``binding`` (``ShadowPrice > 0``).
+        corridor: Boolean mask of the rows eligible for the split — the
+            West-corridor rows minus :data:`FAMILY_SPLIT_EXCLUDE`.
+
+    Returns:
+        ``(family_by_constraint, exposure_day)`` where the family is ``"D"``
+        (daytime / solar-flood) or ``"N"`` (overnight / wind-export) and
+        ``exposure_day`` is the year's measured daytime share of SCED
+        executions — the NULL the lift test is taken against.
+
+    The classification uses distinct (execution, constraint) pairs so a
+    constraint binding in many consecutive intervals is not double-counted
+    relative to one binding across many separate executions.
+    """
+    exposure = float(
+        df.drop_duplicates(subset=["ts"])["ts"].dt.hour.isin(DAYTIME_HOURS).mean()
+    )
+    sub = df[corridor & df["binding"]].drop_duplicates(subset=["ts", "ConstraintName"])
+    if sub.empty or exposure <= 0:
+        return {}, exposure
+    day = (
+        pd.DataFrame(
+            {
+                "con": sub["ConstraintName"],
+                "day": sub["ts"].dt.hour.isin(DAYTIME_HOURS),
+            }
+        )
+        .groupby("con")["day"]
+        .mean()
+    )
+    return {
+        str(c): ("D" if v / exposure > 1.0 else "N") for c, v in day.items()
+    }, exposure
+
+
 def _calendar_position() -> pd.Series:
     """Series mapping ``(month, day, hour) -> 0..8759`` on the non-leap clock."""
     cal = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
@@ -198,8 +279,22 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
 
     df = df.assign(month=df["ts"].dt.month, day=df["ts"].dt.day, hr=df["ts"].dt.hour)
     binding = df["ShadowPrice"] > 0
-    is_west = _west_corridor_mask(df, sub2zone) & binding
+    df = df.assign(binding=binding)
+    west_mask = _west_corridor_mask(df, sub2zone)
+    is_west = west_mask & binding
     is_iface = df["ConstraintName"].isin(INTERFACE_GTCS) & binding
+
+    # Diurnal family membership, derived from THIS year's own binding-hod
+    # placement (see DAYTIME_HOURS / assign_families). PNHNDL is held out of the
+    # split and reported as its own column: the Panhandle interface's owner is a
+    # model-side choice (endogenous tie vs driver share), not a family.
+    splittable = west_mask & ~df["ConstraintName"].isin(FAMILY_SPLIT_EXCLUDE)
+    families, exposure = assign_families(df, splittable)
+    fam_d = [c for c, f in families.items() if f == "D"]
+    fam_n = [c for c, f in families.items() if f == "N"]
+    is_fam_d = splittable & binding & df["ConstraintName"].isin(fam_d)
+    is_fam_n = splittable & binding & df["ConstraintName"].isin(fam_n)
+    is_pnhndl = binding & df["ConstraintName"].isin(FAMILY_SPLIT_EXCLUDE)
 
     # n_intervals: distinct SCED executions observed per clock hour (any constraint).
     grp_cols = ["month", "day", "hr"]
@@ -209,6 +304,15 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
         df[is_west].groupby(grp_cols)["ts"].nunique().rename("n_binding_west")
     )
     n_iface = df[is_iface].groupby(grp_cols)["ts"].nunique().rename("n_iface")
+    n_fam_d = (
+        df[is_fam_d].groupby(grp_cols)["ts"].nunique().rename("n_binding_family_d")
+    )
+    n_fam_n = (
+        df[is_fam_n].groupby(grp_cols)["ts"].nunique().rename("n_binding_family_n")
+    )
+    n_pnhndl = (
+        df[is_pnhndl].groupby(grp_cols)["ts"].nunique().rename("n_binding_pnhndl")
+    )
     # mean positive West shadow price over the hour's binding West-corridor rows.
     sp_west = (
         df[is_west]
@@ -218,11 +322,23 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
     )
 
     out = pd.concat(
-        [n_intervals, n_binding_west, n_iface, sp_west], axis=1
+        [n_intervals, n_binding_west, n_iface, n_fam_d, n_fam_n, n_pnhndl, sp_west],
+        axis=1,
     ).reset_index()
-    out["n_binding_west"] = out["n_binding_west"].fillna(0).astype("int64")
-    out["n_iface"] = out["n_iface"].fillna(0).astype("int64")
+    _counts = [
+        "n_binding_west",
+        "n_iface",
+        "n_binding_family_d",
+        "n_binding_family_n",
+        "n_binding_pnhndl",
+    ]
+    for col in _counts:
+        out[col] = out[col].fillna(0).astype("int64")
     out["n_intervals"] = out["n_intervals"].astype("int64")
+    print(
+        f"  {year} families: exposure_day={exposure:.4f}, "
+        f"{len(fam_d)} D / {len(fam_n)} N of {len(families)} corridor elements"
+    )
 
     pos = _calendar_position()
     key = pd.MultiIndex.from_frame(out[["month", "day", "hr"]])
@@ -236,8 +352,8 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
     dense = pd.DataFrame({"hour": np.arange(HOURS_PER_YEAR, dtype="int64")})
     out = dense.merge(out, on="hour", how="left")
     out["n_intervals"] = out["n_intervals"].fillna(0).astype("int64")
-    out["n_binding_west"] = out["n_binding_west"].fillna(0).astype("int64")
-    out["n_iface"] = out["n_iface"].fillna(0).astype("int64")
+    for col in _counts:
+        out[col] = out[col].fillna(0).astype("int64")
 
     denom = out["n_intervals"].to_numpy()
     safe = np.where(denom > 0, denom, 1)
@@ -247,6 +363,15 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
     out["interface_binding_frac"] = np.where(
         denom > 0, out["n_iface"].to_numpy() / safe, 0.0
     )
+    # Per-family union shares: each is the fraction of the hour's executions with
+    # >=1 element OF THAT FAMILY binding, so a family's own diurnal shape is not
+    # averaged into the pooled union (which the dominant family would dictate).
+    for frac_col, count_col in (
+        ("congestion_frac_family_d", "n_binding_family_d"),
+        ("congestion_frac_family_n", "n_binding_family_n"),
+        ("congestion_frac_pnhndl", "n_binding_pnhndl"),
+    ):
+        out[frac_col] = np.where(denom > 0, out[count_col].to_numpy() / safe, 0.0)
 
     # Non-leap wall clock: build from the 2023 template's month/day/hour applied to
     # this year (Feb 29 already excluded by construction of the 8760 grid).
@@ -270,6 +395,12 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
             "congestion_frac",
             "interface_binding_frac",
             "shadow_price_mean_west",
+            "n_binding_family_d",
+            "n_binding_family_n",
+            "n_binding_pnhndl",
+            "congestion_frac_family_d",
+            "congestion_frac_family_n",
+            "congestion_frac_pnhndl",
         ]
     ].sort_values("hour", ignore_index=True)
 
