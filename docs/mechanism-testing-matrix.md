@@ -1549,7 +1549,113 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-151-seam-envelope`, CALIBRATED — **keeper stamp RE-STAMPED at xiso-4 (2026-08-04)**, it had gone stale at the pjm-151 promotion; determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-04-pjm-152-collapse`, CALIBRATED — **PROMOTED at pjm-153 (2026-08-04)** from `2026-08-03-pjm-151-seam-envelope`: a rule 26 `[R-DELETE]` debt discharge with **BIT-IDENTICAL dispatch** (E1 `max |dMW| = 0.0` over all 166,440 class-hours in each of 2023/2024/2025, zero breaches) and **zero value diffs** on every shared recipe field. The keeper moves because the superseded recipe named a `ScenarioConfig` field HEAD no longer has and so was not replayable as recorded; structural integrity improves and **nothing regresses**. determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs, identical criterion-for-criterion to the superseded run. pjm-153 also generated the governance attestation pjm-152 shipped without, which is what made the run scoreable at all); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**; **THE LEVER QUEUE IS CLEARED AT pjm-153 (2026-08-04) — see the block immediately below**
+
+**pjm-153 (2026-08-04): THE PJM LEVER QUEUE IS EMPTY. Every remaining item reaches
+a terminal state; ZERO LP solved, zero bundles, zero years touched outside
+2023–2025, keeper unchanged and re-verified CALIBRATED 9/9 with zero FAILs and
+zero CAVEATs.** `results/calibration/FINDING-pjm153-queue-clear-2026-08-04.md`.
+*(Session renumbered off the SPENT `pjm-152` label — that label was consumed by
+the merged `claude/pjm-152-backcast-calibration-gaq8jv` collapse session, which
+logged nothing, so `docs/calibration-log/pjm.md` still read "Next shorthand:
+pjm-152"; nyiso-121 precedent.)*
+
+* ~~**item 15-new / root cause (15)**~~ — **CLOSED BY MEASURED REFUTATION, no
+  charter.** It is **not an independent defect**: it is items 12–13's flat-stack
+  amplitude defect measured on the seam. (a) The **2025 "runs 5.21 TWh long"
+  clause is a BENCHMARK ARTIFACT** — EIA-930 `Total interchange` posts 17.968 TWh
+  against PJM's settlement tie file at 32.925 and against **EIA-930's own
+  Net-gen − Demand identity at 32.730**, failing its own arithmetic by 14.762 TWh
+  with hourly r collapsing 0.976/0.9735 → **0.3732**. On the keeper's own attested
+  net position the residual is **one-signed in all three years** (−9.57/−9.17/−5.40
+  TWh); the model *always* under-exports. (b) The envelope **ceiling cannot bind**
+  — 75.5/67.0/68.5 TWh against measured 40.0/32.8/32.9, i.e. **34–36 TWh of unused
+  headroom** every year, so loosening caps was not merely barred but pointless.
+  (c) The binding side is the **model's own price duration curve**: the ladder's
+  identification is exact (≤ 0.0003 on all 40 bands), and evaluating the band sum
+  at the model's price gives **−8.290/−5.991/−4.152 TWh = 86.6/65.3/76.9 %** of
+  the shortfall, because the model is **too dear at the bottom** (p5 +$7.32/+$7.57/
+  +$7.36, p25 +$5.23/+$4.84/+$4.43 above actual). **Do not charter it** — that
+  would re-open the owner-declared frontier under a new name. *Against interest:
+  the TWh figures are an accounting attribution on the ladder's own bands, not an
+  LP counterfactual; the price feedback is stabilizing, so the true equilibrium
+  recovery is smaller.*
+* **item 5 / root cause (6b) remnant** — **ROUTED TO OWNER.** The §7.2 memo is
+  **written**: `results/calibration/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`.
+  One question (does a vetoed window's ≤ 10 % in-merit tail stay erased with the
+  window?), evidence stated **both ways**, rule 19 replacement-not-stacking bar,
+  and pre-registered kills K1–K4 so a "yes" is actionable and a "no" is final.
+  **Nothing armed; no guard parameter moved (rule 23).**
+* **`state_carbon_pricing`** — **UNCHANGED at `O`, PENDING OWNER.** Restated for
+  decision in the finding's OWNER BLOCK; **not armed, cell not flipped.**
+* ~~**item 8, `st_gas_mustrun_p25_level`**~~ — **CLOSED, cell PJM `U` → `I`**,
+  provably inert on PJM's own committed artifact (ST_GAS `online_frac` **0/10**, so
+  `arrays.py` skips every plant however the flags are set), host mechanism not
+  armed (`st_gas_mustrun_per_plant=False`; the real owner is `gas_st_netload_drag`),
+  **no source-data change exists to cite** for the rule-23 re-derivation, and
+  regenerating the artifact would move the keeper's *armed* CC/COAL floors through
+  an unchartered channel.
+* ~~**item 10, `winter_citygate_daily`**~~ — **CLOSED, cell PJM `U` → `R`,
+  premise REFUTED at Phase 0 with NO data intake required.** The keeper does not
+  proxy PJM's winter delivered basis with Henry Hub: it prices gas off **measured
+  EIA-923 delivered receipts** (`gas_monthly_actuals` + `gas_plant_monthly_fuel_pricing`),
+  carrying DJF/annual **1.355/1.388/1.428** with January at **$4.97/$5.07/$6.79**.
+  HH enters only as a **within-month mean-1.0** day shape; the zonal basis is
+  **annual and mean-zero**. A citygate series would replace a settlement-grade
+  measured delivered cost with a hub quote (against rule 14) and stack a second
+  owner (rule 19). **Supersedes the pjm-146 "DATA-BLOCKED, intake first" reading —
+  the intake is moot, not pending.**
+* **item 3, the `PJM_Dominion` NoVA/Loudoun split** — **BLOCKED-ON-DATA,
+  re-confirmed on the current feed and NARROWED.** `DOM` resolves to exactly one
+  `load_area` in all three training years. The standing framing "PJM's metered-load
+  feed stops at the transmission zone" is **too broad and corrected**: the feed
+  *does* resolve below the zone for six zones (`AE`, `AEP`, `ATSI`, `DPL`, `PEP`,
+  `PL`) — Dominion just is not one of them. No basis invented; the rules-5/24 bar
+  is unchanged.
+* **items 4 and 6 — RECLASSIFIED as WATCH items**, out of the lever queue and into
+  the keeper note's watch list, so the queue stops reading as though they were
+  actionable. Re-measured at head: C8 `CT_PEAKER` **16.2/16.4/16.7 %** (not the
+  pjm-137 16.3/16.9/17.1 the queue carried), a clean GROUNDED PASS in all three
+  years (D-4 clear; profile r 0.927/0.962/0.974; CV 0.719/1.075/0.836); C3c model
+  tail **3/10/32 h**, and the duty to report a C3c effect on any future delta is
+  retained. **Newly surfaced: C8 2025 `ST_GAS` 39.9 %** (6.109 of 15.298 TWh),
+  above the 30 % cap — passing twice over (immaterial at 1.74 % load share, and
+  separately GROUNDED) but on no watch list until now.
+* **`pjm_reserve_supply_cap`** — the pjm-151 filed observation is **ADJUDICATED**:
+  a **rule 19 `[R-ONE-MECH]` ENFORCEMENT gap**, not cosmetic and not a rule 26
+  delete candidate. Proved statically with `ast`: **three** read sites (not the two
+  filed), the pergen gate at `spec.py:2148` returns on every path before the
+  `supply_cap` assignment at `:2355` and its `ReserveDesign` takes no `supply_cap`;
+  `commitment.py::build_pjm_reserve_p1_prep` returns at `:1374` before its read at
+  `:1394`. **All 15 committed PJM bundles pjm136→pjm151 are armed-and-unobservable.**
+  The observation's anchors `:2280/:2286/:2018` were **stale**. **Filed, not
+  deleted** — the one-line guard that closes it would make the current keeper's own
+  recorded config raise, so it is an owner call.
+* **The D-2 attribution defect routed by pjm-148 does NOT reproduce at head and is
+  NOT routed onward — it was FIXED at pjm-149**, one session after it was filed.
+  D-2 row counts: pjm136…pjm144 **42–43** (CC_CHP + `nuclear_mustrun` present),
+  pjm146/147 **32** (both absent), pjm150/pjm151 **42** (both present again).
+  `legitimacy_diagnostics.py` now unions every floored key and stamps
+  `lower_bound`/`upper_bound`, which the keeper's committed file carries.
+  `FINDING-pjm149-…` records that no determination moved at any of the six ISOs
+  **and that pjm-148's specific CC_CHP payload-absence claim was REFUTED — all 14
+  codes are PRESENT.** The stale routing paragraph below is struck accordingly.
+* **The merged `pjm-152` rule-26 collapse: filed as an open verification debt, then
+  DISCHARGED mid-session — nothing is owed.** At `origin/main` `a96f9743` the
+  PREREG's sole absolute gate (E1, `max |dMW| = 0.000000` on every P1 class-hour of
+  all three years) had **no committed evidence at all** — no `pjm152_collapse_A`
+  bundle, no gate record, no FINDING, and the token `PJM152_COLLAPSE_DMW` that the
+  `seam_flow_envelopes` row cited as proof appears **nowhere in the repository**.
+  Main advanced to `6fbd3f28` while this session worked and the arm landed.
+  Re-verified: **E1 PASSES absolutely** — `max_abs_class_hour_dMW = 0.0`,
+  `n_nonzero = 0`, `sum_abs_dMW = 0.0` across all **166,440** class-hours in each
+  of 2023/2024/2025, zero breaches (`_pjm152_collapse_gates.json`); K5 passes with
+  no holdout year touched; the bundle is registered
+  (`registry/2026-08-04-pjm-152-collapse.json`, rule 15 honoured). K2 `FAIL` is
+  **environment drift only** (platform string + basis SHA from re-solving at a
+  moved HEAD — the pjm-147 template artifact), not a behaviour delta. **The row's
+  original claim was true, merely un-evidenced at the commit pjm-153 measured**;
+  its citation is now the real gate record rather than the dangling token.
 
 **pjm-151 (2026-08-03): the PJM matrix column is CLOSED.** Ratchet
 `docs/codebase-site/data/mechanism-matrix-gaps.json` PJM **15 → 0**; sweep
@@ -1627,8 +1733,19 @@ residual; do not arm `chp_steam_floor_p25` for PJM (pre-WP-3 artifact ⇒ inert,
 wrong-signed regardless). **Structural reading:** κ ≈ 0.01 plus an ~11 % floor means ~89 %
 of PJM CC_CHP is *voluntary economic clearing* — a merit-order residual, not a quantity one.
 
-**Side finding, needs its own cross-ISO charter (not PJM's to land):** D-2 floor
-attribution is **path-dependent**. The dispatch join at `legitimacy_diagnostics.py:2325-2327`
+**~~Side finding, needs its own cross-ISO charter (not PJM's to land)~~ — STRUCK
+AT pjm-153 (2026-08-04): CLOSED AT pjm-149, and its own example was REFUTED
+THERE.** The defect was real and is **fixed**: `legitimacy_diagnostics.py` now
+unions every floored key regardless of dispatch-map coverage and stamps
+`lower_bound`/`upper_bound` on the affected class summary rows, which the current
+keeper's committed file carries. Verified at head — D-2 row counts pjm136…pjm144
+**42–43** (CC_CHP + `nuclear_mustrun` present), pjm146/147 **32** (both absent),
+pjm150/pjm151 **42** (both present). `FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`
+records that **no determination moved at any of the six ISOs** and that
+**pjm-148's claim that PJM's 14 CC_CHP codes are payload-absent is REFUTED — all
+14 are PRESENT** in the pjm-144/146/147 payloads alike. **No charter is owed and
+nothing is routed.** The original text is preserved below for the record only:
+D-2 floor attribution *was* **path-dependent**. The dispatch join at `legitimacy_diagnostics.py:2325-2327`
 (predating caiso-155 — not a regression from it) uses `dispatch/*.parquet` when present,
 else the dashboard **run payload**, which is CAMPD-bench-keyed and holds **none** of PJM's
 14 CC_CHP plant codes (311 plants, PJM 2023). The protocol *mandates* the slim/payload
@@ -1797,10 +1914,27 @@ lever on the AMPLITUDE, never on the annual mean.**
    `split: "unit_hourly"` at mixed sites), never by summing CAMPD over a plant
    roster.
 3. **A `PJM_Dominion` NoVA/Loudoun split** is the structurally correct fix and
-   is **blocked on one measured input**: PJM's metered-load feed stops at the
-   transmission zone, so a sub-zonal load share would be a fitted scalar
-   (rules 5/24). Refused until a measured sub-zonal load basis exists.
-4. **C8 `CT_PEAKER` forced share** rose to 16.3 / 16.9 / 17.1 % at pjm-137 (all
+   is **blocked on one measured input**: a sub-zonal load share would be a fitted
+   scalar (rules 5/24). Refused until a measured sub-zonal load basis exists.
+   **RE-CONFIRMED AND NARROWED AT pjm-153 (2026-08-04)** against the current
+   published feed, all three training years: `DOM` resolves to **exactly one
+   `load_area`**. The old framing — "PJM's metered-load feed stops at the
+   transmission zone" — is **too broad and is corrected**: the feed *does* resolve
+   below the zone for six zones (`AE`, `AEP`, `ATSI`, `DPL`, `PEP`, `PL`);
+   Dominion simply is not one of them. That makes it a cleaner data ask if ever
+   raised, and does not weaken the block. **Do not invent a basis**, and do not
+   propose another zonal congestion mechanism for the Dominion CT leg — that route
+   is CLOSED BY MEASUREMENT at pjm-137.
+4. ~~**C8 `CT_PEAKER` forced share**~~ **▶ RECLASSIFIED AT pjm-153 (2026-08-04):
+   this is a WATCH ITEM, not a lever, and it has moved to the keeper note's watch
+   list.** Re-measured at head it is **16.2 / 16.4 / 16.7 %** — *not* the
+   16.3/16.9/17.1 this entry carried, which are the pjm-137 figures — and a clean
+   **GROUNDED PASS** in all three years (every binding mechanism clears D-4;
+   profile r 0.927 / 0.962 / 0.974; off-peak CV ratio 0.719 / 1.075 / 0.836).
+   Newly surfaced and added to the same watch list: **C8 2025 `ST_GAS` at 39.9 %**
+   (6.109 of 15.298 TWh), above the 30 % cap but passing twice over — immaterial
+   at 1.74 % load share *and* separately GROUNDED. *Original entry, for the
+   record:* rose to 16.3 / 16.9 / 17.1 % at pjm-137 (all
    GROUNDED — D-4 clear, profile r 0.923–0.973, CV ratio 0.703–1.083) on a class
    whose ISO-wide volume fell 2.6–2.9 TWh. A clean pass under rule 20, but worth
    watching.
@@ -1816,7 +1950,11 @@ lever on the AMPLITUDE, never on the annual mean.**
    evidence. Route stays its §7.2: a within-window tight-hour treatment memo,
    owner sign-off, its own charter, LOYO within 2023–2025. **Do not arm anything
    on the price alone.**
-6. **C3c margin** — still passes by **1 h** (2024) and **2.5 h** (2025) against a
+6. ~~**C3c margin**~~ **▶ RECLASSIFIED AT pjm-153 (2026-08-04): a WATCH ITEM, not
+   a lever; moved to the keeper note's watch list.** Model tail hours at head are
+   **3 / 10 / 32 h**. The duty is retained and unchanged: **any delta must report
+   its C3c effect explicitly.** *Original entry, for the record:* still passes by
+   **1 h** (2024) and **2.5 h** (2025) against a
    0.5× floor, untouched by pjm-137 and by pjm-138 (which solved nothing). Any
    delta must report its C3c effect explicitly.
 7. ~~**`pjm_dam_availability`** (**U**) — intaken but untested. pjm-137 measured
@@ -1851,7 +1989,23 @@ lever on the AMPLITUDE, never on the annual mean.**
    registry, and/or (2) a class-/unit-resolved or fuel-split outage numerator,
    or (3) the event-window-cap form (ERCOT-148/149 shape) identified from
    PJM's own record.
-8. **`st_gas_mustrun_p25_level`** (**U**, MISO form) — re-ground the six
+8. ~~**`st_gas_mustrun_p25_level`** (**U**, MISO form)~~ **▶ CLOSED AT pjm-153
+   (2026-08-04) — PROVABLY INERT FOR PJM, CELL `U` → `I`, NO SOLVE SPENT.** PJM's
+   committed `thermal_tranches_PJM.csv` carries `online_frac` for COAL 29/29,
+   CC_REGULAR 69/69, CT_PEAKER 70/70 and **ST_GAS 0/10**, and `arrays.py` arms a
+   plant only when *both* its p25 level and its `online_frac` are positive — so
+   every PJM ST_GAS plant is skipped and the floor set is empty **however the
+   flags are set** (MISO, where miso-67 armed this, carries 16/16). Three further
+   blockers stack: the host mechanism is not armed (`st_gas_mustrun_per_plant =
+   False`; the real ST_GAS forcing owner is `gas_st_netload_drag`, so arming the
+   pair collides under rule 19); **no source-data change exists to cite**, which
+   is what rule 23 requires (what is stale is the *artifact* against the deriver's
+   own `_ONLINE_FRAC_GROUPS`, which now includes ST_GAS); and regenerating it
+   rewrites `committed_pct`/`online_frac`/`chp_pmin_cf` for COAL/CC_REGULAR/
+   CT_PEAKER — columns the keeper's **armed** `cc_mustrun_per_plant` and
+   `coal_mustrun_per_plant` floors read. Same measured basis NYISO used at
+   nyiso-105, re-measured on PJM's own artifact per rule 25.
+   *Original entry, for the record:* re-ground the six
    overnight ST_GAS floor limbs on measured operating levels (D-2 ST_GAS
    42–55 % forced). ~~**Newly motivated by pjm-138**: the model runs
    **$1.6–7.3/MWh too DEAR at h01–h04**~~ — **the overnight motivation is
@@ -1886,7 +2040,26 @@ lever on the AMPLITUDE, never on the annual mean.**
    (`FINDING-pjm139-winter-morning-ramp-is-a-ramp-rate-deficit-2026-07-30.md`
    W0/W1; the stale `DIAGNOSIS-pjm-dof-scarcity-tail` §B.3/§B.4 text that
    produced this item is corrected in place.)
-10. **TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**) —
+10. ~~**TETCO-M3 winter daily citygate** (`winter_citygate_daily` form, **U**)~~
+    **▶ CLOSED AT pjm-153 (2026-08-04) — PREMISE REFUTED AT PHASE 0, CELL `U` →
+    `R`, NO SOLVE AND NO DATA INTAKE REQUIRED.** The item survived only on the
+    winter-LEVEL story, whose premise was that the model proxies PJM's delivered
+    winter basis with the HH+zonal-basis construction. **It does not.** The keeper
+    prices PJM gas off **measured EIA-923 delivered receipts**
+    (`gas_monthly_actuals=True` **and** `gas_plant_monthly_fuel_pricing=True`),
+    carrying DJF/annual **1.355 / 1.388 / 1.428** with January at **$4.97 / $5.07 /
+    $6.79** per MMBtu. Henry Hub enters *only* as `gas_daily_shape`, whose factors
+    divide by each month's own staircase mean and therefore average **exactly 1.0
+    within every month** — zero month-to-month level; `pjm_zonal_gas_hub.csv` is
+    **one row per (zone, YEAR)** applied capacity-weighted **mean-zero** — zero
+    seasonality and zero level; and `gas_price_override = 2.54` is only the
+    trajectory fallback for months with no receipts. A daily citygate would
+    therefore **replace a settlement-grade measured delivered cost with a hub
+    quote** — the opposite of what rule 14 `[R-ACCURATE]` asks — and stack a second
+    owner on a phenomenon that already has a sole owner (rule 19). This
+    **supersedes the pjm-146 triage's "DATA-BLOCKED, intake precedes any charter"
+    reading**: the intake is not a prerequisite, it is moot. DO-NOT-REDO for PJM.
+    *Original entry, for the record:*
     own hub derivation, PJM cell genuinely untested. **But note what pjm-139
     measured before chartering it: a daily citygate series has the same
     calendar-day resolution as item 9**, so it inherits the same W1 objection

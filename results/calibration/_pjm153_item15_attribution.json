@@ -1,0 +1,265 @@
+{
+ "_what": "pjm-153: no-LP attribution of PJM root-cause item 15 (net-export level). Reads the committed pjm-152 scope file and the keeper's own attestation; solves nothing.",
+ "inputs": {
+  "scope": "results/calibration/_pjm152_item15_scope.json",
+  "attestation": "results/calibration/pjm151_seam_B/calibration_attestation.json"
+ },
+ "item15_as_stated_at_pjm151": {
+  "2023": {
+   "actual_twh": 39.98,
+   "model_twh": 27.5
+  },
+  "2024": {
+   "actual_twh": 32.64,
+   "model_twh": 20.42
+  },
+  "2025": {
+   "actual_twh": 17.97,
+   "model_twh": 23.18
+  }
+ },
+ "benchmark_basis": {
+  "2023": {
+   "eia930_total_interchange_twh": 39.983,
+   "pjm_tie_file_net_export_twh": 39.974,
+   "eia930_netgen_minus_demand_twh": 39.99,
+   "sources_disagree_twh": 0.009,
+   "eia930_self_identity_residual_twh": -0.007,
+   "hourly_correlation": 0.976,
+   "benchmark_self_consistent": true
+  },
+  "2024": {
+   "eia930_total_interchange_twh": 32.641,
+   "pjm_tie_file_net_export_twh": 32.825,
+   "eia930_netgen_minus_demand_twh": 32.68,
+   "sources_disagree_twh": -0.184,
+   "eia930_self_identity_residual_twh": -0.039,
+   "hourly_correlation": 0.9735,
+   "benchmark_self_consistent": true
+  },
+  "2025": {
+   "eia930_total_interchange_twh": 17.968,
+   "pjm_tie_file_net_export_twh": 32.925,
+   "eia930_netgen_minus_demand_twh": 32.73,
+   "sources_disagree_twh": -14.957,
+   "eia930_self_identity_residual_twh": -14.762,
+   "hourly_correlation": 0.3732,
+   "benchmark_self_consistent": false
+  }
+ },
+ "ceiling_check": {
+  "2023": {
+   "total_envelope_export_ceiling_twh": 75.528,
+   "total_measured_net_export_twh": 39.975,
+   "headroom_twh": 35.553,
+   "ceiling_binds": false
+  },
+  "2024": {
+   "total_envelope_export_ceiling_twh": 67.031,
+   "total_measured_net_export_twh": 32.824,
+   "headroom_twh": 34.207,
+   "ceiling_binds": false
+  },
+  "2025": {
+   "total_envelope_export_ceiling_twh": 68.465,
+   "total_measured_net_export_twh": 32.925,
+   "headroom_twh": 35.54,
+   "ceiling_binds": false
+  }
+ },
+ "ladder_attribution": {
+  "2023": {
+   "seams": {
+    "Carolinas": {
+     "band_width_mw": 300.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.4912,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.4912,
+     "identification_residual_max": 0.0002
+    },
+    "LGEE": {
+     "band_width_mw": 137.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.2285,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.2285,
+     "identification_residual_max": 0.0001
+    },
+    "MISO": {
+     "band_width_mw": 912.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 35.3073,
+     "ladder_energy_at_model_price_twh": 30.4025,
+     "attributed_export_gap_twh": -4.9048,
+     "identification_residual_max": 0.0002
+    },
+    "NYISO": {
+     "band_width_mw": 487.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 18.5267,
+     "ladder_energy_at_model_price_twh": 15.9247,
+     "attributed_export_gap_twh": -2.602,
+     "identification_residual_max": 0.0003
+    },
+    "TVA": {
+     "band_width_mw": 200.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.0632,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.0632,
+     "identification_residual_max": 0.0002
+    }
+   },
+   "total_attributed_export_gap_twh": -8.2897,
+   "model_price_quantiles": {
+    "p5": 22.7,
+    "p25": 26.81,
+    "p50": 30.25,
+    "p75": 33.82,
+    "p90": 38.78,
+    "p95": 41.75,
+    "p99": 48.32
+   },
+   "measured_da_lmp_quantiles": {
+    "p5": 15.38,
+    "p25": 21.58,
+    "p50": 27.14,
+    "p75": 33.89,
+    "p90": 42.3,
+    "p95": 49.81,
+    "p99": 71.89
+   }
+  },
+  "2024": {
+   "seams": {
+    "Carolinas": {
+     "band_width_mw": 300.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.6121,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.6121,
+     "identification_residual_max": 0.0001
+    },
+    "LGEE": {
+     "band_width_mw": 137.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.194,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.194,
+     "identification_residual_max": 0.0001
+    },
+    "MISO": {
+     "band_width_mw": 912.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 27.1843,
+     "ladder_energy_at_model_price_twh": 23.3762,
+     "attributed_export_gap_twh": -3.8081,
+     "identification_residual_max": 0.0003
+    },
+    "NYISO": {
+     "band_width_mw": 487.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 20.325,
+     "ladder_energy_at_model_price_twh": 19.075,
+     "attributed_export_gap_twh": -1.25,
+     "identification_residual_max": 0.0002
+    },
+    "TVA": {
+     "band_width_mw": 200.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.1268,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.1268,
+     "identification_residual_max": 0.0002
+    }
+   },
+   "total_attributed_export_gap_twh": -5.991,
+   "model_price_quantiles": {
+    "p5": 20.86,
+    "p25": 24.4,
+    "p50": 27.95,
+    "p75": 32.78,
+    "p90": 38.58,
+    "p95": 43.24,
+    "p99": 83.19
+   },
+   "measured_da_lmp_quantiles": {
+    "p5": 13.29,
+    "p25": 19.56,
+    "p50": 25.79,
+    "p75": 34.33,
+    "p90": 46.95,
+    "p95": 58.78,
+    "p99": 106.17
+   }
+  },
+  "2025": {
+   "seams": {
+    "Carolinas": {
+     "band_width_mw": 300.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 1.031,
+     "ladder_energy_at_model_price_twh": 0.047,
+     "attributed_export_gap_twh": -0.9839,
+     "identification_residual_max": 0.0002
+    },
+    "LGEE": {
+     "band_width_mw": 137.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.2685,
+     "ladder_energy_at_model_price_twh": 0.0026,
+     "attributed_export_gap_twh": -0.2658,
+     "identification_residual_max": 0.0002
+    },
+    "MISO": {
+     "band_width_mw": 912.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 24.636,
+     "ladder_energy_at_model_price_twh": 22.5633,
+     "attributed_export_gap_twh": -2.0727,
+     "identification_residual_max": 0.0003
+    },
+    "NYISO": {
+     "band_width_mw": 487.5,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 21.8987,
+     "ladder_energy_at_model_price_twh": 21.288,
+     "attributed_export_gap_twh": -0.6107,
+     "identification_residual_max": 0.0003
+    },
+    "TVA": {
+     "band_width_mw": 200.0,
+     "n_bands": 8,
+     "ladder_energy_at_measured_duration_twh": 0.2192,
+     "ladder_energy_at_model_price_twh": 0.0,
+     "attributed_export_gap_twh": -0.2192,
+     "identification_residual_max": 0.0003
+    }
+   },
+   "total_attributed_export_gap_twh": -4.1523,
+   "model_price_quantiles": {
+    "p5": 27.16,
+    "p25": 33.01,
+    "p50": 37.64,
+    "p75": 44.27,
+    "p90": 53.03,
+    "p95": 61.2,
+    "p99": 90.93
+   },
+   "measured_da_lmp_quantiles": {
+    "p5": 19.8,
+    "p25": 28.58,
+    "p50": 36.58,
+    "p75": 49.47,
+    "p90": 69.44,
+    "p95": 87.48,
+    "p99": 158.0
+   }
+  }
+ },
+ "keeper_attested_net_position": {
+  "source": "calibration_attestation free_parameters entry",
+  "note": "A published net interchange position is a market/physical input, not an outcome pinned to a residual: it is applied as a one-sided CEILING the LP clears within on its own economics, never as a target the model is forced onto. The LP's net position remains strictly inside it (arm B: -30.41/-23.66/-27.53 TWh against a measured -39.98/-32.83/-32.93), so no volume is pinned to the actual."
+ }
+}
