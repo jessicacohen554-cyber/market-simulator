@@ -198,13 +198,39 @@ Consequences, stated in the entry:
 
 ## 5. Scope 3 — the kill-resume drill on the shipped config
 
-**PENDING at this commit — the drill is running in this session and this section is
-completed by a follow-up commit before the lane closes.** It is `scripts/ff_readiness_battery.py
-kill-resume` (the FFR-3J `ef5695b0` discriminator), NEISO 2026–2028, on the shipped config —
-which now carries the D-10 posture, because the drill builds its config through
-`golden_posture_config`. FFR-3M measured GREEN for exactly this posture in its cell C, so
-reproducing it is confirmation, not a new claim; if it does NOT come back green that means the
-cause was not fully identified, and the correct outcome is to report that rather than chase it.
+**GREEN.** `scripts/ff_readiness_battery.py kill-resume` (the FFR-3J `ef5695b0`
+discriminator), NEISO 2026–2028, run on the **shipped** config — no ablation flag, no
+override: the drill builds its config through `golden_posture_config`, which now carries the
+D-10 posture, so this is the production posture being drilled.
+
+```
+killed_mid_horizon=True  cache_key_match=True  cached_loaded=True
+result_identical=True  ->  GREEN
+    resumed years (loaded from cache): [2026, 2027]
+    2026: equal (resumed)
+    2027: equal (resumed)
+    2028: equal (solved)
+```
+
+The load-bearing line is the last one. 2026 and 2027 are cache-loaded, so their equality only
+re-confirms that the resume plumbing is sound — FFR-3M's cell A already had those two
+bit-identical while failing overall. **2028 is freshly solved on the resume leg
+(`from_cache=false`) and is now equal to the control's 2028**, which is exactly the
+comparison that was red before D-10. Drill cache key `891f4d430421ed0e` (the drill's own
+2026–2028 window, distinct from the 2026–2050 T1-F keys in §3.2 because the horizon bounds
+enter the key).
+
+**This is confirmation, not a new claim.** FFR-3M measured GREEN for this posture in its cell
+C; what is new here is only that the posture is now what the shipped runners produce rather
+than an ablation argument passed by a probe. The result was reproduced twice in this session,
+in two independent work directories — the second run is the one that wrote
+`docs/handoffs/ffr-3t/kill_resume_drill.json`, committed as the machine-readable record. That
+run took **10m39s wall** end to end (control 3 years + kill 2 years + resume 1 year, NEISO,
+`MARKET_SIM_HIGHS_THREADS=1`), which is the drill-scale cost of the whole instrument and is
+the scale at which the lost warm start is negligible — see §6 for where it is not.
+
+Nothing was widened, disabled, or tuned to obtain this: the drill is the unmodified
+instrument, its tolerances are untouched, and no basis is pinned anywhere.
 
 ---
 
