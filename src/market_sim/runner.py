@@ -36,6 +36,7 @@ from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
     ScenarioConfig,
     SweepDefinition,
+    crossover_unbridges_year,
     resolve_demand_growth_rate,
     resolve_policy_bundle,
 )
@@ -186,6 +187,68 @@ logger = logging.getLogger(__name__)
 # is still evolved across them from the last solved year's drivers so capacity
 # outcomes on the far side are reachable, but no dispatch is produced.
 HINDCAST_BRIDGE_YEARS = frozenset({2022, 2026})
+
+
+def is_hindcast_bridge_year(
+    year: int,
+    *,
+    hindcast: bool,
+    crossover_forward_year: int | None,
+    start_year: int | None,
+) -> bool:
+    """THE single definition of "evolved across, never solved" (rule 22).
+
+    A bridge year is a quarantined year (:data:`HINDCAST_BRIDGE_YEARS`) inside
+    a hindcast window: the fleet evolves across it, but its LP is never solved
+    and its measured data never read. The one exception is a genuine T1-X
+    crossover forward year (:func:`~market_sim.config.scenarios.
+    crossover_unbridges_year`), which is a forecast-mode solve reading no
+    measured actuals.
+
+    Both :func:`run_scenario_iso`'s per-year branch and the harness guard
+    (``scripts/run_capacity_hindcast._validate_window``) call THIS function, so
+    the guard policy-checks exactly the years the runner will actually solve.
+    FFR-3Q's breach was two predicates answering one question: the guard
+    computed its solve set from the ``--crossover`` CLI flag while the runner
+    branched on ``crossover_forward_year``, and a base-2021 T1-FF window fell
+    through the gap and solved 2022. Rule 19 ``[R-ONE-MECH]``.
+    """
+    return (
+        hindcast
+        and year in HINDCAST_BRIDGE_YEARS
+        and not crossover_unbridges_year(
+            year,
+            crossover_forward_year=crossover_forward_year,
+            start_year=start_year,
+        )
+    )
+
+
+def hindcast_solve_years(
+    start_year: int,
+    end_year: int,
+    *,
+    hindcast: bool = True,
+    crossover_forward_year: int | None = None,
+) -> list[int]:
+    """Return the years a run over ``[start_year, end_year]`` will SOLVE.
+
+    The window minus its bridge years, decided by
+    :func:`is_hindcast_bridge_year` — so this is the realized solve set by
+    construction, not a second reading of it. The harness guard checks this
+    set against the rule-22 policy, and the completion assertion compares it to
+    what the evolution ledgers actually recorded.
+    """
+    return [
+        y
+        for y in range(start_year, end_year + 1)
+        if not is_hindcast_bridge_year(
+            y,
+            hindcast=hindcast,
+            crossover_forward_year=crossover_forward_year,
+            start_year=start_year,
+        )
+    ]
 
 
 def _chp_measured_co2_inputs(
@@ -916,15 +979,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # never solved, its data never read, and prior_results is left pointing
         # at the last solved year. Its capacity drivers (gas/carbon) come from
         # that last solved year, never from the quarantined bridge year.
-        # T1-X crossover (FF-0E, plan §2.2): a crossover SOLVES its forward
-        # years (>= the boundary) as forecast-mode years, so 2026 — a plain-
-        # hindcast quarantine bridge year — is un-bridged here. Rule-22-legal:
+        # T1-X crossover (FF-0E, plan §2.2): a GENUINE crossover SOLVES its
+        # forward years (>= 2026) as forecast-mode years, so 2026 — a plain-
+        # hindcast quarantine bridge year — is un-bridged there. Rule-22-legal:
         # a forecast solve of 2026+ consumes no measured H1-2026 actuals (the
         # measured overlays are all skipped for crossover forward years).
-        is_bridge = (
-            config.hindcast
-            and year in HINDCAST_BRIDGE_YEARS
-            and not config.is_crossover_forward_year(year)
+        #
+        # The un-bridging is SCOPED to that case (FFR-3U), not applied to any
+        # year at/above ``crossover_forward_year``: a T1-FF full-forward
+        # hindcast points the boundary at its OWN base year, so the un-scoped
+        # test made every year of a base-2021 window a "forward year" and
+        # solved 2022 — a validation-tier holdout — with its measured data
+        # read (FFR-3Q §2.2, owner Addendum L). One definition, shared with the
+        # harness guard: ``is_hindcast_bridge_year``.
+        is_bridge = is_hindcast_bridge_year(
+            year,
+            hindcast=config.hindcast,
+            crossover_forward_year=config.crossover_forward_year,
+            start_year=start_year,
         )
         driver_year = last_solved_year if is_bridge else year
 

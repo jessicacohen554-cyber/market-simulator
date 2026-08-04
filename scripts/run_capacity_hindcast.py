@@ -122,11 +122,18 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.capacity_market import (  # noqa: E402
     resolve_capacity_market_clearing,
 )
-from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.config.scenarios import (  # noqa: E402
+    CROSSOVER_FORWARD_BOUNDARY_YEAR as _SRC_CROSSOVER_FORWARD_YEAR,
+)
+from market_sim.config.scenarios import (  # noqa: E402
+    ScenarioConfig,
+    crossover_unbridges_year,
+)  # isort: skip
 from market_sim.results import cache as cachemod  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.pipeline.api import run_scenario  # noqa: E402
 from market_sim.runner import HINDCAST_BRIDGE_YEARS as _RUNNER_BRIDGE_YEARS  # noqa: E402
+from market_sim.runner import hindcast_solve_years  # noqa: E402
 from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
     shipped_capacity_clearing_by_iso,
@@ -161,8 +168,10 @@ ALLOWED_SOLVE_YEARS = holdout_policy.HINDCAST_SOLVE_YEARS
 # forecast-mode years (rule-22-legal: no measured H1-2026 actuals are read).
 CROSSOVER_ALLOWED_SOLVE_YEARS = frozenset({2023, 2024, 2025, 2026, 2027})
 # First forecast (forward-driver) year of a crossover: 2023-2025 realized,
-# 2026+ pure forward drivers (plan §2.2).
-CROSSOVER_FORWARD_YEAR = 2026
+# 2026+ pure forward drivers (plan §2.2). Since FFR-3U the literal lives in
+# ``src`` (it is half of the bridge predicate, which src owns); this is an
+# alias, so the two can never drift apart the way the two window predicates did.
+CROSSOVER_FORWARD_YEAR = _SRC_CROSSOVER_FORWARD_YEAR
 # The EIA-860 vintage a plain hindcast seeds from (plan §1.1); a crossover seeds
 # from the 2023 vintage (plan §2.2); a full-forward hindcast seeds from any
 # allowed vintage at/before its base year (FH-1: Phase A 2023, Phase B 2020).
@@ -202,6 +211,45 @@ def full_forward_gas_path(arm: str, base_year: int) -> str:
     return path
 
 
+def window_forward_boundary(
+    start_year: int, crossover: bool, forward_from_base: bool
+) -> int | None:
+    """Return the ``crossover_forward_year`` a window's config will carry.
+
+    One resolution, two readers (FFR-3U, rule 19 ``[R-ONE-MECH]``):
+    :func:`build_config` sets the field from THIS function, and
+    :func:`_validate_window` derives the runner's bridge predicate from it — so
+    the guard can never be checking a different window than the one that
+    solves. FFR-3Q's breach was exactly that divergence: the guard read the
+    ``--crossover`` CLI flag (False for a T1-FF run) while the runner read the
+    boundary the config actually carried (the T1-FF base year).
+    """
+    if forward_from_base:
+        return start_year
+    return CROSSOVER_FORWARD_YEAR if crossover else None
+
+
+def window_solve_years(
+    start_year: int, end_year: int, crossover: bool, forward_from_base: bool
+) -> list[int]:
+    """Return the years the RUNNER will solve for this window.
+
+    Thin composition of :func:`window_forward_boundary` with
+    :func:`market_sim.runner.hindcast_solve_years` — the runner's own bridge
+    predicate, not a harness-side re-derivation. Used by the guard
+    (:func:`_validate_window`), by the launch governance banner, and by the
+    completion parity assertion, so all three speak about one set.
+    """
+    return hindcast_solve_years(
+        start_year,
+        end_year,
+        hindcast=True,
+        crossover_forward_year=window_forward_boundary(
+            start_year, crossover, forward_from_base
+        ),
+    )
+
+
 def _validate_window(
     start_year: int,
     end_year: int,
@@ -224,6 +272,15 @@ def _validate_window(
     which years may be solved. The solvable set is read from
     ``scripts.lib.holdout_policy`` (the carve-outs' single home), and every
     non-bridge year outside it fails closed with its tier named.
+
+    **The solve-year set is the RUNNER's** (FFR-3U):
+    :func:`market_sim.runner.hindcast_solve_years`, over the boundary
+    :func:`build_config` will actually set. Before FFR-3U this function
+    computed its own set from the ``--crossover`` flag, dropped 2022 as a
+    bridge for a base-2021 T1-FF window the runner then SOLVED, and so never
+    policy-checked the year at all — the fail-closed check could not fire
+    because the guard had already deleted the year (FFR-3Q §2.2.1, owner
+    Addendum L.1). Every year the runner solves is now checked here.
     """
     if start_year < 2021:
         raise SystemExit(
@@ -248,16 +305,9 @@ def _validate_window(
                 "no solve/score; use --crossover for the forecast-mode 2026/2027 window)"
             )
         allowed = ALLOWED_SOLVE_YEARS
-    solve_years = [
-        y
-        for y in range(start_year, end_year + 1)
-        # A crossover forward year (>= 2026) is a SOLVED forecast-mode year,
-        # not a bridge — so it does not skip the allowed-year check below.
-        if not (
-            y in HINDCAST_BRIDGE_YEARS
-            and not (crossover and y >= CROSSOVER_FORWARD_YEAR)
-        )
-    ]
+    # The years the RUNNER will solve, from the runner's own predicate over the
+    # boundary build_config will set — never a locally recomputed set.
+    solve_years = window_solve_years(start_year, end_year, crossover, forward_from_base)
     for y in solve_years:
         if y not in allowed:
             kind = "crossover" if crossover else "hindcast"
@@ -266,9 +316,20 @@ def _validate_window(
     # by holdout_policy — anything outside training + seed refuses with its
     # tier named, whatever the local `allowed` literal says. Crossover forward
     # years (2026+) are the one legal exception (forecast-mode solves reading
-    # no measured actuals, rule 22).
+    # no measured actuals, rule 22) — and since FFR-3U that exemption is the
+    # SAME scoped predicate the runner un-bridges on (a genuine crossover, not
+    # a T1-FF base-year boundary), so no year can be exempted here that the
+    # runner would solve as a quarantined bridge year.
     _policy_years = [
-        y for y in solve_years if not (crossover and y >= CROSSOVER_FORWARD_YEAR)
+        y
+        for y in solve_years
+        if not crossover_unbridges_year(
+            y,
+            crossover_forward_year=window_forward_boundary(
+                start_year, crossover, forward_from_base
+            ),
+            start_year=start_year,
+        )
     ]
     violations = holdout_policy.hindcast_solve_year_violations(_policy_years)
     if violations:
@@ -530,13 +591,11 @@ def build_config(
         variant = arm
         gas_path = _ff_gas
         fwd_gas_path = _ff_gas
-        boundary = start_year
         weather_year = start_year
         solve_year_weather = arm == "realized"
     else:
         gas_path = FUEL_VARIANT_GAS_PATH[variant]
         fwd_gas_path = crossover_forward_gas_path
-        boundary = CROSSOVER_FORWARD_YEAR if crossover else None
         # T1-X: pin the weather year to the last realized year (boundary − 1 =
         # 2025) so "growth-scaled demand from the last realized year" (plan
         # §2.2) is exactly what the forward years see. A plain hindcast keeps
@@ -545,6 +604,10 @@ def build_config(
             CROSSOVER_FORWARD_YEAR - 1 if crossover else ScenarioConfig().weather_year
         )
         solve_year_weather = False
+    # ONE resolution of the forward boundary, shared with the window guard
+    # (FFR-3U): whatever the guard policy-checked is exactly what the config
+    # carries into the runner's bridge predicate.
+    boundary = window_forward_boundary(start_year, crossover, forward_from_base)
     _clearing_by_iso, _ = resolve_capacity_clearing_posture(
         iso, capacity_market_clearing, fixed_net_cone
     )
@@ -911,12 +974,12 @@ def assert_forward_drivers(
     # check, so the seam assertion (d) covers exactly the same set.
     forward_years: list[int] = []
     for y in range(max(start_year, config.crossover_forward_year), end_year + 1):
-        if y in HINDCAST_BRIDGE_YEARS and not (
-            # A crossover forward year >= 2026 is un-bridged (solved); a
-            # full-forward run inside 2021-2025 keeps the 2022 bridge, which
-            # is never solved — nothing to assert for it.
-            y >= CROSSOVER_FORWARD_YEAR and config.is_crossover_forward_year(y)
-        ):
+        # A genuine crossover forward year (>= 2026) is un-bridged (solved); a
+        # full-forward run inside 2021-2025 keeps the 2022 bridge, which is
+        # never solved — nothing to assert for it. This local expression had
+        # the RIGHT scoping while the runner's did not (FFR-3Q's three-way
+        # split); since FFR-3U all three read one predicate.
+        if y in HINDCAST_BRIDGE_YEARS and not config.is_crossover_unbridged_year(y):
             continue
         forward_years.append(y)
         if not config.is_crossover_forward_year(y):
@@ -1265,6 +1328,20 @@ def main(argv: list[str] | None = None) -> int:
     _validate_window(start_year, end_year, crossover, forward_from_base)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
+    # THE promise this run makes about which years it will solve. Derived from
+    # the runner's own bridge predicate (FFR-3U), printed in the banner below,
+    # and asserted against the realized ledgers at completion — so the banner
+    # cannot say one thing while the solve does another. FFR-3Q's run printed
+    # "bridges [2022, 2026] are never solved or read" and then solved 2022; a
+    # governance banner not mechanically tied to behaviour is decoration
+    # (owner Addendum L.1).
+    promised_solve_years = window_solve_years(
+        start_year, end_year, crossover, forward_from_base
+    )
+    promised_bridge_years = [
+        y for y in range(start_year, end_year + 1) if y not in promised_solve_years
+    ]
+
     # Governance record (FH-1, plan §5.3): the holdout freeze is read and the
     # run's legality stated EXPLICITLY at launch — deliberate, not accidental.
     # A T1-FF/hindcast window is freeze-legal by construction (solves = the
@@ -1282,11 +1359,20 @@ def main(argv: list[str] | None = None) -> int:
             "solve years are the rule-22 training window "
             f"{sorted(holdout_policy.CALIBRATION_YEARS)} plus the enumerated "
             f"seed {sorted(holdout_policy.HINDCAST_SEED_YEARS)} (never scored), "
-            f"bridges {sorted(holdout_policy.HINDCAST_BRIDGE_YEARS)} are never "
-            "solved or read, and scoring is bounded to the training window on "
-            "both sides (score_crossover). No out-of-training year is solved, "
-            "scored, or registered; no marker is spent."
+            "and scoring is bounded to the training window on both sides "
+            "(score_crossover). No out-of-training year is solved, scored, or "
+            "registered; no marker is spent."
         )
+    # Stated for EVERY run, freeze or not, and stated as THIS window's own
+    # resolved sets rather than the static bridge constant — a banner that
+    # names {2022, 2026} unconditionally is true of the constant, not of the
+    # run. Verified at completion (search: SOLVE-YEAR PARITY).
+    print(
+        f"[governance] this window SOLVES {promised_solve_years} and BRIDGES "
+        f"{promised_bridge_years} (evolved across, LP never solved, measured "
+        "data never read — rule 22). Asserted against the realized evolution "
+        "ledgers at completion."
+    )
 
     # FFR-2E posture label for the meta record (pure resolution, no side
     # effect — build_config resolves the same pair internally). Called here so
@@ -1378,6 +1464,28 @@ def main(argv: list[str] | None = None) -> int:
 
     solved = sorted(y for y in ledgers if not ledgers[y].get("bridge"))
     bridged = sorted(y for y in ledgers if ledgers[y].get("bridge"))
+
+    # SOLVE-YEAR PARITY (FFR-3U, owner Addendum L.1 condition on the banner).
+    # The realized set — read back from the evolution ledgers the solve itself
+    # wrote — must equal what the launch banner promised. This is the assertion
+    # FFR-3Q's run had no way to fail: its banner promised 2022 was bridged and
+    # its ledgers recorded 2022 solved, and nothing compared the two. A
+    # mismatch is a rule-22 STOP-THE-LINE, so it raises rather than warns:
+    # by the time it fires the quarantined year has already been read, and the
+    # only correct behaviour left is to refuse to produce a meta, a
+    # run_config.json or a registrable bundle from it.
+    if solved != sorted(promised_solve_years) or bridged != sorted(
+        promised_bridge_years
+    ):
+        raise SystemExit(
+            f"{tag} SOLVE-YEAR PARITY FAILURE (rule 22 STOP-THE-LINE): the "
+            f"launch banner promised solved {sorted(promised_solve_years)} / "
+            f"bridged {sorted(promised_bridge_years)}, but the run realized "
+            f"solved {solved} / bridged {bridged}. A quarantined year may "
+            "already have been solved and its measured data read — do NOT "
+            "register this bundle; quarantine it, escalate, and treat the "
+            f"cache key {key} as contaminated."
+        )
     # The meta has three zones, and the middle one is the point of FFR-3R.
     #
     #   1. HARNESS LABELS — what mode/arm the operator asked for. Not

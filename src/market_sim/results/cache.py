@@ -46,6 +46,33 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-04b — FFR-3U bridge-seam fix + the D-11 two-key quarantine. NO
+KEY MOVES; TWO KEYS ARE PERMANENTLY REFUSED.** The seam fix
+(``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md``) scopes the runner's
+un-bridging clause to genuine T1-X crossover forward years, so a T1-FF window
+whose boundary sits at its own base year again BRIDGES 2022 (and 2026) instead
+of solving them. It is a guard change, not a mechanism: **no ``ScenarioConfig``
+field was added, removed or re-defaulted, and all seven measured keys — the
+default plus the six per-ISO 2023 backcast keys — are byte-identical before and
+after** (default ``603c2498bf71d21d``; ERCOT ``df386bca96a1d288``, CAISO
+``a9afddae291525c1``, PJM ``9834b2018b598423``, MISO ``2a1252c3acae89e9``,
+NYISO ``fd15030b3ee60f11``, NEISO ``5b1633171fead559``).
+
+*Invalidated:* **exactly two bundles**, ``b99600bceb8cb6b8`` and
+``5c352508039513da`` — FFR-3Q's two ERCOT base-2021 T1-FF arms, which solved
+2022 (a validation-tier holdout) under an active freeze. Because the fix moves
+no key, the same config still hashes to them, so the refusal is mechanical
+rather than documentary: see :data:`CONTAMINATED_CACHE_KEYS` and
+:func:`assert_cache_key_uncontaminated`, enforced at ``get_cache_path``.
+Owner decision D-11 condition 2.
+
+*NOT invalidated:* everything else. No backcast bundle, no keeper, no T1-H,
+T1-X or base-2023 T1-FF leg is touched — every one of those postures realizes
+the identical solve-year set before and after (measured across seven postures in
+``tests/scoring/test_full_forward_hindcast.py::TestBridgeSeam``). The only
+behavioural change is that a posture which was *illegal to run at all* now
+bridges instead of solving.
+
 **Epoch 2026-08-04 — D-10 warm-start OFF for forecast bundles. THIS ONE IS A KEY
 ADVANCE, NOT A SAME-KEY INVALIDATION — recorded here anyway because it is the
 entry a reader looking for "why did every forecast key move on 2026-08-04" will
@@ -271,6 +298,58 @@ def cache_root(root: "Path | str"):
         CACHE_ROOT = prior
 
 
+# Cache keys whose on-disk bundles are CONTAMINATED and may never be served
+# (owner decision D-11 condition 2, ``docs/handoffs/ffr-owner-sitting-2026-08-02.md``
+# Addendum L.2; discharged by FFR-3U, ``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md``).
+#
+# Why a denylist and not an epoch bump: the epoch ledger above is human-read and
+# never auto-invalidates, and the FFR-3U seam fix deliberately moves NO cache key
+# (it is a guard fix, not a mechanism — every key is byte-identical before and
+# after). So the very config that solved 2022 still hashes to these keys: without
+# a mechanical refusal, a later run would silently CACHE-HIT the contaminated
+# 2022 solve and inherit the rule-22 breach with no banner at all.
+#
+# The refusal is scoped to what protects the tier: a bundle DIRECTORY existing at
+# one of these keys is a hard error, naming the key and telling the operator to
+# delete it. An absent directory is fine — a re-probe on a clean tree re-solves
+# normally, and under the fixed seam bridges 2022. This closes the reuse channel
+# without blocking the legitimate re-probe (a later lane).
+CONTAMINATED_CACHE_KEYS: dict[str, str] = {
+    "b99600bceb8cb6b8": (
+        "FFR-3Q arm A (ERCOT T1-FF base 2021, retirement_rule=pipeline) — SOLVED "
+        "2022, a validation-tier holdout year, under an active holdout freeze"
+    ),
+    "5c352508039513da": (
+        "FFR-3Q arm B (ERCOT T1-FF base 2021, retirement_rule=legacy) — SOLVED "
+        "2022, a validation-tier holdout year, under an active holdout freeze"
+    ),
+}
+
+
+def assert_cache_key_uncontaminated(iso: str, cache_key: str) -> None:
+    """Refuse a cache key whose bundle is quarantined under rule 22.
+
+    Called from :func:`get_cache_path`, the single seam every cache read and
+    write routes through, so no reader can bypass it. A no-op unless the key is
+    in :data:`CONTAMINATED_CACHE_KEYS` **and** a directory for it exists.
+
+    Raises:
+        RuntimeError: A bundle directory exists at a contaminated key.
+    """
+    reason = CONTAMINATED_CACHE_KEYS.get(cache_key)
+    if reason is None:
+        return
+    bundle = CACHE_ROOT / iso / cache_key
+    if not bundle.exists():
+        return
+    raise RuntimeError(
+        f"cache key {cache_key} is QUARANTINED and its bundle must not be read "
+        f"or extended: {reason}. Owner decision D-11 condition 2 requires this "
+        f"key to be uncacheable. Delete {bundle} and re-solve; the FFR-3U seam "
+        "fix makes the same window bridge 2022 rather than solve it."
+    )
+
+
 def get_cache_path(
     iso: str, cache_key: str, year: int, pass_label: str | None = None
 ) -> Path:
@@ -287,6 +366,7 @@ def get_cache_path(
     Returns:
         Path ``results/{iso}/{cache_key}/year_{year}[_{pass_label}].parquet``.
     """
+    assert_cache_key_uncontaminated(iso, cache_key)
     suffix = "" if pass_label is None else f"_{pass_label}"
     return CACHE_ROOT / iso / cache_key / f"year_{year}{suffix}.parquet"
 
