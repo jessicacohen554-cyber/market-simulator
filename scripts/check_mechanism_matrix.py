@@ -538,14 +538,22 @@ def anchor_findings(matrix_text: str, source: str) -> tuple[list[dict], dict[str
     return out, tally
 
 
-def anchor_ratchet(findings: list[dict]) -> list[str]:
-    """Errors for unresolvable anchors absent from the committed baseline.
+def anchor_ratchet(findings: list[dict]) -> list[dict]:
+    """Unresolvable anchors that the committed baseline does not already allow.
 
     Same shrink-only contract as the two gap ratchets: the baseline enumerates
     the anchors known not to resolve, and anything unresolvable that is NOT in
-    it FAILS. Refresh with ``--fix-anchors``, which repairs every mechanically
-    derivable anchor (digits only) and rewrites the baseline with whatever is
-    left. Target state is an EMPTY baseline, which xiso-3 established.
+    it is reportable. Refresh with ``--fix-anchors``, which repairs every
+    mechanically derivable anchor (digits only) and rewrites the baseline with
+    whatever is left. Target state is an EMPTY baseline, which xiso-3
+    established.
+
+    Returns the findings themselves so the caller can split them by BLAME —
+    see :func:`main`. A line anchor is an absolute line number into
+    ``scenarios.py``, which nearly every calibration lane edits, so ANY PR that
+    inserts a field silently stales every anchor below it. Failing that PR for
+    drift it merely inherited is how a gate gets disabled, so the blame split
+    is what makes this check survivable.
     """
     path = REPO / ANCHORS_BASELINE_PATH
     allowed: set[str] = set()
@@ -553,14 +561,17 @@ def anchor_ratchet(findings: list[dict]) -> list[str]:
         try:
             allowed = set(json.loads(path.read_text(encoding="utf-8")).get("stale", ()))
         except (OSError, ValueError) as exc:
-            return [f"{ANCHORS_BASELINE_PATH} is unreadable ({exc})"]
-    return [
-        f"{f['detail']}. Run `python3 scripts/check_mechanism_matrix.py "
+            return [{"key": ANCHORS_BASELINE_PATH, "detail": f"unreadable ({exc})"}]
+    return [f for f in findings if f["key"] not in allowed]
+
+
+def _anchor_message(finding: dict) -> str:
+    """One reportable anchor finding, with the repair command."""
+    return (
+        f"{finding['detail']}. Run `python3 scripts/check_mechanism_matrix.py "
         f"--fix-anchors` (repairs the digits only; the field NAME is the "
         f"durable identifier)."
-        for f in findings
-        if f["key"] not in allowed
-    ]
+    )
 
 
 def fix_anchors(matrix_text: str, findings: list[dict]) -> tuple[str, int]:
@@ -654,8 +665,11 @@ def main() -> int:
     if not drift:
         print("mechanism-matrix: keeper stamps match every keepers/<ISO>.json")
     if not args.base:
-        for e in anchor_errs:
-            print(f"::warning file={MATRIX_PATH}::mechanism-matrix anchor: {e}")
+        for f in anchor_errs:
+            print(
+                f"::warning file={MATRIX_PATH}::mechanism-matrix anchor: "
+                f"{_anchor_message(f)}"
+            )
         for iso, header, shard in drift:
             print(
                 f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift: header "
@@ -670,9 +684,35 @@ def main() -> int:
     # --- rule 28(c): new ScenarioConfig fields must be registered ------------
     failed = False
 
-    for e in anchor_errs:
-        failed = True
-        print(f"::error file={MATRIX_PATH}::mechanism-matrix anchor: {e}")
+    # A PR that STALES an anchor owns it: fail. An anchor already stale at the
+    # base only warns — it belongs to whoever last moved scenarios.py, not to
+    # whichever PR happens to run next. Exactly the keeper-drift rule below,
+    # and the reason this gate is survivable: anchors are ABSOLUTE line numbers
+    # into a file nearly every lane edits, so a single inserted field stales
+    # every anchor beneath it. (xiso-3 shipped this check with an empty ratchet
+    # and main re-staled 214 anchors within the day — a hard gate would have
+    # gone red for lanes that touched nothing.)
+    base_stale: set[str] = set()
+    try:
+        base_findings, _ = anchor_findings(
+            _git("show", f"{args.base}:{MATRIX_PATH}"),
+            _git("show", f"{args.base}:{SCENARIOS_PATH}"),
+        )
+        base_stale = {f["key"] for f in base_findings}
+    except (subprocess.CalledProcessError, OSError):
+        base_stale = set()  # base blobs unreachable: fail closed, blame nobody
+    for f in anchor_errs:
+        if f["key"] in base_stale:
+            print(
+                f"::warning file={MATRIX_PATH}::mechanism-matrix anchor "
+                f"(pre-existing, not this PR): {_anchor_message(f)}"
+            )
+        else:
+            failed = True
+            print(
+                f"::error file={MATRIX_PATH}::mechanism-matrix anchor: "
+                f"{_anchor_message(f)}"
+            )
 
     # A PR that MOVES a keeper shard owns that ISO's header stamp: fail. Drift
     # this PR did not create only warns — it belongs to the owning ISO's lane.
