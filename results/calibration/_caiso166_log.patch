@@ -1,0 +1,95 @@
+diff --git a/docs/calibration-log/caiso.md b/docs/calibration-log/caiso.md
+index bfa2458f..3f6d4697 100644
+--- a/docs/calibration-log/caiso.md
++++ b/docs/calibration-log/caiso.md
+@@ -5613,4 +5613,89 @@ Evidence: `results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-0
+ `results/calibration/_caiso165_intra_sp15.json`,
+ `scripts/probes/caiso165_intra_sp15_decomp.py`.
+ 
+-Next number: caiso-166 (caiso-160 unclaimed, see above).
++---
++
++## caiso-166 — five MEASURED loss zones (Arm A): the surface is KEPT, the arm is NOT PROMOTED
++
++**2026-08-04** · branch `claude/caiso166-measured-loss-zones-uwsq1n` · base `3bc37ce2`
++· prereg `PRECHECK-caiso166-measured-loss-zones-2026-08-04.md` (pushed at `6c2dbfd5`,
++**before either arm solved**) · arms `2026-08-04-caiso-166-measured-dlap` /
++`2026-08-04-caiso-166-control-hubsurface`.
++
++**KEEPER UNCHANGED: `2026-08-04-caiso164-zonal-loss-surface`.** Determination
++**NOT-YET**.
++
++Closes `FINDING-caiso164` §7 caveat 2 on the data side: `LA_BASIN` →
++`DLAP_SCE-APND` and `SDGE` → `DLAP_SDGE-APND`, replacing the `TH_SP15_GEN`
++**generation**-hub deviation both **load** pockets inherited. Rule 23
++`[R-FROZEN-DERIVE]` licence is the **source-data change** (the caiso-165 intake),
++not a residual; estimator, schema and every threshold unchanged. The A/B delta is
++a **DATA FILE** — `caiso_zonal_loss_surface` is `True` in **both** arms and config
++drift vs the same-HEAD control is **zero of any kind**.
++
++**NOT PROMOTED on two pre-registered gates, neither relaxed after it fired:**
++1. **S3 adversarial ceiling BREACHED** — 2025 `LA_BASIN−SP15_rest` moved
++   `+1.0205` vs measured `dMCL` `+0.9686` = **105.4 % of ceiling**.
++2. **C3a mean LMP regresses 2024 PASS → FAIL** (+9.5 % → +11.5 %, ±10 % band);
++   the incumbent's ledgered `price_mean` exception covers **2025 only**.
++
++**The S3 breach is a GATE-SPECIFICATION defect, not a mechanism one.** The LP
++tracks the **surface-implied** separation at **0.914–1.011×** — never
++meaningfully above it — while the surface itself sits **1.038–1.042×** above
++measured `dMCL`, which is the MCE-weighted estimator's own positive bias, the
++same ≈+4 % the derive's `[0.5×, 1.5×]` acceptance band *accepts* and caiso-164
++passed on. 105.4 % = 1.042 × 1.011. A ceiling at exactly `1.00×` holds the LP
++**tighter than the derive's own accepted tolerance**. Re-charter it
++**PROSPECTIVELY** or not at all — that is an owner call.
++
++**Gates that PASSED, and they are not weak.** **S1 placebo**: 2023's surface rows
++are identical in both arms, and the two 2023 solves agree to **EXACTLY 0.0** on
++price, class dispatch **and** flows — a falsifiable check that the CSV is the only
++object differing. **S2 liveness on FLOWS**: the control carries **48.2/56.4/59.4
++TWh** on `SP15_rest→LA_BASIN` (8,760 of 8,760 h) and **7.6/7.4/6.9 TWh** on
++`SP15_rest→SDGE`; identical link counts; **zero** hours over any caiso-163
++published cap. **S4**: `mode=backcast` both arms; the one incumbent-only field
++(`pjm_seam_envelope_by_neighbor`) is admitted only after asserting it is no longer
++a `ScenarioConfig` field at all (upstream pjm-152 rule 26 `[R-DELETE]`). **C7/C8
++PASS** — diagnostics generated into both bundles before registration.
++
++**Pre-solve data gates:** acceptance **12/12** in band with the four pre-existing
++pair-years reproducing caiso-164's 1.04–1.06× **exactly**; `NP15`/`ZP26`/
++`SP15_rest` **bit-identical** (0 diffs across 96 rows each); **48 of 240** rows
++change.
++
++**The surface is KEPT regardless (rule 14, pre-committed).** λ rises +1.82 %
++(2024) / +2.06 % (2025) — physically obligatory, since losses consume MWh. CAISO
++was **already** +9.5 %/+12.1 % hot vs RT; the arm pushed a pre-existing bias
++across a line it was already touching. That is a **discovered bug elsewhere**,
++never grounds to revert. (Against CAISO's own **DA** basis — which is what the
++surface is derived on — the control sits −0.1 %/+9.0 % and the arm +1.8 %/+11.3 %.)
++
++**⚠ OPEN FOR OWNER:** the committed surface and the caiso-164 keeper (solved on
++the *old* surface) now disagree, so **the keeper no longer reproduces from the
++repo**. Arm A *is* that keeper's recipe on the corrected data. Reverting the CSV
++would leave the committed derive and artifact disagreeing and would bury a
++known-wrong input — both worse.
++
++**⚠ DELIVERY GAP:** `git push` returns **HTTP 413 for every push in this
++container**, including a no-op ref advance with a **4-byte** body (git sends the
++RPC `Transfer-Encoding: chunked`; the origin rejects any chunked body — a direct
++4-byte POST to the same endpoint returns 200). `push_files` works and every blob
++was hash-verified, but it is text-only with a ~457 KB cap, so the **674/677 KB
++`runs/*.js` payloads and the binary parquet sidecars are NOT on the remote**.
++Registry sidecars were deliberately **withheld** rather than pushed alone (a
++sidecar without its payload is silently invisible in the Run Explorer), and the
++top-15 prune was reverted locally for the same reason.
++
++**DO-NOT-REDO:** do not re-test the `caiso_zonal_loss_surface` **mechanism** — it
++was not re-tested here, only its input data, and the cell stays `K`. Do not
++re-cut the S3 ceiling retroactively. Do not arm Arm B from the residual; no
++published intra-SP15 limit is in `data/raw` and the prohibition binds harder now
++that the target numbers are known. Do not charter an N–S topology lever.
++
++Evidence: `results/calibration/FINDING-caiso166-measured-loss-zones-2026-08-04.md`,
++`PRECHECK-caiso166-measured-loss-zones-2026-08-04.md`,
++`scripts/gen_caiso166_attestation.py`,
++`results/calibration/caiso166_measured_loss_zones/calibration_attestation.json`.
++
++Next number: caiso-167 (caiso-160 unclaimed, see above).
