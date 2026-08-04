@@ -4634,3 +4634,101 @@ marker, so no re-key duty. Branch rebased onto origin/main (9aca82b8;
 manifest/benchmark conflicts regenerated from sidecars).
 
 Next shorthand: ercot-159.
+
+*(Bookkeeping note, ercot-160: **ercot-159 landed on main without a log entry
+here** — commits `935c33dd` / `824052a6` / `bbf0c2fa`, the
+`ercot_energy_online_capability_cap` build. The shorthand is therefore SPENT
+and this session is ercot-160; the gap is recorded rather than silently
+renumbered, and reconstructing ercot-159's entry belongs to that lane.)*
+
+## ercot-160 (2026-08-04) — the ERCOT item-7/item-8 DATA INTAKES: item 7's blocker dissolved (ERCOT publishes the crosswalk), item 8(a) delivered at 98.7 % of the training span, item 8(b) BLOCKED on licensing, item 8(c) reshaped; no LP, no solve, no cell, keeper UNCHANGED (ercot158)
+
+**Session ercot-160** (branch `claude/cross-iso-backcast-calibration-vz74oe`).
+Queue precedence per rule 28(a): the prompt's item 1 (MISO C7 COAL_PRB) is
+gated on the miso-104 ex-ante coal-contract tonnage ask having LANDED. It has
+not — the ask doc carries a single commit (its original upload) and nothing
+has added contract tonnage to `data/raw/`. The receipts-derived construction
+(miso-103, cell `R`) was **not** re-attempted. Precedence fell to ERCOT items
+7/8, data-intake first. Full record:
+`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`.
+
+**Item 7 — the stated blocker was never real.** The queue records that a
+station→area crosswalk "does not exist in-repo". ERCOT *publishes* one, free
+and unauthenticated, as **NP4-160-SG "Settlement Points List and Electrical
+Buses Mapping"** (`reportTypeId=10008`, in ERCOT's own product catalog); it had
+simply never been fetched. Intaken COMMITTED to `data/raw/ercot-network-model/`
+(1.2 MB) by `scripts/data/fetch_ercot_settlement_point_mapping.py`, members
+written as **exact published bytes with a per-member sha256** (ERCOT ToU §5
+permits redistribution only if contents are unmodified — so no pandas
+round-trip). `Settlement_Points` (19,287 rows): `SUBSTATION` →
+`SETTLEMENT_LOAD_ZONE` → `RESOURCE_NODE` → `HUB`. `Resource_Node_to_Unit`
+(1,624 rows): `RESOURCE_NODE` → `UNIT_SUBSTATION` + `UNIT_NAME`. **Committed
+rather than gitignored precisely because MIS retention is ~31 days** — only the
+current network-model version is ever reachable, there is no 2023–2025 vintage
+and there never will be on this path, so an un-committed vintage is lost
+permanently. **Binding caveat on every consumer:** report your own match rate
+against your target year, never inherit this session's.
+
+**Item 8(a) — EXECUTED, 98.7 % of the training span.** The fetcher's day-list
+scope was the blocker; `--resource-types` / `--delivery-range` /
+`--shard-by-month` / `--skip-existing` lift it (scope+plumbing only, no
+derivation). CT-scoping cuts a delivery day to **15.1 % of its rows**
+(18,816/124,608 measured live, 0.51 MB parquet vs ~90 MB unscoped CSV) — the
+thing that makes ~700 days affordable. Delivery 2024-01-24…2025-12-31 landed
+CT-only in `data/raw/ercot/SCED-CT/` (gitignored + README + SHA256SUMS, the
+`pjm-zonal-lmp` precedent) and joins the committed all-resource corpus
+`data/raw/ercot/SCED/`, whose true span is **delivery 2022-12-31…2024-01-09**
+(its shard filenames are PUBLICATION months — a two-month offset that is easy
+to misread as a 2023-03 start). **Gap: delivery 2024-01-10…2024-01-23 (14
+days) is UNREACHABLE** — it falls between the corpus end and the MIS window's
+earliest listed publication (2024-03-24 → delivery 2024-01-24); reported
+`NOT LISTED`, never interpolated; closing it is the owner-declined credentialed
+archive, and **the gap widens with time** as the window rolls. Rule 22 held:
+the guard refused `--delivery-range 2025-12-30 2026-01-02` on its two 2026
+days, verified live.
+
+**Item 8(b) — BLOCKED, and it is the ONLY thing still blocking the lever.**
+ERCOT-147 §4 demanded a licensing check before promising this; it was run and
+recorded reproducibly (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
+`results/calibration/ercot160_texas_hub_screen.json`). EIA's free NGWU spot
+table: **Waha / Katy / Agua Dulce / Carthage at ZERO mentions** on a real
+archive page, against Chicago 6 and Henry Hub 10 — a daily row cannot exist at
+zero mentions; the lone "Houston Ship"/"Permian" hits are narrative
+petrochemical prose quoting a WEEKLY average. ERCOT's own catalog: 5,773
+products, 6 mention fuel, **none a price series** (FFSS award, FFSS
+deploy/recall, RMR fuel-supply option, Fuel Mix dashboard, 7-Day Event Trigger,
+Exceptional Fuel Cost) — the settlement Fuel Index Price is not a data product.
+**⇒ NGI/Platts/Argus only = owner licensing decision**, compounded by the
+unresolved `docs/data-licensing.md` §5 finding. Logged BLOCKED, **not inferred
+as zero and not substituted with Henry Hub** (rule 14): ERCOT-147 §3's confound
+is exactly that 63–67 % of CT capacity's daily p50 sits below its own sheet-HR
+× HH burn, so a HH stand-in assumes away the object. **The CT-band
+re-identification therefore stays blocked and this session claims no
+otherwise.**
+
+**Item 8(c) — RESHAPED; the charter's sizing was wrong in KIND.** Census
+`scripts/probes/ercot160_ct_target_population.py` (no model, no LP, no free
+parameter). The crosswalk's `site` column is not one grain: `CC_REGULAR` holds
+a site prefix (`RIONOG`/`RIONOG_CC1`), `CT_PEAKER` holds the **full resource
+name** (`VICTPORT_CTG01`) — **165/165 CT rows match a corpus RESOURCE name,
+0/165 match a site prefix**. So ERCOT-146 §3 / ERCOT-147 §3's "165 CT_PEAKER
+sites, 6 accepted" counts RESOURCES, and "~150-site hand crosswalk" is not the
+job: most CT resources and most CT capacity **already carry a candidate row**,
+making the bulk an ACCEPT/REJECT adjudication with a small
+industrial-cogen-heavy tail (DOWGEN, FORMOSA) carrying no row at all. Both now
+stand on item 7's spine — resource → substation → load zone, measured 186/191
+resources and 50/50 substations — leaving **substation → EIA plant code** as
+the single judgement step (NP4-160-SG carries no EIA identifier). **Not built
+this session:** its only consumer is the lever, which (b) still blocks.
+
+**Guard rails.** No LP solve ⇒ no dashboard registration (rule 15 attaches to a
+completed run; none was produced). No mechanism tested ⇒ no matrix cell verdict
+(rule 28(b)); no new `ScenarioConfig` field ⇒ rule 28(c) does not fire; the
+§5.1 lever-queue entries for items 7 and 8 were re-stamped instead, and matrix
+integrity + keeper stamps re-checked PASS. No holdout touched. Keeper, DOF
+ledger (n_residual 6) and all gate verdicts unchanged. Rule 27: every push was
+exact on-disk bytes over `git push`, and the two ≥300-line files touched
+(`fetch_ercot_60day_sced_gen_resource.py`, `mechanism-testing-matrix.md`) were
+blob-verified line-count + sha256 against local after their pushes.
+
+Next shorthand: ercot-161.
