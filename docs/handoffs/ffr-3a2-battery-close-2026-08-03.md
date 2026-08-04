@@ -928,8 +928,66 @@ which scored the producer as it actually was:
 
 ## 8. The per-ISO §2.1b gate scorecard
 
-*(see `results/ffr3a2/scorecard/scorecard.{json,txt}`; assembled by
-`scripts/build_ffr3a2_scorecard.py` from committed artifacts only, no re-solve)*
+**This is the artifact the owner's gate-open conversation happens on.** Assembled by
+`scripts/build_ffr3a2_scorecard.py` from committed artifacts only — it scores nothing
+itself, every verdict is read from an artifact another instrument produced, and it
+re-derives without a solve. Machine copy: `results/ffr3a2/scorecard/scorecard.json`.
+
+`scored_at_sha` `def7cbf8` · `cache_epoch` 2026-08-03 · **holdout freeze ACTIVE**
+
+The §2.1b gate opens per ISO on four criteria (plan §0/§2.1b): **(a)** completed backcast
+calibration, **(b)** green T1 proof-of-concept gates, **(c)** measured worth-the-compute
+evidence, **(d)** explicit per-campaign owner authorization.
+
+| ISO | (a) backcast determination | marker | (b) t1f | t1h | t1x | (c) proj h | solo | **gate** |
+|---|---|---|---|---|---|---|---|---|
+| **PJM** | **CALIBRATED** (clean, 16/16) | `complete` | HOLD | HOLD | HOLD | 7.34 | **yes** | **CLOSED on (b)** |
+| **NEISO** | CALIBRATED-WITH-CAVEATS | `complete` | HOLD | HOLD | — | 0.95 | no | **CLOSED on (b)** |
+| **NYISO** | CALIBRATED-WITH-CAVEATS | `complete` | HOLD | HOLD | — | 1.09 | no | **CLOSED on (b)** |
+| **CAISO** | CALIBRATED-WITH-CAVEATS | **none** | HOLD | — | — | 2.78 | no | **CLOSED on (a) + (b)** |
+| **ERCOT** | **NOT-YET** | **none** | HOLD | — | HOLD | 2.00 | no | **CLOSED on (a) + (b)** |
+| **MISO** | **NOT-YET** | **none** | HOLD | HOLD | — | 10.12 | **yes** | **CLOSED on (a) + (b)** |
+
+### 8.1 The reading, PJM first
+
+**No ISO clears the gate, and criterion (b) is what closes it for all six** — every T1-F,
+T1-H and T1-X determination measured in this session is **HOLD**. That is unchanged from
+FF-2D in kind, and this session did not move a single determination (§7).
+
+* **PJM is the closest, and by a wide margin.** It is the only ISO with a **clean
+  `CALIBRATED`** backcast (every criterion passing, 16/16, zero caveats) *and* a `complete`
+  marker. Its T1-F blocker is **one invariant, marginal**: I7 short by **366 MW on a
+  150,454 MW requirement — 0.24 %, in 2030 only**. Its FC-2 is CAVEAT, not FAIL, and its
+  reserve margin never leaves the requirement-implied band except in that terminal year.
+  If the owner opens a gate for any ISO on this evidence, PJM is the candidate — and the
+  honest caveat is that its projected cost (**7.34 h, must run solo at 10.0 GB**) is the
+  second-heaviest of the six.
+* **NEISO and NYISO** also hold `complete` markers with caveated determinations, and are
+  by far the **cheapest** (0.95 h and 1.09 h, both co-runnable). NEISO's T1-F blocker is
+  likewise a single I7 miss (218 MW in 2028).
+* **CAISO and MISO and ERCOT fail (a) as well as (b)** — none holds a `complete` marker,
+  and ERCOT and MISO are `NOT-YET` on their own backcast determinations. For those three
+  the forecast gate is not the binding constraint; the backcast is.
+* **ERCOT and CAISO are the two ISOs whose T1-F FC-2 is FAIL** (not CAVEAT), on negative
+  reserve margins — ERCOT to −1.5 %, CAISO to −3.1 % — and CAISO additionally fails FC-2
+  row 4 at a **65.5 %** backstop share (§2.2).
+
+### 8.2 Criterion (d) is NOT evaluated here
+
+`final` is **empty**, deliberately, and no ISO carries a per-campaign authorization.
+**(d) is the owner's decision and this session neither makes it nor recommends it.** The
+scorecard reports (a)–(c) as measured and leaves (d) blank by construction — the
+assembler emits the literal string *"NOT MEASURED HERE — an explicit, per-campaign owner
+decision"* rather than a verdict.
+
+### 8.3 What the readiness half says
+
+FF-3E parts a/b/d are **GREEN for all six ISOs** (§6) — the input-resolution walk resolves
+every forward input 2026–2050 with 0 hard fails, and the golden-posture config round-trips
+with a stable cache key. **Part c is FAIL** (§6.4), and the registered
+`ff-3e-readiness.json` therefore records **`green=False`**, with `gate_open=False` for
+every ISO. Compute is still not the binding constraint; the T1 structural blockers are —
+the same conclusion FF-2D reached, now with a resume-path defect added to it.
 
 ---
 
