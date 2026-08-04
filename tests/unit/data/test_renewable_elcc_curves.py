@@ -173,6 +173,28 @@ class TestPublishedCurveHandValues(unittest.TestCase):
             evaluate_renewable_elcc_curve(curve, 28_335.0, 127_000.0), 0.166
         )
 
+    def test_miso_solar_constant_at_season_weighted_credit(self):
+        # FFR-4B: a flat published default -> a constant curve at every
+        # penetration, and it must NOT need the peak (unlike MISO wind).
+        curve = RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]["solar"]
+        for mw, peak in ((None, None), (0.0, 100_000.0), (60_000.0, 127_000.0)):
+            self.assertAlmostEqual(
+                evaluate_renewable_elcc_curve(curve, mw, peak), 0.3875
+            )
+        # And it displaces the generic 0.18 fallback through the ladder.
+        self.assertAlmostEqual(
+            resolve_renewable_capacity_credit(
+                "solar", "MISO", installed_mw=None, curves_enabled=True
+            ),
+            0.3875,
+        )
+        self.assertAlmostEqual(
+            resolve_renewable_capacity_credit(
+                "solar", "MISO", installed_mw=None, curves_enabled=False
+            ),
+            RENEWABLE_CAPACITY_CREDIT["solar"],
+        )
+
     def test_nyiso_single_points(self):
         ny = RENEWABLE_ELCC_CURVES_BY_ISO["NYISO"]
         self.assertAlmostEqual(
@@ -521,6 +543,44 @@ class TestP0BElccReconciliation(unittest.TestCase):
             RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]["wind"].penetration_basis,
             "pct_of_peak_load",
         )
+
+    def test_miso_solar_season_weighted_rederives_from_published_rows(self):
+        """0.3875 re-derives from the committed rows by the settled rule.
+
+        FFR-4B / owner D-12: MISO's published solar credit is SEASONAL (50 %
+        Summer/Fall/Spring, 5 % Winter) and this registry is ANNUAL. The
+        settled selection rule is the duration-weighted mean over MISO's four
+        equal-length PRA seasons, i.e. the plain mean with weights 3 and 1 —
+        re-derived here from the CSV so the constant can never drift from the
+        source rows (the same discipline as the PJM MW-weighted blend).
+        """
+        df = self._rows("MISO")
+        rows = df[
+            (df["resource_class"] == "solar")
+            & (df["study_vintage"] == "2025-2026 PY report")
+            & (df["elcc_type"] == "class_average")
+        ]
+        self.assertEqual(len(rows), 2, "expected the two published seasonal rows")
+        winter = rows[rows["source_page"].str.contains("Winter", regex=False)]
+        non_winter = rows[~rows["source_page"].str.contains("Winter", regex=False)]
+        self.assertEqual(len(winter), 1)
+        self.assertEqual(len(non_winter), 1)
+        # Three equal-length non-winter seasons (Summer/Fall/Spring) + Winter.
+        rederived = (
+            (
+                3.0 * float(non_winter["elcc_pct"].iloc[0])
+                + float(winter["elcc_pct"].iloc[0])
+            )
+            / 4.0
+            / 100.0
+        )
+        curve = RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]["solar"]
+        self.assertAlmostEqual(curve.points[0][1], rederived)
+        self.assertAlmostEqual(curve.points[0][1], 0.3875)
+        # MISO published a FLAT default, not a penetration curve: the encoded
+        # entry must never fabricate an axis (P-0B intake discipline).
+        self.assertIsNone(curve.penetration_basis)
+        self.assertEqual(len(curve.points), 1)
 
     def test_nyiso_points_match_published_ros_li(self):
         df = self._rows("NYISO")
