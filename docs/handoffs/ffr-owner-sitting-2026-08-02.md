@@ -1554,3 +1554,61 @@ both.
 
 Unchanged from K.5: **D-2′** unprobed; **CAISO FC-2 row 4** at 63.23 % with FFR-3H cause 2
 diagnosed and unchartered; pre-existing test failures on main unowned.
+
+---
+
+## Addendum M — Wave-3 instrument lanes closed; three new lanes chartered
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `bf43122e`.** Ledger update and
+new charters; supersedes K.4/L.5 status lines only.
+
+### M.1 — three dispatched lanes LANDED, one never started
+
+| lane | state |
+|---|---|
+| **FFR-3K** (FC-7) | **LANDED** PR #3502. `run_capacity_hindcast.py` emits `run_config.json`; the `.yaml` kept because something reads it. Solve-inert, census + inertness proof committed. **K.4's "still never dispatched" line is hereby retired** — FFR-3K's own handoff §6 correctly left this edit to the manager |
+| **FFR-3S** (D-9(ii)) | **LANDED** PR #3501. Additions scored on the DECISION basis; `additions_basis` recorded in `score.json` via FFR-3R's `RecordSpec`; `additions_cod_basis` kept for within-run comparison only and is **not** the graded instrument |
+| **FFR-3T** (D-10) | **LANDED** PRs #3498/#3504. Took the **forecast-path override**, not a default flip — `scenarios.py` still ships `forecast_xyear_warmstart: bool = True` with `scripts/lib/forecast_posture.shipped_forecast_xyear_warmstart` as the single source, so backcast solves are untouched and the decision was not exceeded. Cache epoch **2026-08-04** declared; handoff + key census landed |
+| **FFR-3U** (bridge seam) | **NEVER STARTED.** No branch, no doc. Seam confirmed open at `runner.py:927` |
+
+**FFR-3U's not starting has a live consequence, restated because it is easy to lose:** D-11's
+no-spend determination for ERCOT 2022 is **conditional and undischarged**. Cache keys
+`b99600bceb8cb6b8` / `5c352508039513da` have not been invalidated by anyone. Until they are, a
+run with that config can silently cache-hit the contaminated 2022 solve. FH-4/FH-5 remains
+blocked behind the same lane.
+
+### M.2 — the entry screen is now the program's largest open finding, in TWO ISOs
+
+Two lanes independently landed on the same *shape* of defect in different markets. **Rule 25
+`[R-ISO-SCOPE]` binds absolutely: these are two lanes, not one, and neither may import the
+other's verdict, parameters, or diagnosis.** They are recorded together only so the manager
+ledger does not pretend they are unrelated in kind.
+
+* **MISO — FFR-3S §6.** `miso-2021-2025-realized-ffr3a3` fails FC-3 additions on all five techs,
+  most starkly **solar: model 0.0 GW vs actual 18.649 GW (−100 %)**. FFR-3S showed the new
+  decision basis **cannot** explain it: with a 2-year lag and a 2021 start, the 2021/2022/2023
+  cohorts commission in 2023/2024/2025 — **inside** the window and already visible under the COD
+  basis — so those three cohorts decided **zero** solar. Only 2024/2025 were censored. Three
+  cohorts of zero solar in the ISO that actually added 18.6 GW is an **entry-screen root cause**
+  (rules 1/11/14), not a scoring artifact. Chartered as **FFR-3V**.
+* **CAISO — FFR-3H cause 2.** A CAISO `gas_ct` is unprofitable in the entry screen in **every
+  year of every arm** by **$39,974–45,316/MW-yr**, and FC-2 row 4 still FAILs at **63.23 %**
+  (FFR-3P's identified VRE accreditation moved it from 65.48 %, with zero invariant flips).
+  Diagnosed and unowned since Addendum J. Chartered as **FFR-3W**.
+
+Both are **diagnosis** lanes. Neither may tune a parameter to close its residual; a residual
+closable only by an unidentified value is an open blocker to be written up (rule 11).
+
+### M.3 — FFR-3X: the record-provenance follow-up FFR-3K identified
+
+`scripts/_ff2d_emit_run_config.py` will **silently overwrite a producer-written
+`run_config.json` with a `meta.json`-reconstructed one** if run on a post-FFR-3K bundle — a
+provenance downgrade, and precisely the defect class FFR-3R closed structurally. Its hindcast
+arm also still reads `meta.json` rather than `run_config.yaml` (FFR-3R §6.1, open). FFR-3K
+scoped it out correctly and named the remedy: a refuse-if-exists guard. Small lane.
+
+### M.4 — carried forward, still unowned
+
+**D-2′** (`entry_vre_capacity_revenue`) unprobed — note it is now adjacent to M.2's finding and
+a successor may want it sequenced after FFR-3V/FFR-3W rather than before. Pre-existing test
+failures on main unowned.
