@@ -5120,3 +5120,70 @@ Evidence: `docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md`, probe
 `results/calibration/_nyiso124_charter_g0_g1.json`.
 
 * Next number: **nyiso-125**.
+
+---
+
+## nyiso-126 (2026-08-04) — the eastern seam is identified; C3a is two offsetting defects
+
+**No solve. No mechanism armed. No parameter moved. No bundle, nothing registered.
+Keeper unchanged at `2026-08-04-nyiso-125-seam-envelope`** (re-verified at this
+session's own head: `calibration_verdict.py` → NOT-YET, sole FAIL `price_mean`,
+C3a +7.7 / −0.8 / −10.2 %; `audit_keepers.py --iso NYISO` PASS 0/0; nyiso-125's
+commit `956d612b` confirmed on `main`).
+
+**(1) ITEM 1 — the eastern seam is no longer data-blocked.** nyiso-125 refused the
+`Capital_Hudson` / `Upstate_West` envelope because nothing separated the
+`SCH - PJ - NY` Zone-A and Zone-G legs. **NYISO's own posting does** — *"NY-NJ PAR
+Interchange Percentages, Operational Base Flow (OBF), and other MW Offsets"* —
+and it splits the row **three** ways with **zero free parameters**: Ramapo 32 % +
+JK 15 % → **Zone G**, ABC 21 % → **Zone J**, residual 32 % over the free-flowing
+western ties → **Zone A**, plus a PAR-outage reallocation rule that makes the
+shares **availability-conditioned, not flat** (the Operating Study records Farragut
+B/C **open** in Winter 2023-24, moving 14 points west). Zone landings are cited to
+the Gold Book and the Operating Study, not assumed. P-34 `ParFlows` (5-min per-PAR
+flow by PTID) is verified present for 2023–2025 and supplies the availability.
+**REPORTED AGAINST INTEREST:** the published shares do **not** reproduce as
+measured-flow regression slopes in aggregate (summed |slope| 0.45 / 0.12 / 0.20
+vs a published 0.68) — they are a market-model **scheduling** convention, not a
+metered flow share, and the construction says so. **ALSO NEW:** 21 % of the PJM AC
+interchange lands in Zone J and the model has **no PJM AC path into NYC at all**.
+**Nothing was intaken**; the lane is now gated on **owner authorisation**, not on
+data. Pre-registration filed and **not executed**.
+
+**(2) ITEM 2 — C3a-2025's −10.2 % decomposed, scorer-side, no solve.** The `rt_lw`
+basis is reconstructed and validated first (−0.77 / −0.36 / −0.23 % vs the
+committed bench). **It is not a level error.** It is two structurally distinct,
+offsetting errors present in **all three years**: a **stable over-pricing of the
+bottom 80 % of hours** (+$5.51 / +$3.79 / +$4.39 per MWh of contribution; mean
+error +$7.18 / +$4.92 / +$5.71) against a **top-decile under-pricing that grows**
+(−$2.95 → −$3.59 → **−$9.35**; decile 10 model $108.69 vs actual $187.98 in 2025).
+**Only the second term moves between years, and it alone is 138 % of the 2025 net
+residual.** h16–h18 carry **70.6 %** of the 2025 signed residual; Jun/Jan/Feb/Jul
+carry **111 %**. Three consequences: **2024's C3a "PASS" (−0.8 %) is cancellation,
+not agreement**; **no level lever can close C3a-2025** (it would worsen a bulk
+over-pricing already +$4–7/MWh); and **C3a-2025 and C3c are one defect measured
+twice**, not two independent misses. The 2025 model also shows **no zonal price
+separation at all** (`NYC` $58.65 = `Upstate_West` $58.65).
+
+**(3) ITEM 3 — FLAGGED, NOT EDITED (owner disposition).** The C3c ledger is stale
+in **two** ways, now **three**: (a) its stated re-open condition (the F/G topology
+split) is falsified as written — nyiso-124, `_nyiso124_charter_g0_g1.py`; (b) its
+premise is partly falsified — nyiso-125 moved the tail 3/0/14 h → 18/2/21 h with a
+seam-side input correction carrying **no scarcity parameter**
+(`FINDING-nyiso125-seam-envelope-2026-08-04.md` §5.5); and (c) **new here** — if
+C3a-2025 and C3c are the same object per §(2), then carrying C3c as a *supporting*
+caveat while C3a is the *load-bearing* FAIL understates what is being carried.
+**This session edited none of it.**
+
+**Standing instruction for the successor:** the lever queue stays **EMPTY**. The
+eastern-seam lane is **pre-registered and owner-gated**; do not open it without
+explicit authorisation, and do not re-derive the nyiso-125 refusal — it is
+discharged on identification.
+
+Evidence:
+`results/calibration/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md`,
+`results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
+probes `scripts/probes/_nyiso126_par_identification.py`,
+`scripts/probes/_nyiso126_c3a_decomposition.py`.
+
+* Next number: **nyiso-127**.
