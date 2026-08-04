@@ -124,9 +124,29 @@ which in this lane would look exactly like the finding).
 
 ---
 
-## 3. The instrumented screen — measured
+## 3. The instrumented screen — RUN PENDING AT THIS COMMIT
 
-<!--LEDGER-->
+**Read this section's status before relying on it.** The diagnostics-on solve
+described in §2 had not returned when this document was merged: the container
+ships no `data/clean/`, and `scripts/regenerate_clean.py` runs far over its
+quoted 63–65 min here (the nine `emissions` years are ~27 M rows each), so the
+four sequential MISO solve-years were still queued behind it. **This section
+will carry the per-candidate, per-decision-year ledger when it lands; until
+then it carries nothing, and no number in it is claimed.**
+
+What the ledger is expected to show, stated in advance so it can falsify rather
+than confirm — `solar` present as a candidate row in every decision year
+(2022–2025) with `profitable: false` and `binding_cap: "unprofitable"`, and
+`wind` present with `profitable: true` and `binding_cap` alternating
+`per_tech_cap` / `per_tech_cap_zero`. **If solar's row instead reads
+`profitable: true` with a cap label, §0's headline is wrong and the finding is
+a cap finding after all.**
+
+Nothing else in this document depends on it. The margin-vs-cap separation is
+carried independently by §5.1, whose cap reconstruction reproduces the
+registered leg's wind additions **to the megawatt** (4.000 GW) and therefore
+pins the cap side without the ledger; the solar residual is what that validated
+arithmetic cannot account for.
 
 ---
 
