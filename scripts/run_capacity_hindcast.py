@@ -544,6 +544,7 @@ def build_config(
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
+    ptc_window: "int | str | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -735,6 +736,22 @@ def build_config(
             }.items()
             if v is not None
         },
+        # FFR-4C §45 wind-PTC statutory window (owner decision D-13). This
+        # field cannot ride the None-drop dict above because ``None`` is a
+        # MEANINGFUL value here (the unwindowed full-book-life control arm,
+        # distinct cache key) — so the inherit sentinel is the OMITTED CLI
+        # flag instead: omit → the shipped ScenarioConfig default (10,
+        # statutory); ``--ptc-window none`` → an explicit None; an integer →
+        # a sensitivity window.
+        **(
+            {}
+            if ptc_window is None
+            else {
+                "ira_ptc_credit_window_years": (
+                    None if str(ptc_window).lower() == "none" else int(ptc_window)
+                )
+            }
+        ),
     )
 
 
@@ -1206,6 +1223,18 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--ptc-window",
+        default=None,
+        help=(
+            "FFR-4C §45 wind-PTC credit window, years from placed-in-service "
+            "(owner decision D-13). OMIT to inherit the shipped ScenarioConfig "
+            "default (10, statutory — 26 U.S.C. §45(a)(2)(A)(ii)). Pass "
+            "'none' for the UNWINDOWED control arm (full-book-life crediting, "
+            "the pre-4C posture, distinct cache key); an integer runs a "
+            "sensitivity window."
+        ),
+    )
+    parser.add_argument(
         "--entry-vre-capacity-revenue",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1409,6 +1438,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,
+        ptc_window=args.ptc_window,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
