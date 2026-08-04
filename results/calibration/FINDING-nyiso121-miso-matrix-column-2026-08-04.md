@@ -1,13 +1,30 @@
-# FINDING — nyiso-120 (TASK 2): MISO's rule-28(c) matrix column is CLOSED
+# FINDING — nyiso-121 (TASK 2): MISO's rule-28(c) matrix column is CLOSED
 
-**Date:** 2026-08-04 · **Session:** nyiso-120 (NYISO lane, cross-ISO column work) ·
+**Date:** 2026-08-04 · **Session:** nyiso-121 (NYISO lane, cross-ISO column work) ·
 **Target column:** MISO · **MISO keeper:** `2026-08-04-miso-122b-scope-gate`, **unchanged**
 **NYISO keeper:** `2026-08-03-nyiso-119-seny-increment`, **unchanged**
-**Pre-registration:** `PREREG-nyiso120-miso-matrix-column-2026-08-04.md` — committed and
+**Pre-registration:** `PREREG-nyiso121-miso-matrix-column-2026-08-04.md` — committed and
 pushed **before** any row was written and before the probe was run.
 
 **Zero solves. Zero years touched. No `ScenarioConfig` value, constant or derive script
 changed.**
+
+> **Session renumbered nyiso-120 → nyiso-121, recorded not silent.** This session opened as
+> nyiso-120; a concurrent NYISO session (the East River hybrid-cogen scope gate) merged to
+> main first and spent that label — itself having renumbered off nyiso-119 for the same
+> reason. No pre-registered content changed; see PREREG's header note and commit `9b3fe469`,
+> the timestamped record that the pre-registration preceded the work.
+>
+> **Rebased onto `origin/main` at `f3a1e817` after the work was done.** Two main-side changes
+> are attributed here so they are not read as this session's: (a) `pjm-152` collapsed
+> `pjm_seam_envelope_by_neighbor` under rule 26 `[R-DELETE]`, which is why **PJM's family
+> count moves 36 → 35** in §7's criterion-4 table — main's deletion, not this census's doing;
+> and (b) that same deletion **fixes two `tests/scoring/test_forecast_parity.py` failures that
+> were red on this session's pre-rebase base** (`pjm_seam_envelope_by_neighbor` armed in the
+> PJM keeper with no forecast consumer) — pre-existing, PJM's, and cleared by the rebase.
+> The only conflict was `seam_flow_envelopes`' `def:` line, which `pjm-152` also edited;
+> it was resolved by taking **main's** line and re-applying this session's isolated 3,693-char
+> MISO insertion onto it, verified by exact length delta.
 
 ---
 

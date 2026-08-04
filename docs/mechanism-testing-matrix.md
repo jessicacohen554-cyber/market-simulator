@@ -1575,9 +1575,9 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion; **rule-28(c) column CLOSED at nyiso-120 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate`)**
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion; **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate`)**
 
-> **nyiso-120 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
+> **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
 > All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
 > are registered as **literal sub-scalar entries on 7 existing family rows**
 > (`energy_reserve_coopt`, `rdt_tcdc`, `seam_flow_envelopes`, `import_hub_pricing`,
@@ -1610,8 +1610,8 @@ loss.
 > cell moves** — whether either is a rule 19 `[R-ONE-MECH]` question belongs to a lane that
 > may adjudicate MISO (rule 28(d)).
 >
-> **PREREG:** `results/calibration/PREREG-nyiso120-miso-matrix-column-2026-08-04.md`
-> **FINDING:** `results/calibration/FINDING-nyiso120-miso-matrix-column-2026-08-04.md`
+> **PREREG:** `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md`
+> **FINDING:** `results/calibration/FINDING-nyiso121-miso-matrix-column-2026-08-04.md`
 >
 > **METHODOLOGICAL CORRECTION THAT BINDS THE NEXT LANE (FINDING §6.2).** A first draft
 > enumerated MISO's 17 shared-stem literals, as ercot-156 / caiso-161 / pjm-151 each did.

@@ -1,8 +1,20 @@
-# PRE-REGISTRATION — nyiso-120 (TASK 2): close MISO's rule-28(c) matrix column
+# PRE-REGISTRATION — nyiso-121 (TASK 2): close MISO's rule-28(c) matrix column
 
-**Date:** 2026-08-04 · **Session:** nyiso-120 · **Lane:** NYISO session taking the
+> **RENUMBERED nyiso-120 → nyiso-121 after this pre-registration was written and pushed,
+> and recorded here rather than rewritten silently.** This session opened as nyiso-120; while
+> it was running, a concurrent NYISO session (`claude/nyiso-120-eastriver-*`, the East River
+> hybrid-cogen scope gate) merged to main and **spent that label first** — itself having
+> renumbered off nyiso-119 for exactly the same reason. Following that precedent, this
+> session takes **nyiso-121**. **No pre-registered content changed**: the scope, the kills,
+> the no-tuning clause, the 12-field mapping and the G-1 specification below are byte-identical
+> to what was pushed before any row was written or any probe run — only the session label and
+> the artifact filenames moved. The original pushed commit is
+> `9b3fe469` ("nyiso-120 TASK 2: pre-register …"), which is the timestamped record that this
+> pre-registration preceded the work.
+
+**Date:** 2026-08-04 · **Session:** nyiso-121 · **Lane:** NYISO session taking the
 **cross-ISO column work** (TASK 2) · **Target column:** **MISO**
-**Branch:** `claude/nyiso-120-calibration-hekvta` · **Committed and pushed BEFORE any
+**Branch:** `claude/nyiso-121-calibration-hekvta` · **Committed and pushed BEFORE any
 row is written and before the construction probe is run.**
 
 ---

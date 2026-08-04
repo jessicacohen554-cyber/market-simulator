@@ -1,6 +1,6 @@
 {
-  "probe": "nyiso-120 G-1 \u2014 miso_pjm_border_anchor displacement (CONSTRUCTION)",
-  "prereg": "results/calibration/PREREG-nyiso120-miso-matrix-column-2026-08-04.md \u00a74",
+  "probe": "nyiso-121 G-1 \u2014 miso_pjm_border_anchor displacement (CONSTRUCTION)",
+  "prereg": "results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md \u00a74",
   "keeper": "2026-08-04-miso-122b-scope-gate",
   "no_lp": true,
   "border_hr_by_year": {
