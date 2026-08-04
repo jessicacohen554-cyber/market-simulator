@@ -48,6 +48,11 @@ Sections
     model's upstate error in each bucket, so a defect that is the mirror image
     of the missing congestion is distinguishable from one that is not.  Adds the
     peak/off-peak split and the correlation.
+``flows``
+    WHY the model's Central-East link stays slack, from the ALREADY-COMMITTED
+    per-link network layer (``nyiso116_c3c_unitlayer``) against the measured
+    external schedules.  Corrects this session's own first claim that the
+    question needed a replay.
 
 Rule 13 ``[R-MEASURED]``: every measured price, basis, flow and limit here is
 used to IDENTIFY a boundary and to ATTRIBUTE a residual — never as a dispatch
@@ -61,7 +66,7 @@ Usage::
 
     PYTHONPATH=.:src python scripts/probes/_nyiso124_charter_g0_g1.py
     PYTHONPATH=.:src python scripts/probes/_nyiso124_charter_g0_g1.py \\
-        --sections sources incidence
+        --sections sources incidence flows
 
 Outputs ``results/calibration/_nyiso124_charter_g0_g1.json``.
 """
@@ -680,11 +685,142 @@ def section_objectb() -> dict:
     return {"years": rows}
 
 
+def section_flows() -> dict:
+    """Why the model's Central-East link stays slack: the seam, measured.
+
+    **Correction to this session's own first write-up.** §6 of the finding as
+    first drafted said the question was unmeasurable from committed artifacts
+    because ``system_<year>.parquet`` carries no link flow. That is true of the
+    keeper bundle but WRONG as a statement about the repo: ``_network_frame``
+    has always written ``hourly/network_<year>.parquet`` (per-link hourly flow,
+    reduced cost and bounds), ``.gitignore`` merely excludes it by default, and
+    NYISO already has it COMMITTED — matrix row ``unit_network_layer_sidecar``
+    NYISO cell **K**, on ``nyiso116_c3c_unitlayer``.
+
+    **Provenance, stated because it bounds the claim.** That bundle is a
+    zero-delta replay of the **nyiso-113** keeper recipe, not the current
+    nyiso-120 keeper, and its **G1 replay fidelity FAILED** (max |Δp| $10.5 /
+    $10.6 / $9.0); nyiso-116 licensed it for C3c tail work on G2. It is used
+    here only for **link saturation** and **gross flow magnitude** — a
+    marginal-tie reshuffle in the body of the price distribution cannot move a
+    bound that holds in ~100 % of hours or a 2-3x flow gap — and the MEASURED
+    side of every comparison needs no model at all. A successor wanting the
+    caveat gone commits the layer on the current keeper's own replay with
+    ``git add -f`` (the cell is already K; nothing to arm).
+    """
+    print(RULE)
+    print("SEAM: the model's link flows (committed network layer) vs measured schedules")
+    print(RULE)
+    layer = REPO / "results/calibration/nyiso116_c3c_unitlayer/hourly"
+    if not layer.exists():
+        print("  [absent] nyiso116_c3c_unitlayer network layer not in this checkout")
+        return {"available": False}
+
+    # Measured external schedules, grouped by the LANDING model zone each border
+    # link represents (interchange/spec.py BORDER_LINK_MW NYISO comment).
+    sched_groups = {
+        "Capital_Hudson": ["SCH - PJ - NY", "SCH - NE - NY"],
+        "NYC": ["SCH - PJM_HTP", "SCH - PJM_VFT"],
+        "Long_Island": ["SCH - PJM_NEPTUNE", "SCH - NPX_CSC", "SCH - NPX_1385"],
+        "Upstate_West": ["SCH - HQ - NY", "SCH - OH - NY"],
+    }
+    rows = []
+    for year in YEARS:
+        net = pd.read_parquet(layer / f"network_{year}.parquet")
+        net = net[(net["kind"] == "link") & (net["pass"] == "P1")]
+        post = interface_postings(year)
+        post["k"] = (
+            post["mo"].astype(str) + "-" + post["dy"].astype(str) + "-" + post["hr"].astype(str)
+        )
+        print(f"\n{year}")
+        print(
+            f"  {'model link':32s} {'limit':>7s} {'flow p50':>9s} {'util p50':>9s} "
+            f"{'h at bound':>11s}   {'MEASURED p50':>13s} {'mean':>8s}"
+        )
+        year_rows = []
+        for zone, ifaces in sched_groups.items():
+            link = f"NYISO_external>{zone}"
+            s = net[net["name"] == link].sort_values("hour")
+            if s.empty:
+                continue
+            mw, up = s["mw"].to_numpy(), s["limit_up"].to_numpy()
+            util = np.divide(mw, np.where(up == 0, np.nan, up))
+            meas = post[post["interface"].isin(ifaces)].groupby("k")["flow_mw"].sum()
+            print(
+                f"  {link:32s} {np.median(up):7.0f} {np.median(mw):9.1f} {np.nanmedian(util):9.3f} "
+                f"{np.nanmean(util >= 0.999) * 100:10.1f}%   {meas.median():13.1f} {meas.mean():8.1f}"
+            )
+            year_rows.append(
+                {
+                    "link": link,
+                    "limit_mw": round(float(np.median(up)), 1),
+                    "model_flow_p50": round(float(np.median(mw)), 1),
+                    "model_util_p50": round(float(np.nanmedian(util)), 4),
+                    "model_share_hours_at_bound": round(float(np.nanmean(util >= 0.999)), 4),
+                    "measured_interfaces": ifaces,
+                    "measured_flow_p50": round(float(meas.median()), 1),
+                    "measured_flow_mean": round(float(meas.mean()), 1),
+                }
+            )
+        ce = net[net["name"] == "Upstate_West>Capital_Hudson"].sort_values("hour")
+        mw, up = ce["mw"].to_numpy(), ce["limit_up"].to_numpy()
+        ce_util = np.divide(mw, np.where(up == 0, np.nan, up))
+        real_util = interface_utilisation(year, "CENTRAL EAST - VC")
+        print(
+            f"  {'Upstate_West>Capital_Hudson':32s} {np.median(up):7.0f} {np.median(mw):9.1f} "
+            f"{np.nanmedian(ce_util):9.3f} {np.nanmean(ce_util >= 0.999) * 100:10.1f}%   "
+            f"[measured CENTRAL EAST util p50 {float(real_util.median()):.3f}]"
+        )
+        down = [r for r in year_rows if r["link"] != "NYISO_external>Upstate_West"]
+        up_row = next(r for r in year_rows if r["link"] == "NYISO_external>Upstate_West")
+        down_model = sum(r["limit_mw"] for r in down)
+        down_meas = sum(r["measured_flow_p50"] for r in down)
+        print(
+            f"  DOWNSTATE-LANDING total: model {down_model:.0f} MW pinned vs measured p50 "
+            f"{down_meas:.0f} MW ({down_model / down_meas:.2f}x); UPSTATE model "
+            f"{up_row['model_flow_p50']:+.0f} vs measured {up_row['measured_flow_p50']:+.0f} MW"
+        )
+        print(
+            f"  NET across all four border links: model "
+            f"{down_model + up_row['model_flow_p50']:+.0f} vs measured "
+            f"{down_meas + up_row['measured_flow_p50']:+.0f} MW — the NET reconciles, the "
+            "DISTRIBUTION does not"
+        )
+        rows.append(
+            {
+                "year": year,
+                "links": year_rows,
+                "central_east_model_util_p50": round(float(np.nanmedian(ce_util)), 4),
+                "central_east_measured_util_p50": round(float(real_util.median()), 4),
+                "downstate_model_mw": round(down_model, 1),
+                "downstate_measured_p50_mw": round(down_meas, 1),
+                "upstate_model_p50_mw": up_row["model_flow_p50"],
+                "upstate_measured_p50_mw": up_row["measured_flow_p50"],
+                "net_model_mw": round(down_model + up_row["model_flow_p50"], 1),
+                "net_measured_mw": round(down_meas + up_row["measured_flow_p50"], 1),
+            }
+        )
+    return {
+        "available": True,
+        "source_bundle": "nyiso116_c3c_unitlayer",
+        "provenance": (
+            "zero-delta replay of the nyiso-113 keeper recipe, G1 replay fidelity FAILED "
+            "(max |dp| 10.5/10.6/9.0 $/MWh), licensed by nyiso-116 for C3c tail work on G2. "
+            "Used here ONLY for link saturation and gross flow magnitude, where a marginal-tie "
+            "reshuffle cannot move a ~100 %-of-hours bound or a 2-3x flow gap; the measured side "
+            "needs no model. Commit the layer on the current keeper's own replay to remove the "
+            "caveat (unit_network_layer_sidecar NYISO is already K)."
+        ),
+        "years": rows,
+    }
+
+
 SECTIONS = {
     "sources": section_sources,
     "incidence": section_incidence,
     "binding": section_binding,
     "objectb": section_objectb,
+    "flows": section_flows,
 }
 
 
