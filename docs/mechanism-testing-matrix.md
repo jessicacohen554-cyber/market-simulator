@@ -4634,7 +4634,122 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — keeper `2026-08-03-neiso-caiso156-meter-screen` (**keeper id corrected at neiso-78** — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below
+### 5.6 NEISO — keeper `2026-08-04-neiso81-chpheatrate` (**PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
+
+**neiso-81 (2026-08-04) — the promotion re-adjudication, EXECUTED with a keeper.**
+The session's charter was the one live, agent-actionable item left in this
+section: re-adjudicate `measured_chp_heat_rates` NEISO `O` → `K` under the
+OWNER'S STANDING STANDARD, stated 2026-08-04 — *"if structural integrity improves
+but gates regress that may still be a keeper."* **Outcome: `K`, PROMOTED.** New
+keeper `2026-08-04-neiso81-chpheatrate`; control `2026-08-04-neiso81-control`;
+both registered (rule 15), both years 2023 2024 2025 in ONE invocation (rule 16),
+both solved at the same HEAD.
+
+**Re-measured from scratch, not inherited.** neiso-70's numbers are NOT this
+arm's result — they were taken against a DIFFERENT keeper (the neiso-61 recipe)
+and a PRE-gate-3 artifact, and miso-124's DO-NOT-MISREAD is that price response
+is not stable across keepers. The whole A/B was re-solved against the keeper
+actually replayed, with a same-HEAD **zero-delta control arm A** solved first and
+every delta quoted against it.
+
+**The load-bearing question was pre-registered AND one half of it was falsified
+BEFORE any solve — and the promotion does not rest on it.** The prereg named as
+load-bearing whether the CC_CHP overshoot is a *class-attribution artifact* of
+the CC_CHP/CC_REGULAR boundary rather than a dispatch error. Measured pre-solve
+at the keeper's own config: model CC_CHP is 19 units / **7 plants** / 320.6 MW
+and CC_REGULAR is 214 / **29** / 14,043.5 MW, the plant sets are **DISJOINT**, no
+artifact CC_CHP plant sits in the model's CC_REGULAR class, and the benchmark
+side (`classFull = e923_bench − btm`) buckets EIA-923 through the **same**
+`plant_taxonomy.classify_plant` registry the fleet uses. **One registry applied
+twice**, so the CC_CHP movement is a REAL per-class reallocation and the
+attribution-artifact case was killed with zero solves spent — the miso-125
+discipline.
+
+**What the promotion DOES rest on is RESOLVABILITY, and it is a number.** C1's
+per-class volume band is `min(2 % ISO load, 8 TWh)` = **±1.955 / 2.103 /
+2.066 TWh**, while CC_CHP's **entire** annual grid-delivered actual is **1.072 /
+1.124 / 1.194 TWh — 0.548× / 0.534× / 0.578× its own band.** A class whose whole
+annual output is roughly half its own tolerance cannot be discriminated by its C1
+row in either direction: zero generation and double generation both PASS. CC_CHP
+is additionally D-10 `pinned` / `excluded_from_free` (so the arm cannot move the
+free-class score by construction) and its 2025 row is SKIPPED on preliminary
+EIA-923 (3/7 plants, 57 % reporting).
+
+**All five pre-registered construction properties PASS**, including the two the
+DO-NOT-MISREAD chain demanded: **P6 firing at GRAIN 2** (per-class ENERGY delta,
+not a loader check — miso-126(a); grain 1 was the pre-arm fleet rebuild at the
+keeper's own config, 20/602 generators / 271.008 MW, CC_CHP cap-wt HR 8.1437 →
+10.3632 = **+27.25 %**), and **P7 conservation on the FULL identity** across
+`class_hourly` + storage + `system` (miso-126(b)) — per-hour **relative**
+residual 1.6e-7 / 1.7e-7 / 1.9e-7 against the pre-registered 1e-6 bar, sitting
+**at the float32 sidecar epsilon**, i.e. stored-column precision rather than a
+boundary defect.
+
+**None of the four pre-registered stop-and-escalate triggers fires.** No
+criterion crosses PASS→FAIL; determination is **CALIBRATED-WITH-CAVEATS in BOTH
+arms** (0 FAILs, 1 ledgered C3c caveat, C1 all 12/12 · free 8/8,
+criterion-for-criterion identical); C3c is bit-unchanged and no new caveat slot
+is spent; total generation, slack and dump are unmoved. **So rule 22 D-5(b) does
+not stop this one** — the re-verified determination is NOT worse, which is
+exactly the test NYISO's identical arm failed at nyiso-120 before the owner ruled.
+
+**A clean CC-pair reallocation.** CC_CHP **−0.5866 / −0.3404 / −0.6533 TWh**
+against CC_REGULAR **+0.6088 / +0.3521 / +0.6790**, i.e. CC_REGULAR absorbs
+**103.8 % / 103.5 % / 103.9 %** (the >100 % is CT_CHP's own small decline), so
+the displacement stays inside the pair. λ **+0.159 / +0.093 / +0.289 $/MWh** =
++0.405 / +0.211 / +0.401 pp of level, against a pre-registered 1.0 pp allowance
+and C3a headroom of 6.7 / 4.1 / 7.1 pp. **The identified aggregate holds:**
+combined CC_CHP+CC_REGULAR |error| **0.133 → 0.110 TWh in 2023 (IMPROVES)** and
+0.056 → 0.068 in 2024, against a pre-registered 0.50 TWh allowance anchored at
+one quarter of the C1 band. **And the fit cost is SMALLER than at neiso-70,
+measured not asserted:** CC_CHP's own |error| moves +0.075 in 2023 (vs neiso-70's
++0.145) and **+0.003** in 2024 (vs +0.084) — the 2024 row is essentially unmoved.
+
+**Disclosed against interest, three ways.** (i) The prereg said IN ADVANCE that
+the counterweight had **less** room than at neiso-70 (this keeper's CC_REGULAR
+error was already −0.38 / −0.11 vs −0.471 / −0.340) and that the combined
+improvement might not replicate; it **half**-replicated. (ii) **2025 is UNSCORED
+and would look worse if gated** — CC_CHP 0.013 → 0.640 and CC_REGULAR 2.028 →
+2.707 against a 2.066 band, so on a complete 923 vintage arm B's CC_REGULAR row
+would be OUT of band where the control's is barely in. But the 2025 CC-**family**
+overshoot is **98.7 % pre-existing** (combined 2.041 → 2.067; this arm adds
++0.026) and the pair merely re-splits it. Flagged for the re-gate when the 2025
+vintage finalises, not buried. (iii) **CC_CHP now sits UNDER actual in every year
+where it sat over** — a real, ungated, currently **unclosable** residual whose
+only named route is CLOSED WITH EVIDENCE by neiso-71.
+
+**DO-NOT-REDO honoured (rule 28a).** No CC_CHP host-steam floor was built and
+`chp_steam_floor_p25` stays **UNARMED**; Kendall's capacity basis stays
+ADJUDICATED-ARTIFACT (neiso-73); `cc_steam_part_capacity` NEISO stays **`I`**
+(neiso-80) and was NOT stamped by this session. **The neiso-80 scope gate is not
+the reason and is not quoted as one:** at the LP seam it walks +27.96 % back to
++27.25 %, a 0.71 pp move = **2.54 %** of the overshoot-producing seam move, about
+one part in forty. **Rule 25:** MISO's / CAISO's / PJM's / NYISO's `K` transferred
+nothing — NEISO derived its own artifact from its own data and no file outside
+the NEISO lane was touched. **Rule 23:** the artifact's last re-derive cites the
+miso-122 measured scope change, never a residual. **Zero free parameters** — DOF
+ledger 12 → 13 entries, `n_residual` UNCHANGED at 5; CEMS re-validated 4/4 within
+1 %, median 1.00000. **Same-HEAD drift reported, not hidden** (the reason the
+control exists): the committed keeper's `git_sha` `f6238a5` is no longer in the
+repo, control-minus-keeper class-hour maxima run 402.6 / 614.6 / 442.3 MW, but
+the numerics stack is IDENTICAL (highspy 1.14.0, pandas 3.0.3, pyarrow 24.0.0) —
+so unlike neiso-70 the drift is **CODE ONLY** and cannot be decomposed further.
+
+**LEVER QUEUE AFTER neiso-81: EMPTY of agent-actionable items.** C3c stays at its
+declared frontier (untouched — bit-unchanged between the arms); the named
+secondary, NEISO **6081_CA1** (96.0 MW in the LP as `oil` with an EMPTY
+`plant_group` while its three CC1-block CT siblings are CC_REGULAR/`gas_cc`, and
+CAMPD meters the block on Pipeline Natural Gas at units 001/002/003 with NO CAMPD
+unit for CA1 at all), was NOT opened — it is a CLASSIFICATION/repricing question
+needing **its own charter** and its own measured identification, and at 73–91
+GWh/yr gross it is a correctness question before a magnitude one. Everything else
+in this section remains owner-gated. Evidence:
+`results/calibration/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md`
+(pushed before either arm solved),
+`results/calibration/FINDING-neiso81-chp-heat-rate-promotion-2026-08-04.md`,
+records `_neiso81_chp_phase0.json` + `_neiso81_chpheatrate_ab.json`, probes
+`_neiso81_chp_phase0.py` + `_neiso81_chpheatrate_ab.py`.
+
 
 **neiso-80 (2026-08-04) — the two cross-ISO hand-offs, both adjudicated with
 ZERO solves.** Prereg
