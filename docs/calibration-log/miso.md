@@ -3597,3 +3597,107 @@ NON-solve steps: item 1's Form 580 tonnage COUNT and miso-114 §6's CAMPD
 miso-122 opened (NYISO 2493 East River, NEISO 1595 Kendall) remain those lanes'
 own sessions (rule 25) and were not touched here.
 * Next number: **miso-124**.
+## miso-124 — re-arm `dual_fuel_switching` on the current keeper: KEEPER PROMOTED, nothing regresses (2026-08-04)
+
+**KEEPER PROMOTED** — `2026-08-04-miso-122b-scope-gate` → **`2026-08-04-miso-124-dualfuel-rearm`**
+(bundle `results/calibration/miso124_dualfuel_B`). Determination **NOT-YET**,
+sole FAIL C7 `COAL_PRB` ×3y, ledgered caveats 2/3 `{C3a, C3c}` — all identical
+to the predecessor.
+
+*(Numbering note: **miso-123** is the seam hour-of-day band-availability closure
+immediately above. It was solved in parallel and was still unmerged when this
+branch was cut, so this session took the next free number rather than minting a
+duplicate lane entry; the two were later stacked so miso-123 lands first.)*
+
+**WHY THIS SESSION EXISTS — a merge race, not new science.** miso-121
+adjudicated `dual_fuel_switching` against a pre-registration pushed before any
+measurement, and the owner authorized promoting it on rule 1 `[R-STRUCT]`
+grounds. That promotion **lost a race**: miso-122 had branched off the older
+miso-117b keeper and promoted `2026-08-04-miso-122b-scope-gate`, whose
+`run_config` carries `dual_fuel_switching: false`. The mechanism was therefore
+adjudicated, validated and evidenced — but **not armed in the live keeper**.
+This session restores **only the arming**.
+
+**THE VERDICT IS NOT RE-ADJUDICATED and nothing about it is retracted.**
+`dual_fuel_switching` remains **fully identified and price-inert** at MISO's
+scored grain (`FINDING-miso121-dual-fuel-switching-2026-08-03.md`): capability
+15,827 MW = 23.3 % of MISO gas from the EIA-860 Multifuel flag, parity price
+from 12/12 measured F923 Petroleum months every year, event windows observable
+in CAMPD — and the phenomenon is ~0.002 % of MISO energy, which is *why* it is
+inert. Arming an inert-but-correct mechanism was the open **owner call**
+miso-121's own matrix note named ("an OWNER call, not a session call, and
+miso-121 did not make it"); the owner made it.
+
+**Correction to the session brief's premise, verified against main:** the brief
+stated the mechanism was "matrix-stamped K". It was **`I`** on `origin/main` —
+miso-121's stamp was lost with its promotion. This session moves the cell
+`I` → `K` (armed in keeper) with the tested-inert verdict preserved verbatim in
+the note, rather than asserting a `K` that was never there.
+
+**Method.** Single-delta `replay_keeper` re-solve of `miso122_scopegate_B`,
+`--years 2023 2024 2025` in **one** invocation (rules 12 / 16), years sequential
+inside it. A programmatic diff of the two scenario blocks returns **exactly one
+differing key**. Siblings `dual_fuel_oil_reattribution` /
+`dual_fuel_oil_daily_parity` OFF in both (rule 19 `[R-ONE-MECH]`).
+**Confirmed armed and firing** — the solve logs the cap on **371 / 371 / 369**
+gas tranches (15,827 / 15,827 / 15,825 MW), reproducing miso-121's capability
+census exactly, so the miso-113 "hook never wired into the calibration path"
+hazard is cleared **by measurement**.
+
+**NOTHING REGRESSES — the condition the session was required to test.**
+Determination, all **nine** criterion statuses and the ledgered-caveat budget
+are identical to the predecessor; C7 `COAL_PRB` is still the sole FAIL (profile
+r 0.988 / 0.979 / 0.971, off-peak CV ratio 0.464 / 0.475 / 0.311); C1 all 16/16,
+free 12/12; and there are **zero legitimacy-diagnostic verdict changes** across
+D-1 / D-2 / D-4 / D-5 / D-9 / D-10 (4 of 30 D-1 rows, 6 of 27 D-2 rows and 1 of
+3 D-4 rows move numerically, none across a threshold). A/B gates **K1–K6 all
+PASS** (`_miso124_dualfuel_rearm_ab.json`). `audit_keepers.py --iso MISO`:
+**0 failures / 0 warnings**.
+
+**ONE PRE-DECLARED EXPECTATION WAS WRONG — recorded as wrong, not re-narrated.**
+The brief pre-declared *"max zonal |ΔLMP| well under 0.01 $/MWh"*, extrapolating
+miso-121's 0.0000 / 0.0003 / 0.0000 measured on the **miso-117b** keeper.
+Measured here against **miso-122b**: **0.000000 / 1.382669 / 0.000000 $/MWh** —
+~4,600× miso-121's 2024 figure and ~138× the pre-declared bar. **This is a real
+interaction with the miso-122 scope gate**, and it is stated plainly rather than
+buried:
+
+* the **dispatch** response is essentially unchanged from miso-121 (max
+  class-hour 0.0 / 912.5 / 16.0 MW there vs **0.000 / 912.500 / 15.959 MW**
+  here — the same 912.5 MW seam-band quantisation constant miso-122 named), so
+  the mechanism does the same thing;
+* what moved is **which unit is marginal** in those hours, once the scope gate
+  re-priced 55088 Dearborn's `CC_CHP` / `CT_CHP` tranches by −16.6 %;
+* it is **6 hours of 8,760**, all mid-January — the same winter-2024 locus
+  miso-121 measured — and **one-sided** as a `min()` cap requires: price falls
+  in 23 zone-hours and rises in 6, system demand-weighted ΔLMP **−0.000159** in
+  2024 and exactly **0.000000** in 2023 and 2025.
+
+Per miso-122's DO-NOT-MISREAD the magnitude of record is **per-class ENERGY**,
+never the max class-hour (which here lands on the very import class the seam
+band quantises): 2024 `CC_REGULAR` −0.337 GWh, `CT_PEAKER` +0.318, `ST_CHP`
++0.063, `ST_GAS` −0.026, `CC_CHP` −0.016, `oil` −0.002 GWh; 2023 identically
+zero; 2025 ~0.02 GWh. That is ~0.0003 TWh against a MISO load in the hundreds of
+TWh — the same ~0.002 %-of-energy scale that makes the mechanism inert.
+
+The brief's stop condition was **gate regression**, and no gate regresses, so
+the promotion proceeded. The interaction is surfaced here and in the keeper note
+so it is reversible on inspection rather than discovered later.
+
+**Rule duties.** Rule 15 — arm registered in-session
+(`2026-08-04-miso-124-dualfuel-rearm`, top-15 retention pruned
+`2026-07-31-miso-111a-control`). Rule 16 — 2023 + 2024 + 2025 in one bundle.
+Rule 26 — arming visible in `run_config.json`. Rule 22 — training years only;
+MISO holds no `calibration-complete` marker, so no out-of-training year was
+solved, scored or read and no D-5(b) re-key is owed. Rule 28b — the
+`dual_fuel_switching` MISO cell and the matrix keeper header are stamped in this
+session. **Nothing is claimed for any criterion**; C7 `COAL_PRB` is untouched
+and stays routed to the data-blocked miso-78/79 lane, with the contract-period
+tonnage route refused (miso-103 / 104) pending the Form 580 count — a **data
+ask, not a solve**.
+
+**Evidence:** `_miso124_dualfuel_rearm_ab.json`,
+`scripts/probes/_miso124_dualfuel_rearm_ab.py`,
+`scripts/gen_miso124_attestation.py`,
+`results/calibration/miso124_dualfuel_B/{run_config,meta,metrics,legitimacy_diagnostics,calibration_attestation}.json`.
+* Next number: **miso-125**.
