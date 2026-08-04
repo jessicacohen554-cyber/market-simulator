@@ -4912,4 +4912,96 @@ assigned to NYISO with neither should say so and take another ISO's queue (rule
 28(a)) rather than manufacture a lever — which is exactly what item 4's refusal was
 protecting against (rule 1 `[R-STRUCT]`).
 
-* Next number: **nyiso-123** (blocked — see above).
+* Next number: **nyiso-123** (blocked — see above). **UNBLOCKED at nyiso-123 by
+  owner charter — see the entry below.**
+
+## 2026-08-04 — nyiso-123: BLOCKER-A CHARTERED as a PAIR — the split is the right object for 2025 and would break both passing years alone, NO SOLVE
+
+**Keeper UNCHANGED** (`2026-08-04-nyiso-120-c119-scope`, **NOT-YET**, re-verified
+from committed artifacts at this HEAD with `scripts/calibration_verdict.py
+--run-id`; `scripts/audit_keepers.py --iso NYISO` **PASS 0/0**). **Zero solves,
+zero runs registered** (there is none to register), zero `ScenarioConfig` /
+constant / derive / artifact changes, **no mechanism tested so no matrix cell
+verdict changes**. C3c's ledger budget stays **1 of 3, unspent**. Holdout spend
+freeze **ACTIVE and untouched**; training years only.
+
+**(1) THE JOB.** nyiso-122 left the lever queue **EMPTY** with the only successor
+an owner-charter item. This session (a) put the re-scoped charter question to the
+owner, (b) surfaced item 4 as the second open owner question, and (c) produced the
+**leave-one-year-out grounding rule 22 requires before any structural promotion** —
+which nyiso-122 had measured for 2025 only. No lever was substituted to avoid
+asking.
+
+**(2) THE GROUNDING, EXTENDED TO 2023–2024.** On the keeper's committed `hourly/`
+sidecars; **2025 reproduces nyiso-122's table exactly**. Two new facts. **(a) The
+Jan+Feb window is a 2025 artifact** — 2024's winter miss is in **December**
+(−1.130 of −1.690 in the $100–300 band; its Jan+Feb is **+1.053**), 2023's is in
+**February** (−0.734; January +0.237). It is a **cold-snap** object, so any future
+window must be **driver-derived, never a month range** (rule 17
+`[R-FLOOR-WINDOW]`). **(b) The defect did not worsen — the exposure grew.** The
+conditional per-hour miss in the $100–300 band **improved** −104.95 → −63.37 →
+**−40.45** $/MWh while the band's load share grew **1.42 → 2.75 → 14.65 %**
+(10.3×). On C3a's percentage basis, **2023→2024 is the mask removal** (−8.53 of
+−8.83 pp is the ≤$100 credit collapsing) and **2024→2025 is exposure growth**
+(−8.31 of −9.08 pp in the two upper bands). This **sharpens** nyiso-122's
+accounting, which quoted the $0–25 band alone, and supports its conclusion more
+strongly — the per-hour defect measurably improved every year.
+
+**(3) THE IDENTITY SHARE — AND THE PART REPORTED AGAINST THE HYPOTHESIS.**
+Whole-year mainland-4 price identity: **86.40 % (2023) / 95.88 % (2024) / 95.94 %
+(2025)**. **2024 ≡ 2025 to 0.06 pp**, which is the comparison that carries the
+argument and **confirms** the removed-mask reading. But **2023 is NOT ~100 %**, so
+the "constant in all three years" form of the claim is **not supported** — only the
+2024↔2025 form is, and that is how it is stated. Corroborating: **Feb 2023 ran a
+$43.67 actual all-5 zonal spread**, within $0.61 of Jan 2025's $44.28, **in a year
+that PASSED C3a**. The boundary is a standing gap, not a 2025 event.
+
+**(4) THE CHARTER'S NUMBER — AN EXACT IDENTITY, ASSERTED IN PROBE CODE.**
+Anchoring the model at its own upstate price and adding the **observed** basis
+(diagnostic bound only, rule 13 `[R-MEASURED]` — it never enters a solve), every
+actual term cancels and the counterfactual error collapses to **the model's
+load-weighted `Upstate_West` pricing error**: **+$1.59 (2025) / +$3.25 (2024) /
++$7.93 (2023)**. C3a with the basis closed and nothing else changed: **2023
++8.10 % PASS → +24.74 % FAIL**, **2024 +0.07 % → +8.60 %** (in band, near the edge),
+**2025 −7.86 % FAIL → +2.45 % PASS**.
+
+**(5) STRENGTHENED AND WEAKENED — TWO DIFFERENT CLAIMS, BOTH REPORTED.**
+**Strengthened as the object**: the split owns both halves, and in 2025 the
+unconstrained marginal cost is right to +$1.59 so essentially all of the C3a
+failure is the missing basis. **Weakened as a standalone promotion**: it converts a
+passing year into a clear fail — in-sample gain with held-out degradation, exactly
+what rule 22 `[R-HOLDOUT]` exists to catch, and invisible from 2025 alone. The
+counterfactual is an **upper bound** on the lift (it holds upstate fixed), so the
+2023/2024 breakage is a conservative warning, not an overstated one.
+
+**(6) OWNER RULINGS.** Put with the numbers above: **charter both, paired** —
+**Object A** the `Capital_Hudson` → Zone-F/Zone-G topology split, **Object B** the
+upstate over-pricing (the "mask" nyiso-122 named as trough over-pricing, now
+located exactly), promoted **only jointly**. Precommit written:
+`docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md` — **nothing built,
+armed, registered or solved**, with gates **G0 identifiability** and **G1 Object-B
+diagnosis** both **no-LP and gating every solve**, and §6 pre-stating the three ways
+the charter closes **without** a promotion. Second ruling: item 4
+(`nyiso_iroquois_winter_spread`) **holds unadjudicated**, cell stays **`O`**,
+default-off; its standalone rule 14 case still survives untested by solve.
+
+**(7) ONE CORRECTION TO THE PRIOR RECORD.** nyiso-122 mapped hour → month with a
+per-year `date_range`; the repo's canonical clock is a **fixed non-leap 8760
+calendar keyed to 2023** (`build_ercot_as_withholding._CALENDAR`). Identical for
+non-leap 2023/2025 — **every nyiso-122 number stands** — and one day off for
+leap-2024 from Mar 1. nyiso-123 uses the canonical clock throughout.
+
+**Standing instruction for a later NYISO assignment:** the lever queue is **still
+EMPTY** and no lever may be manufactured. What is now available is the **chartered
+pair**, and it must be worked **under the charter's pre-registered gates** — start
+with **G0** and **G1**, both no-LP, both gating any solve. A chartered topology
+change is **not** a queue item and must never be entered as one.
+
+Evidence: `docs/handoffs/nyiso-123-downstate-boundary-2026-08-04.md`,
+`docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`,
+`results/calibration/PREREG-nyiso123-downstate-boundary-2026-08-04.md`,
+`_nyiso123_month_band_allyears.json`, `_nyiso123_zonal_identity_allyears.json`,
+probes `scripts/probes/_nyiso123_month_band_allyears.py`,
+`_nyiso123_zonal_identity_allyears.py`.
+
+* Next number: **nyiso-124**.

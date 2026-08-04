@@ -2341,7 +2341,7 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — **LANE CLOSED 2026-08-04 (nyiso-122): lever queue EMPTY, column census 0-gap, every remaining route BLOCKED — see the LANE CLOSURE block below.** Target of record: the 2025 C3a FAIL, decomposed at nyiso-122 into TWO seasonally-separable objects that BOTH resolve to the downstate locational boundary; keeper `2026-08-04-nyiso-120-c119-scope`, **NOT-YET** (C3a-2025 −10.1 %, a criterion failure deliberately NOT ledgered; C3c the sole ledgered caveat, budget 1 of 3); ~~item 4~~ CLOSED at nyiso-122 (re-opened, then REFUSED ex ante on reach — no solve), the last live lever; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante) **Section de-duplicated at xiso-4 (2026-08-04): this section carried THREE `### 5.5` headers** (merge-race artifacts, byte-identical but for their stale keeper clauses); the two lower ones were removed, restoring the one-header-per-section convention every other §5.x follows and which `check_mechanism_matrix.py::doc_header_drift` now enforces.
+### 5.5 NYISO — **LANE RE-OPENED UNDER CHARTER 2026-08-04 (nyiso-123): the lever queue is STILL EMPTY, but BLOCKER-A is now CHARTERED — the `Capital_Hudson` → Zone-F/Zone-G topology split, re-scoped to BOTH halves and PAIRED with the upstate over-pricing object, precommit `docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`, gates G0/G1 no-LP and gating every solve. Work this lane under the charter, never as a lever.** (Prior state: **LANE CLOSED 2026-08-04 (nyiso-122)** — lever queue EMPTY, column census 0-gap, every remaining route BLOCKED; see the LANE CLOSURE block below.) Target of record: the 2025 C3a FAIL, decomposed at nyiso-122 into TWO seasonally-separable objects that BOTH resolve to the downstate locational boundary; keeper `2026-08-04-nyiso-120-c119-scope`, **NOT-YET** (C3a-2025 −10.1 %, a criterion failure deliberately NOT ledgered; C3c the sole ledgered caveat, budget 1 of 3); ~~item 4~~ CLOSED at nyiso-122 (re-opened, then REFUSED ex ante on reach — no solve), the last live lever; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante) **Section de-duplicated at xiso-4 (2026-08-04): this section carried THREE `### 5.5` headers** (merge-race artifacts, byte-identical but for their stale keeper clauses); the two lower ones were removed, restoring the one-header-per-section convention every other §5.x follows and which `check_mechanism_matrix.py::doc_header_drift` now enforces.
 
 **LANE CLOSURE 2026-08-04 (nyiso-122) — NYISO's cross-ISO queue lane is CLOSED.
 Every route out is BLOCKED, and each blocker is typed below so a later session
@@ -2360,13 +2360,20 @@ Closure is on four measured facts, not on judgement:
 of its halves resolve to the downstate locational boundary, and every route to
 that boundary is blocked:
 
-- **BLOCKER-A — GOVERNANCE (owner charter required).** The `Capital_Hudson` →
-  Zone-F/Zone-G **topology split**. It is the standing re-open condition for C3c
-  and — new at nyiso-122 — it now also owns the **winter level miss**, which is
-  the larger of the two halves in the months it occupies and is **not** a scarcity
-  phenomenon. It is explicitly **never a mechanism-flag lever** (the ERCOT
-  West/Panhandle class, CLOSED). *Unblocks on:* an owner charter, which should now
-  be scoped to **both** halves rather than to C3c alone.
+- **BLOCKER-A — GOVERNANCE (owner charter required). ~~BLOCKED~~ → CHARTERED
+  2026-08-04 (nyiso-123), AS A PAIR.** The `Capital_Hudson` → Zone-F/Zone-G
+  **topology split**. It is the standing re-open condition for C3c and — new at
+  nyiso-122 — it now also owns the **winter level miss**, which is the larger of
+  the two halves in the months it occupies and is **not** a scarcity phenomenon.
+  It is explicitly **never a mechanism-flag lever** (the ERCOT West/Panhandle
+  class, CLOSED). ***UNBLOCKED:*** the owner chartered it on 2026-08-04, re-scoped
+  to **both** halves **and paired with a second object** — see the nyiso-123 status
+  block below and the precommit
+  `docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`. The charter is
+  **precommit only**: nothing is built, armed or solved, and its first two gates
+  (**G0 identifiability**, **G1 Object-B diagnosis**) are **no-LP and gate every
+  solve**. A NYISO session may now work this lane — under the charter's gates, not
+  as a lever.
 - **BLOCKER-B — DATA (source is access-walled, not merely un-fetched).** The
   sub-zonal in-city price formation that the winter miss actually is. nyiso-97
   closed this on **content, not only access**: the as-enforced AORR is
@@ -2402,6 +2409,79 @@ the C3a residual. Re-opening any of the above needs BLOCKER-A's charter or
 BLOCKER-B's intake. A session assigned to NYISO with neither should say so and
 take another ISO's queue (rule 28(a)) rather than manufacture a lever — which is
 precisely what item 4's refusal was protecting against (rule 1 `[R-STRUCT]`).
+**AMENDED 2026-08-04 (nyiso-123): BLOCKER-A's charter now EXISTS**, so the lane is
+workable again — but **only under that charter's pre-registered gates**, starting
+with the two no-LP ones. The lever **queue** remains **EMPTY**; a chartered
+topology change is not a queue item and must never be entered as one.
+
+**STATUS 2026-08-04 (nyiso-123) — BLOCKER-A CHARTERED AS A PAIR; THE SPLIT IS THE
+RIGHT OBJECT FOR 2025 AND WOULD BREAK BOTH PASSING YEARS ALONE. NO SOLVE, KEEPER
+UNCHANGED, QUEUE STILL EMPTY.** Keeper `2026-08-04-nyiso-120-c119-scope`,
+determination **NOT-YET**, untouched (re-verified from committed artifacts at this
+HEAD; `audit_keepers --iso NYISO` PASS 0/0). Zero solves, zero `ScenarioConfig` /
+constant / derive / artifact changes, **no mechanism tested so no cell verdict
+changes**, no run registered. C3c's ledger budget stays **1 of 3, unspent**.
+
+**(1) THE LEAVE-ONE-YEAR-OUT GROUNDING rule 22 REQUIRES BEFORE ANY STRUCTURAL
+PROMOTION.** nyiso-122 measured 2025 only. Extended to 2023–2024 on the keeper's
+committed `hourly/` sidecars: **2025 reproduces nyiso-122's table exactly**, and
+the two new legs change two things. **(a) The Jan+Feb window is a 2025 artifact** —
+2024's winter miss is in **December** (−1.130 of −1.690 in the $100–300 band; its
+Jan+Feb is **+1.053**) and 2023's is in **February** (−0.734; January is +0.237).
+The object is a **cold snap**, so any future window must be **driver-derived, not a
+month range** (rule 17 `[R-FLOOR-WINDOW]`). **(b) The defect did not worsen — the
+exposure grew.** The model's conditional per-hour miss in the $100–300 band
+**improved** −104.95 → −63.37 → **−40.45** $/MWh while that band's load share grew
+**1.42 % → 2.75 → 14.65 %** (10.3×). On C3a's percentage basis, **2023→2024 is the
+mask removal** (−8.53 of −8.83 pp is the ≤$100 credit collapsing) and **2024→2025 is
+exposure growth** (−8.31 of −9.08 pp in the two upper bands). This **sharpens**
+nyiso-122's accounting — which quoted the $0–25 band alone — without changing its
+conclusion, and supports it more strongly.
+
+**(2) THE IDENTITY SHARE, AND THE PART REPORTED AGAINST THE HYPOTHESIS.**
+Whole-year share of hours pricing the four mainland zones identically: **86.40 %
+(2023) / 95.88 % (2024) / 95.94 % (2025)**. **2024 ≡ 2025 to 0.06 pp** — the
+comparison that carries the argument, and it **confirms** the removed-mask reading
+(locational blindness unchanged between a passing and a failing year). **2023 is
+NOT ~100 %**, so the "constant across all three years" form of the claim is **not**
+supported and only the 2024↔2025 form is. Corroborating: **Feb 2023 ran a $43.67
+actual all-5 zonal spread** — within $0.61 of Jan 2025's $44.28 — **in a year that
+PASSED C3a**. The boundary is a standing representation gap, not a 2025 event.
+
+**(3) THE NUMBER THE CHARTER IS BUILT ON — AN EXACT IDENTITY, ASSERTED IN CODE.**
+Anchoring the model at its own upstate price and adding the **observed** basis
+(diagnostic bound only, rule 13 `[R-MEASURED]`; it never enters a solve), every
+actual-price term cancels and the counterfactual error collapses to **the model's
+load-weighted `Upstate_West` pricing error**: **+$1.59 (2025) / +$3.25 (2024) /
++$7.93 (2023)**. So C3a with the basis closed and nothing else changed would read
+**2023 +8.10 % PASS → +24.74 % FAIL**, **2024 +0.07 % → +8.60 %** (in band, near the
+edge), **2025 −7.86 % FAIL → +2.45 % PASS**.
+
+**(4) HENCE THE PAIRING, AND THE OWNER'S RULING.** The split is **strengthened as
+the object** (it owns both halves; in 2025 the unconstrained marginal cost is right
+to +$1.59 and essentially all of the failure is the missing basis) and **weakened as
+a standalone promotion** (it converts a passing year into a clear fail — in-sample
+gain with held-out degradation, exactly what rule 22 catches). Put to the owner with
+these numbers, the ruling was **charter both, paired**: **Object A** the topology
+split, **Object B** the upstate over-pricing — the "mask" nyiso-122 named as trough
+over-pricing, now **located exactly** — promoted **only jointly** under gate G5.
+
+**(5) ITEM 4 STAYS `O`, UNADJUDICATED — OWNER RULING, NOT A SESSION DECISION.**
+Asked alongside the charter, the owner ruled **hold unadjudicated**. Its standalone
+rule 14 `[R-ACCURATE]` case still survives untested by solve; nyiso-123
+independently reinforces nyiso-122's reach refusal (NYC carries the winter gap and
+item 4 cannot move NYC in any of the 36 months). **Not** part of the charter in
+either direction.
+
+**(6) ONE CORRECTION TO THE PRIOR RECORD.** nyiso-122's probes mapped hour → month
+with a per-year `date_range`; the repo's canonical clock is a **fixed non-leap 8760
+calendar keyed to 2023** (`build_ercot_as_withholding._CALENDAR`). The two agree
+exactly for non-leap 2023 and 2025 — **every nyiso-122 number stands** — and differ
+by one day from Mar 1 for leap-2024. nyiso-123 uses the canonical clock throughout.
+Evidence: `docs/handoffs/nyiso-123-downstate-boundary-2026-08-04.md`,
+`docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`,
+`results/calibration/PREREG-nyiso123-downstate-boundary-2026-08-04.md`,
+`_nyiso123_month_band_allyears.json`, `_nyiso123_zonal_identity_allyears.json`.
 
 **STATUS 2026-08-04 (nyiso-122) — THE 2025 C3a FAILURE IS TWO OBJECTS, NOT ONE,
 AND BOTH RESOLVE TO THE DOWNSTATE LOCATIONAL BOUNDARY. NO SOLVE, KEEPER
