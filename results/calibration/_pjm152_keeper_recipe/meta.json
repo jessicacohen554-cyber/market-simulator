@@ -438,7 +438,7 @@
     "refusals": {
       "2025": "year not solved in the prior bundle"
     },
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence — keeper promotion still requires a full fresh solve of every year.",
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
     "source_timestamp": "2026-08-03T22:34:38",
     "source_git_sha": "1c191624"
   }
