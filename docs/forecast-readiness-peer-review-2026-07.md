@@ -183,6 +183,18 @@ this list verbatim until the underlying item changes state:
 > Uncertainty bands are dispatch-conditional: the fleet-path (capacity-expansion) component of
 > structural error is unmeasured and excluded. Deterministic scenario cases are a range, not a
 > probability distribution.
+>
+> **Capacity-additions metric basis (from 2026-08-04).** Additions are scored against the year
+> the model *decided* to build, not the year the unit commissions (owner decision D-9(ii),
+> FFR-3S). This changes what the additions metric measures, so **every additions verdict
+> committed before 2026-08-04 is non-comparable to one committed after**, and **the FF-2D
+> regression baseline is not usable for additions specifically** — an additions band that
+> "moves" across that date may be measuring the instrument, not the model. Retirements-side
+> comparability is unaffected: the retirement channel has no commissioning lag and the change
+> does not touch it. Cross-date additions comparisons require re-measuring both sides forward
+> on the decision basis. Each new `score.json` carries both bases (`additions` = decision,
+> `additions_cod_basis` = COD) plus an `additions_basis` provenance block, so the two ARE
+> comparable within a single run.
 
 (Wording lives here; the pack's every-prompt footer references it. FFR-3B's DOF-ledger stub and
 any future FF-G4/weather-posture decisions shrink it item by item.)
