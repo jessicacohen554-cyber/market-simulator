@@ -474,9 +474,29 @@ rule-13-admissible mechanism available to carry it.
    Martin Lake-family class-composition ruling. **That successor was run and
    REFUSED AT PHASE 0 by ERCOT-147 — see item 8; the two committed artifacts
    stay ready for the post-intake lane.**
-7. **WP-B nodal curtailment layer** — *data-intake first* (station→area
-   crosswalk does not exist in-repo), then the under-curtailment gap
-   (ERCOT-121).
+7. **WP-B nodal curtailment layer** — ~~*data-intake first* (station→area
+   crosswalk does not exist in-repo)~~, then the under-curtailment gap
+   (ERCOT-121). **▶ THE DATA PREREQUISITE IS EXECUTED AT ERCOT-160
+   (2026-08-04) — the blocker was never real.** ERCOT *publishes* the
+   station→area crosswalk, free and unauthenticated, as **NP4-160-SG
+   "Settlement Points List and Electrical Buses Mapping"**
+   (`reportTypeId=10008`, in ERCOT's own product catalog); it had simply never
+   been fetched. Intaken COMMITTED to `data/raw/ercot-network-model/` (1.2 MB,
+   exact published bytes + per-member sha256, ERCOT ToU §5) by
+   `scripts/data/fetch_ercot_settlement_point_mapping.py`:
+   `Settlement_Points` (19,287 rows) carries `SUBSTATION` →
+   `SETTLEMENT_LOAD_ZONE` → `RESOURCE_NODE` → `HUB`, and
+   `Resource_Node_to_Unit` (1,624 rows) carries `RESOURCE_NODE` →
+   `UNIT_SUBSTATION` + `UNIT_NAME`. **VINTAGE CAVEAT THAT BINDS ANY
+   CONSUMER:** MIS retention is ~31 days, so only the CURRENT network-model
+   version (published 2026-07-29) is reachable — there is **no 2023–2025
+   vintage and there never will be on this path** (which is why it is
+   committed, not gitignored). Substation→zone is structural and slow-moving,
+   but a node commissioned/retired since the backcast year will not line up:
+   **report your own match rate against your target year, never inherit
+   ERCOT-160's.** Item 7 is now unblocked on data and can proceed to its
+   actual object, the ERCOT-121 under-curtailment gap.
+   (`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md` §4.)
 7b. ~~**The measured STORAGE evening discharge-offer surface** (ercot-153's
    chartered successor to the diurnal-amplitude decomposition) + its named
    fallback **`measured_ramp_capability`**.~~
@@ -604,6 +624,56 @@ rule-13-admissible mechanism available to carry it.
    crosswalk (6/165 accepted in `ercot-dam-plant-crosswalk.csv`; Morgan
    Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
    existing four extracts.
+   **▶ THE THREE-PART INTAKE WAS EXECUTED AT ERCOT-160 (2026-08-04): (a) DONE,
+   (b) BLOCKED, (c) RESHAPED. The lever STAYS BLOCKED — on (b) alone.**
+   (`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`;
+   no LP, no cell, keeper unchanged.)
+   - **(a) DONE at 98.7 % of the training span.** The fetcher's day-list scope
+     was lifted (`--resource-types` / `--delivery-range` / `--shard-by-month`);
+     CT-scoping cuts a delivery day to 15.1 % of its rows (18,816/124,608,
+     0.51 MB parquet), which is what makes ~700 days affordable. Delivery
+     2024-01-24…2025-12-31 landed CT-only in `data/raw/ercot/SCED-CT/`
+     (gitignored + README + SHA256SUMS, the pjm-zonal-lmp precedent) and joins
+     the committed all-resource corpus (`data/raw/ercot/SCED/`, delivery
+     **2022-12-31…2024-01-09** — note that is a DELIVERY span; its shard
+     filenames are PUBLICATION months). **Gap: delivery 2024-01-10…2024-01-23
+     (14 days) is UNREACHABLE** — it falls between the corpus end and the MIS
+     rolling window's earliest listed publication (2024-03-24 → delivery
+     2024-01-24), reported `NOT LISTED` and never interpolated; closing it is
+     the owner-declined credentialed archive, and **the gap WIDENS with time**
+     as the window rolls. 2026 delivery days were refused live by the rule-22
+     guard, not omitted.
+   - **(b) BLOCKED — the only thing still blocking the lever.** The licensing
+     check ERCOT-147 §4 demanded was run and recorded reproducibly
+     (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
+     `results/calibration/ercot160_texas_hub_screen.json`). EIA's free NGWU
+     spot table carries **Waha/Katy/Agua Dulce/Carthage at ZERO mentions** on a
+     real page against Chicago's 6 and Henry Hub's 10 — a row cannot exist at
+     zero; the lone "Houston Ship"/"Permian" hits are narrative prose quoting a
+     WEEKLY average. ERCOT's own catalog: 5,773 products, 6 mention fuel,
+     **none is a price series** (FFSS/RMR/Fuel-Mix/Exceptional-Fuel-Cost); the
+     settlement Fuel Index Price is not a data product. **⇒ NGI/Platts/Argus
+     only = OWNER LICENSING DECISION**, compounded by the unresolved
+     `docs/data-licensing.md` §5 finding. **DO-NOT-REDO:** do not re-screen the
+     free EIA/ERCOT paths, and **never substitute Henry Hub** — ERCOT-147 §3's
+     confound is precisely that 63–67 % of CT capacity's daily p50 sits below
+     its own sheet-HR × HH burn, so a HH stand-in assumes away the object.
+   - **(c) RESHAPED — and the charter's sizing was wrong in KIND.** The
+     crosswalk's `site` column is not one grain: `CC_REGULAR` holds a site
+     prefix (`RIONOG`/`RIONOG_CC1`), `CT_PEAKER` holds the **full resource
+     name** (`VICTPORT_CTG01`) — measured **165/165 CT rows match a corpus
+     RESOURCE name, 0/165 match a site prefix**. So "165 CT_PEAKER sites, 6
+     accepted" counts RESOURCES and the "~150-site hand crosswalk" is not the
+     job. Most CT resources (and most CT capacity) **already carry a candidate
+     row** — the bulk of the work is ACCEPT/REJECT adjudication, with a small
+     industrial-cogen-heavy tail (DOWGEN, FORMOSA) carrying no row at all.
+     Both now stand on item 7's newly-intaken published spine (resource →
+     substation → load zone, measured 186/191 and 50/50), leaving
+     **substation → EIA plant code** as the single judgement step — NP4-160-SG
+     carries no EIA identifier. Census:
+     `scripts/probes/ercot160_ct_target_population.py`,
+     `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
+     session: its only consumer is the lever, which (b) still blocks.
 
 ### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
