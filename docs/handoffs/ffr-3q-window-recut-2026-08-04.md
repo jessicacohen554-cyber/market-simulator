@@ -14,7 +14,28 @@ not the result.
 
 ## 0. Headline
 
-*(pending — filled after the arms land)*
+1. **Task 0 — VERIFIED.** The enumerated carve-out in `scripts/lib/holdout_policy.py` does cover a
+   base-2021 T1-FF window; `--forward-from-base` routes through the same `_validate_window`.
+   No carve-out added or widened. §1. *(Discharged Addendum I.2's escalation clause — but see
+   item 3, which is the part that determination did not reach.)*
+2. **Task 2 — D-9(i) is a NO-OP for T1-H, and the H.4 convergence was wrong on that side.** All
+   **57** registered plain-hindcast sidecars already run `[2021, 2023, 2024, 2025]`; T1-H has
+   always been at the five-year posture G.5(a) moves the T1-FF gate *to*. The censoring survives
+   and **no window length can remove it** — forward is closed by rule 22, backward by the 2021
+   demand floor. Only the unsigned D-9(ii) can recover it. Escalated, not implemented. §3.
+   *(Accepted upstream: Addendum J re-opened D-9 on this finding.)*
+3. **Task 1 — STOP-THE-LINE. The re-cut window SOLVED 2022, a validation-tier holdout year, under
+   an ACTIVE freeze — and the harness printed a banner promising it would not.** Both arms:
+   `solved [2021, 2022, 2023, 2024, 2025], bridged []`, with measured 2022 demand, renewable CF,
+   outage and hydro read. Cause is a harness defect — `_validate_window` drops 2022 as a bridge and
+   never policy-checks it, while `runner.is_bridge` un-bridges it because T1-FF sets
+   `crossover_forward_year = base_year = 2021`. **Base 2021 is the first posture whose window
+   contains a bridge year, so this lane is the first that could hit it.** Bundles quarantined,
+   nothing registered. **No I6/I7/I12 re-probe is reported** — it would describe a different
+   experiment. Escalated; not patched by this lane. §2.2.
+4. **FH-4/FH-5 is NOT unblocked, and G.5(a)'s gate re-cut cannot proceed until the seam is
+   fixed.** Nothing promoted, no default flipped, no band widened, no threshold moved, no marker
+   spent.
 
 ---
 
@@ -131,9 +152,128 @@ which is the one place Addendum D's *HOLD PROMOTION* permits it.
    non-empty, so the reportable precondition is whether `due` is ever non-empty in this window —
    that is what "could it bind" means here, and it is readable from the default-off arm.
 
-### 2.2 Result
+### 2.2 Result — **STOP-THE-LINE. The re-cut window SOLVED 2022. No re-probe is reported.**
 
-*(pending)*
+**Both arms solved a validation-tier holdout year under an ACTIVE holdout spend freeze.** The
+arms ran to completion (ERCOT, base 2021, vintage 2020, Arm R, ~25 min each, 2 concurrent) and
+both printed:
+
+```
+[full_forward] done. solved [2021, 2022, 2023, 2024, 2025], bridged []
+```
+
+`meta.json`, both arms: `solved_years: [2021, 2022, 2023, 2024, 2025]`, `bridged_years: []`,
+`leakage_violations: []`, `holdout_freeze_active_at_launch: true`.
+
+**2022 data was READ, not merely stepped over.** From the arm-A log:
+
+```
+year 2022: T1-FF Arm R given-weather rebind -- demand profile and renewable CF
+           re-seeded from weather year 2022
+ERCOT 2022: correlated forced-outage derate (weather year 2022, era post) ...
+Loaded ERCOT 2022 hydro budget: 15 plants, 350.8 GWh annual, 554 MW nameplate
+```
+
+Measured 2022 demand, renewable CF, outage and hydro all entered the solve, and a
+`year_2022.parquet` was written in each bundle.
+
+**I am not reporting an I6/I7/I12 re-probe, and the three-point comparison the charter asked for
+is NOT delivered.** It would be invalid: the fleet these invariants describe evolved *through* a
+measured-2022 solve, which is not the posture the FH-1 §3.3 gate tests. Quoting those numbers as
+the re-cut gate's result — in either direction — would be reporting a different experiment under
+the gate's name. Both bundles carry a `QUARANTINE-DO-NOT-REGISTER.txt`, neither is registered,
+and `frontend/data/hindcast/` is untouched.
+
+#### 2.2.1 Root cause: the guard and the runner disagree about what a "forward year" is
+
+This is a **harness defect**, not an operator choice, and it is in code both prior probes ran
+without ever exercising.
+
+`runner.py` decides bridging as:
+
+```python
+is_bridge = (config.hindcast and year in HINDCAST_BRIDGE_YEARS
+             and not config.is_crossover_forward_year(year))
+```
+
+T1-FF's whole construction is to point the crossover boundary at the window's **own base year**
+(`crossover_forward_year = start_year`). At base 2021 that makes **every** year ≥ 2021 a
+"crossover forward year" — including the bridge years. Measured at this HEAD:
+
+| year | in `HINDCAST_BRIDGE_YEARS` | `is_crossover_forward_year` | ⇒ `is_bridge` |
+|---|---|---|---|
+| 2022 | ✅ | ✅ (≥ 2021) | **False — SOLVED** |
+| 2026 | ✅ | ✅ (≥ 2021) | **False — would also be solved** if a window reached it |
+
+Meanwhile `_validate_window` computes its solve-year set with the **`--crossover` flag**, which is
+`False` for a T1-FF run — so it excluded 2022 as a bridge and **never policy-checked it**:
+
+```
+_validate_window solve-year set (what the guard checked): [2021, 2023, 2024, 2025]
+```
+
+The un-bridging clause is correct *for its original purpose*: a T1-X crossover's forward years are
+2026/2027, solved in forecast mode reading no measured actuals, which rule 22 explicitly permits.
+Re-pointing the boundary at 2021 silently extends that permission to a year for which it was never
+true. **The fail-closed policy check never sees 2022, because the guard removed it before the
+check ran.**
+
+#### 2.2.2 Why no earlier lane hit this, and why my Task 0 verification did not catch it
+
+Every prior T1-FF run — FH-1's gate, all three FFR-3F ERCOT arms, all three PJM arms — was **base
+2023, window 2023–2025**. 2022 is not in that window, so the defect could not fire. **Base 2021 is
+the first posture whose window contains a bridge year, and that posture is precisely what G.5(a)
+authorized.** This lane is the first that could have hit it, and did, on its first solve.
+
+**My Task 0 determination in §1 was correct about what it checked and wrong about what it
+implied, and that is my error to own.** Addendum I.2 asked whether the carve-out *enumerates* a
+base-2021 T1-FF window; it does, and `_validate_window` passes. But I reported that as "no
+out-of-training year is solved" (§1.3), which is a claim about **runtime behaviour** that I
+verified only against the **guard**. The guard is not what decides which years get solved. The
+check I should have run — and did not — was the runner's `is_bridge` predicate at base 2021,
+which takes about a minute and would have caught this before burning two solves. I verified the
+gate, not the behaviour behind it.
+
+#### 2.2.3 Governance position, stated plainly
+
+* **A validation-tier year (2022) was solved and its measured data read, under an ACTIVE freeze.**
+  Rule 22's bridge contract — *"evolved across, never solved, data never read"* — is violated in
+  both halves.
+* **Nothing was scored outside 2023–2025.** Scoring is independently bounded on both sides
+  (`score_crossover._scored_year`, `score_capacity_hindcast.SCORED_YEARS`), and no scorer ran.
+* **No marker was spent and no marker file was touched.** `final` is still EMPTY, `complete` is
+  unchanged, `holdout-freeze.json` is unmodified.
+* **Nothing is registered.** No sidecar, no dashboard entry, no matrix verdict claimed from these
+  arms.
+* **The harness asserted the opposite at launch.** Its governance banner printed *"bridges
+  [2022, 2026] are never solved or read"* — a guarantee it then broke. That the false assurance is
+  printed by the same script that breaks it is the most dangerous property here: a future lane
+  reading the banner would have no reason to doubt it.
+
+**This is escalated to the owner, not worked around.** I did not patch `is_bridge` to make my own
+window legal — that is the rule-22-adjacent move this policy exists to prevent, and it is the
+same class of act Addendum I.1 refused to authorize for the carve-out. The fix is a real code
+change to a solve-affecting guard, it needs its own charter and its own review, and G.5(a)'s
+gate re-cut **cannot proceed until it lands**.
+
+#### 2.2.4 What the successor needs
+
+1. **Fix the seam, under its own charter.** `is_bridge` must not treat a bridge year as
+   un-bridged merely because it sits above a T1-FF base-year boundary. The un-bridging clause
+   should be scoped to genuine crossover forward years (`crossover=True`, year ≥ 2026), not to any
+   year above `crossover_forward_year`. `_validate_window` must additionally policy-check every
+   year the runner will actually solve, rather than a set it computes from a different predicate —
+   the two must share one definition (rule 19 `[R-ONE-MECH]` applied to the guard itself).
+2. **Add the regression test that would have caught it:** at base 2021, assert the runner's
+   `is_bridge(2022)` is True and that `solved_years` excludes 2022. A parity test between
+   `_validate_window`'s solve set and the runner's realized `solved_years` would catch the whole
+   class.
+3. **Re-run the gate only after (1) lands.** The re-probe is unexecuted; §2.1's pre-registration
+   stands and can be reused verbatim.
+4. **Check whether any committed artifact is affected.** These two bundles are quarantined and
+   unregistered. I did **not** audit whether any previously-registered run hit the same seam — no
+   prior T1-FF window contains a bridge year, so the exposure looks nil, but that is reasoning
+   from the window list, not an audit, and it should be confirmed rather than assumed.
 
 ---
 
@@ -276,6 +416,58 @@ on; not fixed here, because it is FFR-3K's charter and not this one's.
 
 ---
 
-## 4. What this evidence does NOT separate
+## 4. What this evidence does NOT separate — stated plainly
 
-*(pending)*
+Mirrors FFR-3C §5 / FFR-3F §7.
+
+1. **It does not tell you whether the re-cut gate passes or fails.** That is the deliverable
+   G.5(a) authorized and it is **not delivered**. The arms produced numbers; those numbers
+   describe a run that solved 2022 on measured data, which is not the gate's posture. Reporting
+   them as the re-probe — green *or* red — would be substituting a different experiment. The
+   charter's three-point I6/I7/I12 comparison against FH-1's FAIL/FAIL/WARN and FFR-3F's
+   PASS/PASS/WARN remains **open**.
+2. **It does not measure whether a five-year window makes the retirement layer observable.** The
+   pre-registered primary read — `pipeline_events` per year, and whether a 2021/2022 decision can
+   execute in-window under `L_coal` = 3 — is unmeasured. The mechanical argument in §2.1 that only
+   a 2021 or 2022 decision *could* execute inside a window ending 2025 stands as **reasoning, not
+   measurement**, and must not be cited as a result.
+3. **It does not establish whether the exit-throughput cap can bind.** Whether the `due` set is
+   ever non-empty in a five-year window is still the open question FFR-3F §10.2 left. `due` was
+   not read from these bundles, because reading anything from them as evidence is the thing this
+   section refuses.
+4. **It does not attribute the I12 inversion, and did not try to.** That is FFR-3N's lane. Its
+   band-basis half has landed and is worth carrying: the exact basis gap is **6.5975 pp**
+   (`0.942 × 1.1375 − 1 = 7.1525 %` enforced vs **13.75 %** scored), which **corrects FFR-3C §2.1's
+   6.65 pp** — that figure was taken off a rendered `13.8%` rather than the `0.1375` scalar.
+   FFR-3N's attribution arms were still open at this HEAD.
+5. **It does not audit prior runs for the same seam.** No previously-registered T1-FF window
+   contains a bridge year, so the exposure *looks* nil — but that is inference from the window
+   list, not an audit, and §2.2.4 item 4 asks for it to be confirmed.
+6. **On Task 2, it does not isolate the commissioning lag's effect on additions.** §3.3's
+   lag-off/lag-on table crosses **three** changed fields, not one. It shows direction and rough
+   magnitude only; an effect size needs a paired control no committed leg provides.
+7. **It does not re-validate anything scored on the three-year window.** Every committed T1-H
+   additions verdict was produced under the H.4 censoring and stays interpreted that way — which,
+   per §3, is now permanent rather than pending a re-measurement.
+
+---
+
+## 5. What this session does NOT claim
+
+* **FH-4/FH-5 is NOT unblocked.** The lift is the manager's, on a landed fix plus a green
+  re-probe. There is no re-probe. Addendum I.1 is explicit that G.5(a) authorized the re-cut and
+  the re-probe, not the result.
+* **No default flipped, nothing promoted, no band widened, no threshold moved, no damper
+  unarmed** outside the explicitly-labelled `--retirement-rule legacy` control arm. `exit_rate_limits`
+  stays default-OFF and was never armed. D-1 and D-2 stay armed exactly as Addendum D left them.
+* **No holdout marker spent and no marker file modified.** `final` EMPTY, `complete` unchanged,
+  `holdout-freeze.json` unmodified, NEISO's locked test still SPENT.
+* **Nothing registered anywhere.** No backcast registry, no `frontend/data/hindcast/` sidecar, no
+  forecast namespace, no dashboard entry. Both bundles carry a `QUARANTINE-DO-NOT-REGISTER.txt`.
+* **No mechanism-matrix verdict was claimed from the quarantined arms.** A run that solved a
+  holdout year cannot adjudicate a cell in either direction, so `exit_rate_limits` and
+  `economic_retirement_screen` keep their existing ERCOT `O`. The rule-28(b) duty is discharged by
+  recording the DO-NOT-REDO fact — *the base-2021 T1-FF posture is blocked on a harness defect* —
+  rather than by inventing a verdict.
+* **The harness defect was NOT patched by this lane.** Editing a solve-affecting guard to make my
+  own window legal is precisely the move rule 22 exists to prevent; it needs its own charter.
