@@ -40,6 +40,112 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from scripts import register_hindcast as RH  # noqa: E402
+from scripts.lib.run_record import (  # noqa: E402
+    Derived,
+    FromConfig,
+    RecordSpec,
+    config_field_names,
+)
+
+_SRC = _ROOT / "src"
+if _SRC.exists() and str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from market_sim.config.capacity_market import (  # noqa: E402
+    resolve_capacity_market_clearing,
+)
+
+#: The forecast sidecar's config-describing block (FFR-3R). Before this, three
+#: of these keys were sourced from neither the config NOR ``args`` but from
+#: HARDCODED LITERALS mirroring the shipped defaults ("the FF-1F posture
+#: defaults resolved by forecast mode at HEAD") — the same defect class one
+#: step worse, since a mirrored literal cannot even track a flag. FFR-3D
+#: recorded the cost of exactly that pattern in ``build_config``: "a mirrored
+#: literal here would have silently overridden both flips and made the signed
+#: decisions inert". They are now read off the run's OWN resolved
+#: ``ScenarioConfig`` dump.
+SIDECAR_RECORD_SPEC = RecordSpec(
+    {
+        "iso": FromConfig(),
+        "mode": FromConfig(),
+        "start_year": FromConfig(),
+        "end_year": FromConfig(),
+        # The RESOLVED per-ISO clearing gate, not the scalar field — under
+        # --golden-posture the scalar stays False while the by-ISO dict carries
+        # the curve-ON ISOs, and forecast_verdict._curve_on reads this key
+        # (FFR-2E).
+        "capacity_market_clearing": Derived(
+            lambda cfg, ctx: bool(resolve_capacity_market_clearing(cfg, ctx["iso"])),
+            "the RESOLVED per-ISO gate (FFR-2E), not the scalar field",
+        ),
+        "datacenter_load_path": FromConfig(),
+        "correlated_forced_outage": FromConfig(cast=bool),
+    },
+    name="forecast-baseline sidecar meta",
+)
+
+
+def _extra_meta_spec(meta: dict) -> RecordSpec:
+    """Auto-declare every config-named key a campaign merged into ``meta``.
+
+    ``--extra-meta`` (and a leg driver's summary block) can contribute keys this
+    registrar has no vocabulary for — the CES legs record
+    ``federal_ces_crediting`` that way. Rejecting them as undeclared would break
+    a legitimate provenance channel; leaving them unchecked is the FFR-3R defect
+    with a longer fuse. So each is declared ``FromConfig`` on the spot, which
+    means it must EQUAL the run's own resolved config: a hand-typed claim about
+    the solve is allowed through only when the solve agrees with it.
+
+    Args:
+        meta: The assembled sidecar meta.
+
+    Returns:
+        A spec declaring the config-named keys not already in
+        ``SIDECAR_RECORD_SPEC``.
+    """
+    extra = (config_field_names() & set(meta)) - set(SIDECAR_RECORD_SPEC.sources)
+    return RecordSpec(
+        {k: FromConfig() for k in sorted(extra)}, name="campaign extra_meta"
+    )
+
+
+def resolved_config(summary_path: Path, summary: dict) -> dict | None:
+    """Return the run's RESOLVED ``ScenarioConfig`` dump, or ``None``.
+
+    ``run_full_horizon.write_run_config`` writes ``run_config.json`` beside the
+    summary from the solve's own ``run_dir/config.yaml`` — the faithful
+    post-``__post_init__`` resolution, which is what a record must describe.
+    Falls back to reading that ``config.yaml`` directly when the run predates
+    the sidecar artifact but its cache directory is still on disk.
+
+    Returns ``None`` when neither exists. A caller must then record the
+    config-describing keys as ``None`` (unknown) rather than substitute a
+    default: fabricating a value is how the record starts lying, and rubric §4
+    forbids authoring an artifact after the fact.
+
+    Args:
+        summary_path: Path to the ``full_horizon_summary.json``.
+        summary: Its parsed contents (for ``run_dir``).
+
+    Returns:
+        The resolved config mapping, or ``None``.
+    """
+    rc = summary_path.parent / "run_config.json"
+    if rc.exists():
+        payload = json.loads(rc.read_text())
+        sc = payload.get("scenario_config")
+        if isinstance(sc, dict) and sc:
+            return sc
+    run_dir = summary.get("run_dir")
+    if run_dir:
+        cfg_yaml = Path(run_dir) / "config.yaml"
+        if cfg_yaml.exists():
+            import yaml
+
+            resolved = yaml.safe_load(cfg_yaml.read_text())
+            if isinstance(resolved, dict) and resolved:
+                return resolved
+    return None
 
 
 def build_sidecar(
@@ -56,10 +162,21 @@ def build_sidecar(
     ``ff-t1f-baseline`` or ``ces-poc-bau``). ``kind`` records the run family the
     FF-5A forecast run explorer groups by (``t1f`` default; ``ces-poc`` for a
     T1-scale CES proof-of-concept leg). ``extra_meta`` is merged into ``meta``
-    verbatim — used to record a CES leg's premium level / case / campaign. The
-    two FF-1F posture defaults resolved by forecast mode
-    (``datacenter_load_path="mid"``, ``correlated_forced_outage=True``) are
-    recorded in ``meta`` so the "before" leg is self-describing.
+    verbatim — used to record a CES leg's premium level / case / campaign.
+
+    The config-describing keys (``mode``, the resolved ``capacity_market_clearing``
+    gate, ``datacenter_load_path``, ``correlated_forced_outage``, the window) are
+    read from the run's OWN resolved ``ScenarioConfig`` dump through
+    ``SIDECAR_RECORD_SPEC`` and asserted against it before the sidecar is
+    returned (FFR-3R). They were previously LITERALS mirroring the shipped
+    forecast-mode defaults, so the sidecar asserted a posture rather than
+    reporting one; a default flip or a new control-arm flag would have made
+    every sidecar silently wrong, which is exactly the FFR-3D history. Keys the
+    dump cannot answer are recorded ``null``, never defaulted.
+
+    ``extra_meta`` is merged AFTER the block and is re-checked, so a hand-typed
+    ``--extra-meta`` cannot overwrite a config-describing key with a claim the
+    solve contradicts.
     """
     summary = json.loads(summary_path.read_text())
     iso = summary["iso"]
@@ -102,18 +219,25 @@ def build_sidecar(
         for r in summary.get("trajectory", [])
     ]
 
+    # Config-describing keys come from the run's OWN resolved ScenarioConfig
+    # dump (FFR-3R), never from a literal mirroring today's shipped default.
+    # When the dump is missing they are recorded as null — "not recoverable
+    # from this bundle" is the truthful statement; a substituted default is the
+    # defect (see resolved_config).
+    resolved = resolved_config(summary_path, summary)
+    if resolved is not None:
+        config_block = SIDECAR_RECORD_SPEC.build(resolved, {"iso": iso})
+    else:
+        config_block = {k: None for k in SIDECAR_RECORD_SPEC.sources}
+        config_block["iso"] = iso
+        config_block["start_year"] = start
+        config_block["end_year"] = end
+
     meta = {
-        "iso": iso,
         "kind": kind,
         "label": label,
         "variant": "forecast-baseline",
-        "mode": "forecast",
-        "start_year": start,
-        "end_year": end,
-        "capacity_market_clearing": summary.get("capacity_market_clearing", False),
-        # FF-1F posture defaults resolved by forecast mode at HEAD (S2.1a c/d).
-        "datacenter_load_path": "mid",
-        "correlated_forced_outage": True,
+        **config_block,
         "cache_key": summary.get("cache_key"),
         "bundle": summary.get("run_dir"),
         "solved_years": summary.get("solved_years", []),
@@ -129,6 +253,17 @@ def build_sidecar(
     }
     if extra_meta:
         meta.update(extra_meta)
+    if resolved is not None:
+        # Re-checked AFTER the extra_meta merge: --extra-meta is a hand-typed
+        # JSON blob on the command line, the most direct way there is to assert
+        # something the solve did not do. Any key it adds that names a
+        # ScenarioConfig field is AUTO-DECLARED FromConfig and thereby checked
+        # for equality against the run's own resolved config — a campaign
+        # vocabulary this registrar cannot know in advance (the CES legs record
+        # federal_ces_crediting here) stays usable, but only when it is true.
+        SIDECAR_RECORD_SPEC.merged(_extra_meta_spec(meta)).assert_sourced(
+            meta, resolved, {"iso": iso}
+        )
     return {
         "run_id": run_id,
         "meta": meta,

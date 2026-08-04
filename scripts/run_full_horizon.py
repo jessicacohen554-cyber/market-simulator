@@ -82,6 +82,47 @@ from market_sim.config.schedulable import (  # noqa: E402,F401  (re-export)
     MAX_UNAUTHORIZED_SOLVE_YEARS,
     assert_schedulable,
 )
+from scripts.lib.run_record import (  # noqa: E402
+    Derived,
+    FromConfig,
+    RecordSpec,
+)
+
+#: The ``full_horizon_summary.json`` config-describing block (FFR-3R). Every
+#: key here is read off the ScenarioConfig the solve ran on; a new
+#: ScenarioConfig field cannot be summarized from ``args`` (or from a literal)
+#: without being declared. The summary is the input to
+#: ``register_forecast_baseline.build_sidecar`` and, through it, to the FF-2D
+#: verdict machinery, so a wrong value here is a wrong published classification
+#: — that is what FFR-2E found when the clearing gate was flag-sourced.
+SUMMARY_RECORD_SPEC = RecordSpec(
+    {
+        "iso": FromConfig(),
+        "start_year": FromConfig(),
+        "end_year": FromConfig(),
+        # The RESOLVED per-ISO clearing gate, not the scalar flag: under
+        # --golden-posture the scalar stays False while
+        # capacity_market_clearing_by_iso carries the curve-ON ISOs, and
+        # forecast_verdict._curve_on reads this key — so a flag-sourced value
+        # recorded every curve-ON T1-F leg as curve-OFF (FFR-2E / audit FR-14).
+        "capacity_market_clearing": Derived(
+            lambda cfg, ctx: bool(resolve_capacity_market_clearing(cfg, ctx["iso"])),
+            "the RESOLVED per-ISO gate (FFR-2E), not the scalar field",
+        ),
+        # Normalized to None when empty so an absent posture reads as absent
+        # rather than as an empty dict.
+        "capacity_market_clearing_by_iso": Derived(
+            lambda cfg, ctx: (
+                dict(cfg.capacity_market_clearing_by_iso)
+                if cfg.capacity_market_clearing_by_iso
+                else None
+            ),
+            "empty/None normalized to null",
+        ),
+        "weather_year": FromConfig(),
+    },
+    name="full_horizon_summary.json",
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -460,6 +501,7 @@ def solve_and_summarize(
     sample_interval: float = 0.5,
     redirect_cache: bool = True,
     extra_summary: dict | None = None,
+    extra_spec: "RecordSpec | None" = None,
 ) -> dict:
     """Solve one forecast config with instrumentation, write its summary, return it.
 
@@ -487,6 +529,12 @@ def solve_and_summarize(
         extra_summary: Optional dict merged into the summary verbatim (a leg
             records its ``case`` / ``premium_usd_per_mwh`` / ``crediting`` /
             ``campaign`` there for the CES sidecar).
+        extra_spec: Optional :class:`RecordSpec` declaring any config-describing
+            keys ``extra_summary`` contributes (FFR-3R). Required whenever
+            ``extra_summary`` carries a key naming a ``ScenarioConfig`` field:
+            the provenance check refuses an undeclared one, so the caller
+            deliberately opts it in and it is then verified against the solved
+            config like every other key.
 
     Returns:
         The summary dict (also written to disk). ``summary["error"]`` is the
@@ -586,29 +634,17 @@ def solve_and_summarize(
 
     start_year, end_year = config.start_year, config.end_year
     summary = {
-        "iso": iso,
-        "start_year": start_year,
-        "end_year": end_year,
-        # The RESOLVED per-ISO clearing gate, not the scalar flag. FFR-2E fixed
-        # exactly this in the sibling harness (run_capacity_hindcast) and gave
-        # the reason: forecast_verdict._curve_on reads this key, so a
-        # flag-sourced value "would have mis-classified every shipped-posture
-        # leg as curve-OFF". The same defect was live here — under
-        # --golden-posture the scalar stays False while
-        # capacity_market_clearing_by_iso carries {PJM,MISO,CAISO,NEISO,NYISO:
-        # True}, so every curve-ON T1-F leg recorded itself curve-OFF. Records
-        # what ACTUALLY ran (rule 24: the run record may not diverge from the
-        # solved config).
-        "capacity_market_clearing": bool(resolve_capacity_market_clearing(config, iso)),
-        "capacity_market_clearing_by_iso": (
-            dict(config.capacity_market_clearing_by_iso)
-            if config.capacity_market_clearing_by_iso
-            else None
-        ),
+        # Config-describing block, built FROM THE SOLVED CONFIG by
+        # SUMMARY_RECORD_SPEC (FFR-3R) and re-asserted against it below. The
+        # FFR-2E comment this replaced explained, key by key, why the clearing
+        # gate is read resolved rather than off the scalar flag; the spec now
+        # states that once, in a form the code enforces, and refuses any new
+        # config-named key added here from another source.
+        **SUMMARY_RECORD_SPEC.build(config, {"iso": iso}),
         # Owner decision D-7(ii), signed 2026-08-02: a single-draw forecast
         # deliverable carries the weather-conditional label WITH the artifact.
+        # A build-time constant, not a config field.
         "weather_posture": WEATHER_POSTURE,
-        "weather_year": getattr(config, "weather_year", None),
         "cache_key": cache_key,
         "run_dir": str(run_dir) if run_dir else None,
         "error": error,
@@ -638,6 +674,12 @@ def solve_and_summarize(
 
     if extra_summary:
         summary.update(extra_summary)
+    # Re-checked after the extra_summary merge: a leg driver may add keys here
+    # verbatim, and one that names a ScenarioConfig field must agree with the
+    # config the solve ran on (FFR-3R). A driver that legitimately records
+    # extra config-describing keys (run_ces_leg's CES provenance block)
+    # DECLARES them via extra_spec — composition, not a blanket exemption.
+    SUMMARY_RECORD_SPEC.merged(extra_spec).assert_sourced(summary, config, {"iso": iso})
     summary_path = out_dir / "full_horizon_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2) + "\n")
 
