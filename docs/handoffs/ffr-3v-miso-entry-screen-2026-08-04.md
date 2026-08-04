@@ -59,10 +59,13 @@ the generic 0.18 fallback rather than MISO's published seasonal credit (§4.6b).
 Two further findings sit alongside it, both independent of the margin:
 
 * **Even a profitable solar screen could not have passed FC-3.** The growth
-  ladder + pending-queue netting **freeze** MISO solar at 1.236 GW/yr, so the
-  maximum solar that can reach COD inside 2021–2025 is **≈3.7 GW against 18.649
-  GW actual (−80 %)** (§5). The dampers are not why solar is zero, but they
-  cap the best achievable outcome well short of a pass.
+  ladder and the pending-queue netting sit on an exact knife-edge
+  (`ENTRY_GROWTH_LIMIT_MULTIPLE = 2.0` against `ENTRY_COD_LAG_YEARS = 2`), so
+  the ladder **cannot ratchet at all** and MISO solar is pinned at 1.236 GW/yr
+  forever. The most solar that can reach COD inside 2021–2025 is **2.473 GW
+  against 18.649 GW actual — a −86.7 % band at best** (§5). The dampers are not
+  why solar is zero, but they cap the best achievable outcome an order of
+  magnitude short of a pass.
 * **The wind PTC is credited over the plant's full 30-year book life** with no
   10-year statutory window, while the solar ITC is booked correctly. The screen
   therefore credits wind **$86,549/MW-yr** and solar **$26,787–32,873/MW-yr**
@@ -370,37 +373,62 @@ price signal — that is §3's job.)*
 
 ## 5. The second, independent blocker: the ladder cannot ratchet under the COD lag
 
-This is arithmetic on the code, not a measurement of this leg (solar decides
-zero, so the leg never exercises it) — but it bounds what any fix could
-achieve, and it is checkable.
+This is a **counterfactual on the code**, not a measurement of this leg — solar
+decides zero, so the leg never exercises the caps. It bounds what any
+revenue-side fix could achieve, and it is checkable.
 
-`entry_rate_caps_mw[tech] = 2.0 × prior_max_gw[tech] × 1000`
-(`ENTRY_GROWTH_LIMIT_MULTIPLE`, the ReEDS hard bound), and the ladder budget is
-netted by the **pending pipeline**:
-`_ladder_remaining = max(0, cap − pending_by_tech)` (`new_entry.py:1140–1148`).
-`prior_max_gw` rises only when a year's decision **exceeds** it
-(runner.py:1094–1100). With `ENTRY_COD_LAG_YEARS = 2`, exactly one year of
-decisions is pending at any time. Writing M for the prior max:
+Three code sites, and nothing else, drive it:
 
-| decision year | ladder cap | pending | remaining | decides | new prior max |
-|---|---|---|---|---|---|
-| 2021 | 2M₀ = 1.236 GW | 0 | 1.236 | 1.236 | M₁ = 1.236 |
-| 2022 | 2M₁ = 2.472 | 1.236 (2021, COD 2023) | 1.236 | 1.236 | 1.236 (no rise) |
-| 2023 | 2.472 | 1.236 (2022, COD 2024) | 1.236 | 1.236 | 1.236 |
-| … | … | … | … | 1.236 | **frozen** |
+* `_ladder_remaining = max(0, entry_rate_caps_mw[tech] − pending_by_tech[tech])`
+  where `entry_rate_caps_mw = ENTRY_GROWTH_LIMIT_MULTIPLE (=2.0) × prior_max ×
+  1000` (`new_entry.py:1140–1148`, runner.py:1079–1086);
+* a cleared VRE decision is **appended to `entry_pipeline`** at
+  `cod_year = year + ENTRY_COD_LAG_YEARS` (`new_entry.py:1172–1188`), and rows
+  are **removed at their COD** in step 4.5, before the screen runs
+  (`evolve.py:578–602`);
+* `prior_max_gw` rises **only when a year's decision exceeds it**
+  (runner.py:1094–1100).
 
-**The doubling is exactly cancelled by the one year of pending MW, so economic
-entry is pinned at 2 × the measured seed forever.** For MISO solar that is
-1.236 GW/yr; the three in-window decision cohorts commission in 2023/2024/2025
-for **≈3.71 GW**, a −80 % FC-3 additions band at best.
+Trace, MISO solar assumed profitable and highest-margin every year, seed 0.618
+GW measured from `vintage_2020`:
+
+```
+--- shipped: entry_commissioning_lag ON (lag = 2) ---
+   yr  ladder cap MW  pending MW  remaining   decides  COD yr  new prior max GW
+ 2022          1,236           0      1,236     1,236    2024             1.236
+ 2023          2,473       1,236      1,236     1,236    2025             1.236
+ 2024          2,473       1,236      1,236     1,236    2026             1.236
+ 2025          2,473       1,236      1,236     1,236    2027             1.236
+  -> solar COMMISSIONED inside 2021-2025:  2.473 GW   (actual 18.649, band +/-15%)
+
+--- control: lag OFF (in-year commissioning) ---
+ 2022          1,236           0      1,236     1,236    2022             1.236
+ 2023          2,473           0      2,473     2,473    2023             2.473
+ 2024          4,946           0      4,946     4,946    2024             4.946
+ 2025          9,891           0      9,891     6,000    2025             6.000   <- per-tech queue cap
+  -> solar COMMISSIONED inside 2021-2025: 14.655 GW
+```
+
+**The ladder cannot ratchet at all under the shipped configuration.** With a
+COD lag of L years, `(L−1)` years of decisions are pending when the screen
+runs, so `remaining = (K − L + 1) × D_prev`. At the shipped **K = 2.0 and
+L = 2** that is exactly `1 × D_prev` — the doubling and the pending netting
+cancel **exactly**, and economic entry is pinned at 2 × the measured seed
+forever. The knife-edge is `K = L`; the shipped values sit on it.
+
+For MISO solar the ceiling is therefore **2.473 GW commissioned in-window, a
+−86.7 % FC-3 additions band at best** — even with a perfect revenue side.
+Removing only the lag lifts it to 14.655 GW (−21.4 %, still outside the ±15 %
+band, but an order of magnitude closer), at which point the **6.0 GW per-tech
+queue cap** becomes the binder rather than the ladder.
 
 This reconciles with FFR-2B's observation that the MISO gas_ct ladder *did*
-double (1,350 → 2,700 → 5,241 MW): that channel was the **reserve-margin
-backstop**, which commissions **in-year**, so it never nets a pending row and
-the ratchet works. **The ladder ratchets for the backstop and freezes for
-economic entry** — a structural asymmetry between two consumers of the same
-budget. Recorded as an observation; whether it is a defect or the intended
-conservatism is an owner call.
+double (1,350 → 2,700 → 5,241 MW): that channel is the **reserve-margin
+backstop**, which commissions **in-year** and so never nets a pending row —
+i.e. the "control" column above. **The same ladder ratchets for the backstop
+and freezes for economic entry.** Recorded as an observation. Whether the
+knife-edge is a defect or intended conservatism is an owner call; **nothing was
+unarmed here and no revert is recommended** (Addendum D).
 
 ---
 
