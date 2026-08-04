@@ -234,10 +234,19 @@ would still miss its LCOE. **Solar's 2024 rejection is not a close margin call;
 it is arithmetically unreachable**, and no capture-shape, siting or CF argument
 can touch it.
 
-The same number condemns the peaker outright: `gas_ct`'s variable cost is
-**$41.39/MWh**, above the signal's $39 maximum, so its 2024 energy margin is
-**exactly zero** by construction — the mechanical origin of the leg's gas_ct
-−100 % band.
+**Correction to this section's first draft:** I wrote that `gas_ct`'s $41.39/MWh
+variable cost sits above the $39 ceiling and so earns exactly zero. That
+conflated two years — $41.39 is the **2022** decision year's variable cost (gas
+at 2022 prices), screened against 2021's duals, not against this $39 signal.
+The accurate statement is milder and still damning: in the 2024 decision year
+`gas_ct`'s variable cost is **$25.91/MWh** against a signal **mean of $25.92** —
+the marginal peaker is priced at exactly the average clearing price — so it
+earns **$8,727/MW-yr against a $128,112 CONE (6.8 %)**. A peaker's economics
+live in a tail this signal does not have.
+
+Note also that for thermal candidates `energy_revenue_per_mw_yr` is
+`Σₜ max(pₜ − vc, reserve_priceₜ)`, not energy alone (`new_entry.py:879–883`), so
+part of even that $8,727 is ancillary-service value rather than energy margin.
 
 This is `scarcity_price_overlay: False` in the resolved config doing the work:
 the gate on the ORDC adder inside `_lookahead_reprice_signal`
@@ -250,6 +259,48 @@ first, then anything near the margin. **That is a fourth distinct finding, and
 on this evidence it is the largest single suppressor of MISO entry in the
 2024/2025 decision years.** It is a price-formation issue upstream of every
 revenue-side lever in §7, and it is not what this lane was chartered to fix.
+
+### 2024 (screening on the $39-ceiling lookahead signal above)
+
+| tech | profitable | margin $/MW-yr | revenue | annual cost | cf used | build MW | `binding_cap` |
+|---|---|---|---|---|---|---|---|
+| **wind** | **Y** | **+19,165** | 77,750 | 58,585 | 0.3511 | **4,000** | `per_tech_cap` |
+| **solar** | **N** | **−35,946** | 51,426 | 87,372 | 0.2200 | **0** | **`unprofitable`** |
+| gas_cc | N | −74,876 | 72,118 | 146,994 | — | 0 | `unprofitable` |
+| gas_ct | N | −119,385 | 8,727 | 128,112 | — | 0 | `unprofitable` |
+| nuclear_smr | N | −612,619 | 204,351 | 816,969 | 0.90 | 0 | `unprofitable` |
+
+Solar's implied capture price is **$26.69/MWh** against a $43.18 break-even —
+its **worst** year of the three, and the year §3.2 shows was unreachable by
+construction. `renewable_additions` also records the **2022 cohort
+commissioning here** (4,000 MW wind into MISO-West at COD 2024) while a further
+4,000 MW is decided for COD 2026, outside the window: §5.1's trace, again,
+exactly.
+
+### 3.2b The screen values 2021 revenue against 2023 fuel costs
+
+Falls straight out of the three ledgers side by side:
+
+| decision year | solar revenue | wind revenue | gas_ct var cost | gas_cc var cost |
+|---|---|---|---|---|
+| 2022 | 67,759 | 94,623 | **41.39** | **28.52** |
+| 2023 | **67,759** | **94,623** | **29.06** | **19.89** |
+| 2024 | 51,426 | 77,750 | 25.91 | 17.69 |
+
+**The VRE revenues in 2022 and 2023 are byte-identical**, which independently
+confirms §4.7b's reading of the bridge: both decision years screen on the *same*
+2021 price series, because 2022 is never solved and `prior_results` stays
+pinned to the last solved year. But the thermal **variable costs move sharply
+between those same two years** (gas_ct 41.39 → 29.06), because `var_cost` is
+built from *that decision year's* gas price.
+
+So the 2023 decision screens **revenue at 2021's electricity prices against
+costs at 2023's fuel prices** — and gas_cc's apparent margin improves by
+$74,270/MW-yr on nothing but that mismatch. It is an artifact of the rule-22
+bridge, not a market signal. Solar and wind are immune (no fuel cost), which is
+why their rows are identical; every thermal row in the 2023 column is affected.
+Flagged, not pursued — it does not touch this lane's finding, and any fix is
+entangled with the quarantine the bridge exists to enforce.
 
 ### 3.3 CORRECTION to §4.6 — the capacity payment is zero for thermal too
 
