@@ -1,13 +1,14 @@
 {
  "program": "Forecast Finalization Program (FF)",
- "generated": "2026-07-20",
+ "generated": "2026-08-04",
  "sources": [
+  "docs/handoffs/ffr-3a3-battery-close-2026-08-04.md (FFR-3A-3 \u2014 post-FFR-3F re-measurement of the T1-H/T1-X halves)",
   "docs/handoffs/ff-t1-gate-2026-07.md (FF-2D \u2014 T1 gate battery, six ISOs)",
   "docs/handoffs/ff-poc-closeout-2026-07.md (FF-3E \u2014 full-solve readiness + \u00a72.1b scorecard)",
   "docs/handoffs/ff-t1-gate-verdicts.json (FC-1..FC-8 rubric verdicts)",
   "docs/forecast-development-plan-2026-07.md \u00a71.2 / \u00a72.1 / \u00a72.1b"
  ],
- "headline": "No ISO clears the T1\u2192T2 rubric gate at HEAD \u2014 all six read HOLD (FF-2D). No ISO clears the \u00a72.1b full-solve authorization gate either (FF-3E). This board is the \u00a72.1b evidence, not a green-wash: every remaining blocker is structural, routed to its L-CAP lane, none an FF-5A/dashboard target (rule 1).",
+ "headline": "No ISO clears the T1->T2 rubric gate at HEAD \u2014 all six read HOLD, unchanged from FF-2D and unchanged after FFR-3A-3 re-measured the T1-H and T1-X halves at the post-FFR-3F HEAD. No ISO clears the \u00a72.1b full-solve authorization gate either. NO DETERMINATION MOVED, but two band-level results did: MISO's retire.total_gw flipped PASS -> FAIL (its 3/3 retirement sweep does not survive the G3 cap-grain fix) and PJM's retirement depth improved 22.415 -> 18.862 GW. Both PJM and MISO now land exactly on the values FFR-2B measured against a paired control. This board is the \u00a72.1b evidence, not a green-wash: every remaining blocker is structural (rule 1).",
  "gate_reading": "The dominant T1-F blocker is FC-1 structural \u2014 the I4 capacity-accounting leak (the FF-0B \"A1\" finding, still open) for CAISO/PJM/MISO/NEISO, plus I7 base-year adequacy (A2) for CAISO/MISO/NYISO and ERCOT's I3 scarcity slack. PJM and NEISO are closest \u2014 their only T1-F blocker is the single I4 leak invariant; fix A1 and both clear FC-1. The FF-2C capacity-clearing flip is the structurally-correct mechanism and is working; the residuals it exposes are the open retirement-rule / backstop / capacity-accounting lanes, not tuning targets.",
  "readiness": "The FF-3E full-horizon readiness battery is GREEN for all six ISOs \u2014 the path is bug-free (input-resolution walk, config round-trip, kill-resume drill all clean; wall/RSS projected). Ten hours of compute today would buy a mechanically-clean but structurally-flawed golden run. Compute is not the binding constraint; the T1-F structural blockers are.",
  "tier_ladder": [
@@ -77,7 +78,8 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "frontier withdrawn 2026-07-17 (phantom-outage audit); no calibration-complete marker."
+     "detail": "keeper 2026-08-03-ercot158-pool-arm; determination NOT-YET; marker complete=False final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -106,7 +108,11 @@
     ]
    },
    "golden": "deferred (Wave 4, \u00a72.1b); fixture tests/golden/ercot_2026_2040.json is FROZEN (seeded f0f7c67, bands moved).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-03-ercot158-pool-arm",
+   "marker_complete": false,
+   "marker_final": false,
+   "t1x_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
   },
   "CAISO": {
    "tier_reached": "T1",
@@ -125,7 +131,8 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper caiso-102-hourfix; no calibration-complete marker."
+     "detail": "keeper 2026-08-04-caiso164-zonal-loss-surface; determination CALIBRATED-WITH-CAVEATS; marker complete=False final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -154,7 +161,10 @@
     ]
    },
    "golden": "deferred (\u00a72.1b).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-04-caiso164-zonal-loss-surface",
+   "marker_complete": false,
+   "marker_final": false
   },
   "PJM": {
    "tier_reached": "T1",
@@ -174,8 +184,9 @@
    ],
    "gate": {
     "a_keeper_marker": {
-     "status": "fail",
-     "detail": "keeper pjm-gasshape-interpfix; no calibration-complete marker."
+     "status": "pass",
+     "detail": "keeper 2026-08-03-pjm-151-seam-envelope; determination CALIBRATED; marker complete=True final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -204,12 +215,18 @@
     ]
    },
    "golden": "deferred (\u00a72.1b).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-03-pjm-151-seam-envelope",
+   "marker_complete": true,
+   "marker_final": false,
+   "t1h_determination": "HOLD",
+   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1",
+   "t1x_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
   },
   "MISO": {
    "tier_reached": "T1",
    "t1f_determination": "HOLD",
-   "t1x_determination": "HOLD (crossover launched, may fold)",
+   "t1x_determination": null,
    "flip": "curve-ON (capacity clearing) \u2014 enabled cap-market storage entry (+4 GW)",
    "fc": {
     "FC-1": "FAIL",
@@ -224,7 +241,8 @@
    "gate": {
     "a_keeper_marker": {
      "status": "fail",
-     "detail": "keeper miso-81-phantom-outage; no calibration-complete marker."
+     "detail": "keeper 2026-08-04-miso-124-dualfuel-rearm; determination NONE PARSEABLE (no calibration-complete entry, and the promotion note carries no determination string); marker complete=False final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -254,7 +272,13 @@
     ]
    },
    "golden": "deferred (\u00a72.1b).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-04-miso-124-dualfuel-rearm",
+   "marker_complete": false,
+   "marker_final": false,
+   "t1h_determination": "HOLD",
+   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1",
+   "t1x_provenance": "NOT MEASURED \u2014 leg killed twice; see refresh.what_was_CARRIED_not_remeasured"
   },
   "NYISO": {
    "tier_reached": "T1",
@@ -272,8 +296,9 @@
    ],
    "gate": {
     "a_keeper_marker": {
-     "status": "pass",
-     "detail": "VALIDATION-tier calibration-complete marker RE-DECLARED 2026-07-31 (nyiso-104b) on keeper 2026-07-30-nyiso-100-silretire, which determines CALIBRATED-WITH-CAVEATS (C3c ledgered as an exhausted-queue representation-frontier caveat). Supersedes the 2026-07-19 withdrawal: that record's own prescribed path \u2014 re-calibrate the offer curves against the corrected phantom-outage envelope, then re-declare \u2014 is complete, and this keeper descends entirely from the post-correction lane (nyiso-96 -> 98 -> 99 -> 100). NOTE the two-tier split: this is the 'complete' (validation) block only; NYISO is deliberately absent from the touch-once 'final' (locked-test) block."
+     "status": "fail",
+     "detail": "keeper 2026-08-04-nyiso-120-c119-scope; determination NOT-YET; marker complete=True final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -301,7 +326,12 @@
     ]
    },
    "golden": "deferred (\u00a72.1b).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-04-nyiso-120-c119-scope",
+   "marker_complete": true,
+   "marker_final": false,
+   "t1h_determination": "HOLD",
+   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
   },
   "NEISO": {
    "tier_reached": "T1",
@@ -319,8 +349,9 @@
    ],
    "gate": {
     "a_keeper_marker": {
-     "status": "pass",
-     "detail": "marker present 2026-07-07; keeper neiso-60-phantom-outage \u2014 the ONLY ISO meeting gate (a)."
+     "status": "fail",
+     "detail": "keeper 2026-08-03-neiso-caiso156-meter-screen; determination CALIBRATED-WITH-CAVEATS; marker complete=True final=False.",
+     "read_live_at": "e2a422c1"
     },
     "b_t1f_verdict": {
      "status": "fail",
@@ -349,7 +380,12 @@
     "note": "Closest to the gate \u2014 the only ISO meeting (a); fix the I4/A1 lane and NEISO clears FC-1 (b)."
    },
    "golden": "deferred (\u00a72.1b).",
-   "candidate": null
+   "candidate": null,
+   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+   "marker_complete": true,
+   "marker_final": false,
+   "t1h_determination": "HOLD",
+   "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1"
   }
  },
  "honest_unfit": [
@@ -487,5 +523,13 @@
    "title": "Gated mechanisms",
    "detail": "capacity_deliverability_limits part (b) unvalidated in any keeper; legacy P2 economic-commitment archived; CES premium ladder CES-off in BAU (seam verified, campaign deferred, W4)."
   }
- ]
+ ],
+ "refresh": {
+  "session": "FFR-3A-3",
+  "scored_at_sha": "e2a422c1",
+  "solved_at_sha": "941f4983",
+  "what_was_refreshed": "Criterion (a) keeper + marker + determination for all six ISOs, read LIVE from frontend/data/backcast/keepers/*.json and calibration-complete.json (the prior seed was generated 2026-07-20 and had gone materially stale \u2014 it recorded PJM as having no calibration-complete marker, which is no longer true). Criterion (b) t1h/t1x determinations for the SIX legs re-solved at the post-FFR-3F HEAD.",
+  "what_was_CARRIED_not_remeasured": "Every t1f determination, all blocking_rows, flip notes and per-ISO FC maps for legs this session did not solve. These date from FF-2D/FFR-3A-2 and are NOT re-verified here. MISO T1-X was launched twice and killed twice (the second time by this session's own concurrent git activity) and is explicitly NOT measured \u2014 its t1x cell is null rather than carrying a stale value.",
+  "why": "FFR-3A-2's provenance ceiling recorded that its battery measured a SUPERSEDED configuration: FFR-3F's G3 cap-grain fix (2adfb49) is unconditional and moves the admitted exit set under every T1-H finding."
+ }
 }

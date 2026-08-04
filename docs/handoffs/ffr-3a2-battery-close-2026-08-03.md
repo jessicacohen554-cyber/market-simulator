@@ -47,6 +47,29 @@ armed** — is honoured throughout.
 > This is a sequencing artifact, not a defect in either lane: FFR-3C characterized G-31,
 > the owner chartered the fix, FFR-3F landed it, and this battery ran concurrently against
 > the pre-fix code. It is recorded rather than papered over.
+>
+> ---
+>
+> ### ✅ RESOLVED — the re-measurement was done: `docs/handoffs/ffr-3a3-battery-close-2026-08-04.md`
+>
+> **FFR-3A-3 re-solved the exposed halves at the post-FFR-3F HEAD** (six of seven legs;
+> MISO T1-X was not measured). Read that document alongside this one. Outcome:
+>
+> * **§3.7 (NYISO) CONFIRMED** — every band identical post-fix, because the economic
+>   screen never fires. The strongest possible form of the inertness claim.
+> * **§3.8 (PJM) numbers SUPERSEDED, conclusion STANDS** — `retire.total_gw`
+>   22.415 → **18.862** GW, coal 18.309 → **14.756** GW. The membership-vs-calendar
+>   split reproduces; the depth residual shrank 3.55 GW.
+> * **§3.9 (MISO) headline SUPERSEDED** — *"every retirement band now PASSES"* is
+>   **2/3**, not 3/3: `retire.total_gw` 13.734 PASS → **12.716 FAIL**.
+> * **§3.6 (NEISO) number SUPERSEDED** — 8.221 → **7.585** GW; all additions identical.
+> * **§4.2–4.4 (T1-X) STAND** — ERCOT and PJM reproduce exactly, so §9 blocker 7's
+>   price-2025 regression is **real, not a pre-fix artifact**.
+>
+> The load-bearing result: post-fix PJM **and** MISO land *exactly* on the values
+> FFR-2B measured against a paired control (14.756 / 11.932 / 0.997 / 13-of-17), so
+> the pre-fix figures here carried the grain bug — which in MISO's case flattered a
+> level band into a PASS. **No determination moved: all six legs HOLD, as recorded here.**
 
 ---
 
@@ -455,6 +478,8 @@ decisions, not this session's to take.
 
 ### 3.6 Refreshed FC-3 — NEISO
 
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §2.2 (8.221 → **7.585** GW; additions identical).**
+
 Determination **unchanged: FC-3 FAIL** (as at FF-2D). Band-level movement, old committed
 bundle (`neiso-2021-2025-curve`, pre-epoch, both mechanisms pinned OFF) vs this session's
 (post-epoch, shipped posture):
@@ -487,6 +512,8 @@ honestly:
   measurement that would separate them.
 
 ### 3.7 Refreshed FC-3 — NYISO, and here D-1 IS attributed: it is PROVABLY INERT
+
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §2.3 (**CONFIRMED** — every band identical post-fix).**
 
 Determination **unchanged: FC-3 FAIL**. But NYISO admits a real attribution that NEISO
 does not, and it comes from the retirement side being **exactly unmoved**.
@@ -534,6 +561,8 @@ window" without the control arm named above.
 
 ### 3.8 Refreshed FC-3 — PJM, where D-1 fires hard and REPRODUCES FFR-3C's split
 
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §2.4 (depth 22.415 → **18.862** GW; coal → **14.756**, = FFR-2B's controlled value).**
+
 Determination **unchanged: FC-3 FAIL**. But PJM is the leg where the retirement screen
 actually fires, and what it does is the D-1 signature — recomposing *which fuel* exits
 while making the *level* worse.
@@ -578,6 +607,8 @@ against it, and the depth residual is the chartered G-31 lane's (Addendum F.1), 
 this session's to touch.
 
 ### 3.9 Refreshed FC-3 — MISO: **every retirement band now PASSES**
+
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §2.5 (**SUPERSEDED — 2/3, not 3/3**: `retire.total_gw` PASS → **FAIL**).**
 
 Determination **unchanged: FC-3 FAIL** — but *why* it fails has changed completely, and
 this is the cleanest T1-H result in the set.
@@ -658,6 +689,8 @@ Two of the five (`correlated_forced_outage`, `entry_lookahead_reprice`) move dis
 
 ### 4.2 Measured results — ERCOT
 
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §4.1 (**reproduces exactly** — the price-2025 regression is real, not a pre-fix artifact).**
+
 Re-run at vintage 2023, window 2023–2027 (5 solve-years), all damper/un-pin flags omitted
 so each inherits the shipped default. **Determination HOLD**; FC-4 **FAIL**.
 
@@ -713,6 +746,8 @@ reconstructed on the keeper's full-plant basis via bench intensities, so it is d
 regression above matters.
 
 ### 4.3 Measured results — PJM, and the asymmetry that matters
+
+> **↪ RE-MEASURED post-FFR-3F — see `ffr-3a3-battery-close-2026-08-04.md` §4.2 (**reproduces exactly**).**
 
 **Determination HOLD**; FC-4 **FAIL**; quarantine row **PASS**. But PJM is **essentially
 unchanged from FF-2D**, which is the point:
