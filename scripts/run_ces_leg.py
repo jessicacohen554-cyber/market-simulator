@@ -64,6 +64,7 @@ if str(_ROOT) not in sys.path:
 from market_sim.config.scenarios import ScenarioConfig, SweepDefinition  # noqa: E402
 from market_sim.matrix import matrix_configs, write_matrix_outputs  # noqa: E402
 from market_sim.policy.federal_ces import premium_for_year  # noqa: E402
+from scripts.lib.run_record import Derived, FromConfig, RecordSpec  # noqa: E402
 from scripts.run_full_horizon import (  # noqa: E402
     assert_schedulable,
     solve_and_summarize,
@@ -86,18 +87,37 @@ def _load_ladder(
     return base, configs, iso
 
 
+#: The CES-provenance keys this driver adds to a leg's summary (FFR-3R). Two
+#: of them name ``ScenarioConfig`` fields, so they are DECLARED here and passed
+#: to ``solve_and_summarize`` as ``extra_spec`` rather than merged in
+#: unchecked — the record then comes off the leg's own config and is verified
+#: against it, like every other config-describing key.
+CES_LEG_SPEC = RecordSpec(
+    {
+        "federal_ces_enabled": FromConfig(cast=bool),
+        "federal_ces_crediting": FromConfig(),
+        "premium_usd_per_mwh": Derived(
+            lambda cfg, ctx: premium_for_year(cfg, cfg.start_year),
+            "the leg's flat real premium at its start year (0.0 for BAU)",
+        ),
+    },
+    name="CES leg provenance",
+)
+
+
 def _leg_meta(case: str, leg: ScenarioConfig, campaign: str) -> dict:
     """The CES-provenance block recorded in the leg's summary (and sidecar).
 
     ``premium_for_year`` at the leg's start year is 0.0 for BAU (CES disabled)
     and the flat real premium otherwise — the same value the report reads.
+    The three config-describing keys are built from ``CES_LEG_SPEC`` off the
+    leg's own ``ScenarioConfig``; ``case`` and ``campaign`` are campaign labels
+    the config cannot answer.
     """
     return {
         "case": case,
         "campaign": campaign,
-        "federal_ces_enabled": bool(leg.federal_ces_enabled),
-        "federal_ces_crediting": leg.federal_ces_crediting,
-        "premium_usd_per_mwh": premium_for_year(leg, leg.start_year),
+        **CES_LEG_SPEC.build(leg, {}),
     }
 
 
@@ -140,6 +160,7 @@ def run_leg(
         sample_interval=sample_interval,
         redirect_cache=False,
         extra_summary=_leg_meta(case, leg, campaign),
+        extra_spec=CES_LEG_SPEC,
     )
 
 
