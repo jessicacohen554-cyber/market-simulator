@@ -565,6 +565,58 @@ rule-13-admissible mechanism available to carry it.
    (`results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md`;
    probe `scripts/probes/ercot164_wpb_nodal_identification.py` →
    `results/calibration/ercot164_wpb_nodal_identification.json`.)
+   **▶ BUILT AND A/B-TESTED AT ERCOT-165 (2026-08-04, owner-authorized by the
+   dispatch prompt; two full-span 2023–2025 solves, BOTH REGISTERED, keeper
+   NOT moved — promotion PENDING OWNER).** `ercot_wtx_curtail_unpooled` +
+   `ercot_wtx_panhandle_owner` ship **default-off/"tie"**; matrix cell
+   `wtx_curtail_unpooled` ERCOT **`O`**.
+   **Phase 0 PASSES on identification.** The family split is derivable with a
+   *threshold-free* lift test against each year's measured SCED-execution
+   exposure (no cutoff, no minimum-n — this replaces ercot-164's exploratory
+   `aft>0.30 & n>=200`): family **D** peaks h14–15 and correlates
+   **+0.775…+0.959** with actual SOLAR curtailment in every year, family **N**
+   peaks h21–23 (**−0.838…−0.961**). LOYO binding-weighted membership
+   agreement **0.755 / 0.942 / 0.968**, held-out family-share hod corr
+   **+0.744…+0.999**, and the per-family table's LOYO shape corr **beats the
+   pooled table in every year**. WESTEX lands in D on its own measured lift
+   (1.074–1.216) all three years; PNHNDL migrates N→D→D as its enforcement
+   moved into the solar-flood hours. Own-population match rate on the
+   production spine: 91.3 / 90.3 / 90.1 % of stations, 92.5 / 94.4 / 93.0 % of
+   endpoint weight (ERCOT-164's NOT inherited).
+   **THE A/B RESULT: all five pre-registered kill gates CLEAR in both arms in
+   all three years, [3e] VOLUME improves materially, and the charter's SHAPE
+   target is MISSED.** Wind curtailment model/reported: keeper .951/.890/.787
+   (mean abs err 0.124) → tie 1.171/1.032/.935 (0.089) → share 1.109/.974/.887
+   (**0.083**). But 2025 wind hod corr goes only −0.077 → −0.066 (tie) /
+   −0.058 (share), still NEGATIVE; afternoon mass 0.159 → 0.158/0.159 against
+   actual 0.222; overnight 0.357 → **0.362/0.360** against actual 0.266. The
+   added curtailment landed OVERNIGHT — the volume gain is a level re-centring
+   effect, not the daytime-mode insight the layer was chartered for. Solar
+   volume is marginally WORSE in both arms, and 2023 moves from 5 % UNDER- to
+   11 % (share) / 17 % (tie) OVER-curtailment. Both arms are
+   criterion-for-criterion identical to the keeper (C3a 2023 −32.8 % →
+   −32.5/−32.6 %, 2025 −8.1 % → −7.7/−7.9 %; C2 2025 gas −2.0 % → −1.5/−1.7 %;
+   D-1/D-2/D-4 identical). **Arm SHARE dominates arm TIE on every measured
+   axis** and was the Phase-0 structurally-indicated arm.
+   **WHAT THE ARMS DO FIX IS REAL (rule 19):** the keeper has TWO mechanisms
+   owning the Panhandle phenomenon and both put it at night; each arm reduces
+   that to one owner, and the pooled share's overnight shape is a measured
+   ARTIFACT of union saturation, not the corridor's pressure distribution.
+   **SECOND PHASE-0 NEGATIVE, and it CLOSES the charter's other half:** the
+   rule-14 hypothesis that `data/gtc.py`'s non-active-hour static stand-in
+   over-constrains the tie is **REFUTED BY MEASUREMENT** — measured
+   active-hour p50 / static rating is **0.963 / 1.209 / 1.048** for PNHNDL
+   (WESTEX 1.000–1.038, NE_LOB 0.966–1.191), so the level is right and the
+   manufactured overnight binding is the reduced network's *aggregate* flow
+   reaching a CORRECT cap in hours the real *nodal* system had headroom. That
+   is a topology-resolution limit, the West/Panhandle topology split stays
+   CLOSED, and **no `gtc.py` change was built** (which also keeps NE_LOB out of
+   the A/B as a confound). Do not re-open the stand-in as a data question.
+   `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`,
+   `results/calibration/FINDING-ercot165-wpb-v2-unpooled-2026-08-04.md`,
+   probes `scripts/probes/ercot165_family_split_phase0.py` +
+   `_ercot165_unpooled_ab.py` → `results/calibration/
+   ercot165_family_split_phase0.json`, `_ercot165_unpooled_ab.json`.
 7b. ~~**The measured STORAGE evening discharge-offer surface** (ercot-153's
    chartered successor to the diurnal-amplitude decomposition) + its named
    fallback **`measured_ramp_capability`**.~~

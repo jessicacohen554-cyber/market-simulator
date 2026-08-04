@@ -5285,4 +5285,105 @@ verdict, no matrix row due; §5.1 item 7 re-stamped with this outcome. Scope
 fence held: item 8 untouched, topology split not re-opened (families are
 share-table resolution, sub-zonal by construction).
 
-Next shorthand: ercot-165.
+## 2026-08-04 — ERCOT-165 (the FINDING-ercot164 §6 charter BUILT and A/B-tested, owner-authorized by the dispatch prompt; two full-span solves, BOTH registered, keeper UNCHANGED at ercot158 — promotion RECOMMENDED for arm SHARE, PENDING OWNER): the diurnal-family split is IDENTIFIED and LOYO-stable and every pre-registered kill gate is CLEAR, but the charter's SHAPE target is MISSED — the added curtailment lands OVERNIGHT
+
+**Lane** ercot165-curtailment-unpooling · keeper **unchanged**
+(`2026-08-03-ercot158-pool-arm`, NOT-YET; open gates C3a 2023-only, C3b
+2023-only, C3c, C7 2023-lignite cv-leg) · matrix cell `wtx_curtail_unpooled`
+ERCOT **`O`** (built, tested, promotion pending owner — the pjm
+`state_carbon_pricing` precedent) · runs
+`2026-08-04-ercot165-unpooled-tie` + `2026-08-04-ercot165-unpooled-share` ·
+PRECOMMIT `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`
+(pushed BEFORE either arm solved) · finding
+`results/calibration/FINDING-ercot165-wpb-v2-unpooled-2026-08-04.md`.
+
+**What was built.** `ercot_wtx_curtail_unpooled` + `ercot_wtx_panhandle_owner`
+(`"tie"`/`"share"`), both **default-off**, ERCOT-scoped, registry-visible.
+`ercot-wtx-congestion` schema **v2** carries the per-family + PNHNDL binding
+columns; `derive_ercot_wtx_curtailment_share.py --family` builds the
+per-family share table on the same (net-load decile × hod × season) axis.
+West takes **D + N additively** (not the saturating OR that made the pooled
+union inherit the overnight family's shape); the Panhandle zone's owner is the
+A/B. **DOF unchanged at two** — the per-tech depths, re-identified per arm on
+the capacity-weighted corridor share (weights measured from EIA-860 through the
+model's own zone boundaries: wind .630/.370, solar .969/.031).
+
+**Phase 0 PASSES.** The family rule is a **threshold-free lift test** against
+each year's measured SCED-execution exposure — no cutoff, no minimum-n, no
+per-year tuning (rule 23); it replaces ercot-164's exploratory
+`aft>0.30 & n>=200`. Family D peaks h14–15 and correlates **+0.775…+0.959**
+with actual SOLAR curtailment every year; family N peaks h21–23
+(**−0.838…−0.961**). LOYO binding-weighted membership agreement **0.755 /
+0.942 / 0.968**, held-out family-share hod corr **+0.744…+0.999**, and the
+per-family table's LOYO shape corr **beats the pooled table in every year**.
+WESTEX lands in D on its own measured lift (1.074–1.216) all three years —
+the design call the charter left open, answered from its own data. Own-population
+match rate on the production spine: **91.3 / 90.3 / 90.1 %** of stations,
+**92.5 / 94.4 / 93.0 %** of endpoint weight (ERCOT-164's never inherited).
+
+**THE A/B RESULT — all five kill gates CLEAR in both arms in all three years,
+[3e] volume improves, the SHAPE target is MISSED.** Wind curtailment
+model/reported: keeper .951/.890/.787 (mean abs err **0.124**) → tie
+1.171/1.032/.935 (**0.089**) → share 1.109/.974/.887 (**0.083**). But 2025 wind
+hod corr moves only −0.077 → −0.066 (tie) / **−0.058** (share), still NEGATIVE;
+afternoon mass 0.159 → 0.158/0.159 against actual **0.222**; overnight 0.357 →
+**0.362/0.360** against actual 0.266. **The added curtailment landed
+overnight** — the volume gain is a level re-centring effect, not the
+daytime-mode insight the layer was chartered for. Phase 0 predicted exactly this
+(HSL-weighted bound-reduction corr 2025 wind: pooled −0.001 → D+N −0.076 →
+D+N+PNHNDL +0.012) and the PRECOMMIT declared it before the LP ran.
+
+**Reported against interest:** 2023 flips from 5 % UNDER- to 11 % (share) /
+17 % (tie) OVER-curtailment, giving up the keeper's best wind-volume year; solar
+volume is marginally worse in both arms. Both arms are criterion-for-criterion
+IDENTICAL to the keeper (C3a 2023 −32.8 % → −32.5/−32.6 %, 2025 −8.1 % →
+−7.7/−7.9 %; C2 2025 gas −2.0 % → −1.5/−1.7 %; C1/C4/C8 PASS; C7 the same
+2023-lignite cv-leg; D-1/D-2/D-4 verdicts unchanged). **Arm SHARE dominates arm
+TIE on every measured axis** and was the Phase-0 structurally-indicated arm.
+
+**SECOND PHASE-0 NEGATIVE — the charter's rule-14 half is REFUTED and CLOSED.**
+The hypothesis that `data/gtc.py`'s non-active-hour static stand-in
+over-constrains the tie does not survive measurement: active-hour p50 over
+static rating is **0.963 / 1.209 / 1.048** for PNHNDL (WESTEX 1.000–1.038,
+NE_LOB 0.966–1.191). The level is right; the manufactured overnight binding is
+the reduced network's *aggregate* flow reaching a CORRECT cap in hours the real
+*nodal* system had headroom — a topology-resolution limit, with the
+West/Panhandle topology split staying CLOSED. **No `gtc.py` change was built**
+(which also keeps NE_LOB out of the A/B as a confound). Do not re-open the
+stand-in as a data question.
+
+**Governance.** Rule 12 disclosure: both arms were first launched concurrently
+and **arm A was OOM-killed at ~6 min** — two ERCOT per-plant solves do not fit
+this 15 GB box — so the arms were serialized and arm A re-run from a cleaned
+output dir; recipe unchanged. Rule 23 disclosure: the committed pooled share
+table is a 2026-07 vintage that **no longer byte-reproduces** from today's
+archives (870 vs 872 cells, mean |Δ| 0.019); it was left UNTOUCHED and the
+derive gained `--family-only` so it cannot be clobbered without a data change to
+cite. The confound on the A/B is bounded and negligible (hod corr 0.9997–0.9999,
+mean share moving < 0.002). Also declared
+`ercot_storage_rt_offer_surface`'s default in
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` — a pre-existing ercot-162 registration gap
+that failed the cache-key guard on main; pure guard repair, no solve change.
+
+**Recommendation, NOT executed.** Promote arm B
+(`2026-08-04-ercot165-unpooled-share`) on rule 1 structural fidelity — it
+removes a real rule-19 defect (two mechanisms owning the Panhandle, both
+overnight) and a share whose diurnal shape is a measured artifact of union
+saturation, at zero new DOF, with no criterion regressed. It was not executed
+in-session because the build was authorized to deliver the mid-afternoon mode
+and does not: a promotion justified by a volume gain traceable to depth
+re-centring, while the named target is missed and 2023 moves into
+over-curtailment, is a materially different outcome from what the charter
+described and belongs in front of the owner first. If promoted: generate the
+bundle attestation, set `keepers/ERCOT.json`, `build_status.py --iso ERCOT`,
+then the `calibration-keeper-auditor` agent scoped `--iso ERCOT` (no re-key duty
+— ERCOT holds no `complete` marker).
+
+**Successor, named not chartered.** The daytime mode remains unexplained by any
+armed mechanism. The signals that carry it (PNHNDL enforcement incidence, 2025
+wind bite corr +0.729; the afternoon nodal minority) cannot reach the West zone
+at the two-depth budget. Closing it needs a declared identification source for a
+per-family weight — an owner decision the ercot-164 charter explicitly fences —
+or a different object. Do not re-open it as a re-weighting without that.
+
+Next shorthand: ercot-166.
