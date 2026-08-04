@@ -29,8 +29,23 @@
 # totals (the [3e] VALIDATION target). It is the identification source for the
 # forward-admissible VRE curtailment-share driver, NEVER fit to the curtailment
 # volume or a price residual.
+#
+# schema_version 2 (ercot-165, 2026-08-04) adds the DIURNAL-FAMILY decomposition
+# of the pooled union. The pooled ``congestion_frac`` is an OR over every
+# corridor element, so it saturates and inherits the shape of whichever family
+# carries the most binding weight (measured 0.70-0.77 overnight) — which is why
+# the driver's hod shape is anti-correlated with the mid-afternoon curtailment
+# mode it exists to close (FINDING-ercot164 §3). The family columns split that
+# union by each element's OWN measured binding-hod placement, using a
+# threshold-free LIFT test against the year's measured SCED-execution exposure
+# (curate_ercot_wtx_congestion.assign_families): an element joins family D
+# exactly when it binds more in h9-17 than its own exposure predicts, else N.
+# No cutoff, no minimum-n, no per-year tuning (rule 23 [R-FROZEN-DERIVE]).
+# PNHNDL is held OUT of the split and carried as its own column: the Panhandle
+# export interface's owner is a model-side mechanism choice (endogenous tie vs
+# driver share), not a diurnal family. The pooled columns are unchanged.
 datatype: ercot-wtx-congestion
-schema_version: 1
+schema_version: 2
 title: Measured ERCOT West Texas Export corridor congestion pressure (hourly)
 description: >-
   Hourly aggregation of ERCOT's ~5-minute SCED binding-constraint incidence in
@@ -102,3 +117,48 @@ columns:
     description: >-
       Mean positive ShadowPrice over the hour's binding West-corridor
       constraints; null when none bound that hour.
+  - name: n_binding_family_d
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Executions in the hour with at least one DAYTIME-family (D) corridor
+      element binding — the solar-flood / daytime-export congestion family
+      (measured hod peak h14-15; corr +0.775..+0.959 vs actual solar
+      curtailment in every year 2023-2025). Excludes PNHNDL.
+  - name: n_binding_family_n
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Executions in the hour with at least one OVERNIGHT-family (N) corridor
+      element binding — the wind-export congestion tail that dominates the
+      pooled union (measured hod peak h21-23; 0.70-0.77 of nodal binding
+      weight). Excludes PNHNDL.
+  - name: n_binding_pnhndl
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Executions in the hour with the PNHNDL Panhandle export GTC binding.
+      Held out of the D/N split: the Panhandle interface's model-side owner
+      (endogenous tie vs driver share) is a mechanism choice, not a family.
+  - name: congestion_frac_family_d
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      n_binding_family_d / n_intervals in [0,1]. 0.0 when n_intervals is 0.
+  - name: congestion_frac_family_n
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      n_binding_family_n / n_intervals in [0,1]. 0.0 when n_intervals is 0.
+  - name: congestion_frac_pnhndl
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      n_binding_pnhndl / n_intervals in [0,1] — the measured Panhandle export
+      interface enforcement-incidence signal. 0.0 when n_intervals is 0.

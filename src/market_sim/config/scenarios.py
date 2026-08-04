@@ -620,6 +620,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # An explicit False (the pre-FFR-4D flat-scalar control) is non-default and
     # hashes distinctly, so control arms stay separable.
     "storage_measured_base_fleet",
+    # ERCOT unpooled diurnal-family curtailment shares + Panhandle interface
+    # owner (ercot-165, default off / "tie"): dropped from the hash at their
+    # defaults so every pre-existing cache key stays byte-stable -- unarmed the
+    # driver takes the pooled branch and never reads the family table, so the
+    # arm is byte-identical off; an armed run applies per-zone family ceilings
+    # and so is a distinct scenario that enters the key. The owner field is
+    # registered alongside the gate because it is only read when the gate is
+    # armed, and an armed run always carries the gate too.
+    "ercot_wtx_curtail_unpooled",
+    "ercot_wtx_panhandle_owner",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -710,6 +720,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # (tests/unit/config/test_cache_key_default_flip_guard.py) FAILING on main
     # for every session. One line, exactly the remedy the guard prints; not
     # part of this lane's mechanism and it changes no cache key.
+    # (FFR-4D independently added the same declaration in a parallel lane; the
+    # two collapsed into this single entry at the ercot-165 rebase — a dict
+    # literal with the key twice was F601-red on main. No behaviour or key
+    # changes either way.)
     "ercot_storage_rt_offer_surface": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
@@ -823,11 +837,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_energy_online_capability_cap": "False",
     "ercot_energy_online_capability_cap_path": "None",
     "caiso_nqc_accreditation": "False",
-    # Bookkeeping-only backfill (FFR-4D): this registration shipped without its
-    # declared default, so check 1 of scripts/check_cache_key_registration.py
-    # was RED on main before this branch. Declaring it changes no behaviour and
-    # no key -- it only restores the guard's ability to see a future flip.
-    "ercot_storage_rt_offer_surface": "False",
+    "ercot_wtx_curtail_unpooled": "False",
+    "ercot_wtx_panhandle_owner": '"tie"',
 }
 
 
@@ -9166,6 +9177,41 @@ class ScenarioConfig:
     ercot_wtx_curtail_depth_wind: float = 0.1004
     ercot_wtx_curtail_depth_solar: float = 0.1637
 
+    # ercot-165 — UNPOOL the driver's share by diurnal family, and give the
+    # Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]).
+    # FINDING-ercot164 measured that the pooled congestion_share is a UNION over
+    # every corridor element, so it saturates (2025 mean 0.64) and inherits the
+    # shape of whichever family carries the most binding weight — measured
+    # 0.70-0.77 OVERNIGHT. Its hod shape is therefore anti-correlated with the
+    # mid-afternoon curtailment mode it exists to close (2025 gap-shape corr
+    # -0.67, worsening as West solar grows), and the SAME overnight-shaped
+    # ceiling is broadcast to the Panhandle zone in ~8,750 h/yr on top of the
+    # endogenous Panhandle->North tie, so two mechanisms own the Panhandle
+    # phenomenon and both put it at night.
+    #
+    # With ``ercot_wtx_curtail_unpooled`` the driver reads the per-family table
+    # (data/raw/reference/ercot_wtx_curtailment_share_family.csv) instead:
+    #   West       -> family D + family N (ADDITIVE corridor pressure, not the
+    #                 saturating OR), so the daytime/solar-flood family's own
+    #                 measured incidence stops being averaged away;
+    #   Panhandle  -> ``ercot_wtx_panhandle_owner``:
+    #                 "tie"   the endogenous tie at measured PNHNDL limits is
+    #                         the SOLE Panhandle mechanism (no driver ceiling);
+    #                 "share" a Panhandle-scoped ceiling shaped by the measured
+    #                         PNHNDL enforcement incidence owns the SUB-LIMIT
+    #                         pressure, so the tie (network limit, overnight)
+    #                         and the ceiling (daytime) bind in different hours.
+    # Family membership is a source-data derive (rule 23): a threshold-free lift
+    # test of each element's own binding-hod placement against the year's
+    # measured SCED-execution exposure. Still exactly TWO free scalars — the
+    # existing per-tech depths, re-identified against the unpooled shares
+    # (panhandle_owner="tie" -> 0.1507/0.1627; "share" -> 0.1354/0.1614).
+    # ERCOT-only, both off/"tie" by default; the pooled path is untouched.
+    # See scripts/data/derive_ercot_wtx_curtailment_share.py --family and
+    # results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md.
+    ercot_wtx_curtail_unpooled: bool = False
+    ercot_wtx_panhandle_owner: str = "tie"
+
     # ERCOT-113 per-zone wind SHAPE gate (data.renewables._WIND_ZONE_SHAPE_GATES).
     # Give each ERCOT zone its own MERRA-2 reanalysis wind shape (NASA POWER
     # WS50M at the zone's EIA-860 wind-plant locations through a turbine power
@@ -11632,6 +11678,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
+    "ercot_wtx_curtail_unpooled": 3,
+    "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,
