@@ -6,12 +6,12 @@
 (main moved twice mid-session — see §9.1). Run concurrently with FFR-3A-2 and FFR-3F
 under owner decision Addendum F.2 (rule 12's cap is per prompt).
 
-**One-line result.** *(filled in §4)*
-
-> **⚠ THIS DOCUMENT IS INCOMPLETE AS COMMITTED.** §§2–5 are placeholders: the paired
-> CAISO arms had not finished solving when this revision was pushed. §§1 and 6–9 are
-> final and stand on their own (the PJM inertness measurement, both input refreshes,
-> the MISO block). Do not cite an A/B result from this revision — there is none yet.
+**One-line result.** The gate is **INERT in CAISO 2026–2030 and provably inert in PJM
+2026–2050**, and the CAISO half is inert for a *structural* reason worth more than the
+verdict: `WECC_import_simultaneous` caps the **signed sum of two legs that run in
+opposite directions**, so it stays slack even when both legs are individually
+saturated — the registry uplifted the one element that cannot bind. **No default is
+flipped**; arming remains the owner's box, and nothing here argues for it.
 
 > **⚠ BOTH ARMS INHERIT AN OPEN ADEQUACY FINDING.** The shipped forecast posture now
 > carries owner decisions D-1 (`retirement_rule="pipeline"`) and D-2 (both entry
@@ -72,19 +72,147 @@ Two consequences worth stating before any number is read:
 
 ## 2. The arms
 
-*(filled in §4)*
+Both cold-solved post-epoch at the **shipped** CAISO posture (§4.3 of the re-gate:
+CAISO is curve-ON, expressed by `--golden-posture`), 5 solve-years each, run
+concurrently (rule 12: ≤2 invocations, years sequential within each).
 
-## 3. Invariants
+```
+MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1 PYTHONPATH=.:src \
+python scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 \
+  --golden-posture [--transmission-expansion] --out-dir results/ffrsc/txexp-{off,on}/caiso
+```
 
-*(filled in §4)*
+| arm | gate | years | cache key | registered id |
+|---|---|---|---|---|
+| **OFF** (control) | off | 5/5 | `fe814896444d8ed7` | `caiso-2026-2030-ffrsc-txexp-off` |
+| **ON** | on | 5/5 | `f4a79a86d61336f8` | `caiso-2026-2030-ffrsc-txexp-on` |
+
+**Liveness is established before any delta is read:** the keys are distinct, so the
+gate genuinely produced a different scenario rather than silently reusing the control
+(the `_CACHE_KEY_OPTIONAL_FIELDS` separability property doing its job).
+
+## 3. Invariants — identical in both arms, and both carry the inherited finding
+
+Both arms score **3 FAIL / 0 WARN (14 scored)**, the same three, with identical text:
+
+* **I3** unserved/dump — 2030: slack 0.02 % of load
+* **I7** reliability floor — 2026: accredited firm 50,729 < requirement 57,306 MW …
+* **I12** reserve-margin band — 2026 **1.8 %**, 2027 **−3.1 %**, … vs band [15 %, 30 %]
+
+These reproduce FFR-3A's CAISO T1-F leg exactly, which is the point: **the gate moves
+no invariant**, and the *level* both arms sit at is the open D-1/D-2 adequacy finding
+(§6.4 of the re-gate), not something this lane introduced or can fix.
 
 ## 4. Measured result — interface, flows, prices
 
-*(filled in §4)*
+### 4.1 The interface never binds, in either arm
+
+`WECC_import_simultaneous` is the only element the registry moves. Cap vs realised
+net flow (OFF arm; the ON arm's flows are identical — §4.2):
+
+| year | cap OFF | cap ON | net iface mean | net iface **max** | binding h (OFF/ON) | **headroom at max** |
+|---|---|---|---|---|---|---|
+| 2026 | 7,500 | 7,500 | 4,839.0 | 5,067.6 | 0 / 0 | 2,432.4 |
+| 2027 | 7,500 | 7,500 | 4,804.4 | 5,209.1 | 0 / 0 | 2,290.9 |
+| 2028 | 7,500 | **8,617.5** | 4,917.9 | 5,614.9 | 0 / 0 | 1,885.1 |
+| 2029 | 7,500 | **8,617.5** | 4,920.3 | 5,798.1 | 0 / 0 | 1,701.9 |
+| 2030 | 7,500 | **8,617.5** | 5,243.3 | 6,831.6 | 0 / 0 | 668.4 |
+
+**Zero binding hours in 43,800 hour-years, in both arms.** Raising a constraint that
+never binds cannot change anything, and does not.
+
+### 4.2 The economics are identical; only degenerate primal detail moves
+
+| year | objective OFF | objective ON | Δ | total unserved OFF/ON (MWh) | gen OFF/ON (TWh) |
+|---|---|---|---|---|---|
+| 2026 | 7,101,771,414.306412 | 7,101,771,414.306412 | 0 | 0.000 / 0.000 | 168.55052 / 168.55052 |
+| 2027 | 7,848,373,983.695720 | 7,848,373,983.695720 | 0 | 274.172 / 274.172 | 175.19851 / 175.19851 |
+| 2028 | 9,020,042,745.686092 | 9,020,042,745.686092 | 0 | 8,362.519 / 8,362.519 | 182.16759 / 182.16759 |
+| 2029 | 8,662,411,502.857380 | 8,662,411,502.858770 | +1.4e−3 | 23,704.997 / 23,704.997 | 178.31642 / 178.31642 |
+| 2030 | 10,569,717,656.338373 | 10,569,717,656.337332 | −1.0e−3 | 42,320.299 / 42,320.299 | 183.65514 / 183.65514 |
+
+Load-weighted and zonal **prices are identical to 4.3e−14** in every year; the
+objective agrees to 1.6e−13 relative (solver tolerance); **fleet evolution is
+identical in every year** — same peak demand, same retirements, same thermal
+additions (2027: 1,492.5 MW retired / 1,396.4 MW added in *both* arms; 2029: 7,585.6
+MW added in both; 2030: 1,122.0 / 4,268.8 in both).
+
+**2026, 2027 and 2028 are BIT-IDENTICAL across the arms** — dispatch, prices, flows
+and slack all `array_equal`. 2026–27 are pre-COD and *must* be (the built-in control,
+which passes). **2028 is the informative one**: the cap actually moves that year, and
+nothing changes at all.
+
+**2029 and 2030 differ in the primal only**: dispatch, flows, storage and slack are
+rearranged (dispatch max cell Δ 7.0/10.5 GW; slack redistributed across 18/33 cells)
+at **identical duals, identical objective and identical totals**. That is textbook
+**alternative optima** — a slack constraint's changed bound perturbs the solver's
+pivoting and CAISO's degenerate import/storage ties resolve to a different vertex.
+It is not an effect, and it must not be reported as one.
+
+### 4.3 Why it is inert — structural, not incidental
+
+This is the part worth carrying forward. The two WECC legs run in **opposite
+directions**, and the interface caps their **signed sum**:
+
+| 2030, OFF arm | leg TTC | mean | max | min | hours at +TTC | hours at −TTC |
+|---|---|---|---|---|---|---|
+| `WECC_import→NP15` | 4,800 | **−3,215.0** | 4,800.0 | −4,800.0 | 1 | **4,164** |
+| `WECC_import→SP15_rest` | 10,623 | **+8,458.3** | 10,623.0 | −216.3 | **994** | 0 |
+| net sum (the capped quantity) | *7,500 cap* | 5,243.3 | 6,831.6 | — | **0** | — |
+
+So CAISO wheels: it imports into SP15_rest at up to the leg's full 10,623 MW TTC
+(994 h/yr) while exporting through NP15 at its full 4,800 MW bound (4,164 h/yr). Both
+legs are **individually saturated for thousands of hours** — and the net sum they are
+capped on still peaks 668 MW short of 7,500. **The binding limits are the per-leg
+TTCs; the net-sum envelope is structurally slack and is the wrong element to uplift.**
+
+Two corroborations that this is the real mechanism and not a one-run accident:
+
+* It **reproduces caiso-133's backcast measurement in the forecast lane** — that
+  session found `WECC_import_simultaneous` structurally unreachable in all 26,280 h of
+  2023–25 in *both* directions, duals exactly 0.000. Different mode, different fleet,
+  same conclusion.
+* It is the CAISO instance of **FF-G1 §4.4's own NEISO smoke finding**: the link half
+  of a registry row applies, while the energy half stays bound by something else
+  (there the import-tranche supply curve, here the per-leg TTCs).
+
+### 4.4 A registry mapping note this produced
+
+SWIP-North's instrument is a **new controlled Idaho→Eldorado corridor** with a
+board-stated 1,117.5 MW N→S entitlement — physically a *per-leg / new-link*
+capability. The registry maps it onto the **net-sum interface**, which §4.3 shows
+cannot bind. Separately, the row's `delta_mw_reverse = 1,072.5` is **silently
+dropped**: `WECC_import_simultaneous` has `reverse_cap_mw = None`, and
+`apply_transmission_expansion` only writes a reverse cap where one is already
+declared. Neither is changed here — re-mapping the row is a topology decision with an
+owner and a methodology §6.6 tension behind it (the board entitlement vs the flat
+advisory MIC), not a call this lane makes. Recorded for the FF-G1 §6 follow-up list.
 
 ## 5. What this A/B does NOT establish
 
-*(filled in §5)*
+* **It does not establish that the channel is broken, or that it works.** It
+  establishes that in CAISO 2026–2030 the channel applied its one live delta to an
+  element that never binds. The *wiring* demonstrably fires (distinct cache key;
+  the cap is 8,617.5 in the ON arm from 2028) — the effect is nil downstream.
+* **It says nothing about ERCOT, MISO, NYISO or NEISO** (rule 25). Their cells stay
+  `U`. In particular ERCOT's STEP rows (+2,555 / +945 MW) land in **2032** and MISO's
+  five CIL rows in **2030** — outside or at the very edge of a 2026–2030 window — so
+  they are untested, not inert.
+* **It does not extend past 2030.** Headroom is *narrowing* monotonically (2,432 →
+  668 MW). A later window could well bind, and the correct read of this result is
+  "inert in this window", not "inert".
+* **It does not test the import-tranche half.** Four of CAISO's eight live rows are
+  `import_tranche` (SunZia, TenWest, NG-IV2, TransWest = 11.7 GW of recorded external
+  supply) and are recorded-not-applied by construction — the V1 exclusion. The
+  per-year import-tranche seam remains the named FF-G1 §6 follow-up, and on this
+  evidence it is the **higher-value** half.
+* **It does not clear either arm for promotion.** Both are HOLD-grade by the §3
+  invariants, both inherit the open D-1/D-2 adequacy finding, and no determination is
+  claimed here.
+* **It is not an argument to flip the default.** A default-off gate measured inert is
+  neither promoted nor deleted: it is correct, grounded, and waiting on either a
+  registry re-map (§4.4) or a window in which its deltas bind. Arming stays the
+  owner's box.
 
 ## 6. Input refresh 1 — ATB derivation pin → 2024 v4.0.0 (audit FR-20)
 
@@ -233,7 +361,47 @@ disagree on their face. Flagged, not changed: making it visible is a loader/logg
 question, and inventing an export cap would be a topology change with no instrument
 behind it. Successor item for the FF-G1 §6 follow-up list.
 
-### 9.4 Pre-existing test failures, unchanged by this session
+### 9.4 A defect on main lost both arms' summaries — fixed, with a guard
+
+Both arms solved **all five years**, then died at the finish line:
+
+```
+TypeError: write_run_config() got multiple values for argument 'run_dir'
+  scripts/run_full_horizon.py:596 in solve_and_summarize
+```
+
+`write_run_config(out_dir, run_dir, **extra)` was being passed `run_dir` **both
+positionally and in the kwargs**. Introduced by `34c2f25` ("Repair the T1-F
+measurement instruments") — the commit that fixed FFR-3A blocker 7 (no
+`run_config.json`, so FC-7 failed by construction) — so *the fix for the FC-7 blocker
+was itself broken*, and it takes out **every T1-F leg** on main, after the expensive
+part, losing both `full_horizon_summary.json` and `run_config.json`.
+
+**FIXED CONCURRENTLY BY FFR-3A-2, WHOSE FIX IS THE ONE ON MAIN.** This lane hit the
+defect independently and patched it locally to unblock the A/B (record `run_dir` in
+the payload, drop the duplicate kwarg). On the rebase onto `6040f28c` the two fixes
+collided: FFR-3A-2 had made the *same* correction, and **its version is kept** — the
+code fix is semantically identical, and its test
+(`test_accepts_the_real_call_sites_kwargs`) is strictly stronger than the one written
+here, because it *invokes* `write_run_config` with the caller's exact shape and
+asserts `run_dir` / `iso` / `cache_key` / `solved_years` all survive into the payload,
+where this lane's version only bound the signature via `inspect.signature(...).bind()`.
+This session's test was dropped in the merge, deliberately and with nothing lost.
+
+So the attribution is: **found independently by two lanes on the same day; fixed by
+FFR-3A-2.** What this lane contributes is the *measured operational consequence* —
+re-running both arms after the fix completed in **0.6–0.7 min** each entirely off the
+existing cache (no re-solve), which is what makes this defect cheap to recover from
+once diagnosed, and confirms **FFR-3A blocker 7 is genuinely closed** (both arms now
+write `run_config.json`).
+
+**Why nothing caught it,** which is the durable lesson and is recorded in both lanes:
+every pre-existing test in `tests/scoring/test_full_horizon_instruments.py` called
+`write_run_config` directly with a hand-written kwarg set *shorter* than the caller's,
+so the collision shipped green; the real call site is only reachable behind a full
+solve and was never executed in CI.
+
+### 9.5 Pre-existing test failures, unchanged by this session
 
 The fast lane is **5 failed / 6,034 passed**. All five were confirmed pre-existing by
 re-running with this session's edits stashed:
@@ -248,7 +416,7 @@ re-running with this session's edits stashed:
   `TestDispatchPerformance::test_full_year_200_generator_fleet` — wall-clock
   assertions, run while the `data/clean` regeneration was saturating the container.
 
-### 9.5 The `data/clean` prerequisite, re-measured
+### 9.6 The `data/clean` prerequisite, re-measured
 
 FFR-3A's blocker 1 reproduced exactly: a fresh container has **zero** curated
 datatypes and every forecast leg fails loudly until `scripts/regenerate_clean.py`
