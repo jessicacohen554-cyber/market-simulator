@@ -608,6 +608,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is byte-identical off; an armed run changes the accredited ledger and so
     # gets a distinct key.
     "caiso_nqc_accreditation",
+    # CAISO measured backcast storage base fleet (FFR-4D, default ON): dropped
+    # from the hash at its default so every pre-existing key stays byte-stable
+    # (the pinned default 603c2498bf71d21d holds). UNLIKE every sibling above
+    # this field is NOT byte-identical at its default -- it is default-ON and it
+    # CHANGES the CAISO backcast fleet, so it is a SAME-KEY INVALIDATION and it
+    # carries a cache-epoch ledger entry (results/cache.py, epoch 2026-08-04c)
+    # naming exactly what it invalidates. Registering it is still correct: the
+    # alternative moves every key in every ISO for a change that touches one,
+    # and the epoch ledger is the surface built for precisely this case.
+    # An explicit False (the pre-FFR-4D flat-scalar control) is non-default and
+    # hashes distinctly, so control arms stay separable.
+    "storage_measured_base_fleet",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -659,6 +671,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 # guard enforces both directions.
 _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "start_year": "None",
+    "storage_measured_base_fleet": "True",
     "end_year": "None",
     "hindcast": "False",
     "hindcast_fuel_variant": "'realized'",
@@ -803,6 +816,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_energy_online_capability_cap": "False",
     "ercot_energy_online_capability_cap_path": "None",
     "caiso_nqc_accreditation": "False",
+    # Bookkeeping-only backfill (FFR-4D): this registration shipped without its
+    # declared default, so check 1 of scripts/check_cache_key_registration.py
+    # was RED on main before this branch. Declaring it changes no behaviour and
+    # no key -- it only restores the guard's ability to see a future flip.
+    "ercot_storage_rt_offer_surface": "False",
 }
 
 
@@ -1396,6 +1414,18 @@ class ScenarioConfig:
     # off 0.5.
     renewable_buildout_pace: str = "mid"  # "slow", "mid", "aggressive"
     storage_deployment: str = "mid"
+    # Resolve a BACKCAST's storage base fleet as of its solve year from EIA-860
+    # (model.storage.load_eia860_storage) instead of the forward-looking
+    # STORAGE_BASE_FLEET_MW ladder that `storage_deployment` selects. Default
+    # ON: it is the measured input, and rule 14 [R-ACCURATE] does not gate an
+    # accurate input behind a flag that an estimate wins by default. Scoped to
+    # capacity_market.STORAGE_MEASURED_BASE_FLEET_ISOS (CAISO only today) so the
+    # other five ISOs' keepers stay byte-identical; FORECAST mode is untouched
+    # in every ISO and keeps reading the scenario ladder, exactly as
+    # data.renewables already treats wind/solar. Set False to reproduce a
+    # pre-FFR-4D CAISO backcast (the flat 8,000 MW scalar). See
+    # docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
+    storage_measured_base_fleet: bool = True
     retirement_aggressiveness: str = "mid"
     hydro_year: str = "normal"  # "dry" | "normal" | "wet" — forecast wet/dry
     # water-year lever on the conventional-hydro monthly-energy budget. The
@@ -11174,6 +11204,7 @@ TIER_TAGS: dict[str, int] = {
     "tech_cost_percentile": 1,
     "renewable_buildout_pace": 1,
     "storage_deployment": 1,
+    "storage_measured_base_fleet": 1,
     "retirement_aggressiveness": 1,
     "hydro_year": 1,
     "eac_price_nuclear": 1,

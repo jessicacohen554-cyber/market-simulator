@@ -3,7 +3,10 @@
 import unittest
 
 import numpy as np
+import pandas as pd
 
+from market_sim.config.constants import STORAGE_MEASURED_BASE_FLEET_ISOS
+from market_sim.config.paths import RAW_DIR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
@@ -203,17 +206,73 @@ class TestBuildDefaultStorage(unittest.TestCase):
         self.assertAlmostEqual(mid_mw, STORAGE_BASE_FLEET_MW["MISO"]["mid"])
         self.assertAlmostEqual(high_mw, STORAGE_BASE_FLEET_MW["MISO"]["high"])
 
-    def test_ercot_caiso_base_fleet_unchanged(self):
-        # The MISO fix (and the PJM/NYISO/NEISO EIA-860 re-derivation) must not
-        # touch the two already-cited entries.
+    def test_ercot_base_fleet_unchanged(self):
+        # The MISO fix, the PJM/NYISO/NEISO EIA-860 re-derivation and the FFR-4D
+        # CAISO re-vintage must all leave ERCOT's hand-entered row alone
+        # (rule 25 [R-ISO-SCOPE]). ERCOT's row is itself off the documented
+        # EIA-860 construction (17,000 shipped vs 13,709.3 measured) and is
+        # ROUTED, not fixed, in docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
         self.assertEqual(
             STORAGE_BASE_FLEET_MW["ERCOT"],
             {"low": 12_000.0, "mid": 17_000.0, "high": 25_000.0},
         )
+
+    def test_caiso_base_fleet_matches_eia860_construction(self):
+        # FFR-4D. The CAISO row is no longer a hand-rounded TPP-2024 figure; it
+        # is the registry's OWN documented EIA-860 construction, the one that
+        # already reproduces PJM/MISO/NYISO/NEISO exactly. Asserting the VALUES
+        # would only re-pin a literal, so this test re-runs the CONSTRUCTION
+        # against the committed parquet: the row cannot drift from its source
+        # without failing here, and a genuine EIA-860 re-intake that moves the
+        # measured fleet fails loudly instead of silently disagreeing with the
+        # registry comment (rule 23 [R-FROZEN-DERIVE] -- the licence to move
+        # this row is a source-data change, and this is what detects one).
         self.assertEqual(
             STORAGE_BASE_FLEET_MW["CAISO"],
-            {"low": 6_000.0, "mid": 8_000.0, "high": 12_000.0},
+            {"low": 11_590.0, "mid": 15_450.0, "high": 19_260.0},
         )
+
+        plant = pd.read_parquet(RAW_DIR / "eia-860" / "eia860_plant.parquet")
+        ba_by_plant = plant.set_index("Plant Code")["Balancing Authority Code"]
+        storage_dir = RAW_DIR / "eia-860"
+        operable = pd.read_parquet(
+            storage_dir / "eia860_energy_storage_operable.parquet"
+        )
+        proposed = pd.read_parquet(
+            storage_dir / "eia860_energy_storage_proposed.parquet"
+        )
+
+        def _ciso(df):
+            return df[df["Plant Code"].map(ba_by_plant) == "CISO"]
+
+        def _round10(mw):
+            return round(mw / 10.0) * 10.0
+
+        raw_mid = (
+            _ciso(operable).query("Status == 'OP'")["Nameplate Capacity (MW)"].sum()
+        )
+        ciso_proposed = _ciso(proposed)
+        under_construction = ciso_proposed[
+            ciso_proposed["Status"].isin(["U", "V", "TS"])
+        ]["Nameplate Capacity (MW)"].sum()
+
+        # mid = operable OP nameplate; high = mid + under construction; low =
+        # the ROUNDED mid x 0.75 (the convention the four derived rows follow --
+        # PJM's shipped 380 is 500 x 0.75 = 375 rounded, not 497.1 x 0.75).
+        mid = _round10(raw_mid)
+        self.assertAlmostEqual(mid, STORAGE_BASE_FLEET_MW["CAISO"]["mid"])
+        self.assertAlmostEqual(
+            _round10(raw_mid + under_construction),
+            STORAGE_BASE_FLEET_MW["CAISO"]["high"],
+        )
+        self.assertAlmostEqual(
+            _round10(mid * 0.75), STORAGE_BASE_FLEET_MW["CAISO"]["low"]
+        )
+
+        # The shipped-before value was 8,000 MW -- roughly CAISO's 2023 fleet,
+        # applied flat to a 2026 base year. Guard the direction so a revert is
+        # visible as a revert.
+        self.assertGreater(STORAGE_BASE_FLEET_MW["CAISO"]["mid"], 15_000.0)
 
 
 class TestEstimateStorageRevenue(unittest.TestCase):
@@ -1541,3 +1600,64 @@ class TestNEISOStorageUnchangedForOtherISOs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestMeasuredBackcastStorageBaseFleet(unittest.TestCase):
+    """FFR-4D: a backcast resolves its storage base fleet as of its solve year.
+
+    ``STORAGE_BASE_FLEET_MW`` is a FORECAST object (its own docstring calls it
+    "the base year (2026)" and its low/mid/high are the ``storage_deployment``
+    scenario ladder), so feeding it to a 2023 solve is a vintage/as-of
+    misalignment. These tests pin the seam that fixes it, and — just as
+    importantly — pin its ISO SCOPE, because enrolling another ISO moves that
+    ISO's designated keeper (rule 25 [R-ISO-SCOPE]).
+    """
+
+    def test_registry_is_caiso_only(self):
+        # The blast radius of the default-ON field IS this registry. If another
+        # ISO is added here, that ISO's backcast keeper changes and must be
+        # re-solved and re-gated in its own lane — so this assertion is the
+        # thing that makes such a change deliberate rather than incidental.
+        self.assertEqual(STORAGE_MEASURED_BASE_FLEET_ISOS, frozenset({"CAISO"}))
+
+    def test_default_is_on(self):
+        # Rule 14 [R-ACCURATE]: the measured fleet is the accurate input, so it
+        # is not gated behind a flag that the estimate wins by default.
+        self.assertTrue(ScenarioConfig().storage_measured_base_fleet)
+
+    def test_measured_caiso_fleet_tracks_the_solve_year(self):
+        # The defect this closes: the scalar supplied a FLAT 8,000 MW to 2023,
+        # 2024 and 2025 alike. The measured fleet roughly doubles across that
+        # window, so the corrected path must be strictly increasing in year and
+        # must straddle the old flat value rather than sitting beside it.
+        cfg = ScenarioConfig(iso="CAISO", mode="backcast")
+        totals = {}
+        for year in (2023, 2024, 2025):
+            units = load_eia860_storage("CAISO", year, cfg)
+            self.assertGreater(len(units), 0, f"no CAISO storage units for {year}")
+            totals[year] = sum(u.power_cap_mw for u in units)
+        self.assertLess(totals[2023], totals[2024])
+        self.assertLess(totals[2024], totals[2025])
+        # Pumped storage is appended by the loader itself, so these totals carry
+        # CAISO's ~2.1 GW of PS on top of the battery fleet. Bracket loosely —
+        # the point is the SHAPE across years, not a re-pinned literal.
+        self.assertLess(totals[2023], 12_000.0)
+        self.assertGreater(totals[2025], 16_000.0)
+
+    def test_pumped_storage_is_not_double_counted(self):
+        # The forecast path PREPENDS pumped storage to build_default_storage;
+        # load_eia860_storage APPENDS it internally. Wiring the loader in
+        # without removing the prepend would have counted CAISO's ~2.1 GW of PS
+        # twice — so assert the loader already carries it exactly once.
+        cfg = ScenarioConfig(iso="CAISO", mode="backcast")
+        units = load_eia860_storage("CAISO", 2025, cfg)
+        ps_units = load_eia860_pumped_storage("CAISO", 2025, cfg)
+        self.assertGreater(len(ps_units), 0)
+        ps_ids = {u.unit_id for u in ps_units}
+        self.assertTrue(ps_ids.issubset({u.unit_id for u in units}))
+        for unit_id in ps_ids:
+            self.assertEqual(
+                sum(1 for u in units if u.unit_id == unit_id),
+                1,
+                f"pumped-storage unit {unit_id} appears more than once",
+            )
