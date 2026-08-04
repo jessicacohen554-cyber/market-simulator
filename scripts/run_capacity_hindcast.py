@@ -1241,7 +1241,17 @@ def main(argv: list[str] | None = None) -> int:
         # FFR-1D "meta entry sourced from a flag that armed nothing" defect
         # inverted. Same sourcing rule as the FF-2A dampers below.
         "entry_lookahead_reprice": bool(config.entry_lookahead_reprice),
-        "retirement_rule": args.retirement_rule,
+        # Solved-config sourced, for the SAME reason as entry_lookahead_reprice
+        # above and the FF-2A dampers below (FFR-3D / C.4(c)) — this key was
+        # MISSED by that sweep and stayed args-sourced, so every leg that
+        # OMITTED --retirement-rule (i.e. every shipped-default leg since owner
+        # decision D-1 flipped it to "pipeline" on 2026-08-02) recorded
+        # `retirement_rule: null` rather than the rule it actually solved.
+        # Verified on the committed FFR-3A-2 T1-X sidecars, which record
+        # `entry_rate_limits: true` from the solved config beside a null
+        # retirement_rule from args. Record-only: no solve, score, cache key or
+        # default is affected. (FFR-3L instrument repair, 2026-08-04.)
+        "retirement_rule": config.retirement_rule,
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         # FFR-2E: the RESOLVED per-ISO clearing gate, not the raw force-ON
         # flag. Downstream (scripts/forecast_verdict._curve_on) reads this key
