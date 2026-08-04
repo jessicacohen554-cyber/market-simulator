@@ -154,6 +154,7 @@ def reference_config(
     entry_commissioning_lag: "bool | None" = None,
     electrification_path: str = "off",
     entry_screen_diagnostics: bool = False,
+    caiso_nqc_accreditation: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -195,6 +196,16 @@ def reference_config(
     docstring) — but it is NOT in ``_CACHE_KEY_OPTIONAL_FIELDS``, so an armed
     leg takes its own cache key and must be paired with an un-armed arm when the
     recorded key matters. Default ``False`` = byte-identical.
+
+    ``caiso_nqc_accreditation`` (FFR-3P) arms CAISO's OWN published
+    class-average VRE accreditation (the CPUC/CAISO Net Qualifying Capacity
+    technology factors) in place of the generic non-CAISO 0.18/0.16 fallback.
+    Unlike the diagnostics gate this DOES change the solve — it raises the
+    accredited-firm ledger, so the adequacy backstop and the retirement
+    reliability floor both see a different gap — and it is registered in
+    ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed leg keeps its
+    historical key and an armed leg keys distinctly. Default ``False``: the
+    arming posture is an OWNER decision, not this runner's.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -234,6 +245,7 @@ def reference_config(
         # None-sentinel too or it will silently override that signature.
         electrification_path=electrification_path,
         entry_screen_diagnostics=entry_screen_diagnostics,
+        caiso_nqc_accreditation=caiso_nqc_accreditation,
         **{k: v for k, v in arms.items() if v is not None},
     )
 
@@ -797,6 +809,19 @@ def main(argv: list[str] | None = None) -> int:
             "an armed leg with an un-armed arm when the key matters."
         ),
     )
+    ap.add_argument(
+        "--caiso-nqc-accreditation",
+        action="store_true",
+        help=(
+            "FFR-3P arm (CAISO only, DEFAULT OFF pending an owner decision): "
+            "accredit CAISO wind/solar at the ISO's OWN published CPUC/CAISO "
+            "Net Qualifying Capacity class factors (solar 0.2096, wind 0.2202 "
+            "- the Jul/Aug/Sep peak-risk minima of the CY2026 report) instead "
+            "of the generic non-CAISO 0.18/0.16 fallback. Solve-affecting: it "
+            "raises the accredited-firm ledger, so pair it with an unarmed "
+            "control. No-op in every other ISO (rule 25)."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -820,6 +845,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_commissioning_lag=args.entry_commissioning_lag,
         electrification_path=args.electrification_path,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
+        caiso_nqc_accreditation=args.caiso_nqc_accreditation,
     )
     summary = solve_and_summarize(
         config,

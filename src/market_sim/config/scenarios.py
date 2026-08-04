@@ -579,6 +579,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # on-disk cache (PRECOMMIT-ercot159-energy-online-capability-cap §1).
     "ercot_energy_online_capability_cap",
     "ercot_energy_online_capability_cap_path",
+    # CAISO published-NQC VRE accreditation (FFR-3P, default off): dropped from
+    # the hash at its default so every pre-existing forecast cache key stays
+    # byte-stable -- unarmed the resolver never reaches the registry, so the arm
+    # is byte-identical off; an armed run changes the accredited ledger and so
+    # gets a distinct key.
+    "caiso_nqc_accreditation",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -771,6 +777,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "electrification_percentile": "0.5",
     "ercot_energy_online_capability_cap": "False",
     "ercot_energy_online_capability_cap_path": "None",
+    "caiso_nqc_accreditation": "False",
 }
 
 
@@ -2586,6 +2593,39 @@ class ScenarioConfig:
     # False = the frozen-penetration byte-compat mode: credits pin back to
     # the pre-CR-3.1 flat constants (the capacity-hindcast BASELINE arm and
     # the byte-identity tests) — no curve, no penetration response.
+    caiso_nqc_accreditation: bool = False  # GATED default-OFF (FFR-3P
+    # 2026-08-04, docs/handoffs/ffr-3p-caiso-accreditation-2026-08-04.md).
+    # Admits CAISO's OWN published class-average VRE accreditation
+    # (constants.RENEWABLE_NQC_CURVES_BY_ISO — the CPUC/CAISO Net Qualifying
+    # Capacity report's monthly technology factors, blended onto the model's
+    # solar/wind classes on the same report's own fleet mix) at rung 0 of the
+    # ONE accreditation ladder (capacity.resolve_renewable_capacity_credit,
+    # rule 19), so all four consumers move together: the accredited-firm
+    # ledger, the retirement reliability floor, the reserve-margin backstop
+    # and the CR-1 curve position.
+    #
+    # WHY IT EXISTS. Unarmed, CAISO accredits VRE on the GENERIC non-CAISO
+    # fallback (solar 0.18, wind 0.16) because CAISO is absent from both
+    # per-ISO registries — a rule 14 [R-ACCURATE] defect in the ISO with the
+    # most elaborate published RA accreditation in the country (FFR-3H §3.3
+    # measured the fallback invariant across a 0.2x-2.0x penetration sweep).
+    # Armed, it reads CAISO's published Aug/Sep peak-risk factors: solar
+    # 0.2096, wind 0.2202 — i.e. the generic fallback is too STINGY in both
+    # classes, so arming RAISES the accredited ledger (~+1.1 GW on the 2026
+    # CAISO base fleet, against a measured 6,577 MW base-year deficit).
+    #
+    # WHY DEFAULT-OFF rather than simply adding CAISO to
+    # RENEWABLE_ELCC_CURVES_BY_ISO: that registry's gate
+    # (`renewable_elcc_curves`) ships default-ON, so a CAISO key there would
+    # move every CAISO forecast solve unannounced. Arming posture is an OWNER
+    # decision (rules 5/24/28); this field is the switch that decision flips.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so an unarmed run's
+    # cache key is byte-stable and an armed run keys distinctly.
+    #
+    # SCOPE. CAISO-only by construction (the registry holds one ISO) — rule 25
+    # [R-ISO-SCOPE]: nothing here transfers, and no other ISO's curve is
+    # touched. Forecast-lane mechanism: capacity evolution and the CR-1
+    # position are forecast-only, so no backcast keeper can move.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
