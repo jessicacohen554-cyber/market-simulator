@@ -627,3 +627,18 @@ results/calibration/caiso154_slopes_PJM.csv
 # scripts/register_forecast_run.py, never as tracked bundles here (CLAUDE.md
 # rule 15). The deliverable is docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md.
 /results/ffr3h/
+
+# FFR-3Q re-cut FH-1 §3.3 gate arms (run_capacity_hindcast --forward-from-base
+# --out-dir caches, base 2021 / vintage 2020, paired pipeline + legacy control).
+# QUARANTINED, NEVER REGISTERED: both arms solved 2022 -- a validation-tier
+# holdout year -- under an ACTIVE freeze, via the _validate_window /
+# runner.is_bridge seam defect (docs/handoffs/ffr-3q-window-recut-2026-08-04.md
+# §2.2). Same class as /results/ffr3l/ — hindcast bundles are registered via
+# frontend/data/hindcast/ sidecars, never as tracked bundles (CLAUDE.md rule 15)
+# — and these must not be registered at all. The evidence (meta.json fields and
+# the 2022 data-read log lines) is quoted verbatim in the handoff doc, which is
+# the durable record; the bundles themselves are disposable solver output and a
+# tracked meta.json recording solved_years [2021,2022,...] would commit the
+# breach artifact rather than the finding.
+/results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q/
+/results/hindcast/ercot-2021-2025-t1ff-armr-ffr3q-legacy/
