@@ -13,17 +13,17 @@ Every number below is a fleet or accreditation quantity. §8 states this formall
 
 ## 0. Headline — four findings, and the second one changes the charter's premise
 
-1. **The shortfall is NOT all fleet. It is 45.9 % fleet coverage and 54.1 % accreditation
-   rate.** Correcting the base-year fleet from the model's own committed EIA-860 release
-   recovers **+5,375.0 MW** of the 11,711 MW. That is measured from the shipped
-   accreditation chain, not projected.
+1. **The shortfall is NOT all fleet. It is 47.3 % fleet coverage and 52.7 % accreditation
+   rate and class boundary.** Correcting the base-year fleet from the model's own
+   committed EIA-860 release recovers **+5,540.3 MW** of the 11,711 MW. That is measured
+   from the shipped accreditation chain, not projected.
 
-2. **Correcting the fleet alone moves the reserve position 0.8852 → 0.9790, NOT to
+2. **Correcting the fleet alone moves the reserve position 0.8852 → 0.9819, NOT to
    1.0896.** The charter's premise — inherited from FFR-3W §5.3 — reads *"correcting the
    fleet alone moves the reserve position 0.8852 → 1.0896 (11.5 % short → 9.0 % long) and
    collapses row 4's numerator."* **That arithmetic assumed the entire 11,711 MW gap was
    fleet** (50,729 + 11,711 = 62,440; 62,440 / 57,306 = 1.0896). It is not. After the
-   fleet is right CAISO is still **2.1 % SHORT**, so the adequacy need does **not**
+   fleet is right CAISO is still **1.8 % SHORT**, so the adequacy need does **not**
    vanish and row 4's numerator does **not** collapse. This is the charter's own
    *"if row 4 does not clear after the fleet is right, THAT IS THE FINDING"* branch, and
    it is the branch that fired. Nothing was tuned in response (rule 11).
@@ -118,23 +118,33 @@ reproduced twice). CAISO figures are Table 1.1 as transcribed by FFR-3P — **th
 committed and I did not re-extract it**, so those cells carry FFR-3P's transcription risk;
 the PS split in §2 is my own measurement from the committed workbook.
 
+**One structural point governs the whole table.** The solar, wind, battery, hybrid and
+"other" classes **cannot be differenced class-by-class** against Table 1.1, because
+EIA-860 splits a hybrid plant's PV onto the solar schedule and its battery onto the
+storage schedule (`load_eia860_storage`'s own docstring says so), while CAISO books
+hybrids as their own class. Any class-level split of that block double-counts. So the
+block is differenced **merged**, and only the battery *rate* is separated inside it —
+battery being the one class that is a single, cleanly-comparable class in both ledgers.
+
 | # | cause | class | MW | share | disposition |
 |---|---|---|--:|--:|---|
 | **A** | **Base-year battery fleet is a stale hand-rounded scalar** | storage | **−5,121.9** | 43.7 % | **FIXED** §4.1 |
-| **B** | **Battery accreditation rate** (generic duration table vs CAISO's published class ratio) | storage | −2,774.1 | 23.7 % | **ROUTED** §6.1 |
-| **C** | **Solar/wind accreditation rate** (generic 0.18/0.16 vs CAISO's published NQC) | VRE | −2,571.2 | 22.0 % | **ROUTED** §6.2 — mechanism EXISTS, default-off |
-| **D** | **Hybrid class boundary** — CAISO accredits solar+storage as its own class; the model has none | boundary | −1,484.0 | 12.7 % | **DOCUMENTED MISALIGNMENT** §6.3 |
-| **E** | **Base-year solar nameplate** stale (22,000 vs EIA-860 23,996.4) | VRE | −360.0 | 3.1 % | **FIXED** §4.2 |
-| **F** | **Base-year wind nameplate** stale — *the model is OVER by 674 MW* | VRE | **+107.2** | −0.9 % | **FIXED** §4.2 *(makes the deficit worse)* |
+| **B** | **Battery accreditation rate** — model's generic blended 0.6875 vs CAISO's published class ratio 13,365/14,131 = 0.9458 | storage | **−3,990.6** | 34.1 % | **ROUTED** §6.1 — *no mechanism exists* |
+| **C** | **Solar/wind accreditation rate + hybrid POI boundary + deliverability truncation** — jointly, NOT separable (see above) | VRE / boundary | **−2,684.1** | 22.9 % | **ROUTED / DOCUMENTED** §6.2, §6.3 |
+| **E** | **Base-year solar nameplate** stale (22,000 vs EIA-860 24,919.2) | VRE | −525.6 | 4.5 % | **FIXED** §4.2 |
+| **F** | **Base-year wind nameplate** stale — *the model is OVER by 670 MW* | VRE | **+107.2** | −0.9 % | **FIXED** §4.2 *(makes the deficit worse)* |
 | **G** | Conventional hydro — model above published | hydro | +292.6 | −2.5 % | no defect §2 |
 | **H** | Thermal — model above published | thermal | +242.4 | −2.1 % | no defect (FFR-3P §2.2 stands) |
 | **I** | Pumped storage — model marginally under published NQC | storage | −30.6 | 0.3 % | immaterial |
-| **J** | "Other" class (451 NDC / 42 NQC) unrepresented | other | −42.0 | 0.4 % | immaterial |
-| | **TOTAL** | | **−11,711.0** | 100 % | |
+| | **TOTAL** | | **−11,710.6** | 100 % | |
 
-Causes A + E + F are **fleet coverage** and total **−5,375.0 MW (45.9 %)**. Causes
-B + C + D are **accreditation rate and class boundary** and total **−6,829.3 MW (58.3 %)**.
-G + H + I + J net **+462.4 MW**. The four rows are exact against the −11,711.0 total.
+The total closes on FFR-3P's −11,711.0 to **0.4 MW** — rounding in its transcription, not
+a missing term. ("Other", 451 MW NDC / 42 MW NQC, is inside the merged block, not a
+separate row.)
+
+Causes A + E + F are **fleet coverage** and total **−5,540.3 MW (47.3 %)** — this is what
+was fixed. Causes B + C are **accreditation rate and class boundary** and total
+**−6,674.7 MW (57.0 %)**. G + H + I net **+504.4 MW** of model surplus.
 
 **The one-sentence answer to the charter's question:** the capacity is missing in **two**
 of the four places it named — *units present but under-accredited* (the majority) and *a
@@ -190,10 +200,19 @@ Same vintage problem, same release, forecast-only blast radius (`data.renewables
 this registry only when `mode != "backcast"`; a backcast already takes that year's EIA-860
 month-end capacity — §5 is about why storage lacks that path).
 
-| class | shipped | EIA-860 2025 ER | adopted | CAISO published NDC |
+The measured object is deliberately **the one the backcast itself resolves** —
+`data.renewables._eia860_monthly_capacity(..., 2025)` year-end, i.e. the EIA-860
+per-technology *schedules* — not the generators parquet's prime-mover totals. The two
+agree exactly on wind and differ by 923 MW on solar (schedule 24,919.2 vs prime-mover PV
+23,996.4; the solar schedule carries 1,012 CISO rows to the generator file's 1,005). The
+schedule is correct here **because it is what the backcast reads**: a forecast base year
+built on a different solar object than the 2025 backcast it follows would step
+discontinuously at the seam.
+
+| class | shipped | measured (loader's own object) | adopted | CAISO published NDC |
 |---|--:|--:|--:|--:|
 | wind | 7,000 | **6,326.3** | **6,330** | **6,330** |
-| solar | 22,000 | **23,996.4** | **24,000** | 20,459 + 2,043 hybrid = 22,502 |
+| solar | 22,000 | **24,919.2** | **24,920** | 20,459 + 2,043 hybrid = 22,502 |
 
 The wind closure check is the strongest single number in this document: EIA-860's CISO
 wind nameplate and CAISO's own published wind NDC agree to **0.06 %**. That is two
@@ -213,14 +232,22 @@ Computed from the shipped accreditation chain (`build_default_storage` →
 ```
 battery firm   5,500.0 -> 10,621.9   (+5,121.9)
 pumped storage 1,932.2 ->  1,932.2   (unchanged)
-solar firm     3,960.0 ->  4,320.0   (  +360.0)
+solar firm     3,960.0 ->  4,485.6   (  +525.6)
 wind firm      1,120.0 ->  1,012.8   (  -107.2)
                                      ----------
-                                      +5,375.0 MW
+                                      +5,540.3 MW
 
-accredited firm  50,729 -> 56,104.0
-reserve position 0.8852 -> 0.9790     (11.5 % short -> 2.1 % short)
+accredited firm  50,729 -> 56,269.6
+reserve position 0.8852 -> 0.9819     (11.5 % short -> 1.8 % short)
 ```
+
+**Row 4's position after the fleet is right.** The reserve position rises but stays
+**below 1.0**, so the adequacy requirement is still unmet in the base year and the
+reserve-margin backstop still has a deficit to size against. The FC-2 row-4 numerator is
+reduced, **not collapsed** — the charter's premise that it collapses rested on the
+1.0896 figure, which §0 finding 2 corrects. The exact landing cell is not claimed here:
+it needs the five-year forecast solve, and §7 D-8 records that as the owed measurement
+rather than estimating it.
 
 ---
 
@@ -274,8 +301,8 @@ Post-fix ledger against CAISO's published internal total of 59,069 MW:
 | thermal | 29,979 | 30,221.4 | **+242.4** |
 | conventional hydro (Table 1.1 hydro − measured PS) | 4,332.2 | 4,624.8 | **+292.6** |
 | pumped storage | 1,962.8 | 1,932.2 | −30.6 |
-| **solar + wind + battery + hybrid + other, MERGED** | **22,795.0** | **15,954.7** | **−6,840.3** |
-| **total** | **59,069** | **52,733.1** | **−6,335.9** |
+| **solar + wind + battery + hybrid + other, MERGED** | **22,795.0** | **16,120.3** | **−6,674.7** |
+| **total** | **59,069** | **52,898.7** | **−6,170.3** |
 
 The VRE+battery block **must** be compared merged: EIA-860 reports a hybrid plant's PV on
 the solar schedule and its battery on the storage schedule (the loader's own docstring
@@ -286,7 +313,7 @@ hybrid class. Comparing class-by-class here would double-count.
 residual is one number:**
 
 ```
-model accredits this block at   15,954.7 / 45,780 nameplate = 0.3485
+model accredits this block at   16,120.3 / 46,700 nameplate = 0.3452
 CAISO's own realized rate is    22,795.0 / 43,414 NDC       = 0.5251
 ```
 
@@ -295,7 +322,7 @@ CAISO's own realized rate is    22,795.0 / 43,414 NDC       = 0.5251
 The model credits batteries through the **generic** `STORAGE_ELCC_BY_DURATION` table
 (NREL/E3; 4 h → 0.60), blended to **0.6875** over a synthetic 70/25/5 duration mix. CAISO's
 published whole-class realized ratio is **13,365 / 14,131 = 0.9458**. On the corrected
-15,450 MW fleet the difference is **≈ +3,991 MW** — 58 % of everything left.
+15,450 MW fleet the difference is **+3,990.6 MW** — 59.8 % of everything left.
 
 `STORAGE_ELCC_BY_DURATION_BY_ISO` exists and today holds **PJM only**. CAISO has no entry.
 
@@ -351,12 +378,13 @@ reconciled hybrid class is invented to close a residual. FFR-3P's B-6 is thereby
 
 | id | item | why not here |
 |---|---|---|
-| **D-1** | **Battery accreditation rate — CAISO absent from `STORAGE_ELCC_BY_DURATION_BY_ISO` while CAISO publishes 13,365/14,131 = 0.9458.** ≈ +3,991 MW, the largest remaining term. | §6.1: a rate not a fleet; objects don't map one-for-one; and it would move row 4 by an unchartered route. |
+| **D-1** | **Battery accreditation rate — CAISO absent from `STORAGE_ELCC_BY_DURATION_BY_ISO` while CAISO publishes 13,365/14,131 = 0.9458.** +3,990.6 MW, the largest remaining term. | §6.1: a rate not a fleet; objects don't map one-for-one; and it would move row 4 by an unchartered route. |
 | **D-2** | **THE CAISO KEEPER `2026-08-04-caiso-166-measured-dlap` IS PRE-EPOCH AND OWES A RE-SOLVE + RE-GATE.** Its metrics were produced on the flat 8,000 MW scalar. Cache epoch 2026-08-04c records it. | A keeper re-solve is a 3-year run plus a full re-gate under rules 15/16 — its own session in the CAISO lane. **Stated as owed, not done.** |
 | **D-3** | **ERCOT's storage row is the other hand-entered entry** (17,000 shipped vs 13,709.3 by the registry's own EIA-860 construction). | Rule 25 `[R-ISO-SCOPE]`. ERCOT's cited source (ERCOT Monthly Dec 2025) is a *later* vintage than EIA-860 2025 ER, so this may be a legitimate misalignment rather than a defect — it needs ERCOT's lane to judge, not mine. |
 | **D-4** | **CAISO's storage ELCC portfolio dilution is a hard 1.0** (`STORAGE_ELCC_DILUTION_*` hold ERCOT only) — a much larger assumption at 15,450 MW than at 8,000. | New registry entry for another ISO; belongs with D-1. |
 | **D-5** | **The other five ISOs still take a forecast scalar for their backcast storage fleet.** Immaterial for PJM/MISO/NYISO/NEISO (their rows were derived from EIA-860 and sit within a few MW), material only for ERCOT. | Enrolling an ISO in `STORAGE_MEASURED_BASE_FLEET_ISOS` moves that ISO's keeper; each needs its own lane. |
 | **D-6** | **`check_cache_key_registration.py` check 1 was RED on `main`** before this branch (`ercot_storage_rt_offer_surface` registered with no declared default). Backfilled here as a zero-behaviour bookkeeping entry so this PR's CI is readable. | Pre-existing; fixed only because it blocks a guard, not as scope. |
+| **D-8** | **The five-year CAISO forecast solve that would place FC-2 row 4 exactly was NOT completed in this session.** §4.3's +5,540.3 MW and the 0.9819 reserve position are exact arithmetic over the shipped accreditation chain, but the row-4 *cell* (PASS / CAVEAT / FAIL) additionally depends on how the backstop and the economic entry screen split the reduced deficit across 2026-2030. | Container time. The direction is unambiguous and is stated (§4.3): the numerator falls, the position stays below 1.0, so the need does not vanish. **The cell itself is not claimed.** `scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 --golden-posture` against a stashed-constants control is the exact measurement owed. |
 | **D-7** | Table 1.1's cells are carried from **FFR-3P's transcription**; the source PDF is not committed. The PS split in §2 is my own measurement from the committed workbook, but the class totals are not independently re-extracted. | An intake, with its own authorization. Flagged so nobody reads §3 as fully first-party. |
 
 ---

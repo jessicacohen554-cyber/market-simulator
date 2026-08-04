@@ -2916,9 +2916,18 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # Early Release operable nameplate for balancing authority CISO -- the SAME
     # release and the SAME BA-code crosswalk (zone_assignment._ISO_TO_BA_CODE)
     # that STORAGE_BASE_FLEET_MW already cites for PJM/MISO/NYISO/NEISO.
-    # Measured (prime mover, status OP, data/raw/eia-860/eia860_generators.parquet):
-    #   wind  WT = 6,326.3 MW -> 6330 (nearest 10)
-    #   solar PV = 23,996.4 MW -> 24000 (nearest 10)
+    # Measured as THE SAME OBJECT the model's own backcast path resolves, so the
+    # forecast base year continues from where the last measured year ends:
+    # data.renewables._eia860_monthly_capacity(iso, fuel, zones, 2025) year-end,
+    # i.e. the EIA-860 per-technology schedules (wind/solar operable, status OP),
+    # NOT the generators parquet's prime-mover totals. The two agree exactly on
+    # wind (6,326.3) and differ on solar (schedule 24,919.2 vs prime-mover PV
+    # 23,996.4 -- the solar schedule carries 1,012 CISO rows to the generator
+    # file's 1,005). The schedule is the right one BECAUSE it is the one the
+    # backcast reads; a forecast base year on a different solar object than the
+    # 2025 backcast it follows would step discontinuously at the seam.
+    #   wind  = 6,326.3 MW -> 6330 (nearest 10)
+    #   solar = 24,919.2 MW -> 24920 (nearest 10)
     # Independent closure check against CAISO's OWN published ledger (2026
     # Summer Loads & Resources Assessment Table 1.1, Net Dependable Capacity):
     # published wind NDC 6,330 MW vs EIA-860 6,326.3 -- agreement to 0.06 %.
@@ -2932,8 +2941,8 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # month-end total and reads this registry only in forecast mode.
     # See docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
-        "wind": 6330.0,  # EIA-860 2025 ER, CISO WT operable = 6,326.3 MW.
-        "solar": 24000.0,  # EIA-860 2025 ER, CISO PV operable = 23,996.4 MW.
+        "wind": 6330.0,  # EIA-860 2025 ER wind schedule, CISO OP = 6,326.3 MW.
+        "solar": 24920.0,  # EIA-860 2025 ER solar schedule, CISO OP = 24,919.2 MW.
     },
     # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
     # Source: EIA-860 2024 / ISO planning reports, rounded. needs-citation:
