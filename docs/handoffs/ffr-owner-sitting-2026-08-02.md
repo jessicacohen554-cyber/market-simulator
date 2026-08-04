@@ -1900,3 +1900,58 @@ not validated.
 
 **Sign-off:** ☐ dispatch now  ☐ hold  ☐ other: ____________
 owner: ________  date: ____
+
+---
+
+## Addendum O — the five N-cards are SIGNED; Wave 4 opens
+
+**Written 2026-08-04 by the workstream manager.** Owner signed all five N-cards on 2026-08-04,
+each on the stated recommendation. Wave 3 is closed (Addendum N.1); these charters open Wave 4.
+
+### O.1 — the signatures
+
+| decision | signed | what it authorizes |
+|---|---|---|
+| **D-14** | **CHARTER AS A DEFECT** | A lane to derive the intended relationship between the ladder multiplier `K` and the COD lag `L` **from the measured build record**. Explicitly **NOT** a licence to move `K` off 2.0 — tuning a knife-edge to taste is the thing the card refused |
+| **D-12** | **WIRE IT** | MISO's published solar accreditation read into `RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]` from the already-intaken `elcc/miso/miso.csv`, seasonal→annual selection rule settled in the same lane |
+| **D-2′** | **ARM (MISO-scoped)** | `entry_vre_capacity_revenue` armed, **after** D-12 and in the same lane, with a paired control. Other capacity-market ISOs remain **separate per-ISO decisions** (rule 25) |
+| **D-13** | **TAKE IT NOW** | The §45 wind PTC windowed to its statutory 10 years, on the existing `_ccs_45q_window_years` pattern |
+| **D-15** | **FLEET-VINTAGE; ANCHOR SEPARATE** | FC-2 row 4 chartered against the fleet-vintage cause (FFR-3P **B-1**). The CAISO capacity-anchor correction is **NOT chartered by this decision** — it may be chartered later on its own rule-14 merits, and any such charter must state it is not a row-4 fix |
+| **re-probe** | **DISPATCH NOW** | The FH-1 §3.3 gate re-probe, on FFR-3Q §2.1's surviving pre-registration |
+
+### O.2 — the consequences the owner accepted, recorded once so no lane re-opens them
+
+* **D-13 will make wind additions FALL** (MISO builds 4.0 GW against 7.2 GW actual). That is the
+  faithful direction under rule 1 `[R-STRUCT]`; a worse band is a discovered under-build on
+  wind's revenue side, to be **written up as an open root cause and never reverted**. A lane that
+  reverts D-13 because the residual moved has misread the decision.
+* **D-12 + D-2′ will not buy an FC-3 pass on their own.** If the ladder freeze survives D-14's
+  derivation, they move MISO solar from a −100 % band to −86.7 %. They were taken on rule-14
+  grounds, not on expected band movement, and must not be judged by it.
+* **D-15 deliberately declines the cheaper green.** Correcting the CAISO anchor would move row 4
+  just as far by building the same 14 GW of CTs California does not need. Row 4 is chartered
+  against the 11,711 MW fleet shortfall instead, so that shortfall stays visible in the gates.
+* **The re-probe's lift remains a MANAGER box** (Addendum I.1). The lane reports; it does not
+  lift, and reporting green does not lift.
+
+### O.3 — Wave 4 lanes, dispatched in pack §0i
+
+| lane | decision | model | notes |
+|---|---|---|---|
+| **FFR-4A** | D-14 | OPUS | Derive `K`/`L` from the measured record. **Rule 23 `[R-FROZEN-DERIVE]` binds hardest here** |
+| **FFR-4B** | D-12 + D-2′ | OPUS | One lane, D-12 first, paired control. New/changed `ScenarioConfig` behaviour ⇒ rule 28 matrix duty |
+| **FFR-4C** | D-13 | FABLE | Bounded; zero free parameters; precedent in the same file |
+| **FFR-4D** | D-15 | OPUS | CAISO row 4 against fleet vintage (FFR-3P B-1) |
+| **FFR-3Q-3** | re-probe | OPUS | Finishes FFR-3Q Task 1; keeps the 3Q lineage and its pre-registration |
+
+**Concurrency (rule 12 per prompt, Addendum F.2): all five may run as independent sessions.**
+One coupling to manage: **FFR-4B and FFR-4C both touch entry-screen revenue in MISO** — 4B raises
+solar, 4C lowers wind. Each must therefore carry **its own paired control against the shipped
+default at its own base commit**, and whichever lands second re-verifies against the new base.
+Without that, MISO's FC-3 moves on two axes at once and neither change has a clean attribution.
+They also risk a merge race on the mechanism matrix (miso-124 lost one); second-in re-checks its
+cell survived.
+
+**Not chartered by anything here:** the CAISO capacity-anchor correction (D-15 explicitly), the
+VRE screen's siting-zone CF (FFR-3V proposal 3), the hindcast renewable-pool vintage leak
+(proposal 4 — belongs to whoever owns the T1-H lane), and the pre-existing test failures on main.
