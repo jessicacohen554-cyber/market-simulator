@@ -1240,6 +1240,7 @@ def load_or_synthesize_bins(
             iso_config,
             measured_ct_heat_rates=config.measured_ct_heat_rates,
             measured_chp_heat_rates=config.measured_chp_heat_rates,
+            cc_steam_part_capacity=config.cc_steam_part_capacity,
         )
         + retired_within_window,
         iso,
@@ -1321,6 +1322,7 @@ def build_base_fleet(
                 year=vintage_year,
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
+                cc_steam_part_capacity=config.cc_steam_part_capacity,
             )
             + retired_within_window
         )
@@ -1360,6 +1362,7 @@ def build_base_fleet(
                 year=vintage_year,
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
+                cc_steam_part_capacity=config.cc_steam_part_capacity,
             )
             + retired_within_window,
             n_bins=(
