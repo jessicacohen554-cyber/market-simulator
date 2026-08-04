@@ -116,6 +116,16 @@ def measured(year: int) -> pd.DataFrame:
     Columns are ``<node>_<component>`` for LMP / MCE / MCC / MCL / MGHG.  Only
     hours in which **every** requested node printed are kept: a basis built
     from two different hour sets is not a basis.
+
+    **MGHG is optional and is NOT allowed to drop an hour.** The GHG component
+    is a late addition to ``PRC_LMP`` v12 and is simply absent from the
+    bulk-``GRP``-sourced early-2023 rows (measured: 2,640 null MGHG cells and
+    zero null LMP/MCE/MCC/MCL cells in the 2023 aggregate). Requiring it
+    would silently discard every hour that only the GRP route can supply — the
+    aged-out head of the record — so completeness is enforced on the four core
+    components that make up the decomposition under test, MGHG is filled with
+    0.0, and the fill count is reported by the caller's identity guard rather
+    than buried.
     """
     path = DAM / f"CAISO_dam_hourly_{year}.csv"
     if not path.is_file():
@@ -123,11 +133,15 @@ def measured(year: int) -> pd.DataFrame:
     df = pd.read_csv(path)
     want = [n for n in (*GEN_HUBS, *DLAPS) if n in set(df["node"])]
     df = df[df["node"].isin(want)]
-    comps = [c for c in ("LMP", "MCE", "MCC", "MCL", "MGHG") if c in df.columns]
+    core = [c for c in ("LMP", "MCE", "MCC", "MCL") if c in df.columns]
+    comps = core + (["MGHG"] if "MGHG" in df.columns else [])
     wide = df.pivot_table(
         index="interval_start_gmt", columns="node", values=comps, aggfunc="mean"
     )
     wide.columns = [f"{node}_{comp}" for comp, node in wide.columns]
+    ghg_cols = [c for c in wide.columns if c.endswith("_MGHG")]
+    wide.attrs["mghg_filled"] = int(wide[ghg_cols].isna().sum().sum())
+    wide[ghg_cols] = wide[ghg_cols].fillna(0.0)
     wide = wide.dropna()
     wide.index = pd.to_datetime(wide.index, utc=True)
     return wide.sort_index()
@@ -233,6 +247,10 @@ def main() -> int:
     print("=" * 79)
     for year in YEARS:
         m = frames[year]
+        if m.empty:
+            print(f"{year}: no complete hours — identity guard skipped")
+            report["identity"][str(year)] = {"complete_hours": 0}
+            continue
         nodes = sorted({c.rsplit("_", 1)[0] for c in m.columns})
         mce = m[[f"{n}_MCE" for n in nodes]].to_numpy()
         mce_spread = float(np.abs(mce.max(axis=1) - mce.min(axis=1)).max())
@@ -248,16 +266,21 @@ def main() -> int:
             if f"{n}_MGHG" in m.columns
         }
         report["identity"][str(year)] = {
+            "complete_hours": int(len(m)),
             "max_MCE_spread_across_nodes": round(mce_spread, 8),
             "max_LMP_reconstruction_error": round(max(recon), 6),
             "max_abs_MGHG_by_node": ghg,
+            "mghg_cells_filled_zero": int(m.attrs.get("mghg_filled", 0)),
         }
         print(
             f"{year}: max MCE spread across {len(nodes)} nodes "
             f"{mce_spread:.2e} $/MWh; max |LMP - (MCE+MCC+MCL+MGHG)| "
             f"{max(recon):.2e} $/MWh"
         )
-        print(f"      max |MGHG| by node: {ghg}")
+        print(
+            f"      max |MGHG| by node: {ghg}"
+            f"  (MGHG cells filled 0: {m.attrs.get('mghg_filled', 0):,})"
+        )
 
     print()
     print("=" * 79)
@@ -270,6 +293,8 @@ def main() -> int:
     )
     for year in YEARS:
         m = frames[year]
+        if m.empty:
+            continue
         for near, far, label in PAIRS:
             if f"{near}_LMP" not in m.columns or f"{far}_LMP" not in m.columns:
                 continue
@@ -279,11 +304,13 @@ def main() -> int:
             dmce = (m[f"{near}_MCE"] - m[f"{far}_MCE"]).to_numpy()
             s_tot, s_cc, s_cl = _split(tot), _split(dmcc), _split(dmcl)
             denom = float(tot.mean())
-            share = (
-                lambda x: 100.0 * float(x.mean()) / denom  # noqa: E731
-                if abs(denom) > 1e-9
-                else float("nan")
-            )
+
+            def share(x: np.ndarray, _d: float = denom) -> float:
+                """Component's share of the total basis, in per cent."""
+                return (
+                    100.0 * float(x.mean()) / _d if abs(_d) > 1e-9 else float("nan")
+                )
+
             report["measured"][f"{year}_{label}"] = {
                 "mean_total": s_tot["mean"],
                 "mean_dMCE": round(float(dmce.mean()), 8),
@@ -314,6 +341,8 @@ def main() -> int:
     )
     for year in YEARS:
         m = frames[year]
+        if m.empty:
+            continue
         loc = m.index.tz_convert("America/Los_Angeles")
         belly = (loc.hour >= BELLY[0]) & (loc.hour <= BELLY[1])
         for near, far, label in PAIRS:
@@ -393,7 +422,7 @@ def main() -> int:
     for near, far, label in PAIRS[:2]:
         for year in YEARS:
             m = frames[year]
-            if f"{near}_MCC" not in m.columns:
+            if m.empty or f"{near}_MCC" not in m.columns:
                 continue
             loc = m.index.tz_convert("America/Los_Angeles")
             s = pd.Series((m[f"{near}_MCC"] - m[f"{far}_MCC"]).to_numpy(), index=loc)
