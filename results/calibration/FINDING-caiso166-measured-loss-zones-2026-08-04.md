@@ -221,22 +221,35 @@ pre-registration, the derive, the re-derived surface, this finding, and
 
 Two edits target files **larger than the cap**, so they ship as small carriers
 rather than as the files themselves. Both were verified end-to-end — the
-**remote** copy was fetched back and run/applied against a clean tree:
+**remote** copy was fetched back and run against a clean tree:
 
 | carrier | applies to | verification |
 |---|---|---|
-| `results/calibration/_caiso166_log.patch` | `docs/calibration-log/caiso.md` (380 KB) | remote copy passes `git apply --check` |
+| `results/calibration/_caiso166_apply_calibration_log.py` | `docs/calibration-log/caiso.md` (380 KB) | remote copy applies on the current branch tip; idempotent |
 | `results/calibration/_caiso166_apply_matrix_cell.py` | `docs/codebase-site/data/mechanism-matrix.js` (843 KB) | remote copy reproduces the hand edit **byte-for-byte** (sha `e7b8b796`) |
 
 ```
-git apply results/calibration/_caiso166_log.patch
+python results/calibration/_caiso166_apply_calibration_log.py
 python results/calibration/_caiso166_apply_matrix_cell.py
 ```
 
-The matrix carrier is an **anchored applier, not a diff** — a diff would have
-required reproducing the ~15 KB *old* note line exactly for no benefit. It is
-idempotent and refuses rather than force-fits if either anchor does not match
-exactly once.
+Both are **anchored appliers, not diffs**, and the log one is a diff only in
+hindsight: it *started* as a `git diff` patch and **went stale inside this
+session** — a caiso-167 session appended its own entry to `caiso.md`, moving the
+tail the patch was cut against, and `git apply` refused it. The calibration log
+is a hot append-only file several lanes touch at once, so a positional diff is
+the wrong shape for it; the applier anchors on the file's last `Next number:`
+trailer instead and leaves that trailer to whichever session owns it. The stale
+`_caiso166_log.patch` is **deleted**, not left lying around for someone to try
+and conclude the entry was lost. Both appliers are idempotent and refuse rather
+than force-fit if their anchor is gone.
+
+Same drift caught the branch itself: the remote branch advanced onto a newer
+`main` (`6fbd3f28`) between pushes, so the local tree was stale by ~180 files of
+other lanes' work. The `push_files` transport is per-file, so nothing of theirs
+was clobbered — but a `git commit -a` from the stale tree would have reverted
+them, which is why the local tree was reconciled onto the branch tip rather than
+committed as-is.
 
 **Needs a session with a working `git push`:** `frontend/data/backcast/runs/*.js`
 (2 files), the registry sidecars, and the bundle parquet sidecars. Registry
