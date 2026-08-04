@@ -718,7 +718,9 @@ def _agg_status(records: list[dict]) -> str:
 # --------------------------------------------------------------------------- #
 # (b) Capacity events — reuse score_capacity_hindcast verbatim
 # --------------------------------------------------------------------------- #
-def score_capacity_events(cache_dir: Path, iso: str) -> dict:
+def score_capacity_events(
+    cache_dir: Path, iso: str, bundle: Path | None = None
+) -> dict:
     """Part (b): retirements / additions / CO2, 2023-2025, vs registry actuals.
 
     Reuses :mod:`scripts.score_capacity_hindcast` unchanged. Model ledger events
@@ -727,19 +729,44 @@ def score_capacity_events(cache_dir: Path, iso: str) -> dict:
     Emitted at the TOP LEVEL of ``crossover_score.json`` in the SAME shape the
     hindcast scorer produces (``retirements`` / ``additions`` / ``co2``), so
     ``scripts/register_hindcast.py`` consumes a crossover bundle unchanged.
+
+    **Additions basis (owner decision D-9(ii), 2026-08-04).** Additions are
+    attributed to the year the model DECIDED to build, not the COD year, and
+    the basis is passed explicitly rather than inherited from the scorer's
+    default — a basis-implicit verdict is the record-provenance defect class.
+    The ``<= 2025`` window filter composes with it exactly: a pipeline
+    commissioning at 2026/2027 drops both its ledger addition and its
+    decision-basis reversal (same year, equal and opposite), while its
+    ``decided`` row stays inside the window — so no forward event is scored and
+    no in-window decision is lost.
+
+    Args:
+        cache_dir: The run's cache directory (ledgers + parquets).
+        iso: ISO code.
+        bundle: The bundle out-dir, for the ``run_config.yaml`` the basis block
+            is checked against. ``None`` records the gate as unverifiable.
     """
     ledgers = load_ledgers_for_run(cache_dir)
     actuals = CH.load_actuals(iso)
     mret = CH.model_retirements(ledgers)
-    madd = CH.model_additions(ledgers)
+    madd = CH.model_additions(ledgers, basis=CH.ADDITIONS_BASIS_DECISION)
+    madd_cod = CH.model_additions(ledgers, basis=CH.ADDITIONS_BASIS_COD)
     # Restrict model events to the scored window (no forward events vs actuals).
     if not mret.empty:
         mret = mret[mret["year"] <= max(SCORED_YEARS)]
     if not madd.empty:
         madd = madd[madd["year"] <= max(SCORED_YEARS)]
+    if not madd_cod.empty:
+        madd_cod = madd_cod[madd_cod["year"] <= max(SCORED_YEARS)]
 
     ret = CH.score_retirements(mret, actuals)
-    add = CH.score_additions(madd, actuals)
+    add = CH.score_additions(madd, actuals, basis=CH.ADDITIONS_BASIS_DECISION)
+    add_cod = CH.score_additions(madd_cod, actuals, basis=CH.ADDITIONS_BASIS_COD)
+    add_basis = CH.additions_basis_record(
+        ledgers,
+        CH.ADDITIONS_BASIS_DECISION,
+        CH.load_solved_config(bundle) if bundle is not None else None,
+    )
     model_co2 = {
         str(k): v for k, v in CH.model_co2_by_year(cache_dir).items()
     }  # 2023-2025 only, physical basis
@@ -747,6 +774,8 @@ def score_capacity_events(cache_dir: Path, iso: str) -> dict:
     return {
         "retirements": ret,
         "additions": add,
+        "additions_cod_basis": add_cod,
+        "additions_basis": add_basis,
         "co2": {"model": model_co2, "actual": actual_co2},
     }
 
@@ -982,7 +1011,7 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
     keeper_run_id = _load_keepers().get(iso)
 
     dispatch = score_dispatch_skill(cache_dir, iso, keeper_run_id)
-    capacity = score_capacity_events(cache_dir, iso)
+    capacity = score_capacity_events(cache_dir, iso, bundle)
     forward = forward_invariants(cache_dir, meta)
 
     run_id = bundle.name
@@ -1024,6 +1053,8 @@ def score_crossover(bundle: Path, report_dir: Path) -> dict:
         # (b) — TOP LEVEL, hindcast-scorer shape (register_hindcast compatibility)
         "retirements": capacity["retirements"],
         "additions": capacity["additions"],
+        "additions_cod_basis": capacity["additions_cod_basis"],
+        "additions_basis": capacity["additions_basis"],
         "co2": capacity["co2"],
         "bands": CH.BANDS,
         # (c)
