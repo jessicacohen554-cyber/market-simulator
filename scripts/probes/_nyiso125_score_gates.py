@@ -50,9 +50,26 @@ BORDER_LINKS = (
 )
 CE_LINK = "Upstate_West>Capital_Hudson"
 
-# nyiso-124 §6.1's measured Central-East reference (NYISO MIS P-32
-# "CENTRAL EAST - VC" utilisation p50) and the model's incumbent reading.
-MEASURED_CE_UTIL_P50 = 0.591
+
+# Measured Central-East utilisation, read PER YEAR from NYISO's own P-32
+# posting rather than pinned to one year. nyiso-124 §6.1 quoted 0.591, which is
+# the 2025 value; 2023's posted limit is far lower (1,725 MW median, pre-NY
+# Transco) so its utilisation runs much higher. Using one year's number for all
+# three would misstate 2023's gap by a factor of ~2.4 — corrected here.
+def measured_ce_util_p50(year: int) -> float:
+    """Return the measured ``CENTRAL EAST - VC`` utilisation p50 for ``year``."""
+    src = (
+        Path(__file__).resolve().parent.parent.parent
+        / "data/raw/NYISO/interface-flows"
+        / f"NYISO_interface_flows_hourly_{year}.csv.gz"
+    )
+    df = pd.read_csv(src)
+    ce = df[df["interface"] == "CENTRAL EAST - VC"]
+    lim = ce["positive_limit_mw"].where(ce["positive_limit_mw"].abs() < 9999)
+    util = (ce["flow_mw"] / lim).replace([np.inf, -np.inf], np.nan)
+    return float(util.median())
+
+
 INCUMBENT_CE_FLOW_P50 = 722.8
 INCUMBENT_CE_UTIL_P50 = 0.253
 # The keeper's C3a mean-LMP basis (rt_lw bench) — K6's target.
@@ -121,7 +138,9 @@ def score_prices(control: Path, treatment: Path) -> dict:
         f"\n  K1 zone-mean move > {K1_ZONE_MEAN_MOVE:.0%}: "
         f"{'FIRE ' + str(k1_fire) if k1_fire else 'silent'}"
     )
-    print(f"  K2 new unserved energy: {'FIRE ' + str(k2_fire) if k2_fire else 'silent'}")
+    print(
+        f"  K2 new unserved energy: {'FIRE ' + str(k2_fire) if k2_fire else 'silent'}"
+    )
     print(
         f"  K4 inertness (max |dLMP| < ${K4_INERT_DLMP:.2f} in all years): "
         f"{'FIRE — mechanism is INERT' if inert else 'silent (mechanism is LIVE)'}"
@@ -162,13 +181,12 @@ def score_criteria(control: Path, treatment: Path) -> dict:
     print(f"\n  {'criterion':22s} {'control':10s} {'treatment':10s}")
     for key in sorted(set(vc) | set(vt)):
         flag = "  <<<" if vc.get(key) != vt.get(key) else ""
-        print(f"  {str(key)[:22]:22s} {str(vc.get(key)):10s} {str(vt.get(key)):10s}{flag}")
+        print(
+            f"  {str(key)[:22]:22s} {str(vc.get(key)):10s} {str(vt.get(key)):10s}{flag}"
+        )
     out["verdicts_control"], out["verdicts_treatment"] = vc, vt
     out["K3_c1_regressed"] = vc.get("fuelmix") == "PASS" and vt.get("fuelmix") != "PASS"
-    print(
-        f"\n  K3 C1 regression: "
-        f"{'FIRE' if out['K3_c1_regressed'] else 'silent'}"
-    )
+    print(f"\n  K3 C1 regression: {'FIRE' if out['K3_c1_regressed'] else 'silent'}")
     return out
 
 
@@ -219,11 +237,12 @@ def score_network(control: Path, treatment: Path) -> dict:
         ce_c, ce_t = float(np.median(cc["mw"])), float(np.median(ct["mw"]))
         uc = float(np.nanmedian(cc["mw"].to_numpy() / cc["limit_up"].to_numpy()))
         ut = float(np.nanmedian(ct["mw"].to_numpy() / ct["limit_up"].to_numpy()))
-        gap = MEASURED_CE_UTIL_P50 - uc
+        meas_util = measured_ce_util_p50(year)
+        gap = meas_util - uc
         closed = (ut - uc) / gap if gap else float("nan")
         print(
             f"  {CE_LINK:34s} {ce_c:12.1f} {ce_t:12.1f} {ce_t - ce_c:+9.1f}"
-            f"   util {uc:.3f} -> {ut:.3f} (measured {MEASURED_CE_UTIL_P50:.3f}; "
+            f"   util {uc:.3f} -> {ut:.3f} (measured {meas_util:.3f}; "
             f"{closed * 100:+.1f} % of the gap closed)"
         )
         print(
@@ -236,7 +255,7 @@ def score_network(control: Path, treatment: Path) -> dict:
                 "ce_flow_p50_treatment": round(ce_t, 1),
                 "ce_util_p50_control": round(uc, 4),
                 "ce_util_p50_treatment": round(ut, 4),
-                "ce_measured_util_p50": MEASURED_CE_UTIL_P50,
+                "ce_measured_util_p50": round(meas_util, 4),
                 "ce_gap_share_closed": None if np.isnan(closed) else round(closed, 4),
                 "border_net_p50_control": round(net_c, 1),
                 "border_net_p50_treatment": round(net_t, 1),
