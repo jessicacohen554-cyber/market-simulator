@@ -1,0 +1,481 @@
+{
+  "session": "miso-122",
+  "lever": "hybrid-cogen dark-fuel scope gate on chp_power_only_heat_rates",
+  "prereg": "results/calibration/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md",
+  "keeper": "2026-08-03-miso-117b-ct-heat",
+  "arms": {
+    "A": "miso122_control_A",
+    "B": "miso122_scopegate_B"
+  },
+  "K1_artifact_fidelity": {
+    "passed": true,
+    "note": "the delta is an INPUT FILE, not a config key \u2014 identical run_config blocks are expected, not a wiring failure",
+    "mechanism_armed_both_arms": true,
+    "artifact_sha256": {
+      "A": "4cbeb961157793613f6fbfea9efff16d06a569b77d1f8616fae276d2e7de374f",
+      "B": "949fc67a9472759291c7384e8f94f5ac21193a1422b979cdaa09e22aec76a7a3"
+    },
+    "applied_map_size": {
+      "A": 25,
+      "B": 25
+    },
+    "rows_that_moved": {
+      "10745:CC_CHP": {
+        "A": 8.8243,
+        "B": 8.816,
+        "pct": -0.000941
+      },
+      "55088:CC_CHP": {
+        "A": 8.3465,
+        "B": 6.9573,
+        "pct": -0.166441
+      },
+      "55088:CT_CHP": {
+        "A": 8.3465,
+        "B": 6.9573,
+        "pct": -0.166441
+      }
+    },
+    "rows_added": [],
+    "rows_dropped": []
+  },
+  "K2_control_integrity": {
+    "passed": true,
+    "basis": "scorecard (gate); byte basis reported below",
+    "keeper_criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "CAVEAT",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "shape": "FAIL",
+      "forced_share": "PASS"
+    },
+    "control_criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "CAVEAT",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "shape": "FAIL",
+      "forced_share": "PASS"
+    },
+    "keeper_determination": "NOT-YET",
+    "control_determination": "NOT-YET",
+    "byte_basis_identical": true,
+    "byte_basis_by_year": {
+      "2023": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      },
+      "2024": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      },
+      "2025": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      }
+    }
+  },
+  "K3_liveness": {
+    "passed": false,
+    "dispatch_live_all_years": true,
+    "price_live_all_years": false,
+    "price_live_year_count": 0,
+    "by_year": {
+      "2023": {
+        "max_abs_class_hour_mw": 912.5,
+        "max_by_class_mw": {
+          "CC_CHP": 445.2947,
+          "CC_REGULAR": 715.2808,
+          "COAL_BIT": 202.6973,
+          "COAL_LIGNITE": 185.7399,
+          "COAL_PRB": 486.8477,
+          "CT_CHP": 155.1031,
+          "CT_PEAKER": 282.5849,
+          "OTHER": 0.0,
+          "ST_CHP": 33.2294,
+          "ST_GAS": 277.8491,
+          "biomass": 0.0,
+          "hydro": 383.5,
+          "import": 912.5,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "max_abs_zone_price_delta": 0.049105,
+        "A_lw_price": 32.5458,
+        "B_lw_price": 32.5041,
+        "delta_system_lw_price": -0.0417,
+        "zone_price_deltas": {
+          "MISO-East": -0.049105,
+          "MISO-Illinois": -0.049105,
+          "MISO-Indiana": -0.049105,
+          "MISO-Plains": -0.049105,
+          "MISO-South": -0.032587,
+          "MISO-West": -0.049105
+        },
+        "dispatch_live": true,
+        "price_live": false
+      },
+      "2024": {
+        "max_abs_class_hour_mw": 912.5,
+        "max_by_class_mw": {
+          "CC_CHP": 456.1287,
+          "CC_REGULAR": 587.208,
+          "COAL_BIT": 483.8167,
+          "COAL_LIGNITE": 171.3088,
+          "COAL_PRB": 641.8193,
+          "CT_CHP": 107.4473,
+          "CT_PEAKER": 267.4071,
+          "OTHER": 0.0,
+          "ST_CHP": 66.5468,
+          "ST_GAS": 273.071,
+          "biomass": 0.0,
+          "hydro": 225.9,
+          "import": 912.5,
+          "nuclear": 0.0,
+          "oil": 15.57,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "max_abs_zone_price_delta": 0.03902,
+        "A_lw_price": 30.2496,
+        "B_lw_price": 30.2179,
+        "delta_system_lw_price": -0.0317,
+        "zone_price_deltas": {
+          "MISO-East": -0.03902,
+          "MISO-Illinois": -0.03902,
+          "MISO-Indiana": -0.03902,
+          "MISO-Plains": -0.03902,
+          "MISO-South": -0.020637,
+          "MISO-West": -0.03902
+        },
+        "dispatch_live": true,
+        "price_live": false
+      },
+      "2025": {
+        "max_abs_class_hour_mw": 914.661621,
+        "max_by_class_mw": {
+          "CC_CHP": 422.7439,
+          "CC_REGULAR": 753.3164,
+          "COAL_BIT": 259.3936,
+          "COAL_LIGNITE": 174.7245,
+          "COAL_PRB": 641.8193,
+          "CT_CHP": 105.6636,
+          "CT_PEAKER": 255.9846,
+          "OTHER": 0.0,
+          "ST_CHP": 52.2207,
+          "ST_GAS": 285.0845,
+          "biomass": 0.0,
+          "hydro": 327.0,
+          "import": 914.6616,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        },
+        "max_abs_zone_price_delta": 0.075219,
+        "A_lw_price": 38.9863,
+        "B_lw_price": 38.9295,
+        "delta_system_lw_price": -0.0568,
+        "zone_price_deltas": {
+          "MISO-East": -0.075219,
+          "MISO-Illinois": -0.075219,
+          "MISO-Indiana": -0.075219,
+          "MISO-Plains": -0.075219,
+          "MISO-South": -0.016275,
+          "MISO-West": -0.075219
+        },
+        "dispatch_live": true,
+        "price_live": false
+      }
+    },
+    "thresholds": {
+      "mw": 50.0,
+      "price": 0.1
+    }
+  },
+  "K4_zero_config_delta": {
+    "passed": true,
+    "differing_keys": []
+  },
+  "K5_year_span": {
+    "passed": true,
+    "spans": {
+      "A": [
+        2023,
+        2024,
+        2025
+      ],
+      "B": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "K6_direction_integrity": {
+    "passed": true,
+    "by_year": {
+      "2023": {
+        "delta_system_lw_price": -0.0417,
+        "passed": true
+      },
+      "2024": {
+        "delta_system_lw_price": -0.0317,
+        "passed": true
+      },
+      "2025": {
+        "delta_system_lw_price": -0.0568,
+        "passed": true
+      }
+    },
+    "tolerance": 0.001,
+    "offer_side_arithmetic": {
+      "rule": "heat_rate = all_fuel * (1 - dark_share), dark_share in [0, 1) \u2014 a strictly non-increasing map",
+      "applied_rows_whose_rate_ROSE": []
+    },
+    "zones_with_rising_lambda_REPORTED": {
+      "2023": [],
+      "2024": [],
+      "2025": []
+    }
+  },
+  "P_gates": {
+    "available": true,
+    "P1_free_class": {
+      "passed": true,
+      "A_free": {
+        "pass": 12,
+        "total": 12
+      },
+      "B_free": {
+        "pass": 12,
+        "total": 12
+      },
+      "A_all": {
+        "pass": 16,
+        "total": 16
+      },
+      "B_all": {
+        "pass": 16,
+        "total": 16
+      }
+    },
+    "P2_no_new_fail": {
+      "passed": true,
+      "A_fails": [
+        "shape"
+      ],
+      "B_fails": [
+        "shape"
+      ]
+    },
+    "P3_protective": {
+      "passed": true,
+      "note": "C6/C8 only \u2014 C7 (shape) is the standing MISO FAIL, expected in BOTH arms, covered by P2's subset rule",
+      "B": {
+        "governance": "PASS",
+        "forced_share": "PASS"
+      },
+      "shape_status_REPORTED": {
+        "A": "FAIL",
+        "B": "FAIL"
+      }
+    },
+    "P4_slack_dump_delta": {
+      "passed": true,
+      "by_year": {
+        "2023": {
+          "A_total_mwh": 0.0,
+          "B_total_mwh": 0.0,
+          "allowance": 10.0,
+          "passed": true
+        },
+        "2024": {
+          "A_total_mwh": 19059.283,
+          "B_total_mwh": 19059.283,
+          "allowance": 19249.876,
+          "passed": true
+        },
+        "2025": {
+          "A_total_mwh": 0.0,
+          "B_total_mwh": 0.0,
+          "allowance": 10.0,
+          "passed": true
+        }
+      },
+      "raw": {
+        "2023": {
+          "A": [
+            0.0,
+            0.0
+          ],
+          "B": [
+            0.0,
+            0.0
+          ]
+        },
+        "2024": {
+          "A": [
+            19059.283,
+            0.0
+          ],
+          "B": [
+            19059.283,
+            0.0
+          ]
+        },
+        "2025": {
+          "A": [
+            0.0,
+            0.0
+          ],
+          "B": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "P5_no_fitted_followup": {
+      "passed": true,
+      "note": "declarative: the dark-fuel share is CAMPD's own unit-grain heat input over the same plant's total, at the artifact's own eGRID vintage year \u2014 zero free parameters, no threshold, nothing swept (rules 5 / 23 / 24)"
+    },
+    "P6_no_c7_claim": {
+      "passed": true,
+      "note": "C7 COAL_PRB is the standing MISO FAIL and is data-blocked; this lever touches only CC_CHP/CT_CHP and claims no C7 result in either direction",
+      "shape_REPORTED": {
+        "A": "FAIL",
+        "B": "FAIL"
+      }
+    }
+  },
+  "REPORTED": {
+    "W2_mechanism_fired": {
+      "is_a_gate": true,
+      "2023": {
+        "touched_class_twh_delta": {
+          "CC_CHP": 0.35747000575065613,
+          "CT_CHP": 0.21969899535179138
+        },
+        "moved": true
+      },
+      "2024": {
+        "touched_class_twh_delta": {
+          "CC_CHP": 0.27181199193000793,
+          "CT_CHP": 0.22178000211715698
+        },
+        "moved": true
+      },
+      "2025": {
+        "touched_class_twh_delta": {
+          "CC_CHP": 0.5190449953079224,
+          "CT_CHP": 0.22395099699497223
+        },
+        "moved": true
+      },
+      "passed": true,
+      "note": "the corrected rows sit in CC_CHP/CT_CHP; a zero delta in BOTH classes in any year would mean the corrected artifact never reached the LP (the miso-113 hazard), not that the correction is inert"
+    },
+    "class_twh_delta_top": {
+      "2023": {
+        "CC_CHP": 0.35747000575065613,
+        "CT_CHP": 0.21969899535179138,
+        "CC_REGULAR": -0.19323700666427612,
+        "import": -0.15200400352478027,
+        "COAL_PRB": -0.10735300183296204,
+        "CT_PEAKER": -0.06100799888372421,
+        "COAL_BIT": -0.022292999550700188,
+        "ST_GAS": -0.021556999534368515
+      },
+      "2024": {
+        "CC_CHP": 0.27181199193000793,
+        "CC_REGULAR": -0.2248840034008026,
+        "CT_CHP": 0.22178000211715698,
+        "import": -0.1115420013666153,
+        "CT_PEAKER": -0.05653199926018715,
+        "COAL_PRB": -0.05583199858665466,
+        "ST_GAS": -0.015745000913739204,
+        "COAL_BIT": -0.01566700078547001
+      },
+      "2025": {
+        "CC_CHP": 0.5190449953079224,
+        "CC_REGULAR": -0.308120995759964,
+        "CT_CHP": 0.22395099699497223,
+        "COAL_PRB": -0.1419530063867569,
+        "import": -0.129038006067276,
+        "COAL_BIT": -0.08403799682855606,
+        "CT_PEAKER": -0.0570870004594326,
+        "ST_GAS": -0.009709999896585941
+      }
+    }
+  },
+  "VERDICT": {
+    "branch": "DISPATCH-LIVE / PRICE-INERT",
+    "rule": "prereg \u00a75: LIVE iff max zonal |\u0394\u03bb| >= 0.10 $/MWh in >= 2 of 3 years; otherwise DISPATCH-LIVE/PRICE-INERT if the touched classes moved, else FULLY INERT",
+    "the_correction_ships_under_every_branch": true,
+    "reason": "rule 14 [R-ACCURATE] \u2014 an accurate input is never reverted because it did not help a residual"
+  }
+}
