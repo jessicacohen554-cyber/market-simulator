@@ -303,6 +303,15 @@ frontend/data/forecast/program-status.js
 # docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md §2.
 /results/ffrsc/**/year_*.parquet
 /results/ffrsc/**/config.yaml
+# FFR-3P paired CAISO NQC-accreditation A/B arms (CAISO 2026-2030, isolated
+# run_full_horizon --out-dir caches). Same class as /results/ffrsc/ — only the
+# HEAVY regenerable LP output is ignored; the slim per-run record the addendum
+# cites (full_horizon_summary.json + run_config.json + the evolution_<year>.json
+# / year_<year>_floor_retentions.json ledgers) IS committed. Regenerate the
+# parquets with the two commands in
+# docs/handoffs/ffr-3p-caiso-accreditation-ab-2026-08-04.md §Reproduction.
+/results/ffr3p/**/year_*.parquet
+/results/ffr3p/**/config.yaml
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
