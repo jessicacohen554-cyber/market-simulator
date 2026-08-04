@@ -1,0 +1,683 @@
+{
+  "probe": "miso-128 C7 2025 diurnal organization",
+  "prereg": "results/calibration/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md",
+  "keeper_run": "2026-08-04-miso-127-onlinepmin",
+  "bundle": "results/calibration/miso127_onlinepmin_B",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "gate": {
+    "d1_min_cv_ratio": 0.5,
+    "offpeak_last_hour": 14
+  },
+  "no_lp_solved": true,
+  "per_year": {
+    "2023": {
+      "model": {
+        "mean": 13094.183560997735,
+        "prof_std": 1038.3608407659121,
+        "tot_std": 4443.600108899857,
+        "cv": 0.07929939548570009,
+        "dfrac": 0.23367558180724515,
+        "profile": [
+          11907.4,
+          11763.0,
+          11698.2,
+          11747.2,
+          11967.4,
+          12388.3,
+          12928.5,
+          13303.1,
+          13667.9,
+          13951.2,
+          14126.8,
+          14233.1,
+          14244.5,
+          14243.1,
+          14243.0,
+          14284.1,
+          14485.0,
+          14668.5,
+          14629.5,
+          14382.6,
+          13833.9,
+          13056.9,
+          12574.5,
+          12168.4
+        ]
+      },
+      "actual": {
+        "mean": 14108.401019796069,
+        "prof_std": 2183.5660105295997,
+        "tot_std": 4897.648391297789,
+        "cv": 0.15477062265707855,
+        "dfrac": 0.4458396838795922,
+        "profile": [
+          11775.1,
+          11150.8,
+          10969.7,
+          11204.7,
+          11873.9,
+          12792.6,
+          13773.8,
+          14652.4,
+          15367.6,
+          15873.4,
+          16217.7,
+          16422.9,
+          16517.2,
+          16516.8,
+          16517.4,
+          16695.1,
+          17041.8,
+          17442.9,
+          17542.8,
+          17241.3,
+          16452.4,
+          15247.7,
+          13994.5,
+          12830.9
+        ]
+      },
+      "R_tot": 0.9072925930728937,
+      "R_dfrac": 0.524124680364599,
+      "R_level": 1.0774555705648785,
+      "cv_ratio": 0.5123672317413996,
+      "product": 0.5123672317413995,
+      "n_matched": 31,
+      "committed_cv_ratio": 0.514,
+      "repro_abs_err": 0.00163276825860037,
+      "online_days": {
+        "actual": {
+          "n_plants": 30,
+          "prof_std_frac": 0.08729661260676265,
+          "resid_std_frac": 0.21212504183028486,
+          "level_frac": 0.5334731912323715
+        },
+        "model": {
+          "n_plants": 30,
+          "prof_std_frac": 0.041254205919878995,
+          "resid_std_frac": 0.17492477162149977,
+          "level_frac": 0.5414120373983856
+        },
+        "R_prof": 0.47257510558528976,
+        "R_resid": 0.8246304637688748,
+        "R_level": 1.0148814341498111
+      },
+      "flat_census": {
+        "actual": {
+          "n_flat": 0,
+          "n": 31,
+          "flat_mw": 0.0,
+          "class_mw": 32247.0,
+          "flat_share": 0.0
+        },
+        "model": {
+          "n_flat": 10,
+          "n": 31,
+          "flat_mw": 8370.0,
+          "class_mw": 32247.0,
+          "flat_share": 0.2596
+        }
+      },
+      "controls": {
+        "COAL_BIT": {
+          "R_tot": 1.0260972128425174,
+          "R_dfrac": 0.5844723875295535,
+          "R_level": 1.070741797617887,
+          "cv_ratio": 0.6421511469136671
+        },
+        "COAL_LIGNITE": {
+          "R_tot": 0.771829965149161,
+          "R_dfrac": 1.7042500645772827,
+          "R_level": 1.1595042350672335,
+          "cv_ratio": 1.525201745956326
+        }
+      },
+      "P2": {
+        "profile_r": 0.99999,
+        "payload_offpeak_cv": 0.0793,
+        "parquet_offpeak_cv": 0.07687,
+        "rel_diff": 0.03163,
+        "bars": {
+          "min_r": 0.98,
+          "rel_tol": 0.1
+        },
+        "verdict": "PASS"
+      }
+    },
+    "2024": {
+      "model": {
+        "mean": 12513.964911018651,
+        "prof_std": 796.6318797534459,
+        "tot_std": 4221.256223685061,
+        "cv": 0.0636594305176615,
+        "dfrac": 0.18871914840980783,
+        "profile": [
+          11655.4,
+          11540.2,
+          11494.0,
+          11531.8,
+          11689.9,
+          12006.8,
+          12328.7,
+          12513.6,
+          12686.9,
+          12939.2,
+          13185.6,
+          13397.1,
+          13523.9,
+          13578.2,
+          13638.3,
+          13702.2,
+          13974.0,
+          14227.3,
+          14198.8,
+          13930.5,
+          13370.2,
+          12629.4,
+          12198.3,
+          11836.3
+        ]
+      },
+      "actual": {
+        "mean": 13654.076732301764,
+        "prof_std": 1654.9959570377266,
+        "tot_std": 4813.087506276983,
+        "cv": 0.12120892459337543,
+        "dfrac": 0.34385328645684615,
+        "profile": [
+          11894.4,
+          11376.5,
+          11209.0,
+          11377.9,
+          11968.3,
+          12799.8,
+          13594.5,
+          14132.8,
+          14492.7,
+          14881.3,
+          15171.8,
+          15373.6,
+          15474.0,
+          15518.9,
+          15545.7,
+          15774.9,
+          16266.9,
+          16812.9,
+          16989.2,
+          16766.0,
+          16101.0,
+          15023.2,
+          13888.8,
+          12797.3
+        ]
+      },
+      "R_tot": 0.8770370823675893,
+      "R_dfrac": 0.5488362503508956,
+      "R_level": 1.091107161430446,
+      "cv_ratio": 0.5252041525095814,
+      "product": 0.5252041525095814,
+      "n_matched": 31,
+      "committed_cv_ratio": 0.529,
+      "repro_abs_err": 0.0037958474904186135,
+      "online_days": {
+        "actual": {
+          "n_plants": 29,
+          "prof_std_frac": 0.06712304437783174,
+          "resid_std_frac": 0.21353351858218864,
+          "level_frac": 0.5181322900728108
+        },
+        "model": {
+          "n_plants": 28,
+          "prof_std_frac": 0.032427245028102965,
+          "resid_std_frac": 0.17263968338129704,
+          "level_frac": 0.48743334378466957
+        },
+        "R_prof": 0.4831015239054396,
+        "R_resid": 0.8084898545557772,
+        "R_level": 0.9407507563679784
+      },
+      "flat_census": {
+        "actual": {
+          "n_flat": 3,
+          "n": 31,
+          "flat_mw": 2415.0,
+          "class_mw": 32247.0,
+          "flat_share": 0.0749
+        },
+        "model": {
+          "n_flat": 11,
+          "n": 31,
+          "flat_mw": 8846.0,
+          "class_mw": 32247.0,
+          "flat_share": 0.2743
+        }
+      },
+      "controls": {
+        "COAL_BIT": {
+          "R_tot": 1.0159970905033635,
+          "R_dfrac": 0.5064008827832748,
+          "R_level": 1.070533117066085,
+          "cv_ratio": 0.5507912408863309
+        },
+        "COAL_LIGNITE": {
+          "R_tot": 0.6483769657872643,
+          "R_dfrac": 0.9196499951513527,
+          "R_level": 1.182903509727683,
+          "cv_ratio": 0.7053415550751195
+        }
+      },
+      "P2": {
+        "profile_r": 0.99999,
+        "payload_offpeak_cv": 0.06366,
+        "parquet_offpeak_cv": 0.06214,
+        "rel_diff": 0.02445,
+        "bars": {
+          "min_r": 0.98,
+          "rel_tol": 0.1
+        },
+        "verdict": "PASS"
+      }
+    },
+    "2025": {
+      "model": {
+        "mean": 15992.909005850097,
+        "prof_std": 406.78787012833266,
+        "tot_std": 4072.6744258635294,
+        "cv": 0.025435514575836857,
+        "dfrac": 0.09988224630602074,
+        "profile": [
+          15555.3,
+          15377.2,
+          15317.2,
+          15384.1,
+          15618.3,
+          16008.5,
+          16186.7,
+          16159.1,
+          16124.6,
+          16196.7,
+          16295.0,
+          16363.1,
+          16406.5,
+          16425.3,
+          16475.9,
+          16626.2,
+          17009.2,
+          17376.3,
+          17465.1,
+          17353.4,
+          17106.0,
+          16665.5,
+          16246.9,
+          15846.2
+        ]
+      },
+      "actual": {
+        "mean": 16392.1470802192,
+        "prof_std": 1207.0862375274726,
+        "tot_std": 4280.091681545572,
+        "cv": 0.0736380799672114,
+        "dfrac": 0.2820234535470476,
+        "profile": [
+          15313.8,
+          14565.7,
+          14321.7,
+          14598.2,
+          15299.7,
+          16117.4,
+          16616.2,
+          16831.2,
+          17012.2,
+          17232.9,
+          17474.3,
+          17616.0,
+          17634.0,
+          17618.6,
+          17630.4,
+          17864.2,
+          18347.3,
+          18968.0,
+          19376.6,
+          19383.9,
+          19008.9,
+          18347.8,
+          17546.1,
+          16498.7
+        ]
+      },
+      "R_tot": 0.9515390624513111,
+      "R_dfrac": 0.3541629075517942,
+      "R_level": 1.0249634431248915,
+      "cv_ratio": 0.345412517370937,
+      "product": 0.345412517370937,
+      "n_matched": 30,
+      "committed_cv_ratio": 0.347,
+      "repro_abs_err": 0.0015874826290629973,
+      "online_days": {
+        "actual": {
+          "n_plants": 30,
+          "prof_std_frac": 0.04687928682381366,
+          "resid_std_frac": 0.2021954167223149,
+          "level_frac": 0.5940496784614551
+        },
+        "model": {
+          "n_plants": 30,
+          "prof_std_frac": 0.014773633493181226,
+          "resid_std_frac": 0.16771031858303936,
+          "level_frac": 0.5771215624433059
+        },
+        "R_prof": 0.31514202740978003,
+        "R_resid": 0.8294466872776071,
+        "R_level": 0.9715038714236969
+      },
+      "flat_census": {
+        "actual": {
+          "n_flat": 4,
+          "n": 30,
+          "flat_mw": 3976.0,
+          "class_mw": 32246.0,
+          "flat_share": 0.1233
+        },
+        "model": {
+          "n_flat": 17,
+          "n": 30,
+          "flat_mw": 19157.0,
+          "class_mw": 32246.0,
+          "flat_share": 0.5941
+        }
+      },
+      "controls": {
+        "COAL_BIT": {
+          "R_tot": 1.1060432665006217,
+          "R_dfrac": 1.1109858354852944,
+          "R_level": 0.9852274352509098,
+          "cv_ratio": 1.2106458985513302
+        },
+        "COAL_LIGNITE": {
+          "R_tot": 0.9334847224637368,
+          "R_dfrac": 0.4238377909640524,
+          "R_level": 1.1356580536200662,
+          "cv_ratio": 0.4493186828779897
+        }
+      },
+      "P2": {
+        "profile_r": 1.0,
+        "payload_offpeak_cv": 0.02544,
+        "parquet_offpeak_cv": 0.02491,
+        "rel_diff": 0.02108,
+        "bars": {
+          "min_r": 0.98,
+          "rel_tol": 0.1
+        },
+        "verdict": "PASS"
+      }
+    }
+  },
+  "P1_reproduction": {
+    "abs_err": [
+      0.0016,
+      0.0038,
+      0.0016
+    ],
+    "tol": 0.02,
+    "verdict": "PASS",
+    "note": "the committed artifact was computed from the solve-time dispatch/ parquet; this construction uses the registered payload, which is D-1's own fallback grain."
+  },
+  "P2_two_grain": {
+    "2023": {
+      "profile_r": 0.99999,
+      "payload_offpeak_cv": 0.0793,
+      "parquet_offpeak_cv": 0.07687,
+      "rel_diff": 0.03163,
+      "bars": {
+        "min_r": 0.98,
+        "rel_tol": 0.1
+      },
+      "verdict": "PASS"
+    },
+    "2024": {
+      "profile_r": 0.99999,
+      "payload_offpeak_cv": 0.06366,
+      "parquet_offpeak_cv": 0.06214,
+      "rel_diff": 0.02445,
+      "bars": {
+        "min_r": 0.98,
+        "rel_tol": 0.1
+      },
+      "verdict": "PASS"
+    },
+    "2025": {
+      "profile_r": 1.0,
+      "payload_offpeak_cv": 0.02544,
+      "parquet_offpeak_cv": 0.02491,
+      "rel_diff": 0.02108,
+      "bars": {
+        "min_r": 0.98,
+        "rel_tol": 0.1
+      },
+      "verdict": "PASS"
+    }
+  },
+  "P3_quantization": {
+    "per_hour_sd_frac_of_npl": 0.002886751345948129,
+    "profile_point_sd_frac_of_npl": 0.00015109947130387489,
+    "flat_threshold_frac_of_npl": 0.01,
+    "noise_over_threshold": 0.015109947130387488,
+    "bar": 0.05,
+    "verdict": "PASS"
+  },
+  "P4_decomposition_exact": {
+    "max_rel_err": 2.1668501727790133e-16,
+    "tol": 1e-06,
+    "verdict": "PASS"
+  },
+  "P5_single_factor": {
+    "R_tot": {
+      "2023": 0.9073,
+      "2024": 0.877,
+      "2025": 0.9515
+    },
+    "R_dfrac": {
+      "2023": 0.5241,
+      "2024": 0.5488,
+      "2025": 0.3542
+    },
+    "R_level": {
+      "2023": 1.0775,
+      "2024": 1.0911,
+      "2025": 1.025
+    },
+    "cond_R_tot_2025_gt_2024": true,
+    "cond_R_level_2025_lt_2024": true,
+    "cond_R_dfrac_2025_lt_080x_2024": true,
+    "verdict": "PASS"
+  },
+  "P6_absolute_deficit": {
+    "deficit_mw": [
+      1145.2,
+      858.4,
+      800.3
+    ],
+    "deficit_over_actual_mean": [
+      0.08117,
+      0.06287,
+      0.04882
+    ],
+    "cv_deficit": [
+      0.07547,
+      0.05755,
+      0.0482
+    ],
+    "nonincreasing": {
+      "mw": true,
+      "normalised": true,
+      "cv": true
+    },
+    "verdict": "PASS"
+  },
+  "P7_dimension_specific": {
+    "R_resid": [
+      0.8246,
+      0.8085,
+      0.8294
+    ],
+    "R_prof": [
+      0.4726,
+      0.4831,
+      0.3151
+    ],
+    "R_level": [
+      1.0149,
+      0.9408,
+      0.9715
+    ],
+    "resid_drift": 0.021,
+    "prof_drop_2024_to_2025": 0.168,
+    "bar": 0.1,
+    "verdict": "PASS"
+  },
+  "P8_controls": {
+    "R_dfrac": {
+      "COAL_BIT": {
+        "2023": 0.5845,
+        "2024": 0.5064,
+        "2025": 1.111
+      },
+      "COAL_LIGNITE": {
+        "2023": 1.7043,
+        "2024": 0.9196,
+        "2025": 0.4238
+      }
+    },
+    "collapsed_in_2025": {
+      "COAL_BIT": false,
+      "COAL_LIGNITE": true
+    },
+    "fork": "mixed \u2014 reported per class"
+  },
+  "amplitude_vs_level": {
+    "actual": {
+      "slope": 0.05579502283347099,
+      "intercept": 0.02893146482863158,
+      "weighted_r2": 0.4288971757674772,
+      "n": 92
+    },
+    "model": {
+      "slope": -0.0028304442906676736,
+      "intercept": 0.024992518231029656,
+      "weighted_r2": 0.0025709978070257433,
+      "n": 92
+    }
+  },
+  "flat_census": {
+    "2023": {
+      "actual": {
+        "n_flat": 0,
+        "n": 31,
+        "flat_mw": 0.0,
+        "class_mw": 32247.0,
+        "flat_share": 0.0
+      },
+      "model": {
+        "n_flat": 10,
+        "n": 31,
+        "flat_mw": 8370.0,
+        "class_mw": 32247.0,
+        "flat_share": 0.2596
+      }
+    },
+    "2024": {
+      "actual": {
+        "n_flat": 3,
+        "n": 31,
+        "flat_mw": 2415.0,
+        "class_mw": 32247.0,
+        "flat_share": 0.0749
+      },
+      "model": {
+        "n_flat": 11,
+        "n": 31,
+        "flat_mw": 8846.0,
+        "class_mw": 32247.0,
+        "flat_share": 0.2743
+      }
+    },
+    "2025": {
+      "actual": {
+        "n_flat": 4,
+        "n": 30,
+        "flat_mw": 3976.0,
+        "class_mw": 32246.0,
+        "flat_share": 0.1233
+      },
+      "model": {
+        "n_flat": 17,
+        "n": 30,
+        "flat_mw": 19157.0,
+        "class_mw": 32246.0,
+        "flat_share": 0.5941
+      }
+    }
+  },
+  "driver": {
+    "gas_price_mmbtu": {
+      "2023": 2.54,
+      "2024": 2.19,
+      "2025": 3.52
+    },
+    "offpeak_mean_mw": {
+      "2023": {
+        "actual": 14108.4,
+        "model": 13094.2
+      },
+      "2024": {
+        "actual": 13654.1,
+        "model": 12514.0
+      },
+      "2025": {
+        "actual": 16392.1,
+        "model": 15992.9
+      }
+    },
+    "offpeak_level_change_2024_2025": {
+      "actual": 0.2005,
+      "model": 0.278
+    },
+    "note": "reported as the measured driver of the 2025 denominator move. It sizes nothing \u2014 PREREG KILL-4 forbids sizing any parameter on any quantity in this probe."
+  },
+  "P9_lever_wiring": {
+    "grain1_construction": {
+      "use_campd_bins": true,
+      "plant_level_fleet": true,
+      "thermal_tranche_overrides_present": true,
+      "campd_bins_rows": 423,
+      "campd_bins_empty": false,
+      "branch_taken": "campd_bins",
+      "sole_consumer": "market_sim.data.offer_curves.split_coal_tranches (data/offer_curves.py:70-72), called only from the else limb of fleet/assembly.py build_dispatch_fleet's `if campd_bins is not None`"
+    },
+    "grain2_measurement": {
+      "perturbation": {
+        "coal_tranche_1_frac": 0.1,
+        "coal_tranche_2_frac": 0.15,
+        "coal_tranche_3_frac": 0.75
+      },
+      "committed": {
+        "coal_tranche_1_frac": 0.3,
+        "coal_tranche_2_frac": 0.25,
+        "coal_tranche_3_frac": 0.45
+      },
+      "n_generators": 2923,
+      "same_shape": true,
+      "max_abs_dpmax_mw": 0.0,
+      "n_pmax_changed": 0,
+      "max_abs_dfuel_frac": 0.0,
+      "n_fuel_frac_changed": 0
+    },
+    "verdict": "INERT BY WIRING at MISO",
+    "consequence": "coal_tranche_1/2/3_frac is not a MISO tuning channel; issue #1336 is a split-fleet-ISO debt, not a MISO one, and no arm is solved on it here."
+  }
+}
