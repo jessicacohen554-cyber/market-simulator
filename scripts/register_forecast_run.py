@@ -134,6 +134,22 @@ VERDICT_MAP = {
     "miso-2021-2025-curve-ff2c": "miso-2021-2025-curve-ff2c-t1h",
     "neiso-2021-2025-curve": "neiso-2021-2025-curve-t1h",
     "nyiso-2021-2025-curve": "nyiso-2021-2025-curve-t1h",
+    # FFR-3A-3 re-measured the T1-H and T1-X halves at the post-FFR-3F HEAD,
+    # because FFR-3A-2's own provenance ceiling recorded that its battery had
+    # measured a SUPERSEDED configuration: the G3 cap-grain fix (`2adfb49`) is
+    # unconditional and changes the admitted exit set — the economic-retirement
+    # screen every T1-H finding rests on. Each leg carries its OWN verdict key
+    # for the same reason the FFR-2A block above gives: a run must never render
+    # a verdict its own score contradicts, and these scores differ from the
+    # pre-fix ones (MISO's `retire.total_gw` flips PASS -> FAIL, PJM's depth
+    # moves 22.415 -> 18.862 GW). The pre-fix rows stay pointed at their own
+    # verdicts and remain valid at the sha they record.
+    "neiso-2021-2025-realized-ffr3a3": "neiso-2021-2025-realized-ffr3a3-t1h",
+    "nyiso-2021-2025-realized-ffr3a3": "nyiso-2021-2025-realized-ffr3a3-t1h",
+    "pjm-2021-2025-realized-ffr3a3": "pjm-2021-2025-realized-ffr3a3-t1h",
+    "miso-2021-2025-realized-ffr3a3": "miso-2021-2025-realized-ffr3a3-t1h",
+    "ercot-2023-2027-crossover-ffr3a3": "ercot-2023-2027-crossover-ffr3a3-t1x",
+    "pjm-2023-2027-crossover-ffr3a3": "pjm-2023-2027-crossover-ffr3a3-t1x",
 }
 
 
