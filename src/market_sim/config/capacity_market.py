@@ -439,10 +439,31 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 17_000.0,
         "high": 25_000.0,
     },
+    # CAISO re-vintaged 2026-08-04 (FFR-4D). The shipped row was the only CAISO
+    # entry NOT built by the EIA-860 construction documented above -- it came
+    # from "CAISO TPP 2024 - ~8 GW operational + under construction", a
+    # hand-rounded 2023-vintage figure. Re-derived by that same documented
+    # construction on the same EIA-860 2025 Early Release release:
+    #   mid  = operable Status="OP" nameplate, BA CISO = 15,448.4 -> 15_450
+    #   high = mid + proposed Status in {U,V,TS} = 19,262.3 -> 19_260
+    #   low  = rounded mid x 0.75 = 11,587.5 -> 11_590
+    # The construction reproduces the four ISOs it already governs EXACTLY
+    # (MISO 801.9->800, PJM 497.1->500, NYISO 252.7->250 / 278.3->280,
+    # NEISO 765.4->770 / 1,280.1->1,280), which is what licenses applying it
+    # here. Independent closure check against CAISO's own published ledger:
+    # 14,131 MW battery Net Dependable Capacity (2026 Summer Loads & Resources
+    # Assessment Table 1.1) vs 15,448.4 MW EIA-860 nameplate -- NDC is 91.5 %
+    # of nameplate, the expected post-derate relationship.
+    # Rule 23 [R-FROZEN-DERIVE]: the re-derivation licence is the SOURCE-DATA
+    # vintage (EIA-860 2025 ER, already on disk and already cited by the four
+    # rows above), NOT a residual. ERCOT's row is the other hand-entered entry
+    # (17,000 vs 13,709.3 by this construction) and is deliberately UNTOUCHED
+    # -- rule 25 [R-ISO-SCOPE]; it is routed, not fixed, in the FFR-4D handoff.
+    # See docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
-        "low": 6_000.0,
-        "mid": 8_000.0,
-        "high": 12_000.0,
+        "low": 11_590.0,
+        "mid": 15_450.0,
+        "high": 19_260.0,
     },
     "PJM": {
         "low": 380.0,
@@ -465,6 +486,27 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "high": 1_280.0,
     },
 }
+
+# ISOs whose BACKCAST resolves its storage base fleet AS OF THE SOLVE YEAR from
+# EIA-860 (model.storage.load_eia860_storage) instead of the forward-looking
+# STORAGE_BASE_FLEET_MW ladder above, under ScenarioConfig.
+# storage_measured_base_fleet. This is the storage analogue of what
+# data.renewables ALREADY does for wind/solar -- a backcast year takes that
+# year's EIA-860 month-end capacity and only a forecast reads the scenario
+# constant (FFR-4D, rule 14 [R-ACCURATE]).
+#
+# CAISO only, deliberately (rule 25 [R-ISO-SCOPE]). CAISO is where the vintage
+# error is first-order: its measured battery fleet doubles across the
+# calibration window (7,492 / 11,131 / 15,448 MW at year-end 2023 / 2024 / 2025)
+# while the scalar supplies a flat 8,000 MW, so a 2025 backcast runs 48 % short
+# of the fleet that actually operated. The other five ISOs are NOT enrolled here
+# because each enrollment moves that ISO's designated keeper and must be
+# re-solved and re-gated in that ISO's own lane; for PJM / MISO / NYISO / NEISO
+# the shipped scalar is within a few MW of the measured fleet anyway (the four
+# were derived from it), so the correction there is immaterial. ERCOT is the one
+# other ISO with a material gap (17,000 shipped vs 13,709.3 measured) and is
+# routed, not fixed, in docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md.
+STORAGE_MEASURED_BASE_FLEET_ISOS: frozenset[str] = frozenset({"CAISO"})
 
 # Ceiling on total deployed storage power (MW) per ISO, capping cumulative
 # new entry at a realistic share of system peak demand. Each value is roughly

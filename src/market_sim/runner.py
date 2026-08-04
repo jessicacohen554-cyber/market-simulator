@@ -22,6 +22,7 @@ from market_sim.config.constants import (
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
+    STORAGE_MEASURED_BASE_FLEET_ISOS,
     resolve_capacity_market_clearing,
 )
 from market_sim.config.entry_config import (
@@ -105,6 +106,7 @@ from market_sim.model.storage import (
     apply_storage_new_entry,
     build_default_storage,
     load_eia860_pumped_storage,
+    load_eia860_storage,
     storage_cap_profiles,
     storage_units_to_arrays,
 )
@@ -759,26 +761,59 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # Storage is managed across years like the generation fleet: the base
     # year starts from the deployment-pace fleet, later years grow via the
     # economic new-entry screen.
-    storage_units = build_default_storage(iso_config, config)
-
-    # Pumped storage is existing installed capacity (EIA-860 prime mover ``PS``,
-    # ~20 GW nationally) with no new build, so the parameterized battery builder
-    # never includes it. Prepend the EIA-860 PS fleet to the storage list once,
-    # before the new-entry screen -- PS is fixed existing capacity and does not
-    # participate in the endogenous battery-growth screen (it persists across
-    # years because ``apply_storage_new_entry`` preserves existing units). Per
-    # CLAUDE.md rule #12, EIA-860 installed capacity is a physical asset
-    # registry, admissible as a forward input in any year.
-    ps_units = load_eia860_pumped_storage(iso, start_year, config=config)
-    if ps_units:
-        storage_units = ps_units + storage_units
+    #
+    # A BACKCAST resolves the base fleet AS OF ITS SOLVE YEAR from EIA-860
+    # instead (FFR-4D, rule 14 [R-ACCURATE]). ``STORAGE_BASE_FLEET_MW`` is a
+    # FORECAST object -- its own docstring calls it "the base year (2026)" and
+    # its low/mid/high are the ``storage_deployment`` scenario ladder -- so
+    # feeding it to a 2023 solve is a vintage/as-of misalignment, not a
+    # scenario choice. ``load_eia860_storage`` was written for exactly this
+    # ("grounds a calibration backcast in the historical storage fleet rather
+    # than the forward-looking STORAGE_BASE_FLEET_MW scenario constant") and
+    # was ORPHANED -- no runner path called it, so ``storage_vintage_ramp`` was
+    # a dead flag for batteries even where a keeper armed it (the caiso-98
+    # dead-flag lesson). It matters most where the fleet moved fastest: CAISO's
+    # measured battery fleet is 7,492 / 11,131 / 15,448 MW at year-end
+    # 2023 / 2024 / 2025 against the flat 8,000 MW the scalar supplied.
+    # Rule 25 [R-ISO-SCOPE]: scoped to the ISOs in
+    # ``STORAGE_MEASURED_BASE_FLEET_ISOS`` so the other five keepers stay
+    # byte-identical; the loader already appends pumped storage itself.
+    measured_storage = (
+        config.storage_measured_base_fleet
+        and config.mode == "backcast"
+        and iso in STORAGE_MEASURED_BASE_FLEET_ISOS
+    )
+    if measured_storage:
+        storage_units = load_eia860_storage(iso, start_year, config)
         logger.info(
-            "%s %d: %d pumped-storage units (%.0f MW) from EIA-860",
+            "%s %d: %d measured EIA-860 storage units (%.0f MW incl. pumped storage)",
             iso,
             start_year,
-            len(ps_units),
-            sum(u.power_cap_mw for u in ps_units),
+            len(storage_units),
+            sum(u.power_cap_mw for u in storage_units),
         )
+    else:
+        storage_units = build_default_storage(iso_config, config)
+
+        # Pumped storage is existing installed capacity (EIA-860 prime mover
+        # ``PS``, ~20 GW nationally) with no new build, so the parameterized
+        # battery builder never includes it. Prepend the EIA-860 PS fleet to the
+        # storage list once, before the new-entry screen -- PS is fixed existing
+        # capacity and does not participate in the endogenous battery-growth
+        # screen (it persists across years because ``apply_storage_new_entry``
+        # preserves existing units). Per CLAUDE.md rule #12, EIA-860 installed
+        # capacity is a physical asset registry, admissible as a forward input
+        # in any year.
+        ps_units = load_eia860_pumped_storage(iso, start_year, config=config)
+        if ps_units:
+            storage_units = ps_units + storage_units
+            logger.info(
+                "%s %d: %d pumped-storage units (%.0f MW) from EIA-860",
+                iso,
+                start_year,
+                len(ps_units),
+                sum(u.power_cap_mw for u in ps_units),
+            )
 
     # Known additions (methodology spec §5.4): EIA-860 planned /
     # under-construction thermal units, deterministic through the data

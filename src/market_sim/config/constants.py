@@ -63,6 +63,7 @@ from market_sim.config.capacity_market import (
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     STORAGE_ELCC_SATURATION_EXPONENT,
+    STORAGE_MEASURED_BASE_FLEET_ISOS,
     STORAGE_TECHS,
     STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
@@ -2910,9 +2911,29 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
         "wind": 42000.0,  # was 40000. Source: ERCOT CDR Dec 2024.
         "solar": 38000.0,  # was 25000. Source: EIA Hourly Grid Monitor Oct 2025.
     },
+    # CAISO re-vintaged 2026-08-04 (FFR-4D) from the hand-rounded "CAISO annual
+    # report 2024" pair (wind 7000 / solar 22000) to the MEASURED EIA-860 2025
+    # Early Release operable nameplate for balancing authority CISO -- the SAME
+    # release and the SAME BA-code crosswalk (zone_assignment._ISO_TO_BA_CODE)
+    # that STORAGE_BASE_FLEET_MW already cites for PJM/MISO/NYISO/NEISO.
+    # Measured (prime mover, status OP, data/raw/eia-860/eia860_generators.parquet):
+    #   wind  WT = 6,326.3 MW -> 6330 (nearest 10)
+    #   solar PV = 23,996.4 MW -> 24000 (nearest 10)
+    # Independent closure check against CAISO's OWN published ledger (2026
+    # Summer Loads & Resources Assessment Table 1.1, Net Dependable Capacity):
+    # published wind NDC 6,330 MW vs EIA-860 6,326.3 -- agreement to 0.06 %.
+    # Solar: published solar 20,459 + hybrid 2,043 = 22,502 MW NDC, below the
+    # EIA-860 nameplate as expected (NDC is the post-test, post-derate value).
+    # NOTE THE DIRECTION ON WIND: the accurate value is 670 MW LOWER than the
+    # estimate, i.e. it makes the CAISO adequacy deficit WORSE. It is adopted
+    # anyway -- rule 14 [R-ACCURATE] forbids keeping an estimate because it
+    # flatters a residual. Backcast mode is UNAFFECTED: data.renewables already
+    # resolves a backcast year's installed capacity from that year's EIA-860
+    # month-end total and reads this registry only in forecast mode.
+    # See docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
-        "wind": 7000.0,  # unchanged. Source: CAISO annual report 2024.
-        "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
+        "wind": 6330.0,  # EIA-860 2025 ER, CISO WT operable = 6,326.3 MW.
+        "solar": 24000.0,  # EIA-860 2025 ER, CISO PV operable = 23,996.4 MW.
     },
     # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
     # Source: EIA-860 2024 / ISO planning reports, rounded. needs-citation:
