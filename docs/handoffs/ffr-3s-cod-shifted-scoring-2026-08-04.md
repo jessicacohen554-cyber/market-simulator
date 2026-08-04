@@ -2,7 +2,11 @@
 
 **Session:** 2026-08-04 · **Owner decision:** D-9(ii), signed 2026-08-04 (sitting Addendum K.2)
 **Class:** instrument change (scorer-only). **Lands BEFORE the next battery scores anything.**
-**Base:** `origin/main` 292f577e · **Branch:** `claude/capacity-additions-decision-year-n0musi`
+**Base:** `origin/main` c06d01a9 · **Branch:** `claude/capacity-additions-decision-year-n0musi`
+(Authored on 292f577e, rebased onto c06d01a9 before push — `main` advanced mid-session, and a
+stale `origin/main` ref defeats delta compression into an HTTP 413. Cache keys below were
+re-measured on the rebased tree and are unchanged on both bases; FFR-3T's `scenarios.py` /
+`cache.py` warm-start change that landed in between moves no backcast key.)
 
 ---
 
