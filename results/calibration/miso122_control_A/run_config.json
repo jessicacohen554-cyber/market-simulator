@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-07-30T23:46:41",
+  "timestamp": "2026-08-04T00:01:58",
   "git": {
-    "sha": "c77b76f",
-    "basis_sha": "5064afb2cc2b563d7b5173dd75fe85c9b8e98938",
-    "branch": "claude/miso-109-hydro-level-923hy-q7x2k",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "725779a",
+    "basis_sha": "9aca82b8700e80e5a2f4e51aca2e9d1d902eeb41",
+    "branch": "claude/miso-c7-coal-mechanism-6d828k",
+    "dirty": true,
+    "changed_files": [
+      "ests/unit/pipeline/test_p1_prep_wiring.py"
+    ],
+    "diffstat": "tests/unit/pipeline/test_p1_prep_wiring.py | 4 +---\n 1 file changed, 1 insertion(+), 3 deletions(-)"
   },
-  "model_changes_note": "miso-109 CONTROL: keeper recipe replayed at HEAD, unpatched (930 NG:WAT hydro level pin). Same-HEAD baseline for the EIA-923 HY level fix A/B.",
+  "model_changes_note": "miso-122 arm A CONTROL - zero-delta same-HEAD replay of the miso-117b keeper on the PRE-scope-gate chp_power_only_heat_rates_MISO.csv (PREREG-miso122 section 5)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -65,7 +67,8 @@
         "CT_CHP"
       ],
       "temp_derate_slope_st_chp": 0.00141,
-      "temp_derate_slope_ct_chp": 0.00141
+      "temp_derate_slope_ct_chp": 0.00141,
+      "measured_ct_heat_rates": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -82,7 +85,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "c77b76f"
+    "git_sha": "725779a"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -96,6 +99,7 @@
     "hindcast_fuel_variant": "realized",
     "crossover_forward_year": null,
     "crossover_forward_gas_path": "mid",
+    "crossover_solve_year_weather": false,
     "gas_price_path": "mid",
     "gas_price_factor": 1.0,
     "coal_price_path": "mid",
@@ -105,19 +109,23 @@
     "carbon_price_path": "zero",
     "policy_bundle": "current",
     "state_carbon_pricing": true,
+    "pjm_rggi_allowance_pricing": false,
     "nox_price": 0.0,
     "so2_price": 0.0,
     "mass_cap_enabled": false,
     "mass_cap_program": null,
     "mass_cap_tons": null,
     "carbon_program_price_path": null,
-    "net_cone_forward_escalation": "hold_last",
+    "net_cone_forward_escalation": "reindex_gross",
     "demand_growth_rate": 0.01,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
+    "demand_growth_vintage": null,
     "datacenter_load_path": "off",
     "datacenter_percentile": 0.5,
     "datacenter_load_factor": 0.85,
+    "electrification_path": "off",
+    "electrification_percentile": 0.5,
     "tech_cost_path": "mid",
     "tech_cost_percentile": 0.5,
     "renewable_buildout_pace": "mid",
@@ -190,7 +198,7 @@
     "retirement_fom_multiplier_oil": 1.0,
     "retirement_fom_multiplier_gas_cc_ccs": 1.0,
     "retirement_fom_multiplier_nuclear": 1.0,
-    "retirement_rule": "legacy",
+    "retirement_rule": "pipeline",
     "retirement_execution_lag_coal": 3,
     "retirement_execution_lag_gas_ct": 2,
     "retirement_execution_lag_gas_cc": 1,
@@ -198,6 +206,7 @@
     "retirement_execution_lag_oil": 1,
     "retirement_execution_lag_nuclear": 3,
     "retirement_execution_lag_gas_cc_ccs": null,
+    "exit_rate_limits": false,
     "limited_foresight_dispatch": false,
     "fixed_om_gas_cc": 30.0,
     "fixed_om_gas_ct": 21.0,
@@ -244,7 +253,7 @@
     "plant_emission_rates_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
-    "measured_ct_heat_rates": false,
+    "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": true,
     "control_retrofit_forward": false,
     "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
@@ -283,6 +292,7 @@
     "nyiso_rcpf_locational": null,
     "nyiso_dynamic_reserve_requirements": false,
     "nyiso_ordc_measured_step_span": false,
+    "nyiso_seny_rcpf_increment_step": false,
     "nyiso_hydro_reserve_eligible": false,
     "nyiso_scr_edrp_reserve_eligible": false,
     "neiso_rcpf_enabled": false,
@@ -302,8 +312,8 @@
     "entry_lookahead_reprice": false,
     "entry_screen_diagnostics": false,
     "entry_vre_capacity_revenue": false,
-    "entry_rate_limits": false,
-    "entry_commissioning_lag": false,
+    "entry_rate_limits": true,
+    "entry_commissioning_lag": true,
     "interchange_shaping": false,
     "interchange_shaping_export_only": false,
     "interchange_shape_import_pct": 90.0,
@@ -316,7 +326,7 @@
     "caiso_gas_commitment_floor": false,
     "caiso_gas_floor_frac": 1.0,
     "caiso_ra_mustoffer": false,
-    "caiso_ra_min_load_frac": 0.26,
+    "caiso_ra_min_load_frac": 0.4,
     "caiso_ra_startup_bridge": false,
     "caiso_ra_bridge_decommit": false,
     "caiso_ra_mustoffer_quantity_gate": false,
@@ -350,6 +360,7 @@
     "nyiso_iroquois_winter_spread": false,
     "nyiso_li_locational_reserve": false,
     "nyiso_incity_commitment_obligation": false,
+    "nyiso_nyc_rcpf_step_curve": false,
     "nyiso_east_reserve_families": false,
     "nyiso_gas_commitment_bridge": false,
     "nyiso_gas_bridge_cc_min_load_frac": 0.523,
@@ -389,6 +400,7 @@
     "caiso_firm_import_shape": false,
     "caiso_firm_import_selfschedule": false,
     "caiso_firm_import_envelope_clip": false,
+    "caiso_firm_import_selfsched_clip": false,
     "caiso_p1_export_sink_seam": false,
     "dump_cost_full_offer_domain": false,
     "caiso_demand_clock_realign": false,
@@ -532,6 +544,9 @@
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": true,
     "coal_committed_takeorpay_sunk_fixed": false,
+    "coal_prb_committed_dispatchable": false,
+    "coal_prb_committed_split": false,
+    "miso_coal_night_floor": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -613,6 +628,8 @@
     "ercot_thermal_dam_availability_hourly": false,
     "ercot_thermal_dam_availability_plant": false,
     "ercot_thermal_dam_availability_coal": false,
+    "ercot_dam_availability_coal_event_cap": false,
+    "ercot_dam_availability_gas_event_cap": false,
     "ercot_noncampd_plant_availability": false,
     "ercot_storage_capability_measured": false,
     "neiso_offer_surface_conditional": false,
@@ -688,9 +705,6 @@
     "gas_st_committed_hr_override": null,
     "gas_st_econ_hr_override": null,
     "gas_st_peak_hr_override": null,
-    "ct_committed_hr_override": 1.1,
-    "ct_econ_hr_override": 1.2,
-    "ct_peak_hr_override": 1.4,
     "econ_split_by_group": {},
     "offer_curve_by_group": {
       "CC_REGULAR": {
@@ -814,6 +828,8 @@
     },
     "gas_offer_net_revenue_margin": true,
     "gas_offer_margin_anchor": 3.0492,
+    "gas_offer_margin_zonal_anchor": false,
+    "gas_offer_margin_anchor_by_zone": null,
     "coal_offer_net_revenue_margin": false,
     "coal_offer_margin_anchor": null,
     "coal_offer_margin_level": null,
@@ -822,6 +838,8 @@
     "coal_peak_offer_margin": false,
     "coal_peak_offer_level": null,
     "coal_peak_offer_gas_hr": null,
+    "coal_perplant_offer_level": false,
+    "coal_perplant_offer_curves": null,
     "offer_curve_smoothing_n": 6,
     "offer_curve_smoothing_exp": 1.0,
     "offer_curve_smoothing_mid": null,
@@ -868,6 +886,7 @@
     "pjm_seam_flow_limit": false,
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
+    "pjm_seam_envelope_by_neighbor": false,
     "pjm_seam_measured_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_gas_delivered_floor_basis": null,
@@ -905,38 +924,5 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
-  },
-  "reuse": {
-    "source_bundle": "results/calibration/miso109_control_A_y24",
-    "requested_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "dd26d73d52a92ab0"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "206c98b27133f7e7"
-      }
-    },
-    "fresh_years": [
-      2025
-    ],
-    "refusals": {
-      "2025": "year not solved in the prior bundle"
-    },
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-30T23:32:44",
-    "source_git_sha": "c77b76f"
   }
 }

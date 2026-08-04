@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-30T23:46:41",
+  "timestamp": "2026-08-04T00:01:58",
   "iso": "MISO",
   "years": [
     2023,
@@ -37,9 +37,11 @@
   "tranche_startup_measured_runs": true,
   "tranche_startup_conditional_runs": true,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": false,
   "coal_offer_margin": false,
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
+  "coal_perplant_offer_level": false,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": true,
@@ -71,7 +73,8 @@
       "CT_CHP"
     ],
     "temp_derate_slope_st_chp": 0.00141,
-    "temp_derate_slope_ct_chp": 0.00141
+    "temp_derate_slope_ct_chp": 0.00141,
+    "measured_ct_heat_rates": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -237,6 +240,8 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
   "capacity_deliverability_limits": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -253,6 +258,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -291,18 +297,17 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-2f4bfa01b1e4.parquet",
-    "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
+    "eia930": "../_shared/MISO/eia930-a257b22934ed.parquet",
+    "eia923": "../_shared/MISO/eia923-1a5b4475b1f3.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
-    "unit_outages_short": "../_shared/MISO/unit_outages_short-8bcb14c5f625.parquet",
+    "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
-    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet",
-    "capacity_deliverability": "../_shared/MISO/capacity_deliverability-8949cf5d0c5b.parquet"
+    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "c77b76f",
-  "basis_sha": "5064afb2cc2b563d7b5173dd75fe85c9b8e98938",
+  "git_sha": "725779a",
+  "basis_sha": "9aca82b8700e80e5a2f4e51aca2e9d1d902eeb41",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -315,38 +320,5 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
-  },
-  "reuse": {
-    "source_bundle": "results/calibration/miso109_control_A_y24",
-    "requested_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "dd26d73d52a92ab0"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "206c98b27133f7e7"
-      }
-    },
-    "fresh_years": [
-      2025
-    ],
-    "refusals": {
-      "2025": "year not solved in the prior bundle"
-    },
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-30T23:32:44",
-    "source_git_sha": "c77b76f"
   }
 }
