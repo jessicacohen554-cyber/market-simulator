@@ -406,3 +406,69 @@ caveat budget is **3/3** (C3a mean LMP, C3b price shape, C3c price tail;
 what makes this ask load-bearing rather than housekeeping: the next
 load-bearing MISO miss must be *built*, and this is the datum that would let
 the one identified mechanism be built honestly.
+
+## 9. §8 retrieval attempt, xiso-4 (2026-08-04) — the count is NOT PRODUCIBLE from a standard session
+
+**No LP, no solve, no intake.** Nothing was written under `data/raw/`; the
+assessment-not-intake posture of §5 ("miso-104 intook nothing") was preserved, so
+no rule-22 authorization was required or claimed. **No receipts variant was
+re-tested** (miso-103 DO-NOT-REDO respected) and **no charter was written** —
+nothing cleared §4, so per §6 nothing was built and C7 stays failing and
+unledgered.
+
+**The §8 count was attempted and could not be produced.** Three retrieval routes
+were tested; all close. Two are new relative to miso-104/105.
+
+1. **eLibrary exposes no machine surface — reconfirmed against the CURRENT
+   bundles.** Every `/eLibrary/*` path returns the same 22,464-byte SPA shell
+   (`/eLibrary/api/search`, `/eLibrary/filelist`,
+   `/eLibrary/docketsheet?docket=IN79-6`, and the legacy
+   `idmws/search/fercgensearch.asp`); everything else 404s. All four JS bundles
+   were fetched at their current hashes and grepped: the **only** `/api/` base is
+   `"/api/v2/"` inside the **Datadog RUM SDK** (`ddforward`, `datadoghq`).
+   §3(a) blocker 4 and the miso-105 note are correct and now independently
+   re-verified rather than carried forward on trust.
+2. **NEW — the headless-browser fallback this ask names is unavailable.** §8 says
+   the count "needs either a headless-browser session against the search UI or an
+   authorized alternative source." Chromium + Playwright are installed in the
+   session image, but **Chromium cannot traverse the agent proxy at all**:
+   `example.com` fails with `ERR_CONNECTION_RESET` identically to
+   `elibrary.ferc.gov`, with and without `--proxy-server` / `proxy=`, and the
+   proxy logs a `non-CONNECT request` from the browser. This is a browser-egress
+   limitation of the session environment, **not** a FERC block. The ask's own
+   escape hatch does not work in a standard session.
+3. **NEW — FERC's structured open-data catalog does not carry Form 580.**
+   `data.ferc.gov` is a real data catalog with a developer API, and a surface
+   miso-104/105 never probed (both hit only `elibrary.ferc.gov`). It publishes
+   **Forms 1, 552 and 556 and the Market-Based Rate database**; searching the
+   Electric catalog for "580" returns **zero** hits. There is therefore **no
+   bulk/API alternative to eLibrary for Form 580.** (`www.ferc.gov` is
+   additionally 403/bot-blocked from this environment.)
+
+**Status unchanged — still blocked — but on a sharper boundary.** It is no
+longer "the browser route is untried"; it is *eLibrary exposes no API, FERC's
+open-data catalog does not carry this form, and the browser fallback is
+environment-blocked*. Producing the count requires a session with working
+browser egress, or a human/authorized eLibrary retrieval.
+
+### The scheduling point, which is independent of the count
+
+The **2026** Form 580 (CY2024–2025) is **due 2026-10-30**; today is 2026-08-04.
+The CY2024 and CY2025 contract data **does not yet exist**, so this ask **cannot**
+clear §2C's "≥15 plants AND ≥60 % of tonnage in EACH of 2023/2024/2025" before
+late 2026 — *whatever the count returns*. Per §8 the count decides only **which
+kind** of blocked the lane is (timing-blocked vs data-blocked). Hence the owner
+question:
+
+> Spend a human/authorized eLibrary retrieval **now** to distinguish
+> timing-blocked from data-blocked, or **wait** for the 2026 form and run the
+> §8 count once against the full 2023–2025 span? Waiting forfeits nothing that
+> is recoverable today.
+
+### Target-set denominators, re-derived for the record
+
+From committed artifacts only (`scripts/probes/miso104_contract_source_coverage.py`,
+no network, no LP): **39 plants across 26 owners**, **93.99 / 80.67 / 89.52 Mt**
+in 2023 / 2024 / 2025. Unchanged from miso-104.
+
+`docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(a).
