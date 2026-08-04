@@ -93,8 +93,7 @@ def _shared_evidence(g: dict, c: dict, s: dict) -> str:
         g4["years"][y]["hours_shortfall_strictly_inside_band"] for y in YEARS
     )
     g4_at40 = _fmt(
-        g4["years"][y]["hours_interior_priced_exactly_at_published_40"]
-        for y in YEARS
+        g4["years"][y]["hours_interior_priced_exactly_at_published_40"] for y in YEARS
     )
     g4_edge = _fmt(
         f"{g4['years'][y]['hours_shortfall_exactly_at_band_edge']}"
