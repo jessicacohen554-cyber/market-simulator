@@ -20,11 +20,11 @@ versions are committed:
 
 | file stem | edition | version | OEDI object | status |
 |---|---|---|---|---|
-| `atb_2024_electricity_filtered` | 2024 | `v3.0.0` | `ATB/electricity/csv/2024/v3.0.0/ATBe.csv` | **the derivation pin** — every committed cost constant is derived from this |
-| `atb_2024v4_electricity_filtered` | 2024 | `v4.0.0` | `ATB/electricity/csv/2024/v4.0.0/ATBe.csv` | latest published; landed 2026-07-31, **not yet consumed** |
+| `atb_2024_electricity_filtered` | 2024 | `v3.0.0` | `ATB/electricity/csv/2024/v3.0.0/ATBe.csv` | superseded as the pin 2026-08-03; retained for provenance and for reproducing pre-FFR-SC derivations |
+| `atb_2024v4_electricity_filtered` | 2024 | `v4.0.0` | `ATB/electricity/csv/2024/v4.0.0/ATBe.csv` | latest published; **the derivation pin** since 2026-08-03 (FFR-SC) — every committed cost constant is derived from this |
 
 `curate_nrel_atb.parse()` defaults to
-`curate_nrel_atb.DERIVATION_PINNED_VERSION` (`v3.0.0`), so the derive scripts
+`curate_nrel_atb.DERIVATION_PINNED_VERSION` (`v4.0.0`), so the derive scripts
 and their rule-23 consistency tests keep reading the exact bytes the
 constants were built against; `curate()` writes **both**. Moving that pin is
 a deliberate re-derivation act, never a side effect of landing new data.
@@ -156,10 +156,10 @@ curl -s "https://oedi-data-lake.s3.amazonaws.com/?list-type=2&prefix=ATB/electri
 - [x] `atb_2024_electricity_filtered.csv` (2024 **v3.0.0**) — 3,858 rows (23
       tech/techdetail combos x up to 2 parameters (CAPEX, Fixed O&M) x 3 cost
       cases x 27 years, crpyears-deduped as above; not every combination
-      populated for every tech). **The derivation pin.**
+      populated for every tech). The derivation pin until 2026-08-03.
 - [x] `atb_2024v4_electricity_filtered.csv` (2024 **v4.0.0**) — 3,858 rows,
       same key set; landed 2026-07-31, byte-reproducible from a fresh fetch.
-      Not yet consumed by any constant (see the v4.0.0 note above).
+      **The derivation pin** since 2026-08-03 (see the FFR-SC note below).
 
 > **FF-1E completeness fix (2026-07):** the extract was previously committed as
 > only `.part00`/`.part01` (600 rows, the four alphabetically-first techs —
@@ -216,6 +216,29 @@ curl -s "https://oedi-data-lake.s3.amazonaws.com/?list-type=2&prefix=ATB/electri
 > (forecast-readiness prompt pack §7.2 P1/P2), which flips
 > `DERIVATION_PINNED_VERSION` and re-runs the consistency tests as one
 > reviewed change.
+
+> **v4.0.0 RE-DERIVE DONE (2026-08-03, FFR-SC).**
+> `DERIVATION_PINNED_VERSION` is now `v4.0.0`. Triggered by the **data vintage
+> change alone** (rule 23 `[R-FROZEN-DERIVE]`) — no residual was consulted and
+> none moved. **Result: a measured no-op on every committed constant.** Both
+> derive scripts return byte-identical output under v3.0.0 and v4.0.0:
+> `derive_entry_costs_from_atb` (`NEW_ENTRY_COSTS`, `TECH_COST_MULTIPLIERS`)
+> and `derive_cost_benchmark_envelope` (envelope validation table, envelope
+> multipliers, `STORAGE_TECHS` li-ion, `OFFSHORE_WIND_PARAMS`,
+> `derive_egs_fom` = 163.4 both ways). `constants.py` is **unchanged**, and
+> the two rule-23 consistency tests plus the curation suite pass against the
+> newer bytes (27 passed).
+>
+> **Why the one real diff doesn't reach a constant.** The 56 moved values are
+> all `Geothermal`/`DeepEGSFlash`/`Moderate`, and nothing derives from that
+> class: `GEOTHERMAL_PARAMS["egs"]["fom_kw_yr"]` reads **NFEGSFlash**
+> (unchanged) and its `capex_kw` 5000.0 is a **DOE Liftoff** figure, not an
+> ATB DeepEGS one. The note above anticipated a possible EGS-capex move; on
+> inspection there is no ATB-DeepEGS-derived constant for it to move.
+> `tests/curation/test_curate_nrel_atb.py::test_parse_defaults_to_the_pinned_derivation_version`
+> was rewritten against `DERIVATION_PINNED_VERSION` instead of the literal
+> `v3.0.0`, so a future pin move re-points it rather than failing it.
+> Evidence: `docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md` §6.
 
 ## What this doesn't cover
 

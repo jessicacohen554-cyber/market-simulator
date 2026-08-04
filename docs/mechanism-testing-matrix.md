@@ -79,6 +79,36 @@ re-runs of recorded recipes legitimately change no cell). In-session, the
 `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook injects the
 duties and pointers at the start of every session, local and web.
 
+**Two shrink-only ratchets sit behind that gate**, because the diff gate can
+only ever see fields added in the SAME PR, so everything predating it is
+structurally invisible:
+
+- `mechanism-matrix-gaps.json` (nyiso-114) — ISO-scoped fields absent from the
+  matrix, plus SHARED fields a designated keeper arms with no row anywhere.
+  **Both blocks are now EMPTY for all six ISOs** (own-family columns closed by
+  ercot-156 / caiso-161 / pjm-151 / neiso-78 / nyiso-113 / nyiso-121; the
+  cross-ISO shared-stem backlog closed by xiso-3). Regenerate with
+  `mechanism_matrix_gap_sweep.py --write-baseline`.
+- `mechanism-matrix-anchors.json` (xiso-3) — line anchors that do NOT resolve.
+  **Currently EMPTY.** A line anchor points into files every lane edits, so it
+  decays with nobody touching the matrix: nyiso-121 found all 20 MISO anchors
+  stale, and xiso-3 measured **163 of 167 stale file-wide** and repaired 161.
+  The check has three legs (a `<field> :<line>` must resolve to the
+  `scenarios.py` line defining that field; a row whose `id` is itself a field
+  must do the same for its `scenarios.py:<line>`; any `<file>.py:<line>` must be
+  in range) and a `--fix-anchors` repair path, so a `scenarios.py` PR that
+  shifts anchors fixes them with one command instead of hand-editing.
+  **Existence is gated first**, which is what preserves a deliberate
+  QUOTATION of a defect (`miso_pjm_lmp :2914` in `import_hub_pricing`'s repair
+  note) — do not "fix" it.
+
+> **What the anchor ratchet does NOT do:** it proves an anchor points at the
+> field it NAMES, never that the named field is the right one. **The literal
+> field name is the durable identifier; the anchor is a convenience.** And a
+> mention is still not a registration — a field named only in a row's `note:`
+> has no cell, which is the defect the gap census exists to close (nyiso-121
+> §6.2: naming a SHARED field as a bare literal in prose leaks across columns).
+
 ## 2. How similar are the six ISO configs? (the up-front answer)
 
 Quantitatively, from the keeper `run_config.json`s (true non-default counts,
@@ -205,7 +235,7 @@ order is a prior, not a mandate — a session with a better-identified lever
 goes off-queue and says so. Entries already adjudicated elsewhere are *not*
 repeated here; the matrix `R`/`G`/`I` cells are the DO-NOT-REDO list.
 
-### 5.1 ERCOT — NOT-YET (keeper `2026-08-02-ercot150b-zonal-anchor`, C6 PASSES); **LIVE QUEUE AS OF ERCOT-155 (2026-08-03): item 9 (the named successor — UNCHARTERED, owner authorization required), item 7 (data-intake first) and item 8 (data-intake first) — every other named item is struck. ERCOT-155 measured item 7b's dispersion object and RE-POINTED it: it is a COMMITMENT-STATE defect, not an offer-slope or fleet-composition one, the offer-dispersion arm is REFUSED (rules 1/13/20), and the "flat ~25 GW at 1.6 $/MWh per GW" framing is CORRECTED (item 7c) — do not quote it forward.** Open gates unchanged in kind: C3a 2023-only (−32.6%; 2024 +1.6%, 2025 −8.3% away from the edge), C3b 2023-only (0.607), C3c (58/20/0 vs 181/53/31), C7 2023-lignite cv-leg (r 0.888, cv 0.334); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap; ERCOT-149 (the §6.1 successor / owner ruling #7) measured the GAS-side collision MATERIAL, adjudicated it a defect on the gas fleet's own conduct, and was OWNER-PROMOTED (`ercot_dam_availability_gas_event_cap` cell `K`); **ercot-150 (2026-08-02, the nyiso-109 §7 cross-ISO transfer adjudicated at ERCOT per rule 25) resolved the gas-offer margin anchor PER ZONE (`gas_offer_margin_zonal_anchor` cell `K`) and was OWNER-PROMOTED under the standing in-session instruction**: ERCOT's convention is a capacity-weighted mean-zero spread PLUS a flat measured EP level correction, the anchors were identified on the keeper reconstruction's own resolved fuel_prices (the West net-load floor lift cut the West leg ~5× before anything was pushed), all five construction gates passed incl. zonal K3 liveness (max zone |ΔLMP| 0.356/0.304/0.319 $/MWh — ERCOT prices the LEVEL side its convention carries while the mean-zero spread half stays price-inert on its coupled topology, West decoupling only 6/17/2 h/yr), P1/P2/P3/P5 passed, and P4 fired on a template artifact (the keeper itself carries slack 3478.9/1114.6/0.0 MWh; true arm delta +0.97/+0.91/0.00 MWh ≈ +0.03%). The availability lane is measured-precedence-correct on COAL AND GAS and the gas offer surface is now zone-grain-identified; the un-masked residuals are the CC econ-band under-dispatch (ERCOT-138/139 object: Jack County/Guadalupe now under) and the coal LOADING-CONDUCT under-run (ERCOT-126 object); OPEN owner rulings #9 (deriver `_site()` cross-train collapse + gas crosswalk partial acceptance — the root-cause derive lane; its re-derive would also re-trigger the zone-anchor table per rule 23) and #10 (pin remove-direction over-removal)
+### 5.1 ERCOT — NOT-YET (keeper `2026-08-03-ercot158-pool-arm`, C6 PASSES; **keeper re-stamped at ercot-158** — the ERCOT-88 fast-start pool ARMED, `ercot_faststart_pool_offer` cell `K`, OWNER-PROMOTED on the standing standard after the pre-registered A/B measured it ENGAGED-but-INERT at the missed tail: the 91 missed 2023 >$300 hours are bit-identical between arms, so the 2023 tail is confirmed a COMMITMENT-STATE gap on the un-repriced CC offline block — the same object ERCOT-155 re-pointed item 7b at, now measured from the offline side; docs/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md); **LIVE QUEUE AS OF ERCOT-158 (2026-08-03): item 9 (the named successor — UNCHARTERED, owner authorization required), item 7 (data-intake first) and item 8 (data-intake first) — every other named item is struck. ERCOT-155 measured item 7b's dispersion object and RE-POINTED it: it is a COMMITMENT-STATE defect, not an offer-slope or fleet-composition one, the offer-dispersion arm is REFUSED (rules 1/13/20), and the "flat ~25 GW at 1.6 $/MWh per GW" framing is CORRECTED (item 7c) — do not quote it forward.** Open gates unchanged in kind: C3a 2023-only (−32.6%; 2024 +1.6%, 2025 −8.3% away from the edge), C3b 2023-only (0.607), C3c (58/20/0 vs 181/53/31), C7 2023-lignite cv-leg (r 0.888, cv 0.334); ~~C7 lignite, coal seasonal split~~ CLOSED; ~~items 4+5~~ EXECUTED at ERCOT-145; ~~item 6~~ CLOSED `I` at ERCOT-146; the items-5/6 reopen route REFUSED at Phase 0 by ERCOT-147 — data-intake first (item 8); ERCOT-148 (owner-directed availability audit) promoted the DAM coal event-window cap; ERCOT-149 (the §6.1 successor / owner ruling #7) measured the GAS-side collision MATERIAL, adjudicated it a defect on the gas fleet's own conduct, and was OWNER-PROMOTED (`ercot_dam_availability_gas_event_cap` cell `K`); **ercot-150 (2026-08-02, the nyiso-109 §7 cross-ISO transfer adjudicated at ERCOT per rule 25) resolved the gas-offer margin anchor PER ZONE (`gas_offer_margin_zonal_anchor` cell `K`) and was OWNER-PROMOTED under the standing in-session instruction**: ERCOT's convention is a capacity-weighted mean-zero spread PLUS a flat measured EP level correction, the anchors were identified on the keeper reconstruction's own resolved fuel_prices (the West net-load floor lift cut the West leg ~5× before anything was pushed), all five construction gates passed incl. zonal K3 liveness (max zone |ΔLMP| 0.356/0.304/0.319 $/MWh — ERCOT prices the LEVEL side its convention carries while the mean-zero spread half stays price-inert on its coupled topology, West decoupling only 6/17/2 h/yr), P1/P2/P3/P5 passed, and P4 fired on a template artifact (the keeper itself carries slack 3478.9/1114.6/0.0 MWh; true arm delta +0.97/+0.91/0.00 MWh ≈ +0.03%). The availability lane is measured-precedence-correct on COAL AND GAS and the gas offer surface is now zone-grain-identified; the un-masked residuals are the CC econ-band under-dispatch (ERCOT-138/139 object: Jack County/Guadalupe now under) and the coal LOADING-CONDUCT under-run (ERCOT-126 object); OPEN owner rulings #9 (deriver `_site()` cross-train collapse + gas crosswalk partial acceptance — the root-cause derive lane; its re-derive would also re-trigger the zone-anchor table per rule 23) and #10 (pin remove-direction over-removal)
 
 **RULE-28(c) COLUMN CLOSED (ercot-156, 2026-08-03; no LP, no solve, keeper
 UNCHANGED, no queue item touched).** The ERCOT census debt — 60 `ercot_*`
@@ -474,9 +504,29 @@ rule-13-admissible mechanism available to carry it.
    Martin Lake-family class-composition ruling. **That successor was run and
    REFUSED AT PHASE 0 by ERCOT-147 — see item 8; the two committed artifacts
    stay ready for the post-intake lane.**
-7. **WP-B nodal curtailment layer** — *data-intake first* (station→area
-   crosswalk does not exist in-repo), then the under-curtailment gap
-   (ERCOT-121).
+7. **WP-B nodal curtailment layer** — ~~*data-intake first* (station→area
+   crosswalk does not exist in-repo)~~, then the under-curtailment gap
+   (ERCOT-121). **▶ THE DATA PREREQUISITE IS EXECUTED AT ERCOT-160
+   (2026-08-04) — the blocker was never real.** ERCOT *publishes* the
+   station→area crosswalk, free and unauthenticated, as **NP4-160-SG
+   "Settlement Points List and Electrical Buses Mapping"**
+   (`reportTypeId=10008`, in ERCOT's own product catalog); it had simply never
+   been fetched. Intaken COMMITTED to `data/raw/ercot-network-model/` (1.2 MB,
+   exact published bytes + per-member sha256, ERCOT ToU §5) by
+   `scripts/data/fetch_ercot_settlement_point_mapping.py`:
+   `Settlement_Points` (19,287 rows) carries `SUBSTATION` →
+   `SETTLEMENT_LOAD_ZONE` → `RESOURCE_NODE` → `HUB`, and
+   `Resource_Node_to_Unit` (1,624 rows) carries `RESOURCE_NODE` →
+   `UNIT_SUBSTATION` + `UNIT_NAME`. **VINTAGE CAVEAT THAT BINDS ANY
+   CONSUMER:** MIS retention is ~31 days, so only the CURRENT network-model
+   version (published 2026-07-29) is reachable — there is **no 2023–2025
+   vintage and there never will be on this path** (which is why it is
+   committed, not gitignored). Substation→zone is structural and slow-moving,
+   but a node commissioned/retired since the backcast year will not line up:
+   **report your own match rate against your target year, never inherit
+   ERCOT-160's.** Item 7 is now unblocked on data and can proceed to its
+   actual object, the ERCOT-121 under-curtailment gap.
+   (`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md` §4.)
 7b. ~~**The measured STORAGE evening discharge-offer surface** (ercot-153's
    chartered successor to the diurnal-amplitude decomposition) + its named
    fallback **`measured_ramp_capability`**.~~
@@ -577,9 +627,12 @@ rule-13-admissible mechanism available to carry it.
      (which own the **lower** bound) — explicit precedence, never a stacked
      layer; identification from ERCOT's own measured online state only
      (rules 13/20/23); an availability-shaped bound, since the pure-LP
-     architecture forbids MIP; and the validating SCED corpus is **2024/2025
-     only** (no 2023 corpus — NP3-965 OWNER-DECLINED 2026-08-02), a 47-day
-     event/control-split sample.
+     architecture forbids MIP; and the SCED corpus basis is: **full-year
+     delivery-2023** (the ERCOT-157 owner re-upload at `data/raw/ercot/SCED/`,
+     315 shards verified complete, all 365 delivery days — this SUPERSEDES the
+     earlier "2024/2025 only, NP3-965 OWNER-DECLINED 2026-08-02" clause, which
+     went stale when the re-upload landed the next day) plus the 47-day
+     2024/2025 event/control sample extracts (validation only).
 8. **The CT-band re-identification reopen intake** (ERCOT-147, 2026-07-31 —
    Phase 0 REFUSED ex ante, no solve spent, keeper unchanged;
    `docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`, probe
@@ -601,12 +654,124 @@ rule-13-admissible mechanism available to carry it.
    crosswalk (6/165 accepted in `ercot-dam-plant-crosswalk.csv`; Morgan
    Creek MGSES_CT1–6 confirmed in-corpus). DO NOT re-run Phase 0 on the
    existing four extracts.
+   **▶ THE THREE-PART INTAKE WAS EXECUTED AT ERCOT-160 (2026-08-04): (a) DONE,
+   (b) BLOCKED, (c) RESHAPED. The lever STAYS BLOCKED — on (b) alone.**
+   (`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`;
+   no LP, no cell, keeper unchanged.)
+   - **(a) DONE at 98.7 % of the training span.** The fetcher's day-list scope
+     was lifted (`--resource-types` / `--delivery-range` / `--shard-by-month`);
+     CT-scoping cuts a delivery day to 15.1 % of its rows (18,816/124,608,
+     0.51 MB parquet), which is what makes ~700 days affordable. Delivery
+     2024-01-24…2025-12-31 landed CT-only in `data/raw/ercot/SCED-CT/`
+     (gitignored + README + SHA256SUMS, the pjm-zonal-lmp precedent) and joins
+     the committed all-resource corpus (`data/raw/ercot/SCED/`, delivery
+     **2022-12-31…2024-01-09** — note that is a DELIVERY span; its shard
+     filenames are PUBLICATION months). **Gap: delivery 2024-01-10…2024-01-23
+     (14 days) is UNREACHABLE** — it falls between the corpus end and the MIS
+     rolling window's earliest listed publication (2024-03-24 → delivery
+     2024-01-24), reported `NOT LISTED` and never interpolated; closing it is
+     the owner-declined credentialed archive, and **the gap WIDENS with time**
+     as the window rolls. 2026 delivery days were refused live by the rule-22
+     guard, not omitted.
+   - **(b) BLOCKED — the only thing still blocking the lever.** The licensing
+     check ERCOT-147 §4 demanded was run and recorded reproducibly
+     (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
+     `results/calibration/ercot160_texas_hub_screen.json`). EIA's free NGWU
+     spot table carries **Waha/Katy/Agua Dulce/Carthage at ZERO mentions** on a
+     real page against Chicago's 6 and Henry Hub's 10 — a row cannot exist at
+     zero; the lone "Houston Ship"/"Permian" hits are narrative prose quoting a
+     WEEKLY average. ERCOT's own catalog: 5,773 products, 6 mention fuel,
+     **none is a price series** (FFSS/RMR/Fuel-Mix/Exceptional-Fuel-Cost); the
+     settlement Fuel Index Price is not a data product. **⇒ NGI/Platts/Argus
+     only = OWNER LICENSING DECISION**, compounded by the unresolved
+     `docs/data-licensing.md` §5 finding. **DO-NOT-REDO:** do not re-screen the
+     free EIA/ERCOT paths, and **never substitute Henry Hub** — ERCOT-147 §3's
+     confound is precisely that 63–67 % of CT capacity's daily p50 sits below
+     its own sheet-HR × HH burn, so a HH stand-in assumes away the object.
+   - **(c) RESHAPED — and the charter's sizing was wrong in KIND.** The
+     crosswalk's `site` column is not one grain: `CC_REGULAR` holds a site
+     prefix (`RIONOG`/`RIONOG_CC1`), `CT_PEAKER` holds the **full resource
+     name** (`VICTPORT_CTG01`) — measured **165/165 CT rows match a corpus
+     RESOURCE name, 0/165 match a site prefix**. So "165 CT_PEAKER sites, 6
+     accepted" counts RESOURCES and the "~150-site hand crosswalk" is not the
+     job. Most CT resources (and most CT capacity) **already carry a candidate
+     row** — the bulk of the work is ACCEPT/REJECT adjudication, with a small
+     industrial-cogen-heavy tail (DOWGEN, FORMOSA) carrying no row at all.
+     Both now stand on item 7's newly-intaken published spine (resource →
+     substation → load zone, measured 186/191 and 50/50), leaving
+     **substation → EIA plant code** as the single judgement step — NP4-160-SG
+     carries no EIA identifier. Census:
+     `scripts/probes/ercot160_ct_target_population.py`,
+     `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
+     session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-03-caiso156-meter-screen-b`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
-> **Keeper id corrected at caiso-161** — this heading had gone stale at
-> `2026-07-31-caiso148-nuclear-availability`; `frontend/data/backcast/keepers/CAISO.json`
-> and the matrix header both read `2026-08-03-caiso156-meter-screen-b`. (The
+> **caiso-164 (2026-08-04) — NEW LANE OPENED AND CLOSED IN ONE SESSION; KEEPER
+> PROMOTED to `2026-08-04-caiso164-zonal-loss-surface`.** The CAISO queue was
+> EMPTY of never-adjudicated items after caiso-163, so this session opened a new
+> lane — and chose it from a MEASUREMENT rather than from caiso-163 §5's named
+> hypothesis. Full record:
+> `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md`;
+> prereg `PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md` pushed at
+> `eda8ebe8` **before either arm solved**.
+>
+> **§0, no LP.** CAISO publishes the congestion/loss split directly (`LMP = MCE
+> + MCC + MCL`, MCE identical at every node to `0.00e+00`), so the hub basis is
+> EXACTLY `dMCC + dMCL`. NP15−ZP26 is **80.2/87.2/81.7 % congestion, 19.8/12.8/
+> 18.3 % loss** (+1.176/+1.102/+1.049 of +5.947/+8.576/+5.727 $/MWh). The
+> congestion majority is a **FREQUENCY-AND-DIRECTION** miss, not magnitude (freq
+> 0.035–0.054× vs magnitude 0.26–0.44×): in the top decile of measured `|dMCC|`
+> — **100/100/99.9 % of it S→N** — the pre-arm model separated in **0 of
+> 864/879/876 hours** across the whole lag sweep, and its rare separations ran
+> 99–100 % N→S, the opposite direction.
+>
+> **The arm.** `caiso_zonal_loss_surface` (matrix row `zonal_loss_surface`,
+> CAISO `U → K`) — the model was LOSSLESS, i.e. carrying the *estimate* that
+> losses are zero, so rule 14 `[R-ACCURATE]` governs. Zero free parameters: the
+> frozen MISO/PJM estimator on CAISO's own committed DAM component record. Per
+> rule 28(d) the PJM `K` / MISO `R` verdicts did **not** fill CAISO's cell.
+> **Headline is the sign:** mean NP15−ZP26 −0.0768/−0.1086/−0.0841 →
+> **+0.2362/+0.1258/+0.1113** — correct for the first time; separated hours
+> 2.7/4.7/3.2 % → **38.0/28.8/27.3 %**; hours NP15 *dearer* 3/0/1 →
+> **3,082/2,120/2,108**. Zero criterion flips, no new caveat spent.
+>
+> **TWO NEW QUEUE FACTS THIS LANE MUST CARRY FORWARD:**
+>
+> 1. **NEW DATA BLOCKER — CAISO intra-zonal congestion (FINDING §6).** The
+>    ~80–87 % congestion majority is NOT reachable from `data/raw`. §0 attributes
+>    it to an **intra-SP15** corridor: `LA_BASIN` carries 77–83 TWh of load at a
+>    0.11–0.12 belly renewable/load ratio and absorbs the entire
+>    ZP26+SP15_rest belly surplus (their own ratios are 2.1–3.5, local surplus in
+>    ~2,850 of 2,920 belly hours) through a **never-binding 12,008 MW one-way
+>    link**, so no surplus reaches Path 15 and it never binds S→N with a positive
+>    dual. Needs CAISO nodal/DLAP LMP components or published intra-SP15 transfer
+>    limits; `data/raw/lmp-data/CAISO/` has only the three `TH_*_GEN-APND` hubs
+>    hourly (the 22 nodal `DAM_LMP_GRP` zips are single days, fetched to patch a
+>    2023 hole). **NOT closable by an adder, haircut or residual-tuned value**
+>    (rules 1/13). Joins C3a-2025 (non-public hourly pumped-storage) and
+>    C3c-2023/24 (SoCalGas OFO record). **Do not charter an N–S topology lever
+>    against this residual** — §0 measured that topology is not where the
+>    recoverable component was.
+> 2. **The loss surface's two interpolated zones are the same blocker.**
+>    `LA_BASIN` and `SDGE` carry `interpolated=True` (they inherit the SP15
+>    generation hub's deviation under rule 14's reconciliation clause, since
+>    CAISO's DLAP component record is absent). A DLAP intake would close both
+>    this and item 1. The three zones carrying the quantity under test (NP15,
+>    ZP26, SP15_rest) each have their own measured hub.
+>
+> **DO-NOT-REDO additions:** `caiso_zonal_loss_surface` is now `K` — do not
+> re-test it. Its S4-2023 miss (NP15−SP15_rest −1.2265 → −1.5665, away from the
+> measured +2.337, while 2024/2025 move toward) is a **recorded carried caveat**,
+> pre-committed in prereg §5 as a measurement rather than a promotion criterion;
+> it is not an open lever.
+
+
+> **Keeper id corrected at caiso-161, re-stamped at caiso-164** — this heading
+> had gone stale at `2026-07-31-caiso148-nuclear-availability`, was corrected to
+> `2026-08-03-caiso156-meter-screen-b`, and now reads
+> `2026-08-04-caiso164-zonal-loss-surface` in step with
+> `frontend/data/backcast/keepers/CAISO.json` and the matrix header. (The
 > `check_mechanism_matrix.py` stamp guard covers the `.js` header only, so prose
 > drift here is invisible to CI — the same class of staleness nyiso-116 fixed.)
 
@@ -670,14 +835,57 @@ rule-13-admissible mechanism available to carry it.
 >      not evidence the LP saw it — confirm a **call site exists on the lane
 >      being solved**, and verify on a **flow/observable**, not on price.
 >
->    `caiso_asymmetric_path_ratings` remains **default-off, armed in zero
->    bundles** and untested. A session taking it
->    pre-registers it as its own single-delta arm (gates + kills + no-tuning
->    clause, pushed **before** solving) and honours rule 16 — 2023–2025 in ONE
->    bundle. (The "neither was solved here" note belonged to the caiso-161
->    census; `caiso_per_year_import_caps` has since been solved and closed by
->    caiso-162 above, leaving the asymmetric-path item as the queue's only
->    untested member.)
+>    **`caiso_asymmetric_path_ratings` — CLOSED (TESTED AND PROMOTED)
+>    2026-08-03 by caiso-163; CAISO cell stays `K`, now on a second armed leg.**
+>    This was the queue's last never-adjudicated item, so the CAISO lever queue
+>    is now EMPTY of untested members. Published WECC Path Rating Catalog
+>    directional ratings replace the symmetric TTC estimate on both internal
+>    N–S paths (Path 15 3,265 N→S / 5,400 S→N; Path 26 4,000 N→S / 3,000
+>    S→N). Rule 14 `[R-ACCURATE]`, **zero free parameters** — all four numbers
+>    were already committed in `CAISO_PATH_DIRECTIONAL_RATINGS`; nothing swept,
+>    no residual consulted, DOF ledger carried verbatim at 11/9.
+>    **MEASURED ON FLOWS, NOT PRICES.** Against a same-HEAD flag-off control
+>    the incumbent configuration moved power **past a published WECC rating in
+>    1,141 path-hours** across 2023–2025 (Path 15 N→S peaking at
+>    4,119/4,443/4,597 MW against the published 3,265, 294/450/380 h over;
+>    Path 26 S→N at 3,514/4,000/2,946 against 3,000, 6/11/0 h over). Under the
+>    keeper that count is **zero in every hour of every year**, and the paths
+>    bind as real paths do (Path 15 N→S 307/489/411 h; Path 26 N→S
+>    1,656/1,987/2,213 h). Path 15 binds at all for the first time — NP15
+>    separates from ZP26 in 237/414/284 h, up from 3/0/1, and the 2024
+>    byte-identity breaks. **Zero gate flips** on all nine criteria, C3a-2025
+>    unchanged at +12.0 %, level effect nil (−0.004 % / −0.015 % / +0.010 %).
+>    **PROMOTED** to `2026-08-03-caiso163-asym-path-ratings`.
+>    **NO ZERO-DELTA YEAR EXISTS** for this mechanism (the ratings are
+>    year-invariant), so the prereg replaced it with a pre-solve structural
+>    assertion — flag-off returns the SAME OBJECT (identity, not equality) —
+>    which passed before either arm solved. Wiring was checked **before**
+>    solving and, unlike caiso-162's mechanism, the backcast call site already
+>    existed (`interchange/spec.py:1988` inside `apply_interchange_topology`,
+>    reached from `run_calibration.py:2037`); only the CLI/kwarg channel was
+>    missing, wired across seven sites.
+>    **IT OPENS A ROOT-CAUSE ISSUE RATHER THAN CLOSING ONE**, which is the more
+>    useful result: the *real* Path 15 separates the hubs in ~100 % of hours by
+>    +5.95/+8.58/+5.73 $/MWh, against the keeper's −0.077/−0.109/−0.084, and
+>    the NP15-over-SP15 basis moves marginally **further** from the measured
+>    +2.34/+7.99/+6.01 (the Path-15 N→S leg dominates the Path-26 S→N leg —
+>    the prereg §3 registered the opposing-legs ambiguity and predicted NO
+>    sign, so this is a resolved ambiguity, not a surprise). Under rules 14 and
+>    1 `[R-STRUCT]` the published ratings **stay in** and the worse basis is a
+>    **discovered bug**: the symmetric estimate was silently absorbing a defect
+>    that lives elsewhere.
+>    **NAMED OPEN SUCCESSOR (hypothesis, NOT adjudicated — no solve was spent
+>    on it):** the reduced **two-link N–S topology and zonal aggregation**,
+>    which cannot reproduce hourly Path-15 congestion whatever the ratings are.
+>    It needs its own pre-registration and its own arm.
+>    **DO-NOT-REDO:** do not re-test `caiso_asymmetric_path_ratings` itself
+>    (keeper), and do **not** pitch the successor as a C3a lever — this arm
+>    moved level by 0.01 %. Corrected on the record: the census's
+>    "NP15==ZP26 byte-identical all years" holds for **2024 only** (2023/2025
+>    differ in 3 and 1 hours), which does not change the finding that Path 15
+>    essentially never bound. Evidence:
+>    `FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
+>    `PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md`.
 
 **BOTH former blockers were DISPOSITIONED BY THE OWNER at caiso-145
 (2026-07-30) and are now ACCEPTED MEASURED-INPUT LIMITATIONS** — ledgered in
@@ -975,7 +1183,52 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**
+
+**pjm-151 (2026-08-03): the PJM matrix column is CLOSED.** Ratchet
+`docs/codebase-site/data/mechanism-matrix-gaps.json` PJM **15 → 0**; sweep
+`scripts/mechanism_matrix_gap_sweep.py --iso PJM` returns `0 absent / 0 prose-only /
+0 armed-no-cell / 0 live-but-invisible`. All 16 fields closed as **literal sub-scalar
+registrations on 6 existing family rows** (`pjm_midcurve_belt`,
+`measured_offer_surface`, `da_virtual_bids`, `reserve_pergen`,
+`reserve_deliverability_scoping`, `seam_flow_envelopes`) — **zero new rows, zero
+mechanism verdicts**, one cell mint (`matrix_gap_census` PJM `O → K`, an audit status,
+the ercot-156 / caiso-161 precedent). Five of the sixteen shape the **published
+keeper** and had no cell anywhere: `pjm_offer_midcurve_segments`, `pjm_seam_flow_limit`,
+`pjm_seam_export_limit`, `pjm_seam_measured_ladder`, `pjm_reserve_online_rho`.
+
+* **Mechanical cause:** the seam family sat behind the glob `pjm_seam_* :7371+` in
+  `seam_flow_envelopes`' `def` — natural to a human, invisible to a checker that matches
+  literals — and the `:7371` anchor was itself stale (the fields live at `:9019+`). Same
+  defect caiso-161 §2 recorded. **Registrations must be full literals.**
+* **PJM's instance of the caiso-161 §5 "armed-looking but dead" shape:**
+  `pjm_reserve_online_rho = 1.0` is recorded in every PJM `run_config.json` and is
+  **unobservable on the keeper** — sole read `reserves/spec.py:2291`, inside
+  `if pjm_reserve_online_gated:` at `:2290`, which the keeper sets `False`. **NOT** a rule
+  26 `[R-DELETE]` candidate (a built, reachable, default-off mechanism at its own
+  documented default — not a retired mechanism's fitted residue), so **nothing is filed
+  for the owner from PJM's column.**
+* **Filed as an observation for a lane that may adjudicate, NOT adjudicated here:** the
+  keeper arms `pjm_reserve_supply_cap=True` alongside `pjm_reserve_pergen=True`, and
+  **both** of that flag's read paths are gated off by pergen —
+  `reserves/spec.py` returns the pergen `ReserveDesign` at `:2280` *before* the
+  `supply_cap` computation at `:2286` (its own docstring at `:2018`: "the zone-aggregate
+  scoping flags are ignored in this mode"), and
+  `pipeline/commitment.py::build_pjm_reserve_p1_prep` returns `(None, None)` at `:1374`
+  because `pjm_reserve_commitment_scoped` is `False`. Whether that is cosmetic or a rule
+  19 `[R-ONE-MECH]` question is not a census's call (rule 28(d)).
+* **No armable candidate was surfaced**, consistent with the owner-declared PJM frontier
+  (pjm-142). The census did not manufacture a successor.
+* **MISO's ratchet moves 11 → 8 in the same commit and this is NOT a MISO census.** The
+  PJM seam literals would have substring-shadowed three `miso_seam_*` fields into
+  "covered" (`pjm_seam_flow_limit` contains the matched stem `seam_flow_limit`), silently
+  dropping them from MISO's list with nobody having registered them. Those three are
+  written out as real literals on the same row so the coverage is true; **no MISO cell or
+  verdict is touched**, and MISO's remaining 8 are referenced by line number only so that
+  naming them cannot count as registering them. **MISO is now the last open column.**
+* **PJM's 18 shared-stem keeper-armed fields stay open** as a cross-ISO hygiene lane
+  (ERCOT 14, CAISO 5, MISO 17 of the same class) — one column's session does not touch
+  rows whose cells span all six.
 
 **pjm-148 (2026-08-03): the host-steam holdout lane is REFUSED with evidence — no LP
 solved, keeper untouched.** Prereg
@@ -1487,7 +1740,61 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion; **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate`)**
+
+> **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
+> All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
+> are registered as **literal sub-scalar entries on 7 existing family rows**
+> (`energy_reserve_coopt`, `rdt_tcdc`, `seam_flow_envelopes`, `import_hub_pricing`,
+> `reference_price_interface`, `diurnal_price_amplitude`, `campd_outage_windows`).
+> **Zero new rows (169 → 169); one cell mint, `matrix_gap_census` MISO `O` → `K`, an audit
+> status and not a mechanism verdict; zero mechanism verdicts** — every verdict-bearing
+> sentence transcribes an adjudication already on the record with its citation
+> (`miso_firm_import_floor` rejected as an outcome pin under rule 13;
+> `miso_pjm_lmp_import_pricing` refuted ex ante at miso-114; `miso_cc_coal_rebalance`
+> licensed by nothing, premise removed at miso-115 §2; the per-Reserve-Zone Zonal ORDC
+> ladder measured-refuted at miso-71). **No MISO lever is tested, chartered or queued and
+> MISO's lever queue below is UNCHANGED** — the census surfaced no never-adjudicated
+> armable candidate, so it did not manufacture a successor.
+>
+> **Mechanical cause, the caiso-161 §2 defect a third time:** `import_hub_pricing` carried
+> `miso_pjm_lmp :2914` — an abbreviation that is not a `ScenarioConfig` field, on a stale
+> anchor pointing at an unrelated over-generation comment block (the field is
+> `miso_pjm_lmp_import_pricing` at :3872). **Plus a NEW variant no checker looks for:**
+> `miso_manitoba_seam`, ARMED on the keeper, was prose-only inside `diagnostics_plant_set`
+> — a row about probe plant sets. A mention on the **wrong family row** is as invisible as
+> no mention, and unlike a glob or a stale anchor **it reads as correct coverage to a human**.
+>
+> **Census finding, measured on CONSTRUCTION (G-1; no LP, no solve, no dual):**
+> `miso_pjm_border_anchor` is **PROVABLY UNOBSERVABLE** on the keeper — displaced by
+> `miso_seam_measured_ladder`, which runs last and carries a full PJM band entry in all
+> three keeper years. All 48 seam rows exactly equal (`np.array_equal`, float32) in
+> 2023/24/25, with a positive control that separates ($0.92/$2.23/$4.78 with the ladder off,
+> SPP/South untouched). A second instance: the keeper arms `miso_firm_imports` alongside
+> `miso_manitoba_seam`, which drops the MHEB firm block. **Both filed as OBSERVATIONS; no
+> cell moves** — whether either is a rule 19 `[R-ONE-MECH]` question belongs to a lane that
+> may adjudicate MISO (rule 28(d)).
+>
+> **PREREG:** `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md`
+> **FINDING:** `results/calibration/FINDING-nyiso121-miso-matrix-column-2026-08-04.md`
+>
+> **METHODOLOGICAL CORRECTION THAT BINDS THE NEXT LANE (FINDING §6.2).** A first draft
+> enumerated MISO's 17 shared-stem literals, as ercot-156 / caiso-161 / pjm-151 each did.
+> The pre-registered criterion 4 caught the consequence: **ERCOT went 12 → 11** because one
+> field shared between the two keepers was newly counted "mentioned" — **one lane's prose
+> dropping a field from BOTH lanes' live-but-invisible lists, with no ERCOT session
+> registering anything.** Naming a shared field as a bare literal makes the sweep count it
+> mentioned, which is exactly the "a mention is not a registration" defect the census exists
+> to close, and it **leaks across columns**. The enumeration was withdrawn for a count plus
+> a pointer to the committed `_matrix_gap_sweep_<ISO>.json`. **Consequence: the enumerated
+> lists left in `matrix_gap_census` by the earlier column closures are PROSE, NOT
+> REGISTRATIONS — trust `_matrix_gap_sweep_<ISO>.json` over the row's text.**
+>
+> **NAMED SUCCESSOR.** With every ISO's own-family column now closed, the **cross-ISO
+> shared-stem backlog** (PJM 18, MISO 17, ERCOT 14, CAISO 5, all overlapping and all armed
+> on keepers with no cell) is the **only remaining rule-28(c) debt**. That lane must
+> **register these fields on rows, not enumerate them in prose**, or it will hide the very
+> backlog it is closing.
 
 *(Header refreshed 2026-07-31, miso-111: the former "C3b spread compression"
 target is RETIRED — C3b PASSES on the live scorer against the
@@ -1616,6 +1923,49 @@ is now the live queue head.**)*
    **availability** at the `(month × hour-of-day)` grain `MISO_SEAM_DIBA`
    already uses — changing *when* a band may clear, not *how much* flows —
    which needs its own charter.
+   **CLOSED ON MEASUREMENT 2026-08-04 (miso-123 — chartered and refused in one
+   session, NO LP SPENT; `import_shape_lever` MISO `·` → `G`, minted from MISO's
+   own measurement and NOT transferred from NYISO's, rule 25). The successor's
+   premise was already satisfied.** The armed p90 envelope is not merely
+   hod-*resolved* but hod-**shaped**: its own 24-point hour-of-day profile tracks
+   the MEASURED directed flow at **r = +0.952/+0.987/+0.955** (PJM),
+   +0.904/+0.973/+0.948 (SPP), +0.814/+0.837/+0.844 (South),
+   +0.996/+0.992/+0.986 (Manitoba), while the model's CLEARED flow tracks it at
+   **−0.638/−0.753/−0.852** (PJM). Availability already points the right way and
+   the LP's flow points the wrong way — confirming this item's own attribution to
+   the hour-INVARIANT price ladder *from the other direction*. The envelope is
+   also **not the marginal constraint overnight** (miso-121's statistic): PJM
+   marginal binding **0.6/2.4/1.4 %** of overnight hours vs 12.0/28.6/11.6 % at
+   peak. Candidate C1 (per-band per-cell survival availability; same source, same
+   grain, same 8-band grid, zero free parameters, zero thresholds) fails its
+   pre-registered bars held-price — hod corr **+0.058/+0.031/+0.005** against a
+   ≥ +0.20-in-2-of-3 bar, and annual seam energy
+   **1.012/1.010/0.902 → 0.868/0.812/0.718** against a [0.85, 1.15] bar.
+   **The bound generalises to the WHOLE ceiling class:** even the forbidden
+   outcome pin (`min(model, measured)` hour by hour, computed as an unattainable
+   bound and never armed) reaches only **+0.241/−0.289/+0.305** at energy ratios
+   0.775/0.624/0.460 — a ceiling can only CUT and the model's overnight seam is
+   **short** (−1,116/−972/−1,009 MW), so every availability ceiling moves the
+   night limb AWAY from reality. **Do not re-derive a different envelope
+   statistic and do not sweep `miso_seam_flow_percentile`** against this residual
+   (rule 23 `[R-FROZEN-DERIVE]`). KILL-13 did **not** fire and the
+   pre-registration predicted it would — recorded as a wrong prediction, not
+   re-narrated: C1 is an **admissible** capability envelope that simply does not
+   work, refused on rules 1/14 effectiveness and NOT on rule 13 admissibility, so
+   the lane must not carry forward a belief that the construction is forbidden.
+   **All three mechanism classes for this defect are now spent** — price
+   (`miso_pjm_lmp_import_pricing`, `R` ex ante at miso-114 §4), ceiling (closed
+   here), floor (`miso_firm_import_floor`, rule-13 outcome pin — still not
+   re-licensed). The defect itself **remains real and unfixed** (annual energy
+   1.017/1.016/0.908 at hod corr +0.094/−0.455/−0.023, independently reproduced
+   on the miso-122b keeper against miso-114's +0.097/−0.453/−0.030 on miso-109b —
+   two keepers, two constructions, same answer); re-opening needs a **scheduling**
+   representation of the firm/JOA transfer base that can *raise* overnight flow
+   on an identification that is not the measured net interchange itself.
+   (`results/calibration/FINDING-miso123-seam-hod-availability-closed-2026-08-04.md`,
+   `PREREG-miso123-seam-hod-band-availability-2026-08-04.md`, probe
+   `scripts/probes/_miso123_seam_hod_availability.py`, transcript
+   `PROBE-miso123-seam-hod-availability-2026-08-04.txt`.)
 1. **Contract-period tonnage constraint — data-blocked**
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
@@ -1678,16 +2028,151 @@ is now the live queue head.**)*
    fuel ÷ EIA-923 net MWh) all four sit inside the pre-registered
    `[0.90, 1.10]` band in 3 of 3 years. **DO NOT re-open on the CAMPD gross
    comparator, and do not quote the 0.810 / 0.653 / 0.802 / 0.817 ratios as a
-   model result.** One new single-plant item is NAMED BUT NOT CHARTERED and
+   model result.** ~~One new single-plant item is NAMED BUT NOT CHARTERED and
    points the *other* way: 55088 Dearborn burns 13–17 % of its CEMS fuel in
-   zero-electric-output boilers, so its `CC_CHP`+`CT_CHP` tranches are charged
-   **+13…+20 % too dear**; it does not generalise (1 of 14 `ok`-flagged plants,
-   515 of 6,357 MW) and needs its own pre-registration plus a derive scope-gate
-   change (rule 23 `[R-FROZEN-DERIVE]`).
+   zero-electric-output boilers…~~ **EXECUTED at miso-122 (2026-08-04) — see
+   item 4c.**
    (`results/calibration/FINDING-miso118-cchp-plant-outliers-2026-08-03.md`;
    probe `scripts/probes/_miso118_cchp_plant_outlier_basis.py`.)
-5. **`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
-   untested in MISO. **The live head of the MISO queue as of miso-118.**
+4c. ~~**The 55088 Dearborn hybrid-cogen scope gate.**~~ **EXECUTED 2026-08-04
+   (miso-122): the gate is BUILT and MISO's artifact re-derived; the A/B is
+   DISPATCH-LIVE / PRICE-INERT; the `measured_chp_heat_rates` cell STAYS `K`.**
+   eGRID's PLANT-level CHP split cannot see a **hybrid** — a topping CC/CT train
+   plus a direct-fired package boiler on one ORIS code — so Dearborn's
+   plant-average `thermal_share` (0.2396) passes the derive's 0.50 unfired
+   ceiling while 16.6 % of its metered fuel burns in three `Other boiler` units
+   with **zero gross load**, inside the rate charged to its power tranches.
+   **The gate**, a third scope gate on the same footing as the other two:
+   `heat_rate = (PLHTIAN + CHPCHTI) * (1 - dark_fuel_share) / PLNGENAN`, the
+   share measured at CEMS **unit** grain at the artifact's own vintage year. A
+   **share, not an MMBtu subtraction** — it needs CEMS's fuel *composition* to
+   be representative and never CEMS's *level* to equal eGRID's, so the
+   denominator stays `PLNGENAN`. Zero free parameters, **no threshold**, strict
+   byte no-op where the phenomenon is absent.
+   **miso-118's "it does not generalise" was too narrow.** Swept across all
+   five artifact ISOs: MISO 55088 Dearborn 16.6 % (515 MW, 8.3465 → 6.9573),
+   MISO 10745 MCV 0.09 % (1,479 MW), **NYISO 2493 East River 37.5 % (306 MW)**,
+   NEISO 1595 Kendall 1.2 % (206 MW); PJM and CAISO none. Every dark unit found
+   is a boiler `unitType` (100.0 % of dark fuel, behavioural selection — never a
+   `unitType` allowlist), persistent across 2023–2025 at max/min 1.13–1.80.
+   **Two measured exclusions the census forced in:** `dark_unreconciled` (the
+   two meters disagree outside miso-118's [0.90, 1.10] band, or the whole CEMS
+   footprint is dark — the sub-Part-75 plants 10328/55096/55799 where CEMS
+   meters the boilers and MISSES the turbines, so an unguarded share runs to
+   100 % and would drive the rate to ZERO) and `below_credited` (the share
+   removes more than eGRID's entire CHP credit — which is what **excludes East
+   River**).
+   **A/B:** `CC_CHP` +0.3575/+0.2718/+0.5190 TWh and `CT_CHP`
+   +0.2197/+0.2218/+0.2240 TWh displacing `CC_REGULAR`, imports and `COAL_PRB`,
+   at max zonal |Δλ| **0.0491/0.0390/0.0752** $/MWh against the 0.10 bar —
+   **zero of three years clear it**. All construction and protective gates pass,
+   the control is byte-identical to the keeper, all nine criteria are identical
+   between arms. The correction **ships under every branch** (rule 14
+   `[R-ACCURATE]`).
+   **SEAM OPENED, NOT CLOSED:** the keeper `2026-08-03-miso-117b-ct-heat` solved
+   on the pre-gate artifact and is **no longer reproducible from HEAD**; arm B
+   is the promotion candidate (nothing regresses; rule-22 LOO satisfied at year
+   grain) but promotion is an owner call and was not taken in-session.
+   **DO-NOT-REDO / DO-NOT-MISREAD, extending miso-119's and miso-121's:**
+   `max_abs_class_hour_mw` is **not** a mechanism magnitude at MISO — it reads
+   912.5 MW here and 912.5/912.5/912.500061 at miso-119, two unrelated levers to
+   seven figures, because the statistic lands on the `import` class where a
+   single **912.5 MW seam band** flips in or out (import delta non-zero in
+   1,546 h, median 72 MW, exactly 912.5 in 7). Read the per-class **energy**
+   deltas instead.
+   **RULE 25 `[R-ISO-SCOPE]`: only MISO's artifact was re-derived.** NYISO
+   (306 MW leaving its applied map) and NEISO (206 MW, −1.2 %) are handed to
+   their own lanes with measured numbers; **no cell outside MISO is stamped.**
+   (`results/calibration/FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md`;
+   prereg `PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`; probes
+   `scripts/probes/_miso122_hybrid_cogen_scope.py`,
+   `_miso122_scope_gate_ab.py`; runs `2026-08-04-miso-122a-control` /
+   `2026-08-04-miso-122b-scope-gate`.)
+5. ~~**`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
+   untested in MISO.~~ **CLOSED 2026-08-03 (miso-121, cell `U` → `I`): FULLY
+   IDENTIFIED but PRICE-INERT.** All three legs are measured from MISO's **own**
+   data with zero free parameters — capability 371/371/369 gas tranches =
+   **15,827 MW = 23.3 % of MISO gas** (EIA-860 Multifuel switch flag,
+   per-plant); switch price **12/12 measured MISO F923 Petroleum months every
+   year** (20.36/18.22/17.21 $/MMBtu, the flat national fallback never reached,
+   so rule 13's forward-regeneration test passes); event windows **observable in
+   MISO's own CAMPD feed** — 90/459/452 gas-labelled unit-hours across 25/43/40
+   distinct units lifting from p50 53.91 kg CO₂/MMBtu (pipeline gas) into the
+   70–80 distillate band, validated against CAMPD's **own** diesel-labelled
+   units at p50 73.65/73.46/73.65. The mechanism **genuinely fires** (the solve
+   logs the cap on 371/371/369 tranches, matching the census exactly — the
+   miso-113 "hook invisible to the calibration path" hazard is **cleared by
+   measurement**) with fuel deltas to **197.8 $/MMBtu**, and still moves
+   nothing: K3's price leg fails every year, max zonal |Δλ|
+   **0.0000/0.0003/0.0000** vs the 0.10 bar, dispatch clearing 50 MW in 2024
+   alone. **Inert for a DIFFERENT reason than the zonal anchor** (rule 25 within
+   an ISO): that lever's perturbation never reached price-setting tranches;
+   **this one's underlying phenomenon is negligible at MISO scale** — CAMPD's
+   own meters put observed dual-fuel oil generation at 0.0023/0.0113/0.0128
+   TWh/yr, **~0.002 % of ISO energy**. The pre-registered over-switching risk
+   **did not materialise**: same-grain K7 gives model 0.00013/0.03757/0.01096
+   TWh vs CAMPD 0.00233/0.01133/0.01284 TWh (0.06×/3.3×/0.85×, CAMPD a lower
+   bound). **DO-NOT-REDO, extending miso-119's:** the binding-hour Δoffer p50
+   (64.30/93.93/108.23 $/MWh) over-predicted the realized 0.0003 by **five
+   orders of magnitude** — *binding is not marginality*. Only **0.00 %/1.24 %/
+   0.54 %** of binding tranche-hours are also partially loaded, and 2023's exact
+   0.0000 is because **no** capable tranche is ever both binding and marginal.
+   The predictive ex-ante statistic is the **marginal share of binding hours**,
+   never a percentile of the offer delta. Re-open needs a **winter-event-grain
+   scored criterion** (the rubric has none), a chartered mechanism raising
+   MISO's delivered winter gas further past parity, or an owner override — not
+   a re-run, not a sweep (both legs are measured registries).
+   (`results/calibration/FINDING-miso121-dual-fuel-switching-2026-08-03.md`;
+   prereg `PREREG-miso121-dual-fuel-switching-2026-08-03.md`; probes
+   `scripts/probes/_miso121_dual_fuel_screen.py`, `_miso121_dual_fuel_ab.py`,
+   `_miso121_switched_volume.py`.)
+   ~~**The live head of the MISO queue is now the 55088 Dearborn hybrid-cogen
+   scope gate (item 4 above, named not chartered).**~~ **SPENT at miso-122
+   (2026-08-04) — see item 4c. §5.4 now has NO named, un-adjudicated,
+   non-data-blocked item left.** The two *named but unchartered* successors that
+   remain are miso-114 §0c's hour-of-day-resolved seam **band availability** at
+   the `(month × hour-of-day)` `MISO_SEAM_DIBA` grain — note it is the very seam
+   whose 912.5 MW band quantises miso-122's K3 dispatch statistic — and
+   miso-118's `CT_CHP`-side plant-level rate question. The bounded non-solve
+   step remains item 1's Form 580 count.
+   **QUEUE STAMP 2026-08-04 (miso-123): the seam band-availability successor is
+   now CLOSED on measurement (item 0c above; `import_shape_lever` MISO → `G`,
+   no LP spent), so the ONE named, un-adjudicated, non-data-blocked successor
+   left in §5.4 is miso-118's `CT_CHP`-side plant-level rate at 55088 Dearborn
+   (rule 14 `[R-ACCURATE]`, one eGRID rate spanning two prime movers at a mixed
+   facility) — that is the live queue head. Beside it stand only the two bounded
+   NON-solve steps: item 1's Form 580 tonnage COUNT (a sourcing pass, not a
+   solve) and miso-114 §6's CAMPD `CT_PEAKER` + `ST_GAS` overnight-online
+   measurement. A session going off-queue must say so and why.**
+   **QUEUE STAMP 2026-08-04 (miso-125): that queue head is now SPENT — the
+   `CT_CHP`-side plant-level rate is ADJUDICATED, `R` on its repair and
+   REDIRECTED on its cause, with NO LP, NO solve and NO derive change**
+   (`results/calibration/FINDING-miso125-chp-prime-mover-split-2026-08-04.md`).
+   The grain defect is confirmed and stands — 55088 is the ONLY applied
+   multi-class plant in MISO (515.0 MW: `CC_CHP` 350.0 + `CT_CHP` 165.0, both
+   `ok`) and both rows carry the same plant-grain 6.9573. But the pre-registered
+   repair, a CEMS share ratio `hr_m = hr_plant × (f_m/g_m)`, is **refuted by its
+   own stated assumption**: it measured LIVE (4.76 / 3.05 / 3.17 % vs a
+   pre-declared 2 % band) yet **backwards from turbine physics**
+   (`hr_CC` 7.09 > `hr_CT` 6.63), because eGRID's `PLNGENAN` (5,259,825 net MWh)
+   is **1.4418×** the CEMS power-train gross (3,648,140 MWh) — net cannot exceed
+   gross on the same machines — and the implied capacity factor on the LP's own
+   515 MW is **116.6 %**. EIA-860 names the missing machine: **`ST1`, prime
+   mover `CA`, Unit Code `SINT` shared with the two NG `CT` turbines, 250 MW,
+   Energy Source 1 = `BFG`**, the steam part of the combined-cycle block, with
+   no CEMS stack and no fleet row (`classify_plant` keys on Energy Source 1, so
+   `BFG` falls to the residual `OTHER` bucket). Its output is not attributable
+   between the `CC` and `CT` families from any available source, so no repaired
+   split is derivable — rule 14 `[R-ACCURATE]`'s named different-boundary
+   exception, and nothing was shipped. **The successor this NAMES but does not
+   charter** is the upstream capacity defect: **MISO carries 290.4 MW of
+   measurably missing `CA` combined-cycle steam capacity** (55088 `ST1` 250.0 MW
+   `BFG`; 50973 Motiva `GN31`/`GN32`/`GN33` 40.4 MW `OG`), verified absent
+   against each plant's EIA-860 totals. 1004 Edwardsport is **not** a defect
+   (its 555 MW `SGC` steam part IS represented, as `COAL`). Rule 25: 54912
+   Martinez 20.0 MW (CAISO) and 6081 Stony Brook 96.0 MW (NEISO, undetermined)
+   are handed off unstamped. §5.4 again has **no** named, un-adjudicated,
+   non-data-blocked item; the two bounded NON-solve steps above are unchanged.
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
@@ -1741,7 +2226,82 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-118-seny-span`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-119-seny-increment`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+
+**STATUS 2026-08-03 (nyiso-119) — THE PUBLISHED SENY $40 INCREMENT TIER IS
+ARMED AND PROMOTED; nyiso-118's PARTIAL IS NOW COMPLETED ON CONSTRUCTION.**
+Keeper `2026-08-03-nyiso-118-seny-span` →
+**`2026-08-03-nyiso-119-seny-increment`**. Determination
+CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **UNCHANGED**. One delta
+(`nyiso_seny_rcpf_increment_step`, matrix cell **`U` → `K`**, row added **with
+the field** per rule 28(c)), **zero free parameters** (ledger 32 → 33,
+`n_residual` 6). Two runs registered
+(`2026-08-03-nyiso-119-control-zerodelta` + the keeper).
+
+**(1) A PUBLISHED TIER THE MODEL NEVER CARRIED.** The SOM states SENY 30-minute
+as a **$500/MW base over 1,300 MW PLUS a $40/MW increment above it**, and the
+2023 SOM p. A-132 prints the pair as one object — **"SENY $500+$40"**. That
+transcription **already existed in the codebase**
+(`NYISO_RCPF_EAST_FAMILIES`' provenance block) before this session.
+`nyiso_dynamic_reserve_requirements` has **always ENFORCED** the increment
+(measured 1,550/1,800 MW against a 1,300 MW base for most of the day) and
+**nothing ever PRICED it** — the whole shortfall was charged against the base
+curve, whose first rung **$62.50** already sat above the entire measured
+**$23.92/$30.37/$40.00** envelope. A rule 14 `[R-ACCURATE]` **omission** of the
+nyiso-83/84 class, not a lever.
+
+**(2) NO NEW NUMBER — it clears the NYC-precedent bar.** The $40 is the **same
+ASM §6.8 item 12** already pinned for `east_30min_total`, whose clause names
+**Southeastern explicitly**; the 1,300 MW breakpoint is **read from**
+`NYISO_RCPF_LOCATIONAL`; the hourly requirement was already on the balance row.
+The **$500 base, `critical_mw = 0` and `n_ramp = 8` are untouched** — the
+posted-price instrument never reaches the base, so its shape stays
+**unidentified** and keeps its ramp (nyiso-115's discipline).
+
+**(3) RULE 19 BY SUBSTITUTION, NEVER STACKING.** The two-tier construction
+carries the hourly requirement **natively**, in the increment band, so SENY takes
+this branch **instead of** `nyiso_ordc_measured_step_span`'s — exactly as
+`li_30min_total`'s ladder already opts itself out of the global flag. Every other
+family's span behaviour is untouched.
+
+**(4) ALL EIGHT GATES PASS, K-A…K-G SILENT.** Blast radius **exactly one
+family**: the other eight are byte-identical in widths, requirement **and**
+penalties at **$0.000** reachable price delta, so the rule-23 freezes on the NYC
+curve and the LI ladder hold. Steps **8 → 9**, first rung **$62.50 → $40.00**,
+base-ramp penalties **byte-identical**. **The nyiso-118 identity SURVIVES** —
+total width == requirement at **0/0/0** violating hours in both arms. Solve-log
+ORDC steps **59 → 60**, exactly +1 in one family. Zero slack, zero dump.
+
+**(5) G4 AS PRE-REGISTERED FAILED AND IS RECORDED, NOT REDEFINED.** It demanded
+exact $40.00 on the **closed** interval `(0, band]` — asymmetric, since it
+excluded the lower kink (`s > 0`) but included the upper one (`s == band`). At
+either kink the LP is degenerate and the dual sits legitimately between adjacent
+band prices; that is why the zero-shortfall hours price $7.75/$17.31 and the
+pre-registered form already tolerated **that**. Re-specified onto what K-G asks:
+the **strict interior** prices at the published increment (**2/0/4** hours, every
+one at exactly **$40.00**) and the band **edge** is **bracketed** (**$57.28** ∈
+[$40.00, $62.50]). Same class as the nyiso-115 G2 and nyiso-117 G2a lessons.
+
+**(6) STRUCTURAL CORROBORATION FROM THE SOLVE.** In the treatment's deepest 2025
+hour the LP stops holding SENY reserve at **exactly `held_mw = 1300.0` — the
+published base** — because past it the $40 tier no longer justifies more; the
+control stopped at **1575.0** (= 1800 − one control band width), a number with no
+market meaning. **The published curve's own breakpoint is where the dispatch now
+stops.**
+
+**(7) S-OVER NARROWED, NOT CLOSED — reported, not gated.** SENY max dual
+**62.50 → 40.00** (2023), none (2024), **87.07 → 62.50** (2025). Of **10**
+binding hours, those above the year's **measured** ceiling go **8 → 4** and those
+above the **published $40** go **8 → 2**. **Not closed:** 2023/2024's *realized*
+ceilings ($23.92/$30.37) sit **below** the published $40 cap, so pricing **at**
+the cap is still above them — an **incidence/depth** question, not a
+curve-construction one, and it belongs with the open peak-half lane in (3) above.
+**All 18 scored numeric fields equal** the control's; the ISO-scope null was
+pre-registered (SENY binds in 2/0/8 hours). **C3c UNCHANGED** — also
+pre-registered; this does **not** reach nyiso-110's reserve-formation gap.
+Evidence: `results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
+`PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
+`nyiso119_seny_increment_construction_probe.json`.
 
 **STATUS 2026-08-03 (nyiso-118) — THE SENY ORDC SPAN FIX IS ARMED AND
 PROMOTED, ON STRUCTURE, WITH THE RESIDUAL DELIBERATELY UNMOVED.** Keeper
@@ -2923,6 +3483,59 @@ charter with a new measured identification** before a solve:
     First task for any successor charter: reconcile the crossing quantity
     (published DA cleared demand net of scheduled imports and cleared virtual
     supply). Evidence: `FINDING-neiso76-dabid-phase0-2026-08-02.md` §D.
+    **PREREQUISITE DISCHARGED AT neiso-79 (2026-08-03, NO LP, no solve, no
+    cell verdict; item 5b STILL NOT OPENED — no owner green-light).** The
+    crossing quantity is reconciled and the reconciliation **removes the depth
+    parameter rather than re-assuming it**: imports enter ISO-NE's DA market as
+    PRICED supply offers, so the probe crosses the **combined** book (internal
+    offers + import offers + INC virtuals) against the published cleared-demand
+    line and import depth clears **endogenously**.
+    * **The DA CLEARED external series does not exist.** Verified against the
+      full ISO Express Pricing / Grid / Load & Demand trees and Web Services
+      v1.1: every interchange report is real-time/actual; the only DA external
+      data ISO-NE publishes is the SUBMITTED import-offer/export-bid book. New
+      gitignored corpus `data/raw/NEISO-AS/da-import-export/` (1,090 day-files,
+      13 empty postings, 0 unpublished) + committed fetcher. **EIA-930
+      interchange was NOT substituted** — actual net interchange is a different
+      quantity at a different grain (rule 14 grain-misalignment trap).
+    * **THE NUMBER:** crossed correctly, the real book's hour-of-day range is
+      **$7.71 / $10.63 / $16.78 = 29.7 / 36.7 / 37.7 %** of the measured DA
+      range — against §D's **65.6 / 72.9 / 54.1 %** at metered demand and the
+      keeper's own **27.1 / 23.5 / 29.9 %**. 864 days in all three books,
+      20,733 hours (300 / 288 / 276).
+    * **The CONTROL makes this a statement about the QUANTITY, not the
+      sample:** neiso-76's own §D read recomputed on the SAME 864 days gives
+      **68.6 / 79.8 / 59.3 %** — at or ABOVE its full-corpus anchors in every
+      year. §D was crossing the book **~4–5 GW too deep** (measured DA import
+      depth ~4–4.4 GW plus 1.3–1.9 GW of INC), in a flatter part of the stack.
+      neiso-76's own 3 GW sensitivity was the right instinct; the correct
+      endogenous depth confirms its **pessimistic end**.
+    * **Kill rules (pre-registered before the numbers existed):** **KQ1 does
+      NOT fire** (0/3 at-or-below keeper) — the traversal lane is **NOT
+      refuted**; **KQ2 FIRES** (3/3 below 40 %) — **DIRECTION-ONLY; the
+      magnitude does not survive**; **KQ3 fires on 2025** ($11.12 vs a $10.00
+      bar; 2023 $7.86 / 2024 $8.33 clear it) so the three-year headline share
+      is **withheld** per the prereg; **KQ4 does NOT fire** — removing the
+      import book recovers **49.6 / 61.0 / 49.4 %**, so the import
+      reconciliation carries the bulk of the correction.
+    * **Against interest:** the session's own `Must Take Energy` refinement is
+      **REFUTED** (those MW are a subset of the ladder — every carrying
+      unit-hour is MUST_RUN with a ladder already spanning EcoMax — and
+      re-pricing them to the floor worsens the identification in all three
+      years); the crossing sits a median $7.8–11.0 BELOW the posted DA
+      (commitment cost, reserve co-opt, congestion, losses — reported as a
+      bound, not tuned away); and a DA reserve reservation, which would have
+      flattered the lane, was refused on neiso-76 §B3's measurement that ISO-NE
+      cleared **no DA reserve product before 2025-03-01**.
+    * **OWNER ROUTING for the 5b green-light:** the margin over the keeper is
+      **+2.6 / +13.2 / +7.8 pp**, so a perfect traversal lever recovers at most
+      **a third to a half** of NEISO's amplitude gap and **cannot close
+      C3c-2025**; neiso-75 §2.4 already showed it cannot close C3c-2023.
+      **Charter 5b only if the target is amplitude FIDELITY, not the C3c
+      gate.** Evidence:
+      `results/calibration/FINDING-neiso79-crossing-quantity-2026-08-03.md`;
+      prereg `PREREG-neiso79-crossing-quantity-2026-08-03.md`; probe
+      `scripts/probes/_neiso79_crossing_quantity.py`.
 
 5c. **NEISO's amplitude decomposition is NOT NYISO's** (neiso-76 task (b), no
     LP; rule 25 in both directions). On NEISO's own posted AS prices — new

@@ -826,6 +826,68 @@ class NeighborInterface:
     )
 
 
+# Each PJM tie line in the settlement-grade tie-line file -> the NAMED
+# reference-price interface it belongs to (the ``name`` of the matching
+# :class:`NeighborInterface` in ``INTERFACE_NEIGHBORS["PJM"]`` below).
+#
+# WHY THIS EXISTS (pjm-151, rule 14 [R-ACCURATE]). The seam deliverability cap
+# ``model.interchange.pjm.inject_pjm_seam_flow_limit`` needs a PER-NEIGHBOUR
+# envelope. It used to obtain one by building a per-model-ZONE envelope from
+# ``data.eia930.envelopes._PJM_TIE_ZONE`` and summing it over each neighbour's
+# ``border_zones`` — two structures that attribute the same physical seam
+# differently (``_PJM_TIE_ZONE`` puts the whole TVA tie on ``PJM_Dominion``;
+# this file's TVA interface spans ``PJM_AEP_Ohio`` + ``PJM_Dominion``), and the
+# zone buckets mix counterparties, so each neighbour's cap picked up other
+# neighbours' ties. Measured on PJM's own file at p90
+# (``scripts/probes/pjm151_seam_envelope_attribution.py``): the TVA EXPORT cap
+# came out 124x / 53x / 40x the direct construction in 2023/24/25 and the LGEE
+# one 33x / 42x / 26x, neither binding in any (month x hod) cell of 2023-24;
+# while the LGEE IMPORT cap came out at 0 MW against a measured ~520-550 MW, so
+# the repair loosens as well as tightens.
+#
+# This map removes the zone intermediary for that purpose. It is an IDENTITY,
+# not a derivation and not a fitted share: PJM labels every tie with the
+# counterparty balancing authority / utility itself, and those labels are the
+# same five counterparties ``INTERFACE_NEIGHBORS["PJM"]`` names. Rule 5
+# [R-NO-MAGIC] is satisfied by construction — there is no number here.
+#
+# ``_PJM_TIE_ZONE`` is NOT replaced and is not wrong: a per-ZONE attribution is
+# the right grain for the objects that are per-zone (the measured zonal
+# net-position schedule ``pjm_zonal_interchange`` feeds ``load_demand``, and the
+# star topology's per-border link caps). The two structures answer different
+# questions and only conflicted where one was summed to serve the other.
+#
+# Ties with no named interface map to ``None`` and enter no neighbour's cap.
+# ``OVEC`` appears in ``_PJM_TIE_ZONE`` but in none of the 2023-2025 files.
+PJM_TIE_NEIGHBOR: dict[str, str] = {
+    # MISO — Illinois / Iowa / Wisconsin / Dakotas / Indiana / Michigan
+    "AMIL": "MISO",
+    "ALTE": "MISO",
+    "ALTW": "MISO",
+    "CWLP": "MISO",
+    "MEC": "MISO",
+    "WEC": "MISO",
+    "MDU": "MISO",
+    "LAGN": "MISO",
+    "CIN": "MISO",
+    "IPL": "MISO",
+    "NIPS": "MISO",
+    "SIGE": "MISO",
+    "MECS": "MISO",
+    # NYISO — the AC tie plus the three merchant HVDC / VFT cables
+    "NYIS": "NYISO",
+    "NEPT": "NYISO",
+    "HUDS": "NYISO",
+    "LIND": "NYISO",
+    # Carolinas — Duke Progress East / West + Duke Carolinas
+    "CPLE": "Carolinas",
+    "CPLW": "Carolinas",
+    "DUK": "Carolinas",
+    # single-counterparty seams
+    "TVA": "TVA",
+    "LGEE": "LGEE",
+}
+
 INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     "PJM": [
         NeighborInterface(
@@ -2065,6 +2127,27 @@ def apply_interchange_topology(
             "PJM %d: pjm_zonal_loss_surface — internal links split into "
             "one-way loss pairs (marginal delivery-factor physics, "
             "pjm-136 M2)",
+            year,
+        )
+    # 9. ``config.caiso_zonal_loss_surface`` — the CAISO twin of steps 7-8:
+    #    split the internal CAISO links into one-way loss pairs so CAISO's own
+    #    measured marginal delivery-factor surface can enter the energy balance
+    #    as hour-varying receiving-side loss fractions (caiso-164; the
+    #    fractions are built per solve year by interchange.build_caiso_link_loss
+    #    from CAISO_loss_surface.csv). Internal links only — the WECC seam keeps
+    #    its measured hub prices, corridor groups and ATC envelopes untouched.
+    #    Runs LAST so it splits the topology every earlier step has already
+    #    settled; the caiso-163 directional path ratings are InterfaceLimits
+    #    keyed on the zone PAIR, which build_interface_groups resolves onto
+    #    both orientations with ±1 signs, so the published Path 15 / Path 26
+    #    bounds survive the split exactly (rule 19 ``[R-ONE-MECH]``).
+    if getattr(config, "caiso_zonal_loss_surface", False) and iso == "CAISO":
+        from market_sim.model.interchange.caiso import apply_caiso_zonal_loss_links
+
+        iso_config = apply_caiso_zonal_loss_links(iso_config)
+        logger.info(
+            "CAISO %d: caiso_zonal_loss_surface — internal links split into "
+            "one-way loss pairs (marginal delivery-factor physics, caiso-164)",
             year,
         )
     return iso_config

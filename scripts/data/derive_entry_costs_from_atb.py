@@ -62,9 +62,13 @@ from market_sim.config.constants import INFLATION_RATE, REAL_DOLLAR_BASE_YEAR
 from scripts.data import curate_nrel_atb
 from scripts.lib.clean_io import paths
 
-# ATB edition and its published dollar-year basis (ATB 2024 v3.0.0 = 2022 USD;
-# data/raw/nrel-atb/README.md "Network note" — the 2022$ basis is confirmed via
-# NREL's ATB documentation, flagged there for browser re-verification).
+# ATB edition and its published dollar-year basis (the whole ATB 2024 edition,
+# v3.0.0 and v4.0.0 alike, is 2022 USD; data/raw/nrel-atb/README.md "Network
+# note" — the 2022$ basis is confirmed via NREL's ATB documentation, flagged
+# there for browser re-verification). The *version* this reads is
+# curate_nrel_atb.DERIVATION_PINNED_VERSION, moved to v4.0.0 by FFR-SC
+# (2026-08-03) on the data-vintage change; every value below is unchanged by
+# that move (rule 23 — see the pin's own comment for the measured diff).
 ATB_EDITION_YEAR = 2024
 ATB_DOLLAR_YEAR = 2022
 

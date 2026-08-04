@@ -82,11 +82,42 @@ topping population, both definitional and both frozen at derive time (rule 23
    thermal allocation exceeds the physical ceiling of an *unfired* topping
    cycle is firing fuel directly to steam (duct burners / a package boiler),
    which is host process fuel, not power fuel.
+3. **Hybrid-cogen dark-fuel share** (miso-122, 2026-08-03). Gates 1-2 are both
+   read off eGRID's PLANT-level allocation, which cannot see a **hybrid** — a
+   topping CC/CT train *plus* a direct-fired package boiler on the same ORIS
+   code. There the plant-average `thermal_share` sits comfortably under the
+   0.50 ceiling while a large minority of the fuel never passes through a
+   prime mover at all. CEMS resolves it at UNIT grain, so the boiler fuel is
+   removed from the rate the power tranches are charged:
 
-Rule 14 `[R-ACCURATE]`'s named "different boundary" exception is what both
-gates implement: outside them the real datum is defined on a boundary that is
-not the LP's marginal offer rate, so it is not applied — never replaced by a
-guess.
+       dark_share = CEMS heat input of units reporting heatInput > 0 and
+                    grossLoad == 0 over the WHOLE vintage year
+                    ------------------------------------------------------
+                    CEMS heat input of ALL units at the plant
+
+       heat_rate  = (PLHTIAN + CHPCHTI) * (1 - dark_share) / PLNGENAN
+
+   It is a **share**, never a subtraction of MMBtu: that needs CEMS's fuel
+   *composition* to be representative, never CEMS's *level* to equal eGRID's,
+   so the denominator stays ``PLNGENAN`` and no re-basing is smuggled in
+   alongside the correction. It is measured at the SAME year as ``--vintage``
+   (no vintage mixing), it has NO threshold (a plant with no dark units gets
+   ``dark_share = 0.0`` and a byte-identical rate, so the gate is a strict
+   no-op wherever the phenomenon is absent — rule 5 ``[R-NO-MAGIC]``), and a
+   plant whose corrected rate would fall BELOW eGRID's own credited rate is
+   flagged ``below_credited`` and excluded rather than corrected, because that
+   says the two sources disagree about the plant's boundary.
+   Measured 2023 across the five artifact ISOs: MISO 55088 Dearborn 16.6 %
+   (515 MW), NYISO 2493 East River 37.5 % (306 MW, ``below_credited`` — see
+   above), NEISO 1595 Kendall 1.2 % (206 MW); PJM and CAISO carry none above
+   0.1 %. Evidence:
+   ``results/calibration/FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md``,
+   probe ``scripts/probes/_miso122_hybrid_cogen_scope.py``.
+
+Rule 14 `[R-ACCURATE]`'s named "different boundary" exception is what all
+three gates implement: outside them the real datum is defined on a boundary
+that is not the LP's marginal offer rate, so it is not applied — never
+replaced by a guess.
 
 Zero fitted parameters (rule 24 `[R-REGISTRY]`). Nothing here is swept against
 a residual; the thermal-share ceiling falls out of the EPA CHP envelope
@@ -97,10 +128,13 @@ Governance (rule 13 `[R-MEASURED]`): a plant's power-only heat rate is a
 physical property of the machine, the same admissibility class as the CAMPD
 min-stable loads, CT run horizons and the CO2 emission rates. It regenerates
 for a forward year from the same published pipeline (each eGRID vintage carries
-both columns) and responds to changed conditions. It is an INPUT, not a
+both columns, each CAMPD year carries the unit-grain fuel/gross channels the
+dark-fuel gate reads) and responds to changed conditions — a plant that
+re-configures its boilers regenerates a different rate. It is an INPUT, not a
 measured outcome fed back to close a residual. Per rule 23 it re-derives ONLY
-when EPA publishes a new eGRID vintage, and the re-derivation commit must cite
-that data change.
+when EPA publishes a new eGRID vintage OR when a **scope gate's logic** changes
+on measured grounds, and the re-derivation commit must cite that change — never
+a residual.
 
 Output: ``data/raw/_processed-legacy/chp_power_only_heat_rates_{ISO}.csv``, one
 row per ``(plant_code, plant_group)``, consumed by
@@ -191,6 +225,18 @@ _HR_BAND: dict[str, tuple[float, float]] = {
 #: (the hand factor is a known deterministic in-repo transform that sits after
 #: the seam, and comparing against it blinded the check in CAISO/PJM).
 _BASIS_TOL: float = 0.005
+
+#: Two-meter agreement band on ``cems_vs_egrid_total`` inside which the CEMS
+#: unit-grain fuel SPLIT may be attributed to eGRID's plant total, i.e. the
+#: precondition for SCOPE gate 3. Outside it CEMS is not seeing the same
+#: machine eGRID is: the derive's own header records three MISO plants (10328,
+#: 55096, 55799) whose combustion units sit below the Part-75 reporting
+#: threshold, where CEMS meters the boilers and misses the turbines — and there
+#: an unguarded dark share runs to 100 % and would drive the rate to zero.
+#: NOT a swept threshold: it is the band miso-118 pre-registered for exactly
+#: this "do two independent meters describe the same plant" question, reused
+#: rather than reinvented (rule 5 ``[R-NO-MAGIC]``).
+_CEMS_RECONCILE_BAND: tuple[float, float] = (0.90, 1.10)
 
 _CC_PREFIX = "combined cycle"
 _CT_PREFIX = "combustion turbine"
@@ -309,28 +355,61 @@ def egrid_chp_split(vintage: int) -> pd.DataFrame:
     return out.dropna(subset=["plant_code"]).drop_duplicates("plant_code")
 
 
-def cems_annual_heat(iso: str, year: int, codes: set[int]) -> dict[int, float]:
-    """Return ``{plant_code: annual CEMS heat input MMBtu}`` for ``year``.
+def cems_annual_heat(
+    iso: str, year: int, codes: set[int]
+) -> tuple[dict[int, float], dict[int, float]]:
+    """Return ``({plant: annual CEMS MMBtu}, {plant: DARK MMBtu})`` for ``year``.
 
-    The INDEPENDENT validation of eGRID's split: CEMS meters the fuel at the
-    stack, so ``PLHTIAN + CHPCHTI`` should reproduce it. Each state-year extract
-    is narrowed to the ISO's own plants on read, so a shared state file cannot
-    leak another ISO's units in. Missing extracts simply leave the plant
-    unvalidated (``NaN``) — the validation never gates the applied value.
+    Two products from one read of the same extract:
+
+    * **total** — the INDEPENDENT validation of eGRID's split: CEMS meters the
+      fuel at the stack, so ``PLHTIAN + CHPCHTI`` should reproduce it.
+    * **dark** — the heat input of units that report fuel and **zero gross
+      load** over the whole year, i.e. fuel that makes no electricity at all.
+      This is the hybrid-cogen scope gate's measurement (SCOPE gate 3).
+
+    The dark set is chosen **behaviourally**, never by a ``unitType``
+    allowlist: a hand map of "boiler-looking" type strings would be exactly the
+    off-registry channel rule 24 ``[R-REGISTRY]`` forbids. ``grossLoad`` is
+    null — not zero — for a unit with no gross-load channel at all, which is
+    the boiler case, so it is filled before aggregating. Validated at
+    miso-122: every dark unit found across the five artifact ISOs is a boiler
+    ``unitType`` (100 % of dark fuel, three plants).
+
+    Each state-year extract is narrowed to the ISO's own plants on read, so a
+    shared state file cannot leak another ISO's units in. A missing extract
+    leaves the plant out of BOTH maps — unvalidated (``NaN``) and uncorrected
+    (``dark_fuel_share`` NaN, applied as 0.0, which is the status quo and not
+    a claim that the plant has no dark fuel).
     """
     totals: dict[int, float] = {}
+    dark: dict[int, float] = {}
     for state in campd.states_for_iso(iso):
         path = UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
         if not path.exists():
             continue
-        df = pd.read_parquet(path, columns=["facilityId", "heatInput"])
+        df = pd.read_parquet(
+            path, columns=["facilityId", "unitId", "heatInput", "grossLoad"]
+        )
         df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
-        df = df[df["facilityId"].isin(codes)].dropna(subset=["heatInput"])
+        df = df[df["facilityId"].isin(codes)]
+        df = df.assign(
+            heatInput=df["heatInput"].fillna(0.0),
+            grossLoad=df["grossLoad"].fillna(0.0),
+        )
         if df.empty:
             continue
-        for code, heat in df.groupby("facilityId")["heatInput"].sum().items():
+        by_unit = df.groupby(["facilityId", "unitId"])[["heatInput", "grossLoad"]].sum()
+        is_dark = (by_unit["grossLoad"] <= 0.0) & (by_unit["heatInput"] > 0.0)
+        for code, heat in (
+            by_unit.groupby(level="facilityId")["heatInput"].sum().items()
+        ):
             totals[int(code)] = totals.get(int(code), 0.0) + float(heat)
-    return totals
+        for code, heat in (
+            by_unit[is_dark].groupby(level="facilityId")["heatInput"].sum().items()
+        ):
+            dark[int(code)] = dark.get(int(code), 0.0) + float(heat)
+    return totals, dark
 
 
 def plant_table(
@@ -341,6 +420,7 @@ def plant_table(
     basis_hr: dict[tuple[int, str], float],
     egrid: pd.DataFrame,
     cems_heat: dict[int, float],
+    cems_dark: dict[int, float],
 ) -> pd.DataFrame:
     """Build one measured row per ``(plant_code, plant_group)``.
 
@@ -368,6 +448,11 @@ def plant_table(
             "basis_heat_rate": round(float(basis), 4) if basis is not None else np.nan,
             "model_over_measured": float("nan"),
             "cems_heat_mmbtu": round(cems_heat.get(code, float("nan")), 1),
+            "cems_dark_heat_mmbtu": round(cems_dark.get(code, 0.0), 1)
+            if code in cems_heat
+            else float("nan"),
+            "dark_fuel_share": float("nan"),
+            "heat_rate_all_fuel": float("nan"),
             "cems_vs_egrid_total": float("nan"),
             "flag": "no_egrid_row",
         }
@@ -385,15 +470,47 @@ def plant_table(
                 rec["thermal_share"] = round(therm / total, 6)
             if np.isfinite(ngen) and ngen > 0.0 and np.isfinite(total):
                 credited = elec / ngen
-                power_only = total / ngen
-                rec["heat_rate_credited"] = round(credited, 4)
-                rec["heat_rate"] = round(power_only, 4)
-                if model is not None and power_only > 0.0:
-                    rec["model_over_measured"] = round(float(model) / power_only, 4)
+                all_fuel = total / ngen
                 cems = cems_heat.get(code)
                 if cems is not None and total > 0.0:
                     rec["cems_vs_egrid_total"] = round(cems / total, 5)
-                rec["flag"] = _flag(klass, credited, power_only, therm / total, basis)
+                # SCOPE gate 3 — the hybrid-cogen dark-fuel share, applied ONLY
+                # where the two meters reconcile. Absent CEMS coverage the share
+                # is unmeasured and applied as 0.0: the status quo, never a
+                # claim that the plant burns no dark fuel.
+                dark_share = 0.0
+                reconciled = True
+                if cems is not None and cems > 0.0:
+                    measured = cems_dark.get(code, 0.0) / cems
+                    rec["dark_fuel_share"] = round(measured, 6)
+                    lo_r, hi_r = _CEMS_RECONCILE_BAND
+                    ratio = rec["cems_vs_egrid_total"]
+                    # measured >= 1.0 means the plant's ENTIRE CEMS footprint is
+                    # dark, so CEMS never saw the power train and the gate has
+                    # no power-train fuel left to divide — degenerate, not a
+                    # 100 % correction. Treated exactly like a failed
+                    # reconciliation (the same thing is true of it).
+                    reconciled = (
+                        np.isfinite(ratio) and lo_r <= ratio <= hi_r and measured < 1.0
+                    )
+                    if reconciled:
+                        dark_share = measured
+                power_only = all_fuel * (1.0 - dark_share)
+                rec["heat_rate_credited"] = round(credited, 4)
+                rec["heat_rate_all_fuel"] = round(all_fuel, 4)
+                rec["heat_rate"] = round(power_only, 4)
+                if model is not None and power_only > 0.0:
+                    rec["model_over_measured"] = round(float(model) / power_only, 4)
+                rec["flag"] = _flag(
+                    klass,
+                    credited,
+                    power_only,
+                    therm / total,
+                    basis,
+                    dark_unreconciled=(
+                        not reconciled and float(rec["dark_fuel_share"]) > 0.0
+                    ),
+                )
         rows.append(rec)
 
     out = pd.DataFrame(rows)
@@ -402,18 +519,27 @@ def plant_table(
     out["source"] = (
         f"EPA eGRID{vintage} plant sheet PLNT{str(vintage)[2:]} "
         f"({_EGRID_WORKBOOK[vintage]}, data/raw/fleet-egrid) — heat_rate = "
-        "(PLHTIAN + CHPCHTI) / PLNGENAN, i.e. the model's own incumbent "
-        "PLHTRT = PLHTIAN/PLNGENAN with eGRID's published CHP useful-thermal "
-        "heat-input allocation CHPCHTI added back, on the SAME net-generation "
-        "denominator (no gross-to-net factor is involved). Validated against "
-        "independently metered CAMPD/CEMS annual heat input "
-        "(cems_vs_egrid_total). Applied only where flag=='ok': topping-cycle "
-        f"classes {'/'.join(TARGET_CLASSES)}, thermal_share <= "
-        f"{_MAX_THERMAL_SHARE} (EPA CHP Partnership unfired gas-turbine "
-        "envelope), corrected rate inside the class physical band, and the "
-        "incumbent rate AT THE REPLACEMENT SEAM (basis_heat_rate — after the "
-        "eGRID join and boundary repairs, before the legacy hand factor) "
-        "equal to eGRID's credited rate."
+        "(PLHTIAN + CHPCHTI) * (1 - dark_fuel_share) / PLNGENAN, i.e. the "
+        "model's own incumbent PLHTRT = PLHTIAN/PLNGENAN with eGRID's "
+        "published CHP useful-thermal heat-input allocation CHPCHTI added "
+        "back, on the SAME net-generation denominator (no gross-to-net factor "
+        "is involved), then the hybrid-cogen dark-fuel share removed — the "
+        f"share of the plant's CAMPD/CEMS {vintage} heat input burned in units "
+        "reporting fuel and ZERO gross load all year, which makes no "
+        "electricity and cannot be a topping cycle's co-product "
+        "(scripts/probes/_miso122_hybrid_cogen_scope.py), applied only where "
+        f"cems_vs_egrid_total is inside {_CEMS_RECONCILE_BAND} so the CEMS "
+        "unit split may be attributed to eGRID's plant total. "
+        "heat_rate_all_fuel carries the pre-gate value. Validated against "
+        "independently metered "
+        "CAMPD/CEMS annual heat input (cems_vs_egrid_total). Applied only "
+        f"where flag=='ok': topping-cycle classes {'/'.join(TARGET_CLASSES)}, "
+        f"thermal_share <= {_MAX_THERMAL_SHARE} (EPA CHP Partnership unfired "
+        "gas-turbine envelope), corrected rate at or above eGRID's own "
+        "credited rate and inside the class physical band, and the incumbent "
+        "rate AT THE REPLACEMENT SEAM (basis_heat_rate — after the eGRID join "
+        "and boundary repairs, before the legacy hand factor) equal to "
+        "eGRID's credited rate."
     )
     return out
 
@@ -424,8 +550,16 @@ def _flag(
     power_only: float,
     thermal_share: float,
     basis: float | None,
+    dark_unreconciled: bool = False,
 ) -> str:
-    """Return the applicability flag for one (plant, class) row."""
+    """Return the applicability flag for one (plant, class) row.
+
+    ``dark_unreconciled`` is set when the plant carries measured dark fuel but
+    its two meters do NOT agree (:data:`_CEMS_RECONCILE_BAND`), so SCOPE gate 3
+    could not be applied. Such a plant is excluded rather than left silently on
+    the uncorrected all-fuel rate: the measurement says there IS host process
+    fuel inside its rate, and the data does not say how much.
+    """
     if not np.isfinite(power_only) or power_only <= 0.0:
         return "no_rate"
     if thermal_share <= 0.0:
@@ -439,6 +573,17 @@ def _flag(
         return "basis_mismatch"
     if thermal_share > _MAX_THERMAL_SHARE:
         return "not_unfired_topping"
+    if dark_unreconciled:
+        return "dark_unreconciled"
+    if power_only < credited:
+        # SCOPE gate 3's own exclusion: the dark-fuel share removed MORE fuel
+        # than eGRID's whole CHP credit, so the corrected rate would sit below
+        # the plant's incumbent. The two sources disagree about where the
+        # plant's boundary is and neither can be preferred from this data —
+        # the plant keeps the existing chain rather than take a rate the
+        # correction cannot justify. Measured on NYISO 2493 East River
+        # (miso-122): dark share 37.5 % against a 29.6 % eGRID thermal share.
+        return "below_credited"
     lo, hi = _HR_BAND[klass]
     if power_only < lo:
         return "below_physical_band"
@@ -464,7 +609,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--no-cems",
         action="store_true",
-        help="Skip the CAMPD validation column (faster; applied values unchanged)",
+        help=(
+            "Skip the CAMPD read entirely — faster, but it also DISABLES the "
+            "hybrid-cogen dark-fuel scope gate, which is measured from that "
+            "same read. Output is a diagnostic, NOT the committed artifact."
+        ),
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     args = parser.parse_args(argv)
@@ -474,7 +623,20 @@ def main(argv: list[str] | None = None) -> int:
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no topping-cycle CHP plants")
     codes = {code for code, _ in caps}
-    cems = {} if args.no_cems else cems_annual_heat(iso, args.vintage, codes)
+    if args.no_cems:
+        # The dark-fuel share is measured from the same CAMPD read, so --no-cems
+        # is no longer a validation-only switch: it changes the applied value at
+        # any hybrid plant. Say so loudly rather than write a quietly different
+        # artifact (rule 24 [R-REGISTRY]).
+        print(
+            "WARNING --no-cems: the hybrid-cogen dark-fuel scope gate is "
+            "DISABLED (it reads the CAMPD extract). Applied heat rates revert "
+            "to all-fuel at any hybrid plant. Do not commit this output.",
+            file=sys.stderr,
+        )
+        cems, dark = {}, {}
+    else:
+        cems, dark = cems_annual_heat(iso, args.vintage, codes)
     table = plant_table(
         iso,
         args.vintage,
@@ -483,6 +645,7 @@ def main(argv: list[str] | None = None) -> int:
         basis_heat_rates(iso),
         egrid_chp_split(args.vintage),
         cems,
+        dark,
     )
 
     out_path = (
@@ -527,6 +690,23 @@ def main(argv: list[str] | None = None) -> int:
             f"input within 1 % on {within}/{len(val)} covered plants "
             f"(median ratio {val['cems_vs_egrid_total'].median():.5f})"
         )
+    moved = table[table["dark_fuel_share"].fillna(0.0) > 0.0]
+    if moved.empty:
+        print("  hybrid-cogen scope gate: no plant carries dark fuel — no-op")
+    else:
+        print(
+            f"  hybrid-cogen scope gate: {len(moved)} (plant, class) rows carry "
+            f"dark fuel ({float(moved['class_capacity_mw'].sum()):,.0f} MW)"
+        )
+        for r in moved.sort_values("dark_fuel_share", ascending=False).itertuples(
+            index=False
+        ):
+            print(
+                f"    {r.plant_code:<7} {r.plant_group:<7} "
+                f"{str(r.plant_name)[:28]:<30} dark {r.dark_fuel_share:6.2%}  "
+                f"{r.heat_rate_all_fuel:7.4f} -> {r.heat_rate:7.4f}  "
+                f"flag={r.flag}"
+            )
     counts = table["flag"].value_counts()
     print("  flag census: " + ", ".join(f"{k}={v}" for k, v in counts.items()))
     return 0

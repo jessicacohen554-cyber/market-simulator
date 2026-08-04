@@ -49,6 +49,7 @@ from market_sim.config.constants import (
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
     RENEWABLE_ELCC_CURVES_BY_ISO,
+    RENEWABLE_NQC_CURVES_BY_ISO,
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
@@ -61,7 +62,7 @@ from market_sim.config.reserve_config import (
     QUICK_START_FUEL_TYPES,
     RESERVE_FUEL_TYPES,
 )
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import ScenarioConfig, resolve_demand_growth_rate
 from market_sim.data import capacity_deliverability as capdel
 from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.confirmed_retirements import ConfirmedExit
@@ -161,6 +162,151 @@ def _execution_lag_years(config: ScenarioConfig, fuel_type: str) -> int:
     if lag is None and fuel_type == "gas_cc_ccs":
         lag = getattr(config, "retirement_execution_lag_gas_cc")
     return int(lag)
+
+
+def _apply_exit_throughput_cap(
+    due: list[Generator], state: dict[str, int], cap_mw: float
+) -> tuple[list[Generator], list[Generator]]:
+    """Split the year's due exits into (executing, deferred) at the MW cap.
+
+    The exit half of the deactivation queue (``ScenarioConfig.exit_rate_limits``;
+    owner decision D-8, 2026-08-03 —
+    ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum F.1). The
+    execution lag models the queue's LATENCY; this models its THROUGHPUT. D-8
+    ruled them two mechanisms for rule 19 ``[R-ONE-MECH]`` purposes, on
+    FFR-3C §1.2's measurement that a per-fuel constant lag is a rigid
+    time-shift operator — it translates an exit wave without spreading it, so
+    wave width stays at exactly one year however many units fail.
+
+    **Strict FIFO, because that is what a deactivation queue is.** Requests are
+    processed oldest-decision-first (``state[unit_id]``, the decided year),
+    tie-broken by the caller's existing deterministic ``(fuel_type,
+    -heat_rate)`` order, and the year stops at the first unit that would not
+    fit. The remaining headroom is deliberately NOT backfilled with a smaller
+    later unit: reordering the queue to pack the year is an optimisation a real
+    RTO deactivation queue does not perform, and it would make exit
+    composition depend on unit size rather than on request date.
+
+    The head of the queue is always admitted even when it alone exceeds the
+    cap. Without that, a unit larger than the ISO's whole annual throughput
+    could never leave — the cap would silently become an immortality rule
+    rather than a rate limit.
+
+    Deferred units are NOT un-decided: the caller leaves them in
+    ``pipeline_state``, so they re-present at the head of next year's queue
+    through the identical "execution deferred, re-latched next year" path the
+    reliability floor already uses (pipeline component 5). No second deferral
+    mechanism is introduced (rule 19).
+
+    Args:
+        due: The year's due exits, in the caller's deterministic order.
+        state: Pipeline state ``unit_id -> decided_year``, read for the FIFO
+            key; not mutated.
+        cap_mw: The year's throughput budget in MW.
+
+    Returns:
+        ``(executing, deferred)``, both preserving the caller's input order so
+        the ledger and the floor's eligible iteration stay deterministic.
+    """
+    queue = sorted(due, key=lambda g: (state[g.unit_id], g.fuel_type, -g.heat_rate))
+    admitted: set[str] = set()
+    admitted_mw = 0.0
+    for g in queue:
+        mw = float(g.pmax_mw)
+        if admitted and admitted_mw + mw > cap_mw:
+            break  # year's throughput exhausted; the rest wait their turn
+        admitted.add(g.unit_id)
+        admitted_mw += mw
+    return (
+        [g for g in due if g.unit_id in admitted],
+        [g for g in due if g.unit_id not in admitted],
+    )
+
+
+def _admission_cap_horizon(
+    config: ScenarioConfig,
+    scheduled: set[str],
+    state: dict[str, int],
+    decided_year: int,
+    fleet: list[Generator],
+    peak_demand: float,
+    year: int,
+) -> tuple[int, float]:
+    """Return the (year, peak MW) the pipeline's admission cap is tested at.
+
+    The G-31 cap-grain correction (FFR-3F task 1, chartered by owner decision
+    D-8 / FFR-3C §6.3). The admission cap in
+    :func:`_apply_pipeline_retirements` is a test on ONE counterfactual fleet:
+    the current fleet with the WHOLE scheduled exit set removed at once. That
+    fleet state is not realized at the decision ``year`` — it is realized at
+    the LAST execution year in the schedule, ``max(decided_year + L_f)``, one
+    to three years later. Testing it against the decision year's requirement
+    measured the exits against a requirement they never land against (FFR-3C
+    §1.2 G3: the cap saw a 2026 requirement of 21,990 MW while the exits it
+    admitted landed against 2028's 24,244 MW — **+10.3 % of requirement the
+    cap never saw**). This function returns the horizon that makes the two
+    halves of the test consistent: the fleet-with-all-exits-gone is paired
+    with the requirement at the year that fleet actually exists.
+
+    Both inputs to :func:`resolve_adequacy_requirement_mw` move to that
+    horizon, because both are year-dependent:
+
+    * the **year**, which selects the ISO's published-FPR delivery year
+      (:func:`resolve_forecast_pool_requirement`); and
+    * the **peak** the requirement is a fraction of, projected from the
+      entering year's peak by compounding the run's own demand-growth path
+      (:func:`resolve_demand_growth_rate` — the identical per-year rate
+      ``runner._scale_demand`` compounds to build each year's load).
+
+    No new parameter enters: the horizon is a function of the per-fuel
+    execution lags (``retirement_execution_lag_*``, already identified) and
+    the growth path already driving demand, so it regenerates for any forward
+    year and responds to changed conditions (rule 13 ``[R-MEASURED]``).
+
+    Two deliberate limits, stated because they are silent otherwise:
+
+    * The projection compounds growth only. ``runner.add_load_layers``
+      relocates each additive load layer's energy onto its own shape *after*
+      scaling and is jointly energy-invariant, so its effect on the peak is
+      second-order and is not reproduced here; the growth path itself is
+      DC- and electrification-inclusive.
+    * The **fleet** side stays at the decision year — entry that commissions
+      between decision and execution is not credited. That is the pre-existing
+      grain of the cap and is out of this correction's scope; it biases the
+      cap conservative (toward retaining), and it is recorded as an open item
+      rather than silently closed.
+
+    Args:
+        config: Scenario config supplying the per-fuel execution lags and the
+            demand-growth path.
+        scheduled: Unit ids of the whole scheduled exit set (pending state
+            plus this year's admitted candidates).
+        state: Pipeline state ``unit_id -> decided_year`` for pending units.
+        decided_year: The loss year stamped on units decided at this screen.
+        fleet: The current fleet, supplying each scheduled unit's fuel type.
+        peak_demand: The entering year's peak demand in MW.
+        year: The screen (decision) year.
+
+    Returns:
+        ``(cap_year, cap_peak_demand_mw)``. With an empty schedule, or when
+        every scheduled exit executes in ``year`` itself (all lags 1, the
+        gas/oil case), this is exactly ``(year, peak_demand)`` — the
+        pre-correction behaviour, unchanged.
+    """
+    fuel_of = {g.unit_id: g.fuel_type for g in fleet}
+    cap_year = year
+    for uid in scheduled:
+        fuel_type = fuel_of.get(uid)
+        if fuel_type is None:  # left the fleet through another channel
+            continue
+        execute_year = state.get(uid, decided_year) + _execution_lag_years(
+            config, fuel_type
+        )
+        cap_year = max(cap_year, execute_year)
+    cap_peak_demand = peak_demand
+    for growth_year in range(year, cap_year):
+        cap_peak_demand *= 1.0 + resolve_demand_growth_rate(config, growth_year)
+    return cap_year, cap_peak_demand
 
 
 # Per-fuel ScenarioConfig field names for the effective-FOM multiplier.
@@ -1018,6 +1164,7 @@ def resolve_renewable_capacity_credit(
     installed_mw: float | None = None,
     peak_demand_mw: float | None = None,
     curves_enabled: bool = False,
+    nqc_curves_enabled: bool = False,
 ) -> float | None:
     """Resolve one VRE class's adequacy capacity credit (CR-3.1 ladder).
 
@@ -1026,6 +1173,14 @@ def resolve_renewable_capacity_credit(
     the retirement reliability floor, the reserve-margin backstop and the
     CR-1 reserve position all move together. Resolution ladder:
 
+    0. **Published class-average accreditation held behind its own gate**
+       (:data:`RENEWABLE_NQC_CURVES_BY_ISO`, gate
+       ``ScenarioConfig.caiso_nqc_accreditation`` — CAISO's CPUC/CAISO NQC
+       technology factors, FFR-3P). Same registry shape and same evaluator as
+       rung 1; it is a separate registry ONLY because the rung-1 gate ships
+       default-ON and this arm must ship default-OFF pending an owner decision
+       (rules 5/24). ``nqc_curves_enabled=False`` (the default) skips it
+       entirely, so an unarmed run is byte-identical to the pre-FFR-3P ladder.
     1. **Published penetration-indexed ELCC curve**
        (:data:`RENEWABLE_ELCC_CURVES_BY_ISO`, gate
        ``ScenarioConfig.renewable_elcc_curves``) evaluated at the model's
@@ -1046,6 +1201,14 @@ def resolve_renewable_capacity_credit(
     for fuels that are not credit-accredited (thermal), mirroring
     ``RENEWABLE_CAPACITY_CREDIT.get``.
     """
+    if nqc_curves_enabled and iso is not None:
+        nqc_curve = RENEWABLE_NQC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
+        if nqc_curve is not None:
+            credit = evaluate_renewable_elcc_curve(
+                nqc_curve, installed_mw, peak_demand_mw
+            )
+            if credit is not None:
+                return credit
     if curves_enabled and iso is not None:
         curve = RENEWABLE_ELCC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
         if curve is not None:
@@ -1148,6 +1311,7 @@ def _apply_reliability_floor(
         iso=config.iso,
         peak_demand_mw=peak_demand,
         elcc_curves_enabled=config.renewable_elcc_curves,
+        nqc_curves_enabled=config.caiso_nqc_accreditation,
     )
     retention_log: list[dict] = []
     if accredited_mw >= requirement_mw:
@@ -1190,6 +1354,7 @@ def _apply_pipeline_retirements(
     deliverability_headroom: dict[str, float] | None,
     year: int,
     event_sink: dict | None,
+    exit_rate_cap_mw: float | None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
 
@@ -1211,7 +1376,12 @@ def _apply_pipeline_retirements(
        and cheapest-firm-adequacy metric) retains candidates until the
        scheduled post-pipeline firm capacity clears the shared PRM
        requirement. Removes the D1 defects 2 and 3 (the cross-fuel race and
-       the fuel-partitioned eligible set).
+       the fuel-partitioned eligible set). The cap is tested at the
+       schedule's EXECUTION horizon, not the decision year
+       (:func:`_admission_cap_horizon` — the G-31 cap-grain correction,
+       FFR-3F/D-8): the counterfactual fleet it screens is realized when the
+       last scheduled exit leaves, so the requirement is resolved at that
+       year and that year's projected peak.
     3. **Soft latch.** A pipelined unit is re-screened annually and leaves
        the pipeline ONLY by re-clearing the same bar (economic recovery; the
        policy-rescue reversal channel stays the confirmed registry's). No
@@ -1298,20 +1468,23 @@ def _apply_pipeline_retirements(
     # in prior years are not re-litigated here — the realized-year floor
     # below remains their backstop.
     scheduled: set[str] = set(state) | {g.unit_id for g in new_units}
+    decided_year = year - 1  # the loss year whose dispatch failed this screen
+    cap_year, cap_peak_demand = _admission_cap_horizon(
+        config, scheduled, state, decided_year, fleet, peak_demand, year
+    )
     _apply_reliability_floor(
         fleet,
         new_units,
         scheduled,
         state,
         config,
-        peak_demand,
+        cap_peak_demand,
         wind_pool_mw,
         solar_pool_mw,
         storage_firm_mw,
         deliverability_headroom,
-        year,
+        cap_year,
     )
-    decided_year = year - 1  # the loss year whose dispatch failed this screen
     for g in new_units:
         if g.unit_id in scheduled:
             state[g.unit_id] = decided_year
@@ -1333,6 +1506,19 @@ def _apply_pipeline_retirements(
     ]
     # Deterministic order for the floor's eligible iteration and the ledger.
     due.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
+    # --- Exit throughput (ScenarioConfig.exit_rate_limits; owner D-8). The
+    # queue's SECOND property: the lag above set who is due, this bounds how
+    # many MW may actually leave this year. Applied BEFORE the reliability
+    # floor because the floor is the last-resort adequacy backstop and must
+    # see the set that is genuinely leaving; a unit deferred here stays
+    # pipelined and re-presents at the head of next year's queue.
+    throughput_deferred: list[Generator] = []
+    if exit_rate_cap_mw is not None and due:
+        due, throughput_deferred = _apply_exit_throughput_cap(
+            due, state, exit_rate_cap_mw
+        )
+        for g in throughput_deferred:
+            events.append(_event("throughput_deferred", g, state[g.unit_id]))
     retired = {g.unit_id for g in due}
     floor_retention_log = _apply_reliability_floor(
         fleet,
@@ -1355,16 +1541,19 @@ def _apply_pipeline_retirements(
     for uid in retired:
         state.pop(uid, None)
 
-    if retired:
+    if retired or throughput_deferred:
         logger.info(
             "year %d: R-NEW pipeline executed %d exit(s), %.0f MW "
-            "(%d pending, %d entry-capped, %d reversed)",
+            "(%d pending, %d entry-capped, %d reversed, "
+            "%d throughput-deferred / %.0f MW)",
             year,
             len(retired),
             sum(float(g.pmax_mw) for g in due if g.unit_id in retired),
             len(state),
             sum(1 for e in events if e["event"] == "entry_capped"),
             sum(1 for e in events if e["event"] == "reversed"),
+            len(throughput_deferred),
+            sum(float(g.pmax_mw) for g in throughput_deferred),
         )
     if event_sink is not None:
         event_sink["pipeline_events"] = events
@@ -1377,6 +1566,13 @@ def _apply_pipeline_retirements(
             {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
             for g in due
             if g.unit_id not in retired
+        ]
+        # Kept distinct from floor_retained: a throughput deferral is a queue
+        # rate limit, a floor retention is an adequacy backstop. Collapsing
+        # them would make the D-2 mechanism attribution unreadable.
+        event_sink["throughput_deferred"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in throughput_deferred
         ]
     return survivors, state, floor_retention_log
 
@@ -1403,6 +1599,7 @@ def apply_economic_retirements(
     reserve_price_signal_slow: np.ndarray | None = None,
     reserve_position: float | None = None,
     exempt_unit_ids: frozenset[str] = frozenset(),
+    exit_rate_cap_mw: float | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -1554,6 +1751,16 @@ def apply_economic_retirements(
             instant it spent the retrofit capex would be incoherent — it
             re-enters the screen as ``gas_cc_ccs`` next year on its own
             post-retrofit dispatch. Default empty ⇒ byte-identical.
+        exit_rate_cap_mw: The year's deactivation-throughput budget in MW
+            (``ScenarioConfig.exit_rate_limits``; owner decision D-8), or
+            ``None`` for no cap. Pipeline rule only. Bounds how many MW of
+            DUE exits actually execute this year, strict-FIFO by decided
+            year; the remainder stays pipelined and re-presents next year.
+            The execution lag and this cap are the latency and throughput of
+            ONE queue and cannot double-count — the lag sets who is due, the
+            cap sets how much of the due set is processed (rule 19; see
+            :func:`_apply_exit_throughput_cap`). ``None`` (default) is
+            byte-identical.
 
     Returns:
         Tuple ``(survivors, loss_years, floor_retention_log)`` -- the fleet
@@ -1825,6 +2032,7 @@ def apply_economic_retirements(
             deliverability_headroom,
             year,
             event_sink,
+            exit_rate_cap_mw,
         )
 
     # Legacy rule: a failing year increments the unit's consecutive-loss

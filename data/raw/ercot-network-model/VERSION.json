@@ -1,0 +1,66 @@
+{
+  "report": "NP4-160-SG Settlement Points List and Electrical Buses Mapping",
+  "reportTypeId": 10008,
+  "docId": "1255818233",
+  "publishDate": "2026-07-29T00:08:13-05:00",
+  "constructedName": "RPT.00010008.0000000000000000.20260729.000814785.CIM_Jul_ML4_1_08042026_SP_List_and_EB_Mapping.zip",
+  "members": {
+    "CCP_Resource_Names_07152026_155200.csv": {
+      "rows": 68,
+      "columns": [
+        "CCP_NAME",
+        "LOGICALREOURCENODENAME"
+      ],
+      "sha256": "9cc9a2288b3d957c8afda24002bff0d9d18c829be977a0e61c004234a8df30a5",
+      "bytes": 1517
+    },
+    "Hub_Name_AND_DC_Ties_07152026_155200.csv": {
+      "rows": 11,
+      "columns": [
+        "NAME"
+      ],
+      "sha256": "d148a2ebded2b75dce6ee49152f54456cd83a01311b36799a199c851d6009ee2",
+      "bytes": 101
+    },
+    "NOIE_Mapping_07152026_155200.csv": {
+      "rows": 817,
+      "columns": [
+        "PHYSICAL_LOAD",
+        "NOIE",
+        "VOLTAGE_NAME",
+        "SUBSTATION",
+        "ELECTRICAL_BUS"
+      ],
+      "sha256": "050946094da17376b4393dc94218571b7e0c1520cdf8f3570cfd90b802e5215a",
+      "bytes": 30110
+    },
+    "Resource_Node_to_Unit_07152026_155200.csv": {
+      "rows": 1624,
+      "columns": [
+        "RESOURCE_NODE",
+        "UNIT_SUBSTATION",
+        "UNIT_NAME"
+      ],
+      "sha256": "5b54f928a260d09e632849346a130035a60c1ed9bbcf2bc4b09b1b62f6cde81e",
+      "bytes": 41225
+    },
+    "Settlement_Points_07152026_155200.csv": {
+      "rows": 19287,
+      "columns": [
+        "ELECTRICAL_BUS",
+        "NODE_NAME",
+        "PSSE_BUS_NAME",
+        "VOLTAGE_LEVEL",
+        "SUBSTATION",
+        "SETTLEMENT_LOAD_ZONE",
+        "RESOURCE_NODE",
+        "HUB_BUS_NAME",
+        "HUB",
+        "PSSE_BUS_NUMBER"
+      ],
+      "sha256": "ab7d0a6c7ee472cfebb1551084a37c20c000bd90cdd2e98b8abcb4ce212e913b",
+      "bytes": 1077868
+    }
+  },
+  "retention_note": "MIS retention ~31 days: only the CURRENT network-model version is reachable on the free path. No 2023-2025 vintage exists to fetch; consumers must report their own match rate against the target year."
+}

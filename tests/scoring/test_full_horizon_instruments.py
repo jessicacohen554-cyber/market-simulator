@@ -171,6 +171,42 @@ class RunConfigProvenanceTest(unittest.TestCase):
             self.assertEqual(payload["cache_key"], "abc123")
             self.assertEqual(Path(path).name, "run_config.json")
 
+    def test_accepts_the_real_call_sites_kwargs(self):
+        """The production call site's exact kwarg shape must bind.
+
+        REGRESSION (FFR-3A-2). ``solve_and_summarize`` passed ``run_dir`` BOTH
+        positionally and again inside ``**extra``, so every real invocation
+        raised ``TypeError: write_run_config() got multiple values for argument
+        'run_dir'`` — and it raised *after* a full 5-year solve and *before*
+        ``full_horizon_summary.json`` was written, so an affected leg lost its
+        summary as well as its FC-7 artifact and looked like a hard crash.
+
+        The existing tests all called this helper with a DIFFERENT (shorter)
+        kwarg set than the caller used, which is precisely why the defect
+        shipped green. This test pins the caller's own shape, and asserts the
+        payload still records ``run_dir`` so the fix lost no provenance.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            out, run = Path(td) / "out", Path(td) / "run"
+            out.mkdir()
+            run.mkdir()
+            (run / "config.yaml").write_text("iso: ERCOT\nmode: forecast\n")
+            path = F.write_run_config(
+                out,
+                run,
+                iso="ERCOT",
+                cache_key="key123",
+                solved_years=[2026, 2027, 2028, 2029, 2030],
+            )
+            self.assertIsNotNone(path)
+            payload = json.loads(Path(path).read_text())
+            self.assertEqual(payload["run_dir"], str(run))
+            self.assertEqual(payload["iso"], "ERCOT")
+            self.assertEqual(payload["cache_key"], "key123")
+            self.assertEqual(payload["solved_years"], [2026, 2027, 2028, 2029, 2030])
+
     def test_not_written_when_there_is_no_resolved_config(self):
         # A zero-year run has no provenance. Writing one from the REQUEST would
         # manufacture an FC-7 pass for a run that produced nothing.

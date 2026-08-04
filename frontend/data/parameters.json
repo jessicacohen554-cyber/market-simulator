@@ -8856,110 +8856,98 @@
     {
       "param_id": "demand_growth_rates.NYISO.high.long",
       "display_name": "Demand Growth Rates / Nyiso / High / Long",
-      "value": 0.02,
+      "value": 0.0196,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.NYISO.high.near",
       "display_name": "Demand Growth Rates / Nyiso / High / Near",
-      "value": 0.03,
+      "value": 0.0263,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.NYISO.low.long",
       "display_name": "Demand Growth Rates / Nyiso / Low / Long",
-      "value": 0.006,
+      "value": 0.0028,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.NYISO.low.near",
       "display_name": "Demand Growth Rates / Nyiso / Low / Near",
-      "value": 0.008,
+      "value": -0.0024,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.NYISO.mid.long",
       "display_name": "Demand Growth Rates / Nyiso / Mid / Long",
-      "value": 0.012,
+      "value": 0.0127,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.NYISO.mid.near",
       "display_name": "Demand Growth Rates / Nyiso / Mid / Near",
-      "value": 0.018,
+      "value": 0.0122,
       "unit": "",
       "domain": "Demand",
       "tier": 2,
-      "source": "Annual demand growth rates by ISO, scenario path, and era. Near-term (2026-2030): elevated by data center and industrial load. Long-term (2031-2050): decelerates as pipeline matures. Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.",
-      "source_date": "2026",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "NYISO 2026 Load & Capacity Data Report (\"Gold Book\", released April 2026), Table I-1a NYCA Baseline Energy and Demand Forecasts, Energy-GWh Lower/Baseline/Higher columns. Case CAGR: near = 2026->2030, long = 2031->2050 (matching DEMAND_GROWTH_TRANSITION_YEAR). Re-derived on the edition bump alone (rule 23) by FFR-SC 2026-08-03; supersedes the 2025 Gold Book reading.",
+      "source_date": "2026-04",
+      "page_or_table": "Table I-1a",
+      "url": "https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf",
+      "notes": "Landed at data/raw/NYISO/2026-Gold-Book-Public.pdf (sha256 43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf). low/high are the edition's own Lower/Higher Demand series, not band ratios re-centred on the mid.",
       "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "demand_growth_rates.PJM.high.long",
@@ -27203,6 +27191,22 @@
       "flags": [
         "auto-generated"
       ]
+    },
+    {
+      "param_id": "scenario.exit_rate_limits",
+      "display_name": "Exit Rate Limits",
+      "value": false,
+      "unit": "",
+      "domain": "Capacity Expansion",
+      "tier": 1,
+      "source": "EIA-860 retired sheet (measured per-ISO max single-year thermal deactivation) x NREL ReEDS growth-constraint hard bound (200% of prior maximum), transferred from the entry side's ENTRY_GROWTH_LIMIT_MULTIPLE",
+      "source_date": "2026-08",
+      "page_or_table": "EIA-860 eia860_generator_retired_and_canceled (Status == 'RE'); NREL ReEDS Model Documentation 2025, growth-constraints section",
+      "url": "",
+      "notes": "GATED default-OFF. The exit half of the deactivation queue, chartered by owner decision D-8 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum F.1, signed 2026-08-03): queue LATENCY (retirement_execution_lag_*) and queue THROUGHPUT (this) are TWO mechanisms for rule 19 [R-ONE-MECH], so arming both is not a stacked floor -- the lag sets WHEN a decided unit becomes eligible to leave, this sets HOW MANY MW may leave in one year. Cap = retirement_config.EXIT_THROUGHPUT_LIMIT_MULTIPLE (2.0) x data.build_exit_throughput.max_annual_exit_gw(iso, vintage, EXIT_THROUGHPUT_WINDOW_YEARS=11). Externally identified, never fitted (rule 13 [R-MEASURED]); re-derives ONLY on an EIA-860 vintage update, never because a residual moved (rule 23 [R-FROZEN-DERIVE]). Measured seeds at vintage 2023: ERCOT 4.42 GW/yr, PJM 5.24, MISO 7.46, CAISO 2.39, NEISO 0.98, NYISO 0.31 -- and for ERCOT/PJM/MISO the seed is invariant across the 11-yr window, the entry side's 10-yr window, and the unwindowed full retired record, so the windowing choice carries no DOF there. The 2.0 multiplier is the entry side's own value transferred rather than chosen: FFR-3C 1.4's finding is the ASYMMETRY (exit uncapped while entry is capped at 2x its measured record), so one envelope binds both halves of one queue and no exit-side multiplier exists to fit. An ISO with no measured deactivation carries NO cap (rule 25 neutral fallback -- a missing measurement must not invent a zero that forbids exit). Pipeline retirement rule only; default off is byte-identical.",
+      "old_repo_location": "",
+      "last_verified": "2026-08-03",
+      "flags": []
     },
     {
       "param_id": "scenario.fixed_om_gas_cc_ccs",

@@ -2708,4 +2708,92 @@ Matrix: `measured_ct_heat_rates` PJM stays `K`, note/evidence extended (rule 28b
 `results/calibration/_pjm150_regate_gates.json`;
 `scripts/probes/pjm150_ct_regate_arm.py`, `scripts/probes/pjm150_regate_gates.py`.
 
-Next shorthand: pjm-151.
+## pjm-151 — the seam envelopes were built on the wrong grain (KEEPER)
+
+**KEEPER → `2026-08-03-pjm-151-seam-envelope`** (was `2026-08-03-pjm-147b-chp-heat`).
+CALIBRATED, 9/9, C1 `all 16/16 · free 12/12`, zero caveats. ONE config delta,
+`pjm_seam_envelope_by_neighbor`; **ZERO free parameters** and the DOF ledger carried
+VERBATIM (19 entries / 6 residual, asserted by `scripts/gen_pjm151_attestation.py`).
+
+**Three phases, two of them spending no LP at all.**
+
+**Phase 0 — PJM's rule-28(c) matrix column is CLOSED.** 15 absent + 1 prose-only +
+5 armed-with-no-cell → 0/0/0; ratchet PJM 15 → 0. All 16 closed as literal
+sub-scalar registrations on 6 existing rows: zero new rows, zero mechanism verdicts,
+one audit-status mint. Mechanical cause is the caiso-161 §2 defect again — the seam
+family hid behind the glob `pjm_seam_* :7371+`, whose anchor was itself stale
+(`:9019+`), and two of those fields shape the published keeper. Census findings:
+`pjm_reserve_online_rho` is recorded in every PJM `run_config.json` and is
+unobservable on the keeper (sole read gated on `pjm_reserve_online_gated`, which is
+False) — **not** a rule-26 candidate, so nothing filed; and, filed as an observation
+only (rule 28(d)), the keeper arms `pjm_reserve_supply_cap=True` alongside
+`pjm_reserve_pergen=True` with **both** read paths gated off by pergen. MISO's
+ratchet moved 11 → 8 in the same commit and is **not** a MISO census: the PJM seam
+literals would have substring-shadowed three `miso_seam_*` fields into "covered", so
+those three are written out as real literals rather than dropped by an artifact.
+
+**Phase 2 — the lever, and the chartered question was the wrong one.** Keeper-note
+item 12 (carried since pjm-135) charged an inconsistency: `_PJM_TIE_ZONE` puts the
+whole TVA tie on `PJM_Dominion` while `INTERFACE_NEIGHBORS` splits it across two
+zones. **Two corrections to the charter's premises.** (a) **LGEE is inconsistent
+identically** — it is not the self-consistent contrast case. (b) **The two-zone
+share never needed deriving.** The two structures are not independent:
+`inject_pjm_seam_flow_limit` builds a per-ZONE p90 envelope and SUMS it over each
+neighbour's `border_zones`, and a zone bucket holds every tie that lands in it, so
+each seam's cap absorbs other seams' ties. The object needed is per-NEIGHBOUR;
+building it from the seam's own ties needs only an **identity** read off PJM's own
+tie labels. Zero parameters, same file, same shipped p90 (rules 5/13).
+`_PJM_TIE_ZONE` is unchanged and stays correct for the per-zone objects.
+
+**Measured ex ante, no LP.** Legacy ÷ direct cap: TVA export **124×/53×/40×**, LGEE
+export **33×/42×/26×**, neither binding in any 2023-24 (month × hod) cell — so
+`pjm_seam_export_limit`, armed precisely to fix the structural over-export, was
+effectively **INERT on two of the five seams**. It **loosens as well as tightens**
+(legacy LGEE import cap **0 MW** vs a measured 518/539/549 MW; legacy Carolinas
+export 0.67/0.97/0.81× measured), which a residual-fitted change would not. NYISO
+reproduces at **1.00× exactly** — the control. A first version of the probe clipped
+per-tie before summing (MISO import 2,225 MW vs a netted 0.1 MW) and is recorded as
+wrong in its own docstring, with a regression test pinning the netting order.
+
+**Gates.** K1 PASS (one delta; the rest enumerated schema drift / known default
+moves — the delta arrives as `arm_only` because the keeper predates the field, and
+the first gate-scorer version mis-FAILed on exactly that). K2 discharged **without a
+solve** (pjm-150's bit-identity plus six provably PJM-inert `src` commits), so arm A
+is the committed keeper. K3 LIVE (max |ΔMW| 1481/1699/1648). K4 **no criterion
+regresses**. E1 PASS with zero breaches, largest class move 1.24 TWh vs a declared
+3.0 TWh cap.
+
+**THE TRADE, pre-registered before the arm solved and disclosed not absorbed.** Net
+export falls in all three years, so interchange family error goes
+−10.82/−9.86/**+8.20** → −12.48/−12.22/**+5.21** TWh: better 2025, worse 2023-24.
+Gas improves in all three (+4.98/+10.92/+23.05 → +3.91/+9.34/+21.02); coal degrades
+slightly. Promoted on rule 1 `[R-STRUCT]` / rule 14 `[R-ACCURATE]`, with the 2023-24
+under-export filed as **new open root cause item 15** — not a seam-deliverability
+defect (the repair moved all three years the same way), so it must not be chased by
+loosening caps or tuning the tie map. **Rule 26 follow-up OWED:** collapse the gate
+flag and delete the zone-summed path.
+
+**Phase 1 — NOT COMPLETED, stated rather than dropped.** The pjm-149 D-2 projection
+check needs the diagnostics artifact regenerated from one bundle at two commits, and
+each regeneration rebuilds per-plant floors via `run_year` — memory-comparable to the
+LP on a 15 GB box, so it could not run alongside the arm chain without risking an OOM
+of the deliverable. The pre-fix code view is materialised and the harness is ready; no
+claim is offered either way. No verdict depends on it, but rule 18 is scored entirely
+from that file at every ISO, so the record correction is **carried forward as an open
+item**.
+
+Rule 15: registered, top-15 retention re-applied (pruned `2026-07-28-pjm-136-control`).
+Rule 22: 2023-2025 only; `complete` re-keyed **with** a determination re-verification
+(D-5(b)) that is not worse; `final` absent; freeze untouched;
+`audit_keepers.py --iso PJM --check` PASSES. Rule 28: matrix row added in the same PR,
+cell verdict + evidence updated, keeper stamp and PJM gates re-stamped; off-queue entry
+declared explicitly under 28(a) as a NEW measured identification.
+
+`results/calibration/FINDING-pjm151-seam-envelope-attribution-2026-08-03.md`;
+`PREREG-pjm151-seam-envelope-attribution-2026-08-03.md`;
+`results/calibration/_pjm151_seam_gates.json`;
+`results/calibration/_pjm151_seam_envelope_attribution.json`;
+`scripts/probes/pjm151_seam_arm.py`, `scripts/probes/pjm151_seam_envelope_attribution.py`,
+`scripts/probes/pjm151_seam_gates.py`, `scripts/gen_pjm151_attestation.py`.
+
+Next shorthand: pjm-152.

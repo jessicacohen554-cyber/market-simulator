@@ -1982,6 +1982,112 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
     },
 }
 
+# Published CLASS-AVERAGE accreditation held behind its own default-off gate
+# (``ScenarioConfig.caiso_nqc_accreditation``, FFR-3P 2026-08-04). Read at rung
+# 0 of the SAME ladder as RENEWABLE_ELCC_CURVES_BY_ISO by the SAME resolver
+# (:func:`market_sim.model.capacity.resolve_renewable_capacity_credit`) — one
+# accreditation mechanism, one resolver (rule 19); this registry only holds the
+# entries whose admission is gated, so an unarmed run is byte-identical.
+#
+# WHY IT IS A SEPARATE REGISTRY RATHER THAN A CAISO KEY ABOVE. The
+# ``renewable_elcc_curves`` gate ships default-ON, so adding CAISO to
+# RENEWABLE_ELCC_CURVES_BY_ISO would change every CAISO forecast solve on the
+# next commit. FFR-3P's charter requires the arm to ship DEFAULT-OFF pending an
+# owner decision on arming posture (rules 5/24/28), and this is the cheapest
+# honest way to hold a published value inert until that decision.
+#
+# CAISO — the rule 14 [R-ACCURATE] repair. Before this entry the ISO with the
+# most elaborate published VRE accreditation in the country was accredited on
+# the GENERIC non-CAISO fallback (RENEWABLE_CAPACITY_CREDIT: solar 0.18, wind
+# 0.16), measured invariant across a 0.2x-2.0x penetration sweep (FFR-3H §3.3).
+# The values below are CAISO's OWN published accreditation, read from the SAME
+# workbook and the SAME "Tech Factors" tab that
+# HYDRO_ACCREDITATION_CREDIT_BY_ISO["CAISO"] already cites — the solar and wind
+# blocks that sit directly above the "Non-dispatchable Hydro" block it reads.
+#
+#   Source: CAISO, "Net Qualifying Capacity Report for Compliance Year 2026",
+#   tab "2026 Tech Factors" (Solar Fixed / Solar Tracking / Solar Thermal
+#   Exceedance and Wind Exceedance blocks) x tab "2026 NQC List" (the per-
+#   resource monthly NQC MW that supplies the fleet mix). Committed at
+#   data/raw/capacity-market/nqc/caiso/net-qualifying-capacity-report-cy2026.xlsx;
+#   CPUC adopted QC methodology D.10-06-036 App. B.
+#
+# THE BLEND IS SAME-DOCUMENT ARITHMETIC, exactly like PJM's two-class solar
+# rating above. CAISO publishes per-(technology, region) factors while the model
+# carries one `solar` and one `wind` class, so each published sub-class factor is
+# weighted by that sub-class's nameplate in CAISO's own NQC List
+# (scripts/data/derive_caiso_nqc_class_factors.py, which recovers the mix from
+# the identity NQC = Pmax x factor; review artifact
+# data/raw/capacity-market/nqc/caiso/caiso_nqc_class_factors.csv, reconciled
+# against these literals by tests/unit/data/test_caiso_nqc_class_factors.py).
+#   solar: 12,470.4 MW matched over 200 resources — tracking 5,167.5 Socal +
+#          2,691.3 Norcal, fixed 2,030.5 Socal + 1,664.2 Norcal, thermal 917.0.
+#   wind : 6,211.3 MW matched over 97 resources — 4,752.8 Socal + 1,458.5 Norcal.
+# The out-of-state wind geographies CAISO also publishes (AZ / NM / WA-OR,
+# 0.24-0.31 in the peak months) are EXCLUDED: they accredit imported wind, which
+# the model credits at the seam through ADEQUACY_EXTERNAL_TIE_FIRM_MW, and
+# folding them into the in-ISO pool would double-count it (the _firm_import_mw
+# discipline, rule 19).
+#
+# MONTH SELECTION — the identical rule the hydro entry already applies. CAISO's
+# accreditation is published per MONTH and the model's ledger carries one annual
+# credit against the annual peak, so the registry takes the MINIMUM over CAISO's
+# Jul/Aug/Sep peak-risk months, and the credit therefore holds in whichever of
+# them the model's peak lands (HYDRO_ACCREDITATION_CREDIT_BY_ISO["CAISO"] takes
+# Sep on exactly this rule). Published CY2026 peak-month factors:
+#   solar: Jul 0.6365 / Aug 0.2096 / Sep 0.3942  -> 0.2096 (Aug binds)
+#   wind : Jul 0.3873 / Aug 0.3359 / Sep 0.2202  -> 0.2202 (Sep binds)
+# Collapsing a monthly (slice-of-day) accreditation onto one annual credit is a
+# TIME-AGGREGATION misalignment against the model's representation, so under rule
+# 14 this is the RECONCILED version of the real data, not a raw lift — and the
+# reconciliation is stated rather than buried. Resolving the credit at the
+# model's OWN peak month instead is the routed refinement (it needs the peak
+# month threaded into the ledger, which today receives only peak MW); it would
+# RAISE solar materially in a September-peaking year (0.3942 vs 0.2096).
+#
+# NO PENETRATION AXIS IS FABRICATED (the RenewableElccCurve contract). CAISO's
+# published class accreditation is an exceedance statistic on measured
+# production, not a marginal-ELCC curve, so it carries no penetration axis and
+# is encoded as a single-point constant — the same shape NYISO's CAFs take.
+# CAISO's marginal-ELCC study exists (data/raw/capacity-market/elcc/caiso/
+# caiso.csv) and is deliberately NOT used here: a marginal-tranche value is not
+# a whole-fleet ledger credit (the misalignment the note above records).
+#
+# VINTAGE. CY2026, matching the forecast base year. The CY2027 draft-final
+# report moves the AUGUST solar factors sharply (tracking Norcal 0.2672 ->
+# 0.6020), which would move the solar peak-risk minimum from Aug 0.2096 to Sep
+# 0.3944 — recorded so the vintage is visibly load-bearing. Refresh on a
+# published-vintage update (rule 23), never on a residual.
+RENEWABLE_NQC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
+    "CAISO": {
+        "solar": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.2096),),
+            source=(
+                "CAISO Net Qualifying Capacity Report, Compliance Year 2026, "
+                "'2026 Tech Factors' solar exceedance blocks blended on the "
+                "'2026 NQC List' fleet mix (12,470.4 MW / 200 resources); "
+                "August = min over the Jul/Aug/Sep peak-risk months — "
+                "data/raw/capacity-market/nqc/caiso/"
+                "net-qualifying-capacity-report-cy2026.xlsx"
+            ),
+        ),
+        "wind": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.2202),),
+            source=(
+                "CAISO Net Qualifying Capacity Report, Compliance Year 2026, "
+                "'2026 Tech Factors' Wind Exceedance Norcal/Socal blended on "
+                "the '2026 NQC List' fleet mix (6,211.3 MW / 97 resources; "
+                "out-of-state AZ/NM/WA-OR excluded — credited at the seam via "
+                "ADEQUACY_EXTERNAL_TIE_FIRM_MW); September = min over the "
+                "Jul/Aug/Sep peak-risk months — data/raw/capacity-market/nqc/"
+                "caiso/net-qualifying-capacity-report-cy2026.xlsx"
+            ),
+        ),
+    },
+}
+
 # Thermal accreditation basis for the same adequacy ledger, per ISO. Default
 # (ISO absent): "ucap" = pmax x (1 - EFORd). Three published-basis alternatives:
 #

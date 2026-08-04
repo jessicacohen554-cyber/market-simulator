@@ -3192,6 +3192,8 @@ def solve_and_persist(
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
     caiso_per_year_import_caps: bool | None = None,
+    caiso_asymmetric_path_ratings: bool | None = None,
+    caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -4362,6 +4364,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 caiso_per_year_import_caps=caiso_per_year_import_caps
             )
+        if caiso_asymmetric_path_ratings is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings
+            )
+        if caiso_zonal_loss_surface is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_zonal_loss_surface=caiso_zonal_loss_surface
+            )
         if capacity_deliverability_limits is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 capacity_deliverability_limits=capacity_deliverability_limits
@@ -4762,6 +4772,8 @@ def solve_and_persist(
             caiso_corridor_atc_forward=caiso_corridor_atc_forward,
             caiso_reference_price_seam=caiso_reference_price_seam,
             caiso_per_year_import_caps=caiso_per_year_import_caps,
+            caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings,
+            caiso_zonal_loss_surface=caiso_zonal_loss_surface,
             capacity_deliverability_limits=capacity_deliverability_limits,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -5563,6 +5575,8 @@ def solve_and_persist(
         "caiso_corridor_atc_forward": caiso_corridor_atc_forward,
         "caiso_reference_price_seam": caiso_reference_price_seam,
         "caiso_per_year_import_caps": caiso_per_year_import_caps,
+        "caiso_asymmetric_path_ratings": caiso_asymmetric_path_ratings,
+        "caiso_zonal_loss_surface": caiso_zonal_loss_surface,
         "capacity_deliverability_limits": capacity_deliverability_limits,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -10089,6 +10103,41 @@ def main() -> None:
         "Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--caiso-asymmetric-path-ratings",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Bound CAISO's two INTERNAL north-south paths at their published "
+        "WECC directional ratings instead of the symmetric TTC estimate the "
+        "reduced topology ships (ScenarioConfig.caiso_asymmetric_path_ratings). "
+        "Each link's baked ttc_mw is only ONE direction's rating -- Path 15 "
+        "(Midway-Los Banos) 5,400 MW is its S->N limit and Path 26 "
+        "(Midway-Vincent) 4,000 MW its N->S limit -- so the reverse direction "
+        "runs up to 65%% too loose. When on, appends one directional "
+        "InterfaceLimit per path: Path 15 3,265 N->S / 5,400 S->N and Path 26 "
+        "4,000 N->S / 3,000 S->N (WECC Path Rating Catalog, "
+        "interchange.caiso.CAISO_PATH_DIRECTIONAL_RATINGS). Measured "
+        "directional data over a symmetric estimate (CLAUDE.md #14); zero free "
+        "parameters, nothing swept (#24). CAISO-only and internal-links-only, "
+        "so it composes with the import-node/corridor steps. Default (unset) "
+        "keeps the base config value (off).",
+    )
+    parser.add_argument(
+        "--caiso-zonal-loss-surface",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Represent CAISO marginal transmission losses on the internal links: "
+        "split each internal CAISO link into a one-way loss pair and charge each "
+        "direction the measured receiving-side marginal delivery-factor loss "
+        "fraction from CAISO's own published DAM component record "
+        "(data/raw/iso-specific-transmission/CAISO_loss_surface.csv, derived by "
+        "scripts/data/derive_caiso_loss_surface.py as dev_z = sum(MCL_z)/sum(MCE); "
+        "per-year rows for a backcast train year, pooled rows for a forecast "
+        "year). The LP is otherwise LOSSLESS, i.e. it currently carries the "
+        "ESTIMATE that losses are zero; caiso-164 measured that 13-20%% of the "
+        "observed NP15-ZP26 basis is this component (rule 14 [R-ACCURATE]). "
+        "CAISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--capacity-deliverability-limits",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11212,6 +11261,8 @@ def main() -> None:
         caiso_corridor_atc_forward=args.caiso_corridor_atc_forward,
         caiso_reference_price_seam=args.caiso_reference_price_seam,
         caiso_per_year_import_caps=args.caiso_per_year_import_caps,
+        caiso_asymmetric_path_ratings=args.caiso_asymmetric_path_ratings,
+        caiso_zonal_loss_surface=args.caiso_zonal_loss_surface,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,

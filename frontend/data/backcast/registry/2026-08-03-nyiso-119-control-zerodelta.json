@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-nyiso-119-control-zerodelta",
+  "label": "nyiso 119 control zerodelta",
+  "date": "2026-08-03",
+  "shorthand": "nyiso-119-control-zerodelta",
+  "definition": "nyiso-119 CONTROL: same-HEAD zero-delta replay of the then-designated keeper 2026-08-03-nyiso-118-seny-span (bundle nyiso118_seny_span; superseded 2026-08-03 by this session's treatment, 2026-08-03-nyiso-119-seny-increment). All 18 scored numeric fields, every criterion verdict and the grade summary are EQUAL to the treatment arm.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-nyiso-119-control-zerodelta.js",
+  "bundle": "results/calibration/nyiso119_control"
+}

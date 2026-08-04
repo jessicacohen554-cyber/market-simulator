@@ -756,23 +756,42 @@ def _score_fc2_backstop(
 ) -> dict:
     """FC-2 row 4 — cumulative reserve_backstop thermal additions ÷ total additions.
 
-    When the reserve-margin backstop channel is disabled (``reserve_margin_build
-    _enabled`` off — its default), backstop builds are structurally zero, so the
-    share is provably 0% ⇒ PASS with no producer dependency. When the channel is
-    armed, the share needs the trajectory's per-channel split
-    (``builds_thermal_backstop_mw`` or a ``builds_by_source`` map); absent that,
-    the row SKIPs with an actionable message (the run_full_horizon trajectory
-    currently emits only the ``builds_thermal_mw`` total).
+    **The MEASURED split always wins over the gate.** This used to short-circuit
+    to ``PASS, share 0%`` whenever ``reserve_margin_build_enabled`` was falsey,
+    on the premise that a disabled channel makes backstop builds "structurally
+    zero". Measured at FFR-3A-2, that premise is FALSE: a real NEISO T1-F leg
+    resolved the field to ``None`` and still recorded **693.5 MW** of
+    ``reserve_backstop`` additions (50.2 MW in 2028, 643.3 MW in 2029) — a
+    **11.7 %** share, squarely in the CAVEAT band — which the short-circuit
+    reported as a clean 0 % PASS. Two things were wrong at once: ``bool(None)``
+    silently read a tri-state *unset* as a confirmed *off*, and the "structurally
+    zero" claim was never checked against the ledger that disproves it. Since
+    BLK-10 backstop sizing is precisely the evidence this row exists to surface,
+    a false PASS here hides the finding it is meant to report.
+
+    So: when the trajectory carries a per-channel split
+    (``builds_thermal_backstop_mw`` or a ``builds_by_source`` map) the share is
+    computed FROM THAT SPLIT, whatever the gate says. The gate short-circuit is
+    kept ONLY for the case it can still legitimately answer — no split present,
+    so there is nothing to measure and nothing to contradict it. That is the
+    minimal change the evidence supports: what was proven wrong is *ignoring a
+    split that exists*, not the gate's reading when none does.
     """
     g = _fc2_gates(tier, 4, curve_on, iso)
     sc = _scenario_config(art)
     enabled = bool(sc.get("reserve_margin_build_enabled"))
-    if not enabled and "reserve_margin_build_enabled" in sc:
+    has_split = any(
+        ("builds_thermal_backstop_mw" in r)
+        or isinstance(r.get("builds_by_source"), dict)
+        for r in (traj or [])
+    )
+    if not enabled and "reserve_margin_build_enabled" in sc and not has_split:
         return _row(
             "FC-2",
             "row4",
             PASS,
-            "backstop share 0% (reserve_margin_build_enabled off — no backstop channel)",
+            "backstop share 0% (reserve_margin_build_enabled off — no backstop "
+            "channel, and no per-channel split to check it against)",
             gating=bool(g),
             values={"backstop_share": 0.0, "channel": "off"},
         )

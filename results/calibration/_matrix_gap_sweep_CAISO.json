@@ -1,22 +1,22 @@
 {
   "iso": "CAISO",
-  "keeper": "2026-08-03-caiso162-per-year-import",
-  "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "keeper": "2026-08-04-caiso164-zonal-loss-surface",
+  "keeper_bundle_fields": 675,
+  "n_scenario_fields": 676,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 20,
   "family": [
     {
       "field": "caiso_asymmetric_path_ratings",
       "default": false,
-      "keeper_value": false,
-      "keeper_arms_it": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -28,7 +28,11 @@
       "cells": [
         "K"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "caiso163_asym_path_ratings",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
+      ]
     },
     {
       "field": "caiso_bidir_intertie",
@@ -88,10 +92,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -104,6 +104,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -128,10 +132,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -144,6 +144,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -209,10 +213,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -225,6 +225,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -268,10 +272,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -284,6 +284,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -308,10 +312,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -324,6 +324,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -347,10 +351,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -363,6 +363,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -386,10 +390,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -402,6 +402,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -425,10 +429,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -441,6 +441,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -487,10 +491,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -502,7 +502,11 @@
         "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
-        "caiso162_peryear_import_caps_v2"
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -539,7 +543,11 @@
         "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
-        "caiso162_peryear_import_caps_v2"
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -573,10 +581,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -589,6 +593,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -613,10 +621,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -629,6 +633,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -643,7 +651,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -667,7 +675,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -682,10 +690,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -698,6 +702,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -750,7 +758,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -860,10 +868,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -876,6 +880,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -906,10 +914,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -922,6 +926,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -973,10 +981,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -989,6 +993,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1013,10 +1021,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1029,6 +1033,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1083,10 +1091,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1099,6 +1103,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1113,7 +1121,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1127,7 +1135,11 @@
       ],
       "armed_in_bundles": [
         "caiso162_peryear_import_caps",
-        "caiso162_peryear_import_caps_v2"
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -1150,10 +1162,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1166,6 +1174,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1209,10 +1221,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1225,6 +1233,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1249,10 +1261,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1265,6 +1273,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1294,10 +1306,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1310,6 +1318,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1340,10 +1352,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1356,6 +1364,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1399,10 +1411,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1415,6 +1423,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1439,10 +1451,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1455,6 +1463,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -1571,10 +1583,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1587,6 +1595,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1620,7 +1632,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1635,10 +1647,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1651,6 +1659,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1665,7 +1677,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1680,10 +1692,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1696,6 +1704,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1710,7 +1722,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1725,10 +1737,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1741,6 +1749,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1755,7 +1767,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1770,10 +1782,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1786,6 +1794,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1800,7 +1812,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1815,10 +1827,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1831,6 +1839,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1845,7 +1857,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -1860,10 +1872,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1876,6 +1884,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1919,10 +1931,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1935,6 +1943,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -1958,10 +1970,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso146_ctheatrate_B",
-        "caiso147_chp_B",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1974,6 +1982,10 @@
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1988,6 +2000,32 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_zonal_loss_surface",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".KKR..",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso164_zonal_loss_surface"
+      ]
     }
   ],
   "family_matrix_gaps_absent": [],
@@ -2101,6 +2139,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "cc_nameplate_summer_derate",
           "cells": "UUUUKU",
           "cell": "U"
@@ -2113,11 +2156,16 @@
       "field": "cc_outage_derate_from_top",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -2148,11 +2196,11 @@
       "field": "chp_steam_floor_p25",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2210,6 +2258,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
@@ -2283,12 +2336,17 @@
       "field": "ct_drag_cap",
       "default": 0.47,
       "keeper_value": 0.36,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
         }
       ],
       "excluded": false,
@@ -2298,12 +2356,17 @@
       "field": "ct_drag_intercept",
       "default": -0.1427,
       "keeper_value": -0.1124,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
         }
       ],
       "excluded": false,
@@ -2313,12 +2376,17 @@
       "field": "ct_drag_slope_per_gw",
       "default": 0.00703,
       "keeper_value": 0.00901,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
         }
       ],
       "excluded": false,
@@ -2361,6 +2429,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
+        {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
           "cell": "K"
@@ -2397,7 +2470,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2418,6 +2491,11 @@
         {
           "row": "gas_monthly_actuals",
           "cells": "GKK.KK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -2462,7 +2540,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2515,6 +2593,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
@@ -2621,6 +2704,16 @@
           "cell": "K"
         },
         {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "legacy_p2",
           "cells": "G....K",
           "cell": "."
@@ -2677,7 +2770,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -2781,6 +2874,11 @@
           "cell": "."
         },
         {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
           "row": "gas_commitment_bridge",
           "cells": "KKRUKK",
           "cell": "K"
@@ -2789,6 +2887,11 @@
           "row": "reliability_floor",
           "cells": "KIKKKK",
           "cell": "I"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "coal_takeorpay_committed",
@@ -2886,8 +2989,18 @@
           "cell": "I"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "measured_offer_surface",
           "cells": "KKRUGI",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
           "cell": "K"
         },
         {
@@ -2946,6 +3059,11 @@
           "cell": "K"
         },
         {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "zonal_gas_basis",
           "cells": "KKKKK.",
           "cell": "K"
@@ -2958,6 +3076,11 @@
         {
           "row": "winter_citygate_daily",
           "cells": "U.UK..",
+          "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KKKK",
           "cell": "."
         },
         {
@@ -2999,6 +3122,11 @@
           "row": "nysdec_peaker_rule_availability",
           "cells": "....K.",
           "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "solar_deliverability",
@@ -3082,8 +3210,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".KKR..",
+          "cell": "K"
         },
         {
           "row": "rdt_tcdc",
@@ -3102,7 +3230,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -3196,14 +3324,19 @@
           "cell": "K"
         },
         {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
           "row": "capacity_deliverability",
           "cells": ".K....",
           "cell": "K"
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
-          "cell": "U"
+          "cells": "UOUOUU",
+          "cell": "O"
         },
         {
           "row": "hydro_accreditation",
@@ -3212,6 +3345,11 @@
         },
         {
           "row": "electrification_layers",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "transmission_expansion",
           "cells": "......",
           "cell": "."
         },
@@ -3367,7 +3505,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         },
         {
@@ -3472,6 +3610,11 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
           "cells": "....K.",
           "cell": "."
         },
@@ -3602,7 +3745,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -3717,7 +3860,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KKKK",
           "cell": "."
         },
         {
@@ -3902,8 +4045,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".KKR..",
+          "cell": "K"
         },
         {
           "row": "rdt_tcdc",
@@ -3922,7 +4065,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -4051,9 +4194,14 @@
           "cell": "K"
         },
         {
-          "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
           "cell": "U"
+        },
+        {
+          "row": "entry_dampers",
+          "cells": "UOUOUU",
+          "cell": "O"
         },
         {
           "row": "elcc_accreditation",
@@ -4077,8 +4225,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -4374,6 +4522,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -4382,6 +4535,11 @@
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "I"
         }
       ],
       "excluded": false,
@@ -4509,6 +4667,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
           "row": "temp_dependent_derate",
           "cells": "UKRKGK",
           "cell": "K"
@@ -4525,7 +4688,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "K"
         }
       ],
@@ -4549,13 +4712,7 @@
     }
   ],
   "shared_matrix_gaps_absent": [],
-  "shared_prose_only": [
-    "cc_outage_derate_from_top",
-    "chp_steam_floor_p25",
-    "ct_drag_cap",
-    "ct_drag_intercept",
-    "ct_drag_slope_per_gw"
-  ],
+  "shared_prose_only": [],
   "shared_excluded": [
     "weather_year"
   ],

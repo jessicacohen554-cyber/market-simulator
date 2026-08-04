@@ -1547,6 +1547,124 @@ def ercot_online_capacity_envelope_mw(
     return cap.astype(float)
 
 
+_ERCOT_ENERGY_OLC_CACHE: dict[str, dict] = {}
+
+
+def ercot_energy_online_capability_cap_mw(
+    config,
+    hours: int,
+    *,
+    net_load: np.ndarray,
+) -> np.ndarray | None:
+    """ERCOT's measured online-capability ceiling on the FAST tier, ``(2, hours)`` MW.
+
+    ERCOT-159 / queue item 9, the ERCOT-155 named successor
+    (``docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md``;
+    matrix row ``energy_online_capability_cap``). The energy-side analogue of
+    :func:`ercot_rtolcap_supply_cap_mw`: the reserve supply cap re-scopes
+    reserve SUPPLY to the measured online capability, but nothing constrains
+    ENERGY to the online fleet — the pure LP dispatches 15-17 GW of slow-start
+    thermal headroom from cold at marginal cost in evening hours where the
+    real market held 0.9-2.8 GW online (ERCOT-155, measured on matched SCED
+    days; ERCOT-158 confirmed the un-repriced offline block bit-identical at
+    the 91 missed 2023 tail hours).
+
+    Returns the RHS for the EXISTING ``ReserveDesign.online_capacity_cap``
+    row block (``model/lp/reserve_rows.py``): row 0 (fast tier — P over
+    responsive & ~quick = {gas_cc, gas_st, coal, nuclear}, plus
+    RegUp/RRS/ECRS) carries the conditional envelope; row 1 (all tier) the
+    uncapped sentinel, so NonSpin and quick-start capability keep their
+    existing bounds (the ORDC total family's NonSpin escape valve — the
+    ercot41/43 over-fire arithmetic cannot recur; precommit §0.2).
+
+    The ceiling is the FROZEN derived conditional envelope
+    (``scripts/data/derive_ercot_energy_online_capability.py`` →
+    ``data/raw/_validation-source/ercot_energy_online_capability_condbinned
+    .json``): per (season × hour-block × net-load-percentile bin) cell, the
+    measured MAXIMUM of slow-fossil + nuclear online HSL + quick-start online
+    headroom from the full-year 60-Day SCED corpus. Zero fitted scalars
+    (rule 20); the raw hour series never ships (rule 13, ERCOT-89 §6 bright
+    line — and Phase 0 measured the hour-pin at 3,838 binding hours: the
+    forbidden form is also the broken form).
+
+    Mode/coverage seams (all → ``None`` = uncapped, LP unchanged):
+    * forecast mode — the G4 pattern: the forward branch is a later
+      derivation; the matrix row stays mode ``B``;
+    * a weather year with no artifact block (year-scoped by full-corpus
+      coverage, the ``ercot_shoulder_online_span`` precedent — 2024/2025 are
+      byte-inert until the item-8a corpus intake);
+    * artifact missing.
+    A covered year fills only measured cells; unmeasured cells keep the
+    sentinel (no envelope evidence → no constraint).
+    """
+    if not getattr(config, "ercot_energy_online_capability_cap", False):
+        return None
+    if not (
+        getattr(config, "energy_reserve_coopt", False)
+        and getattr(config, "ercot_multiproduct_as_coopt", False)
+    ):
+        # Enforced HERE (solve-time, final config) rather than in
+        # ScenarioConfig.__post_init__: the replay path applies prb_overrides
+        # before the trailing co-opt kwargs, so an intermediate config holds
+        # this flag with the co-opt fields at defaults (the ERCOT-65 channel
+        # mechanics — the ercot-159 Run-B first launch died on exactly that).
+        raise ValueError(
+            "ercot_energy_online_capability_cap requires energy_reserve_coopt "
+            "+ ercot_multiproduct_as_coopt — the fast/all tier split is the "
+            "identified structure (PRECOMMIT-ercot159 §2)."
+        )
+    if str(getattr(config, "mode", "forecast")) == "forecast":
+        return None
+    override = getattr(config, "ercot_energy_online_capability_cap_path", None)
+    path = (
+        Path(override)
+        if override
+        else RAW_DATA_DIR / "_validation-source/ercot_energy_online_capability_condbinned.json"
+    )
+    if not path.exists():
+        return None
+    key = str(path)
+    art = _ERCOT_ENERGY_OLC_CACHE.get(key)
+    if art is None:
+        import json
+
+        art = json.loads(path.read_text())
+        _ERCOT_ENERGY_OLC_CACHE[key] = art
+    block = art.get(str(int(config.weather_year)))
+    if not block:
+        return None
+    grain = art["_provenance"]["grain"]
+    T = int(hours)
+    import pandas as pd
+
+    nl = np.asarray(net_load, dtype=float)
+    if nl.size < T:
+        nl = np.concatenate([nl, np.full(T - nl.size, nl.mean() if nl.size else 0.0)])
+    nl = nl[:T]
+    month = _ercot_rtolcap_fwd_month()[:T]
+    season = np.asarray(grain["season_by_month"], dtype=int)[month - 1]
+    hod = np.arange(T) % 24
+    hblock = np.zeros(T, dtype=int)
+    for b, (lo, hi) in enumerate(grain["hour_blocks"]):
+        hblock[(hod >= lo) & (hod <= hi)] = b
+    # Within-run percentile rank (average ties — the derive's rank(pct=True)
+    # semantics), so a forecast year's bins would regenerate from its own
+    # drivers (the _ercot_rtolcap_fwd_decile pattern).
+    rank = pd.Series(nl).rank(pct=True).to_numpy()
+    nl_bin = np.searchsorted(np.asarray(grain["netload_rank_edges"], dtype=float), rank, side="right")
+    cells = block["cells"]
+    cap0 = np.full(T, _RESERVE_SUPPLY_CAP_UNCAPPED_MW, dtype=float)
+    combo = season * 1000 + hblock * 100 + nl_bin
+    for c in np.unique(combo):
+        k = f"s{c // 1000}_b{(c // 100) % 10}_n{c % 100}"
+        cell = cells.get(k)
+        if cell is not None:
+            cap0[combo == c] = float(cell["max_mw"])
+    # Row 1 (all tier) stays uncapped: quick-start and NonSpin capability are
+    # owned by the reserve supply cap tiers and the fast-start pool (rule 19).
+    return np.vstack([cap0, np.full(T, _RESERVE_SUPPLY_CAP_UNCAPPED_MW)]).astype(float)
+
+
 def ercot_rtolcap_supply_cap_mw(
     config,
     hours: int,

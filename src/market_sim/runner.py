@@ -28,6 +28,10 @@ from market_sim.config.entry_config import (
     ENTRY_GROWTH_LIMIT_MULTIPLE,
     ENTRY_THROUGHPUT_WINDOW_YEARS,
 )
+from market_sim.config.retirement_config import (
+    EXIT_THROUGHPUT_LIMIT_MULTIPLE,
+    EXIT_THROUGHPUT_WINDOW_YEARS,
+)
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
     ScenarioConfig,
@@ -51,6 +55,7 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
+from market_sim.data.build_exit_throughput import max_annual_exit_gw
 from market_sim.data.build_throughput import max_annual_build_gw_by_tech
 from market_sim.data.offer_curves import (
     apply_cc_committed_offer_margin,
@@ -112,6 +117,7 @@ from market_sim.model.transmission import (
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_caiso_link_loss,
     build_miso_link_loss,
     build_pjm_link_loss,
     forward_corridor_interface_groups,
@@ -819,6 +825,50 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         [] if getattr(config, "entry_commissioning_lag", False) else None
     )
 
+    # FFR-3F exit-throughput cap (exit_rate_limits, GATED default-off ⇒ None,
+    # byte-identical). The EXIT half of the same queue the growth ladder above
+    # bounds on the entry side, and seeded the same way: the measured EIA-860
+    # record at the run's vintage (data.build_exit_throughput.max_annual_exit_gw
+    # reads the active vintage directory, so a 2023-vintage hindcast sees only
+    # deactivations knowable at the cutoff) × EXIT_THROUGHPUT_LIMIT_MULTIPLE.
+    # Unlike the entry ladder this seed does NOT rise endogenously: the model's
+    # own exits are not evidence about how fast an RTO can process
+    # deactivations, so admitting them would let the cap bootstrap itself
+    # (rule 13 — the seed must stay a measured external input, never a model
+    # outcome fed back). An ISO with no measured deactivation in the window
+    # carries NO cap (rule 25 neutral fallback), logged.
+    exit_rate_cap_mw: float | None = None
+    if getattr(config, "exit_rate_limits", False):
+        _exit_seed_through = config.eia860_vintage_year or (start_year - 1)
+        _exit_prior_max_gw = max_annual_exit_gw(
+            iso, _exit_seed_through, EXIT_THROUGHPUT_WINDOW_YEARS
+        )
+        if _exit_prior_max_gw is None:
+            logger.warning(
+                "exit throughput cap (%s): seed UNRESOLVED for the %d-yr "
+                "window through %d (no measured thermal deactivation, or the "
+                "EIA-860 retired sheet is absent — see the reader's own log "
+                "line for which) — NO cap applied (rule 25 neutral fallback). "
+                "The arm is INERT this run; do not read it as a tested cap.",
+                iso,
+                EXIT_THROUGHPUT_WINDOW_YEARS,
+                _exit_seed_through,
+            )
+        else:
+            exit_rate_cap_mw = (
+                EXIT_THROUGHPUT_LIMIT_MULTIPLE * _exit_prior_max_gw * 1000.0
+            )
+            logger.info(
+                "exit throughput cap (%s, through %d, %d-yr window): measured "
+                "max single-year deactivation %.3f GW × %.1f = %.0f MW/yr",
+                iso,
+                _exit_seed_through,
+                EXIT_THROUGHPUT_WINDOW_YEARS,
+                _exit_prior_max_gw,
+                EXIT_THROUGHPUT_LIMIT_MULTIPLE,
+                exit_rate_cap_mw,
+            )
+
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
     # of worldwide deployment (plus this ISO's local builds) every year.
@@ -1035,6 +1085,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     else None
                 ),
                 entry_pipeline=entry_pipeline,
+                exit_rate_cap_mw=exit_rate_cap_mw,
             )
             # Growth-ladder update (entry_rate_limits): this year's decision-
             # grain builds raise the prior max, so a tech building at its
@@ -1757,7 +1808,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                             iso_config.links, iso, year, int(base_demand.shape[1])
                         )
                         if getattr(config, "pjm_zonal_loss_surface", False)
-                        else UNSET
+                        else (
+                            build_caiso_link_loss(
+                                iso_config.links, iso, year, int(base_demand.shape[1])
+                            )
+                            if getattr(config, "caiso_zonal_loss_surface", False)
+                            else UNSET
+                        )
                     )
                 ),
                 storage_power_cap=storage.power_cap,
@@ -2584,6 +2641,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             iso=iso,
             peak_demand_mw=peak_demand,
             elcc_curves_enabled=config.renewable_elcc_curves,
+            nqc_curves_enabled=config.caiso_nqc_accreditation,
         )
         # CR-3.1 observability: the credit each VRE class actually earned on
         # this year's own penetration (same resolver/basis as firm_mw above),
@@ -2597,6 +2655,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             iso,
             peak_demand_mw=peak_demand,
             elcc_curves_enabled=config.renewable_elcc_curves,
+            nqc_curves_enabled=config.caiso_nqc_accreditation,
         )
         ledger = dict(evo_events)
         ledger.update(

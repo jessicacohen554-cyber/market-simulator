@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-caiso164-zonal-loss-surface",
+  "label": "caiso164 zonal loss surface",
+  "date": "2026-08-04",
+  "shorthand": "caiso164-zonal-loss-surface",
+  "definition": "caiso164 zonal loss surface: CAISO measured marginal delivery-factor surface (dev_z=sum(MCL_z)/sum(MCE) from CAISO's own published DAM component record) on the internal N-S links, one-way loss pairs. Rule 14 [R-ACCURATE] measured-over-estimate; the LP was lossless. Bounded ex ante at the measured dMCL (19.8/12.8/18.3% of the NP15-ZP26 basis); NOT a fix for the congestion majority.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-caiso164-zonal-loss-surface.js",
+  "bundle": "results/calibration/caiso164_zonal_loss_surface"
+}

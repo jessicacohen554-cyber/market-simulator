@@ -8,11 +8,18 @@ availability; export caps raise min_gen. Mirrors the MISO seam flow limit tests.
 """
 
 import unittest
+from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
-from market_sim.data.eia_loader import pjm_zonal_interchange_envelope
+from market_sim.data.eia_loader import (
+    pjm_neighbor_interchange,
+    pjm_neighbor_interchange_envelope,
+    pjm_zonal_interchange_envelope,
+)
+from market_sim.model.interchange.spec import PJM_TIE_NEIGHBOR
 from market_sim.data.fleet import generators_to_fleet_arrays
 from market_sim.model.transmission import (
     _REF_EXPORT_MARK,
@@ -21,6 +28,7 @@ from market_sim.model.transmission import (
     inject_pjm_seam_flow_limit,
 )
 
+REPO = Path(__file__).resolve().parents[3]
 T = 8760
 PJM_NEIGHBORS = INTERFACE_NEIGHBORS.get("PJM", [])
 PJM_ZONE_NAMES = [
@@ -156,6 +164,138 @@ class TestPjmSeamExportInjection(unittest.TestCase):
         with self.assertRaises(ValueError):
             inject_pjm_seam_flow_limit(
                 fleet, "PJM", 2024, PJM_ZONE_NAMES, T, direction="sideways"
+            )
+
+
+class TestPjmSeamEnvelopeByNeighbor(unittest.TestCase):
+    """The pjm-151 per-neighbour envelope construction (rule 14 repair).
+
+    A zone-summed construction preceded it: a per-model-ZONE envelope summed
+    over each neighbour's ``border_zones``. A zone bucket holds every tie that
+    lands in it, so the caps absorbed other counterparties' ties. The seam
+    envelope is now built from that seam's OWN ties, unconditionally — the
+    ``pjm_seam_envelope_by_neighbor`` gate and the zone-summed branch were
+    deleted at pjm-152 under rule 26 ``[R-DELETE]`` once the repair became the
+    keeper's armed path. The zone-summed cap is reconstructed inline below so
+    the regression evidence survives the flag's deletion.
+    """
+
+    def _fleet(self):
+        node = build_reference_price_node("PJM")
+        fleet_zones = sorted({g.zone for g in node})
+        return node, generators_to_fleet_arrays(node, fleet_zones, hours=T)
+
+    def test_tie_neighbor_map_covers_every_named_interface(self):
+        """Every PJM interface name owns at least one tie, and no stray names."""
+        named = {n.name for n in PJM_NEIGHBORS}
+        mapped = set(PJM_TIE_NEIGHBOR.values())
+        self.assertEqual(mapped, named)
+
+    def test_tie_neighbor_map_covers_the_measured_file(self):
+        """Every tie in a backcast year's file has a named interface."""
+        path = (
+            REPO
+            / "data/raw/iso-specific-transmission"
+            / "PJM_2024_import_export_act_sch_interchange.csv"
+        )
+        if not path.exists():  # pragma: no cover - raw file not provisioned
+            self.skipTest("PJM tie-line file not present")
+        ties = set(pd.read_csv(path, usecols=["tie_line"])["tie_line"].unique())
+        self.assertEqual(ties - set(PJM_TIE_NEIGHBOR), set())
+
+    def test_neighbor_envelope_shape_and_sign(self):
+        names = [n.name for n in PJM_NEIGHBORS]
+        env = pjm_neighbor_interchange_envelope(2024, names, T)
+        self.assertIsNotNone(env)
+        import_cap, export_cap = env
+        self.assertEqual(import_cap.shape, (len(names), T))
+        self.assertEqual(export_cap.shape, (len(names), T))
+        self.assertTrue(np.all(import_cap >= 0.0))
+        self.assertTrue(np.all(export_cap >= 0.0))
+
+    def test_neighbor_envelope_none_for_future_year(self):
+        names = [n.name for n in PJM_NEIGHBORS]
+        self.assertIsNone(pjm_neighbor_interchange_envelope(2030, names, T))
+
+    def test_ties_are_netted_before_the_directional_clip(self):
+        """A seam that nets to export in an hour must not report an import.
+
+        The construction error this repair had to avoid: clipping each tie
+        before summing reports the import-side ties of a net-exporting seam as
+        an import cap. Netting first is what ``pjm_zonal_interchange`` does.
+        """
+        series = pjm_neighbor_interchange(2024, ["MISO"])
+        self.assertIsNotNone(series)
+        # MISO is a near-always export seam on PJM's measured record; its
+        # netted import side must be far below the sum of its import-side ties.
+        netted_import = np.clip(-series[0], 0.0, None)
+        self.assertLess(float(netted_import.mean()), 500.0)
+
+    def test_export_cap_is_the_seam_s_own_envelope_not_a_zone_sum(self):
+        """The injected export cap IS the neighbour's own row, with no summation.
+
+        Pins the repaired construction directly rather than against a flag: for
+        every seam the applied cap must equal that seam's own envelope row
+        (clipped to the band's total capacity), never a sum over
+        ``border_zones``.
+        """
+        names = [n.name for n in PJM_NEIGHBORS]
+        env = pjm_neighbor_interchange_envelope(2024, names, T)
+        self.assertIsNotNone(env)
+        _, export_cap = env
+        _, fleet = self._fleet()
+        self.assertTrue(
+            inject_pjm_seam_flow_limit(
+                fleet, "PJM", 2024, PJM_ZONE_NAMES, T, direction="export"
+            )
+        )
+        for i, name in enumerate(names):
+            rows = [
+                r
+                for r, uid in enumerate(fleet.unit_ids)
+                if _REF_EXPORT_MARK in uid
+                and uid.rsplit(_REF_EXPORT_MARK, 1)[1].partition("#")[0] == name
+            ]
+            if not rows:
+                continue
+            total = -float(fleet.pmin[rows].sum())
+            expected = np.minimum(np.clip(export_cap[i], 0.0, None), total)
+            applied = -fleet.min_gen[rows, :].sum(axis=0)
+            np.testing.assert_allclose(applied, expected, rtol=0, atol=1e-6)
+
+    def test_the_zone_summed_cap_was_looser_on_tva_and_lgee(self):
+        """The defect the repair closed, reconstructed without the deleted flag.
+
+        TVA and LGEE are the two seams the zone path mis-attributes worst (the
+        whole tie lands in one border zone while the interface names two, so
+        their caps absorbed every other tie in those buckets). The zone-summed
+        export cap is rebuilt here from the still-public
+        :func:`pjm_zonal_interchange_envelope` and must sit strictly above the
+        per-neighbour one the injector now applies.
+        """
+        names = [n.name for n in PJM_NEIGHBORS]
+        by_nb = pjm_neighbor_interchange_envelope(2024, names, T)
+        by_zone = pjm_zonal_interchange_envelope(2024, PJM_ZONE_NAMES, T)
+        self.assertIsNotNone(by_nb)
+        self.assertIsNotNone(by_zone)
+        _, nb_export = by_nb
+        _, zone_export = by_zone
+        z_idx = {z: i for i, z in enumerate(PJM_ZONE_NAMES)}
+        for neighbor in PJM_NEIGHBORS:
+            if neighbor.name not in ("TVA", "LGEE"):
+                continue
+            legacy = np.clip(
+                zone_export[
+                    [z_idx[z] for z in neighbor.border_zones if z in z_idx]
+                ].sum(axis=0),
+                0.0,
+                None,
+            )
+            direct = np.clip(nb_export[names.index(neighbor.name)], 0.0, None)
+            self.assertGreater(
+                float(legacy.mean()),
+                float(direct.mean()),
+                f"{neighbor.name}: the zone-summed export cap should be looser",
             )
 
 

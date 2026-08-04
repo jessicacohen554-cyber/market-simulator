@@ -341,6 +341,7 @@ def build_config(
     entry_vre_capacity_revenue: "bool | None" = None,
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
+    exit_rate_limits: "bool | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -502,6 +503,7 @@ def build_config(
                 "entry_vre_capacity_revenue": entry_vre_capacity_revenue,
                 "entry_rate_limits": entry_rate_limits,
                 "entry_commissioning_lag": entry_commissioning_lag,
+                "exit_rate_limits": exit_rate_limits,
                 # G-30 entering-year stack re-price: the capacity screens see
                 # the entering year's net load re-priced against the current
                 # (post-retirement) fleet with the published ORDC curve, so a
@@ -1020,6 +1022,23 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--exit-rate-limits",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "FFR-3F exit-throughput PROBE arm (owner decision D-8, 2026-08-03): "
+            "cap the MW of thermal capacity that may DEACTIVATE in one year at "
+            "EXIT_THROUGHPUT_LIMIT_MULTIPLE (2.0) x the ISO's measured maximum "
+            "single-year thermal deactivation, seeded from the EIA-860 retired "
+            "sheet at the run's vintage. The EXIT half of the queue whose entry "
+            "half --entry-rate-limits bounds; D-8 ruled queue latency "
+            "(retirement_execution_lag_*) and queue throughput TWO mechanisms, "
+            "so this composes with the lag rather than stacking on it. OMIT to "
+            "inherit the shipped default (OFF); --exit-rate-limits arms the "
+            "treatment and --no-exit-rate-limits forces the uncapped control."
+        ),
+    )
+    parser.add_argument(
         "--entry-commissioning-lag",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -1155,6 +1174,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_vre_capacity_revenue=args.entry_vre_capacity_revenue,
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
+        exit_rate_limits=args.exit_rate_limits,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -1221,7 +1241,17 @@ def main(argv: list[str] | None = None) -> int:
         # FFR-1D "meta entry sourced from a flag that armed nothing" defect
         # inverted. Same sourcing rule as the FF-2A dampers below.
         "entry_lookahead_reprice": bool(config.entry_lookahead_reprice),
-        "retirement_rule": args.retirement_rule,
+        # Solved-config sourced, for the SAME reason as entry_lookahead_reprice
+        # above and the FF-2A dampers below (FFR-3D / C.4(c)) — this key was
+        # MISSED by that sweep and stayed args-sourced, so every leg that
+        # OMITTED --retirement-rule (i.e. every shipped-default leg since owner
+        # decision D-1 flipped it to "pipeline" on 2026-08-02) recorded
+        # `retirement_rule: null` rather than the rule it actually solved.
+        # Verified on the committed FFR-3A-2 T1-X sidecars, which record
+        # `entry_rate_limits: true` from the solved config beside a null
+        # retirement_rule from args. Record-only: no solve, score, cache key or
+        # default is affected. (FFR-3L instrument repair, 2026-08-04.)
+        "retirement_rule": config.retirement_rule,
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         # FFR-2E: the RESOLVED per-ISO clearing gate, not the raw force-ON
         # flag. Downstream (scripts/forecast_verdict._curve_on) reads this key
@@ -1247,6 +1277,7 @@ def main(argv: list[str] | None = None) -> int:
         "entry_vre_capacity_revenue": bool(config.entry_vre_capacity_revenue),
         "entry_rate_limits": bool(config.entry_rate_limits),
         "entry_commissioning_lag": bool(config.entry_commissioning_lag),
+        "exit_rate_limits": bool(config.exit_rate_limits),
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "crossover": crossover,

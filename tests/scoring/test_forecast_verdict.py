@@ -271,6 +271,40 @@ class FC2Tests(unittest.TestCase):
         self.assertEqual(r4["status"], fv.PASS)
         self.assertEqual(r4["values"]["backstop_share"], 0.0)
 
+    def test_backstop_measured_split_beats_the_gate(self):
+        """A real reserve_backstop split must be scored even when the gate reads off.
+
+        REGRESSION (FFR-3A-2). Row 4 short-circuited to ``PASS, share 0%``
+        whenever ``reserve_margin_build_enabled`` was falsey, asserting that a
+        disabled channel makes backstop builds "structurally zero". A real NEISO
+        T1-F leg disproved that premise: the field resolved to ``None`` — which
+        ``bool()`` reads as off — and the run still recorded 693.5 MW of
+        ``reserve_backstop`` additions on 5,913.5 MW of total additions, an
+        11.7% share squarely in the CAVEAT band, reported as a clean 0% PASS.
+
+        BLK-10 backstop sizing is the evidence this row exists to surface, so a
+        false PASS here hides the very finding it should report. The gate
+        short-circuit is still correct when NO split is present (nothing to
+        measure, nothing to contradict it) — that case is covered by
+        ``test_backstop_off_is_pass`` and is deliberately unchanged.
+        """
+        summary = _summary()
+        summary["trajectory"] = [
+            {"year": 2026, "builds_thermal_mw": 0.0, "builds_thermal_backstop_mw": 0.0},
+            {
+                "year": 2027,
+                "builds_thermal_mw": 1000.0,
+                "builds_thermal_backstop_mw": 200.0,
+            },
+        ]
+        art = _art(
+            summary=summary,
+            run_config=_run_config(reserve_margin_build_enabled=None),
+        )
+        r4 = [r for r in fv.score_fc2(art, "t1f", "ERCOT") if r["row"] == "row4"][0]
+        self.assertEqual(r4["status"], fv.CAVEAT, r4["detail"])
+        self.assertAlmostEqual(r4["values"]["backstop_share"], 0.2)
+
     def test_backstop_share_bands(self):
         # Thresholds READ from the module (rubric §2 FC-2.4): <=10% PASS, 10-30% CAVEAT, >30% FAIL.
         over = 0.5 * (

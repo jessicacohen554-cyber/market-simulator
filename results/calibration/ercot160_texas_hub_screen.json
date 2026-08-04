@@ -1,0 +1,69 @@
+{
+  "eia_ngwu": {
+    "reachable": true,
+    "page": "2025-07-17",
+    "parsed_spot_rows": 5,
+    "spot_table_columns": [
+      "chicago",
+      "henry_hub"
+    ],
+    "known_row_mentions": {
+      "Henry Hub": 10,
+      "New York": 10,
+      "Chicago": 6,
+      "Cal. comp": 6,
+      "Algonquin": 3
+    },
+    "texas_hub_mentions": {
+      "Waha": 0,
+      "Houston Ship": 1,
+      "Katy": 0,
+      "Permian": 1,
+      "Agua Dulce": 0,
+      "Carthage": 0
+    }
+  },
+  "ercot_catalog": {
+    "catalog_items": 5773,
+    "items_mentioning_fuel": 6,
+    "fuel_products": [
+      {
+        "emilId": "gen-544-ui",
+        "productName": "Fuel Mix Dashboard",
+        "reportTypeId": null
+      },
+      {
+        "emilId": "np3-149-m",
+        "productName": "Firm Fuel Supply Service (FFSS) Award Notification",
+        "reportTypeId": "22672"
+      },
+      {
+        "emilId": "np3-159-an",
+        "productName": "Firm Fuel Supply Service (FFSS) Deployment or Recall",
+        "reportTypeId": null
+      },
+      {
+        "emilId": "np3-46-an",
+        "productName": "RMR - Fuel Supply Option Selection",
+        "reportTypeId": null
+      },
+      {
+        "emilId": "np3-987-ex",
+        "productName": "7-Day Event Trigger Posting",
+        "reportTypeId": "10047"
+      },
+      {
+        "emilId": "np4-494-er",
+        "productName": "Exceptional Fuel Cost Submission Report",
+        "reportTypeId": "24276"
+      }
+    ],
+    "fuel_price_series_products": []
+  },
+  "verdict": {
+    "eia_ngwu_carries_texas_hub_daily": false,
+    "ercot_mis_publishes_fuel_price_series": false,
+    "free_path_available": false,
+    "conclusion": "BLOCKED \u2014 licensed source only (NGI/Platts/Argus); owner decision"
+  }
+}

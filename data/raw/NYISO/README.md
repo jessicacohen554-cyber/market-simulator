@@ -2,8 +2,15 @@
 
 Manually-collected NYISO planning and market reference documents:
 
-- `<year>-Gold-Book-Public.pdf` (2023–2025) — NYISO Load & Capacity Data
-  Report ("Gold Book").
+- `<year>-Gold-Book-Public.pdf` (2023–2026) — NYISO Load & Capacity Data
+  Report ("Gold Book"). The **2026** edition (released April 2026, 166 pp,
+  sha256 `43865c1cbe38ca2ef4c8319d11454881de2b9dde3e48867dbbd2e94855b908bf`)
+  was fetched 2026-08-03 (FFR-SC) from
+  `https://www.nyiso.com/documents/20142/2226333/2026-Gold-Book-Public.pdf`
+  — the same URL pattern this README documents for 2024 — closing FF-G4 §8-D4
+  item 3. It is the source of the NYISO row of
+  `constants.DEMAND_GROWTH_RATES` (Table I-1a, NYCA Baseline Energy and Demand
+  Forecasts, Energy-GWh Lower/Baseline/Higher columns).
 - `<year>-NYCA-Generators.xlsx` / `2025-NYCA-Existing-Generating-Facilities.xlsx`
   — NYCA generator lists.
 - `NYISO-<year>-SOM-*-Report*.pdf` — NYISO annual State of the Market (SOM)

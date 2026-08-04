@@ -4546,3 +4546,189 @@ the corpus bleed rows (2022-12-31, 2024-01-01..09) are delivery-year-filtered at
 every consumer; no out-of-training year solved or scored. ERCOT-scoped (rule 25).
 
 Next shorthand: ercot-158.
+
+## 2026-08-03 — ERCOT-158 (the ERCOT-89 §7 step-2 arming round, owner-authorized; 2 full-span solves, keeper UNCHANGED at ercot150b): the ERCOT-88 fast-start pool armed with its 2023 block is ENGAGED-but-INERT at the missed tail — the 91 missed hours are bit-identical between arms, confirming the Phase-0 arithmetic that the cushion is the un-repriced CC offline block; matrix cell O→I; honest-inputs control registered alongside
+
+**Session scope.** The owner prompt authorized the standing ERCOT-89 §7 step-2
+design round (ERCOT-151 §4 ask 2) on the ERCOT-157-completed data: arm the
+EXISTING ERCOT-88 CT pool (`ercot_faststart_pool_offer=true`) — no CC tier
+(ERCOT-152 refusal upheld), no span (ERCOT-89 §9.4 rejection stands) — as a
+full-span single-delta A/B off the ercot150b keeper.
+`docs/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md` (mechanism
+statement, the four standing ERCOT-89 analyzer gates, matched-hour C3c
+anatomy, zero-forced check, LOYO statement, K/R/I decision rule) was pushed
+BEFORE any solve, and the A/B scorer + attestation generator were pushed
+before results existed.
+
+**Run A — `2026-08-03-ercot158-honest-replay`** (bundle `ercot158_honest_A`;
+the ercot98 honest-inputs pattern): replay_keeper on the keeper bundle, config
+UNCHANGED, fresh out-dir. DETERMINATION NOT-YET with the keeper-identical fail
+set {C3a 2023-only −32.6%, C3b 2023-only 0.607, C3c, C7 2023-lignite cv-leg};
+C3a 2024 +1.9% / 2025 −8.1% PASS; C1 16/16. The ERCOT-157 RT-wall 2023
+completion (bins 0–4) is PRICE-IMMATERIAL: vs the committed keeper sidecars
+the standing analyzer measures 2023 mean $36.59→$36.61, identical tail counts
+(h>$200 58, h>$500 30), NRMSE identical to 3 decimals, all four gates HELD
+every year — and same-HEAD drift is ~nil (unlike ercot150's K2 finding), so
+Run A is a clean control and the committed keeper needs no re-solve on the
+completed inputs.
+
+**Run B — `2026-08-03-ercot158-pool-arm`** (bundle `ercot158_poolarm_B`;
+single delta `--set ercot_faststart_pool_offer=true`): ENGAGED all three
+years — 173/173/91 pool rows (2025 matching the ERCOT-88 record) — and INERT
+at the target. At the keeper's 91 missed 2023 >$300 hours (re-derived on Run
+A's own prices: 91 missed / 53 hit, exactly the committed Phase-0 split) the
+missed-set model mean is BIT-IDENTICAL between arms ($105.163→$105.163,
+0 flips, delta 0.0): the marginal unit at those hours is never a pool-owned
+CT row — the un-repriced cheap CC offline block (~8 GW ≤$200; ERCOT-152's
+measured-no-op refusal) keeps the cushion, exactly the Phase-0 arithmetic
+(CT OFF 7.81 GW repriced vs CC OFF 10.32 GW untouched vs a ~0.5 GW cushion).
+ALL pre-registered gates HELD every year: C3a −24.3→−24.5% / +10.2→+10.2% /
+−0.7→−0.7% (analyzer basis; within the +1.0 pp guard), zero spurious added,
+tail counts identical (58/20/0 vs actual 181/53/31), NRMSE 2.870→2.866 /
+2.947→2.946 / 0.955→0.955. Scorecard: 73 per-(criterion,year,key) verdict
+rows, zero PASS→FAIL at either grain; DETERMINATION NOT-YET, keeper-identical
+fail set. D-2 mechanism sets identical, zero forced-TWh delta >0.05
+(offer-availability confirmed vacuous — no floor, no forced energy). Only
+measurable motion: a slight 2023 softening (hit-set mean $1,347→$1,331,
+NRMSE −0.004) where the pool ladder REPLACES a higher wall markup on
+already-walled row-hours — structurally honest, direction DOWN, immaterial.
+
+**Adjudication (pre-declared decision rule): I — INERT.** Committed A/B
+record `results/calibration/_ercot158_pool_ab.json` (+ captured full verdicts
+`_ercot158_verdict_{A,B}.json`); matrix cell `ercot_faststart_pool_offer`
+O→I with the ercot-158 citation. Mechanism stays merged default-off; keeper
+UNCHANGED (ercot150b). LOYO: zero fitted parameters, per-year guard table
+stood in — all three years cleared independently (trivially: near-zero
+deltas). The 2023 tail residual remains a COMMITMENT-STATE gap (the CC
+offline block's phantom cheap depth, cap-side expression closed by the
+ercot41/43/106/108 family) — the successor lane is the commitment-state
+question chartered in DIAGNOSIS-ercot151 §3 / ERCOT-152, not further offer
+re-pricing of the CT slice.
+
+**Ops.** Both runs registered on the dashboard with attestations (Run A
+n_entries 9, Run B 10 — the pool's measured entry, n_residual 6 unchanged
+both) + legitimacy diagnostics + metrics; retention pruned
+ercot116-regate-{arm,base} (top-15). Solves ran SEQUENTIALLY after the
+concurrent launch OOM'd on this 15 GB box (rule 12's cap-2 memory caveat
+binds at 1 here; single-solve RSS peaks ~10 GB). Holdouts untouched
+(2023–2025 only). ERCOT-scoped (rule 25).
+
+**ADDENDUM — OWNER PROMOTION (same session, 2026-08-03).** On the owner's
+standing standard re-given in-session ("Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates
+regress that may still be a keeper"), the session recommended YES for Run B
+and executed the promotion: **ERCOT keeper → `2026-08-03-ercot158-pool-arm`**
+(supersedes ercot150b, kept on the dashboard as the immediate-prior
+comparison). Basis: the promotion rests on the IDENTIFICATION, not the A/B —
+ERCOT-87 adjudicated that the real mid-band prices on the offline startable
+CT pool, so an online-basis wall price on those rows is refuted by status;
+arming prices that capability at its measured conduct (zero fitted
+parameters; C6 n_entries 10 / n_residual 6). Gate cost REPORTED: rubric C3a
+2023 −32.6→−32.8 % (−0.2 pp); every criterion status identical to ercot150b;
+all pre-registered kill gates held. The inert-at-target finding stands as the
+recorded honest result and sharpens the successor: the 2023 tail is a
+COMMITMENT-STATE gap on the CC offline block. Keeper lane executed: shard +
+`build_status --iso ERCOT` (NOT-YET) + keeper-auditor + matrix header
+re-stamp + cell I→K + sidecar `market_story`; ERCOT holds no `complete`
+marker, so no re-key duty. Branch rebased onto origin/main (9aca82b8;
+manifest/benchmark conflicts regenerated from sidecars).
+
+Next shorthand: ercot-159.
+
+*(Bookkeeping note, ercot-160: **ercot-159 landed on main without a log entry
+here** — commits `935c33dd` / `824052a6` / `bbf0c2fa`, the
+`ercot_energy_online_capability_cap` build. The shorthand is therefore SPENT
+and this session is ercot-160; the gap is recorded rather than silently
+renumbered, and reconstructing ercot-159's entry belongs to that lane.)*
+
+## ercot-160 (2026-08-04) — the ERCOT item-7/item-8 DATA INTAKES: item 7's blocker dissolved (ERCOT publishes the crosswalk), item 8(a) delivered at 98.7 % of the training span, item 8(b) BLOCKED on licensing, item 8(c) reshaped; no LP, no solve, no cell, keeper UNCHANGED (ercot158)
+
+**Session ercot-160** (branch `claude/cross-iso-backcast-calibration-vz74oe`).
+Queue precedence per rule 28(a): the prompt's item 1 (MISO C7 COAL_PRB) is
+gated on the miso-104 ex-ante coal-contract tonnage ask having LANDED. It has
+not — the ask doc carries a single commit (its original upload) and nothing
+has added contract tonnage to `data/raw/`. The receipts-derived construction
+(miso-103, cell `R`) was **not** re-attempted. Precedence fell to ERCOT items
+7/8, data-intake first. Full record:
+`results/calibration/FINDING-ercot160-ct-fullspan-intake-2026-08-04.md`.
+
+**Item 7 — the stated blocker was never real.** The queue records that a
+station→area crosswalk "does not exist in-repo". ERCOT *publishes* one, free
+and unauthenticated, as **NP4-160-SG "Settlement Points List and Electrical
+Buses Mapping"** (`reportTypeId=10008`, in ERCOT's own product catalog); it had
+simply never been fetched. Intaken COMMITTED to `data/raw/ercot-network-model/`
+(1.2 MB) by `scripts/data/fetch_ercot_settlement_point_mapping.py`, members
+written as **exact published bytes with a per-member sha256** (ERCOT ToU §5
+permits redistribution only if contents are unmodified — so no pandas
+round-trip). `Settlement_Points` (19,287 rows): `SUBSTATION` →
+`SETTLEMENT_LOAD_ZONE` → `RESOURCE_NODE` → `HUB`. `Resource_Node_to_Unit`
+(1,624 rows): `RESOURCE_NODE` → `UNIT_SUBSTATION` + `UNIT_NAME`. **Committed
+rather than gitignored precisely because MIS retention is ~31 days** — only the
+current network-model version is ever reachable, there is no 2023–2025 vintage
+and there never will be on this path, so an un-committed vintage is lost
+permanently. **Binding caveat on every consumer:** report your own match rate
+against your target year, never inherit this session's.
+
+**Item 8(a) — EXECUTED, 98.7 % of the training span.** The fetcher's day-list
+scope was the blocker; `--resource-types` / `--delivery-range` /
+`--shard-by-month` / `--skip-existing` lift it (scope+plumbing only, no
+derivation). CT-scoping cuts a delivery day to **15.1 % of its rows**
+(18,816/124,608 measured live, 0.51 MB parquet vs ~90 MB unscoped CSV) — the
+thing that makes ~700 days affordable. Delivery 2024-01-24…2025-12-31 landed
+CT-only in `data/raw/ercot/SCED-CT/` (gitignored + README + SHA256SUMS, the
+`pjm-zonal-lmp` precedent) and joins the committed all-resource corpus
+`data/raw/ercot/SCED/`, whose true span is **delivery 2022-12-31…2024-01-09**
+(its shard filenames are PUBLICATION months — a two-month offset that is easy
+to misread as a 2023-03 start). **Gap: delivery 2024-01-10…2024-01-23 (14
+days) is UNREACHABLE** — it falls between the corpus end and the MIS window's
+earliest listed publication (2024-03-24 → delivery 2024-01-24); reported
+`NOT LISTED`, never interpolated; closing it is the owner-declined credentialed
+archive, and **the gap widens with time** as the window rolls. Rule 22 held:
+the guard refused `--delivery-range 2025-12-30 2026-01-02` on its two 2026
+days, verified live.
+
+**Item 8(b) — BLOCKED, and it is the ONLY thing still blocking the lever.**
+ERCOT-147 §4 demanded a licensing check before promising this; it was run and
+recorded reproducibly (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
+`results/calibration/ercot160_texas_hub_screen.json`). EIA's free NGWU spot
+table: **Waha / Katy / Agua Dulce / Carthage at ZERO mentions** on a real
+archive page, against Chicago 6 and Henry Hub 10 — a daily row cannot exist at
+zero mentions; the lone "Houston Ship"/"Permian" hits are narrative
+petrochemical prose quoting a WEEKLY average. ERCOT's own catalog: 5,773
+products, 6 mention fuel, **none a price series** (FFSS award, FFSS
+deploy/recall, RMR fuel-supply option, Fuel Mix dashboard, 7-Day Event Trigger,
+Exceptional Fuel Cost) — the settlement Fuel Index Price is not a data product.
+**⇒ NGI/Platts/Argus only = owner licensing decision**, compounded by the
+unresolved `docs/data-licensing.md` §5 finding. Logged BLOCKED, **not inferred
+as zero and not substituted with Henry Hub** (rule 14): ERCOT-147 §3's confound
+is exactly that 63–67 % of CT capacity's daily p50 sits below its own sheet-HR
+× HH burn, so a HH stand-in assumes away the object. **The CT-band
+re-identification therefore stays blocked and this session claims no
+otherwise.**
+
+**Item 8(c) — RESHAPED; the charter's sizing was wrong in KIND.** Census
+`scripts/probes/ercot160_ct_target_population.py` (no model, no LP, no free
+parameter). The crosswalk's `site` column is not one grain: `CC_REGULAR` holds
+a site prefix (`RIONOG`/`RIONOG_CC1`), `CT_PEAKER` holds the **full resource
+name** (`VICTPORT_CTG01`) — **165/165 CT rows match a corpus RESOURCE name,
+0/165 match a site prefix**. So ERCOT-146 §3 / ERCOT-147 §3's "165 CT_PEAKER
+sites, 6 accepted" counts RESOURCES, and "~150-site hand crosswalk" is not the
+job: most CT resources and most CT capacity **already carry a candidate row**,
+making the bulk an ACCEPT/REJECT adjudication with a small
+industrial-cogen-heavy tail (DOWGEN, FORMOSA) carrying no row at all. Both now
+stand on item 7's spine — resource → substation → load zone, measured 186/191
+resources and 50/50 substations — leaving **substation → EIA plant code** as
+the single judgement step (NP4-160-SG carries no EIA identifier). **Not built
+this session:** its only consumer is the lever, which (b) still blocks.
+
+**Guard rails.** No LP solve ⇒ no dashboard registration (rule 15 attaches to a
+completed run; none was produced). No mechanism tested ⇒ no matrix cell verdict
+(rule 28(b)); no new `ScenarioConfig` field ⇒ rule 28(c) does not fire; the
+§5.1 lever-queue entries for items 7 and 8 were re-stamped instead, and matrix
+integrity + keeper stamps re-checked PASS. No holdout touched. Keeper, DOF
+ledger (n_residual 6) and all gate verdicts unchanged. Rule 27: every push was
+exact on-disk bytes over `git push`, and the two ≥300-line files touched
+(`fetch_ercot_60day_sced_gen_resource.py`, `mechanism-testing-matrix.md`) were
+blob-verified line-count + sha256 against local after their pushes.
+
+Next shorthand: ercot-161.

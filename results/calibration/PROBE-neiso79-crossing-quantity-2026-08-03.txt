@@ -1,0 +1,96 @@
+=== corpus: operating days present in ALL THREE books (prereg §3) ===
+  2023:  300 days   OK
+  2024:  288 days   UNDER-SAMPLED
+  2025:  276 days   UNDER-SAMPLED
+
+crossing 864 operating days ...
+  ... 100/864 days
+  ... 200/864 days
+  ... 300/864 days
+  ... 400/864 days
+  ... 500/864 days
+  ... 600/864 days
+  ... 700/864 days
+  ... 800/864 days
+  20,733 hours crossed
+
+=== §2.2 IDENTIFICATION: which composition reproduces the posted DA? ===
+  selection statistic: pooled median |lambda* - DA| per year; prereg KQ3 bar $10.00
+
+  --- FROZEN construction (prereg §2.1, neiso-76 offer selection) ---
+  comp  2023 median  within$2   2024 median  within$2   2025 median  within$2   
+  C1           9.25     3.3%          9.85     3.0%         14.68     3.4%   
+  C2           7.86     7.4%          8.33     6.5%         12.10     6.0%   
+  C3           7.86     7.5%          8.47     7.0%         11.12     9.1%   
+  C4           9.25     3.3%          9.85     3.0%         14.68     3.4%   
+
+  --- MT variant -- DISCLOSED POST-HOC (prereg KQ5): each asset's Must Take Energy MW re-priced to the floor ---
+  comp  2023 median  within$2   2024 median  within$2   2025 median  within$2   
+  C1          10.16     1.3%         10.75     1.6%         16.04     2.0%   
+  C2           8.77     3.5%          9.20     3.7%         13.13     4.6%   
+  C3           8.78     3.2%          9.28     3.2%         12.09     6.3%   
+  C4          10.16     1.3%         10.75     1.6%         16.04     2.0%   
+
+  FROZEN: best C3;  UNIDENTIFIED (same winner not in all years);  KQ3 (<$10.00 all years): FIRES -- crossing not identified vs the market
+
+  MT: best C3;  UNIDENTIFIED (same winner not in all years);  KQ3 (<$10.00 all years): FIRES -- crossing not identified vs the market
+
+=== §2.3 THE CORRECTED CROSSING: hour-of-day range ===
+
+  --- FROZEN, composition C3 ---
+    year    hod range   peak    share   n76 dem   n76-3GW   keeper   n hrs
+    2023         7.71   HE21    29.7%     65.6%     36.4%    27.1%    7199
+    2024        10.63   HE19    36.7%     72.9%     33.6%    23.5%    6911
+    2025        16.78   HE19    37.7%     54.1%     30.9%    29.9%    6623
+
+  --- MT variant, composition C3 ---
+    year    hod range   peak    share   n76 dem   n76-3GW   keeper   n hrs
+    2023         7.70   HE21    29.7%     65.6%     36.4%    27.1%    7199
+    2024        10.01   HE19    34.6%     72.9%     33.6%    23.5%    6911
+    2025        16.68   HE19    37.5%     54.1%     30.9%    29.9%    6623
+
+=== CONTROL: the neiso-76 §D traversal itself, recomputed on THIS sample ===
+  (internal book alone crossed at EIA-930 demand -- separates the QUANTITY change from the SAMPLE change)
+
+  --- neiso-76 §D read: at EIA-930 demand ---
+    year    hod range   peak    share   n76 dem   n76-3GW   keeper   n hrs
+    2023        17.80   HE21    68.6%     65.6%     36.4%    27.1%    7198
+    2024        23.12   HE21    79.8%     72.9%     33.6%    23.5%    6910
+    2025        26.37   HE20    59.3%     54.1%     30.9%    29.9%    6621
+
+  --- neiso-76 §D read: at demand - 3 GW ---
+    year    hod range   peak    share   n76 dem   n76-3GW   keeper   n hrs
+    2023         9.70   HE21    37.4%     65.6%     36.4%    27.1%    7198
+    2024        10.67   HE21    36.9%     72.9%     33.6%    23.5%    6910
+    2025        14.78   HE20    33.2%     54.1%     30.9%    29.9%    6621
+
+=== KILL RULES (prereg §4) ===
+
+  --- KILL RULES on FROZEN / C3 (years scored: [2023, 2024, 2025]) ---
+    KQ1 (lane kill; <= keeper in >=2 yrs): 0/3 -> does NOT fire
+    KQ2 (direction-only; <40% in >=2 yrs): 3/3 -> FIRES -- report as DIRECTION-ONLY
+    KQ4 2023: imports   7.71 (29.7%)  vs none  12.89 (49.6%)  delta  19.9 pp
+    KQ4 2024: imports  10.63 (36.7%)  vs none  17.67 (61.0%)  delta  24.3 pp
+    KQ4 2025: imports  16.78 (37.7%)  vs none  21.95 (49.4%)  delta  11.6 pp
+    KQ4 (<5 pp = immaterial): worst 24.3 pp -> does NOT fire -- the import book does real work
+
+  --- KILL RULES on MT / C3 (years scored: [2023, 2024, 2025]) ---
+    KQ1 (lane kill; <= keeper in >=2 yrs): 0/3 -> does NOT fire
+    KQ2 (direction-only; <40% in >=2 yrs): 3/3 -> FIRES -- report as DIRECTION-ONLY
+    KQ4 2023: imports   7.70 (29.7%)  vs none  12.66 (48.8%)  delta  19.1 pp
+    KQ4 2024: imports  10.01 (34.6%)  vs none  16.16 (55.8%)  delta  21.2 pp
+    KQ4 2025: imports  16.68 (37.5%)  vs none  21.79 (49.0%)  delta  11.5 pp
+    KQ4 (<5 pp = immaterial): worst 21.2 pp -> does NOT fire -- the import book does real work
+
+=== depth diagnostics (report-only) ===
+  2023: cleared dem    12487 MW | imports submitted fixed   1729 + priced   2268 | exports    125 +   2104 | INC   1282 | gen offered   27173
+  2024: cleared dem    12867 MW | imports submitted fixed   1210 + priced   3174 | exports    175 +   2190 | INC   1451 | gen offered   26582
+  2025: cleared dem    12983 MW | imports submitted fixed   1034 + priced   3001 | exports    104 +   1928 | INC   1927 | gen offered   25800
+
+=== signed bias of the crossing vs the posted DA (report-only) ===
+  FROZEN 2023: mean   -12.06  median    -7.83  |  no crossing in bracket 0.00%
+  FROZEN 2024: mean   -12.46  median    -8.47  |  no crossing in bracket 0.00%
+  FROZEN 2025: mean   -17.60  median   -10.95  |  no crossing in bracket 0.00%
+  MT     2023: mean   -13.33  median    -8.78  |  no crossing in bracket 0.00%
+  MT     2024: mean   -13.55  median    -9.28  |  no crossing in bracket 0.00%
+  MT     2025: mean   -19.02  median   -11.96  |  no crossing in bracket 0.00%

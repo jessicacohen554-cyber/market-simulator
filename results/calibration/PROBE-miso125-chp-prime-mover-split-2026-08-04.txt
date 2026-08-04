@@ -1,0 +1,125 @@
+==============================================================================
+KE2 — population: plants carrying MORE THAN ONE target-class row
+==============================================================================
+  50973   Motiva Enterprises Port Arthur Refiner CC_CHP   183.4MW not_unfired_topping | CT_CHP    15.6MW not_unfired_topping
+  55088   Dearborn Industrial Generation         CC_CHP   350.0MW ok | CT_CHP   165.0MW ok
+  56309   Trigen St. Louis                       CC_CHP    29.2MW not_unfired_topping | CT_CHP     1.2MW not_unfired_topping
+  58161   Western Michigan University Power Plan CC_CHP     9.3MW not_unfired_topping | CT_CHP     5.8MW not_unfired_topping
+
+  multi-class plants:            [50973, 55088, 56309, 58161]
+  with >=1 APPLIED (ok) row:     [55088]
+  applied capacity in scope:     515.0 MW
+
+==============================================================================
+KE1 — prime-mover resolvability at CAMPD unit grain
+==============================================================================
+
+  --- 2023 ---
+  unit    family  unitType                              heat MMBtu     gross MWh  dark
+  GT3100  CC      Combined cycle                        14,634,586     1,398,184 False
+  GT2100  CC      Combined cycle                        12,028,570     1,210,432 False
+  GTP1    CT      Combustion turbine                     9,931,137     1,039,524 False
+  BL1100  OTHER   Other boiler                           2,628,918             0  True
+  BL3100  OTHER   Other boiler                           2,498,201             0  True
+  BL2100  OTHER   Other boiler                           2,179,768             0  True
+  power-train families: ['CC', 'CT']  (units 3 of 6; unmapped OTHER 0)
+
+  --- 2024 ---
+  unit    family  unitType                              heat MMBtu     gross MWh  dark
+  GT3100  CC      Combined cycle                        14,818,137     1,408,521 False
+  GT2100  CC      Combined cycle                        14,038,406     1,447,199 False
+  GTP1    CT      Combustion turbine                    11,315,904     1,169,570 False
+  BL1100  OTHER   Other boiler                           2,544,400             0  True
+  BL2100  OTHER   Other boiler                           2,441,356             0  True
+  BL3100  OTHER   Other boiler                           2,002,606             0  True
+  power-train families: ['CC', 'CT']  (units 3 of 6; unmapped OTHER 0)
+
+  --- 2025 ---
+  unit    family  unitType                              heat MMBtu     gross MWh  dark
+  GT2100  CC      Combined cycle                        10,622,628     1,082,636 False
+  GT3100  CC      Combined cycle                         9,973,316       967,293 False
+  GTP1    CT      Combustion turbine                     7,285,592       757,666 False
+  BL1100  OTHER   Other boiler                           2,374,539             0  True
+  BL3100  OTHER   Other boiler                           1,807,706             0  True
+  BL2100  OTHER   Other boiler                           1,455,144             0  True
+  power-train families: ['CC', 'CT']  (units 3 of 6; unmapped OTHER 0)
+
+  reconcile 55088 @ 2023: probe 43,901,179 vs artifact 43,901,179 MMBtu -> ratio 1.000000
+
+  KE1 verdict: PASS
+
+==============================================================================
+KE3 — split magnitude and the INERT-BY-ARITHMETIC band
+==============================================================================
+
+  --- plant 55088, 2023 (hr_plant = 6.9573) ---
+    CC     f=0.7286  g=0.7151  f/g=1.0190  hr=  7.0892  (+1.90 % vs plant)
+    CT     f=0.2714  g=0.2849  f/g=0.9524  hr=  6.6262  (-4.76 % vs plant)
+    identity  sum(g*hr) = 6.957270  vs hr_plant 6.957300   err 3.00e-05
+    max |rel delta| = 0.0476   band = 0.02
+
+  --- plant 55088, 2024 (hr_plant = 6.9573) ---
+    CC     f=0.7183  g=0.7094  f/g=1.0125  hr=  7.0443  (+1.25 % vs plant)
+    CT     f=0.2817  g=0.2906  f/g=0.9695  hr=  6.7449  (-3.05 % vs plant)
+    identity  sum(g*hr) = 6.957308  vs hr_plant 6.957300   err 7.83e-06
+    max |rel delta| = 0.0305   band = 0.02
+
+  --- plant 55088, 2025 (hr_plant = 6.9573) ---
+    CC     f=0.7387  g=0.7301  f/g=1.0117  hr=  7.0388  (+1.17 % vs plant)
+    CT     f=0.2613  g=0.2699  f/g=0.9683  hr=  6.7367  (-3.17 % vs plant)
+    identity  sum(g*hr) = 6.957274  vs hr_plant 6.957300   err 2.56e-05
+    max |rel delta| = 0.0317   band = 0.02
+
+  overall max |rel delta| = 0.0476  ->  KE3 LIVE
+
+==============================================================================
+KE4 — INERT-BY-MARGINALITY, from the keeper's COMMITTED sidecars
+==============================================================================
+  sidecar schema is (year, pass, klass, hour, mw): it carries NO
+  marginality flag and NO bound flags, so clause (a) of prereg KE4 is
+  NOT ANSWERABLE from committed artifacts. Reported below is clause
+  (b) only — dispatch freedom — stated as such, not as a proxy for
+  marginality (prereg 3 KE4).
+
+  2023 CC_CHP  hours 8760  min 936.0  max 3175.4  cv 0.2328  distinct 1084  at-min 0.0006  19.763 TWh
+  2023 CT_CHP  hours 8760  min 456.8  max 774.8  cv 0.0775  distinct 8466  at-min 0.0001  5.514 TWh
+  2024 CC_CHP  hours 8760  min 883.9  max 3101.8  cv 0.2273  distinct 1397  at-min 0.0002  19.725 TWh
+  2024 CT_CHP  hours 8760  min 467.9  max 844.8  cv 0.0908  distinct 8510  at-min 0.0001  5.660 TWh
+  2025 CC_CHP  hours 8760  min 802.3  max 2955.2  cv 0.2967  distinct 1563  at-min 0.0009  16.846 TWh
+  2025 CT_CHP  hours 8760  min 479.5  max 818.5  cv 0.0863  distinct 8496  at-min 0.0001  5.639 TWh
+
+  KE4 clause (b) all-pinned>99%: False  ->  LIVE_OR_UNDETERMINED
+
+==============================================================================
+KE-R — validity of the construction's own assumption (NOT pre-registered)
+==============================================================================
+  R1 eGRID PLNGENAN 5,259,825 net MWh vs CEMS power-train GROSS 3,648,140 MWh
+     net/gross = 1.4418  -> 1,611,685 MWh eGRID counts and CEMS never metered. NET CANNOT EXCEED GROSS on the same machines.
+
+  R2 implied CF on the LP's 515.0 MW = 116.6%  -> physically possible: False
+
+  R3 EIA-860 roster at 55088:
+     GT 1  Natural Gas Fired Combined Cycle   pm=CT  unit=SINT    175.0 MW  fuel=NG
+     GT2   Natural Gas Fired Combined Cycle   pm=CT  unit=SINT    175.0 MW  fuel=NG
+     GTP1  Natural Gas Fired Combustion Turbi pm=GT  unit=nan     165.0 MW  fuel=NG
+     ST1   Other Gases                        pm=CA  unit=SINT    250.0 MW  fuel=BFG
+
+  R4 census — CA/non-NG steam parts of NG combined-cycle blocks:
+     presence is decided against the plant's EIA-860 TOTALS, not against
+     the block's siblings: a plant can host generators outside the block
+     (55088's standalone GTP1 does), so a sibling-relative test
+     mis-reads those as the missing steam part.
+
+     1004   Edwardsport                     MISO    555.0 MW SGC  | EIA-860 plant   555.0 (excl CA     0.0) | fleet  1036.2  ->  UNDETERMINED
+     55088  Dearborn Industrial Generation  MISO    250.0 MW BFG  | EIA-860 plant   765.0 (excl CA   515.0) | fleet   515.0  ->  MISSING
+     6081   Stony Brook                     NEISO    96.0 MW DFO  | EIA-860 plant   446.6 (excl CA   350.6) | fleet   435.7  ->  UNDETERMINED
+     50973  Motiva Enterprises Port Arthur  MISO     21.5 MW OG   | EIA-860 plant   239.4 (excl CA   199.0) | fleet   199.0  ->  MISSING
+     54912  Martinez Refining               CAISO    20.0 MW OG   | EIA-860 plant   100.0 (excl CA    80.0) | fleet    80.0  ->  MISSING
+     50973  Motiva Enterprises Port Arthur  MISO     10.5 MW OG   | EIA-860 plant   239.4 (excl CA   199.0) | fleet   199.0  ->  MISSING
+     50973  Motiva Enterprises Port Arthur  MISO      8.4 MW OG   | EIA-860 plant   239.4 (excl CA   199.0) | fleet   199.0  ->  MISSING
+
+     MISO capacity measurably missing: 290.4 MW
+
+  KE-R verdict: PREREGISTERED_CONSTRUCTION_REFUTED
+
+wrote results/calibration/_miso125_prime_mover_split.json

@@ -1,0 +1,482 @@
+{
+  "prereg": "results/calibration/PREREG-miso121-dual-fuel-switching-2026-08-03.md",
+  "keeper": "results/calibration/miso117_ctheatrate_B",
+  "arm_A": "results/calibration/miso121_control_A",
+  "arm_B": "results/calibration/miso121_dualfuel_B",
+  "K1_flag_fidelity": {
+    "passed": true,
+    "A": {
+      "dual_fuel_switching": false,
+      "dual_fuel_oil_reattribution": false,
+      "dual_fuel_oil_daily_parity": false
+    },
+    "B": {
+      "dual_fuel_switching": true,
+      "dual_fuel_oil_reattribution": false,
+      "dual_fuel_oil_daily_parity": false
+    },
+    "siblings_off_both_arms": true
+  },
+  "K2_control_integrity": {
+    "passed": true,
+    "basis": "scorecard (gate); byte basis reported below",
+    "keeper_criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "CAVEAT",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "shape": "FAIL",
+      "forced_share": "PASS"
+    },
+    "control_criteria": {
+      "fuelmix": "PASS",
+      "sysvol": "PASS",
+      "price_mean": "CAVEAT",
+      "price_shape": "PASS",
+      "price_tail": "CAVEAT",
+      "dispatch_corr": "PASS",
+      "governance": "PASS",
+      "shape": "FAIL",
+      "forced_share": "PASS"
+    },
+    "keeper_determination": "NOT-YET",
+    "control_determination": "NOT-YET",
+    "byte_basis_identical": true,
+    "byte_basis_by_year": {
+      "2023": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      },
+      "2024": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      },
+      "2025": {
+        "max_abs_diff_mw": 0.0,
+        "max_by_class_mw": {
+          "CC_CHP": 0.0,
+          "CC_REGULAR": 0.0,
+          "COAL_BIT": 0.0,
+          "COAL_LIGNITE": 0.0,
+          "COAL_PRB": 0.0,
+          "CT_CHP": 0.0,
+          "CT_PEAKER": 0.0,
+          "OTHER": 0.0,
+          "ST_CHP": 0.0,
+          "ST_GAS": 0.0,
+          "biomass": 0.0,
+          "hydro": 0.0,
+          "import": 0.0,
+          "nuclear": 0.0,
+          "oil": 0.0,
+          "solar": 0.0,
+          "wind": 0.0
+        }
+      }
+    }
+  },
+  "K3_liveness": {
+    "passed": false,
+    "by_year": {
+      "2023": {
+        "max_abs_class_hour_mw": 0.0,
+        "max_abs_zone_price_delta": 0.0,
+        "A_lw_price": 32.5458,
+        "B_lw_price": 32.5458,
+        "delta_system_lw_price": 0.0,
+        "zone_price_deltas": {
+          "MISO-East": 0.0,
+          "MISO-Illinois": 0.0,
+          "MISO-Indiana": 0.0,
+          "MISO-Plains": 0.0,
+          "MISO-South": 0.0,
+          "MISO-West": 0.0
+        },
+        "passed": false
+      },
+      "2024": {
+        "max_abs_class_hour_mw": 912.5,
+        "max_abs_zone_price_delta": 0.000346,
+        "A_lw_price": 30.2496,
+        "B_lw_price": 30.2493,
+        "delta_system_lw_price": -0.0003,
+        "zone_price_deltas": {
+          "MISO-East": -0.000346,
+          "MISO-Illinois": -0.000346,
+          "MISO-Indiana": -0.000346,
+          "MISO-Plains": -0.000346,
+          "MISO-South": -2.7e-05,
+          "MISO-West": -0.000346
+        },
+        "passed": false
+      },
+      "2025": {
+        "max_abs_class_hour_mw": 15.958984,
+        "max_abs_zone_price_delta": 0.0,
+        "A_lw_price": 38.9863,
+        "B_lw_price": 38.9863,
+        "delta_system_lw_price": 0.0,
+        "zone_price_deltas": {
+          "MISO-East": 0.0,
+          "MISO-Illinois": 0.0,
+          "MISO-Indiana": 0.0,
+          "MISO-Plains": 0.0,
+          "MISO-South": 0.0,
+          "MISO-West": 0.0
+        },
+        "passed": false
+      }
+    },
+    "thresholds": {
+      "mw": 50.0,
+      "price": 0.1
+    }
+  },
+  "K4_single_delta": {
+    "passed": true,
+    "differing_keys": [
+      "dual_fuel_switching"
+    ]
+  },
+  "K5_year_span": {
+    "passed": true,
+    "spans": {
+      "A": [
+        2023,
+        2024,
+        2025
+      ],
+      "B": [
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "K6_direction_integrity": {
+    "passed": true,
+    "by_year": {
+      "2023": {
+        "delta_system_lw_price": 0.0,
+        "passed": true
+      },
+      "2024": {
+        "delta_system_lw_price": -0.0003,
+        "passed": true
+      },
+      "2025": {
+        "delta_system_lw_price": 0.0,
+        "passed": true
+      }
+    },
+    "tolerance": 0.001,
+    "offer_side_arithmetic": {
+      "applier": "np.minimum(fuel_prices[g], oil_hourly, out=...) \u2014 in-place, one-sided by construction",
+      "screen_binding_genhours_by_year": {
+        "2023": 15792,
+        "2024": 18192,
+        "2025": 11568
+      },
+      "screen_max_delta_fuel_by_year": {
+        "2023": 197.8272172853708,
+        "2024": 107.85278284395926,
+        "2025": 45.869241808838055
+      },
+      "note": "every binding cell had gas > oil, so every write LOWERED the delivered price; no capable tranche's offer can rise"
+    },
+    "zones_with_rising_lambda_REPORTED": {
+      "2023": [],
+      "2024": [],
+      "2025": []
+    }
+  },
+  "kills": {
+    "available": true,
+    "P1_free_class": {
+      "passed": true,
+      "A_free": {
+        "pass": 12,
+        "total": 12
+      },
+      "B_free": {
+        "pass": 12,
+        "total": 12
+      },
+      "A_all": {
+        "pass": 16,
+        "total": 16
+      },
+      "B_all": {
+        "pass": 16,
+        "total": 16
+      }
+    },
+    "P2_no_new_fail": {
+      "passed": true,
+      "A_fails": [
+        "shape"
+      ],
+      "B_fails": [
+        "shape"
+      ]
+    },
+    "P3_protective": {
+      "passed": true,
+      "note": "C6/C8 only \u2014 C7 (shape) is the standing MISO FAIL, expected in BOTH arms, covered by P2's subset rule",
+      "B": {
+        "governance": "PASS",
+        "forced_share": "PASS"
+      },
+      "shape_status_REPORTED": {
+        "A": "FAIL",
+        "B": "FAIL"
+      }
+    },
+    "P4_slack_dump_delta": {
+      "passed": true,
+      "by_year": {
+        "2023": {
+          "A_total_mwh": 0.0,
+          "B_total_mwh": 0.0,
+          "allowance": 10.0,
+          "passed": true
+        },
+        "2024": {
+          "A_total_mwh": 19059.283,
+          "B_total_mwh": 19059.283,
+          "allowance": 19249.876,
+          "passed": true
+        },
+        "2025": {
+          "A_total_mwh": 0.0,
+          "B_total_mwh": 0.0,
+          "allowance": 10.0,
+          "passed": true
+        }
+      },
+      "raw": {
+        "2023": {
+          "A": [
+            0.0,
+            0.0
+          ],
+          "B": [
+            0.0,
+            0.0
+          ]
+        },
+        "2024": {
+          "A": [
+            19059.283,
+            0.0
+          ],
+          "B": [
+            19059.283,
+            0.0
+          ]
+        },
+        "2025": {
+          "A": [
+            0.0,
+            0.0
+          ],
+          "B": [
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "P5_no_fitted_followup": {
+      "passed": true,
+      "note": "declarative: the capable set is EIA-860's Multifuel switch flag and the parity price is MISO's own F923 Petroleum receipt \u2014 both measured registries, neither swept (rules 5 / 23)"
+    },
+    "P6_no_c7_claim": {
+      "passed": true,
+      "note": "C7 COAL_PRB is data-blocked; no C7 result is claimed in either direction (prereg \u00a76 P6)",
+      "shape_REPORTED": {
+        "A": "FAIL",
+        "B": "FAIL"
+      }
+    }
+  },
+  "reported": {
+    "K7_switched_volume_REPORTED": {
+      "is_a_gate": false,
+      "2023": {
+        "model_binding_TRANCHE_hours": 15792,
+        "campd_oil_signature_UNIT_hours": 90,
+        "campd_units_with_oil_signature": 25,
+        "campd_plants_covered": 49
+      },
+      "2024": {
+        "model_binding_TRANCHE_hours": 18192,
+        "campd_oil_signature_UNIT_hours": 459,
+        "campd_units_with_oil_signature": 43,
+        "campd_plants_covered": 49
+      },
+      "2025": {
+        "model_binding_TRANCHE_hours": 11568,
+        "campd_oil_signature_UNIT_hours": 452,
+        "campd_units_with_oil_signature": 40,
+        "campd_plants_covered": 49
+      },
+      "note": "tranche-hours vs unit-hours are different grains (369 model tranches over 89 capable plants; CAMPD covers 49 of them), so no ratio between these columns is meaningful \u2014 reported so any over-switching is visible rather than buried"
+    },
+    "class_twh_delta_top": {
+      "2023": {
+        "CC_CHP": 0.0,
+        "CC_REGULAR": 0.0,
+        "COAL_BIT": 0.0,
+        "COAL_LIGNITE": 0.0,
+        "COAL_PRB": 0.0,
+        "CT_CHP": 0.0,
+        "CT_PEAKER": 0.0,
+        "OTHER": 0.0
+      },
+      "2024": {
+        "CC_REGULAR": -0.00019999999494757503,
+        "CT_PEAKER": 0.00019999999494757503,
+        "CC_CHP": -9.999999747378752e-05,
+        "ST_CHP": 9.999999747378752e-05,
+        "COAL_BIT": 0.0,
+        "COAL_PRB": 0.0,
+        "COAL_LIGNITE": 0.0,
+        "CT_CHP": -0.0
+      },
+      "2025": {
+        "CC_CHP": -0.0,
+        "CC_REGULAR": 0.0,
+        "COAL_BIT": 0.0,
+        "COAL_LIGNITE": 0.0,
+        "COAL_PRB": 0.0,
+        "CT_CHP": 0.0,
+        "CT_PEAKER": 0.0,
+        "OTHER": 0.0
+      }
+    },
+    "seasonal_price_delta": {
+      "2023": {
+        "winter": 0.0,
+        "rest": 0.0
+      },
+      "2024": {
+        "winter": -0.0013,
+        "rest": 0.0
+      },
+      "2025": {
+        "winter": 0.0,
+        "rest": 0.0
+      }
+    },
+    "criteria_from_calibration_verdict": {
+      "keeper": {
+        "fuelmix": "PASS",
+        "sysvol": "PASS",
+        "price_mean": "CAVEAT",
+        "price_shape": "PASS",
+        "price_tail": "CAVEAT",
+        "dispatch_corr": "PASS",
+        "governance": "PASS",
+        "shape": "FAIL",
+        "forced_share": "PASS"
+      },
+      "A_control": {
+        "fuelmix": "PASS",
+        "sysvol": "PASS",
+        "price_mean": "CAVEAT",
+        "price_shape": "PASS",
+        "price_tail": "CAVEAT",
+        "dispatch_corr": "PASS",
+        "governance": "PASS",
+        "shape": "FAIL",
+        "forced_share": "PASS"
+      },
+      "B_arm": {
+        "fuelmix": "PASS",
+        "sysvol": "PASS",
+        "price_mean": "CAVEAT",
+        "price_shape": "PASS",
+        "price_tail": "CAVEAT",
+        "dispatch_corr": "PASS",
+        "governance": "PASS",
+        "shape": "FAIL",
+        "forced_share": "PASS"
+      }
+    },
+    "determination": {
+      "keeper": "NOT-YET",
+      "A_control": "NOT-YET",
+      "B_arm": "NOT-YET"
+    },
+    "grade_summary": {
+      "keeper": {
+        "scored": 9,
+        "target_grade": 6,
+        "commercial_grade": 0,
+        "ledgered": 2,
+        "fails": 1
+      },
+      "A_control": {
+        "scored": 9,
+        "target_grade": 6,
+        "commercial_grade": 0,
+        "ledgered": 2,
+        "fails": 1
+      },
+      "B_arm": {
+        "scored": 9,
+        "target_grade": 6,
+        "commercial_grade": 0,
+        "ledgered": 2,
+        "fails": 1
+      }
+    },
+    "free_class_headline": {
+      "keeper": "C1 all 16/16 \u00b7 free 12/12",
+      "A_control": "C1 all 16/16 \u00b7 free 12/12",
+      "B_arm": "C1 all 16/16 \u00b7 free 12/12"
+    }
+  },
+  "all_gates_passed": false,
+  "all_kills_passed": true
+}

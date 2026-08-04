@@ -938,3 +938,219 @@ exceptions recorded; A5 eight new tests including a regression guard that
 reproduces the *old* comprehension and asserts it loses the plant; A6
 `tests/scoring/` 900 passed with 4 pre-existing `test_ff_readiness_battery.py`
 failures verified pre-existing by re-running with the changes stashed.
+
+---
+
+## nyiso-121 (2026-08-04) — MISO's rule-28(c) matrix column CLOSED; the six-lane census backlog is discharged
+
+**Cross-ISO audit action, logged here rather than in `miso.md`** because it was performed
+from the NYISO lane on MISO's column and touches no MISO mechanism, keeper or determination
+— and because a MISO calibration session may be active (the keeper is same-day).
+**Zero solves. Zero years touched. No `ScenarioConfig` value, constant or derive script
+changed. Both ISOs' keepers unchanged.**
+
+**What closed.** MISO was the **last** ISO with an open own-family column. All **8 absent +
+4 prose-only** `miso_*` fields — **7 ARMED on keeper `2026-08-04-miso-122b-scope-gate` with
+no cell anywhere**, the 227-3 shape — are registered as **literal sub-scalar entries on 7
+existing family rows**. **169 → 169 rows (zero new).** One cell mint: `matrix_gap_census`
+MISO `O` → `K`, an **audit status**, per the ercot-156 / caiso-161 / pjm-151 precedent.
+**Zero mechanism verdicts** — every verdict-bearing sentence transcribes an adjudication
+already on the record with its citation. Ratchet baseline MISO **8 → 0**.
+
+With ERCOT, CAISO, NEISO, PJM and NYISO already closed, **the six-lane backlog nyiso-113/114
+measured (161 absent, 95 armed-but-cell-less) is fully discharged.**
+
+**A new invisibility variant, recorded for every lane.** Beyond the caiso-161 §2
+abbreviation/stale-anchor defect (which recurred here as `miso_pjm_lmp :2914`, not a
+`ScenarioConfig` field, anchored on an unrelated comment block), `miso_manitoba_seam` —
+ARMED on the keeper — was prose-only inside **`diagnostics_plant_set`**, a row about probe
+plant sets. **A mention on the wrong family row is as invisible as no mention, and unlike a
+glob or a stale anchor it reads as correct coverage to a human auditor.**
+
+**A governance correction that binds the next lane (FINDING §6.2).** The pre-registered
+criterion "the other five ISOs' counts must not move" **fired on this session's own first
+draft**: enumerating MISO's 17 shared-stem literals — as ercot-156, caiso-161 and pjm-151
+each did — took **ERCOT from 12 to 11**, because a field armed on both keepers was newly
+counted "mentioned". **One lane's prose silently dropped a field from BOTH lanes' lists with
+no ERCOT session registering anything.** Naming a shared field as a bare literal makes the
+sweep count it mentioned — the very "a mention is not a registration" defect the census
+exists to close — and it **leaks across columns**. The enumeration was withdrawn for a count
+plus a pointer to the committed `_matrix_gap_sweep_<ISO>.json`.
+
+> **Standing consequence: the enumerated shared-field lists left in `matrix_gap_census` by
+> the earlier column closures are PROSE, NOT REGISTRATIONS. Trust
+> `results/calibration/_matrix_gap_sweep_<ISO>.json` over the row's text.**
+
+**Two armed-but-dead observations, filed and NOT adjudicated (rule 28(d)).** Measured on
+**construction** — no LP, no solve, no dual (the nyiso-115 G2 / nyiso-118 lesson):
+`miso_pjm_border_anchor` is **provably unobservable** on the MISO keeper, displaced by
+`miso_seam_measured_ladder`; all 48 seam rows exactly equal (`np.array_equal`, float32) in
+all three years, with a positive control that separates. Likewise `miso_firm_imports` is
+dropped by `miso_manitoba_seam`. **Neither is a rule 26 `[R-DELETE]` candidate** (both are
+built, reachable, default-off mechanisms at their documented defaults, displaced by
+documented alternatives). Whether arming both halves of an either/or pair is cosmetic or a
+rule 19 `[R-ONE-MECH]` question **belongs to a lane that may adjudicate MISO.**
+
+**A pre-registered prediction recorded as WRONG rather than redefined (FINDING §6.1):** the
+prereg predicted the cells string `KKKOKO` → `KKKKKK`, assuming NEISO's audit cell was
+already `K`. It is not; minting it is NEISO's lane's call. Only index 3 moved.
+
+**Named successor:** the **cross-ISO shared-stem backlog** (PJM 18, MISO 17, ERCOT 14,
+CAISO 5, overlapping, all armed on keepers with no cell) is the only remaining rule-28(c)
+debt. That lane must **register these fields on rows, not enumerate them in prose.**
+
+Evidence: `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md` (pushed
+before any row was written) · `FINDING-nyiso121-miso-matrix-column-2026-08-04.md` ·
+`scripts/probes/_nyiso121_miso_border_anchor_displacement_probe.py` →
+`nyiso121_miso_border_anchor_displacement_probe.json` · sweeps `_matrix_gap_sweep_*.json`.
+
+## 2026-08-04 — xiso-3: the CROSS-ISO SHARED-STEM backlog CLOSED — both halves of the rule-28(c) census now read zero, and line-anchor decay is now GATED (cross-cutting audit, NO LP)
+
+**Cross-ISO audit, logged here rather than in any ISO's file** because it touches every
+ISO's column and no ISO's mechanism, keeper or determination. **Zero solves. Zero years
+touched. No `ScenarioConfig` value, constant or derive script changed. All six keepers
+unchanged. NO CELL MINTED ANYWHERE** — stricter than the five column closures that preceded
+it, each of which minted its own audit status.
+
+**What closed.** The cross-ISO shared-stem backlog was the LAST rule-28(c) debt and the
+successor nyiso-121 named. All **45 distinct SHARED (non-ISO-prefixed) fields** — **54
+(ISO, field) pairs**, nine armed in two ISOs at once — that a designated keeper **ARMS with
+no matrix cell anywhere** are registered as **literal sub-scalar entries on 19 EXISTING
+rows' defs**, each home chosen on a **cited code read site** rather than on theme.
+**169 → 169 rows (zero new).** Ratchet `shared_armed_on_keeper` CAISO 5 / ERCOT 14 /
+MISO 17 / PJM 18 → **0 0 0 0**. With every own-family column already closed, **both halves
+of the census now read zero and both are ratcheted.**
+
+**Mechanical cause — the caiso-161 §2 abbreviation defect, three more times, and it is now
+the single most common cause of matrix invisibility on the record.** Seven registrations
+already existed but only as ABBREVIATIONS no literal-matching checker could resolve: a bare
+**`etc.`** standing in for THREE armed fields at once, plus `(+seasonal)`, `p25 level`,
+`class_aware`, `_from_data`, `conditional runs` (the field name written with a space), and
+`outage_source=historic :7709`, whose anchored token is not a field at all.
+
+**LINE-ANCHOR DECAY IS NOW MEASURED, REPAIRED AND GATED (the nyiso-121 suggestion, built).**
+nyiso-121 found all 20 MISO anchors stale and deliberately filed a checker as tooling work.
+Measured file-wide here the decay is **near-total: 163 of 167 checkable anchors did not
+resolve, only 4 did** (120 of 152 field-style, 43 of 43 row-id style), most off by
+900–1,400 lines because `scenarios.py` grew under them. **161 repaired mechanically**,
+verified **digits-only** (with every `:\d+` normalised, before and after are byte-identical).
+`scripts/check_mechanism_matrix.py` now carries a standing anchor leg — field-style, row-id
+and file-in-range checks, a **shrink-only ratchet** (`mechanism-matrix-anchors.json`, now
+**EMPTY**) and a **`--fix-anchors`** path so compliance is one command rather than a tax on
+every `scenarios.py` PR. **Existence is gated FIRST**, which preserves the deliberate
+`miso_pjm_lmp :2914` defect QUOTATION — do not "fix" it. The check is also what verified
+this session's own 54 registrations (field anchors 124 → 178, all resolving).
+
+> **Standing consequence: the ratchet proves an anchor points at the field it NAMES; it
+> cannot tell a correct literal from a wrong one. The literal field name remains the
+> durable identifier — only a human can tell whether it is the right field to name.**
+
+**Seven armed-but-dead pairs in TWO ISOs, filed and NOT adjudicated (rule 28(d)).** Measured
+on **CONSTRUCTION** — no LP, no solve, no dual (the nyiso-115 G2 / nyiso-118 lesson), built
+twice at one HEAD with `np.array_equal` on float32, exact equality and not a tolerance.
+Four ERCOT coal passthrough scalars (`coal_prb_passthrough_floor` 0.76,
+`coal_prb_follower_floor` 0.76, `coal_lignite_passthrough_floor` 0.675,
+`coal_lignite_passthrough_ceil` 1.0) sit behind rank sigmoid gates the ercot158 keeper sets
+False; three CAISO CT drag coefficients sit behind `ct_netload_drag=False`. All five arms
+Δ = **0.0 exactly**, and **all five positive controls separate** (0.58–0.74 on the
+passthrough multiplier, 80.1 MW on `min_gen`), so the silence is the mechanism's and not the
+instrument's. Those two `run_config.json` files **overstate what the solve read** — the
+caiso-161 §5 / pjm-151 / nyiso-121 G-1 shape in a third and fourth ISO. **The CAISO result
+is CONSISTENT with that family's existing CAISO `R`**, not in tension with it. Whether an
+inert fitted scalar is cosmetic, a rule-19 `[R-ONE-MECH]` question or a rule-26 `[R-DELETE]`
+candidate belongs to a lane that may adjudicate that ISO.
+
+**THE MANDATORY POSITIVE CONTROL CAUGHT TWO DEFECTS IN THE SESSION'S OWN INSTRUMENT, which
+is the argument for it being mandatory rather than advisory.** (a) A pooled control over all
+four ERCOT fields separated — but only on the prb and lignite floors; it **never exercised
+`coal_prb_follower_floor`'s read path at all**, so that field's silence would have been an
+artifact. (b) The per-field rewrite then reported one control **VOID**, because the probe's
+emulation of `assembly.py`'s tiered branch **overwrote** the baseload prb entry while the
+real code keeps BOTH maps and routes only low-must-run plants to the follower — the
+instrument was blind to the very field it was testing. Neither was found by inspection.
+
+**A pre-registered criterion FIRED and is recorded rather than redefined (FINDING §6).**
+Criterion 6 — the nyiso-121 §6.2 guard restated for the lane it was filed for — flagged
+`coal_lignite_passthrough_sigmoid` leaving ERCOT's live-but-invisible list without being one
+of the 45. **Measured**: an audit of **all 24** fields newly mentioned by this session finds
+**every one is an `own_row` `def:` registration, with ZERO prose-only mentions introduced**.
+The departure is one of seven COMPANION gates/thresholds the registrations name in a def,
+because naming a scalar while hiding its own gate would be the very defect above. **The
+criterion's guard HOLDS; its wording was too narrow.** Corrected form, stated rather than
+applied silently: every departure must be a `def:` registration on the row whose code owns
+it, pre-declared or not, and any non-pre-declared departure must be itemized.
+
+**ONE declared cell mismatch left unresolved on purpose:** `coal_nameplate_summer_derate` is
+ARMED on the ERCOT keeper while its only code-level home row (`cc_nameplate_summer_derate`)
+reads ERCOT **`U`** — correctly, since that row's own CC flag is False there. Resolving it
+would be minting a verdict, so it is stated in the registration and **filed for the ERCOT
+lane**.
+
+**What the next lane inherits.** Not a backlog — three filed, un-adjudicated items, each
+belonging to a lane that may adjudicate its own ISO: **ERCOT** (four unreadable scalars plus
+the cell mismatch), **CAISO** (three unreadable coefficients), and **NEISO**, whose
+`matrix_gap_census` audit cell is still `O` while its own-family sweep reads 20/0/0/0 —
+that mint is NEISO's lane's call, not this one's.
+
+Evidence: `results/calibration/PREREG-xiso3-shared-stem-backlog-2026-08-04.md` (pushed
+before any row was written, any anchor repaired or the probe run) ·
+`FINDING-xiso3-shared-stem-backlog-2026-08-04.md` ·
+`scripts/probes/_xiso3_shared_stem_gate_probe.py` → `xiso3_shared_stem_gate_probe.json` ·
+sweeps `_matrix_gap_sweep_*.json` · ratchets `mechanism-matrix-gaps.json` (shared block now
+empty) + `mechanism-matrix-anchors.json` (empty).
+
+## xiso-4 — the shared-stem lane arrived after xiso-3 had closed it: independent VERIFICATION, plus one live-but-mislabelled cell (2026-08-04)
+
+**No matrix byte written. No cell minted. No registration made. No LP, no solve, no keeper,
+default or band moved.** This lane opened against `d7363b0e` on the same charter xiso-3 was
+already executing; main moved to `fe90fb8f` mid-session and the collision surfaced on the
+first push, **before any edit**. The correct response to finding your lane already closed is
+to verify it and stop.
+
+**Verified independently at `fe90fb8f`:** shared-gap **0 in all six ISOs**, both ratchet
+blocks 0, `check_mechanism_matrix.py` PASS (integrity OK, **0 unresolvable anchors**, keeper
+stamps match every shard), and all 46 fields `own_row` with **exactly one `def:` home each**.
+
+**The cross-check, and why the earlier commit's timestamp is what makes it worth anything.**
+This session derived its own home-row map from the code before seeing xiso-3's (committed as
+`PREREG-xiso4-…` prior to the collision). The two maps **agree on 43 of 46**. The three that
+differ — `oil_primary_bin_fuel`, `gas_hh_monthly_shape`, `cc_outage_derate_from_top` — are
+defensible either way, and in two of them **xiso-3's tie-breaker is the better rule**: match
+the home row's cell to the ISO's actual arming, which avoids the leg mismatch xiso-3 then had
+to declare for `coal_nameplate_summer_derate`. Two counts in the xiso-4 prereg were wrong and
+xiso-3's are right (nine double-armed fields, not seven; `coal_lignite_passthrough_sigmoid`
+already in the 45) — corrected in place rather than edited away. Pre-registered criterion 4a
+— the six post-closure live-but-invisible counts **and the six surviving fields by name**,
+predicted before the closure was known — measured **EXACT**.
+
+**THE NEW ITEM, on a row no census can see.** `gas_st_startup_spread` has its **own row**, so
+`coverage()` returns `own_row` and both halves of the rule-28(c) sweep are blind to it by
+construction — the ratchet reads zero and is correct to. Proven on CONSTRUCTION (no LP, no
+solve, no dual): `backcast_config.py:1692` arms it for **every** ISO unconditionally;
+`solve.py:259` is its only plumbing; `commitment.py:321` is its only read and sits **nine
+lines after** `:312-313`'s `if gen.fuel_type == "gas_st" and not gas_st_startup_cost:
+continue`; and `eia860.py:1897` maps `ST_GAS → gas_st`, so that skip is **total for exactly
+the class the flag selects**. ⇒ with `gas_st_startup_cost` off the flag cannot move one LP
+coefficient. At the six keepers it is **UNREACHABLE in CAISO, PJM, NYISO and NEISO** — and
+**NYISO's `K` is the row's only non-`U` cell** (armed-looking but dead, the caiso-161 §5 /
+pjm-151 / nyiso-121 G-1 / xiso-3 §4 shape, reaching a matrix *cell* for the first time rather
+than an unregistered scalar) — while **ERCOT's and MISO's `U` are the mirror error**, sitting
+on a mechanism both keepers actually run. **NOT ADJUDICATED, no cell moved (rule 28(d)):**
+three lanes' calls. The confirming A/B is xiso-3's own instrument, cheap and LP-free.
+
+**Also filed, reported not fixed:** `scenarios.py:850` describes `carry_operating_mothballs`
+as "INERT since 2026-07-17" — an annotation belonging to `historic_outage_overlay` (`:1928`),
+whose comment block (`:1913-1927`) sits between them. The field is live on the MISO keeper
+with its own `measured-physical` DOF entry, and miso-88 measured its effect. A live measured
+overlay labelled inert is a rule-13 `[R-MEASURED]` provenance hazard, not a census's
+unilateral core-file edit.
+
+**The sharpened standing risk.** Both ratchets now read zero, and a mechanism can still be
+mislabelled in the matrix without either moving. The remaining exposure is no longer
+*unregistered* mechanisms — it is **registered ones whose cell asserts something the code
+contradicts**, and nothing in CI looks for that. xiso-3's gate-reachability probe, run across
+every keeper-armed flag that has a gate, would be the third ratchet.
+
+Evidence: `results/calibration/PREREG-xiso4-cross-iso-shared-stem-2026-08-04.md` (committed
+before any matrix byte and before the collision was known; carries the independently-derived
+map) · `FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md`.

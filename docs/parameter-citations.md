@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1661 parameters registered** (872 flagged `needs-citation`).
+**1662 parameters registered** (872 flagged `needs-citation`).
 
 
 ## Calibration
@@ -66,6 +66,7 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_gw.CAISO` | 8 | 1 | CAISO Transmission Planning Process (TPP) | 2024-03 |  |
 | `queue_cap_gw.ERCOT` | 12 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 |  |
 | `scenario.discount_rate` | 0.08 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `scenario.exit_rate_limits` | False | 1 | EIA-860 retired sheet (measured per-ISO max single-year thermal dea… | 2026-08 |  |
 | `scenario.renewable_buildout_pace` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_aggressiveness` | mid | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.retirement_consecutive_years` | 2 | 2 | Market simulator model design decision | 2026-05 | modeled |
@@ -145,12 +146,12 @@ inline comment and still need a dated primary source — search the table for
 | `demand_growth_rates.NEISO.low.near` | 0.007 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.NEISO.mid.long` | 0.012 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.NEISO.mid.near` | 0.013 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.high.long` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.high.near` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.low.long` | 0.006 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.low.near` | 0.008 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.mid.long` | 0.012 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.mid.near` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.high.long` | 0.0196 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
+| `demand_growth_rates.NYISO.high.near` | 0.0263 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
+| `demand_growth_rates.NYISO.low.long` | 0.0028 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
+| `demand_growth_rates.NYISO.low.near` | -0.0024 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
+| `demand_growth_rates.NYISO.mid.long` | 0.0127 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
+| `demand_growth_rates.NYISO.mid.near` | 0.0122 | 2 | NYISO 2026 Load & Capacity Data Report ("Gold Book", released April 2026)… | 2026-04 |  |
 | `demand_growth_rates.PJM.high.long` | 0.04 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.high.near` | 0.06 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.low.long` | 0.014 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |

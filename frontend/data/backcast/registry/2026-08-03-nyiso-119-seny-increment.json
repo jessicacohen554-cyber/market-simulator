@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-nyiso-119-seny-increment",
+  "label": "nyiso 119 seny increment",
+  "date": "2026-08-03",
+  "shorthand": "nyiso-119-seny-increment",
+  "definition": "nyiso-119 TREATMENT: arm nyiso_seny_rcpf_increment_step (published SENY $500 base + $40 increment tier)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-03-nyiso-119-seny-increment.js",
+  "bundle": "results/calibration/nyiso119_seny_increment"
+}

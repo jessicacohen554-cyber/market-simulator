@@ -2,8 +2,8 @@
   "iso": "NEISO",
   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 671,
-  "n_matrix_rows": 181,
+  "n_scenario_fields": 676,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
     {
@@ -604,6 +604,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_nameplate_summer_derate",
           "cells": "UUUUKU",
           "cell": "U"
@@ -668,6 +673,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
@@ -760,7 +770,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KKKK",
           "cell": "K"
         }
       ],
@@ -775,7 +785,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KKKK",
           "cell": "K"
         }
       ],
@@ -789,6 +799,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
+        {
           "row": "energy_reserve_coopt",
           "cells": "KIKKKK",
           "cell": "K"
@@ -801,6 +816,11 @@
         {
           "row": "nyiso_rcpf_postsolve_overlay",
           "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
           "cell": "."
         },
         {
@@ -824,8 +844,13 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         }
       ],
@@ -838,6 +863,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "R"
+        },
         {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
@@ -854,13 +884,18 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "reserve_margin_backstop",
           "cells": ".KKKKK",
           "cell": "K"
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         }
       ],
@@ -910,7 +945,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -932,6 +967,11 @@
           "row": "gas_monthly_actuals",
           "cells": "GKK.KK",
           "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -950,7 +990,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         }
       ],
@@ -970,12 +1010,12 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1029,6 +1069,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
           "cell": "U"
@@ -1069,6 +1114,16 @@
           "cell": "K"
         },
         {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "legacy_p2",
           "cells": "G....K",
           "cell": "K"
@@ -1085,7 +1140,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -1125,7 +1180,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1229,6 +1284,11 @@
           "cell": "."
         },
         {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
           "row": "gas_commitment_bridge",
           "cells": "KKRUKK",
           "cell": "K"
@@ -1236,6 +1296,11 @@
         {
           "row": "reliability_floor",
           "cells": "KIKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -1334,9 +1399,19 @@
           "cell": "I"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "measured_offer_surface",
           "cells": "KKRUGI",
           "cell": "I"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "."
         },
         {
           "row": "coal_econ_bound",
@@ -1394,6 +1469,11 @@
           "cell": "K"
         },
         {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "zonal_gas_basis",
           "cells": "KKKKK.",
           "cell": "."
@@ -1407,6 +1487,11 @@
           "row": "winter_citygate_daily",
           "cells": "U.UK..",
           "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KKKK",
+          "cell": "K"
         },
         {
           "row": "campd_outage_windows",
@@ -1447,6 +1532,11 @@
           "row": "nysdec_peaker_rule_availability",
           "cells": "....K.",
           "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "solar_deliverability",
@@ -1530,7 +1620,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".KKR..",
           "cell": "."
         },
         {
@@ -1550,7 +1640,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -1605,7 +1695,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "."
         },
         {
@@ -1644,13 +1734,18 @@
           "cell": "K"
         },
         {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
           "row": "capacity_deliverability",
           "cells": ".K....",
           "cell": "."
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
@@ -1660,6 +1755,11 @@
         },
         {
           "row": "electrification_layers",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "transmission_expansion",
           "cells": "......",
           "cell": "."
         },
@@ -1750,7 +1850,7 @@
         },
         {
           "row": "gas_offer_margin_zonal_anchor",
-          "cells": "K.IUK.",
+          "cells": "K.IIK.",
           "cell": "."
         },
         {
@@ -1795,7 +1895,7 @@
         },
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         },
         {
@@ -1900,6 +2000,11 @@
         },
         {
           "row": "nyiso_ordc_measured_step_span",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
           "cells": "....K.",
           "cell": "."
         },
@@ -2030,7 +2135,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -2145,7 +2250,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KKKK",
           "cell": "K"
         },
         {
@@ -2330,7 +2435,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
+          "cells": ".KKR..",
           "cell": "."
         },
         {
@@ -2350,7 +2455,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -2405,7 +2510,7 @@
         },
         {
           "row": "lcr_tsl_published",
-          "cells": ".UUUK.",
+          "cells": ".KUUK.",
           "cell": "."
         },
         {
@@ -2479,8 +2584,13 @@
           "cell": "K"
         },
         {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "U"
+        },
+        {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
@@ -2505,8 +2615,8 @@
         },
         {
           "row": "transmission_expansion",
-          "cells": "UUUUUU",
-          "cell": "U"
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "t1ff_solve_year_weather",
@@ -2573,6 +2683,11 @@
       "keeper_value": "hold_last",
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
         {
           "row": "net_cone_forward_vintages",
           "cells": "..OOOO",
@@ -2754,6 +2869,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -2762,6 +2882,11 @@
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "R"
         }
       ],
       "excluded": false,
@@ -2838,6 +2963,11 @@
       "keeper_value": "legacy",
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
         {
           "row": "economic_retirement_screen",
           "cells": "OORRRR",
@@ -2919,6 +3049,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
           "row": "temp_dependent_derate",
           "cells": "UKRKGK",
           "cell": "K"
@@ -2939,6 +3074,11 @@
           "cell": "I"
         },
         {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "."
+        },
+        {
           "row": "tranche_startup_amortization",
           "cells": "GGKKKK",
           "cell": "K"
@@ -2955,7 +3095,7 @@
       "owning_rows": [
         {
           "row": "matrix_gap_census",
-          "cells": "KKOOKO",
+          "cells": "KKKKKO",
           "cell": "O"
         }
       ],

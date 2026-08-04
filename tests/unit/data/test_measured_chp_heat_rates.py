@@ -69,7 +69,15 @@ class TestDerive(unittest.TestCase):
             ),
         )
         return plant_table(
-            "FAKEISO", 2023, caps, model, basis, egrid, kw.pop("cems", {}), **kw
+            "FAKEISO",
+            2023,
+            caps,
+            model,
+            basis,
+            egrid,
+            kw.pop("cems", {}),
+            kw.pop("cems_dark", {}),
+            **kw,
         )
 
     def test_credit_is_added_back_on_the_same_denominator(self) -> None:
@@ -192,6 +200,84 @@ class TestDerive(unittest.TestCase):
             .loc[(1, "CC_CHP")]
         )
         self.assertAlmostEqual(float(row["cems_vs_egrid_total"]), 1.0, places=5)
+
+
+class TestHybridCogenScopeGate(unittest.TestCase):
+    """SCOPE gate 3 (miso-122) — direct-fired boiler fuel leaves the topping rate.
+
+    The fixture is :class:`TestDerive`'s topping cogen: 6.0 credited, 25 % of
+    the fuel on the thermal side, 8 000 000 MMBtu total, 1 000 000 net MWh, so
+    the all-fuel rate is 8.0.
+    """
+
+    _table = TestDerive._table
+
+    def _row(self, **kw):
+        return (
+            self._table(**kw)
+            .set_index(["plant_code", "plant_group"])
+            .loc[(1, "CC_CHP")]
+        )
+
+    def test_dark_fuel_is_removed_from_the_applied_rate(self) -> None:
+        """A hybrid's boiler fuel is not charged to its power tranches."""
+        row = self._row(cems={1: 8_000_000.0}, cems_dark={1: 1_600_000.0})
+        self.assertAlmostEqual(float(row["dark_fuel_share"]), 0.20, places=6)
+        self.assertAlmostEqual(float(row["heat_rate_all_fuel"]), 8.0, places=4)
+        self.assertAlmostEqual(float(row["heat_rate"]), 6.4, places=4)
+        self.assertEqual(row["flag"], "ok")
+
+    def test_no_dark_fuel_is_byte_identical(self) -> None:
+        """The gate is a strict no-op wherever the phenomenon is absent."""
+        base = self._row(cems={1: 8_000_000.0})
+        gated = self._row(cems={1: 8_000_000.0}, cems_dark={1: 0.0})
+        self.assertAlmostEqual(float(base["heat_rate"]), 8.0, places=4)
+        self.assertEqual(float(base["heat_rate"]), float(gated["heat_rate"]))
+        self.assertEqual(float(base["dark_fuel_share"]), 0.0)
+
+    def test_no_cems_coverage_leaves_the_rate_alone(self) -> None:
+        """Uncovered plants keep the status quo — never a claim of zero dark fuel."""
+        row = self._row()
+        self.assertAlmostEqual(float(row["heat_rate"]), 8.0, places=4)
+        self.assertTrue(pd.isna(row["dark_fuel_share"]))
+
+    def test_unreconciled_meters_are_excluded_not_corrected(self) -> None:
+        """CEMS that does not reproduce eGRID's total cannot be split by unit.
+
+        The derive's own header records the failure mode: plants whose
+        combustion units sit below the Part-75 threshold, where CEMS meters the
+        boilers and misses the turbines. An unguarded share there runs toward
+        1.0 and would drive the rate to zero.
+        """
+        row = self._row(cems={1: 2_000_000.0}, cems_dark={1: 1_000_000.0})
+        self.assertAlmostEqual(float(row["cems_vs_egrid_total"]), 0.25, places=5)
+        self.assertAlmostEqual(float(row["dark_fuel_share"]), 0.50, places=6)
+        self.assertAlmostEqual(float(row["heat_rate"]), 8.0, places=4)
+        self.assertEqual(row["flag"], "dark_unreconciled")
+
+    def test_entirely_dark_plant_is_degenerate_and_not_corrected(self) -> None:
+        """CEMS never saw the power train, so there is no power-train fuel."""
+        row = self._row(cems={1: 8_000_000.0}, cems_dark={1: 8_000_000.0})
+        self.assertAlmostEqual(float(row["heat_rate"]), 8.0, places=4)
+        self.assertEqual(row["flag"], "dark_unreconciled")
+
+    def test_correction_below_the_credited_rate_is_excluded(self) -> None:
+        """Removing more fuel than eGRID's whole credit means the sources disagree.
+
+        Measured on NYISO 2493 East River: a 37.5 % dark share against a 29.6 %
+        eGRID thermal share, so the corrected rate would fall below the plant's
+        own incumbent. Neither source can be preferred from this data, so the
+        plant keeps the existing chain.
+        """
+        row = self._row(cems={1: 8_000_000.0}, cems_dark={1: 3_000_000.0})
+        self.assertLess(float(row["heat_rate"]), float(row["heat_rate_credited"]))
+        self.assertEqual(row["flag"], "below_credited")
+
+    def test_the_gate_never_raises_the_rate(self) -> None:
+        """It only ever removes fuel — it can never make a machine look worse."""
+        for dark in (0.0, 0.05, 0.10, 0.20):
+            row = self._row(cems={1: 8_000_000.0}, cems_dark={1: 8_000_000.0 * dark})
+            self.assertLessEqual(float(row["heat_rate"]), 8.0)
 
 
 class TestArtifactLoader(unittest.TestCase):

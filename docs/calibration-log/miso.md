@@ -3246,4 +3246,540 @@ measured *identification* (does MISO's own data identify dual-fuel capability,
 switch price and event windows?), **not** a solve, and needs its own
 pre-registration before any arm — then the 55088 Dearborn hybrid-cogen scope
 gate (miso-118 §5, named not chartered).
-* Next number: **miso-121**.
+
+
+---
+
+## miso-121 — `dual_fuel_switching`: FULLY IDENTIFIED but PRICE-INERT → cell `U` → `I` (2026-08-03)
+
+**Keeper UNCHANGED** (`2026-08-03-miso-117b-ct-heat`). Arms registered:
+`2026-08-03-miso-121a-control`, `2026-08-03-miso-121b-dual-fuel`.
+
+**Phase 0 was a measured identification, no LP, and it returned LIVE on all
+four legs** — which is what authorized the two solves. Nothing in that
+identification is retracted, and all of it is MISO's **own** data with **zero
+free parameters**: capability 371/371/369 gas tranches = **15,827 MW = 23.3 %
+of MISO gas** (EIA-860 Multifuel switch flag, per-plant); switch price **12/12
+measured MISO F923 Petroleum months in every year** (20.36/18.22/17.21
+$/MMBtu — the flat national `OIL_PRICE_PER_MMBTU` fallback is never reached, so
+rule 13's forward-regeneration test passes); event windows **observable in
+MISO's own CAMPD feed**, 90/459/452 gas-labelled unit-hours across 25/43/40
+distinct units lifting from p50 53.91 kg CO₂/MMBtu (pipeline gas) into the
+70–80 distillate band, validated against CAMPD's **own** diesel-labelled units
+at p50 73.65/73.46/73.65. The mechanism **genuinely fires** — the solve logs
+the cap on 371/371/369 tranches (15,827/15,827/15,825 MW), matching the census
+exactly, so the miso-113 *"hook wired into `runner.py` only, invisible to the
+calibration path"* hazard was checked in advance and is **cleared by
+measurement**. Fuel deltas reach **197.8 $/MMBtu** (gas 218.9 vs oil 17.7).
+
+**And it moves nothing.** K3's price leg FAILS in every year — max zonal |Δλ|
+**0.0000 / 0.0003 / 0.0000 $/MWh** against the 0.10 bar (system
+0.0000/−0.0003/0.0000) — while the dispatch leg clears 50 MW in **2024 alone**
+(0.0/912.5/16.0 MW, ~0.2 GWh). K1/K2/K4/K5/K6 PASS, no kill fires (P1–P6).
+Both arms score the **identical** nine criterion statuses and NOT-YET, C7
+`COAL_PRB` the sole FAIL in both. **K2 is the strongest form:** the same-HEAD
+zero-delta control reproduces the committed keeper at **max |ΔMW| = 0.000000**
+on every one of 148,920 class-hours, all three years. Disposition is the
+prereg's own K3 rule, applied verbatim: `U` → `I`, **not promoted**.
+
+**Inert for a DIFFERENT reason than the zonal anchor — do not conflate them**
+(rule 25 applied *within* an ISO). `gas_offer_margin_zonal_anchor` is inert
+because a mean-zero perturbation never reaches the price-setting tranches
+(*where the perturbation lands*). **This** is inert because **the underlying
+physical phenomenon is negligible at MISO's scale** (*how big the real thing
+is*): CAMPD's own meters put observed dual-fuel oil generation at
+**0.0023/0.0113/0.0128 TWh a year** against ~17–23 TWh of capable-unit
+generation and a MISO load in the hundreds of TWh — **of order 0.002 % of ISO
+energy**.
+
+**The pre-registered over-switching risk did NOT materialise.** K7 is now
+same-grain in MWh (the Phase-1 bundles carry `unit_hourly` sidecars the keeper
+lacks): model switched **0.00013/0.03757/0.01096 TWh** vs CAMPD's own observed
+**0.00233/0.01133/0.01284 TWh** — 0.06×/3.3×/0.85×, CAMPD a **stated lower
+bound** (49 of 89 capable plants report). The model does not systematically
+over-switch; in 2023 it under-switches.
+
+**DO-NOT-REDO, extending miso-119's and reported against interest.** miso-119
+established `max |Δoffer|` is an upper bound only and named the capw p50 *"the
+predictive statistic"*. **The p50 over BINDING hours is not predictive either —
+binding is not marginality.** This session's §8.1 substitute (binding-hour
+Δoffer p50 **64.30/93.93/108.23 $/MWh** vs a 0.10 bar) over-predicted the
+realized **0.0003 $/MWh** by **five orders of magnitude**. Measured on the arms'
+own `unit_hourly`: the share of binding tranche-hours **also partially loaded**
+(`0 < mw < cap_mw`, genuinely price-setting) is **0.00 % / 1.24 % / 0.54 %**
+(0 of 15,792; 225 of 18,192; 63 of 11,568) — in 2023 **no** capable tranche is
+ever both binding and marginal, which is exactly why that year's price delta is
+an *exact* 0.0000. The literal L5 calls 2023 correctly but would still not have
+prevented these solves. **The predictive ex-ante statistic is the MARGINAL
+SHARE of binding hours**, not any percentile of the offer delta.
+
+**Reported, never banked:** the cap is one-sided so system λ never rises (K6
+PASS), and the **entire** price effect sits in **winter 2024 (−0.0013 $/MWh)**
+with an exact 0.0000 in every other season-year — right locus, right sign,
+inert magnitude. C7 untouched exactly as pre-declared (P6 forbade any C7 claim
+in either direction); P4 slack+dump **identical** between arms.
+
+**Governance.** Rule 15 — both arms registered, top-15 retention honoured
+(pruned `2026-07-28-miso-99b-chp-power`, `2026-07-29-miso-102b-sunkfixed`).
+Rule 16 — one bundle each, `[2023, 2024, 2025]`, one invocation; **a per-year
+invocation chain was DISCARDED and both arms re-solved from scratch** because
+`replay_keeper` sets `kwargs["years"] = args.years`, so the finished bundle
+would have claimed `years: [2025]` and mis-stated K5 and rule 16. Rule 19 —
+both sibling cells (`dual_fuel_oil_reattribution`, `dual_fuel_oil_daily_parity`)
+OFF in both arms, neither adjudicated. Rule 21 — arm B's one new DOF entry is
+`measured/published`, `free_parameters_added: 0`, `n_residual` unchanged.
+Rule 23 — neither leg swept, neither re-derived against the inert outcome.
+Rule 22 — 2023–2025 only; Elliott (Dec 2022) declared out of scope at §3 and
+never read. Rule 28 duty (b) — matrix cell stamped this session.
+**Two probe defects were caught BEFORE adjudication**, both of which would have
+produced a wrong `I` on leg (c): CAMPD's `facilityId` is string-typed so an
+int-valued filter matched **zero** rows (a hard-fail guard now prevents route
+I-D firing on an empty query), and the roster keys **plants**, so coal units at
+mixed plants (93–97 kg CO₂/MMBtu, *above* oil) were booked as oil and
+over-counted **13×** (6,181 → 459 in 2024).
+
+**Note for a rule-1 revisit (an OWNER call, not a session call):** the
+mechanism is structurally faithful, measured, zero-free-parameter and
+reproduces observed MISO behaviour at the right order of magnitude — it is
+*costless* to arm and changes no score. Whether a keeper should carry it as
+correct market structure anyway was **not** decided here; the prereg's rule was
+`I`, keeper unchanged, and that is what was applied.
+
+**Evidence:** `FINDING-miso121-dual-fuel-switching-2026-08-03.md`,
+`PREREG-miso121-dual-fuel-switching-2026-08-03.md`,
+`_miso121_dual_fuel_ab.json`, `_miso121_switched_volume.json`,
+`_miso121_dual_fuel_screen.json`,
+`PROBE-miso121-dual-fuel-screen-2026-08-03.txt`,
+`scripts/probes/_miso121_dual_fuel_screen.py`,
+`scripts/probes/_miso121_dual_fuel_ab.py`,
+`scripts/probes/_miso121_switched_volume.py`,
+`scripts/gen_miso121_attestation.py`.
+
+~~**Live queue head:** the **55088 Dearborn hybrid-cogen scope gate**~~
+**SPENT at miso-122 — see below.**
+
+---
+
+## miso-122 (2026-08-04) — the hybrid-cogen scope gate: DISPATCH-LIVE, PRICE-INERT; keeper UNCHANGED, promotion candidate ESCALATED
+
+**Lever:** the MISO lever-queue head as written (`mechanism-testing-matrix.md`
+§5.4) — the 55088 Dearborn hybrid-cogen scope gate, named-not-chartered at
+miso-118 §5. Matrix cell `measured_chp_heat_rates` × MISO, **already `K` and it
+STAYS `K`**: this is a scope-gate refinement *inside* the mechanism that owns
+the phenomenon (rule 19 `[R-ONE-MECH]`), not a new mechanism, and **no
+`ScenarioConfig` field was added** (rule 24). Admissible on rule 14
+`[R-ACCURATE]` **only**, and it ships regardless of the residual.
+
+**The defect.** The derive's two scope gates both read eGRID's **plant**-level
+CHP allocation, which cannot see a **hybrid** — a topping CC/CT train plus a
+direct-fired package boiler on one ORIS code. Dearborn's plant-average
+`thermal_share` is 0.2396, comfortably under the 0.50 unfired ceiling, while
+**16.6 % of its metered fuel burns in three `Other boiler` units reporting zero
+gross load**, inside the rate charged to its `CC_CHP` (350 MW) and `CT_CHP`
+(165 MW) tranches. CEMS resolves that at unit grain; eGRID cannot.
+
+**The gate.** `heat_rate = (PLHTIAN + CHPCHTI) * (1 − dark_fuel_share) /
+PLNGENAN`, the share measured from CEMS at the artifact's own vintage year. A
+**share, not an MMBtu subtraction** — it needs CEMS's fuel *composition* to be
+representative, never CEMS's *level* to equal eGRID's, so the denominator stays
+`PLNGENAN` and no re-basing rides along. Zero free parameters, **no threshold**
+(rule 5), strict byte no-op where the phenomenon is absent. Rule 23
+`[R-FROZEN-DERIVE]` citation is a **scope-gate LOGIC change on measured
+grounds** (miso-118 §5(b)) — never a residual, never a source refresh.
+
+**miso-118's "it does not generalise" was too narrow.** Swept across all five
+artifact ISOs at the 2023 vintage, **three plants in three ISOs** carry it:
+MISO 55088 Dearborn 16.6 % (515 MW, 8.3465 → 6.9573), MISO 10745 MCV 0.09 %
+(1,479 MW), **NYISO 2493 East River 37.5 % (306 MW)**, NEISO 1595 Kendall 1.2 %
+(206 MW); PJM and CAISO none. K1 — **100.0 %** of dark fuel is a boiler
+`unitType` at every plant (behavioural selection, never a `unitType` allowlist,
+rule 24). K2 — persistent 2023–2025, max/min 1.13–1.80. K3 —
+`cems_vs_egrid_total` 1.0 at all four. K5 no-op fidelity — re-deriving all five
+ISOs changes the applied `heat_rate` on **exactly** the dark-fuel rows, zero
+flag churn.
+
+**Two measured exclusions the census forced into the gate**, both unit-tested:
+`dark_unreconciled` (the two meters disagree outside miso-118's [0.90, 1.10]
+band, or the whole CEMS footprint is dark — the sub-Part-75 plants
+10328/55096/55799 the derive's own header names, where CEMS meters the boilers
+and **misses the turbines**, so an unguarded share runs to 100 % and would drive
+the rate to **zero**) and `below_credited` (the share removes more than eGRID's
+entire CHP credit — which is what **excludes East River**, corrected 7.3763
+under a credited 7.4205).
+
+**A/B (`2026-08-04-miso-122a-control` / `2026-08-04-miso-122b-scope-gate`).**
+The single delta is an **input file**, not a config key, so the two
+`run_config.json` blocks are identical by design (K4 requires **zero** differing
+keys) and "did it fire?" is answered by W1 (pre-arm, `load_fleet_from_csv`
+returns 6.9573 / 6.9573 / 8.8160 exactly as pre-registered) and W2 (post-arm,
+both touched classes move every year) — not a log line. *The miso-113 warm-P1
+hazard does not apply: a heat rate enters at fleet load, before P0, so a warm P1
+is correct here.*
+
+`CC_CHP` **+0.3575/+0.2718/+0.5190 TWh** and `CT_CHP`
+**+0.2197/+0.2218/+0.2240 TWh**, displacing `CC_REGULAR` (−0.19/−0.22/−0.31),
+imports and `COAL_PRB` — the plant that was charged 16.6 % too dear now runs
+where it should. Max zonal |Δλ| **0.0491 / 0.0390 / 0.0752 $/MWh** against the
+0.10 pre-registered bar: **zero of three years clear it**. K1/K2/K4/K5/K6 and
+P1–P6 all PASS; the control is **byte-identical to the keeper**; **all nine
+criteria identical between arms**; determination `NOT-YET` in both, decided by
+the same C7 `COAL_PRB` shape FAIL this lever does not touch and claims nothing
+about.
+
+**Seam found and CLOSED in-session.** The keeper `2026-08-03-miso-117b-ct-heat`
+solved on the pre-gate artifact and became **not reproducible from HEAD** the
+moment the corrected input landed. **Arm B was OWNER-PROMOTED in the same
+session** — *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper"* —
+so **MISO keeper → `2026-08-04-miso-122b-scope-gate`**, which is the run whose
+inputs match HEAD. Determination `NOT-YET` unchanged, all nine criterion
+statuses unchanged, 12/12 free and 16/16 all classes; **the gates did not even
+regress, so this is the easy half of the owner's rule** — promoted on structural
+fidelity (rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`), never on a score. The
+predecessor's ledgered caveat budget {C3a, C3c} is carried unchanged, and the
+`measured_chp_heat_rates` × MISO matrix cell stays `K` (a scope-gate refinement
+inside a `K` mechanism is not a new verdict). Arm B's
+`calibration_attestation.json` was **re-authored for this bundle** at promotion
+rather than left inherited from miso-117b; `audit_keepers.py --iso MISO` passes
+0 failures / 0 warnings. MISO holds no `calibration-complete` marker, so rule
+22's D-5(b) re-key duty does not apply.
+
+**DO-NOT-MISREAD, extending miso-119's and miso-121's.**
+`max_abs_class_hour_mw` is **not** a mechanism magnitude at MISO: it reads
+912.5 MW here and 912.5/912.5/912.500061 at miso-119 — two unrelated levers, the
+same number to seven figures — because the statistic lands on the `import`
+class, where a single **912.5 MW seam band** flips in or out (measured on this
+arm's own 2023 output: import delta non-zero in 1,546 h, median 72 MW, exactly
+912.5 in **7**). The K3 dispatch statistic is quantised by the seam ladder and
+near-constant across levers; read the per-class **energy** deltas. The chain:
+miso-119 a percentile of the offer delta over-predicts by two orders of
+magnitude → miso-121 *binding is not marginality* → miso-122 the max class-hour
+delta is a seam quantisation constant.
+
+**Solve-path memory (corrects miso-114's attribution).** Arm A was **OOM-killed
+at 15.92 GB anon-RSS** (`total-vm` 31.76 GB) building **2025's P1** — and this
+is an **UNFLOORED keeper replay**, no `p1_fleet_prep`, no cold-rebuild branch.
+miso-114's standing note attributed the 16 GB MISO OOM to the floor branch; the
+2025 MISO year alone reaches it. **Remedy used, which touches neither the recipe
+nor the bundle span:** a 12 GB swapfile, after which the single
+`--years 2023 2024 2025` invocation completed normally (P0 cold ~280–450 s, P1
+warm ~120–155 s per year). Prefer this to miso-114's fresh-process +
+`--reuse-solved` merge — it preserves a truthful `meta.json` span by
+construction.
+
+**Governance.** Rule 15 — both arms registered this session; top-15 retention
+pruned `2026-07-30-miso-109a-control-930pin` and `2026-07-31-miso-109b-hy-level`.
+Rule 16 — one bundle each, `[2023, 2024, 2025]`, one invocation. Rule 22 —
+training years only; no out-of-training year solved, scored or read. **Rule 25
+`[R-ISO-SCOPE]` — only MISO's artifact was re-derived**; NYISO (306 MW leaves
+its applied map) and NEISO (206 MW, −1.2 %) are handed to their own lanes with
+measured numbers and **no cell outside MISO is stamped**. Rule 28 duty (b) —
+matrix cell evidence stamped this session.
+
+**Reported, not fixed — FOUR main-side failures, none with a path to this
+branch** (which touches nothing under `src/market_sim/`). Verified on a clean
+`origin/main` worktree at `9aca82b`: `test_persisted_identity.py`'s default
+cache key is **`973a0acdef818e91`** against the pinned `603c2498bf71d21d`
+(3 tests), and the same drift fails
+`test_cc_committed_offer_margin`/`test_ramp_envelope_basis`'s
+`test_default_cache_key_is_byte_stable` and
+`test_forecast_xyear_warmstart_flag::test_default_cache_key_unmoved`. **The
+drift has moved since the bisect in this session's brief**
+(`0e9fce2fb55b889f` → `973a0acdef818e91`), so a further field has landed on the
+original culprit. Separately,
+`test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`
+is stale for a different reason: it asserts NEISO is an *unknown* ISO, and NEISO
+nuclear outage data has since been intaken (three units now resolve). Both
+belong to the lanes that own them. This session's own tests pass — 22/22 CHP,
+5/5 p1-prep wiring, and 1,419 passed across `tests/unit/data` +
+`tests/unit/pipeline` with only those four.
+
+**Evidence:** `FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,
+`PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,
+`PROBE-miso122-hybrid-cogen-scope-2026-08-03.txt`,
+`_miso122_scope_gate_ab.json`, `_miso122_artifact_A.csv`,
+`scripts/probes/_miso122_hybrid_cogen_scope.py`,
+`scripts/probes/_miso122_scope_gate_ab.py`,
+`scripts/data/derive_chp_power_only_heat_rates.py`,
+`tests/unit/data/test_measured_chp_heat_rates.py`.
+
+**Live queue head:** §5.4 now has **no named, un-adjudicated, non-data-blocked
+item left**. The two named-but-unchartered successors are miso-114 §0c's
+hour-of-day-resolved seam **band availability** at the `(month × hour-of-day)`
+`MISO_SEAM_DIBA` grain — the very seam whose 912.5 MW band quantises the K3
+statistic above — and miso-118's `CT_CHP`-side plant-level rate question. The
+bounded non-solve step remains item 1's Form 580 count.
+* Next number: **miso-123**.
+
+---
+
+## miso-123 — hour-of-day-resolved seam band AVAILABILITY: chartered and CLOSED on measurement, no LP spent (2026-08-04)
+
+**Keeper UNCHANGED** — `2026-08-04-miso-122b-scope-gate`
+(`results/calibration/miso122_scopegate_B`), determination `NOT-YET`, sole FAIL
+C7 `COAL_PRB` diurnal shape, ledgered caveats {C3a, C3c}. **NO LP SOLVED**;
+rule 15 `[R-DASHBOARD]` — no run produced, nothing to register.
+
+Took the §5.4 queue's option (A): miso-114 §0c's *"one admissible successor …
+hour-of-day-resolved band availability at the `(month × hour-of-day)` grain"*.
+Pre-registered first (rule 1 `[R-STRUCT]` structural fidelity only, sized at
+4-7 % of the residual in advance so a price-inert outcome could not be the
+disqualifier), then measured. **It is refused, and the refusal generalises past
+the candidate to the entire mechanism class.**
+
+**The premise was already satisfied.** The armed p90 deliverability envelope is
+not merely hod-*resolved* (it is per-`(month × hod)` by construction) but
+hod-**shaped**: its 24-point hour-of-day profile tracks the MEASURED directed
+BA-to-BA flow at **r = +0.952/+0.987/+0.955** (PJM), +0.904/+0.973/+0.948 (SPP),
++0.814/+0.837/+0.844 (South), +0.996/+0.992/+0.986 (Manitoba) — while the
+model's own CLEARED flow tracks it at **−0.638/−0.753/−0.852** (PJM).
+Availability already points the right way; the LP's flow points the wrong way.
+That confirms miso-114's attribution to the hour-INVARIANT
+`MISO_SEAM_LADDER_BY_YEAR` **price** ladder from the other direction.
+
+**The envelope is not the marginal constraint overnight** (miso-121's statistic,
+binding separated from marginality): PJM marginal binding **0.6/2.4/1.4 %** of
+overnight hours against 12.0/28.6/11.6 % at peak. Price, not availability, is
+what stops MISO importing at night.
+
+**Candidate C1 fails its own pre-registered bars**, held-price: hod corr
+**+0.058/+0.031/+0.005** against a ≥ +0.20-in-≥2-of-3 bar (0 of 3), and annual
+seam energy **1.012/1.010/0.902 → 0.868/0.812/0.718** against a [0.85, 1.15]
+bar (fails 2024 and 2025). It buys a rounding-error of shape by deleting an
+eighth to a quarter of the seam.
+
+**The bound generalises to the WHOLE ceiling class** — the transferable result.
+Even the *forbidden* outcome pin (cleared = `min(model, measured)` hour by hour,
+computed only as an unattainable bound and never armed) reaches hod corr
+**+0.241/−0.289/+0.305** at energy ratios **0.775/0.624/0.460**, clearing the
+bar in one of three years while deleting 22/38/54 % of the seam. A ceiling can
+only CUT and the model's overnight seam is **short** (−1,116/−972/−1,009 MW),
+so every availability-ceiling construction moves the night limb AWAY from
+reality. No future MISO session need re-derive a different envelope statistic.
+
+**KILL-13 did NOT fire and the pre-registration predicted it would** — recorded
+as a wrong prediction rather than re-narrated. C1's ceiling lands within 5 % of
+the cell mean in only 11.8/0.4/0.0 % of cells and binds 3.9/12.3/3.7 % of hours,
+because PJM's 912.5 MW band width makes an 8-rung survival sum far too coarse a
+Riemann sum to collapse onto the mean. C1 is an **admissible** capability
+envelope that simply does not work — refused on rules 1/14 effectiveness, **not**
+on rule 13 admissibility.
+
+**All three mechanism classes for this defect are now spent:** price
+(`miso_pjm_lmp_import_pricing`, `R` ex ante at miso-114 §4), ceiling (closed
+here), floor (`miso_firm_import_floor`, rule-13 outcome pin — still not
+re-licensed). The defect **remains real and unfixed** (annual energy
+1.017/1.016/0.908 at hod corr +0.094/−0.455/−0.023, independently reproduced
+here on the miso-122b keeper against miso-114's +0.097/−0.453/−0.030 on
+miso-109b — two keepers, two constructions, same answer). Re-opening needs a
+**scheduling** representation of the firm/JOA transfer base that can *raise*
+overnight flow, on an identification that is not the measured net interchange
+itself.
+
+**Rule 28 duty (b), same session:** `import_shape_lever` MISO `·` → **`G`**
+(minted from MISO's own measurement, never transferred from NYISO's `G` —
+rule 25); `seam_flow_envelopes` MISO **stays `K`** and is strengthened, its
+evidence re-stamped with the first measurement of the armed envelope's own
+hour-of-day fidelity. No new `ScenarioConfig` field, so duty (c) does not arise.
+Nothing claimed about C7 `COAL_PRB`, C3a or C3c.
+
+**Evidence:** `FINDING-miso123-seam-hod-availability-closed-2026-08-04.md`,
+`PREREG-miso123-seam-hod-band-availability-2026-08-04.md`,
+`PROBE-miso123-seam-hod-availability-2026-08-04.txt`,
+`scripts/probes/_miso123_seam_hod_availability.py`.
+
+**Live queue head:** with the seam successor closed, the ONE named,
+un-adjudicated, non-data-blocked item left in §5.4 is **miso-118's `CT_CHP`-side
+plant-level rate at 55088 Dearborn** (rule 14 `[R-ACCURATE]`; one eGRID rate
+spanning two prime movers at a mixed facility). Beside it stand two bounded
+NON-solve steps: item 1's Form 580 tonnage COUNT and miso-114 §6's CAMPD
+`CT_PEAKER` + `ST_GAS` overnight-online measurement. The cross-ISO CHP handoffs
+miso-122 opened (NYISO 2493 East River, NEISO 1595 Kendall) remain those lanes'
+own sessions (rule 25) and were not touched here.
+* Next number: **miso-124**.
+## miso-124 — re-arm `dual_fuel_switching` on the current keeper: KEEPER PROMOTED, nothing regresses (2026-08-04)
+
+**KEEPER PROMOTED** — `2026-08-04-miso-122b-scope-gate` → **`2026-08-04-miso-124-dualfuel-rearm`**
+(bundle `results/calibration/miso124_dualfuel_B`). Determination **NOT-YET**,
+sole FAIL C7 `COAL_PRB` ×3y, ledgered caveats 2/3 `{C3a, C3c}` — all identical
+to the predecessor.
+
+*(Numbering note: **miso-123** is the seam hour-of-day band-availability closure
+immediately above. It was solved in parallel and was still unmerged when this
+branch was cut, so this session took the next free number rather than minting a
+duplicate lane entry; the two were later stacked so miso-123 lands first.)*
+
+**WHY THIS SESSION EXISTS — a merge race, not new science.** miso-121
+adjudicated `dual_fuel_switching` against a pre-registration pushed before any
+measurement, and the owner authorized promoting it on rule 1 `[R-STRUCT]`
+grounds. That promotion **lost a race**: miso-122 had branched off the older
+miso-117b keeper and promoted `2026-08-04-miso-122b-scope-gate`, whose
+`run_config` carries `dual_fuel_switching: false`. The mechanism was therefore
+adjudicated, validated and evidenced — but **not armed in the live keeper**.
+This session restores **only the arming**.
+
+**THE VERDICT IS NOT RE-ADJUDICATED and nothing about it is retracted.**
+`dual_fuel_switching` remains **fully identified and price-inert** at MISO's
+scored grain (`FINDING-miso121-dual-fuel-switching-2026-08-03.md`): capability
+15,827 MW = 23.3 % of MISO gas from the EIA-860 Multifuel flag, parity price
+from 12/12 measured F923 Petroleum months every year, event windows observable
+in CAMPD — and the phenomenon is ~0.002 % of MISO energy, which is *why* it is
+inert. Arming an inert-but-correct mechanism was the open **owner call**
+miso-121's own matrix note named ("an OWNER call, not a session call, and
+miso-121 did not make it"); the owner made it.
+
+**Correction to the session brief's premise, verified against main:** the brief
+stated the mechanism was "matrix-stamped K". It was **`I`** on `origin/main` —
+miso-121's stamp was lost with its promotion. This session moves the cell
+`I` → `K` (armed in keeper) with the tested-inert verdict preserved verbatim in
+the note, rather than asserting a `K` that was never there.
+
+**Method.** Single-delta `replay_keeper` re-solve of `miso122_scopegate_B`,
+`--years 2023 2024 2025` in **one** invocation (rules 12 / 16), years sequential
+inside it. A programmatic diff of the two scenario blocks returns **exactly one
+differing key**. Siblings `dual_fuel_oil_reattribution` /
+`dual_fuel_oil_daily_parity` OFF in both (rule 19 `[R-ONE-MECH]`).
+**Confirmed armed and firing** — the solve logs the cap on **371 / 371 / 369**
+gas tranches (15,827 / 15,827 / 15,825 MW), reproducing miso-121's capability
+census exactly, so the miso-113 "hook never wired into the calibration path"
+hazard is cleared **by measurement**.
+
+**NOTHING REGRESSES — the condition the session was required to test.**
+Determination, all **nine** criterion statuses and the ledgered-caveat budget
+are identical to the predecessor; C7 `COAL_PRB` is still the sole FAIL (profile
+r 0.988 / 0.979 / 0.971, off-peak CV ratio 0.464 / 0.475 / 0.311); C1 all 16/16,
+free 12/12; and there are **zero legitimacy-diagnostic verdict changes** across
+D-1 / D-2 / D-4 / D-5 / D-9 / D-10 (4 of 30 D-1 rows, 6 of 27 D-2 rows and 1 of
+3 D-4 rows move numerically, none across a threshold). A/B gates **K1–K6 all
+PASS** (`_miso124_dualfuel_rearm_ab.json`). `audit_keepers.py --iso MISO`:
+**0 failures / 0 warnings**.
+
+**ONE PRE-DECLARED EXPECTATION WAS WRONG — recorded as wrong, not re-narrated.**
+The brief pre-declared *"max zonal |ΔLMP| well under 0.01 $/MWh"*, extrapolating
+miso-121's 0.0000 / 0.0003 / 0.0000 measured on the **miso-117b** keeper.
+Measured here against **miso-122b**: **0.000000 / 1.382669 / 0.000000 $/MWh** —
+~4,600× miso-121's 2024 figure and ~138× the pre-declared bar. **This is a real
+interaction with the miso-122 scope gate**, and it is stated plainly rather than
+buried:
+
+* the **dispatch** response is essentially unchanged from miso-121 (max
+  class-hour 0.0 / 912.5 / 16.0 MW there vs **0.000 / 912.500 / 15.959 MW**
+  here — the same 912.5 MW seam-band quantisation constant miso-122 named), so
+  the mechanism does the same thing;
+* what moved is **which unit is marginal** in those hours, once the scope gate
+  re-priced 55088 Dearborn's `CC_CHP` / `CT_CHP` tranches by −16.6 %;
+* it is **6 hours of 8,760**, all mid-January — the same winter-2024 locus
+  miso-121 measured — and **one-sided** as a `min()` cap requires: price falls
+  in 23 zone-hours and rises in 6, system demand-weighted ΔLMP **−0.000159** in
+  2024 and exactly **0.000000** in 2023 and 2025.
+
+Per miso-122's DO-NOT-MISREAD the magnitude of record is **per-class ENERGY**,
+never the max class-hour (which here lands on the very import class the seam
+band quantises): 2024 `CC_REGULAR` −0.337 GWh, `CT_PEAKER` +0.318, `ST_CHP`
++0.063, `ST_GAS` −0.026, `CC_CHP` −0.016, `oil` −0.002 GWh; 2023 identically
+zero; 2025 ~0.02 GWh. That is ~0.0003 TWh against a MISO load in the hundreds of
+TWh — the same ~0.002 %-of-energy scale that makes the mechanism inert.
+
+The brief's stop condition was **gate regression**, and no gate regresses, so
+the promotion proceeded. The interaction is surfaced here and in the keeper note
+so it is reversible on inspection rather than discovered later.
+
+**Rule duties.** Rule 15 — arm registered in-session
+(`2026-08-04-miso-124-dualfuel-rearm`, top-15 retention pruned
+`2026-07-31-miso-111a-control`). Rule 16 — 2023 + 2024 + 2025 in one bundle.
+Rule 26 — arming visible in `run_config.json`. Rule 22 — training years only;
+MISO holds no `calibration-complete` marker, so no out-of-training year was
+solved, scored or read and no D-5(b) re-key is owed. Rule 28b — the
+`dual_fuel_switching` MISO cell and the matrix keeper header are stamped in this
+session. **Nothing is claimed for any criterion**; C7 `COAL_PRB` is untouched
+and stays routed to the data-blocked miso-78/79 lane, with the contract-period
+tonnage route refused (miso-103 / 104) pending the Form 580 count — a **data
+ask, not a solve**.
+
+**Evidence:** `_miso124_dualfuel_rearm_ab.json`,
+`scripts/probes/_miso124_dualfuel_rearm_ab.py`,
+`scripts/gen_miso124_attestation.py`,
+`results/calibration/miso124_dualfuel_B/{run_config,meta,metrics,legitimacy_diagnostics,calibration_attestation}.json`.
+* Next number: **miso-125**.
+
+---
+
+## miso-125 — the CHP prime-mover rate split: `R` on the repair, redirected on the cause (2026-08-04, NO LP)
+
+**Lever.** §5.4's queue head as stamped by miso-123: miso-118's `CT_CHP`-side
+plant-level rate at 55088 Dearborn — one eGRID rate spanning two prime movers at
+a mixed facility. Rule 14 `[R-ACCURATE]` grounds only. A **grain** change inside
+the already-armed `measured_chp_heat_rates`, so no new `ScenarioConfig` field and
+no new matrix row (the miso-122 shape, rule 19 `[R-ONE-MECH]`-correct).
+
+**Outcome: adjudicated with ZERO solves, and nothing shipped.** Keeper unchanged
+at `2026-08-04-miso-124-dualfuel-rearm`; the derive script is unmodified and all
+five ISO artifacts are byte-identical.
+
+**The defect is real** (KE2): 55088 is the **only** applied multi-class plant in
+MISO — `CC_CHP` 350.0 MW + `CT_CHP` 165.0 MW = 515.0 MW, both `ok`, both carrying
+the same plant-grain **6.9573**, which is at the floor of MISO's `CC_CHP` band and
+**below the entire `CT_CHP` band**. (50973 / 56309 / 58161 are multi-class too but
+`not_unfired_topping` on every row, so they apply nothing.)
+
+**The pre-registered repair is refuted by its own stated assumption.** The
+construction — `hr_m = hr_plant × (f_m/g_m)` over CEMS power-train units, chosen
+because it preserves `Σ_m g_m·hr_m = hr_plant` exactly (measured identity error
+3.0e-05) and needs no gross-to-net *level* reconciliation — rests on the
+gross-to-net factor being common **across families at one plant** (prereg §2
+property 2). KE3 measured it **LIVE** (max |rel delta| 4.76 / 3.05 / 3.17 % vs a
+pre-declared 2 % band) but **backwards from turbine physics**: `hr_CC` 7.09 >
+`hr_CT` 6.63, matching the per-unit CEMS gross rates (GT3100 10.47, GT2100 9.94
+vs GTP1 9.55). KE4 did not rescue it either — `CT_CHP` takes **8,466 distinct
+values in 8,760 hours**, so the class is nearly a free variable, not pinned.
+
+**KE-R (not pre-registered; forced by the sign) found the cause in arithmetic.**
+eGRID `PLNGENAN` 5,259,825 net MWh ÷ CEMS power-train **gross** 3,648,140 =
+**1.4418** — net cannot exceed gross on the same machines — leaving 1,611,685 MWh
+inside eGRID and outside CEMS; the implied capacity factor on the LP's own
+515 MW is **116.6 %**. EIA-860 names the machine: **`ST1`, prime mover `CA`, Unit
+Code `SINT` shared with the two NG `CT` turbines, 250 MW, Energy Source 1
+`BFG`** — the steam part of the combined-cycle block, with no CEMS stack and no
+fleet row. `classify_plant` keys on Energy Source 1, so `BFG` falls to the
+residual `OTHER` bucket. `g_CC` is therefore structurally understated while
+`f_CC` carries the fuel, and GTP1 (standalone simple-cycle) has no such omission.
+
+**No repaired split was shipped**, because attributing `ST1`'s output would decide
+the answer and is not measurable here: CAMPD `unitType` argues the steam belongs
+to the `CC` family, but a let-down turbine on the three dark process boilers
+(7.3 M MMBtu) cannot be excluded. Rule 14's named different-boundary exception —
+not applied, and not replaced by a guess.
+
+**Successor NAMED, not chartered.** The census generalises the diagnostic (a `CA`
+generator whose Energy Source 1 is not `NG` but which shares a Unit Code with `NG`
+`CT` siblings), with presence decided against each plant's **EIA-860 totals**
+rather than block siblings: **MISO carries 290.4 MW measurably missing** — 55088
+`ST1` 250.0 MW `BFG` and 50973 Motiva `GN31`/`GN32`/`GN33` 40.4 MW `OG`. **1004
+Edwardsport is NOT a defect** (its 555 MW `SGC` steam part is represented, as
+`COAL`) — it would have been a 555 MW false positive, and only the fleet-presence
+cross-check caught it. This is a fleet-build change at a different seam and needs
+its own prereg; its A/B must re-derive 55088's rate onto the repaired denominator
+in the same change, since the two defects share one cause.
+
+**Rule duties.** Rule 15 — **no run was produced**; no LP was built, no solve
+launched, no bundle created, so no dashboard registration is owed, stated
+explicitly rather than left implicit. Rule 16 — n/a (no solve). Rule 22 —
+training years only; MISO holds no `calibration-complete` marker and no
+out-of-training year was solved, scored or read. Rule 23 `[R-FROZEN-DERIVE]` —
+the measured grounds **refuse** the change, so the derive stays frozen. Rule 25 —
+only MISO is stamped; 54912 Martinez 20.0 MW (CAISO) and 6081 Stony Brook 96.0 MW
+(NEISO, undetermined) are handed off unadjudicated. Rule 28b — the
+`measured_chp_heat_rates` MISO evidence and the §5.4 queue prose are stamped in
+this session. **Nothing is claimed for any criterion**; C7 `COAL_PRB` untouched.
+
+**Method note worth carrying.** Both pre-declared zero-solve inertness routes
+failed to fire, and the lever was still killed with zero solves — by a
+**validity** check on the construction's own written-down assumption, not by a
+magnitude. Writing the assumption into the prereg is what made it falsifiable.
+
+**Evidence:** `PREREG-miso125-chp-prime-mover-split-2026-08-04.md` (commit
+`77f18a37`), `FINDING-miso125-chp-prime-mover-split-2026-08-04.md`,
+`scripts/probes/_miso125_chp_prime_mover_split.py`,
+`_miso125_prime_mover_split.json`,
+`PROBE-miso125-chp-prime-mover-split-2026-08-04.txt`.
+* Next number: **miso-126**.

@@ -5307,4 +5307,211 @@ Evidence: `results/calibration/FINDING-caiso162-per-year-import-caps-2026-08-03.
 `PRECHECK-caiso162-per-year-import-caps-2026-08-03.md`,
 `PRECHECK-caiso162-ADDENDUM-A-samehead-control-2026-08-03.md`.
 
-Next number: caiso-163 (caiso-160 unclaimed, see above).
+---
+
+## caiso-163 — asymmetric WECC path ratings (2026-08-03) — **KEPT, PROMOTED**
+
+**Keeper → `2026-08-03-caiso163-asym-path-ratings`** (control
+`2026-08-03-caiso163-control-asymoff`). Determination **CALIBRATED-WITH-CAVEATS**,
+carried over unchanged: 2 ledgered / 0 FAILs / protective 0 of 1, no new slot spent.
+`audit_keepers.py --iso CAISO` PASS (0 failures, 0 warnings).
+
+**Mechanism.** `caiso_asymmetric_path_ratings` — CAISO's two INTERNAL north–south
+paths move from the **symmetric** TTC estimate the reduced topology ships
+(`iso_configs.py:369-378`: Path 15 5,400 MW, Path 26 4,000 MW) to their
+**published WECC Path Rating Catalog directional ratings**: Path 15
+(Midway–Los Banos) **3,265 N→S / 5,400 S→N**, Path 26 (Midway–Vincent)
+**4,000 N→S / 3,000 S→N**. Each shipped `ttc_mw` was only ONE direction's rating,
+leaving the reverse direction up to **65 % too loose**. Rule 14 `[R-ACCURATE]`
+measured-over-estimate; **zero free parameters** (all four numbers already
+committed in `CAISO_PATH_DIRECTIONAL_RATINGS`; nothing swept, no residual
+consulted; DOF ledger carried verbatim at 11 entries / 9 residual, asserted by
+`scripts/gen_caiso163_attestation.py`).
+
+**Wiring, checked BEFORE solving — and the answer differed from caiso-162's.**
+The backcast call site already existed: `interchange/spec.py:1988` inside
+`apply_interchange_topology`, reached from `run_calibration.py:2037` in the
+`priced_interchange` branch the CAISO keeper takes. A no-LP probe
+(`scripts/probes/caiso163_wiring_probe.py`) replayed the calibration lane's exact
+topology sequence and resolved **2 directional limits to non-empty LP flow-column
+groups** in all three years. What was missing was only the CLI/kwarg channel,
+wired across **seven** sites (five in `run_calibration_full.py` plus the argparse
+flag, and the two `run_calibration.py` sites caiso-162 lost a solve to).
+
+**No zero-delta year exists** — the published ratings are year-invariant, so every
+solve year is live. The prereg replaced the free control with a **pre-solve
+structural assertion**, passing before either arm solved: with the flag off,
+`apply_caiso_asymmetric_path_limits` returns the **SAME OBJECT** (identity, not
+equality). That is what licenses arm A as a clean control.
+
+**Liveness — on FLOWS, never on prices (the caiso-162 lesson, applied ex ante).**
+
+| path · year | control max N→S | h over cap | control max S→N | h over cap | arm h over ANY cap |
+|---|---:|---:|---:|---:|---:|
+| Path 15 · 2023/24/25 | 4,119 / 4,443 / 4,597 | **294 / 450 / 380** | 5,400 / 5,400 / 5,400 | 0 / 0 / 0 | **0 / 0 / 0** |
+| Path 26 · 2023/24/25 | 4,000 / 4,000 / 4,000 | 0 / 0 / 0 | 3,514 / 4,000 / 2,946 | **6 / 11 / 0** | **0 / 0 / 0** |
+
+The incumbent configuration moved power **past a published WECC rating in 1,141
+path-hours**; under the keeper that is **zero in every hour of every year**, and
+the paths bind as real paths do (Path 15 N→S 307/489/411 h; Path 26 N→S
+1,656/1,987/2,213 h — roughly a quarter of hours, the midday solar belly).
+
+**Structural gates.** Path 15 binds at all for the first time: hours with
+NP15 ≠ ZP26 go **3 → 237**, **0 → 414**, **1 → 284**, and the 2024
+byte-identity breaks. Level effect nil: **−0.0036 % / −0.0147 % / +0.0102 %**.
+**Zero gate flips** — all nine criteria identical to the control, C3a-2025
+unchanged at **+12.0 %**, protective C6/C7/C8 PASS.
+
+**THE ROOT-CAUSE ISSUE THIS OPENS — the session's real finding.** S3/S4 move
+marginally the **wrong** way and the published ratings **stay in anyway**, exactly
+as the prereg §4.4 pre-committed before any arm solved. Prereg §3 also registered,
+before solving, that the two legs push the ISO mean in **opposite** directions and
+predicted **no** sign; the solve resolves it — the Path-15 N→S leg dominates,
+trapping cheap northern energy in NP15. But the magnitudes are what matter: the
+**real** Path 15 separates NP15 from ZP26 in **~100 %** of hours by
+**+5.95 / +8.58 / +5.73 $/MWh**, against this keeper's **−0.077 / −0.109 /
+−0.084**; NP15 − SP15 goes −1.168/−0.913/−0.770 → −1.226/−0.983/−0.822 against a
+measured **+2.34 / +7.99 / +6.01**. So the published ratings are **NOT** the
+binding cause of the model's missing north–south basis — fixing them recovers
+~1 % of it. Under rules 14 and 1 `[R-STRUCT]` that is a **discovered bug**, not a
+revert: the symmetric estimate was silently absorbing a defect that lives
+elsewhere. **Named open successor (hypothesis, NOT adjudicated, no solve spent):**
+the reduced **two-link N–S topology and zonal aggregation**, which cannot
+reproduce hourly Path-15 congestion whatever the ratings are. It needs its own
+pre-registration and its own arm. No compensating adder, haircut or offset was
+added to hide the gap (rules 1/13), and the gap is **not** claimed as closed.
+
+**NOT A C3a ARM** and must not be reported as one — C3a-2025 is unchanged and the
+level effect is 0.01 %.
+
+**Governance.** Config drift is **exactly one field** against **both** the
+incumbent and the same-HEAD control, with zero schema drift on either side. The
+four owner-decision default flips (D-1/D-2/D-3a) were already carried by the
+incumbent so they do not even appear as a drift; asserted anyway on both grounds
+(forecast-gated, unreachable at `mode="backcast"`; identical across arms). CAISO
+holds **no** `complete` marker, so no `calibration-complete` re-key (rule 22
+D-5(b) applies to `complete` ISOs only) and no marker written; the **holdout spend
+freeze is ACTIVE** — 2023/2024/2025 only (rule 16, one invocation and one bundle
+per arm, years sequential, in-session).
+
+**Correction to the caiso-161 census's premise, recorded not buried.**
+"NP15==ZP26 byte-identical all years" holds for **2024 only** — 2023 and 2025
+differ in 3 and 1 hours (max |Δ| 1.14 and 4.29 $/MWh). The finding that Path 15
+essentially never bound is unchanged; the prereg's gates were written against the
+measured 0.034 % / 0 % / 0.011 % rather than against zero.
+
+**DO-NOT-REDO:** do not re-test `caiso_asymmetric_path_ratings` (keeper). The
+caiso-161 lever queue is now **empty of never-adjudicated items**.
+
+Evidence: `results/calibration/FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md`,
+`PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md`.
+
+---
+
+## caiso-164 — CAISO zonal marginal-loss surface (2026-08-04) — **KEEPER**
+
+**Keeper `2026-08-04-caiso164-zonal-loss-surface`** (control
+`2026-08-04-control-flagoff-lossless-baseline`), determination
+**CALIBRATED-WITH-CAVEATS** carried over unchanged — 2 ledgered, 0 FAILs,
+protective 3/3 PASS, **zero criterion flips**. Prereg
+`PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md` pushed at `eda8ebe8`
+**before either arm solved**, with the rule-14 disposition stated before the
+result.
+
+**Headline: CAISO's north-south basis carries the correct sign for the first
+time.** Mean NP15 − ZP26 goes **-0.0768 / -0.1086 / -0.0841 -> +0.2362 /
++0.1258 / +0.1113 $/MWh** against a same-HEAD control; hours separated
+237/414/284 (2.7/4.7/3.2 %) -> **3,332/2,522/2,388 (38.0/28.8/27.3 %)**; hours
+with NP15 **dearer** — the measured direction — 3/0/1 -> **3,082/2,120/2,108**.
+Zero free parameters.
+
+**§0 DIAGNOSIS FIRST, NO LP — and it overturned the leading hypothesis.**
+caiso-163 §5 left the basis miss open and named ONE untested hypothesis (reduced
+N-S topology / zonal aggregation). This session decomposed instead. CAISO
+publishes the split directly (`LMP = MCE + MCC + MCL`; MCE identical at every
+node, measured to `0.00e+00`), so the hub basis is EXACTLY `dMCC + dMCL`:
+NP15-ZP26 is **80.2/87.2/81.7 % congestion, 19.8/12.8/18.3 % loss**
+(+1.176/+1.102/+1.049 of +5.947/+8.576/+5.727 $/MWh). The congestion majority is
+a **FREQUENCY-AND-DIRECTION** miss, not magnitude (freq 0.035-0.054x vs
+magnitude 0.26-0.44x): in the top decile of measured `|dMCC|` — **100/100/99.9 %
+of it S->N** — the pre-arm model separated in **0 of 864/879/876 hours** across
+the whole lag sweep, and its rare separations ran 99-100 % N->S, the opposite
+direction. The north was roughly right; the **south never got cheap** (2024
+local h12: measured NP15 26.10 / ZP26 5.26 vs model 19.40 / 19.40), all five
+zones pricing as one copperplate.
+
+**The mechanism.** `caiso_zonal_loss_surface` — the model was **lossless**, i.e.
+carrying the *estimate* that losses are zero, so rule 14 `[R-ACCURATE]` governs.
+`dev_z,m = SUM(MCL_z)/SUM(MCE)`, the frozen MISO/PJM estimator re-derived on
+CAISO's own committed DAM component record
+(`scripts/data/derive_caiso_loss_surface.py` -> `CAISO_loss_surface.csv`, 240
+rows). Per rule 28(d) the PJM `K` / MISO `R` verdicts did NOT fill CAISO's cell —
+it entered as `U` and derived its own parameters. NP15 is the least-negative
+deviation, so **the lossy direction is S->N**, the same direction the measured
+congestion binds in — a property of the data, not a choice. DOF ledger carried
+verbatim at 11/9.
+
+**Checked before solving** (the caiso-162/163 lesson, on physical observables
+never prices): derive acceptance **6/6 pair-years** in the miso-76 B1 band at
+1.04-1.06x; wiring probe exit 0 on all five checks — links 6->8, the builder
+REFUSES an unsplit topology, the loss orients S->N (Path 15 eps
+0.01936/0.02516/0.02645, N->S clamped), the **caiso-163 published Path 15 /
+Path 26 ratings survive the one-way split exactly** (both orientations, signs
+[-1,+1], caps unchanged), and the WECC seam is untouched.
+
+**Gates.** L1 PASS — the control carried **6.079/4.352/3.820 TWh** of real S->N
+Path-15 energy over 3,277/2,834/2,733 h, so the mechanism was not inert. L3 PASS
+— zero treatment hours over any published cap. S1/S2/S3 PASS all years; S2's
+pre-registered **ceiling** (the arm may not move the basis by more than the
+measured `dMCL`) used only 26.6/21.3/18.6 %. Recovered 26.6/21.3/18.6 % of the
+measured loss component, 5.26/2.73/3.41 % of the total basis. Load-weighted
+lambda +0.372/+0.315/+0.105 % — the expected direction, losses consume energy.
+
+**CARRIED CAVEATS, recorded not buried.** (1) **S4 misses in 2023**:
+NP15-SP15_rest -1.2265 -> -1.5665, away from the measured +2.337, while
+2024/2025 move toward it — prereg §5 disposition 4 pre-committed that S1-S4 are
+MEASUREMENTS, not promotion criteria. (2) **2 of 5 zones interpolated**:
+`LA_BASIN` and `SDGE` inherit the SP15 generation hub's deviation under rule 14's
+reconciliation clause because CAISO's DLAP component record is absent; the three
+zones carrying the quantity under test each have their own measured hub. (3) The
+basis is **not closed** and no compensating adder was added. (4) **Not a C3a
+arm** — C3a-2025 unchanged, still the owner's caiso-141 A2 ledgered caveat.
+
+**Governance.** Config drift is **exactly one field** against the same-HEAD
+control with **zero schema drift either way**. Against the incumbent (an older
+HEAD) the field is `arm_only` because it did not exist, alongside three fields
+merged by other sessions since; that hole is **closed rather than waived** — the
+attestation generator ASSERTS every inherited field holds its `ScenarioConfig`
+default. Owner flips D-1/D-2/D-3a asserted on both grounds. CAISO holds **no**
+`complete` marker, so no `calibration-complete` re-key (rule 22 D-5(b) is for
+`complete` ISOs only); the **holdout spend freeze is ACTIVE** — 2023/2024/2025
+only, asserted on both bundles *and* the derived surface.
+
+**Process note.** The first control run was **OOM-killed** (kernel: `Killed
+process 8145 (python)`, anon-rss 8.85 GB) while finalizing 2025 with both arms
+resident on a 15 GB box; it wrote no bundle. The treatment had already completed
+and is unaffected. The control was re-solved **alone**. Still a genuine same-HEAD
+control: the only commit in between (`5f02556e`) touched two probe/attestation
+scripts the LP never imports. *Operational: stagger CAISO 2023-2025 replay pairs
+rather than fully overlapping them.*
+
+**NEW DATA BLOCKER FILED — CAISO intra-zonal congestion.** The ~80-87 %
+congestion majority is not reachable from `data/raw`. §0 attributes it to an
+**intra-SP15** corridor: `LA_BASIN` carries 77-83 TWh of load at a 0.11-0.12
+belly renewable/load ratio and absorbs the entire ZP26+SP15_rest belly surplus
+(their own ratios 2.1-3.5, local surplus in ~2,850 of 2,920 belly hours) through
+a **never-binding 12,008 MW one-way link**, so no surplus reaches Path 15. Needs
+CAISO nodal/DLAP LMP components or published intra-SP15 transfer limits — only
+the three `TH_*_GEN-APND` hubs are committed hourly. **Not closable by an adder,
+haircut or residual-tuned value** (rules 1/13). Joins C3a-2025 and C3c-2023/24.
+
+**DO-NOT-REDO:** do not re-test `caiso_zonal_loss_surface` (keeper) or
+`caiso_asymmetric_path_ratings` (keeper, superseded-not-retracted and still
+armed). Do **not** charter an N-S topology lever against the congestion
+residual — §0 measured that topology is not where the recoverable component was.
+
+Evidence: `results/calibration/FINDING-caiso164-zonal-loss-surface-2026-08-04.md`,
+`PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md`,
+`results/calibration/_caiso164_ab_gates.json`.
+
+Next number: caiso-165 (caiso-160 unclaimed, see above).
