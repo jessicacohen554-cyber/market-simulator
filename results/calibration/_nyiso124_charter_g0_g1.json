@@ -738,5 +738,210 @@
     "basis_reproduced_share": 0.0027
    }
   ]
+ },
+ "flows": {
+  "available": true,
+  "source_bundle": "nyiso116_c3c_unitlayer",
+  "provenance": "zero-delta replay of the nyiso-113 keeper recipe, G1 replay fidelity FAILED (max |dp| 10.5/10.6/9.0 $/MWh), licensed by nyiso-116 for C3c tail work on G2. Used here ONLY for link saturation and gross flow magnitude, where a marginal-tie reshuffle cannot move a ~100 %-of-hours bound or a 2-3x flow gap; the measured side needs no model. Commit the layer on the current keeper's own replay to remove the caveat (unit_network_layer_sidecar NYISO is already K).",
+  "years": [
+   {
+    "year": 2023,
+    "links": [
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "limit_mw": 1600.0,
+      "model_flow_p50": 1600.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 0.9932,
+      "measured_interfaces": [
+       "SCH - PJ - NY",
+       "SCH - NE - NY"
+      ],
+      "measured_flow_p50": 290.2,
+      "measured_flow_mean": 275.1
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "limit_mw": 1000.0,
+      "model_flow_p50": 1000.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 1.0,
+      "measured_interfaces": [
+       "SCH - PJM_HTP",
+       "SCH - PJM_VFT"
+      ],
+      "measured_flow_p50": 730.0,
+      "measured_flow_mean": 671.4
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "limit_mw": 1200.0,
+      "model_flow_p50": 1200.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 0.9982,
+      "measured_interfaces": [
+       "SCH - PJM_NEPTUNE",
+       "SCH - NPX_CSC",
+       "SCH - NPX_1385"
+      ],
+      "measured_flow_p50": 849.4,
+      "measured_flow_mean": 843.9
+     },
+     {
+      "link": "NYISO_external>Upstate_West",
+      "limit_mw": 3000.0,
+      "model_flow_p50": -1003.1,
+      "model_util_p50": -0.3344,
+      "model_share_hours_at_bound": 0.0,
+      "measured_interfaces": [
+       "SCH - HQ - NY",
+       "SCH - OH - NY"
+      ],
+      "measured_flow_p50": 668.2,
+      "measured_flow_mean": 749.4
+     }
+    ],
+    "central_east_model_util_p50": 0.4695,
+    "central_east_measured_util_p50": 0.8068,
+    "downstate_model_mw": 3800.0,
+    "downstate_measured_p50_mw": 1869.6,
+    "upstate_model_p50_mw": -1003.1,
+    "upstate_measured_p50_mw": 668.2,
+    "net_model_mw": 2796.9,
+    "net_measured_mw": 2537.8
+   },
+   {
+    "year": 2024,
+    "links": [
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "limit_mw": 1600.0,
+      "model_flow_p50": 1600.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 1.0,
+      "measured_interfaces": [
+       "SCH - PJ - NY",
+       "SCH - NE - NY"
+      ],
+      "measured_flow_p50": 306.0,
+      "measured_flow_mean": 327.4
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "limit_mw": 1000.0,
+      "model_flow_p50": 1000.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 1.0,
+      "measured_interfaces": [
+       "SCH - PJM_HTP",
+       "SCH - PJM_VFT"
+      ],
+      "measured_flow_p50": 655.8,
+      "measured_flow_mean": 671.4
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "limit_mw": 1200.0,
+      "model_flow_p50": 1200.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 0.9946,
+      "measured_interfaces": [
+       "SCH - PJM_NEPTUNE",
+       "SCH - NPX_CSC",
+       "SCH - NPX_1385"
+      ],
+      "measured_flow_p50": 810.6,
+      "measured_flow_mean": 802.0
+     },
+     {
+      "link": "NYISO_external>Upstate_West",
+      "limit_mw": 3000.0,
+      "model_flow_p50": -1520.0,
+      "model_util_p50": -0.5067,
+      "model_share_hours_at_bound": 0.0,
+      "measured_interfaces": [
+       "SCH - HQ - NY",
+       "SCH - OH - NY"
+      ],
+      "measured_flow_p50": 453.9,
+      "measured_flow_mean": 537.3
+     }
+    ],
+    "central_east_model_util_p50": 0.1968,
+    "central_east_measured_util_p50": 0.6151,
+    "downstate_model_mw": 3800.0,
+    "downstate_measured_p50_mw": 1772.4,
+    "upstate_model_p50_mw": -1520.0,
+    "upstate_measured_p50_mw": 453.9,
+    "net_model_mw": 2280.0,
+    "net_measured_mw": 2226.3
+   },
+   {
+    "year": 2025,
+    "links": [
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "limit_mw": 1600.0,
+      "model_flow_p50": 1600.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 0.9999,
+      "measured_interfaces": [
+       "SCH - PJ - NY",
+       "SCH - NE - NY"
+      ],
+      "measured_flow_p50": 490.5,
+      "measured_flow_mean": 475.2
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "limit_mw": 1000.0,
+      "model_flow_p50": 1000.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 1.0,
+      "measured_interfaces": [
+       "SCH - PJM_HTP",
+       "SCH - PJM_VFT"
+      ],
+      "measured_flow_p50": 760.8,
+      "measured_flow_mean": 731.5
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "limit_mw": 1200.0,
+      "model_flow_p50": 1200.0,
+      "model_util_p50": 1.0,
+      "model_share_hours_at_bound": 0.9809,
+      "measured_interfaces": [
+       "SCH - PJM_NEPTUNE",
+       "SCH - NPX_CSC",
+       "SCH - NPX_1385"
+      ],
+      "measured_flow_p50": 788.6,
+      "measured_flow_mean": 776.7
+     },
+     {
+      "link": "NYISO_external>Upstate_West",
+      "limit_mw": 3000.0,
+      "model_flow_p50": -1688.5,
+      "model_util_p50": -0.5628,
+      "model_share_hours_at_bound": 0.0,
+      "measured_interfaces": [
+       "SCH - HQ - NY",
+       "SCH - OH - NY"
+      ],
+      "measured_flow_p50": 148.0,
+      "measured_flow_mean": 251.3
+     }
+    ],
+    "central_east_model_util_p50": 0.2534,
+    "central_east_measured_util_p50": 0.5907,
+    "downstate_model_mw": 3800.0,
+    "downstate_measured_p50_mw": 2039.9,
+    "upstate_model_p50_mw": -1688.5,
+    "upstate_measured_p50_mw": 148.0,
+    "net_model_mw": 2111.5,
+    "net_measured_mw": 2187.9
+   }
+  ]
  }
 }
