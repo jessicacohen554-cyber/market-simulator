@@ -81,23 +81,30 @@ CSV_BASE = (
 #: Train years only (CLAUDE.md rule 22).
 DEFAULT_YEARS = (2023, 2024, 2025)
 
-#: The endpoint answers a missing/unpublished operating day either with a stub
-#: body (~31 bytes) or with a bare 404 -- the same publication-gap pattern the
-#: sibling ``da-energy-offers`` and ``da-demand-bids`` READMEs document.  A 404
-#: here is an ABSENT DAY, not a transport failure: it is recorded and skipped
-#: without the session refresh a real error triggers.
+#: A genuinely unpublished operating day comes back as a stub body (~31 bytes)
+#: with HTTP 200 -- the same publication-gap pattern the sibling
+#: ``da-energy-offers`` and ``da-demand-bids`` READMEs document.
 MIN_REAL_BYTES = 5_000
 
 
-class DayNotPublished(Exception):
-    """The operating day is absent from the static historical-report tree."""
+class TransientMiss(Exception):
+    """A 404 from the static report tree.
+
+    Measured 2026-08-03: these are NOT source gaps.  Days that 404'd on one
+    pass returned full ~0.35 MB reports on the next, and a complete 2023-2025
+    run finished with **zero** 404s -- so a 404 is a transient serving failure,
+    not an absent day.  It is therefore counted and skipped CHEAPLY (no five-
+    second sleep, no session rebuild -- those cost more than the retry) and the
+    file is left unwritten so a re-run picks the day up.  Treating it as
+    "absent" would silently drop real operating days.
+    """
 
 
 def fetch_day(opener: urllib.request.OpenerDirector, day: dt.date) -> bytes:
     """Fetch one operating day's import/export CSV, validating the preamble.
 
     Raises:
-        DayNotPublished: the report tree has no file for this operating day.
+        TransientMiss: the report tree 404d this day on this pass.
     """
     url = CSV_BASE % f"{day:%Y%m%d}"
     req = urllib.request.Request(url, headers={"Referer": REPORT_PAGE})
@@ -106,7 +113,7 @@ def fetch_day(opener: urllib.request.OpenerDirector, day: dt.date) -> bytes:
             body = resp.read()
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            raise DayNotPublished(f"{day:%Y-%m-%d}") from None
+            raise TransientMiss(f"{day:%Y-%m-%d}") from None
         raise
     if len(body) >= MIN_REAL_BYTES and b"Import and Export" not in body[:200]:
         raise RuntimeError(f"unexpected response (not the impexp CSV) from {url}")
@@ -130,7 +137,7 @@ def main(argv: list[str] | None = None) -> int:
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     opener = _opener()
-    n_new = n_skip = n_err = n_empty = n_absent = 0
+    n_new = n_skip = n_err = n_empty = n_miss = 0
     for year in args.years:
         day = dt.date(year, 1, 1)
         while day.year == year:
@@ -140,8 +147,8 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 try:
                     body = fetch_day(opener, day)
-                except DayNotPublished:  # a source gap, not a failure
-                    n_absent += 1
+                except TransientMiss:  # retry-able; skip cheaply, leave unwritten
+                    n_miss += 1
                     day += dt.timedelta(days=1)
                     continue
                 except Exception as e:  # transient endpoint hiccups: log, go on
@@ -161,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
             day += dt.timedelta(days=1)
     print(
         f"done: {n_new} fetched ({n_empty} empty postings), {n_skip} present, "
-        f"{n_absent} not published (404), {n_err} errors -> {RAW_DIR}"
+        f"{n_miss} transient 404s (re-run to fill), {n_err} errors -> {RAW_DIR}"
     )
     return 1 if n_err else 0
 

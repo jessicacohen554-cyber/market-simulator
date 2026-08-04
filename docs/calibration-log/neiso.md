@@ -1445,4 +1445,138 @@ introduced or re-derived; the NEISO frontier declaration and the C3c owner
 routing (CHARTER-neiso75 §5) are exactly where neiso-76 left them. **This
 licenses nothing.**
 
-Next shorthand: **neiso-79.**
+
+---
+
+## neiso-79 — 2026-08-03 — THE CROSSING QUANTITY IS RECONCILED: neiso-76 §D's 66/73/54 % traversal falls to 30/37/38 % once the real book is crossed at the real quantity — DIRECTION survives, MAGNITUDE does not; and ISO-NE publishes NO day-ahead cleared external series anywhere
+
+**Session type:** measurement/intake prerequisite for matrix §5.6 item **5b**.
+**NO LP, no solve, no bundle, no dashboard registration, no `ScenarioConfig`
+change, no default altered, no derive re-run, no cell verdict stamped.**
+Keeper unchanged at `2026-08-03-neiso-caiso156-meter-screen`. Deliverables:
+`results/calibration/PREREG-neiso79-crossing-quantity-2026-08-03.md` (committed
+BEFORE any statistic was computed),
+`FINDING-neiso79-crossing-quantity-2026-08-03.md`, probe
+`scripts/probes/_neiso79_crossing_quantity.py`, record
+`PROBE-neiso79-crossing-quantity-2026-08-03.txt`.
+
+**HARD STOP OBSERVED.** Item 5b needs an owner green-light and none was in
+hand, so under §5.6 frontier discipline this session landed the prerequisite
+and stopped. No lever, no arm, no G-gate on the magnitude.
+
+**(a) THE REAL DATA GAP, ANSWERED: ISO-NE publishes no day-ahead CLEARED
+external-transaction or net-interchange series, anywhere public.** Verified
+against the full ISO Express Pricing / Grid / Load & Demand report trees and
+the Web Services v1.1 endpoint list: every interchange report on the Grid tree
+is real-time/actual (*Real-Time Actual Scheduled Interchange*, *External
+Interface Metered Data*, and the 15- and 5-minute variants), Load & Demand's
+only DA cleared quantity is *Hourly Day-Ahead Cleared Demand*, and Pricing's
+only external report is the **submitted** book. The API adds
+`/actualinterchange`, `/hourlybainterchange`, `/fiveminuteexternalflow` — all
+actual — and `/hbimportexport`, the same submitted report. **EIA-930
+interchange was NOT substituted** (actual net interchange is a different
+quantity at a different grain from DA scheduled imports — the rule-14
+`[R-ACCURATE]` grain-misalignment trap); `derive_neiso_import_tranches.py` is
+untouched.
+
+**(a′) The available input turned out to be BETTER than the missing one.** New
+gitignored corpus `data/raw/NEISO-AS/da-import-export/` (README + committed
+fetcher `scripts/data/fetch_neiso_da_import_export.py`; 1,090 day-files, 13
+empty postings, 0 unpublished): the submitted DA import-offer/export-bid book,
+`Direction` × `Transaction Type` (`DISPATCHABLE` priced / `FIXED`
+self-scheduled) × price × MW. Imports enter ISO-NE's DA market **as priced
+supply offers**, so crossing them jointly with the internal book clears import
+depth **endogenously** — which **removes the free depth parameter entirely**
+rather than re-assuming neiso-76's flat 3 GW. Ladder semantics identified from
+the file (645 of 1,280 keys multi-row ⇒ incremental block widths), not assumed.
+
+**(b) The construction, frozen in the prereg.** ISO-NE's DA balance makes the
+internal book's crossing quantity `q*(λ) = Q_cleared_dem − Q_imp(λ) − Q_inc(λ)`
+**price-dependent** — a fixed point, not a lookup — so the probe crosses the
+**combined** supply book (internal offers + import offers + INC virtuals)
+against the published cleared-demand line. The composition of that published
+series was **identified, not assumed** (the miso-105 discipline): C1/C4
+refuted in every year; **C2 and C3 are statistically indistinguishable** at
+NEISO because cleared exports (~1–2 GW) and INC virtual supply (~1.3–1.9 GW)
+nearly cancel. C2 wins 2023–24, C3 wins 2025 ⇒ **UNIDENTIFIED between them**,
+both reported.
+
+**(c) THE RESULT.** 864 operating days in all three books, 20,733 hours
+(300 / 288 / 276 days — 2023 `OK`, 2024–25 `UNDER-SAMPLED` but above the
+prereg's 200-day floor).
+
+| year | corrected hod range | share of measured DA | n76 §D at demand | n76 at demand−3 GW | keeper |
+|---|--:|--:|--:|--:|--:|
+| 2023 | $7.71 (HE21) | **29.7 %** | 65.6 % | 36.4 % | 27.1 % |
+| 2024 | $10.63 (HE19) | **36.7 %** | 72.9 % | 33.6 % | 23.5 % |
+| 2025 | $16.78 (HE19) | **37.7 %** | 54.1 % | 30.9 % | 29.9 % |
+
+**THE CONTROL IS WHAT MAKES THIS A STATEMENT ABOUT THE QUANTITY.** The same
+probe, same 864 days, crossing the internal book alone at EIA-930 demand —
+neiso-76 §D's own construction — gives **68.6 / 79.8 / 59.3 %**, at or **above**
+their full-corpus anchors in every year, and **37.4 / 36.9 / 33.2 %** at
+demand−3 GW against their 36.4 / 33.6 / 30.9 %. The sample is not depressing
+the traversal; if anything it flatters it. The fall to 30 / 37 / 38 % is the
+**crossing quantity and nothing else**. The measured DA import depth is
+**~4–4.4 GW** plus 1.3–1.9 GW of INC — so §D was crossing the book ~4–5 GW too
+deep, in a materially flatter part of the stack. **neiso-76's own 3 GW
+sensitivity was the right instinct and the correct endogenous depth confirms
+its pessimistic end.**
+
+**Kill rules (pre-registered before the numbers existed).** **KQ1 does NOT
+fire** (0/3 at-or-below keeper) — the traversal lane is **not refuted**; the
+real book does traverse more than the model's. **KQ2 FIRES** (3/3 below 40 %)
+— the corrected read is **DIRECTION-ONLY**, and the neiso-76 §D magnitude must
+not be quoted as surviving. **KQ3 FIRES on 2025** ($11.12 vs the $10.00 bar;
+2023 $7.86 and 2024 $8.33 clear it), so the three-year headline share is
+**WITHHELD** per the prereg — honoured rather than reinterpreted. **KQ4 does
+NOT fire**: removing the import book recovers **49.6 / 61.0 / 49.4 %**
+(19.9 / 24.3 / 11.6 pp), i.e. the import reconciliation carries the bulk of the
+correction and is the mechanical explanation of the whole finding.
+
+**Reported against interest.** (i) The **MT variant was mine and is refuted**:
+`Must Take Energy` averages ~4.6 GW/h and looked like a first-order omission,
+but every unit-hour carrying it is `MUST_RUN` with a ladder already spanning
+EcoMax (seg/EcoMax p25 1.00), so those MW are a **subset** — adding them would
+double-count — and re-pricing them to the floor (the faithful reading)
+**worsens** the identification in all three years. Disclosed post-hoc per KQ5,
+reported both ways, changes no verdict. (ii) The crossing sits a median
+**$7.8–11.0 BELOW** the posted DA; that is structural (a merit-order energy
+crossing omits commitment cost, reserve co-optimization, congestion, losses)
+and is reported as a bound on what the construction can explain, not tuned
+away. A no-load-cost bound was built and then **discarded as undefendable**
+rather than shipped. (iii) A DA reserve reservation — which would have
+flattered this lane — was refused on neiso-76 §B3's **measurement** that ISO-NE
+cleared no DA reserve product at all before DASI go-live 2025-03-01. (iv) The
+corpus is 864 of 1,095 days because the ISO Express endpoint throttles a
+sustained bulk pull; the fetch order was made **stratified** (`--stride`) so
+every partial pull is seasonally unbiased, and the control above converts that
+caveat into a measured statement.
+
+**Owner routing — what this gives the item-5b decision.** The
+quantity-dimension suspicion is **not refuted**, but the margin over the
+keeper is **+2.6 / +13.2 / +7.8 pp**, not the 38–49 pp §D's headline implied. A
+perfect stack-traversal lever would therefore recover **at most about a third
+to a half** of NEISO's diurnal amplitude gap and **cannot close C3c-2025**
+(which neiso-75 sized as the one gate the amplitude lane could close);
+neiso-75 §2.4 already established it cannot close C3c-2023 at all. **The honest
+recommendation this session can support: charter item 5b only if the target is
+amplitude FIDELITY, not the C3c gate.** C3c-2023 stays routed to the owner
+(CHARTER-neiso75 §5), untouched.
+
+**DO-NOT-REDO.** Do not re-quote neiso-76 §D's 66/73/54 % — that read is now
+measured to cross the book ~4–5 GW too deep and its magnitude is superseded.
+Do not substitute EIA-930 interchange for DA scheduled imports. Do not
+re-measure this reconciliation: the probe re-runs it from the committed
+fetchers at zero LP cost.
+
+**Governance.** 2023–2025 only; **no year outside the training window was
+read**. NEISO's locked test remains SPENT and untouched; the holdout spend
+freeze is ACTIVE and unspent (rule 22). Rule 13: every price is a validation
+target and enters no solve. Rule 28: **no mechanism was tested, so no cell
+verdict is stamped and no `U` is minted** — `da_virtual_bids` NEISO stays `R`
+(neiso-76) and the tranche family is not stamped; §5.6 item 5b gains the
+reconciliation result and stays **charter-requested, NOT opened**.
+**This licenses nothing.**
+
+Next shorthand: **neiso-80.**

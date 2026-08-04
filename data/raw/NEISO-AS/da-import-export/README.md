@@ -70,10 +70,15 @@ committed fetcher:
 
     python scripts/data/fetch_neiso_da_import_export.py --years 2023 2024 2025
 
-Known source gaps: the endpoint answers an unpublished operating day with a
-~31-byte stub rather than a 404 — the same publication pattern the sibling
-`da-energy-offers/` and `da-demand-bids/` READMEs document (2023-01-15 is one
-such day). The fetcher counts these separately as "empty postings".
+Known source gaps: an unpublished operating day comes back as a ~31-byte stub
+with HTTP 200 — the same publication pattern the sibling `da-energy-offers/`
+and `da-demand-bids/` READMEs document (2023-01-15 is one such day). The
+fetcher counts these separately as "empty postings". A **404 is not a source
+gap**: measured, days that 404'd on one pass returned full reports on the
+next and a complete 2023–2025 run finished with zero 404s, so the fetcher
+counts them as transient, leaves the file unwritten, and a re-run fills them.
+Measured coverage of the completed 2023–2025 pull: **1,090 day-files, 13
+empty postings, 0 unpublished**.
 
 Rule 13: this is a measured market input on the offer/bid side, read only by
 probes; nothing derived from it is armed in any solve, and no `data/` loader
