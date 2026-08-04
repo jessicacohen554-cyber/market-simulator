@@ -58,6 +58,28 @@ SCHEMA_DRIFT = {
         "solve_and_persist loops years through run_calibration.run_year, a "
         "standalone per-year solve (pjm-150 §4)."
     ),
+    # Added at the 2026-08-04 rebase onto a0bf3db3, after this PREREG was
+    # pushed. Both are default-off and BOTH ARE ISO-GATED IN CODE, not merely
+    # by convention — the enumeration is by inspection of the guard, per K2.
+    "ercot_energy_online_capability_cap": (
+        "935c33dd (ercot-159) added the energy-side online-capability cap, "
+        "default off. Its sole read sits inside "
+        "`if getattr(config, 'ercot_energy_online_capability_cap', False)` in "
+        "model/reserves/spec.py, on the ERCOT fast-tier row of the "
+        "online_capacity_cap block; None/off leaves the LP unchanged."
+    ),
+    "ercot_energy_online_capability_cap_path": (
+        "935c33dd, the artifact path for the field above. Read only when that "
+        "flag is armed."
+    ),
+    "caiso_zonal_loss_surface": (
+        "eda8ebe8 (caiso-164) added the CAISO internal-link loss-pair split, "
+        "default off and guarded by "
+        "`if getattr(config, 'caiso_zonal_loss_surface', False) and "
+        "iso == 'CAISO'` — unreachable for iso='PJM' twice over. The runner "
+        "site adds a conditional that reduces to the pre-existing UNSET when "
+        "off, so PJM is byte-identical."
+    ),
 }
 
 #: Shipped ``ScenarioConfig`` defaults that MOVED on main after the PJM keeper
