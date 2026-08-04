@@ -43,11 +43,13 @@ energy:
 | merchant energy at the entry price signal | yes | ~$60–75 k/MW-yr |
 | RPS attribute payment (REC) | **structurally zero** — MISO's 11 % target is slack against a 16.9 % modelled VRE share | $0 |
 | exogenous EAC / federal CES premium | zero at the shipped config | $0 |
-| **RA / capacity accreditation** | **NO — `entry_vre_capacity_revenue` is default-OFF** | would be **$14,364/MW-yr** |
+| **RA / capacity accreditation** | **NO — `entry_vre_capacity_revenue` is default-OFF** | **$0 even if armed** — MISO clears 27.3 % long and its VRR pays nothing above a ~1.02 position (§3.1) |
 
-against an annualized fixed cost of **$84.8 k–99.0 k/MW-yr**. Solar's
-break-even mean entry price is **$41.9–48.9/MWh**; MISO's modelled price level
-is ~$30–40/MWh.
+against an annualized fixed cost of **$84.8 k–99.0 k/MW-yr**. Measured in the
+first decision year: energy **$67,759**, everything else **$0**, cost
+**$94,204** — margin **−$26,446/MW-yr**, `binding_cap: "unprofitable"` (§3).
+Solar's implied capture price is $35.17/MWh against a break-even of
+$41.9–48.9.
 
 **But the RA zero turns out to be the smaller half of the story — see §3.1.**
 Measured, the capacity payment is zero for **every** technology in this leg,
