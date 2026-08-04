@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-08-04 — xiso-3: the cross-ISO shared-stem matrix backlog CLOSED, and line-anchor decay is now gated (no LP, no solve, all six keepers unchanged)
+
+The last rule-28(c) debt, and the successor nyiso-121 named. **Both halves of
+the matrix-gap census now read zero for all six ISOs, and both are ratcheted.**
+
+- **45 shared fields registered on 19 existing rows.** Every SHARED
+  (non-ISO-prefixed) `ScenarioConfig` field a designated keeper *arms* with no
+  matrix cell anywhere — **54 (ISO, field) pairs**, nine armed in two ISOs at
+  once — now carries a literal sub-scalar registration in its family row's
+  `def`, each home chosen on a **cited code read site** rather than on theme.
+  Ratchet `shared_armed_on_keeper` CAISO 5 / ERCOT 14 / MISO 17 / PJM 18 →
+  **0 0 0 0**; **169 → 169 rows, zero new**; every `cells:` string
+  byte-identical, **no cell minted anywhere** (a census may mint a `U` and
+  nothing more, rule 28(d)).
+- **The cause was the caiso-161 §2 abbreviation defect, three more times.**
+  Seven registrations existed only as abbreviations no literal-matching checker
+  could resolve — including a bare **`etc.`** standing in for three armed fields
+  at once, and `conditional runs` written with a space instead of an underscore.
+- **New: a standing anchor-resolution gate.** nyiso-121 found all 20 MISO line
+  anchors stale and filed a checker as a suggestion; measured file-wide here,
+  **163 of 167 checkable anchors did not resolve — only 4 did**, most off by
+  900–1,400 lines because `scenarios.py` grew under them. 161 were repaired
+  mechanically (verified digits-only: with every `:\d+` normalised the texts are
+  byte-identical), and `scripts/check_mechanism_matrix.py` gains an anchor leg
+  (field-style, row-id and file-in-range checks), a shrink-only ratchet
+  `docs/codebase-site/data/mechanism-matrix-anchors.json` (**now empty**) and a
+  **`--fix-anchors`** repair path so a `scenarios.py` PR fixes drift with one
+  command. Existence is gated first, preserving the deliberate `miso_pjm_lmp
+  :2914` defect *quotation*. Caveat recorded in the docs: the gate proves an
+  anchor points at the field it **names**, never that the named field is the
+  right one.
+- **Seven armed-but-dead pairs found and filed, none adjudicated.** Measured on
+  **construction** (no LP, no solve, no dual; built twice at one HEAD,
+  `np.array_equal` on float32): four ERCOT coal-passthrough scalars and three
+  CAISO CT-drag coefficients are **provably unreadable on their own keepers**,
+  so those `run_config.json`s overstate what the solve read. All five arms
+  Δ = 0.0 exactly with all five positive controls separating. The CAISO result
+  is *consistent* with that family's existing CAISO `R`.
+
 ## 2026-08-04 — ERCOT-160: the item-7 / item-8 data intakes (no LP, no mechanism, keeper unchanged)
 
 Data-intake session on the ERCOT lever queue. MISO's C7 COAL_PRB item was

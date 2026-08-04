@@ -2010,6 +2010,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "zonal_loss_surface",
           "cells": ".KKR..",
           "cell": "K"
