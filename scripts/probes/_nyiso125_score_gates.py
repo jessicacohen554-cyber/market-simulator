@@ -155,21 +155,16 @@ def score_criteria(control: Path, treatment: Path) -> dict:
     )
 
     def verdicts(m):
-        return {
-            c.get("id") or c.get("name"): c.get("verdict")
-            for c in (m.get("criteria") or [])
-        }
+        crit = m.get("criteria") or {}
+        return {k: (v or {}).get("status") for k, v in crit.items()}
 
     vc, vt = verdicts(mc), verdicts(mt)
-    print(f"\n  {'criterion':34s} {'control':10s} {'treatment':10s}")
+    print(f"\n  {'criterion':22s} {'control':10s} {'treatment':10s}")
     for key in sorted(set(vc) | set(vt)):
         flag = "  <<<" if vc.get(key) != vt.get(key) else ""
-        print(f"  {str(key)[:34]:34s} {str(vc.get(key)):10s} {str(vt.get(key)):10s}{flag}")
+        print(f"  {str(key)[:22]:22s} {str(vc.get(key)):10s} {str(vt.get(key)):10s}{flag}")
     out["verdicts_control"], out["verdicts_treatment"] = vc, vt
-    c1 = [k for k in vc if "C1" in str(k)]
-    out["K3_c1_regressed"] = any(
-        vc.get(k) == "PASS" and vt.get(k) != "PASS" for k in c1
-    )
+    out["K3_c1_regressed"] = vc.get("fuelmix") == "PASS" and vt.get("fuelmix") != "PASS"
     print(
         f"\n  K3 C1 regression: "
         f"{'FIRE' if out['K3_c1_regressed'] else 'silent'}"
