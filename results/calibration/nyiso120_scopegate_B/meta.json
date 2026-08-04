@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T21:20:36",
+  "timestamp": "2026-08-04T04:15:53",
   "iso": "NYISO",
   "years": [
     2023,
@@ -88,7 +88,11 @@
     "nyiso_import_sil_retire": true,
     "measured_chp_heat_rates": true,
     "gas_offer_margin_zonal_anchor": true,
-    "nysdec_peaker_rule_availability": true
+    "ramp_limits": true,
+    "nysdec_peaker_rule_availability": true,
+    "nyiso_li_locational_reserve": true,
+    "nyiso_nyc_rcpf_step_curve": true,
+    "nyiso_ordc_measured_step_span": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -251,8 +255,11 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
-  "ramp_limits": null,
+  "ramp_limits": true,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": true,
   "nyiso_scr_edrp": true,
@@ -262,7 +269,7 @@
   "nyiso_import_hub_prices": true,
   "nyiso_iroquois_winter_spread": null,
   "nyiso_synchronised_reserve": null,
-  "nyiso_li_locational_reserve": null,
+  "nyiso_li_locational_reserve": true,
   "nyiso_incity_commitment_obligation": null,
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": {
@@ -332,12 +339,12 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-  "git_sha": "68253ba",
-  "basis_sha": "b9a96a98d030bc5d2c3ecbdbf4e6dc22e600338f",
+  "git_sha": "bc9e6dbf",
+  "basis_sha": "bc9e6dbf8679e00a2e16000b8059ded9145607df",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

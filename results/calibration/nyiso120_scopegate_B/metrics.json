@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-02-nyiso112-dec-peaker-rule",
+  "run_id": "2026-08-04-nyiso-120b-scope-gate",
   "iso": "NYISO",
-  "label": "nyiso112 dec peaker rule",
+  "label": "nyiso 120b scope gate",
   "target_years": [
     2023,
     2024,
@@ -14,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "CALIBRATED-WITH-CAVEATS",
+  "determination": "NOT-YET",
   "reasons": [
-    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -80,10 +80,10 @@
   },
   "grade_summary": {
     "scored": 9,
-    "target_grade": 8,
+    "target_grade": 7,
     "commercial_grade": 0,
     "ledgered": 1,
-    "fails": 0
+    "fails": 1
   },
   "free_class_score": {
     "iso": "NYISO",
