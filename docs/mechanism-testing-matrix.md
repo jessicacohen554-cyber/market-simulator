@@ -2144,6 +2144,35 @@ is now the live queue head.**)*
    NON-solve steps: item 1's Form 580 tonnage COUNT (a sourcing pass, not a
    solve) and miso-114 §6's CAMPD `CT_PEAKER` + `ST_GAS` overnight-online
    measurement. A session going off-queue must say so and why.**
+   **QUEUE STAMP 2026-08-04 (miso-125): that queue head is now SPENT — the
+   `CT_CHP`-side plant-level rate is ADJUDICATED, `R` on its repair and
+   REDIRECTED on its cause, with NO LP, NO solve and NO derive change**
+   (`results/calibration/FINDING-miso125-chp-prime-mover-split-2026-08-04.md`).
+   The grain defect is confirmed and stands — 55088 is the ONLY applied
+   multi-class plant in MISO (515.0 MW: `CC_CHP` 350.0 + `CT_CHP` 165.0, both
+   `ok`) and both rows carry the same plant-grain 6.9573. But the pre-registered
+   repair, a CEMS share ratio `hr_m = hr_plant × (f_m/g_m)`, is **refuted by its
+   own stated assumption**: it measured LIVE (4.76 / 3.05 / 3.17 % vs a
+   pre-declared 2 % band) yet **backwards from turbine physics**
+   (`hr_CC` 7.09 > `hr_CT` 6.63), because eGRID's `PLNGENAN` (5,259,825 net MWh)
+   is **1.4418×** the CEMS power-train gross (3,648,140 MWh) — net cannot exceed
+   gross on the same machines — and the implied capacity factor on the LP's own
+   515 MW is **116.6 %**. EIA-860 names the missing machine: **`ST1`, prime
+   mover `CA`, Unit Code `SINT` shared with the two NG `CT` turbines, 250 MW,
+   Energy Source 1 = `BFG`**, the steam part of the combined-cycle block, with
+   no CEMS stack and no fleet row (`classify_plant` keys on Energy Source 1, so
+   `BFG` falls to the residual `OTHER` bucket). Its output is not attributable
+   between the `CC` and `CT` families from any available source, so no repaired
+   split is derivable — rule 14 `[R-ACCURATE]`'s named different-boundary
+   exception, and nothing was shipped. **The successor this NAMES but does not
+   charter** is the upstream capacity defect: **MISO carries 290.4 MW of
+   measurably missing `CA` combined-cycle steam capacity** (55088 `ST1` 250.0 MW
+   `BFG`; 50973 Motiva `GN31`/`GN32`/`GN33` 40.4 MW `OG`), verified absent
+   against each plant's EIA-860 totals. 1004 Edwardsport is **not** a defect
+   (its 555 MW `SGC` steam part IS represented, as `COAL`). Rule 25: 54912
+   Martinez 20.0 MW (CAISO) and 6081 Stony Brook 96.0 MW (NEISO, undetermined)
+   are handed off unstamped. §5.4 again has **no** named, un-adjudicated,
+   non-data-blocked item; the two bounded NON-solve steps above are unchanged.
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
