@@ -740,14 +740,57 @@ rule-13-admissible mechanism available to carry it.
 > seven nodes to `0.00e+00` $/MWh, and `LMP` reconstructs from its components to
 > `≤3e-05` $/MWh.
 >
-> **THE MODEL-SIDE HALF IS ALREADY CONCLUSIVE, from committed sidecars only.**
+> **THE VERDICT: caiso-164's ATTRIBUTION IS CONFIRMED.** Pre-registered rule
+> (prereg §4), belly window (Pacific 09-16), congestion component only, on the
+> two full-coverage years — **3 CONFIRMED, 1 PARTIAL, ZERO FALSIFIED**:
+>
+> | year | corridor | sep % | mean \|dMCC\| | pocket-dearer % | verdict |
+> |---|---|---:|---:|---:|---|
+> | 2024 | SCE − SP15 gen | 89.31 % | 1.038 | 52.4 % | **PARTIAL** |
+> | 2025 | SCE − SP15 gen | **98.05 %** | **1.999** | **84.0 %** | **CONFIRMED** |
+> | 2024 | SDGE − SP15 gen | **94.23 %** | **4.038** | **96.8 %** | **CONFIRMED** |
+> | 2025 | SDGE − SP15 gen | **99.69 %** | **6.451** | **99.1 %** | **CONFIRMED** |
+>
+> The corridor is **belly-timed** (2025 SCE ~0.8-1.0 overnight → 1.79-2.11 in
+> h08-16; SDGE ~1.2-1.8 → 5.58-7.38 in h08-17) and **growing fast** (belly mean
+> `dMCC` +0.701 → +1.912 SCE, +3.924 → +6.420 SDGE, 2024 → 2025). The single
+> PARTIAL is a DIRECTION split not rounded up: SCE-2024 clears frequency and
+> magnitude but binds both ways at 52.4 % pocket-dearer, under the 60 % bar,
+> settling into the pocket-dearer direction only in 2025. 2023's rows are
+> printed but carry NO weight — 176 belly hours, all January, declared partial in
+> prereg §2.2 *before* the fetch.
+>
+> **THE MODEL-SIDE HALF IS ALSO CONCLUSIVE, from committed sidecars only.**
 > On the caiso-164 keeper's own P1 hourlies, in the 2,920 belly hours of each
 > year: `LA_BASIN − SP15_rest` separates in **0.00 % of hours in all three years
 > (0 of 8,760)** — a hard copper-plate on exactly the corridor caiso-164 named —
 > and `SDGE − SP15_rest` separates 1.0/20.4/24.9 % but **pocket-dearer in only
 > 76.7/0.0/1.0 %**, i.e. 2024–25 run the pocket CHEAPER than the generation hub.
-> Whatever the congestion verdict, the model's south is not merely
-> under-separated; on the SDGE limb it is **inverted**.
+> The model's south is therefore not merely under-separated; on the SDGE limb it
+> is **INVERTED** — model mean **−2.63 / −5.32** $/MWh against a measured
+> **+3.92 / +6.42**, so the error is the sum, roughly **$6.6 / $11.7 per MWh**.
+> **This second defect was invisible to caiso-164 and is not in its finding**:
+> with no DLAP there was nothing to compare the SDGE limb against.
+>
+> **WHAT caiso-165 DID NOT DO, and why — read before proposing the successor.**
+> **Arm B (an intra-SP15 transfer limit) is NOT armed and stays blocked.** No
+> published physical limit (CAISO LCT/LCR local-area import capability, a
+> published path rating, or an ATC construction off measured directed flows) was
+> located in `data/raw` or CAISO's published record this session, so per prereg
+> §5.2 it is FILED rather than approximated. A limit chosen to reproduce the
+> frequencies or magnitudes in the table above is an **OUTCOME PIN and is
+> forbidden** (rule 13 `[R-MEASURED]`, rules 5/21/24) — and now that those
+> numbers are known precisely, that prohibition binds HARDER, not softer.
+> **Arm A (five measured loss zones) was NOT solved** — the OASIS diagnosis
+> below ate the budget — but it is fully chartered in prereg §5.1 with its
+> crosswalk disposition, its strengthened acceptance gate (`NP15↔LA_BASIN` and
+> `NP15↔SDGE` ADDED, since as written the gate could not see the zones Arm A
+> changes) and its rule-14 ruling all pre-registered. Nothing in it was tuned,
+> previewed or partially run. **Its measured justification is now quantified:**
+> the `dMCL` the two interpolated zones currently MISS by inheriting the SP15
+> generation hub is **+0.924/+0.969 (SCE)** and **+1.211/+1.310 (SDGE)** $/MWh —
+> comparable to, and for SDGE larger than, the whole NP15−ZP26 loss component
+> (+1.102/+1.049) the caiso-164 keeper was promoted for representing.
 >
 > **OASIS operational facts this lane paid for, so the next one does not:**
 > (a) the `PRC_LMP` retention boundary is **~2023-04-24 as of 2026-08-04**, moved

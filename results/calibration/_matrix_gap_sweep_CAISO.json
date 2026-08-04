@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-04-caiso164-zonal-loss-surface",
   "keeper_bundle_fields": 675,
-  "n_scenario_fields": 676,
-  "n_matrix_rows": 183,
+  "n_scenario_fields": 677,
+  "n_matrix_rows": 184,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -826,6 +826,31 @@
       ],
       "cells": [
         "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_nqc_accreditation",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "elcc_accreditation",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
       ],
       "armed_in_bundles": []
     },
@@ -3339,6 +3364,16 @@
           "cell": "O"
         },
         {
+          "row": "elcc_accreditation",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
           "row": "hydro_accreditation",
           "cells": "OKOKKO",
           "cell": "K"
@@ -4207,6 +4242,11 @@
           "row": "elcc_accreditation",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
         },
         {
           "row": "hydro_accreditation",
