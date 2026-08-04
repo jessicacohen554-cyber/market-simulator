@@ -1575,7 +1575,61 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion; **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate`)**
+
+> **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
+> All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
+> are registered as **literal sub-scalar entries on 7 existing family rows**
+> (`energy_reserve_coopt`, `rdt_tcdc`, `seam_flow_envelopes`, `import_hub_pricing`,
+> `reference_price_interface`, `diurnal_price_amplitude`, `campd_outage_windows`).
+> **Zero new rows (169 → 169); one cell mint, `matrix_gap_census` MISO `O` → `K`, an audit
+> status and not a mechanism verdict; zero mechanism verdicts** — every verdict-bearing
+> sentence transcribes an adjudication already on the record with its citation
+> (`miso_firm_import_floor` rejected as an outcome pin under rule 13;
+> `miso_pjm_lmp_import_pricing` refuted ex ante at miso-114; `miso_cc_coal_rebalance`
+> licensed by nothing, premise removed at miso-115 §2; the per-Reserve-Zone Zonal ORDC
+> ladder measured-refuted at miso-71). **No MISO lever is tested, chartered or queued and
+> MISO's lever queue below is UNCHANGED** — the census surfaced no never-adjudicated
+> armable candidate, so it did not manufacture a successor.
+>
+> **Mechanical cause, the caiso-161 §2 defect a third time:** `import_hub_pricing` carried
+> `miso_pjm_lmp :2914` — an abbreviation that is not a `ScenarioConfig` field, on a stale
+> anchor pointing at an unrelated over-generation comment block (the field is
+> `miso_pjm_lmp_import_pricing` at :3872). **Plus a NEW variant no checker looks for:**
+> `miso_manitoba_seam`, ARMED on the keeper, was prose-only inside `diagnostics_plant_set`
+> — a row about probe plant sets. A mention on the **wrong family row** is as invisible as
+> no mention, and unlike a glob or a stale anchor **it reads as correct coverage to a human**.
+>
+> **Census finding, measured on CONSTRUCTION (G-1; no LP, no solve, no dual):**
+> `miso_pjm_border_anchor` is **PROVABLY UNOBSERVABLE** on the keeper — displaced by
+> `miso_seam_measured_ladder`, which runs last and carries a full PJM band entry in all
+> three keeper years. All 48 seam rows exactly equal (`np.array_equal`, float32) in
+> 2023/24/25, with a positive control that separates ($0.92/$2.23/$4.78 with the ladder off,
+> SPP/South untouched). A second instance: the keeper arms `miso_firm_imports` alongside
+> `miso_manitoba_seam`, which drops the MHEB firm block. **Both filed as OBSERVATIONS; no
+> cell moves** — whether either is a rule 19 `[R-ONE-MECH]` question belongs to a lane that
+> may adjudicate MISO (rule 28(d)).
+>
+> **PREREG:** `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md`
+> **FINDING:** `results/calibration/FINDING-nyiso121-miso-matrix-column-2026-08-04.md`
+>
+> **METHODOLOGICAL CORRECTION THAT BINDS THE NEXT LANE (FINDING §6.2).** A first draft
+> enumerated MISO's 17 shared-stem literals, as ercot-156 / caiso-161 / pjm-151 each did.
+> The pre-registered criterion 4 caught the consequence: **ERCOT went 12 → 11** because one
+> field shared between the two keepers was newly counted "mentioned" — **one lane's prose
+> dropping a field from BOTH lanes' live-but-invisible lists, with no ERCOT session
+> registering anything.** Naming a shared field as a bare literal makes the sweep count it
+> mentioned, which is exactly the "a mention is not a registration" defect the census exists
+> to close, and it **leaks across columns**. The enumeration was withdrawn for a count plus
+> a pointer to the committed `_matrix_gap_sweep_<ISO>.json`. **Consequence: the enumerated
+> lists left in `matrix_gap_census` by the earlier column closures are PROSE, NOT
+> REGISTRATIONS — trust `_matrix_gap_sweep_<ISO>.json` over the row's text.**
+>
+> **NAMED SUCCESSOR.** With every ISO's own-family column now closed, the **cross-ISO
+> shared-stem backlog** (PJM 18, MISO 17, ERCOT 14, CAISO 5, all overlapping and all armed
+> on keepers with no cell) is the **only remaining rule-28(c) debt**. That lane must
+> **register these fields on rows, not enumerate them in prose**, or it will hide the very
+> backlog it is closing.
 
 *(Header refreshed 2026-07-31, miso-111: the former "C3b spread compression"
 target is RETIRED — C3b PASSES on the live scorer against the
