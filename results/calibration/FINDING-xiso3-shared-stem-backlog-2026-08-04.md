@@ -216,3 +216,39 @@ mechanical** — but note what the ratchet does NOT do: it cannot tell a *correc
 from a *wrong* one. The checker proves an anchor points at the field it names; **only a
 human can tell whether that field is the right one to name.** The literal name remains the
 durable identifier.
+
+---
+
+## §10 — AMENDMENT (same day, after the first merge): the anchor gate needed a blame split
+
+**Recorded rather than quietly rewritten**, and it is a correction to §5's design, not to
+its measurement.
+
+**What happened.** §5 shipped the anchor check with a hard `--base` failure and an empty
+ratchet. Within the same day, main merged further lanes that inserted fields into
+`scenarios.py` — and **214 anchors re-staled**, all of them below the insertion points.
+Nothing in the matrix was touched; the anchors decayed exactly as §5 says they do. Had the
+next lane opened a PR, **the gate would have failed it for drift it did not cause.**
+
+**Why the ratchet alone could not fix this.** The ratchet answers *"is this anchor already
+known-bad?"*, which is the right question for a backlog and the wrong one for decay: a
+freshly repaired file has an empty baseline by construction, so the very next
+`scenarios.py` insertion produces hundreds of un-baselined findings at once.
+
+**The fix, which is the file's own existing precedent.** Under `--base` the check now
+computes findings at the BASE as well as at HEAD and splits by blame — the same rule
+`keeper_drift` already uses two blocks below it:
+
+* an anchor stale at HEAD but **not** at the base → **this PR staled it → FAIL**;
+* an anchor stale at **both** → **pre-existing → WARN**, and it belongs to whoever last
+  moved `scenarios.py`.
+
+Verified in all three directions: clean tree exits 0; a PR that breaks one anchor exits 1
+with an `::error`; a tree carrying the base's own 221 stale anchors exits **0** with 221
+`pre-existing` warnings and zero errors.
+
+**The general lesson, and it generalises past this checker.** A gate keyed on **absolute
+line numbers in a file every lane edits** cannot be a hard gate on inherited state — it
+would go red constantly, and *a gate that gets disabled protects nothing*. The durable
+identifier is still the field NAME; the anchor is a convenience, now repaired by one
+command (`--fix-anchors`) and enforced only against the PR that actually broke it.

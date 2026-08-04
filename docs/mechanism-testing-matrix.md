@@ -100,7 +100,13 @@ structurally invisible:
   shifts anchors fixes them with one command instead of hand-editing.
   **Existence is gated first**, which is what preserves a deliberate
   QUOTATION of a defect (`miso_pjm_lmp :2914` in `import_hub_pricing`'s repair
-  note) — do not "fix" it.
+  note) — do not "fix" it. **Blame split (amended same-day):** under `--base` the
+  check compares findings at HEAD against the BASE and **fails only anchors THIS
+  PR staled**, warning on pre-existing drift — the same rule the keeper-stamp
+  guard uses. Without it the gate is unsurvivable: anchors are absolute line
+  numbers into `scenarios.py`, so one inserted field stales every anchor beneath
+  it (main re-staled 214 within a day of the check landing) and lanes that
+  touched nothing would go red.
 
 > **What the anchor ratchet does NOT do:** it proves an anchor points at the
 > field it NAMES, never that the named field is the right one. **The literal
