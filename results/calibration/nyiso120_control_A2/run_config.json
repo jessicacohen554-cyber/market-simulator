@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-08-03T03:20:56",
+  "timestamp": "2026-08-04T04:37:38",
   "git": {
-    "sha": "ee251cb",
-    "basis_sha": "5885248d14972ff6e14eccdd851f72c88299cca9",
-    "branch": "claude/nyiso-backcast-calibration-114-nx5wzq",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "745c3413",
+    "basis_sha": "bc9e6dbf8679e00a2e16000b8059ded9145607df",
+    "branch": "claude/neiso80-cross-iso-cell-bldpg9",
+    "dirty": true,
+    "changed_files": [
+      "ata/raw/_processed-legacy/chp_power_only_heat_rates_NYISO.csv"
+    ],
+    "diffstat": ".../chp_power_only_heat_rates_NYISO.csv            | 64 +++++++++++-----------\n 1 file changed, 32 insertions(+), 32 deletions(-)"
   },
-  "model_changes_note": "nyiso-114 zero-delta confirmation replay of the nyiso-113 keeper, run to emit the per-family reserve-dual sidecar (hourly/reserve_family_<year>.parquet: dual, requirement_mw, held_mw, shortfall_mw). No config delta. PREREG-nyiso114-reserve-family-sidecar-2026-08-03.md",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -82,7 +84,9 @@
       "gas_offer_margin_zonal_anchor": true,
       "ramp_limits": true,
       "nysdec_peaker_rule_availability": true,
-      "nyiso_li_locational_reserve": true
+      "nyiso_li_locational_reserve": true,
+      "nyiso_nyc_rcpf_step_curve": true,
+      "nyiso_ordc_measured_step_span": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -99,7 +103,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "ee251cb"
+    "git_sha": "745c3413"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -130,7 +134,7 @@
     "mass_cap_program": null,
     "mass_cap_tons": null,
     "carbon_program_price_path": null,
-    "net_cone_forward_escalation": "hold_last",
+    "net_cone_forward_escalation": "reindex_gross",
     "demand_growth_rate": 0.01,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
@@ -212,7 +216,7 @@
     "retirement_fom_multiplier_oil": 1.0,
     "retirement_fom_multiplier_gas_cc_ccs": 1.0,
     "retirement_fom_multiplier_nuclear": 1.0,
-    "retirement_rule": "legacy",
+    "retirement_rule": "pipeline",
     "retirement_execution_lag_coal": 3,
     "retirement_execution_lag_gas_ct": 2,
     "retirement_execution_lag_gas_cc": 1,
@@ -220,6 +224,7 @@
     "retirement_execution_lag_oil": 1,
     "retirement_execution_lag_nuclear": 3,
     "retirement_execution_lag_gas_cc_ccs": null,
+    "exit_rate_limits": false,
     "limited_foresight_dispatch": false,
     "fixed_om_gas_cc": 30.0,
     "fixed_om_gas_ct": 21.0,
@@ -304,7 +309,8 @@
     "nyiso_rcpf_products": null,
     "nyiso_rcpf_locational": null,
     "nyiso_dynamic_reserve_requirements": true,
-    "nyiso_ordc_measured_step_span": false,
+    "nyiso_ordc_measured_step_span": true,
+    "nyiso_seny_rcpf_increment_step": false,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
     "neiso_rcpf_enabled": false,
@@ -324,8 +330,8 @@
     "entry_lookahead_reprice": false,
     "entry_screen_diagnostics": false,
     "entry_vre_capacity_revenue": false,
-    "entry_rate_limits": false,
-    "entry_commissioning_lag": false,
+    "entry_rate_limits": true,
+    "entry_commissioning_lag": true,
     "interchange_shaping": false,
     "interchange_shaping_export_only": false,
     "interchange_shape_import_pct": 90.0,
@@ -388,6 +394,7 @@
     "nyiso_iroquois_winter_spread": false,
     "nyiso_li_locational_reserve": true,
     "nyiso_incity_commitment_obligation": false,
+    "nyiso_nyc_rcpf_step_curve": true,
     "nyiso_east_reserve_families": false,
     "nyiso_gas_commitment_bridge": true,
     "nyiso_gas_bridge_cc_min_load_frac": 0.523,
@@ -629,6 +636,8 @@
     "ercot_faststart_pool_offer_path": null,
     "ercot_shoulder_online_span": false,
     "ercot_shoulder_online_span_path": null,
+    "ercot_energy_online_capability_cap": false,
+    "ercot_energy_online_capability_cap_path": null,
     "ercot_offer_surface_binned_path": null,
     "ercot_offer_surface_netload_pcts": [
       0.8,
@@ -880,6 +889,7 @@
     "pjm_apsouth_interface_cut": false,
     "pjm_external_net_position_cut": false,
     "pjm_zonal_loss_surface": false,
+    "caiso_zonal_loss_surface": false,
     "ercot_wtx_curtailment_driver": false,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
@@ -940,7 +950,7 @@
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

@@ -47,7 +47,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 KEEPER = REPO / "results/calibration/nyiso118_seny_span"
-ARM_A = REPO / "results/calibration/nyiso120_control_A"
+ARM_A = REPO / "results/calibration/nyiso120_control_A2"
 ARM_B = REPO / "results/calibration/nyiso120_scopegate_B"
 ARTIFACT = REPO / "data/raw/_processed-legacy/chp_power_only_heat_rates_NYISO.csv"
 #: The pre-change copy, kept for the A-arm's provenance so the sha comparison
@@ -514,6 +514,14 @@ def main() -> int:
         "prereg": "results/calibration/PREREG-nyiso120-eastriver-scope-gate-2026-08-04.md",
         "keeper": "2026-08-03-nyiso-118-seny-span",
         "arms": {"A": str(ARM_A.name), "B": str(ARM_B.name)},
+        "control_note": (
+            "The FIRST control (nyiso120_control_A) is SUPERSEDED and must not be "
+            "used: it solved at a PRE-rebase HEAD and main then added three "
+            "ScenarioConfig fields, so it fails the prereg KE5 same-HEAD "
+            "requirement (K4 read 3 differing keys against it). nyiso120_control_A2 "
+            "is the valid same-HEAD control and reproduces the incumbent keeper's "
+            "C3a numbers exactly, which is what shows main's drift is inert at NYISO."
+        ),
         "K1_artifact_fidelity": k1_artifact_fidelity(),
         "K2_control_integrity": k2_control_integrity(),
         "K3_liveness": k3_liveness(),

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-03T03:20:56",
+  "timestamp": "2026-08-04T04:37:38",
   "iso": "NYISO",
   "years": [
     2023,
@@ -90,7 +90,9 @@
     "gas_offer_margin_zonal_anchor": true,
     "ramp_limits": true,
     "nysdec_peaker_rule_availability": true,
-    "nyiso_li_locational_reserve": true
+    "nyiso_li_locational_reserve": true,
+    "nyiso_nyc_rcpf_step_curve": true,
+    "nyiso_ordc_measured_step_span": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -253,6 +255,9 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "ramp_limits": true,
   "local_capacity_constraints": null,
@@ -334,12 +339,12 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-  "git_sha": "ee251cb",
-  "basis_sha": "5885248d14972ff6e14eccdd851f72c88299cca9",
+  "git_sha": "745c3413",
+  "basis_sha": "bc9e6dbf8679e00a2e16000b8059ded9145607df",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

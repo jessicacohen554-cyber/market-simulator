@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-03-nyiso-114-reserve-family",
+  "run_id": "2026-08-04-nyiso-120a2-control-samehead",
   "iso": "NYISO",
-  "label": "nyiso 114 reserve family",
+  "label": "nyiso 120a2 control samehead",
   "target_years": [
     2023,
     2024,

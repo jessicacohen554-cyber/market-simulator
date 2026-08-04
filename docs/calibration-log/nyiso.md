@@ -4625,3 +4625,100 @@ worse, so the promotion proceeded. Evidence:
 `results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
 `PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
 `nyiso119_seny_increment_construction_probe.json`.
+
+## 2026-08-04 — nyiso-120 (CROSS-ISO session): neither meter is wrong about East River — they AGREE, and what they agree on is that the model has been double-counting boiler fuel into a 306 MW NYC gas tranche
+
+**Keeper UNCHANGED** (`2026-08-03-nyiso-118-seny-span`). Three runs registered:
+`2026-08-04-nyiso-120a2-control-samehead` (the valid control),
+`2026-08-04-nyiso-120b-scope-gate` (the treatment) and
+`2026-08-04-nyiso-120a-control` (a SUPERSEDED first control, kept as the record
+of why — see (5)).
+
+**Why NYISO at all.** The session brief opened on **NEISO**, whose queue is
+owner-gated end to end (§5.6: item 1 SPENT, items 3/4/6/7/8 closed, item 2
+ceiling-bounded, items 5 / 5b / C3c-2023 all needing an owner green-light that
+is not granted), and directed a cross-ISO cell. This one was minted **one day
+earlier** by miso-122 §7 handoff item 1, which measured the defect, declined to
+act under rule 25, and left one question: *"which meter is wrong about East
+River's boundary, and it is not answerable from MISO's data."* It is answerable
+from NYISO's, and the answer is **neither**.
+
+**(1) THE MEASUREMENT, no LP, on NYISO's own data.** ORIS 2493 East River is a
+hybrid one eGRID plant code cannot see: two `Combined cycle` units that generate
+and two `Dry bottom wall-fired boiler` units (60, 70) reporting **exactly zero**
+gross load in every hour of 2023–2025. **KE1** — eGRID's `CHPCHTI` (13,493,031
+MMBtu) and the CAMPD dark-boiler fuel (13,629,047) are the **same object to
+1.0 %** (ratio 1.0101). **KE2** — CAMPD's power-train fuel over eGRID's own
+`PLNGENAN` is **7.3763** against eGRID's credited **7.4205**, ratio **0.9940**:
+two independent meters agreeing to **0.6 %**. Therefore `PLHTIAN` is *already*
+the power train's fuel, `PLHTRT = 7.4205` is *already* the power-only rate, and
+the `(PLHTIAN + CHPCHTI)` add-back **double-counts boiler fuel into a power
+tranche**. The keeper has been offering 306 MW of NYC `CT_CHP` at **11.8032**,
+59 % above what the machine burns. **KE3** — 100.0 % of dark fuel is a boiler
+`unitType` in all three years, share 37.51/30.79/30.64 %, max/min 1.22.
+Corroborated from the *generation* side: CEMS gross 2,133,488 MWh vs eGRID net
+3,078,707 (**0.693**) is miso-118's `G_gross < 1` physical impossibility —
+~0.95 TWh/yr of HRSG steam-turbine output CEMS never meters, which is why 7.4
+and not the naive CEMS-gross 10.6 is the right number.
+
+**(2) The correction, zero free parameters.** miso-122's scope gate shipped
+**unmodified** (no derive code was edited): East River goes `ok` →
+`below_credited` and its **effective** offer rate falls **11.8032 → 7.4205
+(−37.1 %)**. **KE4 exact**: one applied row changes, zero other flag changes,
+zero other applied-rate changes. Direction is unambiguously downward only
+because NYISO is **not** in `CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` ({CAISO, PJM})
+— in a hand-factor ISO the identical exclusion would push the rate **up**;
+asserted in the scorer, not assumed. Rule 23 citation is miso-122's scope-gate
+**logic change on measured grounds**, never a residual. DOF ledger unchanged
+(32 entries, `n_residual` 6).
+
+**(3) A/B — LIVE, and one gate regresses.** All six construction gates PASS, no
+kill fires: max zonal |Δλ| **0.1287 / 0.1371 / 0.3875** $/MWh clears the 0.10
+bar in **3 of 3** years, no zone's λ rises, `CT_CHP` gains **+0.3113 / +0.1921 /
++0.4214 TWh** displacing `ST_GAS` / `CC_REGULAR` / `CC_CHP`. **P1 free-class C1
+does NOT regress** (14/14 all, 10/10 free in both arms); P3/P4/P5/P6 pass; C3c
+**bit-unchanged** (CAVEAT both arms). **P2 fires**: C3a mean LMP FAILS on **2025
+at exactly −10.0 %** against a control reading **−9.5 %** — a **0.5 pp
+knife-edge crossing** worth **−$0.39/MWh** on a $60 mean, while **2023 IMPROVES**
+(+7.6 % → +7.2 %) and 2024 stays deep inside band. The 2025 C3a gap is
+**$6.68/MWh**, so this correction is **6 %** of it and **94 % is pre-existing**.
+Determination control CALIBRATED-WITH-CAVEATS → treatment **NOT-YET**.
+
+**(4) THE PROMOTION IS ESCALATED, NOT TAKEN — rule 22 D-5(b).** Arm B **is** the
+recommended keeper candidate on the owner's standing standard (structural
+integrity improves, the input was wrong and is now right, it moves the
+worst-matched class — `CT_CHP`, −67.9/−67.6/−62.0 % on the incumbent keeper's
+own `_open_items` — toward reality, and it closes a reproducibility seam since
+the incumbent solved on the pre-gate artifact and is no longer reproducible from
+HEAD). **But NYISO holds a `complete` marker**, and D-5(b) is explicit that a
+re-verified determination that is *worse* **stops the promotion and escalates to
+the owner; it is never silently written**. CALIBRATED-WITH-CAVEATS → NOT-YET is
+worse and would change NYISO's published calibration status. **The corrected
+artifact ships regardless** (rule 14); only the keeper designation is deferred.
+
+**(5) Reported against interest — two self-inflicted errors.** (a) The **first
+control is invalid**: it solved at a pre-rebase HEAD and main then added three
+`ScenarioConfig` fields, so it read 3 differing config keys against the
+treatment and failed KE5's same-HEAD requirement. It is superseded, no number is
+quoted against it, and a same-HEAD control was re-solved — which turns out
+**byte-identical to the committed keeper**, and that is what proves the three
+new fields are inert at NYISO. (b) **Nine bundle JSONs reached `origin/main`
+carrying unresolved rebase conflict markers** — five of them the **nyiso-119
+lane's** — because a rename/rename conflict (git matched the top-15-pruned
+`nyiso111_control_A` against both lanes' new bundles) was blanket-resolved on
+the wrong assumption that each path was uniquely owned by one side. Found,
+stopped for, repaired: the nyiso-119 files restored **byte-exactly** from
+`4e1b1274`, mine by label-matched selection
+(`scripts/probes/_nyiso120_resolve_rename_conflicts.py`, which refuses to guess).
+Zero markers remain. (c) The prereg named **C3c** as the at-risk gate and **C3a**
+is what moved — the anticipated mechanism was right, the criterion was not, and
+that is recorded rather than re-narrated as a hit.
+
+**Governance.** Rules 12/13/15/16/21/22/23/25/26/28 all honoured; training years
+only; the holdout spend freeze is ACTIVE and untouched. Rule 25: **only NYISO's
+artifact was re-derived** — NEISO 1595 Kendall (206 MW, −1.2 %) stays in NEISO's
+lane and no cell outside NYISO is stamped. Rule 28 duty (b): the
+`measured_chp_heat_rates` NYISO cell keeps its `K` (a scope refinement inside
+the K mechanism, rule 19) and gains its citation this session.
+
+* Next number: **nyiso-121**.
