@@ -1,0 +1,168 @@
+{
+  "instrument": "kill-resume-drill",
+  "iso": "NEISO",
+  "window": [
+    2026,
+    2028
+  ],
+  "kill_after_year": 2027,
+  "killed_mid_horizon": true,
+  "cache_key_match": true,
+  "cached_years_loaded_not_resolved": true,
+  "resumed_years": [
+    2026,
+    2027
+  ],
+  "result_identical": false,
+  "green": false,
+  "per_year": [
+    {
+      "year": 2026,
+      "equal": true,
+      "resumed_from_cache": true,
+      "control": {
+        "dispatch_shape": [
+          648,
+          8760
+        ],
+        "dispatch_sum": 110209668.869,
+        "dispatch_hash": "f27cdfdda9b46cd8",
+        "dispatch_sorted_hash": "2deb9cddaceae822",
+        "dispatch_multiset_hash": "0c0baf6b838752d3",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2252019.757,
+        "price_hash": "b359d8d250fd3416",
+        "price_sorted_hash": "3fe1eb9bab9958b4",
+        "price_multiset_hash": "db696cd1a7b2b961",
+        "n_retire": 0,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      },
+      "resume": {
+        "dispatch_shape": [
+          648,
+          8760
+        ],
+        "dispatch_sum": 110209668.869,
+        "dispatch_hash": "f27cdfdda9b46cd8",
+        "dispatch_sorted_hash": "2deb9cddaceae822",
+        "dispatch_multiset_hash": "0c0baf6b838752d3",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2252019.757,
+        "price_hash": "b359d8d250fd3416",
+        "price_sorted_hash": "3fe1eb9bab9958b4",
+        "price_multiset_hash": "db696cd1a7b2b961",
+        "n_retire": 0,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      }
+    },
+    {
+      "year": 2027,
+      "equal": true,
+      "resumed_from_cache": true,
+      "control": {
+        "dispatch_shape": [
+          419,
+          8760
+        ],
+        "dispatch_sum": 111778905.232,
+        "dispatch_hash": "98883c3562139548",
+        "dispatch_sorted_hash": "895b37c5feefbab4",
+        "dispatch_multiset_hash": "eb5b70cb54b1d5e0",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2286419.979,
+        "price_hash": "621de6294d1c088c",
+        "price_sorted_hash": "1a0c8218a2844e20",
+        "price_multiset_hash": "633074aa1b50631f",
+        "n_retire": 34,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      },
+      "resume": {
+        "dispatch_shape": [
+          419,
+          8760
+        ],
+        "dispatch_sum": 111778905.232,
+        "dispatch_hash": "98883c3562139548",
+        "dispatch_sorted_hash": "895b37c5feefbab4",
+        "dispatch_multiset_hash": "eb5b70cb54b1d5e0",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2286419.979,
+        "price_hash": "621de6294d1c088c",
+        "price_sorted_hash": "1a0c8218a2844e20",
+        "price_multiset_hash": "633074aa1b50631f",
+        "n_retire": 34,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      }
+    },
+    {
+      "year": 2028,
+      "equal": false,
+      "resumed_from_cache": false,
+      "control": {
+        "dispatch_shape": [
+          419,
+          8760
+        ],
+        "dispatch_sum": 113461235.316,
+        "dispatch_hash": "a45685089f83d177",
+        "dispatch_sorted_hash": "f39ece09d05911b1",
+        "dispatch_multiset_hash": "ad01eb3b702cf228",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2454073.548,
+        "price_hash": "e94d20aab560b046",
+        "price_sorted_hash": "6d8e259b550c9b00",
+        "price_multiset_hash": "4dd7ad73323e3761",
+        "n_retire": 0,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      },
+      "resume": {
+        "dispatch_shape": [
+          419,
+          8760
+        ],
+        "dispatch_sum": 113461235.316,
+        "dispatch_hash": "4d5bfb6c7302fccd",
+        "dispatch_sorted_hash": "3acb8156c208b2a1",
+        "dispatch_multiset_hash": "fafa5cc4db3c5828",
+        "price_shape": [
+          5,
+          8760
+        ],
+        "price_sum": 2454071.122,
+        "price_hash": "befd780ad2777427",
+        "price_sorted_hash": "7d3afffd79949725",
+        "price_multiset_hash": "19a1d79fbcba3d9a",
+        "n_retire": 0,
+        "n_thermal_add": 0,
+        "n_renew_add": 0,
+        "n_storage_add": 0
+      }
+    }
+  ],
+  "cell": "drill"
+}
