@@ -518,7 +518,6 @@ def inject_pjm_seam_flow_limit(
     hours: int,
     percentile: float | None = None,
     direction: str = "import",
-    by_neighbor: bool = False,
 ) -> bool:
     """Cap each PJM reference-price seam's import/export bands at the measured envelope.
 
@@ -533,28 +532,27 @@ def inject_pjm_seam_flow_limit(
     identical to the MISO function: import caps scale ``availability``; export
     caps raise ``min_gen``.
 
-    **Two constructions of that per-neighbour envelope** (``by_neighbor``,
-    ``ScenarioConfig.pjm_seam_envelope_by_neighbor``, default off):
+    **The envelope is built per NEIGHBOUR, from that seam's OWN ties**
+    (:data:`~market_sim.model.interchange.spec.PJM_TIE_NEIGHBOR` ->
+    :func:`~market_sim.data.eia_loader.pjm_neighbor_interchange_envelope`).
 
-    * ``False`` — the legacy path: a per-model-ZONE envelope from
-      :func:`~market_sim.data.eia_loader.pjm_zonal_interchange_envelope`
-      (each tie attributed to one border zone via
-      ``data.eia930.envelopes._PJM_TIE_ZONE``), summed over the neighbour's
-      ``border_zones``.
-    * ``True`` — the direct path (pjm-151, rule 14 ``[R-ACCURATE]``):
-      :func:`~market_sim.data.eia_loader.pjm_neighbor_interchange_envelope`
-      on the neighbour's OWN ties
-      (:data:`~market_sim.model.interchange.spec.PJM_TIE_NEIGHBOR`).
-
-    The legacy path mixes counterparties, because a zone bucket holds every tie
-    that lands in it and several neighbours name the same border zone. It is
-    also where the two modules' attributions collide: ``_PJM_TIE_ZONE`` puts the
-    whole TVA tie on ``PJM_Dominion`` while this interface's ``border_zones``
-    spans ``PJM_AEP_Ohio`` + ``PJM_Dominion``, so the TVA cap picked up the
-    Carolinas ties, the MISO Indiana/Ohio ties, LGEE and TVA itself. Measured on
-    PJM's own file at p90 (``scripts/probes/pjm151_seam_envelope_attribution.py``,
-    netting each seam's ties within the hour before the directional clip, as
-    ``pjm_zonal_interchange`` does):
+    A zone-summed construction preceded it — a per-model-ZONE envelope from
+    :func:`~market_sim.data.eia_loader.pjm_zonal_interchange_envelope` (each tie
+    attributed to one border zone via ``data.eia930.envelopes._PJM_TIE_ZONE``),
+    summed over the neighbour's ``border_zones`` — and it mixed counterparties,
+    because a zone bucket holds every tie that lands in it and several
+    neighbours name the same border zone. It was also where the two modules'
+    attributions collided: ``_PJM_TIE_ZONE`` puts the whole TVA tie on
+    ``PJM_Dominion`` while this interface's ``border_zones`` spans
+    ``PJM_AEP_Ohio`` + ``PJM_Dominion``, so the TVA cap picked up the Carolinas
+    ties, the MISO Indiana/Ohio ties, LGEE and TVA itself. That path was carried
+    behind ``ScenarioConfig.pjm_seam_envelope_by_neighbor`` for the pjm-151
+    single-delta A/B and **deleted at pjm-152 once the repair was the keeper's
+    armed path** (rule 26 ``[R-DELETE]``: a deprecated parameter that still
+    parses is a re-armable answer key). Measured on PJM's own file at p90
+    (``scripts/probes/pjm151_seam_envelope_attribution.py``, netting each seam's
+    ties within the hour before the directional clip, as
+    ``pjm_zonal_interchange`` does), the zone-summed cap against this one:
 
     ==========  =========  ==================================  ===============
     seam        direction  legacy cap / direct cap (23/24/25)  legacy binds
@@ -575,11 +573,15 @@ def inject_pjm_seam_flow_limit(
     NYISO reproduces exactly (its border zone holds only its own four ties) —
     the control the measurement carries.
 
-    The direct path introduces no parameter: the tie->interface map is an
+    This construction introduces no parameter: the tie->interface map is an
     identity taken from PJM's own tie labels (rule 5 ``[R-NO-MAGIC]``), and both
     paths read the same measured file at the same percentile (rule 13
     ``[R-MEASURED]`` — reproducible for a forward year, flow-responsive, and
     fitted to nothing).
+
+    ``zone_names`` is retained for signature parity with
+    :func:`inject_miso_seam_flow_limit` and the positional call sites; the
+    per-neighbour envelope is keyed on the interface, not the model zone.
 
     Returns ``True`` when at least one seam was capped.
     """
@@ -595,24 +597,15 @@ def inject_pjm_seam_flow_limit(
     if not neighbors:
         return False
 
-    if by_neighbor:
-        from market_sim.data.eia_loader import pjm_neighbor_interchange_envelope
+    from market_sim.data.eia_loader import pjm_neighbor_interchange_envelope
 
-        nb_names = [n.name for n in neighbors]
-        env = pjm_neighbor_interchange_envelope(year, nb_names, hours, pct)
-        if env is None:
-            return False
-        import_cap, export_cap = env
-        # Row key is the neighbour's own name; no border-zone summation.
-        cap_idx = {n: i for i, n in enumerate(nb_names)}
-    else:
-        from market_sim.data.eia_loader import pjm_zonal_interchange_envelope
-
-        env = pjm_zonal_interchange_envelope(year, zone_names, hours, pct)
-        if env is None:
-            return False
-        import_cap, export_cap = env
-        cap_idx = {z: i for i, z in enumerate(zone_names)}
+    nb_names = [n.name for n in neighbors]
+    env = pjm_neighbor_interchange_envelope(year, nb_names, hours, pct)
+    if env is None:
+        return False
+    import_cap, export_cap = env
+    # Row key is the neighbour's own name; no border-zone summation.
+    cap_idx = {n: i for i, n in enumerate(nb_names)}
 
     mark = _REF_IMPORT_MARK if direction == "import" else _REF_EXPORT_MARK
     if direction == "export" and fleet_arrays.min_gen is None:
@@ -630,16 +623,8 @@ def inject_pjm_seam_flow_limit(
         if not rows:
             continue
         cap_data = export_cap if direction == "export" else import_cap
-        if by_neighbor:
-            # The neighbour's own row — one seam, one series, no summation.
-            cap_rows = [cap_idx[neighbor.name]] if neighbor.name in cap_idx else []
-        else:
-            # Legacy: sum the per-zone envelope across the neighbor's borders.
-            cap_rows = [
-                z_i
-                for z in neighbor.border_zones
-                if (z_i := cap_idx.get(z)) is not None
-            ]
+        # The neighbour's own row — one seam, one series, no summation.
+        cap_rows = [cap_idx[neighbor.name]] if neighbor.name in cap_idx else []
         if not cap_rows:
             continue
         cap = np.clip(cap_data[cap_rows].sum(axis=0), 0.0, None)
