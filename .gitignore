@@ -533,6 +533,12 @@ results/ffr1c/*.log
 # -----------------------------------------------------------------------------
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
+
+# nyiso-124 probe pull cache: public NYISO MIS monthly zonal-LBMP and ATC/TTC
+# zips fetched on demand by scripts/probes/_nyiso124_charter_g0_g1.py. The URLs
+# are in the probe and the committed deliverable is
+# results/calibration/_nyiso124_charter_g0_g1.json — the zips are disposable.
+.cache/
 docs/handoffs/_battery_cache_*/
 docs/handoffs/_battery_metrics/
 

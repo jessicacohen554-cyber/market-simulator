@@ -5004,4 +5004,91 @@ Evidence: `docs/handoffs/nyiso-123-downstate-boundary-2026-08-04.md`,
 probes `scripts/probes/_nyiso123_month_band_allyears.py`,
 `_nyiso123_zonal_identity_allyears.py`.
 
-* Next number: **nyiso-124**.
+
+## 2026-08-04 — nyiso-124: the topology-split charter CLOSES AT G0 WITH CAUSE, and Object A is re-attributed to Central East — a boundary the model ALREADY HAS. NO SOLVE
+
+**Keeper `2026-08-04-nyiso-120-c119-scope`, UNCHANGED.** Zero solves, zero years
+outside 2023–2025, no `ScenarioConfig` field / constant / derive script / artifact
+changed, **no run produced so none registered** (rule 15). No cell verdict moved —
+no mechanism was tested. The lever queue is **still EMPTY** and no lever was
+manufactured. Verified at HEAD `afe19a56`, committed artifacts only:
+`calibration_verdict.py --run-id` returns **NOT-YET** (`price_mean` FAIL on 2025
+−10.1 %, `price_tail` ledgered CAVEAT, seven PASS); `audit_keepers.py --iso NYISO`
+PASS 0/0.
+
+**(1) G0 — IDENTIFIABILITY: FAIL on 2 of 5 quantities → the charter closes under
+its own §6(1).** NYISO publishes **no F/G (UPNY-SENY) transfer limit** anywhere
+reachable: absent from the MIS P-32 posting (7 internal interfaces), absent from
+the MIS ATC/TTC posting (7 internal interfaces read across all 36 training
+months), and absent from **all four Gold Book editions** (0 hits for
+SENY / UPNY / Central East / Total East / "transfer limit" — the Gold Book carries
+no interface-limit table at all). Its only public trace is the 2025 SOM's record
+that NYISO **ceased studying** the interface in the deliverability test in **2013**
+after the G-J locality was created. The split also forces `ext_G`, the Zone-G
+share of the 1,600 MW eastern seam, which is unchanged from nyiso-101 §3 leg 2 —
+`interchange/spec.py` calls it "a modelling choice inside the topology". Boundary
+definition, zonal load allocation and per-unit fleet membership all **PASS**.
+
+**(2) INDEPENDENTLY, THE SPLIT TARGETS THE WRONG BOUNDARY.** Measured NYISO zonal
+RT LBMP, annual eastward steps: **E|F (Central East) +$10.17 / +$5.09 / +$11.69**
+against **F|G (UPNY-SENY) −$2.65 / −$0.36 / −$1.48**. Zone G prices **below** Zone
+F, and furthest below in the charter's own cold-snap months (Feb-2023 −12.19,
+Jan-2025 −8.91, Feb-2025 −15.41). The F|G separation is real, but it is a
+G-cheaper-than-F object — not the downstate premium the charter chartered.
+
+**(3) OBJECT A IS RE-ATTRIBUTED: A DIAGNOSABLE DEFECT, NOT A REPRESENTATION
+FRONTIER.** `CENTRAL EAST - VC` is the **only** internal NYISO interface that binds
+at all (≥95 % of posted limit in **4.4 / 2.5 / 3.6 %** of hours annually,
+**22.0 / 17.2 / 26.9 %** of January hours); TOTAL EAST, UPNY CONED, SPR/DUN-SOUTH,
+DYSINGER EAST, MOSES SOUTH and WEST CENTRAL bind in **0.0 %** of hours in every
+month of every year — independently **confirming** nyiso-122's TTC-re-grounding
+refutation, which is not re-opened. The model's own `Upstate_West→Capital_Hudson`
+link sits on that same cutset and separates prices in **13.4 / 1.5 / 1.1 %** of
+hours, reproducing **5.0 / 6.0 / 0.3 %** of the measured basis. January 2025: model
+measured monthly TTC **3,175 MW** vs posted median **3,205 MW**, real interface
+binding in **26.9 %** of hours, model link separating in **0.0 %**. Same cutset,
+same limit, same hours. §7(1) answered too — 2023's 86.40 % mainland identity is
+that year's tighter measured TTC override (1,450–1,950 MW monthly vs 2,525–3,175
+later) — and **qualified**: the model's 2023 separation concentrates in Mar/Aug/Sep
+(34.5 / 38.7 / 26.7 %), months the real interface bound in 5.2 / 1.6 / 1.1 %, while
+January (real 22.0 %) gets 6.3 %. More dispersion, not the right dispersion.
+
+**(4) G1 — OBJECT B, AND A CORRECTION TO THIS SESSION'S OWN FIRST READING.**
+Reported against interest: the mirror-image reading (A and B one object) was
+**falsified by this session's own quintile decomposition**. The model over-prices
+upstate by **+$4.2–7.2/MWh in the quintiles where the market's own basis is $0–2**;
+`corr(upstate error, measured basis)` = **+0.124 / −0.061 / −0.263**; CE-binding
+hours carry only **13 / 31 / −344 %** of the load-weighted upstate error. The
++$18–24 conditional reading in binding hours was a **level artifact** and is
+corrected, not carried. Object B is an **off-peak** object (+$8.37 / +$4.53 /
++$5.05 vs on-peak +$6.72 / +$1.87 / −$0.70) that applies to the **whole state**, so
+**§7(2) is decided: it is the TROUGH HALF of nyiso-110's compression object**. Rule
+19 `[R-ONE-MECH]` forbids a second mechanism for it; `diurnal_price_amplitude`
+NYISO stays **G**. Diagnosis half PASSES, mechanism half FAILS — charter §6(2) is
+satisfied alongside §6(1).
+
+**(5) OPEN BLOCKER, WRITTEN UP AND NOT CLOSED BY A PICKED VALUE.** Why does the
+model's Central-East link stay slack on a limit the real interface binds at?
+Candidates **enumerated but NOT adjudicated**: the 1,600 MW import node landing
+east of the cutset; forced eastern generation (D-2 `ST_GAS reliability_floor`
+2.80 TWh / 21 % of class and `firm_import` 7.88 TWh in 2025); the zonal load
+allocation. None is measurable from committed artifacts —
+`system_<year>.parquet` carries no link flow, `class_hourly_<year>.parquet` no
+zone — so answering it needs a sidecar extension or a keeper replay, which is a
+scoping decision, not a lever.
+
+**(6) FLAGGED, NOT EDITED.** C3c's stated re-open condition ("a `Capital_Hudson` →
+Zone-F/Zone-G topology split") is **falsified as written**. It lives in the keeper
+attestation generator; correcting it removes C3c's only stated satisfiable re-open
+route and is therefore an **owner disposition**, not a session edit.
+
+**Standing instruction for a later NYISO assignment:** the lever queue stays
+**EMPTY**, the chartered pair is **closed**, and the named successor is the §(5)
+open blocker — which is an instrumentation/scoping question to put to the owner,
+not a lever to enter as a queue item.
+
+Evidence: `docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md`, probe
+`scripts/probes/_nyiso124_charter_g0_g1.py`, record
+`results/calibration/_nyiso124_charter_g0_g1.json`.
+
+* Next number: **nyiso-125**.
