@@ -431,6 +431,11 @@ results/calibration/caiso122_nooutage_2025/
 # captured from the live fleet-array path (no LP). Derived and disposable —
 # regenerate with `scripts/probes/ercot130_capoff_phase1.py --capture`.
 results/calibration/_ercot130_avail_cache/
+# ercot-159 Phase-0 SCED online-capability hourly caches: the probe's scan
+# output (slow/quick/nuc online HSL sums per hour). Derived and disposable —
+# regenerate with `scripts/probes/ercot159_capability_phase0.py --scan`; the
+# census JSON and the frozen envelope artifact are the committed records.
+results/calibration/_ercot159_sced_online_hourly_*.parquet
 # miso-98 CHP-sector A/B staging legs. MISO peaks at 14.4 GB on a 15 GB box
 # (miso-92 §7), so each three-year bundle is built one fresh year per process
 # and chained forward with --reuse-solved. Only the two FINAL three-year
