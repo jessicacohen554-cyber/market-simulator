@@ -577,9 +577,12 @@ rule-13-admissible mechanism available to carry it.
      (which own the **lower** bound) — explicit precedence, never a stacked
      layer; identification from ERCOT's own measured online state only
      (rules 13/20/23); an availability-shaped bound, since the pure-LP
-     architecture forbids MIP; and the validating SCED corpus is **2024/2025
-     only** (no 2023 corpus — NP3-965 OWNER-DECLINED 2026-08-02), a 47-day
-     event/control-split sample.
+     architecture forbids MIP; and the SCED corpus basis is: **full-year
+     delivery-2023** (the ERCOT-157 owner re-upload at `data/raw/ercot/SCED/`,
+     315 shards verified complete, all 365 delivery days — this SUPERSEDES the
+     earlier "2024/2025 only, NP3-965 OWNER-DECLINED 2026-08-02" clause, which
+     went stale when the re-upload landed the next day) plus the 47-day
+     2024/2025 event/control sample extracts (validation only).
 8. **The CT-band re-identification reopen intake** (ERCOT-147, 2026-07-31 —
    Phase 0 REFUSED ex ante, no solve spent, keeper unchanged;
    `docs/DIAGNOSIS-ercot147-ct-band-reident-2026-07-31.md`, probe
