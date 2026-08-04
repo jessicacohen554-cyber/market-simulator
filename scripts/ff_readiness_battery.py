@@ -93,6 +93,7 @@ from market_sim.policy.rps import get_rps_acp, get_rps_target  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
     shipped_capacity_clearing,
     shipped_capacity_clearing_by_iso,
+    shipped_forecast_xyear_warmstart,
 )
 
 # --------------------------------------------------------------------------- #
@@ -171,6 +172,12 @@ def golden_posture_config(
         start_year=start_year,
         end_year=end_year,
         capacity_market_clearing_by_iso=shipped_capacity_clearing_by_iso(),
+        # Owner decision D-10 (2026-08-04, sitting Addendum K.3) — the golden
+        # posture IS the shipped forecast-bundle posture, so it carries the
+        # cross-year warm-start disarm too. This is what makes the kill-resume
+        # drill's control and resume legs both solve their first post-kill year
+        # cold, which is the FFR-3M cell-C configuration that measured GREEN.
+        forecast_xyear_warmstart=shipped_forecast_xyear_warmstart(),
     )
     return resolve_policy_bundle(cfg)
 
