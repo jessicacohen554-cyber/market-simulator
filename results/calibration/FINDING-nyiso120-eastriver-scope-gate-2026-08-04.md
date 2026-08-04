@@ -236,6 +236,46 @@ level criterion instead of the tail one, and C3c is bit-unchanged.
 
 ---
 
+## §4.2 — THE KEEPER MOVED MID-SESSION, SO EVERYTHING ABOVE WAS RE-RUN ON THE RIGHT BASE
+
+**The A/B in §4/§4.1 is on the `nyiso-118` recipe, and it is SUPERSEDED as the
+promotion evidence.** The NYISO keeper advanced
+`2026-08-03-nyiso-118-seny-span` → **`2026-08-03-nyiso-119-seny-increment`**
+*during* this session, after the arms were launched. A `nyiso-118`-based
+treatment is therefore **not** a valid keeper candidate: promoting it would have
+**silently disarmed `nyiso_seny_rcpf_increment_step`**, the mechanism nyiso-119
+armed and the owner promoted a day earlier. That was caught before it landed —
+the keeper shard edit was made, checked, and **reverted** — and both arms were
+re-solved on the `nyiso-119` recipe so the correction **composes** onto the
+current keeper instead of reverting it.
+
+**Deciding arms:** `2026-08-04-nyiso-120-c119-control` vs
+**`2026-08-04-nyiso-120-c119-scope`**. The control reproduces the nyiso-119
+keeper's C3a **exactly** (34.77 / 37.99 / 60.22). The promoted run carries
+`nyiso_seny_rcpf_increment_step = True`, verified explicitly.
+
+**The result replicates on the correct base** — which is itself worth stating,
+because it means the finding is a property of the input, not of the recipe:
+
+| gate | nyiso-118 pair | **nyiso-119 pair (deciding)** |
+|---|---|---|
+| six construction gates | all PASS, LIVE | **all PASS, LIVE** |
+| max zonal \|Δλ\| | 0.1287 / 0.1371 / 0.3875 | **0.1278 / 0.1379 / 0.3887** |
+| `CT_CHP` ΔTWh | +0.3113 / +0.1921 / +0.4214 | **+0.3103 / +0.1927 / +0.4213** |
+| C1 | 14/14 all, 10/10 free both arms | **unchanged, both arms** |
+| P2 | fires on C3a | **fires on C3a** |
+| C3a 2025 | −9.5 % → −10.0 % | **−9.5 % → −10.1 %** |
+| C3a 2023 | +7.6 % → +7.2 % | **+7.6 % → +7.2 %** |
+
+The three residual config differences against the nyiso-119 keeper
+(`exit_rate_limits`, `caiso_zonal_loss_surface`,
+`ercot_energy_online_capability_cap`) are **HEAD drift, not deltas introduced
+here** — all three are new fields main added after nyiso-119 solved, they are
+non-NYISO-scoped or backcast-inert, and the c119 **control carries them
+identically**, which is why K4 reads **zero** config delta between the two arms.
+
+---
+
 ## §5 — the determination, and the governance stop
 
 **Control: CALIBRATED-WITH-CAVEATS** (C3c sole caveat).
@@ -271,9 +311,17 @@ rather than taken under the standing standard — the standing standard is
 general, D-5(b) is specific to a `complete` ISO and specifically names
 escalation.
 
-**The keeper is therefore UNCHANGED at `2026-08-03-nyiso-118-seny-span` pending
-that decision.** The corrected artifact itself **ships regardless** (rule 14) and
-is committed; what is deferred is only which run is designated keeper.
+**OWNER RULING: PROMOTE.** Escalated with the numbers above; the owner ruled
+promote. **NYISO keeper → `2026-08-04-nyiso-120-c119-scope`** (the nyiso-119-based
+treatment, §4.2 — *not* the nyiso-118-based arm B, which would have disarmed
+`nyiso_seny_rcpf_increment_step`). `calibration-complete.json` re-keyed with the
+worse determination **written explicitly, not softened**;
+`audit_keepers --iso NYISO` PASSES 0 failures / 0 warnings.
+
+The ledgered-caveat budget is **unspent** by this change (1 of 3, C3c only). The
+C3a FAIL is a criterion failure, **not** a new ledger entry, and is deliberately
+not ledgered — it is an open residual whose named object is the 2025
+under-pricing this correction did not create.
 
 ---
 
