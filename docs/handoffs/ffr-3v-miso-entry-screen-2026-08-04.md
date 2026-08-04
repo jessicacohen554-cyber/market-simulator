@@ -51,7 +51,7 @@ first decision year: energy **$67,759**, everything else **$0**, cost
 Solar's implied capture price is $35.17/MWh against a break-even of
 $41.9–48.9.
 
-**But the RA zero turns out to be the smaller half of the story — see §3.1.**
+**But the RA zero turns out to be the smaller half of the story — see §3.3.**
 Measured, the capacity payment is zero for **every** technology in this leg,
 thermal included, because MISO clears 27.3 % long and its sloped VRR pays
 nothing above a ~1.02 reserve position. Arming `entry_vre_capacity_revenue`
@@ -64,7 +64,15 @@ published solar accreditation is intaken on disk but not wired** (§4.6b), so
 the credit would be the generic 0.18 fallback even where the payment is
 non-zero.
 
-Two further findings sit alongside it, both independent of the margin:
+**And in the 2024 decision year the margin is not even close — it is
+unreachable.** The entry price signal's *maximum* hourly price is **$39/MWh**
+against solar's $43.18 break-even *mean* (§3.2), because
+`scarcity_price_overlay: False` leaves the lookahead stack with no ORDC tail at
+all. On this evidence that missing tail is the **largest single suppressor of
+MISO entry** in 2024/2025 — upstream of every revenue lever below — and it also
+zeroes the peaker outright (`gas_ct` var cost $41.39 > the $39 ceiling).
+
+Three further findings sit alongside the margin:
 
 * **Even a profitable solar screen could not have passed FC-3.** The growth
   ladder and the pending-queue netting sit on an exact knife-edge
@@ -190,7 +198,60 @@ Three things the ledger adds that §4 did not have:
    price formation, not caps and not credits — and it is the likely origin of
    the leg's gas_ct −100 % band. Not this lane's question; flagged, not pursued.
 
-### 3.1 CORRECTION to §4.6 — the capacity payment is zero for thermal too
+### 2023 (screening on 2021's zonal LP duals — the bridge leaves `prior_results` two years stale)
+
+| tech | profitable | margin $/MW-yr | energy | attr | cap | annual cost | cf used | build MW | `binding_cap` |
+|---|---|---|---|---|---|---|---|---|---|
+| **wind** | **Y** | **+34,210** | 94,623 | 0 | 0 | 60,412 | 0.3511 | **0** | **`per_tech_cap_zero`** |
+| **solar** | **N** | **−22,681** | 67,759 | 0 | 0 | 90,440 | 0.2200 | **0** | **`unprofitable`** |
+| gas_cc | N | −33,362 | 113,683 | 0 | 0 | 147,045 | — | 0 | `unprofitable` |
+| gas_ct | N | −92,709 | 35,402 | 0 | 0 | 128,112 | — | 0 | `unprofitable` |
+| nuclear_smr | N | −558,706 | 259,143 | 0 | 0 | 817,849 | 0.90 | 0 | `unprofitable` |
+
+`entry_decided_mw_by_tech = {}` — **nothing at all is decided in 2023.**
+
+**This is the §5.1 reconstruction's prediction landing exactly.** The trace said
+wind would decide 4,000 MW at `per_tech_cap` in 2022 and then **zero at
+`per_tech_cap_zero` in 2023**, because the 2022 pending row consumes the whole
+4.0 GW per-tech queue cap. That is precisely what the ledger says, label
+included. The two failure modes are now both measured rather than inferred:
+**wind is profitable and cap-blocked; solar is uncapped and unprofitable.**
+
+### 3.2 The 2024 entry price signal cannot clear solar under ANY capture shape
+
+The strongest single number in this lane, from the run's own log:
+
+```
+year 2023: lookahead stack re-price for 2024 capacity screens --
+  mean $25.92/MWh (raw duals+overlay mean $27.41);
+  pro-forma scarcity >$200 in 0 h, >$1000 in 0 h, max $39
+```
+
+**The maximum hourly price in the entire 8760-hour signal is $39/MWh.** Solar's
+2024 break-even *mean* capture price is **$43.18/MWh** (§4.7). So a solar plant
+that somehow produced *only* in the single most expensive hour of the year
+would still miss its LCOE. **Solar's 2024 rejection is not a close margin call;
+it is arithmetically unreachable**, and no capture-shape, siting or CF argument
+can touch it.
+
+The same number condemns the peaker outright: `gas_ct`'s variable cost is
+**$41.39/MWh**, above the signal's $39 maximum, so its 2024 energy margin is
+**exactly zero** by construction — the mechanical origin of the leg's gas_ct
+−100 % band.
+
+This is `scarcity_price_overlay: False` in the resolved config doing the work:
+the gate on the ORDC adder inside `_lookahead_reprice_signal`
+(runner.py:2468–2471) requires **both** `scarcity_pricing_enabled` *and*
+`scarcity_price_overlay`, and only the first is on. The lookahead signal is
+therefore a pure merit-order stack price whose ceiling is the most expensive
+unit's time-mean variable cost. A screen fed a price series with no scarcity
+tail will reject every technology whose economics live in that tail — peakers
+first, then anything near the margin. **That is a fourth distinct finding, and
+on this evidence it is the largest single suppressor of MISO entry in the
+2024/2025 decision years.** It is a price-formation issue upstream of every
+revenue-side lever in §7, and it is not what this lane was chartered to fix.
+
+### 3.3 CORRECTION to §4.6 — the capacity payment is zero for thermal too
 
 §4.6 said the thermal branch takes its capacity payment ungated while VRE is
 denied, and quoted $75,810–117,325/MW-yr for a new MISO gas unit. **The code
