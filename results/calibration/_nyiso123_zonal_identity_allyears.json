@@ -1,0 +1,842 @@
+{
+ "probe": "nyiso-123 -- zonal identity by month + zonal-basis counterfactual, all training years (no LP)",
+ "keeper": "2026-08-04-nyiso-120-c119-scope",
+ "bundle": "results/calibration/nyiso120_c119_scopegate",
+ "reference_zone": "Upstate_West",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "counterfactual_note": "DIAGNOSTIC BOUND ONLY (rule 13 [R-MEASURED]). m*[z,k] = m[Upstate_West,k] + (a[z,k] - a[Upstate_West,k]) at monthly grain, load-weighted on the model's own demand. The observed basis is a measured OUTCOME and never enters a solve; no mechanism is proposed that would consume it.",
+ "results": [
+  {
+   "year": 2023,
+   "months": [
+    {
+     "month": 1,
+     "load_share_pct": 8.635,
+     "mainland4_identical_pct": 93.68,
+     "all5_identical_pct": 70.16,
+     "model_mainland4_spread_mean": 0.063,
+     "model_all5_spread_mean": 2.9,
+     "actual_all5_spread": 16.93,
+     "actual_nyc_minus_upstate": 8.27,
+     "model_nyc_minus_upstate": 0.13,
+     "zone_gap": {
+      "Upstate_West": 8.62,
+      "Capital_Hudson": -2.6,
+      "Lower_Hudson": 0.61,
+      "NYC": 0.48,
+      "Long_Island": -4.75
+     },
+     "reference_zone_gap": 8.62,
+     "gap_contrib": 0.213,
+     "cf_gap_contrib": 0.744
+    },
+    {
+     "month": 2,
+     "load_share_pct": 7.775,
+     "mainland4_identical_pct": 91.22,
+     "all5_identical_pct": 73.07,
+     "model_mainland4_spread_mean": 1.329,
+     "model_all5_spread_mean": 3.303,
+     "actual_all5_spread": 43.67,
+     "actual_nyc_minus_upstate": 21.79,
+     "model_nyc_minus_upstate": 1.42,
+     "zone_gap": {
+      "Upstate_West": 11.22,
+      "Capital_Hudson": -20.47,
+      "Lower_Hudson": -8.41,
+      "NYC": -9.16,
+      "Long_Island": -28.52
+     },
+     "reference_zone_gap": 11.22,
+     "gap_contrib": -0.428,
+     "cf_gap_contrib": 0.872
+    },
+    {
+     "month": 3,
+     "load_share_pct": 8.167,
+     "mainland4_identical_pct": 65.46,
+     "all5_identical_pct": 53.9,
+     "model_mainland4_spread_mean": 0.785,
+     "model_all5_spread_mean": 2.005,
+     "actual_all5_spread": 21.08,
+     "actual_nyc_minus_upstate": 14.02,
+     "model_nyc_minus_upstate": 0.76,
+     "zone_gap": {
+      "Upstate_West": 15.07,
+      "Capital_Hudson": -5.17,
+      "Lower_Hudson": 2.01,
+      "NYC": 1.81,
+      "Long_Island": -2.33
+     },
+     "reference_zone_gap": 15.07,
+     "gap_contrib": 0.431,
+     "cf_gap_contrib": 1.231
+    },
+    {
+     "month": 4,
+     "load_share_pct": 7.126,
+     "mainland4_identical_pct": 78.75,
+     "all5_identical_pct": 76.25,
+     "model_mainland4_spread_mean": 0.364,
+     "model_all5_spread_mean": 0.565,
+     "actual_all5_spread": 13.85,
+     "actual_nyc_minus_upstate": 10.55,
+     "model_nyc_minus_upstate": 0.42,
+     "zone_gap": {
+      "Upstate_West": 8.48,
+      "Capital_Hudson": -4.9,
+      "Lower_Hudson": -1.45,
+      "NYC": -1.66,
+      "Long_Island": -1.18
+     },
+     "reference_zone_gap": 8.48,
+     "gap_contrib": 0.113,
+     "cf_gap_contrib": 0.604
+    },
+    {
+     "month": 5,
+     "load_share_pct": 7.37,
+     "mainland4_identical_pct": 93.95,
+     "all5_identical_pct": 80.78,
+     "model_mainland4_spread_mean": 0.032,
+     "model_all5_spread_mean": 1.812,
+     "actual_all5_spread": 10.22,
+     "actual_nyc_minus_upstate": 6.37,
+     "model_nyc_minus_upstate": -0.02,
+     "zone_gap": {
+      "Upstate_West": 10.28,
+      "Capital_Hudson": 3.4,
+      "Lower_Hudson": 4.31,
+      "NYC": 3.89,
+      "Long_Island": 2.29
+     },
+     "reference_zone_gap": 10.28,
+     "gap_contrib": 0.433,
+     "cf_gap_contrib": 0.757
+    },
+    {
+     "month": 6,
+     "load_share_pct": 8.171,
+     "mainland4_identical_pct": 99.44,
+     "all5_identical_pct": 70.83,
+     "model_mainland4_spread_mean": 0.003,
+     "model_all5_spread_mean": 3.289,
+     "actual_all5_spread": 10.62,
+     "actual_nyc_minus_upstate": 2.77,
+     "model_nyc_minus_upstate": 0.13,
+     "zone_gap": {
+      "Upstate_West": 6.08,
+      "Capital_Hudson": 2.85,
+      "Lower_Hudson": 3.96,
+      "NYC": 3.44,
+      "Long_Island": -0.18
+     },
+     "reference_zone_gap": 6.08,
+     "gap_contrib": 0.309,
+     "cf_gap_contrib": 0.497
+    },
+    {
+     "month": 7,
+     "load_share_pct": 10.614,
+     "mainland4_identical_pct": 94.35,
+     "all5_identical_pct": 62.5,
+     "model_mainland4_spread_mean": 0.173,
+     "model_all5_spread_mean": 7.367,
+     "actual_all5_spread": 14.73,
+     "actual_nyc_minus_upstate": 6.19,
+     "model_nyc_minus_upstate": 0.21,
+     "zone_gap": {
+      "Upstate_West": 6.28,
+      "Capital_Hudson": 4.34,
+      "Lower_Hudson": 3.66,
+      "NYC": 0.3,
+      "Long_Island": 1.51
+     },
+     "reference_zone_gap": 6.28,
+     "gap_contrib": 0.324,
+     "cf_gap_contrib": 0.667
+    },
+    {
+     "month": 8,
+     "load_share_pct": 9.489,
+     "mainland4_identical_pct": 61.29,
+     "all5_identical_pct": 43.01,
+     "model_mainland4_spread_mean": 0.944,
+     "model_all5_spread_mean": 6.09,
+     "actual_all5_spread": 18.52,
+     "actual_nyc_minus_upstate": 6.73,
+     "model_nyc_minus_upstate": 1.11,
+     "zone_gap": {
+      "Upstate_West": 6.99,
+      "Capital_Hudson": 2.49,
+      "Lower_Hudson": 2.51,
+      "NYC": 1.37,
+      "Long_Island": -3.78
+     },
+     "reference_zone_gap": 6.99,
+     "gap_contrib": 0.245,
+     "cf_gap_contrib": 0.663
+    },
+    {
+     "month": 9,
+     "load_share_pct": 8.542,
+     "mainland4_identical_pct": 71.94,
+     "all5_identical_pct": 49.72,
+     "model_mainland4_spread_mean": 1.587,
+     "model_all5_spread_mean": 8.152,
+     "actual_all5_spread": 15.02,
+     "actual_nyc_minus_upstate": 6.55,
+     "model_nyc_minus_upstate": 2.94,
+     "zone_gap": {
+      "Upstate_West": 4.11,
+      "Capital_Hudson": 1.71,
+      "Lower_Hudson": 1.8,
+      "NYC": 0.5,
+      "Long_Island": 3.2
+     },
+     "reference_zone_gap": 4.11,
+     "gap_contrib": 0.195,
+     "cf_gap_contrib": 0.351
+    },
+    {
+     "month": 10,
+     "load_share_pct": 7.729,
+     "mainland4_identical_pct": 88.71,
+     "all5_identical_pct": 70.56,
+     "model_mainland4_spread_mean": 0.152,
+     "model_all5_spread_mean": 2.547,
+     "actual_all5_spread": 9.61,
+     "actual_nyc_minus_upstate": 6.13,
+     "model_nyc_minus_upstate": 0.21,
+     "zone_gap": {
+      "Upstate_West": 4.02,
+      "Capital_Hudson": 2.21,
+      "Lower_Hudson": 1.26,
+      "NYC": -1.9,
+      "Long_Island": -2.43
+     },
+     "reference_zone_gap": 4.02,
+     "gap_contrib": 0.069,
+     "cf_gap_contrib": 0.311
+    },
+    {
+     "month": 11,
+     "load_share_pct": 7.877,
+     "mainland4_identical_pct": 98.61,
+     "all5_identical_pct": 82.22,
+     "model_mainland4_spread_mean": 0.001,
+     "model_all5_spread_mean": 1.804,
+     "actual_all5_spread": 13.83,
+     "actual_nyc_minus_upstate": 6.41,
+     "model_nyc_minus_upstate": -0.02,
+     "zone_gap": {
+      "Upstate_West": 7.97,
+      "Capital_Hudson": 0.93,
+      "Lower_Hudson": 1.9,
+      "NYC": 1.53,
+      "Long_Island": -3.52
+     },
+     "reference_zone_gap": 7.97,
+     "gap_contrib": 0.254,
+     "cf_gap_contrib": 0.628
+    },
+    {
+     "month": 12,
+     "load_share_pct": 8.504,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 78.09,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 2.605,
+     "actual_all5_spread": 7.7,
+     "actual_nyc_minus_upstate": 3.15,
+     "model_nyc_minus_upstate": -0.01,
+     "zone_gap": {
+      "Upstate_West": 7.09,
+      "Capital_Hudson": 5.11,
+      "Lower_Hudson": 4.87,
+      "NYC": 3.94,
+      "Long_Island": 2.62
+     },
+     "reference_zone_gap": 7.09,
+     "gap_contrib": 0.437,
+     "cf_gap_contrib": 0.603
+    }
+   ],
+   "annual": {
+    "model_lw_monthly_grain": 34.64,
+    "actual_lw_zonal_monthly": 32.04,
+    "actual_lw_hub_hourly": 32.05,
+    "basis_difference_zonal_minus_hub": -0.01,
+    "err_pct_baseline": 8.1,
+    "cf_model_lw": 39.97,
+    "cf_err_pct": 24.74,
+    "cf_lift_usd_mwh": 5.33,
+    "cf_cold_only_model_lw": 36.64,
+    "cf_cold_only_err_pct": 14.33,
+    "reference_zone_gap_lw": 7.93,
+    "reference_zone_gap_pct": 24.74
+   },
+   "identity": {
+    "mainland4_identical_pct_year": 86.4,
+    "all5_identical_pct_year": 67.52,
+    "model_mainland4_spread_mean_year": 0.445
+   }
+  },
+  {
+   "year": 2024,
+   "months": [
+    {
+     "month": 1,
+     "load_share_pct": 8.934,
+     "mainland4_identical_pct": 91.53,
+     "all5_identical_pct": 73.25,
+     "model_mainland4_spread_mean": 2.597,
+     "model_all5_spread_mean": 4.415,
+     "actual_all5_spread": 22.88,
+     "actual_nyc_minus_upstate": 22.88,
+     "model_nyc_minus_upstate": 2.96,
+     "zone_gap": {
+      "Upstate_West": 17.23,
+      "Capital_Hudson": 7.87,
+      "Lower_Hudson": 9.29,
+      "NYC": -2.68,
+      "Long_Island": 1.79
+     },
+     "reference_zone_gap": 17.23,
+     "gap_contrib": 0.659,
+     "cf_gap_contrib": 1.54
+    },
+    {
+     "month": 2,
+     "load_share_pct": 7.608,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 76.79,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 2.144,
+     "actual_all5_spread": 7.5,
+     "actual_nyc_minus_upstate": 4.53,
+     "model_nyc_minus_upstate": -0.03,
+     "zone_gap": {
+      "Upstate_West": 4.99,
+      "Capital_Hudson": 2.94,
+      "Lower_Hudson": 2.19,
+      "NYC": 0.42,
+      "Long_Island": 0.06
+     },
+     "reference_zone_gap": 4.99,
+     "gap_contrib": 0.19,
+     "cf_gap_contrib": 0.379
+    },
+    {
+     "month": 3,
+     "load_share_pct": 7.746,
+     "mainland4_identical_pct": 99.73,
+     "all5_identical_pct": 82.8,
+     "model_mainland4_spread_mean": 0.006,
+     "model_all5_spread_mean": 1.404,
+     "actual_all5_spread": 3.25,
+     "actual_nyc_minus_upstate": 3.04,
+     "model_nyc_minus_upstate": -0.07,
+     "zone_gap": {
+      "Upstate_West": 5.17,
+      "Capital_Hudson": 3.65,
+      "Lower_Hudson": 2.97,
+      "NYC": 2.06,
+      "Long_Island": 3.75
+     },
+     "reference_zone_gap": 5.17,
+     "gap_contrib": 0.284,
+     "cf_gap_contrib": 0.401
+    },
+    {
+     "month": 4,
+     "load_share_pct": 7.082,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 79.58,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 2.203,
+     "actual_all5_spread": 5.93,
+     "actual_nyc_minus_upstate": 3.46,
+     "model_nyc_minus_upstate": -0.01,
+     "zone_gap": {
+      "Upstate_West": 3.43,
+      "Capital_Hudson": 2.62,
+      "Lower_Hudson": 1.78,
+      "NYC": -0.03,
+      "Long_Island": 0.3
+     },
+     "reference_zone_gap": 3.43,
+     "gap_contrib": 0.122,
+     "cf_gap_contrib": 0.243
+    },
+    {
+     "month": 5,
+     "load_share_pct": 7.551,
+     "mainland4_identical_pct": 98.12,
+     "all5_identical_pct": 71.37,
+     "model_mainland4_spread_mean": 0.049,
+     "model_all5_spread_mean": 4.085,
+     "actual_all5_spread": 6.11,
+     "actual_nyc_minus_upstate": 4.89,
+     "model_nyc_minus_upstate": 0.09,
+     "zone_gap": {
+      "Upstate_West": 4.7,
+      "Capital_Hudson": 4.16,
+      "Lower_Hudson": 1.95,
+      "NYC": -0.1,
+      "Long_Island": 3.67
+     },
+     "reference_zone_gap": 4.7,
+     "gap_contrib": 0.205,
+     "cf_gap_contrib": 0.355
+    },
+    {
+     "month": 6,
+     "load_share_pct": 9.064,
+     "mainland4_identical_pct": 86.67,
+     "all5_identical_pct": 62.64,
+     "model_mainland4_spread_mean": 0.573,
+     "model_all5_spread_mean": 6.692,
+     "actual_all5_spread": 15.8,
+     "actual_nyc_minus_upstate": 5.56,
+     "model_nyc_minus_upstate": 0.7,
+     "zone_gap": {
+      "Upstate_West": 6.52,
+      "Capital_Hudson": 4.7,
+      "Lower_Hudson": 3.01,
+      "NYC": 1.66,
+      "Long_Island": -0.35
+     },
+     "reference_zone_gap": 6.52,
+     "gap_contrib": 0.31,
+     "cf_gap_contrib": 0.591
+    },
+    {
+     "month": 7,
+     "load_share_pct": 10.643,
+     "mainland4_identical_pct": 83.6,
+     "all5_identical_pct": 60.08,
+     "model_mainland4_spread_mean": 1.228,
+     "model_all5_spread_mean": 10.51,
+     "actual_all5_spread": 15.84,
+     "actual_nyc_minus_upstate": 6.05,
+     "model_nyc_minus_upstate": 1.61,
+     "zone_gap": {
+      "Upstate_West": 0.05,
+      "Capital_Hudson": -5.99,
+      "Lower_Hudson": -3.5,
+      "NYC": -4.39,
+      "Long_Island": -1.21
+     },
+     "reference_zone_gap": 0.05,
+     "gap_contrib": -0.289,
+     "cf_gap_contrib": 0.006
+    },
+    {
+     "month": 8,
+     "load_share_pct": 9.639,
+     "mainland4_identical_pct": 92.07,
+     "all5_identical_pct": 66.8,
+     "model_mainland4_spread_mean": 0.779,
+     "model_all5_spread_mean": 4.652,
+     "actual_all5_spread": 8.07,
+     "actual_nyc_minus_upstate": 3.83,
+     "model_nyc_minus_upstate": 1.36,
+     "zone_gap": {
+      "Upstate_West": 3.09,
+      "Capital_Hudson": 1.88,
+      "Lower_Hudson": 1.28,
+      "NYC": 0.63,
+      "Long_Island": 1.75
+     },
+     "reference_zone_gap": 3.09,
+     "gap_contrib": 0.171,
+     "cf_gap_contrib": 0.298
+    },
+    {
+     "month": 9,
+     "load_share_pct": 7.902,
+     "mainland4_identical_pct": 99.44,
+     "all5_identical_pct": 75.83,
+     "model_mainland4_spread_mean": 0.01,
+     "model_all5_spread_mean": 1.978,
+     "actual_all5_spread": 2.58,
+     "actual_nyc_minus_upstate": 2.58,
+     "model_nyc_minus_upstate": 0.05,
+     "zone_gap": {
+      "Upstate_West": 3.43,
+      "Capital_Hudson": 2.71,
+      "Lower_Hudson": 2.27,
+      "NYC": 0.91,
+      "Long_Island": 3.72
+     },
+     "reference_zone_gap": 3.43,
+     "gap_contrib": 0.194,
+     "cf_gap_contrib": 0.271
+    },
+    {
+     "month": 10,
+     "load_share_pct": 7.431,
+     "mainland4_identical_pct": 99.87,
+     "all5_identical_pct": 88.17,
+     "model_mainland4_spread_mean": 0.001,
+     "model_all5_spread_mean": 0.636,
+     "actual_all5_spread": 2.4,
+     "actual_nyc_minus_upstate": 2.4,
+     "model_nyc_minus_upstate": -0.04,
+     "zone_gap": {
+      "Upstate_West": 0.4,
+      "Capital_Hudson": -1.08,
+      "Lower_Hudson": -1.61,
+      "NYC": -2.04,
+      "Long_Island": 0.18
+     },
+     "reference_zone_gap": 0.4,
+     "gap_contrib": -0.055,
+     "cf_gap_contrib": 0.03
+    },
+    {
+     "month": 11,
+     "load_share_pct": 7.509,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 84.86,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 1.671,
+     "actual_all5_spread": 5.02,
+     "actual_nyc_minus_upstate": 4.33,
+     "model_nyc_minus_upstate": -0.05,
+     "zone_gap": {
+      "Upstate_West": 0.72,
+      "Capital_Hudson": -1.94,
+      "Lower_Hudson": -2.43,
+      "NYC": -3.66,
+      "Long_Island": -2.06
+     },
+     "reference_zone_gap": 0.72,
+     "gap_contrib": -0.117,
+     "cf_gap_contrib": 0.054
+    },
+    {
+     "month": 12,
+     "load_share_pct": 8.89,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 73.66,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 2.172,
+     "actual_all5_spread": 18.13,
+     "actual_nyc_minus_upstate": 13.56,
+     "model_nyc_minus_upstate": 0.09,
+     "zone_gap": {
+      "Upstate_West": -10.28,
+      "Capital_Hudson": -21.13,
+      "Lower_Hudson": -21.11,
+      "NYC": -23.74,
+      "Long_Island": -25.66
+     },
+     "reference_zone_gap": -10.28,
+     "gap_contrib": -1.65,
+     "cf_gap_contrib": -0.914
+    }
+   ],
+   "annual": {
+    "model_lw_monthly_grain": 37.85,
+    "actual_lw_zonal_monthly": 37.83,
+    "actual_lw_hub_hourly": 38.14,
+    "basis_difference_zonal_minus_hub": -0.32,
+    "err_pct_baseline": 0.07,
+    "cf_model_lw": 41.08,
+    "cf_err_pct": 8.6,
+    "cf_lift_usd_mwh": 3.23,
+    "cf_cold_only_model_lw": 39.66,
+    "cf_cold_only_err_pct": 4.84,
+    "reference_zone_gap_lw": 3.25,
+    "reference_zone_gap_pct": 8.6
+   },
+   "identity": {
+    "mainland4_identical_pct_year": 95.88,
+    "all5_identical_pct_year": 74.62,
+    "model_mainland4_spread_mean_year": 0.444
+   }
+  },
+  {
+   "year": 2025,
+   "months": [
+    {
+     "month": 1,
+     "load_share_pct": 9.351,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 83.06,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 1.874,
+     "actual_all5_spread": 44.28,
+     "actual_nyc_minus_upstate": 44.28,
+     "model_nyc_minus_upstate": 1.09,
+     "zone_gap": {
+      "Upstate_West": 0.6,
+      "Capital_Hudson": -34.97,
+      "Lower_Hudson": -26.67,
+      "NYC": -42.59,
+      "Long_Island": -36.37
+     },
+     "reference_zone_gap": 0.6,
+     "gap_contrib": -2.264,
+     "cf_gap_contrib": 0.056
+    },
+    {
+     "month": 2,
+     "load_share_pct": 8.135,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 83.04,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 1.313,
+     "actual_all5_spread": 27.09,
+     "actual_nyc_minus_upstate": 24.64,
+     "model_nyc_minus_upstate": 0.13,
+     "zone_gap": {
+      "Upstate_West": -8.6,
+      "Capital_Hudson": -34.93,
+      "Lower_Hudson": -20.69,
+      "NYC": -33.11,
+      "Long_Island": -30.94
+     },
+     "reference_zone_gap": -8.6,
+     "gap_contrib": -1.91,
+     "cf_gap_contrib": -0.699
+    },
+    {
+     "month": 3,
+     "load_share_pct": 7.729,
+     "mainland4_identical_pct": 95.43,
+     "all5_identical_pct": 81.18,
+     "model_mainland4_spread_mean": 0.053,
+     "model_all5_spread_mean": 1.809,
+     "actual_all5_spread": 8.96,
+     "actual_nyc_minus_upstate": 8.96,
+     "model_nyc_minus_upstate": -0.25,
+     "zone_gap": {
+      "Upstate_West": 5.64,
+      "Capital_Hudson": -0.03,
+      "Lower_Hudson": 0.51,
+      "NYC": -3.58,
+      "Long_Island": 1.49
+     },
+     "reference_zone_gap": 5.64,
+     "gap_contrib": 0.084,
+     "cf_gap_contrib": 0.436
+    },
+    {
+     "month": 4,
+     "load_share_pct": 7.075,
+     "mainland4_identical_pct": 96.53,
+     "all5_identical_pct": 85.0,
+     "model_mainland4_spread_mean": 0.091,
+     "model_all5_spread_mean": 1.293,
+     "actual_all5_spread": 8.38,
+     "actual_nyc_minus_upstate": 8.38,
+     "model_nyc_minus_upstate": -0.19,
+     "zone_gap": {
+      "Upstate_West": 3.7,
+      "Capital_Hudson": 1.7,
+      "Lower_Hudson": 0.67,
+      "NYC": -4.87,
+      "Long_Island": -2.41
+     },
+     "reference_zone_gap": 3.7,
+     "gap_contrib": -0.023,
+     "cf_gap_contrib": 0.262
+    },
+    {
+     "month": 5,
+     "load_share_pct": 7.273,
+     "mainland4_identical_pct": 98.79,
+     "all5_identical_pct": 79.97,
+     "model_mainland4_spread_mean": 0.013,
+     "model_all5_spread_mean": 2.463,
+     "actual_all5_spread": 13.98,
+     "actual_nyc_minus_upstate": 4.97,
+     "model_nyc_minus_upstate": 0.13,
+     "zone_gap": {
+      "Upstate_West": 7.04,
+      "Capital_Hudson": 4.43,
+      "Lower_Hudson": 3.13,
+      "NYC": 2.2,
+      "Long_Island": -3.82
+     },
+     "reference_zone_gap": 7.04,
+     "gap_contrib": 0.253,
+     "cf_gap_contrib": 0.512
+    },
+    {
+     "month": 6,
+     "load_share_pct": 8.728,
+     "mainland4_identical_pct": 87.22,
+     "all5_identical_pct": 65.83,
+     "model_mainland4_spread_mean": 1.527,
+     "model_all5_spread_mean": 8.531,
+     "actual_all5_spread": 25.56,
+     "actual_nyc_minus_upstate": 12.32,
+     "model_nyc_minus_upstate": 3.49,
+     "zone_gap": {
+      "Upstate_West": -6.66,
+      "Capital_Hudson": -10.1,
+      "Lower_Hudson": -15.37,
+      "NYC": -15.5,
+      "Long_Island": -15.22
+     },
+     "reference_zone_gap": -6.66,
+     "gap_contrib": -1.04,
+     "cf_gap_contrib": -0.582
+    },
+    {
+     "month": 7,
+     "load_share_pct": 10.733,
+     "mainland4_identical_pct": 88.98,
+     "all5_identical_pct": 72.45,
+     "model_mainland4_spread_mean": 2.434,
+     "model_all5_spread_mean": 9.057,
+     "actual_all5_spread": 26.76,
+     "actual_nyc_minus_upstate": 19.2,
+     "model_nyc_minus_upstate": 3.2,
+     "zone_gap": {
+      "Upstate_West": -2.2,
+      "Capital_Hudson": -4.81,
+      "Lower_Hudson": -12.84,
+      "NYC": -18.2,
+      "Long_Island": -15.32
+     },
+     "reference_zone_gap": -2.2,
+     "gap_contrib": -1.15,
+     "cf_gap_contrib": -0.237
+    },
+    {
+     "month": 8,
+     "load_share_pct": 9.026,
+     "mainland4_identical_pct": 97.72,
+     "all5_identical_pct": 69.89,
+     "model_mainland4_spread_mean": 0.104,
+     "model_all5_spread_mean": 2.932,
+     "actual_all5_spread": 2.06,
+     "actual_nyc_minus_upstate": 1.26,
+     "model_nyc_minus_upstate": 0.01,
+     "zone_gap": {
+      "Upstate_West": 5.03,
+      "Capital_Hudson": 5.59,
+      "Lower_Hudson": 4.64,
+      "NYC": 3.78,
+      "Long_Island": 6.98
+     },
+     "reference_zone_gap": 5.03,
+     "gap_contrib": 0.446,
+     "cf_gap_contrib": 0.454
+    },
+    {
+     "month": 9,
+     "load_share_pct": 7.759,
+     "mainland4_identical_pct": 90.69,
+     "all5_identical_pct": 76.25,
+     "model_mainland4_spread_mean": 0.945,
+     "model_all5_spread_mean": 2.22,
+     "actual_all5_spread": 5.06,
+     "actual_nyc_minus_upstate": -0.05,
+     "model_nyc_minus_upstate": 1.16,
+     "zone_gap": {
+      "Upstate_West": 2.64,
+      "Capital_Hudson": 5.54,
+      "Lower_Hudson": 3.4,
+      "NYC": 3.85,
+      "Long_Island": 3.14
+     },
+     "reference_zone_gap": 2.64,
+     "gap_contrib": 0.277,
+     "cf_gap_contrib": 0.205
+    },
+    {
+     "month": 10,
+     "load_share_pct": 7.346,
+     "mainland4_identical_pct": 97.18,
+     "all5_identical_pct": 84.68,
+     "model_mainland4_spread_mean": 0.142,
+     "model_all5_spread_mean": 0.979,
+     "actual_all5_spread": 3.63,
+     "actual_nyc_minus_upstate": 2.94,
+     "model_nyc_minus_upstate": -0.18,
+     "zone_gap": {
+      "Upstate_West": 1.4,
+      "Capital_Hudson": 0.61,
+      "Lower_Hudson": -1.04,
+      "NYC": -1.72,
+      "Long_Island": 3.22
+     },
+     "reference_zone_gap": 1.4,
+     "gap_contrib": 0.025,
+     "cf_gap_contrib": 0.103
+    },
+    {
+     "month": 11,
+     "load_share_pct": 7.661,
+     "mainland4_identical_pct": 98.75,
+     "all5_identical_pct": 92.36,
+     "model_mainland4_spread_mean": 0.089,
+     "model_all5_spread_mean": 0.633,
+     "actual_all5_spread": 7.27,
+     "actual_nyc_minus_upstate": 4.48,
+     "model_nyc_minus_upstate": 0.17,
+     "zone_gap": {
+      "Upstate_West": 5.25,
+      "Capital_Hudson": 2.27,
+      "Lower_Hudson": 1.58,
+      "NYC": 0.94,
+      "Long_Island": -0.93
+     },
+     "reference_zone_gap": 5.25,
+     "gap_contrib": 0.192,
+     "cf_gap_contrib": 0.402
+    },
+    {
+     "month": 12,
+     "load_share_pct": 9.185,
+     "mainland4_identical_pct": 100.0,
+     "all5_identical_pct": 88.58,
+     "model_mainland4_spread_mean": 0.0,
+     "model_all5_spread_mean": 0.713,
+     "actual_all5_spread": 21.59,
+     "actual_nyc_minus_upstate": 8.79,
+     "model_nyc_minus_upstate": 0.14,
+     "zone_gap": {
+      "Upstate_West": 7.42,
+      "Capital_Hudson": -3.39,
+      "Lower_Hudson": -0.83,
+      "NYC": -1.24,
+      "Long_Island": -13.03
+     },
+     "reference_zone_gap": 7.42,
+     "gap_contrib": 0.008,
+     "cf_gap_contrib": 0.681
+    }
+   ],
+   "annual": {
+    "model_lw_monthly_grain": 59.84,
+    "actual_lw_zonal_monthly": 64.94,
+    "actual_lw_hub_hourly": 66.37,
+    "basis_difference_zonal_minus_hub": -1.43,
+    "err_pct_baseline": -7.86,
+    "cf_model_lw": 66.53,
+    "cf_err_pct": 2.45,
+    "cf_lift_usd_mwh": 6.7,
+    "cf_cold_only_model_lw": 64.04,
+    "cf_cold_only_err_pct": -1.38,
+    "reference_zone_gap_lw": 1.59,
+    "reference_zone_gap_pct": 2.45
+   },
+   "identity": {
+    "mainland4_identical_pct_year": 95.94,
+    "all5_identical_pct_year": 80.17,
+    "model_mainland4_spread_mean_year": 0.451
+   }
+  }
+ ]
+}
