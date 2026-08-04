@@ -1,0 +1,492 @@
+{
+ "session": "miso-125",
+ "iso": "MISO",
+ "vintage": 2023,
+ "KE2": {
+  "multi_class_plants": [
+   50973,
+   55088,
+   56309,
+   58161
+  ],
+  "applied_multi_class_plants": [
+   55088
+  ],
+  "applied_capacity_mw": 515.0,
+  "rows": [
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "plant_group": "CC_CHP",
+    "class_capacity_mw": 183.4,
+    "heat_rate": 34.9153,
+    "flag": "not_unfired_topping",
+    "applied": false
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "plant_group": "CT_CHP",
+    "class_capacity_mw": 15.6,
+    "heat_rate": 34.9153,
+    "flag": "not_unfired_topping",
+    "applied": false
+   },
+   {
+    "plant_code": 55088,
+    "plant_name": "Dearborn Industrial Generation",
+    "plant_group": "CC_CHP",
+    "class_capacity_mw": 350.0,
+    "heat_rate": 6.9573,
+    "flag": "ok",
+    "applied": true
+   },
+   {
+    "plant_code": 55088,
+    "plant_name": "Dearborn Industrial Generation",
+    "plant_group": "CT_CHP",
+    "class_capacity_mw": 165.0,
+    "heat_rate": 6.9573,
+    "flag": "ok",
+    "applied": true
+   },
+   {
+    "plant_code": 56309,
+    "plant_name": "Trigen St. Louis",
+    "plant_group": "CC_CHP",
+    "class_capacity_mw": 29.2,
+    "heat_rate": 10.9731,
+    "flag": "not_unfired_topping",
+    "applied": false
+   },
+   {
+    "plant_code": 56309,
+    "plant_name": "Trigen St. Louis",
+    "plant_group": "CT_CHP",
+    "class_capacity_mw": 1.2,
+    "heat_rate": 10.9731,
+    "flag": "not_unfired_topping",
+    "applied": false
+   },
+   {
+    "plant_code": 58161,
+    "plant_name": "Western Michigan University Power Plant",
+    "plant_group": "CC_CHP",
+    "class_capacity_mw": 9.3,
+    "heat_rate": 12.5195,
+    "flag": "not_unfired_topping",
+    "applied": false
+   },
+   {
+    "plant_code": 58161,
+    "plant_name": "Western Michigan University Power Plant",
+    "plant_group": "CT_CHP",
+    "class_capacity_mw": 5.8,
+    "heat_rate": 12.5195,
+    "flag": "not_unfired_topping",
+    "applied": false
+   }
+  ],
+  "verdict": "PASS"
+ },
+ "KE1": {
+  "guard_empty_query": "PASS",
+  "per_year": {
+   "2023": {
+    "empty": false,
+    "n_units": 6,
+    "n_power_train_units": 3,
+    "power_train_families": [
+     "CC",
+     "CT"
+    ],
+    "n_families": 2,
+    "unmapped_other_units": 0,
+    "cems_total_mmbtu": 43901179.349999994,
+    "cems_dark_mmbtu": 7306886.0
+   },
+   "2024": {
+    "empty": false,
+    "n_units": 6,
+    "n_power_train_units": 3,
+    "power_train_families": [
+     "CC",
+     "CT"
+    ],
+    "n_families": 2,
+    "unmapped_other_units": 0,
+    "cems_total_mmbtu": 47160808.8,
+    "cems_dark_mmbtu": 6988361.875
+   },
+   "2025": {
+    "empty": false,
+    "n_units": 6,
+    "n_power_train_units": 3,
+    "power_train_families": [
+     "CC",
+     "CT"
+    ],
+    "n_families": 2,
+    "unmapped_other_units": 0,
+    "cems_total_mmbtu": 33518924.849999998,
+    "cems_dark_mmbtu": 5637388.675
+   }
+  },
+  "artifact_reconciliation": {
+   "55088": {
+    "probe_cems_mmbtu": 43901179.3,
+    "artifact_cems_mmbtu": 43901179.4,
+    "ratio": 1.0
+   }
+  },
+  "verdict": "PASS"
+ },
+ "KE3": {
+  "band": 0.02,
+  "plants": {
+   "55088": {
+    "hr_plant": 6.9573,
+    "per_year": {
+     "2023": {
+      "families": {
+       "CC": {
+        "fuel_share": 0.728615,
+        "gen_share": 0.715054,
+        "ratio": 1.018966,
+        "hr_m": 7.0892,
+        "delta_vs_plant_pct": 1.897
+       },
+       "CT": {
+        "fuel_share": 0.271385,
+        "gen_share": 0.284946,
+        "ratio": 0.952407,
+        "hr_m": 6.6262,
+        "delta_vs_plant_pct": -4.759
+       }
+      },
+      "identity_sum_g_hr": 6.95727,
+      "identity_error": 2.9998e-05,
+      "max_abs_rel_delta": 0.04759,
+      "band_dollars_per_mwh": {
+       "2023": 0.3534,
+       "2024": 0.3047,
+       "2025": 0.4898
+      }
+     },
+     "2024": {
+      "families": {
+       "CC": {
+        "fuel_share": 0.718317,
+        "gen_share": 0.709445,
+        "ratio": 1.012506,
+        "hr_m": 7.0443,
+        "delta_vs_plant_pct": 1.251
+       },
+       "CT": {
+        "fuel_share": 0.281683,
+        "gen_share": 0.290555,
+        "ratio": 0.969465,
+        "hr_m": 6.7449,
+        "delta_vs_plant_pct": -3.054
+       }
+      },
+      "identity_sum_g_hr": 6.957308,
+      "identity_error": 7.833e-06,
+      "max_abs_rel_delta": 0.030529,
+      "band_dollars_per_mwh": {
+       "2023": 0.3534,
+       "2024": 0.3047,
+       "2025": 0.4898
+      }
+     },
+     "2025": {
+      "families": {
+       "CC": {
+        "fuel_share": 0.738695,
+        "gen_share": 0.730137,
+        "ratio": 1.011721,
+        "hr_m": 7.0388,
+        "delta_vs_plant_pct": 1.172
+       },
+       "CT": {
+        "fuel_share": 0.261305,
+        "gen_share": 0.269863,
+        "ratio": 0.968289,
+        "hr_m": 6.7367,
+        "delta_vs_plant_pct": -3.171
+       }
+      },
+      "identity_sum_g_hr": 6.957274,
+      "identity_error": 2.5612e-05,
+      "max_abs_rel_delta": 0.031708,
+      "band_dollars_per_mwh": {
+       "2023": 0.3534,
+       "2024": 0.3047,
+       "2025": 0.4898
+      }
+     }
+    }
+   }
+  },
+  "overall_max_abs_rel_delta": 0.04759,
+  "verdict": "LIVE"
+ },
+ "KE4": {
+  "clause_a_marginal_share": "NOT_ANSWERABLE_FROM_COMMITTED_SIDECARS",
+  "per_year": {
+   "2023": {
+    "CC_CHP": {
+     "hours": 8760,
+     "min_mw": 935.9946,
+     "max_mw": 3175.4114,
+     "mean_mw": 2256.0766,
+     "std_mw": 525.149996,
+     "cv": 0.232771,
+     "n_distinct_values": 1084,
+     "share_hours_at_annual_min": 0.000571,
+     "annual_twh": 19.7632
+    },
+    "CT_CHP": {
+     "hours": 8760,
+     "min_mw": 456.8443,
+     "max_mw": 774.832,
+     "mean_mw": 629.4043,
+     "std_mw": 48.776932,
+     "cv": 0.077497,
+     "n_distinct_values": 8466,
+     "share_hours_at_annual_min": 0.000114,
+     "annual_twh": 5.5136
+    }
+   },
+   "2024": {
+    "CC_CHP": {
+     "hours": 8760,
+     "min_mw": 883.876,
+     "max_mw": 3101.7725,
+     "mean_mw": 2251.7052,
+     "std_mw": 511.733277,
+     "cv": 0.227265,
+     "n_distinct_values": 1397,
+     "share_hours_at_annual_min": 0.000228,
+     "annual_twh": 19.7249
+    },
+    "CT_CHP": {
+     "hours": 8760,
+     "min_mw": 467.8745,
+     "max_mw": 844.8431,
+     "mean_mw": 646.0891,
+     "std_mw": 58.645523,
+     "cv": 0.09077,
+     "n_distinct_values": 8510,
+     "share_hours_at_annual_min": 0.000114,
+     "annual_twh": 5.6597
+    }
+   },
+   "2025": {
+    "CC_CHP": {
+     "hours": 8760,
+     "min_mw": 802.2726,
+     "max_mw": 2955.228,
+     "mean_mw": 1923.0461,
+     "std_mw": 570.576527,
+     "cv": 0.296705,
+     "n_distinct_values": 1563,
+     "share_hours_at_annual_min": 0.000913,
+     "annual_twh": 16.8459
+    },
+    "CT_CHP": {
+     "hours": 8760,
+     "min_mw": 479.4749,
+     "max_mw": 818.4573,
+     "mean_mw": 643.767,
+     "std_mw": 55.557714,
+     "cv": 0.086301,
+     "n_distinct_values": 8496,
+     "share_hours_at_annual_min": 0.000114,
+     "annual_twh": 5.6394
+    }
+   }
+  },
+  "clause_b_all_pinned_gt_99pct": false,
+  "verdict": "LIVE_OR_UNDETERMINED"
+ },
+ "KE_R": {
+  "R1_net_vs_gross": {
+   "2023": {
+    "cems_power_train_gross_mwh": 3648140.0,
+    "egrid_plngenan_net_mwh": 5259825.0,
+    "net_over_gross": 1.4418,
+    "unmetered_mwh": 1611685.0
+   },
+   "2024": {
+    "cems_power_train_gross_mwh": 4025290.0,
+    "egrid_plngenan_net_mwh": 5259825.0,
+    "net_over_gross": 1.3067,
+    "unmetered_mwh": 1234535.0
+   },
+   "2025": {
+    "cems_power_train_gross_mwh": 2807595.0,
+    "egrid_plngenan_net_mwh": 5259825.0,
+    "net_over_gross": 1.8734,
+    "unmetered_mwh": 2452230.0
+   }
+  },
+  "R2_implied_cf": {
+   "model_fleet_capacity_mw": 515.0,
+   "egrid_net_mwh": 5259825.0,
+   "implied_capacity_factor": 1.1659,
+   "physically_possible": false
+  },
+  "R3_eia860_roster_55088": [
+   {
+    "Generator ID": "GT 1",
+    "Technology": "Natural Gas Fired Combined Cycle",
+    "pm": "CT",
+    "uc": "SINT",
+    "mw": 175.0,
+    "es": "NG"
+   },
+   {
+    "Generator ID": "GT2",
+    "Technology": "Natural Gas Fired Combined Cycle",
+    "pm": "CT",
+    "uc": "SINT",
+    "mw": 175.0,
+    "es": "NG"
+   },
+   {
+    "Generator ID": "GTP1",
+    "Technology": "Natural Gas Fired Combustion Turbine",
+    "pm": "GT",
+    "uc": NaN,
+    "mw": 165.0,
+    "es": "NG"
+   },
+   {
+    "Generator ID": "ST1",
+    "Technology": "Other Gases",
+    "pm": "CA",
+    "uc": "SINT",
+    "mw": 250.0,
+    "es": "BFG"
+   }
+  ],
+  "R4_census": [
+   {
+    "plant_code": 1004,
+    "plant_name": "Edwardsport",
+    "state": "IN",
+    "generator_id": "ST",
+    "unit_code": "1",
+    "summer_mw": 555.0,
+    "energy_source_1": "SGC",
+    "ng_ct_siblings": 2,
+    "sibling_mw": 0.0,
+    "iso": "MISO",
+    "fleet_total_mw": 1036.2,
+    "eia860_plant_total_mw": 555.0,
+    "eia860_plant_total_excl_ca_mw": 0.0,
+    "status": "UNDETERMINED"
+   },
+   {
+    "plant_code": 55088,
+    "plant_name": "Dearborn Industrial Generation",
+    "state": "MI",
+    "generator_id": "ST1",
+    "unit_code": "SINT",
+    "summer_mw": 250.0,
+    "energy_source_1": "BFG",
+    "ng_ct_siblings": 2,
+    "sibling_mw": 350.0,
+    "iso": "MISO",
+    "fleet_total_mw": 515.0,
+    "eia860_plant_total_mw": 765.0,
+    "eia860_plant_total_excl_ca_mw": 515.0,
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 6081,
+    "plant_name": "Stony Brook",
+    "state": "MA",
+    "generator_id": "CA1",
+    "unit_code": "CC1",
+    "summer_mw": 96.0,
+    "energy_source_1": "DFO",
+    "ng_ct_siblings": 3,
+    "sibling_mw": 209.1,
+    "iso": "NEISO",
+    "fleet_total_mw": 435.7,
+    "eia860_plant_total_mw": 446.6,
+    "eia860_plant_total_excl_ca_mw": 350.6,
+    "status": "UNDETERMINED"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN33",
+    "unit_code": "BLK1",
+    "summer_mw": 21.5,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 54912,
+    "plant_name": "Martinez Refining",
+    "state": "CA",
+    "generator_id": "STG1",
+    "unit_code": "CC1",
+    "summer_mw": 20.0,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 2,
+    "sibling_mw": 80.0,
+    "iso": "CAISO",
+    "fleet_total_mw": 80.0,
+    "eia860_plant_total_mw": 100.0,
+    "eia860_plant_total_excl_ca_mw": 80.0,
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN32",
+    "unit_code": "BLK1",
+    "summer_mw": 10.5,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN31",
+    "unit_code": "BLK1",
+    "summer_mw": 8.4,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "status": "MISSING"
+   }
+  ],
+  "R4_miso_missing_mw": 290.4,
+  "verdict": "PREREGISTERED_CONSTRUCTION_REFUTED",
+  "reason": "The construction's stated assumption (prereg 2 property 2 \u2014 a common gross-to-net factor across prime-mover families at one plant) is violated at the only plant it reaches: EIA-860 ST1 (250 MW, prime mover CA, Unit Code SINT shared with the two NG CT gas turbines, Energy Source 1 = BFG) is the steam part of the combined-cycle block, has no CEMS stack, and is absent from the model fleet. Its generation is inside eGRID's PLNGENAN and outside CEMS grossLoad, so g_CC is structurally understated and the split returns hr_CC > hr_CT, backwards from turbine physics. The ST output cannot be attributed between the CC and CT families from any available source, so no repaired split is derivable here. Rule 14 [R-ACCURATE] named-exception case: the datum is defined on a different boundary than the model's representation."
+ }
+}
