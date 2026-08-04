@@ -156,4 +156,165 @@ an excluded row reverts to the **plain eGRID rate** (7.4205) and the change is a
 
 ---
 
-<!-- §4 (A/B) and §5-§7 are completed once both arms have solved. -->
+## §4 — the A/B, and the control that had to be re-solved
+
+**Arms.** `2026-08-04-nyiso-120a2-control-samehead` (control, pre-gate artifact)
+vs `2026-08-04-nyiso-120b-scope-gate` (treatment, gated artifact), both
+`replay_keeper` of `nyiso118_seny_span`, 2023–2025 in one invocation each.
+
+**THE FIRST CONTROL WAS INVALID AND IS SUPERSEDED — reported, not buried.**
+`2026-08-04-nyiso-120a-control` solved at a **pre-rebase HEAD**; main then added
+three `ScenarioConfig` fields (`caiso_zonal_loss_surface`,
+`ercot_energy_online_capability_cap`, `pjm_seam_envelope_by_neighbor`), so
+against arm B it read **3 differing config keys** and failed the prereg's KE5
+same-HEAD requirement. It stays registered as the record of that, and **no
+number in this finding is quoted against it.** The valid control was re-solved
+at the treatment's own HEAD. That it was needed at all is the FINDING-nyiso114
+§2 hazard biting from the other direction — not keeper drift, but *my own
+rebase* between arms.
+
+**And the re-solve settles the drift question by measurement:** arm A2 is
+**byte-identical to the committed keeper** (K2 byte basis `True`, max class-hour
+|ΔMW| ≤ 1e-6 in all three years) with an identical scorecard and determination.
+So main's three new fields are **inert at NYISO**, and every delta below is the
+scope gate's and nothing else's.
+
+**Gates — all six construction gates PASS, no kill fires, verdict LIVE.**
+
+| gate | result |
+|---|---|
+| K1 artifact fidelity | PASS — sha differs, config identical, **exactly one** effective row moves: `2493:CT_CHP` 11.8032 → 7.4205 (**−37.13 %**) |
+| K2 control integrity | PASS — control scorecard == keeper scorecard, **and byte-identical** |
+| K3 liveness | **PASS / LIVE** — max zonal \|Δλ\| **0.1287 / 0.1371 / 0.3875** $/MWh, clearing the 0.10 bar in **3 of 3** years |
+| K4 zero config delta | PASS — **zero** differing keys |
+| K5 year span | PASS — [2023, 2024, 2025] both arms |
+| K6 direction integrity | PASS — no effective rate rises, **no zone's λ rises in any year**, system λ −0.127 / −0.139 / −0.384 |
+
+**W2 — the mechanism fired.** `CT_CHP` energy **+0.3113 / +0.1921 / +0.4214 TWh**,
+displacing `ST_GAS` (−0.131 / −0.093 / −0.138), `CC_REGULAR` (−0.098 / −0.065 /
+−0.164) and `CC_CHP` (−0.069 / −0.022 / −0.060). A merit-order reshuffle of the
+expected sign and size: one 306 MW plant made 37 % cheaper.
+
+**Zonal incidence is systemic, not local** — every zone falls by roughly the same
+amount (2025: NYC −0.3875, Lower_Hudson −0.3820, Upstate_West −0.3827,
+Capital_Hudson −0.3816, Long_Island −0.2962), because East River displaces
+marginal gas across the mainland rather than only in Zone J.
+
+### §4.1 — the P gates, and the one that fires
+
+| gate | result |
+|---|---|
+| P1 free-class C1 | **PASS — no regression**: all 14/14 and free 10/10 in **both** arms |
+| **P2 no new FAIL** | **FIRES** — `price_mean` (C3a) FAILs in B and not in the control |
+| P3 protective | PASS — governance + forced_share PASS |
+| P4 slack/dump | PASS |
+| P5 no fitted follow-up | PASS — zero free parameters, no threshold, derive shipped unmodified |
+| P6 no C3c claim | PASS — `price_tail` CAVEAT in **both** arms, unchanged |
+
+**C3a, the whole of the regression, per year:**
+
+| year | control | treatment | model mean LMP | actual RT |
+|---|--:|--:|--:|--:|
+| 2023 | +7.6 % PASS | **+7.2 % PASS** | 34.77 → 34.64 | 32.30 |
+| 2024 | −0.5 % PASS | −0.9 % PASS | 37.99 → 37.85 | 38.20 |
+| 2025 | **−9.5 % PASS** | **−10.0 % FAIL** | 60.24 → **59.85** | 66.53 |
+
+**Stated plainly: 2023 IMPROVES, 2024 stays deep inside the band, and 2025
+crosses a knife-edge.** The control already sat **0.5 pp** from the ±10 % edge,
+and the correction moves the 2025 system mean by **−$0.39/MWh** on a $60 mean.
+The 2025 C3a gap is **$6.68/MWh**; this correction is **6 %** of it and the other
+**94 % is pre-existing and untouched**. It did not create NYISO's 2025
+under-pricing — it tipped a criterion that was already at its edge.
+
+**This was pre-registered.** Prereg §4.1 declared *in advance* that the
+correction makes a NYC unit cheaper, that the expected direction is lower
+prices, and that a gate moving the wrong way does not revert it (rules 1 / 14).
+The prereg named C3c; the criterion that actually moved was C3a. **That
+difference is recorded rather than smoothed over** — the anticipated *mechanism*
+(cheaper NYC capacity ⇒ lower λ) is exactly what happened; it landed on the
+level criterion instead of the tail one, and C3c is bit-unchanged.
+
+---
+
+## §5 — the determination, and the governance stop
+
+**Control: CALIBRATED-WITH-CAVEATS** (C3c sole caveat).
+**Treatment: NOT-YET** — C3a is load-bearing, so a single-year FAIL carries the
+determination down a full tier.
+
+**Recommendation: arm B IS the recommended keeper candidate**, on the owner's
+standing standard (*"if structural integrity improves but gates regress that may
+still be a keeper"*):
+
+1. **The input was wrong and is now right**, established by two independent
+   meters agreeing to **0.6 %** and **1.0 %** — not by a fit. Zero free
+   parameters, no threshold, no derive edit.
+2. **Rules 1 and 14 are explicit** that a structurally-correct input is never
+   reverted because a residual moved the wrong way.
+3. **The regression is 0.5 pp on a ±10 % band**, worth −$0.39/MWh, while 2023
+   improves and C1 / C3b / C3c / C4 / C6 / C7 / C8 are all unchanged.
+4. **It moves the worst-matched class toward reality.** The incumbent keeper's
+   own `_open_items` records `CT_CHP` under-dispatched **−67.9 / −67.6 /
+   −62.0 %**; this adds 0.19–0.42 TWh/yr to exactly that class.
+5. **It closes a reproducibility seam.** The incumbent keeper solved on the
+   pre-gate artifact and is **no longer reproducible from HEAD** — the same seam
+   miso-122 opened at MISO and closed by promoting its treatment.
+
+**BUT THE PROMOTION IS STOPPED, AND NOT BY ME.** NYISO holds a
+`calibration-complete` **`complete`** marker, so rule 22's **D-5(b)** governs:
+the entry's `determination` must be re-verified against the new keeper before
+the promotion commit lands, and *"a re-verified determination that is **worse**
+stops the promotion and escalates to the owner; it is never silently written."*
+CALIBRATED-WITH-CAVEATS → NOT-YET is worse, and it would change NYISO's
+**published calibration status**. So this is escalated with the numbers above
+rather than taken under the standing standard — the standing standard is
+general, D-5(b) is specific to a `complete` ISO and specifically names
+escalation.
+
+**The keeper is therefore UNCHANGED at `2026-08-03-nyiso-118-seny-span` pending
+that decision.** The corrected artifact itself **ships regardless** (rule 14) and
+is committed; what is deferred is only which run is designated keeper.
+
+---
+
+## §6 — reported against interest
+
+1. **My own rebase invalidated the first control**, cost a full re-solve, and is
+   reported in §4 rather than quietly replaced.
+2. **I committed nine bundle JSONs containing unresolved conflict markers** —
+   five of them another lane's (nyiso-119's) — by blanket-resolving a
+   rename/rename conflict on the assumption each path was uniquely owned by one
+   side. It reached `origin/main`. Found, stopped for, and repaired
+   (`scripts/probes/_nyiso120_resolve_rename_conflicts.py`; the nyiso-119 files
+   restored **byte-exactly** from their own session's commit `4e1b1274`, not from
+   a parser). Zero markers remain. Recorded because a silent repair of another
+   lane's committed bytes would be worse than the original error.
+3. **The prereg named C3c and C3a is what moved.** The mechanism anticipated was
+   right; the criterion was not. Reported as a miss in the pre-registration, not
+   re-narrated as a hit.
+4. **`heat_rate_credited` is not independently verified as *correct*, only as
+   *corroborated*.** KE2 shows CAMPD's power-train fuel over eGRID's net
+   generation agrees with eGRID's credited rate to 0.6 %. Both use `PLNGENAN` as
+   the denominator, so the agreement is on the *numerator* — the fuel — and a
+   common error in `PLNGENAN` would cancel. What is established is that the
+   **add-back is wrong**, which is what the correction acts on.
+5. **The 306 MW is a class-capacity figure**, not a claim about East River's
+   instantaneous output; the LP dispatches it against its own availability.
+
+---
+
+## §7 — governance
+
+Rule 12: years sequential; the two arms swap a fixed-path input file so they ran
+sequentially, never concurrently. Rule 13: no measured outcome enters any solve;
+every measured price is a validation target. Rule 15: all three runs registered
+and committed **this session**. Rule 16: 2023–2025, one bundle each, one
+invocation. Rule 21: DOF ledger carried over **unchanged** (32 entries,
+`n_residual` 6) — the correction adds no degree of freedom. Rule 22: training
+years only; the holdout spend freeze is ACTIVE and untouched; the D-5(b) re-key
+duty is **why the promotion is escalated** rather than taken. Rule 23: the
+re-derive cites miso-122's scope-gate logic change, never a residual. Rule 25:
+only NYISO's artifact was re-derived; **NEISO 1595 Kendall (206 MW, −1.2 %)
+stays in NEISO's lane and no cell outside NYISO is stamped.** Rule 26: nothing
+deprecated; the open rule-26 queue is untouched. Rule 28 duty (b): the
+`measured_chp_heat_rates` NYISO cell is stamped this session.
