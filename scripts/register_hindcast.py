@@ -33,6 +33,60 @@ SIDECAR_DIR = Path("frontend/data/hindcast")
 PAGE_PATH = Path("docs/codebase-site/forecast-validation.html")
 
 
+#: Meta fields that together identify WHICH run a sidecar describes. Two
+#: bundles agreeing on all four are the same run being re-registered (a
+#: re-score, an invariant refresh); two disagreeing on any of them are
+#: different runs that happen to share a directory basename.
+RUN_IDENTITY_KEYS = ("iso", "kind", "start_year", "end_year")
+
+
+def _run_identity(meta: dict) -> dict:
+    """Return the identity sub-dict of a bundle ``meta`` (RUN_IDENTITY_KEYS)."""
+    return {k: meta.get(k) for k in RUN_IDENTITY_KEYS}
+
+
+def _refuse_run_id_collision(run_id: str, meta: dict, existing: Path) -> None:
+    """Raise if ``run_id`` already names a DIFFERENT run's sidecar.
+
+    The run id is the bundle directory's basename, so two out-dirs named e.g.
+    ``pjm`` under ``t1h/`` and ``t1x/`` produce the same id and the second
+    registration OVERWRITES the first with no error at all. That has now bitten
+    two sessions: FFR-3A-2 logged it as blocker 9, and FFR-3A-3 reproduced it —
+    six registrations yielded five sidecars, caught only by counting outputs
+    (FFR-3A-3 handoff §8 blocker 2).
+
+    Re-registering the SAME run stays legal and is common (scoring-only
+    re-scores, ``--preserve-invariants``); only a genuine identity mismatch is
+    refused, with both identities printed so the fix — rename the out-dir to
+    the ``<iso>-<start>-<end>-<label>`` convention — is obvious.
+
+    Args:
+        run_id: Id derived from the bundle directory basename.
+        meta: The incoming bundle's ``meta.json``.
+        existing: Path of the sidecar that would be overwritten.
+
+    Raises:
+        SystemExit: When ``existing`` describes a different run.
+    """
+    if not existing.exists():
+        return
+    try:
+        prior = json.loads(existing.read_text()).get("meta", {})
+    except (OSError, json.JSONDecodeError):
+        return  # An unreadable sidecar is not evidence of a collision.
+    incoming_id, prior_id = _run_identity(meta), _run_identity(prior)
+    if incoming_id == prior_id:
+        return
+    raise SystemExit(
+        f"run-id collision: '{run_id}' is already registered as a DIFFERENT "
+        f"run.\n  registered: {prior_id}\n  incoming:   {incoming_id}\n"
+        "The run id is the bundle directory's basename, so two out-dirs "
+        "sharing a basename silently overwrite each other. Re-run with an "
+        "out-dir named '<iso>-<start>-<end>-<label>' (e.g. "
+        "'miso-2023-2027-crossover-ffr3a4') and register that."
+    )
+
+
 def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     """Assemble the sidecar dict for one hindcast bundle.
 
@@ -44,12 +98,19 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     invariants (I1/I9) to SKIP purely because the parquets are absent. Preserving
     them keeps the sidecar diff to the intended score change.
     """
+    meta = json.loads((bundle_dir / "meta.json").read_text())
+    run_id = bundle_dir.name
+    existing = SIDECAR_DIR / f"{run_id}.json"
+    # Refuse a colliding id BEFORE any expensive work: the invariant summary
+    # below reads the whole dispatch cache, and there is no point computing it
+    # for a sidecar that must not be written.
+    _refuse_run_id_collision(run_id, meta, existing)
+
     # Lazy import: the invariant summary needs numpy + market_sim constants,
     # which the Pages deploy runner (stdlib-only, --page-only path) does not
     # install. Importing here keeps page regeneration dependency-free.
     import check_forecast_invariants as CI  # noqa: PLC0415 (sibling script)
 
-    meta = json.loads((bundle_dir / "meta.json").read_text())
     cache_dir = Path(meta["bundle"])
     if not cache_dir.exists():
         cache_dir = bundle_dir / meta["iso"] / meta["cache_key"]
@@ -66,8 +127,6 @@ def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
     )
     score_path = cache_dir / score_name
     score = json.loads(score_path.read_text()) if score_path.exists() else None
-    run_id = bundle_dir.name
-    existing = SIDECAR_DIR / f"{run_id}.json"
     if preserve_invariants and existing.exists():
         invariants = json.loads(existing.read_text()).get("invariants", [])
     else:

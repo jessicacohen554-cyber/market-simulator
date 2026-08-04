@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import warnings
 from dataclasses import asdict, dataclass, field, fields, replace
 from pathlib import Path
 
@@ -10634,8 +10635,44 @@ class ScenarioConfig:
 
     @classmethod
     def from_yaml(cls, path) -> "ScenarioConfig":
-        """Load a config from YAML, merging stored overrides onto defaults."""
+        """Load a config from YAML, merging stored overrides onto defaults.
+
+        Unknown keys are DROPPED with a loud ``RuntimeWarning`` rather than
+        raising. Rule 26 ``[R-DELETE]`` requires a deprecated knob to be
+        *removed*, not zeroed — but a bare ``cls(**data)`` then makes every
+        bundle config written before that deletion permanently unloadable with
+        ``TypeError: unexpected keyword argument``, stranding results whose
+        solve semantics never depended on the deleted field. That is exactly
+        what happened when ``pjm_seam_envelope_by_neighbor`` was collapsed at
+        ``2ca08ed9``: all six FFR-3A-3 bundles became unregisterable
+        (FFR-3A-3 handoff §8 blocker 1), and it would recur on every future
+        deletion.
+
+        Dropping is safe in the direction that matters and only that
+        direction: a key the codebase no longer has is a knob that no longer
+        influences a solve, so ignoring it cannot change the reconstructed
+        run. The warning is deliberately loud — an unknown key still means the
+        loaded config is NOT a byte-faithful reconstruction of the writer's
+        config, and a session reading an old bundle must see that.
+
+        Unknown keys are never silently accepted into a *new* config: writers
+        go through the dataclass, so only historical files can carry them.
+        """
         data = yaml.safe_load(Path(path).read_text()) or {}
+        known = {f.name for f in fields(cls)}
+        unknown = sorted(k for k in data if k not in known)
+        if unknown:
+            warnings.warn(
+                f"ScenarioConfig.from_yaml({path}): dropping "
+                f"{len(unknown)} unknown key(s) not present in this "
+                f"codebase's ScenarioConfig: {unknown}. These are almost "
+                "certainly fields deleted under rule 26 [R-DELETE] after the "
+                "file was written; the loaded config is therefore NOT a "
+                "byte-faithful reconstruction of the config that produced it.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+            data = {k: v for k, v in data.items() if k in known}
         return cls(**data)
 
     @classmethod

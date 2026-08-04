@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+import warnings
 from dataclasses import asdict
 from pathlib import Path
 
@@ -64,6 +65,49 @@ class TestScenarioConfig(unittest.TestCase):
         self.assertEqual(loaded.carbon_price, 99.0)
         self.assertEqual(loaded.iso, defaults.iso)
         self.assertEqual(loaded.nominal_discount_rate, defaults.nominal_discount_rate)
+
+    def test_from_yaml_drops_unknown_keys_with_a_warning(self):
+        # Rule 26 [R-DELETE] removes a deprecated knob outright, which used to
+        # make every bundle config written before the deletion permanently
+        # unloadable (TypeError: unexpected keyword argument) — it stranded all
+        # six FFR-3A-3 bundles when pjm_seam_envelope_by_neighbor was collapsed
+        # at 2ca08ed9. The loader must DROP the stale key, keep the known ones,
+        # and say so loudly.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "scenario.yaml"
+            path.write_text(
+                "carbon_price: 99.0\n"
+                "a_knob_deleted_under_rule_26: false\n"
+                "another_deleted_knob: 7\n"
+            )
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                loaded = ScenarioConfig.from_yaml(path)
+
+        self.assertEqual(loaded.carbon_price, 99.0)
+        self.assertEqual(loaded.iso, ScenarioConfig().iso)
+
+        runtime = [w for w in caught if issubclass(w.category, RuntimeWarning)]
+        self.assertEqual(len(runtime), 1)
+        message = str(runtime[0].message)
+        self.assertIn("a_knob_deleted_under_rule_26", message)
+        self.assertIn("another_deleted_knob", message)
+
+    def test_from_yaml_does_not_warn_when_every_key_is_known(self):
+        # The warning is the signal that a config is NOT a byte-faithful
+        # reconstruction; a clean load must stay silent or the signal is noise.
+        config = ScenarioConfig(carbon_price=42.0, iso="CAISO", hours=24)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "scenario.yaml"
+            config.to_yaml(path)
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                loaded = ScenarioConfig.from_yaml(path)
+
+        self.assertEqual(config, loaded)
+        self.assertEqual(
+            [w for w in caught if issubclass(w.category, RuntimeWarning)], []
+        )
 
     def test_to_yaml_only_writes_non_defaults(self):
         config = ScenarioConfig(carbon_price=33.0)
