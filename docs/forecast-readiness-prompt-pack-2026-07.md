@@ -1531,3 +1531,78 @@ Deliverable: docs/handoffs/ffr-3t-warmstart-off-<date>.md — the scope-1 justif
 before/after key measurements on BOTH paths, the declared cache epoch, the drill result, and
 the measured horizon-scale solve-time cost.
 ```
+
+### FFR-3K [OPUS] — complete dispatched prompt, header refreshed to `145e4c5f`
+
+Supersedes the Wave-3 section's copy of this prompt (whose VERIFIED STATE header and line
+reference are stale). Paste this one.
+
+```
+[OPUS] FFR-3K — Fix FC-7 for the T1-H and T1-X tiers. This is the UNFIXED ANALOGUE of a bug
+already fixed once, and it must land BEFORE the next battery.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 145e4c5f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO moved 7x in 4 days):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-03-pjm-151-seam-envelope ·
+CAISO 2026-08-04-caiso164-zonal-loss-surface · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: calibration-complete.json `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY.
+HOLDOUT FREEZE ACTIVE (holdout-freeze.json) — out-of-training BACKCAST solve/score/registration
+only; it does NOT block forecast-mode 2026+, T1 windows, or in-sample 2023-2025 work.
+Cache epochs 2026-08-02 (all forecast) + 2026-08-03b (NYISO-forecast-scoped).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is not one), THEN scripts/regenerate_clean.py (~63-65 min, 50
+datatypes, 1.6 GB) — ONLY if you need a smoke leg.
+Rule 12 is PER PROMPT (sitting Addendum F.2): years sequential within an invocation, <=2
+concurrent invocations, <=5 solve-years each, PJM and MISO never co-run. Rule 27:
+scripts/run_* is Opus/Fable only, and never a full-file rewrite from response content.
+
+=== THE BUG ===
+`run_capacity_hindcast.py` writes `run_config.yaml`; FC-7 row 1 requires `run_config.json`.
+FC-7 therefore fails on EVERY T1-H and T1-X leg BY CONSTRUCTION and carries no information
+about leg quality. The defect is at **L1419** at this HEAD:
+    config.to_yaml_full(args.out_dir / "run_config.yaml")
+(FFR-3Q §3.5 cites L1303 — the line moved, the defect did not. Re-locate it yourself.)
+This is the exact defect FFR-3D fixed at `34c2f25` — but ONLY in `run_full_horizon.py`. READ
+THAT COMMIT and REUSE its writer rather than writing a second implementation. `ea7cd5d` fixed
+a crash in that repair; confirm you are past it and inherit the fix. FFR-3R (`0f788c29`) has
+since landed `scripts/lib/run_record.py`, which DECLARES a record's config-describing block
+and BUILDS it from the solved config — build on that, not around it.
+
+=== WHY IT MUST LAND FIRST ===
+FFR-3A-2 deliberately did not fix it: authoring the artifact after seeing the score is what
+rubric §4 forbids. The same logic binds you in reverse — this lands as an INSTRUMENT change
+BEFORE the next battery scores anything, never as a retrofit. Do NOT hand-author a
+run_config.json into any already-scored bundle, and do NOT re-score a committed leg to pick up
+the fix. FFR-3S (owner decision D-9(ii)) is the other instrument lane landing before the next
+battery; you are independent of it.
+
+=== SCOPE ===
+1. Emit run_config.json from run_capacity_hindcast via the same writer run_full_horizon uses.
+   Keep the .yaml if anything reads it — CHECK before deleting.
+2. A test that would have caught this: assert the artifact FC-7 reads exists after a minimal
+   hindcast run. One per tier if the paths differ.
+3. Verify no keeper moves and no cache key moves — artifact emission must be SOLVE-INERT.
+   Report cache_key(ScenarioConfig()) and the six per-ISO 2023 backcast keys before and after,
+   the way FFR-3R did. A keeper that moves under it is STOP-THE-LINE.
+4. Check whether any OTHER runner has the same gap. Two instances of one defect was a
+   coincidence; FFR-3R found a fifth instance of the sibling class, so a third here would be a
+   pattern and finding it is cheap.
+5. State plainly that EVERY committed T1-H/T1-X FC-7 verdict predating your fix is an
+   INSTRUMENT ARTIFACT, not a leg-quality signal. Do not retro-edit those artifacts.
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase, measured 647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never fall back to push_files
+for a >=300-line file — it takes content as a string, the exact full-file rewrite rule 27
+forbids; run_capacity_hindcast.py is well past that, so edit locally, `git push`, then VERIFY
+THE PUSHED BLOB (line count + hash vs local) before the next commit. The documented cache-purge
+command deletes TRACKED files (410 committed artifacts once); `git status --short` after any
+purge. `git checkout origin/main -- <path>` STAGES those files — `git restore --staged` after.
+Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3k-fc7-hindcast-<date>.md. Small lane; do not expand it.
+Rule 28: stamp any mechanism-matrix cell you touch in THIS session.
+```
