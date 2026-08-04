@@ -1,0 +1,327 @@
+{
+ "probe": "nyiso-125 gate scoring",
+ "control": "results/calibration/nyiso125_control",
+ "treatment": "results/calibration/nyiso125_seam_A",
+ "prices": {
+  "rows": [
+   {
+    "year": 2023,
+    "zone": "Capital_Hudson",
+    "mean_lmp_control": 33.1377,
+    "mean_lmp_treatment": 33.0162,
+    "rel_move": -0.003667,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2023,
+    "zone": "Long_Island",
+    "mean_lmp_control": 36.2799,
+    "mean_lmp_treatment": 38.3713,
+    "rel_move": 0.057644,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2023,
+    "zone": "Lower_Hudson",
+    "mean_lmp_control": 33.1392,
+    "mean_lmp_treatment": 33.0192,
+    "rel_move": -0.003622,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2023,
+    "zone": "NYC",
+    "mean_lmp_control": 33.187,
+    "mean_lmp_treatment": 33.1045,
+    "rel_move": -0.002485,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2023,
+    "zone": "NYISO_external",
+    "mean_lmp_control": 32.7418,
+    "mean_lmp_treatment": 32.1801,
+    "rel_move": -0.017156,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2023,
+    "zone": "Upstate_West",
+    "mean_lmp_control": 32.7418,
+    "mean_lmp_treatment": 32.1801,
+    "rel_move": -0.017156,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "Capital_Hudson",
+    "mean_lmp_control": 35.9517,
+    "mean_lmp_treatment": 35.7224,
+    "rel_move": -0.006378,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "Long_Island",
+    "mean_lmp_control": 39.2947,
+    "mean_lmp_treatment": 40.7325,
+    "rel_move": 0.03659,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "Lower_Hudson",
+    "mean_lmp_control": 35.9693,
+    "mean_lmp_treatment": 35.7487,
+    "rel_move": -0.006132,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "NYC",
+    "mean_lmp_control": 36.1755,
+    "mean_lmp_treatment": 36.0763,
+    "rel_move": -0.002741,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "NYISO_external",
+    "mean_lmp_control": 35.7318,
+    "mean_lmp_treatment": 35.4197,
+    "rel_move": -0.008735,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2024,
+    "zone": "Upstate_West",
+    "mean_lmp_control": 35.7318,
+    "mean_lmp_treatment": 35.4201,
+    "rel_move": -0.008723,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "Capital_Hudson",
+    "mean_lmp_control": 56.3253,
+    "mean_lmp_treatment": 55.8738,
+    "rel_move": -0.008016,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "Long_Island",
+    "mean_lmp_control": 59.1238,
+    "mean_lmp_treatment": 61.1183,
+    "rel_move": 0.033735,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "Lower_Hudson",
+    "mean_lmp_control": 56.3321,
+    "mean_lmp_treatment": 55.8926,
+    "rel_move": -0.007801,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "NYC",
+    "mean_lmp_control": 56.7557,
+    "mean_lmp_treatment": 56.4523,
+    "rel_move": -0.005345,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "NYISO_external",
+    "mean_lmp_control": 56.3045,
+    "mean_lmp_treatment": 55.7428,
+    "rel_move": -0.009977,
+    "new_slack_mwh": 0.0
+   },
+   {
+    "year": 2025,
+    "zone": "Upstate_West",
+    "mean_lmp_control": 56.3045,
+    "mean_lmp_treatment": 55.765,
+    "rel_move": -0.009581,
+    "new_slack_mwh": 0.0
+   }
+  ],
+  "max_abs_dlmp_by_year": {
+   "2023": 265.9313,
+   "2024": 106.2079,
+   "2025": 104.7852
+  },
+  "K1_fired": [],
+  "K2_fired": [],
+  "K4_inert": false
+ },
+ "criteria": {
+  "determination_control": "NOT-YET",
+  "determination_treatment": "NOT-YET",
+  "verdicts_control": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "FAIL",
+   "price_shape": "PASS",
+   "price_tail": "FAIL",
+   "dispatch_corr": "PASS",
+   "governance": "UNATTESTED",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "verdicts_treatment": {
+   "fuelmix": "PASS",
+   "sysvol": "PASS",
+   "price_mean": "FAIL",
+   "price_shape": "PASS",
+   "price_tail": "FAIL",
+   "dispatch_corr": "PASS",
+   "governance": "UNATTESTED",
+   "shape": "PASS",
+   "forced_share": "PASS"
+  },
+  "K3_c1_regressed": false
+ },
+ "network": {
+  "rows": [
+   {
+    "year": 2023,
+    "links": [
+     {
+      "link": "NYISO_external>Upstate_West",
+      "control_p50": -998.3,
+      "treatment_p50": -753.5,
+      "delta_p50": 244.8,
+      "control_share_at_bound": 0.0,
+      "treatment_share_at_bound": 0.0
+     },
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "control_p50": 1600.0,
+      "treatment_p50": 1600.0,
+      "delta_p50": 0.0,
+      "control_share_at_bound": 0.9932,
+      "treatment_share_at_bound": 0.9989
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "control_p50": 1000.0,
+      "treatment_p50": 974.0,
+      "delta_p50": -26.0,
+      "control_share_at_bound": 1.0,
+      "treatment_share_at_bound": 1.0
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "control_p50": 1200.0,
+      "treatment_p50": 1012.4,
+      "delta_p50": -187.6,
+      "control_share_at_bound": 0.9981,
+      "treatment_share_at_bound": 0.9992
+     }
+    ],
+    "ce_flow_p50_control": 850.2,
+    "ce_flow_p50_treatment": 1182.8,
+    "ce_util_p50_control": 0.4673,
+    "ce_util_p50_treatment": 0.668,
+    "ce_measured_util_p50": 0.8068,
+    "ce_gap_share_closed": 0.5913,
+    "border_net_p50_control": 2801.7,
+    "border_net_p50_treatment": 2832.9
+   },
+   {
+    "year": 2024,
+    "links": [
+     {
+      "link": "NYISO_external>Upstate_West",
+      "control_p50": -1520.0,
+      "treatment_p50": -1231.4,
+      "delta_p50": 288.6,
+      "control_share_at_bound": 0.0,
+      "treatment_share_at_bound": 0.0001
+     },
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "control_p50": 1600.0,
+      "treatment_p50": 1600.0,
+      "delta_p50": 0.0,
+      "control_share_at_bound": 1.0,
+      "treatment_share_at_bound": 1.0
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "control_p50": 1000.0,
+      "treatment_p50": 828.0,
+      "delta_p50": -172.0,
+      "control_share_at_bound": 1.0,
+      "treatment_share_at_bound": 1.0
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "control_p50": 1200.0,
+      "treatment_p50": 985.7,
+      "delta_p50": -214.3,
+      "control_share_at_bound": 0.9949,
+      "treatment_share_at_bound": 0.9995
+     }
+    ],
+    "ce_flow_p50_control": 562.0,
+    "ce_flow_p50_treatment": 962.9,
+    "ce_util_p50_control": 0.1965,
+    "ce_util_p50_treatment": 0.335,
+    "ce_measured_util_p50": 0.6156,
+    "ce_gap_share_closed": 0.3305,
+    "border_net_p50_control": 2280.0,
+    "border_net_p50_treatment": 2182.3
+   },
+   {
+    "year": 2025,
+    "links": [
+     {
+      "link": "NYISO_external>Upstate_West",
+      "control_p50": -1702.3,
+      "treatment_p50": -1376.9,
+      "delta_p50": 325.4,
+      "control_share_at_bound": 0.0,
+      "treatment_share_at_bound": 0.0019
+     },
+     {
+      "link": "NYISO_external>Capital_Hudson",
+      "control_p50": 1600.0,
+      "treatment_p50": 1600.0,
+      "delta_p50": 0.0,
+      "control_share_at_bound": 0.9999,
+      "treatment_share_at_bound": 1.0
+     },
+     {
+      "link": "NYISO_external>NYC",
+      "control_p50": 1000.0,
+      "treatment_p50": 975.0,
+      "delta_p50": -25.0,
+      "control_share_at_bound": 1.0,
+      "treatment_share_at_bound": 1.0
+     },
+     {
+      "link": "NYISO_external>Long_Island",
+      "control_p50": 1200.0,
+      "treatment_p50": 990.0,
+      "delta_p50": -210.0,
+      "control_share_at_bound": 0.9821,
+      "treatment_share_at_bound": 0.9955
+     }
+    ],
+    "ce_flow_p50_control": 722.5,
+    "ce_flow_p50_treatment": 1093.6,
+    "ce_util_p50_control": 0.2553,
+    "ce_util_p50_treatment": 0.3828,
+    "ce_measured_util_p50": 0.5906,
+    "ce_gap_share_closed": 0.3802,
+    "border_net_p50_control": 2097.7,
+    "border_net_p50_treatment": 2188.1
+   }
+  ]
+ }
+}
