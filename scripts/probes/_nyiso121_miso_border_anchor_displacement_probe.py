@@ -1,4 +1,4 @@
-"""nyiso-120 G-1 — is ``miso_pjm_border_anchor`` observable on the MISO keeper?
+"""nyiso-121 G-1 — is ``miso_pjm_border_anchor`` observable on the MISO keeper?
 
 **CONSTRUCTION probe. No LP, no solve, no dual.** The binding lesson of
 nyiso-115 G2 / nyiso-118 is that ``dual`` and ``held_mw`` are solved
@@ -21,7 +21,7 @@ border anchor's re-anchored heat rate is overwritten before the solve ever sees
 it — the caiso-161 §5 / pjm-151 "armed-looking but dead" shape, restated for
 MISO.
 
-**G-1, pre-registered in PREREG-nyiso120-miso-matrix-column-2026-08-04.md §4:**
+**G-1, pre-registered in PREREG-nyiso121-miso-matrix-column-2026-08-04.md §4:**
 
 * PASS (inert)  — the two constructions are EXACTLY equal (``np.array_equal``,
   not a tolerance: float32 exact equality, per nyiso-116 G3/P4) in all three
@@ -42,7 +42,7 @@ overstates.
 
 Usage::
 
-    PYTHONPATH=.:src python scripts/probes/_nyiso120_miso_border_anchor_displacement_probe.py
+    PYTHONPATH=.:src python scripts/probes/_nyiso121_miso_border_anchor_displacement_probe.py
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ from market_sim.model.transmission import (
 YEARS = (2023, 2024, 2025)
 HOURS = 8760
 SENTINEL = -123.0
-OUT = Path("results/calibration/nyiso120_miso_border_anchor_displacement_probe.json")
+OUT = Path("results/calibration/nyiso121_miso_border_anchor_displacement_probe.json")
 
 
 def _fresh():
@@ -107,8 +107,8 @@ def _construct(year: int, *, border_anchor: bool, ladder: bool):
 
 def main() -> int:
     result: dict = {
-        "probe": "nyiso-120 G-1 — miso_pjm_border_anchor displacement (CONSTRUCTION)",
-        "prereg": "results/calibration/PREREG-nyiso120-miso-matrix-column-2026-08-04.md §4",
+        "probe": "nyiso-121 G-1 — miso_pjm_border_anchor displacement (CONSTRUCTION)",
+        "prereg": "results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md §4",
         "keeper": "2026-08-04-miso-122b-scope-gate",
         "no_lp": True,
         "border_hr_by_year": MISO_PJM_BORDER_HR_BY_YEAR,

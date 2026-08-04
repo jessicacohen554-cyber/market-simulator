@@ -941,7 +941,7 @@ failures verified pre-existing by re-running with the changes stashed.
 
 ---
 
-## nyiso-120 (2026-08-04) — MISO's rule-28(c) matrix column CLOSED; the six-lane census backlog is discharged
+## nyiso-121 (2026-08-04) — MISO's rule-28(c) matrix column CLOSED; the six-lane census backlog is discharged
 
 **Cross-ISO audit action, logged here rather than in `miso.md`** because it was performed
 from the NYISO lane on MISO's column and touches no MISO mechanism, keeper or determination
@@ -999,7 +999,7 @@ already `K`. It is not; minting it is NEISO's lane's call. Only index 3 moved.
 CAISO 5, overlapping, all armed on keepers with no cell) is the only remaining rule-28(c)
 debt. That lane must **register these fields on rows, not enumerate them in prose.**
 
-Evidence: `results/calibration/PREREG-nyiso120-miso-matrix-column-2026-08-04.md` (pushed
-before any row was written) · `FINDING-nyiso120-miso-matrix-column-2026-08-04.md` ·
-`scripts/probes/_nyiso120_miso_border_anchor_displacement_probe.py` →
-`nyiso120_miso_border_anchor_displacement_probe.json` · sweeps `_matrix_gap_sweep_*.json`.
+Evidence: `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md` (pushed
+before any row was written) · `FINDING-nyiso121-miso-matrix-column-2026-08-04.md` ·
+`scripts/probes/_nyiso121_miso_border_anchor_displacement_probe.py` →
+`nyiso121_miso_border_anchor_displacement_probe.json` · sweeps `_matrix_gap_sweep_*.json`.
