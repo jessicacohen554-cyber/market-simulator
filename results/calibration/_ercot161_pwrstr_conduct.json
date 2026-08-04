@@ -1,0 +1,238 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot161_pwrstr_conduct_census.py",
+  "session": "ercot-161 Phase 0 addendum 3 (no LP, no solve)",
+  "population": "PWRSTR above-LSL discharge segments capped at HASL, ONTEST excluded (the ERCOT-154 population discipline), absolute $/MWh (the gas-multiple basis is refuted for storage)",
+  "n_files_read": 315
+ },
+ "status_mw_share": {
+  "ON": 0.564,
+  "ONTEST": 0.2601,
+  "ONREG": 0.1603,
+  "ONFFRRRS": 0.0156,
+  "ONOS": 0.0,
+  "ONDSR": 0.0
+ },
+ "gap_hours": {
+  "usd_quantiles": {
+   "p10": 74.0,
+   "p30": 1500.0,
+   "p50": 5000.0,
+   "p70": 5000.0,
+   "p90": 5000.0,
+   "p95": 5000.0,
+   "p99": 5000.0
+  },
+  "n_intervals": 400,
+  "n_hours": 100,
+  "mean_offered_gw": 0.711,
+  "mean_gw_at_usd_rungs": {
+   "gw_ge_100": 0.621,
+   "gw_ge_300": 0.572,
+   "gw_ge_500": 0.556,
+   "gw_ge_1000": 0.529,
+   "gw_ge_2000": 0.488,
+   "gw_ge_4000": 0.442
+  }
+ },
+ "gap_hours_incl_ontest": {
+  "usd_quantiles": {
+   "p10": 95.0,
+   "p30": 4995.0,
+   "p50": 5000.0,
+   "p70": 5000.0,
+   "p90": 5000.0,
+   "p95": 5000.0,
+   "p99": 5000.0
+  },
+  "n_intervals": 400,
+  "n_hours": 100,
+  "mean_offered_gw": 1.091,
+  "mean_gw_at_usd_rungs": {
+   "gw_ge_100": 0.979,
+   "gw_ge_300": 0.931,
+   "gw_ge_500": 0.912,
+   "gw_ge_1000": 0.883,
+   "gw_ge_2000": 0.842,
+   "gw_ge_4000": 0.795
+  }
+ },
+ "bin6_rest": {
+  "usd_quantiles": {
+   "p10": 55.0,
+   "p30": 355.0,
+   "p50": 4999.9,
+   "p70": 5000.0,
+   "p90": 5000.0,
+   "p95": 5000.0,
+   "p99": 5000.0
+  },
+  "n_intervals": 724,
+  "n_hours": 181,
+  "mean_offered_gw": 1.014,
+  "mean_gw_at_usd_rungs": {
+   "gw_ge_100": 0.811,
+   "gw_ge_300": 0.724,
+   "gw_ge_500": 0.699,
+   "gw_ge_1000": 0.652,
+   "gw_ge_2000": 0.617,
+   "gw_ge_4000": 0.587
+  }
+ },
+ "year_by_netload_bin": {
+  "bin0": {
+   "usd_quantiles": {
+    "p10": 40.0,
+    "p30": 230.0,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 8751,
+   "n_hours": 2188,
+   "mean_offered_gw": 1.052,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.823,
+    "gw_ge_300": 0.732,
+    "gw_ge_500": 0.664,
+    "gw_ge_1000": 0.652,
+    "gw_ge_2000": 0.62,
+    "gw_ge_4000": 0.612
+   }
+  },
+  "bin1": {
+   "usd_quantiles": {
+    "p10": 46.0,
+    "p30": 200.0,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 8763,
+   "n_hours": 2190,
+   "mean_offered_gw": 1.059,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.831,
+    "gw_ge_300": 0.727,
+    "gw_ge_500": 0.66,
+    "gw_ge_1000": 0.641,
+    "gw_ge_2000": 0.609,
+    "gw_ge_4000": 0.596
+   }
+  },
+  "bin2": {
+   "usd_quantiles": {
+    "p10": 52.6,
+    "p30": 300.0,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 7008,
+   "n_hours": 1752,
+   "mean_offered_gw": 1.073,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.882,
+    "gw_ge_300": 0.782,
+    "gw_ge_500": 0.712,
+    "gw_ge_1000": 0.684,
+    "gw_ge_2000": 0.648,
+    "gw_ge_4000": 0.632
+   }
+  },
+  "bin3": {
+   "usd_quantiles": {
+    "p10": 56.5,
+    "p30": 384.3,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 3504,
+   "n_hours": 876,
+   "mean_offered_gw": 1.074,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.89,
+    "gw_ge_300": 0.799,
+    "gw_ge_500": 0.74,
+    "gw_ge_1000": 0.706,
+    "gw_ge_2000": 0.674,
+    "gw_ge_4000": 0.657
+   }
+  },
+  "bin4": {
+   "usd_quantiles": {
+    "p10": 56.5,
+    "p30": 402.6,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 3504,
+   "n_hours": 876,
+   "mean_offered_gw": 0.965,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.781,
+    "gw_ge_300": 0.712,
+    "gw_ge_500": 0.669,
+    "gw_ge_1000": 0.643,
+    "gw_ge_2000": 0.624,
+    "gw_ge_4000": 0.613
+   }
+  },
+  "bin5": {
+   "usd_quantiles": {
+    "p10": 55.0,
+    "p30": 300.0,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 2456,
+   "n_hours": 614,
+   "mean_offered_gw": 0.816,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.65,
+    "gw_ge_300": 0.578,
+    "gw_ge_500": 0.551,
+    "gw_ge_1000": 0.519,
+    "gw_ge_2000": 0.492,
+    "gw_ge_4000": 0.477
+   }
+  },
+  "bin6": {
+   "usd_quantiles": {
+    "p10": 60.0,
+    "p30": 501.0,
+    "p50": 5000.0,
+    "p70": 5000.0,
+    "p90": 5000.0,
+    "p95": 5000.0,
+    "p99": 5000.0
+   },
+   "n_intervals": 1052,
+   "n_hours": 263,
+   "mean_offered_gw": 0.924,
+   "mean_gw_at_usd_rungs": {
+    "gw_ge_100": 0.759,
+    "gw_ge_300": 0.687,
+    "gw_ge_500": 0.666,
+    "gw_ge_1000": 0.625,
+    "gw_ge_2000": 0.587,
+    "gw_ge_4000": 0.551
+   }
+  }
+ }
+}

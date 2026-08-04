@@ -1,0 +1,66 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot161_price_setter_census.py",
+  "session": "ercot-161 Phase 0 addendum 2 (no LP, no solve)",
+  "population": "every Resource Type in the corpus is included; none excluded",
+  "band": [
+   0.7,
+   1.3
+  ],
+  "min_lambda": 300.0,
+  "n_gap_hours_used": 100,
+  "n_intervals": 400,
+  "n_files_read": 315
+ },
+ "mean_gw_dispatched_in_lambda_band_by_type": {
+  "PWRSTR": 0.033,
+  "SCLE90": 0.009,
+  "CCGT90": 0.002,
+  "GSREH": 0.002,
+  "GSSUP": 0.002,
+  "HYDRO": 0.001,
+  "GSNONR": 0.001
+ },
+ "mean_gw_dispatched_ge500_by_type": {
+  "PWRSTR": 0.109,
+  "SCLE90": 0.051,
+  "GSREH": 0.008,
+  "CCGT90": 0.007,
+  "GSSUP": 0.003,
+  "GSNONR": 0.002,
+  "HYDRO": 0.002,
+  "SCGT90": 0.002,
+  "CLLIG": 0.001,
+  "PVGR": 0.001,
+  "NUC": 0.001,
+  "RENEW": 0.001
+ },
+ "mean_gw_dispatched_ge1000_by_type": {
+  "PWRSTR": 0.095,
+  "SCLE90": 0.018,
+  "CCGT90": 0.005,
+  "GSSUP": 0.003,
+  "GSREH": 0.003,
+  "GSNONR": 0.002,
+  "SCGT90": 0.002,
+  "HYDRO": 0.002,
+  "PVGR": 0.001,
+  "NUC": 0.001,
+  "RENEW": 0.001
+ },
+ "mean_gw_offered_ge500_by_type": {
+  "PWRSTR": 0.912,
+  "SCLE90": 0.082,
+  "CCGT90": 0.035,
+  "GSREH": 0.022,
+  "GSSUP": 0.014,
+  "NUC": 0.011,
+  "GSNONR": 0.008,
+  "HYDRO": 0.007,
+  "SCGT90": 0.006,
+  "RENEW": 0.005,
+  "PVGR": 0.003,
+  "CLLIG": 0.002,
+  "CCLE90": 0.001
+ }
+}
