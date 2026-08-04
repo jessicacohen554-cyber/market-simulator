@@ -1,0 +1,1512 @@
+{
+  "_what": "pjm-152 Task C: NO-LP scoping of PJM root-cause item 15 (the net-export level residual). Names which side binds -- the measured p90 deliverability ceiling or the ladder's clearing price -- and proposes NOTHING. Any mechanism it points at needs its own pre-registration.",
+  "keeper": "results/calibration/pjm151_seam_B",
+  "years": {
+    "2023": {
+      "benchmark_basis": {
+        "eia930_total_interchange_twh": 39.983,
+        "pjm_tie_file_net_export_twh": 39.974,
+        "difference_twh": 0.009,
+        "hourly_correlation": 0.976,
+        "eia930_net_generation_twh": 824.739,
+        "eia930_demand_twh": 784.749,
+        "eia930_netgen_minus_demand_twh": 39.99,
+        "eia930_identity_residual_twh": 0.011
+      },
+      "envelope_ceiling": {
+        "percentile": 90.0,
+        "seams": [
+          {
+            "seam": "MISO",
+            "interface_limit_mw": 7300.0,
+            "measured_export_twh": 35.311,
+            "measured_import_twh": 0.012,
+            "measured_net_export_twh": 35.3,
+            "envelope_export_ceiling_twh": 48.659,
+            "envelope_import_ceiling_twh": 0.001,
+            "export_ceiling_shortfall_twh": -13.348,
+            "export_ceiling_utilisation_needed": 0.7257,
+            "hours_measured_export_above_cap": 869
+          },
+          {
+            "seam": "NYISO",
+            "interface_limit_mw": 3900.0,
+            "measured_export_twh": 18.537,
+            "measured_import_twh": 0.0,
+            "measured_net_export_twh": 18.537,
+            "envelope_export_ceiling_twh": 24.775,
+            "envelope_import_ceiling_twh": 0.0,
+            "export_ceiling_shortfall_twh": -6.238,
+            "export_ceiling_utilisation_needed": 0.7482,
+            "hours_measured_export_above_cap": 864
+          },
+          {
+            "seam": "Carolinas",
+            "interface_limit_mw": 2400.0,
+            "measured_export_twh": 0.504,
+            "measured_import_twh": 5.943,
+            "measured_net_export_twh": -5.438,
+            "envelope_export_ceiling_twh": 1.238,
+            "envelope_import_ceiling_twh": 10.149,
+            "export_ceiling_shortfall_twh": -0.734,
+            "export_ceiling_utilisation_needed": 0.4074,
+            "hours_measured_export_above_cap": 486
+          },
+          {
+            "seam": "TVA",
+            "interface_limit_mw": 1600.0,
+            "measured_export_twh": 0.065,
+            "measured_import_twh": 6.271,
+            "measured_net_export_twh": -6.206,
+            "envelope_export_ceiling_twh": 0.187,
+            "envelope_import_ceiling_twh": 8.875,
+            "export_ceiling_shortfall_twh": -0.122,
+            "export_ceiling_utilisation_needed": 0.3479,
+            "hours_measured_export_above_cap": 185
+          },
+          {
+            "seam": "LGEE",
+            "interface_limit_mw": 1100.0,
+            "measured_export_twh": 0.235,
+            "measured_import_twh": 2.453,
+            "measured_net_export_twh": -2.218,
+            "envelope_export_ceiling_twh": 0.669,
+            "envelope_import_ceiling_twh": 4.527,
+            "export_ceiling_shortfall_twh": -0.433,
+            "export_ceiling_utilisation_needed": 0.3521,
+            "hours_measured_export_above_cap": 605
+          }
+        ],
+        "total_measured_net_export_twh": 39.975,
+        "total_envelope_export_ceiling_twh": 75.528,
+        "net_export_headroom_twh": 35.553
+      },
+      "ladder_clearing": {
+        "bands": [
+          {
+            "seam": "MISO",
+            "band": 1,
+            "band_mid_mw": 456.2,
+            "ladder_price": 72.78,
+            "duration_measured": 0.9908,
+            "duration_actual_lmp_clears": 0.9909,
+            "duration_model_price_clears": 0.999,
+            "model_minus_measured_duration": 0.0082
+          },
+          {
+            "seam": "MISO",
+            "band": 2,
+            "band_mid_mw": 1368.8,
+            "ladder_price": 52.34,
+            "duration_measured": 0.9584,
+            "duration_actual_lmp_clears": 0.9584,
+            "duration_model_price_clears": 0.9949,
+            "model_minus_measured_duration": 0.0364
+          },
+          {
+            "seam": "MISO",
+            "band": 3,
+            "band_mid_mw": 2281.2,
+            "ladder_price": 39.12,
+            "duration_measured": 0.8615,
+            "duration_actual_lmp_clears": 0.8615,
+            "duration_model_price_clears": 0.9068,
+            "model_minus_measured_duration": 0.0453
+          },
+          {
+            "seam": "MISO",
+            "band": 4,
+            "band_mid_mw": 3193.8,
+            "ladder_price": 31.75,
+            "duration_measured": 0.6866,
+            "duration_actual_lmp_clears": 0.6866,
+            "duration_model_price_clears": 0.6189,
+            "model_minus_measured_duration": -0.0677
+          },
+          {
+            "seam": "MISO",
+            "band": 5,
+            "band_mid_mw": 4106.2,
+            "ladder_price": 26.75,
+            "duration_measured": 0.4814,
+            "duration_actual_lmp_clears": 0.4812,
+            "duration_model_price_clears": 0.2451,
+            "model_minus_measured_duration": -0.2363
+          },
+          {
+            "seam": "MISO",
+            "band": 6,
+            "band_mid_mw": 5018.8,
+            "ladder_price": 22.22,
+            "duration_measured": 0.2773,
+            "duration_actual_lmp_clears": 0.2775,
+            "duration_model_price_clears": 0.0381,
+            "model_minus_measured_duration": -0.2392
+          },
+          {
+            "seam": "MISO",
+            "band": 7,
+            "band_mid_mw": 5931.2,
+            "ladder_price": 18.38,
+            "duration_measured": 0.1256,
+            "duration_actual_lmp_clears": 0.1255,
+            "duration_model_price_clears": 0.0006,
+            "model_minus_measured_duration": -0.125
+          },
+          {
+            "seam": "MISO",
+            "band": 8,
+            "band_mid_mw": 6843.8,
+            "ladder_price": 14.67,
+            "duration_measured": 0.0354,
+            "duration_actual_lmp_clears": 0.0355,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0354
+          },
+          {
+            "seam": "NYISO",
+            "band": 1,
+            "band_mid_mw": 243.8,
+            "ladder_price": 86.28,
+            "duration_measured": 0.9958,
+            "duration_actual_lmp_clears": 0.9958,
+            "duration_model_price_clears": 0.9993,
+            "model_minus_measured_duration": 0.0035
+          },
+          {
+            "seam": "NYISO",
+            "band": 2,
+            "band_mid_mw": 731.2,
+            "ladder_price": 48.61,
+            "duration_measured": 0.9449,
+            "duration_actual_lmp_clears": 0.945,
+            "duration_model_price_clears": 0.9906,
+            "model_minus_measured_duration": 0.0458
+          },
+          {
+            "seam": "NYISO",
+            "band": 3,
+            "band_mid_mw": 1218.8,
+            "ladder_price": 36.0,
+            "duration_measured": 0.8053,
+            "duration_actual_lmp_clears": 0.8051,
+            "duration_model_price_clears": 0.8372,
+            "model_minus_measured_duration": 0.032
+          },
+          {
+            "seam": "NYISO",
+            "band": 4,
+            "band_mid_mw": 1706.2,
+            "ladder_price": 31.11,
+            "duration_measured": 0.6636,
+            "duration_actual_lmp_clears": 0.6637,
+            "duration_model_price_clears": 0.5717,
+            "model_minus_measured_duration": -0.0919
+          },
+          {
+            "seam": "NYISO",
+            "band": 5,
+            "band_mid_mw": 2193.8,
+            "ladder_price": 27.2,
+            "duration_measured": 0.5015,
+            "duration_actual_lmp_clears": 0.5018,
+            "duration_model_price_clears": 0.2842,
+            "model_minus_measured_duration": -0.2172
+          },
+          {
+            "seam": "NYISO",
+            "band": 6,
+            "band_mid_mw": 2681.2,
+            "ladder_price": 22.58,
+            "duration_measured": 0.2941,
+            "duration_actual_lmp_clears": 0.2941,
+            "duration_model_price_clears": 0.046,
+            "model_minus_measured_duration": -0.2481
+          },
+          {
+            "seam": "NYISO",
+            "band": 7,
+            "band_mid_mw": 3168.8,
+            "ladder_price": 18.08,
+            "duration_measured": 0.1171,
+            "duration_actual_lmp_clears": 0.1172,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1171
+          },
+          {
+            "seam": "NYISO",
+            "band": 8,
+            "band_mid_mw": 3656.2,
+            "ladder_price": 13.0,
+            "duration_measured": 0.016,
+            "duration_actual_lmp_clears": 0.0161,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.016
+          },
+          {
+            "seam": "Carolinas",
+            "band": 1,
+            "band_mid_mw": 150.0,
+            "ladder_price": 17.62,
+            "duration_measured": 0.1041,
+            "duration_actual_lmp_clears": 0.1043,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1041
+          },
+          {
+            "seam": "Carolinas",
+            "band": 2,
+            "band_mid_mw": 450.0,
+            "ladder_price": 15.32,
+            "duration_measured": 0.0493,
+            "duration_actual_lmp_clears": 0.0494,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0493
+          },
+          {
+            "seam": "Carolinas",
+            "band": 3,
+            "band_mid_mw": 750.0,
+            "ladder_price": 13.65,
+            "duration_measured": 0.0208,
+            "duration_actual_lmp_clears": 0.0208,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0208
+          },
+          {
+            "seam": "Carolinas",
+            "band": 4,
+            "band_mid_mw": 1050.0,
+            "ladder_price": 12.06,
+            "duration_measured": 0.0087,
+            "duration_actual_lmp_clears": 0.0089,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0087
+          },
+          {
+            "seam": "Carolinas",
+            "band": 5,
+            "band_mid_mw": 1350.0,
+            "ladder_price": 10.39,
+            "duration_measured": 0.0026,
+            "duration_actual_lmp_clears": 0.0026,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0026
+          },
+          {
+            "seam": "Carolinas",
+            "band": 6,
+            "band_mid_mw": 1650.0,
+            "ladder_price": 9.88,
+            "duration_measured": 0.0014,
+            "duration_actual_lmp_clears": 0.0015,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0014
+          },
+          {
+            "seam": "Carolinas",
+            "band": 7,
+            "band_mid_mw": 1950.0,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "Carolinas",
+            "band": 8,
+            "band_mid_mw": 2250.0,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "TVA",
+            "band": 1,
+            "band_mid_mw": 100.0,
+            "ladder_price": 13.54,
+            "duration_measured": 0.0197,
+            "duration_actual_lmp_clears": 0.0199,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0197
+          },
+          {
+            "seam": "TVA",
+            "band": 2,
+            "band_mid_mw": 300.0,
+            "ladder_price": 12.17,
+            "duration_measured": 0.0092,
+            "duration_actual_lmp_clears": 0.0094,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0092
+          },
+          {
+            "seam": "TVA",
+            "band": 3,
+            "band_mid_mw": 500.0,
+            "ladder_price": 10.95,
+            "duration_measured": 0.0041,
+            "duration_actual_lmp_clears": 0.0041,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0041
+          },
+          {
+            "seam": "TVA",
+            "band": 4,
+            "band_mid_mw": 700.0,
+            "ladder_price": 10.29,
+            "duration_measured": 0.0023,
+            "duration_actual_lmp_clears": 0.0023,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0023
+          },
+          {
+            "seam": "TVA",
+            "band": 5,
+            "band_mid_mw": 900.0,
+            "ladder_price": 9.08,
+            "duration_measured": 0.0008,
+            "duration_actual_lmp_clears": 0.0008,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0008
+          },
+          {
+            "seam": "TVA",
+            "band": 6,
+            "band_mid_mw": 1100.0,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "TVA",
+            "band": 7,
+            "band_mid_mw": 1300.0,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "TVA",
+            "band": 8,
+            "band_mid_mw": 1500.0,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 1,
+            "band_mid_mw": 68.8,
+            "ladder_price": 17.96,
+            "duration_measured": 0.1143,
+            "duration_actual_lmp_clears": 0.1143,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1143
+          },
+          {
+            "seam": "LGEE",
+            "band": 2,
+            "band_mid_mw": 206.2,
+            "ladder_price": 15.18,
+            "duration_measured": 0.0468,
+            "duration_actual_lmp_clears": 0.0469,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0468
+          },
+          {
+            "seam": "LGEE",
+            "band": 3,
+            "band_mid_mw": 343.8,
+            "ladder_price": 13.58,
+            "duration_measured": 0.0202,
+            "duration_actual_lmp_clears": 0.0201,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0202
+          },
+          {
+            "seam": "LGEE",
+            "band": 4,
+            "band_mid_mw": 481.2,
+            "ladder_price": 11.8,
+            "duration_measured": 0.007,
+            "duration_actual_lmp_clears": 0.007,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.007
+          },
+          {
+            "seam": "LGEE",
+            "band": 5,
+            "band_mid_mw": 618.8,
+            "ladder_price": 9.88,
+            "duration_measured": 0.0014,
+            "duration_actual_lmp_clears": 0.0015,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0014
+          },
+          {
+            "seam": "LGEE",
+            "band": 6,
+            "band_mid_mw": 756.2,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 7,
+            "band_mid_mw": 893.8,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 8,
+            "band_mid_mw": 1031.2,
+            "ladder_price": 7.68,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          }
+        ],
+        "model_price_quantiles": {
+          "p5": 22.7,
+          "p25": 26.81,
+          "p50": 30.25,
+          "p75": 33.82,
+          "p90": 38.78,
+          "p95": 41.75,
+          "p99": 48.32
+        },
+        "measured_da_lmp_quantiles": {
+          "p5": 15.38,
+          "p25": 21.58,
+          "p50": 27.14,
+          "p75": 33.89,
+          "p90": 42.3,
+          "p95": 49.81,
+          "p99": 71.89
+        }
+      }
+    },
+    "2024": {
+      "benchmark_basis": {
+        "eia930_total_interchange_twh": 32.641,
+        "pjm_tie_file_net_export_twh": 32.825,
+        "difference_twh": -0.184,
+        "hourly_correlation": 0.9735,
+        "eia930_net_generation_twh": 847.716,
+        "eia930_demand_twh": 815.036,
+        "eia930_netgen_minus_demand_twh": 32.68,
+        "eia930_identity_residual_twh": -0.005
+      },
+      "envelope_ceiling": {
+        "percentile": 90.0,
+        "seams": [
+          {
+            "seam": "MISO",
+            "interface_limit_mw": 7300.0,
+            "measured_export_twh": 27.189,
+            "measured_import_twh": 0.062,
+            "measured_net_export_twh": 27.127,
+            "envelope_export_ceiling_twh": 39.211,
+            "envelope_import_ceiling_twh": 0.1,
+            "export_ceiling_shortfall_twh": -12.022,
+            "export_ceiling_utilisation_needed": 0.6934,
+            "hours_measured_export_above_cap": 864
+          },
+          {
+            "seam": "NYISO",
+            "interface_limit_mw": 3900.0,
+            "measured_export_twh": 20.308,
+            "measured_import_twh": 0.0,
+            "measured_net_export_twh": 20.308,
+            "envelope_export_ceiling_twh": 25.175,
+            "envelope_import_ceiling_twh": 0.0,
+            "export_ceiling_shortfall_twh": -4.867,
+            "export_ceiling_utilisation_needed": 0.8067,
+            "hours_measured_export_above_cap": 864
+          },
+          {
+            "seam": "Carolinas",
+            "interface_limit_mw": 2400.0,
+            "measured_export_twh": 0.622,
+            "measured_import_twh": 7.029,
+            "measured_net_export_twh": -6.408,
+            "envelope_export_ceiling_twh": 1.614,
+            "envelope_import_ceiling_twh": 11.671,
+            "export_ceiling_shortfall_twh": -0.992,
+            "export_ceiling_utilisation_needed": 0.3853,
+            "hours_measured_export_above_cap": 399
+          },
+          {
+            "seam": "TVA",
+            "interface_limit_mw": 1600.0,
+            "measured_export_twh": 0.129,
+            "measured_import_twh": 5.945,
+            "measured_net_export_twh": -5.816,
+            "envelope_export_ceiling_twh": 0.481,
+            "envelope_import_ceiling_twh": 9.087,
+            "export_ceiling_shortfall_twh": -0.352,
+            "export_ceiling_utilisation_needed": 0.2684,
+            "hours_measured_export_above_cap": 314
+          },
+          {
+            "seam": "LGEE",
+            "interface_limit_mw": 1100.0,
+            "measured_export_twh": 0.198,
+            "measured_import_twh": 2.585,
+            "measured_net_export_twh": -2.387,
+            "envelope_export_ceiling_twh": 0.55,
+            "envelope_import_ceiling_twh": 4.755,
+            "export_ceiling_shortfall_twh": -0.352,
+            "export_ceiling_utilisation_needed": 0.3607,
+            "hours_measured_export_above_cap": 559
+          }
+        ],
+        "total_measured_net_export_twh": 32.824,
+        "total_envelope_export_ceiling_twh": 67.031,
+        "net_export_headroom_twh": 34.207
+      },
+      "ladder_clearing": {
+        "bands": [
+          {
+            "seam": "MISO",
+            "band": 1,
+            "band_mid_mw": 456.2,
+            "ladder_price": 62.02,
+            "duration_measured": 0.9576,
+            "duration_actual_lmp_clears": 0.9576,
+            "duration_model_price_clears": 0.9853,
+            "model_minus_measured_duration": 0.0276
+          },
+          {
+            "seam": "MISO",
+            "band": 2,
+            "band_mid_mw": 1368.8,
+            "ladder_price": 41.54,
+            "duration_measured": 0.8578,
+            "duration_actual_lmp_clears": 0.8578,
+            "duration_model_price_clears": 0.9366,
+            "model_minus_measured_duration": 0.0789
+          },
+          {
+            "seam": "MISO",
+            "band": 3,
+            "band_mid_mw": 2281.2,
+            "ladder_price": 31.09,
+            "duration_measured": 0.6712,
+            "duration_actual_lmp_clears": 0.6712,
+            "duration_model_price_clears": 0.6798,
+            "model_minus_measured_duration": 0.0086
+          },
+          {
+            "seam": "MISO",
+            "band": 4,
+            "band_mid_mw": 3193.8,
+            "ladder_price": 24.99,
+            "duration_measured": 0.4688,
+            "duration_actual_lmp_clears": 0.4691,
+            "duration_model_price_clears": 0.291,
+            "model_minus_measured_duration": -0.1779
+          },
+          {
+            "seam": "MISO",
+            "band": 5,
+            "band_mid_mw": 4106.2,
+            "ladder_price": 20.26,
+            "duration_measured": 0.2761,
+            "duration_actual_lmp_clears": 0.2763,
+            "duration_model_price_clears": 0.0317,
+            "model_minus_measured_duration": -0.2444
+          },
+          {
+            "seam": "MISO",
+            "band": 6,
+            "band_mid_mw": 5018.8,
+            "ladder_price": 16.13,
+            "duration_measured": 0.1219,
+            "duration_actual_lmp_clears": 0.1221,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1219
+          },
+          {
+            "seam": "MISO",
+            "band": 7,
+            "band_mid_mw": 5931.2,
+            "ladder_price": 12.72,
+            "duration_measured": 0.0392,
+            "duration_actual_lmp_clears": 0.0392,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0392
+          },
+          {
+            "seam": "MISO",
+            "band": 8,
+            "band_mid_mw": 6843.8,
+            "ladder_price": 10.47,
+            "duration_measured": 0.0082,
+            "duration_actual_lmp_clears": 0.0083,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0082
+          },
+          {
+            "seam": "NYISO",
+            "band": 1,
+            "band_mid_mw": 243.8,
+            "ladder_price": 159.98,
+            "duration_measured": 0.9984,
+            "duration_actual_lmp_clears": 0.9984,
+            "duration_model_price_clears": 1.0,
+            "model_minus_measured_duration": 0.0016
+          },
+          {
+            "seam": "NYISO",
+            "band": 2,
+            "band_mid_mw": 731.2,
+            "ladder_price": 95.88,
+            "duration_measured": 0.9871,
+            "duration_actual_lmp_clears": 0.9872,
+            "duration_model_price_clears": 0.9917,
+            "model_minus_measured_duration": 0.0046
+          },
+          {
+            "seam": "NYISO",
+            "band": 3,
+            "band_mid_mw": 1218.8,
+            "ladder_price": 52.89,
+            "duration_measured": 0.9309,
+            "duration_actual_lmp_clears": 0.9311,
+            "duration_model_price_clears": 0.9796,
+            "model_minus_measured_duration": 0.0486
+          },
+          {
+            "seam": "NYISO",
+            "band": 4,
+            "band_mid_mw": 1706.2,
+            "ladder_price": 37.29,
+            "duration_measured": 0.8073,
+            "duration_actual_lmp_clears": 0.8074,
+            "duration_model_price_clears": 0.8737,
+            "model_minus_measured_duration": 0.0664
+          },
+          {
+            "seam": "NYISO",
+            "band": 5,
+            "band_mid_mw": 2193.8,
+            "ladder_price": 28.63,
+            "duration_measured": 0.5985,
+            "duration_actual_lmp_clears": 0.5986,
+            "duration_model_price_clears": 0.5433,
+            "model_minus_measured_duration": -0.0553
+          },
+          {
+            "seam": "NYISO",
+            "band": 6,
+            "band_mid_mw": 2681.2,
+            "ladder_price": 21.6,
+            "duration_measured": 0.3303,
+            "duration_actual_lmp_clears": 0.3305,
+            "duration_model_price_clears": 0.0784,
+            "model_minus_measured_duration": -0.2518
+          },
+          {
+            "seam": "NYISO",
+            "band": 7,
+            "band_mid_mw": 3168.8,
+            "ladder_price": 15.5,
+            "duration_measured": 0.1029,
+            "duration_actual_lmp_clears": 0.1029,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1029
+          },
+          {
+            "seam": "NYISO",
+            "band": 8,
+            "band_mid_mw": 3656.2,
+            "ladder_price": 9.73,
+            "duration_measured": 0.004,
+            "duration_actual_lmp_clears": 0.0041,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.004
+          },
+          {
+            "seam": "Carolinas",
+            "band": 1,
+            "band_mid_mw": 150.0,
+            "ladder_price": 15.55,
+            "duration_measured": 0.1037,
+            "duration_actual_lmp_clears": 0.1038,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1037
+          },
+          {
+            "seam": "Carolinas",
+            "band": 2,
+            "band_mid_mw": 450.0,
+            "ladder_price": 13.75,
+            "duration_measured": 0.0599,
+            "duration_actual_lmp_clears": 0.0599,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0599
+          },
+          {
+            "seam": "Carolinas",
+            "band": 3,
+            "band_mid_mw": 750.0,
+            "ladder_price": 12.5,
+            "duration_measured": 0.0355,
+            "duration_actual_lmp_clears": 0.0356,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0355
+          },
+          {
+            "seam": "Carolinas",
+            "band": 4,
+            "band_mid_mw": 1050.0,
+            "ladder_price": 11.41,
+            "duration_measured": 0.0196,
+            "duration_actual_lmp_clears": 0.0195,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0196
+          },
+          {
+            "seam": "Carolinas",
+            "band": 5,
+            "band_mid_mw": 1350.0,
+            "ladder_price": 10.5,
+            "duration_measured": 0.0089,
+            "duration_actual_lmp_clears": 0.009,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0089
+          },
+          {
+            "seam": "Carolinas",
+            "band": 6,
+            "band_mid_mw": 1650.0,
+            "ladder_price": 9.59,
+            "duration_measured": 0.0037,
+            "duration_actual_lmp_clears": 0.0038,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0037
+          },
+          {
+            "seam": "Carolinas",
+            "band": 7,
+            "band_mid_mw": 1950.0,
+            "ladder_price": 8.99,
+            "duration_measured": 0.0011,
+            "duration_actual_lmp_clears": 0.0011,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0011
+          },
+          {
+            "seam": "Carolinas",
+            "band": 8,
+            "band_mid_mw": 2250.0,
+            "ladder_price": 8.56,
+            "duration_measured": 0.0005,
+            "duration_actual_lmp_clears": 0.0005,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0005
+          },
+          {
+            "seam": "TVA",
+            "band": 1,
+            "band_mid_mw": 100.0,
+            "ladder_price": 12.68,
+            "duration_measured": 0.0381,
+            "duration_actual_lmp_clears": 0.0382,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0381
+          },
+          {
+            "seam": "TVA",
+            "band": 2,
+            "band_mid_mw": 300.0,
+            "ladder_price": 11.45,
+            "duration_measured": 0.0202,
+            "duration_actual_lmp_clears": 0.0204,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0202
+          },
+          {
+            "seam": "TVA",
+            "band": 3,
+            "band_mid_mw": 500.0,
+            "ladder_price": 10.6,
+            "duration_measured": 0.0099,
+            "duration_actual_lmp_clears": 0.01,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0099
+          },
+          {
+            "seam": "TVA",
+            "band": 4,
+            "band_mid_mw": 700.0,
+            "ladder_price": 9.57,
+            "duration_measured": 0.0033,
+            "duration_actual_lmp_clears": 0.0035,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0033
+          },
+          {
+            "seam": "TVA",
+            "band": 5,
+            "band_mid_mw": 900.0,
+            "ladder_price": 8.65,
+            "duration_measured": 0.0007,
+            "duration_actual_lmp_clears": 0.0008,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0007
+          },
+          {
+            "seam": "TVA",
+            "band": 6,
+            "band_mid_mw": 1100.0,
+            "ladder_price": 7.77,
+            "duration_measured": 0.0002,
+            "duration_actual_lmp_clears": 0.0001,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0002
+          },
+          {
+            "seam": "TVA",
+            "band": 7,
+            "band_mid_mw": 1300.0,
+            "ladder_price": 7.75,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "TVA",
+            "band": 8,
+            "band_mid_mw": 1500.0,
+            "ladder_price": 7.75,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 1,
+            "band_mid_mw": 68.8,
+            "ladder_price": 15.75,
+            "duration_measured": 0.1099,
+            "duration_actual_lmp_clears": 0.1099,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.1099
+          },
+          {
+            "seam": "LGEE",
+            "band": 2,
+            "band_mid_mw": 206.2,
+            "ladder_price": 12.67,
+            "duration_measured": 0.038,
+            "duration_actual_lmp_clears": 0.038,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.038
+          },
+          {
+            "seam": "LGEE",
+            "band": 3,
+            "band_mid_mw": 343.8,
+            "ladder_price": 10.63,
+            "duration_measured": 0.0104,
+            "duration_actual_lmp_clears": 0.0105,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0104
+          },
+          {
+            "seam": "LGEE",
+            "band": 4,
+            "band_mid_mw": 481.2,
+            "ladder_price": 9.22,
+            "duration_measured": 0.0021,
+            "duration_actual_lmp_clears": 0.0022,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0021
+          },
+          {
+            "seam": "LGEE",
+            "band": 5,
+            "band_mid_mw": 618.8,
+            "ladder_price": 8.65,
+            "duration_measured": 0.0007,
+            "duration_actual_lmp_clears": 0.0008,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0007
+          },
+          {
+            "seam": "LGEE",
+            "band": 6,
+            "band_mid_mw": 756.2,
+            "ladder_price": 7.75,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 7,
+            "band_mid_mw": 893.8,
+            "ladder_price": 7.75,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 8,
+            "band_mid_mw": 1031.2,
+            "ladder_price": 7.75,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          }
+        ],
+        "model_price_quantiles": {
+          "p5": 20.86,
+          "p25": 24.4,
+          "p50": 27.95,
+          "p75": 32.78,
+          "p90": 38.58,
+          "p95": 43.24,
+          "p99": 83.19
+        },
+        "measured_da_lmp_quantiles": {
+          "p5": 13.29,
+          "p25": 19.56,
+          "p50": 25.79,
+          "p75": 34.33,
+          "p90": 46.95,
+          "p95": 58.78,
+          "p99": 106.17
+        }
+      }
+    },
+    "2025": {
+      "benchmark_basis": {
+        "eia930_total_interchange_twh": 17.968,
+        "pjm_tie_file_net_export_twh": 32.925,
+        "difference_twh": -14.957,
+        "hourly_correlation": 0.3732,
+        "eia930_net_generation_twh": 875.918,
+        "eia930_demand_twh": 843.188,
+        "eia930_netgen_minus_demand_twh": 32.73,
+        "eia930_identity_residual_twh": 14.762
+      },
+      "envelope_ceiling": {
+        "percentile": 90.0,
+        "seams": [
+          {
+            "seam": "MISO",
+            "interface_limit_mw": 7300.0,
+            "measured_export_twh": 24.715,
+            "measured_import_twh": 0.088,
+            "measured_net_export_twh": 24.627,
+            "envelope_export_ceiling_twh": 36.995,
+            "envelope_import_ceiling_twh": 0.206,
+            "export_ceiling_shortfall_twh": -12.28,
+            "export_ceiling_utilisation_needed": 0.6681,
+            "hours_measured_export_above_cap": 863
+          },
+          {
+            "seam": "NYISO",
+            "interface_limit_mw": 3900.0,
+            "measured_export_twh": 21.91,
+            "measured_import_twh": 0.0,
+            "measured_net_export_twh": 21.91,
+            "envelope_export_ceiling_twh": 26.642,
+            "envelope_import_ceiling_twh": 0.0,
+            "export_ceiling_shortfall_twh": -4.732,
+            "export_ceiling_utilisation_needed": 0.8224,
+            "hours_measured_export_above_cap": 882
+          },
+          {
+            "seam": "Carolinas",
+            "interface_limit_mw": 2400.0,
+            "measured_export_twh": 1.041,
+            "measured_import_twh": 6.927,
+            "measured_net_export_twh": -5.885,
+            "envelope_export_ceiling_twh": 3.403,
+            "envelope_import_ceiling_twh": 11.916,
+            "export_ceiling_shortfall_twh": -2.361,
+            "export_ceiling_utilisation_needed": 0.306,
+            "hours_measured_export_above_cap": 619
+          },
+          {
+            "seam": "TVA",
+            "interface_limit_mw": 1600.0,
+            "measured_export_twh": 0.223,
+            "measured_import_twh": 5.623,
+            "measured_net_export_twh": -5.4,
+            "envelope_export_ceiling_twh": 0.603,
+            "envelope_import_ceiling_twh": 8.589,
+            "export_ceiling_shortfall_twh": -0.381,
+            "export_ceiling_utilisation_needed": 0.3691,
+            "hours_measured_export_above_cap": 450
+          },
+          {
+            "seam": "LGEE",
+            "interface_limit_mw": 1100.0,
+            "measured_export_twh": 0.275,
+            "measured_import_twh": 2.603,
+            "measured_net_export_twh": -2.327,
+            "envelope_export_ceiling_twh": 0.822,
+            "envelope_import_ceiling_twh": 4.808,
+            "export_ceiling_shortfall_twh": -0.547,
+            "export_ceiling_utilisation_needed": 0.3347,
+            "hours_measured_export_above_cap": 616
+          }
+        ],
+        "total_measured_net_export_twh": 32.925,
+        "total_envelope_export_ceiling_twh": 68.465,
+        "net_export_headroom_twh": 35.54
+      },
+      "ladder_clearing": {
+        "bands": [
+          {
+            "seam": "MISO",
+            "band": 1,
+            "band_mid_mw": 456.2,
+            "ladder_price": 84.96,
+            "duration_measured": 0.9451,
+            "duration_actual_lmp_clears": 0.9452,
+            "duration_model_price_clears": 0.9873,
+            "model_minus_measured_duration": 0.0422
+          },
+          {
+            "seam": "MISO",
+            "band": 2,
+            "band_mid_mw": 1368.8,
+            "ladder_price": 55.77,
+            "duration_measured": 0.8161,
+            "duration_actual_lmp_clears": 0.8163,
+            "duration_model_price_clears": 0.9233,
+            "model_minus_measured_duration": 0.1072
+          },
+          {
+            "seam": "MISO",
+            "band": 3,
+            "band_mid_mw": 2281.2,
+            "ladder_price": 40.86,
+            "duration_measured": 0.605,
+            "duration_actual_lmp_clears": 0.605,
+            "duration_model_price_clears": 0.6374,
+            "model_minus_measured_duration": 0.0324
+          },
+          {
+            "seam": "MISO",
+            "band": 4,
+            "band_mid_mw": 3193.8,
+            "ladder_price": 32.7,
+            "duration_measured": 0.3874,
+            "duration_actual_lmp_clears": 0.3877,
+            "duration_model_price_clears": 0.2322,
+            "model_minus_measured_duration": -0.1553
+          },
+          {
+            "seam": "MISO",
+            "band": 5,
+            "band_mid_mw": 4106.2,
+            "ladder_price": 27.02,
+            "duration_measured": 0.2079,
+            "duration_actual_lmp_clears": 0.208,
+            "duration_model_price_clears": 0.0425,
+            "model_minus_measured_duration": -0.1654
+          },
+          {
+            "seam": "MISO",
+            "band": 6,
+            "band_mid_mw": 5018.8,
+            "ladder_price": 22.09,
+            "duration_measured": 0.0879,
+            "duration_actual_lmp_clears": 0.0879,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0879
+          },
+          {
+            "seam": "MISO",
+            "band": 7,
+            "band_mid_mw": 5931.2,
+            "ladder_price": 17.85,
+            "duration_measured": 0.0283,
+            "duration_actual_lmp_clears": 0.0282,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0283
+          },
+          {
+            "seam": "MISO",
+            "band": 8,
+            "band_mid_mw": 6843.8,
+            "ladder_price": 14.46,
+            "duration_measured": 0.0043,
+            "duration_actual_lmp_clears": 0.0045,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0043
+          },
+          {
+            "seam": "NYISO",
+            "band": 1,
+            "band_mid_mw": 243.8,
+            "ladder_price": 381.93,
+            "duration_measured": 0.9993,
+            "duration_actual_lmp_clears": 0.9993,
+            "duration_model_price_clears": 0.9999,
+            "model_minus_measured_duration": 0.0006
+          },
+          {
+            "seam": "NYISO",
+            "band": 2,
+            "band_mid_mw": 731.2,
+            "ladder_price": 178.51,
+            "duration_measured": 0.9918,
+            "duration_actual_lmp_clears": 0.9919,
+            "duration_model_price_clears": 0.9977,
+            "model_minus_measured_duration": 0.0059
+          },
+          {
+            "seam": "NYISO",
+            "band": 3,
+            "band_mid_mw": 1218.8,
+            "ladder_price": 92.15,
+            "duration_measured": 0.9578,
+            "duration_actual_lmp_clears": 0.9578,
+            "duration_model_price_clears": 0.9901,
+            "model_minus_measured_duration": 0.0323
+          },
+          {
+            "seam": "NYISO",
+            "band": 4,
+            "band_mid_mw": 1706.2,
+            "ladder_price": 62.13,
+            "duration_measured": 0.8628,
+            "duration_actual_lmp_clears": 0.8629,
+            "duration_model_price_clears": 0.9526,
+            "model_minus_measured_duration": 0.0898
+          },
+          {
+            "seam": "NYISO",
+            "band": 5,
+            "band_mid_mw": 2193.8,
+            "ladder_price": 44.27,
+            "duration_measured": 0.6705,
+            "duration_actual_lmp_clears": 0.6707,
+            "duration_model_price_clears": 0.7498,
+            "model_minus_measured_duration": 0.0792
+          },
+          {
+            "seam": "NYISO",
+            "band": 6,
+            "band_mid_mw": 2681.2,
+            "ladder_price": 33.17,
+            "duration_measured": 0.4003,
+            "duration_actual_lmp_clears": 0.4006,
+            "duration_model_price_clears": 0.2631,
+            "model_minus_measured_duration": -0.1372
+          },
+          {
+            "seam": "NYISO",
+            "band": 7,
+            "band_mid_mw": 3168.8,
+            "ladder_price": 26.61,
+            "duration_measured": 0.1975,
+            "duration_actual_lmp_clears": 0.1978,
+            "duration_model_price_clears": 0.0317,
+            "model_minus_measured_duration": -0.1658
+          },
+          {
+            "seam": "NYISO",
+            "band": 8,
+            "band_mid_mw": 3656.2,
+            "ladder_price": 19.64,
+            "duration_measured": 0.0479,
+            "duration_actual_lmp_clears": 0.0482,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0479
+          },
+          {
+            "seam": "Carolinas",
+            "band": 1,
+            "band_mid_mw": 150.0,
+            "ladder_price": 25.95,
+            "duration_measured": 0.1798,
+            "duration_actual_lmp_clears": 0.1796,
+            "duration_model_price_clears": 0.0176,
+            "model_minus_measured_duration": -0.1622
+          },
+          {
+            "seam": "Carolinas",
+            "band": 2,
+            "band_mid_mw": 450.0,
+            "ladder_price": 22.74,
+            "duration_measured": 0.1025,
+            "duration_actual_lmp_clears": 0.1026,
+            "duration_model_price_clears": 0.0003,
+            "model_minus_measured_duration": -0.1022
+          },
+          {
+            "seam": "Carolinas",
+            "band": 3,
+            "band_mid_mw": 750.0,
+            "ladder_price": 20.18,
+            "duration_measured": 0.0556,
+            "duration_actual_lmp_clears": 0.0556,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0556
+          },
+          {
+            "seam": "Carolinas",
+            "band": 4,
+            "band_mid_mw": 1050.0,
+            "ladder_price": 18.02,
+            "duration_measured": 0.0305,
+            "duration_actual_lmp_clears": 0.0306,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0305
+          },
+          {
+            "seam": "Carolinas",
+            "band": 5,
+            "band_mid_mw": 1350.0,
+            "ladder_price": 16.13,
+            "duration_measured": 0.0147,
+            "duration_actual_lmp_clears": 0.0147,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0147
+          },
+          {
+            "seam": "Carolinas",
+            "band": 6,
+            "band_mid_mw": 1650.0,
+            "ladder_price": 15.08,
+            "duration_measured": 0.0068,
+            "duration_actual_lmp_clears": 0.007,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0068
+          },
+          {
+            "seam": "Carolinas",
+            "band": 7,
+            "band_mid_mw": 1950.0,
+            "ladder_price": 13.65,
+            "duration_measured": 0.0017,
+            "duration_actual_lmp_clears": 0.0018,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0017
+          },
+          {
+            "seam": "Carolinas",
+            "band": 8,
+            "band_mid_mw": 2250.0,
+            "ladder_price": 13.0,
+            "duration_measured": 0.0007,
+            "duration_actual_lmp_clears": 0.0007,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0007
+          },
+          {
+            "seam": "TVA",
+            "band": 1,
+            "band_mid_mw": 100.0,
+            "ladder_price": 21.09,
+            "duration_measured": 0.0672,
+            "duration_actual_lmp_clears": 0.0672,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0672
+          },
+          {
+            "seam": "TVA",
+            "band": 2,
+            "band_mid_mw": 300.0,
+            "ladder_price": 18.25,
+            "duration_measured": 0.0329,
+            "duration_actual_lmp_clears": 0.0326,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0329
+          },
+          {
+            "seam": "TVA",
+            "band": 3,
+            "band_mid_mw": 500.0,
+            "ladder_price": 16.14,
+            "duration_measured": 0.0148,
+            "duration_actual_lmp_clears": 0.015,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0148
+          },
+          {
+            "seam": "TVA",
+            "band": 4,
+            "band_mid_mw": 700.0,
+            "ladder_price": 15.08,
+            "duration_measured": 0.0068,
+            "duration_actual_lmp_clears": 0.007,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0068
+          },
+          {
+            "seam": "TVA",
+            "band": 5,
+            "band_mid_mw": 900.0,
+            "ladder_price": 13.76,
+            "duration_measured": 0.0022,
+            "duration_actual_lmp_clears": 0.0023,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0022
+          },
+          {
+            "seam": "TVA",
+            "band": 6,
+            "band_mid_mw": 1100.0,
+            "ladder_price": 13.26,
+            "duration_measured": 0.0011,
+            "duration_actual_lmp_clears": 0.0011,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0011
+          },
+          {
+            "seam": "TVA",
+            "band": 7,
+            "band_mid_mw": 1300.0,
+            "ladder_price": 11.65,
+            "duration_measured": 0.0001,
+            "duration_actual_lmp_clears": 0.0001,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0001
+          },
+          {
+            "seam": "TVA",
+            "band": 8,
+            "band_mid_mw": 1500.0,
+            "ladder_price": 11.62,
+            "duration_measured": 0.0,
+            "duration_actual_lmp_clears": 0.0,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": 0.0
+          },
+          {
+            "seam": "LGEE",
+            "band": 1,
+            "band_mid_mw": 68.8,
+            "ladder_price": 24.18,
+            "duration_measured": 0.1356,
+            "duration_actual_lmp_clears": 0.1358,
+            "duration_model_price_clears": 0.0022,
+            "model_minus_measured_duration": -0.1334
+          },
+          {
+            "seam": "LGEE",
+            "band": 2,
+            "band_mid_mw": 206.2,
+            "ladder_price": 20.22,
+            "duration_measured": 0.0565,
+            "duration_actual_lmp_clears": 0.0564,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0565
+          },
+          {
+            "seam": "LGEE",
+            "band": 3,
+            "band_mid_mw": 343.8,
+            "ladder_price": 17.04,
+            "duration_measured": 0.0216,
+            "duration_actual_lmp_clears": 0.0217,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0216
+          },
+          {
+            "seam": "LGEE",
+            "band": 4,
+            "band_mid_mw": 481.2,
+            "ladder_price": 15.08,
+            "duration_measured": 0.0068,
+            "duration_actual_lmp_clears": 0.007,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0068
+          },
+          {
+            "seam": "LGEE",
+            "band": 5,
+            "band_mid_mw": 618.8,
+            "ladder_price": 13.65,
+            "duration_measured": 0.0017,
+            "duration_actual_lmp_clears": 0.0018,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0017
+          },
+          {
+            "seam": "LGEE",
+            "band": 6,
+            "band_mid_mw": 756.2,
+            "ladder_price": 11.97,
+            "duration_measured": 0.0003,
+            "duration_actual_lmp_clears": 0.0005,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0003
+          },
+          {
+            "seam": "LGEE",
+            "band": 7,
+            "band_mid_mw": 893.8,
+            "ladder_price": 11.88,
+            "duration_measured": 0.0002,
+            "duration_actual_lmp_clears": 0.0003,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0002
+          },
+          {
+            "seam": "LGEE",
+            "band": 8,
+            "band_mid_mw": 1031.2,
+            "ladder_price": 11.88,
+            "duration_measured": 0.0002,
+            "duration_actual_lmp_clears": 0.0003,
+            "duration_model_price_clears": 0.0,
+            "model_minus_measured_duration": -0.0002
+          }
+        ],
+        "model_price_quantiles": {
+          "p5": 27.16,
+          "p25": 33.01,
+          "p50": 37.64,
+          "p75": 44.27,
+          "p90": 53.03,
+          "p95": 61.2,
+          "p99": 90.93
+        },
+        "measured_da_lmp_quantiles": {
+          "p5": 19.8,
+          "p25": 28.58,
+          "p50": 36.58,
+          "p75": 49.47,
+          "p90": 69.44,
+          "p95": 87.48,
+          "p99": 158.0
+        }
+      }
+    }
+  }
+}
