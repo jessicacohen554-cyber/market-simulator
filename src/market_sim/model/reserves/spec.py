@@ -1677,6 +1677,35 @@ def _ercot_multiproduct_design(
                 headroom_products=headroom_products,
             )
 
+    # ERCOT-159 energy-side online-capability cap
+    # (config.ercot_energy_online_capability_cap, queue item 9 / ERCOT-155
+    # successor): the measured conditional envelope on the FAST tier row of the
+    # same online_capacity_cap block — Σ P(slow-start fossil + nuclear) +
+    # Σ R(RegUp/RRS/ECRS) ≤ per-cell max online capability; the all tier stays
+    # at the uncapped sentinel (NonSpin / quick-start keep their owners,
+    # rule 19). ScenarioConfig.__post_init__ hard-errors if any envelope
+    # variant or ercot_ordc_only_scarcity is set together with this flag, so
+    # the field has exactly one writer. None (gate off / forecast mode / no
+    # artifact year block) leaves the LP unchanged.
+    if getattr(config, "ercot_energy_online_capability_cap", False):
+        from market_sim.results.scarcity import ercot_energy_online_capability_cap_mw
+
+        if system_load is not None:
+            wind = (
+                np.zeros_like(np.asarray(system_load, dtype=float))
+                if wind_gen is None
+                else np.asarray(wind_gen, dtype=float)
+            )
+            solar = (
+                np.zeros_like(np.asarray(system_load, dtype=float))
+                if solar_gen is None
+                else np.asarray(solar_gen, dtype=float)
+            )
+            net_load = np.asarray(system_load, dtype=float) - wind - solar
+            cap159 = ercot_energy_online_capability_cap_mw(config, T, net_load=net_load)
+            if cap159 is not None:
+                online_capacity_cap = cap159
+
     # ORDC-only scarcity pricing (v3): the envelope is a PRICING-ONLY basis —
     # pre-RTC+B SCED carries no committed-capability constraint, so the array
     # moves to online_capacity_pricing_mw (read by the post-solve RTORPA,

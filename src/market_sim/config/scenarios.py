@@ -571,6 +571,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario). Backcast/hindcast-coerced off in __post_init__ regardless.
     "electrification_path",
     "electrification_percentile",
+    # ercot-159 energy-side online-capability cap (default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key
+    # (the pinned default 603c2498bf71d21d stays byte-stable); an armed run
+    # installs a real fast-tier capability ceiling and so gets a distinct key
+    # — which keeps the A/B arm independent of its zero-delta control in the
+    # on-disk cache (PRECOMMIT-ercot159-energy-online-capability-cap §1).
+    "ercot_energy_online_capability_cap",
+    "ercot_energy_online_capability_cap_path",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -761,6 +769,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_rggi_allowance_pricing": "False",
     "electrification_path": "'off'",
     "electrification_percentile": "0.5",
+    "ercot_energy_online_capability_cap": "False",
+    "ercot_energy_online_capability_cap_path": "None",
 }
 
 
@@ -6926,6 +6936,37 @@ class ScenarioConfig:
     # Path to the frozen conditional online-span JSON (default:
     # data/raw/_validation-source/ercot_shoulder_online_span_condbinned.json).
     ercot_shoulder_online_span_path: str | None = None
+    # ERCOT-159 energy-side online-capability ceiling (default off; queue item
+    # 9, the ERCOT-155 named successor, owner-authorized 2026-08-04;
+    # docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md;
+    # matrix row energy_online_capability_cap). The energy-side analogue of
+    # ercot_reserve_supply_cap: the co-opt's fat headroom hands the LP every
+    # non-outaged slow-start unit as dispatchable-from-cold at marginal cost
+    # (15-17 GW of evening headroom vs the real market's 0.9-2.8 GW online,
+    # ERCOT-155 measured; the un-repriced offline block ERCOT-158 confirmed
+    # bit-identical at the 91 missed 2023 tail hours). Arms the EXISTING
+    # ReserveDesign.online_capacity_cap row on the FAST tier only:
+    #   Σ P(gas_cc/gas_st/coal/nuclear) + Σ R(RegUp/RRS/ECRS)
+    #     ≤ measured conditional envelope(season × hour-block × net-load bin)
+    # — per-cell MAX of slow-fossil + nuclear online HSL + quick-start online
+    # headroom from the full-year 60-Day SCED corpus
+    # (scripts/data/derive_ercot_energy_online_capability.py, frozen rule 23,
+    # zero fitted scalars rule 20; the raw hour series never ships, rule 13 /
+    # ERCOT-89 §6). The all tier stays uncapped (sentinel): NonSpin and
+    # quick-start keep their reserve-supply-cap / fast-start-pool owners
+    # (rule 19; the ercot41/43 ORDC-span-inside-the-cap arithmetic cannot
+    # recur — precommit §0.2 enumerates the distinctions from that REJECTED
+    # envelope family). Year-scoped by full-corpus coverage (2023; absent
+    # years byte-inert — the ercot_shoulder_online_span precedent); forecast
+    # mode uncapped (the G4 mode-aware seam of ercot_reserve_supply_cap).
+    # Requires energy_reserve_coopt + ercot_multiproduct_as_coopt (the
+    # identified tier structure); mutually exclusive with every
+    # ercot_online_capacity_envelope variant and with ercot_ordc_only_scarcity
+    # (same ReserveDesign field / same phenomenon, rule 19).
+    ercot_energy_online_capability_cap: bool = False
+    # Path override for the frozen envelope JSON (default:
+    # data/raw/_validation-source/ercot_energy_online_capability_condbinned.json).
+    ercot_energy_online_capability_cap_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -10168,6 +10209,34 @@ class ScenarioConfig:
                 "mutually exclusive variants of the same envelope row — set "
                 "exactly one."
             )
+
+        # ERCOT-159 energy-side online-capability cap: same
+        # ReserveDesign.online_capacity_cap field as the envelope family and
+        # the same phenomenon (rule 19 one-owner) — never together with any
+        # envelope variant or with ercot_ordc_only_scarcity (which would
+        # demote the cap to a pricing-only basis, a different mechanism). The
+        # fast/all tier split it caps is the multi-product co-opt's; without
+        # it the identified structure does not exist (precommit §2).
+        if self.ercot_energy_online_capability_cap:
+            if any(_envelope_variants):
+                raise ValueError(
+                    "ercot_energy_online_capability_cap is mutually exclusive "
+                    "with the ercot_online_capacity_envelope family — both "
+                    "populate ReserveDesign.online_capacity_cap (rule 19)."
+                )
+            if self.ercot_ordc_only_scarcity:
+                raise ValueError(
+                    "ercot_energy_online_capability_cap requires the in-LP cap "
+                    "row; ercot_ordc_only_scarcity demotes it to pricing-only "
+                    "— set one or the other (rule 19)."
+                )
+            if not (self.energy_reserve_coopt and self.ercot_multiproduct_as_coopt):
+                raise ValueError(
+                    "ercot_energy_online_capability_cap requires "
+                    "energy_reserve_coopt + ercot_multiproduct_as_coopt — the "
+                    "fast/all tier split is the identified structure "
+                    "(PRECOMMIT-ercot159 §2)."
+                )
 
         # ORDC-only scarcity pricing (v2, realized-room RTORPA): needs the
         # multi-product plan structure and an envelope variant (the room
