@@ -707,9 +707,48 @@ question (§9).
 
 ---
 
-## 5. FC-6 driver response
+## 5. FC-6 driver response — run BOUNDED, and the bound is measured, not asserted
 
-*(pending)*
+### 5.1 What the full battery costs, from this session's own anchors
+
+| anchor | measured here |
+|---|---|
+| ERCOT T1-F, cold, 5 solve-years | 10.0 min ⇒ **2.0 min / solve-year** |
+| PJM T1-F, cold, 5 solve-years | 19.0 min ⇒ **3.8 min / solve-year**, and PJM must run **solo** (8.8 GB) |
+| full driver battery | 9 ladders × 3–4 rungs ≈ **29 rungs**, each a full forward solve over the window |
+
+| leg | rungs × solve-years × min | projected |
+|---|---|---|
+| ERCOT (2026–2030) | 29 × 5 × 2.0 | **≈ 4.8 h** |
+| PJM (2026–2030) | 29 × 5 × 3.8 | **≈ 9.2 h**, cannot co-run |
+| **specified ERCOT + PJM battery** | | **≈ 14 h serial** |
+
+**FC-6 is `OPTIONAL` at t1f** (`forecast_verdict.CATEGORY_GATING`) and REQUIRED only at
+t2/t3, and **no leg in this battery is promotable — every determination is HOLD.** So the
+full battery gates nothing this session could have delivered, and spending 14 h on it
+ahead of the scorecard would have been the wrong trade.
+
+### 5.2 The bound, stated so it is never mistaken for the whole battery
+
+| | |
+|---|---|
+| **ISO** | **ERCOT only** — cheapest per solve-year, and the only ISO where D-1 is attributed against a paired control (FFR-3C §5). Rule 25 `[R-ISO-SCOPE]` forbids reading any ERCOT verdict across. |
+| **Window** | **2026–2027** (2 solve-years, not the battery's 5) |
+| **Ladders run** | **T1.1** carbon `{0,25,50,100}` · **T1.3** gas `{0.5,1.0,1.5}×` |
+| **Ladders OMITTED** | T1.2 adder/cap duality · T1.4 load · T1.5 IRA cliff · T1.6 RPS/ACP · T1.7 net-CONE · T1.8 tech cost · T1.9 storage-ELCC saturation — **and PJM entirely** |
+
+**Why those two and not a truncated version of all nine.** T1.1 and T1.3 are the
+pure-**dispatch** directional ladders — a 2-year window exercises them honestly. The
+entry/exit-economics ladders (T1.5–T1.9) are **omitted rather than truncated**, because a
+2-year window *cannot* exercise them honestly: D-2's `ENTRY_COD_LAG_YEARS = 2` means an
+entry decided in 2026 commissions in **2028**, outside the window entirely — the same
+censoring measured at §3.5. Running them short would produce directional verdicts on
+mechanisms the window structurally prevents from acting, which is worse than not running
+them.
+
+**No silent caps.** Everything omitted is named above. FC-6 remains **SKIPPED** on every
+T1-F leg's rubric verdict in §2, because a bounded ERCOT-only battery is not the
+committed driver-battery artifact the scorer keys on and must not be presented as one.
 
 ---
 
