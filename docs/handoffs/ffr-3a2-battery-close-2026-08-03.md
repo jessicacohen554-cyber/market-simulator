@@ -1005,7 +1005,7 @@ the same conclusion FF-2D reached, now with a resume-path defect added to it.
 
 ---
 
-## 8. Open blockers
+## 9. Open blockers
 
 1. **A request-side `cache_key()` is not the key a run is recorded under, and nothing
    says so at the call site** (§1.2). `reference_config(...).cache_key()` returns
@@ -1030,17 +1030,103 @@ the same conclusion FF-2D reached, now with a resume-path defect added to it.
    solve instead. This is by design (rule 15) but is not stated anywhere a dispatching
    session reads, and it silently invalidates a "expect cache hits" budget.
 
-*(further blockers pending — solve lanes still running)*
+5. **FC-7 fails on EVERY T1-H and T1-X leg by construction** (§3.4) —
+   `run_capacity_hindcast.py` writes `run_config.yaml`; FC-7 row 1 requires
+   `run_config.json`. This is the **unfixed analogue** of FFR-3D's blocker 7, which was
+   fixed only in `run_full_horizon.py`. FC-7 therefore carries no information about leg
+   quality at either tier. **Deliberately not fixed here** — authoring the artifact after
+   seeing the score is what rubric §4 forbids; it wants an instrument lane, landing
+   **before** the next battery, exactly as FFR-3D's T1-F fix did.
+6. **⚠ D-2's commissioning lag CENSORS the T1-H additions bands** (§3.5). T1-H scores
+   `{2023, 2024, 2025}` but `ENTRY_COD_LAG_YEARS = 2` sends the 2024 and 2025 decisions to
+   COD 2026/2027, outside the scored window — so **half the solved decision years cannot
+   score by construction**. Additions bands are mechanically suppressed against any
+   pre-D-2 bundle regardless of entry skill, and a cross-boundary additions comparison is
+   **not like-for-like**. This is a **design decision, not a parameter**: fixing it means
+   either scoring COD-shifted additions or lengthening the window. It currently affects
+   the interpretation of every T1-H additions verdict, including MISO's — whose FC-3 now
+   fails on the censored half alone.
+7. **The ERCOT T1-X price convergence is GONE** (§4.2) — price 2025 regressed 8.6 % PASS →
+   22.5 % FAIL, and ERCOT is the sole regressor among three legs (§4.4). Not attributed;
+   a paired T1-X control at pre-decision defaults would settle it.
+8. **CAISO's 65.5 % backstop share is unexplained** (§2.2). Newly measurable, far past the
+   30 % FAIL threshold, and the driver of CAISO's FC-2 FAIL alongside its negative reserve
+   margins. Nothing here establishes why CAISO closes two-thirds of its adequacy gap
+   through the administrative channel.
+9. **Two silent run-id derivations can collide or produce meaningless ids** (registration
+   commits). `register_forecast_run --summary` derives the id from iso+window+label — so
+   the ERCOT **control** and **treatment** collided and one overwrote the other; and
+   `--bundle` derives it from the **directory basename** — so out-dirs named `miso`,
+   `pjm`, … registered as ids `miso`, `pjm`. Both were caught and fixed here, and neither
+   is guarded. A paired control that silently replaces its own treatment destroys the
+   attribution it exists to produce.
+10. **20 + 4 pre-existing test failures on `origin/main`** carried over from FFR-3A/3D
+    §6, most of them data-lane and expected to clear now that `data/clean` is built.
+    **Not re-triaged here** — this session built the tree but did not re-run the full
+    suite against it.
 
 ---
 
-## 9. What this session did NOT measure
+## 10. What this session did NOT measure — stated explicitly
 
-*(pending)*
+**Measured and reported:** the T1-F half (6 ISOs + an ERCOT pre-decision control, 7 legs),
+the T1-H half (all four curve legs), the T1-X half (3 legs), FF-3E parts a/b/c/d, a
+bounded FC-6, the §2.1b scorecard and the FF-2D regression. **14 solve legs, all cold
+post-epoch at the shipped posture, all scored and registered.**
+
+**NOT measured, and therefore NOT claimed:**
+
+1. **No control arm on ANY leg except ERCOT T1-F.** This is the single biggest limit on
+   everything above. Concretely, it means:
+   * **No T1-H control** — so NEISO's FC-3 movement is refreshed but unattributed
+     (§3.6), and PJM's and MISO's attributions lean on FFR-2B's *external* paired
+     control rather than one run here.
+   * **No T1-X control** — so the ERCOT price-2025 regression (§4.2) and the three-leg
+     asymmetry (§4.4) are circumstantial.
+   * **No CAISO control** — so CAISO's FC-2 CAVEAT→FAIL and its 65.5 % backstop share are
+     observations, not attributions, in the ISO with the *second*-worst adequacy result.
+2. **No attribution of the CAISO 65.5 % backstop share.** It is newly measurable (§2.2)
+   and it is large, but nothing here establishes *why* CAISO closes two-thirds of its
+   adequacy gap administratively.
+3. **FC-6 is bounded to ERCOT / 2026–2027 / two dispatch ladders.** Seven ladders and PJM
+   entirely are **not run** (§5.2, each named). FC-6 therefore remains **SKIPPED** on
+   every T1-F rubric verdict, and the bounded result is not presented as the committed
+   driver-battery artifact.
+4. **FC-5 external corridor is SKIPPED on every leg** — no committed benchmark-corridor
+   table exists (FF-0D/FF-0F intake pending). Untouched by this session.
+5. **The FF-3E kill-resume failure is characterized, not diagnosed** (§6.4). Two candidate
+   mechanisms are named with a one-run discriminating test; neither is confirmed, and no
+   commit is blamed.
+6. **No T1-FF work.** `frontend/data/hindcast/` gained no `meta.kind="full_forward"`
+   record, and the FH-1 gate probe's numbers are **not** quoted as T1-FF skill anywhere
+   here. **The FH block is NOT lifted** and nothing here bears on it.
+7. **G-31 exit throughput was not re-opened.** PJM's and MISO's depth residuals (§3.8,
+   §3.9) are reported as the chartered G-31 lane's business (Addendum F.1); no throughput
+   mechanism was armed, proposed or parameterized.
+8. **Nothing was promoted and no gate was opened.** No keeper moved, no marker was
+   written, no holdout year was solved or scored, and the freeze was neither spent nor
+   worked around. Criterion (d) is left blank by construction (§8.2).
+9. **No `ScenarioConfig` default moved.** Both signed mechanisms remain armed exactly as
+   the owner left them (Addendum D.1), and no band, damper or parameter was adjusted in
+   response to any score.
+
+### 10.1 Two scoring changes were made — both ADVERSE, both instrument repairs
+
+Stated here because "nothing was tuned" must survive scrutiny. This session changed two
+things that affect scores, and **both make results worse, not better**:
+
+| change | effect | why it is not tuning |
+|---|---|---|
+| `05690366` — fix the `write_run_config` TypeError | FC-7 FAIL → CAVEAT | repairs a producer that crashed by construction; no value chosen to clear a band |
+| `0830d134` — FC-2 row 4 reads the measured split | NEISO PASS → CAVEAT, CAISO → **FAIL** | the code asserted a "structurally zero" backstop the run's own ledger disproved |
+
+The first *improves* FC-7 — but only by making an artifact exist that the runner already
+intended to write; no number moved. The second **degrades** FC-2 in three ISOs and turns
+one PASS into a FAIL. A session tuning toward a better answer does not do that.
 
 ---
 
-## 10. Standing disclosure list
+## 11. Standing disclosure list
 
 Carried verbatim from `docs/forecast-readiness-peer-review-2026-07.md` §4 (the single
 wording authority):
