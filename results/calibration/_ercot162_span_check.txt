@@ -1,0 +1,24 @@
+
+=== 2023 (base -> probe) ===
+C3a mean: model 36.52 -> 37.05 vs RT 48.36 (resid -24.5% -> -23.4%)
+NRMSE (C3b proxy): 2.866 -> 2.835
+mid-band (120 actual hrs): formed 17 -> 21; p50 78 -> 81; p90 172 -> 197; resid -171.45 -> -160.37
+spurious (model in-band, actual <$150): 10 -> 13  (delta +3; gate requires <= 0)
+tail: h>$200 model 58 -> 72 (actual 181); h>$500 model 30 -> 30 (actual 104); tail-hour mean model 722.0917925544353 -> 737.5614440463331 (actual 1681.5219861544097)
+GATES: C3a HELD; spurious TRIPPED; tail-count HELD; NRMSE HELD
+
+=== 2024 (base -> probe) ===
+C3a mean: model 29.55 -> 31.53 vs RT 26.82 (resid +10.2% -> +17.5%)
+NRMSE (C3b proxy): 2.946 -> 3.683
+mid-band (68 actual hrs): formed 5 -> 9; p50 62 -> 79; p90 123 -> 266; resid -125.75 -> -31.24
+spurious (model in-band, actual <$150): 11 -> 18  (delta +7; gate requires <= 0)
+tail: h>$200 model 20 -> 38 (actual 53); h>$500 model 11 -> 15 (actual 16); tail-hour mean model 1458.5264919772976 -> 1753.7799915392563 (actual 1375.5957832336426)
+GATES: C3a DEGRADED; spurious TRIPPED; tail-count HELD; NRMSE DEGRADED
+
+=== 2025 (base -> probe) ===
+C3a mean: model 32.27 -> 35.54 vs RT 32.49 (resid -0.7% -> +9.4%)
+NRMSE (C3b proxy): 0.955 -> 2.159
+mid-band (65 actual hrs): formed 0 -> 8; p50 70 -> 88; p90 113 -> 256; resid -138.46 -> +17.90
+spurious (model in-band, actual <$150): 0 -> 25  (delta +25; gate requires <= 0)
+tail: h>$200 model 0 -> 31 (actual 31); h>$500 model 0 -> 11 (actual 3); tail-hour mean model 88.05058988853709 -> 156.96112540365758 (actual 1395.2633056640625)
+GATES: C3a DEGRADED; spurious TRIPPED; tail-count HELD; NRMSE DEGRADED
