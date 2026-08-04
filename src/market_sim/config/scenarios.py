@@ -528,6 +528,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # predates the pinned key and is already inside it, so registering it would
     # MOVE the key rather than restore it.
     "pjm_zonal_loss_surface",
+    # caiso-164 CAISO marginal-loss surface (default off): registered at
+    # introduction, so unlike its PJM predecessor it never moves the pinned
+    # default key. Dropped from the hash at its default so every pre-existing
+    # cached run keeps its key; an armed run splits every internal CAISO link
+    # into a lossy one-way pair and so gets a distinct key.
+    "caiso_zonal_loss_surface",
     # nyiso-100 mis-attributed simultaneous-import retire (default off): the
     # same one-line remedy as pjm_apsouth_interface_cut / pjm_zonal_loss_surface
     # above -- the field landed on main (2cc1179) unregistered and so entered
@@ -750,6 +756,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_offer_surface_within_season": "False",
     "coal_committed_takeorpay_sunk_fixed": "False",
     "pjm_zonal_loss_surface": "False",
+    "caiso_zonal_loss_surface": "False",
     "nyiso_import_sil_retire": "False",
     "pjm_rggi_allowance_pricing": "False",
     "electrification_path": "'off'",
@@ -8759,6 +8766,38 @@ class ScenarioConfig:
     # changed grid conditions. Off by default; byte-identical off.
     pjm_zonal_loss_surface: bool = False
 
+    # CAISO marginal transmission-loss surface on the internal N-S corridor
+    # (caiso-164; charter results/calibration/
+    # PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md). The CAISO twin of
+    # pjm_zonal_loss_surface. When True for CAISO, the internal links are split
+    # into one-way loss pairs (interchange.apply_caiso_zonal_loss_links) and
+    # each direction's receiving-side marginal loss fraction
+    #   eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+    # enters the energy balance (dispatch.build_constraints link_loss), where
+    # dev is the measured per-zone monthly delivery-factor deviation
+    # dev_z = sum(MCL_z)/sum(MCE) derived by
+    # scripts/data/derive_caiso_loss_surface.py from CAISO's own published DAM
+    # component record; per-year rows for a backcast train year, pooled rows
+    # for a forecast year.
+    #
+    # WHY: caiso-164 §0 measured that 13-20% of the observed NP15-ZP26 basis
+    # (a mean +1.05 to +1.18 $/MWh of the +5.7 to +8.6 total) is the LOSS
+    # component MCL, which the lossless LP has NO representation of at all --
+    # the model's current treatment is the ESTIMATE "losses are zero". Rule 14
+    # [R-ACCURATE] prefers the measured physical network property. The
+    # remaining 80-87% is congestion and is NOT addressed here (see the
+    # caiso-164 finding's filed data blocker); this mechanism is bounded ex
+    # ante at the measured MCL component and must not be quoted as closing the
+    # north-south basis.
+    #
+    # Rule 25 [R-ISO-SCOPE]: the surface is CAISO's own published components,
+    # read from CAISO_loss_surface.csv; no value crosses from the MISO or PJM
+    # analogues, whose per-ISO verdicts are their own (rule 28(d)). Rule 13
+    # [R-MEASURED]: a network property that regenerates every year from the
+    # same feed and responds to changed grid conditions. Off by default;
+    # byte-identical off.
+    caiso_zonal_loss_surface: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -10963,6 +11002,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_rpe_pricing": 1,
     "miso_zonal_loss_surface": 3,
     "pjm_zonal_loss_surface": 3,
+    "caiso_zonal_loss_surface": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,

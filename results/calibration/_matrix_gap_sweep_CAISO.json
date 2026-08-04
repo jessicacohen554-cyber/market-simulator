@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-03-caiso163-asym-path-ratings",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 673,
-  "n_matrix_rows": 182,
+  "n_scenario_fields": 675,
+  "n_matrix_rows": 183,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -1994,6 +1994,25 @@
       "owning_rows": [],
       "cells": [],
       "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_zonal_loss_surface",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".OKR..",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "O"
+      ],
+      "armed_in_bundles": []
     }
   ],
   "family_matrix_gaps_absent": [],
@@ -2366,6 +2385,11 @@
       "keeper_value": false,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
         {
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
@@ -2788,7 +2812,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -2972,6 +2996,11 @@
           "cell": "."
         },
         {
+          "row": "dual_fuel_switching",
+          "cells": "U.KIKK",
+          "cell": "."
+        },
+        {
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
           "cell": "K"
@@ -3093,8 +3122,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".OKR..",
+          "cell": "O"
         },
         {
           "row": "rdt_tcdc",
@@ -3488,7 +3517,7 @@
         },
         {
           "row": "nyiso_seny_rcpf_increment_step",
-          "cells": "....U.",
+          "cells": "....K.",
           "cell": "."
         },
         {
@@ -3618,7 +3647,7 @@
         },
         {
           "row": "ercot_faststart_pool_offer",
-          "cells": "O.....",
+          "cells": "K.....",
           "cell": "."
         },
         {
@@ -3733,7 +3762,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KUKK",
+          "cells": "U.KIKK",
           "cell": "."
         },
         {
@@ -3918,8 +3947,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": "..KR..",
-          "cell": "."
+          "cells": ".OKR..",
+          "cell": "O"
         },
         {
           "row": "rdt_tcdc",
@@ -4065,6 +4094,11 @@
           "row": "entry_lookahead_reprice",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "U"
         },
         {
           "row": "entry_dampers",
