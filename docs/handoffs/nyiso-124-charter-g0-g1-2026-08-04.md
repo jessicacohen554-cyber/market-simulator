@@ -36,6 +36,7 @@ outranks the marker — nothing out-of-training was solved, scored or read.
 | §7(1) 2023's 86.40 % identity | **ANSWERED** — the measured 2023 Central-East TTC override is 1,450–1,950 MW vs 2,525–3,175 later, so the model's link separated in **13.4 %** of 2023 hours vs 1.5 %/1.1 % | and it separated in the **wrong months** |
 | §7(2) is Object B nyiso-110's object? | **YES, same object** (the trough half) — rule 19 `[R-ONE-MECH]` decides against two treatments | Object B gets **no** mechanism of its own |
 | §7(3) does the split subsume LI? | **moot** — no split | — |
+| **the successor question** — why is the model's Central-East link slack on a limit the real interface binds at? | **ANSWERED, no solve** (§6.1) — the external **seam** delivers the right NET and the wrong DISTRIBUTION: the three downstate border links sit at their bound in **98–100 %** of all hours (3,800 MW flat vs a measured 1,772–2,040 MW median) while the upstate border link runs **net export** against a measured import | the surplus lands **east of the cutset**, so the east never draws on the west; enters the matrix as `seam_flow_envelopes` NYISO **`.` → `U`**, **no lever armed** |
 
 **The headline, and it is a re-attribution rather than a frontier:** the model's
 C3a basis defect is **not** an unrepresentable sub-zonal object. It sits on the
@@ -47,7 +48,9 @@ interface ran at ≥95 % of its posted limit in **26.9 %** of hours and NYISO's 
 those hours, on a monthly TTC of 3,175 MW against the posted median of 3,205 MW.
 **Same cutset, same limit, same hours — the real system binds and the model does
 not.** That is a diagnosable defect in what crosses the link, not a
-representation frontier, and it is the named successor question (§5).
+representation frontier — and **§6.1 diagnoses it, with no solve**: the model's
+external seam over-delivers ~1.8–2.0 GW *east* of the cutset in ~100 % of hours
+and drains ~1.0–1.7 GW from the west, so the east never needs the west.
 
 ---
 
@@ -275,25 +278,80 @@ has**, whose TTC is **already** the measured DAM posting under rule 14
 vs posted median 3,205 MW; real interface ≥95 % in **26.9 %** of hours; model link
 separating prices in **0.0 %**.
 
-**The open blocker, written up rather than closed:** *why does the model's
-Central-East link stay slack while the real interface binds on the same limit?*
-The limit is right, so the answer is in what crosses it — the model's eastern
-zones are being served without drawing on the west. Candidates, **enumerated and
-NOT adjudicated** (no lever is proposed and the queue stays empty):
+### §6.1 — CORRECTION, and the question is ANSWERED: the seam, not the interface
 
-1. the 1,600 MW `import_node → Capital_Hudson` external link lands **east of the
-   cutset** and can serve the east without any west-to-east flow;
-2. forced eastern generation displacing westward flow — the keeper's own D-2 rows
-   carry `ST_GAS reliability_floor` **2.80 TWh (21 % of the class)** and
-   `firm_import` **7.88 TWh** in 2025;
-3. the zonal load allocation between `Upstate_West` and the east.
+**This section's first draft said the successor question was unmeasurable from
+committed artifacts because `system_<year>.parquet` carries no link flow.** That
+is true of the keeper bundle and **wrong as a statement about the repo**, and the
+error is corrected here rather than carried. `run_calibration_full._network_frame`
+has **always** written `hourly/network_<year>.parquet` — per-link hourly flow,
+reduced cost and bounds — `.gitignore` merely excludes it by default, and **NYISO
+already has it committed**: matrix row `unit_network_layer_sidecar`, NYISO cell
+**K**, on `nyiso116_c3c_unitlayer`. The question is answerable with **no solve**,
+and this session answered it.
 
-**None of these is measurable from the committed artifacts.** The keeper's
-`system_<year>.parquet` carries zonal price, demand, slack and dump but **no link
-flow**, and `class_hourly_<year>.parquet` carries no zone. Answering the question
-needs either a sidecar extension (link flow and per-zone generation) or a keeper
-replay — a scoping decision, not a lever. **A residual closable only by an
-unidentified value would be an open blocker, and this one is written up as such.**
+**Provenance, stated because it bounds the claim.** That bundle is a zero-delta
+replay of the **nyiso-113** keeper recipe, not the current nyiso-120 keeper, and
+its **G1 replay fidelity FAILED** (max |Δp| $10.5 / $10.6 / $9.0); nyiso-116
+licensed it for C3c tail work on G2. It is used here **only** for link saturation
+and gross flow magnitude — a marginal-tie reshuffle in the body of the price
+distribution cannot move a bound that holds in ~100 % of hours or a 2–3× flow gap
+— and the *measured* side of every comparison below needs no model at all. A
+successor wanting the caveat gone commits the layer on the current keeper's own
+replay with `git add -f`; the cell is already `K` and there is nothing to arm.
+
+**The answer: the model's external seam delivers the right NET and the wrong
+DISTRIBUTION, and the surplus lands east of the cutset.**
+
+| year | link | limit | model flow p50 | hours at bound | **measured p50** |
+|---|---|--:|--:|--:|--:|
+| **2025** | `external→Capital_Hudson` | 1,600 | **1,600.0** | **100.0 %** | **490.5** |
+| | `external→NYC` | 1,000 | **1,000.0** | **100.0 %** | 760.8 |
+| | `external→Long_Island` | 1,200 | **1,200.0** | **98.1 %** | 788.6 |
+| | `external→Upstate_West` | 3,000 | **−1,688.5** | 0.0 % | **+148.0** |
+| | `Upstate_West→Capital_Hudson` | 2,850 | **722.8** (util **0.253**) | 1.5 % | *measured Central East util p50 **0.591*** |
+
+| | 2023 | 2024 | 2025 |
+|---|--:|--:|--:|
+| downstate-landing import: model (pinned) | 3,800 | 3,800 | 3,800 |
+| downstate-landing import: **measured p50** | 1,870 | 1,772 | 2,040 |
+| **ratio** | **2.03×** | **2.14×** | **1.86×** |
+| upstate border: model p50 | −1,003 | −1,520 | −1,689 |
+| upstate border: **measured p50** | **+668** | **+454** | **+148** |
+| **NET all four links: model** | +2,797 | +2,280 | +2,112 |
+| **NET all four links: measured** | +2,538 | +2,226 | +2,188 |
+
+The three downstate border links sit **at their bound in 98–100 % of all hours of
+all three years**, delivering a flat 3,800 MW against a measured downstate median
+of 1,772–2,040 MW, while the upstate border link runs **net export** (−1,003 /
+−1,520 / −1,689 MW) against a measured **import** of +668 / +454 / +148 MW. The
+**net across all four links reconciles to 2–11 %** — exactly the signature of a
+seam whose total is pinned (the monthly EIA-930 reconciliation band) while its
+spatial allocation is free.
+
+**That is the mechanism.** ~1.8–2.0 GW of surplus import is delivered *east of
+Central East* and ~1.0–1.7 GW is drained from the west, so the east never needs
+the west and the model's Central-East link carries **722.8 MW at the median
+(util 0.253)** where the real interface carries **util 0.591**. The interface
+limit was never the defect — rule 14 `[R-ACCURATE]` already grounded it — and no
+accurate input is reverted. The defect is one step upstream, on the seam.
+
+**What is NOT concluded.** No lever is proposed and the queue stays empty. Which
+part of the seam construction is wrong — the border-link capacities, the import
+ladder's tranche pricing, or the absence of any aggregate downstate cap since
+nyiso-100 correctly retired the mis-attributed 4,350 MW `NYISO_simultaneous_import`
+scalar — is **not** adjudicated here, and nyiso-100's retirement is **not**
+re-opened (its provenance finding stands; what is reported is a measured
+consequence nobody had checked). This is the PJM `pjm_seam_envelope_by_neighbor`
+object in kind, but rule 25 `[R-ISO-SCOPE]` is binding both ways: it enters NYISO
+as **`U`**, on NYISO's own data, with NYISO's own parameters. The matrix row
+`seam_flow_envelopes` moves NYISO **`.` → `U`** on that basis and on nothing else.
+
+**Residual candidates NOT adjudicated**, carried forward for the successor:
+forced eastern generation (the keeper's own D-2 rows carry `ST_GAS
+reliability_floor` 2.80 TWh — 21 % of the class — and `firm_import` 7.88 TWh in
+2025) and the zonal load allocation. Both are second-order against a 2× seam
+misallocation and neither was tested.
 
 **C3c's stated re-open condition is falsified as written, and is flagged rather
 than edited.** The C3c ledger entry and the keeper `frontier` note both record the
