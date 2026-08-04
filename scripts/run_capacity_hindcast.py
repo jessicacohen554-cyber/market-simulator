@@ -137,6 +137,7 @@ from scripts.lib.run_record import (  # noqa: E402
     FromArgs,
     FromConfig,
     RecordSpec,
+    write_run_config,
 )
 
 # Rule-22 carve-outs now live in scripts/lib/holdout_policy.py (FH-1 — moved
@@ -1424,10 +1425,30 @@ def main(argv: list[str] | None = None) -> int:
     }
     META_RECORD_SPEC.assert_sourced(meta, config, _record_ctx)
     (args.out_dir / "meta.json").write_text(json.dumps(meta, indent=2))
+    # Request-side dump, kept: build_forecast_dof_ledger._load_run_config still
+    # falls back to it, and the FFR-3A-3 batteries documented its scorer
+    # behaviour. The FC-7 artifact is the .json below, never this file.
     config.to_yaml_full(args.out_dir / "run_config.yaml")
+    # FC-7 provenance artifact (FFR-3K — the hindcast analogue of FFR-3D's
+    # blocker-7 fix): run_config.json from the bundle's OWN resolved
+    # config.yaml (the RESOLUTION save_result wrote), via the same writer
+    # run_full_horizon uses. Before this, every T1-H/T1-X/T1-FF leg FAILed
+    # FC-7 row 1 "run_config.json absent" by construction. ``bundle`` is
+    # passed ONLY positionally (the ea7cd5d binding contract): the writer
+    # records ``run_dir`` itself.
+    run_config_path = write_run_config(
+        args.out_dir,
+        bundle,
+        iso=iso,
+        cache_key=key,
+        solved_years=solved,
+        bridged_years=bridged,
+        kind=kind,
+    )
     print(f"{tag} done. solved {solved}, bridged {bridged}")
     print(f"{tag} bundle: {bundle}")
     print(f"{tag} meta:   {args.out_dir / 'meta.json'}")
+    print(f"{tag} config: {run_config_path}")
     return 1 if violations else 0
 
 
