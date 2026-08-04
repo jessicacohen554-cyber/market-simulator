@@ -770,6 +770,84 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
+> **caiso-167 (2026-08-04) — LEVER-QUEUE ITEM 2 IS SPENT; THE
+> CORRIDOR/EXPORT-PATH FAMILY IS CLOSED ON BOTH HALVES.** No LP, no solve, no
+> derive, no `ScenarioConfig` field, keeper unchanged. Record
+> `results/calibration/FINDING-caiso167-import-price-basis-2026-08-04.md`;
+> probe `scripts/probes/caiso167_import_basis_phase0.py` (committed artifacts
+> only — the keeper's own P1 sidecars, the measured intertie LMP, and CAISO's
+> DA component record). *(Lane numbering: the prompt opened this as
+> "caiso-165", which the DLAP intake had already spent; `caiso-166` is the
+> in-flight measured-loss-zones prereg. Neither is touched here.)*
+>
+> **THE SURPLUS-REGIME CORRIDOR BASIS IS MEASURED FOR THE FIRST TIME, AND ITS
+> SIGN IS INVERTED.** caiso-121 compared the model's belly wedge to the *hub
+> level* and reported +$4.39/+13.53/+8.00. The right comparator is the real
+> basis, and it is **negative**: measured `TH_SP15_GEN-APND − PALOVRDE_ASR-APND`
+> is **−1.167/−3.824/−1.825** $/MWh in surplus-regime belly hours (negative in
+> **62.2/63.8/69.6 %** of them) against a model wedge of **+7.077/+9.569/+7.100**
+> — so the defect is **+8.24/+13.39/+8.93**, *larger* than caiso-121 stated in
+> 2023 and 2025, and it is a **sign inversion, not a magnitude miss**. It is not
+> an artifact of the cut: the inversion survives dropping the surplus filter
+> (2024 DSW −1.112 vs +8.707) and the belly window entirely (−0.697 vs +3.498).
+>
+> **THE MODEL'S CORRIDOR IS ONE-SIDED BY CONSTRUCTION.** `_caiso_internal`
+> excludes every WECC link from the caiso-164 loss split, so the seam is
+> lossless and a nonzero dual gap means the corridor is at a **bound**. Census
+> over all six corridor-years: wedge `> 0` in 20.3–62.4 % of belly-surplus
+> hours, exactly `0` in the rest, **`< 0` in 0.000 %** — the model can congest
+> inward and *cannot* congest outward (both export sinks dispatch 0.00 MW in all
+> 26,280 hours, caiso-121). Decomposing the model's belly-surplus CA level
+> error: the corridor wedge owns **110.8/77.5/73.4 %** and the import-node level
+> the remainder, so even a *perfect* corridor leaves the CA belly dual +$3.9/+$3.2
+> too high in 2024/25. **caiso-121's structural read is confirmed; only its
+> magnitude is corrected.**
+>
+> **THE ONE NEVER-ADJUDICATED IMPORT-SIDE MECHANISM IS REFUSED EX ANTE ON
+> REACH** (new row `caiso_seam_loss_surface`, CAISO `G`). The import-side
+> census is now complete: (i) tranche offer = measured tie LMP **armed**,
+> (ii) OATT wheel **measured**, (iii) border carbon **refuted at caiso-121**,
+> (iv) tranche depth **demoted at caiso-121**, (v) corridor import cap **armed
+> at caiso-162**, (vi) **seam loss surface — this session**. (vi) is a *real*
+> mechanism and the exclusion's stated reason was **wrong** — the per-hub nodes
+> are priced off `MALIN_5_N101`/`PALOVRDE_ASR-APND`, real APNodes whose
+> components CAISO publishes, `MCE` is one system reference at the seam to
+> `0.00e+00`, and the frozen caiso-164 estimator yields seam `eps` **0.02514
+> DSW / 0.01242 PNW** with zero fitted scalars over a real unrepresented loss
+> component of **+$1.13–2.43/MWh**. It is refused anyway because it **cannot
+> reach**: signed movement **+0.128/+0.017/+0.127** = **1.6/0.1/1.4 %** of the
+> defect *and additive to it*; interior-only −0.027/−0.002/−0.005 (nil); a
+> deliberately over-generous `|λ|` bound only 2.6–6.3 %. **Robust to the one
+> unmeasured input** — committed intertie components cover 2023-01-01..03-10
+> only, so rather than assume the winter `eps` carries, the bound is re-run at a
+> **stress `eps` of 0.13, above the max within-month pairwise `eps` in ANY
+> committed loss surface** (CAISO 0.05339 / MISO 0.09427 / PJM 0.12746) and
+> still reaches only 19.3–39.5 %. The `_caiso_internal` docstring is corrected
+> in the same PR (conclusion survives, stated basis does not); behaviour
+> unchanged.
+>
+> **WHAT THIS DOES NOT CLOSE, SAID AS PROMINENTLY AS WHAT IT DOES.** The
+> corridor wedge is a **symptom**. Reproducing a negative `CA − tie` basis needs
+> CA to be the cheap end at its **export** limit — the export half, and
+> caiso-142 §C's governing asymmetry stands: an export sink is an absorption
+> column, so **no interchange mechanism on either side of the seam can lower the
+> CA belly λ** toward the measured −$7.07/−$0.12. **Re-point, flagged as a
+> POINTER and not a verdict (this session measured nothing on it):** the
+> residual belongs to the in-state belly supply/demand state caiso-121's own
+> stack named — solar under-curtailed (11/43/41 % of hours), storage charging
+> **+1,967/+2,049/+2,244 MW** over measured, hydro −1,114/−948/−856, gas
+> −859/−784/−636 — i.e. **item 3**'s storage lane, not interchange.
+>
+> **DO-NOT-REDO additions (binding; extends caiso-142 §H and caiso-143 §I).**
+> (1) Do not re-propose a WECC seam loss surface — a belly-month `eps`
+> measurement is **not** new evidence, the stress leg covers every `eps` up to
+> 0.13; new evidence means `eps` **above 0.13** or a defect restated below
+> ~$2/MWh. (2) Do not re-propose an import-side price-basis lever generally —
+> the census above is complete. (3) Do not treat the corridor wedge as a price
+> lever; a corridor limit chosen to reproduce the measured basis is an
+> **outcome pin and stays forbidden** (rule 13, rules 5/21/24). (4) Quote the
+> defect as **+8.24/+13.39/+8.93**, not caiso-121's +4.39/+13.53/+8.00.
+
 > **caiso-165 (2026-08-04) — THE DLAP INTAKE LANDED; caiso-164's ATTRIBUTION IS
 > NOW TESTABLE AND ITS "NOT IN `data/raw`" CLAUSE IS SPENT.** No LP, no solve,
 > keeper unchanged. Prereg
@@ -1084,10 +1162,20 @@ target C5a and the standing structural/offer questions. Items 1, 4, 5 and 6 are
 struck through — 1, 4 and 5 were adjudicated and closed **without spending a
 solve** (caiso-144, caiso-149 and caiso-136), and **6 was spent and PROMOTED at
 caiso-146**. They are kept in place so the numbering stays stable and none is
-re-proposed. **Live queue as of 2026-08-01: item 3, plus item 9 (new,
-BLOCKING).** (Item 7 was SPENT and PROMOTED at caiso-147; **item 8 was SPENT
-and PROMOTED at caiso-148**; **item 4 was REFUSED EX ANTE at caiso-149**;
-**item 2 was BUILT and PROMOTED at caiso-151**.)
+re-proposed. **LIVE QUEUE AS OF caiso-167 (2026-08-04): item 3, plus item 9
+(BLOCKING). Item 2 is now STRUCK — CLOSED AND SPENT at caiso-167**, both halves
+(export at caiso-142/143, import here), no solve spent; read the caiso-167 block
+at the top of §5.2 before proposing any successor. (Item 7 was SPENT and
+PROMOTED at caiso-147; **item 8 was SPENT and PROMOTED at caiso-148**; **item 4
+was REFUSED EX ANTE at caiso-149**.)
+
+> **Stale-parenthetical correction, caiso-167.** This paragraph previously ended
+> "**item 2 was BUILT and PROMOTED at caiso-151**". That was wrong and it made a
+> live queue item read as finished. caiso-151 built
+> `caiso_firm_selfsched_clip` — the firm must-flow clip specified at caiso-150
+> §F, which item 2's own body names as its *prerequisite* (the caiso-138 §C
+> firm-block elasticity), **not** item 2's corridor/export-path family. Item 2
+> remained live through caiso-166 and is closed by caiso-167, above.
 
 9. **Re-identify the CAISO measured offer surface's gas-coupling classifier**
    — **NEW at caiso-152 (2026-08-01), BLOCKING, unowned.** This is a
@@ -1185,7 +1273,26 @@ sign argument to every basis and bound.
    (the SoCalGas OFO declaration-record intake) stays unfunded and is the one
    path to an unfitted C3c-2024 trigger — the only route that reopens the cell.
    (`FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`.)
-2. **Corridor/export-path congestion family** — the *selected* open family for
+2. ~~**Corridor/export-path congestion family**~~ — **CLOSED AND SPENT at
+   caiso-167 (2026-08-04), no solve spent.** Both halves are now closed: the
+   **export** half at caiso-142/143 (nothing unbuilt), the **import** half here
+   — the import-side price-basis census is complete ((i) measured tie LMP armed,
+   (ii) OATT wheel measured, (iii) border carbon refuted caiso-121, (iv) depth
+   demoted caiso-121, (v) corridor cap armed caiso-162, (vi) seam loss surface
+   REFUSED EX ANTE ON REACH, new row `caiso_seam_loss_surface` cell `G`).
+   The surplus-regime basis was measured for the first time and is a **SIGN
+   INVERSION** — real `SP15−PALOVRDE` **−1.167/−3.824/−1.825** vs a model wedge
+   **+7.077/+9.569/+7.100**, defect **+8.24/+13.39/+8.93** — and the model's
+   wedge is `< 0` in **0.000 %** of all 26,280 corridor-hours, so the corridor
+   is one-sided by construction. **The wedge is a SYMPTOM**: caiso-142 §C's
+   asymmetry means no interchange mechanism on either side can lower the CA
+   belly λ. Re-points to **item 3** (storage lane) as a POINTER, not a verdict.
+   **Do not re-open** on a belly-month seam-`eps` measurement (the stress leg
+   covers every `eps` ≤ 0.13) or with a corridor limit fitted to the measured
+   basis (outcome pin, rule 13). Read the caiso-167 block at the top of §5.2
+   and `FINDING-caiso167-import-price-basis-2026-08-04.md` before proposing any
+   successor. *Historical scope record, kept so nothing below is re-proposed:*
+   the *selected* open family for
    C5a (59–101% of the belly wedge is DSW→CA congestion, caiso-120/121);
    surplus-regime import pricing is the specific defect. **Scope narrowed by
    caiso-142:** the *export* half of this family is closed — the export-direction
