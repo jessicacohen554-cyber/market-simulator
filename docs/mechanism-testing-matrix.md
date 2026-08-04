@@ -1811,6 +1811,38 @@ sign argument to every basis and bound.
 
 ### 5.3 PJM — **NO failing criterion** (keeper `2026-08-04-pjm-152-collapse`, CALIBRATED — **PROMOTED at pjm-153 (2026-08-04)** from `2026-08-03-pjm-151-seam-envelope`: a rule 26 `[R-DELETE]` debt discharge with **BIT-IDENTICAL dispatch** (E1 `max |dMW| = 0.0` over all 166,440 class-hours in each of 2023/2024/2025, zero breaches) and **zero value diffs** on every shared recipe field. The keeper moves because the superseded recipe named a `ScenarioConfig` field HEAD no longer has and so was not replayable as recorded; structural integrity improves and **nothing regresses**. determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs, identical criterion-for-criterion to the superseded run. pjm-153 also generated the governance attestation pjm-152 shipped without, which is what made the run scoreable at all); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**; **THE LEVER QUEUE IS CLEARED AT pjm-153 (2026-08-04) — see the block immediately below**
 
+**pjm-155 (2026-08-04): THE PJM LANE IS PARKED PENDING OWNER. No LP built, no
+solve launched, no bundle, no run registered, no mechanism armed, NO CELL VERDICT
+MOVED, no year touched outside 2023–2025.** Ran as Lane B of the
+`pjm-155-owner-decision` dispatch: both live items are owner-gated and **the
+dispatch carried no owner answer**, so no lever was picked up and none was
+invented. Keeper **UNCHANGED** at `2026-08-04-pjm-152-collapse` and re-verified
+from committed artifacts alone (`calibration_verdict.py --run-id`, no solve):
+**CALIBRATED, 9/9, zero FAILs, zero CAVEATs**, C1 `all 16/16 · free 12/12`; the
+four C8 grounded-above-budget rows (`CT_PEAKER` ×3y, `ST_GAS` 2025) are clean
+PASSes under rule 21's grounded-pass clause, not caveats. `audit_keepers.py --iso
+PJM` PASSes 0/0. **HOLDOUT: `final` is EMPTY for every ISO and the spend freeze is
+ACTIVE** (verified enforced at `run_calibration_full.py:7578-7587`, read BEFORE
+the marker, fails closed) — so 2022, 2019 and H1-2026 are ALL closed to PJM and
+PJM's `complete` marker grants nothing spendable today. **The two decisions,
+restated for the owner:** (1) `state_carbon_pricing` stays `O` — built, solved,
+five gates PASS, **zero fitted parameters**, DOF 18→19 with `n_residual` unchanged
+at 6, D-2 clears all three `CT_PEAKER` FAILs, blocked only by the **UNLICENSED**
+C1 `CC_REGULAR` −16.06/−13.84 TWh; arm / leave off / charter the **CC→coal
+substitution elasticity** successor first — never a haircut on the adder
+(rules 13/21/24); `pjm_rggi_allowance_pricing` verified still `False` at
+`scenarios.py:1207`. (2) the G-20b memo needs a **yes/no on chartering a charter**
+— YES is bound by memo §5 and only §5 (hour-grain REPLACEMENT per rule 19, zero
+fitted parameters, `MERIT_OOM_FRAC`/`MERIT_RCC_PCTL` FROZEN and verified unmoved
+at 0.90/0.90 in `outage_detect.py:450,452`, scored on tightest-decile AMPLITUDE
+never the annual mean, mandatory C3c report, LOYO, kills K1–K4); NO closes item 5
+as **owner-refused**. `results/calibration/FINDING-pjm155-lane-parked-2026-08-04.md`.
+*(The `pjm-154` label is SPENT — consumed by the merged
+`claude/pjm-154-cross-iso-queue-5e2frp` dispatch, PRs #3516/#3520, which hit the
+same missing-owner-answer condition, routed its Lane B to MISO and logged there as
+**miso-127**, leaving `docs/calibration-log/pjm.md` reading "Next shorthand:
+pjm-154". Same pattern pjm-153 handled; nyiso-121 precedent.)*
+
 **pjm-153 (2026-08-04): THE PJM LEVER QUEUE IS EMPTY. Every remaining item reaches
 a terminal state; ZERO LP solved, zero bundles, zero years touched outside
 2023–2025, keeper unchanged and re-verified CALIBRATED 9/9 with zero FAILs and
