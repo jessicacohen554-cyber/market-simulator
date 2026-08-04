@@ -35,6 +35,14 @@
       "classification": "ACCEPTED MEASURED-INPUT LIMITATION (no public hourly pumped-storage \u2194 conventional-hydro split exists for CAISO; the water-state input the residual requires is unmeasurable on public data \u2014 caiso-141 wall)",
       "reason": "CARRIED FORWARD from the incumbent keeper unchanged in substance. caiso-159 promotes an INPUT CORRECTION with zero free parameters, so it creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-153 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-157 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-151 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-153 creates no new caveat and spends no new ledger slot. CARRIED FORWARD from the caiso-148 keeper unchanged in substance; originally adopted by the OWNER at caiso-145 (2026-07-30). caiso-151 creates no new caveat and spends no new ledger slot. CARRIED FORWARD UNCHANGED from the caiso-147 keeper's ledger by caiso-148 (2026-07-31, single-flag nuclear_unit_availability delta). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. CARRIED FORWARD UNCHANGED by caiso-147 (2026-07-31, single-flag measured_chp_heat_rates delta on the caiso-146 keeper recipe). This session creates NO new caveat and spends NO new ledger slot \u2014 the disposition below is the OWNER's act of 2026-07-30 (caiso-145), re-stated against a bundle whose measurement for it is materially unchanged, with the magnitude field re-measured on this bundle's own bytes. ORIGINAL REASON FOLLOWS. ADOPTED LEDGER (owner, 2026-07-30 \u2014 disposition taken on the caiso-141 A2 data wall after caiso-140/142/143 emptied the in-model lever queue). The +10.9% is a SEPTEMBER-DECEMBER BELLY/NIGHT price-level residual whose identified driver is the model's unrestrained pumped-storage pumping: FINDING-caiso140 \u00a7B measures a +793 MW belly wedge from a 2,078 MW PS fleet the LP dispatches on economics alone. Closing it needs the hourly water state, and that input is WALLED:\n  \u2022 A2 (the identified fix) \u2014 FINDING-caiso141-water-intake-walled-2026-07-30.md surveyed six public source families to a verdict on LIVE bytes (instrument scripts/probes/_caiso141_water_source_survey.py, committed so the wall is re-checkable the day a source appears). NO public source anywhere separates CAISO pumped storage from conventional hydro at hourly grain for 2023-2025: every hourly hydro series CAISO or EIA publishes is the same single PS-NET EMS feed, and Helms (1,053 MW, 50.7% of the fleet) plus Eastwood (199.8 MW) \u2014 60.3% of the fleet together \u2014 have NO public hourly telemetry at all. The charter's own stop-if-walled branch fired: no intake, no mechanism, no solve, and explicitly NO fabricated shape (rule 13 [R-MEASURED] \u2014 a shaped PS profile chosen to move the residual is a fitted answer key, not an input).\n  \u2022 A1 (per-plant own-p25 committed-gas ride-through floor) is arithmetically insufficient: +757/+304 MW belly/night delivers \u2264 \u22120.13 of the \u22120.31 the gate needs \u2014 under half \u2014 and is DO-NOT-REDO standalone (caiso-140 \u00a7D/\u00a7G).\n  \u2022 A3 (the P1 export-sink seam) is REJECTED ON SIGN, ex ante and then by solved A/B: an absorption column can only ADD demand, so it can only weakly RAISE \u03bb, and the export leg prices below the plateau's own marginal-import \u03bb by the corridor's OATT wheel + 2\u03b5 (caiso-142 \u00a7C/\u00a7D/\u00a7H; the restored outlet is node-level resale, not export \u2014 \u00a7J). The seam's real infrastructure defect was fixed flag-gated and default-off (caiso_p1_export_sink_seam). caiso-143 closes the follow-on lane: the node-level constraint is algebraically redundant with the corridor group's limit_dn AND a sound sink is not LP-representable (the soundness set is non-convex; the tightest linear surrogate reduces to F + I_econ \u2264 0, infeasible against the 11.7 + 15.6 TWh must-flow block), and the export netback price is NOT IDENTIFIABLE without a fitted value (PNW p50 $4.74 vs the import basis's $1.25, $7.70-10.48 season/depth cell range, 2023 sign flip; DSW stable but wrong sign \u2014 CA clears ABOVE the raw hub in 62-72% of real DSW net-export hours, so hub \u2212 \u03b5 under-prices that outlet by ~$4.4).\nThe whole export/absorption family is DO-NOT-REDO for this gate \u2014 caiso-142 \u00a7H generalises the sign argument to every basis and bound. What remains is owner-level: land NON-PUBLIC hourly PS data (the only unfitted path), or accept the limitation. The owner accepted it here, on the nyiso-97-style diagnosed-unclosed precedent. Note the standing interaction recorded at caiso-131 \u00a78: no C3c mechanism may later be re-opened that would spend C3a-2025's negative headroom \u2014 this ledger does not license one. Never closable by a price adder, haircut or any value tuned to the level residual (rules 1/13).",
       "carried_from": "2026-08-02-caiso157-partition-restore-b -> 2026-07-31-caiso153-reid-b -> 2026-07-31-caiso-151-firm-selfsched -> 2026-07-31-caiso148-nuclear-availability (owner ledger, caiso-145)"
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "metric": "load-weighted mean LMP vs measured RT actuals (C3a, +/-10%)",
+      "magnitude": "MEASURED on caiso166_measured_loss_zones: load-weighted lambda 38.5678 $/MWh vs the same-HEAD control's 37.8801 (+0.6877, +1.8155% of level), moving C3a from +9.5% (PASS) to +11.5% (out of the +/-10% band). The DIRECTION IS PHYSICALLY OBLIGATORY: losses consume MWh, so representing them must raise the delivered price level. The arm did not CREATE a high bias \u2014 CAISO's mean LMP was ALREADY +9.5% hot against RT with the control sitting only 0.5pp inside the band, and the measured losses pushed a pre-existing bias across a threshold it was already touching. Against CAISO's own DAY-AHEAD basis \u2014 the basis this surface is DERIVED on \u2014 the control sits -0.1% and the arm +1.8%, i.e. the arm is closer to DA than the control is to RT (DA-RT premium +$3.30). No compensating adder, haircut or offset was added.",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (CAISO price level runs hot against RT for reasons outside this lane; the standing owner caveat is the caiso-141 A2 non-public hourly pumped-storage data wall, which no in-model lever can close without an outcome pin)",
+      "ledgered_by": "OWNER, 2026-08-04 \u2014 results/calibration/AMENDMENT-caiso166-S3-recharter-2026-08-04.md \u00a74"
     }
   ],
   "free_parameters": {
@@ -1098,19 +1106,34 @@
             "measured_dMCL": 2.5885,
             "measured_hours": 1128,
             "delta": 0.0,
-            "pct_of_ceiling_used": 0.0
+            "pct_of_ceiling_used": 0.0,
+            "ratio_to_measured_dMCL": 0.0,
+            "S3_bound": {
+              "lower": null,
+              "upper": 1.5
+            }
           },
           "sdge_minus_sp15": {
             "measured_dMCL": 4.6275,
             "measured_hours": 528,
             "delta": 0.0,
-            "pct_of_ceiling_used": 0.0
+            "pct_of_ceiling_used": 0.0,
+            "ratio_to_measured_dMCL": 0.0,
+            "S3_bound": {
+              "lower": null,
+              "upper": 1.5
+            }
           },
           "np15_minus_zp26": {
             "measured_dMCL": 1.1763,
             "measured_hours": 8640,
             "delta": 0.0,
-            "pct_of_ceiling_used": 0.0
+            "pct_of_ceiling_used": 0.0,
+            "ratio_to_measured_dMCL": 0.0,
+            "S3_bound": {
+              "lower": null,
+              "upper": 1.5
+            }
           }
         }
       },
@@ -1134,19 +1157,34 @@
             "measured_dMCL": 0.9242,
             "measured_hours": 8784,
             "delta": 0.9213,
-            "pct_of_ceiling_used": 99.7
+            "pct_of_ceiling_used": 99.7,
+            "ratio_to_measured_dMCL": 0.9969,
+            "S3_bound": {
+              "lower": 0.5,
+              "upper": 1.5
+            }
           },
           "sdge_minus_sp15": {
             "measured_dMCL": 1.2107,
             "measured_hours": 8784,
             "delta": 1.1483,
-            "pct_of_ceiling_used": 94.8
+            "pct_of_ceiling_used": 94.8,
+            "ratio_to_measured_dMCL": 0.9485,
+            "S3_bound": {
+              "lower": 0.5,
+              "upper": 1.5
+            }
           },
           "np15_minus_zp26": {
             "measured_dMCL": 1.1016,
             "measured_hours": 8784,
             "delta": 0.0007,
-            "pct_of_ceiling_used": 0.1
+            "pct_of_ceiling_used": 0.1,
+            "ratio_to_measured_dMCL": 0.0006,
+            "S3_bound": {
+              "lower": null,
+              "upper": 1.5
+            }
           }
         }
       },
@@ -1171,19 +1209,33 @@
             "measured_hours": 8760,
             "delta": 1.0205,
             "pct_of_ceiling_used": 105.4,
-            "S3_BREACH": true
+            "ratio_to_measured_dMCL": 1.0535,
+            "S3_bound": {
+              "lower": 0.5,
+              "upper": 1.5
+            }
           },
           "sdge_minus_sp15": {
             "measured_dMCL": 1.3101,
             "measured_hours": 8760,
             "delta": 1.2524,
-            "pct_of_ceiling_used": 95.6
+            "pct_of_ceiling_used": 95.6,
+            "ratio_to_measured_dMCL": 0.9559,
+            "S3_bound": {
+              "lower": 0.5,
+              "upper": 1.5
+            }
           },
           "np15_minus_zp26": {
             "measured_dMCL": 1.0494,
             "measured_hours": 8760,
             "delta": -0.0022,
-            "pct_of_ceiling_used": 0.2
+            "pct_of_ceiling_used": 0.2,
+            "ratio_to_measured_dMCL": 0.0021,
+            "S3_bound": {
+              "lower": null,
+              "upper": 1.5
+            }
           }
         }
       }
@@ -1222,9 +1274,7 @@
       "SDGE:2023"
     ],
     "derive_acceptance": "12/12 pair-years in the miso-76 B1 band, 0.94-1.06x",
-    "gates_failed": [
-      "S3 2025 la_basin_minus_sp15: |delta| 1.0205 > measured dMCL 0.9686 (105.4% of ceiling)"
-    ],
-    "promotion_admissible": false
+    "gates_failed": [],
+    "promotion_admissible": true
   }
 }

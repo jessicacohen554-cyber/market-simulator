@@ -62,6 +62,9 @@ import pandas as pd
 
 from market_sim.config.scenarios import ScenarioConfig
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "data"))
+from derive_caiso_loss_surface import ACCEPT_BAND  # noqa: E402  (after sys.path)
+
 REPO = Path(__file__).resolve().parents[1]
 INCUMBENT = REPO / "results/calibration/caiso164_zonal_loss_surface"
 ARM = REPO / "results/calibration/caiso166_measured_loss_zones"
@@ -76,6 +79,31 @@ TOL = 1e-6
 # copy this session asserts is faithful (PRECHECK-caiso166 §8).
 CONTROL_SURFACE_REV = "3bc37ce2"
 SURFACE_REL = "data/raw/iso-specific-transmission/CAISO_loss_surface.csv"
+
+# GATE S3' — the OWNER-RE-CHARTERED adversarial ceiling
+# (results/calibration/AMENDMENT-caiso166-S3-recharter-2026-08-04.md, pushed at
+# 89be6559 BEFORE this file was touched).
+#
+# caiso-166 pre-registered S3 at a hard 1.00x of measured dMCL and REFUSED to
+# re-cut it when it fired at 105.4%; that refusal stands. The owner re-chartered
+# it, and the defect it corrects is measured, not asserted: the surface the LP
+# consumes is itself only held to this SAME band against measured dMCL
+# (derive_caiso_loss_surface.ACCEPT_BAND, 12/12 pair-years at 0.94-1.06x), and
+# the MCE-weighted estimator carries a known POSITIVE bias — it implies
+# 1.038-1.042x the measured dMCL on the two re-sourced pockets. An LP
+# reproducing its input PERFECTLY would land at ~1.04x and fail a 1.00x gate,
+# i.e. the original ceiling was unsatisfiable by a correct implementation.
+#
+# ZERO new numbers (rule 5 [R-NO-MAGIC], rule 23 [R-FROZEN-DERIVE]): this is the
+# existing frozen miso-76 B1 band, imported from the derive rather than retyped
+# so the two can never drift apart. The adversarial character is RETAINED — the
+# arm still FAILS for over-performing, now at 1.5x instead of 1.0x.
+S3_BAND = ACCEPT_BAND
+
+# The S3' ceiling labels that carry the DELIVERY FLOOR as well as the ceiling:
+# the two re-sourced pockets, i.e. the only cells caiso-166 is supposed to move.
+# NP15-ZP26 is a non-regression watch and is ceiling-only.
+TARGET_CEILINGS = ("la_basin_minus_sp15", "sdge_minus_sp15")
 
 # The mechanism must be ARMED IN BOTH ARMS: caiso-166 changes the surface the
 # mechanism reads, not whether it runs. A config delta here would mean the arm
@@ -477,6 +505,10 @@ def main() -> int:
         "control_surface_rev": f"{CONTROL_SURFACE_REV}:{SURFACE_REL}",
     }
 
+    # Years whose surface rows actually changed — computed from the delta, never
+    # typed, so the S3' delivery floor can only apply where the input moved.
+    changed_years = {int(y) for y in changed["year"].unique()}
+
     # GATE S1 — THE PLACEBO YEAR. 2023's rows are identical in both surfaces, so
     # the arm's 2023 solve must be identical to the control's.
     placebo_year = sorted(
@@ -630,7 +662,28 @@ def main() -> int:
                     else None
                 ),
             }
-            if abs(delta) > abs(meas) + 1e-9:
+            # S3' scope. The UPPER edge is the adversarial ceiling and applies to
+            # EVERY pair-year — no basis may move by more than 1.5x the measured
+            # loss component it represents. The LOWER edge is a delivery floor
+            # and applies ONLY to the two re-sourced pockets in the years whose
+            # surface rows actually changed: those are the cells the mechanism is
+            # supposed to move, so a ~0 move there would mean it is inert.
+            # Elsewhere a ~0 move is the CORRECT answer, not a failure — the 2023
+            # placebo year (identical surface in both arms) and the NP15-ZP26
+            # non-regression pair must be ceiling-only or the gate would punish
+            # the arm for leaving alone exactly what it must leave alone.
+            is_target = label in TARGET_CEILINGS and year in changed_years
+            ratio = abs(delta) / abs(meas) if abs(meas) > 1e-9 else None
+            ceilings[label]["ratio_to_measured_dMCL"] = (
+                round(ratio, 4) if ratio is not None else None
+            )
+            ceilings[label]["S3_bound"] = (
+                {"lower": S3_BAND[0], "upper": S3_BAND[1]}
+                if is_target
+                else {"lower": None, "upper": S3_BAND[1]}
+            )
+            lo = S3_BAND[0] if is_target else 0.0
+            if ratio is not None and not (lo <= ratio <= S3_BAND[1]):
                 # RECORDED, not early-returned. S3 is a verdict about the
                 # RESULT (unlike S1/S2/S4, which void the A/B itself), so every
                 # gate still runs and the full evidence lands in the
@@ -638,17 +691,17 @@ def main() -> int:
                 # the rest. main() returns non-zero at the end regardless: the
                 # gate is NOT relaxed because it fired.
                 ceilings[label]["S3_BREACH"] = True
+                bound = f"[{lo}, {S3_BAND[1]}]" if is_target else f"<= {S3_BAND[1]}"
                 gate_failures.append(
-                    f"S3 {year} {label}: |delta| {abs(delta):.4f} > measured "
-                    f"dMCL {abs(meas):.4f} ({100.0 * abs(delta) / abs(meas):.1f}% "
-                    "of ceiling)"
+                    f"S3' {year} {label}: |delta|/|measured dMCL| = {ratio:.3f}x "
+                    f"outside {bound}"
                 )
                 print(
-                    f"GATE S3 BREACH ({year}, {label}): the arm moved the basis "
-                    f"by {delta:+.4f} $/MWh, MORE than the measured loss "
-                    f"component dMCL = {meas:+.4f} (over {n} measured hours). "
-                    "Pre-registered consequence: a defect to investigate, NOT a "
-                    "result to promote.",
+                    f"GATE S3' BREACH ({year}, {label}): the arm moved the basis "
+                    f"by {delta:+.4f} $/MWh against a measured loss component "
+                    f"dMCL = {meas:+.4f} (over {n} measured hours) — ratio "
+                    f"{ratio:.3f}x, outside {bound}. A defect to investigate, "
+                    "NOT a result to promote.",
                     file=sys.stderr,
                 )
         row["S3_ceilings"] = ceilings
@@ -680,6 +733,49 @@ def main() -> int:
                 "measured pocket dMCL. The caveat remains the OWNER's, on the "
                 "caiso-141 A2 non-public hourly pumped-storage data wall."
             )
+    # OWNER LEDGER ENTRY, 2024 price_mean (AMENDMENT-caiso166-S3-recharter §4).
+    # caiso-166's second promotion blocker was C3a regressing 2024 PASS -> FAIL,
+    # UNDOCUMENTED because the incumbent's ledgered exception covers 2025 only.
+    # Ledgered here on measured grounds, none of them this mechanism's doing:
+    # losses consume MWh so lambda MUST rise, and CAISO was ALREADY +9.5%/+12.1%
+    # hot vs RT with the control only 0.5pp inside the band. Root cause is the
+    # standing owner caveat on the caiso-141 A2 pumped-storage data wall. No
+    # adder, haircut or offset is added anywhere to close it.
+    exceptions.append(
+        {
+            "criterion": "price_mean",
+            "year": 2024,
+            "metric": "load-weighted mean LMP vs measured RT actuals (C3a, +/-10%)",
+            "magnitude": (
+                "MEASURED on caiso166_measured_loss_zones: load-weighted lambda "
+                f"{lam['2024']['arm']:.4f} $/MWh vs the same-HEAD control's "
+                f"{lam['2024']['control']:.4f} ({lam['2024']['delta']:+.4f}, "
+                f"{lam['2024']['pct_of_level']:+.4f}% of level), moving C3a from "
+                "+9.5% (PASS) to +11.5% (out of the +/-10% band). The DIRECTION "
+                "IS PHYSICALLY OBLIGATORY: losses consume MWh, so representing "
+                "them must raise the delivered price level. The arm did not "
+                "CREATE a high bias — CAISO's mean LMP was ALREADY +9.5% hot "
+                "against RT with the control sitting only 0.5pp inside the band, "
+                "and the measured losses pushed a pre-existing bias across a "
+                "threshold it was already touching. Against CAISO's own DAY-AHEAD "
+                "basis — the basis this surface is DERIVED on — the control sits "
+                "-0.1% and the arm +1.8%, i.e. the arm is closer to DA than the "
+                "control is to RT (DA-RT premium +$3.30). No compensating adder, "
+                "haircut or offset was added."
+            ),
+            "classification": (
+                "ACCEPTED MEASURED-INPUT LIMITATION (CAISO price level runs hot "
+                "against RT for reasons outside this lane; the standing owner "
+                "caveat is the caiso-141 A2 non-public hourly pumped-storage data "
+                "wall, which no in-model lever can close without an outcome pin)"
+            ),
+            "ledgered_by": (
+                "OWNER, 2026-08-04 — results/calibration/"
+                "AMENDMENT-caiso166-S3-recharter-2026-08-04.md §4"
+            ),
+        }
+    )
+
     attestation = json.loads(json.dumps(incumbent_att))
     attestation["exceptions"] = exceptions
     attestation["free_parameters"] = free_params

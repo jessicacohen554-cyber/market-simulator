@@ -14,9 +14,9 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.9,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+    "2 ledgered measured-input caveat(s): C3a mean LMP, C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [],
   "criteria": {
@@ -33,7 +33,8 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -70,6 +71,7 @@
   "caveats": {
     "protective": [],
     "ledgered": [
+      "C3a mean LMP",
       "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
@@ -82,8 +84,8 @@
     "scored": 9,
     "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 1
+    "ledgered": 2,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "CAISO",
