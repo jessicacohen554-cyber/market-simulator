@@ -3977,3 +3977,85 @@ un-adjudicated, non-data-blocked item.
 `scripts/probes/_miso127_overnight_gas_composition.py`,
 `_miso127_overnight_gas_composition.json`.
 * Next number: **miso-128**.
+
+## 2026-08-04 — miso-127: C7 COAL_PRB moves for the first time (2/3 years cross the gate); the take-or-pay period-budget lane closes ex ante by proof
+
+**Keeper → `2026-08-04-miso-127-onlinepmin`** (bundle
+`results/calibration/miso127_onlinepmin_B`), determination **NOT-YET**, sole FAIL
+**C7 `COAL_PRB` — now 2025 only**, ledgered caveats 2/3 {C3a, C3c}.
+`audit_keepers --iso MISO` 0/0. Prereg
+`PREREG-miso127-takeorpay-period-budget-2026-08-04.md` pushed before any arm
+solved; finding `FINDING-miso127-online-pmin-c7-2026-08-04.md`. Runs:
+`2026-08-04-miso-127-onlinepmin-control` (arm A) / `2026-08-04-miso-127-onlinepmin`
+(arm B). *(A parallel session also carried the `miso-127` label — commit
+`49cf0877`, overnight gas composition, no LP, no mechanism, no run — with no
+overlap.)*
+
+**Lane A (the chartered target) died ex ante, zero solves.** The question was
+whether the take-or-pay sunk band could become a **period energy budget** the LP
+allocates across hours at the **same annual volume the model already carries**.
+Property A1 is falsified on committed artifacts:
+`coal._derived_coal_takeorpay()` reads **only** `plant_code` and
+`contract_share`, so **the model carries no period volume at all** — `total_tons`
+never reaches the LP. Every level that could supply one fails:
+`contract_share × total_tons` **is** the EIA-923 Schedule-5 same-year receipts
+series miso-103 refuted; no contractual tonnage exists at plant grain
+(miso-104); and a model-derived level dies **by proof** — set `B := g'x*` and the
+control optimum satisfies the budget row with equality, stays feasible, and
+therefore **stays optimal**, identically in cap, minimum-take and two-tranche
+form. **Volume neutrality and non-inertness are mutually exclusive**, so
+miso-103's blocker is **structural**: any budget needs *external* tonnage by
+construction. Do not re-charter the family until a source clears the Form 580 ask
+§4. What the lane *did* produce is the headroom measurement, which sharpens that
+ask: regulated `COAL_PRB` overnight (h0–h05, online days) load is **min
+0.058/0.039/0.074** of nameplate against the model's **0.251/0.236/0.268**, with
+p50s close — the model lacks the **low tail** entirely.
+
+**Lane B was the result, and only because a pre-declared zero-solve kill was
+refused.** `coal_mustrun_online_pmin` sizes the coal must-run (cheap, fuel-sunk)
+tranche from the measured **online** minimum stable load instead of an all-hours
+available-CF P5 that only proxies it (`Pmin = 0`, so this is band **size**, not a
+floor). The field's "all-hours reads ~2× high" was measured on **ERCOT** and is
+**false at MISO** (cap-weighted ratio **0.9558**, net **−533 MW**, p50 moving the
+*other* way) — but that net is a **cancelling aggregate** hiding **7,528 MW
+gross, 18 % of the coal fleet, on 39 of 44 plants in opposite directions**. The
+prereg recorded the expected-INERT prior as **refuted** and chartered the A/B.
+Firing proven at two grains (the miso-126 rule): grain 1 pre-arm, 42 coal bins
+change `pct_mr`; grain 2 post-arm, `COAL_PRB` −1.72/−2.07/−0.43 TWh against a
+0.05 TWh bar. The flag is config-borne, so it never crosses the
+`load_fleet_from_csv` seam that dropped miso-126's first arm.
+
+**Measured against a same-HEAD zero-delta control** (arm A reproduces the keeper
+to **0.000000 MW** on class-hours, D-1 and scorecard identical): **C7 `COAL_PRB`
+cv_ratio 0.465→0.514, 0.474→0.529, 0.314→0.347** — FAIL→pass in 2023 and 2024,
+with `profile_r` **preserved**, so the gain is **amplitude**, not a phase trade.
+C7 still FAILS on 2025 alone; determination unchanged. **Both of miso-102's
+failure modes are absent:** C1 holds **16/16** (that arm collapsed it to 11/16)
+and `COAL_BIT` does **not** overshoot (0.704/0.596/1.114 → 0.667/0.565/1.211).
+Summed C1 |error| **35.46 → 30.48 TWh** (COAL_PRB's own 3.81 → 0.57); C3a
+−1.4/−6.6 % → −1.0/−6.3 %; C3b NRMSE 0.075/0.116 → 0.074/0.112; C4 coal r
+0.895/0.873/0.888 → 0.898/0.880/0.892 with NRMSE down every year. **Debits,
+kept not reverted (rule 14):** `COAL_BIT` C1 7.96 → 8.65 TWh, and the immaterial
+`COAL_LIGNITE` 2025 D-1 flips pass→FAIL (0.9–1.1 % of load, under the 2 % gating
+floor; its 2023 row improves 2.344 → 1.516). K6 vindicates the miso-126 boundary
+lesson again: the class-only net is −11.0/−19.4/−26.3 GWh while the **full**
+identity closes at −0.023/−0.056/−0.018 GWh with `Δdemand` exactly 0.
+
+**Promoted on structural fidelity (rules 1 / 14), never on a score** — a measured
+quantity replaces a biased proxy for that same quantity, and rule 14 would have
+kept it even had the fit worsened. **Zero free parameters** (a boolean selector
+between two already-committed measured columns); **rule 23 not engaged** — no
+re-derive, the artifact already carried the column. Rule 19: nothing stacked on
+the take-or-pay residual, the band the discount applies to is re-sized. Rule 25 /
+28(d): `K` at PJM transferred nothing — it entered MISO as `U` and MISO's band
+comes from MISO's own CAMPD conduct. LOO (rule 22): zero fitted parameters and
+nothing year-specific, effect present and same-signed in all three years. Rule 22
+`[R-HOLDOUT]`: 2023–2025 only; MISO holds no `complete` marker so no holdout year
+was solved, scored or read and the D-5(b) re-key duty does not apply.
+`coal_tranche_1/2/3_frac` (ERCOT-fitted, applied at MISO) recorded as the named
+open DOF item (#1336), explicitly **not** swept against the C7 residual.
+
+**Named successor: the 2025-only C7 gap** (0.347 vs 0.5) — 2025 has both the
+lowest actual off-peak CV (0.074) and the lowest model CV (0.026); a
+level-of-variability question in the year the fleet cycled least, **not** a
+sizing knob on this mechanism.
