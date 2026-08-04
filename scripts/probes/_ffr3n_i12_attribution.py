@@ -160,6 +160,64 @@ def decompose_year(led: dict) -> dict:
     }
 
 
+ACTUALS_CSV = REPO_ROOT / "data/raw/_validation-source/capacity_actuals_ercot.csv"
+
+
+def actuals_by_year() -> dict:
+    """ERCOT's MEASURED additions/retirements per year and tech, 2023-2025.
+
+    The registry-outcome scoring target `build_capacity_actuals.py` writes from
+    EIA-860 (operable + retired_and_canceled). Used here as the reality anchor
+    for candidate 2: whether the model's build is an over-build is a question
+    about what ERCOT actually built, not about the I12 band.
+
+    Assumption-free by design — nameplate MW compared to nameplate MW, with no
+    accreditation factor applied on either side.
+    """
+    import csv
+
+    adds: dict[int, dict[str, float]] = {}
+    rets: dict[int, dict[str, float]] = {}
+    with open(ACTUALS_CSV) as fh:
+        rows = [ln for ln in fh if not ln.startswith("#")]
+    for row in csv.DictReader(rows):
+        year = int(row["year"])
+        if not 2023 <= year <= 2025:
+            continue
+        sink = adds if row["kind"] == "addition" else rets
+        d = sink.setdefault(year, {})
+        d[row["fuel"]] = d.get(row["fuel"], 0.0) + float(row["mw"])
+    return {"additions": adds, "retirements": rets}
+
+
+def compare_to_actuals(rows: list[dict]) -> None:
+    """Print modelled vs measured capacity events per year (nameplate MW)."""
+    act = actuals_by_year()
+    print("=== Candidate 2 reality anchor — modelled vs ACTUAL (nameplate MW) ===")
+    for r in rows:
+        y = r["year"]
+        if y not in act["additions"] and y not in act["retirements"]:
+            continue
+        a = act["additions"].get(y, {})
+        rt = act["retirements"].get(y, {})
+        m = r["additions_mw"]
+        m_thermal = sum(m["thermal_by_source"].values())
+        m_ren = m["renewable_by_tech"]
+        m_sto = m["storage"]
+        a_thermal = sum(v for k, v in a.items() if k in ("gas_cc", "gas_ct", "gas_st", "coal", "other", "nuclear"))
+        print(
+            f"  {y}  thermal  model {m_thermal:9,.0f}  actual {a_thermal:9,.0f}"
+            f"   | wind model {m_ren.get('wind', 0.0):8,.0f} actual {a.get('wind', 0.0):8,.0f}"
+            f"   | solar model {m_ren.get('solar', 0.0):8,.0f} actual {a.get('solar', 0.0):8,.0f}"
+            f"   | storage model {m_sto:8,.0f} actual {a.get('storage', 0.0):8,.0f}"
+        )
+        print(
+            f"        exits  model {sum(r['retirements_mw_by_reason'].values()):9,.0f}"
+            f"  actual {sum(rt.values()):9,.0f}"
+        )
+    print()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", default="ERCOT")
@@ -227,6 +285,8 @@ def main() -> int:
                     f"   floor_retained: {r['floor_retained_n']}"
                 )
             print()
+            if label == "pipeline":
+                compare_to_actuals(rows)
 
         if "pipeline" in report and "legacy" in report:
             print("=== Candidate 1 — paired rule delta (pipeline − legacy) ===")
