@@ -4546,3 +4546,91 @@ the corpus bleed rows (2022-12-31, 2024-01-01..09) are delivery-year-filtered at
 every consumer; no out-of-training year solved or scored. ERCOT-scoped (rule 25).
 
 Next shorthand: ercot-158.
+
+## 2026-08-03 — ERCOT-158 (the ERCOT-89 §7 step-2 arming round, owner-authorized; 2 full-span solves, keeper UNCHANGED at ercot150b): the ERCOT-88 fast-start pool armed with its 2023 block is ENGAGED-but-INERT at the missed tail — the 91 missed hours are bit-identical between arms, confirming the Phase-0 arithmetic that the cushion is the un-repriced CC offline block; matrix cell O→I; honest-inputs control registered alongside
+
+**Session scope.** The owner prompt authorized the standing ERCOT-89 §7 step-2
+design round (ERCOT-151 §4 ask 2) on the ERCOT-157-completed data: arm the
+EXISTING ERCOT-88 CT pool (`ercot_faststart_pool_offer=true`) — no CC tier
+(ERCOT-152 refusal upheld), no span (ERCOT-89 §9.4 rejection stands) — as a
+full-span single-delta A/B off the ercot150b keeper.
+`docs/PRECOMMIT-ercot158-faststart-pool-arm-2026-08-03.md` (mechanism
+statement, the four standing ERCOT-89 analyzer gates, matched-hour C3c
+anatomy, zero-forced check, LOYO statement, K/R/I decision rule) was pushed
+BEFORE any solve, and the A/B scorer + attestation generator were pushed
+before results existed.
+
+**Run A — `2026-08-03-ercot158-honest-replay`** (bundle `ercot158_honest_A`;
+the ercot98 honest-inputs pattern): replay_keeper on the keeper bundle, config
+UNCHANGED, fresh out-dir. DETERMINATION NOT-YET with the keeper-identical fail
+set {C3a 2023-only −32.6%, C3b 2023-only 0.607, C3c, C7 2023-lignite cv-leg};
+C3a 2024 +1.9% / 2025 −8.1% PASS; C1 16/16. The ERCOT-157 RT-wall 2023
+completion (bins 0–4) is PRICE-IMMATERIAL: vs the committed keeper sidecars
+the standing analyzer measures 2023 mean $36.59→$36.61, identical tail counts
+(h>$200 58, h>$500 30), NRMSE identical to 3 decimals, all four gates HELD
+every year — and same-HEAD drift is ~nil (unlike ercot150's K2 finding), so
+Run A is a clean control and the committed keeper needs no re-solve on the
+completed inputs.
+
+**Run B — `2026-08-03-ercot158-pool-arm`** (bundle `ercot158_poolarm_B`;
+single delta `--set ercot_faststart_pool_offer=true`): ENGAGED all three
+years — 173/173/91 pool rows (2025 matching the ERCOT-88 record) — and INERT
+at the target. At the keeper's 91 missed 2023 >$300 hours (re-derived on Run
+A's own prices: 91 missed / 53 hit, exactly the committed Phase-0 split) the
+missed-set model mean is BIT-IDENTICAL between arms ($105.163→$105.163,
+0 flips, delta 0.0): the marginal unit at those hours is never a pool-owned
+CT row — the un-repriced cheap CC offline block (~8 GW ≤$200; ERCOT-152's
+measured-no-op refusal) keeps the cushion, exactly the Phase-0 arithmetic
+(CT OFF 7.81 GW repriced vs CC OFF 10.32 GW untouched vs a ~0.5 GW cushion).
+ALL pre-registered gates HELD every year: C3a −24.3→−24.5% / +10.2→+10.2% /
+−0.7→−0.7% (analyzer basis; within the +1.0 pp guard), zero spurious added,
+tail counts identical (58/20/0 vs actual 181/53/31), NRMSE 2.870→2.866 /
+2.947→2.946 / 0.955→0.955. Scorecard: 73 per-(criterion,year,key) verdict
+rows, zero PASS→FAIL at either grain; DETERMINATION NOT-YET, keeper-identical
+fail set. D-2 mechanism sets identical, zero forced-TWh delta >0.05
+(offer-availability confirmed vacuous — no floor, no forced energy). Only
+measurable motion: a slight 2023 softening (hit-set mean $1,347→$1,331,
+NRMSE −0.004) where the pool ladder REPLACES a higher wall markup on
+already-walled row-hours — structurally honest, direction DOWN, immaterial.
+
+**Adjudication (pre-declared decision rule): I — INERT.** Committed A/B
+record `results/calibration/_ercot158_pool_ab.json` (+ captured full verdicts
+`_ercot158_verdict_{A,B}.json`); matrix cell `ercot_faststart_pool_offer`
+O→I with the ercot-158 citation. Mechanism stays merged default-off; keeper
+UNCHANGED (ercot150b). LOYO: zero fitted parameters, per-year guard table
+stood in — all three years cleared independently (trivially: near-zero
+deltas). The 2023 tail residual remains a COMMITMENT-STATE gap (the CC
+offline block's phantom cheap depth, cap-side expression closed by the
+ercot41/43/106/108 family) — the successor lane is the commitment-state
+question chartered in DIAGNOSIS-ercot151 §3 / ERCOT-152, not further offer
+re-pricing of the CT slice.
+
+**Ops.** Both runs registered on the dashboard with attestations (Run A
+n_entries 9, Run B 10 — the pool's measured entry, n_residual 6 unchanged
+both) + legitimacy diagnostics + metrics; retention pruned
+ercot116-regate-{arm,base} (top-15). Solves ran SEQUENTIALLY after the
+concurrent launch OOM'd on this 15 GB box (rule 12's cap-2 memory caveat
+binds at 1 here; single-solve RSS peaks ~10 GB). Holdouts untouched
+(2023–2025 only). ERCOT-scoped (rule 25).
+
+**ADDENDUM — OWNER PROMOTION (same session, 2026-08-03).** On the owner's
+standing standard re-given in-session ("Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates
+regress that may still be a keeper"), the session recommended YES for Run B
+and executed the promotion: **ERCOT keeper → `2026-08-03-ercot158-pool-arm`**
+(supersedes ercot150b, kept on the dashboard as the immediate-prior
+comparison). Basis: the promotion rests on the IDENTIFICATION, not the A/B —
+ERCOT-87 adjudicated that the real mid-band prices on the offline startable
+CT pool, so an online-basis wall price on those rows is refuted by status;
+arming prices that capability at its measured conduct (zero fitted
+parameters; C6 n_entries 10 / n_residual 6). Gate cost REPORTED: rubric C3a
+2023 −32.6→−32.8 % (−0.2 pp); every criterion status identical to ercot150b;
+all pre-registered kill gates held. The inert-at-target finding stands as the
+recorded honest result and sharpens the successor: the 2023 tail is a
+COMMITMENT-STATE gap on the CC offline block. Keeper lane executed: shard +
+`build_status --iso ERCOT` (NOT-YET) + keeper-auditor + matrix header
+re-stamp + cell I→K + sidecar `market_story`; ERCOT holds no `complete`
+marker, so no re-key duty. Branch rebased onto origin/main (9aca82b8;
+manifest/benchmark conflicts regenerated from sidecars).
+
+Next shorthand: ercot-159.
