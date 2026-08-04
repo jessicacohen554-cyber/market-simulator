@@ -115,6 +115,17 @@ arm's is inspected for PJM reachability and enumerated here:
 | `09ef7b2a`, `3e534b99`, `2adfb49f` | the same exit-throughput mechanism: seed resolution, ledger key, admission-cap horizon. All `capacity_evolution/` + `runner.py`. |
 | `b291aa2f` | `results/cache.py` **docstring-only** epoch-ledger entry. No executable line. |
 | `16da87f6` | re-derives `DEMAND_GROWTH_RATES["NYISO"]` from the 2026 Gold Book. NYISO row only; forecast-only table — the backcast takes measured load and never reads it. |
+| `935c33dd` ercot-159 | **added at the 2026-08-04 rebase onto `a0bf3db3`, after this PREREG was pushed.** `ercot_energy_online_capability_cap` (+ its artifact path), default off; sole read is inside `if getattr(config, "ercot_energy_online_capability_cap", False)` on the ERCOT fast-tier row of `reserves/spec.py`'s `online_capacity_cap` block. |
+| `eda8ebe8` caiso-164 | **same rebase.** `caiso_zonal_loss_surface`, default off and guarded by `if getattr(...) and iso == "CAISO"` — unreachable for `iso="PJM"` twice over; the `runner.py` site's new conditional reduces to the pre-existing `UNSET` when off. |
+
+*The K2 enumeration is maintained to the arm's actual basis rather than frozen
+at pre-registration time: a commit landing between the PREREG and the solve must
+be inspected and listed, or the discharge is void (§7). Measured against the
+keeper's recorded config, the complete schema drift at this basis is exactly
+four `arm_only` fields — `caiso_zonal_loss_surface`,
+`ercot_energy_online_capability_cap`, `ercot_energy_online_capability_cap_path`,
+`exit_rate_limits` — and one `keeper_only` field, the declared deletion. **E1 is
+unchanged and remains absolute**; nothing here relaxes a gate.*
 
 The exit-throughput commits are unreachable from this lane for the reason
 pjm-150 §4 established and which must not be mis-stated as "forecast-mode only":
