@@ -1,0 +1,959 @@
+{
+  "artifact_fed_d2_rows": {
+    "CAISO": [
+      {
+        "class": "CC_CHP",
+        "forced_twh": 4.6948,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.5618,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 1.4651,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.9305,
+        "year": 2023
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 4.5517,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.6176,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 1.4711,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.9522,
+        "year": 2024
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 4.2685,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.5795,
+        "year": 2025
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 1.4778,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.9682,
+        "year": 2025
+      }
+    ],
+    "ERCOT": [
+      {
+        "class": "CC_CHP",
+        "forced_twh": 12.3451,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.4705,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.5202,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.5195,
+        "year": 2023
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0285,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.4132,
+        "year": 2023
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 12.8069,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.448,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.7016,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.5209,
+        "year": 2024
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0283,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.4122,
+        "year": 2024
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 10.9312,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.3943,
+        "year": 2025
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.2851,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.4795,
+        "year": 2025
+      }
+    ],
+    "MISO": [
+      {
+        "class": "CC_CHP",
+        "forced_twh": 3.5151,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1911,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.3051,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2807,
+        "year": 2023
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.1137,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0543,
+        "year": 2023
+      },
+      {
+        "class": "ST_GAS",
+        "forced_twh": 8.002,
+        "mechanism": "st_gas_mustrun_per_plant",
+        "share_of_class": 0.3213,
+        "year": 2023
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 3.2915,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1816,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.3015,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2622,
+        "year": 2024
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.075,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0303,
+        "year": 2024
+      },
+      {
+        "class": "ST_GAS",
+        "forced_twh": 8.2778,
+        "mechanism": "st_gas_mustrun_per_plant",
+        "share_of_class": 0.3285,
+        "year": 2024
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 4.4394,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2914,
+        "year": 2025
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 2.354,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2793,
+        "year": 2025
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0709,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0419,
+        "year": 2025
+      },
+      {
+        "class": "ST_GAS",
+        "forced_twh": 10.4811,
+        "mechanism": "st_gas_mustrun_per_plant",
+        "share_of_class": 0.4522,
+        "year": 2025
+      }
+    ],
+    "NEISO": [
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.0211,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0332,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.0384,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0576,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.0351,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.064,
+        "year": 2025
+      }
+    ],
+    "NYISO": [
+      {
+        "class": "CC_CHP",
+        "forced_twh": 0.0392,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0032,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.3609,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2068,
+        "year": 2023
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 0.0645,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0046,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.5429,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.3366,
+        "year": 2024
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 0.0932,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.006,
+        "year": 2025
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.2966,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1266,
+        "year": 2025
+      }
+    ],
+    "PJM": [
+      {
+        "class": "CC_CHP",
+        "forced_twh": 1.1589,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1342,
+        "year": 2023
+      },
+      {
+        "class": "CC_REGULAR",
+        "forced_twh": 22.8053,
+        "mechanism": "cc_mustrun_per_plant",
+        "share_of_class": 0.0707,
+        "year": 2023
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 0.0123,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0001,
+        "year": 2023
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 4.8556,
+        "mechanism": "coal_mustrun",
+        "share_of_class": 0.0431,
+        "year": 2023
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.3681,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2427,
+        "year": 2023
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0723,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1079,
+        "year": 2023
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 0.9975,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1226,
+        "year": 2024
+      },
+      {
+        "class": "CC_REGULAR",
+        "forced_twh": 10.837,
+        "mechanism": "cc_mustrun_per_plant",
+        "share_of_class": 0.0323,
+        "year": 2024
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 0.0278,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0002,
+        "year": 2024
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 4.1537,
+        "mechanism": "coal_mustrun",
+        "share_of_class": 0.0364,
+        "year": 2024
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.3199,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.1847,
+        "year": 2024
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0285,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.037,
+        "year": 2024
+      },
+      {
+        "class": "CC_CHP",
+        "forced_twh": 1.3422,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.197,
+        "year": 2025
+      },
+      {
+        "class": "CC_REGULAR",
+        "forced_twh": 9.8102,
+        "mechanism": "cc_mustrun_per_plant",
+        "share_of_class": 0.0293,
+        "year": 2025
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 0.0006,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0,
+        "year": 2025
+      },
+      {
+        "class": "COAL",
+        "forced_twh": 1.59,
+        "mechanism": "coal_mustrun",
+        "share_of_class": 0.0111,
+        "year": 2025
+      },
+      {
+        "class": "CT_CHP",
+        "forced_twh": 0.4154,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.2813,
+        "year": 2025
+      },
+      {
+        "class": "ST_CHP",
+        "forced_twh": 0.0136,
+        "mechanism": "chp_steam",
+        "share_of_class": 0.0216,
+        "year": 2025
+      }
+    ]
+  },
+  "blast_radius": {
+    "CAISO": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [],
+      "artifact_source": "artifact",
+      "consumed_by_keeper": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_pct",
+        "peaking_pct",
+        "steam_level_cf"
+      ],
+      "dormant": [
+        "mustrun_online_pct",
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "online_frac:ST_GAS",
+        "p25_cf"
+      ]
+    },
+    "ERCOT": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_pct"
+      ],
+      "artifact_source": "hardcoded ERCOT maps",
+      "consumed_by_keeper": [],
+      "dormant": [
+        "mustrun_online_pct",
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "online_frac:ST_GAS",
+        "p25_cf",
+        "peaking_pct",
+        "steam_level_cf"
+      ]
+    },
+    "MISO": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [],
+      "artifact_source": "artifact",
+      "consumed_by_keeper": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_online_pct",
+        "mustrun_pct",
+        "online_frac:ST_GAS",
+        "p25_cf",
+        "peaking_pct"
+      ],
+      "dormant": [
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "steam_level_cf"
+      ]
+    },
+    "NEISO": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [],
+      "artifact_source": "artifact",
+      "consumed_by_keeper": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_pct",
+        "peaking_pct"
+      ],
+      "dormant": [
+        "mustrun_online_pct",
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "online_frac:ST_GAS",
+        "p25_cf",
+        "steam_level_cf"
+      ]
+    },
+    "NYISO": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [],
+      "artifact_source": "artifact",
+      "consumed_by_keeper": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_pct",
+        "peaking_pct"
+      ],
+      "dormant": [
+        "mustrun_online_pct",
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "online_frac:ST_GAS",
+        "p25_cf",
+        "steam_level_cf"
+      ]
+    },
+    "PJM": {
+      "armed_but_column_absent": [],
+      "armed_off_artifact_by_design": [],
+      "artifact_source": "artifact",
+      "consumed_by_keeper": [
+        "chp_pmin_cf",
+        "committed_pct",
+        "mustrun_online_pct",
+        "mustrun_pct",
+        "online_frac:CC_REGULAR",
+        "online_frac:COAL",
+        "peaking_pct"
+      ],
+      "dormant": [
+        "online_frac:ST_GAS",
+        "p25_cf",
+        "steam_level_cf"
+      ]
+    }
+  },
+  "column_consumers": {
+    "chp_pmin_cf": [
+      [
+        "data/chp.py::chp_pmin_cf -> chp_grid_pmin_mw",
+        "chp_steam_following"
+      ]
+    ],
+    "committed_pct": [
+      [
+        "fleet/campd_bins.py::thermal_tranche_overrides -> bins_to_fleet",
+        ""
+      ],
+      [
+        "model/reserves/spec.py::_min_stable_headroom",
+        ""
+      ]
+    ],
+    "mustrun_online_pct": [
+      [
+        "fleet/campd_bins.py::thermal_tranche_overrides (online-Pmin select)",
+        "coal_mustrun_online_pmin"
+      ]
+    ],
+    "mustrun_pct": [
+      [
+        "fleet/campd_bins.py::thermal_tranche_overrides -> bins_to_fleet",
+        ""
+      ]
+    ],
+    "online_frac:CC_REGULAR": [
+      [
+        "fleet/assembly.py::cc_mustrun_online_frac",
+        "cc_mustrun_per_plant"
+      ]
+    ],
+    "online_frac:COAL": [
+      [
+        "fleet/assembly.py::coal_sync_online_frac",
+        "coal_sync_srmc_tranche"
+      ]
+    ],
+    "online_frac:ST_GAS": [
+      [
+        "fleet/assembly.py::cc_mustrun_online_frac",
+        "st_gas_mustrun_per_plant"
+      ]
+    ],
+    "p25_cf": [
+      [
+        "fleet/arrays.py::thermal_tranche_p25_level",
+        "st_gas_mustrun_p25_level"
+      ]
+    ],
+    "peaking_pct": [
+      [
+        "fleet/campd_bins.py::thermal_tranche_peaking",
+        "cc_peaking_per_plant"
+      ]
+    ],
+    "steam_level_cf": [
+      [
+        "fleet/assembly.py:611 via thermal_tranche_chp_steam_level",
+        "chp_steam_floor_p25"
+      ]
+    ]
+  },
+  "coverage": {
+    "CAISO": {
+      "artifact": "data/raw/_processed-legacy/thermal_tranches_CAISO.csv",
+      "groups": {
+        "CC_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 6,
+          "ok_rows_blank_online_frac": 6,
+          "online_frac_nonzero": 0,
+          "rows": 21
+        },
+        "CC_REGULAR": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 23,
+          "ok_rows_blank_online_frac": 23,
+          "online_frac_nonzero": 0,
+          "rows": 23
+        },
+        "CT_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 7,
+          "ok_rows_blank_online_frac": 7,
+          "online_frac_nonzero": 0,
+          "rows": 65
+        },
+        "CT_PEAKER": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 44,
+          "ok_rows_blank_online_frac": 44,
+          "online_frac_nonzero": 0,
+          "rows": 44
+        },
+        "ST_GAS": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 3,
+          "ok_rows_blank_online_frac": 3,
+          "online_frac_nonzero": 0,
+          "rows": 3
+        }
+      },
+      "max_online_hours": 22760,
+      "ok_rows_blank_in_emitting_groups": 70,
+      "rows": 156,
+      "schema_generation": {
+        "chp_btm_pct": true,
+        "mustrun_online_pct": true,
+        "online_frac": true,
+        "steam_level_cf": true
+      }
+    },
+    "ERCOT": {
+      "artifact": null,
+      "note": "no artifact (ERCOT: custom-bin-assignments.csv)"
+    },
+    "MISO": {
+      "artifact": "data/raw/_processed-legacy/thermal_tranches_MISO.csv",
+      "groups": {
+        "CC_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 14,
+          "ok_rows_blank_online_frac": 14,
+          "online_frac_nonzero": 0,
+          "rows": 24
+        },
+        "CC_REGULAR": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 39,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 39,
+          "rows": 39
+        },
+        "COAL": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 44,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 44,
+          "rows": 44
+        },
+        "CT_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 5,
+          "ok_rows_blank_online_frac": 5,
+          "online_frac_nonzero": 0,
+          "rows": 41
+        },
+        "CT_PEAKER": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 79,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 79,
+          "rows": 79
+        },
+        "ST_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 39
+        },
+        "ST_GAS": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 16,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 16,
+          "rows": 16
+        }
+      },
+      "max_online_hours": 26280,
+      "ok_rows_blank_in_emitting_groups": 0,
+      "rows": 282,
+      "schema_generation": {
+        "chp_btm_pct": false,
+        "mustrun_online_pct": true,
+        "online_frac": true,
+        "steam_level_cf": false
+      }
+    },
+    "NEISO": {
+      "artifact": "data/raw/_processed-legacy/thermal_tranches_NEISO.csv",
+      "groups": {
+        "CC_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 3,
+          "ok_rows_blank_online_frac": 3,
+          "online_frac_nonzero": 0,
+          "rows": 7
+        },
+        "CC_REGULAR": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 29,
+          "ok_rows_blank_online_frac": 29,
+          "online_frac_nonzero": 0,
+          "rows": 29
+        },
+        "COAL": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 1
+        },
+        "CT_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 25
+        },
+        "CT_PEAKER": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 8,
+          "ok_rows_blank_online_frac": 8,
+          "online_frac_nonzero": 0,
+          "rows": 8
+        },
+        "ST_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 0,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 0,
+          "rows": 5
+        },
+        "ST_GAS": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 1
+        }
+      },
+      "max_online_hours": 24504,
+      "ok_rows_blank_in_emitting_groups": 39,
+      "rows": 76,
+      "schema_generation": {
+        "chp_btm_pct": false,
+        "mustrun_online_pct": false,
+        "online_frac": false,
+        "steam_level_cf": false
+      }
+    },
+    "NYISO": {
+      "artifact": "data/raw/_processed-legacy/thermal_tranches_NYISO.csv",
+      "groups": {
+        "CC_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 14,
+          "ok_rows_blank_online_frac": 14,
+          "online_frac_nonzero": 0,
+          "rows": 17
+        },
+        "CC_REGULAR": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 19,
+          "ok_rows_blank_online_frac": 19,
+          "online_frac_nonzero": 0,
+          "rows": 19
+        },
+        "CT_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 11
+        },
+        "CT_PEAKER": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 17,
+          "ok_rows_blank_online_frac": 17,
+          "online_frac_nonzero": 0,
+          "rows": 17
+        },
+        "ST_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 1,
+          "ok_rows_blank_online_frac": 1,
+          "online_frac_nonzero": 0,
+          "rows": 3
+        },
+        "ST_GAS": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 11,
+          "ok_rows_blank_online_frac": 11,
+          "online_frac_nonzero": 0,
+          "rows": 11
+        }
+      },
+      "max_online_hours": 26253,
+      "ok_rows_blank_in_emitting_groups": 47,
+      "rows": 78,
+      "schema_generation": {
+        "chp_btm_pct": false,
+        "mustrun_online_pct": false,
+        "online_frac": false,
+        "steam_level_cf": false
+      }
+    },
+    "PJM": {
+      "artifact": "data/raw/_processed-legacy/thermal_tranches_PJM.csv",
+      "groups": {
+        "CC_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 7,
+          "ok_rows_blank_online_frac": 7,
+          "online_frac_nonzero": 0,
+          "rows": 14
+        },
+        "CC_REGULAR": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 69,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 69,
+          "rows": 69
+        },
+        "COAL": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 29,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 29,
+          "rows": 29
+        },
+        "CT_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 3,
+          "ok_rows_blank_online_frac": 3,
+          "online_frac_nonzero": 0,
+          "rows": 43
+        },
+        "CT_PEAKER": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 70,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 70,
+          "rows": 70
+        },
+        "ST_CHP": {
+          "deriver_emits_online_frac": false,
+          "ok_rows": 0,
+          "ok_rows_blank_online_frac": 0,
+          "online_frac_nonzero": 0,
+          "rows": 21
+        },
+        "ST_GAS": {
+          "deriver_emits_online_frac": true,
+          "ok_rows": 10,
+          "ok_rows_blank_online_frac": 10,
+          "online_frac_nonzero": 0,
+          "rows": 10
+        }
+      },
+      "max_online_hours": 26280,
+      "ok_rows_blank_in_emitting_groups": 10,
+      "rows": 256,
+      "schema_generation": {
+        "chp_btm_pct": false,
+        "mustrun_online_pct": true,
+        "online_frac": true,
+        "steam_level_cf": false
+      }
+    }
+  },
+  "date": "2026-08-04",
+  "deriver_online_frac_groups": [
+    "CC_REGULAR",
+    "COAL",
+    "CT_PEAKER",
+    "ST_GAS"
+  ],
+  "keeper_gates": {
+    "CAISO": {
+      "cc_mustrun_per_plant": false,
+      "cc_peaking_per_plant": true,
+      "chp_steam_floor_p25": true,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": false,
+      "coal_sync_srmc_tranche": false,
+      "plant_level_fleet": true,
+      "st_gas_mustrun_p25_level": false,
+      "st_gas_mustrun_per_plant": false,
+      "use_campd_bins": true
+    },
+    "ERCOT": {
+      "cc_mustrun_per_plant": false,
+      "cc_peaking_per_plant": false,
+      "chp_steam_floor_p25": false,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": false,
+      "coal_sync_srmc_tranche": false,
+      "plant_level_fleet": false,
+      "st_gas_mustrun_p25_level": false,
+      "st_gas_mustrun_per_plant": false,
+      "use_campd_bins": true
+    },
+    "MISO": {
+      "cc_mustrun_per_plant": false,
+      "cc_peaking_per_plant": true,
+      "chp_steam_floor_p25": false,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": true,
+      "coal_sync_srmc_tranche": false,
+      "plant_level_fleet": true,
+      "st_gas_mustrun_p25_level": true,
+      "st_gas_mustrun_per_plant": true,
+      "use_campd_bins": true
+    },
+    "NEISO": {
+      "cc_mustrun_per_plant": false,
+      "cc_peaking_per_plant": true,
+      "chp_steam_floor_p25": false,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": false,
+      "coal_sync_srmc_tranche": false,
+      "plant_level_fleet": true,
+      "st_gas_mustrun_p25_level": false,
+      "st_gas_mustrun_per_plant": false,
+      "use_campd_bins": true
+    },
+    "NYISO": {
+      "cc_mustrun_per_plant": false,
+      "cc_peaking_per_plant": true,
+      "chp_steam_floor_p25": false,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": false,
+      "coal_sync_srmc_tranche": false,
+      "plant_level_fleet": true,
+      "st_gas_mustrun_p25_level": false,
+      "st_gas_mustrun_per_plant": false,
+      "use_campd_bins": true
+    },
+    "PJM": {
+      "cc_mustrun_per_plant": true,
+      "cc_peaking_per_plant": true,
+      "chp_steam_floor_p25": false,
+      "chp_steam_following": true,
+      "coal_mustrun_online_pmin": true,
+      "coal_sync_srmc_tranche": true,
+      "plant_level_fleet": true,
+      "st_gas_mustrun_p25_level": false,
+      "st_gas_mustrun_per_plant": false,
+      "use_campd_bins": true
+    }
+  },
+  "keepers": {
+    "CAISO": "2026-08-04-caiso-166-measured-dlap",
+    "ERCOT": "2026-08-03-ercot158-pool-arm",
+    "MISO": "2026-08-04-miso-127-onlinepmin",
+    "NEISO": "2026-08-04-neiso81-chpheatrate",
+    "NYISO": "2026-08-04-nyiso-125-seam-envelope",
+    "PJM": "2026-08-04-pjm-152-collapse"
+  },
+  "session": "xiso-5"
+}

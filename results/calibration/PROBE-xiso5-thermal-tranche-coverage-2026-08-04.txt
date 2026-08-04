@@ -1,0 +1,84 @@
+==============================================================================
+Q1 — is the CHP online_frac zero DESIGN or GAP?
+==============================================================================
+derive_thermal_tranches._ONLINE_FRAC_GROUPS = ['CC_REGULAR', 'COAL', 'CT_PEAKER', 'ST_GAS']
+CHP groups in that set: NONE
+  CAISO  CHP status=ok rows reaching the emit path:  13  publishing online_frac: 0
+  PJM    CHP status=ok rows reaching the emit path:  10  publishing online_frac: 0
+  MISO   CHP status=ok rows reaching the emit path:  20  publishing online_frac: 0
+  NYISO  CHP status=ok rows reaching the emit path:  16  publishing online_frac: 0
+  NEISO  CHP status=ok rows reaching the emit path:   4  publishing online_frac: 0
+
+==============================================================================
+Q2 — rows the committed artifact does NOT reproduce at HEAD
+==============================================================================
+ISO     rows  max_on_h  mo_pct   of  btm  steam  blank ok/emitting
+------------------------------------------------------------------
+ERCOT      —  (no artifact — no artifact (ERCOT: custom-bin-assignments.csv))
+CAISO    156     22760       T    T    T      T                 70
+PJM      256     26280       T    T    F      F                 10
+MISO     282     26280       T    T    F      F                  0
+NYISO     78     26253       F    F    F      F                 47
+NEISO     76     24504       F    F    F      F                 39
+
+  CAISO  blank emitting-group ok rows: CC_REGULAR 23/23, CT_PEAKER 44/44, ST_GAS 3/3
+  PJM    blank emitting-group ok rows: ST_GAS 10/10
+  MISO   blank emitting-group ok rows: NONE
+  NYISO  blank emitting-group ok rows: CC_REGULAR 19/19, CT_PEAKER 17/17, ST_GAS 11/11
+  NEISO  blank emitting-group ok rows: CC_REGULAR 29/29, CT_PEAKER 8/8, ST_GAS 1/1, COAL 1/1
+
+==============================================================================
+Q3 — rule 23 [R-FROZEN-DERIVE] gate
+==============================================================================
+  A re-derivation needs a CITED SOURCE-DATA change. Precedent: miso-95
+  ruled the tranche staleness a CODE axis ('rule 23's data-change trigger
+  never fired') and returned PROVENANCE-BLOCKED; xiso-2 measured the only
+  later input move (MISO outage extract) as 2022-ONLY, with 2023-2025
+  identical row-for-row. This census cites NO source-data change.
+  => NO REGENERATION IS LICENSED. Diagnosis only.
+
+==============================================================================
+Q4 — blast radius: columns each CURRENT keeper actually reads
+==============================================================================
+flag                           ERCOT   CAISO     PJM    MISO   NYISO   NEISO
+----------------------------------------------------------------------------
+use_campd_bins                  True    True    True    True    True    True
+plant_level_fleet              False    True    True    True    True    True
+coal_mustrun_online_pmin       False   False    True    True   False   False
+coal_sync_srmc_tranche         False   False    True   False   False   False
+cc_mustrun_per_plant           False   False    True   False   False   False
+st_gas_mustrun_per_plant       False   False   False    True   False   False
+st_gas_mustrun_p25_level       False   False   False    True   False   False
+cc_peaking_per_plant           False    True    True    True    True    True
+chp_steam_following             True    True    True    True    True    True
+chp_steam_floor_p25            False    True   False   False   False   False
+
+  ERCOT  LIVE:            -
+         BY DESIGN off hardcoded maps: chp_pmin_cf, committed_pct, mustrun_pct
+         SILENT NO-OP:    -
+         dormant:         mustrun_online_pct, online_frac:CC_REGULAR, online_frac:COAL, online_frac:ST_GAS, p25_cf, peaking_pct, steam_level_cf
+  CAISO  LIVE:            chp_pmin_cf, committed_pct, mustrun_pct, peaking_pct, steam_level_cf
+         SILENT NO-OP:    -
+         dormant:         mustrun_online_pct, online_frac:CC_REGULAR, online_frac:COAL, online_frac:ST_GAS, p25_cf
+  PJM    LIVE:            chp_pmin_cf, committed_pct, mustrun_online_pct, mustrun_pct, online_frac:CC_REGULAR, online_frac:COAL, peaking_pct
+         SILENT NO-OP:    -
+         dormant:         online_frac:ST_GAS, p25_cf, steam_level_cf
+  MISO   LIVE:            chp_pmin_cf, committed_pct, mustrun_online_pct, mustrun_pct, online_frac:ST_GAS, p25_cf, peaking_pct
+         SILENT NO-OP:    -
+         dormant:         online_frac:CC_REGULAR, online_frac:COAL, steam_level_cf
+  NYISO  LIVE:            chp_pmin_cf, committed_pct, mustrun_pct, peaking_pct
+         SILENT NO-OP:    -
+         dormant:         mustrun_online_pct, online_frac:CC_REGULAR, online_frac:COAL, online_frac:ST_GAS, p25_cf, steam_level_cf
+  NEISO  LIVE:            chp_pmin_cf, committed_pct, mustrun_pct, peaking_pct
+         SILENT NO-OP:    -
+         dormant:         mustrun_online_pct, online_frac:CC_REGULAR, online_frac:COAL, online_frac:ST_GAS, p25_cf, steam_level_cf
+
+  Artifact-fed forced energy in each keeper's committed D-2 rows (TWh/yr):
+    ERCOT  chp_steam 0.03-12.81
+    CAISO  chp_steam 1.47-4.69
+    PJM    cc_mustrun_per_plant 9.81-22.81, chp_steam 0.00-1.34, coal_mustrun 1.59-4.86
+    MISO   chp_steam 0.07-4.44, st_gas_mustrun_per_plant 8.00-10.48
+    NYISO  chp_steam 0.04-0.54
+    NEISO  chp_steam 0.02-0.04
+
+wrote results/calibration/_xiso5_thermal_tranche_coverage.json
