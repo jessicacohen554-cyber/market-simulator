@@ -35,6 +35,7 @@ never re-derived.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import sys
@@ -506,7 +507,24 @@ def reported() -> dict:
 
 
 def main() -> int:
-    """Score every pre-registered gate and write the A/B record."""
+    """Score every pre-registered gate and write the A/B record.
+
+    ``--keeper/--arm-a/--arm-b/--out`` let the same scorer run on either arm
+    pair. The defaults are the ORIGINAL nyiso-118-based pair, kept only as the
+    record of the superseded comparison; the pair that decides the keeper is the
+    nyiso-119-based one, because the NYISO keeper advanced mid-session and a
+    nyiso-118-based treatment would silently disarm
+    ``nyiso_seny_rcpf_increment_step``.
+    """
+    global KEEPER, ARM_A, ARM_B, OUT_PATH
+    ap = argparse.ArgumentParser(description="nyiso-120 A/B scorer")
+    ap.add_argument("--keeper", default=str(KEEPER))
+    ap.add_argument("--arm-a", default=str(ARM_A))
+    ap.add_argument("--arm-b", default=str(ARM_B))
+    ap.add_argument("--out", default=str(OUT_PATH))
+    ns = ap.parse_args()
+    KEEPER, ARM_A, ARM_B = Path(ns.keeper), Path(ns.arm_a), Path(ns.arm_b)
+    OUT_PATH = Path(ns.out)
     result = {
         "session": "nyiso-120",
         "lever": "hybrid-cogen dark-fuel scope gate (miso-122) applied to NYISO's "
