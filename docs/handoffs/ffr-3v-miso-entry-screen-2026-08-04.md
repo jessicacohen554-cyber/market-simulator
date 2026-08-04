@@ -302,7 +302,75 @@ why their rows are identical; every thermal row in the 2023 column is affected.
 Flagged, not pursued — it does not touch this lane's finding, and any fix is
 entangled with the quarantine the bridge exists to enforce.
 
-### 3.3 CORRECTION to §4.6 — the capacity payment is zero for thermal too
+### 2025 — the year everything changes, and it reverses §3.3
+
+| tech | profitable | margin $/MW-yr | energy/AS | **capacity** | annual cost | build MW | `binding_cap` |
+|---|---|---|---|---|---|---|---|
+| **gas_ct** | **Y** | **+182,447** | 2,750 | **307,808** | 128,112 | **1,484** | `growth_ladder` |
+| **gas_cc** | **Y** | **+175,844** | 11,705 | **311,083** | 146,944 | **3,000** | `per_tech_cap` |
+| wind | Y | +18,687 | 75,571 | 0 | 56,883 | 0 | `per_tech_cap_zero` |
+| **solar** | **N** | **−33,406** | 51,396 | **0** | 84,802 | **0** | **`unprofitable`** |
+| nuclear_smr | N | −612,235 | 203,865 | 0 | 816,101 | 0 | `unprofitable` |
+
+`entry_decided_mw_by_tech = {"gas_cc": 3000.0, "gas_ct": 1483.8}`. The gas_ct
+figure is 2 × its measured 0.742 GW EIA-860 seed **to the megawatt** — the
+growth ladder, firing exactly as §5 describes.
+
+**The capacity payment switches on here, and it is enormous.** MISO's modelled
+reserve margin walks down across the window — **27.3 % (2021) → 20.7 % (2023) →
+11.4 % (2024) → 17.3 % (2025)** — crossing below the 13.75 % planning
+requirement in 2024. By the 2025 decision year the sloped VRR pays
+**$311,083/MW-yr** to a new gas CC, implying a firm-capacity price of
+**$327,456/MW-yr**.
+
+**Solar is denied every dollar of it.** At that firm price, even the stingy
+generic **0.18** fallback credit is worth **$58,942/MW-yr** — which turns
+solar's −$33,406 margin into **+$25,536**. At MISO's own published
+accreditation (§4.6b) it is not close:
+
+| solar credit | RA $/MW-yr | 2025 margin |
+|---|---|---|
+| **none (shipped, gate OFF)** | 0 | **−33,406** |
+| generic fallback 0.18 | 58,942 | **+25,536** |
+| MISO published, season-weighted 0.3875 | 126,889 | +93,483 |
+| MISO published, summer 0.50 | 163,728 | +130,322 |
+
+### 3.3 CORRECTION — and then a REVERSAL of that correction
+
+This claim moved twice as evidence arrived, and both moves are recorded rather
+than smoothed over.
+
+**First (from the 2022 ledger alone):** §4.6 had said the thermal branch takes
+its capacity payment ungated while VRE is denied, quoting $75.8–117.3 k/MW-yr.
+Measured in 2022, `capacity_revenue_per_mw_yr` was `0.0` on the **gas rows
+too** — MISO clears 27.3 % long and its VRR pays nothing above a ~1.02 reserve
+position. I concluded that arming `entry_vre_capacity_revenue` "would change
+nothing in this leg."
+
+**That conclusion was drawn from one year and is wrong for the window.** It
+holds for the 2022, 2023 and 2024 decision years — all three carry a $0 capacity
+payment for every technology — and fails completely in 2025, where the payment
+is $307–311 k/MW-yr and **is the entire reason gas CC and CT flip profitable and
+build 4.48 GW.** The asymmetry §4.6 described is therefore real, operative, and
+in the one year it operates it is worth **more than solar's whole annualized
+fixed cost**.
+
+**Net position after the full run:**
+
+* Solar is `unprofitable` in **all four** decision years — that finding is
+  unchanged and is the answer to the charter question.
+* *Why* it is unprofitable changes across the window. In **2022–2024** MISO's
+  capacity is genuinely worth ~nothing (faithful: the real PY2021-22 PRA cleared
+  at ≈$1,825/MW-yr), so a merchant-energy-only screen is roughly right there and
+  the residual is the missing procurement channel (§7 proposal 1). In **2025**
+  capacity is worth $327 k per firm MW and solar is denied its share **by a
+  default-off gate** — a large, identified, code-exists omission.
+* So **proposal 1a is restored to a first-order lever**, with its scope now
+  measured rather than assumed: it does nothing while an ISO is long and becomes
+  decisive the moment the reserve position tightens toward 1.0.
+* It would **not** have fixed *this leg's* FC-3 band: a 2025 decision commissions
+  at COD 2027, outside the 2021–2025 window. It matters for the forecast lane,
+  not for this scorecard.
 
 §4.6 said the thermal branch takes its capacity payment ungated while VRE is
 denied, and quoted $75,810–117,325/MW-yr for a new MISO gas unit. **The code
