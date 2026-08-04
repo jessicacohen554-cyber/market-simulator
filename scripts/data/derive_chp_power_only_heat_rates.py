@@ -242,14 +242,16 @@ _CC_PREFIX = "combined cycle"
 _CT_PREFIX = "combustion turbine"
 
 
-def target_plants(iso: str) -> dict[tuple[int, str], float]:
+def target_plants(iso: str, cc_steam_part_capacity: bool = False) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, class): capacity MW}`` for the ISO's topping CHP.
 
     Keyed by the PAIR because one plant can host more than one CHP class, and
     the loader applies the rate per (plant, class) so a mixed facility's
     out-of-scope rows are never repriced.
     """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    fleet = load_fleet_from_csv(
+        iso, get_iso_config(iso), cc_steam_part_capacity=cc_steam_part_capacity
+    )
     caps: dict[tuple[int, str], float] = {}
     for gen in fleet:
         if gen.plant_group not in TARGET_CLASSES:
@@ -261,14 +263,18 @@ def target_plants(iso: str) -> dict[tuple[int, str], float]:
     return caps
 
 
-def model_heat_rates(iso: str) -> dict[tuple[int, str], float]:
+def model_heat_rates(
+    iso: str, cc_steam_part_capacity: bool = False
+) -> dict[tuple[int, str], float]:
     """Return the CURRENT capacity-weighted model heat rate per (plant, class).
 
     The value the LP prices with today, read through the model's own loader —
     so the artifact records exactly what it replaces, and the basis check below
     compares like with like.
     """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    fleet = load_fleet_from_csv(
+        iso, get_iso_config(iso), cc_steam_part_capacity=cc_steam_part_capacity
+    )
     num: dict[tuple[int, str], float] = {}
     den: dict[tuple[int, str], float] = {}
     for gen in fleet:
@@ -283,7 +289,9 @@ def model_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     return {k: num[k] / den[k] for k in num if den[k] > 0}
 
 
-def basis_heat_rates(iso: str) -> dict[tuple[int, str], float]:
+def basis_heat_rates(
+    iso: str, cc_steam_part_capacity: bool = False
+) -> dict[tuple[int, str], float]:
     """Return the incumbent heat rate AT THE SEAM the measured rate replaces.
 
     Identical to :func:`model_heat_rates` except that the legacy hand-factor
@@ -307,7 +315,10 @@ def basis_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     changes nothing.
     """
     fleet = load_fleet_from_csv(
-        iso, get_iso_config(iso), apply_chp_steam_credit_correction=False
+        iso,
+        get_iso_config(iso),
+        apply_chp_steam_credit_correction=False,
+        cc_steam_part_capacity=cc_steam_part_capacity,
     )
     num: dict[tuple[int, str], float] = {}
     den: dict[tuple[int, str], float] = {}
@@ -615,11 +626,24 @@ def main(argv: list[str] | None = None) -> int:
             "same read. Output is a diagnostic, NOT the committed artifact."
         ),
     )
+    parser.add_argument(
+        "--cc-steam-part-capacity",
+        action="store_true",
+        help=(
+            "Read the fleet with ScenarioConfig.cc_steam_part_capacity ARMED "
+            "(miso-126), so the restored combined-cycle STEAM parts are counted "
+            "in class_capacity_mw. Rule 23 [R-FROZEN-DERIVE]: this re-derives "
+            "on a FLEET/denominator change measured from EIA-860, never on a "
+            "residual. It moves capacity ONLY -- the rate is (PLHTIAN + "
+            "CHPCHTI) * (1 - dark_share) / PLNGENAN, all eGRID/CEMS plant-grain "
+            "quantities that no fleet change can touch."
+        ),
+    )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     args = parser.parse_args(argv)
     iso = args.iso.upper()
 
-    caps = target_plants(iso)
+    caps = target_plants(iso, args.cc_steam_part_capacity)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no topping-cycle CHP plants")
     codes = {code for code, _ in caps}
@@ -641,8 +665,8 @@ def main(argv: list[str] | None = None) -> int:
         iso,
         args.vintage,
         caps,
-        model_heat_rates(iso),
-        basis_heat_rates(iso),
+        model_heat_rates(iso, args.cc_steam_part_capacity),
+        basis_heat_rates(iso, args.cc_steam_part_capacity),
         egrid_chp_split(args.vintage),
         cems,
         dark,

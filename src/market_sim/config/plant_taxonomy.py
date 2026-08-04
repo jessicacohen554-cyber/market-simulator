@@ -166,6 +166,30 @@ def coal_code_to_class(code: str) -> str | None:
 NG_CC_PRIME_MOVERS: frozenset[str] = frozenset({"CA", "CS", "CT", "CC"})
 NG_CT_PRIME_MOVERS: frozenset[str] = frozenset({"GT", "IC"})
 
+# EIA prime-mover code for the STEAM part of a combined-cycle block — the
+# heat-recovery steam generator and its turbine, driven by the exhaust of the
+# block's combustion turbines (which report ``CT``). See
+# :data:`CC_STEAM_PART_REPAIR_ISOS` and ``classify_plant``'s ``cc_steam_part``
+# argument for why this code needs its own handling: EIA-860's
+# ``Energy Source 1`` on a ``CA`` row names the block's SUPPLEMENTARY / duct
+# fuel, not its primary energy input, so a duct-fired steam part reports an
+# exotic fuel code (blast-furnace gas ``BFG``, other gas ``OG``, distillate
+# ``DFO``) and falls to the residual ``OTHER`` bucket even though it is half of
+# an ordinary gas-fired combined cycle.
+CC_STEAM_PART_PRIME_MOVER: str = "CA"
+
+# ISOs whose fleet build repairs the dropped ``CA`` combined-cycle steam parts
+# (``ScenarioConfig.cc_steam_part_capacity``). Rule 25 ``[R-ISO-SCOPE]``: an
+# ISO enters this set only after its OWN session verifies, on its OWN market's
+# data, that the capacity is measurably absent from its fleet and that the
+# plant's joined heat rate is already a BLOCK rate — a verdict in one ISO never
+# fills another ISO's cell. MISO's verification is
+# ``results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md``
+# (55088 Dearborn ``ST1``, 250.0 MW). Named but NOT entered: CAISO 54912
+# Martinez ``STG1`` 20.0 MW and NEISO 6081 Stony Brook ``CA1`` 96.0 MW, each
+# handed to its own lane unstamped.
+CC_STEAM_PART_REPAIR_ISOS: frozenset[str] = frozenset({"MISO"})
+
 # EIA energy-source codes for the non-coal/non-gas thermal classes — the single
 # source of truth shared by the model fleet builder (``data.fleet``) and the
 # EIA-923 benchmark, so the model and benchmark bucket a plant identically.
@@ -188,6 +212,7 @@ def classify_plant(
     chp_flag: bool,
     plant_id: int,
     coal_class_resolver=None,
+    cc_steam_part: bool = False,
 ) -> str:
     """Return the model plant class for one generator / EIA-923 Page-1 row.
 
@@ -216,10 +241,30 @@ def classify_plant(
         coal_class_resolver: Optional ``(plant_id, fuel_code) -> class`` callable
             that returns a plant's coal supply class; when it returns a falsy
             value the fuel-code map is used.
+        cc_steam_part: When True this row is the STEAM part of a gas-fired
+            combined-cycle block (prime mover :data:`CC_STEAM_PART_PRIME_MOVER`,
+            sharing an EIA-860 ``Unit Code`` with ``NG`` ``CT`` siblings it is
+            not older than), so it is classed with the gas combined-cycle
+            classes regardless of its own energy-source code. EIA-860's
+            ``Energy Source 1`` on such a row is the block's supplementary /
+            duct fuel — ``BFG``, ``OG``, ``DFO`` — not the primary energy input,
+            which arrives as turbine exhaust; without this the row falls to the
+            residual ``OTHER`` bucket and its capacity is dropped. The caller
+            resolves the predicate (it needs the plant's whole generator roster,
+            which this function does not see) and gates it on
+            :data:`CC_STEAM_PART_REPAIR_ISOS`. Default False, so every existing
+            call site is byte-identical.
     """
     fuel = str(fuel).strip().upper()
     pm = str(prime_mover).strip().upper()
     chp = bool(chp_flag)
+    if cc_steam_part and pm == CC_STEAM_PART_PRIME_MOVER:
+        # The block's primary fuel is gas, burned in its CT siblings; this row's
+        # own energy-source code describes duct firing only. Class it as the
+        # combined cycle it is half of. An ``NG``-coded CA row never reaches
+        # here differently — it already falls through to the NG branch below
+        # and lands on the same class — so this is a strict widening.
+        return "CC_CHP" if chp else "CC_REGULAR"
     if fuel in COAL_CODE_TO_SUPPLY:
         if coal_class_resolver is not None:
             resolved = coal_class_resolver(int(plant_id), fuel)

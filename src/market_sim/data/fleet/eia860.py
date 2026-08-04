@@ -37,6 +37,8 @@ from market_sim.config.paths import (
 )
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
+    CC_STEAM_PART_PRIME_MOVER,
+    CC_STEAM_PART_REPAIR_ISOS,
     OIL_ENERGY_SOURCES,
     classify_plant,
 )
@@ -840,6 +842,7 @@ def _rows_to_generators(
     iso_config: ISOConfig | None,
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
+    cc_steam_part_capacity: bool = False,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -861,6 +864,16 @@ def _rows_to_generators(
     swaps the eGRID plant-average annual heat rate for the CAMPD-measured
     LOADED rate on CT_PEAKER rows the artifact covers — see the row loop below
     and :func:`market_sim.data.fleet.campd_bins.measured_ct_heat_rates`.
+
+    ``cc_steam_part_capacity`` (``ScenarioConfig.cc_steam_part_capacity``)
+    restores the combined-cycle STEAM parts the fuel-type map drops. EIA-860's
+    ``Energy Source 1`` on a ``CA`` row is the block's supplementary / duct
+    fuel, so a duct-fired steam part reports ``BFG`` / ``OG`` / ``DFO``,
+    :func:`_map_fuel_type` returns ``None`` and the row never reaches the LP —
+    even though its primary energy input is its own block's turbine exhaust.
+    Gated on :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS`
+    (rule 25 ``[R-ISO-SCOPE]``) and resolved by
+    :func:`cc_steam_part_generators`. Default off and byte-identical off.
     """
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
@@ -882,19 +895,54 @@ def _rows_to_generators(
         _pkg_ns().measured_ct_heat_rates(iso) if measured_ct_heat_rates else {}
     )
 
+    # Combined-cycle steam parts to restore (config.cc_steam_part_capacity).
+    # Resolved once here, ISO-gated, and empty in every ISO that has not
+    # verified the repair on its own data — so the flag is a strict no-op
+    # outside CC_STEAM_PART_REPAIR_ISOS as well as when it is off.
+    steam_parts: frozenset[tuple[int, str]] = (
+        cc_steam_part_generators()
+        if cc_steam_part_capacity and iso.upper() in CC_STEAM_PART_REPAIR_ISOS
+        else frozenset()
+    )
+
     records: list[dict] = []
     # Per-plant EIA-860 nameplate sum over merchant-CC generators, for the
     # summer-capacity consistency guard applied after the row loop.
     cc_nameplate_sum: dict[int, float] = {}
     for row in df.itertuples(index=False):
         data = row._asdict()
+        # Is this row a combined-cycle steam part the fuel map would drop? The
+        # key is (plant, generator) because a plant can host both a genuine
+        # steam part and an unrelated process-gas machine.
+        is_steam_part = (
+            bool(steam_parts)
+            and (
+                int(_to_float(data.get("plant_id")) or 0),
+                str(data.get("generator_id") or "").strip(),
+            )
+            in steam_parts
+        )
         fuel_type = _map_fuel_type(
             data.get("technology"),
             data.get("energy_source"),
             data.get("prime_mover"),
         )
+        # The repair only ever RESTORES a row the fuel map drops; it never
+        # reclassifies one that already resolves. MISO 1004 Edwardsport matches
+        # the steam-part predicate (its `ST` row is CA / SGC sharing unit code
+        # "1" with two NG CT siblings) but its technology string carries "coal",
+        # so `_map_fuel_type` resolves it to coal and it is ALREADY in the fleet
+        # as COAL 555.0 MW. Gating on `fuel_type is None` keeps it there: a
+        # represented machine must not be re-bucketed by a capacity repair
+        # (miso-125 §6 — the 555 MW false positive the presence test caught).
+        rescued_steam_part = False
         if fuel_type is None:
-            continue
+            if not is_steam_part:
+                continue
+            # The block's primary energy input is its CT siblings' exhaust, so
+            # the steam part is gas combined cycle whatever its duct fuel says.
+            fuel_type = "gas_cc"
+            rescued_steam_part = True
 
         pmax = _to_float(data.get("net_summer_capacity_mw"))
         if pmax is None or pmax <= 0.0:
@@ -952,6 +1000,7 @@ def _rows_to_generators(
                 data.get("prime_mover"),
                 chp_flag,
                 plant_code,
+                cc_steam_part=rescued_steam_part,
             )
             if group not in _EIA860_GAS_GROUPS:
                 # Non-NG gas code (e.g. blast-furnace / other gas) the canonical
@@ -1041,6 +1090,119 @@ def dual_fuel_plant_groups(
 
 
 @lru_cache(maxsize=4)
+def _cc_steam_part_generators(eia860_dir: Path) -> frozenset[tuple[int, str]]:
+    """Cached ``(plant_code, generator_id)`` keys of dropped CC steam parts.
+
+    ``ScenarioConfig.cc_steam_part_capacity``. Reads the raw EIA-860 operable
+    generator sheet — the same bridge :func:`_chp_by_plant` uses for the CHP
+    flag, and for the same reason: the processed generator parquet the fleet
+    loads does **not** carry ``Unit Code``, and the predicate needs a plant's
+    whole generator roster.
+
+    A row is the steam part of a gas-fired combined-cycle block iff ALL of:
+
+    * prime mover is :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_PRIME_MOVER`
+      (``CA``, EIA's code for the combined-cycle steam part);
+    * its own ``Energy Source 1`` is not ``NG`` — an ``NG``-coded ``CA`` row
+      already classes correctly and needs no repair;
+    * its ``Unit Code`` is non-empty, and at least one sibling at the SAME plant
+      carries the SAME ``Unit Code`` with prime mover ``CT`` and
+      ``Energy Source 1`` ``NG``. The shared unit code is EIA-860's own
+      machine-level statement that the rows are one block, and it is what
+      separates a genuine steam part from a landfill-gas or oil standalone;
+    * the steam part is **not older** than the oldest of those ``NG`` ``CT``
+      siblings. A heat-recovery steam generator is commissioned with or after
+      the gas turbines whose exhaust drives it, so a "steam part" predating
+      every turbine that supposedly drives it is a plant-wide steam header
+      sharing a unit-code label, not a combined cycle (measured at MISO 50973
+      Motiva: ``CA`` rows of 1957/1962/1978 against ``NG`` ``CT`` siblings of
+      1983 and 2011). KNOWN CONSERVATIVE LIMITATION: a *repowered* block — an
+      existing steam turbine fitted with new gas turbines and an HRSG — also
+      has an older ``CA`` row and is excluded here. That direction is safe: the
+      model drops 100 % of these rows today, so this clause can only ever
+      restore fewer of them, never more.
+
+    Returns an empty set when the sheet is absent, so a fleet without the raw
+    EIA-860 extract is unchanged.
+    """
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return frozenset()
+    cols = [
+        "Plant Code",
+        "Generator ID",
+        "Prime Mover",
+        "Energy Source 1",
+        "Unit Code",
+        "Operating Year",
+    ]
+    try:
+        raw = pd.read_parquet(path, columns=cols)
+    except Exception:
+        logger.warning(
+            "EIA-860 operable sheet at %s is unreadable — no CC steam parts resolved",
+            path,
+        )
+        return frozenset()
+
+    raw = raw.copy()
+    raw.columns = [str(c).strip() for c in raw.columns]
+    pm = raw["Prime Mover"].astype(str).str.strip().str.upper()
+    es = raw["Energy Source 1"].astype(str).str.strip().str.upper()
+    uc = raw["Unit Code"].astype(str).str.strip()
+    # "nan" is what a null Unit Code stringifies to; a standalone machine
+    # carries no block and can never be a steam part.
+    has_uc = (uc != "") & (uc.str.lower() != "nan")
+    year = pd.to_numeric(raw["Operating Year"], errors="coerce")
+
+    # Oldest NG CT sibling per (plant, unit code) — the block's first turbine.
+    sib = raw[(pm == "CT") & (es == "NG") & has_uc]
+    if sib.empty:
+        return frozenset()
+    sib_year = (
+        pd.to_numeric(sib["Operating Year"], errors="coerce")
+        .groupby([sib["Plant Code"], uc.loc[sib.index]])
+        .min()
+    )
+
+    cand = raw[(pm == CC_STEAM_PART_PRIME_MOVER) & (es != "NG") & has_uc]
+    out: set[tuple[int, str]] = set()
+    for idx, row in cand.iterrows():
+        key = (row["Plant Code"], uc.at[idx])
+        first_turbine = sib_year.get(key)
+        if first_turbine is None or pd.isna(first_turbine):
+            continue  # no NG CT sibling in this block
+        ca_year = year.at[idx]
+        if pd.isna(ca_year) or float(ca_year) < float(first_turbine):
+            continue  # predates its own turbines — a steam header, not a block
+        try:
+            plant_code = int(row["Plant Code"])
+        except (TypeError, ValueError):
+            continue
+        out.add((plant_code, str(row["Generator ID"]).strip()))
+    logger.info(
+        "EIA-860: %d combined-cycle steam part(s) resolved for the "
+        "cc_steam_part_capacity repair",
+        len(out),
+    )
+    return frozenset(out)
+
+
+def cc_steam_part_generators(
+    eia860_dir: Path | None = None,
+) -> frozenset[tuple[int, str]]:
+    """Return ``(plant_code, generator_id)`` keys of dropped CC steam parts.
+
+    Resolves the EIA-860 directory through :func:`paths.active_eia860_dir` when
+    not given (so a year-matched vintage switch is honored) and defers to the
+    directory-keyed cache above.
+    """
+    return _cc_steam_part_generators(
+        Path(eia860_dir) if eia860_dir is not None else active_eia860_dir()
+    )
+
+
+@lru_cache(maxsize=4)
 def _dual_fuel_plant_groups(
     eia860_dir: Path,
 ) -> frozenset[tuple[int, str]]:
@@ -1119,6 +1281,7 @@ def _load_fleet_from_parquet(
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
+    cc_steam_part_capacity: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -1150,6 +1313,7 @@ def _load_fleet_from_parquet(
         iso_config,
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
+        cc_steam_part_capacity=cc_steam_part_capacity,
     )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
@@ -1228,6 +1392,7 @@ def _load_fleet_from_clean(
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
+    cc_steam_part_capacity: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -1255,6 +1420,7 @@ def _load_fleet_from_clean(
         iso_config,
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
+        cc_steam_part_capacity=cc_steam_part_capacity,
     )
     if not generators:
         logger.warning(
@@ -1371,6 +1537,7 @@ def load_fleet_from_csv(
     measured_ct_heat_rates: bool = False,
     measured_chp_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
+    cc_steam_part_capacity: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1424,6 +1591,13 @@ def load_fleet_from_csv(
             ("is the incumbent this eGRID row, or a repair/bin fallback?")
             is otherwise blinded in the two hand-factor ISOs, where every
             corrected plant reads as a mismatch (caiso-147).
+        cc_steam_part_capacity: When True (``ScenarioConfig.
+            cc_steam_part_capacity``), the combined-cycle STEAM parts
+            :func:`_map_fuel_type` drops — ``CA``-prime-mover rows whose own
+            ``Energy Source 1`` is the block's duct fuel rather than ``NG`` —
+            are restored to the fleet as gas combined cycle. ISO-gated on
+            :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS`
+            (rule 25 ``[R-ISO-SCOPE]``). Default off and byte-identical off.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1454,6 +1628,7 @@ def load_fleet_from_csv(
             iso_config,
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
+            cc_steam_part_capacity=cc_steam_part_capacity,
         )
         source = csv_path
         logger.info(
@@ -1473,6 +1648,7 @@ def load_fleet_from_csv(
             year,
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
+            cc_steam_part_capacity=cc_steam_part_capacity,
         )
         if from_clean is None:
             raise FileNotFoundError(
@@ -1490,6 +1666,7 @@ def load_fleet_from_csv(
             year,
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
+            cc_steam_part_capacity=cc_steam_part_capacity,
         )
         if from_parquet is None:
             raise FileNotFoundError(
