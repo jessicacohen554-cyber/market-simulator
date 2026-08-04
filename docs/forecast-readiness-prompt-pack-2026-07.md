@@ -1606,3 +1606,134 @@ Shell cwd persists between Bash calls.
 Deliverable: docs/handoffs/ffr-3k-fc7-hindcast-<date>.md. Small lane; do not expand it.
 Rule 28: stamp any mechanism-matrix cell you touch in THIS session.
 ```
+
+---
+
+## §0g — FFR-3Q-2 STRUCK; FFR-3U dispatched (2026-08-04 @ `8b920ed6`)
+
+Read after §0f, which it corrects. Decision record: sitting **Addendum L**.
+
+### ~~FFR-3Q-2~~ — **RETRACTED. DO NOT RUN THE §0f BLOCK.**
+
+It instructs the base-2021 T1-FF window, which **solves 2022** — a validation-tier holdout year
+under an active freeze (Addendum L.1; `4724fa83`). The retraction reason is a manager error
+recorded at L.3: §0f's prompt asserted FFR-3Q Task 0's "VERIFIED by execution" and told the
+session **not to re-derive it**, when that determination had certified `_validate_window` (the
+guard) and not `runner.is_bridge` (what actually decides which years are solved). The
+pre-registration in FFR-3Q §2.1 survives and is reused verbatim **after FFR-3U lands**.
+
+### Unchanged and runnable now: **FFR-3K** (§0f, FABLE) · **FFR-3S** (§0f, OPUS) · **FFR-3T** (§0f, OPUS)
+
+FFR-3T's §0f hold is **RELEASED** — it existed only because FFR-3Q-2 was to be solving on the
+old cache key. With 3Q-2 struck, no forecast solve lane is in flight; landing D-10 now means
+FFR-3U's eventual re-probe runs on the settled posture. Its prompt's SEQUENCING section still
+applies as an in-flight check; there is simply nothing to wait for.
+
+### FFR-3U [OPUS] — fix the bridge/un-bridge seam, and discharge D-11's conditions
+
+```
+[OPUS] FFR-3U — Fix the harness seam that let a base-2021 T1-FF window SOLVE a validation-tier
+holdout year, and discharge the three conditions owner decision D-11 attached to the no-spend
+determination. This lane BLOCKS G.5(a)'s gate re-cut and therefore FH-4/FH-5.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 8b920ed6 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO moved 7x in 4 days):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-03-pjm-151-seam-envelope ·
+CAISO 2026-08-04-caiso164-zonal-loss-surface · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: calibration-complete.json `complete` = {NEISO, NYISO, PJM} — ERCOT IS NOT IN IT;
+`final` = EMPTY. HOLDOUT FREEZE ACTIVE (holdout-freeze.json) and it outranks both blocks.
+Cache epochs 2026-08-02 (all forecast) + 2026-08-03b (NYISO-forecast-scoped).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is not one), THEN scripts/regenerate_clean.py (~63-65 min) ONLY if you
+need a smoke leg. Rule 12 is PER PROMPT (Addendum F.2). Rule 27: src/market_sim/ and
+scripts/run_* are Opus/Fable only, and never a full-file rewrite from response content.
+
+=== READ FIRST ===
+docs/handoffs/ffr-3q-window-recut-2026-08-04.md §2.2, §2.2.1 (root cause), §2.2.4 (successor
+items), and sitting Addendum L (docs/handoffs/ffr-owner-sitting-2026-08-02.md). Do not
+re-derive the diagnosis; it is measured and correct. YOUR JOB IS THE FIX, THE TEST, THE PURGE
+AND THE AUDIT — not the re-probe, which is a later lane on your output.
+
+=== THE DEFECT (measured, do not re-litigate) ===
+Two predicates disagree about what a "forward year" is.
+  runner.py:  is_bridge = (config.hindcast and year in HINDCAST_BRIDGE_YEARS
+                           and not config.is_crossover_forward_year(year))
+T1-FF sets crossover_forward_year = base_year. At base 2021 EVERY year >= 2021 is a "crossover
+forward year", so 2022 is un-bridged and SOLVED — and 2026, a LOCKED-TEST year, would be too if
+a window reached it. Meanwhile _validate_window computes its solve-year set from the --crossover
+flag (False for T1-FF), so it dropped 2022 as a bridge and NEVER POLICY-CHECKED IT: the
+fail-closed check never saw the year because the guard deleted it first. The un-bridging clause
+is CORRECT for a genuine T1-X crossover (forward years 2026/2027, forecast mode, no measured
+actuals) — do not delete it, scope it.
+
+=== SCOPE ===
+1. FIX THE SEAM. Scope the un-bridging clause to genuine crossover forward years
+   (crossover=True AND year >= 2026), not to any year above crossover_forward_year. Close BOTH
+   exposures — 2022 and 2026.
+2. ONE DEFINITION, NOT TWO. _validate_window must policy-check every year the runner will
+   ACTUALLY solve, sharing a single predicate with the runner rather than computing its own set
+   from a different flag. This is rule 19 [R-ONE-MECH] applied to the guard itself; two
+   mechanisms deciding one question is what produced the breach.
+3. TESTS THAT WOULD HAVE CAUGHT IT: (a) at base 2021, assert is_bridge(2022) is True and that
+   realized solved_years EXCLUDES 2022; (b) the class-level test — a PARITY assertion between
+   _validate_window's solve set and the runner's realized solved_years, which catches this whole
+   family rather than this instance; (c) the 2026 analogue.
+4. THE BANNER MUST NOT BE ABLE TO LIE. The harness printed "bridges [2022, 2026] are never
+   solved or read" and then broke it — a false assurance from the same script is the most
+   dangerous property here. Either derive the banner from the same predicate the runner uses, or
+   assert at completion that realized solved_years matches what the banner promised and FAIL
+   LOUDLY if not. A governance banner that is not mechanically tied to behaviour is decoration.
+5. DISCHARGE D-11's THREE CONDITIONS (owner, Addendum L.2 — the no-spend determination is
+   CONDITIONAL on these, and reverts to "ERCOT 2022 is SPENT" if any cannot be met):
+   a. DELETE the two quarantined FFR-3Q bundles, not merely flag them.
+   b. INVALIDATE cache keys b99600bceb8cb6b8 (arm A) and 5c352508039513da (arm B). Without
+      this a later run with the same config silently CACHE-HITS the contaminated 2022 solve and
+      inherits the breach with no banner at all. THIS IS THE CONDITION THAT PROTECTS THE TIER —
+      if you can do only one thing in this lane, do this one, and say how you verified it.
+   c. DISCLOSE the incident on the peer-review §4 standing disclosure list
+      (docs/forecast-readiness-peer-review-2026-07.md), not buried in a lane doc.
+   Report explicitly, per condition, whether it is discharged. If one cannot be, SAY SO — the
+   determination flips, and that is the owner's to absorb, not yours to paper over.
+6. AUDIT THE EXPOSURE. FFR-3Q §2.2.4 item 4 flags this as reasoned-not-audited: no prior T1-FF
+   window contains a bridge year (all were base 2023 / 2023-2025), so exposure LOOKS nil — but
+   that is reasoning from a window list. CONFIRM it against the committed sidecars: check every
+   registered leg's solved_years for a bridge year. State it as an audit result, not an
+   expectation. If ANY committed artifact solved 2022 or 2026, that is a second STOP-THE-LINE
+   and you report it rather than fixing it.
+
+=== WHAT YOU DO NOT DO ===
+Do NOT re-run the FH-1 §3.3 gate. Do NOT solve any T1-FF window. Do NOT lift FH-4/FH-5 — that
+is a MANAGER box (Addendum I.1) and reporting green does not open it. Do NOT touch
+holdout_policy.py's tier sets, markers, or holdout-freeze.json. Do NOT widen a window to make
+anything legal. Your fix must make the ILLEGAL WINDOW FAIL CLOSED, never make the illegal solve
+permitted. If your change causes a previously-passing legal window to fail, that is a finding to
+report, not a threshold to relax.
+
+=== VERIFY SOLVE-INERTNESS ON THE LEGAL PATH ===
+Report cache_key(ScenarioConfig()) and the six per-ISO 2023 backcast keys before and after. A
+guard fix must not move a key or a keeper; if one moves, STOP-THE-LINE and report. Also confirm
+the legal postures still validate: _validate_window(2023, 2025, crossover=False,
+forward_from_base=True) and the plain T1-H window (2021-2025, 2022 bridged) must both still pass,
+and the T1-H realized solved_years must remain [2021, 2023, 2024, 2025].
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase, measured 647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never fall back to push_files
+for a >=300-line file — it takes content as a string, the exact full-file rewrite rule 27
+forbids; edit locally, `git push`, then VERIFY THE PUSHED BLOB (line count + hash vs local).
+THE DOCUMENTED CACHE-PURGE COMMAND DELETES TRACKED FILES — it removed 410 committed evidence
+artifacts once, and you are running a purge on purpose, so this trap is aimed straight at you:
+`git status --short` immediately after, and `git checkout --` anything tracked that vanished.
+`git checkout origin/main -- <path>` STAGES those files; `git restore --staged` after. Shell cwd
+persists between Bash calls.
+
+=== DELIVERABLE ===
+docs/handoffs/ffr-3u-bridge-seam-<date>.md: the fix and why it is scoped rather than deleted;
+the parity test and what class it closes; the banner remedy; a per-condition discharge statement
+for D-11 a/b/c with HOW each was verified; the exposure audit as a result; and the before/after
+key measurements. Rule 28: stamp any mechanism-matrix cell you touch in THIS session. State
+plainly that the gate re-cut is a LATER lane and that FH-4/FH-5 remains a manager box.
+```
