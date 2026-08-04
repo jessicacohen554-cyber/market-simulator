@@ -2915,4 +2915,79 @@ re-assertion); the re-verified determination is **not worse** — it is identica
 `scripts/audit_keepers.py --iso PJM` passes (check M1), matrix keeper stamp and
 §5.3 prose header re-stamped.
 
-Next shorthand: pjm-154.
+Next shorthand: pjm-154. *(**SUPERSEDED** — the `pjm-154` label was spent by the
+merged `claude/pjm-154-cross-iso-queue-5e2frp` dispatch, which logged as
+`miso-127`. The live next shorthand is at the foot of pjm-155 below.)*
+
+## pjm-155 — the lane is PARKED PENDING OWNER (no LP, no solve, no cell moved)
+
+**SHORTHAND.** Numbered **pjm-155**; the `pjm-154` line above is **stale**. That
+label was consumed by the merged `claude/pjm-154-cross-iso-queue-5e2frp` dispatch
+(PRs #3516/#3520), which hit this same missing-owner-answer condition, routed its
+Lane B to MISO and logged there as **miso-127** — so nothing was written back
+here. Same spent-label pattern pjm-153 handled; nyiso-121 precedent.
+
+**Keeper UNCHANGED** at `2026-08-04-pjm-152-collapse` (**CALIBRATED**). **No LP
+built, no solve launched, no bundle created, no run registered, no mechanism
+armed, no cell verdict moved, no year touched outside 2023–2025.** Ran as **Lane
+B** of the `pjm-155-owner-decision` dispatch: Lane A1 (`state_carbon_pricing`) and
+Lane A2 (G-20b memo sign-off) are both owner-gated and **the dispatch carried no
+owner answer**, so no lever was picked up and none was invented.
+
+**Re-verified from committed artifacts alone** (no solve): `calibration_verdict.py
+--run-id` returns **CALIBRATED, 9/9, zero FAILs, zero CAVEATs**, C1 `all 16/16 ·
+free 12/12`. The four C8 grounded-above-budget rows (`CT_PEAKER` 16.2/16.4/16.7 %,
+`ST_GAS` 2025 39.9 %) are **clean PASSes** under rule 21's grounded-pass clause —
+D-4 clear, profile r 0.927/0.962/0.974/0.896 — not caveats.
+`scripts/audit_keepers.py --iso PJM` **PASSes 0 failures / 0 warnings** (keeper,
+holdout, marker and status shards all clean; M1 re-key check clean). Lever queue
+confirmed **EMPTY**; frontier **DECLARED 2026-07-31**, unchanged.
+
+**Holdout.** `final` contains only `_note` — **EMPTY for every ISO** — and the
+spend freeze is **ACTIVE** (declared 2026-07-25, HELD 2026-07-26), verified
+enforced at `run_calibration_full.py:7578-7587` where it is read **BEFORE** the
+marker and **fails closed**. So 2022, 2019 and H1-2026 are ALL closed to PJM and
+the `complete` marker grants nothing spendable today. Nothing was spent.
+
+**Decision 1 — `state_carbon_pricing`, cell `O`, PENDING OWNER, unchanged.**
+Verified at head: PJM's cell is `O` in `cells: ".KOUKK"`, and
+`pjm_rggi_allowance_pricing: bool = False` at `scenarios.py:1207`. Built, solved,
+registered A/B; **zero fitted parameters**; all five pre-registered gates PASS;
+DOF 18→19 with `n_residual` unchanged at 6; D-2 clears **all three** `CT_PEAKER`
+forced-share FAILs. Blocked solely by the **UNLICENSED** C1 `CC_REGULAR`
+**−16.06/−13.84 TWh** — right in kind, too elastic in magnitude. Arming costs PJM
+its zero-caveat CALIBRATED status; leaving it off means no carbon price at all in
+the four PJM states that had one (a disclosed accuracy gap, not a gate failure).
+Named successor if the magnitude is to be fixed first: the **CC→coal substitution
+elasticity** under its **own** charter, identified from PJM's own record (rule 25)
+— **never** a haircut, offset or scalar tuned onto the adder (rules 13/21/24).
+
+**Decision 2 — G-20b within-window tight-hour memo (item 5).** Needs a **yes/no on
+chartering a charter**, not a fix. Guard constants verified **unmoved** (rule 23):
+`MERIT_RCC_PCTL = 0.90`, `MERIT_OOM_FRAC = 0.90` at `outage_detect.py:450,452`.
+**YES** is bound by memo §5 and only §5 — an hour-grain **REPLACEMENT** of the
+window-grain veto (rule 19, never a stack), zero fitted parameters, both guard
+constants FROZEN, scored on **tightest-decile AMPLITUDE** never the annual mean
+(PJM's level passes by cancellation), mandatory C3c report (model tail 3/10/32 h),
+LOYO within 2023–2025, kills K1–K4. **NO** closes item 5 and root cause (6b)'s
+remnant as **owner-refused** — a complete and final answer.
+
+**Known-open, NOT landed here:** the cross-ISO thermal-tranche artifact staleness
+(PJM `ST_GAS` `online_frac` 0/10, CAISO 0/70; regenerating rewrites columns ARMED
+keeper floors read — needs a cross-ISO charter with a CONTROL ARM, and must not be
+landed as a side effect of another lane, miso-127 §7 being the same family); and
+`pjm_reserve_supply_cap`, filed at pjm-153 as a rule 19 enforcement gap whose
+closing guard would make the current keeper's own recorded config raise — an owner
+call.
+
+**Rule duties.** Rule 15 — no run produced, nothing to register, dashboard
+untouched and correct. Rule 16 — no solve, duty does not fire. Rule 22 — no
+out-of-training year solved, scored, read or registered; no promotion, so no
+D-5(b) re-key owed. Rule 23 — nothing re-derived. Rule 25 — no verdict imported
+into PJM, no other ISO's cell written. Rule 27 — no source file ≥300 lines
+touched; documentation only. Rule 28(b) — **no mechanism tested, so no cell
+verdict moves**; the §5.3 parked block is stamped in this same session.
+
+**Evidence:** `results/calibration/FINDING-pjm155-lane-parked-2026-08-04.md`.
+
+Next shorthand: pjm-156.
