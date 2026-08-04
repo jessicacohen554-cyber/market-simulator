@@ -471,3 +471,33 @@ Mirrors FFR-3C §5 / FFR-3F §7.
   rather than by inventing a verdict.
 * **The harness defect was NOT patched by this lane.** Editing a solve-affecting guard to make my
   own window legal is precisely the move rule 22 exists to prevent; it needs its own charter.
+
+---
+
+## Addendum (2026-08-04) — Task 1 has since been SOLVED by FFR-3Q-3
+
+**This document is unchanged above this line.** §2.1's pre-registration was reused **verbatim**,
+as §2.2.4 item 3 said it could be, and §2.2 stands as the permanent stop-the-line record.
+
+The seam fix landed as **FFR-3U** (`docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`), and the
+owner authorized the re-probe on 2026-08-04 (sitting **Addendum O**). The result is reported in
+full at:
+
+> **`docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md`**
+
+Three things from it that a reader of §2.2 will want immediately:
+
+1. **The breach does not recur.** Both arms realized `solved [2021, 2023, 2024, 2025], bridged
+   [2022]` — no `year_2022.parquet`, no 2022 measured data read, no parity failure. The
+   `is_bridge(2022)` check §2.2.2 identifies as the one this lane should have run *was* run
+   before solving, and passed.
+2. **The re-cut achieved its purpose: the retirement layer is OBSERVABLE.** §2.1 read 1's
+   zero-event vacancy branch **does not fire** — Arm A carries 1,205 `pipeline_events`. But
+   `executed = 0`: a 29-unit / 8,218 MW coal cohort decided at loss-year 2021 is reversed by the
+   soft latch at 2024, its own `execute_year`. The decision half is now tested; the exit half is
+   not.
+3. **It is not a gate pass.** Arm A reads I6 PASS / I7 PASS / I12 FAIL and Arm B reproduces the
+   FH-1 §3.3 triple exactly (FAIL/FAIL/WARN) — so the flip *is* the retirement rule's here,
+   unlike FFR-3F. But Arm A's green is bought by retiring **0.000 GW** against **1.534 GW** of
+   actual exits, and I12 inverts to FAIL on all four solved years. **FH-4/FH-5 remains a manager
+   box and was not lifted.**
