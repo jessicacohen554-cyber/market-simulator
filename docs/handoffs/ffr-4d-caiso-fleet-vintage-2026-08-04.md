@@ -283,6 +283,24 @@ Two consequences, both live before this session:
 A CAISO backcast now resolves its base fleet as of its solve year — precisely the
 mode-aware pattern `data.renewables` has always had for wind and solar.
 
+**Verified end-to-end through the keeper's own storage chain** (no solve; `storage_units_to_arrays`
+→ `storage_cap_profiles` → `caiso_storage_shape_caps`, at the keeper's `storage_vintage_ramp=True`
+and `caiso_storage_shape_anchor=True`):
+
+| year | total MW | battery MW | `power_cap` shape |
+|---|--:|--:|---|
+| 2023 | 9,570.0 | 7,492.4 | (6, 8760) |
+| 2024 | 13,208.9 | 11,131.3 | (6, 8760) |
+| 2025 | 17,526.0 | 15,448.4 | (6, 8760) |
+
+Three things this confirms. **The caps are now 2-D** — `storage_vintage_ramp` is genuinely
+live for batteries for the first time, which is the dead flag closing. **`_battery_mask`
+classifies the measured units correctly** (5 battery + 1 pumped storage; the mask is a
+negative test on `tech_name != "pumped_storage"`, so the loader's `li_ion` passes). And
+**the shape envelope's basis mismatch closes as a side effect**: `caiso_storage_shape_caps`
+multiplies a per-MW-of-EIA-860-fleet rate by `power_cap`, which is now that same EIA-860
+fleet rather than a scalar on a different basis.
+
 > **HYPOTHESIS, EXPLICITLY NOT CLAIMED.** The CAISO keeper carries C3a-2025 (mean LMP
 > **+14.4 %** hot) as a ledgered caveat whose root cause is recorded as a pumped-storage
 > data wall. A 2025 backcast missing **7.4 GW** of evening-peak battery leaves that load
