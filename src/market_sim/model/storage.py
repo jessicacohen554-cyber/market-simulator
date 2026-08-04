@@ -610,6 +610,110 @@ def _battery_mask(units: list["StorageUnit"]) -> np.ndarray:
     return np.array([u.tech_name != "pumped_storage" for u in units], dtype=bool)
 
 
+# ERCOT measured storage RT discharge-offer surface (ercot-162), derived by
+# scripts/data/derive_ercot_storage_rt_offer_surface.py. Per (delivery year ×
+# net-load-percentile bin), the MW-weighted absolute-$ quantile ladder of the
+# battery fleet's above-LSL, HASL-capped SCED discharge offers, plus the
+# a-priori K-tranche (width, price) construction the LP consumes.
+_STORAGE_RT_OFFER_PATH = (
+    RAW_DATA_DIR / "_validation-source" / "ercot_storage_rt_offer_condbinned.json"
+)
+
+
+def ercot_storage_rt_offer_tranches(
+    units: list["StorageUnit"],
+    year: int,
+    net_load_mw: np.ndarray,
+    hours: int,
+    surface_path: "str | None" = None,
+) -> "tuple[np.ndarray, np.ndarray, np.ndarray] | None":
+    """Build the ERCOT battery RT discharge-offer tranche parameters.
+
+    The apply side of ``config.ercot_storage_rt_offer_surface`` (ercot-162):
+    split each ERCOT battery unit's discharge into K priced tranches at the
+    measured per-net-load-bin absolute-$ ladder
+    (:data:`_STORAGE_RT_OFFER_PATH`), REPLACING the flat
+    ``battery_dispatch_adder`` on ERCOT battery discharge (rule 19; pumped
+    storage and other ISOs untouched — pumped storage is excluded by
+    :func:`_battery_mask`).
+
+    Binning matches the RT/DAM offer walls' apply convention exactly: the
+    apply-time hour's bin is the searchsorted rank of the SOLVE's own net load
+    (``net_load_mw``) against the artifact's ``netload_pct_edges`` — so the
+    surface is forward-native (a forecast year bins by its own assembled net
+    load). The ladder itself is standing (measured flat across bins), so the
+    gap/ordinary discrimination is the LP's own crossing depth (FINDING §4).
+
+    Year scope (rule 13): the artifact is year-scoped with no cross-year pooled
+    fallback. A solve year absent from the artifact returns ``None`` (the arm is
+    a no-op that year — the flat adder is retained). An apply-time net-load bin
+    absent from the year's block borrows that year's within-year pooled ladder
+    (same instrument, same year), the derive's disclosed backfill.
+
+    Args:
+        units: The storage fleet (battery + pumped-storage units).
+        year: Solve/weather year — selects the artifact's year block.
+        net_load_mw: ``(hours,)`` system net load (demand − wind − solar) of the
+            solve, for the apply-time bin assignment.
+        hours: Horizon length.
+        surface_path: Optional artifact path override (defaults to
+            :data:`_STORAGE_RT_OFFER_PATH`).
+
+    Returns:
+        ``(arm_batt_idx, width_frac, price_KT)`` where ``arm_batt_idx`` is the
+        ``(n_arm,)`` int array of armed battery storage-unit indices,
+        ``width_frac`` is the ``(K,)`` tranche width fractions of the hourly
+        power cap (Σ ≤ 1), and ``price_KT`` is the ``(K, hours)`` tranche price
+        in $/MWh for each hour's net-load bin. ``None`` when the fleet has no
+        battery, the artifact is missing, or the year is absent (arm inert).
+    """
+    import json
+    from pathlib import Path
+
+    path = Path(surface_path) if surface_path else _STORAGE_RT_OFFER_PATH
+    if not path.exists():
+        return None
+    batt = _battery_mask(units)
+    arm_batt_idx = np.flatnonzero(batt)
+    if arm_batt_idx.size == 0:
+        return None
+
+    surface = json.loads(path.read_text())
+    prov = surface.get("_provenance", {})
+    edges = np.asarray(prov.get("netload_pct_edges", ()), dtype=float)
+    widths = np.asarray(
+        prov.get("tranche_construction", {}).get("widths", ()), dtype=float
+    )
+    yblock = surface.get("years", {}).get(str(int(year)))
+    if yblock is None or edges.size == 0 or widths.size == 0:
+        return None  # year-scoped: an absent year gets NO surface (rule 13)
+    n_bins = int(edges.size) + 1
+    k = int(widths.size)
+
+    bins = yblock.get("bins", {})
+    pool_tr = yblock.get("_coverage", {}).get("within_year_pool_tranches", [])
+    pool_prices = [float(t["price"]) for t in pool_tr] if pool_tr else None
+
+    # Per-bin tranche price vector (n_bins, K); a bin absent from the year's
+    # block borrows the within-year pool (the derive's disclosed backfill).
+    price_by_bin = np.full((n_bins, k), np.nan, dtype=float)
+    for b in range(n_bins):
+        entry = bins.get(f"bin{b}")
+        if entry and entry.get("tranches"):
+            price_by_bin[b] = [float(t["price"]) for t in entry["tranches"]]
+        elif pool_prices is not None:
+            price_by_bin[b] = pool_prices
+    if not np.isfinite(price_by_bin).all():
+        return None  # no admissible ladder for some bin -> arm inert this year
+
+    net = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net, edges)
+    hour_bin = np.searchsorted(thresholds, net, side="right")  # (hours,)
+    hour_bin = np.clip(hour_bin, 0, n_bins - 1)
+    price_KT = price_by_bin[hour_bin].T  # (K, hours)
+    return arm_batt_idx.astype(int), widths.astype(float), price_KT
+
+
 def reserve_caiso_storage_as_power(
     power_cap: np.ndarray,
     units: list["StorageUnit"],

@@ -4452,6 +4452,56 @@ def run_year(
             storage_alloc_share=storage_alloc_params[1],
             storage_alloc_da_frac=storage_alloc_params[2],
         )
+    # ERCOT measured RT storage discharge-offer surface (ercot_storage_rt_offer_
+    # surface, GATED default off — ercot-162): split each ERCOT battery unit's
+    # discharge into K priced tranches at the measured per-net-load-bin
+    # absolute-$ SCED ladder, REPLACING the flat battery_dispatch_adder on ERCOT
+    # battery discharge (rule 19; PS + other ISOs untouched). The tranche width
+    # fractions apply to the FINAL storage_power_cap above (measured capability
+    # net of the AS reservation — the HASL-net energy headroom the ladder
+    # measured), so they price exactly the energy-side discharge. Backcast-only
+    # (the measured surface is a backcast overlay); None (flag off / other ISOs /
+    # year absent / no batteries) leaves the keys unset — identical LP.
+    if (
+        getattr(config, "ercot_storage_rt_offer_surface", False)
+        and iso == "ERCOT"
+        and getattr(config, "mode", "forecast") == "backcast"
+        and storage.n_storage
+    ):
+        from market_sim.model.storage import ercot_storage_rt_offer_tranches
+
+        net_load_rt = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        tranche_params = ercot_storage_rt_offer_tranches(
+            storage_units, config.weather_year, net_load_rt, config.hours
+        )
+        if tranche_params is not None:
+            arm_idx, width_frac, price_KT = tranche_params
+            dispatch_kwargs.update(
+                dis_tranche_arm_idx=arm_idx,
+                dis_tranche_width=width_frac,
+                dis_tranche_price=price_KT,
+            )
+            logger.info(
+                "ERCOT storage RT offer surface (%d): %d battery units armed, "
+                "K=%d tranches; tranche-price range $%.0f–$%.0f/MWh (replaces "
+                "the flat $%.0f battery_dispatch_adder on ERCOT battery discharge)",
+                config.weather_year,
+                int(arm_idx.size),
+                int(width_frac.size),
+                float(price_KT.min()),
+                float(price_KT.max()),
+                float(getattr(config, "battery_dispatch_adder", 0.0)),
+            )
+        else:
+            logger.info(
+                "ERCOT storage RT offer surface (%d): no admissible ladder "
+                "(year absent / artifact missing) — arm inert, flat adder retained",
+                config.weather_year,
+            )
     # Declared-window ELMP emergency-tier pricing (maxgen_emergency_tier_
     # pricing, GATED default off — the MISO F5 scarcity-depth lane): inside a
     # maxgen-events registry window declared at Max Gen Warning or higher,

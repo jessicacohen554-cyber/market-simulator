@@ -585,6 +585,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # on-disk cache (PRECOMMIT-ercot159-energy-online-capability-cap §1).
     "ercot_energy_online_capability_cap",
     "ercot_energy_online_capability_cap_path",
+    # ERCOT measured RT storage discharge-offer surface (ercot-162, default off):
+    # dropped from the hash at its default so every pre-existing cache key stays
+    # byte-stable — unarmed the tranche split is never built (the LP is
+    # byte-identical off), so an off run keeps its key; an armed run prices ERCOT
+    # battery discharge on the measured multi-tranche ladder and so is a distinct
+    # scenario that enters the key.
+    "ercot_storage_rt_offer_surface",
     # CAISO published-NQC VRE accreditation (FFR-3P, default off): dropped from
     # the hash at its default so every pre-existing forecast cache key stays
     # byte-stable -- unarmed the resolver never reaches the registry, so the arm
@@ -5709,6 +5716,24 @@ class ScenarioConfig:
     ercot_storage_as_deployment_from_year: int = 2023  # First weather year the
     # measured-award deployment applies (the storage AS-by-restype series starts
     # 2023, when ECRS launched); earlier years no-op.
+    ercot_storage_rt_offer_surface: bool = False  # ERCOT (ercot-162): price the
+    # battery fleet's ENERGY-side RT discharge at its MEASURED multi-tranche
+    # SCED offer ladder instead of the flat battery_dispatch_adder. The
+    # ercot-161 Phase 0 FINDING attributed the 2023 −30% summer afternoon
+    # residual (~100 hours, 98.3% of the residual) to PWRSTR — grid batteries
+    # standing offers ($1,500–5,000 above the $500 rung) — a class the model
+    # prices at a flat $10 with no offer instrument. This splits each ERCOT
+    # battery unit's discharge into K measured tranches (Dis[s,k,t]) sharing the
+    # unit's SOC and power cap, priced at the MW-weighted absolute-$ quantile
+    # ladder per net-load bin (data/raw/_validation-source/
+    # ercot_storage_rt_offer_condbinned.json, derive_ercot_storage_rt_offer_surface.py).
+    # RULE 19 [R-ONE-MECH]: REPLACES battery_dispatch_adder on ERCOT battery
+    # discharge (one owner per row); the PS adder and every other ISO are
+    # untouched (rule 25), and the AS-side capability keeps its own co-opt
+    # owners (this prices only the HASL-net energy headroom). Absolute $ (the
+    # gas-multiple basis is REFUTED for storage, ERCOT-154); year-scoped, no
+    # cross-year pooled fallback (rule 13); zero fitted scalars (rule 23).
+    # Default off (byte-identical); ERCOT + backcast only.
     ercot_storage_as_endogenous: bool = False  # ERCOT forward (G5): make the
     # battery CHOOSE energy vs upward-AS endogenously inside the multi-product
     # co-opt, REPLACING the measured-award reservation (storage_as_commitment +
@@ -11284,6 +11309,7 @@ TIER_TAGS: dict[str, int] = {
     "storage_as_commitment": 1,
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
+    "ercot_storage_rt_offer_surface": 1,
     "ercot_gas_commitment_bridge": 1,
     "ercot_commitment_posture": 1,
     "ercot_commitment_posture_min_load_frac": 2,

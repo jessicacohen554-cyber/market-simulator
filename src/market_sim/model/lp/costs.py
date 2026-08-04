@@ -26,6 +26,8 @@ def build_cost_vector(
     link_flow_cost: np.ndarray | None = None,
     slack_cost: np.ndarray | None = None,
     min_injectable_mc: float | None = None,
+    dis_tranche_arm_idx: np.ndarray | None = None,
+    dis_tranche_price: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -114,6 +116,31 @@ def build_cost_vector(
         )
         - storage_discharge_eac
     )
+
+    # Storage RT discharge-offer tranches (ERCOT ercot_storage_rt_offer_surface).
+    # RULE 19 [R-ONE-MECH]: on an ARMED battery the measured tranche ladder
+    # REPLACES the flat battery_dispatch_adder — so the armed base discharge
+    # column drops its vom, keeping only the ε tiebreaker net of any EAC
+    # (the base column stays the SOC/energy/power-cap spine, and Dis = Σ_k DisT,
+    # so ε·Dis is exactly the R-EPSILON discharge penalty on the total). Every
+    # tranche column DisT[a,k,t] then carries its own $/MWh rung; the LP fills
+    # cheapest-first, so the marginal cost of the last discharged MW follows the
+    # rising ladder. Pumped storage and other ISOs are untouched (their base
+    # discharge keeps its own adder).
+    if layout.n_dis_tranche and dis_tranche_arm_idx is not None:
+        arm = np.asarray(dis_tranche_arm_idx, dtype=int)
+        block[:, layout._dis_off + arm] = storage_epsilon - storage_discharge_eac
+        price = np.asarray(dis_tranche_price, dtype=float)  # (K, T)
+        k = price.shape[0]
+        # (T, K) tiled across the n_arm armed units, matching the layout stride
+        # _dis_tranche_off + a*K + k (armed-major/tranche-minor).
+        dt0 = layout._dis_tranche_off
+        block[:, dt0 : dt0 + layout.n_dis_tranche] = np.tile(price.T, (1, arm.size))
+        if k * arm.size != layout.n_dis_tranche:
+            raise ValueError(
+                f"dis_tranche layout mismatch: K({k})*n_arm({arm.size}) != "
+                f"n_dis_tranche({layout.n_dis_tranche})"
+            )
 
     # Transmission flow: zero-cost by default; ``link_flow_cost`` prices a
     # link's directed flow (MISO RDT TCDC tiers — one-way links only, the

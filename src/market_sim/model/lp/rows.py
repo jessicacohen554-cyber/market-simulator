@@ -472,6 +472,69 @@ def _build_storage_alloc_rows(
     return block
 
 
+def _build_dis_tranche_rows(
+    layout: VariableLayout,
+    arm_batt_idx: np.ndarray,
+) -> sp.csr_matrix:
+    """Storage discharge-tranche decomposition rows (ERCOT ercot_storage_rt_offer_surface).
+
+    One equality per (armed battery unit ``a``, hour ``t``)::
+
+        Dis[s_a, t] − Σ_k DisT[a, k, t] = 0
+
+    tying each armed battery's single discharge column (its unchanged total —
+    energy balance, SOC dynamics, power-cap bound and the AS→energy deployment
+    floor all ride Dis[s,t] exactly as before) to the sum of its K priced
+    tranche columns. The tranches carry the measured rising offer ladder in the
+    objective (:func:`build_cost_vector`) and their widths cap each rung
+    (:func:`build_variable_bounds`), so the marginal cost of the unit's last
+    discharged MW follows the ladder while the base column keeps its meaning —
+    the standard piecewise-linear-cost decomposition on one variable.
+
+    Inserted after the SOC/cycle/alloc storage rows and before the
+    interface/hydro/RPS/reserve tail, so the front-anchored energy-balance
+    duals and the end-anchored RPS/reserve duals keep their positions. Fully
+    vectorized — the loop is over the O(1) tranche count, never the 8760 hours
+    (rule #2). Returns a zero-row matrix when no units are armed.
+
+    Args:
+        layout: Variable layout (``dis_tranche_k`` = K, ``_dis_tranche_off``).
+        arm_batt_idx: ``(n_arm,)`` storage-unit indices of the armed batteries.
+
+    Returns:
+        CSR block of shape ``(n_arm * T, total_columns)``; row bounds are 0.
+    """
+    T = layout.T
+    vph = layout.vars_per_hour
+    k = layout.dis_tranche_k
+    arm = np.asarray(arm_batt_idx, dtype=int)
+    n_arm = arm.size
+    if n_arm == 0 or k == 0:
+        return sp.csr_matrix((0, layout.total_columns))
+
+    # Row r = a*T + t. Base +Dis[s_a,t]; tranche −DisT[a,k,t] for each k.
+    a_arr = np.repeat(np.arange(n_arm), T)  # (n_arm*T,)
+    t_arr = np.tile(np.arange(T), n_arm)  # (n_arm*T,)
+    s_arr = arm[a_arr]  # storage-unit index of each row's armed battery
+    base_rows = np.arange(n_arm * T)
+    base_cols = t_arr * vph + layout._dis_off + s_arr
+    base_data = np.ones(n_arm * T)
+
+    tr_rows = np.repeat(base_rows, k)
+    kk = np.tile(np.arange(k), n_arm * T)
+    a_rep = np.repeat(a_arr, k)
+    t_rep = np.repeat(t_arr, k)
+    tr_cols = t_rep * vph + layout._dis_tranche_off + a_rep * k + kk
+    tr_data = -np.ones(n_arm * T * k)
+
+    rows = np.concatenate([base_rows, tr_rows])
+    cols = np.concatenate([base_cols, tr_cols])
+    data = np.concatenate([base_data, tr_data])
+    return sp.coo_matrix(
+        (data, (rows, cols)), shape=(n_arm * T, layout.total_columns)
+    ).tocsr()
+
+
 def _build_interface_rows(
     layout: VariableLayout,
     interface_groups: list[tuple[np.ndarray, float | np.ndarray, bool]],
@@ -970,6 +1033,7 @@ def build_constraints(
     posture_col: np.ndarray | None = None,
     posture_mlf: np.ndarray | None = None,
     link_loss: np.ndarray | None = None,
+    dis_tranche_arm_idx: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1106,6 +1170,12 @@ def build_constraints(
             # RPS ACP escape column carries no energy (zero block; empty unless
             # the RPS ACP escape is active). Keeps per_hour width == vph.
             sp.csr_matrix((n_zones, layout.n_rec_acp)),
+            # Storage discharge-tranche columns carry no energy of their own —
+            # the base Dis column already injects the total (Dis = Σ_k DisT via
+            # the decomposition row), so the tranches are a cost decomposition,
+            # not a second injection (zero block; empty off the arm, keeping
+            # per_hour width == vph).
+            sp.csr_matrix((n_zones, layout.n_dis_tranche)),
         ],
         format="csr",
     )
@@ -1280,6 +1350,22 @@ def build_constraints(
             del alloc_block
             row_lower = np.concatenate([row_lower, np.zeros(n_alloc)])
             row_upper = np.concatenate([row_upper, np.full(n_alloc, np.inf)])
+
+    # Optional storage discharge-tranche decomposition rows (ERCOT
+    # ercot_storage_rt_offer_surface): Dis[s,t] = Σ_k DisT[a,k,t] per armed
+    # battery-hour, tying each armed battery's total discharge to its priced
+    # tranche columns. Appended after the SOC/cycle/alloc storage rows and
+    # before interface/hydro/RPS/reserve, so the front-anchored energy-balance
+    # duals and the end-anchored RPS/reserve duals keep their positions. No
+    # rows (identical LP) when the arm is off.
+    if layout.n_dis_tranche and dis_tranche_arm_idx is not None and n_storage:
+        tranche_block = _build_dis_tranche_rows(layout, dis_tranche_arm_idx)
+        if tranche_block.shape[0]:
+            n_tr = tranche_block.shape[0]
+            blocks.append(tranche_block)
+            del tranche_block
+            row_lower = np.concatenate([row_lower, np.zeros(n_tr)])
+            row_upper = np.concatenate([row_upper, np.zeros(n_tr)])
 
     # Optional aggregate interface limits: one row per group per hour capping
     # the signed sum of a set of links' flows at the interface's *simultaneous*
