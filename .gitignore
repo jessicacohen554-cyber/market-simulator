@@ -595,6 +595,16 @@ results/calibration/caiso154_slopes_PJM.csv
 # tracked normally — the same mechanism results/ffr3a2/ relies on.
 /results/ffr3a3/
 
+# FFR-3L ERCOT T1-X price-2025 regression attribution (run_capacity_hindcast
+# --crossover --out-dir caches for the paired shipped/control arms and their
+# loose run logs). Same class as /results/ffr3a2/ and /results/ffr3a3/ — the
+# crossover legs are registered to frontend/data/hindcast/ via
+# scripts/register_forecast_run.py, never as tracked bundles here (CLAUDE.md
+# rule 15). results/ffr3l/README.md stays TRACKED (it is the lane's record, not
+# solver output); git honours that because this rule only ever applies to
+# untracked paths.
+/results/ffr3l/
+
 # Transient CT-artifact stash written by scripts/probes/caiso160_nyiso_ct_arms.py
 # while a control arm solves against a prior artifact revision; the driver
 # restores the working copy and removes this in a finally.
