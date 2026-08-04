@@ -1955,3 +1955,130 @@ cell survived.
 **Not chartered by anything here:** the CAISO capacity-anchor correction (D-15 explicitly), the
 VRE screen's siting-zone CF (FFR-3V proposal 3), the hindcast renewable-pool vintage leak
 (proposal 4 — belongs to whoever owns the T1-H lane), and the pre-existing test failures on main.
+
+---
+
+## Addendum P — CORRECTION: FFR-3V re-measured after the N-cards were signed
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `c7d806eb`.** Corrects the
+evidence block of the **D-12 + D-2′ card** in Addendum N-cards. **No signed decision is
+reversed**, but the number the owner was shown is superseded and the *ranking* has changed.
+Read this as the same class of act as J.1 and L.3.
+
+### P.1 — what I told the owner, and what the measurement actually says
+
+The N-card quoted the MISO capacity payment as **"$79,800 × 0.18 = $14,364/MW-yr"**. FFR-3V
+reopened after the cards were written (`b920be45` "run complete (exit 0) — 2025 lands and
+REVERSES the §3.3 correction", `489f0661` "correct the §0 headline table to the measured RA zero
+and margin") and measured it properly across all four decision years. **The payment is not a
+single standing number. It is zero for three years and very large in the fourth:**
+
+| decision year | MISO reserve margin | capacity payment, ALL techs | solar margin $/MW-yr |
+|---|---|---|---|
+| 2022 | 27.3 % | **$0** | −26,446 |
+| 2023 | 20.7 % | **$0** | −22,681 |
+| 2024 | 11.4 % | **$0** | −35,946 |
+| **2025** | 17.3 % | **$327,456/MW-yr firm** | −33,406 |
+
+MISO is **long** through 2024 and its VRR pays nothing above a ~1.02 position — **that is
+faithful, not broken** (the real PY2021-22 PRA cleared at ≈$1,825/MW-yr). In 2025 the payment
+switches on and is *the entire reason* gas CC and CT flip profitable and build 4.48 GW.
+
+**The correction makes D-2′'s case SHARPER, not weaker.** In 2025 the ungated **thermal** branch
+takes **$307–311 k/MW-yr** while solar is denied its share by a default-off gate; crediting even
+the stingy generic 0.18 fallback gives solar **$58,942/MW-yr**, flipping its margin from
+−$33,406 to **+$25,536**. The mechanism is **inert while the ISO is long and decisive the moment
+it tightens** — which is a better characterisation than the flat annual figure I gave.
+
+### P.2 — two things the owner did not have when signing D-12 + D-2′
+
+Neither reverses the decision. Both must travel with it.
+
+1. **Arming D-2′ would NOT have moved this leg's FC-3 band at all.** A 2025 decision commissions
+   at COD 2027 — outside the 2021–2025 window. Addendum O.2 already recorded "will not buy an
+   FC-3 pass"; the measured reason is sharper than the reason I gave.
+2. **The ranking inverted.** FFR-3V now ranks **arming D-2′ as 1a** and **wiring the
+   accreditation as 1b, SUBORDINATE to it** — because the accreditation "only bites where the
+   payment is non-zero", i.e. in 2025 alone on this record. My card's framing ("D-12 sizes
+   D-2′") is true only where the payment is non-zero, which is one year in four. **The lane
+   order in FFR-4B is therefore amended: arm-then-wire is acceptable, and the two must still
+   land in one lane with separable measurement.**
+
+### P.3 — TWO CAUSES FFR-3V FOUND THAT OUTRANK EVERY REVENUE LEVER
+
+Both were measured after the cards were signed. **Neither is chartered by any signed decision.**
+
+**(a) The procurement channel is missing entirely — FFR-3V's own #1, and it is a MISSING
+MECHANISM, not a mis-set value.** Both revenue levers the screen *could* be given are correctly
+≈zero in MISO over this window (PRA ≈$1,825/MW-yr; the 11 % RPS slack). **Yet 18.6 GW was
+built** — on utility IRP/RFP procurement and corporate PPAs against the ITC, a long-term
+contracting channel with **no representation anywhere in `apply_economic_new_entry`, which
+screens merchant energy margin only.** FFR-3V states the rule-1 reading explicitly: *closing this
+by tuning a revenue adder until solar clears would be exactly the fitted-adder failure rule 1
+forbids.* No parameter fixes it. **This is an owner decision, not a manager charter** — it is a
+new mechanism. Put as card D-16 below.
+
+**(b) The 2024 entry price signal has no ORDC tail at all, and it is upstream of everything.**
+`scarcity_price_overlay: False` leaves the lookahead stack with **a maximum hourly price of
+$39/MWh** against solar's $43.18/MWh break-even *mean* — the margin is not close, it is
+**unreachable**. It also zeroes the peaker outright (`gas_ct` variable cost $41.39 > the $39
+ceiling). FFR-3V calls it *"the largest single suppressor of MISO entry in 2024/2025 — upstream
+of every revenue lever below."* This one is a **diagnosis** lane and I have chartered it as
+**FFR-4E** (pack §0j) without an owner card, because it investigates whether an existing overlay
+is wrongly off in the lookahead stack rather than proposing a new mechanism. If it turns out to
+require a new mechanism, it escalates.
+
+### P.4 — D-13 is STRENGTHENED by the re-measurement
+
+FFR-3V now quantifies it: the screen credits wind **$86,549/MW-yr** and solar
+**$26,787–32,873/MW-yr**, and names this **the mechanical origin of the leg's inverted tech mix**
+— model wind share 43.7 % / solar 0.0 % against actual 22.5 % / 58.3 %. The signed decision is
+unchanged and better supported. FFR-4C's evidence block is updated accordingly.
+
+### P.5 — unaffected by this correction
+
+**D-14** (the ladder knife-edge) — the §5 finding is intact and unchanged. **D-15** (CAISO) and
+the **re-probe** — different ISOs/lanes entirely. FFR-4A, FFR-4C, FFR-4D and FFR-3Q-3 dispatch as
+written; only **FFR-4B**'s evidence block and lane order are amended (pack §0j).
+
+### P.6 — also landed, and both matter to the ledger
+
+* **CAISO's `complete` assessment REVERSED to YES** (`0043fc22`). The owner restated the
+  criterion — `complete` means exactly (a) the 2022 touchpoint is allowed and (b) frontier, i.e.
+  everything testable has been tested. **It is not a certificate that the DOF ledger is clean.**
+  caiso-171's prior NO rested on "the active freeze makes the grant hollow", which the record
+  refutes: the freeze was declared 2026-07-25 and **NYISO and PJM were both declared complete on
+  2026-07-31, six days into it.** `holdout-freeze.json` says so itself — a freeze is *"a
+  SUSPENSION of the authorization that a calibration-complete marker grants, not a withdrawal of
+  the marker itself."* **The marker and the freeze are orthogonal.** Any session reasoning that a
+  freeze blocks a marker has the relationship backwards.
+* **NYISO's keeper moved again → `2026-08-04-nyiso-125-seam-envelope`.** That is the **eighth**
+  NYISO keeper in five days.
+
+---
+
+### CARD D-16 — Represent the procurement channel that actually built MISO's solar?
+
+**Measured (FFR-3V §3.1, §7 proposal 1).** The screen's two available revenue levers are
+*correctly* ≈zero in MISO over 2021–2025 — the PRA cleared ≈$1,825/MW-yr and the 11 % RPS is
+slack against a 16.9 % modelled VRE share. **18.649 GW of solar was built anyway**, on utility
+IRP/RFP procurement and corporate PPAs against the ITC. `apply_economic_new_entry` screens
+**merchant energy margin only** and represents that channel **nowhere**. No parameter fixes it;
+FFR-3V declined to propose one and named the gap instead.
+
+**Recommendation: (a) CHARTER IT AS A STRUCTURAL LANE — scoping first, no implementation.** A
+lane that specifies what the mechanism would have to be (what drives procurement volume, how it
+regenerates in a forecast year, what data identifies it) and returns a design + a rule-13
+`[R-MEASURED]` admissibility argument **before** any code. Rule 1 `[R-STRUCT]` says get the
+structure right and calibrate after; this is the structure.
+
+**The option I think is wrong, with its real cost: (b) LEAVE IT AS A DISCLOSED LIMITATION** and
+proceed on the revenue levers. Cheap, and defensible short-term. The cost is that **MISO's FC-3
+additions can never be right for the right reason** — the model would be asked to reproduce an
+18.6 GW build through a merchant screen that structurally cannot see why it happened, and every
+future lane that tries will be pushed toward the fitted revenue adder rule 1 forbids. You would
+also be shipping a forecast whose VRE build in every capacity-market ISO rests on a channel it
+does not model.
+
+**Sign-off D-16:** ☐ (a) charter structural scoping lane  ☐ (b) disclosed limitation
+☐ other: ____________   owner: ________  date: ____
