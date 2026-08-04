@@ -1,0 +1,271 @@
+{
+  "session": "caiso-169",
+  "keeper_bundle": "results/calibration/caiso166_measured_loss_zones",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "A_reconstruction": {
+    "per_tech": [
+      {
+        "year": 2023,
+        "tech": "li_ion",
+        "cyclic_identity_mwh": -0.0037248147491482086,
+        "annual_swing_mwh": 25330.20647064427,
+        "charge_twh": 4.733064746647597,
+        "discharge_twh": 4.023105038084567
+      },
+      {
+        "year": 2023,
+        "tech": "pumped_storage",
+        "cyclic_identity_mwh": 0.021331203301087953,
+        "annual_swing_mwh": 20776.021681449314,
+        "charge_twh": 2.3724535205626487,
+        "discharge_twh": 1.8979627973709106
+      },
+      {
+        "year": 2024,
+        "tech": "li_ion",
+        "cyclic_identity_mwh": -0.010399700950074475,
+        "annual_swing_mwh": 38452.711702997105,
+        "charge_twh": 8.984286872796536,
+        "discharge_twh": 7.636643851465106
+      },
+      {
+        "year": 2024,
+        "tech": "pumped_storage",
+        "cyclic_identity_mwh": 0.02054623717413051,
+        "annual_swing_mwh": 20776.02097325257,
+        "charge_twh": 2.6061683997843264,
+        "discharge_twh": 2.084934701450348
+      },
+      {
+        "year": 2025,
+        "tech": "li_ion",
+        "cyclic_identity_mwh": 0.043431409325421555,
+        "annual_swing_mwh": 52963.24351663185,
+        "charge_twh": 13.30365658498621,
+        "discharge_twh": 11.308108057196497
+      },
+      {
+        "year": 2025,
+        "tech": "pumped_storage",
+        "cyclic_identity_mwh": 0.02115378091139064,
+        "annual_swing_mwh": 20776.02192881724,
+        "charge_twh": 2.568564286185026,
+        "discharge_twh": 2.054851410027504
+      }
+    ],
+    "V2_ps_capacity": [
+      {
+        "year": 2023,
+        "recovered_swing_mwh": 20776.021681449314,
+        "model_ps_energy_cap_mwh": 20776.0,
+        "ratio": 1.0000010435815034
+      },
+      {
+        "year": 2024,
+        "recovered_swing_mwh": 20776.02097325257,
+        "model_ps_energy_cap_mwh": 20776.0,
+        "ratio": 1.0000010094942515
+      },
+      {
+        "year": 2025,
+        "recovered_swing_mwh": 20776.02192881724,
+        "model_ps_energy_cap_mwh": 20776.0,
+        "ratio": 1.0000010554879304
+      }
+    ],
+    "V3_clock": {
+      "demand_peak_hod": 17,
+      "demand_trough_hod": 3,
+      "solar_peak_hod": 11,
+      "verdict": "LOCAL (a UTC index would put the solar peak at hod 19-20)"
+    }
+  },
+  "B_model_banking": [
+    {
+      "year": 2023,
+      "tech": "li_ion",
+      "daily_net_sd_mwh": 4976.57444963336,
+      "daily_net_mean_abs_dev_mwh": 3503.2593179819914,
+      "daily_net_p95_abs_mwh": 11433.68365258975,
+      "daily_net_max_abs_mwh": 16264.32406807938,
+      "day_start_soc_mean_mwh": 5050.138180029309,
+      "day_start_soc_sd_mwh": 4850.597650213199
+    },
+    {
+      "year": 2023,
+      "tech": "pumped_storage",
+      "daily_net_sd_mwh": 3576.2753967673816,
+      "daily_net_mean_abs_dev_mwh": 1191.4581249009568,
+      "daily_net_p95_abs_mwh": 8240.263629050149,
+      "daily_net_max_abs_mwh": 20776.001075289503,
+      "day_start_soc_mean_mwh": 2781.987955178492,
+      "day_start_soc_sd_mwh": 6365.14933825859
+    },
+    {
+      "year": 2024,
+      "tech": "li_ion",
+      "daily_net_sd_mwh": 7951.299993821387,
+      "daily_net_mean_abs_dev_mwh": 5560.218892987666,
+      "daily_net_p95_abs_mwh": 17391.343550844253,
+      "daily_net_max_abs_mwh": 24294.443734025088,
+      "day_start_soc_mean_mwh": 5691.70913372645,
+      "day_start_soc_sd_mwh": 6445.655370050406
+    },
+    {
+      "year": 2024,
+      "tech": "pumped_storage",
+      "daily_net_sd_mwh": 3498.0519081664775,
+      "daily_net_mean_abs_dev_mwh": 1317.8018550912798,
+      "daily_net_p95_abs_mwh": 7172.266195803541,
+      "daily_net_max_abs_mwh": 20776.000290536642,
+      "day_start_soc_mean_mwh": 1805.8086332301552,
+      "day_start_soc_sd_mwh": 4394.780610720594
+    },
+    {
+      "year": 2025,
+      "tech": "li_ion",
+      "daily_net_sd_mwh": 8799.058973141835,
+      "daily_net_mean_abs_dev_mwh": 6162.699035216582,
+      "daily_net_p95_abs_mwh": 19695.670827601574,
+      "daily_net_max_abs_mwh": 30592.348756024836,
+      "day_start_soc_mean_mwh": 8047.574103051863,
+      "day_start_soc_sd_mwh": 7139.995652714189
+    },
+    {
+      "year": 2025,
+      "tech": "pumped_storage",
+      "daily_net_sd_mwh": 3810.9195123564273,
+      "daily_net_mean_abs_dev_mwh": 1317.3268140566595,
+      "daily_net_p95_abs_mwh": 7449.447004775826,
+      "daily_net_max_abs_mwh": 20776.000873983336,
+      "day_start_soc_mean_mwh": 2585.0013890718533,
+      "day_start_soc_sd_mwh": 5830.677619754794
+    }
+  ],
+  "C_measured_comparator": [
+    {
+      "year": 2023,
+      "eia930_coverage_hours": 8759,
+      "model_hours_with_both_legs": 12,
+      "model_sd_net_collapsed_mwh": 4976.443492768399,
+      "measured_sd_by_rte": {
+        "rte_0.8": 2490.5319428427606,
+        "rte_0.85": 2481.5991126470776,
+        "rte_0.9": 2489.1326680902275
+      },
+      "model_sd_mwh": 4976.57444963336,
+      "measured_sd_mwh": 2481.5991126470776,
+      "ratio": 2.0053901632503957,
+      "model_mean_mwh": -1.0204971910491011e-05,
+      "measured_mean_mwh": -1683.342166968895,
+      "incumbent_error_mwh": 2494.9753369862824,
+      "daily_cycle_error_mwh": -2481.5991126470776
+    },
+    {
+      "year": 2024,
+      "eia930_coverage_hours": 8759,
+      "model_hours_with_both_legs": 7,
+      "model_sd_net_collapsed_mwh": 7951.305999019755,
+      "measured_sd_by_rte": {
+        "rte_0.8": 3719.527469491487,
+        "rte_0.85": 3685.452819557117,
+        "rte_0.9": 3681.7742618022717
+      },
+      "model_sd_mwh": 7951.299993821387,
+      "measured_sd_mwh": 3685.452819557117,
+      "ratio": 2.1574825084253555,
+      "model_mean_mwh": -2.8492331160758684e-05,
+      "measured_mean_mwh": -497.37934234665664,
+      "incumbent_error_mwh": 4265.8471742642705,
+      "daily_cycle_error_mwh": -3685.452819557117
+    },
+    {
+      "year": 2025,
+      "eia930_coverage_hours": 8750,
+      "model_hours_with_both_legs": 11,
+      "model_sd_net_collapsed_mwh": 8799.063662540279,
+      "measured_sd_by_rte": {
+        "rte_0.8": 4095.700231852116,
+        "rte_0.85": 4028.5927667643114,
+        "rte_0.9": 3998.277399404245
+      },
+      "model_sd_mwh": 8799.058973141835,
+      "measured_sd_mwh": 4028.5927667643114,
+      "ratio": 2.1841520060636634,
+      "model_mean_mwh": 0.00011899016259520391,
+      "measured_mean_mwh": -562.8311246156841,
+      "incumbent_error_mwh": 4770.466206377523,
+      "daily_cycle_error_mwh": -4028.5927667643114
+    }
+  ],
+  "D_nu_chain_geometry": {
+    "n_rows": 728,
+    "expected_rows": 728,
+    "rows_not_of_form_SOC0_SOC24d": 0,
+    "distinct_soc_hours_touched": 365,
+    "all_touched_are_local_midnight": true,
+    "touched_hours_inside_the_caiso127_coupling": 0,
+    "overnight_window_hod": [
+      0,
+      7
+    ],
+    "evening_window_hod": [
+      17,
+      22
+    ]
+  },
+  "E_reach": [
+    {
+      "year": 2023,
+      "tech": "li_ion",
+      "overnight_net_metered_mw": 113.25613355060379,
+      "overnight_storage_side_mwh_per_day": 901.2598474541987,
+      "corr_daystart_soc_vs_overnight_draw": 0.254169226820006,
+      "days_soc_bottoms_out_in_overnight": 103
+    },
+    {
+      "year": 2023,
+      "tech": "pumped_storage",
+      "overnight_net_metered_mw": 52.96139707994554,
+      "overnight_storage_side_mwh_per_day": 418.23005739936957,
+      "corr_daystart_soc_vs_overnight_draw": 0.3290038504766927,
+      "days_soc_bottoms_out_in_overnight": 300
+    },
+    {
+      "year": 2024,
+      "tech": "li_ion",
+      "overnight_net_metered_mw": 105.91531121119594,
+      "overnight_storage_side_mwh_per_day": 854.9947167449999,
+      "corr_daystart_soc_vs_overnight_draw": 0.13485849903521882,
+      "days_soc_bottoms_out_in_overnight": 127
+    },
+    {
+      "year": 2024,
+      "tech": "pumped_storage",
+      "overnight_net_metered_mw": 80.31357911888168,
+      "overnight_storage_side_mwh_per_day": 633.2327504930713,
+      "corr_daystart_soc_vs_overnight_draw": 0.5317897420311419,
+      "days_soc_bottoms_out_in_overnight": 315
+    },
+    {
+      "year": 2025,
+      "tech": "li_ion",
+      "overnight_net_metered_mw": 344.1420539060451,
+      "overnight_storage_side_mwh_per_day": 2635.8080514513745,
+      "corr_daystart_soc_vs_overnight_draw": 0.058753925976789675,
+      "days_soc_bottoms_out_in_overnight": 105
+    },
+    {
+      "year": 2025,
+      "tech": "pumped_storage",
+      "overnight_net_metered_mw": 82.17179978812977,
+      "overnight_storage_side_mwh_per_day": 643.0960555591635,
+      "corr_daystart_soc_vs_overnight_draw": 0.4488690397735527,
+      "days_soc_bottoms_out_in_overnight": 307
+    }
+  ]
+}
