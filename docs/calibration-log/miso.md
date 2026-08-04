@@ -3465,12 +3465,23 @@ its applied map) and NEISO (206 MW, −1.2 %) are handed to their own lanes with
 measured numbers and **no cell outside MISO is stamped**. Rule 28 duty (b) —
 matrix cell evidence stamped this session.
 
-**Reported, not fixed:** `tests/regression/test_persisted_identity.py` fails on
-a **clean `origin/main` worktree** at `9aca82b` (verified) — default cache key
-**`973a0acdef818e91`** vs the pinned `603c2498bf71d21d`, three tests. The drift
-has **moved since the bisect in this session's brief** (`0e9fce2fb55b889f` →
-`973a0acdef818e91`), so a further field has landed on the original culprit.
-Belongs to the lane that owns it. This session's own tests pass 22/22.
+**Reported, not fixed — FOUR main-side failures, none with a path to this
+branch** (which touches nothing under `src/market_sim/`). Verified on a clean
+`origin/main` worktree at `9aca82b`: `test_persisted_identity.py`'s default
+cache key is **`973a0acdef818e91`** against the pinned `603c2498bf71d21d`
+(3 tests), and the same drift fails
+`test_cc_committed_offer_margin`/`test_ramp_envelope_basis`'s
+`test_default_cache_key_is_byte_stable` and
+`test_forecast_xyear_warmstart_flag::test_default_cache_key_unmoved`. **The
+drift has moved since the bisect in this session's brief**
+(`0e9fce2fb55b889f` → `973a0acdef818e91`), so a further field has landed on the
+original culprit. Separately,
+`test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`
+is stale for a different reason: it asserts NEISO is an *unknown* ISO, and NEISO
+nuclear outage data has since been intaken (three units now resolve). Both
+belong to the lanes that own them. This session's own tests pass — 22/22 CHP,
+5/5 p1-prep wiring, and 1,419 passed across `tests/unit/data` +
+`tests/unit/pipeline` with only those four.
 
 **Evidence:** `FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,
 `PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,

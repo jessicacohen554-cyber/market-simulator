@@ -277,11 +277,36 @@ about.
    `CT_CHP`-side plant-level rate question. Neither is chartered by this
    session.
 
-## 8. Pre-existing `origin/main` breakage — reported, not fixed
+## 8. Solve-path memory — this **corrects** miso-114's attribution
 
-`tests/regression/test_persisted_identity.py` fails on a **clean `origin/main`
-worktree** at `9aca82b`, verified in a throwaway worktree, not on this branch's
-changes (which touch no `ScenarioConfig` field):
+Arm A was **OOM-killed at 15.92 GB anon-RSS** (`total-vm` 31.76 GB) while
+building **2025's P1**, on the same 15 GB box, at the same place, at the same
+magnitude as miso-114's two kills (16.00 and 15.96 GB).
+
+**But this is an UNFLOORED keeper replay** — no `p1_fleet_prep`, so no
+cold-rebuild branch and no second `DispatchModel`. miso-114 §2.2's standing note
+attributes the MISO 16 GB ceiling to the floor branch at
+`pipeline/solve.py:300-317`; measured here, **MISO's 2025 year reaches it on its
+own**, floored or not. Budget for it before any MISO 2025 solve, not only before
+arming a floor.
+
+**Remedy used, and it is cheaper than miso-114's:** a 12 GB swapfile, after
+which the single `--years 2023 2024 2025` invocation completed normally in both
+arms (P0 cold ~280–450 s, P1 warm ~120–155 s per year; peak spills instead of
+dying). Prefer this to the fresh-process + merge + `--reuse-solved` route: it
+touches neither the recipe nor the bundle, and it preserves a truthful
+`meta.json` year span **by construction** rather than by reassembly — which is
+the exact failure mode miso-121 had to discard a whole chain over.
+
+## 9. Pre-existing `origin/main` breakage — reported, not fixed
+
+Four unit/regression failures are on main, not on this branch. This branch
+touches **nothing under `src/market_sim/`** (`git diff origin/main...HEAD`:
+one derive script, two probes, one test file, the MISO CHP artifact, and docs),
+so none of them has a path to this diff.
+
+**Verified directly on a clean `origin/main` worktree at `9aca82b`** —
+`tests/regression/test_persisted_identity.py`:
 
 * `test_default_scenario_config_cache_key_is_pinned` — default key
   **`973a0acdef818e91`** vs the pinned `603c2498bf71d21d`
@@ -290,9 +315,23 @@ changes (which touch no `ScenarioConfig` field):
 
 **The drift has moved since the bisect quoted in this session's brief**
 (`0e9fce2fb55b889f` → `973a0acdef818e91`), so at least one further field has
-landed on top of the original culprit; the failing set is now three tests, not
-the previously-named trio. Registering the culprit field(s) versus advancing
-the pin belongs to the lane that owns them and is not touched here. Everything
-this session added passes: `tests/unit/data/test_measured_chp_heat_rates.py`
-22/22, including the seven new scope-gate cases.
+landed on top of the original culprit. The same pin drift also fails
+`tests/unit/data/test_cc_committed_offer_margin.py::…::test_default_cache_key_is_byte_stable`,
+`tests/unit/data/test_ramp_envelope_basis.py::…::test_default_cache_key_is_byte_stable`
+and
+`tests/unit/pipeline/test_forecast_xyear_warmstart_flag.py::…::test_default_cache_key_unmoved`.
+Registering the culprit field(s) versus advancing the pin belongs to the lane
+that owns them.
+
+One further main-side staleness, **unrelated to the cache key**:
+`tests/unit/data/test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`
+asserts `nuclear_unit_availability_series("NEISO", 2024) == {}`, and NEISO now
+resolves three units — i.e. NEISO nuclear outage data has since been intaken and
+the test's "unknown ISO" premise is stale. Also not this branch's.
+
+Everything this session added passes: `tests/unit/data/test_measured_chp_heat_rates.py`
+**22/22** (including seven new scope-gate cases) and
+`tests/unit/pipeline/test_p1_prep_wiring.py` **5/5**; the full
+`tests/unit/data` + `tests/unit/pipeline` sweep is **1,419 passed** with only
+the four main-side failures above.
 </content>
