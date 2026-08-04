@@ -88,7 +88,7 @@ Addendum O.2).** MISO wind moves 4.0 → 0.0 GW against 7.2 GW actual. Under
 rule 1 `[R-STRUCT]` the statutory window stays in regardless; the enlarged
 wind under-build becomes a named open root cause on wind's revenue side (§4).
 
-## 3. Measurement — paired MISO capacity hindcast (PENDING — filled in after the runs)
+## 3. Measurement — paired MISO capacity hindcast (MEASURED)
 
 ```
 uv run python scripts/run_capacity_hindcast.py --iso MISO --fuel-variant realized \
@@ -100,19 +100,85 @@ uv run python scripts/run_capacity_hindcast.py --iso MISO --fuel-variant realize
 ```
 
 Both arms at THIS session's fix commit; the ONLY delta is the window field
-(one field, two cache keys). Launched concurrently (rule 12), years sequential
-within each.
+(one field: treatment key `ca36ba26ebe1640f`, control key `18688555edc0342a`).
+Run sequentially in the end — the concurrent launch OOM-killed the treatment
+arm ~40 s in (exit 137; two simultaneous MISO LP builds exceed this
+container's 15 GB), which is rule 12's own memory bound binding at 1, not a
+protocol deviation. Committed evidence: the evolution ledgers + config/meta
+under `results/ffr4c/` (slim files; year parquets untracked).
 
-## 4. Open root cause (rule 11) — handed on, not fixed here
+**Control arm first — it validates the baseline.** Every screen number
+reproduces FFR-3V's registered leg to the digit (wind margins +32,172 /
++34,210 / +19,165 / +18,687; builds 4,000/0/4,000/0 alternating
+`per_tech_cap`/`per_tech_cap_zero`; in-window commissioned wind 4.0 GW;
+`ptc_wind_levelized_per_mwh` = 26.0). Base drift 2c412668 → 5eac75b0 is ZERO
+on this screen.
 
-To be written against the measured result: the statutory window removes
-≈$41k/MW-yr of non-real revenue from the wind screen; whatever true revenue
-the screen still lacks (RA accreditation via `entry_vre_capacity_revenue` +
-MISO's on-disk-but-unwired wind/solar ELCC, the missing IRP/PPA procurement
-channel FFR-3V §7.1 names, the scarcity-less lookahead price signal FFR-3V
-§3.2 measures) is now visible as a wind under-build instead of being papered
-over by a 30-year credit. FFR-4B (D-12 + D-2′) touches the same revenue side
-from the solar direction.
+**Treatment vs prediction — §2 scores 5-for-5, three margins to the dollar:**
+
+| decision yr | § 2 predicted margin | measured | wind builds |
+|---|---|---|---|
+| 2022 | −9,000 | **−9,001** | 0 (`unprofitable`) |
+| 2023 | −6,962 | **−6,962** | 0 (`unprofitable`) |
+| 2024 | −22,007 | **−22,007** | 0 (`unprofitable`) |
+| 2025 | −22,485 | **−21,516** | 0 (`unprofitable`) |
+
+* **Headline: MISO in-window wind economic entry falls 4.0 GW → 0.0 GW**
+  against 7.2 GW actual (additions band −44.4 % → −100 %). Wind is
+  `unprofitable` in all four decision years; `entry_decided_mw_by_tech`
+  carries no wind anywhere in the window. Exactly the pre-registered result.
+* `ptc_wind_levelized_per_mwh` = **13.6315** (treatment) / **26.0** (control),
+  `ptc_wind` nominal 26.0 in both — item 5 exact.
+* **Solar rows 2022–2024 byte-identical across arms** (−26,446 / −22,681 /
+  −35,946, all `unprofitable`) — item 3 exact; the window touches wind only.
+  Gas rows 2022–2024 byte-identical too.
+* **The single off-by-$969 cell (2025) is the pre-registered second-order
+  coupling of item 4, and it decomposes exactly:** the treatment never
+  commissions the control's 4 GW COD-2024 wind, so the 2025 decision year
+  screens a tighter fleet — reserve margin 10.9 %/16.8 % vs the control's
+  11.4 %/17.3 % in 2024/2025 (≈0.5 pp = the missing wind × ELCC on a
+  114 GW peak). Wind's 2025 revenue is +$1,018 (76,589 vs 75,571) and its
+  cost +$49 (the arm builds no wind, so the Wright wind stock sits slightly
+  lower), +1,018 − 49 = **+969**. Same channel on the other rows: 2025 solar
+  −33,020 vs −33,406, and the 2025 gas capacity payment RISES ~$66 k/MW-yr
+  (gas_cc margin +175,844 → +242,229) on the tighter VRR position — while
+  both gas builds stay cap-bound and UNCHANGED at 3,000 / 1,483.8 MW
+  (item 4's "built MW should not move" holds).
+
+**Verdict: the mechanism does exactly what the statute says and nothing
+else.** The correction moves the wind additions band AWAY from the actual
+(−44 % → −100 %), the owner signed knowing it (Addendum O.2), and the fix
+stays in under rule 1 `[R-STRUCT]`.
+
+## 4. Open root cause (rule 11) — DISCOVERED WIND UNDER-BUILD, handed on
+
+The statutory window removes $41,172/MW-yr of never-real revenue from the
+wind screen, and with it MISO wind entry goes to zero against 7.2 GW actually
+built. **That gap is now an honest, named residual instead of a coincidence
+of two offsetting errors** (an over-credited PTC papering over an
+under-represented revenue stack). Measured bounds on where the real revenue
+is missing, all from this session's own ledgers and FFR-3V's:
+
+* Wind's four windowed margins miss break-even by only **$7.0–22.5 k/MW-yr**
+  — small against the identified omissions below.
+* **RA accreditation:** `entry_vre_capacity_revenue` is default-off, and in
+  the 2025 decision year the treatment arm's own VRR pays a new gas CC
+  $389,172/MW-yr of capacity revenue while wind is denied any share; MISO's
+  published wind capacity credit is intaken on disk and unwired
+  (FFR-3V §4.6b — the same gate FFR-4B's D-2′ lane is probing from the
+  solar side).
+* **The IRP/PPA procurement channel** (FFR-3V §7.1): the real builder of
+  MISO renewables, represented nowhere in `apply_economic_new_entry`.
+* **The scarcity-less lookahead signal** (FFR-3V §3.2): the 2024 entry
+  price series' max is $39/MWh, so every technology whose economics live in
+  a tail is under-revenued at the screen.
+
+Rule-1 boundary, restated for the next lane: do NOT re-inflate the credit,
+soften the window, or add an adder to buy the band back — the fix is on the
+revenue side, through mechanisms that exist in the real market. FFR-4B
+(D-12 + D-2′) is already working the same seam from the solar direction;
+these measurements sit on the PRE-4B side and should be re-based if 4B's
+entry-revenue changes land first.
 
 ## 5. Same-defect finding REPORTED for owner chartering (not fixed, per scope)
 
