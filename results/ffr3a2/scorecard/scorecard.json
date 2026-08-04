@@ -1,6 +1,6 @@
 {
- "scored_at_sha": "def7cbf8",
- "cache_epoch": "Epoch 2026-08-03 \u2014 FFR Wave-2 constants + the D-1/D-2 owner default flips.",
+ "scored_at_sha": "2dd75a96",
+ "cache_epoch": "Epoch 2026-08-03b \u2014 FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).",
  "holdout_freeze_active": true,
  "criterion_a_backcast_calibration": {
   "ERCOT": {
@@ -12,7 +12,7 @@
    "determination_full": null
   },
   "CAISO": {
-   "keeper": "2026-08-03-caiso162-per-year-import",
+   "keeper": "2026-08-03-caiso163-asym-path-ratings",
    "marker_complete": false,
    "marker_final": false,
    "determination": "CALIBRATED-WITH-CAVEATS",
@@ -20,12 +20,12 @@
    "determination_full": null
   },
   "PJM": {
-   "keeper": "2026-08-03-pjm-147b-chp-heat",
+   "keeper": "2026-08-03-pjm-151-seam-envelope",
    "marker_complete": true,
    "marker_final": false,
    "determination": "CALIBRATED",
    "determination_source": "calibration-complete.json",
-   "determination_full": "CALIBRATED on 2026-08-03-pjm-147b-chp-heat, RE-VERIFIED 2026-08-03 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only): every criterion PASS, C1 all 16/16 free 12/12, zero caveats, zero fails. Four C8 grounded-above-budget report notes (CT_PEAKER 2023/2024/2025, ST_GAS 2025) are clean PASSes under rule 21's grounded-pass clause, not caveats. Re-keyed on promotion per owner decision D-5(b) (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1) -- OPTION B, re-key on promotion WITH per-promotion determination re-verification. The re-verified determination is NOT WORSE than the superseded 2026-07-31-pjm-143b-hy-level basis (also CALIBRATED, 16/16 free 12/12, zero caveats), so the promotion proceeds rather than escalating. pjm-147 promoted two zero-fitted-parameter measured-input corrections: measured_chp_heat_rates on PJM's own artifact (the lever, A/B'd against a same-HEAD zero-delta control) and the inherited caiso-158 CT hour-grain meter screen, for which this keeper is PJM's re-gate (caiso-158 section 5 deferred it; its control arm 2026-08-03-pjm-147a-control-zerodelta is the deferred PJM leg, measured dispatch-live/score-neutral)."
+   "determination_full": "CALIBRATED on 2026-08-03-pjm-151-seam-envelope, RE-VERIFIED 2026-08-03 without a solve (scripts/calibration_verdict.py --run-id, committed artifacts only): every criterion PASS, C1 all 16/16 free 12/12, zero caveats, zero fails. Four C8 grounded-above-budget report notes (CT_PEAKER 2023/2024/2025, ST_GAS 2025) are clean PASSes under rule 21's grounded-pass clause, not caveats. Re-keyed on promotion per owner decision D-5(b) (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1) -- OPTION B, re-key on promotion WITH per-promotion determination re-verification. The re-verified determination is NOT WORSE than the superseded 2026-08-03-pjm-147b-chp-heat basis (also CALIBRATED, 16/16 free 12/12, zero caveats) -- the two scorecards are IDENTICAL criterion for criterion -- so the promotion proceeds rather than escalating to the owner. pjm-151 promoted ONE zero-fitted-parameter measured repair: pjm_seam_envelope_by_neighbor, the rule 14 [R-ACCURATE] internal-consistency fix closing keeper-note item 12 (each reference-price seam's deliverability envelope built from that seam's OWN ties instead of summing a per-model-ZONE envelope over its border_zones). The DOF ledger is carried VERBATIM (n_entries 19, n_residual 6), asserted by scripts/gen_pjm151_attestation.py. NOTE FOR ANY 2022 VALIDATION SPEND: this keeper's structural gain is paid for with an INTERCHANGE trade recorded openly in keepers/PJM.json root-cause item 15 -- net export falls in all three years, improving 2025 and worsening 2023-24 -- and that trade was PRE-REGISTERED before the arm solved, so it is a confirmed expectation, not a discovered surprise."
   },
   "MISO": {
    "keeper": "2026-08-03-miso-117b-ct-heat",
@@ -199,7 +199,24 @@
      "FC-7 provenance & DOF FAIL"
     ]
    },
-   "t1x": null
+   "t1x": {
+    "determination": "HOLD",
+    "categories": {
+     "FC-1": "SKIPPED",
+     "FC-2": "SKIPPED",
+     "FC-3": "SKIPPED",
+     "FC-4": "FAIL",
+     "FC-5": "SKIPPED",
+     "FC-6": "n/a",
+     "FC-7": "FAIL",
+     "FC-8": "SKIPPED"
+    },
+    "reasons": [
+     "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+     "FC-4 crossover dispatch skill (T1-X) FAIL",
+     "FC-7 provenance & DOF FAIL"
+    ]
+   }
   },
   "NYISO": {
    "t1f": {
@@ -280,7 +297,7 @@
    "lower_hours": 1.0,
    "peak_gb": 4.6,
    "must_run_solo": false,
-   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/ercot/ERCOT/d0d1e9713593b6a9/crossover_score.json"
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/ercot-2023-2027-crossover-ffr3a2/ERCOT/d0d1e9713593b6a9/crossover_score.json"
   },
   "CAISO": {
    "projected_hours": 2.78,
@@ -293,13 +310,14 @@
    "lower_hours": 1.63,
    "peak_gb": 10.0,
    "must_run_solo": true,
-   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/pjm/PJM/6ecd18c0306db6a6/crossover_score.json"
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/pjm-2023-2027-crossover-ffr3a2/PJM/6ecd18c0306db6a6/crossover_score.json"
   },
   "MISO": {
    "projected_hours": 10.12,
    "lower_hours": 2.25,
    "peak_gb": 10.5,
-   "must_run_solo": true
+   "must_run_solo": true,
+   "crossover_score": "/home/user/market-simulator/results/ffr3a2/t1x/miso-2023-2027-crossover-ffr3a2/MISO/f3f09241576623ba/crossover_score.json"
   },
   "NYISO": {
    "projected_hours": 1.09,
@@ -568,6 +586,20 @@
        "FC-7": "FAIL",
        "FC-8": "SKIPPED"
       }
+     },
+     {
+      "id": "pjm-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
      }
     ],
     "now": {
@@ -592,6 +624,20 @@
     "ff2d": [
      {
       "id": "pjm-t1x",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "pjm-t1x-ff2d",
       "determination": "HOLD",
       "categories": {
        "FC-1": "PASS",
@@ -713,6 +759,20 @@
        "FC-7": "FAIL",
        "FC-8": "SKIPPED"
       }
+     },
+     {
+      "id": "miso-t1h-ff2d",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
      }
     ],
     "now": {
@@ -736,6 +796,20 @@
    "t1x": {
     "ff2d": [
      {
+      "id": "miso-t1x",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "SKIPPED",
+       "FC-3": "SKIPPED",
+       "FC-4": "FAIL",
+       "FC-5": "SKIPPED",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
       "id": "miso-t1x-ffr2a",
       "determination": "HOLD",
       "categories": {
@@ -750,7 +824,24 @@
       }
      }
     ],
-    "now": null
+    "now": {
+     "determination": "HOLD",
+     "categories": {
+      "FC-1": "SKIPPED",
+      "FC-2": "SKIPPED",
+      "FC-3": "SKIPPED",
+      "FC-4": "FAIL",
+      "FC-5": "SKIPPED",
+      "FC-6": "n/a",
+      "FC-7": "FAIL",
+      "FC-8": "SKIPPED"
+     },
+     "reasons": [
+      "FC-1 structural integrity (I1-I14) SKIPPED (required, unscored)",
+      "FC-4 crossover dispatch skill (T1-X) FAIL",
+      "FC-7 provenance & DOF FAIL"
+     ]
+    }
    }
   },
   "NYISO": {
@@ -816,6 +907,20 @@
      },
      {
       "id": "nyiso-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "nyiso-t1h-ff2d",
       "determination": "HOLD",
       "categories": {
        "FC-1": "SKIPPED",
@@ -915,6 +1020,20 @@
      },
      {
       "id": "neiso-t1h",
+      "determination": "HOLD",
+      "categories": {
+       "FC-1": "SKIPPED",
+       "FC-2": "n/a",
+       "FC-3": "FAIL",
+       "FC-4": "n/a",
+       "FC-5": "n/a",
+       "FC-6": "n/a",
+       "FC-7": "FAIL",
+       "FC-8": "SKIPPED"
+      }
+     },
+     {
+      "id": "neiso-t1h-ff2d",
       "determination": "HOLD",
       "categories": {
        "FC-1": "SKIPPED",

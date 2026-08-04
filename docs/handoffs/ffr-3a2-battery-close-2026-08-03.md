@@ -11,27 +11,69 @@ decision Addendum D.1 — *HOLD PROMOTION, FIND ROOT CAUSE*, both mechanisms **s
 armed** — is honoured throughout.
 
 **Base.** Branched off `origin/main` **`f0b8c025`**. The dispatch packet named
-`01b6a6a`; main had advanced 9 merges by session start, and **four keepers had moved**
-(see §0.1). Every citation below is taken at `f0b8c025`, not from the packet.
+`01b6a6a`; main had advanced 9 merges by session start, and **a keeper had moved**
+(see §0.1). Every measurement below was taken on the `f0b8c025 … def7cbf8` line.
+
+> ## ⚠ PROVENANCE CEILING — this battery measures a SUPERSEDED configuration
+>
+> **Read this before relying on any number here.** All 14 legs were solved and scored
+> before this branch was rebased. The rebase onto `origin/main` **`87659ae4`** brought in
+> **59 commits**, including **FFR-3F's G-31 exit-throughput lane** — the very lane owner
+> decision D-8 chartered off the back of the findings this battery corroborates.
+>
+> Two of its changes bear directly on what is measured here:
+>
+> 1. **The G3 cap-grain fix (`2adfb49`) is UNCONDITIONAL and changes the admitted exit
+>    set.** The pipeline's admission cap now resolves its adequacy requirement at the
+>    schedule's **execution horizon** instead of the decision year. That is the same
+>    economic-retirement screen every T1-H finding in §3 rests on.
+> 2. **`exit_rate_limits` is a new `ScenarioConfig` field.** It ships **default-OFF**, so
+>    it is not active — but it moves cache keys.
+>
+> Measured after the rebase: the request-side T1-F keys have moved
+> (**ERCOT `b1bf77e3fcf7f7aa` → `64aa36ee37726baa`**, and even **NYISO
+> `2bd878d87848785c` → `dc33616f9f5d8922`**, the one key that had been stable across the
+> whole prior range).
+>
+> **What that does and does not mean.** The results stand exactly as measured, at the sha
+> each artifact records — that is what `scored_at_sha` is for, and nothing here is
+> retro-fitted. But **this is no longer the shipped configuration**, and the findings most
+> exposed are precisely the retirement ones: **§3.8 (PJM recomposition), §3.9 (MISO's 3/3
+> retirement-band flip) and §3.7 (NYISO's D-1 inertness) should be re-measured at the
+> post-FFR-3F HEAD before being relied on.** The additions-side findings (§3.5 censoring)
+> and the instrument findings (§2.2, §3.4, §6.4) do not depend on the exit screen and are
+> unaffected.
+>
+> This is a sequencing artifact, not a defect in either lane: FFR-3C characterized G-31,
+> the owner chartered the fix, FFR-3F landed it, and this battery ran concurrently against
+> the pre-fix code. It is recorded rather than papered over.
 
 ---
 
 ## 0. State re-verified at this HEAD (the packet was stale)
 
-### 0.1 Keepers — four differ from the dispatch packet
+### 0.1 Keepers moved SIX times across this session
 
-| ISO | packet said | **actual at `f0b8c025`** | moved? |
+The dispatch packet's keeper list was stale at session start and went staler while the
+session ran. Recorded so no citation here is mistaken for current:
+
+| ISO | packet said | at session start (`f0b8c025`) | **at the rebase (`87659ae4`)** |
 |---|---|---|---|
-| ERCOT | `2026-08-02-ercot150b-zonal-anchor` | `2026-08-02-ercot150b-zonal-anchor` | no |
-| PJM | `2026-08-03-pjm-147b-chp-heat` | `2026-08-03-pjm-147b-chp-heat` | no |
-| CAISO | `2026-08-03-caiso156-meter-screen-b` | `2026-08-03-caiso156-meter-screen-b` | no |
-| **NYISO** | `2026-08-03-nyiso-117-nyc-rcpf` | **`2026-08-03-nyiso-118-seny-span`** | **yes (5th move)** |
-| NEISO | `2026-08-03-neiso-caiso156-meter-screen` | `2026-08-03-neiso-caiso156-meter-screen` | no |
-| MISO | `2026-08-03-miso-117b-ct-heat` | `2026-08-03-miso-117b-ct-heat` | no |
+| ERCOT | `…ercot150b-zonal-anchor` | same | same |
+| **PJM** | `…pjm-147b-chp-heat` | same | **`2026-08-03-pjm-151-seam-envelope`** |
+| **CAISO** | `…caiso156-meter-screen-b` | same | **`2026-08-03-caiso163-asym-path-ratings`** |
+| **NYISO** | `…nyiso-117-nyc-rcpf` | **`…nyiso-118-seny-span`** | same |
+| NEISO | `…neiso-caiso156-meter-screen` | same | same |
+| MISO | `…miso-117b-ct-heat` | same | same |
 
-NYISO has now moved **five** times in three days. Markers unchanged: `complete` =
-{NEISO, NYISO, PJM}, `final` **empty**. The **holdout spend freeze is ACTIVE** and was
-neither spent nor worked around.
+**The §2.1b scorecard (§8) reads keepers LIVE from the shards**, so it reflects the
+post-rebase set; its criterion-(a) determinations are current. The T1-F/T1-H/T1-X legs
+were solved against the session-start set, which does not affect them — a backcast keeper
+does not enter a forecast solve (regate §2: the backcast has no capacity evolution, and
+the forecast legs read none of it).
+
+Markers unchanged throughout: `complete` = {NEISO, NYISO, PJM}, `final` **empty**. The
+**holdout spend freeze is ACTIVE** and was neither spent nor worked around.
 
 ### 0.2 The environment was empty — both prerequisites, not one
 
