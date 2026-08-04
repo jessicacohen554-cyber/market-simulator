@@ -1338,3 +1338,104 @@ limitation — owner: ________ date: ____
   −1,312 MW lands in 2030.
 * **NYISO moved again** → `2026-08-04-nyiso-120-c119-scope`. That is the **seventh** NYISO
   keeper in four days.
+
+---
+
+## Addendum K — the FH-4/FH-5 lift call, D-9 re-signed, and a new decision D-10
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `145e4c5f`.** Supersedes
+Addendum J where they conflict; J itself is untouched, per the correct-by-addendum discipline.
+
+### K.1 — FH-4/FH-5: **NOT LIFTED. The block stands.** (manager determination)
+
+This is the manager box that Addendum I.1 says only a manager opens. It is **not** opened,
+and the reason is not a judgement call — the evidence the lift requires does not exist.
+
+The lift requires two things: a landed fix **and** a green re-probe on the **re-cut** gate.
+FFR-3Q was chartered to produce the second. **It did not.** Read at this HEAD:
+
+| FFR-3Q section | state |
+|---|---|
+| §0 Headline | **`*(pending)*`** |
+| §1 Task 0 — rule-22 legality of a base-2021 T1-FF window | **VERIFIED by execution** — delivered |
+| §2.1 Task 1 posture, pairing, pre-registered reads | delivered (arms A `b99600bceb8cb6b8` / B `5c352508039513da`, one-field diff) |
+| **§2.2 Task 1 Result** | **`*(pending)*`** — the arms were never solved |
+| §3 Task 2 — D-9 | delivered (the no-op determination; became Addendum J) |
+| §4 What this evidence does NOT separate | **`*(pending)*`** |
+
+Corroborated against the artifacts rather than the prose, per J.1: `frontend/data/hindcast/`
+holds **132** sidecars and **zero** named `ffr3q-*`. The only registered T1-FF gate leg is
+`ercot-2023-2025-t1ff-armr-fh1gate.json` — the **original three-year** window. The re-cut
+posture (base 2021 / vintage 2020 / 2021–2025) has never been solved.
+
+So FFR-3Q delivered its legality determination and its D-9 escalation and stopped before its
+central task. **The re-probe is re-dispatched as FFR-3Q-2.** Until its result lands and is
+read against Addendum G.2's three binds — the earlier green was not the fix's; I12's WARN had
+inverted sign; zero `pipeline_events` means untested, not validated — FH-4 and FH-5 stay
+blocked. A green on a posture that cannot exercise the mechanism is still not a pass.
+
+### K.2 — D-9 (re-put at J.4): **SIGNED — (ii) COD-shifted scoring**
+
+Owner, 2026-08-04. Score an addition against the year the model **decided** it, not the year
+it commissions. Scorer-side; needs no out-of-training year; recovers the censored half of
+every T1-H entry measurement.
+
+**The cost is accepted with the decision and must be carried in every subsequent report:** it
+changes what the additions metric measures, so **every historical additions verdict becomes
+non-comparable to new ones, and the FF-2D regression baseline stops being usable for additions
+specifically**. Retirements-side comparability is unaffected. The implementing lane is
+**FFR-3S**; it does not retro-edit committed artifacts and does not re-score committed legs to
+pick up the change.
+
+Rationale on record: the alternative (iii) meant accepting that half of every T1-H entry
+measurement is permanently unscoreable, which makes D-2's entry-side skill unmeasurable on
+this tier and leaves "FC-3 FAIL" unactionable — MISO's FC-3 fails on the censored half alone.
+
+### K.3 — D-10 (NEW, from FFR-3M): **SIGNED — warm-start OFF for forecast bundles**
+
+FFR-3M landed 2026-08-04 and adjudicated FF-3E part c as **MECHANISM 2, alternate optima**,
+cause confirmed causally (its cell C): `ScenarioConfig.forecast_xyear_warmstart` (default
+`True`) warm-starts each year from the prior year's basis; a resumed run has no basis to
+inherit, solves that year cold, and lands on a different vertex of a degenerate optimal face.
+FFR-3M escalated the trade rather than deciding it. It is now decided.
+
+**Owner decision, 2026-08-04: Option 2 — `forecast_xyear_warmstart=False` for forecast
+bundles.** Drill goes green (measured), resume-reproducibility becomes structural, and the
+cold answer is also the canonical one, so the reproducible result becomes the default result.
+Cost accepted: the ~2.3× steady-state P0 speedup, negligible on a 3-year T0 and material on a
+25-year full-horizon T1.
+
+Option 3 (pin a basis) was put with its measured cost and **not** taken — it would freeze one
+vertex of a tied optimal face as "the" answer and, because the retirement screen reads
+per-unit dispatch volumes, would let a solver setting silently select which marginal units
+retire (ERCOT: objective relΔ 8.3e-4, max |Δ zonal price| 0.19 $/MWh). That is the coupling
+rule 1 `[R-STRUCT]` exists to prevent.
+
+**Coordination hazard, flagged for the implementing lane (FFR-3T):**
+`forecast_xyear_warmstart` is an **included** cache-key field (`scenarios.py` ~L486–493 — the
+comment there states `False` "enters the key as a distinct scenario"), so flipping the default
+**shifts every forecast cache key**. That is a cache-epoch-scale event and must be declared as
+one, sequenced against any in-flight forecast solve lane — FFR-3Q-2 in particular.
+
+### K.4 — dispatch-ledger correction: the pack's Wave-3 ledger was stale within hours
+
+The ledger written at `ee14c4a7` lists FFR-3K, FFR-3M and FFR-3R as **NEVER DISPATCHED**. Two
+of the three have since run and merged. Corrected state:
+
+| lane | ledger said | **actual at `145e4c5f`** |
+|---|---|---|
+| FFR-3M | never dispatched | **LANDED** (`4c403dd9`, PR #3482) — FF-3E part c = alternate optima; produced D-10 |
+| FFR-3R | never dispatched | **LANDED** (`0f788c29`, PR #3476) — found **instance five** (hardcoded literals in `register_forecast_baseline.py`), closed the class structurally via `scripts/lib/run_record.py`; proven record-only (`cache_key(ScenarioConfig())` = `603c2498bf71d21d` unchanged, `git diff origin/main -- src/` empty) |
+| **FFR-3K** | never dispatched | **STILL NEVER DISPATCHED, defect live at HEAD** — `run_capacity_hindcast.py` **L1419** still `to_yaml_full(... "run_config.yaml")` while FC-7 reads `.json`. (FFR-3Q §3.5 cites L1303; the line has moved, the defect has not.) |
+
+The four lanes now dispatched — **FFR-3K**, **FFR-3Q-2**, **FFR-3S** (D-9(ii)), **FFR-3T**
+(D-10) — are written into the prompt pack in the same session, per the standing rule that a
+prompt delivered only in chat is a prompt that gets lost.
+
+### K.5 — still open after this addendum
+
+* **D-2′** (`entry_vre_capacity_revenue`) remains **unprobed** — no lane owns it.
+* **CAISO FC-2 row 4** still FAILs at **63.23 %**; FFR-3H's cause 2 (a CAISO `gas_ct`
+  unprofitable in the entry screen in every year of every arm by $39,974–45,316/MW-yr) is
+  diagnosed and **unchartered**. Offered to the owner, not self-chartered.
+* **Pre-existing test failures on main** remain unowned.

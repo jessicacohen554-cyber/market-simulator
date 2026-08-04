@@ -1251,3 +1251,358 @@ proof against the historical bug; the per-key statement of which committed recor
 unreliable and whether any published verdict depended on them; and an explicit list of any
 runner or writer you did NOT audit.
 ```
+
+---
+
+## §0f — Wave-3 ledger CORRECTION and the four lanes dispatched 2026-08-04 @ `145e4c5f`
+
+Read this **after** the Wave-3 ledger above; it supersedes that ledger's status column.
+Decision citations: sitting **Addendum K** (`docs/handoffs/ffr-owner-sitting-2026-08-02.md`).
+
+**Ledger correction (Addendum K.4).** FFR-3M **LANDED** (`4c403dd9`) and FFR-3R **LANDED**
+(`0f788c29`); do not re-dispatch either. **FFR-3K is still undispatched and its defect is live
+at HEAD** (`run_capacity_hindcast.py` **L1419**, not L1303 as FFR-3Q §3.5 cites — the line
+moved, the defect did not). **FFR-3Q Task 1 never reported** (§0/§2.2/§4 all `*(pending)*`;
+zero `ffr3q-*` sidecars among the 132 in `frontend/data/hindcast/`), so **FH-4/FH-5 is NOT
+lifted** and the re-probe is re-dispatched below as FFR-3Q-2.
+
+**Two decisions signed 2026-08-04:** **D-9 = (ii) COD-shifted scoring** (Addendum K.2) and
+**D-10 = `forecast_xyear_warmstart` OFF for forecast bundles** (Addendum K.3). FFR-3S and
+FFR-3T implement them.
+
+**Landing order.** FFR-3K and FFR-3S are both **instrument** changes and both land **before
+the next battery scores anything**. FFR-3T shifts every forecast cache key and must be
+sequenced against FFR-3Q-2. FFR-3Q-2 is independent of all three and starts immediately.
+
+### FFR-3K [OPUS] — FC-7 for the T1-H and T1-X tiers (unchanged charter, refreshed header)
+
+The prompt body in the Wave-3 section above stands as written. Replace only its VERIFIED STATE
+header with the `145e4c5f` header used by the three prompts below, and correct the line
+reference: the defect is at **L1419**, `config.to_yaml_full(args.out_dir / "run_config.yaml")`.
+
+### FFR-3Q-2 [OPUS] — re-run the FFR-3Q Task 1 re-probe (the FH-4/FH-5 gate)
+
+```
+[OPUS] FFR-3Q-2 — Solve and report the FFR-3Q Task 1 re-probe. FFR-3Q pre-registered this
+posture and then never solved it; you are finishing exactly that task and nothing else.
+This lane GATES the FH-4/FH-5 lift, which is a MANAGER box — you do not lift it, you do not
+declare it liftable, and reporting green does not lift it (sitting Addendum I.1).
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 145e4c5f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO moved 7x in 4 days):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-03-pjm-151-seam-envelope ·
+CAISO 2026-08-04-caiso164-zonal-loss-surface · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: calibration-complete.json `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY.
+HOLDOUT FREEZE ACTIVE (holdout-freeze.json) — it blocks out-of-training BACKCAST solve/score/
+registration only. It does NOT block T1-FF windows, forecast-mode 2026+, or in-sample work.
+Cache epochs 2026-08-02 (all forecast) + 2026-08-03b (NYISO-forecast-scoped). Forecast work
+solves COLD — deliberate, not a bug to route around, and results/ is gitignored so "expect
+cache hits" is never a valid budget in a fresh container.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is not one), THEN scripts/regenerate_clean.py (~63-65 min, 50
+datatypes, 1.6 GB). On the uv path the tzdata/ZoneInfoNotFoundError trap does not arise.
+Rule 12 is PER PROMPT (Addendum F.2): years sequential within an invocation, <=2 concurrent
+invocations, <=5 solve-years per invocation, PJM and MISO never co-run. Rule 27: Opus/Fable
+only for src/ and scripts/run_*; never a full-file rewrite from response content.
+
+=== WHAT IS ALREADY DONE — DO NOT REDO IT ===
+Read docs/handoffs/ffr-3q-window-recut-2026-08-04.md in full first.
+- Task 0 (rule-22 legality of a base-2021 T1-FF window) is VERIFIED BY EXECUTION. The
+  existing carve-out covers it: HINDCAST_SOLVE_YEARS = {2021,2023,2024,2025} (four solve-
+  years, under the <=5 cap), 2022 BRIDGED (evolved across, never solved, data never read),
+  scoring bounded to 2023-2025 on both sides, vintage 2020 enumerated and <= base 2021.
+  Nothing was widened and no marker was spent. Do NOT re-derive this and do NOT edit
+  holdout_policy.py.
+- Task 2 (D-9) is done and became sitting Addendum J; D-9 has since been re-signed as (ii).
+  Not yours.
+- §2.1 pre-registers your posture and pairing. Honour it as written; changing a pre-registered
+  read after the fact is the thing the pre-registration exists to prevent.
+
+=== YOUR TASK: solve the two arms and fill §2.2, §0 and §4 ===
+ERCOT, Arm R (hindcast_realized gas + per-solve-year weather), base 2021 / vintage 2020,
+window 2021-2025, shipped capacity-price posture, D-1 and D-2 ARMED, exit_rate_limits at its
+default OFF, hindcast namespace, meta.kind="full_forward".
+  Arm A — primary, shipped default: retirement_rule=pipeline   (expected key b99600bceb8cb6b8)
+  Arm B — paired control, explicitly labelled: retirement_rule=legacy  (key 5c352508039513da)
+RE-VERIFY both keys and the field-by-field asdict diff at YOUR head before solving: the diff
+must contain EXACTLY ONE entry (retirement_rule). If it does not, STOP and report — something
+landed between FFR-3Q and you. Confirm `env | grep MARKET_SIM` is empty (a MARKET_SIM_DATA_ROOT
+outside REPO_ROOT shifts the cache key for a reason that is not a config difference — FFR-3F
+§5). Arm B is the ONE place Addendum D's HOLD-PROMOTION permits unarming D-1: an explicitly
+labelled control. Do not unarm anything anywhere else.
+
+=== THE PRE-REGISTERED READS (FFR-3Q §2.1, verbatim in force) ===
+1. PRIMARY: `pipeline_events` per year. The whole point of the re-cut is that the retirement
+   layer becomes observable. Both prior probes returned ZERO events in every arm, which is why
+   both were uninformative. If this window ALSO returns zero, THAT IS THE HEADLINE FINDING and
+   I6/I7/I12 are reported as invariant-BY-VACANCY, never as a pass.
+2. The mechanical prediction behind G.5(a): L_coal=3 means only a 2021 or 2022 screen decision
+   can execute in-window (2024/2025). The re-cut succeeds or fails on whether those two screens
+   produce candidates. Report the candidate count per screen year explicitly.
+3. I12 is MEASURED here, not attributed — FFR-3N owns the attribution (it concluded storage
+   accreditation, not the retirement rule; read it). Report only whether the longer window
+   moves it, and note its WARN previously had INVERTED sign (over-retiring -> retiring nothing).
+4. The exit-throughput cap is OBSERVED, not armed. exit_rate_limits stays default-OFF.
+   _apply_exit_throughput_cap only fires when a year's `due` set is non-empty, so the
+   reportable precondition is whether `due` is EVER non-empty. It has never bound in any full
+   solve in either test ISO — a measured null, not an untested mechanism.
+
+=== HOW TO READ THE RESULT (Addendum G.2 — three binds) ===
+(a) The earlier FH-1 green was NOT the fix's: a paired pre-fix control returned it identically.
+(b) I12's WARN had inverted sign. (c) Zero pipeline_events means the retirement layer was
+UNTESTED, not validated. A green on a posture that cannot exercise the mechanism is not a pass.
+Say which of these your result is, and do not round a vacancy up to a pass.
+
+=== SEQUENCING ===
+FFR-3T (owner decision D-10) flips `forecast_xyear_warmstart` to False, and that field is an
+INCLUDED cache-key field, so it shifts every forecast cache key. PIN YOUR HEAD for the duration
+of your solves, RECORD the warm-start value both arms actually ran with, and do not rebase
+mid-flight. Your A/B pairing is internal, so a flip landing after you is not a threat to it —
+an unrecorded flip landing DURING it is.
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase, measured 647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never fall back to push_files
+for a >=300-line file — it takes content as a string, the exact full-file rewrite rule 27
+forbids. The documented cache-purge command deletes TRACKED files (410 committed artifacts
+once); `git status --short` after any purge. Shell cwd persists between Bash calls. Evolution
+ledgers live at <out-dir>/<ISO>/<cache_key>/, NOT the out-dir root, and load_ledgers_for_run
+returns {} rather than raising — a wrong path silently reads as "no evolution happened".
+A REQUEST-side cache_key() is NOT the key a run is recorded under (FFR-3A-2 §1.2).
+
+=== DELIVERABLE ===
+Register both arms to frontend/data/hindcast/ with meta.kind="full_forward" (NEVER the backcast
+registry). Fill FFR-3Q's §0 headline, §2.2 Result and §4 by APPENDING an addendum to
+docs/handoffs/ffr-3q-window-recut-2026-08-04.md — do not rewrite that file. Rule 28: stamp the
+mechanism-matrix cell + citation in THIS session, rejections included. State explicitly that
+the FH-4/FH-5 lift is the manager's call and that you are not making it.
+```
+
+### FFR-3S [OPUS] — implement D-9(ii), COD-shifted additions scoring
+
+```
+[OPUS] FFR-3S — Implement owner decision D-9(ii): score capacity ADDITIONS against the year
+the model DECIDED to build, not the year the unit commissions. Signed 2026-08-04, sitting
+Addendum K.2. This is an INSTRUMENT change and it lands BEFORE the next battery scores
+anything — never as a retrofit to an already-scored bundle.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 145e4c5f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT 2026-08-03-ercot158-
+pool-arm · PJM 2026-08-03-pjm-151-seam-envelope · CAISO 2026-08-04-caiso164-zonal-loss-surface
+· NYISO 2026-08-04-nyiso-120-c119-scope · NEISO 2026-08-03-neiso-caiso156-meter-screen ·
+MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only; it does not block forecast-mode or in-sample work). Cache epochs
+2026-08-02 + 2026-08-03b. PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — no Python env
+ships in the container; skipping it makes regenerate_clean.py report "50/50 datatype(s)
+failed", which is not a data problem), THEN scripts/regenerate_clean.py (~65 min) ONLY if you
+need a smoke leg. Rule 12 is PER PROMPT (Addendum F.2). Rule 27: Opus/Fable only for
+scripts/score_*; never a full-file rewrite from response content.
+
+=== THE DEFECT, AND WHY THE OWNER CHOSE THIS REMEDY ===
+`evolve_fleet` books an entry decision at year Y into `entry_pipeline` with
+cod_year = Y + ENTRY_COD_LAG_YEARS[tech] (= Y+2 for wind/solar/gas_cc/gas_ct).
+`score_capacity_hindcast.model_additions` reads additions by the ledger year they COMMISSION
+in. In the 2021-2025 T1-H window that means the 2024 and 2025 decision cohorts commission in
+2026/2027 and are NEVER SCORED — half the solved decision years are invisible.
+The censoring is PERMANENT and no window length removes it: forward requires scoring 2026
+(a locked-test year; `final` EMPTY; freeze ACTIVE) and 2027 (no actuals), and _validate_window
+hard-caps a non-crossover window at end<=2025; backward hits the 2021 demand floor and 2020's
+validation tier. Read FFR-3Q §3.2 for the full argument — do NOT re-derive it, and do NOT
+attempt to widen any window. This is a SCORER change and touches no out-of-training year.
+
+=== SCOPE ===
+1. Score an addition against its DECISION year, not its COD year. The decision year is
+   recoverable from the entry_pipeline ledger; derive it, do not reconstruct it by subtracting
+   a lag constant unless you first verify the ledger records nothing better.
+2. Make the basis EXPLICIT and RECORDED in the sidecar — a reader must be able to tell which
+   basis a verdict used without reading code. A verdict whose basis is implicit is the
+   record-provenance defect class FFR-3R just closed; do not re-open it. Reuse
+   scripts/lib/run_record.py (FFR-3R, 0f788c29) rather than adding a parallel channel.
+3. Keep the COD basis computable and reported alongside, so the two are comparable within a
+   single new sidecar even though old and new sidecars are not comparable to each other.
+4. Tests: one that fails under the old basis and passes under the new, on a case where a
+   decision cohort falls outside the scored window; and one asserting retirements-side scoring
+   is untouched.
+5. VERIFY SOLVE-INERTNESS: no cache key moves, no keeper moves. Report
+   cache_key(ScenarioConfig()) and the six per-ISO 2023 backcast keys before and after, the
+   way FFR-3R did. A keeper that moves under a scorer change is STOP-THE-LINE.
+
+=== THE COST YOU MUST STATE, NOT SOFTEN ===
+The owner signed this knowing it: the additions metric now MEANS something different, so
+EVERY historical additions verdict is non-comparable to new ones, and THE FF-2D REGRESSION
+BASELINE STOPS BEING USABLE FOR ADDITIONS SPECIFICALLY. Retirements-side comparability is
+unaffected. Put this on the peer-review §4 standing disclosure list
+(docs/forecast-readiness-peer-review-2026-07.md) in this session.
+DO NOT retro-edit any committed artifact and DO NOT re-score a committed leg to pick up the
+change. Any re-measurement is a future battery's job, run forward on the new basis.
+DO NOT tune anything to make a band pass. If MISO's FC-3 additions still fail on the new
+basis, that is the finding — MISO is the only registered T1-H leg with an empty retirement-
+FAIL set, its model solar build is 0.0 GW against an 18.649 GW actual, and a 2-year COD shift
+cannot explain a zero. Report it; do not close it.
+
+=== TRAPS ===
+Push 413: `git remote prune origin` (stale ref of a deleted merged branch) or `git fetch
+origin main` + rebase (stale origin/main defeats delta compression). FETCH MAIN BEFORE
+DIAGNOSING. Never push a >=300-line file via push_files. The documented cache-purge command
+deletes TRACKED files; `git status --short` after. `git checkout origin/main -- <path>` STAGES
+those files — `git restore --staged` after inspecting another lane's state. Shell cwd persists.
+
+Deliverable: docs/handoffs/ffr-3s-cod-shifted-scoring-<date>.md + the peer-review §4 entry.
+Rule 28: stamp the mechanism-matrix cell in this session if you touch a matrix-tracked field.
+```
+
+### FFR-3T [OPUS] — implement D-10, warm-start off for forecast bundles
+
+```
+[OPUS] FFR-3T — Implement owner decision D-10: set forecast_xyear_warmstart=False for forecast
+bundles. Signed 2026-08-04, sitting Addendum K.3, on FFR-3M's measured adjudication.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 145e4c5f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT 2026-08-03-ercot158-
+pool-arm · PJM 2026-08-03-pjm-151-seam-envelope · CAISO 2026-08-04-caiso164-zonal-loss-surface
+· NYISO 2026-08-04-nyiso-120-c119-scope · NEISO 2026-08-03-neiso-caiso156-meter-screen ·
+MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only). Cache epochs 2026-08-02 + 2026-08-03b. PREREQUISITES IN ORDER:
+`uv sync` FIRST (~2 min — no Python env in the container; skipping it makes regenerate_clean.py
+report "50/50 datatype(s) failed", which is not a data problem), THEN
+scripts/regenerate_clean.py (~63-65 min) if you solve anything. Rule 12 is PER PROMPT
+(Addendum F.2): years sequential, <=2 concurrent invocations, <=5 solve-years each, PJM and
+MISO never co-run. Rule 27: Opus/Fable only for src/market_sim/ and scripts/run_*.
+
+=== THE DECISION AND ITS EVIDENCE — READ FIRST, DO NOT RE-ADJUDICATE ===
+docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md. FF-3E part c = MECHANISM 2, ALTERNATE
+OPTIMA, cause confirmed causally by its cell C: the flag warm-starts each year from the prior
+year's in-process basis; a resumed run has no basis to inherit, solves that year cold, and
+lands on a different vertex of a degenerate optimal face. Cell A's cached years are BIT-
+IDENTICAL — the resume plumbing is sound; all divergence is in the first freshly-solved year.
+Owner took Option 2. Option 3 (pin a basis) was put with its measured cost and REFUSED: it
+would let a solver setting silently select which marginal units retire, because the retirement
+screen reads per-unit dispatch volumes (ERCOT: objective relD 8.3e-4, max |D zonal price| 0.19
+$/MWh). Do not implement any form of basis pinning, tie-break, or ordering freeze.
+
+=== SCOPE ===
+1. Make False the effective value on the FORECAST path. Decide and JUSTIFY IN WRITING whether
+   that is a changed ScenarioConfig default or a forecast-path override, and say what it does
+   to the backcast path — the owner signed "for forecast bundles", so a change that silently
+   also alters backcast solves EXCEEDS the decision and is not yours to make.
+2. THIS SHIFTS EVERY FORECAST CACHE KEY. forecast_xyear_warmstart is an INCLUDED cache-key
+   field (src/market_sim/config/scenarios.py ~L486-493; the comment there states False "enters
+   the key as a distinct scenario"). Confirm that at your HEAD, MEASURE the before/after keys,
+   and declare a CACHE EPOCH in the ledger at src/market_sim/results/cache.py with its reason.
+   Report the six per-ISO 2023 BACKCAST keys before and after too: if scope 1 is correct they
+   are UNCHANGED, and that is the check that proves you did not exceed the decision.
+3. Re-run the kill-resume drill (scripts/ff_readiness_battery.py kill-resume, the FFR-3J
+   ef5695b0 discriminator) on the shipped config and record the result. FFR-3M measured GREEN
+   for this posture in its cell C; reproducing that is confirmation, not a new claim. If it is
+   NOT green, STOP and report — that means the cause was not fully identified, and you write
+   that up rather than chasing it.
+4. A test that pins the forecast-path value, so a future default flip cannot silently revert it.
+5. Rule 28: forecast_xyear_warmstart's matrix cell + citation updated in THIS session.
+
+=== SEQUENCING — YOU ARE NOT ALONE ON THIS FILE ===
+FFR-3Q-2 is solving a paired ERCOT T1-FF A/B under the OLD default and has been told to pin its
+HEAD. Before you push the flip, CHECK for in-flight forecast solve lanes (docs/handoffs/ for
+today's date, the PR list open AND closed, and recent origin/main commits — merged branches are
+deleted, so `git branch -r` is not an activity signal). If a lane is mid-flight, say so in your
+write-up with what you did about it. Absence of a PR is NOT absence of a running session: every
+session burns ~65 min on prerequisites before it pushes anything. Report "no evidence yet",
+never "not running".
+
+=== WHAT NOT TO DO ===
+Do not widen a tolerance, do not disable the drill, do not pin a basis, and do not tune
+anything to make a drill pass. The ~2.3x P0 speedup loss is an ACCEPTED cost of the decision,
+not a regression to mitigate — if you find yourself designing a way to keep it, you are
+re-litigating a signed decision. Measure the horizon-scale cost and report it plainly instead.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN BEFORE
+DIAGNOSING. Never push a >=300-line file via push_files (it takes content as a string — the
+full-file rewrite rule 27 forbids); scenarios.py is ~9,800 lines, so edit locally and
+`git push`, then VERIFY THE PUSHED BLOB (line count + hash vs local) before the next commit.
+The documented cache-purge command deletes TRACKED files; `git status --short` after. Shell cwd
+persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3t-warmstart-off-<date>.md — the scope-1 justification, the
+before/after key measurements on BOTH paths, the declared cache epoch, the drill result, and
+the measured horizon-scale solve-time cost.
+```
+
+### FFR-3K [OPUS] — complete dispatched prompt, header refreshed to `145e4c5f`
+
+Supersedes the Wave-3 section's copy of this prompt (whose VERIFIED STATE header and line
+reference are stale). Paste this one.
+
+```
+[OPUS] FFR-3K — Fix FC-7 for the T1-H and T1-X tiers. This is the UNFIXED ANALOGUE of a bug
+already fixed once, and it must land BEFORE the next battery.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 145e4c5f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO moved 7x in 4 days):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-03-pjm-151-seam-envelope ·
+CAISO 2026-08-04-caiso164-zonal-loss-surface · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-124-dualfuel-rearm.
+Markers: calibration-complete.json `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY.
+HOLDOUT FREEZE ACTIVE (holdout-freeze.json) — out-of-training BACKCAST solve/score/registration
+only; it does NOT block forecast-mode 2026+, T1 windows, or in-sample 2023-2025 work.
+Cache epochs 2026-08-02 (all forecast) + 2026-08-03b (NYISO-forecast-scoped).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is not one), THEN scripts/regenerate_clean.py (~63-65 min, 50
+datatypes, 1.6 GB) — ONLY if you need a smoke leg.
+Rule 12 is PER PROMPT (sitting Addendum F.2): years sequential within an invocation, <=2
+concurrent invocations, <=5 solve-years each, PJM and MISO never co-run. Rule 27:
+scripts/run_* is Opus/Fable only, and never a full-file rewrite from response content.
+
+=== THE BUG ===
+`run_capacity_hindcast.py` writes `run_config.yaml`; FC-7 row 1 requires `run_config.json`.
+FC-7 therefore fails on EVERY T1-H and T1-X leg BY CONSTRUCTION and carries no information
+about leg quality. The defect is at **L1419** at this HEAD:
+    config.to_yaml_full(args.out_dir / "run_config.yaml")
+(FFR-3Q §3.5 cites L1303 — the line moved, the defect did not. Re-locate it yourself.)
+This is the exact defect FFR-3D fixed at `34c2f25` — but ONLY in `run_full_horizon.py`. READ
+THAT COMMIT and REUSE its writer rather than writing a second implementation. `ea7cd5d` fixed
+a crash in that repair; confirm you are past it and inherit the fix. FFR-3R (`0f788c29`) has
+since landed `scripts/lib/run_record.py`, which DECLARES a record's config-describing block
+and BUILDS it from the solved config — build on that, not around it.
+
+=== WHY IT MUST LAND FIRST ===
+FFR-3A-2 deliberately did not fix it: authoring the artifact after seeing the score is what
+rubric §4 forbids. The same logic binds you in reverse — this lands as an INSTRUMENT change
+BEFORE the next battery scores anything, never as a retrofit. Do NOT hand-author a
+run_config.json into any already-scored bundle, and do NOT re-score a committed leg to pick up
+the fix. FFR-3S (owner decision D-9(ii)) is the other instrument lane landing before the next
+battery; you are independent of it.
+
+=== SCOPE ===
+1. Emit run_config.json from run_capacity_hindcast via the same writer run_full_horizon uses.
+   Keep the .yaml if anything reads it — CHECK before deleting.
+2. A test that would have caught this: assert the artifact FC-7 reads exists after a minimal
+   hindcast run. One per tier if the paths differ.
+3. Verify no keeper moves and no cache key moves — artifact emission must be SOLVE-INERT.
+   Report cache_key(ScenarioConfig()) and the six per-ISO 2023 backcast keys before and after,
+   the way FFR-3R did. A keeper that moves under it is STOP-THE-LINE.
+4. Check whether any OTHER runner has the same gap. Two instances of one defect was a
+   coincidence; FFR-3R found a fifth instance of the sibling class, so a third here would be a
+   pattern and finding it is cheap.
+5. State plainly that EVERY committed T1-H/T1-X FC-7 verdict predating your fix is an
+   INSTRUMENT ARTIFACT, not a leg-quality signal. Do not retro-edit those artifacts.
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase, measured 647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never fall back to push_files
+for a >=300-line file — it takes content as a string, the exact full-file rewrite rule 27
+forbids; run_capacity_hindcast.py is well past that, so edit locally, `git push`, then VERIFY
+THE PUSHED BLOB (line count + hash vs local) before the next commit. The documented cache-purge
+command deletes TRACKED files (410 committed artifacts once); `git status --short` after any
+purge. `git checkout origin/main -- <path>` STAGES those files — `git restore --staged` after.
+Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3k-fc7-hindcast-<date>.md. Small lane; do not expand it.
+Rule 28: stamp any mechanism-matrix cell you touch in THIS session.
+```
