@@ -311,3 +311,62 @@ reported.
 ---
 
 *Pre-registered 2026-08-04, before any LP solve for this session.*
+
+---
+
+## §8 — ADDENDUM, written BEFORE any solve result exists
+
+**Owner guidance received mid-session, recorded verbatim in substance:** *"Is this
+a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper."*
+
+That is a standing owner disposition on the rule 1 `[R-STRUCT]` / rule 14
+`[R-ACCURATE]` trade this arm was pre-registered to make, and it is written down
+**now**, before the A/B has produced a single number, so the decision rule cannot
+be shaped by the result.
+
+### 8.1 The decision rule, fixed in advance
+
+1. **Any kill gate K1 / K2 / K3 / K5 / K6 fires → NO PROMOTION.** Both bundles are
+   still registered (rule 15) and the finding reports the fire. The owner's
+   guidance covers *gate regression on a scored criterion*, not a structural
+   blow-up, new unserved energy, a C1 regression, or a void A/B.
+2. **K4 fires (the arm is INERT, max |ΔLMP| < $0.10 in all three years) →**
+   report INERT. A measured, structurally-correct input that changes nothing is
+   still promotable in this repo (nyiso-118 is the precedent: "ALL 18 SCORED
+   NUMERIC FIELDS EQUAL to its same-HEAD control … PROMOTION RESTS ON RULE 1 AND
+   THE RESIDUAL DELIBERATELY DID NOT MOVE"), so this is a **report-and-recommend**,
+   not an automatic promotion — the recommendation is stated and the owner's
+   standing guidance applied.
+3. **No kill gate fires and the arm is LIVE → PROMOTE**, whatever C3a does,
+   including the pre-registered adverse case in which C3a-2023 crosses +10 % and
+   FAILS. §4.3 named that risk before the solve; §8 does not now re-license it,
+   it simply records that the owner has ruled on it in advance.
+
+### 8.2 What promotion still requires, and what it may never do
+
+Rule 22 D-5(b) is **not** waived by §8.1. NYISO holds a `complete` marker, so a
+promotion must, in the SAME session and **before** the promotion commit lands:
+
+* re-key `frontend/data/backcast/calibration-complete.json`'s `keeper`, and
+* **re-verify** `determination` with `scripts/calibration_verdict.py --run-id`
+  (committed artifacts only, never a solve).
+
+**A worse re-verified determination is recorded explicitly and never softened.**
+The determination is already **NOT-YET** (C3a FAIL on 2025), so the LABEL cannot
+degrade further — but the SUBSTANCE can (two failing C3a years instead of one),
+and if it does, that is stated in the promotion note in those words, exactly as
+nyiso-120's note stated its own regression. `scripts/audit_keepers.py --iso NYISO`
+must still pass 0/0.
+
+Three things §8 does **not** authorise, stated so the licence cannot spread:
+
+* **No tuning.** The p90 convention is not swept, no band is widened, no leg is
+  unarmed, and the mechanism is not scoped to a year or a zone in response to any
+  score (rules 1 / 11 / 14, PREREG §4.1).
+* **No new caveat.** C3c remains the SOLE ledgered caveat, budget **1 of 3
+  UNSPENT**. C3a is a criterion FAILURE and is not ledgered to make it disappear.
+* **No holdout spend.** The freeze is active and outranks NYISO's `complete`
+  marker; 2023–2025 only.
+
+*Addendum written 2026-08-04, before the A/B produced any result.*
