@@ -1553,13 +1553,22 @@ pjm-152"; nyiso-121 precedent.)*
   `FINDING-pjm149-…` records that no determination moved at any of the six ISOs
   **and that pjm-148's specific CC_CHP payload-absence claim was REFUTED — all 14
   codes are PRESENT.** The stale routing paragraph below is struck accordingly.
-* **FILED, open verification debt (needs a solve, so not this no-LP session's):**
-  the merged `pjm-152` rule-26 collapse landed in main with its PREREG's **sole
-  absolute gate — E1, `max |dMW| = 0.000000` on every P1 class-hour of all three
-  years — NEVER SCORED.** No `pjm152_collapse_A` bundle exists, no FINDING was
-  written, and the token `PJM152_COLLAPSE_DMW` (which the `seam_flow_envelopes`
-  row's note cited as proof) appears **nowhere in the repository**. That note is
-  corrected this session.
+* **The merged `pjm-152` rule-26 collapse: filed as an open verification debt, then
+  DISCHARGED mid-session — nothing is owed.** At `origin/main` `a96f9743` the
+  PREREG's sole absolute gate (E1, `max |dMW| = 0.000000` on every P1 class-hour of
+  all three years) had **no committed evidence at all** — no `pjm152_collapse_A`
+  bundle, no gate record, no FINDING, and the token `PJM152_COLLAPSE_DMW` that the
+  `seam_flow_envelopes` row cited as proof appears **nowhere in the repository**.
+  Main advanced to `6fbd3f28` while this session worked and the arm landed.
+  Re-verified: **E1 PASSES absolutely** — `max_abs_class_hour_dMW = 0.0`,
+  `n_nonzero = 0`, `sum_abs_dMW = 0.0` across all **166,440** class-hours in each
+  of 2023/2024/2025, zero breaches (`_pjm152_collapse_gates.json`); K5 passes with
+  no holdout year touched; the bundle is registered
+  (`registry/2026-08-04-pjm-152-collapse.json`, rule 15 honoured). K2 `FAIL` is
+  **environment drift only** (platform string + basis SHA from re-solving at a
+  moved HEAD — the pjm-147 template artifact), not a behaviour delta. **The row's
+  original claim was true, merely un-evidenced at the commit pjm-153 measured**;
+  its citation is now the real gate record rather than the dangling token.
 
 **pjm-151 (2026-08-03): the PJM matrix column is CLOSED.** Ratchet
 `docs/codebase-site/data/mechanism-matrix-gaps.json` PJM **15 → 0**; sweep

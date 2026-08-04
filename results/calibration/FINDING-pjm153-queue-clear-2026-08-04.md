@@ -82,10 +82,12 @@ makes the **current keeper's own recorded config raise**, so it cannot be landed
 by a calibration session. **Filed, not deleted** — see §7 for the exact one-line
 guard and its consequence.
 
-**Also filed, needing no decision:** the prior `pjm-152` session landed a rule-26
-collapse in main whose own PREREG demanded an **E1 gate of `max |dMW| = 0.000000`
-on every P1 class-hour of all three years**, and that gate was **never scored** —
-no `pjm152_collapse_A` bundle exists and no FINDING was written. §9.
+**Nothing else needs a decision.** This finding originally filed a fourth item —
+that the merged `pjm-152` rule-26 collapse had landed with its E1 gate unscored.
+**That debt was discharged mid-session**: main advanced while this session was
+working, the arm landed, and **E1 PASSES absolutely** (`max |dMW| = 0.0`,
+`n_nonzero = 0` across all 166,440 class-hours in each of 2023/2024/2025, zero
+breaches). §9 records the reversal in full.
 
 ---
 
@@ -419,28 +421,50 @@ and it was wrong.
 
 ---
 
-## §9 — filed: the prior pjm-152 collapse landed with its verification gate unscored
+## §9 — the pjm-152 collapse: filed as an open debt, then DISCHARGED mid-session. Nothing is owed.
 
-Not this session's scope to discharge, but it must not stay invisible.
+**This section reverses itself, and the reversal is the honest record.**
 
-`PREREG-pjm152-seam-flag-collapse-2026-08-04.md` (committed to main) deletes
-`pjm_seam_envelope_by_neighbor` and the zone-summed branch, and declares **exactly
-one substantive gate, absolute**:
+When this session measured (against `origin/main` at `a96f9743`), the merged
+`pjm-152` rule-26 collapse had landed in main with its PREREG's sole absolute
+gate unscored:
 
 > **E1 — max |dMW| = 0.000000 on every P1 class-hour of all three years**, against
 > `results/calibration/pjm151_seam_B`. Anything else means the collapse changed
 > behaviour and is a stop-the-line event.
 
-The code change is merged. **No `pjm152_collapse_A` bundle exists, no FINDING was
-written, and `_pjm153_*` shows no E1 score anywhere in
-`results/calibration/`.** The scorer (`scripts/probes/pjm152_collapse_gates.py`)
-and the stripped replay recipe were committed; the arm was not run.
+At that commit there was **no `pjm152_collapse_A` bundle, no FINDING, and no E1
+score anywhere** in `results/calibration/`; the token `PJM152_COLLAPSE_DMW`, which
+the `seam_flow_envelopes` matrix row cited *as proof the gate had passed*, appeared
+nowhere in the repository. I filed it as an open verification debt needing a solve.
 
-The change is *expected* to be behaviour-neutral — the keeper armed the
-per-neighbour path and the collapse makes it unconditional — but "expected" is
-what the E1 gate exists to replace, and the keeper's recorded recipe now names a
-field HEAD does not have. **Filed for the owner as an open verification debt.** It
-needs a solve, and this session's dispatch is no-LP.
+**While this session was working, main advanced to `6fbd3f28` and the arm landed.**
+Re-verified on the rebased head:
+
+* `results/calibration/pjm152_collapse_A` — the bundle exists.
+* `results/calibration/_pjm152_collapse_gates.json` — the gate record exists.
+* `frontend/data/backcast/registry/2026-08-04-pjm-152-collapse.json` — registered
+  on the backcast dashboard (rule 15 honoured).
+
+**E1 PASSES, absolutely:** `max_abs_class_hour_dMW = 0.0`, `n_nonzero = 0`,
+`sum_abs_dMW = 0.0` across all **166,440** class-hours in **each** of 2023, 2024
+and 2025; **zero breaches**. K5 (year span) PASSES with no holdout year touched.
+K2 (the control) records `FAIL`, but on **environment drift only** — a different
+platform string and basis SHA from re-solving at a moved HEAD — which is the
+template artifact the pjm-147 K2 precedent already documents, not a behaviour
+delta; E1 is the gate that admits zero movement, and it is clean.
+
+**So nothing is owed and nothing is routed to the owner from §9.** The
+`seam_flow_envelopes` matrix row's original claim — that the collapse was proven
+rather than asserted — was **true**; it was merely un-evidenced at the commit this
+session measured. My correction to that row is itself corrected, and the row now
+records the real gate record (`_pjm152_collapse_gates.json`) instead of the
+dangling `PJM152_COLLAPSE_DMW` token.
+
+**Stated against interest:** my first reading was right about the evidence I could
+see and wrong about the conclusion a reader would draw from it. The lesson is the
+narrow one — *a claim with no committed artifact is unverified, not false* — and
+the fix was to re-check before pushing rather than to ship the stronger sentence.
 
 ---
 

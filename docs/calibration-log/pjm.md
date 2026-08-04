@@ -2854,8 +2854,17 @@ attribution defect pjm-148 routed as needing a cross-ISO charter **does not
 reproduce** — it was fixed at pjm-149, which also refuted pjm-148's own CC_CHP
 example; the routing paragraph is struck. (2) The `seam_flow_envelopes` matrix row
 asserted the pjm-152 collapse's E1 gate had been scored, citing a token
-(`PJM152_COLLAPSE_DMW`) that **exists nowhere in the repository**; the gate was
-never scored and is filed as an open verification debt needing a solve.
+(`PJM152_COLLAPSE_DMW`) that **exists nowhere in the repository**. Filed as an
+open verification debt — and then **DISCHARGED mid-session**: main advanced from
+`a96f9743` to `6fbd3f28` while this session worked, the arm landed, and **E1
+PASSES absolutely** (`max_abs_class_hour_dMW = 0.0`, `n_nonzero = 0` across all
+166,440 class-hours in each of 2023/2024/2025, zero breaches;
+`_pjm152_collapse_gates.json`; bundle registered as
+`2026-08-04-pjm-152-collapse`). K2's `FAIL` is environment drift only. **Nothing
+is owed.** The row's original claim was true, merely un-evidenced at the commit
+this session measured; its citation is now the real gate record. Recorded rather
+than quietly dropped — a claim with no committed artifact is *unverified*, not
+false.
 
 The keeper-note duplicate ordinal **(15)** is disambiguated to **(15a)/(15b)**
 without renumbering either, so existing references to "item 15" still resolve.
