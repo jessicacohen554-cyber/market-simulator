@@ -5248,10 +5248,19 @@ def resolve_xyear_warmstart_default(disable: bool) -> bool:
 
     Sets ``os.environ["MARKET_SIM_WARMSTART_XYEAR"]`` so the shared solve core
     (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
-    the resolved boolean. **Calibration path only** — the forecast loop
-    (``runner.py``) passes ``xyear_cache=None`` and cannot consume the basis
-    regardless of the env var, so its capacity-evolution tie-flip rejection
-    stands untouched (rule: forecast stays cold-only).
+    the resolved boolean. **Calibration path only, and it stays that way for a
+    different reason than it used to.** This docstring formerly said the
+    forecast loop "passes ``xyear_cache=None`` and cannot consume the basis
+    regardless of the env var" — that stopped being true at owner decision D-9
+    (2026-07-26), which wired the forecast's own holder behind
+    ``ScenarioConfig.forecast_xyear_warmstart``. What isolates the two lanes
+    now is the gate ARGUMENT, not an absent holder: ``runner.py`` passes an
+    explicit ``xyear_warmstart`` bool, and ``run_energy_solve`` defers to this
+    env var only when that argument is ``None`` — which is what the calibration
+    path (and only the calibration path) passes. So this env var still cannot
+    reach a forecast, and since owner decision **D-10** (2026-08-04) every
+    forecast bundle passes ``False`` explicitly, making the forecast cold-only
+    again — by decision this time, not by plumbing.
     """
     if disable:
         os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"

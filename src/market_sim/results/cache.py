@@ -46,6 +46,50 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-04 — D-10 warm-start OFF for forecast bundles. THIS ONE IS A KEY
+ADVANCE, NOT A SAME-KEY INVALIDATION — recorded here anyway because it is the
+entry a reader looking for "why did every forecast key move on 2026-08-04" will
+come to.** Owner decision D-10 (sitting ``ffr-owner-sitting-2026-08-02.md``
+Addendum K.3, implemented by FFR-3T,
+``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``): every shipped forecast
+runner now passes ``forecast_xyear_warmstart=False`` explicitly, so a resumed
+forecast solves its first post-kill year the same way its control does — cold —
+and the kill-resume drill (FF-3E part c) is structurally passable.
+
+*Cause:* the flag is a ``_CACHE_KEY_OPTIONAL_FIELDS`` member, so an EXPLICIT
+non-default ``False`` enters the hash. **Measured, all six ISOs x four shipped
+forecast configs (T1-F / T1-H / T1-X / golden-posture battery): 24 of 24 keys
+MOVED** — e.g. ERCOT T1-F ``e8ce5b85cc254830 -> 02d559f6a00f24b7``, NEISO T1-H
+``cee8181a253afd6a -> 688dd67264951c7e``. Because the keys move, **no purge is
+required for correctness**: a cold post-D-10 run cannot be served a warm
+pre-D-10 bundle — they are addressed differently. Pre-D-10 warm forecast
+bundles simply become unreachable by the shipped runners; delete them to
+reclaim disk, using the tracked-file warning below, or leave them.
+
+*Why this is NOT expressed as a default flip, which is the form the signed
+decision's coordination note anticipated.* Both halves of a default flip were
+measured at implementation and both exceed the decision:
+
+* **forecast keys would NOT have moved.** ``cache_key`` drops a registered
+  field at the LIVE default, so a post-flip ``False`` default hashes exactly as
+  the pre-flip ``True`` default did — all 24 keys byte-IDENTICAL across the
+  simulated flip, i.e. a cold run silently re-using a warm bundle. That is the
+  FFR-3A blocker-4 same-key invalidation this ledger's 2026-08-03 entry
+  describes, recurring exactly as that entry predicted it would.
+* **backcast keeper keys WOULD have moved.** Every keeper's ``run_config.json``
+  carries an explicit ``true``, which becomes non-default after a flip: all six
+  moved (ERCOT ``f95a5d2aab761873 -> 86cdfc027116b309``, PJM
+  ``c20ec90ee9626b07 -> c562ac25bb545281``, and so on).
+
+*NOT invalidated:* **every backcast bundle and every keeper.** The six keeper
+cache keys are byte-identical before and after (ERCOT ``f95a5d2aab761873``,
+PJM ``c20ec90ee9626b07``, CAISO ``df6220a243add2ad``, NYISO
+``c3b175a9fcf4af8d``, NEISO ``6ff540e9a9ee3b2f``, MISO ``dfe9d5c68e15c54c``),
+the pinned default key is unmoved at ``603c2498bf71d21d``, and the backcast
+solve PATH is untouched: ``run_calibration_full.py`` passes no explicit
+``xyear_warmstart``, so the calibration lane still resolves cross-year warm
+start from ``MARKET_SIM_WARMSTART_XYEAR`` (default ON) exactly as before.
+
 **Epoch 2026-08-03b — FFR-SC NYISO demand-anchor re-derive (NYISO forecast only).**
 ``constants.DEMAND_GROWTH_RATES["NYISO"]`` is re-derived from the 2026 Gold Book
 (``docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md`` §7): mid near
