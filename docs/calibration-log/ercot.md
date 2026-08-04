@@ -4884,4 +4884,54 @@ exact on-disk bytes over `git push`, and the two ≥300-line files touched
 (`fetch_ercot_60day_sced_gen_resource.py`, `mechanism-testing-matrix.md`) were
 blob-verified line-count + sha256 against local after their pushes.
 
+**ADDENDUM — OWNER REDIRECT (same session, 2026-08-04): the 2023 −30 %
+underrun is diagnosed, and it is an ENERGY-OFFER defect, not a scarcity one.**
+The owner deprioritised the ordinary-hour commitment-level successor named
+above and asked for the 2023 −30 % (summer-concentrated) residual directly. A
+no-LP measurement on committed artifacts
+(`results/calibration/FINDING-ercot-2023-summer-underrun-2026-08-04.md`)
+settles where it is and what causes it:
+
+* **It is ~100 hours.** Load-weighted 2023 model $43.08 vs actual $61.97
+  (−30.5 %, gap $18.89/MWh). August alone is **61.2 %** of the annual gap,
+  Aug+Sep **87.8 %**, Jun–Sep **97.6 %**; the **top 100 gap-hours carry 98.3 %**
+  (83 of them in Aug/Sep). Every other month is within ±1.6 % of neutral.
+  Within Aug/Sep the **afternoon h14–16 block is the largest (45.4 %)**, ahead
+  of the evening h17–21 (34.6 %) — the block ERCOT-153/154/155 all worked.
+* **98 % of it is ERCOT's ENERGY stack, not its ORDC adder.** At those hours
+  ERCOT's settlement $1,487.84 = SCED **system lambda $1,470.16** + **RTORPA
+  $36.03**; the model is at $441.27. Among the 53 hours with actual > $1,000,
+  ERCOT's lambda averaged $2,159 and exceeded $1,000 in 49. The model's own
+  reserve dual ($0.15 p50) vs measured RTORPA ($4.80 p50) leaves a reserve-side
+  gap of **$24/h against a total gap of $1,047/h**. There is no missing
+  scarcity adder to recover.
+* **The ERCOT-155 cushion framing does not hold AT THESE HOURS.** Its
+  15.3–17.5 GW is an evening average over all days; at the top-100 gap hours the
+  model carries **6.63 GW headroom at 90.3 % utilisation** (COAL 98.9 %,
+  CT_PEAKER 71.4 %) against ERCOT's own 92.0–96.2 % event-day loading —
+  comparable, not 5–19× loose. **This corrects the premise that drove
+  ERCOT-153/154/155/158/159.**
+* **The defect is the top of the energy offer curve.** At ~90 % utilisation the
+  model's marginal offer is $441 (p50 $147) where ERCOT cleared $1,470 (p50
+  $1,029) — corroborated by ERCOT-155's own census (model stack reaches only
+  $103–116 at the 90 % rung, then a 38 MW tail at $2,797): the model has
+  essentially **no capacity priced between ~$120 and ~$2,800**, while ERCOT has
+  GW offered across $500–3,000.
+* **This also explains ERCOT-159's rejection**: the cap forced price through the
+  RESERVE channel when ERCOT formed it through the ENERGY channel, so it hit the
+  missed hours *and* fabricated 33 elsewhere — a system-wide reserve row cannot
+  discriminate ~100 hours.
+* **It is NOT the refused offer-dispersion arm** (that refusal was about pricing
+  capacity ERCOT keeps COLD); the object is the submitted curve of units ONLINE
+  and near the margin, whose instrument (the RT SCED offer wall over the
+  ERCOT-157 full-year corpus) is already armed on the keeper.
+
+**The successor object is therefore re-pointed** (superseding the ordinary-hour
+commitment-level object above): *why does the armed measured RT offer wall not
+reproduce ERCOT's cleared lambda in these ~100 hours?* — bin resolution, row
+coverage, class coverage, or ladder rungs, per the finding's §6, Phase-0 first.
+**Live data blocker on one branch:** if the marginal unit is a CT, ERCOT-147's
+CT-band identification needs a Texas hub daily gas basis, which is item 8(b) and
+**licensing-BLOCKED as of ercot-160**.
+
 Next shorthand: ercot-161.
