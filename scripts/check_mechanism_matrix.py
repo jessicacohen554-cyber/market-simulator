@@ -54,6 +54,7 @@ CALIB_CLI_PATH = "scripts/run_calibration_full.py"
 REGISTRY_PREFIX = "frontend/data/backcast/registry/"
 KEEPER_SHARD = "frontend/data/backcast/keepers/{iso}.json"
 GAPS_BASELINE_PATH = "docs/codebase-site/data/mechanism-matrix-gaps.json"
+ANCHORS_BASELINE_PATH = "docs/codebase-site/data/mechanism-matrix-anchors.json"
 
 # Each ISO's own ScenarioConfig field stems, incl. the regulator prefixes whose
 # fields are that ISO's exclusively (NYSDEC rules bind only New York units).
@@ -386,9 +387,214 @@ def shared_gap_ratchet(matrix_text: str, source: str) -> list[str]:
     return out
 
 
+def _scenarios_field_lines(source: str) -> dict[str, int]:
+    """Map each ``ScenarioConfig`` field to the 1-based line that defines it.
+
+    Same recogniser as :func:`scenarioconfig_fields` (a 4-space-indented
+    ``name:`` inside the class body), so a field this returns is exactly a
+    field that function reports.
+    """
+    m = re.search(r"^class ScenarioConfig\b", source, re.M)
+    if not m:
+        return {}
+    out: dict[str, int] = {}
+    in_body = False
+    for i, line in enumerate(source.splitlines(), start=1):
+        if re.match(r"^class ScenarioConfig\b", line):
+            in_body = True
+            continue
+        if not in_body:
+            continue
+        if re.match(r"^(?:class |def |@dataclass)", line):
+            break
+        fm = re.match(r"^    ([a-z][a-z0-9_]*)\s*:", line)
+        if fm and not fm.group(1).startswith("_") and fm.group(1) not in out:
+            out[fm.group(1)] = i
+    return out
+
+
+def _py_file_index() -> dict[str, list[Path]]:
+    """Index every repo ``*.py`` by basename, for file-style anchor resolution."""
+    skip = {".git", ".venv", "__pycache__", "node_modules", ".mypy_cache"}
+    idx: dict[str, list[Path]] = {}
+    for p in REPO.rglob("*.py"):
+        if any(part in skip for part in p.parts):
+            continue
+        idx.setdefault(p.name, []).append(p)
+    return idx
+
+
+def _resolve_anchor_path(raw: str, index: dict[str, list[Path]]) -> Path | None:
+    """Resolve a matrix file anchor (``model/lp/rows.py``) to a repo file.
+
+    Returns ``None`` when the path is ambiguous or unknown — an unresolvable
+    path is SKIPPED and counted, never guessed at and never silently dropped.
+    """
+    direct = REPO / raw
+    if direct.is_file():
+        return direct
+    cands = [p for p in index.get(Path(raw).name, ()) if str(p).endswith(raw)]
+    return cands[0] if len(cands) == 1 else None
+
+
+def anchor_findings(matrix_text: str, source: str) -> tuple[list[dict], dict[str, int]]:
+    """Every matrix line anchor that does NOT resolve, plus a coverage tally.
+
+    **Why this exists.** A line anchor is a pointer into files every lane edits,
+    so it decays with nobody touching the matrix — and nothing checked it.
+    nyiso-121 found all 20 MISO anchors stale (eight by ~1,000 lines) and filed
+    a standing check as a suggestion; xiso-3 measured the whole file and found
+    **163 of 167 checkable anchors unresolvable**. A correct field literal on a
+    wrong anchor still sends a reader to unrelated code, so the literal name is
+    the durable identifier and the anchor is a convenience that must be
+    verified, not trusted.
+
+    Three legs, each returning ``{kind, key, detail, fix}`` dicts (``fix`` is
+    the correct line where one is mechanically derivable, else ``None``):
+
+    * ``field`` — a ``<field> :<line>`` sub-scalar registration must resolve to
+      a ``scenarios.py`` line defining ``<field>``. **Existence is gated
+      first**: a token that is not a ``ScenarioConfig`` field is skipped, which
+      is what preserves the deliberate ``miso_pjm_lmp :2914`` defect QUOTATION
+      in ``import_hub_pricing``'s repair note (and ordinary prose collisions
+      like ``a stale :2138``). Do not "fix" those.
+    * ``row`` — a row whose ``id`` is itself a field and whose ``def`` carries
+      ``scenarios.py:<line>`` must resolve the same way.
+    * ``path`` — any ``<file>.py:<line>`` must be within that file. Only
+      out-of-range fails; an unresolvable path is skipped and counted.
+    """
+    fields = _scenarios_field_lines(source)
+    out: list[dict] = []
+    tally = {
+        "field_checked": 0,
+        "field_skipped_nonfield": 0,
+        "row_checked": 0,
+        "path_checked": 0,
+        "path_skipped_unresolvable": 0,
+    }
+
+    # --- leg A: `<field> :<line>` sub-scalar registrations -------------------
+    for name, ln in re.findall(r"\b([a-z][a-z0-9_]{3,}) :(\d+)\b", matrix_text):
+        if name not in fields:
+            tally["field_skipped_nonfield"] += 1
+            continue
+        tally["field_checked"] += 1
+        if int(ln) != fields[name]:
+            out.append(
+                {
+                    "kind": "field",
+                    "key": f"{name} :{ln}",
+                    "detail": (
+                        f"`{name} :{ln}` does not resolve — the field is defined "
+                        f"at {SCENARIOS_PATH}:{fields[name]}"
+                    ),
+                    "fix": fields[name],
+                }
+            )
+
+    # --- leg B: row-id anchors (`def: "scenarios.py:<line>"`) ----------------
+    for chunk in re.split(r'\n\s*\{\s*id:\s*"', matrix_text)[1:]:
+        rid, _, body = chunk.partition('"')
+        if rid not in fields:
+            continue
+        d = re.search(r'def:\s*"(.*?)",\s*mode', body, re.S)
+        if not d:
+            continue
+        m = re.search(r"scenarios\.py:(\d+)", d.group(1))
+        if not m:
+            continue
+        tally["row_checked"] += 1
+        if int(m.group(1)) != fields[rid]:
+            out.append(
+                {
+                    "kind": "row",
+                    "key": f"row:{rid} scenarios.py:{m.group(1)}",
+                    "detail": (
+                        f"row `{rid}` anchors scenarios.py:{m.group(1)} but its "
+                        f"field is defined at {SCENARIOS_PATH}:{fields[rid]}"
+                    ),
+                    "fix": fields[rid],
+                }
+            )
+
+    # --- leg C: file anchors must be in range --------------------------------
+    index = _py_file_index()
+    for raw, ln in re.findall(r"\b([\w/]+\.py):(\d+)\b", matrix_text):
+        target = _resolve_anchor_path(raw, index)
+        if target is None:
+            tally["path_skipped_unresolvable"] += 1
+            continue
+        tally["path_checked"] += 1
+        n_lines = len(target.read_text(encoding="utf-8").splitlines())
+        if int(ln) > n_lines:
+            out.append(
+                {
+                    "kind": "path",
+                    "key": f"{raw}:{ln}",
+                    "detail": f"`{raw}:{ln}` is past end of file ({n_lines} lines)",
+                    "fix": None,
+                }
+            )
+    return out, tally
+
+
+def anchor_ratchet(findings: list[dict]) -> list[str]:
+    """Errors for unresolvable anchors absent from the committed baseline.
+
+    Same shrink-only contract as the two gap ratchets: the baseline enumerates
+    the anchors known not to resolve, and anything unresolvable that is NOT in
+    it FAILS. Refresh with ``--fix-anchors``, which repairs every mechanically
+    derivable anchor (digits only) and rewrites the baseline with whatever is
+    left. Target state is an EMPTY baseline, which xiso-3 established.
+    """
+    path = REPO / ANCHORS_BASELINE_PATH
+    allowed: set[str] = set()
+    if path.exists():
+        try:
+            allowed = set(json.loads(path.read_text(encoding="utf-8")).get("stale", ()))
+        except (OSError, ValueError) as exc:
+            return [f"{ANCHORS_BASELINE_PATH} is unreadable ({exc})"]
+    return [
+        f"{f['detail']}. Run `python3 scripts/check_mechanism_matrix.py "
+        f"--fix-anchors` (repairs the digits only; the field NAME is the "
+        f"durable identifier)."
+        for f in findings
+        if f["key"] not in allowed
+    ]
+
+
+def fix_anchors(matrix_text: str, findings: list[dict]) -> tuple[str, int]:
+    """Rewrite every mechanically derivable anchor. ONLY the digits change."""
+    fixed = 0
+    for f in findings:
+        if f["fix"] is None:
+            continue
+        if f["kind"] == "field":
+            name, _, old = f["key"].partition(" :")
+            new_text = matrix_text.replace(f"{name} :{old}", f"{name} :{f['fix']}")
+        else:  # row-id anchor: only inside that row's def
+            rid = f["key"].split()[0].removeprefix("row:")
+            old = f["key"].rsplit(":", 1)[1]
+            head, sep, rest = matrix_text.partition(f'{{ id: "{rid}"')
+            new_text = (
+                head
+                + sep
+                + rest.replace(f"scenarios.py:{old}", f"scenarios.py:{f['fix']}", 1)
+            )
+        if new_text != matrix_text:
+            matrix_text, fixed = new_text, fixed + 1
+    return matrix_text, fixed
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", help="git ref to diff against (PR base sha)")
+    parser.add_argument(
+        "--fix-anchors",
+        action="store_true",
+        help="repair every mechanically derivable stale line anchor in the "
+        "matrix (digits only) and refresh the anchor ratchet baseline.",
+    )
     args = parser.parse_args()
 
     matrix_text = (REPO / MATRIX_PATH).read_text(encoding="utf-8")
@@ -399,11 +605,57 @@ def main() -> int:
         return 1
     print(f"mechanism-matrix: integrity OK ({MATRIX_PATH})")
 
+    # --- rule 28: line anchors must resolve (the nyiso-121 decay) ------------
+    scen_src = (REPO / SCENARIOS_PATH).read_text(encoding="utf-8")
+    findings, tally = anchor_findings(matrix_text, scen_src)
+    if args.fix_anchors:
+        matrix_text, n_fixed = fix_anchors(matrix_text, findings)
+        (REPO / MATRIX_PATH).write_text(matrix_text, encoding="utf-8")
+        findings, tally = anchor_findings(matrix_text, scen_src)
+        (REPO / ANCHORS_BASELINE_PATH).write_text(
+            json.dumps(
+                {
+                    "_comment": (
+                        "Shrink-only ratchet of matrix line anchors that do NOT "
+                        "resolve, enforced by scripts/check_mechanism_matrix.py. A "
+                        "line anchor points into files every lane edits, so it "
+                        "decays with nobody touching the matrix (nyiso-121 found "
+                        "all 20 MISO anchors stale; xiso-3 found 163 of 167 "
+                        "file-wide). The field NAME is the durable identifier; the "
+                        "anchor is a convenience. Anchors whose token is not a "
+                        "ScenarioConfig field are skipped by construction, which "
+                        "preserves the deliberate `miso_pjm_lmp :2914` defect "
+                        "QUOTATION in import_hub_pricing's repair note — do not "
+                        "'fix' it. Refresh with --fix-anchors."
+                    ),
+                    "stale": sorted(f["key"] for f in findings),
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(
+            f"mechanism-matrix: repaired {n_fixed} line anchor(s); "
+            f"{len(findings)} left in the ratchet"
+        )
+    anchor_errs = anchor_ratchet(findings)
+    print(
+        f"mechanism-matrix: anchors checked "
+        f"({tally['field_checked']} field + {tally['row_checked']} row + "
+        f"{tally['path_checked']} path; skipped "
+        f"{tally['field_skipped_nonfield']} non-field token(s) and "
+        f"{tally['path_skipped_unresolvable']} unresolvable path(s)) — "
+        f"{len(anchor_errs)} unresolvable beyond the ratchet"
+    )
+
     # --- rule 28: header keeper stamp vs the per-ISO keeper shard -------------
     drift = keeper_drift(matrix_text)
     if not drift:
         print("mechanism-matrix: keeper stamps match every keepers/<ISO>.json")
     if not args.base:
+        for e in anchor_errs:
+            print(f"::warning file={MATRIX_PATH}::mechanism-matrix anchor: {e}")
         for iso, header, shard in drift:
             print(
                 f"::warning file={MATRIX_PATH}::{iso} keeper stamp drift: header "
@@ -417,6 +669,10 @@ def main() -> int:
 
     # --- rule 28(c): new ScenarioConfig fields must be registered ------------
     failed = False
+
+    for e in anchor_errs:
+        failed = True
+        print(f"::error file={MATRIX_PATH}::mechanism-matrix anchor: {e}")
 
     # A PR that MOVES a keeper shard owns that ISO's header stamp: fail. Drift
     # this PR did not create only warns — it belongs to the owning ISO's lane.

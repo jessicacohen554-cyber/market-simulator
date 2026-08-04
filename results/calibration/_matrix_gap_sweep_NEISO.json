@@ -2,7 +2,7 @@
   "iso": "NEISO",
   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 674,
+  "n_scenario_fields": 676,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
@@ -760,7 +760,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         }
       ],
@@ -775,7 +775,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         }
       ],
@@ -809,6 +809,11 @@
           "cell": "."
         },
         {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "."
+        },
+        {
           "row": "nuclear_unit_availability",
           "cells": "KKUUKK",
           "cell": "K"
@@ -835,7 +840,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         }
       ],
@@ -880,7 +885,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         }
       ],
@@ -1435,7 +1440,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         },
         {
@@ -1560,7 +1565,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "."
         },
         {
@@ -1580,7 +1585,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -1674,13 +1679,18 @@
           "cell": "K"
         },
         {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
           "row": "capacity_deliverability",
           "cells": ".K....",
           "cell": "."
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
@@ -2185,7 +2195,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         },
         {
@@ -2370,7 +2380,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "."
         },
         {
@@ -2390,7 +2400,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -2525,7 +2535,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
