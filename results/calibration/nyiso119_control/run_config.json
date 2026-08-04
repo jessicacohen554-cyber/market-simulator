@@ -1,26 +1,14 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/run_config.json
   "timestamp": "2026-08-03T20:56:31",
   "git": {
     "sha": "ce70dc5",
     "basis_sha": "98ad9c1b2a916ba340a24d23ee075a9774885238",
     "branch": "claude/nyiso-seny-level-step-119-awvr5e",
-========
-  "timestamp": "2026-08-04T03:02:29",
-  "git": {
-    "sha": "b6288452",
-    "basis_sha": "b6288452ec308c88a1f7099b5d3e3f5bf9c13b6b",
-    "branch": "claude/neiso80-cross-iso-cell-bldpg9",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/run_config.json
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-<<<<<<<< HEAD:results/calibration/nyiso119_control/run_config.json
   "model_changes_note": "nyiso-119 CONTROL: same-HEAD zero-delta replay of the designated keeper nyiso118_seny_span",
-========
-  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/run_config.json
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -113,11 +101,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-<<<<<<<< HEAD:results/calibration/nyiso119_control/run_config.json
     "git_sha": "ce70dc5"
-========
-    "git_sha": "b6288452"
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/run_config.json
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -238,7 +222,6 @@
     "retirement_execution_lag_oil": 1,
     "retirement_execution_lag_nuclear": 3,
     "retirement_execution_lag_gas_cc_ccs": null,
-    "exit_rate_limits": false,
     "limited_foresight_dispatch": false,
     "fixed_om_gas_cc": 30.0,
     "fixed_om_gas_ct": 21.0,
@@ -933,7 +916,6 @@
     "pjm_seam_flow_limit": false,
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
-    "pjm_seam_envelope_by_neighbor": false,
     "pjm_seam_measured_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_gas_delivered_floor_basis": null,

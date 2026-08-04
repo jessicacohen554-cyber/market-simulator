@@ -1,10 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
  "bundle": "/home/user/market-simulator/results/calibration/nyiso119_control",
-========
- "bundle": "/home/user/market-simulator/results/calibration/nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
  "iso": "NYISO",
  "years": [
   2023,
@@ -839,51 +835,31 @@
    "passed": true,
    "rows": [
     {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
      "bundle": "nyiso119_control",
-========
-     "bundle": "nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
      "bundle": "nyiso119_control",
-========
-     "bundle": "nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
      "bundle": "nyiso119_control",
-========
-     "bundle": "nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
      "bundle": "nyiso119_control",
-========
-     "bundle": "nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/legitimacy_diagnostics.json
      "bundle": "nyiso119_control",
-========
-     "bundle": "nyiso120_control_A",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/legitimacy_diagnostics.json
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

@@ -1,9 +1,5 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso119_control/meta.json
-  "timestamp": "2026-08-03T20:56:31",
-========
   "timestamp": "2026-08-04T03:02:29",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/meta.json
   "iso": "NYISO",
   "years": [
     2023,
@@ -260,10 +256,7 @@
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
   "caiso_per_year_import_caps": null,
-<<<<<<<< HEAD:results/calibration/nyiso119_control/meta.json
-========
   "caiso_asymmetric_path_ratings": null,
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/meta.json
   "capacity_deliverability_limits": null,
   "ramp_limits": true,
   "local_capacity_constraints": null,
@@ -345,13 +338,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-031d519d3bfa.parquet"
   },
-<<<<<<<< HEAD:results/calibration/nyiso119_control/meta.json
-  "git_sha": "ce70dc5",
-  "basis_sha": "98ad9c1b2a916ba340a24d23ee075a9774885238",
-========
   "git_sha": "b6288452",
   "basis_sha": "b6288452ec308c88a1f7099b5d3e3f5bf9c13b6b",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/meta.json
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

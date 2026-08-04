@@ -1,13 +1,7 @@
 {
-<<<<<<<< HEAD:results/calibration/nyiso119_seny_increment/metrics.json
   "run_id": "2026-08-03-nyiso-119-seny-increment",
   "iso": "NYISO",
   "label": "nyiso 119 seny increment",
-========
-  "run_id": "2026-08-04-nyiso-120a-control",
-  "iso": "NYISO",
-  "label": "nyiso 120a control",
->>>>>>>> 1dc4bb81 (nyiso-120 arm A (control) + the gated NYISO CHP artifact):results/calibration/nyiso120_control_A/metrics.json
   "target_years": [
     2023,
     2024,
