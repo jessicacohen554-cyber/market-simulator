@@ -1,4 +1,4 @@
-# PREREG — nyiso-119: the hybrid-cogen dark-fuel scope gate at NYISO, and which meter is wrong about East River's boundary
+# PREREG — nyiso-120: the hybrid-cogen dark-fuel scope gate at NYISO, and which meter is wrong about East River's boundary
 
 **Date:** 2026-08-04 · **ISO:** NYISO · **Years:** 2023–2025 (training only) ·
 **Keeper at entry:** `2026-08-03-nyiso-118-seny-span`, CALIBRATED-WITH-CAVEATS,
@@ -196,6 +196,17 @@ bulk-rewritten; every ≥300-line file is blob-verified after any push. Rule 28
 duty (b): the `measured_chp_heat_rates` NYISO cell + citation is stamped in this
 session **whatever the outcome**, rejections included.
 
-**Session shorthand: `nyiso-119`** (NYISO's next number; the branch name carries
-the NEISO lane's `neiso80` slug because the brief assigned it before the target
-ISO was chosen — the work, the log entry and the matrix stamp are all NYISO's).
+**Session shorthand: `nyiso-120`** (the branch name carries the NEISO lane's
+`neiso80` slug because the brief assigned it before the target ISO was chosen —
+the work, the log entry and the matrix stamp are all NYISO's).
+
+**Renumber, recorded rather than quietly rewritten.** This prereg was first
+committed as `nyiso-119` (commit `e473d29f`). That shorthand is already SPENT on
+main by the SENY-increment session
+(`results/calibration/PREREG-nyiso119-seny-increment-2026-08-03.md` +
+`nyiso119_seny_increment_construction_probe.json`), which the NYISO log's entry
+headers do not yet carry — the log tail ends at nyiso-117 while the keeper shard
+is at nyiso-118, so the log's own "next number" line was stale in both
+directions and reading it would have collided either way. The collision was
+found before any solve completed and before any dashboard registration. Nothing
+in §1–§5 changed with the renumber; only the identifier did.

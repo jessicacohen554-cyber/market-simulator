@@ -1,0 +1,171 @@
+{
+  "session": "nyiso-119",
+  "iso": "NYISO",
+  "plant_code": 2493,
+  "plant_name": "East River",
+  "class": "CT_CHP",
+  "class_capacity_mw": 306.0,
+  "egrid_vintage": 2023,
+  "egrid": {
+    "PLHTIAN_mmbtu": 22845485.1,
+    "CHPCHTI_mmbtu": 13493030.8,
+    "PLNGENAN_mwh": 3078707.0,
+    "thermal_share": 0.371315,
+    "heat_rate_credited": 7.4205,
+    "heat_rate_applied_on_keeper": 11.8032
+  },
+  "per_year": {
+    "2023": {
+      "cems_total_mmbtu": 36338515.9,
+      "cems_dark_mmbtu": 13629046.6,
+      "dark_share": 0.375058,
+      "power_train_mmbtu": 22709469.3,
+      "boiler_share_of_dark": 1.0,
+      "n_units": 4,
+      "n_dark_units": 2
+    },
+    "2024": {
+      "cems_total_mmbtu": 34913574.9,
+      "cems_dark_mmbtu": 10749843.4,
+      "dark_share": 0.307899,
+      "power_train_mmbtu": 24163731.5,
+      "boiler_share_of_dark": 1.0,
+      "n_units": 4,
+      "n_dark_units": 2
+    },
+    "2025": {
+      "cems_total_mmbtu": 33759400.7,
+      "cems_dark_mmbtu": 10343314.5,
+      "dark_share": 0.306383,
+      "power_train_mmbtu": 23416086.2,
+      "boiler_share_of_dark": 1.0,
+      "n_units": 4,
+      "n_dark_units": 2
+    }
+  },
+  "units": {
+    "2023": [
+      {
+        "unitId": "1",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 11676993.0,
+        "gross_mwh": 1087690.0,
+        "dark": false
+      },
+      {
+        "unitId": "2",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 11032476.3,
+        "gross_mwh": 1045798.0,
+        "dark": false
+      },
+      {
+        "unitId": "70",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 6922906.3,
+        "gross_mwh": 0.0,
+        "dark": true
+      },
+      {
+        "unitId": "60",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 6706140.2,
+        "gross_mwh": 0.0,
+        "dark": true
+      }
+    ],
+    "2024": [
+      {
+        "unitId": "1",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 12124977.2,
+        "gross_mwh": 1120840.0,
+        "dark": false
+      },
+      {
+        "unitId": "2",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 12038754.3,
+        "gross_mwh": 1138171.0,
+        "dark": false
+      },
+      {
+        "unitId": "60",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 6789992.2,
+        "gross_mwh": 0.0,
+        "dark": true
+      },
+      {
+        "unitId": "70",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 3959851.2,
+        "gross_mwh": 0.0,
+        "dark": true
+      }
+    ],
+    "2025": [
+      {
+        "unitId": "1",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 11905619.2,
+        "gross_mwh": 1093484.0,
+        "dark": false
+      },
+      {
+        "unitId": "2",
+        "unitType": "Combined cycle",
+        "heat_mmbtu": 11510467.0,
+        "gross_mwh": 1095160.0,
+        "dark": false
+      },
+      {
+        "unitId": "70",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 5675264.7,
+        "gross_mwh": 0.0,
+        "dark": true
+      },
+      {
+        "unitId": "60",
+        "unitType": "Dry bottom wall-fired boiler",
+        "heat_mmbtu": 4668049.8,
+        "gross_mwh": 0.0,
+        "dark": true
+      }
+    ]
+  },
+  "KE1_credit_is_dark_fuel": {
+    "dark_mmbtu_over_CHPCHTI": 1.01008,
+    "band": [
+      0.9,
+      1.1
+    ],
+    "pass": true
+  },
+  "KE2_two_meter_power_only": {
+    "campd_power_train_over_PLNGENAN": 7.3763,
+    "egrid_credited": 7.4205,
+    "ratio": 0.994044,
+    "band": [
+      0.9,
+      1.1
+    ],
+    "pass": true
+  },
+  "KE3_dark_set_is_boilers_and_persistent": {
+    "dark_share_by_year": [
+      0.375058,
+      0.307899,
+      0.306383
+    ],
+    "boiler_share_of_dark_by_year": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "max_over_min": 1.2241,
+    "pass": true
+  },
+  "hypothesis": "H (double-count)"
+}
