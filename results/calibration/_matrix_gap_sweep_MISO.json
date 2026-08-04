@@ -1168,8 +1168,14 @@
       "field": "carry_operating_mothballs",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1237,8 +1243,14 @@
       "field": "cc_intermediate_split",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1276,8 +1288,14 @@
       "field": "class_aware_fuel_price_fallback",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_plant_monthly_pricing",
+          "cells": "GKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1338,6 +1356,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
           "cell": "K"
@@ -1360,8 +1383,14 @@
       "field": "coal_takeorpay_from_data",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_takeorpay_committed",
+          "cells": "...K..",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1369,8 +1398,14 @@
       "field": "coal_warm_committed",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1398,11 +1433,16 @@
       "field": "ct_intermediate_split",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -1613,8 +1653,14 @@
       "field": "gas_st_startup_cost",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1624,6 +1670,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
@@ -1637,8 +1688,14 @@
       "field": "gas_st_wefor_base_override",
       "default": null,
       "keeper_value": 0.1,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -1670,6 +1727,16 @@
       "owning_rows": [
         {
           "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
           "cells": "KKKKKK",
           "cell": "K"
         },
@@ -1849,6 +1916,11 @@
           "cell": "K"
         },
         {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "coal_takeorpay_committed",
           "cells": "...K..",
           "cell": "K"
@@ -1944,9 +2016,19 @@
           "cell": "I"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "measured_offer_surface",
           "cells": "KKRUGI",
           "cell": "U"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "R"
         },
         {
           "row": "coal_econ_bound",
@@ -2001,6 +2083,11 @@
         {
           "row": "gas_plant_monthly_pricing",
           "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -2062,6 +2149,11 @@
           "row": "nysdec_peaker_rule_availability",
           "cells": "....K.",
           "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "solar_deliverability",
@@ -3398,6 +3490,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -3405,6 +3502,11 @@
         {
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
           "cell": "K"
         }
       ],
@@ -3520,8 +3622,14 @@
       "field": "st_gas_intermediate_split",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3529,7 +3637,7 @@
       "field": "st_gas_mustrun_p25_level",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "st_gas_mustrun_p25",
@@ -3567,6 +3675,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
           "row": "temp_dependent_derate",
           "cells": "UKRKGK",
           "cell": "K"
@@ -3582,7 +3695,7 @@
         "CT_CHP",
         "ST_CHP"
       ],
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "temp_dependent_derate",
@@ -3597,7 +3710,7 @@
       "field": "temp_derate_hourly_grain",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "temp_dependent_derate",
@@ -3612,7 +3725,7 @@
       "field": "temp_derate_mean_anchored",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "temp_dependent_derate",
@@ -3627,7 +3740,7 @@
       "field": "temp_derate_slope_ct_chp",
       "default": null,
       "keeper_value": 0.00141,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "temp_dependent_derate",
@@ -3642,7 +3755,7 @@
       "field": "temp_derate_slope_st_chp",
       "default": null,
       "keeper_value": 0.00141,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "temp_dependent_derate",
@@ -3682,11 +3795,16 @@
       "field": "tranche_startup_conditional_runs",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
           "cell": "K"
         }
       ],
@@ -3712,8 +3830,14 @@
       "field": "unit_outage_maxgen_events",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3753,157 +3877,12 @@
       "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
     }
   ],
-  "shared_matrix_gaps_absent": [
-    "carry_operating_mothballs",
-    "cc_intermediate_split",
-    "class_aware_fuel_price_fallback",
-    "coal_takeorpay_from_data",
-    "coal_warm_committed",
-    "gas_st_startup_cost",
-    "gas_st_wefor_base_override",
-    "st_gas_intermediate_split",
-    "unit_outage_maxgen_events"
-  ],
-  "shared_prose_only": [
-    "ct_intermediate_split",
-    "st_gas_mustrun_p25_level",
-    "temp_derate_classes",
-    "temp_derate_hourly_grain",
-    "temp_derate_mean_anchored",
-    "temp_derate_slope_ct_chp",
-    "temp_derate_slope_st_chp",
-    "tranche_startup_conditional_runs"
-  ],
+  "shared_matrix_gaps_absent": [],
+  "shared_prose_only": [],
   "shared_excluded": [
     "weather_year"
   ],
   "live_but_invisible": [
-    {
-      "field": "coal_takeorpay_from_data",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "st_gas_intermediate_split",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "cc_intermediate_split",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "gas_st_startup_cost",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "gas_st_wefor_base_override",
-      "default": null,
-      "keeper_value": 0.1,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": 0.1,
-        "miso111_prbdispatch_B": 0.1,
-        "miso112_control_A": 0.1,
-        "miso112_prbsplit_B": 0.1,
-        "miso113_control_A": 0.1,
-        "miso113b_control_A": 0.1
-      }
-    },
-    {
-      "field": "coal_warm_committed",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "class_aware_fuel_price_fallback",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 34,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "carry_operating_mothballs",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 31,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
-    {
-      "field": "unit_outage_maxgen_events",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 31,
-      "bundles": {
-        "miso106_control_A": true,
-        "miso111_prbdispatch_B": true,
-        "miso112_control_A": true,
-        "miso112_prbsplit_B": true,
-        "miso113_control_A": true,
-        "miso113b_control_A": true
-      }
-    },
     {
       "field": "retirement_years_coal",
       "default": 3,

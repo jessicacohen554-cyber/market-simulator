@@ -2668,12 +2668,17 @@
       "field": "chp_export_floor_measured",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "diurnal_price_amplitude",
           "cells": "UUGGGO",
           "cell": "U"
+        },
+        {
+          "row": "chp_steam_following",
+          "cells": "KKKKKK",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -2718,8 +2723,14 @@
       "field": "coal_lignite_passthrough_ceil",
       "default": null,
       "keeper_value": 1.0,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -2727,8 +2738,14 @@
       "field": "coal_lignite_passthrough_floor",
       "default": null,
       "keeper_value": 0.675,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -2738,6 +2755,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
@@ -2761,8 +2783,19 @@
       "field": "coal_nameplate_summer_derate",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3617,8 +3650,14 @@
       "field": "coal_prb_follower_floor",
       "default": null,
       "keeper_value": 0.76,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3626,8 +3665,14 @@
       "field": "coal_prb_passthrough_floor",
       "default": null,
       "keeper_value": 0.76,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3770,12 +3815,17 @@
       "field": "gas_hh_monthly_shape",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "gas_monthly_actuals",
           "cells": "GKK.KK",
           "cell": "G"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -3902,8 +3952,14 @@
       "field": "gas_st_drag_seasonal",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3926,8 +3982,14 @@
       "field": "gas_st_startup_cost",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -3937,6 +3999,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
@@ -5012,11 +5079,16 @@
       "field": "offer_curve_smoothing_mid",
       "default": null,
       "keeper_value": 0.35,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -5027,8 +5099,14 @@
       "field": "oil_primary_bin_fuel",
       "default": false,
       "keeper_value": true,
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     },
@@ -5039,6 +5117,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -5047,6 +5130,11 @@
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "I"
         }
       ],
       "excluded": false,
@@ -5111,11 +5199,16 @@
       "field": "storage_as_commitment",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
           "cell": "K"
         }
       ],
@@ -5191,11 +5284,16 @@
       "field": "wefor_residual",
       "default": null,
       "keeper_value": 0.02,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -5209,200 +5307,29 @@
         "ST_CHP",
         "ST_GAS"
       ],
-      "coverage": "absent",
-      "owning_rows": [],
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
       "excluded": false,
       "exclusion_reason": null
     }
   ],
-  "shared_matrix_gaps_absent": [
-    "coal_lignite_passthrough_ceil",
-    "coal_lignite_passthrough_floor",
-    "coal_nameplate_summer_derate",
-    "coal_prb_follower_floor",
-    "coal_prb_passthrough_floor",
-    "gas_st_drag_seasonal",
-    "gas_st_startup_cost",
-    "oil_primary_bin_fuel",
-    "wefor_residual_groups"
-  ],
-  "shared_prose_only": [
-    "chp_export_floor_measured",
-    "gas_hh_monthly_shape",
-    "offer_curve_smoothing_mid",
-    "storage_as_commitment",
-    "wefor_residual"
-  ],
+  "shared_matrix_gaps_absent": [],
+  "shared_prose_only": [],
   "shared_excluded": [
     "weather_year"
   ],
   "live_but_invisible": [
     {
-      "field": "coal_prb_passthrough_floor",
-      "default": null,
-      "keeper_value": 0.76,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": 0.76,
-        "ercot128_unit_grain": 0.76,
-        "ercot129_conditional": 0.76,
-        "ercot137_margin_arm": 0.76,
-        "ercot139_cc_committed_arm": 0.76,
-        "ercot140_coal_peak_arm": 0.76
-      }
-    },
-    {
-      "field": "coal_prb_follower_floor",
-      "default": null,
-      "keeper_value": 0.76,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": 0.76,
-        "ercot128_unit_grain": 0.76,
-        "ercot129_conditional": 0.76,
-        "ercot137_margin_arm": 0.76,
-        "ercot139_cc_committed_arm": 0.76,
-        "ercot140_coal_peak_arm": 0.76
-      }
-    },
-    {
-      "field": "gas_st_startup_cost",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true,
-        "ercot139_cc_committed_arm": true,
-        "ercot140_coal_peak_arm": true
-      }
-    },
-    {
-      "field": "coal_lignite_passthrough_floor",
-      "default": null,
-      "keeper_value": 0.675,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": 0.675,
-        "ercot128_unit_grain": 0.675,
-        "ercot129_conditional": 0.675,
-        "ercot137_margin_arm": 0.675,
-        "ercot139_cc_committed_arm": 0.675,
-        "ercot140_coal_peak_arm": 0.675
-      }
-    },
-    {
-      "field": "coal_lignite_passthrough_ceil",
-      "default": null,
-      "keeper_value": 1.0,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": 1.0,
-        "ercot128_unit_grain": 1.0,
-        "ercot129_conditional": 1.0,
-        "ercot137_margin_arm": 1.0,
-        "ercot139_cc_committed_arm": 1.0,
-        "ercot140_coal_peak_arm": 1.0
-      }
-    },
-    {
-      "field": "wefor_residual_groups",
-      "default": null,
-      "keeper_value": [
-        "ST_CHP",
-        "ST_GAS"
-      ],
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot128_unit_grain": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot129_conditional": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot137_margin_arm": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot139_cc_committed_arm": [
-          "ST_CHP",
-          "ST_GAS"
-        ],
-        "ercot140_coal_peak_arm": [
-          "ST_CHP",
-          "ST_GAS"
-        ]
-      }
-    },
-    {
       "field": "ercot_gas_commitment_bridge",
       "default": false,
       "keeper_value": true,
       "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true,
-        "ercot139_cc_committed_arm": true,
-        "ercot140_coal_peak_arm": true
-      }
-    },
-    {
-      "field": "coal_nameplate_summer_derate",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true,
-        "ercot139_cc_committed_arm": true,
-        "ercot140_coal_peak_arm": true
-      }
-    },
-    {
-      "field": "oil_primary_bin_fuel",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 19,
-      "bundles": {
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true,
-        "ercot139_cc_committed_arm": true,
-        "ercot140_coal_peak_arm": true
-      }
-    },
-    {
-      "field": "gas_st_drag_seasonal",
-      "default": false,
-      "keeper_value": true,
-      "n_bundles_nondefault": 15,
-      "bundles": {
-        "ercot122_offerlevel": true,
-        "ercot128_unit_grain": true,
-        "ercot129_conditional": true,
-        "ercot137_margin_arm": true,
-        "ercot139_cc_committed_arm": true,
-        "ercot140_coal_peak_arm": true
-      }
-    },
-    {
-      "field": "coal_lignite_passthrough_sigmoid",
-      "default": false,
-      "keeper_value": false,
-      "n_bundles_nondefault": 11,
       "bundles": {
         "ercot122_offerlevel": true,
         "ercot128_unit_grain": true,

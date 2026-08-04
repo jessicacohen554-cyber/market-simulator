@@ -1105,6 +1105,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "cc_nameplate_summer_derate",
           "cells": "UUUUKU",
           "cell": "U"
@@ -1117,11 +1122,16 @@
       "field": "cc_outage_derate_from_top",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -1167,11 +1177,16 @@
       "field": "coal_bit_passthrough_floor",
       "default": null,
       "keeper_value": 0.65,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
           "cell": "K"
         }
       ],
@@ -1182,11 +1197,16 @@
       "field": "coal_bit_passthrough_sigmoid",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
           "cell": "K"
         }
       ],
@@ -1217,11 +1237,16 @@
       "field": "coal_mustrun_online_pmin",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -1234,6 +1259,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
@@ -1287,11 +1317,16 @@
       "field": "coal_sub_passthrough_floor",
       "default": null,
       "keeper_value": 1.1,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
           "cell": "K"
         }
       ],
@@ -1302,11 +1337,16 @@
       "field": "coal_sub_passthrough_sigmoid",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
           "cell": "K"
         }
       ],
@@ -1317,11 +1357,16 @@
       "field": "coal_sync_srmc_tranche",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -1352,11 +1397,16 @@
       "field": "ct_drag_cap",
       "default": 0.47,
       "keeper_value": 0.46,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1367,11 +1417,16 @@
       "field": "ct_drag_intercept",
       "default": -0.1427,
       "keeper_value": -0.9987,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1382,11 +1437,16 @@
       "field": "ct_drag_slope_per_gw",
       "default": 0.00703,
       "keeper_value": 0.01108,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1397,11 +1457,16 @@
       "field": "ct_intermediate_cf_threshold",
       "default": 50.0,
       "keeper_value": 30.0,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -1412,11 +1477,16 @@
       "field": "ct_intermediate_split",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -1429,6 +1499,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
         {
           "row": "netload_drag_floors",
           "cells": "KRKURU",
@@ -1568,6 +1643,11 @@
           "row": "gas_monthly_actuals",
           "cells": "GKK.KK",
           "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1662,11 +1742,16 @@
       "field": "gas_st_drag_cap",
       "default": 0.34,
       "keeper_value": 0.39,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1677,11 +1762,16 @@
       "field": "gas_st_drag_intercept",
       "default": -0.1376,
       "keeper_value": -0.7263,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1692,11 +1782,16 @@
       "field": "gas_st_drag_slope_per_gw",
       "default": 0.00906,
       "keeper_value": 0.01029,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
           "cell": "K"
         }
       ],
@@ -1724,6 +1819,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
@@ -1776,6 +1876,16 @@
       "owning_rows": [
         {
           "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
           "cells": "KKKKKK",
           "cell": "K"
         },
@@ -1955,6 +2065,11 @@
           "cell": "K"
         },
         {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "coal_takeorpay_committed",
           "cells": "...K..",
           "cell": "."
@@ -2050,9 +2165,19 @@
           "cell": "O"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "measured_offer_surface",
           "cells": "KKRUGI",
           "cell": "R"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
         },
         {
           "row": "coal_econ_bound",
@@ -2107,6 +2232,11 @@
         {
           "row": "gas_plant_monthly_pricing",
           "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -2168,6 +2298,11 @@
           "row": "nysdec_peaker_rule_availability",
           "cells": "....K.",
           "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "solar_deliverability",
@@ -3490,11 +3625,16 @@
       "field": "offer_curve_smoothing_mid",
       "default": null,
       "keeper_value": 0.35,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -3508,6 +3648,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -3515,6 +3660,11 @@
         {
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
           "cell": "K"
         }
       ],
@@ -3685,11 +3835,16 @@
       "field": "tranche_startup_conditional_runs",
       "default": false,
       "keeper_value": true,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
           "cell": "K"
         }
       ],
@@ -3765,11 +3920,16 @@
       "field": "wefor_residual",
       "default": null,
       "keeper_value": 0.015,
-      "coverage": "prose_only",
+      "coverage": "own_row",
       "owning_rows": [
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
           "cell": "K"
         }
       ],
@@ -3778,26 +3938,7 @@
     }
   ],
   "shared_matrix_gaps_absent": [],
-  "shared_prose_only": [
-    "cc_outage_derate_from_top",
-    "coal_bit_passthrough_floor",
-    "coal_bit_passthrough_sigmoid",
-    "coal_mustrun_online_pmin",
-    "coal_sub_passthrough_floor",
-    "coal_sub_passthrough_sigmoid",
-    "coal_sync_srmc_tranche",
-    "ct_drag_cap",
-    "ct_drag_intercept",
-    "ct_drag_slope_per_gw",
-    "ct_intermediate_cf_threshold",
-    "ct_intermediate_split",
-    "gas_st_drag_cap",
-    "gas_st_drag_intercept",
-    "gas_st_drag_slope_per_gw",
-    "offer_curve_smoothing_mid",
-    "tranche_startup_conditional_runs",
-    "wefor_residual"
-  ],
+  "shared_prose_only": [],
   "shared_excluded": [
     "weather_year"
   ],
