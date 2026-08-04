@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-ercot165-unpooled-share",
+  "label": "ercot165 unpooled share",
+  "date": "2026-08-04",
+  "shorthand": "ercot165-unpooled-share",
+  "definition": "ercot-165 arm B: unpooled diurnal-family curtailment shares; PNHNDL sub-limit pressure owned by a Panhandle-scoped measured share.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-08-04-ercot165-unpooled-share.js",
+  "bundle": "results/calibration/ercot165_unpooled_share_B"
+}
