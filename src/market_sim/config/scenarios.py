@@ -559,6 +559,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # in the on-disk cache. The KEEPER'S OWN KEY IS UNCHANGED by this
     # registration; only default-valued configs move, and they move BACK.
     "nyiso_import_sil_retire",
+    # nyiso-125 gated NYISO seam deliverability envelope (default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key. Byte-identical off by construction -- its only consumer
+    # (run_calibration.py's TTC overlay block) is gated behind
+    # ``if iso == "NYISO" and config.nyiso_seam_deliverability_envelope``, so at
+    # the default no border-link bound is touched and the LP sees the same
+    # arrays. An ARMED run replaces two links' bounds with a measured hourly
+    # directional envelope and so gets a distinct key, which is what keeps the
+    # A/B candidate independent of its control in the on-disk cache.
+    "nyiso_seam_deliverability_envelope",
     # pjm-146 gated PJM RGGI allowance adder (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key (the
     # pinned default 603c2498bf71d21d stays byte-stable); an armed run charges
@@ -786,6 +796,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_zonal_loss_surface": "False",
     "caiso_zonal_loss_surface": "False",
     "nyiso_import_sil_retire": "False",
+    "nyiso_seam_deliverability_envelope": "False",
     "pjm_rggi_allowance_pricing": "False",
     "electrification_path": "'off'",
     "electrification_percentile": "0.5",
@@ -3535,6 +3546,47 @@ class ScenarioConfig:
     # separate windowed mechanism in the nyiso_nyc_lcr_tsl / nyiso_li_lcr_tsl
     # family, not on the external seam. Default off (byte-identical);
     # NYISO-only.
+    nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
+    # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
+    # flat SYMMETRIC static rating on the two border links whose external ties
+    # land unambiguously in ONE NYISO load zone -- NYISO_external>NYC (Zone J:
+    # HTP + Linden VFT) and NYISO_external>Long_Island (Zone K: Neptune + Cross
+    # Sound + Northport-Norwalk 1385) -- with NYISO's OWN measured DIRECTIONAL
+    # HOURLY envelope, the constants.NYISO_SEAM_FLOW_PERCENTILE (=90) of the
+    # directionally-clipped net schedule within each (month x hour-of-day) bin
+    # of the MIS P-32 posting. Replaces the static, never stacks on it (rule 19
+    # [R-ONE-MECH]); clipped to the incumbent rating as a monotonicity property
+    # that measurably never binds in 2023-2025.
+    # WHY: nyiso-124 6.1 measured, with no LP, that the model's seam delivers
+    # the right NET and the wrong DISTRIBUTION -- the three downstate border
+    # links sit at their bound in 98-100 % of ALL hours of all three years
+    # (3,800 MW flat vs a measured downstate median of 1,870/1,772/2,040) while
+    # NYISO_external>Upstate_West runs net EXPORT against a measured import, so
+    # ~1.8-2.0 GW of surplus import lands EAST of Central East and the model's
+    # CE link carries util 0.253 where the real interface carries 0.591.
+    # DELIBERATELY PARTIAL. Upstate_West and Capital_Hudson are REFUSED ON
+    # IDENTIFICATION (rule 20 [R-DOF]) and keep their statics: SCH - PJ - NY is
+    # the one posting row spanning the CE cutset (Ramapo/Waldwick into Zone G
+    # east; Homer City-Stolle Road/Falconer into Zone A west) and no public
+    # source separates the legs -- NYISO posts the interface total and PJM's own
+    # tie file buckets all four NYISO-facing ties as NYIS/NEPT/HUDS/LIND. The
+    # split brackets Capital_Hudson's import envelope 45-955 / 0-916 / 0-1,134
+    # MW, the whole range that matters on the link carrying the defect, so
+    # choosing inside it would be choosing a number so CE starts binding. The
+    # split-INVARIANT joint cap needs no split and was measured INERT (model
+    # joint net +597/+80/-89 MW p50 vs a measured envelope of 1,818/1,706/1,243).
+    # This arm therefore removes 307/406/369 MW of downstate landing -- 17-22 %
+    # of the misallocation -- and CANNOT close it; it is armed because it is
+    # measured and structurally right (rules 1/14), not because it suffices.
+    # Rule 13 [R-MEASURED]: a per-neighbour deliverability CAPABILITY that
+    # bounds what the seam may deliver and leaves the LP to choose what it does;
+    # it regenerates forward from the forward tie set by the same frozen formula
+    # and responds to changed conditions (974->828->975 MW on NYC and
+    # 1,012->986->990 on Long_Island across 2023-25, and CHPE enters the same
+    # feed in 2026). Evidence: scripts/probes/_nyiso125_seam_envelope.py,
+    # results/calibration/_nyiso125_seam_envelope.json,
+    # PREREG-nyiso125-seam-envelope-2026-08-04.md. Default off
+    # (byte-identical); NYISO-only.
     nyiso_scr_edrp: bool = False  # NYISO SCR/EDRP emergency demand response as
     # price-responsive supply blocks (data.nyiso_demand_response). NYISO
     # registers ~1.2-1.5 GW (summer) of demand-side reliability capability in
