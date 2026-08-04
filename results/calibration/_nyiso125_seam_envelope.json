@@ -1,0 +1,629 @@
+{
+ "probe": "nyiso-125 Phase 0 \u2014 seam envelope identification",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "seam_percentile": 90.0,
+ "source": "data/raw/NYISO/interface-flows (NYISO MIS P-32)",
+ "sections": {
+  "dup": {
+   "rows": [
+    {
+     "year": 2023,
+     "corr_with_HQ_NY": 0.9768,
+     "frac_equal_within_0p5MW": 0.4075,
+     "mean_abs_diff_vs_HQ_NY": 149.0,
+     "mean_abs_diff_vs_HQ_plus_CEDARS": 170.1
+    },
+    {
+     "year": 2024,
+     "corr_with_HQ_NY": 0.9893,
+     "frac_equal_within_0p5MW": 0.7797,
+     "mean_abs_diff_vs_HQ_NY": 39.7,
+     "mean_abs_diff_vs_HQ_plus_CEDARS": 70.0
+    },
+    {
+     "year": 2025,
+     "corr_with_HQ_NY": 0.9934,
+     "frac_equal_within_0p5MW": 0.9088,
+     "mean_abs_diff_vs_HQ_NY": 18.1,
+     "mean_abs_diff_vs_HQ_plus_CEDARS": 65.9
+    }
+   ],
+   "excluded": "SCH - HQ_IMPORT_EXPORT"
+  },
+  "ties": {
+   "rows": [
+    {
+     "year": 2023,
+     "interface": "SCH - HQ - NY",
+     "import_p50": 249.9,
+     "export_p50": 0.0,
+     "posted_pos_p50": 1500.0,
+     "posted_neg_p50": -800.0,
+     "import_util_p50": 0.178,
+     "share_hours_ge_95pct_posted": 0.0264
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - HQ_CEDARS",
+     "import_p50": 0.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 250.0,
+     "posted_neg_p50": -100.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0551
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - NE - NY",
+     "import_p50": 0.0,
+     "export_p50": 510.9,
+     "posted_pos_p50": 1400.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0001
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - NPX_1385",
+     "import_p50": 55.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 200.0,
+     "posted_neg_p50": -200.0,
+     "import_util_p50": 0.402,
+     "share_hours_ge_95pct_posted": 0.1285
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - NPX_CSC",
+     "import_p50": 160.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 330.0,
+     "posted_neg_p50": -330.0,
+     "import_util_p50": 0.8015,
+     "share_hours_ge_95pct_posted": 0.4248
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - OH - NY",
+     "import_p50": 417.3,
+     "export_p50": 0.0,
+     "posted_pos_p50": 1750.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.2409,
+     "share_hours_ge_95pct_posted": 0.0
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - PJ - NY",
+     "import_p50": 822.3,
+     "export_p50": 0.0,
+     "posted_pos_p50": 2200.0,
+     "posted_neg_p50": -1200.0,
+     "import_util_p50": 0.3649,
+     "share_hours_ge_95pct_posted": 0.0
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - PJM_HTP",
+     "import_p50": 450.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 0.6874,
+     "share_hours_ge_95pct_posted": 0.2223
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - PJM_NEPTUNE",
+     "import_p50": 660.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.9321
+    },
+    {
+     "year": 2023,
+     "interface": "SCH - PJM_VFT",
+     "import_p50": 315.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 315.0,
+     "posted_neg_p50": -315.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.6471
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - HQ - NY",
+     "import_p50": 0.0,
+     "export_p50": 199.2,
+     "posted_pos_p50": 1400.0,
+     "posted_neg_p50": -750.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.04
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - HQ_CEDARS",
+     "import_p50": 0.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 240.0,
+     "posted_neg_p50": 0.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0834
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - NE - NY",
+     "import_p50": 0.0,
+     "export_p50": 754.7,
+     "posted_pos_p50": 1400.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0001
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - NPX_1385",
+     "import_p50": 9.5,
+     "export_p50": 0.0,
+     "posted_pos_p50": 200.0,
+     "posted_neg_p50": -200.0,
+     "import_util_p50": 0.055,
+     "share_hours_ge_95pct_posted": 0.0417
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - NPX_CSC",
+     "import_p50": 186.5,
+     "export_p50": 0.0,
+     "posted_pos_p50": 330.0,
+     "posted_neg_p50": -330.0,
+     "import_util_p50": 0.6115,
+     "share_hours_ge_95pct_posted": 0.3577
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - OH - NY",
+     "import_p50": 700.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 2000.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.4402,
+     "share_hours_ge_95pct_posted": 0.0
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - PJ - NY",
+     "import_p50": 997.8,
+     "export_p50": 0.0,
+     "posted_pos_p50": 2200.0,
+     "posted_neg_p50": -1200.0,
+     "import_util_p50": 0.4587,
+     "share_hours_ge_95pct_posted": 0.0006
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - PJM_HTP",
+     "import_p50": 350.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 0.5303,
+     "share_hours_ge_95pct_posted": 0.165
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - PJM_NEPTUNE",
+     "import_p50": 660.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.924
+    },
+    {
+     "year": 2024,
+     "interface": "SCH - PJM_VFT",
+     "import_p50": 315.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 315.0,
+     "posted_neg_p50": -315.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.7714
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - HQ - NY",
+     "import_p50": 0.0,
+     "export_p50": 749.6,
+     "posted_pos_p50": 1450.0,
+     "posted_neg_p50": -980.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0149
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - HQ_CEDARS",
+     "import_p50": 0.0,
+     "export_p50": 4.2,
+     "posted_pos_p50": 200.0,
+     "posted_neg_p50": -100.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0254
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - NE - NY",
+     "import_p50": 0.0,
+     "export_p50": 675.0,
+     "posted_pos_p50": 1400.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.0,
+     "share_hours_ge_95pct_posted": 0.0001
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - NPX_1385",
+     "import_p50": 0.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 125.0,
+     "posted_neg_p50": -125.0,
+     "import_util_p50": 0.0111,
+     "share_hours_ge_95pct_posted": 0.0762
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - NPX_CSC",
+     "import_p50": 153.8,
+     "export_p50": 0.0,
+     "posted_pos_p50": 330.0,
+     "posted_neg_p50": -330.0,
+     "import_util_p50": 0.6949,
+     "share_hours_ge_95pct_posted": 0.4076
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - OH - NY",
+     "import_p50": 781.2,
+     "export_p50": 0.0,
+     "posted_pos_p50": 2000.0,
+     "posted_neg_p50": -1600.0,
+     "import_util_p50": 0.4046,
+     "share_hours_ge_95pct_posted": 0.0003
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - PJ - NY",
+     "import_p50": 1134.9,
+     "export_p50": 0.0,
+     "posted_pos_p50": 2000.0,
+     "posted_neg_p50": -1050.0,
+     "import_util_p50": 0.5503,
+     "share_hours_ge_95pct_posted": 0.0008
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - PJM_HTP",
+     "import_p50": 500.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 0.7936,
+     "share_hours_ge_95pct_posted": 0.3971
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - PJM_NEPTUNE",
+     "import_p50": 660.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 660.0,
+     "posted_neg_p50": -660.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.8582
+    },
+    {
+     "year": 2025,
+     "interface": "SCH - PJM_VFT",
+     "import_p50": 315.0,
+     "export_p50": 0.0,
+     "posted_pos_p50": 315.0,
+     "posted_neg_p50": -315.0,
+     "import_util_p50": 1.0,
+     "share_hours_ge_95pct_posted": 0.6656
+    }
+   ]
+  },
+  "envelope": {
+   "rows": [
+    {
+     "year": 2023,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 1203.5,
+     "import_env_min": 115.4,
+     "import_env_max": 2703.0,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 1718.7,
+     "measured_net_p50": 666.1
+    },
+    {
+     "year": 2023,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 955.1,
+     "import_env_min": 0.0,
+     "import_env_max": 1833.9,
+     "export_env_p50": 275.3,
+     "share_hours_env_below_ttc": 0.9582,
+     "mean_mw_removed": 730.7,
+     "measured_net_p50": 290.2
+    },
+    {
+     "year": 2023,
+     "zone": "NYC",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1000.0,
+     "import_env_p50": 974.0,
+     "import_env_min": 315.0,
+     "import_env_max": 975.1,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 94.7,
+     "measured_net_p50": 729.8
+    },
+    {
+     "year": 2023,
+     "zone": "Long_Island",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1200.0,
+     "import_env_p50": 1012.4,
+     "import_env_min": 673.1,
+     "import_env_max": 1188.4,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 212.5,
+     "measured_net_p50": 849.4
+    },
+    {
+     "year": 2023,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 2198.7,
+     "import_env_min": 1008.5,
+     "import_env_max": 3847.0,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 0.831,
+     "mean_mw_removed": 787.1,
+     "measured_net_p50": 1442.9
+    },
+    {
+     "year": 2023,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 45.0,
+     "import_env_min": 0.0,
+     "import_env_max": 967.7,
+     "export_env_p50": 1095.2,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 1395.1,
+     "measured_net_p50": -511.1
+    },
+    {
+     "year": 2024,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 1285.3,
+     "import_env_min": 0.0,
+     "import_env_max": 2747.9,
+     "export_env_p50": 159.2,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 1710.2,
+     "measured_net_p50": 461.2
+    },
+    {
+     "year": 2024,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 916.5,
+     "import_env_min": 0.0,
+     "import_env_max": 1919.6,
+     "export_env_p50": 261.0,
+     "share_hours_env_below_ttc": 0.9262,
+     "mean_mw_removed": 682.9,
+     "measured_net_p50": 306.6
+    },
+    {
+     "year": 2024,
+     "zone": "NYC",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1000.0,
+     "import_env_p50": 828.0,
+     "import_env_min": 551.7,
+     "import_env_max": 975.0,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 177.9,
+     "measured_net_p50": 656.0
+    },
+    {
+     "year": 2024,
+     "zone": "Long_Island",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1200.0,
+     "import_env_p50": 986.3,
+     "import_env_min": 659.0,
+     "import_env_max": 1189.6,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 228.5,
+     "measured_net_p50": 810.3
+    },
+    {
+     "year": 2024,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 2429.1,
+     "import_env_min": 474.7,
+     "import_env_max": 3935.6,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 0.7596,
+     "mean_mw_removed": 795.0,
+     "measured_net_p50": 1514.1
+    },
+    {
+     "year": 2024,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 0.0,
+     "import_env_min": 0.0,
+     "import_env_max": 1054.8,
+     "export_env_p50": 1235.9,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 1417.6,
+     "measured_net_p50": -754.6
+    },
+    {
+     "year": 2025,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 708.5,
+     "import_env_min": 0.0,
+     "import_env_max": 2800.7,
+     "export_env_p50": 631.9,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 2107.1,
+     "measured_net_p50": 92.7
+    },
+    {
+     "year": 2025,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_EAST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 1134.0,
+     "import_env_min": 427.6,
+     "import_env_max": 2181.9,
+     "export_env_p50": 64.6,
+     "share_hours_env_below_ttc": 0.9015,
+     "mean_mw_removed": 479.5,
+     "measured_net_p50": 490.5
+    },
+    {
+     "year": 2025,
+     "zone": "NYC",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1000.0,
+     "import_env_p50": 975.0,
+     "import_env_min": 532.0,
+     "import_env_max": 975.0,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 97.5,
+     "measured_net_p50": 760.8
+    },
+    {
+     "year": 2025,
+     "zone": "Long_Island",
+     "attribution": "invariant",
+     "identified": true,
+     "incumbent_ttc_mw": 1200.0,
+     "import_env_p50": 990.0,
+     "import_env_min": 545.2,
+     "import_env_max": 1125.0,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 271.5,
+     "measured_net_p50": 788.6
+    },
+    {
+     "year": 2025,
+     "zone": "Upstate_West",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 3000.0,
+     "import_env_p50": 1891.2,
+     "import_env_min": 562.6,
+     "import_env_max": 4218.3,
+     "export_env_p50": 0.0,
+     "share_hours_env_below_ttc": 0.8242,
+     "mean_mw_removed": 1024.5,
+     "measured_net_p50": 1196.7
+    },
+    {
+     "year": 2025,
+     "zone": "Capital_Hudson",
+     "attribution": "PJ_ALL_WEST",
+     "identified": false,
+     "incumbent_ttc_mw": 1600.0,
+     "import_env_p50": 0.0,
+     "import_env_min": 0.0,
+     "import_env_max": 972.5,
+     "export_env_p50": 1184.3,
+     "share_hours_env_below_ttc": 1.0,
+     "mean_mw_removed": 1432.5,
+     "measured_net_p50": -675.1
+    }
+   ]
+  },
+  "joint": {
+   "rows": [
+    {
+     "year": 2023,
+     "measured_joint_net_p50": 987.9,
+     "joint_import_env_p50": 1818.4,
+     "joint_import_env_min": 424.0,
+     "joint_export_env_p50": 0.0,
+     "model_joint_net_p50": 597.0,
+     "binds": false
+    },
+    {
+     "year": 2024,
+     "measured_joint_net_p50": 804.8,
+     "joint_import_env_p50": 1706.4,
+     "joint_import_env_min": 375.0,
+     "joint_export_env_p50": 0.0,
+     "model_joint_net_p50": 80.0,
+     "binds": false
+    },
+    {
+     "year": 2025,
+     "measured_joint_net_p50": 575.8,
+     "joint_import_env_p50": 1242.6,
+     "joint_import_env_min": 253.3,
+     "joint_export_env_p50": 203.1,
+     "model_joint_net_p50": -89.0,
+     "binds": false
+    }
+   ]
+  }
+ }
+}
