@@ -1,0 +1,16 @@
+{
+ "id": "2026-08-04-ercot165-unpooled-share",
+ "label": "ercot165 unpooled share",
+ "date": "2026-08-04",
+ "shorthand": "ercot165-unpooled-share",
+ "definition": "ercot-165 arm B: unpooled diurnal-family curtailment shares; PNHNDL sub-limit pressure owned by a Panhandle-scoped measured share.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-04-ercot165-unpooled-share.js",
+ "bundle": "results/calibration/ercot165_unpooled_share_B",
+ "market_story": "WIND (West + Panhandle corridor): ERCOT's real West-Texas export corridor is limited by dozens of internal 138/345 kV Permian/CREZ elements the 8-zone reduction collapses into one wide pipe, so the LP would deliver wind the real grid could not move. The measured SCED binding incidence of those elements is the ceiling \u2014 and it is TWO populations, not one: a daytime/solar-flood family (peaks h14-15, tracks actual SOLAR curtailment +0.775..+0.959 every year) and an overnight wind-export family (peaks h21-23). Pooling them into one union saturates and hands the whole corridor the overnight family's shape, which is why the armed keeper cut deepest at night. Unpooled, each family's own measured incidence survives. PANHANDLE: the zone carries no load, so every MW it produces must clear the Panhandle->North interface; the measured PNHNDL enforcement incidence (2025 peak h10, day share 0.541) is what actually constrains it sub-limit, and it now owns that pressure alone instead of sharing it with a second, overnight-shaped broadcast on the same hours. GAS: the corridor wind the ceiling holds back is replaced by CC_REGULAR (+0.3..0.6 TWh/yr), which is the displacement ERCOT's own dispatch shows when the West is congested. HONEST LIMIT, not a market story: the model still under-curtails wind in the mid-afternoon hours (2025 afternoon mass 0.159 vs actual 0.222) \u2014 the daytime mode is a measured signal no armed mechanism reaches at the driver's two-scalar budget, and it is an open root-cause issue, not a calibrated behaviour."
+}
