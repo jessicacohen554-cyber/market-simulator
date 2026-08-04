@@ -5801,4 +5801,26 @@ Evidence: `results/calibration/FINDING-caiso166-measured-loss-zones-2026-08-04.m
 `scripts/gen_caiso166_attestation.py`,
 `results/calibration/caiso166_measured_loss_zones/calibration_attestation.json`.
 
+**PROMOTED 2026-08-04 (owner).** The keeper is now
+`2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS, 2 of 3 ledger
+slots, **0 FAILs** — the same grade as the incumbent, on a strictly more measured
+input. `audit_keepers.py --iso CAISO`: PASS, 0 failures / 0 warnings.
+
+caiso-166 declined to promote and **refused to re-cut its own fired gate**; the
+OWNER re-chartered S3 and ledgered 2024 `price_mean`, recorded in
+`AMENDMENT-caiso166-S3-recharter-2026-08-04.md` and pushed at `89be6559` **BEFORE**
+the generator was re-run. **No re-solve** — both bundles byte-unchanged, only the
+threshold and the ledger moved. S3′ imports the SAME frozen `[0.5×, 1.5×]` band
+from the derive so gate and acceptance band cannot drift; realised **0.949–1.054×**
+on all four pocket pair-years. The delivery floor applies only to the two
+re-sourced pockets — the placebo year and the NP15−ZP26 non-regression watch are
+ceiling-only, or the gate would punish the arm for correctly leaving them alone.
+The re-charter is defensible because the 1.00× ceiling was **unsatisfiable by a
+correct implementation**: the estimator's own positive bias implies 1.038–1.042×
+measured dMCL, so a perfect LP lands at ~1.04×.
+
+caiso-166's DELIVERY GAP is **CLOSED**: `git push` recovered once the branch was a
+proper descendant of the remote tip, and all bundles, sidecars and payloads are on
+main. CAISO gap sweep is now 0/0/0/0/0.
+
 Next number: caiso-168 (caiso-160 unclaimed, see above).
