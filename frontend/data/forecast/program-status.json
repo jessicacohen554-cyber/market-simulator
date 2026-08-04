@@ -226,7 +226,7 @@
   "MISO": {
    "tier_reached": "T1",
    "t1f_determination": "HOLD",
-   "t1x_determination": null,
+   "t1x_determination": "HOLD",
    "flip": "curve-ON (capacity clearing) \u2014 enabled cap-market storage entry (+4 GW)",
    "fc": {
     "FC-1": "FAIL",
@@ -249,8 +249,8 @@
      "detail": "HOLD \u2014 FC-1 FAIL I4, I7 + FC-2 FAIL I13 cobweb."
     },
     "c_crossover_gap": {
-     "status": "na",
-     "detail": "crossover launched (may fold); FF-2D scope."
+     "status": "fail",
+     "detail": "FC-4 FAIL - CO2 63.3/58.9/75.5% and gas_twh 2024 15.1% exceed band; price 13.6/13.9/27.4% CAVEAT. Measured at FFR-3A-4 (miso-2023-2027-crossover-ffr3a4); 2025 gas/coal volumes uncovered (preliminary EIA-923 vintage), reported not banded."
     },
     "c_readiness": {
      "status": "green",
@@ -268,7 +268,8 @@
     "closed_on": [
      "a",
      "b",
-     "FC-2"
+     "FC-2",
+     "c"
     ]
    },
    "golden": "deferred (\u00a72.1b).",
@@ -278,7 +279,7 @@
    "marker_final": false,
    "t1h_determination": "HOLD",
    "t1h_provenance": "FFR-3A-3 re-measured post-FFR-3F @ e2a422c1",
-   "t1x_provenance": "NOT MEASURED \u2014 leg killed twice; see refresh.what_was_CARRIED_not_remeasured"
+   "t1x_provenance": "FFR-3A-4 MEASURED it - the leg FFR-3A-3 launched twice and lost twice to OOM. run miso-2023-2027-crossover-ffr3a4 (vintage 2023, 2023-2027, all six solve-affecting flags omitted so each inherits its shipped default; posture verified in the RESOLVED config, not the request). Determination HOLD on FC-4 FAIL + FC-7 FAIL, the same category pattern as every other leg in the battery. All 10 banded metrics reproduce the pre-fix comparator miso-2023-2027-crossover-ffr3a2 to 3 d.p. (delta +0.0000), so MISO joins ERCOT and PJM: all three T1-X legs are unmoved by the G3 cap-grain fix 2adfb49. PRE-REGISTERED and confirmed by MECHANISM, not just by score: the ledgers execute ZERO economic retirements in 2023/2024/2025 and land 3 exits / 432.8 MW in 2026, a year solved but never scored (rule 22), so the fix's admission-set change has nothing to act on inside the scored window. That is the FFR-3L structural null, now on MISO's OWN evidence (rule 25 clean, nothing imported). NOT an attribution: no control arm ran."
   },
   "NYISO": {
    "tier_reached": "T1",

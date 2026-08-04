@@ -150,6 +150,15 @@ VERDICT_MAP = {
     "miso-2021-2025-realized-ffr3a3": "miso-2021-2025-realized-ffr3a3-t1h",
     "ercot-2023-2027-crossover-ffr3a3": "ercot-2023-2027-crossover-ffr3a3-t1x",
     "pjm-2023-2027-crossover-ffr3a3": "pjm-2023-2027-crossover-ffr3a3-t1x",
+    # FFR-3A-4 measured the ONE leg the FFR-3A battery never got: MISO T1-X,
+    # which FFR-3A-3 launched twice and lost twice to OOM and correctly left as
+    # a null board cell rather than a stale value. Its own verdict key, for the
+    # same reason every block above gives — a run must never render a verdict
+    # its own score contradicts. It is NOT pointed at the generic `miso-t1x`
+    # (an older FF-0E solve with a different dispatch-skill score) nor at
+    # `miso-t1x-ffr2a`; the pre-fix `miso-2023-2027-crossover-ffr3a2` stays
+    # unmapped and renders score-only, exactly as it did before.
+    "miso-2023-2027-crossover-ffr3a4": "miso-2023-2027-crossover-ffr3a4-t1x",
 }
 
 
