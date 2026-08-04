@@ -554,6 +554,17 @@ results/calibration/caiso154_slopes_PJM.csv
 # ever applies to untracked paths.
 /results/ffr3a2/
 
+# FFR-3A-3 post-FFR-3F re-measurement of the T1-H / T1-X halves the FFR-3A-2
+# provenance ceiling flagged (run_capacity_hindcast --out-dir caches and their
+# loose run logs). Same class as /results/ffr3a2/ — forecast legs are registered
+# to frontend/data/forecast/ via scripts/register_forecast_run.py, never as
+# tracked bundles here (CLAUDE.md rule 15). results/ffr3a3/README.md and the
+# assembled results/ffr3a3/scorecard/ stay TRACKED (they are the lane's record,
+# not solver output); git honours that because this rule only ever applies to
+# untracked paths, so they are added once with `git add -f` and thereafter
+# tracked normally — the same mechanism results/ffr3a2/ relies on.
+/results/ffr3a3/
+
 # Transient CT-artifact stash written by scripts/probes/caiso160_nyiso_ct_arms.py
 # while a control arm solves against a prior artifact revision; the driver
 # restores the working copy and removes this in a finally.
