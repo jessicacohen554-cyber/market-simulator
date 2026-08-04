@@ -1,0 +1,469 @@
+{
+ "eia860_capacity_not_carried_mw": 10.9,
+ "eia860_plant_total_eff_mw": 446.6,
+ "eia860_plant_total_excl_ca_eff_mw": 350.6,
+ "eia860_plant_total_excl_ca_summer_mw": 350.6,
+ "eia860_plant_total_summer_mw": 446.6,
+ "eia860_rows": [
+  {
+   "eff_mw": 65.0,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "1",
+   "nameplate_mw": 85.0,
+   "operating_year": 1982,
+   "prime_mover": "GT",
+   "summer_mw": 65.0,
+   "unit_code": NaN
+  },
+  {
+   "eff_mw": 65.0,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "2",
+   "nameplate_mw": 85.0,
+   "operating_year": 1982,
+   "prime_mover": "GT",
+   "summer_mw": 65.0,
+   "unit_code": NaN
+  },
+  {
+   "eff_mw": 6.9,
+   "energy_source_1": "SUN",
+   "energy_source_2": NaN,
+   "generator_id": "5051S",
+   "nameplate_mw": 6.9,
+   "operating_year": 2018,
+   "prime_mover": "PV",
+   "summer_mw": 6.9,
+   "unit_code": NaN
+  },
+  {
+   "eff_mw": 2.0,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "BS#1",
+   "nameplate_mw": 2.0,
+   "operating_year": 2007,
+   "prime_mover": "IC",
+   "summer_mw": 2.0,
+   "unit_code": NaN
+  },
+  {
+   "eff_mw": 2.0,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "BS#2",
+   "nameplate_mw": 2.0,
+   "operating_year": 2007,
+   "prime_mover": "IC",
+   "summer_mw": 2.0,
+   "unit_code": NaN
+  },
+  {
+   "eff_mw": 96.0,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "CA1",
+   "nameplate_mw": 105.0,
+   "operating_year": 1981,
+   "prime_mover": "CA",
+   "summer_mw": 96.0,
+   "unit_code": "CC1"
+  },
+  {
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "energy_source_2": "DFO",
+   "generator_id": "CT1",
+   "nameplate_mw": 85.0,
+   "operating_year": 1981,
+   "prime_mover": "CT",
+   "summer_mw": 69.7,
+   "unit_code": "CC1"
+  },
+  {
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "energy_source_2": "DFO",
+   "generator_id": "CT2",
+   "nameplate_mw": 85.0,
+   "operating_year": 1981,
+   "prime_mover": "CT",
+   "summer_mw": 69.7,
+   "unit_code": "CC1"
+  },
+  {
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "energy_source_2": "DFO",
+   "generator_id": "CT3",
+   "nameplate_mw": 85.0,
+   "operating_year": 1981,
+   "prime_mover": "CT",
+   "summer_mw": 69.7,
+   "unit_code": "CC1"
+  },
+  {
+   "eff_mw": 0.6,
+   "energy_source_1": "DFO",
+   "energy_source_2": NaN,
+   "generator_id": "EDSI",
+   "nameplate_mw": 0.6,
+   "operating_year": 1981,
+   "prime_mover": "IC",
+   "summer_mw": 0.6,
+   "unit_code": NaN
+  }
+ ],
+ "eia860_rows_with_nan_summer": 0,
+ "fleet_rows": [
+  {
+   "fuel_type": "oil",
+   "plant_group": "",
+   "pmax_mw": 65.0,
+   "unit_id": "6081_1"
+  },
+  {
+   "fuel_type": "oil",
+   "plant_group": "",
+   "pmax_mw": 65.0,
+   "unit_id": "6081_2"
+  },
+  {
+   "fuel_type": "oil",
+   "plant_group": "",
+   "pmax_mw": 96.0,
+   "unit_id": "6081_CA1"
+  },
+  {
+   "fuel_type": "gas_cc",
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT1"
+  },
+  {
+   "fuel_type": "gas_cc",
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT2"
+  },
+  {
+   "fuel_type": "gas_cc",
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT3"
+  },
+  {
+   "fuel_type": "oil",
+   "plant_group": "",
+   "pmax_mw": 0.6,
+   "unit_id": "6081_EDSI"
+  }
+ ],
+ "fleet_total_mw": 435.7,
+ "inertness_proof": {
+  "added": [],
+  "byte_identical": true,
+  "changed": [],
+  "fleet_size_armed": 431,
+  "fleet_size_off": 431,
+  "iso_set_patched_to": [
+   "MISO",
+   "NEISO"
+  ],
+  "removed": []
+ },
+ "iso": "NEISO",
+ "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+ "miso126_handoff": {
+  "eia860_plant_total_eff_mw": 446.6,
+  "eia860_plant_total_excl_ca_eff_mw": 350.6,
+  "fleet_total_mw": 435.7,
+  "status": "UNDETERMINED"
+ },
+ "miso126_handoff_drift": {},
+ "miso126_handoff_reproduced": true,
+ "plant_code": 6081,
+ "predicate_hits_at_plant": [
+  [
+   "6081",
+   "CA1"
+  ]
+ ],
+ "predicate_population": [
+  [
+   "1004",
+   "ST"
+  ],
+  [
+   "6081",
+   "CA1"
+  ],
+  [
+   "54912",
+   "STG1"
+  ],
+  [
+   "55088",
+   "ST1"
+  ]
+ ],
+ "prereg": "results/calibration/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md",
+ "presence_resolved": "REPRESENTED",
+ "q1_bases_agree": true,
+ "q3_predicate_match": true,
+ "q4_ca_capacity_eff_mw": 96.0,
+ "q4_ca_rows": {
+  "CA1": {
+   "energy_source_1": "DFO",
+   "mapped_fuel": "oil",
+   "technology": "Petroleum Liquids"
+  }
+ },
+ "q4_fleet_rows_matching_ca_capacity": [
+  "6081_CA1"
+ ],
+ "q4_fuel_map_drops_all_ca": false,
+ "q6_block_siblings": {
+  "CC1": [
+   {
+    "eff_mw": 69.7,
+    "energy_source_1": "NG",
+    "energy_source_2": "DFO",
+    "generator_id": "CT1",
+    "operating_year": 1981,
+    "prime_mover": "CT"
+   },
+   {
+    "eff_mw": 69.7,
+    "energy_source_1": "NG",
+    "energy_source_2": "DFO",
+    "generator_id": "CT2",
+    "operating_year": 1981,
+    "prime_mover": "CT"
+   },
+   {
+    "eff_mw": 69.7,
+    "energy_source_1": "NG",
+    "energy_source_2": "DFO",
+    "generator_id": "CT3",
+    "operating_year": 1981,
+    "prime_mover": "CT"
+   }
+  ]
+ },
+ "q6_campd_fuel_mix": {
+  "2023": {
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 6409.0,
+     "heat_mmbtu": 64201.1
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 3627.0,
+     "heat_mmbtu": 35501.1
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 5632.0,
+     "heat_mmbtu": 54219.9
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 3101.0,
+     "heat_mmbtu": 44247.2
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 2284.0,
+     "heat_mmbtu": 35877.3
+    }
+   }
+  },
+  "2024": {
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 16288.0,
+     "heat_mmbtu": 203655.3
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 2868.0,
+     "heat_mmbtu": 35058.5
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 11455.0,
+     "heat_mmbtu": 144648.5
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 3738.0,
+     "heat_mmbtu": 49599.9
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 3709.0,
+     "heat_mmbtu": 49042.0
+    }
+   }
+  },
+  "2025": {
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 36767.0,
+     "heat_mmbtu": 462168.2
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 3355.0,
+     "heat_mmbtu": 41226.0
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas",
+      "Combined cycle"
+     ],
+     "gross_mwh": 33106.0,
+     "heat_mmbtu": 421290.9
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 3620.0,
+     "heat_mmbtu": 50308.5
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil",
+      "Combustion turbine"
+     ],
+     "gross_mwh": 2912.0,
+     "heat_mmbtu": 40252.1
+    }
+   }
+  }
+ },
+ "reconciles_exactly": true,
+ "row_reconciliation": [
+  {
+   "carried_as": "6081_1",
+   "eff_mw": 65.0,
+   "energy_source_1": "DFO",
+   "generator_id": "1",
+   "prime_mover": "GT"
+  },
+  {
+   "carried_as": "6081_2",
+   "eff_mw": 65.0,
+   "energy_source_1": "DFO",
+   "generator_id": "2",
+   "prime_mover": "GT"
+  },
+  {
+   "carried_as": null,
+   "eff_mw": 6.9,
+   "energy_source_1": "SUN",
+   "generator_id": "5051S",
+   "prime_mover": "PV"
+  },
+  {
+   "carried_as": null,
+   "eff_mw": 2.0,
+   "energy_source_1": "DFO",
+   "generator_id": "BS#1",
+   "prime_mover": "IC"
+  },
+  {
+   "carried_as": null,
+   "eff_mw": 2.0,
+   "energy_source_1": "DFO",
+   "generator_id": "BS#2",
+   "prime_mover": "IC"
+  },
+  {
+   "carried_as": "6081_CA1",
+   "eff_mw": 96.0,
+   "energy_source_1": "DFO",
+   "generator_id": "CA1",
+   "prime_mover": "CA"
+  },
+  {
+   "carried_as": "6081_CT1",
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "generator_id": "CT1",
+   "prime_mover": "CT"
+  },
+  {
+   "carried_as": "6081_CT2",
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "generator_id": "CT2",
+   "prime_mover": "CT"
+  },
+  {
+   "carried_as": "6081_CT3",
+   "eff_mw": 69.7,
+   "energy_source_1": "NG",
+   "generator_id": "CT3",
+   "prime_mover": "CT"
+  },
+  {
+   "carried_as": "6081_EDSI",
+   "eff_mw": 0.6,
+   "energy_source_1": "DFO",
+   "generator_id": "EDSI",
+   "prime_mover": "IC"
+  }
+ ],
+ "session": "neiso-80",
+ "status": "UNDETERMINED",
+ "status_summer_basis": "UNDETERMINED"
+}
