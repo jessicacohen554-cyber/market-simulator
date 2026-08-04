@@ -1041,3 +1041,213 @@ verification (FR-20; FF-0D M1/M2) — DATA + CITATIONS ONLY
 *Produced 2026-07-30; refreshed 2026-07-31 @ HEAD `7b8c36a` (state delta §0a; FFR-2E added,
 FFR-PA promoted, peer review `docs/forecast-readiness-peer-review-2026-07.md` folded in). No LP
 solved, no parameter changed, nothing registered by the pack itself.*
+
+---
+
+## Wave 3 lanes — dispatch ledger and the UNDISPATCHED prompts (added 2026-08-04, HEAD `a7966013`)
+
+These lanes were authored by the workstream manager after the Wave-3 battery and dispatched
+from chat. **They are written into the pack here because a prompt that exists only in a chat
+session is lost when that session ends** — the same failure that lost a prior manager's
+decision cards. The dispatch ledger below is the authoritative record of which ran.
+
+### Dispatch ledger
+
+| Lane | Purpose | State at 2026-08-04 `a7966013` |
+|---|---|---|
+| FFR-3A-2 / 3A-3 | Close the T1 battery; boards | **RAN.** `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md`; 18 hindcast sidecars + `ff-verdicts.json` registered |
+| FFR-3H | CAISO 65.5 % backstop diagnosis | **RAN.** `docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md` |
+| FFR-SC-2 | FF-G1 CAISO transmission A/B | **RAN.** Gate INERT in CAISO and PJM; independently replicated |
+| FFR-SA-close | PJM load-shape smoke | **RAN.** Off-leg 2026–2028, invariants PASS |
+| FFR-3J | Kill-resume discriminator | **PARTIAL** — instrumentation landed (`ef5695b0`); the drill was never re-run. Superseded by FFR-3M below |
+| FFR-3L | ERCOT T1-X price-2025 attribution | **RAN** |
+| FFR-3N | FH-1 I12 inversion attribution | **RAN** — arms pre-registered before solving |
+| FFR-3P | CAISO accreditation ledger | **RAN**, incl. a paired NQC arm and two self-retractions |
+| FFR-3Q | Window re-cut under G.5(a) + D-9 | **RAN.** Task 0 rule-22 **VERIFIED**; Task 2 escalated (sitting Addendum J) |
+| **FFR-3K** | **FC-7 for T1-H / T1-X** | **NEVER DISPATCHED** — prompt below. FFR-3Q re-confirmed the defect is live |
+| **FFR-3M** | **Kill-resume adjudication** | **NEVER DISPATCHED** — prompt below |
+| **FFR-3R** | **Record-provenance defect class** | **NEVER DISPATCHED** — prompt below |
+
+Each prompt below is self-contained but its `VERIFIED STATE` block is a **snapshot**: re-verify
+HEAD, keepers, markers and the freeze at your own HEAD before acting. Main moved ~150 commits in
+four hours on 2026-08-04 and all six keepers changed inside three days.
+
+### FFR-3K [OPUS] — FC-7 for the T1-H and T1-X tiers (the unfixed analogue)
+
+```
+[OPUS] FFR-3K — Fix FC-7 for the T1-H and T1-X tiers. This is the UNFIXED ANALOGUE of a
+bug already fixed once, and it must land BEFORE the next battery.
+
+=== VERIFIED STATE (snapshot 2026-08-04 @ a7966013 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT ercot158-pool-arm ·
+PJM pjm-151-seam-envelope · CAISO caiso164-zonal-loss-surface · NYISO nyiso-120-c119-scope ·
+NEISO neiso-caiso156-meter-screen · MISO miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only). Cache epochs 2026-08-02 + 2026-08-03b.
+PREREQUISITES IN ORDER: `uv sync` (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which is not a data
+problem), THEN scripts/regenerate_clean.py (~65 min) only if you need a smoke leg.
+Rule 12's cap is PER PROMPT (sitting Addendum F.2). Rule 27: scripts/run_* — Opus/Fable only,
+never a full-file rewrite from response content.
+
+=== THE BUG ===
+`run_capacity_hindcast.py` writes `run_config.yaml`; FC-7 row 1 requires `run_config.json`.
+FC-7 therefore fails on EVERY T1-H and T1-X leg by construction and carries no information
+about leg quality. FFR-3Q re-confirmed it is still live.
+This is the exact defect FFR-3D fixed at `34c2f25` — but only in `run_full_horizon.py`. READ
+THAT COMMIT and REUSE its `write_run_config` rather than writing a second implementation.
+`ea7cd5d` fixed a crash in that repair; confirm you are past it and inherit the fix.
+
+=== WHY IT MUST LAND FIRST ===
+FFR-3A-2 deliberately did not fix it: authoring the artifact after seeing the score is what
+rubric §4 forbids. The same logic binds you in reverse — this lands as an INSTRUMENT change
+BEFORE the next battery scores anything, never as a retrofit. Do NOT hand-author a
+run_config.json into any already-scored bundle and do not re-score a committed leg to pick
+up the fix.
+
+=== SCOPE ===
+1. Emit run_config.json from run_capacity_hindcast via the same writer run_full_horizon uses.
+   Keep the .yaml if anything reads it — check before deleting.
+2. A test that would have caught this: assert the artifact FC-7 reads exists after a minimal
+   hindcast run. One per tier if the paths differ.
+3. Verify no keeper moves and no cache key moves — artifact emission must be solve-inert. A
+   keeper that moves under it is STOP-THE-LINE.
+4. Check whether any OTHER runner has the same gap. Two instances of one defect was a
+   coincidence; a third would be a pattern and finding it is cheap.
+5. State plainly that every committed T1-H/T1-X FC-7 verdict predating your fix is an
+   INSTRUMENT ARTIFACT, not a leg-quality signal.
+
+=== TRAPS ===
+Push 413 has two causes — a stale tracking ref of a deleted merged branch (`git remote prune
+origin`) or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase); FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files. The
+documented cache-purge command deletes TRACKED files; `git status --short` after. Shell cwd
+persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-3k-fc7-hindcast-<date>.md. Small lane; do not expand it.
+```
+
+### FFR-3M [OPUS] — Adjudicate FF-3E part c (the discriminator is already built)
+
+```
+[OPUS] FFR-3M — Run the instrumented kill-resume drill and adjudicate FF-3E part c.
+The discriminator is BUILT. Nobody ran it.
+
+=== VERIFIED STATE (snapshot 2026-08-04 @ a7966013 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ the shards yourself): ERCOT ercot158-pool-arm · PJM pjm-151-seam-envelope ·
+CAISO caiso164-zonal-loss-surface · NYISO nyiso-120-c119-scope · NEISO
+neiso-caiso156-meter-screen · MISO miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only). Cache epochs 2026-08-02 + 2026-08-03b.
+PREREQUISITES IN ORDER: `uv sync` (~2 min) THEN scripts/regenerate_clean.py (~65 min).
+Rule 12's cap is PER PROMPT (Addendum F.2).
+
+=== WHERE THIS STANDS ===
+FF-3E part c (kill-resume) FAILs at HEAD where FF-2D recorded GREEN for all six ISOs: the
+first freshly-solved year after a resume has identical aggregates and identical evolution
+counts but different byte hashes on dispatch AND price (FFR-3A-2 §6.4). Cross-year warm start
+is RULED OUT (MARKET_SIM_WARMSTART_XYEAR defaults off).
+FFR-3J (`ef5695b0`) built the discriminator and STOPPED THERE — it never re-ran the drill.
+
+=== READ ef5695b0's COMMIT MESSAGE FIRST — it corrected the test ===
+The originally pre-specified `_arr_hash(np.sort(arr))` sorts along the LAST axis, so it is
+invariant to reordering hours WITHIN a row but NOT to a permutation of the rows themselves —
+exactly what the ordering hypothesis names. Run literally it would have pointed at alternate
+optima for an ordering fault. FFR-3J records BOTH:
+  *_sorted_hash    literal last-axis sort (continuity)
+  *_multiset_hash  np.sort(arr, axis=None) — sees through any permutation
+  *_shape          because tobytes() cannot separate (a,b) from its (b,a) twin
+READ THE VERDICT OFF `*_multiset_hash`. Two synthetic tests already pin the discriminator.
+
+=== THE ADJUDICATION ===
+* multiset MATCHES, byte differs -> MECHANISM 1, ARRAY ORDERING. A determinism bug in the
+  cache-reload path. FIXING IT IS IN SCOPE (plumbing, not model behaviour). Add a regression
+  test. A keeper that moves under a determinism fix is STOP-THE-LINE.
+* multiset ALSO differs -> MECHANISM 2, ALTERNATE OPTIMA. DO NOT PIN A BASIS. Write it up as
+  an owner design question with the trade stated: determinism vs solver freedom, and cost.
+
+Attribute WHEN it broke if a bisect is bounded; say so plainly if it is not. Update the FF-3E
+scorecard entry for part c.
+
+=== DO NOT ===
+Do not widen the drill's tolerance or make it compare aggregates instead of hashes — the
+aggregates ALREADY match, and that is the entire finding. Do not disable the drill.
+
+Deliverable: docs/handoffs/ffr-3m-kill-resume-verdict-<date>.md. Small lane.
+```
+
+### FFR-3R [OPUS] — Make the record-provenance defect class structurally impossible
+
+```
+[OPUS] FFR-3R — Make the "recorded config diverges from solved config" defect class
+STRUCTURALLY IMPOSSIBLE. Four instances have now been patched one at a time.
+
+=== WHY THIS LANE EXISTS ===
+Four separate lanes each independently found one defect: a run's recorded metadata sourced
+from the CLI `args` namespace rather than the ScenarioConfig the solve ran on, so the record
+says something the run did not do.
+  FFR-1D — "a meta entry sourced from a flag that armed nothing"
+  FFR-3D — entry_lookahead_reprice / correlated_forced_outage: once C.4(c) made the flags
+           tri-state, bool(None) stamped `false` on legs that ran the shipped `True`
+  FFR-2E — capacity_market_clearing: a flag-sourced value mis-classified every
+           shipped-posture leg as curve-OFF, because forecast_verdict._curve_on reads it
+  FFR-3L — retirement_rule: MISSED by the FFR-3D sweep, so every leg omitting
+           --retirement-rule recorded `null` rather than the rule it solved
+Each fix is correct and each carries a comment explaining why THAT key is solved-sourced.
+That is the problem: correctness is per-key and maintained by comment. **Your job is the
+class, not a fifth key.**
+
+=== VERIFIED STATE (snapshot 2026-08-04 @ a7966013 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ the shards yourself): ERCOT ercot158-pool-arm · PJM pjm-151-seam-envelope ·
+CAISO caiso164-zonal-loss-surface · NYISO nyiso-120-c119-scope · NEISO
+neiso-caiso156-meter-screen · MISO miso-124-dualfuel-rearm.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. FREEZE ACTIVE (irrelevant — you
+should need NO solve). PREREQUISITE: `uv sync` (~2 min). Rule 27: scripts/run_* — Opus/Fable
+only, never a full-file rewrite from response content.
+
+=== THE DISTINCTION THAT SCOPES YOU ===
+`args` -> config is LEGITIMATE and NOT your target; run_calibration_full.py alone has ~50
+such entries that BUILD the config, which is what a CLI is for. The defect is exclusively in
+the RECORD: any artifact describing what a run did (meta.json, run_config.json, registration
+sidecars, attestations) whose value is read from args instead of the solved config. If you
+are editing config CONSTRUCTION you have left your scope.
+
+=== SCOPE ===
+1. CENSUS FIRST. Enumerate every record-artifact field, across every runner and every
+   registration/attestation writer, that is args-sourced. Table it with a verdict per field:
+   DIVERGENT-NOW / CANNOT-DIVERGE-TODAY-BUT-FRAGILE / DELIBERATELY ARGS-SOURCED. The census
+   is a deliverable even for fields you do not change.
+   Known starting points in run_capacity_hindcast.py's meta dict (verify at your HEAD):
+   energy_only_floor, limited_foresight_dispatch, entry_screen_diagnostics are still
+   bool(args.*). capacity_market_clearing_forced looks DELIBERATE (it records the force flag,
+   distinct from the resolved capacity_market_clearing key above it) — confirm before
+   touching, and if deliberate, KEEP it and say so.
+2. MAKE THE CLASS IMPOSSIBLE. Do not hand-patch three more keys and add three more comments —
+   that is the pattern that produced this lane. Derive the config-describing keys from the
+   config object, with a short explicit allowlist for genuinely args-sourced ones, each
+   carrying its one-line reason. Property to guarantee: a new ScenarioConfig field cannot be
+   recorded from args without someone deliberately opting it in.
+3. A TEST THAT FAILS ON INSTANCE FIVE. Assert every meta/run_config key naming a
+   ScenarioConfig field equals the solved config's value, allowlist the only exemption. Prove
+   it catches the real historical bug (omitted tri-state flag whose shipped default is True).
+4. SAY WHAT THE EXISTING RECORD IS WORTH. Per key: from what date, which artifacts, and
+   whether any PUBLISHED VERDICT depended on it. FFR-2E is the precedent that matters —
+   _curve_on reads capacity_market_clearing to classify legs, so a wrong value changed a
+   classification, not just a label. Do NOT retro-edit committed sidecars.
+5. CHECK THE OTHER RUNNERS: run_full_horizon.py, run_calibration_full.py, run_calibration.py,
+   and the register_* / attestation writers.
+
+=== DO NOT ===
+Do NOT change any default, config value, cache key, or anything solve-affecting. RECORD-ONLY:
+prove `cache_key(ScenarioConfig())` is identical before and after and that no keeper moves.
+Do NOT retro-edit committed artifacts. Do NOT revert or "simplify away" another lane's fix —
+the four existing solved-sourced keys are correct; you are generalizing them. Do NOT expand
+into config construction. Do NOT add a GitHub Actions workflow (private repo, billed
+runners); extend ci.yml if CI enforcement is wanted.
+
+Deliverable: docs/handoffs/ffr-3r-record-provenance-<date>.md — the census table with a
+verdict per field; the structural change and the property it guarantees; the test and its
+proof against the historical bug; the per-key statement of which committed records are
+unreliable and whether any published verdict depended on them; and an explicit list of any
+runner or writer you did NOT audit.
+```
