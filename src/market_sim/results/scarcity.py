@@ -1599,6 +1599,20 @@ def ercot_energy_online_capability_cap_mw(
     """
     if not getattr(config, "ercot_energy_online_capability_cap", False):
         return None
+    if not (
+        getattr(config, "energy_reserve_coopt", False)
+        and getattr(config, "ercot_multiproduct_as_coopt", False)
+    ):
+        # Enforced HERE (solve-time, final config) rather than in
+        # ScenarioConfig.__post_init__: the replay path applies prb_overrides
+        # before the trailing co-opt kwargs, so an intermediate config holds
+        # this flag with the co-opt fields at defaults (the ERCOT-65 channel
+        # mechanics — the ercot-159 Run-B first launch died on exactly that).
+        raise ValueError(
+            "ercot_energy_online_capability_cap requires energy_reserve_coopt "
+            "+ ercot_multiproduct_as_coopt — the fast/all tier split is the "
+            "identified structure (PRECOMMIT-ercot159 §2)."
+        )
     if str(getattr(config, "mode", "forecast")) == "forecast":
         return None
     override = getattr(config, "ercot_energy_online_capability_cap_path", None)

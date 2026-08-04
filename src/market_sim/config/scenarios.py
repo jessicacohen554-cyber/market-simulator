@@ -10230,13 +10230,15 @@ class ScenarioConfig:
                     "row; ercot_ordc_only_scarcity demotes it to pricing-only "
                     "— set one or the other (rule 19)."
                 )
-            if not (self.energy_reserve_coopt and self.ercot_multiproduct_as_coopt):
-                raise ValueError(
-                    "ercot_energy_online_capability_cap requires "
-                    "energy_reserve_coopt + ercot_multiproduct_as_coopt — the "
-                    "fast/all tier split is the identified structure "
-                    "(PRECOMMIT-ercot159 §2)."
-                )
+            # The energy_reserve_coopt + ercot_multiproduct_as_coopt
+            # REQUIREMENT is enforced in the provider
+            # (scarcity.ercot_energy_online_capability_cap_mw), not here: the
+            # replay/run_year path constructs ScenarioConfig in stages
+            # (prb_overrides apply BEFORE the trailing explicit-kwarg block
+            # that arms the co-opt flags — the ERCOT-65 channel-order
+            # mechanics), so an intermediate config legitimately holds the
+            # flag with the co-opt fields still at defaults. Only the
+            # POSITIVE-conflict exclusivity checks above are stage-safe.
 
         # ORDC-only scarcity pricing (v2, realized-room RTORPA): needs the
         # multi-product plan structure and an envelope variant (the room
