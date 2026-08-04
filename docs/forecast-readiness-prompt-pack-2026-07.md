@@ -2372,3 +2372,148 @@ registry. Report by APPENDING an addendum to docs/handoffs/ffr-3q-window-recut-2
 citation in THIS session. State explicitly that the FH-4/FH-5 lift is the manager's call and that
 you are not making it.
 ```
+
+---
+
+## §0j — AMENDMENT to §0i: FFR-4B's evidence is superseded; FFR-4E added (2026-08-04 @ `c7d806eb`)
+
+Correction record: sitting **Addendum P**. FFR-3V reopened and re-measured AFTER §0i was written.
+
+**Dispatch as written:** FFR-4A, FFR-4C, FFR-4D, FFR-3Q-3 (§0i). FFR-4C's case is *strengthened*
+— the screen credits wind **$86,549/MW-yr** vs solar **$26,787–32,873/MW-yr**, which FFR-3V names
+as the mechanical origin of the leg's inverted tech mix (model wind 43.7 % / solar 0.0 % vs actual
+22.5 % / 58.3 %). Add that line to its evidence block.
+
+**FFR-4B: replace its `=== THE EVIDENCE ===` block with the corrected one below.** The rest of
+its prompt stands. Two substantive changes: the capacity payment is **$0 in 2022–2024 and
+$327,456/MW-yr firm in 2025**, not a flat $14,364/MW-yr; and the lane order is amended — FFR-3V
+now ranks **arming as 1a** and **wiring as 1b, subordinate**, because the accreditation only
+bites where the payment is non-zero.
+
+```
+=== THE EVIDENCE (measured; corrected 2026-08-04, sitting Addendum P — do not re-derive) ===
+docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §§3.1, 3.3, 4.6b, 7. MISO solar is a MARGIN
+finding — solar reaches the screen every decision year and is rejected on economics before any
+cap is consulted. Internal control: WIND BUILT 4.0 GW through the same code path and caps.
+Solar is `binding_cap: "unprofitable"` in ALL FOUR decision years, margins
+-26,446 / -22,681 / -35,946 / -33,406 $/MW-yr for 2022/2023/2024/2025.
+
+THE CAPACITY PAYMENT IS NOT A STANDING ANNUAL NUMBER. MISO's modelled reserve margin walks
+27.3% -> 20.7% -> 11.4% -> 17.3% against a 13.75% requirement:
+  2022-2024 decision years: payment is $0 FOR EVERY TECHNOLOGY, thermal included. MISO is LONG
+    and its VRR pays nothing above a ~1.02 position. THIS IS FAITHFUL, NOT BROKEN — the real
+    PY2021-22 PRA cleared at ~$1,825/MW-yr. Do not "fix" it.
+  2025 decision year: the payment switches ON at $327,456/MW-yr firm and is the entire reason
+    gas CC and CT flip profitable and build 4.48 GW.
+So entry_vre_capacity_revenue is INERT WHILE THE ISO IS LONG AND DECISIVE THE MOMENT IT TIGHTENS.
+
+THE ASYMMETRY, MEASURED: in 2025 the UNGATED thermal branch takes $307-311k/MW-yr while solar is
+denied its share by a default-off gate. Crediting even the generic 0.18 fallback gives solar
+$58,942/MW-yr and flips its margin from -$33,406 to +$25,536. That asymmetry is inside ONE
+function and the code already exists. It is the sharpest single asymmetry the lane found.
+
+D-12 (wire the accreditation) is SUBORDINATE to D-2' and only bites where the payment is
+non-zero: MISO's published solar accreditation is already intaken and cited at elcc/miso/miso.csv
+and simply not read into RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]. Unwired the model uses the generic
+0.18; the published season-weighted value is 0.3875 (2023 break-even $37.59 vs $29.41/MWh).
+Rule 14 [R-ACCURATE]: the accurate value is on disk, so it goes in whatever it does to a fit.
+
+TWO CAVEATS YOU MUST CARRY, BOTH MEASURED:
+  (i) ARMING D-2' WOULD NOT HAVE MOVED THIS LEG'S FC-3 BAND AT ALL — a 2025 decision commissions
+      at COD 2027, outside the 2021-2025 window. Do not report a band movement as this lane's
+      result and do not tune toward one.
+  (ii) TWO CAUSES OUTRANK THIS LANE and are NOT yours: the missing procurement channel (FFR-3V's
+      own #1 — 18.6 GW was built on utility IRP/RFP and corporate PPAs against the ITC, a channel
+      apply_economic_new_entry represents NOWHERE; owner card D-16), and the 2024 entry price
+      signal's missing ORDC tail (FFR-4E below). If your result looks small next to those, that
+      is the correct relative size and you say so.
+
+LANE ORDER AMENDED: arm-then-wire is acceptable (FFR-3V ranks arming 1a, wiring 1b). Either
+order is fine; what is NOT optional is that the two are measured SEPARABLY against a paired
+control, so neither is attributed to the other.
+```
+
+### FFR-4E [OPUS] — the 2024 MISO entry price signal has no ORDC tail
+
+```
+[OPUS] FFR-4E — Diagnose why the entry price signal's lookahead stack carries no scarcity tail,
+and whether that is the largest suppressor of MISO entry. DIAGNOSIS lane. Chartered by the
+workstream manager (sitting Addendum P.3b), NOT by an owner card — because it investigates
+whether an EXISTING overlay is wrongly off, not whether to add a mechanism. If your answer turns
+out to require a NEW mechanism, STOP and escalate; that is an owner decision.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main c7d806eb — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; NYISO has moved EIGHT times in
+five days): ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-04-pjm-152-collapse ·
+CAISO 2026-08-04-caiso-166-measured-dlap · NYISO 2026-08-04-nyiso-125-seam-envelope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM} — MISO IS NOT IN IT; `final` = EMPTY. HOLDOUT FREEZE
+ACTIVE. NOTE (caiso-171, 0043fc22): THE MARKER AND THE FREEZE ARE ORTHOGONAL — a freeze SUSPENDS
+the authorization a marker grants, it does not withdraw the marker; NYISO and PJM were declared
+complete six days INTO the freeze. Do not reason that a freeze blocks a marker.
+In-sample 2023-2025 and forecast-mode 2026+ only; NEVER 2022/2020/2019/2026-backcast.
+Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly like
+a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min). Rule 12 PER
+PROMPT; MISO is ~8.6 GB per solve — never co-run with PJM in one session. Rule 27: Opus/Fable.
+
+=== THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
+docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.2 and §0. In the 2024 decision year the
+entry price signal's MAXIMUM HOURLY PRICE is $39/MWh against solar's $43.18/MWh break-even MEAN.
+The margin is not close — it is UNREACHABLE. Cause named: `scarcity_price_overlay: False` leaves
+the lookahead stack with NO ORDC TAIL AT ALL. It also zeroes the peaker outright: gas_ct variable
+cost $41.39 exceeds the $39 ceiling, so no CT can ever clear. FFR-3V calls this "the largest
+single suppressor of MISO entry in 2024/2025 — upstream of every revenue lever below."
+
+=== YOUR QUESTION ===
+Is the overlay's absence from the lookahead stack a DEFECT or a deliberate scoping choice?
+Establish, in this order:
+1. WHERE the flag is set for the entry/lookahead path specifically, and whether it differs from
+   the dispatch path the same run uses. A price signal that the screen sees but the dispatch does
+   not (or vice versa) is one mechanism answering to two definitions (rule 19 [R-ONE-MECH]).
+2. WHETHER IT IS ISO-WIDE OR MISO-SPECIFIC. Report the flag's effective value per ISO on the
+   entry path. Rule 25 [R-ISO-SCOPE]: if it is off everywhere, that is a program-wide finding and
+   each ISO's remedy is still its own decision — do not arm another ISO from MISO's evidence.
+3. WHAT THE TAIL WOULD BE WORTH, bounded from committed artifacts before you solve. The screen
+   reads an annual price signal; quantify how many hours of what price the ORDC tail contributes
+   and what that does to a peaker's and a solar unit's margin. If the bound is decisive you may
+   not need a solve at all.
+4. WHETHER THE $39 CEILING IS ITSELF FAITHFUL. A modelled ISO whose annual maximum hourly price
+   is $39/MWh has no scarcity hours of any kind, which is a strong claim about MISO. Check it
+   against MISO's actual 2024 price distribution — if the real market had hours above $39, the
+   lookahead stack is not representing the market, and that is the finding regardless of the flag.
+
+=== RULES THAT BIND THIS LANE HARDEST ===
+Rule 1 [R-STRUCT] / rule 11: if arming the overlay makes a band worse, KEEP IT and open the root
+cause — a real market behaviour stays in. Equally, do NOT arm it because it improves a residual;
+arm it (or propose arming it) because the price signal the screen reads should be the price
+signal the market forms. Rule 14 [R-ACCURATE]: prefer the measured MISO price distribution over
+any modelled proxy when checking limb 4.
+DO NOT tune the ORDC parameters. DO NOT add a scarcity adder. If the overlay is correctly off for
+a stated reason, say so and the finding is that the ENTRY SCREEN needs a different price basis —
+which you report, not implement.
+
+=== SCOPE DISCIPLINE ===
+Diagnose and write up; propose with evidence and let the owner charter the fix. Do not promote,
+do not flip a default, do not widen a band. Rule 28: stamp any matrix cell you test in THIS
+session, rejections included.
+
+=== COORDINATION ===
+FFR-4B (D-12 + D-2') and FFR-4C (D-13) are running concurrently on the same MISO entry screen.
+Your finding is UPSTREAM of both — if it holds, their levers operate on a price signal that
+cannot clear solar in 2024 regardless. Say so plainly; do not soften it to avoid stepping on
+their results, and do not wait for them.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST. Never
+push a >=300-line file via push_files. The documented cache-purge command deletes TRACKED files;
+`git status --short` after. Evolution ledgers live at <out-dir>/<ISO>/<cache_key>/, NOT the
+out-dir root, and load_ledgers_for_run returns {} rather than raising — a wrong path silently
+reads as "no evolution happened". MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the cache key
+(FFR-3F §5). Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-4e-entry-price-scarcity-<date>.md — where the flag is set and
+whether the two paths agree, the per-ISO map, the bounded value of the tail, the limb-4 check
+against MISO's actual price distribution, and what you did NOT separate.
+```
