@@ -2129,4 +2129,25 @@ def apply_interchange_topology(
             "pjm-136 M2)",
             year,
         )
+    # 9. ``config.caiso_zonal_loss_surface`` — the CAISO twin of steps 7-8:
+    #    split the internal CAISO links into one-way loss pairs so CAISO's own
+    #    measured marginal delivery-factor surface can enter the energy balance
+    #    as hour-varying receiving-side loss fractions (caiso-164; the
+    #    fractions are built per solve year by interchange.build_caiso_link_loss
+    #    from CAISO_loss_surface.csv). Internal links only — the WECC seam keeps
+    #    its measured hub prices, corridor groups and ATC envelopes untouched.
+    #    Runs LAST so it splits the topology every earlier step has already
+    #    settled; the caiso-163 directional path ratings are InterfaceLimits
+    #    keyed on the zone PAIR, which build_interface_groups resolves onto
+    #    both orientations with ±1 signs, so the published Path 15 / Path 26
+    #    bounds survive the split exactly (rule 19 ``[R-ONE-MECH]``).
+    if getattr(config, "caiso_zonal_loss_surface", False) and iso == "CAISO":
+        from market_sim.model.interchange.caiso import apply_caiso_zonal_loss_links
+
+        iso_config = apply_caiso_zonal_loss_links(iso_config)
+        logger.info(
+            "CAISO %d: caiso_zonal_loss_surface — internal links split into "
+            "one-way loss pairs (marginal delivery-factor physics, caiso-164)",
+            year,
+        )
     return iso_config

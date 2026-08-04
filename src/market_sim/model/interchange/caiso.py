@@ -1903,6 +1903,189 @@ def apply_caiso_asymmetric_path_limits(iso_config: ISOConfig, config) -> ISOConf
     return extended
 
 
+# Non-leap month lengths in hours. The model's fixed 8760-hour clock drops
+# Feb 29, so non-leap month boundaries align exactly in every year.
+_CAISO_MONTH_HOURS: tuple[int, ...] = tuple(
+    d * 24 for d in (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+)
+
+# Loss-pair flow tiebreaker (``caiso_zonal_loss_surface``): the same role and
+# magnitude as the storage ε = 0.001 $/MWh (CLAUDE.md rule 9 ``[R-EPSILON]``),
+# charged on BOTH one-way directions of each lossy internal CAISO link so that
+# (a) a degenerate lossless-direction wash nets to one direction per hour, and
+# (b) circulating flow (both directions at once, which dissipates
+# ε_loss × flow at each end — free disposal) is strictly cost-positive whenever
+# |zonal dual| × loss fraction < this charge. A numerical device, not a hurdle
+# rate and not a fitted level — the priced-hurdle family is deliberately NOT
+# what this mechanism is (rule 13 ``[R-MEASURED]``: the separation comes from
+# measured loss physics in the energy balance, never from a cost adder tuned to
+# a price residual). Identical in construction and value to PJM's
+# ``PJM_LOSS_LINK_TIEBREAK_EPS``; declared here rather than imported because a
+# per-ISO mechanism never reads another market's module (rule 25
+# ``[R-ISO-SCOPE]``).
+CAISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
+
+
+def _caiso_internal(from_zone: str, to_zone: str) -> bool:
+    """Whether a link joins two internal CAISO zones (WECC nodes excluded).
+
+    The WECC import/export nodes — ``WECC_import`` and the per-hub nodes it
+    expands into under ``caiso_per_hub_intertie`` (``WECC_PNW``, ``WECC_DSW``,
+    …) — are fictitious pricing nodes with no location, so they have no
+    published delivery-factor deviation to derive one from, and inventing one
+    would be a fitted scalar (rule 5 ``[R-NO-MAGIC]``). Their links keep the
+    seam's own mechanisms (measured hub prices, corridor groups, ATC
+    envelopes) and stay lossless — the same exclusion PJM applies to its
+    external star node.
+    """
+    return not (from_zone.startswith("WECC") or to_zone.startswith("WECC"))
+
+
+def apply_caiso_zonal_loss_links(iso_config: ISOConfig) -> ISOConfig:
+    """Split each internal bidirectional CAISO link into a one-way loss pair.
+
+    The caiso-164 topology transform (gated on
+    ``ScenarioConfig.caiso_zonal_loss_surface``): every bidirectional
+    CAISO-internal link becomes TWO one-way links (``is_bidirectional=False``,
+    same TTC each way), each charged the
+    :data:`CAISO_LOSS_LINK_TIEBREAK_EPS` flow cost. The per-direction marginal
+    loss fractions themselves are hour-varying and enter the energy balance via
+    :func:`build_caiso_link_loss` + ``dispatch.build_constraints(link_loss=…)``;
+    the split exists because a loss coefficient on a SIGNED link would create
+    energy on reverse flow, so each direction must be its own nonnegative
+    column.
+
+    Composition with CAISO's existing network mechanisms is by construction:
+
+    * the caiso-163 directional path ratings
+      (``caiso_asymmetric_path_ratings``) are
+      :class:`~market_sim.config.iso_configs.InterfaceLimit` entries keyed on
+      the zone PAIR, and :func:`…interchange.core.build_interface_groups`
+      matches every link joining that pair — the listed orientation with sign
+      ``+1`` and the reversed one with ``−1`` — so each split pair sums to the
+      net corridor flow and the published ``[−5,400, 3,265]`` / ``[−3,000,
+      4,000]`` bounds are preserved exactly;
+    * the SP15 pocket import limits (``SP15_rest→LA_BASIN``,
+      ``SP15_rest→SDGE``) are already one-way, so they are left untouched here
+      and simply pick up their receiving-side loss fraction;
+    * the WECC seam links are untouched (:func:`_caiso_internal`), so the
+      import-node identification, measured hub prices and corridor groups are
+      unchanged.
+
+    Args:
+        iso_config: The CAISO topology, after every other transform.
+
+    Returns:
+        A validated copy with the internal bidirectional links split. A config
+        with no internal bidirectional links (already split, or not CAISO) is
+        returned unchanged.
+    """
+    new_links: list[TransferLink] = []
+    changed = False
+    for ln in iso_config.links:
+        if ln.is_bidirectional and _caiso_internal(ln.from_zone, ln.to_zone):
+            for frm, to in ((ln.from_zone, ln.to_zone), (ln.to_zone, ln.from_zone)):
+                new_links.append(
+                    ln.model_copy(
+                        update={
+                            "from_zone": frm,
+                            "to_zone": to,
+                            "is_bidirectional": False,
+                            "flow_cost": ln.flow_cost + CAISO_LOSS_LINK_TIEBREAK_EPS,
+                        }
+                    )
+                )
+            changed = True
+        else:
+            new_links.append(ln)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
+def build_caiso_link_loss(
+    links: list[TransferLink], iso: str, year: int, hours: int
+) -> np.ndarray | None:
+    """Return the ``(n_links, hours)`` per-link marginal loss fractions for CAISO.
+
+    For each one-way internal link ``x -> y`` and month ``m``, the
+    receiving-side loss fraction is::
+
+        eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+
+    so an interior, uncongested flow ``x -> y`` prices the receiving zone at
+    ``lambda_y = lambda_x x (1 + dev_y,m)/(1 + dev_x,m)`` — exactly the
+    measured marginal delivery-factor ratio CAISO's own LMPs carry
+    (``LMP_i = MCE + MCC_i + MCL_i``, CAISO Tariff §27.1.1 / BPM for Market
+    Operations §6; the derive's ``dev_z = sum(MCL_z)/sum(MCE)`` estimator
+    reproduces the measured MCL when re-multiplied by the measured MCE). The
+    reverse direction of the pair clamps to 0 for that month — the marginal-DF
+    linearization is oriented by the month's persistent gradient, and the clamp
+    is conservative: atypical-direction hours carry no separation rather than a
+    fabricated inverted one. A month whose measured gradient flips sign swaps
+    the lossy direction automatically.
+
+    On CAISO's measured surface the persistent gradient runs south-to-north
+    (``dev_NP15`` is the least negative), so the lossy direction is S→N — the
+    same direction the measured Path-15 congestion binds in. That is a property
+    of the measured data, not a choice made here.
+
+    The monthly surface comes from
+    :func:`market_sim.data.loss_surface.load_zone_month_deviation` (CAISO's own
+    ``CAISO_loss_surface.csv`` — year rows for a train backcast year, pooled
+    rows otherwise) and expands to hours on the model's fixed non-leap
+    calendar. WECC seam links carry zero rows.
+
+    Args:
+        links: The solve-year link list, after
+            :func:`apply_caiso_zonal_loss_links`.
+        iso: ISO identifier; anything but ``CAISO`` returns ``None``.
+        year: Solve year, used to resolve per-year vs pooled surface rows.
+        hours: Hours in the solve year.
+
+    Returns:
+        The ``(n_links, hours)`` loss-fraction array, or ``None`` when the ISO
+        is not CAISO or no link carries a positive fraction (the LP then keeps
+        the ±1 incidence coefficients, byte-identical).
+
+    Raises:
+        ValueError: If an internal link is still bidirectional (the loss
+            coefficient would create energy on reverse flow — apply
+            :func:`apply_caiso_zonal_loss_links` first), or if a CAISO zone is
+            missing from the surface.
+    """
+    if iso.upper() != "CAISO":
+        return None
+    from market_sim.data.loss_surface import load_zone_month_deviation
+
+    surface = load_zone_month_deviation(iso, year)
+    month_of_hour = np.repeat(np.arange(12), _CAISO_MONTH_HOURS)[:hours]
+    loss = np.zeros((len(links), hours), dtype=float)
+    for i, ln in enumerate(links):  # i: link column (few links, not hours)
+        if not _caiso_internal(ln.from_zone, ln.to_zone):
+            continue
+        if ln.is_bidirectional:
+            raise ValueError(
+                f"link {ln.from_zone}->{ln.to_zone} is bidirectional; "
+                "apply_caiso_zonal_loss_links must run before "
+                "build_caiso_link_loss (a signed lossy link would create "
+                "energy on reverse flow)"
+            )
+        try:
+            dev_from = np.asarray(surface[ln.from_zone], dtype=float)
+            dev_to = np.asarray(surface[ln.to_zone], dtype=float)
+        except KeyError as exc:
+            raise ValueError(
+                f"loss surface has no zone {exc.args[0]!r} — regenerate "
+                "scripts/data/derive_caiso_loss_surface.py"
+            ) from exc
+        eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
+        loss[i, :] = eps_m[month_of_hour]
+    return loss if np.any(loss > 0.0) else None
+
+
 def build_wecc_import_generators(
     border_carbon_per_mwh: float = 0.0,
 ) -> list[Generator]:
