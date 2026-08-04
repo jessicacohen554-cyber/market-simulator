@@ -2924,29 +2924,42 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 }
 
 # CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
-# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with
-# fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC
-# boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit
-# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
-# southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
-# has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
-# a direct Path-15 sub-TAC load measurement becomes available. This IS the
-# rule-14/rule-12 misalignment exception (a single measured TAC-area load
-# spanning a boundary — Path 15 — that our zone model splits, with no direct
-# way to measure the sub-split): the estimate is legitimately kept, not an
-# answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16.
-# G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger):
-# FERC-714 unreachable (403/502 via proxy), CEC planning-area geography
-# boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS
-# (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this
-# environment (a zipped-XML load-forecast file fetched successfully) —
-# contradicts the 2026-07-05 "OASIS unreachable" finding and re-opens this
-# item as actionable. Not completed here: finding the specific OASIS report
-# that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is
-# already used), downloading/parsing it, and validating a re-derivation
-# against the CAISO keeper is a data-intake project (new frozen derive
-# script + re-solve + registration, rule 23), not a documentation edit — left
-# for that dedicated session with this reachability finding as the unblock.
+# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26. SCE and
+# SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW,
+# CAISO's southern-Nevada pocket).
+#
+# PGE-TAC IS MEASURED (caiso-172, 2026-08-04) — issue #1372 CLOSED. It was
+# 0.86/0.14, the last residual-identified member of this table, carried on the
+# rule-14 misalignment exception ("no TAC boundary exists at Path 15 to measure
+# the split directly"). That premise was true and irrelevant: the exception
+# licenses an estimate only when the real data is genuinely misaligned to our
+# representation, and CAISO publishes the Path-15 geography itself. The split
+# is now derived from published bytes by
+# scripts/data/derive_caiso_path15_load_split.py (rule 23 [R-FROZEN-DERIVE] —
+# re-derives ONLY when its source bytes change, never against a residual):
+#   * OASIS ATL_LDF -- per-pnode Load Distribution Factors inside
+#     DLAP_PGAE-APND, CAISO's own published weighting for distributing PG&E LAP
+#     load onto nodes (1,668 load pnodes summing to exactly 100.000);
+#   * OASIS ATL_PNODE_MAP -- CAISO's authoritative TH_NP15_GEN / TH_ZP26_GEN
+#     pnode membership, i.e. the Path-15 / Path-26 boundary as CAISO defines it,
+#     which is exactly the boundary this model's NP15<->ZP26 link represents.
+# Joined by substation, two-tier (direct substation match; else the node's PG&E
+# sub-LAP's dominant hub — SLAP_PGZP and SLAP_PGKN are 100% ZP26, the other
+# thirteen ~100% NP15), residue reported and excluded from the normalisation.
+# Day-weighted per year over every live effective window, backcast-mean of
+# 2023-2025: NP15 0.883951 / ZP26 0.116049 (per-year spread 0.0011). Artifact:
+# data/raw/zone-specific-demand/CAISO/CAISO_path15_load_split.{csv,json};
+# acceptance 10/10. RECONCILIATION, not identity (rule 14's clause, documented
+# as it requires): an LDF is a *typical* distribution factor, so this is a
+# MEASURED STATIC scalar replacing an ASSUMED static scalar — the same kind of
+# object, identified instead of guessed. It is NOT an hourly NP15/ZP26 load
+# series; no such series is published. The survey that found this route and
+# walled every alternative (SLD_FCST is TAC-grain under every market run;
+# ENE_SLRS's TAC_NORTH spans Path 15; FERC-714 403; CEC boundary-mismatched;
+# EIA-930 sub-BA demand-only) is scripts/probes/_caiso172_subtac_load_survey.py,
+# committed so the verdict is re-checkable. Rule 13 [R-MEASURED] admissible:
+# regenerates for a forward year from published forward bytes and responds to
+# changed conditions (Kern/Fresno vs Bay-Area load growth moves it).
 # SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into
 # LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md
 # FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest)
@@ -2955,7 +2968,8 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and
 # VEA-TAC map 1:1 onto their own sub-zones (measured, clean).
 CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
-    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    # MEASURED: caiso-172 derive, backcast-mean 2023-2025 (see comment above).
+    "PGE-TAC": {"NP15": 0.883951, "ZP26": 0.116049},
     "SCE-TAC": {"LA_BASIN": 0.835, "SP15_rest": 0.165},
     "SDGE-TAC": {"SDGE": 1.0},
     "VEA-TAC": {"SP15_rest": 1.0},

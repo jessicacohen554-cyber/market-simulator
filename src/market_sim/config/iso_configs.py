@@ -308,9 +308,14 @@ def _caiso_config() -> ISOConfig:
     share is measured from CAISO OASIS ``SLD_FCST`` ACTUAL TAC-area hourly load
     (upload U4, Jan-2023 sample; ``scripts/data/derive_load_shares.py caiso``):
     PGE-TAC 46.1%, SCE-TAC 44.3%, SDGE-TAC 9.2%, VEA-TAC 0.4% of component-TAC
-    load. PGE-TAC straddles Path 15 and is split 0.86/0.14 between NP15 and
-    ZP26, preserving the prior 0.43:0.07 ratio (no TAC boundary exists at Path
-    15 to measure it; Tier 3 — calibration). The *intra-SP15* split is measured
+    load. PGE-TAC straddles Path 15 and is split **0.883951 / 0.116049** between
+    NP15 and ZP26 — MEASURED (caiso-172), not the former 0.86/0.14 estimate:
+    OASIS ``ATL_LDF`` per-pnode load distribution factors inside
+    ``DLAP_PGAE-APND``, joined by substation to ``ATL_PNODE_MAP``'s
+    authoritative ``TH_NP15_GEN`` / ``TH_ZP26_GEN`` membership (CAISO's own
+    Path-15 geography), day-weighted over 2023-2025. See
+    ``scripts/data/derive_caiso_path15_load_split.py`` and
+    ``constants.CAISO_TAC_ZONE_WEIGHTS``. The *intra-SP15* split is measured
     from the CAISO LCT study's published pocket peak loads (Table 3.3-7 vs the
     SP26 zone peak, Table 3.2-1): LA_BASIN 19,537 / SDGE 4,768 / SP26 28,149 MW
     (2023) → LA_BASIN = 0.374, SDGE = 0.091 of full ISO, with SP15_rest the
@@ -325,8 +330,12 @@ def _caiso_config() -> ISOConfig:
     deliverability/caiso/caiso.csv``); ``scripts/data/derive_load_shares.py caiso``.
     """
     zones = [
-        Zone(name="NP15", iso="CAISO", load_share=0.3969),
-        Zone(name="ZP26", iso="CAISO", load_share=0.0646),
+        # PG&E TAC total (0.4615) re-split by the MEASURED Path-15 weight
+        # (caiso-172): 0.4615 x 0.883951 / 0.116049. Was 0.3969 / 0.0646 on the
+        # 0.86/0.14 estimate. The PG&E total is unchanged, so the SP15 sub-zone
+        # shares below (LCT-sourced) are untouched and the five still sum to 1.0.
+        Zone(name="NP15", iso="CAISO", load_share=0.4079),
+        Zone(name="ZP26", iso="CAISO", load_share=0.0536),
         # SP15 local-area split (LCT peak_load ÷ SP26 peak × old SP15 0.5385).
         # LA_BASIN 19,537/28,149 and SDGE 4,768/28,149 (2023 LCT Table 3.3-7 /
         # 3.2-1) → 0.374 / 0.091 of the full ISO; SP15_rest is the exact
