@@ -5499,8 +5499,85 @@ charter with a new measured identification** before a solve:
   keepers today, so nothing is stacked, but arming either needs its own source
   fix first (EIA-923 is monthly and offers no hourly substitute; for NEISO the
   post-split window is the only clean hourly source and holds one water year).
-- `thermal_tranches_<ISO>.csv` provenance re-derivation (blocked at HEAD,
-  miso-95).
+- **`thermal_tranches_<ISO>.csv` COLUMN COVERAGE, all six ISOs — PHASE 0 DONE
+  2026-08-04 (xiso-5), and the "coverage gap" is THREE objects of which only ONE
+  is a gap.** Zero LP, **no regeneration**, no keeper changed, no cell verdict
+  minted. Probe `scripts/probes/_xiso5_thermal_tranche_coverage.py` (committed
+  bytes only — it *parses* the deriver's constant out of source so it cannot
+  accidentally run it), record
+  `results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md`.
+  *(The provenance half stays with miso-95's `PROVENANCE-BLOCKED` verdict; this
+  extends it and does not re-open it.)*
+
+  | population | verdict | disposition |
+  |---|---|---|
+  | CHP `online_frac` zero, every ISO | **BY DESIGN** | CLOSED AS DOCUMENTED |
+  | PJM `ST_GAS` 0/10 vs MISO 16/16 | **ARTIFACT VINTAGE** | chartered, not landed |
+  | CAISO all-blank + NEISO/NYISO no column | same cause | handed off per-ISO |
+
+  **(a) The CHP zero is design, not a defect.**
+  `derive_thermal_tranches._ONLINE_FRAC_GROUPS` = `{COAL, CC_REGULAR,
+  CT_PEAKER, ST_GAS}` (`:409`) gates the emit expression (`:685`), whose comment
+  reads *"CHP groups stay blank — their floor is the steam host (rule 19)."*
+  Confirmed three ways: CHP rows that reached the full `status="ok"` path
+  published nothing in **every** ISO (CAISO 13 / PJM 10 / MISO 20 / NYISO 16 /
+  NEISO 4); `sync_hours` is computed for every group and the constant gates only
+  *publication*; and D-2 `chp_steam` is armed and binding in all six keepers
+  (0.02–12.81 TWh/yr) off `chp_pmin_cf`. Rule 19 `[R-ONE-MECH]` closes it
+  **affirmatively** — a CHP `online_frac` floor would stack a second mechanism
+  on an already-floored class. **Do not re-open this as a defect.**
+
+  **(b) PJM `ST_GAS` 0/10 is vintage, code-proven.** The emit condition is
+  `group in _ONLINE_FRAC_GROUPS and sync_hours[...][1] > 0`; `ST_GAS` joined the
+  set **2026-07-12** (the MISO Southern-gas lane, which regenerated MISO's file),
+  and every PJM `ST_GAS` row is `ok` with `online_hours > 0` (Big Sandy 20,164 h,
+  Brunner Island 19,681 h) so the denominator necessarily clears — **HEAD cannot
+  emit a blank there.** MISO is the clean control arm and it works: same code,
+  same inputs, 16/16 at 0.026–0.982.
+
+  **Coverage census** (`status="ok"` rows blank in an *emitting* group — rows a
+  HEAD re-derive would populate): **CAISO 70** (CC_REGULAR 23/23, CT_PEAKER
+  44/44, ST_GAS 3/3), **NYISO 47**, **NEISO 39**, **PJM 10** (ST_GAS only),
+  **MISO 0**. **166 rows across four ISOs.** The schema ladder is
+  **non-monotone** — CAISO carries both WP-3 columns (2026-07-19) *and* an
+  all-null `online_frac`, i.e. newer on the CHP axis and older on the
+  `online_frac` axis at once, which no single deriver commit produces: **the
+  family has no common vintage.**
+
+  **Rule 23 `[R-FROZEN-DERIVE]` decided up front, and it says NO.** No
+  source-data change is cited, so **no regeneration is licensed** — the axis is a
+  *code*-vintage edit (miso-95's precedent verbatim), and the only later input
+  move (MISO's outage extract, xiso-2) is 2022-only with 2023–2025 identical
+  row-for-row, outside the artifacts' 2023–2025 derive window.
+
+  **Blast radius, measured from each keeper's own `run_config.json`.**
+  **(i) Zero silent no-ops today** — no ISO arms a gate over a column its
+  artifact lacks (`chp_steam_floor_p25`→`steam_level_cf` armed at CAISO alone;
+  `st_gas_mustrun_per_plant` at MISO alone), so **the gap is measured-inert at
+  all six keepers**. It is *latent*, not benign: `campd_bins.py:1287` skips a
+  blank row silently, so a future lane arming `st_gas_mustrun_per_plant` /
+  `cc_mustrun_per_plant` / `coal_sync_srmc_tranche` / `chp_steam_floor_p25` at a
+  gapped ISO would engage a mechanism on **nothing** and read as inert on the
+  merits. **(ii) A regen is not column-scoped** — `thermal_tranche_overrides` is
+  called **ungated** (`campd_bins.py:1644`; also `model/reserves/spec.py:1073`),
+  so `committed_pct`/`mustrun_pct` are read unconditionally and **any** regen of
+  ISO X's file is a keeper-moving change in ISO X, needing that ISO's own
+  pre-registered keeper-grade A/B. **Against interest and reassuring on rule 25:**
+  the artifact is per-ISO by construction and no solve-path reader pools across
+  ISOs, so **a regen cannot reach another ISO's keeper** — the cross-ISO leak
+  does not exist structurally.
+
+  **False dependency removed:** miso-127 §7(a)'s `ST_GAS` bench-coverage
+  shortfall (0.605/0.611/0.629 matched, 7.5–8.3 TWh/yr) is **not** this object —
+  MISO's tranche artifact has **zero** coverage gap on that very class — it is a
+  *bench* class-assignment/membership question and keeps its own charter.
+  **Recommended cheapest unblock**, added to miso-95 §4's three options as a
+  fourth: stamp `_ONLINE_FRAC_GROUPS` + the schema generation into a header or
+  sidecar, so one read answers "which groups was this vintage emitting?".
+  Matrix row `thermal_tranche_artifact_coverage`, cells `.OOIOO`.
+  *Flagged not edited (rule 28(e), NEISO's lane): the matrix header's
+  `keepers.NEISO` is stale at `2026-08-03-neiso-caiso156-meter-screen` against a
+  designated `2026-08-04-neiso81-chpheatrate`.*
 - Registry hygiene fixes from §4.6 (dangling `--ramp-limits`, inert-default
   flags).
 - Forecast-lane inheritance review: for each keeper-only `BF` mechanism,
