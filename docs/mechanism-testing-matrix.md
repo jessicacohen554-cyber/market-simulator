@@ -2279,7 +2279,7 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-124-dualfuel-rearm`, **NOT-YET** — **LIVE KEEPER STAMP ADDED at xiso-4 (2026-08-04)**: this header never carried a live stamp, so its only keeper id was the historical one below and it read as current. `calibration_verdict.py --run-id` on committed artifacts confirms C7 `shape` is the SOLE FAIL — `price_mean`/`price_tail` are CAVEATs — so "the SOLE failing criterion" is exact); **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate` — TRUE AS OF nyiso-121 and left standing as history; miso-124 has since re-armed `dual_fuel_switching` and is the live keeper)**
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-126-steampart-b`, **NOT-YET** — **LIVE KEEPER STAMP ADDED at xiso-4 (2026-08-04)**: this header never carried a live stamp, so its only keeper id was the historical one below and it read as current. `calibration_verdict.py --run-id` on committed artifacts confirms C7 `shape` is the SOLE FAIL — `price_mean`/`price_tail` are CAVEATs — so "the SOLE failing criterion" is exact); **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate` — TRUE AS OF nyiso-121 and left standing as history; miso-124 has since re-armed `dual_fuel_switching` and is the live keeper)**
 
 > **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
 > All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
@@ -2712,6 +2712,44 @@ is now the live queue head.**)*
    Martinez 20.0 MW (CAISO) and 6081 Stony Brook 96.0 MW (NEISO, undetermined)
    are handed off unstamped. §5.4 again has **no** named, un-adjudicated,
    non-data-blocked item; the two bounded NON-solve steps above are unchanged.
+   **QUEUE STAMP 2026-08-04 (miso-126): the successor miso-125 NAMED but did
+   not charter is now SPENT and is a KEEPER.** `cc_steam_part_capacity` MISO
+   `O` → **`K`**, keeper → `2026-08-04-miso-126-steampart-b`
+   (`results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md`;
+   prereg `PREREG-miso126-cc-steam-part-capacity-2026-08-04.md`). It restores
+   **250.0 MW of published, operable MISO capacity that never reached the LP at
+   all** — EIA-860 55088 Dearborn `ST1`, a combined-cycle STEAM part whose
+   `Energy Source 1` (`BFG`) names the block's **duct** fuel rather than its
+   primary energy input, so `_map_fuel_type` returned `None` and the row was
+   skipped. The rate needed no change: eGRID's `PLNGENAN` implies an impossible
+   **116.6 %** capacity factor on the 515 MW held and **78.5 %** on the repaired
+   765 MW, so the measured CHP rate was ALREADY a block rate charged to two
+   thirds of the block; the paired re-derive moves one descriptive cell.
+   **THE LEVER IS 250.0 MW, NOT the 290.4 MW miso-125 named** — 50973 Motiva's
+   40.4 MW is excluded by a pre-registered falsifier (present-fleet implied CF
+   already 80.1 %: the denominator evidence is *absent, not contrary*) and
+   independently by the predicate's vintage clause (`CA` rows 1957/1962/1978
+   against `NG` `CT` siblings 1983/2011 — a refinery steam header, not a CC
+   block). miso-125 §4's **let-down-turbine doubt is CLOSED by measurement**:
+   `ST1`'s implied generation share of its block 0.4173 vs its EIA-860
+   **nameplate** design share 0.4307, gap 0.0134 vs a pre-declared 0.10 band.
+   Determination NOT-YET and every criterion status unchanged, zero
+   legitimacy-diagnostic changes, while **C1 `CC_CHP` error collapses
+   −1.55 → −0.53 and −1.61 → −0.46 TWh** (68 %/71 % of the class's whole error)
+   and summed C1 |error| improves 37.20 → 35.46 TWh. **DO-NOT-REDO for every
+   ISO's successors:** the first arm-B solve was EXACTLY inert because the flag
+   was not forwarded at the BACKCAST's own copy of the bin synthesis
+   (`scripts/run_calibration.py`) — the nyiso-89 regression class. The wiring
+   guard that pinned only `measured_ct_heat_rates` is now generalised to EVERY
+   boolean `ScenarioConfig`-backed keyword of `load_fleet_from_csv`; **a
+   fleet-loader firing check is NOT sufficient proof — always require a post-arm
+   class-energy delta.** §5.4 again has **no** named, un-adjudicated,
+   non-data-blocked item; the two bounded NON-solve steps stand unchanged.
+   Rule 25 hand-offs, **unstamped**: **CAISO 54912 Martinez `STG1` 20.0 MW**
+   (`MISSING`, vintage-coherent — CAISO's lane runs its own P1–P3 and adds
+   itself to `CC_STEAM_PART_REPAIR_ISOS` if it clears) and **NEISO 6081 Stony
+   Brook `CA1` 96.0 MW** (presence still `UNDETERMINED` — that lane must resolve
+   presence first).
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
