@@ -768,28 +768,51 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; FRONTIER ASSESSED, `complete` RECOMMENDED **NO** FOR NOW** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; FRONTIER ASSESSED AND MET — `complete` RECOMMENDED **YES**, PENDING THE OWNER** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
 
 > **caiso-171 (2026-08-04) — FRONTIER + `complete`-DECLARATION ASSESSMENT.
-> RECOMMENDATION: **NO, NOT NOW** — and NOT because CAISO is short of its in-model
-> frontier.** No LP, no solve, no derive, no `ScenarioConfig` field, keeper
-> unchanged, nothing registered, `calibration-complete.json` UNTOUCHED (the marker
-> is an owner act, rule 22). One network call: the caiso-141 wall probe, which is a
-> network probe by design. Full record
+> RECOMMENDATION: **YES.**** No LP, no solve, no derive, no `ScenarioConfig` field,
+> keeper unchanged, nothing registered, `calibration-complete.json` UNTOUCHED (the
+> marker is an owner act, rule 22). One network call: the caiso-141 wall probe,
+> which is a network probe by design. Full record
 > `results/calibration/ASSESSMENT-caiso171-frontier-2026-08-04.md`; instrument
 > `scripts/probes/caiso171_frontier_assessment.py` (committed artifacts only);
 > record `results/calibration/_caiso171_frontier_assessment.json`.
 > **NO CELL VERDICT MOVES — no mechanism was tested.**
 >
-> **THE BLOCKER IS GOVERNANCE, NOT CALIBRATION.** The **holdout spend freeze is
-> ACTIVE** (`holdout-freeze.json`, declared 2026-07-25, `held` 2026-07-26): ALL
-> ISOs, BOTH tiers, and it **outranks both marker blocks and is checked first**. A
-> `complete` marker declared today authorizes **nothing** — 2022 still cannot be
-> solved. Worse, the freeze's own reason is material to this keeper: the CAMPD
-> economic-layup detector means "the availability envelope every keeper is
-> calibrated against is about to change materially", and its `lifts_when` is
-> recorded **HELD, not lifted**. On substance CAISO is at least as strong as the
-> three ISOs that hold the marker (0 FAILs vs NYISO's unledgered C3a-2025 FAIL).
+> **CORRECTED IN-SESSION on the owner's restatement of the criterion.** This block
+> first recommended **NO**, on the ground that the active holdout spend freeze made
+> the grant hollow. **That ground is wrong and the record refutes it.** The freeze
+> was declared **2026-07-25**; **NYISO and PJM were both declared `complete` on
+> 2026-07-31**, six days INTO it. `holdout-freeze.json` says so itself — a freeze is
+> "a **SUSPENSION of the authorization** that a calibration-complete marker grants,
+> **not a withdrawal of the marker itself**", "deliberately ADDITIVE and
+> backward-compatible: `calibration-complete.json` is untouched." **The two
+> instruments are ORTHOGONAL**: the marker records what the calibration has reached,
+> the freeze independently gates when any ISO may SPEND an out-of-training year.
+> Declaring now and lifting later is the sequence NYISO and PJM already ran. Every
+> measurement below is unchanged — only the recommendation they were weighed against
+> moves.
+>
+> **`complete` MEANS EXACTLY TWO THINGS** (owner, 2026-08-04): (a) the **2022
+> touchpoint is allowed**, and (b) **frontier — we have tested everything we could
+> have**. It is NOT a certificate that the DOF ledger is clean or that no root-cause
+> issue is open. **CAISO passes on both limbs.** Limb (b), on measurement: all nine
+> §5.2 items closed with **16 of 16 evidence documents verified present** and nothing
+> struck untried (1/4/5 closed with **no solve spent**); column census
+> **0/0/0/0/0**; the two remaining live `U` cells closed on CAISO's own data this
+> session; **all three walls re-verified and holding**, including a live 5/5-unchanged
+> caiso-141 re-run. On substance CAISO is at least as strong as the three ISOs that
+> hold the marker (**0 FAILs** vs NYISO's *unledgered* C3a-2025 FAIL).
+>
+> **THREE CAVEATS THE DECLARATION SHOULD CARRY — recorded, NOT blocking** (none is a
+> `complete` criterion): the **C3a caveat WIDENED** to two years at the last
+> promotion (§2.1 below); the **two named-open root-cause issues** stay named (§4
+> below); and the **DOF ledger is the honest weak spot** at **4** ISO-specific
+> residual entries, the most of any ISO measured (NEISO 0, PJM 1, NYISO 2) — two of
+> them superseded on the binding path, one resting on a closure route that does not
+> check out. NYISO holds the marker with an unledgered criterion **FAIL**, so none of
+> this is disqualifying; it is where CAISO's next non-lever work lives.
 >
 > **§1 QUEUE — ALL NINE ITEMS CLOSED ON MEASUREMENT, 16 of 16 EVIDENCE DOCUMENTS
 > VERIFIED PRESENT.** No item struck untried; items 1/4/5 closed with **no solve
@@ -867,13 +890,18 @@ rule-13-admissible mechanism available to carry it.
 > 23.3/40.8/21.8 MW against a bound of 632/803/833). Carry caiso-170's framing
 > correction: the overnight "over-position" **reverses sign in 2024/2025**.
 >
-> **WHAT WOULD FLIP IT TO YES**, in order: (1) owner lifts the freeze; (2) the CAISO
-> keeper is re-audited on the corrected availability envelope; (3) the two live
-> ISO-specific DOF entries are discharged or explicitly accepted — starting with the
-> **no-LP** question of whether CAISO publishes sub-TAC load; (4) the declaration
-> NAMES the two open items and §2.1's widened C3a. Items 3–4 are honesty conditions,
-> not blockers: **with the freeze lifted, CAISO is declarable on the NYISO
-> precedent.**
+> **FOLLOW-ON WORK, NONE OF IT A PRECONDITION.** (1) The freeze still gates the
+> **exercise** — CAISO cannot SPEND 2022 until the owner lifts it, exactly as is true
+> today for NYISO/PJM/NEISO, which all hold markers under the same freeze.
+> (2) Re-audit the keeper on the corrected availability envelope before spending 2022
+> (and rule 22 D-5(b) makes re-keying + determination re-verification a standing duty
+> on every future CAISO promotion regardless). (3) **The one high-value no-LP
+> question: does CAISO publish load at sub-TAC (NP15/ZP26) grain at all?** If YES it
+> is a rule-14 re-identification on the boundary of KNOWN-OPEN 1 — the highest-value
+> CAISO lane available, and a DOF *closure* rather than another fitted parameter. If
+> NO it becomes CAISO's **FOURTH WALL** and should be filed as one. (4)
+> `battery_dispatch_adder` has a named forward-valid replacement. (5) KNOWN-OPEN 1
+> and 2 stay named; an N–S topology lever against KNOWN-OPEN 1 stays FORBIDDEN.
 
 > **caiso-170 (2026-08-04) — ITEM 3 IS CLOSED: THE S2 CHARTER caiso-169 LEFT
 > STANDING HAS ~2 pp OF RENT TO BUY, MEASURED AGAINST THE REAL FLEET. WITH IT
