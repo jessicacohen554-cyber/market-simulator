@@ -9,8 +9,17 @@ measured by the one instrumented run this session spent.
 `docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md` §6 — MISO's registered
 T1-H leg `miso-2021-2025-realized-ffr3a3` reports **solar model 0.0 GW vs actual
 18.649 GW (−100 %)**, and FFR-3S proved the COD-shifted scoring basis cannot
-explain a zero. Three consecutive decision cohorts (2021, 2022, 2023) decided
+explain a zero: every decision cohort whose COD lands inside the window decided
 zero solar. Why?
+
+*(One correction to FFR-3S's arithmetic, made from the code rather than from a
+score: the leg's decision years are **2022, 2023, 2024, 2025**, not
+2021–2023. 2021 is the run's first year — `fleet is None`, so it builds the
+base fleet and runs **no** evolution at all (runner.py:1024–1045) — and the
+2022 bridge year *does* evolve, screen included, on 2021's `prior_results`
+(runner.py:1215–1244). It changes which cohorts are censored by the COD lag,
+not the conclusion: at `ENTRY_COD_LAG_YEARS = 2` the 2022 and 2023 cohorts
+commission in 2024 and 2025, inside the window, and both decided zero.)*
 
 ---
 
@@ -40,13 +49,23 @@ against an annualized fixed cost of **$84.8 k–99.0 k/MW-yr**. Solar's
 break-even mean entry price is **$41.9–48.9/MWh**; MISO's modelled price level
 is ~$30–40/MWh.
 
+Two things stack on that RA zero, and both are structural rather than tuned:
+the **thermal** branch of the same function takes its capacity payment
+**ungated** ($75.8 k–117.3 k/MW-yr for a new MISO gas unit — more than solar's
+whole fixed cost); and MISO's **own published solar accreditation is intaken on
+disk but not wired**, so even if the gate were armed solar would be credited at
+the generic 0.18 fallback rather than MISO's published seasonal credit (§4.6b).
+
 Two further findings sit alongside it, both independent of the margin:
 
 * **Even a profitable solar screen could not have passed FC-3.** The growth
-  ladder + pending-queue netting **freeze** MISO solar at 1.236 GW/yr, so the
-  maximum solar that can reach COD inside 2021–2025 is **≈3.7 GW against 18.649
-  GW actual (−80 %)** (§5). The dampers are not why solar is zero, but they
-  cap the best achievable outcome well short of a pass.
+  ladder and the pending-queue netting sit on an exact knife-edge
+  (`ENTRY_GROWTH_LIMIT_MULTIPLE = 2.0` against `ENTRY_COD_LAG_YEARS = 2`), so
+  the ladder **cannot ratchet at all** and MISO solar is pinned at 1.236 GW/yr
+  forever. The most solar that can reach COD inside 2021–2025 is **2.473 GW
+  against 18.649 GW actual — a −86.7 % band at best** (§5). The dampers are not
+  why solar is zero, but they cap the best achievable outcome an order of
+  magnitude short of a pass.
 * **The wind PTC is credited over the plant's full 30-year book life** with no
   10-year statutory window, while the solar ITC is booked correctly. The screen
   therefore credits wind **$86,549/MW-yr** and solar **$26,787–32,873/MW-yr**
@@ -224,18 +243,67 @@ Solar's screened revenue, term by term, at the shipped config:
   is 0.11 through 2025, while the forecast pools alone put modelled VRE at
   32,000 MW × 0.34 + 7,000 MW × 0.22 = **108.8 TWh on 644.6 TWh of MISO load =
   16.9 %**. A slack constraint has a zero dual, so the REC channel pays nothing.
-* **RA / capacity.** **Zero, by an armed gate.** `entry_vre_capacity_revenue`
-  is default-**OFF**, so the whole `vre_capacity_payment` block
-  (`new_entry.py:1007–1027`) is skipped. Everything needed to pay it resolves
-  cleanly at head: `MARKET_DESIGN["MISO"].net_cone_per_kw_yr = 79.8` →
-  **$79,800/MW-yr per firm MW**, and
-  `resolve_renewable_capacity_credit("solar", "MISO", curves_enabled=True)` =
-  **0.18**. The credit MISO solar is denied is **$14,364/MW-yr**.
+* **RA / capacity.** **Zero, by a default-off gate.**
+  `entry_vre_capacity_revenue` is default-**OFF**, so the whole
+  `vre_capacity_payment` block (`new_entry.py:1007–1027`) is skipped.
+  Everything needed to pay it resolves cleanly at head:
+  `MARKET_DESIGN["MISO"].net_cone_per_kw_yr = 79.8` → **$79,800/MW-yr per firm
+  MW**, and `resolve_renewable_capacity_credit("solar", "MISO",
+  curves_enabled=True)` = **0.18**. The credit MISO solar is denied is
+  **$14,364/MW-yr**.
 
-  This is a genuine **asymmetry inside one screen**: the thermal branch
+  This is a genuine **asymmetry inside one function**: the thermal branch
   (`new_entry.py:899–905`) credits `capacity_revenue_per_mw_yr(...)`
-  **unconditionally**, with no gate. In a capacity-market ISO, thermal entry is
-  paid for accredited capacity and VRE entry is not.
+  **unconditionally** — there is no gate on it at all. Measured for MISO 2024:
+  a new gas CC/CT is credited **$75,810/MW-yr** at the fixed net-CONE stub and
+  **$117,325/MW-yr** on the sloped VRR when the ISO is short (reserve position
+  ≤ 1.0), i.e. **more than solar's entire annualized fixed cost**. In a
+  capacity-market ISO, thermal entry is paid for accredited capacity and VRE
+  entry is not.
+
+### 4.6b MISO's own published solar accreditation is on disk and is not wired
+
+Second, stacked omission on the same revenue term, and it is a rule-14
+[R-ACCURATE] issue rather than a gate: **`RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]`
+holds `wind` only.** MISO solar therefore falls all the way down the CR-3.1
+ladder — no rung-0 NQC entry, no rung-1 curve, no rung-2 single-point override
+(`RENEWABLE_CAPACITY_CREDIT_BY_ISO` holds ERCOT alone) — to rung 3, the
+**generic 0.18 flat fallback** for ISOs with no published accreditation.
+
+MISO does publish one, and it is **already intaken**:
+`data/raw/capacity-market/elcc/miso/miso.csv` carries two `MISO,solar`
+class-average rows from the *PY 2025-26 Wind and Solar Capacity Credit Report*
+cover-page highlights — **50 %** default seasonal credit for Summer / Fall /
+Spring and **5 %** for Winter. Only the wind rows from that same file were
+wired.
+
+**The direction depends on the selection rule, and this session does not settle
+it.** MISO runs a *seasonal* PRA, so a resource earns its seasonal credit in
+each of four separately-cleared seasons, while the model's ledger carries one
+annual credit against the annual peak — a genuine time-aggregation
+misalignment of the kind rule 14 says to *reconcile*, not to lift raw:
+
+| reading | credit | RA $/MW-yr | solar break-even mean price, 2021 → 2025 |
+|---|---|---|---|
+| **shipped (gate off)** | — | 0 | **48.93 → 41.91** |
+| generic fallback (gate armed, registry unchanged) | 0.18 | 14,364 | 41.83 → 34.81 |
+| MISO published, season-weighted `(50+50+5+50)/4` | 0.3875 | 30,922 | **33.64 → 26.63** |
+| MISO published, summer only | 0.50 | 39,900 | 29.21 → 22.19 |
+| MISO published, peak-risk **minimum** (winter) | 0.05 | 3,990 | 46.95 → 39.94 |
+
+Under the season-weighted reading — the one aligned to how MISO actually pays
+— solar's break-even falls **below** MISO's modelled price level in every year,
+and the zero would not survive. Under a peak-risk-minimum rule (the selection
+the hydro/NQC registries use elsewhere) it moves the *other* way, below even
+the generic fallback. Recorded as an open input question with its data on disk,
+not resolved here.
+
+One consequence beyond this screen, flagged and not quantified:
+`resolve_renewable_capacity_credit` is documented as "the ONE resolver every
+adequacy consumer prices VRE accreditation through" — the retirement
+reliability floor, the reserve-margin backstop and the CR-1 reserve position all
+read it. A MISO solar credit that is wrong is wrong in all of them
+simultaneously.
 
 ### 4.7 The cost side — **correct in construction; two identified input issues**
 
@@ -272,6 +340,23 @@ neither tuned here:
    reaches around 2029. **This biases the screen towards building**, not away,
    so it cannot be the cause of the zero; recorded for completeness.
 
+### 4.7b Which price signal each decision year actually sees
+
+Worth pinning, because it is not uniform across the window:
+
+| decision year | `prior_results` from | lookahead repriced? | signal the solar screen sees |
+|---|---|---|---|
+| 2022 (bridge) | 2021 | no — `next_year` 2022 ∈ `HINDCAST_BRIDGE_YEARS` | 2021 raw **zonal** LP duals |
+| 2023 | **2021** (2022 never solved) | no, same reason | 2021 raw **zonal** LP duals |
+| 2024 | 2023 | yes | **system-wide** lookahead stack |
+| 2025 | 2024 | yes | **system-wide** lookahead stack |
+
+Two consequences. The **2023 decision is made on a two-year-stale price
+signal**, because the bridge leaves `prior_results` pointing at the last
+*solved* year (runner.py:1217–1218) — correct under rule 22, but it means the
+2023 cohort never sees 2023 prices. And the zonal/system split means MISO-South's
+own price only reaches the screen in the first two decision years.
+
 ### 4.8 Capture shape — measured, and it is not the problem
 
 Using the MISO keeper `miso126_steampart_B`'s committed MISO-South hourly P1
@@ -288,37 +373,62 @@ price signal — that is §3's job.)*
 
 ## 5. The second, independent blocker: the ladder cannot ratchet under the COD lag
 
-This is arithmetic on the code, not a measurement of this leg (solar decides
-zero, so the leg never exercises it) — but it bounds what any fix could
-achieve, and it is checkable.
+This is a **counterfactual on the code**, not a measurement of this leg — solar
+decides zero, so the leg never exercises the caps. It bounds what any
+revenue-side fix could achieve, and it is checkable.
 
-`entry_rate_caps_mw[tech] = 2.0 × prior_max_gw[tech] × 1000`
-(`ENTRY_GROWTH_LIMIT_MULTIPLE`, the ReEDS hard bound), and the ladder budget is
-netted by the **pending pipeline**:
-`_ladder_remaining = max(0, cap − pending_by_tech)` (`new_entry.py:1140–1148`).
-`prior_max_gw` rises only when a year's decision **exceeds** it
-(runner.py:1094–1100). With `ENTRY_COD_LAG_YEARS = 2`, exactly one year of
-decisions is pending at any time. Writing M for the prior max:
+Three code sites, and nothing else, drive it:
 
-| decision year | ladder cap | pending | remaining | decides | new prior max |
-|---|---|---|---|---|---|
-| 2021 | 2M₀ = 1.236 GW | 0 | 1.236 | 1.236 | M₁ = 1.236 |
-| 2022 | 2M₁ = 2.472 | 1.236 (2021, COD 2023) | 1.236 | 1.236 | 1.236 (no rise) |
-| 2023 | 2.472 | 1.236 (2022, COD 2024) | 1.236 | 1.236 | 1.236 |
-| … | … | … | … | 1.236 | **frozen** |
+* `_ladder_remaining = max(0, entry_rate_caps_mw[tech] − pending_by_tech[tech])`
+  where `entry_rate_caps_mw = ENTRY_GROWTH_LIMIT_MULTIPLE (=2.0) × prior_max ×
+  1000` (`new_entry.py:1140–1148`, runner.py:1079–1086);
+* a cleared VRE decision is **appended to `entry_pipeline`** at
+  `cod_year = year + ENTRY_COD_LAG_YEARS` (`new_entry.py:1172–1188`), and rows
+  are **removed at their COD** in step 4.5, before the screen runs
+  (`evolve.py:578–602`);
+* `prior_max_gw` rises **only when a year's decision exceeds it**
+  (runner.py:1094–1100).
 
-**The doubling is exactly cancelled by the one year of pending MW, so economic
-entry is pinned at 2 × the measured seed forever.** For MISO solar that is
-1.236 GW/yr; the three in-window decision cohorts commission in 2023/2024/2025
-for **≈3.71 GW**, a −80 % FC-3 additions band at best.
+Trace, MISO solar assumed profitable and highest-margin every year, seed 0.618
+GW measured from `vintage_2020`:
+
+```
+--- shipped: entry_commissioning_lag ON (lag = 2) ---
+   yr  ladder cap MW  pending MW  remaining   decides  COD yr  new prior max GW
+ 2022          1,236           0      1,236     1,236    2024             1.236
+ 2023          2,473       1,236      1,236     1,236    2025             1.236
+ 2024          2,473       1,236      1,236     1,236    2026             1.236
+ 2025          2,473       1,236      1,236     1,236    2027             1.236
+  -> solar COMMISSIONED inside 2021-2025:  2.473 GW   (actual 18.649, band +/-15%)
+
+--- control: lag OFF (in-year commissioning) ---
+ 2022          1,236           0      1,236     1,236    2022             1.236
+ 2023          2,473           0      2,473     2,473    2023             2.473
+ 2024          4,946           0      4,946     4,946    2024             4.946
+ 2025          9,891           0      9,891     6,000    2025             6.000   <- per-tech queue cap
+  -> solar COMMISSIONED inside 2021-2025: 14.655 GW
+```
+
+**The ladder cannot ratchet at all under the shipped configuration.** With a
+COD lag of L years, `(L−1)` years of decisions are pending when the screen
+runs, so `remaining = (K − L + 1) × D_prev`. At the shipped **K = 2.0 and
+L = 2** that is exactly `1 × D_prev` — the doubling and the pending netting
+cancel **exactly**, and economic entry is pinned at 2 × the measured seed
+forever. The knife-edge is `K = L`; the shipped values sit on it.
+
+For MISO solar the ceiling is therefore **2.473 GW commissioned in-window, a
+−86.7 % FC-3 additions band at best** — even with a perfect revenue side.
+Removing only the lag lifts it to 14.655 GW (−21.4 %, still outside the ±15 %
+band, but an order of magnitude closer), at which point the **6.0 GW per-tech
+queue cap** becomes the binder rather than the ladder.
 
 This reconciles with FFR-2B's observation that the MISO gas_ct ladder *did*
-double (1,350 → 2,700 → 5,241 MW): that channel was the **reserve-margin
-backstop**, which commissions **in-year**, so it never nets a pending row and
-the ratchet works. **The ladder ratchets for the backstop and freezes for
-economic entry** — a structural asymmetry between two consumers of the same
-budget. Recorded as an observation; whether it is a defect or the intended
-conservatism is an owner call.
+double (1,350 → 2,700 → 5,241 MW): that channel is the **reserve-margin
+backstop**, which commissions **in-year** and so never nets a pending row —
+i.e. the "control" column above. **The same ladder ratchets for the backstop
+and freezes for economic entry.** Recorded as an observation. Whether the
+knife-edge is a defect or intended conservatism is an owner call; **nothing was
+unarmed here and no revert is recommended** (Addendum D).
 
 ---
 
@@ -331,11 +441,17 @@ conservatism is an owner call.
 hindcast is **`mode="forecast"` + `hindcast=True`**, so it falls through to the
 canonical constant `RENEWABLE_INSTALLED_MW["MISO"]["solar"] = 7,000 MW`.
 
-Measured: **vintage_2020's own EIA-860 MISO solar operable nameplate is
-2.056 GW** (vintage_2024: 13.575 GW). A 2020-vintage MISO hindcast therefore
-starts holding **3.4× the solar that existed at its vintage** — post-vintage
-information in a run whose entire premise is the vintage cutoff. Zone *shares*
-and the monthly ramp do come from vintage 2020; only the total does not.
+Measured, against each vintage's own EIA-860 operable sheets:
+
+| pool | model seed (constant) | vintage_2020 actual | vintage_2024 actual |
+|---|---|---|---|
+| MISO solar | **7,000 MW** | **2,056 MW** (+240 %) | 13,575 MW |
+| MISO wind | **32,000 MW** | **26,101 MW** (+23 %) | 32,151 MW |
+
+A 2020-vintage MISO hindcast therefore starts holding **3.4× the solar that
+existed at its vintage** — post-vintage information in a run whose entire
+premise is the vintage cutoff. Zone *shares* and the monthly ramp do come from
+vintage 2020; only the total does not.
 
 It compounds this lane's finding: `_lookahead_reprice_signal` subtracts the
 current year's VRE output from next year's demand before pricing the stack, so
@@ -359,8 +475,11 @@ construction to §45:
 | effective PTC | $26.00/MWh | **$13.63/MWh** (× CRF(30)/CRF(10) = 0.5243) |
 | credit booked, wind | **$86,549/MW-yr** | ≈ $45,378/MW-yr |
 | credit booked, solar (ITC) | $26,787–32,873/MW-yr | unchanged (already correct) |
-| wind break-even mean price, 2023 | **$19.32/MWh** | ≈ $33/MWh |
+| wind break-even mean price, 2023 | **$18.77/MWh** | **$31.55/MWh** |
 | solar break-even mean price, 2023 | **$44.69/MWh** | $44.69/MWh |
+
+*(wind at its measured MISO-West screen CF of 0.35, solar at MISO-South's 0.22,
+both at a 1.05 capture ratio)*
 
 That 2.3× hurdle gap is the mechanical origin of the leg's inverted tech mix
 (model wind 43.7 % share / solar 0.0 % vs actual 22.5 % / 58.3 %). Correcting it
@@ -378,10 +497,18 @@ of these was applied.**
    `MARKET_DESIGN` has a capacity market). Evidence: the payment resolves
    cleanly today ($79,800 × 0.18 = $14,364/MW-yr), it moves solar's break-even
    from $41.9–48.9 to $34.8–41.8/MWh, and the thermal branch already takes the
-   same payment **ungated** — the asymmetry is inside one function. It is the
-   single largest identified omission on solar's revenue side and the code
-   exists. This is the "D-2′ HELD pending its own probe row" cell in the
-   `entry_dampers` matrix row; this session is the evidence for opening that probe.
+   same payment **ungated** at $75.8 k–117.3 k/MW-yr — the asymmetry is inside
+   one function. It is the single largest identified omission on solar's
+   revenue side and the code exists. This is the "D-2′ HELD pending its own
+   probe row" cell in the `entry_dampers` matrix row; this session is the
+   evidence for opening that probe.
+1b. **Wire MISO's published solar accreditation** into
+   `RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]` from the already-intaken
+   `elcc/miso/miso.csv` rows (§4.6b), and settle the seasonal→annual selection
+   rule while doing it. This is where the size of proposal 1 is actually
+   decided: 0.18 (unwired) moves solar's 2023 break-even to $37.59, the
+   season-weighted 0.3875 moves it to $29.41. Rule 14 — the accurate value is
+   on disk and cited.
 2. **Window the §45 wind PTC** with the existing `_ccs_45q_window_years`
    pattern. Zero free parameters, one published statutory number (10 years),
    and a precedent in the same file. Expect wind additions to fall — under rule
