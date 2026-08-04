@@ -2877,4 +2877,42 @@ without renumbering either, so existing references to "item 15" still resolve.
 `scripts/probes/pjm153_reserve_supply_cap_reachability.py`,
 `scripts/probes/pjm153_queue_screens.py`.
 
+### pjm-153 addendum — KEEPER PROMOTED to `2026-08-04-pjm-152-collapse`
+
+**KEEPER → `2026-08-04-pjm-152-collapse`** (was `2026-08-03-pjm-151-seam-envelope`).
+A **rule 26 `[R-DELETE]` debt discharge, not a mechanism and not a lever** — and the
+only kind of promotion that carries zero model risk.
+
+**Why the keeper moves.** The superseded bundle's recorded recipe names
+`pjm_seam_envelope_by_neighbor`, a `ScenarioConfig` field HEAD no longer has, so it
+is **not replayable as recorded**. The collapse arm's recipe is. Structural
+integrity improves and **nothing regresses**.
+
+**Measured, not asserted.** Recipe: **zero value diffs** on every shared field; the
+only deltas are the deleted flag and four fields `ScenarioConfig` gained after the
+incumbent solved, each at a falsy default and PJM-unreachable. Dispatch: E1
+**`max |dMW| = 0.0`, 0 nonzero class-hours across all 166,440 class-hours in each of
+2023/2024/2025**, zero breaches (`_pjm152_collapse_gates.json`). K5 passes, no
+holdout year touched. K2's `FAIL` is **environment drift only** (platform string +
+basis SHA from re-solving at a moved HEAD — the pjm-147 template artifact).
+
+**Determination: CALIBRATED, 9/9, C1 all 16/16 · free 12/12, zero fails, zero
+caveats** — identical criterion-for-criterion to the superseded keeper, as
+bit-identical dispatch requires. DOF ledger carried **verbatim** (n_entries 19,
+n_residual 6), asserted rather than claimed.
+
+**The gap pjm-153 closed.** pjm-152 shipped the bundle and the gate record but
+**never wrote the governance attestation**, so C6 scored UNATTESTED and held the run
+short of a determination while all eight model-determined criteria passed
+identically. `scripts/gen_pjm153_collapse_attestation.py` generates it with every
+premise **computed** from the committed bundles and gate record — recipe identity,
+E1 byte identity, and the DOF ledger — aborting without writing if any assertion
+fails. That is what made the promotion scoreable.
+
+**Rule 22 D-5(b) discharged**: `calibration-complete.json`'s PJM `complete` entry
+re-keyed to the new run with a determination **re-verification** (not a
+re-assertion); the re-verified determination is **not worse** — it is identical.
+`scripts/audit_keepers.py --iso PJM` passes (check M1), matrix keeper stamp and
+§5.3 prose header re-stamped.
+
 Next shorthand: pjm-154.
