@@ -300,21 +300,22 @@ different keeper.
 ## 8. Pre-existing `origin/main` breakage — reported, not fixed, and NOT this branch's
 
 This branch adds one probe, one pre-registration, this finding, and matrix/doc
-stamps; it touches **nothing under `src/market_sim/`**. The failures below were
-carried into this session's brief from miso-122's verification on a clean
-`origin/main` worktree and are re-reported unchanged so they are not lost:
+stamps; it touches **nothing under `src/market_sim/`**. This session's brief
+carried two main-side failures forward from miso-122; **both were re-verified
+here rather than repeated on trust, and one of them is no longer true:**
 
-* **Cache-key pin drift.** Default `ScenarioConfig` cache key
-  **`973a0acdef818e91`** vs the pinned `603c2498bf71d21d` — and it has moved
-  since the earlier bisect (`0e9fce2fb55b889f` → `973a0acdef818e91`), so a
-  further field has landed on the original culprit. Fails three tests in
-  `tests/regression/test_persisted_identity.py` plus
-  `test_cc_committed_offer_margin`, `test_ramp_envelope_basis`'s
-  `test_default_cache_key_is_byte_stable` and
-  `test_forecast_xyear_warmstart_flag::test_default_cache_key_unmoved`.
-  Registering the culprit field versus advancing the pin belongs to the owning
-  lane.
-* **`tests/unit/data/test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`**
-  asserts NEISO is an unknown ISO; NEISO nuclear outage data has since been
-  intaken and three units now resolve. Stale test, different cause, also not
-  this branch's.
+* **Cache-key pin drift — RESOLVED on main; do not carry this forward again.**
+  miso-122 reported the default `ScenarioConfig` cache key at
+  `973a0acdef818e91` against a pinned `603c2498bf71d21d`, drifted twice.
+  Re-verified on this branch's base (`origin/main` at `05d291d7`),
+  `tests/regression/test_persisted_identity.py` is **67 passed, 0 failed**, and
+  its four `cache_key` tests pass. The owning lane evidently landed the fix
+  (registering the culprit field or advancing the pin) between miso-122 and this
+  session. The stale item is retired here so the next MISO session does not
+  re-report a fixed defect as live.
+* **`tests/unit/data/test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty`
+  — STILL FAILING, still not this branch's.** Re-verified: it asserts
+  `nuclear_unit_availability_series("NEISO", 2024) == {}`, and NEISO now resolves
+  three units — `(566, 2)`, `(566, 3)`, `(6115, 1)`. NEISO nuclear outage data
+  has been intaken since the test was written, so the test's "unknown ISO"
+  premise is stale. It belongs to the NEISO/outage lane.
