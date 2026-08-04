@@ -1298,7 +1298,7 @@ sign argument to every basis and bound.
    fleet-representation fix outside a calibration session's scope.
    (`FINDING-caiso148-nuclear-availability-2026-07-31.md`.)
 
-### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-147b-chp-heat`, CALIBRATED); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**
+### 5.3 PJM — **NO failing criterion** (keeper `2026-08-03-pjm-151-seam-envelope`, CALIBRATED — **keeper stamp RE-STAMPED at xiso-4 (2026-08-04)**, it had gone stale at the pjm-151 promotion; determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**
 
 **pjm-151 (2026-08-03): the PJM matrix column is CLOSED.** Ratchet
 `docs/codebase-site/data/mechanism-matrix-gaps.json` PJM **15 → 0**; sweep
@@ -1855,7 +1855,7 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion; **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate`)**
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-124-dualfuel-rearm`, **NOT-YET** — **LIVE KEEPER STAMP ADDED at xiso-4 (2026-08-04)**: this header never carried a live stamp, so its only keeper id was the historical one below and it read as current. `calibration_verdict.py --run-id` on committed artifacts confirms C7 `shape` is the SOLE FAIL — `price_mean`/`price_tail` are CAVEATs — so "the SOLE failing criterion" is exact); **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate` — TRUE AS OF nyiso-121 and left standing as history; miso-124 has since re-armed `dual_fuel_switching` and is the live keeper)**
 
 > **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
 > All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
@@ -2341,7 +2341,7 @@ is now the live queue head.**)*
    `results/calibration/FINDING-miso110-forecast-hydro-level-923hy-2026-07-31.md`,
    probe `scripts/probes/_miso110_forward_level_audit.py`.
 
-### 5.5 NYISO — target: **the 2025 C3a FAIL, decomposed at nyiso-122 into TWO seasonally-separable objects that BOTH resolve to the downstate locational boundary**; keeper `2026-08-04-nyiso-120-c119-scope`, **NOT-YET** (C3a-2025 −10.1 %, a criterion failure deliberately NOT ledgered; C3c the sole ledgered caveat, budget 1 of 3); ~~item 4~~ CLOSED at nyiso-122 (re-opened, then REFUSED ex ante on reach — no solve), which leaves **the NYISO lever queue EMPTY**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
+### 5.5 NYISO — target: **the 2025 C3a FAIL, decomposed at nyiso-122 into TWO seasonally-separable objects that BOTH resolve to the downstate locational boundary**; keeper `2026-08-04-nyiso-120-c119-scope`, **NOT-YET** (C3a-2025 −10.1 %, a criterion failure deliberately NOT ledgered; C3c the sole ledgered caveat, budget 1 of 3); ~~item 4~~ CLOSED at nyiso-122 (re-opened, then REFUSED ex ante on reach — no solve), which leaves **the NYISO lever queue EMPTY**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante) **Section de-duplicated at xiso-4 (2026-08-04): this section carried THREE `### 5.5` headers** (merge-race artifacts, byte-identical but for their stale keeper clauses); the two lower ones were removed, restoring the one-header-per-section convention every other §5.x follows and which `check_mechanism_matrix.py::doc_header_drift` now enforces.
 
 **STATUS 2026-08-04 (nyiso-122) — THE 2025 C3a FAILURE IS TWO OBJECTS, NOT ONE,
 AND BOTH RESOLVE TO THE DOWNSTATE LOCATIONAL BOUNDARY. NO SOLVE, KEEPER
@@ -2621,7 +2621,6 @@ is the declared `weather_year` exclusion). ERCOT/PJM/MISO/CAISO backlogs are
 their lanes' work (rule 25 / 28(d)).
 `results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`.
 
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-02-nyiso-113-li-locational`, **CALIBRATED-WITH-CAVEATS** (header keeper id corrected at nyiso-116 — it had gone stale at the nyiso-113 promotion); ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
 **STATUS 2026-08-03 (nyiso-116) — TWO C3c LANES CLOSED BY MEASUREMENT, AND THE
 $2.46 KNIFE-EDGE RETIRED AS A TARGET.** Keeper **UNCHANGED**
@@ -2677,7 +2676,6 @@ about a column's **semantics**; this one is about its **dtype**. Checking that
 the writer emits the column is not enough — the column must be able to
 *represent* the tolerance the gate asserts.
 `results/calibration/FINDING-nyiso116-c3c-unit-layer-2026-08-03.md`.
-### 5.5 NYISO — target: **the compressed price DISTRIBUTION (peak half), DECOMPOSED and route-EXHAUSTED at nyiso-110 (arm solved INERT) — pending the owner amplitude-criterion call**, with C3c ledgered ahead of it; keeper `2026-08-03-nyiso-115-nyc-rcpf`, **CALIBRATED-WITH-CAVEATS**; ~~items 6 + 10~~ CLOSED at nyiso-105, ~~item 11~~ CLOSED at nyiso-106, ~~item 12~~ CLOSED at nyiso-107, ~~item A (hydro input repair)~~ EXECUTED-with-keeper at nyiso-108, ~~the 2023 C3a breach~~ CLOSED-with-keeper at nyiso-109 (item 11b owner-DEFERRED, stays chartered), ~~item 8~~ CLOSED at nyiso-111 (classifier review ANSWERED, transfer falsified ex-ante)
 
 **STATUS 2026-08-03 (nyiso-115) — THE NYC RESERVE DEMAND CURVE WAS THE WRONG
 SHAPE, AND NYISO'S OWN POSTED PRICES SAY SO.** Keeper
