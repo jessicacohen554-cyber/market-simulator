@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-miso-127-onlinepmin",
+  "label": "miso 127 onlinepmin",
+  "date": "2026-08-04",
+  "shorthand": "miso-127-onlinepmin",
+  "definition": "miso-127 arm B: coal_mustrun_online_pmin=true, single delta vs the same-HEAD control",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-miso-127-onlinepmin.js",
+  "bundle": "results/calibration/miso127_onlinepmin_B"
+}

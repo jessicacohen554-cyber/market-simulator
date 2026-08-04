@@ -1,0 +1,405 @@
+{
+ "session": "miso-127",
+ "prereg": "results/calibration/PREREG-miso127-takeorpay-period-budget-2026-08-04.md",
+ "incumbent_keeper": {
+  "bundle": "miso126_steampart_B",
+  "run_id": "2026-08-04-miso-126-steampart-b"
+ },
+ "arm_A": {
+  "bundle": "miso127_onlinepmin_A",
+  "delta": "none (same-HEAD zero-delta control)"
+ },
+ "arm_B": {
+  "bundle": "miso127_onlinepmin_B",
+  "delta": "coal_mustrun_online_pmin=true"
+ },
+ "mechanism": {
+  "field": "coal_mustrun_online_pmin",
+  "what": "sizes the coal must-run (cheap, fuel-sunk) tranche from the MEASURED online minimum stable load (thermal_tranches_MISO.csv mustrun_online_pct) instead of the all-hours available-CF P5 (mustrun_pct). Pmin=0 on that tranche, so this changes the SIZE of the cheap bid band, not a forced floor.",
+  "grain1_pre_arm": {
+   "coal_bins_pct_mr_changed": 42,
+   "coal_bins_pct_econ_changed": 39,
+   "gross_abs_pct_mr_pp": 867.8,
+   "net_pct_mr_pp": 297.8,
+   "artifact_capw_mustrun_pct": 28.886,
+   "artifact_capw_mustrun_online_pct": 27.609,
+   "artifact_net_mw": -533.1,
+   "artifact_gross_abs_mw": 7528.1
+  },
+  "grain1_note": "The field's docstring predicts the all-hours figure 'reads ~2x high'. That was measured on ERCOT and is FALSE at MISO: the cap-weighted ratio is 0.956. But the -533 MW NET hides 7,528 MW GROSS (18% of the coal fleet) reallocating on 39 of 44 plants in OPPOSITE directions, so the expected-INERT prior was refuted ex ante and the zero-solve kill was not available."
+ },
+ "K0_control_integrity": {
+  "incumbent": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "control": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "scorecard_identical": true,
+  "max_abs_class_hour_mw_vs_incumbent": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "note": "caiso-146 found an outgoing keeper's committed sidecars no longer reproducing at HEAD (a zero-delta control diverging by up to 3.2 GW on a class-hour), so this is MEASURED. A non-zero sidecar delta here is a HEAD-drift finding about the incumbent bundle, NOT a result of this session's mechanism, and it is reported as such.",
+  "verdict": "PASS"
+ },
+ "K1_flag_fidelity": {
+  "arm_A_coal_mustrun_online_pmin": false,
+  "arm_B_coal_mustrun_online_pmin": true,
+  "verdict": "PASS"
+ },
+ "K2_single_delta": {
+  "n_differing_keys": 1,
+  "keys": {
+   "coal_mustrun_online_pmin": [
+    false,
+    true
+   ]
+  },
+  "verdict": "PASS"
+ },
+ "K3_year_span": {
+  "arm_A_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "arm_B_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "verdict": "PASS"
+ },
+ "K4_liveness_grain2": {
+  "coal_class_energy_delta_twh": {
+   "2023": {
+    "COAL_PRB": -1.717858,
+    "COAL_BIT": -0.425723,
+    "COAL_LIGNITE": 0.485252
+   },
+   "2024": {
+    "COAL_PRB": -2.071354,
+    "COAL_BIT": -0.261548,
+    "COAL_LIGNITE": 0.722802
+   },
+   "2025": {
+    "COAL_PRB": -0.426674,
+    "COAL_BIT": -0.072751,
+    "COAL_LIGNITE": 0.160226
+   }
+  },
+  "coal_total_delta_twh": {
+   "2023": -1.658329,
+   "2024": -1.6101,
+   "2025": -0.339199
+  },
+  "class_energy_delta_gwh": {
+   "2023": {
+    "CC_CHP": 187.99825,
+    "CC_REGULAR": 607.906438,
+    "COAL_BIT": -425.723781,
+    "COAL_LIGNITE": 485.248781,
+    "COAL_PRB": -1717.859625,
+    "CT_CHP": 7.582103,
+    "CT_PEAKER": 267.346406,
+    "ST_CHP": 23.138484,
+    "ST_GAS": 73.91575,
+    "hydro": 6e-06,
+    "import": 479.392969
+   },
+   "2024": {
+    "CC_CHP": 187.96775,
+    "CC_REGULAR": 501.874062,
+    "COAL_BIT": -261.54775,
+    "COAL_LIGNITE": 722.77225,
+    "COAL_PRB": -2071.353875,
+    "CT_CHP": 14.805302,
+    "CT_PEAKER": 363.835969,
+    "ST_CHP": 16.889172,
+    "ST_GAS": 107.623367,
+    "hydro": -7e-06,
+    "import": 397.732406,
+    "oil": -0.0288
+   },
+   "2025": {
+    "CC_CHP": 56.106738,
+    "CC_REGULAR": 383.085906,
+    "COAL_BIT": -72.751344,
+    "COAL_LIGNITE": 160.223,
+    "COAL_PRB": -426.675469,
+    "CT_CHP": 13.6356,
+    "CT_PEAKER": -189.764062,
+    "ST_CHP": 2.43934,
+    "ST_GAS": -33.318086,
+    "hydro": 4e-06,
+    "import": 80.670484,
+    "oil": -0.00639
+   }
+  },
+  "max_abs_class_hour_mw": {
+   "2023": 1401.82470703125,
+   "2024": 1301.5947265625,
+   "2025": 1275.0
+  },
+  "max_abs_class_hour_mw_note": "NOT a mechanism magnitude at MISO (miso-122 DO-NOT-MISREAD). Read coal_class_energy_delta_twh.",
+  "max_zonal_abs_dlmp": {
+   "2023": 3.164893656685045,
+   "2024": 8.375276522583512,
+   "2025": 2.8855172239107176
+  },
+  "price_delta_hours": {
+   "2023": {
+    "hours_with_any_zonal_delta": 7795,
+    "zone_hours_price_rose": 29780,
+    "zone_hours_price_fell": 15094
+   },
+   "2024": {
+    "hours_with_any_zonal_delta": 8006,
+    "zone_hours_price_rose": 31771,
+    "zone_hours_price_fell": 14320
+   },
+   "2025": {
+    "hours_with_any_zonal_delta": 7753,
+    "zone_hours_price_rose": 17713,
+    "zone_hours_price_fell": 25058
+   }
+  },
+  "grain2_bar_twh": 0.05,
+  "grain1_fired": true,
+  "wiring_note": "Grain 1 fired pre-arm on 42 coal bins, so a dead grain 2 is a WIRING DEFECT to find and fix (miso-126 \u00a74), NOT an 'I' verdict. coal_mustrun_online_pmin is config-borne: run_calibration.py sets it via config.with_overrides (or prb_overrides, applied at :1429), and fleet_to_bins(..., iso, config) -> campd_bins.py:1645 reads it, so it does NOT pass through the load_fleet_from_csv keyword seam that silently dropped miso-126's first arm.",
+  "verdict": "LIVE"
+ },
+ "max_zonal_abs_dlmp": {
+  "2023": 3.164893656685045,
+  "2024": 8.375276522583512,
+  "2025": 2.8855172239107176
+ },
+ "K5_c7_shape": {
+  "target": "C7 COAL_PRB diurnal shape \u2014 MISO's sole failing criterion",
+  "cv_ratio": {
+   "2023": {
+    "control": 0.465,
+    "arm": 0.514
+   },
+   "2024": {
+    "control": 0.474,
+    "arm": 0.529
+   },
+   "2025": {
+    "control": 0.314,
+    "arm": 0.347
+   }
+  },
+  "profile_r": {
+   "2023": {
+    "control": 0.988,
+    "arm": 0.987
+   },
+   "2024": {
+    "control": 0.978,
+    "arm": 0.974
+   },
+   "2025": {
+    "control": 0.971,
+    "arm": 0.972
+   }
+  },
+  "coal_bit_d1": {
+   "2023": {
+    "control": 0.704,
+    "arm": 0.667
+   },
+   "2024": {
+    "control": 0.596,
+    "arm": 0.565
+   },
+   "2025": {
+    "control": 1.114,
+    "arm": 1.211
+   }
+  },
+  "coal_bit_note": "reported because OVERSHOOTING COAL_BIT to 2.6-2.8x measured off-peak variability is one of the two ways miso-102's discount-deleting arm failed (the other was C1 16/16 -> 11/16).",
+  "gate": 0.5,
+  "all_years_pass": false,
+  "promotion_note": "prereg B6 / rule 1 [R-STRUCT]: this gate does NOT decide promotion on its own. A candidate that moves C7 to PASS while breaking C1 is not automatically a keeper, and one that improves structure while C7 stays FAIL still may be.",
+  "verdict": "FAIL"
+ },
+ "K6_energy_conservation": {
+  "net_class_energy_delta_gwh": {
+   "2023": -11.047954,
+   "2024": -19.399674,
+   "2025": -26.349719
+  },
+  "net_class_only_within_tolerance": false,
+  "full_balance_residual_gwh": {
+   "2023": -0.02325,
+   "2024": -0.0555,
+   "2025": -0.01825
+  },
+  "components_gwh": {
+   "2023": {
+    "class_delta_gwh": -11.072,
+    "discharge_delta_gwh": -44.2405,
+    "charge_delta_gwh": -55.28925,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": -0.02325
+   },
+   "2024": {
+    "class_delta_gwh": -19.456,
+    "discharge_delta_gwh": -77.99225,
+    "charge_delta_gwh": -97.39275,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": -0.0555
+   },
+   "2025": {
+    "class_delta_gwh": -26.368,
+    "discharge_delta_gwh": -110.48925,
+    "charge_delta_gwh": -136.839,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": -0.01825
+   }
+  },
+  "tolerance_gwh": 0.5,
+  "rule": "demand is exogenous and identical in both arms, so supply must re-balance exactly: d_class + d_discharge - d_charge + d_slack - d_dump - d_demand == 0",
+  "boundary_note": "The class sidecar is NOT the whole balance (miso-126 \u00a76): storage charge/discharge and unserved energy live in separate sidecars and this lever legitimately moves both. The VERDICT is on the full identity; the class-only figure is reported alongside it so a boundary defect can never be mistaken for a mechanism result.",
+  "verdict": "PASS"
+ },
+ "K7_no_gate_regression": {
+  "determination": {
+   "control": "NOT-YET",
+   "arm": "NOT-YET"
+  },
+  "ledgered_caveats": {
+   "control": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ],
+   "arm": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "criteria": {
+   "dispatch_corr": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "forced_share": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "fuelmix": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "governance": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_mean": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "price_shape": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_tail": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "shape": {
+    "control": "FAIL",
+    "arm": "FAIL",
+    "changed": false
+   },
+   "sysvol": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   }
+  },
+  "criteria_changed": [],
+  "diagnostic_verdict_changes": {
+   "D1:2023|COAL_PRB": [
+    "FAIL",
+    "pass"
+   ],
+   "D1:2024|COAL_PRB": [
+    "FAIL",
+    "pass"
+   ],
+   "D1:2025|COAL_LIGNITE": [
+    "pass",
+    "FAIL"
+   ]
+  },
+  "n_diagnostic_rows_compared": 52,
+  "note": "prereg B6: a regression is REPORTED and is NOT by itself grounds to revert. mustrun_online_pct is the MEASURED online Pmin and mustrun_pct a biased proxy for it, so rule 14 [R-ACCURATE] forbids burying the error back inside the proxy; rule 1 [R-STRUCT] equally forbids promoting because a residual moved.",
+  "verdict": "CHANGED"
+ },
+ "gates": {
+  "K0_control_integrity": "PASS",
+  "K1_flag_fidelity": "PASS",
+  "K2_single_delta": "PASS",
+  "K3_year_span": "PASS",
+  "K4_liveness_grain2": "LIVE",
+  "K5_c7_shape": "FAIL",
+  "K6_energy_conservation": "PASS",
+  "K7_no_gate_regression": "CHANGED"
+ },
+ "blocking_gates_pass": true
+}
