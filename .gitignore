@@ -312,6 +312,13 @@ frontend/data/forecast/program-status.js
 # docs/handoffs/ffr-3p-caiso-accreditation-ab-2026-08-04.md §Reproduction.
 /results/ffr3p/**/year_*.parquet
 /results/ffr3p/**/config.yaml
+# FFR-4D CAISO base-fleet re-vintage A/B (forecast, CAISO 2026-2030, two arms).
+# Same class as /results/ffr3p/ directly above: only the HEAVY regenerable LP
+# output is ignored. The slim per-run record the handoff cites IS committed --
+# full_horizon_summary.json, run_config.json and the evolution_<year>.json
+# ledgers. Regenerate the parquets with the two run_full_horizon commands in
+# docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md §9.
+/results/ffr4d/**/year_*.parquet
 # FFR-3V MISO entry-screen diagnostics solve (MISO 2021-2025 hindcast, isolated
 # run_capacity_hindcast --out-dir cache). Same class as /results/ffr3p/ — only
 # the HEAVY regenerable LP output is ignored; the slim per-run record the

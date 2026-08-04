@@ -46,6 +46,55 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-04c — FFR-4D CAISO base-fleet re-vintage. NO KEY MOVES; CAISO
+BUNDLES IN BOTH MODES ARE INVALIDATED.** Three CAISO-scoped changes
+(``docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md``), all of which move
+CAISO output under **unchanged cache keys**:
+
+* **``STORAGE_BASE_FLEET_MW["CAISO"]`` re-vintaged** — ``low/mid/high``
+  ``6,000 / 8,000 / 12,000`` → ``11,590 / 15,450 / 19,260`` MW, re-derived by
+  the registry's OWN documented EIA-860 construction (the one that already
+  reproduces PJM/MISO/NYISO/NEISO exactly) on the committed EIA-860 2025 Early
+  Release. A **constants-level** change with no ``ScenarioConfig`` field, so no
+  key moves. **Behavioral in CAISO forecast mode** (the base-year storage fleet
+  nearly doubles).
+* **``RENEWABLE_INSTALLED_MW["CAISO"]`` re-vintaged** — wind ``7,000 → 6,330``
+  and solar ``22,000 → 24,000`` MW, from the same EIA-860 release. Also
+  constants-level, also no key move. **Behavioral in CAISO FORECAST mode only**:
+  ``data.renewables`` reads this registry only when ``mode != "backcast"``; a
+  backcast already takes that year's EIA-860 month-end capacity.
+* **``storage_measured_base_fleet`` added, default ``True``** — a CAISO backcast
+  now resolves its storage base fleet as of its solve year from EIA-860
+  (``model.storage.load_eia860_storage``) instead of the flat forecast scalar.
+  Registered in ``_CACHE_KEY_OPTIONAL_FIELDS``, so the key does NOT move — this
+  is the default-flip hazard the entry below describes, entered DELIBERATELY and
+  recorded here because the ledger is the only surface that can see it.
+  **Behavioral in CAISO backcast mode**: the fleet goes from a flat 8,000 MW to
+  the measured 7,492 / 11,131 / 15,448 MW at year-end 2023 / 2024 / 2025.
+
+**The same-key collision is MEASURED, not asserted.** FFR-4D solved both arms of
+the CAISO 2026-2030 forecast at one head — control (pre-FFR-4D constants) and
+treated — and **both resolve to the SAME key** ``35b0a89be0c07483`` while
+producing materially different output: cumulative ``reserve_backstop`` additions
+14,043.6 MW vs 8,186.3 MW, FC-2 row 4 65.48 % vs 52.51 %, and invariant ``I3``
+FAIL vs PASS. The arms stayed clean only because each had its own ``--out-dir``;
+sharing one would have made the second run silently re-use the first's bundle.
+This is the first entry in this ledger whose collision is demonstrated by a
+solved A/B rather than inferred from the registration mechanics.
+
+*Invalidated:* **every cached CAISO bundle, in BOTH modes** — forecast bundles
+(all three changes) and backcast bundles (the third). **The designated CAISO
+keeper ``2026-08-04-caiso-166-measured-dlap`` was solved on the flat 8,000 MW
+scalar and its committed metrics are therefore PRE-EPOCH**; it needs a re-solve
+and a re-gate in the CAISO lane before its numbers are quoted again. That is
+stated as an open, owed item in the FFR-4D handoff §7, not as a completed one.
+
+*NOT invalidated:* **every other ISO, in both modes.** All three changes are
+CAISO-scoped by construction — two are CAISO rows of per-ISO registries, and the
+third resolves through ``STORAGE_MEASURED_BASE_FLEET_ISOS``, which contains
+CAISO alone. ERCOT/PJM/MISO/NYISO/NEISO keepers are untouched (rule 25
+[R-ISO-SCOPE]); ERCOT's own hand-entered storage row is routed, not changed.
+
 **Epoch 2026-08-04b — FFR-3U bridge-seam fix + the D-11 two-key quarantine. NO
 KEY MOVES; TWO KEYS ARE PERMANENTLY REFUSED.** The seam fix
 (``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md``) scopes the runner's
