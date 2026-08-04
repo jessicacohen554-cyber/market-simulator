@@ -1263,6 +1263,32 @@
  *   docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md, probe
  *   scripts/probes/_nyiso124_charter_g0_g1.py, record
  *   results/calibration/_nyiso124_charter_g0_g1.json.
+ *
+ *   nyiso-126 (2026-08-04) — NO VERDICT LETTER CHANGES; seam_flow_envelopes
+ *   NYISO stays `K` on its nyiso-125 evidence and NOTHING WAS TESTED, ARMED OR
+ *   SOLVED. Citation added so the next session does not re-derive a refusal
+ *   that no longer holds: the EASTERN half of the seam envelope, refused by
+ *   nyiso-125 as DATA-BLOCKED because neither NYISO's P-32 nor PJM's tie file
+ *   separates the SCH - PJ - NY Zone-A and Zone-G legs, IS NOW IDENTIFIED.
+ *   NYISO's own posting "NY-NJ PAR Interchange Percentages, Operational Base
+ *   Flow (OBF), and other MW Offsets" publishes the split THREE ways with zero
+ *   free parameters — Ramapo 32 % + JK 15 % -> Zone G, ABC 21 % -> Zone J, and
+ *   the residual 32 % over the free-flowing western ties -> Zone A — plus the
+ *   PAR-outage reallocation rule that makes the shares availability-conditioned
+ *   rather than flat. P-34 ParFlows (5-min per-PAR flow by PTID) is verified
+ *   present for 2023-2025 and supplies that availability. REPORTED AGAINST
+ *   INTEREST: the published shares do NOT reproduce as measured-flow regression
+ *   slopes in aggregate (summed |slope| 0.45/0.12/0.20 vs a published 0.68), so
+ *   they are a market-model SCHEDULING convention, not a metered flow share.
+ *   ALSO NEW: 21 % of the PJM AC interchange lands in Zone J and the model has
+ *   NO PJM AC path into NYC at all (IMPORT_NODE_LINKS NYC = HTP + Linden VFT
+ *   only). The lane is therefore OWNER-GATED ON AUTHORISATION, not on data.
+ *   Nothing was intaken. Evidence:
+ *   results/calibration/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md,
+ *   pre-registration
+ *   results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md,
+ *   probes scripts/probes/_nyiso126_par_identification.py and
+ *   scripts/probes/_nyiso126_c3a_decomposition.py.
  */
 window.MECH_MATRIX = {
   version: 1,
