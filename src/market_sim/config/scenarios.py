@@ -144,6 +144,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash at its default so every pre-existing cached run keeps its key;
     # an armed run carries a different fleet cost and so gets a distinct key.
     "measured_chp_heat_rates",
+    # Combined-cycle steam-part capacity repair (miso-126, default off):
+    # dropped from the hash at its default so every pre-existing cached run
+    # keeps its key; an armed run carries a different FLEET and so gets a
+    # distinct key.
+    "cc_steam_part_capacity",
     # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
     # from the hash at their defaults (None / "mid") so every pre-existing
     # cached run keeps its key; a crossover run sets a non-None boundary and so
@@ -653,6 +658,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ramp_limits": "False",
     "measured_ct_heat_rates": "False",
     "measured_chp_heat_rates": "False",
+    "cc_steam_part_capacity": "False",
     "crossover_forward_year": "None",
     "crossover_forward_gas_path": "'mid'",
     "crossover_solve_year_weather": "False",
@@ -2004,6 +2010,34 @@ class ScenarioConfig:
     # scripts/data/derive_chp_power_only_heat_rates.py and
     # results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.
     measured_chp_heat_rates: bool = False
+
+    # Combined-cycle STEAM-part capacity repair (miso-126; default OFF,
+    # byte-identical off). EIA-860's ``Energy Source 1`` on a ``CA``
+    # prime-mover row names the block's SUPPLEMENTARY / duct fuel, not its
+    # primary energy input, which arrives as its own combustion turbines'
+    # exhaust. So a duct-fired combined-cycle steam part reports an exotic fuel
+    # code (blast-furnace gas ``BFG``, other gas ``OG``, distillate ``DFO``),
+    # ``fleet.eia860._map_fuel_type`` returns None, the row is skipped and its
+    # capacity NEVER REACHES THE LP at all. When True the dropped steam parts
+    # are restored as gas combined cycle (CHP variant where the plant is
+    # CHP-flagged), at the eGRID plant heat rate their ``CT`` siblings already
+    # carry — which is already a BLOCK rate, since eGRID's ``PLNGENAN``
+    # denominator counts the steam part's generation (measured at MISO 55088
+    # Dearborn: the incumbent 515 MW fleet implies a 116.6 % capacity factor
+    # against eGRID's own net generation; the repaired 765 MW implies 78.5 %).
+    # A row qualifies only when it shares an EIA-860 ``Unit Code`` with ``NG``
+    # ``CT`` siblings it is not older than — see
+    # ``fleet.eia860.cc_steam_part_generators`` for the full predicate and its
+    # one known conservative limitation (repowered blocks). ISO-gated on
+    # ``plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS``: rule 25 [R-ISO-SCOPE], each
+    # ISO verifies the repair on its own market's data before entering.
+    # Rule 13 [R-MEASURED] admissible: a generator's existence, prime mover,
+    # unit code, vintage and capacity are published EIA-860 INPUTS that
+    # regenerate for any forward year and respond to changed conditions (a
+    # retirement or re-rate moves them) — not a measured outcome fed back to
+    # close a residual. Zero fitted parameters. See
+    # results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md.
+    cc_steam_part_capacity: bool = False
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md

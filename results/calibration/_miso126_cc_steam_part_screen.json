@@ -1,0 +1,359 @@
+{
+ "session": "miso-126",
+ "iso": "MISO",
+ "vintage": 2023,
+ "keeper": "2026-08-04-miso-124-dualfuel-rearm",
+ "prereg": "results/calibration/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md",
+ "KE1": {
+  "census": [
+   {
+    "plant_code": 1004,
+    "plant_name": "Edwardsport",
+    "state": "IN",
+    "generator_id": "ST",
+    "unit_code": "1",
+    "summer_mw": 555.0,
+    "nameplate_mw": 331.5,
+    "energy_source_1": "SGC",
+    "ng_ct_siblings": 2,
+    "sibling_summer_mw": 0.0,
+    "iso": "MISO",
+    "fleet_total_mw": 1036.2,
+    "eia860_plant_total_mw": 555.0,
+    "eia860_plant_total_excl_ca_mw": 0.0,
+    "eia860_plant_nameplate_total_mw": 812.7,
+    "eia860_plant_total_eff_mw": 1036.2,
+    "eia860_plant_total_excl_ca_eff_mw": 481.2,
+    "eia860_rows_with_nan_summer": 2,
+    "status_miso125_summer_basis": "UNDETERMINED",
+    "status": "REPRESENTED"
+   },
+   {
+    "plant_code": 55088,
+    "plant_name": "Dearborn Industrial Generation",
+    "state": "MI",
+    "generator_id": "ST1",
+    "unit_code": "SINT",
+    "summer_mw": 250.0,
+    "nameplate_mw": 238.0,
+    "energy_source_1": "BFG",
+    "ng_ct_siblings": 2,
+    "sibling_summer_mw": 350.0,
+    "iso": "MISO",
+    "fleet_total_mw": 515.0,
+    "eia860_plant_total_mw": 765.0,
+    "eia860_plant_total_excl_ca_mw": 515.0,
+    "eia860_plant_nameplate_total_mw": 747.9,
+    "eia860_plant_total_eff_mw": 765.0,
+    "eia860_plant_total_excl_ca_eff_mw": 515.0,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "MISSING",
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 6081,
+    "plant_name": "Stony Brook",
+    "state": "MA",
+    "generator_id": "CA1",
+    "unit_code": "CC1",
+    "summer_mw": 96.0,
+    "nameplate_mw": 105.0,
+    "energy_source_1": "DFO",
+    "ng_ct_siblings": 3,
+    "sibling_summer_mw": 209.1,
+    "iso": "NEISO",
+    "fleet_total_mw": 435.7,
+    "eia860_plant_total_mw": 446.6,
+    "eia860_plant_total_excl_ca_mw": 350.6,
+    "eia860_plant_nameplate_total_mw": 541.5,
+    "eia860_plant_total_eff_mw": 446.6,
+    "eia860_plant_total_excl_ca_eff_mw": 350.6,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "UNDETERMINED",
+    "status": "UNDETERMINED"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN33",
+    "unit_code": "BLK1",
+    "summer_mw": 21.5,
+    "nameplate_mw": 25.5,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_summer_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "eia860_plant_nameplate_total_mw": 276.8,
+    "eia860_plant_total_eff_mw": 239.4,
+    "eia860_plant_total_excl_ca_eff_mw": 199.0,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "MISSING",
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 54912,
+    "plant_name": "Martinez Refining",
+    "state": "CA",
+    "generator_id": "STG1",
+    "unit_code": "CC1",
+    "summer_mw": 20.0,
+    "nameplate_mw": 20.0,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 2,
+    "sibling_summer_mw": 80.0,
+    "iso": "CAISO",
+    "fleet_total_mw": 80.0,
+    "eia860_plant_total_mw": 100.0,
+    "eia860_plant_total_excl_ca_mw": 80.0,
+    "eia860_plant_nameplate_total_mw": 100.0,
+    "eia860_plant_total_eff_mw": 100.0,
+    "eia860_plant_total_excl_ca_eff_mw": 80.0,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "MISSING",
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN32",
+    "unit_code": "BLK1",
+    "summer_mw": 10.5,
+    "nameplate_mw": 15.6,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_summer_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "eia860_plant_nameplate_total_mw": 276.8,
+    "eia860_plant_total_eff_mw": 239.4,
+    "eia860_plant_total_excl_ca_eff_mw": 199.0,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "MISSING",
+    "status": "MISSING"
+   },
+   {
+    "plant_code": 50973,
+    "plant_name": "Motiva Enterprises Port Arthur Refinery",
+    "state": "TX",
+    "generator_id": "GN31",
+    "unit_code": "BLK1",
+    "summer_mw": 8.4,
+    "nameplate_mw": 10.0,
+    "energy_source_1": "OG",
+    "ng_ct_siblings": 5,
+    "sibling_summer_mw": 183.4,
+    "iso": "MISO",
+    "fleet_total_mw": 199.0,
+    "eia860_plant_total_mw": 239.4,
+    "eia860_plant_total_excl_ca_mw": 199.0,
+    "eia860_plant_nameplate_total_mw": 276.8,
+    "eia860_plant_total_eff_mw": 239.4,
+    "eia860_plant_total_excl_ca_eff_mw": 199.0,
+    "eia860_rows_with_nan_summer": 0,
+    "status_miso125_summer_basis": "MISSING",
+    "status": "MISSING"
+   }
+  ],
+  "miso_missing_plants": [
+   50973,
+   55088
+  ],
+  "miso_missing_mw": 290.4,
+  "verdict": "PASS"
+ },
+ "P1_absence": {
+  "test": "fleet total == EIA-860 plant total EXCLUDING CA rows (+-1 MW)",
+  "per_plant": {
+   "1004": {
+    "status": "REPRESENTED",
+    "fleet_total_mw": 1036.2,
+    "eia860_excl_ca_mw": 0.0,
+    "eia860_incl_ca_mw": 555.0
+   },
+   "55088": {
+    "status": "MISSING",
+    "fleet_total_mw": 515.0,
+    "eia860_excl_ca_mw": 515.0,
+    "eia860_incl_ca_mw": 765.0
+   },
+   "6081": {
+    "status": "UNDETERMINED",
+    "fleet_total_mw": 435.7,
+    "eia860_excl_ca_mw": 350.6,
+    "eia860_incl_ca_mw": 446.6
+   },
+   "50973": {
+    "status": "MISSING",
+    "fleet_total_mw": 199.0,
+    "eia860_excl_ca_mw": 199.0,
+    "eia860_incl_ca_mw": 239.4
+   },
+   "54912": {
+    "status": "MISSING",
+    "fleet_total_mw": 80.0,
+    "eia860_excl_ca_mw": 80.0,
+    "eia860_incl_ca_mw": 100.0
+   }
+  },
+  "verdict": "PASS"
+ },
+ "P2_one_meter_one_rate": {
+  "per_plant": {
+   "50973": {
+    "heat_rate_ca": [
+     8.184004
+    ],
+    "heat_rate_non_ca": [
+     8.184004
+    ],
+    "a_pass": true,
+    "plngenan_net_mwh": 1395575.8,
+    "present_fleet_mw": 199.0,
+    "added_mw": 40.4,
+    "repaired_fleet_mw": 239.4,
+    "implied_cf_present": 0.800564,
+    "implied_cf_repaired": 0.665465,
+    "b_pass": false,
+    "verdict": "FAIL"
+   },
+   "55088": {
+    "heat_rate_ca": [
+     6.346441
+    ],
+    "heat_rate_non_ca": [
+     6.346441
+    ],
+    "a_pass": true,
+    "plngenan_net_mwh": 5259825.0,
+    "present_fleet_mw": 515.0,
+    "added_mw": 250.0,
+    "repaired_fleet_mw": 765.0,
+    "implied_cf_present": 1.165896,
+    "implied_cf_repaired": 0.784885,
+    "b_pass": true,
+    "verdict": "PASS"
+   }
+  },
+  "admitted_plants": [
+   55088
+  ],
+  "excluded_plants": [
+   50973
+  ]
+ },
+ "P3_design_share": {
+  "band": 0.1,
+  "per_plant": {
+   "55088": {
+    "nameplate_share": 0.430691,
+    "block_ca_nameplate_mw": 238.0,
+    "block_total_nameplate_mw": 552.6,
+    "cems_power_train_gross_mwh": 3648140.0,
+    "implied_steam_mwh": 1611685.0,
+    "block_ct_gross_mwh": 2250843.0,
+    "implied_gen_share": 0.417262,
+    "gap": 0.01343,
+    "verdict": "PASS"
+   }
+  },
+  "admitted_plants": [
+   55088
+  ]
+ },
+ "admitted_plants": [
+  55088
+ ],
+ "admitted_capacity_mw": 250.0,
+ "KE3_inert_by_dispatch": {
+  "band": 0.05,
+  "per_plant": {
+   "55088": {
+    "2023": {
+     "heat_rate": 6.9573,
+     "vom": 2.0,
+     "gas": 2.54,
+     "marginal_cost": 19.6715,
+     "zone": "MISO-East",
+     "hours": 8760,
+     "dispatch_hour_share": 0.998744,
+     "median_price": 31.3935
+    },
+    "2024": {
+     "heat_rate": 6.9573,
+     "vom": 2.0,
+     "gas": 2.19,
+     "marginal_cost": 17.2365,
+     "zone": "MISO-East",
+     "hours": 8760,
+     "dispatch_hour_share": 0.993836,
+     "median_price": 27.9193
+    },
+    "2025": {
+     "heat_rate": 6.9573,
+     "vom": 2.0,
+     "gas": 3.52,
+     "marginal_cost": 26.4897,
+     "zone": "MISO-East",
+     "hours": 8760,
+     "dispatch_hour_share": 0.950342,
+     "median_price": 35.4381
+    }
+   }
+  },
+  "verdict": "LIVE"
+ },
+ "KE3_energy_upper_bound": {
+  "2023": {
+   "upper_bound_added_twh": 2.18725,
+   "iso_load_twh": 640.993,
+   "upper_bound_share_of_load": 0.003412
+  },
+  "2024": {
+   "upper_bound_added_twh": 2.1765,
+   "iso_load_twh": 644.633,
+   "upper_bound_share_of_load": 0.003376
+  },
+  "2025": {
+   "upper_bound_added_twh": 2.08125,
+   "iso_load_twh": 663.81,
+   "upper_bound_share_of_load": 0.003135
+  }
+ },
+ "KE4_inert_by_binding": {
+  "answerable": false,
+  "class_statistics": {
+   "2023": {
+    "cc_chp_fleet_capacity_mw": 7036.4,
+    "cc_chp_max_mw": 3175.4,
+    "cc_chp_mean_mw": 2256.1,
+    "cc_chp_p99_mw": 3089.3,
+    "cc_chp_distinct_values": 1084,
+    "cc_chp_energy_twh": 19.7632
+   },
+   "2024": {
+    "cc_chp_fleet_capacity_mw": 7036.4,
+    "cc_chp_max_mw": 3101.8,
+    "cc_chp_mean_mw": 2251.7,
+    "cc_chp_p99_mw": 2882.3,
+    "cc_chp_distinct_values": 1397,
+    "cc_chp_energy_twh": 19.7249
+   },
+   "2025": {
+    "cc_chp_fleet_capacity_mw": 7036.4,
+    "cc_chp_max_mw": 2955.2,
+    "cc_chp_mean_mw": 1923.0,
+    "cc_chp_p99_mw": 2799.3,
+    "cc_chp_distinct_values": 1564,
+    "cc_chp_energy_twh": 16.8459
+   }
+  }
+ },
+ "verdict": "LIVE_A_B_WARRANTED"
+}
