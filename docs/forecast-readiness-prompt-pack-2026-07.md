@@ -1973,3 +1973,402 @@ files; `git status --short` after. Shell cwd persists between Bash calls.
 
 Deliverable: docs/handoffs/ffr-3x-emit-guard-<date>.md. Keep it short.
 ```
+
+---
+
+## §0i — WAVE 4: the five lanes chartered by the signed N-cards (2026-08-04 @ `49aac023`)
+
+Decision record: sitting **Addendum O**. Wave 3 is closed (Addendum N.1); do not re-dispatch any
+FFR-3x lane. **~~FFR-3Q-2~~ remains STRUCK** (§0g) — FFR-3Q-3 below replaces it on the FIXED seam.
+
+**Concurrency:** all five may run as independent sessions (rule 12 is per prompt, Addendum F.2).
+**One coupling:** FFR-4B and FFR-4C both touch entry-screen revenue in MISO — 4B raises solar,
+4C lowers wind. Each carries its OWN paired control at its OWN base commit; whichever lands
+second re-verifies against the new base and re-checks its matrix cell survived (miso-124 lost a
+matrix merge race).
+
+### FFR-4A [OPUS] — D-14: derive the ladder's K/L relationship from the measured record
+
+```
+[OPUS] FFR-4A — Owner decision D-14, signed 2026-08-04 (sitting Addendum O): the entry growth
+ladder's K = L knife-edge is CHARTERED AS A DEFECT. Derive the intended relationship between the
+ladder multiplier K and the COD lag L from the MEASURED BUILD RECORD. This is a derivation lane.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 49aac023 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; they move several times a day):
+ERCOT 2026-08-03-ercot158-pool-arm · PJM 2026-08-04-pjm-152-collapse ·
+CAISO 2026-08-04-caiso-166-measured-dlap · NYISO 2026-08-04-nyiso-120-c119-scope ·
+NEISO 2026-08-03-neiso-caiso156-meter-screen · MISO 2026-08-04-miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE — out-of-training
+BACKCAST solve/score/registration only; forecast-mode 2026+ and in-sample 2023-2025 unrestricted.
+Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10 warm-start OFF for forecast bundles —
+every forecast key moved; src/market_sim/results/cache.py).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly like
+a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min) only if you solve.
+Rule 12 is PER PROMPT (Addendum F.2). Rule 27: Opus/Fable only for src/market_sim/.
+
+=== THE FINDING YOU ARE INHERITING (measured; do not re-derive) ===
+docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §5. The ladder lets year Y build K x the
+prior year's decisions, then nets off decisions already pending. With a COD lag of L years, (L-1)
+cohorts are always pending when the screen runs, so remaining = (K - L + 1) x D_prev. At the
+shipped K = 2.0 and L = 2 that is exactly 1 x D_prev: the doubling and the netting CANCEL
+EXACTLY, and economic entry is pinned at 2x the measured seed forever. The knife-edge is K = L
+and the shipped values sit on it. MISO solar's ceiling is 2.473 GW in-window (-86.7% FC-3 band)
+even with a perfect revenue side; removing only the lag lifts it to 14.655 GW (-21.4%), at which
+point the 6.0 GW per-tech queue cap binds instead.
+The corroboration that makes it a defect rather than a curiosity: MISO's gas_ct ladder DOES
+double (1,350 -> 2,700 -> 5,241 MW, FFR-2B) — but that channel is the RESERVE-MARGIN BACKSTOP,
+which commissions IN-YEAR and so never nets a pending row. The SAME ladder ratchets for the
+backstop and freezes for economic entry. That asymmetry is your subject.
+
+=== WHAT YOU ARE AUTHORIZED TO DO, AND WHAT YOU ARE NOT ===
+AUTHORIZED: derive, from the MEASURED build record, what relationship between K and L reproduces
+observed entry behaviour — i.e. what the ladder is supposed to express. Rule 23
+[R-FROZEN-DERIVE] IS THE RULE THAT BINDS THIS LANE HARDEST: a measured-behaviour parameter
+re-derives only when its SOURCE DATA updates, never because a residual moved. Your derivation
+commit must cite the DATA that identifies the value — an EIA-860 build-record statistic, a
+queue-to-COD conversion rate, something external. If your answer is "the value that makes MISO
+solar build", you have written the thing this rule forbids.
+NOT AUTHORIZED: moving K off 2.0 by taste. The owner's card says so in terms. Nor may you
+change L (ENTRY_COD_LAG_YEARS) as a convenience — it is a D-2 field under Addendum D's HOLD
+PROMOTION, and it also sets the D-9 censoring window, so a change there has scorer consequences
+outside your lane. If your derivation implies L should change, REPORT that as a finding and
+escalate; do not land it.
+
+=== SCOPE ===
+1. State the ladder's INTENT precisely from the code and its citations: what is the mechanism
+   supposed to prevent, and is the netting of pending cohorts part of that intent or an
+   independent guard that was added later? Read the history — if the doubling and the netting
+   were introduced by different commits for different reasons, that is the finding.
+2. Establish whether K = L is REACHABLE for other techs/ISOs or unique to this pairing. Report
+   the (K, L) pair per technology and per ISO, and mark which sit on, above or below the
+   knife-edge. A defect that binds in one cell is a different problem from one that binds in ten.
+3. Derive the intended relationship with its identifying data cited. If the honest answer is
+   "the two guards are redundant and one should be removed" (rule 19 [R-ONE-MECH]), say so —
+   that is a legitimate outcome and probably the cleanest one.
+4. Whatever you propose, PREDICT its effect before measuring it, and record the prediction first.
+5. Rule 24 [R-REGISTRY]: any value you land appears in ScenarioConfig/constants.py with its
+   citation. Rule 28: matrix cell + citation in THIS session.
+
+=== SCOPE DISCIPLINE ===
+This is a DERIVATION lane. Do not promote a keeper, do not register a forecast run, do not tune.
+If the derivation lands a value, it lands with a paired control and its prediction on record.
+If you cannot identify a value from data, THAT IS THE DELIVERABLE — an open blocker, written up
+(rule 11). A residual closable only by an unidentified value is not a parameter.
+
+=== TRAPS ===
+Push 413 has two causes: a stale tracking ref of a deleted merged branch (`git remote prune
+origin`), or a stale local origin/main defeating delta compression (`git fetch origin main` +
+rebase). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files — it takes
+content as a string, the full-file rewrite rule 27 forbids; scenarios.py is ~9,900 lines, so edit
+locally, `git push`, then VERIFY THE PUSHED BLOB (line count + hash vs local). The documented
+cache-purge command deletes TRACKED files; `git status --short` after. `git checkout origin/main
+-- <path>` STAGES those files; `git restore --staged` after. Shell cwd persists between calls.
+
+Deliverable: docs/handoffs/ffr-4a-entry-ladder-<date>.md — the intent reconstruction, the (K, L)
+map across techs and ISOs, the derivation with its cited identifying data (or the open blocker),
+your recorded prediction, and what you did NOT separate.
+```
+
+### FFR-4B [OPUS] — D-12 + D-2′: MISO's solar revenue side, in one lane, D-12 first
+
+```
+[OPUS] FFR-4B — Owner decisions D-12 and D-2' , signed 2026-08-04 (sitting Addendum O), taken
+together as ONE lane because D-12 SIZES D-2'. Wire MISO's published solar accreditation, THEN arm
+entry_vre_capacity_revenue, with a paired control. MISO-scoped only.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 49aac023 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT ercot158-pool-arm ·
+PJM pjm-152-collapse · CAISO caiso-166-measured-dlap · NYISO nyiso-120-c119-scope ·
+NEISO neiso-caiso156-meter-screen · MISO 2026-08-04-miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM} — MISO IS NOT IN IT; `final` = EMPTY. HOLDOUT FREEZE
+ACTIVE. In-sample 2023-2025 and forecast-mode 2026+ are unrestricted; NEVER 2022/2020/2019/
+2026-backcast. Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — no Python env ships in the container; skipping
+it makes regenerate_clean.py report "50/50 datatype(s) failed", which is NOT a data problem),
+THEN scripts/regenerate_clean.py (~63-65 min). Rule 12 PER PROMPT: years sequential, <=2
+concurrent invocations, <=5 solve-years each; MISO is ~8.6 GB per solve — NEVER co-run with PJM
+in one session. Rule 27: Opus/Fable only for src/market_sim/.
+
+=== THE EVIDENCE (measured; do not re-derive) ===
+docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §§4, 7. MISO solar is a MARGIN finding, not
+a candidate-set or damper finding — solar reaches the screen every decision year and is rejected
+on economics before any cap is consulted. The internal control: WIND BUILT 4.0 GW in the same
+window through the same code path, the same zonal-CF mechanism and the same caps.
+D-12: MISO's published solar accreditation is ALREADY INTAKEN AND CITED at elcc/miso/miso.csv and
+simply not read into RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]. Unwired the model uses 0.18; the
+season-weighted published value is 0.3875. Solar's 2023 break-even: $37.59/MWh at 0.18 vs
+$29.41/MWh at 0.3875, against a MISO modelled price level of ~$30-40/MWh.
+D-2': entry_vre_capacity_revenue is default-OFF. The payment resolves cleanly today
+($79,800 x 0.18 = $14,364/MW-yr) and moves solar's break-even from $41.9-48.9 to $34.8-41.8/MWh.
+THE DECISIVE ASYMMETRY: the THERMAL branch already takes the same payment UNGATED at
+$75.8k-117.3k/MW-yr. VRE is gated off; thermal is not; both are inside one function.
+
+=== SCOPE, IN THIS ORDER ===
+1. D-12 FIRST. Wire the published accreditation from elcc/miso/miso.csv into
+   RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]. SETTLE THE SEASONAL->ANNUAL SELECTION RULE IN THIS LANE
+   — do not leave it implicit, and cite what the selection rule is grounded in. Rule 14
+   [R-ACCURATE]: the accurate value is on disk and cited, so it goes in whatever it does to a fit.
+2. MEASURE D-12 ALONE against a paired control before touching D-2'. The two must be separable;
+   if you arm both in one step you cannot attribute either.
+3. THEN D-2'. Arm entry_vre_capacity_revenue, MISO-SCOPED. Rule 25 [R-ISO-SCOPE]: other ISOs
+   with a capacity market in MARKET_DESIGN are SEPARATE per-ISO decisions and are NOT authorized
+   here — do not arm them, and do not derive their parameters from MISO's.
+4. Report the thermal-vs-VRE asymmetry explicitly: state whether arming VRE makes the function
+   symmetric or introduces a new inconsistency somewhere else (rule 19 [R-ONE-MECH] — enumerate
+   what already pays VRE capacity value before adding a second channel).
+5. Rule 24 [R-REGISTRY]: every value in ScenarioConfig/constants.py with its citation; nothing in
+   a per-plant dict or a getattr fallback. Rule 28: entry_vre_capacity_revenue's matrix cell +
+   citation updated in THIS session — it is a ScenarioConfig mechanism, so CI enforces the row.
+
+=== WHAT THE OWNER ACCEPTED, SO YOU DO NOT RE-OPEN IT ===
+THIS PAIR WILL NOT BUY AN FC-3 PASS ON ITS OWN. If the ladder freeze survives FFR-4A's
+derivation, this moves MISO solar from a -100% band to about -86.7%. The decisions were taken on
+RULE-14 GROUNDS, NOT ON EXPECTED BAND MOVEMENT, and must not be judged by it. Do not tune
+anything to close the remaining gap; the ceiling is FFR-4A's subject, not yours.
+
+=== COORDINATION ===
+FFR-4C (D-13, the wind PTC window) is running concurrently and also touches MISO entry-screen
+revenue — it LOWERS wind while you RAISE solar. Build your paired control at YOUR base commit; if
+4C lands first, re-verify against the new base before quoting any number, and re-check your
+matrix cell survived the merge (miso-124 lost a matrix merge race). Say in your write-up which
+side of 4C your measurements sit on.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST. Never
+push a >=300-line file via push_files; scenarios.py is ~9,900 lines — edit locally, push, then
+VERIFY THE PUSHED BLOB. The documented cache-purge command deletes TRACKED files; `git status
+--short` after. Evolution ledgers live at <out-dir>/<ISO>/<cache_key>/, NOT the out-dir root, and
+load_ledgers_for_run returns {} rather than raising — a wrong path silently reads as "no evolution
+happened", which in an entry-screen lane looks exactly like a null result. MARKET_SIM_DATA_ROOT
+outside REPO_ROOT shifts the cache key (FFR-3F §5) — check `env | grep MARKET_SIM` is empty.
+A REQUEST-side cache_key() is NOT the key a run is recorded under (FFR-3A-2 §1.2). Shell cwd
+persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-4b-miso-solar-revenue-<date>.md — the selection rule and its
+grounding, D-12 measured alone, D-2' measured on top, the asymmetry statement, and what you did
+NOT separate.
+```
+
+### FFR-4C [FABLE] — D-13: window the §45 wind PTC to its statutory 10 years
+
+```
+[FABLE] FFR-4C — Owner decision D-13, signed 2026-08-04 (sitting Addendum O): window the section
+45 wind PTC to its statutory 10 years. Bounded lane. Zero free parameters.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 49aac023 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT ercot158-pool-arm ·
+PJM pjm-152-collapse · CAISO caiso-166-measured-dlap · NYISO nyiso-120-c119-scope ·
+NEISO neiso-caiso156-meter-screen · MISO miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE — in-sample
+2023-2025 and forecast-mode 2026+ only. Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — no Python env in the container; skipping it
+makes regenerate_clean.py report "50/50 datatype(s) failed", which is NOT a data problem), THEN
+scripts/regenerate_clean.py (~63-65 min) if you solve. Rule 12 PER PROMPT. Rule 27: Opus/Fable
+only for src/market_sim/ — never a full-file rewrite from response content.
+
+=== THE DEFECT (FFR-3V §6, measured) ===
+The section 45 wind PTC is credited over the plant's FULL 30-YEAR BOOK LIFE with no statutory
+window. The solar ITC in the same file is booked correctly. The remedy has ZERO FREE PARAMETERS
+— one published statutory number, 10 years — and an existing precedent to copy in the same file:
+the `_ccs_45q_window_years` pattern (see also ira_45q_credit_window_years in ScenarioConfig).
+
+=== SCOPE ===
+1. Window the PTC on the existing pattern. Reuse it; do not invent a second mechanism (rule 19
+   [R-ONE-MECH]).
+2. Cite the statute for the 10 years in the code comment (rule 5 [R-NO-MAGIC]) and in
+   docs/parameter-citations.md.
+3. A test asserting the credit stops at year 10 of the plant's life, and one asserting the solar
+   ITC path is unchanged.
+4. Measure the effect on wind additions in at least one ISO with a paired control, and RECORD
+   YOUR PREDICTION BEFORE MEASURING.
+5. Rule 24 [R-REGISTRY]: the window length lives in ScenarioConfig/constants.py with its citation.
+   Rule 28: matrix cell + citation in THIS session.
+
+=== THE PART THAT GETS MIS-HANDLED — READ TWICE ===
+EXPECT WIND ADDITIONS TO FALL. MISO currently builds 4.0 GW against 7.2 GW actual, so this
+correction moves a passing-ish number FURTHER FROM the actual. UNDER RULE 1 [R-STRUCT] THAT IS
+THE FAITHFUL DIRECTION AND THE FIX STAYS IN. The owner signed it knowing this (Addendum O.2).
+If the band worsens, that is a DISCOVERED UNDER-BUILD elsewhere on wind's revenue side — write it
+up as an open root cause (rule 11) and hand it on. DO NOT REVERT, do not soften the window, do
+not add a compensating adder, and do not delay the commit until something offsets it. A lane that
+reverts this because the residual moved has misread the decision.
+
+=== COORDINATION ===
+FFR-4B (D-12 + D-2') is running concurrently and also touches MISO entry-screen revenue — it
+RAISES solar while you LOWER wind. Build your paired control at YOUR base commit; if 4B lands
+first, re-verify against the new base before quoting a number, and re-check your matrix cell
+survived the merge (miso-124 lost a matrix merge race). State which side of 4B your measurements
+sit on.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST. Never
+push a >=300-line file via push_files. The documented cache-purge command deletes TRACKED files;
+`git status --short` after. Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-4c-wind-ptc-window-<date>.md. Keep it short. Do not expand scope
+into the wider IRA treatment; if you find another credit with the same defect, REPORT it and let
+the owner charter it.
+```
+
+### FFR-4D [OPUS] — D-15: charter CAISO FC-2 row 4 against the FLEET-VINTAGE cause
+
+```
+[OPUS] FFR-4D — Owner decision D-15, signed 2026-08-04 (sitting Addendum O): FC-2 row 4 is
+chartered against the FLEET-VINTAGE cause (FFR-3P B-1). The CAISO capacity-anchor correction is
+NOT chartered and is NOT your lane — see the refusal below, which is the point of this charter.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 49aac023 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; CAISO has moved repeatedly):
+ERCOT ercot158-pool-arm · PJM pjm-152-collapse · CAISO 2026-08-04-caiso-166-measured-dlap ·
+NYISO nyiso-120-c119-scope · NEISO neiso-caiso156-meter-screen · MISO miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM} — CAISO IS NOT IN IT, and caiso-171 has just assessed
+the CAISO frontier as "`complete` is NO for now, and the blocker is governance" (read it).
+`final` = EMPTY. HOLDOUT FREEZE ACTIVE — in-sample 2023-2025 and forecast-mode 2026+ only.
+Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — no Python env ships in the container; skipping
+it makes regenerate_clean.py report "50/50 datatype(s) failed", which is NOT a data problem),
+THEN scripts/regenerate_clean.py (~63-65 min). Rule 12 PER PROMPT. Rule 27: Opus/Fable only.
+
+=== THE EVIDENCE (measured; do not re-derive) ===
+docs/handoffs/ffr-3w-caiso-entry-screen-2026-08-04.md and ffr-3p-caiso-accreditation-*.md.
+FC-2 row 4's driver is a base-year CAISO fleet 11,711 MW SHORT of the real CAISO on accredited
+capacity (FFR-3P Table 1.1) — 1.78x the 6,577 MW deficit that drives the entire 14,043.6 MW
+build. Correcting the fleet alone moves the reserve position 0.8852 -> 1.0896 (11.5% short ->
+9.0% long) and collapses row 4's numerator.
+Also established, and NOT to be reinstated: FFR-3P RETRACTED its own "+1,735.8 MW thermal
+under-credit" and "+1,681 MW hydro under-credit" claims. CAISO's published fleet thermal credit
+is 0.9537 vs the model's 0.9457 (the model is 0.8% ABOVE) and published fleet hydro is 0.6936 vs
+0.7041 (already 1.1pp generous). Both errors came from INFERRING A PARTITION WHERE THE ISO
+PUBLISHES THE WHOLE CLASS'S REALIZED RATIO. That is the standing methodological warning for this
+lane: prefer the published whole-class realized ratio; if you find yourself deriving a component
+the ISO publishes in aggregate, STOP.
+
+=== YOUR TASK ===
+Find and fix the 11,711 MW base-year accredited-capacity shortfall. Work the FLEET, not the
+screen. Where is the capacity missing — units absent from the base fleet, units present but
+under-accredited, a vintage/as-of misalignment in how the base year is assembled, or a class the
+crosswalk drops? Decompose the 11,711 MW by cause with the megawatts attributed, and fix what is
+a genuine data or wiring defect under rule 14 [R-ACCURATE].
+
+=== THE REFUSAL THAT IS THE POINT OF THIS CHARTER ===
+DO NOT CORRECT THE CAISO CAPACITY-PRICE ANCHOR AS A ROUTE TO ROW 4, and do not quote a row-4
+improvement obtained that way. FFR-3W measured that correcting the anchor moves row 4 JUST AS FAR
+— by building the same 14 GW of CTs California does not need, through the economic channel
+instead of the administrative one. Row 4 would read PASS while the model still over-builds 14 GW
+of firm capacity into a market that is 6.9% LONG on RA. That is rule 1 [R-STRUCT] verbatim: the
+right number through a mechanism that isn't real. The owner declined it explicitly.
+(The anchor IS mis-specified — >=94% of a $40k/MW-yr gap, a 550 MW COMBINED-CYCLE retention cost
+used as the entry price for a new COMBUSTION TURBINE. It may be chartered LATER on its own
+rule-14 merits, by someone else, with a charter stating it is not a row-4 fix. Not you, not now.)
+
+=== SCOPE DISCIPLINE ===
+If the shortfall turns out to be partly legitimate — a real difference between our zonal
+representation and CAISO's RA accounting boundary — rule 14's misalignment exception applies:
+document it explicitly and prefer a RECONCILED version of the real data over a guess. Do not tune
+the fleet to hit a reserve position. If row 4 does not clear after the fleet is right, THAT IS
+THE FINDING; write it up (rule 11).
+CAISO holds no marker and the freeze is ACTIVE — in-sample or forecast-mode years only. Rule 25:
+this is CAISO's lane; do not import a MISO/PJM parameter or verdict. Rule 28: matrix cell +
+citation in THIS session.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN FIRST. Never
+push a >=300-line file via push_files. The documented cache-purge command deletes TRACKED files;
+`git status --short` after. Evolution ledgers live at <out-dir>/<ISO>/<cache_key>/ and
+load_ledgers_for_run returns {} rather than raising. MARKET_SIM_DATA_ROOT outside REPO_ROOT
+shifts the cache key (FFR-3F §5). Shell cwd persists between Bash calls.
+
+Deliverable: docs/handoffs/ffr-4d-caiso-fleet-vintage-<date>.md — the 11,711 MW decomposed by
+cause with megawatts attributed, what was fixed and what is a documented boundary misalignment,
+row 4's position after, and an explicit statement that the anchor route was not taken.
+```
+
+### FFR-3Q-3 [OPUS] — the FH-1 §3.3 gate re-probe, on the FIXED seam
+
+```
+[OPUS] FFR-3Q-3 — Solve and report the FH-1 §3.3 gate re-probe. This finishes FFR-3Q Task 1,
+which was pre-registered and then never solved, and whose first attempt hit the rule-22 breach
+that FFR-3U has since fixed. Owner authorized the dispatch 2026-08-04 (sitting Addendum O).
+THE FH-4/FH-5 LIFT IS A MANAGER BOX (Addendum I.1). You do not lift it. Reporting green does not
+lift it. Say so in your write-up.
+
+=== VERIFIED STATE (2026-08-04 @ origin/main 49aac023 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT 2026-08-03-ercot158-
+pool-arm · PJM pjm-152-collapse · CAISO caiso-166-measured-dlap · NYISO nyiso-120-c119-scope ·
+NEISO neiso-caiso156-meter-screen · MISO miso-126-steampart-b.
+Markers: `complete` = {NEISO, NYISO, PJM} — ERCOT IS NOT IN IT; `final` = EMPTY. HOLDOUT FREEZE
+ACTIVE and it outranks both blocks. Cache epochs 2026-08-02, 2026-08-03b, 2026-08-04 (D-10
+warm-start OFF for forecast bundles — EVERY FORECAST KEY MOVED, so you solve COLD; results/ is
+gitignored, so "expect cache hits" is never a valid budget in a fresh container).
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly like
+a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min, 50 datatypes,
+1.6 GB). Rule 12 PER PROMPT: years sequential, <=2 concurrent invocations, <=5 solve-years each.
+Rule 27: Opus/Fable only for src/ and scripts/run_*.
+
+=== WHAT CHANGED SINCE THE FAILED ATTEMPT — READ BOTH ===
+docs/handoffs/ffr-3q-window-recut-2026-08-04.md (the pre-registration in §2.1 SURVIVES VERBATIM;
+§2.2 is the STOP-THE-LINE record) and docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md (the fix).
+FFR-3U scoped the un-bridging clause to genuine T1-X crossover forward years, so at base 2021 the
+runner AGAIN BRIDGES 2022 (validation tier) and 2026 (locked test). _validate_window now
+policy-checks the set the RUNNER will actually solve, through the runner's own predicate. The
+launch banner's promise is derived from that same predicate and ASSERTED AGAINST THE REALIZED
+LEDGERS at completion — a mismatch is a hard SystemExit, not a warning.
+BEFORE YOU SOLVE, VERIFY THE FIX HOLDS AT YOUR HEAD: assert is_bridge(2022) is True at base 2021
+and that the harness's declared solve set is [2021, 2023, 2024, 2025] with 2022 bridged. If your
+run's realized solved_years include 2022, STOP IMMEDIATELY — that is a second rule-22 breach, you
+quarantine and report, you do not proceed and you do not patch the guard yourself.
+
+=== THE POSTURE (FFR-3Q §2.1, in force verbatim) ===
+ERCOT, Arm R (hindcast_realized gas + per-solve-year weather), base 2021 / vintage 2020, window
+2021-2025, shipped capacity-price posture, D-1 and D-2 ARMED, exit_rate_limits default OFF,
+hindcast namespace, meta.kind="full_forward".
+  Arm A — primary, shipped default: retirement_rule=pipeline
+  Arm B — paired control, explicitly labelled: retirement_rule=legacy
+RE-VERIFY the two cache keys and the field-by-field asdict diff at YOUR head before solving: the
+diff must contain EXACTLY ONE entry (retirement_rule). FFR-3Q measured b99600bceb8cb6b8 /
+5c352508039513da, but D-10's cache epoch has since moved forecast keys — SO EXPECT THESE TO
+DIFFER, and note that FFR-3U INVALIDATED those two specific keys by design (D-11 condition b), so
+a refusal on them is CORRECT BEHAVIOUR, not a bug. Report the new keys. Confirm `env | grep
+MARKET_SIM` is empty (FFR-3F §5). Arm B is the ONE place Addendum D's HOLD PROMOTION permits
+unarming D-1: an explicitly labelled control. Unarm nothing anywhere else.
+
+=== THE PRE-REGISTERED READS (do not select a read after the fact) ===
+1. PRIMARY: pipeline_events per year. The purpose of the re-cut is that the retirement layer
+   becomes OBSERVABLE. Both prior probes returned ZERO events in every arm, which is why both
+   were uninformative. IF THIS WINDOW ALSO RETURNS ZERO, THAT IS THE HEADLINE FINDING and I6/I7/
+   I12 are reported as invariant-BY-VACANCY, never as a pass.
+2. L_coal = 3 means only a 2021 or 2022 screen decision can execute in-window (2024/2025). Report
+   the candidate count per screen year explicitly — the re-cut succeeds or fails on that.
+3. I12 is MEASURED here, not attributed. FFR-3N attributed the inversion to storage accreditation,
+   not the retirement rule — read it. Report only whether the longer window moves it, and note
+   its WARN previously had INVERTED sign (over-retiring -> retiring nothing).
+4. The exit-throughput cap is OBSERVED, not armed. exit_rate_limits stays default-OFF;
+   _apply_exit_throughput_cap only fires when a year's `due` set is non-empty, so the reportable
+   precondition is whether `due` is EVER non-empty. It has never bound in any full solve.
+
+=== HOW TO READ THE RESULT (Addendum G.2 — three binds) ===
+(a) The earlier FH-1 green was NOT the fix's — a paired pre-fix control returned it identically.
+(b) I12's WARN had inverted sign. (c) Zero pipeline_events means the retirement layer was
+UNTESTED, not validated. A GREEN ON A POSTURE THAT CANNOT EXERCISE THE MECHANISM IS NOT A PASS.
+State which of these your result is, and do not round a vacancy up to a pass.
+
+=== TRAPS ===
+Push 413: `git remote prune origin`, or `git fetch origin main` + rebase. FETCH MAIN BEFORE
+DIAGNOSING. Never push a >=300-line file via push_files. The documented cache-purge command
+deletes TRACKED files; `git status --short` after. Evolution ledgers live at
+<out-dir>/<ISO>/<cache_key>/, NOT the out-dir root, and load_ledgers_for_run returns {} rather
+than raising — a wrong path silently reads as "no evolution happened", which in THIS lane is
+indistinguishable from your primary finding. VERIFY THE PATH BEFORE BELIEVING A ZERO.
+A REQUEST-side cache_key() is NOT the key a run is recorded under (FFR-3A-2 §1.2). Shell cwd
+persists between Bash calls.
+
+=== DELIVERABLE ===
+Register both arms to frontend/data/hindcast/ with meta.kind="full_forward" — NEVER the backcast
+registry. Report by APPENDING an addendum to docs/handoffs/ffr-3q-window-recut-2026-08-04.md
+(do not rewrite that file) or a new ffr-3q3-<date>.md that it links. Rule 28: matrix cell +
+citation in THIS session. State explicitly that the FH-4/FH-5 lift is the manager's call and that
+you are not making it.
+```
