@@ -713,6 +713,54 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
+> **caiso-165 (2026-08-04) — THE DLAP INTAKE LANDED; caiso-164's ATTRIBUTION IS
+> NOW TESTABLE AND ITS "NOT IN `data/raw`" CLAUSE IS SPENT.** No LP, no solve,
+> keeper unchanged. Prereg
+> `results/calibration/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md`,
+> pushed **before** the probe ran on intaken data; record
+> `results/calibration/FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md`.
+>
+> **What changed in the data contract.** The four `DLAP_*-APND` **load**
+> aggregation points now flow through the whole CAISO intake path —
+> `fetch_caiso_oasis.py` (`DLAPS`, `--nodes`), `fold_caiso_oasis_grp_zips.py`
+> (`NODES`, `--refold`) and `postprocess_oasis_downloads.py` (already
+> node-agnostic) — into `CAISO_dam_hourly_<year>.csv`. **A DLAP prices where
+> load is WITHDRAWN; a `TH_*_GEN` hub prices where power is INJECTED**, which is
+> why caiso-164's hub-only record could not see an intra-SP15 corridor at all:
+> with one southern hub in the basis the corridor is structurally invisible, not
+> merely unmeasured.
+>
+> **Additivity is PROVEN, not asserted** — both consumers of the aggregate select
+> hubs explicitly, and `derive_caiso_loss_surface.py --acceptance` re-runs
+> **6/6 pair-years in the `[0.5×,1.5×]` band with `CAISO_loss_surface.csv`
+> BYTE-UNCHANGED**. The intake perturbs no derived artifact and no keeper.
+>
+> **Identity guards pass WITH the DLAPs included**, which is the precondition for
+> using the decomposition on them at all: MCE is one system reference across all
+> seven nodes to `0.00e+00` $/MWh, and `LMP` reconstructs from its components to
+> `≤3e-05` $/MWh.
+>
+> **THE MODEL-SIDE HALF IS ALREADY CONCLUSIVE, from committed sidecars only.**
+> On the caiso-164 keeper's own P1 hourlies, in the 2,920 belly hours of each
+> year: `LA_BASIN − SP15_rest` separates in **0.00 % of hours in all three years
+> (0 of 8,760)** — a hard copper-plate on exactly the corridor caiso-164 named —
+> and `SDGE − SP15_rest` separates 1.0/20.4/24.9 % but **pocket-dearer in only
+> 76.7/0.0/1.0 %**, i.e. 2024–25 run the pocket CHEAPER than the generation hub.
+> Whatever the congestion verdict, the model's south is not merely
+> under-separated; on the SDGE limb it is **inverted**.
+>
+> **OASIS operational facts this lane paid for, so the next one does not:**
+> (a) the `PRC_LMP` retention boundary is **~2023-04-24 as of 2026-08-04**, moved
+> from the 2023-04-19 recorded on 2026-07-31 — it slid measurably *during the
+> session*, it is a property of the **report not the node**, and near-boundary
+> windows are both ~5× slower and genuinely gappy, so **2023 DLAP coverage is
+> PARTIAL by construction**; (b) a throttled OASIS **hangs rather than 429s**, and
+> `urlopen(timeout=)` is per-socket-operation so it never trips — a stalled read
+> sat >10 min inside a `timeout=180` call, and stalled readers hold the per-IP
+> connection slots, which looks exactly like a ban and is not one.
+> `REQUEST_WALL_CLOCK_S` (SIGALRM) now makes such a request fail so backoff can
+> run.
+
 > **caiso-164 (2026-08-04) — NEW LANE OPENED AND CLOSED IN ONE SESSION; KEEPER
 > PROMOTED to `2026-08-04-caiso164-zonal-loss-surface`.** The CAISO queue was
 > EMPTY of never-adjudicated items after caiso-163, so this session opened a new
@@ -765,6 +813,24 @@ rule-13-admissible mechanism available to carry it.
 >    CAISO's DLAP component record is absent). A DLAP intake would close both
 >    this and item 1. The three zones carrying the quantity under test (NP15,
 >    ZP26, SP15_rest) each have their own measured hub.
+>
+> **AMENDED BY caiso-165 (2026-08-04) — READ THE BLOCK AT THE TOP OF §5.2 FIRST.**
+> Items 1 and 2 above were written when CAISO's DLAP component record was **not
+> in `data/raw`**. **That clause is now SPENT: the intake landed.** The
+> "needs CAISO nodal/DLAP LMP components" half of item 1 and the whole of item 2
+> are no longer data-blocked, and item 2's stated closure route (each of
+> `LA_BASIN` / `SDGE` carrying its **own** measured `dev_z`) is now buildable
+> from committed data — see the prereg §5.1 Arm A, including its declared
+> crosswalk disposition (`DLAP_SDGE → SDGE` a near-identity; **`DLAP_SCE →
+> LA_BASIN` a RECONCILIATION, not an identity**, since SCE's territory spans
+> both the LA basin and much of the `SP15_rest` desert/Kern belt) and its
+> pre-committed rule-14 ruling that the substitution is kept **regardless of what
+> it does to the backcast**. The *published-transfer-limit* half of item 1 is
+> untouched and remains blocked; an intra-SP15 limit chosen to reproduce an
+> observed congestion frequency or basis is an **OUTCOME PIN and stays forbidden**
+> (rule 13 `[R-MEASURED]`, rules 5/21/24). The "do not charter an N–S topology
+> lever" instruction stands unchanged — the corridor caiso-165 measures is
+> **INTRA-SP15**, a different object.
 >
 > **DO-NOT-REDO additions:** `caiso_zonal_loss_surface` is now `K` — do not
 > re-test it. Its S4-2023 miss (NP15−SP15_rest −1.2265 → −1.5665, away from the
