@@ -65,6 +65,20 @@ delivery 2024-01-24; publication = delivery + 60 days). Gap 1 therefore *grows*
 over time: re-running this fetch later recovers fewer early-2024 days, never
 more.
 
+## Schema vs the all-resource corpus (measured 2026-08-04)
+
+Compared against `../SCED/2023-03.part0000.parquet`:
+
+* **188 columns vs 187** — the extra one is `Ancillary Service ECRS`, the
+  service ERCOT introduced mid-2023. A superset, not a conflict.
+* **Numeric columns are `float64` here, `str` in `../SCED/`** (e.g. `HSL`
+  `197.0` vs `'54'`). This mirrors a difference that ALREADY exists in-repo
+  between `../` (coerced, written by this fetcher) and `../SCED/` (raw strings,
+  owner upload), and the shared consumer handles it —
+  `derive_ercot_sced_offer_wall` applies `pd.to_numeric(errors="coerce")` to
+  its columns on read. Any NEW consumer spanning both corpora must do the same
+  rather than assume either dtype.
+
 ## Two publication quirks this intake had to handle (verified 2026-08-04)
 
 Both were discovered by the fetch failing loudly rather than producing quiet

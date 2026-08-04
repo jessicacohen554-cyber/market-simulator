@@ -56,6 +56,41 @@ The rule-22 holdout guard was **not** relaxed and still binds the new range
 path: verified live that `--delivery-range 2025-12-30 2026-01-02` refuses on
 the two 2026 delivery days rather than fetching them.
 
+### 2.0 Two ERCOT publication quirks, found by the fetch failing loudly
+
+The first full-span attempt **died on delivery 2024-08-05**, and the failure was
+correct: two assumptions the fetcher had always carried are false. Both are
+recorded here because any future NP3-965 consumer will hit them.
+
+1. **The member filename is the PUBLICATION stamp, not the delivery day.**
+   `60d_SCED_Gen_Resource_Data-04-OCT-24.csv`, inside the 2024-10-04
+   publication, carries `SCED Time Stamp` values of `08/05/2024` — delivery =
+   publication − 60. Naming an output from the member's own filename would
+   **mislabel every day by 60 days**, silently. Delivery day is now read from
+   the file's own stamps, with the nominal lag used only as a cheap skip test
+   and verified against content before anything is written.
+2. **A publication day can carry more than one document, and a document more
+   than one delivery day.** 2024-10-04 has *both* the ordinary ~10 MB daily
+   document *and* a ~245 MB `Supplemental_60_Day_SCED_Disclosure` holding **32
+   members**. The old "most recent document published that day wins" rule
+   picked the supplemental and then died on its member count. Supplementals
+   are now detected by name, exempted from the nominal-lag skip, and every
+   member read for its true delivery days.
+
+**Consequence for method:** the span is scanned by **publication**, not by
+delivery day — a delivery-driven loop structurally cannot find a day whose
+document does not sit at the nominal lag. Output is **one Parquet per delivery
+day**, so a day that never turns up anywhere is visible as a *missing file*
+rather than silently absent from inside a month shard, and the run prints the
+not-found days grouped into contiguous runs. `fetch_days()`'s original
+single-member contract is untouched, so the earlier day-list intakes are
+unaffected.
+
+Holdout hygiene was re-verified on the new path: a span whose end is past
+`--max-delivery-date` is refused, and a harvested member is kept only if its
+delivery day is inside the requested range — so a supplemental bundle spilling
+into a quarantined year cannot smuggle a day in.
+
 ### 2.1 Coverage, and the two gaps
 
 | Span | Source | Grain |
