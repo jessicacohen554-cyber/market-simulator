@@ -1,0 +1,25 @@
+iso,model_class,compliance_year,month,class_average_factor,matched_nameplate_mw,n_resources,subclass_mix_mw
+CAISO,solar,2026,JAN,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,FEB,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,MAR,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,APR,0.009707,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,MAY,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,JUN,0.422984,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,JUL,0.636505,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,AUG,0.209578,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,SEP,0.394224,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,OCT,0.163676,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,NOV,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,solar,2026,DEC,0.1,12470.4,200,solar_fixed_norcal=1664.2MW; solar_fixed_socal=2030.5MW; solar_thermal_socal=917.0MW; solar_tracking_norcal=2691.3MW; solar_tracking_socal=5167.5MW
+CAISO,wind,2026,JAN,0.077613,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,FEB,0.175116,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,MAR,0.215459,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,APR,0.362472,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,MAY,0.428075,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,JUN,0.387752,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,JUL,0.387315,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,AUG,0.335938,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,SEP,0.220237,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,OCT,0.093929,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,NOV,0.059965,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW
+CAISO,wind,2026,DEC,0.062493,6211.3,97,wind_norcal=1458.5MW; wind_socal=4752.8MW

@@ -49,6 +49,7 @@ from market_sim.config.constants import (
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
     RENEWABLE_ELCC_CURVES_BY_ISO,
+    RENEWABLE_NQC_CURVES_BY_ISO,
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
@@ -1163,6 +1164,7 @@ def resolve_renewable_capacity_credit(
     installed_mw: float | None = None,
     peak_demand_mw: float | None = None,
     curves_enabled: bool = False,
+    nqc_curves_enabled: bool = False,
 ) -> float | None:
     """Resolve one VRE class's adequacy capacity credit (CR-3.1 ladder).
 
@@ -1171,6 +1173,14 @@ def resolve_renewable_capacity_credit(
     the retirement reliability floor, the reserve-margin backstop and the
     CR-1 reserve position all move together. Resolution ladder:
 
+    0. **Published class-average accreditation held behind its own gate**
+       (:data:`RENEWABLE_NQC_CURVES_BY_ISO`, gate
+       ``ScenarioConfig.caiso_nqc_accreditation`` — CAISO's CPUC/CAISO NQC
+       technology factors, FFR-3P). Same registry shape and same evaluator as
+       rung 1; it is a separate registry ONLY because the rung-1 gate ships
+       default-ON and this arm must ship default-OFF pending an owner decision
+       (rules 5/24). ``nqc_curves_enabled=False`` (the default) skips it
+       entirely, so an unarmed run is byte-identical to the pre-FFR-3P ladder.
     1. **Published penetration-indexed ELCC curve**
        (:data:`RENEWABLE_ELCC_CURVES_BY_ISO`, gate
        ``ScenarioConfig.renewable_elcc_curves``) evaluated at the model's
@@ -1191,6 +1201,14 @@ def resolve_renewable_capacity_credit(
     for fuels that are not credit-accredited (thermal), mirroring
     ``RENEWABLE_CAPACITY_CREDIT.get``.
     """
+    if nqc_curves_enabled and iso is not None:
+        nqc_curve = RENEWABLE_NQC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
+        if nqc_curve is not None:
+            credit = evaluate_renewable_elcc_curve(
+                nqc_curve, installed_mw, peak_demand_mw
+            )
+            if credit is not None:
+                return credit
     if curves_enabled and iso is not None:
         curve = RENEWABLE_ELCC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
         if curve is not None:
@@ -1293,6 +1311,7 @@ def _apply_reliability_floor(
         iso=config.iso,
         peak_demand_mw=peak_demand,
         elcc_curves_enabled=config.renewable_elcc_curves,
+        nqc_curves_enabled=config.caiso_nqc_accreditation,
     )
     retention_log: list[dict] = []
     if accredited_mw >= requirement_mw:
