@@ -389,25 +389,59 @@ Three code sites, and nothing else, drive it:
 * `prior_max_gw` rises **only when a year's decision exceeds it**
   (runner.py:1094–1100).
 
-Trace, MISO solar assumed profitable and highest-margin every year, seed 0.618
-GW measured from `vintage_2020`:
+Pending MW are netted from **both** budgets — the per-tech queue cap
+(`group_remaining`, `new_entry.py:1131–1137`) and the ladder — so the trace
+carries both. MISO solar, assumed profitable and highest-margin every year,
+seed 0.618 GW measured from `vintage_2020`:
 
 ```
---- shipped: entry_commissioning_lag ON (lag = 2) ---
-   yr  ladder cap MW  pending MW  remaining   decides  COD yr  new prior max GW
- 2022          1,236           0      1,236     1,236    2024             1.236
- 2023          2,473       1,236      1,236     1,236    2025             1.236
- 2024          2,473       1,236      1,236     1,236    2026             1.236
- 2025          2,473       1,236      1,236     1,236    2027             1.236
-  -> solar COMMISSIONED inside 2021-2025:  2.473 GW   (actual 18.649, band +/-15%)
+== SOLAR, shipped (lag 2), per-tech cap 6.0 GW ==
+   yr  pending  grp_rem   ladder  lad_rem  decides   COD           binding
+ 2022        0    6,000    1,236    1,236    1,236  2024     growth_ladder
+ 2023    1,236    4,764    2,473    1,236    1,236  2025     growth_ladder
+ 2024    1,236    4,764    2,473    1,236    1,236  2026     growth_ladder
+ 2025    1,236    4,764    2,473    1,236    1,236  2027     growth_ladder
+  -> COMMISSIONED in 2021-2025:  2.473 GW   (actual 18.649, band +/-15%)
 
---- control: lag OFF (in-year commissioning) ---
- 2022          1,236           0      1,236     1,236    2022             1.236
- 2023          2,473           0      2,473     2,473    2023             2.473
- 2024          4,946           0      4,946     4,946    2024             4.946
- 2025          9,891           0      9,891     6,000    2025             6.000   <- per-tech queue cap
-  -> solar COMMISSIONED inside 2021-2025: 14.655 GW
+== SOLAR, control (lag 0) ==
+ 2022        0    6,000    1,236    1,236    1,236  2022     growth_ladder
+ 2023        0    6,000    2,473    2,473    2,473  2023     growth_ladder
+ 2024        0    6,000    4,946    4,946    4,946  2024     growth_ladder
+ 2025        0    6,000    9,891    9,891    6,000  2025      per_tech/iso
+  -> COMMISSIONED in 2021-2025: 14.655 GW
 ```
+
+### 5.1 The trace is validated to the megawatt against the leg's own wind number
+
+The same trace, run for **wind** with wind's own measured seed (4.367 GW) and
+per-tech cap (4.0 GW), reproduces the registered leg **exactly**:
+
+```
+== WIND, shipped (lag 2), per-tech cap 4.0 GW ==
+   yr  pending  grp_rem   ladder  lad_rem  decides   COD           binding
+ 2022        0    4,000    8,733    8,733    4,000  2024      per_tech/iso
+ 2023    4,000        0    8,733    4,733        0  2025 per_tech_cap_zero
+ 2024        0    4,000    8,733    8,733    4,000  2026      per_tech/iso
+ 2025    4,000        0    8,733    4,733        0  2027 per_tech_cap_zero
+  -> COMMISSIONED in 2021-2025: 4.000 GW   ==  the leg's reported model wind, to the MW
+  (control, lag 0: 16.000 GW; actual 7.200 GW)
+```
+
+Three things follow, and they are the reason this section is evidence rather
+than speculation:
+
+1. **The cap model is right.** An independent reconstruction of the cap
+   arithmetic lands on the leg's `model_gw = 4.0` for wind exactly.
+2. **Wind's own −44 % miss is a CAP finding, not a margin finding.** Wind is
+   profitable and decides at its cap; in 2023 and 2025 it decides **zero** with
+   `binding_cap = "per_tech_cap_zero"` — the pending row from the previous year
+   consumes the whole 4.0 GW per-tech queue cap. That is a *different failure
+   mode from solar's*, in the same screen, in the same run. It is exactly the
+   distinction this lane was asked to make, drawn twice.
+3. **The solar residual is entirely the margin.** The same validated arithmetic
+   predicts **2.473 GW** of solar if solar were profitable; the leg delivers
+   **0.0**. The 2.473 GW gap between the cap prediction and the observed zero is
+   attributable to nothing but the profitability test.
 
 **The ladder cannot ratchet at all under the shipped configuration.** With a
 COD lag of L years, `(L−1)` years of decisions are pending when the screen
