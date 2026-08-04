@@ -1,0 +1,309 @@
+{
+  "session": "neiso-81",
+  "iso": "NEISO",
+  "keeper_bundle": "results/calibration/neiso_c156_meter_screen_B",
+  "keeper_flag_state": false,
+  "artifact": "data/raw/_processed-legacy/chp_power_only_heat_rates_NEISO.csv",
+  "wiring": {
+    "year": 2023,
+    "generators_total": 602,
+    "generators_moved": 20,
+    "mw_moved": 271.008,
+    "classes": {
+      "CC_CHP": {
+        "n_units_off": 19,
+        "cap_mw": 320.599,
+        "capwt_hr_off": 8.1437,
+        "capwt_hr_on": 10.3632,
+        "pct_dearer": 27.254
+      },
+      "CT_CHP": {
+        "n_units_off": 43,
+        "cap_mw": 74.521,
+        "capwt_hr_off": 6.2962,
+        "capwt_hr_on": 6.7784,
+        "pct_dearer": 7.6579
+      },
+      "CC_REGULAR": {
+        "n_units_off": 214,
+        "cap_mw": 14043.505,
+        "capwt_hr_off": 9.0829,
+        "capwt_hr_on": 9.0829,
+        "pct_dearer": 0.0
+      }
+    },
+    "moved_rows": [
+      {
+        "plant_code": 1595,
+        "name": "Kendall Square Station committed",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 138.71,
+        "hr_off": 6.5982,
+        "hr_on": 10.8586
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP committed",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 33.345,
+        "hr_off": 9.9998,
+        "hr_on": 10.7605
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc01",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.2172,
+        "hr_on": 10.9945
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc00",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.1882,
+        "hr_on": 10.9633
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc04",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.3041,
+        "hr_on": 11.088
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc05",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.3331,
+        "hr_on": 11.1192
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc02",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.2462,
+        "hr_on": 11.0257
+      },
+      {
+        "plant_code": 50002,
+        "name": "Pittsfield Generating LP econc03",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 13.455,
+        "hr_off": 10.2751,
+        "hr_on": 11.0569
+      },
+      {
+        "plant_code": 57666,
+        "name": "Foxwoods CoGen committed",
+        "plant_group": "CC_CHP",
+        "pmax_mw": 5.364,
+        "hr_off": 6.3777,
+        "hr_on": 12.3833
+      },
+      {
+        "plant_code": 61857,
+        "name": "Toray Plastic America's CHP Plant committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 3.399,
+        "hr_off": 9.684,
+        "hr_on": 9.8551
+      },
+      {
+        "plant_code": 61703,
+        "name": "Sikorsky Aircraft CHP committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 1.937,
+        "hr_off": 9.5398,
+        "hr_on": 14.5065
+      },
+      {
+        "plant_code": 61857,
+        "name": "Toray Plastic America's CHP Plant econhi",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 1.196,
+        "hr_off": 9.684,
+        "hr_on": 9.8551
+      },
+      {
+        "plant_code": 61857,
+        "name": "Toray Plastic America's CHP Plant econlo",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 1.196,
+        "hr_off": 9.684,
+        "hr_on": 9.8551
+      },
+      {
+        "plant_code": 54937,
+        "name": "Wellesley College Central Utility Plant committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 1.187,
+        "hr_off": 6.594,
+        "hr_on": 12.5156
+      },
+      {
+        "plant_code": 10108,
+        "name": "Hampton Facility committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 1.091,
+        "hr_off": 6.0704,
+        "hr_on": 11.9081
+      },
+      {
+        "plant_code": 56928,
+        "name": "Fairfield University CHP Plant committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 0.689,
+        "hr_off": 6.3845,
+        "hr_on": 9.8236
+      },
+      {
+        "plant_code": 61703,
+        "name": "Sikorsky Aircraft CHP econlo",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 0.576,
+        "hr_off": 9.5398,
+        "hr_on": 14.5065
+      },
+      {
+        "plant_code": 61703,
+        "name": "Sikorsky Aircraft CHP econhi",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 0.576,
+        "hr_off": 9.5398,
+        "hr_on": 14.5065
+      },
+      {
+        "plant_code": 10408,
+        "name": "Clark University committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 0.508,
+        "hr_off": 5.8608,
+        "hr_on": 10.6863
+      },
+      {
+        "plant_code": 58158,
+        "name": "Wesleyan University Cogen 1 committed",
+        "plant_group": "CT_CHP",
+        "pmax_mw": 0.504,
+        "hr_off": 7.0548,
+        "hr_on": 9.7779
+      }
+    ]
+  },
+  "resolvability": {
+    "2023": {
+      "total_load_twh_basis": 97.739,
+      "c1_vol_band_twh": 1.9548,
+      "actual_CC_CHP_twh": 1.0717,
+      "actual_CT_CHP_twh": 0.7923,
+      "actual_CC_REGULAR_twh": 52.3596,
+      "actual_CC_COMBINED_twh": 53.4313,
+      "CC_CHP_actual_over_band": 0.5482,
+      "CC_CHP_resolvable": false,
+      "CT_CHP_resolvable": false,
+      "CC_CHP_share_of_combined_pct": 2.006
+    },
+    "2024": {
+      "total_load_twh_basis": 105.1721,
+      "c1_vol_band_twh": 2.1034,
+      "actual_CC_CHP_twh": 1.124,
+      "actual_CT_CHP_twh": 0.7694,
+      "actual_CC_REGULAR_twh": 56.6084,
+      "actual_CC_COMBINED_twh": 57.7324,
+      "CC_CHP_actual_over_band": 0.5344,
+      "CC_CHP_resolvable": false,
+      "CT_CHP_resolvable": false,
+      "CC_CHP_share_of_combined_pct": 1.947
+    },
+    "2025": {
+      "total_load_twh_basis": 103.306,
+      "c1_vol_band_twh": 2.0661,
+      "actual_CC_CHP_twh": 1.194,
+      "actual_CT_CHP_twh": 0.2137,
+      "actual_CC_REGULAR_twh": 55.8127,
+      "actual_CC_COMBINED_twh": 57.0067,
+      "CC_CHP_actual_over_band": 0.5779,
+      "CC_CHP_resolvable": false,
+      "CT_CHP_resolvable": false,
+      "CC_CHP_share_of_combined_pct": 2.094
+    }
+  },
+  "boundary": {
+    "year": 2023,
+    "classes": {
+      "CC_CHP": {
+        "n_units": 19,
+        "n_plants": 7,
+        "cap_mw": 320.599,
+        "plants": [
+          1595,
+          10567,
+          50002,
+          52061,
+          57666,
+          58084,
+          58159
+        ]
+      },
+      "CC_REGULAR": {
+        "n_units": 214,
+        "n_plants": 29,
+        "cap_mw": 14043.505,
+        "plants": [
+          568,
+          1682,
+          3236,
+          6081,
+          10307,
+          10726,
+          51030,
+          52026,
+          54324,
+          54805,
+          55026,
+          55041,
+          55042,
+          55048,
+          55068,
+          55079,
+          55100,
+          55107,
+          55126,
+          55149,
+          55170,
+          55211,
+          55212,
+          55294,
+          55317,
+          55661,
+          56047,
+          56798,
+          60903
+        ]
+      }
+    },
+    "plants_in_both_classes": [],
+    "artifact_CC_CHP_plants": [
+      1595,
+      50002,
+      57666
+    ],
+    "artifact_CC_CHP_plants_absent_from_model_class": []
+  },
+  "substitution": {
+    "year": 2023,
+    "CC_CHP_capwt_hr_off": 8.1437,
+    "CC_CHP_capwt_hr_on": 10.3632,
+    "CC_REGULAR_capwt_hr": 9.0829,
+    "CC_REGULAR_cap_mw": 14043.505,
+    "CC_REGULAR_cap_mw_in_traversed_band": 7315.314,
+    "CC_REGULAR_cap_mw_cheaper_than_repriced_CHP": 12312.952,
+    "CC_REGULAR_cheaper_share_pct": 87.677,
+    "CC_CHP_cap_mw": 320.599
+  }
+}
