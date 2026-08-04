@@ -1,0 +1,338 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot163_dam_config_collapse.py",
+  "session": "ercot-163 Phase 0 addendum (no LP, no solve)",
+  "source": "60-Day DAM Gen Resource disclosure, delivery-2023",
+  "reproduces": "results/calibration/ercot151_offline_phase0.json",
+  "train_rule": "resource name with a trailing _<config> segment removed",
+  "year": 2023
+ },
+ "hour_sets": {
+  "ercot151_missed_tail": 91,
+  "ercot163_gap_top100": 100
+ },
+ "ercot151_missed_tail": {
+  "name_grain": {
+   "CC": {
+    "on_gw": 14.619,
+    "off_startable_gw": 48.876,
+    "off_startable_le200_gw": 17.888,
+    "out_gw": 9.838,
+    "n_rows_per_key": 280.7
+   },
+   "CT": {
+    "on_gw": 0.802,
+    "off_startable_gw": 7.805,
+    "off_startable_le200_gw": 5.216,
+    "out_gw": 0.691,
+    "n_rows_per_key": 175.6
+   },
+   "ST": {
+    "on_gw": 3.823,
+    "off_startable_gw": 3.606,
+    "off_startable_le200_gw": 1.529,
+    "out_gw": 1.486,
+    "n_rows_per_key": 42.8
+   }
+  },
+  "train_grain": {
+   "CC": {
+    "on_gw": 14.619,
+    "off_startable_gw": 14.102,
+    "of_which_config_uprate_of_running_train_gw": 0.679,
+    "of_which_wholly_offline_train_gw": 13.423,
+    "n_trains_per_key": 65.4,
+    "mean_configs_per_train": 4.3
+   },
+   "CT": {
+    "on_gw": 0.757,
+    "off_startable_gw": 7.423,
+    "of_which_config_uprate_of_running_train_gw": 0.0,
+    "of_which_wholly_offline_train_gw": 7.423,
+    "n_trains_per_key": 167.2,
+    "mean_configs_per_train": 1.05
+   },
+   "ST": {
+    "on_gw": 3.823,
+    "off_startable_gw": 3.552,
+    "of_which_config_uprate_of_running_train_gw": 0.0,
+    "of_which_wholly_offline_train_gw": 3.552,
+    "n_trains_per_key": 40.0,
+    "mean_configs_per_train": 1.07
+   }
+  },
+  "dam_vs_rt": {
+   "crosstab": {
+    "DAM_OFF": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.0318,
+      "rt_telemetered_hsl_gw": 0.019,
+      "rt_dispatched_gw": 0.0009,
+      "n_train_hours": 21
+     },
+     "OFFLINE_STARTABLE": {
+      "dam_declared_offline_gw": 0.0549,
+      "rt_telemetered_hsl_gw": 0.0378,
+      "rt_dispatched_gw": 0.0009,
+      "n_train_hours": 42
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 12.9528,
+      "rt_telemetered_hsl_gw": 12.7198,
+      "rt_dispatched_gw": 12.4681,
+      "n_train_hours": 2151
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.2761,
+      "rt_telemetered_hsl_gw": 0.2435,
+      "rt_dispatched_gw": 0.2077,
+      "n_train_hours": 53
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0146,
+      "rt_telemetered_hsl_gw": 0.0056,
+      "rt_dispatched_gw": 0.0041,
+      "n_train_hours": 7
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0931,
+      "rt_telemetered_hsl_gw": 0.0711,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 25
+     }
+    },
+    "DAM_ON": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.003,
+      "rt_telemetered_hsl_gw": 0.0036,
+      "rt_dispatched_gw": 0.0001,
+      "n_train_hours": 3
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 0.6706,
+      "rt_telemetered_hsl_gw": 14.7179,
+      "rt_dispatched_gw": 14.3332,
+      "n_train_hours": 3403
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0054,
+      "rt_dispatched_gw": 0.0053,
+      "n_train_hours": 1
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0052,
+      "rt_telemetered_hsl_gw": 0.0209,
+      "rt_dispatched_gw": 0.0047,
+      "n_train_hours": 10
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0252,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 16
+     }
+    },
+    "DAM_OUT": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0004,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 1
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0439,
+      "rt_dispatched_gw": 0.039,
+      "n_train_hours": 16
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0057,
+      "rt_dispatched_gw": 0.0053,
+      "n_train_hours": 2
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.03,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 9
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.4562,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 187
+     }
+    }
+   },
+   "dam_off_cc_block_gw": 13.4233,
+   "of_which_rt_online_gw_dam_basis": 13.2289,
+   "of_which_rt_online_share": 0.9855,
+   "rt_dispatch_of_the_dam_off_block_gw": 12.6816,
+   "rt_genuinely_idle_gw": 0.0867
+  }
+ },
+ "ercot163_gap_top100": {
+  "name_grain": {
+   "CC": {
+    "on_gw": 15.761,
+    "off_startable_gw": 52.024,
+    "off_startable_le200_gw": 18.587,
+    "out_gw": 8.125,
+    "n_rows_per_key": 291.7
+   },
+   "CT": {
+    "on_gw": 0.885,
+    "off_startable_gw": 8.114,
+    "off_startable_le200_gw": 5.39,
+    "out_gw": 0.616,
+    "n_rows_per_key": 182.3
+   },
+   "ST": {
+    "on_gw": 4.165,
+    "off_startable_gw": 3.827,
+    "off_startable_le200_gw": 1.549,
+    "out_gw": 1.249,
+    "n_rows_per_key": 44.6
+   }
+  },
+  "train_grain": {
+   "CC": {
+    "on_gw": 15.761,
+    "off_startable_gw": 14.552,
+    "of_which_config_uprate_of_running_train_gw": 0.52,
+    "of_which_wholly_offline_train_gw": 14.032,
+    "n_trains_per_key": 67.9,
+    "mean_configs_per_train": 4.3
+   },
+   "CT": {
+    "on_gw": 0.83,
+    "off_startable_gw": 7.728,
+    "of_which_config_uprate_of_running_train_gw": 0.0,
+    "of_which_wholly_offline_train_gw": 7.728,
+    "n_trains_per_key": 173.6,
+    "mean_configs_per_train": 1.05
+   },
+   "ST": {
+    "on_gw": 4.165,
+    "off_startable_gw": 3.755,
+    "of_which_config_uprate_of_running_train_gw": 0.0,
+    "of_which_wholly_offline_train_gw": 3.755,
+    "n_trains_per_key": 41.7,
+    "mean_configs_per_train": 1.07
+   }
+  },
+  "dam_vs_rt": {
+   "crosstab": {
+    "DAM_OFF": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.0117,
+      "rt_telemetered_hsl_gw": 0.0066,
+      "rt_dispatched_gw": 0.0002,
+      "n_train_hours": 9
+     },
+     "OFFLINE_STARTABLE": {
+      "dam_declared_offline_gw": 0.0234,
+      "rt_telemetered_hsl_gw": 0.0161,
+      "rt_dispatched_gw": 0.0007,
+      "n_train_hours": 22
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 13.6506,
+      "rt_telemetered_hsl_gw": 13.5104,
+      "rt_dispatched_gw": 13.3078,
+      "n_train_hours": 2507
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.2762,
+      "rt_telemetered_hsl_gw": 0.2483,
+      "rt_dispatched_gw": 0.2175,
+      "n_train_hours": 58
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0154,
+      "rt_telemetered_hsl_gw": 0.006,
+      "rt_dispatched_gw": 0.0043,
+      "n_train_hours": 8
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0545,
+      "rt_telemetered_hsl_gw": 0.036,
+      "rt_dispatched_gw": 0.0003,
+      "n_train_hours": 19
+     }
+    },
+    "DAM_ON": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.0001,
+      "rt_telemetered_hsl_gw": 0.0009,
+      "rt_dispatched_gw": 0.0001,
+      "n_train_hours": 2
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 0.5185,
+      "rt_telemetered_hsl_gw": 15.9214,
+      "rt_dispatched_gw": 15.5326,
+      "n_train_hours": 3997
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0349,
+      "rt_dispatched_gw": 0.0348,
+      "n_train_hours": 7
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0016,
+      "rt_telemetered_hsl_gw": 0.0116,
+      "rt_dispatched_gw": 0.0019,
+      "n_train_hours": 7
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0361,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 28
+     }
+    },
+    "DAM_OUT": {
+     "OFFLINE_OTHER": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0018,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 2
+     },
+     "ONLINE": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0422,
+      "rt_dispatched_gw": 0.0384,
+      "n_train_hours": 20
+     },
+     "ONTEST": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0023,
+      "rt_dispatched_gw": 0.0001,
+      "n_train_hours": 4
+     },
+     "OTHER": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.0107,
+      "rt_dispatched_gw": 0.0007,
+      "n_train_hours": 5
+     },
+     "OUT": {
+      "dam_declared_offline_gw": 0.0,
+      "rt_telemetered_hsl_gw": 0.1644,
+      "rt_dispatched_gw": 0.0,
+      "n_train_hours": 94
+     }
+    }
+   },
+   "dam_off_cc_block_gw": 14.0318,
+   "of_which_rt_online_gw_dam_basis": 13.9269,
+   "of_which_rt_online_share": 0.9925,
+   "rt_dispatch_of_the_dam_off_block_gw": 13.5307,
+   "rt_genuinely_idle_gw": 0.035
+  }
+ }
+}
