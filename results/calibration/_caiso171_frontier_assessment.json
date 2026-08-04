@@ -1,0 +1,164 @@
+{
+ "probe": "caiso171_frontier_assessment",
+ "keeper_bundle": "caiso166_measured_loss_zones",
+ "f1_keeper_state": {
+  "ledgered": [
+   {
+    "criterion": "price_tail",
+    "year": 2023
+   },
+   {
+    "criterion": "price_tail",
+    "year": 2024
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2025
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2024
+   }
+  ],
+  "raw_exceptions_type": "list",
+  "governance_keys": [
+   "attested_by",
+   "levers_trace_to_measured_input",
+   "no_fit_to_price_residuals",
+   "no_pinning_to_actuals",
+   "note",
+   "outage_filter_exogenous_net_load"
+  ]
+ },
+ "f2_dof": {
+  "CAISO": {
+   "n_entries": 11,
+   "n_residual": 9,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 4,
+   "iso_specific": [
+    "battery_dispatch_adder",
+    "CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]",
+    "WECC_import_simultaneous.cap_mw"
+   ],
+   "holds_complete_marker": false
+  },
+  "PJM": {
+   "n_entries": 19,
+   "n_residual": 6,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 1,
+   "iso_specific": [
+    "wefor_residual"
+   ],
+   "holds_complete_marker": true
+  },
+  "NYISO": {
+   "n_entries": 33,
+   "n_residual": 6,
+   "n_core_residual": 4,
+   "n_iso_specific_residual": 2,
+   "iso_specific": [
+    "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]"
+   ],
+   "holds_complete_marker": true
+  },
+  "NEISO": {
+   "n_entries": 12,
+   "n_residual": 5,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": true
+  },
+  "MISO": {
+   "n_entries": 27,
+   "n_residual": 2,
+   "n_core_residual": 2,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": false
+  }
+ },
+ "f3_ns_basis": {
+  "2023": {
+   "measured_basis": 5.947096542824075,
+   "measured_dMCC": 4.77080242824074,
+   "measured_dMCL": 1.1762941192129628,
+   "measured_congestion_share": 0.8022069912894549,
+   "model_basis": 0.23624989203109584,
+   "model_separated_pct": 100.0,
+   "model_share_of_measured": 0.03972524917493752
+  },
+  "2024": {
+   "measured_basis": 8.576498797814208,
+   "measured_dMCC": 7.474897973588342,
+   "measured_dMCL": 1.101600841302368,
+   "measured_congestion_share": 0.8715558801932387,
+   "model_basis": 0.12653792667783026,
+   "model_separated_pct": 99.92009132420091,
+   "model_share_of_measured": 0.014754030713568046
+  },
+  "2025": {
+   "measured_basis": 5.726817916666667,
+   "measured_dMCC": 4.677448150684931,
+   "measured_dMCL": 1.0493696837899544,
+   "measured_congestion_share": 0.8167621680800022,
+   "model_basis": 0.10914955315310408,
+   "model_separated_pct": 100.0,
+   "model_share_of_measured": 0.01905937201800111
+  }
+ },
+ "f4_intra_sp15": {
+  "2023": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 0.0,
+    "belly_mean": 0.0,
+    "belly_sd": 0.0,
+    "ratio_mean": 0.0,
+    "ratio_sd": 0.0
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 1.13013698630137,
+    "belly_mean": 0.04893556414896325,
+    "belly_sd": 0.727756268855902,
+    "ratio_mean": 0.0008648104135772919,
+    "ratio_sd": 0.013580168853551709
+   }
+  },
+  "2024": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": 0.5819533078184426,
+    "belly_sd": 0.6531134451946762,
+    "ratio_mean": 0.025818365604148307,
+    "ratio_sd": 0.003815114894780436
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": -2.089867104794646,
+    "belly_sd": 8.907382987212419,
+    "ratio_mean": -3.1111318792113263,
+    "ratio_sd": 161.36379878864324
+   }
+  },
+  "2025": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": 0.6648975359131865,
+    "belly_sd": 0.5639304462609419,
+    "ratio_mean": 0.02736344155521237,
+    "ratio_sd": 0.0026088454044952895
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": -4.761143660427759,
+    "belly_sd": 13.408538061144945,
+    "ratio_mean": -0.06699346561166061,
+    "ratio_sd": 16.705647050457827
+   }
+  }
+ }
+}

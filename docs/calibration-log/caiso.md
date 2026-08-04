@@ -6046,3 +6046,109 @@ marker and the holdout spend freeze is ACTIVE — only 2023/2024/2025 were read,
 no out-of-training year was solved, scored or touched, and **no marker was
 written**. **Rule 25:** every number is CAISO's own, from CAISO's own
 disclosures.
+
+---
+
+## caiso-171 (2026-08-04) — FRONTIER + `complete`-DECLARATION ASSESSMENT: **NO, NOT NOW**
+
+**No LP, no solve, no derive, no `ScenarioConfig` field, keeper UNCHANGED, nothing
+registered, `calibration-complete.json` UNTOUCHED.** One network call — the caiso-141
+wall probe, which is a network probe by design. No cell verdict moves: no mechanism was
+tested. Full record `results/calibration/ASSESSMENT-caiso171-frontier-2026-08-04.md`;
+instrument `scripts/probes/caiso171_frontier_assessment.py` (committed artifacts only);
+record `results/calibration/_caiso171_frontier_assessment.json`.
+
+**Preconditions re-verified from committed artifacts before anything else**, per the
+caiso-170 lesson that a prompt can be ahead of the repo. `calibration_verdict.py --run-id
+2026-08-04-caiso-166-measured-dlap` → **CALIBRATED-WITH-CAVEATS**, 0 FAIL, 2 ledgered
+caveats (C3a, C3c), D-10 free-class C1 12/12 · free 8/8. `audit_keepers.py --iso CAISO` →
+**PASS**, 0 failures / 0 warnings. `calibration-complete.json` `complete` = NEISO, NYISO,
+PJM — **CAISO absent**; `final` deliberately empty. All as briefed.
+
+**THE RECOMMENDATION IS NO, AND THE BLOCKER IS GOVERNANCE RATHER THAN CALIBRATION.** The
+**holdout spend freeze is ACTIVE** — ALL ISOs, BOTH tiers — and it **outranks both marker
+blocks and is checked first**. A `complete` marker declared today authorizes **nothing**:
+2022 still cannot be solved, scored or registered. The freeze's own stated reason is
+material to this keeper (the CAMPD economic-layup detector means the availability envelope
+every keeper is calibrated against is about to change) and its `lifts_when` is recorded
+**HELD, not lifted**. On substance CAISO is at least as strong as the three marker-holding
+ISOs — zero failing criteria against NYISO's unledgered C3a-2025 FAIL.
+
+**§1 — every queue item closed on a measurement, 16 of 16 evidence documents verified
+present.** Items 1/4/5 closed with **no solve spent**; 6/7/8 promoted; 2/3/9 closed on
+measured refusals. Nothing struck untried. Three flags:
+* **A stale premise number, do not re-quote it.** `FINDING-caiso165`'s "`LA_BASIN −
+  SP15_rest` separates in **0.00 %** of belly hours in all three years" was measured on
+  the **caiso-164** keeper and is stale for caiso-166. Re-measured: **0.00 / 100.00 /
+  100.00 %** — but ratio sd **0.00382 / 0.00261**, a constant ~2.6 % **loss** wedge, not
+  congestion. The conclusion (the corridor never binds) **survives**; the number does not.
+  The SDGE limb is not a loss wedge and stays **inverted** (model −2.090/−4.761 vs
+  measured +4.038/+6.451).
+* **`pumped_storage_cycling_depth` closed on CAISO's own data, no transfer (rule 25):**
+  duration is data-walled (EIA-860's generator table has **no MWh column**; PS is absent
+  from the energy-storage table, which carries BA/CE/CP/FW only — so the shipped 10.0 h is
+  a DOE *national* average), the adder is wrong-signed and rule-13-refused at PJM, RTE is
+  a cross-ISO constant. Cell left `U`.
+* **`cc_steam_part_capacity` bounded immaterial:** CAISO 54912 = Martinez Refining STG1,
+  prime mover CA / ES1 OG / Unit Code CC1 with GTG1+GTG2 siblings — matches the miso-125
+  predicate exactly, at **20.0 MW ≈ 0.04 %** of fleet. Cell left `U`.
+
+**§2 — all three walls re-verified, all three hold.** The caiso-141 survey re-ran against
+**live** endpoints: **5/5 `unchanged`** (CISO PS rows 0; Outlook hydro corr 0.950 /
+287 MW vs WAT = the same PS-NET feed; storage.csv battery-only; CDEC CTG/WSN/SHV **0**
+hourly sensors ⇒ Helms+Eastwood 60.3 % uninstrumented; sub-BA demand-only). **Arm B's wall
+is stronger than "nothing on disk":** the only published intra-SP15 numbers are the LCT
+pocket import capabilities, and they are **already armed per-year**
+(`caiso_per_year_import_caps = True`) at 12,008/15,224/15,174 (LA Basin) and
+1,436/2,074/2,071 MW (SDG&E) — the published limit does not bind, so any tighter one must
+be **invented**. C3c: the only `data/raw` OFO hit is a **price** series
+(`gas-prices/pge_socal_citygate_weekly.csv`), not a declaration record.
+
+**§2.1 — carry this: the C3a caveat WIDENED at the last promotion.** Still 2 of 3 slots
+(slots are per criterion), but C3a now covers **two years**: `price_mean` **2024** was
+ledgered by the OWNER on 2026-08-04 (`AMENDMENT-caiso166-S3-recharter-2026-08-04.md` §4)
+when caiso-166 moved it **+9.5 % PASS → +11.5 %**; 2025 reads **+14.4 %** against the
+**+10.9 %** the caiso-145 text describes. The grounds are sound and measured (losses
+consume MWh so the direction is physically obligatory; the bias pre-existed; against
+CAISO's **own DA** basis the arm sits +1.8 % / +11.3 %) — but the coverage widened rather
+than narrowed, and a declaration must not inherit the single-year framing.
+
+**§3 — DOF: CAISO carries the most ISO-specific residual of any ISO measured.**
+`n_entries 11 / n_residual 9` confirmed. Five entries are the cross-ISO CORE every ISO
+carries, so the comparable statistic is the remainder: **CAISO 4** · NYISO 2 · PJM 1 ·
+NEISO 0 · MISO 0 — and the last three hold the marker. Two of CAISO's four are largely
+superseded on the binding path (`WECC_import_simultaneous.cap_mw` 7,500 is **not** in it —
+the published MIC sum 16,055/16,452/16,148 is, binding 0/0/0 h; the import ladder is
+superseded by measured hub prices on the binding seam). Two are live:
+`battery_dispatch_adder` 5.0, and **`CAISO_TAC_ZONE_WEIGHTS['PGE-TAC'] = {NP15 0.86,
+ZP26 0.14}`** — a residual-identified split of PG&E load across **Path 15**, sitting on
+the exact boundary of the largest open defect. **Its stated closure route does not check
+out:** the wired `load` dataset is `SLD_FCST` at **TAC-area** grain and the committed
+series carries only `CA ISO-TAC / PGE-TAC / SCE-TAC / SDGE-TAC / VEA-TAC`. NP15/ZP26 is
+**sub-TAC**; whether OASIS publishes it at all is **UNVERIFIED**. Filed as a FOURTH open
+data question, not an available lever.
+
+**§4 — two known-open root-cause issues, NAMED not buried.** (1) **The N–S congestion
+majority.** Re-measured on the current keeper with annual means (clock-invariant, so the
+caiso-168 Feb-29/UTC defect cannot touch it): measured `NP15−ZP26`
+**+5.947/+8.576/+5.727** with congestion share **80.2/87.2/81.7 %**, against a model
+**+0.236/+0.127/+0.109** — the model reproduces **4.0/1.5/1.9 %**. caiso-164 fixed the
+SIGN and represented the loss minority; the congestion majority is unrepresented, its
+successor hypothesis named-but-unadjudicated at caiso-163, and an N–S topology lever
+against it stays FORBIDDEN. (2) **The caiso-170 within-day storage placement pointer** —
+untested, explicitly a pointer not a verdict, and **not a bound**: in the anchor-live
+overnight hours the model charges 23.3/40.8/21.8 MW against a bound of 632/803/833. Carry
+caiso-170's framing correction — the overnight "over-position" reverses sign in 2024/2025.
+
+**What would flip it to YES**, in order: (1) the owner lifts the freeze; (2) the CAISO
+keeper is re-audited on the corrected availability envelope; (3) the two live ISO-specific
+DOF entries are discharged or explicitly accepted, starting with the **no-LP** question of
+whether CAISO publishes sub-TAC load; (4) the declaration NAMES §4's two open items and
+§2.1's widened C3a. Items 3–4 are honesty conditions, not blockers — **with the freeze
+lifted, CAISO is declarable on the NYISO precedent.**
+
+**Matrix (rule 28 duty b):** §5.2 header re-stamped with the assessment and its verdict;
+no cell moved (nothing was tested). **Rule 22:** CAISO holds no `complete` marker, the
+freeze is active, only 2023/2024/2025 were read, **no marker was written and
+`calibration-complete.json` was not touched** — the declaration is the owner's act.
+**Rule 25:** every number is CAISO's own.
