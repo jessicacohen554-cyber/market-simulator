@@ -426,11 +426,6 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the hash at its default; an armed run enters the key as a distinct
     # scenario.
     "pjm_offer_midcurve_level_segments",
-    # PJM seam envelope grain (pjm-151, rule 14 [R-ACCURATE] repair, default
-    # off). Off runs take the legacy border-zone-summed path and are
-    # byte-identical, so they are dropped from the hash; an armed run enters
-    # the key as a distinct scenario.
-    "pjm_seam_envelope_by_neighbor",
     # PJM mid-curve PEAK-row scope + the CT_FAST measured max()-seam reprice
     # (pjm-123 dispersion composite legs 2 and 3, both default-off). Neither
     # branch is reachable at its default — an empty peak scope targets no extra
@@ -733,7 +728,6 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "neiso_operable_capacity_availability": "False",
     "pjm_dam_availability": "False",
     "pjm_offer_midcurve_level_segments": "None",
-    "pjm_seam_envelope_by_neighbor": "False",
     "pjm_offer_midcurve_peak_segments": "None",
     "pjm_ct_measured_max_reprice": "False",
     "nyiso_east_reserve_families": "False",
@@ -9193,43 +9187,6 @@ class ScenarioConfig:
     # pjm_seam_flow_percentile knob with the import cap (one p90 envelope, both
     # directions). Requires --reference-price-interface; PJM-only (no seam map →
     # no-op, byte-identical). Default off; opt-in.
-    pjm_seam_envelope_by_neighbor: bool = False  # PJM reference-price seams:
-    # build each seam's measured deliverability envelope from that seam's OWN
-    # tie lines (interchange.spec.PJM_TIE_NEIGHBOR ->
-    # eia_loader.pjm_neighbor_interchange_envelope) instead of summing a
-    # per-model-ZONE envelope over the neighbor's border_zones. A rule 14
-    # [R-ACCURATE] internal-consistency repair, not a new lever (pjm-151,
-    # keeper-note item 12): the zone path attributes the SAME physical seam by
-    # a different rule than INTERFACE_NEIGHBORS does — envelopes._PJM_TIE_ZONE
-    # puts the whole TVA tie on PJM_Dominion while the TVA interface's
-    # border_zones spans PJM_AEP_Ohio + PJM_Dominion — and because a zone
-    # bucket holds every tie that lands in it, each neighbor's cap absorbed
-    # other neighbors' ties. Measured at p90 on PJM's own settlement-grade
-    # tie-line file (scripts/probes/pjm151_seam_envelope_attribution.py, ties
-    # netted within the hour before the directional clip exactly as
-    # pjm_zonal_interchange does): the TVA EXPORT cap ran 124x / 53x / 40x the
-    # direct construction in 2023/24/25 and bound in 0.000/0.000/0.097 of
-    # (month x hod) cells, LGEE's 33x / 42x / 26x at 0.000/0.000/0.014 — so
-    # pjm_seam_export_limit, armed on the keeper precisely to fix the
-    # structural over-export, was effectively INERT on two of the five seams.
-    # It also LOOSENS where the zone path was too tight, which is what a
-    # consistency repair looks like and a residual-fitted one would not: the
-    # legacy LGEE IMPORT cap is 0 MW against a measured p90 of 518/539/549 MW,
-    # and the legacy Carolinas EXPORT cap is 0.67/0.97/0.81x measured. Other
-    # legs: TVA import 2.05x/2.20x/2.38x, Carolinas import 1.79x/1.73x/1.67x,
-    # MISO import 1,538/2,139/2,323 MW against a netted 0.1/11/24 MW. NYISO
-    # reproduces at ratio 1.00 (its border zone holds only its own four ties)
-    # — the control the measurement carries.
-    # ZERO new parameters: the tie -> interface map is an identity read off
-    # PJM's own tie labels (rule 5 [R-NO-MAGIC]), and both paths read the same
-    # measured file at the same percentile, so rule 13 [R-MEASURED] is
-    # unchanged — forward-reproducible and flow-responsive either way. Does NOT
-    # replace _PJM_TIE_ZONE, which stays the correct grain for the genuinely
-    # per-zone objects (the measured zonal net-position schedule feeding
-    # load_demand, and the star topology's per-border link caps).
-    # Effective only with pjm_seam_flow_limit and/or pjm_seam_export_limit;
-    # PJM-only; default off (registered in _CACHE_KEY_OPTIONAL_FIELDS, so an
-    # off run's cache key is byte-stable).
     pjm_seam_measured_ladder: bool = False  # PJM reference-price seams: price
     # every seam band (MISO/NYISO/Carolinas/TVA/LGEE, import + export) at the
     # MEASURED per-year Q-Q band ladder
@@ -10963,7 +10920,6 @@ TIER_TAGS: dict[str, int] = {
     "pjm_seam_flow_percentile": 3,
     "pjm_seam_export_limit": 1,
     "pjm_seam_measured_ladder": 1,
-    "pjm_seam_envelope_by_neighbor": 1,
     "miso_pjm_border_anchor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
