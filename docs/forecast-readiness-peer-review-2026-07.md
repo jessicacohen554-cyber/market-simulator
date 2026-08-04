@@ -195,6 +195,25 @@ this list verbatim until the underlying item changes state:
 > on the decision basis. Each new `score.json` carries both bases (`additions` = decision,
 > `additions_cod_basis` = COD) plus an `additions_basis` provenance block, so the two ARE
 > comparable within a single run.
+>
+> **Holdout incident, disclosed (2026-08-04).** On 2026-08-04 a harness defect caused two
+> unregistered ERCOT diagnostic runs (FFR-3Q, base-2021 T1-FF window) to **solve 2022 — a
+> validation-tier holdout year — under an active holdout spend freeze**, reading measured 2022
+> demand, renewable CF, outage and hydro. Two predicates disagreed about what a "forward year"
+> is: the runner un-bridged any year at/above `crossover_forward_year`, which a full-forward
+> window points at its own base year, while the window guard computed its solve-year set from a
+> different flag and so never policy-checked the year. **No number from those runs was ever
+> read or reported** — no scorer ran (scoring is independently bounded to 2023–2025 on both
+> sides), nothing was registered, no marker was spent, and the lane refused to report the
+> re-probe the runs were launched for. On that basis owner decision D-11 determined ERCOT's
+> 2022 validation year is **NOT spent**, conditional on the artifacts being made unusable: the
+> two bundles are gone and their two cache keys are mechanically refused
+> (`results/cache.CONTAMINATED_CACHE_KEYS`), so no later run can silently cache-hit the
+> contaminated solve. The seam is fixed and regression-tested (FFR-3U,
+> `docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`); an audit of every committed artifact
+> (82 hindcast-harness legs replayed through the fixed predicate) found **no other run
+> affected**. Disclosed here because a holdout-discipline incident is material to how any
+> out-of-sample claim in this program should be read, whatever the determination.
 
 (Wording lives here; the pack's every-prompt footer references it. FFR-3B's DOF-ledger stub and
 any future FF-G4/weather-posture decisions shrink it item by item.)

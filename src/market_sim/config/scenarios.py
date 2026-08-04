@@ -998,6 +998,60 @@ def _normalize_cache_key_paths(value, roots: tuple[tuple[str, str], ...]):
 # min, 2.04x overall and 2.20x on the warm-startable years 2027-2050.
 FORECAST_BUNDLE_XYEAR_WARMSTART = False
 
+# First year of the GENUINE T1-X crossover forward window (FF-0E, plan §2.2):
+# 2023-2025 are the realized years, 2026/2027 the pure-forward-driver years. A
+# crossover forward year is un-bridged (SOLVED) because a forecast-mode solve of
+# 2026+ reads no measured H1-2026 actuals, which rule 22 ``[R-HOLDOUT]``
+# explicitly permits. Declared here — in ``src`` — because it is half of the
+# bridge predicate below and ``src`` must not import ``scripts``;
+# ``scripts/run_capacity_hindcast.CROSSOVER_FORWARD_YEAR`` aliases it with a
+# drift check, the same pattern ``HINDCAST_BRIDGE_YEARS`` already uses.
+CROSSOVER_FORWARD_BOUNDARY_YEAR = 2026
+
+
+def crossover_unbridges_year(
+    year: int,
+    *,
+    crossover_forward_year: int | None,
+    start_year: int | None,
+) -> bool:
+    """True when ``year`` is a GENUINE crossover forward year, so NOT a bridge.
+
+    THE single definition of the un-bridging clause (FFR-3U; rule 19
+    ``[R-ONE-MECH]`` applied to the guard itself). A quarantined bridge year
+    (``runner.HINDCAST_BRIDGE_YEARS`` = {2022, 2026}) is un-bridged — that is,
+    solved — only for a **genuine T1-X crossover**, which requires BOTH:
+
+    * the boundary sits **past** the window's own base year (a plain T1-X, not
+      a T1-FF full-forward hindcast, whose boundary IS its base year), and
+    * ``year >= CROSSOVER_FORWARD_BOUNDARY_YEAR`` (2026) — the forecast-mode
+      window rule 22 permits.
+
+    The clause is *scoped*, not deleted: a T1-X crossover's forward years
+    (2026/2027) legitimately solve on forward drivers against no measured
+    actuals, and that path is unchanged. What is closed is FFR-3Q's breach —
+    a T1-FF run points ``crossover_forward_year`` at its **own base year**, so
+    at base 2021 the un-scoped ``year >= crossover_forward_year`` test made
+    EVERY year >= 2021 a "forward year" and un-bridged 2022 (a validation-tier
+    holdout, solved with measured data read) and would equally have un-bridged
+    2026 (locked-test tier) for any window that reached it. Both exposures are
+    closed by the two conjuncts above, independently: the full-forward test
+    alone closes both for T1-FF, and the 2026 floor closes 2022 for any run
+    whose boundary is ever pointed below 2026.
+
+    See ``docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`` §1 and owner
+    decision D-11 (``docs/handoffs/ffr-owner-sitting-2026-08-02.md``
+    Addendum L).
+    """
+    if crossover_forward_year is None:
+        return False
+    # A full-forward hindcast (boundary at/below its own base) never un-bridges:
+    # its "forward" years are 2021-2025 realized years running the forecast
+    # INPUT STACK, which is a statement about drivers, not about legality.
+    if start_year is not None and crossover_forward_year <= start_year:
+        return False
+    return year >= crossover_forward_year and year >= CROSSOVER_FORWARD_BOUNDARY_YEAR
+
 
 @dataclass
 class ScenarioConfig:
@@ -10676,6 +10730,22 @@ class ScenarioConfig:
         return (
             self.crossover_forward_year is not None
             and year >= self.crossover_forward_year
+        )
+
+    def is_crossover_unbridged_year(self, year: int) -> bool:
+        """True when ``year`` is a genuine crossover forward year (NOT a bridge).
+
+        The bridge-legality half of the crossover seam, kept SEPARATE from
+        :meth:`is_crossover_forward_year` (the input-stack half) because FFR-3Q
+        proved they are different questions: a T1-FF year is a forward year
+        *for its drivers* (no measured overlays, growth-scaled demand) while
+        still being a quarantined bridge year *for rule 22*. Thin delegate to
+        :func:`crossover_unbridges_year`, the single definition.
+        """
+        return crossover_unbridges_year(
+            year,
+            crossover_forward_year=self.crossover_forward_year,
+            start_year=self.start_year,
         )
 
     @property
