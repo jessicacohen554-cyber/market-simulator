@@ -1,0 +1,81 @@
+miso-127 — overnight gas composition (h1-3), keeper 2026-08-04-miso-126-steampart-b
+NO LP SOLVED. Matched-plant, committed artifacts only.
+
+=== 2023 ===
+  P1 COAL_PRB hod r = 0.9876 (bar 0.9) -> PASS
+  P2 CC_REGULAR  matched  40/40  plants, 0.931 of the MODEL class (  9.72 TWh unmatched) -> gated
+  P2 CC_CHP      matched  14/14  plants, 1.615 of the MODEL class (-12.79 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 CT_PEAKER   matched  92/94  plants, 0.845 of the MODEL class (  2.16 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 CT_CHP      matched   6/8   plants, 1.644 of the MODEL class ( -3.55 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 ST_GAS      matched  18/22  plants, 0.605 of the MODEL class (  8.33 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 ST_CHP      matched   3/9   plants, 0.416 of the MODEL class (  1.36 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 COAL_PRB    matched  31/34  plants, 0.960 of the MODEL class (  4.98 TWh unmatched) -> gated
+  P3 CT_PEAKER+ST_GAS  model    874.5 MW   measured   1805.7 MW   delta    -931.2 MW  [MATERIAL, model_SHORT]
+  P4 per-class overnight mean MW (model / measured / delta):
+       CC_REGULAR    13662.3 /   14419.7 /    -757.3     (class_hourly   14655.2)
+       CC_CHP         3478.8 /    3699.2 /    -220.4     (class_hourly    1999.5)
+       CT_PEAKER       235.3 /     743.9 /    -508.6     (class_hourly     312.0)
+       CT_CHP         1023.5 /    1275.5 /    -252.0     (class_hourly     599.4)
+       ST_GAS          639.2 /    1061.8 /    -422.6     (class_hourly    1365.5)
+       ST_CHP          111.1 /     106.7 /      +4.3     (class_hourly     215.9)
+  B  one-sided class bound: model FULL class 1677.4 MW vs measured LOWER BOUND 1805.7 MW -> gap +128.3 MW  [model_SHORT_at_class_grain]
+  P5 closure 0.0585 MW (bar 1.0) -> PASS   |   P6 quantization bound 22.50 MW
+  D  post-hoc descriptive (no verdict) — shape vs level, matched machines:
+       CT_PEAKER   annual  11.771 /  17.952 TWh ( -6.181)   night   -508.6 MW   peak   -750.8 MW
+       ST_GAS      annual  12.763 /  15.497 TWh ( -2.734)   night   -422.6 MW   peak   -175.2 MW
+  reader-only: |delta| at miso-105's stack slope = $0.50/MWh against miso-114's $8.53/MWh energy gap
+
+=== 2024 ===
+  P1 COAL_PRB hod r = 0.9776 (bar 0.9) -> PASS
+  P2 CC_REGULAR  matched  40/40  plants, 0.935 of the MODEL class (  9.50 TWh unmatched) -> gated
+  P2 CC_CHP      matched  14/14  plants, 1.670 of the MODEL class (-13.98 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 CT_PEAKER   matched  91/93  plants, 0.865 of the MODEL class (  2.49 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 CT_CHP      matched   6/8   plants, 1.590 of the MODEL class ( -3.33 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 ST_GAS      matched  17/22  plants, 0.611 of the MODEL class (  8.28 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 ST_CHP      matched   3/9   plants, 0.279 of the MODEL class (  2.00 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 COAL_PRB    matched  31/32  plants, 0.968 of the MODEL class (  3.85 TWh unmatched) -> gated
+  P3 CT_PEAKER+ST_GAS  model   1392.3 MW   measured   1986.1 MW   delta    -593.8 MW  [MATERIAL, model_SHORT]
+  P4 per-class overnight mean MW (model / measured / delta):
+       CC_REGULAR    14791.2 /   15036.5 /    -245.3     (class_hourly   15753.1)
+       CC_CHP         3651.1 /    3893.2 /    -242.2     (class_hourly    2021.5)
+       CT_PEAKER       648.4 /     820.5 /    -172.1     (class_hourly     759.5)
+       CT_CHP         1015.6 /    1409.7 /    -394.1     (class_hourly     612.8)
+       ST_GAS          743.9 /    1165.6 /    -421.7     (class_hourly    1502.3)
+       ST_CHP           87.6 /     100.6 /     -13.1     (class_hourly     282.3)
+  B  one-sided class bound: model FULL class 2261.8 MW vs measured LOWER BOUND 1986.1 MW -> gap -275.7 MW  [UNRESOLVED (model long by at most 276 MW)]
+  P5 closure 0.1034 MW (bar 1.0) -> PASS   |   P6 quantization bound 21.36 MW
+  D  post-hoc descriptive (no verdict) — shape vs level, matched machines:
+       CT_PEAKER   annual  15.978 /  18.155 TWh ( -2.178)   night   -172.1 MW   peak   -204.7 MW
+       ST_GAS      annual  13.011 /  16.811 TWh ( -3.800)   night   -421.7 MW   peak   -447.7 MW
+  reader-only: |delta| at miso-105's stack slope = $0.33/MWh against miso-114's $7.01/MWh energy gap
+
+=== 2025 ===
+  P1 COAL_PRB hod r = 0.9712 (bar 0.9) -> PASS
+  P2 CC_REGULAR  matched  39/40  plants, 0.954 of the MODEL class (  5.95 TWh unmatched) -> gated
+  P2 CC_CHP      matched  14/14  plants, 1.776 of the MODEL class (-13.90 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 CT_PEAKER   matched  91/94  plants, 0.823 of the MODEL class (  3.09 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 CT_CHP      matched   6/8   plants, 1.446 of the MODEL class ( -2.51 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 ST_GAS      matched  18/23  plants, 0.629 of the MODEL class (  7.53 TWh unmatched) -> REPORTED ONLY (below 0.90)
+  P2 ST_CHP      matched   3/9   plants, 0.406 of the MODEL class (  1.12 TWh unmatched) -> CHP add-back, uninterpretable
+  P2 COAL_PRB    matched  30/31  plants, 0.975 of the MODEL class (  3.68 TWh unmatched) -> gated
+  P3 CT_PEAKER+ST_GAS  model   1191.7 MW   measured   1889.2 MW   delta    -697.5 MW  [MATERIAL, model_SHORT]
+  P4 per-class overnight mean MW (model / measured / delta):
+       CC_REGULAR    13571.9 /   14154.1 /    -582.2     (class_hourly   14172.5)
+       CC_CHP         3381.4 /    3859.5 /    -478.1     (class_hourly    1778.1)
+       CT_PEAKER       480.1 /     729.6 /    -249.5     (class_hourly     681.0)
+       CT_CHP          924.5 /    1293.9 /    -369.4     (class_hourly     622.6)
+       ST_GAS          711.6 /    1159.6 /    -448.0     (class_hourly    1400.6)
+       ST_CHP           86.0 /      98.2 /     -12.2     (class_hourly     190.0)
+  B  one-sided class bound: model FULL class 2081.6 MW vs measured LOWER BOUND 1889.2 MW -> gap -192.4 MW  [UNRESOLVED (model long by at most 192 MW)]
+  P5 closure 0.0403 MW (bar 1.0) -> PASS   |   P6 quantization bound 21.42 MW
+  D  post-hoc descriptive (no verdict) — shape vs level, matched machines:
+       CT_PEAKER   annual  14.412 /  18.662 TWh ( -4.250)   night   -249.5 MW   peak   -574.5 MW
+       ST_GAS      annual  12.762 /  15.551 TWh ( -2.789)   night   -448.0 MW   peak   -233.7 MW
+  reader-only: |delta| at miso-105's stack slope = $0.45/MWh against miso-114's $8.54/MWh energy gap
+
+VERDICT: P3 UNAVAILABLE ON COVERAGE (P2 fails for the primary classes; its delta is descriptive only, per the pre-registration's own P2 rule). Adjudication falls to the one-sided class bound B.
+  matched-machine delta material in 3/3 years; model long in 0/3
+  one-sided class bound: model short at class grain in 1/3, unresolved in 2/3
+  miso-114's mispriced-marginal-unit reading required the model to hold MORE expensive gas online overnight than the market. It is CONFIRMED in ZERO years by any construction here: on matched machines the model is short in 3/3 years, and the one-sided class bound puts it short at class grain in 1/3 with 2/3 unresolved. No construction available from committed artifacts finds the model long.
+
+wrote results/calibration/_miso127_overnight_gas_composition.json

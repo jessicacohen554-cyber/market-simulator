@@ -1,0 +1,481 @@
+{
+ "probe": "miso-127 overnight gas composition",
+ "prereg": "results/calibration/PREREG-miso127-overnight-gas-composition-2026-08-04.md",
+ "keeper_run": "2026-08-04-miso-126-steampart-b",
+ "night_hod": [
+  1,
+  2,
+  3
+ ],
+ "bars": {
+  "P1_min_r": 0.9,
+  "P2_min_coverage": 0.9,
+  "P3_material_mw": 500.0,
+  "P5_closure_mw": 1.0
+ },
+ "years": {
+  "2023": {
+   "P1_coal_prb_hod_r": 0.9876,
+   "P1_pass": true,
+   "P2_coverage": {
+    "CC_REGULAR": {
+     "matched_frac_of_model_class": 0.9306,
+     "matched_ann_twh": 130.3272,
+     "model_class_ann_twh": 140.049,
+     "unmatched_model_ann_twh": 9.7218,
+     "n_matched": 40,
+     "n_bench": 40,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    },
+    "CC_CHP": {
+     "matched_frac_of_model_class": 1.6155,
+     "matched_ann_twh": 33.5644,
+     "model_class_ann_twh": 20.7769,
+     "unmatched_model_ann_twh": -12.7875,
+     "n_matched": 14,
+     "n_bench": 14,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "CT_PEAKER": {
+     "matched_frac_of_model_class": 0.8452,
+     "matched_ann_twh": 11.7707,
+     "model_class_ann_twh": 13.9271,
+     "unmatched_model_ann_twh": 2.1564,
+     "n_matched": 92,
+     "n_bench": 94,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "CT_CHP": {
+     "matched_frac_of_model_class": 1.6439,
+     "matched_ann_twh": 9.0541,
+     "model_class_ann_twh": 5.5078,
+     "unmatched_model_ann_twh": -3.5463,
+     "n_matched": 6,
+     "n_bench": 8,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "ST_GAS": {
+     "matched_frac_of_model_class": 0.605,
+     "matched_ann_twh": 12.7631,
+     "model_class_ann_twh": 21.0952,
+     "unmatched_model_ann_twh": 8.3321,
+     "n_matched": 18,
+     "n_bench": 22,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "ST_CHP": {
+     "matched_frac_of_model_class": 0.4159,
+     "matched_ann_twh": 0.9716,
+     "model_class_ann_twh": 2.3364,
+     "unmatched_model_ann_twh": 1.3648,
+     "n_matched": 3,
+     "n_bench": 9,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "COAL_PRB": {
+     "matched_frac_of_model_class": 0.9597,
+     "matched_ann_twh": 118.7011,
+     "model_class_ann_twh": 123.6857,
+     "unmatched_model_ann_twh": 4.9846,
+     "n_matched": 31,
+     "n_bench": 34,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    }
+   },
+   "P3_primary_model_mw": 874.5,
+   "P3_primary_measured_mw": 1805.7,
+   "P3_delta_mw": -931.2,
+   "P3_material": true,
+   "P3_direction": "model_SHORT",
+   "P4_per_class": {
+    "CC_REGULAR": {
+     "model_mw": 13662.3,
+     "measured_mw": 14419.7,
+     "delta_mw": -757.3,
+     "class_hourly_mw": 14655.2
+    },
+    "CC_CHP": {
+     "model_mw": 3478.8,
+     "measured_mw": 3699.2,
+     "delta_mw": -220.4,
+     "class_hourly_mw": 1999.5
+    },
+    "CT_PEAKER": {
+     "model_mw": 235.3,
+     "measured_mw": 743.9,
+     "delta_mw": -508.6,
+     "class_hourly_mw": 312.0
+    },
+    "CT_CHP": {
+     "model_mw": 1023.5,
+     "measured_mw": 1275.5,
+     "delta_mw": -252.0,
+     "class_hourly_mw": 599.4
+    },
+    "ST_GAS": {
+     "model_mw": 639.2,
+     "measured_mw": 1061.8,
+     "delta_mw": -422.6,
+     "class_hourly_mw": 1365.5
+    },
+    "ST_CHP": {
+     "model_mw": 111.1,
+     "measured_mw": 106.7,
+     "delta_mw": 4.3,
+     "class_hourly_mw": 215.9
+    },
+    "COAL_PRB": {
+     "model_mw": 12050.1,
+     "measured_mw": 11108.4,
+     "delta_mw": 941.7,
+     "class_hourly_mw": 12597.9
+    }
+   },
+   "P5_gas_delta_mw": -2156.7,
+   "P5_sum_of_class_deltas_mw": -2156.6,
+   "P5_closure_mw": 0.0585,
+   "P5_pass": true,
+   "P6_quantization_bound_mw": 22.5,
+   "B_model_full_class_mw": 1677.4,
+   "B_measured_lower_bound_mw": 1805.7,
+   "B_gap_mw": 128.3,
+   "B_verdict": "model_SHORT_at_class_grain",
+   "D_descriptive_post_hoc": {
+    "CT_PEAKER": {
+     "annual_model_twh": 11.7707,
+     "annual_measured_twh": 17.9521,
+     "annual_delta_twh": -6.1814,
+     "night_delta_mw": -508.6,
+     "peak_delta_mw": -750.8
+    },
+    "ST_GAS": {
+     "annual_model_twh": 12.7631,
+     "annual_measured_twh": 15.4969,
+     "annual_delta_twh": -2.7338,
+     "night_delta_mw": -422.6,
+     "peak_delta_mw": -175.2
+    }
+   },
+   "readers_note_dollar_equivalent": 0.503,
+   "readers_note_energy_gap_dollar": 8.53
+  },
+  "2024": {
+   "P1_coal_prb_hod_r": 0.9776,
+   "P1_pass": true,
+   "P2_coverage": {
+    "CC_REGULAR": {
+     "matched_frac_of_model_class": 0.9354,
+     "matched_ann_twh": 137.4978,
+     "model_class_ann_twh": 146.995,
+     "unmatched_model_ann_twh": 9.4972,
+     "n_matched": 40,
+     "n_bench": 40,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    },
+    "CC_CHP": {
+     "matched_frac_of_model_class": 1.6699,
+     "matched_ann_twh": 34.8591,
+     "model_class_ann_twh": 20.8747,
+     "unmatched_model_ann_twh": -13.9844,
+     "n_matched": 14,
+     "n_bench": 14,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "CT_PEAKER": {
+     "matched_frac_of_model_class": 0.8653,
+     "matched_ann_twh": 15.9779,
+     "model_class_ann_twh": 18.4646,
+     "unmatched_model_ann_twh": 2.4867,
+     "n_matched": 91,
+     "n_bench": 93,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "CT_CHP": {
+     "matched_frac_of_model_class": 1.59,
+     "matched_ann_twh": 8.9818,
+     "model_class_ann_twh": 5.649,
+     "unmatched_model_ann_twh": -3.3328,
+     "n_matched": 6,
+     "n_bench": 8,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "ST_GAS": {
+     "matched_frac_of_model_class": 0.611,
+     "matched_ann_twh": 13.0105,
+     "model_class_ann_twh": 21.2938,
+     "unmatched_model_ann_twh": 8.2833,
+     "n_matched": 17,
+     "n_bench": 22,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "ST_CHP": {
+     "matched_frac_of_model_class": 0.2794,
+     "matched_ann_twh": 0.7754,
+     "model_class_ann_twh": 2.7753,
+     "unmatched_model_ann_twh": 1.9999,
+     "n_matched": 3,
+     "n_bench": 9,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "COAL_PRB": {
+     "matched_frac_of_model_class": 0.9675,
+     "matched_ann_twh": 114.4116,
+     "model_class_ann_twh": 118.2607,
+     "unmatched_model_ann_twh": 3.8491,
+     "n_matched": 31,
+     "n_bench": 32,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    }
+   },
+   "P3_primary_model_mw": 1392.3,
+   "P3_primary_measured_mw": 1986.1,
+   "P3_delta_mw": -593.8,
+   "P3_material": true,
+   "P3_direction": "model_SHORT",
+   "P4_per_class": {
+    "CC_REGULAR": {
+     "model_mw": 14791.2,
+     "measured_mw": 15036.5,
+     "delta_mw": -245.3,
+     "class_hourly_mw": 15753.1
+    },
+    "CC_CHP": {
+     "model_mw": 3651.1,
+     "measured_mw": 3893.2,
+     "delta_mw": -242.2,
+     "class_hourly_mw": 2021.5
+    },
+    "CT_PEAKER": {
+     "model_mw": 648.4,
+     "measured_mw": 820.5,
+     "delta_mw": -172.1,
+     "class_hourly_mw": 759.5
+    },
+    "CT_CHP": {
+     "model_mw": 1015.6,
+     "measured_mw": 1409.7,
+     "delta_mw": -394.1,
+     "class_hourly_mw": 612.8
+    },
+    "ST_GAS": {
+     "model_mw": 743.9,
+     "measured_mw": 1165.6,
+     "delta_mw": -421.7,
+     "class_hourly_mw": 1502.3
+    },
+    "ST_CHP": {
+     "model_mw": 87.6,
+     "measured_mw": 100.6,
+     "delta_mw": -13.1,
+     "class_hourly_mw": 282.3
+    },
+    "COAL_PRB": {
+     "model_mw": 11854.0,
+     "measured_mw": 11321.1,
+     "delta_mw": 532.9,
+     "class_hourly_mw": 12280.4
+    }
+   },
+   "P5_gas_delta_mw": -1488.4,
+   "P5_sum_of_class_deltas_mw": -1488.5,
+   "P5_closure_mw": 0.1034,
+   "P5_pass": true,
+   "P6_quantization_bound_mw": 21.36,
+   "B_model_full_class_mw": 2261.8,
+   "B_measured_lower_bound_mw": 1986.1,
+   "B_gap_mw": -275.7,
+   "B_verdict": "UNRESOLVED (model long by at most 276 MW)",
+   "D_descriptive_post_hoc": {
+    "CT_PEAKER": {
+     "annual_model_twh": 15.9779,
+     "annual_measured_twh": 18.1555,
+     "annual_delta_twh": -2.1776,
+     "night_delta_mw": -172.1,
+     "peak_delta_mw": -204.7
+    },
+    "ST_GAS": {
+     "annual_model_twh": 13.0105,
+     "annual_measured_twh": 16.8105,
+     "annual_delta_twh": -3.8,
+     "night_delta_mw": -421.7,
+     "peak_delta_mw": -447.7
+    }
+   },
+   "readers_note_dollar_equivalent": 0.332,
+   "readers_note_energy_gap_dollar": 7.01
+  },
+  "2025": {
+   "P1_coal_prb_hod_r": 0.9712,
+   "P1_pass": true,
+   "P2_coverage": {
+    "CC_REGULAR": {
+     "matched_frac_of_model_class": 0.9543,
+     "matched_ann_twh": 124.2508,
+     "model_class_ann_twh": 130.2007,
+     "unmatched_model_ann_twh": 5.9499,
+     "n_matched": 39,
+     "n_bench": 40,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    },
+    "CC_CHP": {
+     "matched_frac_of_model_class": 1.7758,
+     "matched_ann_twh": 31.8202,
+     "model_class_ann_twh": 17.9192,
+     "unmatched_model_ann_twh": -13.901,
+     "n_matched": 14,
+     "n_bench": 14,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "CT_PEAKER": {
+     "matched_frac_of_model_class": 0.8234,
+     "matched_ann_twh": 14.412,
+     "model_class_ann_twh": 17.504,
+     "unmatched_model_ann_twh": 3.092,
+     "n_matched": 91,
+     "n_bench": 94,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "CT_CHP": {
+     "matched_frac_of_model_class": 1.446,
+     "matched_ann_twh": 8.1413,
+     "model_class_ann_twh": 5.6304,
+     "unmatched_model_ann_twh": -2.5109,
+     "n_matched": 6,
+     "n_bench": 8,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "ST_GAS": {
+     "matched_frac_of_model_class": 0.629,
+     "matched_ann_twh": 12.762,
+     "model_class_ann_twh": 20.2895,
+     "unmatched_model_ann_twh": 7.5275,
+     "n_matched": 18,
+     "n_bench": 23,
+     "chp_addback_uninterpretable": false,
+     "gated": false
+    },
+    "ST_CHP": {
+     "matched_frac_of_model_class": 0.4059,
+     "matched_ann_twh": 0.766,
+     "model_class_ann_twh": 1.8869,
+     "unmatched_model_ann_twh": 1.1209,
+     "n_matched": 3,
+     "n_bench": 9,
+     "chp_addback_uninterpretable": true,
+     "gated": false
+    },
+    "COAL_PRB": {
+     "matched_frac_of_model_class": 0.975,
+     "matched_ann_twh": 143.3572,
+     "model_class_ann_twh": 147.0371,
+     "unmatched_model_ann_twh": 3.6799,
+     "n_matched": 30,
+     "n_bench": 31,
+     "chp_addback_uninterpretable": false,
+     "gated": true
+    }
+   },
+   "P3_primary_model_mw": 1191.7,
+   "P3_primary_measured_mw": 1889.2,
+   "P3_delta_mw": -697.5,
+   "P3_material": true,
+   "P3_direction": "model_SHORT",
+   "P4_per_class": {
+    "CC_REGULAR": {
+     "model_mw": 13571.9,
+     "measured_mw": 14154.1,
+     "delta_mw": -582.2,
+     "class_hourly_mw": 14172.5
+    },
+    "CC_CHP": {
+     "model_mw": 3381.4,
+     "measured_mw": 3859.5,
+     "delta_mw": -478.1,
+     "class_hourly_mw": 1778.1
+    },
+    "CT_PEAKER": {
+     "model_mw": 480.1,
+     "measured_mw": 729.6,
+     "delta_mw": -249.5,
+     "class_hourly_mw": 681.0
+    },
+    "CT_CHP": {
+     "model_mw": 924.5,
+     "measured_mw": 1293.9,
+     "delta_mw": -369.4,
+     "class_hourly_mw": 622.6
+    },
+    "ST_GAS": {
+     "model_mw": 711.6,
+     "measured_mw": 1159.6,
+     "delta_mw": -448.0,
+     "class_hourly_mw": 1400.6
+    },
+    "ST_CHP": {
+     "model_mw": 86.0,
+     "measured_mw": 98.2,
+     "delta_mw": -12.2,
+     "class_hourly_mw": 190.0
+    },
+    "COAL_PRB": {
+     "model_mw": 15508.5,
+     "measured_mw": 14495.2,
+     "delta_mw": 1013.3,
+     "class_hourly_mw": 15924.3
+    }
+   },
+   "P5_gas_delta_mw": -2139.4,
+   "P5_sum_of_class_deltas_mw": -2139.4,
+   "P5_closure_mw": 0.0403,
+   "P5_pass": true,
+   "P6_quantization_bound_mw": 21.42,
+   "B_model_full_class_mw": 2081.6,
+   "B_measured_lower_bound_mw": 1889.2,
+   "B_gap_mw": -192.4,
+   "B_verdict": "UNRESOLVED (model long by at most 192 MW)",
+   "D_descriptive_post_hoc": {
+    "CT_PEAKER": {
+     "annual_model_twh": 14.412,
+     "annual_measured_twh": 18.6617,
+     "annual_delta_twh": -4.2497,
+     "night_delta_mw": -249.5,
+     "peak_delta_mw": -574.5
+    },
+    "ST_GAS": {
+     "annual_model_twh": 12.762,
+     "annual_measured_twh": 15.5511,
+     "annual_delta_twh": -2.7891,
+     "night_delta_mw": -448.0,
+     "peak_delta_mw": -233.7
+    }
+   },
+   "readers_note_dollar_equivalent": 0.447,
+   "readers_note_energy_gap_dollar": 8.54
+  }
+ },
+ "verdict": "P3 UNAVAILABLE ON COVERAGE (P2 fails for the primary classes; its delta is descriptive only, per the pre-registration's own P2 rule). Adjudication falls to the one-sided class bound B.",
+ "n_material_years": 3,
+ "n_long_years": 0,
+ "P2_primary_classes_gated": false,
+ "B_years_model_short_at_class_grain": 1,
+ "B_years_unresolved": 2,
+ "reading": "miso-114's mispriced-marginal-unit reading required the model to hold MORE expensive gas online overnight than the market. It is CONFIRMED in ZERO years by any construction here: on matched machines the model is short in 3/3 years, and the one-sided class bound puts it short at class grain in 1/3 with 2/3 unresolved. No construction available from committed artifacts finds the model long."
+}

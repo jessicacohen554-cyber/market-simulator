@@ -2750,6 +2750,70 @@ is now the live queue head.**)*
    itself to `CC_STEAM_PART_REPAIR_ISOS` if it clears) and **NEISO 6081 Stony
    Brook `CA1` 96.0 MW** (presence still `UNDETERMINED` — that lane must resolve
    presence first).
+   **QUEUE STAMP 2026-08-04 (miso-127): the SECOND of the two bounded NON-solve
+   steps — miso-114 §6's CAMPD `CT_PEAKER` + `ST_GAS` overnight-online
+   measurement — is now SPENT. It returns a FALSIFICATION, not a lever. NO LP,
+   no solve, no run registered, keeper UNCHANGED, and NO mechanism cell moves
+   (a measurement question was adjudicated, not a mechanism).**
+   miso-114's mispriced-marginal-unit reading required the model to hold MORE
+   expensive gas online overnight than the market. It is **CONFIRMED IN ZERO
+   YEARS by any construction available from committed artifacts.** On matched
+   machines (the only apples-to-apples population — MISO's sub-25-MW peakers are
+   below the CEMS threshold, so an unmatched comparison reads the model long BY
+   CONSTRUCTION) the model runs **LESS** overnight gas in **3 of 3** years:
+   **−931.2 / −593.8 / −697.5 MW** on `CT_PEAKER` + `ST_GAS`, and short in
+   **every** gas class bar `ST_CHP` 2023 (+4.3 MW). A one-sided class bound
+   (measured-matched is a LOWER bound on the true class, since unmatched
+   machines only ADD) puts the model short at CLASS grain in 2023 (+128.3 MW)
+   and leaves 2024/2025 **UNRESOLVED** (long by at most 275.7 / 192.4 MW).
+   **Nothing finds the model long.** Controls all pass: P1 phase-alignment
+   `COAL_PRB` hod r **0.9876/0.9776/0.9712** vs a 0.90 bar, P5 arithmetic
+   closure ≤ 0.104 MW vs 1 MW, P6 `uint8` quantization 21.4–22.5 MW ≈ 40× below
+   the Δ. miso-114's MODEL-side figure independently reproduces across two
+   keepers (1,907/2,415/2,350 on `miso109b_hy_level_B` vs **1,677/2,262/2,082**
+   here on `miso126_steampart_B`) — it was always the MARKET side that had never
+   been measured, and that is what flips the conclusion.
+   **The pre-registered adjudication P3 is UNAVAILABLE ON COVERAGE**, by its own
+   prereg's P2 rule: against the CORRECT denominator (the model's FULL class,
+   not the bench-intersected subset) matched machines carry only
+   **0.845/0.865/0.823** of `CT_PEAKER` and **0.605/0.611/0.629** of `ST_GAS`
+   against a 0.90 bar. The verdict above rests on the matched-machine comparison
+   and the one-sided bound, neither of which needs the unmatched machines.
+   **DO-NOT-MISREAD, carrying miso-121's forward:** P3 measures **online energy,
+   not marginality** — even a material long result would have established a
+   composition fact and **NOT** a price effect. And post-hoc descriptive (no
+   verdict): both classes are short **annually** and at **both** ends of the day
+   (`CT_PEAKER` more at peak than overnight in all three years), so this is a
+   **LEVEL** defect on those machines, **not** an overnight-specific SHAPE
+   defect — it could not be the source of an overnight-specific price residual
+   even if coverage were clean. **The C7 `COAL_PRB` residual is therefore NOT
+   redirected to an overnight gas-composition object; that object is measured
+   and does not exist in the required direction.** No successor chartered
+   (rule 19), nothing sized on the residual (rules 13/21/24, the prereg's
+   binding KILL-4).
+   **NEW OBSERVATION, handed off and NOT chartered (rule 25):** the model's
+   `ST_GAS` class carries **8.33/8.28/7.53 TWh/yr — 37–39 % of its own class
+   energy — on machines with NO committed bench counterpart at all**
+   (`CT_PEAKER` 2.16/2.49/3.09 TWh, 14–18 %), against `COAL_PRB` 96–98 % and
+   `CC_REGULAR` 93–95 %. **This is what actually blocks the measurement
+   miso-114 asked for** — no class-grain statement about MISO's overnight gas is
+   determinable while a third of the steam-gas class is unmeasured. Cause NOT
+   determinable from committed artifacts (candidates: sub-CEMS-threshold units,
+   bench class assignment differing from the LP's, model units with no bench
+   entry); needs its own charter with a control arm, and touches the same
+   artifact family as the open cross-ISO thermal-tranche staleness item — must
+   not land as a side effect of either. **Second construction fact future lanes
+   need:** the dashboard payload's CHP series carry the **whole-plant host-steam
+   add-back**, so CHP coverage computes ABOVE 1 (1.45–1.78) and the payload's
+   CHP model series is **not** comparable to `class_hourly`; any future
+   matched-plant construction must handle this or silently mis-state CHP.
+   **§5.4's ONE remaining bounded non-solve step is item 1's Form 580 tonnage
+   COUNT** (a sourcing pass, not a solve); there is still **no** named,
+   un-adjudicated, non-data-blocked item.
+   (`results/calibration/FINDING-miso127-overnight-gas-composition-2026-08-04.md`;
+   prereg `PREREG-miso127-overnight-gas-composition-2026-08-04.md`; probe
+   `scripts/probes/_miso127_overnight_gas_composition.py`; record
+   `results/calibration/_miso127_overnight_gas_composition.json`.)
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
