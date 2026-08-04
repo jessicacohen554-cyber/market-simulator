@@ -1185,3 +1185,66 @@ owner: ________ date: ____
 | 7 | CAISO accreditation ledger — the 6,577 MW base-year deficit + the generic VRE credit (H.2) | dispatchable |
 | 8 | D-2′ `entry_vre_capacity_revenue` — signed HOLD at Addendum C, **still never probed** | unowned |
 | 9 | Pre-existing test failures on main | unowned |
+
+---
+
+## Addendum I — **G.5 and D-9 are SIGNED: the windows are lengthened, together** (workstream manager, 2026-08-04, HEAD `5055b1a5`)
+
+Both open decisions were put to the owner as decision cards and both are signed. They are
+recorded here as one entry because the owner took them as one action.
+
+| # | Decision | Signed | Effect |
+|---|---|---|---|
+| **G.5** | Re-cut the FH-1 §3.3 acceptance gate | **(a) LONGER WINDOW** | The gate moves to the five-year 2021–2025 / vintage-2020 posture |
+| **D-9** | The T1-H censoring window | **TAKE WITH G.5(a)** | One action; the T1-H window lengthens with it |
+
+**What the owner accepted, in plain terms.** The model's own execution lags are longer than
+the windows it was being scored on, on **both** sides: `L_coal` = 3 exceeds a three-year *exit*
+window and `ENTRY_COD_LAG_YEARS` = 2 exceeds a three-year *entry* window. A gate that cannot
+produce a retirement execution, and an additions band that cannot score half its own decision
+years, are the same defect seen from two ends. Five years fixes both.
+
+### I.1 — What this decision does NOT do
+
+* **It does NOT lift the FH-4/FH-5 block.** The block lifts on a **landed fix plus a green
+  re-probe** (Addendum G.2, unchanged). Signing G.5(a) authorizes the gate to be *re-cut and
+  re-probed*; it does not pre-approve the result. A session that reports the re-probe green
+  does not thereby unblock FH — the lift remains the manager's, on the re-cut gate's evidence.
+* **It does NOT spend a holdout marker, and it must not.** `final` stays EMPTY, the holdout
+  spend freeze stays ACTIVE, and NEISO's locked test stays SPENT. The five-year window is legal
+  by a **carve-out**, not by a marker.
+* **It does NOT authorize tuning to the re-cut gate.** Rules 1/11/14 apply unchanged: if the
+  re-probe fails, that is a finding written up, not a threshold moved.
+* **It does NOT retroactively validate anything scored on the three-year window.** Every
+  committed T1-H additions verdict was produced under the censoring described in H.4 and stays
+  interpreted that way until re-measured.
+
+### I.2 — The rule-22 position: one half is verified, the other half is NOT, and the difference matters
+
+**Verified, for T1-H.** FFR-3A-2 §3.3 checked the 2021–2025 window against the code rather than
+the prose, and `scripts/lib/holdout_policy.py` carries an explicit enumerated
+capacity-hindcast carve-out: `HINDCAST_SEED_YEARS = {2021}` (solvable, **never scored**),
+`HINDCAST_BRIDGE_YEARS = {2022, 2026}` (evolved across, **never solved, data never read**),
+`HINDCAST_SOLVE_YEARS = {2021, 2023, 2024, 2025}` — four solve-years, under the ≤5 cap — with
+scoring bounded to 2023–2025 on both sides and `_validate_window` enforcing it fail-closed.
+**No marker is spent and the freeze is not implicated.**
+
+**NOT verified, for T1-FF.** The FH-1 gate runs the *other* harness (`--forward-from-base`), and
+whether the same carve-out enumerates a **base-2021** T1-FF window has not been checked by any
+lane. The FH plan names base 2021 → 2021–2025 as its second phase, so it is *planned*, but
+planned is not enumerated. **The lane must verify this against `holdout_policy.py` before
+solving, and if the carve-out does not cover it, that is a GOVERNANCE QUESTION ESCALATED TO THE
+OWNER — never a carve-out the lane adds for itself.** Widening a rule-22 carve-out to make one's
+own window legal is precisely the move the policy exists to prevent, and this addendum does not
+authorize it.
+
+### I.3 — What is now dispatchable, and what still is not
+
+The gate re-cut lane (FFR-3Q) is dispatched on this signature. **FH-4 and FH-5 remain blocked**
+until it lands and its re-probe is green. The five lanes dispatched at H.5 (FFR-3K/3L/3M/3N/3P)
+are unaffected and continue independently — none of them depends on this decision, and FFR-3N's
+I12-inversion attribution becomes **more** valuable under the re-cut gate, not less, because the
+inversion is one of the two things the re-cut is meant to make legible.
+
+Still unowned after this signing: **D-2′'s probe row** (signed HOLD at Addendum C, never
+probed) and the **pre-existing test failures on main**.
