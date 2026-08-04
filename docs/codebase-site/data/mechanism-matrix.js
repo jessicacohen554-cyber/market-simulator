@@ -1154,7 +1154,7 @@ window.MECH_MATRIX = {
   keepers: {
     ERCOT: "2026-08-03-ercot158-pool-arm",
     CAISO: "2026-08-04-caiso164-zonal-loss-surface",
-    PJM: "2026-08-03-pjm-151-seam-envelope",
+    PJM: "2026-08-04-pjm-152-collapse",
     MISO: "2026-08-04-miso-124-dualfuel-rearm",
     NYISO: "2026-08-04-nyiso-120-c119-scope",
     NEISO: "2026-08-03-neiso-caiso156-meter-screen"
