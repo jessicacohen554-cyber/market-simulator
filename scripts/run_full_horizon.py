@@ -153,6 +153,7 @@ def reference_config(
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     electrification_path: str = "off",
+    entry_screen_diagnostics: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -184,6 +185,16 @@ def reference_config(
     default — which is the point of C.4(a): golden posture and shipped posture
     are one answer, not two. It remains explicit so the run's config records
     the posture it ran.
+
+    ``entry_screen_diagnostics`` (RC-0C / BLK-8, FFR-3H) arms the per-candidate
+    entry-screen decomposition sink that ``run_capacity_hindcast.py`` has always
+    exposed and this runner did not, so a forecast leg could not answer *which
+    revenue term starves the economic entry screen* without one. It is a pure
+    observability gate — nothing reads it back, so the fleet outcome is
+    identical with it on or off (``ScenarioConfig.entry_screen_diagnostics``
+    docstring) — but it is NOT in ``_CACHE_KEY_OPTIONAL_FIELDS``, so an armed
+    leg takes its own cache key and must be paired with an un-armed arm when the
+    recorded key matters. Default ``False`` = byte-identical.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -222,6 +233,7 @@ def reference_config(
         # ever signs an electrification default, this line must become a
         # None-sentinel too or it will silently override that signature.
         electrification_path=electrification_path,
+        entry_screen_diagnostics=entry_screen_diagnostics,
         **{k: v for k, v in arms.items() if v is not None},
     )
 
@@ -774,6 +786,17 @@ def main(argv: list[str] | None = None) -> int:
             "evidence-first (NEISO first, memo §8-D3)."
         ),
     )
+    ap.add_argument(
+        "--entry-screen-diagnostics",
+        action="store_true",
+        help=(
+            "Arm the RC-0C per-candidate entry-screen decomposition sink "
+            "(revenue/cost terms, margin, binding queue cap) into each year's "
+            "evolution ledger. Pure observability — the fleet outcome is "
+            "identical with it on or off — but it MOVES THE CACHE KEY, so pair "
+            "an armed leg with an un-armed arm when the key matters."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -796,6 +819,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         electrification_path=args.electrification_path,
+        entry_screen_diagnostics=args.entry_screen_diagnostics,
     )
     summary = solve_and_summarize(
         config,
