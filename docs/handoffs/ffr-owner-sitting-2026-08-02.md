@@ -1013,3 +1013,46 @@ Options, with the manager recommendation named:
 
 **Sign-off:** ☐ (a) longer window ☐ (b) re-cut criterion ☐ (c) lift on the letter ☐ (d) stay
 blocked — owner: ________ date: ____
+
+### G.6 — G.5(a) is independently corroborated by FFR-3F's PJM half, and its posture is already legality-checked (manager, 2026-08-03, HEAD `01bb25f7`)
+
+FFR-3F continued after Addendum G was written and completed the PJM pairing it owed. Three
+results change what G.5 is choosing between, so they are recorded here rather than left in the
+lane doc.
+
+1. **The cap-grain fix is emphatically NOT inert — ERCOT simply had nothing for it to act on.**
+   In PJM it changes the admitted exit set by an order of magnitude and in exactly the direction
+   FFR-3C §1.2 G3 predicted: the old grain tested the schedule against a requirement ~10 % too
+   low and over-admitted; the corrected grain retains **13.7 GW more capacity** in the pipeline
+   screen — an **89–93 % cut in admitted exits** (pre-fix 83 units / 14.766 GW, cap-fix 9 units /
+   1.056 GW). G.1's "provably inert" was true **of ERCOT only** and must not be generalized.
+2. **The throughput cap is a measured NULL in BOTH test ISOs, and has still never bound in any
+   full solve.** Same underlying reason, different routes: ERCOT never enters the pipeline at
+   all; PJM enters it and then every admitted unit re-clears the bar and reverses through the
+   soft latch before its execution year (83 → `reversed` pre-fix, 9 → `reversed` cap-fix). The
+   cap acts on the year's `due` set and `_apply_exit_throughput_cap` is only invoked when that
+   set is non-empty, so it is never called. Predicted-inert and measured-inert are different
+   claims; this is now the second.
+3. **Realized exits are 0.000 GW in every arm of both ISOs, and in-window dispatch skill is
+   untouched** (PJM C1 12.230/18.843, C3a 0.318/49.688/2.564 — identical across arms), because
+   nothing the corrected grain changes ever reaches the LP inside a 3-year window. The membership
+   change would first surface as executions in **2026+**.
+
+**Why this bears directly on the sign-off.** FFR-3F's own §10.1 reaches G.5's conclusion
+independently and states it as measured rather than suspected: *"The T1-FF 3-year window is the
+wrong instrument for testing exit mechanisms."* It names the posture G.5(a) would adopt — the
+**T1-H 2021–2025 vintage-2020 posture FFR-2B already used**, where PJM's pipeline coal wave was
+**14.756 GW** — on the ground that a 5-year window clears `L_coal` = 3 with room to spare. And
+**FFR-3A-2 §3.3 has already checked that window's rule-22 legality rather than assuming it**, so
+option (a) carries no unresolved holdout question.
+
+This does not change the manager determination in G.2 — **FH-4/FH-5 stay blocked** — and it does
+not pre-empt the owner's choice among (a)–(d). It removes the two objections a reader might
+reasonably have raised against (a): that the longer window was the manager's preference rather
+than an evidenced requirement, and that its rule-22 status was open.
+
+**One question G.5 does not cover and nobody currently owns** (FFR-3F §10.4): the FH-1 gate's
+**I12 inversion is unattributed**. ERCOT now runs 40.2 % reserve margin against a 28.7 % ceiling
+while retiring nothing. Whether that is the pipeline rule under-retiring, the entry side
+over-building, or the ERCOT band's known 6.65 pp basis mismatch (FFR-3C §2.1) has not been
+separated by any lane.
