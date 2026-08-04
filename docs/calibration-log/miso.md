@@ -3426,12 +3426,23 @@ criteria identical between arms**; determination `NOT-YET` in both, decided by
 the same C7 `COAL_PRB` shape FAIL this lever does not touch and claims nothing
 about.
 
-**Seam opened, not closed.** The keeper `2026-08-03-miso-117b-ct-heat` solved on
-the pre-gate artifact and is **no longer reproducible from HEAD**. Arm B is the
-promotion candidate — nothing regresses, it is the only registered MISO run
-whose inputs match HEAD, and rule 22's LOO is satisfied at year grain (no single
-year carries the result) — but promotion is an **owner call** (miso-117b and
-ercot-150 were both owner-authorized in-session) and was **not taken here**.
+**Seam found and CLOSED in-session.** The keeper `2026-08-03-miso-117b-ct-heat`
+solved on the pre-gate artifact and became **not reproducible from HEAD** the
+moment the corrected input landed. **Arm B was OWNER-PROMOTED in the same
+session** — *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper"* —
+so **MISO keeper → `2026-08-04-miso-122b-scope-gate`**, which is the run whose
+inputs match HEAD. Determination `NOT-YET` unchanged, all nine criterion
+statuses unchanged, 12/12 free and 16/16 all classes; **the gates did not even
+regress, so this is the easy half of the owner's rule** — promoted on structural
+fidelity (rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`), never on a score. The
+predecessor's ledgered caveat budget {C3a, C3c} is carried unchanged, and the
+`measured_chp_heat_rates` × MISO matrix cell stays `K` (a scope-gate refinement
+inside a `K` mechanism is not a new verdict). Arm B's
+`calibration_attestation.json` was **re-authored for this bundle** at promotion
+rather than left inherited from miso-117b; `audit_keepers.py --iso MISO` passes
+0 failures / 0 warnings. MISO holds no `calibration-complete` marker, so rule
+22's D-5(b) re-key duty does not apply.
 
 **DO-NOT-MISREAD, extending miso-119's and miso-121's.**
 `max_abs_class_hour_mw` is **not** a mechanism magnitude at MISO: it reads

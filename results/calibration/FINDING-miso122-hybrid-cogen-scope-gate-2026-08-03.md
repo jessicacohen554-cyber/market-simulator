@@ -216,7 +216,7 @@ quantisation constant, not a mechanism magnitude.
   evidence is re-stamped in this session. The cell stays `K`; a scope-gate
   refinement inside a `K` mechanism is not a new verdict.
 
-## 6. The keeper question — a seam this session opens and does NOT close
+## 6. The keeper question — OWNER-PROMOTED in-session
 
 **The corrected artifact is now the committed input, so the designated MISO
 keeper `2026-08-03-miso-117b-ct-heat` is no longer reproducible from HEAD.**
@@ -224,8 +224,12 @@ That is stated plainly rather than left to be discovered: it solved on the
 pre-gate `chp_power_only_heat_rates_MISO.csv`, and HEAD now carries the
 corrected one.
 
-**Arm B is the promotion candidate, and this session does not promote it.**
-The evidence, for whoever does:
+**Arm B WAS the promotion candidate and is now the keeper.** The owner
+authorized promotion in-session — *"Is this a recommended keeper candidate? If
+so plz promote. If structural integrity improves but gates regress that may
+still be a keeper"* — so **MISO keeper → `2026-08-04-miso-122b-scope-gate`**.
+Note the owner's conditional did not have to be invoked: **the gates do not
+regress at all.** The evidence the promotion rests on:
 
 * It is the only registered MISO run whose inputs match HEAD.
 * **Nothing regresses.** All nine criteria carry identical statuses in both
@@ -241,12 +245,22 @@ The evidence, for whoever does:
   which is the same ground miso-117b was promoted on — *"chartered on rule 14
   regardless of the residual"*.
 
-Promotion in this repo is an owner call (miso-117b and ercot-150 were both
-owner-authorized in-session), and there is no owner in this session, so the
-keeper is **left unchanged** and the question is escalated rather than taken.
-The determination would not move either way: `NOT-YET`, decided by the same C7
+The determination does not move: `NOT-YET` both sides, decided by the same C7
 `COAL_PRB` diurnal-shape issue this lever does not touch and claims nothing
-about.
+about, and the predecessor's ledgered caveat budget {C3a, C3c} carries unchanged.
+
+**Promotion hygiene done in the same session:** the keeper shard
+`frontend/data/backcast/keepers/MISO.json` re-pointed and its `note` rewritten
+to lead with this delta (the miso-117b CT-heat-rate story is kept, marked as
+inherited-and-still-true); a `market_story` added to the keeper's registry
+sidecar; `status/MISO.js` rebuilt via `build_status.py --iso MISO`;
+`audit_keepers.py --iso MISO` **passes 0 failures / 0 warnings**; the matrix
+keeper header and cell re-stamped (duty e), with the cell **still `K`**; and arm
+B's `calibration_attestation.json` **re-authored for this bundle** rather than
+left inherited — it now records the input-artifact delta, the zero-free-parameter
+claim, and that every DOF-ledger entry carries over verbatim with `n_residual`
+unchanged. MISO holds no `calibration-complete` marker, so rule 22's D-5(b)
+re-key duty does not apply. **No other ISO's shard or status part was touched.**
 
 ## 7. Handoffs, with measured numbers
 
