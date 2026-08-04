@@ -2755,7 +2755,66 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-126-steampart-b`, **NOT-YET** — **LIVE KEEPER STAMP ADDED at xiso-4 (2026-08-04)**: this header never carried a live stamp, so its only keeper id was the historical one below and it read as current. `calibration_verdict.py --run-id` on committed artifacts confirms C7 `shape` is the SOLE FAIL — `price_mean`/`price_tail` are CAVEATs — so "the SOLE failing criterion" is exact); **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate` — TRUE AS OF nyiso-121 and left standing as history; miso-124 has since re-armed `dual_fuel_switching` and is the live keeper)**
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-127-onlinepmin`, **NOT-YET**, C7 now failing **2025 only**)
+
+> **QUEUE STAMP miso-127 (2026-08-04) — C7 `COAL_PRB` MOVES FOR THE FIRST TIME, AND
+> THE LAST BUDGET LANE CLOSES BY PROOF. Keeper → `2026-08-04-miso-127-onlinepmin`.**
+>
+> **(a) `coal_mustrun_online_pmin` PROMOTED at MISO** (sub-scalar of the
+> `coal_mustrun_per_plant` row; entered as `U` under rule 28(d) — its `K` on the PJM
+> keeper transfers nothing, and MISO's band is read from MISO's own CAMPD conduct).
+> Against a same-HEAD zero-delta control: **C7 `COAL_PRB` cv_ratio 0.465→0.514,
+> 0.474→0.529, 0.314→0.347** — FAIL→pass in 2023 and 2024, with `profile_r`
+> **preserved**, so the gain is **amplitude**, not a phase trade. **C7 still FAILS on
+> 2025 alone and the determination stays NOT-YET.** Summed C1 |error| 35.46→**30.48
+> TWh** (COAL_PRB's own 3.81→0.57); C3a −1.4/−6.6 % → −1.0/−6.3 %; C3b and C4 improve;
+> only COAL_BIT C1 worsens (7.96→8.65) and immaterial COAL_LIGNITE 2025 D-1 flips
+> pass→FAIL (under the 2 % gating floor; its 2023 row improves 2.344→1.516).
+> **miso-102's two failure modes are both absent:** C1 holds 16/16 and COAL_BIT does
+> not overshoot. **Zero free parameters** — a boolean selector between two committed
+> measured columns; no re-derive, so rule 23 is not engaged.
+> **DO-NOT-MISREAD (the reason this was solved at all):** the docstring's "all-hours
+> reads ~2× high" was measured on **ERCOT** and is **FALSE at MISO** (cap-weighted ratio
+> **0.9558**, net **−533 MW**, p50 moving the *other* way). That net is a **cancelling
+> aggregate** — **7,528 MW gross, 18 % of the coal fleet, on 39 of 44 plants in opposite
+> directions**. A zero-solve `I` built on the net would have been the
+> miso-119/122/125 error.
+>
+> **(b) THE PERIOD-BUDGET RE-SHAPING LANE IS CLOSED EX ANTE, NO LP BUILT.** The
+> chartered successor — re-express the sunk band as a period energy budget at the same
+> annual volume, explicitly on the premise that it needs **no new tonnage level** —
+> dies on property A1: `coal._derived_coal_takeorpay()` reads **only** `plant_code` and
+> `contract_share`, so **the model carries no period volume at all** (`total_tons` never
+> reaches the LP). `contract_share × total_tons` **is** miso-103's refuted receipts
+> series; no contractual tonnage exists at plant grain (miso-104); and a model-derived
+> level dies **by proof** — set `B := g'x*` and the control optimum satisfies the row
+> with equality, stays feasible, and therefore **stays optimal**, in cap, minimum-take
+> and two-tranche form alike. **Volume neutrality and non-inertness are mutually
+> exclusive**, so miso-103's blocker is **structural**: the budget needs *external*
+> tonnage by construction. **DO NOT re-charter any budget/minimum-take form until a
+> source clears the Form 580 ask §4.**
+>
+> **(c) What (b) did produce, and it sharpens the ask:** measured headroom. Regulated
+> MISO `COAL_PRB` overnight (h0–h05, online days only) load is **min 0.058/0.039/0.074**
+> of nameplate against the model's **0.251/0.236/0.268**, with p50s close
+> (0.435/0.440/0.518 vs 0.516/0.469/0.567). The model is only modestly high on a typical
+> night; it lacks the **low tail** entirely — miso-113's "too NARROW" at plant grain,
+> now quantified.
+>
+> **`coal_tranche_1/2/3_frac` recorded, NOT swept** (issue #1336): ERCOT-fitted
+> parameters applied at MISO, a live rule-25/rule-21 debt sitting on the C7 mechanism.
+> Re-grounding it on MISO contract-share data needs its own prereg citing a **source**
+> change (rule 23); sweeping it against the C7 residual is the forbidden fitted path.
+>
+> **PREREG:** `results/calibration/PREREG-miso127-takeorpay-period-budget-2026-08-04.md`
+> **FINDING:** `results/calibration/FINDING-miso127-online-pmin-c7-2026-08-04.md`
+> **Runs:** `2026-08-04-miso-127-onlinepmin-control` / `2026-08-04-miso-127-onlinepmin`.
+> **NAMED SUCCESSOR: the 2025-only C7 `COAL_PRB` gap (0.347 vs the 0.5 gate)** — 2025 is
+> the year whose actual off-peak CV is lowest (0.074) and whose model CV is lowest
+> (0.026); it is a *level-of-variability* question in the year the fleet cycled least,
+> **not** a sizing knob on this mechanism.
+
+*(superseded stamp, kept as history: keeper was `2026-08-04-miso-126-steampart-b` — **LIVE KEEPER STAMP ADDED at xiso-4 (2026-08-04)**: this header never carried a live stamp, so its only keeper id was the historical one below and it read as current. `calibration_verdict.py --run-id` on committed artifacts confirms C7 `shape` is the SOLE FAIL — `price_mean`/`price_tail` are CAVEATs — so "the SOLE failing criterion" is exact); **rule-28(c) column CLOSED at nyiso-121 (8 absent + 4 prose-only + 7 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged at `2026-08-04-miso-122b-scope-gate` — TRUE AS OF nyiso-121 and left standing as history; miso-124 has since re-armed `dual_fuel_switching` and is the live keeper)**
 
 > **nyiso-121 (2026-08-04) — MISO's matrix column is CLOSED, and it was the LAST one.**
 > All 12 `miso_*` fields — 7 of them ARMED on the published keeper with no cell anywhere —
