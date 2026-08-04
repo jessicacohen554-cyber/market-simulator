@@ -72,6 +72,16 @@ CAISO output under **unchanged cache keys**:
   **Behavioral in CAISO backcast mode**: the fleet goes from a flat 8,000 MW to
   the measured 7,492 / 11,131 / 15,448 MW at year-end 2023 / 2024 / 2025.
 
+**The same-key collision is MEASURED, not asserted.** FFR-4D solved both arms of
+the CAISO 2026-2030 forecast at one head — control (pre-FFR-4D constants) and
+treated — and **both resolve to the SAME key** ``35b0a89be0c07483`` while
+producing materially different output: cumulative ``reserve_backstop`` additions
+14,043.6 MW vs 8,186.3 MW, FC-2 row 4 65.48 % vs 52.51 %, and invariant ``I3``
+FAIL vs PASS. The arms stayed clean only because each had its own ``--out-dir``;
+sharing one would have made the second run silently re-use the first's bundle.
+This is the first entry in this ledger whose collision is demonstrated by a
+solved A/B rather than inferred from the registration mechanics.
+
 *Invalidated:* **every cached CAISO bundle, in BOTH modes** — forecast bundles
 (all three changes) and backcast bundles (the third). **The designated CAISO
 keeper ``2026-08-04-caiso-166-measured-dlap`` was solved on the flat 8,000 MW

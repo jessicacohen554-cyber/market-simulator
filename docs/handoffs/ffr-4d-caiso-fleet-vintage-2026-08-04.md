@@ -44,9 +44,11 @@ Every number below is a fleet or accreditation quantity. §8 states this formall
 fixed:** the accreditation-rate and class-boundary residual (§6), which is the whole of
 what remains and whose largest single term — battery — has **no mechanism at all**.
 
-**Measured outcome (§4.4):** FC-2 row 4 goes **65.48 % → 52.51 %, still FAIL**; the
-backstop falls 14,043.6 → 8,186.3 MW. The solve reproduces this session's independent
-solve-free arithmetic to the megawatt.
+**Measured outcome (§4.4), both arms solved at this head:** FC-2 row 4 goes
+**65.48 % → 52.51 %, still FAIL**; the backstop falls 14,043.6 → 8,186.3 MW; `I3`
+(unserved energy) goes FAIL → PASS. The solve reproduces this session's independent
+solve-free arithmetic to the megawatt, and the control reproduces FFR-3P's control to the
+digit.
 
 ---
 
@@ -254,13 +256,26 @@ resolved key `35b0a89be0c07483`. Sidecars committed at
 `evolution_<year>.json`); the ~12 MB of per-year parquet is deliberately not committed,
 per the FFR-3P precedent.
 
-| | control (FFR-3H arm A / FFR-3P control) | **treated** |
+Both arms were solved **at this head**, cold, in their own `--out-dir`: the control is the
+pre-FFR-4D constants (storage `6,000/8,000/12,000`, wind 7,000, solar 22,000) restored in
+place, nothing else changed.
+
+| | **control** (same head) | **treated** |
 |---|--:|--:|
 | 2026 accredited firm MW | 50,729 | **56,270** |
 | reserve position | 0.8852 | **0.9819** |
+| reserve-margin path 2026–30 (%) | 1.80 / −3.12 / −0.31 / 12.35 / 15.28 | **12.92 / 7.74 / 10.29 / 16.60 / 15.24** |
 | Σ `reserve_backstop` thermal MW | 14,043.6 | **8,186.3** |
 | Σ additions MW (thermal + renew + storage) | 21,448.0 | **15,590.7** |
+| renewable builds MW | 5,404.4 | 5,404.4 *(identical)* |
+| storage builds MW | 0.0 | 0.0 *(identical)* |
+| invariants | **3 FAIL** (I3, I7, I12) | **2 FAIL** (I7, I12) |
 | **FC-2 row 4** | **65.48 % FAIL** | **52.51 % FAIL** |
+
+**The control reproduces FFR-3H arm A and FFR-3P's control to the digit** — 14,043.6 /
+21,448.0 / 65.48 %, accredited firm 50,729, RM path 1.80 / −3.12 / −0.31 / 12.35 / 15.28,
+3 FAIL. Those were solved ~50 commits upstream at key `e5822277b72184f6`; reproducing them
+exactly at this head retires the comparability caveat entirely.
 
 **The LP reproduces §4.3's solve-free arithmetic to the megawatt**: projected 56,269.6 MW
 of accredited firm capacity, solved 56,270.
@@ -279,10 +294,24 @@ has a deficit to size against. The charter's premise that correcting the fleet
 numerator is **cut by 41.7 %, not collapsed**, because 52.7 % of the shortfall was never
 fleet.
 
-**One invariant flips in the model's favour.** The treated arm scores **2 FAIL** (I7
-reliability floor, I12 reserve-margin band) against FFR-3P's control **3 FAIL** — `I3`
-(unserved/dump) is PASS here. I7's own text tells the story plainly: *"2026: accredited
-firm 56270 < requirement 57306"*. See §7 D-9 for the one caveat on the comparison.
+**One invariant flips in the model's favour, and it is a real flip.** The control FAILs
+`I3` (unserved/dump — *"2030: slack 0.02 % of load"*); the treated arm PASSES it. The
+model was dropping load in 2030 because it was 5.5 GW of real fleet short. I7 still FAILs
+in both, and its own text tells the story: control *"2026: accredited firm 50729 <
+requirement 57306"*, treated *"2026: accredited firm 56270 < requirement 57306"*.
+
+### 4.5 The same-key invalidation, MEASURED
+
+**Both arms resolve to the SAME cache key `35b0a89be0c07483`** while producing materially
+different output — 14,043.6 vs 8,186.3 MW of backstop. That is the cache-epoch hazard
+demonstrated rather than argued: the two constants are module-level and enter no key, and
+`storage_measured_base_fleet` is `_CACHE_KEY_OPTIONAL_FIELDS`-registered so it drops out at
+its default. **A pre-FFR-4D CAISO bundle and a post-FFR-4D config are the same key.**
+
+The arms stayed clean only because each had its own `--out-dir`; had they shared one, the
+second run would have silently re-used the first's bundle. This is exactly what epoch
+**2026-08-04c** in `results/cache.py` exists to record, and it is why the CAISO keeper's
+committed metrics are pre-epoch (§7 D-2) rather than merely stale-looking.
 
 ---
 
@@ -439,7 +468,7 @@ reconciled hybrid class is invented to close a residual. FFR-3P's B-6 is thereby
 | **D-5** | **The other five ISOs still take a forecast scalar for their backcast storage fleet.** Immaterial for PJM/MISO/NYISO/NEISO (their rows were derived from EIA-860 and sit within a few MW), material only for ERCOT. | Enrolling an ISO in `STORAGE_MEASURED_BASE_FLEET_ISOS` moves that ISO's keeper; each needs its own lane. |
 | **D-6** | **`check_cache_key_registration.py` check 1 was RED on `main`** before this branch (`ercot_storage_rt_offer_surface` registered with no declared default). Backfilled here as a zero-behaviour bookkeeping entry so this PR's CI is readable. | Pre-existing; fixed only because it blocks a guard, not as scope. |
 | **D-7** | Table 1.1's cells are carried from **FFR-3P's transcription**; the source PDF is not committed. The PS split in §2 is my own measurement from the committed workbook, but the class totals are not independently re-extracted. | An intake, with its own authorization. Flagged so nobody reads §3 as fully first-party. |
-| **D-8** | **The same-HEAD CONTROL arm was still solving when this document was written.** §4.4's control column is FFR-3H arm A / FFR-3P's control, solved ~50 commits upstream at key `e5822277b72184f6`; the treated arm is at `35b0a89be0c07483`. | The comparison is nonetheless tight: renewable builds (5,404.4 MW) and storage builds (0.0) reproduce FFR-3P's control EXACTLY, and the treated accredited firm MW matches this session's independent solve-free arithmetic to 0.4 MW. A same-HEAD control was launched to close it; if it disagrees, **the control column is what moves, not the treated measurements.** |
+| **D-8** | ~~Same-HEAD control outstanding.~~ **CLOSED IN SESSION.** The control was solved at this head and reproduces FFR-3H arm A / FFR-3P's control to the digit (14,043.6 / 21,448.0 / 65.48 %, accredited firm 50,729, RM path 1.80 / −3.12 / −0.31 / 12.35 / 15.28, 3 FAIL). | No caveat remains on §4.4's comparison. |
 
 ---
 
