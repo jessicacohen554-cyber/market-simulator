@@ -4935,3 +4935,85 @@ CT-band identification needs a Texas hub daily gas basis, which is item 8(b) and
 **licensing-BLOCKED as of ercot-160**.
 
 Next shorthand: ercot-161.
+
+## 2026-08-04 — ercot-161 (the FINDING §6 Phase 0, owner-directed at the 2023 −30 %; NO LP, no solve, keeper UNCHANGED at ercot158): the armed RT wall is EXONERATED on its own population — the ~100-hour λ was formed on the STORAGE fleet's standing $1,500–5,000 discharge offers, a class the model prices at a flat $10; a measured multi-tranche storage RT offer surface is CHARTERED (not built), pending owner authorization
+
+**Session ercot-161** (branch `claude/ercot-afternoon-offer-phase0-oenet8`).
+Full record: `results/calibration/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md`.
+Probes `scripts/probes/ercot161_afternoon_wall_phase0.py` /
+`ercot161_dispatched_segment_census.py` / `ercot161_price_setter_census.py` /
+`ercot161_pwrstr_conduct_census.py` → committed records
+`results/calibration/_ercot161_{wall_phase0,dispatched_census,price_setter,pwrstr_conduct}.json`.
+The keeper fleet was reconstructed no-LP (`reconstruct_bundle_fleet`, the
+prb-overrides RT/pool flags asserted — 426/369/173 rows, the keeper's exact
+builder signature) and the top-100 gap-hour set reproduces the parent FINDING
+to the cent ($1,487.84 / $441.27 / λ $1,470.16 / RTORPA $36.03 / 83 Aug-Sep /
+98.3 %).
+
+**The four §6 candidates, adjudicated:** (1) **bin resolution NOT the defect**
+— 86/100 hours in bin 6 both geometries (93 % agreement), and the
+gap-hour-conditioned gas spare ladder ≡ the bin-6-rest ladder (CC p90 197 vs
+194; λ meanwhile 17× apart, and un-separable within bin 6 by PRC, net-load
+depth, or calendar — no admissible re-conditioning of THIS instrument can
+discriminate the hours). (2) **row coverage secondary** — the wall IS marginal
+in 41/100 h at $238 p50; 39/100 h the margin is an un-walled row (CC peak
+r0–r2 at baked $85–102, CT committed $247, ST_GAS); median marginal bid
+$161.69 vs λ p50 $1,029. (3) **class coverage is the finding** — the model's
+margin is CC/CT/ST_GAS, but the REAL marginal segments belong to **PWRSTR**
+(33 MW/interval in the [0.7,1.3]×λ band vs 9 for the largest gas type; 0.91 of
+1.10 GW offered ≥$500 is storage; merchant gas dispatched ≥$500 is 0.06 GW and
+its dispatched p99 is **$81 (CC)** — the "GW offered across $500–3,000" sit on
+batteries, not gas). The **CT item-8(b) licensing blocker is NOT binding** on
+this successor (SCLE90: 0.082 GW ≥$500). (4) **ceiling/rungs real but
+immaterial** — the p90-truncated ladder + rel-compression give 6 MW (CC) / 15
+MW (CT) at the top rung and max wall prices $413/$1,216, yet repairing them
+cannot reach λ because the gas conduct itself tops at ~$81 dispatched p99.
+Spare-p10 vs λ/gas correlation **−0.10** (spare 8–12× gas while λ ran
+321–993×): the wall's population does not carry the price signal — **the wall
+is right about the gas fleet; the gas fleet was not the price.**
+
+**The storage conduct is measured and STANDING** (ONTEST excluded, absolute $,
+HASL-capped above-LSL — the ERCOT-154 population discipline, now on the
+full-year delivery-2023 corpus that landed only at ERCOT-157): p10 $74 / p30
+$1,500 / **p50–p99 pinned at the $5,000 HCAP**, 0.711 GW offered and 0.556 GW
+≥$500 at the gap hours, and **every one of the seven net-load bins shows the
+same hockey stick** (p50 $5,000; 0.55–0.74 GW ≥$500) — the discrimination
+between a $76 and a $1,337 hour is the crossing's depth, which the LP supplies
+inherently (the discriminator the ERCOT-159 system-wide reserve row lacked).
+The model's storage discharges 653 MW mean at those hours (≈ the real fleet's
+0.71 GW whole online energy capability): the defect is **price, not volume**.
+
+**ERCOT-154 is NOT re-opened (rule 28(a))** — new evidence, different object:
+its ground (b) was the superseded evening-average cushion; its ground (c) was
+2025-annual-volume on pooled evenings (now a pre-registered successor gate);
+its ground (a) — the single-price representation — is *honoured* as the reason
+the successor is **multi-tranche**, the form ERCOT-154 itself named, whose
+upper rungs are now HCAP-degenerate-by-measurement (stable) and whose p10–p30
+toe is exactly where ERCOT-154's own year-pair test passed (0.969). Its three
+DO-NOT-REDO items (single-price arm, gas-multiple basis, p10-rung selection)
+are all honoured. `battery_dispatch_adder` ERCOT stays `K` (note gains the
+pointer; zero verdicts minted).
+
+**CHARTERED SUCCESSOR (named, not built, not armed — owner authorization
+required for the structural LP change):** `ercot_storage_rt_offer_surface` —
+K discharge tranches per ERCOT battery unit sharing SOC/power-cap (the
+thermal-tranche pattern on the storage columns), priced at the measured
+per-net-load-bin absolute-$ PWRSTR ladder, year-scoped no-pooled-fallback,
+REPLACING the flat `battery_dispatch_adder` on ERCOT (rule 19, one owner; PS
+and other ISOs untouched). Identification phase + PRECOMMIT (C3a +1.0 pp
+grace, zero-spurious mid-band, tail-not-away, NRMSE +0.005, matched-hour C3c,
+**the 2025 EIA-930 `NG: BAT` volume guard**, K/R/I rule, LOYO) BEFORE any
+solve; single-delta full-span A/B off ercot158 via `replay_keeper.py`, fresh
+same-HEAD control, years sequential (rule 12). Refutation branches stated ex
+ante in the FINDING §4.
+
+**Governance.** Rule 15: no run produced, nothing owed to the dashboard. Rule
+28(b): no cell verdict (no mechanism tested); §5.1 queue re-stamped to this
+successor and the `battery_dispatch_adder` note annotated. Rule 28(c): no new
+field. Holdouts untouched (2023, training span). ERCOT-scoped. Scope fence
+honoured in full (dispersion refusal untouched — this surface prices ONLINE
+telemetered capability at its own submitted curve; envelope family /
+shoulder-span / topology / item 6 / ordc-only stay closed; the offer LEVEL
+program is exonerated, not re-derived).
+
+Next shorthand: ercot-162.
