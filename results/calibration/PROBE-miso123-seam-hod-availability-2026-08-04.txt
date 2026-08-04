@@ -1,0 +1,165 @@
+==============================================================================
+miso-123 Phase-0 — hour-of-day-resolved MISO seam band availability
+keeper bundle: results/calibration/miso122_scopegate_B   (NO LP SOLVED)
+seams: {'PJM': 7300.0, 'SPP': 4000.0, 'South': 3000.0, 'Manitoba': 2900.0}   bands: 8
+==============================================================================
+
+##############################################################################
+## 2023
+##############################################################################
+
+Q0  reconstruction vs keeper solved import class:  r = +0.994   mean   4381.0 vs   4418.7 MW   bias    -37.7 MW
+    hod-profile corr of reconstruction vs keeper: +1.000   (the reconstruction omits border-link TTCs and the LP's zonal network, so it is an ACCOUNTING of band availability x price, not a resolve)
+
+Q1  hour-of-day profile: armed p90 cap vs measured flow vs model
+         seam  cap night  cap peak    n/p |  meas night  meas peak    n/p |  mdl night  mdl peak    n/p
+          PJM       6451      5781   1.12 |        5044       4114   1.23 |       4094      5011   0.82
+          SPP        782       654   1.20 |         248         -2 118.05 |         42       245   0.17
+        South         11       219   0.05 |       -1285       -880  -1.46 |          0         0   0.00
+     Manitoba        810      1338   0.61 |         270        907   0.30 |        240       822   0.29
+    hod-profile corr vs MEASURED flow:       seam  armed p90 cap  model cleared
+                                              PJM          0.952         -0.638
+                                              SPP          0.904         -0.755
+                                            South          0.814            nan
+                                         Manitoba          0.996          0.929
+
+Q2  envelope binding (miso-121: the predictive statistic is the MARGINAL share)
+         seam  bind all  bind ngt  bind pk |  MARG all  MARG ngt  MARG pk
+          PJM     13.8%      3.3%    35.1% |      3.8%      0.6%    12.0%
+          SPP     16.1%      1.5%    28.0% |      1.7%      0.0%     3.1%
+        South      0.0%      0.0%     0.0% |      0.0%      0.0%     0.0%
+     Manitoba     22.9%     15.4%    24.9% |     18.8%     19.6%    17.1%
+
+Q3  candidate C1, HELD-PRICE (upper bound on the correction)
+    hour-of-day corr vs measured net interchange: current +0.094  ->  candidate +0.152   (delta +0.058)
+          PJM  night     -209 MW   peak     -842 MW   energy  -4.439 TWh
+          SPP  night      -16 MW   peak     -102 MW   energy  -0.446 TWh
+        South  night       +0 MW   peak       +0 MW   energy  +0.000 TWh
+     Manitoba  night      -40 MW   peak      -95 MW   energy  -0.587 TWh
+
+Q4  KILL-13 (rule 13 [R-MEASURED])
+          PJM  (a) candidate ceiling within 5% of the cell MEAN in  11.8% of cells   (b) ceiling binds   3.9% of hours
+                   armed p90 ceiling mean     6166 MW vs candidate     5079 MW vs measured mean     4674 MW
+          SPP  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   5.8% of hours
+                   armed p90 ceiling mean      682 MW vs candidate      447 MW vs measured mean      110 MW
+        South  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   0.0% of hours
+                   armed p90 ceiling mean       85 MW vs candidate       56 MW vs measured mean        0 MW
+     Manitoba  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds  19.3% of hours
+                   armed p90 ceiling mean     1090 MW vs candidate      870 MW vs measured mean      615 MW
+
+Q5  annual net-import energy ratio (reconstruction/measured): current 1.012  ->  candidate 0.868
+    keeper solved import class ratio: 1.021  (the scored number)
+
+Q6  reachable share of the measured mis-shape (a CEILING can only cut)
+    night mis-shape    -1116 MW   candidate moves     -265 MW   (AWAY FROM reality)
+    peak  mis-shape    +1312 MW   candidate moves    -1038 MW   (toward reality)
+    CEILING-CLASS BOUND (forbidden outcome pin, diagnostic only): hod corr +0.241   energy ratio 0.775
+
+##############################################################################
+## 2024
+##############################################################################
+
+Q0  reconstruction vs keeper solved import class:  r = +0.995   mean   2661.2 vs   2686.3 MW   bias    -25.1 MW
+    hod-profile corr of reconstruction vs keeper: +1.000   (the reconstruction omits border-link TTCs and the LP's zonal network, so it is an ACCOUNTING of band availability x price, not a resolve)
+
+Q1  hour-of-day profile: armed p90 cap vs measured flow vs model
+         seam  cap night  cap peak    n/p |  meas night  meas peak    n/p |  mdl night  mdl peak    n/p
+          PJM       5534      4435   1.25 |        4229       3008   1.41 |       3197      3727   0.86
+          SPP        717       509   1.41 |         105       -142   0.74 |         37       178   0.21
+        South         37       199   0.19 |       -1546      -1168  -1.32 |          3         7   0.46
+     Manitoba        510      1166   0.44 |         -68        672  -0.10 |         88       625   0.14
+    hod-profile corr vs MEASURED flow:       seam  armed p90 cap  model cleared
+                                              PJM          0.987         -0.753
+                                              SPP          0.973         -0.529
+                                            South          0.837          0.700
+                                         Manitoba          0.992          0.898
+
+Q2  envelope binding (miso-121: the predictive statistic is the MARGINAL share)
+         seam  bind all  bind ngt  bind pk |  MARG all  MARG ngt  MARG pk
+          PJM     25.4%      8.6%    50.8% |     10.9%      2.4%    28.6%
+          SPP     16.5%      2.4%    34.0% |      1.0%      0.4%     1.2%
+        South      1.1%      1.0%     1.3% |      0.4%      0.7%     0.2%
+     Manitoba     16.7%     10.9%    23.1% |     12.8%     17.7%     8.6%
+
+Q3  candidate C1, HELD-PRICE (upper bound on the correction)
+    hour-of-day corr vs measured net interchange: current -0.455  ->  candidate -0.424   (delta +0.031)
+          PJM  night     -189 MW   peak     -675 MW   energy  -3.536 TWh
+          SPP  night      -16 MW   peak      -85 MW   energy  -0.359 TWh
+        South  night       -2 MW   peak       -5 MW   energy  -0.034 TWh
+     Manitoba  night      -18 MW   peak     -133 MW   energy  -0.637 TWh
+
+Q4  KILL-13 (rule 13 [R-MEASURED])
+          PJM  (a) candidate ceiling within 5% of the cell MEAN in   0.4% of cells   (b) ceiling binds  12.3% of hours
+                   armed p90 ceiling mean     5064 MW vs candidate     4131 MW vs measured mean     3689 MW
+          SPP  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   6.4% of hours
+                   armed p90 ceiling mean      579 MW vs candidate      371 MW vs measured mean        0 MW
+        South  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   0.3% of hours
+                   armed p90 ceiling mean       94 MW vs candidate       43 MW vs measured mean        0 MW
+     Manitoba  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds  12.6% of hours
+                   armed p90 ceiling mean      884 MW vs candidate      651 MW vs measured mean      344 MW
+
+Q5  annual net-import energy ratio (reconstruction/measured): current 1.010  ->  candidate 0.812
+    keeper solved import class ratio: 1.020  (the scored number)
+
+Q6  reachable share of the measured mis-shape (a CEILING can only cut)
+    night mis-shape     -972 MW   candidate moves     -226 MW   (AWAY FROM reality)
+    peak  mis-shape    +1139 MW   candidate moves     -898 MW   (toward reality)
+    CEILING-CLASS BOUND (forbidden outcome pin, diagnostic only): hod corr -0.289   energy ratio 0.624
+
+##############################################################################
+## 2025
+##############################################################################
+
+Q0  reconstruction vs keeper solved import class:  r = +0.993   mean   1952.4 vs   1971.1 MW   bias    -18.8 MW
+    hod-profile corr of reconstruction vs keeper: +1.000   (the reconstruction omits border-link TTCs and the LP's zonal network, so it is an ACCOUNTING of band availability x price, not a resolve)
+
+Q1  hour-of-day profile: armed p90 cap vs measured flow vs model
+         seam  cap night  cap peak    n/p |  meas night  meas peak    n/p |  mdl night  mdl peak    n/p
+          PJM       4963      4096   1.21 |        3574       2584   1.38 |       2540      3188   0.80
+          SPP        827       797   1.04 |         188        101   1.87 |         50       243   0.21
+        South        161       263   0.61 |       -1016       -986  -1.03 |          0         1   0.00
+     Manitoba        187       796   0.24 |        -378        199  -1.90 |          4        94   0.04
+    hod-profile corr vs MEASURED flow:       seam  armed p90 cap  model cleared
+                                              PJM          0.955         -0.852
+                                              SPP          0.948         -0.311
+                                            South          0.844          0.377
+                                         Manitoba          0.986          0.818
+
+Q2  envelope binding (miso-121: the predictive statistic is the MARGINAL share)
+         seam  bind all  bind ngt  bind pk |  MARG all  MARG ngt  MARG pk
+          PJM     12.2%      5.3%    28.3% |      4.4%      1.4%    11.6%
+          SPP      3.9%      1.5%     4.9% |      0.4%      0.3%     0.7%
+        South      0.1%      0.0%     0.3% |      2.0%      1.7%     2.7%
+     Manitoba      2.7%      1.2%     4.8% |      4.2%      3.3%     4.2%
+
+Q3  candidate C1, HELD-PRICE (upper bound on the correction)
+    hour-of-day corr vs measured net interchange: current -0.023  ->  candidate -0.018   (delta +0.005)
+          PJM  night     -205 MW   peak     -618 MW   energy  -3.007 TWh
+          SPP  night      -21 MW   peak      -88 MW   energy  -0.396 TWh
+        South  night       +0 MW   peak       -0 MW   energy  +0.000 TWh
+     Manitoba  night       -1 MW   peak      -34 MW   energy  -0.094 TWh
+
+Q4  KILL-13 (rule 13 [R-MEASURED])
+          PJM  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   3.7% of hours
+                   armed p90 ceiling mean     4669 MW vs candidate     3651 MW vs measured mean     3199 MW
+          SPP  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   0.8% of hours
+                   armed p90 ceiling mean      734 MW vs candidate      460 MW vs measured mean      109 MW
+        South  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   0.8% of hours
+                   armed p90 ceiling mean      185 MW vs candidate       99 MW vs measured mean        0 MW
+     Manitoba  (a) candidate ceiling within 5% of the cell MEAN in   0.0% of cells   (b) ceiling binds   2.8% of hours
+                   armed p90 ceiling mean      451 MW vs candidate      307 MW vs measured mean        0 MW
+
+Q5  annual net-import energy ratio (reconstruction/measured): current 0.902  ->  candidate 0.718
+    keeper solved import class ratio: 0.911  (the scored number)
+
+Q6  reachable share of the measured mis-shape (a CEILING can only cut)
+    night mis-shape    -1009 MW   candidate moves     -226 MW   (AWAY FROM reality)
+    peak  mis-shape     +711 MW   candidate moves     -740 MW   (toward reality)
+    CEILING-CLASS BOUND (forbidden outcome pin, diagnostic only): hod corr +0.305   energy ratio 0.460
+
+==============================================================================
+SUMMARY
+==============================================================================
+  2023: recon r=+0.994  hod corr +0.094 -> +0.152   energy ratio 1.012 -> 0.868
+  2024: recon r=+0.995  hod corr -0.455 -> -0.424   energy ratio 1.010 -> 0.812
+  2025: recon r=+0.993  hod corr -0.023 -> -0.018   energy ratio 0.902 -> 0.718

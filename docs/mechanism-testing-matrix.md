@@ -1761,6 +1761,49 @@ is now the live queue head.**)*
    **availability** at the `(month × hour-of-day)` grain `MISO_SEAM_DIBA`
    already uses — changing *when* a band may clear, not *how much* flows —
    which needs its own charter.
+   **CLOSED ON MEASUREMENT 2026-08-04 (miso-123 — chartered and refused in one
+   session, NO LP SPENT; `import_shape_lever` MISO `·` → `G`, minted from MISO's
+   own measurement and NOT transferred from NYISO's, rule 25). The successor's
+   premise was already satisfied.** The armed p90 envelope is not merely
+   hod-*resolved* but hod-**shaped**: its own 24-point hour-of-day profile tracks
+   the MEASURED directed flow at **r = +0.952/+0.987/+0.955** (PJM),
+   +0.904/+0.973/+0.948 (SPP), +0.814/+0.837/+0.844 (South),
+   +0.996/+0.992/+0.986 (Manitoba), while the model's CLEARED flow tracks it at
+   **−0.638/−0.753/−0.852** (PJM). Availability already points the right way and
+   the LP's flow points the wrong way — confirming this item's own attribution to
+   the hour-INVARIANT price ladder *from the other direction*. The envelope is
+   also **not the marginal constraint overnight** (miso-121's statistic): PJM
+   marginal binding **0.6/2.4/1.4 %** of overnight hours vs 12.0/28.6/11.6 % at
+   peak. Candidate C1 (per-band per-cell survival availability; same source, same
+   grain, same 8-band grid, zero free parameters, zero thresholds) fails its
+   pre-registered bars held-price — hod corr **+0.058/+0.031/+0.005** against a
+   ≥ +0.20-in-2-of-3 bar, and annual seam energy
+   **1.012/1.010/0.902 → 0.868/0.812/0.718** against a [0.85, 1.15] bar.
+   **The bound generalises to the WHOLE ceiling class:** even the forbidden
+   outcome pin (`min(model, measured)` hour by hour, computed as an unattainable
+   bound and never armed) reaches only **+0.241/−0.289/+0.305** at energy ratios
+   0.775/0.624/0.460 — a ceiling can only CUT and the model's overnight seam is
+   **short** (−1,116/−972/−1,009 MW), so every availability ceiling moves the
+   night limb AWAY from reality. **Do not re-derive a different envelope
+   statistic and do not sweep `miso_seam_flow_percentile`** against this residual
+   (rule 23 `[R-FROZEN-DERIVE]`). KILL-13 did **not** fire and the
+   pre-registration predicted it would — recorded as a wrong prediction, not
+   re-narrated: C1 is an **admissible** capability envelope that simply does not
+   work, refused on rules 1/14 effectiveness and NOT on rule 13 admissibility, so
+   the lane must not carry forward a belief that the construction is forbidden.
+   **All three mechanism classes for this defect are now spent** — price
+   (`miso_pjm_lmp_import_pricing`, `R` ex ante at miso-114 §4), ceiling (closed
+   here), floor (`miso_firm_import_floor`, rule-13 outcome pin — still not
+   re-licensed). The defect itself **remains real and unfixed** (annual energy
+   1.017/1.016/0.908 at hod corr +0.094/−0.455/−0.023, independently reproduced
+   on the miso-122b keeper against miso-114's +0.097/−0.453/−0.030 on miso-109b —
+   two keepers, two constructions, same answer); re-opening needs a **scheduling**
+   representation of the firm/JOA transfer base that can *raise* overnight flow
+   on an identification that is not the measured net interchange itself.
+   (`results/calibration/FINDING-miso123-seam-hod-availability-closed-2026-08-04.md`,
+   `PREREG-miso123-seam-hod-band-availability-2026-08-04.md`, probe
+   `scripts/probes/_miso123_seam_hod_availability.py`, transcript
+   `PROBE-miso123-seam-hod-availability-2026-08-04.txt`.)
 1. **Contract-period tonnage constraint — data-blocked**
    (`miso-coal-contract-tonnage-data-ask-2026-07.md`) — **the LP constraint is
    NOT the lever any more; the RHS is.** The constraint itself (contract-period
@@ -1930,6 +1973,15 @@ is now the live queue head.**)*
    whose 912.5 MW band quantises miso-122's K3 dispatch statistic — and
    miso-118's `CT_CHP`-side plant-level rate question. The bounded non-solve
    step remains item 1's Form 580 count.
+   **QUEUE STAMP 2026-08-04 (miso-123): the seam band-availability successor is
+   now CLOSED on measurement (item 0c above; `import_shape_lever` MISO → `G`,
+   no LP spent), so the ONE named, un-adjudicated, non-data-blocked successor
+   left in §5.4 is miso-118's `CT_CHP`-side plant-level rate at 55088 Dearborn
+   (rule 14 `[R-ACCURATE]`, one eGRID rate spanning two prime movers at a mixed
+   facility) — that is the live queue head. Beside it stand only the two bounded
+   NON-solve steps: item 1's Form 580 tonnage COUNT (a sourcing pass, not a
+   solve) and miso-114 §6's CAMPD `CT_PEAKER` + `ST_GAS` overnight-online
+   measurement. A session going off-queue must say so and why.**
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
