@@ -1,0 +1,241 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [
+    {
+      "from_fuel": "gas_cc",
+      "mw": 179.1,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_LA_BASIN_p50216_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 13.16,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NP15_p50748_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 58.68,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_NP15_p52109_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 61.288,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_NP15_p52109_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 37.6,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_NP15_p54912_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 139.5,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_SP15_rest_p55077_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 878.7,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_ZP26_p55151_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 324.77900000000005,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_NP15_p55217_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 327.33540000000005,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_NP15_p56476_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 8.55,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_LA_BASIN_p57122_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 1.52,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_LA_BASIN_p57122_peak"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 13.5,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_SDGE_p57584_committed"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 14.1,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_CHP_SDGE_p57584_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 459.486,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_LA_BASIN_p62115_econ"
+    },
+    {
+      "from_fuel": "gas_cc",
+      "mw": 482.58000000000004,
+      "to_fuel": "gas_cc_ccs",
+      "unit_id": "CC_REGULAR_LA_BASIN_p62116_econ"
+    }
+  ],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "gas_cc": 2000.0,
+    "gas_ct": 5585.6,
+    "solar": 4000.0,
+    "wind": 702.2
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 702.2,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "ZP26"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 4000.0,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "SP15_rest"
+    },
+    {
+      "cod_year": 2031,
+      "decision_year": 2029,
+      "event": "decided",
+      "kind": "thermal",
+      "mw": 2000.0,
+      "seq": 2,
+      "tech": "gas_cc",
+      "zone": "NP15"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 702.2,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "ZP26"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 4000.0,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "SP15_rest"
+    },
+    {
+      "cod_year": 2029,
+      "decision_year": 2027,
+      "event": "commissioned",
+      "kind": "thermal",
+      "mw": 2000.0,
+      "seq": 2,
+      "tech": "gas_cc",
+      "zone": "NP15"
+    }
+  ],
+  "firm_clean_accredited_mw": 4624.808,
+  "firm_clean_mw": 6568.396,
+  "fleet_by_fuel_after": {
+    "biomass": 743.2,
+    "coal": 50.0,
+    "gas_cc": 12383.7052,
+    "gas_cc_ccs": 5999.7148,
+    "gas_ct": 19331.601,
+    "gas_st": 34.8,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 743.2,
+    "coal": 50.0,
+    "gas_cc": 13383.5836,
+    "gas_cc_ccs": 2999.8364,
+    "gas_ct": 13746.001,
+    "gas_st": 34.8,
+    "nuclear": 2240.0,
+    "oil": 122.7
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "CAISO",
+  "ledger_version": 1,
+  "mode": "forecast",
+  "peak_demand_mw": 53511.902,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 702.2,
+      "tech": "wind",
+      "zone": "ZP26"
+    },
+    {
+      "mw": 4000.0,
+      "tech": "solar",
+      "zone": "SP15_rest"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.2096,
+    "wind": 0.2202
+  },
+  "reserve_margin": 0.146523,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "solar_cap_mw": 26000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 7432.168,
+  "storage_power_mw": 10077.6,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 2000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2027c2029_2",
+      "zone": "NP15"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 5585.6,
+      "source": "reserve_backstop",
+      "unit_id": "gas_ct_adequacy_2029",
+      "zone": "NP15"
+    }
+  ],
+  "wind_cap_mw": 7702.2,
+  "year": 2029
+}
