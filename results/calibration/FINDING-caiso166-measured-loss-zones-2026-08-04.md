@@ -217,12 +217,26 @@ remote**, for a transport reason outside this lane:
 
 **Landed via `push_files`, every blob hash-verified against local:** the
 pre-registration, the derive, the re-derived surface, this finding, and
-`results/calibration/_caiso166_session_artifacts.patch` — a git-generated,
-`git apply --check`-verified patch carrying the three artifacts too large or too
-risky to retype: `scripts/gen_caiso166_attestation.py` (new, 813 lines), the
-`zonal_loss_surface` **mechanism-matrix** cell update (the file is 843 KB, over
-the cap) and the `docs/calibration-log/caiso.md` entry (380 KB). Apply with
-`git apply results/calibration/_caiso166_session_artifacts.patch`.
+`scripts/gen_caiso166_attestation.py`.
+
+Two edits target files **larger than the cap**, so they ship as small carriers
+rather than as the files themselves. Both were verified end-to-end — the
+**remote** copy was fetched back and run/applied against a clean tree:
+
+| carrier | applies to | verification |
+|---|---|---|
+| `results/calibration/_caiso166_log.patch` | `docs/calibration-log/caiso.md` (380 KB) | remote copy passes `git apply --check` |
+| `results/calibration/_caiso166_apply_matrix_cell.py` | `docs/codebase-site/data/mechanism-matrix.js` (843 KB) | remote copy reproduces the hand edit **byte-for-byte** (sha `e7b8b796`) |
+
+```
+git apply results/calibration/_caiso166_log.patch
+python results/calibration/_caiso166_apply_matrix_cell.py
+```
+
+The matrix carrier is an **anchored applier, not a diff** — a diff would have
+required reproducing the ~15 KB *old* note line exactly for no benefit. It is
+idempotent and refuses rather than force-fits if either anchor does not match
+exactly once.
 
 **Needs a session with a working `git push`:** `frontend/data/backcast/runs/*.js`
 (2 files), the registry sidecars, and the bundle parquet sidecars. Registry
