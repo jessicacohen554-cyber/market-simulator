@@ -388,5 +388,257 @@ class TestScorerBounds(unittest.TestCase):
             self.assertEqual(SC._assert_scoreable_year(y), y)
 
 
+# --------------------------------------------------------------------------- #
+# FFR-3U: the bridge/un-bridge seam (owner decision D-11, sitting Addendum L)
+#
+# FFR-3Q's base-2021 T1-FF window SOLVED 2022 — a validation-tier holdout year —
+# under an active freeze, because two predicates disagreed about what a
+# "forward year" is: the runner un-bridged any year at/above
+# ``crossover_forward_year`` (which T1-FF points at its OWN base year), while
+# the guard computed its solve set from the ``--crossover`` CLI flag and so
+# never policy-checked the year at all. These tests are the ones that would
+# have caught it before the solve.
+# --------------------------------------------------------------------------- #
+class TestBridgeSeam(unittest.TestCase):
+    """The FFR-3U seam: one predicate, checked at every posture."""
+
+    # -- (a) the instance: base 2021 must BRIDGE 2022 -------------------- #
+    def test_base_2021_bridges_2022(self):
+        c = H.build_config(
+            "ERCOT", 2021, 2025, "realized", vintage=2020, forward_from_base=True
+        )
+        self.assertEqual(c.crossover_forward_year, 2021)  # the T1-FF pointing
+        # The runner's predicate, at the boundary the config actually carries.
+        self.assertTrue(
+            runner.is_hindcast_bridge_year(
+                2022,
+                hindcast=c.hindcast,
+                crossover_forward_year=c.crossover_forward_year,
+                start_year=c.start_year,
+            )
+        )
+        self.assertFalse(c.is_crossover_unbridged_year(2022))
+        # ... and the realized solve set excludes it.
+        self.assertNotIn(
+            2022,
+            runner.hindcast_solve_years(
+                2021, 2025, crossover_forward_year=c.crossover_forward_year
+            ),
+        )
+        self.assertEqual(
+            runner.hindcast_solve_years(
+                2021, 2025, crossover_forward_year=c.crossover_forward_year
+            ),
+            [2021, 2023, 2024, 2025],
+        )
+
+    def test_forward_stack_and_bridge_legality_are_different_questions(self):
+        """The separation the defect collapsed (and why the clause is scoped).
+
+        2022 IS a forward year for its *drivers* on a base-2021 T1-FF run (no
+        measured overlays, growth-scaled demand) and is STILL a quarantined
+        bridge year for rule 22. One predicate answering both is the bug.
+        """
+        c = H.build_config(
+            "ERCOT", 2021, 2025, "realized", vintage=2020, forward_from_base=True
+        )
+        self.assertTrue(c.is_crossover_forward_year(2022))  # input stack
+        self.assertFalse(c.is_crossover_unbridged_year(2022))  # rule-22 legality
+
+    # -- (c) the 2026 analogue: locked-test tier ------------------------- #
+    def test_base_2021_bridges_2026(self):
+        """The exposure nothing has reached yet — closed at the predicate."""
+        c = H.build_config(
+            "ERCOT", 2021, 2025, "realized", vintage=2020, forward_from_base=True
+        )
+        self.assertFalse(c.is_crossover_unbridged_year(2026))
+        self.assertTrue(
+            runner.is_hindcast_bridge_year(
+                2026,
+                hindcast=True,
+                crossover_forward_year=c.crossover_forward_year,
+                start_year=c.start_year,
+            )
+        )
+        # And the window guard still refuses to be pointed at it at all.
+        with pytest.raises(SystemExit):
+            H._validate_window(2021, 2026, False, True)
+
+    def test_genuine_crossover_still_unbridges_2026(self):
+        """The clause is SCOPED, not deleted: T1-X is unchanged."""
+        c = H.build_config("ERCOT", 2023, 2027, "realized", crossover=True)
+        self.assertEqual(c.crossover_forward_year, 2026)
+        self.assertTrue(c.is_crossover_unbridged_year(2026))
+        self.assertTrue(c.is_crossover_unbridged_year(2027))
+        self.assertEqual(
+            runner.hindcast_solve_years(
+                2023, 2027, crossover_forward_year=c.crossover_forward_year
+            ),
+            [2023, 2024, 2025, 2026, 2027],
+        )
+
+    def test_plain_hindcast_unchanged(self):
+        c = H.build_config("ERCOT", 2021, 2025, "realized")
+        self.assertIsNone(c.crossover_forward_year)
+        self.assertFalse(c.is_crossover_unbridged_year(2022))
+        self.assertEqual(
+            runner.hindcast_solve_years(2021, 2025, crossover_forward_year=None),
+            [2021, 2023, 2024, 2025],
+        )
+
+    # -- (b) the CLASS-level test: guard set == realized set ------------- #
+    def test_guard_and_runner_agree_on_every_posture(self):
+        """PARITY — the whole family, not this instance.
+
+        For every CLI posture the harness accepts, the set ``_validate_window``
+        policy-checks must equal the set the runner will realize. The runner's
+        set is rebuilt here from the config ``build_config`` actually produces
+        — CLI args -> config -> runner predicate — so re-pointing the boundary,
+        or re-deriving either side from a different flag, breaks this test
+        rather than a holdout year.
+        """
+        postures = [
+            # (start, end, crossover, forward_from_base, vintage)
+            (2021, 2025, False, False, None),  # plain T1-H
+            (2023, 2025, False, False, None),  # plain, short
+            (2021, 2025, False, True, 2020),  # T1-FF base 2021 (the breach)
+            (2023, 2025, False, True, 2023),  # T1-FF base 2023
+            (2024, 2025, False, True, 2023),  # T1-FF base 2024
+            (2023, 2027, True, False, 2023),  # T1-X crossover
+            (2023, 2026, True, False, 2023),  # T1-X, short
+        ]
+        for start, end, crossover, ffb, vintage in postures:
+            with self.subTest(start=start, end=end, crossover=crossover, ffb=ffb):
+                H._validate_window(start, end, crossover, ffb)  # legal, no raise
+                guard = H.window_solve_years(start, end, crossover, ffb)
+                cfg = H.build_config(
+                    "ERCOT",
+                    start,
+                    end,
+                    "realized",
+                    vintage=vintage,
+                    crossover=crossover,
+                    forward_from_base=ffb,
+                    arm="realized" if ffb else "realized",
+                )
+                realized = [
+                    y
+                    for y in range(start, end + 1)
+                    if not runner.is_hindcast_bridge_year(
+                        y,
+                        hindcast=cfg.hindcast,
+                        crossover_forward_year=cfg.crossover_forward_year,
+                        start_year=cfg.start_year,
+                    )
+                ]
+                self.assertEqual(guard, realized)
+                # A quarantined year may survive into the solve set ONLY as a
+                # genuine crossover forward year (2026 on a T1-X); 2022 never.
+                for y in realized:
+                    if y in runner.HINDCAST_BRIDGE_YEARS:
+                        self.assertTrue(crossover, f"{y} solved on a non-crossover")
+                        self.assertGreaterEqual(y, H.CROSSOVER_FORWARD_YEAR)
+
+    def test_guard_checks_the_boundary_the_config_carries(self):
+        """The exact gap FFR-3Q fell through: guard flag vs config boundary."""
+        for start, end, crossover, ffb, vintage in [
+            (2021, 2025, False, True, 2020),
+            (2023, 2025, False, True, 2023),
+            (2023, 2027, True, False, 2023),
+            (2021, 2025, False, False, None),
+        ]:
+            with self.subTest(start=start, crossover=crossover, ffb=ffb):
+                cfg = H.build_config(
+                    "ERCOT",
+                    start,
+                    end,
+                    "realized",
+                    vintage=vintage,
+                    crossover=crossover,
+                    forward_from_base=ffb,
+                    arm="realized",
+                )
+                self.assertEqual(
+                    H.window_forward_boundary(start, crossover, ffb),
+                    cfg.crossover_forward_year,
+                )
+
+    # -- (4) the banner cannot lie -------------------------------------- #
+    def test_banner_and_completion_assertion_share_the_predicate(self):
+        """Source-level: the launch promise and the completion check are tied.
+
+        The FFR-3Q run printed a governance banner promising 2022 was bridged
+        and then solved it, with nothing comparing the two. The banner is now
+        derived from ``window_solve_years`` and re-asserted against the
+        realized evolution ledgers, so it cannot be true at launch and false at
+        completion.
+        """
+        import inspect
+
+        src = inspect.getsource(H.main)
+        self.assertIn("promised_solve_years = window_solve_years(", src)
+        self.assertIn("SOLVE-YEAR PARITY FAILURE", src)
+        self.assertIn("promised_solve_years", src.split("solved = sorted")[1])
+
+    def test_no_second_predicate_at_either_site(self):
+        """Rule 19 ``[R-ONE-MECH]`` applied to the guard itself.
+
+        The runner's bridge branch and the harness guard must both route
+        through ``is_hindcast_bridge_year``; neither may re-derive bridging
+        from ``is_crossover_forward_year`` (the input-stack predicate) or from
+        the ``--crossover`` flag.
+        """
+        import inspect
+
+        runner_src = inspect.getsource(runner.run_scenario_iso)
+        bridge_stmt = runner_src.split("is_bridge = ")[1].split("\n\n")[0]
+        self.assertIn("is_hindcast_bridge_year(", bridge_stmt)
+        self.assertNotIn("is_crossover_forward_year", bridge_stmt)
+
+        guard_src = inspect.getsource(H._validate_window)
+        self.assertIn("window_solve_years(", guard_src)
+        # The guard must not rebuild a solve set from the CLI flag.
+        self.assertNotIn("for y in range(start_year, end_year + 1)", guard_src)
+
+    def test_boundary_constant_is_single_sourced(self):
+        from market_sim.config import scenarios as S
+
+        self.assertEqual(H.CROSSOVER_FORWARD_YEAR, S.CROSSOVER_FORWARD_BOUNDARY_YEAR)
+
+    # -- D-11 condition 2: the contaminated keys are uncacheable --------- #
+    def test_contaminated_cache_keys_refuse_a_present_bundle(self):
+        """The condition that actually protects the tier (owner D-11(b)).
+
+        The seam fix moves no cache key, so the config that solved 2022 still
+        hashes to FFR-3Q's two keys. A bundle sitting at one of them must be a
+        hard error rather than a silent cache hit; an absent bundle stays a
+        no-op so the eventual re-probe can re-solve on a clean tree.
+        """
+        import tempfile
+
+        from market_sim.results import cache as cachemod
+
+        self.assertEqual(
+            set(cachemod.CONTAMINATED_CACHE_KEYS),
+            {"b99600bceb8cb6b8", "5c352508039513da"},
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            with cachemod.cache_root(tmp):
+                for key in cachemod.CONTAMINATED_CACHE_KEYS:
+                    # Absent bundle: no-op, so a clean re-solve is unaffected.
+                    cachemod.assert_cache_key_uncontaminated("ERCOT", key)
+                    self.assertFalse(cachemod.is_cached("ERCOT", key, 2022))
+                    # Present bundle: refused at the single path seam, so every
+                    # read AND write is refused with it.
+                    (cachemod.CACHE_ROOT / "ERCOT" / key).mkdir(parents=True)
+                    with pytest.raises(RuntimeError, match="QUARANTINED"):
+                        cachemod.get_cache_path("ERCOT", key, 2022)
+                    with pytest.raises(RuntimeError, match="QUARANTINED"):
+                        cachemod.is_cached("ERCOT", key, 2022)
+                # An uncontaminated key is untouched.
+                (cachemod.CACHE_ROOT / "ERCOT" / "603c2498bf71d21d").mkdir(parents=True)
+                self.assertFalse(cachemod.is_cached("ERCOT", "603c2498bf71d21d", 2023))
+
+
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(unittest.main())

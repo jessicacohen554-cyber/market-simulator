@@ -31,10 +31,20 @@ from scripts import run_capacity_hindcast as H
 
 #: One argv per structurally distinct tier the harness produces, with the
 #: rubric tier its bundle is scored under (``None`` = not a battery-named
-#: tier here; the full-forward leg still must emit the artifact).
+#: tier here; the full-forward leg still must emit the artifact) and the
+#: ``(start, end, crossover, forward_from_base)`` window that argv resolves to.
+#:
+#: The window is declared because the stub ledger below is BUILT from it
+#: (FFR-3U). Before that, the stub returned one hard-coded ledger
+#: ``{2022: bridge, 2023: {}}`` for every leg — a solve-year set inconsistent
+#: with each leg's own window, which the harness's new SOLVE-YEAR PARITY
+#: assertion (a run whose realized ledgers disagree with its launch banner is a
+#: rule-22 stop-the-line) correctly refuses. A fixture that models a run
+#: solving years its window never contained cannot exercise the tail it claims
+#: to.
 TIER_LEGS = {
-    "t1h_plain_hindcast": ([], "t1h"),
-    "t1x_crossover": (["--crossover"], "t1x"),
+    "t1h_plain_hindcast": ([], "t1h", (2021, 2025, False, False)),
+    "t1x_crossover": (["--crossover"], "t1x", (2023, 2027, True, False)),
     "t1ff_full_forward": (
         [
             "--forward-from-base",
@@ -48,13 +58,26 @@ TIER_LEGS = {
             "2025",
         ],
         None,
+        (2023, 2025, False, True),
     ),
 }
 
 STUB_KEY = "deadbeefcafe0123"
 
 
-def _run_main(tmp_path: Path, monkeypatch, extra_argv: list[str]) -> Path:
+def _expected_years(window: tuple[int, int, bool, bool]) -> tuple[list[int], list[int]]:
+    """Return ``(solved, bridged)`` for a leg's window, via the runner's predicate."""
+    start, end, crossover, ffb = window
+    solved = H.window_solve_years(start, end, crossover, ffb)
+    return solved, [y for y in range(start, end + 1) if y not in solved]
+
+
+def _run_main(
+    tmp_path: Path,
+    monkeypatch,
+    extra_argv: list[str],
+    window: tuple[int, int, bool, bool],
+) -> Path:
     """Run ``main()`` with the solve seam stubbed; return the bundle root.
 
     The stub ``run_scenario`` writes the resolved ``config.yaml`` exactly where
@@ -77,10 +100,17 @@ def _run_main(tmp_path: Path, monkeypatch, extra_argv: list[str]) -> Path:
     # current value with monkeypatch restores it for the rest of the session.
     monkeypatch.setattr(cachemod, "CACHE_ROOT", cachemod.CACHE_ROOT)
     monkeypatch.setattr(H, "run_scenario", fake_run_scenario)
+    # The stub ledger IS the leg's own window (see TIER_LEGS): a solved entry
+    # per solve year, a ``bridge`` entry per bridged year — what a real solve
+    # over this window writes, and what the harness's parity assertion checks.
+    _solved, _bridged = _expected_years(window)
     monkeypatch.setattr(
         H,
         "load_ledgers_for_run",
-        lambda bundle: {2022: {"bridge": True}, 2023: {}},
+        lambda bundle: {
+            **{y: {} for y in _solved},
+            **{y: {"bridge": True} for y in _bridged},
+        },
     )
     monkeypatch.setattr(H, "assert_pipeline_from_vintage", lambda *a, **k: [])
     monkeypatch.setattr(H, "assert_forward_drivers", lambda *a, **k: [])
@@ -93,8 +123,8 @@ def _run_main(tmp_path: Path, monkeypatch, extra_argv: list[str]) -> Path:
 @pytest.mark.parametrize("leg", sorted(TIER_LEGS))
 def test_bundle_root_carries_the_artifact_fc7_reads(tmp_path, monkeypatch, leg):
     """After a run, ``run_config.json`` exists at the bundle root and parses."""
-    extra_argv, _ = TIER_LEGS[leg]
-    out_dir = _run_main(tmp_path, monkeypatch, extra_argv)
+    extra_argv, _, window = TIER_LEGS[leg]
+    out_dir = _run_main(tmp_path, monkeypatch, extra_argv, window)
 
     path = out_dir / "run_config.json"
     assert path.exists(), (
@@ -114,8 +144,9 @@ def test_bundle_root_carries_the_artifact_fc7_reads(tmp_path, monkeypatch, leg):
     # Run-outcome keys mirror the meta's vocabulary.
     assert payload["iso"] == "ERCOT"
     assert payload["cache_key"] == STUB_KEY
-    assert payload["solved_years"] == [2023]
-    assert payload["bridged_years"] == [2022]
+    expected_solved, expected_bridged = _expected_years(window)
+    assert payload["solved_years"] == expected_solved
+    assert payload["bridged_years"] == expected_bridged
     assert payload["kind"] == json.loads((out_dir / "meta.json").read_text())["kind"]
 
     # The request-side YAML dump stays: build_forecast_dof_ledger still falls
@@ -124,7 +155,7 @@ def test_bundle_root_carries_the_artifact_fc7_reads(tmp_path, monkeypatch, leg):
 
 
 @pytest.mark.parametrize(
-    "leg", [k for k, (_, tier) in sorted(TIER_LEGS.items()) if tier]
+    "leg", [k for k, (_, tier, _w) in sorted(TIER_LEGS.items()) if tier]
 )
 def test_score_fc7_row1_passes_on_the_emitted_artifact(tmp_path, monkeypatch, leg):
     """FC-7 row 1 PASSes when fed the artifact through the scorer's own loader.
@@ -134,8 +165,8 @@ def test_score_fc7_row1_passes_on_the_emitted_artifact(tmp_path, monkeypatch, le
     loader feeds ``score_fc7``. Before FFR-3K that path FAILed on every leg of
     both tiers, carrying no information about leg quality.
     """
-    extra_argv, tier = TIER_LEGS[leg]
-    out_dir = _run_main(tmp_path, monkeypatch, extra_argv)
+    extra_argv, tier, window = TIER_LEGS[leg]
+    out_dir = _run_main(tmp_path, monkeypatch, extra_argv, window)
 
     rc = FV._load_config(out_dir / "run_config.json")
     rows = FV.score_fc7({"run_config": rc}, tier, "ERCOT")
