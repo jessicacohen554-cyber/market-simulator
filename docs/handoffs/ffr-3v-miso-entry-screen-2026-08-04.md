@@ -9,8 +9,17 @@ measured by the one instrumented run this session spent.
 `docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md` §6 — MISO's registered
 T1-H leg `miso-2021-2025-realized-ffr3a3` reports **solar model 0.0 GW vs actual
 18.649 GW (−100 %)**, and FFR-3S proved the COD-shifted scoring basis cannot
-explain a zero. Three consecutive decision cohorts (2021, 2022, 2023) decided
+explain a zero: every decision cohort whose COD lands inside the window decided
 zero solar. Why?
+
+*(One correction to FFR-3S's arithmetic, made from the code rather than from a
+score: the leg's decision years are **2022, 2023, 2024, 2025**, not
+2021–2023. 2021 is the run's first year — `fleet is None`, so it builds the
+base fleet and runs **no** evolution at all (runner.py:1024–1045) — and the
+2022 bridge year *does* evolve, screen included, on 2021's `prior_results`
+(runner.py:1215–1244). It changes which cohorts are censored by the COD lag,
+not the conclusion: at `ENTRY_COD_LAG_YEARS = 2` the 2022 and 2023 cohorts
+commission in 2024 and 2025, inside the window, and both decided zero.)*
 
 ---
 
@@ -327,6 +336,23 @@ neither tuned here:
    2021-start hindcast prices 2025 solar at a 3400 GW global stock the world
    reaches around 2029. **This biases the screen towards building**, not away,
    so it cannot be the cause of the zero; recorded for completeness.
+
+### 4.7b Which price signal each decision year actually sees
+
+Worth pinning, because it is not uniform across the window:
+
+| decision year | `prior_results` from | lookahead repriced? | signal the solar screen sees |
+|---|---|---|---|
+| 2022 (bridge) | 2021 | no — `next_year` 2022 ∈ `HINDCAST_BRIDGE_YEARS` | 2021 raw **zonal** LP duals |
+| 2023 | **2021** (2022 never solved) | no, same reason | 2021 raw **zonal** LP duals |
+| 2024 | 2023 | yes | **system-wide** lookahead stack |
+| 2025 | 2024 | yes | **system-wide** lookahead stack |
+
+Two consequences. The **2023 decision is made on a two-year-stale price
+signal**, because the bridge leaves `prior_results` pointing at the last
+*solved* year (runner.py:1217–1218) — correct under rule 22, but it means the
+2023 cohort never sees 2023 prices. And the zonal/system split means MISO-South's
+own price only reaches the screen in the first two decision years.
 
 ### 4.8 Capture shape — measured, and it is not the problem
 
