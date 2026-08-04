@@ -1439,3 +1439,118 @@ prompt delivered only in chat is a prompt that gets lost.
   unprofitable in the entry screen in every year of every arm by $39,974–45,316/MW-yr) is
   diagnosed and **unchartered**. Offered to the owner, not self-chartered.
 * **Pre-existing test failures on main** remain unowned.
+
+---
+
+## Addendum L — the rule-22 breach, D-11 signed, FFR-3Q-2 retracted
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `8b920ed6`.** Supersedes
+Addendum K where they conflict; K is untouched. **L.3 is a manager error correction — read it
+the way J.1 was meant to be read.**
+
+### L.1 — STOP-THE-LINE: a validation-tier year was solved under an active freeze
+
+FFR-3Q resumed after Addendum K was written and executed its Task 1. Both arms of the
+base-2021 T1-FF window **solved 2022** — a validation-tier holdout year — under an **ACTIVE**
+holdout spend freeze, and **read** measured 2022 demand, renewable CF, forced-outage derate and
+hydro. `meta.json`, both arms: `solved_years: [2021, 2022, 2023, 2024, 2025]`,
+`bridged_years: []`. Rule 22's bridge contract — *"evolved across, never solved, data never
+read"* — is violated in **both** halves. Evidence: `4724fa83`, and
+`docs/handoffs/ffr-3q-window-recut-2026-08-04.md` §2.2.
+
+**Cause is a harness defect, not an operator choice.** Two predicates disagree about what a
+"forward year" is:
+
+* `runner.is_bridge` un-bridges a bridge year when `config.is_crossover_forward_year(year)`.
+  T1-FF's construction points `crossover_forward_year` at the window's **own base year**, so at
+  base 2021 *every* year ≥ 2021 is a "crossover forward year" — including 2022 **and 2026**, had
+  a window reached it.
+* `_validate_window` computes its solve-year set from the **`--crossover` flag** (False for
+  T1-FF), so it removed 2022 as a bridge and **never policy-checked it**. The fail-closed check
+  never saw the year, because the guard deleted it before the check ran.
+
+The un-bridging clause is correct for a genuine T1-X crossover — forward years 2026/2027, solved
+in forecast mode against no measured actuals, which rule 22 permits. Re-pointing the boundary at
+2021 silently extended that permission to a year for which it was never true.
+
+**The most dangerous property is the false assurance:** the harness printed a governance banner
+promising *"bridges [2022, 2026] are never solved or read"* and then broke it. A future lane
+reading that banner would have had no reason to doubt it.
+
+**Why no earlier lane hit it:** every prior T1-FF run — FH-1's gate, all three FFR-3F ERCOT
+arms, all three PJM arms — was base 2023 / window 2023–2025, which contains no bridge year. Base
+2021 is the first posture whose window contains one, and that posture is precisely what G.5(a)
+authorized.
+
+**What the lane did right, and it is worth naming:** it quarantined both bundles
+(`QUARANTINE-DO-NOT-REGISTER.txt`), registered nothing, spent no marker, claimed no matrix
+verdict, **refused to report the I6/I7/I12 re-probe** on the grounds that a fleet evolved through
+a measured-2022 solve is a different experiment, and **did not patch `is_bridge` to make its own
+window legal** — the rule-22-adjacent move the policy exists to prevent. It also corrected its
+own Task 0 wording unprompted (§2.2.2).
+
+### L.2 — D-11 (NEW): **SIGNED — NO SPEND, conditional on purge and disclosure**
+
+Owner, 2026-08-04. ERCOT's 2022 validation year is **NOT** consumed. The reasoning on record:
+rule 22's harm is *tuning against held-out data*, and no number from these arms was ever read —
+no scorer ran (scoring is independently bounded to 2023–2025 on both sides), nothing was
+registered, no marker file was touched, and the lane refused to quote any derived verdict.
+
+**The determination is only honest if the artifacts genuinely cannot be reused, so it carries
+three BINDING conditions, all owned by FFR-3U:**
+
+1. **Delete the two quarantined bundles**, not merely flag them. A `.txt` marker is a convention;
+   a deleted bundle is a fact.
+2. **Invalidate the two cache keys** `b99600bceb8cb6b8` (arm A) and `5c352508039513da` (arm B).
+   Without this, a later run with the same config silently **CACHE-HITS the contaminated 2022
+   solve** and inherits the breach with no banner at all. This is the condition that actually
+   protects the tier.
+3. **Disclose it** on the peer-review §4 standing disclosure list
+   (`docs/forecast-readiness-peer-review-2026-07.md`) — not buried in a lane doc.
+
+If any condition cannot be met, D-11 reverts to the strict reading and ERCOT 2022 is spent.
+
+### L.3 — FFR-3Q-2 is RETRACTED, and the manager error that produced it
+
+**The FFR-3Q-2 prompt dispatched earlier today instructs exactly the window that commits this
+breach. It is withdrawn. Do not run it.** It is struck in the pack at §0g.
+
+**My error, owned.** Addendum K.1 repeated FFR-3Q's Task 0 as *"VERIFIED by execution"* and the
+FFR-3Q-2 prompt told its session *"Do NOT re-derive this and do NOT edit holdout_policy.py."*
+Task 0 verified the **guard** — `_validate_window` raises or does not raise. The guard is not
+what decides which years get solved; `runner.is_bridge` is. The check that would have caught
+this takes about a minute and neither the lane nor I ran it.
+
+This is the J.1 failure mode exactly: a claim about behaviour certified against an artifact
+adjacent to the behaviour. J.1 recorded it happening once; L.3 records me doing it again, and
+worse — **I hard-coded the unverified claim into a dispatched prompt as a do-not-check
+instruction**, which converts my error into an instruction not to find it. A prompt that tells a
+session not to re-derive something is only safe when the something was verified at the level the
+prompt relies on. Standing correction to my own practice: **a "do not re-derive" clause may only
+cover a claim verified at the level of the behaviour the lane will exercise**, and where a
+determination certifies a guard rather than a runtime, the prompt says which.
+
+### L.4 — FFR-3U chartered: fix the bridge/un-bridge seam
+
+Dispatched in pack §0g. It carries FFR-3Q §2.2.4's four successor items plus D-11's three
+conditions. **It BLOCKS G.5(a)'s gate re-cut, and therefore FH-4/FH-5, which remain blocked.**
+FH-4/FH-5 is now blocked for a stronger reason than in K.1: not merely that the re-probe is
+unreported, but that the posture it must run on **cannot legally be solved** until the seam is
+fixed. §2.1's pre-registration survives intact and is reused verbatim once FFR-3U lands.
+
+Note for whoever eventually re-runs it: the same defect would un-bridge **2026** — a
+locked-test year — for any window that reached it. Nothing has reached one; the fix must close
+both.
+
+### L.5 — dispatch state after this addendum
+
+| lane | state |
+|---|---|
+| **FFR-3K** (FC-7) | **UNAFFECTED — run it.** Defect still live at `run_capacity_hindcast.py` L1419 |
+| **FFR-3S** (D-9(ii)) | **UNAFFECTED — run it.** Scorer-side, touches no window |
+| **FFR-3T** (D-10) | **HOLD RELEASED — run it.** Its hold existed only because FFR-3Q-2 was solving on the old cache key; with 3Q-2 retracted no forecast solve lane is in flight, and landing the flip now means FFR-3U's eventual re-probe runs on the settled posture |
+| **FFR-3Q-2** | **RETRACTED** (L.3) |
+| **FFR-3U** (seam fix) | **NEW, dispatched** — gates the gate re-cut and FH-4/FH-5 |
+
+Unchanged from K.5: **D-2′** unprobed; **CAISO FC-2 row 4** at 63.23 % with FFR-3H cause 2
+diagnosed and unchartered; pre-existing test failures on main unowned.
