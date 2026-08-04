@@ -120,6 +120,18 @@ Ledgers read from `results/ffr3v/miso-entry-diag/MISO/<cache_key>/evolution_<yea
 `{}` rather than raising, so a wrong path reads as "no evolution happened",
 which in this lane would look exactly like the finding).
 
+**Instrumenting an existing run costs a full cold re-solve, and that is why
+this lane is expensive.** `entry_screen_diagnostics` is decision-neutral by
+construction — nothing reads the ledger back — but it is a `ScenarioConfig`
+field and is **absent from `_CACHE_KEY_OPTIONAL_FIELDS`**, so its value enters
+the cache-key hash unconditionally. Turning it on therefore mints a different
+key from the registered leg's `4c09a710b0894c6c` and re-solves every year from
+scratch rather than re-reading the leg. Recorded as a friction note, not a
+proposal: the optional-fields mechanism would not fix it either (a non-default
+value enters the key even for a listed field), so exempting a
+provably-observability-only flag would need its own category and that is a
+design call for whoever owns the cache.
+
 *(§3 below carries the measured ledger.)*
 
 ---
