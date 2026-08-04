@@ -1,0 +1,46 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/_ercot162_storage_ab.py",
+  "base": "results/calibration/ercot162_control_A",
+  "probe": "results/calibration/ercot162_stormarm_B",
+  "gap_set": "results/calibration/_ercot161_wall_phase0.json (top-100)",
+  "target_lambda_mean": 1470.16,
+  "keeper_model_mean_ref": 441.27
+ },
+ "gap_hour_set": {
+  "n_hours": 100,
+  "control_mean": 441.27,
+  "arm_mean": 457.32,
+  "control_median": 146.99,
+  "arm_median": 172.71,
+  "target_lambda_mean": 1470.16,
+  "lift_toward_lambda": 16.05,
+  "closes_gap_pct": 1.6
+ },
+ "matched_hour_c3c_2023": {
+  "n_actual_gt300": 144,
+  "control_missed": 112,
+  "control_hit": 32,
+  "control_missed_mean": 128.84,
+  "arm_missed_mean": 147.86,
+  "control_hit_mean": 2053.27,
+  "arm_hit_mean": 2057.76,
+  "missed_flipped_by_arm": 1
+ },
+ "new_tail_outside_actual_2023": {
+  "n_new_tail_hours": 1,
+  "n_new_outside_actual": 0,
+  "kill": false,
+  "sample_outside_hours": []
+ },
+ "volume_guard_2025": {
+  "control_discharge_gwh": 4454.1,
+  "arm_discharge_gwh": 1284.5,
+  "measured_ng_bat_gwh": 5444.8,
+  "control_vs_measured_pct": -18.2,
+  "arm_vs_measured_pct": -76.4,
+  "arm_drop_vs_control_gwh": 3169.6,
+  "guard_threshold_gwh": 272.2,
+  "kill": true
+ }
+}

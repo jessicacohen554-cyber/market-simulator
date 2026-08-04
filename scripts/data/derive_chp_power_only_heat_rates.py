@@ -242,7 +242,9 @@ _CC_PREFIX = "combined cycle"
 _CT_PREFIX = "combustion turbine"
 
 
-def target_plants(iso: str, cc_steam_part_capacity: bool = False) -> dict[tuple[int, str], float]:
+def target_plants(
+    iso: str, cc_steam_part_capacity: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, class): capacity MW}`` for the ISO's topping CHP.
 
     Keyed by the PAIR because one plant can host more than one CHP class, and

@@ -78,6 +78,21 @@ class VariableLayout:
     # (the default — set only when an ACP price accompanies an active RPS
     # target) leaves the layout byte-identical to the hard-constraint LP.
     n_rec_acp: int = 0
+    # Storage RT discharge-offer tranche columns (ERCOT
+    # ercot_storage_rt_offer_surface). Each ARMED battery unit's single
+    # discharge Dis[s,t] is decomposed into K priced tranches DisT[a,k,t]
+    # (a = armed-battery index, k = tranche) via an equality
+    # ``Dis[s,t] = Σ_k DisT[a,k,t]``, so the base Dis column keeps its exact
+    # meaning (total discharge — energy balance, SOC, power cap, deployment
+    # floor all untouched) and the tranches only add the measured rising
+    # price ladder. ``n_dis_tranche == n_armed_batteries * K``, laid out
+    # armed-major/tranche-minor at ``_dis_tranche_off + a*K + k``. Appended
+    # AFTER the RPS ACP block so every existing offset is unchanged; 0 (the
+    # default) leaves the layout byte-identical.
+    n_dis_tranche: int = 0
+    # Tranches per armed battery unit (K). Only meaningful when
+    # n_dis_tranche > 0; the accessor uses it to stride armed units.
+    dis_tranche_k: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -92,6 +107,7 @@ class VariableLayout:
             + self.n_storage_reserve
             + 2 * self.n_posture
             + self.n_rec_acp
+            + self.n_dis_tranche
         )
 
     @property
@@ -180,6 +196,11 @@ class VariableLayout:
         """Per-hour offset of the RPS ACP escape column (RPS only)."""
         return self._posture_su_off + self.n_posture
 
+    @property
+    def _dis_tranche_off(self) -> int:
+        """Per-hour offset of the storage discharge-tranche block (ERCOT arm)."""
+        return self._rec_acp_off + self.n_rec_acp
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -239,6 +260,12 @@ class VariableLayout:
     def acp_col(self, t: int) -> int:
         """Return the RPS ACP escape column in hour ``t`` (RPS only)."""
         return t * self.vars_per_hour + self._rec_acp_off
+
+    def dis_tranche_col(self, a: int, k: int, t: int) -> int:
+        """Return the discharge-tranche column of armed unit ``a``, tranche ``k``, hour ``t``."""
+        return (
+            t * self.vars_per_hour + self._dis_tranche_off + a * self.dis_tranche_k + k
+        )
 
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
