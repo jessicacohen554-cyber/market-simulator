@@ -1,5 +1,51 @@
 # Changelog
 
+## 2026-08-04 — ERCOT-160: the item-7 / item-8 data intakes (no LP, no mechanism, keeper unchanged)
+
+Data-intake session on the ERCOT lever queue. MISO's C7 COAL_PRB item was
+checked first and remains data-blocked (the miso-104 ex-ante coal-contract
+tonnage ask has not landed), so precedence fell to ERCOT items 7/8.
+
+- **Item 7's blocker dissolved.** The queue recorded that a station→area
+  crosswalk "does not exist in-repo". ERCOT *publishes* one — **NP4-160-SG
+  "Settlement Points List and Electrical Buses Mapping"**
+  (`reportTypeId=10008`) — and it had simply never been fetched. New
+  `scripts/data/fetch_ercot_settlement_point_mapping.py` intakes it to
+  `data/raw/ercot-network-model/` (1.2 MB, **committed**), writing each member
+  as its **exact published bytes with a sha256**, because ERCOT ToU §5 permits
+  redistribution only if contents are unmodified. Committed rather than
+  gitignored because MIS retention here is ~31 days: only the current
+  network-model version is ever reachable, so an un-committed vintage is lost
+  permanently. Every consumer must report its own match rate against its target
+  year.
+- **Item 8(a) delivered at 98.7 % of the training span.**
+  `fetch_ercot_60day_sced_gen_resource.py` gains `--resource-types`,
+  `--delivery-range`, `--shard-by-month` and `--skip-existing` — scope and
+  plumbing only. CT-scoping cuts a delivery day to 15.1 % of its rows
+  (0.51 MB parquet vs ~90 MB unscoped CSV), which is what makes a ~700-day span
+  affordable; month sharding bounds memory and makes it resumable. Delivery
+  2024-01-24…2025-12-31 landed CT-only in `data/raw/ercot/SCED-CT/` (gitignored
+  + README + SHA256SUMS). **14 days (delivery 2024-01-10…2024-01-23) are
+  unreachable** — they fall between the committed corpus and the MIS rolling
+  window — and are reported, never interpolated. The rule-22 holdout guard was
+  not relaxed and refused 2026 delivery days live.
+- **Item 8(b) is BLOCKED and is the only thing still blocking the lever.** The
+  licensing check ERCOT-147 §4 demanded is now a reproducible probe: EIA's free
+  weekly spot table carries Waha/Katy/Agua Dulce/Carthage at **zero** mentions
+  (Chicago scores 6, Henry Hub 10), and ERCOT's own catalog has 5,773 products
+  of which none is a fuel price series. The series exists only behind
+  NGI/Platts/Argus — an owner licensing decision. Logged as blocked, **not**
+  inferred as zero and **not** substituted with Henry Hub.
+- **Item 8(c) reshaped by a grain correction.** The crosswalk's `site` column
+  holds a site prefix for `CC_REGULAR` but the full resource name for
+  `CT_PEAKER` (165/165 CT rows match a corpus resource name, 0/165 a site
+  prefix), so "165 CT_PEAKER sites" counts resources and the "~150-site hand
+  crosswalk" was mis-sized in kind. Most CT resources already carry a candidate
+  row, making the bulk an adjudication rather than an identification.
+
+No LP solve, no `ScenarioConfig` field, no mechanism tested, no matrix cell
+verdict, no dashboard run; keeper unchanged at `2026-08-03-ercot158-pool-arm`.
+
 ## 2026-08-03 — FFR-SC input refreshes: ATB derivation pin → 2024 v4.0.0 (no-op); NYISO demand anchor → 2026 Gold Book
 
 Two rule-23 `[R-FROZEN-DERIVE]` re-derivations, each triggered by a **source-data
