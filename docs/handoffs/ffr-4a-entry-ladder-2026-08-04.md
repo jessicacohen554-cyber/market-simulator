@@ -348,14 +348,175 @@ would be false, and is pre-registered as false here.
 
 ## 5. Measurement
 
-*(§5 is appended after §1–§4 were committed; see the commit sequence in §6.)*
+**Instrument.** A multi-year harness driving the **real**
+`apply_economic_new_entry` — the shipped code path, not a hand trace —
+reproducing the runner's year loop for the entry screen alone: the real ladder
+cap, the real netting, the real step-4.5 pipeline commissioning
+(`evolve.py:576–600`) and the real prior-max update (`runner.py:1153–1160`).
+Other techs are suppressed with a zero ladder row so the shared ISO budget
+cannot mask the cell under study. Each counterfactual arm is one netting term
+removed and **nothing else**; both arms were reverted after measurement and the
+tree left clean (§6).
+
+### 5.1 Harness validation — replication of a registered leg, twice
+
+| cell | shipped-arm result | FFR-3V §5 registered leg | verdict |
+|---|---|---|---|
+| MISO **solar** (ladder-first) | frozen at **1,236 MW/yr**; 2021–2025 commissioned **2.472 GW** | frozen 1,236; **2.473 GW** | reproduced |
+| MISO **wind** (static-cap-first) | **4,000 / 0 / 4,000 / 0 MW**; 2021–2025 commissioned **4.000 GW**; steady-state mean **2,000 MW** | 4,000/0 alternation; **4.000 GW** | reproduced |
+
+Both signatures of §3.3 are reproduced through the shipped code, on a cell where
+the ladder binds and on a cell where it never does. The wind mean of
+**2,000 MW = C / L = 4,000 / 2** is the general law measured directly.
+
+### 5.2 The counterfactual arms (MISO solar, seed 0.618 GW)
+
+Decision series, MW:
+
+| year | Arm 0 shipped | Arm A ladder-netting removed | Arm B both removed |
+|---|---|---|---|
+| 2022 | 1,236 | 1,236 | 1,236 |
+| 2023 | 1,236 | 2,472 | 2,472 |
+| 2024 | 1,236 | 3,528 | 4,944 |
+| 2025 | 1,236 | 2,472 | 6,000 |
+| 2026 | 1,236 | 3,528 | 6,000 |
+| … | 1,236 (forever) | 3,528 / 2,472 alternating | 6,000 (static cap) |
+| **steady-state mean** | **1,236** | **3,000** = 6,000 / L | **6,000** = C |
+| **commissioned 2021–2025** | **2.472 GW** | **3.708 GW** | **3.708 GW** |
+| **decisions 2022–2033** | **14.832 GW** | **33.708 GW** | **62.652 GW** |
+
+### 5.3 Scoring the prediction (§4) against the measurement
+
+| pre-registered claim | measured | |
+|---|---|---|
+| Arm 0 frozen at 1,236 MW; 2.473 GW commissioned | 1,236 MW; **2.472 GW** | ✅ |
+| Arm A series 1,236 → 2,472 → 3,528 → 2,472, then 3,528/2,472 alternating, mean 3,000 = C/L | exactly that | ✅ |
+| Arm B series 1,236 → 2,472 → 4,944 → 6,000, then 6,000/yr | exactly that | ✅ |
+| Arm A and Arm B **indistinguishable** on the 2021–2025 window (both 3.709 GW) | both **3.708 GW** | ✅ |
+| Neither arm reaches MISO's 18.649 GW actual — this fix alone does **not** close FFR-3V's miss | 3.708 GW vs 18.649 | ✅ |
+| Arm A decisions 2022–2033 ≈ **36.0 GW** | **33.708 GW** | ❌ **−6.4 %** |
+| Arm B decisions 2022–2033 ≈ 62.7 GW | 62.652 GW | ✅ |
+
+**The one miss, recorded.** My hand estimate of Arm A's 12-year decision total
+assumed the 3,528/2,472 alternation began one year earlier than it does; the
+measured total is 33.708 GW, not ≈36.0. The *series* — the quantity the
+derivation actually claims — matched exactly, and the general law `C/L` it was
+derived from is confirmed by the measured steady-state mean of 3,000 MW. The
+error is in my arithmetic of a summary statistic, not in the derivation.
+
+### 5.4 What the measurement establishes
+
+1. The freeze is **the netting on the ladder**, not the value of `K`: removing
+   that one term and nothing else restores the ratchet (Arm A/B years 2022–2024
+   grow 1,236 → 2,472 → 3,528/4,944).
+2. The `C / L` law holds for **both** caps, and the static per-tech cap is
+   halved by it even where the ladder never binds (Arm A's 3,000 MW steady state
+   against a 6,000 MW/yr documented cap).
+3. **The fix does not rescue MISO solar**, exactly as pre-registered. Anyone
+   reading this as the cure for FFR-3V's −86.7 % FC-3 band is reading it wrong:
+   that leg's solar decides **zero** on revenue grounds before any cap is
+   consulted, and the numbers here are *ceilings the caps permit*, not builds.
 
 ---
 
 ## 6. Reproduction
 
+Commit sequence (the pre-registration is committed **before** the measurement):
+
+1. `FFR-4A: intent reconstruction, (K,L) map and PRE-REGISTERED prediction` — §1–§4.
+2. this commit — §5–§7 plus the rule-28 matrix entry.
+
+Scripts (session scratchpad; they read only committed on-disk data and shipped code):
+
+* `ffr4a_build_record.py` — re-runs `data.build_throughput`'s own construction
+  over `data/raw/eia-860/vintage_{2020,2024}` and returns the **full** annual
+  COD series per ISO × tech, plus the ratchet statistics of §3.4.
+* `ffr4a_summarize.py` — the §2 `(K, L)` map and the pooled ratio distribution.
+* `ffr4a_harness.py` — the §5 multi-year driver over the real
+  `apply_economic_new_entry`.
+
+Arm A is `new_entry.py:1141–1147` with `− _pending_by_tech.get(tech, 0.0)`
+deleted; Arm B additionally deletes it from `new_entry.py:1131–1137`. Both were
+reverted (`git checkout --`) and `git status` verified clean before committing.
+
+**Rule 28 discharge.** The `entry_dampers` row in
+`docs/codebase-site/data/mechanism-matrix.js` carries the finding, the
+`(K, L)` map, the identifying data and the recommendation, with an `ev.A`
+citation to this document. **No cell status was changed** — a derivation lane
+adjudicates nothing, and MISO stays `O`. `scripts/check_mechanism_matrix.py`
+exits 0 with zero errors, identically to the pre-edit baseline.
+
+**Rule 24 discharge.** **No value was landed**, so there is nothing to register
+in `ScenarioConfig`/`constants.py`. That is a property of the answer, not an
+omission: the recommendation is the *deletion* of an uncited term, which adds no
+tunable. `K` and `L` keep their shipped values and their published citations.
+
 ---
 
 ## 7. What I did NOT separate, and what is escalated
+
+### 7.1 Not separated (limits on every number above)
+
+* **No LP solve was run.** No dispatch, no prices, no revenue. The harness
+  forces every tech profitable, so §5's numbers are **ceilings the cap
+  arithmetic permits**, not builds a solve would produce. They must never be
+  quoted as build forecasts.
+* **The caps are not separated from the revenue side.** FFR-3V's MISO solar
+  residual is *entirely* the profitability test (its §5.1(3)); this lane's
+  subject sits downstream of that and cannot be credited with anything the
+  revenue side blocks. The two adjacent defects that lane reported — the
+  hindcast's non-vintage-initialized renewable pools (§6.1) and the wind PTC
+  credited over 30 years instead of §45's 10 (§6.2) — are **untouched here**
+  and remain the larger effects on that leg.
+* **Cross-tech competition is suppressed.** Zeroing the other techs' ladder rows
+  isolates the cell but removes their draw on MISO's shared 10 GW/yr ISO budget.
+  In a real solve that budget can bind before either per-tech cap.
+* **Two cells measured, twenty-four mapped.** The harness was run on MISO solar
+  (ladder-first) and MISO wind (static-first) — one of each signature. The other
+  22 cells are mapped analytically in §2 from measured seeds and shipped
+  constants; they are not individually measured.
+* **The backstop's asymmetry is located, not adjudicated.** §1.3 shows the two
+  consumers of one ladder budget net differently. Whether the backstop's
+  in-year, un-netted treatment is the *right* one is not decided here.
+
+### 7.2 Escalated to the owner (not landed)
+
+**E-1 — the recommended fix is a mechanism change, and needs a lane authorized
+to arm one.** Removing the stock netting from the flow caps materially changes
+forecast build (Arm B quadruples MISO solar's 12-year decisions). A derivation
+lane may not arm it. The natural next step is a **gated
+`ScenarioConfig` field, default OFF**, with its own matrix row under rule 28(c),
+tested as a paired arm — and, per rule 19, landed *together with* E-2 rather
+than alone, so the anti-cobweb guard is relocated rather than merely deleted.
+
+**E-2 — the anti-cobweb guard belongs in the price signal, not the caps.**
+`runner.py::_lookahead_reprice_signal` prices next year's net load into the
+**current fleet's** merit stack only, so the entry pro-forma cannot see its own
+committed pipeline and will re-decide the same opportunity every lag year. The
+zero-DOF fix is to include pending `entry_pipeline` rows (known MW, known COD
+year) in the stack the signal prices against. This is a revenue-side change with
+solve consequences — **flagged, not landed.**
+
+**E-3 — a finding that touches `L`, reported per the charter and NOT landed.**
+The charter forbids changing `ENTRY_COD_LAG_YEARS` as a convenience, and I have
+not. But the derivation exposes a property the owner should know: the growth
+factor is `K − L + 1`, so the shipped mechanism is not merely *frozen* at
+`L = 2` — it **goes to zero at `L = 3` and negative beyond**, i.e. economic
+entry would shut off entirely. Any future increase of `L` (the per-tech IA→COD
+refinement from EIA-860 proposed-pipeline vintages that
+`ff-entry-stack-completion-2026-07.md` records as future work would very
+plausibly push wind above 2 years, since LBNL notes wind is the slowest) would
+**silently kill economic entry for that tech** while every parameter still
+carried a valid citation. This is a latent trap in the current construction and
+is an argument for fixing it before `L` is ever refined — but it is the owner's
+call, and `L` is untouched here.
+
+**E-4 — `QUEUE_CAP_PER_TECH_GW`'s eastern-ISO values are self-declared
+judgment.** Not this lane's subject, but §2 leans on them: their own comment
+(`capacity_market.py:2865–2872`) labels the PJM/MISO/NYISO/NEISO per-tech splits
+**engineering-judgment estimates**, not measured throughput. Since the netting
+deforms exactly these caps into `C / L`, the two issues compound in the 16 cells
+where the static cap binds first. The standing rule-11 follow-up is
+`docs/handoffs/queue-cap-citation-2026-07.md`.
 
 ---
