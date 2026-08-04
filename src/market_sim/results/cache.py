@@ -59,7 +59,7 @@ CAISO output under **unchanged cache keys**:
   key moves. **Behavioral in CAISO forecast mode** (the base-year storage fleet
   nearly doubles).
 * **``RENEWABLE_INSTALLED_MW["CAISO"]`` re-vintaged** — wind ``7,000 → 6,330``
-  and solar ``22,000 → 24,000`` MW, from the same EIA-860 release. Also
+  and solar ``22,000 → 24,920`` MW, from the same EIA-860 release. Also
   constants-level, also no key move. **Behavioral in CAISO FORECAST mode only**:
   ``data.renewables`` reads this registry only when ``mode != "backcast"``; a
   backcast already takes that year's EIA-860 month-end capacity.
@@ -84,8 +84,9 @@ solved A/B rather than inferred from the registration mechanics.
 
 *Invalidated:* **every cached CAISO bundle, in BOTH modes** — forecast bundles
 (all three changes) and backcast bundles (the third). **The designated CAISO
-keeper ``2026-08-04-caiso-166-measured-dlap`` was solved on the flat 8,000 MW
-scalar and its committed metrics are therefore PRE-EPOCH**; it needs a re-solve
+keeper ``2026-08-04-caiso-172-measured-path15`` — and every CAISO keeper before
+it — was solved on the flat 8,000 MW scalar, so its committed metrics are
+PRE-EPOCH**; it needs a re-solve
 and a re-gate in the CAISO lane before its numbers are quoted again. That is
 stated as an open, owed item in the FFR-4D handoff §7, not as a completed one.
 
