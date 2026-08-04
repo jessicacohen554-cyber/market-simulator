@@ -2278,7 +2278,10 @@ def run_year(
             )
         else:
             from market_sim.config import paths as _paths
-            from market_sim.data.curtailment_share import wtx_curtail_multipliers
+            from market_sim.data.curtailment_share import (
+                wtx_curtail_multipliers,
+                wtx_family_curtail_multipliers,
+            )
 
             # System net-load on the potential convention (fleet net-load drag):
             # demand minus uncurtailed wind & solar potential, summed over zones.
@@ -2287,15 +2290,32 @@ def run_year(
                 - (np.asarray(wind_cap)[:, None] * wind_cf).sum(axis=0)
                 - (np.asarray(solar_cap)[:, None] * solar_cf).sum(axis=0)
             )
-            mult = wtx_curtail_multipliers(
-                net_load,
-                list(zone_names),
-                depth_wind=float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
-                depth_solar=float(
-                    getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)
-                ),
-                reference_dir=_paths.RAW_DIR / "reference",
-            )
+            _depth_w = float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0))
+            _depth_s = float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0))
+            # ercot-165: the UNPOOLED diurnal-family variant gives each corridor
+            # zone its own measured share instead of broadcasting one saturating
+            # pooled union to both (rule 19 [R-ONE-MECH] on the Panhandle
+            # interface). Same two depths, same axis, same forward story.
+            _unpooled = bool(getattr(config, "ercot_wtx_curtail_unpooled", False))
+            if _unpooled:
+                mult = wtx_family_curtail_multipliers(
+                    net_load,
+                    list(zone_names),
+                    depth_wind=_depth_w,
+                    depth_solar=_depth_s,
+                    panhandle_owner=str(
+                        getattr(config, "ercot_wtx_panhandle_owner", "tie")
+                    ),
+                    reference_dir=_paths.RAW_DIR / "reference",
+                )
+            else:
+                mult = wtx_curtail_multipliers(
+                    net_load,
+                    list(zone_names),
+                    depth_wind=_depth_w,
+                    depth_solar=_depth_s,
+                    reference_dir=_paths.RAW_DIR / "reference",
+                )
             if mult is None:
                 logger.warning(
                     "ercot_wtx_curtailment_driver: no derived share table for %d "
@@ -2307,10 +2327,16 @@ def run_year(
                 wind_curtail_share, solar_curtail_share = mult
                 logger.info(
                     "ercot_wtx_curtailment_driver: %d West/Panhandle VRE ceiling "
-                    "active (depth wind=%.4f solar=%.4f)",
+                    "active (depth wind=%.4f solar=%.4f, %s)",
                     year,
-                    float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
-                    float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
+                    _depth_w,
+                    _depth_s,
+                    (
+                        "unpooled families, panhandle_owner="
+                        + str(getattr(config, "ercot_wtx_panhandle_owner", "tie"))
+                        if _unpooled
+                        else "pooled share"
+                    ),
                 )
     # Aggregate interface limits (CAISO's simultaneous WECC import cap): resolve
     # the configured link groups to flow-column indices for the LP. Empty (no
