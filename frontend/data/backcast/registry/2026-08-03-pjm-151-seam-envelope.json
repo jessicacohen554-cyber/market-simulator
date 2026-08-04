@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-03-pjm-151-seam-envelope",
+  "label": "pjm 151 seam envelope",
+  "date": "2026-08-03",
+  "shorthand": "pjm-151-seam-envelope",
+  "definition": "pjm-151 arm B: PJM reference-price seam deliverability envelopes built PER-NEIGHBOUR from each seam's own ties (spec.PJM_TIE_NEIGHBOR) instead of summing a per-model-ZONE envelope over the neighbour's border_zones. Rule 14 [R-ACCURATE] internal-consistency repair of keeper-note item 12, off-queue as a NEW measured identification (rule 28a) -- the PJM price-formation frontier is owner-declared and this is not a price lever. ZERO new parameters: the tie->interface map is an identity read off PJM's own tie labels. Measured ex ante at p90: the legacy TVA export cap ran 124x/53x/40x the direct one and never bound, LGEE's 33x/42x/26x; the legacy LGEE import cap is 0 MW against a measured 518/539/549 MW, so the repair loosens as well as tightens. NYISO reproduces at 1.00x -- the control. Single delta vs keeper pjm147_chp_B: pjm_seam_envelope_by_neighbor=true",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-08-03-pjm-151-seam-envelope.js",
+  "bundle": "results/calibration/pjm151_seam_B"
+}
