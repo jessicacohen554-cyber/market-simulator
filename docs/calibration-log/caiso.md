@@ -5825,7 +5825,6 @@ main. CAISO gap sweep is now 0/0/0/0/0.
 
 Next number: caiso-168 (caiso-160 unclaimed, see above).
 
-<<<<<<< HEAD
 ---
 
 ## caiso-169 (2026-08-04) — S2's cheap substitute REFUSED EX ANTE; item 3 stays live, its real charter is specified. NO SOLVE, keeper unchanged
@@ -5902,7 +5901,6 @@ probe `scripts/probes/caiso169_storage_foresight_phase0.py`,
 artifact `results/calibration/_caiso169_storage_foresight_phase0.json`.
 
 Next number: caiso-170.
-=======
 ## 2026-08-04 — CAISO — caiso-170: S2's REAL CHARTER has ~2 pp of rent to buy — with the concurrent caiso-170's substitute refusal this CLOSES lever-queue item 3 and the CAISO in-model lever queue is EMPTY. The real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling. No LP, no solve, keeper unchanged — the real battery fleet already captures 90.7–92.2 % of the perfect-foresight ceiling; item 9 was STALE and is corrected; the CAISO in-model lever queue is now EMPTY. Prompt PRECONDITION did not reproduce — NO promotion made. No LP, no solve, keeper unchanged
 
 > **Lane numbering.** This lane opened as **caiso-169** and its precheck merged
