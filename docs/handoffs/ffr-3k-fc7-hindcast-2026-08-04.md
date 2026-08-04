@@ -7,8 +7,11 @@ reference cache keys byte-identical before/after; `git diff origin/main -- src/`
 empty; no keeper moved).
 
 Landed as an **instrument change BEFORE the next battery** (the FFR-3D
-sequencing that made its T1-F fix admissible). Base: `origin/main 292f577e`.
-Branch: `claude/fc7-hindcast-config-m18g1f`.
+sequencing that made its T1-F fix admissible). Developed at `origin/main
+292f577e`; rebased clean onto `c06d01a9` before push (upstream FFR-3T — owner
+D-10 `forecast_xyear_warmstart` — landed mid-session in both runners with no
+hunk or semantic overlap; all suites re-run and the seven §2 keys re-verified
+at the rebased HEAD). Branch: `claude/fc7-hindcast-config-m18g1f`.
 
 ---
 
@@ -27,8 +30,8 @@ The fix, per the prompt's "reuse its writer" directive:
 | File | Change |
 |---|---|
 | `scripts/lib/run_record.py` (373 → 458 lines) | `write_run_config` moved here VERBATIM from `run_full_horizon.py` (docstring notes the move; `market_sim.pipeline.persist.git_state`/`environment_block` lazy-imported per the module's `config_field_names` precedent). The FFR-3R record module is the natural home: `run_config.json` is a run record whose `scenario_config` block is solved-sourced by construction (read verbatim from the bundle's own `config.yaml` — the RESOLUTION `results.cache.save_result` wrote — never a re-dump of the pre-solve request). |
-| `scripts/run_full_horizon.py` (903 → 833 lines) | Local def deleted; imports the shared writer. Call site unchanged. The now-unused `pipeline.persist` import dropped. |
-| `scripts/run_capacity_hindcast.py` (1427 → 1448 lines) | After the meta write, calls `write_run_config(args.out_dir, bundle, iso=…, cache_key=…, solved_years=…, bridged_years=…, kind=…)` — `bundle` passed ONLY positionally (the `ea7cd5d` binding contract). Artifact lands at the bundle root beside `meta.json`, exactly where the scorer's documented invocation reads it (`--run-config results/hindcast/<run_id>/run_config.json`). One write site serves all three kinds (`hindcast` / `crossover` / `full_forward`), so T1-H, T1-X and T1-FF are all covered. |
+| `scripts/run_full_horizon.py` (903 → 833 by this change; 842 at the pushed tree with FFR-3T) | Local def deleted; imports the shared writer. Call site unchanged. The now-unused `pipeline.persist` import dropped. |
+| `scripts/run_capacity_hindcast.py` (1427 → 1448 by this change; 1456 at the pushed tree with FFR-3T) | After the meta write, calls `write_run_config(args.out_dir, bundle, iso=…, cache_key=…, solved_years=…, bridged_years=…, kind=…)` — `bundle` passed ONLY positionally (the `ea7cd5d` binding contract). Artifact lands at the bundle root beside `meta.json`, exactly where the scorer's documented invocation reads it (`--run-config results/hindcast/<run_id>/run_config.json`). One write site serves all three kinds (`hindcast` / `crossover` / `full_forward`), so T1-H, T1-X and T1-FF are all covered. |
 
 **`run_config.yaml` is KEPT** (checked before deciding): it is the request-side
 dump `build_forecast_dof_ledger._load_run_config` still falls back to, and the
