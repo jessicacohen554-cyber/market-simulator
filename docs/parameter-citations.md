@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1682 parameters registered** (881 flagged `needs-citation`).
+**1684 parameters registered** (882 flagged `needs-citation`).
 
 
 ## Calibration
@@ -914,6 +914,7 @@ inline comment and still need a dated primary source — search the table for
 | `ercot_rtolcap_fwd_storage_reserve_frac` | 0.35 | 2 | Forward on-line storage responsive-reserve fraction of installed st… | 2023 | auto-generated |
 | `pumped_storage_duration_hours` | 10.0 | 2 | Pumped-storage hydro fleet parameters (EIA-860 PS units enter the s… | 2023 | auto-generated |
 | `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
+| `renewable_elcc_curves_by_iso.MISO.solar` | {"penetration_basis": null, "points":… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `renewable_elcc_curves_by_iso.MISO.wind` | {"penetration_basis": "pct_of_peak_lo… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `renewable_elcc_curves_by_iso.NYISO.offshore_wind` | {"penetration_basis": null, "points":… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `renewable_elcc_curves_by_iso.NYISO.solar` | {"penetration_basis": null, "points":… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
@@ -940,6 +941,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.storage_daily_cycling` | False | 2 | When True, each storage unit's SOC |  | auto-generated, needs-citation |
 | `scenario.storage_degradation` | True | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.storage_deployment` | mid | 1 | Market simulator model design decision | 2026-05 |  |
+| `scenario.storage_measured_base_fleet` | True | 1 | Resolve a BACKCAST's storage base fleet as of its solve year from E… | 2026-08 | auto-generated |
 | `scenario.storage_rte_4hr` | 0.85 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `scenario.storage_rte_8hr` | 0.8 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `storage_annual_build_cap_mw.CAISO` | 3000.0 | 2 | Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP q… |  | auto-generated, needs-citation |
@@ -948,9 +950,9 @@ inline comment and still need a dated primary source — search the table for
 | `storage_annual_build_cap_mw.NEISO` | 1200.0 | 2 | Source: ISO-NE interconnection queue 2024 | 2024 | auto-generated |
 | `storage_annual_build_cap_mw.NYISO` | 1500.0 | 2 | Source: NYISO interconnection queue 2024 | 2024 | auto-generated |
 | `storage_annual_build_cap_mw.PJM` | 4000.0 | 2 | large queue but slower interconnection. Source: PJM queue 2024 | 2024 | auto-generated |
-| `storage_base_fleet_mw.CAISO.high` | 12000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.CAISO.low` | 6000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.CAISO.mid` | 8000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.CAISO.high` | 19260.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.CAISO.low` | 11590.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.CAISO.mid` | 15450.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
 | `storage_base_fleet_mw.ERCOT.high` | 25000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
 | `storage_base_fleet_mw.ERCOT.low` | 12000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
 | `storage_base_fleet_mw.ERCOT.mid` | 17000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
@@ -1524,8 +1526,8 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
-| `caiso_tac_zone_weights.PGE-TAC.NP15` | 0.86 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
-| `caiso_tac_zone_weights.PGE-TAC.ZP26` | 0.14 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
+| `caiso_tac_zone_weights.PGE-TAC.NP15` | 0.883951 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
+| `caiso_tac_zone_weights.PGE-TAC.ZP26` | 0.116049 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.SCE-TAC.LA_BASIN` | 0.835 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
 | `caiso_tac_zone_weights.SCE-TAC.SP15` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.SCE-TAC.SP15_rest` | 0.165 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
@@ -1757,8 +1759,8 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_capacity_credit.wind` | 0.16 | 2 | Capacity credit (ELCC) of variable resources for the planning-reser… |  | auto-generated, needs-citation |
 | `renewable_capacity_credit_by_iso.ERCOT.solar` | 0.21 | 2 | Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy led… | 2025 | auto-generated |
 | `renewable_capacity_credit_by_iso.ERCOT.wind` | 0.2 | 2 | Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy led… | 2025 | auto-generated |
-| `renewable_installed_mw.CAISO.solar` | 22000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
-| `renewable_installed_mw.CAISO.wind` | 7000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
+| `renewable_installed_mw.CAISO.solar` | 24920.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
+| `renewable_installed_mw.CAISO.wind` | 6330.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.ERCOT.solar` | 38000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.ERCOT.wind` | 42000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.MISO.solar` | 7000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
