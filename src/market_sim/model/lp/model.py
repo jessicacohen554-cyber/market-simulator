@@ -145,6 +145,9 @@ class DispatchModel:
         link_loss: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
         dump_cost_full_offer_domain: bool = False,
+        dis_tranche_arm_idx: np.ndarray | None = None,
+        dis_tranche_width: np.ndarray | None = None,
+        dis_tranche_price: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -156,6 +159,25 @@ class DispatchModel:
         n_gen = fleet.n_gen
         n_storage = 0 if storage_power_cap is None else len(storage_power_cap)
         n_links = 0 if incidence is None else sp.csr_matrix(incidence).shape[1]
+
+        # Storage RT discharge-offer tranches (ERCOT ercot_storage_rt_offer_surface).
+        # Each armed battery unit's discharge is decomposed into K priced
+        # tranches (_build_dis_tranche_rows) sharing the base Dis column's SOC,
+        # energy balance and power cap. Active only when the arm supplies both
+        # the armed-unit indices and the tranche width ladder.
+        dis_tranche_on = (
+            dis_tranche_arm_idx is not None
+            and dis_tranche_width is not None
+            and dis_tranche_price is not None
+            and n_storage > 0
+            and len(np.asarray(dis_tranche_arm_idx)) > 0
+        )
+        n_dis_tranche = 0
+        dis_tranche_k = 0
+        if dis_tranche_on:
+            n_arm = int(len(np.asarray(dis_tranche_arm_idx)))
+            dis_tranche_k = int(len(np.asarray(dis_tranche_width)))
+            n_dis_tranche = n_arm * dis_tranche_k
 
         # Energy+reserve co-optimization is active when a requirement is given.
         # Reserve is tracked per ZONE and per reserve CLASS (one reserve var +
@@ -314,7 +336,21 @@ class DispatchModel:
             n_storage_reserve=n_storage_reserve,
             n_posture=n_posture,
             n_rec_acp=n_rec_acp,
+            n_dis_tranche=n_dis_tranche,
+            dis_tranche_k=dis_tranche_k,
         )
+        # The discharge-tranche decomposition rides the base Dis column (which
+        # keeps its exact total-discharge meaning), so it composes with the
+        # energy-only measured-reservation AS path the ERCOT keeper uses. It is
+        # NOT wired into the endogenous storage-AS duration gate (which gives
+        # storage its own RS reserve columns): guard against that untested combo.
+        if n_dis_tranche and storage_gate:
+            raise ValueError(
+                "ercot_storage_rt_offer_surface (discharge tranches) is not "
+                "composable with the endogenous storage-AS duration gate "
+                "(reserve_storage_duration_h) — the keeper's measured-reservation "
+                "AS path leaves the base discharge column free to be decomposed"
+            )
 
         # Posture U upper bound: the pool's hour-varying available capacity
         # (Σ member pmax·availability) — the RHS the joint-headroom row gives
@@ -422,6 +458,7 @@ class DispatchModel:
             posture_col=(posture_col if standalone_posture else None),
             posture_mlf=(posture_mlf if standalone_posture else None),
             link_loss=link_loss,
+            dis_tranche_arm_idx=(dis_tranche_arm_idx if dis_tranche_on else None),
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -444,6 +481,8 @@ class DispatchModel:
             posture_ucap=posture_ucap,
             wind_curtail_share=wind_curtail_share,
             solar_curtail_share=solar_curtail_share,
+            dis_tranche_arm_idx=(dis_tranche_arm_idx if dis_tranche_on else None),
+            dis_tranche_width=(dis_tranche_width if dis_tranche_on else None),
         )
 
         _mem_debug = os.environ.get("MARKET_SIM_MEM_DEBUG") == "1"
@@ -558,6 +597,23 @@ class DispatchModel:
         self.solar_mc = solar_mc
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
+        # Storage RT discharge-offer tranche pricing (ERCOT
+        # ercot_storage_rt_offer_surface): the armed-battery indices and the
+        # (K, T) tranche price ladder the per-solve cost vector consumes. Both
+        # None off the arm (byte-identical). The (K, T) shape is checked so a
+        # mis-oriented ladder fails loud, not as a silent mis-priced objective.
+        if dis_tranche_on:
+            price = np.asarray(dis_tranche_price, dtype=float)
+            if price.shape != (dis_tranche_k, T):
+                raise ValueError(
+                    f"dis_tranche_price shape {price.shape} != (K, T) = "
+                    f"({dis_tranche_k}, {T})"
+                )
+            self.dis_tranche_arm_idx = np.asarray(dis_tranche_arm_idx, dtype=int)
+            self.dis_tranche_price = price
+        else:
+            self.dis_tranche_arm_idx = None
+            self.dis_tranche_price = None
         # Overgeneration-dump guard domain (caiso-139, ScenarioConfig.
         # dump_cost_full_offer_domain; GATED default off = byte-identical).
         # When on, :meth:`solve` extends the dump price over every ``mc`` row
@@ -885,6 +941,8 @@ class DispatchModel:
             link_flow_cost=self.link_flow_cost,
             slack_cost=self.slack_cost,
             min_injectable_mc=min_injectable_mc,
+            dis_tranche_arm_idx=self.dis_tranche_arm_idx,
+            dis_tranche_price=self.dis_tranche_price,
         )
 
         h = self._h
@@ -1331,6 +1389,12 @@ def _cross_year_column_map(
             new_layout._ordc_off,
             old_layout.n_ordc_steps,
             new_layout.n_ordc_steps,
+        ),
+        (
+            old_layout._dis_tranche_off,
+            new_layout._dis_tranche_off,
+            old_layout.n_dis_tranche,
+            new_layout.n_dis_tranche,
         ),
     ]
     for old_off, new_off, old_n, new_n in blocks:

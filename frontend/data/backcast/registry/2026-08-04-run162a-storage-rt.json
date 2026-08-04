@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-04-run162a-storage-rt",
+ "label": "run162a storage rt",
+ "date": "2026-08-04",
+ "shorthand": "run162a-storage-rt",
+ "definition": "(A/B CONTROL, ercot-162) Fresh same-HEAD replay of the ercot158 keeper config UNCHANGED \u2014 the unconfounded base for the ercot162 storage RT offer-surface A/B (gap-hour mean $441.27 = the committed keeper to the cent). Arm run162b REFUTED.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-04-run162a-storage-rt.js",
+ "bundle": "results/calibration/ercot162_control_A"
+}

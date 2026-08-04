@@ -360,6 +360,9 @@ def solve_dispatch(
     link_flow_cost: np.ndarray | None = None,
     link_loss: np.ndarray | None = None,
     dump_cost_full_offer_domain: bool = False,
+    dis_tranche_arm_idx: np.ndarray | None = None,
+    dis_tranche_width: np.ndarray | None = None,
+    dis_tranche_price: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -543,6 +546,9 @@ def solve_dispatch(
         link_flow_cost=link_flow_cost,
         link_loss=link_loss,
         dump_cost_full_offer_domain=dump_cost_full_offer_domain,
+        dis_tranche_arm_idx=dis_tranche_arm_idx,
+        dis_tranche_width=dis_tranche_width,
+        dis_tranche_price=dis_tranche_price,
         T=T,
     )
     return model.solve(

@@ -32,6 +32,8 @@ def build_variable_bounds(
     storage_discharge_min: np.ndarray | None = None,
     storage_charge_cap: np.ndarray | None = None,
     storage_discharge_cap: np.ndarray | None = None,
+    dis_tranche_arm_idx: np.ndarray | None = None,
+    dis_tranche_width: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -285,6 +287,31 @@ def build_variable_bounds(
     if layout.n_rec_acp:
         a0 = layout._rec_acp_off
         col_upper[:, a0 : a0 + layout.n_rec_acp] = np.inf
+
+    # Storage discharge tranche columns DisT[a,k,t] (ERCOT
+    # ercot_storage_rt_offer_surface): 0 ≤ DisT[a,k,t] ≤ width_frac[k] ×
+    # power_cap[s_a, t]. Each tranche's width fraction of the hour's power cap
+    # enforces the ladder's rung MW; the decomposition row
+    # (_build_dis_tranche_rows) ties Σ_k DisT to the base discharge, whose own
+    # [dmin, power_cap] bound (untouched above) carries the shared cap and the
+    # AS→energy deployment floor. Σ_k width_frac ≤ 1, so the tranche sum can
+    # never exceed the base column's own cap — the tranches SHARE it.
+    if layout.n_dis_tranche and dis_tranche_arm_idx is not None:
+        arm = np.asarray(dis_tranche_arm_idx, dtype=int)
+        wf = np.asarray(dis_tranche_width, dtype=float)  # (K,)
+        k = wf.size
+        # power_cap is (T, n_storage) or (1, n_storage); select the armed
+        # battery columns and broadcast a static cap across all hours.
+        pc_arm = power_cap[:, arm]  # (T or 1, n_arm)
+        if pc_arm.shape[0] == 1:
+            pc_arm = np.broadcast_to(pc_arm, (T, arm.size))
+        # (T, n_arm, K) -> armed-major/tranche-minor (T, n_arm*K), matching
+        # the layout stride _dis_tranche_off + a*K + k.
+        tr_upper = wf[None, None, :] * pc_arm[:, :, None]
+        dt0 = layout._dis_tranche_off
+        col_upper[:, dt0 : dt0 + layout.n_dis_tranche] = tr_upper.reshape(
+            T, arm.size * k
+        )
 
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen
