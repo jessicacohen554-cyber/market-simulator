@@ -55,7 +55,6 @@ import sys
 import threading
 import time
 import traceback
-from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -72,7 +71,6 @@ from market_sim.config.capacity_market import (  # noqa: E402
 )
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.results import cache as cachemod  # noqa: E402
-from market_sim.pipeline.persist import environment_block, git_state  # noqa: E402
 from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
@@ -87,6 +85,7 @@ from scripts.lib.run_record import (  # noqa: E402
     Derived,
     FromConfig,
     RecordSpec,
+    write_run_config,
 )
 
 #: The ``full_horizon_summary.json`` config-describing block (FFR-3R). Every
@@ -428,75 +427,6 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
             }
         )
     return rows
-
-
-def write_run_config(out_dir: Path, run_dir: "Path | None", **extra) -> "Path | None":
-    """Write ``<out_dir>/run_config.json`` from the RUN'S OWN resolved config.
-
-    **Why this exists (FFR-3A blocker 7).** ``forecast_verdict.score_fc7`` row 1
-    requires a ``run_config`` artifact with a full ``ScenarioConfig`` flag
-    surface, and this runner wrote only the cache's ``config.yaml`` — so **no
-    bundle it produced could pass FC-7 provenance**: the row read "run_config.json
-    absent" and FAILed by construction, on every T1-F leg, for reasons having
-    nothing to do with the run. FF-2D worked around it with a scoring-time helper
-    (``scripts/_ff2d_emit_run_config.py``); that keeps the producer broken and
-    puts artifact authorship next to the score.
-
-    **Provenance, which is the whole point.** The payload's ``scenario_config``
-    is the cache directory's own ``config.yaml``, read VERBATIM — the dump
-    ``results.cache.save_result`` wrote from the config the solve actually ran.
-    That is deliberately NOT the object handed to :func:`solve_and_summarize`:
-    ``runner.run_scenario_iso`` re-binds the ISO, applies
-    ``resolve_policy_bundle`` and may apply per-ISO overrides, so the pre-solve
-    object is a REQUEST and the on-disk dump is the RESOLUTION. Recording the
-    request would be exactly the rule-24 divergence FC-7 is meant to detect. No
-    value is reconstructed, normalized, or defaulted here.
-
-    Returns ``None`` — writing nothing — when there is no resolved dump to read
-    (a zero-year run, a solve that raised before its first save). A run that
-    produced no years has no provenance to record, and FC-7 FAILing on it is the
-    truthful verdict; fabricating a config from the request would manufacture a
-    pass. Rubric §4 forbids authoring an artifact to move a score, and this
-    lands BEFORE the next scoring battery precisely so the instrument is fixed
-    rather than the number.
-
-    Args:
-        out_dir: Directory to write ``run_config.json`` into (beside the
-            summary, where ``forecast_verdict --run-config`` expects it).
-        run_dir: The solve's cache directory, or ``None`` if it never resolved.
-        **extra: Additional top-level keys recorded verbatim (``iso``,
-            ``cache_key``, ``solved_years`` …).
-
-    Returns:
-        The path written, or ``None``.
-    """
-    if run_dir is None:
-        return None
-    cfg_yaml = Path(run_dir) / "config.yaml"
-    if not cfg_yaml.exists():
-        return None
-    import yaml
-
-    resolved = yaml.safe_load(cfg_yaml.read_text())
-    if not isinstance(resolved, dict) or not resolved:
-        return None
-    payload = {
-        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "git": git_state(),
-        # Names the file this was taken from, so a reader can re-verify the
-        # provenance claim above rather than trust it.
-        "scenario_config_source": str(cfg_yaml),
-        "scenario_config": resolved,
-        # Recorded here, from the positional argument, so a caller never has to
-        # pass it again through **extra — doing so collides with this
-        # function's own parameter name and raises TypeError at bind time.
-        "run_dir": str(run_dir),
-        "environment": environment_block(),
-        **extra,
-    }
-    path = Path(out_dir) / "run_config.json"
-    path.write_text(json.dumps(payload, indent=2, default=str) + "\n")
-    return path
 
 
 # --------------------------------------------------------------------------- #
