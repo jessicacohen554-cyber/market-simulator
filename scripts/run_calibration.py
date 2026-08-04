@@ -2665,6 +2665,7 @@ def run_year(
                 year=year,
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
+                cc_steam_part_capacity=config.cc_steam_part_capacity,
             )
             + retired_units,
             iso,
