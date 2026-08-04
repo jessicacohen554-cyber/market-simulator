@@ -6201,3 +6201,90 @@ NO makes it CAISO's **fourth wall**; discharge `battery_dispatch_adder`; keep KN
 and 2 named, with an N–S topology lever against KNOWN-OPEN 1 still forbidden.
 
 **`calibration-complete.json` remains UNTOUCHED — the declaration is the owner's act.**
+
+---
+
+## caiso-172 (2026-08-04) — the frontier question answered: CAISO **does** resolve sub-TAC load, and the Path-15 split is now MEASURED
+
+**KEEPER `2026-08-04-caiso-172-measured-path15`** (CALIBRATED-WITH-CAVEATS, 0 FAILs,
+2 ledgered caveats). Control `2026-08-04-caiso-172-control-pge`. Both registered.
+
+`ASSESSMENT-caiso171` §5 item 3 left exactly one unresolved item gating the `complete`
+declaration, and named it the only thing that could unseat the frontier claim: **does
+CAISO publish load at NP15/ZP26 grain at all?** If yes, limb (b) of `complete` ("we have
+tested everything we could have") was FALSE while the model carried a residual-fitted
+split. **It does, and it was.**
+
+**The survey** (`scripts/probes/_caiso172_subtac_load_survey.py`, network, no LP, built
+on the caiso-141 model so the verdict stays re-checkable) walls five routes and opens
+one. `SLD_FCST` — the report the DOF entry's own `root_cause` had pointed at since
+2026-07-07 — is TAC-area grain under **every** `market_run_id`; its 34–35-area live
+domain is external WECC BAs, not CAISO sub-areas. `ENE_SLRS`'s
+`TAC_NORTH/NCNTR/ECNTR/SOUTH` geography is the trap: it is a different vocabulary from
+the `*-TAC` areas and sums exactly to the ISO total, which is what a Path-15 split would
+look like — but `ATL_TAC_AREA_MAP` puts Gates, Midway, Panoche, Elk Hills and Helms in
+`TAC_NORTH` **together with** Moss Landing, Geysers and Round Mountain, so `TAC_NORTH`
+spans Path 15 and the geography is the utility one relabelled. DLAPs carry price and no
+MW (and OASIS names its generic value column `MW` on price reports too, which proves
+nothing — the discriminator is the data item). FERC-714 is still 403; CEC is
+boundary-mismatched regardless; EIA-930 sub-BA is demand-only.
+
+**The route that works is not a load series at all** — it is the two published halves of
+the split: `ATL_LDF`'s per-pnode load distribution factors inside `DLAP_PGAE-APND`
+(1,668 load pnodes summing to exactly 100.000 — CAISO's own weighting for distributing
+PG&E LAP load onto nodes) joined by substation to `ATL_PNODE_MAP`'s **authoritative**
+`TH_NP15_GEN` / `TH_ZP26_GEN` membership, which IS the Path-15 geography as CAISO
+defines it for its own hubs. Two-tier assignment (direct substation match; else the
+node's PG&E sub-LAP dominant hub — `SLAP_PGZP` and `SLAP_PGKN` are 100 % ZP26, the other
+thirteen ~100 % NP15), ~2.2 residue points reported and excluded from the normalisation,
+day-weighted over every live effective window. **NP15 0.883951 / ZP26 0.116049**
+(per-year ZP26 0.11644/0.11554/0.11600, spread 0.0011, acceptance 10/10): the estimate
+put **17 % too much PG&E load in ZP26**.
+
+**Rule 14 `[R-ACCURATE]` — the misalignment exception is SPENT.** The `constants.py`
+comment kept the estimate on the premise that *"no TAC boundary exists at Path 15 to
+measure the split directly."* True and irrelevant: the exception licenses an estimate
+only where the real data is misaligned to our representation, and `ATL_PNODE_MAP` is the
+very boundary the model's `NP15↔ZP26` link represents. It was never misaligned; it had
+not been found. **Rule 23** frozen derive (`scripts/data/derive_caiso_path15_load_split.py`,
+source snapshots committed under `data/raw/caiso-atlas/` so it runs with no network).
+**Rule 20 `[R-DOF]` CLOSURE, not a new parameter:** `n_entries` 11 unchanged,
+`n_residual` **9 → 8**, CAISO's ISO-specific residual count **4 → 3** — it had been the
+highest of any ISO measured. Issue #1372 / audit C-16 CLOSED.
+
+**The A/B is determination-neutral, and that is the result.** The control is
+**BIT-IDENTICAL** to the caiso-166 keeper (max |Δprice| = max |Δdemand| = 0.000000 over
+all P1 zone-hours of all three years), which is what licenses reading the delta as the
+mechanism's own. Every criterion is then identical between the arms, C3a magnitudes
+(+11.5 % / +14.4 %) included. It costs nothing and buys a degree of freedom.
+
+**Measured on quantities, not asserted** (the caiso-162 lesson — and the first call-site
+check patched the wrong binding and returned "identical", which is exactly that failure
+mode, caught here rather than later): ZP26 served energy **−17.11 %** and NP15 **+2.79 %**
+in every year with the ISO total conserved to **0.0000 %**; Path-15 N→S flow
+**−13.2/−12.2/−12.0 %** (10.27→8.92, 12.19→10.70, 12.23→10.77 TWh), bound hours in 2025
+**21 → 13**. Less load south of Path 15 needs less transfer across it.
+
+**Reported, NOT gated — pre-registered as such.** The NP15−ZP26 basis moves toward the
+measured value (+0.236→+0.333, +0.127→+0.217, +0.109→+0.179, i.e. 4.0→5.6 %, 1.5→2.5 %,
+1.9→3.1 % of the measured +5.947/+8.576/+5.727). **KNOWN-OPEN 1 stays wide open** — the
+congestion majority is 80–87 % of that basis and the model still reproduces 2.5–5.6 %.
+No N–S topology lever is chartered off this (caiso-164 §0/§6 stands); steering a
+load-split input by a price residual is the outcome pin rule 13 forbids.
+
+**Newly opened and named, not buried:** `MWD-TAC` (Metropolitan Water District, ~208 MW,
+~0.9 % of ISO load) is a real CAISO TAC area **absent** from the committed TAC load
+series and from `CAISO_TAC_ZONE_WEIGHTS`. SP15-side, not a Path-15 object, out of scope
+here — but a genuine demand-input gap a future `complete` assessment should account for.
+
+**Holdout:** 2023/2024/2025 only. CAISO holds no `complete` marker and the spend freeze
+is ACTIVE, so every out-of-training year stayed quarantined. Rule 22 D-5(b) re-keying
+does **not** apply — it binds only ISOs holding a `complete` entry.
+**`calibration-complete.json` and `holdout-freeze.json` remain UNTOUCHED — both are
+owner acts, and this session does not make the `complete` recommendation.**
+
+Matrix: **new row `path15_load_split`, CAISO `K`** (minted with no `ScenarioConfig`
+field, on the `demand_dropout_screen` precedent; other five cells `.` by structure —
+CAISO's is the only fractional load-area split in the zonal-shares layer). Evidence:
+`results/calibration/FINDING-caiso172-path15-load-split-2026-08-04.md`,
+`PRECHECK-caiso172-path15-load-split-2026-08-04.md`.
