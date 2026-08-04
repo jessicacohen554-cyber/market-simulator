@@ -1964,9 +1964,11 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
         # PY2025-26 seasonal marginal ELCCs (18.1-30.7 % at ~28.3 GW
         # installed, a different axis+grain, recorded in the same CSV but
         # not blended into this annual class-average curve).
-        # MISO SOLAR has no published probabilistic ELCC curve (only flat
-        # seasonal defaults for <30-day-metered resources) → generic
-        # fallback, per the registry-level note above.
+        # MISO SOLAR has no published probabilistic ELCC *curve* — only the
+        # flat seasonal class-average defaults below, wired at FFR-4B (owner
+        # decision D-12, sitting Addendum O, 2026-08-04) under rule 14
+        # [R-ACCURATE]: the ISO's own published number is on disk and cited,
+        # so it displaces the generic 0.18 fallback whatever it does to a fit.
         "wind": RenewableElccCurve(
             penetration_basis="pct_of_peak_load",
             points=(
@@ -1984,6 +1986,66 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
                 "MISO 2019 Wind & Solar Capacity Credit Report, Tables "
                 "2-1/2-2 'MISO Capacity Credit (%)' vs 'Historical "
                 "Penetration (%)' (PY2010-PY2020) — "
+                "data/raw/capacity-market/elcc/miso/miso.csv"
+            ),
+        ),
+        # SOLAR — MISO's published SEASONAL class-average capacity credit,
+        # reconciled to this registry's ANNUAL grain (FFR-4B / owner D-12).
+        # The PY2025-26 Wind and Solar Capacity Credit Report's cover-page
+        # Highlights publish a flat default seasonal solar capacity credit of
+        # 50 % for Summer / Fall / Spring and 5 % for Winter 2025-26. It is a
+        # FLAT default, not a penetration curve, so this is a single-point
+        # (constant) curve — never fabricate the axis MISO did not publish
+        # (the P-0B intake discipline the NYISO CAF entries below follow).
+        #
+        # SEASONAL -> ANNUAL SELECTION RULE (settled here, not left implicit):
+        # DURATION-WEIGHTED MEAN OVER MISO'S FOUR PRA SEASONS, which reduces
+        # to the equal-weighted arithmetic mean because the four seasons are
+        # equal-length quarters:
+        #     (50 + 50 + 5 + 50) / 4 = 38.75 %  ->  0.3875
+        # Grounding, in two published facts and one property of this model:
+        #  (a) MISO's Planning Resource Auction has been SEASONAL since
+        #      PY2023-24 (FERC-accepted seasonal resource-adequacy construct,
+        #      ER22-495; Tariff Module E-1). It clears FOUR separate seasonal
+        #      auctions, each with its own requirement and its own price, over
+        #      a June 1 - May 31 Planning Year split into four THREE-MONTH
+        #      seasons: Summer (Jun-Aug), Fall (Sep-Nov), Winter (Dec-Feb),
+        #      Spring (Mar-May). A resource is paid in EVERY season on THAT
+        #      season's accredited capacity — it is not denied its summer
+        #      revenue because its winter credit is low, which is why a
+        #      peak-risk MINIMUM rule (winter 5 %) is wrong for MISO however
+        #      right it is for a single-requirement annual construct.
+        #  (b) Annual capacity revenue is therefore
+        #      SUM_s (price_s x days_s x credit_s). This model carries ONE
+        #      annual capacity price per firm MW
+        #      (MarketDesign.capacity_price_per_firm_mw_yr) and ONE annual
+        #      credit, which is exactly the assertion that the four seasonal
+        #      prices are equal; under that assertion the revenue-preserving
+        #      annual-equivalent credit is the duration-weighted mean of the
+        #      seasonal credits. Equal-length seasons make it the plain mean.
+        # This is the rule-14 [R-ACCURATE] "reconciled version of the real
+        # data" for a genuine time-aggregation misalignment — documented, and
+        # preferred over both the raw lift (summer-only 0.50, which pays the
+        # winter quarter a credit MISO does not grant) and the guess it
+        # replaces (the generic 0.18 flat fallback, no MISO content at all).
+        # Exact-day weighting (92/91/90/92 days) gives 142/365 = 0.3890, a
+        # +0.0015 difference that is an order of magnitude below the grain of
+        # the published 50 %/5 % figures themselves; the equal weights are
+        # taken as the settled rule and the day-weighted variant is recorded
+        # here only to show the choice does not carry the result.
+        # ONE credit serves BOTH consumers of the single adequacy resolver
+        # (rule 19 [R-ONE-MECH]): the entry screen's VRE capacity payment and
+        # the adequacy ledger (retirement reliability floor, reserve-margin
+        # backstop, CR-1 reserve position) — see FFR-4B's asymmetry section.
+        "solar": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.3875),),
+            source=(
+                "MISO PY2025-26 Wind and Solar Capacity Credit Report, cover-"
+                "page Highlights: default seasonal solar capacity credit 50 % "
+                "Summer/Fall/Spring + 5 % Winter 2025-26, duration-weighted "
+                "over MISO's four equal-length PRA seasons (= equal-weighted "
+                "mean) -> 0.3875 — "
                 "data/raw/capacity-market/elcc/miso/miso.csv"
             ),
         ),

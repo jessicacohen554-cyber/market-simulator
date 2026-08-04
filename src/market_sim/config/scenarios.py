@@ -704,6 +704,13 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "retirement_execution_lag_oil": "1",
     "retirement_execution_lag_nuclear": "3",
     "entry_vre_capacity_revenue": "False",
+    # Backfilled at FFR-4B: the field was registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS by ercot-162 (48a158a6) without its ledger
+    # entry, which left the HEAD-only leg of the cache-key flip guard
+    # (tests/unit/config/test_cache_key_default_flip_guard.py) FAILING on main
+    # for every session. One line, exactly the remedy the guard prints; not
+    # part of this lane's mechanism and it changes no cache key.
+    "ercot_storage_rt_offer_surface": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
     "exit_rate_limits": "False",
@@ -2916,6 +2923,15 @@ class ScenarioConfig:
     # Default off is byte-identical (VRE capacity revenue stays the measured $0
     # the BLK-8 decomposition attributed — blk8-solar-entry-decomposition
     # 2026-07-15 §4: ~$8-11k/MW-yr would-be payment, pivotal in PJM 2023).
+    # ARMED FOR MISO ONLY at FFR-4B (owner decision D-2', sitting Addendum O,
+    # signed 2026-08-04) via ISOConfig.default_scenario_overrides in
+    # config/iso_configs.py::_miso_config — this ScenarioConfig default STAYS
+    # False, so every other ISO is byte-identical and each is its own separate
+    # decision (rule 25 [R-ISO-SCOPE]). Evidence and the four-arm 2x2:
+    # docs/handoffs/ffr-4b-miso-solar-revenue-2026-08-04.md; the asymmetry it
+    # removes is that VRE was the ONLY accredited class denied the payment
+    # while thermal entry, thermal retirement and storage entry all took it
+    # through the same MarketDesign.capacity_price_per_firm_mw_yr seam.
     entry_rate_limits: bool = True  # ARMED by owner decision D-2, signed
     # 2026-08-02 (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum C.1:
     # "ARM BOTH"). Was GATED default-OFF (FF-2A item 2 / BLK-10

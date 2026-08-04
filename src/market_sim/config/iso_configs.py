@@ -676,6 +676,48 @@ def _miso_config() -> ISOConfig:
         links=links,
         voll=2000.0,
         interface_limits=interface_limits,
+        # ISO-level scenario default applied by the runner to any field the
+        # caller left at its ScenarioConfig default (runner.py:585-593).
+        #
+        # entry_vre_capacity_revenue — ARMED FOR MISO by owner decision D-2'
+        # (sitting Addendum O, signed 2026-08-04; lane FFR-4B, evidence
+        # docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.3/§7 1a).
+        # MISO's Planning Resource Auction accredits and PAYS wind and solar
+        # like any other Planning Resource, so a MISO forecast that denies VRE
+        # entry the RA payment is not modelling MISO's market. Before this,
+        # VRE was the ONLY accredited resource class on the system denied that
+        # payment while thermal entry, the thermal retirement screen and
+        # storage entry all took it through the SAME seam
+        # (MarketDesign.capacity_price_per_firm_mw_yr) — and VRE's accredited
+        # MW were ALREADY counted on the supply side of the adequacy ledger,
+        # so MISO solar was depressing the very price the others collected.
+        # Arming removes that exception; it adds no second channel (rule 19
+        # [R-ONE-MECH] — one price seam, one accreditation resolver).
+        #
+        # Rule 25 [R-ISO-SCOPE]: MISO ONLY. The other capacity-market ISOs are
+        # separate per-ISO decisions, are NOT authorized by D-2', and must
+        # derive their own accreditation from their own market's data.
+        #
+        # Measured MISO-scoped effect (FFR-4B 2x2, base 5eac75b0, T1-H
+        # 2021-2025): INERT in the 2022-2024 decision years — MISO is long and
+        # its VRR pays $0 to EVERY technology, thermal included, which is
+        # faithful (the real PY2021-22 PRA cleared at ~$1,825/MW-yr). DECISIVE
+        # in the 2025 decision year, which screens on 2024's short position:
+        # solar's margin flips -33,406 -> +25,536 $/MW-yr and it decides
+        # 1,236.4 MW, MISO's first modelled solar entry. It moves ZERO MW
+        # inside the 2021-2025 window (ENTRY_COD_LAG_YEARS=2 puts that COD in
+        # 2027) and was NOT signed on band movement.
+        #
+        # CAVEAT for anyone building a control arm: the runner applies this
+        # override to any field whose value EQUALS the ScenarioConfig default,
+        # so an explicit --no-entry-vre-capacity-revenue (which sets the
+        # default, False) is re-armed here and does NOT reach a gate-off
+        # control for MISO. Same pre-existing property as ERCOT's
+        # scarcity_price_overlay and CAISO's negative_renewable_offers. FFR-4B's
+        # own controls were therefore solved BEFORE this arming landed.
+        default_scenario_overrides={
+            "entry_vre_capacity_revenue": True,
+        },
     )
 
 
