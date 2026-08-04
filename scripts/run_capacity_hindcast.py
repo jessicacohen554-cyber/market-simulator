@@ -131,6 +131,12 @@ from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
     shipped_capacity_clearing_by_iso,
 )
+from scripts.lib.run_record import (  # noqa: E402
+    Derived,
+    FromArgs,
+    FromConfig,
+    RecordSpec,
+)
 
 # Rule-22 carve-outs now live in scripts/lib/holdout_policy.py (FH-1 — moved
 # out of prose and this file's former local literals): the {2021} seed, the
@@ -317,6 +323,139 @@ def resolve_capacity_clearing_posture(
     if force_on:
         return {iso: True}, "forced_curve"
     return production_capacity_clearing_default(), "shipped"
+
+
+#: The hindcast/crossover/full-forward ``meta.json`` config-describing block,
+#: declared once and built FROM THE SOLVED CONFIG (FFR-3R). Four lanes each
+#: found the same defect here — a meta entry sourced from ``args`` rather than
+#: from the object the solve ran on (FFR-1D's inert flag, FFR-3D's
+#: ``bool(None)`` on a tri-state, FFR-2E's flag-sourced clearing gate that
+#: mis-classified every shipped-posture leg, FFR-3L's ``retirement_rule: null``)
+#: — and each was patched key-by-key with its own comment. This spec is the
+#: class fix: every key below is read off ``config`` unless it is declared
+#: ``FromArgs`` with a written reason, and ``RecordSpec.assert_sourced`` refuses
+#: to write a meta that disagrees with the solve. A NEW ``ScenarioConfig`` field
+#: cannot appear in this meta from ``args`` without a deliberate declaration —
+#: an undeclared config-named key is itself a violation.
+#:
+#: NB scope: this governs the RECORD only. ``args`` → ``ScenarioConfig`` in
+#: ``build_config`` above is what a CLI is for and is untouched.
+META_RECORD_SPEC = RecordSpec(
+    {
+        "iso": FromConfig(),
+        "variant": FromConfig(
+            field="hindcast_fuel_variant",
+            why=(
+                "the record keeps the short harness name; a full-forward leg sets it to the arm so meta/variant stays one vocabulary"
+            ),
+        ),
+        "energy_only_floor": FromConfig(
+            field="market_design_retirement_floor",
+            cast=bool,
+            why=(
+                "the CLI arm is named for the market design; the field it "
+                "arms is market_design_retirement_floor (build_config)"
+            ),
+        ),
+        "entry_lookahead_reprice": FromConfig(cast=bool),
+        "retirement_rule": FromConfig(),
+        "limited_foresight_dispatch": FromConfig(cast=bool),
+        # The RESOLVED per-ISO clearing gate, NOT the scalar field of the same
+        # name (which stays off in every posture). scripts/forecast_verdict.
+        # _curve_on reads this key to classify a leg curve-ON/curve-OFF, so a
+        # flag-sourced value mis-classified every shipped-posture leg (FFR-2E /
+        # audit FR-14). Declared Derived so the resolution is checked against
+        # the solved config rather than asserted by comment.
+        "capacity_market_clearing": Derived(
+            lambda cfg, ctx: bool(resolve_capacity_market_clearing(cfg, ctx["iso"])),
+            "the RESOLVED per-ISO gate (FFR-2E), not the scalar field",
+        ),
+        "capacity_market_clearing_by_iso": FromConfig(),
+        # Which of the three CLI arms this leg selected — the FC-3 evidence-row
+        # discriminator. Genuinely not a config property: `shipped` and
+        # `forced_curve` can resolve to the same by-ISO dict for a single-ISO
+        # posture, so the solved config cannot recover the operator's choice.
+        # Consistency with what the config actually carries is asserted
+        # separately (see _assert_posture_consistent).
+        "capacity_clearing_posture": FromArgs(
+            "records WHICH harness arm was selected; the resolved config "
+            "cannot distinguish forced_curve from a coincident shipped posture"
+        ),
+        "capacity_market_clearing_forced": FromArgs(
+            "the raw --capacity-market-clearing force flag, deliberately "
+            "distinct from the resolved gate recorded above (FFR-2E)"
+        ),
+        "correlated_forced_outage": FromConfig(cast=bool),
+        "entry_screen_diagnostics": FromConfig(cast=bool),
+        "entry_vre_capacity_revenue": FromConfig(cast=bool),
+        "entry_rate_limits": FromConfig(cast=bool),
+        "entry_commissioning_lag": FromConfig(cast=bool),
+        "exit_rate_limits": FromConfig(cast=bool),
+        "renewable_elcc_curves": FromConfig(cast=bool),
+        "gas_price_path": FromConfig(),
+        "crossover_forward_year": FromConfig(),
+        # Nulled when there is no forward boundary: the field still carries the
+        # harness default there, and recording it would imply a forward leg.
+        "crossover_forward_gas_path": Derived(
+            lambda cfg, ctx: (
+                cfg.crossover_forward_gas_path
+                if cfg.crossover_forward_year is not None
+                else None
+            ),
+            "not applicable (recorded null) when the leg has no forward boundary",
+        ),
+        # T1-FF weather posture (FH-1 plan §2.1). Config-derived, and nulled
+        # outside a full-forward leg where the arm concept does not apply.
+        "weather_posture": Derived(
+            lambda cfg, ctx: (
+                ("solve_year" if cfg.crossover_solve_year_weather else "base_year")
+                if ctx["forward_from_base"]
+                else None
+            ),
+            "the arm's weather posture, off config.crossover_solve_year_weather",
+        ),
+        "vintage_year": FromConfig(
+            field="eia860_vintage_year",
+            why="the record drops the source prefix; the field is the EIA-860 vintage",
+        ),
+        "start_year": FromConfig(),
+        "end_year": FromConfig(),
+    },
+    name="capacity-hindcast meta.json",
+)
+
+
+def _assert_posture_consistent(posture: str, config: ScenarioConfig, iso: str) -> None:
+    """Refuse a ``capacity_clearing_posture`` label the solved config contradicts.
+
+    The posture label is the one genuinely args-sourced config-ish key in the
+    meta (it records which CLI arm the operator picked, which the resolved
+    config cannot always recover). An unchecked args-sourced label is exactly
+    the FFR-3R defect, so the label is instead checked for CONSISTENCY with the
+    posture the config actually carries — the strongest statement the solved
+    object can make about it.
+
+    Args:
+        posture: The label ``resolve_capacity_clearing_posture`` returned.
+        config: The ``ScenarioConfig`` the solve ran on.
+        iso: The run's ISO.
+
+    Raises:
+        SystemExit: The label and the solved config disagree.
+    """
+    by_iso = config.capacity_market_clearing_by_iso
+    expected = {
+        "fixed_net_cone": None,
+        "forced_curve": {iso: True},
+        "shipped": production_capacity_clearing_default(),
+    }.get(posture, "<unknown posture>")
+    if by_iso != expected:
+        raise SystemExit(
+            f"capacity_clearing_posture={posture!r} contradicts the solved "
+            f"config: capacity_market_clearing_by_iso={by_iso!r}, expected "
+            f"{expected!r} (FFR-3R — an args-sourced record label may not "
+            "disagree with the solve)"
+        )
 
 
 def build_config(
@@ -1230,78 +1369,44 @@ def main(argv: list[str] | None = None) -> int:
 
     solved = sorted(y for y in ledgers if not ledgers[y].get("bridge"))
     bridged = sorted(y for y in ledgers if ledgers[y].get("bridge"))
+    # The meta has three zones, and the middle one is the point of FFR-3R.
+    #
+    #   1. HARNESS LABELS — what mode/arm the operator asked for. Not
+    #      ScenarioConfig properties, so the config cannot answer them.
+    #   2. THE CONFIG-DESCRIBING BLOCK — built BY CONSTRUCTION from the
+    #      ScenarioConfig the solve actually ran on, via META_RECORD_SPEC.
+    #      No `args.*` may appear here: that is the defect four lanes each
+    #      found and patched key-by-key (FFR-1D / FFR-3D / FFR-2E / FFR-3L).
+    #      The two deliberately args-sourced keys are declared FromArgs in the
+    #      spec with their reasons, and are the ONLY exemption.
+    #   3. RUN OUTCOME — what came back from the solve.
+    #
+    # assert_sourced below re-checks the finished dict, so a key merged in
+    # later (or a new ScenarioConfig field recorded from args) fails loudly at
+    # write time instead of silently entering a scored verdict.
+    _record_ctx = {"iso": iso, "forward_from_base": forward_from_base}
+    _assert_posture_consistent(_clearing_posture, config, iso)
     meta = {
-        "iso": iso,
+        # -- 1. harness labels --------------------------------------------- #
         "kind": kind,
-        "variant": config.hindcast_fuel_variant,
-        "energy_only_floor": bool(args.energy_only_floor),
-        # Read from the SOLVED config, not from args (FFR-3D / C.4(c)): the
-        # flag is tri-state now, so an omitted flag is `None` and `bool(None)`
-        # would record `false` on a leg that ran the shipped `True` — the
-        # FFR-1D "meta entry sourced from a flag that armed nothing" defect
-        # inverted. Same sourcing rule as the FF-2A dampers below.
-        "entry_lookahead_reprice": bool(config.entry_lookahead_reprice),
-        # Solved-config sourced, for the SAME reason as entry_lookahead_reprice
-        # above and the FF-2A dampers below (FFR-3D / C.4(c)) — this key was
-        # MISSED by that sweep and stayed args-sourced, so every leg that
-        # OMITTED --retirement-rule (i.e. every shipped-default leg since owner
-        # decision D-1 flipped it to "pipeline" on 2026-08-02) recorded
-        # `retirement_rule: null` rather than the rule it actually solved.
-        # Verified on the committed FFR-3A-2 T1-X sidecars, which record
-        # `entry_rate_limits: true` from the solved config beside a null
-        # retirement_rule from args. Record-only: no solve, score, cache key or
-        # default is affected. (FFR-3L instrument repair, 2026-08-04.)
-        "retirement_rule": config.retirement_rule,
-        "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
-        # FFR-2E: the RESOLVED per-ISO clearing gate, not the raw force-ON
-        # flag. Downstream (scripts/forecast_verdict._curve_on) reads this key
-        # to classify a leg curve-ON/curve-OFF, and since the harness default
-        # is now the shipped posture a flag-sourced value would mis-classify
-        # every shipped-posture leg as curve-OFF — the FR-14 defect in another
-        # costume. Backward-compatible: on every leg run before FFR-2E the
-        # resolved gate equals the flag (the old default was None → False).
-        "capacity_market_clearing": bool(resolve_capacity_market_clearing(config, iso)),
-        "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
-        # Which of the three postures this leg ran (shipped / fixed_net_cone /
-        # forced_curve) — the FC-3 evidence-row discriminator.
-        "capacity_clearing_posture": _clearing_posture,
-        "capacity_market_clearing_forced": bool(args.capacity_market_clearing),
-        # Solved-config sourced for the same reason as entry_lookahead_reprice
-        # above (FFR-3D / C.4(c)).
-        "correlated_forced_outage": bool(config.correlated_forced_outage),
-        "entry_screen_diagnostics": bool(args.entry_screen_diagnostics),
-        # FF-2A dampers (FFR-2B): read from the SOLVED config, never from
-        # args — the FFR-1D defect was a meta entry sourced from a flag that
-        # armed nothing, so the record is taken from the object the solve
-        # actually ran on and cannot diverge from it.
-        "entry_vre_capacity_revenue": bool(config.entry_vre_capacity_revenue),
-        "entry_rate_limits": bool(config.entry_rate_limits),
-        "entry_commissioning_lag": bool(config.entry_commissioning_lag),
-        "exit_rate_limits": bool(config.exit_rate_limits),
-        "renewable_elcc_curves": bool(config.renewable_elcc_curves),
-        "gas_price_path": config.gas_price_path,
         "crossover": crossover,
-        "crossover_forward_year": config.crossover_forward_year,
-        "crossover_forward_gas_path": (
-            config.crossover_forward_gas_path
-            if config.crossover_forward_year is not None
-            else None
-        ),
-        # T1-FF record (FH-1, plan §2.1): mode + pre-registered arm + base +
-        # weather posture, so a full-forward bundle is self-describing and the
-        # scorer/registry never has to infer the arm from the gas path.
+        # T1-FF record (FH-1, plan §2.1): mode + pre-registered arm + base, so
+        # a full-forward bundle is self-describing and the scorer/registry
+        # never has to infer the arm from the gas path.
         "forward_from_base": forward_from_base,
         "arm": arm if forward_from_base else None,
         "base_year": start_year if forward_from_base else None,
-        "weather_posture": (
-            ("solve_year" if config.crossover_solve_year_weather else "base_year")
-            if forward_from_base
-            else None
-        ),
         "holdout_freeze_active_at_launch": freeze_active,
-        "vintage_year": vintage,
-        "start_year": start_year,
-        "end_year": end_year,
+        # -- 2. config-describing block (solved-sourced by construction) ---- #
+        **META_RECORD_SPEC.build(
+            config,
+            _record_ctx,
+            args_values={
+                "capacity_clearing_posture": _clearing_posture,
+                "capacity_market_clearing_forced": bool(args.capacity_market_clearing),
+            },
+        ),
+        # -- 3. run outcome ------------------------------------------------- #
         "cache_key": key,
         "bundle": str(bundle),
         "solved_years": solved,
@@ -1309,6 +1414,7 @@ def main(argv: list[str] | None = None) -> int:
         "leakage_violations": violations,
         "started_utc": started,
     }
+    META_RECORD_SPEC.assert_sourced(meta, config, _record_ctx)
     (args.out_dir / "meta.json").write_text(json.dumps(meta, indent=2))
     config.to_yaml_full(args.out_dir / "run_config.yaml")
     print(f"{tag} done. solved {solved}, bridged {bridged}")
