@@ -312,6 +312,16 @@ frontend/data/forecast/program-status.js
 # docs/handoffs/ffr-3p-caiso-accreditation-ab-2026-08-04.md §Reproduction.
 /results/ffr3p/**/year_*.parquet
 /results/ffr3p/**/config.yaml
+# FFR-3V MISO entry-screen diagnostics solve (MISO 2021-2025 hindcast, isolated
+# run_capacity_hindcast --out-dir cache). Same class as /results/ffr3p/ — only
+# the HEAVY regenerable LP output is ignored; the slim per-run record the
+# handoff cites (the evolution_<year>.json ledgers carrying the RC-0C
+# entry_screen_diagnostics rows, plus year_<year>_floor_retentions.json) IS
+# committed, because those ledgers ARE the deliverable's evidence. Regenerate
+# the parquets with the command in
+# docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §2.
+/results/ffr3v/**/year_*.parquet
+/results/ffr3v/**/config.yaml
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
