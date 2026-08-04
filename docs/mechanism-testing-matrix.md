@@ -79,6 +79,36 @@ re-runs of recorded recipes legitimately change no cell). In-session, the
 `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook injects the
 duties and pointers at the start of every session, local and web.
 
+**Two shrink-only ratchets sit behind that gate**, because the diff gate can
+only ever see fields added in the SAME PR, so everything predating it is
+structurally invisible:
+
+- `mechanism-matrix-gaps.json` (nyiso-114) — ISO-scoped fields absent from the
+  matrix, plus SHARED fields a designated keeper arms with no row anywhere.
+  **Both blocks are now EMPTY for all six ISOs** (own-family columns closed by
+  ercot-156 / caiso-161 / pjm-151 / neiso-78 / nyiso-113 / nyiso-121; the
+  cross-ISO shared-stem backlog closed by xiso-3). Regenerate with
+  `mechanism_matrix_gap_sweep.py --write-baseline`.
+- `mechanism-matrix-anchors.json` (xiso-3) — line anchors that do NOT resolve.
+  **Currently EMPTY.** A line anchor points into files every lane edits, so it
+  decays with nobody touching the matrix: nyiso-121 found all 20 MISO anchors
+  stale, and xiso-3 measured **163 of 167 stale file-wide** and repaired 161.
+  The check has three legs (a `<field> :<line>` must resolve to the
+  `scenarios.py` line defining that field; a row whose `id` is itself a field
+  must do the same for its `scenarios.py:<line>`; any `<file>.py:<line>` must be
+  in range) and a `--fix-anchors` repair path, so a `scenarios.py` PR that
+  shifts anchors fixes them with one command instead of hand-editing.
+  **Existence is gated first**, which is what preserves a deliberate
+  QUOTATION of a defect (`miso_pjm_lmp :2914` in `import_hub_pricing`'s repair
+  note) — do not "fix" it.
+
+> **What the anchor ratchet does NOT do:** it proves an anchor points at the
+> field it NAMES, never that the named field is the right one. **The literal
+> field name is the durable identifier; the anchor is a convenience.** And a
+> mention is still not a registration — a field named only in a row's `note:`
+> has no cell, which is the defect the gap census exists to close (nyiso-121
+> §6.2: naming a SHARED field as a bare literal in prose leaks across columns).
+
 ## 2. How similar are the six ISO configs? (the up-front answer)
 
 Quantitatively, from the keeper `run_config.json`s (true non-default counts,

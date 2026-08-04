@@ -1,0 +1,128 @@
+{
+  "probe": "xiso-3 O-1 shared-stem gate readability (CONSTRUCTION, no LP)",
+  "prereg": "results/calibration/PREREG-xiso3-shared-stem-backlog-2026-08-04.md",
+  "keepers": {
+    "ERCOT": "2026-08-03-ercot158-pool-arm",
+    "CAISO": "2026-08-04-caiso164-zonal-loss-surface"
+  },
+  "comparison": "np.array_equal on float32 \u2014 EXACT equality, not a tolerance",
+  "arms": [
+    {
+      "arm": "ERCOT coal_prb_passthrough_floor, GATE AT KEEPER SETTING",
+      "fields": [
+        "coal_prb_passthrough_floor"
+      ],
+      "gates": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_lignite_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": true
+      },
+      "exactly_equal": true,
+      "max_abs_delta": 0.0,
+      "verdict": "INERT (provably unreadable)"
+    },
+    {
+      "arm": "POSITIVE CONTROL \u2014 coal_prb_passthrough_floor, its own gate ON ({'coal_prb_passthrough_sigmoid': True})",
+      "fields": [
+        "coal_prb_passthrough_floor"
+      ],
+      "exactly_equal": false,
+      "max_abs_delta": 0.6619902849197388,
+      "verdict": "SEPARATES (instrument live)"
+    },
+    {
+      "arm": "ERCOT coal_lignite_passthrough_floor, GATE AT KEEPER SETTING",
+      "fields": [
+        "coal_lignite_passthrough_floor"
+      ],
+      "gates": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_lignite_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": true
+      },
+      "exactly_equal": true,
+      "max_abs_delta": 0.0,
+      "verdict": "INERT (provably unreadable)"
+    },
+    {
+      "arm": "POSITIVE CONTROL \u2014 coal_lignite_passthrough_floor, its own gate ON ({'coal_lignite_passthrough_sigmoid': True})",
+      "fields": [
+        "coal_lignite_passthrough_floor"
+      ],
+      "exactly_equal": false,
+      "max_abs_delta": 0.582737922668457,
+      "verdict": "SEPARATES (instrument live)"
+    },
+    {
+      "arm": "ERCOT coal_lignite_passthrough_ceil, GATE AT KEEPER SETTING",
+      "fields": [
+        "coal_lignite_passthrough_ceil"
+      ],
+      "gates": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_lignite_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": true
+      },
+      "exactly_equal": true,
+      "max_abs_delta": 0.0,
+      "verdict": "INERT (provably unreadable)"
+    },
+    {
+      "arm": "POSITIVE CONTROL \u2014 coal_lignite_passthrough_ceil, its own gate ON ({'coal_lignite_passthrough_sigmoid': True})",
+      "fields": [
+        "coal_lignite_passthrough_ceil"
+      ],
+      "exactly_equal": false,
+      "max_abs_delta": 0.7438761591911316,
+      "verdict": "SEPARATES (instrument live)"
+    },
+    {
+      "arm": "ERCOT coal_prb_follower_floor, GATE AT KEEPER SETTING",
+      "fields": [
+        "coal_prb_follower_floor"
+      ],
+      "gates": {
+        "coal_prb_passthrough_sigmoid": false,
+        "coal_lignite_passthrough_sigmoid": false,
+        "coal_prb_passthrough_tiered": true
+      },
+      "exactly_equal": true,
+      "max_abs_delta": 0.0,
+      "verdict": "INERT (provably unreadable)"
+    },
+    {
+      "arm": "POSITIVE CONTROL \u2014 coal_prb_follower_floor, its own gate ON ({'coal_prb_passthrough_sigmoid': True})",
+      "fields": [
+        "coal_prb_follower_floor"
+      ],
+      "exactly_equal": false,
+      "max_abs_delta": 0.6619902849197388,
+      "verdict": "SEPARATES (instrument live)"
+    },
+    {
+      "arm": "CAISO ct_drag coefficients, GATE AT KEEPER SETTING",
+      "fields": [
+        "ct_drag_cap",
+        "ct_drag_intercept",
+        "ct_drag_slope_per_gw"
+      ],
+      "gates": {
+        "ct_netload_drag": false
+      },
+      "exactly_equal": true,
+      "max_abs_delta": 0.0,
+      "verdict": "INERT (provably unreadable)"
+    },
+    {
+      "arm": "POSITIVE CONTROL \u2014 same perturbation, ct_netload_drag ON",
+      "fields": [
+        "ct_drag_cap",
+        "ct_drag_intercept",
+        "ct_drag_slope_per_gw"
+      ],
+      "exactly_equal": false,
+      "max_abs_delta": 80.10801696777344,
+      "verdict": "SEPARATES (instrument live)"
+    }
+  ]
+}
