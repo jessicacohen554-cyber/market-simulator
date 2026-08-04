@@ -770,6 +770,79 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso164-zonal-loss-surface`, CALIBRATED-WITH-CAVEATS)
 
+> **caiso-168 (2026-08-04) — THE caiso-167 POINTER IS CONFIRMED AND QUANTIFIED,
+> AND ITS LEVER IS SHUT: ITEM 3's S2 CHARTER IS *NOT* THE SUCCESSOR FOR THE
+> BELLY RESIDUAL.** No LP, no solve, no derive, no `ScenarioConfig` field, no
+> prereg (nothing was armed), keeper unchanged. Record
+> `results/calibration/FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md`;
+> probe `scripts/probes/caiso168_storage_bid_phase0.py` (committed artifacts
+> only — the keeper's `hourly/storage_<y>.parquet` + `system_<y>.parquet`, the
+> armed anchor's committed envelope CSV, EIA-930 CISO `NG: OTH`, and CAISO's DA
+> component record). Artifact
+> `results/calibration/_caiso168_storage_bid_phase0.json`.
+>
+> **A STORAGE CHARGE COLUMN IS THE MARGINAL BUYER IN THE CA BELLY.** By LP
+> optimality an interior charge column has zero reduced cost, so
+> `λ = −ε − η_c·ν` — the column *is* the price setter. It is interior in
+> **36.6/50.5/55.5 %** of surplus-regime belly hours, and those hours carry
+> **81.1/67.4/82.3 %** of the whole belly-surplus over-price. Matched within
+> month × measured-hub decile, an interior column carries **+9.66/+13.97/+11.33
+> $/MWh** more over-price than a pinned one (positive in 95.5/96.3/93.2 % of
+> 22/54/59 cells). Where **no** storage column is marginal — 63.4/49.5/44.5 % of
+> the hours — the mean defect is only **+2.86/+11.05/+4.84**. Two corroborations:
+> the interior-state dual is 3.6–6.2× flatter within-day than the pinned-state
+> dual (the common-`ν` signature), and **SDGE** — the one zone that reaches its
+> own curtailment margin (caiso-121 §3) — prices **$3.59/$7.67 below** the other
+> CA zones in exactly those hours.
+>
+> **BUT THE OBJECT SPLITS INTO TWO LIMBS AND NEITHER IS S2's.** Battery limb
+> 42.2/57.3/69.7 % of the defect; **pumped-storage limb 49.1/21.5/21.8 %, and
+> the PS limb is the MAJORITY OWNER IN 2023** (38.9 % ps-only vs 32.0 %
+> battery-only). Rule 16 `[R-ALLYEARS]` means 2023 must be covered.
+> * **Battery limb — CHANNEL OCCUPIED (rule 19 `[R-ONE-MECH]`).** The only
+>   instrument class that can reach is a charge-side **upper bound** (caiso-129
+>   §5: "a floor can only ADD"), and that is the **armed**
+>   `caiso_storage_shape_anchor`. The LP *rides* it: 93.9/82.2/89.0 % of the p95
+>   cap in belly-surplus hours where the measured fleet averages 59.4/65.7/72.8 %.
+>   Re-picking the percentile against this residual is barred by rule 23
+>   `[R-FROZEN-DERIVE]` and rule 13 `[R-MEASURED]` (outcome pin); a second cap
+>   would stack. Where the anchor **does** bind the defect is still
+>   +6.15/+10.81/+6.22 — so it is not all the battery's either.
+> * **PS limb — WALLED, and this is the stop-and-report.** The model carries the
+>   whole CAISO PS fleet as **one continuous 2,077.6 MW / 20,776 MWh column in
+>   NP15 with no shape restraint of any kind** (caiso-129 §7). A PS capability
+>   envelope needs measured hourly PS operation: EIA-930 `WAT` mixes PS with
+>   conventional hydro (caiso-141) and `NG: OTH` excludes PS outright. That is
+>   the owner-ledgered **C3a-2025 wall** (accepted caiso-145). **Reported, not
+>   approximated.** New matrix row `caiso_ps_charge_shape_anchor` CAISO → `G`.
+>
+> **THE NUMBER THAT SENT THE LANE HERE IS A BASIS MISMATCH — do not re-quote
+> it.** caiso-121 §3's "storage net (charging +) **+1967/+2049/+2244 MW**" is the
+> model's **all-tech** net differenced against EIA-930 `NG: OTH`, which
+> **excludes pumped storage by construction** (the battery envelope's own derive
+> script says so). **67.1/64.7/56.3 %** of it is model PS pumping. Like-for-like
+> **battery** excess is **+736/+717/+979 MW** (belly-surplus) and **+76/+34/+47
+> MW/h** (annual) — the battery's *annual* volume is essentially right and the
+> defect is a **belly concentration**.
+>
+> **CLOCK DEFECT, INHERITED AND FLAGGED.** The model frame is the fixed
+> **non-leap 8760** calendar with Feb-29 dropped.
+> `scripts/probes/caiso167_import_basis_phase0.py` maps timestamps by linear
+> offset, which puts every **2024** hour after Feb-28 a full day out of phase.
+> caiso-168 uses the corrected clock throughout (it was caught by an exact
+> EIA-860 cross-check of the recovered cap staircase). Flagged for caiso-167's
+> lane, not silently repaired; its DSW verdict was a 1.6/0.1/1.4 % reach bound,
+> far outside what a one-day shift moves. **Any CAISO probe pairing a measured
+> series to model hours must drop Feb-29.**
+>
+> **WHAT THIS DOES *NOT* DO. Item 3 is NOT spent.** S2 is the DA/RT
+> two-settlement charter for the **evening/overnight** spread; caiso-168
+> measured the **belly** only and adjudicates only the belly route into it. S2
+> stays **STANDING and UNTOUCHED** on its own object. Also not established: any
+> counterfactual — the charge state and the dual are jointly determined by the
+> same LP, so this is a decomposition of where the defect lives, not a
+> prediction of what removing it would do.
+
 > **caiso-167 (2026-08-04) — LEVER-QUEUE ITEM 2 IS SPENT; THE
 > CORRIDOR/EXPORT-PATH FAMILY IS CLOSED ON BOTH HALVES.** No LP, no solve, no
 > derive, no `ScenarioConfig` field, keeper unchanged. Record
@@ -1162,7 +1235,8 @@ target C5a and the standing structural/offer questions. Items 1, 4, 5 and 6 are
 struck through — 1, 4 and 5 were adjudicated and closed **without spending a
 solve** (caiso-144, caiso-149 and caiso-136), and **6 was spent and PROMOTED at
 caiso-146**. They are kept in place so the numbering stays stable and none is
-re-proposed. **LIVE QUEUE AS OF caiso-167 (2026-08-04): item 3, plus item 9
+re-proposed. **LIVE QUEUE AS OF caiso-168 (2026-08-04): item 3 (scope
+unchanged, its BELLY route closed at caiso-168 — see its body), plus item 9
 (BLOCKING). Item 2 is now STRUCK — CLOSED AND SPENT at caiso-167**, both halves
 (export at caiso-142/143, import here), no solve spent; read the caiso-167 block
 at the top of §5.2 before proposing any successor. (Item 7 was SPENT and
@@ -1317,7 +1391,20 @@ sign argument to every basis and bound.
    (caiso-143 §F).
 3. **S2: DA/RT two-settlement separation charter** for the evening/overnight
    storage spread (caiso-129's only surviving candidate; a real charter, not a
-   shaped floor — the S1 family is DO-NOT-REDO).
+   shaped floor — the S1 family is DO-NOT-REDO). **STILL LIVE, SCOPE UNCHANGED,
+   NOT SPENT — but the BELLY ROUTE INTO IT IS CLOSED (caiso-168, 2026-08-04, no
+   solve).** caiso-167 §7 re-pointed the surplus-regime *belly* residual here;
+   that re-point does **not** land. caiso-168 confirmed the mechanism (a storage
+   charge column is the marginal buyer in 36.6/50.5/55.5 % of belly-surplus
+   hours, carrying 81.1/67.4/82.3 % of the over-price) and then shut the lever:
+   the battery limb's only reaching instrument class is the **armed**
+   `caiso_storage_shape_anchor` (rule 19; the LP rides it at 82–94 % of its p95
+   cap), and the PS limb — the **2023 majority owner** — is the walled C3a
+   object (`caiso_ps_charge_shape_anchor` → `G`). caiso-121's motivating storage
+   row is also 56–67 % PS on a PS-free comparator. **S2 keeps its original
+   evening/overnight scope**; read the caiso-168 block at the top of §5.2 and
+   `FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` before proposing any
+   belly-scoped successor.
 4. ~~**`tranche_startup_amortization`** — evening-ramp start economics~~ —
    **CLOSED, cell is `G`: REFUSED EX ANTE at caiso-149 (2026-07-31, no-LP, no
    solve spent).** Three independent grounds and, unusually, **no reopen
