@@ -1154,3 +1154,18 @@ every keeper-armed flag that has a gate, would be the third ratchet.
 Evidence: `results/calibration/PREREG-xiso4-cross-iso-shared-stem-2026-08-04.md` (committed
 before any matrix byte and before the collision was known; carries the independently-derived
 map) · `FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md`.
+
+**AMENDMENT (2026-08-04, same day, after the first merge) — the anchor gate needed a blame
+split, and the need was demonstrated by main itself.** The check shipped with a hard
+`--base` failure and an empty ratchet; within the day main merged lanes that inserted
+fields into `scenarios.py` and **214 anchors re-staled**, all below the insertion points,
+with nothing in the matrix touched. The next lane's PR would have FAILED on drift it did not
+cause. The ratchet cannot fix this by construction — a freshly repaired file has an empty
+baseline, so the next insertion produces hundreds of un-baselined findings at once. Under
+`--base` the check now splits by BLAME, the same rule `keeper_drift` already uses: an anchor
+stale at HEAD but not at the base **fails** that PR; an anchor stale at **both** only
+**warns** and belongs to whoever last moved `scenarios.py`. Verified three ways — clean tree
+exits 0, a PR breaking one anchor exits 1, and a tree carrying the base's own 221 stale
+anchors exits 0 with 221 `pre-existing` warnings. **General lesson: a gate keyed on absolute
+line numbers in a file every lane edits cannot hard-fail on INHERITED state — a gate that
+gets disabled protects nothing.** (FINDING §10.)
