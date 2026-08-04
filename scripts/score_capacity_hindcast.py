@@ -32,14 +32,22 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import yaml
 
 _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
+# Invoking this file directly puts scripts/ on sys.path[0], not the repo root,
+# so ``scripts.lib.run_record`` would not resolve. Same bootstrap as
+# run_capacity_hindcast.py.
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 from market_sim.data.fleet import BA_CODE_TO_ISO  # noqa: E402
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
+from scripts.lib.run_record import FromArgs, FromConfig, RecordSpec  # noqa: E402
 
 SCORED_YEARS = (2023, 2024, 2025)  # 2021 seeds; 2022 bridged (rule 22).
 CO2_HEADLINE_YEAR = 2025
@@ -69,6 +77,44 @@ THERMAL_FUELS = frozenset(
     {"coal", "gas_cc", "gas_ct", "gas_st", "oil", "nuclear", "biomass"}
 )
 ADDITION_TECHS = ("wind", "solar", "gas_cc", "gas_ct", "storage")
+
+# --------------------------------------------------------------------------- #
+# Additions attribution basis (owner decision D-9(ii), signed 2026-08-04 —
+# ffr-owner-sitting-2026-08-02.md sitting Addendum K.2)
+# --------------------------------------------------------------------------- #
+# An addition is scored against the year the model DECIDED to build it, not the
+# year it commissions. See ``model_additions`` for the mechanism and FFR-3Q
+# §3.2 for why the COD basis censors the last two decision cohorts of every
+# admissible hindcast window. The COD basis stays computable and is reported
+# alongside, so the two are comparable WITHIN one score.json.
+ADDITIONS_BASIS_DECISION = "decision"
+ADDITIONS_BASIS_COD = "cod"
+ADDITIONS_BASES = (ADDITIONS_BASIS_DECISION, ADDITIONS_BASIS_COD)
+ADDITIONS_BASIS_DEFAULT = ADDITIONS_BASIS_DECISION
+
+# The record contract for the basis block (FFR-3R, scripts/lib/run_record.py).
+# The basis is the SCORER's instrument and the lag gate is the SOLVE's — mixing
+# the two sources by hand is the record-provenance defect class FFR-3R closed,
+# so both are declared and the finished block is asserted against the solved
+# config before it is written.
+ADDITIONS_BASIS_RECORD_SPEC = RecordSpec(
+    {
+        "additions_basis": FromArgs(
+            "the SCORER's attribution instrument, not a property of the solved "
+            "config: one solve is scorable on either basis, so no ScenarioConfig "
+            "field can answer which basis produced this verdict"
+        ),
+        "entry_commissioning_lag": FromConfig(
+            cast=bool,
+            why=(
+                "the solved-config gate that separates decision from COD; when "
+                "False the two bases coincide by construction and the basis "
+                "choice is inert"
+            ),
+        ),
+    },
+    name="capacity-hindcast additions basis",
+)
 
 # Per plan §1.4 band table.
 BANDS = {
@@ -138,17 +184,254 @@ def model_retirements(ledgers: dict) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["unit_id", "fuel", "mw", "year", "reason"])
 
 
-def model_additions(ledgers: dict) -> pd.DataFrame:
-    """All modelled additions (thermal + renewable + storage)."""
+def _entry_pipeline_rows(ledgers: dict) -> list[dict]:
+    """Every ``entry_pipeline`` event row across the window, ledger-year tagged.
+
+    The ledger writes this key only when ``entry_commissioning_lag`` is armed
+    (``evolve_fleet``'s step-4.5/step-5 recorder seam); a bundle solved with the
+    lag off — or any bundle predating FF-2A item 3 — carries no key at all, and
+    an absent key is backward-compatible, never malformed. Each row carries both
+    ``decision_year`` and ``cod_year`` plus an ``event`` of ``decided``
+    (booked into the pipeline this year) or ``commissioned`` (left the pipeline
+    into the fleet / VRE pools this year).
+    """
+    rows: list[dict] = []
+    for year, led in ledgers.items():
+        for r in led.get("entry_pipeline", []) or []:
+            rows.append({**r, "ledger_year": int(year)})
+    return rows
+
+
+def model_additions(
+    ledgers: dict, basis: str = ADDITIONS_BASIS_DEFAULT
+) -> pd.DataFrame:
+    """All modelled additions (thermal + renewable + storage), attributed by year.
+
+    **Owner decision D-9(ii), signed 2026-08-04** (sitting Addendum K.2): the
+    default attribution year is the year the model *decided* to build, not the
+    year the unit commissions.
+
+    Why the COD basis censors. With ``entry_commissioning_lag`` armed, the
+    economic screen books a decision at year *Y* into ``entry_pipeline`` with
+    ``cod_year = Y + ENTRY_COD_LAG_YEARS[tech]`` (2 years for
+    wind/solar/gas_cc/gas_ct). A ledger's ``thermal_additions`` /
+    ``renewable_additions`` rows record the *commissioning*, so in the
+    2021→2025 T1-H window the 2024 and 2025 decision cohorts commission in
+    2026/2027 and are **never scored** — half the solved decision years are
+    invisible. The censoring is permanent and no window length removes it:
+    forward needs 2026 (a locked-test year — ``final`` is empty and the holdout
+    freeze is active) and 2027 (no actuals), and ``_validate_window`` hard-caps
+    a non-crossover window at ``end <= 2025``; backward hits the 2021 demand
+    floor and 2020's validation tier. The argument is FFR-3Q §3.2 — not
+    re-derived here, and no window is widened to dodge it.
+
+    The two bases:
+
+    ``"decision"``
+        Pipeline-mediated builds count in ``decision_year``. Implemented as an
+        exact net-out against the COD-basis rows rather than a lag-constant
+        reconstruction: every ``commissioned`` row is *reversed* out of its
+        ``cod_year`` (where step 4.5 folded it into the ledger's additions) and
+        every ``decided`` row is *added* at its ``decision_year``. The ledger
+        records ``decision_year`` per row, so nothing is inferred by
+        subtracting ``ENTRY_COD_LAG_YEARS``.
+    ``"cod"``
+        The pre-D-9(ii) instrument: the ledger year the capacity commissions.
+        Kept computable so both bases are reported side by side in one
+        ``score.json`` (they are comparable to each other; a *new* score.json's
+        additions verdict is NOT comparable to any previously committed one —
+        see :func:`additions_basis_record`).
+
+    Storage never enters ``entry_pipeline`` (its build channel is the runner's
+    ``storage_additions`` value stack, outside the economic-entry screen), so
+    storage is COD-attributed under both bases — which is also its decision
+    year, the two coinciding by construction.
+
+    Args:
+        ledgers: ``{year: ledger_dict}`` from ``load_ledgers_for_run``.
+        basis: ``"decision"`` (default, D-9(ii)) or ``"cod"``.
+
+    Returns:
+        Columns ``fuel``, ``mw``, ``year``, ``channel``. Under the decision
+        basis ``mw`` may be negative on ``pipeline_commissioned_reversal`` rows;
+        every consumer aggregates by sum, so the net-out is exact.
+
+    Raises:
+        ValueError: ``basis`` is not one of the two declared values.
+    """
+    if basis not in ADDITIONS_BASES:
+        raise ValueError(
+            f"unknown additions basis {basis!r} — expected one of {ADDITIONS_BASES}"
+        )
     rows = []
     for year, led in ledgers.items():
         for a in led.get("thermal_additions", []):
-            rows.append({"fuel": a["fuel"], "mw": float(a["mw"]), "year": year})
+            rows.append(
+                {
+                    "fuel": a["fuel"],
+                    "mw": float(a["mw"]),
+                    "year": year,
+                    "channel": "ledger",
+                }
+            )
         for a in led.get("renewable_additions", []):
-            rows.append({"fuel": a["tech"], "mw": float(a["mw"]), "year": year})
+            rows.append(
+                {
+                    "fuel": a["tech"],
+                    "mw": float(a["mw"]),
+                    "year": year,
+                    "channel": "ledger",
+                }
+            )
         for a in led.get("storage_additions", []):
-            rows.append({"fuel": "storage", "mw": float(a["mw"]), "year": year})
-    return pd.DataFrame(rows, columns=["fuel", "mw", "year"])
+            rows.append(
+                {
+                    "fuel": "storage",
+                    "mw": float(a["mw"]),
+                    "year": year,
+                    "channel": "ledger",
+                }
+            )
+    if basis == ADDITIONS_BASIS_DECISION:
+        for r in _entry_pipeline_rows(ledgers):
+            event = r.get("event")
+            if event == "commissioned":
+                rows.append(
+                    {
+                        "fuel": r["tech"],
+                        "mw": -float(r["mw"]),
+                        "year": int(r["cod_year"]),
+                        "channel": "pipeline_commissioned_reversal",
+                    }
+                )
+            elif event == "decided":
+                rows.append(
+                    {
+                        "fuel": r["tech"],
+                        "mw": float(r["mw"]),
+                        "year": int(r["decision_year"]),
+                        "channel": "pipeline_decided",
+                    }
+                )
+    return pd.DataFrame(rows, columns=["fuel", "mw", "year", "channel"])
+
+
+def load_solved_config(bundle: Path) -> dict | None:
+    """The bundle's persisted ``run_config.yaml`` as a plain mapping.
+
+    ``run_capacity_hindcast.py`` dumps every ``ScenarioConfig`` field beside
+    ``meta.json`` in the out-dir. ``run_record.as_attr_view`` accepts that dump
+    directly, so the basis block can be checked against the config the solve
+    actually ran on rather than against the CLI request. Returns ``None`` for a
+    bundle that carries no dump (pre-FFR-3R out-dirs, or a hand-assembled one).
+    """
+    path = Path(bundle) / "run_config.yaml"
+    if not path.exists():
+        return None
+    return yaml.safe_load(path.read_text()) or None
+
+
+def additions_basis_record(
+    ledgers: dict,
+    basis: str = ADDITIONS_BASIS_DEFAULT,
+    solved_config: dict | None = None,
+) -> dict:
+    """The explicit, machine-readable provenance of the additions verdict.
+
+    D-9(ii) scope item 2: a reader must be able to tell which basis a verdict
+    used **without reading code**. This block rides into the committed hindcast
+    sidecar (``register_hindcast`` embeds ``score.json`` wholesale), so the
+    basis travels with the verdict.
+
+    It also quantifies what the basis change moved, per ledger: the MW decided
+    inside the window whose COD lands *after* it (invisible under the COD
+    basis — the censoring D-9(ii) removes) and the MW commissioned inside the
+    window whose decision predates it (counted under the COD basis, correctly
+    dropped under the decision basis, since that decision was not the window's).
+
+    Args:
+        ledgers: ``{year: ledger_dict}`` from ``load_ledgers_for_run``.
+        basis: The basis the verdict was scored on.
+        solved_config: The bundle's ``run_config.yaml`` mapping, or ``None``.
+
+    Returns:
+        The basis block, ready to merge into ``score.json``.
+
+    Raises:
+        SystemExit: The block diverges from the solved config (``RecordSpec``).
+    """
+    rows = _entry_pipeline_rows(ledgers)
+    decided = [r for r in rows if r.get("event") == "decided"]
+    commissioned = [r for r in rows if r.get("event") == "commissioned"]
+    years = sorted(int(y) for y in ledgers)
+    first, last = (years[0], years[-1]) if years else (None, None)
+
+    def _by_tech(sub: list[dict]) -> dict[str, float]:
+        out: dict[str, float] = {}
+        for r in sub:
+            out[r["tech"]] = round(out.get(r["tech"], 0.0) + float(r["mw"]) / 1000.0, 3)
+        return out
+
+    censored = (
+        [r for r in decided if int(r["cod_year"]) > last] if last is not None else []
+    )
+    inherited = (
+        [r for r in commissioned if int(r["decision_year"]) < first]
+        if first is not None
+        else []
+    )
+
+    record: dict = {
+        "additions_basis": basis,
+        "basis_definition": {
+            ADDITIONS_BASIS_DECISION: (
+                "an addition counts in the year the model DECIDED to build it "
+                "(entry_pipeline decision_year); pipeline commissionings are "
+                "reversed out of their cod_year"
+            ),
+            ADDITIONS_BASIS_COD: (
+                "an addition counts in the ledger year it COMMISSIONS — the "
+                "pre-D-9(ii) instrument, reported alongside for comparison"
+            ),
+        }[basis],
+        "decision": "D-9(ii), signed 2026-08-04 (sitting Addendum K.2)",
+        "ledger_year_span": [first, last],
+        "pipeline_rows": {
+            "decided": len(decided),
+            "commissioned": len(commissioned),
+        },
+        "decided_in_window_cod_after_window_gw": _by_tech(censored),
+        "commissioned_in_window_decided_before_window_gw": _by_tech(inherited),
+        "note": (
+            "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this "
+            "basis are NOT comparable to any additions verdict committed before "
+            "2026-08-04, which were scored on the COD basis — the metric means "
+            "something different. Retirements-side comparability is unaffected. "
+            "See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md."
+            if basis == ADDITIONS_BASIS_DECISION
+            else (
+                "COD basis, reported for comparison against the decision-basis "
+                "verdict in this same score.json. NOT the graded instrument."
+            )
+        ),
+    }
+    if solved_config is not None:
+        record.update(
+            ADDITIONS_BASIS_RECORD_SPEC.build(
+                solved_config, args_values={"additions_basis": basis}
+            )
+        )
+        ADDITIONS_BASIS_RECORD_SPEC.assert_sourced(record, solved_config)
+    else:
+        # No dump to check against: record the ABSENCE rather than guessing the
+        # gate from the CLI or from meta.json (guessing it is exactly the
+        # FFR-3R defect). A null here means "not measured", never "off".
+        record["entry_commissioning_lag"] = None
+        record["config_source"] = (
+            "run_config.yaml absent from the bundle — entry_commissioning_lag "
+            "not verifiable against the solved config"
+        )
+    return record
 
 
 def _gw_by_fuel(df: pd.DataFrame, kind: str | None = None) -> dict[str, float]:
@@ -331,8 +614,15 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
     }
 
 
-def score_additions(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
-    """Cumulative additions by tech + tech-mix shares."""
+def score_additions(
+    model: pd.DataFrame, actuals: pd.DataFrame, basis: str = ADDITIONS_BASIS_DEFAULT
+) -> dict:
+    """Cumulative additions by tech + tech-mix shares.
+
+    ``basis`` is stamped into the result so a verdict is never basis-implicit
+    (D-9(ii) scope item 2); it selects nothing here — the caller has already
+    attributed ``model``'s rows via :func:`model_additions`.
+    """
     act = actuals[actuals["kind"] == "addition"]
     by_tech = {}
     for tech in ADDITION_TECHS:
@@ -373,6 +663,7 @@ def score_additions(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
             "band": "PASS" if abs(dpp) <= BANDS["techmix_share_pp_max"] else "FAIL",
         }
     return {
+        "basis": basis,
         "by_tech": by_tech,
         "shares": shares,
         "actual_total_gw": round(act_tot, 3),
@@ -986,9 +1277,22 @@ def _fmt_band(x: str) -> str:
 
 
 def write_report(
-    iso, variant, meta, ret, add, co2, baselines, report_path: Path
+    iso,
+    variant,
+    meta,
+    ret,
+    add,
+    co2,
+    baselines,
+    report_path: Path,
+    add_cod: dict | None = None,
+    add_basis: dict | None = None,
 ) -> None:
-    """Render the markdown hindcast report."""
+    """Render the markdown hindcast report.
+
+    ``add_cod``/``add_basis`` render the D-9(ii) basis disclosure and the
+    COD-basis comparison; omitted (``None``) they are simply not rendered.
+    """
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     L = []
     L.append(f"# Capacity hindcast — {iso} 2021→2025 ({variant} fuel)")
@@ -1052,8 +1356,25 @@ def write_report(
         L.append(f"| {f} | {d['actual_gw']} | {d['model_gw']} | {e} |")
     L.append("")
     # Additions
-    L.append("## Additions (cumulative 2021→2025)")
+    basis = add.get("basis", ADDITIONS_BASIS_DEFAULT)
+    L.append(f"## Additions (cumulative 2021→2025) — **{basis} basis**")
     L.append("")
+    if add_basis is not None:
+        L.append(
+            f"_Attribution basis: **{basis}** (owner decision "
+            f"{add_basis.get('decision', 'D-9(ii)')}). "
+            f"{add_basis.get('note', '')}_"
+        )
+        L.append("")
+        cens = add_basis.get("decided_in_window_cod_after_window_gw") or {}
+        inh = add_basis.get("commissioned_in_window_decided_before_window_gw") or {}
+        L.append(
+            "Basis effect — decided in-window with COD **after** the window "
+            f"(invisible under the COD basis): `{cens or 'none'}`; commissioned "
+            "in-window from a **pre-window** decision (dropped under the "
+            f"decision basis): `{inh or 'none'}` (GW)."
+        )
+        L.append("")
     L.append("| tech | actual GW | model GW | err | band | Δ-share (pp) |")
     L.append("|---|--:|--:|--:|:--|--:|")
     for tech in ADDITION_TECHS:
@@ -1065,6 +1386,22 @@ def write_report(
             f"| {format(s['delta_pp'] * 100, '+.1f')} |"
         )
     L.append("")
+    if add_cod is not None:
+        L.append(
+            f"COD-basis comparison (**not** the graded instrument; "
+            f"model total {add_cod['model_total_gw']} GW vs decision-basis "
+            f"{add['model_total_gw']} GW):"
+        )
+        L.append("")
+        L.append("| tech | model GW (COD) | model GW (decision) | band (COD) |")
+        L.append("|---|--:|--:|:--|")
+        for tech in ADDITION_TECHS:
+            c, d = add_cod["by_tech"][tech], add["by_tech"][tech]
+            L.append(
+                f"| {tech} | {c['model_gw']} | {d['model_gw']} | "
+                f"{_fmt_band(c['band'])} |"
+            )
+        L.append("")
     # CO2
     L.append("## System CO2 (headline: 2025, ±10%)")
     L.append("")
@@ -1276,10 +1613,16 @@ def _rescore(bundle: Path, report: Path | None) -> int:
 
     ledgers = load_ledgers_for_run(cache_dir)
     actuals = load_actuals(iso)
-    mret, madd = model_retirements(ledgers), model_additions(ledgers)
+    mret = model_retirements(ledgers)
+    madd = model_additions(ledgers, basis=ADDITIONS_BASIS_DECISION)
+    madd_cod = model_additions(ledgers, basis=ADDITIONS_BASIS_COD)
 
     ret = score_retirements(mret, actuals)  # raw, RD-5 actuals
-    add = score_additions(madd, actuals)
+    add = score_additions(madd, actuals, basis=ADDITIONS_BASIS_DECISION)
+    add_cod = score_additions(madd_cod, actuals, basis=ADDITIONS_BASIS_COD)
+    add_basis = additions_basis_record(
+        ledgers, ADDITIONS_BASIS_DECISION, load_solved_config(bundle)
+    )
     reversal_set = load_reversal_set(iso)
     ret_is = score_retirements_is2020(mret, actuals, reversal_set)
     channels = score_channels(mret, actuals)
@@ -1294,6 +1637,8 @@ def _rescore(bundle: Path, report: Path | None) -> int:
             "scored_years": list(SCORED_YEARS),
             "retirements": ret,
             "additions": add,
+            "additions_cod_basis": add_cod,
+            "additions_basis": add_basis,
             "retirements_is2020": ret_is,
             "retirement_channels": channels,
             "additions_is2020": add_is,
@@ -1391,10 +1736,18 @@ def main(argv: list[str] | None = None) -> int:
 
     ledgers = load_ledgers_for_run(cache_dir)
     actuals = load_actuals(iso)
-    mret, madd = model_retirements(ledgers), model_additions(ledgers)
+    mret = model_retirements(ledgers)
+    # D-9(ii): the DECISION basis is the graded instrument; the COD basis is
+    # computed alongside so both are comparable within this one score.json.
+    madd = model_additions(ledgers, basis=ADDITIONS_BASIS_DECISION)
+    madd_cod = model_additions(ledgers, basis=ADDITIONS_BASIS_COD)
 
     ret = score_retirements(mret, actuals)
-    add = score_additions(madd, actuals)
+    add = score_additions(madd, actuals, basis=ADDITIONS_BASIS_DECISION)
+    add_cod = score_additions(madd_cod, actuals, basis=ADDITIONS_BASIS_COD)
+    add_basis = additions_basis_record(
+        ledgers, ADDITIONS_BASIS_DECISION, load_solved_config(args.bundle)
+    )
     co2 = {
         "model": {str(k): v for k, v in model_co2_by_year(cache_dir).items()},
         "actual": {str(k): v for k, v in actual_co2_by_year(iso).items()},
@@ -1407,6 +1760,8 @@ def main(argv: list[str] | None = None) -> int:
         "scored_years": list(SCORED_YEARS),
         "retirements": ret,
         "additions": add,
+        "additions_cod_basis": add_cod,
+        "additions_basis": add_basis,
         "co2": co2,
         "baselines": baselines,
         "bands": BANDS,
@@ -1421,7 +1776,9 @@ def main(argv: list[str] | None = None) -> int:
     # falls back to the legacy iso-window-variant stem for bare dirs.
     run_id = args.bundle.name or f"{iso.lower()}-2021-2025-{variant}"
     report_path = args.report_dir / f"{run_id}-{stamp}.md"
-    write_report(iso, variant, meta, ret, add, co2, baselines, report_path)
+    write_report(
+        iso, variant, meta, ret, add, co2, baselines, report_path, add_cod, add_basis
+    )
 
     print(
         f"[score] {iso} {variant}: thermal-retire band {ret['total_gw']['band']}, "
