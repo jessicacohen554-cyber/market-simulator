@@ -944,6 +944,54 @@ def _normalize_cache_key_paths(value, roots: tuple[tuple[str, str], ...]):
     return value
 
 
+# --------------------------------------------------------------------------- #
+# Owner decision D-10 — cross-year warm start OFF for FORECAST BUNDLES.
+# --------------------------------------------------------------------------- #
+# The value every shipped forecast runner passes for
+# ``ScenarioConfig.forecast_xyear_warmstart`` (signed 2026-08-04, sitting
+# ``docs/handoffs/ffr-owner-sitting-2026-08-02.md`` Addendum K.3, on FFR-3M's
+# measured adjudication of FF-3E part c; implemented by FFR-3T,
+# ``docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md``).
+#
+# WHY THIS IS A CONSTANT AND NOT THE FIELD'S DEFAULT. The owner signed
+# "``forecast_xyear_warmstart=False`` **for forecast bundles**", and the field's
+# DEFAULT is not a forecast-only surface — it is read by
+# ``runner.run_scenario_iso``'s year loop in BOTH modes (``runner.py`` 890 /
+# 2135, one loop from line 908 with no mode gate). FFR-3T MEASURED both halves
+# of what a default flip would do, and both exceed the decision:
+#
+#   * **Forecast keys would NOT move.** ``cache_key`` drops a
+#     ``_CACHE_KEY_OPTIONAL_FIELDS`` member when it equals the LIVE default, so
+#     a post-flip forecast config at the new ``False`` default hashes exactly as
+#     a pre-flip config at the old ``True`` default: all 24 measured forecast
+#     runner keys (6 ISOs x T1-F / T1-H / T1-X / battery) were byte-IDENTICAL
+#     across the flip. A cold post-flip run would silently read a warm
+#     pre-flip bundle — the FFR-3A blocker-4 same-key invalidation the ledger
+#     in ``results/cache.py`` exists to make visible.
+#   * **BACKCAST keys WOULD move.** Every keeper's ``run_config.json`` carries
+#     an EXPLICIT ``true``, which becomes non-default after a flip and enters
+#     the hash: all six keeper keys moved (e.g. ERCOT
+#     ``f95a5d2aab761873 -> 86cdfc027116b309``). Orphaning six keeper caches is
+#     not in the decision.
+#
+# Passing the value EXPLICITLY from the forecast runners inverts both: the
+# forecast configs hold a non-default ``False`` and so enter the key as
+# distinct scenarios (the field's own registration comment promises exactly
+# this), while every backcast config keeps the untouched ``True`` default and
+# is byte-stable in key AND in solve path. Rule 24 ``[R-REGISTRY]`` is
+# satisfied because the tunable itself stays a ``ScenarioConfig`` field and the
+# passed value is recorded in each run's ``run_config.json``; this constant is
+# the single declaration of the posture, read through
+# ``scripts.lib.forecast_posture.shipped_forecast_xyear_warmstart`` (the ONE
+# reader, owner decision C.4(a) B1) so no runner mirrors a literal.
+#
+# Cost accepted with the decision, not to be mitigated: the ~2.3x steady-state
+# P0 speedup. Measured at horizon scale on the D-9 A/B (ERCOT 2026-2050, Exp 5
+# of ``docs/handoffs/wallclock-baseline-2026-07.md``): total wall 25.1 -> 51.1
+# min, 2.04x overall and 2.20x on the warm-startable years 2027-2050.
+FORECAST_BUNDLE_XYEAR_WARMSTART = False
+
+
 @dataclass
 class ScenarioConfig:
     """Full configuration for a single simulation scenario.
@@ -9832,6 +9880,20 @@ class ScenarioConfig:
     # The only residuals are marginal-tie / dual-degeneracy noise: load-weighted
     # price max 2.5e-5 relative, CO2 max 6.6e-6 relative. Recorded as Exp 5 in
     # docs/handoffs/wallclock-baseline-2026-07.md.
+    #
+    # DISARMED ON THE FORECAST LANE 2026-08-04 by owner decision D-10, WITHOUT
+    # moving this default: every shipped forecast runner now passes ``False``
+    # explicitly, from the single ``FORECAST_BUNDLE_XYEAR_WARMSTART`` constant
+    # above this class (which carries the full rationale and the measurements
+    # showing why a DEFAULT flip would both collide forecast keys and orphan
+    # the six backcast keepers). The default stays ``True`` because it is also
+    # what the runner's mode-agnostic year loop hands a runner-driven BACKCAST,
+    # and because keeping it here is what makes the forecast's explicit
+    # ``False`` a non-default value that enters the cache key. Two pinned tests
+    # depend on this pairing: ``test_forecast_xyear_warmstart_flag`` /
+    # ``test_xyear_warmstart_default`` pin the default, and
+    # ``test_forecast_bundle_xyear_warmstart`` pins the forecast-path value, so
+    # a future default flip cannot silently revert D-10.
     forecast_xyear_warmstart: bool = True
 
     gas_price_override: float | None = None  # When set, pins the annual

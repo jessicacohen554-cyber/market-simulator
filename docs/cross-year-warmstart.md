@@ -3,8 +3,12 @@
 **Status: default ON for the calibration/backcast path** (the calibration CLIs
 `scripts/run_calibration.py` / `scripts/run_calibration_full.py` set
 `MARKET_SIM_WARMSTART_XYEAR=1` unless `--no-xyear-warmstart` is passed or the env
-var is set explicitly). The forecast path (`runner.py`) stays **cold-only** —
-see [Why the forecast path is not wired](#why-the-forecast-path-is-not-wired).
+var is set explicitly). The forecast path (`runner.py`) **is wired** behind
+`ScenarioConfig.forecast_xyear_warmstart` (D-9, 2026-07-26) but every forecast
+**bundle** runs it OFF (D-10, 2026-08-04, for resume-reproducibility) — so in
+practice the forecast is cold-only. The section titled
+[Why the forecast path is not wired](#why-the-forecast-path-is-not-wired) is the
+pre-D-9 record; read its two status updates at the end for the current state.
 Reproducibility baselines (`scripts/replay_keeper.py`,
 `scripts/capture_keeper_goldens.py`, the D-13 `bench-repro.yml` gate) pin it OFF
 so byte-identity stays basis-independent.
@@ -384,3 +388,42 @@ including the margin analysis that would actually bound it:
 
 Full experiment record, including the wall-clock table and the contention
 caveat: `docs/handoffs/wallclock-baseline-2026-07.md` §H3/Exp 5.
+
+**Status update (D-10, 2026-08-04): DISARMED on the forecast lane.** The field
+still exists and still defaults `True`; what changed is that every shipped
+forecast runner now passes `False` explicitly, so **forecast bundles run
+cold-only again** — `run_full_horizon.reference_config`,
+`run_capacity_hindcast.build_config` (T1-H / T1-X / T1-FF) and
+`ff_readiness_battery.golden_posture_config`, all through the one reader
+`scripts/lib/forecast_posture.shipped_forecast_xyear_warmstart`.
+
+The cause is a case D-9's guardrail could not see, because it compared two
+uninterrupted runs. A **resumed** run loads its earlier years from cache, and a
+cache-loaded year never enters the solve branch, so it exports no basis: the
+first freshly-solved year after a resume runs cold while the same year in an
+uninterrupted control runs warm. The two land on different vertices of a
+degenerate optimal face, so **a killed-and-resumed forecast is not reproducible
+from its own cache**. FFR-3M measured this causally on NEISO 2026-2028 (drill
+FAIL at the default; two independent no-kill controls byte-identical, ruling out
+run-to-run nondeterminism; the same drill GREEN with the flag off, all three
+years byte-identical including the freshly-solved one) and found the **cold
+answer is the canonical one** — the ablation's value equals the resume leg's,
+not the warm control's.
+
+Pinning a basis so warm and cold agree was put to the owner and **refused**: the
+retirement screen reads per-unit dispatch volumes, so a pinned vertex would let
+a solver setting silently select which marginal units retire (the tie-flip
+measured earlier in this document). The ~2.3× P0 speedup is an **accepted cost**
+of the decision — at horizon scale, ERCOT 2026-2050 returns from 25.1 min to
+51.1 min — and is not to be recovered by re-arming, tie-breaking or ordering
+freezes.
+
+Implementation note that matters for anyone reading a cache: the disarm is an
+explicit argument, **not** a default flip, because a default flip would have
+left every forecast cache key colliding with its warm predecessor (a registered
+optional field drops at the *live* default) while moving all six backcast keeper
+keys (which carry an explicit `true`). Measured both ways in
+`docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md`; cache epoch 2026-08-04 in
+`src/market_sim/results/cache.py`. Decision record: sitting Addendum K.3
+(`docs/handoffs/ffr-owner-sitting-2026-08-02.md`); adjudication:
+`docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md`.

@@ -130,6 +130,7 @@ from market_sim.runner import HINDCAST_BRIDGE_YEARS as _RUNNER_BRIDGE_YEARS  # n
 from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
     shipped_capacity_clearing_by_iso,
+    shipped_forecast_xyear_warmstart,
 )
 from scripts.lib.run_record import (  # noqa: E402
     Derived,
@@ -550,6 +551,13 @@ def build_config(
         iso=iso,
         mode="forecast",
         hindcast=True,
+        # Owner decision D-10 (2026-08-04, sitting Addendum K.3): the T1-H /
+        # T1-X / T1-FF legs are forecast bundles, so they run cross-year warm
+        # start OFF and stay reproducible from their own cache after a resume.
+        # Explicit (non-default) by design — see FFR-3T and
+        # scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART for why a default flip
+        # would collide these keys with their warm predecessors instead.
+        forecast_xyear_warmstart=shipped_forecast_xyear_warmstart(),
         start_year=start_year,
         end_year=end_year,
         eia860_vintage_year=vintage,

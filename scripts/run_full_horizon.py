@@ -77,6 +77,7 @@ from scripts.golden_forecast_bands import WEATHER_POSTURE  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 from scripts.lib.forecast_posture import (  # noqa: E402
     shipped_capacity_clearing_by_iso,
+    shipped_forecast_xyear_warmstart,
 )
 from market_sim.config.schedulable import (  # noqa: E402,F401  (re-export)
     MAX_UNAUTHORIZED_SOLVE_YEARS,
@@ -287,6 +288,14 @@ def reference_config(
         electrification_path=electrification_path,
         entry_screen_diagnostics=entry_screen_diagnostics,
         caiso_nqc_accreditation=caiso_nqc_accreditation,
+        # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
+        # bundles run cross-year warm start OFF, so a killed-and-resumed
+        # forecast reproduces from its own cache. Passed explicitly — and
+        # therefore non-default — which is what gives every T1-F leg a cache
+        # key distinct from its warm predecessor rather than colliding with it
+        # (FFR-3T; scenarios.FORECAST_BUNDLE_XYEAR_WARMSTART carries the
+        # measurement).
+        forecast_xyear_warmstart=shipped_forecast_xyear_warmstart(),
         **{k: v for k, v in arms.items() if v is not None},
     )
 
