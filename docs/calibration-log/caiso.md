@@ -6152,3 +6152,52 @@ no cell moved (nothing was tested). **Rule 22:** CAISO holds no `complete` marke
 freeze is active, only 2023/2024/2025 were read, **no marker was written and
 `calibration-complete.json` was not touched** — the declaration is the owner's act.
 **Rule 25:** every number is CAISO's own.
+
+### caiso-171 CORRECTION (same session, 2026-08-04) — the recommendation is **YES**
+
+The owner restated the criterion: **`complete` means exactly two things — (a) the 2022
+touchpoint is allowed, and (b) frontier, i.e. we have tested everything we could have.**
+It is not a certificate that the DOF ledger is clean or that no root-cause issue is open.
+
+**The NO above was over-scoped and its primary ground is refuted by the record.** That
+ground was "the active holdout spend freeze makes the grant hollow, so declaring spends a
+governance act on a suspended grant." The freeze was declared **2026-07-25**; **NYISO and
+PJM were both declared `complete` on 2026-07-31 — six days INTO the active freeze.**
+`holdout-freeze.json` states the principle itself: a freeze is "a **SUSPENSION of the
+authorization** that a calibration-complete marker grants, **not a withdrawal of the
+marker itself**", and it is "deliberately ADDITIVE and backward-compatible:
+`calibration-complete.json` is untouched." The marker and the freeze are **orthogonal
+instruments** — the marker records what the calibration has reached, the freeze
+independently gates when any ISO may SPEND an out-of-training year. Declaring CAISO now
+and lifting the freeze later is the sequence NYISO and PJM already ran.
+
+**Measured against the criterion as stated, CAISO passes both limbs.** Limb (a) is simply
+what the block grants. Limb (b) is the substantive one and every number supporting it is
+in the record above, unchanged: all nine §5.2 items closed with **16 of 16 evidence
+documents verified present** and nothing struck untried (1/4/5 closed with **no solve
+spent**); matrix column census **0/0/0/0/0**; the two remaining live `U` cells closed on
+CAISO's own data this session (`pumped_storage_cycling_depth` on all three legs,
+`cc_steam_part_capacity` bounded at 20.0 MW ≈ 0.04 % of fleet); **all three walls
+re-verified and holding**, including a live 5/5-unchanged caiso-141 re-run, with Arm B's
+wall stronger than "nothing on disk" because the published limit is already armed
+per-year and does not bind. On substance CAISO is at least as strong as the three
+marker-holding ISOs — **zero failing criteria** against NYISO's *unledgered* C3a-2025
+FAIL.
+
+**Three caveats the declaration should carry — recorded, NOT blocking**, since none is a
+`complete` criterion: the C3a caveat **widened** to two years at the last promotion
+(§2.1); the two named-open root-cause issues stay named (§4); and the DOF ledger is the
+honest weak spot at **4** ISO-specific residual entries, the most of any ISO measured
+(NEISO 0, PJM 1, NYISO 2) — two superseded on the binding path, one resting on a closure
+route that does not check out. NYISO holds the marker with an unledgered criterion FAIL,
+so none of this is disqualifying.
+
+**Follow-on work, none of it a precondition:** the freeze still gates the *exercise* (no
+2022 solve until the owner lifts it, as is true today for all three marker-holding ISOs);
+re-audit the keeper on the corrected availability envelope before spending 2022; answer
+the **no-LP** question of whether CAISO publishes load at sub-TAC (NP15/ZP26) grain — YES
+makes it a rule-14 re-identification on the boundary of KNOWN-OPEN 1 and a DOF *closure*,
+NO makes it CAISO's **fourth wall**; discharge `battery_dispatch_adder`; keep KNOWN-OPEN 1
+and 2 named, with an N–S topology lever against KNOWN-OPEN 1 still forbidden.
+
+**`calibration-complete.json` remains UNTOUCHED — the declaration is the owner's act.**
