@@ -1,0 +1,106 @@
+{
+  "_what": "pjm-152 PREREG gate scoring: the rule 26 [R-DELETE] collapse of pjm_seam_envelope_by_neighbor, re-solved cold at the collapsed HEAD and diffed against the committed keeper pjm151_seam_B. E1 is THE gate and admits exactly zero movement.",
+  "arm_bundle": "results/calibration/pjm152_collapse_A",
+  "keeper_bundle": "results/calibration/pjm151_seam_B",
+  "K1_recipe": {
+    "arm_only": [
+      "caiso_zonal_loss_surface",
+      "ercot_energy_online_capability_cap",
+      "ercot_energy_online_capability_cap_path",
+      "exit_rate_limits"
+    ],
+    "keeper_only": [
+      "pjm_seam_envelope_by_neighbor"
+    ],
+    "value_diffs": [],
+    "detail": {},
+    "retired_field_channel": "keeper_only (the keeper recorded it True; HEAD has no such field)",
+    "schema_drift_explained": {
+      "caiso_zonal_loss_surface": "eda8ebe8 (caiso-164) added the CAISO internal-link loss-pair split, default off and guarded by `if getattr(config, 'caiso_zonal_loss_surface', False) and iso == 'CAISO'` \u2014 unreachable for iso='PJM' twice over. The runner site adds a conditional that reduces to the pre-existing UNSET when off, so PJM is byte-identical.",
+      "ercot_energy_online_capability_cap": "935c33dd (ercot-159) added the energy-side online-capability cap, default off. Its sole read sits inside `if getattr(config, 'ercot_energy_online_capability_cap', False)` in model/reserves/spec.py, on the ERCOT fast-tier row of the online_capacity_cap block; None/off leaves the LP unchanged.",
+      "ercot_energy_online_capability_cap_path": "935c33dd, the artifact path for the field above. Read only when that flag is armed.",
+      "exit_rate_limits": "db5ff912 (FFR-3F, owner decision D-8) added the measured exit-throughput cap, default off. Read ONLY in runner.py's capacity-evolution path, which the calibration harness never enters \u2014 solve_and_persist loops years through run_calibration.run_year, a standalone per-year solve (pjm-150 \u00a74).",
+      "pjm_seam_envelope_by_neighbor": "THE DECLARED DELTA (PREREG-pjm152 \u00a74), and the ONLY intended one. Deleted from ScenarioConfig by this session under rule 26 [R-DELETE], so it lands in keeper_only: the pjm-151 keeper recorded it True and HEAD has no such field because the path it gated is now the only path."
+    },
+    "default_moves_explained": [],
+    "unexplained": [],
+    "verdict": "PASS"
+  },
+  "K2_control": {
+    "keeper_basis_sha": "1c191624605c47ad161a99386c475b27a7162eff",
+    "arm_basis_sha": "bc9e6dbf8679e00a2e16000b8059ded9145607df",
+    "environment_drift": {
+      "platform": {
+        "keeper": "Linux-6.18.5-x86_64-with-glibc2.39",
+        "arm": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39"
+      }
+    },
+    "verdict": "FAIL"
+  },
+  "K5_span": {
+    "years": [
+      2023,
+      2024,
+      2025
+    ],
+    "holdout_touched": [],
+    "verdict": "PASS"
+  },
+  "E1_byte_identity": {
+    "years": {
+      "2023": {
+        "n_rows_arm": 166440,
+        "n_rows_keeper": 166440,
+        "max_abs_class_hour_dMW": 0.0,
+        "n_class_hours": 166440,
+        "n_nonzero": 0,
+        "sum_abs_dMW": 0.0
+      },
+      "2024": {
+        "n_rows_arm": 166440,
+        "n_rows_keeper": 166440,
+        "max_abs_class_hour_dMW": 0.0,
+        "n_class_hours": 166440,
+        "n_nonzero": 0,
+        "sum_abs_dMW": 0.0
+      },
+      "2025": {
+        "n_rows_arm": 166440,
+        "n_rows_keeper": 166440,
+        "max_abs_class_hour_dMW": 0.0,
+        "n_class_hours": 166440,
+        "n_nonzero": 0,
+        "sum_abs_dMW": 0.0
+      }
+    },
+    "breaches": [],
+    "verdict": "PASS"
+  },
+  "determination": {
+    "keeper_determination": "CALIBRATED",
+    "arm_determination": "NOT-YET",
+    "keeper_grade": {
+      "scored": 9,
+      "target_grade": 9,
+      "commercial_grade": 0,
+      "ledgered": 0,
+      "fails": 0
+    },
+    "arm_grade": {
+      "scored": 8,
+      "target_grade": 8,
+      "commercial_grade": 0,
+      "ledgered": 0,
+      "fails": 0
+    },
+    "keeper_c1": "C1 all 16/16 \u00b7 free 12/12",
+    "arm_c1": "C1 all 16/16 \u00b7 free 12/12",
+    "criterion_moves": {
+      "governance": {
+        "keeper": "PASS",
+        "arm": "UNATTESTED"
+      }
+    },
+    "verdict": "MOVED"
+  }
+}

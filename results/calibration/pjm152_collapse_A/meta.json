@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-28T20:28:14",
+  "timestamp": "2026-08-04T06:52:31",
   "iso": "PJM",
   "years": [
     2023,
@@ -37,6 +37,11 @@
   "tranche_startup_measured_runs": true,
   "tranche_startup_conditional_runs": true,
   "gas_offer_margin": true,
+  "gas_offer_margin_zonal_anchor": false,
+  "coal_offer_margin": false,
+  "cc_committed_offer_margin": false,
+  "coal_peak_offer_margin": false,
+  "coal_perplant_offer_level": false,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
@@ -60,7 +65,10 @@
     ],
     "hydro_budget_nameplate_aware": true,
     "pjm_external_net_position_cut": true,
-    "pjm_zonal_loss_surface": true
+    "pjm_zonal_loss_surface": true,
+    "measured_ct_heat_rates": true,
+    "ramp_limits": true,
+    "measured_chp_heat_rates": true
   },
   "coal_bit_passthrough_sigmoid": true,
   "coal_bit_sigmoid_overrides": {
@@ -250,6 +258,7 @@
     "CC_LIKE"
   ],
   "ercot_nuclear_unit_availability": false,
+  "nuclear_unit_availability": false,
   "ercot_thermal_dam_availability": false,
   "ercot_thermal_dam_availability_hourly": false,
   "ercot_thermal_dam_availability_plant": false,
@@ -277,6 +286,7 @@
   "ercot_gas_bridge_min_load_frac": null,
   "ercot_gas_bridge_startup": null,
   "ercot_gas_bridge_da_horizon": null,
+  "ercot_gas_bridge_online_hours": null,
   "ercot_commitment_posture": null,
   "ercot_commitment_posture_min_load_frac": null,
   "carry_operating_mothballs": null,
@@ -317,8 +327,11 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
-  "ramp_limits": null,
+  "ramp_limits": true,
   "local_capacity_constraints": null,
   "nyiso_local_selfsupply": null,
   "nyiso_scr_edrp": null,
@@ -333,6 +346,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -375,18 +389,18 @@
     "eia923": "../_shared/PJM/eia923-515fa22df146.parquet",
     "campd": "../_shared/PJM/campd-db315991835d.parquet",
     "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
-    "unit_outages_short": "../_shared/PJM/unit_outages_short-3ba0897821ba.parquet",
+    "unit_outages_short": "../_shared/PJM/unit_outages_short-6fd29c386319.parquet",
     "unit_outages_partial": "../_shared/PJM/unit_outages_partial-b37584b96662.parquet",
     "unit_outages_e923": "../_shared/PJM/unit_outages_e923-5db50221ce30.parquet",
     "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet",
     "capacity_deliverability": "../_shared/PJM/capacity_deliverability-7b81c5eca3cf.parquet"
   },
-  "git_sha": "ae84165",
-  "basis_sha": "21a6fa2d5f49808967de841199e5b35f0fa89faa",
+  "git_sha": "46a3c21d",
+  "basis_sha": "bc9e6dbf8679e00a2e16000b8059ded9145607df",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
@@ -395,5 +409,24 @@
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
     }
+  },
+  "reuse": {
+    "source_bundle": "results/calibration/pjm152_collapse_y24",
+    "requested_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "reused_years": {},
+    "fresh_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "refusals": {
+      "bundle": "prior bundle was solved from a dirty tree (see its model_changes.diff) \u2014 its code state is not commit-addressable"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-08-04T05:38:31"
   }
 }

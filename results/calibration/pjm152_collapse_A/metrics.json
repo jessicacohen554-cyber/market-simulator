@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-28-pjm-136-lossurf",
+  "run_id": "2026-08-04-pjm-152-collapse",
   "iso": "PJM",
-  "label": "pjm 136 lossurf",
+  "label": "pjm 152 collapse",
   "target_years": [
     2023,
     2024,
@@ -19,8 +19,10 @@
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [
-    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.1% forced (3.6036 of 23.8026 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.959 (\u22650.8) & off-peak CV ratio 0.867 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 CT_PEAKER: grounded above budget \u2014 15.6% forced (4.8763 of 31.2165 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.685 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 16.2% forced (3.3438 of 20.6355 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.927 (\u22650.8) & off-peak CV ratio 0.719 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 16.4% forced (3.5275 of 21.5602 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.962 (\u22650.8) & off-peak CV ratio 1.075 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 16.7% forced (4.8189 of 28.8416 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 0.836 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 39.9% forced (6.1091 of 15.2981 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.896 (\u22650.8) & off-peak CV ratio 2.242 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
