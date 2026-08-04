@@ -180,6 +180,18 @@ revenue side, through mechanisms that exist in the real market. FFR-4B
 these measurements sit on the PRE-4B side and should be re-based if 4B's
 entry-revenue changes land first.
 
+**Post-rebase note (same session).** FFR-4B merged to main after §3 was
+measured, and this branch was rebased over it. Both arm cache keys are
+BYTE-IDENTICAL at the post-merge head (`ca36ba26ebe1640f` /
+`18688555edc0342a`), i.e. the §3 harness commands still build exactly the
+measured configs — 4B's D-2′ arming was probe-scoped (its own explicit
+flags), not a shipped-default flip, so the §3 numbers stand as the pre-4B
+baseline without adjustment. (The epoch was also re-lettered
+**2026-08-04d** in the rebase: FFR-4D's concurrently-landed CAISO entry
+took `c`.) Whichever lane next arms D-2′ or the D-12 accreditation for
+MISO wind should quote the §3 control/treatment pair as its own baseline
+and re-run both arms at its head.
+
 ## 5. Same-defect finding REPORTED for owner chartering (not fixed, per scope)
 
 **The geothermal PTC has the identical defect**: `apply_ira_credits_to_lcoe`'s
