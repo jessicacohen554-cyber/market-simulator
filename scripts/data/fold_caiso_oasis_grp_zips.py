@@ -8,9 +8,11 @@ history that has aged out of the OASIS API's ~39-month retention (the
 2023-01-01..2023-03-09 hole in ``CAISO_dam_hourly_2023.csv``; probed
 2026-06-22, see ``scripts/data/derive_actual_lmp.py`` CAISO_MIN_HOURS note).
 
-This script extracts ONLY the three trading-hub nodes the aggregates carry
-(``fetch_caiso_oasis.HUBS`` — the same TH_NP15/TH_SP15/TH_ZP26 system-price
-basis ``derive_actual_lmp.py`` load-weights) from each GRP zip and writes
+This script extracts ONLY the handful of nodes the aggregates carry — see
+:data:`NODES`: the three trading hubs (``fetch_caiso_oasis.HUBS``, the same
+TH_NP15/TH_SP15/TH_ZP26 system-price basis ``derive_actual_lmp.py``
+load-weights), the WECC intertie nodes, and since caiso-165 the four
+``DLAP_*-APND`` load aggregation points — and writes
 them as compact per-day window CSVs (``{market}_grp_{Ymd}_{Ymd}.csv``,
 columns ``INTERVALSTARTTIME_GMT, NODE, LMP_TYPE, MW``) into the same
 directory. Those windows are then folded into the committed hourly
@@ -52,15 +54,21 @@ sys.path.insert(0, str(REPO / "scripts"))
 
 sys.path.insert(0, str(REPO / "scripts" / "data"))
 from fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
-from fetch_caiso_oasis import HUBS  # noqa: E402  (single source for the hub set)
+from fetch_caiso_oasis import DLAPS, HUBS  # noqa: E402  (single source for both sets)
 from market_sim.config import paths  # noqa: E402
 
 LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"
 
-# Hub nodes + the WECC intertie nodes (MALIN/CAPTJACK/PALOVRDE) — the bulk
-# zips are the only source for the seam's retention-aged early-2023 window;
-# see the NODES note in scripts/data/extract_caiso_hubs.py.
-NODES = HUBS + tuple(n for ns in INTERTIE_NODES.values() for n in ns)
+# Hub nodes + the WECC intertie nodes (MALIN/CAPTJACK/PALOVRDE) + the four
+# DLAP load aggregation points — the bulk zips are the only route to history
+# that has aged out of the API's retention, and since caiso-165 that history
+# includes the DLAP component record (see the NODES note in
+# scripts/data/extract_caiso_hubs.py).
+#
+# Widening this set does NOT retroactively widen already-extracted windows:
+# ``fold`` skips a window whose CSV exists, so a window written before the
+# DLAPs were added stays hub-only. Pass ``--refold`` to rewrite it.
+NODES = HUBS + DLAPS + tuple(n for ns in INTERTIE_NODES.values() for n in ns)
 
 # GRP zip name: {Ymd}_{Ymd}_{DAM|RTM|HASP}_LMP_GRP_{group}_{...}_csv.zip
 _GRP_NAME = re.compile(
@@ -75,7 +83,7 @@ _KEEP = ["INTERVALSTARTTIME_GMT", "NODE", "LMP_TYPE", "MW"]
 
 
 def _window_frames(zip_path: Path) -> pd.DataFrame | None:
-    """Hub-only rows from every component CSV inside one GRP zip.
+    """Kept-node rows from every component CSV inside one GRP zip.
 
     Each member file carries one LMP_TYPE (LMP/MCE/MCC/MCL/MGHG) for every
     node; the concatenated hub subset pivots back to the wide component
@@ -94,12 +102,14 @@ def _window_frames(zip_path: Path) -> pd.DataFrame | None:
     return pd.concat(frames, ignore_index=True)
 
 
-def fold(markets: tuple[str, ...]) -> list[Path]:
-    """Extract hub window CSVs for ``markets`` from every GRP zip in place.
+def fold(markets: tuple[str, ...], refold: bool = False) -> list[Path]:
+    """Extract node window CSVs for ``markets`` from every GRP zip in place.
 
     Zips whose window CSV already exists are skipped (re-runs only fill
-    gaps), so the extraction is idempotent and resumable. Returns the window
-    paths written.
+    gaps), so the extraction is idempotent and resumable. Pass ``refold`` to
+    rewrite them instead — needed after :data:`NODES` widens, since an
+    existing window was written against the older, narrower node set and
+    would otherwise silently stay narrow. Returns the window paths written.
     """
     written: list[Path] = []
     # One window per (market, day): group-numbered zips (RTM hour groups)
@@ -115,7 +125,7 @@ def fold(markets: tuple[str, ...]) -> list[Path]:
         out = LMP_DIR / f"{m['market'].lower()}_grp_{m['start']}_{m['end']}.csv"
         by_window.setdefault(out, []).append(zip_path)
     for out, zips in sorted(by_window.items()):
-        if out.exists():
+        if out.exists() and not refold:
             print(f"skip existing window: {out.name}")
             continue
         parts = [f for z in zips if (f := _window_frames(z)) is not None]
@@ -124,7 +134,10 @@ def fold(markets: tuple[str, ...]) -> list[Path]:
         frame = pd.concat(parts, ignore_index=True).drop_duplicates()
         frame.to_csv(out, index=False)
         written.append(out)
-        print(f"wrote {out.name} ({len(frame)} hub rows from {len(zips)} zip(s))")
+        print(
+            f"wrote {out.name} ({len(frame)} rows, "
+            f"{frame['NODE'].nunique()} nodes, from {len(zips)} zip(s))"
+        )
     return written
 
 
@@ -138,8 +151,14 @@ def main() -> None:
         help="GRP markets to extract (HASP is never folded; rtm only when its "
         "raw coverage can honestly stand for the months it unmasks)",
     )
+    parser.add_argument(
+        "--refold",
+        action="store_true",
+        help="rewrite windows that already exist; use after the kept-node set "
+        "widens, since an existing window was extracted against the older set",
+    )
     args = parser.parse_args()
-    written = fold(tuple(args.markets))
+    written = fold(tuple(args.markets), refold=args.refold)
     if written:
         print(
             f"{len(written)} window(s) written — now run "
