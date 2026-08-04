@@ -1,0 +1,1255 @@
+{
+ "keeper": "2026-08-04-caiso164-zonal-loss-surface",
+ "bundle": "results/calibration/caiso164_zonal_loss_surface",
+ "regime": {
+  "belly": [
+   9,
+   16
+  ],
+  "evening": [
+   17,
+   22
+  ],
+  "surplus_max": 20.0,
+  "ca_hub": "TH_SP15_GEN-APND"
+ },
+ "physics": {
+  "rte": 0.85,
+  "battery_dispatch_adder": 5.0,
+  "eps": 0.001
+ },
+ "recovered_caps": {
+  "monthly_power_cap_mw": {
+   "2023": [
+    4443.4002099088075,
+    4443.4002099088075,
+    4499.400163857677,
+    4499.400163857677,
+    4579.400209645134,
+    5060.600424712558,
+    5628.40036016691,
+    5915.400428835942,
+    6302.400404407133,
+    6471.400415932598,
+    6870.200436178677,
+    7492.400362822508
+   ],
+   "2024": [
+    7564.00047699151,
+    7564.00047699151,
+    7968.000348981794,
+    8362.600415685534,
+    8720.000549987122,
+    9006.10042523734,
+    9399.100793947819,
+    10054.400670046063,
+    10296.900754719112,
+    10479.900504969342,
+    10653.400592975788,
+    11131.300409939791
+   ],
+   "2025": [
+    11131.300728337992,
+    11371.30077873038,
+    11469.800676618303,
+    11984.500571834818,
+    12536.200583977843,
+    13038.200890065655,
+    13294.701159381664,
+    13954.400846415183,
+    14079.100971718088,
+    14710.900871521475,
+    14910.400390625,
+    15448.40060026105
+   ]
+  },
+  "year_boundary": {
+   "2023Dec_vs_2024Jan": [
+    7492.400362822508,
+    7564.00047699151
+   ],
+   "2024Dec_vs_2025Jan": [
+    11131.300409939791,
+    11131.300728337992
+   ]
+  }
+ },
+ "A_states": [
+  {
+   "year": 2023,
+   "tech": "li_ion",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 540.30419921875,
+   "bound_mean_mw": 1113.0714962142629,
+   "pct_zero": 69.76027397260273,
+   "twh_zero": 0.0,
+   "pct_interior": 12.009132420091325,
+   "twh_interior": 1.3235795497894287,
+   "pct_at_cap": 18.230593607305938,
+   "twh_at_cap": 3.409485340118408
+  },
+  {
+   "year": 2023,
+   "tech": "li_ion",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 1563.9927978515625,
+   "bound_mean_mw": 2206.2691818516996,
+   "pct_zero": 20.665362035225048,
+   "twh_zero": 0.0,
+   "pct_interior": 26.105675146771034,
+   "twh_interior": 0.966192364692688,
+   "pct_at_cap": 53.22896281800391,
+   "twh_at_cap": 3.0298094749450684
+  },
+  {
+   "year": 2023,
+   "tech": "li_ion",
+   "window": "belly_surplus",
+   "n": 1116,
+   "chg_mean_mw": 2067.148193359375,
+   "bound_mean_mw": 2216.9510411358992,
+   "pct_zero": 1.7921146953405016,
+   "twh_zero": 0.0,
+   "pct_interior": 16.218637992831543,
+   "twh_interior": 0.30825912952423096,
+   "pct_at_cap": 81.98924731182797,
+   "twh_at_cap": 1.99867844581604
+  },
+  {
+   "year": 2023,
+   "tech": "pumped_storage",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 270.8280334472656,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 83.97260273972603,
+   "pct_at_cap": 10.148401826484019,
+   "pct_interior": 5.878995433789954,
+   "twh_zero": 0.0,
+   "twh_interior": 0.5254827737808228,
+   "twh_at_cap": 1.8469703197479248
+  },
+  {
+   "year": 2023,
+   "tech": "pumped_storage",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 806.2671508789062,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 52.602739726027394,
+   "pct_at_cap": 30.332681017612522,
+   "pct_interior": 17.06457925636008,
+   "twh_zero": 0.0,
+   "twh_interior": 0.44988831877708435,
+   "twh_at_cap": 1.6101239919662476
+  },
+  {
+   "year": 2023,
+   "tech": "pumped_storage",
+   "window": "belly_surplus",
+   "n": 1116,
+   "chg_mean_mw": 1513.1451416015625,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 15.68100358422939,
+   "pct_at_cap": 59.67741935483871,
+   "pct_interior": 24.641577060931898,
+   "twh_zero": 0.0,
+   "twh_interior": 0.30499696731567383,
+   "twh_at_cap": 1.3836729526519775
+  },
+  {
+   "year": 2024,
+   "tech": "li_ion",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 1030.0494384765625,
+   "bound_mean_mw": 1981.3404440558202,
+   "pct_zero": 66.99771689497716,
+   "twh_zero": 0.0,
+   "pct_interior": 20.07990867579909,
+   "twh_interior": 4.197810173034668,
+   "pct_at_cap": 12.922374429223742,
+   "twh_at_cap": 4.825422286987305
+  },
+  {
+   "year": 2024,
+   "tech": "li_ion",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 3113.31103515625,
+   "bound_mean_mw": 4634.494119873554,
+   "pct_zero": 14.637964774951076,
+   "twh_zero": 0.0,
+   "pct_interior": 46.45792563600783,
+   "twh_interior": 3.4497456550598145,
+   "pct_at_cap": 38.9041095890411,
+   "twh_at_cap": 4.504764080047607
+  },
+  {
+   "year": 2024,
+   "tech": "li_ion",
+   "window": "belly_surplus",
+   "n": 1604,
+   "chg_mean_mw": 3769.915283203125,
+   "bound_mean_mw": 4605.627192229493,
+   "pct_zero": 4.551122194513716,
+   "twh_zero": 0.0,
+   "pct_interior": 41.83291770573566,
+   "twh_interior": 2.193582534790039,
+   "pct_at_cap": 53.61596009975062,
+   "twh_at_cap": 3.8533620834350586
+  },
+  {
+   "year": 2024,
+   "tech": "pumped_storage",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 304.91632080078125,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 82.62557077625571,
+   "pct_at_cap": 12.454337899543379,
+   "pct_interior": 4.920091324200913,
+   "twh_zero": 0.0,
+   "twh_interior": 0.40442192554473877,
+   "twh_at_cap": 2.2666447162628174
+  },
+  {
+   "year": 2024,
+   "tech": "pumped_storage",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 869.7774658203125,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 50.72407045009785,
+   "pct_at_cap": 35.929549902152644,
+   "pct_interior": 13.34637964774951,
+   "twh_zero": 0.0,
+   "twh_interior": 0.31505313515663147,
+   "twh_at_cap": 1.9072279930114746
+  },
+  {
+   "year": 2024,
+   "tech": "pumped_storage",
+   "window": "belly_surplus",
+   "n": 1604,
+   "chg_mean_mw": 1322.5950927734375,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 26.932668329177055,
+   "pct_at_cap": 55.61097256857855,
+   "pct_interior": 17.45635910224439,
+   "twh_zero": 0.0,
+   "twh_interior": 0.26823174953460693,
+   "twh_at_cap": 1.85321044921875
+  },
+  {
+   "year": 2025,
+   "tech": "li_ion",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 1533.522216796875,
+   "bound_mean_mw": 2624.9600099817526,
+   "pct_zero": 64.98858447488584,
+   "twh_zero": 2.9720490601903293e-07,
+   "pct_interior": 22.237442922374427,
+   "twh_interior": 6.878558158874512,
+   "pct_at_cap": 12.773972602739725,
+   "twh_at_cap": 6.555096626281738
+  },
+  {
+   "year": 2025,
+   "tech": "li_ion",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 4724.513671875,
+   "bound_mean_mw": 6459.978107915417,
+   "pct_zero": 6.966731898238747,
+   "twh_zero": 0.0,
+   "pct_interior": 53.54207436399218,
+   "twh_interior": 5.829359531402588,
+   "pct_at_cap": 39.49119373776908,
+   "twh_at_cap": 6.241772174835205
+  },
+  {
+   "year": 2025,
+   "tech": "li_ion",
+   "window": "belly_surplus",
+   "n": 1623,
+   "chg_mean_mw": 5550.720703125,
+   "bound_mean_mw": 6264.309006950923,
+   "pct_zero": 0.7393715341959335,
+   "twh_zero": 0.0,
+   "pct_interior": 43.561306223043744,
+   "twh_interior": 3.455169439315796,
+   "pct_at_cap": 55.69932224276032,
+   "twh_at_cap": 5.55364990234375
+  },
+  {
+   "year": 2025,
+   "tech": "pumped_storage",
+   "window": "all",
+   "n": 8760,
+   "chg_mean_mw": 300.4091491699219,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 82.85388127853881,
+   "pct_at_cap": 11.575342465753424,
+   "pct_interior": 5.570776255707763,
+   "twh_zero": 0.0,
+   "twh_interior": 0.5249068737030029,
+   "twh_at_cap": 2.1066770553588867
+  },
+  {
+   "year": 2025,
+   "tech": "pumped_storage",
+   "window": "belly",
+   "n": 2555,
+   "chg_mean_mw": 880.5864868164062,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 50.136986301369866,
+   "pct_at_cap": 34.12915851272016,
+   "pct_interior": 15.733855185909981,
+   "twh_zero": 0.0,
+   "twh_interior": 0.43824049830436707,
+   "twh_at_cap": 1.8116580247879028
+  },
+  {
+   "year": 2025,
+   "tech": "pumped_storage",
+   "window": "belly_surplus",
+   "n": 1623,
+   "chg_mean_mw": 1270.8814697265625,
+   "bound_mean_mw": 2077.60009765625,
+   "pct_zero": 30.31423290203327,
+   "pct_at_cap": 51.50955021565004,
+   "pct_interior": 18.176216882316698,
+   "twh_zero": 0.0,
+   "twh_interior": 0.32577061653137207,
+   "twh_at_cap": 1.7368700504302979
+  }
+ ],
+ "A_months": [
+  {
+   "year": 2023,
+   "month": 2,
+   "n": 74,
+   "chg_mean_mw": 1779.6363525390625,
+   "bound_mean_mw": 1894.2875600277853,
+   "pct_zero": 4.054054054054054,
+   "pct_interior": 12.162162162162163,
+   "pct_at_cap": 83.78378378378379
+  },
+  {
+   "year": 2023,
+   "month": 3,
+   "n": 81,
+   "chg_mean_mw": 1749.49072265625,
+   "bound_mean_mw": 1783.9788360794666,
+   "pct_zero": 1.2345679012345678,
+   "pct_interior": 6.172839506172839,
+   "pct_at_cap": 92.5925925925926
+  },
+  {
+   "year": 2023,
+   "month": 4,
+   "n": 178,
+   "chg_mean_mw": 1819.7392578125,
+   "bound_mean_mw": 1819.8910896469824,
+   "pct_zero": 0.0,
+   "pct_interior": 0.5617977528089888,
+   "pct_at_cap": 99.43820224719101
+  },
+  {
+   "year": 2023,
+   "month": 5,
+   "n": 211,
+   "chg_mean_mw": 1749.718017578125,
+   "bound_mean_mw": 1838.544541230258,
+   "pct_zero": 2.3696682464454977,
+   "pct_interior": 9.95260663507109,
+   "pct_at_cap": 87.67772511848341
+  },
+  {
+   "year": 2023,
+   "month": 6,
+   "n": 153,
+   "chg_mean_mw": 1950.499755859375,
+   "bound_mean_mw": 2035.3536453275294,
+   "pct_zero": 1.3071895424836601,
+   "pct_interior": 15.032679738562091,
+   "pct_at_cap": 83.66013071895425
+  },
+  {
+   "year": 2023,
+   "month": 7,
+   "n": 27,
+   "chg_mean_mw": 2456.47509765625,
+   "bound_mean_mw": 2466.0940407707617,
+   "pct_zero": 0.0,
+   "pct_interior": 3.7037037037037033,
+   "pct_at_cap": 96.29629629629629
+  },
+  {
+   "year": 2023,
+   "month": 9,
+   "n": 130,
+   "chg_mean_mw": 2306.668212890625,
+   "bound_mean_mw": 2612.892791661909,
+   "pct_zero": 2.307692307692308,
+   "pct_interior": 33.07692307692307,
+   "pct_at_cap": 64.61538461538461
+  },
+  {
+   "year": 2023,
+   "month": 10,
+   "n": 96,
+   "chg_mean_mw": 2244.000732421875,
+   "bound_mean_mw": 2676.6453634928216,
+   "pct_zero": 6.25,
+   "pct_interior": 32.29166666666667,
+   "pct_at_cap": 61.458333333333336
+  },
+  {
+   "year": 2023,
+   "month": 11,
+   "n": 86,
+   "chg_mean_mw": 2751.84375,
+   "bound_mean_mw": 2987.2909673330223,
+   "pct_zero": 0.0,
+   "pct_interior": 25.581395348837212,
+   "pct_at_cap": 74.4186046511628
+  },
+  {
+   "year": 2023,
+   "month": 12,
+   "n": 69,
+   "chg_mean_mw": 2896.174560546875,
+   "bound_mean_mw": 3219.3432747385746,
+   "pct_zero": 0.0,
+   "pct_interior": 36.231884057971016,
+   "pct_at_cap": 63.76811594202898
+  },
+  {
+   "year": 2024,
+   "month": 1,
+   "n": 48,
+   "chg_mean_mw": 3223.960205078125,
+   "bound_mean_mw": 3874.454385992649,
+   "pct_zero": 4.166666666666666,
+   "pct_interior": 41.66666666666667,
+   "pct_at_cap": 54.166666666666664
+  },
+  {
+   "year": 2024,
+   "month": 2,
+   "n": 146,
+   "chg_mean_mw": 3031.932373046875,
+   "bound_mean_mw": 3791.33608018037,
+   "pct_zero": 7.534246575342466,
+   "pct_interior": 24.65753424657534,
+   "pct_at_cap": 67.8082191780822
+  },
+  {
+   "year": 2024,
+   "month": 3,
+   "n": 217,
+   "chg_mean_mw": 3442.067626953125,
+   "bound_mean_mw": 3980.471488622062,
+   "pct_zero": 3.225806451612903,
+   "pct_interior": 26.72811059907834,
+   "pct_at_cap": 70.04608294930875
+  },
+  {
+   "year": 2024,
+   "month": 4,
+   "n": 210,
+   "chg_mean_mw": 3844.41259765625,
+   "bound_mean_mw": 4177.59677051582,
+   "pct_zero": 0.4761904761904762,
+   "pct_interior": 27.61904761904762,
+   "pct_at_cap": 71.9047619047619
+  },
+  {
+   "year": 2024,
+   "month": 5,
+   "n": 217,
+   "chg_mean_mw": 3622.468505859375,
+   "bound_mean_mw": 4356.138560464281,
+   "pct_zero": 4.6082949308755765,
+   "pct_interior": 41.013824884792626,
+   "pct_at_cap": 54.377880184331794
+  },
+  {
+   "year": 2024,
+   "month": 6,
+   "n": 172,
+   "chg_mean_mw": 3494.23291015625,
+   "bound_mean_mw": 4547.886978863617,
+   "pct_zero": 5.813953488372093,
+   "pct_interior": 56.395348837209305,
+   "pct_at_cap": 37.7906976744186
+  },
+  {
+   "year": 2024,
+   "month": 8,
+   "n": 88,
+   "chg_mean_mw": 4151.65478515625,
+   "bound_mean_mw": 5267.0320673695505,
+   "pct_zero": 6.8181818181818175,
+   "pct_interior": 55.68181818181818,
+   "pct_at_cap": 37.5
+  },
+  {
+   "year": 2024,
+   "month": 9,
+   "n": 129,
+   "chg_mean_mw": 4329.1162109375,
+   "bound_mean_mw": 5228.2393850682165,
+   "pct_zero": 2.3255813953488373,
+   "pct_interior": 48.06201550387597,
+   "pct_at_cap": 49.6124031007752
+  },
+  {
+   "year": 2024,
+   "month": 10,
+   "n": 137,
+   "chg_mean_mw": 3615.80810546875,
+   "bound_mean_mw": 5252.99275639779,
+   "pct_zero": 8.02919708029197,
+   "pct_interior": 66.42335766423358,
+   "pct_at_cap": 25.547445255474454
+  },
+  {
+   "year": 2024,
+   "month": 11,
+   "n": 156,
+   "chg_mean_mw": 4625.0849609375,
+   "bound_mean_mw": 5505.7866920969955,
+   "pct_zero": 5.128205128205128,
+   "pct_interior": 42.30769230769231,
+   "pct_at_cap": 52.56410256410257
+  },
+  {
+   "year": 2024,
+   "month": 12,
+   "n": 61,
+   "chg_mean_mw": 4510.81103515625,
+   "bound_mean_mw": 5782.254362127247,
+   "pct_zero": 3.278688524590164,
+   "pct_interior": 59.01639344262295,
+   "pct_at_cap": 37.704918032786885
+  },
+  {
+   "year": 2025,
+   "month": 1,
+   "n": 148,
+   "chg_mean_mw": 4956.42333984375,
+   "bound_mean_mw": 5572.517173334518,
+   "pct_zero": 1.3513513513513513,
+   "pct_interior": 27.027027027027028,
+   "pct_at_cap": 71.62162162162163
+  },
+  {
+   "year": 2025,
+   "month": 2,
+   "n": 182,
+   "chg_mean_mw": 5120.88232421875,
+   "bound_mean_mw": 5576.973243351324,
+   "pct_zero": 0.5494505494505495,
+   "pct_interior": 25.274725274725274,
+   "pct_at_cap": 74.17582417582418
+  },
+  {
+   "year": 2025,
+   "month": 3,
+   "n": 193,
+   "chg_mean_mw": 5339.10693359375,
+   "bound_mean_mw": 5621.557313177305,
+   "pct_zero": 0.5181347150259068,
+   "pct_interior": 19.170984455958546,
+   "pct_at_cap": 80.31088082901555
+  },
+  {
+   "year": 2025,
+   "month": 4,
+   "n": 210,
+   "chg_mean_mw": 5569.47119140625,
+   "bound_mean_mw": 5877.712701880874,
+   "pct_zero": 0.0,
+   "pct_interior": 26.190476190476193,
+   "pct_at_cap": 73.80952380952381
+  },
+  {
+   "year": 2025,
+   "month": 5,
+   "n": 209,
+   "chg_mean_mw": 5646.02880859375,
+   "bound_mean_mw": 6154.968579446143,
+   "pct_zero": 0.0,
+   "pct_interior": 44.49760765550239,
+   "pct_at_cap": 55.50239234449761
+  },
+  {
+   "year": 2025,
+   "month": 6,
+   "n": 187,
+   "chg_mean_mw": 5540.78466796875,
+   "bound_mean_mw": 6416.51002369784,
+   "pct_zero": 0.53475935828877,
+   "pct_interior": 68.44919786096256,
+   "pct_at_cap": 31.016042780748666
+  },
+  {
+   "year": 2025,
+   "month": 7,
+   "n": 81,
+   "chg_mean_mw": 5357.02197265625,
+   "bound_mean_mw": 6589.543249464483,
+   "pct_zero": 1.2345679012345678,
+   "pct_interior": 74.07407407407408,
+   "pct_at_cap": 24.691358024691358
+  },
+  {
+   "year": 2025,
+   "month": 8,
+   "n": 47,
+   "chg_mean_mw": 5594.1337890625,
+   "bound_mean_mw": 6935.485671741179,
+   "pct_zero": 0.0,
+   "pct_interior": 59.57446808510638,
+   "pct_at_cap": 40.42553191489361
+  },
+  {
+   "year": 2025,
+   "month": 9,
+   "n": 83,
+   "chg_mean_mw": 6024.84814453125,
+   "bound_mean_mw": 6969.731715257127,
+   "pct_zero": 1.2048192771084338,
+   "pct_interior": 59.036144578313255,
+   "pct_at_cap": 39.75903614457831
+  },
+  {
+   "year": 2025,
+   "month": 10,
+   "n": 188,
+   "chg_mean_mw": 5812.49072265625,
+   "bound_mean_mw": 7227.69252164939,
+   "pct_zero": 2.6595744680851063,
+   "pct_interior": 62.23404255319149,
+   "pct_at_cap": 35.1063829787234
+  },
+  {
+   "year": 2025,
+   "month": 11,
+   "n": 64,
+   "chg_mean_mw": 6443.939453125,
+   "bound_mean_mw": 7564.884828186035,
+   "pct_zero": 0.0,
+   "pct_interior": 62.5,
+   "pct_at_cap": 37.5
+  },
+  {
+   "year": 2025,
+   "month": 12,
+   "n": 31,
+   "chg_mean_mw": 7258.67431640625,
+   "bound_mean_mw": 7758.336282102068,
+   "pct_zero": 0.0,
+   "pct_interior": 45.16129032258064,
+   "pct_at_cap": 54.83870967741935
+  }
+ ],
+ "B_lambda_by_state": [
+  {
+   "year": 2023,
+   "state": "zero",
+   "n": 20,
+   "share_of_surplus_pct": 1.7921146953405018,
+   "ca_lambda_model": 40.10910327709696,
+   "ca_hub_measured": 12.3434615,
+   "defect": 27.76564177709697,
+   "defect_twh_weighted": 555.3128355419394,
+   "lam_LA_BASIN": 39.99198412647178,
+   "lam_NP15": 40.35794763238698,
+   "lam_SDGE": 39.99198412647178,
+   "lam_SP15_rest": 39.99198412647178,
+   "lam_ZP26": 39.55706230702276
+  },
+  {
+   "year": 2023,
+   "state": "interior",
+   "n": 181,
+   "share_of_surplus_pct": 16.218637992831543,
+   "ca_lambda_model": 34.77693667040761,
+   "ca_hub_measured": 9.840231160220993,
+   "defect": 24.936705510186613,
+   "defect_twh_weighted": 4513.543697343777,
+   "lam_LA_BASIN": 34.53881130745753,
+   "lam_NP15": 35.16616849522399,
+   "lam_SDGE": 34.53881130745753,
+   "lam_SP15_rest": 34.53881130745753,
+   "lam_ZP26": 34.37150136365951
+  },
+  {
+   "year": 2023,
+   "state": "at_cap",
+   "n": 915,
+   "share_of_surplus_pct": 81.98924731182795,
+   "ca_lambda_model": 10.182904111928234,
+   "ca_hub_measured": 4.037330961748634,
+   "defect": 6.1455731501796,
+   "defect_twh_weighted": 5623.199432414334,
+   "lam_LA_BASIN": 10.08959121630515,
+   "lam_NP15": 10.339016136669686,
+   "lam_SDGE": 10.089587937616624,
+   "lam_SP15_rest": 10.08959121630515,
+   "lam_ZP26": 10.00224680993338
+  },
+  {
+   "year": 2023,
+   "state": "ALL",
+   "n": 1116,
+   "share_of_surplus_pct": 100.0,
+   "ca_lambda_model": 14.708033033422982,
+   "ca_hub_measured": 5.127337724014336,
+   "defect": 9.580695309408647,
+   "defect_twh_weighted": 10692.05596530005,
+   "lam_LA_BASIN": 14.590806892561343,
+   "lam_NP15": 14.903615784351295,
+   "lam_SDGE": 14.5908042043893,
+   "lam_SP15_rest": 14.590806892561343,
+   "lam_ZP26": 14.484264179257949
+  },
+  {
+   "year": 2024,
+   "state": "zero",
+   "n": 73,
+   "share_of_surplus_pct": 4.551122194513716,
+   "ca_lambda_model": 34.774590185753624,
+   "ca_hub_measured": 4.775758630136987,
+   "defect": 29.998831555616643,
+   "defect_twh_weighted": 2189.914703560015,
+   "lam_LA_BASIN": 34.626932321135655,
+   "lam_NP15": 35.11723929840243,
+   "lam_SDGE": 34.25990016892875,
+   "lam_SP15_rest": 34.626932321135655,
+   "lam_ZP26": 34.43616749823959
+  },
+  {
+   "year": 2024,
+   "state": "interior",
+   "n": 671,
+   "share_of_surplus_pct": 41.83291770573566,
+   "ca_lambda_model": 22.012542846126816,
+   "ca_hub_measured": -0.959037362146051,
+   "defect": 22.97158020827287,
+   "defect_twh_weighted": 15413.930319751094,
+   "lam_LA_BASIN": 22.11670717332111,
+   "lam_NP15": 22.413532885685168,
+   "lam_SDGE": 18.5238991832174,
+   "lam_SP15_rest": 22.11670717332111,
+   "lam_ZP26": 21.82396882313973
+  },
+  {
+   "year": 2024,
+   "state": "at_cap",
+   "n": 860,
+   "share_of_surplus_pct": 53.61596009975062,
+   "ca_lambda_model": -1.2115495433074603,
+   "ca_hub_measured": -12.021029755813954,
+   "defect": 10.809480212506491,
+   "defect_twh_weighted": 9296.152982755582,
+   "lam_LA_BASIN": -0.9757620331065826,
+   "lam_NP15": -0.8474919874171286,
+   "lam_SDGE": -5.515009460104237,
+   "lam_SP15_rest": -0.9757620331065826,
+   "lam_ZP26": -1.0533812769586834
+  },
+  {
+   "year": 2024,
+   "state": "ALL",
+   "n": 1604,
+   "share_of_surplus_pct": 100.0,
+   "ca_lambda_model": 10.141539106026613,
+   "ca_hub_measured": -6.629033216957605,
+   "defect": 16.770572322984222,
+   "defect_twh_weighted": 26899.998006066693,
+   "lam_LA_BASIN": 10.304813730841463,
+   "lam_NP15": 10.52007227300461,
+   "lam_SDGE": 6.351372149988174,
+   "lam_SP15_rest": 10.304813730841463,
+   "lam_ZP26": 10.13205449470934
+  },
+  {
+   "year": 2025,
+   "state": "zero",
+   "n": 12,
+   "share_of_surplus_pct": 0.7393715341959335,
+   "ca_lambda_model": 42.6641686859661,
+   "ca_hub_measured": 12.460142500000002,
+   "defect": 30.20402618596609,
+   "defect_twh_weighted": 362.4483142315931,
+   "lam_LA_BASIN": 42.24583124470956,
+   "lam_NP15": 43.40760446125328,
+   "lam_SDGE": 42.17183581896806,
+   "lam_SP15_rest": 42.24583124470956,
+   "lam_ZP26": 42.20048115847336
+  },
+  {
+   "year": 2025,
+   "state": "interior",
+   "n": 707,
+   "share_of_surplus_pct": 43.561306223043744,
+   "ca_lambda_model": 24.83504325082603,
+   "ca_hub_measured": 5.326747185289958,
+   "defect": 19.508296065536072,
+   "defect_twh_weighted": 13792.365318334003,
+   "lam_LA_BASIN": 25.188142698762817,
+   "lam_NP15": 25.677369157615033,
+   "lam_SDGE": 17.51409552712074,
+   "lam_SP15_rest": 25.188142698762817,
+   "lam_ZP26": 25.042628500185888
+  },
+  {
+   "year": 2025,
+   "state": "at_cap",
+   "n": 904,
+   "share_of_surplus_pct": 55.69932224276032,
+   "ca_lambda_model": 2.024257855839894,
+   "ca_hub_measured": -4.194558219026549,
+   "defect": 6.218816074866443,
+   "defect_twh_weighted": 5621.809731679265,
+   "lam_LA_BASIN": 2.4800301298118095,
+   "lam_NP15": 2.60470210610761,
+   "lam_SDGE": -4.94274929064551,
+   "lam_SP15_rest": 2.4800301298118095,
+   "lam_ZP26": 2.403740728274968
+  },
+  {
+   "year": 2025,
+   "state": "ALL",
+   "n": 1623,
+   "share_of_surplus_pct": 100.0,
+   "ca_lambda_model": 12.261413865831708,
+   "ca_hub_measured": 0.07618690080098549,
+   "defect": 12.185226965030722,
+   "defect_twh_weighted": 19776.62336424486,
+   "lam_LA_BASIN": 12.665997597234565,
+   "lam_NP15": 12.957142299377788,
+   "lam_SDGE": 5.188097479210377,
+   "lam_SP15_rest": 12.665997597234565,
+   "lam_ZP26": 12.55978172636702
+  }
+ ],
+ "C_arbitrage_identity": [
+  {
+   "year": 2023,
+   "days": 77,
+   "obs_mean": 33.42931761486892,
+   "pred_mean": 36.48049349238573,
+   "mean_abs_err": 3.2281290255372355,
+   "r": 0.9421470585708275,
+   "within_1_pct": 44.15584415584416,
+   "within_5_pct": 80.51948051948052
+  },
+  {
+   "year": 2024,
+   "days": 243,
+   "obs_mean": 18.149093442154943,
+   "pred_mean": 29.64692307721954,
+   "mean_abs_err": 11.83763711158613,
+   "r": 0.6993906080003681,
+   "within_1_pct": 37.86008230452675,
+   "within_5_pct": 58.0246913580247
+  },
+  {
+   "year": 2025,
+   "days": 244,
+   "obs_mean": 20.4405465590487,
+   "pred_mean": 32.68381039726082,
+   "mean_abs_err": 12.383738620937503,
+   "r": 0.6189172309822465,
+   "within_1_pct": 31.557377049180328,
+   "within_5_pct": 50.0
+  }
+ ],
+ "C2_flatness": [
+  {
+   "year": 2023,
+   "n_interior": 24,
+   "range_interior": 0.8481961644955476,
+   "flat_pct_interior": 16.666666666666664,
+   "n_at_cap": 157,
+   "range_at_cap": 15.783745870823525,
+   "flat_pct_at_cap": 15.92356687898089,
+   "n_hub_interior": 24,
+   "range_hub_interior": 4.559070416666667,
+   "flat_pct_hub_interior": 0.0
+  },
+  {
+   "year": 2024,
+   "n_interior": 105,
+   "range_interior": 2.5309807086054765,
+   "flat_pct_interior": 19.047619047619047,
+   "n_at_cap": 170,
+   "range_at_cap": 9.559921958654169,
+   "flat_pct_at_cap": 22.35294117647059,
+   "n_hub_interior": 105,
+   "range_hub_interior": 4.372106666666667,
+   "flat_pct_hub_interior": 0.0
+  },
+  {
+   "year": 2025,
+   "n_interior": 113,
+   "range_interior": 3.7839798798855826,
+   "flat_pct_interior": 23.893805309734514,
+   "n_at_cap": 170,
+   "range_at_cap": 8.718103105602607,
+   "flat_pct_at_cap": 13.529411764705882,
+   "n_hub_interior": 113,
+   "range_hub_interior": 3.6509579646017705,
+   "flat_pct_hub_interior": 0.0
+  }
+ ],
+ "D_reach": [
+  {
+   "year": 2023,
+   "state": "zero",
+   "hours_pct": 1.7921146953405018,
+   "defect_mean": 27.76564177709697,
+   "defect_share_pct": 5.193695556253626
+  },
+  {
+   "year": 2023,
+   "state": "interior",
+   "hours_pct": 16.218637992831543,
+   "defect_mean": 24.936705510186613,
+   "defect_share_pct": 42.21399244440931
+  },
+  {
+   "year": 2023,
+   "state": "at_cap",
+   "hours_pct": 81.98924731182795,
+   "defect_mean": 6.1455731501796,
+   "defect_share_pct": 52.59231199933709
+  },
+  {
+   "year": 2024,
+   "state": "zero",
+   "hours_pct": 4.551122194513716,
+   "defect_mean": 29.998831555616643,
+   "defect_share_pct": 8.14094745682185
+  },
+  {
+   "year": 2024,
+   "state": "interior",
+   "hours_pct": 41.83291770573566,
+   "defect_mean": 22.97158020827287,
+   "defect_share_pct": 57.30086045461723
+  },
+  {
+   "year": 2024,
+   "state": "at_cap",
+   "hours_pct": 53.61596009975062,
+   "defect_mean": 10.809480212506491,
+   "defect_share_pct": 34.55819208856091
+  },
+  {
+   "year": 2025,
+   "state": "zero",
+   "hours_pct": 0.7393715341959335,
+   "defect_mean": 30.20402618596609,
+   "defect_share_pct": 1.832710809909448
+  },
+  {
+   "year": 2025,
+   "state": "interior",
+   "hours_pct": 43.561306223043744,
+   "defect_mean": 19.508296065536072,
+   "defect_share_pct": 69.74074928923359
+  },
+  {
+   "year": 2025,
+   "state": "at_cap",
+   "hours_pct": 55.69932224276032,
+   "defect_mean": 6.218816074866443,
+   "defect_share_pct": 28.426539900856955
+  }
+ ],
+ "E_matched_control": [
+  {
+   "year": 2023,
+   "cells": 22,
+   "matched_hours": 109,
+   "paired_diff": 9.662700041641608,
+   "paired_pos_pct": 95.45454545454545,
+   "unmatched_diff": 18.791132360007012
+  },
+  {
+   "year": 2024,
+   "cells": 54,
+   "matched_hours": 438,
+   "paired_diff": 13.970969900614538,
+   "paired_pos_pct": 96.29629629629629,
+   "unmatched_diff": 12.162099995766377
+  },
+  {
+   "year": 2025,
+   "cells": 59,
+   "matched_hours": 403,
+   "paired_diff": 11.33256103214063,
+   "paired_pos_pct": 93.22033898305084,
+   "unmatched_diff": 13.28947999066963
+  }
+ ],
+ "F_limb_attribution": [
+  {
+   "year": 2023,
+   "marginal_limb": "battery_only",
+   "n": 134,
+   "hours_pct": 12.007168458781361,
+   "defect_mean": 25.533211295561696,
+   "defect_share_pct": 31.999928963234265,
+   "batt_chg_mw": 1702.107666015625,
+   "ps_chg_mw": 573.6019897460938
+  },
+  {
+   "year": 2023,
+   "marginal_limb": "ps_only",
+   "n": 228,
+   "hours_pct": 20.43010752688172,
+   "defect_mean": 18.24011948989871,
+   "defect_share_pct": 38.89567410789549,
+   "batt_chg_mw": 2292.999267578125,
+   "ps_chg_mw": 1063.791748046875
+  },
+  {
+   "year": 2023,
+   "marginal_limb": "both",
+   "n": 47,
+   "hours_pct": 4.211469534050179,
+   "defect_mean": 23.236029441244884,
+   "defect_share_pct": 10.214063481175039,
+   "batt_chg_mw": 1705.8865966796875,
+   "ps_chg_mw": 1328.775146484375
+  },
+  {
+   "year": 2023,
+   "marginal_limb": "neither",
+   "n": 707,
+   "hours_pct": 63.35125448028674,
+   "defect_mean": 2.85681050107407,
+   "defect_share_pct": 18.890333447695223,
+   "batt_chg_mw": 2087.517333984375,
+   "ps_chg_mw": 1848.387939453125
+  },
+  {
+   "year": 2024,
+   "marginal_limb": "battery_only",
+   "n": 530,
+   "hours_pct": 33.042394014962596,
+   "defect_mean": 23.28498147227229,
+   "defect_share_pct": 45.8774761898535,
+   "batt_chg_mw": 3168.547607421875,
+   "ps_chg_mw": 870.239990234375
+  },
+  {
+   "year": 2024,
+   "marginal_limb": "ps_only",
+   "n": 139,
+   "hours_pct": 8.665835411471322,
+   "defect_mean": 19.500302379592735,
+   "defect_share_pct": 10.076365173529338,
+   "batt_chg_mw": 4425.283203125,
+   "ps_chg_mw": 949.7749633789062
+  },
+  {
+   "year": 2024,
+   "marginal_limb": "both",
+   "n": 141,
+   "hours_pct": 8.790523690773068,
+   "defect_mean": 21.793547088275048,
+   "defect_share_pct": 11.423384264763738,
+   "batt_chg_mw": 3647.179443359375,
+   "ps_chg_mw": 966.0501098632812
+  },
+  {
+   "year": 2024,
+   "marginal_limb": "neither",
+   "n": 794,
+   "hours_pct": 49.50124688279302,
+   "defect_mean": 11.052299314297489,
+   "defect_share_pct": 32.622774371853424,
+   "batt_chg_mw": 4078.3974609375,
+   "ps_chg_mw": 1753.127685546875
+  },
+  {
+   "year": 2025,
+   "marginal_limb": "battery_only",
+   "n": 606,
+   "hours_pct": 37.33826247689464,
+   "defect_mean": 19.759601209265217,
+   "defect_share_pct": 60.54784030758095,
+   "batt_chg_mw": 4815.67724609375,
+   "ps_chg_mw": 795.379150390625
+  },
+  {
+   "year": 2025,
+   "marginal_limb": "ps_only",
+   "n": 194,
+   "hours_pct": 11.95317313616759,
+   "defect_mean": 12.822569041820667,
+   "defect_share_pct": 12.578377755884384,
+   "batt_chg_mw": 6151.74853515625,
+   "ps_chg_mw": 1066.8846435546875
+  },
+  {
+   "year": 2025,
+   "marginal_limb": "both",
+   "n": 101,
+   "hours_pct": 6.223043746149107,
+   "defect_mean": 18.000465203161205,
+   "defect_share_pct": 9.192908981652646,
+   "batt_chg_mw": 5315.53466796875,
+   "ps_chg_mw": 1176.18798828125
+  },
+  {
+   "year": 2025,
+   "marginal_limb": "neither",
+   "n": 722,
+   "hours_pct": 44.485520640788664,
+   "defect_mean": 4.843046609138016,
+   "defect_share_pct": 17.68087295488202,
+   "batt_chg_mw": 6039.0732421875,
+   "ps_chg_mw": 1738.0474853515625
+  }
+ ],
+ "G_volume": [
+  {
+   "year": 2023,
+   "window": "all",
+   "n": 8759,
+   "model_mw": 540.3659057617188,
+   "measured_mw": 464.454960611942,
+   "excess_mw": 75.91091981363128,
+   "model_rate": 0.09875568006375728,
+   "measured_rate": 0.08316550735576836,
+   "anchor_p95_rate": 0.20150529740837994
+  },
+  {
+   "year": 2023,
+   "window": "belly",
+   "n": 2555,
+   "model_mw": 1563.9927978515625,
+   "measured_mw": 1203.6857142857143,
+   "excess_mw": 360.30716141254703,
+   "model_rate": 0.28607740401333226,
+   "measured_rate": 0.2149178089445529,
+   "anchor_p95_rate": 0.3993857142857143
+  },
+  {
+   "year": 2023,
+   "window": "belly_surplus",
+   "n": 1116,
+   "model_mw": 2067.148193359375,
+   "measured_mw": 1335.43458781362,
+   "excess_mw": 731.7138391412715,
+   "model_rate": 0.38645165733269116,
+   "measured_rate": 0.24446989879411246,
+   "anchor_p95_rate": 0.41145044802867375
+  },
+  {
+   "year": 2024,
+   "window": "all",
+   "n": 8759,
+   "model_mw": 1030.1668701171875,
+   "measured_mw": 996.4005023404499,
+   "excess_mw": 33.76647504733733,
+   "model_rate": 0.11167541605527843,
+   "measured_rate": 0.1065571380009501,
+   "anchor_p95_rate": 0.21359135746089736
+  },
+  {
+   "year": 2024,
+   "window": "belly",
+   "n": 2555,
+   "model_mw": 3113.31103515625,
+   "measured_mw": 2923.419569471624,
+   "excess_mw": 189.89146761339003,
+   "model_rate": 0.3382630596117513,
+   "measured_rate": 0.31147428491593376,
+   "anchor_p95_rate": 0.49955714285714287
+  },
+  {
+   "year": 2024,
+   "window": "belly_surplus",
+   "n": 1604,
+   "model_mw": 3769.915283203125,
+   "measured_mw": 3054.695137157107,
+   "excess_mw": 715.2202323534691,
+   "model_rate": 0.41537004915792713,
+   "measured_rate": 0.3321108296131039,
+   "anchor_p95_rate": 0.5053818578553616
+  },
+  {
+   "year": 2025,
+   "window": "all",
+   "n": 8750,
+   "model_mw": 1535.2747802734375,
+   "measured_mw": 1487.8363428571429,
+   "excess_mw": 47.438446214369364,
+   "model_rate": 0.11861188450269694,
+   "measured_rate": 0.11338501450202507,
+   "anchor_p95_rate": 0.19944219428571425
+  },
+  {
+   "year": 2025,
+   "window": "belly",
+   "n": 2554,
+   "model_mw": 4726.36328125,
+   "measured_mw": 4425.279561472201,
+   "excess_mw": 301.08365507740103,
+   "model_rate": 0.36531590661299024,
+   "measured_rate": 0.33701854094654704,
+   "anchor_p95_rate": 0.4904864526233359
+  },
+  {
+   "year": 2025,
+   "window": "belly_surplus",
+   "n": 1623,
+   "model_mw": 5550.720703125,
+   "measured_mw": 4573.294516327788,
+   "excess_mw": 977.4260693195787,
+   "model_rate": 0.4389371177261859,
+   "measured_rate": 0.3594918283941508,
+   "anchor_p95_rate": 0.49327325939617983
+  }
+ ],
+ "H_caiso121_rebased": [
+  {
+   "year": 2023,
+   "n": 1116,
+   "caiso121_basis_mw": 2235.209818129044,
+   "battery_like_for_like_mw": 735.7840949540497,
+   "model_ps_net_mw": 1499.4256591796875,
+   "ps_share_of_row_pct": 67.08209991455078
+  },
+  {
+   "year": 2024,
+   "n": 1604,
+   "caiso121_basis_mw": 2033.8396677036683,
+   "battery_like_for_like_mw": 717.0882898612956,
+   "model_ps_net_mw": 1316.751220703125,
+   "ps_share_of_row_pct": 64.74213409423828
+  },
+  {
+   "year": 2025,
+   "n": 1623,
+   "caiso121_basis_mw": 2242.0595127418314,
+   "battery_like_for_like_mw": 979.3527483091043,
+   "model_ps_net_mw": 1262.7066650390625,
+   "ps_share_of_row_pct": 56.31904983520508
+  }
+ ]
+}
