@@ -768,7 +768,75 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
+### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE NOW EMPTY** (keeper `2026-08-04-caiso-166-measured-dlap`, CALIBRATED-WITH-CAVEATS)
+
+> **caiso-170 (2026-08-04) — ITEM 3 IS CLOSED: THE S2 CHARTER caiso-169 LEFT
+> STANDING HAS ~2 pp OF RENT TO BUY, MEASURED AGAINST THE REAL FLEET. WITH IT
+> THE CAISO IN-MODEL LEVER QUEUE IS EMPTY.** No LP, no solve, no derive, no
+> `ScenarioConfig` field, keeper unchanged, nothing registered. Prereg
+> `results/calibration/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`
+> (pushed before any value existed, merged as PR #3517 under this lane's
+> original `caiso-169` id); record
+> `results/calibration/FINDING-caiso170-s2-foresight-phase0-2026-08-04.md`;
+> probe `scripts/probes/caiso170_s2_foresight_phase0.py`; artifact
+> `results/calibration/_caiso170_s2_foresight_phase0.json`. **New row
+> `caiso_da_rt_two_settlement` CAISO → `R`.**
+>
+> **READ WITH caiso-169 BELOW — the two lanes ran concurrently, agree, and are
+> complementary.** caiso-169 refused S2's *cheap substitute*
+> (`storage_daily_cycling`) on reach and premise and left the **real charter
+> LIVE**, concluding the horizon family admits only 24 h and ∞ with the measured
+> fleet strictly between them, reachable "only with an explicit uncertainty
+> representation". **caiso-170 prices that representation's upside.** Neither
+> closes item 3 alone.
+>
+> **THE REAL CAISO BATTERY FLEET ALREADY BEHAVES WITHIN ~2 pp OF PERFECT
+> FORESIGHT.** Scoring the model's `li_ion` dispatch and the **measured** fleet
+> (EIA-930 `NG: OTH`, PS-free — the caiso-168 §H basis) on the **same** measured
+> prices as a discharge-MWh-weighted **within-day price percentile**, the model
+> beats the real fleet by **−0.014 / +0.019 / +0.007** on RT — **0 of 3** years
+> clear the pre-registered `≥ 0.10`, and 2023 is negative. Energy-neutral form,
+> stronger: against each series' **own** perfect-foresight ceiling (same energy,
+> same power profile, only the order of hours re-placed) the **measured** fleet
+> achieves **0.922 / 0.917 / 0.907** on RT and **0.970 / 0.942 / 0.962** on DA;
+> the model **0.924 / 0.941 / 0.923** and **0.972 / 0.987 / 0.984**. Volume
+> confound measured, not assumed: annual discharge 4,023/4,024, 7,637/7,586,
+> 11,308/11,255 GWh (ratios 1.00/1.01/1.00). Statistic self-checked — the
+> model's own dispatch on its own dual returns capture efficiency
+> 0.978/0.983/0.981, near its ceiling as perfect foresight requires.
+>
+> **THE SEPARATION IS REAL — WHICH IS WHAT MAKES THIS A REFUTATION, NOT A
+> NULL.** The second pre-registered falsifier PASSES: mean within-day DA/RT
+> Spearman **0.849/0.822/0.769** (mean **0.813**, inside `≤ 0.90`), RT carrying
+> 25 % more within-day spread than DA by 2025. CAISO's two settlements really do
+> order the day differently; the fleet is simply not losing to it.
+>
+> **RE-POINTED, AS A POINTER AND NOT A VERDICT.** The defect is a within-day
+> **placement** object — the model over-charges the belly (+359/+179/+262 MW/h),
+> under-charges overnight (−167/−159/−149) and over-discharges the evening
+> (+130/+678/+902) on the **same annual energy**. **It is not a bound:** in the
+> 2,920/2,555/2,190 overnight hours whose `caiso_storage_shape_anchor` cap is
+> LIVE the model charges 23.3/40.8/21.8 MW against a bound of 632/803/833 MW and
+> is at it in 1.4/0.7/0.6 % of them; the anchor's hard-zero hours hold only
+> 0.2/0.3/0.4 % of the measured fleet's annual charge. The untested pointer is
+> the **aggregated** battery representation — **not claimed here.**
+>
+> **⚠ FRAMING CORRECTION — CARRY IT.** On a like-for-like battery basis the
+> "overnight OVER-position" **reverses sign in 2024 and 2025** (model UNDER by
+> −227/−306 MW/h; still under with the PS limb added), over only in 2023. This
+> does **not** refute `FINDING-caiso127` §2, which measured a **pin** statistic
+> and not a window volume — a different measurement, reported as one — but no
+> successor may scope itself to "remove overnight discharge" without it.
+>
+> **ROBUST TO THE KEEPER CHANGE, MEASURED NOT ASSERTED.** The lane opened on
+> `caiso164-zonal-loss-surface` and the caiso-166 promotion landed mid-session,
+> so the probe was re-run against the new keeper via its `--bundle` switch:
+> **both verdicts identical**, F1 moving ≤ 0.0004, F2 not moving at all (it
+> reads only measured prices), 2023 bit-identical (the caiso-166 placebo year).
+>
+> **THE HONEST SUCCESSOR IS A DATA BLOCKER, NOT A LEVER:** Arm B (no published
+> intra-SP15 limit in `data/raw` — FILED, never approximated), C3a-2025
+> (non-public hourly PS, caiso-141 wall) and C3c-2023/24 (SoCalGas OFO record).
 
 > *Header re-stamped at caiso-169: it still named `2026-08-04-caiso164-zonal-loss-surface`
 > after caiso-166's promotion (rule 26 header duty, missed by the promoting
@@ -1525,11 +1593,38 @@ sign argument to every basis and bound.
    The only live prerequisite left is **caiso-138 §C firm-block elasticity**, and
    with the forced injection removed no new export constraint is needed at all
    (caiso-143 §F).
-3. **S2: DA/RT two-settlement separation charter** for the evening/overnight
-   storage spread (caiso-129's only surviving candidate; a real charter, not a
-   shaped floor — the S1 family is DO-NOT-REDO). **STILL LIVE, SCOPE UNCHANGED,
-   NOT SPENT — but the BELLY ROUTE INTO IT IS CLOSED (caiso-168, 2026-08-04, no
-   solve).** caiso-167 §7 re-pointed the surplus-regime *belly* residual here;
+3. ~~**S2: DA/RT two-settlement separation charter** for the evening/overnight
+   storage spread~~ — **CLOSED BY TWO CONCURRENT SESSIONS, 2026-08-04, no LP,
+   no solve, no field, keeper unchanged.** caiso-169 refused S2's **cheap
+   substitute** (`storage_daily_cycling` → cell `G`) on reach and premise and
+   left the real charter LIVE; **caiso-170 then measured that the charter has
+   nothing to buy** (cell `caiso_da_rt_two_settlement` CAISO → `R`). **Neither
+   closes the item alone — read both.** caiso-170's half, refused on **measured
+   reach**, with the premise as the thing that failed:
+   Scoring the model's `li_ion` dispatch and the **measured** battery fleet
+   (EIA-930 `NG: OTH`, PS-free — the caiso-168 §H basis) on the **same**
+   measured prices as a discharge-MWh-weighted **within-day price percentile**,
+   the model beats the real fleet by **−0.014 / +0.019 / +0.007** on RT against
+   a pre-registered `≥ 0.10 in ≥ 2 of 3 years` — **0 of 3**, and in 2023 the
+   model is *worse* timed. The energy-neutral form agrees and is stronger:
+   against each series' **own** perfect-foresight ceiling (same energy, same
+   power profile, only the order re-placed) the **measured** fleet already
+   achieves **0.922 / 0.917 / 0.907** on RT and the model 0.924 / 0.941 / 0.923
+   — a gap of **+0.002 / +0.024 / +0.016**. **The real CAISO fleet, which faces
+   exactly the DA/RT structure S2 would represent, is already within ~2 pp of
+   perfect foresight**, so the separation cannot recover a rent nobody pays.
+   The second falsifier PASSES (mean within-day DA/RT Spearman **0.813**), so
+   the separation is *real* — which is what makes this a refutation rather than
+   a null. The defect is re-pointed **as a pointer, not a verdict** to a
+   within-day **placement** object that is neither foresight nor a bound (the
+   armed anchor's overnight limb is measured **slack >10×**), with a **framing
+   correction that must be carried**: on a like-for-like battery basis the
+   "overnight over-position" **reverses sign in 2024/2025**. Read the caiso-170
+   AND caiso-169 blocks at the top of §5.2,
+   `FINDING-caiso170-s2-foresight-phase0-2026-08-04.md` and
+   `FINDING-caiso169-storage-foresight-horizon-2026-08-04.md`, before proposing
+   any successor. *Historical scope note follows.* caiso-167 §7 re-pointed the
+   surplus-regime *belly* residual here;
    that re-point does **not** land. caiso-168 confirmed the mechanism (a storage
    charge column is the marginal buyer in 36.6/50.5/55.5 % of belly-surplus
    hours, carrying 81.1/67.4/82.3 % of the over-price) and then shut the lever:
@@ -1542,8 +1637,10 @@ sign argument to every basis and bound.
    `FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` before proposing any
    belly-scoped successor.
 
-   **STILL LIVE AND STILL NOT SPENT after caiso-169 (2026-08-04, no solve) — but
-   its CHEAP SUBSTITUTE IS NOW REFUSED and its REAL CHARTER IS SPECIFIED.** Read
+   **caiso-169's half, as that session wrote it. Its "STILL LIVE" verdict is
+   SUPERSEDED by caiso-170 above** — which priced the charter caiso-169
+   specified and found ≤ 2 pp of rent in it — **but everything it binds on a
+   successor stands unchanged.** Read
    the caiso-169 block at the top of §5.2 and
    `FINDING-caiso169-storage-foresight-horizon-2026-08-04.md` **before proposing
    any successor**. Three things bind a successor:
