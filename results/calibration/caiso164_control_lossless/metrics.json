@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-31-caiso147-control-zerodelta",
+  "run_id": "2026-08-04-control-flagoff-lossless-baseline",
   "iso": "CAISO",
-  "label": "caiso147 control zerodelta",
+  "label": "control flagoff lossless baseline",
   "target_years": [
     2023,
     2024,
