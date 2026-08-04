@@ -248,6 +248,12 @@ frontend/data/forecast/program-status.js
 /results/MISO/
 /results/NYISO/
 /results/NEISO/
+# FFR-SA T0 smoke legs (results/ffr-sa-smoke/<iso>-<arm>/): the summary +
+# run_config + leg log ARE committed (the FF-G4 §2 acceptance evidence); the
+# nested per-ISO LP cache dir each self-contained leg writes is the same
+# transient class as /results/<ISO>/ above — regenerable from config.
+/results/ffr-sa-smoke/*/PJM/
+/results/ffr-sa-smoke/*/NEISO/
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
