@@ -263,6 +263,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # reserve-eligibility flags above); an armed run enters the key as a
     # distinct scenario.
     "nyiso_ordc_measured_step_span",
+    # Published SENY two-tier RCPF curve ($500 base + $40 increment), nyiso-119.
+    # GATED / default-off and byte-identical for every existing config, so it is
+    # dropped from the hash at its default (same treatment as the span flag
+    # directly above); an armed run enters the key as a distinct scenario.
+    "nyiso_seny_rcpf_increment_step",
     # Daily-resolution dual-fuel oil-parity cap (nyiso-76 P2). GATED /
     # default-off and byte-identical for every existing config, so it is
     # dropped from the hash at its default; an armed run enters the key as a
@@ -688,6 +693,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # exists to close (rule 24 [R-REGISTRY]). Caught by the flip guard's own
     # HEAD-only check 3, which had been failing on main since that commit.
     "nyiso_nyc_rcpf_step_curve": "False",
+    # Added by nyiso-119 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry — deliberately not repeating the
+    # nyiso-115 miss recorded immediately above, where the field was registered
+    # as cache-optional but never given its recorded default here, leaving a
+    # flip of it undetectable (rule 24 [R-REGISTRY]).
+    "nyiso_seny_rcpf_increment_step": "False",
     "dual_fuel_oil_daily_parity": "False",
     "ercot_thermal_dam_availability_hourly": "False",
     "ercot_thermal_dam_availability_plant": "False",
@@ -2321,6 +2332,20 @@ class ScenarioConfig:
     # span behaviour is untouched, and with this flag off the span flag behaves
     # on SENY exactly as it does today. Default off, byte-identical when off;
     # NYISO-only; requires --energy-reserve-coopt.
+    #
+    # REGISTRATION (rule 24 [R-REGISTRY]), all three in the same commit as the
+    # field: _CACHE_KEY_OPTIONAL_FIELDS (dropped at its default so every
+    # pre-existing cache key stays byte-stable; armed, it enters the key as a
+    # distinct scenario), _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS (the flip guard's
+    # check 3 — omitting it is exactly the hole nyiso-117 had to close for
+    # nyiso-115's field) and TIER_TAGS (tier 1, as every sibling NYISO reserve
+    # flag). Deliberately NOT in _BACKCAST_ONLY_OVERLAY_FIELDS: unlike
+    # nyiso_ordc_measured_step_span, whose scale factor is literally
+    # measured/static, this curve is built from PUBLISHED values only — the
+    # $40 RCPF, the 1,300 MW base, and the published deterministic hourly SENY
+    # step schedule — so it regenerates for a forward year (rule 13
+    # [R-MEASURED]). With a static requirement the increment band is
+    # identically zero width, i.e. a clean no-op, so no mode gate is owed.
 
     nyiso_hydro_reserve_eligible: bool = False  # GATED, default-OFF
     # NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, lever 3).
@@ -10912,6 +10937,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_incity_commitment_obligation": 1,
     "nyiso_east_reserve_families": 1,
     "nyiso_spin_reserve_online": 1,
+    "nyiso_seny_rcpf_increment_step": 1,
     # Same tiering as the ERCOT bridge's fields: the gates/legs are structural
     # flags (1), the measured scalars are parameters (2).
     "nyiso_gas_commitment_bridge": 1,
