@@ -1,0 +1,393 @@
+{
+  "ca_hub": "TH_SP15_GEN-APND",
+  "keeper_bundle": "results/calibration/caiso166_measured_loss_zones/hourly",
+  "prereg": {
+    "f1_min_advantage": 0.1,
+    "f1_min_years": 2,
+    "f2_max_rank_corr": 0.9
+  },
+  "session": "caiso-170",
+  "verdict": {
+    "disposition": "F1 IMMATERIAL \u2014 no foresight advantage to remove; the over-position is a QUANTITY/BOUND object, not a foresight one (PRECHECK \u00a74 disposition 2).",
+    "f1_advantage_by_year": {
+      "2023": -0.01413763904838361,
+      "2024": 0.019438573459123587,
+      "2025": 0.0070391675203494986
+    },
+    "f1_material": false,
+    "f1_years_hit": 0,
+    "f2_material": true,
+    "f2_mean_rank_corr": 0.8134405265466865,
+    "f2_rank_corr_by_year": {
+      "2023": 0.8490916905965388,
+      "2024": 0.8224970503332543,
+      "2025": 0.7687328387102667
+    }
+  },
+  "years": {
+    "2023": {
+      "anchor": {
+        "bound_mean_mw": 1113.0714962142629,
+        "meas_charge_in_zero_gwh": 6.607,
+        "meas_overnight_charge_share_in_zero_pct": 0.0,
+        "meas_share_of_year_in_zero_pct": 0.1624075350016875,
+        "model_charge_in_zero_gwh": 0.0,
+        "overnight_at_bound_share": 0.0136986301369863,
+        "overnight_bound_mw": 632.1706572547403,
+        "overnight_charge_deficit_mw": -166.48603973372343,
+        "overnight_live_cap_hours": 2920,
+        "overnight_meas_chg_mw": 189.81061643835616,
+        "overnight_model_chg_mw": 23.324576704632747,
+        "recovered_fleet_cap_mw": 7492.400362822508,
+        "zero_cap_hods": [
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      "capture": {
+        "dam": {
+          "gap": 0.001449804983267633,
+          "meas_achieved_usd_per_day": 663187.144272479,
+          "meas_ceiling_usd_per_day": 704420.6752854877,
+          "meas_efficiency": 0.9703686442622982,
+          "model_achieved_usd_per_day": 765389.9955318247,
+          "model_ceiling_usd_per_day": 813268.8014759056,
+          "model_efficiency": 0.9718184492455658
+        },
+        "rtm": {
+          "gap": 0.001713184304826254,
+          "meas_achieved_usd_per_day": 573154.2965889914,
+          "meas_ceiling_usd_per_day": 675758.5202074422,
+          "meas_efficiency": 0.9223790634620517,
+          "model_achieved_usd_per_day": 618563.2574695582,
+          "model_ceiling_usd_per_day": 734833.9474122241,
+          "model_efficiency": 0.9240922477668779
+        }
+      },
+      "coverage": {
+        "dam": 0.9861872146118722,
+        "meas_net": 0.9996575342465753,
+        "rtm": 0.994406392694064
+      },
+      "f1": {
+        "dam": {
+          "chg_advantage": -0.03286966994517662,
+          "dis_advantage": 0.007370948782242759,
+          "meas_chg_pct": 0.18052043391860026,
+          "meas_dis_pct": 0.844377531435573,
+          "model_chg_pct": 0.14765076397342364,
+          "model_dis_pct": 0.8517484802178158
+        },
+        "rtm": {
+          "chg_advantage": -0.038771659541479375,
+          "dis_advantage": -0.01413763904838361,
+          "meas_chg_pct": 0.20675711961480625,
+          "meas_dis_pct": 0.7992994825679129,
+          "model_chg_pct": 0.16798546007332688,
+          "model_dis_pct": 0.7851618435195293
+        }
+      },
+      "f2": {
+        "mean_da_daily_spread": 91.20893000000001,
+        "mean_rank_corr": 0.8490916905965388,
+        "mean_rt_daily_spread": 90.86944524042951,
+        "n_days": 357,
+        "p25": 0.8313043478260868,
+        "p50": 0.8939130434782607,
+        "p75": 0.9295652173913044,
+        "rt_over_da_spread": 0.9962779438420065
+      },
+      "limbs": {
+        "li_ion": {
+          "annual_charge_gwh": 4733.064746647597,
+          "annual_discharge_gwh": 4023.105038084567,
+          "evening_dis_mw": 1785.2374636527284,
+          "overnight_dis_mw": 164.7124177745148
+        },
+        "pumped_storage": {
+          "annual_charge_gwh": 2372.453520562649,
+          "annual_discharge_gwh": 1897.9627973709107,
+          "evening_dis_mw": 733.8991897008191,
+          "overnight_dis_mw": 112.39487026097024
+        }
+      },
+      "reach": {
+        "belly": {
+          "chg_excess_mw": 359.085698660803,
+          "dis_excess_mw": -19.117961959749216,
+          "meas_chg_mw": 1204.6286721504114,
+          "meas_dis_mw": 21.99960830395613,
+          "model_chg_mw": 1563.7143708112144,
+          "model_dis_mw": 2.881646344206915
+        },
+        "evening": {
+          "chg_excess_mw": -3.6202739726027398,
+          "dis_excess_mw": 130.32623077601602,
+          "meas_chg_mw": 3.6202739726027398,
+          "meas_dis_mw": 1654.9112328767123,
+          "model_chg_mw": 0.0,
+          "model_dis_mw": 1785.2374636527284
+        },
+        "overnight": {
+          "chg_excess_mw": -166.5430750333924,
+          "dis_excess_mw": 25.100328863483867,
+          "meas_chg_mw": 189.87564234326825,
+          "meas_dis_mw": 139.66666666666666,
+          "model_chg_mw": 23.332567309875856,
+          "model_dis_mw": 164.76699553015052
+        }
+      },
+      "selfcheck": {
+        "chg_pct_model_lambda": 0.14439825724211627,
+        "dis_pct_model_lambda": 0.8435954896699144,
+        "efficiency_model_lambda": 0.9779798512609402
+      }
+    },
+    "2024": {
+      "anchor": {
+        "bound_mean_mw": 1981.3404440558202,
+        "meas_charge_in_zero_gwh": 26.162,
+        "meas_overnight_charge_share_in_zero_pct": 0.018119766378157764,
+        "meas_share_of_year_in_zero_pct": 0.29976607200802247,
+        "model_charge_in_zero_gwh": 0.0,
+        "overnight_at_bound_share": 0.006653620352250489,
+        "overnight_bound_mw": 803.2734382039409,
+        "overnight_charge_deficit_mw": -158.9536386836065,
+        "overnight_live_cap_hours": 2555,
+        "overnight_meas_chg_mw": 222.44109589041096,
+        "overnight_model_chg_mw": 40.820107649263804,
+        "recovered_fleet_cap_mw": 11131.300409939791,
+        "zero_cap_hods": [
+          18,
+          19,
+          20,
+          21,
+          22
+        ]
+      },
+      "capture": {
+        "dam": {
+          "gap": 0.04563118146271328,
+          "meas_achieved_usd_per_day": 854463.5121433056,
+          "meas_ceiling_usd_per_day": 977425.1000755106,
+          "meas_efficiency": 0.9416620309769804,
+          "model_achieved_usd_per_day": 1105640.0041156255,
+          "model_ceiling_usd_per_day": 1135711.8060919014,
+          "model_efficiency": 0.9872932124396937
+        },
+        "rtm": {
+          "gap": 0.023924753524663722,
+          "meas_achieved_usd_per_day": 771916.4554881633,
+          "meas_ceiling_usd_per_day": 940824.0518973926,
+          "meas_efficiency": 0.9167001800881216,
+          "model_achieved_usd_per_day": 959863.5656345248,
+          "model_ceiling_usd_per_day": 1095494.5466875343,
+          "model_efficiency": 0.9406249336127853
+        }
+      },
+      "coverage": {
+        "dam": 0.9998858447488584,
+        "meas_net": 0.9971461187214612,
+        "rtm": 0.9998858447488584
+      },
+      "f1": {
+        "dam": {
+          "chg_advantage": -0.029610848818423546,
+          "dis_advantage": 0.040314681700568844,
+          "meas_chg_pct": 0.17373827764070707,
+          "meas_dis_pct": 0.8136602876842183,
+          "model_chg_pct": 0.14412742882228352,
+          "model_dis_pct": 0.8539749693847871
+        },
+        "rtm": {
+          "chg_advantage": -0.031420160454383506,
+          "dis_advantage": 0.019438573459123587,
+          "meas_chg_pct": 0.1973661648167763,
+          "meas_dis_pct": 0.7579237593464028,
+          "model_chg_pct": 0.1659460043623928,
+          "model_dis_pct": 0.7773623328055264
+        }
+      },
+      "f2": {
+        "mean_da_daily_spread": 65.50922131868131,
+        "mean_rank_corr": 0.8224970503332543,
+        "mean_rt_daily_spread": 65.96552190934067,
+        "n_days": 364,
+        "p25": 0.768478260869565,
+        "p50": 0.8699999999999999,
+        "p75": 0.9165217391304347,
+        "rt_over_da_spread": 1.0069654406123925
+      },
+      "limbs": {
+        "li_ion": {
+          "annual_charge_gwh": 8984.286872796536,
+          "annual_discharge_gwh": 7636.643851465106,
+          "evening_dis_mw": 3372.549833010582,
+          "overnight_dis_mw": 406.3986405702078
+        },
+        "pumped_storage": {
+          "annual_charge_gwh": 2606.1683997843265,
+          "annual_discharge_gwh": 2084.934701450348,
+          "evening_dis_mw": 765.3996168690512,
+          "overnight_dis_mw": 179.37008773660006
+        }
+      },
+      "reach": {
+        "belly": {
+          "chg_excess_mw": 179.42518115661187,
+          "dis_excess_mw": -8.244743850859967,
+          "meas_chg_mw": 2931.4509419152278,
+          "meas_dis_mw": 9.698587127158556,
+          "model_chg_mw": 3110.8761230718396,
+          "model_dis_mw": 1.453843276298589
+        },
+        "evening": {
+          "chg_excess_mw": -72.84753752697955,
+          "dis_excess_mw": 678.2365083759955,
+          "meas_chg_mw": 77.61813186813187,
+          "meas_dis_mw": 2703.5785714285716,
+          "model_chg_mw": 4.770594341152317,
+          "model_dis_mw": 3381.815079804567
+        },
+        "overnight": {
+          "chg_excess_mw": -159.44507899557917,
+          "dis_excess_mw": -227.09107092904372,
+          "meas_chg_mw": 195.2731020267949,
+          "meas_dis_mw": 634.5238749570594,
+          "model_chg_mw": 35.82802303121574,
+          "model_dis_mw": 407.4328040280157
+        }
+      },
+      "selfcheck": {
+        "chg_pct_model_lambda": 0.14413775882615484,
+        "dis_pct_model_lambda": 0.8346971805646312,
+        "efficiency_model_lambda": 0.9830001309792461
+      }
+    },
+    "2025": {
+      "anchor": {
+        "bound_mean_mw": 2624.9600099817526,
+        "meas_charge_in_zero_gwh": 47.374,
+        "meas_overnight_charge_share_in_zero_pct": 1.2502879771859803,
+        "meas_share_of_year_in_zero_pct": 0.36389562968830375,
+        "model_charge_in_zero_gwh": 0.0,
+        "overnight_at_bound_share": 0.006392694063926941,
+        "overnight_bound_mw": 833.1115631002739,
+        "overnight_charge_deficit_mw": -148.6373915218327,
+        "overnight_live_cap_hours": 2190,
+        "overnight_meas_chg_mw": 217.25342465753425,
+        "overnight_model_chg_mw": 21.820920893264145,
+        "recovered_fleet_cap_mw": 15448.40060026105,
+        "zero_cap_hods": [
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ]
+      },
+      "capture": {
+        "dam": {
+          "gap": 0.022311276499389465,
+          "meas_achieved_usd_per_day": 1008420.6281663453,
+          "meas_ceiling_usd_per_day": 1101625.9176913463,
+          "meas_efficiency": 0.962023306572468,
+          "model_achieved_usd_per_day": 1211262.50229747,
+          "model_ceiling_usd_per_day": 1254090.935570078,
+          "model_efficiency": 0.9843345830718575
+        },
+        "rtm": {
+          "gap": 0.015740644268542048,
+          "meas_achieved_usd_per_day": 920726.5329939473,
+          "meas_ceiling_usd_per_day": 1158431.7474866253,
+          "meas_efficiency": 0.9074146972608591,
+          "model_achieved_usd_per_day": 1086270.7068778952,
+          "model_ceiling_usd_per_day": 1304261.5750414524,
+          "model_efficiency": 0.9231553415294012
+        }
+      },
+      "coverage": {
+        "dam": 0.9998858447488584,
+        "meas_net": 0.9988584474885844,
+        "rtm": 0.9998858447488584
+      },
+      "f1": {
+        "dam": {
+          "chg_advantage": -0.018962813127623684,
+          "dis_advantage": 0.031088737024059676,
+          "meas_chg_pct": 0.17667471851553335,
+          "meas_dis_pct": 0.7976546159604074,
+          "model_chg_pct": 0.15771190538790966,
+          "model_dis_pct": 0.8287433529844671
+        },
+        "rtm": {
+          "chg_advantage": -0.02416649602930887,
+          "dis_advantage": 0.0070391675203494986,
+          "meas_chg_pct": 0.20898357005100168,
+          "meas_dis_pct": 0.7265747336028682,
+          "model_chg_pct": 0.1848170740216928,
+          "model_dis_pct": 0.7336139011232177
+        }
+      },
+      "f2": {
+        "mean_da_daily_spread": 44.634188186813184,
+        "mean_rank_corr": 0.7687328387102667,
+        "mean_rt_daily_spread": 55.710358397435904,
+        "n_days": 364,
+        "p25": 0.7343478260869565,
+        "p50": 0.8043478260869565,
+        "p75": 0.8752173913043477,
+        "rt_over_da_spread": 1.2481544004847631
+      },
+      "limbs": {
+        "li_ion": {
+          "annual_charge_gwh": 13303.656584986209,
+          "annual_discharge_gwh": 11308.108057196498,
+          "evening_dis_mw": 4587.866681750833,
+          "overnight_dis_mw": 822.4193478094388
+        },
+        "pumped_storage": {
+          "annual_charge_gwh": 2568.564286185026,
+          "annual_discharge_gwh": 2054.851410027504,
+          "evening_dis_mw": 786.4610736993241,
+          "overnight_dis_mw": 162.14831229268688
+        }
+      },
+      "reach": {
+        "belly": {
+          "chg_excess_mw": 261.52585569637813,
+          "dis_excess_mw": -11.581517524988088,
+          "meas_chg_mw": 4425.279561472201,
+          "meas_dis_mw": 12.411511354737666,
+          "model_chg_mw": 4686.805417168579,
+          "model_dis_mw": 0.8299938297495771
+        },
+        "evening": {
+          "chg_excess_mw": -138.0068811353746,
+          "dis_excess_mw": 901.8365636587146,
+          "meas_chg_mw": 146.85604395604395,
+          "meas_dis_mw": 3698.397252747253,
+          "model_chg_mw": 8.84916282066932,
+          "model_dis_mw": 4600.233816405967
+        },
+        "overnight": {
+          "chg_excess_mw": -148.79025822548903,
+          "dis_excess_mw": -306.3910505257528,
+          "meas_chg_mw": 165.1727802536853,
+          "meas_dis_mw": 1128.9334933150496,
+          "model_chg_mw": 16.382522028196256,
+          "model_dis_mw": 822.5424427892968
+        }
+      },
+      "selfcheck": {
+        "chg_pct_model_lambda": 0.15438076732701067,
+        "dis_pct_model_lambda": 0.8109851140311013,
+        "efficiency_model_lambda": 0.9810054917857676
+      }
+    }
+  }
+}

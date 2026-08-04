@@ -1,6 +1,6 @@
-# PRECHECK — caiso-169: is the CAISO evening/overnight storage over-position a PERFECT-FORESIGHT artifact, and is lever-queue item 3 (S2, the DA/RT two-settlement separation) REACHABLE?
+# PRECHECK — caiso-170: is the CAISO evening/overnight storage over-position a PERFECT-FORESIGHT artifact, and is lever-queue item 3 (S2, the DA/RT two-settlement separation) REACHABLE?
 
-**Session** caiso-169 · **Date** 2026-08-04 · **Branch**
+**Session** caiso-170 · **Date** 2026-08-04 · **Branch**
 `claude/caiso168-calibration-continuation-adaqwy` · **Base** `6d24a84d`
 
 **Committed and pushed BEFORE any value in §4 exists.** No LP, no solve, no
@@ -15,11 +15,11 @@ and a matrix cell.
 
 The dispatching prompt opened this lane as "caiso-168". That id is **SPENT**:
 `results/calibration/FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` is
-on `origin/main`, as is caiso-167. This lane is therefore **caiso-169**.
+on `origin/main`, as is caiso-167. This lane is therefore **caiso-170**.
 
 **The prompt's stated PRECONDITION does not reproduce from the repository, and
 this is recorded before any work is done on it** (detail and evidence:
-`FINDING-caiso169` §1).
+`FINDING-caiso170` §1).
 
 | prompt asserts | repository state |
 |---|---|
@@ -82,7 +82,7 @@ could a two-settlement separation reach it?**
 
 ## §3 — instrument and inputs (all committed; nothing derived, nothing fitted)
 
-`scripts/probes/caiso169_s2_foresight_phase0.py`, one command, no LP anywhere.
+`scripts/probes/caiso170_s2_foresight_phase0.py`, one command, no LP anywhere.
 
 * keeper bundle `results/calibration/caiso164_zonal_loss_surface/hourly/` —
   `storage_<y>.parquet` (P1 charge/discharge MW by tech), `system_<y>.parquet`

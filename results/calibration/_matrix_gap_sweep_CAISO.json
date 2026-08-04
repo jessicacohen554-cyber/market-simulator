@@ -3,7 +3,7 @@
   "keeper": "2026-08-04-caiso-166-measured-dlap",
   "keeper_bundle_fields": 678,
   "n_scenario_fields": 679,
-  "n_matrix_rows": 189,
+  "n_matrix_rows": 190,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -1961,6 +1961,16 @@
           "cell": "K"
         },
         {
+          "row": "storage_daily_cycling",
+          "cells": "KG....",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
           "row": "caiso_ps_charge_shape_anchor",
           "cells": ".G....",
           "cell": "G"
@@ -1968,7 +1978,8 @@
       ],
       "cells": [
         "G",
-        "K"
+        "K",
+        "R"
       ],
       "armed_in_bundles": [
         "caiso124_control_A",
@@ -2775,7 +2786,7 @@
       "owning_rows": [
         {
           "row": "cc_steam_part_capacity",
-          "cells": ".U.O.U",
+          "cells": ".U.K.I",
           "cell": "U"
         },
         {
@@ -3264,9 +3275,19 @@
           "cell": "K"
         },
         {
+          "row": "storage_daily_cycling",
+          "cells": "KG....",
+          "cell": "G"
+        },
+        {
           "row": "pumped_storage_cycling_depth",
           "cells": ".UGUUG",
           "cell": "U"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
         },
         {
           "row": "caiso_ps_charge_shape_anchor",
@@ -3305,7 +3326,7 @@
         },
         {
           "row": "seam_flow_envelopes",
-          "cells": "..KK..",
+          "cells": "..KKU.",
           "cell": "."
         },
         {
@@ -3525,7 +3546,7 @@
       "owning_rows": [
         {
           "row": "cc_steam_part_capacity",
-          "cells": ".U.O.U",
+          "cells": ".U.K.I",
           "cell": "U"
         },
         {
@@ -4115,13 +4136,18 @@
         },
         {
           "row": "storage_daily_cycling",
-          "cells": "K.....",
-          "cell": "."
+          "cells": "KG....",
+          "cell": "G"
         },
         {
           "row": "pumped_storage_cycling_depth",
           "cells": ".UGUUG",
           "cell": "U"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
         },
         {
           "row": "caiso_ps_charge_shape_anchor",
@@ -4175,7 +4201,7 @@
         },
         {
           "row": "seam_flow_envelopes",
-          "cells": "..KK..",
+          "cells": "..KKU.",
           "cell": "."
         },
         {
