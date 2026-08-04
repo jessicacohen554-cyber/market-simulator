@@ -670,6 +670,41 @@ reconstructed on the keeper's full-plant basis via bench intensities, so it is d
 **Price remains the load-bearing input-gap measurement** — which is exactly why the 2025
 regression above matters.
 
+### 4.3 Measured results — PJM, and the asymmetry that matters
+
+**Determination HOLD**; FC-4 **FAIL**; quarantine row **PASS**. But PJM is **essentially
+unchanged from FF-2D**, which is the point:
+
+| metric | FF-2D (`pjm-t1x`) | **now** | |
+|---|---|---|---|
+| price 2023, 2024 | in-band | **in-band** (not flagged) | unchanged |
+| **price 2025** | **17.5 % CAVEAT** | **15.7 % CAVEAT** | **slightly better** |
+| CO2 2023–2025 | 43–58 % FAIL | **45.1 / 40.4 / 54.2 % FAIL** | same range |
+| `gas_twh` 2024 | *uncovered* | 6.7 % CAVEAT | newly covered |
+| `coal_twh` 2023 / 2024 | *uncovered* | 13.0 % CAVEAT / 23.9 % FAIL | newly covered |
+
+#### ⚠ The two crossover legs move in OPPOSITE directions
+
+| leg | price 2025, FF-2D → now | direction |
+|---|---|---|
+| **ERCOT** | **8.6 % PASS → 22.5 % FAIL** | **regressed** |
+| **PJM** | 17.5 % CAVEAT → **15.7 % CAVEAT** | flat / marginally better |
+
+Both legs ran the same signed decisions, the same un-pin, the same cache epoch and the
+same instrument. **Only ERCOT's terminal-year price skill regressed.**
+
+That asymmetry is *consistent with* the D-1/D-2 story rather than with a generic
+instrument or epoch effect — ERCOT is the energy-only ISO where D-1 has no capacity
+revenue to offset the going-forward-cost screen, where FFR-3C attributes the collapse
+against a control, and where this session's T1-F reserve margin runs to −1.5 % while PJM's
+FC-2 is only CAVEAT. A pure epoch or scorer effect would be expected to move both.
+
+**It remains NOT ATTRIBUTED.** Two legs is not a control, the ISOs differ in market design
+as well as in exposure to D-1, and the ERCOT-only `correlated_forced_outage` curve is a
+further ERCOT/PJM asymmetry (§3.2b) that this comparison does not eliminate. Recorded as
+the strongest available *circumstantial* evidence on the T1-X half, and as a named open
+question (§9).
+
 ---
 
 ## 5. FC-6 driver response
