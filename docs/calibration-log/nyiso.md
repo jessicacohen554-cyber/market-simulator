@@ -4721,4 +4721,40 @@ lane and no cell outside NYISO is stamped. Rule 28 duty (b): the
 `measured_chp_heat_rates` NYISO cell keeps its `K` (a scope refinement inside
 the K mechanism, rule 19) and gains its citation this session.
 
+**(6) OUTCOME — KEEPER PROMOTED, and the arms were re-solved on the RIGHT base
+first.** After the above was written the keeper was found to have advanced
+`2026-08-03-nyiso-118-seny-span` → **`2026-08-03-nyiso-119-seny-increment`**
+*during* this session, after the arms were launched. A nyiso-118-based treatment
+would have **silently disarmed `nyiso_seny_rcpf_increment_step`**, the mechanism
+nyiso-119 armed and the owner promoted a day earlier — so the shard edit was
+made, checked, and **reverted**, and both arms were re-solved on the nyiso-119
+recipe: `2026-08-04-nyiso-120-c119-control` /
+**`2026-08-04-nyiso-120-c119-scope`**. The promoted run carries
+`nyiso_seny_rcpf_increment_step = True` (verified explicitly), and its control
+reproduces the nyiso-119 keeper's C3a exactly (34.77 / 37.99 / 60.22).
+
+**The result replicates on the correct base**, which is what shows the finding is
+a property of the *input* rather than the recipe: six construction gates PASS,
+verdict LIVE, max zonal |Δλ| **0.1278 / 0.1379 / 0.3887**, `CT_CHP`
+**+0.3103 / +0.1927 / +0.4213 TWh**, C1 unchanged in both arms, P2 fires on C3a,
+**2025 −9.5 % → −10.1 %** and **2023 +7.6 % → +7.2 %**.
+
+**Owner ruled PROMOTE on the D-5(b) escalation.** NYISO keeper →
+**`2026-08-04-nyiso-120-c119-scope`**, determination **NOT-YET**, written
+explicitly into `calibration-complete.json` rather than softened;
+`build_status --iso NYISO` rebuilt (`[NYISO:NOT-YET]`); `audit_keepers --iso
+NYISO` **PASSES, 0 failures / 0 warnings**; matrix header re-stamped and the
+NYISO column re-checked (rule 28). **The ledgered-caveat budget is UNSPENT at
+1 of 3** — C3c remains the sole ledger entry and the C3a FAIL is a *criterion
+failure*, deliberately **not** ledgered.
+
+**The named open residual for nyiso-121** is NYISO's **2025 under-pricing**,
+which this correction did not create: the C3a-2025 gap is **$6.68/MWh** and this
+input fix moves **$0.38** of it, so **~94 % is pre-existing** and is now the
+lane's target. A marker-hygiene note recorded in passing: `audit_keepers` M1b
+extracts the **first** determination token appearing anywhere in the marker's
+prose, so a marker must never spell out a second run's determination — doing so
+makes it assert a status never scored against the run it names, exactly the
+silent transfer D-5(b) exists to prevent.
+
 * Next number: **nyiso-121**.
