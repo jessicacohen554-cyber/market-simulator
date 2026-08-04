@@ -5091,3 +5091,95 @@ offer-LEVEL re-derive, no envelope/cap family, no topology, no
 `ordc_only_scarcity`.
 
 Next shorthand: ercot-163.
+
+## 2026-08-04 — ERCOT-163 (Phase 0, no LP, no solve, keeper UNCHANGED at ercot158): the "~8 GW cheap CC offline block" **DOES NOT EXIST** — ERCOT's CC fleet was **96.4 % committed and 98.0 % loaded** at the gap hours with **20 MW** of offline-startable capability; the block was a 60-Day-DAM **day-ahead status** artifact whose **99.2 % was telemetered ONLINE and generating** in real time. **No commitment-state mechanism is chartered** (charter condition not met)
+
+**Session ercot-163** (branch `claude/ercot-163-cc-commitment-owq92i`).
+Full record: `results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`.
+Probes (both no-LP, both on committed data):
+`scripts/probes/ercot163_cc_commitment_state_census.py` →
+`results/calibration/_ercot163_cc_commitment.json` (the RT capability-state
+census of the CC and CT fleets over the delivery-2023 SCED corpus, 315 shards,
+at four hour sets, against the keeper's own reconstructed CC availability /
+dispatch / P1 bid ladder via `reconstruct_bundle_fleet`) and
+`scripts/probes/ercot163_dam_config_collapse.py` →
+`_ercot163_dam_config_collapse.json` (the ERCOT-151 DAM block re-cut at train
+grain and **joined train-by-train to the RT telemetry at the same hour keys**).
+Hour set: the committed top-100 2023 gap hours (`_ercot161_wall_phase0.json`,
+98.3 % of the load-weighted residual, model $441.27 vs actual $1,487.84,
+λ $1,470.16).
+
+**THE MEASUREMENT.** At those hours the whole ERCOT CC fleet (`CCGT90`/`CCLE90`,
+train grain, 70 trains, 35.26 GW registered p98 HSL) split:
+**ONLINE 34.00 GW registered / 30.07 GW telemetered HSL / 29.46 GW Base Point**,
+**OFFLINE_STARTABLE (OFFQS/OFFNS) 0.020 GW**, OFFLINE_OTHER 0.034, OUT 0.791,
+ONTEST 0.355, ABSENT 0.005. Committed share **96.4 %**, online loading
+**98.0 %**, online spare (HASL − Base Point) **0.321 GW** of which only 0.028 GW
+offered ≥ $500. The offline-startable increment's above-LSL SCED2 offer is
+**2.6 MW at $77.5–85.5 — zero MW above $100**. The instrument is not blind: the
+same census on **CT** at the same hours returns **0.891 GW** offline-startable
+registered / 67 MW above-LSL offer at **p50 $891.5** — the ERCOT-88 pool, real,
+scarcity-priced, and CT-only (ERCOT-152's "CC OFFQS/OFFNS ≈ 0 MW" on four
+sample-day extracts is CONFIRMED on the full-year corpus and can be closed).
+
+**WHERE THE ~8 GW CAME FROM — the ERCOT-151 §0.2/§0.4 correction, two defects.**
+(a) **Configuration inflation, 3.5×**: a CC train submits one 60-Day-DAM row per
+configuration (**4.3 configs/train**) and only one can be the operating point,
+so every other configuration of a *running* train carries
+`Resource Status = OFF` at its own full HSL — name-grain OFF CC reads
+**48.9 GW**, train-collapsed **14.1 GW**. ERCOT-151's `_site()` collapse
+mitigated but did not fix it (it collapses across *trains at a site* and takes
+the **max** HSL among ON rows rather than the sum) — direct quantified evidence
+for **open owner ruling #9**. (b) **Basis, the fatal one**: of the 13.42 GW that
+survives as wholly-offline in the day-ahead disclosure, **98.6 % (12.95 GW) was
+telemetered ONLINE in real time and 12.47 GW was generating** at those very
+hours (2,151 `DAM_OFF × RT_ONLINE` train-hours against 42
+`DAM_OFF × RT_OFFLINE_STARTABLE`); genuinely idle **0.087 GW**. At the ercot-163
+gap hours: 14.03 GW → **99.2 % RT-online, 13.53 GW dispatched, 0.035 GW idle**.
+A DAM `Resource Status` is a *day-ahead* commitment; ERCOT's merchant CC fleet
+self-commits into real time, so it says nothing about RT availability at an RT
+tail hour.
+
+**VERDICT — charter condition NOT met, no mechanism chartered.** The prompt
+chartered a mechanism only *"IF a real commitment-state gap is measured"*. There
+is none on the CC fleet. A gate removing "cheap CC offline capacity reality had
+committed/unavailable" would, on this measurement, remove capacity ERCOT had
+**online and running** — a haircut with no measured referent (rules 1
+`[R-STRUCT]`, 13 `[R-MEASURED]`).
+
+**WHAT IS LEFT — named, NOT chartered.** The model's CC *dispatch* matches
+reality to **+0.30 GW** (30.04 vs 29.73 GW). What differs is *headroom*: the
+model leaves **3.07 GW** of CC undispatched (0.72 GW bid ≤ $200, 2.04 GW
+≤ $500, utilisation 90.6 %) where the market had **0.35 GW** of non-dispatched
+CC capability in total — ~9× the depth, but 2.7 GW, not 8–10. Its provenance is
+*capability*, not commitment: the model's CC classes carry 38.83 GW nameplate
+against a **35.26 GW** SCED CC universe, at a comparable derate. Candidate:
+cogeneration behind private-use networks — physically real, in CAMPD/EIA-923,
+but never offering capability into SCED and therefore not merit-order depth.
+**That is a hypothesis, not a result** (the accepted DAM-site → EIA-plant
+crosswalk covers 12 CC plants / 6.6 GW), so the successor's first step is
+**identification, not a mechanism**: extend the reviewed SCED-train ↔ model-unit
+crosswalk over the CC fleet. Only if that lands does a mechanism question arise,
+and it would be a rule-14 `[R-ACCURATE]` fleet-scope correction to the existing
+availability channel (`ercot_thermal_dam_availability_*`, which already owns how
+much CC capability the model credits, rule 19) — **not** a new commitment gate
+and **not** an aggregate cap (`energy_online_capability_cap` `R`, ERCOT-159).
+Explicitly refused as successors: any per-hour cap of CC availability at its
+RT-telemetered HSL (the rule-13-forbidden form ERCOT-159 Phase 0 already named)
+and any CC re-pricing (ERCOT-152 no-op, upheld ERCOT-158).
+
+**Governance.** No mechanism tested ⇒ **no matrix cell verdict minted** (rule
+28(b)); the §5.1 queue and the two ERCOT cell notes that carried the refuted
+premise (`ercot_faststart_pool_offer`, `ercot_storage_rt_offer_surface`) are
+corrected in-session, and
+`docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md` carries a
+correction banner over its §0.2/§0.4. No run produced ⇒ **no dashboard
+registration** (rule 15; the ERCOT-147/152/161 no-LP pattern), keeper
+UNCHANGED. Delivery-2023 only (rule 22, training span). ERCOT-scoped (rule 25).
+No `ScenarioConfig` field added (rule 28(c) not engaged). Scope fence honoured:
+no storage offer-price lane, no `energy_online_capability_cap`, no
+ercot41/43/106/108 envelope family, no `ercot_shoulder_online_span`, no
+West/Panhandle topology split, no `ercot_ordc_only_scarcity`, no offer-LEVEL
+re-derive; queue items 7 and 8 left DATA-INTAKE-BLOCKED.
+
+Next shorthand: ercot-164.
