@@ -33,6 +33,35 @@
  *   likewise a snapshot — its own freshness is now measurable from the
  *   provenance stamps (scripts/check_forecast_staleness.py, audit FR-21).
  *   (Header hygiene, FFR-3B 2026-08-02. No cell verdict touched.)
+ * MISO column re-stamped 2026-08-04 on the miso-126 keeper promotion
+ *   (keeper -> 2026-08-04-miso-126-steampart-b). ONE cell moves:
+ *   cc_steam_part_capacity MISO O -> K, a NEW row minted in the same PR as its
+ *   ScenarioConfig field (rule 28(c)). It restores 250 MW of PUBLISHED, OPERABLE
+ *   MISO capacity that never reached the LP at all — EIA-860 55088 Dearborn ST1,
+ *   a combined-cycle STEAM part whose Energy Source 1 (BFG) names the block's
+ *   DUCT fuel rather than its primary energy input, so the fuel-type map returned
+ *   None and the row was skipped. The rate needed no change: eGRID's PLNGENAN
+ *   implies an impossible 116.6 % CF on the 515 MW held and 78.5 % on the
+ *   repaired 765 MW, so the measured CHP rate was ALREADY a block rate charged to
+ *   two thirds of the block. Determination NOT-YET unchanged, all nine criterion
+ *   statuses and the ledgered caveats {C3a, C3c} identical, zero
+ *   legitimacy-diagnostic changes, C7 COAL_PRB still the sole FAIL — while C1
+ *   CC_CHP error collapses -1.55 -> -0.53 and -1.61 -> -0.46 TWh and summed C1
+ *   |error| improves 37.20 -> 35.46 TWh. Promoted on rules 1/14, never on a
+ *   score. TWO THINGS SUCCESSORS MUST READ. (1) A WIRING GAP: the first arm-B
+ *   solve was EXACTLY inert because the flag was not forwarded at the BACKCAST's
+ *   own copy of the bin synthesis (scripts/run_calibration.py) — the nyiso-89
+ *   regression class. The durable fix shipped with it: the wiring guard that
+ *   pinned only measured_ct_heat_rates is generalised to EVERY boolean
+ *   ScenarioConfig-backed keyword of load_fleet_from_csv, verified to FAIL
+ *   against the pre-fix source. ANY future fleet-sourcing flag must prove firing
+ *   with a post-arm class-energy delta, never a fleet-loader check alone.
+ *   (2) THE LEVER IS 250.0 MW, NOT the 290.4 MW miso-125 named: 50973 Motiva's
+ *   40.4 MW is excluded by a pre-registered falsifier (present-fleet implied CF
+ *   already 80.1 %, so the denominator evidence is absent — insufficient, not
+ *   contrary) and independently by the predicate's vintage clause (CA rows of
+ *   1957/1962/1978 against NG CT siblings of 1983/2011 — a refinery steam header,
+ *   not a CC block). 1004 Edwardsport is NOT a defect and is untouched.
  * NYISO column re-checked
  * 2026-07-28 on the nyiso-92 keeper promotion (hydro envelope/floor cells -> K)
  *   and again 2026-07-28 by nyiso-93 (unit_outage_short_windows U -> I, ex-ante)
@@ -1213,7 +1242,7 @@ window.MECH_MATRIX = {
     ERCOT: "2026-08-03-ercot158-pool-arm",
     CAISO: "2026-08-04-caiso164-zonal-loss-surface",
     PJM: "2026-08-04-pjm-152-collapse",
-    MISO: "2026-08-04-miso-124-dualfuel-rearm",
+    MISO: "2026-08-04-miso-126-steampart-b",
     NYISO: "2026-08-04-nyiso-120-c119-scope",
     NEISO: "2026-08-03-neiso-caiso156-meter-screen"
   },
@@ -1248,7 +1277,7 @@ window.MECH_MATRIX = {
     /* ============ structure ============ */
     { id: "cc_steam_part_capacity", cat: "structure", name: "Combined-cycle STEAM-part capacity repair (dropped CA prime movers)",
       def: "scenarios.py cc_steam_part_capacity; predicate fleet/eia860.py::cc_steam_part_generators; ISO gate plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS", mode: "BF",
-      cells: ".U.O.U",
+      cells: ".U.K.U",
       note: "EIA-860's Energy Source 1 on a CA (combined-cycle steam part) row names the block's SUPPLEMENTARY/DUCT fuel, not its primary energy input, which arrives as its own combustion turbines' exhaust. So a duct-fired steam part reports BFG/OG/DFO, fleet.eia860._map_fuel_type returns None, the row is SKIPPED and its capacity never reaches the LP at all. Predicate (miso-125 ke_r R4 verbatim, machine-grounded, zero fitted parameters): prime mover CA, own Energy Source 1 != NG, non-empty Unit Code, >=1 sibling at the same plant sharing that Unit Code with prime mover CT and Energy Source 1 NG, and the steam part NOT OLDER than the oldest such sibling (an HRSG is commissioned with or after the turbines whose exhaust drives it). Known conservative limitation: a REPOWERED block (old ST + new CTs) is also excluded; that direction is safe because the model drops 100 % of these rows today, so the clause can only restore fewer, never more. Only restores rows the fuel map DROPS — never reclassifies a represented one (MISO 1004 Edwardsport matches the predicate but its technology string carries 'coal', so it already sits in the fleet as COAL 555.0 MW and is untouched; miso-125 §6 called it out as a 555 MW false positive under a sibling-relative presence test). Rule 13 [R-MEASURED] admissible: existence, prime mover, unit code, vintage and capacity are published EIA-860 INPUTS that regenerate for any forward year. Rule 25 [R-ISO-SCOPE]: ISO-gated via CC_STEAM_PART_REPAIR_ISOS — an ISO enters only after verifying, on its own market's data, that the capacity is measurably ABSENT (fleet total == EIA-860 plant total EXCLUDING the CA rows) and that the plant's joined heat rate is already a BLOCK rate. National census is exactly four rows: MISO 55088 + 1004, CAISO 54912, NEISO 6081 — so ERCOT/PJM/NYISO are n/a on measurement, not untested.",
       ev: { M: "miso-126 (results/calibration/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md, FINDING-miso126-cc-steam-part-capacity-2026-08-04.md; probe scripts/probes/_miso126_cc_steam_part_screen.py). Successor miso-125 §6 NAMED but deliberately did not charter. 55088 Dearborn ST1 250.0 MW BFG ADMITTED: absent from the fleet (515.0 MW held vs 765.0 MW EIA-860), and eGRID PLNGENAN 5,259,825 net MWh implies an IMPOSSIBLE 116.6 % capacity factor on the 515 MW the LP holds versus 78.5 % on the repaired 765 MW — proof the incumbent rate's denominator ALREADY counts the missing machine, so the rate is already a block rate and does not change. 50973 Motiva GN31/32/33 40.4 MW OG EXCLUDED by the pre-registered P2 falsifier (present-fleet implied CF is already 80.1 %, so the denominator evidence is absent — not contrary, insufficient); the vintage clause excludes it independently (CA rows of 1957/1962/1978 against NG CT siblings of 1983/2011 — a refinery steam header, not a CC block). So the lever is 250.0 MW, not the 290.4 MW miso-125 named. miso-125's own §4 let-down-turbine doubt is CLOSED by measurement, not assumption: ST1's implied generation share of its block is 0.4173 against its EIA-860 NAMEPLATE design share of 0.4307, a gap of 0.0134 against a pre-declared 0.10 band.",
             C: "54912 Martinez Refining STG1 20.0 MW OG — MISSING against CAISO's fleet (80.0 MW held vs 100.0 MW EIA-860), vintage-coherent (STG1 1995 = GTG1 1995). REPORTED AND HANDED OFF UNSTAMPED by miso-126 (rule 25): CAISO's lane runs its own P1-P3 and adds CAISO to CC_STEAM_PART_REPAIR_ISOS if it clears.",
