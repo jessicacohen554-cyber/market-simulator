@@ -44,6 +44,10 @@ Every number below is a fleet or accreditation quantity. §8 states this formall
 fixed:** the accreditation-rate and class-boundary residual (§6), which is the whole of
 what remains and whose largest single term — battery — has **no mechanism at all**.
 
+**Measured outcome (§4.4):** FC-2 row 4 goes **65.48 % → 52.51 %, still FAIL**; the
+backstop falls 14,043.6 → 8,186.3 MW. The solve reproduces this session's independent
+solve-free arithmetic to the megawatt.
+
 ---
 
 ## 1. State re-verified at this head
@@ -241,13 +245,44 @@ accredited firm  50,729 -> 56,269.6
 reserve position 0.8852 -> 0.9819     (11.5 % short -> 1.8 % short)
 ```
 
-**Row 4's position after the fleet is right.** The reserve position rises but stays
-**below 1.0**, so the adequacy requirement is still unmet in the base year and the
-reserve-margin backstop still has a deficit to size against. The FC-2 row-4 numerator is
-reduced, **not collapsed** — the charter's premise that it collapses rested on the
-1.0896 figure, which §0 finding 2 corrects. The exact landing cell is not claimed here:
-it needs the five-year forecast solve, and §7 D-8 records that as the owed measurement
-rather than estimating it.
+### 4.4 FC-2 row 4, MEASURED — 65.48 % → 52.51 %, still FAIL
+
+`scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030
+--golden-posture`, treated arm cold, 19.1 min wall, peak RSS 4.63 GB, 5/5 years solved,
+resolved key `35b0a89be0c07483`. Sidecars committed at
+`results/ffr4d/caiso-treated/` (`full_horizon_summary.json`, `run_config.json`,
+`evolution_<year>.json`); the ~12 MB of per-year parquet is deliberately not committed,
+per the FFR-3P precedent.
+
+| | control (FFR-3H arm A / FFR-3P control) | **treated** |
+|---|--:|--:|
+| 2026 accredited firm MW | 50,729 | **56,270** |
+| reserve position | 0.8852 | **0.9819** |
+| Σ `reserve_backstop` thermal MW | 14,043.6 | **8,186.3** |
+| Σ additions MW (thermal + renew + storage) | 21,448.0 | **15,590.7** |
+| **FC-2 row 4** | **65.48 % FAIL** | **52.51 % FAIL** |
+
+**The LP reproduces §4.3's solve-free arithmetic to the megawatt**: projected 56,269.6 MW
+of accredited firm capacity, solved 56,270.
+
+**The substitution is clean, which is what makes the A/B legible.** Renewable builds are
+**identical** across the arms at 5,404.4 MW (4,702.2 in 2029 + 702.2 in 2030) — the same
+figure FFR-3P measured — and storage builds are 0.0 in both. So the entire −5,857.3 MW
+move is backstop CTs the model no longer needs, and it appears in the numerator and the
+denominator alike.
+
+**Row 4 does not clear, and this is the charter's own branch firing.** 52.51 % is far
+above the 30 % CAVEAT line, let alone the 10 % PASS line. The reserve position ends
+**below 1.0** in the base year, so the requirement is still unmet and the backstop still
+has a deficit to size against. The charter's premise that correcting the fleet
+*"collapses row 4's numerator"* rested on the 1.0896 figure §0 finding 2 corrects: the
+numerator is **cut by 41.7 %, not collapsed**, because 52.7 % of the shortfall was never
+fleet.
+
+**One invariant flips in the model's favour.** The treated arm scores **2 FAIL** (I7
+reliability floor, I12 reserve-margin band) against FFR-3P's control **3 FAIL** — `I3`
+(unserved/dump) is PASS here. I7's own text tells the story plainly: *"2026: accredited
+firm 56270 < requirement 57306"*. See §7 D-9 for the one caveat on the comparison.
 
 ---
 
@@ -404,7 +439,7 @@ reconciled hybrid class is invented to close a residual. FFR-3P's B-6 is thereby
 | **D-5** | **The other five ISOs still take a forecast scalar for their backcast storage fleet.** Immaterial for PJM/MISO/NYISO/NEISO (their rows were derived from EIA-860 and sit within a few MW), material only for ERCOT. | Enrolling an ISO in `STORAGE_MEASURED_BASE_FLEET_ISOS` moves that ISO's keeper; each needs its own lane. |
 | **D-6** | **`check_cache_key_registration.py` check 1 was RED on `main`** before this branch (`ercot_storage_rt_offer_surface` registered with no declared default). Backfilled here as a zero-behaviour bookkeeping entry so this PR's CI is readable. | Pre-existing; fixed only because it blocks a guard, not as scope. |
 | **D-7** | Table 1.1's cells are carried from **FFR-3P's transcription**; the source PDF is not committed. The PS split in §2 is my own measurement from the committed workbook, but the class totals are not independently re-extracted. | An intake, with its own authorization. Flagged so nobody reads §3 as fully first-party. |
-| **D-8** | **The five-year CAISO forecast solve that would place FC-2 row 4 exactly was NOT completed in this session.** §4.3's +5,540.3 MW and the 0.9819 reserve position are exact arithmetic over the shipped accreditation chain, but the row-4 *cell* (PASS / CAVEAT / FAIL) additionally depends on how the backstop and the economic entry screen split the reduced deficit across 2026-2030. | Container time. The direction is unambiguous and is stated (§4.3): the numerator falls, the position stays below 1.0, so the need does not vanish. **The cell itself is not claimed.** `scripts/run_full_horizon.py --iso CAISO --start-year 2026 --end-year 2030 --golden-posture` against a stashed-constants control is the exact measurement owed. |
+| **D-8** | **The same-HEAD CONTROL arm was still solving when this document was written.** §4.4's control column is FFR-3H arm A / FFR-3P's control, solved ~50 commits upstream at key `e5822277b72184f6`; the treated arm is at `35b0a89be0c07483`. | The comparison is nonetheless tight: renewable builds (5,404.4 MW) and storage builds (0.0) reproduce FFR-3P's control EXACTLY, and the treated accredited firm MW matches this session's independent solve-free arithmetic to 0.4 MW. A same-HEAD control was launched to close it; if it disagrees, **the control column is what moves, not the treated measurements.** |
 
 ---
 
