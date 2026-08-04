@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-03-nyiso-115-control-zerodelta",
+  "run_id": "2026-08-04-nyiso-120-c119-control",
   "iso": "NYISO",
-  "label": "nyiso 115 control zerodelta",
+  "label": "nyiso 120 c119 control",
   "target_years": [
     2023,
     2024,
