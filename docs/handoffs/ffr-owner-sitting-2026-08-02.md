@@ -1248,3 +1248,93 @@ inversion is one of the two things the re-cut is meant to make legible.
 
 Still unowned after this signing: **D-2′'s probe row** (signed HOLD at Addendum C, never
 probed) and the **pre-existing test failures on main**.
+
+---
+
+## Addendum J — **CORRECTION: the H.4 convergence was wrong on the T1-H side. D-9(i) is a NO-OP and D-9 is RE-OPENED** (workstream manager, 2026-08-04, HEAD `b45fc4e2`)
+
+### J.1 — The manager's error, stated plainly
+
+Addendum H.4 asserted that *"D-9(i) and G.5(a) ARE THE SAME ACTION"* and recommended taking
+them together. **That was wrong on the T1-H half, and the owner signed D-9 on that
+recommendation.** FFR-3Q Task 2 verified the actual T1-H window against all **57 registered
+plain-hindcast sidecars**: **none starts anywhere but 2021, and none carries a `solved_years`
+other than `[2021, 2023, 2024, 2025]`.** **T1-H has ALWAYS been at the five-year 2021–2025 /
+vintage-2020 / four-solve-year posture that G.5(a) moves the T1-FF gate TO.**
+
+So there is no shorter T1-H window to lengthen, no additions band becomes newly visible, and
+**neither** "the model got better" **nor** "the metric can now see it" applies — because
+nothing changed. The convergence recorded in H.4 **holds on the exit side only**: G.5(a) is
+real and unaffected, D-9(i) is a no-op. The error was inferring the T1-H window's length from
+the censoring symptom instead of reading the sidecars.
+
+### J.2 — G.5(a) is unaffected and its blocking precondition is DISCHARGED
+
+The exit-side half of the signature stands entirely. And FFR-3Q's **Task 0 came back
+VERIFIED**, which was the one thing I.2 flagged as unchecked: the enumerated
+capacity-hindcast carve-out in `scripts/lib/holdout_policy.py` **does** cover a base-2021
+T1-FF window — `--forward-from-base` routes through the same `_validate_window`, whose
+non-crossover branch applies the plain window rules (2021 floor, end ≤ 2025, `{2021}` seed,
+2022 bridge) and re-checks fail-closed against `hindcast_solve_year_violations`. **Verified by
+execution, not by reading prose. No carve-out was added or widened, no marker spent, the
+freeze untouched.** That is the correct discharge of I.2's escalation clause, and the gate
+re-cut proceeds.
+
+### J.3 — The censoring SURVIVES, and no window length can remove it
+
+This is the part that makes D-9 a live decision again rather than a closed one. FFR-3Q
+established that the T1-H window cannot be extended in either direction:
+
+* **Forward is closed by rule 22.** 2026 is locked-test tier, `final` is **EMPTY**, the
+  holdout spend freeze is **ACTIVE**, and 2027 has no actuals to score against.
+* **Backward is closed by data and by tier.** The 2021 demand-profile floor bounds it, and
+  2020 sits in the validation tier.
+
+So the D-9 censoring — half the solved entry-decision years unable to score because
+`ENTRY_COD_LAG_YEARS = 2` pushes their commercial operation past the window — **is structural
+and permanent under the current scoring convention.** Lengthening cannot fix it because there
+is nowhere left to lengthen into.
+
+**Only D-9(ii) — COD-shifted scoring, attributing an addition to its DECISION year rather
+than its COD year — can recover the censored half. It is UNSIGNED.** FFR-3Q escalated rather
+than implementing it, which is correct.
+
+### J.4 — D-9, re-put to the owner
+
+The option signed at Addendum I does nothing. The choice is now between the only two live
+options, and it should be made knowing the first is permanent:
+
+* **(ii) COD-shifted scoring.** Recovers the censored half. Cost: it changes what the
+  additions metric means, and makes every historical additions verdict non-comparable to new
+  ones — the FF-2D regression baseline stops being usable for additions specifically.
+  **Recommended**, because the alternative is accepting that half of every T1-H entry
+  measurement is permanently unscoreable, and an entry mechanism the program cannot measure
+  cannot be validated at all.
+* **(iii) ACCEPT THE CENSORING as a permanent, disclosed limitation.** No code change. Cost:
+  every T1-H additions verdict — including MISO's FC-3, which fails on the censored half
+  alone — carries a standing caveat forever, and D-2's entry-side skill is never measurable
+  on this tier. If chosen, it belongs on the peer-review §4 standing disclosure list, not
+  buried in a lane doc.
+
+**Sign-off D-9 (re-put):** ☐ (ii) COD-shifted scoring ☐ (iii) accept as permanent disclosed
+limitation — owner: ________ date: ____
+
+### J.5 — Also landed, and worth the record
+
+* **FFR-3Q additionally confirmed FC-7's yaml/json defect is STILL UNFIXED at this HEAD** —
+  the H.5 item 3 lane (FFR-3K) has not run. It remains true that no T1-H or T1-X FC-7 verdict
+  carries information about leg quality.
+* **FFR-3P measured the CAISO NQC arm and RETRACTED TWO OF ITS OWN CLAIMS.** The
+  "+1,735.8 MW thermal under-credit" and "+1,681 MW hydro under-credit" are both **wrong**:
+  CAISO's published fleet thermal credit is 0.9537 against the model's 0.9457, so the model is
+  **0.8 % ABOVE**, and a Pmax basis would over-credit by ~2 GW; the published fleet-wide hydro
+  rate is 0.6936 against the model's 0.7041, already **1.1 pp generous**. Both errors came
+  from inferring a partition where the ISO publishes the whole class's realized ratio. Neither
+  claim had reached main. **The rule-14 "if it gets worse, keep it and open the root cause"
+  branch never fired** — arming the identified VRE accreditation moved FC-2 row 4 from 65.48 %
+  to 63.23 % (still FAIL) with zero invariant flips and retirements, renewable builds, storage
+  builds and CO2 identical to the digit. The non-obvious finding: **2027–2029 do not move by a
+  megawatt** because the backstop is RATE-limited there, not need-limited, so the entire
+  −1,312 MW lands in 2030.
+* **NYISO moved again** → `2026-08-04-nyiso-120-c119-scope`. That is the **seventh** NYISO
+  keeper in four days.
