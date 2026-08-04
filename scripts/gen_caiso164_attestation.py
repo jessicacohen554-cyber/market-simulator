@@ -54,10 +54,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import fields as dc_fields
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from market_sim.config.scenarios import ScenarioConfig
 
 REPO = Path(__file__).resolve().parents[1]
 INCUMBENT = REPO / "results/calibration/caiso163_asym_path_ratings"
@@ -203,13 +206,75 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        if INTENDED_DELTA not in drift["value_diffs"]:
-            print(
-                f"FATAL: {INTENDED_DELTA} is not a value diff vs the {label} — "
-                "the arm did not actually change the mechanism.",
-                file=sys.stderr,
-            )
-            return 1
+
+    # Against the SAME-HEAD CONTROL the intended delta must be a genuine VALUE
+    # diff — same schema both sides, so anything else means the arm did not
+    # actually change the mechanism.
+    if INTENDED_DELTA not in drift_ctl["value_diffs"]:
+        print(
+            f"FATAL: {INTENDED_DELTA} is not a value diff vs the same-HEAD "
+            "control — the arm did not actually change the mechanism.",
+            file=sys.stderr,
+        )
+        return 1
+    if drift_ctl["arm_only"] or drift_ctl["other_only"]:
+        print(
+            "FATAL: schema drift against the same-HEAD control "
+            f"(arm_only={drift_ctl['arm_only']}, "
+            f"other_only={drift_ctl['other_only']}) — the two arms must share "
+            "one schema or the single-field premise is not measurable.",
+            file=sys.stderr,
+        )
+        return 1
+
+    # Against the INCUMBENT — an OLDER head — the intended delta legitimately
+    # appears as ``arm_only``: the field did not exist when that keeper solved.
+    # So does every ScenarioConfig field other sessions merged in between. That
+    # is a real hole (an inherited field could carry a non-default value and
+    # silently change the solve), so it is CLOSED rather than waived: every
+    # inherited new field must hold its ScenarioConfig DEFAULT in the arm, and
+    # must be identical in the control.
+    if (
+        INTENDED_DELTA not in drift_inc["value_diffs"]
+        and INTENDED_DELTA not in drift_inc["arm_only"]
+    ):
+        print(
+            f"FATAL: {INTENDED_DELTA} is neither a value diff nor a new field "
+            "vs the incumbent — the arm did not actually change the mechanism.",
+            file=sys.stderr,
+        )
+        return 1
+    if drift_inc["other_only"]:
+        print(
+            "FATAL: the incumbent carries ScenarioConfig fields the arm does "
+            f"not ({drift_inc['other_only']}) — a field was REMOVED under the "
+            "arm, which is not a single-field delta.",
+            file=sys.stderr,
+        )
+        return 1
+    defaults = {f.name: f.default for f in dc_fields(ScenarioConfig)}
+    inherited_nondefault = {}
+    for k in drift_inc["arm_only"]:
+        if k == INTENDED_DELTA:
+            continue
+        if k not in defaults:
+            inherited_nondefault[k] = "not a ScenarioConfig field"
+        elif arm_cfg[k] != defaults[k]:
+            inherited_nondefault[k] = {"default": defaults[k], "arm": arm_cfg[k]}
+    if inherited_nondefault:
+        print(
+            "FATAL: ScenarioConfig fields inherited from intervening merges are "
+            f"NOT at their defaults in the arm: {inherited_nondefault}. An "
+            "inherited non-default is an undeclared config change, not a "
+            "schema addition.",
+            file=sys.stderr,
+        )
+        return 1
+    inherited_schema = {
+        k: {"default": defaults.get(k), "arm": arm_cfg[k]}
+        for k in drift_inc["arm_only"]
+        if k != INTENDED_DELTA
+    }
 
     # The owner-default flips must be IDENTICAL between the control and the
     # treatment, else they confound the A/B and the single-delta premise is void.
@@ -441,6 +506,15 @@ def main() -> int:
         ),
         "config_drift_vs_incumbent": drift_inc,
         "config_drift_vs_control": drift_ctl,
+        "inherited_schema_fields_vs_incumbent": inherited_schema,
+        "inherited_schema_admissibility": (
+            "the incumbent solved at an older HEAD, so fields other sessions "
+            "merged since appear as arm_only; every one is ASSERTED to hold its "
+            "ScenarioConfig default in the arm, so none is an undeclared config "
+            "change. The single-field premise is measured against the SAME-HEAD "
+            "control, where the intended delta is the only value diff and there "
+            "is zero schema drift either way."
+        ),
         "owner_default_flips": OWNER_DEFAULT_FLIPS,
         "owner_default_flips_admissibility": (
             "forecast-gated capacity-evolution machinery, unreachable at "

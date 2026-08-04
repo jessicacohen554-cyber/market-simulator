@@ -1,8 +1,8 @@
 {
   "iso": "CAISO",
-  "keeper": "2026-08-03-caiso163-asym-path-ratings",
-  "keeper_bundle_fields": 671,
-  "n_scenario_fields": 674,
+  "keeper": "2026-08-04-caiso164-zonal-loss-surface",
+  "keeper_bundle_fields": 675,
+  "n_scenario_fields": 676,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 20,
   "family": [
@@ -29,7 +29,9 @@
         "K"
       ],
       "armed_in_bundles": [
-        "caiso163_asym_path_ratings"
+        "caiso163_asym_path_ratings",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -90,8 +92,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -106,6 +106,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -130,8 +132,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -146,6 +146,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -211,8 +213,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -227,6 +227,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -270,8 +272,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -286,6 +286,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -310,8 +312,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -326,6 +326,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -349,8 +351,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -365,6 +365,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -388,8 +390,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -404,6 +404,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -427,8 +429,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -443,6 +443,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -489,8 +491,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -504,7 +504,9 @@
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
-        "caiso163_control_A"
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -543,7 +545,9 @@
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
-        "caiso163_control_A"
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -577,8 +581,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -593,6 +595,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -617,8 +621,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -633,6 +635,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -686,8 +690,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -702,6 +704,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -864,8 +868,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -880,6 +882,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -910,8 +914,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -926,6 +928,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -977,8 +981,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -993,6 +995,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1017,8 +1021,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1033,6 +1035,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1087,8 +1091,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1103,6 +1105,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1133,7 +1137,9 @@
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
-        "caiso163_control_A"
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface"
       ]
     },
     {
@@ -1156,8 +1162,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1172,6 +1176,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1215,8 +1221,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1231,6 +1235,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1255,8 +1261,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1271,6 +1275,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1300,8 +1306,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1316,6 +1320,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1346,8 +1352,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1362,6 +1366,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1405,8 +1411,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1421,6 +1425,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1445,8 +1451,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1461,6 +1465,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -1577,8 +1583,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1593,6 +1597,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1641,8 +1647,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1657,6 +1661,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1686,8 +1692,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1702,6 +1706,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1731,8 +1737,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1747,6 +1751,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1776,8 +1782,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1792,6 +1796,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1821,8 +1827,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1837,6 +1841,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1866,8 +1872,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1882,6 +1886,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1925,8 +1931,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1941,6 +1945,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso_netrev_base"
       ]
     },
@@ -1964,8 +1970,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso147_control_A",
-        "caiso148_control_A",
         "caiso148_nucavail_B",
         "caiso153_control_A",
         "caiso153_reid_B",
@@ -1980,6 +1984,8 @@
         "caiso162_peryear_import_caps_v2",
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1998,21 +2004,23 @@
     {
       "field": "caiso_zonal_loss_surface",
       "default": false,
-      "keeper_value": "<absent>",
-      "keeper_arms_it": null,
+      "keeper_value": true,
+      "keeper_arms_it": true,
       "mentioned_in_matrix": true,
       "coverage": "own_row",
       "owning_rows": [
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
-          "cell": "O"
+          "cells": ".KKR..",
+          "cell": "K"
         }
       ],
       "cells": [
-        "O"
+        "K"
       ],
-      "armed_in_bundles": []
+      "armed_in_bundles": [
+        "caiso164_zonal_loss_surface"
+      ]
     }
   ],
   "family_matrix_gaps_absent": [],
@@ -3122,8 +3130,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
-          "cell": "O"
+          "cells": ".KKR..",
+          "cell": "K"
         },
         {
           "row": "rdt_tcdc",
@@ -3952,8 +3960,8 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
-          "cell": "O"
+          "cells": ".KKR..",
+          "cell": "K"
         },
         {
           "row": "rdt_tcdc",
