@@ -5182,4 +5182,31 @@ ercot41/43/106/108 envelope family, no `ercot_shoulder_online_span`, no
 West/Panhandle topology split, no `ercot_ordc_only_scarcity`, no offer-LEVEL
 re-derive; queue items 7 and 8 left DATA-INTAKE-BLOCKED.
 
+**ADDENDUM — OWNER DECISION 2026-08-04 (same session): NO PAID DAILY GAS
+DATA; §5.1 item 8 is CLOSED, REFUSED ON DATA.** The owner declined the
+NGI/Platts/Argus licence ERCOT-160 §(b) escalated and offered MONTHLY instead.
+Monthly is **insufficient AND is not an intake**: the free monthly Texas
+delivered-to-electric-power series (EIA N3045TX3,
+`data/raw/ercot_electric_power_gas_price.csv`, 2018→, fetcher
+`scripts/data/fetch_eia_delivered_gas.py`) is **already on disk and already
+armed** as the ERCOT zonal-basis anchor
+(`data/fuel/basis/ercot.py::ercot_electric_power_gas_basis` — the
+`level -0.50 -> measured EP +0.00 (corr +0.50)` line every keeper solve logs).
+ERCOT-147 §3's confound is DAILY by construction — the CT fleet's submitted TPO
+is daily-repriced (intra-day variance share 0.14, daily rel IQR 0.64) and the
+question is whether a given day's CT offer is below cost or merely below *Henry
+Hub* because Waha was cheap **that day**; Waha's 2023 monthly means are positive
+while individual days went negative, so a monthly level erases exactly the
+variation that would settle it. Item 8 therefore closes `G`-shaped with **no
+solve ever spent**. **DO NOT** re-open it, re-screen the free EIA/ERCOT paths
+(ERCOT-160 DO-NOT-REDO stands), or re-ask for a licence. **SOLE REOPEN
+CONDITION**, free and unscreened by ERCOT-160: CME/NYMEX publishes Waha and
+Houston-Ship-Channel **basis-swap daily settlements** publicly at no cost — a
+FORWARD settlement, not cash spot, so it needs its own rule-13 admissibility
+argument screened first (no LP) before item 8 could return. Item 7 is
+separately confirmed **LIVE and UNBLOCKED** (its station→area prerequisite
+landed at ERCOT-160 as NP4-160-SG in `data/raw/ercot-network-model/`); the stale
+"data-intake first" tag on it is retired in §5.1. Matrix §5.1 header and item 8
+block re-stamped; no cell verdict minted, no run, keeper UNCHANGED.
+
 Next shorthand: ercot-164.
