@@ -184,7 +184,9 @@ def _d1_rows(bundle: Path, klass: str) -> dict[str, dict]:
     diags = json.loads(path.read_text()).get("diagnostics", {})
     out: dict[str, dict] = {}
     for block, payload in diags.items():
-        if not isinstance(payload, dict) or "D-1" not in block:
+        # The machine artifact keys this block "D1" (the human report writes
+        # "D-1"); accept either so a rename cannot silently empty this table.
+        if not isinstance(payload, dict) or block.replace("-", "") != "D1":
             continue
         for row in payload.get("rows", []):
             if row.get("class") == klass:
