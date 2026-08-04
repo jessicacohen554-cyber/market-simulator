@@ -49,12 +49,18 @@ against an annualized fixed cost of **$84.8 k–99.0 k/MW-yr**. Solar's
 break-even mean entry price is **$41.9–48.9/MWh**; MISO's modelled price level
 is ~$30–40/MWh.
 
-Two things stack on that RA zero, and both are structural rather than tuned:
-the **thermal** branch of the same function takes its capacity payment
-**ungated** ($75.8 k–117.3 k/MW-yr for a new MISO gas unit — more than solar's
-whole fixed cost); and MISO's **own published solar accreditation is intaken on
-disk but not wired**, so even if the gate were armed solar would be credited at
-the generic 0.18 fallback rather than MISO's published seasonal credit (§4.6b).
+**But the RA zero turns out to be the smaller half of the story — see §3.1.**
+Measured, the capacity payment is zero for **every** technology in this leg,
+thermal included, because MISO clears 27.3 % long and its sloped VRR pays
+nothing above a ~1.02 reserve position. Arming `entry_vre_capacity_revenue`
+would change nothing here. That is faithful rather than broken — MISO's real
+PY2021-22 auction cleared at ≈$1,825/MW-yr — and it relocates the question:
+**MISO's actual 18.6 GW of solar was not built on capacity revenue either.** It
+was built on utility IRP procurement, state policy and corporate PPAs against
+the ITC, a channel this model represents nowhere. Separately, MISO's **own
+published solar accreditation is intaken on disk but not wired** (§4.6b), so
+the credit would be the generic 0.18 fallback even where the payment is
+non-zero.
 
 Two further findings sit alongside it, both independent of the margin:
 
@@ -136,29 +142,82 @@ design call for whoever owns the cache.
 
 ---
 
-## 3. The instrumented screen — RUN PENDING AT THIS COMMIT
+## 3. The instrumented screen — measured
 
-**Read this section's status before relying on it.** The diagnostics-on solve
-described in §2 had not returned when this document was merged: the container
-ships no `data/clean/`, and `scripts/regenerate_clean.py` runs far over its
-quoted 63–65 min here (the nine `emissions` years are ~27 M rows each), so the
-four sequential MISO solve-years were still queued behind it. **This section
-will carry the per-candidate, per-decision-year ledger when it lands; until
-then it carries nothing, and no number in it is claimed.**
+Solve `ca36ba26ebe1640f` (the diagnostics flag shifted the key off the
+registered leg's `4c09a710b0894c6c`, as §2 says it would). **Decision year 2022
+is complete; 2023–2025 are still solving and are added below as they land.**
 
-What the ledger is expected to show, stated in advance so it can falsify rather
-than confirm — `solar` present as a candidate row in every decision year
-(2022–2025) with `profitable: false` and `binding_cap: "unprofitable"`, and
-`wind` present with `profitable: true` and `binding_cap` alternating
-`per_tech_cap` / `per_tech_cap_zero`. **If solar's row instead reads
-`profitable: true` with a cap label, §0's headline is wrong and the finding is
-a cap finding after all.**
+**Every pre-registration in this section's earlier draft is confirmed.** Solar
+appears as a candidate row, is priced, and is rejected on economics:
 
-Nothing else in this document depends on it. The margin-vs-cap separation is
-carried independently by §5.1, whose cap reconstruction reproduces the
-registered leg's wind additions **to the megawatt** (4.000 GW) and therefore
-pins the cap side without the ledger; the solar residual is what that validated
-arithmetic cannot account for.
+### 2022 (the first decision year — bridge year, screening on 2021's zonal LP duals)
+
+| tech | profitable | margin $/MW-yr | energy | attribute | capacity | annual cost | cf used | build MW | `binding_cap` |
+|---|---|---|---|---|---|---|---|---|---|
+| **wind** | **Y** | **+32,172** | 94,623 | 0 | 0 | 62,451 | 0.3511 | **4,000** | `per_tech_cap` |
+| **solar** | **N** | **−26,446** | 67,759 | 0 | 0 | 94,204 | 0.2200 | **0** | **`unprofitable`** |
+| gas_cc | N | −107,686 | 39,413 | 0 | 0 | 147,100 | — | 0 | `unprofitable` |
+| gas_ct | N | −127,111 | **1,001** | 0 | 0 | 128,112 | — | 0 | `unprofitable` |
+| nuclear_smr | N | −559,596 | 259,143 | 0 | 0 | 818,739 | 0.90 | 0 | `unprofitable` |
+
+`entry_decided_mw_by_tech = {"wind": 4000.0}` — **wind is the only technology
+the economic screen builds in MISO, in any year of this window.**
+
+The solar row also confirms every input §4 derived independently, to the
+digit: `capex_base 1562.2 → capex_wright 1464.470 → capex_after_credit
+1025.129` at `itc_solar 0.30`, `crf 0.07014`, `cumulative_gw 2200`,
+`annual_cost 94,204.39`, `cf_expected 0.21996` with `cf_shape_aware: true`,
+`rps_shadow_price 0.0`, `attribute_price 0.0`, `per_tech_cap_gw 6.0`,
+`queue_budget_gw 10.0`. Implied solar capture price: **$35.17/MWh**.
+
+Three things the ledger adds that §4 did not have:
+
+1. **The capacity payment is zero for EVERY technology, thermal included —
+   see §3.1.** This corrects §4.6.
+2. **MISO's gas_cc additions do not come from the economic screen at all.**
+   The 1.146 GW the leg reports is three `source: "planned"` units at EIA plant
+   62192 in MISO-Illinois — the known-additions channel. The economic screen
+   prices gas_cc at **−$107,686/MW-yr** and builds none.
+3. **A new peaker earns $1,001/MW-yr of energy margin against a $128,112 CONE.**
+   `gas_ct`'s entire screened revenue is 0.8 % of its fixed cost. Its variable
+   cost is $41.39/MWh and the price signal almost never clears it — consistent
+   with `scarcity_price_overlay: False` in the resolved config, which leaves the
+   entry price signal with no ORDC scarcity tail at all. A peaker's margin *is*
+   the tail. That is a **third distinct failure mode** in the same screen —
+   price formation, not caps and not credits — and it is the likely origin of
+   the leg's gas_ct −100 % band. Not this lane's question; flagged, not pursued.
+
+### 3.1 CORRECTION to §4.6 — the capacity payment is zero for thermal too
+
+§4.6 said the thermal branch takes its capacity payment ungated while VRE is
+denied, and quoted $75,810–117,325/MW-yr for a new MISO gas unit. **The code
+asymmetry is real, but it is NOT operative in this leg, and the earlier framing
+over-claimed.** Measured: `capacity_revenue_per_mw_yr = 0.0` on the `gas_cc`
+and `gas_ct` rows as well as on solar's.
+
+The reason is in the 2021 ledger: **MISO's modelled reserve margin is 27.3 %**
+(`reserve_margin: 0.272935`, peak 114,226 MW) against a 13.75 % planning
+requirement — a reserve position around 1.12, and MISO's sloped VRR pays
+**zero at any position ≥ ~1.02**:
+
+| reserve position | 1.00 | 1.02 | 1.05 | 1.10 | 1.20 |
+|---|---|---|---|---|---|
+| firm price $/MW-yr | 91,060 | **0** | 0 | 0 | 0 |
+
+**Consequence for proposal 1 (§7): arming `entry_vre_capacity_revenue` would
+change nothing in this leg**, because the payment it unlocks is zero at MISO's
+modelled reserve position. That is a materially smaller lever than §4.6
+implied, and the correction matters more than the original claim.
+
+It is also, on the face of it, *faithful*: MISO's real PY2021-22 PRA cleared at
+$5/MW-day (≈$1,825/MW-yr) — near zero — so a model that prices MISO capacity at
+nothing in 2022 is reproducing the market, not missing it. Which sharpens the
+real question rather than closing it: **MISO's actual 18.6 GW of solar was not
+built on capacity revenue either.** It was built on utility IRP procurement,
+state policy and corporate PPAs against the ITC — a channel this model does not
+represent anywhere, and which no gate in `apply_economic_new_entry` stands in
+for. §7 is re-ranked accordingly.
 
 ---
 
@@ -559,16 +618,30 @@ does **not** make solar build — solar's own margin is negative on its own term
 Ranked by evidence strength, each with the measurement that supports it. **None
 of these was applied.**
 
-1. **Arm `entry_vre_capacity_revenue` for MISO** (and re-examine it wherever
-   `MARKET_DESIGN` has a capacity market). Evidence: the payment resolves
-   cleanly today ($79,800 × 0.18 = $14,364/MW-yr), it moves solar's break-even
-   from $41.9–48.9 to $34.8–41.8/MWh, and the thermal branch already takes the
-   same payment **ungated** at $75.8 k–117.3 k/MW-yr — the asymmetry is inside
-   one function. It is the single largest identified omission on solar's
-   revenue side and the code exists. This is the "D-2′ HELD pending its own
-   probe row" cell in the `entry_dampers` matrix row; this session is the
-   evidence for opening that probe.
-1b. **Wire MISO's published solar accreditation** into
+1. **Represent the procurement channel that actually built MISO's solar — the
+   open structural question, and the one this lane ends pointing at.** §3.1
+   shows the two revenue levers the screen *could* be given (capacity revenue,
+   REC value) are both correctly ≈zero in MISO over this window: the PRA cleared
+   at ≈$1,825/MW-yr and the 11 % RPS is slack. Yet 18.6 GW was built. It was
+   built on utility IRP/RFP procurement and corporate PPAs against the ITC — a
+   long-term contracting channel with no representation anywhere in
+   `apply_economic_new_entry`, which screens **merchant energy margin only**.
+   No parameter fixes that, and this lane does not propose one; naming it is
+   the finding. **Rule 1 [R-STRUCT] reading:** the residual is a missing
+   mechanism, not a mis-set value, and closing it by tuning a revenue adder
+   until solar clears would be exactly the fitted-adder failure the rule
+   forbids.
+1a. **Arm `entry_vre_capacity_revenue`** — still worth doing on structural
+   grounds (VRE entry should see the same RA seam thermal entry sees, and the
+   gate exists), but **measured inert for this leg**: the payment it unlocks is
+   $0 at MISO's 27.3 % reserve margin. It becomes load-bearing only in years or
+   ISOs where the position tightens toward 1.0, where the firm price is
+   $91,060/MW-yr. Do not expect it to move MISO's FC-3 solar band. This is the
+   "D-2′ HELD pending its own probe row" cell in the `entry_dampers` matrix row,
+   and this session is evidence for how to scope that probe — not for arming it
+   blind.
+1b. **Wire MISO's published solar accreditation** (subordinate to 1a — it only
+   bites where the payment is non-zero) into
    `RENEWABLE_ELCC_CURVES_BY_ISO["MISO"]` from the already-intaken
    `elcc/miso/miso.csv` rows (§4.6b), and settle the seasonal→annual selection
    rule while doing it. This is where the size of proposal 1 is actually
