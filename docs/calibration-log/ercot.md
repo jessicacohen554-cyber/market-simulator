@@ -5210,3 +5210,79 @@ landed at ERCOT-160 as NP4-160-SG in `data/raw/ercot-network-model/`); the stale
 block re-stamped; no cell verdict minted, no run, keeper UNCHANGED.
 
 Next shorthand: ercot-164.
+
+---
+
+## 2026-08-04 — ERCOT-164 (Phase 0/1, no LP, no solve, keeper UNCHANGED at ercot158): §5.1 item 7's WP-B nodal-layer identification EXECUTED — and it refutes the layer AS SPECIFIED. The station-to-station corridor tail is OVERNIGHT-shaped (2025 gap-shape corr −0.79); the missing mid-afternoon mode lives in PNHNDL interface binding (+0.96) and a stable afternoon nodal minority (+0.80). Redirected charter NAMED, pending owner authorization (ercot164-wpb-nodal)
+
+**Lane** ercot164-wpb-nodal · keeper **unchanged** (`2026-08-03-ercot158-pool-arm`,
+NOT-YET; open gates C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg) ·
+no year solved, no run registered, no `ScenarioConfig` field added, no matrix
+cell verdict minted. Full write-up:
+`results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md`;
+probe `scripts/probes/ercot164_wpb_nodal_identification.py` →
+`results/calibration/ercot164_wpb_nodal_identification.json`.
+
+**Vintage duty discharged (the ERCOT-160 README's binding caveat).** Match
+rates measured on THIS session's per-year binding station populations, never
+inherited: the 2026-07-29 NP4-160-SG spine resolves 91.3/90.3/90.1 % of
+distinct 2023/24/25 binding stations, 92.5/94.4/93.0 % of endpoint weight,
+99.8–100 % of binding rows at ≥1 endpoint. Phase-0 gate PASS — the
+identification is not match-rate-limited.
+
+**The §4 shape answer (the chartered question).** Sanity anchor reproduced
+from committed sidecars (model-vs-actual wind hod corr +0.645/+0.462/−0.077 vs
+ERCOT-121's 0.610/0.459/−0.079). The LZ_WEST 138/345 kV station-to-station
+tail — the rows `curate_gtc_limits._gtc_only` drops, the layer's chartered
+aggregate — is overnight-shaped in ALL THREE years (peak h21–23, afternoon
+share 0.146–0.159) and anti-correlated with the 2025 wind under-curtailment
+gap (hod-shape corr **−0.793**; the armed pooled share −0.670). The
+mid-afternoon mode the model misses is carried instead by (a) **PNHNDL
+interface binding** — 2025 peak h10, gap-shape corr **+0.961** — and (b) a
+**stable afternoon-heavy nodal minority** (15.5–19.4 % of nodal binding
+weight; PALOUS_WOLFCA1_1 + TREADW_YELWJC1_1 cores all three years,
+solar-curtailment hod corr +0.948–0.967 every year, 2025 gap-shape +0.802).
+2025's inversion is the growth of the daytime family the pooled OR-union
+buries under the overnight majority.
+
+**The ERCOT-121 rule-19 stack is now TIMED (attribution no longer opaque).**
+The keeper's endogenous Panhandle→North tie reproduces the separation COUNTS
+(2,666/3,214/4,066 h recomputed from committed `system_<y>.parquet` vs
+ERCOT-121's 2,708/3,221/4,074) but peaks h22 with hod corr **−0.162/−0.170
+(2024/25) against measured PNHNDL binding**, whose enforcement moved into the
+solar-flood hours by 2025 (active-set peak h13; binding peak h10; active only
+2,039 h — the static 2,680 MW non-active stand-in manufactures overnight
+binding real 2025 did not have, while the measured active-hour limit barely
+moves aft-vs-ovn, 3,018 vs 2,827 MW). Both armed mechanisms put the Panhandle
+phenomenon at night; separation-hour count right, curtailment volume AND
+timing wrong.
+
+**HIFLD geographic sub-split: honest negative.** Deterministic tiers cover
+2.5–6.6 % of corridor endpoint weight with detectable prefix false positives;
+`panhandle_geo_nodal` measured empty. Element-level diurnal clustering does
+the family separation the geography split was for, without coordinates.
+
+**CHARTERED (named, NOT built), pending owner authorization (ercot-159/162
+precedent): "WP-B v2 — diurnal-family unpooled curtailment-pressure shares +
+Panhandle interface timing reconciliation."** (1) Unpool the single pooled
+share into daytime/overnight family shares on the same decile × hod × season
+axis, membership re-derived per year from each element's own binding-hod
+placement (rule 23 source-data derive); (2) ONE owner for the Panhandle
+interface via pre-registered A/B — tie-owns-it (PNHNDL leaves the driver
+share; non-active-hour stand-in re-examined against measured enforcement
+incidence, a rule-14 misalignment reconciliation) vs Panhandle-scoped share —
+never both; (3) the two per-tech depths re-identified LOYO with the unpooled
+shares live (any DOF beyond two needs its own declared identification
+source). QUANTITY object bounding the wind/solar variables — a
+ceiling-clipped variable is never marginal, so it is NOT a C3a/b/c lever and
+"the residual didn't move" is no verdict on it (rule 1); judged on [3e]
+volume + hod/season shape + C2-adjacent gas displacement, LOYO 2023–2025.
+
+Governance: rule 22 (2023–2025 only; 2020–2022 archives unread); rule 19
+D-2 enumeration done before proposing; gap used as DIAGNOSTIC target only
+(rule 13 — the charter forbids fitting shares to it); rule 28b/c — no cell
+verdict, no matrix row due; §5.1 item 7 re-stamped with this outcome. Scope
+fence held: item 8 untouched, topology split not re-opened (families are
+share-table resolution, sub-zonal by construction).
+
+Next shorthand: ercot-165.
