@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-caiso-166-control-hubsurface",
+  "label": "caiso 166 control hubsurface",
+  "date": "2026-08-04",
+  "shorthand": "caiso-166-control-hubsurface",
+  "definition": "control caiso166 incumbent hub-sourced loss surface: LA_BASIN and SDGE inherit the TH_SP15_GEN generation-hub deviation, the pre-caiso-166 stand-in. Same-HEAD zero-delta control for the measured-DLAP arm; caiso_zonal_loss_surface stays True in BOTH arms, so the only difference between the two bundles is the CAISO_loss_surface.csv rows for those two zones.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-caiso-166-control-hubsurface.js",
+  "bundle": "results/calibration/caiso166_control_hubsurface"
+}
