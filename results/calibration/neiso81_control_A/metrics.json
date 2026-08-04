@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-23-neiso-61-netrev-base",
+  "run_id": "2026-08-04-neiso81-control",
   "iso": "NEISO",
-  "label": "neiso 61 netrev base",
+  "label": "neiso81 control",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,11 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.7,
-  "determination": "NOT-YET",
+  "rubric_version": 2.9,
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)",
+    "unscored PROTECTIVE criteria: shape"
   ],
   "notes": [],
   "criteria": {
@@ -43,22 +44,18 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
       "status": "PASS"
     },
-    "co2": {
-      "label": "C5a CO2 vs eGRID",
-      "tier": "load-bearing",
-      "status": "PASS"
-    },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -73,7 +70,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -84,8 +83,8 @@
     "scored": 8,
     "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 1
+    "ledgered": 1,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NEISO",

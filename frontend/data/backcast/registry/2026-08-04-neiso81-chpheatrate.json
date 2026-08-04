@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-04-neiso81-chpheatrate",
+  "label": "neiso81 chpheatrate",
+  "date": "2026-08-04",
+  "shorthand": "neiso81-chpheatrate",
+  "definition": "neiso-81 arm B: measured_chp_heat_rates ARMED on the corrected (miso-122 gate-3) NEISO artifact, single delta vs arm A. Re-adjudication of the neiso-70 'O' under the owner standing standard of 2026-08-04. Prereg: results/calibration/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-08-04-neiso81-chpheatrate.js",
+  "bundle": "results/calibration/neiso81_chpheatrate_B"
+}
