@@ -1,0 +1,134 @@
+{
+  "backcast_keeper_keys": {
+    "CAISO": {
+      "cache_key": "df6220a243add2ad",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    },
+    "ERCOT": {
+      "cache_key": "f95a5d2aab761873",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    },
+    "MISO": {
+      "cache_key": "dfe9d5c68e15c54c",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    },
+    "NEISO": {
+      "cache_key": "6ff540e9a9ee3b2f",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    },
+    "NYISO": {
+      "cache_key": "c3b175a9fcf4af8d",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    },
+    "PJM": {
+      "cache_key": "c20ec90ee9626b07",
+      "forecast_xyear_warmstart": true,
+      "mode": "backcast"
+    }
+  },
+  "forecast_keys": {
+    "T1-F/run_full_horizon/CAISO": {
+      "cache_key": "24ab6f39d0d0bb86",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-F/run_full_horizon/ERCOT": {
+      "cache_key": "02d559f6a00f24b7",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-F/run_full_horizon/MISO": {
+      "cache_key": "1e8f173aa965b0bf",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-F/run_full_horizon/NEISO": {
+      "cache_key": "8a1629c0f7c0a801",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-F/run_full_horizon/NYISO": {
+      "cache_key": "ac018d6b0450fec0",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-F/run_full_horizon/PJM": {
+      "cache_key": "dda7f7c43ca0d7c9",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/CAISO": {
+      "cache_key": "d13af45fc76bdf89",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/ERCOT": {
+      "cache_key": "def1ee1e8514c384",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/MISO": {
+      "cache_key": "b6f997c653722595",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/NEISO": {
+      "cache_key": "688dd67264951c7e",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/NYISO": {
+      "cache_key": "fc6f628c90eb7eda",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-H/run_capacity_hindcast/PJM": {
+      "cache_key": "f9d5d795106d9c74",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/CAISO": {
+      "cache_key": "af40e7e7bede6474",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/ERCOT": {
+      "cache_key": "3c4edf579674f0f0",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/MISO": {
+      "cache_key": "d10167c50411416e",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/NEISO": {
+      "cache_key": "80a6752279ffe182",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/NYISO": {
+      "cache_key": "27989c835ef55ade",
+      "forecast_xyear_warmstart": false
+    },
+    "T1-X/run_capacity_hindcast/PJM": {
+      "cache_key": "4d43d95faf04bce6",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/CAISO": {
+      "cache_key": "24ab6f39d0d0bb86",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/ERCOT": {
+      "cache_key": "02d559f6a00f24b7",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/MISO": {
+      "cache_key": "1e8f173aa965b0bf",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/NEISO": {
+      "cache_key": "8a1629c0f7c0a801",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/NYISO": {
+      "cache_key": "ac018d6b0450fec0",
+      "forecast_xyear_warmstart": false
+    },
+    "battery/golden_posture/PJM": {
+      "cache_key": "dda7f7c43ca0d7c9",
+      "forecast_xyear_warmstart": false
+    }
+  },
+  "pinned_default_cache_key": "603c2498bf71d21d",
+  "shipped_field_default": true
+}
