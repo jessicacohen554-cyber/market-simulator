@@ -1181,6 +1181,12 @@ Measured ERCOT West Texas Export corridor transmission-congestion pressure
 | `congestion_frac` | `float64` | `fraction` | no | n_binding_west / n_intervals in [0,1] — the fraction of the hour's SCED executions with the West Texas Export corridor congested. The measured congestion-pressure intensity the curtailment-share driver's SHAPE is fit to. 0.0 when n_intervals is 0. |
 | `interface_binding_frac` | `float64` | `fraction` | no | Fraction of the hour's executions with the aggregate WESTEX or PNHNDL export GTC binding — the interface-only component (already representable in the model's 8-zone TTC), reported for decomposition against the nodal tail. |
 | `shadow_price_mean_west` | `float64` | `usd_per_mwh` | yes | Mean positive ShadowPrice over the hour's binding West-corridor constraints; null when none bound that hour. |
+| `n_binding_family_d` | `int64` | `count` | no | Executions in the hour with at least one DAYTIME-family (D) corridor element binding — the solar-flood / daytime-export congestion family (measured hod peak h14-15; corr +0.775..+0.959 vs actual solar curtailment in every year 2023-2025). Excludes PNHNDL. |
+| `n_binding_family_n` | `int64` | `count` | no | Executions in the hour with at least one OVERNIGHT-family (N) corridor element binding — the wind-export congestion tail that dominates the pooled union (measured hod peak h21-23; 0.70-0.77 of nodal binding weight). Excludes PNHNDL. |
+| `n_binding_pnhndl` | `int64` | `count` | no | Executions in the hour with the PNHNDL Panhandle export GTC binding. Held out of the D/N split: the Panhandle interface's model-side owner (endogenous tie vs driver share) is a mechanism choice, not a family. |
+| `congestion_frac_family_d` | `float64` | `fraction` | no | n_binding_family_d / n_intervals in [0,1]. 0.0 when n_intervals is 0. |
+| `congestion_frac_family_n` | `float64` | `fraction` | no | n_binding_family_n / n_intervals in [0,1]. 0.0 when n_intervals is 0. |
+| `congestion_frac_pnhndl` | `float64` | `fraction` | no | n_binding_pnhndl / n_intervals in [0,1] — the measured Panhandle export interface enforcement-incidence signal. 0.0 when n_intervals is 0. |
 
 ## nyiso-renewable-curtailment
 
