@@ -4858,3 +4858,58 @@ stamped this session. Evidence:
 `_nyiso122_winter_zonal_spread.json`.
 
 * Next number: **nyiso-123**.
+
+## 2026-08-04 — nyiso-122 (closeout): the NYISO cross-ISO queue LANE IS CLOSED, with every remaining route typed as a blocker
+
+**Keeper UNCHANGED** (`2026-08-04-nyiso-120-c119-scope`, **NOT-YET**). No solve, no
+run registered, no `ScenarioConfig` / constant / derive / artifact change. C3c's
+ledger budget stays **1 of 3, unspent**. This closes out the lane opened by the
+nyiso-122 diagnosis above.
+
+**Closure rests on four measured facts, not judgement.** (1) The **lever queue is
+EMPTY** — item 4 was the last live item and was re-opened then refused ex ante on
+reach; items 1/1b/2/3/5/6/7/8/9/9c/10/11/12 were already closed. (2) The
+**rule-28(c) column census** re-confirms **41 family / 0 absent / 0 prose-only /
+0 armed-no-cell / 0 invisible**, sole exclusion the declared `weather_year`.
+(3) **Item 9b is not a queue item at all — it is SHIPPED**: `_screen_demand_dropouts`
+is called unconditionally for `NYIS` at `src/market_sim/data/eia930/demand.py:396`,
+no flag and no gate. (4) **Item 11b is owner-DEFERRED and out of lane** — it moves
+CAISO +0.4173 / NYISO +0.1996 / NEISO +0.1618 TWh, so rule 25 `[R-ISO-SCOPE]`
+forbids a NYISO session from acting on it and it needs its own cross-ISO charter.
+
+**THE THREE BLOCKERS, TYPED so a later session can tell "not yet tried" from
+"cannot be tried".** NYISO's open residual is the 2025 C3a FAIL, whose two halves
+both resolve to the downstate locational boundary:
+
+- **BLOCKER-A — GOVERNANCE.** The `Capital_Hudson` → Zone-F/Zone-G **topology
+  split**, C3c's standing re-open condition, which nyiso-122 shows now **also**
+  owns the winter level miss. Explicitly never a mechanism-flag lever. *Unblocks
+  on* an owner charter — and that charter should now be **scoped to both halves**,
+  not to the summer tail alone.
+- **BLOCKER-B — DATA (access-walled, not un-fetched).** The sub-zonal in-city
+  price formation the winter miss actually is. nyiso-97 closed it on **content,
+  not merely access**: the as-enforced AORR is MyNYISO-walled and the public
+  2008-vintage Appendix B carries **no derivable NYC parameter**. *Unblocks on* an
+  authorized MyNYISO-grade intake; **not** by re-reading public postings.
+- **BLOCKER-C — IDENTIFICATION (data exists and REFUTES the lever).** Re-grounding
+  the **Tier-3** interface TTC estimates on NYISO's measured as-enforced limits is
+  **not** data-blocked (2023–2025 on disk with `positive_limit_mw` per
+  interface-hour) but **is** refuted: UPNY-CONED and SPR/DUN-SOUTH bind >95 % in
+  **0.0 %** of 2025 hours at medians **looser** than the model's own estimates. The
+  measured limits are **NOT adopted** (rule 14's misalignment clause). This route
+  is closed on measurement and does not unblock.
+
+**ONE ITEM IS LEFT OPEN ON PURPOSE.** `nyiso_iroquois_winter_spread` stays cell
+**`O`**, default-**off**, **not** adjudicated `R`. Its standalone rule 14
+`[R-ACCURATE]` case survives untested by solve and is an **owner question**, since
+arming it improves a measured input while **degrading** C3a-2025 — a rule 22
+**D-5(b)** escalation, not a session decision. Its construction gates already PASS
+(annual conservation **Δ = 0.00000** in all three years).
+
+**Standing instruction for a later NYISO assignment:** there is nothing actionable
+on the C3a residual without BLOCKER-A's charter or BLOCKER-B's intake. A session
+assigned to NYISO with neither should say so and take another ISO's queue (rule
+28(a)) rather than manufacture a lever — which is exactly what item 4's refusal was
+protecting against (rule 1 `[R-STRUCT]`).
+
+* Next number: **nyiso-123** (blocked — see above).
