@@ -1056,3 +1056,132 @@ than an evidenced requirement, and that its rule-22 status was open.
 while retiring nothing. Whether that is the pipeline rule under-retiring, the entry side
 over-building, or the ERCOT band's known 6.65 pp basis mismatch (FFR-3C §2.1) has not been
 separated by any lane.
+
+---
+
+## Addendum H — **The battery is CLOSED and registered; CAISO's backstop is diagnosed; a SECOND decision now converges on the same answer as G.5** (workstream manager, 2026-08-04, HEAD `a0bf3db3`)
+
+Five lanes dispatched after Addendum G all ran: **FFR-3A-3** (battery close), **FFR-3H** (CAISO
+backstop), **FFR-SC-2** (transmission A/B), **FFR-SA-close** (PJM load-shape smoke) and
+**FFR-3J** (kill-resume instrumentation). Zero open PRs. This addendum records what closed, one
+new owner decision, and the convergence between it and G.5.
+
+### H.1 — The T1 battery is CLOSED, scored and REGISTERED
+
+FFR-3A-3 filled every `(pending)` section and discharged the registration duty FFR-3A-2 left
+open: **18 hindcast sidecars** plus `ff-verdicts.json` are committed. The headline from the
+regression table against FF-2D:
+
+* **No determination moved. All six were HOLD at FF-2D; all six are HOLD now.** FC-1, FC-3,
+  FC-4, FC-5, FC-6 and FC-7 are unchanged in every ISO. **Every movement is inside FC-2**, and
+  it separates into three causes that must not be conflated: genuine movement from the signed
+  decisions (ERCOT row1 CAVEAT→FAIL and row6 sustained-VOLL newly firing, both **attributed
+  against the paired control**; CAISO row1 CAVEAT→FAIL as an **observation, not attributed**);
+  newly-scorable rows; and one genuine improvement.
+* **⚠ The newly-scorable rows are NOT regressions.** FC-2 row 4 was SKIPPED everywhere before
+  `34c2f25` + `0830d134`. Reading CAISO 65.5 % / NYISO 23.8 % / PJM 23.6 % / NEISO 11.7 % /
+  MISO 9.2 % / ERCOT 0.0 % as "FC-2 got worse" would be wrong: **the metric did not move, the
+  instrument started reporting it.** Without the fix every one would have read a false
+  `PASS 0 %`.
+* **⚠ THE FIRST POSITIVE EVIDENCE FOR D-2, and it deserves to be seen.** MISO's FC-2 row 3
+  moved **FAIL → PASS**: the FF-2C-induced `gas_ct` cobweb the mechanism matrix records is
+  **gone** at this HEAD. `entry_commissioning_lag` is D-2's structural anti-cobweb — decide at
+  Y, commission at Y+2, so decision and commissioning separate and the oscillation damps.
+  FFR-2B could not test the claim and said so; **MISO's FF-2D leg is the one case in the
+  program where it was testable at all.** Stated at the right strength by the lane and repeated
+  here: this is **CONSISTENT WITH** the anti-cobweb claim, **not an attribution** — the two legs
+  differ in more than D-2 and no paired control was run. It is nonetheless the first measured
+  result pointing *for* D-2 in a battery otherwise dominated by adverse D-2 findings, and the
+  owner should weigh it against them rather than only against them.
+
+### H.2 — CAISO's 65.5 % is diagnosed: three stacked causes, and the prompt's hypothesis was refuted-then-sharpened
+
+FFR-3H (`docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md`), diagnosis only, nothing fixed:
+
+1. **~37 pp is a BOOKING-CONVENTION ARTIFACT of the row-4 ratio** — the backstop books in-year
+   while economic entry books at decision + 2. Measured: 65.48 % → **28.61 %** with the
+   commissioning lag unarmed as a labelled probe arm.
+2. **The residual ~29 % is real**, and its cause is specific: a CAISO `gas_ct` is `unprofitable`
+   in the economic entry screen **in every year of every arm**, by **$39,974–45,316/MW-yr**. The
+   administrative channel is the only one that can add firm capacity.
+3. **47 % of the total backstop build closes a deficit the model already has in its BASE YEAR** —
+   2026 accredited firm 50,729 MW against a 57,306 MW requirement, **before any evolution step
+   runs**. That is an accreditation-ledger question, not an entry question.
+
+**The growth ladder is NOT the cause** — unarming it moves the cumulative share 0.84 pp while
+completely re-phasing the build, independently reproducing in CAISO the "re-phases, cumulative
+invariant" result FFR-2B measured in MISO (measured separately per rule 25, not transferred).
+
+**ERCOT's 0.0 % now has its mechanism:** `resolve_reserve_margin_build_enabled(ERCOT) = False`.
+ERCOT is not in the population at all, so its 0.0 % is structural and FFR-3C's
+retirement/entry-asymmetry attribution for ERCOT stands untouched.
+
+**Two findings inside it that outlive the diagnosis.** (a) **A net-CONE level re-anchor would
+not fix this**, and that is the most decision-relevant thing about the candidate: CAISO's
+$88.08/kW-yr is current and correctly cited (FF-2C R4), but the CPM soft-offer cap is *a price
+cap on CAISO's own administrative backstop procurement* — not a market-clearing capacity price
+and not a net-CONE. The model prices CAISO capacity at the administered price of CAISO's own
+backstop and then closes two-thirds of its gap with that backstop. What the parameter cannot do
+is **vary**, and it is the invariance, not the level, that binds. (b) **Rule 14 finding:** the
+ISO with the most elaborate published VRE accreditation in the country — CPUC slice-of-day /
+ELCC — is accredited in this model on a **generic non-CAISO flat fallback** (solar 0.18, wind
+0.16, invariant across a 0.2×–2.0× penetration sweep), because `RENEWABLE_ELCC_CURVES_BY_ISO`
+holds PJM/MISO/NYISO only and `RENEWABLE_CAPACITY_CREDIT_BY_ISO` holds ERCOT only. Direction
+unresolved, so it is filed as an open ledger question rather than a shortfall.
+
+**And a structural observation worth carrying:** CAISO retires 1,492.5 MW of `gas_st` in a single
+year (2027 — a **98.8 % single-year class exit**) plus 1,122 MW of nuclear in 2030. That is
+FFR-3C's G-31 asymmetry reproduced in CAISO, but it **expresses differently**: in ERCOT, backstop
+OFF, the asymmetry produces a *collapse*; in CAISO, backstop ON, it is absorbed by step 6 and
+surfaces as *administrative over-build*. **Same defect, two symptoms, because of one gate.**
+
+### H.3 — Both remaining gate A/Bs are INERT, and one is inert for a reason worth more than the verdict
+
+* **FFR-SC-2:** the transmission-expansion gate is **inert in CAISO 2026–2030 and provably inert
+  in PJM 2026–2050**. CAISO's inertness is *structural*: `WECC_import_simultaneous` caps the
+  **signed sum of two legs that run in opposite directions**, so it stays slack even when both
+  legs are individually saturated — **the registry uplifted the one element that cannot bind.**
+  No default flipped; arming stays the owner's box and nothing argues for it.
+* **FFR-SA-close:** the owed PJM load-shape smoke ran, off-leg 2026–2028, all invariants PASS.
+
+### H.4 — NEW OWNER DECISION (D-9): D-2's commissioning lag CENSORS half the T1-H scoring window
+
+Spelled out before it is named, because it is easy to misread as a metric problem: T1-H scores
+the years {2023, 2024, 2025}, but `ENTRY_COD_LAG_YEARS = 2` sends the **2024 and 2025 entry
+decisions to commercial operation in 2026/2027 — outside the scored window.** So **half the
+solved decision years cannot score at all, by construction.** Additions bands are mechanically
+suppressed against any pre-D-2 bundle regardless of actual entry skill, and a cross-boundary
+additions comparison is **not like-for-like**. This currently affects the interpretation of every
+T1-H additions verdict, including MISO's — whose FC-3 now fails on the censored half alone.
+
+This is a **design decision, not a parameter** (so it is not tunable and must not be treated as
+one). Two routes:
+
+* **(i) Lengthen the T1-H window** so a decision inside it can commission inside it.
+* **(ii) Score COD-shifted additions** — attribute an addition to its decision year rather than
+  its COD year.
+
+**⚠ THE CONVERGENCE THE OWNER SHOULD SEE: D-9(i) and G.5(a) ARE THE SAME ACTION.** Two
+independent blockers, discovered by different lanes on different evidence, both resolve by moving
+to a **five-year window**: G.5 because `L_coal` = 3 exceeds a 3-year exit window, D-9 because
+`ENTRY_COD_LAG_YEARS` = 2 exceeds a 3-year entry window. The model's own execution lags are
+simply longer than the windows it is being scored on, on **both** the exit and the entry side.
+Signing G.5(a) very likely disposes of D-9 as well; signing G.5(b), (c) or (d) leaves D-9 live
+and needing its own answer. **Recommendation: take them together, as (a) + (i).**
+
+**Sign-off D-9:** ☐ (i) lengthen the window ☐ (ii) score COD-shifted ☐ take with G.5(a) —
+owner: ________ date: ____
+
+### H.5 — What is open, and who owns it
+
+| # | Item | Owner |
+|---|---|---|
+| 1 | **G.5** — the FH-1 §3.3 gate re-cut | **OWNER, unsigned.** Gates every FH lane |
+| 2 | **D-9** — the T1-H censoring window (H.4) | **OWNER, unsigned.** Converges with G.5(a) |
+| 3 | FC-7 fails on EVERY T1-H and T1-X leg — `run_capacity_hindcast` writes `run_config.yaml`, FC-7 needs `.json`. The **unfixed analogue** of FFR-3D's blocker 7 | dispatchable; must land **before** the next battery |
+| 4 | ERCOT T1-X price-2025 regressed 8.6 % PASS → **22.5 % FAIL**, sole regressor of three legs, unattributed | dispatchable (needs a paired control) |
+| 5 | FF-3E part c — FFR-3J built the discriminator but **never ran the drill**; still unadjudicated | dispatchable, small |
+| 6 | The FH-1 I12 inversion (G.6) — unattributed | dispatchable |
+| 7 | CAISO accreditation ledger — the 6,577 MW base-year deficit + the generic VRE credit (H.2) | dispatchable |
+| 8 | D-2′ `entry_vre_capacity_revenue` — signed HOLD at Addendum C, **still never probed** | unowned |
+| 9 | Pre-existing test failures on main | unowned |
