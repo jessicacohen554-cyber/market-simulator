@@ -57,6 +57,7 @@ build/
 /scratchpad_logs/
 /scratch_hindcast/
 /scratch_logs/
+/scratch-logs/
 /logs/
 /logs_g10/
 # Local compatibility shim: symlinks (inputs/ -> data/raw/...) so tooling that
@@ -106,6 +107,16 @@ data/raw/pjm-zonal-lmp/*
 !data/raw/pjm-zonal-lmp/README.md
 !data/raw/pjm-zonal-lmp/SHA256SUMS.txt
 
+# ERCOT NP3-965-ER 60-Day SCED disclosure, CT-scoped full-span shards
+# (SCLE90/SCGT90, delivery 2024-01-24..2025-12-31): ~360 MB of parquet, past
+# what the push path carries, and deterministically re-fetchable with
+# scripts/data/fetch_ercot_60day_sced_gen_resource.py --delivery-range ...
+# (see data/raw/ercot/SCED-CT/README.md). The sha256 manifest IS committed as
+# the provenance record for the shards.
+data/raw/ercot/SCED-CT/*
+!data/raw/ercot/SCED-CT/README.md
+!data/raw/ercot/SCED-CT/SHA256SUMS.txt
+
 # PJM DataMiner2 day-ahead BINDING TRANSMISSION CONSTRAINTS (da_marginal_value
 # / da_transconstraints — monitored facility, contingency, shadow price): same
 # non-member redistribution restriction; refetch with
@@ -148,11 +159,16 @@ data/raw/NEISO-AS/requirements/requirements_*.csv
 # ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
 # precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
 data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
-# ISO-NE DA demand-bid daily CSVs (~2.3 MB/day) + the DA cleared-demand window
-# files: same precedent; regenerate with
-# scripts/probes/_neiso76_demand_limb.py --fetch (README.md in that dir).
+# ISO-NE DA demand-bid daily CSVs (~2.3 MB/day, ~2.5 GB for the full 2023-2025
+# corpus) + the DA cleared-demand window files: same precedent; regenerate with
+# scripts/data/fetch_neiso_da_demand_bids.py (full corpus) or
+# scripts/probes/_neiso76_demand_limb.py --fetch (the 41-day Phase-0 sample).
 data/raw/NEISO-AS/da-demand-bids/hbdayaheaddemandbid_*.csv
 data/raw/NEISO-AS/da-demand-bids/cleared_*.csv
+# ISO-NE DA SUBMITTED import-offer / export-bid daily CSVs (~0.35 MB/day,
+# ~380 MB for 2023-2025): same precedent; regenerate with
+# scripts/data/fetch_neiso_da_import_export.py (README.md in that dir).
+data/raw/NEISO-AS/da-import-export/hbdayaheadimpexp_*.csv
 # ISO-NE reserve CLEARING-PRICE window CSVs (RT final RZPD + DAAS day-ahead):
 # validation-only measured prices, same precedent; regenerate with
 # scripts/probes/_neiso76_reserve_content.py --fetch (README.md in that dir).
@@ -242,6 +258,12 @@ frontend/data/forecast/program-status.js
 /results/MISO/
 /results/NYISO/
 /results/NEISO/
+# FFR-SA T0 smoke legs (results/ffr-sa-smoke/<iso>-<arm>/): the summary +
+# run_config + leg log ARE committed (the FF-G4 §2 acceptance evidence); the
+# nested per-ISO LP cache dir each self-contained leg writes is the same
+# transient class as /results/<ISO>/ above — regenerable from config.
+/results/ffr-sa-smoke/*/PJM/
+/results/ffr-sa-smoke/*/NEISO/
 # Full-horizon forecast runs and ad-hoc forecast probes: disposable diagnostic
 # cache, never committed (forecast probes are not dashboard-registered —
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
@@ -278,6 +300,15 @@ frontend/data/forecast/program-status.js
 # the run dirs regenerate from config. The committed record is the readout in
 # docs/handoffs/ffr-sa-load-shape-implementation-2026-08.md §4.
 /results/ffr-sa-smoke/
+# FFR-SC transmission-expansion gate A/B arms (CAISO 2026-2030, isolated
+# run_full_horizon --out-dir caches). Only the HEAVY regenerable LP output is
+# ignored: the slim per-run record — full_horizon_summary.json + the
+# evolution_<year>.json / year_<year>_floor_retentions.json ledgers the handoff
+# and the registered sidecar cite — is committed, as under /results/ff2b-after/
+# and /results/ffr1c/. Regenerate the parquets with the two commands in
+# docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md §2.
+/results/ffrsc/**/year_*.parquet
+/results/ffrsc/**/config.yaml
 /results/*.log
 # Backcast diagnostic-probe solve output (scripts/probes/* --out-dir default,
 # e.g. results/probes/pjm119_eastcut). Same class as the /results/probe-*/ rule
@@ -416,6 +447,11 @@ results/calibration/caiso122_nooutage_2025/
 # captured from the live fleet-array path (no LP). Derived and disposable —
 # regenerate with `scripts/probes/ercot130_capoff_phase1.py --capture`.
 results/calibration/_ercot130_avail_cache/
+# ercot-159 Phase-0 SCED online-capability hourly caches: the probe's scan
+# output (slow/quick/nuc online HSL sums per hour). Derived and disposable —
+# regenerate with `scripts/probes/ercot159_capability_phase0.py --scan`; the
+# census JSON and the frozen envelope artifact are the committed records.
+results/calibration/_ercot159_sced_online_hourly_*.parquet
 # miso-98 CHP-sector A/B staging legs. MISO peaks at 14.4 GB on a 15 GB box
 # (miso-92 §7), so each three-year bundle is built one fresh year per process
 # and chained forward with --reuse-solved. Only the two FINAL three-year
@@ -545,7 +581,36 @@ results/calibration/caiso154_slopes_PJM.csv
 # ever applies to untracked paths.
 /results/ffr3c/
 
+# FFR-3A-2 consolidated T1 battery close (run_full_horizon / run_capacity_hindcast
+# / run_driver_battery --out-dir caches and their loose run logs). Same class as
+# /results/ffr3a/ and /results/ffr3c/ — forecast legs are registered to
+# frontend/data/forecast/ via scripts/register_forecast_run.py, never as tracked
+# bundles here (CLAUDE.md rule 15). results/ffr3a2/README.md stays TRACKED (it is
+# the lane's record, not an output) and is unaffected by this rule, which only
+# ever applies to untracked paths.
+/results/ffr3a2/
+
+# FFR-3A-3 post-FFR-3F re-measurement of the T1-H / T1-X halves the FFR-3A-2
+# provenance ceiling flagged (run_capacity_hindcast --out-dir caches and their
+# loose run logs). Same class as /results/ffr3a2/ — forecast legs are registered
+# to frontend/data/forecast/ via scripts/register_forecast_run.py, never as
+# tracked bundles here (CLAUDE.md rule 15). results/ffr3a3/README.md and the
+# assembled results/ffr3a3/scorecard/ stay TRACKED (they are the lane's record,
+# not solver output); git honours that because this rule only ever applies to
+# untracked paths, so they are added once with `git add -f` and thereafter
+# tracked normally — the same mechanism results/ffr3a2/ relies on.
+/results/ffr3a3/
+
 # Transient CT-artifact stash written by scripts/probes/caiso160_nyiso_ct_arms.py
 # while a control arm solves against a prior artifact revision; the driver
 # restores the working copy and removes this in a finally.
 .caiso160_artifact_stash_*/
+
+# FFR-3H CAISO backstop-diagnosis lane (run_full_horizon --out-dir caches +
+# loose run logs for the four CAISO arms: the shipped reproduction, the
+# entry-screen-diagnostics arm, and the two labelled D-2 probe arms). Same
+# class as /results/ffr3a/, /results/ffr3c/ and /results/ffr3a2/ — forecast
+# legs are registered to frontend/data/forecast/ via
+# scripts/register_forecast_run.py, never as tracked bundles here (CLAUDE.md
+# rule 15). The deliverable is docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md.
+/results/ffr3h/

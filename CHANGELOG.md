@@ -1,5 +1,130 @@
 # Changelog
 
+## 2026-08-04 — xiso-3: the cross-ISO shared-stem matrix backlog CLOSED, and line-anchor decay is now gated (no LP, no solve, all six keepers unchanged)
+
+The last rule-28(c) debt, and the successor nyiso-121 named. **Both halves of
+the matrix-gap census now read zero for all six ISOs, and both are ratcheted.**
+
+- **45 shared fields registered on 19 existing rows.** Every SHARED
+  (non-ISO-prefixed) `ScenarioConfig` field a designated keeper *arms* with no
+  matrix cell anywhere — **54 (ISO, field) pairs**, nine armed in two ISOs at
+  once — now carries a literal sub-scalar registration in its family row's
+  `def`, each home chosen on a **cited code read site** rather than on theme.
+  Ratchet `shared_armed_on_keeper` CAISO 5 / ERCOT 14 / MISO 17 / PJM 18 →
+  **0 0 0 0**; **169 → 169 rows, zero new**; every `cells:` string
+  byte-identical, **no cell minted anywhere** (a census may mint a `U` and
+  nothing more, rule 28(d)).
+- **The cause was the caiso-161 §2 abbreviation defect, three more times.**
+  Seven registrations existed only as abbreviations no literal-matching checker
+  could resolve — including a bare **`etc.`** standing in for three armed fields
+  at once, and `conditional runs` written with a space instead of an underscore.
+- **New: a standing anchor-resolution gate.** nyiso-121 found all 20 MISO line
+  anchors stale and filed a checker as a suggestion; measured file-wide here,
+  **163 of 167 checkable anchors did not resolve — only 4 did**, most off by
+  900–1,400 lines because `scenarios.py` grew under them. 161 were repaired
+  mechanically (verified digits-only: with every `:\d+` normalised the texts are
+  byte-identical), and `scripts/check_mechanism_matrix.py` gains an anchor leg
+  (field-style, row-id and file-in-range checks), a shrink-only ratchet
+  `docs/codebase-site/data/mechanism-matrix-anchors.json` (**now empty**) and a
+  **`--fix-anchors`** repair path so a `scenarios.py` PR fixes drift with one
+  command. Existence is gated first, preserving the deliberate `miso_pjm_lmp
+  :2914` defect *quotation*. Caveat recorded in the docs: the gate proves an
+  anchor points at the field it **names**, never that the named field is the
+  right one.
+- **Seven armed-but-dead pairs found and filed, none adjudicated.** Measured on
+  **construction** (no LP, no solve, no dual; built twice at one HEAD,
+  `np.array_equal` on float32): four ERCOT coal-passthrough scalars and three
+  CAISO CT-drag coefficients are **provably unreadable on their own keepers**,
+  so those `run_config.json`s overstate what the solve read. All five arms
+  Δ = 0.0 exactly with all five positive controls separating. The CAISO result
+  is *consistent* with that family's existing CAISO `R`.
+
+## 2026-08-04 — ERCOT-160: the item-7 / item-8 data intakes (no LP, no mechanism, keeper unchanged)
+
+Data-intake session on the ERCOT lever queue. MISO's C7 COAL_PRB item was
+checked first and remains data-blocked (the miso-104 ex-ante coal-contract
+tonnage ask has not landed), so precedence fell to ERCOT items 7/8.
+
+- **Item 7's blocker dissolved.** The queue recorded that a station→area
+  crosswalk "does not exist in-repo". ERCOT *publishes* one — **NP4-160-SG
+  "Settlement Points List and Electrical Buses Mapping"**
+  (`reportTypeId=10008`) — and it had simply never been fetched. New
+  `scripts/data/fetch_ercot_settlement_point_mapping.py` intakes it to
+  `data/raw/ercot-network-model/` (1.2 MB, **committed**), writing each member
+  as its **exact published bytes with a sha256**, because ERCOT ToU §5 permits
+  redistribution only if contents are unmodified. Committed rather than
+  gitignored because MIS retention here is ~31 days: only the current
+  network-model version is ever reachable, so an un-committed vintage is lost
+  permanently. Every consumer must report its own match rate against its target
+  year.
+- **Item 8(a) delivered at 98.7 % of the training span.**
+  `fetch_ercot_60day_sced_gen_resource.py` gains `--resource-types`,
+  `--delivery-range`, `--shard-by-month` and `--skip-existing` — scope and
+  plumbing only. CT-scoping cuts a delivery day to 15.1 % of its rows
+  (0.51 MB parquet vs ~90 MB unscoped CSV), which is what makes a ~700-day span
+  affordable; month sharding bounds memory and makes it resumable. Delivery
+  2024-01-24…2025-12-31 landed CT-only in `data/raw/ercot/SCED-CT/` (gitignored
+  + README + SHA256SUMS). **14 days (delivery 2024-01-10…2024-01-23) are
+  unreachable** — they fall between the committed corpus and the MIS rolling
+  window — and are reported, never interpolated. The rule-22 holdout guard was
+  not relaxed and refused 2026 delivery days live.
+- **Item 8(b) is BLOCKED and is the only thing still blocking the lever.** The
+  licensing check ERCOT-147 §4 demanded is now a reproducible probe: EIA's free
+  weekly spot table carries Waha/Katy/Agua Dulce/Carthage at **zero** mentions
+  (Chicago scores 6, Henry Hub 10), and ERCOT's own catalog has 5,773 products
+  of which none is a fuel price series. The series exists only behind
+  NGI/Platts/Argus — an owner licensing decision. Logged as blocked, **not**
+  inferred as zero and **not** substituted with Henry Hub.
+- **Item 8(c) reshaped by a grain correction.** The crosswalk's `site` column
+  holds a site prefix for `CC_REGULAR` but the full resource name for
+  `CT_PEAKER` (165/165 CT rows match a corpus resource name, 0/165 a site
+  prefix), so "165 CT_PEAKER sites" counts resources and the "~150-site hand
+  crosswalk" was mis-sized in kind. Most CT resources already carry a candidate
+  row, making the bulk an adjudication rather than an identification.
+
+No LP solve, no `ScenarioConfig` field, no mechanism tested, no matrix cell
+verdict, no dashboard run; keeper unchanged at `2026-08-03-ercot158-pool-arm`.
+
+## 2026-08-03 — FFR-SC input refreshes: ATB derivation pin → 2024 v4.0.0 (no-op); NYISO demand anchor → 2026 Gold Book
+
+Two rule-23 `[R-FROZEN-DERIVE]` re-derivations, each triggered by a **source-data
+vintage change and nothing else** — no residual was consulted and none moved.
+
+- **ATB derivation pin `v3.0.0` → `v4.0.0`** (`curate_nrel_atb.DERIVATION_PINNED_VERSION`),
+  closing audit FR-20's open half after FFR-PB landed the v4.0.0 extract. **A measured
+  no-op on every committed constant**: `derive_entry_costs_from_atb`
+  (`NEW_ENTRY_COSTS`, `TECH_COST_MULTIPLIERS`) and `derive_cost_benchmark_envelope`
+  (envelope table + multipliers, `STORAGE_TECHS` li-ion, `OFFSHORE_WIND_PARAMS`,
+  `derive_egs_fom` = 163.4) return byte-identical output under both versions, so
+  `constants.py` is unchanged. Of 3,858 rows on an identical key index, 56 differ
+  materially and **all** are `Geothermal`/`DeepEGSFlash`/`Moderate` (CAPEX
+  +1.50…+6.14 %, Fixed O&M +0.13…+2.00 %) — a class no derive script reads; the
+  other 16 are ~1e-14 float noise. `test_parse_defaults_to_the_pinned_derivation_version`
+  is rewritten against `DERIVATION_PINNED_VERSION` instead of the literal `v3.0.0`,
+  so a future pin move re-points it rather than failing it.
+- **`DEMAND_GROWTH_RATES["NYISO"]` re-derived from the 2026 Gold Book**
+  (NYISO Load & Capacity Data Report, released April 2026), landed at
+  `data/raw/NYISO/2026-Gold-Book-Public.pdf` — closing FF-G4 §8-D4 item 3, which
+  flagged the 2025 edition this row cited as stale. Basis is now **formulaic**
+  (rule 5 `[R-NO-MAGIC]`) instead of the FF-1C "~1.8 %/yr" reading: per-case CAGR
+  of Table I-1a's own Energy-GWh series, near = 2026→2030, long = 2031→2050 —
+  the identical construction `DEMAND_GROWTH_RATES_VINTAGES` already uses for every
+  NYISO row. mid `near 0.018 → 0.0122`, `long 0.012 → 0.0127`; low
+  `0.008/0.006 → -0.0024/0.0028`; high `0.030/0.020 → 0.0263/0.0196`. Two rule-14
+  `[R-ACCURATE]` improvements beyond the level: low/high are now the edition's own
+  Lower/Higher Demand series rather than prior-vintage band ratios re-centred on the
+  mid (the "exact published low/high tables" FF-1C recorded as unavailable are in
+  this edition), and the low case's **negative** near rate is the Lower Demand
+  forecast's real sign. `parameters.json` / `parameter-citations.md` re-cited to the
+  edition, table, URL and file sha256.
+- **MISO's 2026 LTLF anchor is NOT refreshed** — `cdn.misoenergy.org` and
+  `misoenergy.org/planning/…` both return HTTP 403 to a non-browser client, exactly
+  the bot-wall FF-G4 §8-D4 item 5 marks ⬇. Handed forward as a manual download; the
+  row keeps its cited Sept-2025 LTLF basis rather than an uncited estimate.
+
+Full session record incl. the CAISO transmission-expansion A/B:
+`docs/handoffs/ffr-sc-transmission-ab-2026-08-03.md`.
+
 ## 2026-08-03 — ERCOT-157: NP3-965 delivery-2023 corpus re-upload verified + wired; 2023 SCED blocks completed (pool/wall/steam)
 
 The ERCOT-151 §4 data blocker is resolved: the owner re-uploaded the 60-Day

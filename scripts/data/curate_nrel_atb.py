@@ -105,7 +105,21 @@ _VERSIONS: dict[str, tuple[int, str, str]] = {
 # this and writes EVERY committed version to the clean partition, so a
 # re-derivation session can select the newer one explicitly. Moving this pin
 # is a deliberate re-derivation act (FFR-SC), never a side effect of intake.
-DERIVATION_PINNED_VERSION = "v3.0.0"
+#
+# MOVED v3.0.0 -> v4.0.0 by FFR-SC (2026-08-03), on the DATA VINTAGE CHANGE and
+# nothing else (rule 23 [R-FROZEN-DERIVE]): OEDI mirrored ATB 2024 v4.0.0 on
+# 2026-07-28 and FFR-PB landed its extract (audit FR-20). No residual moved and
+# none was consulted. The re-derivation is a measured NO-OP on every committed
+# constant: over the whole committed slice (3,858 rows, identical key index)
+# only 56 rows differ materially, ALL of them Geothermal/DeepEGSFlash Moderate
+# (CAPEX +1.50..+6.14 %, Fixed O&M +0.13..+2.00 %) -- a technology no derive
+# script reads; the other 16 differing rows are float round-trip noise at
+# ~1e-14 relative. derive_entry_costs_from_atb (NEW_ENTRY_COSTS,
+# TECH_COST_MULTIPLIERS) and derive_cost_benchmark_envelope (envelope table,
+# envelope multipliers, STORAGE_TECHS li-ion, OFFSHORE_WIND_PARAMS) return
+# byte-identical dicts under both versions, so constants.py is unchanged and
+# the two rule-23 consistency tests still pass against the newer bytes.
+DERIVATION_PINNED_VERSION = "v4.0.0"
 
 _STEM_BY_VERSION = {v: stem for stem, (_, v, _) in _VERSIONS.items()}
 

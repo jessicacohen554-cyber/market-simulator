@@ -1021,6 +1021,7 @@ def apply_economic_new_entry(
                             peak_demand_mw if peak_demand_mw > 0.0 else None
                         ),
                         curves_enabled=config.renewable_elcc_curves,
+                        nqc_curves_enabled=config.caiso_nqc_accreditation,
                     )
                     vre_capacity_payment = firm_price * float(credit or 0.0)
             effective_revenue += vre_capacity_payment

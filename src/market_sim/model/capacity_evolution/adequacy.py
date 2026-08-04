@@ -31,6 +31,7 @@ from market_sim.config.constants import (
     QUEUE_CAP_GW,
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_ELCC_CURVES_BY_ISO,
+    RENEWABLE_NQC_CURVES_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
 )
 from market_sim.config.iso_configs import get_iso_config
@@ -71,6 +72,7 @@ def _renewable_nameplate_by_fuel(
         if (
             g.fuel_type in RENEWABLE_CAPACITY_CREDIT
             or g.fuel_type in RENEWABLE_ELCC_CURVES_BY_ISO.get(iso or "", {})
+            or g.fuel_type in RENEWABLE_NQC_CURVES_BY_ISO.get(iso or "", {})
         ):
             nameplate_by_fuel[g.fuel_type] = nameplate_by_fuel.get(
                 g.fuel_type, 0.0
@@ -85,6 +87,7 @@ def renewable_credits_applied(
     iso: str | None,
     peak_demand_mw: float | None = None,
     elcc_curves_enabled: bool = False,
+    nqc_curves_enabled: bool = False,
 ) -> dict[str, float]:
     """Resolved wind/solar credits on the ledger's exact basis (diagnostic).
 
@@ -105,6 +108,7 @@ def renewable_credits_applied(
             installed_mw=nameplate_by_fuel.get(fuel_type),
             peak_demand_mw=peak_demand_mw,
             curves_enabled=elcc_curves_enabled,
+            nqc_curves_enabled=nqc_curves_enabled,
         )
         if credit is not None:
             out[fuel_type] = float(credit)
@@ -255,6 +259,7 @@ def accredited_firm_capacity_mw(
     peak_demand_mw: float | None = None,
     elcc_curves_enabled: bool = False,
     year: int | None = None,
+    nqc_curves_enabled: bool = False,
 ) -> float:
     """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
 
@@ -264,9 +269,12 @@ def accredited_firm_capacity_mw(
     its seasonal rating (:func:`_thermal_firm_mw` /
     :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO` — ERCOT's CDR basis),
     variable renewables at their capacity credit
-    (:func:`resolve_renewable_capacity_credit` — penetration-indexed
-    published ELCC curve when ``elcc_curves_enabled``, per-ISO point
-    override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
+    (:func:`resolve_renewable_capacity_credit` — the ISO's published
+    class-average NQC accreditation when ``nqc_curves_enabled``
+    (:data:`RENEWABLE_NQC_CURVES_BY_ISO`, CAISO only, default off),
+    penetration-indexed published ELCC curve when ``elcc_curves_enabled``,
+    per-ISO point override, generic :data:`RENEWABLE_CAPACITY_CREDIT`
+    fallback), storage
     at its duration-dependent ELCC (passed in pre-accredited as
     ``storage_firm_mw``, since the ELCC helper lives in the storage module),
     conventional hydro at the ISO's published hydro accreditation
@@ -303,6 +311,7 @@ def accredited_firm_capacity_mw(
             installed_mw=nameplate_by_fuel.get(fuel_type),
             peak_demand_mw=peak_demand_mw,
             curves_enabled=elcc_curves_enabled,
+            nqc_curves_enabled=nqc_curves_enabled,
         )
 
     firm = float(storage_firm_mw)
@@ -371,6 +380,7 @@ def capacity_reserve_position(
         peak_demand_mw=peak_demand_mw,
         elcc_curves_enabled=config.renewable_elcc_curves,
         year=year,
+        nqc_curves_enabled=config.caiso_nqc_accreditation,
     )
     return accredited_mw / requirement_mw
 

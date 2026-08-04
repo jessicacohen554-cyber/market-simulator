@@ -926,6 +926,26 @@ def _bundle_signature(run_dir: Path) -> dict:
     evolution ledgers), the same surface the invariants/trajectory score, so two
     result-equivalent bundles produce byte-equal signatures regardless of
     wall-clock metadata.
+
+    Beyond the raw byte hash, each array also carries two ORDER-INSENSITIVE
+    hashes, so a signature mismatch discriminates *permutation* from *different
+    numbers* without a second solve (FFR-3J):
+
+    * ``*_sorted_hash`` — ``np.sort(arr)``, i.e. sorted along the LAST axis
+      (within each row). Invariant to a re-ordering of hours *within* a
+      generator/zone, but NOT to a re-ordering of the rows themselves.
+    * ``*_multiset_hash`` — ``np.sort(arr, axis=None)``, the fully flattened
+      sort. Invariant to ANY permutation of the elements, so it is the
+      discriminator that actually separates the two candidate mechanisms: equal
+      here with an unequal ``*_hash`` means the two bundles hold the SAME
+      multiset of values in a different order (array ordering); unequal here
+      means the solves genuinely produced different numbers (alternate optima).
+
+    ``shape`` is recorded because ``tobytes()`` alone cannot distinguish an
+    ``(a, b)`` array from its ``(b, a)`` transpose-shaped twin.
+
+    Every added field is a pure function of the same arrays, so this can only
+    make the control/resume comparison stricter, never looser.
     """
     from scripts import check_forecast_invariants as C
 
@@ -937,10 +957,16 @@ def _bundle_signature(run_dir: Path) -> dict:
         price = np.asarray(yd.result.prices, dtype=float)
         led = run.ledgers.get(year, {})
         sig[year] = {
+            "dispatch_shape": list(disp.shape),
             "dispatch_sum": round(float(disp.sum()), 3),
             "dispatch_hash": _arr_hash(disp),
+            "dispatch_sorted_hash": _arr_hash(np.sort(disp)),
+            "dispatch_multiset_hash": _arr_hash(np.sort(disp, axis=None)),
+            "price_shape": list(price.shape),
             "price_sum": round(float(price.sum()), 3),
             "price_hash": _arr_hash(price),
+            "price_sorted_hash": _arr_hash(np.sort(price)),
+            "price_multiset_hash": _arr_hash(np.sort(price, axis=None)),
             "n_retire": len(led.get("retirements", [])),
             "n_thermal_add": len(led.get("thermal_additions", [])),
             "n_renew_add": len(led.get("renewable_additions", [])),

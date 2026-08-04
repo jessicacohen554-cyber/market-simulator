@@ -141,6 +141,7 @@ from market_sim.model.transmission import (  # noqa: E402
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,
+    build_caiso_link_loss,
     build_miso_link_loss,
     build_pjm_link_loss,
     get_link_bidirectional_array,
@@ -500,6 +501,8 @@ def run_year(
     caiso_corridor_atc_forward: bool | None = None,
     caiso_reference_price_seam: bool | None = None,
     caiso_per_year_import_caps: bool | None = None,
+    caiso_asymmetric_path_ratings: bool | None = None,
+    caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -1233,6 +1236,14 @@ def run_year(
     if caiso_per_year_import_caps is not None:
         config = config.with_overrides(
             caiso_per_year_import_caps=caiso_per_year_import_caps
+        )
+    if caiso_asymmetric_path_ratings is not None:
+        config = config.with_overrides(
+            caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings
+        )
+    if caiso_zonal_loss_surface is not None:
+        config = config.with_overrides(
+            caiso_zonal_loss_surface=caiso_zonal_loss_surface
         )
     if capacity_deliverability_limits is not None:
         config = config.with_overrides(
@@ -2940,14 +2951,19 @@ def run_year(
 
         _pjm_pct = getattr(config, "pjm_seam_flow_percentile", None)
         if inject_pjm_seam_flow_limit(
-            fleet_arrays, iso, year, zone_names, hours, percentile=_pjm_pct
+            fleet_arrays,
+            iso,
+            year,
+            zone_names,
+            hours,
+            percentile=_pjm_pct,
         ):
             from market_sim.config.constants import PJM_SEAM_FLOW_PERCENTILE
 
             logger.info(
                 "%s %d: reference-price seam import capped at measured PJM "
                 "tie-line deliverability envelope (p%g); each neighbor's "
-                "import bands derated to border-zone summed envelope",
+                "import bands derated to its PER-NEIGHBOR (own ties) envelope",
                 iso,
                 year,
                 PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
@@ -2974,7 +2990,7 @@ def run_year(
             logger.info(
                 "%s %d: reference-price seam export capped at measured PJM "
                 "tie-line net-export envelope (p%g); each neighbor's export "
-                "bands floored to border-zone summed envelope",
+                "bands floored to its PER-NEIGHBOR (own ties) envelope",
                 iso,
                 year,
                 PJM_SEAM_FLOW_PERCENTILE if _pjm_pct is None else _pjm_pct,
@@ -4380,7 +4396,13 @@ def run_year(
             else (
                 build_pjm_link_loss(iso_config.links, iso, year, int(demand.shape[1]))
                 if getattr(config, "pjm_zonal_loss_surface", False)
-                else None
+                else (
+                    build_caiso_link_loss(
+                        iso_config.links, iso, year, int(demand.shape[1])
+                    )
+                    if getattr(config, "caiso_zonal_loss_surface", False)
+                    else None
+                )
             )
         ),
         hydro_monthly_energy=hydro_monthly_energy,

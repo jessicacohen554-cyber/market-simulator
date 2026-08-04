@@ -1,0 +1,104 @@
+# NYISO confirmed-retirement registry — DATA NEEDED (zero qualifying rows).
+# Source of truth: NYISO "Posting of Completed Generator Deactivation Notice"
+# postings (individual PDFs under nyiso.com/documents/20142/1403511/...) per
+# the OATT section 38 (Attachment FF) deactivation process, Technical Bulletin
+# TB-185; NYSDEC/PSC orders; Gold Book retirement table (announced-grade
+# cross-check only, not itself an admissible instrument).
+#
+# Researched 2026-07-05. Every forward-looking generator that reached a
+# completed deactivation notice has since been REVERSED — either returned to
+# market service or had its retirement notice formally withdrawn, following a
+# NYISO reliability determination. None currently point to a still-binding
+# forward exit:
+#   - Far Rockaway Peakers (Bayswater 53.5 MW + Jamaica Bay 55.4 MW, MPH
+#     Rockaway Peakers, Zone K): completed deactivation 2025-06-02; NYISO's
+#     Q3 2025 STAR found a reliability need; formally RETURNED TO MARKET
+#     SERVICE effective 2026-05-01 (NYPSC filing 2026-05-14) — retirement
+#     rescinded.
+#   - Gowanus 2 & 3 / Narrows 1 & 2 (AlphaGen, Zone J): completed deactivation
+#     notices filed June 2025; NYISO's Q3 2025 STAR found a reliability need
+#     through 2027-05-01 (extendable to 2029-05-01); AlphaGen formally
+#     WITHDREW the retirement notices 2026-04-16, citing the reliability
+#     finding — continuing merchant operation.
+#   - Pinelawn Power 1 (82 MW, Zone K): completed deactivation notice; NYISO's
+#     Q3 2025 STAR found a Long Island capacity deficiency beginning summer
+#     2027 driven partly by this unit; directed into an Interim Service
+#     Provider arrangement (regulated rate) from 2025-12-25. No return-to-
+#     service notice found yet, but same deferred/must-run pattern as Far
+#     Rockaway — status unresolved, not a confirmed forward exit.
+#   - Danskammer (Hudson Valley): NYISO determined it must remain operational
+#     through at least August 2026 for reliability; owner filed Chapter 11
+#     bankruptcy June 2026, but no dated closure order exists — financial
+#     distress is not a binding retirement instrument.
+#   - Already-historical completed deactivations (Allegheny Cogen, Sithe
+#     Sterling, Gowanus 1 & 4, Nassau Energy/Trigen, Cayuga 1 & 2, West
+#     Babylon 4): all executed 2020-2022, predate this forward registry's
+#     practical value (already gone from the base fleet); not seeded.
+#   - No NYSDEC air-permit order, PSC order, or CLCPA-derived order binding a
+#     specific plant to a dated forward closure was found. NYPSC Case
+#     05-E-0889 is a generic procedural order (industry-wide notice
+#     requirements), not a plant-specific closure mandate.
+#
+# Revisit if/when NYISO posts a new completed deactivation notice that is NOT
+# followed by a return-to-service or withdrawal filing.
+# ===========================================================================
+# RE-QUERY PASS 2026-07-31 (FFR-PA). STILL AN HONEST ZERO — re-researched,
+# not merely carried forward. Every candidate below was checked against the
+# 2026 Gold Book deactivation pipeline (Table IV-5, which grew from 48 MW of
+# summer capability in the 2025 Gold Book to 1,307 MW in the 2026 edition) and
+# the NYISO planning status reports; none yields a still-binding forward exit.
+#
+#   - Danskammer (Zone G) — the one genuinely NEW candidate this pass, and the
+#     closest any NYISO unit has come to the bar. Danskammer submitted a
+#     deactivation notice in December 2025 requesting 2026-08-01. NYISO's
+#     determination is conditional in BOTH directions: it may deactivate on
+#     the requested date only if the identified Lower Hudson Valley solutions
+#     are in service and demonstrating their capability by then, and it may
+#     NOT deactivate before 2027-01-15 absent them — and if those projects
+#     slip, it "would need to remain in service" for LHV needs arising in 2029
+#     and 2030. So there is no date the instrument REQUIRES the unit offline,
+#     which is what confirmation_class means; a retention beyond 2027 is an
+#     explicitly contemplated outcome, not a tail risk. Danskammer HoldCo also
+#     filed Chapter 11 on 2026-06-10. HELD OUT — re-query once NYISO publishes
+#     a determination that fixes an unconditional date.
+#   - Gowanus 2-3 / Narrows 1-2 (Zone J): the 2026 Gold Book carries them at a
+#     2029-05-01 deactivation but marks them RETAINED following the
+#     reliability finding; the owner's withdrawal (2026-04-16) recorded in the
+#     previous pass stands. Still not a confirmed exit.
+#   - Far Rockaway GT1/GT2 (Zone K): withdrawal confirmed effective
+#     2026-05-01, the units retained under a LIPA capacity purchase agreement.
+#     Reversal unchanged.
+#   - Pinelawn (Zone K): still in the deferred/must-run pattern; unresolved,
+#     not a confirmed forward exit.
+#
+# The correct number of rows for this ISO remains ZERO. Revisit if/when NYISO
+# posts a completed deactivation notice with an unconditional date that is not
+# followed by a return-to-service, withdrawal, or retention determination.
+# ===========================================================================
+# RE-QUERY PASS 2026-08-03 (FFR-PA refresh). STILL AN HONEST ZERO. No row was
+# manufactured to make this ISO look covered, and none should be.
+#
+#   - Danskammer (Zone G) remains the only candidate near the bar and remains
+#     HELD OUT, for the same structural reason as the previous pass: the NYISO
+#     determination fixes no date at which the instrument REQUIRES the unit
+#     offline. Restating it precisely from this pass's sources, because the two
+#     framings differ in emphasis and both are in circulation: the deactivation
+#     notice was submitted in December 2025; reporting this pass describes it as
+#     targeting a closing date of 2027-01-14, and the determination as barring
+#     deactivation before 2026-08-01 while contemplating retention into
+#     mid-January 2027 — and, if the Lower Hudson Valley solutions slip, further
+#     retention for 2029/2030 needs. Conditional in both directions either way,
+#     which is not a confirmation class. Danskammer HoldCo's Chapter 11 (filed
+#     2026-06-10, ~$13M owed including ~$11.8M to NYISO) is financial distress,
+#     not a binding retirement instrument.
+#     WATCH, NEW AND NEAR-TERM: the 2026-08-01 contingency date has JUST PASSED
+#     (two days before this pass). Whether the identified solutions went into
+#     service on time determines whether Danskammer may now deactivate or is
+#     held to mid-January 2027. Re-query this specifically at the next pass — it
+#     is the single likeliest source of NYISO's first registry row.
+#   - Gowanus 2-3 / Narrows 1-2, Far Rockaway GT1/GT2, Pinelawn: re-queried,
+#     unchanged (retained / withdrawn / deferred respectively).
+#   - No NYISO unit appears in the DOE 2026 202(c) log with a
+#     retirement-deferring order (the sole 2026 NYISO entry, No. 202-26-08, is a
+#     one-week January 2026 winter-event order naming no unit).
+iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,source_url,source_doc,accessed,notes

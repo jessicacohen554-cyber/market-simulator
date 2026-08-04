@@ -4534,3 +4534,191 @@ Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
 re-verification on committed artifacts only (D-5(b)); identical, not worse.
 Evidence: `results/calibration/FINDING-nyiso117-stepcurve-compose-2026-08-03.md`,
 `_nyiso117_stepcurve_gates.json`, `nyiso117_seny_rcpf_curve_screen.json`.
+
+## 2026-08-03 — nyiso-119: the published SENY $40 increment tier — **KEEPER**; and a price gate that failed on its own boundary
+
+**Keeper `2026-08-03-nyiso-118-seny-span` → `2026-08-03-nyiso-119-seny-increment`.**
+Determination CALIBRATED-WITH-CAVEATS, C3c the sole caveat, **unchanged**. One
+delta (`nyiso_seny_rcpf_increment_step`, cell `U` → `K`), **zero free parameters**
+(ledger 32 → 33, `n_residual` 6). Both arms registered.
+
+**The mechanism.** The SOM states SENY 30-minute as a **$500/MW base over
+1,300 MW plus a $40/MW increment above it**; the 2023 SOM p. A-132 prints the
+pair as one object, "SENY $500+$40". `nyiso_dynamic_reserve_requirements` has
+**always enforced** that increment — the measured #1344 series runs 1,550/1,800 MW
+against the 1,300 MW base for most of the day — and **nothing ever priced it**.
+The whole shortfall was charged against the base curve, whose first rung
+($500/8 = **$62.50**) already sat above the entire measured $23.92/$30.37/$40.00
+envelope. That is precisely why nyiso-118 was a partial: it re-spanned the
+*widths*, and the RCPF penalties are requirement-independent.
+
+**No new number** (rule 5), clearing the bar the NYC step curve cleared: the $40
+is the same **ASM §6.8 item 12** already pinned for `east_30min_total`, whose
+clause names **Southeastern explicitly**; the 1,300 MW breakpoint is read from
+`NYISO_RCPF_LOCATIONAL`; the hourly requirement was already on the balance row.
+The **$500 base, `critical_mw = 0` and `n_ramp = 8` are untouched** — the
+posted-price instrument never reaches the base, so its shape stays *unidentified*
+and keeps its ramp (nyiso-115's discipline). Rule 19 is reconciled by
+**substitution**: the two-tier construction carries the hourly requirement
+natively in the increment band, so SENY takes this branch *instead of* the span
+branch, exactly as `li_30min_total` already opts itself out of the global flag.
+
+**Every kill discharged ex ante, on construction, before the solve.** The probe
+builds the `ReserveDesign` twice at one HEAD and diffs requirement, penalties and
+widths — no LP, no dual. Blast radius **exactly one family**: the other eight are
+byte-identical in all three vectors at **$0.000** reachable price delta, so the
+rule-23 freezes on the NYC curve and the LI ladder hold. Steps **8 → 9**, first
+rung **$62.50 → $40.00**, base-ramp penalties byte-identical, and **nyiso-118's
+total-width == requirement identity survives at 0/0/0 violating hours in both
+arms** — including the zero-requirement TSA hours. Solve-log ORDC steps
+**59 → 60**, exactly +1 in one family. Zero slack, zero dump.
+
+**G4 as pre-registered FAILED, and that is recorded rather than quietly
+redefined** (the nyiso-115 G2 / nyiso-117 G2a lesson, now on a price gate rather
+than a scope gate). It demanded an exact $40.00 dual on the **closed** interval
+`(0, band]` — asymmetric, since it excluded the lower kink (`s > 0`) while
+including the upper one (`s == band`). At either kink the LP is degenerate and
+the dual sits legitimately between the adjacent bands' prices; that is exactly
+why the zero-shortfall hours price $7.75/$17.31 rather than $0, which the
+pre-registered form already tolerated. Re-specified onto what K-G actually asks:
+the **strict interior** prices at the published increment — **2/0/4** hours, every
+one at exactly **$40.00** — and the band **edge** is **bracketed**, $57.28 inside
+[$40.00, $62.50]. The mechanism is unchanged; only the gate's boundary handling is.
+
+**Structural corroboration the gates did not ask for.** In the treatment's
+deepest 2025 hour the LP stops holding SENY reserve at **exactly
+`held_mw = 1300.0` — the published base** — because past that point the $40 tier
+no longer justifies holding more. In the control it stopped at **1575.0**, which
+is 1800 minus one control band width and has no market meaning. The published
+demand curve's own breakpoint is now where the dispatch stops.
+
+**Effect, and the honest limit.** SENY max dual **62.50 → 40.00** (2023), no
+binding hours (2024), **87.07 → 62.50** (2025). S-OVER is **narrowed, not closed**
+and is reported rather than gated (rule 1): of 10 binding hours, those above the
+year's *measured* ceiling go **8 → 4** and those above the *published* $40 go
+**8 → 2**. It is not closed because 2023/2024's **realized** ceilings
+($23.92/$30.37) sit **below** the published $40 cap — the market never drove those
+years to full band saturation — so pricing *at* the cap is still above them. That
+residual is an **incidence/depth** question, not a curve-construction one, and it
+belongs with the open peak-half reserve-formation lane. **My own prereg §5 said
+this would put SENY "inside the measured envelope"; that is right for 2025 only,
+and the precise claim is that the model now prices at the published $40 cap and
+never above it, where before its floor was $62.50.**
+
+**All 18 scored numeric fields are equal** to the same-HEAD control's — the
+pre-registered ISO-scope null, since SENY binds in only 2/0/8 hours and a demand
+curve can only price where there is a shortfall. **C3c unchanged**, also
+pre-registered; this does not reach nyiso-110's everyday-reserve-formation gap
+and is not reported as closing it. Promotion rests on rule 1 `[R-STRUCT]` /
+rule 14 `[R-ACCURATE]`.
+
+**Task 2.** `mechanism_matrix_gap_sweep.py --iso NYISO` re-confirmed at **41
+family / 0 / 0 / 0 / 0**, sole exclusion the declared `weather_year`; the 40 → 41
+is this session's own new field and row, not drift. NYISO's column stays closed
+and its transfer queue empty. No other ISO's cell adjudicated (rule 25 / 28(d)).
+
+Rule 22: the holdout spend freeze is ACTIVE and untouched — no year outside
+2023–2025 solved, scored or read. `complete.NYISO` re-keyed with a determination
+re-verification on committed artifacts only (D-5(b)): identical to the superseded
+keeper on all 18 fields, all 9 criterion verdicts and the grade summary — nothing
+worse, so the promotion proceeded. Evidence:
+`results/calibration/FINDING-nyiso119-seny-increment-2026-08-03.md`,
+`PREREG-nyiso119-seny-increment-2026-08-03.md`, `nyiso119_gate_scores.json`,
+`nyiso119_seny_increment_construction_probe.json`.
+
+## 2026-08-04 — nyiso-120 (CROSS-ISO session): neither meter is wrong about East River — they AGREE, and what they agree on is that the model has been double-counting boiler fuel into a 306 MW NYC gas tranche
+
+**Keeper UNCHANGED** (`2026-08-03-nyiso-118-seny-span`). Three runs registered:
+`2026-08-04-nyiso-120a2-control-samehead` (the valid control),
+`2026-08-04-nyiso-120b-scope-gate` (the treatment) and
+`2026-08-04-nyiso-120a-control` (a SUPERSEDED first control, kept as the record
+of why — see (5)).
+
+**Why NYISO at all.** The session brief opened on **NEISO**, whose queue is
+owner-gated end to end (§5.6: item 1 SPENT, items 3/4/6/7/8 closed, item 2
+ceiling-bounded, items 5 / 5b / C3c-2023 all needing an owner green-light that
+is not granted), and directed a cross-ISO cell. This one was minted **one day
+earlier** by miso-122 §7 handoff item 1, which measured the defect, declined to
+act under rule 25, and left one question: *"which meter is wrong about East
+River's boundary, and it is not answerable from MISO's data."* It is answerable
+from NYISO's, and the answer is **neither**.
+
+**(1) THE MEASUREMENT, no LP, on NYISO's own data.** ORIS 2493 East River is a
+hybrid one eGRID plant code cannot see: two `Combined cycle` units that generate
+and two `Dry bottom wall-fired boiler` units (60, 70) reporting **exactly zero**
+gross load in every hour of 2023–2025. **KE1** — eGRID's `CHPCHTI` (13,493,031
+MMBtu) and the CAMPD dark-boiler fuel (13,629,047) are the **same object to
+1.0 %** (ratio 1.0101). **KE2** — CAMPD's power-train fuel over eGRID's own
+`PLNGENAN` is **7.3763** against eGRID's credited **7.4205**, ratio **0.9940**:
+two independent meters agreeing to **0.6 %**. Therefore `PLHTIAN` is *already*
+the power train's fuel, `PLHTRT = 7.4205` is *already* the power-only rate, and
+the `(PLHTIAN + CHPCHTI)` add-back **double-counts boiler fuel into a power
+tranche**. The keeper has been offering 306 MW of NYC `CT_CHP` at **11.8032**,
+59 % above what the machine burns. **KE3** — 100.0 % of dark fuel is a boiler
+`unitType` in all three years, share 37.51/30.79/30.64 %, max/min 1.22.
+Corroborated from the *generation* side: CEMS gross 2,133,488 MWh vs eGRID net
+3,078,707 (**0.693**) is miso-118's `G_gross < 1` physical impossibility —
+~0.95 TWh/yr of HRSG steam-turbine output CEMS never meters, which is why 7.4
+and not the naive CEMS-gross 10.6 is the right number.
+
+**(2) The correction, zero free parameters.** miso-122's scope gate shipped
+**unmodified** (no derive code was edited): East River goes `ok` →
+`below_credited` and its **effective** offer rate falls **11.8032 → 7.4205
+(−37.1 %)**. **KE4 exact**: one applied row changes, zero other flag changes,
+zero other applied-rate changes. Direction is unambiguously downward only
+because NYISO is **not** in `CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` ({CAISO, PJM})
+— in a hand-factor ISO the identical exclusion would push the rate **up**;
+asserted in the scorer, not assumed. Rule 23 citation is miso-122's scope-gate
+**logic change on measured grounds**, never a residual. DOF ledger unchanged
+(32 entries, `n_residual` 6).
+
+**(3) A/B — LIVE, and one gate regresses.** All six construction gates PASS, no
+kill fires: max zonal |Δλ| **0.1287 / 0.1371 / 0.3875** $/MWh clears the 0.10
+bar in **3 of 3** years, no zone's λ rises, `CT_CHP` gains **+0.3113 / +0.1921 /
++0.4214 TWh** displacing `ST_GAS` / `CC_REGULAR` / `CC_CHP`. **P1 free-class C1
+does NOT regress** (14/14 all, 10/10 free in both arms); P3/P4/P5/P6 pass; C3c
+**bit-unchanged** (CAVEAT both arms). **P2 fires**: C3a mean LMP FAILS on **2025
+at exactly −10.0 %** against a control reading **−9.5 %** — a **0.5 pp
+knife-edge crossing** worth **−$0.39/MWh** on a $60 mean, while **2023 IMPROVES**
+(+7.6 % → +7.2 %) and 2024 stays deep inside band. The 2025 C3a gap is
+**$6.68/MWh**, so this correction is **6 %** of it and **94 % is pre-existing**.
+Determination control CALIBRATED-WITH-CAVEATS → treatment **NOT-YET**.
+
+**(4) THE PROMOTION IS ESCALATED, NOT TAKEN — rule 22 D-5(b).** Arm B **is** the
+recommended keeper candidate on the owner's standing standard (structural
+integrity improves, the input was wrong and is now right, it moves the
+worst-matched class — `CT_CHP`, −67.9/−67.6/−62.0 % on the incumbent keeper's
+own `_open_items` — toward reality, and it closes a reproducibility seam since
+the incumbent solved on the pre-gate artifact and is no longer reproducible from
+HEAD). **But NYISO holds a `complete` marker**, and D-5(b) is explicit that a
+re-verified determination that is *worse* **stops the promotion and escalates to
+the owner; it is never silently written**. CALIBRATED-WITH-CAVEATS → NOT-YET is
+worse and would change NYISO's published calibration status. **The corrected
+artifact ships regardless** (rule 14); only the keeper designation is deferred.
+
+**(5) Reported against interest — two self-inflicted errors.** (a) The **first
+control is invalid**: it solved at a pre-rebase HEAD and main then added three
+`ScenarioConfig` fields, so it read 3 differing config keys against the
+treatment and failed KE5's same-HEAD requirement. It is superseded, no number is
+quoted against it, and a same-HEAD control was re-solved — which turns out
+**byte-identical to the committed keeper**, and that is what proves the three
+new fields are inert at NYISO. (b) **Nine bundle JSONs reached `origin/main`
+carrying unresolved rebase conflict markers** — five of them the **nyiso-119
+lane's** — because a rename/rename conflict (git matched the top-15-pruned
+`nyiso111_control_A` against both lanes' new bundles) was blanket-resolved on
+the wrong assumption that each path was uniquely owned by one side. Found,
+stopped for, repaired: the nyiso-119 files restored **byte-exactly** from
+`4e1b1274`, mine by label-matched selection
+(`scripts/probes/_nyiso120_resolve_rename_conflicts.py`, which refuses to guess).
+Zero markers remain. (c) The prereg named **C3c** as the at-risk gate and **C3a**
+is what moved — the anticipated mechanism was right, the criterion was not, and
+that is recorded rather than re-narrated as a hit.
+
+**Governance.** Rules 12/13/15/16/21/22/23/25/26/28 all honoured; training years
+only; the holdout spend freeze is ACTIVE and untouched. Rule 25: **only NYISO's
+artifact was re-derived** — NEISO 1595 Kendall (206 MW, −1.2 %) stays in NEISO's
+lane and no cell outside NYISO is stamped. Rule 28 duty (b): the
+`measured_chp_heat_rates` NYISO cell keeps its `K` (a scope refinement inside
+the K mechanism, rule 19) and gains its citation this session.
+
+* Next number: **nyiso-121**.

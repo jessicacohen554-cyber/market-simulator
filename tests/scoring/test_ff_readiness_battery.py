@@ -277,3 +277,100 @@ def test_build_registration_scorecard_no_iso_gate_open():
     for iso in ("NEISO", "NYISO"):
         assert sc[iso]["gate_b_t1f"]["determination"] == "HOLD", iso
         assert not sc[iso]["gate_open"], iso
+
+
+# --------------------------------------------------------------------------- #
+# _bundle_signature — the kill-resume drill's permutation discriminator (FFR-3J)
+# --------------------------------------------------------------------------- #
+def _write_stub_bundle(run_dir, dispatch, prices):
+    """Write a minimal one-year cache dir _bundle_signature can read.
+
+    Only the surface the signature touches is populated: a single
+    ``year_2026.parquet`` holding the dispatch/price arrays. No config.yaml and
+    no evolution ledger, so :func:`check_forecast_invariants.load_run` takes its
+    documented defaults and the signature's ledger counts are all zero.
+    """
+    import numpy as np
+
+    from market_sim.model.lp import DispatchResult
+
+    run_dir.mkdir(parents=True, exist_ok=True)
+    n_zones, T = prices.shape
+    zeros_z = np.zeros((n_zones, T), dtype=float)
+    result = DispatchResult(
+        dispatch=dispatch,
+        wind_dispatched=zeros_z,
+        solar_dispatched=zeros_z,
+        slack=zeros_z,
+        dump=zeros_z,
+        prices=prices,
+        storage_charge=None,
+        storage_discharge=None,
+        storage_soc=None,
+        flows=None,
+        objective_value=0.0,
+        status="Optimal",
+        build_time=0.0,
+        solve_time=0.0,
+    )
+    result.to_parquet(run_dir / "year_2026.parquet")
+    return run_dir
+
+
+def test_bundle_signature_discriminates_permutation_from_different_values(tmp_path):
+    """A row permutation must move the byte hash but NOT the multiset hash.
+
+    This is the FFR-3J discriminator the kill-resume drill leans on: identical
+    aggregates with differing byte hashes are ambiguous between a re-ordering of
+    the arrays and a genuinely different solve, and only an order-insensitive
+    hash separates them. Pinned on synthetic arrays (no LP) so the drill's
+    verdict semantics stay trustworthy without a solve.
+
+    Also pins the axis subtlety: ``np.sort`` sorts along the LAST axis, so the
+    ``*_sorted_hash`` is NOT invariant to a permutation of the ROWS — it is the
+    fully flattened ``*_multiset_hash`` that is.
+    """
+    import numpy as np
+
+    rng = np.random.default_rng(0)
+    disp = rng.random((5, 24)) * 100.0
+    price = rng.random((3, 24)) * 50.0
+    perm_g = [3, 0, 4, 1, 2]  # generator re-ordering
+    perm_z = [2, 0, 1]  # zone re-ordering
+
+    a = B._bundle_signature(_write_stub_bundle(tmp_path / "a", disp, price))[2026]
+    b = B._bundle_signature(
+        _write_stub_bundle(tmp_path / "b", disp[perm_g], price[perm_z])
+    )[2026]
+
+    # A permutation is exactly what the drill saw: equal aggregates, unequal bytes.
+    assert a["dispatch_sum"] == b["dispatch_sum"]
+    assert a["price_sum"] == b["price_sum"]
+    assert a["dispatch_hash"] != b["dispatch_hash"]
+    assert a["price_hash"] != b["price_hash"]
+
+    # The flattened multiset hash sees through the permutation — this is the
+    # branch that means "same numbers, different order".
+    assert a["dispatch_multiset_hash"] == b["dispatch_multiset_hash"]
+    assert a["price_multiset_hash"] == b["price_multiset_hash"]
+
+    # The last-axis sort does NOT, because the rows themselves moved.
+    assert a["dispatch_sorted_hash"] != b["dispatch_sorted_hash"]
+
+    # A genuinely different value moves the multiset hash too — the other branch.
+    disp_c = disp.copy()
+    disp_c[0, 0] += 1e-6
+    c = B._bundle_signature(_write_stub_bundle(tmp_path / "c", disp_c, price))[2026]
+    assert c["dispatch_multiset_hash"] != a["dispatch_multiset_hash"]
+
+
+def test_bundle_signature_is_identical_for_identical_bundles(tmp_path):
+    """Two byte-identical bundles produce equal signatures (the drill's PASS)."""
+    import numpy as np
+
+    rng = np.random.default_rng(1)
+    disp = rng.random((4, 12)) * 100.0
+    price = rng.random((2, 12)) * 50.0
+    a = B._bundle_signature(_write_stub_bundle(tmp_path / "a", disp, price))
+    b = B._bundle_signature(_write_stub_bundle(tmp_path / "b", disp, price))
+    assert a == b

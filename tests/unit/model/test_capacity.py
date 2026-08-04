@@ -18,7 +18,7 @@ from market_sim.config.constants import (
     WRIGHT_REFERENCE_GW,
 )
 from market_sim.config.iso_configs import get_iso_config
-from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.scenarios import ScenarioConfig, resolve_demand_growth_rate
 from market_sim.data.confirmed_retirements import ConfirmedExit
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.capacity import (
@@ -1176,9 +1176,16 @@ class TestPipelineRetirementRule(unittest.TestCase):
         # shared eligible set, and pipeline admission is capped by the
         # existing accredited-adequacy requirement on the schedule of pending
         # exits, cheapest-firm-adequacy retained first. ERCOT CDR basis
-        # (same fixture arithmetic as the reliability-floor tests):
-        # requirement = 3080 x 0.942 x 1.1375 = 3300.1 MW; nuclear (2000 at
-        # rating) + DC ties (817) = 2817 < req, so ONE of the two failing
+        # (same fixture arithmetic as the reliability-floor tests). The cap is
+        # tested at the schedule's EXECUTION horizon, not the decision year
+        # (_admission_cap_horizon, the G-31 grain correction): coal's lag 3
+        # puts the horizon at 2033, so the 2031/2032 screens test
+        # 3080 x 1.025^2 x 0.942 x 1.1375 = 3467.3 MW rather than the
+        # decision-year 3080 x 0.942 x 1.1375 = 3300.1 MW. Retaining gas_st
+        # alone (3817 MW accredited) clears BOTH, so this fixture's outcome is
+        # grain-invariant and still pins the composition claim below; the
+        # grain itself is pinned by the two tests that follow.
+        # nuclear (2000 at rating) + DC ties (817) = 2817 < req, so ONE of the two failing
         # candidates must be retained. gas_st is the cheaper firm-adequacy
         # buy (GFC 35 vs coal's 45 x 1.3 = 58.5 $/kW-yr), so gas_st is
         # UN-ADMITTED (entry_capped) and coal — the deeper loss — is decided:
@@ -1246,6 +1253,238 @@ class TestPipelineRetirementRule(unittest.TestCase):
         self.assertEqual(state, {})
         executed = [e for e in sink["pipeline_events"] if e["event"] == "executed"]
         self.assertEqual([e["unit_id"] for e in executed], ["C0"])
+
+    def test_admission_cap_horizon_is_the_last_execution_year(self):
+        # G-31 cap grain (FFR-3F task 1; owner decision D-8 / FFR-3C §1.2 G3).
+        # The admission cap screens ONE counterfactual fleet — the current
+        # fleet with the whole scheduled exit set removed at once — and that
+        # fleet is realized at the LAST execution year in the schedule, not at
+        # the decision year. FFR-3C measured the old grain testing a 2026
+        # requirement against exits landing in 2028: +10.3 % of requirement
+        # the cap never saw. Both year-dependent inputs move to the horizon:
+        # the FPR delivery year and the peak, the latter projected on the
+        # run's own demand-growth path.
+        from market_sim.model.capacity_evolution.retirements import (
+            _admission_cap_horizon,
+        )
+
+        config = ScenarioConfig(retirement_rule="pipeline", iso="ERCOT")
+        coal = [_gen(f"C{i}", "coal", pmax=100.0) for i in range(3)]
+        scheduled = {g.unit_id for g in coal}
+        growth = (1.0 + resolve_demand_growth_rate(config, 2031)) * (
+            1.0 + resolve_demand_growth_rate(config, 2032)
+        )
+        # Decided at the 2031 screen (loss year 2030) + lag_coal 3 => 2033.
+        cap_year, cap_peak = _admission_cap_horizon(
+            config, scheduled, {}, 2030, coal, 1000.0, 2031
+        )
+        self.assertEqual(cap_year, 2033)
+        self.assertAlmostEqual(cap_peak, 1000.0 * growth, places=6)
+
+        # A lag-1 fuel executes in the screen year itself, so its horizon IS
+        # the decision year: the correction is inert there, byte-identically.
+        gas_st = [_gen("S0", "gas_st", pmax=100.0)]
+        self.assertEqual(
+            _admission_cap_horizon(config, {"S0"}, {}, 2030, gas_st, 1000.0, 2031),
+            (2031, 1000.0),
+        )
+        # Empty schedule: nothing to project against, unchanged.
+        self.assertEqual(
+            _admission_cap_horizon(config, set(), {}, 2030, coal, 1000.0, 2031),
+            (2031, 1000.0),
+        )
+        # A pending unit carries its OWN decided year, not this screen's.
+        self.assertEqual(
+            _admission_cap_horizon(
+                config, {"C0"}, {"C0": 2028}, 2030, coal, 1000.0, 2031
+            )[0],
+            2031,  # 2028 + 3 = 2031, already due — never earlier than `year`
+        )
+
+    def test_admission_cap_binds_on_the_execution_year_requirement(self):
+        # The behavioural half: a fixture where the two grains admit DIFFERENT
+        # exit sets, so a revert to the decision-year grain fails here.
+        # ERCOT, peak 3095.5 MW. Accredited without the coal cohort (nuclear
+        # 2000 at seasonal rating + DC ties) = 3090.15 MW, and each coal unit
+        # buys 250 MW of firm adequacy back.
+        #   decision-year requirement 2031 = 3316.91 MW -> ONE unit retained
+        #   execution-year requirement 2033 (peak grown 2 yr) = 3484.82 MW
+        #                                                     -> TWO retained
+        config = ScenarioConfig(retirement_rule="pipeline", iso="ERCOT")
+        peak = 3095.5
+        nuclear = _gen("N0", "nuclear", pmax=2000.0)
+        coal = [_gen(f"C{i}", "coal", pmax=250.0) for i in range(8)]
+        fleet = [nuclear, *coal]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)
+        # Nuclear clears its bar on the gross fallback; every coal unit fails.
+        dispatch = SimpleNamespace(
+            dispatch=np.vstack(
+                [np.full((1, self.T), 1.0e7)] + [np.full((1, self.T), 10.0)] * 8
+            )
+        )
+        sink: dict = {}
+        apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=peak,
+            year=2031,
+            event_sink=sink,
+        )
+        capped = [e for e in sink["pipeline_events"] if e["event"] == "entry_capped"]
+        self.assertEqual(len(capped), 2)
+
+        # And the grain is what makes it two: the accredited base plus ONE
+        # retained unit clears the decision-year requirement but NOT the
+        # execution-year one. If the cap reverts to the decision year this
+        # bracket inverts and the assertion above drops to 1.
+        from market_sim.model.capacity_evolution.adequacy import (
+            accredited_firm_capacity_mw,
+        )
+
+        base = accredited_firm_capacity_mw(
+            [nuclear],
+            0.0,
+            0.0,
+            0.0,
+            iso="ERCOT",
+            peak_demand_mw=peak,
+            elcc_curves_enabled=config.renewable_elcc_curves,
+        )
+        growth = (1.0 + resolve_demand_growth_rate(config, 2031)) * (
+            1.0 + resolve_demand_growth_rate(config, 2032)
+        )
+        req_decision = resolve_adequacy_requirement_mw(config, "ERCOT", peak, 2031)
+        req_execution = resolve_adequacy_requirement_mw(
+            config, "ERCOT", peak * growth, 2033
+        )
+        self.assertGreaterEqual(base + 250.0, req_decision)
+        self.assertLess(base + 250.0, req_execution)
+        self.assertGreaterEqual(base + 500.0, req_execution)
+
+    def _cohort_schedule(self, cap, n=12, mw=500.0, years=range(2026, 2036)):
+        """Exit schedule of an all-failing coal cohort under ``exit_rate_cap_mw``.
+
+        ``peak_demand=0`` makes the reliability floor inert, so what is left
+        is the queue alone. Returns ``[(year, executed_gw, deferred_units)]``.
+        """
+        fleet = [
+            _gen(f"C{i:02d}", "coal", pmax=mw, heat_rate=10.0 + i) for i in range(n)
+        ]
+        config = ScenarioConfig(retirement_rule="pipeline", iso="ERCOT")
+        state: dict[str, int] = {}
+        schedule = []
+        for year in years:
+            if not fleet:
+                schedule.append((year, 0.0, 0))
+                continue
+            arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+            sink: dict = {}
+            fleet, state, _ = apply_economic_retirements(
+                fleet,
+                arrays,
+                SimpleNamespace(dispatch=np.full((len(fleet), self.T), 10.0)),
+                np.full((1, self.T), 10.0),
+                config,
+                state,
+                peak_demand=0.0,
+                year=year,
+                event_sink=sink,
+                exit_rate_cap_mw=cap,
+            )
+            events = sink["pipeline_events"]
+            schedule.append(
+                (
+                    year,
+                    sum(e["mw"] for e in events if e["event"] == "executed") / 1000.0,
+                    sum(1 for e in events if e["event"] == "throughput_deferred"),
+                )
+            )
+        return schedule
+
+    def test_exit_throughput_cap_spreads_the_wave_without_shrinking_it(self):
+        # The mechanism owner decision D-8 authorized (2026-08-03,
+        # ffr-owner-sitting-2026-08-02.md Addendum F.1). FFR-3C §1.2 G2
+        # measured what the pipeline lacks: a per-fuel constant execution lag
+        # is a rigid TIME-SHIFT operator, so an all-failing cohort's exit wave
+        # is one year wide however many units fail. A throughput cap is the
+        # missing second property of the same queue.
+        #
+        # 12 x 500 MW coal (6 GW), all failing, lag 3. Uncapped the whole
+        # cohort leaves in ONE year; capped at 2 GW/yr it leaves over THREE —
+        # and the TOTAL is identical. That invariant is the point: a
+        # throughput cap moves the calendar, it does not adjudicate the level
+        # (which is the revenue lane's, FFR-3C §1.4).
+        uncapped = self._cohort_schedule(None)
+        capped = self._cohort_schedule(2000.0)
+
+        self.assertEqual(sum(1 for _y, gw, _d in uncapped if gw > 0), 1)
+        self.assertEqual(sum(1 for _y, gw, _d in capped if gw > 0), 3)
+        self.assertAlmostEqual(sum(gw for _y, gw, _d in uncapped), 6.0)
+        self.assertAlmostEqual(sum(gw for _y, gw, _d in capped), 6.0)
+        # No year exceeds the budget, and deferrals are recorded as their own
+        # event kind (never folded into floor retention).
+        self.assertTrue(all(gw <= 2.0 + 1e-9 for _y, gw, _d in capped))
+        self.assertTrue(any(d > 0 for _y, _gw, d in capped))
+        # Default off is byte-identical to the shipped no-cap behaviour.
+        self.assertEqual(self._cohort_schedule(None), uncapped)
+
+    def test_exit_throughput_cap_is_strict_fifo_by_decided_year(self):
+        # A deactivation queue is processed oldest-request-first. The unit
+        # decided earlier leaves first even though the later-decided unit is
+        # the less efficient one (which is the order the ledger sort would
+        # otherwise impose).
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        old = _gen("OLD", "coal", pmax=500.0, heat_rate=9.0)
+        new = _gen("NEW", "coal", pmax=500.0, heat_rate=15.0)
+        due = sorted([old, new], key=lambda g: (g.fuel_type, -g.heat_rate))
+        self.assertEqual([g.unit_id for g in due], ["NEW", "OLD"])  # ledger order
+        executing, deferred = _apply_exit_throughput_cap(
+            due, {"OLD": 2028, "NEW": 2030}, cap_mw=500.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["OLD"])
+        self.assertEqual([g.unit_id for g in deferred], ["NEW"])
+
+    def test_exit_throughput_cap_never_makes_a_unit_immortal(self):
+        # A unit larger than the whole annual budget must still leave — at the
+        # head of the queue — or the cap silently becomes an immortality rule
+        # instead of a rate limit.
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        huge = _gen("HUGE", "coal", pmax=9000.0)
+        small = _gen("SMALL", "coal", pmax=100.0)
+        executing, deferred = _apply_exit_throughput_cap(
+            [huge, small], {"HUGE": 2028, "SMALL": 2029}, cap_mw=1000.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["HUGE"])
+        self.assertEqual([g.unit_id for g in deferred], ["SMALL"])
+
+    def test_exit_throughput_cap_does_not_backfill_remaining_headroom(self):
+        # Strict FIFO: the year stops at the first unit that does not fit; a
+        # smaller LATER request is not promoted to pack the year. Reordering
+        # the queue by size is not something a real deactivation queue does,
+        # and it would make exit composition depend on unit size.
+        from market_sim.model.capacity_evolution.retirements import (
+            _apply_exit_throughput_cap,
+        )
+
+        first = _gen("A", "coal", pmax=600.0)
+        big = _gen("B", "coal", pmax=900.0)
+        tiny = _gen("C", "coal", pmax=100.0)
+        executing, deferred = _apply_exit_throughput_cap(
+            [first, big, tiny], {"A": 2028, "B": 2029, "C": 2030}, cap_mw=1000.0
+        )
+        self.assertEqual([g.unit_id for g in executing], ["A"])
+        self.assertEqual([g.unit_id for g in deferred], ["B", "C"])
 
     def test_gas_cc_ccs_lag_inherits_gas_cc(self):
         # §5 open-DOF disposition: no CCS retirement exists anywhere (§a.4),

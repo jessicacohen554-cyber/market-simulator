@@ -1,0 +1,405 @@
+{
+  "_what": "pjm-151 PREREG gate scoring: seam envelope per-neighbour arm vs the committed keeper pjm147_chp_B. K2 discharged without a solve.",
+  "arm_bundle": "results/calibration/pjm151_seam_B",
+  "keeper_bundle": "results/calibration/pjm147_chp_B",
+  "K1_recipe": {
+    "arm_only": [
+      "electrification_path",
+      "electrification_percentile",
+      "nyiso_nyc_rcpf_step_curve",
+      "nyiso_seny_rcpf_increment_step",
+      "pjm_seam_envelope_by_neighbor"
+    ],
+    "keeper_only": [
+      "ct_committed_hr_override",
+      "ct_econ_hr_override",
+      "ct_peak_hr_override"
+    ],
+    "value_diffs": [
+      "caiso_ra_min_load_frac",
+      "entry_commissioning_lag",
+      "entry_rate_limits",
+      "net_cone_forward_escalation",
+      "retirement_rule"
+    ],
+    "detail": {
+      "caiso_ra_min_load_frac": {
+        "keeper": 0.26,
+        "arm": 0.4
+      },
+      "entry_commissioning_lag": {
+        "keeper": false,
+        "arm": true
+      },
+      "entry_rate_limits": {
+        "keeper": false,
+        "arm": true
+      },
+      "net_cone_forward_escalation": {
+        "keeper": "hold_last",
+        "arm": "reindex_gross"
+      },
+      "retirement_rule": {
+        "keeper": "legacy",
+        "arm": "pipeline"
+      }
+    },
+    "declared_delta_armed": true,
+    "declared_delta_channel": "arm_only (keeper predates the field; effective keeper value = shipped default False)",
+    "schema_drift_explained": {
+      "electrification_path": "2541a02 added the FF-G4 Option-B electrification load-shape layers, default off. Forecast-only demand layering with no backcast reader.",
+      "electrification_percentile": "same FF-G4 layer as electrification_path.",
+      "nyiso_nyc_rcpf_step_curve": "69f1aa0 (nyiso-115) added it, default off; NYISO-gated RCPF demand curve, unreachable for iso='PJM'.",
+      "nyiso_seny_rcpf_increment_step": "4491fe6 (nyiso-119) added it, default off; the reserves/spec.py branch gates on `seny_increment and name == NYISO_SENY_30MIN_FAMILY` and reduces to the pre-existing condition when off, so PJM is byte-identical.",
+      "pjm_seam_envelope_by_neighbor": "THE DECLARED DELTA (PREREG-pjm151 \u00a74). New in this session, so the keeper predates the field entirely and its effective keeper value is the shipped default False -- which is why it lands in arm_only rather than as a False -> True value_diff.",
+      "ct_committed_hr_override": "DELETED from ScenarioConfig by a0fc302 ('delete the dead CT_CHP override triple'), so the keeper records a field that no longer exists. Removed precisely because it was dead -- rule 26 [R-DELETE].",
+      "ct_econ_hr_override": "same a0fc302 deletion as ct_committed_hr_override.",
+      "ct_peak_hr_override": "same a0fc302 deletion as ct_committed_hr_override."
+    },
+    "default_moves_explained": [
+      "caiso_ra_min_load_frac",
+      "entry_commissioning_lag",
+      "entry_rate_limits",
+      "net_cone_forward_escalation",
+      "retirement_rule"
+    ],
+    "unexplained": [],
+    "verdict": "PASS"
+  },
+  "K3_liveness": {
+    "2023": {
+      "max_abs_class_hour_dMW": 1481.25,
+      "n_class_hours": 166440
+    },
+    "2024": {
+      "max_abs_class_hour_dMW": 1699.225098,
+      "n_class_hours": 166440
+    },
+    "2025": {
+      "max_abs_class_hour_dMW": 1647.614746,
+      "n_class_hours": 166440
+    }
+  },
+  "K4_criteria": {
+    "keeper_determination": "CALIBRATED",
+    "arm_determination": "NOT-YET",
+    "keeper_grade": {
+      "scored": 9,
+      "target_grade": 9,
+      "commercial_grade": 0,
+      "ledgered": 0,
+      "fails": 0
+    },
+    "arm_grade": {
+      "scored": 8,
+      "target_grade": 8,
+      "commercial_grade": 0,
+      "ledgered": 0,
+      "fails": 0
+    },
+    "keeper_c1": "C1 all 16/16 \u00b7 free 12/12",
+    "arm_c1": "C1 all 16/16 \u00b7 free 12/12",
+    "criterion_moves": {
+      "governance": {
+        "keeper": "PASS",
+        "arm": "UNATTESTED"
+      }
+    },
+    "verdict": "MOVED"
+  },
+  "E1_c1_magnitude": {
+    "breaches": [],
+    "rows": [
+      {
+        "year": 2023,
+        "class": "CC_REGULAR",
+        "gated": true,
+        "actual": 325.67,
+        "keeper": 322.968,
+        "arm": 322.218,
+        "keeper_d": -2.702,
+        "arm_d": -3.451,
+        "move": -0.749,
+        "headroom_used": 3.451
+      },
+      {
+        "year": 2023,
+        "class": "CC_CHP",
+        "gated": true,
+        "actual": 6.115,
+        "keeper": 8.606,
+        "arm": 8.575,
+        "keeper_d": 2.492,
+        "arm_d": 2.46,
+        "move": -0.032,
+        "headroom_used": 2.46
+      },
+      {
+        "year": 2023,
+        "class": "CT_PEAKER",
+        "gated": true,
+        "actual": 21.663,
+        "keeper": 19.659,
+        "arm": 19.43,
+        "keeper_d": -2.004,
+        "arm_d": -2.233,
+        "move": -0.229,
+        "headroom_used": 2.233
+      },
+      {
+        "year": 2023,
+        "class": "ST_GAS",
+        "gated": true,
+        "actual": 8.883,
+        "keeper": 10.896,
+        "arm": 10.842,
+        "keeper_d": 2.013,
+        "arm_d": 1.959,
+        "move": -0.054,
+        "headroom_used": 1.959
+      },
+      {
+        "year": 2023,
+        "class": "ST_CHP",
+        "gated": true,
+        "actual": 2.198,
+        "keeper": 0.926,
+        "arm": 0.987,
+        "keeper_d": -1.272,
+        "arm_d": -1.211,
+        "move": 0.061,
+        "headroom_used": 1.211
+      },
+      {
+        "year": 2023,
+        "class": "COAL_PRB",
+        "gated": true,
+        "actual": 3.55,
+        "keeper": 3.156,
+        "arm": 3.13,
+        "keeper_d": -0.394,
+        "arm_d": -0.421,
+        "move": -0.026,
+        "headroom_used": 0.421
+      },
+      {
+        "year": 2023,
+        "class": "COAL_BIT",
+        "gated": true,
+        "actual": 103.026,
+        "keeper": 104.03,
+        "arm": 103.71,
+        "keeper_d": 1.004,
+        "arm_d": 0.684,
+        "move": -0.32,
+        "headroom_used": 0.684
+      },
+      {
+        "year": 2023,
+        "class": "COAL_WC",
+        "gated": true,
+        "actual": 5.895,
+        "keeper": 5.768,
+        "arm": 5.751,
+        "keeper_d": -0.128,
+        "arm_d": -0.144,
+        "move": -0.017,
+        "headroom_used": 0.144
+      },
+      {
+        "year": 2024,
+        "class": "CC_REGULAR",
+        "gated": true,
+        "actual": 335.124,
+        "keeper": 336.522,
+        "arm": 335.446,
+        "keeper_d": 1.397,
+        "arm_d": 0.322,
+        "move": -1.075,
+        "headroom_used": 0.322
+      },
+      {
+        "year": 2024,
+        "class": "CC_CHP",
+        "gated": true,
+        "actual": 7.283,
+        "keeper": 8.071,
+        "arm": 8.042,
+        "keeper_d": 0.788,
+        "arm_d": 0.759,
+        "move": -0.029,
+        "headroom_used": 0.759
+      },
+      {
+        "year": 2024,
+        "class": "CT_PEAKER",
+        "gated": true,
+        "actual": 24.019,
+        "keeper": 21.134,
+        "arm": 20.748,
+        "keeper_d": -2.885,
+        "arm_d": -3.271,
+        "move": -0.386,
+        "headroom_used": 3.271
+      },
+      {
+        "year": 2024,
+        "class": "ST_GAS",
+        "gated": true,
+        "actual": 13.107,
+        "keeper": 10.936,
+        "arm": 10.872,
+        "keeper_d": -2.171,
+        "arm_d": -2.236,
+        "move": -0.065,
+        "headroom_used": 2.236
+      },
+      {
+        "year": 2024,
+        "class": "ST_CHP",
+        "gated": true,
+        "actual": 2.373,
+        "keeper": 1.038,
+        "arm": 1.096,
+        "keeper_d": -1.335,
+        "arm_d": -1.276,
+        "move": 0.058,
+        "headroom_used": 1.276
+      },
+      {
+        "year": 2024,
+        "class": "COAL_PRB",
+        "gated": true,
+        "actual": 4.411,
+        "keeper": 4.011,
+        "arm": 3.985,
+        "keeper_d": -0.401,
+        "arm_d": -0.426,
+        "move": -0.026,
+        "headroom_used": 0.426
+      },
+      {
+        "year": 2024,
+        "class": "COAL_BIT",
+        "gated": true,
+        "actual": 105.097,
+        "keeper": 104.939,
+        "arm": 104.568,
+        "keeper_d": -0.157,
+        "arm_d": -0.528,
+        "move": -0.371,
+        "headroom_used": 0.528
+      },
+      {
+        "year": 2024,
+        "class": "COAL_WC",
+        "gated": true,
+        "actual": 5.688,
+        "keeper": 5.618,
+        "arm": 5.583,
+        "keeper_d": -0.07,
+        "arm_d": -0.105,
+        "move": -0.035,
+        "headroom_used": 0.105
+      },
+      {
+        "year": 2025,
+        "class": "CC_REGULAR",
+        "gated": false,
+        "actual": 330.361,
+        "keeper": 335.554,
+        "arm": 334.317,
+        "keeper_d": 5.193,
+        "arm_d": 3.957,
+        "move": -1.236,
+        "headroom_used": 3.957
+      },
+      {
+        "year": 2025,
+        "class": "CC_CHP",
+        "gated": false,
+        "actual": 6.445,
+        "keeper": 6.835,
+        "arm": 6.778,
+        "keeper_d": 0.39,
+        "arm_d": 0.333,
+        "move": -0.057,
+        "headroom_used": 0.333
+      },
+      {
+        "year": 2025,
+        "class": "CT_PEAKER",
+        "gated": false,
+        "actual": 23.825,
+        "keeper": 27.944,
+        "arm": 27.38,
+        "keeper_d": 4.119,
+        "arm_d": 3.555,
+        "move": -0.564,
+        "headroom_used": 3.555
+      },
+      {
+        "year": 2025,
+        "class": "ST_GAS",
+        "gated": false,
+        "actual": 14.788,
+        "keeper": 17.243,
+        "arm": 17.087,
+        "keeper_d": 2.454,
+        "arm_d": 2.299,
+        "move": -0.156,
+        "headroom_used": 2.299
+      },
+      {
+        "year": 2025,
+        "class": "ST_CHP",
+        "gated": false,
+        "actual": 1.836,
+        "keeper": 0.881,
+        "arm": 0.94,
+        "keeper_d": -0.955,
+        "arm_d": -0.896,
+        "move": 0.059,
+        "headroom_used": 0.896
+      },
+      {
+        "year": 2025,
+        "class": "COAL_PRB",
+        "gated": false,
+        "actual": 6.032,
+        "keeper": 6.328,
+        "arm": 6.296,
+        "keeper_d": 0.296,
+        "arm_d": 0.264,
+        "move": -0.031,
+        "headroom_used": 0.264
+      },
+      {
+        "year": 2025,
+        "class": "COAL_BIT",
+        "gated": false,
+        "actual": 125.429,
+        "keeper": 131.268,
+        "arm": 130.786,
+        "keeper_d": 5.839,
+        "arm_d": 5.357,
+        "move": -0.482,
+        "headroom_used": 5.357
+      },
+      {
+        "year": 2025,
+        "class": "COAL_WC",
+        "gated": false,
+        "actual": 5.403,
+        "keeper": 5.688,
+        "arm": 5.668,
+        "keeper_d": 0.285,
+        "arm_d": 0.266,
+        "move": -0.019,
+        "headroom_used": 0.266
+      }
+    ],
+    "verdict": "PASS",
+    "arm_determination": "NOT-YET"
+  }
+}

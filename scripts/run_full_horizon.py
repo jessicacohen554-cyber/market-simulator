@@ -153,6 +153,8 @@ def reference_config(
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     electrification_path: str = "off",
+    entry_screen_diagnostics: bool = False,
+    caiso_nqc_accreditation: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -184,6 +186,26 @@ def reference_config(
     default — which is the point of C.4(a): golden posture and shipped posture
     are one answer, not two. It remains explicit so the run's config records
     the posture it ran.
+
+    ``entry_screen_diagnostics`` (RC-0C / BLK-8, FFR-3H) arms the per-candidate
+    entry-screen decomposition sink that ``run_capacity_hindcast.py`` has always
+    exposed and this runner did not, so a forecast leg could not answer *which
+    revenue term starves the economic entry screen* without one. It is a pure
+    observability gate — nothing reads it back, so the fleet outcome is
+    identical with it on or off (``ScenarioConfig.entry_screen_diagnostics``
+    docstring) — but it is NOT in ``_CACHE_KEY_OPTIONAL_FIELDS``, so an armed
+    leg takes its own cache key and must be paired with an un-armed arm when the
+    recorded key matters. Default ``False`` = byte-identical.
+
+    ``caiso_nqc_accreditation`` (FFR-3P) arms CAISO's OWN published
+    class-average VRE accreditation (the CPUC/CAISO Net Qualifying Capacity
+    technology factors) in place of the generic non-CAISO 0.18/0.16 fallback.
+    Unlike the diagnostics gate this DOES change the solve — it raises the
+    accredited-firm ledger, so the adequacy backstop and the retirement
+    reliability floor both see a different gap — and it is registered in
+    ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed leg keeps its
+    historical key and an armed leg keys distinctly. Default ``False``: the
+    arming posture is an OWNER decision, not this runner's.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -222,6 +244,8 @@ def reference_config(
         # ever signs an electrification default, this line must become a
         # None-sentinel too or it will silently override that signature.
         electrification_path=electrification_path,
+        entry_screen_diagnostics=entry_screen_diagnostics,
+        caiso_nqc_accreditation=caiso_nqc_accreditation,
         **{k: v for k, v in arms.items() if v is not None},
     )
 
@@ -413,6 +437,10 @@ def write_run_config(out_dir: Path, run_dir: "Path | None", **extra) -> "Path | 
         # provenance claim above rather than trust it.
         "scenario_config_source": str(cfg_yaml),
         "scenario_config": resolved,
+        # Recorded here, from the positional argument, so a caller never has to
+        # pass it again through **extra — doing so collides with this
+        # function's own parameter name and raises TypeError at bind time.
+        "run_dir": str(run_dir),
         "environment": environment_block(),
         **extra,
     }
@@ -593,13 +621,18 @@ def solve_and_summarize(
         "trajectory": trajectory,
     }
     # FC-7 provenance artifact, from the run's OWN resolved config (blocker 7).
+    # NB: ``run_dir`` is passed ONLY positionally. It used to be passed again
+    # inside **extra to get it into the payload, which made every real call
+    # raise `TypeError: write_run_config() got multiple values for argument
+    # 'run_dir'` — after a full 5-year solve and before the summary was
+    # written, so the leg lost its summary AND its FC-7 artifact. The function
+    # now records the key itself (see its payload), so the caller must not.
     run_config_path = write_run_config(
         out_dir,
         run_dir,
         iso=iso,
         cache_key=cache_key,
         solved_years=solved_years,
-        run_dir=str(run_dir) if run_dir else None,
     )
     summary["run_config_path"] = str(run_config_path) if run_config_path else None
 
@@ -765,6 +798,30 @@ def main(argv: list[str] | None = None) -> int:
             "evidence-first (NEISO first, memo §8-D3)."
         ),
     )
+    ap.add_argument(
+        "--entry-screen-diagnostics",
+        action="store_true",
+        help=(
+            "Arm the RC-0C per-candidate entry-screen decomposition sink "
+            "(revenue/cost terms, margin, binding queue cap) into each year's "
+            "evolution ledger. Pure observability — the fleet outcome is "
+            "identical with it on or off — but it MOVES THE CACHE KEY, so pair "
+            "an armed leg with an un-armed arm when the key matters."
+        ),
+    )
+    ap.add_argument(
+        "--caiso-nqc-accreditation",
+        action="store_true",
+        help=(
+            "FFR-3P arm (CAISO only, DEFAULT OFF pending an owner decision): "
+            "accredit CAISO wind/solar at the ISO's OWN published CPUC/CAISO "
+            "Net Qualifying Capacity class factors (solar 0.2096, wind 0.2202 "
+            "- the Jul/Aug/Sep peak-risk minima of the CY2026 report) instead "
+            "of the generic non-CAISO 0.18/0.16 fallback. Solve-affecting: it "
+            "raises the accredited-firm ledger, so pair it with an unarmed "
+            "control. No-op in every other ISO (rule 25)."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -787,6 +844,8 @@ def main(argv: list[str] | None = None) -> int:
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         electrification_path=args.electrification_path,
+        entry_screen_diagnostics=args.entry_screen_diagnostics,
+        caiso_nqc_accreditation=args.caiso_nqc_accreditation,
     )
     summary = solve_and_summarize(
         config,

@@ -883,3 +883,368 @@ evidence dependency or owner decision, never slot contention.
 **Bookkeeping.** Where an earlier record in this program says a lane waits for a solve slot, that
 statement rests on the superseded reading. It is corrected by this addendum and not by rewriting
 the earlier record — the same convention as Addenda A–E.
+
+---
+
+## Addendum G — **The D-8 wave landed; the FH gate went green for the wrong reason and the block does NOT lift** (workstream manager, 2026-08-03, HEAD `9aca82b8`)
+
+Four lanes dispatched under Addendum F landed within hours: **FFR-3F** (the G-31 fix),
+**FFR-3A-2** (the battery close), **FFR-SC** (the transmission A/B) and **FFR-PA** (the
+retirement registry). Two of them committed **incomplete deliverables with `(pending)`
+placeholders** because their solve lanes had not finished at merge. This addendum records what
+is established, one manager determination, and one decision the owner needs.
+
+### G.1 — D-8 executed. Both mechanisms are built, registered, default-off, and MEASURED INERT in ERCOT.
+
+FFR-3F (`docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md`) discharged the D-8 charter to its
+bounds:
+
+* **The G3 cap-grain fix landed** (`2adfb49`). The pipeline's admission cap now resolves its
+  adequacy requirement at the schedule's **execution horizon** rather than the decision year —
+  both the delivery year and the projected peak. No new parameter, pinned by a discriminating
+  test (decision-year grain retains 1 unit, execution-year grain retains 2), byte-inert where
+  the grain was already right.
+* **The exit-throughput cap landed default-OFF** (`db5ff91`), externally identified from the
+  EIA-860 retired sheet and reproducing D-8's cited values exactly (ERCOT 4.42 GW/yr, PJM 5.24).
+  The synthetic is decisive on the property that was missing: FFR-3C's 12-unit cohort exits in
+  **one** year uncapped and over **three** capped, **total identical** — the cap moves the
+  calendar and does not touch the level.
+* **Both are PROVABLY INERT at the ERCOT T1-FF gate posture, against a paired pre-fix control.**
+  All three arms are identical to the megawatt in every year, with **zero `pipeline_events` of
+  any kind** — no ERCOT unit fails the going-forward bar anywhere in the window, so the
+  retirement pipeline is never entered. Per the lane's own charter this is a **NULL, not a
+  pass**, and the pairing is what makes it legible.
+* **PJM is where the seam is live**: 1,199 units fail the going-forward bar at the 2024 screen,
+  the admission cap admits **9 (1.056 GW)** and un-admits **1,190 (108.2 GW)**. The cap is the
+  binding constraint on PJM's exit membership by two orders of magnitude — exactly the quantity
+  FFR-3C said was being tested against the wrong year.
+
+### G.2 — MANAGER DETERMINATION: FH-4/FH-5 stay BLOCKED. The re-probe's green is not the gate's.
+
+FH-1's §3.3 acceptance gate re-probes **I6 PASS / I7 PASS / I12 WARN** at the post-fix HEAD,
+against the recorded **FAIL / FAIL / WARN**. On the letter of the gate that is a pass. The lift is
+the manager's call and I am **not** taking it. FFR-3F declined to claim it and gave the reasons;
+I adopt them:
+
+1. **The green is not the fix's.** The pre-fix control returns the identical PASS/PASS/WARN.
+   Nothing FFR-3F built moved I6 or I7. The flip is attributable by elimination and mechanism to
+   **D-1's `legacy` → `pipeline` default flip, signed 2026-08-02 — after FH-1's probe ran.**
+2. **I12's WARN has INVERTED SIGN — a new problem wearing the old problem's label.** FH-1 exited
+   the band *downward* (an over-retiring harness). The re-probe exits it *upward*: 2024 at
+   32.3 % and 2025 at **40.2 %** against a ceiling of 28.7 %. The harness has swung from retiring
+   26.8 % of its thermal fleet in a single year to retiring **nothing at all** while capacity
+   keeps being added. The gate's own wording — *"an over-retiring harness would make every
+   downstream metric uninterpretable"* — applies with equal force to a harness that cannot retire
+   anything.
+3. **The gate cannot exercise what it was re-probed to test.** Zero `pipeline_events` means the
+   retirement layer is **untested** at this posture, not validated by it.
+
+**And a fourth reason, which is the one that turns this from a measurement into a decision.**
+FFR-3F §5.1 establishes a **mechanical impossibility**: under the pipeline rule a unit decided at
+the 2024 screen with `L_coal` = 3 executes in **2027**, and one decided at the 2025 screen
+executes in 2028 — **both outside a 2023–2025 window**. Even if ERCOT units *had* failed the bar,
+**the pipeline rule cannot produce a single retirement execution inside a 3-year T1-FF window.**
+The gate as currently cut can therefore never test the retirement layer under the shipped rule,
+whatever the result. A green here means "the window is too short to see anything," not "the
+harness is sound." That is not a threshold to re-tune; it is a gate that needs re-cutting, and
+how to re-cut it is the owner's call (see G.5).
+
+### G.3 — FFR-3A-2: the collapse REPRODUCES cold, and BLK-10 is scorable for the first time
+
+* **The D-1/D-2 adequacy collapse reproduces** cold and post-epoch. It is not a cache artifact.
+* **BLK-10 backstop sizing is measurable at last** — the evidence D-2 was signed to re-open and
+  which had been SKIPPED on every leg at FF-2D and FFR-3A. **CAISO builds 65.5 % of its capacity
+  additions through the administrative reliability backstop** (rubric pass bar 10 %; the
+  rubric's own rationale calls this channel "a single-digit-percent residual in real markets").
+  FC-2 row 4 **FAILs** for CAISO; NYISO 23.8 % and NEISO 11.7 % are CAVEATs; **ERCOT is 0.0 % in
+  BOTH arms**.
+* That last number **sharpens FFR-3C's attribution**: ERCOT's collapse is not a backstop-sizing
+  story at all, it is entirely the retirement/entry asymmetry. The backstop finding belongs to
+  CAISO and the downstate/New-England ISOs, and rule 25 forbids carrying it across.
+* **FF-3E part c (kill-resume) is now FAIL** where FF-2D recorded GREEN for all six ISOs: the
+  first freshly-solved year after a resume has **identical aggregates and identical evolution
+  counts but different byte hashes** on both dispatch and price. A resumed full-horizon run is
+  therefore not bit-reproducible against an uninterrupted one — a live provenance risk for any
+  T2/T3 campaign, where resume is not optional at 7–10 h/ISO. Two candidate mechanisms (array
+  ordering vs alternate optima) and the discriminating test are named; attribution is not claimed.
+
+### G.4 — Two deliverables are committed INCOMPLETE, and one instrument correction matters
+
+* **FFR-3A-2 §§3.4, 4.2, 5, 7, 9 are `(pending)`** — T1-H measured results, T1-X measured
+  results, FC-6 driver response, the §2.1b gate scorecard, and the not-measured list. Its T1-X
+  fold test ran and returned **all three legs RE-RUN** (no leg folds as-is). No board was
+  regenerated and nothing was registered.
+* **FFR-SC §§2–5 are placeholders** — the CAISO paired arms had not finished. §1 stands and is
+  a real result: **PJM is provably inert for the transmission gate with no solve spent**, because
+  all six live PJM rows carry `delta_mw = 0.0` (PJM publishes component lists, not interface-TTC
+  deltas, and rule 5 forbids inventing the MW). CAISO is the only ISO that can test it.
+* **FFR-3D's FC-7 repair was itself broken and is now fixed** (`ea7cd5d`): `write_run_config`
+  crashed on every real T1-F leg. FFR-3A-2 also **retracted its own cache-key finding** — it had
+  measured the wrong object, because a *request-side* `cache_key()` is not the key a run is
+  recorded under. That distinction is documented only inside a docstring and is now an open
+  blocker in its own right.
+* **`uv sync` is an undocumented hard prerequisite.** The container ships no Python environment;
+  the failure surfaces as *"50/50 datatype(s) failed"* from `regenerate_clean.py`, which reads
+  as a data problem and is not one. Budget ≈2 min (env) + ≈65 min (clean). On the `uv` path the
+  documented `tzdata` / `ZoneInfoNotFoundError` trap does **not** arise — that one is specific to
+  a bare `pip` environment.
+
+### G.5 — OPEN DECISION for the owner: how to re-cut the FH-1 §3.3 gate
+
+Put in G.2's terms: the gate is now known to be **structurally incapable** of testing the thing
+it exists to test, because the shipped retirement rule's execution lag exceeds the gate window.
+Options, with the manager recommendation named:
+
+* **(a) Re-cut the gate to the longer window already in the FH plan** — base 2021 → 2021–2025.
+  Five years accommodates `L_coal` = 3, so a decision inside the window can execute inside it and
+  the retirement layer becomes observable. **Recommended.** Cost: the longer window is 5
+  solve-years (at the standing per-invocation ceiling, so it fits) and needs a rule-22 legality
+  check on 2021–2022, which FFR-3A-2 §3.3 has already shown is checkable rather than assumed.
+* **(b) Re-cut the gate's criterion** to something a 3-year window can test — e.g. gate on
+  `pipeline_events` *decided* rather than *executed*. Cheaper, but it measures intent rather than
+  effect and would not have caught the original 21 GW lump.
+* **(c) Lift the block on the letter of the current gate.** I think this is wrong and want its
+  cost recorded: it would unblock FH-4/FH-5 on a probe that measured a harness retiring nothing,
+  with reserve margin 11.5 pp above its ceiling, and no test of the retirement layer at all — the
+  precise failure the gate was written to prevent, inverted.
+* **(d) Keep FH-4/FH-5 blocked with no gate change.** Honest, and the status quo this addendum
+  records, but it leaves the capacity-expansion skill measurement the peer review names as
+  bucket-C item 7 permanently unobtainable.
+
+**Sign-off:** ☐ (a) longer window ☐ (b) re-cut criterion ☐ (c) lift on the letter ☐ (d) stay
+blocked — owner: ________ date: ____
+
+### G.6 — G.5(a) is independently corroborated by FFR-3F's PJM half, and its posture is already legality-checked (manager, 2026-08-03, HEAD `01bb25f7`)
+
+FFR-3F continued after Addendum G was written and completed the PJM pairing it owed. Three
+results change what G.5 is choosing between, so they are recorded here rather than left in the
+lane doc.
+
+1. **The cap-grain fix is emphatically NOT inert — ERCOT simply had nothing for it to act on.**
+   In PJM it changes the admitted exit set by an order of magnitude and in exactly the direction
+   FFR-3C §1.2 G3 predicted: the old grain tested the schedule against a requirement ~10 % too
+   low and over-admitted; the corrected grain retains **13.7 GW more capacity** in the pipeline
+   screen — an **89–93 % cut in admitted exits** (pre-fix 83 units / 14.766 GW, cap-fix 9 units /
+   1.056 GW). G.1's "provably inert" was true **of ERCOT only** and must not be generalized.
+2. **The throughput cap is a measured NULL in BOTH test ISOs, and has still never bound in any
+   full solve.** Same underlying reason, different routes: ERCOT never enters the pipeline at
+   all; PJM enters it and then every admitted unit re-clears the bar and reverses through the
+   soft latch before its execution year (83 → `reversed` pre-fix, 9 → `reversed` cap-fix). The
+   cap acts on the year's `due` set and `_apply_exit_throughput_cap` is only invoked when that
+   set is non-empty, so it is never called. Predicted-inert and measured-inert are different
+   claims; this is now the second.
+3. **Realized exits are 0.000 GW in every arm of both ISOs, and in-window dispatch skill is
+   untouched** (PJM C1 12.230/18.843, C3a 0.318/49.688/2.564 — identical across arms), because
+   nothing the corrected grain changes ever reaches the LP inside a 3-year window. The membership
+   change would first surface as executions in **2026+**.
+
+**Why this bears directly on the sign-off.** FFR-3F's own §10.1 reaches G.5's conclusion
+independently and states it as measured rather than suspected: *"The T1-FF 3-year window is the
+wrong instrument for testing exit mechanisms."* It names the posture G.5(a) would adopt — the
+**T1-H 2021–2025 vintage-2020 posture FFR-2B already used**, where PJM's pipeline coal wave was
+**14.756 GW** — on the ground that a 5-year window clears `L_coal` = 3 with room to spare. And
+**FFR-3A-2 §3.3 has already checked that window's rule-22 legality rather than assuming it**, so
+option (a) carries no unresolved holdout question.
+
+This does not change the manager determination in G.2 — **FH-4/FH-5 stay blocked** — and it does
+not pre-empt the owner's choice among (a)–(d). It removes the two objections a reader might
+reasonably have raised against (a): that the longer window was the manager's preference rather
+than an evidenced requirement, and that its rule-22 status was open.
+
+**One question G.5 does not cover and nobody currently owns** (FFR-3F §10.4): the FH-1 gate's
+**I12 inversion is unattributed**. ERCOT now runs 40.2 % reserve margin against a 28.7 % ceiling
+while retiring nothing. Whether that is the pipeline rule under-retiring, the entry side
+over-building, or the ERCOT band's known 6.65 pp basis mismatch (FFR-3C §2.1) has not been
+separated by any lane.
+
+---
+
+## Addendum H — **The battery is CLOSED and registered; CAISO's backstop is diagnosed; a SECOND decision now converges on the same answer as G.5** (workstream manager, 2026-08-04, HEAD `a0bf3db3`)
+
+Five lanes dispatched after Addendum G all ran: **FFR-3A-3** (battery close), **FFR-3H** (CAISO
+backstop), **FFR-SC-2** (transmission A/B), **FFR-SA-close** (PJM load-shape smoke) and
+**FFR-3J** (kill-resume instrumentation). Zero open PRs. This addendum records what closed, one
+new owner decision, and the convergence between it and G.5.
+
+### H.1 — The T1 battery is CLOSED, scored and REGISTERED
+
+FFR-3A-3 filled every `(pending)` section and discharged the registration duty FFR-3A-2 left
+open: **18 hindcast sidecars** plus `ff-verdicts.json` are committed. The headline from the
+regression table against FF-2D:
+
+* **No determination moved. All six were HOLD at FF-2D; all six are HOLD now.** FC-1, FC-3,
+  FC-4, FC-5, FC-6 and FC-7 are unchanged in every ISO. **Every movement is inside FC-2**, and
+  it separates into three causes that must not be conflated: genuine movement from the signed
+  decisions (ERCOT row1 CAVEAT→FAIL and row6 sustained-VOLL newly firing, both **attributed
+  against the paired control**; CAISO row1 CAVEAT→FAIL as an **observation, not attributed**);
+  newly-scorable rows; and one genuine improvement.
+* **⚠ The newly-scorable rows are NOT regressions.** FC-2 row 4 was SKIPPED everywhere before
+  `34c2f25` + `0830d134`. Reading CAISO 65.5 % / NYISO 23.8 % / PJM 23.6 % / NEISO 11.7 % /
+  MISO 9.2 % / ERCOT 0.0 % as "FC-2 got worse" would be wrong: **the metric did not move, the
+  instrument started reporting it.** Without the fix every one would have read a false
+  `PASS 0 %`.
+* **⚠ THE FIRST POSITIVE EVIDENCE FOR D-2, and it deserves to be seen.** MISO's FC-2 row 3
+  moved **FAIL → PASS**: the FF-2C-induced `gas_ct` cobweb the mechanism matrix records is
+  **gone** at this HEAD. `entry_commissioning_lag` is D-2's structural anti-cobweb — decide at
+  Y, commission at Y+2, so decision and commissioning separate and the oscillation damps.
+  FFR-2B could not test the claim and said so; **MISO's FF-2D leg is the one case in the
+  program where it was testable at all.** Stated at the right strength by the lane and repeated
+  here: this is **CONSISTENT WITH** the anti-cobweb claim, **not an attribution** — the two legs
+  differ in more than D-2 and no paired control was run. It is nonetheless the first measured
+  result pointing *for* D-2 in a battery otherwise dominated by adverse D-2 findings, and the
+  owner should weigh it against them rather than only against them.
+
+### H.2 — CAISO's 65.5 % is diagnosed: three stacked causes, and the prompt's hypothesis was refuted-then-sharpened
+
+FFR-3H (`docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md`), diagnosis only, nothing fixed:
+
+1. **~37 pp is a BOOKING-CONVENTION ARTIFACT of the row-4 ratio** — the backstop books in-year
+   while economic entry books at decision + 2. Measured: 65.48 % → **28.61 %** with the
+   commissioning lag unarmed as a labelled probe arm.
+2. **The residual ~29 % is real**, and its cause is specific: a CAISO `gas_ct` is `unprofitable`
+   in the economic entry screen **in every year of every arm**, by **$39,974–45,316/MW-yr**. The
+   administrative channel is the only one that can add firm capacity.
+3. **47 % of the total backstop build closes a deficit the model already has in its BASE YEAR** —
+   2026 accredited firm 50,729 MW against a 57,306 MW requirement, **before any evolution step
+   runs**. That is an accreditation-ledger question, not an entry question.
+
+**The growth ladder is NOT the cause** — unarming it moves the cumulative share 0.84 pp while
+completely re-phasing the build, independently reproducing in CAISO the "re-phases, cumulative
+invariant" result FFR-2B measured in MISO (measured separately per rule 25, not transferred).
+
+**ERCOT's 0.0 % now has its mechanism:** `resolve_reserve_margin_build_enabled(ERCOT) = False`.
+ERCOT is not in the population at all, so its 0.0 % is structural and FFR-3C's
+retirement/entry-asymmetry attribution for ERCOT stands untouched.
+
+**Two findings inside it that outlive the diagnosis.** (a) **A net-CONE level re-anchor would
+not fix this**, and that is the most decision-relevant thing about the candidate: CAISO's
+$88.08/kW-yr is current and correctly cited (FF-2C R4), but the CPM soft-offer cap is *a price
+cap on CAISO's own administrative backstop procurement* — not a market-clearing capacity price
+and not a net-CONE. The model prices CAISO capacity at the administered price of CAISO's own
+backstop and then closes two-thirds of its gap with that backstop. What the parameter cannot do
+is **vary**, and it is the invariance, not the level, that binds. (b) **Rule 14 finding:** the
+ISO with the most elaborate published VRE accreditation in the country — CPUC slice-of-day /
+ELCC — is accredited in this model on a **generic non-CAISO flat fallback** (solar 0.18, wind
+0.16, invariant across a 0.2×–2.0× penetration sweep), because `RENEWABLE_ELCC_CURVES_BY_ISO`
+holds PJM/MISO/NYISO only and `RENEWABLE_CAPACITY_CREDIT_BY_ISO` holds ERCOT only. Direction
+unresolved, so it is filed as an open ledger question rather than a shortfall.
+
+**And a structural observation worth carrying:** CAISO retires 1,492.5 MW of `gas_st` in a single
+year (2027 — a **98.8 % single-year class exit**) plus 1,122 MW of nuclear in 2030. That is
+FFR-3C's G-31 asymmetry reproduced in CAISO, but it **expresses differently**: in ERCOT, backstop
+OFF, the asymmetry produces a *collapse*; in CAISO, backstop ON, it is absorbed by step 6 and
+surfaces as *administrative over-build*. **Same defect, two symptoms, because of one gate.**
+
+### H.3 — Both remaining gate A/Bs are INERT, and one is inert for a reason worth more than the verdict
+
+* **FFR-SC-2:** the transmission-expansion gate is **inert in CAISO 2026–2030 and provably inert
+  in PJM 2026–2050**. CAISO's inertness is *structural*: `WECC_import_simultaneous` caps the
+  **signed sum of two legs that run in opposite directions**, so it stays slack even when both
+  legs are individually saturated — **the registry uplifted the one element that cannot bind.**
+  No default flipped; arming stays the owner's box and nothing argues for it.
+* **FFR-SA-close:** the owed PJM load-shape smoke ran, off-leg 2026–2028, all invariants PASS.
+
+### H.4 — NEW OWNER DECISION (D-9): D-2's commissioning lag CENSORS half the T1-H scoring window
+
+Spelled out before it is named, because it is easy to misread as a metric problem: T1-H scores
+the years {2023, 2024, 2025}, but `ENTRY_COD_LAG_YEARS = 2` sends the **2024 and 2025 entry
+decisions to commercial operation in 2026/2027 — outside the scored window.** So **half the
+solved decision years cannot score at all, by construction.** Additions bands are mechanically
+suppressed against any pre-D-2 bundle regardless of actual entry skill, and a cross-boundary
+additions comparison is **not like-for-like**. This currently affects the interpretation of every
+T1-H additions verdict, including MISO's — whose FC-3 now fails on the censored half alone.
+
+This is a **design decision, not a parameter** (so it is not tunable and must not be treated as
+one). Two routes:
+
+* **(i) Lengthen the T1-H window** so a decision inside it can commission inside it.
+* **(ii) Score COD-shifted additions** — attribute an addition to its decision year rather than
+  its COD year.
+
+**⚠ THE CONVERGENCE THE OWNER SHOULD SEE: D-9(i) and G.5(a) ARE THE SAME ACTION.** Two
+independent blockers, discovered by different lanes on different evidence, both resolve by moving
+to a **five-year window**: G.5 because `L_coal` = 3 exceeds a 3-year exit window, D-9 because
+`ENTRY_COD_LAG_YEARS` = 2 exceeds a 3-year entry window. The model's own execution lags are
+simply longer than the windows it is being scored on, on **both** the exit and the entry side.
+Signing G.5(a) very likely disposes of D-9 as well; signing G.5(b), (c) or (d) leaves D-9 live
+and needing its own answer. **Recommendation: take them together, as (a) + (i).**
+
+**Sign-off D-9:** ☐ (i) lengthen the window ☐ (ii) score COD-shifted ☐ take with G.5(a) —
+owner: ________ date: ____
+
+### H.5 — What is open, and who owns it
+
+| # | Item | Owner |
+|---|---|---|
+| 1 | **G.5** — the FH-1 §3.3 gate re-cut | **OWNER, unsigned.** Gates every FH lane |
+| 2 | **D-9** — the T1-H censoring window (H.4) | **OWNER, unsigned.** Converges with G.5(a) |
+| 3 | FC-7 fails on EVERY T1-H and T1-X leg — `run_capacity_hindcast` writes `run_config.yaml`, FC-7 needs `.json`. The **unfixed analogue** of FFR-3D's blocker 7 | dispatchable; must land **before** the next battery |
+| 4 | ERCOT T1-X price-2025 regressed 8.6 % PASS → **22.5 % FAIL**, sole regressor of three legs, unattributed | dispatchable (needs a paired control) |
+| 5 | FF-3E part c — FFR-3J built the discriminator but **never ran the drill**; still unadjudicated | dispatchable, small |
+| 6 | The FH-1 I12 inversion (G.6) — unattributed | dispatchable |
+| 7 | CAISO accreditation ledger — the 6,577 MW base-year deficit + the generic VRE credit (H.2) | dispatchable |
+| 8 | D-2′ `entry_vre_capacity_revenue` — signed HOLD at Addendum C, **still never probed** | unowned |
+| 9 | Pre-existing test failures on main | unowned |
+
+---
+
+## Addendum I — **G.5 and D-9 are SIGNED: the windows are lengthened, together** (workstream manager, 2026-08-04, HEAD `5055b1a5`)
+
+Both open decisions were put to the owner as decision cards and both are signed. They are
+recorded here as one entry because the owner took them as one action.
+
+| # | Decision | Signed | Effect |
+|---|---|---|---|
+| **G.5** | Re-cut the FH-1 §3.3 acceptance gate | **(a) LONGER WINDOW** | The gate moves to the five-year 2021–2025 / vintage-2020 posture |
+| **D-9** | The T1-H censoring window | **TAKE WITH G.5(a)** | One action; the T1-H window lengthens with it |
+
+**What the owner accepted, in plain terms.** The model's own execution lags are longer than
+the windows it was being scored on, on **both** sides: `L_coal` = 3 exceeds a three-year *exit*
+window and `ENTRY_COD_LAG_YEARS` = 2 exceeds a three-year *entry* window. A gate that cannot
+produce a retirement execution, and an additions band that cannot score half its own decision
+years, are the same defect seen from two ends. Five years fixes both.
+
+### I.1 — What this decision does NOT do
+
+* **It does NOT lift the FH-4/FH-5 block.** The block lifts on a **landed fix plus a green
+  re-probe** (Addendum G.2, unchanged). Signing G.5(a) authorizes the gate to be *re-cut and
+  re-probed*; it does not pre-approve the result. A session that reports the re-probe green
+  does not thereby unblock FH — the lift remains the manager's, on the re-cut gate's evidence.
+* **It does NOT spend a holdout marker, and it must not.** `final` stays EMPTY, the holdout
+  spend freeze stays ACTIVE, and NEISO's locked test stays SPENT. The five-year window is legal
+  by a **carve-out**, not by a marker.
+* **It does NOT authorize tuning to the re-cut gate.** Rules 1/11/14 apply unchanged: if the
+  re-probe fails, that is a finding written up, not a threshold moved.
+* **It does NOT retroactively validate anything scored on the three-year window.** Every
+  committed T1-H additions verdict was produced under the censoring described in H.4 and stays
+  interpreted that way until re-measured.
+
+### I.2 — The rule-22 position: one half is verified, the other half is NOT, and the difference matters
+
+**Verified, for T1-H.** FFR-3A-2 §3.3 checked the 2021–2025 window against the code rather than
+the prose, and `scripts/lib/holdout_policy.py` carries an explicit enumerated
+capacity-hindcast carve-out: `HINDCAST_SEED_YEARS = {2021}` (solvable, **never scored**),
+`HINDCAST_BRIDGE_YEARS = {2022, 2026}` (evolved across, **never solved, data never read**),
+`HINDCAST_SOLVE_YEARS = {2021, 2023, 2024, 2025}` — four solve-years, under the ≤5 cap — with
+scoring bounded to 2023–2025 on both sides and `_validate_window` enforcing it fail-closed.
+**No marker is spent and the freeze is not implicated.**
+
+**NOT verified, for T1-FF.** The FH-1 gate runs the *other* harness (`--forward-from-base`), and
+whether the same carve-out enumerates a **base-2021** T1-FF window has not been checked by any
+lane. The FH plan names base 2021 → 2021–2025 as its second phase, so it is *planned*, but
+planned is not enumerated. **The lane must verify this against `holdout_policy.py` before
+solving, and if the carve-out does not cover it, that is a GOVERNANCE QUESTION ESCALATED TO THE
+OWNER — never a carve-out the lane adds for itself.** Widening a rule-22 carve-out to make one's
+own window legal is precisely the move the policy exists to prevent, and this addendum does not
+authorize it.
+
+### I.3 — What is now dispatchable, and what still is not
+
+The gate re-cut lane (FFR-3Q) is dispatched on this signature. **FH-4 and FH-5 remain blocked**
+until it lands and its re-probe is green. The five lanes dispatched at H.5 (FFR-3K/3L/3M/3N/3P)
+are unaffected and continue independently — none of them depends on this decision, and FFR-3N's
+I12-inversion attribution becomes **more** valuable under the re-cut gate, not less, because the
+inversion is one of the two things the re-cut is meant to make legible.
+
+Still unowned after this signing: **D-2′'s probe row** (signed HOLD at Addendum C, never
+probed) and the **pre-existing test failures on main**.

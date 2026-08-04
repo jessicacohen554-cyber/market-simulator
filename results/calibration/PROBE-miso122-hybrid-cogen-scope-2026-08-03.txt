@@ -1,0 +1,147 @@
+==============================================================================
+A. DARK-FUEL CENSUS — all five artifact ISOs, ok-flagged rows, CEMS 2023
+==============================================================================
+
+  MISO: 25 ok rows / 6,732 MW; CEMS covers 15 rows / 6,357 MW; 3 rows carry dark fuel > 0.0% (1,994 MW)
+      plant   class    name                           cap MW    dark  applied   loaded  corrected    delta
+      55088   CC_CHP   Dearborn Industrial Genera      350.0   16.6%    16.6%   8.3465     6.9573   -16.6%
+      55088   CT_CHP   Dearborn Industrial Genera      165.0   16.6%    16.6%   8.3465     6.9573   -16.6%
+      10745   CC_CHP   Midland Cogeneration Ventu    1,479.4    0.1%     0.1%   8.8243     8.8160    -0.1%
+
+  PJM: 21 ok rows / 2,035 MW; CEMS covers 7 rows / 1,914 MW; 0 rows carry dark fuel > 0.0% (0 MW)
+      (no row moves)
+
+  CAISO: 30 ok rows / 2,372 MW; CEMS covers 10 rows / 1,567 MW; 0 rows carry dark fuel > 0.0% (0 MW)
+      (no row moves)
+
+  NYISO: 18 ok rows / 3,369 MW; CEMS covers 13 rows / 3,335 MW; 1 rows carry dark fuel > 0.0% (306 MW)
+      plant   class    name                           cap MW    dark  applied   loaded  corrected    delta
+      2493    CT_CHP   East River                      306.0   37.5%    37.5%  11.8032     7.3763   -37.5%
+
+  NEISO: 12 ok rows / 430 MW; CEMS covers 2 rows / 364 MW; 1 rows carry dark fuel > 0.0% (206 MW)
+      plant   class    name                           cap MW    dark  applied   loaded  corrected    delta
+      1595    CC_CHP   Kendall Green Energy LLC        206.0    1.2%     1.2%   9.5584     9.4423    -1.2%
+
+==============================================================================
+K1. ARE THE DARK UNITS BOILERS? (bar: >= 90% of dark fuel in a non-turbine unitType)
+==============================================================================
+
+  MISO plant 10745: 6 dark unit(s), 80,561 MMBtu
+      unit 016      unitType Other boiler                         family ST_GAS   heat        9,520
+      unit 017      unitType Other boiler                         family ST_GAS   heat       23,445
+      unit 018      unitType Other boiler                         family ST_GAS   heat       21,681
+      unit 019      unitType Other boiler                         family ST_GAS   heat       16,393
+      unit 020      unitType Other boiler                         family ST_GAS   heat        4,090
+      unit 021      unitType Other boiler                         family ST_GAS   heat        5,432
+      non-turbine share of dark fuel 100.0%  PASS
+
+  MISO plant 55088: 3 dark unit(s), 7,306,886 MMBtu
+      unit BL1100   unitType Other boiler                         family ST_GAS   heat    2,628,918
+      unit BL2100   unitType Other boiler                         family ST_GAS   heat    2,179,768
+      unit BL3100   unitType Other boiler                         family ST_GAS   heat    2,498,201
+      non-turbine share of dark fuel 100.0%  PASS
+
+  NYISO plant 2493: 2 dark unit(s), 13,629,047 MMBtu
+      unit 60       unitType Dry bottom wall-fired boiler         family ST_GAS   heat    6,706,140
+      unit 70       unitType Dry bottom wall-fired boiler         family ST_GAS   heat    6,922,906
+      non-turbine share of dark fuel 100.0%  PASS
+
+  NEISO plant 1595: 2 dark unit(s), 176,824 MMBtu
+      unit 2        unitType Dry bottom wall-fired boiler         family ST_GAS   heat       52,044
+      unit 3        unitType Dry bottom wall-fired boiler         family ST_GAS   heat      124,780
+      non-turbine share of dark fuel 100.0%  PASS
+
+  K1 overall: PASS
+
+==============================================================================
+K2. PERSISTENCE across (2023, 2024, 2025) (bar: non-zero every year, max/min <= 2.0)
+==============================================================================
+  MISO plant 10745: 2023  0.09%  2024  0.09%  2025  0.05%   max/min 1.80   PASS
+  MISO plant 55088: 2023 16.64%  2024 14.82%  2025 16.82%   max/min 1.13   PASS
+  NYISO plant 2493: 2023 37.51%  2024 30.80%  2025 30.64%   max/min 1.22   PASS
+  NEISO plant 1595: 2023  1.21%  2024  0.96%  2025  1.48%   max/min 1.54   PASS
+
+  K2 overall: PASS
+
+==============================================================================
+K3. TWO-METER RECONCILIATION (band (0.9, 1.1), miso-118's pre-registered band reused)
+==============================================================================
+  MISO plant 55088 CC_CHP: cems_vs_egrid_total 1.0   PASS
+  MISO plant 55088 CT_CHP: cems_vs_egrid_total 1.0   PASS
+  MISO plant 10745 CC_CHP: cems_vs_egrid_total 1.0   PASS
+  NYISO plant 2493 CT_CHP: cems_vs_egrid_total 1.0   PASS
+  NEISO plant 1595 CC_CHP: cems_vs_egrid_total 1.0   PASS
+
+  K3 overall: PASS
+
+==============================================================================
+K4. CORRECTED RATE STAYS PHYSICAL (>= credited, inside _HR_BAND)
+==============================================================================
+  MISO plant 55088 CC_CHP: corrected 6.9573 vs credited 6.3464, band [5.5, 11.5]   PASS
+  MISO plant 55088 CT_CHP: corrected 6.9573 vs credited 6.3464, band [6.0, 25.0]   PASS
+  MISO plant 10745 CC_CHP: corrected 8.8160 vs credited 6.8927, band [5.5, 11.5]   PASS
+  NYISO plant 2493 CT_CHP: corrected 7.3763 vs credited 7.4205, band [6.0, 25.0]   FIRES -> flag out
+  NEISO plant 1595 CC_CHP: corrected 9.4423 vs credited 5.7376, band [5.5, 11.5]   PASS
+
+  K4 for MISO: PASS (other ISOs' firings are per-plant flag-outs, reported not gating)
+
+==============================================================================
+K6. COVERAGE HONESTY — ok rows CEMS does not cover keep dark_share=0
+==============================================================================
+  MISO: 10 of 25 ok rows uncovered (375 of 6,732 MW). Their rates are UNCHANGED — the status quo, not a claim of no dark fuel.
+  PJM: 14 of 21 ok rows uncovered (120 of 2,035 MW). Their rates are UNCHANGED — the status quo, not a claim of no dark fuel.
+  CAISO: 20 of 30 ok rows uncovered (805 of 2,372 MW). Their rates are UNCHANGED — the status quo, not a claim of no dark fuel.
+  NYISO: 5 of 18 ok rows uncovered (34 of 3,369 MW). Their rates are UNCHANGED — the status quo, not a claim of no dark fuel.
+  NEISO: 10 of 12 ok rows uncovered (66 of 430 MW). Their rates are UNCHANGED — the status quo, not a claim of no dark fuel.
+
+==============================================================================
+W1. LOADED-FLEET EFFECT (MISO, keeper flags, all three years)
+==============================================================================
+eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+
+  2023
+    plant 55088 CC_CHP: cap   350.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 55088 CT_CHP: cap   165.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 10745 CC_CHP: cap 1,479.4 MW  loaded 8.8243 -> corrected 8.8160  (-0.1%)
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+
+  2024
+    plant 55088 CC_CHP: cap   350.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 55088 CT_CHP: cap   165.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 10745 CC_CHP: cap 1,479.4 MW  loaded 8.8243 -> corrected 8.8160  (-0.1%)
+MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
+
+  2025
+    plant 55088 CC_CHP: cap   350.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 55088 CT_CHP: cap   165.0 MW  loaded 8.3465 -> corrected 6.9573  (-16.6%)
+    plant 10745 CC_CHP: cap 1,479.4 MW  loaded 8.8243 -> corrected 8.8160  (-0.1%)
+
+==============================================================================
+PHASE-0 VERDICT
+==============================================================================
+  MISO: K1 boilers True   K2 persistence True   K3 reconciliation True   K4 physical True
+  -> PROCEED for MISO: build the scope gate, re-derive MISO only, run the A/B.
+
+  OTHER ISOs are a GENERALITY SWEEP, not a verdict (rule 25
+  [R-ISO-SCOPE]). Their artifacts are NOT re-derived here: each lane
+  owns its own A/B and its own keeper. Handed off with measured
+  numbers in the finding.

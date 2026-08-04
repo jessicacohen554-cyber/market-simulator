@@ -150,13 +150,98 @@ pending its profile intake (§6.1); (b) linear degree-hours omit cold-climate
 COP rolloff (§5 box); (c) CELT's flip is on NET peaks (BTM solar suppresses
 summer), a channel this model carries elsewhere.
 
-**PJM 2026–2028 armed vs off:** the assembled demand arrays are BIT-IDENTICAL
-(`ARMED==OFF` measured exactly at the seam, all three years) because PJM
-ships `{}` anchors (M11 bot-walled) — the honest no-op the memo designed.
-Both legs solved end-to-end to confirm identical trajectories through the LP:
-see the table below.
+**PJM 2026–2028 armed vs off (FFR-SA-close, 2026-08-04 — the owed §2 half):**
+the assembled demand arrays are BIT-IDENTICAL — `ARMED==OFF` measured exactly
+at the runner's demand seam (sha256 over the assembled `(n_zones, T)` array,
+runner-exact reconstruction incl. the external-node topology): equal in
+2026/2027/2028 and in the 2030/2035 seam-only context years — because PJM
+ships `{}` anchors, the honest no-op the memo designed. Both legs then solved
+end-to-end (strictly sequential, rule 12; ~10-11 min / 8.65 GB peak RSS each;
+distinct cache keys `c5054dc0d093da2a` / `ced93433f2383d26` — the armed path
+enters the key, so neither leg reused the other): trajectories IDENTICAL
+through the LP to the last recorded decimal, and **both arms score 14/14
+invariants PASS (0 FAIL, 0 WARN) — no armed-vs-off status delta**, and (unlike
+the NEISO legs' inherited I12) no baseline FAIL in the PJM probe posture:
 
-*(PJM table appended after the legs complete.)*
+| yr | peak_demand off→mid (MW) | reserve_margin off→mid | lw_price off→mid | CO₂ off→mid (Mt) |
+|---|---|---|---|---|
+| 2026 | 161,027 → 161,027 (=) | −0.094 → −0.094 (=) | 40.11 → 40.11 | 349.09 → 349.09 |
+| 2027 | 163,627 → 163,627 (=) | −0.109 → −0.109 (=) | 39.18 → 39.18 | 356.58 → 356.58 |
+| 2028 | 166,439 → 166,439 (=) | −0.117 → −0.117 (=) | 40.77 → 40.77 | 374.96 → 374.96 |
+
+System winter/summer peak ratio, off vs mid (demand-seam measured, the FR-16
+acceptance metric; 2030/2035 are seam-only context rows, no solve):
+
+| yr | off | mid |
+|---|---|---|
+| 2026 | 0.8788 | 0.8788 |
+| 2027 | 0.8826 | 0.8826 |
+| 2028 | 0.8863 | 0.8863 |
+| 2030 | 0.8933 | 0.8933 |
+| 2035 | 0.8908 | 0.8908 |
+
+Two readings, both required. (1) **Between arms the columns are EQUAL — that
+is a DATA-ABSENCE result, NOT inertness** (the FFR-SC §1 discipline:
+transmission's PJM rows, same shape). `ELECTRIFICATION_LAYERS["PJM"]` ships
+`{}` for both layers because the PJM 2026 Load Forecast component MW-by-year
+tables live in the bot-walled report PDF/XLSX (audit row M11). ARMED==OFF is
+what an EMPTY input makes the mechanism do by design; it measures NOTHING
+about what an armed, SOURCED PJM layer would do, so the matrix PJM cell
+records `O` with this citation — never `I`. **MANUAL DOWNLOAD NEEDED: PJM
+2026 Load Forecast Report PDF/XLSX (memo §8-D4 item 2 / audit M11)** — the
+cell cannot adjudicate until that intake lands. (2) **Across years the ratio
+MOVES (0.8788 → 0.8933 by 2030) in BOTH arms identically** — that is the
+armed flat DC block (`datacenter_load_path` "mid" forecast default,
+`DATACENTER_ADDITIONS_MW`) relocating growing DC energy onto a flat shape:
+winter rises toward summer, the load-factor-raising direction PJM actually
+publishes (energy +5.3 %/yr FASTER than peak, memo §2.1) — context, never a
+target (rule 1). The §2 rule-19 seam is thereby verified OPERATIONALLY, not
+just by construction: layer #1 (DC) is live and doing PJM's whole shape story
+in BOTH arms, `elec == []` in both arms (`resolve_electrification_gwh` → 0.0
+for `{}` anchors), one joint fold-in, each layer relocating its own energy
+exactly once, no DC MW ever claimed by an electrification trajectory (disjoint
+end-uses; PJM's electrification contribution is exactly zero while `{}`) —
+the byte-equal seam output and the identical LP trajectories are the proof.
+Leg artifacts: `results/ffr-sa-smoke/pjm-{off,mid}/` (summary + run_config
+committed; the per-year LP cache dirs are not).
+
+### 4.1 FFR-SA-close addendum (2026-08-04): PJM keeper byte-identity attestation
+
+The mechanism is default-off and backcast-coerced, so the PJM keeper must be
+bit-identical. Attested WITHOUT a re-solve (rule 15: keeper replays are for
+unit-level questions), against the CURRENT designated keeper
+`2026-08-03-pjm-151-seam-envelope` (`results/calibration/pjm151_seam_B`; the
+lane moved the keeper from pjm-147b-chp-heat before this session — nothing
+here moved it):
+
+1. **Provenance.** The keeper was solved 2026-08-03T22:47 at sha `1c191624`
+   (clean tree) — a commit CONTAINING the FFR-SA merge (`356df4b6` is an
+   ancestor) — so its committed bytes were produced with the mechanism present
+   at defaults: `run_config.json` echoes `electrification_path="off"` /
+   `electrification_percentile=0.5`, `mode="backcast"` (coercion live;
+   `datacenter_load_path` backcast-coerced `"off"` likewise).
+2. **Cache identity.** Rebuilding the as-solved 2023 config from the committed
+   `scenario_config` dump reproduces the recorded per-year cache key
+   `abd1cd4a4140496f` EXACTLY at the keeper's recorded sha. Recomputed at this
+   session's HEAD (`6040f28c`) the key moves to `ae2aec9c21e06d23` —
+   payload-diffed to EXACTLY ONE field, `nyiso_seny_rcpf_increment_step`: the
+   keeper solved inside nyiso-119's mid-registration window (field present but
+   not yet in `_CACHE_KEY_OPTIONAL_FIELDS`; registration completed by
+   `bd6d090a`, restoring drop-at-default). NOT an electrification field, and a
+   PJM-lane housekeeping fact rather than a byte-integrity breach: the
+   committed bundle and its recorded keys are untouched; the one operational
+   consequence is that a `--reuse-solved` against this bundle at HEAD refuses
+   conservatively. The electrification fields appear in NEITHER payload
+   (registered optional from birth, drop at default at both shas —
+   cache-key-invisible at defaults, as designed; pinned default key
+   `603c2498bf71d21d` measured unmoved at HEAD).
+3. **Seam identity.** At the keeper's exact as-solved config,
+   `add_load_layers(year_demand, cfg, "PJM", 2023, zones)` returns the input
+   array as the SAME OBJECT (no DC block, no electrification layers in
+   backcast) — measured live at HEAD.
+4. **Suites.** `tests/unit/data/test_electrification_layers.py` (35, incl. the
+   DC-only bit-identity test), `tests/regression/test_persisted_identity.py`
+   and the datacenter fold-in suite (38) all green at HEAD.
 
 ## 5. OWNER DECISION BOX — arming posture (§8-D2 of the memo; NOTHING flipped here)
 

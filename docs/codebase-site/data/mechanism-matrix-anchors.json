@@ -1,0 +1,4 @@
+{
+  "_comment": "Shrink-only ratchet of matrix line anchors that do NOT resolve, enforced by scripts/check_mechanism_matrix.py. A line anchor points into files every lane edits, so it decays with nobody touching the matrix (nyiso-121 found all 20 MISO anchors stale; xiso-3 found 163 of 167 file-wide). The field NAME is the durable identifier; the anchor is a convenience. Anchors whose token is not a ScenarioConfig field are skipped by construction, which preserves the deliberate `miso_pjm_lmp :2914` defect QUOTATION in import_hub_pricing's repair note \u2014 do not 'fix' it. Refresh with --fix-anchors.",
+  "stale": []
+}

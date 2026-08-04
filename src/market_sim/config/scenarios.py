@@ -187,6 +187,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "entry_vre_capacity_revenue",
     "entry_rate_limits",
     "entry_commissioning_lag",
+    # FFR-3F exit-throughput cap (GATED default-off): dropped from the hash at
+    # its default so every pre-existing cache key is byte-stable; an armed run
+    # bounds the deactivation queue and so gets a distinct key. Owner decision
+    # D-8 (ffr-owner-sitting-2026-08-02.md Addendum F.1).
+    "exit_rate_limits",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -258,6 +263,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # reserve-eligibility flags above); an armed run enters the key as a
     # distinct scenario.
     "nyiso_ordc_measured_step_span",
+    # Published SENY two-tier RCPF curve ($500 base + $40 increment), nyiso-119.
+    # GATED / default-off and byte-identical for every existing config, so it is
+    # dropped from the hash at its default (same treatment as the span flag
+    # directly above); an armed run enters the key as a distinct scenario.
+    "nyiso_seny_rcpf_increment_step",
     # Daily-resolution dual-fuel oil-parity cap (nyiso-76 P2). GATED /
     # default-off and byte-identical for every existing config, so it is
     # dropped from the hash at its default; an armed run enters the key as a
@@ -518,6 +528,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # predates the pinned key and is already inside it, so registering it would
     # MOVE the key rather than restore it.
     "pjm_zonal_loss_surface",
+    # caiso-164 CAISO marginal-loss surface (default off): registered at
+    # introduction, so unlike its PJM predecessor it never moves the pinned
+    # default key. Dropped from the hash at its default so every pre-existing
+    # cached run keeps its key; an armed run splits every internal CAISO link
+    # into a lossy one-way pair and so gets a distinct key.
+    "caiso_zonal_loss_surface",
     # nyiso-100 mis-attributed simultaneous-import retire (default off): the
     # same one-line remedy as pjm_apsouth_interface_cut / pjm_zonal_loss_surface
     # above -- the field landed on main (2cc1179) unregistered and so entered
@@ -555,6 +571,20 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario). Backcast/hindcast-coerced off in __post_init__ regardless.
     "electrification_path",
     "electrification_percentile",
+    # ercot-159 energy-side online-capability cap (default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key
+    # (the pinned default 603c2498bf71d21d stays byte-stable); an armed run
+    # installs a real fast-tier capability ceiling and so gets a distinct key
+    # — which keeps the A/B arm independent of its zero-delta control in the
+    # on-disk cache (PRECOMMIT-ercot159-energy-online-capability-cap §1).
+    "ercot_energy_online_capability_cap",
+    "ercot_energy_online_capability_cap_path",
+    # CAISO published-NQC VRE accreditation (FFR-3P, default off): dropped from
+    # the hash at its default so every pre-existing forecast cache key stays
+    # byte-stable -- unarmed the resolver never reaches the registry, so the arm
+    # is byte-identical off; an armed run changes the accredited ledger and so
+    # gets a distinct key.
+    "caiso_nqc_accreditation",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -639,6 +669,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_vre_capacity_revenue": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
+    "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
     "federal_ces_premium_escalation_real": "0.0",
@@ -677,6 +708,12 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # exists to close (rule 24 [R-REGISTRY]). Caught by the flip guard's own
     # HEAD-only check 3, which had been failing on main since that commit.
     "nyiso_nyc_rcpf_step_curve": "False",
+    # Added by nyiso-119 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry — deliberately not repeating the
+    # nyiso-115 miss recorded immediately above, where the field was registered
+    # as cache-optional but never given its recorded default here, leaving a
+    # flip of it undetectable (rule 24 [R-REGISTRY]).
+    "nyiso_seny_rcpf_increment_step": "False",
     "dual_fuel_oil_daily_parity": "False",
     "ercot_thermal_dam_availability_hourly": "False",
     "ercot_thermal_dam_availability_plant": "False",
@@ -733,10 +770,14 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_offer_surface_within_season": "False",
     "coal_committed_takeorpay_sunk_fixed": "False",
     "pjm_zonal_loss_surface": "False",
+    "caiso_zonal_loss_surface": "False",
     "nyiso_import_sil_retire": "False",
     "pjm_rggi_allowance_pricing": "False",
     "electrification_path": "'off'",
     "electrification_percentile": "0.5",
+    "ercot_energy_online_capability_cap": "False",
+    "ercot_energy_online_capability_cap_path": "None",
+    "caiso_nqc_accreditation": "False",
 }
 
 
@@ -1555,9 +1596,21 @@ class ScenarioConfig:
     retirement_fom_multiplier_nuclear: float = 1.0
     # (staged_oversupply_thinning / staged_thinning_max_gw_per_year were
     # DELETED at the FF-1A flip — owner D2, rule 26: deleted, not zeroed. The
-    # R-NEW execution-lag pipeline below carries the same physical
-    # deactivation queue once; a throughput/rate cap on top would double-count
-    # it — rule 19; RC-0B §a.6; ff-retirement-rule-redesign-2026-07.md §3.3.)
+    # stated reason was that "the R-NEW execution-lag pipeline below carries
+    # the same physical deactivation queue once; a throughput/rate cap on top
+    # would double-count it" — rule 19; RC-0B §a.6;
+    # ff-retirement-rule-redesign-2026-07.md §3.3.
+    #   THAT REASONING IS SUPERSEDED. Owner decision D-8, signed 2026-08-03
+    # (docs/handoffs/ffr-owner-sitting-2026-08-02.md Addendum F.1), ruled that
+    # queue LATENCY and queue THROUGHPUT are TWO mechanisms for rule-19
+    # purposes, on FFR-3C §1.2's measurement: the execution lag is a rigid
+    # time-shift operator, so with only the latency term exit-wave width is
+    # invariant at exactly one year no matter how many units fail. The
+    # deletion removed the only throughput model and left the latency model
+    # standing alone. The throughput half is restored — as a NEW, externally
+    # identified, default-off gate, not a revival of the deleted fitted knob
+    # (rule 26 stands: staged_oversupply_thinning is gone for good) — by
+    # exit_rate_limits below.
     retirement_rule: str = "pipeline"  # "legacy" | "pipeline" (FF-1A, owner
     # D1 = Option B, 2026-07-17 — ff-retirement-rule-redesign-2026-07.md
     # §3.6/§6). DEFAULT FLIPPED "legacy" -> "pipeline" by owner decision D-1,
@@ -1609,6 +1662,44 @@ class ScenarioConfig:
     # inherits retirement_execution_lag_gas_cc when None (no CCS retirement
     # exists anywhere, §a.4; the inheritance is the §5 disposition, not a
     # tunable).
+    exit_rate_limits: bool = False  # GATED, default-OFF. The exit half of the
+    # deactivation queue (FFR-3F; owner decision D-8, signed 2026-08-03 —
+    # ffr-owner-sitting-2026-08-02.md Addendum F.1: queue LATENCY and queue
+    # THROUGHPUT are TWO mechanisms for rule 19, so this may be armed ALONGSIDE
+    # retirement_execution_lag_* without constituting a stacked floor).
+    #
+    # THE RULE-19 SEAM, stated explicitly because that is what D-8 turned on:
+    # the execution lag owns WHEN a decided unit becomes eligible to leave
+    # (a rigid per-fuel time shift, decided_year + L_f); this cap owns HOW MANY
+    # MW may actually leave in one year. They cannot double-count because they
+    # act on different quantities in sequence — the lag decides membership of
+    # the year's DUE set, the cap decides how much of that due set is
+    # processed. A unit deferred by the cap STAYS PIPELINED and executes in a
+    # later year through the identical "execution deferred, re-latched next
+    # year" path the reliability floor already uses (pipeline component 5), so
+    # no new deferral mechanism is introduced either (rule 19 again).
+    #
+    # Identification is EXTERNAL and measured, never fitted (rule 13
+    # [R-MEASURED], rule 23 [R-FROZEN-DERIVE]): the ISO's maximum single-year
+    # thermal deactivation from the EIA-860 retired sheet at the run's vintage
+    # (data.build_exit_throughput.max_annual_exit_gw, trailing
+    # EXIT_THROUGHPUT_WINDOW_YEARS window), times
+    # EXIT_THROUGHPUT_LIMIT_MULTIPLE (2.0 — the entry side's own
+    # ENTRY_GROWTH_LIMIT_MULTIPLE, transferred rather than chosen, so ONE
+    # envelope binds both halves of one queue; config/retirement_config.py).
+    # Measured seeds at vintage 2023: ERCOT 4.42 GW/yr -> 8.84 cap, PJM 5.24
+    # -> 10.49, MISO 7.46 -> 14.92. WINDOW, DRIVER AND FORWARD STORY (rule 17
+    # [R-FLOOR-WINDOW] analogue): the driver is RTO deactivation-queue
+    # processing capacity (deactivation studies, RMR determinations,
+    # decommissioning logistics); it may bind ONLY in a year whose decided-and-
+    # due exit volume exceeds 2x the ISO's historical single-year record, so it
+    # is inert over the historical window by construction (the seed IS that
+    # record); and it regenerates in a forecast year from the EIA-860 vintage,
+    # rising automatically if a future edition records a larger deactivation
+    # year. An ISO with no measured deactivation carries NO cap (neutral
+    # fallback, rule 25 [R-ISO-SCOPE] — a missing measurement must not invent a
+    # zero that forbids exit). Pipeline rule only; a no-op under
+    # retirement_rule="legacy". Default off is byte-identical.
     limited_foresight_dispatch: bool = False  # GATED, default-OFF (G-30 in-year
     # scarcity fix). When True, the in-year dispatch LP is denied perfect annual
     # foresight for flexible resources: storage/hydro cannot bank energy across
@@ -2205,6 +2296,75 @@ class ScenarioConfig:
     # NYISO-only. Promotion gate: leave-one-year-out within 2023-2025
     # (rule 22). See docs/handoffs/nyiso-overrun-underrun-2026-07.md §4.
 
+    nyiso_seny_rcpf_increment_step: bool = False  # GATED, default-OFF
+    # NYISO SENY 30-minute demand curve as the PUBLISHED TWO TIERS — a $500/MW
+    # base over 1,300 MW PLUS the $40/MW increment above it — instead of the
+    # base-only curve the model carries. A rule 14 [R-ACCURATE] OMISSION fix of
+    # the same class as nyiso-83/84's missing Long Island and East families: a
+    # published tier the model never carried, NOT a re-levelling of the base
+    # (rule 23 — the $500, its critical_mw = 0 and the n_ramp discretization are
+    # untouched, and this flag adds no rung to the base ramp).
+    #
+    # THE PUBLISHED CURVE. The NYISO SOM states the SENY 30-minute product as
+    # "at least 1,300 MW for all hours" at $500/MW PLUS an additional
+    # condition-varying increment binding a subset of hours at $40/MW, and the
+    # 2023 SOM p. A-132 prints the pair as one object — "SENY $500+$40" — as
+    # the as-enforced 2022-2023 curves. The $40 is NOT a new number (rule 5):
+    # it is the SAME Ancillary Services Manual §6.8 item 12 already pinned for
+    # the East 30-minute family, whose clause names Southeastern explicitly
+    # ("Eastern, SOUTHEASTERN, New York City, or Long Island 30-Minute Reserves
+    # ... shall be $40/MW"), on the same July-2021 vintage that spans all of
+    # 2023-2025. The breakpoint is the published 1,300 MW base already in
+    # NYISO_RCPF_LOCATIONAL, read from that registry rather than re-typed.
+    #
+    # THE DEFECT. nyiso_dynamic_reserve_requirements already ENFORCES the
+    # increment — the measured #1344 series runs 1,550/1,800 MW against the
+    # 1,300 MW base for most of the day — but nothing ever PRICED it: the whole
+    # shortfall is charged against the base curve, whose very first rung
+    # ($500/8 = $62.50) already sits above the ENTIRE measured SENY envelope.
+    # MEASURED ex ante with no solve spent (nyiso-117,
+    # results/calibration/nyiso117_seny_rcpf_curve_screen.json): the isolated
+    # SENY-only adder on NYISO's OWN posted zonal DA prices caps at
+    # $23.92/$30.37/$40.00 in 2023/24/25, with 52 hours of 2025 at EXACTLY
+    # $40.00 and ZERO hours above it in any year — the published increment
+    # realised as an atom at its ceiling — while the $500 base is never reached
+    # in 26,301 hours. That is why the BASE tier keeps its ramp: its shape is
+    # UNIDENTIFIED by the instrument, and nyiso-115's discipline is that an
+    # unidentified shape is left alone.
+    #
+    # CONSTRUCTION. Shortfall bands ascend cheapest-first, so the increment tier
+    # is the shallowest band and prices FIRST at $40; only a shortfall deep
+    # enough to eat into the 1,300 MW base reaches the base ramp. Total step
+    # width stays EXACTLY the hour's requirement in every hour — base clipped to
+    # min(1300, requirement[t]), increment max(0, requirement[t] - 1300), which
+    # sum to requirement[t] for any requirement, including the zero-requirement
+    # Thunderstorm-Alert hours.
+    #
+    # RULE 19 [R-ONE-MECH] vs nyiso_ordc_measured_step_span (armed on the
+    # keeper): that flag exists to make a SINGLE-tier curve span the hour's
+    # measured requirement. This construction carries the hourly requirement
+    # natively, in the increment band — which is what the requirement above the
+    # base physically IS — so SENY takes this branch INSTEAD of the span branch,
+    # exactly as li_30min_total's family-scoped ladder already opts itself out
+    # of the global flag. SUBSTITUTION, never stacking; every other family's
+    # span behaviour is untouched, and with this flag off the span flag behaves
+    # on SENY exactly as it does today. Default off, byte-identical when off;
+    # NYISO-only; requires --energy-reserve-coopt.
+    #
+    # REGISTRATION (rule 24 [R-REGISTRY]), all three in the same commit as the
+    # field: _CACHE_KEY_OPTIONAL_FIELDS (dropped at its default so every
+    # pre-existing cache key stays byte-stable; armed, it enters the key as a
+    # distinct scenario), _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS (the flip guard's
+    # check 3 — omitting it is exactly the hole nyiso-117 had to close for
+    # nyiso-115's field) and TIER_TAGS (tier 1, as every sibling NYISO reserve
+    # flag). Deliberately NOT in _BACKCAST_ONLY_OVERLAY_FIELDS: unlike
+    # nyiso_ordc_measured_step_span, whose scale factor is literally
+    # measured/static, this curve is built from PUBLISHED values only — the
+    # $40 RCPF, the 1,300 MW base, and the published deterministic hourly SENY
+    # step schedule — so it regenerates for a forward year (rule 13
+    # [R-MEASURED]). With a static requirement the increment band is
+    # identically zero width, i.e. a clean no-op, so no mode gate is owed.
+
     nyiso_hydro_reserve_eligible: bool = False  # GATED, default-OFF
     # NYISO conventional-hydro reserve-SUPPLY eligibility (issue #1344, lever 3).
     # When on (NYISO + energy_reserve_coopt), NYISO's in-fleet conventional
@@ -2433,6 +2593,39 @@ class ScenarioConfig:
     # False = the frozen-penetration byte-compat mode: credits pin back to
     # the pre-CR-3.1 flat constants (the capacity-hindcast BASELINE arm and
     # the byte-identity tests) — no curve, no penetration response.
+    caiso_nqc_accreditation: bool = False  # GATED default-OFF (FFR-3P
+    # 2026-08-04, docs/handoffs/ffr-3p-caiso-accreditation-2026-08-04.md).
+    # Admits CAISO's OWN published class-average VRE accreditation
+    # (constants.RENEWABLE_NQC_CURVES_BY_ISO — the CPUC/CAISO Net Qualifying
+    # Capacity report's monthly technology factors, blended onto the model's
+    # solar/wind classes on the same report's own fleet mix) at rung 0 of the
+    # ONE accreditation ladder (capacity.resolve_renewable_capacity_credit,
+    # rule 19), so all four consumers move together: the accredited-firm
+    # ledger, the retirement reliability floor, the reserve-margin backstop
+    # and the CR-1 curve position.
+    #
+    # WHY IT EXISTS. Unarmed, CAISO accredits VRE on the GENERIC non-CAISO
+    # fallback (solar 0.18, wind 0.16) because CAISO is absent from both
+    # per-ISO registries — a rule 14 [R-ACCURATE] defect in the ISO with the
+    # most elaborate published RA accreditation in the country (FFR-3H §3.3
+    # measured the fallback invariant across a 0.2x-2.0x penetration sweep).
+    # Armed, it reads CAISO's published Aug/Sep peak-risk factors: solar
+    # 0.2096, wind 0.2202 — i.e. the generic fallback is too STINGY in both
+    # classes, so arming RAISES the accredited ledger (~+1.1 GW on the 2026
+    # CAISO base fleet, against a measured 6,577 MW base-year deficit).
+    #
+    # WHY DEFAULT-OFF rather than simply adding CAISO to
+    # RENEWABLE_ELCC_CURVES_BY_ISO: that registry's gate
+    # (`renewable_elcc_curves`) ships default-ON, so a CAISO key there would
+    # move every CAISO forecast solve unannounced. Arming posture is an OWNER
+    # decision (rules 5/24/28); this field is the switch that decision flips.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS at False, so an unarmed run's
+    # cache key is byte-stable and an armed run keys distinctly.
+    #
+    # SCOPE. CAISO-only by construction (the registry holds one ISO) — rule 25
+    # [R-ISO-SCOPE]: nothing here transfers, and no other ISO's curve is
+    # touched. Forecast-lane mechanism: capacity evolution and the CR-1
+    # position are forecast-only, so no backcast keeper can move.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
@@ -6783,6 +6976,37 @@ class ScenarioConfig:
     # Path to the frozen conditional online-span JSON (default:
     # data/raw/_validation-source/ercot_shoulder_online_span_condbinned.json).
     ercot_shoulder_online_span_path: str | None = None
+    # ERCOT-159 energy-side online-capability ceiling (default off; queue item
+    # 9, the ERCOT-155 named successor, owner-authorized 2026-08-04;
+    # docs/PRECOMMIT-ercot159-energy-online-capability-cap-2026-08-04.md;
+    # matrix row energy_online_capability_cap). The energy-side analogue of
+    # ercot_reserve_supply_cap: the co-opt's fat headroom hands the LP every
+    # non-outaged slow-start unit as dispatchable-from-cold at marginal cost
+    # (15-17 GW of evening headroom vs the real market's 0.9-2.8 GW online,
+    # ERCOT-155 measured; the un-repriced offline block ERCOT-158 confirmed
+    # bit-identical at the 91 missed 2023 tail hours). Arms the EXISTING
+    # ReserveDesign.online_capacity_cap row on the FAST tier only:
+    #   Σ P(gas_cc/gas_st/coal/nuclear) + Σ R(RegUp/RRS/ECRS)
+    #     ≤ measured conditional envelope(season × hour-block × net-load bin)
+    # — per-cell MAX of slow-fossil + nuclear online HSL + quick-start online
+    # headroom from the full-year 60-Day SCED corpus
+    # (scripts/data/derive_ercot_energy_online_capability.py, frozen rule 23,
+    # zero fitted scalars rule 20; the raw hour series never ships, rule 13 /
+    # ERCOT-89 §6). The all tier stays uncapped (sentinel): NonSpin and
+    # quick-start keep their reserve-supply-cap / fast-start-pool owners
+    # (rule 19; the ercot41/43 ORDC-span-inside-the-cap arithmetic cannot
+    # recur — precommit §0.2 enumerates the distinctions from that REJECTED
+    # envelope family). Year-scoped by full-corpus coverage (2023; absent
+    # years byte-inert — the ercot_shoulder_online_span precedent); forecast
+    # mode uncapped (the G4 mode-aware seam of ercot_reserve_supply_cap).
+    # Requires energy_reserve_coopt + ercot_multiproduct_as_coopt (the
+    # identified tier structure); mutually exclusive with every
+    # ercot_online_capacity_envelope variant and with ercot_ordc_only_scarcity
+    # (same ReserveDesign field / same phenomenon, rule 19).
+    ercot_energy_online_capability_cap: bool = False
+    # Path override for the frozen envelope JSON (default:
+    # data/raw/_validation-source/ercot_energy_online_capability_condbinned.json).
+    ercot_energy_online_capability_cap_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -8623,6 +8847,38 @@ class ScenarioConfig:
     # changed grid conditions. Off by default; byte-identical off.
     pjm_zonal_loss_surface: bool = False
 
+    # CAISO marginal transmission-loss surface on the internal N-S corridor
+    # (caiso-164; charter results/calibration/
+    # PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md). The CAISO twin of
+    # pjm_zonal_loss_surface. When True for CAISO, the internal links are split
+    # into one-way loss pairs (interchange.apply_caiso_zonal_loss_links) and
+    # each direction's receiving-side marginal loss fraction
+    #   eps_(x->y),m = max(0, (dev_y,m - dev_x,m) / (1 + dev_y,m))
+    # enters the energy balance (dispatch.build_constraints link_loss), where
+    # dev is the measured per-zone monthly delivery-factor deviation
+    # dev_z = sum(MCL_z)/sum(MCE) derived by
+    # scripts/data/derive_caiso_loss_surface.py from CAISO's own published DAM
+    # component record; per-year rows for a backcast train year, pooled rows
+    # for a forecast year.
+    #
+    # WHY: caiso-164 §0 measured that 13-20% of the observed NP15-ZP26 basis
+    # (a mean +1.05 to +1.18 $/MWh of the +5.7 to +8.6 total) is the LOSS
+    # component MCL, which the lossless LP has NO representation of at all --
+    # the model's current treatment is the ESTIMATE "losses are zero". Rule 14
+    # [R-ACCURATE] prefers the measured physical network property. The
+    # remaining 80-87% is congestion and is NOT addressed here (see the
+    # caiso-164 finding's filed data blocker); this mechanism is bounded ex
+    # ante at the measured MCL component and must not be quoted as closing the
+    # north-south basis.
+    #
+    # Rule 25 [R-ISO-SCOPE]: the surface is CAISO's own published components,
+    # read from CAISO_loss_surface.csv; no value crosses from the MISO or PJM
+    # analogues, whose per-ISO verdicts are their own (rule 28(d)). Rule 13
+    # [R-MEASURED]: a network property that regenerates every year from the
+    # same feed and responds to changed grid conditions. Off by default;
+    # byte-identical off.
+    caiso_zonal_loss_surface: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -9994,6 +10250,36 @@ class ScenarioConfig:
                 "exactly one."
             )
 
+        # ERCOT-159 energy-side online-capability cap: same
+        # ReserveDesign.online_capacity_cap field as the envelope family and
+        # the same phenomenon (rule 19 one-owner) — never together with any
+        # envelope variant or with ercot_ordc_only_scarcity (which would
+        # demote the cap to a pricing-only basis, a different mechanism). The
+        # fast/all tier split it caps is the multi-product co-opt's; without
+        # it the identified structure does not exist (precommit §2).
+        if self.ercot_energy_online_capability_cap:
+            if any(_envelope_variants):
+                raise ValueError(
+                    "ercot_energy_online_capability_cap is mutually exclusive "
+                    "with the ercot_online_capacity_envelope family — both "
+                    "populate ReserveDesign.online_capacity_cap (rule 19)."
+                )
+            if self.ercot_ordc_only_scarcity:
+                raise ValueError(
+                    "ercot_energy_online_capability_cap requires the in-LP cap "
+                    "row; ercot_ordc_only_scarcity demotes it to pricing-only "
+                    "— set one or the other (rule 19)."
+                )
+            # The energy_reserve_coopt + ercot_multiproduct_as_coopt
+            # REQUIREMENT is enforced in the provider
+            # (scarcity.ercot_energy_online_capability_cap_mw), not here: the
+            # replay/run_year path constructs ScenarioConfig in stages
+            # (prb_overrides apply BEFORE the trailing explicit-kwarg block
+            # that arms the co-opt flags — the ERCOT-65 channel-order
+            # mechanics), so an intermediate config legitimately holds the
+            # flag with the co-opt fields still at defaults. Only the
+            # POSITIVE-conflict exclusivity checks above are stage-safe.
+
         # ORDC-only scarcity pricing (v2, realized-room RTORPA): needs the
         # multi-product plan structure and an envelope variant (the room
         # quantity RTORPA prices), and FORBIDS the in-LP ORDC total-reserve
@@ -10758,6 +11044,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_incity_commitment_obligation": 1,
     "nyiso_east_reserve_families": 1,
     "nyiso_spin_reserve_online": 1,
+    "nyiso_seny_rcpf_increment_step": 1,
     # Same tiering as the ERCOT bridge's fields: the gates/legs are structural
     # flags (1), the measured scalars are parameters (2).
     "nyiso_gas_commitment_bridge": 1,
@@ -10826,6 +11113,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_rpe_pricing": 1,
     "miso_zonal_loss_surface": 3,
     "pjm_zonal_loss_surface": 3,
+    "caiso_zonal_loss_surface": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
@@ -10899,6 +11187,7 @@ TIER_TAGS: dict[str, int] = {
     "entry_vre_capacity_revenue": 1,
     "entry_rate_limits": 1,
     "entry_commissioning_lag": 1,
+    "exit_rate_limits": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "cc_committed_hr_mult": 3,

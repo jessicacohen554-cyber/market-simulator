@@ -42,6 +42,7 @@ PJM_SURFACE_PATH = ISO_TRANSMISSION_DIR / "PJM_loss_surface.csv"
 _DERIVE_SCRIPT = {
     "MISO": "scripts/data/derive_miso_loss_surface.py",
     "PJM": "scripts/data/derive_pjm_loss_surface.py",
+    "CAISO": "scripts/data/derive_caiso_loss_surface.py",
 }
 
 # Pooled-surface sentinel year (matches the derives' POOLED_YEAR).
@@ -68,7 +69,7 @@ def load_zone_month_deviation(iso: str, year: int) -> dict[str, tuple[float, ...
         iso: ISO identifier. Each ISO reads its OWN ``<ISO>_loss_surface.csv``
             (rule 25 ``[R-ISO-SCOPE]`` — a surface is derived from that
             market's published components and never crosses a boundary);
-            ``MISO`` and ``PJM`` have one.
+            ``MISO``, ``PJM`` and ``CAISO`` have one.
         year: Simulation year. Resolved to the year's own rows when the
             surface carries them, else the pooled ``year = 0`` rows
             (module docstring).
