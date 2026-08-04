@@ -5017,3 +5017,77 @@ shoulder-span / topology / item 6 / ordc-only stay closed; the offer LEVEL
 program is exonerated, not re-derived).
 
 Next shorthand: ercot-162.
+
+## 2026-08-04 — ercot-162 (the ercot-161-chartered `ercot_storage_rt_offer_surface`, BUILT and A/B-tested; owner-authorized by the dispatch prompt): the measured multi-tranche battery RT discharge-offer surface is **REFUTED (R)** — it collapses battery discharge ~74 % every year (2025 −76 % vs EIA-930), manufactures spurious mid-band scarcity, and barely lifts the gap hours (+$16); keeper UNCHANGED at ercot158
+
+**Session ercot-162** (branch `claude/ercot-162-storage-rt-surface-6dycz4`).
+Full record: `results/calibration/FINDING-ercot162-storage-rt-surface-refuted-2026-08-04.md`;
+`docs/PRECOMMIT-ercot162-storage-rt-offer-surface-2026-08-04.md` (pushed BEFORE
+any solve). Phase A derive `scripts/data/derive_ercot_storage_rt_offer_surface.py`
+→ `data/raw/_validation-source/ercot_storage_rt_offer_condbinned.json`; Phase B
+the LP tranche split (`ScenarioConfig.ercot_storage_rt_offer_surface`, default
+off, + its matrix row same-PR rule 28(c); `model/lp/rows.py::_build_dis_tranche_rows`,
+`model/storage.py::ercot_storage_rt_offer_tranches`; unit tests
+`tests/unit/model/test_storage_rt_offer_tranche.py`). Scorers
+`scripts/probes/_ercot162_storage_ab.py` → `results/calibration/_ercot162_storage_ab.json`
+and the standing `_ercot89_span_check.py` → `_ercot162_span_check.txt`. A/B off
+the ercot158 keeper: control `ercot162_control_A` (fresh same-HEAD replay,
+gap-hour mean $441.27 = the committed keeper to the cent), arm
+`ercot162_stormarm_B` (`--set ercot_storage_rt_offer_surface=true`), both
+`--year 2023 2024 2025`, invocations sequential (15 GB box, rule 12 cap 1).
+
+**Mechanism.** Splits each ERCOT battery unit's ENERGY-side discharge into K=3
+priced tranches `Dis[s,k,t]` sharing SOC + power cap via a decomposition row
+(`Dis[s,t] = Σ_k DisT[a,k,t]`, so the base column keeps its exact total-discharge
+meaning — energy balance / SOC / power cap / AS→energy deployment floor all
+untouched), priced at the measured per-net-load-bin absolute-$ PWRSTR ladder
+(cum-fraction edges 0.10/0.30, widths 0.10/0.20/0.70, right-edge prices
+Q(0.10)/Q(0.30)/Q(0.99)), REPLACING the flat `battery_dispatch_adder` ($10) on
+ERCOT battery discharge (rule 19; PS + other ISOs untouched, rule 25).
+Year-scoped, zero fitted scalars. Phase-A identification reproduced the
+ercot-161 census to the cent; year-pair p30/p50 instability DISCLOSED (2023
+HCAP-degenerate p50=$5,000 all bins; the 6×-larger 2024/25 fleet collapses to
+p50=$91–230; top tranche Q(0.99)=$5,000 all years).
+
+**Verdict R — multiple pre-registered kills fired, both refutation branches
+realized.** (1) **2025 EIA-930 `NG: BAT` volume guard KILL** — battery discharge
+collapses ~74 % EVERY year (2023 829→216, 2024 2,143→538, 2025 4,454→1,284 GWh =
+−76.4 % vs the measured 5,444.8, control −18.2 %): the right-edge top tranche
+prices 70 % of the fleet at the $5,000 cap and the model's under-scarce price
+rarely clears it, so the fleet sits idle — the ERCOT-154 ground-(c) failure
+recurring on the very multi-tranche form ground-(a) demanded. (2) **Zero-spurious
+mid-band TRIPPED all three years** (+3/+7/+25); C3a DEGRADED 2024 +7.3pp / 2025
++10.1pp; NRMSE DEGRADED 2024/25 — the withheld storage manufactures scarcity
+where reality had none (the pre-declared 'ordinary-hour lift ⇒ R' branch). And
+the owner-priority object barely moved: the 100-hour gap set lifts only
+$441.27→$457.32 (+$16, 1.6 % of the gap to λ $1,470.16) because the crossing
+never runs deep into the tranches — the ERCOT-88 pool + the cheap CC offline
+block absorb the load (the 'INERT at the gap hours' branch).
+
+**Structural lesson.** A battery's submitted SCED offer is an EQUILIBRIUM object
+(offered at the cap knowing it clears in the market's real scarcity hours);
+transplanted into the LP as a discharge marginal cost WITHOUT the model
+reproducing those scarcity hours, it only withholds the fleet — the offer
+surface **presumes the scarcity the model lacks and cannot create it**. The
+residual is a QUANTITY / scarcity-depth object — the AS/energy split of storage
+capability at scarcity (the FINDING §4 destination), not a storage-offer-price
+object. The successor is the commitment-state / scarcity-depth question (the CC
+offline block's phantom cheap depth, the ERCOT-158-attributed object) and, on
+the storage side, the AS-vs-energy capability split at scarcity — a QUANTITY
+measurement, not an offer re-price.
+
+**Governance.** Rule 15: BOTH runs registered on the backcast dashboard with
+attestations (control = A/B base `2026-08-04-run162a-storage-rt`; arm = rejected
+probe `2026-08-04-run162b-storage-rt`, definition marked PROBE). Rule 28(b):
+`ercot_storage_rt_offer_surface` cell stamped ERCOT **O → R** with this finding +
+both bundles as evidence. Rule 28(c): the new field's matrix row landed in the
+Phase-B PR. Mechanism stays merged **default-off** (rule 26 does not apply — a
+built, reachable, default-off measured mechanism, not a fitted knob). ERCOT-154
+DO-NOT-REDO honoured throughout (not single-price, not gas-multiple, no rung
+selected on model absorption — K/quantiles/widths fixed a priori and NOT
+re-tuned to answer the refutation). Holdouts untouched (2023–2025, training
+span). ERCOT-scoped (rule 25). Scope fence honoured (PRECOMMIT §0): no
+offer-LEVEL re-derive, no envelope/cap family, no topology, no
+`ordc_only_scarcity`.
+
+Next shorthand: ercot-163.
