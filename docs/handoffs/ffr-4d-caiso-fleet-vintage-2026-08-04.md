@@ -41,8 +41,8 @@ Every number below is a fleet or accreditation quantity. §8 states this formall
    on a 2026 constant. §5.
 
 **What is fixed here:** the base-year fleet, both channels (§4). **What is routed, not
-fixed:** the accreditation-rate residual (§6), which is now the whole of what remains and
-whose largest single term — battery — has **no mechanism at all**.
+fixed:** the accreditation-rate and class-boundary residual (§6), which is the whole of
+what remains and whose largest single term — battery — has **no mechanism at all**.
 
 ---
 
@@ -310,7 +310,7 @@ fleet rather than a scalar on a different basis.
 
 ---
 
-## 6. What remains — after the fleet is right, the residual is ENTIRELY accreditation rate
+## 6. What remains — after the fleet is right, the residual is accreditation rate and class boundary
 
 Post-fix ledger against CAISO's published internal total of 59,069 MW:
 
@@ -327,8 +327,9 @@ the solar schedule and its battery on the storage schedule (the loader's own doc
 says so), so the model's corrected pools already carry the MW CAISO books in a separate
 hybrid class. Comparing class-by-class here would double-count.
 
-**Three of the four classes are now at or above CAISO's published values. The entire
-residual is one number:**
+**Thermal and conventional hydro now sit ABOVE CAISO's published values and pumped storage
+is within 30 MW of it. Every megawatt of the residual is in the one merged block, and it
+reduces to a single comparison:**
 
 ```
 model accredits this block at   16,120.3 / 46,700 nameplate = 0.3452
