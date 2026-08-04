@@ -1,5 +1,34 @@
 # ERCOT-151 — the 2023 tail's phantom cheap DEPTH is measured at the missed hours; the offline-increment re-pricing lane (ERCOT-107/108 scope-correction successor) is CONFIRMED identifiable and chartered; the identification is DATA-BLOCKED on an NP3-965 corpus re-upload
 
+> **CORRECTION 2026-08-04 (ercot-163) — §0.2 and §0.4's offline-CC numbers are
+> REFUTED and must not be quoted forward.** This document's headline object —
+> *"18.1 GW of startable-but-OFF CC+CT (CC 10.3 / CT 7.8), ~13.5 GW of it at
+> submitted-DAM ≤ $200"*, and with it the "~8 GW cheap CC offline block" the
+> ERCOT-152/158/162 narrative carried — is a **60-Day-DAM day-ahead-status
+> artifact**. Measured on the delivery-2023 SCED corpus at the committed
+> top-100 gap hours, ERCOT's CC fleet was **96.4 % committed and 98.0 % loaded**
+> with **0.020 GW** of offline-startable (OFFQS/OFFNS) capability whose entire
+> above-LSL SCED2 offer is **2.6 MW at $77.5–85.5** (zero MW above $100). Two
+> defects compound here: (a) a CC train submits one DAM row per configuration
+> (**4.3 configs/train**) and every non-operating configuration of a *running*
+> train carries `Resource Status = OFF` at full HSL — name-grain OFF CC reads
+> 48.9 GW against 14.1 GW train-collapsed, and the §0.2 `_site()` collapse takes
+> the **max** HSL among ON rows rather than the sum (open owner ruling #9); and
+> (b) even correctly collapsed, **98.6 % of the surviving 13.42 GW was
+> telemetered ONLINE in real time, 12.47 GW of it generating**, at these very
+> hours — a DAM status is a day-ahead commitment, and ERCOT's merchant CC fleet
+> self-commits into real time. The **CT** half of the object stands (the census
+> resolves a real 0.891 GW offline-startable CT pool at p50 $891.5 — the
+> ERCOT-88 pool, armed and measured inert at the tail by ERCOT-158). The CC
+> half does not, which also **confirms ERCOT-152's own refusal** on the
+> full-year corpus. §0.4's "the LP cleared around it on the un-repriced cheap CC
+> offline block" survives only as *the model has ~2.7 GW of CC headroom the
+> market did not have* — a fleet-scope capability object, not a commitment-state
+> one. Full record:
+> `results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`;
+> probes `scripts/probes/ercot163_cc_commitment_state_census.py` +
+> `scripts/probes/ercot163_dam_config_collapse.py`.
+
 > **§4 ask 1 RESOLVED 2026-08-03 (ercot-157).** The owner re-uploaded the
 > delivery-2023 NP3-965 corpus to `data/raw/ercot/SCED/` (315 shards, verified
 > complete: all 365 delivery days, 35.8M rows; two failed upload batches caught

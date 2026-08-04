@@ -1,0 +1,1170 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot163_cc_commitment_state_census.py",
+  "session": "ercot-163 Phase 0 (no LP, no solve, keeper unchanged)",
+  "bundle": "results/calibration/ercot158_poolarm_B",
+  "keeper": "2026-08-03-ercot158-pool-arm",
+  "year": 2023,
+  "hour_set_source": "results/calibration/_ercot161_wall_phase0.json",
+  "n_sced_shards": 315,
+  "cap_ref": "per-TRAIN p98 telemetered HSL over delivery-2023 (configuration aliases collapsed on the trailing _<config> segment)",
+  "states": [
+   "ONLINE",
+   "ONTEST",
+   "OFFLINE_STARTABLE",
+   "OFFLINE_OTHER",
+   "OUT",
+   "TRANSITION",
+   "OTHER",
+   "ABSENT"
+  ],
+  "elapsed_s": 272.3
+ },
+ "hour_sets": {
+  "gap": 100,
+  "bin6_nongap": 177,
+  "summer_afternoon_nongap": 761,
+  "all": 8760
+ },
+ "model": {
+  "CC": {
+   "gap": {
+    "n_hours": 100,
+    "mean_gw_available": 33.1092,
+    "mean_gw_dispatched": 30.0376,
+    "mean_gw_undispatched": 3.0716,
+    "mean_utilisation": 0.9063,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.3786,
+     "le_200": 0.7231,
+     "le_300": 1.4063,
+     "le_500": 2.0397,
+     "le_1000": 2.4141
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 30.0223,
+     "100-200": 0.703,
+     "200-300": 0.7186,
+     "300-500": 0.6335,
+     "500-1000": 0.3744,
+     "1000-2000": 0.1427,
+     "2000-inf": 0.5147
+    },
+    "marginal_bid_within_class": {
+     "p10": 71.6,
+     "p50": 134.33,
+     "p90": 237.82
+    },
+    "max_bid_in_class_p50_over_hours": 4757.76
+   },
+   "bin6_nongap": {
+    "n_hours": 177,
+    "mean_gw_available": 33.7483,
+    "mean_gw_dispatched": 30.0138,
+    "mean_gw_undispatched": 3.7346,
+    "mean_utilisation": 0.8894,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.7342,
+     "le_200": 1.2457,
+     "le_300": 1.9904,
+     "le_500": 2.6528,
+     "le_1000": 3.0641
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 30.5966,
+     "100-200": 0.6506,
+     "200-300": 0.757,
+     "300-500": 0.6624,
+     "500-1000": 0.4112,
+     "1000-2000": 0.1333,
+     "2000-inf": 0.5373
+    },
+    "marginal_bid_within_class": {
+     "p10": 68.84,
+     "p50": 83.8,
+     "p90": 175.58
+    },
+    "max_bid_in_class_p50_over_hours": 4757.99
+   },
+   "summer_afternoon_nongap": {
+    "n_hours": 761,
+    "mean_gw_available": 32.568,
+    "mean_gw_dispatched": 27.3404,
+    "mean_gw_undispatched": 5.2276,
+    "mean_utilisation": 0.8391,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 2.4029,
+     "le_200": 3.3742,
+     "le_300": 3.9427,
+     "le_500": 4.4052,
+     "le_1000": 4.6061
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 29.711,
+     "100-200": 1.0011,
+     "200-300": 0.571,
+     "300-500": 0.4625,
+     "500-1000": 0.201,
+     "1000-2000": 0.2404,
+     "2000-inf": 0.381
+    },
+    "marginal_bid_within_class": {
+     "p10": 33.86,
+     "p50": 48.11,
+     "p90": 86.76
+    },
+    "max_bid_in_class_p50_over_hours": 4758.47
+   },
+   "all": {
+    "n_hours": 8760,
+    "mean_gw_available": 29.3295,
+    "mean_gw_dispatched": 19.2379,
+    "mean_gw_undispatched": 10.0916,
+    "mean_utilisation": 0.6535,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 8.2632,
+     "le_200": 9.1183,
+     "le_300": 9.3279,
+     "le_500": 9.4722,
+     "le_1000": 9.532
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 27.4828,
+     "100-200": 0.8621,
+     "200-300": 0.2102,
+     "300-500": 0.1443,
+     "500-1000": 0.0598,
+     "1000-2000": 0.2814,
+     "2000-inf": 0.2782
+    },
+    "marginal_bid_within_class": {
+     "p10": 18.24,
+     "p50": 25.0,
+     "p90": 42.71
+    },
+    "max_bid_in_class_p50_over_hours": 4758.89
+   }
+  },
+  "CC_REGULAR_ONLY": {
+   "gap": {
+    "n_hours": 100,
+    "mean_gw_available": 28.3101,
+    "mean_gw_dispatched": 25.8402,
+    "mean_gw_undispatched": 2.4699,
+    "mean_utilisation": 0.9119,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.324,
+     "le_200": 0.6337,
+     "le_300": 1.3107,
+     "le_500": 1.75,
+     "le_1000": 2.0559
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 25.8203,
+     "100-200": 0.6183,
+     "200-300": 0.7124,
+     "300-500": 0.4393,
+     "500-1000": 0.3059,
+     "1000-2000": 0.0291,
+     "2000-inf": 0.3849
+    },
+    "marginal_bid_within_class": {
+     "p10": 70.35,
+     "p50": 131.34,
+     "p90": 237.82
+    },
+    "max_bid_in_class_p50_over_hours": 4742.66
+   },
+   "bin6_nongap": {
+    "n_hours": 177,
+    "mean_gw_available": 28.8622,
+    "mean_gw_dispatched": 25.7835,
+    "mean_gw_undispatched": 3.0787,
+    "mean_utilisation": 0.8934,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.6538,
+     "le_200": 1.1145,
+     "le_300": 1.8593,
+     "le_500": 2.3165,
+     "le_1000": 2.6558
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 26.3089,
+     "100-200": 0.5768,
+     "200-300": 0.757,
+     "300-500": 0.4572,
+     "500-1000": 0.3394,
+     "1000-2000": 0.02,
+     "2000-inf": 0.4028
+    },
+    "marginal_bid_within_class": {
+     "p10": 68.06,
+     "p50": 82.96,
+     "p90": 175.58
+    },
+    "max_bid_in_class_p50_over_hours": 4742.96
+   },
+   "summer_afternoon_nongap": {
+    "n_hours": 761,
+    "mean_gw_available": 27.9401,
+    "mean_gw_dispatched": 23.6577,
+    "mean_gw_undispatched": 4.2824,
+    "mean_utilisation": 0.8465,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 2.0055,
+     "le_200": 2.8841,
+     "le_300": 3.4252,
+     "le_500": 3.7365,
+     "le_1000": 3.8808
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 25.6358,
+     "100-200": 0.9035,
+     "200-300": 0.5437,
+     "300-500": 0.3112,
+     "500-1000": 0.1444,
+     "1000-2000": 0.1166,
+     "2000-inf": 0.285
+    },
+    "marginal_bid_within_class": {
+     "p10": 33.1,
+     "p50": 47.32,
+     "p90": 86.34
+    },
+    "max_bid_in_class_p50_over_hours": 4741.01
+   },
+   "all": {
+    "n_hours": 8760,
+    "mean_gw_available": 24.7439,
+    "mean_gw_dispatched": 16.2425,
+    "mean_gw_undispatched": 8.5013,
+    "mean_utilisation": 0.6533,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 7.2302,
+     "le_200": 7.9035,
+     "le_300": 8.0772,
+     "le_500": 8.1293,
+     "le_1000": 8.1513
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 23.4555,
+     "100-200": 0.6792,
+     "200-300": 0.1744,
+     "300-500": 0.0521,
+     "500-1000": 0.022,
+     "1000-2000": 0.1605,
+     "2000-inf": 0.1896
+    },
+    "marginal_bid_within_class": {
+     "p10": 17.2,
+     "p50": 24.27,
+     "p90": 41.38
+    },
+    "max_bid_in_class_p50_over_hours": 4738.82
+   }
+  },
+  "CT": {
+   "gap": {
+    "n_hours": 100,
+    "mean_gw_available": 7.5204,
+    "mean_gw_dispatched": 5.5931,
+    "mean_gw_undispatched": 1.9272,
+    "mean_utilisation": 0.7421,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.1472,
+     "le_200": 0.3026,
+     "le_300": 0.8223,
+     "le_500": 1.2542,
+     "le_1000": 1.7711
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 5.4534,
+     "100-200": 0.3022,
+     "200-300": 0.6127,
+     "300-500": 0.4656,
+     "500-1000": 0.5303,
+     "1000-2000": 0.1045,
+     "2000-inf": 0.0517
+    },
+    "marginal_bid_within_class": {
+     "p10": 69.8,
+     "p50": 173.38,
+     "p90": 287.41
+    },
+    "max_bid_in_class_p50_over_hours": 2797.56
+   },
+   "bin6_nongap": {
+    "n_hours": 177,
+    "mean_gw_available": 7.5808,
+    "mean_gw_dispatched": 5.5077,
+    "mean_gw_undispatched": 2.0731,
+    "mean_utilisation": 0.7266,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 0.064,
+     "le_200": 0.3382,
+     "le_300": 0.9199,
+     "le_500": 1.3817,
+     "le_1000": 1.941
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 5.4401,
+     "100-200": 0.3323,
+     "200-300": 0.6144,
+     "300-500": 0.4806,
+     "500-1000": 0.579,
+     "1000-2000": 0.1035,
+     "2000-inf": 0.0309
+    },
+    "marginal_bid_within_class": {
+     "p10": 70.45,
+     "p50": 115.6,
+     "p90": 195.34
+    },
+    "max_bid_in_class_p50_over_hours": 2797.56
+   },
+   "summer_afternoon_nongap": {
+    "n_hours": 761,
+    "mean_gw_available": 7.5664,
+    "mean_gw_dispatched": 4.1662,
+    "mean_gw_undispatched": 3.4002,
+    "mean_utilisation": 0.5507,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 1.6651,
+     "le_200": 1.8817,
+     "le_300": 2.4735,
+     "le_500": 2.8818,
+     "le_1000": 3.2477
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 5.8026,
+     "100-200": 0.2286,
+     "200-300": 0.599,
+     "300-500": 0.4127,
+     "500-1000": 0.3705,
+     "1000-2000": 0.1052,
+     "2000-inf": 0.0478
+    },
+    "marginal_bid_within_class": {
+     "p10": 32.92,
+     "p50": 47.01,
+     "p90": 115.6
+    },
+    "max_bid_in_class_p50_over_hours": 2797.56
+   },
+   "all": {
+    "n_hours": 8760,
+    "mean_gw_available": 7.1888,
+    "mean_gw_dispatched": 1.3196,
+    "mean_gw_undispatched": 5.8691,
+    "mean_utilisation": 0.1809,
+    "mean_gw_undispatched_by_bid_cap": {
+     "le_100": 3.8682,
+     "le_200": 3.9707,
+     "le_300": 4.3181,
+     "le_500": 4.5544,
+     "le_1000": 4.928
+    },
+    "mean_gw_available_by_bid_band": {
+     "0-100": 5.1818,
+     "100-200": 0.1054,
+     "200-300": 0.3492,
+     "300-500": 0.237,
+     "500-1000": 0.3741,
+     "1000-2000": 0.3421,
+     "2000-inf": 0.5991
+    },
+    "marginal_bid_within_class": {
+     "p10": 24.72,
+     "p50": 29.44,
+     "p90": 41.17
+    },
+    "max_bid_in_class_p50_over_hours": 3869.95
+   }
+  }
+ },
+ "reality": {
+  "fleet_cap_ref_gw": {
+   "CC": 35.2601,
+   "CT": 11.045
+  },
+  "gap": {
+   "n_hours": 100,
+   "n_intervals": 400,
+   "classes": {
+    "CC": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 33.9984,
+      "ONTEST": 0.3549,
+      "OFFLINE_STARTABLE": 0.0199,
+      "OFFLINE_OTHER": 0.0342,
+      "OUT": 0.7911,
+      "TRANSITION": 0.0336,
+      "OTHER": 0.0229,
+      "ABSENT": 0.0051
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 30.0652,
+      "ONTEST": 0.2963,
+      "OFFLINE_STARTABLE": 0.0179,
+      "OFFLINE_OTHER": 0.0173,
+      "OUT": 0.3664,
+      "TRANSITION": 0.0172,
+      "OTHER": 0.0157,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 29.4599,
+      "ONTEST": 0.2638,
+      "OFFLINE_STARTABLE": 0.0,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0101,
+      "OTHER": 0.0001,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 29.7719,
+     "mean_gw_hsl_by_status": {
+      "ON": 27.629,
+      "ONREG": 1.3511,
+      "ONOS": 1.0619,
+      "OUT": 0.3664,
+      "ONTEST": 0.2963,
+      "ONHOLD": 0.0201,
+      "OFFNS": 0.0179,
+      "OFF": 0.0173,
+      "STARTUP": 0.0162,
+      "EMR": 0.0129,
+      "ONOPTOUT": 0.0032,
+      "NA": 0.0027,
+      "SHUTDOWN": 0.0009
+     },
+     "committed_share_of_capref": 0.9642,
+     "offline_startable_share_of_capref": 0.0006,
+     "online_loading": 0.9799,
+     "n_resources_present": 70,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.0026,
+      "quantiles": {
+       "p10": 77.5,
+       "p30": 77.5,
+       "p50": 77.5,
+       "p70": 79.5,
+       "p90": 83.5,
+       "p99": 85.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0026,
+       "100-200": 0.0,
+       "200-300": 0.0,
+       "300-500": 0.0,
+       "500-1000": 0.0,
+       "1000-2000": 0.0,
+       "2000-inf": 0.0
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.3205,
+      "quantiles": {
+       "p10": 16.5,
+       "p30": 21.5,
+       "p50": 32.5,
+       "p70": 75.5,
+       "p90": 417.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.2686,
+       "100-200": 0.006,
+       "200-300": 0.005,
+       "300-500": 0.012,
+       "500-1000": 0.0064,
+       "1000-2000": 0.0116,
+       "2000-inf": 0.0101
+      }
+     }
+    },
+    "CT": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 10.1847,
+      "ONTEST": 0.0386,
+      "OFFLINE_STARTABLE": 0.8911,
+      "OFFLINE_OTHER": 0.1341,
+      "OUT": 0.5104,
+      "TRANSITION": 0.0564,
+      "OTHER": 0.1325,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 8.6683,
+      "ONTEST": 0.0297,
+      "OFFLINE_STARTABLE": 0.7609,
+      "OFFLINE_OTHER": 0.1164,
+      "OUT": 0.4237,
+      "TRANSITION": 0.0441,
+      "OTHER": 0.1194,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 8.5237,
+      "ONTEST": 0.0288,
+      "OFFLINE_STARTABLE": 0.0177,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0269,
+      "OTHER": 0.0003,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 8.6228,
+     "mean_gw_hsl_by_status": {
+      "ON": 7.8091,
+      "ONREG": 0.6303,
+      "OFFQS": 0.6219,
+      "OUT": 0.4237,
+      "ONOS": 0.2251,
+      "OFFNS": 0.1389,
+      "OFF": 0.1164,
+      "EMRSWGR": 0.073,
+      "EMR": 0.0439,
+      "STARTUP": 0.0395,
+      "ONTEST": 0.0297,
+      "SHUTDOWN": 0.0045,
+      "ONRUC": 0.0035,
+      "NA": 0.0025,
+      "ONHOLD": 0.0004
+     },
+     "committed_share_of_capref": 0.8524,
+     "offline_startable_share_of_capref": 0.0746,
+     "online_loading": 0.9833,
+     "n_resources_present": 180,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.0673,
+      "quantiles": {
+       "p10": 34.5,
+       "p30": 225.5,
+       "p50": 891.5,
+       "p70": 961.5,
+       "p90": 1153.5,
+       "p99": 4999.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0112,
+       "100-200": 0.0026,
+       "200-300": 0.0107,
+       "300-500": 0.0056,
+       "500-1000": 0.0234,
+       "1000-2000": 0.0085,
+       "2000-inf": 0.0037
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.1001,
+      "quantiles": {
+       "p10": 26.5,
+       "p30": 75.5,
+       "p50": 205.5,
+       "p70": 960.5,
+       "p90": 5000.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0381,
+       "100-200": 0.0065,
+       "200-300": 0.0069,
+       "300-500": 0.0089,
+       "500-1000": 0.0103,
+       "1000-2000": 0.005,
+       "2000-inf": 0.0202
+      }
+     }
+    }
+   }
+  },
+  "bin6_nongap": {
+   "n_hours": 177,
+   "n_intervals": 708,
+   "classes": {
+    "CC": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 34.3314,
+      "ONTEST": 0.5051,
+      "OFFLINE_STARTABLE": 0.0371,
+      "OFFLINE_OTHER": 0.0283,
+      "OUT": 0.2978,
+      "TRANSITION": 0.0478,
+      "OTHER": 0.0127,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 30.6085,
+      "ONTEST": 0.4528,
+      "OFFLINE_STARTABLE": 0.0371,
+      "OFFLINE_OTHER": 0.0237,
+      "OUT": 0.1532,
+      "TRANSITION": 0.0215,
+      "OTHER": 0.0089,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 29.8648,
+      "ONTEST": 0.4074,
+      "OFFLINE_STARTABLE": 0.0,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0134,
+      "OTHER": 0.0001,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 30.2816,
+     "mean_gw_hsl_by_status": {
+      "ON": 28.0209,
+      "ONREG": 1.5873,
+      "ONOS": 0.9874,
+      "ONTEST": 0.4528,
+      "OUT": 0.1532,
+      "OFFNS": 0.0371,
+      "OFF": 0.0237,
+      "STARTUP": 0.0161,
+      "ONHOLD": 0.0128,
+      "EMR": 0.0087,
+      "SHUTDOWN": 0.0054,
+      "NA": 0.0002
+     },
+     "committed_share_of_capref": 0.9737,
+     "offline_startable_share_of_capref": 0.0011,
+     "online_loading": 0.9757,
+     "n_resources_present": 70,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.0114,
+      "quantiles": {
+       "p10": 77.5,
+       "p30": 77.5,
+       "p50": 77.5,
+       "p70": 77.5,
+       "p90": 79.5,
+       "p99": 85.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0114,
+       "100-200": 0.0,
+       "200-300": 0.0,
+       "300-500": 0.0,
+       "500-1000": 0.0,
+       "1000-2000": 0.0,
+       "2000-inf": 0.0
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.4298,
+      "quantiles": {
+       "p10": 18.5,
+       "p30": 26.5,
+       "p50": 66.5,
+       "p70": 75.5,
+       "p90": 413.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.3506,
+       "100-200": 0.0154,
+       "200-300": 0.0095,
+       "300-500": 0.0148,
+       "500-1000": 0.0109,
+       "1000-2000": 0.0137,
+       "2000-inf": 0.0128
+      }
+     }
+    },
+    "CT": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 9.3187,
+      "ONTEST": 0.0161,
+      "OFFLINE_STARTABLE": 1.495,
+      "OFFLINE_OTHER": 0.3924,
+      "OUT": 0.426,
+      "TRANSITION": 0.0835,
+      "OTHER": 0.224,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 7.9103,
+      "ONTEST": 0.0123,
+      "OFFLINE_STARTABLE": 1.2711,
+      "OFFLINE_OTHER": 0.3241,
+      "OUT": 0.3593,
+      "TRANSITION": 0.0642,
+      "OTHER": 0.1899,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 7.6621,
+      "ONTEST": 0.0115,
+      "OFFLINE_STARTABLE": 0.0161,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0316,
+      "OTHER": 0.0012,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 7.8764,
+     "mean_gw_hsl_by_status": {
+      "ON": 6.7459,
+      "OFFQS": 1.1368,
+      "ONREG": 0.9397,
+      "OUT": 0.3593,
+      "OFF": 0.3241,
+      "ONOS": 0.2237,
+      "EMR": 0.1475,
+      "OFFNS": 0.1344,
+      "STARTUP": 0.0399,
+      "EMRSWGR": 0.0397,
+      "SHUTDOWN": 0.0243,
+      "ONTEST": 0.0123,
+      "NA": 0.0027,
+      "ONHOLD": 0.0007,
+      "ONRUC": 0.0004
+     },
+     "committed_share_of_capref": 0.7794,
+     "offline_startable_share_of_capref": 0.125,
+     "online_loading": 0.9686,
+     "n_resources_present": 180,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.4354,
+      "quantiles": {
+       "p10": 165.5,
+       "p30": 296.5,
+       "p50": 956.5,
+       "p70": 963.5,
+       "p90": 1145.5,
+       "p99": 1170.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0381,
+       "100-200": 0.0431,
+       "200-300": 0.0509,
+       "300-500": 0.0788,
+       "500-1000": 0.1139,
+       "1000-2000": 0.1075,
+       "2000-inf": 0.0027
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.2149,
+      "quantiles": {
+       "p10": 28.5,
+       "p30": 42.5,
+       "p50": 75.5,
+       "p70": 336.5,
+       "p90": 1499.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.1126,
+       "100-200": 0.0162,
+       "200-300": 0.0103,
+       "300-500": 0.0167,
+       "500-1000": 0.0239,
+       "1000-2000": 0.008,
+       "2000-inf": 0.021
+      }
+     }
+    }
+   }
+  },
+  "summer_afternoon_nongap": {
+   "n_hours": 761,
+   "n_intervals": 3044,
+   "classes": {
+    "CC": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 33.1448,
+      "ONTEST": 0.5118,
+      "OFFLINE_STARTABLE": 0.0952,
+      "OFFLINE_OTHER": 0.2653,
+      "OUT": 0.9594,
+      "TRANSITION": 0.1023,
+      "OTHER": 0.1812,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 28.8458,
+      "ONTEST": 0.438,
+      "OFFLINE_STARTABLE": 0.0942,
+      "OFFLINE_OTHER": 0.1587,
+      "OUT": 0.4591,
+      "TRANSITION": 0.0503,
+      "OTHER": 0.1222,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 27.6215,
+      "ONTEST": 0.3756,
+      "OFFLINE_STARTABLE": 0.0,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0271,
+      "OTHER": 0.0002,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 28.5544,
+     "mean_gw_hsl_by_status": {
+      "ON": 24.9067,
+      "ONREG": 2.6661,
+      "ONOS": 1.2624,
+      "OUT": 0.4591,
+      "ONTEST": 0.438,
+      "OFF": 0.1587,
+      "OFFNS": 0.0942,
+      "EMR": 0.067,
+      "EMRSWGR": 0.0524,
+      "STARTUP": 0.0447,
+      "ONHOLD": 0.0069,
+      "SHUTDOWN": 0.0056,
+      "NA": 0.0027,
+      "ONOPTOUT": 0.0025,
+      "ONRUC": 0.0012
+     },
+     "committed_share_of_capref": 0.94,
+     "offline_startable_share_of_capref": 0.0027,
+     "online_loading": 0.9576,
+     "n_resources_present": 70,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.0099,
+      "quantiles": {
+       "p10": 77.5,
+       "p30": 77.5,
+       "p50": 77.5,
+       "p70": 77.5,
+       "p90": 79.5,
+       "p99": 83.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0099,
+       "100-200": 0.0,
+       "200-300": 0.0,
+       "300-500": 0.0,
+       "500-1000": 0.0,
+       "1000-2000": 0.0,
+       "2000-inf": 0.0
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.9404,
+      "quantiles": {
+       "p10": 17.5,
+       "p30": 25.5,
+       "p50": 28.5,
+       "p70": 75.5,
+       "p90": 150.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.8232,
+       "100-200": 0.0239,
+       "200-300": 0.0131,
+       "300-500": 0.0189,
+       "500-1000": 0.0192,
+       "1000-2000": 0.0131,
+       "2000-inf": 0.0258
+      }
+     }
+    },
+    "CT": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 7.1139,
+      "ONTEST": 0.0273,
+      "OFFLINE_STARTABLE": 2.5472,
+      "OFFLINE_OTHER": 1.3099,
+      "OUT": 0.5012,
+      "TRANSITION": 0.0686,
+      "OTHER": 0.3656,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 5.9569,
+      "ONTEST": 0.0206,
+      "OFFLINE_STARTABLE": 2.1894,
+      "OFFLINE_OTHER": 1.138,
+      "OUT": 0.4105,
+      "TRANSITION": 0.0543,
+      "OTHER": 0.3112,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 5.6921,
+      "ONTEST": 0.0176,
+      "OFFLINE_STARTABLE": 0.0112,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0291,
+      "OTHER": 0.0008,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 5.9127,
+     "mean_gw_hsl_by_status": {
+      "ON": 4.4508,
+      "OFFQS": 1.4858,
+      "ONREG": 1.2855,
+      "OFF": 1.138,
+      "OFFNS": 0.7036,
+      "OUT": 0.4105,
+      "EMR": 0.2319,
+      "ONOS": 0.22,
+      "EMRSWGR": 0.0753,
+      "STARTUP": 0.0368,
+      "ONTEST": 0.0206,
+      "SHUTDOWN": 0.0174,
+      "NA": 0.004,
+      "ONRUC": 0.0004,
+      "ONHOLD": 0.0003,
+      "ONEMR": 0.0,
+      "ONDSR": 0.0,
+      "": 0.0
+     },
+     "committed_share_of_capref": 0.5961,
+     "offline_startable_share_of_capref": 0.2134,
+     "online_loading": 0.9555,
+     "n_resources_present": 180,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.6191,
+      "quantiles": {
+       "p10": 75.5,
+       "p30": 218.5,
+       "p50": 358.5,
+       "p70": 958.5,
+       "p90": 1080.5,
+       "p99": 1168.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0879,
+       "100-200": 0.0764,
+       "200-300": 0.1013,
+       "300-500": 0.0471,
+       "500-1000": 0.2374,
+       "1000-2000": 0.0653,
+       "2000-inf": 0.0014
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.2209,
+      "quantiles": {
+       "p10": 23.5,
+       "p30": 29.5,
+       "p50": 37.5,
+       "p70": 75.5,
+       "p90": 763.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.1743,
+       "100-200": 0.0093,
+       "200-300": 0.0047,
+       "300-500": 0.0038,
+       "500-1000": 0.006,
+       "1000-2000": 0.0007,
+       "2000-inf": 0.0165
+      }
+     }
+    }
+   }
+  },
+  "all": {
+   "n_hours": 8760,
+   "n_intervals": 35038,
+   "classes": {
+    "CC": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 25.6419,
+      "ONTEST": 0.3235,
+      "OFFLINE_STARTABLE": 0.1409,
+      "OFFLINE_OTHER": 4.0835,
+      "OUT": 3.977,
+      "TRANSITION": 0.4254,
+      "OTHER": 0.5292,
+      "ABSENT": 0.1387
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 21.2332,
+      "ONTEST": 0.2557,
+      "OFFLINE_STARTABLE": 0.0961,
+      "OFFLINE_OTHER": 2.5781,
+      "OUT": 2.0504,
+      "TRANSITION": 0.2419,
+      "OTHER": 0.2587,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 18.6175,
+      "ONTEST": 0.203,
+      "OFFLINE_STARTABLE": 0.0,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0817,
+      "OTHER": 0.0015,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 20.8896,
+     "mean_gw_hsl_by_status": {
+      "ON": 17.7918,
+      "OFF": 2.5781,
+      "ONREG": 2.4671,
+      "OUT": 2.0504,
+      "ONOS": 0.9596,
+      "ONTEST": 0.2557,
+      "STARTUP": 0.185,
+      "EMR": 0.1254,
+      "EMRSWGR": 0.1206,
+      "OFFNS": 0.0961,
+      "SHUTDOWN": 0.0569,
+      "NA": 0.0126,
+      "ONRUC": 0.0078,
+      "ONHOLD": 0.0039,
+      "ONOPTOUT": 0.003,
+      "": 0.0
+     },
+     "committed_share_of_capref": 0.7272,
+     "offline_startable_share_of_capref": 0.004,
+     "online_loading": 0.8768,
+     "n_resources_present": 70,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.0028,
+      "quantiles": {
+       "p10": 54.5,
+       "p30": 77.5,
+       "p50": 77.5,
+       "p70": 77.5,
+       "p90": 79.5,
+       "p99": 85.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0028,
+       "100-200": 0.0,
+       "200-300": 0.0,
+       "300-500": 0.0,
+       "500-1000": 0.0,
+       "1000-2000": 0.0,
+       "2000-inf": 0.0
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 2.2782,
+      "quantiles": {
+       "p10": 13.5,
+       "p30": 18.5,
+       "p50": 22.5,
+       "p70": 27.5,
+       "p90": 75.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 2.1307,
+       "100-200": 0.0495,
+       "200-300": 0.0214,
+       "300-500": 0.0103,
+       "500-1000": 0.0187,
+       "1000-2000": 0.0123,
+       "2000-inf": 0.0262
+      }
+     }
+    },
+    "CT": {
+     "mean_gw_capref_by_state": {
+      "ONLINE": 3.0448,
+      "ONTEST": 0.0329,
+      "OFFLINE_STARTABLE": 3.7727,
+      "OFFLINE_OTHER": 3.3866,
+      "OUT": 1.0868,
+      "TRANSITION": 0.1083,
+      "OTHER": 0.428,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hsl_by_state": {
+      "ONLINE": 2.3279,
+      "ONTEST": 0.0275,
+      "OFFLINE_STARTABLE": 3.4649,
+      "OFFLINE_OTHER": 3.1107,
+      "OUT": 0.8975,
+      "TRANSITION": 0.0969,
+      "OTHER": 0.3887,
+      "ABSENT": 0.0
+     },
+     "mean_gw_basepoint_by_state": {
+      "ONLINE": 2.1811,
+      "ONTEST": 0.0175,
+      "OFFLINE_STARTABLE": 0.0053,
+      "OFFLINE_OTHER": 0.0,
+      "OUT": 0.0,
+      "TRANSITION": 0.0344,
+      "OTHER": 0.0004,
+      "ABSENT": 0.0
+     },
+     "mean_gw_hasl_online": 2.2974,
+     "mean_gw_hsl_by_status": {
+      "OFF": 3.1107,
+      "OFFNS": 2.0153,
+      "OFFQS": 1.4495,
+      "ON": 1.3566,
+      "OUT": 0.8975,
+      "ONREG": 0.7471,
+      "EMR": 0.2801,
+      "ONOS": 0.2237,
+      "EMRSWGR": 0.1064,
+      "STARTUP": 0.0563,
+      "SHUTDOWN": 0.0407,
+      "ONTEST": 0.0275,
+      "NA": 0.0023,
+      "ONRUC": 0.0005,
+      "ONHOLD": 0.0001,
+      "ONDSR": 0.0,
+      "ONEMR": 0.0,
+      "ONOPTOUT": 0.0,
+      "": 0.0
+     },
+     "committed_share_of_capref": 0.2567,
+     "offline_startable_share_of_capref": 0.3181,
+     "online_loading": 0.9369,
+     "n_resources_present": 180,
+     "offline_startable_offer_ladder": {
+      "total_mean_gw": 0.8243,
+      "quantiles": {
+       "p10": 76.5,
+       "p30": 130.5,
+       "p50": 886.5,
+       "p70": 955.5,
+       "p90": 962.5,
+       "p99": 4999.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.2397,
+       "100-200": 0.0706,
+       "200-300": 0.0272,
+       "300-500": 0.0291,
+       "500-1000": 0.4127,
+       "1000-2000": 0.0301,
+       "2000-inf": 0.0131
+      }
+     },
+     "online_spare_offer_ladder": {
+      "total_mean_gw": 0.117,
+      "quantiles": {
+       "p10": 15.5,
+       "p30": 25.5,
+       "p50": 33.5,
+       "p70": 75.5,
+       "p90": 5000.5,
+       "p99": 5000.5
+      },
+      "mean_gw_by_band": {
+       "0-100": 0.0901,
+       "100-200": 0.0043,
+       "200-300": 0.0018,
+       "300-500": 0.001,
+       "500-1000": 0.0034,
+       "1000-2000": 0.0003,
+       "2000-inf": 0.0151
+      }
+     }
+    }
+   }
+  }
+ }
+}
