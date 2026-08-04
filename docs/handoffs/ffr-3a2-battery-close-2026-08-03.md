@@ -683,27 +683,41 @@ unchanged from FF-2D**, which is the point:
 | `gas_twh` 2024 | *uncovered* | 6.7 % CAVEAT | newly covered |
 | `coal_twh` 2023 / 2024 | *uncovered* | 13.0 % CAVEAT / 23.9 % FAIL | newly covered |
 
-#### ⚠ The two crossover legs move in OPPOSITE directions
+### 4.4 Measured results — MISO, and the three-leg picture
+
+**Determination HOLD**; FC-4 **FAIL**; quarantine **PASS**. MISO **improved**:
+
+| metric | FF-2D (`miso-t1x-ffr2a`) | **now** | |
+|---|---|---|---|
+| price 2023 | 13.6 % CAVEAT | 13.6 % CAVEAT | identical |
+| price 2024 | 15.3 % CAVEAT | **13.9 %** CAVEAT | better |
+| **price 2025** | **30.3 % FAIL** | **27.4 % CAVEAT** | **improved — back inside the band** |
+| CO2 2023–2025 | 63.3 / 59.9 / 77.1 FAIL | 63.3 / 58.9 / **75.5** FAIL | ~flat |
+
+#### ⚠ ERCOT is the SOLE regressor of the three
 
 | leg | price 2025, FF-2D → now | direction |
 |---|---|---|
-| **ERCOT** | **8.6 % PASS → 22.5 % FAIL** | **regressed** |
-| **PJM** | 17.5 % CAVEAT → **15.7 % CAVEAT** | flat / marginally better |
+| **ERCOT** | **8.6 % PASS → 22.5 % FAIL** | **REGRESSED** |
+| PJM | 17.5 % CAVEAT → 15.7 % CAVEAT | flat / marginally better |
+| **MISO** | **30.3 % FAIL → 27.4 % CAVEAT** | **IMPROVED** |
 
-Both legs ran the same signed decisions, the same un-pin, the same cache epoch and the
-same instrument. **Only ERCOT's terminal-year price skill regressed.**
+All three legs ran the same signed decisions, the same un-pin, the same cache epoch and
+the same instrument. **Two improved or held; only ERCOT degraded.** The third leg
+strengthens rather than dilutes the reading: a generic epoch, scorer or instrument effect
+would be expected to move all three in the same direction, and it did not.
 
-That asymmetry is *consistent with* the D-1/D-2 story rather than with a generic
-instrument or epoch effect — ERCOT is the energy-only ISO where D-1 has no capacity
-revenue to offset the going-forward-cost screen, where FFR-3C attributes the collapse
-against a control, and where this session's T1-F reserve margin runs to −1.5 % while PJM's
-FC-2 is only CAVEAT. A pure epoch or scorer effect would be expected to move both.
+That is *consistent with* the D-1/D-2 story — ERCOT is the energy-only ISO where D-1 has
+no capacity revenue to offset the going-forward-cost screen, where FFR-3C attributes the
+collapse against a control, and where this session's T1-F reserve margin runs to −1.5 %
+while PJM's and MISO's FC-2 are only CAVEAT.
 
-**It remains NOT ATTRIBUTED.** Two legs is not a control, the ISOs differ in market design
-as well as in exposure to D-1, and the ERCOT-only `correlated_forced_outage` curve is a
-further ERCOT/PJM asymmetry (§3.2b) that this comparison does not eliminate. Recorded as
-the strongest available *circumstantial* evidence on the T1-X half, and as a named open
-question (§9).
+**It remains NOT ATTRIBUTED.** Three unpaired legs are still not a control; the ISOs
+differ in market design as well as in D-1 exposure; and the ERCOT-only
+`correlated_forced_outage` curve is a further ERCOT-vs-others asymmetry (§3.2b) this
+comparison does not eliminate — ERCOT is the one leg where that mechanism is *not* a
+no-op. Recorded as the strongest available **circumstantial** evidence on the T1-X half
+and as a named open question (§10).
 
 ---
 
