@@ -157,9 +157,15 @@ class TestConfigExclusivity(unittest.TestCase):
                 ercot_online_capacity_envelope=False,
             )
 
-    def test_requires_multiproduct_coopt(self):
+    def test_requires_multiproduct_coopt_at_provider(self):
+        # Enforced at the PROVIDER (solve-time, final config), not in
+        # __post_init__: the replay path applies prb_overrides before the
+        # trailing co-opt kwargs, so an intermediate config legitimately holds
+        # the flag with the co-opt fields at defaults (the ercot-159 Run-B
+        # first-launch crash).
+        cfg = _cfg(ercot_multiproduct_as_coopt=False)  # construction is fine
         with self.assertRaises(ValueError):
-            _cfg(ercot_multiproduct_as_coopt=False)
+            ercot_energy_online_capability_cap_mw(cfg, 24, net_load=np.arange(24.0))
 
 
 if __name__ == "__main__":
