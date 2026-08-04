@@ -199,3 +199,86 @@ further load-bearing MISO criterion can be ledgered without exceeding budget and
 forcing the determination back to NOT-YET.** The next load-bearing miss must be
 *built*, not documented — which is what makes this ask load-bearing rather than
 housekeeping.
+
+## 8. Candidate assessment, xiso-4 (2026-08-04) — candidate 2 CLOSED
+
+**No LP, no solve, no intake.** Every document below was read in a scratch
+directory for assessment only; nothing was written under `data/raw/`, so no
+rule-22 intake authorization was required or claimed.
+
+**Framing correction, stated up front: this ask is DEFECT-motivated, not
+GATE-motivated.** C3b (`price_shape`) **PASSES** on the current MISO keeper
+`2026-08-04-miso-124-dualfuel-rearm` — re-derived at xiso-4 with
+`scripts/calibration_verdict.py --run-id` on committed artifacts, not asserted.
+MISO's sole FAIL is C7 (`shape`); `price_mean` and `price_tail` are CAVEATs.
+§1(a) and §7 above were written when C3b was ledgered as a live miss, and that
+framing no longer holds. The ~10 GW summer-peak derate defect and the undeclared
+`SUMMER_WEFOR_SHARE = 0.30` DOF are both still real — this ask stands on those,
+not on a failing gate. Do not cite it as gate work.
+
+### Candidate 2 — Potomac Economics MISO SOM: **CLOSED, fails §2B**
+
+Assessed against the **2025 MISO State of the Market Report** (body, 152 pp.,
+published 2026-07) and its **Analytic Appendix** (157 pp.):
+
+| figure | content | grain |
+|---|---|---|
+| Figure 25 (body) | Generation Outages, 2023–2025 | **subregion** × outage type |
+| Figure A71 (appendix) | monthly avg planned + unplanned outage rates, 2024–2025 + 3-yr annual averages; splits normal-planned / short-notice-planned / short-term-unplanned / long-term-unplanned. **Full outages only — explicitly excludes partial outages and deratings.** | MISO-wide, **month** × outage type |
+| Figures A154–A156 | Real-Time Deratings and Forced Outages, 2025 | **region** (Central / South / North) |
+
+Scored against §2: clears **A** (ticket-based, not output-derived), **C**
+(monthly, year-specific, 2023–2025) and **E** (planned vs forced separated).
+**FAILS B** — there is **no fuel-class resolution of outages anywhere** in
+either document. The grain delivered is region × cause × month, which is
+*exactly what the model already holds* from the MOM report (§1) and exactly the
+grain miso-85 and miso-87 proved cannot be pushed onto units.
+
+§3 ranked this "the single best candidate… if a fuel × month series exists it
+clears A–D directly." **It does not exist.** Candidate 2 is closed, on the one
+criterion this ask exists for. Do not re-open it, and do not re-attempt an
+attribution rule over it (miso-85/87 remain closed).
+
+### Candidate 3 — RA / accreditation: partially visible, does **not** clear
+
+SOM **Figure 34 / A119** publishes **UCAP by fuel type × Local Resource Zone**,
+from the 2025–26 PRA summer and winter seasons; UCAP "account[s] for forced
+outages and intermittency." Clears **A, B, D**. **Fails C and E:**
+
+* it is a **two-season planning accreditation over a historical lookback** — a
+  rolling class average, which §2C's own note says "would satisfy B and D but
+  fail C and would move nothing";
+* it **combines forced outage with intermittency** rather than isolating the
+  forced component (fails E, which the `SUMMER_WEFOR_SHARE` replacement needs);
+* the SOM renders only UCAP/ICAP **shares** in an inset table, not the
+  underlying MW series.
+
+Direct MISO PRA postings could not be checked: `misoenergy.org` and
+`cdn.misoenergy.org` both return **403** from the session environment
+(`docs.misoenergy.org` works, which is why the already-intaken MOM reports are
+reachable and the PRA results are not). Candidate 3 stays **open but
+downgraded** — as published it fails C and E.
+
+### Candidate 1 — NERC GADS: **UNRESOLVED, explicitly not refuted**
+
+`nerc.com` serves the GADS Reports page; the public product family is
+*Generating Unit Statistical Brochures*. The brochure links are JS-rendered and
+did not resolve from this environment — **Chromium cannot traverse the session's
+agent proxy at all** (`example.com` fails with `ERR_CONNECTION_RESET`
+identically to any other host, with and without explicit proxy args). §3's prior
+— that these are multi-year rolling class averages and therefore fail C — is
+**untested and is NOT recorded as refuted here.**
+
+### Candidate 4 — MISO data request: unchanged
+
+A stakeholder process, not a fetch. After candidate 2's closure this is now the
+**leading** route: per §3 it is "the one path that can be specified to meet §2
+exactly rather than hoping an existing product happens to."
+
+### Net
+
+No source clears. The ask stays **open**, with candidate 2 closed, candidate 3
+downgraded, and candidate 1 blocked on an environment limitation rather than on
+evidence. **A session chartered to finish candidate 1 needs working browser
+egress** — worth knowing before one is scheduled.
+`docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(b).
