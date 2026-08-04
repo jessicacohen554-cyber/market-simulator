@@ -2,7 +2,7 @@
   "iso": "ERCOT",
   "keeper": "2026-08-03-ercot158-pool-arm",
   "keeper_bundle_fields": 671,
-  "n_scenario_fields": 674,
+  "n_scenario_fields": 676,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 19,
   "family": [
@@ -409,6 +409,44 @@
       ]
     },
     {
+      "field": "ercot_energy_online_capability_cap",
+      "default": false,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "ercot_energy_online_capability_cap_path",
+      "default": null,
+      "keeper_value": "<absent>",
+      "keeper_arms_it": null,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
       "field": "ercot_faststart_pool_offer",
       "default": false,
       "keeper_value": true,
@@ -812,10 +850,16 @@
           "row": "ercot_multiproduct_as",
           "cells": "K.....",
           "cell": "K"
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "U"
         }
       ],
       "cells": [
-        "K"
+        "K",
+        "U"
       ],
       "armed_in_bundles": [
         "ercot122_offerlevel",
@@ -1542,10 +1586,16 @@
           "row": "online_capacity_envelope",
           "cells": "R.RR..",
           "cell": "R"
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "U"
         }
       ],
       "cells": [
-        "R"
+        "R",
+        "U"
       ],
       "armed_in_bundles": []
     },
@@ -3658,6 +3708,11 @@
           "cell": "."
         },
         {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
+          "cell": "U"
+        },
+        {
           "row": "nuclear_unit_availability",
           "cells": "KKUUKK",
           "cell": "K"
@@ -3786,7 +3841,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "U"
         }
       ],
@@ -4334,7 +4389,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "U"
         },
         {
@@ -4519,7 +4574,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "."
         },
         {
@@ -4539,7 +4594,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -4674,7 +4729,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {

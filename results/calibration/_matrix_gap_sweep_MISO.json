@@ -1,8 +1,8 @@
 {
   "iso": "MISO",
-  "keeper": "2026-08-04-miso-122b-scope-gate",
+  "keeper": "2026-08-04-miso-124-dualfuel-rearm",
   "keeper_bundle_fields": 674,
-  "n_scenario_fields": 674,
+  "n_scenario_fields": 676,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 34,
   "family": [
@@ -85,9 +85,15 @@
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
           "cell": "K"
+        },
+        {
+          "row": "import_shape_lever",
+          "cells": "...GG.",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K"
       ],
       "armed_in_bundles": []
@@ -117,7 +123,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -132,6 +137,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -182,7 +188,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -197,6 +202,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso74_manitoba_seam",
         "miso75_manitoba_meritcap",
         "miso75_meritcap_base",
@@ -231,7 +237,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -246,6 +251,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -290,7 +296,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -305,6 +310,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso71_midwest",
         "miso72_winter_citygate",
         "miso72_winter_citygate-base",
@@ -364,7 +370,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -379,6 +384,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -421,9 +427,15 @@
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
           "cell": "K"
+        },
+        {
+          "row": "import_shape_lever",
+          "cells": "...GG.",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K"
       ],
       "armed_in_bundles": []
@@ -452,7 +464,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -467,6 +478,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -517,7 +529,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -532,6 +543,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -571,7 +583,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -586,6 +597,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -625,7 +637,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -640,6 +651,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso73_seam_meritcap",
         "miso75_manitoba_meritcap",
         "miso76_loss_base",
@@ -673,7 +685,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -688,6 +699,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -732,7 +744,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -747,6 +758,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -784,9 +796,15 @@
           "row": "seam_flow_envelopes",
           "cells": "..KK..",
           "cell": "K"
+        },
+        {
+          "row": "import_shape_lever",
+          "cells": "...GG.",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K"
       ],
       "armed_in_bundles": []
@@ -810,6 +828,11 @@
           "cell": "K"
         },
         {
+          "row": "seam_flow_envelopes",
+          "cells": "..KK..",
+          "cell": "K"
+        },
+        {
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
           "cell": "K"
@@ -820,7 +843,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -835,6 +857,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -874,7 +897,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -889,6 +911,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -933,7 +956,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -948,6 +970,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso72_winter_citygate",
         "miso73_seam_meritcap",
         "miso73_seam_meritcap-base",
@@ -981,7 +1004,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -996,6 +1018,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -1031,7 +1054,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "R"
         }
       ],
@@ -1081,7 +1104,6 @@
       ],
       "armed_in_bundles": [
         "miso106_control_A",
-        "miso111_control_A",
         "miso111_prbdispatch_B",
         "miso112_control_A",
         "miso112_prbsplit_B",
@@ -1096,6 +1118,7 @@
         "miso121_dualfuel_B",
         "miso122_control_A",
         "miso122_scopegate_B",
+        "miso124_dualfuel_B",
         "miso65_outage_regen",
         "miso66_coalconduct",
         "miso67_stgas_vlr_level",
@@ -1402,6 +1425,21 @@
       "exclusion_reason": null
     },
     {
+      "field": "dual_fuel_switching",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
       "field": "energy_reserve_coopt",
       "default": false,
       "keeper_value": true,
@@ -1425,6 +1463,11 @@
         {
           "row": "nyiso_rcpf_postsolve_overlay",
           "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
           "cell": "."
         },
         {
@@ -1977,8 +2020,8 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
-          "cell": "I"
+          "cells": "U.KKKK",
+          "cell": "K"
         },
         {
           "row": "campd_outage_windows",
@@ -2102,7 +2145,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "R"
         },
         {
@@ -2122,8 +2165,8 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
-          "cell": "."
+          "cells": "...GG.",
+          "cell": "G"
         },
         {
           "row": "nyiso_import_sil_retire",
@@ -2216,13 +2259,18 @@
           "cell": "K"
         },
         {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
           "row": "capacity_deliverability",
           "cells": ".K....",
           "cell": "."
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "O"
         },
         {
@@ -2762,8 +2810,8 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
-          "cell": "I"
+          "cells": "U.KKKK",
+          "cell": "K"
         },
         {
           "row": "gas_price_override",
@@ -2947,7 +2995,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "R"
         },
         {
@@ -2967,8 +3015,8 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
-          "cell": "."
+          "cells": "...GG.",
+          "cell": "G"
         },
         {
           "row": "nyiso_import_sil_retire",
@@ -3102,7 +3150,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "O"
         },
         {
@@ -3737,11 +3785,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3751,11 +3799,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3765,11 +3813,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3779,11 +3827,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3793,11 +3841,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": 0.1,
-        "miso111_control_A": 0.1,
         "miso111_prbdispatch_B": 0.1,
         "miso112_control_A": 0.1,
         "miso112_prbsplit_B": 0.1,
-        "miso113_control_A": 0.1
+        "miso113_control_A": 0.1,
+        "miso113b_control_A": 0.1
       }
     },
     {
@@ -3807,11 +3855,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3821,11 +3869,11 @@
       "n_bundles_nondefault": 34,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3835,11 +3883,11 @@
       "n_bundles_nondefault": 31,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {
@@ -3849,11 +3897,11 @@
       "n_bundles_nondefault": 31,
       "bundles": {
         "miso106_control_A": true,
-        "miso111_control_A": true,
         "miso111_prbdispatch_B": true,
         "miso112_control_A": true,
         "miso112_prbsplit_B": true,
-        "miso113_control_A": true
+        "miso113_control_A": true,
+        "miso113b_control_A": true
       }
     },
     {

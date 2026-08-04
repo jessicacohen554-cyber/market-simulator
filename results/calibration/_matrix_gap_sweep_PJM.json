@@ -2,7 +2,7 @@
   "iso": "PJM",
   "keeper": "2026-08-03-pjm-151-seam-envelope",
   "keeper_bundle_fields": 673,
-  "n_scenario_fields": 674,
+  "n_scenario_fields": 676,
   "n_matrix_rows": 183,
   "n_bundles_scanned": 15,
   "family": [
@@ -953,7 +953,7 @@
       "owning_rows": [
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "K"
         }
       ],
@@ -1466,7 +1466,7 @@
       "owning_rows": [
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         }
       ],
@@ -1497,6 +1497,11 @@
         {
           "row": "nyiso_rcpf_postsolve_overlay",
           "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "U.....",
           "cell": "."
         },
         {
@@ -2121,7 +2126,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         },
         {
@@ -2246,7 +2251,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "K"
         },
         {
@@ -2266,7 +2271,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -2360,13 +2365,18 @@
           "cell": "K"
         },
         {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
           "row": "capacity_deliverability",
           "cells": ".K....",
           "cell": "."
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
@@ -2911,7 +2921,7 @@
         },
         {
           "row": "dual_fuel_switching",
-          "cells": "U.KIKK",
+          "cells": "U.KKKK",
           "cell": "K"
         },
         {
@@ -3096,7 +3106,7 @@
         },
         {
           "row": "zonal_loss_surface",
-          "cells": ".OKR..",
+          "cells": ".KKR..",
           "cell": "K"
         },
         {
@@ -3116,7 +3126,7 @@
         },
         {
           "row": "import_shape_lever",
-          "cells": "....G.",
+          "cells": "...GG.",
           "cell": "."
         },
         {
@@ -3251,7 +3261,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UUUOUU",
+          "cells": "UOUOUU",
           "cell": "U"
         },
         {
