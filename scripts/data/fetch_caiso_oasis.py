@@ -8,25 +8,36 @@ and back off) and its ~39-month retention.
 
 **The LMP retention boundary moves forward with the calendar** — it is not a
 fixed date, and it aged past the whole 2018-2022 holdout window during 2026.
-Binary-searched 2026-07-31: the earliest DAM trade date PRC_LMP still serves
-is **2023-04-19** (every earlier date returns ERR_CODE 1000 "No data returned",
-2018/2020/2022 included; PRC_INTVL_LMP RTM matches). A back-year LMP intake is
-therefore NOT a fetch task at all — the API cannot serve it, and the only route
-to aged-out history is a hand-downloaded GRP bulk zip
-(``fold_caiso_oasis_grp_zips.py``). ``AS_REQ`` carries NO such limit: 2018,
+Binary-searched 2026-07-31: the earliest DAM trade date PRC_LMP served was
+**2023-04-19**. **Re-binary-searched 2026-08-04 (caiso-165): it has moved to
+2023-04-22** — three trade dates lost in four calendar days, which is the
+retention window sliding in real time. The boundary is a property of the
+*report*, not of the node: ``TH_SP15_GEN-APND`` and ``DLAP_SCE-APND`` both
+return ERR_CODE 1000 "No data returned" at 2023-04-19 and both return data at
+2023-04-22. Do NOT hardcode a boundary date and trust it — re-measure it, and
+use ``--start-date`` to skip the aged-out head of the range rather than
+burning ~3 failed requests per day walking into it.
+
+A back-year LMP intake is therefore NOT a fetch task at all — the API cannot
+serve it, and the only route to aged-out history is a hand-downloaded GRP bulk
+zip (``fold_caiso_oasis_grp_zips.py``). ``AS_REQ`` carries NO such limit: 2018,
 2020, 2022 and 2026 all return full data (re-verified 2026-07-31), so the
 ancillary-requirement history is fetchable for every year. Run:
 
     python scripts/data/fetch_caiso_oasis.py                 # everything, 2023-2025
     python scripts/data/fetch_caiso_oasis.py --datasets dam load
     python scripts/data/fetch_caiso_oasis.py --years 2024
+    # the caiso-165 DLAP intake (load aggregation points, not the GEN hubs):
+    python scripts/data/fetch_caiso_oasis.py --datasets dam --nodes dlaps \
+        --start-date 2023-04-22
 
 It downloads, per backcast year:
 
-* ``dam``  -- PRC_LMP (DAM, version 12), one query per trading hub
-  (TH_NP15/TH_SP15/TH_ZP26 ``_GEN-APND``) per window
+* ``dam``  -- PRC_LMP (DAM, version 12), one query per node
+  (default: the TH_NP15/TH_SP15/TH_ZP26 ``_GEN-APND`` trading hubs; the four
+  ``DLAP_*-APND`` load aggregation points via ``--nodes dlaps``) per window
   -> ``data/raw/lmp-data/CAISO/``
-* ``rtm``  -- PRC_INTVL_LMP (RTM 5-minute, version 2), same hubs
+* ``rtm``  -- PRC_INTVL_LMP (RTM 5-minute, version 2), same nodes
   -> ``data/raw/lmp-data/CAISO/``
 * ``load`` -- SLD_FCST (market_run_id=ACTUAL, version 1), all TAC areas
   -> ``data/raw/zone-specific-demand/CAISO/``
@@ -70,7 +81,49 @@ from market_sim.config import paths  # noqa: E402  (resolves the data root)
 _LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"
 _LOAD_DIR = paths.RAW_DATA_DIR / "zone-specific-demand" / "CAISO"
 
+#: The three CAISO trading hubs. These are GENERATION aggregation points: each
+#: is a generation-weighted average over the pnodes of its congestion zone, so
+#: it prices where power is INJECTED, not where load is served.
 HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
+
+#: The four CAISO Default Load Aggregation Points. A DLAP is the LOAD-weighted
+#: aggregate over the pnodes serving one utility's service territory, so it
+#: prices where load is WITHDRAWN — which is what a model load zone represents.
+#: ``DLAP_SCE`` is the SCE territory (the LA-basin load pocket), ``DLAP_SDGE``
+#: the post-SONGS San Diego pocket behind Path 44, ``DLAP_PGAE`` the PG&E
+#: territory (which straddles NP15 and ZP26), ``DLAP_VEA`` the small Valley
+#: Electric (NV) member. Present in the committed nodal ``DAM_LMP_GRP`` zips
+#: and served by PRC_LMP for every in-retention trade date (caiso-165).
+DLAPS = (
+    "DLAP_PGAE-APND",
+    "DLAP_SCE-APND",
+    "DLAP_SDGE-APND",
+    "DLAP_VEA-APND",
+)
+
+#: ``--nodes`` shorthands. Anything not a shorthand is taken as a literal node.
+NODE_SETS: dict[str, tuple[str, ...]] = {
+    "hubs": HUBS,
+    "dlaps": DLAPS,
+    "all": HUBS + DLAPS,
+}
+
+
+def _resolve_nodes(tokens: list[str] | None) -> tuple[str, ...]:
+    """Expand ``--nodes`` tokens into a de-duplicated node tuple.
+
+    Each token is either a shorthand from :data:`NODE_SETS` or a literal OASIS
+    node id. ``None`` keeps the historical default (the three trading hubs).
+    """
+    if not tokens:
+        return HUBS
+    out: list[str] = []
+    for tok in tokens:
+        for node in NODE_SETS.get(tok, (tok,)):
+            if node not in out:
+                out.append(node)
+    return tuple(out)
+
 
 # dataset key -> (query params, output dir, per-node?)
 DATASETS: dict[str, dict] = {
@@ -157,6 +210,17 @@ def _url(params: dict, start: dt.date, end: dt.date, node: str | None) -> str:
     return BASE + "?" + "&".join(f"{k}={v}" for k, v in parts.items())
 
 
+#: Read timeout per OASIS request. Was 60 s, which is NOT enough: measured
+#: 2026-08-04 (caiso-165), a 25-day single-node PRC_LMP window returns in ~4 s
+#: in the middle of the retention range but ~21 s within a few weeks of the
+#: aged-out boundary, and OASIS additionally *hangs* rather than 429s when it
+#: throttles a burst. A 60 s ceiling turned those two effects into spurious
+#: "too-large window" verdicts, so the adaptive sizer halved a window that was
+#: never too large. Give a slow response room to land; genuine hangs are still
+#: bounded by ``retries``.
+REQUEST_TIMEOUT_S = 180
+
+
 def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
     """Download ``url`` with exponential-backoff retries.
 
@@ -168,7 +232,7 @@ def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
     delay = sleep_s
     for attempt in range(retries):
         try:
-            with urllib.request.urlopen(url, timeout=60) as resp:
+            with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT_S) as resp:
                 return resp.read()
         except Exception as exc:  # noqa: BLE001 - network errors of any shape
             print(
@@ -270,6 +334,8 @@ def fetch_dataset(
     sleep_s: float,
     deadline: float | None = None,
     end_date: dt.date | None = None,
+    start_date: dt.date | None = None,
+    nodes: tuple[str, ...] = HUBS,
 ) -> None:
     """Fetch one dataset for the given years with adaptive window sizing.
 
@@ -279,17 +345,26 @@ def fetch_dataset(
     ``end_date`` is an exclusive upper bound on the trade dates fetched, so a
     partial year can be pinned to an exact window (e.g. ``2026-07-01`` for the
     H1-2026 holdout edge) instead of running to today's date.
+
+    ``start_date`` is the inclusive lower bound. Its purpose is the moving
+    PRC_LMP retention boundary documented in the module docstring: without it a
+    fetch whose range starts before the boundary spends ~3 failed requests per
+    aged-out day walking the window down to 1 day and back up again.
+
+    ``nodes`` is the node list for per-node datasets (see :func:`_resolve_nodes`).
     """
     spec = DATASETS[key]
     out_dir: Path = spec["out_dir"]
     out_dir.mkdir(parents=True, exist_ok=True)
-    nodes = HUBS if spec["per_node"] else (None,)
+    nodes = nodes if spec["per_node"] else (None,)
     start = dt.date(min(years), 1, 1)
     end = dt.date(max(years) + 1, 1, 1)
     today = dt.date.today()
     end = min(end, today)  # OASIS has no future actuals
     if end_date is not None:
         end = min(end, end_date)
+    if start_date is not None:
+        start = max(start, start_date)
 
     for node in nodes:
         done_days = _aggregate_covered_days(out_dir, key, node)
@@ -380,7 +455,23 @@ def main() -> None:
         help="exclusive upper bound on trade dates (YYYY-MM-DD); pins a "
         "partial year to an exact window, e.g. 2026-07-01 for H1-2026",
     )
+    parser.add_argument(
+        "--start-date",
+        type=dt.date.fromisoformat,
+        default=None,
+        help="inclusive lower bound on trade dates (YYYY-MM-DD); use it to "
+        "skip the aged-out head of the PRC_LMP retention window "
+        "(2023-04-22 as re-measured 2026-08-04 — it MOVES, so re-check)",
+    )
+    parser.add_argument(
+        "--nodes",
+        nargs="+",
+        default=None,
+        help="nodes for per-node datasets: the shorthands "
+        f"{sorted(NODE_SETS)} or literal OASIS node ids (default: hubs)",
+    )
     args = parser.parse_args()
+    nodes = _resolve_nodes(args.nodes)
 
     deadline = (
         time.monotonic() + args.deadline_minutes * 60.0
@@ -389,7 +480,18 @@ def main() -> None:
     )
     for key in args.datasets:
         print(f"=== {key} ({DATASETS[key]['params']['queryname']}) ===")
-        fetch_dataset(key, args.years, args.window, args.sleep, deadline, args.end_date)
+        if DATASETS[key]["per_node"]:
+            print(f"    nodes: {', '.join(nodes)}")
+        fetch_dataset(
+            key,
+            args.years,
+            args.window,
+            args.sleep,
+            deadline,
+            args.end_date,
+            args.start_date,
+            nodes,
+        )
     print("done. Commit the new files under data/raw/ when finished.")
 
 
