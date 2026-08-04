@@ -1,0 +1,70 @@
+{
+  "probe": "nyiso-120 G-1 \u2014 miso_pjm_border_anchor displacement (CONSTRUCTION)",
+  "prereg": "results/calibration/PREREG-nyiso120-miso-matrix-column-2026-08-04.md \u00a74",
+  "keeper": "2026-08-04-miso-122b-scope-gate",
+  "no_lp": true,
+  "border_hr_by_year": {
+    "2023": 10.99,
+    "2024": 12.9,
+    "2025": 11.4
+  },
+  "ladder_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "years": {
+    "2023": {
+      "status": "PASS_INERT",
+      "ladder_applied_both_arms": true,
+      "n_seam_rows": 48,
+      "n_pjm_rows": 16,
+      "seams": {
+        "PJM": 16,
+        "SPP": 16,
+        "South": 16
+      },
+      "treatment_all_rows_exactly_equal": true,
+      "treatment_pjm_rows_exactly_equal": true,
+      "treatment_max_abs_delta": 0.0,
+      "control_pjm_separates": true,
+      "control_pjm_max_abs_delta": 0.9195404052734375,
+      "control_non_pjm_seams_untouched": true
+    },
+    "2024": {
+      "status": "PASS_INERT",
+      "ladder_applied_both_arms": true,
+      "n_seam_rows": 48,
+      "n_pjm_rows": 16,
+      "seams": {
+        "PJM": 16,
+        "SPP": 16,
+        "South": 16
+      },
+      "treatment_all_rows_exactly_equal": true,
+      "treatment_pjm_rows_exactly_equal": true,
+      "treatment_max_abs_delta": 0.0,
+      "control_pjm_separates": true,
+      "control_pjm_max_abs_delta": 2.2277793884277344,
+      "control_non_pjm_seams_untouched": true
+    },
+    "2025": {
+      "status": "PASS_INERT",
+      "ladder_applied_both_arms": true,
+      "n_seam_rows": 48,
+      "n_pjm_rows": 16,
+      "seams": {
+        "PJM": 16,
+        "SPP": 16,
+        "South": 16
+      },
+      "treatment_all_rows_exactly_equal": true,
+      "treatment_pjm_rows_exactly_equal": true,
+      "treatment_max_abs_delta": 0.0,
+      "control_pjm_separates": true,
+      "control_pjm_max_abs_delta": 4.775093078613281,
+      "control_non_pjm_seams_untouched": true
+    }
+  },
+  "verdict": "G-1 PASS \u2014 miso_pjm_border_anchor is PROVABLY UNOBSERVABLE on the keeper"
+}
