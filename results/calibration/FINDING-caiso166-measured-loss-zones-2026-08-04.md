@@ -198,66 +198,48 @@ C3c-2023/24 are likewise untouched.
 
 ---
 
-## 7. ⚠ DELIVERY GAP — the dashboard payloads could not be pushed
+## 7. Delivery — everything landed, after a transport detour worth recording
 
-Both runs are registered **locally** (bundles, sidecars and
-`runs/<id>.js` payloads all generated, C7/C8 scored). They are **not on the
-remote**, for a transport reason outside this lane:
+Both runs are registered on the remote: both bundles (slim artifacts + `hourly/`
+sidecars), both registry sidecars, both `runs/<id>.js` payloads, and the top-15
+CAISO retention prune (dropping `2026-07-31-caiso153-control` and
+`2026-07-31-caiso148-nuclear-availability`).
 
-* **`git push` returns HTTP 413 for every push in this container** — including a
-  *no-op ref advance whose request body was 4 bytes*. Git sends the receive-pack
-  RPC with `Transfer-Encoding: chunked` and the origin rejects any chunked body;
-  `http.postBuffer`, `http.version=HTTP/1.1` and `protocol.version=0` all fail
-  identically. A direct `POST` of 4 bytes to the same endpoint returns 200, so
-  it is the transport, not the pack. `GH_TOKEN` is a 14-character proxy
-  placeholder, so pushing to `github.com` directly is not available either.
-* `mcp__github__push_files` works and is byte-verified (rule 27) — but it is
-  **text-only** with a **~457 KB** cap, and the payloads are **674 KB /
-  677 KB**, with the bundle `hourly/*.parquet` sidecars binary.
+**It was not straightforward, and the diagnosis is the useful part.** For most of
+this session `git push` returned **HTTP 413 for every push** — including a *no-op
+ref advance whose request body was 4 bytes*. Git sends the receive-pack RPC with
+`Transfer-Encoding: chunked` and the origin rejected any chunked body; a direct
+4-byte `POST` to the same endpoint returned 200, so it was not pack size.
+`http.postBuffer`, `http.version=HTTP/1.1` and `protocol.version=0` all failed
+identically, and `GH_TOKEN` is a 14-character proxy placeholder so pushing to
+`github.com` directly was unavailable.
 
-**Landed via `push_files`, every blob hash-verified against local:** the
-pre-registration, the derive, the re-derived surface, this finding, and
-`scripts/gen_caiso166_attestation.py`.
+The work therefore went out over `mcp__github__push_files` — text-only, ~457 KB
+cap, every blob hash-verified against local (rule 27) — with the two edits whose
+target files exceed the cap (`mechanism-matrix.js` at 843 KB,
+`calibration-log/caiso.md` at 380 KB) carried as small anchored appliers.
 
-Two edits target files **larger than the cap**, so they ship as small carriers
-rather than as the files themselves. Both were verified end-to-end — the
-**remote** copy was fetched back and run against a clean tree:
+**The 413 resolved once the local branch was reconciled to be a proper DESCENDANT
+of the remote tip.** The remote branch had advanced onto a newer `main`
+(`6fbd3f28`) between pushes, leaving the local tree stale by ~180 files of other
+lanes' work; after resetting onto the tip, `git push` carried the full 33 MB
+registration in one go. Root cause is not conclusively established — but the
+413 tracked the divergent-branch state, not pack size, and that is the thing to
+try first next time rather than reaching for `push_files`.
 
-| carrier | applies to | verification |
-|---|---|---|
-| `results/calibration/_caiso166_apply_calibration_log.py` | `docs/calibration-log/caiso.md` (380 KB) | remote copy applies on the current branch tip; idempotent |
-| `results/calibration/_caiso166_apply_matrix_cell.py` | `docs/codebase-site/data/mechanism-matrix.js` (843 KB) | remote copy reproduces the hand edit **byte-for-byte** (sha `e7b8b796`) |
+Two consequences worth carrying forward:
 
-```
-python results/calibration/_caiso166_apply_calibration_log.py
-python results/calibration/_caiso166_apply_matrix_cell.py
-```
-
-Both are **anchored appliers, not diffs**, and the log one is a diff only in
-hindsight: it *started* as a `git diff` patch and **went stale inside this
-session** — a caiso-167 session appended its own entry to `caiso.md`, moving the
-tail the patch was cut against, and `git apply` refused it. The calibration log
-is a hot append-only file several lanes touch at once, so a positional diff is
-the wrong shape for it; the applier anchors on the file's last `Next number:`
-trailer instead and leaves that trailer to whichever session owns it. The stale
-`_caiso166_log.patch` is **deleted**, not left lying around for someone to try
-and conclude the entry was lost. Both appliers are idempotent and refuse rather
-than force-fit if their anchor is gone.
-
-Same drift caught the branch itself: the remote branch advanced onto a newer
-`main` (`6fbd3f28`) between pushes, so the local tree was stale by ~180 files of
-other lanes' work. The `push_files` transport is per-file, so nothing of theirs
-was clobbered — but a `git commit -a` from the stale tree would have reverted
-them, which is why the local tree was reconciled onto the branch tip rather than
-committed as-is.
-
-**Needs a session with a working `git push`:** `frontend/data/backcast/runs/*.js`
-(2 files), the registry sidecars, and the bundle parquet sidecars. Registry
-sidecars are deliberately **withheld** rather than pushed alone — a sidecar
-without its payload is silently invisible in the Run Explorer
-(`docs/handoffs/dashboard-payload-push-gap-2026-07.md`), which is worse than a
-clean absence. **Top-15 CAISO retention pruning was also reverted locally** for
-the same reason: a half-applied prune on the remote is worse than none.
+* **A positional diff is the wrong carrier for the calibration log.** The first
+  log carrier was a `git diff` patch and it **went stale inside this session** —
+  a caiso-167 session appended its own entry to `caiso.md`, moving the tail the
+  patch was cut against. It was replaced with an anchored applier and the stale
+  patch deleted. Both appliers were then removed entirely once the real files
+  landed, so nothing redundant is left in the tree.
+* **`push_files` is per-file, which is what kept the stale tree harmless.** A
+  `git commit -a` from that tree would have reverted ~180 files of other lanes'
+  work; the tree was reconciled onto the branch tip instead, and another lane's
+  pruned PJM bundle (`pjm136_lossurf_B`, removed upstream by pjm-152 when PJM's
+  keeper moved to pjm-151) was deleted locally rather than resurrected.
 
 ---
 

@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-04-caiso164-zonal-loss-surface",
   "keeper_bundle_fields": 675,
-  "n_scenario_fields": 677,
-  "n_matrix_rows": 184,
+  "n_scenario_fields": 678,
+  "n_matrix_rows": 187,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -31,7 +31,9 @@
       "armed_in_bundles": [
         "caiso163_asym_path_ratings",
         "caiso164_control_lossless",
-        "caiso164_zonal_loss_surface"
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones"
       ]
     },
     {
@@ -92,8 +94,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -108,6 +108,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -132,8 +134,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -148,6 +148,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -213,8 +215,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -229,6 +229,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -272,8 +274,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -288,6 +288,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -312,8 +314,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -328,6 +328,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso_netrev_base"
       ]
     },
@@ -351,8 +353,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -367,6 +367,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso_netrev_base"
       ]
     },
@@ -390,8 +392,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -406,6 +406,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso_netrev_base"
       ]
     },
@@ -429,8 +431,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -445,6 +445,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -491,8 +493,6 @@
         "K"
       ],
       "armed_in_bundles": [
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -506,7 +506,9 @@
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
         "caiso164_control_lossless",
-        "caiso164_zonal_loss_surface"
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones"
       ]
     },
     {
@@ -533,7 +535,6 @@
         "O"
       ],
       "armed_in_bundles": [
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -547,7 +548,9 @@
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
         "caiso164_control_lossless",
-        "caiso164_zonal_loss_surface"
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones"
       ]
     },
     {
@@ -581,8 +584,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -597,6 +598,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -621,8 +624,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -637,6 +638,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -690,8 +693,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -706,6 +707,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -893,8 +896,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -909,6 +910,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -939,8 +942,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -955,6 +956,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1006,8 +1009,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1022,6 +1023,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1046,8 +1049,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1062,6 +1063,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1107,17 +1110,21 @@
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
           "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K",
         "U"
       ],
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1132,6 +1139,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1164,7 +1173,9 @@
         "caiso163_asym_path_ratings",
         "caiso163_control_A",
         "caiso164_control_lossless",
-        "caiso164_zonal_loss_surface"
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones"
       ]
     },
     {
@@ -1187,8 +1198,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1203,6 +1212,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1246,8 +1257,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1262,6 +1271,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1286,8 +1297,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1302,6 +1311,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1331,8 +1342,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1347,6 +1356,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1377,8 +1388,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1393,6 +1402,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1436,8 +1447,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1452,6 +1461,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1476,8 +1487,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1492,6 +1501,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso_netrev_base"
       ]
     },
@@ -1608,8 +1619,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1624,6 +1633,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1672,8 +1683,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1688,6 +1697,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1717,8 +1728,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1733,6 +1742,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1762,8 +1773,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1778,6 +1787,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1807,8 +1818,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1823,6 +1832,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1852,8 +1863,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1868,6 +1877,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1897,8 +1908,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1913,6 +1922,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1956,8 +1967,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -1972,6 +1981,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso_netrev_base"
       ]
     },
@@ -1995,8 +2006,6 @@
       "armed_in_bundles": [
         "caiso124_control_A",
         "caiso126_control_A",
-        "caiso148_nucavail_B",
-        "caiso153_control_A",
         "caiso153_reid_B",
         "caiso156_meter_control_A",
         "caiso156_meter_screen_B",
@@ -2011,6 +2020,8 @@
         "caiso163_control_A",
         "caiso164_control_lossless",
         "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -2043,13 +2054,21 @@
           "row": "zonal_loss_surface",
           "cells": ".KKR..",
           "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
         }
       ],
       "cells": [
+        "G",
         "K"
       ],
       "armed_in_bundles": [
-        "caiso164_zonal_loss_surface"
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones"
       ]
     }
   ],
@@ -2724,6 +2743,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "cc_steam_part_capacity",
+          "cells": ".U.O.U",
+          "cell": "U"
+        },
+        {
           "row": "use_campd_bins",
           "cells": "KKKKKK",
           "cell": "K"
@@ -3289,6 +3313,11 @@
           "cell": "K"
         },
         {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
           "row": "caiso_corridor_export_path",
           "cells": ".R....",
           "cell": "R"
@@ -3360,7 +3389,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UOUOUU",
+          "cells": "IOUOUU",
           "cell": "O"
         },
         {
@@ -3459,6 +3488,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "cc_steam_part_capacity",
+          "cells": ".U.O.U",
+          "cell": "U"
+        },
+        {
           "row": "use_campd_bins",
           "cells": "KKKKKK",
           "cell": "K"
@@ -3542,6 +3576,11 @@
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
           "cell": "K"
+        },
+        {
+          "row": "forecast_xyear_warmstart",
+          "cells": "......",
+          "cell": "."
         },
         {
           "row": "energy_reserve_coopt",
@@ -3770,7 +3809,7 @@
         },
         {
           "row": "energy_online_capability_cap",
-          "cells": "U.....",
+          "cells": "R.....",
           "cell": "."
         },
         {
@@ -4134,6 +4173,11 @@
           "cell": "K"
         },
         {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
           "row": "caiso_corridor_export_path",
           "cells": ".R....",
           "cell": "R"
@@ -4235,7 +4279,7 @@
         },
         {
           "row": "entry_dampers",
-          "cells": "UOUOUU",
+          "cells": "IOUOUU",
           "cell": "O"
         },
         {
@@ -4756,15 +4800,5 @@
   "shared_excluded": [
     "weather_year"
   ],
-  "live_but_invisible": [
-    {
-      "field": "forecast_xyear_warmstart",
-      "default": true,
-      "keeper_value": true,
-      "n_bundles_nondefault": 1,
-      "bundles": {
-        "caiso124_control_A": false
-      }
-    }
-  ]
+  "live_but_invisible": []
 }
