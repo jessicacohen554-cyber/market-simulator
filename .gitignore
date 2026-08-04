@@ -589,3 +589,12 @@ results/calibration/caiso154_slopes_PJM.csv
 # while a control arm solves against a prior artifact revision; the driver
 # restores the working copy and removes this in a finally.
 .caiso160_artifact_stash_*/
+
+# FFR-3H CAISO backstop-diagnosis lane (run_full_horizon --out-dir caches +
+# loose run logs for the four CAISO arms: the shipped reproduction, the
+# entry-screen-diagnostics arm, and the two labelled D-2 probe arms). Same
+# class as /results/ffr3a/, /results/ffr3c/ and /results/ffr3a2/ — forecast
+# legs are registered to frontend/data/forecast/ via
+# scripts/register_forecast_run.py, never as tracked bundles here (CLAUDE.md
+# rule 15). The deliverable is docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md.
+/results/ffr3h/
