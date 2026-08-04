@@ -1766,14 +1766,66 @@ is now the live queue head.**)*
    fuel ÷ EIA-923 net MWh) all four sit inside the pre-registered
    `[0.90, 1.10]` band in 3 of 3 years. **DO NOT re-open on the CAMPD gross
    comparator, and do not quote the 0.810 / 0.653 / 0.802 / 0.817 ratios as a
-   model result.** One new single-plant item is NAMED BUT NOT CHARTERED and
+   model result.** ~~One new single-plant item is NAMED BUT NOT CHARTERED and
    points the *other* way: 55088 Dearborn burns 13–17 % of its CEMS fuel in
-   zero-electric-output boilers, so its `CC_CHP`+`CT_CHP` tranches are charged
-   **+13…+20 % too dear**; it does not generalise (1 of 14 `ok`-flagged plants,
-   515 of 6,357 MW) and needs its own pre-registration plus a derive scope-gate
-   change (rule 23 `[R-FROZEN-DERIVE]`).
+   zero-electric-output boilers…~~ **EXECUTED at miso-122 (2026-08-04) — see
+   item 4c.**
    (`results/calibration/FINDING-miso118-cchp-plant-outliers-2026-08-03.md`;
    probe `scripts/probes/_miso118_cchp_plant_outlier_basis.py`.)
+4c. ~~**The 55088 Dearborn hybrid-cogen scope gate.**~~ **EXECUTED 2026-08-04
+   (miso-122): the gate is BUILT and MISO's artifact re-derived; the A/B is
+   DISPATCH-LIVE / PRICE-INERT; the `measured_chp_heat_rates` cell STAYS `K`.**
+   eGRID's PLANT-level CHP split cannot see a **hybrid** — a topping CC/CT train
+   plus a direct-fired package boiler on one ORIS code — so Dearborn's
+   plant-average `thermal_share` (0.2396) passes the derive's 0.50 unfired
+   ceiling while 16.6 % of its metered fuel burns in three `Other boiler` units
+   with **zero gross load**, inside the rate charged to its power tranches.
+   **The gate**, a third scope gate on the same footing as the other two:
+   `heat_rate = (PLHTIAN + CHPCHTI) * (1 - dark_fuel_share) / PLNGENAN`, the
+   share measured at CEMS **unit** grain at the artifact's own vintage year. A
+   **share, not an MMBtu subtraction** — it needs CEMS's fuel *composition* to
+   be representative and never CEMS's *level* to equal eGRID's, so the
+   denominator stays `PLNGENAN`. Zero free parameters, **no threshold**, strict
+   byte no-op where the phenomenon is absent.
+   **miso-118's "it does not generalise" was too narrow.** Swept across all
+   five artifact ISOs: MISO 55088 Dearborn 16.6 % (515 MW, 8.3465 → 6.9573),
+   MISO 10745 MCV 0.09 % (1,479 MW), **NYISO 2493 East River 37.5 % (306 MW)**,
+   NEISO 1595 Kendall 1.2 % (206 MW); PJM and CAISO none. Every dark unit found
+   is a boiler `unitType` (100.0 % of dark fuel, behavioural selection — never a
+   `unitType` allowlist), persistent across 2023–2025 at max/min 1.13–1.80.
+   **Two measured exclusions the census forced in:** `dark_unreconciled` (the
+   two meters disagree outside miso-118's [0.90, 1.10] band, or the whole CEMS
+   footprint is dark — the sub-Part-75 plants 10328/55096/55799 where CEMS
+   meters the boilers and MISSES the turbines, so an unguarded share runs to
+   100 % and would drive the rate to ZERO) and `below_credited` (the share
+   removes more than eGRID's entire CHP credit — which is what **excludes East
+   River**).
+   **A/B:** `CC_CHP` +0.3575/+0.2718/+0.5190 TWh and `CT_CHP`
+   +0.2197/+0.2218/+0.2240 TWh displacing `CC_REGULAR`, imports and `COAL_PRB`,
+   at max zonal |Δλ| **0.0491/0.0390/0.0752** $/MWh against the 0.10 bar —
+   **zero of three years clear it**. All construction and protective gates pass,
+   the control is byte-identical to the keeper, all nine criteria are identical
+   between arms. The correction **ships under every branch** (rule 14
+   `[R-ACCURATE]`).
+   **SEAM OPENED, NOT CLOSED:** the keeper `2026-08-03-miso-117b-ct-heat` solved
+   on the pre-gate artifact and is **no longer reproducible from HEAD**; arm B
+   is the promotion candidate (nothing regresses; rule-22 LOO satisfied at year
+   grain) but promotion is an owner call and was not taken in-session.
+   **DO-NOT-REDO / DO-NOT-MISREAD, extending miso-119's and miso-121's:**
+   `max_abs_class_hour_mw` is **not** a mechanism magnitude at MISO — it reads
+   912.5 MW here and 912.5/912.5/912.500061 at miso-119, two unrelated levers to
+   seven figures, because the statistic lands on the `import` class where a
+   single **912.5 MW seam band** flips in or out (import delta non-zero in
+   1,546 h, median 72 MW, exactly 912.5 in 7). Read the per-class **energy**
+   deltas instead.
+   **RULE 25 `[R-ISO-SCOPE]`: only MISO's artifact was re-derived.** NYISO
+   (306 MW leaving its applied map) and NEISO (206 MW, −1.2 %) are handed to
+   their own lanes with measured numbers; **no cell outside MISO is stamped.**
+   (`results/calibration/FINDING-miso122-hybrid-cogen-scope-gate-2026-08-03.md`;
+   prereg `PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`; probes
+   `scripts/probes/_miso122_hybrid_cogen_scope.py`,
+   `_miso122_scope_gate_ab.py`; runs `2026-08-04-miso-122a-control` /
+   `2026-08-04-miso-122b-scope-gate`.)
 5. ~~**`dual_fuel_switching`** — winter-event pricing candidate (Elliott-class),
    untested in MISO.~~ **CLOSED 2026-08-03 (miso-121, cell `U` → `I`): FULLY
    IDENTIFIED but PRICE-INERT.** All three legs are measured from MISO's **own**
@@ -1812,8 +1864,15 @@ is now the live queue head.**)*
    prereg `PREREG-miso121-dual-fuel-switching-2026-08-03.md`; probes
    `scripts/probes/_miso121_dual_fuel_screen.py`, `_miso121_dual_fuel_ab.py`,
    `_miso121_switched_volume.py`.)
-   **The live head of the MISO queue is now the 55088 Dearborn hybrid-cogen
-   scope gate (item 4 above, named not chartered).**
+   ~~**The live head of the MISO queue is now the 55088 Dearborn hybrid-cogen
+   scope gate (item 4 above, named not chartered).**~~ **SPENT at miso-122
+   (2026-08-04) — see item 4c. §5.4 now has NO named, un-adjudicated,
+   non-data-blocked item left.** The two *named but unchartered* successors that
+   remain are miso-114 §0c's hour-of-day-resolved seam **band availability** at
+   the `(month × hour-of-day)` `MISO_SEAM_DIBA` grain — note it is the very seam
+   whose 912.5 MW band quantises miso-122's K3 dispatch statistic — and
+   miso-118's `CT_CHP`-side plant-level rate question. The bounded non-solve
+   step remains item 1's Form 580 count.
 6. **`hydro_budget_nameplate_aware`** + the `NG: PS` pin audit — **CLOSED
    2026-07-30 across two sessions: the pin defect was confirmed (miso-108), the
    LEVEL was fixed (miso-109), and the mechanism is then `I` — provably INERT at
