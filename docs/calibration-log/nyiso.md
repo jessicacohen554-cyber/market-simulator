@@ -5067,15 +5067,43 @@ corrected, not carried. Object B is an **off-peak** object (+$8.37 / +$4.53 /
 NYISO stays **G**. Diagnosis half PASSES, mechanism half FAILS — charter §6(2) is
 satisfied alongside §6(1).
 
-**(5) OPEN BLOCKER, WRITTEN UP AND NOT CLOSED BY A PICKED VALUE.** Why does the
-model's Central-East link stay slack on a limit the real interface binds at?
-Candidates **enumerated but NOT adjudicated**: the 1,600 MW import node landing
-east of the cutset; forced eastern generation (D-2 `ST_GAS reliability_floor`
-2.80 TWh / 21 % of class and `firm_import` 7.88 TWh in 2025); the zonal load
-allocation. None is measurable from committed artifacts —
-`system_<year>.parquet` carries no link flow, `class_hourly_<year>.parquet` no
-zone — so answering it needs a sidecar extension or a keeper replay, which is a
-scoping decision, not a lever.
+**(5) THE SUCCESSOR QUESTION IS ANSWERED IN THE SAME SESSION — AND THIS ENTRY'S
+OWN FIRST CLAIM IS CORRECTED.** It said the question was unmeasurable from
+committed artifacts because `system_<year>.parquet` carries no link flow. True of
+the keeper bundle, **wrong about the repo**: `_network_frame` has always written
+`hourly/network_<year>.parquet` (per-link hourly flow, reduced cost, bounds),
+`.gitignore` merely excludes it by default, and NYISO **already has it committed**
+— matrix row `unit_network_layer_sidecar` NYISO cell **K**, on
+`nyiso116_c3c_unitlayer`. Measured there, with **no solve**: the three DOWNSTATE
+border links sit **at their bound in 98–100 % of all hours of all three years**
+(`external→Capital_Hudson` 1,600 MW, `external→NYC` 1,000 MW,
+`external→Long_Island` 1,200 MW), delivering a flat **3,800 MW** against a
+measured downstate median of **1,870 / 1,772 / 2,040 MW** (**2.03× / 2.14× /
+1.86×**), while `external→Upstate_West` runs **net EXPORT** (−1,003 / −1,520 /
+−1,689 MW p50) against a measured **import** of **+668 / +454 / +148 MW**. The
+**net across all four links reconciles to 2–11 %** (model +2,797 / +2,280 /
++2,112 vs measured +2,538 / +2,226 / +2,188) — the signature of a seam whose
+total is pinned by the monthly EIA-930 reconciliation band while its spatial
+allocation is free. **That is why Central East stays slack:** ~1.8–2.0 GW of
+surplus import lands EAST of the cutset and ~1.0–1.7 GW is drained from the west,
+so the model's CE link carries 722.8 MW at the median (util **0.253**) where the
+real interface carries util **0.591**. Provenance stated because it bounds the
+claim: `nyiso116_c3c_unitlayer` is a replay of the **nyiso-113** recipe whose
+**G1 fidelity FAILED** (max |Δp| $10.5/$10.6/$9.0), licensed by nyiso-116 for C3c
+tail work on G2 — used here ONLY for link saturation and gross flow magnitude,
+where a marginal-tie reshuffle cannot move a ~100 %-of-hours bound or a 2–3× flow
+gap, and the measured side needs no model at all. **NOTHING IS ARMED AND NO LEVER
+IS PROPOSED.** Which part of the seam construction is wrong — border-link
+capacities, import-ladder tranche pricing, or the absence of any aggregate
+downstate cap since nyiso-100 correctly retired the mis-attributed 4,350 MW
+`NYISO_simultaneous_import` scalar — is **not** adjudicated, and nyiso-100 is
+**not** re-opened (its provenance finding stands; this is a measured consequence
+nobody had checked). Rule 25 binding both ways: this is PJM's
+`pjm_seam_envelope_by_neighbor` object in kind, so `seam_flow_envelopes` NYISO
+moves **`.` → `U`** and NYISO derives its own parameters from its own data.
+Residual candidates NOT adjudicated: forced eastern generation (D-2 `ST_GAS
+reliability_floor` 2.80 TWh / 21 % of class, `firm_import` 7.88 TWh in 2025) and
+the zonal load allocation — both second-order against a 2× seam misallocation.
 
 **(6) FLAGGED, NOT EDITED.** C3c's stated re-open condition ("a `Capital_Hudson` →
 Zone-F/Zone-G topology split") is **falsified as written**. It lives in the keeper
