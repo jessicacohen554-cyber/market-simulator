@@ -1,0 +1,161 @@
+{
+ "_what": "pjm-153: adjudicates the pjm-151 filed observation on pjm_reserve_supply_cap. Static (ast) reachability + bundle census; no LP, no deletion.",
+ "read_sites": [
+  {
+   "file": "src/market_sim/config/scenarios.py",
+   "line": 11175,
+   "function": null
+  },
+  {
+   "file": "src/market_sim/pipeline/commitment.py",
+   "line": 1394,
+   "function": "build_pjm_reserve_p1_prep"
+  },
+  {
+   "file": "src/market_sim/results/scarcity.py",
+   "line": 1802,
+   "function": "pjm_reserve_deliverable_supply_cap_mw"
+  }
+ ],
+ "spec_dominance": {
+  "file": "src/market_sim/model/reserves/spec.py",
+  "function": "_pjm_design",
+  "pergen_gate_line": 2148,
+  "supply_cap_assign_line": 2355,
+  "same_nesting_depth": true,
+  "supply_cap_assign_is_after_gate": true,
+  "pergen_block_always_returns": true,
+  "pergen_returned_reservedesign_kwargs": [
+   "balance_col_mask",
+   "eligible",
+   "families",
+   "pergen_col",
+   "pergen_col_pool",
+   "pergen_gen_idx",
+   "pergen_ramp10",
+   "storage_eligible"
+  ],
+  "pergen_design_passes_supply_cap": false,
+  "unreachable_when_pergen_true": true
+ },
+ "prep_gate": {
+  "file": "src/market_sim/pipeline/commitment.py",
+  "function": "build_pjm_reserve_p1_prep",
+  "scoped_guard_line": 1374,
+  "supply_cap_read_lines": [
+   1394
+  ],
+  "guard_precedes_every_read": true
+ },
+ "bundles": [
+  {
+   "bundle": "pjm136_lossurf_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm137_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm137_ctheatrate_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm140_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm140_rampenv_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm143_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm143_hy_level_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm144_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm144_zonalanchor_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm146_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm146_rggi_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm147_chp_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm147_control_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm150_ctmeter_regate_A",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  },
+  {
+   "bundle": "pjm151_seam_B",
+   "pjm_reserve_supply_cap": true,
+   "pjm_reserve_pergen": true,
+   "pjm_reserve_commitment_scoped": false,
+   "cap_observable": false
+  }
+ ],
+ "verdict": {
+  "inert_on_the_keeper": true,
+  "basis": "Both LP-facing readers are dominated by a gate the keeper sets against them: the design builder returns inside the pergen block before the supply_cap assignment (and its ReserveDesign passes no supply_cap), and the P1 prep returns on the commitment-scoped guard before its read."
+ }
+}

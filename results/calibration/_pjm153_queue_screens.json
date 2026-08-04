@@ -1,0 +1,216 @@
+{
+ "_what": "pjm-153: ex-ante no-LP screens closing PJM lever-queue items 8, 10 and re-confirming the item-3 block. Committed bytes only.",
+ "item8_st_gas_mustrun_p25_level": {
+  "artifact_coverage_by_iso": {
+   "CAISO": {
+    "has_online_frac_column": true,
+    "coverage": {
+     "COAL": {
+      "rows": 0,
+      "online_frac_present": 0
+     },
+     "CC_REGULAR": {
+      "rows": 23,
+      "online_frac_present": 0
+     },
+     "CT_PEAKER": {
+      "rows": 44,
+      "online_frac_present": 0
+     },
+     "ST_GAS": {
+      "rows": 3,
+      "online_frac_present": 0
+     }
+    }
+   },
+   "MISO": {
+    "has_online_frac_column": true,
+    "coverage": {
+     "COAL": {
+      "rows": 44,
+      "online_frac_present": 44
+     },
+     "CC_REGULAR": {
+      "rows": 39,
+      "online_frac_present": 39
+     },
+     "CT_PEAKER": {
+      "rows": 79,
+      "online_frac_present": 79
+     },
+     "ST_GAS": {
+      "rows": 16,
+      "online_frac_present": 16
+     }
+    }
+   },
+   "NEISO": {
+    "has_online_frac_column": false
+   },
+   "NYISO": {
+    "has_online_frac_column": false
+   },
+   "PJM": {
+    "has_online_frac_column": true,
+    "coverage": {
+     "COAL": {
+      "rows": 29,
+      "online_frac_present": 29
+     },
+     "CC_REGULAR": {
+      "rows": 69,
+      "online_frac_present": 69
+     },
+     "CT_PEAKER": {
+      "rows": 70,
+      "online_frac_present": 70
+     },
+     "ST_GAS": {
+      "rows": 10,
+      "online_frac_present": 0
+     }
+    }
+   }
+  },
+  "keeper_flags": {
+   "st_gas_mustrun_p25_level": false,
+   "st_gas_mustrun_per_plant": false,
+   "gas_st_netload_drag": true
+  },
+  "pjm_st_gas_rows": 10,
+  "pjm_st_gas_with_online_frac": 0,
+  "inert_for_pjm_on_committed_artifact": true,
+  "host_mechanism_armed_in_pjm": false
+ },
+ "item10_winter_citygate_daily": {
+  "keeper_flags": {
+   "gas_monthly_actuals": true,
+   "gas_plant_monthly_fuel_pricing": true,
+   "gas_daily_shape": true,
+   "pjm_zonal_gas_basis": true,
+   "gas_hub_basis_daily": false,
+   "gas_hub_basis_overlay": false
+  },
+  "construction": {
+   "henry_hub_daily_shape_is_within_month_mean_one": true,
+   "zonal_basis_is_annual_and_mean_zero": true,
+   "winter_level_owner": "measured EIA-923 delivered receipts"
+  },
+  "years": {
+   "2023": {
+    "measured_monthly_available": true,
+    "monthly_usd_mmbtu": [
+     4.975,
+     4.854,
+     3.544,
+     3.143,
+     2.882,
+     2.458,
+     2.516,
+     2.314,
+     2.639,
+     2.813,
+     3.595,
+     3.446
+    ],
+    "djf_mean_usd_mmbtu": 4.425,
+    "annual_mean_usd_mmbtu": 3.265,
+    "djf_over_annual": 1.3554,
+    "trajectory_fallback_override": 2.54
+   },
+   "2024": {
+    "measured_monthly_available": true,
+    "monthly_usd_mmbtu": [
+     5.066,
+     2.819,
+     2.447,
+     2.297,
+     2.527,
+     2.73,
+     2.352,
+     2.224,
+     2.268,
+     2.561,
+     2.945,
+     3.989
+    ],
+    "djf_mean_usd_mmbtu": 3.958,
+    "annual_mean_usd_mmbtu": 2.852,
+    "djf_over_annual": 1.3877,
+    "trajectory_fallback_override": 2.54
+   },
+   "2025": {
+    "measured_monthly_available": true,
+    "monthly_usd_mmbtu": [
+     6.791,
+     4.988,
+     4.074,
+     4.029,
+     3.406,
+     2.993,
+     3.263,
+     2.893,
+     2.655,
+     3.12,
+     3.944,
+     5.088
+    ],
+    "djf_mean_usd_mmbtu": 5.622,
+    "annual_mean_usd_mmbtu": 3.937,
+    "djf_over_annual": 1.4281,
+    "trajectory_fallback_override": 2.54
+   }
+  },
+  "premise_holds": false
+ },
+ "item3_dominion_subzonal_load": {
+  "years": {
+   "2023": {
+    "file_present": true,
+    "dom_load_areas": [
+     "DOM"
+    ],
+    "dom_subdivides": false,
+    "zones_that_do_subdivide": [
+     "AE",
+     "AEP",
+     "ATSI",
+     "DPL",
+     "PEP",
+     "PL"
+    ]
+   },
+   "2024": {
+    "file_present": true,
+    "dom_load_areas": [
+     "DOM"
+    ],
+    "dom_subdivides": false,
+    "zones_that_do_subdivide": [
+     "AE",
+     "AEP",
+     "ATSI",
+     "DPL",
+     "PEP",
+     "PL"
+    ]
+   },
+   "2025": {
+    "file_present": true,
+    "dom_load_areas": [
+     "DOM"
+    ],
+    "dom_subdivides": false,
+    "zones_that_do_subdivide": [
+     "AE",
+     "AEP",
+     "ATSI",
+     "DPL",
+     "PEP",
+     "PL"
+    ]
+   }
+  },
+  "block_holds": true
+ }
+}
