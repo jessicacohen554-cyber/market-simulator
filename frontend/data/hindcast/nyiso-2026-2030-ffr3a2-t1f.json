@@ -1,0 +1,187 @@
+{
+  "run_id": "nyiso-2026-2030-ffr3a2-t1f",
+  "meta": {
+    "iso": "NYISO",
+    "kind": "t1f",
+    "label": "ffr3a2-t1f",
+    "variant": "forecast-baseline",
+    "mode": "forecast",
+    "start_year": 2026,
+    "end_year": 2030,
+    "capacity_market_clearing": false,
+    "datacenter_load_path": "mid",
+    "correlated_forced_outage": true,
+    "cache_key": "2bd878d87848785c",
+    "bundle": "results/ffr3a2/t1f/nyiso/NYISO/2bd878d87848785c",
+    "solved_years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030
+    ],
+    "n_solved_years": 5,
+    "error": null,
+    "total_wall_s": 42.1,
+    "global_peak_rss_mb": 772.3,
+    "per_year_perf": [],
+    "year_summary": [
+      {
+        "year": 2026,
+        "reserve_margin": 0.0785,
+        "lw_price": 50.64,
+        "max_hourly_price": 64.8,
+        "co2_mt": 24.5,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2027,
+        "reserve_margin": 0.078,
+        "lw_price": 50.03,
+        "max_hourly_price": 63.2,
+        "co2_mt": 25.76,
+        "hours_ge_500": 0,
+        "retire_mw": 8.0,
+        "builds_thermal_mw": 274.8,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2028,
+        "reserve_margin": 0.0798,
+        "lw_price": 54.45,
+        "max_hourly_price": 65.9,
+        "co2_mt": 25.22,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 350.6,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2029,
+        "reserve_margin": 0.1069,
+        "lw_price": 56.63,
+        "max_hourly_price": 68.1,
+        "co2_mt": 23.48,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 1000.0,
+        "builds_renew_mw": 1000.0,
+        "builds_storage_mw": 0.0
+      },
+      {
+        "year": 2030,
+        "reserve_margin": 0.0969,
+        "lw_price": 64.01,
+        "max_hourly_price": 78.3,
+        "co2_mt": 21.07,
+        "hours_ge_500": 0,
+        "retire_mw": 0.0,
+        "builds_thermal_mw": 0.0,
+        "builds_renew_mw": 0.0,
+        "builds_storage_mw": 0.0
+      }
+    ],
+    "started_utc": "2026-08-03T22:12:06Z",
+    "bridged_years": []
+  },
+  "score": null,
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply−demand| = 7.203e-10 MW (year 2028); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2026: accredited firm 32085 < requirement 32121 MW; 2027: accredited firm 32339 < requirement 32390 MW"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "≥0, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "requirement-implied floor [8.0%, 23.0%]; out: 2026:7.8% (band [8.0%, 23.0%]), 2027:7.8% (band [8.0%, 23.0%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "PASS",
+      "detail": "in band"
+    }
+  ],
+  "registered_utc": "2026-08-03T22:12:06Z",
+  "provenance": {
+    "schema": "forecast-provenance/v1",
+    "scored_at_sha": "3611ce5c175a",
+    "scored_at_date": "2026-08-03T22:12:06Z",
+    "cache_epoch": "2bd878d87848785c"
+  }
+}

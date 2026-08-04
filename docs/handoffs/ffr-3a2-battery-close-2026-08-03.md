@@ -11,27 +11,69 @@ decision Addendum D.1 — *HOLD PROMOTION, FIND ROOT CAUSE*, both mechanisms **s
 armed** — is honoured throughout.
 
 **Base.** Branched off `origin/main` **`f0b8c025`**. The dispatch packet named
-`01b6a6a`; main had advanced 9 merges by session start, and **four keepers had moved**
-(see §0.1). Every citation below is taken at `f0b8c025`, not from the packet.
+`01b6a6a`; main had advanced 9 merges by session start, and **a keeper had moved**
+(see §0.1). Every measurement below was taken on the `f0b8c025 … def7cbf8` line.
+
+> ## ⚠ PROVENANCE CEILING — this battery measures a SUPERSEDED configuration
+>
+> **Read this before relying on any number here.** All 14 legs were solved and scored
+> before this branch was rebased. The rebase onto `origin/main` **`87659ae4`** brought in
+> **59 commits**, including **FFR-3F's G-31 exit-throughput lane** — the very lane owner
+> decision D-8 chartered off the back of the findings this battery corroborates.
+>
+> Two of its changes bear directly on what is measured here:
+>
+> 1. **The G3 cap-grain fix (`2adfb49`) is UNCONDITIONAL and changes the admitted exit
+>    set.** The pipeline's admission cap now resolves its adequacy requirement at the
+>    schedule's **execution horizon** instead of the decision year. That is the same
+>    economic-retirement screen every T1-H finding in §3 rests on.
+> 2. **`exit_rate_limits` is a new `ScenarioConfig` field.** It ships **default-OFF**, so
+>    it is not active — but it moves cache keys.
+>
+> Measured after the rebase: the request-side T1-F keys have moved
+> (**ERCOT `b1bf77e3fcf7f7aa` → `64aa36ee37726baa`**, and even **NYISO
+> `2bd878d87848785c` → `dc33616f9f5d8922`**, the one key that had been stable across the
+> whole prior range).
+>
+> **What that does and does not mean.** The results stand exactly as measured, at the sha
+> each artifact records — that is what `scored_at_sha` is for, and nothing here is
+> retro-fitted. But **this is no longer the shipped configuration**, and the findings most
+> exposed are precisely the retirement ones: **§3.8 (PJM recomposition), §3.9 (MISO's 3/3
+> retirement-band flip) and §3.7 (NYISO's D-1 inertness) should be re-measured at the
+> post-FFR-3F HEAD before being relied on.** The additions-side findings (§3.5 censoring)
+> and the instrument findings (§2.2, §3.4, §6.4) do not depend on the exit screen and are
+> unaffected.
+>
+> This is a sequencing artifact, not a defect in either lane: FFR-3C characterized G-31,
+> the owner chartered the fix, FFR-3F landed it, and this battery ran concurrently against
+> the pre-fix code. It is recorded rather than papered over.
 
 ---
 
 ## 0. State re-verified at this HEAD (the packet was stale)
 
-### 0.1 Keepers — four differ from the dispatch packet
+### 0.1 Keepers moved SIX times across this session
 
-| ISO | packet said | **actual at `f0b8c025`** | moved? |
+The dispatch packet's keeper list was stale at session start and went staler while the
+session ran. Recorded so no citation here is mistaken for current:
+
+| ISO | packet said | at session start (`f0b8c025`) | **at the rebase (`87659ae4`)** |
 |---|---|---|---|
-| ERCOT | `2026-08-02-ercot150b-zonal-anchor` | `2026-08-02-ercot150b-zonal-anchor` | no |
-| PJM | `2026-08-03-pjm-147b-chp-heat` | `2026-08-03-pjm-147b-chp-heat` | no |
-| CAISO | `2026-08-03-caiso156-meter-screen-b` | `2026-08-03-caiso156-meter-screen-b` | no |
-| **NYISO** | `2026-08-03-nyiso-117-nyc-rcpf` | **`2026-08-03-nyiso-118-seny-span`** | **yes (5th move)** |
-| NEISO | `2026-08-03-neiso-caiso156-meter-screen` | `2026-08-03-neiso-caiso156-meter-screen` | no |
-| MISO | `2026-08-03-miso-117b-ct-heat` | `2026-08-03-miso-117b-ct-heat` | no |
+| ERCOT | `…ercot150b-zonal-anchor` | same | same |
+| **PJM** | `…pjm-147b-chp-heat` | same | **`2026-08-03-pjm-151-seam-envelope`** |
+| **CAISO** | `…caiso156-meter-screen-b` | same | **`2026-08-03-caiso163-asym-path-ratings`** |
+| **NYISO** | `…nyiso-117-nyc-rcpf` | **`…nyiso-118-seny-span`** | same |
+| NEISO | `…neiso-caiso156-meter-screen` | same | same |
+| MISO | `…miso-117b-ct-heat` | same | same |
 
-NYISO has now moved **five** times in three days. Markers unchanged: `complete` =
-{NEISO, NYISO, PJM}, `final` **empty**. The **holdout spend freeze is ACTIVE** and was
-neither spent nor worked around.
+**The §2.1b scorecard (§8) reads keepers LIVE from the shards**, so it reflects the
+post-rebase set; its criterion-(a) determinations are current. The T1-F/T1-H/T1-X legs
+were solved against the session-start set, which does not affect them — a backcast keeper
+does not enter a forecast solve (regate §2: the backcast has no capacity evolution, and
+the forecast legs read none of it).
+
+Markers unchanged throughout: `complete` = {NEISO, NYISO, PJM}, `final` **empty**. The
+**holdout spend freeze is ACTIVE** and was neither spent nor worked around.
 
 ### 0.2 The environment was empty — both prerequisites, not one
 
@@ -322,6 +364,29 @@ half** in these four legs. That halves the un-pin's attributable surface before 
 leg is scored, and it means an ERCOT-only mechanism must never be credited with a PJM,
 MISO, NEISO or NYISO movement (rule 25 `[R-ISO-SCOPE]`).
 
+#### CONFIRMED AT RUNTIME — the model says so itself
+
+The pre-registration above was derived from the constants. The solves then **confirmed it
+empirically**, which upgrades it from inference to measurement. Each of the four T1-H legs
+logs, once per solved year:
+
+```
+correlated forced-outage derate armed but no curve/weather coverage — no-op
+```
+
+| leg | occurrences (solve years 2021, 2023, 2024, 2025) |
+|---|---|
+| PJM | **4** |
+| MISO | **4** |
+| NEISO | **4** |
+| NYISO | **4** |
+
+Four legs × four solved years = **16/16 solve-years explicitly no-op**. The flag is armed
+and the mechanism does nothing, exactly as predicted and now stated by the model rather
+than by me. (The same line appears in the T1-X PJM leg's forward years.) This makes the
+"not the `correlated_forced_outage` half" clause of every attribution below **airtight
+rather than merely argued**.
+
 ### 3.3 Rule-22 legality of the 2021–2025 window — checked, not assumed
 
 The window spans out-of-training years while the **holdout freeze is ACTIVE**, so it was
@@ -339,9 +404,238 @@ carries an explicit, enumerated capacity-hindcast carve-out:
 the freeze file at launch and prints an explicit governance line. **No marker is spent,
 no out-of-training year is scored, and the freeze is not implicated.**
 
-### 3.4 Measured results
+### 3.4 FC-7 fails on EVERY T1-H leg by construction — the unfixed analogue of blocker 7
 
-*(pending)*
+`run_capacity_hindcast.py` writes **`run_config.yaml`** at the bundle root. FC-7 row 1
+requires **`run_config.json`**. So every T1-H bundle this runner produces FAILs FC-7
+*"run_config.json absent"* for reasons having nothing to do with the run — exactly the
+defect FFR-3D fixed in `run_full_horizon.py` (blocker 7, `34c2f25`) and **did not fix in
+the hindcast runner**.
+
+Consequences, both worth stating:
+
+* **FC-7 does not differentiate anything at T1-H.** It is FAIL on every leg, so it
+  carries no information about leg quality and must not be read as one.
+* **It is deliberately NOT fixed here.** Authoring the artifact *after* seeing the score
+  is what rubric §4 forbids, and it is precisely why FFR-3A left the T1-F case open for a
+  successor rather than patching it mid-battery. Logged as blocker §8.5 for an
+  instrument lane to fix **before** the next T1-H battery, the same sequencing that made
+  FFR-3D's T1-F fix admissible.
+
+### 3.5 ⚠ D-2's commissioning lag CENSORS the T1-H additions bands — they no longer measure what they used to
+
+This is a methodological finding, and it changes how the additions half of FC-3 must be
+read across the D-2 boundary.
+
+T1-H solves `{2021, 2023, 2024, 2025}` and **scores `{2023, 2024, 2025}`**. D-2's
+`entry_commissioning_lag` commissions entry at `decision_year + ENTRY_COD_LAG_YEARS (2)`.
+So:
+
+| decision year | COD | inside the scored window? |
+|---|---|---|
+| 2021 | 2023 | yes |
+| 2023 | 2025 | yes |
+| **2024** | **2026** | **NO** |
+| **2025** | **2027** | **NO** |
+
+**Half the solved decision years now commission outside the scored window by
+construction.** In-window additions are therefore mechanically suppressed relative to any
+pre-D-2 bundle, independently of whether the model's entry *decisions* got better or
+worse. Measured in NEISO: `storage` additions 0.72 → **0.0 GW** and `gas_ct` 0.5 → **0.0
+GW`, both flipping their bands adverse, while the model still decides entry — it just
+decides it into 2026/2027.
+
+**Consequence:** an additions band that moves across the D-2 boundary is **not**
+attributable to entry skill without correcting for this censoring, and a
+pre-D-2-vs-post-D-2 additions comparison is not like-for-like. FFR-3C recorded the same
+mechanism as a caveat on *cumulative* T1-F reads (§3(d)); here it bites the T1-H
+**scoring window** directly. Reported, not corrected — correcting it means either
+scoring COD-shifted additions or lengthening the window, both of which are design
+decisions, not this session's to take.
+
+### 3.6 Refreshed FC-3 — NEISO
+
+Determination **unchanged: FC-3 FAIL** (as at FF-2D). Band-level movement, old committed
+bundle (`neiso-2021-2025-curve`, pre-epoch, both mechanisms pinned OFF) vs this session's
+(post-epoch, shipped posture):
+
+| metric | actual | OLD model / band | NEW model / band | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 0.951 | 9.325 FAIL | **8.221** FAIL | closer, still 8.6× actual |
+| `retire.unit_recall_gt300` | — | **PASS** | **FAIL** | **adverse** |
+| `retire.false_retire` | — | FAIL | FAIL | unchanged |
+| `add.by_tech.wind` | 0.225 | 4.0 FAIL | **1.0** FAIL | much closer |
+| `add.by_tech.solar` | 1.947 | 8.0 FAIL | **1.028** FAIL | much closer (now under) |
+| `add.by_tech.gas_ct` | 0.163 | 0.5 FAIL | **0.0** FAIL | **adverse — censored (§3.5)** |
+| `add.by_tech.storage` | 0.642 | 0.72 **PASS** | **0.0 FAIL** | **adverse — censored (§3.5)** |
+
+**Attribution — un-pin, D-1/D-2, or neither?** Stated per the scope item, and stated
+honestly:
+
+* **NOT the `correlated_forced_outage` half of the un-pin.** Pre-registered in §3.2b and
+  it holds: NEISO has no entry in `CORRELATED_OUTAGE_CURVE`, so that flag is structurally
+  inert here. **Ruled out, not merely unlikely.**
+* **The additions movement is consistent with D-2**, and its storage/gas_ct legs are at
+  least partly the §3.5 censoring artifact rather than a skill change.
+* **The retirement movement is consistent with D-1**, whose whole purpose is to change
+  which units the screen retires.
+* **But NONE of it is ATTRIBUTED**, because this session ran **no T1-H control arm** and
+  the legs also cross the **cache epoch** — and FFR-2B measured that the epoch alone
+  moved PJM's retirement total 18.157 → 29.373 GW with *no* rule or posture change. With
+  three candidate causes and one measurement, the honest verdict is **refreshed, not
+  attributed**. A paired T1-H control at explicit pre-decision defaults is the single
+  measurement that would separate them.
+
+### 3.7 Refreshed FC-3 — NYISO, and here D-1 IS attributed: it is PROVABLY INERT
+
+Determination **unchanged: FC-3 FAIL**. But NYISO admits a real attribution that NEISO
+does not, and it comes from the retirement side being **exactly unmoved**.
+
+| metric | actual | OLD (`nyiso-2021-2025-fixed`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 1.488 | 1.036 FAIL | **1.036** FAIL | **IDENTICAL** |
+| `retire.unit_recall_gt300` | — | PASS | PASS | unchanged |
+| `retire.false_retire` | — | PASS | PASS | unchanged |
+| `add.by_tech.wind` | 0.890 | 4.0 FAIL | **0.951 PASS** | **improved to PASS** |
+| `add.by_tech.solar` | 2.197 | 8.0 FAIL | **0.891** FAIL | much closer (now under) |
+| `add.by_tech.gas_ct` | 0.072 | 0.0 FAIL | 0.5 FAIL | over |
+| `add.by_tech.storage` | 0.184 | 0.0 FAIL | 0.0 FAIL | unchanged |
+
+**The retirement total is identical to three decimals across the cache epoch, D-1, the
+C.4(c) un-pin AND D-2.** The evolution ledgers say why:
+
+| per-fuel model retirement | OLD | NEW |
+|---|---|---|
+| nuclear | 1.036 | **1.036** |
+| biomass / gas_cc / gas_ct / oil | 0.0 | **0.0** |
+
+and across all five ledger years the run books **exactly one retirement event**, in 2022,
+with reason **`announced`**. **Zero economic retirements in any year, in either arm.**
+
+**Attribution, and this one is real:**
+
+* **D-1 is PROVABLY INERT in NYISO's T1-H window.** The economic-retirement screen never
+  fires, so the rule that governs it cannot move anything. This is the same structural
+  inertness FFR-3C established for MISO in T1-F — but derived independently from NYISO's
+  own evidence, so it is rule-25 `[R-ISO-SCOPE]` clean and is **not** imported.
+* **NYISO's FC-3 retirement bands are therefore NOT evidence about D-1.** They measure
+  the announced-exit channel against actuals: 1.036 GW booked vs 1.488 GW actual, a −30 %
+  miss that is entirely "the economic screen retires nothing in NYISO 2023–2025".
+* **The additions movement is D-2 plus the §3.5 censoring**, with the
+  `correlated_forced_outage` half of the un-pin ruled out structurally (§3.2b) — leaving
+  `entry_lookahead_reprice` and the epoch as the only unseparated candidates on that half.
+
+**A first PASS in the T1-H set.** `add.by_tech.wind` moves 4.0 → 0.951 GW against 0.890
+actual — from a 4.5× over-build to inside the band. That is the only band in either
+refreshed leg to reach PASS, and it is reported as measured, not claimed as skill: the
+same §3.5 censoring that pushed NEISO's storage to zero also trims NYISO's wind, and this
+session cannot separate "better entry decisions" from "entry deferred past the scoring
+window" without the control arm named above.
+
+### 3.8 Refreshed FC-3 — PJM, where D-1 fires hard and REPRODUCES FFR-3C's split
+
+Determination **unchanged: FC-3 FAIL**. But PJM is the leg where the retirement screen
+actually fires, and what it does is the D-1 signature — recomposing *which fuel* exits
+while making the *level* worse.
+
+| metric | actual | OLD (`pjm-2021-2025-curve-ff2c`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 11.121 | 18.157 FAIL | **22.415** FAIL | **worse level** (2.0× actual) |
+| `retire.unit_recall_gt300` | — | **FAIL** | **PASS** | **better membership** |
+| `retire.false_retire` | — | FAIL | FAIL | unchanged |
+
+Per-fuel model GW — a wholesale recomposition, not a rescaling:
+
+| fuel | OLD | NEW |
+|---|---|---|
+| **coal** | 0.0 | **18.309** |
+| **gas_st** | 10.358 | **0.0** |
+| **gas_ct** | 3.693 | **0.0** |
+| nuclear | 4.097 | 4.097 (announced — unmoved) |
+| biomass | 0.009 | 0.009 |
+
+**This is attributable to D-1, and the corroboration is external.** FFR-2B measured the
+legacy→pipeline flip in PJM **against a paired control** and recorded *"PJM gas_st 10.358
+→ 0.0 and gas_ct 11.379 → 0.0, coal 3.530 → 14.756, recall 9/17 → 13/17"*. This session's
+independent, post-epoch, shipped-posture re-solve reproduces that signature — **`gas_st`
+10.358 → 0.0 to the megawatt** — plus the recall band flipping FAIL → PASS. The
+mechanism, the direction and the magnitude all match a result that *was* controlled, so
+naming D-1 here is not a bare inference from one arm.
+
+**⚠ It independently reproduces FFR-3C's MEMBERSHIP-vs-CALENDAR split** (§4 of that
+memo), which is the finding the owner's decision rests on:
+
+| FFR-3C term | its verdict | what PJM's refreshed FC-3 shows |
+|---|---|---|
+| *which* units retire | **REAL** economics; the corrected rule identifies them better | `unit_recall_gt300` **FAIL → PASS** |
+| *when* they leave / how deep | **GRAIN ARTIFACT** | `retire.total_gw` **18.157 → 22.415** against 11.121 actual — the level gets **worse** |
+
+So the same leg gets **more right about membership and more wrong about depth**, in one
+measurement, exactly as FFR-3C's split predicts. **This is corroboration of the existing
+attribution, not a new one, and it changes nothing about the owner's decision** — rule 1
+`[R-STRUCT]`: a structurally better mechanism is not reverted because a level band moved
+against it, and the depth residual is the chartered G-31 lane's (Addendum F.1), not
+this session's to touch.
+
+### 3.9 Refreshed FC-3 — MISO: **every retirement band now PASSES**
+
+Determination **unchanged: FC-3 FAIL** — but *why* it fails has changed completely, and
+this is the cleanest T1-H result in the set.
+
+| metric | actual | OLD (`miso-2021-2025-curve-ff2c`) | NEW (shipped) | direction |
+|---|---|---|---|---|
+| `retire.total_gw` | 15.227 | 10.814 **FAIL** | **13.734 PASS** | **FLIPPED** |
+| `retire.unit_recall_gt300` | — | **FAIL** | **PASS** | **FLIPPED** |
+| `retire.false_retire` | — | **FAIL** | **PASS** | **FLIPPED** |
+
+Per-fuel: **coal 1.387 → 12.95 GW**, **gas_st 8.643 → 0.0**, nuclear 0.768 and biomass
+0.016 unmoved (announced). Same D-1 signature as PJM, and the same one FFR-2B measured in
+MISO **against a paired control** (*"gas_st econ exits 12.920 → 0.0 GW and coal 1.497 →
+11.932, recall 2/17 → 13/17, false-retire 12.920 → 0.997"*) — the fuel inversion the
+legacy rule caused is gone.
+
+**MISO's FC-3 now fails on the ADDITIONS half ALONE:**
+
+```
+band FAIL: add.by_tech.{wind, solar, gas_cc, gas_ct, storage}
+           add.shares.{wind, solar, storage}
+```
+
+**Every failing band is an additions band, and additions are exactly what §3.5 shows
+D-2's commissioning lag censors inside this scoring window.** So MISO's refreshed FC-3
+reads: *the retirement half is fully passing under D-1, and the only thing still holding
+FC-3 at FAIL is the half this session independently showed to be mechanically suppressed
+by D-2.*
+
+**The two signed decisions pull in opposite directions on FC-3**, and MISO is where that
+is cleanest. Neither is tuned or unarmed here (Addendum D.1); the observation is routed
+to the owner, and the additions-censoring question is an instrument/design decision
+(§3.5), not a parameter.
+
+### 3.10 T1-H summary — all four curve legs refreshed
+
+| leg | det | FC-3 | FC-7 | retirement bands | additions | what moved it |
+|---|---|---|---|---|---|---|
+| **MISO** | HOLD | FAIL | FAIL* | **3/3 PASS** | all FAIL | D-1 (attributed, FFR-2B-corroborated); additions censored by D-2 |
+| **PJM** | HOLD | FAIL | FAIL* | recall **FAIL→PASS**, level worse | FAIL | D-1 (attributed); reproduces FFR-3C's membership/calendar split |
+| **NYISO** | HOLD | FAIL | FAIL* | **identical** (1.036 GW) | wind→**PASS** | **D-1 PROVABLY INERT** (zero economic exits) |
+| **NEISO** | HOLD | FAIL | FAIL* | recall PASS→FAIL | FAIL | refreshed, **NOT attributed** (3 candidates, no control) |
+
+\* FC-7 is FAIL on all four for the same instrument reason (§3.4) and differentiates
+nothing.
+
+**Every FC-3 verdict in `ff-t1-gate-2026-07.md` §4.1 is now REFRESHED** — post-epoch
+**and** shipped-posture, clearing both stacked invalidations that table records. **No
+determination flipped: all four were FC-3 FAIL and all four remain FC-3 FAIL.** What
+changed is the *composition* of the failure — and in MISO's case it is now confined
+entirely to the censored half.
+
+**The FFR-3A confound is gone** (§3.1). But note what limits attribution in its place:
+with `correlated_forced_outage` structurally inert in all four ISOs (§3.2b), the un-pin's
+attributable surface is only `entry_lookahead_reprice`, and **no T1-H control arm was
+run** — so each ISO's attribution rests on structural inertness (NYISO), external
+corroboration from a controlled experiment (PJM, MISO via FFR-2B), or is **withheld**
+(NEISO).
 
 ---
 
@@ -362,15 +656,155 @@ Two of the five (`correlated_forced_outage`, `entry_lookahead_reprice`) move dis
 **every** year; three (D-1/D-2) move capacity evolution in the forward years 2026–2027.
 **No leg folds as-is.**
 
-### 4.2 Measured results
+### 4.2 Measured results — ERCOT
 
-*(pending)*
+Re-run at vintage 2023, window 2023–2027 (5 solve-years), all damper/un-pin flags omitted
+so each inherits the shipped default. **Determination HOLD**; FC-4 **FAIL**.
+
+**Rule-22 compliance is verified by the scorer, not asserted:** FC-4 row 1
+*quarantine* → **PASS**, *"≥2026 refusal marker present and clean"*. The forward years
+2026–2027 are solved as pure forecast years and no bench/actual is read for them.
+
+| FC-4 row | verdict | |
+|---|---|---|
+| quarantine | **PASS** | ≥2026 refusal marker present and clean |
+| dispatch skill | **FAIL** | see below |
+| input-gap ratio | PASS | report-only |
+
+#### ⚠ The price convergence FF-2D reported is GONE
+
+| metric | FF-2D (`ercot-t1x`) | **now** | |
+|---|---|---|---|
+| price 2023 | 69.2 % | **68.7 %** | unchanged |
+| price 2024 | 42.7 % | **41.2 %** | unchanged |
+| **price 2025** | **8.6 % — PASS** | **22.5 % — FAIL** | **REGRESSED** |
+
+FF-2D's headline for this leg was *"ERCOT converges 69 % → 9 % by 2025"*, and that
+convergence — the cleanest positive dispatch-skill signal in the whole T1-X set — **no
+longer holds**. 2023 and 2024 are essentially unmoved, so this is specifically the
+terminal year losing its fit.
+
+**Not attributed.** The crossover's scored years are hindcast years on realized inputs, but
+its fleet is evolved across 2023 → 2025, so D-1's retirement recomposition (measured hard
+in PJM and MISO, §3.8/§3.9) is a plausible route to a changed 2025 fleet and therefore a
+changed 2025 price. It is only plausible: **no T1-X control arm was run**, and the leg also
+crosses the cache epoch. Recorded as an open regression (§9 blocker), not a claim.
+
+#### Family-volume rows are newly COVERED — not a regression
+
+FF-2D reported these **uncovered**: *"the emitter computes only aggregate `fuelmix` …
+neither of which maps to the rubric's fractional `gas_twh`/`coal_twh` family-volume bands —
+so FC-4 scores price + CO2 only; the family-volume rows are uncovered and reported here,
+never silently passed."* That L-VAL follow-up has since landed (`d12b4a8` folded the
+adapter into `score_crossover.py`), and this run bands **11 rows with 1 uncovered**:
+
+| newly banded | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| `gas_twh` | 19.6 % FAIL | 10.0 % FAIL | *uncovered — preliminary EIA-923 vintage* |
+| `coal_twh` | 35.0 % FAIL | 44.1 % FAIL | 37.2 % FAIL |
+
+These are **new coverage, not new failures** — the same distinction as FC-2 row 4 (§7.2).
+The one remaining `uncovered` row is declared with its reason (incomplete 2025 class
+actuals would bias the band) rather than silently passed, which is the correct behaviour.
+
+CO2 stays FAIL at 49.2 / 42.7 / 50.6 %, and FF-2D's caveat still applies: crossover CO2 is
+reconstructed on the keeper's full-plant basis via bench intensities, so it is directional.
+**Price remains the load-bearing input-gap measurement** — which is exactly why the 2025
+regression above matters.
+
+### 4.3 Measured results — PJM, and the asymmetry that matters
+
+**Determination HOLD**; FC-4 **FAIL**; quarantine row **PASS**. But PJM is **essentially
+unchanged from FF-2D**, which is the point:
+
+| metric | FF-2D (`pjm-t1x`) | **now** | |
+|---|---|---|---|
+| price 2023, 2024 | in-band | **in-band** (not flagged) | unchanged |
+| **price 2025** | **17.5 % CAVEAT** | **15.7 % CAVEAT** | **slightly better** |
+| CO2 2023–2025 | 43–58 % FAIL | **45.1 / 40.4 / 54.2 % FAIL** | same range |
+| `gas_twh` 2024 | *uncovered* | 6.7 % CAVEAT | newly covered |
+| `coal_twh` 2023 / 2024 | *uncovered* | 13.0 % CAVEAT / 23.9 % FAIL | newly covered |
+
+### 4.4 Measured results — MISO, and the three-leg picture
+
+**Determination HOLD**; FC-4 **FAIL**; quarantine **PASS**. MISO **improved**:
+
+| metric | FF-2D (`miso-t1x-ffr2a`) | **now** | |
+|---|---|---|---|
+| price 2023 | 13.6 % CAVEAT | 13.6 % CAVEAT | identical |
+| price 2024 | 15.3 % CAVEAT | **13.9 %** CAVEAT | better |
+| **price 2025** | **30.3 % FAIL** | **27.4 % CAVEAT** | **improved — back inside the band** |
+| CO2 2023–2025 | 63.3 / 59.9 / 77.1 FAIL | 63.3 / 58.9 / **75.5** FAIL | ~flat |
+
+#### ⚠ ERCOT is the SOLE regressor of the three
+
+| leg | price 2025, FF-2D → now | direction |
+|---|---|---|
+| **ERCOT** | **8.6 % PASS → 22.5 % FAIL** | **REGRESSED** |
+| PJM | 17.5 % CAVEAT → 15.7 % CAVEAT | flat / marginally better |
+| **MISO** | **30.3 % FAIL → 27.4 % CAVEAT** | **IMPROVED** |
+
+All three legs ran the same signed decisions, the same un-pin, the same cache epoch and
+the same instrument. **Two improved or held; only ERCOT degraded.** The third leg
+strengthens rather than dilutes the reading: a generic epoch, scorer or instrument effect
+would be expected to move all three in the same direction, and it did not.
+
+That is *consistent with* the D-1/D-2 story — ERCOT is the energy-only ISO where D-1 has
+no capacity revenue to offset the going-forward-cost screen, where FFR-3C attributes the
+collapse against a control, and where this session's T1-F reserve margin runs to −1.5 %
+while PJM's and MISO's FC-2 are only CAVEAT.
+
+**It remains NOT ATTRIBUTED.** Three unpaired legs are still not a control; the ISOs
+differ in market design as well as in D-1 exposure; and the ERCOT-only
+`correlated_forced_outage` curve is a further ERCOT-vs-others asymmetry (§3.2b) this
+comparison does not eliminate — ERCOT is the one leg where that mechanism is *not* a
+no-op. Recorded as the strongest available **circumstantial** evidence on the T1-X half
+and as a named open question (§10).
 
 ---
 
-## 5. FC-6 driver response
+## 5. FC-6 driver response — run BOUNDED, and the bound is measured, not asserted
 
-*(pending)*
+### 5.1 What the full battery costs, from this session's own anchors
+
+| anchor | measured here |
+|---|---|
+| ERCOT T1-F, cold, 5 solve-years | 10.0 min ⇒ **2.0 min / solve-year** |
+| PJM T1-F, cold, 5 solve-years | 19.0 min ⇒ **3.8 min / solve-year**, and PJM must run **solo** (8.8 GB) |
+| full driver battery | 9 ladders × 3–4 rungs ≈ **29 rungs**, each a full forward solve over the window |
+
+| leg | rungs × solve-years × min | projected |
+|---|---|---|
+| ERCOT (2026–2030) | 29 × 5 × 2.0 | **≈ 4.8 h** |
+| PJM (2026–2030) | 29 × 5 × 3.8 | **≈ 9.2 h**, cannot co-run |
+| **specified ERCOT + PJM battery** | | **≈ 14 h serial** |
+
+**FC-6 is `OPTIONAL` at t1f** (`forecast_verdict.CATEGORY_GATING`) and REQUIRED only at
+t2/t3, and **no leg in this battery is promotable — every determination is HOLD.** So the
+full battery gates nothing this session could have delivered, and spending 14 h on it
+ahead of the scorecard would have been the wrong trade.
+
+### 5.2 The bound, stated so it is never mistaken for the whole battery
+
+| | |
+|---|---|
+| **ISO** | **ERCOT only** — cheapest per solve-year, and the only ISO where D-1 is attributed against a paired control (FFR-3C §5). Rule 25 `[R-ISO-SCOPE]` forbids reading any ERCOT verdict across. |
+| **Window** | **2026–2027** (2 solve-years, not the battery's 5) |
+| **Ladders run** | **T1.1** carbon `{0,25,50,100}` · **T1.3** gas `{0.5,1.0,1.5}×` |
+| **Ladders OMITTED** | T1.2 adder/cap duality · T1.4 load · T1.5 IRA cliff · T1.6 RPS/ACP · T1.7 net-CONE · T1.8 tech cost · T1.9 storage-ELCC saturation — **and PJM entirely** |
+
+**Why those two and not a truncated version of all nine.** T1.1 and T1.3 are the
+pure-**dispatch** directional ladders — a 2-year window exercises them honestly. The
+entry/exit-economics ladders (T1.5–T1.9) are **omitted rather than truncated**, because a
+2-year window *cannot* exercise them honestly: D-2's `ENTRY_COD_LAG_YEARS = 2` means an
+entry decided in 2026 commissions in **2028**, outside the window entirely — the same
+censoring measured at §3.5. Running them short would produce directional verdicts on
+mechanisms the window structurally prevents from acting, which is worse than not running
+them.
+
+**No silent caps.** Everything omitted is named above. FC-6 remains **SKIPPED** on every
+T1-F leg's rubric verdict in §2, because a bounded ERCOT-only battery is not the
+committed driver-battery artifact the scorer keys on and must not be presented as one.
 
 ---
 
@@ -474,13 +908,146 @@ this session did not run.
 
 ---
 
-## 7. The per-ISO §2.1b gate scorecard
+## 7. Regression vs FF-2D — every moved metric with its causal commit
 
-*(pending)*
+Diffed against the FF-2D rubric snapshot, preserved verbatim by this session under
+`<iso>-t1f-ff2d` before the bare keys were refreshed (§6 of the merge tool's rationale).
+
+**No determination moved. All six were HOLD at FF-2D; all six are HOLD now.** FC-1, FC-3,
+FC-4, FC-5, FC-6 and FC-7 are unchanged in every ISO. **Every movement is inside FC-2**,
+and it splits cleanly into three causes that must not be conflated:
+
+### 7.1 GENUINE metric movement — the signed decisions
+
+| ISO | row | FF-2D | now | causal commit |
+|---|---|---|---|---|
+| **ERCOT** | row1 reserve-margin | CAVEAT | **FAIL** | `24b1602` (D-1) + `3e33f15` (D-2) — **attributed against the paired control** (§2.1) |
+| **ERCOT** | row6 sustained-VOLL | *did not fire* | **FAIL** (1,137 h/yr) | `24b1602` + `3e33f15` — control does not fire it (63 h/yr) |
+| **CAISO** | row1 reserve-margin | CAVEAT | **FAIL** | `24b1602` + `3e33f15` — **observation, not attributed** (no CAISO control) |
+| **PJM** | row1 reserve-margin | *PASS* | CAVEAT | I12 WARN appears; **not attributed** (no control) |
+| **NEISO** | row1 reserve-margin | *PASS* | CAVEAT | I12 WARN appears; **not attributed** (no control) |
+| MISO / NYISO | row1 | CAVEAT | CAVEAT | unchanged |
+
+### 7.2 ⚠ NEWLY SCORABLE — not regressions, previously invisible
+
+**FC-2 row 4 was SKIPPED on every leg** at FF-2D and FFR-3A (blocker 8: the trajectory
+carried no `reserve_backstop` split). It is scorable for the first time here, so its
+values are **new measurements, not movements**:
+
+| ISO | row 4 now | causal commits |
+|---|---|---|
+| **CAISO** | **FAIL 65.5 %** | `34c2f25` (FFR-3D — emit the split) + `0830d134` (this session — actually read it) |
+| NYISO | CAVEAT 23.8 % | same |
+| PJM | CAVEAT 23.6 % | same |
+| NEISO | CAVEAT 11.7 % | same |
+| MISO | PASS 9.2 % | same |
+| ERCOT (+control) | PASS 0.0 % | same |
+
+Reading these as "FC-2 got worse" would be wrong: **the metric did not move, the
+instrument started reporting it.** Without `0830d134` every one of them would have read a
+false `PASS 0 %` (§2.2).
+
+### 7.3 ⚠ A GENUINE IMPROVEMENT, and the first positive evidence for D-2
+
+| ISO | row | FF-2D | now |
+|---|---|---|---|
+| **MISO** | row3 cobweb | **FAIL** — `cobweb (I13 WARN ⇒ row FAIL): gas_ct(3)` | **PASS** — `no cobweb (I13 PASS)` |
+
+This is the FF-2C-induced MISO gas_ct cobweb the mechanism matrix records (*"MISO … induced
+the I13 gas_ct cobweb → FC-2 FAIL, routed to BLK-10"*). **At this HEAD it is gone.**
+
+`entry_commissioning_lag` is D-2's **structural anti-cobweb** — decide in year Y, commission
+at Y+2, so decision and commissioning separate and the oscillation damps. FFR-2B could not
+test it and said so: *"(c) The anti-cobweb claim is UNTESTED, not won — I13 PASSES in BOTH
+arms, so this window contained no cobweb to damp."* **MISO's FF-2D leg did have one**, and
+it is the one case in the program where the claim was testable at all.
+
+**Stated at the right strength: this is CONSISTENT WITH the anti-cobweb claim, not an
+attribution.** The FF-2D leg differs from this one in more than D-2 — cache epoch, the
+FFR-2C net-CONE re-anchor, the C.4(c) un-pin and D-1 all moved too — and no paired control
+was run. What is established is narrow and worth the owner's attention anyway: **the only
+measured cobweb in the program has disappeared under the configuration D-2 armed**, which is
+the first evidence pointing *for* D-2 in a battery otherwise dominated by adverse D-2
+findings (§2.1 adequacy, §3.5 additions censoring).
+
+### 7.4 FC-7 — against FFR-3A rather than FF-2D
+
+FF-2D reads FC-7 CAVEAT, but only because it worked around the missing artifact with a
+scoring-time helper (`scripts/_ff2d_emit_run_config.py`). Measured against **FFR-3A**,
+which scored the producer as it actually was:
+
+| | FFR-3A | now | causal commits |
+|---|---|---|---|
+| FC-7, every T1-F leg | **FAIL** (`run_config.json` absent by construction) | **CAVEAT** (only the DOF ledger remains) | `34c2f25` (FFR-3D) + `05690366` (this session — without which the emitter never ran) |
 
 ---
 
-## 8. Open blockers
+## 8. The per-ISO §2.1b gate scorecard
+
+**This is the artifact the owner's gate-open conversation happens on.** Assembled by
+`scripts/build_ffr3a2_scorecard.py` from committed artifacts only — it scores nothing
+itself, every verdict is read from an artifact another instrument produced, and it
+re-derives without a solve. Machine copy: `results/ffr3a2/scorecard/scorecard.json`.
+
+`scored_at_sha` `def7cbf8` · `cache_epoch` 2026-08-03 · **holdout freeze ACTIVE**
+
+The §2.1b gate opens per ISO on four criteria (plan §0/§2.1b): **(a)** completed backcast
+calibration, **(b)** green T1 proof-of-concept gates, **(c)** measured worth-the-compute
+evidence, **(d)** explicit per-campaign owner authorization.
+
+| ISO | (a) backcast determination | marker | (b) t1f | t1h | t1x | (c) proj h | solo | **gate** |
+|---|---|---|---|---|---|---|---|---|
+| **PJM** | **CALIBRATED** (clean, 16/16) | `complete` | HOLD | HOLD | HOLD | 7.34 | **yes** | **CLOSED on (b)** |
+| **NEISO** | CALIBRATED-WITH-CAVEATS | `complete` | HOLD | HOLD | — | 0.95 | no | **CLOSED on (b)** |
+| **NYISO** | CALIBRATED-WITH-CAVEATS | `complete` | HOLD | HOLD | — | 1.09 | no | **CLOSED on (b)** |
+| **CAISO** | CALIBRATED-WITH-CAVEATS | **none** | HOLD | — | — | 2.78 | no | **CLOSED on (a) + (b)** |
+| **ERCOT** | **NOT-YET** | **none** | HOLD | — | HOLD | 2.00 | no | **CLOSED on (a) + (b)** |
+| **MISO** | **NOT-YET** | **none** | HOLD | HOLD | — | 10.12 | **yes** | **CLOSED on (a) + (b)** |
+
+### 8.1 The reading, PJM first
+
+**No ISO clears the gate, and criterion (b) is what closes it for all six** — every T1-F,
+T1-H and T1-X determination measured in this session is **HOLD**. That is unchanged from
+FF-2D in kind, and this session did not move a single determination (§7).
+
+* **PJM is the closest, and by a wide margin.** It is the only ISO with a **clean
+  `CALIBRATED`** backcast (every criterion passing, 16/16, zero caveats) *and* a `complete`
+  marker. Its T1-F blocker is **one invariant, marginal**: I7 short by **366 MW on a
+  150,454 MW requirement — 0.24 %, in 2030 only**. Its FC-2 is CAVEAT, not FAIL, and its
+  reserve margin never leaves the requirement-implied band except in that terminal year.
+  If the owner opens a gate for any ISO on this evidence, PJM is the candidate — and the
+  honest caveat is that its projected cost (**7.34 h, must run solo at 10.0 GB**) is the
+  second-heaviest of the six.
+* **NEISO and NYISO** also hold `complete` markers with caveated determinations, and are
+  by far the **cheapest** (0.95 h and 1.09 h, both co-runnable). NEISO's T1-F blocker is
+  likewise a single I7 miss (218 MW in 2028).
+* **CAISO and MISO and ERCOT fail (a) as well as (b)** — none holds a `complete` marker,
+  and ERCOT and MISO are `NOT-YET` on their own backcast determinations. For those three
+  the forecast gate is not the binding constraint; the backcast is.
+* **ERCOT and CAISO are the two ISOs whose T1-F FC-2 is FAIL** (not CAVEAT), on negative
+  reserve margins — ERCOT to −1.5 %, CAISO to −3.1 % — and CAISO additionally fails FC-2
+  row 4 at a **65.5 %** backstop share (§2.2).
+
+### 8.2 Criterion (d) is NOT evaluated here
+
+`final` is **empty**, deliberately, and no ISO carries a per-campaign authorization.
+**(d) is the owner's decision and this session neither makes it nor recommends it.** The
+scorecard reports (a)–(c) as measured and leaves (d) blank by construction — the
+assembler emits the literal string *"NOT MEASURED HERE — an explicit, per-campaign owner
+decision"* rather than a verdict.
+
+### 8.3 What the readiness half says
+
+FF-3E parts a/b/d are **GREEN for all six ISOs** (§6) — the input-resolution walk resolves
+every forward input 2026–2050 with 0 hard fails, and the golden-posture config round-trips
+with a stable cache key. **Part c is FAIL** (§6.4), and the registered
+`ff-3e-readiness.json` therefore records **`green=False`**, with `gate_open=False` for
+every ISO. Compute is still not the binding constraint; the T1 structural blockers are —
+the same conclusion FF-2D reached, now with a resume-path defect added to it.
+
+---
+
+## 9. Open blockers
 
 1. **A request-side `cache_key()` is not the key a run is recorded under, and nothing
    says so at the call site** (§1.2). `reference_config(...).cache_key()` returns
@@ -505,17 +1072,103 @@ this session did not run.
    solve instead. This is by design (rule 15) but is not stated anywhere a dispatching
    session reads, and it silently invalidates a "expect cache hits" budget.
 
-*(further blockers pending — solve lanes still running)*
+5. **FC-7 fails on EVERY T1-H and T1-X leg by construction** (§3.4) —
+   `run_capacity_hindcast.py` writes `run_config.yaml`; FC-7 row 1 requires
+   `run_config.json`. This is the **unfixed analogue** of FFR-3D's blocker 7, which was
+   fixed only in `run_full_horizon.py`. FC-7 therefore carries no information about leg
+   quality at either tier. **Deliberately not fixed here** — authoring the artifact after
+   seeing the score is what rubric §4 forbids; it wants an instrument lane, landing
+   **before** the next battery, exactly as FFR-3D's T1-F fix did.
+6. **⚠ D-2's commissioning lag CENSORS the T1-H additions bands** (§3.5). T1-H scores
+   `{2023, 2024, 2025}` but `ENTRY_COD_LAG_YEARS = 2` sends the 2024 and 2025 decisions to
+   COD 2026/2027, outside the scored window — so **half the solved decision years cannot
+   score by construction**. Additions bands are mechanically suppressed against any
+   pre-D-2 bundle regardless of entry skill, and a cross-boundary additions comparison is
+   **not like-for-like**. This is a **design decision, not a parameter**: fixing it means
+   either scoring COD-shifted additions or lengthening the window. It currently affects
+   the interpretation of every T1-H additions verdict, including MISO's — whose FC-3 now
+   fails on the censored half alone.
+7. **The ERCOT T1-X price convergence is GONE** (§4.2) — price 2025 regressed 8.6 % PASS →
+   22.5 % FAIL, and ERCOT is the sole regressor among three legs (§4.4). Not attributed;
+   a paired T1-X control at pre-decision defaults would settle it.
+8. **CAISO's 65.5 % backstop share is unexplained** (§2.2). Newly measurable, far past the
+   30 % FAIL threshold, and the driver of CAISO's FC-2 FAIL alongside its negative reserve
+   margins. Nothing here establishes why CAISO closes two-thirds of its adequacy gap
+   through the administrative channel.
+9. **Two silent run-id derivations can collide or produce meaningless ids** (registration
+   commits). `register_forecast_run --summary` derives the id from iso+window+label — so
+   the ERCOT **control** and **treatment** collided and one overwrote the other; and
+   `--bundle` derives it from the **directory basename** — so out-dirs named `miso`,
+   `pjm`, … registered as ids `miso`, `pjm`. Both were caught and fixed here, and neither
+   is guarded. A paired control that silently replaces its own treatment destroys the
+   attribution it exists to produce.
+10. **20 + 4 pre-existing test failures on `origin/main`** carried over from FFR-3A/3D
+    §6, most of them data-lane and expected to clear now that `data/clean` is built.
+    **Not re-triaged here** — this session built the tree but did not re-run the full
+    suite against it.
 
 ---
 
-## 9. What this session did NOT measure
+## 10. What this session did NOT measure — stated explicitly
 
-*(pending)*
+**Measured and reported:** the T1-F half (6 ISOs + an ERCOT pre-decision control, 7 legs),
+the T1-H half (all four curve legs), the T1-X half (3 legs), FF-3E parts a/b/c/d, a
+bounded FC-6, the §2.1b scorecard and the FF-2D regression. **14 solve legs, all cold
+post-epoch at the shipped posture, all scored and registered.**
+
+**NOT measured, and therefore NOT claimed:**
+
+1. **No control arm on ANY leg except ERCOT T1-F.** This is the single biggest limit on
+   everything above. Concretely, it means:
+   * **No T1-H control** — so NEISO's FC-3 movement is refreshed but unattributed
+     (§3.6), and PJM's and MISO's attributions lean on FFR-2B's *external* paired
+     control rather than one run here.
+   * **No T1-X control** — so the ERCOT price-2025 regression (§4.2) and the three-leg
+     asymmetry (§4.4) are circumstantial.
+   * **No CAISO control** — so CAISO's FC-2 CAVEAT→FAIL and its 65.5 % backstop share are
+     observations, not attributions, in the ISO with the *second*-worst adequacy result.
+2. **No attribution of the CAISO 65.5 % backstop share.** It is newly measurable (§2.2)
+   and it is large, but nothing here establishes *why* CAISO closes two-thirds of its
+   adequacy gap administratively.
+3. **FC-6 is bounded to ERCOT / 2026–2027 / two dispatch ladders.** Seven ladders and PJM
+   entirely are **not run** (§5.2, each named). FC-6 therefore remains **SKIPPED** on
+   every T1-F rubric verdict, and the bounded result is not presented as the committed
+   driver-battery artifact.
+4. **FC-5 external corridor is SKIPPED on every leg** — no committed benchmark-corridor
+   table exists (FF-0D/FF-0F intake pending). Untouched by this session.
+5. **The FF-3E kill-resume failure is characterized, not diagnosed** (§6.4). Two candidate
+   mechanisms are named with a one-run discriminating test; neither is confirmed, and no
+   commit is blamed.
+6. **No T1-FF work.** `frontend/data/hindcast/` gained no `meta.kind="full_forward"`
+   record, and the FH-1 gate probe's numbers are **not** quoted as T1-FF skill anywhere
+   here. **The FH block is NOT lifted** and nothing here bears on it.
+7. **G-31 exit throughput was not re-opened.** PJM's and MISO's depth residuals (§3.8,
+   §3.9) are reported as the chartered G-31 lane's business (Addendum F.1); no throughput
+   mechanism was armed, proposed or parameterized.
+8. **Nothing was promoted and no gate was opened.** No keeper moved, no marker was
+   written, no holdout year was solved or scored, and the freeze was neither spent nor
+   worked around. Criterion (d) is left blank by construction (§8.2).
+9. **No `ScenarioConfig` default moved.** Both signed mechanisms remain armed exactly as
+   the owner left them (Addendum D.1), and no band, damper or parameter was adjusted in
+   response to any score.
+
+### 10.1 Two scoring changes were made — both ADVERSE, both instrument repairs
+
+Stated here because "nothing was tuned" must survive scrutiny. This session changed two
+things that affect scores, and **both make results worse, not better**:
+
+| change | effect | why it is not tuning |
+|---|---|---|
+| `05690366` — fix the `write_run_config` TypeError | FC-7 FAIL → CAVEAT | repairs a producer that crashed by construction; no value chosen to clear a band |
+| `0830d134` — FC-2 row 4 reads the measured split | NEISO PASS → CAVEAT, CAISO → **FAIL** | the code asserted a "structurally zero" backstop the run's own ledger disproved |
+
+The first *improves* FC-7 — but only by making an artifact exist that the runner already
+intended to write; no number moved. The second **degrades** FC-2 in three ISOs and turns
+one PASS into a FAIL. A session tuning toward a better answer does not do that.
 
 ---
 
-## 10. Standing disclosure list
+## 11. Standing disclosure list
 
 Carried verbatim from `docs/forecast-readiness-peer-review-2026-07.md` §4 (the single
 wording authority):
