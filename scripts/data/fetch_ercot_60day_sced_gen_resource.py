@@ -55,6 +55,19 @@ Run (the ERCOT-74 leg-1 intake — 2024 RT-tail cluster days, evening window):
     python scripts/data/fetch_ercot_60day_sced_gen_resource.py \
         --delivery-days 2024-03-04 2024-04-16 ... \
         --hod-start 11 --hod-end 22 --window-label 2024_ercot74_tail_days
+
+Run (the ERCOT item-8 part-(a) intake — CT fleet, FULL SPAN, all hours): the
+day-list scope above is what the ERCOT-147 §4 reopen condition asked to be
+lifted, so that the CT daily conduct object can be *measured* rather than
+sampled on 82 selected days. ``--resource-types SCLE90 SCGT90`` cuts the day
+to ~15 % of its rows (~0.5 MB of parquet), which is what makes a ~700-day
+span affordable; ``--shard-by-month`` bounds resident memory to one month and
+``--skip-existing`` makes the span resumable after an interruption:
+    python scripts/data/fetch_ercot_60day_sced_gen_resource.py \
+        --delivery-range 2024-01-10 2025-12-31 \
+        --resource-types SCLE90 SCGT90 \
+        --shard-by-month --skip-existing \
+        --window-label ct_fullspan --out-dir data/raw/ercot/SCED-CT
 """
 
 from __future__ import annotations
@@ -159,8 +172,23 @@ def fetch_days(
     hod_start: int = 0,
     hod_end: int = 23,
     zip_cache: Path | None = None,
-) -> Path:
-    """Fetch each delivery day's publication zip, keep the hod window, write parquet."""
+    resource_types: tuple[str, ...] | None = None,
+    shard_by_month: bool = False,
+    skip_existing: bool = False,
+) -> list[Path]:
+    """Fetch each delivery day's publication zip, keep the hod window, write parquet.
+
+    ``resource_types`` restricts the kept rows to those ``Resource Type`` codes
+    (e.g. ``("SCLE90", "SCGT90")`` for the CT fleet) — the scoping that makes a
+    FULL-SPAN multi-year intake size-feasible where the unscoped day is ~90 MB
+    of CSV. ``shard_by_month`` writes one parquet per DELIVERY month instead of
+    a single merged file, which is what bounds memory on a multi-year span (a
+    coerced day is ~30 MB resident; a whole 700-day span concatenated is not
+    representable). ``skip_existing`` makes such a span resumable: an already
+    written month shard is left alone and its days are never re-fetched.
+
+    Returns every parquet written (one element unless ``shard_by_month``).
+    """
     bad = [d for d in delivery_days if d > max_delivery_date]
     if bad:
         raise SystemExit(
@@ -172,9 +200,45 @@ def fetch_days(
     for doc in docs:
         by_pub_day.setdefault(doc["PublishDate"][:10], []).append(doc)
 
-    frames = []
-    unreachable = []
+    out_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    frames: list[pd.DataFrame] = []
+    unreachable: list[tuple[date, date]] = []
+    skipped: list[date] = []
+    current_month: str | None = None
+
+    def _shard_path(month: str | None) -> Path:
+        label = window_label if month is None else f"{window_label}_{month}"
+        return (
+            out_dir
+            / f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{label}.parquet"
+        )
+
+    def _flush(month: str | None) -> None:
+        """Write the buffered days out as one shard and release them."""
+        if not frames:
+            return
+        merged = pd.concat(frames, ignore_index=True)
+        frames.clear()
+        out = _shard_path(month)
+        merged.to_parquet(out, index=False)
+        written.append(out)
+        print(
+            f"wrote {out.name} ({len(merged):,} rows, "
+            f"{out.stat().st_size / 1e6:.1f} MB)",
+            flush=True,
+        )
+        del merged
+
     for dd in sorted(delivery_days):
+        if shard_by_month:
+            month = dd.strftime("%Y-%m")
+            if month != current_month:
+                _flush(current_month)
+                current_month = month
+            if skip_existing and _shard_path(month).exists():
+                skipped.append(dd)
+                continue
         pub = dd + timedelta(days=PUBLICATION_LAG_DAYS)
         cands = by_pub_day.get(pub.isoformat(), [])
         if not cands:
@@ -202,6 +266,19 @@ def fetch_days(
                 df["SCED Time Stamp"], format="%m/%d/%Y %H:%M:%S"
             ).dt.hour
             df = df[(hod >= hod_start) & (hod <= hod_end)]
+        # Resource-type scope, applied on the raw published code so the filter
+        # is auditable against the CSV itself (SCLE90/SCGT90 = the CT fleet).
+        # An empty day after scoping is REPORTED, never silently dropped.
+        if resource_types is not None:
+            present = set(df["Resource Type"].unique())
+            df = df[df["Resource Type"].isin(resource_types)]
+            if df.empty:
+                print(
+                    f"  {dd} (pub {pub}): 0 rows after resource scope "
+                    f"{sorted(resource_types)} — day carried {sorted(present)}",
+                    flush=True,
+                )
+                continue
         # Coerce PER DAY: a whole multi-day window of all-string frames is
         # ~60 bytes/cell and OOM-kills a 15 GB container at the final concat
         # (observed live on the 25-day ERCOT-74 intake); the coerced float64
@@ -212,21 +289,16 @@ def fetch_days(
             f"(hod {hod_start}..{hod_end})",
             flush=True,
         )
-    if not frames:
+    _flush(current_month if shard_by_month else None)
+    if not written and not skipped:
         raise SystemExit("no requested delivery day is reachable — nothing to write")
 
-    merged = pd.concat(frames, ignore_index=True)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out = (
-        out_dir
-        / f"60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{window_label}.parquet"
-    )
-    merged.to_parquet(out, index=False)
     print(
-        f"wrote {out} ({len(merged):,} rows, {out.stat().st_size / 1e6:.1f} MB); "
+        f"wrote {len(written)} parquet(s) to {out_dir}; "
+        f"{len(skipped)} day(s) already covered by an existing month shard; "
         f"unreachable days: {[str(d) for d, _ in unreachable] or 'none'}"
     )
-    return out
+    return written
 
 
 def main() -> None:
@@ -234,8 +306,15 @@ def main() -> None:
     ap.add_argument(
         "--delivery-days",
         nargs="+",
-        required=True,
         help="delivery days to fetch, YYYY-MM-DD (publication = day + 60)",
+    )
+    ap.add_argument(
+        "--delivery-range",
+        nargs=2,
+        metavar=("START", "END"),
+        help="inclusive delivery-day range YYYY-MM-DD YYYY-MM-DD — the "
+        "full-span alternative to --delivery-days (use with --resource-types "
+        "and --shard-by-month; unreachable days are reported, never faked)",
     )
     ap.add_argument("--window-label", required=True)
     ap.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR))
@@ -251,9 +330,42 @@ def main() -> None:
         default=None,
         help="directory caching the downloaded daily zips (resumable re-runs)",
     )
+    ap.add_argument(
+        "--resource-types",
+        nargs="+",
+        default=None,
+        help="keep only these published Resource Type codes (e.g. SCLE90 "
+        "SCGT90 for the CT fleet) — the scope that makes a full-span intake "
+        "size-feasible. Default: every resource, as before.",
+    )
+    ap.add_argument(
+        "--shard-by-month",
+        action="store_true",
+        help="write one parquet per DELIVERY month instead of one merged file "
+        "(bounds memory on a multi-year span, and makes it resumable)",
+    )
+    ap.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="with --shard-by-month, leave already-written month shards alone "
+        "and never re-fetch their days",
+    )
     args = ap.parse_args()
 
-    days = [datetime.strptime(d, "%Y-%m-%d").date() for d in args.delivery_days]
+    if bool(args.delivery_days) == bool(args.delivery_range):
+        ap.error("pass exactly one of --delivery-days / --delivery-range")
+    if args.delivery_range:
+        start, end = (
+            datetime.strptime(d, "%Y-%m-%d").date() for d in args.delivery_range
+        )
+        if end < start:
+            ap.error(f"--delivery-range END {end} precedes START {start}")
+        days = [start + timedelta(days=i) for i in range((end - start).days + 1)]
+    else:
+        days = [datetime.strptime(d, "%Y-%m-%d").date() for d in args.delivery_days]
+    if args.skip_existing and not args.shard_by_month:
+        ap.error("--skip-existing requires --shard-by-month")
+
     fetch_days(
         days,
         args.window_label,
@@ -262,6 +374,9 @@ def main() -> None:
         hod_start=args.hod_start,
         hod_end=args.hod_end,
         zip_cache=Path(args.zip_cache) if args.zip_cache else None,
+        resource_types=tuple(args.resource_types) if args.resource_types else None,
+        shard_by_month=args.shard_by_month,
+        skip_existing=args.skip_existing,
     )
 
 
