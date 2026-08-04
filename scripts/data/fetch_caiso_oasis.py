@@ -65,6 +65,7 @@ import argparse
 import datetime as dt
 import io
 import re
+import signal
 import sys
 import time
 import urllib.request
@@ -217,8 +218,30 @@ def _url(params: dict, start: dt.date, end: dt.date, node: str | None) -> str:
 #: throttles a burst. A 60 s ceiling turned those two effects into spurious
 #: "too-large window" verdicts, so the adaptive sizer halved a window that was
 #: never too large. Give a slow response room to land; genuine hangs are still
-#: bounded by ``retries``.
+#: bounded by ``retries`` and by :data:`REQUEST_WALL_CLOCK_S`.
 REQUEST_TIMEOUT_S = 180
+
+#: Hard wall-clock bound per request, enforced with ``SIGALRM``.
+#:
+#: ``urlopen(timeout=...)`` is a **per-socket-operation** timeout, not a total
+#: one, so a throttled OASIS that trickles bytes indefinitely never trips it:
+#: measured 2026-08-04 (caiso-165), a throttled ``resp.read()`` sat for over
+#: ten minutes inside a call with ``timeout=180`` and printed no failure,
+#: stalling the crawl with no forward progress and no diagnostic. This bound is
+#: what makes a throttled request FAIL rather than HANG, so the retry/backoff
+#: path can actually run.
+REQUEST_WALL_CLOCK_S = 240
+
+
+class _RequestTimeout(Exception):
+    """Raised by the SIGALRM handler when a request exceeds its wall clock."""
+
+
+def _alarm(_signum, _frame):  # noqa: ANN001 - signal handler signature
+    """SIGALRM handler: turn a trickling read into a catchable failure."""
+    raise _RequestTimeout(
+        f"exceeded {REQUEST_WALL_CLOCK_S}s wall clock (OASIS throttle trickle)"
+    )
 
 
 def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
@@ -231,6 +254,8 @@ def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
     """
     delay = sleep_s
     for attempt in range(retries):
+        prev = signal.signal(signal.SIGALRM, _alarm)
+        signal.alarm(REQUEST_WALL_CLOCK_S)
         try:
             with urllib.request.urlopen(url, timeout=REQUEST_TIMEOUT_S) as resp:
                 return resp.read()
@@ -243,6 +268,9 @@ def _fetch(url: str, retries: int = 3, sleep_s: float = 5.0) -> bytes | None:
             if attempt < retries - 1:
                 time.sleep(delay)
                 delay *= 2
+        finally:
+            signal.alarm(0)
+            signal.signal(signal.SIGALRM, prev)
     return None
 
 
