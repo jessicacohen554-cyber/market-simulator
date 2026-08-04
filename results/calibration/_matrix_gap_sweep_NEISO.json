@@ -604,6 +604,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
+        {
           "row": "cc_nameplate_summer_derate",
           "cells": "UUUUKU",
           "cell": "U"
@@ -668,6 +673,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
         {
           "row": "coal_mustrun_per_plant",
           "cells": "KKKKKK",
@@ -957,6 +967,11 @@
           "row": "gas_monthly_actuals",
           "cells": "GKK.KK",
           "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
         }
       ],
       "excluded": false,
@@ -1054,6 +1069,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "gas_st_startup_spread",
           "cells": "UUUUKU",
           "cell": "U"
@@ -1090,6 +1110,16 @@
       "owning_rows": [
         {
           "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
           "cells": "KKKKKK",
           "cell": "K"
         },
@@ -1269,6 +1299,11 @@
           "cell": "K"
         },
         {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "coal_takeorpay_committed",
           "cells": "...K..",
           "cell": "."
@@ -1364,9 +1399,19 @@
           "cell": "I"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "measured_offer_surface",
           "cells": "KKRUGI",
           "cell": "I"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "."
         },
         {
           "row": "coal_econ_bound",
@@ -1421,6 +1466,11 @@
         {
           "row": "gas_plant_monthly_pricing",
           "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -1482,6 +1532,11 @@
           "row": "nysdec_peaker_rule_availability",
           "cells": "....K.",
           "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
         },
         {
           "row": "solar_deliverability",
@@ -2814,6 +2869,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "O"
+        },
+        {
           "row": "historic_outage_overlay",
           "cells": "UUUUIU",
           "cell": "U"
@@ -2822,6 +2882,11 @@
           "row": "campd_outage_windows",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "R"
         }
       ],
       "excluded": false,
@@ -2983,6 +3048,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
         {
           "row": "temp_dependent_derate",
           "cells": "UKRKGK",
