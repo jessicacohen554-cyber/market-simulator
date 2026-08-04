@@ -3,7 +3,29 @@
 **Date:** 2026-08-04 · **Lane:** cross-ISO hygiene (`xiso-1/2/3` predecessors) ·
 **Base:** `origin/main` @ `d7363b0e` · **Branch:** `claude/cross-iso-shared-stem-backlog-s4sn78`
 
-**Pushed BEFORE any matrix byte is written.** Nothing below is retro-fitted.
+**Written and committed BEFORE any matrix byte was written.** Nothing below is retro-fitted.
+
+> **SUPERSEDED IN FLIGHT — READ THIS FIRST, AND READ THE REST AS WHAT IT NOW IS.**
+> While this pre-registration was being written against `origin/main` @ `d7363b0e`, a
+> **concurrent session, `xiso-3`, closed the identical backlog** and merged to main
+> (`de247065`, PR #3442/#3444; main moved `d7363b0e` → `fe90fb8f` mid-session, discovered on
+> the first push). **This session therefore executed NO registration** — every one of the 46
+> fields was already registered when its first push attempt landed.
+>
+> The document is kept, unedited below this note, for the one thing it is now good for:
+> it is the **timestamped record that the §5 registration map was derived independently**,
+> from the code, before its author had seen xiso-3's. That is what makes the 43-of-46
+> agreement in `FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md` §2 a real cross-check
+> rather than a restatement. Read §5 as an independently-derived comparison map, §6/§7 as
+> criteria scored against **xiso-3's** work rather than this session's, and the whole as
+> verification — **not** as a claim that this session closed anything. It did not.
+>
+> Two numbers below are wrong and are corrected rather than edited away: §1/§7 say **seven**
+> fields are armed on two keepers at once (§5's own table lists all of them, and xiso-3
+> counts **nine** — the three `ct_drag_*` scalars were collapsed to one line in the prose but
+> not in the table), and §5's `coal_lignite_passthrough_sigmoid` is declared here as a "+1
+> adjacent addition" when xiso-3 had already registered it. xiso-3's counts are the correct
+> ones.
 
 **Keepers at this HEAD, read from the shards, ALL UNCHANGED by this session:**
 ERCOT `2026-08-03-ercot158-pool-arm` · CAISO `2026-08-04-caiso164-zonal-loss-surface` ·
