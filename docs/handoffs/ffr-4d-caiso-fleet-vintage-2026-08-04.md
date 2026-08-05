@@ -57,7 +57,7 @@ digit.
 | item | verified |
 |---|---|
 | `origin/main` | `5eac75b0` |
-| CAISO keeper | **`2026-08-04-caiso-166-measured-dlap`** — read from `frontend/data/backcast/keepers/CAISO.json` |
+| CAISO keeper | **`2026-08-04-caiso-172-measured-path15`** — re-read from `frontend/data/backcast/keepers/CAISO.json` after the final rebase; the packet cited `2026-08-04-caiso-166-measured-dlap`, which this branch also sat on for most of the session. The re-verify-at-your-own-head instruction was exercised twice. |
 | `complete` markers | {NEISO, NYISO, PJM} — **CAISO absent**, as the packet states |
 | `final` markers | EMPTY |
 | holdout spend freeze | **ACTIVE** |
@@ -462,7 +462,7 @@ reconciled hybrid class is invented to close a residual. FFR-3P's B-6 is thereby
 | id | item | why not here |
 |---|---|---|
 | **D-1** | **Battery accreditation rate — CAISO absent from `STORAGE_ELCC_BY_DURATION_BY_ISO` while CAISO publishes 13,365/14,131 = 0.9458.** +3,990.6 MW, the largest remaining term. | §6.1: a rate not a fleet; objects don't map one-for-one; and it would move row 4 by an unchartered route. |
-| **D-2** | **THE CAISO KEEPER `2026-08-04-caiso-166-measured-dlap` IS PRE-EPOCH AND OWES A RE-SOLVE + RE-GATE.** Its metrics were produced on the flat 8,000 MW scalar. Cache epoch 2026-08-04c records it. | A keeper re-solve is a 3-year run plus a full re-gate under rules 15/16 — its own session in the CAISO lane. **Stated as owed, not done.** |
+| **D-2** | **THE CAISO KEEPER `2026-08-04-caiso-172-measured-path15` IS PRE-EPOCH AND OWES A RE-SOLVE + RE-GATE.** Its metrics were produced on the flat 8,000 MW scalar. Cache epoch 2026-08-04c records it. | A keeper re-solve is a 3-year run plus a full re-gate under rules 15/16 — its own session in the CAISO lane. **Stated as owed, not done.** |
 | **D-3** | **ERCOT's storage row is the other hand-entered entry** (17,000 shipped vs 13,709.3 by the registry's own EIA-860 construction). | Rule 25 `[R-ISO-SCOPE]`. ERCOT's cited source (ERCOT Monthly Dec 2025) is a *later* vintage than EIA-860 2025 ER, so this may be a legitimate misalignment rather than a defect — it needs ERCOT's lane to judge, not mine. |
 | **D-4** | **CAISO's storage ELCC portfolio dilution is a hard 1.0** (`STORAGE_ELCC_DILUTION_*` hold ERCOT only) — a much larger assumption at 15,450 MW than at 8,000. | New registry entry for another ISO; belongs with D-1. |
 | **D-5** | **The other five ISOs still take a forecast scalar for their backcast storage fleet.** Immaterial for PJM/MISO/NYISO/NEISO (their rows were derived from EIA-860 and sit within a few MW), material only for ERCOT. | Enrolling an ISO in `STORAGE_MEASURED_BASE_FLEET_ISOS` moves that ISO's keeper; each needs its own lane. |
