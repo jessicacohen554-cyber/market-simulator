@@ -2488,3 +2488,93 @@ CAISO-GRANT [OPUS].** Prompts: pack §0l. Open queue carried forward: FFR-5B E-1
 spatial grain + clean tiers — next wave's scoping card), the §5.4 residual sizing, FFR-3V §6.1
 (now blocking FFR-5E's hindcast arm), FFR-4D's 52.7 % accreditation half, the CAISO anchor
 (D-15 posture), and the pre-existing test failures on main.
+
+## Addendum T — Wave-5 lanes adjudicated: CAISO-GRANT and FFR-5E CLEAN, FFR-5D partial (measurement outstanding)
+
+**Written 2026-08-05 by the workstream manager at `origin/main` `34473b0c`.** Context: the §0l
+prompts were never pasted (owner confirmation, recorded in pack §0n); after the manager
+re-dispatched them at `70acd78c` all three lanes ran the same morning. Everything below is
+verified off committed artifacts at this HEAD, not inherited from lane self-reports.
+
+### T.1 CAISO-GRANT — LANDED, ADJUDICATED CLEAN (PR #3599)
+
+`complete` now reads {CAISO, NEISO, NYISO, PJM}. The determination was scorer-verified against
+the named run (`CALIBRATED-WITH-CAVEATS`, 0 FAILs, the two caveats being the owner's
+2026-07-30 act at caiso-145, no new slot spent), `audit_keepers --iso CAISO` M1 PASS,
+mechanism-matrix zero-delta, `locked_test` note "never authorized", and the lane PROVED live
+that the freeze outranks the marker (`--year 2022 --holdout-authorized` refused citing the
+freeze first). D-5(b) now applies to every future CAISO promotion. Two disclosures adopted
+into the record:
+* **caiso-174's committed bundle carries no `legitimacy_diagnostics.json`**, so C7/C8 are
+  unscored-protective on the current keeper (the superseded caiso-172 scored both PASS).
+  Disclosed-not-disqualifying per the NEISO precedent; the close-out is scorer-only (rule 21:
+  no re-solve) and CHEAP — queued as a manager-charterable follow-up.
+* **The `ruff-autofix.sh` PostToolUse hook reflows `src/market_sim/config/constants.py`
+  (3,960 → 9,508 lines) on ANY `.py` Write/Edit** — pre-existing on main (`ruff format
+  --check` fails against main's own bytes; the file is not in `extend-exclude`). The grant
+  session caught it and restored exact HEAD bytes unstaged. This is a rule-27 footgun for
+  every session that touches any Python file: NEW STANDING TRAP (check `git status --short`
+  for constants.py before staging; never push the reflow). The underlying lint-config fix is
+  unowned — small, but it edits `pyproject.toml`/hook behavior, so it gets its own charter.
+
+### T.2 FFR-5E — LANDED, ADJUDICATED CLEAN (PR #3602 chain, D-18(a) discharged as chartered)
+
+`vre_procurement_additions_enabled: bool = False` (verified at HEAD), forecast-mode-only,
+matrix row in the same PR (28c), zero free parameters. Byte-identity proven the strong way —
+shipped digest identical between the base commit (field absent) and the feature commit, pinned
+default `cache_key()` unmoved. Measurement by the FFR-4A harness pattern (evolve step-4/5
+direct, six ISOs × 2026-2029, no LP, no run produced ⇒ rule 15 N/A): the MISO-2027
+demonstration shows one physical queue spent once (armed = 2,489.3 economic + 2,510.7 procured
+= 5,000.0 MW, exactly the budget an un-netted channel would have overshot), and MISO-2028
+shows the closed defect (shipped builds nothing, armed commissions 960 MW committed pipeline).
+The hindcast arm was BLOCKED per FFR-3V §6.1 and the lane honored the block. Rule 13's
+boundary is enforced mechanically (a loader spy fails on any `operable`/`retired` read). The
+lane's guard sentence — this does not and cannot close MISO's 18.649 GW — precedes every
+number, as chartered. Two self-caught defects (gate enforced only at one call site; the
+cache-key registration miss that would have invalidated every cached bundle) were fixed and
+regression-pinned before merge. **New unowned finding, recorded:** `assign_zone_by_coords` has
+incomplete zone rules for PJM and MISO (every PJM row falls back to `PJM_AEP_Ohio`) — a
+pre-existing condition shared identically with the thermal limb, measured not introduced.
+**Arming anywhere, including MISO, remains a SEPARATE owner decision (rule 25)** — no card put
+until there is measurement worth deciding on.
+
+### T.3 FFR-5D — PARTIAL: implementation LANDED, paired-arm measurement NEVER RAN
+
+PR #3601 chain landed `capacity_screen_unified_lookahead` (default OFF, cache-key-registered,
+byte-identity proven by test), the unification (one signal per entering year, bridge-adjacent
+included, rule-22 compliance by construction with quarantine assertions untouched), all three
+level repairs (storage peak-shave into the stack; entering-year VRE capacity; hourly
+availability — none escalated, zero new tunables), the matrix row, the §2 PRE-REGISTERED reads
+(committed before any solve — the discipline held), and the read-out probe
+`scripts/probes/ffr5d_paired_arm.py`. **But handoff §3 ("Measured results") and §4
+("Governance position") are empty placeholders, there are no
+`ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}` entries in `frontend/data/hindcast/`, and
+no PR comment explains** — the two pre-registered invocations (4 cold LP years each) evidently
+never completed in that container. Not a lane failure: the pre-registration makes the
+continuation purely mechanical. **FFR-5D-M chartered** (prompt: pack §0o) — run the two §2
+invocations exactly, execute the probe, register both arms, fill §3/§4 by appending. It
+qualifies under Q.2 (no committed-artifact answer exists).
+
+### T.4 Standing consequences
+
+* **Wave-5 close: NOT RUN** — blocked solely on FFR-5D-M's measurement.
+* **FH-4/FH-5: REMAIN BLOCKED** (I.1). The S.5 rider is unsatisfied by construction — the
+  D-19(a) measurement does not exist yet. The lift determination stays with the manager and
+  will be adjudicated against G.2's three binds when FFR-5D-M lands.
+* **Keeper churn during the window, R.1-checked at each step:** ERCOT moved twice (run167b
+  → `2026-08-05-run168b-year-curves`, ercot-168 promotion). Verified at `34473b0c`:
+  `ercot_storage_as_*` all default False, `coal_perplant_offer_yearly` default False — the
+  shipped posture FFR-5D-M's arms inherit is unchanged. Q.2 stands: no T1 battery
+  re-measurement.
+* **Owner governance act, recorded (not an FFR/FH lane):** the holdout freeze was
+  lifted-spent-re-armed in one owner-signed session (PJM 2022 + NEISO 2022 validation
+  touchpoints, PRs #3603/#3606; AskUserQuestion disposition "Lift, spend, re-arm" recorded in
+  `holdout-freeze.json` history). Validation tier only, `final` untouched, freeze back ACTIVE
+  on its original 2026-07-25 basis. The manager verified the history entries carry the owner
+  authorization verbatim.
+* **Open queue delta:** ADD caiso-174 `legitimacy_diagnostics.json` close-out (scorer-only,
+  cheap); ADD the ruff-autofix/constants.py lint-config fix (unowned); ADD
+  `assign_zone_by_coords` PJM/MISO zone rules (unowned, shared with thermal limb). CARRIED:
+  E-1/E-2 scoping card (next sitting), FFR-5B §5.4 residual sizing, FFR-3V §6.1 (still blocks
+  FFR-5E's hindcast arm AND now gates the useful half of any future arming card), FFR-4D
+  row-4, CAISO anchor (D-15), pre-existing test failures.
