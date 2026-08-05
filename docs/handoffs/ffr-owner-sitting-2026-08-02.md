@@ -2461,4 +2461,30 @@ suspend.
 
 ### S.5 — signatures this refresh
 
-*(recorded on receipt)*
+All three signed 2026-08-05, each on the stated recommendation, via the option cards put in this
+refresh:
+
+| decision | signed | what it authorizes |
+|---|---|---|
+| **D-18** | **(a) CHARTER THE CHANNEL LANE** | **FFR-5E**: the default-OFF VRE limb of step 4 (`vre_procurement_additions_enabled: bool = False`), U/V/TS statuses at face value, matrix row in the same PR, paired-arm measured. Arming anywhere (including MISO) is a separate decision (rule 25). FFR-3V §6.1 remains the BLOCKING PRECONDITION for the hindcast arm only |
+| **D-19** | **(a) UNIFY ON LOOKAHEAD + REPAIR** | **FFR-5D**: one price object at every capacity screen (bridge-adjacent included, via the growth-scaled fallback — rule-22-safe) plus the three completeness repairs (storage in the stack, entering-year VRE capacity, peak-hour availability), as ONE gated default-OFF field, paired arms on the FFR-5A posture, LOYO 2023-2025 before any promotion; a repair that needs a new tunable escalates rather than lands |
+| **CAISO `complete`** | **GRANT** | A governance lane writes the CAISO `complete` entry keyed to `2026-08-05-caiso-174-measured-fleet`, determination verified via `scripts/calibration_verdict.py --run-id` (committed artifacts only, never a solve), `audit_keepers` M1 after. Spending 2022 stays suspended by the active freeze; `final` untouched |
+
+Consequences recorded once (the O.2 pattern):
+
+* **FFR-5D and FFR-5E both BRANCH AFTER PR #3577 MERGES** (still open at this writing —
+  re-checked after S was pushed; the interim main move was #3579, an ercot-167 control run).
+  FFR-5C owns the same code surfaces (`_lookahead_reprice_signal`; the entry budget netting);
+  each lane's step 0 verifies the merge and re-reads the landed code.
+* **D-19(a) does not promise the exit gates go green.** The repaired object's level is a
+  measurement to be made, not a target to be hit. If the unified, repaired signal still cannot
+  resolve the real 1.534 GW, that is the finding (rule 1) and FH-4/FH-5 stay blocked on it.
+* **The CAISO grant authorizes the validation ladder and NOTHING else.** `final` is untouched;
+  the freeze suspends spending until it lifts; the grant's execution follows the NYISO/PJM entry
+  shape and cites this addendum as the session-logged owner authorization.
+
+**Wave 5 is now six lanes: 5A ✅ · 5B ✅ · 5C in flight (#3577) · 5D [FABLE] · 5E [OPUS] ·
+CAISO-GRANT [OPUS].** Prompts: pack §0l. Open queue carried forward: FFR-5B E-1/E-2 (RPS
+spatial grain + clean tiers — next wave's scoping card), the §5.4 residual sizing, FFR-3V §6.1
+(now blocking FFR-5E's hindcast arm), FFR-4D's 52.7 % accreditation half, the CAISO anchor
+(D-15 posture), and the pre-existing test failures on main.
