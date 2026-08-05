@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-05-nyiso-127-par-attribution",
+  "label": "nyiso 127 par attribution",
+  "date": "2026-08-05",
+  "shorthand": "nyiso-127-par-attribution",
+  "definition": "nyiso-127 TREATMENT: nyiso_seam_par_attribution=true. Rebuild ALL FOUR NYISO_external border-link caps from the measured MIS P-32 per-neighbour schedules, attributing each posted row to its Gold Book tie-landing zone and splitting SCH - PJ - NY by NYISO's published NY-NJ PAR percentages under published PAR availability (MIS P-33 outSched). SUPERSEDES nyiso_seam_deliverability_envelope (rule 19), set false so run_config reads honestly; the code enforces exclusivity with if/elif, so this is a SINGLE behavioural delta. Zero free parameters, n_residual unchanged at 6. Pre-registration: PREREG-nyiso126 + nyiso-127 addenda 1 and 2.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-05-nyiso-127-par-attribution.js",
+  "bundle": "results/calibration/nyiso127_par_B"
+}
