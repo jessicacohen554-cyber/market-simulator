@@ -962,13 +962,11 @@ class DispatchModel:
         _, primal_status = h.getInfoValue("primal_solution_status")
         if primal_status != 2:
             status = h.modelStatusToString(h.getModelStatus())
-            # TEMP ercot-167 DEBUG (uncommitted): dump an IIS + layout scalars
+            # TEMP ercot-167 DEBUG: dump full LP col/row bounds + layout scalars
             try:
-                import highspy as _hs
                 import os as _os
 
-                _iis = _hs.HighsIis()
-                h.getIis(_iis)
+                _lp = h.getLp()
                 _lay = getattr(self, "layout", None)
                 _meta = {
                     "T": self.T,
@@ -978,19 +976,17 @@ class DispatchModel:
                 for _a in ("vars_per_hour", "_chg_off", "_dis_off", "_soc_off"):
                     if _lay is not None and hasattr(_lay, _a):
                         _meta[_a] = int(getattr(_lay, _a))
-                np.savez(
+                np.savez_compressed(
                     _os.environ.get("ERCOT167_IIS_DUMP", "/tmp/iis_dump.npz"),
-                    iis_cols=np.asarray(_iis.col_index, dtype=np.int64),
-                    iis_rows=np.asarray(_iis.row_index, dtype=np.int64),
+                    col_lower=np.asarray(_lp.col_lower_, dtype=np.float64),
+                    col_upper=np.asarray(_lp.col_upper_, dtype=np.float64),
+                    row_lower=np.asarray(_lp.row_lower_, dtype=np.float64),
+                    row_upper=np.asarray(_lp.row_upper_, dtype=np.float64),
                     **{k: np.int64(v) for k, v in _meta.items()},
                 )
-                logger.info(
-                    "IIS dumped: %d cols, %d rows",
-                    len(_iis.col_index),
-                    len(_iis.row_index),
-                )
+                logger.info("LP bounds dumped (%d cols)", int(_lp.num_col_))
             except Exception as _e:  # noqa: BLE001
-                logger.info("IIS dump failed: %s", _e)
+                logger.info("LP bounds dump failed: %s", _e)
             raise RuntimeError(
                 f"dispatch LP has no feasible primal solution (status: {status})"
             )
