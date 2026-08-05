@@ -3516,3 +3516,14 @@ TRACKED files. Shell cwd persists. Stop-hook on merged history: rev-list count 0
 to amend. MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the cache key. results/ dies with
 the container — commit registrations and handoff BEFORE any long tail work.
 ```
+
+## §0p — FFR-5D-M landed; Wave 5 CLOSED; FH-4/FH-5 lift HELD (2026-08-05 @ `8693b75d`)
+
+FFR-5D-M executed the pre-registered measurement (PR #3611) and was adjudicated CLEAN. The
+manager's lift determination (Addendum U.2): **FH-4/FH-5 stay BLOCKED** — G.2 bind 2 fails
+(0 → 10.9 GW of the wrong fuel, executed pre-window), bind 3 fails (in-window both arms
+execute nothing), and at the repaired price level the admission cap, not unit economics, does
+all retention work. Wave 5 is CLOSED (Addendum U.3). Two cards are at the owner: D-20
+(repaired-level margin-gap decomposition) and E-1/E-2 (RPS spatial grain + clean tiers,
+settled together). Lane prompts follow the owner's signatures — none are dispatched from this
+section yet.
