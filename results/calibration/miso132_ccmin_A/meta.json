@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T06:34:00",
+  "timestamp": "2026-08-05T20:23:53",
   "iso": "MISO",
   "years": [
     2023,
@@ -27,7 +27,7 @@
   "ct_mustrun_per_plant": false,
   "ct_mustrun_floor_frac": 1.0,
   "coal_drop_pof": true,
-  "coal_mustrun_online_pmin": false,
+  "coal_mustrun_online_pmin": true,
   "coal_sync_srmc_tranche": false,
   "ct_intermediate_split": true,
   "ct_intermediate_cf_threshold": null,
@@ -42,6 +42,7 @@
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
   "coal_perplant_offer_level": false,
+  "coal_perplant_offer_yearly": false,
   "nysdec_peaker_rule_availability": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": true,
@@ -74,7 +75,10 @@
     ],
     "temp_derate_slope_st_chp": 0.00141,
     "temp_derate_slope_ct_chp": 0.00141,
-    "miso_coal_night_floor": true
+    "measured_ct_heat_rates": true,
+    "dual_fuel_switching": true,
+    "cc_steam_part_capacity": true,
+    "coal_mustrun_online_pmin": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -240,6 +244,9 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -256,7 +263,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
-  "miso_coal_night_floor": true,
+  "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
   "nyiso_gas_bridge_startup": null,
@@ -275,6 +282,8 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": true,
   "miso_seam_envelope_merit_cap": false,
+  "nyiso_seam_deliverability_envelope": false,
+  "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": true,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -302,55 +311,21 @@
     "unit_outages_short": "../_shared/MISO/unit_outages_short-ee95f581732c.parquet",
     "unit_outages_maxgen": "../_shared/MISO/unit_outages_maxgen-1244687d16cc.parquet",
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
-    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet",
-    "capacity_deliverability": "../_shared/MISO/capacity_deliverability-8949cf5d0c5b.parquet"
+    "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "8d3d5e5",
-  "basis_sha": "1d3ec21d9f3f431ab8bf74481de21baaa54a7e21",
-  "highspy_version": "1.14.0",
+  "git_sha": "3af5ab09",
+  "basis_sha": "331ac57647965a6ce7720c2b48e39253fc714327",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.0",
       "pydantic": "2.13.4"
     }
-  },
-  "reuse": {
-    "source_bundle": "results/calibration/miso113b_nightfloor_B_y24",
-    "requested_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "2b9cf46624be944b"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": null,
-        "scenario_config_sha256": "9e4a68dc4397cd9b"
-      }
-    },
-    "fresh_years": [
-      2025
-    ],
-    "refusals": {
-      "2025": "year not solved in the prior bundle"
-    },
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-08-02T05:32:46",
-    "source_git_sha": "8d3d5e5"
   }
 }
