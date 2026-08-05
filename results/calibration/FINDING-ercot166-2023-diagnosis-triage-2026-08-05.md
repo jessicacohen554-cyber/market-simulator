@@ -47,18 +47,22 @@ adjudicated ercot-160→163 attribution and the basis of the §6 model-class led
 Model minus actual (EIA-930 fuels at the verified 0-lag alignment; CAMPD for the lignite split), mean
 MW over the actual >$1000 hours (n=61):
 
-| | wind | solar | COAL_PRB-class | COAL_LIGNITE-class | gas | storage (net) |
+| | wind | solar | COAL_PRB-class | COAL_LIGNITE-class | gas | storage |
 |---|---|---|---|---|---|---|
-| model − actual | **+354** | +5 | **≈ +800** | ≈ −200 | **−1,950** | **+661** |
+| model − actual | **+354** | +5 | **≈ +800** | ≈ −200 | **−1,950** | **+243** |
 
 - **Solar overrun: RESOLVED** (was the ercot109 finding's +/-0; now +5 MW).
 - **Wind +354** persists (ercot109 had +377/+560) — the daytime-curtailment open issue's tail.
 - **Coal +569 net** is a *class split*: the PRB/sub-bituminous class (incl. Martin Lake) over ≈+800
   while the lignite class is ≈−200. Aug-heat partial derates are structurally absent for the sub-bit
   fleet beyond the plant-grain partial file (ercot-126's per-unit partial extract returned zero rows).
-- **Storage +661 over-discharge** is the largest single physical overrun and the same object as the
-  ercot-162 successor: real batteries at scarcity held capability back (AS + $500–3,000 standing
-  offers); the model discharges at the flat $10 adder.
+- **Storage +243 over-discharge** *(corrected at ercot-167: EIA-930 has no 2023 BAT series — the
+  first cut of this table quoted the model's net position, +661 MW, as if the actual were zero;
+  the delivery-2023 SCED corpus telemetry gives the real actual: PWRSTR discharged **423 MW mean**
+  (p50 327, capability 3,277 MW) in these hours vs the model's 666)*. Same object as the ercot-162
+  successor: real batteries at scarcity held capability back — 2,125 MW of measured AS awards =
+  2,705 MWh of SOC frozen of the fleet's ~4.1 GWh (Phase-0, PRECOMMIT-ercot167) — while the model
+  discharges at the flat $10 adder against a power-only award dock.
 - The −1,950 gas is the mirror: the model meets the hour with cheap surplus and leaves gas headroom
   the real market ran.
 

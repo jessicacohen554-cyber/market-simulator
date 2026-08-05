@@ -4199,13 +4199,46 @@ def run_year(
             float(deploy_sys.max()),
         )
 
+    # Measured AS SOC reservation (ercot_storage_as_soc_reserve, ercot-167 —
+    # matrix §5.1 item 10, the ercot-162 §2 named successor). The power
+    # reservation above withholds the measured award's MW from the discharge
+    # cap but "reserves *power*, not state of charge" (its own docstring);
+    # ERCOT Nodal Protocols §3.17.3 also requires the SOC BEHIND each award
+    # (award × published product duration) to stay in the tank. This floors
+    # battery SOC at Σ_p award_p(t) × duration_p, per-product shares measured
+    # from the same 60-Day corpus, normalized to the SAME committed total the
+    # power dock subtracts (rule 19: one award basis, both sides). Off /
+    # missing series → None (byte-identical LP). Requires storage_as_commitment
+    # (validated); off under the endogenous split (validated).
+    storage_soc_min = None
+    if (
+        getattr(config, "ercot_storage_as_soc_reserve", False)
+        and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and iso == "ERCOT"
+        and storage.n_storage
+    ):
+        from market_sim.model.storage import ercot_storage_as_soc_min
+
+        soc_floor = ercot_storage_as_soc_min(
+            storage_energy_cap, config.weather_year, config.hours
+        )
+        if float(np.asarray(soc_floor).max()) > 0.0:
+            storage_soc_min = soc_floor
+            logger.info(
+                "ERCOT storage AS SOC reservation (%d): fleet floor mean %.0f MWh, "
+                "max %.0f MWh (award x product duration) held out of arbitrage",
+                config.weather_year,
+                float(np.asarray(soc_floor).sum(axis=0).mean()),
+                float(np.asarray(soc_floor).sum(axis=0).max()),
+            )
+
     # CAISO analogue (caiso_storage_as_reservation): reserve the measured
     # battery AS-award MW (Daily Energy Storage Report, storage-as-awards
     # clean datatype) out of the battery power cap, and floor the battery SOC
     # at the tariff 30-min sustain of the spin/non-spin awards
     # (CAISO_AS_SUSTAIN_DURATION_H). Batteries only — pumped storage is not an
     # LESR. Zero fitted parameters; see model.storage.
-    storage_soc_min = None
     if getattr(config, "caiso_storage_as_reservation", False) and iso == "CAISO":
         from market_sim.data.storage_as_awards import upward_award_mw
         from market_sim.model.storage import (

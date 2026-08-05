@@ -616,6 +616,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # battery discharge on the measured multi-tranche ladder and so is a distinct
     # scenario that enters the key.
     "ercot_storage_rt_offer_surface",
+    # ERCOT measured AS SOC-reservation (ercot-167, default off): dropped from
+    # the hash at its default so every pre-existing cache key stays byte-stable
+    # — unarmed no SOC floor is passed (the LP is byte-identical off); an armed
+    # run floors battery SOC at the measured award x published product duration
+    # and so is a distinct scenario that enters the key.
+    "ercot_storage_as_soc_reserve",
     # CAISO published-NQC VRE accreditation (FFR-3P, default off): dropped from
     # the hash at its default so every pre-existing forecast cache key stays
     # byte-stable -- unarmed the resolver never reaches the registry, so the arm
@@ -740,6 +746,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # literal with the key twice was F601-red on main. No behaviour or key
     # changes either way.)
     "ercot_storage_rt_offer_surface": "False",
+    "ercot_storage_as_soc_reserve": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
     "exit_rate_limits": "False",
@@ -756,12 +763,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "federal_ces_replaces_state_rps": "False",
     "ira_45q_credit_window_years": "12",
     "ira_ptc_credit_window_years": "10",
-    # Added by FFR-4C as a DRIVE-BY REPAIR (pre-existing on main, found by the
-    # guard's own check 1): ercot-162 registered the field in
-    # _CACHE_KEY_OPTIONAL_FIELDS without its recorded default here — the same
-    # nyiso-115 miss documented below, leaving a flip of it undetectable and
-    # the registration guard red on every run (rule 24 [R-REGISTRY]).
-    "ercot_storage_rt_offer_surface": "False",
+    # (The FFR-4C drive-by duplicate of ercot_storage_rt_offer_surface that
+    # re-appeared here after a parallel-lane merge was removed at ercot-167 —
+    # the single entry above, with the ercot-165 collapse note, is canonical.)
     "per_tech_wacc_enabled": "False",
     "transmission_expansion_enabled": "False",
     "nyiso_li_locational_reserve": "False",
@@ -5945,6 +5949,29 @@ class ScenarioConfig:
     ercot_storage_as_deployment_from_year: int = 2023  # First weather year the
     # measured-award deployment applies (the storage AS-by-restype series starts
     # 2023, when ECRS launched); earlier years no-op.
+    ercot_storage_as_soc_reserve: bool = False  # ERCOT (ercot-167, matrix §5.1
+    # item 10 — the ercot-162 §2 named successor): floor each battery's SOC at
+    # the MEASURED AS award x the PUBLISHED per-product SOC duration
+    # (Σ_p award_p(t) × duration_p; RegUp/RRS 1 h, ECRS 2 h, Non-Spin 4 h —
+    # reserves.spec.ERCOT_AS_PRODUCT_DURATION_H, Nodal Protocols §3.17.3), so
+    # AS-committed battery ENERGY cannot be arbitraged away. Completes the
+    # measured-award family's missing half: storage_as_commitment reserves the
+    # award's POWER from the discharge cap ("this reserves *power*, not state
+    # of charge — the first-order constraint that binds in the scarcity hours
+    # where the LP over-discharges", model/storage.reserve_storage_as_power);
+    # this reserves the ENERGY behind the same award. Measured 2023 >$1000
+    # actual hours: 2,125 MW held = 2,705 MWh frozen of the fleet's ~4.1 GWh,
+    # leaving ~350–470 MW sustainable vs the 423 MW the delivery-2023 SCED
+    # corpus shows actually discharged (keeper LP: 666 MW). Product split from
+    # ercot_<year>_storage_as_products_hourly.parquet
+    # (derive_ercot_storage_as_products.py), consumed as SHARES of the SAME
+    # committed total the power reservation subtracts — one award basis, both
+    # sides (rule 19), zero fitted scalars (rule 23), forward runs price the
+    # split endogenously instead (ercot_storage_as_endogenous, rule 13).
+    # Requires storage_as_commitment (the reservation it completes); mutually
+    # exclusive with ercot_storage_as_endogenous (validated). Default off
+    # (byte-identical); ERCOT + backcast only
+    # (model/storage.ercot_storage_as_soc_min, run_calibration.py wiring).
     ercot_storage_rt_offer_surface: bool = False  # ERCOT (ercot-162): price the
     # battery fleet's ENERGY-side RT discharge at its MEASURED multi-tranche
     # SCED offer ladder instead of the flat battery_dispatch_adder. The
@@ -10831,6 +10858,23 @@ class ScenarioConfig:
                 "the duration gate bounds the endogenous storage AS split by state "
                 "of charge; enable the endogenous split or clear the duration gate."
             )
+        # The measured SOC reservation completes storage_as_commitment's power
+        # reservation (one award basis, both sides — rule 19); without the
+        # commitment it would floor SOC for an award whose power was never
+        # withheld, and under the endogenous split the LP prices the AS/energy
+        # split itself, so a measured floor would pre-commit it.
+        if self.ercot_storage_as_soc_reserve and not self.storage_as_commitment:
+            raise ValueError(
+                "ercot_storage_as_soc_reserve requires storage_as_commitment: the "
+                "SOC floor backs the same measured award the power reservation "
+                "withholds; arm storage_as_commitment or clear the SOC reserve."
+            )
+        if self.ercot_storage_as_soc_reserve and self.ercot_storage_as_endogenous:
+            raise ValueError(
+                "ercot_storage_as_soc_reserve is mutually exclusive with "
+                "ercot_storage_as_endogenous: the endogenous split prices the "
+                "AS/energy split itself (a measured SOC floor would pre-commit it)."
+            )
         # Forecast multi-product AS requirement must regenerate from forward
         # drivers: the measured-plan fallback (ASPLANNP433) returns an all-zero
         # requirement for any year with no file, so a forecast co-opt without
@@ -11607,6 +11651,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
     "ercot_storage_rt_offer_surface": 1,
+    "ercot_storage_as_soc_reserve": 1,
     "ercot_gas_commitment_bridge": 1,
     "ercot_commitment_posture": 1,
     "ercot_commitment_posture_min_load_frac": 2,

@@ -515,6 +515,90 @@ def reserve_storage_as_power(
     return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
+def ercot_storage_as_soc_min(
+    energy_cap: np.ndarray,
+    year: int,
+    hours: int,
+) -> np.ndarray:
+    """SOC floor backing ERCOT's measured battery AS awards (per-product duration).
+
+    The measured-award power reservation (:func:`reserve_storage_as_power`,
+    ``storage_as_commitment``) reserves *power*, not state of charge — its own
+    docstring names that as "the first-order constraint that binds in the
+    scarcity hours where the LP over-discharges". ERCOT Nodal Protocols
+    §3.17.3 requires an ESR to hold SOC backing each award for the product's
+    duration (RegUp/RRS 1 h, ECRS 2 h, Non-Spin 4 h —
+    :data:`market_sim.model.reserves.spec.ERCOT_AS_PRODUCT_DURATION_H`, the
+    co-opt's own published constants, no new number), so an awarded battery
+    holds ``Σ_p award_p(t) × duration_p`` MWh it cannot arbitrage away. This
+    is the ercot-167 mechanism (``ercot_storage_as_soc_reserve``, matrix §5.1
+    item 10 — the ercot-162 §2 named successor): measured at the 2023 actual
+    >$1000 hours the fleet held 2,125 MW of awards = 2,705 MWh frozen of its
+    ~4.1 GWh, leaving ~350–470 MW sustainable vs the 423 MW the SCED corpus
+    shows it actually discharged (the keeper's LP discharges 666 MW there).
+
+    Product split: measured per-product PWRSTR awards
+    (``ercot_<year>_storage_as_products_hourly.parquet``,
+    ``scripts/data/derive_ercot_storage_as_products.py``), consumed as SHARES
+    of the same committed total series the power reservation subtracts
+    (rule 19: one measured award basis for both sides; the shares file can
+    never move the armed total). Allocated across units pro-rata by ENERGY
+    cap — the stable basis for an energy floor (the power cap at the call
+    site is already award-docked by :func:`reserve_storage_as_power`, so
+    power weights would be degenerate exactly in the high-award hours) — and
+    clipped at each unit's energy cap. Missing either file → all-zero floor
+    (inert), the family convention. Zero fitted parameters (rule 23); forward runs
+    price the split endogenously (``ercot_storage_as_endogenous``), so this
+    measured record is backcast-only, a capability input, never a pinned
+    outcome (rule 13).
+
+    Returns the ``(n_storage, hours)`` SOC lower bound for
+    ``dispatch.build_variable_bounds(storage_soc_min=...)``.
+    """
+    ec = np.asarray(energy_cap, dtype=float)
+    ec2 = np.repeat(ec[:, np.newaxis], hours, axis=1) if ec.ndim == 1 else ec.copy()
+    soc_min = np.zeros_like(ec2)
+    if ec.size == 0:
+        return soc_min
+    total_path = _AS_RESTYPE_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    prod_path = _AS_RESTYPE_DIR / f"ercot_{year}_storage_as_products_hourly.parquet"
+    if not (total_path.exists() and prod_path.exists()):
+        return soc_min
+    from market_sim.model.reserves.spec import (
+        ERCOT_AS_PRODUCT_DURATION_H,
+        ERCOT_AS_PRODUCTS,
+    )
+
+    def _series(frame: "pd.DataFrame", col: str) -> np.ndarray:
+        v = frame[col].to_numpy(dtype=float)
+        if len(v) < hours:
+            v = np.concatenate([v, np.zeros(hours - len(v))])
+        return v[:hours]
+
+    committed = _series(pd.read_parquet(total_path), "storage")
+    prods = pd.read_parquet(prod_path)
+    # Column names follow the product order of ERCOT_AS_PRODUCTS
+    # (RegUp, RRS, ECRS, NonSpin) — asserted so a spec reorder cannot silently
+    # mispair a duration with a product column.
+    names = tuple(n.lower() for n, _c, _t in ERCOT_AS_PRODUCTS)
+    assert names == ("regup", "rrs", "ecrs", "nonspin"), names
+    per = np.stack([_series(prods, n) for n in names])  # (4, hours)
+    tot = per.sum(axis=0)
+    dur = np.asarray(ERCOT_AS_PRODUCT_DURATION_H, dtype=float)[:, np.newaxis]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        share = np.where(tot[np.newaxis, :] > 0.0, per / tot[np.newaxis, :], 0.0)
+    # (hours,) fleet MWh floor: committed total split by measured product
+    # shares, weighted by the published per-product SOC durations.
+    freeze = (share * dur).sum(axis=0) * committed
+    fleet_e = ec2.sum(axis=0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weight = np.where(
+            fleet_e[np.newaxis, :] > 0.0, ec2 / fleet_e[np.newaxis, :], 0.0
+        )
+    soc_min = np.minimum(weight * freeze[np.newaxis, :], ec2)
+    return soc_min
+
+
 # Measured ERCOT hourly battery-fleet capability (60-Day DAM disclosure
 # non-OUT PWRSTR/ESR HSL), derived by scripts/data/derive_ercot_storage_capability.py
 # (provenance, basis decision and the FROZEN-AGAINST-RESIDUALS contract live
