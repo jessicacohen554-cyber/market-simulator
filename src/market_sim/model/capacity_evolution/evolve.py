@@ -110,7 +110,10 @@ def evolve_fleet(
        fossil dates are a default no-op — the exogenous fossil channel is step 0),
     2. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
     3. economic retirements,
-    4. known additions (planned units with ``online_year == year``),
+    4. known additions (planned units with ``online_year == year``), plus the
+       GATED FFR-5E wind/solar limb (``vre_procurement_additions_enabled``,
+       default off) that folds construction-committed EIA-860 proposed VRE
+       rows into the zonal pools tagged ``source: "procured"``,
     5. economic new entry (generation).
 
     Steps 2 and 3 are the JOINT retrofit-or-retire evaluation for
@@ -269,6 +272,19 @@ def evolve_fleet(
         else peak_demand
     )
     planned = _prior_attr(prior_results, "planned_additions", []) or []
+    # FFR-5E procurement channel rows. The runner only LOADS rows when the
+    # gate is armed, but the gate is re-checked HERE as well so the mechanism
+    # is off at its point of use for every caller, not merely at one load
+    # site: a gate that only one caller honours is not a gate. Forecast-mode
+    # only — a backcast's historical VRE rides the vintage snapshot.
+    procured_vre = (
+        (_prior_attr(prior_results, "procured_vre_additions", []) or [])
+        if (
+            getattr(config, "vre_procurement_additions_enabled", False)
+            and config.mode == "forecast"
+        )
+        else []
+    )
     mc_cost = _prior_attr(prior_results, "mc_cost")
     # AS-eligible (storage) fleet power, the AS-revenue saturation driver.
     storage_power_mw = float(_prior_attr(prior_results, "storage_power_mw", 0.0) or 0.0)
@@ -558,6 +574,58 @@ def evolve_fleet(
             for g in _planned_now
         )
 
+    # 4b. FFR-5E near-term VRE procurement (GATED
+    # vre_procurement_additions_enabled, default OFF ⇒ empty list ⇒ this whole
+    # block is a no-op and the shipped path is byte-identical). The WIND/SOLAR
+    # limb of the SAME step-4 known-additions channel above, which skips them
+    # because _map_fuel_type returns None for wind and solar on a premise
+    # FFR-3V §4.3 refuted (the zonal pools' only writer is the economic
+    # screen). A LIMB, never a new step: minting a step 4b mechanism alongside
+    # step 4 would create a second additions channel in the very act of fixing
+    # a rule 19 [R-ONE-MECH]-shaped problem, and would break the
+    # step-0-confirmed-exits : step-4-confirmed-additions symmetry that makes
+    # both auditable (design §2.1).
+    #
+    # Rows commission in the year their EIA-860 ``Effective Year`` names, so
+    # what this contributes is a per-year FLOW (MW commissioning in year Y) —
+    # the object §2.3(c) requires, never a cumulative pipeline stock. Rows
+    # whose effective year falls at or before the run's base year are not
+    # injected: the base year does not evolve, and its pools are already
+    # seeded from RENEWABLE_INSTALLED_MW. That leaves them out (an
+    # UNDER-count, the safe direction), never double-counted.
+    _procured_flow_mw: dict[str, float] = {}
+    if procured_vre:
+        for _r in procured_vre:
+            if int(_r["online_year"]) != year:
+                continue
+            _mw = float(_r["mw"])
+            zone_acc = renewable_additions.setdefault(_r["zone"], {})
+            zone_acc[_r["tech"]] = zone_acc.get(_r["tech"], 0.0) + _mw
+            _procured_flow_mw[_r["tech"]] = _procured_flow_mw.get(_r["tech"], 0.0) + _mw
+            if _rec:
+                # Design §3.5, a HARD requirement rather than a nicety: MW that
+                # cannot be separated from the economic screen's MW is
+                # unauditable — no D-2 attribution can enumerate it and no
+                # rule-19 reconciliation can be performed against it. Mirrors
+                # step 4's source "planned" and step 5's source "economic".
+                events.setdefault("vre_additions", []).append(
+                    {
+                        "tech": _r["tech"],
+                        "mw": _mw,
+                        "zone": _r["zone"],
+                        "source": "procured",
+                        "eia860_id": _r["plant_id"],
+                        "generator_id": _r["generator_id"],
+                    }
+                )
+        if _procured_flow_mw:
+            logger.info(
+                "year %d: procured VRE additions %s (%.0f MW total)",
+                year,
+                {t: round(mw, 1) for t, mw in sorted(_procured_flow_mw.items())},
+                sum(_procured_flow_mw.values()),
+            )
+
     # 4.5 FF-2A pipeline commissioning (entry_commissioning_lag): pending
     # economic-entry decisions whose COD year is reached materialize now —
     # thermal rows enter the fleet (picked up by the step-5 events diff as
@@ -640,6 +708,7 @@ def evolve_fleet(
             peak_demand_mw=peak_demand_used,
             entry_rate_caps_mw=entry_rate_caps_mw,
             entry_pipeline=entry_pipeline,
+            procured_flow_mw=_procured_flow_mw or None,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
         # Decision-grain accounting: in-year builds (fleet diff + VRE screen

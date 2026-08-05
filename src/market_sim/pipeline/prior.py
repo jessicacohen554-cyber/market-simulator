@@ -17,7 +17,7 @@ class provides :meth:`get` and :meth:`__getitem__` shims with exact
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -81,6 +81,13 @@ class PriorYearResults:
     zone_names: "list[str] | None" = None
     wind_cf: "np.ndarray | None" = None
     solar_cf: "np.ndarray | None" = None
+    # FFR-5E procurement channel (GATED vre_procurement_additions_enabled,
+    # default OFF ⇒ ALWAYS EMPTY, so the shipped path is byte-identical):
+    # construction-committed EIA-860 proposed WIND/SOLAR rows — the VRE limb
+    # of the same step-4 known-additions channel ``planned_additions`` feeds.
+    # Loaded once by the runner, read by capacity.evolve_fleet step 4.
+    # Defaulted (not required) so every existing constructor keeps working.
+    procured_vre_additions: list = field(default_factory=list)
 
     def get(self, key: str, default: Any = None) -> Any:
         """Dict-style read with ``dict.get`` semantics.

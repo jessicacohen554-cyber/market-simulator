@@ -2119,6 +2119,186 @@ def load_planned_additions(
     return generators
 
 
+def load_procured_vre_additions(
+    iso: str,
+    iso_config: ISOConfig | None = None,
+    data_dir: Path | None = None,
+) -> list[dict]:
+    """Load EIA-860 construction-committed proposed WIND / SOLAR rows for an ISO.
+
+    The VRE limb of the step-4 known-additions channel (FFR-5E; design
+    ``docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3),
+    GATED on ``ScenarioConfig.vre_procurement_additions_enabled`` (default
+    OFF) and applied by :func:`evolve_fleet` step 4. The exact sibling of
+    :func:`load_planned_additions`, which skips wind and solar because
+    ``_map_fuel_type`` returns ``None`` for them: same sheet, same
+    :data:`_PLANNED_FIRM_STATUSES`, same BA crosswalk, same vintage gate,
+    same lat/lon zone assignment. Wind/solar rows become zonal pool MW
+    rather than :class:`Generator` objects, so this returns plain dicts.
+
+    **Rule 13 [R-MEASURED] boundary.** Only ``eia860_generator_proposed.parquet``
+    is read — a forward statement of intent, filed *before* the outcome. The
+    operable sheet (*the outcome*) is never opened here, for any purpose
+    including cross-checks, because deciding what to build from an observed
+    ``Operating Year`` would be pasting the answer key in (design §3.1).
+
+    **Three gates, none of them a parameter.**
+
+    * *Instrument* — a row exists only with a construction-committed status
+      (:data:`_PLANNED_FIRM_STATUSES`, ``U``/``V``/``TS``), whose instrument
+      is the utility's own Form 860 filing. ``P`` (planned, approvals not
+      initiated) is announcement-grade and stays excluded, exactly as the
+      thermal limb excludes it; the frozenset is *shared*, not copied, so
+      the two limbs cannot drift apart.
+    * *Information* — only the run's own active vintage directory is read,
+      and only rows with ``Effective Year > operable_vintage_year(data_dir)``
+      qualify. A run pinned to vintage 2020 can never open the 2021 sheet.
+    * *Horizon* — none is imposed here. The pipeline is simply empty past
+      roughly ``V+4``, so the channel falls silent and hands the whole job
+      back to the economic screen. **The pipeline is never extrapolated
+      forward**: an assumed repeat of the last cohort would be a free
+      parameter wearing a data costume (design §3.3).
+
+    Technology mapping reuses :data:`market_sim.data.renewables._TECHNOLOGY_TO_FUEL`
+    — the repo's already-adjudicated map for *this same sheet* — rather than
+    minting a second vocabulary. It covers ``Solar Photovoltaic`` and
+    ``Onshore Wind Turbine``; offshore wind and solar thermal are therefore
+    out of scope for this limb, which makes it build *less* (the safe
+    direction, and the same posture as the U/V/TS status choice). Extending
+    the map is a separate decision with its own evidence, not a widening this
+    lane may take.
+
+    Args:
+        iso: ISO identifier, e.g. ``"MISO"``.
+        iso_config: Topology configuration; fetched via
+            :func:`get_iso_config` when ``None``.
+        data_dir: Directory holding the processed EIA-860 parquets.
+            Defaults to the active (vintage-aware) snapshot directory.
+
+    Returns:
+        One dict per qualifying row, sorted by ``(online_year, plant_id,
+        generator_id)``, with keys ``zone``, ``tech`` (``"wind"``/``"solar"``),
+        ``online_year``, ``mw``, ``plant_id`` and ``generator_id``. Empty when
+        the proposed or plant parquet is missing (logged), or nothing
+        qualifies -- including every year past the data horizon, which is
+        correct behaviour rather than a fault.
+    """
+    iso = iso.upper()
+    if data_dir is None:
+        data_dir = active_eia860_dir()
+    data_dir = Path(data_dir)
+    if iso_config is None:
+        try:
+            iso_config = get_iso_config(iso)
+        except ValueError:
+            iso_config = None
+
+    proposed_path = data_dir / "eia860_generator_proposed.parquet"
+    plant_path = data_dir / "eia860_plant.parquet"
+    if not proposed_path.exists() or not plant_path.exists():
+        logger.warning(
+            "procured VRE additions unavailable for %s: missing %s",
+            iso,
+            proposed_path.name if not proposed_path.exists() else plant_path.name,
+        )
+        return []
+
+    # The adjudicated proposed-sheet technology map, imported rather than
+    # duplicated so a future edit cannot leave the two readers disagreeing
+    # about what "solar" means on the same file.
+    from market_sim.data.renewables import _TECHNOLOGY_TO_FUEL, get_renewable_zone
+
+    df = pd.read_parquet(proposed_path)
+    plants = pd.read_parquet(plant_path)[
+        ["Plant Code", "Balancing Authority Code", "Latitude", "Longitude"]
+    ].drop_duplicates("Plant Code")
+    df = df.merge(plants, on="Plant Code", how="left")
+
+    ba_iso = df["Balancing Authority Code"].map(BA_CODE_TO_ISO)
+    df = df[ba_iso == iso]
+    tech = df["Technology"].map(_TECHNOLOGY_TO_FUEL)
+    df = df[tech.notna()]
+    if df.empty:
+        return []
+    status = df["Status"].astype(str).str.strip().str.upper()
+    df = df[status.isin(_PLANNED_FIRM_STATUSES)]
+    eff_year = pd.to_numeric(df["Effective Year"], errors="coerce")
+    # The information gate, measured from the ACTIVE snapshot's own vintage
+    # (never the canonical-2025 constant) — the same FH-1 leak fix the thermal
+    # limb carries, for the same reason.
+    df = df[eff_year > operable_vintage_year(data_dir)]
+    if df.empty:
+        return []
+
+    from market_sim.data.zone_assignment import assign_zone_by_coords
+
+    rows: list[dict] = []
+    _cols = [
+        "Plant Code",
+        "Generator ID",
+        "Technology",
+        "Nameplate Capacity (MW)",
+        "Effective Year",
+        "Latitude",
+        "Longitude",
+    ]
+    # Positional itertuples (name=None): the EIA-860 headers carry spaces and
+    # parentheses, which named tuples would mangle — the same convention the
+    # renewables loader uses on this file.
+    for code_v, gid_v, tech_v, cap_v, year_v, lat_v, lon_v in df[_cols].itertuples(
+        index=False, name=None
+    ):
+        mw = _to_float(cap_v)
+        online_year = _to_float(year_v)
+        fuel = _TECHNOLOGY_TO_FUEL.get(str(tech_v).strip())
+        if mw is None or mw <= 0.0 or online_year is None or fuel is None:
+            continue
+        lat = _to_float(lat_v)
+        lon = _to_float(lon_v)
+        # Sited from the plant's own coordinates — procured MW lands in the
+        # zone it is actually being built in, NOT the single
+        # RENEWABLE_ZONE_ALLOCATION bucket the economic screen forces every MW
+        # into (design §2.2; FFR-3V §4.4). That bucket remains the fallback for
+        # a row with no usable coordinates, so the MW is never dropped.
+        zone = None
+        if lat is not None and lon is not None:
+            try:
+                zone = assign_zone_by_coords(lat, lon, iso)
+            except Exception:  # zone rules missing for the ISO: fall back
+                zone = None
+        if zone is None:
+            try:
+                zone = get_renewable_zone(iso, fuel)
+            except KeyError:  # no allocation entry for this ISO/fuel
+                continue
+        code = _to_float(code_v)
+        rows.append(
+            {
+                "zone": zone,
+                "tech": fuel,
+                "online_year": int(online_year),
+                "mw": float(mw),
+                "plant_id": int(code) if code is not None else None,
+                "generator_id": str(gid_v).strip(),
+            }
+        )
+
+    if not rows:
+        return []
+    rows.sort(key=lambda r: (r["online_year"], r["plant_id"] or 0, r["generator_id"]))
+    logger.info(
+        "%s procured VRE additions: %d rows, %.0f MW (wind %.0f / solar %.0f), %d-%d",
+        iso,
+        len(rows),
+        sum(r["mw"] for r in rows),
+        sum(r["mw"] for r in rows if r["tech"] == "wind"),
+        sum(r["mw"] for r in rows if r["tech"] == "solar"),
+        min(r["online_year"] for r in rows),
+        max(r["online_year"] for r in rows),
+    )
+    return rows
+
+
 # ---------------------------------------------------------------------------
 # CAMPD operational binning
 #
