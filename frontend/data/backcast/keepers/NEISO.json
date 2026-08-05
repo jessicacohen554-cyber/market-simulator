@@ -30,6 +30,6 @@
    "C8 forced-energy share"
   ],
   "spent": "2026-08-05, under a narrow owner lift of the 2026-07-25 holdout spend freeze (re-armed the same session).",
-  "caveat": "Validation tier: ITERABLE model-SELECTION evidence, NOT a certified out-of-sample skill number and never quotable as one. Scored against the known-imperfect CAMPD availability envelope that caused the freeze, so the misses are not attributable to forecast error alone until re-run after that fix. The touch-once locked test is NOT spent here (NEISO's 2019 + H1-2026 one-shot was already spent 2026-07-07 on the frozen neiso-53 config and is not re-opened). No re-tune was performed in response."
+  "caveat": "Validation tier: ITERABLE model-SELECTION evidence, NOT a certified out-of-sample skill number and never quotable as one. AVAILABILITY-ENVELOPE PARITY IS VERIFIED: 2022 comes from the same uniform 2018-2026 CAMPD detector regeneration as the tuned years, with the same merit-order guard, the byte-identical layup artifact, and an envelope in family on window count, capacity-weighted MW-days and median duration. So the residual over-count behind the freeze sits in the TUNED years too - it discounts the ABSOLUTE level of the in-sample and holdout scores alike, but NOT the in-sample-to-holdout DELTA, which is like-for-like. The degradations are not explained by the holdout year having worse data. No re-tune was performed in response. The touch-once locked test is NOT re-opened (NEISO's 2019 + H1-2026 one-shot was spent 2026-07-07 on the frozen neiso-53 config)."
  }
 }
