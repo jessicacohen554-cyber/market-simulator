@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-08-05 — ercot-166: ERCOT 2023 diagnosis triage; Oak Grove conduct solved from the disclosure corpora; rubric v3.0 model-class ledger kind and the ERCOT C3c caveat (no LP, no solve, keeper unchanged)
+
+Owner-directed. Full record `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`;
+log entry ercot-166; matrix §5.1 re-stamped with three new owner-chartered queue items (10–12).
+
+- **Rubric v3.0** (`scripts/calibration_verdict.py`, `docs/calibration-determination-rubric.md`):
+  a second ledgered caveat kind, `ACCEPTED MODEL-CLASS LIMITATION` (`"kind": "model-class"`
+  exceptions entries) — supporting-tier-only, fail-closed against load-bearing/protective
+  criteria, same ≤3 ledgered budget, requires owner decision + exhaustion record + open residual
+  lane. Three new scorer tests.
+- **ERCOT C3c ledgered across 2023–2025** (owner decision 2026-08-05): three model-class entries on
+  the `ercot165_unpooled_share_B` attestation; keeper re-scored in place — C3c FAIL→CAVEAT ×3,
+  C6 UNATTESTED→PASS (stale promotion-day metrics), determination stays NOT-YET with its basis
+  narrowed to the 2023-only C3a/C3b + C7 lignite. Registry sidecar annotated; `status/ERCOT.js`
+  rebuilt; `audit_keepers --iso ERCOT` PASS.
+- **Diagnosis headlines** (measured, no solve): the 2023 −30 % is Aug (−46.7 %) + Sep (−48.7 %)
+  tail mass; the model's ORDC-shortfall regime matches the actual scarcity calendar and its ~$1
+  duals match measured RTORPA — the miss is the energy stack (ercot-160→163 attribution
+  confirmed); storage nets +661 MW over actual in the >$1000 hours while the model sheds load in
+  4 hours reality served; the year-round 17–19 h underrun is NOT a clock artifact (three
+  DST-window-only data defects found and ranked, none price-moving); **Oak Grove's Aug–Oct 2023
+  overnight backdown is solved** — a seasonal RT offer repricing (TPO top step $4.50 → $60.30 at
+  full HSL, zero AS awards, no DAM position) that the keeper's 2024/25→2023 offer-curve
+  extrapolation cannot see; the delivery-2023 SCED corpus (ercot-157, publication-month-keyed)
+  dissolves the ERCOT-143 "no 2023 SCED" closure premise and re-arms the per-plant offer derive
+  as a rule-23 re-identification (queue item 12).
+
 ## 2026-08-04 — xiso-3: the cross-ISO shared-stem matrix backlog CLOSED, and line-anchor decay is now gated (no LP, no solve, all six keepers unchanged)
 
 The last rule-28(c) debt, and the successor nyiso-121 named. **Both halves of

@@ -4187,6 +4187,8 @@ def run_year(
     # never stacked and never above the physical cap. Requires storage_as_commit-
     # ment (the reservation it reconciles with); off under the endogenous split.
     storage_discharge_min = None
+    deploy_sys = None  # shared with the SOC reservation below (rule 19: the
+    # deployed AS energy is subtracted from the SOC floor's backing)
     if (
         getattr(config, "ercot_storage_as_deployment", False)
         and getattr(config, "storage_as_commitment", False)
@@ -4230,13 +4232,66 @@ def run_year(
             float(deploy_sys.max()),
         )
 
+    # Measured AS SOC reservation (ercot_storage_as_soc_reserve, ercot-167 —
+    # matrix §5.1 item 10, the ercot-162 §2 named successor). The power
+    # reservation above withholds the measured award's MW from the discharge
+    # cap but "reserves *power*, not state of charge" (its own docstring);
+    # ERCOT Nodal Protocols §3.17.3 also requires the SOC BEHIND each award
+    # (award × published product duration) to stay in the tank. This floors
+    # battery SOC at Σ_p award_p(t) × duration_p, per-product shares measured
+    # from the same 60-Day corpus, normalized to the SAME committed total the
+    # power dock subtracts (rule 19: one award basis, both sides). Off /
+    # missing series → None (byte-identical LP). Requires storage_as_commitment
+    # (validated); off under the endogenous split (validated).
+    storage_soc_min = None
+    if (
+        getattr(config, "ercot_storage_as_soc_reserve", False)
+        and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and iso == "ERCOT"
+        and storage.n_storage
+    ):
+        from market_sim.model.storage import ercot_storage_as_soc_min
+
+        _pc = np.asarray(storage_power_cap, dtype=float)
+        if _pc.ndim == 1:
+            _pc = np.repeat(_pc[:, None], config.hours, axis=1)
+        soc_floor = ercot_storage_as_soc_min(
+            storage_energy_cap,
+            config.weather_year,
+            config.hours,
+            deploy_mw=deploy_sys,
+            # Scaffold-reachability inputs (the 2023 probe measured the raw
+            # floor infeasible against the daily SOC pin + award-docked power;
+            # see _pin_reachability_clip): the post-dock power cap bounds both
+            # charge and discharge in the LP, the deployment floor is the
+            # forced discharge, and the pin applies whenever the daily-cycling
+            # scaffold does.
+            charge_cap=_pc,
+            discharge_min=storage_discharge_min,
+            eta_chg=np.array([u.eta_charge for u in storage_units], dtype=float),
+            eta_dis=np.array([u.eta_discharge for u in storage_units], dtype=float),
+            daily_pin=bool(
+                getattr(config, "storage_daily_cycling", False)
+                or getattr(config, "limited_foresight_dispatch", False)
+            ),
+        )
+        if float(np.asarray(soc_floor).max()) > 0.0:
+            storage_soc_min = soc_floor
+            logger.info(
+                "ERCOT storage AS SOC reservation (%d): fleet floor mean %.0f MWh, "
+                "max %.0f MWh (award x product duration) held out of arbitrage",
+                config.weather_year,
+                float(np.asarray(soc_floor).sum(axis=0).mean()),
+                float(np.asarray(soc_floor).sum(axis=0).max()),
+            )
+
     # CAISO analogue (caiso_storage_as_reservation): reserve the measured
     # battery AS-award MW (Daily Energy Storage Report, storage-as-awards
     # clean datatype) out of the battery power cap, and floor the battery SOC
     # at the tariff 30-min sustain of the spin/non-spin awards
     # (CAISO_AS_SUSTAIN_DURATION_H). Batteries only — pumped storage is not an
     # LESR. Zero fitted parameters; see model.storage.
-    storage_soc_min = None
     if getattr(config, "caiso_storage_as_reservation", False) and iso == "CAISO":
         from market_sim.data.storage_as_awards import upward_award_mw
         from market_sim.model.storage import (

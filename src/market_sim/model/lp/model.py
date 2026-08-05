@@ -962,6 +962,31 @@ class DispatchModel:
         _, primal_status = h.getInfoValue("primal_solution_status")
         if primal_status != 2:
             status = h.modelStatusToString(h.getModelStatus())
+            # TEMP ercot-167 DEBUG: dump full LP col/row bounds + layout scalars
+            try:
+                import os as _os
+
+                _lp = h.getLp()
+                _lay = getattr(self, "layout", None)
+                _meta = {
+                    "T": self.T,
+                    "n_storage": self.n_storage,
+                    "n_zones": self.n_zones,
+                }
+                for _a in ("vars_per_hour", "_chg_off", "_dis_off", "_soc_off"):
+                    if _lay is not None and hasattr(_lay, _a):
+                        _meta[_a] = int(getattr(_lay, _a))
+                np.savez_compressed(
+                    _os.environ.get("ERCOT167_IIS_DUMP", "/tmp/iis_dump.npz"),
+                    col_lower=np.asarray(_lp.col_lower_, dtype=np.float64),
+                    col_upper=np.asarray(_lp.col_upper_, dtype=np.float64),
+                    row_lower=np.asarray(_lp.row_lower_, dtype=np.float64),
+                    row_upper=np.asarray(_lp.row_upper_, dtype=np.float64),
+                    **{k: np.int64(v) for k, v in _meta.items()},
+                )
+                logger.info("LP bounds dumped (%d cols)", int(_lp.num_col_))
+            except Exception as _e:  # noqa: BLE001
+                logger.info("LP bounds dump failed: %s", _e)
             raise RuntimeError(
                 f"dispatch LP has no feasible primal solution (status: {status})"
             )
