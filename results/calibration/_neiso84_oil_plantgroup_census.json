@@ -1,0 +1,356 @@
+{
+ "note": "neiso-84 Phase-0 census, NO LP. See module docstring.",
+ "states_by_iso": {
+  "ERCOT": [
+   "OK",
+   "TX"
+  ],
+  "CAISO": [
+   "CA",
+   "NV"
+  ],
+  "PJM": [
+   "DC",
+   "DE",
+   "IL",
+   "IN",
+   "KY",
+   "MD",
+   "MI",
+   "NC",
+   "NJ",
+   "OH",
+   "PA",
+   "TN",
+   "VA",
+   "WV"
+  ],
+  "MISO": [
+   "AR",
+   "IA",
+   "IL",
+   "IN",
+   "KY",
+   "LA",
+   "MI",
+   "MN",
+   "MO",
+   "MS",
+   "MT",
+   "ND",
+   "SD",
+   "TX",
+   "WI"
+  ],
+  "NYISO": [
+   "NJ",
+   "NY"
+  ],
+  "NEISO": [
+   "CT",
+   "MA",
+   "ME",
+   "NH",
+   "NY",
+   "RI",
+   "VT"
+  ]
+ },
+ "A_fleet_group_gap": {
+  "ERCOT": {
+   "fleet_units": 1463,
+   "fleet_mw": 78447.6,
+   "no_group": {
+    "nuclear": {
+     "units": 4,
+     "mw": 4980.0
+    },
+    "oil": {
+     "units": 292,
+     "mw": 672.6
+    },
+    "biomass": {
+     "units": 27,
+     "mw": 150.1
+    }
+   },
+   "no_group_units": 323,
+   "no_group_mw": 5802.7
+  },
+  "CAISO": {
+   "fleet_units": 808,
+   "fleet_mw": 33045.0,
+   "no_group": {
+    "nuclear": {
+     "units": 2,
+     "mw": 2240.0
+    },
+    "biomass": {
+     "units": 184,
+     "mw": 847.3
+    },
+    "oil": {
+     "units": 27,
+     "mw": 142.7
+    }
+   },
+   "no_group_units": 213,
+   "no_group_mw": 3230.0
+  },
+  "PJM": {
+   "fleet_units": 2103,
+   "fleet_mw": 176240.8,
+   "no_group": {
+    "nuclear": {
+     "units": 32,
+     "mw": 33491.8
+    },
+    "oil": {
+     "units": 469,
+     "mw": 4465.6
+    },
+    "biomass": {
+     "units": 591,
+     "mw": 1860.2
+    }
+   },
+   "no_group_units": 1092,
+   "no_group_mw": 39817.6
+  },
+  "MISO": {
+   "fleet_units": 2029,
+   "fleet_mw": 135085.4,
+   "no_group": {
+    "nuclear": {
+     "units": 13,
+     "mw": 11519.3
+    },
+    "oil": {
+     "units": 589,
+     "mw": 3339.0
+    },
+    "biomass": {
+     "units": 302,
+     "mw": 1935.5
+    }
+   },
+   "no_group_units": 904,
+   "no_group_mw": 16793.8
+  },
+  "NYISO": {
+   "fleet_units": 474,
+   "fleet_mw": 30744.9,
+   "no_group": {
+    "nuclear": {
+     "units": 4,
+     "mw": 3325.9
+    },
+    "oil": {
+     "units": 59,
+     "mw": 2926.8
+    },
+    "biomass": {
+     "units": 105,
+     "mw": 447.4
+    }
+   },
+   "no_group_units": 168,
+   "no_group_mw": 6700.1
+  },
+  "NEISO": {
+   "fleet_units": 454,
+   "fleet_mw": 25955.9,
+   "no_group": {
+    "oil": {
+     "units": 140,
+     "mw": 5345.2
+    },
+    "nuclear": {
+     "units": 3,
+     "mw": 3355.4
+    },
+    "biomass": {
+     "units": 69,
+     "mw": 1048.8
+    }
+   },
+   "no_group_units": 212,
+   "no_group_mw": 9749.4
+  }
+ },
+ "B_outage_routing_exposure": {
+  "ERCOT": {
+   "extract": "campd-unit-outages-e923-ERCOT.csv",
+   "rows": 53,
+   "rows_matched_to_campd_meta": 0,
+   "rows_oil_unit_in_any_gas_bin": 0,
+   "rows_any_unit_type_bin_mismatch": 0,
+   "rows_from_oil_units_in_gas_bins": 0,
+   "exposed_plants": 0,
+   "exposed_plants_oil_only_source": 0,
+   "detail": []
+  },
+  "CAISO": {
+   "extract": "campd-unit-outages-CAISO.csv",
+   "rows": 4328,
+   "rows_matched_to_campd_meta": 4108,
+   "rows_oil_unit_in_any_gas_bin": 0,
+   "rows_any_unit_type_bin_mismatch": 358,
+   "rows_from_oil_units_in_gas_bins": 0,
+   "exposed_plants": 0,
+   "exposed_plants_oil_only_source": 0,
+   "detail": []
+  },
+  "PJM": {
+   "extract": "campd-unit-outages-PJM.csv",
+   "rows": 10670,
+   "rows_matched_to_campd_meta": 10406,
+   "rows_oil_unit_in_any_gas_bin": 312,
+   "rows_any_unit_type_bin_mismatch": 140,
+   "rows_from_oil_units_in_gas_bins": 33,
+   "exposed_plants": 1,
+   "exposed_plants_oil_only_source": 0,
+   "detail": [
+    {
+     "facility_id": 593,
+     "facility_name": "Edge Moor",
+     "groups": [
+      "ST_GAS"
+     ],
+     "rows_total": 207,
+     "rows_from_oil_units": 33,
+     "oil_only_source": false,
+     "oil_unit_ids": [
+      "10"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 12.5
+    }
+   ]
+  },
+  "MISO": {
+   "extract": "campd-unit-outages-MISO.csv",
+   "rows": 10445,
+   "rows_matched_to_campd_meta": 10163,
+   "rows_oil_unit_in_any_gas_bin": 217,
+   "rows_any_unit_type_bin_mismatch": 735,
+   "rows_from_oil_units_in_gas_bins": 217,
+   "exposed_plants": 2,
+   "exposed_plants_oil_only_source": 1,
+   "detail": [
+    {
+     "facility_id": 2001,
+     "facility_name": "New Ulm",
+     "groups": [
+      "ST_CHP"
+     ],
+     "rows_total": 114,
+     "rows_from_oil_units": 114,
+     "oil_only_source": true,
+     "oil_unit_ids": [
+      "7"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 27.5
+    },
+    {
+     "facility_id": 8056,
+     "facility_name": "Waterford 1 & 2",
+     "groups": [
+      "ST_GAS"
+     ],
+     "rows_total": 143,
+     "rows_from_oil_units": 103,
+     "oil_only_source": false,
+     "oil_unit_ids": [
+      "4"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 41.0
+    }
+   ]
+  },
+  "NYISO": {
+   "extract": "campd-unit-outages-NYISO.csv",
+   "rows": 4423,
+   "rows_matched_to_campd_meta": 4386,
+   "rows_oil_unit_in_any_gas_bin": 52,
+   "rows_any_unit_type_bin_mismatch": 341,
+   "rows_from_oil_units_in_gas_bins": 42,
+   "exposed_plants": 1,
+   "exposed_plants_oil_only_source": 0,
+   "detail": [
+    {
+     "facility_id": 2516,
+     "facility_name": "Northport",
+     "groups": [
+      "ST_GAS"
+     ],
+     "rows_total": 270,
+     "rows_from_oil_units": 42,
+     "oil_only_source": false,
+     "oil_unit_ids": [
+      "UGT001"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 13.0
+    }
+   ]
+  },
+  "NEISO": {
+   "extract": "campd-unit-outages-NEISO.csv",
+   "rows": 3189,
+   "rows_matched_to_campd_meta": 3045,
+   "rows_oil_unit_in_any_gas_bin": 304,
+   "rows_any_unit_type_bin_mismatch": 302,
+   "rows_from_oil_units_in_gas_bins": 201,
+   "exposed_plants": 2,
+   "exposed_plants_oil_only_source": 0,
+   "detail": [
+    {
+     "facility_id": 6081,
+     "facility_name": "Stony Brook Energy Center",
+     "groups": [
+      "CC_REGULAR"
+     ],
+     "rows_total": 207,
+     "rows_from_oil_units": 148,
+     "oil_only_source": false,
+     "oil_unit_ids": [
+      "004",
+      "005"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 166.0
+    },
+    {
+     "facility_id": 1595,
+     "facility_name": "Kendall Green Energy LLC",
+     "groups": [
+      "CC_CHP"
+     ],
+     "rows_total": 77,
+     "rows_from_oil_units": 53,
+     "oil_only_source": false,
+     "oil_unit_ids": [
+      "S6"
+     ],
+     "oil_unit_types": [
+      "Combustion turbine"
+     ],
+     "oil_mw": 21.0
+    }
+   ]
+  }
+ }
+}
