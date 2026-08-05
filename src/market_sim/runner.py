@@ -95,6 +95,7 @@ from market_sim.model.capacity import (
     deliverability_headroom_by_zone,
     evolve_fleet,
     modelled_hydro_nameplate_mw,
+    pipeline_lookahead_units,
     renewable_credits_applied,
 )
 from market_sim.model.ancillary import (
@@ -485,6 +486,9 @@ def _lookahead_reprice_signal(
     result,
     n_zones: int,
     demand_next_total: np.ndarray | None = None,
+    pipeline_mc: np.ndarray | None = None,
+    pipeline_arrays=None,
+    pipeline_vre: np.ndarray | None = None,
 ) -> np.ndarray:
     """Stack re-price of the entering year's known net load (plan §2.3.2).
 
@@ -507,6 +511,20 @@ def _lookahead_reprice_signal(
     total here; ``None`` (the plain-forecast path) falls back to
     ``_scale_demand`` unchanged.
 
+    **Committed pipeline (FFR-5C ``entry_pipeline_aware_signal``, GATED).**
+    Without the gate the stack is the *current* fleet only, so a developer's
+    pro-forma cannot see capacity it has already committed and re-decides the
+    same opportunity every lag year -- the pipeline-stuffing cobweb, which
+    FFR-4A §3.5 located HERE rather than at the annual flow caps that were
+    guarding it. Armed, the caller supplies the pipeline rows that are ONLINE
+    in ``next_year`` (``cod_year <= next_year``): ``pipeline_arrays`` /
+    ``pipeline_mc`` are the thermal rows' ``FleetArrays`` and ``(n, T)``
+    marginal cost, built by the SAME builder/assembler the current fleet's
+    stack uses, appended to the merit stack; ``pipeline_vre`` is the ``(T,)``
+    potential output of pending wind/solar at their own zones' capacity
+    factors, added to the net-load VRE term. All three ``None`` -- the default
+    and the whole unarmed path -- is byte-identical.
+
     Returns:
         ``(n_zones, T)`` system-wide hourly price signal (every zone sees the
         same stack price, matching the screens' system-level use).
@@ -516,6 +534,8 @@ def _lookahead_reprice_signal(
     else:
         demand_next = _scale_demand(base_demand, config, next_year).sum(axis=0)  # (T,)
     vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
+    if pipeline_vre is not None:
+        vre = vre + np.asarray(pipeline_vre, dtype=float)
     net_load = demand_next - vre
     # Static merit stack: per-generator time-mean full variable cost against
     # availability-derated capacity (outages/derates included).
@@ -523,6 +543,19 @@ def _lookahead_reprice_signal(
     cap_gen = np.asarray(fleet_arrays.pmax, dtype=float) * np.asarray(
         fleet_arrays.availability, dtype=float
     ).mean(axis=1)  # (n_gen,)
+    if pipeline_arrays is not None and pipeline_mc is not None:
+        # Committed thermal pipeline online in the priced year, on exactly the
+        # same time-mean cost / derated-capacity basis as the fleet above.
+        mc_gen = np.concatenate(
+            [mc_gen, np.asarray(pipeline_mc, dtype=float).mean(axis=1)]
+        )
+        cap_gen = np.concatenate(
+            [
+                cap_gen,
+                np.asarray(pipeline_arrays.pmax, dtype=float)
+                * np.asarray(pipeline_arrays.availability, dtype=float).mean(axis=1),
+            ]
+        )
     order = np.argsort(mc_gen, kind="stable")
     mc_sorted = mc_gen[order]
     cum_cap = np.cumsum(cap_gen[order])
@@ -535,6 +568,104 @@ def _lookahead_reprice_signal(
         adder = scarcity_prices(config, next_year, reserves, prices_h)["scarcity_adder"]
         prices_h = prices_h + adder
     return np.tile(prices_h[None, :], (n_zones, 1))
+
+
+def _pipeline_lookahead_terms(
+    config: ScenarioConfig,
+    fleet_config: ScenarioConfig,
+    iso: str,
+    entry_pipeline: list[dict] | None,
+    through_year: int,
+    year: int,
+    zone_names: list[str],
+    wind_cf: np.ndarray,
+    solar_cf: np.ndarray,
+    load_shape: np.ndarray,
+    carbon_price,
+) -> tuple:
+    """Value the committed entry pipeline for the look-ahead pro-forma (FFR-5C).
+
+    Turns the ``entry_pipeline`` rows that are ONLINE in ``through_year`` into
+    the three terms :func:`_lookahead_reprice_signal` accepts, so the entry
+    screen's price signal stops being blind to capacity the model has already
+    committed (FFR-4A §3.5 / E-2 -- the anti-cobweb guard's real object).
+    Gated by ``entry_pipeline_aware_signal``; the caller only invokes it when
+    the gate is armed.
+
+    **Zero new tunables** (rule 24 ``[R-REGISTRY]``). Thermal rows are built by
+    :func:`~market_sim.model.capacity.pipeline_lookahead_units` (the same
+    ``_make_new_generator`` the step-4.5 commissioning uses) and priced through
+    the same ``generators_to_fleet_arrays`` -> ``resolve_fuel_prices`` ->
+    ``assemble_mc`` seam as the current fleet's stack, at THIS year's fuel and
+    carbon basis so the pro-forma's two halves share one cost basis (rule 19).
+    VRE rows carry no Generator -- they enter the model as zonal pools -- so
+    they are valued at their own zone's hourly capacity factor, the same array
+    that upper-bounds ``W[z,t]``/``S[z,t]`` in the LP. That is a *potential*
+    (pre-curtailment) basis, one notch richer than the realized-dispatch VRE
+    term it is added to; the pro-forma has no curtailment model to apply and
+    inventing a haircut would be a fitted parameter (rules 5 / 24).
+
+    A row whose zone is absent from ``zone_names`` is skipped with a warning
+    rather than silently mis-assigned.
+
+    Args:
+        config: The run's scenario configuration.
+        fleet_config: The (possibly outage-overlay-adjusted) config the year's
+            own ``generators_to_fleet_arrays`` call used, so the pipeline units
+            are built on identical terms.
+        iso: ISO identifier.
+        entry_pipeline: The pending-entry queue (read-only here), or ``None``.
+        through_year: The year being priced -- rows with a later COD are out.
+        year: The dispatch year, i.e. the fuel/carbon basis of the stack.
+        zone_names: Model zone order (indexes ``wind_cf``/``solar_cf``).
+        wind_cf: ``(n_zones, T)`` wind capacity factors.
+        solar_cf: ``(n_zones, T)`` solar capacity factors.
+        load_shape: Hourly total demand passed to the fleet-array builder.
+        carbon_price: The year's resolved carbon price (scalar or hourly).
+
+    Returns:
+        ``(pipeline_arrays, pipeline_mc, pipeline_vre)``; each element is
+        ``None`` when the pipeline contributes nothing of that kind.
+    """
+    units, vre_mw = pipeline_lookahead_units(entry_pipeline, through_year, config, iso)
+    pipeline_vre: np.ndarray | None = None
+    if vre_mw:
+        zone_idx = {name: i for i, name in enumerate(zone_names)}
+        acc = np.zeros(int(wind_cf.shape[1]), dtype=float)
+        for (zone, tech), mw in sorted(vre_mw.items()):
+            cf = wind_cf if tech == "wind" else solar_cf
+            z = zone_idx.get(zone)
+            if z is None or z >= cf.shape[0]:
+                logger.warning(
+                    "lookahead pipeline: %s row in zone %r is not a model zone "
+                    "-- %0.1f MW excluded from the pro-forma stack",
+                    tech,
+                    zone,
+                    mw,
+                )
+                continue
+            acc = acc + mw * np.asarray(cf[z], dtype=float)
+        pipeline_vre = acc
+    pipeline_arrays = None
+    pipeline_mc = None
+    if units:
+        pipeline_arrays = generators_to_fleet_arrays(
+            units,
+            zone_names,
+            hours=config.hours,
+            iso=iso,
+            config=fleet_config,
+            load_shape=load_shape,
+            year=year,
+        )
+        pipeline_mc = assemble_mc(
+            pipeline_arrays,
+            resolve_fuel_prices(config, pipeline_arrays, year),
+            carbon_price,
+            config.nox_price,
+            so2=(pipeline_arrays.so2_rate, config.so2_price),
+        )
+    return pipeline_arrays, pipeline_mc, pipeline_vre
 
 
 def _confirmed_exits_active(config: ScenarioConfig) -> bool:
@@ -2572,6 +2703,27 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if config.hours < _dn.shape[1]:
                     _dn = _dn[:, : config.hours]
                 demand_next_total = _dn.sum(axis=0)
+            # FFR-5C entry_pipeline_aware_signal (GATED, default OFF ⇒ all
+            # three terms stay None and this is byte-identical): let the
+            # pro-forma see the capacity the model has already committed. The
+            # netting this replaces was guarding the same phenomenon at the
+            # wrong object -- the annual flow caps (rule 19 [R-ONE-MECH];
+            # docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md §3.5).
+            _pipe_arrays = _pipe_mc = _pipe_vre = None
+            if getattr(config, "entry_pipeline_aware_signal", False):
+                _pipe_arrays, _pipe_mc, _pipe_vre = _pipeline_lookahead_terms(
+                    config,
+                    fleet_config,
+                    iso,
+                    entry_pipeline,
+                    next_year,
+                    year,
+                    zone_names,
+                    wind_cf,
+                    solar_cf,
+                    year_base_demand.sum(axis=0),
+                    carbon_price,
+                )
             price_signal = _lookahead_reprice_signal(
                 wx_config,
                 next_year,
@@ -2581,12 +2733,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 result,
                 len(zone_names),
                 demand_next_total=demand_next_total,
+                pipeline_mc=_pipe_mc,
+                pipeline_arrays=_pipe_arrays,
+                pipeline_vre=_pipe_vre,
             )
             _ps_h = price_signal[0]  # system row; every zone identical
             logger.info(
                 "year %d: lookahead stack re-price for %d capacity screens -- "
                 "mean $%.2f/MWh (raw duals+overlay mean $%.2f); "
-                "pro-forma scarcity >$200 in %d h, >$1000 in %d h, max $%.0f",
+                "pro-forma scarcity >$200 in %d h, >$1000 in %d h, max $%.0f; "
+                "committed pipeline priced in: %d thermal unit(s), "
+                "%.0f MWh VRE",
                 year,
                 next_year,
                 float(price_signal.mean()),
@@ -2594,6 +2751,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 int((_ps_h > 200).sum()),
                 int((_ps_h > 1000).sum()),
                 float(_ps_h.max()),
+                0 if _pipe_arrays is None else int(_pipe_arrays.pmax.size),
+                0.0 if _pipe_vre is None else float(_pipe_vre.sum()),
             )
         price_signal = _blend_price_signal(
             price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
