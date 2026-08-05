@@ -4156,6 +4156,8 @@ def run_year(
     # never stacked and never above the physical cap. Requires storage_as_commit-
     # ment (the reservation it reconciles with); off under the endogenous split.
     storage_discharge_min = None
+    deploy_sys = None  # shared with the SOC reservation below (rule 19: the
+    # deployed AS energy is subtracted from the SOC floor's backing)
     if (
         getattr(config, "ercot_storage_as_deployment", False)
         and getattr(config, "storage_as_commitment", False)
@@ -4221,7 +4223,10 @@ def run_year(
         from market_sim.model.storage import ercot_storage_as_soc_min
 
         soc_floor = ercot_storage_as_soc_min(
-            storage_energy_cap, config.weather_year, config.hours
+            storage_energy_cap,
+            config.weather_year,
+            config.hours,
+            deploy_mw=deploy_sys,
         )
         if float(np.asarray(soc_floor).max()) > 0.0:
             storage_soc_min = soc_floor

@@ -519,6 +519,7 @@ def ercot_storage_as_soc_min(
     energy_cap: np.ndarray,
     year: int,
     hours: int,
+    deploy_mw: np.ndarray | None = None,
 ) -> np.ndarray:
     """SOC floor backing ERCOT's measured battery AS awards (per-product duration).
 
@@ -542,7 +543,21 @@ def ercot_storage_as_soc_min(
     ``scripts/data/derive_ercot_storage_as_products.py``), consumed as SHARES
     of the same committed total series the power reservation subtracts
     (rule 19: one measured award basis for both sides; the shares file can
-    never move the armed total). Allocated across units pro-rata by ENERGY
+    never move the armed total).
+
+    Deployment reconciliation (rule 19 — measured by the first 2023 probe,
+    which went INFEASIBLE without it): ``ercot_storage_as_deployment``
+    force-discharges the measured award draw-down at the evening ramp, and
+    every deployed MWh is AS energy leaving the tank — the backing behind it
+    is spent, not still owed. ``deploy_mw`` (the same
+    :func:`~market_sim.results.scarcity.ercot_storage_as_deployment_mw`
+    series the discharge floor forces, when that flag is armed) is therefore
+    subtracted from the freeze as an INTRA-DAY CUMULATIVE:
+    ``floor(t) = max(0, freeze(t) − Σ_{same day, ≤t} deploy)``. Per hour the
+    floor then releases at least the forced discharge (feasible by
+    construction against the deployment floor), the backing rebuilds with the
+    next day's procurement, and with deployment unarmed (``None``) the plain
+    freeze applies. Allocated across units pro-rata by ENERGY
     cap — the stable basis for an energy floor (the power cap at the call
     site is already award-docked by :func:`reserve_storage_as_power`, so
     power weights would be degenerate exactly in the high-award hours) — and
@@ -590,6 +605,18 @@ def ercot_storage_as_soc_min(
     # (hours,) fleet MWh floor: committed total split by measured product
     # shares, weighted by the published per-product SOC durations.
     freeze = (share * dur).sum(axis=0) * committed
+    if deploy_mw is not None:
+        # Intra-day cumulative deployed AS energy (MWh; hourly MW × 1 h) —
+        # backing already spent through the armed deployment discharge floor.
+        dep = np.asarray(deploy_mw, dtype=float)[:hours]
+        if dep.shape[0] < hours:
+            dep = np.concatenate([dep, np.zeros(hours - dep.shape[0])])
+        n_days = hours // 24
+        cum = dep[: n_days * 24].reshape(n_days, 24).cumsum(axis=1).reshape(-1)
+        if hours % 24:  # ragged tail (never on the 8760 clock; guard anyway)
+            tail = dep[n_days * 24 :].cumsum()
+            cum = np.concatenate([cum, tail])
+        freeze = np.maximum(freeze - cum, 0.0)
     fleet_e = ec2.sum(axis=0)
     with np.errstate(divide="ignore", invalid="ignore"):
         weight = np.where(

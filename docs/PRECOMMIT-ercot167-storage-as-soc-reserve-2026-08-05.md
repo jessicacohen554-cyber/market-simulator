@@ -34,6 +34,17 @@ sequentially.**
   `ercot_storage_as_product_credit` nets the REQUIREMENT side. This adds the missing ENERGY-side
   reservation the power dock's own docstring names ("this reserves *power*, not state of charge —
   the first-order constraint that binds in the scarcity hours where the LP over-discharges").
+- **Amendment (2026-08-05, pre-A/B — found by the 2023 probe, recorded before any full-span
+  solve):** the first probe went **LP-INFEASIBLE**: the deployment mechanism force-discharges the
+  award draw-down at the ramp while midday charge power is award-docked to ~0.3 GW, and a floor
+  tracking the award LEVEL does not release the energy the forced discharge spends. Physically,
+  deployed AS energy leaves the tank and its backing is spent — so the floor now nets the
+  **intra-day cumulative deployment**: `floor(t) = max(0, freeze(t) − Σ_{same day ≤ t} deploy)`,
+  with `deploy` the SAME measured series the discharge floor forces (rule 19, one series both
+  sides; per hour the floor release ≥ the forced discharge, feasible by construction; backing
+  rebuilds with the next day's procurement; deployment unarmed → plain freeze). No gate, band, or
+  kill threshold changed by this amendment — it is a feasibility-correct composition fix, not a
+  re-tune.
 
 ## 1. Phase-0 measured facts (all from committed corpora, no solve)
 
