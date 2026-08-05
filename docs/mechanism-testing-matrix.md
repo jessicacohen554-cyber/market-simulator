@@ -2951,6 +2951,80 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-127-onlinepmin`, **NOT-YET**, C7 now failing **2025 only**)
 
+> **QUEUE STAMP miso-130 (2026-08-05) — C7 COAL_PRB IS A SUMMER-NIGHT
+> PRICE-REGIME DEFECT, AND THE QUEUE NOW CARRIES TWO NAMED-NOT-CHARTERED
+> SUCCESSORS. NO LP, NO PREREG (all numbers descriptive), NO ARM, NO CELL
+> MOVED, KEEPER UNCHANGED** at `2026-08-04-miso-127-onlinepmin`.
+>
+> **(a) THE FREEZE STATISTIC.** Fleet assembled at HEAD under the keeper
+> config, every tranche priced at its July basis, overlaid on the keeper's own
+> solved July night prices: **PRB econ capacity priced BELOW the model's July
+> night floor (p10) = 21.1 / 2.8 / 55.4 %** in 2023/24/25 (below night p50:
+> 30.8/17.4/74.6 %). Capacity below the floor is below every price the wave
+> visits — it CANNOT cycle at ANY ladder granularity. Ordering matches C7
+> (cv_ratio 0.529/0.514/0.347 for frozen 2.8/21.1/55.4 %) and converges with
+> miso-128's dispatch-side flat census (59.4 % vs real 12.3 %) from the PRICE
+> side. **Why 2025:** the PRB ladder's $ placement barely moves (p5–p95
+> ~$20–38 all three years); +61 % gas re-prices the CC supply that cleared
+> UNDER it up to $24–33, lifting the July night floor (p10 26.11/20.67/31.42)
+> past the cheap PRB majority. The July night price sits +$7.0–8.7 above
+> actual in ALL THREE years (miso-114's flat trough offset, still standing);
+> COAL_PRB July night surplus +2,276/+2,204/+3,454 MW with summer-2025 daytime
+> MATCHED (+141 MW). No 2025 driver, only a 2025 regime (miso-128 confirmed).
+>
+> **(b) NAMED, NOT CHARTERED — successor 1: SYNCHRONIZED-RESERVE ONLINE-GATING
+> at MISO.** `_miso_design` (model/reserves/spec.py:2377) never sets
+> `online_gated`: all ~2.5–2.7 GW of the RBDC requirement can be backed by
+> IDLE capacity, so reserves exert ZERO overnight backdown pressure on coal.
+> The generic `R − ρ·ΣP ≤ 0` machinery exists (NYISO's three online-gated
+> arms; `pjm_reserve_online_gated`), and the real market's spin+reg (~1–1.4 GW)
+> must be SYNCHRONIZED — overnight that lands on backed-down coal/CC.
+> Hour-organizing by construction (targets R_dfrac, the exact miso-128
+> dimension), price-regime-immune, forward-reproducible. Charter
+> prerequisites: (i) published-requirement identification of the online
+> portion (BPM-002 / Schedule 28 family — NEVER the residual); (ii) the
+> nested-family split (online class ⊂ ORR, the NYISO nested template);
+> (iii) `online_rho` as a fleet property; (iv) prereg with C1 16/16, COAL_BIT
+> no-overshoot, D-4 window and LOYO kills. Rule 25: PJM's flag and NYISO's
+> verdicts transfer NOTHING — MISO enters `U`.
+>
+> **(c) NAMED, NOT CHARTERED — successor 2: CC_REGULAR COMMITTED-BAND MEASURED
+> RE-GROUNDING.** The registered `committed: 1.20` rests on a generic
+> "part-load ~30–40 % premium" claim contradicted by the repo's OWN rule-23
+> artifact: `avg_committed_p50` **1.005** (n=103), ALREADY wired as this
+> band's `phys_committed`. CT_PEAKER's committed IS grounded on its measured
+> value (1.025, markup 0); CC's carries markup 0.195 (~$4.4/MWh at the
+> anchor) and the CC_INTERMEDIATE-routed bulk keeps the 0.92 backcast_config
+> itself calls "an unphysical, artificially-cheap min-load block". The
+> in-code "metric-neutral" validation of 1.20 was taken at 2023 prices and
+> does not carry to 2025. Rule-14 proxy-for-measurand swap, zero free
+> parameters, bounded effect; own prereg + same-HEAD A/B, never a bare code
+> edit (miso-122 seam).
+>
+> **(d) The gas_commitment_bridge pool at MISO reads ~EMPTY** (pjm-142's
+> statistic, measured WITHOUT a prereg ⇒ descriptive, cell stays `U`): model
+> CC day-anchored night-off plants in July = 3 / 1,601 MW (2023), **0 / 0
+> (2024, 2025)**. A future bridge charter must confront this census in its
+> own pre-registered pre-check.
+>
+> **(e) DO-NOT:** do not charter ladder granularity off this finding — the
+> 2025 wave never ENTERS the cheap-PRB band, so miso-129 prerequisite (i)
+> would measure FALSE for 2025. The spent seam classes, take-or-pay family
+> and self-commitment forcing family stay closed; no fitted trough adder
+> (rules 1/13/19/24).
+>
+> **(f) Solve posture:** a control+arm A/B is INFEASIBLE in a 15 GB container
+> against the documented 14.4–15.5 GB single-year peak — successor A/Bs need
+> a larger container or an owner-run invocation (stated per CLAUDE.md, not
+> offloaded to CI).
+>
+> **FINDING:** `results/calibration/FINDING-miso130-c7-night-regime-2026-08-05.md`
+> · **Probe:** `scripts/probes/_miso130_c7_night_regime.py`
+> · **Record:** `results/calibration/_miso130_c7_night_regime.json`.
+> Answers the owner's July-2025-prices question in §1 (−$8.24 lw: ~$5.2 the
+> C3c-ledgered tail, ~$3.1 body, atop the miso-89/90 instrument-blocked
+> under-derate; the miss is TWO-SIDED — overnight +$7–9 every July).
+
 > **QUEUE STAMP miso-129 (2026-08-05) — miso-128's NAMED-BUT-NOT-CHARTERED OBJECT
 > IS DEAD ON ITS OWN PREMISE. NO LP SOLVED, NO DERIVE RUN, NO ScenarioConfig FIELD
 > ADDED, NO ARM BUILT, NO RUN REGISTERED, KEEPER UNCHANGED at

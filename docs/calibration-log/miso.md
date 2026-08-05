@@ -4244,3 +4244,103 @@ PREREG `results/calibration/PREREG-miso129-coal-within-band-incremental-slope-20
 FINDING `results/calibration/FINDING-miso129-coal-within-band-slope-premise-false-2026-08-05.md`;
 probe `scripts/probes/_miso129_coal_within_band_slope.py`;
 record `results/calibration/_miso129_coal_within_band_slope.json`.
+
+## 2026-08-05 — miso-130: C7 COAL_PRB is a SUMMER-NIGHT price-regime defect — the model's July night floor prices 55 % of the PRB econ ladder out of the wave in 2025; the wave-compression doing it is the same object as the July price miss. NO LP, keeper UNCHANGED
+
+**Lane.** OFF-QUEUE BY NECESSITY (rule 28(a) — §5.4 still has no named,
+un-adjudicated, non-data-blocked item), opened by an owner question: *why are
+July-2025 MISO high prices not captured, and why does C7 COAL_PRB run hot at
+night, July-concentrated, every year at varying intensity?* Both halves are
+answered, and they are ONE phenomenon. **NO LP SOLVED. NO ARM BUILT. NO
+MECHANISM ARMED. NO RUN REGISTERED. NO PREREG — every number is DESCRIPTIVE
+and adjudicates nothing** (stated in the finding and in the probe record;
+future lever screens pre-register their own bars). Keeper UNCHANGED at
+`2026-08-04-miso-127-onlinepmin` (NOT-YET, sole FAIL C7 COAL_PRB 2025,
+ledgered caveats 2/3 {C3a, C3c}). Rule 22: 2023–2025 only; the probe
+hard-errors on any other year.
+
+**Q1 (July prices).** July-2025 lw miss on the current keeper is **−$8.24**
+(June −6.13, Sep −5.62): ~$5.2 the C3c-ledgered >$200 tail (model p99 $75.6 vs
+actual $222.4), ~$3.08 sub-$200 body (the residual of miso-87's −$11–13, mostly
+closed by miso-98/99/117/122/126), behind which stands miso-89/90's
+instrument-blocked ~10 GW Jun/Jul-2025 under-derate. NEW: the miss is
+**two-sided** — every July the model runs **+$7.0–8.7 HIGH overnight** and low
+at the peaks; the diurnal price wave is compressed 3–5× (2025: 20.2 vs
+109.3 $/MWh; worst hod h18 2025: 53.6 vs 133.6).
+
+**Q2 (C7).** The owner's description verifies exactly: COAL_PRB July night
+(h0–5) model−actual **+2,276 / +2,204 / +3,454 MW** (Aug-2025 +3.9 GW), with
+summer-2025 DAYTIME matched (+141 MW) — the whole 2025 July defect is the
+missing overnight backdown; the month-grain amplitude deficit is
+summer-concentrated in all three years.
+
+**THE FREEZE STATISTIC (the finding).** Fleet assembled at HEAD under the
+keeper config, every tranche priced at its July basis (per-plant F923 coal, ISO
+measured July gas 2.97/2.43/3.41, the apply_gas_offer_margin form), overlaid on
+the keeper's own solved July night prices: **PRB econ capacity priced BELOW the
+model's July night floor (p10) = 21.1 % / 2.8 % / 55.4 %** (below night p50:
+30.8/17.4/74.6 %). A tranche below the floor is below every price the wave
+visits — it can never cycle, at ANY ladder granularity. The ordering matches C7
+exactly (cv_ratio 0.529/0.514/0.347 for frozen 2.8/21.1/55.4 %), and it
+converges from the PRICE side with miso-128's DISPATCH-side census (59.4 %
+flat vs 12.3 % real) — two constructions, same ~55–59 % of the fleet. **Why
+2025:** the PRB ladder's dollar placement barely moves across years (p5–p95
+~$20–38 in all three), but +61 % gas re-prices the CC supply that used to clear
+UNDER it ($17–26) up to $24–33, lifting the night floor past the cheap PRB
+majority. Confirms miso-128: no 2025 driver, only a 2025 REGIME.
+
+**Attribution of the high night floor** (the overnight supply identity, each
+component with its adjudication): seam hod hole −1.0..−1.5 GW (all three seam
+classes SPENT, miso-114/123); CC_REGULAR matched −0.5 GW (level, both ends;
+trough volume REFUSED mis-specified, miso-115); CHP nominal −1.7 GW
+(basis-disputed, miso-116/127-parallel §7b); ST_GAS 37–39 % bench-uncovered
+(miso-127-parallel §7a). The model fills the hole with the only cheap headroom
+— coal — which is why the surplus is overnight-specific and the clearing lands
+ABOVE the band instead of inside it (miso-115's "trough pricing question on
+correctly-sized units" is this arithmetic).
+
+**Gas-commitment-bridge pool at MISO reads ~EMPTY** (pjm-142's screen
+statistic, measured WITHOUT a prereg ⇒ descriptive, cell stays `U`): model CC
+day-anchored night-off plants in July = 3 / 1,601 MW (2023), **0 / 0 MW (2024,
+2025)** — model CCs already run near-flat through summer nights. Any future
+MISO bridge charter must confront this census in its own pre-registered
+pre-check.
+
+**NAMED SUCCESSORS, NOT CHARTERED** (rule 19; nothing sized on any Δ measured
+here): **(a) synchronized-reserve online-gating at MISO** — `_miso_design`
+(model/reserves/spec.py:2377) never sets `online_gated`, so all ~2.5–2.7 GW of
+the RBDC requirement can be backed by IDLE capacity and reserves exert ZERO
+overnight backdown pressure on coal; the generic `R − ρ·ΣP ≤ 0` machinery
+exists (NYISO three arms, `pjm_reserve_online_gated`) and the real market's
+spin+reg (~1–1.4 GW) must be synchronized — overnight that lands on backed-down
+coal/CC. Hour-organizing by construction (targets R_dfrac), regime-immune,
+forward-reproducible. Prerequisites: published-requirement identification of
+the online portion (BPM-002/Schedule 28 family, never the residual), the
+nested-family split, fleet-property `online_rho`, prereg with C1 16/16 +
+COAL_BIT + D-4 + LOYO kills; rule 25 — PJM/NYISO verdicts transfer nothing.
+**(b) CC_REGULAR committed-band measured re-grounding** — registered 1.20
+rests on a generic "30–40 % part-load premium" claim contradicted by the
+repo's OWN artifact (`avg_committed_p50` **1.005**, n=103, already wired as
+`phys_committed`); CT_PEAKER's committed IS grounded on its measured value
+(1.025, markup 0) while CC's carries markup 0.195 and the intermediate-routed
+0.92 bulk keeps what backcast_config itself calls "an unphysical,
+artificially-cheap min-load block"; the "metric-neutral" validation of 1.20 was
+taken at 2023 prices (band below $32) and does not carry to 2025, where the
+cohort's tail prices into the night-clearing neighborhood. Bounded effect,
+rule-14 swap, zero free parameters, own prereg + same-HEAD A/B required, never
+a bare code edit (miso-122 reproducibility seam). **(c) DO NOT** charter ladder
+granularity off this finding — the 2025 wave never ENTERS the cheap-PRB band,
+so miso-129 prerequisite (i) would measure FALSE for 2025; the closed
+seam/take-or-pay/self-commitment families stay closed; no fitted trough adder.
+
+**Solve posture.** This container (15 GB) cannot hold the documented
+14.4–15.5 GB single-year MISO peak; a control+arm A/B (6 sequential solves,
+rule 12) is infeasible in-session and per CLAUDE.md is stated, not offloaded to
+CI: **successor A/Bs need a larger container or an owner-run invocation.**
+
+Rule 28(b): `gas_commitment_bridge` MISO ev annotated (pool census,
+descriptive, cell stays U); `diurnal_price_amplitude` MISO ev annotated (the
+two-sided wave + regime attribution). NO cell status changes. FINDING
+`results/calibration/FINDING-miso130-c7-night-regime-2026-08-05.md`; probe
+`scripts/probes/_miso130_c7_night_regime.py`; record
+`results/calibration/_miso130_c7_night_regime.json`. Next number: miso-131.
