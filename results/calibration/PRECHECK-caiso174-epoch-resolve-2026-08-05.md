@@ -91,6 +91,57 @@ as part of this gate.
 
 ---
 
+## 4a. AMENDMENT — §4's control expectation was WRONG, and the gate caught it
+
+**Recorded here rather than silently corrected** (the caiso-172 §5.1 discipline). §4
+pre-registered the control arm at a flat **8,000 MW**. **That is wrong.** The quantity gate
+found it on its first run, **before any price was read** — which is precisely what the gate
+exists for.
+
+**FFR-4D made TWO changes and §4 conflated them:**
+
+1. it **re-vintaged the constant** `STORAGE_BASE_FLEET_MW["CAISO"]` **8,000 → 15,450 MW**
+   (mid) — always in effect, both modes, gated by no flag; and
+2. it **added** `storage_measured_base_fleet` — backcast-scoped, default-ON.
+
+A control at **this** head with the field off therefore resolves the **new constant
+(15,450 MW)**, not the pre-epoch 8,000. **The flat 8,000 exists only in the committed keeper
+bundle, at a different HEAD, and is not reproducible by any flag here.**
+
+The corrected three-state ladder, which is what the finding decomposes:
+
+| year | keeper (PRE-epoch, committed) | Arm A (new constant, flat) | Arm B (measured, vintaged) |
+|---|---:|---:|---:|
+| 2023 | 8,000.0 | 15,450.0 | **7,492.4** |
+| 2024 | 8,000.0 | 15,450.0 | **11,131.3** |
+| 2025 | 8,000.0 | 15,450.0 | **15,448.4** |
+
+**Two consequences, both pre-registered now:**
+
+- **2025 is EXPECTED to nearly coincide between the arms** (15,450 vs 15,448.4, a **1.6 MW**
+  gap) because FFR-4D set the constant to the 2025 measured value rounded. That is a real
+  property of the re-vintage, **not** a separation failure. The gate is corrected to require
+  separation in **at least one** year rather than every year, and to **report** 2025's
+  coincidence. So the field's per-year vintaging effect is **concentrated in 2023 and 2024**.
+- **Arm A is not a reconstruction of the keeper's baseline** and is not claimed to be. It is
+  the counterfactual *"what if only the constant had been re-vintaged"* — which is itself
+  informative, because at 15,450 MW flat it puts **more than twice** the batteries that
+  existed into 2023. The keeper's committed bundle remains the pre-epoch baseline, and the
+  keeper-vs-Arm-B comparison is the "what did the epoch do" question.
+
+**§4's other pre-registrations stand and all PASSED**: Arm B resolves to
+7,492.4 / 11,131.3 / 15,448.4 MW, its power-cap **profile** is **2-D `(6, 8760)` and varies
+within the year** in all three years (`storage_vintage_ramp` live for batteries for the
+first time), and Arm A's profile is flat `(16,)`. One further correction inside the gate: the
+2-D ramp is produced by `storage_cap_profiles`, **not** by `storage_units_to_arrays` — the
+first draft checked the latter and would have reported a false failure. Checking the wrong
+object is the caiso-162 failure mode in a new place, so the gate now reads the profile.
+
+Record: `results/calibration/_caiso174_fleet_gate.json`; instrument
+`scripts/probes/_caiso174_fleet_gate.py`.
+
+---
+
 ## 5. What is REPORTED and what GATES
 
 **GATES the promotion:** the determination, and only the determination — per §2.
