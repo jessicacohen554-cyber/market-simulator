@@ -1707,7 +1707,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Under coal_offer_net_revenue_margin the CAMPD _mustrun band is
             # instead repriced to the measured net-margin form (ERCOT-137).
             apply_coal_tranches(
-                mc_base, dispatch_fleet, fleet_arrays, fuel_fracs, fuel_prices, config
+                mc_base,
+                dispatch_fleet,
+                fleet_arrays,
+                fuel_fracs,
+                fuel_prices,
+                config,
+                year=year,
             )
             # Gas-offer net-revenue margin (gas_offer_net_revenue_margin,
             # default off — forecast parity with the backcast orchestrator's

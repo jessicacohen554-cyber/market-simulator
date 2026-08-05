@@ -386,6 +386,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "coal_perplant_offer_level",
     "coal_perplant_offer_curves",
+    # Per-year windowed refinement of the same mechanism (ercot-168): both
+    # default-off (False / None) and byte-identical for every config that
+    # does not arm it; registered at their defaults so every pre-existing
+    # cache key stays byte-stable. An armed run enters the key as a distinct
+    # scenario.
+    "coal_perplant_offer_yearly",
+    "coal_perplant_offer_curves_yearly",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -832,6 +839,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_peak_offer_gas_hr": "None",
     "coal_perplant_offer_level": "False",
     "coal_perplant_offer_curves": "None",
+    "coal_perplant_offer_yearly": "False",
+    "coal_perplant_offer_curves_yearly": "None",
     "hydro_min_flow_floor": "False",
     "hydro_ror_split": "False",
     "hydro_budget_nameplate_aware": "False",
@@ -9003,6 +9012,51 @@ class ScenarioConfig:
     # the values the solve used. Rule-23 frozen — re-derives only when the
     # source disclosure subsets change.
     coal_perplant_offer_curves: dict[int, tuple[tuple[float, float], ...]] | None = None
+
+    # PER-YEAR windowed per-plant coal offer curves (ercot-168, matrix §5.1
+    # item 12 — the rule-23 re-derivation of the ercot-144 identification
+    # from the delivery-2023 NP3-965 corpus, replacing the DOF ledger's
+    # declared 2024/25→2023 extrapolation). Refines coal_perplant_offer_level
+    # (REQUIRED armed — enforced at the wiring guard in run_calibration.py,
+    # not here, because the level flag is threaded as a solve kwarg after
+    # config construction, the soc-reserve precedent above): for a solve year
+    # PRESENT in the resolved table, each committed/econ tranche of a listed
+    # plant is priced per (months × hours) window at the capacity-weighted
+    # measured price of its capacity window on the window's own merged
+    # measured curve — the SAME window mapping, evaluated per cell, applied
+    # to the cell's hours on the 8760 axis; `_mustrun` (ERCOT-137) and
+    # `_peak` (ERCOT-140) keep their own measured owners. A solve year ABSENT
+    # from the table (2024, 2025 — the table carries only 2023) falls through
+    # to the static coal_perplant_offer_curves registry unchanged (the
+    # precommit's G-BIT bit-identity kill verifies this end-to-end). Zero
+    # fitted scalars; the windows are the corpus's own hourly-submission
+    # structure under the day-majority stability license
+    # (docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md §0).
+    coal_perplant_offer_yearly: bool = False
+    # The resolved year-keyed windowed registry (year -> plant_code ->
+    # ((months, hours, ((cum_MW, price), ...)), ...)). None + flag armed is a
+    # hard error (rule 25 — no silent fallback in the offer path); the
+    # harness resolves it from
+    # constants.COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO so run_config.json
+    # records the values the solve used. Rule-23 frozen — re-derives only
+    # when the source disclosure corpus changes (re-derive cite: ercot-157).
+    coal_perplant_offer_curves_yearly: (
+        dict[
+            int,
+            dict[
+                int,
+                tuple[
+                    tuple[
+                        tuple[int, ...],
+                        tuple[int, ...],
+                        tuple[tuple[float, float], ...],
+                    ],
+                    ...,
+                ],
+            ],
+        ]
+        | None
+    ) = None
 
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /

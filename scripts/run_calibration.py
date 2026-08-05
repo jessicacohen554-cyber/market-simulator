@@ -354,6 +354,7 @@ def run_year(
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
     coal_perplant_offer_level: bool = False,
+    coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -1631,6 +1632,56 @@ def run_year(
             "replacement)",
             iso,
             len(COAL_PERPLANT_OFFER_CURVE_BY_ISO[iso]),
+        )
+    # Per-year windowed per-plant coal offer curves (run_calibration_full
+    # --coal-perplant-offer-yearly; ScenarioConfig.coal_perplant_offer_yearly,
+    # ercot-168 — matrix §5.1 item 12's rule-23 re-derivation of the armed
+    # ERCOT-144 identification from the delivery-2023 corpus). Refines the
+    # block above: the WIRING guard here enforces the dependency (the level
+    # flag is a solve kwarg, so a construction-time config check cannot see
+    # it — the soc-reserve precedent). The FULL year-keyed table resolves
+    # into the config (rule 25: run_config records what the solve used,
+    # year-invariantly); the consumer indexes it by the solve year, and a
+    # year absent from the table (2024/2025 — it carries only 2023) falls
+    # through to the static registry unchanged (precommit G-BIT).
+    # Identification: scripts/data/derive_coal_perplant_offer.py --year 2023.
+    if coal_perplant_offer_yearly:
+        from market_sim.config.constants import (
+            COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO,
+        )
+
+        if not coal_perplant_offer_level:
+            raise SystemExit(
+                "--coal-perplant-offer-yearly requires "
+                "--coal-perplant-offer-level: the year table refines the "
+                "per-plant mechanism and has no meaning without it (rule 24)"
+            )
+        if iso not in COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO:
+            raise SystemExit(
+                f"--coal-perplant-offer-yearly: no derived year-windowed "
+                f"coal offer curves for {iso} in "
+                "constants.COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO — run "
+                "scripts/data/derive_coal_perplant_offer.py --year <Y> and "
+                "register the curves (rule 24: curves never cross ISO "
+                "boundaries)"
+            )
+        config = config.with_overrides(
+            coal_perplant_offer_yearly=True,
+            coal_perplant_offer_curves_yearly=(
+                COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]
+            ),
+        )
+        logger.info(
+            "%s coal per-plant YEAR-windowed offer curves (ercot-168): "
+            "years %s; solve year %d is %s the table",
+            iso,
+            sorted(COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]),
+            year,
+            (
+                "IN"
+                if year in COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]
+                else "NOT in (static fall-through)"
+            ),
         )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR
@@ -3548,7 +3599,9 @@ def run_year(
     # then the coal take-or-pay tranche discount. No startup-cost markup.
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_mc, config.nox_price)
     apply_eac_to_mc(mc_base, fleet_arrays, config)
-    apply_coal_tranches(mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices, config)
+    apply_coal_tranches(
+        mc_base, fleet, fleet_arrays, fuel_fracs, fuel_prices, config, year=year
+    )
     # Gas-offer net-revenue margin (gas_offer_net_revenue_margin, default
     # off): compress each gas tranche's above-physical markup to a fixed
     # $/MWh margin at the ISO's delivered-gas anchor. Runs after
