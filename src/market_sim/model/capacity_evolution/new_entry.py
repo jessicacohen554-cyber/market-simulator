@@ -738,6 +738,7 @@ def apply_economic_new_entry(
     peak_demand_mw: float = 0.0,
     entry_rate_caps_mw: dict[str, float] | None = None,
     entry_pipeline: list[dict] | None = None,
+    procured_flow_mw: dict[str, float] | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -851,6 +852,15 @@ def apply_economic_new_entry(
             cod_year, seq, kind}`` rows instead of materializing;
             ``evolve_fleet`` commissions rows at their ``cod_year``.
             ``None`` (default) keeps in-year commissioning byte-identically.
+        procured_flow_mw: ``{tech: mw}`` commissioning THIS YEAR through the
+            FFR-5E procurement channel (``vre_procurement_additions_enabled``),
+            netted from the ISO budget and the per-tech queue cap so one
+            physical queue is not spent twice (design §2.3(b)). A per-year
+            FLOW against annual caps — never a cumulative stock, which is
+            what would re-create FFR-4A's dimensional defect (§2.3(c)) — and
+            independent of ``entry_pipeline_aware_signal``. ``None``
+            (default, and always ``None`` while the gate is off) is
+            byte-identical.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -1219,7 +1229,32 @@ def apply_economic_new_entry(
 
     new_fleet = list(fleet)
     renewable_additions: dict[str, dict[str, float]] = {}
-    remaining = queue_budget_mw
+    # FFR-5E procurement-channel netting (design §2.3(b)). The real
+    # interconnection queue has ONE throughput and both channels draw on it, so
+    # MW the procurement channel commissions THIS YEAR is consumed from this
+    # year's budgets before the merchant screen spends them. Without this the
+    # model would build the committed pipeline AND a full economic ladder on
+    # top of it — the double-count FFR-4A was chartered to remove.
+    #
+    # WHAT IS NETTED, AND WHY IT IS NOT FFR-4A's DEFECT UNDER A NEW NAME
+    # (§2.3(c), the single most likely implementation error here): this nets
+    # the MW COMMISSIONING IN THIS YEAR — a FLOW, GW/yr — from a flow cap.
+    # Same units on both sides, no stock, no implied D <= C/L, no effect on
+    # the ladder's K - L + 1 ratchet. It is therefore INDEPENDENT of
+    # entry_pipeline_aware_signal, which relocates the netting of a pending
+    # pipeline STOCK: deliberately NOT routed through ``_pending_netting_mw``
+    # below, or arming that unrelated gate would silently switch this netting
+    # off too. Neither mechanism is a precondition for the other.
+    #
+    # NOT capped by the ladder or the queue caps (§2.3(a)): for the same reason
+    # a confirmed exit bypasses the reliability floor, the caps model the
+    # queue's annual throughput and a row already IN the queue with an
+    # effective year IS that throughput. Capping it would count one physical
+    # constraint twice and could silently delete a project that verifiably
+    # exists — hence the netting lands on the SCREEN's budgets, never on the
+    # procured MW itself.
+    _procured_netting_mw: dict[str, float] = dict(procured_flow_mw or {})
+    remaining = max(0.0, queue_budget_mw - sum(_procured_netting_mw.values()))
     # Per-tech queue caps are tracked per cap group: hydrogen turbines and
     # CCUS share the ``gas_cc`` group, so their builds compete for one cap.
     group_remaining: dict[str, float] = {}
@@ -1271,7 +1306,11 @@ def apply_economic_new_entry(
             group_remaining[group] = max(
                 0.0,
                 per_tech_cap_gw.get(group, 0.0) * 1000.0
-                - _pending_netting_mw.get(tech, 0.0),
+                - _pending_netting_mw.get(tech, 0.0)
+                # FFR-5E: this year's procured commissioning flow (§2.3(b)).
+                # wind/solar carry no _QUEUE_CAP_GROUP entry, so group == tech
+                # and the tech-keyed flow maps 1:1 onto the group budget.
+                - _procured_netting_mw.get(tech, 0.0),
             )
         build_mw = min(group_remaining[group], remaining)
         _cap_label = None

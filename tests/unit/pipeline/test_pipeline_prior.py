@@ -87,7 +87,7 @@ def test_getitem_missing_raises_keyerror():
         _ = pr["nope"]
 
 
-def test_all_twenty_keys_present():
+def test_all_cross_year_keys_present():
     """The typed object carries one field per current ``prior_results`` key.
 
     ``price_signal`` is the capacity-screen price signal added by the
@@ -119,6 +119,11 @@ def test_all_twenty_keys_present():
         "wind_cap_mw",
         "solar_cap_mw",
         "storage_firm_mw",
+        # FFR-5E procurement channel rows (GATED
+        # vre_procurement_additions_enabled, default OFF ⇒ always empty), read
+        # by capacity.evolve_fleet step 4 — a real cross-year field, so the
+        # exact-key-set contract includes it.
+        "procured_vre_additions",
     }
     assert set(PriorYearResults._field_names()) == expected
 
