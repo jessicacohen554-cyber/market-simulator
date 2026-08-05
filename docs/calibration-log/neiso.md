@@ -1679,3 +1679,71 @@ this session**, the inert verdict included. Rule 28c: no new `ScenarioConfig`
 field. Rule 27 `[R-PUSH]`: exact on-disk bytes; blob-verified after push.
 
 Next shorthand: **neiso-81.**
+
+## neiso-84 — the 2022 VALIDATION TOUCHPOINT is SPENT: price level and shape DEGRADE out-of-sample, everything else HOLDS (2026-08-05)
+
+**What was run.** NEISO's designated keeper recipe
+(`2026-08-05-neiso-83-ca1-reclass`, CALIBRATED-WITH-CAVEATS on 2023–2025),
+frozen and replayed on the held-out year 2022 via
+`replay_keeper.py --years 2022 --holdout-authorized`. **Zero recipe deltas** —
+no `--set`, no `--offer-curve-json`, no config edit — so the rule 20 `[R-DOF]`
+ledger is carried onto the touchpoint attestation byte-identical (14 entries,
+5 residual-identified). **No parameter was identified, re-identified or
+re-fitted on 2022, and no 2022 result fed back into any input.** Registered
+`2026-08-05-neiso-2022-touchpoint`.
+
+**Authorization.** The touchpoint is the intended use of NEISO's `complete`
+marker (validation tier). It was spent under a **narrow owner lift** of the
+2026-07-25 holdout spend freeze (owner, 2026-08-05: "lift, spend, re-arm"),
+scoped to the PJM and NEISO 2022 touchpoints alone, and the freeze is
+**RE-ARMED in the same session** — see `holdout-freeze.json` history. NEISO's
+locked test (2019 + H1-2026) is **SPENT since 2026-07-07 and was NOT re-opened**;
+`final` remains empty.
+
+**Result, as scored — NOT-YET on 2022 against CALIBRATED-WITH-CAVEATS
+in-sample.** The split is the point, not the label:
+
+| | criterion | in-sample | 2022 |
+|---|---|---|---|
+| **DEGRADED** | C3a mean LMP | PASS | **FAIL +14.7 %** |
+| **DEGRADED** | C3b price duration/shape | PASS | **FAIL NRMSE 0.620** |
+| CARRIED | C3c price tail (RT) | CAVEAT | FAIL — model 0 h vs actual 117 h |
+| HELD | C1 fuel-mix (grid-delivered) | PASS | PASS (6/6, free 4/4) |
+| HELD | C2 system volume | PASS | PASS |
+| HELD | C4 dispatch correlation | PASS | PASS |
+| HELD | C6 governance | PASS | PASS |
+| HELD | C8 forced-energy share | PASS | PASS |
+
+So the **quantity** side of the model travels to an unseen year intact —
+fuel mix, system volume, hourly dispatch correlation and the forcing budget all
+hold — and the **price** side does not. Model load-weighted λ is $104.57
+against a measured RT $84.92. C3c is NOT new evidence: it is the keeper's
+existing ledgered caveat (the energy-only LP forms no >$300 tail) travelling
+unchanged, and 2022's 117 actual tail hours simply make the same gap bigger.
+
+**What this is NOT.** Validation tier is **ITERABLE model-SELECTION evidence**.
++14.7 % is **not** a certified out-of-sample skill number and must never be
+quoted as one. It is also scored against the **known-imperfect availability
+envelope** the freeze was declared for (the CAMPD economic-layup residual that
+survives the merit-order guard), so the two degradations are **not attributable
+to forecast error alone** until the touchpoint is re-run after that fix — which
+the validation tier explicitly permits, and which is exactly why the owner spent
+this tier rather than the touch-once locked one.
+
+**No re-tune was performed.** Rule 22's response to a validation miss is to send
+the issue back to 2023–2025; this session only measured and reported. 2022 is a
+strongly atypical year for NEISO (measured RT $84.92 against the 2023–2025
+range, with a Jan $148.66 / Dec $121.40 gas-driven winter), so the natural first
+question for whoever picks this up is whether the level miss is a fuel-passthrough
+behaviour that only shows at extreme gas, not an offer-curve level error.
+
+**Governance.** No mechanism was tested, so no mechanism-matrix cell moves
+(rule 28b) and no `ScenarioConfig` field was added (rule 28c). The keeper is
+UNCHANGED and no marker was re-keyed — a touchpoint is not a promotion. Rule 16
+`[R-ALLYEARS]` is not engaged: it governs keepers, which must span 2023–2025;
+this is a single held-out year, which is the shape the `complete` marker
+authorizes. Run explorer pruned 16 → 6 on owner instruction, keeping the keeper,
+the touchpoint and every run cited by `calibration-complete.json` or
+`keepers/NEISO.json`.
+
+Next shorthand: **neiso-85.**
