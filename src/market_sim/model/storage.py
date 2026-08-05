@@ -515,6 +515,195 @@ def reserve_storage_as_power(
     return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
+def ercot_storage_as_soc_min(
+    energy_cap: np.ndarray,
+    year: int,
+    hours: int,
+    deploy_mw: np.ndarray | None = None,
+    charge_cap: np.ndarray | None = None,
+    discharge_min: np.ndarray | None = None,
+    eta_chg: np.ndarray | float = 1.0,
+    eta_dis: np.ndarray | float = 1.0,
+    daily_pin: bool = False,
+) -> np.ndarray:
+    """SOC floor backing ERCOT's measured battery AS awards (per-product duration).
+
+    The measured-award power reservation (:func:`reserve_storage_as_power`,
+    ``storage_as_commitment``) reserves *power*, not state of charge — its own
+    docstring names that as "the first-order constraint that binds in the
+    scarcity hours where the LP over-discharges". ERCOT Nodal Protocols
+    §3.17.3 requires an ESR to hold SOC backing each award for the product's
+    duration (RegUp/RRS 1 h, ECRS 2 h, Non-Spin 4 h —
+    :data:`market_sim.model.reserves.spec.ERCOT_AS_PRODUCT_DURATION_H`, the
+    co-opt's own published constants, no new number), so an awarded battery
+    holds ``Σ_p award_p(t) × duration_p`` MWh it cannot arbitrage away. This
+    is the ercot-167 mechanism (``ercot_storage_as_soc_reserve``, matrix §5.1
+    item 10 — the ercot-162 §2 named successor): measured at the 2023 actual
+    >$1000 hours the fleet held 2,125 MW of awards = 2,705 MWh frozen of its
+    ~4.1 GWh, leaving ~350–470 MW sustainable vs the 423 MW the SCED corpus
+    shows it actually discharged (the keeper's LP discharges 666 MW there).
+
+    Product split: measured per-product PWRSTR awards
+    (``ercot_<year>_storage_as_products_hourly.parquet``,
+    ``scripts/data/derive_ercot_storage_as_products.py``), consumed as SHARES
+    of the same committed total series the power reservation subtracts
+    (rule 19: one measured award basis for both sides; the shares file can
+    never move the armed total).
+
+    Deployment reconciliation (rule 19 — measured by the first 2023 probe,
+    which went INFEASIBLE without it): ``ercot_storage_as_deployment``
+    force-discharges the measured award draw-down at the evening ramp, and
+    every deployed MWh is AS energy leaving the tank — the backing behind it
+    is spent, not still owed. ``deploy_mw`` (the same
+    :func:`~market_sim.results.scarcity.ercot_storage_as_deployment_mw`
+    series the discharge floor forces, when that flag is armed) is therefore
+    subtracted from the freeze as an INTRA-DAY CUMULATIVE:
+    ``floor(t) = max(0, freeze(t) − Σ_{same day, ≤t} deploy)``. Per hour the
+    floor then releases at least the forced discharge (feasible by
+    construction against the deployment floor), the backing rebuilds with the
+    next day's procurement, and with deployment unarmed (``None``) the plain
+    freeze applies. Allocated across units pro-rata by ENERGY
+    cap — the stable basis for an energy floor (the power cap at the call
+    site is already award-docked by :func:`reserve_storage_as_power`, so
+    power weights would be degenerate exactly in the high-award hours) — and
+    clipped at each unit's energy cap. Missing either file → all-zero floor
+    (inert), the family convention. Zero fitted parameters (rule 23); forward runs
+    price the split endogenously (``ercot_storage_as_endogenous``), so this
+    measured record is backcast-only, a capability input, never a pinned
+    outcome (rule 13).
+
+    Returns the ``(n_storage, hours)`` SOC lower bound for
+    ``dispatch.build_variable_bounds(storage_soc_min=...)``.
+    """
+    ec = np.asarray(energy_cap, dtype=float)
+    ec2 = np.repeat(ec[:, np.newaxis], hours, axis=1) if ec.ndim == 1 else ec.copy()
+    soc_min = np.zeros_like(ec2)
+    if ec.size == 0:
+        return soc_min
+    total_path = _AS_RESTYPE_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    prod_path = _AS_RESTYPE_DIR / f"ercot_{year}_storage_as_products_hourly.parquet"
+    if not (total_path.exists() and prod_path.exists()):
+        return soc_min
+    from market_sim.model.reserves.spec import (
+        ERCOT_AS_PRODUCT_DURATION_H,
+        ERCOT_AS_PRODUCTS,
+    )
+
+    def _series(frame: "pd.DataFrame", col: str) -> np.ndarray:
+        v = frame[col].to_numpy(dtype=float)
+        if len(v) < hours:
+            v = np.concatenate([v, np.zeros(hours - len(v))])
+        return v[:hours]
+
+    committed = _series(pd.read_parquet(total_path), "storage")
+    prods = pd.read_parquet(prod_path)
+    # Column names follow the product order of ERCOT_AS_PRODUCTS
+    # (RegUp, RRS, ECRS, NonSpin) — asserted so a spec reorder cannot silently
+    # mispair a duration with a product column.
+    names = tuple(n.lower() for n, _c, _t in ERCOT_AS_PRODUCTS)
+    assert names == ("regup", "rrs", "ecrs", "nonspin"), names
+    per = np.stack([_series(prods, n) for n in names])  # (4, hours)
+    tot = per.sum(axis=0)
+    dur = np.asarray(ERCOT_AS_PRODUCT_DURATION_H, dtype=float)[:, np.newaxis]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        share = np.where(tot[np.newaxis, :] > 0.0, per / tot[np.newaxis, :], 0.0)
+    # (hours,) fleet MWh floor: committed total split by measured product
+    # shares, weighted by the published per-product SOC durations.
+    freeze = (share * dur).sum(axis=0) * committed
+    if deploy_mw is not None:
+        # Intra-day cumulative deployed AS energy (MWh; hourly MW × 1 h) —
+        # backing already spent through the armed deployment discharge floor.
+        dep = np.asarray(deploy_mw, dtype=float)[:hours]
+        if dep.shape[0] < hours:
+            dep = np.concatenate([dep, np.zeros(hours - dep.shape[0])])
+        n_days = hours // 24
+        cum = dep[: n_days * 24].reshape(n_days, 24).cumsum(axis=1).reshape(-1)
+        if hours % 24:  # ragged tail (never on the 8760 clock; guard anyway)
+            tail = dep[n_days * 24 :].cumsum()
+            cum = np.concatenate([cum, tail])
+        freeze = np.maximum(freeze - cum, 0.0)
+    fleet_e = ec2.sum(axis=0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weight = np.where(
+            fleet_e[np.newaxis, :] > 0.0, ec2 / fleet_e[np.newaxis, :], 0.0
+        )
+    soc_min = np.minimum(weight * freeze[np.newaxis, :], ec2)
+    if charge_cap is not None and daily_pin:
+        soc_min = _pin_reachability_clip(
+            soc_min, ec2, charge_cap, discharge_min, eta_chg, eta_dis
+        )
+    return soc_min
+
+
+def _pin_reachability_clip(
+    soc_min: np.ndarray,
+    soc_ub: np.ndarray,
+    chg_ub: np.ndarray,
+    dis_lb: np.ndarray | None,
+    eta_chg: np.ndarray | float,
+    eta_dis: np.ndarray | float,
+) -> np.ndarray:
+    """Clip a SOC floor to what the daily-pinned scaffold can physically hold.
+
+    ``storage_daily_cycle_hours`` pins every day-start SOC of a unit to ONE
+    shared level S0, so the floor must admit an S0 satisfying every pin hour
+    at once: the 2023 probe measured the raw award-backing floor infeasible
+    by exactly this coupling — the floor at high-award midnights (889 MWh on
+    the West unit) exceeded the unit's energy cap at capability-dip midnights
+    elsewhere in the year (546 MWh), leaving no valid shared S0 (max feasible
+    uniform floor scale 0.997; the conflict enters at the Oct-2023 capability
+    hole boundary). This clips the floor by the unit's max-reachable SOC path
+    under the model's own scaffolding — S0 capped at the tightest pin-hour
+    energy cap, then a within-day forward pass at the award-docked charge
+    power net of the forced deployment discharge, and a backward pass bounding
+    late-day SOC by what the docked discharge power can return to S0 by the
+    day boundary. Every input is a measured array already in the LP (caps,
+    docked power, forced floor, efficiencies); no parameter is introduced —
+    the clip removes only backing the pinned model could not have carried
+    (~0.3 % of the 2023 floor at its worst hours), and is a no-op when the
+    plain floor is already reachable.
+    """
+    nS, hours = soc_min.shape
+    n_days = hours // 24
+    if n_days < 2 or hours % 24:
+        return soc_min
+    ec = eta_chg if np.ndim(eta_chg) else np.full(nS, float(eta_chg))
+    ed = eta_dis if np.ndim(eta_dis) else np.full(nS, float(eta_dis))
+    ec = np.asarray(ec, dtype=float)[:, np.newaxis, np.newaxis]
+    ed = np.asarray(ed, dtype=float)[:, np.newaxis, np.newaxis]
+    ub = soc_ub[:, : n_days * 24].reshape(nS, n_days, 24)
+    chg = chg_ub[:, : n_days * 24].reshape(nS, n_days, 24)
+    forced = (
+        dis_lb[:, : n_days * 24].reshape(nS, n_days, 24)
+        if dis_lb is not None
+        else np.zeros_like(ub)
+    )
+    # Shared pin level: S0 must fit under every day-start energy cap.
+    s0_cap = ub[:, :, 0].min(axis=1)[:, np.newaxis, np.newaxis]  # (nS,1,1)
+    # Forward pass: max SOC reachable from S0 given docked charging net of the
+    # forced deployment discharge. reach[d,h] = s0 + Σ_{j<=h}(η·chg − forced/η)
+    # capped by the running energy-cap minimum (a cap dip caps everything after
+    # it until recharge — the running-min is a safe lower envelope of the true
+    # hourly-capped recursion and keeps the pass a pure cumsum).
+    gain = (ec * chg - forced / ed).cumsum(axis=2)
+    # SOC at the pin hour (local h=0) is EXACTLY S0, so gains accumulate from
+    # h=1 (subtract the h=0 term). Exact unconstrained max path is then
+    # S0 + Σ_{j=1..h} gain_j (charge max every hour, only the forced discharge
+    # drains); the running-min energy cap is a safe (over-clipping only after a
+    # dip) envelope that keeps the pass a pure cumsum.
+    gain = gain - gain[:, :, 0:1]
+    fwd = np.minimum(s0_cap + gain, np.minimum.accumulate(ub, axis=2))
+    # Backward pass: SOC at hour h must be dischargeable back to S0 by the day
+    # boundary at the docked discharge power (dis_ub == chg_ub basis here: the
+    # docked power cap bounds both directions in the LP bounds builder).
+    drop = (chg / ed)[:, :, ::-1].cumsum(axis=2)[:, :, ::-1]
+    bwd = s0_cap + np.concatenate([drop[:, :, 1:], np.zeros((nS, n_days, 1))], axis=2)
+    env = np.minimum(fwd, bwd).reshape(nS, n_days * 24)
+    if hours > n_days * 24:
+        env = np.concatenate([env, soc_ub[:, n_days * 24 :]], axis=1)
+    return np.minimum(soc_min, np.maximum(env, 0.0))
+
+
 # Measured ERCOT hourly battery-fleet capability (60-Day DAM disclosure
 # non-OUT PWRSTR/ESR HSL), derived by scripts/data/derive_ercot_storage_capability.py
 # (provenance, basis decision and the FROZEN-AGAINST-RESIDUALS contract live

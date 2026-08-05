@@ -152,7 +152,26 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # payload/dashboard, but "co2" is no longer in CRITERIA, so it contributes no
 # status to the determination and consumes no caveat budget. See the CRITERIA
 # comment for the year-scoped restoration path.
-RUBRIC_VERSION = 2.9
+# v3.0 (owner amendment 2026-08-05, session-logged, ERCOT-2023-diagnosis
+# session): a second LEDGERED caveat kind, ACCEPTED MODEL-CLASS LIMITATION
+# (ledger entry `"kind": "model-class"`). It reclassifies a FAIL exactly like
+# the measured-input kind and consumes the same non-protective ledgered budget
+# (max 3), but is admissible ONLY for SUPPORTING-tier criteria — a model-class
+# entry matching a load-bearing or protective criterion is IGNORED (the FAIL
+# stands; fail-closed). Purpose: record an owner-accepted limitation of the
+# model CLASS itself (e.g. C3c — an LP with competitive/measured offers cannot
+# reproduce the equilibrium scarcity-hour offer conduct that formed the
+# realized RT tail, and every mechanism family that reached the count
+# fabricated scarcity elsewhere: ERCOT-95/97/102/107/108/155/159/161/162)
+# after the root-cause program has EXHAUSTED the within-class mechanism space.
+# Each entry must cite that exhaustion record and any still-open residual lane
+# (the caveat documents a bound, it never closes root-causing — a later
+# mechanism that fixes the criterion simply PASSes and the entry goes inert).
+# Rubric §3 (v3.0) narrows the former "a collapsed price tail is never
+# ledgerable" example accordingly: never ledgerable AS A MEASURED-INPUT claim,
+# ledgerable as model-class only under this owner-signed, exhaustion-cited
+# form.
+RUBRIC_VERSION = 3.0
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -165,6 +184,9 @@ PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
 #    "commercial-grade or better on every load-bearing criterion").
 MODEL_MISS = "MODEL MISS"
 MEASURED_LIMIT = "ACCEPTED MEASURED-INPUT LIMITATION"
+# v3.0: owner-accepted limitation of the model class itself (ledger entry
+# kind "model-class"); supporting-tier criteria only, same ledgered budget.
+MODEL_LIMIT = "ACCEPTED MODEL-CLASS LIMITATION"
 COMMERCIAL_BAND = "WITHIN COMMERCIAL BAND (TARGET MISS)"
 # Overall determinations.
 CALIBRATED = "CALIBRATED"
@@ -646,16 +668,32 @@ def _ledger_match(exceptions: list[dict], criterion: str, year: int, key: str | 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
     """Reclassify an out-of-tolerance result to CAVEAT iff the ledger documents it.
 
-    A FAIL with a matching ledger entry becomes a CAVEAT classified ACCEPTED
-    MEASURED-INPUT LIMITATION; a FAIL without one stays a FAIL (MODEL MISS).
+    A FAIL with a matching ledger entry becomes a CAVEAT: classified ACCEPTED
+    MEASURED-INPUT LIMITATION by default, or ACCEPTED MODEL-CLASS LIMITATION
+    when the entry carries ``"kind": "model-class"`` (rubric v3.0). A FAIL
+    without an entry stays a FAIL (MODEL MISS).
+
+    Fail-closed guard (v3.0): a model-class entry is admissible ONLY for a
+    SUPPORTING-tier criterion — matched against a load-bearing or protective
+    criterion it is ignored and the FAIL stands. Owner acceptance of a
+    model-class limit never waves through the certifying or anti-self-deception
+    tiers.
     """
     if rec["status"] != FAIL:
         return rec
     entry = _ledger_match(exceptions, rec["criterion"], rec["year"], rec.get("key"))
-    if entry:
+    if not entry:
+        return rec
+    if entry.get("kind") == "model-class":
+        tier = CRITERIA.get(rec["criterion"], (None, None))[1]
+        if tier != TIER_SUPPORT:
+            return rec  # fail-closed: model-class is supporting-tier-only
+        rec["status"] = CAVEAT
+        rec["classification"] = MODEL_LIMIT
+    else:
         rec["status"] = CAVEAT
         rec["classification"] = MEASURED_LIMIT
-        rec["ledger_reason"] = entry.get("reason", "")
+    rec["ledger_reason"] = entry.get("reason", "")
     return rec
 
 
@@ -2296,11 +2334,12 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
             continue
         recs = [r for r in records if r["criterion"] == cid]
         # A criterion at CAVEAT is LEDGERED when any of its caveat records was
-        # earned by an exceptions-ledger entry (MEASURED_LIMIT — budgeted);
-        # otherwise every caveat sits inside the commercial band (auto, listed
-        # not budgeted).
+        # earned by an exceptions-ledger entry (MEASURED_LIMIT or, v3.0,
+        # MODEL_LIMIT — both budgeted); otherwise every caveat sits inside the
+        # commercial band (auto, listed not budgeted).
         ledgered = any(
-            r["status"] == CAVEAT and r.get("classification") == MEASURED_LIMIT
+            r["status"] == CAVEAT
+            and r.get("classification") in (MEASURED_LIMIT, MODEL_LIMIT)
             for r in recs
         )
         per_criterion[cid] = {
@@ -2387,7 +2426,8 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
                 )
             if ledgered_caveats:
                 reasons.append(
-                    f"{len(ledgered_caveats)} ledgered measured-input caveat(s): "
+                    f"{len(ledgered_caveats)} ledgered caveat(s) "
+                    "(measured-input or model-class): "
                     + ", ".join(c["label"] for c in ledgered_caveats)
                 )
             if protective_caveats:

@@ -922,6 +922,69 @@ class LedgerTests(unittest.TestCase):
         cv._apply_ledger(rec, [{"criterion": "sysvol", "family": "gas", "year": 2024}])
         self.assertEqual(rec["status"], cv.FAIL)
 
+    def test_model_class_entry_caveats_supporting_criterion(self):
+        # v3.0: kind=model-class reclassifies a SUPPORTING-tier FAIL to a
+        # ledgered CAVEAT with the MODEL_LIMIT classification.
+        rec = {
+            "criterion": "price_tail",
+            "key": None,
+            "year": 2023,
+            "status": cv.FAIL,
+            "classification": cv.MODEL_MISS,
+        }
+        cv._apply_ledger(
+            rec,
+            [
+                {
+                    "criterion": "price_tail",
+                    "year": 2023,
+                    "kind": "model-class",
+                    "reason": "owner-accepted LP-class scarcity-tail limit",
+                }
+            ],
+        )
+        self.assertEqual(rec["status"], cv.CAVEAT)
+        self.assertEqual(rec["classification"], cv.MODEL_LIMIT)
+        self.assertIn("scarcity-tail", rec["ledger_reason"])
+
+    def test_model_class_entry_ignored_on_load_bearing_criterion(self):
+        # v3.0 fail-closed guard: a model-class entry can never wave through a
+        # load-bearing (or protective) criterion — the FAIL stands.
+        rec = {
+            "criterion": "price_mean",
+            "key": None,
+            "year": 2023,
+            "status": cv.FAIL,
+            "classification": cv.MODEL_MISS,
+        }
+        cv._apply_ledger(
+            rec,
+            [{"criterion": "price_mean", "year": 2023, "kind": "model-class"}],
+        )
+        self.assertEqual(rec["status"], cv.FAIL)
+        self.assertEqual(rec["classification"], cv.MODEL_MISS)
+
+    def test_model_class_entry_ignored_on_protective_criterion(self):
+        rec = {
+            "criterion": "shape",
+            "key": "COAL_LIGNITE",
+            "year": 2023,
+            "status": cv.FAIL,
+            "classification": cv.MODEL_MISS,
+        }
+        cv._apply_ledger(
+            rec,
+            [
+                {
+                    "criterion": "shape",
+                    "klass": "COAL_LIGNITE",
+                    "year": 2023,
+                    "kind": "model-class",
+                }
+            ],
+        )
+        self.assertEqual(rec["status"], cv.FAIL)
+
 
 class DeterminationTests(unittest.TestCase):
     def _clean_year_payload(self):
