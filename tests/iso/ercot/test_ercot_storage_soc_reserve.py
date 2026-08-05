@@ -99,6 +99,33 @@ class SocFloorTests(unittest.TestCase):
         self.assertTrue((soc[0] <= 1200.0 + 1e-9).all())
         self.assertTrue((soc[1] <= 400.0 + 1e-9).all())
 
+    def test_deployment_energy_releases_the_floor_intra_day(self):
+        # The armed deployment floor force-discharges deployed AS energy; the
+        # backing behind it is spent, so the freeze nets the INTRA-DAY
+        # cumulative deployment (the first 2023 probe went infeasible without
+        # this). 100 MW RRS (1 h) all 4 hours -> freeze 100 MWh; deploy 30 MW
+        # in hours 2 and 3 -> cum 0/0/30/60 -> floor 100/100/70/40.
+        total = np.full(HOURS, 100.0)
+        products = {
+            "regup": np.zeros(HOURS),
+            "rrs": np.full(HOURS, 100.0),
+            "ecrs": np.zeros(HOURS),
+            "nonspin": np.zeros(HOURS),
+        }
+        deploy = np.array([0.0, 0.0, 30.0, 30.0])
+        with (
+            mock.patch("pathlib.Path.exists", return_value=True),
+            mock.patch.object(
+                storage_mod.pd,
+                "read_parquet",
+                side_effect=_patched_read(total, products),
+            ),
+        ):
+            soc = ercot_storage_as_soc_min(
+                np.array([1200.0, 400.0]), 2023, HOURS, deploy_mw=deploy
+            )
+        np.testing.assert_allclose(soc.sum(axis=0), [100.0, 100.0, 70.0, 40.0])
+
     def test_missing_files_inert(self):
         with mock.patch("pathlib.Path.exists", return_value=False):
             soc = ercot_storage_as_soc_min(np.array([1200.0, 400.0]), 2023, HOURS)
