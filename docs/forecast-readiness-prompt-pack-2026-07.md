@@ -2866,3 +2866,274 @@ Deliverable: the PR (field + both halves + tests + matrix row) and
 docs/handoffs/ffr-5c-entry-cap-fix-<date>.md — the byte-identity proof, the paired-arm series
 against FFR-4A §5.2, the backstop-asymmetry statement, and what you did NOT separate.
 ```
+
+## §0l — Wave 5 continues: FFR-5D, FFR-5E and the CAISO grant dispatched (2026-08-05 @ `5543c4c0`)
+
+Sitting record: **Addendum S** (Wave-5 refresh: FFR-5A/5B adjudicated, three cards signed).
+FFR-5A and FFR-5B are LANDED; FFR-5C is IN FLIGHT (PR #3577). **FFR-5D and FFR-5E both branch
+AFTER #3577 merges** — step 0 of each verifies. The CAISO grant lane is independent of all
+three. Adjudicated and carried: the reserve-leg suspect is DEAD (FFR-5A measured $0.0 both
+screens — do not re-suspect it); the D-13 hash-out means "same cache key" does NOT imply
+byte-identity across the D-13 boundary.
+
+### FFR-5D [FABLE] — one price object for the capacity screens, with its level repaired (D-19(a))
+
+```
+[FABLE] FFR-5D — Unify the capacity screens on the lookahead price object and repair its level
+(owner decision D-19(a), sitting Addendum S.3/S.5, signed 2026-08-05). IMPLEMENTATION lane
+(Wave 5): ONE gated ScenarioConfig field, DEFAULT OFF; armed, every capacity-evolution screen
+(retirement pipeline, economic entry, storage) consumes the SAME price object — the lookahead
+stack-reprice — for the entering year, bridge-adjacent years included, AND the lookahead's
+three measured completeness gaps are repaired. Shipped path byte-identical until armed, proven
+by a regression test. This lane arms nothing, promotes nothing, tunes nothing.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 5543c4c0 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT
+2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-05-caiso-174-measured-fleet · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM} at dispatch; a concurrent governance lane is
+executing the SIGNED CAISO grant, so CAISO may appear in `complete` at your head — correct
+either way, re-read the file. `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast out-of-training
+only — this lane's T1-FF window is legal by the enumerated carve-out; ERCOT holds no marker and
+needs none; 2022 is BRIDGED, never solved, its data never read). Marker and freeze are
+orthogonal (caiso-171).
+Cache epochs 2026-08-02/03b/04 (D-10 warm-start OFF for forecast bundles). results/ gitignored
+— COLD solves. D-13 HASH-OUT HAZARD (FFR-5A §1): ira_ptc_credit_window_years hashes out at its
+shipped default, so an identical cache key does NOT imply byte-identical behavior across the
+D-13 boundary — never reuse a pre-D-13 warm dir.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min), THEN scripts/regenerate_clean.py
+(~63-65 min). Rule 12 PER PROMPT: years sequential; <=2 concurrent invocations; <=5 solve-years
+each. Rule 27: FABLE (runner.py is core).
+
+=== STEP 0 — PRECONDITION AND LANDED-CODE RE-READ ===
+1. PR #3577 (FFR-5C, entry_pipeline_aware_signal) MUST BE MERGED before you branch. If it is
+   still open, STOP and report to the manager — do not base off its branch and do not race it.
+2. Re-read `_lookahead_reprice_signal` AS LANDED (it now carries the pipeline-aware gating
+   FFR-5C added) and `runner.py:2536-2553` (the price_signal seam and the rule-22 bridge guard
+   at 2545-2546). Line numbers in this prompt are from FFR-5A at its base — re-locate, do not
+   trust them.
+
+=== THE EVIDENCE YOU ARE IMPLEMENTING AGAINST (measured, FFR-5A; do not re-derive) ===
+docs/handoffs/ffr-5a-soft-latch-2026-08-05.md. The decide screen for any base-year cohort in a
+bridged window consumes raw duals + overlay (bridge guard suppresses the lookahead when the
+entering year is the bridge); every re-screen consumes the lookahead. Measured on the 29-unit /
+8,218 MW coal cohort: decide $22.4/kW-yr vs $58.5 bar (raw object, p_mean $29.38); reverse
+$341.5 — 6x the bar, 100% energy leg (lookahead object, p_mean $65.38 vs raw-2023 $15.77);
+consistent-basis counterfactual $1.3/kW-yr, 0/29 clear. Reserve leg $0.0 at BOTH screens —
+adjudicated, not a suspect. The as-built lookahead's level defects (§2a): (i) the stack is
+THERMAL-ONLY — storage never enters; (ii) net load subtracts PRIOR-YEAR VRE OUTPUT, not
+entering-year capacity; (iii) capacity is derated by TIME-MEAN availability applied to peak
+hours. Jointly they manufacture 122 pro-forma scarcity hours (>$200; 88 h >$1000, max $5000) on
+a 34.8%-RM fleet, so every fuel clears its bar by 4-13x and nothing ever retires. Neither
+current object resolves the real 1.534 GW of 2023-25 ERCOT exits (raw fails the whole 66.9 GW
+merchant fleet; lookahead fails no one). FFR-4A/FFR-5C's pipeline-awareness is the FOURTH gap,
+already landed by #3577 — do not re-implement it; compose with it.
+
+=== WHAT YOU LAND ===
+1. ONE gated field (name it — e.g. capacity_screen_unified_lookahead — justify in the
+   docstring), DEFAULT OFF, in run_config.json (rule 24), matrix row in the SAME PR (rule 28c).
+   OFF => byte-identical shipped behavior, proven by a regression test over the capacity-
+   evolution path.
+2. UNIFICATION (armed): every capacity screen consumes the lookahead object for its entering
+   year, INCLUDING bridge-adjacent years. Rule-22 compliance is by CONSTRUCTION, not by
+   exception: for a bridged entering year the lookahead prices the growth-scaled demand
+   fallback the full-forward leg already uses for forward years (FFR-5A §2a) — zero measured
+   reads of the bridged year. The bridge guard's rule-22 PURPOSE stays satisfied; what changes
+   is that the screens no longer fall back to a different OBJECT there. Do not remove any
+   quarantine assertion — the no-read contract is re-verified in your paired runs.
+3. REPAIRS (armed), each from EXISTING model state, zero new tunables: (i) storage enters the
+   stack (power caps from the evolved storage fleet, with an energy/duration-limited treatment
+   derived from already-carried storage parameters); (ii) entering-year VRE capacity (the
+   evolved fleet's wind/solar MW x the model's own CF basis) replaces prior-year realized
+   output; (iii) peak-hour-appropriate availability (the outage model's hourly availability
+   already exists — use its peak-window values, not the annual time-mean). IF any repair cannot
+   be built without inventing a parameter, STOP on that repair and escalate it — land the rest.
+4. PAIRED-ARM MEASUREMENT on the FFR-5A posture (ERCOT T1-FF, vintage 2020, window 2021-2025,
+   Arm R, shipped defaults otherwise; FFR-5A §1 records the exact invocation): shipped vs
+   armed. PRE-REGISTER the reads BEFORE solving: (a) the cohort's event sequence
+   (decided/re_confirmed/reversed/executed); (b) the enriched pipeline_events bar decomposition
+   (FFR-5A's ledger fields — they persist; use them, do not re-instrument); (c) the fleet-wide
+   entry_capped census; (d) scored thermal exits vs the 1.534 GW actual. STATE THE HONEST
+   EXPECTATION: the armed arm may STILL not resolve real exits — that is a finding, not a
+   failure, and no repair may be tuned toward 1.534 GW (rule 1). Two invocations max
+   (shipped/armed), 4 LP years each, sequential, cold.
+5. Register both arms to frontend/data/hindcast/ (register_hindcast.py, slim files,
+   meta.kind="full_forward", ids ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}) — evidence,
+   expected to be superseded when keepers settle (Q.2). NEVER the backcast registry.
+6. LOYO 2023-2025 discipline: this lane arms nothing; any future promotion/arming decision
+   scores leave-one-year-out first (rule 22) — say so in the handoff so the next session
+   inherits the duty.
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT]: no repair is tuned toward the exit residual; the repaired level is a
+measurement. Rule 19 [R-ONE-MECH]: one object, one gate; do not leave a second screen-price
+path armed anywhere. Rule 22: the bridge stays unsolved and unread — your unification changes
+the OBJECT, never the data diet. Rule 23: repairs derive from model state/source data, never
+from a residual. Rule 24: one field, registered. Rule 27: runner.py is core — edit locally,
+push exact bytes, verify blobs. Rule 28: matrix row in the same PR; stamp any cell your paired
+arms adjudicate, rejections included. FH-4/FH-5: the lift is a MANAGER box (Addendum I.1); you
+report, you do not lift.
+
+=== TRAPS ===
+Push 413: `git fetch origin main` + rebase FIRST; `git remote prune origin` for stale refs.
+Never push_files a >=300-line file. Cache-purge deletes TRACKED files — `git status --short`
+after; `git checkout origin/main -- <path>` STAGES — `git restore --staged`. Shell cwd
+persists. MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the key. Recorded key = runtime
+`cache_key=` line, not request-side. Evolution ledgers at <out-dir>/<ISO>/<cache_key>/;
+load_ledgers_for_run returns {} on a wrong path; decided_year is on the event rows, not the
+ledger year. Stop-hook on merged history: rev-list count 0 => nothing to amend.
+
+Deliverable: the PR (field + unification + repairs + tests + matrix row) and
+docs/handoffs/ffr-5d-price-object-<date>.md — the byte-identity proof, the paired-arm
+pre-registered reads with the bar decompositions, what the armed object does to the cohort AND
+to real-exit resolution, which repairs landed vs escalated, and what you did NOT separate.
+```
+
+### FFR-5E [OPUS] — the near-term VRE procurement channel (D-18(a))
+
+```
+[OPUS] FFR-5E — Implement the near-term VRE procurement channel (owner decision D-18(a),
+sitting Addendum S.2/S.5, signed 2026-08-05). IMPLEMENTATION lane (Wave 5) for FFR-5B's
+recommended design — the design doc IS the spec; implement it, do not redesign it:
+docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md §§2-3 (mechanical seam,
+composition, gates) with §5.1 the admissibility contract. Default OFF; arming anywhere,
+including MISO, is a SEPARATE owner decision (rule 25).
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 5543c4c0 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ the shards YOURSELF): ERCOT 2026-08-04-ercot165-unpooled-share · PJM
+2026-08-04-pjm-152-collapse · CAISO 2026-08-05-caiso-174-measured-fleet · NYISO
+2026-08-04-nyiso-125-seam-envelope · NEISO 2026-08-05-neiso-83-ca1-reclass · MISO
+2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM} at dispatch (a concurrent governance lane executes
+the signed CAISO grant — re-read at your head); `final` = EMPTY. HOLDOUT FREEZE ACTIVE. Marker
+and freeze orthogonal (caiso-171). Forecast-mode 2026+ is unrestricted; NEVER a 2022/2019/
+H1-2026 backcast or scoring against their actuals.
+PREREQUISITES: `uv sync` FIRST (~2 min). regenerate_clean.py (~63-65 min) only if your
+measurement solves; the channel's data path reads committed data/raw/eia-860 vintages directly.
+Rule 12 PER PROMPT: <=5 solve-years per invocation, years sequential, <=2 concurrent. Rule 27:
+OPUS/FABLE (src/ capacity-evolution is core).
+
+=== STEP 0 — PRECONDITION AND LANDED-CODE RE-READ ===
+1. PR #3577 (FFR-5C) MUST BE MERGED before you branch — it changes the entry budget netting
+   your §2.3 composition nets against. If still open, STOP and report.
+2. Re-read new_entry.py's budget code AS LANDED (entry_pipeline_aware_signal exists now) and
+   FFR-5B §2.3's composition rule against it: the channel's current-year commissioning flow is
+   netted from the economic screen's budgets AS A FLOW (MW commissioning in year Y against year
+   Y's caps) — it must NOT recreate the stock-from-flow netting FFR-4A diagnosed and D-17
+   removed. If the landed 5C shape makes §2.3 ambiguous, escalate to the manager with the exact
+   seam rather than guessing.
+
+=== THE DESIGN YOU ARE IMPLEMENTING (FFR-5B; do not re-derive, do not widen) ===
+One field: `vre_procurement_additions_enabled: bool = False` (forecast-mode-only). Data: the
+run's own EIA-860 vintage's proposed-generator sheet, construction-committed statuses U/V/TS
+ONLY (the status set is a cited code constant; eia860.py already excludes P by name), through
+the EXISTING vintage information gate (active_eia860_dir + Effective Year >
+operable_vintage_year). Zone-assigned MW into `renewable_additions`; every MW tagged
+source:"procured" (the §3.5 attribution requirement — additions must be scoreable by channel);
+the channel falls SILENT past the data horizon (empty pipeline past V+4 is correct behavior,
+not a bug). Zero free parameters — the whole registry surface is the one gate flag + the
+existing data path (FFR-5B §2.5), and any expansion of that surface is visible against the
+design doc by construction.
+
+=== GUARDS YOU CARRY (the card's teeth) ===
+1. THIS DOES NOT CLOSE MISO's 18.649 GW, BY DESIGN: a vintage-2020 hindcast may see 1.034 GW
+   committed. Your handoff says so before any number. Anyone widening the status set, vintage,
+   or horizon to improve MISO has spent the guard (rule 1 arriving as a status filter) — the
+   signed card explicitly REFUSED option (b).
+2. HINDCAST ARM BLOCKED: FFR-3V §6.1 (hindcast renewable pools seed from the canonical
+   constant, MISO solar 7,000 vs 2,056 MW actual at vintage 2020) must close before ANY
+   hindcast measurement of this channel, or injected MW double-count invisibly. Do NOT run a
+   hindcast arm; state the block. Plain 2026+ forecast measurement is unaffected.
+3. Measurement: shipped vs armed paired control at your own base commit, the cheapest honest
+   instrument — prefer exercising the evolve/step-4 path directly (the FFR-4A harness pattern);
+   a bounded 2026+ MISO forecast pair is permitted if you need the full loop (<=5 solve-years
+   per invocation; register any full runs to frontend/data/forecast/ via
+   register_forecast_run.py, NEVER the backcast registry, noting Q.2 supersession). No keeper
+   contact, no default flip, no ISOConfig override.
+4. Matrix row for vre_procurement_additions_enabled in the SAME PR (rule 28c — CI enforces);
+   stamp any cell your measurement adjudicates, rejections included.
+
+=== RULES THAT BIND HARDEST ===
+Rule 13 [R-MEASURED]: the channel reads the proposed sheet (filed BEFORE outcomes), never the
+operable sheet (the outcome) — §3.1's instrument gate is the admissibility boundary; crossing
+it anywhere fails the lane. Rule 14: face-value U/V/TS, no realization multiplier (§3.4 option
+(a) — a realization treatment would be a future frozen-derive with its own citation, not this
+lane's). Rule 19: the channel is step-4's VRE limb — it must not become a second ladder or a
+second netting. Rule 23: nothing derives from a residual. Rule 24: one field, registered.
+Rule 25: no arming. Rule 27: exact bytes, blob verification. Rule 28c.
+
+=== TRAPS ===
+Push 413: fetch main + rebase first; prune stale refs. Never push_files a >=300-line file.
+Cache-purge deletes tracked files. Shell cwd persists. Stop-hook on merged history: rev-list
+count 0 => nothing to amend. The D-13 hash-out hazard (FFR-5A §1): same cache key does not
+imply byte-identity across the D-13 boundary — never reuse a pre-D-13 warm dir.
+
+Deliverable: the PR (field + channel + source attribution + tests + matrix row) and
+docs/handoffs/ffr-5e-vre-procurement-channel-<date>.md — the byte-identity proof, the paired
+measurement, the §2.3 composition statement against the landed 5C netting, the hindcast-arm
+block statement, and what you did NOT separate.
+```
+
+### CAISO-GRANT [OPUS] — execute the signed CAISO `complete` declaration
+
+```
+[OPUS] CAISO-GRANT — Execute the CAISO `complete` declaration (owner-signed 2026-08-05,
+sitting Addendum S.4/S.5 — cite this as the session-logged authorization). GOVERNANCE lane:
+committed artifacts only, NO solve, NO scoring, NO year touched, NO dashboard run produced.
+The freeze is untouched and stays active; the grant authorizes CAISO's validation ladder and
+NOTHING else; `final` is not touched.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 5543c4c0 — RE-VERIFY AT YOUR OWN HEAD) ===
+CAISO keeper: 2026-08-05-caiso-174-measured-fleet (READ frontend/data/backcast/keepers/
+CAISO.json yourself; if it has moved again, STOP and report to the manager — the grant is
+keyed to the keeper the recommendation was made on, and a newer keeper needs a fresh
+determination check, not a silent re-key). Markers: `complete` = {NEISO, NYISO, PJM}; `final`
+EMPTY; holdout-freeze.json ACTIVE. Basis on record: caiso-171 (assessment YES, criterion per
+Addendum P.6), caiso-172 (closed the one gating item, PGE-TAC weight, MEASURED), caiso-174
+(PR #3578: FFR-4D epoch re-solved, keeper on the measured fleet, `complete` re-recommended
+YES). PREREQUISITES: `uv sync` (~2 min) for the verdict/audit scripts; regenerate_clean.py NOT
+needed.
+
+=== WHAT YOU DO, IN ORDER ===
+1. READ the NYISO and PJM `complete` entries in
+   frontend/data/backcast/calibration-complete.json — they are your TEMPLATE. The file's own
+   note documents the field contract; D-5(b) (Addendum C.1) defines `keeper` (current,
+   re-keyed on promotion) vs `keeper_at_declaration` (frozen at declaration).
+2. VERIFY THE DETERMINATION without a solve:
+   `uv run python scripts/calibration_verdict.py --run-id 2026-08-05-caiso-174-measured-fleet`
+   (committed artifacts only). Record its determination verbatim in the entry. If the script
+   fails or the run's committed bundle is incomplete, STOP and report — never hand-write a
+   determination.
+3. WRITE the CAISO entry: keeper = keeper_at_declaration = 2026-08-05-caiso-174-measured-fleet;
+   the verified determination; declaration date 2026-08-05; authorization citation (sitting
+   Addendum S.4/S.5); a `locked_test` note reading "never authorized" (CAISO's locked test is
+   NOT granted by this — absence from `final` with this note is the contract). Do not touch any
+   other ISO's entry, the freeze file, or `final`.
+4. RUN `uv run python scripts/audit_keepers.py --iso CAISO` (M1 must pass) and
+   `scripts/check_mechanism_matrix.py` (should be untouched — you change no cell; a warning
+   delta means you did something wrong).
+5. One-line record in docs/calibration-log/caiso.md citing the grant + authorization; commit
+   everything in ONE small commit; push (fetch main + rebase first); verify the pushed
+   calibration-complete.json blob matches local.
+
+=== WHAT THIS DOES NOT DO ===
+No 2022 solve/score/registration — the FREEZE IS ACTIVE and outranks the marker
+(holdout-freeze.json's own text); the grant stores the authorization the freeze suspends.
+No keeper change, no dashboard run, no matrix cell. Rule 22's tier map is unchanged.
+If ANY check above fails, report the failure — do not improvise a repair.
+
+=== TRAPS ===
+Push 413: fetch main + rebase first. calibration-complete.json is small — push_files is
+acceptable for it, but the one-commit git push path is preferred since audit outputs may touch
+nothing else. Shell cwd persists. Stop-hook on merged history: rev-list count 0 => nothing to
+amend.
+
+Deliverable: the merged commit + a SHORT note docs/handoffs/caiso-complete-grant-2026-08-05.md
+recording the verified determination, the M1 pass, and the citation chain
+(caiso-171 → caiso-172 → caiso-174 → Addendum S.4/S.5).
+```
+
+**§0l post-script (same session, minutes later):** PR #3577 MERGED at `f664d37c` while this
+section was being pushed — FFR-5D/FFR-5E's step-0 precondition is ALREADY SATISFIED; the
+verification step in each prompt now passes trivially. Dispatch all three immediately.
