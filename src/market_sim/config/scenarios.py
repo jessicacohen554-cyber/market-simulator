@@ -583,6 +583,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # directional envelope and so gets a distinct key, which is what keeps the
     # A/B candidate independent of its control in the on-disk cache.
     "nyiso_seam_deliverability_envelope",
+    # nyiso-127 gated NYISO full-seam PAR attribution (default off): same
+    # treatment and same reason as its sibling above -- its only consumer is
+    # gated behind ``if iso == "NYISO" and config.nyiso_seam_par_attribution``,
+    # so at the default no border-link bound is touched and the LP sees the
+    # same arrays; an ARMED run rebuilds all four links and gets a distinct key.
+    "nyiso_seam_par_attribution",
     # pjm-146 gated PJM RGGI allowance adder (default off): dropped from the
     # hash at its default so every pre-existing cached run keeps its key (the
     # pinned default 603c2498bf71d21d stays byte-stable); an armed run charges
@@ -853,6 +859,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_zonal_loss_surface": "False",
     "nyiso_import_sil_retire": "False",
     "nyiso_seam_deliverability_envelope": "False",
+    "nyiso_seam_par_attribution": "False",
     "pjm_rggi_allowance_pricing": "False",
     "electrification_path": "'off'",
     "electrification_percentile": "0.5",
@@ -3669,6 +3676,22 @@ class ScenarioConfig:
     # separate windowed mechanism in the nyiso_nyc_lcr_tsl / nyiso_li_lcr_tsl
     # family, not on the external seam. Default off (byte-identical);
     # NYISO-only.
+    nyiso_seam_par_attribution: bool = False  # NYISO full-seam PAR
+    # attribution (nyiso-127, data.nyiso_par_attribution): rebuild ALL FOUR
+    # NYISO_external border-link caps from the measured MIS P-32 per-neighbour
+    # schedules, attributing each posted row to the model zone its ties
+    # physically land in, and splitting the one row that does NOT land in a
+    # single zone -- ``SCH - PJ - NY`` -- by NYISO's OWN published NY-NJ PAR
+    # interchange percentages, conditioned hour by hour on published PAR
+    # availability (MIS P-33 outSched). SUPERSEDES, never stacks on,
+    # nyiso_seam_deliverability_envelope (rule 19 [R-ONE-MECH]): it computes the
+    # same two downstate links from the same measured rows, so the two are
+    # mutually exclusive and the caller applies exactly one. ZERO free
+    # parameters -- eight published percentages, eight published PTID
+    # identities, one published outage state, one definitional percentile
+    # (NYISO_SEAM_FLOW_PERCENTILE), and the Gold Book tie landings. Default off;
+    # NYISO-only. Pre-registration:
+    # results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md
     nyiso_seam_deliverability_envelope: bool = False  # NYISO external seam
     # deliverability envelope (nyiso-125, data.nyiso_seam_envelope): replace the
     # flat SYMMETRIC static rating on the two border links whose external ties
