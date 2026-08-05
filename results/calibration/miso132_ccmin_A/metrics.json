@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-02-miso-113b-night-floor",
+  "run_id": "2026-08-05-miso-132b-control",
   "iso": "MISO",
-  "label": "miso 113b night floor",
+  "label": "miso 132b control",
   "target_years": [
     2023,
     2024,
@@ -13,15 +13,15 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.9,
+  "rubric_version": 3.0,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: shape"
   ],
   "notes": [
-    "C8 2023 ST_GAS: grounded above budget \u2014 33.1% forced (8.3118 of 25.1506 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 1.565 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 ST_GAS: grounded above budget \u2014 34.4% forced (8.6744 of 25.2013 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.96 (\u22650.8) & off-peak CV ratio 1.278 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 45.5% forced (10.7226 of 23.554 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.973 (\u22650.8) & off-peak CV ratio 1.503 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 ST_GAS: grounded above budget \u2014 32.9% forced (8.1978 of 24.9051 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 1.561 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 ST_GAS: grounded above budget \u2014 33.8% forced (8.5267 of 25.1975 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.96 (\u22650.8) & off-peak CV ratio 1.27 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 46.3% forced (10.7398 of 23.1801 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.973 (\u22650.8) & off-peak CV ratio 1.48 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -37,7 +37,8 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -47,7 +48,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -57,7 +59,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -72,7 +74,10 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3a mean LMP",
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -80,11 +85,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 5,
+    "scored": 9,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 3
+    "ledgered": 2,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "MISO",
