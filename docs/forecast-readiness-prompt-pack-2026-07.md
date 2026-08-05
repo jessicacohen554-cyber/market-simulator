@@ -2517,3 +2517,352 @@ Deliverable: docs/handoffs/ffr-4e-entry-price-scarcity-<date>.md — where the f
 whether the two paths agree, the per-ISO map, the bounded value of the tail, the limb-4 check
 against MISO's actual price distribution, and what you did NOT separate.
 ```
+
+## §0k — WAVE 5 OPENS: FFR-5A dispatched; D-16 and D-17 put to the owner (2026-08-05 @ `4d8f0c06`)
+
+Sitting record: **Addendum R** (which also discharges Q.2's FFR-3Q-3 keeper-sensitivity exposure
+by measurement — the ercot-165 promotion moved no shipped default; the one shipped delta since
+the arms' base is D-13's `ira_ptc_credit_window_years=10`). Wave 4 is closed (Addendum Q).
+FFR-5A below is manager-chartered (R.4, the FFR-4E precedent class). FFR-5B (D-16(a)) and
+FFR-5C (D-17(a)) dispatch only on their signatures; their prompts are appended here at dispatch
+time. ~~FFR-3Q-2~~ remains STRUCK (§0g).
+
+### FFR-5A [FABLE] — why does the soft latch reverse an 8.2 GW coal exit cohort at its own execute_year?
+
+```
+[FABLE] FFR-5A — Why does the soft latch reverse an 8.2 GW coal exit cohort at its own
+execute_year? ROOT-CAUSE DIAGNOSIS lane (Wave 5). Chartered by the workstream manager (sitting
+Addendum R.4; same manager-charterable class as FFR-4E): it diagnoses why an EXISTING mechanism
+behaves as measured. It lands no fix, flips no default, tunes nothing, promotes nothing. If the
+root cause turns out to need a NEW mechanism (hysteresis, distress memory, a changed bar), STOP
+and escalate — that is an owner card.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 4d8f0c06 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; all six moved during Wave 4):
+ERCOT 2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-04-caiso-172-measured-path15 · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-04-neiso81-chpheatrate · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE — it blocks
+out-of-training BACKCAST solve/score/registration only; it does NOT block this lane's
+forecast-mode hindcast window. The 2021-2025 window with 2022 BRIDGED (evolved, never solved,
+its data never read) is legal by the enumerated carve-out in scripts/lib/holdout_policy.py;
+ERCOT holds no marker and needs none for it. The marker and the freeze are orthogonal
+(caiso-171): a freeze SUSPENDS what a marker grants, it does not withdraw the marker.
+Cache epochs 2026-08-02 / 2026-08-03b / 2026-08-04 (D-10: warm-start OFF for forecast bundles —
+deliberate, not a bug to route around). results/ is gitignored: a fresh container has NO cache;
+budget for COLD solves.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min — the container ships NO Python environment;
+skipping it makes regenerate_clean.py report "50/50 datatype(s) failed", which reads exactly
+like a data problem and is NOT one), THEN scripts/regenerate_clean.py (~63-65 min, 50 datatypes,
+1.6 GB). Rule 12 PER PROMPT (Addendum F.2): years sequential within an invocation; <=2
+concurrent invocations; <=5 solve-years per invocation. Rule 27: FABLE/OPUS only (this prompt is
+FABLE — src/ instrumentation is in scope).
+
+=== THE FINDING YOU ARE INHERITING (measured, FFR-3Q-3; do not re-derive the record) ===
+docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md §§3.1-3.5, §7. At the five-year re-cut (ERCOT
+T1-FF, Arm R, base 2021 / vintage 2020, window 2021-2025 with 2022 bridged, shipped defaults =
+D-1 pipeline rule + D-2 dampers armed):
+- The 2021 loss-year screen decides a 29-unit / 8,218 MW ALL-COAL cohort (execute_year 2024).
+  2023 re-confirms all 29. 2024 — the cohort's own execute_year — REVERSES all 29.
+  `executed` = 0, in every year, in both arms. 1,205 pipeline_events total; 58.7 GW refused by
+  the admission cap.
+- THE REVERSAL RUNS COUNTER TO PRICE DIRECTION: the 2024 screen re-clears coal on 2023 dispatch
+  ($15.77/MWh system mean) that had FAILED on 2021's richer $23.40; 2024 is the cheapest year in
+  the window ($13.62). Max hourly price $68.78 (2021) — no scarcity anywhere. The vintage-2020
+  fleet carries a 48.5% reserve margin.
+- FIRST SUSPECT, flagged by FFR-3Q-3 and deliberately not adjudicated: the reserve leg of the
+  attainable margin (`screen_reserve_value_enabled` is ON).
+- Against 1.534 GW of actual ERCOT exits 2023-25: shipped `pipeline` retires 0.000 GW (recall
+  0/3); `legacy` retires 17.309 GW (97.1% false). Both FAIL, in opposite directions. This is why
+  FH-4/FH-5 stay blocked (Addendum Q.1): the EXIT half of the retirement layer has never once
+  executed in any full run.
+
+=== WHERE THE MECHANISM LIVES ===
+src/market_sim/model/capacity_evolution/retirements.py, `_apply_pipeline_retirements`:
+- Soft latch (component 3), ~lines 1440-1456: per pipelined unit,
+  `failing = net_revenue < going_forward_cost`; a not-failing year emits `reversed` and pops the
+  unit from the pipeline. ONE non-failing year reverses. The docstring (~1385-1389) states the
+  intent: "one good year no longer erases the distress history unless it actually restores
+  viability."
+- The margins come from upstream via prior_results (the year-1 dispatch): the attainable
+  pro-forma Σ_t max(0, price − full variable cost, reserve price) × pmax × availability
+  (CLAUDE.md capacity-evolution step 3), against FOM-only going-forward cost (coal FOM ×1.3).
+- Execution (component 4) fires at decided_year + L_f (coal L=3); the reliability floor
+  (component 5) and the exit-throughput cap sit AFTER the latch — nothing downstream ever fires
+  when the latch reverses first.
+
+=== STEP 0 — REPRODUCE BEFORE YOU DIAGNOSE (Addendum R.1; J.1 discipline) ===
+The FFR-3Q-3 arms are NOT byte-reproducible at your HEAD: D-13 (`ira_ptc_credit_window_years=10`,
+commit 7bdc58c6) moved a shipped forecast-path default since their base 68e7bfcd, and the cache
+keys moved with it. The ercot-165 keeper promotion moved NO shipped default (its fields land
+False/"tie"; ERCOT's ISOConfig untouched) — measured in Addendum R.1; do not re-litigate it.
+1. Re-run Arm A ONLY at your HEAD (the legacy control is NOT needed — this lane diagnoses the
+   latch, not the A/B split): scripts/run_capacity_hindcast.py, ERCOT, vintage 2020, window
+   2021-2025, full-forward, Arm R — reproduce FFR-3Q-3 §2's posture EXACTLY as recorded, with
+   every optional flag OMITTED so shipped defaults inherit. Before any downstream read, verify
+   the realized run_config shows: retirement_rule=pipeline, entry_rate_limits=True,
+   entry_commissioning_lag=True, exit_rate_limits=False, crossover_solve_year_weather=True,
+   gas_price_path=hindcast_realized. One invocation, 4 LP years (2021, 2023, 2024, 2025),
+   sequential; expect a NEW cache key and a COLD solve.
+2. Verify the reversal reproduces: read the evolution ledgers at <out-dir>/ERCOT/<cache_key>/
+   (NEVER the out-dir root — load_ledgers_for_run returns {} on a wrong path, and in THIS lane a
+   silent {} is indistinguishable from a finding; assert the path exists and enumerate
+   evolution_*.json first). Read decided_year off the event rows, not the ledger year (the 2022
+   ledger carries decided_year=2021 rows — ffr-3q3 §3.2 records the trap).
+3. If the reversal does NOT reproduce, THAT is the finding: attribute against the enumerated
+   D-13 delta (the only shipped solve-affecting change since 68e7bfcd) and stop — do not force
+   the phenomenon back into existence.
+
+=== YOUR QUESTION, DECOMPOSED ===
+1. DECOMPOSE THE BAR, both sides, per unit, for the 29 units, at each screen year: energy leg,
+   reserve leg, going-forward cost. Instrument the screen so `pipeline_events` rows carry
+   net_revenue, going_forward_cost, and the reserve-leg share (a ledger enrichment — new row
+   fields, no behavior change, no tunable; rule 24 untouched). Which leg moves 29 units from
+   failing at $23.40-mean prices to clearing at $15.77-mean? Quantify: how much of the 2023
+   attainable margin is reserve-price hours vs energy?
+2. IS THE BAR THE SAME OBJECT YEAR OVER YEAR? Same availability, pmax, fuel-cost basis, FOM
+   multiplier, same reserve-price source (co-opt duals vs ORDC adder — which one is live here,
+   given `ercot_thermal_as_endogenous`'s state in this posture?)? A basis drift between the 2021
+   screen and the 2023 screen would explain counter-price recovery with no economics at all.
+3. ADJUDICATE INTENT VS CODE: the docstring says one good year should NOT erase distress "unless
+   it actually restores viability"; the code reverses on ONE non-failing year. Either the 2023
+   re-clear is a genuine viability restoration (latch behaved as designed; the defect is
+   upstream in the margin), or the margin computation overstates viability (the latch's INPUT is
+   the defect). Check the design record for what "restores viability" was intended to mean —
+   the RC-0B / retirement-calibration lane docs under docs/handoffs/ (see
+   docs/handoffs/forecast-retirement-calibration-plan-2026-07.md and its lineage).
+4. CLASSIFY THE FIX — ESCALATE, DO NOT LAND: (a) computation defect in the bar (wrong year's
+   prices, wrong reserve source, wrong availability/basis) => defect, escalate with the exact
+   line; (b) the latch needs memory/hysteresis => NEW mechanism, owner card, design nothing;
+   (c) everything computes as specified and an oversupplied 48.5%-RM fleet SHOULD retain coal on
+   model economics => the defect is elsewhere (the real exits happened for reasons the screen
+   cannot see — say so plainly; that REFRAMES FH-4/FH-5, it does not unblock them).
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT] / rule 11: no tuning toward the actual 1.534 GW; if the faithful computation
+retires nothing, that is the finding. Rule 19 [R-ONE-MECH]: do not propose a second
+latch/floor/counter stacked on the unexplained residual of this one. Rule 23 [R-FROZEN-DERIVE]:
+derive nothing from the exit residual. Rule 24 [R-REGISTRY]: no new knob; the ledger enrichment
+adds row fields, not parameters. Rule 28: economic_retirement_screen ERCOT `fc` stays O unless
+your evidence earns a verdict; stamp any cell you adjudicate in THIS session, with citation.
+FH-4/FH-5: the lift is a MANAGER box (Addendum I.1). You report; you do not lift; green does not
+lift.
+
+=== REGISTRATION ===
+If your step-0/1 run completes, register the arm to frontend/data/hindcast/
+(scripts/register_hindcast.py, slim files, meta.kind="full_forward", id
+ercot-2021-2025-t1ff-armr-ffr5a-pipeline) exactly as FFR-3Q-3 did. It is EVIDENCE, expected to
+be superseded when keepers settle (Q.2) — say so in the sidecar notes. NEVER the backcast
+registry (frontend/data/backcast/ is not yours to touch).
+
+=== TRAPS ===
+Push 413 has two causes: a merged branch's stale tracking ref (`git remote prune origin`) and a
+stale local origin/main defeating delta compression (`git fetch origin main` + rebase — measured
+647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files
+(string-content full-file rewrite — the exact thing rule 27 forbids). The documented cache-purge
+command deletes TRACKED files — `git status --short` after any purge; restore with
+`git checkout --`. `git checkout origin/main -- <path>` STAGES those files — `git restore
+--staged` after. Shell cwd persists between Bash calls. MARKET_SIM_DATA_ROOT outside REPO_ROOT
+shifts the cache key (FFR-3F §5). A REQUEST-side cache_key() is NOT the recorded key (FFR-3A-2
+§1.2) — take the key from the runtime `cache_key=` log line. The stop-hook reports unverified
+commits on already-merged shared history: if `git rev-list --count origin/main..HEAD` is 0 you
+have nothing to amend.
+
+Deliverable: docs/handoffs/ffr-5a-soft-latch-<date>.md — step-0 reproduction status (including
+the realized-config verification), the per-unit bar decomposition, the year-over-year basis
+audit, the intent-vs-code adjudication with the design-record citation, the fix CLASS with its
+escalation, and what you did NOT separate.
+```
+
+### FFR-5B [OPUS] — design the procurement-channel mechanism for VRE entry (D-16(a); NO implementation)
+
+Signed 2026-08-05 (Addendum R.5). Dispatched with FFR-5A and FFR-5C.
+
+```
+[OPUS] FFR-5B — Design the procurement-channel mechanism for VRE entry (D-16(a) scoping; NO
+implementation). STRUCTURAL SCOPING lane (Wave 5), chartered by owner decision D-16(a) (sitting
+Addendum R.3/R.5, signed 2026-08-05). The deliverable is a DESIGN plus a rule-13 [R-MEASURED]
+admissibility argument. No code lands, no solve runs, no parameter is proposed as a number, no
+default moves. If your design work convinces you an implementation shortcut is safe, it is not:
+implementation is a SEPARATE owner decision, and your job includes drafting its card.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 243b4ab1 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; all six moved during Wave 4):
+ERCOT 2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-04-caiso-172-measured-path15 · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-04-neiso81-chpheatrate · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (it blocks
+out-of-training BACKCAST solve/score/registration only — irrelevant to this no-solve lane). The
+marker and the freeze are orthogonal (caiso-171): a freeze SUSPENDS what a marker grants, it
+does not withdraw the marker. This lane reads docs + code + committed data only; if you run
+Python for data inspection, `uv sync` first (~2 min — the container ships NO Python
+environment). scripts/regenerate_clean.py is NOT needed (no solve). Rule 27: OPUS/FABLE.
+
+=== THE GAP (measured; do not re-derive) ===
+FFR-3V (docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.1, §7 proposal 1) + sitting
+Addendum P.3(a) + card D-16 (end of Addendum P): MISO built 18.649 GW of solar 2021-2025 while
+BOTH revenue levers the entry screen can see are correctly ~zero (PRA cleared ~$1,825/MW-yr; the
+11% RPS is slack at 16.9% modelled VRE share). The build happened on utility IRP/RFP procurement
+and corporate PPAs against the ITC — a long-term contracting channel `apply_economic_new_entry`
+represents NOWHERE (it screens merchant energy margin only). FFR-3V's rule-1 reading, adopted by
+the owner: closing this with a revenue adder tuned until solar clears is the fitted-adder
+failure rule 1 forbids. Internal control that makes the gap sharp: wind built 4.0 GW through the
+same code path and caps.
+
+=== YOUR QUESTION ===
+Specify what a structurally faithful procurement channel would have to BE. The design answers,
+in order:
+1. WHAT DRIVES PROCUREMENT VOLUME as a forward-regenerating input. Rule 13's admissibility test,
+   verbatim: could this same quantity be produced for a forward year from forward drivers, and
+   would it respond to changed conditions? Candidates to evaluate (not exhaustive, none
+   pre-approved): announced utility IRP targets/portfolios, state clean-energy statutes beyond
+   the modelled RPS constraint, corporate PPA demand, the interconnection queue's
+   signed-IA/executed-GIA cohort (EIA-860 proposed-pipeline statuses). For each: what data
+   identifies it, at what vintage, with what forward analogue, and how it responds to changed
+   conditions.
+2. WHERE IT ENTERS the capacity-evolution loop (spec §5.1: step 4 known additions vs step 5
+   economic entry vs a new step), and how it composes with the caps FFR-4A audited — it must not
+   become a second netting or a second ladder (rule 19 [R-ONE-MECH]), and it must state its
+   interaction with D-17's chartered fix (FFR-5C, running this wave).
+3. HOW IT FAILS SAFE: what stops it from degenerating into "paste the actual build in" (the
+   rule-13 forbidden pole — pinning to observed outcomes)? Draw the line between an
+   announced-procurement INPUT (admissible — the confirmed-exits analogue) and a
+   measured-outcome PIN (forbidden) explicitly, including the hindcast information gate
+   (instrument_date <= the vintage cutoff; precedent
+   docs/handoffs/confirmed-retirement-plan-2026-07.md).
+4. SCOPE per rule 25 [R-ISO-SCOPE]: MISO evidence charters MISO. State per-ISO data availability
+   for the channel without arming anywhere; every other ISO enters as its own later decision.
+5. VERDICT: a rule-13 admissibility argument for the recommended design — or a finding that NO
+   admissible design exists. The null is a valid deliverable; say it plainly rather than forcing
+   a design.
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT] (structure first; no fitted adders). Rule 13 [R-MEASURED] (the admissibility
+test IS your rubric). Rule 19 [R-ONE-MECH]. Rule 24 [R-REGISTRY] (any future tunable must be
+named for ScenarioConfig/run_config in the design). Rule 25 [R-ISO-SCOPE]. Rule 28 (a design
+alone changes no matrix cell; if you nonetheless adjudicate one, stamp it in-session with
+citation).
+
+=== DELIVERABLE ===
+docs/handoffs/ffr-5b-procurement-channel-design-<date>.md: the candidate-driver evaluation
+(limb 1), the insertion-point design (limb 2), the fail-safe line (limb 3), the per-ISO scope
+map (limb 4), the admissibility verdict (limb 5), what you did NOT decide, and a PROPOSED OWNER
+CARD for the implementation decision (measured consequence, named recommendation, the wrong
+option with its real cost) ready for the manager to put. Do not open the implementation.
+
+=== TRAPS ===
+Push 413 has two causes: a merged branch's stale tracking ref (`git remote prune origin`) and a
+stale local origin/main defeating delta compression (`git fetch origin main` + rebase — measured
+647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files
+(string-content full-file rewrite — rule 27). Shell cwd persists between Bash calls. The
+stop-hook reports unverified commits on already-merged shared history: if
+`git rev-list --count origin/main..HEAD` is 0 you have nothing to amend.
+```
+
+### FFR-5C [OPUS] — land the entry-cap fix: un-net the stock from the flows; give the pro-forma eyes (D-17(a))
+
+Signed 2026-08-05 (Addendum R.5). Dispatched with FFR-5A and FFR-5B.
+
+```
+[OPUS] FFR-5C — Land the entry-cap fix: un-net the stock from the flows; give the pro-forma
+eyes (D-17(a), sitting Addendum R.2/R.5, signed 2026-08-05). IMPLEMENTATION lane (Wave 5) for
+FFR-4A's E-1 + E-2, landed TOGETHER (rule 19): remove the pending-stock netting from both flow
+caps AND include pending entry_pipeline rows in the lookahead price signal's stack, as ONE gated
+ScenarioConfig field, DEFAULT OFF, with its matrix row in the same PR (rule 28c — CI enforces)
+and a paired-arm measurement. The shipped path stays BYTE-IDENTICAL until armed, and you prove
+that with a regression test.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 243b4ab1 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; all six moved during Wave 4):
+ERCOT 2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-04-caiso-172-measured-path15 · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-04-neiso81-chpheatrate · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only). The marker and the freeze are orthogonal (caiso-171).
+PREREQUISITES: `uv sync` FIRST (~2 min — the container ships NO Python environment; skipping it
+makes any repo script fail in ways that read like data problems and are not).
+scripts/regenerate_clean.py (~63-65 min) ONLY if a test you need reads the clean store — the
+FFR-4A harness pattern reads committed EIA-860 vintages and shipped code; decide before spending
+the hour. Rule 12 PER PROMPT; this lane needs NO LP solve (see SCOPE DISCIPLINE). Rule 27:
+OPUS/FABLE; new_entry.py and runner.py are core src/ — edit locally, push exact on-disk bytes,
+verify the blob after any push touching a >=300-line file.
+
+=== THE DEFECT (measured, FFR-4A; do not re-derive) ===
+docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md. The pending-pipeline STOCK (`_pending_by_tech`,
+MW, no time denominator) is netted from two annual-FLOW caps (new_entry.py:1131-1148): the
+endogenous ladder `K × prior_max` and the static per-tech queue cap C. Consequences, derived
+(§3) and MEASURED through the shipped code path (§5): long-run average decisions capped at C/L;
+the ratchet's growth factor K−L+1 = 1 at the shipped (K,L)=(2,2) — frozen — in 24/24 ISO×tech
+cells at both vintages; MISO wind's registered 4,000/0/4,000/0 alternation (mean 2,000 = C/L
+exactly) is the static-cap signature. K=2.0 (ReEDS 200%; between the measured p75 and p90 of the
+EIA-860 growth-ratio distribution) and L=2 (LBNL Queued Up median IA→COD) both keep their
+citations — DO NOT MOVE EITHER. The documented intent (ff-entry-stack-completion-2026-07, gates
+line 39) nets the PER-TECH cap only; the ladder half is an uncited implementation extension
+(FFR-4A §1.1(b)). E-2 (FFR-4A §3.5): runner.py::_lookahead_reprice_signal prices next year's
+net load into the CURRENT fleet's merit stack only (runner.py:518-527) — pending entry_pipeline
+rows (known mw, known cod_year) are invisible to the pro-forma, so it re-decides the same
+opportunity every lag year. THAT information gap is the real cobweb; the netting was guarding it
+at the wrong object.
+
+=== WHAT YOU LAND ===
+1. ONE gated ScenarioConfig field (name it well — e.g. entry_pipeline_aware_signal — and justify
+   the name in its docstring), DEFAULT OFF, visible in run_config.json (rule 24), matrix row in
+   the SAME PR (rule 28c). OFF ⇒ shipped behavior byte-identical: add the regression test that
+   drives apply_economic_new_entry through a multi-year path with the field off and asserts the
+   shipped decision series (FFR-4A §5.2 Arm 0: MISO solar frozen at 1,236 MW/yr) is unchanged.
+2. ARMED ⇒ (i) the stock netting is removed from BOTH `_ladder_remaining` (new_entry.py:
+   1141-1147) and `group_remaining` (new_entry.py:1131-1137); (ii) pending entry_pipeline rows
+   enter the merit stack `_lookahead_reprice_signal` prices against, at their mw, from their
+   cod_year forward. ZERO new tunables — the rows already carry both fields. If you cannot do
+   (ii) without inventing a parameter, STOP and escalate to the manager; do not invent one.
+3. The backstop asymmetry (FFR-4A §1.3: evolve.py:708-713 nets only this-year decisions;
+   adequacy.py:497-500 commissions in-year with no pipeline row) is NOT yours to reconcile.
+   Record that the armed path leaves it unchanged; flag in the handoff if your change makes the
+   inconsistency WORSE, with the mechanism.
+4. PAIRED-ARM MEASUREMENT on the FFR-4A harness pattern (the real apply_economic_new_entry, the
+   real ladder update runner.py:1153-1160, the real step-4.5 commissioning evolve.py:576-600;
+   scripts recorded in FFR-4A §6): shipped vs armed, on MISO solar (ladder-first cell) AND MISO
+   wind (static-cap-first cell). Check against FFR-4A's measured series (§5.2): armed must
+   restore the ratchet (solar 1,236 → 2,472 → 4,944 → 6,000, then the static cap as the true
+   binder) and kill the wind 4,000/0 alternation. Any deviation from the §5.2 Arm B series is a
+   finding to explain, not to tune away.
+5. E-3 goes in the field's docstring: under the OLD construction the growth factor K−L+1 hits
+   zero at L=3 (economic entry shuts off entirely) — the armed path removes that trap; record it
+   so no future per-tech L refinement re-introduces it blind.
+
+=== SCOPE DISCIPLINE ===
+NO LP solve, NO forecast/hindcast registration, NO keeper contact, NO default flip, NO arming in
+any ISOConfig default_scenario_overrides. The field ships OFF everywhere; arming anywhere is a
+separate owner decision informed by your paired-arm measurement. Pre-registered and carried
+(FFR-4A §4/§5.4, owner-accepted at Q.3): this fix does NOT rescue MISO solar's FC-3 band — that
+leg's solar dies on revenue before any cap is consulted. If your handoff or PR reads as "fixes
+MISO solar", it is wrong; say the numbers are cap CEILINGS, not builds.
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT] (no tuning to bands). Rule 19 [R-ONE-MECH] (E-1 and E-2 land together — the
+guard RELOCATES; it neither vanishes nor duplicates). Rule 23 [R-FROZEN-DERIVE] (the
+identification is FFR-4A §3.4's EIA-860 statistics — cite, never re-derive from a residual).
+Rule 24 [R-REGISTRY]. Rule 27 (push-integrity: exact bytes; blob verification after any push
+touching a >=300-line file). Rule 28c (matrix row in the same PR; CI enforces).
+
+=== COORDINATION ===
+FFR-5A (soft-latch root cause, retirements.py) and FFR-5B (procurement design, docs-only) run
+this wave as independent sessions. Your src/ overlap with them: NONE (you: new_entry.py,
+runner.py, tests; 5A: retirements.py + instrumentation). The one shared surface is
+docs/codebase-site/data/mechanism-matrix.js — whichever session lands second re-checks its cell
+survived the merge (the O.3 discipline; miso-124 lost a cell to exactly this race).
+
+=== TRAPS ===
+Push 413 has two causes: a merged branch's stale tracking ref (`git remote prune origin`) and a
+stale local origin/main defeating delta compression (`git fetch origin main` + rebase — measured
+647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files
+(string-content full-file rewrite — rule 27). The documented cache-purge command deletes TRACKED
+files — `git status --short` after any purge; restore with `git checkout --`.
+`git checkout origin/main -- <path>` STAGES those files — `git restore --staged` after. Shell
+cwd persists between Bash calls. The stop-hook reports unverified commits on already-merged
+shared history: if `git rev-list --count origin/main..HEAD` is 0 you have nothing to amend.
+
+Deliverable: the PR (field + both halves + tests + matrix row) and
+docs/handoffs/ffr-5c-entry-cap-fix-<date>.md — the byte-identity proof, the paired-arm series
+against FFR-4A §5.2, the backstop-asymmetry statement, and what you did NOT separate.
+```
