@@ -962,6 +962,35 @@ class DispatchModel:
         _, primal_status = h.getInfoValue("primal_solution_status")
         if primal_status != 2:
             status = h.modelStatusToString(h.getModelStatus())
+            # TEMP ercot-167 DEBUG (uncommitted): dump an IIS + layout scalars
+            try:
+                import highspy as _hs
+                import os as _os
+
+                _iis = _hs.HighsIis()
+                h.getIis(_iis)
+                _lay = getattr(self, "layout", None)
+                _meta = {
+                    "T": self.T,
+                    "n_storage": self.n_storage,
+                    "n_zones": self.n_zones,
+                }
+                for _a in ("vars_per_hour", "_chg_off", "_dis_off", "_soc_off"):
+                    if _lay is not None and hasattr(_lay, _a):
+                        _meta[_a] = int(getattr(_lay, _a))
+                np.savez(
+                    _os.environ.get("ERCOT167_IIS_DUMP", "/tmp/iis_dump.npz"),
+                    iis_cols=np.asarray(_iis.col_index, dtype=np.int64),
+                    iis_rows=np.asarray(_iis.row_index, dtype=np.int64),
+                    **{k: np.int64(v) for k, v in _meta.items()},
+                )
+                logger.info(
+                    "IIS dumped: %d cols, %d rows",
+                    len(_iis.col_index),
+                    len(_iis.row_index),
+                )
+            except Exception as _e:  # noqa: BLE001
+                logger.info("IIS dump failed: %s", _e)
             raise RuntimeError(
                 f"dispatch LP has no feasible primal solution (status: {status})"
             )
