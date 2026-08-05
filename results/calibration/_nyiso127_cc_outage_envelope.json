@@ -1,0 +1,177 @@
+{
+  "probe": "_nyiso127_cc_outage_envelope",
+  "question": "ITEM 2 / Q3 \u2014 does the holdout freeze's stated reason still bind for NYISO?",
+  "keeper": "2026-08-04-nyiso-125-seam-envelope",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "panel_capacity_mw": {
+    "CC_CHP": 4754.4,
+    "CC_REGULAR": 8949.8,
+    "CC_ALL": 13704.199999999999
+  },
+  "capacity_weighted_pct": {
+    "BASELINE (pre-guard)|CC_REGULAR": [
+      41.37,
+      40.76,
+      42.46
+    ],
+    "BASELINE (pre-guard)|CC_CHP": [
+      33.82,
+      28.17,
+      25.36
+    ],
+    "BASELINE (pre-guard)|CC_ALL": [
+      38.75,
+      36.39,
+      36.53
+    ],
+    "CURRENT (post-guard)|CC_REGULAR": [
+      25.43,
+      29.63,
+      35.77
+    ],
+    "CURRENT (post-guard)|CC_CHP": [
+      29.18,
+      24.82,
+      22.41
+    ],
+    "CURRENT (post-guard)|CC_ALL": [
+      26.73,
+      27.96,
+      31.13
+    ],
+    "VETOED (layup)|CC_REGULAR": [
+      15.94,
+      11.13,
+      6.69
+    ],
+    "VETOED (layup)|CC_CHP": [
+      4.64,
+      3.35,
+      2.95
+    ],
+    "VETOED (layup)|CC_ALL": [
+      12.02,
+      8.43,
+      5.39
+    ]
+  },
+  "unit_year_pct": {
+    "BASELINE (pre-guard)|CC_REGULAR": [
+      [
+        46.8,
+        41
+      ],
+      [
+        46.9,
+        40
+      ],
+      [
+        44.3,
+        40
+      ]
+    ],
+    "BASELINE (pre-guard)|CC_CHP": [
+      [
+        49.0,
+        33
+      ],
+      [
+        46.9,
+        30
+      ],
+      [
+        37.5,
+        33
+      ]
+    ],
+    "CURRENT (post-guard)|CC_REGULAR": [
+      [
+        36.6,
+        32
+      ],
+      [
+        37.2,
+        32
+      ],
+      [
+        37.1,
+        34
+      ]
+    ],
+    "CURRENT (post-guard)|CC_CHP": [
+      [
+        41.3,
+        27
+      ],
+      [
+        42.4,
+        25
+      ],
+      [
+        35.1,
+        25
+      ]
+    ],
+    "VETOED (layup)|CC_REGULAR": [
+      [
+        74.6,
+        10
+      ],
+      [
+        68.4,
+        10
+      ],
+      [
+        56.7,
+        9
+      ]
+    ],
+    "VETOED (layup)|CC_CHP": [
+      [
+        71.8,
+        7
+      ],
+      [
+        69.6,
+        5
+      ],
+      [
+        45.1,
+        8
+      ]
+    ]
+  },
+  "headroom": {
+    "2023": {
+      "annual_max_mw": 6490.1,
+      "mean_mw": 3791.7,
+      "mean_over_max": 0.5842,
+      "hours_within_5pct_of_max": 47,
+      "share_of_hours": 0.0054
+    },
+    "2024": {
+      "annual_max_mw": 6088.4,
+      "mean_mw": 4356.2,
+      "mean_over_max": 0.7155,
+      "hours_within_5pct_of_max": 78,
+      "share_of_hours": 0.0089
+    },
+    "2025": {
+      "annual_max_mw": 5972.7,
+      "mean_mw": 4081.2,
+      "mean_over_max": 0.6833,
+      "hours_within_5pct_of_max": 398,
+      "share_of_hours": 0.0454
+    }
+  },
+  "dof_ledger_symbols_missing_at_head": [
+    [
+      "GAS_AVAILABILITY_FACTOR[NYISO]",
+      "GAS_AVAILABILITY_FACTOR"
+    ]
+  ]
+}
