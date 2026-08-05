@@ -199,3 +199,35 @@ band's **price**, not the trough's marginal-unit sizing); the coal night floor;
 lane — the swap is armed identically in all three years.
 
 Next number after this session: **miso-133**.
+
+---
+
+## §5 ADDENDUM (appended 2026-08-05, BEFORE any lane-(b) statistic was computed) — the arming CHANNEL changes; the scope does NOT
+
+§3 named `replay_keeper.py --offer-curve-json` as the arming channel. That
+channel **cannot express this mechanism**: `pipeline/persist.py::parse_offer_curve_json`
+validates class keys against `plant_taxonomy.fossil_classes()`, and
+**`CC_INTERMEDIATE` is not in it** — it is an offer-curve ROUTING key
+(`cc_intermediate_split`), not a taxonomy class, so the parser would `SystemExit`
+on it. Discovered by reading the validator, **before any arm was solved and
+before any lane-(b) number existed**.
+
+**The scope is unchanged — both cohorts still move together.** Narrowing to
+`CC_REGULAR` alone was considered and is **REFUSED**: `CC_REGULAR`-only is the
+*cheaper* direction, which is the half that flatters the C7 target, and §1's
+whole point is that choosing the direction is the forbidden path. A transport
+limitation must not silently become a scope decision.
+
+**The arm is therefore armed through the other registered channel**:
+`replay_keeper.py --set offer_curve_by_group=<JSON>`, which routes into
+`prb_overrides` → `config.with_overrides(...)`. That channel is applied **last**
+in `run_calibration.run_year` (after the `offer_curve_overrides` deep-merge), so
+it is deterministic, and the resolved curve is recorded verbatim in the bundle's
+`run_config.json` — rule 26 `[R-REGISTRY]` satisfied exactly as before. **Still
+no code edit** (the miso-122 seam holds).
+
+To remove any transcription risk in a whole-curve replacement, the arm-B JSON is
+**generated programmatically from arm A's own committed `run_config.json`** with
+only the two `committed` entries changed, so K2's band diff is byte-exact by
+construction. Every bar, kill, target and keeper-decision rule in §§1–4 is
+untouched.
