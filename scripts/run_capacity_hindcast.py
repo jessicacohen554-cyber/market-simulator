@@ -454,6 +454,7 @@ META_RECORD_SPEC = RecordSpec(
         "entry_rate_limits": FromConfig(cast=bool),
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
+        "capacity_screen_unified_lookahead": FromConfig(cast=bool),
         "renewable_elcc_curves": FromConfig(cast=bool),
         "gas_price_path": FromConfig(),
         "crossover_forward_year": FromConfig(),
@@ -544,6 +545,7 @@ def build_config(
     entry_rate_limits: "bool | None" = None,
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
+    capacity_screen_unified_lookahead: "bool | None" = None,
     ptc_window: "int | str | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
@@ -727,6 +729,16 @@ def build_config(
                 # (runner.py, is_crossover_forward_year branch), so inheriting
                 # the shipped ``True`` introduces no measured read (rule 22).
                 "entry_lookahead_reprice": entry_lookahead_reprice,
+                # FFR-5D (owner decision D-19(a)): unify EVERY capacity screen
+                # on the lookahead price object for its entering year —
+                # bridged/bridge-adjacent years included, priced on the
+                # growth-scaled fallback so the rule-22 no-read contract is
+                # unchanged — and repair the object's three FFR-5A §2a level
+                # gaps (storage enters the stack, entering-year VRE capacity,
+                # hourly availability). Screens-only, zero new tunables.
+                "capacity_screen_unified_lookahead": (
+                    capacity_screen_unified_lookahead
+                ),
                 # FF-1B correlated cold-event forced-outage derate
                 # (data/outages.apply_correlated_outage_derate): a leg's deep-
                 # cold days (Uri 2021, Heather 2024) physically thin the fleet
@@ -1292,6 +1304,23 @@ def main(argv: list[str] | None = None) -> int:
             "control."
         ),
     )
+    parser.add_argument(
+        "--capacity-screen-unified-lookahead",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "FFR-5D PROBE arm (owner decision D-19(a), 2026-08-05): unify "
+            "every capacity screen — retirement pipeline decide AND "
+            "re-screens, CCS, new entry, storage — on the lookahead price "
+            "object for its entering year, bridged/bridge-adjacent entering "
+            "years included (growth-scaled fallback; zero measured reads, "
+            "rule 22 by construction), with the FFR-5A §2a level repairs "
+            "(storage enters the stack, entering-year VRE capacity, hourly "
+            "availability). OMIT to inherit the shipped default (OFF); "
+            "--capacity-screen-unified-lookahead arms the treatment and "
+            "--no-capacity-screen-unified-lookahead forces the control."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -1438,6 +1467,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_rate_limits=args.entry_rate_limits,
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,
+        capacity_screen_unified_lookahead=args.capacity_screen_unified_lookahead,
         ptc_window=args.ptc_window,
     )
 

@@ -477,6 +477,109 @@ def _blend_price_signal(
     return alpha * econ_prices + (1.0 - alpha) * prev_signal
 
 
+def _storage_shave_terms(storage) -> tuple[float, float, float] | None:
+    """Aggregate the storage fleet into ``(power_mw, energy_mwh, rte)``.
+
+    The FFR-5D repair (a) inputs for :func:`_storage_peak_shave_net_load`,
+    read from the already-carried ``StorageArrays`` fields only (rule 23
+    ``[R-FROZEN-DERIVE]`` / rule 24 ``[R-REGISTRY]``: zero new tunables).
+    Vintage-ramp 2-D cap profiles take their final-hour value — a unit ramping
+    in mid-year is fully online in the ENTERING year the pro-forma prices.
+    Round-trip efficiency is the energy-capacity-weighted mean of
+    ``eta_chg * eta_dis``. ``None`` when the fleet has no power or no energy.
+    """
+    power = np.asarray(storage.power_cap, dtype=float)
+    energy = np.asarray(storage.energy_cap, dtype=float)
+    if power.ndim == 2:
+        power = power[:, -1]
+    if energy.ndim == 2:
+        energy = energy[:, -1]
+    p_mw = float(power.sum())
+    e_mwh = float(energy.sum())
+    if p_mw <= 0.0 or e_mwh <= 0.0:
+        return None
+    rte = float(
+        (
+            np.asarray(storage.eta_chg, dtype=float)
+            * np.asarray(storage.eta_dis, dtype=float)
+            * energy
+        ).sum()
+        / e_mwh
+    )
+    return p_mw, e_mwh, max(rte, 1e-6)
+
+
+def _storage_peak_shave_net_load(
+    net_load: np.ndarray,
+    power_mw: float,
+    energy_mwh: float,
+    rte: float,
+) -> np.ndarray:
+    """Return net load adjusted for the storage fleet (FFR-5D repair (a)).
+
+    The energy/duration-limited equivalent of storage entering the pro-forma
+    merit stack: per calendar day the fleet discharges into the day's highest
+    net-load hours (water-filling down to a shave level, per-hour cap
+    ``power_mw``, daily energy budget ``energy_mwh`` — one cycle per day) and
+    recharges ``discharge / rte`` from the day's lowest hours (valley-filling
+    up to a fill level with the same power cap). The fill level is bounded
+    above by the shave level, so charge and discharge hours are disjoint by
+    construction and a day with insufficient cheap headroom replenishes only
+    partially. Both levels are found by vectorized per-day bisection — no
+    hour loop (rule 2 ``[R-VECTOR]``). Hours beyond the last whole day (none
+    at T=8760) pass through unchanged.
+
+    A static stack cannot represent an energy-limited resource as a supply
+    block (it would run unlimited hours); shifting the net load the stack
+    prices is the standard energy-constrained treatment and mirrors what the
+    LP's own storage dispatch does — discharge at the peak, charge in the
+    trough. All three parameters come from the carried ``StorageArrays``
+    (:func:`_storage_shave_terms`); no new tunables (rules 23/24).
+    """
+    T = int(net_load.shape[0])
+    n_days = T // 24
+    if n_days == 0 or power_mw <= 0.0 or energy_mwh <= 0.0:
+        return net_load
+    days = net_load[: n_days * 24].reshape(n_days, 24)
+    p = float(power_mw)
+    # Daily discharge budget: the fleet's energy cap, bounded by 24 h at full
+    # power (a pure cap-consistency bound, not a parameter).
+    e_day = min(float(energy_mwh), 24.0 * p)
+    # Discharge: bisect the shave level L per day so that
+    # sum_i min(P, max(0, y_i - L)) == E. hi starts at the day max (zero
+    # discharge) and lo at (min - P) (every hour at full power), so the
+    # bracket always contains the root; 50 halvings put the level error below
+    # any physical resolution. Exact equality counts as "over" so the level
+    # converges to the TOP of a power-cap-induced equal-spend plateau (the
+    # highest level that spends the budget) — ``hi`` then never over-spends,
+    # and the charge bracket below stays non-degenerate.
+    lo = days.min(axis=1) - p
+    hi = days.max(axis=1)
+    for _ in range(50):
+        mid = 0.5 * (lo + hi)
+        spend = np.minimum(p, np.clip(days - mid[:, None], 0.0, None)).sum(axis=1)
+        over = spend >= e_day
+        lo = np.where(over, mid, lo)
+        hi = np.where(over, hi, mid)
+    shave_level = hi
+    discharge = np.minimum(p, np.clip(days - shave_level[:, None], 0.0, None))
+    # Charge: replenish discharge / rte from the day's lowest hours, filling
+    # up to level M <= shave level (disjoint hour sets by construction).
+    target = discharge.sum(axis=1) / rte
+    lo_c = days.min(axis=1)
+    hi_c = shave_level.copy()
+    for _ in range(50):
+        mid = 0.5 * (lo_c + hi_c)
+        fill = np.minimum(p, np.clip(mid[:, None] - days, 0.0, None)).sum(axis=1)
+        enough = fill >= target
+        hi_c = np.where(enough, mid, hi_c)
+        lo_c = np.where(enough, lo_c, mid)
+    charge = np.minimum(p, np.clip(hi_c[:, None] - days, 0.0, None))
+    adjusted = net_load.copy()
+    adjusted[: n_days * 24] = (days - discharge + charge).reshape(-1)
+    return adjusted
+
+
 def _lookahead_reprice_signal(
     config: ScenarioConfig,
     next_year: int,
@@ -489,6 +592,9 @@ def _lookahead_reprice_signal(
     pipeline_mc: np.ndarray | None = None,
     pipeline_arrays=None,
     pipeline_vre: np.ndarray | None = None,
+    vre_capacity_potential: np.ndarray | None = None,
+    storage_shave: tuple[float, float, float] | None = None,
+    hourly_availability: bool = False,
 ) -> np.ndarray:
     """Stack re-price of the entering year's known net load (plan §2.3.2).
 
@@ -525,6 +631,30 @@ def _lookahead_reprice_signal(
     factors, added to the net-load VRE term. All three ``None`` -- the default
     and the whole unarmed path -- is byte-identical.
 
+    **Level repairs (FFR-5D ``capacity_screen_unified_lookahead``, GATED).**
+    FFR-5A §2a measured three completeness gaps in the as-built object that
+    jointly manufacture 122 pro-forma scarcity hours (88 h > $1000, max
+    $5000) on a 34.8 %-reserve-margin fleet, so every fuel clears its
+    retirement bar 4-13x. Each repair reads existing model state only — zero
+    new tunables (rules 23/24) — and each defaults off (byte-identical):
+
+    * ``vre_capacity_potential`` (repair b): the ENTERING fleet's wind/solar
+      MW x the model's own hourly CF basis, ``(T,)`` — replaces the
+      prior year's REALIZED dispatched VRE output as the net-load VRE term
+      (realized output embeds prior-year curtailment and under-counts the
+      capacity actually facing the entering year). ``pipeline_vre`` still
+      adds on top when the FFR-5C gate is armed.
+    * ``storage_shave`` (repair a): ``(power_mw, energy_mwh, rte)`` of the
+      entering storage fleet — the stack was thermal-only; the fleet enters
+      as a per-day energy-limited peak-shave/valley-fill on net load
+      (:func:`_storage_peak_shave_net_load`).
+    * ``hourly_availability`` (repair c): derate the stack by the outage
+      model's HOURLY availability instead of the annual time-mean.
+      Maintenance is scheduled off-peak, so a time-mean derate (~0.79-0.85)
+      understates peak-hour capacity exactly where scarcity is priced. The
+      per-hour cumulative stack replaces the scalar one; the merit order
+      (time-mean mc) is unchanged.
+
     Returns:
         ``(n_zones, T)`` system-wide hourly price signal (every zone sees the
         same stack price, matching the screens' system-level use).
@@ -533,10 +663,18 @@ def _lookahead_reprice_signal(
         demand_next = np.asarray(demand_next_total, dtype=float)  # (T,)
     else:
         demand_next = _scale_demand(base_demand, config, next_year).sum(axis=0)  # (T,)
-    vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
+    if vre_capacity_potential is not None:
+        # FFR-5D repair (b): entering-fleet potential, not prior realized.
+        vre = np.asarray(vre_capacity_potential, dtype=float)  # (T,)
+    else:
+        vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
     if pipeline_vre is not None:
         vre = vre + np.asarray(pipeline_vre, dtype=float)
     net_load = demand_next - vre
+    if storage_shave is not None:
+        # FFR-5D repair (a): the storage fleet shifts the net load the stack
+        # prices — discharge at the peak, charge in the trough, per day.
+        net_load = _storage_peak_shave_net_load(net_load, *storage_shave)
     # Static merit stack: per-generator time-mean full variable cost against
     # availability-derated capacity (outages/derates included).
     mc_gen = np.asarray(mc_cost, dtype=float).mean(axis=1)  # (n_gen,)
@@ -558,13 +696,37 @@ def _lookahead_reprice_signal(
         )
     order = np.argsort(mc_gen, kind="stable")
     mc_sorted = mc_gen[order]
-    cum_cap = np.cumsum(cap_gen[order])
-    idx = np.searchsorted(cum_cap, np.clip(net_load, 0.0, None), side="left")
+    if hourly_availability:
+        # FFR-5D repair (c): per-hour availability-derated cumulative stack.
+        # Merit order is unchanged (time-mean mc); only the capacity each
+        # tranche offers in hour t is that hour's own derated capacity. The
+        # per-hour left-searchsorted index is the count of cumulative-capacity
+        # entries strictly below the hour's net load — identical semantics to
+        # np.searchsorted(..., side="left") on the scalar path.
+        cap_ht = np.asarray(fleet_arrays.pmax, dtype=float)[:, None] * np.asarray(
+            fleet_arrays.availability, dtype=float
+        )  # (n_gen, T)
+        if pipeline_arrays is not None and pipeline_mc is not None:
+            cap_ht = np.concatenate(
+                [
+                    cap_ht,
+                    np.asarray(pipeline_arrays.pmax, dtype=float)[:, None]
+                    * np.asarray(pipeline_arrays.availability, dtype=float),
+                ]
+            )
+        cum_cap_ht = np.cumsum(cap_ht[order], axis=0)  # (n_gen, T)
+        load_pos = np.clip(net_load, 0.0, None)
+        idx = (cum_cap_ht < load_pos[None, :]).sum(axis=0)  # (T,)
+        top_of_stack = cum_cap_ht[-1]  # (T,) per-hour available capacity
+    else:
+        cum_cap = np.cumsum(cap_gen[order])
+        idx = np.searchsorted(cum_cap, np.clip(net_load, 0.0, None), side="left")
+        top_of_stack = cum_cap[-1]
     prices_h = mc_sorted[np.minimum(idx, mc_sorted.size - 1)]
     # ORDC scarcity tail where the stack exhausts (same curve, same gate as
     # the post-solve capacity-economics adder; reserve-rich hours get ~0).
     if config.scarcity_pricing_enabled and config.scarcity_price_overlay:
-        reserves = cum_cap[-1] - net_load
+        reserves = top_of_stack - net_load
         adder = scarcity_prices(config, next_year, reserves, prices_h)["scarcity_adder"]
         prices_h = prices_h + adder
     return np.tile(prices_h[None, :], (n_zones, 1))
@@ -858,6 +1020,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # EWMA state for the capacity screens' price signal (plan §2.2): the
     # previous year's blended signal. None until the first solved year.
     price_signal_prev: np.ndarray | None = None
+    # FFR-5D capacity_screen_unified_lookahead (GATED, default OFF): the
+    # per-entering-year lookahead signals the last SOLVED year priced —
+    # {entering_year: (n_zones, T)}. Rebuilt at every solved year's seam;
+    # consumed at the top of each loop iteration, where the entering year's
+    # own signal is swapped into prior_results.price_signal before any
+    # screen runs. Empty unarmed (byte-identical).
+    unified_signals: dict[int, np.ndarray] = {}
 
     # Load the CAMPD operational bins once when enabled. The same bin frame
     # builds the dispatch fleet and drives the CHP must-run post-processing.
@@ -1165,6 +1334,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             start_year=start_year,
         )
         driver_year = last_solved_year if is_bridge else year
+
+        # FFR-5D capacity_screen_unified_lookahead (GATED, default OFF): swap
+        # THIS entering year's own lookahead signal into prior_results before
+        # any screen consumes it — evolve_fleet (retirement pipeline, CCS,
+        # new entry) and the storage screen both read
+        # prior_results.price_signal — so every screen for this entering year
+        # sees ONE price object (rule 19), bridged and bridge-adjacent
+        # entering years included. For a normal entering year this re-assigns
+        # the identical array the seam already stored (a no-op); after a
+        # bridge it replaces a signal priced for the bridge year with the one
+        # priced for THIS year. Unarmed the dict is empty (byte-identical).
+        if (
+            getattr(config, "capacity_screen_unified_lookahead", False)
+            and prior_results is not None
+        ):
+            _uni_sig = unified_signals.get(year)
+            if _uni_sig is not None:
+                prior_results.price_signal = _uni_sig
 
         # T1-FF Arm R given-weather rebind (FH-1, hindcast-forward plan §2.1):
         # a solved forward year re-seeds the weather base from ITSELF — the
@@ -2677,89 +2864,176 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # (2022, 2026) or falls outside this run's own window -- the last
         # solved hindcast year (2025) has no admissible next year to screen
         # for. A plain forecast is bounded only by the module horizon.
+        #
+        # FFR-5D capacity_screen_unified_lookahead (GATED, default OFF, owner
+        # decision D-19(a)): armed, the bridge suppression is replaced BY
+        # CONSTRUCTION rather than by exception — a bridged entering year is
+        # still priced, but on the growth-scaled demand fallback the
+        # full-forward leg already uses for forward years, so the rule-22
+        # no-read contract is unchanged while the screens' price OBJECT stops
+        # flipping at the bridge (the FFR-5A basis asymmetry). The signals
+        # are stored per entering year in ``unified_signals``; the top of the
+        # year loop swaps the matching one into prior_results.price_signal.
         next_year = year + 1
+        unified_screens = getattr(config, "capacity_screen_unified_lookahead", False)
         if config.hindcast:
-            lookahead_next_ok = (
-                next_year <= end_year and next_year not in HINDCAST_BRIDGE_YEARS
+            lookahead_next_ok = next_year <= end_year and (
+                unified_screens or next_year not in HINDCAST_BRIDGE_YEARS
             )
         else:
             lookahead_next_ok = year < END_YEAR
+        unified_signals = {}
         if (
             config.entry_lookahead_reprice
             and config.mode == "forecast"
             and lookahead_next_ok
         ):
-            # Hindcast: the KNOWN entering-year load is the realized next-year
-            # demand the LP will actually dispatch (line ~872), not a growth-
-            # scaled weather year. Forecast: None → _scale_demand fallback.
-            # A crossover FORWARD next-year must NOT read the measured
-            # per-year loader (the same seam that skips it for the LP demand
-            # above, FF-0E §2.2 / FH-1): it falls to the growth-scaled
-            # ``wx_config`` fallback like a plain forecast.
-            demand_next_total = None
-            if config.hindcast and not config.is_crossover_forward_year(next_year):
-                _dn = load_demand(
-                    iso,
-                    next_year,
-                    iso_config,
-                    td_loss_factor=config.td_loss_factor,
-                    include_interchange=not import_generators,
-                    strict_demand_profile=config.strict_demand_profile,
+
+            def _screen_signal_for(entering_year: int) -> np.ndarray:
+                """Price the capacity-screen lookahead for one entering year.
+
+                The per-entering-year body of the seam: realized-demand
+                override resolution (hindcast, non-bridge, non-crossover
+                years only — rule 22), the FFR-5C pipeline terms, and the
+                FFR-5D level repairs, all against THIS solved year's stack
+                basis. Unarmed it is called exactly once with ``next_year``
+                and reproduces the shipped path byte-identically.
+                """
+                # Hindcast: the KNOWN entering-year load is the realized
+                # demand the LP will actually dispatch (line ~872), not a
+                # growth-scaled weather year. Forecast: None → _scale_demand
+                # fallback. A crossover FORWARD entering year must NOT read
+                # the measured per-year loader (the same seam that skips it
+                # for the LP demand above, FF-0E §2.2 / FH-1), and neither
+                # may a BRIDGED entering year (rule 22 — only reachable
+                # armed): both fall to the growth-scaled ``wx_config``
+                # fallback like a plain forecast.
+                demand_next_total = None
+                if (
+                    config.hindcast
+                    and not config.is_crossover_forward_year(entering_year)
+                    and not is_hindcast_bridge_year(
+                        entering_year,
+                        hindcast=config.hindcast,
+                        crossover_forward_year=config.crossover_forward_year,
+                        start_year=start_year,
+                    )
+                ):
+                    _dn = load_demand(
+                        iso,
+                        entering_year,
+                        iso_config,
+                        td_loss_factor=config.td_loss_factor,
+                        include_interchange=not import_generators,
+                        strict_demand_profile=config.strict_demand_profile,
+                    )
+                    if config.hours < _dn.shape[1]:
+                        _dn = _dn[:, : config.hours]
+                    demand_next_total = _dn.sum(axis=0)
+                # FFR-5C entry_pipeline_aware_signal (GATED, default OFF ⇒
+                # all three terms stay None and this is byte-identical): let
+                # the pro-forma see the capacity the model has already
+                # committed. The netting this replaces was guarding the same
+                # phenomenon at the wrong object -- the annual flow caps
+                # (rule 19 [R-ONE-MECH];
+                # docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md §3.5).
+                _pipe_arrays = _pipe_mc = _pipe_vre = None
+                if getattr(config, "entry_pipeline_aware_signal", False):
+                    _pipe_arrays, _pipe_mc, _pipe_vre = _pipeline_lookahead_terms(
+                        config,
+                        fleet_config,
+                        iso,
+                        entry_pipeline,
+                        entering_year,
+                        year,
+                        zone_names,
+                        wind_cf,
+                        solar_cf,
+                        year_base_demand.sum(axis=0),
+                        carbon_price,
+                    )
+                # FFR-5D level repairs (armed only; each None/False unarmed ⇒
+                # byte-identical): entering-fleet VRE potential (repair b),
+                # the entering storage fleet as a per-day peak shave (repair
+                # a), hourly availability derating (repair c). All read
+                # end-of-this-year model state — the same "last solved
+                # state" basis every screen already runs on.
+                _uni_vre = _uni_storage = None
+                if unified_screens:
+                    _uni_vre = (
+                        wind_cf * np.asarray(wind_cap, dtype=float)[:, None]
+                        + solar_cf * np.asarray(solar_cap, dtype=float)[:, None]
+                    ).sum(axis=0)
+                    _uni_storage = _storage_shave_terms(storage)
+                sig = _lookahead_reprice_signal(
+                    wx_config,
+                    entering_year,
+                    base_demand,
+                    fleet_arrays,
+                    mc_cost,
+                    result,
+                    len(zone_names),
+                    demand_next_total=demand_next_total,
+                    pipeline_mc=_pipe_mc,
+                    pipeline_arrays=_pipe_arrays,
+                    pipeline_vre=_pipe_vre,
+                    vre_capacity_potential=_uni_vre,
+                    storage_shave=_uni_storage,
+                    hourly_availability=unified_screens,
                 )
-                if config.hours < _dn.shape[1]:
-                    _dn = _dn[:, : config.hours]
-                demand_next_total = _dn.sum(axis=0)
-            # FFR-5C entry_pipeline_aware_signal (GATED, default OFF ⇒ all
-            # three terms stay None and this is byte-identical): let the
-            # pro-forma see the capacity the model has already committed. The
-            # netting this replaces was guarding the same phenomenon at the
-            # wrong object -- the annual flow caps (rule 19 [R-ONE-MECH];
-            # docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md §3.5).
-            _pipe_arrays = _pipe_mc = _pipe_vre = None
-            if getattr(config, "entry_pipeline_aware_signal", False):
-                _pipe_arrays, _pipe_mc, _pipe_vre = _pipeline_lookahead_terms(
-                    config,
-                    fleet_config,
-                    iso,
-                    entry_pipeline,
-                    next_year,
+                _sig_h = sig[0]  # system row; every zone identical
+                logger.info(
+                    "year %d: lookahead stack re-price for %d capacity "
+                    "screens -- mean $%.2f/MWh (raw duals+overlay mean "
+                    "$%.2f); pro-forma scarcity >$200 in %d h, >$1000 in "
+                    "%d h, max $%.0f; committed pipeline priced in: "
+                    "%d thermal unit(s), %.0f MWh VRE; unified repairs %s",
                     year,
-                    zone_names,
-                    wind_cf,
-                    solar_cf,
-                    year_base_demand.sum(axis=0),
-                    carbon_price,
+                    entering_year,
+                    float(sig.mean()),
+                    float(econ_prices.mean()),
+                    int((_sig_h > 200).sum()),
+                    int((_sig_h > 1000).sum()),
+                    float(_sig_h.max()),
+                    0 if _pipe_arrays is None else int(_pipe_arrays.pmax.size),
+                    0.0 if _pipe_vre is None else float(_pipe_vre.sum()),
+                    "on" if unified_screens else "off",
                 )
-            price_signal = _lookahead_reprice_signal(
-                wx_config,
-                next_year,
-                base_demand,
-                fleet_arrays,
-                mc_cost,
-                result,
-                len(zone_names),
-                demand_next_total=demand_next_total,
-                pipeline_mc=_pipe_mc,
-                pipeline_arrays=_pipe_arrays,
-                pipeline_vre=_pipe_vre,
-            )
-            _ps_h = price_signal[0]  # system row; every zone identical
-            logger.info(
-                "year %d: lookahead stack re-price for %d capacity screens -- "
-                "mean $%.2f/MWh (raw duals+overlay mean $%.2f); "
-                "pro-forma scarcity >$200 in %d h, >$1000 in %d h, max $%.0f; "
-                "committed pipeline priced in: %d thermal unit(s), "
-                "%.0f MWh VRE",
-                year,
-                next_year,
-                float(price_signal.mean()),
-                float(econ_prices.mean()),
-                int((_ps_h > 200).sum()),
-                int((_ps_h > 1000).sum()),
-                float(_ps_h.max()),
-                0 if _pipe_arrays is None else int(_pipe_arrays.pmax.size),
-                0.0 if _pipe_vre is None else float(_pipe_vre.sum()),
-            )
+                return sig
+
+            price_signal = _screen_signal_for(next_year)
+            if unified_screens:
+                # Every entering year this solved year's prior_results will
+                # screen gets its OWN signal: next_year always; the
+                # bridge-adjacent year after a bridged next_year too (the
+                # bridge iteration never solves, so prior_results stays
+                # pointed here and the post-bridge screens would otherwise
+                # consume a signal priced for the wrong year). Blends use the
+                # pre-update EWMA state; pass-through at alpha=1.0.
+                _prev_ewma = price_signal_prev
+                _alpha = float(config.entry_price_signal_alpha)
+                unified_signals[next_year] = _blend_price_signal(
+                    price_signal, _prev_ewma, _alpha
+                )
+                _after_bridge = next_year + 1
+                if (
+                    is_hindcast_bridge_year(
+                        next_year,
+                        hindcast=config.hindcast,
+                        crossover_forward_year=config.crossover_forward_year,
+                        start_year=start_year,
+                    )
+                    and _after_bridge <= end_year
+                    and not is_hindcast_bridge_year(
+                        _after_bridge,
+                        hindcast=config.hindcast,
+                        crossover_forward_year=config.crossover_forward_year,
+                        start_year=start_year,
+                    )
+                ):
+                    unified_signals[_after_bridge] = _blend_price_signal(
+                        _screen_signal_for(_after_bridge), _prev_ewma, _alpha
+                    )
         price_signal = _blend_price_signal(
             price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
         )
