@@ -3074,3 +3074,139 @@ LP build/solve and OOM-killed twice on a 15 GB box; it completed only after
 `regenerate_clean` pass concurrently.
 
 Next shorthand: **pjm-157.**
+
+---
+
+## pjm-157 — the CC gas-elasticity object **DOES NOT SURVIVE Phase 0**; the lane re-points (no LP, no solve, no cell moved) (2026-08-05)
+
+**What was run.** Nothing. **Zero LP solves, zero scoring, zero registration.**
+Every number is read from committed artifacts: the `pjm2022_touchpoint` and
+`pjm152_collapse_A` P1 hourly sidecars, the two dashboard run payloads, the
+per-year `bench/PJM/*.json.gz`, `data/raw/eia-930/`, and the EIA-923 monthly
+delivered-cost parquet. Full write-up:
+`results/calibration/FINDING-pjm157-cc-object-does-not-survive-phase0-2026-08-05.md`.
+Probes: `_pjm157_energy_balance.py`, `_pjm157_virtual_channel.py`,
+`_pjm157_switching_elasticity.py`, `_pjm157_fuel_and_vintage.py`.
+
+**The pjm-156 hand-back's decisive claim is refuted on the model's own in-sample
+data.** The chartered object was "the model's CC fleet is gas-price-INELASTIC".
+It is not. Regressing the coal share of (coal + `CC_REGULAR`) on
+`ln(delivered gas / delivered coal)` over **36 in-sample months** spanning ratios
+**1.00–2.51**: model slope **0.0781** vs actual **0.0814** — **ratio 0.959**. On
+2022 the model is *over*-elastic (**1.414**). Annual coal-share error is
+**−0.04 / +0.13 / −0.42 / +0.41 pp** (2022 is the *smallest*). And from 2023 to
+2022 the model moved **+33.03 TWh** into `COAL_BIT` against a measured **+33.08**
+— a **0.15 % error on a 33 TWh fuel-switching swing**.
+
+**This entry supersedes pjm-156's closing framing.** That entry ended by pointing
+the miss "at the CC offer stack / gas passthrough under extreme 2022 gas". The
+switching measurement above says the passthrough is right; the offer-stack
+reading is withdrawn. (pjm-156's *envelope-parity* correction is untouched and
+was not re-litigated.)
+
+**What the +25.40 TWh `CC_REGULAR` error actually is.** Decomposed into the
+*level* of total (coal + CC) thermal energy and the coal↔CC *switching share*:
+
+| yr | ΔT | Δ share pp | **CC err** | **from LEVEL** | **from SHARE** | level % |
+|---|---:|---:|---:|---:|---:|---:|
+| **2022** | +30.64 | −1.09 | **+25.40** | **+20.31** | +5.09 | **80 %** |
+| 2023 | +2.45 | −0.34 | +3.28 | +1.81 | +1.47 | 55 % |
+| 2024 | +5.11 | −0.56 | +6.32 | +3.78 | +2.54 | 60 % |
+| 2025 | **+18.67** | +0.51 | +10.73 | **+13.18** | −2.45 | 123 % |
+
+**80 % is thermal LEVEL, and the same level defect is already present IN-SAMPLE
+in 2025 at 65 % of 2022's magnitude, in a year that PASSED C1.** The elasticity
+object survives only at **5.09 of 25.40 TWh (20 %)**, and as a level-of-share
+offset, not a slope deficiency.
+
+**Phase 0.1 — which term absorbs it.** On a self-closing EIA-930 basis the
+model's *total* 2022 generation error is **+3.9 TWh (+0.5 %)**, not +30. Demand
+**CLEARS** (model rises +25.37 TWh from 2023 vs a measured +25.10 — a 0.27 TWh
+delta error); nonfossil **CLEARS** (nuclear −0.1 %, wind/solar 0.0 %; hydro is on
+the pjm-143-corrected 923 `HY` basis — do **not** read the bench's PS-contaminated
+`classFull.hydro` 16.0 as a model shortfall); BTM **CLEARS**. Two terms do not:
+
+* **the DA virtual layer**, whose net cleared volume swings **+18.57 TWh** from
+  2023 to 2022 (+7.45 → −11.12) into phantom demand;
+* **net interchange**, where the model under-exports by **18.25 TWh** vs
+  12.36 / 12.16 / 9.75 in-sample — the *already-chartered* pjm-135 M4 defect
+  ("nothing in the model constrains it"), widened ~6 TWh. Note its **sign**: it
+  *reduces* the model's generation requirement, so it offsets the CC surplus.
+
+**`pjm_da_virtual_bids` breaks its own admissibility invariant IN-SAMPLE.** The
+mechanism's rule-13 case (module docstring, citing pjm-105) is that the annual
+net cleared at *actual* DA prices is ≈0 — measured **−0.68 / −0.95 / +1.32 TWh**.
+The keeper clears it to **+7.45 / +6.55 / −0.91**, i.e. **+8.13 / +7.50 / −2.23
+TWh away from that anchor in the tuned years**, on flat gross turnover
+(30–36 TWh) — so the clearing *point* moved, not the curve mass. Cause is a
+transmission channel: hours where the model's dual sits below actual clear net
+virtual DEMAND and hours above clear net SUPPLY, in all four years
+(corr +0.12/+0.30/+0.30/+0.21). **The layer converts a C3b price-shape error into
+a C1 quantity error, with a gain that scales with the price level** — invisible
+in-sample at a $29–44 level with C3b passing, dominant at 2022's $67 level with
+C3b failing (hourly price MAE $20.61 vs an in-sample 9.20/10.50).
+
+**Phase 0.3 — the fuel input is clean.** PJM-footprint EIA-923 delivered gas
+**$7.14/MMBtu** (2022) vs $3.81/$3.37/$4.37, Dec **$9.76**, Aug **$8.97**;
+gas/coal ratio **1.35 → 2.80**; 972 plant-month reporters vs 977/959/941. No
+pooled or stale vintage fallback. A fuel-input bug is excluded.
+
+**Phase 0.4 — the pooled-vintage bound is small and adverse.**
+`measured_ct_heat_rates` is pooled 2023-25 (71/71 PJM plants `ok`, median
+`model_over_measured` 0.991) and prices only `CT_PEAKER`, whose error is
+**−3.20** (2022) vs −0.49/−0.75/+2.98 in-sample. So it could own **≲3 TWh** — but
+the model runs `CT_PEAKER` too **low**, so correcting it displaces `CC_REGULAR`
+*downward*. **Wrong sign for the CC object.** (`measured_ramp_capability`'s clean
+partition is gitignored/absent and is bounded the same empirical way.)
+
+**One prerequisite before anyone reads the 2022 C1/C2 coal rows.** On an
+**identical 42-plant / 38,003 MW census** in 2022 and 2023, EIA-930 `COL` minus
+the bench's CAMPD grid-delivered coal is **+19.49 TWh** (11.7 %) in 2022 against
++7.26 / +7.05 / +11.02 (5.8–7.6 %) in-sample — **~7–9 TWh wider than the
+in-sample relationship predicts, on the same plants**. This is why the two bases
+disagree on the **sign** of the model's 2022 coal error (**+5.1** against the
+bench's own 42 plants; **−14.2** against 930 `COL`). It is a bench/coverage
+question, not a dispatch one, and could not be closed here — the 2022 CAMPD
+facility extract is absent from the container (2023–2025 only).
+
+**Also logged, unopened:** ~7 TWh/yr of double-counted pumped-storage pumping
+load (model demand is 930 `D`, which already contains PS pumping, *and* the model
+charges its own PS) — constant in every year including in-sample, so it explains
+none of the holdout regression; and `ST_GAS` **+4.38** in 2022 vs
++1.47/−2.82/+0.64. Separately, **2025's 930 `TI` cell is unusable**
+(`NG − TI − D = +14.68` vs ≤0.04 elsewhere) and the bench's `interchange` row
+carries it.
+
+**No mechanism armed — a documented refusal with cause (rule 1 / 13 / 26).** The
+chartered object dissolved; Object B is already chartered at pjm-135; Object A's
+*root* is the C3b price shape and PJM's price-formation frontier is
+**owner-declared at pjm-142** (diurnal-amplitude family CLOSED, overnight gas
+commitment bridge `R`), so opening it here would re-enter a closed lane without
+authorization; and completing Object A's diagnosis needs the 2022
+`hrl_da_incs_decs` corpus, which is gitignored, absent, and whose re-fetch is
+out-of-training data intake requiring explicit owner authorization (rule 22
+channel 1). The **in-sample half is already established and needs no new data.**
+
+**Recommended next charter.** Object A, **in-sample only**: a pre-registered,
+leave-one-year-out 2023–2025 A/B on whether the keeper is better described with
+the DA virtual layer **disarmed** than with a layer whose net clearing runs ±8 TWh
+from its own admissibility anchor. That is a rule-1 structural question, needs no
+new data, and never touches 2022. Question C should be settled first or in
+parallel. **Note what the fix is NOT:** pinning the layer's cleared volume to a
+measured outcome would violate rule 13 and recreate the condemned pjm-102 clamp.
+
+**Governance.** Rule 22: the freeze is **intact** — 2022 was not solved, scored,
+re-registered or worked around, and nothing was tuned on or against the 2022
+residual; every identification is in-sample. Rule 25: no NEISO parameter or
+verdict transplanted (the shared December miss is noted, not used as evidence).
+Rule 21: the C8 `CT_PEAKER` 31.1 % grounded pass was **not** treated as a defect.
+Rule 28: **OFF-QUEUE BY NECESSITY** — a new object opened by holdout evidence, not
+a re-test of a closed cell; no closed cell re-opened. **No mechanism was tested,
+so no status letter moves** — `da_virtual_bids` PJM stays **`K`** — but the
+pjm-157 evidence and the open question are appended to that cell's note and
+`ev.P` so the ledger does not read as settled (duty b, citation half). No new
+`ScenarioConfig` field (duty c). Rule 15: no run produced, nothing to register;
+the pjm-156 touchpoint stands as-is. Keeper **UNCHANGED**, no marker re-keyed.
+Availability parity not re-litigated, as instructed.
+
+Next shorthand: **pjm-158.**
