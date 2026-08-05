@@ -106,8 +106,10 @@ def main() -> None:
     fp["n_entries"] = len(fp["entries"])
     gov = att["governance"]
     gov["attested_by"] = (
-        "ercot-168 2026-08-05 (KEEPER CANDIDATE - surfaced for owner adjudication, "
-        "NOT self-promoted) - the ercot167 keeper recipe with ONE delta: "
+        "ercot-168 2026-08-05 (OWNER-PROMOTED - the owner's one-word directive "
+        "'Promote' issued on the fully-surfaced all-gates-green A/B record; the "
+        "session surfaced the candidate and did not self-promote) - the ercot167 "
+        "keeper recipe with ONE delta: "
         "coal_perplant_offer_yearly=true (matrix 5.1 item 12, owner-adjudicated "
         "OPTION A 2026-08-05: a rule-14/23 data-vintage fix of the armed "
         "coal_perplant_offer_curves K mechanism, whose ERCOT-143 closure premise "

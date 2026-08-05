@@ -1,15 +1,16 @@
 {
-  "id": "2026-08-05-run168b-year-curves",
-  "label": "run168b year curves",
-  "date": "2026-08-05",
-  "shorthand": "run168b-year-curves",
-  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "ERCOT",
-  "file": "frontend/data/backcast/runs/2026-08-05-run168b-year-curves.js",
-  "bundle": "results/calibration/ercot168_yearcurves_B"
+ "id": "2026-08-05-run168b-year-curves",
+ "label": "run168b year curves",
+ "date": "2026-08-05",
+ "shorthand": "run168b-year-curves",
+ "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-05-run168b-year-curves.js",
+ "bundle": "results/calibration/ercot168_yearcurves_B",
+ "market_story": "COAL_LIGNITE / COAL_PRB (2023): the real Luminant/sub-bit coal fleet two-shifted overnight in Aug-Oct 2023 - Oak Grove submitted a $60-class overnight RT offer top (measured 60-Day SCED, $60.26/$61.46) against ~$20 overnight LMPs, so SCED base-pointed the units to LSL every ordinary night and restored full output for the day; Martin Lake's +$1.9 Aug level step crossed the ~$21.3 overnight LMP and carries the sub-bit two-shift at the margin. The model now prices those measured year-2023 curves directly (verbatim submitted conduct, zero fitted parameters), so the LP's own dispatch reproduces the overnight backdown, the daytime recovery, and the Aug 15-19 scarcity-night pause (those nights priced >> $60) - price formation, not a floor, and no forced energy: the mustrun block stays owned by the ERCOT-137 measured margin, the peak tranche by ERCOT-140's gas-parity margin."
 }
