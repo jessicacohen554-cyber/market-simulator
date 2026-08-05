@@ -55,6 +55,7 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     load_or_synthesize_bins,
     load_planned_additions,
+    load_procured_vre_additions,
     load_retired_within_window,
 )
 from market_sim.data.build_exit_throughput import max_annual_exit_gw
@@ -1132,6 +1133,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 min(g.online_year for g in planned_additions),
                 max(g.online_year for g in planned_additions),
             )
+
+    # FFR-5E near-term VRE procurement channel (owner decision D-18(a)): the
+    # WIND/SOLAR limb of the same known-additions channel above, which skips
+    # them because _map_fuel_type returns None for wind and solar. GATED
+    # (vre_procurement_additions_enabled, default OFF) and forecast-mode only
+    # — a backcast's historical VRE rides the vintage snapshot. Loaded once;
+    # rows commission in evolve_fleet step 4 at their EIA-860 effective year.
+    procured_vre_additions: list[dict] = []
+    if config.mode == "forecast" and getattr(
+        config, "vre_procurement_additions_enabled", False
+    ):
+        procured_vre_additions = load_procured_vre_additions(iso, iso_config)
 
     # RC-1B hindcast information gate (RC-0B D4): in hindcast mode
     # (config.hindcast, e.g. scripts/run_capacity_hindcast.py), a confirmed
@@ -3099,6 +3112,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             price_signal=price_signal,
             peak_demand=peak_demand,
             planned_additions=planned_additions,
+            procured_vre_additions=procured_vre_additions,
             mc_cost=mc_cost,
             rps_shadow_price=result.rps_shadow_price or 0.0,
             retrofit_log=retrofit_log,

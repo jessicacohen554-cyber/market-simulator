@@ -209,6 +209,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # capacity screen consumes (and that object's level) and so gets a
     # distinct key. Owner decision D-19(a).
     "capacity_screen_unified_lookahead",
+    # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
+    # from the hash at its default so every pre-existing cache key is
+    # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
+    # zonal pools and nets that flow from the entry budgets, so it is a
+    # different scenario and gets a distinct key.
+    "vre_procurement_additions_enabled",
     # FFR-3F exit-throughput cap (GATED default-off): dropped from the hash at
     # its default so every pre-existing cache key is byte-stable; an armed run
     # bounds the deactivation queue and so gets a distinct key. Owner decision
@@ -775,6 +781,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_commissioning_lag": "True",
     "entry_pipeline_aware_signal": "False",
     "capacity_screen_unified_lookahead": "False",
+    "vre_procurement_additions_enabled": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
@@ -3207,6 +3214,66 @@ class ScenarioConfig:
     # (the object itself) to be on; with it off this gate is structurally
     # a no-op. Forecast-machinery only (the backcast has no capacity
     # evolution). Default off is byte-identical.
+    vre_procurement_additions_enabled: bool = False  # GATED default-OFF
+    # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
+    # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
+    # 2026-08-05.md §§2-3, admissibility contract §5.1). The NEAR-TERM VRE
+    # PROCUREMENT CHANNEL: a wind/solar limb of capacity-evolution STEP 4
+    # (known additions), reading the run's OWN EIA-860 vintage's proposed-
+    # generator sheet at construction-committed status and writing zone-
+    # assigned MW into ``renewable_additions`` tagged ``source: "procured"``.
+    #
+    # WHY IT EXISTS. Step 4's thermal channel (data.fleet.eia860.
+    # load_planned_additions) skips wind and solar because ``_map_fuel_type``
+    # returns None for them, on the docstring's premise that "renewable
+    # capacity growth is handled by the zonal wind_cap / solar_cap pools".
+    # FFR-3V §4.3 refuted that premise: ``renewable_additions`` is the ONLY
+    # writer of those pools and its sole upstream is the economic screen, so
+    # the merchant screen is a single point of failure for ALL VRE in EVERY
+    # forecast. This limb is the additions-side twin of the confirmed-
+    # retirement registry (step 0), sharing its instrument gate, its vintage
+    # information gate and its ``source:`` attribution — hence a limb of an
+    # existing step, never a new step (rule 19 [R-ONE-MECH]).
+    #
+    # ZERO FREE PARAMETERS (rule 24 [R-REGISTRY]). This flag plus the already-
+    # registered active-EIA-860-vintage path is the ENTIRE tunable surface
+    # (design §2.5). The status set is a cited code constant
+    # (eia860._PLANNED_FIRM_STATUSES, U/V/TS — the SAME frozenset the thermal
+    # limb uses, not a copy), the horizon is the data's own, the vintage is
+    # the run's own. No status-set override, no horizon scalar, no
+    # realization multiplier, no per-ISO dict, no env var — a config knob is
+    # a channel through which a residual could be closed, which is exactly
+    # what this design must not provide.
+    #
+    # RULE 13 [R-MEASURED] BOUNDARY, the line the whole design turns on: the
+    # channel reads the PROPOSED sheet (a forward statement of intent, filed
+    # BEFORE the outcome) and is FORBIDDEN the OPERABLE sheet (the outcome).
+    # Both files sit in the same directory with near-identical schemas; a
+    # design that read ``eia860_generator_operable.parquet``'s Operating Year
+    # to decide what to build would have pasted the answer key in, however
+    # dressed (design §3.1). Not for cross-checking, not for "validation",
+    # not for a coverage statistic computed at run time.
+    #
+    # PRE-REGISTERED, so no later session misreads the bound: THIS DOES NOT
+    # CLOSE MISO's 18.649 GW GAP AND NO VERSION OF IT CAN. A vintage-2020
+    # hindcast is ALLOWED to see 1.034 GW of committed MISO solar pipeline
+    # against 18.649 GW actually built — a correctly-gated near-term channel
+    # is arithmetically incapable of reproducing a five-year build from a
+    # two-year queue, and that is the information gate WORKING (design §5.2).
+    # Widening the status set, the vintage or the horizon to reach a better
+    # MISO number SPENDS the guard rather than improving the model: it is
+    # rule 1 [R-STRUCT]'s fitted-input failure arriving as a status filter
+    # instead of an adder. Owner card D-18 explicitly REFUSED that option (b).
+    #
+    # BLOCKING PRECONDITION, HINDCAST LANE ONLY: FFR-3V §6.1 must close first
+    # (a hindcast is mode="forecast" + hindcast=True, so load_renewable_
+    # profiles' ``is_backcast`` gate falls through to the canonical constant —
+    # MISO solar seeds at 7,000 MW against 2,056 MW actual at vintage 2020).
+    # Injecting vintage-gated procured MW onto a pool that already contains
+    # post-vintage capacity double-counts INVISIBLY: the totals stay plausible
+    # while the mechanism is wrong. Plain 2026+ forecasts are unaffected.
+    # Forecast-mode only; arming anywhere, including MISO, is a SEPARATE owner
+    # decision (rule 25 [R-ISO-SCOPE]).
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -11891,6 +11958,7 @@ TIER_TAGS: dict[str, int] = {
     "entry_rate_limits": 1,
     "entry_commissioning_lag": 1,
     "entry_pipeline_aware_signal": 1,
+    "vre_procurement_additions_enabled": 1,
     "exit_rate_limits": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
