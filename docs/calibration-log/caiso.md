@@ -6286,3 +6286,74 @@ field, on the `demand_dropout_screen` precedent; other five cells `.` by structu
 CAISO's is the only fractional load-area split in the zonal-shares layer). Evidence:
 `results/calibration/FINDING-caiso172-path15-load-split-2026-08-04.md`,
 `PRECHECK-caiso172-path15-load-split-2026-08-04.md`.
+
+## 2026-08-05 — CAISO — caiso-173: frontier RE-ASSESSED on the post-caiso-172 ledger — every limb intact, but the keeper is PRE-EPOCH and `complete` is **NOT YET**
+
+**Runs:** NONE. No LP, no solve, no derive, no intake, no `ScenarioConfig` field,
+keeper unchanged at `2026-08-04-caiso-172-measured-path15`, nothing registered.
+Two network calls, both standing wall probes. `calibration-complete.json` and
+`holdout-freeze.json` **UNTOUCHED** (owner acts, rule 22). 2023/2024/2025 only.
+
+**Why the session existed.** caiso-171 recommended **YES** on `complete` with one
+unresolved item; caiso-172 closed it by MEASUREMENT rather than by filing a wall, so
+the recommendation rested on a ledger no session had re-assessed. It is re-assessed
+here and **every frontier limb survives** — but a fact neither predecessor could see
+now governs.
+
+**GATE 0 outcome (ii) — FFR-4D merged (PR #3562) and the keeper predates it.** Cache
+epoch **2026-08-04c** is a same-key invalidation of every cached CAISO bundle.
+MEASURED on three independent signals: the keeper's recorded `git_sha` **`789e28b8`**
+is an ancestor of FFR-4D's head; that tree carries **0** occurrences of
+`storage_measured_base_fleet` against **4** on `main`; and the keeper's
+`run_config.json` carries **no such field at all**. The keeper's metrics were produced
+on a flat **8,000 MW** battery scalar — a FORECAST base-year constant fed to a backcast
+year — against a measured year-end fleet of **7,492 / 11,131 / 15,448 MW**. The defect
+**REVERSES SIGN**: 2023 ran **6.8 % OVER**, 2025 **48.2 % short**. A `complete`
+determination on those metrics is exactly the stale determination rule 22 D-5(b) exists
+to prevent. **Owed, and a different session's work** (FFR-4D §7 D-2 states it as owed):
+a CAISO backcast re-solve of 2023/2024/2025 in ONE bundle (rule 16), registered
+(rule 15), re-gated. **The freeze is NOT the reason** — caiso-171's corrected §0 settled
+that; cited, not re-derived.
+
+**The six adjudications.** **(A)** caiso-171 §3's "highest ISO-specific residual DOF"
+**SURVIVES, NARROWED**: CAISO **3** (was 4), still sole highest — PJM 1, NYISO 2,
+NEISO 0, MISO 0. `storage_measured_base_fleet` does NOT increment it (checked: default-ON,
+zero free parameters, a rule-14 measured-EIA-860 identification — a DOF reduction in
+kind). *Instrument correction:* caiso-171 PINNED its comparison bundles and three of four
+have promoted since, so caiso-173 resolves them LIVE from `keepers/<ISO>.json` → registry.
+**(B)** All three standing walls **HOLD** on live bytes (caiso-141 5/5 `unchanged`;
+Arm B's published caps already armed and non-binding; no OFO record on disk), plus
+caiso-172's five walls all `unchanged`. **(C) MWD-TAC = recorded open item, NOT a
+blocker**, adjudicated on measurement: it is **NOT missing load** — `load_zonal_shares`
+normalises to 1.0, so MWD is re-apportioned pro-rata, a **misapportionment** of
+**0.52/0.67/0.56 %** of ISO load (caiso-172's "~0.9 %" was high), of which only
+**0.24–0.30 %** crosses a model boundary. **Orthogonal to caiso-172** (a pro-rata slice
+scales `PGE-TAC`'s level, not its NP15/ZP26 ratio). Closing it is an INTAKE; keep it OUT
+of the re-solve. **(D)** Neither remaining live DOF entry blocks — now on PRECEDENT:
+NYISO carries the structurally identical `IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]` **while
+holding the marker**. **(E) FFR-4D D-1/D-4 do NOT block a BACKCAST `complete`**, VERIFIED
+not asserted: both are `model/capacity_evolution/` adequacy objects, and the keeper's own
+`metrics.json` enumerates the nine scored criteria — **none reads accreditation**.
+**(F)** `mechanism_matrix_gap_sweep --iso CAISO` **0/0/0/0/0** as run; CAISO column
+**60 K · 20 U · 13 I · 6 R · 5 G · 6 O**. Five of six `O`s are compatible with limb (b);
+`storage_measured_base_fleet` is different in kind — **backcast-scoped and default-ON**,
+so its `O` says *"the current keeper was not solved on the current model"*. That is
+GATE 0, recorded in the matrix.
+
+**PRE-REGISTERED CONDITION (assessment §6):** if the re-solve returns
+CALIBRATED-WITH-CAVEATS with **no NEW FAIL and no new caveat slot**, the recommendation
+becomes **YES** with no further frontier work; a degraded determination reopens the
+question on substance and **escalates to the owner**.
+
+**Also carried.** caiso-171 §2.1's C3a **two-year** widening (+11.5 % 2024 / +14.4 % 2025)
+UNCHANGED by caiso-172. KNOWN-OPEN 1 moved TOWARD measured but stays wide open (model
+**5.6/2.5/3.1 %** of the +5.947/+8.576/+5.727 basis; congestion majority 80–87 %
+unrepresented; no N–S topology lever chartered, caiso-164 §0/§6 stands). KNOWN-OPEN 2 was
+measured on a PRE-EPOCH fleet and should be **re-read after the re-solve**. Evidence
+census **19 of 19** resolved.
+
+Matrix: **NO cell verdict moves — no mechanism was tested**; §5.2 header re-stamped
+(rule 28 duty b). Evidence:
+`results/calibration/ASSESSMENT-caiso173-frontier-2026-08-04.md`, instrument
+`scripts/probes/caiso173_frontier_recheck.py`, record
+`results/calibration/_caiso173_frontier_recheck.json`.
