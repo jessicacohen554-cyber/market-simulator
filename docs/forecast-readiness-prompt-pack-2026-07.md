@@ -3527,3 +3527,170 @@ all retention work. Wave 5 is CLOSED (Addendum U.3). Two cards are at the owner:
 (repaired-level margin-gap decomposition) and E-1/E-2 (RPS spatial grain + clean tiers,
 settled together). Lane prompts follow the owner's signatures — none are dispatched from this
 section yet.
+
+**§0p addendum (same sitting):** both cards SIGNED as recommended (Addendum U.5) — D-20(a)
+charters FFR-6A, E-1/E-2(a) charters FFR-6B (with the §5.4 residual sizing as a rider).
+Wave 6 opens with the two prompts below.
+
+### FFR-6A [FABLE] — decompose the repaired-level margin gap (D-20(a))
+
+```
+[FABLE] FFR-6A — Decompose the repaired-level retirement margin gap against the measured
+Potomac-SOM net-revenue benchmark (owner decision D-20(a), sitting Addendum U.4/U.5, signed
+2026-08-05). MEASUREMENT lane, Wave 6. THE MEASURED FACT YOU START FROM (FFR-5D-M, handoff
+docs/handoffs/ffr-5d-price-object-2026-08-05.md §3, probe JSON docs/handoffs/ffr-5d/
+paired-arm-probe-2026-08-05.json, registered arms ercot-2021-2025-t1ff-armr-ffr5d-{shipped,
+unified}): under the unified+repaired price object the retirement screen fails essentially
+the whole ERCOT merchant fleet (entry_capped 554-564 units / 63.0-66.1 GW in 2024/2025), the
+adequacy admission cap does ALL retention work, and the model retires 10.9 GW of gas_st
+(actual gas_st exits: 0.0) pre-window instead of the real 1.534 GW. Either the screen object
+is missing a real revenue leg or the bar is mis-leveled. Your job: say WHICH, with measured
+decomposition and an admissibility verdict per candidate fix. You tune nothing, arm nothing,
+fix nothing in this lane — the fix is a separate charter on your findings.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 8693b75d — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ the shards YOURSELF): ERCOT 2026-08-05-run168b-year-curves · PJM
+2026-08-04-pjm-152-collapse · CAISO 2026-08-05-caiso-174-measured-fleet · NYISO
+2026-08-04-nyiso-125-seam-envelope · NEISO 2026-08-05-neiso-83-ca1-reclass · MISO
+2026-08-05-miso-132b-cc-committed (NEW this morning). Markers: `complete` = {CAISO, NEISO,
+NYISO, PJM}; `final` EMPTY; HOLDOUT FREEZE ACTIVE (2023-2025 in-sample work and the T1-FF
+carve-out unaffected). capacity_screen_unified_lookahead ships default OFF. Wave 5 is
+CLOSED; FH-4/FH-5 remain BLOCKED by manager determination U.2 — this lane's output is the
+candidate evidence for lift condition (i), and the lift is the MANAGER'S, not yours.
+PREREQUISITES: `uv sync` (~2 min). regenerate_clean.py (~63-65 min) ONLY if you re-solve —
+prefer not to (below).
+
+=== WHAT YOU MEASURE ===
+1. COMMITTED-ARTIFACT-FIRST. The registered ffr5d arms carry the per-screen bar
+   decompositions (FFR-5A's persisted ledger fields: energy_margin_usd, reserve_uplift_usd,
+   going_forward_cost_usd, screen_price_mean/max, availability, mc, as_pricing) in the probe
+   JSON and slim bundles. Build the per-fuel margin-gap table at the repaired level FROM
+   THOSE before considering any solve. A re-run of the unified arm (invocation: ffr-5d
+   handoff §2, verbatim + its one flag) is permitted ONLY if a read you need was not
+   persisted — state which, and budget rule 12 (<=2 concurrent, years sequential, cold).
+2. THE BENCHMARK: Potomac/ERCOT State-of-the-Market net-revenue estimates by technology for
+   2023-2025 (public, measured; the screen's own cited definition — "Potomac-SOM net
+   revenue", CLAUDE.md capacity-evolution step 3). Intake under the data contract if not
+   already on disk (data/raw/ + schema; in-sample years only, no authorization needed —
+   confirm nothing you intake touches an out-of-training year). Compare, per fuel:
+   (i) SOM measured net revenue vs (ii) the shipped screen object's margin vs (iii) the
+   repaired screen object's margin vs (iv) the bar (FOM-based going-forward cost, per-fuel
+   thresholds).
+3. THE DECOMPOSITION QUESTIONS, pre-register your reads before computing:
+   (a) Which revenue legs does SOM count that the repaired object lacks (AS/reserve revenue
+       at the repaired level? energy uplift? bilateral)? The FFR-5A reserve-leg $0.0
+       adjudication was measured on the OLD objects — at the repaired level it is an OPEN
+       question, not a settled one; re-measure, don't inherit.
+   (b) Is the bar consistent with SOM's going-forward-cost basis (FOM levels, per-fuel
+       multipliers), or mis-leveled against it?
+   (c) Does the real 2023-2025 SOM data show the actual exits (coal 0.932 / gas_ct 0.502 /
+       gas_cc 0.080 GW) as margin-negative units a correct screen COULD have caught — or
+       were those exits non-economic (a finding that bounds what any screen can do)?
+4. ADMISSIBILITY VERDICT per candidate fix (rules 13/14/23): for each gap term, state
+   whether a fix is a reproducible physical/market input with a forward analogue, a
+   frozen-derive re-derivation (citing its source-data change), or inadmissible (a level
+   knob tuned at a residual — name it as such and refuse it).
+
+=== RULES THAT BIND HARDEST ===
+Rule 1: the deliverable is a decomposition, not a better exit number; nothing is tuned
+toward 1.534 GW. Rule 13: SOM data enters as a benchmark for VALIDATION of the screen's
+completeness, never as an input that pins the screen to actuals. Rule 23: no derive script
+changes here. Rule 24/25/28: no new fields, no arming, stamp any cell you adjudicate.
+Rule 27: FABLE; if you touch scripts/, exact bytes + blob verification.
+
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit
+(3,960 -> 9,508 lines) — `git status --short` after any Python write; restore exact HEAD
+bytes; never stage the reflow. Push 413: fetch main + rebase first; owner merges fast,
+prune stale refs. Never push_files a >=300-line file. Evolution ledgers at
+<out-dir>/<ISO>/<runtime-key>/ — a silent {} from a wrong path is indistinguishable from a
+real null. results/ dies with the container — commit findings early and often. Shell cwd
+persists. Stop-hook on merged history: rev-list 0 => nothing to amend.
+
+Deliverable: docs/handoffs/ffr-6a-margin-gap-decomposition-<date>.md — the per-fuel gap
+table (SOM vs shipped vs repaired vs bar), the three pre-registered answers (a)-(c), the
+admissibility verdict per candidate fix, and a recommendation card for the owner. NO lift
+recommendation — U.2's determination is the manager's.
+```
+
+### FFR-6B [OPUS] — E-1/E-2 scoping: zonal RPS grain + clean tiers, settled together (E-1/E-2(a))
+
+```
+[OPUS] FFR-6B — Scope the RPS row's spatial grain (E-1) and the clean/carbon-free tiers
+(E-2) TOGETHER (owner signature at sitting Addendum U.5, 2026-08-05; the escalation record
+is FFR-5B docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md §5.3). DESIGN-ONLY
+lane on the FFR-5B pattern: NO code, NO ScenarioConfig field, NO schema, NO solve, NO
+matrix cell, NO dashboard contact. The deliverable is a design doc + an implementation card
+the owner can sign, exactly as FFR-5B produced for D-18. RIDER (second, bounded
+deliverable): the FFR-5B §5.4 residual sizing — committed-artifact-only computation of
+realized COD minus the vintage-gated committed pipeline, per ISO-year (the disclosed-null's
+named size). No solve for the rider either.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 8693b75d — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ the shards YOURSELF): ERCOT 2026-08-05-run168b-year-curves · PJM
+2026-08-04-pjm-152-collapse · CAISO 2026-08-05-caiso-174-measured-fleet · NYISO
+2026-08-04-nyiso-125-seam-envelope · NEISO 2026-08-05-neiso-83-ca1-reclass · MISO
+2026-08-05-miso-132b-cc-committed. `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY;
+HOLDOUT FREEZE ACTIVE (irrelevant to this lane: no solve, no year touched).
+PREREQUISITES: `uv sync` (~2 min) for any committed-artifact reads; nothing else.
+
+=== E-1 — THE ZONAL RPS ROW (the finding you design against, FFR-5B §5.3) ===
+_build_rps_row builds ONE ISO-wide annual row against a load-weighted blend of state
+obligations, dissolving binding state statutes into a slack ISO-wide average. The claimed
+fix is a spatial-grain correction under rule 14, zero new tunables, using the per-state ->
+per-zone reconciliation FFR-5B says is "already derived inside STATE_RPS_FLOORS['MISO']'s
+own comment block". YOUR SCOPING DUTIES: (1) VERIFY that reconciliation claim at
+implementation grain — read the actual constants/comment blocks for EVERY multi-state ISO
+(MISO, PJM, NEISO, NYISO trivially single-state? verify, don't assume), and state per-ISO
+whether zone-resolved obligations are derivable from committed data or need intake;
+(2) design the row structure (per-state rows mapped onto zones? per-zone rows? what the REC
+dual means at each grain — one dual per row is the REC price of WHAT market); (3) state the
+LP-size and degeneracy consequences (rule 2 vectorization, one row per state-year vs one);
+(4) interaction with the RPS-as-constraint architecture (CLAUDE.md steps 4-5: "RPS is not a
+force-build step") and with FFR-5E's procurement channel (rule 19: the channel is committed
+near-term procurement; the RPS row is the statutory driver — they must not double-count the
+same MW); (5) per-ISO scope under rule 25 — which ISOs get zonal rows in the first
+implementation and why.
+
+=== E-2 — THE CLEAN/CARBON-FREE TIERS (settled WITH E-1, never separately) ===
+The tiers are represented NOWHERE; MN/MI/IL's strongest statutory drivers are invisible.
+FFR-5B deliberately did not settle whether a second, nuclear-counting clean-energy row is
+real or would be slack for the same aggregation reason as E-1. YOUR DUTY: adjudicate this
+EX-ANTE from committed artifacts — per state: statutory clean/carbon-free requirement
+trajectory vs existing qualifying generation (nuclear + hydro + renewables as each statute
+defines) at the zonal grain E-1's design produces. If the row binds nowhere within the
+model horizon at honest levels, the verdict is "designed but slack — do not build" and that
+verdict goes in the card (that outcome is the system working, not a failed lane). If it
+binds somewhere, design the row (statute-defined qualifying set as data, not hardcoded
+class tuples — rule 18's spirit; interaction with the REC dual and EAC/CES machinery in
+policy/).
+
+=== RULES THAT BIND HARDEST ===
+Rule 13/14: statutes and their levels are measured inputs with forward analogues; cite
+every level (docs/parameter-citations.md pattern). Rule 19: one mechanism per phenomenon —
+the design must state exactly what already floors/forces the same MW (RPS row, EAC, IRA,
+FFR-5E channel) and how double-counting is excluded. Rule 25: per-ISO derivation, no
+cross-ISO transfer of levels. Rule 28: NO matrix row now (nothing lands); the future
+implementation PR adds its row. Rule 5: no magic numbers in the design — every proposed
+constant carries its citation.
+
+=== THE RIDER — FFR-5B §5.4 residual sizing (bounded, committed-artifact-only) ===
+Compute, per ISO-year in the available vintage windows: realized COD MW (from committed
+EIA-860 operable/monthly data ALREADY on disk — read-only; this is a sizing of a disclosed
+limitation, not a model input, so the operable sheet is legal HERE and only here) minus the
+vintage-gated committed (U/V/TS) pipeline MW the FFR-5E channel would inject. The result is
+the named size of the corporate-PPA / beyond-horizon residual FFR-5B disclosed as having no
+admissible representation. Report the table + method in the handoff; it feeds no mechanism.
+
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit —
+`git status --short` after any Python write (scratch helpers included); restore exact HEAD
+bytes; never stage the reflow. Push 413: fetch main + rebase first; owner merges fast,
+prune stale refs. Never push_files a >=300-line file. Shell cwd persists. Stop-hook on
+merged history: rev-list 0 => nothing to amend.
+
+Deliverable: docs/handoffs/ffr-6b-rps-grain-clean-tiers-<date>.md — the E-1 design with the
+per-ISO reconciliation verification, the E-2 ex-ante bind/slack adjudication and (if it
+binds) its design, the double-count exclusion statement, the §5.4 residual table, explicit
+"what I did NOT decide", and the implementation card for the owner's signature.
+```
