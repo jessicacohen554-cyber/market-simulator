@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T20:43:13",
+  "timestamp": "2026-08-05T02:58:53",
   "iso": "CAISO",
   "years": [
     2023,
@@ -74,7 +74,11 @@
     "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": true,
     "nuclear_unit_availability": true,
-    "caiso_firm_import_selfsched_clip": true
+    "caiso_firm_import_selfsched_clip": true,
+    "caiso_per_year_import_caps": true,
+    "caiso_asymmetric_path_ratings": true,
+    "caiso_zonal_loss_surface": true,
+    "storage_measured_base_fleet": false
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -237,6 +241,9 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": true,
+  "caiso_asymmetric_path_ratings": true,
+  "caiso_zonal_loss_surface": true,
   "capacity_deliverability_limits": true,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -299,14 +306,16 @@
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet"
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet",
+    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
+    "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "52b2d97",
-  "basis_sha": "a900c67ca6ff2312328ed9bd1472a455995d03ee",
+  "git_sha": "5c8244ec",
+  "basis_sha": "de804d079b76524168b90574a4a4dfb2d434e06e",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

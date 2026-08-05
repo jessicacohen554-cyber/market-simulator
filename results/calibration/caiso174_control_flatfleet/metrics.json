@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-02-caiso157-partition-control",
+  "run_id": "2026-08-05-caiso-174-control-flatfleet",
   "iso": "CAISO",
-  "label": "caiso157 partition control",
+  "label": "caiso 174 control flatfleet",
   "target_years": [
     2023,
     2024,
@@ -58,12 +58,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -76,8 +76,8 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 6,
+    "scored": 6,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 2
