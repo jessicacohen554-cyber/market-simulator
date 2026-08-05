@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-05-neiso-83-control-zerodelta",
+  "label": "neiso 83 control zerodelta",
+  "date": "2026-08-05",
+  "shorthand": "neiso-83-control-zerodelta",
+  "definition": "neiso-83 arm A: same-HEAD ZERO-DELTA control of the 2026-08-04-neiso81-chpheatrate keeper. No --set. Baseline for the cc_steam_part_reclass A/B (miso-124: price response is not stable across keepers, so the committed keeper is not an admissible baseline). Prereg: results/calibration/PREREG-neiso83-stonybrook-ca1-2026-08-05.md",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-08-05-neiso-83-control-zerodelta.js",
+  "bundle": "results/calibration/neiso83_control_A"
+}
