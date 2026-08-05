@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-08-04",
+  "generated": "2026-08-05",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -27533,6 +27533,24 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_wtx_curtail_unpooled",
+      "display_name": "Ercot Wtx Curtail Unpooled",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "ercot-165 — UNPOOL the driver's share by diurnal family, and give the Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]). FINDING-ercot164 measured that the pooled congestion_share is a UNION over every corridor element, so it saturates (2025 mean 0.64) and inherits the shape of whichever family carries the most binding weight — measured 0.70-0.77 OVERNIGHT. Its hod shape is therefore anti-correlated with the mid-afternoon curtailment mode it exists to close (2025 gap-shape corr -0.67, worsening as West solar grows), and the SAME overnight-shaped ceiling is broadcast to the Panhandle zone in ~8,750 h/yr on top of the endogenous Panhandle->North tie, so two mechanisms own the Panhandle phenomenon and both put it at night.  With ``ercot_wtx_curtail_unpooled`` the driver reads the per-family table (data/raw/reference/ercot_wtx_curtailment_share_family.csv) instead: West       -> family D + family N (ADDITIVE corridor pressure, not the saturating OR), so the daytime/solar-flood family's own measured incidence stops being averaged away; Panhandle  -> ``ercot_wtx_panhandle_owner``: \"tie\"   the endogenous tie at measured PNHNDL limits is the SOLE Panhandle mechanism (no driver ceiling); \"share\" a Panhandle-scoped ceiling shaped by the measured PNHNDL enforcement incidence owns the SUB-LIMIT pressure, so the tie (network limit, overnight) and the ceiling (daytime) bind in different hours. Family membership is a source-data derive (rule 23): a threshold-free lift test of each element's own binding-hod placement against the year's measured SCED-execution exposure. Still exactly TWO free scalars — the existing per-tech depths, re-identified against the unpooled shares (panhandle_owner=\"tie\" -> 0.1507/0.1627; \"share\" -> 0.1354/0.1614). ERCOT-only, both off/\"tie\" by default; the pooled path is untouched. See scripts/data/derive_ercot_wtx_curtailment_share.py --family and results/calibration/FINDING-ercot164-wpb-nodal-identification-2026-08-04.md.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_wtx_curtailment_driver",
       "display_name": "Ercot Wtx Curtailment Driver",
       "value": false,
@@ -27548,6 +27566,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_wtx_panhandle_owner",
+      "display_name": "Ercot Wtx Panhandle Owner",
+      "value": "tie",
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {

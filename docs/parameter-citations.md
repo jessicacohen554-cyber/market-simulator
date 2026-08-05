@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-08-04. Every numeric input to the model traces to a primary source
+_Generated 2026-08-05. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1684 parameters registered** (882 flagged `needs-citation`).
+**1686 parameters registered** (883 flagged `needs-citation`).
 
 
 ## Calibration
@@ -1194,7 +1194,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_thermal_as_endogenous` | False | 1 | ERCOT forward: the thermal |  | auto-generated, needs-citation |
 | `scenario.ercot_wtx_curtail_depth_solar` | 0.1637 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.ercot_wtx_curtail_depth_wind` | 0.1004 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ercot_wtx_curtail_unpooled` | False | 3 | ercot-165 — UNPOOL the driver's share by diurnal family, and give t… | 2025 | auto-generated |
 | `scenario.ercot_wtx_curtailment_driver` | False | 3 | ERCOT West Texas Export corridor VRE curtailment-share driver (back… | 2026-07 | auto-generated |
+| `scenario.ercot_wtx_panhandle_owner` | tie | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.federal_ces_ci_benchmark_t_per_mwh` | 0.82 | 1 | Clean Energy Standard Act, S.1359 (116th Cong.); Bingaman CES Act S… | 2026-07 |  |
 | `scenario.federal_ces_crediting` | clean_capture | 1 | Owner decision D1 2026-07-17 (docs/handoffs/national-ces-eac-premiu… | 2026-07 |  |
 | `scenario.federal_ces_enabled` | False | 1 | Owner ask 2026-07-17 — national CES EAC-premium plan (docs/handoffs… | 2026-07 |  |
