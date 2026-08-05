@@ -320,8 +320,23 @@ again on the next field).
 
 ## 8. Reproduction & verification
 
-* **Tests:** `uv run pytest tests/unit/model/test_vre_procurement_ffr5e.py` (19 passed).
-  Full `tests/unit` + `tests/regression` suite green at the feature commit.
+* **Tests:** `uv run pytest tests/unit/model/test_vre_procurement_ffr5e.py` — **19 passed**.
+  Full `tests/unit` + `tests/regression` at the feature commit: **3,754 passed, 13 failed**.
+  **All 13 failures are PRE-EXISTING and ENVIRONMENTAL, verified by running the same 13 on a
+  clean `origin/main` checkout (`62570c67`) in this same container — identical set, identical
+  count.** They are caused by `data/clean` being **empty**: this session's measurement
+  deliberately solves nothing, so `regenerate_clean.py` was never run, and the code says so
+  itself — *"data/clean is derived and gitignored, so a fresh checkout has no registry; refusing
+  to silently degrade to the economic screen"*
+  (`data/confirmed_retirements.py:168`). The set is
+  `test_soundness.py::TestEndToEnd` ×6 (end-to-end solves), `test_export.py` ×4,
+  `test_constants_facade.py::test_moved_surface_is_complete`,
+  `test_fleet_arrays_golden.py::test_generators_to_fleet_arrays_ercot_2023_golden`, and
+  `test_outages.py::test_unknown_iso_degrades_to_empty`. **Nothing in this lane's diff touches
+  any of them**, and the two suites' failing sets differ slightly between runs (ordering
+  flakiness), which is itself a marker of the environmental cause rather than a code one.
+  A reviewer with a populated `data/clean` should see them pass; if any does not, it is not
+  this change.
 * **Paired arms:** `uv run python ffr5e_harness.py <label>` at the base commit and at the
   feature commit; compare the printed `SHIPPED=` digests (must be identical) and diff the
   `armed` blocks. The harness probes for the field with `dataclasses.fields(ScenarioConfig)`
