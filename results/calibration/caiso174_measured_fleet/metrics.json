@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-02-caiso157-partition-restore-b",
+  "run_id": "2026-08-05-caiso-174-measured-fleet",
   "iso": "CAISO",
-  "label": "caiso157 partition restore b",
+  "label": "caiso 174 measured fleet",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,8 @@
   "rubric_version": 2.9,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "2 ledgered measured-input caveat(s): C3a mean LMP, C3c price tail / scarcity (RT hourly)"
+    "2 ledgered measured-input caveat(s): C3a mean LMP, C3c price tail / scarcity (RT hourly)",
+    "unscored PROTECTIVE criteria: shape, forced_share"
   ],
   "notes": [],
   "criteria": {
@@ -60,12 +61,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -81,8 +82,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 7,
+    "scored": 7,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 2,
     "fails": 0

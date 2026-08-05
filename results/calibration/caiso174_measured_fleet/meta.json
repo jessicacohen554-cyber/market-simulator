@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T21:09:38",
+  "timestamp": "2026-08-05T03:28:42",
   "iso": "CAISO",
   "years": [
     2023,
@@ -74,7 +74,10 @@
     "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": true,
     "nuclear_unit_availability": true,
-    "caiso_firm_import_selfsched_clip": true
+    "caiso_firm_import_selfsched_clip": true,
+    "caiso_per_year_import_caps": true,
+    "caiso_asymmetric_path_ratings": true,
+    "caiso_zonal_loss_surface": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -237,6 +240,9 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": true,
+  "caiso_asymmetric_path_ratings": true,
+  "caiso_zonal_loss_surface": true,
   "capacity_deliverability_limits": true,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -303,12 +309,12 @@
     "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
     "hydro_plant_modes": "../_shared/CAISO/hydro_plant_modes-a44772fd5dd4.parquet"
   },
-  "git_sha": "33d64d6",
-  "basis_sha": "33d64d637b9ba66f41ae037a435e6cbfdd0852d0",
+  "git_sha": "ae7658d0",
+  "basis_sha": "de804d079b76524168b90574a4a4dfb2d434e06e",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
