@@ -5469,6 +5469,71 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
 
+**neiso-85 (2026-08-05) — THE 2022 SEASONAL INVERSION IS *ONE OBJECT* AND IT IS A DEFECTIVE
+FUEL INPUT, NOT A MECHANISM. NO LP, NO SOLVE, NOTHING SCORED OR REGISTERED, KEEPER
+UNCHANGED, NO CELL VERDICT MINTED (rule 28d: no mechanism was tested).** Off-queue by
+necessity and justified as such: this is a NEW object opened by holdout evidence that did
+not exist when the queue was closed at neiso-80/81, **not** a re-test of any closed cell.
+Nothing marked `R`/`I`/`G` was re-opened. The lever queue stays CLEARED — **this session
+deliberately charters no lever**, and that refusal is the result.
+
+**WHAT WAS MEASURED.** The neiso-84 touchpoint's inversion (model 37–58 % LOW in Jan/Feb/Dec,
+48–111 % HIGH May–Oct) is one defective input applied with the correct sign every month.
+**NEISO's resolved delivered gas for 2022 is seasonally INVERTED** — winter $6.09–8.68,
+summer $13.79–19.20/MMBtu, winter/summer **0.397** against **2.390 / 3.778 / 4.608** in the
+three tuned years. Decomposed stage by stage: the measured **EIA-923 ISO-month series is
+CORRECT for 2022** (Jan 16.27 / Feb 14.60 / Dec 15.38 vs summer 5.27–8.77, 12/12 months of
+receipts) and **`_hub_overlay_series` then overwrites 100 % of the year and inverts it**
+(Jan 16.27 → 6.74, Aug 8.51 → 19.20). **ROOT CAUSE: the basis SOURCE changes by year in
+`data/raw/gas_basis_by_iso_month.csv`.** NEISO 2015–2022 (and 2026) are sourced from the
+`EIA N3050MA3` proxy — an LDC city-gate **purchase-portfolio AVERAGE** whose summer $/Mcf
+balloons as fixed reservation charges spread over collapsed summer throughput — while
+**2023–2025 are the measured ISO-NE MA index** and are correctly winter-peaking. **The repo
+already diagnosed this once and wrote it down**: the Aug-2025 row's own `source` field
+records "EIA N3050MA3 proxy (+13.46) **rejected** — low-volume summer LDC citygate average
+overstates marginal AGT basis", but only that one month was repaired. **ATTRIBUTION**, at a
+single committed heat rate (7.340, the CC_REGULAR cap-weighted p50) with **zero fitted
+parameters**: **corr(residual, explained) = 0.978**, **77.3 %** of total monthly |residual|
+explained, sign correct in **all 12 months**, MAE $48.47 → $11.02/MWh. **THE DUAL-FUEL TELL**
+is decisive and independent: the inverted basis prices summer gas above oil parity, so the
+WINTER fuel-security switch fires in **September** — model oil Jun–Sep **2.2983 TWh** vs
+Jan/Feb/Dec **0.0012 TWh** (**1,948 : 1**), against an EIA-930 actual that is the mirror
+image (**1.5039 TWh** Jan/Feb/Dec vs 0.1089 Jun–Sep); September alone is model 2.1882 vs
+actual 0.0046 TWh, **476×**. The oil burn is seasonally TRANSPOSED, exactly like the basis
+driving it — a correct mechanism receiving an inverted signal.
+
+**WHY NO LEVER IS ARMED (the refusal, four grounds).** (1) The object is a committed input
+row, so rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]` require fixing the input, not compensating
+in a parameter; anything armed against this residual would be a fitted adder in substance.
+(2) **The defect is structurally INVISIBLE in the training window** — NEISO 2023–2025 are
+**0 % proxy / 100 % measured**, so a correct fix is **provably a no-op on 2023–2025** and the
+mandatory leave-one-year-out A/B would return a null for *any* correct fix; conversely a
+mechanism that DID move the tuned years would necessarily not be this defect. (3) The correct
+fix carries **zero DOF** — swapping a mis-bounded measured series for a correctly-bounded one
+— exactly the shape of CAISO's `caiso_citygate_spot_level` (caiso-84), which retired *the
+same EIA N3050 family* as an "LDC purchase-portfolio SURVEY" under rule 14. (4) The residual
+$11.02/MWh sits on top of a defective input and cannot be read until the input is corrected;
+it is NOT chartered. **C3c CONSEQUENCE:** the winter mechanisms are re-confirmed DORMANT in
+2022 (26,280 family-hours, `shortfall_mw` max 0.0, zero nonzero duals; 6,480 winter
+family-hours, 0 short) — but that dormancy is **downstream**, since January gas resolved to
+$6.74 against a measured $16.27. **The derate's depth/trigger CANNOT be identified while the
+input is inverted**, and that lane should not open until it is fixed. **THE NAMED FIX is a
+rule-22-channel-1 DATA INTAKE** (no-LP, owner-authorized, NOT frozen by the spend freeze):
+replace NEISO's proxy-sourced rows with the measured ISO-NE MA index, gated on four
+pre-registered no-LP checks (V1 seasonality sign > 0 every year; V2 2023–2025 byte-identical;
+V3 winter level not below the 923 series; V4 the commit cites the data change only, rule 23).
+**No re-solve of 2022 is requested or recommended** until that lands. **FLAGGED FOR THE OWNER,
+NOT ACTED ON:** NEISO's 2019 rows are 100 % proxy at −6.71 $/MMBtu inversion and the overlay
+is ON BY DEFAULT for NEISO (`backcast_config.py:1422`), so the **SPENT** 2019 locked-test
+one-shot is likely exposed — recorded so that number is *interpreted* correctly, **never
+re-opened** (rule 22); **2026 rows are 100 % proxy for every ISO**, reaching the unrestricted
+forecast/crossover lane; and **CAISO is the other ISO arming this overlay** and is 100 % proxy
+in all years — **flagged for the CAISO lane under rule 25, not adjudicated here, no CAISO cell
+touched.** Evidence:
+`results/calibration/FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md`, probes
+`scripts/probes/_neiso85_{seasonal_inversion_phase0,gas_chain_decomp,attribution}.py`,
+records `results/calibration/_neiso85_{phase0,gas_chain,attribution}.json`.
+
 **neiso-84 (2026-08-05) — frontier RE-VERIFIED on the neiso-83 keeper's own sidecars; ONE
 CROSS-ISO LANE CHARTERED. NO LP, NO SOLVE, NO RUN REGISTERED, KEEPER UNCHANGED, NO CELL
 VERDICT MINTED (rule 28b: no mechanism was tested).** The §5.6 lever queue stays CLEARED —
