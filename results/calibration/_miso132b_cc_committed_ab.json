@@ -1,0 +1,508 @@
+{
+ "session": "miso-132(b)",
+ "prereg": "results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md",
+ "incumbent_keeper": {
+  "bundle": "miso127_onlinepmin_B",
+  "run_id": "2026-08-04-miso-127-onlinepmin"
+ },
+ "arm_A": {
+  "bundle": "miso132_ccmin_A",
+  "delta": "none (same-HEAD zero-delta control)"
+ },
+ "arm_B": {
+  "bundle": "miso132_ccmin_B",
+  "delta": "offer_curve_by_group CC_REGULAR.committed 1.20 -> 1.005 and CC_INTERMEDIATE.committed 0.92 -> 1.005"
+ },
+ "mechanism": {
+  "what": "rule-14 [R-ACCURATE] proxy-for-measurand swap: both CC committed (min-stable-load) bands take the fleet's OWN measured min-load block-average burn, avg_committed_p50 = 1.005 (n=103 CC units, cap-weighted, miso_campd_marginal_hr_summary.csv), replacing a generic part-load-premium claim (1.20) and a generic default (0.92) that backcast_config.py itself calls 'an unphysical, artificially-cheap min-load block'. ZERO free parameters.",
+  "both_cohorts_note": "Both keys move together deliberately: moving only CC_REGULAR (cheaper) or only CC_INTERMEDIATE (dearer) would be CHOOSING the direction \u2014 the forbidden path. One measurand, one mechanism."
+ },
+ "K0_control_integrity": {
+  "incumbent": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "control": {
+   "determination": "NOT-YET",
+   "criteria": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "CAVEAT",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "shape": "FAIL",
+    "forced_share": "PASS"
+   },
+   "caveats": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "scorecard_identical": true,
+  "max_abs_class_hour_mw_vs_incumbent": {
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "note": "A non-zero sidecar delta is a HEAD-drift finding about the incumbent bundle, NOT a result of this session's mechanism, and is reported as such (caiso-146).",
+  "verdict": "PASS"
+ },
+ "K1_band_fidelity": {
+  "bands": {
+   "CC_REGULAR": {
+    "arm_A": 1.2,
+    "arm_B": 1.005,
+    "registered_before": 1.2,
+    "measured": 1.005
+   },
+   "CC_INTERMEDIATE": {
+    "arm_A": 0.92,
+    "arm_B": 1.005,
+    "registered_before": 0.92,
+    "measured": 1.005
+   }
+  },
+  "verdict": "PASS"
+ },
+ "K2_single_mechanism": {
+  "differing_scenario_keys": [
+   "offer_curve_by_group"
+  ],
+  "offer_curve_band_diff": {
+   "CC_INTERMEDIATE": {
+    "committed": [
+     0.92,
+     1.005
+    ]
+   },
+   "CC_REGULAR": {
+    "committed": [
+     1.2,
+     1.005
+    ]
+   }
+  },
+  "verdict": "PASS"
+ },
+ "K3_year_span": {
+  "arm_A_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "arm_B_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "verdict": "PASS"
+ },
+ "K4_liveness_grain2": {
+  "cc_class_energy_delta_twh": {
+   "2023": {
+    "CC_REGULAR": -1.851914,
+    "CC_CHP": 0.244746
+   },
+   "2024": {
+    "CC_REGULAR": -1.133598,
+    "CC_CHP": 0.169908
+   },
+   "2025": {
+    "CC_REGULAR": -1.855557,
+    "CC_CHP": 0.351536
+   }
+  },
+  "cc_total_delta_twh": {
+   "2023": -1.607168,
+   "2024": -0.96369,
+   "2025": -1.504021
+  },
+  "class_energy_delta_gwh": {
+   "2023": {
+    "CC_CHP": 244.745984,
+    "CC_REGULAR": -1851.91275,
+    "COAL_BIT": 81.840867,
+    "COAL_LIGNITE": 29.403762,
+    "COAL_PRB": 516.421687,
+    "CT_CHP": 13.496726,
+    "CT_PEAKER": 305.779844,
+    "ST_CHP": 24.673707,
+    "ST_GAS": 65.550352,
+    "hydro": 2e-06,
+    "import": 548.3155
+   },
+   "2024": {
+    "CC_CHP": 169.908219,
+    "CC_REGULAR": -1133.602,
+    "COAL_BIT": 77.335641,
+    "COAL_LIGNITE": 6.937271,
+    "COAL_PRB": 253.691734,
+    "CT_CHP": 15.108683,
+    "CT_PEAKER": 239.180969,
+    "ST_CHP": 16.513664,
+    "ST_GAS": 45.221012,
+    "hydro": -2e-06,
+    "import": 298.708406,
+    "oil": 0.55161
+   },
+   "2025": {
+    "CC_CHP": 351.535188,
+    "CC_REGULAR": -1855.5785,
+    "COAL_BIT": 236.195234,
+    "COAL_LIGNITE": 8.274144,
+    "COAL_PRB": 536.67275,
+    "CT_CHP": 14.569126,
+    "CT_PEAKER": 164.685047,
+    "ST_CHP": 10.71029,
+    "ST_GAS": 17.15034,
+    "hydro": -2e-06,
+    "import": 495.953469,
+    "oil": 0.00639
+   }
+  },
+  "max_abs_class_hour_mw": {
+   "2023": 1675.3251953125,
+   "2024": 1394.1845703125,
+   "2025": 2268.6142578125
+  },
+  "max_abs_class_hour_mw_note": "NOT a mechanism magnitude at MISO (miso-122 DO-NOT-MISREAD). Read cc_class_energy_delta_twh.",
+  "max_zonal_abs_dlmp": {
+   "2023": 2.85851130926088,
+   "2024": 7.110037320340453,
+   "2025": 6.259315932611841
+  },
+  "d_system_lw_price_usd_mwh": {
+   "2023": 0.17167662732283478,
+   "2024": 0.13308509136293742,
+   "2025": 0.24691733642212058
+  },
+  "price_delta_hours": {
+   "2023": {
+    "hours_with_any_zonal_delta": 7384,
+    "zone_hours_price_rose": 48536,
+    "zone_hours_price_fell": 7204
+   },
+   "2024": {
+    "hours_with_any_zonal_delta": 6968,
+    "zone_hours_price_rose": 38195,
+    "zone_hours_price_fell": 13350
+   },
+   "2025": {
+    "hours_with_any_zonal_delta": 7350,
+    "zone_hours_price_rose": 42796,
+    "zone_hours_price_fell": 10698
+   }
+  },
+  "grain2_bar_twh": 0.05,
+  "wiring_note": "offer_curve_overrides deep-merges into config.offer_curve_by_group and the RESOLVED curve is recorded in run_config.json, so K1 already proves the band reached the config. A dead grain 2 with K1 PASS is a downstream wiring defect to find (miso-126 \u00a74), not an I verdict.",
+  "verdict": "LIVE"
+ },
+ "max_zonal_abs_dlmp": {
+  "2023": 2.85851130926088,
+  "2024": 7.110037320340453,
+  "2025": 6.259315932611841
+ },
+ "mechanism_price_channel": {
+  "july_night": {
+   "2023": {
+    "july_night_lw_price_A": 27.881335096345016,
+    "july_night_lw_price_B": 28.200237129994367,
+    "d_july_night_lw_price": 0.3189020336493513,
+    "d_july_night_p10": 0.43670010952215677
+   },
+   "2024": {
+    "july_night_lw_price_A": 25.53070303849485,
+    "july_night_lw_price_B": 25.542630639335556,
+    "d_july_night_lw_price": 0.011927600840706987,
+    "d_july_night_p10": 0.22142179922726513
+   },
+   "2025": {
+    "july_night_lw_price_A": 33.989492373633304,
+    "july_night_lw_price_B": 34.094206239300284,
+    "d_july_night_lw_price": 0.10471386566698015,
+    "d_july_night_p10": 0.22135682050178573
+   }
+  },
+  "note": "The miso-130 channel: the July-night level sets which share of the PRB econ ladder is priced out of the diurnal wave. Reported whichever way it moves (prereg \u00a72 two-sided prior: net DEARER was expected)."
+ },
+ "K7_full_balance": {
+  "net_class_energy_delta_gwh": {
+   "2023": -21.685875,
+   "2024": -10.440262,
+   "2025": -19.802906
+  },
+  "full_balance_residual_gwh": {
+   "2023": 0.054,
+   "2024": 0.00825,
+   "2025": -0.037
+  },
+  "components_gwh": {
+   "2023": {
+    "class_delta_gwh": -21.632,
+    "discharge_delta_gwh": -87.0965,
+    "charge_delta_gwh": -108.7825,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": 0.054
+   },
+   "2024": {
+    "class_delta_gwh": -10.432,
+    "discharge_delta_gwh": -41.78425,
+    "charge_delta_gwh": -52.2245,
+    "slack_delta_gwh": -0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": 0.00825
+   },
+   "2025": {
+    "class_delta_gwh": -19.84,
+    "discharge_delta_gwh": -82.2315,
+    "charge_delta_gwh": -102.0345,
+    "slack_delta_gwh": 0.0,
+    "dump_delta_gwh": 0.0,
+    "demand_delta_gwh": 0.0,
+    "residual_gwh": -0.037
+   }
+  },
+  "tolerance_gwh": 0.5,
+  "rule": "demand is exogenous and identical in both arms, so supply must re-balance exactly: d_class + d_discharge - d_charge + d_slack - d_dump - d_demand == 0",
+  "boundary_note": "The class sidecar is NOT the whole balance (miso-126 \u00a76): storage and unserved energy live in separate sidecars.",
+  "verdict": "PASS"
+ },
+ "TARGET_c7_coal_prb": {
+  "cv_ratio": {
+   "2023": {
+    "control": 0.514,
+    "arm": 0.505
+   },
+   "2024": {
+    "control": 0.529,
+    "arm": 0.524
+   },
+   "2025": {
+    "control": 0.347,
+    "arm": 0.338
+   }
+  },
+  "profile_r": {
+   "2023": {
+    "control": 0.987,
+    "arm": 0.986
+   },
+   "2024": {
+    "control": 0.974,
+    "arm": 0.973
+   },
+   "2025": {
+    "control": 0.972,
+    "arm": 0.971
+   }
+  },
+  "decomposition": {
+   "2023": {
+    "control": {
+     "R_tot": 0.9072925930728937,
+     "R_dfrac": 0.524124680364599,
+     "R_level": 1.0774555705648785,
+     "cv_ratio": 0.5123672317413996,
+     "n_matched_plants": 31
+    },
+    "arm": {
+     "R_tot": 0.9077208689153751,
+     "R_dfrac": 0.5168188915366749,
+     "R_level": 1.0725137085484335,
+     "cv_ratio": 0.5031454531158458,
+     "n_matched_plants": 31
+    }
+   },
+   "2024": {
+    "control": {
+     "R_tot": 0.8770370823675893,
+     "R_dfrac": 0.5488362503508956,
+     "R_level": 1.091107161430446,
+     "cv_ratio": 0.5252041525095814,
+     "n_matched_plants": 31
+    },
+    "arm": {
+     "R_tot": 0.8753914614466066,
+     "R_dfrac": 0.5464759628965613,
+     "R_level": 1.0884659303928026,
+     "cv_ratio": 0.5207007582482059,
+     "n_matched_plants": 31
+    }
+   },
+   "2025": {
+    "control": {
+     "R_tot": 0.9515390624513111,
+     "R_dfrac": 0.3541629075517942,
+     "R_level": 1.0249634431248915,
+     "cv_ratio": 0.345412517370937,
+     "n_matched_plants": 30
+    },
+    "arm": {
+     "R_tot": 0.9488415067561258,
+     "R_dfrac": 0.34683172949230817,
+     "R_level": 1.0205086258721434,
+     "cv_ratio": 0.3358374904627139,
+     "n_matched_plants": 30
+    }
+   }
+  },
+  "decomposition_note": "QUOTE R_dfrac, NEVER raw variance (miso-128 DO-NOT-MISREAD). cv_ratio = R_tot x R_dfrac x R_level; the 2025 failure is the R_dfrac (organisation) term.",
+  "gate": 0.5,
+  "all_years_pass": false,
+  "promotion_note": "rule 1 [R-STRUCT] / prereg \u00a73: this does NOT decide promotion on its own. Arm B replaces two ungrounded multipliers with the fleet's own measured value, so it is the more faithful configuration whichever way this moves."
+ },
+ "K6_coal_bit_no_overshoot": {
+  "cv_ratio": {
+   "2023": {
+    "control": 0.667,
+    "arm": 0.669
+   },
+   "2024": {
+    "control": 0.565,
+    "arm": 0.566
+   },
+   "2025": {
+    "control": 1.211,
+    "arm": 1.2
+   }
+  },
+  "ceiling": 1.6,
+  "status_regressed": false,
+  "note": "the miso-102 signature: overshooting COAL_BIT to 2.6-2.8x measured off-peak variability is one of the two ways that arm failed.",
+  "verdict": "PASS"
+ },
+ "K8_r_tot_floor": {
+  "floor": 0.9,
+  "arm_R_tot": {
+   "2023": 0.9077208689153751,
+   "2024": 0.8753914614466066,
+   "2025": 0.9488415067561258
+  },
+  "control_R_tot": {
+   "2023": 0.9072925930728937,
+   "2024": 0.8770370823675893,
+   "2025": 0.9515390624513111
+  },
+  "note": "the miso-131 P3 convention. R_tot was already 0.952 with no room, so a cv_ratio gain bought by inflating raw off-peak dispersion is not the organisation fix this lane claims.",
+  "verdict": "FAIL"
+ },
+ "K5_c1_16_of_16": {
+  "control_status": null,
+  "arm_status": null,
+  "control_tally": null,
+  "arm_tally": null,
+  "verdict": "PASS"
+ },
+ "K9_no_forced_energy": {
+  "new_forcing_mechanism_ids": [],
+  "forced_share_risen": {},
+  "note": "the arm changes a PRICE, not a floor \u2014 no min_gen is added, so no new forcing id and no rising forced share is expected.",
+  "verdict": "PASS"
+ },
+ "scorecard_movement": {
+  "determination": {
+   "control": "NOT-YET",
+   "arm": "NOT-YET"
+  },
+  "ledgered_caveats": {
+   "control": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ],
+   "arm": [
+    "budget",
+    "commercial_band",
+    "ledgered",
+    "protective"
+   ]
+  },
+  "criteria": {
+   "dispatch_corr": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "forced_share": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "fuelmix": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "governance": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_mean": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "price_shape": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   },
+   "price_tail": {
+    "control": "CAVEAT",
+    "arm": "CAVEAT",
+    "changed": false
+   },
+   "shape": {
+    "control": "FAIL",
+    "arm": "FAIL",
+    "changed": false
+   },
+   "sysvol": {
+    "control": "PASS",
+    "arm": "PASS",
+    "changed": false
+   }
+  },
+  "criteria_changed": [],
+  "diagnostic_verdict_changes": {},
+  "note": "prereg \u00a73: a regression is REPORTED and is NOT grounds to revert to 0.92/1.20 \u2014 rule 14 [R-ACCURATE] forbids burying the error back inside the proxy; rule 1 [R-STRUCT] equally forbids promoting because a residual moved."
+ },
+ "gates": {
+  "K0_control_integrity": "PASS",
+  "K1_band_fidelity": "PASS",
+  "K2_single_mechanism": "PASS",
+  "K3_year_span": "PASS",
+  "K4_liveness_grain2": "LIVE",
+  "K7_full_balance": "PASS",
+  "K6_coal_bit_no_overshoot": "PASS",
+  "K8_r_tot_floor": "FAIL",
+  "K5_c1_16_of_16": "PASS",
+  "K9_no_forced_energy": "PASS"
+ },
+ "blocking_gates_pass": true
+}
