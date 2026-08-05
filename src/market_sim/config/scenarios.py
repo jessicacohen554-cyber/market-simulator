@@ -150,6 +150,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeps its key; an armed run carries a different FLEET and so gets a
     # distinct key.
     "cc_steam_part_capacity",
+    # Combined-cycle steam-part RE-CLASS (neiso-83, default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key; an
+    # armed run carries a different FLEET (one unit's fuel/class/VOM/CO2/EFORd
+    # move) and so gets a distinct key.
+    "cc_steam_part_reclass",
     # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
     # from the hash at their defaults (None / "mid") so every pre-existing
     # cached run keeps its key; a crossover run sets a non-None boundary and so
@@ -709,6 +714,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_ct_heat_rates": "False",
     "measured_chp_heat_rates": "False",
     "cc_steam_part_capacity": "False",
+    "cc_steam_part_reclass": "False",
     "crossover_forward_year": "None",
     "crossover_forward_gas_path": "'mid'",
     "crossover_solve_year_weather": "False",
@@ -2238,6 +2244,35 @@ class ScenarioConfig:
     # close a residual. Zero fitted parameters. See
     # results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md.
     cc_steam_part_capacity: bool = False
+
+    # Combined-cycle steam-part RE-CLASS (neiso-83; default OFF, byte-identical
+    # off). When True, a ``CA``-prime-mover row that the steam-part predicate
+    # identifies as half of a gas combined-cycle block but whose own
+    # ``Energy Source 1`` makes ``_map_fuel_type`` resolve it to a NON-gas fuel
+    # is re-classed to gas combined cycle, at the eGRID plant heat rate its
+    # ``CT`` siblings already carry.
+    #
+    # Distinct from ``cc_steam_part_capacity`` in object, population and sign:
+    # that flag RESTORES a steam part the fuel map DROPS (capacity ADDED); this
+    # one re-classes a steam part the fuel map CARRIES UNDER THE WRONG FUEL
+    # (capacity UNCHANGED — class, fuel price, VOM, CO2 rate and EFORd move).
+    # A combined-cycle steam turbine has no combustion path of its own: it runs
+    # on HRSG exhaust, so it reports no CEMS stack and EIA-860's
+    # ``Energy Source 1`` on its row is a duct / legacy label, never the block's
+    # primary energy input. Left uncorrected the LP burns that label's fuel in a
+    # machine that has none. Applying the block's own (already block-denominated)
+    # eGRID heat rate uniformly across every block MW reproduces the block's
+    # total fuel burn — it neither double-counts the ``CT``-metered heat input
+    # nor lets the steam part run free.
+    #
+    # ISO-gated on ``plant_taxonomy.CC_STEAM_PART_RECLASS_ISOS``: rule 25
+    # [R-ISO-SCOPE], each ISO verifies on its own market's data before entering.
+    # Rule 13 [R-MEASURED] admissible and carries ZERO fitted parameters: a
+    # generator's prime mover, unit code, vintage and net-summer capacity are
+    # published EIA-860 INPUTS that regenerate for any forward year and respond
+    # to changed conditions; no residual is consulted and no share is estimated.
+    # See results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md.
+    cc_steam_part_reclass: bool = False
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md
