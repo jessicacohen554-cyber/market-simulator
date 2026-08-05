@@ -3025,7 +3025,48 @@ clean: PJM publishes multiple hubs only inside its two most internally-uniform
 zones. The external star node remains lossless while internal wheeling pays a
 loss.
 
-### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-127-onlinepmin`, **NOT-YET**, C7 now failing **2025 only**)
+### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**, C7 failing **2025 only**)
+
+> **QUEUE STAMP miso-132(b) (2026-08-05) — SUCCESSOR 2 EXECUTED AND PROMOTED:
+> the CC committed-band measured re-grounding is the NEW KEEPER,
+> `2026-08-05-miso-132b-cc-committed`** (bundle
+> `results/calibration/miso132_ccmin_B`; same-HEAD zero-delta control
+> `2026-08-05-miso-132b-control`, which reproduced the incumbent to 0.0 MW at
+> class-hour grain). Both CC committed bands now carry the fleet's own measured
+> `avg_committed_p50` **1.005** (n=103, cap-weighted,
+> `miso_campd_marginal_hr_summary.csv`) in place of CC_REGULAR's generic 1.20
+> and CC_INTERMEDIATE's generic 0.92 — the last borrowed/generic committed band
+> at MISO, closing the same gap CT_PEAKER's measured 1.025 closed for its class.
+> Rule-14 proxy-for-measurand swap, ZERO free parameters, both cohorts moved
+> together (direction-choice refused, rule 19), armed via `replay_keeper --set
+> offer_curve_by_group` (PREREG §5: `--offer-curve-json` cannot carry
+> `CC_INTERMEDIATE`). **The pre-registered two-sided DEARER prior came true**:
+> pre-check +1.29 $/MWh cap-weighted on 12.1 GW committed; measured vs control
+> CC_REGULAR −1.61/−0.96/−1.50 TWh, July-night lw price +0.319/+0.012/+0.105
+> $/MWh, C7 `COAL_PRB` `cv_ratio` 0.514→0.505 / 0.529→0.524 / 0.347→0.338 with
+> `profile_r` preserved — REPORTED AND KEPT per rules 1/14; the regression
+> sharpens miso-130's overnight-supply root cause (the model still fills the
+> seam/CHP/ST_GAS night hole with cheap coal, and the correctly-priced committed
+> block no longer subsidises the night floor). NOTHING regresses at the gated
+> grain: determination NOT-YET, caveats {C3a, C3c}, every criterion and
+> diagnostic verdict identical to control; all blocking A/B gates PASS; K8
+> R_tot-floor FAIL adjudicated INHERITED (control's own 2024 R_tot 0.8770 <
+> 0.90; arm moves ≤0.003; no cv gain claimed so the prereg's refusal clause
+> does not bite). Promoted on structural fidelity under the PREREG's
+> pre-declared decision rule with explicit owner confirmation in-session.
+> **The §5.4 queue is now EMPTY**: successor 1 (online-gating) was refuted
+> ex ante at miso-132(a); successor 2 is executed and promoted here; the
+> standing continuation for C7-2025 remains the **data ask**
+> (`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` — ex-ante
+> coal contract tonnage; bounded next experiment: the Form 580 1:1
+> contract-plant count, plus the one unchecked Michigan PSCR state lead) and
+> the instrument-blocked miso-89/90 Jun/Jul-2025 under-derate. DO NOT revert
+> the committed bands to 1.20/0.92; DO NOT sweep them against the C7 residual.
+> **PREREG:** `results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`
+> · pre-check `results/calibration/_miso132b_cc_committed_precheck.json`
+> · A/B record `results/calibration/_miso132b_cc_committed_ab.json`
+> · scorer `scripts/probes/_miso132b_cc_committed_ab.py`.
+
 
 > **QUEUE STAMP miso-132(a) (2026-08-05) — SUCCESSOR 1 IS IDENTIFIED BUT INERT.
 > ONLINE-GATING REFUTED EX ANTE ON ITS OWN PRE-REGISTERED BAR, ZERO SOLVES. NO

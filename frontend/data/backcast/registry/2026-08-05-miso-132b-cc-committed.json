@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-05-miso-132b-cc-committed",
+  "label": "miso 132b cc committed",
+  "date": "2026-08-05",
+  "shorthand": "miso-132b-cc-committed",
+  "definition": "miso-132(b) arm B: CC committed-band measured re-grounding \u2014 offer_curve_by_group CC_REGULAR.committed 1.20 -> 1.005 and CC_INTERMEDIATE.committed 0.92 -> 1.005, the fleet's own measured avg_committed_p50 (n=103, cap-weighted, miso_campd_marginal_hr_summary.csv). Rule-14 [R-ACCURATE] proxy-for-measurand swap, zero free parameters. PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md \u00a73+\u00a75; scored against same-HEAD zero-delta control miso132_ccmin_A.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-05-miso-132b-cc-committed.js",
+  "bundle": "results/calibration/miso132_ccmin_B"
+}

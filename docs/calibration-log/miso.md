@@ -4496,3 +4496,93 @@ record `results/calibration/_miso132_online_gating_sizing.json`.
 **The queue's only remaining named item is successor 2 (the CC committed-band
 re-grounding, miso-130 stamp (c)) — opened in this same session under its own
 pre-registration; see the miso-132(b) entry.**
+
+## 2026-08-05 — miso-132(b): SUCCESSOR 2 EXECUTED AND PROMOTED — the CC committed-band measured re-grounding is the NEW KEEPER `2026-08-05-miso-132b-cc-committed`. Two solves (control + arm), C7 slightly worse as the prior named, NOTHING regresses at the gated grain, §5.4 queue now EMPTY
+
+**Lane.** Executes the PREREG this session inherited
+(`PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`, pushed
+`da92271b`/`9880cea9` BEFORE any adjudicating statistic) — miso-130 stamp (c) /
+miso-131 §3(b) successor 2, the queue's only remaining named item after
+miso-132(a) killed successor 1 ex ante. Keeper at entry
+`2026-08-04-miso-127-onlinepmin`; at exit **`2026-08-05-miso-132b-cc-committed`**
+(NOT-YET, sole FAIL C7 COAL_PRB 2025, ledgered caveats 2/3 {C3a, C3c} —
+unchanged). Rule 22: 2023–2025 only, both arms, one invocation each.
+
+**The mechanism (rule 14, zero free parameters).** Both CC committed
+(min-stable-load) bands take the fleet's own measured `avg_committed_p50`
+**1.005** (n=103 CC units, cap-weighted, CAMPD 2023–2025 pooled,
+`miso_campd_marginal_hr_summary.csv`): `CC_REGULAR.committed` 1.20 → 1.005 and
+`CC_INTERMEDIATE.committed` 0.92 → 1.005. One measurand, both cohorts together
+(direction-choice refused, rule 19); the last borrowed/generic committed band at
+MISO, closing what CT_PEAKER's measured 1.025 closed for its class — and the
+same measured-conduct-over-generic-multiplier move that grounded ERCOT's offer
+surface (ercot-144/168) and PJM's ex-ante coal rebuild. Armed via
+`replay_keeper --set offer_curve_by_group` with arm-B JSON generated from the
+control's own committed `run_config.json` (PREREG §5: `--offer-curve-json`
+rejects `CC_INTERMEDIATE`, a routing key outside `fossil_classes()`).
+
+**P-0 pre-check** (probe `_miso132b_cc_committed_precheck.py`): 12.1 GW CC
+committed capacity ≥ the 200 MW bar; net direction **DEARER** (+1.29 $/MWh
+cap-weighted, committed HR 6.842 → 7.266) — the declared two-sided prior.
+
+**A/B** (`_miso132b_cc_committed_ab.json`; control `2026-08-05-miso-132b-control`,
+bundle `miso132_ccmin_A`; arm bundle `miso132_ccmin_B`). **K0 bit-perfect**:
+control reproduces the incumbent's class-hour sidecars to 0.0 MW in all three
+years, scorecard identical. K1/K2 single delta byte-exact (only the two
+committed entries). K3 span. K4 **LIVE**: CC_REGULAR −1.607/−0.964/−1.504 TWh,
+backfilled 2025 by import +496 / COAL_PRB +537 / CC_CHP +352 / COAL_BIT +236 /
+CT_PEAKER +165 GWh. K5 C1 16/16 (free 12/12). K6 COAL_BIT clean. K7 full
+balance ≤0.06 GWh, d_demand exactly 0. K9 no new forcing id, no share risen.
+**K8 R_tot-floor FAIL AS WRITTEN, ADJUDICATED INHERITED NOT CAUSED**: arm 2024
+R_tot 0.8754 < 0.90 but the CONTROL's own 2024 R_tot is 0.8770 — already under
+the floor — the arm moves R_tot ≤0.003 every year, and the condition the kill
+guards (a cv_ratio GAIN bought by dispersion inflation) is absent because there
+is no gain; the prereg's refusal clause does not bite. LOYO: zero fitted
+parameters, effect same-signed 3/3, no PASS→FAIL flip in a passing year.
+
+**TARGET, reported as chartered (quote R_dfrac, never raw variance).** C7
+COAL_PRB cv_ratio **0.514→0.505 / 0.529→0.524 / 0.347→0.338**, profile_r
+preserved (0.987/0.974/0.972 → 0.986/0.973/0.971); 2025 R_dfrac 0.354→0.347.
+July-night lw price **+0.319/+0.012/+0.105 $/MWh** — the miso-130 freeze
+channel: the correctly-priced committed block no longer subsidises the night
+floor, so marginally more of the cheap PRB ladder freezes out of the wave. The
+regression is the PREREG's pre-accepted outcome and is **KEPT** (rules 1/14):
+it removes a compensating error that sat in front of miso-130's real root cause
+(the overnight supply identity — seam hod hole SPENT, CHP basis-disputed,
+ST_GAS 37–39 % bench-uncovered). Max zonal |dLMP| 2.859/7.110/6.259; system
+demand-weighted +0.172/+0.133/+0.247.
+
+**PROMOTED on structural fidelity** under the PREREG's pre-declared keeper
+decision rule (blocking gates all PASS; arm B is the more faithful
+configuration by construction) with explicit owner confirmation in-session
+("if structural integrity improves but gates regress that may still be a
+keeper"). NOTHING regresses at the gated grain: determination, caveats, every
+criterion status and every diagnostic verdict identical to control (D-1 2023
+COAL_PRB holds pass at 0.505). Keeper shard re-keyed + `build_status --iso
+MISO`; `calibration-keeper-auditor --iso MISO` PASS, zero drift, zero repairs
+(M1 n/a — no marker). Both arms registered (top-15 retention pruned
+`2026-08-02-miso-113b-night-floor` and `2026-08-02-miso-113c-control`);
+attestation via `gen_miso132b_attestation.py` (fixed in-session to accept
+verdict rc=1 = NOT-YET, the gen_miso127 pattern), DOF ledger 29 entries,
+n_residual 2 unchanged, new measured entry `cc_committed_band_measured`.
+
+**Rule duties.** Rule 15: both runs registered + this entry. Rule 28(b):
+`offer_curve_by_group` MISO cell re-stamped (stays K, sub-scalar re-grounding),
+matrix header re-stamped to the new keeper, §5.4 queue stamp landed. Rule 23:
+no re-derive. Rule 25: MISO's own CAMPD value; no other ISO touched.
+
+**Queue after this session: §5.4 is EMPTY.** Successor 1 refuted ex ante
+(miso-132(a)); successor 2 executed and promoted here. The C7-2025 continuation
+is **data-blocked**: the admissible lever family needs ex-ante coal contract
+tonnage (`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`;
+bounded next experiment = the 2024 Form 580 1:1 contract-plant count, plus the
+one unchecked Michigan PSCR state lead), and the July-2025 price half is
+instrument-blocked on the miso-89/90 ~10 GW Jun/Jul-2025 under-derate. Any new
+lever must come from NEW evidence, not the closed cells (DO-NOT-REDO:
+granularity, online-gating, take-or-pay/budget forms, within-band slope, seam
+classes, trough volume, self-commitment forcing — all adjudicated).
+
+FINDING: this entry (the A/B record is the finding artifact);
+PREREG `results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`;
+records `_miso132b_cc_committed_precheck.json`, `_miso132b_cc_committed_ab.json`,
+`_miso132b_run_ids.json`. Next number: **miso-133**.
