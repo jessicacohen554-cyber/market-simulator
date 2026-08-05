@@ -2322,3 +2322,143 @@ Addendum F.2; sessions do not contend). `src/` overlap: none (5A: `retirements.p
 `new_entry.py`/`runner.py`; 5B: docs only). The one shared surface is the mechanism matrix —
 whichever session lands second re-checks its cell survived the merge (the O.3 discipline).
 Prompts: pack §0k.
+
+---
+
+## Addendum S — refresh sitting: Wave 5 landed same-day; the price-object card, the procurement card, and the CAISO grant
+
+**Written 2026-08-05 (~04:30Z) by the workstream manager at `origin/main` `c750e3f9`.** Between
+R.5 (~01:10Z) and this refresh, ELEVEN PRs merged (#3567–#3576, #3578) and Wave 5's three lanes
+all ran: FFR-5A and FFR-5B are LANDED, FFR-5C is IN FLIGHT (PR #3577 open, its 3/3 stack:
+`entry_pipeline_aware_signal` + matrix row + handoff). Verified off the artifacts at this HEAD:
+
+* **Keepers: two moved.** CAISO → `2026-08-05-caiso-174-measured-fleet` (the FFR-4D epoch
+  re-solve; `storage_measured_base_fleet` measured a NULL there), NEISO →
+  `2026-08-05-neiso-83-ca1-reclass`. ERCOT/PJM/NYISO/MISO unchanged from Q's list.
+* **NEISO's D-5(b) re-key: VERIFIED EXECUTED** by the promoting session — the `complete` entry's
+  `keeper` field reads `2026-08-05-neiso-83-ca1-reclass` and `keeper_at_declaration` is
+  preserved (`2026-07-08-neiso-54-steamgas-ct`). Read off the marker file, not inferred. CAISO
+  holds no marker; nothing to re-key on its promotion.
+* `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; freeze ACTIVE. calibration-program lanes also
+  landed (nyiso-127 seam exoneration + default-off PAR attribution; miso-130 C7 diagnosis;
+  ercot-166/167 probes + `ercot_storage_as_soc_reserve`; rubric v3.0 ledgered-caveat kind) —
+  noted for state, none in FFR/FH scope.
+
+### S.1 — Wave 5 lane adjudications
+
+**FFR-5A (PR #3575) — the soft latch is root-caused, and the answer changes the question.**
+The reversal reproduces at HEAD on the recorded key. The reserve leg — FFR-3Q-3's first suspect,
+carried in R.4 — is **adjudicated DEAD: $0.0/kW-yr at both screens** (do not re-suspect it).
+The mover is the **bar's PRICE OBJECT**: the decide screen consumed raw 2021 duals + overlay
+(the rule-22 bridge guard suppresses the lookahead when the entering year is the bridge,
+`runner.py:2545-2546`) and failed the cohort at $22.4 vs the $58.5 bar; the reverse screen
+consumed the lookahead stack-reprice (mean $65.38/MWh vs raw $15.77 — 4.1×; 122 manufactured
+pro-forma scarcity hours on a 34.8 %-RM fleet) and cleared all 29 units at $341.5 — six times
+the bar, 100 % energy leg. **On a consistent basis there is no counter-price paradox and no
+reversal** ($1.3/kW-yr on raw 2023 duals, 0/29 clear — the cohort would have executed 8.2 GW).
+The latch's logic matches its design record exactly; **its INPUT is the defect** (the design
+presumes one bar; the screen sequence delivers two). Hysteresis is measured MOOT (no band
+< $283/kW-yr survives a 6×-bar clearance). And the class-(c) rider: **neither consistent basis
+reproduces the real 1.534 GW** — raw duals fail the entire 66.9 GW merchant fleet, the lookahead
+clears everything — so the pipeline's output is currently determined by bridge geometry, not
+unit economics. Escalated as the owner's price-object decision → **CARD D-19 (S.3)**. Cell
+`economic_retirement_screen` ERCOT `fc` correctly stays O. Run registered
+`ercot-2021-2025-t1ff-armr-ffr5a-pipeline`.
+
+Two successor-facing notes from the lane, recorded here so they are not lost: (i) **the D-13
+hash-out cache hazard** — `ira_ptc_credit_window_years` lands at a hash-dropped default, so the
+SAME cache key spans behaviorally-different configs across the D-13 boundary; cold solves and
+D-10 make it harmless today, but never read byte-identity into "same key" across that boundary.
+(ii) FFR-3Q-3's ledger reserve margins drifted at the identical key (40.9/49.0 → 39.8/47.8 for
+2024/2025) — that is D-13 moving later-year fleets, the same hazard seen from the other side.
+
+**FFR-5B (PR #3574) — the D-16 design returned a PARTITION, and the partition is the finding.**
+(i) The near-term committed-procurement gap is real and rule-13 ADMISSIBLE: a default-OFF VRE
+limb of step 4's known-additions channel, keyed to the run's own EIA-860 proposed-generator
+vintage at construction-committed status (U/V/TS) — the additions-side twin of the
+confirmed-retirement registry, zero free parameters, measured coverage median 0.63/0.33/0.21 of
+realized solar COD at horizons 1/2/3 yr. Proposed as **CARD D-18, adopted verbatim (S.2)**.
+(ii) The long-run policy-procurement half is **REFUSED a channel** (rule 19): the phenomenon
+already belongs to the RPS LP row, whose defect is its SPATIAL GRAIN (one ISO-wide row against a
+load-weighted state blend dilutes a binding MN 55 %-by-2035 to slackness) — escalated as
+**FFR-5B E-1/E-2**, "the largest single finding in this lane," queued for its own scoping
+decision next wave, deliberately not put today. (iii) Corporate PPAs / beyond-horizon
+procurement have **no admissible representation**: disclosed as a named null; sizing it is a
+cheap committed-artifact follow-up, unchartered. Pre-registered so no one misreads: the
+admissible channel **cannot and must not** close MISO's 18.649 GW (a vintage-2020 hindcast may
+see 1.034 GW of committed pipeline; reproducing five-year build from a two-year queue would mean
+the information gate failed).
+
+**FFR-5C — in flight.** PR #3577 open. Landed second of the 5B/5C pair, so the O.3 interaction
+re-check is its duty. No action from this sitting; the two lanes chartered below both branch
+AFTER it merges (same code surfaces).
+
+**Numbering note:** FFR-5B minted "CARD D-18" in its committed handoff; adopted as-is
+(correct-by-addendum: a committed record is not renumbered). The FFR-5A price-object card is
+therefore **D-19**.
+
+### S.2 — CARD D-18 put: implement the near-term VRE procurement channel?
+
+The card as drafted in `ffr-5b-procurement-channel-design-2026-08-05.md` §7 is put to the owner
+verbatim, with its recommendation and both wrong options carried: **(a) RECOMMENDED — charter
+the implementation lane** for the near-term channel ONLY (`vre_procurement_additions_enabled:
+bool = False`, MISO-scoped arming decision separate, matrix row in the same PR, paired arm;
+carried: does not close MISO's gap, and the FFR-3V §6.1 renewable-pool vintage leak is a
+BLOCKING PRECONDITION for the hindcast arm only — plain 2026+ forecasts unaffected).
+**(b) widen the status basis** — the option the evidence will keep suggesting; cost: admits
+announcement-grade `P` rows, the tier this repo excluded by name on both sides; a fitted input
+arriving as a status filter. **(c) disclosed limitation** — cost: the merchant screen stays a
+single point of failure for ALL VRE in EVERY forecast while the accurate, already-intaken
+pipeline sits unread on disk next to the thermal channel that reads it (rule 14).
+
+### S.3 — CARD D-19 put: which price object do the capacity screens own?
+
+**Measured (FFR-5A §§2-6).** The option space is FFR-5A §6.1's, enumerated there without
+recommendation; the manager's recommendation follows from the lane's own measurements:
+
+**Recommendation — (a) CHARTER ONE LANE (FFR-5D): unify on the LOOKAHEAD object everywhere in
+the capacity screens (§6.1 option 2) AND repair its measured completeness gaps (§6.1 option 4),
+together, gated default-OFF.** Structure: the real market's exit/entry decisions are forward
+pro-formas, so the lookahead is the structurally faithful KIND (rule 1) — and it is the FF-2A
+answer to the s2/s3 revenue understatement, so reverting to raw duals re-opens a solved defect.
+But its LEVEL is broken by three identified completeness gaps (thermal-only stack omits storage
+entirely; net load subtracts prior-year VRE OUTPUT rather than entering-year capacity;
+time-mean availability applied to peak hours) that jointly manufacture 122 scarcity hours on a
+34.8 %-RM fleet. Unify (one object at every screen, bridge-adjacent included — rule 19, and
+rule-22-safe since the full-forward leg's growth-scaled fallback reads nothing measured) and
+repair (each gap from existing model state; **any repair requiring a new tunable escalates
+rather than lands**). Paired arms on the FFR-5A posture; leave-one-year-out within 2023-2025
+before any promotion; per-ISO verdicts (rule 25) even though the function is ISO-agnostic code.
+Dispatches AFTER PR #3577 merges (same function).
+
+**The options I think are wrong, with their measured costs:** **(§6.1 option 3) raw duals
+everywhere** — measured: the ENTIRE 66.9 GW merchant fleet fails the bar (582-unit
+entry_capped churn; the cohort executes 8.2 GW and the cap admits successors, against 1.534 GW
+of actual exits), and s2/s3 re-opens. **(§6.1 option 1) pin each cohort to its decide-screen
+object-kind** — cheapest, and fixes the reversal artifact; cost: bridge geometry still selects
+which bar each cohort lives under (two live cohorts screened on different objects), and the
+signal gains no power to resolve real exits — the class-(c) rider stands in full. **(§6.1
+option 2 alone, no repair)** — bakes in "nothing ever retires" at the measured level
+($267-341/kW-yr vs $21-58 bars, every fuel clearing 4-13×).
+
+### S.4 — CARD put: grant CAISO `complete`?
+
+The recommendation now exists twice on record: caiso-171 (assessment reversed to YES at
+`0043fc22`, P.6 — criterion restated by the owner: `complete` means (a) the 2022 touchpoint is
+allowed and (b) frontier, everything testable tested; NOT a DOF-cleanliness certificate), whose
+one gating item (the PGE-TAC weight) was closed MEASURED by caiso-172; and caiso-174 (PR #3578),
+which re-solved the FFR-4D epoch, put the keeper on the measured fleet, and **re-recommends
+`complete` = YES post-epoch**. **Recommendation — (a) GRANT.** The freeze stays active and
+orthogonal (NYISO and PJM were declared complete six days INTO it; the grant authorizes the
+2022 ladder, the freeze suspends spending it), and the grant anchors D-5(b) re-keying for every
+future CAISO promotion. Execution if signed: a small governance lane writes the marker entry
+keyed to `2026-08-05-caiso-174-measured-fleet` with its determination verified via
+`scripts/calibration_verdict.py --run-id` (committed artifacts only, never a solve) and runs
+`scripts/audit_keepers.py` M1. **The option I think is wrong: (b) defer until the freeze
+lifts** — cost: it re-conflates the marker with the freeze (the exact confusion caiso-171's
+first NO rested on and then corrected), and it protects nothing the freeze does not already
+suspend.
+
+### S.5 — signatures this refresh
+
+*(recorded on receipt)*
