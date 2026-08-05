@@ -468,6 +468,7 @@ from market_sim.data.fleet.eia860 import (  # noqa: F401
     load_fleet_from_csv,
     load_mothballed_but_operating,
     load_planned_additions,
+    load_procured_vre_additions,
     load_retired_within_window,
     mixed_fossil_plants,
 )
