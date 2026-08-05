@@ -1,0 +1,4 @@
+# FFR-4C paired-arm bundles: the slim evidence (evolution ledgers, config,
+# meta, floor retentions) is committed; the per-year dispatch parquets are
+# solve cache, reproducible from run_config.json, and stay untracked.
+**/year_*.parquet

@@ -59,9 +59,14 @@ forecast with a pinned gas price is still a forecast.
 ### IRA credits
 
 `ira_ptc_wind=26.0` ($/MWh), `ira_itc_solar=0.30`, `ira_itc_storage=0.30`;
-phase-out cliffs `ira_wind_solar_last_year=2027`,
-`ira_other_clean_last_full_year=2028`, `ira_other_clean_phaseout_end=2033`,
-`ira_h2_45v_last_year=2027`, `ira_ccus_45q_last_year=2032`.
+phase-out cliffs `ira_wind_solar_last_year=2027`, the §45Y/§48E OBBBA step
+schedule `ira_other_clean_last_full_year=2033` / `75pct=2034` / `50pct=2035` /
+`phaseout_end=2036`, `ira_h2_45v_last_year=2027`, `ira_ccus_45q_last_year=2032`.
+Credit windows from placed-in-service, both levelized `CRF(life)/CRF(window)`
+in the entry screens: `ira_45q_credit_window_years=12` (§45Q(a)(3)-(4)) and
+`ira_ptc_credit_window_years=10` (§45(a)(2)(A)(ii); FFR-4C/D-13 — wind entry
+LCOE only, `None` = unwindowed control arm; the dispatch-side PTC offer is a
+separate surface).
 
 ### Fleet representation
 
