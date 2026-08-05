@@ -2299,4 +2299,26 @@ scope; and this is the program's hardest open root cause).
 
 ### R.5 — signatures this sitting
 
-*(recorded on receipt of the owner's answers to D-16 and D-17)*
+Both cards signed 2026-08-05, each on the stated recommendation, via the option cards put in this
+sitting:
+
+| decision | signed | what it authorizes |
+|---|---|---|
+| **D-16** | **(a) CHARTER STRUCTURAL SCOPING LANE** | **FFR-5B**: design + rule-13 `[R-MEASURED]` admissibility argument for the procurement channel — what drives volume, how it regenerates in a forward year, what data identifies it. NO implementation, no solve, no parameter proposed as a number. Implementation is a separate, later owner decision, and the lane delivers a proposed card for it |
+| **D-17** | **(a) CHARTER FFR-5C** | Land FFR-4A's E-1 + E-2 **together**: the stock netting removed from both flow caps AND the pro-forma made pipeline-aware, as ONE gated default-OFF `ScenarioConfig` field with its matrix row (rule 28c) and a paired-arm measurement. The shipped path stays byte-identical until armed; arming anywhere is a separate decision |
+
+Consequences recorded once (the O.2 pattern), so no lane re-opens them:
+
+* **D-16(a) may return a null.** A finding that no rule-13-admissible design exists is a valid
+  deliverable; the lane says so plainly rather than forcing a design into existence.
+* **D-17(a) is a correctness change gated OFF.** Nothing moves in any keeper, forecast default,
+  or registered run until a separate arming decision. Anyone reading FFR-5C's PR as "fixes MISO
+  solar" has it wrong (FFR-4A §4/§5.4, pre-registered and owner-accepted at Q.3): that leg's
+  solar dies on revenue before any cap is consulted.
+
+**Wave 5 is therefore three lanes: FFR-5A [FABLE] (R.4, manager-chartered), FFR-5B [OPUS]
+(D-16a), FFR-5C [OPUS] (D-17a).** All three run as independent sessions (rule 12 is per prompt,
+Addendum F.2; sessions do not contend). `src/` overlap: none (5A: `retirements.py`; 5C:
+`new_entry.py`/`runner.py`; 5B: docs only). The one shared surface is the mechanism matrix —
+whichever session lands second re-checks its cell survived the merge (the O.3 discipline).
+Prompts: pack §0k.
