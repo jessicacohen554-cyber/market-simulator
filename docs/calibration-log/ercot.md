@@ -5387,3 +5387,53 @@ per-family weight — an owner decision the ercot-164 charter explicitly fences 
 or a different object. Do not re-open it as a re-weighting without that.
 
 Next shorthand: ercot-166.
+
+## 2026-08-05 — ercot-166 (owner-directed 2023 diagnosis triage; NO LP, no solve, keeper UNCHANGED at ercot165): Oak Grove's Aug–Oct 2023 overnight conduct is SOLVED FROM THE DISCLOSURE CORPORA (a seasonal RT offer repricing to a $60.30 top step — the ERCOT-143 closure's "no 2023 SCED" premise is DISSOLVED by the ercot-157 corpus); the timezone/DST hypothesis for the year-round 17–19 h underrun is CLOSED (no misalignment reaches the LP; three DST-window data defects found and ranked); C3c becomes a LEDGERED ACCEPTED MODEL-CLASS LIMITATION in all three years (rubric v3.0 owner amendment); three successors CHARTERED (§5.1 items 10–12)
+
+Full record: `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`. Headlines:
+
+- **2023 −30 % decomposed on the keeper sidecars**: Aug −46.7 % (−$11.6 of the −$18.8 annual gap),
+  Sep −48.7 % (−$5.0), Jul −21.8 % (−$1.1); non-summer ±16 % and ~$0. Tail catch matrix >$1000:
+  actual 61 h / model 22 / coincident 21 / invented 1. The model's ORDC-shortfall REGIME matches the
+  actual tail calendar (217 shortfall-hours, Aug 124 / Sep 35) and its ~$1 family duals match the
+  measured RTORPA p50 $1–5 at the missed hours — the miss is the ENERGY stack, confirming the
+  ercot-160→163 attribution (storage standing offers formed the real λ).
+- **Scarcity-hour composition (act >$1000)**: storage net **+661 MW** over actual (the single
+  largest physical overrun — the ercot-162 successor object), wind +354, coal +569 net (a split:
+  PRB-class ≈ +800 over, LIGNITE-class ≈ −200 under), gas −1,950; solar RESOLVED (+5). At the
+  extreme the model is over-TIGHT: 4 phantom shed hours (Aug 17/25/30 18h, Jun 20 17h) while its
+  gas tops out 1.7–3.1 GW below actual delivered gas — the ercot-163 CC-headroom object's face.
+- **Evening 17–19 h underrun** is real in all three years excluding Jun–Sep (2025 18h −23.4 lw,
+  median −8) with a +3–6 midday mirror — the xiso-1 amplitude deficit, ERCOT face. 930-BAT 2025
+  shows the model OVER-discharging the peak (19h +1.27 GW) and still charging 15–16h: the storage
+  AS/energy split is also the evening-amplitude lever.
+- **Timezone audit (owner question) CLOSED**: model clock verified fixed-CST hour-beginning
+  astronomically; demand/HSL/LMP/CAMPD/AS all lag-0 in DST and standard windows; ZERO Mountain-time
+  handling exists or is needed (Far-West is a topology object). Three DST-window-only defects
+  ranked, none price-moving: the zonal-LMP deriver lacks `_PrevailingShift` (its consumers: the
+  `rt_lw` bench join — which biases the BENCHMARK low $0.71/$0.19/$0.21, i.e. UNDERSTATES the
+  underrun — and several probes), and the zonal-shares curator is prevailing-clock (~150–250 MW
+  interzonal, share-preserving). Fix lane chartered (H4), no-solve.
+- **Oak Grove (C7 2023 lignite cv-leg)**: CAMPD shows both units cycling to exact LSL floors
+  (386–392 / 492–494 MW) nightly Aug 1–Oct 28 ONLY, pausing Aug 15–19 (the tightest week), Nov
+  snap-back; daily energy NOT conserved (38.6→31.9 GWh) — not fuel-limited; the WHOLE sub-bit fleet
+  two-shifted the same window (Martin Lake 1,254 night / 2,122 day). DAM: status ON, COP HSL full
+  all night, no DAM energy curve, no award, ZERO AS awards — nothing withheld from ERCOT's view.
+  SCED delivery-August (`SCED/2023-10.part*` — **the corpus is publication-month-keyed, delivery =
+  filename − 2**): overnight TNO ≈ LSL at full HSL with the submitted TPO top step at **$60.30**
+  (June: $4.50) — SCED itself base-points the units down at $20 LMPs. VERDICT: economic
+  two-shifting via seasonal RT offer repricing; the keeper cannot see it because
+  `coal_perplant_offer_curves` extrapolates the 2024/25 corpus to 2023 (declared in the DOF
+  ledger). Rule-23 re-derivation from the delivery-2023 corpus is chartered (item 12) — this is a
+  DATA-CHANGE re-identification of an armed K mechanism, not a re-test of the closed
+  slope/floor/commitment/seasonal-split lanes, whose refutations all stand.
+- **C3c ledger executed (owner decision, this session)**: rubric v3.0 adds the `model-class`
+  ledgered-caveat kind (supporting-tier-only, fail-closed, shared ≤3 budget, requires owner
+  decision + exhaustion record + open residual lane). Three entries on the keeper attestation;
+  re-scored in place: C3c FAIL→CAVEAT ×3, C6 UNATTESTED→PASS (stale metrics), determination
+  NOT-YET with basis exactly {C3a 2023 −32.6 %, C3b 2023 0.610, C7 2023 lignite cv 0.311} — the
+  keeper's whole fail surface is now 2023. `audit_keepers --iso ERCOT` PASS; status shard rebuilt;
+  scoring tests pass (6 pre-existing failures verified pre-existing by stash).
+- Also named: 2024 Apr 27 / May 7 fabricated spike days (hod 19–20); 2025 HSL evening solar
+  potential +2 GW at h17–18 vs delivered; the `ercot_ordc_cap_dual_adder` run_config recorder gap;
+  PJM committed metrics stale vs the current scorer (pre-existing, PJM-lane).
