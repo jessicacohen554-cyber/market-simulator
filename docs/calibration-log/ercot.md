@@ -5437,3 +5437,45 @@ Full record: `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08
 - Also named: 2024 Apr 27 / May 7 fabricated spike days (hod 19–20); 2025 HSL evening solar
   potential +2 GW at h17–18 vs delivered; the `ercot_ordc_cap_dual_adder` run_config recorder gap;
   PJM committed metrics stale vs the current scorer (pre-existing, PJM-lane).
+
+## 2026-08-05 — ercot-167 (matrix §5.1 item 10 EXECUTED, owner-directed with a separate-2023-first sequencing; mechanism BUILT + 2023-probed + full-span A/B; ARM REJECTED-AS-ARMED on its own pre-registered gates, reopen condition cited; keeper UNCHANGED at ercot165): the measured storage AS SOC reservation hits its chartered quantity object dead-on in 2023 — scarcity-hour battery discharge 666→520 MW against the SCED-measured actual 423 — and the two kills that fired both localize to a KNOWN separate defect plus a $43 threshold graze
+
+Full record: `results/calibration/FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md`;
+gates pre-registered in `docs/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md` BEFORE any
+solve (two feasibility amendments recorded mid-probe, no gate touched). Runs registered:
+`2026-08-05-run167a-soc-control` (fresh same-HEAD replay) + `2026-08-05-run167b-soc-reserve`
+(single delta `ercot_storage_as_soc_reserve=true`). Headlines:
+
+- **Mechanism** (zero fitted scalars): floor battery SOC at the measured AS award × the PUBLISHED
+  per-product SOC duration (RegUp/RRS 1 h, ECRS 2 h, NonSpin 4 h — Nodal Protocols §3.17.3), the
+  per-product split measured from the 60-Day corpus (new derive
+  `derive_ercot_storage_as_products.py`, reconstruction EXACT vs the committed total for 2023/24)
+  and normalized to the SAME committed total `storage_as_commitment` power-docks — completing the
+  half that reservation's own docstring names missing ("reserves *power*, not state of charge").
+- **Two probe-found infeasibilities, both localized exactly and fixed structurally** (the
+  separate-2023 probe earning its keep): (1) the armed deployment floor force-discharges energy a
+  level-tracking floor never releases → the floor nets the intra-day cumulative deployment; (2)
+  the daily-pin scaffold shares ONE midnight SOC across 365 days and the West unit's high-award
+  midnight floor (889 MWh) exceeded its capability-dip midnight cap (546 MWh; the Oct-2023
+  capability-hole boundary; max feasible uniform scale 0.997 — localized by an LP-bounds dump +
+  per-unit feasibility LP) → `_pin_reachability_clip`, verified to remove only 0.16 % of floor MWh.
+- **2023 (the owner's separate-test year): every gate GREEN.** G1 666→520 MW (60 % of the physical
+  gap to actual 423, no overshoot); spurious 4→3; shed 4→4; tail 58→61 (+3 real); C3a −30.3→−29.9 %.
+  As pre-expected the 2023-$ move is small — the $500–3,000 tail mass is equilibrium offer conduct
+  (the C3c model-class ledger's very basis), not quantity.
+- **2025 improves broadly**: C3a −1.5→−0.8 %, NRMSE 0.073→0.068, evening 18h net discharge 3,033
+  vs actual 2,995 (control was +462 over; 19h over-discharge 3,902→3,374 vs actual 2,634), G2
+  930-BAT volume 0.72 ≥ 0.70. Annual discharge 4.48→3.93 TWh vs measured 5.45 net-basis.
+- **The two fired kills (BIND per the precommit)**: G4-2024 C3a +9.0→+10.4 % — day-drilldown puts
+  the lift on the KNOWN maintenance-season fabricated-spike days (Nov 9 +$19.7/h-day, Apr 27
+  +$19.1, May 7 +$8.7) on an April already +72 % over in the CONTROL; and G3-2025 one spurious
+  hour — 2025-10-21 19h, model $235 vs actual $192, whose two NEIGHBOR hours (actual $214/$210)
+  are newly-captured REAL tail hours the control missed at $96.
+- **Verdict: REJECTED-AS-ARMED; reopen condition cited** (rule-1-compatible, not a softening):
+  re-gate the IDENTICAL arm — no parameter exists to change — after the 2024 maintenance-season
+  availability defect (FINDING-ercot166 §5, handoff H4 item 4) lands. Owner promotion on the
+  standing structural standard ("if structural integrity improves but gates regress that may
+  still be a keeper") remains available on this record; the session executed its own precommit
+  verdict and did not self-promote. Retention auto-pruned ercot141/ercot144 (top-15; the prior
+  keeper ercot158 stays). C3c's rubric-v3.0 model-class entries are unaffected (58→61 / 20→25 /
+  0→3 vs the [0.5×] bands 91/27/16 — nowhere near a PASS, the entries stay live).
