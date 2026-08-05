@@ -1,0 +1,96 @@
+{
+ "prereg": "results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md",
+ "keeper": "2026-08-04-miso-127-onlinepmin",
+ "measured_committed": 1.005,
+ "measurand_source": "data/raw/reference/miso_campd_marginal_hr_summary.csv CC_REGULAR avg_committed_p50 (n=103, cap-weighted, 2023-2025)",
+ "registered_before": {
+  "CC_REGULAR": 1.2,
+  "CC_INTERMEDIATE": 0.92
+ },
+ "gas_offer_anchor_usd_per_mmbtu": 3.0492,
+ "P0_min_committed_mw": 200.0,
+ "years": {
+  "2023": {
+   "july_night_prices": {
+    "july_night_p10": 26.109147048217814,
+    "july_night_p50": 27.859419032343368,
+    "july_night_mean": 27.885095062393
+   },
+   "by_class": {
+    "CC_REGULAR": {
+     "cap_mw": 12103.017300000001,
+     "n_tranches": 44,
+     "hr_before": 6.842164322032903,
+     "hr_after": 7.265986025276746,
+     "offer_before_usd_mwh": 22.863127450742727,
+     "offer_after_usd_mwh": 24.155444588273852,
+     "d_offer_usd_mwh": 1.2923171375311249,
+     "vs_july_night_p50_before": -4.996291581600641,
+     "vs_july_night_p50_after": -3.703974444069516
+    },
+    "CC_INTERMEDIATE": {
+     "cap_mw": 0.0,
+     "note": "no committed tranches"
+    }
+   },
+   "combined_committed_cap_mw": 12103.017300000001,
+   "cap_weighted_d_offer_usd_mwh": 1.2923171375311249,
+   "net_direction": "DEARER"
+  },
+  "2024": {
+   "july_night_prices": {
+    "july_night_p10": 20.666404484144707,
+    "july_night_p50": 25.86316163912152,
+    "july_night_mean": 25.508077155430104
+   },
+   "by_class": {
+    "CC_REGULAR": {
+     "cap_mw": 12103.017300000001,
+     "n_tranches": 44,
+     "hr_before": 6.842164322032903,
+     "hr_after": 7.265986025276746,
+     "offer_before_usd_mwh": 22.863127450742727,
+     "offer_after_usd_mwh": 24.155444588273852,
+     "d_offer_usd_mwh": 1.2923171375311249,
+     "vs_july_night_p50_before": -3.0000341883787947,
+     "vs_july_night_p50_after": -1.7077170508476698
+    },
+    "CC_INTERMEDIATE": {
+     "cap_mw": 0.0,
+     "note": "no committed tranches"
+    }
+   },
+   "combined_committed_cap_mw": 12103.017300000001,
+   "cap_weighted_d_offer_usd_mwh": 1.2923171375311249,
+   "net_direction": "DEARER"
+  },
+  "2025": {
+   "july_night_prices": {
+    "july_night_p10": 31.41199372643981,
+    "july_night_p50": 33.870542961127,
+    "july_night_mean": 33.98641298146941
+   },
+   "by_class": {
+    "CC_REGULAR": {
+     "cap_mw": 12103.017300000001,
+     "n_tranches": 44,
+     "hr_before": 6.842164322032903,
+     "hr_after": 7.265986025276746,
+     "offer_before_usd_mwh": 22.863127450742727,
+     "offer_after_usd_mwh": 24.155444588273852,
+     "d_offer_usd_mwh": 1.2923171375311249,
+     "vs_july_night_p50_before": -11.007415510384273,
+     "vs_july_night_p50_after": -9.715098372853149
+    },
+    "CC_INTERMEDIATE": {
+     "cap_mw": 0.0,
+     "note": "no committed tranches"
+    }
+   },
+   "combined_committed_cap_mw": 12103.017300000001,
+   "cap_weighted_d_offer_usd_mwh": 1.2923171375311249,
+   "net_direction": "DEARER"
+  }
+ },
+ "P0_inertness_pass": true
+}
