@@ -5532,4 +5532,17 @@ matrix §5.1 item 12 stamped + the `coal_perplant_offer_level` row def/note/ev u
 adjudicated), coal_min_load_floor both grains, daily unit commitment, seasonal LEVEL split,
 `coal_offer_level_rebasis` R, `tranche_startup_amortization` G, no CT extension (ERCOT-147).
 
+**PROMOTION ADDENDUM (same day, 2026-08-05): ercot-168 PROMOTED — keeper →
+`2026-08-05-run168b-year-curves` (owner directive 'Promote' issued on the fully-surfaced
+all-gates-green A/B record; the session surfaced the candidate and did not self-promote).**
+Keeper shard `frontend/data/backcast/keepers/ERCOT.json` re-keyed with the full promotion note +
+`market_story` on the registry sidecar; attestation regenerated to record the promotion
+(`gen_ercot168_attestation.py`); status part rebuilt (`build_status.py --iso ERCOT`,
+ERCOT:NOT-YET on {C3a, C3b} — C7 now PASS); `audit_keepers --iso ERCOT` PASS (0 failures);
+matrix §5.1 header + open-gates line re-stamped and the `keepers:` object updated
+(`check_mechanism_matrix.py` exit 0). D-5(b) re-key does not apply (ERCOT holds no `complete`
+marker). ercot167 (run167b-soc-reserve) stays on the dashboard as the immediate-prior
+comparison; its carried honest limits (C3b-2024 0.206 maintenance-season root, the SOC-reserve
+re-gate expectation) transfer unchanged to this keeper's attestation.
+
 Next shorthand: ercot-169.
