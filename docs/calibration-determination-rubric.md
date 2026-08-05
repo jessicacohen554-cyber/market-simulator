@@ -1,8 +1,21 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2.9** (2026-07-27 owner
-amendment: **C5a CO2 vs eGRID REMOVED from the rubric and demoted to
-REPORTED-ONLY** — eGRID's latest released workbook is the 2024 vintage and
+Status: **canonical, machine-enforced. RUBRIC VERSION 3.0** (2026-08-05 owner
+amendment, session-logged, ERCOT-2023-diagnosis session: a second ledgered
+caveat kind, **`ACCEPTED MODEL-CLASS LIMITATION`** — exceptions-ledger entries
+carrying `"kind": "model-class"` reclassify a FAIL to a budgeted ledgered
+CAVEAT exactly like the measured-input kind, but are admissible **only for
+SUPPORTING-tier criteria** (fail-closed: matched against a load-bearing or
+protective criterion the entry is ignored and the FAIL stands). Each entry is
+an owner-signed acceptance of a limitation of the model *class* itself and
+must cite the exhaustion record that bounds it plus any still-open residual
+lane — it documents a bound, it never closes root-causing; a later mechanism
+that fixes the criterion simply PASSes and the entry goes inert. First
+application: ERCOT C3c 2023–2025 (§3, §9). The "3.0" is forced by the
+one-decimal version float (2.9 + 0.1), **not** a re-anchor of the v2 criterion
+set — every criterion, band and tier is unchanged from v2.9. Prior banner,
+v2.9, 2026-07-27 owner amendment: **C5a CO2 vs eGRID REMOVED from the rubric
+and demoted to REPORTED-ONLY** — eGRID's latest released workbook is the 2024 vintage and
 `data.egrid.egrid_vintage_for_year` falls any later year back to it, so a 2025
 C5a "actual" is the 2024 intensities standing in rather than a measurement, and
 a criterion whose actual does not exist for a scored year cannot be
@@ -493,7 +506,14 @@ way FAILs C6 regardless.
     measured benchmark, not count precision. Supporting tier: the
     *level* contribution of scarcity is already load-bearing via C3a/C3b.
   - *Classification:* `MODEL MISS` (missing scarcity pricing / over-aggressive
-    peaker offers). `SKIPPED` when the model scarcity series is not in the
+    peaker offers). Since v3.0 a C3c FAIL may be reclassified to a ledgered
+    `ACCEPTED MODEL-CLASS LIMITATION` by an owner-signed `"kind":
+    "model-class"` exceptions entry (§3) — first application ERCOT 2023–2025,
+    where the realized RT tail formed on equilibrium scarcity-hour ENERGY
+    offers (predominantly storage at $500–3,000 with measured RTORPA ≈ $1–5
+    and PRC ≈ 5.8 GW at the missed hours) that a competitive-offer LP cannot
+    reproduce, and the within-class mechanism space is exhaustion-cited
+    (ercot-95/97/102/107/108/155/159/161/162/163). `SKIPPED` when the model scarcity series is not in the
     committed payload or the ISO-year is absent from the tail part — recorded
     as not-scored, never a silent pass.
 
@@ -787,9 +807,14 @@ differently:
   the dashboard. They are *listed, not excused* — an ISO whose load-bearing
   criteria all sit in the commercial band is certified `CALIBRATED-WITH-CAVEATS`
   and visibly not target-grade (the `grade_summary` line counts each tier).
-- **Ledgered caveats** (`ACCEPTED MEASURED-INPUT LIMITATION`) — an
-  out-of-tolerance (beyond-commercial) criterion reclassified by an explicit
-  exceptions-ledger entry (§3). Budgeted:
+- **Ledgered caveats** — an out-of-tolerance (beyond-commercial) criterion
+  reclassified by an explicit exceptions-ledger entry (§3). Two
+  classifications share one budget pool: `ACCEPTED MEASURED-INPUT LIMITATION`
+  (the actual/benchmark is the limitation — the v2 kind, unchanged) and, since
+  v3.0, `ACCEPTED MODEL-CLASS LIMITATION` (ledger entry `"kind":
+  "model-class"` — an owner-signed acceptance that the model *class* cannot
+  express the judged behaviour, admissible for **supporting-tier criteria
+  only** and requiring a cited exhaustion record; see §3). Budgeted:
   - **Protective criteria (C7/C8):** at most **1**, unchanged from v1’s
     hard-gate budget (C7/C8 are essentially never ledgerable — see their
     sections; C6 is never caveatable). This is CLAUDE.md rule 20 / audit
@@ -818,8 +843,9 @@ differently:
 
 The decisive rule, restated: **a determination with an undocumented
 out-of-tolerance criterion is `NOT-YET`.** The only way a beyond-commercial-band
-criterion is compatible with a passing determination is an explicit, ledgered
-`ACCEPTED MEASURED-INPUT LIMITATION` (and only within the caveat budget).
+criterion is compatible with a passing determination is an explicit ledgered
+caveat — `ACCEPTED MEASURED-INPUT LIMITATION`, or (supporting tier only, v3.0)
+`ACCEPTED MODEL-CLASS LIMITATION` — and only within the caveat budget.
 
 Where an actual is not committed for an ISO-year (historically the tail and
 CO2, both now committed), the criterion is `SKIPPED`, which **caps the best
@@ -843,6 +869,17 @@ with **no matching ledger entry is a `FAIL`** — silence is never a pass.
 Each entry must name **the metric (criterion, and class/family where the criterion
 is per-class), the year, the magnitude (the observed error), and the reason it is
 an accepted measured-input limitation rather than a model defect.**
+
+**Model-class entries (v3.0).** An entry carrying `"kind": "model-class"` is the
+owner-signed variant for a limitation of the model *class* itself rather than of
+the benchmark. It is admissible **only for supporting-tier criteria** (the
+scorer ignores it — fail-closed — against load-bearing and protective
+criteria), and its `reason` must additionally carry: (a) the **owner decision**
+(date + session), (b) the **exhaustion record** — the runs/probes that bound
+the limitation and refuted the within-class mechanism families, and (c) any
+**still-open residual lane**, because the caveat documents a bound and never
+closes root-causing — a mechanism that later fixes the criterion simply PASSes
+and the entry goes inert in place.
 
 ```json
 {
@@ -876,9 +913,15 @@ an accepted measured-input limitation rather than a model defect.**
 
 Example accepted limitations (the named cases): NEISO’s model-zeroed `CT_PEAKER`;
 the 2025 preliminary-923 vintage system-volume residual. Examples that are **never**
-ledgerable (they are `MODEL MISS` and must be fixed, not excused): a coal/gas split
-error, a collapsed price tail, a fleet-correlation floor breach, an over-cycling
-storage fleet.
+ledgerable as a *measured-input* claim (they are `MODEL MISS` and must be fixed,
+not excused): a coal/gas split error, a collapsed price tail, a
+fleet-correlation floor breach, an over-cycling storage fleet. *(v3.0
+narrowing: a collapsed price tail remains never ledgerable as measured-input —
+the RT tail actual is sound — but C3c, as a supporting-tier criterion, may
+carry an owner-signed `model-class` entry once the within-class mechanism
+space is exhaustion-cited; see the model-class paragraph above and §9 v3.0.
+The other three examples sit in load-bearing or protective tiers, where
+model-class entries are inadmissible by construction.)*
 
 ---
 
@@ -998,6 +1041,33 @@ down to.
 
 ## 9. Version history
 
+- **v3.0 (2026-08-05, owner amendment — session-logged, ERCOT-2023-diagnosis
+  session; directive: "make C3c an accepted caveat because of known
+  limitations of LP modeling underestimating the scarcity tail — across all
+  3 years")** — adds the second ledgered caveat kind, **`ACCEPTED MODEL-CLASS
+  LIMITATION`** (`"kind": "model-class"` exceptions entries): reclassifies a
+  FAIL to a budgeted ledgered CAVEAT exactly like the measured-input kind
+  (same ≤3 non-protective pool), admissible **only for supporting-tier
+  criteria** — the scorer ignores a model-class entry matched against a
+  load-bearing or protective criterion (fail-closed), so the certifying and
+  anti-self-deception tiers cannot be waved through this door. Required
+  entry content: owner decision (date + session), exhaustion record, open
+  residual lane (§3). Numbering note: "3.0" is forced by the one-decimal
+  version float (2.9 + 0.1); the v2 criterion set, bands and tiers are
+  untouched. **First application and effects at amendment:** the ERCOT
+  keeper (`2026-08-04-ercot165-unpooled-share`) gains three `price_tail`
+  model-class entries (2023 58 vs 181 h; 2024 20 vs 53 h; 2025 0 vs 31 h) —
+  its exhaustion record is ercot-95/97/102/107/108/155/159/161/162/163 (the
+  realized RT tail formed on equilibrium scarcity-hour ENERGY offers,
+  predominantly storage at $500–3,000, with measured RTORPA ≈ $1–5 and PRC
+  ≈ 5.8 GW at the missed hours; the offer-side arm collapsed discharge when
+  tried, every reserve/quantity-side family fabricated scarcity elsewhere),
+  and its named open residual lanes are the storage AS-vs-energy capability
+  split and the CC headroom identification. C3c flips FAIL → CAVEAT
+  [ledgered] in all three years; the ERCOT determination stays NOT-YET with
+  its basis narrowed to the 2023-only C3a/C3b FAILs + the C7 2023-lignite
+  cv-leg. No other ISO carries a model-class entry, so every other keeper's
+  verdict is byte-stable.
 - **v2.8 (2026-07-27, coal gate-blindness correction — ERCOT-121 owner
   charter: "the fix … is a scorer/gate correction that RE-SCORES every
   existing keeper in place (no re-solve), and it may flip verdicts";
