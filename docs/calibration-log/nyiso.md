@@ -5187,3 +5187,94 @@ probes `scripts/probes/_nyiso126_par_identification.py`,
 `scripts/probes/_nyiso126_c3a_decomposition.py`.
 
 * Next number: **nyiso-127**.
+
+---
+
+## nyiso-127 (2026-08-05) — NYISO is NOT READY to spend 2022; the freeze's own defect is still 1.7–2.9× the norm on this ISO — NO SOLVE
+
+**Keeper UNCHANGED** `2026-08-04-nyiso-125-seam-envelope`. **No solve, no
+mechanism armed, no parameter moved, no bundle, nothing registered** (rule 15: a
+session that produces no run registers nothing). Verified at this session's own
+head: `calibration_verdict.py --run-id` → **NOT-YET**, sole FAIL `price_mean`,
+C3a **+7.7 / −0.8 / −10.2 %**, C3c CAVEAT (ledgered) 18/2/21 h vs 10/12/42 h
+failing 2024 alone, ledger **1 of 3**; `audit_keepers.py --iso NYISO` **PASS
+0/0**; nyiso-125 (`20127fd0`) and nyiso-126 (`25dbf462`, PR #3555) both on `main`.
+**ITEM 1 (the eastern-seam PAR attribution) was NOT executed — owner-gated, no
+authorisation given.** No out-of-training year was solved, scored, read or
+registered; the freeze was checked first and is ACTIVE.
+
+**(1) Q3 — THE FREEZE'S STATED REASON STILL BINDS FOR NYISO, WITH NUMBERS.** On
+the CURRENT post-merit-order-guard extract, NYISO books **25.4 / 29.6 / 35.8 %**
+of its CC_REGULAR capacity-year as mechanical outage (CC_ALL 26.7/28.0/31.1 %)
+against the **~10–15 %** EFOR+planned norm the freeze cites — **1.7–2.9×**, and
+**worst in 2025**, the failing C3a year. The guard's veto shrinks year over year
+(15.9 → 11.1 → **6.7** pp), so the correction is smallest where the residual is
+largest. neiso-63's own unit-year metric reproduced for like-for-like: baseline
+47/47/44 % (validating against its quoted 46 %) → **37/37/37 %** post-guard.
+**Reported against interest:** the obvious mechanism — a too-tight envelope
+pinning the CC fleet so something dearer sets price, which would have attributed
+nyiso-126's unattributed +$4–7/MWh bulk over-pricing — is **NOT supported** by the
+keeper's own committed `class_hourly` sidecar (mean/max 58.4/71.5/68.3 %, hours
+within 5 % of the annual max only 0.5/0.9/**4.5** %). Claimed narrowly: the
+envelope is materially wrong in a known direction, so a 2022 miss would be
+uninterpretable and a 2022 pass misleading. **No lever proposed; the queue stays
+EMPTY.** Instrument `scripts/probes/_nyiso127_cc_outage_envelope.py`, record
+`results/calibration/_nyiso127_cc_outage_envelope.json`.
+
+**(2) Q5 — READINESS VERDICT: NOT READY**, on §(1) alone and independent of
+everything else. Secondary reasons: the load-bearing C3a-2025 FAIL is unledgered
+(determination NOT-YET), and a pre-registered keeper-changing candidate is queued
+behind an owner authorisation. **Q4 ordering: (b) resolve ITEM 1 first** — its
+§8 rule 2 promotes on structure even if C3a/C3c are unchanged or modestly worse,
+so a successful arm changes the keeper by construction — **but the ordering
+argument is not the binding reason to wait; §(1) is.** Restated: 2022 is
+UNSPENDABLE until the owner lifts the freeze explicitly, and a validation number
+is SELECTION EVIDENCE, never a certified out-of-sample skill number (rule 22).
+NYISO stays ABSENT from `final`.
+
+**(3) Q1 — THE FRONTIER DECLARATION HAS LAPSED; RECOMMEND RE-DECLARATION, NOT A
+THIRD AMENDMENT.** It lapsed at **nyiso-120**, whose own log entry records
+`determination control CALIBRATED-WITH-CAVEATS → treatment NOT-YET` on a 0.5 pp
+knife-edge crossing (−9.5 % → −10.0 %, 94 % of the gap pre-existing), and has not
+been restored — so the frontier block's **CALIBRATED-WITH-CAVEATS** label and the
+live determination have disagreed for two days. Four load-bearing clauses of the
+2026-07-31 note are now falsified or superseded: the sole-blocker premise, the
+"cannot form the tail" strength claim, the F/G re-open condition, and the label.
+The substantive frontier claim (the C3c lever queue is exhausted, nine items
+adjudicated) survives and should be re-stated. **Not edited — owner disposition.**
+
+**(4) Q2 — THE BLOCKERS ARE ONE OBJECT PHYSICALLY, BUT DO NOT COLLAPSE FOR THE
+RUBRIC. RECOMMEND: DO NOT LEDGER C3a-2025.** Both sides stated in the finding.
+Against, decisively: the rubric defines a ledgered caveat as `MEASURED_LIMIT`
+("**the actual is the limitation**") and requires "its own named **measured-input**
+reason", while nyiso-126 attributes C3a-2025 to a **model** defect on both halves;
+explaining a miss does not stop it missing (nyiso-120 twice declined to ledger
+this exact FAIL); and `price_mean` is **load-bearing** where the only precedent
+(C3c) is *supporting*. If the owner ledgers it anyway, **broaden the existing C3c
+entry rather than open a second slot** — one defect, one slot. **Not
+re-classified here.**
+
+**(5) ITEM 3 — NOW FOUR ITEMS, ONE DECISION PACKAGE, NONE EDITED.** (a) the F/G
+re-open condition falsified as written (nyiso-124 G0); (b) the "cannot form the
+tail" premise partly falsified (nyiso-125, 3/0/14 → 18/2/21 h on a seam-side
+**input** correction with no scarcity parameter); (c) C3a-2025 and C3c are one
+object, so carrying C3c as a supporting caveat understates what the single slot
+covers (nyiso-126 §2.3(3)); and **(d) NEW HERE — a phantom DOF entry**:
+`GAS_AVAILABILITY_FACTOR[NYISO] = 0.866` is ledgered as living in
+`constants.py` with `identification: published`, but **no such symbol exists
+anywhere in `src/market_sim/`** (its only other repo occurrence is
+`market-sim-build-plan.md:406`, the pre-extraction `lmp_engine.py` manifest). An
+over-count, not a hidden channel — a rule 20 provenance defect. All four live in
+`scripts/gen_nyiso125_attestation.py`; editing the emitted JSON alone would be
+reverted by the next generator run.
+
+**Standing instruction for the successor:** unchanged. The lever queue stays
+**EMPTY**; the eastern-seam lane is pre-registered and owner-gated; do not
+re-derive the nyiso-125 refusal (discharged on identification at nyiso-126).
+
+Evidence:
+`results/calibration/FINDING-nyiso127-holdout-readiness-and-frontier-review-2026-08-05.md`,
+probe `scripts/probes/_nyiso127_cc_outage_envelope.py`,
+record `results/calibration/_nyiso127_cc_outage_envelope.json`.
+
+* Next number: **nyiso-128**.
