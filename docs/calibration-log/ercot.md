@@ -5492,3 +5492,44 @@ attestation, the keeper shard note, and the matrix §5.1 re-stamp — with the s
 expectation unchanged. `audit_keepers --iso ERCOT` PASS; status part rebuilt; ercot165 stays on
 the dashboard as the immediate-prior comparison. The ercot-166 open-gates re-stamp above is
 superseded by the ercot-167 promotion re-stamp in §5.1.
+
+## 2026-08-05 — ercot-168 (matrix §5.1 item 12 EXECUTED, owner-adjudicated OPTION A; mechanism BUILT default-off + 2023-probed + full-span A/B; ALL SEVEN pre-registered gates GREEN; C7-2023 CLOSED; surfaced as KEEPER CANDIDATE, promotion an owner call): the armed coal per-plant offer curves re-identified PER-YEAR for 2023 from the delivery-2023 SCED corpus — the LP now two-shifts Oak Grove through price formation exactly as SCED did, COAL_LIGNITE 2023 cv_ratio 0.331 → 1.193 with profile_r 0.897 → 0.976, and 2024/25 verified BYTE-IDENTICAL
+
+**Governance basis (quoted from the 2026-08-05 owner adjudication, not re-litigated):** a
+rule-14/23 data-vintage fix of an armed K mechanism (`coal_perplant_offer_curves`, cell K at
+ercot-144) — the ercot-157 delivery-2023 corpus re-upload dissolved ERCOT-143's closure premise
+"no 2023 SCED exists" — NOT a claim that "2023 bid differently": same modal derive, fed the
+year's own rows, zero new DOF. No commodity backing is claimed for the lignite repricing (no
+measured fuel series moves at any offer step; F923 receipts exist only for Fayette/JKS/San
+Miguel and none steps at Aug — conduct, not commodity). OPTION B (spread-regime-conditional
+offer top) stays DEFERRED as the forecast-side successor. Gates pre-registered BEFORE any solve
+in `docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`; NO amendment was needed
+(the probe was feasible first try). The grain amendment (month-vs-season menu → within-day
+windows at the corpus's own hourly grain under a strict day-majority license) was recorded in
+the precommit §0 BEFORE any solve, decided from the data: at month grain the modal construction
+returns Oak Grove's flat day curve in EVERY month — the Aug–Oct repricing is a within-day
+submission regime (overnight CST h23–h8 top $60.26, Oct $61.46; day keeps ~$4.4).
+
+**Result (control `2026-08-05-ercot168-control`, arm `2026-08-05-run168b-year-curves`, both
+registered):** G-BIT PASS — all twelve 2024+2025 hourly sidecars sha256-identical A→B (the year
+table carries only 2023). G-TGT full clear — C7 2023 COAL_LIGNITE cv_ratio 0.331 → 1.193
+(≥0.5 gate), G-SHAPE 0.897 → 0.976, G-NEWROWS D-1 failing rows 1 → 0 (COAL_PRB improves 0.737 →
+0.958), G-NOREG C1/C2/C4/C6/C8 PASS all years with C3a-2023 −32.24 → −32.23 and C3b-2023
+0.6026 → 0.6043, G-SPUR 3 → 3, G-SHED 4 → 4. 2023 coal energy LIGNITE 17.66 → 16.91 TWh / PRB
+45.05 → 43.62 TWh (measured overnight backdown replacing forced flatness); Aug lw −$0.34, Sep
++$0.01 — the −32 % stays C3c tail mass (61/25/3 UNCHANGED, ledger unaffected), exactly as
+pre-declared. Official determination fail set SHRINKS {C3a, C3b, C7} → {C3a, C3b}. DOF: zero
+new free parameters (n_entries 12 → 13 measured-physical, n_residual UNCHANGED 6); the ercot-144
+"2023 application is a declared extrapolation" note RETIRED by measured replacement
+(`scripts/gen_ercot168_attestation.py`). LOYO (rule 22) reduces to the per-year gate table by
+construction. Named-not-chartered successors (FINDING §4): the same dissolved premise sits on
+ERCOT-137 (`COAL_OFFER_MARGIN_LEVEL` 15.8807), ERCOT-139 (`CC_COMMITTED_OFFER_LEVEL` 10.354)
+and ERCOT-140 (`COAL_PEAK_OFFER_LEVEL` 35.1989 + GAS_HR 10.41) — margin forms whose
+fuel-invariance claim the 2023 rows can now TEST; each is its own rule-14/23 owner charter.
+Full record `results/calibration/FINDING-ercot168-coal-perplant-year-curves-2026-08-05.md`;
+matrix §5.1 item 12 stamped + the `coal_perplant_offer_level` row def/note/ev updated (rule
+28b/c). Retention pruned ercot145/ercot148. DO-NOT-REDO honored: lignite SLOPE (ERCOT-143 as
+adjudicated), coal_min_load_floor both grains, daily unit commitment, seasonal LEVEL split,
+`coal_offer_level_rebasis` R, `tranche_startup_amortization` G, no CT extension (ERCOT-147).
+
+Next shorthand: ercot-169.
