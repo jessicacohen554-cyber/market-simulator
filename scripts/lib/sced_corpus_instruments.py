@@ -48,6 +48,24 @@ Rule 13 ``[R-MEASURED]`` scope: a measured corpus read on an already-accepted
 convention. No ``ScenarioConfig`` field is written, no solve path is touched, no
 residual is consulted. Rule 22 ``[R-HOLDOUT]``: :func:`load_corpus_year` refuses
 any year outside the 2023–2025 training window.
+
+**ercot-170 extension (matrix §5.1 item 11) — the CAPABILITY census.**
+:func:`capability_census` adds the second half this module needed for the CC
+headroom/capability object: a per-TRAIN capability roll-up over a delivery year.
+It is an EXTENSION, never a rewrite — the functions above are untouched, and the
+census imports ``ercot163_cc_commitment_state_census``'s ``_cap_ref`` /
+``_train`` / ``_state_of`` / ``_hoy`` **verbatim** for exactly the reason
+ercot-169 imported ercot136/138: re-deriving them would make this session's
+numbers incomparable to the ercot-163 record they must bridge.
+
+It carries ONE declared row-filter delta from the ercot-123/144 set the
+instruments above use, pre-registered in
+``docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`` §1a: the
+capability census applies **no telemetered-status filter**. A capability
+denominator that drops ``OUT``/``OFF`` rows is biased toward committed capacity
+and would measure commitment — the object ercot-163 already closed — instead of
+capability. The ONLINE-filtered conduct statistics remain available, unchanged,
+through :func:`load_corpus_year`.
 """
 
 from __future__ import annotations
@@ -83,6 +101,21 @@ def _probe_imports():
     import ercot138_coal_gas_ranking as e138
 
     return e123, e136, e138
+
+
+def _census_imports():
+    """Return the ERCOT-163 capability-census constructions, imported verbatim.
+
+    ``_cap_ref`` (per-TRAIN p98 telemetered HSL over a delivery year, with the
+    configuration aliases collapsed on the trailing ``_<config>`` segment),
+    ``_train``, ``_state_of`` (telemetered status -> capability state) and
+    ``_hoy`` (SCED timestamp -> hour-of-year on the model's fixed-standard
+    clock) are the ercot-163 record this session's numbers must bridge to, so
+    they are imported, never re-derived (ercot-170 precommit §1).
+    """
+    import ercot163_cc_commitment_state_census as e163
+
+    return e163
 
 
 def load_corpus_year(
@@ -574,6 +607,201 @@ def fuel_basis_by_year(years: tuple[int, ...] = (2024, 2025, 2023)) -> dict:
     if 2023 in out["years"]:
         out["gas_2023"] = out["years"][2023]["CC"]
     return out
+
+
+# --------------------------------------------------------------------------
+# The ercot-170 capability census — per-TRAIN, over a delivery year
+# --------------------------------------------------------------------------
+
+#: The ERCOT-163 states counted as reality-side CAPABILITY in the ercot-170
+#: attribution identity (precommit §1c): committed or intra-hour startable.
+#: ``OUT`` and plain ``OFF`` capability is rolled up too, and reported, but is
+#: NOT reality-side capability — a resource on outage cannot serve the tail.
+COMMITTED_OR_STARTABLE: tuple[str, ...] = (
+    "ONLINE",
+    "ONTEST",
+    "OFFLINE_STARTABLE",
+    "TRANSITION",
+)
+
+#: SCED ``Resource Type`` values forming the combined-cycle universe.
+CC_RESTYPES: tuple[str, ...] = ("CCGT90", "CCLE90")
+
+
+def capability_census(
+    year: int,
+    hours: np.ndarray,
+    restypes: tuple[str, ...] = CC_RESTYPES,
+) -> dict:
+    """Per-TRAIN capability roll-up over ``hours`` of delivery ``year``.
+
+    The reality side of the ercot-170 attribution identity. Every construction
+    is the ERCOT-163 one, imported verbatim via :func:`_census_imports`:
+    ``_cap_ref`` for the fixed per-train capability denominator (p98 telemetered
+    HSL over the whole delivery year), ``_train`` for the configuration-alias
+    collapse, ``_state_of`` for the capability-state taxonomy and ``_hoy`` for
+    the model's fixed-standard clock.
+
+    **Row filters (precommit §1a).** ``Resource Type`` in ``restypes``, the
+    delivery-year filter, and NO telemetered-status filter — the one declared
+    delta from the ercot-123/144 set, because a capability denominator that
+    drops ``OUT``/``OFF`` rows measures commitment, not capability.
+
+    Args:
+        year: Delivery year (training window only, rule 22).
+        hours: Hours-of-year (0..8759, model fixed-standard clock) to census.
+        restypes: SCED ``Resource Type`` values forming the universe.
+
+    Returns:
+        ``{"trains": {train: {...}}, "totals": {...}, "n_intervals": int}``.
+        Each train carries ``cap_ref_mw`` (the year-long p98 denominator) and,
+        over the requested hours, the interval-mean ``hsl_mw`` / ``hasl_mw`` /
+        ``basepoint_mw`` split by capability state plus the committed-or-
+        startable aggregates the identity consumes.
+
+    Raises:
+        SystemExit: If ``year`` is outside the training window, or no shard
+            carries a row of ``restypes``.
+    """
+    if int(year) not in TRAIN_YEARS:
+        raise SystemExit(
+            f"capability_census(year={year}): rule 22 [R-HOLDOUT] — only "
+            f"{sorted(TRAIN_YEARS)} may be read here."
+        )
+    e163 = _census_imports()
+    if int(year) != int(e163.YEAR):
+        # ``_cap_ref`` is imported VERBATIM and reads its own module-level YEAR,
+        # so it can only be trusted on the year it was written for. Widening it
+        # would mean editing the committed construction — refused (precommit §1).
+        raise SystemExit(
+            f"capability_census(year={year}): ercot163._cap_ref is pinned to "
+            f"delivery {e163.YEAR}. Extending it to another year is an edit to a "
+            "committed construction, not a call — do that in its own session."
+        )
+    from derive_ercot_sced_offer_wall import _delivery_year_rows, _sced_source_files
+
+    files = _sced_source_files(int(year))
+    if not files:
+        raise SystemExit(f"no SCED corpus shards for delivery {year}")
+
+    # Pass 1 — the fixed per-train capability denominator, ERCOT-163 verbatim.
+    ref, cls = e163._cap_ref(files)
+    # ``_cap_ref`` censuses BOTH the CC and CT universes (it is the ERCOT-163
+    # construction, unmodified); keep the trains whose census class is the one
+    # this call's ``restypes`` selects, so a train that telemetered no row in
+    # the requested hours still appears with its capability denominator rather
+    # than vanishing from the accounting.
+    want_cls = {e163.CLASS_OF_RESTYPE[t] for t in restypes}
+    keep_trains = {n for n in ref.index if str(cls.get(n, "")) in want_cls}
+
+    want = np.zeros(8760, dtype=bool)
+    want[np.asarray(hours, dtype=int)] = True
+
+    cols = [
+        "SCED Time Stamp",
+        "Resource Name",
+        "Resource Type",
+        "Telemetered Resource Status",
+        "HSL",
+        "HASL",
+        "Base Point",
+        "LSL",
+    ]
+    # accumulators: train -> state -> summed MW over the censused intervals
+    acc: dict[str, dict[str, dict[str, float]]] = {}
+    seen_iv: set = set()
+    for path in files:
+        df = pd.read_parquet(path, columns=cols)
+        df = _delivery_year_rows(df, int(year))
+        df = df[df["Resource Type"].isin(list(restypes))].copy()
+        if df.empty:
+            continue
+        df["hoy"] = e163._hoy(df["SCED Time Stamp"])
+        df = df[(df["hoy"] >= 0) & (df["hoy"] < 8760)]
+        df = df[want[df["hoy"].to_numpy(int)]]
+        if df.empty:
+            continue
+        for c in ("HSL", "HASL", "Base Point", "LSL"):
+            df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0.0)
+        df["train"] = df["Resource Name"].map(e163._train)
+        df["state"] = e163._state_of(df["Telemetered Resource Status"])
+        seen_iv.update(df["SCED Time Stamp"].unique().tolist())
+        g = df.groupby(["train", "state"], observed=True)[
+            ["HSL", "HASL", "Base Point"]
+        ].sum()
+        for (tr, st), row in g.iterrows():
+            b = acc.setdefault(str(tr), {}).setdefault(
+                str(st), {"hsl": 0.0, "hasl": 0.0, "bp": 0.0}
+            )
+            b["hsl"] += float(row["HSL"])
+            b["hasl"] += float(row["HASL"])
+            b["bp"] += float(row["Base Point"])
+
+    n_iv = max(len(seen_iv), 1)
+    trains: dict[str, dict] = {}
+    for tr in sorted(set(acc) | keep_trains):
+        by_state = acc.get(tr, {})
+        rec = {
+            "cap_ref_mw": round(float(ref.get(tr, float("nan"))), 2),
+            "restype_class": str(cls.get(tr, "")),
+            "hsl_mw_by_state": {
+                s: round(v["hsl"] / n_iv, 2) for s, v in sorted(by_state.items())
+            },
+            "hsl_mw": round(
+                sum(
+                    v["hsl"] for s, v in by_state.items() if s in COMMITTED_OR_STARTABLE
+                )
+                / n_iv,
+                2,
+            ),
+            "hasl_mw": round(
+                sum(
+                    v["hasl"]
+                    for s, v in by_state.items()
+                    if s in COMMITTED_OR_STARTABLE
+                )
+                / n_iv,
+                2,
+            ),
+            "basepoint_mw": round(
+                sum(v["bp"] for s, v in by_state.items() if s in COMMITTED_OR_STARTABLE)
+                / n_iv,
+                2,
+            ),
+            "hsl_mw_out": round(
+                sum(
+                    v["hsl"]
+                    for s, v in by_state.items()
+                    if s not in COMMITTED_OR_STARTABLE
+                )
+                / n_iv,
+                2,
+            ),
+            "present": bool(by_state),
+        }
+        trains[tr] = rec
+
+    tot = {
+        k: round(sum(t[k] for t in trains.values()), 2)
+        for k in ("hsl_mw", "hasl_mw", "basepoint_mw", "hsl_mw_out")
+    }
+    tot["cap_ref_mw"] = round(
+        float(np.nansum([t["cap_ref_mw"] for t in trains.values()])), 2
+    )
+    tot["n_trains"] = len(trains)
+    tot["n_trains_present"] = int(sum(t["present"] for t in trains.values()))
+    return {
+        "year": int(year),
+        "n_hours": int(want.sum()),
+        "n_intervals": n_iv,
+        "restypes": list(restypes),
+        "row_filter": (
+            "Resource Type in restypes + delivery-year; NO telemetered-status "
+            "filter (ercot-170 precommit §1a declared delta)"
+        ),
+        "trains": trains,
+        "totals": tot,
+    }
 
 
 def verify_year(
