@@ -2991,3 +2991,72 @@ verdict moves**; the §5.3 parked block is stamped in this same session.
 **Evidence:** `results/calibration/FINDING-pjm155-lane-parked-2026-08-04.md`.
 
 Next shorthand: pjm-156.
+
+## pjm-156 — the 2022 VALIDATION TOUCHPOINT is SPENT: price level and tail HOLD, `CC_REGULAR` volume and price shape DEGRADE (2026-08-05)
+
+**What was run.** PJM's designated keeper recipe
+(`2026-08-04-pjm-152-collapse`, CALIBRATED on 2023–2025, zero caveats), frozen
+and replayed on the held-out year 2022 via
+`replay_keeper.py --years 2022 --holdout-authorized`. **Zero recipe deltas**, so
+the rule 20 `[R-DOF]` ledger carries onto the touchpoint attestation
+byte-identical (19 entries, 6 residual-identified). **No parameter was
+identified, re-identified or re-fitted on 2022.** Registered
+`2026-08-05-pjm-2022-touchpoint`.
+
+**Authorization.** Spent under a **narrow owner lift** of the 2026-07-25 holdout
+spend freeze (owner, 2026-08-05: "lift, spend, re-arm"), scoped to the PJM and
+NEISO 2022 touchpoints alone; the freeze is **RE-ARMED in the same session**.
+PJM's locked tier is **NOT authorized** — `final` is empty and 2019 / H1-2026
+were not touched.
+
+**Result, as scored — NOT-YET on 2022 against CALIBRATED in-sample.**
+
+| | criterion | in-sample | 2022 |
+|---|---|---|---|
+| **DEGRADED** | C1 fuel-mix | PASS | **FAIL — `CC_REGULAR` +18.28 TWh, share +1.6 pp** |
+| **DEGRADED** | C3b price duration/shape | PASS | **FAIL — NRMSE 0.206** |
+| HELD | C3a mean LMP | PASS | **PASS** |
+| HELD | C3c price tail (RT) | PASS | **PASS** |
+| HELD | C2 system volume | PASS | PASS |
+| HELD | C4 dispatch correlation | PASS | PASS |
+| HELD | C6 governance | PASS | PASS |
+| HELD | C7 diurnal shape | PASS | PASS |
+| HELD | C8 forced-energy share | PASS | PASS |
+
+**PJM and NEISO fail in OPPOSITE directions, and that contrast is the session's
+most useful output.** NEISO (neiso-84, same day) held its whole quantity side
+and lost price level (+14.7 %) and shape; PJM **held price level and the
+scarcity tail** — the two things NEISO lost — and lost **volume**: the model
+puts +18.28 TWh too much through `CC_REGULAR`, a +1.6 pp share error, in a year
+of extreme gas. A single shared cause (e.g. "2022 gas is mis-passed-through")
+does not explain both, so the two lanes need separate root-cause work rather
+than one cross-ISO fix. D-10 records C1 7/8 all-class, 5/6 free-class.
+
+**C8 note, not a caveat.** `CT_PEAKER` 2022 is forced 31.1 % (4.93 of 15.84 TWh),
+above the 15 % peaker cap but a **grounded PASS** under rule 21: every binding
+mechanism clears D-4 off-window binding, profile r 0.927, off-peak CV ratio
+1.004. Reported as a clean pass, per rule 21's grounded-pass clause.
+
+**What this is NOT.** Validation tier is **ITERABLE model-SELECTION evidence** —
+not a certified out-of-sample skill number, never quotable as one. It is scored
+against the **known-imperfect availability envelope** the freeze exists for, so
+the `CC_REGULAR` over-generation in particular must be re-measured after that
+fix before it is attributed to the offer stack: an over-counted outage envelope
+and a CC over-dispatch are exactly the pair that could be confounded.
+
+**No re-tune was performed.** Rule 22 sends a validation miss back to 2023–2025;
+this session measured and reported only.
+
+**Governance.** No mechanism tested → no matrix cell moves (rule 28b), no new
+`ScenarioConfig` field (rule 28c). Keeper UNCHANGED, no marker re-keyed — a
+touchpoint is not a promotion. Rule 16 `[R-ALLYEARS]` is not engaged (it governs
+keepers; this is a single held-out year, the shape the `complete` marker
+authorizes). Run explorer pruned 15 → 4, keeping the keeper, the touchpoint and
+every run cited by `calibration-complete.json` or `keepers/PJM.json`.
+
+**Environment note for whoever re-runs this.** PJM 2022 needs **~16 GB RSS** at
+LP build/solve and OOM-killed twice on a 15 GB box; it completed only after
+10 GB of swap was added. Solve it alone — do not run a second ISO or a
+`regenerate_clean` pass concurrently.
+
+Next shorthand: **pjm-157.**
