@@ -3414,3 +3414,105 @@ invariants; vacancy is not validation).
 6. Do NOT commission a T1 battery re-measurement (Q.2). Keepers are still moving — ERCOT moved
    during this handoff's writing.
 ```
+
+## §0o — Wave-5 adjudication + FFR-5D-M continuation dispatched (2026-08-05 @ `34473b0c`)
+
+All three §0l lanes ran after the §0n re-dispatch. **CAISO-GRANT LANDED CLEAN** (PR #3599 —
+CAISO in `complete`, determination scorer-verified, M1 PASS, freeze-outranks proven live).
+**FFR-5E LANDED CLEAN** (PR #3602 chain — byte-identity proven against a field-absent base,
+netting demonstrated at the MISO queue cap, hindcast arm correctly BLOCKED per FFR-3V §6.1).
+**FFR-5D landed its implementation but its paired-arm measurement NEVER RAN** — handoff §3/§4
+are empty placeholders and no ffr5d hindcast registrations exist. Full adjudication: sitting
+Addendum T. Wave-5 close and the FH-4/FH-5 lift both wait on the measurement below.
+
+NEW STANDING TRAP (from the grant lane, Addendum T.1): the `ruff-autofix.sh` PostToolUse hook
+reflows `src/market_sim/config/constants.py` (3,960 → 9,508 lines) on ANY `.py` Write/Edit —
+check `git status --short` before staging, restore the file's exact HEAD bytes, never push the
+reflow.
+
+### FFR-5D-M [FABLE] — run FFR-5D's pre-registered paired-arm measurement
+
+```
+[FABLE] FFR-5D-M — Execute FFR-5D's PRE-REGISTERED paired-arm measurement (continuation of
+owner decision D-19(a); charter: sitting Addendum T.3). The implementation is LANDED and
+ADJUDICATED (PR #3601 chain): capacity_screen_unified_lookahead (default OFF), the screen
+unification, the three level repairs, the matrix row, and the pre-registered reads all sit on
+main. Your job is ONLY the measurement half its session never completed: run the two
+invocations EXACTLY as pre-registered, execute the committed read-out probe, register both
+arms, and fill the handoff's empty §3/§4. You change NO model code, arm nothing, promote
+nothing, tune nothing. If the arms surface a code defect, STOP and report to the manager —
+do not fix-and-rerun inside this lane.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 34473b0c — RE-VERIFY AT YOUR OWN HEAD) ===
+ERCOT keeper: 2026-08-05-run168b-year-curves — it has moved TWICE since FFR-5D branched
+(run167b soc-reserve, then run168b year-curves). The manager ran the R.1-style check at
+34473b0c: ercot_storage_as_* and coal_perplant_offer_yearly ALL ship default False, so the
+SHIPPED posture your arms inherit is unchanged from the FFR-5A posture. Re-verify at your
+head: if any ScenarioConfig default has flipped since, STOP and report before solving —
+paired-arm comparability is the lane's foundation.
+Markers: `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY; HOLDOUT FREEZE ACTIVE (the
+2026-08-05 lift was spent and RE-ARMED — PJM/NEISO 2022 only, an owner act, done). This
+lane's T1-FF window is legal by the enumerated carve-out; ERCOT holds no marker and needs
+none; 2022 is BRIDGED — never solved, its measured data never read.
+Cache epochs 2026-08-02/03b/04; results/ gitignored — COLD solves, no cache budget. D-13
+hash-out hazard: identical cache key does NOT imply byte-identity across the D-13 boundary.
+PREREQUISITES IN ORDER: `uv sync` FIRST (~2 min), THEN scripts/regenerate_clean.py
+(~63-65 min, 50 datatypes — budget for it). Rule 27: FABLE/OPUS; this lane writes docs +
+frontend/data/hindcast/ + probe outputs only.
+
+=== WHAT YOU RUN (pre-registered in docs/handoffs/ffr-5d-price-object-2026-08-05.md §2 —
+run VERBATIM, no flag added or dropped) ===
+uv run python scripts/run_capacity_hindcast.py \
+  --iso ERCOT --vintage 2020 --start-year 2021 --end-year 2025 \
+  --forward-from-base --arm realized \
+  --out-dir results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-shipped
+
+uv run python scripts/run_capacity_hindcast.py \
+  --iso ERCOT --vintage 2020 --start-year 2021 --end-year 2025 \
+  --forward-from-base --arm realized --capacity-screen-unified-lookahead \
+  --out-dir results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified
+
+Rule 12 (F.2, per prompt): the TWO invocations MAY run as concurrent background jobs (<=2);
+years are sequential WITHIN each invocation (the runner does this — do not parallelize the
+year loop). 4 LP years each (2022 bridged). Take each run's cache key from its runtime
+`cache_key=` log line, never from a request-side cache_key() call.
+
+=== THE READS (fixed BEFORE the original session solved — read, do not re-decide) ===
+Execute scripts/probes/ffr5d_paired_arm.py against both out-dirs. The four reads are handoff
+§2 (a)-(d): (a) coal-cohort event sequence (decided/re_confirmed/reversed/executed by ledger
+year — decided_year is ON THE EVENT ROWS; ledgers live at <out-dir>/ERCOT/<runtime-key>/,
+and a silent {} from a wrong path is indistinguishable from a real null — VERIFY THE PATH
+BEFORE BELIEVING A ZERO); (b) the enriched pipeline_events bar decomposition (FFR-5A's
+persisted ledger fields — no re-instrumentation); (c) the fleet-wide entry_capped census;
+(d) scored thermal exits vs the 1.534 GW actual.
+THE HONEST EXPECTATION IS ALREADY ON RECORD (handoff §2, committed before solving): the
+armed arm may STILL not resolve the real exits — whatever it shows is a FINDING, not a
+failure, and NO repair may be tuned toward 1.534 GW (rule 1). If the cohort still reverses,
+or nothing ever fails, or everything fails — that number goes to the manager as-is.
+
+=== WHAT YOU DELIVER ===
+1. Register BOTH arms to frontend/data/hindcast/ (register_hindcast.py, slim files,
+   meta.kind="full_forward", ids ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}) — NEVER
+   the backcast registry. Evidence runs, expected to be superseded when keepers settle (Q.2).
+2. Fill handoff §3 (measured results: the four reads, both arms, side by side) and §4
+   (governance position) by APPENDING under the existing placeholder lines — nothing above §3
+   changes (pre-registration integrity: the §2 expectations must remain verifiably
+   pre-solve). State explicitly which shipped-expectation reproductions held (§2a/§2c) — a
+   shipped arm that does NOT reproduce FFR-5A's recorded values is stop-the-line evidence of
+   drift, report it before interpreting the armed arm.
+3. Rule 28(b): stamp any matrix cell your arms adjudicate (the row exists — no new field).
+4. A SHORT report to the manager: the four reads, whether G.2's three binds have anything to
+   say (a control that flips identically is not the fix's green; watch inverted-sign
+   invariants; vacancy is not validation), and NO lift recommendation — the FH-4/FH-5 lift
+   determination is the MANAGER'S (Addendum I.1), not this lane's.
+
+=== TRAPS ===
+NEW: the ruff-autofix PostToolUse hook reflows src/market_sim/config/constants.py on ANY .py
+Write/Edit (3,960 -> 9,508 lines) — after writing any Python (probe tweaks, scratch
+helpers), `git status --short` and restore constants.py to exact HEAD bytes; NEVER stage or
+push the reflow (rule 27). Push 413: fetch main + rebase first; prune stale refs; the owner
+merges fast and deletes branches. Never push_files a >=300-line file. Cache-purge deletes
+TRACKED files. Shell cwd persists. Stop-hook on merged history: rev-list count 0 => nothing
+to amend. MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the cache key. results/ dies with
+the container — commit registrations and handoff BEFORE any long tail work.
+```
