@@ -1,0 +1,103 @@
+{
+ "id": "2026-08-05-neiso-2022-touchpoint",
+ "label": "neiso 2022 touchpoint",
+ "date": "2026-08-05",
+ "shorthand": "neiso-2022-touchpoint",
+ "definition": "NEISO 2022 VALIDATION TOUCHPOINT (rule 22, validation tier). Byte-faithful replay of the neiso-83 keeper recipe (2026-08-05-neiso-83-ca1-reclass, CALIBRATED-WITH-CAVEATS) on the held-out 2022 year. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2022. Iterable model-SELECTION evidence, NEVER a certified out-of-sample skill number. NEISO's locked test (2019 + H1-2026) is SPENT and is NOT re-opened here. Spent under a narrow owner lift of the 2026-07-25 holdout freeze, which is re-armed in the same session.",
+ "years": [
+  2022
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-08-05-neiso-2022-touchpoint.js",
+ "bundle": "results/calibration/neiso2022_touchpoint",
+ "holdout": {
+  "tier": "validation",
+  "year": 2022,
+  "keeper": "2026-08-05-neiso-83-ca1-reclass",
+  "keeperDetermination": "CALIBRATED-WITH-CAVEATS",
+  "keeperYears": [
+   2023,
+   2024,
+   2025
+  ],
+  "holdoutDetermination": "NOT-YET",
+  "criteria": [
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "CAVEAT",
+    "holdout": "FAIL",
+    "verdict": "carried"
+   },
+   {
+    "key": "shape",
+    "label": "C7 diurnal shape (D-1)",
+    "tier": "protective",
+    "inSample": "SKIPPED",
+    "holdout": "SKIPPED",
+    "verdict": "carried"
+   },
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 2,
+  "nCarried": 2,
+  "tierCaveat": "Validation tier: ITERABLE model-SELECTION evidence. This is NOT a certified out-of-sample skill number and must never be quoted as one \u2014 the year may be re-spent after the open availability-envelope defect lands. The touch-once locked test (2019 / H1-2026) is NOT spent here.",
+  "envelopeCaveat": "Scored against a known-imperfect availability envelope: the CAMPD unit-outage detector still books sustained economic layup as mechanical outage, and a residual over-count survives the 2026-07-26 merit-order guard. Every miss below is measured against a fleet whose availability is about to change, so none of them is attributable to forecast error alone until the run is repeated after that fix."
+ }
+}
