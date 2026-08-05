@@ -621,6 +621,104 @@ def _coal_perplant_levels(
     return out
 
 
+#: Non-leap month lengths for the model's fixed 8760 CST calendar (rule 8).
+_MONTH_DAYS: tuple[int, ...] = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+
+def _hour_month_hod(T: int) -> tuple[np.ndarray, np.ndarray]:
+    """Month-of-hour (1..12) and hour-of-day arrays for the model's calendar.
+
+    The model hour axis is fixed-CST hour-beginning on the non-leap 8760
+    calendar; the windowed per-plant curves (ercot-168) are derived onto the
+    SAME clock (CPT->CST conversion at derivation), so a plain calendar map is
+    the whole alignment story here.
+    """
+    doy = np.arange(T) // 24
+    bounds = np.cumsum((0,) + _MONTH_DAYS)
+    month = np.searchsorted(bounds, doy, side="right").astype(np.int64)
+    hod = np.arange(T) % 24
+    return month, hod
+
+
+def _coal_perplant_yearly_levels(
+    generators: "list[Generator]",
+    fleet_arrays: FleetArrays,
+    year_windows: "dict[int, tuple]",
+    self_sched_floor: float,
+) -> dict[int, list[tuple[tuple[int, ...], tuple[int, ...], float]]]:
+    """Per-row windowed measured levels for the ercot-168 year table.
+
+    ``year_windows`` is one solve-year's plant table
+    (``plant_code -> ((months, hours, curve), ...)``). The tranche stacking
+    and the capacity-window -> price mapping are the SAME construction as
+    :func:`_coal_perplant_levels`, evaluated per (months × hours) window on
+    the window's own curve — deliberately a parallel implementation rather
+    than a refactor of the static path, so the armed 2024/25 arithmetic is
+    untouched at the byte level (the precommit's G-BIT gate; a unit test
+    asserts the two paths agree on a single all-months-all-hours window).
+
+    Returns ``{row_index: [(months, hours, level), ...]}`` for exactly the
+    rows to reprice.
+    """
+    by_plant: dict[int, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if gen.fuel_type == "coal" and getattr(gen, "is_campd_bin", False):
+            code = int(getattr(gen, "plant_code", 0) or 0)
+            if code in year_windows:
+                by_plant.setdefault(code, []).append(g)
+    out: dict[int, list[tuple[tuple[int, ...], tuple[int, ...], float]]] = {}
+    for code, rows in by_plant.items():
+        entries = year_windows[code]
+        total = float(sum(fleet_arrays.pmax[g] for g in rows))
+        if total <= 0:
+            continue
+        rows_ord = sorted(rows, key=lambda g: _coal_tranche_rank(generators[g].unit_id))
+        cum = 0.0
+        for g in rows_ord:
+            share = float(fleet_arrays.pmax[g]) / total
+            lo_f, hi_f = cum, cum + share
+            cum = hi_f
+            rank = _coal_tranche_rank(generators[g].unit_id)
+            if not (1.0 <= rank < 99.0):
+                continue  # mustrun/sync/peak keep their own measured owners
+            wins: list[tuple[tuple[int, ...], tuple[int, ...], float]] = []
+            for months, hours, pts in entries:
+                top = float(pts[-1][0])
+                if top <= 0:
+                    continue
+                edges = [0.0] + [float(mw) for mw, _p in pts]
+                prices = [float(p) for _mw, p in pts]
+                lo, hi = lo_f * top, hi_f * top
+                wsum = psum = 0.0
+                for k in range(len(prices)):
+                    if prices[k] <= self_sched_floor:
+                        continue
+                    w = max(0.0, min(edges[k + 1], hi) - max(edges[k], lo))
+                    if w > 0:
+                        wsum += w
+                        psum += w * prices[k]
+                if wsum > 0:
+                    level = psum / wsum
+                else:
+                    # window entirely inside the self-schedule floor block:
+                    # the first priced price above it (the static path's own
+                    # convention)
+                    priced = [p for p in prices if p > self_sched_floor]
+                    if not priced:
+                        continue
+                    level = priced[0]
+                wins.append(
+                    (
+                        tuple(int(m) for m in months),
+                        tuple(int(h) for h in hours),
+                        float(level),
+                    )
+                )
+            if wins:
+                out[g] = wins
+    return out
+
+
 def apply_coal_tranches(
     mc: np.ndarray,
     generators: list[Generator],
@@ -628,6 +726,7 @@ def apply_coal_tranches(
     fuel_fracs: list[float],
     fuel_prices: np.ndarray,
     config: "ScenarioConfig | None" = None,
+    year: int | None = None,
 ) -> None:
     """Reduce coal-tranche marginal cost by the sunk (unpassed) fuel fraction.
 
@@ -706,6 +805,18 @@ def apply_coal_tranches(
     stand down on these rows (rule 19 replacement — the harness also strips
     them from the armed config so nothing re-armable remains, rule 26).
 
+    **Per-year windowed curves** (ercot-168,
+    ``config.coal_perplant_offer_yearly`` — requires the ERCOT-144 gate):
+    when the solve ``year`` is present in
+    ``config.coal_perplant_offer_curves_yearly``, a listed plant's
+    committed/econ tranches take the SAME all-in replacement with the level
+    a step series over the year table's (months × hours) windows — each
+    window's level is the tranche's capacity-window price on that window's
+    own measured curve (:func:`_coal_perplant_yearly_levels`). A year absent
+    from the table falls through to the static branch unchanged; the derive
+    guarantees exhaustive (month × hour) coverage and the branch hard-fails
+    on any gap (rule 25).
+
     Args:
         mc: The ``(n_gen, T)`` marginal-cost array, modified in place.
         generators: The generator list aligned row-for-row with ``mc``.
@@ -717,6 +828,10 @@ def apply_coal_tranches(
         config: Scenario configuration supplying the coal net-revenue margin
             gate and its identification constants. ``None`` (legacy callers)
             keeps the sunk-fuel form everywhere.
+        year: The solve year, used only by the per-year windowed curve
+            branch (ercot-168) to index the year table. ``None`` with that
+            gate armed is a hard error; legacy callers without the gate are
+            unaffected.
 
     Raises:
         ValueError: ``coal_offer_net_revenue_margin`` armed without a
@@ -819,6 +934,54 @@ def apply_coal_tranches(
                 "committed/econ tranche matched the per-plant curve registry "
                 "— the mechanism would silently do nothing (rule 24)"
             )
+    # Per-year windowed per-plant coal offer curves (ercot-168): for a solve
+    # year PRESENT in the resolved year table, committed/econ tranches of
+    # listed plants take their (months x hours) window levels instead of the
+    # static level; a year ABSENT from the table falls through to the static
+    # path unchanged (2024/2025 bit-identity is the precommit's G-BIT kill).
+    yearly_on = config is not None and getattr(
+        config, "coal_perplant_offer_yearly", False
+    )
+    pp_year_levels: dict[int, list] = {}
+    _ym: "np.ndarray | None" = None
+    _yh: "np.ndarray | None" = None
+    if yearly_on:
+        if not perplant_on:
+            raise ValueError(
+                "coal_perplant_offer_yearly is armed without "
+                "coal_perplant_offer_level — the year table refines the "
+                "per-plant mechanism and has no meaning without it (rule 24)"
+            )
+        _ytab = getattr(config, "coal_perplant_offer_curves_yearly", None)
+        if not _ytab:
+            raise ValueError(
+                "coal_perplant_offer_yearly is armed but "
+                "coal_perplant_offer_curves_yearly is unset; resolve it from "
+                "constants.COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO at config "
+                "build (rule 25 — no silent fallback in the offer path)"
+            )
+        if year is None:
+            raise ValueError(
+                "coal_perplant_offer_yearly is armed but the caller passed no "
+                "solve year — the year table cannot resolve (rule 25)"
+            )
+        from market_sim.config.constants import COAL_PERPLANT_SELF_SCHED_FLOOR
+
+        _ytab = {int(y): tab for y, tab in _ytab.items()}
+        _ywin = _ytab.get(int(year))
+        if _ywin:
+            _ywin = {int(k): v for k, v in _ywin.items()}
+            pp_year_levels = _coal_perplant_yearly_levels(
+                generators, fleet_arrays, _ywin, COAL_PERPLANT_SELF_SCHED_FLOOR
+            )
+            if not pp_year_levels:
+                raise ValueError(
+                    "coal_perplant_offer_yearly is armed and the year table "
+                    f"carries {year}, but no CAMPD coal committed/econ "
+                    "tranche matched it — the mechanism would silently do "
+                    "nothing (rule 24)"
+                )
+            _ym, _yh = _hour_month_hod(mc.shape[1])
     for g, gen in enumerate(generators):
         if (
             peak_margin_on
@@ -855,6 +1018,29 @@ def apply_coal_tranches(
             )
             n_margin += 1
             continue
+        if yearly_on and g in pp_year_levels:
+            # Per-year windowed measured level (ercot-168): the same all-in
+            # replacement as the static branch below, with the level a step
+            # series over the (months x hours) windows of the solve year's
+            # own measured curves. Vectorized per window (a handful of
+            # windows per row, never a loop over hours — rule 2).
+            lev = np.full(mc.shape[1], np.nan)
+            for _months, _hours, _level in pp_year_levels[g]:
+                _msk = np.isin(_ym, _months) & np.isin(_yh, _hours)
+                lev[_msk] = _level
+            if np.isnan(lev).any():
+                raise ValueError(
+                    "coal_perplant_offer_curves_yearly leaves uncovered "
+                    f"hours for row {g} ({generators[g].unit_id}) — the "
+                    "window table must cover every (month, hour) cell "
+                    "(rule 25; derive emits exhaustive coverage)"
+                )
+            mc[g, :] += (
+                lev
+                - fleet_arrays.heat_rate[g] * fuel_prices[g, :]
+                - fleet_arrays.vom[g]
+            )
+            continue
         if perplant_on and g in pp_levels:
             # Per-plant measured window level (ERCOT-144): remove the
             # assembled fuel and VOM terms and post the plant's own measured
@@ -887,6 +1073,24 @@ def apply_coal_tranches(
             n_margin,
             coal_level,
             coal_anchor,
+        )
+    if pp_year_levels:
+        _by_plant_y: dict[int, list[float]] = {}
+        for g, wins in pp_year_levels.items():
+            _by_plant_y.setdefault(
+                int(getattr(generators[g], "plant_code", 0) or 0), []
+            ).extend(lv for _m, _h, lv in wins)
+        logger.info(
+            "coal per-plant YEAR-windowed offer levels (ercot-168, year %s): "
+            "%d committed/econ tranche(s) across %d plant(s) on the year's "
+            "own measured window curves — %s",
+            year,
+            len(pp_year_levels),
+            len(_by_plant_y),
+            "; ".join(
+                f"{code} [{min(v):.2f}..{max(v):.2f}]"
+                for code, v in sorted(_by_plant_y.items())
+            ),
         )
     if pp_levels:
         _by_plant: dict[int, list[float]] = {}

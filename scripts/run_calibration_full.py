@@ -3040,6 +3040,7 @@ def solve_and_persist(
     cc_committed_offer_margin: bool = False,
     coal_peak_offer_margin: bool = False,
     coal_perplant_offer_level: bool = False,
+    coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -4348,6 +4349,23 @@ def solve_and_persist(
                 coal_lignite_passthrough_sigmoid=False,
                 coal_econ_marginal_hr_bound=False,
             )
+        if coal_perplant_offer_yearly:
+            # Per-year windowed per-plant coal offer curves (ercot-168):
+            # record the gate and the FULL year-keyed table the run used —
+            # exactly as scripts/run_calibration.py::run_year resolves it
+            # (rule 25: run_config records what the solve used; the consumer
+            # indexes the table by solve year, so the recorded value is
+            # year-invariant).
+            from market_sim.config.constants import (
+                COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_perplant_offer_yearly=True,
+                coal_perplant_offer_curves_yearly=(
+                    COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]
+                ),
+            )
         if nysdec_peaker_rule_availability:
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
@@ -4617,6 +4635,7 @@ def solve_and_persist(
             cc_committed_offer_margin=cc_committed_offer_margin,
             coal_peak_offer_margin=coal_peak_offer_margin,
             coal_perplant_offer_level=coal_perplant_offer_level,
+            coal_perplant_offer_yearly=coal_perplant_offer_yearly,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -5361,6 +5380,7 @@ def solve_and_persist(
         "cc_committed_offer_margin": cc_committed_offer_margin,
         "coal_peak_offer_margin": coal_peak_offer_margin,
         "coal_perplant_offer_level": coal_perplant_offer_level,
+        "coal_perplant_offer_yearly": coal_perplant_offer_yearly,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -8153,6 +8173,27 @@ def main() -> None:
         "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO "
         "(derive_coal_perplant_offer.py); ISOs without derived curves "
         "hard-fail (rule 24). Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--coal-perplant-offer-yearly",
+        dest="coal_perplant_offer_yearly",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PER-YEAR windowed per-plant coal offer curves (ercot-168, "
+        "ScenarioConfig.coal_perplant_offer_yearly — matrix section 5.1 "
+        "item 12's rule-23 re-derivation of the armed ERCOT-144 "
+        "identification from the delivery-2023 NP3-965 corpus, replacing "
+        "the DOF ledger's declared 2024/25->2023 extrapolation). Requires "
+        "--coal-perplant-offer-level. For a solve year PRESENT in "
+        "constants.COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO (only 2023), "
+        "committed/econ tranches of listed plants are priced per "
+        "(months x hours) window on the window's own merged measured curve "
+        "— the same window mapping, per cell; _mustrun/_peak keep their "
+        "ERCOT-137/ERCOT-140 owners; a year ABSENT from the table falls "
+        "through to the static registry unchanged (2024/2025 "
+        "byte-identical — the ercot-168 precommit's G-BIT kill gate). "
+        "Identification: derive_coal_perplant_offer.py --year 2023. "
+        "Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -11139,6 +11180,7 @@ def main() -> None:
         cc_committed_offer_margin=args.cc_committed_offer_margin,
         coal_peak_offer_margin=args.coal_peak_offer_margin,
         coal_perplant_offer_level=args.coal_perplant_offer_level,
+        coal_perplant_offer_yearly=args.coal_perplant_offer_yearly,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,

@@ -40,14 +40,35 @@ Rule-23 frozen derive: re-run ONLY when the source disclosure subsets are
 regenerated from new data, and cite that change in the re-derivation commit.
 NEVER because a residual moved.
 
+**Per-year mode (ercot-168, matrix §5.1 item 12 — rule-23 re-derivation
+trigger: the ercot-157 delivery-2023 corpus landing dissolved the "no 2023
+SCED exists" extrapolation premise).** ``--year 2023`` reads the full-year
+NP3-965 corpus (``data/raw/ercot/SCED/``, publication-month-keyed shards,
+delivery = filename − 2) under the SAME row filters and emits the
+year-resolved registry ``COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO`` — the
+same modal construction at the corpus's own submission grain: the effective
+curve of (resource, month, hour) is the hour's modal price-tuple curve iff
+that key repeats on a strict majority (>0.5) of the month's live days at
+that hour, else the month's pooled modal curve (the ercot-144
+modal/time-stability license at day grain; every admitted hour cell is
+recorded with its day-share in the provenance JSON). Timestamps are
+converted CPT -> fixed CST at derivation so emitted hour windows sit on the
+model's clock (the ercot-166 DST-defect class, closed at the source).
+Construction and convention-boundary disclosure:
+``docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`` §0/§1e.
+
 Reporting/derivation tool only — default-off in every solve path. The model
 artifact it informs is the hand-set ``COAL_PERPLANT_OFFER_CURVE_BY_ISO``
 entry in ``config/constants.py`` (cited back to this script), consumed by the
-harness only under ``--coal-perplant-offer-level``.
+harness only under ``--coal-perplant-offer-level`` — plus, in per-year mode,
+``COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO`` consumed under
+``--coal-perplant-offer-yearly``.
 
 Usage::
 
     python scripts/data/derive_coal_perplant_offer.py [--json-out PATH]
+    python scripts/data/derive_coal_perplant_offer.py --year 2023 \
+        [--json-out PATH]
 """
 
 from __future__ import annotations
@@ -163,10 +184,295 @@ def merge_plant_curve(
     return out
 
 
+SCED_CORPUS_DIR = REPO / "data" / "raw" / "ercot" / "SCED"
+
+#: Columns the per-year mode reads from each corpus shard (the ercot-123
+#: load_sced filter set: ONLINE status, HSL>0, HSL>LSL, HASL & net-output
+#: non-null — replicated on the raw 187-column all-string schema).
+_CORPUS_COLS = [
+    "SCED Time Stamp",
+    "Resource Name",
+    "Resource Type",
+    "Telemetered Resource Status",
+    "HSL",
+    "HASL",
+    "LSL",
+    "Telemetered Net Output ",
+]
+
+
+def load_corpus_coal(year: int) -> pd.DataFrame:
+    """Delivery-``year`` CLLIG rows from the NP3-965 corpus, filter-matched.
+
+    Applies the SAME row filters as :func:`ercot123_coal_sced_reach.load_sced`
+    (ONLINE telemetered status, numeric coercion, ``HSL > 0``, ``HSL > LSL``,
+    HASL and net-output non-null) plus the delivery-year filter that drops the
+    publication-window bleed (2022-12-31 / early-Jan rows in edge shards).
+    Timestamps convert CPT (prevailing, the disclosure clock) -> fixed CST
+    (the model clock): fall-back ambiguity resolves to standard time, the
+    spring-forward hole shifts forward — a dozen 5-minute rows per resource
+    at stake, disclosed here rather than silently mixed.
+    """
+    from market_sim.config import paths  # noqa: F401  (repo-root resolution)
+
+    import pyarrow.dataset as pads
+
+    from scripts.probes.ercot123_coal_sced_reach import ONLINE
+
+    files = sorted(SCED_CORPUS_DIR.glob("*.parquet"))
+    if not files:
+        raise SystemExit(f"no NP3-965 corpus shards under {SCED_CORPUS_DIR}")
+    cols = _CORPUS_COLS + TPO_MW + TPO_PR
+    frames = []
+    for f in files:
+        t = pads.dataset(f).to_table(
+            columns=cols, filter=pads.field("Resource Type") == "CLLIG"
+        )
+        if t.num_rows:
+            frames.append(t.to_pandas())
+    df = pd.concat(frames, ignore_index=True)
+    df = df[df["Telemetered Resource Status"].astype(str).str.strip().isin(ONLINE)]
+    for c in ["HSL", "HASL", "LSL", "Telemetered Net Output "] + TPO_MW + TPO_PR:
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    ts = pd.to_datetime(df["SCED Time Stamp"], format="%m/%d/%Y %H:%M:%S")
+    loc = ts.dt.tz_localize(
+        "America/Chicago", ambiguous=False, nonexistent="shift_forward"
+    )
+    df["ts"] = loc.dt.tz_convert("Etc/GMT+6").dt.tz_localize(None)
+    df = df[(df["HSL"] > 0) & (df["HSL"] > df["LSL"])]
+    df = df[df["HASL"].notna() & df["Telemetered Net Output "].notna()]
+    df = df[df["ts"].dt.year == year]
+    if df.empty:
+        raise SystemExit(f"no delivery-{year} CLLIG rows survived the filters")
+    df["month"] = df["ts"].dt.month
+    df["hour"] = df["ts"].dt.hour
+    df["day"] = df["ts"].dt.normalize()
+    return df.reset_index(drop=True)
+
+
+def _row_keys(g: pd.DataFrame) -> pd.Series:
+    """The modal-construction curve key of every row: rounded sorted prices."""
+    P = g[TPO_PR].to_numpy(float)
+    M = g[TPO_MW].to_numpy(float)
+    ok = np.isfinite(P) & np.isfinite(M)
+    keys = [
+        tuple(np.round(np.sort(P[i][ok[i]]), 2)) if ok[i].any() else None
+        for i in range(len(g))
+    ]
+    return pd.Series(keys, index=g.index)
+
+
+def _curve_of_key(g: pd.DataFrame, key: tuple) -> list[tuple[float, float]]:
+    """The (mw, price) points of the first row carrying ``key`` (ercot-144)."""
+    P = g[TPO_PR].to_numpy(float)
+    M = g[TPO_MW].to_numpy(float)
+    ok = np.isfinite(P) & np.isfinite(M)
+    i = next(
+        j
+        for j in range(len(g))
+        if ok[j].any() and tuple(np.round(np.sort(P[j][ok[j]]), 2)) == key
+    )
+    pr = P[i][ok[i]]
+    mw = M[i][ok[i]]
+    o = np.argsort(mw)
+    return list(zip(mw[o].tolist(), pr[o].tolist()))
+
+
+def derive_year_windows(
+    df: pd.DataFrame,
+) -> tuple[dict[int, list], dict]:
+    """The per-year windowed registry: plant -> [(months, hours, curve)].
+
+    Construction (precommit §0, one rule, uniform, no scope carve-outs):
+    the effective curve of (resource, month, hour) is the hour's modal
+    price-tuple curve iff that key repeats on a strict majority (>0.5) of the
+    month's live days at that hour, else the month's pooled modal curve.
+    Identical adjacent cells merge into windows; resources merge to plants via
+    :func:`merge_plant_curve` per cell; a plant with zero live resources in a
+    month carries its year-pooled plant curve for that month.
+    """
+    df = df.copy()
+    df["key"] = _row_keys(df)
+    df = df[df["key"].notna()]
+    df["plant_code"] = df["Resource Name"].map(_plant_of)
+
+    # effective per (resource, month, hour) curve, plus the disclosure record
+    eff: dict[tuple[str, int, int], tuple] = {}  # (rn, mo, h) -> key
+    curves_by_key: dict[tuple[str, tuple], list] = {}  # (rn, key) -> points
+    admitted: list[dict] = []
+    refused: list[dict] = []
+    for (rn, mo), g in df.groupby(["Resource Name", "month"]):
+        month_key, _n = Counter(g["key"]).most_common(1)[0]
+        curves_by_key.setdefault((rn, month_key), _curve_of_key(g, month_key))
+        live_days = g["day"].nunique()
+        for h, gh in g.groupby("hour"):
+            key, _hn = Counter(gh["key"]).most_common(1)[0]
+            if key != month_key:
+                dshare = gh[gh["key"] == key]["day"].nunique() / live_days
+                cell = {
+                    "resource": rn,
+                    "month": int(mo),
+                    "hour": int(h),
+                    "day_share": round(float(dshare), 3),
+                    "top": float(max(key)),
+                }
+                if dshare > 0.5:
+                    curves_by_key.setdefault((rn, key), _curve_of_key(gh, key))
+                    eff[(rn, mo, h)] = key
+                    admitted.append(cell)
+                    continue
+                refused.append(cell)
+            eff[(rn, mo, h)] = month_key
+        # hours with no rows in this month fall back to the month key
+        for h in range(24):
+            eff.setdefault((rn, mo, h), month_key)
+
+    # year-pooled per-resource modal (the zero-live-month plant fallback)
+    pooled: dict[str, list] = {}
+    for rn, g in df.groupby("Resource Name"):
+        key, _n = Counter(g["key"]).most_common(1)[0]
+        pooled[rn] = _curve_of_key(g, key)
+
+    live_months: dict[str, set[int]] = {
+        rn: set(g["month"].unique()) for rn, g in df.groupby("Resource Name")
+    }
+
+    # plant-grain merge per (month, hour), then window collapse
+    registry: dict[int, list] = {}
+    plants = sorted({c for c in df["plant_code"].dropna().unique().astype(int)})
+    res_by_plant: dict[int, list[str]] = {
+        int(code): sorted(g["Resource Name"].unique())
+        for code, g in df.groupby("plant_code")
+    }
+    for code in plants:
+        units = res_by_plant[code]
+        cell_curves: dict[tuple[int, int], tuple] = {}
+        for mo in range(1, 13):
+            live = [rn for rn in units if mo in live_months[rn]]
+            for h in range(24):
+                if live:
+                    unit_curves = [
+                        (
+                            np.array(
+                                [p[0] for p in curves_by_key[(rn, eff[(rn, mo, h)])]]
+                            ),
+                            np.array(
+                                [p[1] for p in curves_by_key[(rn, eff[(rn, mo, h)])]]
+                            ),
+                        )
+                        for rn in live
+                    ]
+                else:
+                    # zero live resources this month: year-pooled plant curve
+                    unit_curves = [
+                        (
+                            np.array([p[0] for p in pooled[rn]]),
+                            np.array([p[1] for p in pooled[rn]]),
+                        )
+                        for rn in units
+                    ]
+                merged = merge_plant_curve(unit_curves)
+                cell_curves[(mo, h)] = tuple(
+                    (round(a, 1), round(b, 2)) for a, b in merged
+                )
+        # collapse: per month -> maximal hour runs of identical curves,
+        # then merge (hours, curve)-identical entries across months.
+        per_month: dict[int, list[tuple[tuple[int, ...], tuple]]] = {}
+        for mo in range(1, 13):
+            runs: list[tuple[list[int], tuple]] = []
+            for h in range(24):
+                cv = cell_curves[(mo, h)]
+                if runs and runs[-1][1] == cv:
+                    runs[-1][0].append(h)
+                else:
+                    runs.append(([h], cv))
+            per_month[mo] = [(tuple(hs), cv) for hs, cv in runs]
+        groups: dict[tuple[tuple[tuple[int, ...], tuple], ...], list[int]] = {}
+        for mo in range(1, 13):
+            sig = tuple(per_month[mo])
+            groups.setdefault(sig, []).append(mo)
+        entries = []
+        for sig, months in sorted(groups.items(), key=lambda kv: kv[1][0]):
+            for hours, cv in sig:
+                entries.append((tuple(months), hours, cv))
+        registry[code] = entries
+
+    prov = {
+        "admitted_hour_cells": admitted,
+        "refused_hour_cells": refused,
+        "n_admitted": len(admitted),
+        "n_refused": len(refused),
+    }
+    return registry, prov
+
+
+def emit_year_mode(year: int, json_out: Path | None) -> int:
+    """Run the per-year derivation and print the constants paste block."""
+    df = load_corpus_coal(year)
+    n_days = df["day"].nunique()
+    print(
+        f"# delivery-{year} corpus: {len(df):,} CLLIG rows, {n_days} days, "
+        f"{df['Resource Name'].nunique()} resources"
+    )
+    registry, prov = derive_year_windows(df)
+
+    print(
+        "# COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO['ERCOT'][%d] — paste into "
+        "constants.py" % year
+    )
+    print('    "ERCOT": {')
+    print(f"        {year}: {{")
+    for code, entries in registry.items():
+        print(f"            {code}: (  # {PLANT_NAMES.get(code, code)}")
+        for months, hours, cv in entries:
+            pts = ", ".join(f"({a:g}, {b:g})" for a, b in cv)
+            print(f"                ({months}, {hours}, ({pts})),")
+        print("            ),")
+    print("        },")
+    print("    },")
+
+    if json_out:
+        json_out.parent.mkdir(parents=True, exist_ok=True)
+        json_out.write_text(
+            json.dumps(
+                {
+                    "lane": "ercot168-coal-perplant-year-curves",
+                    "year": year,
+                    "registry": {
+                        str(k): [
+                            [list(months), list(hours), [list(p) for p in cv]]
+                            for months, hours, cv in v
+                        ]
+                        for k, v in registry.items()
+                    },
+                    "provenance": prov,
+                    "corpus": {
+                        "dir": str(SCED_CORPUS_DIR.relative_to(REPO)),
+                        "rows": int(len(df)),
+                        "days": int(n_days),
+                    },
+                },
+                indent=1,
+            )
+        )
+        print(f"wrote {json_out}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--json-out", type=Path, default=None)
+    ap.add_argument(
+        "--year",
+        type=int,
+        default=None,
+        help="per-year mode (ercot-168): derive the windowed year registry "
+        "from the full NP3-965 corpus instead of the pooled 2024-25 "
+        "probe-day registry",
+    )
     args = ap.parse_args()
+    if args.year is not None:
+        return emit_year_mode(args.year, args.json_out)
 
     frames = []
     for tag, _year, _fam in SUBSETS:
