@@ -3027,6 +3027,103 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**, C7 failing **2025 only**)
 
+> **QUEUE STAMP miso-133 (2026-08-05) — THE ST_GAS COVERAGE BLOCKER IS DEAD AS A
+> MEASUREMENT ARTIFACT, THE CHP ROW IS CORRECTED, AND A WHOLE SUCCESSOR FAMILY
+> IS CLOSED BY A SLACK MEASUREMENT. NO LP, NO FIELD, NO ARM, NO RUN, KEEPER
+> UNCHANGED** at `2026-08-05-miso-132b-cc-committed`. Charter lane (b), the two
+> **un-adjudicated** rows of miso-130 §4. PREREG pushed at `a2be76c6` BEFORE any
+> adjudicating statistic; two-sided prior declared (the sign of the restated
+> deficit was genuinely unknown and could have inverted).
+>
+> **(a) THE KILL.** miso-127-parallel §7a's three candidate causes for the
+> `ST_GAS` 37–39 % gap — sub-CEMS units, bench-vs-LP class assignment, no bench
+> entry — are **ALL WRONG**. The cause is a fourth nobody looked for: the
+> ratio's two sides sit on **opposite sides of a documented reporting
+> transform**. `fleet.eia860.apply_other_fossil_scoring` re-buckets a
+> genuinely-mixed gas-thermal plant into `OTHER_FOSSIL` **symmetrically on the
+> model and actual sides**; `class_hourly` is written UPSTREAM of it, the
+> bench/payload pair DOWNSTREAM. miso-127 divided a downstream numerator by an
+> upstream denominator. At MISO the transform has one material member —
+> **Ninemile Point (plant 1403**, model `ST_GAS` 1,465.4 + `CC_REGULAR`
+> 649.5 MW, neither class dominant): **9.51 / 9.21 / 8.36 TWh** of payload
+> `OTHER_FOSSIL` energy against an `ST_GAS` residual of **8.23 / 8.16 / 7.38
+> TWh**. One plant IS the gap. Transform-consistent **`ST_GAS` coverage =
+> 0.988 / 0.988 / 0.988** (was 0.605/0.612/0.629), and the machines were never
+> missing — the bench carries 1403 at 8.26/9.13/8.62 TWh, matching the model to
+> **−50 / −3 / −86 MW** at July night. **The §7a blocker on every class-grain
+> MISO gas statement — standing since 2026-08-04 — is LIFTED.**
+>
+> **(b) THE CHP ROW WAS INVERTIBLE ALL ALONG.** §7b is right that the bench CHP
+> series are whole-plant; what it lacked is that the **payload's MODEL series
+> carries the same add-back**, flat, in exactly the bench's own `btm` amount, so
+> removing it is EXACT. The §7b ratio is a **crossed** pair. Clean pairs,
+> grid-delivered: `CC_CHP` 1.088/**0.986**/1.194 (**S-2 RESOLVED**), `CT_CHP`
+> 1.654/1.756/1.767, `ST_CHP` 0.822/0.803/0.773 (both PARTIALLY RESOLVED,
+> residual named: model short 1.7–2.0 TWh/yr `CT_CHP`, long 0.06–0.08 `ST_CHP`).
+>
+> **(c) miso-130 §4 IS SUPERSEDED** (July night h0–5, grid-delivered both sides,
+> model − measured MW 2023/24/25): `COAL_PRB` **+1,968/+1,736/+3,103**;
+> `CC_REGULAR` −1,367/−779/−1,357; **`CT_PEAKER` −854/−691/−666 — a row the
+> identity did not have**; **`ST_GAS` −384/−234/−673** (was "size unknown");
+> **CHP −314/−131/−444** (was "nominal −1.7 GW" — **the disputed row overstated
+> the CHP hole by ~1.3 GW**). Non-coal total −2,969/−1,838/−3,227 vs coal
+> +1,989/+2,122/+3,993. miso-130's root cause **SURVIVES, re-weighted**: the
+> hole is `CC_REGULAR`/`CT_PEAKER`-led, not CHP-led. The seam and `CC_REGULAR`
+> rows keep their adjudications (SPENT / miso-115 REFUSED).
+>
+> **(d) THE GENERALISABLE LESSON, and a DO-NOT that closes a FAMILY: MISO's
+> overnight non-coal CAPABILITY IS NOT THE BINDING CONSTRAINT.** Pre-registered
+> slack measurement (S-4, declared ungated), uncontaminated in all three years:
+> at July night the keeper dispatches **6.1 %** of assembled `CT_PEAKER` and
+> **16.9 %** of `ST_GAS`, leaving **~41 GW** of idle non-coal gas capability
+> against a **3.2 GW** (2025) shortfall — `CT_PEAKER` availability would have to
+> fall to **~20 %** before its idle block ALONE stopped covering the whole
+> shortfall. **DO NOT charter a MISO lever whose mechanism is to make more
+> overnight non-coal capability AVAILABLE** — availability, must-offer,
+> commitment-bridge, reserve-gating and RA-style levers all add *capability*.
+> What holds the model's overnight gas down is the merit **ORDER**, i.e.
+> miso-130's freeze statistic seen from the quantity side; the two constructions
+> now agree from both directions. This also disposes of miso-130 §5's open
+> `gas_commitment_bridge` census question — the mechanism could not bind even if
+> the pool were full. Joins miso-132(a) ("a missing market rule is not
+> automatically a binding one"), miso-131 ("a plant-grain signature is not a
+> class-grain defect") and miso-129 ("a signature is not a cause"); the family's
+> rule is now: **measure the SLACK, and measure it on ONE basis.**
+>
+> **(e) A grain disagreement, recorded not buried.** S-1's pre-registered
+> plant-grain sub-CEMS test on `CT_PEAKER`'s 46 unbenched plants returns
+> **FAILS** (0.192 below 25 MW); at the grain 40 CFR Part 75 is actually written
+> — the **unit** — the same plants carry 154 EIA-860 generators with **79.9 %**
+> of 1,886.4 MW below 25 MW → **SUPPORTED** (RICE banks: Weston RICE 131.6 MW,
+> F.D. Kuester 131.6 MW). Both reported; the pre-registered one fired and is
+> superseded on rule 14 grounds, disclosed. `CT_PEAKER`'s gap is **real machines
+> CEMS cannot see** — its shortfall is a LOWER bound and **no bench-repair
+> charter is owed**.
+>
+> **(f) THE QUEUE NOW.** §5.4 stays **EMPTY of chartered levers**, and it is
+> *smaller*: (d) closes the capability-side family, so with granularity inert
+> (miso-131), online-gating slack (miso-132(a)), seam classes SPENT
+> (miso-114/123), take-or-pay dead by proof (miso-127b), within-band slope false
+> (miso-129) and trough volume REFUSED (miso-115), the remaining admissible
+> route to C7-2025 runs through the **coal offer LEVEL** — i.e. the ex-ante
+> contract-tonnage data ask, still **data/calendar-blocked** (the Form 580 count
+> is environment-blocked, re-confirmed here by the same 22,464-byte SPA shell,
+> and the 2026 form is not due until **2026-10-30**; the **Michigan PSCR lead is
+> UNSPENT**). NAMED, NOT CHARTERED: a cross-ISO **bench-chain hygiene** item —
+> any coverage/level statistic dividing a bench/payload quantity by a
+> `class_hourly` quantity crosses the `apply_other_fossil_scoring` seam and will
+> mis-state any ISO with a mixed gas-thermal plant; under rule 25 **no other
+> ISO's number is corrected here** and each ISO must measure its own roster.
+> Cell effect: `gas_commitment_bridge` MISO **stays `U`** with its evidence
+> re-stamped — S-4 was declared descriptive and ungated, so no verdict is taken
+> from it (KILL-1 honoured; nothing was sized on any Δ).
+>
+> **FINDING:** `results/calibration/FINDING-miso133-overnight-identity-basis-2026-08-05.md`
+> · **PREREG:** `results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`
+> · **Probe:** `scripts/probes/_miso133_overnight_identity_basis.py`
+> · **Record:** `results/calibration/_miso133_overnight_identity_basis.json`.
+
+
 > **QUEUE STAMP miso-132(b) (2026-08-05) — SUCCESSOR 2 EXECUTED AND PROMOTED:
 > the CC committed-band measured re-grounding is the NEW KEEPER,
 > `2026-08-05-miso-132b-cc-committed`** (bundle
