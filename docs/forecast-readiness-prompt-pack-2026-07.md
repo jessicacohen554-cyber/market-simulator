@@ -2673,3 +2673,196 @@ the realized-config verification), the per-unit bar decomposition, the year-over
 audit, the intent-vs-code adjudication with the design-record citation, the fix CLASS with its
 escalation, and what you did NOT separate.
 ```
+
+### FFR-5B [OPUS] — design the procurement-channel mechanism for VRE entry (D-16(a); NO implementation)
+
+Signed 2026-08-05 (Addendum R.5). Dispatched with FFR-5A and FFR-5C.
+
+```
+[OPUS] FFR-5B — Design the procurement-channel mechanism for VRE entry (D-16(a) scoping; NO
+implementation). STRUCTURAL SCOPING lane (Wave 5), chartered by owner decision D-16(a) (sitting
+Addendum R.3/R.5, signed 2026-08-05). The deliverable is a DESIGN plus a rule-13 [R-MEASURED]
+admissibility argument. No code lands, no solve runs, no parameter is proposed as a number, no
+default moves. If your design work convinces you an implementation shortcut is safe, it is not:
+implementation is a SEPARATE owner decision, and your job includes drafting its card.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 243b4ab1 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; all six moved during Wave 4):
+ERCOT 2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-04-caiso-172-measured-path15 · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-04-neiso81-chpheatrate · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (it blocks
+out-of-training BACKCAST solve/score/registration only — irrelevant to this no-solve lane). The
+marker and the freeze are orthogonal (caiso-171): a freeze SUSPENDS what a marker grants, it
+does not withdraw the marker. This lane reads docs + code + committed data only; if you run
+Python for data inspection, `uv sync` first (~2 min — the container ships NO Python
+environment). scripts/regenerate_clean.py is NOT needed (no solve). Rule 27: OPUS/FABLE.
+
+=== THE GAP (measured; do not re-derive) ===
+FFR-3V (docs/handoffs/ffr-3v-miso-entry-screen-2026-08-04.md §3.1, §7 proposal 1) + sitting
+Addendum P.3(a) + card D-16 (end of Addendum P): MISO built 18.649 GW of solar 2021-2025 while
+BOTH revenue levers the entry screen can see are correctly ~zero (PRA cleared ~$1,825/MW-yr; the
+11% RPS is slack at 16.9% modelled VRE share). The build happened on utility IRP/RFP procurement
+and corporate PPAs against the ITC — a long-term contracting channel `apply_economic_new_entry`
+represents NOWHERE (it screens merchant energy margin only). FFR-3V's rule-1 reading, adopted by
+the owner: closing this with a revenue adder tuned until solar clears is the fitted-adder
+failure rule 1 forbids. Internal control that makes the gap sharp: wind built 4.0 GW through the
+same code path and caps.
+
+=== YOUR QUESTION ===
+Specify what a structurally faithful procurement channel would have to BE. The design answers,
+in order:
+1. WHAT DRIVES PROCUREMENT VOLUME as a forward-regenerating input. Rule 13's admissibility test,
+   verbatim: could this same quantity be produced for a forward year from forward drivers, and
+   would it respond to changed conditions? Candidates to evaluate (not exhaustive, none
+   pre-approved): announced utility IRP targets/portfolios, state clean-energy statutes beyond
+   the modelled RPS constraint, corporate PPA demand, the interconnection queue's
+   signed-IA/executed-GIA cohort (EIA-860 proposed-pipeline statuses). For each: what data
+   identifies it, at what vintage, with what forward analogue, and how it responds to changed
+   conditions.
+2. WHERE IT ENTERS the capacity-evolution loop (spec §5.1: step 4 known additions vs step 5
+   economic entry vs a new step), and how it composes with the caps FFR-4A audited — it must not
+   become a second netting or a second ladder (rule 19 [R-ONE-MECH]), and it must state its
+   interaction with D-17's chartered fix (FFR-5C, running this wave).
+3. HOW IT FAILS SAFE: what stops it from degenerating into "paste the actual build in" (the
+   rule-13 forbidden pole — pinning to observed outcomes)? Draw the line between an
+   announced-procurement INPUT (admissible — the confirmed-exits analogue) and a
+   measured-outcome PIN (forbidden) explicitly, including the hindcast information gate
+   (instrument_date <= the vintage cutoff; precedent
+   docs/handoffs/confirmed-retirement-plan-2026-07.md).
+4. SCOPE per rule 25 [R-ISO-SCOPE]: MISO evidence charters MISO. State per-ISO data availability
+   for the channel without arming anywhere; every other ISO enters as its own later decision.
+5. VERDICT: a rule-13 admissibility argument for the recommended design — or a finding that NO
+   admissible design exists. The null is a valid deliverable; say it plainly rather than forcing
+   a design.
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT] (structure first; no fitted adders). Rule 13 [R-MEASURED] (the admissibility
+test IS your rubric). Rule 19 [R-ONE-MECH]. Rule 24 [R-REGISTRY] (any future tunable must be
+named for ScenarioConfig/run_config in the design). Rule 25 [R-ISO-SCOPE]. Rule 28 (a design
+alone changes no matrix cell; if you nonetheless adjudicate one, stamp it in-session with
+citation).
+
+=== DELIVERABLE ===
+docs/handoffs/ffr-5b-procurement-channel-design-<date>.md: the candidate-driver evaluation
+(limb 1), the insertion-point design (limb 2), the fail-safe line (limb 3), the per-ISO scope
+map (limb 4), the admissibility verdict (limb 5), what you did NOT decide, and a PROPOSED OWNER
+CARD for the implementation decision (measured consequence, named recommendation, the wrong
+option with its real cost) ready for the manager to put. Do not open the implementation.
+
+=== TRAPS ===
+Push 413 has two causes: a merged branch's stale tracking ref (`git remote prune origin`) and a
+stale local origin/main defeating delta compression (`git fetch origin main` + rebase — measured
+647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files
+(string-content full-file rewrite — rule 27). Shell cwd persists between Bash calls. The
+stop-hook reports unverified commits on already-merged shared history: if
+`git rev-list --count origin/main..HEAD` is 0 you have nothing to amend.
+```
+
+### FFR-5C [OPUS] — land the entry-cap fix: un-net the stock from the flows; give the pro-forma eyes (D-17(a))
+
+Signed 2026-08-05 (Addendum R.5). Dispatched with FFR-5A and FFR-5B.
+
+```
+[OPUS] FFR-5C — Land the entry-cap fix: un-net the stock from the flows; give the pro-forma
+eyes (D-17(a), sitting Addendum R.2/R.5, signed 2026-08-05). IMPLEMENTATION lane (Wave 5) for
+FFR-4A's E-1 + E-2, landed TOGETHER (rule 19): remove the pending-stock netting from both flow
+caps AND include pending entry_pipeline rows in the lookahead price signal's stack, as ONE gated
+ScenarioConfig field, DEFAULT OFF, with its matrix row in the same PR (rule 28c — CI enforces)
+and a paired-arm measurement. The shipped path stays BYTE-IDENTICAL until armed, and you prove
+that with a regression test.
+
+=== VERIFIED STATE (2026-08-05 @ origin/main 243b4ab1 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF; all six moved during Wave 4):
+ERCOT 2026-08-04-ercot165-unpooled-share · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-04-caiso-172-measured-path15 · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-04-neiso81-chpheatrate · MISO 2026-08-04-miso-127-onlinepmin.
+Markers: `complete` = {NEISO, NYISO, PJM}; `final` = EMPTY. HOLDOUT FREEZE ACTIVE (backcast
+out-of-training only). The marker and the freeze are orthogonal (caiso-171).
+PREREQUISITES: `uv sync` FIRST (~2 min — the container ships NO Python environment; skipping it
+makes any repo script fail in ways that read like data problems and are not).
+scripts/regenerate_clean.py (~63-65 min) ONLY if a test you need reads the clean store — the
+FFR-4A harness pattern reads committed EIA-860 vintages and shipped code; decide before spending
+the hour. Rule 12 PER PROMPT; this lane needs NO LP solve (see SCOPE DISCIPLINE). Rule 27:
+OPUS/FABLE; new_entry.py and runner.py are core src/ — edit locally, push exact on-disk bytes,
+verify the blob after any push touching a >=300-line file.
+
+=== THE DEFECT (measured, FFR-4A; do not re-derive) ===
+docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md. The pending-pipeline STOCK (`_pending_by_tech`,
+MW, no time denominator) is netted from two annual-FLOW caps (new_entry.py:1131-1148): the
+endogenous ladder `K × prior_max` and the static per-tech queue cap C. Consequences, derived
+(§3) and MEASURED through the shipped code path (§5): long-run average decisions capped at C/L;
+the ratchet's growth factor K−L+1 = 1 at the shipped (K,L)=(2,2) — frozen — in 24/24 ISO×tech
+cells at both vintages; MISO wind's registered 4,000/0/4,000/0 alternation (mean 2,000 = C/L
+exactly) is the static-cap signature. K=2.0 (ReEDS 200%; between the measured p75 and p90 of the
+EIA-860 growth-ratio distribution) and L=2 (LBNL Queued Up median IA→COD) both keep their
+citations — DO NOT MOVE EITHER. The documented intent (ff-entry-stack-completion-2026-07, gates
+line 39) nets the PER-TECH cap only; the ladder half is an uncited implementation extension
+(FFR-4A §1.1(b)). E-2 (FFR-4A §3.5): runner.py::_lookahead_reprice_signal prices next year's
+net load into the CURRENT fleet's merit stack only (runner.py:518-527) — pending entry_pipeline
+rows (known mw, known cod_year) are invisible to the pro-forma, so it re-decides the same
+opportunity every lag year. THAT information gap is the real cobweb; the netting was guarding it
+at the wrong object.
+
+=== WHAT YOU LAND ===
+1. ONE gated ScenarioConfig field (name it well — e.g. entry_pipeline_aware_signal — and justify
+   the name in its docstring), DEFAULT OFF, visible in run_config.json (rule 24), matrix row in
+   the SAME PR (rule 28c). OFF ⇒ shipped behavior byte-identical: add the regression test that
+   drives apply_economic_new_entry through a multi-year path with the field off and asserts the
+   shipped decision series (FFR-4A §5.2 Arm 0: MISO solar frozen at 1,236 MW/yr) is unchanged.
+2. ARMED ⇒ (i) the stock netting is removed from BOTH `_ladder_remaining` (new_entry.py:
+   1141-1147) and `group_remaining` (new_entry.py:1131-1137); (ii) pending entry_pipeline rows
+   enter the merit stack `_lookahead_reprice_signal` prices against, at their mw, from their
+   cod_year forward. ZERO new tunables — the rows already carry both fields. If you cannot do
+   (ii) without inventing a parameter, STOP and escalate to the manager; do not invent one.
+3. The backstop asymmetry (FFR-4A §1.3: evolve.py:708-713 nets only this-year decisions;
+   adequacy.py:497-500 commissions in-year with no pipeline row) is NOT yours to reconcile.
+   Record that the armed path leaves it unchanged; flag in the handoff if your change makes the
+   inconsistency WORSE, with the mechanism.
+4. PAIRED-ARM MEASUREMENT on the FFR-4A harness pattern (the real apply_economic_new_entry, the
+   real ladder update runner.py:1153-1160, the real step-4.5 commissioning evolve.py:576-600;
+   scripts recorded in FFR-4A §6): shipped vs armed, on MISO solar (ladder-first cell) AND MISO
+   wind (static-cap-first cell). Check against FFR-4A's measured series (§5.2): armed must
+   restore the ratchet (solar 1,236 → 2,472 → 4,944 → 6,000, then the static cap as the true
+   binder) and kill the wind 4,000/0 alternation. Any deviation from the §5.2 Arm B series is a
+   finding to explain, not to tune away.
+5. E-3 goes in the field's docstring: under the OLD construction the growth factor K−L+1 hits
+   zero at L=3 (economic entry shuts off entirely) — the armed path removes that trap; record it
+   so no future per-tech L refinement re-introduces it blind.
+
+=== SCOPE DISCIPLINE ===
+NO LP solve, NO forecast/hindcast registration, NO keeper contact, NO default flip, NO arming in
+any ISOConfig default_scenario_overrides. The field ships OFF everywhere; arming anywhere is a
+separate owner decision informed by your paired-arm measurement. Pre-registered and carried
+(FFR-4A §4/§5.4, owner-accepted at Q.3): this fix does NOT rescue MISO solar's FC-3 band — that
+leg's solar dies on revenue before any cap is consulted. If your handoff or PR reads as "fixes
+MISO solar", it is wrong; say the numbers are cap CEILINGS, not builds.
+
+=== RULES THAT BIND HARDEST ===
+Rule 1 [R-STRUCT] (no tuning to bands). Rule 19 [R-ONE-MECH] (E-1 and E-2 land together — the
+guard RELOCATES; it neither vanishes nor duplicates). Rule 23 [R-FROZEN-DERIVE] (the
+identification is FFR-4A §3.4's EIA-860 statistics — cite, never re-derive from a residual).
+Rule 24 [R-REGISTRY]. Rule 27 (push-integrity: exact bytes; blob verification after any push
+touching a >=300-line file). Rule 28c (matrix row in the same PR; CI enforces).
+
+=== COORDINATION ===
+FFR-5A (soft-latch root cause, retirements.py) and FFR-5B (procurement design, docs-only) run
+this wave as independent sessions. Your src/ overlap with them: NONE (you: new_entry.py,
+runner.py, tests; 5A: retirements.py + instrumentation). The one shared surface is
+docs/codebase-site/data/mechanism-matrix.js — whichever session lands second re-checks its cell
+survived the merge (the O.3 discipline; miso-124 lost a cell to exactly this race).
+
+=== TRAPS ===
+Push 413 has two causes: a merged branch's stale tracking ref (`git remote prune origin`) and a
+stale local origin/main defeating delta compression (`git fetch origin main` + rebase — measured
+647 KB -> 21 KB). FETCH MAIN BEFORE DIAGNOSING. Never push a >=300-line file via push_files
+(string-content full-file rewrite — rule 27). The documented cache-purge command deletes TRACKED
+files — `git status --short` after any purge; restore with `git checkout --`.
+`git checkout origin/main -- <path>` STAGES those files — `git restore --staged` after. Shell
+cwd persists between Bash calls. The stop-hook reports unverified commits on already-merged
+shared history: if `git rev-list --count origin/main..HEAD` is 0 you have nothing to amend.
+
+Deliverable: the PR (field + both halves + tests + matrix row) and
+docs/handoffs/ffr-5c-entry-cap-fix-<date>.md — the byte-identity proof, the paired-arm series
+against FFR-4A §5.2, the backstop-asymmetry statement, and what you did NOT separate.
+```
