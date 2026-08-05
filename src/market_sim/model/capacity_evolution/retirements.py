@@ -1355,6 +1355,7 @@ def _apply_pipeline_retirements(
     year: int,
     event_sink: dict | None,
     exit_rate_cap_mw: float | None,
+    margin_detail: dict[str, dict[str, float | str]] | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
 
@@ -1402,7 +1403,13 @@ def _apply_pipeline_retirements(
     6. **Ledger attribution.** ``event_sink["pipeline_events"]`` records
        decided / re_confirmed / reversed / entry_capped / executed rows with
        years, so recall/false-retire scoring sees the decision and the
-       execution separately.
+       execution separately. When the caller supplies ``margin_detail``
+       (:func:`apply_economic_retirements` always does), every row also
+       carries the FFR-5A bar decomposition — both bar sides, the per-leg
+       revenue split and the screen-basis descriptors — so a ledger reader
+       can attribute which leg moved a unit across the bar, and whether the
+       bar was the same object between two screen years, without replaying
+       the solve. Diagnostic only: rows record the decision, never shape it.
 
     ``pipeline_state`` maps ``unit_id -> decided_year`` and is threaded
     through the same cross-year seam as the legacy loss counters (the
@@ -1435,6 +1442,12 @@ def _apply_pipeline_retirements(
             row["execute_year"] = int(decided) + _execution_lag_years(
                 config, g.fuel_type
             )
+        # FFR-5A bar decomposition (diagnostic row fields; the decision this
+        # row records was already made from net_revenue vs going_forward_cost
+        # alone). Absent margin_detail (legacy callers/tests) rows are
+        # byte-identical to the pre-enrichment schema.
+        if margin_detail is not None:
+            row.update(margin_detail.get(g.unit_id, {}))
         return row
 
     # --- Soft latch (component 3): re-screen every pipelined unit at the
@@ -1801,6 +1814,10 @@ def apply_economic_retirements(
     # net_revenue vs going_forward_cost comparison is computed once here;
     # the rules differ only in how a failing screen becomes a realized exit.
     margins: list[tuple[Generator, float, float]] = []
+    # FFR-5A ledger enrichment: per-unit decomposition of both sides of the
+    # bar, merged onto that unit's pipeline_events rows (pipeline rule only).
+    # Diagnostic row fields, no decision effect (rule 24: not a tunable).
+    margin_detail: dict[str, dict[str, float | str]] = {}
     for g in fleet:
         if g.unit_id in exempt_unit_ids:
             # CCS-retrofitted this year (W2-C): decision already made; the
@@ -1840,15 +1857,26 @@ def apply_economic_retirements(
         # structurally misses the scarcity rent (the Potomac SOM net-revenue
         # construction is this same pro-forma). Gross revenue alone would
         # let a unit "cover" fixed cost with money it spent on fuel.
+        # Per-leg accumulators for the FFR-5A ledger enrichment (diagnostic
+        # row fields on pipeline_events; no decision effect, no tunable —
+        # rule 24 untouched): the energy-only pro-forma and the increment the
+        # reserve fold adds, so a ledger reader can attribute WHICH leg moved
+        # a unit across the bar without replaying the solve.
+        energy_margin_usd = 0.0
+        reserve_uplift_usd = 0.0
         if mc is None:
             net_revenue = float(sum(np.dot(prices[zone], dispatch[i]) for i in rows))
+            energy_margin_usd = net_revenue
         else:
             net_revenue = 0.0
             for i in rows:
-                hourly_value = np.maximum(prices[zone] - mc[i], 0.0)
+                base_value = np.maximum(prices[zone] - mc[i], 0.0)
+                energy_margin_usd += float(np.dot(base_value, cap_mw[i]))
+                hourly_value = base_value
                 if r_row is not None:
                     hourly_value = np.maximum(hourly_value, r_row)
                 net_revenue += float(np.dot(hourly_value, cap_mw[i]))
+            reserve_uplift_usd = net_revenue - energy_margin_usd
 
         # The attribute payment -- the higher of the exogenous EAC and the
         # endogenous RPS shadow price, never their sum -- adds revenue
@@ -1931,9 +1959,10 @@ def apply_economic_retirements(
                 section_45u_credit_per_mwh(year, avg_energy_price, config),
             )
         rps_for_unit = rps_shadow_price if g.fuel_type in _RPS_ELIGIBLE_FUELS else 0.0
-        net_revenue += compute_attribute_revenue(
+        attribute_revenue_usd = compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
         )
+        net_revenue += attribute_revenue_usd
 
         # Resource-adequacy capacity payment (Module M1): in PJM/NYISO/
         # ISO-NE/CAISO a unit earns a capacity revenue stream that can cover
@@ -1943,10 +1972,12 @@ def apply_economic_retirements(
         # zone already long on deliverable firm capacity vs its requirement earns
         # NO capacity payment (RA saturated there), so surplus in a long zone
         # retires as it should while short zones keep their units.
+        capacity_revenue_usd = 0.0
         if not _zone_is_long(deliverability_headroom, g.zone):
-            net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
+            capacity_revenue_usd = g.pmax_mw * capacity_revenue_per_mw_yr(
                 config.iso, g.fuel_type, g.eford, config, reserve_position, year
             )
+            net_revenue += capacity_revenue_usd
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
         # income stream the energy-only LP cannot produce. Exactly one
@@ -1960,16 +1991,22 @@ def apply_economic_retirements(
         #     and the exogenous flat rate is suppressed;
         #  3. else the exogenous flat rate (as_revenue_enabled, ERCOT only,
         #     saturating on the storage fleet) is the sole credit.
+        as_annual_credit_usd = 0.0
         if mc is not None and reserve_price_signal is not None:
-            pass  # hourly max(energy, reserve) above is the sole AS pricing
+            # hourly max(energy, reserve) above is the sole AS pricing
+            as_pricing = "hourly_signal"
         elif thermal_as_revenue_per_mw_yr is not None:
-            net_revenue += g.pmax_mw * thermal_as_revenue_per_mw_yr.get(
+            as_pricing = "endogenous_annual"
+            as_annual_credit_usd = g.pmax_mw * thermal_as_revenue_per_mw_yr.get(
                 g.fuel_type, 0.0
             )
+            net_revenue += as_annual_credit_usd
         else:
-            net_revenue += g.pmax_mw * as_revenue_per_mw_yr(
+            as_pricing = "exogenous_flat"
+            as_annual_credit_usd = g.pmax_mw * as_revenue_per_mw_yr(
                 g.fuel_type, storage_power_mw, config
             )
+            net_revenue += as_annual_credit_usd
 
         multiplier = getattr(config, _FOM_MULTIPLIER.get(g.fuel_type, ""), 1.0)
         going_forward_cost = (
@@ -1987,6 +2024,50 @@ def apply_economic_retirements(
             )
 
         margins.append((g, net_revenue, going_forward_cost))
+
+        # FFR-5A bar decomposition, attached to this unit's pipeline_events
+        # rows by _apply_pipeline_retirements (diagnostic only — the decision
+        # above consumed net_revenue/going_forward_cost and is already made).
+        # Basis descriptors record WHAT price/cost/availability object this
+        # screen consumed, so a year-over-year ledger diff can distinguish a
+        # genuine economic move from a basis drift between screen years.
+        _row_pmax = np.asarray([float(fleet_arrays.pmax[i]) for i in rows], dtype=float)
+        _pmax_total = float(_row_pmax.sum())
+        detail: dict[str, float | str] = {
+            "net_revenue_usd": float(net_revenue),
+            "going_forward_cost_usd": float(going_forward_cost),
+            "energy_margin_usd": float(energy_margin_usd),
+            "reserve_uplift_usd": float(reserve_uplift_usd),
+            "attribute_revenue_usd": float(attribute_revenue_usd),
+            "capacity_revenue_usd": float(capacity_revenue_usd),
+            "as_annual_credit_usd": float(as_annual_credit_usd),
+            "as_pricing": as_pricing,
+            "screen_price_mean_usd_mwh": float(np.mean(prices[zone])),
+            "screen_price_max_usd_mwh": float(np.max(prices[zone])),
+            "reserve_signal_mean_usd_mwh": (
+                float(np.mean(r_row)) if r_row is not None else 0.0
+            ),
+            "availability_mean": (
+                float(
+                    sum(
+                        float(_row_pmax[k]) * float(np.mean(availability[i]))
+                        for k, i in enumerate(rows)
+                    )
+                    / _pmax_total
+                )
+                if _pmax_total > 0.0
+                else 0.0
+            ),
+        }
+        if mc is not None and _pmax_total > 0.0:
+            detail["mc_mean_usd_mwh"] = float(
+                sum(
+                    float(_row_pmax[k]) * float(np.mean(mc[i]))
+                    for k, i in enumerate(rows)
+                )
+                / _pmax_total
+            )
+        margin_detail[g.unit_id] = detail
 
     # Revenue-side audit line (diagnostic): capacity-weighted screen net
     # revenue and going-forward bar per fuel class, for the FOM+scarcity joint
@@ -2033,6 +2114,7 @@ def apply_economic_retirements(
             year,
             event_sink,
             exit_rate_cap_mw,
+            margin_detail=margin_detail,
         )
 
     # Legacy rule: a failing year increments the unit's consecutive-loss
