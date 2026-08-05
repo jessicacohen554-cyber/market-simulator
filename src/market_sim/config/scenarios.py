@@ -203,6 +203,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-stable; an armed run changes both the flow caps and the pro-forma
     # price signal and so gets a distinct key.
     "entry_pipeline_aware_signal",
+    # FFR-5D capacity-screen unification + lookahead level repairs (GATED
+    # default-off): dropped from the hash at its default so every pre-existing
+    # cache key is byte-stable; an armed run changes which price object every
+    # capacity screen consumes (and that object's level) and so gets a
+    # distinct key. Owner decision D-19(a).
+    "capacity_screen_unified_lookahead",
     # FFR-3F exit-throughput cap (GATED default-off): dropped from the hash at
     # its default so every pre-existing cache key is byte-stable; an armed run
     # bounds the deactivation queue and so gets a distinct key. Owner decision
@@ -768,6 +774,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
     "entry_pipeline_aware_signal": "False",
+    "capacity_screen_unified_lookahead": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
@@ -3151,6 +3158,55 @@ class ScenarioConfig:
     # decisions only (evolve.py) and commissions in-year with no pipeline row
     # (adequacy.py), so the two consumers of one physical queue still net
     # differently. Default off is byte-identical.
+    capacity_screen_unified_lookahead: bool = False  # GATED default-OFF
+    # (FFR-5D, owner decision D-19(a), sitting Addendum S.3/S.5 signed
+    # 2026-08-05). Unifies every capacity-evolution screen — the retirement
+    # pipeline (decide AND every re-screen), CCS retrofit, economic new entry,
+    # and storage entry — on ONE price object for the entering year: the
+    # lookahead stack re-price (runner._lookahead_reprice_signal), bridge-
+    # adjacent entering years included; and repairs that object's three
+    # measured completeness gaps (FFR-5A §2a).
+    #
+    # NAME. The field is named for the two things it makes true at once: the
+    # capacity SCREENS become UNIFIED on the LOOKAHEAD object. Neither half is
+    # separable — unifying on the unrepaired object bakes in the 122
+    # manufactured pro-forma scarcity hours FFR-5A measured (every fuel clears
+    # its bar 4-13x, nothing ever retires), and repairing the object without
+    # unifying leaves the FFR-5A basis asymmetry (a bridged window's decide
+    # screen consumes raw duals + overlay while every re-screen consumes the
+    # lookahead, so bridge geometry — not unit economics — decides the
+    # retirement pipeline's output: the 29-unit / 8,218 MW coal cohort decided
+    # at $22.4/kW-yr vs a $58.5 bar on the raw object, then reversed at
+    # $341.5/kW-yr — 6x the bar — on the lookahead object, with a consistent-
+    # basis counterfactual of $1.3/kW-yr).
+    #
+    # WHEN ON:
+    #  (i) UNIFICATION. The runner prices a lookahead signal for EVERY entering
+    #      year the last solved year's prior_results will screen — including a
+    #      bridged entering year (2022/2026) and the bridge-adjacent year after
+    #      it — and swaps the matching signal into prior_results.price_signal
+    #      before each year's screens run. Rule-22 compliance is by
+    #      CONSTRUCTION, not by exception: a bridged entering year is priced on
+    #      the growth-scaled demand fallback the full-forward leg already uses
+    #      for forward years (never the bridged year's measured load), so the
+    #      no-read contract is unchanged while the OBJECT the screens consume
+    #      stops flipping at the bridge.
+    # (ii) LEVEL REPAIRS, each from existing model state, zero new tunables
+    #      (rules 23/24): (a) the storage fleet enters the pro-forma as a
+    #      per-day peak-shave/valley-fill on net load (power/energy caps and
+    #      round-trip efficiency from the evolved StorageArrays — the stack was
+    #      thermal-only); (b) the net-load VRE term becomes the ENTERING
+    #      fleet's wind/solar MW x the model's own hourly CF basis (potential,
+    #      pre-curtailment) instead of the prior year's REALIZED dispatched
+    #      output; (c) the merit stack is derated by the outage model's HOURLY
+    #      availability instead of the annual time-mean (maintenance is
+    #      scheduled off-peak, so a time-mean derate understates peak-hour
+    #      capacity and manufactures pro-forma scarcity).
+    # Composes with entry_pipeline_aware_signal (FFR-5C): pipeline rows enter
+    # the repaired stack on the same basis. Requires entry_lookahead_reprice
+    # (the object itself) to be on; with it off this gate is structurally
+    # a no-op. Forecast-machinery only (the backcast has no capacity
+    # evolution). Default off is byte-identical.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
