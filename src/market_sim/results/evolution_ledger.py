@@ -24,6 +24,16 @@ The schema (one object per scenario-year)::
       "pipeline_events":    [{"event","unit_id","fuel","mw","year",...}],  # R-NEW
                             # decided|re_confirmed|reversed|entry_capped|executed
                             # (retirement_rule="pipeline" only; empty under legacy)
+                            # FFR-5A bar decomposition (diagnostic, rows written
+                            # since 2026-08-05): each row also carries both bar
+                            # sides (net_revenue_usd, going_forward_cost_usd),
+                            # the per-leg split (energy_margin_usd,
+                            # reserve_uplift_usd, attribute_revenue_usd,
+                            # capacity_revenue_usd, as_annual_credit_usd,
+                            # as_pricing) and the screen-basis descriptors
+                            # (screen_price_mean/max_usd_mwh,
+                            # reserve_signal_mean_usd_mwh, availability_mean,
+                            # mc_mean_usd_mwh) of the screen that emitted it.
       "thermal_additions":  [{"unit_id","fuel","mw","zone","source","eia860_id"}],
       "ccs_retrofits":      [{"unit_id","mw","from_fuel","to_fuel"}],
       "renewable_additions":[{"zone","tech","mw"}],
