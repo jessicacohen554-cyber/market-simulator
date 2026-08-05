@@ -1,0 +1,43 @@
+{
+ "session": "miso-131",
+ "prereg": "PREREG-miso131-granularity-infinite-bound-2026-08-05.md",
+ "years": {
+  "2023": {
+   "plants_used": 31,
+   "p0b_profile_r_response6_vs_payload": 0.999,
+   "p0b_payload_frame_cv_ratio": 0.517,
+   "p0b_keeper_d1_cv_ratio": 0.514,
+   "p0b_pass": true,
+   "counterfactual_inf_cv_ratio": 0.518,
+   "payload_cv_ratio": 0.517,
+   "delta_cv_ratio": 0.001,
+   "frozen_share_of_band_cap": 0.0,
+   "clip_hours": 6389
+  },
+  "2024": {
+   "plants_used": 31,
+   "p0b_profile_r_response6_vs_payload": 0.997,
+   "p0b_payload_frame_cv_ratio": 0.529,
+   "p0b_keeper_d1_cv_ratio": 0.529,
+   "p0b_pass": true,
+   "counterfactual_inf_cv_ratio": 0.53,
+   "payload_cv_ratio": 0.529,
+   "delta_cv_ratio": 0.001,
+   "frozen_share_of_band_cap": 0.0,
+   "clip_hours": 5896
+  },
+  "2025": {
+   "plants_used": 31,
+   "p0b_profile_r_response6_vs_payload": 0.997,
+   "p0b_payload_frame_cv_ratio": 0.345,
+   "p0b_keeper_d1_cv_ratio": 0.347,
+   "p0b_pass": true,
+   "counterfactual_inf_cv_ratio": 0.344,
+   "payload_cv_ratio": 0.345,
+   "delta_cv_ratio": -0.001,
+   "frozen_share_of_band_cap": 0.0,
+   "clip_hours": 3057
+  }
+ },
+ "verdict": "P1 KILL \u2014 n->inf 2025 cv_ratio 0.344 < 0.50: infinite granularity cannot reach the gate under price-taking; the lane dies"
+}
