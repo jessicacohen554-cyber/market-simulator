@@ -1,0 +1,123 @@
+{
+  "probe": "_nyiso127_par_phase0",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "corroboration": {
+    "2023|25370": {
+      "hours_out": 0,
+      "share_hours_flowing": 0.9999
+    },
+    "2023|25371": {
+      "hours_out": 0,
+      "share_hours_flowing": 0.9999
+    },
+    "2023|101017299": {
+      "hours_out": 17,
+      "share_hours_flowing": NaN
+    },
+    "2023|101016633": {
+      "hours_out": 21,
+      "share_hours_flowing": NaN
+    },
+    "2023|101016389": {
+      "hours_out": 2156,
+      "share_hours_flowing": NaN
+    },
+    "2023|25641": {
+      "hours_out": 21,
+      "share_hours_flowing": 0.9962
+    },
+    "2023|25044": {
+      "hours_out": 8760,
+      "share_hours_flowing": 0.0
+    },
+    "2023|25043": {
+      "hours_out": 8760,
+      "share_hours_flowing": 0.0
+    },
+    "2024|25370": {
+      "hours_out": 49,
+      "share_hours_flowing": 0.9942
+    },
+    "2024|25371": {
+      "hours_out": 49,
+      "share_hours_flowing": 0.9942
+    },
+    "2024|101017299": {
+      "hours_out": 0,
+      "share_hours_flowing": NaN
+    },
+    "2024|101016633": {
+      "hours_out": 0,
+      "share_hours_flowing": NaN
+    },
+    "2024|101016389": {
+      "hours_out": 0,
+      "share_hours_flowing": NaN
+    },
+    "2024|25641": {
+      "hours_out": 291,
+      "share_hours_flowing": 0.9703
+    },
+    "2024|25044": {
+      "hours_out": 8784,
+      "share_hours_flowing": 0.0
+    },
+    "2024|25043": {
+      "hours_out": 8784,
+      "share_hours_flowing": 0.0
+    },
+    "2025|25370": {
+      "hours_out": 155,
+      "share_hours_flowing": 0.9826
+    },
+    "2025|25371": {
+      "hours_out": 155,
+      "share_hours_flowing": 0.9826
+    },
+    "2025|101017299": {
+      "hours_out": 21,
+      "share_hours_flowing": NaN
+    },
+    "2025|101016633": {
+      "hours_out": 42,
+      "share_hours_flowing": NaN
+    },
+    "2025|101016389": {
+      "hours_out": 42,
+      "share_hours_flowing": NaN
+    },
+    "2025|25641": {
+      "hours_out": 215,
+      "share_hours_flowing": 0.9823
+    },
+    "2025|25044": {
+      "hours_out": 8760,
+      "share_hours_flowing": 0.0
+    },
+    "2025|25043": {
+      "hours_out": 8760,
+      "share_hours_flowing": 0.0
+    }
+  },
+  "mean_zone_share": {
+    "2023": {
+      "Capital_Hudson": 0.4575,
+      "Upstate_West": 0.4727,
+      "NYC": 0.0698
+    },
+    "2024": {
+      "Capital_Hudson": 0.4682,
+      "Upstate_West": 0.4641,
+      "NYC": 0.0677
+    },
+    "2025": {
+      "Capital_Hudson": 0.4637,
+      "Upstate_West": 0.468,
+      "NYC": 0.0683
+    }
+  }
+}
