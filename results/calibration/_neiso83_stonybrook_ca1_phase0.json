@@ -1,0 +1,550 @@
+{
+ "arm_fleet_delta": {
+  "added": [],
+  "changed": [
+   "6081_CA1"
+  ],
+  "fields": {
+   "6081_CA1": {
+    "efficiency_bin": [
+     "default",
+     "older"
+    ],
+    "eford": [
+     0.1,
+     0.05
+    ],
+    "emission_rate_co2": [
+     1.0,
+     0.43
+    ],
+    "fuel_type": [
+     "oil",
+     "gas_cc"
+    ],
+    "nox_rate": [
+     0.0004,
+     8e-05
+    ],
+    "plant_group": [
+     "",
+     "CC_REGULAR"
+    ],
+    "vom": [
+     4.5,
+     2.0
+    ]
+   }
+  },
+  "removed": [],
+  "total_pmax_armed": 24209.58,
+  "total_pmax_off": 24209.58
+ },
+ "arm_outage_availability": {
+  "by_year": {
+   "2023": {
+    "capacity_leg_mw": 0.0,
+    "denominator_leg_mw": 0.0,
+    "effective_avail_mw_armed": 0.0,
+    "effective_avail_mw_capacity_leg_only": 0.0,
+    "effective_avail_mw_off": 0.0,
+    "mean_avail_armed": 0.0,
+    "mean_avail_off": 0.0,
+    "zero_hours_armed": 8760,
+    "zero_hours_off": 8760
+   },
+   "2024": {
+    "capacity_leg_mw": 28.3,
+    "denominator_leg_mw": 66.4,
+    "effective_avail_mw_armed": 156.4,
+    "effective_avail_mw_capacity_leg_only": 90.1,
+    "effective_avail_mw_off": 61.7,
+    "mean_avail_armed": 0.5128,
+    "mean_avail_off": 0.2953,
+    "zero_hours_armed": 0,
+    "zero_hours_off": 216
+   },
+   "2025": {
+    "capacity_leg_mw": 18.6,
+    "denominator_leg_mw": 75.2,
+    "effective_avail_mw_armed": 134.2,
+    "effective_avail_mw_capacity_leg_only": 59.0,
+    "effective_avail_mw_off": 40.5,
+    "mean_avail_armed": 0.44,
+    "mean_avail_off": 0.1935,
+    "zero_hours_armed": 144,
+    "zero_hours_off": 264
+   }
+  },
+  "denominator_mw_armed": 305.1,
+  "denominator_mw_off": 209.1
+ },
+ "campd": {
+  "2023": {
+   "cc_ct_gross_mwh": 15668.0,
+   "cc_ct_heat_mmbtu": 153922.1,
+   "has_ca_unit": false,
+   "oil_gt_gross_mwh": 5385.0,
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 6409.0,
+     "heat_mmbtu": 64201.1,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 3627.0,
+     "heat_mmbtu": 35501.1,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 5632.0,
+     "heat_mmbtu": 54219.9,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 3101.0,
+     "heat_mmbtu": 44247.2,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 2284.0,
+     "heat_mmbtu": 35877.3,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    }
+   }
+  },
+  "2024": {
+   "cc_ct_gross_mwh": 30611.0,
+   "cc_ct_heat_mmbtu": 383362.3,
+   "has_ca_unit": false,
+   "oil_gt_gross_mwh": 7447.0,
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 16288.0,
+     "heat_mmbtu": 203655.3,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 2868.0,
+     "heat_mmbtu": 35058.5,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 11455.0,
+     "heat_mmbtu": 144648.5,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 3738.0,
+     "heat_mmbtu": 49599.9,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 3709.0,
+     "heat_mmbtu": 49042.0,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    }
+   }
+  },
+  "2025": {
+   "cc_ct_gross_mwh": 73228.0,
+   "cc_ct_heat_mmbtu": 924685.2,
+   "has_ca_unit": false,
+   "oil_gt_gross_mwh": 6532.0,
+   "present": true,
+   "units": {
+    "001": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 36767.0,
+     "heat_mmbtu": 462168.3,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "002": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 3355.0,
+     "heat_mmbtu": 41226.0,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "003": {
+     "fuel": [
+      "Pipeline Natural Gas"
+     ],
+     "gross_mwh": 33106.0,
+     "heat_mmbtu": 421290.9,
+     "unit_type": [
+      "Combined cycle"
+     ]
+    },
+    "004": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 3620.0,
+     "heat_mmbtu": 50308.5,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    },
+    "005": {
+     "fuel": [
+      "Diesel Oil"
+     ],
+     "gross_mwh": 2912.0,
+     "heat_mmbtu": 40252.1,
+     "unit_type": [
+      "Combustion turbine"
+     ]
+    }
+   }
+  }
+ },
+ "fleet_rows_keeper_config": [
+  {
+   "eford": 0.1,
+   "emission_rate_co2": 1.0,
+   "fuel_type": "oil",
+   "heat_rate": 10.60617891,
+   "nox_rate": 0.0004,
+   "online_year": 1982,
+   "plant_group": "",
+   "pmax_mw": 65.0,
+   "unit_id": "6081_1",
+   "vom": 4.5,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.1,
+   "emission_rate_co2": 1.0,
+   "fuel_type": "oil",
+   "heat_rate": 10.60617891,
+   "nox_rate": 0.0004,
+   "online_year": 1982,
+   "plant_group": "",
+   "pmax_mw": 65.0,
+   "unit_id": "6081_2",
+   "vom": 4.5,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.1,
+   "emission_rate_co2": 1.0,
+   "fuel_type": "oil",
+   "heat_rate": 10.60617891,
+   "nox_rate": 0.0004,
+   "online_year": 1981,
+   "plant_group": "",
+   "pmax_mw": 96.0,
+   "unit_id": "6081_CA1",
+   "vom": 4.5,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.05,
+   "emission_rate_co2": 0.43,
+   "fuel_type": "gas_cc",
+   "heat_rate": 10.60617891,
+   "nox_rate": 8e-05,
+   "online_year": 1981,
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT1",
+   "vom": 2.0,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.05,
+   "emission_rate_co2": 0.43,
+   "fuel_type": "gas_cc",
+   "heat_rate": 10.60617891,
+   "nox_rate": 8e-05,
+   "online_year": 1981,
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT2",
+   "vom": 2.0,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.05,
+   "emission_rate_co2": 0.43,
+   "fuel_type": "gas_cc",
+   "heat_rate": 10.60617891,
+   "nox_rate": 8e-05,
+   "online_year": 1981,
+   "plant_group": "CC_REGULAR",
+   "pmax_mw": 69.7,
+   "unit_id": "6081_CT3",
+   "vom": 2.0,
+   "zone": "Central"
+  },
+  {
+   "eford": 0.1,
+   "emission_rate_co2": 1.0,
+   "fuel_type": "oil",
+   "heat_rate": 10.60617891,
+   "nox_rate": 0.0004,
+   "online_year": 1981,
+   "plant_group": "",
+   "pmax_mw": 0.6,
+   "unit_id": "6081_EDSI",
+   "vom": 4.5,
+   "zone": "Central"
+  }
+ ],
+ "iso": "NEISO",
+ "keeper": "2026-08-04-neiso81-chpheatrate",
+ "keeper_fleet_kwargs": {
+  "cc_steam_part_capacity": false,
+  "measured_chp_heat_rates": true,
+  "measured_ct_heat_rates": true
+ },
+ "no_lp": true,
+ "plant_code": 6081,
+ "predicate_population_national": [
+  {
+   "disposition": "CARRIED as coal (re-class population)",
+   "energy_source_1": "SGC",
+   "generator": "ST",
+   "mapped_fuel": "coal",
+   "name": "Edwardsport",
+   "plant": 1004,
+   "state": "IN"
+  },
+  {
+   "disposition": "CARRIED as oil (re-class population)",
+   "energy_source_1": "DFO",
+   "generator": "CA1",
+   "mapped_fuel": "oil",
+   "name": "Stony Brook",
+   "plant": 6081,
+   "state": "MA"
+  },
+  {
+   "disposition": "DROPPED (repair population)",
+   "energy_source_1": "OG",
+   "generator": "STG1",
+   "mapped_fuel": null,
+   "name": "Martinez Refining",
+   "plant": 54912,
+   "state": "CA"
+  },
+  {
+   "disposition": "DROPPED (repair population)",
+   "energy_source_1": "BFG",
+   "generator": "ST1",
+   "mapped_fuel": null,
+   "name": "Dearborn Industrial Generation",
+   "plant": 55088,
+   "state": "MI"
+  }
+ ],
+ "q1_capacity_basis": {
+  "eia860_nameplate_mw": 105.0,
+  "eia860_summer_mw": 96.0,
+  "fleet_pmax_mw": 96.0,
+  "reconciles_to_net_summer": true
+ },
+ "q1_misclassified": true,
+ "q1_oil_units_with_empty_group": {
+  "all_empty": true,
+  "mw": 5181.5,
+  "n": 135
+ },
+ "q1_shares_heat_rate_with_ct_siblings": true,
+ "q1b_reclass_population_national": [
+  {
+   "disposition": "CARRIED as coal (re-class population)",
+   "energy_source_1": "SGC",
+   "generator": "ST",
+   "mapped_fuel": "coal",
+   "name": "Edwardsport",
+   "plant": 1004,
+   "state": "IN"
+  },
+  {
+   "disposition": "CARRIED as oil (re-class population)",
+   "energy_source_1": "DFO",
+   "generator": "CA1",
+   "mapped_fuel": "oil",
+   "name": "Stony Brook",
+   "plant": 6081,
+   "state": "MA"
+  }
+ ],
+ "q2_no_campd_stack_for_ca1": true,
+ "q3_cross_check_implied_ct_net_over_gross": {
+  "2024": 0.9601,
+  "2025": 0.9572
+ },
+ "q3_direct": {
+  "mean_steam_share": 0.2849,
+  "sd": 0.006,
+  "years": {
+   "2018": {
+    "ca_net_mwh": 28493.0,
+    "ct_net_mwh": 74992.0,
+    "steam_share_of_block": 0.2753
+   },
+   "2019": {
+    "ca_net_mwh": 12916.0,
+    "ct_net_mwh": 31837.0,
+    "steam_share_of_block": 0.2886
+   },
+   "2020": {
+    "ca_net_mwh": 27121.0,
+    "ct_net_mwh": 67926.0,
+    "steam_share_of_block": 0.2853
+   },
+   "2021": {
+    "ca_net_mwh": 15378.0,
+    "ct_net_mwh": 37453.0,
+    "steam_share_of_block": 0.2911
+   },
+   "2022": {
+    "ca_net_mwh": 29558.0,
+    "ct_net_mwh": 74498.0,
+    "steam_share_of_block": 0.2841
+   }
+  }
+ },
+ "q3_fuel_inheritance": {
+  "max_abs_gap": 0.0217,
+  "years": {
+   "2018": {
+    "abs_gap": 0.0128,
+    "ca_dfo_share": 0.4556,
+    "ct_dfo_share": 0.4684
+   },
+   "2019": {
+    "abs_gap": 0.0163,
+    "ca_dfo_share": 0.0043,
+    "ct_dfo_share": 0.0206
+   },
+   "2020": {
+    "abs_gap": 0.0016,
+    "ca_dfo_share": 0.0096,
+    "ct_dfo_share": 0.008
+   },
+   "2021": {
+    "abs_gap": 0.003,
+    "ca_dfo_share": 0.0289,
+    "ct_dfo_share": 0.0319
+   },
+   "2022": {
+    "abs_gap": 0.0217,
+    "ca_dfo_share": 0.3655,
+    "ct_dfo_share": 0.3872
+   }
+  }
+ },
+ "q3_indirect": {
+  "2023": {
+   "campd_cc_ct_gross_mwh": 15668.0,
+   "ct_net_over_ct_gross": 0.9325,
+   "e923_ca_net_mwh": 2165.0,
+   "e923_ct_net_mwh": 14611.0,
+   "impossible_for_a_ct_only_row": false
+  },
+  "2024": {
+   "campd_cc_ct_gross_mwh": 30611.0,
+   "ct_net_over_ct_gross": 1.3426,
+   "e923_ca_net_mwh": 0.0,
+   "e923_ct_net_mwh": 41098.0,
+   "impossible_for_a_ct_only_row": true
+  },
+  "2025": {
+   "campd_cc_ct_gross_mwh": 73228.0,
+   "ct_net_over_ct_gross": 1.3385,
+   "e923_ca_net_mwh": 0.0,
+   "e923_ct_net_mwh": 98014.0,
+   "impossible_for_a_ct_only_row": true
+  }
+ },
+ "q3_share_is_evidence_not_a_parameter": true,
+ "rule25_other_isos": {
+  "CAISO": {
+   "byte_identical": true,
+   "n": 782
+  },
+  "ERCOT": {
+   "byte_identical": true,
+   "n": 1450
+  },
+  "MISO": {
+   "byte_identical": true,
+   "n": 1975
+  },
+  "NYISO": {
+   "byte_identical": true,
+   "n": 460
+  },
+  "PJM": {
+   "byte_identical": true,
+   "n": 1922
+  }
+ },
+ "rule25_registry": [
+  "NEISO"
+ ],
+ "session": "neiso-83"
+}

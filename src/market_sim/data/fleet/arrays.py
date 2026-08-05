@@ -928,6 +928,7 @@ def _apply_outage_overlays(
             hours,
             getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
             iso=_iso or "ERCOT",
+            cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -1055,6 +1056,7 @@ def _apply_outage_overlays(
                 hours,
                 getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
                 iso=_iso or "ERCOT",
+                cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             )
             if sfac:
                 applied_s = 0
@@ -1090,6 +1092,7 @@ def _apply_outage_overlays(
                 hours,
                 getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
                 iso=_iso or "ERCOT",
+                cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             )
             if ppfac:
                 applied_pp = 0
@@ -1125,6 +1128,7 @@ def _apply_outage_overlays(
                 config.weather_year,
                 hours,
                 iso=_iso or "ERCOT",
+                cc_steam_part_reclass=getattr(config, "cc_steam_part_reclass", False),
             )
             if mgfac:
                 applied_mg = 0

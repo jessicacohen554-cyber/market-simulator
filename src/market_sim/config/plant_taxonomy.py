@@ -187,8 +187,41 @@ CC_STEAM_PART_PRIME_MOVER: str = "CA"
 # ``results/calibration/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md``
 # (55088 Dearborn ``ST1``, 250.0 MW). Named but NOT entered: CAISO 54912
 # Martinez ``STG1`` 20.0 MW and NEISO 6081 Stony Brook ``CA1`` 96.0 MW, each
-# handed to its own lane unstamped.
+# handed to its own lane unstamped. NEISO's ``CA1`` is NOT a member of this
+# set's population at all — it is CARRIED, not dropped, so nothing is there to
+# restore; its object is :data:`CC_STEAM_PART_RECLASS_ISOS` below.
 CC_STEAM_PART_REPAIR_ISOS: frozenset[str] = frozenset({"MISO"})
+
+# ISOs whose fleet build RE-CLASSES the ``CA`` combined-cycle steam parts the
+# fuel map resolves to a NON-gas fuel from the row's own (stale / duct)
+# ``Energy Source 1`` (``ScenarioConfig.cc_steam_part_reclass``).
+#
+# This is a DIFFERENT object from :data:`CC_STEAM_PART_REPAIR_ISOS`, on a
+# disjoint population and with the opposite sign on capacity. The repair set
+# RESTORES a steam part the fuel map DROPS (``_map_fuel_type`` returns ``None``
+# for ``BFG`` / ``OG``), adding capacity that is missing. This set re-classes a
+# steam part the fuel map CARRIES under the wrong fuel — a ``CA`` row coded
+# ``DFO`` resolves to ``oil`` and is dispatched as a standalone distillate unit,
+# burning a fuel the machine does not have while the block's whole metered heat
+# input already sits on its ``CT`` siblings. Total capacity is unchanged; what
+# moves is the class, the fuel price, the VOM, the CO2 rate and the forced-
+# outage rate.
+#
+# The two sets are kept separate deliberately: the repair's ``fuel_type is
+# None`` gate is load-bearing (miso-125 §6 — MISO 1004 Edwardsport's ``CA``/
+# ``SGC`` row matches the steam-part predicate but is a real 555 MW IGCC
+# machine the model carries as ``COAL``, and a capacity repair must never
+# re-bucket a represented machine). Re-classing is exactly the operation that
+# gate forbids, so it gets its own flag and its own ISO registry rather than
+# widening the repair's.
+#
+# Rule 25 ``[R-ISO-SCOPE]``: an ISO enters only after its OWN session verifies,
+# on its OWN market's data, that the row is a genuine fuel-less steam part.
+# NEISO's verification is
+# ``results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md``
+# (6081 Stony Brook ``CA1``, 96.0 MW — NEISO's ENTIRE population is that one
+# row). MISO is deliberately absent: its only member would be Edwardsport.
+CC_STEAM_PART_RECLASS_ISOS: frozenset[str] = frozenset({"NEISO"})
 
 # EIA energy-source codes for the non-coal/non-gas thermal classes — the single
 # source of truth shared by the model fleet builder (``data.fleet``) and the
