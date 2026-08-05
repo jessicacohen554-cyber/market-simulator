@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-05 — ercot-167: the storage AS SOC reservation built, 2023-probed, A/B-tested, and OWNER-PROMOTED TO ERCOT KEEPER (2026-08-05-run167b-soc-reserve) — the session's REJECTED-AS-ARMED precommit verdict carried openly
+
+Matrix §5.1 item 10 executed (owner-directed, separate-2023-first per the distinct 2023 scarcity
+design). New mechanism `ercot_storage_as_soc_reserve` (+ derive
+`scripts/data/derive_ercot_storage_as_products.py`): battery SOC floored at the measured AS award ×
+the published per-product duration, deployment-netted, pin-reachability-clipped (two probe-found
+infeasibilities localized exactly — LP-bounds dump + per-unit feasibility LP — and fixed
+structurally; precommit amendments 1–2, zero fitted scalars). 2023 passes every gate (scarcity-hour
+discharge 666→520 MW vs SCED-measured actual 423); kills fired on 2024 C3a (+1.4 pp, concentrated
+on the known maintenance-season fabricated-spike days) and one 2025 spurious hour ($43 graze
+adjacent to two newly-captured real tail hours) — verdict REJECTED-AS-ARMED, re-gate the identical
+arm after the 2024 availability defect lands. Runs `2026-08-05-run167a-soc-control` +
+`2026-08-05-run167b-soc-reserve`; `FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md`.
+
+**Promotion addendum (same day):** owner directive "Promote" on the surfaced record, under the
+standing structural standard. Attestation generated (`scripts/gen_ercot167_attestation.py`,
+n_entries 11→12 measured/published, zero scalars; the three rubric-v3.0 C3c model-class entries
+carried with updated magnitudes 61/181, 25/53, 3/31); re-scored C6 PASS / C3c ledgered CAVEAT ×3;
+determination NOT-YET on {C3a 2023 −32.2%, C3b 2023 0.603 + 2024 0.206 (a NEW +0.006 scorer-basis
+band cross, same spike-day root, carried as an honest limit), C7 lignite cv 0.331}. Keeper shard,
+status part, matrix header + item-10 + def-registration all re-stamped; `audit_keepers --iso
+ERCOT` PASS; ercot165 stays as the immediate-prior comparison; standing re-gate condition
+unchanged.
+
 ## 2026-08-05 — ercot-166: ERCOT 2023 diagnosis triage; Oak Grove conduct solved from the disclosure corpora; rubric v3.0 model-class ledger kind and the ERCOT C3c caveat (no LP, no solve, keeper unchanged)
 
 Owner-directed. Full record `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`;
