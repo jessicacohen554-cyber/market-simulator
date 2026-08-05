@@ -2951,6 +2951,110 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-127-onlinepmin`, **NOT-YET**, C7 now failing **2025 only**)
 
+> **QUEUE STAMP miso-129 (2026-08-05) — miso-128's NAMED-BUT-NOT-CHARTERED OBJECT
+> IS DEAD ON ITS OWN PREMISE. NO LP SOLVED, NO DERIVE RUN, NO ScenarioConfig FIELD
+> ADDED, NO ARM BUILT, NO RUN REGISTERED, KEEPER UNCHANGED at
+> `2026-08-04-miso-127-onlinepmin` (NOT-YET, C7 `COAL_PRB` 2025 still the sole FAIL).**
+>
+> **OFF-QUEUE BY NECESSITY, and it says so** (rule 28(a)): §5.4 has no named,
+> un-adjudicated, non-data-blocked item — miso-128 closed the last one. This lane
+> took the ONE object miso-128 §6.4 NAMED BUT DID NOT CHARTER and attempted to
+> licence it itself. **It did not survive its own pre-registered premise check.**
+>
+> **(a) THE PREMISE IS FALSE. The coal offer band ALREADY HAS a within-band
+> incremental cost slope — it bids NINE prices, not one.** miso-128 named "the
+> model's coal offer band has no WITHIN-BAND INCREMENTAL COST SLOPE. Each CAMPD bin
+> bids ONE price, so a plant is bang-bang in whichever band is marginal and
+> SATURATES FLAT once loading clears a step." Measured at TWO grains (the
+> miso-126(a) duty) on the CAMPD limb — **never** `split_coal_tranches`, inert by
+> wiring at MISO. **GRAIN 1 (config):** `offer_curve_smoothing_n` = **6** (the
+> field's own `scenarios.py` DEFAULT), `_exp` = **1.0** (a straight linear ramp),
+> `_mid` = None; `offer_curve_by_group["COAL_PRB"]` =
+> `{committed 1.0, econ_low 1.0, econ_high 1.19, peak 1.48, econ_low_share 0.556}`;
+> `econ_split_by_group` **empty**, so the `offer is not None` limb is the one taken.
+> `data/offer_curves.py::_econ_curve_steps` slices the econ band into `n`
+> equal-capacity sub-tranches rising `econ_low → econ_high`, and **its own docstring
+> says `exp == 1` is "a straight (linear) ramp MATCHING A THERMAL UNIT'S
+> GENTLY-RISING INCREMENTAL HEAT RATE"** — the mechanism miso-128 named as missing
+> is the documented purpose of code armed on this keeper all along. **GRAIN 2
+> (assembled fleet at HEAD, keeper's own committed config, 2025):** **48 coal
+> plants / 38,144.8 MW; cap share bidding ONE econ price 0.0000; cap share LADDERED
+> 1.0000** — **SIX** distinct econ marginal costs on **ALL 48** plants, 7/8/9
+> distinct whole-plant prices, cap-wtd econ HR max/min **1.1341** (`COAL_PRB`
+> **1.1559** uniform over 34 plants / 27,973.1 MW). A representative PRB plant
+> (**1733**, 3,066 MW — one of the ten miso-128 measured going **newly flat at
+> HIGHER loading** in 2025) assembles as `mustrun, committed, econc00…econc05,
+> peak`: nine tranches, eight distinct prices, HR 10.74 → 15.90 (**1.48×**).
+> PREREG P1's falsifier was "FALSE if laddered ≥ 50 %"; measured **100.0 %**.
+> **The lane died with ZERO derive output and ZERO solves**, and no
+> `coal_within_band_incremental_slope` field was created.
+>
+> **(b) The construction was validated BEFORE the kill was quoted.** PREREG P0
+> reproduces miso-128's own actual-side fit on the committed bench:
+> `std_frac = +0.0558 × cf_off + 0.0289`, wR² **0.429**, n **92** — **identical to
+> three decimals** on both. The kill is not an artifact of a different construction.
+>
+> **(c) THE GENERALISABLE LESSON, and it is why this stamp is worth its length: A
+> SIGNATURE IS NOT A CAUSE.** miso-128 inferred "no slope" from "flat at higher
+> loading". **A saturation signature is produced by a step of ANY width** — it says
+> a plant is parked between prices, not that there is only one price. Reading it as
+> "no slope" skipped the construction check that separates a **MISSING** ladder from
+> a **COARSE** one, and the two have completely different successors. That check
+> costs one fleet assembly and no LP. **Apply the miso-126(a) two-grain duty to a
+> PREMISE, not only to a lever.**
+>
+> **(d) The phenomenon stays real; only the stated cause is dead.** 10 plants /
+> 11,958 MW newly flat in 2025 (nine of ten while model loading RISES), 59.4 % of
+> 2025 PRB nameplate flat vs reality's 12.3 %, `R_dfrac` 0.354, C7 still FAILS 2025
+> and the determination stays **NOT-YET**. **DO NOT re-open miso-128 §6.4's object**
+> — adjudicated PREMISE-FALSE at two grains on 100 % of capacity. **DO NOT charter
+> `coal_within_band_incremental_slope` at MISO**: it would be a rule 19
+> `[R-ONE-MECH]` duplicate of `offer_curve_smoothing_n`.
+>
+> **(e) NAMED, NOT CHARTERED** (rule 19; PREREG KILL-5 forbids manufacturing a
+> successor) — the refined object is the ladder's **GRANULARITY**. Measured in **MW**
+> so the two normalisations are not silently mixed: cap-wtd econ **step width 72.6
+> MW** against a cap-wtd **measured** off-peak diurnal amplitude of **90.4 MW**;
+> cap-wtd **MEDIAN** per-plant ratio **1.175**; and **41.4 % OF COAL CAPACITY HAS ITS
+> WHOLE MEASURED DIURNAL SWING INSIDE ONE STEP.** A plant parked mid-step is flat to
+> every price move narrower than a step — reproducing the saturation signature with
+> no missing slope. **DO-NOT-MISREAD:** the cap-wtd **MEAN** per-plant ratio is
+> **2.228** against the **MEDIAN 1.175** (plants with small econ bands Jensen-inflate
+> the mean) — quote the median and the capacity share, **never the mean alone**.
+> Three prerequisites a successor must establish, none established here: (i) that
+> granularity, not something else, carries `R_dfrac`; (ii) an identification for
+> `offer_curve_smoothing_n` that is **NOT** the C7 residual — it is presently an
+> **unidentified discretization count sitting on the gated mechanism**, a rule 21
+> `[R-DOF]` question in its own right, and sweeping it against C7 is the forbidden
+> fitted path (rules 1 / 24); (iii) that a finer ladder does not simply re-spend
+> **`R_tot`, ALREADY 0.952 with no room** (miso-128's binding consequence binds this
+> observation too).
+>
+> **(f) A rule-28(c) gap, filed and closed here — a NEW VARIANT no checker looks
+> for.** `offer_curve_smoothing_n` had **ZERO mentions anywhere** in
+> `mechanism-matrix.js`, **while its own two MODIFIERS were already registered** on
+> the `offer_curve_by_group` row (`offer_curve_smoothing_mid :8876`,
+> `offer_curve_smoothing_exp :8867`). The field that decides whether the ramp
+> **EXISTS AT ALL** was missing while the fields that *shape* it were present, so the
+> row **read as covering the smoothing family when it did not** — the caiso-161 §2 /
+> nyiso-121 defect as a registered **modifier set standing in for an unregistered
+> SWITCH**. Registered literally on that row this session as a sub-scalar (the
+> `coal_mustrun_online_pmin` convention, and nyiso-121's "register on rows, not in
+> prose"); **NO CELL MOVED** — the row is already `KKKKKK` and MISO's `K` is
+> *confirmed* at the construction grain, not changed. Rule 28(d): nothing inferred
+> for another ISO — the default of 6 makes it very likely armed everywhere, but only
+> MISO's was measured. It is a **shared-stem** field, so it belongs to the cross-ISO
+> shared-stem backlog nyiso-121 named as the only remaining rule-28(c) debt.
+>
+> **PREREG:** `results/calibration/PREREG-miso129-coal-within-band-incremental-slope-2026-08-05.md`
+> **FINDING:** `results/calibration/FINDING-miso129-coal-within-band-slope-premise-false-2026-08-05.md`
+> **Probe:** `scripts/probes/_miso129_coal_within_band_slope.py` ·
+> **Record:** `results/calibration/_miso129_coal_within_band_slope.json`.
+> **The two bounded NON-solve steps are unchanged:** item 1's Form 580 tonnage count
+> (a sourcing pass) and carrying miso-127 §1.3's headroom numbers into that ask.
+> **MISO's lever queue is UNCHANGED and still has no named, un-adjudicated,
+> non-data-blocked item.**
+
 > **QUEUE STAMP miso-128 (2026-08-04) — THE 2025-ONLY C7 GAP IS ADJUDICATED: ONE
 > DIMENSION, NOT ONE YEAR. NO LP SOLVED, NO ARM BUILT, NO RUN REGISTERED, KEEPER
 > UNCHANGED at `2026-08-04-miso-127-onlinepmin` (NOT-YET, C7 `COAL_PRB` 2025 still
