@@ -34,6 +34,19 @@ sequentially.**
   `ercot_storage_as_product_credit` nets the REQUIREMENT side. This adds the missing ENERGY-side
   reservation the power dock's own docstring names ("this reserves *power*, not state of charge —
   the first-order constraint that binds in the scarcity hours where the LP over-discharges").
+- **Amendment 2 (2026-08-05, pre-A/B — found by the v2 probe's LP-bounds dump + a per-unit
+  feasibility LP on the exact dumped arrays):** the netted floor was STILL infeasible, and the
+  minimal conflict is the **daily-pin coupling across days**: `storage_daily_cycle_hours=24` pins
+  every day-start SOC of a unit to ONE shared level, so the floor must admit an S0 satisfying all
+  365 pin hours at once — the West unit's floor at high-award midnights (889 MWh) exceeded its
+  energy cap at capability-dip midnights elsewhere (546 MWh; the conflict enters at the Oct-2023
+  capability-hole boundary, max feasible uniform floor scale 0.997). Fix: `_pin_reachability_clip`
+  — the floor is clipped by the unit's max-reachable SOC path under the model's own scaffolding
+  (S0 capped at the tightest pin-hour energy cap; within-day forward pass at the award-docked
+  charge power net of forced deployment discharge; backward pass bounding late-day SOC by what
+  docked discharge returns to S0). All inputs are measured arrays already in the LP; zero
+  parameters. Verified against the dumped failing bounds: removes **0.16 %** of floor MWh (max
+  138 MWh/h) and all five units go feasible at η=√0.85. No gate, band, or kill threshold changed.
 - **Amendment (2026-08-05, pre-A/B — found by the 2023 probe, recorded before any full-span
   solve):** the first probe went **LP-INFEASIBLE**: the deployment mechanism force-discharges the
   award draw-down at the ramp while midday charge power is award-docked to ~0.3 GW, and a floor

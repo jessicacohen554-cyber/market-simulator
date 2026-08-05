@@ -520,6 +520,11 @@ def ercot_storage_as_soc_min(
     year: int,
     hours: int,
     deploy_mw: np.ndarray | None = None,
+    charge_cap: np.ndarray | None = None,
+    discharge_min: np.ndarray | None = None,
+    eta_chg: np.ndarray | float = 1.0,
+    eta_dis: np.ndarray | float = 1.0,
+    daily_pin: bool = False,
 ) -> np.ndarray:
     """SOC floor backing ERCOT's measured battery AS awards (per-product duration).
 
@@ -623,7 +628,80 @@ def ercot_storage_as_soc_min(
             fleet_e[np.newaxis, :] > 0.0, ec2 / fleet_e[np.newaxis, :], 0.0
         )
     soc_min = np.minimum(weight * freeze[np.newaxis, :], ec2)
+    if charge_cap is not None and daily_pin:
+        soc_min = _pin_reachability_clip(
+            soc_min, ec2, charge_cap, discharge_min, eta_chg, eta_dis
+        )
     return soc_min
+
+
+def _pin_reachability_clip(
+    soc_min: np.ndarray,
+    soc_ub: np.ndarray,
+    chg_ub: np.ndarray,
+    dis_lb: np.ndarray | None,
+    eta_chg: np.ndarray | float,
+    eta_dis: np.ndarray | float,
+) -> np.ndarray:
+    """Clip a SOC floor to what the daily-pinned scaffold can physically hold.
+
+    ``storage_daily_cycle_hours`` pins every day-start SOC of a unit to ONE
+    shared level S0, so the floor must admit an S0 satisfying every pin hour
+    at once: the 2023 probe measured the raw award-backing floor infeasible
+    by exactly this coupling — the floor at high-award midnights (889 MWh on
+    the West unit) exceeded the unit's energy cap at capability-dip midnights
+    elsewhere in the year (546 MWh), leaving no valid shared S0 (max feasible
+    uniform floor scale 0.997; the conflict enters at the Oct-2023 capability
+    hole boundary). This clips the floor by the unit's max-reachable SOC path
+    under the model's own scaffolding — S0 capped at the tightest pin-hour
+    energy cap, then a within-day forward pass at the award-docked charge
+    power net of the forced deployment discharge, and a backward pass bounding
+    late-day SOC by what the docked discharge power can return to S0 by the
+    day boundary. Every input is a measured array already in the LP (caps,
+    docked power, forced floor, efficiencies); no parameter is introduced —
+    the clip removes only backing the pinned model could not have carried
+    (~0.3 % of the 2023 floor at its worst hours), and is a no-op when the
+    plain floor is already reachable.
+    """
+    nS, hours = soc_min.shape
+    n_days = hours // 24
+    if n_days < 2 or hours % 24:
+        return soc_min
+    ec = eta_chg if np.ndim(eta_chg) else np.full(nS, float(eta_chg))
+    ed = eta_dis if np.ndim(eta_dis) else np.full(nS, float(eta_dis))
+    ec = np.asarray(ec, dtype=float)[:, np.newaxis, np.newaxis]
+    ed = np.asarray(ed, dtype=float)[:, np.newaxis, np.newaxis]
+    ub = soc_ub[:, : n_days * 24].reshape(nS, n_days, 24)
+    chg = chg_ub[:, : n_days * 24].reshape(nS, n_days, 24)
+    forced = (
+        dis_lb[:, : n_days * 24].reshape(nS, n_days, 24)
+        if dis_lb is not None
+        else np.zeros_like(ub)
+    )
+    # Shared pin level: S0 must fit under every day-start energy cap.
+    s0_cap = ub[:, :, 0].min(axis=1)[:, np.newaxis, np.newaxis]  # (nS,1,1)
+    # Forward pass: max SOC reachable from S0 given docked charging net of the
+    # forced deployment discharge. reach[d,h] = s0 + Σ_{j<=h}(η·chg − forced/η)
+    # capped by the running energy-cap minimum (a cap dip caps everything after
+    # it until recharge — the running-min is a safe lower envelope of the true
+    # hourly-capped recursion and keeps the pass a pure cumsum).
+    gain = (ec * chg - forced / ed).cumsum(axis=2)
+    # SOC at the pin hour (local h=0) is EXACTLY S0, so gains accumulate from
+    # h=1 (subtract the h=0 term). Exact unconstrained max path is then
+    # S0 + Σ_{j=1..h} gain_j (charge max every hour, only the forced discharge
+    # drains); the running-min energy cap is a safe (over-clipping only after a
+    # dip) envelope that keeps the pass a pure cumsum.
+    gain = gain - gain[:, :, 0:1]
+    fwd = np.minimum(s0_cap + gain, np.minimum.accumulate(ub, axis=2))
+    # Backward pass: SOC at hour h must be dischargeable back to S0 by the day
+    # boundary at the docked discharge power (dis_ub == chg_ub basis here: the
+    # docked power cap bounds both directions in the LP bounds builder).
+    drop = (chg / ed)[:, :, ::-1].cumsum(axis=2)[:, :, ::-1]
+    bwd = s0_cap + np.concatenate([drop[:, :, 1:], np.zeros((nS, n_days, 1))], axis=2)
+    env = np.minimum(fwd, bwd).reshape(nS, n_days * 24)
+    if hours > n_days * 24:
+        env = np.concatenate([env, soc_ub[:, n_days * 24 :]], axis=1)
+    return np.minimum(soc_min, np.maximum(env, 0.0))
 
 
 # Measured ERCOT hourly battery-fleet capability (60-Day DAM disclosure
