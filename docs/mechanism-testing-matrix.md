@@ -5352,6 +5352,77 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
 
+**neiso-84 (2026-08-05) — frontier RE-VERIFIED on the neiso-83 keeper's own sidecars; ONE
+CROSS-ISO LANE CHARTERED. NO LP, NO SOLVE, NO RUN REGISTERED, KEEPER UNCHANGED, NO CELL
+VERDICT MINTED (rule 28b: no mechanism was tested).** The §5.6 lever queue stays CLEARED —
+this session tested nothing and added no NEISO lever.
+
+**FRONTIER HOLDS.** Re-verified against `2026-08-05-neiso-83-ca1-reclass`'s OWN committed
+`hourly/reserve_family_<year>.parquet`, not by inheritance: `shortfall_mw` 0.0 and
+`held_mw` ≥ requirement in **all 157,680 family-hours** (3 years × 8,760 h × 3 families × 2
+persisted passes) at the published static 1,800 / 1,200 / 600 MW — no hour goes
+reserve-short, so the in-LP ISO-NE RCPF co-opt remains DORMANT. The ledgered C3c caveat's
+sizing re-verifies (model **0 h > $300 in all three years**, on the scored pass and the
+other one, any-zone and load-weighted) and the determination reproduces byte-for-byte via
+`calibration_verdict.py --run-id`. **`complete` unchanged** (no promotion ⇒ no re-key, no
+D-5(b) due). **`final` NOT PROPOSABLE — NEISO's locked test is SPENT and never
+re-grantable**; its absence from `final` is not a pending grant. The spend freeze is ACTIVE
+and outranks both markers.
+
+**THREE CARRIED-FORWARD NUMBERS WERE WRONG AND ARE CORRECTED IN PLACE (no re-solve).** The
+third exposed a basis defect: **the NEISO keeper is SCORED ON THE PASS LABELLED `P2`, NOT
+`P1`.** Its `meta.json` carries `commitment: true`, so the ARCHIVED legacy commitment pass
+ran and its output is what the registered payload was rendered from — verified two
+independent ways (HQ_import mean LMP matches `P2` to 4 dp in all three years; 2025 payload
+coal 0.21 / gas 61.35 TWh match `P2`'s 0.2108/61.3457, not `P1`'s 0.2159/61.3427). **NEISO
+is the only ISO of six that does this: all 15 committed NEISO bundles carry
+`commitment: true`, all 111 bundles of the other five carry `false`.** This is against
+CLAUDE.md "Dispatch & Commitment" ("P1 is THE main run … what every run is scored on";
+"No keeper uses it"). It survives the `--enable-legacy-p2` gate because that gate runs on
+parsed CLI args while `run_replay_bundle` re-injects the recipe's flags from `meta.json`
+afterwards, so every replay carries P2 forward invisibly. Materiality is small but non-nil
+(2025 `COAL_BIT` −2.3 %; mean LMP +0.058/+0.011/+0.038 $/MWh; the 2024 annual max +18 %).
+**ESCALATED TO THE OWNER, NOT ACTED ON** — resolving it needs a re-solve. Consequently the
+scored-pass annual maxima are **$249.50 / $256.93 / $280.85**, and neiso-82's correction of
+the 2024 figure to `$218.24` was itself wrong-basis (that is the NON-scored pass) and is
+superseded. neiso-82's summer-not-winter observation SURVIVES and strengthens, but one leg
+REVERSES: 2024's closest hour (Jul-15 17:00, $256.93) sits **$1.07 UNDER** the ~$258
+dual-fuel oil-parity cap, so in the model's tightest 2024 hour that cap IS effectively the
+wall. Also corrected: the reserve dual is **not bit-zero** on this keeper — 3 of 157,680
+family-hours carry ≤ 2.84e-14 $/MWh degeneracy noise with zero shortfall (the prior keeper
+and neiso-83's control are bit-zero), so "$0.00, never short" is exact but "min = max =
+−0.0, zero exceptions" is not.
+
+**CHARTERED — the oil-unit `plant_group` gap (neiso-83 disposition (v)), as a CROSS-ISO
+LANE, explicitly NOT a NEISO lever (rule 25).** Charter:
+`docs/handoffs/oil-plantgroup-outage-routing-charter-2026-08.md`; six-ISO Phase-0 census
+`scripts/probes/_neiso84_oil_plantgroup_census.py` + `_neiso84_oil_plantgroup_census.json`
+(no LP). `eia860.py` groups only coal and gas, so **1,576 oil units / 16.9 GW across six
+ISOs carry an empty `plant_group`**; `outages._iso_plant_capacity` drops them from the
+derate denominator and `derive_campd_unit_outages._resolve_unit_group` short-circuits on
+the plant's single modelled group **before** consulting the unit's own `unitType`.
+Measured exposure: **493 defect rows at 6 plants in 4 ISOs** (NEISO 201 / MISO 217 /
+NYISO 42 / PJM 33; CAISO 0; ERCOT structurally out — it keeps its bin-sheet group
+verbatim), every one an oil **combustion turbine** routed into a steam or combined-cycle
+bin. Worst case is **MISO 2001 New Ulm — 114 of 114 rows**, i.e. every outage the plant
+has, from a 27.5 MW oil CT charged against `ST_CHP`. Reported against interest: the naive
+"oil in a gas bin" count (885 rows) **over-states** it — dual-fuel oil STEAM units in
+`ST_GAS` are correctly modelled — while the underlying short-circuit mis-routes **1,876
+rows (~3.8×)** counting any `unitType`/bin contradiction, reaching CAISO which has no oil
+exposure at all. neiso-83's NEISO 6081 claim confirmed independently: units 001/002/003
+contribute **zero** outage rows in 2024 and 2025. **Object (b), the national-scope
+benchmark `classify_plant` call, was deliberately NOT chartered** (one lane per the brief):
+neiso-83 measured its residue at 0.0022 TWh = 0.11 % of the ±1.955 TWh C1 band, so it is a
+consistency question with no magnitude behind it and remains filed, unactioned.
+
+**Rule 28a honoured — nothing closed was re-opened.** `cc_steam_part_reclass` not
+re-tested and its registry not extended; `cc_steam_part_capacity` still `I` and not
+stamped; `chp_steam_floor_p25` still unarmed; `da_virtual_bids` `R` and
+`pumped_storage_cycling_depth` `G` untouched; Kendall's capacity basis stays
+ADJUDICATED-ARTIFACT (it appears in the defect census on *outage routing*, a different
+question); C3c not re-opened as a lever; the CC_CHP under-shoot not re-argued. Evidence:
+`results/calibration/FINDING-neiso84-frontier-recheck-2026-08-05.md`.
+
 **neiso-83 (2026-08-05) — the named secondary from neiso-81/neiso-82, EXECUTED with a
 keeper.** The lever queue was EMPTY of agent-actionable items, and the one named
 secondary was NEISO **6081_CA1**. It is now closed. **Outcome: `cc_steam_part_reclass`
