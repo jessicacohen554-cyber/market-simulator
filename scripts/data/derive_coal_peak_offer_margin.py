@@ -202,10 +202,59 @@ def derive_ercot() -> dict:
     }
 
 
+def _verify_year_mode(year: int, limb_key: str, constant_name: str) -> int:
+    """ercot-169 ``--year`` mode: TEST this identification's fuel-invariance claim.
+
+    Rule-23 re-run cite: the ercot-157 delivery-{year} SCED corpus landing, which
+    dissolves this constant's declared "no 2023 SCED disclosure exists"
+    extrapolation premise. Because this is a MARGIN form, the corpus does not
+    merely enable re-derivation — it tests the invariance claim itself:
+    ``level_year = measured_instrument_year - HR x (fuel_year - anchor)`` is
+    compared against the armed constant inside the identification's OWN cited
+    cross-subset dispersion band. Decision rule pre-registered in
+    ``docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md``; this mode
+    applies it, it does not choose it. Nothing is written and no residual is
+    consulted — a REFUTED or NOT-IDENTIFIABLE outcome is reported, never repaired
+    here (rules 13/23).
+    """
+    sys.path.insert(0, str(REPO))
+    from market_sim.config import constants as _C
+
+    from scripts.lib.sced_corpus_instruments import verify_year
+
+    armed = float(getattr(_C, constant_name)["ERCOT"])
+    out = verify_year(limb_key, year, armed)
+    print(json.dumps(out, indent=2, default=float))
+    v = out.get("T1_gating", out)
+    print()
+    print(
+        f"ercot-169 fuel-invariance test, limb {v.get('limb', '?')} "
+        f"({constant_name}['ERCOT'] = {armed}):\n"
+        f"  delivery-{year} measured   = {v.get('measured_usd_mwh')} $/MWh "
+        f"({v.get('instrument')}, {v.get('window')})\n"
+        f"  fuel response removed     = {v.get('fuel_response_removed_usd_mwh')} $/MWh\n"
+        f"  level_{year}                = {v.get('level_year_usd_mwh')} $/MWh "
+        f"(delta {v.get('delta_usd_mwh')}, band +/-{v.get('band_usd_mwh')})\n"
+        f"  curve coverage            = {v.get('curve_share')} "
+        f"(licence >= {v.get('licence_threshold')})\n"
+        f"  VERDICT                   = {v.get('verdict')}"
+    )
+    return 0
+
+
 def main() -> None:
     """CLI entry point."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--iso", default="ERCOT")
+    parser.add_argument(
+        "--year",
+        type=int,
+        default=None,
+        help="ercot-169 verification mode (matrix §5.1 item 13): TEST this "
+        "identification's fuel-invariance claim on the delivery-year SCED "
+        "corpus instead of re-printing the 2024-2025 identification. "
+        "Training years only (rule 22).",
+    )
     args = parser.parse_args()
     if args.iso.upper() != "ERCOT":
         raise SystemExit(
@@ -213,6 +262,10 @@ def main() -> None:
             "artifact this identification requires (ercot138). Another ISO "
             "derives its own constants from its own market's data in its own "
             "lane (rule 25 — never transferred)."
+        )
+    if args.year is not None:
+        raise SystemExit(
+            _verify_year_mode(args.year, "coal_peak", "COAL_PEAK_OFFER_LEVEL_BY_ISO")
         )
     out = derive_ercot()
     print(json.dumps(out, indent=2))
