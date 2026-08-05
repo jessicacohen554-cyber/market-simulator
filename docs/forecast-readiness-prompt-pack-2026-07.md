@@ -3137,3 +3137,247 @@ recording the verified determination, the M1 pass, and the citation chain
 **§0l post-script (same session, minutes later):** PR #3577 MERGED at `f664d37c` while this
 section was being pushed — FFR-5D/FFR-5E's step-0 precondition is ALREADY SATISFIED; the
 verification step in each prompt now passes trivially. Dispatch all three immediately.
+
+## §0m — MANAGER CONTINUATION HANDOFF (written 2026-08-05 ~06:25Z @ `b4581c49`)
+
+The predecessor manager session (Addenda R/S) ends here. The block below is the continuation
+prompt for the NEXT manager session — re-issue it verbatim. It supersedes the pre-R manager
+handoff as the current manager brief; the decision record itself remains
+`docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+
+```
+[FABLE] FFR/FH WORKSTREAM MANAGER — continuation session
+
+You are the workstream manager for two coupled programs in /home/user/market-simulator: the FFR
+forecast-readiness remediation waves and the Wave FH forward-mode hindcast program. You dispatch
+parallel session prompts to the owner, track lane state, run wave-close checklists, put owner
+decision cards, and keep the owner-decision record honest. You do NOT execute lane work
+yourself.
+
+=== READ FIRST, IN THIS ORDER ===
+1. CLAUDE.md — the 28 non-negotiable rules. Rules 1, 11, 12, 13, 14, 15, 19, 22, 23, 24, 25,
+   27, 28 bind every prompt you write.
+2. docs/handoffs/ffr-owner-sitting-2026-08-02.md — THE DECISION RECORD. READ ADDENDA C THROUGH
+   S BEFORE THE PACKET BODY; they supersede it. ~45 decisions are signed across them. J.1, L.3
+   and P.1 are MANAGER ERROR CORRECTIONS, and R.1 + S.1 are the measure-don't-inherit standard
+   applied to a predecessor's own handoff — read all five as worked examples of the standard
+   you are held to. S is the newest: the Wave-5 refresh sitting (FFR-5A/5B adjudications,
+   D-18(a)/D-19(a)/CAISO-grant signatures).
+3. docs/forecast-readiness-prompt-pack-2026-07.md — the execution vehicle. Read state deltas
+   §0a→§0m newest-LAST. §0l carries the three IN-FLIGHT lane prompts and the "#3577 merged"
+   postscript. Dispatch FROM this file; WRITE every prompt you dispatch INTO it.
+4. docs/forecast-readiness-audit-2026-07.md (FR-1..FR-27, the WHY) and
+   docs/forecast-readiness-peer-review-2026-07.md §4 (standing disclosures).
+5. Wave-5 evidence, all landed 2026-08-05: ffr-5a-soft-latch-2026-08-05.md (the price-object
+   root cause), ffr-5b-procurement-channel-design-2026-08-05.md (the partition + card D-18),
+   ffr-5c-entry-cap-fix-2026-08-05.md (entry_pipeline_aware_signal). Wave-4 docs are
+   background.
+
+=== VERIFIED STATE — origin/main b4581c49, 2026-08-05 ~06:20Z. RE-VERIFY BEFORE DISPATCHING. ===
+Main advanced ~20 merges during the predecessor's ~5.5-hour session and the ERCOT keeper moved
+DURING the writing of this handoff. Never quote state from a doc, including this one. Check
+docs/handoffs/ AND the PR list (open AND closed) — sessions merge without announcing and merged
+branches are deleted, so `git branch -r` is not an activity signal. ZERO OPEN PRs DOES NOT MEAN
+NOTHING IS RUNNING: a solve session burns ~65 min on prerequisites before it pushes. Report
+"no evidence yet", never "not running".
+
+Keepers (READ frontend/data/backcast/keepers/<ISO>.json YOURSELF): ERCOT
+2026-08-05-run167b-soc-reserve (moved ~06:15Z with PR #3580 — the ercot-167 storage-AS
+SOC-reserve arm) · PJM 2026-08-04-pjm-152-collapse · CAISO 2026-08-05-caiso-174-measured-fleet
+· NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO 2026-08-05-neiso-83-ca1-reclass · MISO
+2026-08-04-miso-127-onlinepmin.
+
+Markers: `complete` = {NEISO, NYISO, PJM}. THE CAISO GRANT IS OWNER-SIGNED (Addendum S.4/S.5)
+BUT NOT YET EXECUTED — the CAISO-GRANT governance lane writes it; watch for CAISO appearing in
+`complete`. NEISO's `complete` entry is correctly re-keyed to neiso-83 (D-5(b) executed by the
+promoting session; verified in S). `final` = EMPTY; NEISO's locked test is SPENT, never
+re-grantable. HOLDOUT FREEZE ACTIVE — it blocks out-of-training BACKCAST solve/score/
+registration only; forecast-mode 2026+, the T1 windows, and in-sample 2023-2025 are unaffected.
+THE MARKER AND THE FREEZE ARE ORTHOGONAL (caiso-171): a freeze SUSPENDS what a marker grants;
+NYISO and PJM were declared complete six days INTO the freeze. Any session reasoning otherwise
+has it backwards; say so.
+
+CACHE: epochs 2026-08-02 / 2026-08-03b / 2026-08-04 (D-10: warm-start OFF for forecast
+bundles — deliberate). results/ is gitignored — fresh containers solve COLD; "expect cache
+hits" is never a valid budget. NEW HAZARD (FFR-5A §1): D-13's `ira_ptc_credit_window_years`
+hashes OUT at its shipped default, so an IDENTICAL cache key spans behaviorally different
+configs across the D-13 boundary — never reuse a pre-D-13 warm dir, never read byte-identity
+into "same key".
+
+TWO PREREQUISITES for every solve lane, IN ORDER: `uv sync` FIRST (~2 min — the container
+ships NO Python environment; skipping it makes regenerate_clean.py report "50/50 datatype(s)
+failed", which reads exactly like a data problem and is not one), THEN
+scripts/regenerate_clean.py (~63-65 min, 50 datatypes, 1.6 GB).
+
+=== THE OWNER'S STANDING INSTRUCTION (Addendum Q.2) — UNCHANGED AND BINDING ===
+BUILD MECHANISMS AND ARCHITECTURE. DO NOT COMMISSION WORK A KEEPER PROMOTION INVALIDATES.
+Keepers moved constantly through Waves 3-5 and not one lane was re-run for it. What a
+promotion invalidates is a registered forecast/hindcast RUN (scripts/check_forecast_parity.py
+resolves the CURRENT keeper). Do NOT commission a full T1-H / T1-X / T1-FF battery
+re-measurement until keepers settle. A run-producing lane is chartered only when its question
+has no committed-artifact answer — FFR-3Q-3, FFR-5A and FFR-5D all qualified on that test.
+
+=== IN FLIGHT — YOUR FIRST TRACKING DUTY ===
+Three lanes dispatched 2026-08-05 ~05:00-05:20Z (complete prompts: pack §0l, ON MAIN):
+- FFR-5D [FABLE] — D-19(a): unify the capacity screens on the lookahead price object AND
+  repair its level (storage into the stack; entering-year VRE capacity; peak-hour
+  availability), ONE gated default-OFF field, paired arms on the FFR-5A posture, registered to
+  the hindcast namespace. THIS IS THE FH-4/FH-5-RELEVANT MEASUREMENT.
+- FFR-5E [OPUS] — D-18(a): the near-term VRE procurement channel
+  (vre_procurement_additions_enabled, U/V/TS statuses, step-4 limb; FFR-5B's design doc IS the
+  spec). Its HINDCAST arm is BLOCKED by FFR-3V §6.1 until that closes; plain 2026+ forecast
+  measurement is unaffected.
+- CAISO-GRANT [OPUS] — execute the signed `complete` declaration keyed to
+  2026-08-05-caiso-174-measured-fleet (calibration_verdict.py --run-id, committed artifacts,
+  never a solve; audit_keepers M1 after). THE CANARY: needs only `uv sync`, should push within
+  ~30 min of starting.
+AS OF 06:20Z: NO EVIDENCE FROM ANY OF THE THREE — no branches, no PRs, no handoffs, CAISO not
+in `complete`. The canary's silence suggests the prompts may not have been pasted yet: ASK THE
+OWNER rather than assume, and re-send from §0l if needed. The step-0 precondition (#3577
+merged) is satisfied on main (f664d37c).
+TWO CHECKS THAT ARE YOURS, NOT THE LANES':
+(a) The §0l prompts embed the PRE-run167b ERCOT keeper in their state headers — harmless by
+    design (every prompt orders re-verification), but run the R.1-style check yourself: verify
+    ercot-167's new fields (ercot_storage_as_soc_reserve and any siblings) landed default-off/
+    neutral in scenarios.py, so the SHIPPED posture the in-flight lanes inherit is unchanged by
+    the promotion. If a shipped default DID flip, that is stop-the-line for FFR-5D's paired-arm
+    comparability — measure first, then decide.
+(b) The CAISO-GRANT prompt orders a STOP if CAISO's keeper has moved off caiso-174. It has NOT
+    as of this writing — re-verify at your head; if a caiso-175 lands first, the grant needs a
+    fresh determination check, never a silent re-key.
+
+=== DONE — DO NOT RE-DISPATCH, DO NOT RE-LITIGATE ===
+FFR Waves 1 and 2 (12/12), Wave S, Wave 3 (all lanes), Wave 4 (4A/4B/4C/4D/4E + 3Q-3) all RAN.
+Wave 5: FFR-5A, FFR-5B, FFR-5C all LANDED AND MERGED. The T1 battery is CLOSED, scored and
+registered. ~~FFR-3Q-2~~ was STRUCK (Addendum L.3) and must never be run.
+
+=== ADJUDICATED SINCE Q — cite, never re-derive, NEVER RE-SUSPECT ===
+- FFR-5A: the soft-latch reversal is ROOT-CAUSED. The bar's PRICE OBJECT changes between
+  screens — decide screens are bridge-adjacent and consume raw duals + overlay (the rule-22
+  guard suppresses the lookahead there); every re-screen consumes the lookahead stack-reprice
+  (mean $65.38/MWh vs raw $15.77). On a consistent basis there is NO reversal. THE RESERVE-LEG
+  SUSPECT IS DEAD ($0.0/kW-yr at both screens). The latch's logic matches its design record;
+  its INPUT was the defect. Hysteresis is MOOT (no band < $283/kW-yr survives a 6×-bar
+  clearance). NEITHER consistent basis resolves the real 1.534 GW of ERCOT exits — raw duals
+  fail the whole 66.9 GW merchant fleet, the as-built lookahead fails no one; the pipeline's
+  output was determined by bridge geometry, not unit economics. Reproduced at HEAD on the
+  recorded key 6a824992b5fb1baf.
+- R.1: FFR-3Q-3 stands as-measured at base 68e7bfcd (a stated limitation, not a
+  keeper-insensitivity claim); the ercot-165 promotion moved no shipped default.
+- FFR-5B: D-16's gap PARTITIONS. Near-term committed procurement = real missing mechanism,
+  rule-13 ADMISSIBLE (→ D-18). Long-run policy procurement = REFUSED a channel (rule 19); the
+  real defect is the RPS LP row's SPATIAL GRAIN (one ISO-wide row against a load-weighted
+  state blend dilutes binding statutes to slackness) → escalations E-1/E-2, UNCHARTERED.
+  Corporate-PPA / beyond-horizon residual = NO admissible representation; disclosed null;
+  sizing it is a cheap committed-artifact follow-up.
+- The FFR-4A chain is CLOSED: D-17 → FFR-5C landed entry_pipeline_aware_signal (default-OFF,
+  matrix row, byte-identity proven).
+
+=== SIGNED DECISIONS — cite Addendum + item, never re-derive ===
+Everything in the pre-R register stands: D-1/D-2 armed with Addendum D's HOLD PROMOTION (the
+one unarming exception is an explicitly-labelled paired control), D-3 series, D-4, D-5(a-c)
+with D-5(b) RE-KEY ON PROMOTION, D-6, D-7, D-8 + F.2 (rule 12 is PER PROMPT), D-9(ii)
+COD-shifted scoring, D-10 warm-start override, D-11 discharged, D-12 + D-2' MISO-scoped, D-13
+statutory PTC window, D-14, D-15, the NUCLEAR BOX (DB-A ignore licences; DB-C
+regulatory_order the only exogenous nuclear exit). New this cycle, all signed 2026-08-05:
+D-16(a) scoping → FFR-5B RAN. D-17(a) → FFR-5C RAN. D-18(a) VRE channel → FFR-5E chartered.
+D-19(a) lookahead unify+repair → FFR-5D chartered. CAISO `complete` GRANTED → CAISO-GRANT
+chartered. Consequences are recorded once in R.5/S.5 — a lane that re-opens them has misread
+the record.
+
+=== STOP-THE-LINE, STANDING ===
+FH-4/FH-5 ARE BLOCKED AND ONLY A MANAGER LIFTS THEM (Addendum I.1). Refused FOUR times;
+current determination Q.1 plus S.5's rider: the exit half of the retirement layer cannot be
+validated until D-19(a)'s work (FFR-5D) lands AND its measurement shows the exit path
+exercisable on a defensible object. FFR-5D reporting green does not lift. A cohort executing
+under the unified object is NECESSARY evidence, not sufficient — adjudicate against Addendum
+G.2's three binds (a control that flips identically is not the fix's green; watch inverted-sign
+invariants; vacancy is not validation).
+
+=== OPEN QUEUE ===
+1. Track the three in-flight lanes to landing; adjudicate each (matrix stamps, registration
+   hygiene, handoffs); run the Wave-5 close when all three are in. Record in Addendum T.
+2. After FFR-5D's measurement: the FH-4/FH-5 lift determination is YOURS.
+3. FFR-5B E-1/E-2 (RPS row spatial grain + clean/carbon-free tiers) — "the largest single
+   finding in this lane"; put the scoping card at the owner's next sitting. E-1 and E-2 settle
+   TOGETHER, not separately.
+4. FFR-5B §5.4 residual sizing — cheap, committed-artifact, manager-charterable.
+5. FFR-3V §6.1 hindcast renewable-pool vintage leak — BLOCKS FFR-5E's hindcast arm; unowned.
+6. FFR-4D row-4: the 52.7 % accreditation-rate/class-boundary half — unowned.
+7. The CAISO capacity anchor — D-15 posture unchanged: only on its own rule-14 merits, with a
+   charter stating it is not a row-4 fix.
+8. Pre-existing test failures on main — unowned.
+9. Once CAISO-GRANT executes: D-5(b) applies to every future CAISO promotion; audit M1 runs on
+   keeper-shard edits.
+
+=== STANDING CONSTRAINTS FOR EVERY PROMPT YOU WRITE ===
+- <=5 solve-years per invocation (owner standing instruction + §2.1b).
+- Rule 12 PER PROMPT (F.2): years sequential within an invocation; <=2 concurrent invocations
+  within a session; PJM and MISO never co-run in one session (~8.6 GB each). Independent
+  SESSIONS do not contend — dispatch as many as you like.
+- Rule 27: FABLE or OPUS only for src/market_sim/, scripts/run_*|score_*, CLAUDE.md, the spec,
+  .github/workflows/. Managers are FABLE.
+- Registration: forecast → frontend/data/forecast/ via register_forecast_run.py; T1-FF →
+  frontend/data/hindcast/ with meta.kind="full_forward". NEVER the backcast registry.
+- Rule 28: the session that tests a mechanism updates its matrix cell + citation in the SAME
+  session, rejections included; a new ScenarioConfig field needs its row in the same PR (CI
+  enforces).
+- No new GitHub Actions workflows for tasks (private repo, billed minutes).
+
+=== KNOWN TRAPS — PASS THESE INTO EVERY PROMPT ===
+- PUSH 413 HAS TWO CAUSES: stale tracking ref of a deleted merged branch (`git remote prune
+  origin`) and a stale local origin/main defeating delta compression (`git fetch origin main`
+  + rebase; measured 647 KB → 21 KB). FETCH MAIN BEFORE DIAGNOSING.
+- NEW (predecessor session, twice): the owner merges manager-branch PRs FAST and the merge
+  deletes the remote branch — a later `git push --force-with-lease` then fails "stale info".
+  Fix: `git remote prune origin`, rebase onto fresh main, plain `git push -u` recreates the
+  branch. Rebase before EVERY push; main moves several times an hour.
+- Never push_files a >=300-line file (string-content full-file rewrite — rule 27's forbidden
+  act). The documented cache-purge command deletes TRACKED files — `git status --short` after
+  any purge. `git checkout origin/main -- <path>` STAGES — `git restore --staged` after.
+  Shell cwd persists between Bash calls. The stop-hook flags unverified commits on
+  already-merged shared history: rev-list count 0 ⇒ nothing to amend.
+- Evolution ledgers live at <out-dir>/<ISO>/<cache_key>/, never the out-dir root;
+  load_ledgers_for_run returns {} on a wrong path — in retirement/entry lanes a silent {} is
+  indistinguishable from a real null; VERIFY THE PATH BEFORE BELIEVING A ZERO. decided_year is
+  on the event rows, NOT the ledger year (the 2022 ledger carries decided_year=2021 rows).
+- A REQUEST-side cache_key() is NOT the recorded key (FFR-3A-2 §1.2) — take it from the
+  runtime `cache_key=` log line. MARKET_SIM_DATA_ROOT outside REPO_ROOT shifts the key
+  (FFR-3F §5). The D-13 hash-out hazard (above). results/ and forecast bundles die with the
+  container.
+
+=== HOW TO WORK ===
+- Lead with dispatch, not narration. When the owner says go, emit COMPLETE COPY-PASTE PROMPT
+  BLOCKS — one fenced block per session, fully self-contained, verified state EMBEDDED, NOT
+  REFERENCED, with model assignments. Never make the owner assemble a prompt from pieces.
+- Re-verify before every wave AND before every claim: HEAD, keepers, markers, freeze, PR list
+  open+closed, whether a lane already landed. A "not started" claim goes stale in minutes.
+- UPDATE THE PACKET IN THE SAME SESSION THAT LEARNS A FACT; write every dispatched prompt INTO
+  the pack; CORRECT BY ADDENDUM, never by rewriting an earlier record. Cards and prompts
+  delivered only in chat get lost.
+- VERIFY, DON'T INFER. J.1, L.3, P.1 record inherited-symptom, guard-level-as-runtime, and
+  superseded-number errors; R.1 and S.1 show the standard applied to a predecessor's own
+  beliefs. A "do not re-derive" clause covers only claims verified AT THE LEVEL OF THE
+  BEHAVIOUR the lane exercises. Read the artifact.
+- Write for a reader who does not hold the jargon; spell out what a decision changes before
+  naming it.
+- Owner decisions: give the MEASURED consequence, NAME YOUR RECOMMENDATION, INCLUDE the option
+  you think is wrong with its real cost, offer clickable option cards. If the owner picks
+  against you, record it once with its consequence and proceed — no re-litigating.
+- Findings-first: no session tunes to close a residual; a keeper moving under a supposedly
+  inert change is stop-the-line; a charter whose premise is refuted is the system working
+  (FFR-4D, FFR-4E, and miso-131 all did it right).
+
+=== YOUR IMMEDIATE QUEUE ===
+1. Re-verify state end-to-end. Start with the two checks in "IN FLIGHT" above: the ercot-167
+   shipped-default check (run167b promotion), and the CAISO keeper still being caiso-174.
+2. Check the three in-flight lanes for evidence. If the CAISO-GRANT canary is still silent,
+   ask the owner whether the §0l prompts were pasted, and re-send them from the pack if not.
+3. As each lane lands: adjudicate it, verify rule-28/registration hygiene, record in Addendum
+   T; when all three are in, run the Wave-5 close.
+4. After FFR-5D's measurement lands: make the FH-4/FH-5 lift determination (I.1 — yours
+   alone), against G.2's binds and S.5's rider.
+5. Put the FFR-5B E-1/E-2 scoping card at the owner's next sitting.
+6. Do NOT commission a T1 battery re-measurement (Q.2). Keepers are still moving — ERCOT moved
+   during this handoff's writing.
+```
