@@ -5146,7 +5146,113 @@ capability envelope/floor pair is now the keeper — cells K above):
     truncation — the `hydro_level_923_hy` trap, re-verified, still not quotable.
     `results/calibration/FINDING-nyiso107-hydro-input-truncation-2026-07-31.md`.
 
-### 5.6 NEISO — keeper `2026-08-04-neiso81-chpheatrate` (**PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
+### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
+
+**neiso-83 (2026-08-05) — the named secondary from neiso-81/neiso-82, EXECUTED with a
+keeper.** The lever queue was EMPTY of agent-actionable items, and the one named
+secondary was NEISO **6081_CA1**. It is now closed. **Outcome: `cc_steam_part_reclass`
+NEISO `K`, PROMOTED.** New keeper `2026-08-05-neiso-83-ca1-reclass`; control
+`2026-08-05-neiso-83-control-zerodelta`; both registered (rule 15), both `--years 2023
+2024 2025` in ONE invocation (rule 16), both solved at the same HEAD.
+
+**Q1 CONFIRMED — CA1 is misclassified — but TWO PIECES OF THE INHERITED FRAMING ARE
+WRONG AND ARE CORRECTED HERE.** (a) The "EMPTY `plant_group`" is **not an anomaly**:
+every oil unit in NEISO carries an empty group (135 units / 5,181.5 MW, all empty)
+because the EIA-860 loader assigns a group only to coal and gas. Nothing is inferable
+from it. (b) The "96.0 vs 105.0 MW mismatch" is **reconciled, not a discrepancy**: 96.0
+is EIA-860 net summer, 105.0 is nameplate, and the fleet `pmax` rule is
+net-summer-else-nameplate. What IS real: `6081_CA1` sits in the LP as 96.0 MW `oil` at
+VOM $4.50 / 1.0 t-CO2/MWh / EFORd 0.10 against three `CC_REGULAR`/`gas_cc` CT siblings
+at $2.00 / 0.43 / 0.05 that share its heat rate 10.60617891 exactly.
+
+**WHY `cc_steam_part_capacity` COULD NEVER HAVE REACHED IT — population, not gating.**
+The national predicate is exactly FOUR rows and splits two-and-two: **DROPPED** (the
+repair's population, `_map_fuel_type` → `None`) 55088 Dearborn `BFG` and 54912 Martinez
+`OG`; **CARRIED** (the re-class population) 1004 Edwardsport `SGC` → `coal` and 6081
+Stony Brook `DFO` → `oil`. The repair only restores dropped rows, so a carried row is
+outside its population entirely — which is exactly what neiso-80 measured as a
+byte-identical armed fleet. Its `fuel_type is None` gate is load-bearing (miso-125 §6 —
+it is what keeps Edwardsport's real 555 MW IGCC machine in `COAL`), so re-classing gets
+its **own** flag and its **own** ISO registry, MISO deliberately absent.
+`cc_steam_part_capacity` was NOT re-armed and its `I` was NOT re-stamped (rule 28a).
+
+**Q2 — the physics, and why (a) not (b).** A combined-cycle steam turbine has no
+combustion path. Measured: plant 6081 meters **five** CEMS units in every train year and
+**none of them is CA1**. The chosen representation folds CA1 into its own block at the
+incumbent eGRID **plant-average** heat rate — which is already BLOCK-denominated
+(`PLNGENAN` counts the steam part's own generation), so applying it uniformly to every
+block MW reproduces the block's total fuel burn **by construction**. The UNARMED state is
+the inconsistent one: a block rate charged to 209.1 MW of a 305.1 MW block, with the
+missing 96 MW priced off the distillate curve. The "zero-fuel-cost unit" alternative was
+REJECTED on physics, not fit: it under-counts unless the CTs simultaneously move to a
+CT-denominated rate, and it would make CA1 the only CC steam part in the model priced
+differently from every other.
+
+**Q3 — the identification, and there is NO parameter in it.** Zero fitted parameters: the
+capacity is EIA-860's published net-summer figure and the heat rate is the incumbent one.
+The measurements establish the machine is LIVE, and are evidence only. **The decisive
+one** is fuel inheritance: EIA-923 Page 1 shows the `CA` row's OWN fuel split tracking its
+`CT` siblings' split year by year across a 0.004 → 0.468 swing in the block's oil share
+(|gap| 0.0016–0.0217, 2018–2022), so EIA-860's `DFO` is a duct / legacy label, not a
+primary energy input. Steam share **0.2849 ± 0.0060** direct (2018–2022), corroborated
+for 2024–2025 by EIA-923 `CT` **net** generation EXCEEDING CAMPD `CT` **gross** (1.343 /
+1.338) — impossible for a CT-only row, therefore proof of a **reporting-convention
+change**, not a retired steam turbine. The two routes reconcile at a 0.96 auxiliary-load
+ratio.
+
+**Q4 — CORRECT AND NUMERICALLY SMALL, reported as a clean result (rule 1).** Largest
+class move **CC_REGULAR +0.0108 TWh in 2025 = 0.018 % of the class**, absorbed almost
+exactly by CT_PEAKER (−0.0111); oil −0.00231 / −0.00034 / −0.00139 TWh; λ +0.0005 /
+−0.0192 / −0.0701 $/MWh; summed C1 |error| delta +0.0044 / −0.0004 / −0.0010 TWh; C3c
+bit-unchanged. **Why so small, measured not asserted:** 6081's 10.6062 MMBtu/MWh heat rate
+sits above **97.5 %** of NEISO's CC_REGULAR capacity (cap-weighted p50 7.340, p90 8.616;
+only 312.1 MW dearer), so the re-classed 96 MW is deep out of merit.
+
+**THE CHARTER'S OWN MAGNITUDE EXPECTATION WAS CORRECTED BEFORE THE SOLVE, NOT AFTER.**
+The lane was chartered expecting "< 0.15 % of CC_REGULAR". Phase 0 measured the block's
+effective available capacity moving 0.0 → 0.0 / 61.7 → 156.4 / 40.5 → 134.2 MW — more
+HEADROOM than that — and the prereg said so in advance so the finding could not be read
+as retrofitting. The realized DISPATCH effect then landed an order of magnitude UNDER the
+charter's bound. Both halves are on the record.
+
+**THE OUTAGE-DENOMINATOR LEG IS PART OF THIS MECHANISM AND DOMINATES THE HEADROOM —
+DISCLOSED IN ADVANCE.** The CAMPD unit-outage overlay reads its `plant_capacity_mw`
+denominator off the same fleet, so it moves with the flag (209.1 → 305.1 MW at 6081).
+Un-forwarded it would remove the wrong ABSOLUTE MW — 221.8 MW for a 152 MW outage.
+Decomposed: capacity leg +0.0 / +28.3 / +18.6 MW against denominator leg +0.0 / +66.4 /
++75.2 MW. **Rule 23 is NOT engaged** — the deriver's own inputs at 6081 are identical
+under both arms, so the committed extract re-derives byte-for-byte and nothing was
+regenerated.
+
+**NEW OPEN ROOT-CAUSE ISSUE, NAMED AND DELIBERATELY NOT FIXED (rules 19 / 21 / 25).**
+`campd-unit-outages-NEISO.csv` routes plant 6081's **DIESEL peakers** (CAMPD units
+004/005 = EIA-860 generators `1` and `2`) to `plant_group=CC_REGULAR`, because `oil`
+carries no `plant_group` at all and the overlay cannot represent an oil unit's outage. In
+2024 and 2025 those two units are the **only** source of 6081 outage rows while the CC
+block's own units 001/002/003 have **none** — so the model derates a fully-available CC
+block to 29.5 % / 19.4 %. Pre-existing, ISO-agnostic, needing a fleet-taxonomy change with
+six-ISO blast radius. **Also disclosed:** the EIA-923 benchmark side is NOT symmetrically
+corrected (its `classify_plant` call is national with no ISO gate, so re-classing there
+would reach Edwardsport); the residue is the 6081 `CA`/`DFO` row at 2,165 MWh in 2023 and
+ZERO in 2024–2025 — 0.0022 TWh, **0.11 %** of the ±1.955 TWh C1 band.
+
+**Rule 25 proven by RUNNING it:** with the flag armed the ERCOT (1,450), CAISO (782), PJM
+(1,922), MISO (1,975) and NYISO (460) fleets are byte-identical, and Edwardsport stays
+`COAL`. **The control came back BYTE-IDENTICAL to the committed keeper** (max |class-hour
+delta| 0.000000 MW, all three years), so unlike neiso-81 there is no same-HEAD drift to
+decompose. **2025 EIA-923 re-checked and still NOT landed** — the CC rows stay SKIPPED,
+and nothing was estimated around it. Evidence:
+`results/calibration/PREREG-neiso83-stonybrook-ca1-2026-08-05.md` (pushed BEFORE either
+arm solved), `results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md`, probes
+`scripts/probes/_neiso83_stonybrook_ca1_phase0.py` +
+`scripts/probes/_neiso83_ca1reclass_ab.py`, records `_neiso83_stonybrook_ca1_phase0.json`
++ `_neiso83_ca1reclass_ab.json`.
+
+**LEVER QUEUE AFTER neiso-83: EMPTY of agent-actionable items again.** C3c stays at its
+declared frontier (untouched — bit-unchanged between the arms). The named secondary is
+now SPENT. The two things this session FILED rather than actioned — the oil-unit
+`plant_group` gap in the outage overlay, and the national-scope benchmark `classify_plant`
+call — are both cross-ISO objects needing their own charters, not NEISO levers.
 
 **neiso-81 (2026-08-04) — the promotion re-adjudication, EXECUTED with a keeper.**
 The session's charter was the one live, agent-actionable item left in this
