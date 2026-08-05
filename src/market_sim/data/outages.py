@@ -367,12 +367,26 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
 
 
 @lru_cache(maxsize=None)
-def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
+def _iso_plant_capacity(
+    iso: str, cc_steam_part_reclass: bool = False
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
 
     Non-ERCOT ISOs run a per-plant EIA-860 fleet (no CAMPD bin sheet), so the
     derate denominator — the plant's capacity in its model group — comes from
     the fleet's nameplate summed per ``(plant_code, plant_group)``.
+
+    ``cc_steam_part_reclass`` is forwarded to the fleet load because this
+    denominator has to be THE SAME capacity the derate multiplier is applied to
+    in the LP. It is not a second mechanism: a flag that moves a generator into
+    a ``(plant_code, plant_group)`` bin necessarily moves that bin's capacity,
+    and reading the denominator off an un-armed fleet while the LP holds an
+    armed one would remove the wrong absolute MW for a given outage (measured at
+    NEISO 6081 Stony Brook: a 152 MW 2024 outage against a 209.1 MW un-armed
+    denominator removes 72.7 % of an armed 305.1 MW bin = 221.8 MW, i.e. 46 %
+    more than actually went out). Default ``False`` keeps every existing caller
+    — including PJM's and MISO's own outage loaders — on the identical cache key
+    and the identical map.
     """
     from market_sim.config.iso_configs import get_iso_config
     from market_sim.data.fleet import (
@@ -385,9 +399,9 @@ def _iso_plant_capacity(iso: str) -> dict[tuple[int, str], float]:
     # capacity must be in the derate denominator — else their unit-outage rows
     # route to a (plant_code, plant_group) absent from this map and are skipped,
     # leaving the injected retiree (e.g. Mystic) un-capped.
-    fleet = load_fleet_from_csv(iso, iso_config) + load_retired_within_window(
-        iso, iso_config
-    )
+    fleet = load_fleet_from_csv(
+        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+    ) + load_retired_within_window(iso, iso_config)
     cap: dict[tuple[int, str], float] = {}
     for g in fleet:
         code = int(g.plant_code)
@@ -405,6 +419,7 @@ def unit_outage_derate_factors(
     hours: int = HOURS_PER_YEAR,
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
+    cc_steam_part_reclass: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -433,7 +448,9 @@ def unit_outage_derate_factors(
     if df is None:
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
-    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
+    return _unit_outage_factors_from_events(
+        df, year, hours, bins_path, iso, cc_steam_part_reclass
+    )
 
 
 def _unit_outage_factors_from_events(
@@ -442,6 +459,7 @@ def _unit_outage_factors_from_events(
     hours: int,
     bins_path: str | Path,
     iso: str,
+    cc_steam_part_reclass: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -475,7 +493,7 @@ def _unit_outage_factors_from_events(
         }
         target_fn = _unit_outage_target
     else:
-        cap = _iso_plant_capacity(iso)
+        cap = _iso_plant_capacity(iso, cc_steam_part_reclass)
         target_fn = _generic_unit_outage_target
     has_derate = "derate_factor" in df.columns
     sums: dict[tuple[int, str], np.ndarray] = {}
@@ -515,6 +533,7 @@ def unit_outage_short_derate_factors(
     hours: int = HOURS_PER_YEAR,
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
+    cc_steam_part_reclass: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -537,7 +556,9 @@ def unit_outage_short_derate_factors(
     df = df[
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
     ]
-    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
+    return _unit_outage_factors_from_events(
+        df, year, hours, bins_path, iso, cc_steam_part_reclass
+    )
 
 
 def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
@@ -564,6 +585,7 @@ def unit_partial_outage_derate_factors(
     hours: int = HOURS_PER_YEAR,
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
+    cc_steam_part_reclass: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -593,7 +615,9 @@ def unit_partial_outage_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
-    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
+    return _unit_outage_factors_from_events(
+        df, year, hours, bins_path, iso, cc_steam_part_reclass
+    )
 
 
 def unit_outage_maxgen_csv_for_iso(iso: str | None) -> Path:
@@ -615,6 +639,7 @@ def unit_outage_maxgen_derate_factors(
     year: int,
     hours: int = HOURS_PER_YEAR,
     iso: str = "ERCOT",
+    cc_steam_part_reclass: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -645,7 +670,7 @@ def unit_outage_maxgen_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
-    cap = _iso_plant_capacity(iso)
+    cap = _iso_plant_capacity(iso, cc_steam_part_reclass)
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         code = int(r.facility_id)

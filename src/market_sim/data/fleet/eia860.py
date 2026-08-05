@@ -38,6 +38,7 @@ from market_sim.config.paths import (
 from market_sim.config.plant_taxonomy import (
     BIOMASS_ENERGY_SOURCES,
     CC_STEAM_PART_PRIME_MOVER,
+    CC_STEAM_PART_RECLASS_ISOS,
     CC_STEAM_PART_REPAIR_ISOS,
     OIL_ENERGY_SOURCES,
     classify_plant,
@@ -843,6 +844,7 @@ def _rows_to_generators(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
+    cc_steam_part_reclass: bool = False,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -874,6 +876,17 @@ def _rows_to_generators(
     Gated on :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS`
     (rule 25 ``[R-ISO-SCOPE]``) and resolved by
     :func:`cc_steam_part_generators`. Default off and byte-identical off.
+
+    ``cc_steam_part_reclass`` (``ScenarioConfig.cc_steam_part_reclass``) covers
+    the SAME predicate's other half: the steam parts the fuel-type map CARRIES
+    under the non-gas fuel their own ``Energy Source 1`` names (``DFO`` →
+    ``oil``) rather than dropping. Total capacity is unchanged; the row's class,
+    fuel, VOM, CO2 rate and EFORd move onto the gas combined-cycle block it is
+    half of. Gated on its own
+    :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_RECLASS_ISOS` — never
+    the repair's set, because the repair's ``fuel_type is None`` gate is
+    load-bearing (it is what keeps MISO 1004 Edwardsport's real 555 MW IGCC
+    machine in ``COAL``; miso-125 §6). Default off and byte-identical off.
     """
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
@@ -902,6 +915,18 @@ def _rows_to_generators(
     steam_parts: frozenset[tuple[int, str]] = (
         cc_steam_part_generators()
         if cc_steam_part_capacity and iso.upper() in CC_STEAM_PART_REPAIR_ISOS
+        else frozenset()
+    )
+
+    # Combined-cycle steam parts to RE-CLASS (config.cc_steam_part_reclass).
+    # Same predicate, disjoint population and opposite object: these are the
+    # rows the fuel map CARRIES under a non-gas fuel taken from the steam
+    # part's own (duct / legacy) Energy Source 1, not the rows it drops. Its
+    # own ISO registry, never CC_STEAM_PART_REPAIR_ISOS — the two gates are
+    # deliberately separate (see CC_STEAM_PART_RECLASS_ISOS).
+    reclass_parts: frozenset[tuple[int, str]] = (
+        cc_steam_part_generators()
+        if cc_steam_part_reclass and iso.upper() in CC_STEAM_PART_RECLASS_ISOS
         else frozenset()
     )
 
@@ -935,12 +960,38 @@ def _rows_to_generators(
         # as COAL 555.0 MW. Gating on `fuel_type is None` keeps it there: a
         # represented machine must not be re-bucketed by a capacity repair
         # (miso-125 §6 — the 555 MW false positive the presence test caught).
+        # Is this row a carried-but-mis-fuelled steam part the re-class covers?
+        # Disjoint from `is_steam_part` in practice (that branch only fires when
+        # the fuel map DROPS the row), and gated on its own flag + ISO set.
+        is_reclass_part = (
+            bool(reclass_parts)
+            and (
+                int(_to_float(data.get("plant_id")) or 0),
+                str(data.get("generator_id") or "").strip(),
+            )
+            in reclass_parts
+        )
         rescued_steam_part = False
         if fuel_type is None:
             if not is_steam_part:
                 continue
             # The block's primary energy input is its CT siblings' exhaust, so
             # the steam part is gas combined cycle whatever its duct fuel says.
+            fuel_type = "gas_cc"
+            rescued_steam_part = True
+        elif is_reclass_part and fuel_type != "gas_cc":
+            # Carried, but under the fuel its own Energy Source 1 names. A
+            # combined-cycle steam turbine has no combustion path — it is driven
+            # by its CT siblings' exhaust, reports no CEMS stack of its own, and
+            # every MMBtu the block burns is already metered at those siblings.
+            # So that code is a duct / legacy label, and dispatching the row as
+            # a standalone unit of that fuel burns a fuel the machine does not
+            # have. Re-class it onto the block it is half of. Capacity is
+            # UNCHANGED (contrast the restore branch above); what moves is the
+            # class, fuel, VOM, CO2 rate and EFORd. NEISO 6081 Stony Brook
+            # `CA1`: 96.0 MW carried as `oil` at $4.50 VOM / 1.0 t-CO2/MWh
+            # against three `CC_REGULAR` `CT` siblings that share its plant heat
+            # rate (rule 25 [R-ISO-SCOPE]: NEISO's whole population is that row).
             fuel_type = "gas_cc"
             rescued_steam_part = True
 
@@ -1282,6 +1333,7 @@ def _load_fleet_from_parquet(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
+    cc_steam_part_reclass: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -1314,6 +1366,7 @@ def _load_fleet_from_parquet(
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
+        cc_steam_part_reclass=cc_steam_part_reclass,
     )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
@@ -1393,6 +1446,7 @@ def _load_fleet_from_clean(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
+    cc_steam_part_reclass: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -1421,6 +1475,7 @@ def _load_fleet_from_clean(
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
+        cc_steam_part_reclass=cc_steam_part_reclass,
     )
     if not generators:
         logger.warning(
@@ -1538,6 +1593,7 @@ def load_fleet_from_csv(
     measured_chp_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
     cc_steam_part_capacity: bool = False,
+    cc_steam_part_reclass: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -1598,6 +1654,14 @@ def load_fleet_from_csv(
             are restored to the fleet as gas combined cycle. ISO-gated on
             :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_REPAIR_ISOS`
             (rule 25 ``[R-ISO-SCOPE]``). Default off and byte-identical off.
+        cc_steam_part_reclass: When True (``ScenarioConfig.
+            cc_steam_part_reclass``), the combined-cycle STEAM parts
+            :func:`_map_fuel_type` CARRIES under a non-gas fuel taken from the
+            row's own duct / legacy ``Energy Source 1`` are re-classed to gas
+            combined cycle. Capacity is unchanged — the fuel, class, VOM, CO2
+            rate and EFORd move. ISO-gated on
+            :data:`~market_sim.config.plant_taxonomy.CC_STEAM_PART_RECLASS_ISOS`
+            (rule 25 ``[R-ISO-SCOPE]``). Default off and byte-identical off.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -1629,6 +1693,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
+            cc_steam_part_reclass=cc_steam_part_reclass,
         )
         source = csv_path
         logger.info(
@@ -1649,6 +1714,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
+            cc_steam_part_reclass=cc_steam_part_reclass,
         )
         if from_clean is None:
             raise FileNotFoundError(
@@ -1667,6 +1733,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
+            cc_steam_part_reclass=cc_steam_part_reclass,
         )
         if from_parquet is None:
             raise FileNotFoundError(
