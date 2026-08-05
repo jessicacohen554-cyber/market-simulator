@@ -642,6 +642,77 @@ def _make_new_generator(
     return Generator(**kwargs)
 
 
+def pipeline_lookahead_units(
+    entry_pipeline: list[dict] | None,
+    through_year: int,
+    config: ScenarioConfig,
+    iso: str,
+) -> tuple[list[Generator], dict[tuple[str, str], float]]:
+    """Split the pending-entry pipeline into what is ONLINE by ``through_year``.
+
+    The capacity screens' look-ahead pro-forma
+    (:func:`market_sim.runner._lookahead_reprice_signal`) prices a future
+    year's net load into the *current* fleet's merit stack, so a decision
+    already committed to the ``entry_pipeline`` is invisible to it and the same
+    opportunity is re-decided every lag year (FFR-4A §3.5 / E-2). This returns
+    the pipeline's contribution to the priced year's supply, split by how each
+    kind enters that pro-forma:
+
+    * **thermal** rows become ``Generator`` objects via the SAME
+      :func:`_make_new_generator` call ``evolve_fleet``'s step-4.5
+      commissioning makes, so their heat rate, VOM, emission rate and forced-
+      outage rate are the ones the unit will actually carry -- no second cost
+      construction to drift (rule 19 ``[R-ONE-MECH]``);
+    * **VRE** rows carry no Generator (they enter the model as zone renewable
+      pools), so they are returned as ``{(zone, tech): mw}`` for the caller to
+      value at that zone's own hourly capacity factor.
+
+    A row is included iff ``cod_year <= through_year`` -- it is online in the
+    year being priced. Rows still in construction are correctly absent: they
+    set no price in that year. **Zero new tunables** (rule 24
+    ``[R-REGISTRY]``): every quantity is a field the row already carries or a
+    shipped constant.
+
+    Args:
+        entry_pipeline: The cross-year pending-entry queue, or ``None``. NOT
+            mutated -- this is a read-only view.
+        through_year: The year being priced; rows with a later COD are excluded.
+        config: Scenario configuration (passed through to the generator build).
+        iso: ISO identifier (passed through to the generator build).
+
+    Returns:
+        ``(thermal_units, vre_mw_by_zone_tech)``. Both are empty when the
+        pipeline is empty or holds nothing online by ``through_year``.
+    """
+    units: list[Generator] = []
+    vre_mw: dict[tuple[str, str], float] = {}
+    for row in entry_pipeline or []:
+        if int(row["cod_year"]) > int(through_year):
+            continue
+        if row.get("kind") == "vre":
+            key = (row["zone"], row["tech"])
+            vre_mw[key] = vre_mw.get(key, 0.0) + float(row["mw"])
+            continue
+        unit = _make_new_generator(
+            row["tech"],
+            float(row["mw"]),
+            row["zone"],
+            int(row["cod_year"]),
+            int(row["seq"]),
+            config,
+            iso,
+        )
+        # Same id convention step 4.5 uses, so a pro-forma unit and the unit it
+        # anticipates are traceable to one decision cohort.
+        unit.unit_id = (
+            f"{row['tech']}_new_{int(row['decision_year'])}"
+            f"c{int(row['cod_year'])}_{int(row['seq'])}"
+        )
+        unit.name = unit.unit_id
+        units.append(unit)
+    return units, vre_mw
+
+
 def apply_economic_new_entry(
     fleet: list[Generator],
     prices: np.ndarray,
@@ -1163,6 +1234,23 @@ def apply_economic_new_entry(
             _pending_by_tech[_row["tech"]] = _pending_by_tech.get(
                 _row["tech"], 0.0
             ) + float(_row["mw"])
+    # FFR-5C entry_pipeline_aware_signal (GATED, default OFF ⇒ byte-identical):
+    # armed, the anti-cobweb guard RELOCATES to the pro-forma price signal
+    # (runner._lookahead_reprice_signal now prices the pending rows into its
+    # merit stack), so the stock netting is dropped from BOTH flow caps below
+    # and each binds as the GW/yr rate its own citation defines. The netting is
+    # a stock (MW, no time denominator) subtracted from an annual flow: it caps
+    # the long-run decision rate at C/L and, on the ladder, kills the ratchet
+    # whenever K ≤ L — K−L+1 = 1 at the shipped (2, 2) in 24/24 ISO×tech cells
+    # (FFR-4A §3.3/§5, docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md). Rule 19
+    # [R-ONE-MECH]: one mechanism per phenomenon — the guard moves, it is
+    # neither deleted nor duplicated. ``_pending_by_tech`` itself stays
+    # populated (it is the queue state, not the guard).
+    _pending_netting_mw: dict[str, float] = (
+        {}
+        if getattr(config, "entry_pipeline_aware_signal", False)
+        else _pending_by_tech
+    )
     # FF-2A growth-ladder budgets (entry_rate_limits): per TECH, not group —
     # the measured throughput seed is tech-grain. Absent tech ⇒ no ladder cap.
     _ladder_remaining: dict[str, float] = {}
@@ -1183,7 +1271,7 @@ def apply_economic_new_entry(
             group_remaining[group] = max(
                 0.0,
                 per_tech_cap_gw.get(group, 0.0) * 1000.0
-                - _pending_by_tech.get(tech, 0.0),
+                - _pending_netting_mw.get(tech, 0.0),
             )
         build_mw = min(group_remaining[group], remaining)
         _cap_label = None
@@ -1191,7 +1279,8 @@ def apply_economic_new_entry(
             if tech not in _ladder_remaining:
                 _ladder_remaining[tech] = max(
                     0.0,
-                    float(entry_rate_caps_mw[tech]) - _pending_by_tech.get(tech, 0.0),
+                    float(entry_rate_caps_mw[tech])
+                    - _pending_netting_mw.get(tech, 0.0),
                 )
             if _ladder_remaining[tech] < build_mw:
                 build_mw = _ladder_remaining[tech]
