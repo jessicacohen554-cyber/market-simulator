@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-30-ercot141-online-hours-lsl",
+  "run_id": "2026-08-05-run167b-soc-reserve",
   "iso": "ERCOT",
-  "label": "ercot141 online hours lsl",
+  "label": "run167b soc reserve",
   "target_years": [
     2023,
     2024,
@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.9,
+  "rubric_version": 3.0,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle (attestation has no governance block)"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
