@@ -80,6 +80,7 @@ _DEFINED = (
     "_capital_recovery_factor",
     "compute_lcoe",
     "estimate_expected_revenue",
+    "wind_ptc_levelized_per_mwh",
     "_make_new_generator",
     "apply_economic_new_entry",
     # adequacy (ledger + step-6 backstop)

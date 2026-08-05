@@ -171,6 +171,7 @@ from .new_entry import (
     apply_economic_new_entry,
     compute_lcoe,
     estimate_expected_revenue,
+    wind_ptc_levelized_per_mwh,
     wright_cost,
 )
 from .ccs import (
@@ -276,6 +277,7 @@ __all__ = [
     "apply_economic_new_entry",
     "compute_lcoe",
     "estimate_expected_revenue",
+    "wind_ptc_levelized_per_mwh",
     "wright_cost",
     # ccs
     "apply_ccs_retrofit",

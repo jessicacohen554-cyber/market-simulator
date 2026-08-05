@@ -241,14 +241,30 @@ def apply_ira_credits_to_lcoe(
 ) -> float:
     """Reduce LCOE by the applicable IRA credit.
 
-    Wind PTC: full value through ira_wind_solar_last_year, then zero.
-    Geothermal PTC: graduated phaseout per ira_phaseout_fraction.
+    Wind PTC: eligible through ira_wind_solar_last_year, then zero. An
+    eligible vintage's credit is levelized over min(the statutory 10-year
+    §45 window, book life) — never credited for the plant's whole life —
+    via :func:`~market_sim.model.capacity_evolution.new_entry.
+    wind_ptc_levelized_per_mwh`, the single screen-side PTC computation
+    site (FFR-4C, owner decision D-13).
+    Geothermal PTC: graduated phaseout per ira_phaseout_fraction. KNOWN
+    DEFECT, reported by FFR-4C and awaiting its own charter: this branch
+    still credits the full unwindowed rate over book life, though the
+    §45/§45Y 10-year credit period applies to geothermal too. Left as-is
+    deliberately — D-13's scope is the wind PTC alone.
     Solar ITC: handled in compute_lcoe (capex reduction), not here.
     """
     if tech_type == "wind":
         if year > config.ira_wind_solar_last_year:
             return lcoe
-        return lcoe - config.ira_ptc_wind
+        # Imported here to avoid a module-level cycle: capacity_evolution's
+        # new_entry imports this module at top level (same pattern as
+        # new_entry's own function-scope `.ccs` import for the §45Q window).
+        from market_sim.model.capacity_evolution.new_entry import (
+            wind_ptc_levelized_per_mwh,
+        )
+
+        return lcoe - wind_ptc_levelized_per_mwh(config)
     if tech_type == "geothermal":
         frac = ira_phaseout_fraction(year, config)
         if frac <= 0.0:
