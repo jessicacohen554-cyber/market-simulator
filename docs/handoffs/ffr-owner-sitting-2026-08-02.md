@@ -2082,3 +2082,104 @@ does not model.
 
 **Sign-off D-16:** ☐ (a) charter structural scoping lane  ☐ (b) disclosed limitation
 ☐ other: ____________   owner: ________  date: ____
+
+---
+
+## Addendum Q — Wave 4 closed; the FH-4/FH-5 lift call; the keeper-churn standing instruction
+
+**Written 2026-08-04 by the workstream manager at `origin/main` `0d858b15`.**
+
+### Q.1 — FH-4/FH-5: **NOT LIFTED.** Manager determination, third time, new reason.
+
+FFR-3Q-3 delivered. **The FFR-3U fix HELD in a real run** — both arms realized
+`solved [2021, 2023, 2024, 2025], bridged [2022]`, no `year_2022.parquet`, zero 2022 measured
+reads, no parity failure. The breach does not recur.
+
+**And the re-cut achieved its stated purpose:** the retirement layer is OBSERVABLE for the first
+time. Arm A carries **1,205 `pipeline_events`** — a 29-unit / 8,218 MW coal cohort decided,
+re-confirmed, then reversed — so the headline-finding-by-vacancy branch **does not fire**. G.5(a)
+was worth signing.
+
+**But the lift fails on its own terms.** `executed` events are **0**, in every year, in both
+arms: the cohort is reversed by the soft latch at 2024, its own `execute_year`. **The EXIT half
+of the layer is still untested** — now for a sharper reason than vacancy. Arm A reads
+**I6 PASS / I7 PASS / I12 FAIL**; the control reads I6 FAIL / I7 FAIL / I12 WARN, reproducing the
+FH-1 §3.3 triple exactly. I12 degrades WARN → **FAIL with inverted sign** *because Arm A retires
+nothing*. Addendum G.2's third bind applies directly: a posture that cannot exercise the
+mechanism is not a pass, and this one is not even green.
+
+**A genuinely new measurement, which breaks the FFR-3L null for ERCOT:** against **1.534 GW** of
+actual ERCOT exits 2023-25, shipped `pipeline` retires **0.000 GW** (recall 0/3) and `legacy`
+retires **17.309 GW** (97.1 % false). Both FAIL, violently and in opposite directions. Unlike
+FFR-3F the arms genuinely differ, so the I6/I7 flip **is** attributable to the retirement rule at
+this window. **The soft latch that reverses the cohort at its own execute_year is the next
+blocker** and it is unowned.
+
+### Q.2 — STANDING INSTRUCTION (owner, 2026-08-04): build mechanisms and architecture; do not commission work that a keeper promotion invalidates
+
+Recorded verbatim in substance: *keepers are almost settled, but work must not need repeating
+when a new keeper is promoted.*
+
+**What this permits, and why Wave 3/4 complied.** Every lane in Waves 3 and 4 was a mechanism,
+architecture, instrument or diagnosis lane. Their deliverables are **code and findings**, which a
+keeper promotion does not invalidate. **No Wave-3 or Wave-4 lane has been re-run because a keeper
+moved** — and keepers moved constantly through both waves (NYISO eight times in five days; ERCOT,
+CAISO, MISO, NEISO and PJM all moved during Wave 4 alone).
+
+**What this forbids.** The work that a promotion *does* invalidate is a **registered forecast or
+hindcast RUN**: `scripts/check_forecast_parity.py` resolves each ISO's **CURRENT** keeper →
+registry sidecar → bundle `run_config.json` and enumerates its armed mechanisms, so a promotion
+re-points the parity target. Its own docstring states the exposure: *"Keeper mechanisms land
+weekly, so without a standing check every promotion is another chance to fork the two paths."*
+Rule 22 D-5(b) compounds it — a promotion in a `complete` ISO re-keys the marker and
+re-verifies its determination.
+
+**Operating rule for the manager, therefore: do NOT commission a full T1-H / T1-X / T1-FF battery
+re-measurement until keepers settle.** Charter mechanism, architecture, instrument and diagnosis
+lanes freely; they are keeper-agnostic. A run-producing lane is chartered only when its question
+cannot be answered any other way — FFR-3Q-3 was one, correctly, because "does the retirement
+layer produce events" has no committed-artifact answer.
+
+**One open exposure created by this session and left to the successor:** FFR-3Q-3's arms were
+solved before ERCOT's keeper moved to `2026-08-04-ercot165-unpooled-share`. Its **findings are
+structural** (the pipeline rule retires nothing; the soft latch reverses at execute_year) and I do
+not believe they are keeper-sensitive — but **that is a belief, not a measurement**, and the
+successor should either check parity or state the limitation rather than inherit my assumption.
+This is the J.1/L.3 discipline applied to my own handoff.
+
+### Q.3 — Wave 4 results, and two charters whose PREMISE was refuted
+
+* **FFR-4A.** The knife-edge is **not** a mis-set `K`. It is a **dimensional double-count** — a
+  *stock* (pending pipeline MW) subtracted from two *flow* caps (GW **per year**). Netting a stock
+  from an annual-flow cap `C` under lag `L` caps the long-run average decision rate at `C / L`,
+  and destroys the ratchet whenever `K ≤ L`. **`K` and `L` both survive with their citations
+  intact** — `K = 2.0` independently corroborated against the EIA-860 ratio distribution
+  (p90 = 2.20–2.37). The defect is a **third, uncited term**. Recommendation (rule 19): remove the
+  pending-stock netting from the flow caps and relocate the anti-cobweb guard to where its
+  phenomenon lives. **Unimplemented — needs an owner card.**
+* **FFR-4B.** Both landed, MISO-scoped, each measured alone. D-12 wired at **0.3875** (duration-
+  weighted mean over MISO's four PRA seasons) and is **not inert — its whole effect is in the
+  RETIREMENT screen**, 2024 economic retirements 11,931.6 → 13,524.3 MW, because the reliability
+  floor now has real accredited solar. D-2′ armed via `ISOConfig.default_scenario_overrides` with
+  the `ScenarioConfig` default left `False`, so no other ISO moves — inert 2022-24, decisive in
+  2025: solar flips −33,406 → +25,536 $/MW-yr and decides **1,236.4 MW, MISO's first modelled
+  solar entry anywhere in the window**.
+* **FFR-4C.** Landed. MISO wind entry **4.0 → 0.0 GW** under the statutory window — the predicted
+  direction, larger than predicted. Rule 1 says it stays in.
+* **FFR-4D — PREMISE REFUTED.** The shortfall is **47.3 % fleet, 52.7 % accreditation rate and
+  class boundary**. Fleet correction recovers +5,540.3 MW and moves the reserve position
+  0.8852 → **0.9819, not 1.0896**: CAISO is still **1.8 % short**, the adequacy need does not
+  vanish and **row 4's numerator does not collapse**. The charter's own *"if row 4 does not clear
+  after the fleet is right, THAT IS THE FINDING"* branch fired, and nothing was tuned in response.
+  It also found **FFR-3P's §1.1 hydro row is wrong and reverses sign** (Table 1.1 Hydro includes
+  pumped storage): −1,670.2 MW deficit becomes **+292.6 MW surplus**, moving 1,962.8 MW into
+  storage (−5,933.2 → −7,896.0 MW). Total unchanged; attribution moved.
+* **FFR-4E — PREMISE REFUTED, decisively.** The overlay's absence is a **deliberate,
+  already-adjudicated scoping choice**, and the missing ORDC tail **is worth approximately
+  nothing**: armed on the lookahead today it adds **$0.0002/MWh**, because MISO's modelled reserve
+  never approaches the curve (≥11 GW floor; the curve needs <~8 GW to reach even $2.65/MWh). The
+  in-LP mechanism it defers to has non-zero reserve duals in **0/6/2 hours of 8,760**. And on
+  MISO's measured 2024 DA prices, everything above $200 contributes **$1,192/MW-yr — 0.9 % of
+  CONE**. **FFR-3V's ranking of this as "the largest single suppressor" is refuted.** I chartered
+  it on that ranking; the lane cost one diagnosis and returned a decisive null, which is the
+  system working.
