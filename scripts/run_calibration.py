@@ -4222,11 +4222,28 @@ def run_year(
     ):
         from market_sim.model.storage import ercot_storage_as_soc_min
 
+        _pc = np.asarray(storage_power_cap, dtype=float)
+        if _pc.ndim == 1:
+            _pc = np.repeat(_pc[:, None], config.hours, axis=1)
         soc_floor = ercot_storage_as_soc_min(
             storage_energy_cap,
             config.weather_year,
             config.hours,
             deploy_mw=deploy_sys,
+            # Scaffold-reachability inputs (the 2023 probe measured the raw
+            # floor infeasible against the daily SOC pin + award-docked power;
+            # see _pin_reachability_clip): the post-dock power cap bounds both
+            # charge and discharge in the LP, the deployment floor is the
+            # forced discharge, and the pin applies whenever the daily-cycling
+            # scaffold does.
+            charge_cap=_pc,
+            discharge_min=storage_discharge_min,
+            eta_chg=np.array([u.eta_charge for u in storage_units], dtype=float),
+            eta_dis=np.array([u.eta_discharge for u in storage_units], dtype=float),
+            daily_pin=bool(
+                getattr(config, "storage_daily_cycling", False)
+                or getattr(config, "limited_foresight_dispatch", False)
+            ),
         )
         if float(np.asarray(soc_floor).max()) > 0.0:
             storage_soc_min = soc_floor
