@@ -4414,3 +4414,85 @@ PREREG `results/calibration/PREREG-miso131-granularity-infinite-bound-2026-08-05
 probe `scripts/probes/_miso131_granularity_infinite_bound.py`;
 record `results/calibration/_miso131_granularity_infinite_bound.json`.
 Next number: **miso-132**.
+
+## 2026-08-05 — miso-132(a): SUCCESSOR 1 IS IDENTIFIED BUT INERT — synchronized-reserve online-gating REFUTED ex ante on its own pre-registered bar. NO LP, NO field added, NO run, keeper UNCHANGED
+
+**Lane.** The miso-130 stamp (b) / miso-131 §3 **successor 1** — "the only
+structural, hour-organizing, price-regime-immune candidate left" on the §5.4
+queue. Keeper at entry and exit: `2026-08-04-miso-127-onlinepmin` (NOT-YET, sole
+FAIL C7 `COAL_PRB` 2025 `cv_ratio` 0.347 vs 0.50, ledgered caveats 2/3
+{C3a, C3c}). Rule 22: MISO holds no marker — 2023–2025 only; 2022/2019/2026
+neither solved, scored nor read.
+
+**PREREG** `results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
+pushed at **`9a0033bb` BEFORE the probe ran**, with the two-sided prior naming
+S-2 as the live kill risk and §0 disclosing every previously-measured number.
+
+**Step 1 — IDENTIFICATION SUCCEEDED, and it is DEFINITIONAL (bank it).**
+MISO **BPM-002 §4.2.1.1.2** (Regulation) and **§4.2.1.2.2** (Spin) make both
+products **synchronized-only** in real time; Supplemental is the offline-capable
+one (PJM's public cross-RTO survey states it for MISO directly: "MISO does
+qualification testing to provide *offline supplemental reserve*, but not for
+synchronized reserves"). So the online portion of the Market-Wide Operating
+Reserve is **exactly `reg + spin`** — a product-definition boundary, never a
+fitted share — and it needed **no new intake**: the keeper already runs
+`miso_measured_reserve_requirements`, whose loader reads the cleared-offers
+report at (date, hour, region, **product**) grain and today sums `reg+spin+supp`.
+Measured: online = **55.0 / 56.9 / 58.7 %** of the total OR, **1,316 / 1,550 /
+1,519 MW** at July night — the charter's "~1–1.4 GW must be SYNCHRONIZED"
+**confirmed**. Forward generator, also published and registered:
+`MISO_REGULATING_RESERVE_MW + 0.50 × MSSC` (BPM-002 §3.2 sets the form; PJM
+RCSTF *Education on Reserve Practices across RTOs/ISOs*, 2024-01-17, records
+MISO's spin percent as 50). **It sized no number in this session.**
+
+**Step 2 — the KILL, on the pre-registered S-2 bar.** `ONLINE_CAP` = the reserve
+capability surviving the gate, on the keeper's own dispatch and the fleet
+assembled at HEAD under its committed config. Gating **deletes ~55 % of the
+overnight reserve pool**, and the deleted block is exactly the idle one
+(`gas_ct` 17.9 → 1.6 GW, `oil` 3.0 → 0.0 GW in 2025) — **and it changes
+nothing**, because the **13.8 GW** that survives on GENERATING pools is still
+**~9×** the 1.5 GW online requirement. Tightness **0.100 / 0.113 / 0.110**
+against the 0.25 bar; S-3 also misses in the target year (coal share 0.245 vs
+0.40, reach 371 MW vs 500). The keeper's own solve log states the un-gated form
+of the same fact: the pergen pool's availability-scaled 10-minute cap averages
+**36.7 GW** against a ~2.5 GW total requirement. **Zone pooling did not
+manufacture the kill** — resolved on the published Midwest/South boundary, 2025
+tightness is **0.105 / 0.120**, both regions 8–10× oversupplied.
+
+**THE LESSON, third of the family: A MISSING MARKET RULE IS NOT AUTOMATICALLY A
+BINDING ONE.** miso-130's gap is real and citable; what did not follow is that
+closing it moves dispatch. *Before building a mechanism that adds or tightens a
+constraint, measure that constraint's SLACK in the target hours on the
+incumbent's own dispatch* — one fleet assembly, no LP. Joins miso-129 §2 ("a
+signature is not a cause") and miso-131 §2 ("a plant-grain signature is not a
+class-grain defect").
+
+**Two construction facts recorded rather than buried.** (i) The PREREG's `ρ`
+construction `(pmax−pmin)/pmin` is **DEGENERATE at MISO** — 0 of 504 pergen
+plants carry a positive `pmin` (the tranche fleet holds min-load in `min_gen`) —
+and was replaced with the CEMS-measured min-stable-when-online basis
+(cap-weighted `mlf` 0.352 over 87.5 % covered capacity ⇒ ρ = 1.839) **with
+disclosure**. (ii) S-3's 2025 legs are construction-contaminated (the keeper's
+coal dispatch exceeds the probe's coal available capacity in 36.8 % of 2025
+hours) and are **NOT relied on**; the verdict rests on S-2 alone, whose bias
+direction can only strengthen it.
+
+**Rule duties.** Rule 15 — no run produced in this lane, nothing to register
+(this statement). Rule 16 — all three years throughout. Rules 19/21/24 — nothing
+armed, no field, no knob, no parameter owed an identification. Rule 22 —
+2023–2025 only. Rule 23 — no derive re-run. Rule 25 — MISO-scoped and explicitly
+non-transferable (it rests on MISO's fleet size and overnight headroom); PJM's
+`pjm_reserve_online_gated` and NYISO's arms untouched. Rule 28(b) —
+`reserve_deliverability_scoping` MISO stays **`R`**, re-confirmed on the
+SYNCHRONIZED-PRODUCT variant (the prior R covered zone-aggregate scoping), with
+the evidence citation and the §5.4 queue stamp landed in this session.
+**DO NOT re-open online-gating at MISO without evidence that the overnight
+ONLINE capability is SCARCE**; the pre-check to beat is the finding's §3 table.
+
+FINDING `results/calibration/FINDING-miso132-online-gating-slack-at-miso-2026-08-05.md`;
+PREREG `results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`;
+probe `scripts/probes/_miso132_online_gating_sizing.py`;
+record `results/calibration/_miso132_online_gating_sizing.json`.
+**The queue's only remaining named item is successor 2 (the CC committed-band
+re-grounding, miso-130 stamp (c)) — opened in this same session under its own
+pre-registration; see the miso-132(b) entry.**
