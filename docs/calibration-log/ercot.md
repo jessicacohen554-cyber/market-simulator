@@ -5617,3 +5617,124 @@ no solve was run.** DO-NOT-REDO honored: no CT extension (ERCOT-147), lignite SL
 item 11 untouched.
 
 Next shorthand: ercot-170.
+
+## ercot-170 (2026-08-05) — matrix §5.1 item 11 EXECUTED: the ~2.7 GW CC headroom object IS a CAPABILITY object (102.4 % of the gap, identity error 0.0000 GW), and the per-unit crosswalk that would attribute it is NOT LICENSABLE from committed data. `FILED-UNLICENSED`; Phase 0, NO LP, keeper UNCHANGED (run168b-year-curves)
+
+**Phase 0 — no LP, no solve, no mechanism armed, no `ScenarioConfig` field, no matrix cell verdict
+minted (rule 28(b), the ercot-163/147/152/161 no-LP precedent), keeper UNCHANGED at
+`2026-08-05-run168b-year-curves`.** Charter: the ERCOT-163 close-out, which named a ~2.7 GW CC
+*headroom/capability* object and handed it forward UNCHARTERED pending a per-unit SCED-train ↔
+model-unit crosswalk. Decision rule pre-registered, committed and pushed **before** the corpus was
+read (`docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`).
+
+**The object is CONFIRMED and it needs no crosswalk to establish.** The pre-registered attribution
+identity `U_m − U_r = A(capability) + B(AS reservation) − C(dispatch)` closes **exactly** — error
+**0.0000 GW** against a 0.01 GW construction-error stop — at the committed top-100 2023 gap hours:
+gap **2.6482 GW**, term **A 2.7126 GW = 102.4 %**, with B **0.3029** and C **0.3673** very nearly
+cancelling. It is therefore **not** an ancillary-services object and **not** a dispatch object (the
+pre-registered REDIRECTED branch does not fire). `C_m` 33.1092 / `H_r` 30.3966 / `C_r` 30.0937 /
+`D_r` 29.7339 GW reproduce the ERCOT-163 census **exactly** on its own imported constructions;
+`D_m` 30.1013 vs ERCOT-163's 30.0376 is a disclosed **+0.064 GW keeper delta** (ercot158 → ercot168
+bundle). Fleet scope: model CC nameplate **38.834 GW** (CC_REGULAR 33.120 + CC_CHP 5.714, 61 plants,
+616 LP rows) vs the SCED CC universe **35.260 GW** (per-train p98 telemetered HSL, 70 trains /
+58 sites) = **+3.574 GW / +10.1 %**.
+
+**The crosswalk FAILS its pre-registered coverage licence in BOTH legs, by a wide margin.**
+L1 (SCED-side closure) **0.5111** as pre-registered and **0.3375** on the tiers that survive
+inspection, against a **0.90** bar; L2 (ambiguity budget) **0.1829** against **0.10**. Per the
+pre-registered rule the per-unit attribution is withheld **in BOTH directions** (the ercot-169 §1b
+symmetry — a biased instrument manufactures a false refutation as easily as a false confirmation),
+**no arm is named and none may be built on this record**. On defensible evidence only **19 of 58**
+ERCOT CC sites and **19 of 61** model plants resolve (11.90 of 35.26 GW SCED, 13.17 of 38.83 GW
+model). The unmatched block is led by `FRNYPP` 1.947 GW, `CBECII` 1.174, `OECCS` 1.157, `LPCCS`
+1.138, `WHCCS2` 1.064 — every one with an *obvious* mnemonic expansion and **not one** with an
+on-disk artifact that supports it. The precommit ruled that inadmissible (no row accepted on model
+recall of ERCOT mnemonics alone), which is the ERCOT-163 §3 lesson applied to the crosswalk itself:
+the "~8 GW" existed because a plausible reading of a published file was carried forward unverified.
+The NP4-160-SG README had already stated the limit — *"substation → EIA plant code … this file does
+not carry EIA identifiers and cannot be made to."*
+
+**The ERCOT-163 leading candidate — cogeneration behind private-use networks — is FALSIFIED as a
+COMPLETE explanation, by arithmetic, with no crosswalk.** ERCOT's SCED CC universe telemeters
+**30.397 GW** of committed-or-startable HSL at the gap hours, which **exceeds the model's entire
+CC_REGULAR available capability (28.310 GW) by 2.087 GW**; if the whole CC_CHP class (4.799 GW
+available) were behind private-use networks and absent from SCED, the model would be 2.09 GW
+**short** on regular CC, not long. Under the defensible tiers the unmatched model block is 17.86 GW
+available across 25 CC_REGULAR plants vs 3.96 GW across 17 CC_CHP — the DAM-**covered** class
+carries ~82 % of it. (Caveat stated: `CCGT90`/`CCLE90` is ERCOT's own resource typing and need not
+align with the model's CAMPD/EIA `plant_group`; the arithmetic is exact under the class alignment
+ERCOT-163 itself used.)
+
+**Reported against interest — a pre-registered tier RETRACTED after measurement.** The precommit's
+own **X3/E1** and **X3/E3** tiers are **REFUTED BY INSPECTION in-session**: E1's zone leg consumed
+`ercot-dam-plant-crosswalk.csv`'s `zone`, which is the *unaccepted auto-matcher's proposed plant's*
+zone, not the site's own — the published `SETTLEMENT_LOAD_ZONE` falsifies it directly (`FRNYPP`
+South_Central vs **LZ_NORTH**; `CBEC` North vs **LZ_SOUTH**; `TGCCS` Northeast vs **LZ_NORTH**) —
+and its matches are wrong on their face (Paris Energy Center ← the Ingleside cogen site; Wolf
+Hollow II ← `DDPEC`; Magic Valley ← `PANDA_S`; Ennis ← `TXCTY`). Writing "unique survivor in a
+capacity window" into the precommit as an *evidence* class was an error and is recorded as one.
+The retraction moves L1 **0.5111 → 0.3375**, i.e. further BELOW its bar — the only direction in
+which a post-measurement change to a pre-registered rule is admissible. A second limit is disclosed
+and **not** fixed by moving the bar: the X2 capacity window [0.70, 1.30] conditions on the very
+quantity being measured (6 lexical covers blocked — `THW` 0.579, `TEN` 0.292–0.340, `FORMOSA`
+0.214, `SILASRAY` 0.404), which can only understate `A_derate`. Inside the matched subset the
+per-unit readings are dominated by **grain artifacts**: the largest, Jack County **+593.9 MW**,
+closes to a **1.001** capacity ratio with one unmatched sibling site `JCKCNTY2`, whose published
+`UNIT_NAME` set (`CT3;CT4;ST2`) continues `JACKCNTY`'s own (`CT1;CT2;STG`).
+
+**ITEM 11 RE-POINTED — the next step is DATA INTAKE, not calibration.** The blocker is evidence,
+not effort, and no calibration work produces it: (1) an ERCOT resource-registration extract carrying
+resource/unit name → county (RARF-derived generation-resource listings, CDR generator tables), which
+makes the precommit's E3 county leg and a nameplate/COD join fire on the ~2/3 that is currently
+mnemonic-only; (2) failing that, an ERCOT substation → county/city table, which composes with the
+NP4-160-SG spine already on disk; (3) failing both, a hand-adjudicated site → EIA-plant seed list in
+the ERCOT-110 coal pattern (`ercot-dam-coal-site-seeds.csv`, all 26 coal sites adjudicated with
+citations) — an owner-authorized, reviewed **human** artifact, never a model inference. Only after
+one lands does the mechanism question arise, and it stays exactly what ERCOT-163 said: a rule-14
+`[R-ACCURATE]` fleet-scope correction on the **existing** `ercot_thermal_dam_availability_*`
+channel — **never** a new commitment gate, **never** an aggregate cap, **never** a per-hour
+telemetered-HSL cap. Item 11's **extreme-hour face** (the 4 phantom shed hours, the 1.7–3.1 GW gas
+shortness at the top-10 actual hours) was out of scope here and stays chartered, untouched.
+
+**Mechanism-shape observation, explicitly NOT a measured defect.**
+`derive_ercot_thermal_dam_availability.py` computes `avail(class, hour) = Σ_sites live_HSL /
+Σ_sites rating` and the model applies that **fraction** to its **own** class nameplate, so a
+denominator that does not match the model's registered capability transports a correct measured
+*ratio* onto a larger MW base. Establishing that the denominators differ **per unit** is precisely
+the licence this session failed to obtain; per ERCOT-163 §3 an unattributed aggregate is not handed
+forward as a mechanism premise.
+
+**Carried forward, surfaced NOT decided.** The ercot-169 **OPEN OWNER DECISION** on the 2023
+application of `COAL_OFFER_MARGIN_LEVEL_BY_ISO` (ERCOT-137) and `COAL_PEAK_OFFER_LEVEL_BY_ISO`
+(ERCOT-140) stands untouched — both NOT-IDENTIFIABLE-2023 (COAL `curve_share` 0.9702 vs the 0.9876
+floor), unlicensed readings large and one-directional (limb A +1.6404 = 1.76× band; limb C measured
+p90 $75.00/MWh flat in 9 of 12 months, level₂₀₂₃ +36.14 = 14.4× band). The pre-registered REFUTED
+branch was not reached, so **no candidate arm is named and none may be built without a fresh owner
+adjudication**; this session did not act on it. Also still filed for the next **keeper-promoting**
+session: the three margin constants have no dedicated DOF-ledger entries (zero fitted scalars —
+bookkeeping), to be added with limb B's RETIRED-BY-VERIFICATION note.
+
+**Bookkeeping (rule 28b/c).** Matrix §5.1 item 11 stamped EXECUTED-AND-RE-POINTED in the same
+session; **no cell verdict minted** (no mechanism tested); `check_mechanism_matrix.py` **exit 0**
+(230 pre-existing warnings — anchor drift + the CAISO keeper-stamp drift, neither this session's).
+Harness `scripts/lib/sced_corpus_instruments.py` **EXTENDED** with `capability_census` (rule 23: a
+new function, every ercot-169 function byte-unchanged; it imports
+`ercot163_cc_commitment_state_census`'s `_cap_ref`/`_train`/`_state_of`/`_hoy` **verbatim**, and
+carries ONE declared row-filter delta from the ercot-123/144 set — no telemetered-status filter on
+the capability denominator, because a denominator that drops OUT/OFF rows measures commitment, not
+capability). Probe `scripts/probes/ercot170_cc_headroom_phase0.py`; record
+`results/calibration/ercot170_cc_headroom_phase0.json`; full write-up
+`results/calibration/FINDING-ercot170-cc-headroom-crosswalk-2026-08-05.md`. **No run registered —
+no solve was run** (rule 15). Rule 22: delivery-2023 only, refused by construction outside
+2023–2025; ERCOT holds no `complete` marker. Rule 25: ERCOT-scoped throughout. All-hours control
+reported and pre-declared non-gating (A 7.503 GW of a 7.246 GW gap), with its caveat that over the
+whole year ERCOT genuinely cycles CC off (72.7 % committed vs 96.4 % at the gap hours) so its `H_r`
+mixes commitment state into a capability comparison. DO-NOT-REDO honored in full: the ~8 GW cheap CC
+offline block DOES NOT EXIST (ERCOT-163, not reopened), `energy_online_capability_cap` R,
+`ercot_storage_rt_offer_surface` R, no CT re-identification (ERCOT-147), lignite SLOPE (ERCOT-143),
+`coal_min_load_floor` both grains, lignite daily unit commitment, coal seasonal LEVEL split,
+`coal_offer_level_rebasis` R, `tranche_startup_amortization` G, ercot-168 OPTION B still DEFERRED,
+the ercot-167 SOC-reserve re-gate still waiting on the H4-item-4 defect, West/Panhandle topology
+split CLOSED.
+
+Next shorthand: ercot-171.
