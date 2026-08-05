@@ -5479,3 +5479,16 @@ solve (two feasibility amendments recorded mid-probe, no gate touched). Runs reg
   verdict and did not self-promote. Retention auto-pruned ercot141/ercot144 (top-15; the prior
   keeper ercot158 stays). C3c's rubric-v3.0 model-class entries are unaffected (58→61 / 20→25 /
   0→3 vs the [0.5×] bands 91/27/16 — nowhere near a PASS, the entries stay live).
+
+**PROMOTION EXECUTED (2026-08-05, same day).** The owner promoted run167b on the surfaced record
+("Promote") under the standing structural standard. Keeper → `2026-08-05-run167b-soc-reserve`;
+attestation generated (`scripts/gen_ercot167_attestation.py` — n_entries 11→12, the added entry
+measured/published with zero scalars; the three rubric-v3.0 C3c model-class exceptions carried
+with magnitudes updated to 61/181, 25/53, 3/31); re-scored: C6 PASS, C3c ledgered CAVEAT ×3,
+determination NOT-YET on {C3a 2023 −32.2%, C3b 2023 0.603 + **2024 0.206 — a NEW +0.006
+scorer-basis band cross**, C7 lignite cv 0.331}. The C3b-2024 cross shares the fired kills' root
+(the maintenance-season fabricated-spike days) and is carried as an honest limit in the
+attestation, the keeper shard note, and the matrix §5.1 re-stamp — with the standing re-gate
+expectation unchanged. `audit_keepers --iso ERCOT` PASS; status part rebuilt; ercot165 stays on
+the dashboard as the immediate-prior comparison. The ercot-166 open-gates re-stamp above is
+superseded by the ercot-167 promotion re-stamp in §5.1.
