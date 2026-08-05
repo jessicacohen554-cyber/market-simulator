@@ -1,0 +1,886 @@
+{
+ "arm_A": "results/calibration/neiso83_control_A",
+ "arm_B": "results/calibration/neiso83_ca1reclass_B",
+ "construction_properties": {
+  "p1": {
+   "arm_A_flag": false,
+   "arm_B_flag": true,
+   "differing_keys": {
+    "cc_steam_part_reclass": {
+     "A": false,
+     "B": true
+    }
+   },
+   "falsifier": "differing keys != [the flag] \u21d2 INVALID, no verdict written",
+   "n_differing": 1,
+   "passed": true,
+   "property": "P1 flag fidelity + single delta"
+  },
+  "p2": {
+   "ca1_heat_rate_unchanged": true,
+   "capacity_conserved": true,
+   "changed_fields": {
+    "6081_CA1": {
+     "efficiency_bin": [
+      "default",
+      "older"
+     ],
+     "eford": [
+      0.1,
+      0.05
+     ],
+     "emission_rate_co2": [
+      1.0,
+      0.43
+     ],
+     "fuel_type": [
+      "oil",
+      "gas_cc"
+     ],
+     "nox_rate": [
+      0.0004,
+      8e-05
+     ],
+     "plant_group": [
+      "",
+      "CC_REGULAR"
+     ],
+     "vom": [
+      4.5,
+      2.0
+     ]
+    }
+   },
+   "falsifier": "more than one unit moved, or capacity not conserved \u21d2 INVALID",
+   "passed": true,
+   "property": "P2 fleet grain",
+   "total_pmax_mw": {
+    "armed": 24209.58,
+    "off": 24209.58
+   },
+   "units_added": [],
+   "units_changed": [
+    "6081_CA1"
+   ],
+   "units_removed": []
+  },
+  "p3": {
+   "falsifier": "any other ISO's fleet moving \u21d2 the gate leaks \u21d2 INVALID",
+   "note": "Measured by RUNNING the armed loader per ISO, not by reading the registry. MISO 1004 Edwardsport \u2014 the one other member of the re-class population, and a real 555 MW IGCC machine \u2014 must stay COAL.",
+   "passed": true,
+   "per_iso": {
+    "CAISO": {
+     "byte_identical": true,
+     "n": 782
+    },
+    "ERCOT": {
+     "byte_identical": true,
+     "n": 1450
+    },
+    "MISO": {
+     "byte_identical": true,
+     "n": 1975
+    },
+    "NYISO": {
+     "byte_identical": true,
+     "n": 460
+    },
+    "PJM": {
+     "byte_identical": true,
+     "n": 1922
+    }
+   },
+   "property": "P3 ISO scope (rule 25 [R-ISO-SCOPE])"
+  },
+  "p4": {
+   "falsifier": "|\u0394 oil energy| <= threshold in every year \u21d2 the flag was recorded but never reached the LP \u21d2 INVALID. This is NOT 'the mechanism is inert' \u2014 that reading is what miso-126 lost a solve to.",
+   "passed": true,
+   "per_year": {
+    "2023": {
+     "cc_regular_energy_delta_twh": 0.002197,
+     "energy_delta_twh": {
+      "CC_CHP": -0.000272,
+      "CC_REGULAR": 0.002197,
+      "COAL_BIT": -7.1e-05,
+      "CT_CHP": 2.3e-05,
+      "CT_PEAKER": 0.000679,
+      "ST_GAS": -0.000154,
+      "oil": -0.002313
+     },
+     "max_abs_class_hour_mw": 454.800781,
+     "max_by_class_mw": {
+      "CC_CHP": 31.8084,
+      "CC_REGULAR": 454.8008,
+      "COAL_BIT": 44.9887,
+      "CT_CHP": 3.0369,
+      "CT_PEAKER": 61.5981,
+      "ST_GAS": 47.5568,
+      "hydro": 318.5,
+      "oil": 186.5649
+     },
+     "oil_energy_delta_twh": -0.002313
+    },
+    "2024": {
+     "cc_regular_energy_delta_twh": 0.000618,
+     "energy_delta_twh": {
+      "CC_CHP": 0.000247,
+      "CC_REGULAR": 0.000618,
+      "COAL_BIT": -0.000146,
+      "CT_CHP": -3.6e-05,
+      "CT_PEAKER": -0.001308,
+      "ST_CHP": 3e-06,
+      "ST_GAS": -6.9e-05,
+      "oil": -0.000338
+     },
+     "max_abs_class_hour_mw": 614.59375,
+     "max_by_class_mw": {
+      "CC_CHP": 122.3907,
+      "CC_REGULAR": 614.5938,
+      "COAL_BIT": 91.8066,
+      "CT_CHP": 2.9706,
+      "CT_PEAKER": 65.5214,
+      "ST_CHP": 0.6825,
+      "ST_GAS": 45.8462,
+      "hydro": 245.5631,
+      "oil": 120.9314
+     },
+     "oil_energy_delta_twh": -0.000338
+    },
+    "2025": {
+     "cc_regular_energy_delta_twh": 0.010777,
+     "energy_delta_twh": {
+      "CC_CHP": -0.000144,
+      "CC_REGULAR": 0.010777,
+      "COAL_BIT": -0.000372,
+      "CT_CHP": -6.8e-05,
+      "CT_PEAKER": -0.011054,
+      "ST_GAS": -0.00026,
+      "oil": -0.001387
+     },
+     "max_abs_class_hour_mw": 453.336487,
+     "max_by_class_mw": {
+      "CC_CHP": 123.0452,
+      "CC_REGULAR": 442.3398,
+      "COAL_BIT": 44.9817,
+      "CT_CHP": 3.023,
+      "CT_PEAKER": 138.845,
+      "ST_CHP": 0.8624,
+      "ST_GAS": 47.5568,
+      "hydro": 442.3398,
+      "oil": 453.3365
+     },
+     "oil_energy_delta_twh": -0.001387
+    }
+   },
+   "property": "P4 firing at the ENERGY grain (miso-126 wiring gap)",
+   "threshold_twh": 0.001
+  },
+  "p5": {
+   "basis": "PER-HOUR RELATIVE: max_h |residual_h| / demand_h",
+   "identity": "d_class + d_discharge - d_charge + d_slack - d_dump - d_demand == 0",
+   "passed": true,
+   "per_year": {
+    "2023": {
+     "charge_delta_gwh": 0.394484,
+     "class_delta_gwh": 0.085341,
+     "demand_delta_gwh": 0.0,
+     "discharge_delta_gwh": 0.309141,
+     "dump_delta_gwh": 0.0,
+     "max_abs_hourly_residual_mw": 0.00195312,
+     "max_relative_hourly_residual": 1.583e-07,
+     "slack_delta_gwh": 0.0
+    },
+    "2024": {
+     "charge_delta_gwh": -5.160584,
+     "class_delta_gwh": -1.030585,
+     "demand_delta_gwh": 0.0,
+     "discharge_delta_gwh": -4.130014,
+     "dump_delta_gwh": 0.0,
+     "max_abs_hourly_residual_mw": 0.00219727,
+     "max_relative_hourly_residual": 1.418e-07,
+     "slack_delta_gwh": 0.0
+    },
+    "2025": {
+     "charge_delta_gwh": -12.438113,
+     "class_delta_gwh": -2.507458,
+     "demand_delta_gwh": 0.0,
+     "discharge_delta_gwh": -9.930679,
+     "dump_delta_gwh": 0.0,
+     "max_abs_hourly_residual_mw": 0.00238037,
+     "max_relative_hourly_residual": 1.584e-07,
+     "slack_delta_gwh": 0.0
+    }
+   },
+   "property": "P5 conservation, full identity",
+   "tolerance_relative": 1e-06
+  },
+  "p6": {
+   "passed": true,
+   "per_year": {
+    "2023": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": 9.1e-07,
+     "total_gen_twh": {
+      "A": 96.98633,
+      "B": 96.98641
+     }
+    },
+    "2024": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": -9.91e-06,
+     "total_gen_twh": {
+      "A": 103.92447,
+      "B": 103.92344
+     }
+    },
+    "2025": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": -2.338e-05,
+     "total_gen_twh": {
+      "A": 107.32128,
+      "B": 107.31877
+     }
+    }
+   },
+   "property": "P6 system integrity",
+   "tolerance_total_gen": 0.0005
+  }
+ },
+ "control_integrity": {
+  "byte_basis_identical": true,
+  "byte_basis_vs_committed_keeper": {
+   "2023": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {}
+   },
+   "2024": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {}
+   },
+   "2025": {
+    "max_abs_diff_mw": 0.0,
+    "max_by_class_mw": {}
+   }
+  },
+  "control_determination": "CALIBRATED-WITH-CAVEATS",
+  "keeper_determination": "CALIBRATED-WITH-CAVEATS",
+  "reported_not_a_gate": true,
+  "scorecard_matches_committed_keeper": true
+ },
+ "directional_expectations": {
+  "note": "Rule 1 [R-STRUCT]: nothing here can reject the arm. The ceiling bounds plant 6081's OWN contribution; a class delta may exceed it legitimately through displacement of other plants.",
+  "per_year": {
+   "2023": {
+    "CC_REGULAR_delta_twh": 0.002197,
+    "CC_REGULAR_twh": {
+     "A": 52.5802,
+     "B": 52.5824
+    },
+    "S1_oil_falls": true,
+    "S2_cc_rises": true,
+    "cc_delta_within_ceiling": false,
+    "ceiling_on_6081_leg_twh": 0.0,
+    "oil_delta_twh": -0.002313,
+    "oil_twh": {
+     "A": 0.30721,
+     "B": 0.30489
+    }
+   },
+   "2024": {
+    "CC_REGULAR_delta_twh": 0.000618,
+    "CC_REGULAR_twh": {
+     "A": 56.84789,
+     "B": 56.8485
+    },
+    "S1_oil_falls": true,
+    "S2_cc_rises": true,
+    "cc_delta_within_ceiling": true,
+    "ceiling_on_6081_leg_twh": 1.37,
+    "oil_delta_twh": -0.000338,
+    "oil_twh": {
+     "A": 0.24826,
+     "B": 0.24793
+    }
+   },
+   "2025": {
+    "CC_REGULAR_delta_twh": 0.010777,
+    "CC_REGULAR_twh": {
+     "A": 58.51954,
+     "B": 58.53031
+    },
+    "S1_oil_falls": true,
+    "S2_cc_rises": true,
+    "cc_delta_within_ceiling": true,
+    "ceiling_on_6081_leg_twh": 1.176,
+    "oil_delta_twh": -0.001387,
+    "oil_twh": {
+     "A": 1.70551,
+     "B": 1.70412
+    }
+   }
+  },
+  "reported_not_a_gate": true
+ },
+ "flag": "cc_steam_part_reclass",
+ "iso": "NEISO",
+ "outage_decomposition": {
+  "denominator_mw": {
+   "armed": 305.1,
+   "off": 209.1
+  },
+  "per_year": {
+   "2023": {
+    "capacity_leg_mw": 0.0,
+    "denominator_leg_mw": 0.0,
+    "effective_avail_mw": {
+     "armed": 0.0,
+     "capacity_leg_only": 0.0,
+     "off": 0.0
+    },
+    "mean_avail": {
+     "armed": 0.0,
+     "off": 0.0
+    }
+   },
+   "2024": {
+    "capacity_leg_mw": 28.3,
+    "denominator_leg_mw": 66.4,
+    "effective_avail_mw": {
+     "armed": 156.4,
+     "capacity_leg_only": 90.1,
+     "off": 61.7
+    },
+    "mean_avail": {
+     "armed": 0.5128,
+     "off": 0.2953
+    }
+   },
+   "2025": {
+    "capacity_leg_mw": 18.6,
+    "denominator_leg_mw": 75.2,
+    "effective_avail_mw": {
+     "armed": 134.2,
+     "capacity_leg_only": 59.0,
+     "off": 40.5
+    },
+    "mean_avail": {
+     "armed": 0.44,
+     "off": 0.1935
+    }
+   }
+  },
+  "reported_not_a_gate": true,
+  "root_cause_named_not_fixed": "campd-unit-outages-NEISO.csv carries plant 6081's DIESEL peakers (CAMPD units 004/005 = EIA-860 generators 1 and 2) with plant_group=CC_REGULAR, because `oil` carries no plant_group and the overlay cannot represent an oil unit's outage. In 2024 and 2025 those two units are the ONLY source of 6081 outage rows while the CC block's own units 001/002/003 have none \u2014 so a fully-available CC block is derated to 29.5 % / 19.4 %. Pre-existing, ISO-agnostic, needs a fleet-taxonomy change with six-ISO blast radius. NAMED as an open root-cause issue (rule 21), NOT fixed here (rules 19, 25)."
+ },
+ "prereg": "results/calibration/PREREG-neiso83-stonybrook-ca1-2026-08-05.md",
+ "reported_context": {
+  "c1_per_class_vs_bench": {
+   "2023": {
+    "CC_CHP": {
+     "A": 0.7408,
+     "B": 0.7406,
+     "abs_err_A": 0.3309,
+     "abs_err_B": 0.3311,
+     "abs_err_delta": 0.0003,
+     "actual": 1.0717
+    },
+    "CC_REGULAR": {
+     "A": 52.5802,
+     "B": 52.5824,
+     "abs_err_A": 0.2206,
+     "abs_err_B": 0.2228,
+     "abs_err_delta": 0.0022,
+     "actual": 52.3596
+    },
+    "COAL_BIT": {
+     "A": 0.082,
+     "B": 0.0819,
+     "abs_err_A": 0.1213,
+     "abs_err_B": 0.1214,
+     "abs_err_delta": 0.0001,
+     "actual": 0.2033
+    },
+    "CT_CHP": {
+     "A": 0.4599,
+     "B": 0.4599,
+     "abs_err_A": 0.3324,
+     "abs_err_B": 0.3324,
+     "abs_err_delta": -0.0,
+     "actual": 0.7923
+    },
+    "CT_PEAKER": {
+     "A": 0.3043,
+     "B": 0.305,
+     "abs_err_A": 0.1618,
+     "abs_err_B": 0.1611,
+     "abs_err_delta": -0.0007,
+     "actual": 0.4661
+    },
+    "OTHER": {
+     "A": 3.401,
+     "B": 3.401,
+     "abs_err_A": 0.0,
+     "abs_err_B": 0.0,
+     "abs_err_delta": 0.0,
+     "actual": 3.401
+    },
+    "OTHER_FOSSIL": {
+     "A": 0.0,
+     "B": 0.0,
+     "abs_err_A": 0.2174,
+     "abs_err_B": 0.2174,
+     "abs_err_delta": 0.0,
+     "actual": 0.2174
+    },
+    "ST_CHP": {
+     "A": 0.1667,
+     "B": 0.1667,
+     "abs_err_A": 0.0594,
+     "abs_err_B": 0.0594,
+     "abs_err_delta": 0.0,
+     "actual": 0.1073
+    },
+    "ST_GAS": {
+     "A": 0.126,
+     "B": 0.1258,
+     "abs_err_A": 0.0868,
+     "abs_err_B": 0.087,
+     "abs_err_delta": 0.0002,
+     "actual": 0.2128
+    },
+    "biomass": {
+     "A": 3.0046,
+     "B": 3.0046,
+     "abs_err_A": 0.0,
+     "abs_err_B": 0.0,
+     "abs_err_delta": 0.0,
+     "actual": 3.0046
+    },
+    "hydro": {
+     "A": 8.5173,
+     "B": 8.5173,
+     "abs_err_A": 0.3453,
+     "abs_err_B": 0.3453,
+     "abs_err_delta": 0.0,
+     "actual": 8.172
+    },
+    "nuclear": {
+     "A": 23.1589,
+     "B": 23.1589,
+     "abs_err_A": 0.0453,
+     "abs_err_B": 0.0453,
+     "abs_err_delta": 0.0,
+     "actual": 23.2042
+    },
+    "oil": {
+     "A": 0.3072,
+     "B": 0.3049,
+     "abs_err_A": 0.0825,
+     "abs_err_B": 0.0848,
+     "abs_err_delta": 0.0023,
+     "actual": 0.3897
+    },
+    "solar": {
+     "A": 0.8899,
+     "B": 0.8899,
+     "abs_err_A": 0.0001,
+     "abs_err_B": 0.0001,
+     "abs_err_delta": 0.0,
+     "actual": 0.89
+    },
+    "wind": {
+     "A": 3.2475,
+     "B": 3.2475,
+     "abs_err_A": 0.0005,
+     "abs_err_B": 0.0005,
+     "abs_err_delta": 0.0,
+     "actual": 3.247
+    }
+   },
+   "2024": {
+    "CC_CHP": {
+     "A": 0.9523,
+     "B": 0.9525,
+     "abs_err_A": 0.1717,
+     "abs_err_B": 0.1715,
+     "abs_err_delta": -0.0002,
+     "actual": 1.124
+    },
+    "CC_REGULAR": {
+     "A": 56.8479,
+     "B": 56.8485,
+     "abs_err_A": 0.2395,
+     "abs_err_B": 0.2401,
+     "abs_err_delta": 0.0006,
+     "actual": 56.6084
+    },
+    "COAL_BIT": {
+     "A": 0.1269,
+     "B": 0.1267,
+     "abs_err_A": 0.127,
+     "abs_err_B": 0.1272,
+     "abs_err_delta": 0.0001,
+     "actual": 0.2539
+    },
+    "CT_CHP": {
+     "A": 0.482,
+     "B": 0.4819,
+     "abs_err_A": 0.2874,
+     "abs_err_B": 0.2875,
+     "abs_err_delta": 0.0,
+     "actual": 0.7694
+    },
+    "CT_PEAKER": {
+     "A": 0.7859,
+     "B": 0.7846,
+     "abs_err_A": 0.1312,
+     "abs_err_B": 0.1299,
+     "abs_err_delta": -0.0013,
+     "actual": 0.6547
+    },
+    "OTHER": {
+     "A": 3.3519,
+     "B": 3.3519,
+     "abs_err_A": 0.0,
+     "abs_err_B": 0.0,
+     "abs_err_delta": 0.0,
+     "actual": 3.3519
+    },
+    "OTHER_FOSSIL": {
+     "A": 0.0,
+     "B": 0.0,
+     "abs_err_A": 0.219,
+     "abs_err_B": 0.219,
+     "abs_err_delta": 0.0,
+     "actual": 0.219
+    },
+    "ST_CHP": {
+     "A": 0.1758,
+     "B": 0.1758,
+     "abs_err_A": 0.0756,
+     "abs_err_B": 0.0756,
+     "abs_err_delta": 0.0,
+     "actual": 0.1002
+    },
+    "ST_GAS": {
+     "A": 0.072,
+     "B": 0.072,
+     "abs_err_A": 0.0393,
+     "abs_err_B": 0.0393,
+     "abs_err_delta": 0.0001,
+     "actual": 0.1113
+    },
+    "biomass": {
+     "A": 2.9641,
+     "B": 2.9641,
+     "abs_err_A": 0.0,
+     "abs_err_B": 0.0,
+     "abs_err_delta": 0.0,
+     "actual": 2.9641
+    },
+    "hydro": {
+     "A": 6.6731,
+     "B": 6.6731,
+     "abs_err_A": 0.7211,
+     "abs_err_B": 0.7211,
+     "abs_err_delta": 0.0,
+     "actual": 7.3942
+    },
+    "nuclear": {
+     "A": 26.4816,
+     "B": 26.4816,
+     "abs_err_A": 0.0656,
+     "abs_err_B": 0.0656,
+     "abs_err_delta": 0.0,
+     "actual": 26.5472
+    },
+    "oil": {
+     "A": 0.2483,
+     "B": 0.2479,
+     "abs_err_A": 0.0635,
+     "abs_err_B": 0.0639,
+     "abs_err_delta": 0.0003,
+     "actual": 0.3118
+    },
+    "solar": {
+     "A": 1.3114,
+     "B": 1.3114,
+     "abs_err_A": 0.0004,
+     "abs_err_B": 0.0004,
+     "abs_err_delta": 0.0,
+     "actual": 1.311
+    },
+    "wind": {
+     "A": 3.4515,
+     "B": 3.4515,
+     "abs_err_A": 0.0005,
+     "abs_err_B": 0.0005,
+     "abs_err_delta": 0.0,
+     "actual": 3.451
+    }
+   },
+   "2025": {
+    "CC_CHP": {
+     "A": 0.554,
+     "B": 0.5539,
+     "abs_err_A": 0.64,
+     "abs_err_B": 0.6401,
+     "abs_err_delta": 0.0001,
+     "actual": 1.194
+    },
+    "CC_REGULAR": {
+     "A": 58.5195,
+     "B": 58.5303,
+     "abs_err_A": 2.7068,
+     "abs_err_B": 2.7176,
+     "abs_err_delta": 0.0108,
+     "actual": 55.8127
+    },
+    "COAL_BIT": {
+     "A": 0.2163,
+     "B": 0.2159,
+     "abs_err_A": 0.0549,
+     "abs_err_B": 0.0553,
+     "abs_err_delta": 0.0004,
+     "actual": 0.2712
+    },
+    "CT_CHP": {
+     "A": 0.45,
+     "B": 0.4499,
+     "abs_err_A": 0.2363,
+     "abs_err_B": 0.2362,
+     "abs_err_delta": -0.0001,
+     "actual": 0.2137
+    },
+    "CT_PEAKER": {
+     "A": 1.6533,
+     "B": 1.6422,
+     "abs_err_A": 1.034,
+     "abs_err_B": 1.0229,
+     "abs_err_delta": -0.0111,
+     "actual": 0.6193
+    },
+    "OTHER": {
+     "A": 2.7748,
+     "B": 2.7748,
+     "abs_err_A": 0.1618,
+     "abs_err_B": 0.1618,
+     "abs_err_delta": 0.0,
+     "actual": 2.613
+    },
+    "ST_CHP": {
+     "A": 0.1024,
+     "B": 0.1024,
+     "abs_err_A": 0.0369,
+     "abs_err_B": 0.0369,
+     "abs_err_delta": -0.0,
+     "actual": 0.0655
+    },
+    "ST_GAS": {
+     "A": 0.0642,
+     "B": 0.064,
+     "abs_err_A": 0.2398,
+     "abs_err_B": 0.24,
+     "abs_err_delta": 0.0003,
+     "actual": 0.304
+    },
+    "biomass": {
+     "A": 2.4538,
+     "B": 2.4538,
+     "abs_err_A": 0.0,
+     "abs_err_B": 0.0,
+     "abs_err_delta": 0.0,
+     "actual": 2.4538
+    },
+    "hydro": {
+     "A": 5.1064,
+     "B": 5.1064,
+     "abs_err_A": 0.0143,
+     "abs_err_B": 0.0143,
+     "abs_err_delta": 0.0,
+     "actual": 5.1207
+    },
+    "nuclear": {
+     "A": 27.6105,
+     "B": 27.6105,
+     "abs_err_A": 0.0084,
+     "abs_err_B": 0.0084,
+     "abs_err_delta": 0.0,
+     "actual": 27.6189
+    },
+    "oil": {
+     "A": 1.7055,
+     "B": 1.7041,
+     "abs_err_A": 0.7963,
+     "abs_err_B": 0.7949,
+     "abs_err_delta": -0.0014,
+     "actual": 0.9092
+    },
+    "solar": {
+     "A": 1.5774,
+     "B": 1.5774,
+     "abs_err_A": 0.0004,
+     "abs_err_B": 0.0004,
+     "abs_err_delta": 0.0,
+     "actual": 1.577
+    },
+    "wind": {
+     "A": 4.5331,
+     "B": 4.5331,
+     "abs_err_A": 0.0001,
+     "abs_err_B": 0.0001,
+     "abs_err_delta": 0.0,
+     "actual": 4.533
+    }
+   }
+  },
+  "c1_summed_abs_err_delta_twh": {
+   "2023": 0.0044,
+   "2024": -0.0004,
+   "2025": -0.001
+  },
+  "lambda_load_weighted": {
+   "2023": {
+    "A": 39.3278,
+    "B": 39.3283,
+    "delta_usd": 0.0005,
+    "frac_of_level": 1.2e-05
+   },
+   "2024": {
+    "A": 44.0745,
+    "B": 44.0553,
+    "delta_usd": -0.0192,
+    "frac_of_level": -0.000435
+   },
+   "2025": {
+    "A": 72.3205,
+    "B": 72.2503,
+    "delta_usd": -0.0701,
+    "frac_of_level": -0.000969
+   }
+  },
+  "tail_hours_over_300": {
+   "2023": {
+    "A": 0,
+    "B": 0
+   },
+   "2024": {
+    "A": 0,
+    "B": 0
+   },
+   "2025": {
+    "A": 0,
+    "B": 0
+   }
+  }
+ },
+ "session": "neiso-83",
+ "stop_triggers": {
+  "N1_determination_worse": {
+   "arm_A": "CALIBRATED-WITH-CAVEATS",
+   "arm_B": "CALIBRATED-WITH-CAVEATS",
+   "fired": false,
+   "incumbent": "CALIBRATED-WITH-CAVEATS"
+  },
+  "N2_criterion_pass_to_fail": {
+   "fired": false,
+   "flips": []
+  },
+  "N3_c3c_degraded_or_new_caveat": {
+   "fired": false,
+   "n_caveats": {
+    "A": 4,
+    "B": 4
+   },
+   "price_tail": {
+    "A": "CAVEAT",
+    "B": "CAVEAT"
+   }
+  },
+  "N4_system_integrity": {
+   "detail": {
+    "2023": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": 9.1e-07,
+     "total_gen_twh": {
+      "A": 96.98633,
+      "B": 96.98641
+     }
+    },
+    "2024": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": -9.91e-06,
+     "total_gen_twh": {
+      "A": 103.92447,
+      "B": 103.92344
+     }
+    },
+    "2025": {
+     "dump_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "slack_mwh": {
+      "A": 0.0,
+      "B": 0.0
+     },
+     "total_gen_frac_delta": -2.338e-05,
+     "total_gen_twh": {
+      "A": 107.32128,
+      "B": 107.31877
+     }
+    }
+   },
+   "fired": false
+  },
+  "any_fired": false
+ },
+ "verdict": {
+  "branch": "V3",
+  "cell": "K",
+  "construction": {
+   "p1": true,
+   "p2": true,
+   "p3": true,
+   "p4": true,
+   "p5": true,
+   "p6": true
+  },
+  "outcome": "K \u2014 PROMOTE on rules 1 [R-STRUCT] / 13 [R-MEASURED] / 14 [R-ACCURATE]: a zero-DOF correctness fix. The size of the residual move is reported, never required."
+ }
+}
