@@ -6432,3 +6432,26 @@ one cell only a CAISO backcast could settle); §5.2 header re-stamped. Evidence:
 `results/calibration/FINDING-caiso174-epoch-resolve-2026-08-05.md`,
 `PRECHECK-caiso174-epoch-resolve-2026-08-05.md`, probes `_caiso174_fleet_gate.py` /
 `_caiso174_ab_compare.py`, generator `scripts/gen_caiso174_attestation.py`.
+
+## 2026-08-05 — CAISO — CAISO-GRANT: the `complete` marker is WRITTEN (owner-signed). Governance lane — no solve, no scoring, no year touched
+
+CAISO's `complete` entry now exists in `frontend/data/backcast/calibration-complete.json`,
+keyed to `2026-08-05-caiso-174-measured-fleet` (`keeper` = `keeper_at_declaration`), on the
+owner's **GRANT** signed 2026-08-05 via the option card at
+`docs/handoffs/ffr-owner-sitting-2026-08-02.md` **Addendum S.4/S.5** — the session-logged
+authorization rule 22 requires. Citation chain: caiso-171 (assessment reversed to YES,
+criterion restated at P.6) → caiso-172 (its one gating item, the PGE-TAC weight, closed
+MEASURED) → caiso-174 (PR #3578, FFR-4D epoch re-solved, keeper on the measured fleet,
+`complete` re-recommended YES) → Addendum S.4/S.5. Determination **verified from committed
+artifacts only** (`scripts/calibration_verdict.py --run-id`, never a solve):
+**CALIBRATED-WITH-CAVEATS**, 2 ledgered caveats (C3a, C3c — the owner's act of 2026-07-30 at
+caiso-145), 0 FAILs, D-10 C1 12/12 · free 8/8. `audit_keepers.py --iso CAISO` **PASS** (0
+failures, 0 warnings, M1 included); mechanism matrix **zero delta** (230 warnings before and
+after, identical set — no cell changed). The grant authorizes the **validation ladder and
+nothing else**: `final` is untouched, and the **holdout spend freeze stays ACTIVE and outranks
+the marker** — the solve entry point still refuses `--iso CAISO --year 2022
+--holdout-authorized`, citing the freeze before the marker. Recorded against interest in the
+entry itself: C7/C8 are **unscored-protective** on caiso-174 because its bundle carries no
+`legitimacy_diagnostics.json` (the superseded caiso-172 does, and scores both PASS) — a
+scorer-only gap under rule 21, deliberately not repaired in this committed-artifacts-only lane.
+Full record: `docs/handoffs/caiso-complete-grant-2026-08-05.md`.
