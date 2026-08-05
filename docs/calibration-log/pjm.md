@@ -3038,11 +3038,25 @@ mechanism clears D-4 off-window binding, profile r 0.927, off-peak CV ratio
 1.004. Reported as a clean pass, per rule 21's grounded-pass clause.
 
 **What this is NOT.** Validation tier is **ITERABLE model-SELECTION evidence** —
-not a certified out-of-sample skill number, never quotable as one. It is scored
-against the **known-imperfect availability envelope** the freeze exists for, so
-the `CC_REGULAR` over-generation in particular must be re-measured after that
-fix before it is attributed to the offer stack: an over-counted outage envelope
-and a CC over-dispatch are exactly the pair that could be confounded.
+not a certified out-of-sample skill number, never quotable as one.
+
+**AVAILABILITY-ENVELOPE PARITY IS VERIFIED — corrected 2026-08-05.** An earlier
+draft of this entry said the `CC_REGULAR` miss "must be re-measured after the
+envelope fix before it is attributed to the offer stack", on the reasoning that
+an over-counted outage envelope and a CC over-dispatch could be confounded. That
+framing is **withdrawn as too broad**: it would be right only if 2022's envelope
+were worse than the tuned years', and it is not. 2022 comes from the SAME
+uniform 2018–2026 detector regeneration, carries the SAME merit-order guard
+(layup windows disjoint from the standard extract — 0 of 10,670 PJM windows
+overlap), was solved against the **byte-identical** layup artifact the keeper
+used (`unit_outages_layup-b8ac78eb969e`), and is in family on volume
+(11.78 M MW-days vs a 2023–2025 range of 10.53–12.97 M; median window 12 d).
+The confound would have to explain why the SAME defect produces a passing C1 on
+the tuned years and an +18.28 TWh `CC_REGULAR` miss on 2022 — so it is not a
+sufficient explanation, and the miss stands as a real out-of-sample signal
+pointing at the CC offer stack / gas passthrough under extreme 2022 gas. The
+envelope defect still discounts the **absolute level** of both sides; it does
+not discount the **delta**.
 
 **No re-tune was performed.** Rule 22 sends a validation miss back to 2023–2025;
 this session measured and reported only.
