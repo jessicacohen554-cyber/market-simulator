@@ -4344,3 +4344,73 @@ two-sided wave + regime attribution). NO cell status changes. FINDING
 `results/calibration/FINDING-miso130-c7-night-regime-2026-08-05.md`; probe
 `scripts/probes/_miso130_c7_night_regime.py`; record
 `results/calibration/_miso130_c7_night_regime.json`. Next number: miso-131.
+
+## 2026-08-05 — miso-131: the granularity lane is DEAD AT PREREQUISITE 1, verdict-grade, zero solves — infinite granularity moves the gated statistic by ±0.001, and a PLANT-grain signature is not a CLASS-grain defect. NO LP, keeper UNCHANGED
+
+**Lane.** Executes the owner handoff chartering miso-129's named-not-chartered
+granularity object. (The handoff was labelled "miso-130"; that number was spent
+by the merged PR #3573 diagnostic session, so this is **miso-131**.) OFF-QUEUE
+BY NECESSITY as the handoff required, and it says so. **NO LP SOLVED. NO
+DERIVE RUN. NO FIELD ADDED. NO ARM BUILT. NO RUN REGISTERED** (rule 15
+satisfied by this statement). Keeper UNCHANGED at
+`2026-08-04-miso-127-onlinepmin` (NOT-YET, sole FAIL C7 COAL_PRB 2025 cv_ratio
+0.347, ledgered caveats 2/3 {C3a, C3c}). Rule 22: 2023–2025 only.
+
+**PREREG pushed at `6e3562a4` BEFORE the probe ran**, expected-kill prior
+declared TWO-SIDEDLY (miso-127 Lane B duty), §0 disclosing every
+previously-measured number (the miso-130 July freeze statistic included).
+Construction census re-established at HEAD first: bit-identical to miso-129
+(n=6, 48 plants / 38,144.8 MW, 100 % laddered, step 72.6 MW, median ratio
+1.175, 41.4 % share) across the ~50 intervening merges.
+
+**The screen: an INFINITE-GRANULARITY BOUND.** Per keeper-payload PRB plant,
+the econ band's hourly response to the keeper's OWN solved zonal price is
+reconstructed under the current 6-step ladder and under the n→∞ continuous
+limit (the linear ramp through the same assembled (cum-cap, $) points — same
+endpoints, same capacity, zero new parameters; per-plant F923 monthly coal
+pricing; peak tranche a step in both legs). Counterfactual class series =
+payload + (response_∞ − response_6), clipped to the plant's solved annual max;
+scored exactly as D-1 scores. Price-taking declared as the bound direction
+(equilibrium feedback only shrinks the gain).
+
+**P0b VALIDATES the construction emphatically**: response-model hod-profile r
+vs the payload class sum **0.999/0.997/0.997** (bar 0.90); payload scoring
+frame reproduces the official D-1 cv_ratio to three decimals
+(0.517/0.529/0.345 vs 0.514/0.529/0.347, bar ±0.10). **P1 then KILLS on its
+pre-registered bar**: n→∞ cv_ratio **0.518/0.530/0.344** vs payload
+0.517/0.529/0.345 — Δ **+0.001/+0.001/−0.001**, with 2025 at 0.344 < 0.50
+(needed ×1.447). P1-secondary does not fire.
+
+**WHY — the lesson that extends miso-129 §2's "a signature is not a cause": A
+PLANT-GRAIN SIGNATURE IS NOT A CLASS-GRAIN DEFECT.** A 72.6 MW step quantizes
+each plant by ±half a step, but ~34 plants' quantization residuals sit at
+different price phases and CANCEL in the class sum — and C7 is scored on the
+CLASS hour-of-day mean profile. The 41.4 %-inside-one-step statistic is true
+and irrelevant at the gated grain. Also measured: the annual frozen-band share
+is **0.000** — every PRB band is crossed at some point in a year, so
+miso-130's July freeze statistic is real but MONTH-scoped; the kill is direct
+aggregation cancellation, not freeze. The §0 prior is recorded CONFIRMED IN
+OUTCOME, CORRECTED IN MECHANISM.
+
+**Consequences.** `offer_curve_smoothing_n` is ADJUDICATED INERT as a MISO C7
+lever (sub-scalar note stamped on the `offer_curve_by_group` matrix row; no
+cell status change — the row stays K). All three miso-129 prerequisites are
+MOOT; the rule-21 unidentified-discretization-count DOF question is DISSOLVED
+for MISO (an inert parameter owes no identification). **DO NOT re-open
+granularity at MISO without new CLASS-grain evidence.** Rule 25: the
+cancellation argument is fleet-size-dependent and transfers to NO other ISO.
+P2's conduct derive was never run; no n chosen; nothing sized on any Δ.
+
+**Queue after this session:** the two miso-130 successors are the only named,
+un-adjudicated, non-data-blocked items — (1) synchronized-reserve
+online-gating (the structural, hour-organizing, regime-immune candidate;
+needs the published spin/reg identification and a ≥24 GB or swap-enabled
+solve host), (2) CC_REGULAR committed-band measured re-grounding (1.20 vs its
+own measured avg_committed_p50 1.005; bounded). Neither is licensed by this
+finding; each needs its own prereg.
+
+FINDING `results/calibration/FINDING-miso131-granularity-inert-at-class-grain-2026-08-05.md`;
+PREREG `results/calibration/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`;
+probe `scripts/probes/_miso131_granularity_infinite_bound.py`;
+record `results/calibration/_miso131_granularity_infinite_bound.json`.
+Next number: **miso-132**.

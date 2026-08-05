@@ -3026,6 +3026,61 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-04-miso-127-onlinepmin`, **NOT-YET**, C7 now failing **2025 only**)
 
+> **QUEUE STAMP miso-131 (2026-08-05) — THE GRANULARITY LANE IS DEAD AT
+> PREREQUISITE 1, VERDICT-GRADE, ZERO SOLVES. NO LP, NO DERIVE, NO FIELD, NO
+> ARM, NO RUN, KEEPER UNCHANGED** at `2026-08-04-miso-127-onlinepmin`.
+>
+> **(a) The kill.** PREREG pushed at `6e3562a4` BEFORE the probe ran
+> (expected-kill prior declared two-sidedly per the miso-127 Lane B duty; §0
+> disclosed every previously-measured number). Construction VALIDATED (P0b:
+> response-model hod-profile r 0.999/0.997/0.997 vs the keeper's own payload;
+> payload scoring frame reproduces official D-1 cv_ratio to three decimals),
+> then the pre-registered P1 bar fired: the **n→∞ infinite-granularity
+> counterfactual** (continuous econ ramp through the same assembled step
+> points, cleared against the keeper's own solved zonal prices, per-plant F923
+> monthly coal pricing) moves COAL_PRB cv_ratio by **+0.001/+0.001/−0.001**
+> (2025: 0.345 → **0.344** vs the 0.50 gate, needed ×1.447). Infinite
+> resolution is INERT to three decimals, under price-taking that OVERSTATES
+> the gain.
+>
+> **(b) WHY, and the lesson that extends miso-129 §2: A PLANT-GRAIN SIGNATURE
+> IS NOT A CLASS-GRAIN DEFECT.** A 72.6 MW step quantizes each plant by
+> ±half a step, but ~34 plants' residuals sit at different price phases and
+> CANCEL in the class sum — and the C7 statistic is the CLASS hour-of-day
+> mean profile. miso-129's OBS (41.4 % of capacity with its whole swing
+> inside one step) is true and irrelevant at the gated grain. Checking the
+> grain transfer cost one no-LP reconstruction and killed the lane. Also
+> measured: the annual frozen-band share is **0.000** (every band is crossed
+> at some point in a year) — miso-130's July freeze statistic is real but
+> MONTH-scoped; the kill is direct cancellation, not freeze.
+>
+> **(c) Consequences.** `offer_curve_smoothing_n` is ADJUDICATED INERT as a
+> MISO C7 lever (sub-scalar note stamped on the `offer_curve_by_group` row;
+> no cell status change). All three miso-129 prerequisites are MOOT; the
+> rule-21 unidentified-discretization-count question is DISSOLVED for MISO
+> (an inert parameter owes no identification). **DO NOT re-open granularity
+> at MISO without new CLASS-grain evidence** — a per-plant statistic is not
+> such evidence. The cancellation argument is fleet-size-dependent and
+> transfers to NO other ISO (rule 25). P2's conduct derive was never run; no
+> n was chosen; nothing was sized on any Δ (KILL-4 honoured).
+>
+> **(d) THE QUEUE NOW.** The only named, un-adjudicated, non-data-blocked
+> items are the two miso-130 successors, unchanged and unlicensed:
+> **successor 1 — synchronized-reserve online-gating** (`_miso_design` sets
+> no `online_gated`; ~1–1.4 GW spin+reg must be synchronized in the real
+> market; hour-organizing by construction, regime-immune; prerequisites in
+> the miso-130 stamp (b)); **successor 2 — CC_REGULAR committed-band
+> measured re-grounding** (registered 1.20 vs its own measured
+> `avg_committed_p50` 1.005; miso-130 stamp (c)). Session-number note: the
+> inbound handoff for this session was labelled "miso-130"; that number was
+> spent by the merged PR #3573 session — this lane is miso-131 and the next
+> number is **miso-132**.
+>
+> **FINDING:** `results/calibration/FINDING-miso131-granularity-inert-at-class-grain-2026-08-05.md`
+> · **PREREG:** `results/calibration/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`
+> · **Probe:** `scripts/probes/_miso131_granularity_infinite_bound.py`
+> · **Record:** `results/calibration/_miso131_granularity_infinite_bound.json`.
+
 > **QUEUE STAMP miso-130 (2026-08-05) — C7 COAL_PRB IS A SUMMER-NIGHT
 > PRICE-REGIME DEFECT, AND THE QUEUE NOW CARRIES TWO NAMED-NOT-CHARTERED
 > SUCCESSORS. NO LP, NO PREREG (all numbers descriptive), NO ARM, NO CELL
