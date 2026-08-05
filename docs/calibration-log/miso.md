@@ -4586,3 +4586,100 @@ FINDING: this entry (the A/B record is the finding artifact);
 PREREG `results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md`;
 records `_miso132b_cc_committed_precheck.json`, `_miso132b_cc_committed_ab.json`,
 `_miso132b_run_ids.json`. Next number: **miso-133**.
+
+## 2026-08-05 — miso-133: the ST_GAS "bench coverage gap" is a REPORTING-TRANSFORM DENOMINATOR CROSSING; the CHP row was a BASIS CROSSING; and the model's overnight non-coal CAPABILITY is not the binding constraint
+
+**NO LP SOLVED. NO KEEPER MOVED. NO MECHANISM ARMED. NO ScenarioConfig FIELD
+ADDED. NO RUN REGISTERED.** Keeper unchanged at
+`2026-08-05-miso-132b-cc-committed` (NOT-YET, sole FAIL C7 `COAL_PRB` 2025
+`cv_ratio` 0.338 vs 0.50, caveats 2/3 {C3a, C3c}). Rule 22: 2023–2025 only.
+Charter lane **(b)** — the new-evidence screen on the two **un-adjudicated**
+rows of miso-130 §4's overnight supply identity. PREREG pushed at `a2be76c6`
+**before** any adjudicating statistic.
+
+**(a) THE KILL, and it is a measurement-integrity kill.** miso-127-parallel
+§7a named three candidate causes for `ST_GAS`'s 37–39 % bench-coverage gap
+(sub-CEMS units / bench-vs-LP class assignment / no bench entry) and
+adjudicated none. **All three are wrong.** The cause is a fourth: the ratio's
+two sides sit on **opposite sides of a documented reporting transform**.
+`fleet.eia860.apply_other_fossil_scoring` re-buckets a genuinely-mixed
+gas-thermal plant into `OTHER_FOSSIL` **symmetrically on the model and actual
+sides**; `class_hourly` is written UPSTREAM of it and the bench/payload pair
+DOWNSTREAM. miso-127 divided a downstream numerator by an upstream denominator.
+At MISO the transform has one material member — **Ninemile Point (1403**,
+model `ST_GAS` 1,465.4 MW + `CC_REGULAR` 649.5 MW, neither dominant), **9.51 /
+9.21 / 8.36 TWh** of payload `OTHER_FOSSIL` energy against an `ST_GAS`
+residual of **8.23 / 8.16 / 7.38 TWh**. One plant *is* the gap. On a
+transform-consistent denominator **`ST_GAS` coverage is 0.988 / 0.988 / 0.988**,
+not 0.605 / 0.612 / 0.629 — and the machines were never missing: the bench
+carries 1403 at 8.26 / 9.13 / 8.62 TWh, matching the model to −50 / −3 / −86 MW
+at July night. **The §7a blocker ("no class-grain statement about MISO gas is
+determinable") is LIFTED.**
+
+**(b) The CHP row was invertible all along.** §7b is right that the bench CHP
+series are whole-plant; what it lacked is that the **payload's MODEL series
+carries the same add-back** (`render_calibration_html`: "CHP add-back (report
+only, NOT in the LP) … a flat add"), in exactly the bench's own `btm` amount —
+so its removal is exact. The §7b ratio (2.20–4.60 here) is a **crossed** pair.
+Clean pairs: whole-plant `CC_CHP` 1.080/1.039/1.134, `CT_CHP` 1.264/1.379/1.393,
+`ST_CHP` 0.953/1.130/1.113; grid-delivered 1.088/**0.986**/1.194,
+1.654/1.756/1.767, 0.822/0.803/0.773. **S-2: `CC_CHP` RESOLVED**; `CT_CHP` /
+`ST_CHP` PARTIALLY RESOLVED with the residual named (model short 1.7–2.0 TWh/yr
+`CT_CHP`; long 0.06–0.08 TWh/yr `ST_CHP`).
+
+**(c) miso-130 §4 RESTATED** — July night h0–5, grid-delivered on BOTH sides,
+model − measured MW (2023/2024/2025): `COAL_PRB` **+1,968 / +1,736 / +3,103**;
+`COAL_BIT` +145/+445/+970; `CC_REGULAR` −1,367/−779/−1,357; **`CT_PEAKER`
+−854/−691/−666** (a row the identity did not have); **`ST_GAS` −384/−234/−673**
+(was "size unknown"); **CHP −314/−131/−444** (was "nominal −1.7 GW" — the
+disputed row **overstated the CHP hole by ~1.3 GW**); `OTHER_FOSSIL` −50/−3/−86.
+Coal +1,989/+2,122/+3,993 vs non-coal −2,969/−1,838/−3,227. miso-130's root
+cause **survives, re-weighted**: the hole is `CC_REGULAR`-and-`CT_PEAKER`-led,
+not CHP-led.
+
+**(d) THE SLACK RESULT, and the DO-NOT it produces — third of the
+miso-132(a) family.** July-night headroom on the keeper's own dispatch,
+**uncontaminated in all three years**: the model dispatches **6.1 %** of
+assembled `CT_PEAKER` and **16.9 %** of `ST_GAS`, leaving **~41 GW** of idle
+non-coal gas capability against a **3.2 GW** (2025) shortfall; `CT_PEAKER`
+availability would have to fall to **~20 %** before its idle block alone
+stopped covering the whole shortfall. **DO NOT charter a MISO lever whose
+mechanism is to make more overnight non-coal capability AVAILABLE** —
+availability, must-offer, commitment-bridge, reserve-gating and RA-style levers
+all add *capability*, and MISO's is ~10× the shortfall and idle. What holds the
+model's overnight gas down is the merit **ORDER**, which is miso-130's freeze
+statistic seen from the quantity side — the two constructions now agree from
+both directions. This also disposes of miso-130 §5's open
+`gas_commitment_bridge` census question: the mechanism could not bind even if
+the pool were full.
+
+**(e) A grain disagreement, recorded not buried.** S-1's pre-registered
+plant-grain sub-CEMS test on `CT_PEAKER`'s 46 unbenched plants returns
+**FAILS** (0.192 < 25 MW). At the grain 40 CFR Part 75 is actually written —
+the **unit** — the same plants carry 154 EIA-860 generators, **79.9 %** of
+1,886.4 MW below 25 MW → **SUPPORTED**, and the plants are RICE banks (Weston
+RICE 131.6 MW, F.D. Kuester 131.6 MW) and small peakers. Both are reported; the
+pre-registered one fired and is superseded on rule 14 grounds, disclosed. So
+`CT_PEAKER`'s residual gap is **real machines CEMS cannot see** — its shortfall
+is a LOWER bound and **no bench-repair charter is owed**.
+
+**(f) Charter option (a) not taken, and NOT re-derived.** The Form 580 count
+was already established non-producible from a standard session
+(`miso-coal-contract-tonnage-data-ask-2026-07.md` §9, xiso-4). Only the one
+cheap discriminator was re-probed — the eLibrary docket sheet returns the same
+**22,464-byte SPA shell** — confirming §9. The §2C bar cannot clear before the
+2026 form lands **2026-10-30** whatever the count says. **The Michigan PSCR
+lead is UNSPENT and untouched.**
+
+**Rule duties.** Rule 15: no run produced (no LP), nothing to register. Rule
+28(b): `gas_commitment_bridge` MISO evidence re-stamped — **cell stays `U`**,
+because PREREG §2 declared S-4 descriptive and ungated, so no verdict is taken
+from it. Rules 19/21/24/25: nothing sized on any Δ, no parameter derived, no
+tuning channel created, no other ISO's cell touched (the transform is not
+MISO-specific, but each ISO must measure its own roster).
+
+FINDING `results/calibration/FINDING-miso133-overnight-identity-basis-2026-08-05.md`;
+PREREG `results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`;
+probe `scripts/probes/_miso133_overnight_identity_basis.py`;
+record `results/calibration/_miso133_overnight_identity_basis.json`.
+Next number: **miso-134**.
