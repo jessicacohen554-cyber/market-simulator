@@ -138,7 +138,8 @@ def _verdict(run_id: str) -> dict:
         text=True,
         cwd=REPO,
     )
-    if out.returncode != 0:
+    # rc 1 is a NOT-YET determination, not a failure (gen_miso127 pattern).
+    if out.returncode not in (0, 1) or not out.stdout.strip():
         raise SystemExit(f"calibration_verdict failed:\n{out.stderr[-2000:]}")
     return json.loads(out.stdout)
 
