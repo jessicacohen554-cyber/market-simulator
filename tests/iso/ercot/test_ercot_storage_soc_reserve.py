@@ -115,9 +115,14 @@ class ValidatorTests(unittest.TestCase):
 
         return ScenarioConfig(**kw)
 
-    def test_requires_storage_as_commitment(self):
-        with self.assertRaisesRegex(ValueError, "requires storage_as_commitment"):
-            self._cfg(ercot_storage_as_soc_reserve=True)
+    def test_arming_without_commitment_is_allowed_but_inert(self):
+        # The commitment dependency is a WIRING guard (the deployment-flag
+        # pattern): storage_as_commitment threads in as a solve kwarg after
+        # construction, so the config accepts the flag alone and the
+        # run_calibration.py guard simply never builds the floor without it.
+        cfg = self._cfg(ercot_storage_as_soc_reserve=True)
+        self.assertTrue(cfg.ercot_storage_as_soc_reserve)
+        self.assertFalse(cfg.storage_as_commitment)
 
     def test_exclusive_with_endogenous(self):
         with self.assertRaisesRegex(ValueError, "mutually exclusive"):

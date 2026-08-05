@@ -10859,16 +10859,16 @@ class ScenarioConfig:
                 "of charge; enable the endogenous split or clear the duration gate."
             )
         # The measured SOC reservation completes storage_as_commitment's power
-        # reservation (one award basis, both sides — rule 19); without the
-        # commitment it would floor SOC for an award whose power was never
-        # withheld, and under the endogenous split the LP prices the AS/energy
-        # split itself, so a measured floor would pre-commit it.
-        if self.ercot_storage_as_soc_reserve and not self.storage_as_commitment:
-            raise ValueError(
-                "ercot_storage_as_soc_reserve requires storage_as_commitment: the "
-                "SOC floor backs the same measured award the power reservation "
-                "withholds; arm storage_as_commitment or clear the SOC reserve."
-            )
+        # reservation (one award basis, both sides — rule 19). The commitment
+        # dependency is enforced at the WIRING guard (run_calibration.py), not
+        # here, because storage_as_commitment is threaded as a solve kwarg
+        # AFTER config construction (the ercot_storage_as_deployment pattern —
+        # a construction-time check would reject the replay_keeper --set path
+        # before the kwarg lands); without the commitment the SOC floor is
+        # simply never built. The endogenous exclusivity IS construction-
+        # checkable (pure config field): under the endogenous split the LP
+        # prices the AS/energy split itself, so a measured floor would
+        # pre-commit it.
         if self.ercot_storage_as_soc_reserve and self.ercot_storage_as_endogenous:
             raise ValueError(
                 "ercot_storage_as_soc_reserve is mutually exclusive with "
