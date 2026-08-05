@@ -37,10 +37,14 @@ outcome pinned to a residual.
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DIR
+
+logger = logging.getLogger(__name__)
 
 PAR_DIR = RAW_DIR / "NYISO" / "par-data"
 
@@ -154,3 +158,268 @@ def zone_shares(outages: pd.DataFrame, year: int) -> dict[str, np.ndarray]:
         out[INTERFACE_ZONE["west"]] += (1.0 - live) * share
     out[INTERFACE_ZONE["west"]] += WEST_RESIDUAL_SHARE
     return out
+
+
+# Every P-32 ``SCH -`` row, attributed to the model zone its ties physically land
+# in. The NYCA aggregation is A-E -> Upstate_West, F-G -> Capital_Hudson,
+# H-I -> Lower_Hudson, J -> NYC, K -> Long_Island (iso_configs NYISO docstring);
+# Lower_Hudson has no external ties and correctly has no border link.
+# ``SCH - PJ - NY`` is absent here because it is the one row that does NOT land in
+# a single zone — it is split hourly by the published PAR shares (zone_shares).
+SEAM_ROW_ZONE: dict[str, str] = {
+    # Gold Book external interconnections (tie landing points):
+    "SCH - OH - NY": "Upstate_West",  # Ontario / Niagara, zones A-B
+    "SCH - HQ - NY": "Upstate_West",  # Chateauguay-Massena, zone D
+    "SCH - HQ_CEDARS": "Upstate_West",  # Cedars Rapids, zone D
+    "SCH - NE - NY": "Capital_Hudson",  # New Scotland / Pleasant Valley AC, F-G
+    # The downstate DC/VFT cables — the nyiso-125 map, unchanged.
+    "SCH - PJM_HTP": "NYC",
+    "SCH - PJM_VFT": "NYC",
+    "SCH - PJM_NEPTUNE": "Long_Island",
+    "SCH - NPX_CSC": "Long_Island",
+    "SCH - NPX_1385": "Long_Island",
+}
+
+# The PJM AC row, split by the PAR shares rather than landed in one zone.
+PJM_AC_ROW: str = "SCH - PJ - NY"
+
+# An ACCOUNTING duplicate of ``SCH - HQ - NY``, never attributed (it would double
+# the HQ seam). Carried by name so a future map edit cannot silently include it.
+ACCOUNTING_DUPLICATE: str = "SCH - HQ_IMPORT_EXPORT"
+
+
+def _model_clock(hours: int) -> tuple[np.ndarray, np.ndarray]:
+    """Return ``(month_of_hour, hour_of_day)`` on the model's fixed clock.
+
+    The model's calendar is a FIXED NON-LEAP 8760-hour year keyed to 2023, shared
+    by every model year.
+
+    Args:
+        hours: Dispatch horizon.
+
+    Returns:
+        Two ``(hours,)`` integer arrays.
+    """
+    cal = pd.date_range("2023-01-01", periods=hours, freq="h")
+    return cal.month.to_numpy(), cal.hour.to_numpy()
+
+
+def attributed_zone_net(frame: pd.DataFrame, year: int) -> pd.DataFrame:
+    """Attribute every posted seam row to a model zone, hour by hour.
+
+    Each single-landing row goes wholly to its zone; ``SCH - PJ - NY`` is split by
+    the published, availability-conditioned PAR shares. The accounting duplicate
+    is excluded. Rows are keyed by LOCAL wall-clock throughout — never
+    positionally — and the PAR share series is joined on that same key.
+
+    Args:
+        frame: The ``nyiso-interface-flows`` clean partition for one year.
+        year: The year ``frame`` covers (keys the PAR availability calendar).
+
+    Returns:
+        One row per (local hour, model zone) with the attributed net MW.
+
+    Raises:
+        ValueError: A posted ``SCH -`` row is attributed zero times or more than
+            once (kill gate K9), or the PJM AC row is missing.
+    """
+    src = frame.copy()
+    src["local_hour"] = pd.to_datetime(src["interval_start_local"]).dt.floor("h")
+
+    posted = {r for r in src["interface"].unique() if str(r).startswith("SCH -")}
+    mapped = set(SEAM_ROW_ZONE) | {PJM_AC_ROW, ACCOUNTING_DUPLICATE}
+    unattributed = posted - mapped
+    if unattributed:
+        raise ValueError(
+            f"nyiso_seam_par_attribution {year}: posted seam row(s) "
+            f"{sorted(unattributed)} are attributed to no zone (kill gate K9) — "
+            "a silently dropped row would delete real seam capability"
+        )
+    if PJM_AC_ROW not in posted:
+        raise ValueError(
+            f"nyiso_seam_par_attribution {year}: {PJM_AC_ROW!r} is absent from "
+            "the clean partition (the mechanism never silently no-ops)"
+        )
+
+    parts: list[pd.DataFrame] = []
+    single = src[src["interface"].isin(SEAM_ROW_ZONE)].copy()
+    single["zone"] = single["interface"].map(SEAM_ROW_ZONE)
+    parts.append(single[["local_hour", "zone", "flow_mw"]])
+
+    pjm = (
+        src[src["interface"] == PJM_AC_ROW]
+        .groupby("local_hour")["flow_mw"]
+        .mean()  # the DST fall-back hour repeats one label; average it
+        .rename("pjm_mw")
+    )
+    shares = zone_shares(load_par_outages(), year)
+    index = pd.date_range(
+        pd.Timestamp(year, 1, 1),
+        pd.Timestamp(year + 1, 1, 1),
+        freq="h",
+        inclusive="left",
+    )
+    for zone, arr in shares.items():
+        share = pd.Series(arr, index=index, name="share")
+        joined = pd.concat([pjm, share], axis=1, join="inner")
+        parts.append(
+            pd.DataFrame(
+                {
+                    "local_hour": joined.index,
+                    "zone": zone,
+                    "flow_mw": joined["pjm_mw"].to_numpy() * joined["share"].to_numpy(),
+                }
+            )
+        )
+
+    allrows = pd.concat(parts, ignore_index=True)
+    return allrows.groupby(["local_hour", "zone"], as_index=False)["flow_mw"].sum()
+
+
+def attributed_envelope_by_zone(
+    frame: pd.DataFrame, year: int, hours: int, percentile: float
+) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+    """Directional hourly envelope per zone from the attributed seam net.
+
+    Same construction as the armed ``nyiso_seam_deliverability_envelope`` — the
+    ``percentile`` of the directionally-clipped net within each (month x
+    hour-of-day) bin — applied to the attributed net rather than to a single
+    zone's own ties. Feb 29 is dropped so a leap year contributes the model's
+    calendar.
+
+    Args:
+        frame: The ``nyiso-interface-flows`` clean partition for one year.
+        year: The year ``frame`` covers.
+        hours: Dispatch horizon (length of the returned arrays).
+        percentile: Envelope percentile (``constants.NYISO_SEAM_FLOW_PERCENTILE``).
+
+    Returns:
+        ``{zone: (import_cap, export_cap)}``, each ``(hours,)`` and non-negative.
+    """
+    net = attributed_zone_net(frame, year)
+    net = net[~((net["local_hour"].dt.month == 2) & (net["local_hour"].dt.day == 29))]
+    net["_mo"] = net["local_hour"].dt.month.to_numpy()
+    net["_hr"] = net["local_hour"].dt.hour.to_numpy()
+
+    month_of_hour, hour_of_day = _model_clock(hours)
+    out: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for zone, sub in net.groupby("zone"):
+        imp = np.clip(sub["flow_mw"].to_numpy(), 0.0, None)
+        exp = np.clip(-sub["flow_mw"].to_numpy(), 0.0, None)
+        src_mo, src_hr = sub["_mo"].to_numpy(), sub["_hr"].to_numpy()
+        import_cap = np.zeros(hours, dtype=float)
+        export_cap = np.zeros(hours, dtype=float)
+        for m in range(1, 13):
+            for h in range(24):
+                bin_src = (src_mo == m) & (src_hr == h)
+                bin_dst = (month_of_hour == m) & (hour_of_day == h)
+                if not bin_src.any() or not bin_dst.any():
+                    continue
+                import_cap[bin_dst] = np.percentile(imp[bin_src], percentile)
+                export_cap[bin_dst] = np.percentile(exp[bin_src], percentile)
+        out[str(zone)] = (import_cap, export_cap)
+    return out
+
+
+def nyiso_par_attributed_ttc_hourly(
+    ttc: np.ndarray,
+    iso_config,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Replace every NYISO border-link static with the attributed seam envelope.
+
+    SUPERSEDES ``data.nyiso_seam_envelope.nyiso_seam_ttc_hourly`` (rule 19
+    ``[R-ONE-MECH]``) — it computes that mechanism's two links from the same
+    measured rows, so the caller applies exactly one of the two.
+
+    **The envelope is NOT clipped to the incumbent static.** The armed nyiso-125
+    mechanism clips, because there the static is the *rating* of the very ties
+    being measured and a deliverability envelope cannot exceed a rating. Here the
+    statics are lumped multi-neighbour stand-ins for exactly this quantity, and
+    on ``NYC`` the attributed tie set is strictly larger than the static's (the
+    ABC AC path is real and absent from the 1,000 MW HTP+VFT rating), so clipping
+    would delete a physically-real path. The cap is the measured p90 of NYISO's
+    own schedules over the full attributed tie set, and that is the object.
+
+    Args:
+        ttc: Static per-link capability, ``(n_links,)`` or ``(hours, n_links)``,
+            after any earlier overrides so this composes with them.
+        iso_config: The NYISO ``ISOConfig``, **after** ``apply_interchange_topology``
+            has appended the external node.
+        year: Backcast year whose clean partition is read.
+        hours: Dispatch horizon (rows of the output matrices).
+        percentile: Envelope percentile; defaults to
+            ``constants.NYISO_SEAM_FLOW_PERCENTILE``.
+
+    Returns:
+        ``(ttc_hourly, ttc_import)`` — the ``(hours, n_links)`` forward (import)
+        cap and the ``(hours, n_links)`` reverse (export) cap.
+
+    Raises:
+        FileNotFoundError: No ``nyiso-interface-flows`` clean partition for
+            ``year``, or no border link matched. Callers are gated on
+            ``ScenarioConfig.nyiso_seam_par_attribution``, so silently keeping the
+            static would leave the run claiming a measured input it never read
+            (the pjm-119 silent-overlay-degradation lesson).
+    """
+    from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
+
+    pct = NYISO_SEAM_FLOW_PERCENTILE if percentile is None else float(percentile)
+
+    try:
+        from scripts.lib.clean_io import read_clean
+
+        frame = read_clean(
+            "nyiso-interface-flows", iso="NYISO", year=year, validate=False
+        )
+    except Exception as exc:  # noqa: BLE001 — re-raised as the gated error below
+        raise FileNotFoundError(
+            f"nyiso_seam_par_attribution {year}: could not read the "
+            f"'nyiso-interface-flows' clean partition ({exc}) — run "
+            "scripts/regenerate_clean.py nyiso-interface-flows (the mechanism "
+            "never silently no-ops)"
+        ) from exc
+    if frame is None or frame.empty:
+        raise FileNotFoundError(
+            f"nyiso_seam_par_attribution {year}: empty 'nyiso-interface-flows' "
+            "clean partition (the mechanism never silently no-ops)"
+        )
+
+    static = np.asarray(ttc, dtype=float)
+    ttc_hourly = (
+        np.broadcast_to(static, (hours, static.shape[-1])).copy()
+        if static.ndim == 1
+        else static.copy()
+    )
+    ttc_import = ttc_hourly.copy()
+
+    link_idx = {link.to_zone: i for i, link in enumerate(iso_config.links)}
+    envelopes = attributed_envelope_by_zone(frame, year, hours, pct)
+
+    n_capped = 0
+    for zone, (import_cap, export_cap) in envelopes.items():
+        i = link_idx.get(zone)
+        if i is None:
+            continue
+        logger.info(
+            "nyiso_seam_par_attribution %d: %s import cap p50 %.0f MW "
+            "(incumbent static p50 %.0f), export cap p50 %.0f MW",
+            year,
+            zone,
+            float(np.median(import_cap)),
+            float(np.median(ttc_hourly[:, i])),
+            float(np.median(export_cap)),
+        )
+        ttc_hourly[:, i] = import_cap
+        ttc_import[:, i] = export_cap
+        n_capped += 1
+
+    if not n_capped:
+        raise FileNotFoundError(
+            f"nyiso_seam_par_attribution {year}: no border link matched the "
+            "attributed zones — the external node is absent from iso_config "
+            "(the mechanism never silently no-ops)"
+        )
+    return ttc_hourly, ttc_import

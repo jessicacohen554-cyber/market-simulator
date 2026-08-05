@@ -3229,6 +3229,8 @@ def solve_and_persist(
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
     miso_seam_envelope_merit_cap: bool = False,
+    nyiso_seam_deliverability_envelope: bool = False,
+    nyiso_seam_par_attribution: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -4194,6 +4196,12 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_seam_envelope_merit_cap=True
             )
+        if nyiso_seam_deliverability_envelope:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_seam_deliverability_envelope=True
+            )
+        if nyiso_seam_par_attribution:
+            recorded_cfg = recorded_cfg.with_overrides(nyiso_seam_par_attribution=True)
         if miso_pjm_border_anchor:
             recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
         if miso_cc_coal_rebalance:
@@ -4809,6 +4817,8 @@ def solve_and_persist(
             miso_seam_flow_percentile=miso_seam_flow_percentile,
             miso_seam_export_limit=miso_seam_export_limit,
             miso_seam_envelope_merit_cap=miso_seam_envelope_merit_cap,
+            nyiso_seam_deliverability_envelope=nyiso_seam_deliverability_envelope,
+            nyiso_seam_par_attribution=nyiso_seam_par_attribution,
             miso_pjm_border_anchor=miso_pjm_border_anchor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -5612,6 +5622,8 @@ def solve_and_persist(
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
         "miso_seam_export_limit": miso_seam_export_limit,
         "miso_seam_envelope_merit_cap": miso_seam_envelope_merit_cap,
+        "nyiso_seam_deliverability_envelope": nyiso_seam_deliverability_envelope,
+        "nyiso_seam_par_attribution": nyiso_seam_par_attribution,
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -10275,6 +10287,32 @@ def main() -> None:
         "(off).",
     )
     parser.add_argument(
+        "--nyiso-seam-deliverability-envelope",
+        action="store_true",
+        help="NYISO external-seam deliverability envelope (nyiso-125): the two "
+        "border links whose external ties land unambiguously in ONE NYISO load "
+        "zone -- NYC (Zone J: HTP + Linden VFT) and Long_Island (Zone K: "
+        "Neptune + Cross Sound + Northport-Norwalk 1385) -- trade their flat "
+        "symmetric static rating for NYISO's own measured p90 DIRECTIONAL "
+        "HOURLY envelope off the MIS P-32 posting. Upstate_West and "
+        "Capital_Hudson keep their statics (refused on identification, rule 20). "
+        "Superseded by --nyiso-seam-par-attribution; NYISO-only, default off.",
+    )
+    parser.add_argument(
+        "--nyiso-seam-par-attribution",
+        action="store_true",
+        help="NYISO FULL-SEAM PAR attribution (nyiso-127): rebuild ALL FOUR "
+        "border-link caps from the measured MIS P-32 per-neighbour schedules, "
+        "attributing each posted row to the model zone its ties physically land "
+        "in, and splitting the one row that does not land in a single zone -- "
+        "SCH - PJ - NY -- by NYISO's own published NY-NJ PAR interchange "
+        "percentages conditioned on published PAR availability (MIS P-33 "
+        "outSched). SUPERSEDES --nyiso-seam-deliverability-envelope rather than "
+        "stacking on it (rule 19). Zero free parameters. NYISO-only, default "
+        "off. Pre-registration: results/calibration/"
+        "PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md.",
+    )
+    parser.add_argument(
         "--nyiso-iroquois-winter-spread",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11299,6 +11337,8 @@ def main() -> None:
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
         miso_seam_export_limit=args.miso_seam_export_limit,
         miso_seam_envelope_merit_cap=args.miso_seam_envelope_merit_cap,
+        nyiso_seam_deliverability_envelope=args.nyiso_seam_deliverability_envelope,
+        nyiso_seam_par_attribution=args.nyiso_seam_par_attribution,
         miso_pjm_border_anchor=args.miso_pjm_border_anchor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
