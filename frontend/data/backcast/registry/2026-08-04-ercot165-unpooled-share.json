@@ -3,7 +3,7 @@
  "label": "ercot165 unpooled share",
  "date": "2026-08-04",
  "shorthand": "ercot165-unpooled-share",
- "definition": "ercot-165 arm B: unpooled diurnal-family curtailment shares; PNHNDL sub-limit pressure owned by a Panhandle-scoped measured share.",
+ "definition": "KEEPER (OWNER-PROMOTED 2026-08-04, ercot-165, arm B). DETERMINATION: NOT-YET — criterion-for-criterion IDENTICAL to the superseded ercot158 keeper (C1/C2/C4/C6/C8 PASS; C3a/C3b/C3c/C7 FAIL, the C7 failure the same pre-existing 2023-lignite cv-leg); nothing regresses (C3a 2023 -32.8% -> -32.6%, 2025 -8.1% -> -7.9%; C2 2025 gas -2.0% -> -1.7%). ONE mechanism, single delta off the ercot158 recipe: ercot_wtx_curtail_unpooled=true + ercot_wtx_panhandle_owner=\"share\" — unpooled diurnal-family curtailment shares (the pooled union saturated and broadcast the overnight family's shape onto the daytime/solar-flood family and onto the Panhandle interface) plus a single Panhandle-scoped measured share, so the interface has exactly one owner instead of two overlapping mechanisms (rule 19 R-ONE-MECH). [3e] wind curtailment model/reported: .951/.890/.787 (ercot158, mean abs err 0.124) -> 1.109/.974/.887 (0.083). HONEST LIMIT, CARRIED HERE AND IN THE ATTESTATION, NOT HIDDEN: the charter's SHAPE target is MISSED — 2025 wind-curtailment hod corr only -0.077 -> -0.058 (still negative); afternoon mass 0.159 vs actual 0.222; overnight 0.357 -> 0.360 vs actual 0.266 (the added curtailment landed OVERNIGHT, a level re-centring effect, not the daytime-mode insight). 2023 moved from 5% UNDER- to 11% OVER-curtailment and solar volume is marginally worse. The daytime mode remains an OPEN ROOT-CAUSE ISSUE, not a calibrated behaviour.",
  "years": [
   2023,
   2024,
