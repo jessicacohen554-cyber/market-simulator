@@ -2,8 +2,8 @@
   "iso": "CAISO",
   "keeper": "2026-08-04-caiso-172-measured-path15",
   "keeper_bundle_fields": 680,
-  "n_scenario_fields": 680,
-  "n_matrix_rows": 191,
+  "n_scenario_fields": 684,
+  "n_matrix_rows": 195,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -1960,6 +1960,11 @@
       "coverage": "own_row",
       "owning_rows": [
         {
+          "row": "storage_measured_base_fleet",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
           "row": "storage_measured_anchors",
           "cells": "KK....",
           "cell": "K"
@@ -1983,6 +1988,7 @@
       "cells": [
         "G",
         "K",
+        "O",
         "R"
       ],
       "armed_in_bundles": [
@@ -2270,6 +2276,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
+        },
         {
           "row": "matrix_gap_census",
           "cells": "KKKKKO",
@@ -2801,6 +2812,11 @@
           "cell": "K"
         },
         {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
+        },
+        {
           "row": "plant_level_fleet",
           "cells": ".KKKKK",
           "cell": "K"
@@ -3271,6 +3287,11 @@
           "cell": "K"
         },
         {
+          "row": "storage_measured_base_fleet",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
           "cell": "K"
@@ -3461,6 +3482,11 @@
           "cell": "O"
         },
         {
+          "row": "entry_vre_capacity_revenue",
+          "cells": "IUUKUU",
+          "cell": "U"
+        },
+        {
           "row": "elcc_accreditation",
           "cells": "KKKKKK",
           "cell": "K"
@@ -3488,6 +3514,11 @@
         {
           "row": "state_carbon_pricing",
           "cells": ".KOUKK",
+          "cell": "K"
+        },
+        {
+          "row": "ira_credits",
+          "cells": "KKKKKK",
           "cell": "K"
         },
         {
@@ -3564,6 +3595,11 @@
           "row": "use_campd_bins",
           "cells": "KKKKKK",
           "cell": "K"
+        },
+        {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
         },
         {
           "row": "plant_level_fleet",
@@ -4091,6 +4127,11 @@
           "cell": "."
         },
         {
+          "row": "wtx_curtail_unpooled",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
           "row": "hydro_dispatch_envelope",
           "cells": ".KUUKU",
           "cell": "K"
@@ -4134,6 +4175,11 @@
           "row": "ercot_storage_rt_offer_surface",
           "cells": "R.....",
           "cell": "."
+        },
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".O....",
+          "cell": "O"
         },
         {
           "row": "storage_vintage_ramp",
@@ -4369,6 +4415,11 @@
           "row": "entry_dampers",
           "cells": "IOUOUU",
           "cell": "O"
+        },
+        {
+          "row": "entry_vre_capacity_revenue",
+          "cells": "IUUKUU",
+          "cell": "U"
         },
         {
           "row": "elcc_accreditation",
@@ -4823,6 +4874,11 @@
       "keeper_value": true,
       "coverage": "own_row",
       "owning_rows": [
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".O....",
+          "cell": "O"
+        },
         {
           "row": "storage_vintage_ramp",
           "cells": "KKUUIK",
