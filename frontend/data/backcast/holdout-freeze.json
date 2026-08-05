@@ -1,7 +1,9 @@
 {
   "note": "HOLDOUT SPEND FREEZE (CLAUDE.md rule 22). A freeze is a SUSPENSION of the authorization that a calibration-complete marker grants, not a withdrawal of the marker itself. While `active` is true, NO out-of-training year may be solved, scored, or registered for ANY ISO — validation tier (2022 and any backward extension) and locked test (2019, H1-2026) alike — even with `--holdout-authorized` and a `complete` marker present. It is deliberately ADDITIVE and backward-compatible: `calibration-complete.json` is untouched, so every already-registered out-of-training bundle stays CI-legal and no prior one-shot is invalidated or re-armed. Enforced at the solve entry point by `scripts/run_calibration_full.py::enforce_holdout_year_gate`, which reads this file BEFORE the marker check and fails closed. Data intake for out-of-training windows is NOT frozen (rule 22 channel 1: intake is no-LP and remains permitted under session-logged owner authorization). Lifting the freeze is an owner action: set `active` to false and record the lift in `history` with the reason.",
-  "active": true,
+  "active": false,
   "declared": "2026-07-25",
+  "lifted": "2026-08-05",
+  "lift_scope": "NARROW AND SPENT IN-SESSION. The owner lifted the freeze on 2026-08-05 for exactly one purpose: the PJM and NEISO 2022 VALIDATION touchpoints, each solved with its ISO's frozen keeper recipe. Nothing else was authorized and nothing else was spent — not 2018/2020/2021 (the backward ladder rungs), not 2019 or H1-2026 (locked tier, and `final` is still empty), and not any other ISO (CAISO/ERCOT/MISO hold no marker; NYISO holds one but was not run). The freeze is RE-ARMED in the same session immediately after the two spends land, so this `active: false` state is transient by design and the file's steady state remains frozen. The still-open CAMPD economic-layup residual that caused the freeze is NOT resolved — see `reason` — so a 2022 miss in either ISO must be read against a known-imperfect availability envelope, which is exactly what the touchpoint reports record.",
   "by": "owner (session claude/neiso-operable-capacity-calibration-5pz8lc, explicit instruction: 'Open it and freeze holdout')",
   "scope": {
     "isos": "ALL",
@@ -24,6 +26,18 @@
       "action": "held",
       "by": "owner (charter verdict, campd-economic-layup-fix-charter-2026-07.md §8)",
       "reason": "Merit-order guard ADOPTED-AS-IMPROVEMENT (adopt + hold freeze, not adopt + lift): corrected extracts commit and keeper re-audits proceed, but a residual over-count survives the guard (NEISO 2023-24 still 1.29-1.36x a whole-fleet published total on a thermal-only extract), so out-of-training years stay preserved until that residual is explained or fixed. Freeze remains active; only the owner lifts it."
+    },
+    {
+      "date": "2026-08-05",
+      "action": "lifted (NARROW, single-purpose)",
+      "by": "owner (this session, AskUserQuestion 2026-08-05: asked to run PJM and NEISO with the current keeper recipe for the 2022 touchpoint, and on the freeze question selected 'Lift, spend, re-arm' — record an owner-authorized lift, run the two 2022 spends, then re-declare the freeze in the same session so 2018-2021 / 2019 / H1-2026 and the other ISOs stay protected)",
+      "reason": "PJM and NEISO are the two ISOs that clear all three readiness conditions: a `complete` (validation-tier) marker, an owner-declared frontier, and a CLEARED cross-ISO lever queue (PJM at pjm-153, NEISO at neiso-80/81). Their 2022 validation touchpoint is the intended use of that grant. The lift is deliberately NOT a resolution of the layup residual: it is the owner electing to spend two ITERABLE validation-tier years (model-SELECTION evidence, re-runnable after the envelope fix, never a certified out-of-sample number) while leaving the TOUCH-ONCE locked tier untouched. That asymmetry is the whole justification — an iterable year spent on a known-imperfect envelope can be re-spent; a locked-test year cannot, which is why `final` stays empty."
+    },
+    {
+      "date": "2026-08-05",
+      "action": "re-armed",
+      "by": "owner (same session, the 'lift, spend, re-arm' disposition above)",
+      "reason": "The two authorized spends (PJM 2022, NEISO 2022) landed and are registered. The freeze returns to ACTIVE on its original 2026-07-25 basis — the CAMPD economic-layup residual is still open and every remaining out-of-training year for every ISO stays preserved. Re-arming is not a new declaration: the original `reason` and `lifts_when` are unchanged and still govern."
     }
   ]
 }

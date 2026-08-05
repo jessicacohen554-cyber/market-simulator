@@ -1,0 +1,330 @@
+{
+ "schema": "calibration-attestation/v1",
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 14,
+  "n_residual": 5,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 88,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_committed_below_floor[NEISO]",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "ST_GAS": 0.79
+    },
+    "n_scalars": 1,
+    "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[NEISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "n_scalars": 4,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_NEISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+    "where": "interchange_config.py NEISO seam supply-curve ladders",
+    "identification": "measured-physical",
+    "lineage_solves": ">=43 solves (audit \u00a75.1)",
+    "source": "per-seam Q-Q duration coupling of measured ISO-NE DA hub LMP with measured EIA-930 per-seam flows, frozen scripts/data/derive_neiso_import_tranches.py (audit C-6 CLOSED 2026-07-06)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual; shape gap: flat annual rungs cannot carry within-year seam variation (calibration-log 2026-07-06 neiso-51 P9 re-test)"
+   },
+   {
+    "name": "NEISO_RCPF_PRODUCTS / energy_reserve_coopt[NEISO]",
+    "identification": "measured-market",
+    "source": "ISO-NE Market Rule 1 Section III.2.7A reserve constraint penalty factors and operating-reserve requirements (total-30-min 1,800 MW @ $1,000/MWh, total-10-min 1,200 MW @ $1,500/MWh, 10-min-spin 600 MW @ $50/MWh; config/reserve_config.py NEISO_RCPF_PRODUCTS). Published market-design constants entered as-is; zero values tuned; dormant on 2023-2025 (reserve dual $0 every hour)."
+   },
+   {
+    "name": "gas_offer_margin_anchor",
+    "where": "run_config.scenario_config.gas_offer_margin_anchor",
+    "identification": "measured",
+    "source": "scripts/data/derive_gas_offer_margin_anchor.py - mean of the model's own merit-order delivered-gas series (_gas_series: measured EIA HH monthly x measured AGT hub basis) over the train window 2023-2025 = 4.0763 $/MMBtu (year means 2.9365/3.0304/6.2621). Identification constant of the net-revenue margin form (offers reduce exactly to the registered multipliers at this delivered price); re-derives only on a gas source-data change (rule 23), never from a residual.",
+    "value": 4.0763
+   },
+   {
+    "name": "offer_curve_by_group phys_* physical-basis keys",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].phys_*",
+    "identification": "measured",
+    "source": "data/raw/reference/neiso_campd_marginal_hr_summary.csv (derive_campd_marginal_hr.py --iso NEISO, the same frozen artifact the 2026-07-06 econ-band grounding used): committed -> avg_committed_p50 (min-load block-average burn), econ endpoints -> marg_econ_{low,high}_p50 (incremental burn), peak -> physical duct ratio (CC 2.25) / full-output bound (CT/ST 1.0). The markup each band converts to $-space is the REGISTERED multiplier minus this measured basis - no new fitted values; bands whose registered bid sits below the measured basis clip to zero markup (CC_CHP/ST_GAS committed price-taker bands); CT_CHP carries no keys (n=1, not identifiable - neutral).",
+    "value": {
+     "CC_REGULAR": [
+      1.107,
+      0.854,
+      0.94,
+      2.25
+     ],
+     "CC_CHP": [
+      1.399,
+      0.973,
+      0.94,
+      2.25
+     ],
+     "CT_PEAKER": [
+      0.985,
+      0.745,
+      0.7,
+      1.0
+     ],
+     "ST_GAS": [
+      2.394,
+      0.692,
+      0.731,
+      1.0
+     ]
+    }
+   },
+   {
+    "name": "measured_ct_heat_rates[NEISO]",
+    "where": "run_config.scenario_config.measured_ct_heat_rates + data/raw/_processed-legacy/campd_ct_heat_rates_NEISO.csv",
+    "identification": "measured",
+    "lineage_solves": "0 residual solves \u2014 derived from EPA CAMPD unit-level hourly grossLoad/heatInput, never swept against a residual",
+    "value": {
+     "rows_applied": 8,
+     "rows_excluded_by_physical_band": 0,
+     "class_capacity_covered_pct": 75.6,
+     "class_metered_energy_covered_pct": 100.0,
+     "cap_weighted_delta_mmbtu_per_mwh": -0.579,
+     "screen_constants": {
+      "loaded_frac_of_p95": 0.8,
+      "min_loaded_hours": 50,
+      "physical_band_mmbtu_per_mwh": [
+       6.0,
+       25.0
+      ]
+     },
+     "net_basis_source": "parasitic_load_factors.parquet (the committed map the benchmark's net actual uses)"
+    },
+    "note": "A unit's loaded heat rate is a physical characteristic of the machine \u2014 rule 13 [R-MEASURED] admissible as an INPUT (it regenerates for a forward year from the same pipeline and responds to changed conditions: a retrofit moves it, a new unit carries its design rate). It is NOT a measured outcome fed back to close a residual. Per rule 23 [R-FROZEN-DERIVE] it re-derives ONLY when CAMPD publishes new or revised vintages, and that commit must cite the data change."
+   },
+   {
+    "name": "nuclear_unit_availability[NEISO]",
+    "where": "run_config.scenario_config.nuclear_unit_availability + data/raw/nuclear-availability-NEISO.csv",
+    "identification": "measured",
+    "lineage_solves": "0 residual solves \u2014 derived from the NRC daily Power Reactor Status reports reconciled to the committed EIA-923 monthly anchor, never swept against a residual",
+    "value": {
+     "reactors": {
+      "Millstone 2": [
+       566,
+       2
+      ],
+      "Millstone 3": [
+       566,
+       3
+      ],
+      "Seabrook 1": [
+       6115,
+       1
+      ]
+     },
+     "fleet_mw": 3355.4,
+     "rows": 3288,
+     "reactor_days_per_year": [
+      365,
+      366,
+      365
+     ],
+     "months_reconciled_within_tolerance": 36,
+     "months_dropped_for_wedge": 0,
+     "worst_month_off_anchor_pct": -0.7,
+     "frozen_constants_inherited_from_ercot_deriver": {
+      "EVENT_RAW_MAX": 0.9,
+      "SCALE_CLIP": 1.25,
+      "WEDGE_TOL": 0.01
+     },
+     "check": "--check reports 'nuclear-availability-NEISO.csv reproduces byte-for-byte'"
+    },
+    "note": "A reactor power state / refuel window is a physical availability event \u2014 rule 13 [R-MEASURED] admissible as an INPUT, the same class as the CAMPD fossil outage windows and the already-keeper ERCOT/PJM/NYISO/CAISO nuclear overlays. It regenerates for a forward year from the static NUCLEAR_MONTHLY_CF / refuel-block schedule and responds to changed conditions. It is NOT a measured outcome fed back to close a residual: the EIA-923 anchor owns the LEVEL (fleet-month energy is preserved to <=0.031 TWh/yr) and NRC supplies only the TIMING. Per rule 23 [R-FROZEN-DERIVE] it re-derives ONLY when a new NRC annual file lands, and that commit must cite the data change. Rule 25 [R-ISO-SCOPE]: the crosswalk is NEISO's own fleet; no parameter was imported from the precedent ISOs."
+   },
+   {
+    "name": "measured_chp_heat_rates",
+    "identification": "measured",
+    "classification": "eGRID published CHP heat-input allocation, zero free parameters (rule 14 [R-ACCURATE] input-accuracy swap)",
+    "value": true,
+    "free_parameters_added": 0,
+    "source": "eGRID plant file: (PLHTIAN + CHPCHTI) / PLNGENAN, i.e. eGRID's own published CHP useful-thermal heat-input allocation added back on the SAME NET denominator as the credited rate it replaces. Deriver: scripts/data/derive_chp_power_only_heat_rates.py (--iso NEISO --vintage 2023), including miso-122 scope gate 3 (dark-fuel exclusion). Artifact: data/raw/_processed-legacy/chp_power_only_heat_rates_NEISO.csv md5 7cdb75dc674a1fcac78abe1ce29d77a6, 40 rows x 22 columns, flag census not_unfired_topping 22 / ok 12 / no_egrid_row 5 / basis_mismatch 1. Applied population: CC_CHP 3 rows / 378.2 MW (6.9636 -> 9.4576), CT_CHP 9 rows / 51.5 MW (8.7009 -> 11.5146). At the LP seam, at THIS keeper's own ScenarioConfig: 20 of 602 generators, 271.008 MW; CC_CHP cap-weighted heat rate 8.1437 -> 10.3632 (27.254 %), CT_CHP 6.2962 -> 6.7784 (7.6579 %). Phase-0 identification record: results/calibration/_neiso81_chp_phase0.json + scripts/probes/_neiso81_chp_phase0.py.",
+    "why_zero": "Nothing is chosen, tuned or swept. Both the incumbent and the replacement are PUBLISHED eGRID quantities on the same net denominator; the swap introduces no coefficient, no threshold and no percentile. The only screen is the 0.50 thermal-share ceiling, which is the EPA CHP Partnership unfired gas-turbine envelope, and the miso-122 dark-fuel scope gate, which is a measured per-unit CAMPD quantity (NEISO dark share 0.012142 / 0.009584 / 0.014798 for 2023/2024/2025; the committed artifact is the 2023 vintage, so 9.4423 is the number of record and no vintage is mixed). VALIDATION: eGRID's (PLHTIAN + CHPCHTI) reproduces independently metered CAMPD heat input within 1 % on 4/4 covered NEISO plants, median ratio 1.00000, re-verified this session. Rule 13 [R-MEASURED]: a plant's heat rate is a physical INPUT that regenerates for any forward year and responds to changed conditions \u2014 not a measured outcome fed back to close a residual; no residual was consulted, in either direction. Rule 23 [R-FROZEN-DERIVE]: the artifact's last re-derive (neiso-80) cites the miso-122 gate-3 SCOPE CHANGE on measured grounds, never a residual. Rule 19 [R-ONE-MECH]: nothing is stacked on it \u2014 no host-steam floor is built (neiso-71 closed that route with evidence) and chp_steam_floor_p25 stays unarmed. Rule 25 [R-ISO-SCOPE]: MISO's, CAISO's, PJM's and NYISO's K on this mechanism transfer nothing; NEISO's parameters come from NEISO's own artifact on NEISO's own data, and no file outside the NEISO lane was re-derived. n_residual is unchanged."
+   },
+   {
+    "name": "cc_steam_part_reclass",
+    "identification": "measured",
+    "classification": "EIA-860 published generator attributes, zero free parameters (rule 14 [R-ACCURATE] classification-correctness fix)",
+    "value": true,
+    "free_parameters_added": 0,
+    "source": "EIA-860 operable generator sheet. The predicate (fleet.eia860.cc_steam_part_generators, miso-125 R4 verbatim): prime mover CA, own Energy Source 1 != NG, non-empty Unit Code, at least one sibling at the same plant sharing that Unit Code with prime mover CT and Energy Source 1 NG, and the steam part not older than the oldest such sibling. NEISO's ENTIRE population is one row: 6081 Stony Brook CA1, pmax 96.0 MW = EIA-860 net summer 96.0 (nameplate 105.0; the fleet pmax rule is net-summer-else-nameplate, so the 96-vs-105 'mismatch' is a basis difference, not a discrepancy). The heat rate is UNCHANGED at the incumbent eGRID plant rate 10.60617891, which its three CT siblings already carry exactly. Phase-0 identification record: results/calibration/_neiso83_stonybrook_ca1_phase0.json + scripts/probes/_neiso83_stonybrook_ca1_phase0.py.",
+    "why_zero": "Nothing is chosen, tuned or swept. The capacity is EIA-860's published net-summer figure and the heat rate is the incumbent one; the flag selects a CLASS, and every downstream attribute (VOM, CO2 rate, NOx rate, EFORd, efficiency bin) follows from the existing per-fuel constants with no new value introduced. THE STEAM SHARE IS EVIDENCE, NOT A PARAMETER: EIA-923 Page 1 reports the CA row's own net generation at 0.2753 / 0.2886 / 0.2853 / 0.2911 / 0.2841 of block output (mean 0.2849, sd 0.006), and the CA row's own FUEL split tracks its CT siblings' fuel split year by year across a 0.004 -> 0.468 swing in the block's oil share \u2014 proof the steam part has no fuel of its own and that EIA-860's DFO label is a duct / legacy code. Corroborated independently for 2024-2025, where EIA-923's CT NET generation EXCEEDS the CAMPD CT GROSS (ratios 1.343 / 1.338), which is impossible for a CT-only row and therefore proves a reporting-convention change rather than a retired steam turbine; the two routes reconcile at a 0.96 auxiliary-load ratio. NONE of these numbers enters the LP. Rule 13 [R-MEASURED]: a generator's prime mover, unit code, vintage and net-summer capacity are published INPUTS that regenerate for any forward year and respond to changed conditions (a retirement or re-rate moves them) \u2014 not a measured outcome fed back to close a residual. No residual was consulted, in either direction. Rule 25 [R-ISO-SCOPE]: ISO-gated on plant_taxonomy.CC_STEAM_PART_RECLASS_ISOS = {NEISO}, proven by RUNNING the armed loader per ISO \u2014 ERCOT, CAISO, PJM, MISO and NYISO fleets are byte-identical, and MISO 1004 Edwardsport (the one other member of the national re-class population, and a real 555 MW IGCC machine) stays COAL. n_residual is unchanged."
+   }
+  ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "NEISO 2022 VALIDATION TOUCHPOINT, 2026-08-05. A replay_keeper.py re-solve of the designated keeper 2026-08-05-neiso-83-ca1-reclass (CALIBRATED-WITH-CAVEATS) from its own meta.json, with --years 2022 and NO other change: zero --set overrides, zero offer-curve overrides, zero recipe deltas. The rule 20 [R-DOF] ledger above is the keeper's own, carried over byte-identical (14 entries, 5 residual-identified) \u2014 no parameter was identified, re-identified or re-fitted on 2022, and no 2022 result fed back into any input. VALIDATION TIER (CLAUDE.md rule 22). 2022 is ITERABLE model-SELECTION evidence, NOT a certified out-of-sample skill number and never quotable as one. It may be re-spent after the open availability-envelope defect lands, which is precisely why the owner spent it rather than the touch-once locked tier (2019 / H1-2026), which stays unspent and ungranted ('final' is empty). Spent under a NARROW owner lift of the 2026-07-25 holdout spend freeze (AskUserQuestion, 2026-08-05: 'Lift, spend, re-arm'), scoped to the PJM and NEISO 2022 touchpoints alone and RE-ARMED in the same session \u2014 see frontend/data/backcast/holdout-freeze.json history."
+ },
+ "disclosures": {
+  "note": "TOUCHPOINT DISCLOSURES, reported rather than patched. (a) THE AVAILABILITY ENVELOPE IS KNOWN-IMPERFECT AND WAS NOT FIXED FIRST. The freeze this spend was taken under exists because the CAMPD unit-outage detector still books sustained economic layup as mechanical outage in all six ISO extracts, and a residual over-count survives the 2026-07-26 merit-order guard (campd-economic-layup-fix-charter-2026-07 \u00a78, adopt-and-hold). Every criterion miss below is therefore scored against a fleet whose availability is about to change, and NONE of them may be attributed to forecast error alone without re-running after that fix. This is a stated limit of the evidence, not a hedge added after seeing the numbers \u2014 it is the freeze's own documented rationale. (b) SINGLE-YEAR BY DESIGN, NOT A RULE 16 [R-ALLYEARS] BREACH. Rule 16 governs calibration KEEPERS, which must cover 2023-2025 in one bundle. This is a validation touchpoint of one held-out year, which is exactly the shape the 'complete' marker authorizes ('complete only means 2022 test point can run'). It is NOT a keeper, is NOT promoted, and does NOT re-key any marker. (c) NO RE-TUNE IS PERFORMED HERE. Rule 22's stated response to a validation miss is to send the issue back to 2023-2025 and re-tune there; this session only measures and reports."
+ },
+ "exceptions": []
+}
