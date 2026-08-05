@@ -1,0 +1,478 @@
+{
+ "shipped": {
+  "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-shipped/ERCOT/6a824992b5fb1baf",
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "pipeline_sequence": {
+   "2022": {
+    "decided": {
+     "all": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 22.43,
+       "going_forward_cost": 58.5,
+       "energy_margin": 22.43,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 29.377,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.798,
+       "mc_mean_usd_mwh": 26.801
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     },
+     "coal": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 22.43,
+       "going_forward_cost": 58.5,
+       "energy_margin": 22.43,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 29.377,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.798,
+       "mc_mean_usd_mwh": 26.801
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    }
+   },
+   "2023": {
+    "re_confirmed": {
+     "all": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 22.43,
+       "going_forward_cost": 58.5,
+       "energy_margin": 22.43,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 29.377,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.798,
+       "mc_mean_usd_mwh": 26.801
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     },
+     "coal": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 22.43,
+       "going_forward_cost": 58.5,
+       "energy_margin": 22.43,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 29.377,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.798,
+       "mc_mean_usd_mwh": 26.801
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    }
+   },
+   "2024": {
+    "reversed": {
+     "all": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 341.47,
+       "going_forward_cost": 58.5,
+       "energy_margin": 341.47,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 65.379,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "availability_mean": 0.79,
+       "mc_mean_usd_mwh": 24.406
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     },
+     "coal": {
+      "n": 29,
+      "mw": 8217.6,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2024
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 341.47,
+       "going_forward_cost": 58.5,
+       "energy_margin": 341.47,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 65.379,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "availability_mean": 0.79,
+       "mc_mean_usd_mwh": 24.406
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    }
+   }
+  },
+  "entry_capped": {
+   "2022": {
+    "total": {
+     "n": 582,
+     "mw": 58683.9
+    },
+    "by_fuel": {
+     "coal": {
+      "n": 11,
+      "mw": 5746.3
+     },
+     "gas_cc": {
+      "n": 138,
+      "mw": 30734.3
+     },
+     "gas_ct": {
+      "n": 385,
+      "mw": 10950.3
+     },
+     "gas_st": {
+      "n": 48,
+      "mw": 11252.9
+     }
+    }
+   },
+   "2023": {
+    "total": {
+     "n": 536,
+     "mw": 57959.9
+    },
+    "by_fuel": {
+     "coal": {
+      "n": 11,
+      "mw": 5746.3
+     },
+     "gas_cc": {
+      "n": 138,
+      "mw": 30734.3
+     },
+     "gas_ct": {
+      "n": 339,
+      "mw": 10226.3
+     },
+     "gas_st": {
+      "n": 48,
+      "mw": 11252.9
+     }
+    }
+   }
+  },
+  "thermal_exits": {},
+  "reserve_margins": {
+   "2021": 0.484723,
+   "2022": null,
+   "2023": 0.347864,
+   "2024": 0.397555,
+   "2025": 0.478135
+  },
+  "bridged_years": [
+   2022
+  ]
+ },
+ "unified": {
+  "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified/ERCOT/49eac64f146b3460",
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "pipeline_sequence": {
+   "2022": {
+    "decided": {
+     "all": {
+      "n": 45,
+      "mw": 10942.9,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2022
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 17.9,
+       "going_forward_cost": 35.0,
+       "energy_margin": 17.9,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 52.715,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.595,
+       "mc_mean_usd_mwh": 44.261
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    },
+    "executed": {
+     "all": {
+      "n": 45,
+      "mw": 10942.9,
+      "decided_years": [
+       2021
+      ],
+      "execute_years": [
+       2022
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 17.9,
+       "going_forward_cost": 35.0,
+       "energy_margin": 17.9,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 52.715,
+       "screen_price_max_usd_mwh": 5000.0,
+       "reserve_signal_mean_usd_mwh": 1.126,
+       "availability_mean": 0.595,
+       "mc_mean_usd_mwh": 44.261
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    }
+   },
+   "2025": {
+    "decided": {
+     "all": {
+      "n": 11,
+      "mw": 1482.1,
+      "decided_years": [
+       2024
+      ],
+      "execute_years": [
+       2027
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 0.04,
+       "going_forward_cost": 58.5,
+       "energy_margin": 0.04,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 9.544,
+       "screen_price_max_usd_mwh": 46.217,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "availability_mean": 0.787,
+       "mc_mean_usd_mwh": 23.009
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     },
+     "coal": {
+      "n": 11,
+      "mw": 1482.1,
+      "decided_years": [
+       2024
+      ],
+      "execute_years": [
+       2027
+      ],
+      "bar_usd_per_kw_yr": {
+       "net_revenue": 0.04,
+       "going_forward_cost": 58.5,
+       "energy_margin": 0.04,
+       "reserve_uplift": 0.0,
+       "attribute_revenue": 0.0,
+       "capacity_revenue": 0.0,
+       "as_annual_credit": 0.0
+      },
+      "basis": {
+       "screen_price_mean_usd_mwh": 9.544,
+       "screen_price_max_usd_mwh": 46.217,
+       "reserve_signal_mean_usd_mwh": 0.0,
+       "availability_mean": 0.787,
+       "mc_mean_usd_mwh": 23.009
+      },
+      "as_pricing": [
+       "hourly_signal"
+      ]
+     }
+    }
+   }
+  },
+  "entry_capped": {
+   "2024": {
+    "total": {
+     "n": 564,
+     "mw": 62971.7
+    },
+    "by_fuel": {
+     "coal": {
+      "n": 40,
+      "mw": 13963.9
+     },
+     "gas_cc": {
+      "n": 160,
+      "mw": 37241.0
+     },
+     "gas_ct": {
+      "n": 359,
+      "mw": 11413.2
+     },
+     "gas_st": {
+      "n": 5,
+      "mw": 353.6
+     }
+    }
+   },
+   "2025": {
+    "total": {
+     "n": 554,
+     "mw": 66060.5
+    },
+    "by_fuel": {
+     "coal": {
+      "n": 29,
+      "mw": 12481.8
+     },
+     "gas_cc": {
+      "n": 161,
+      "mw": 40241.0
+     },
+     "gas_ct": {
+      "n": 359,
+      "mw": 12984.2
+     },
+     "gas_st": {
+      "n": 5,
+      "mw": 353.6
+     }
+    }
+   }
+  },
+  "thermal_exits": {
+   "2022": {
+    "pipeline_executed": {
+     "n": 45,
+     "mw": 10942.9,
+     "by_fuel": {
+      "gas_st": 10942.9
+     }
+    },
+    "economic_retirements": {
+     "n": 45,
+     "mw": 10942.9,
+     "by_fuel": {
+      "gas_st": 10942.9
+     }
+    }
+   }
+  },
+  "reserve_margins": {
+   "2021": 0.484723,
+   "2022": null,
+   "2023": 0.218541,
+   "2024": 0.266827,
+   "2025": 0.317522
+  },
+  "bridged_years": [
+   2022
+  ]
+ },
+ "actual_exits_note": "real 2023-25 ERCOT thermal exits: 1.534 GW (three units > 300 MW)"
+}
