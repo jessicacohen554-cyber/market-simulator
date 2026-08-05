@@ -425,8 +425,15 @@ def emit_year_mode(year: int, json_out: Path | None) -> int:
     for code, entries in registry.items():
         print(f"            {code}: (  # {PLANT_NAMES.get(code, code)}")
         for months, hours, cv in entries:
+            # Trailing commas are LOAD-BEARING: a one-point curve emitted as
+            # "((1760, 60.26))" collapses to a flat 2-tuple in Python, not a
+            # 1-tuple of points — and single-point curves are exactly the
+            # Oak Grove overnight windows this lane exists for. Same for a
+            # one-element months/hours tuple.
             pts = ", ".join(f"({a:g}, {b:g})" for a, b in cv)
-            print(f"                ({months}, {hours}, ({pts})),")
+            mo = ", ".join(f"{m:d}" for m in months)
+            hr = ", ".join(f"{h:d}" for h in hours)
+            print(f"                (({mo},), ({hr},), ({pts},)),")
         print("            ),")
     print("        },")
     print("    },")
