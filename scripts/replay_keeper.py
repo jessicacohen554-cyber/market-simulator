@@ -272,6 +272,14 @@ def main() -> None:
         "are copies, not fresh evidence.",
     )
     ap.add_argument(
+        "--holdout-authorized",
+        action="store_true",
+        help="acknowledge that --years names an out-of-training year (rule 22). "
+        "Required, and NOT sufficient: the spend freeze must be lifted and the "
+        "target ISO must carry the marker for that year's TIER ('complete' for "
+        "the validation ladder, 'final' for the touch-once locked test).",
+    )
+    ap.add_argument(
         "--offer-curve-json",
         default=None,
         metavar="JSON_OR_PATH",
@@ -290,6 +298,16 @@ def main() -> None:
     kwargs = build_kwargs(meta)
     kwargs["years"] = [int(y) for y in (args.years or meta["years"])]
     kwargs["iso"] = meta["iso"]
+    # Rule 22 gate. This driver calls solve_and_persist DIRECTLY rather than
+    # through run_calibration_full.main(), so until 2026-08-05 it reached the
+    # solver without passing the freeze or marker checks at all: --years 2022
+    # on any keeper bundle solved a holdout year with no gate. That is the same
+    # hole holdout-policy-memo-2026-07.md (b)(2) closed at the calibration CLI's
+    # own entry point, reopened by a second entry point. Gate here too, with the
+    # identical function, so the two paths cannot diverge.
+    rcf.enforce_holdout_year_gate(
+        kwargs["years"], kwargs["iso"], args.holdout_authorized
+    )
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle

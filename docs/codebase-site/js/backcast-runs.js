@@ -975,6 +975,80 @@
         <p style="font-size:0.72rem;color:var(--text-muted);margin-top:4px">Positive = the keeper's floors add that class's generation vs the floor-free twin. Each material delta needs a market story above.</p>`;
     }
 
+    /* Validation-touchpoint panel (rule 22). Reads the sidecar's `holdout`
+       block only — it never recomputes a verdict in the browser, so what the
+       page shows is exactly what calibration_verdict.py scored.
+
+       The four per-criterion verdicts carry the reading, so the reader does not
+       have to infer it: `degraded` (passed in-sample, missed out-of-sample) is
+       the signal a touchpoint is run to find; `carried` missed on both sides
+       and is a known limitation travelling, not a new discovery; `held` passed
+       on both; `improved` is the rare inverse. */
+    const HOLDOUT_VERDICT = {
+      degraded: { cls: 'clr-bad', txt: 'degraded out-of-sample',
+                  why: 'Passed on the tuned years, misses on the held-out year — the signal this touchpoint exists to surface.' },
+      carried:  { cls: 'clr-ok',  txt: 'known limitation carried',
+                  why: 'Misses on BOTH the tuned years and the held-out year, so it travelled rather than appeared — already-documented behaviour, not new evidence.' },
+      improved: { cls: 'clr-good', txt: 'improved out-of-sample',
+                  why: 'Misses in-sample but passes on the held-out year.' },
+      held:     { cls: 'clr-good', txt: 'held',
+                  why: 'Passes on both the tuned years and the held-out year.' },
+    };
+
+    function renderHoldoutPanel(h) {
+      const rows = Array.isArray(h.criteria) ? h.criteria : [];
+      // Contiguous spans read as a range ("2023–2025"); anything else lists.
+      const ky = (h.keeperYears || []).map(Number).filter(Number.isFinite).sort();
+      const kYears = !ky.length ? 'in-sample'
+        : (ky.length > 1 && ky[ky.length - 1] - ky[0] === ky.length - 1)
+          ? `${ky[0]}–${ky[ky.length - 1]}`
+          : ky.join(', ');
+      const keeperLink = h.keeper
+        ? `<a class="run-id-link" href="#iso=${encodeURIComponent(st.iso)}&run=${encodeURIComponent(h.keeper)}">${esc(h.keeper)}</a>`
+        : '<em>unknown</em>';
+
+      // Headline: what actually changed when the frozen recipe met a year it
+      // has never seen. Stated as a count, not a determination label, because
+      // the determination alone ("NOT-YET") hides which criteria moved.
+      const headline = h.nDegraded
+        ? `${h.nDegraded} ${h.nDegraded === 1 ? 'criterion' : 'criteria'} degraded out-of-sample`
+        : 'No criterion degraded out-of-sample';
+
+      const body = rows.map(r => {
+        const v = HOLDOUT_VERDICT[r.verdict] || { cls: '', txt: r.verdict, why: '' };
+        return `<tr>
+          <td>${esc(r.label || r.key)}<span style="display:block;font-size:0.68rem;color:var(--text-muted)">${esc(r.tier || '')}</span></td>
+          <td style="text-align:center">${esc(r.inSample)}</td>
+          <td style="text-align:center">${esc(r.holdout)}</td>
+          <td class="${v.cls}" style="font-weight:600" title="${esc(v.why)}">${esc(v.txt)}</td>
+        </tr>`;
+      }).join('');
+
+      return `<div class="bc-panel">
+        <h2>Validation Touchpoint &middot; ${esc(String(h.year))}
+          <span class="keeper-badge" title="Held-out year, solved with the frozen keeper recipe">Holdout &middot; ${esc(h.tier || 'validation')} tier</span>
+        </h2>
+        <p class="panel-sub">The ISO's designated keeper recipe, frozen and replayed on a year it was never tuned on. Same recipe, unseen year — so a criterion that moves here moved because of the year, not because of a parameter change.</p>
+
+        <p class="bc-narration"><strong>${esc(headline)}.</strong>
+          Keeper ${keeperLink} scores <strong>${esc(h.keeperDetermination || '—')}</strong> on ${esc(kYears)};
+          the same recipe scores <strong>${esc(h.holdoutDetermination || '—')}</strong> on ${esc(String(h.year))}.</p>
+
+        <table class="bc-table" style="margin-top:10px;font-size:0.8rem">
+          <thead><tr>
+            <th>Criterion</th>
+            <th style="text-align:center">In-sample<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(kYears)}</span></th>
+            <th style="text-align:center">Holdout<span style="display:block;font-size:0.68rem;font-weight:400;color:var(--text-muted)">${esc(String(h.year))}</span></th>
+            <th>Reading</th>
+          </tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+
+        ${h.tierCaveat ? `<p class="bc-narration" style="margin-top:10px"><strong>How to read this number:</strong> <span class="ndef">${esc(h.tierCaveat)}</span></p>` : ''}
+        ${h.envelopeCaveat ? `<p class="bc-narration"><strong>Known input limitation:</strong> <span class="ndef">${esc(h.envelopeCaveat)}</span></p>` : ''}
+      </div>`;
+    }
+
     function renderReport(el) {
       const meta = META();
       const years = meta.years || [];
@@ -994,6 +1068,16 @@
           </p>
         </div>`;
       }
+
+      // Validation touchpoint (CLAUDE.md rule 22): a held-out year solved with
+      // an ISO's FROZEN keeper recipe. Rendered only when the sidecar carries a
+      // `holdout` block (written by scripts/stamp_touchpoint_holdout.py from
+      // committed artifacts — no re-solve). The panel's whole job is to make
+      // the in-sample vs held-out comparison readable WITHOUT diffing two
+      // verdicts by eye, and to keep the tier caveat attached to the number:
+      // a validation result is iterable selection evidence, never a certified
+      // out-of-sample skill number.
+      if (reg.holdout) html += renderHoldoutPanel(reg.holdout);
 
       // Zero-forcing ablation twin (CLAUDE.md rule 20 / audit D-3): the market
       // story + keeper-vs-twin per-class delta. Rendered when the sidecar links

@@ -286,6 +286,35 @@
         </div>`;
       }
 
+      // Validation touchpoint (CLAUDE.md rule 22). Present only for an ISO that
+      // has actually SPENT a held-out year with this keeper's frozen recipe.
+      // Deliberately shown next to the in-sample determination, because the
+      // pair is the point: "CALIBRATED on the years we tuned on" means
+      // something different once you can see how the same recipe scored on a
+      // year it had never seen. The tier caveat rides along so the number
+      // cannot be lifted off this page as a certified skill claim.
+      if (keeper.holdout_touchpoint) {
+        const h = keeper.holdout_touchpoint;
+        const runLink = h.run_id
+          ? `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(h.run_id)}`
+          : null;
+        const degraded = h.degraded || [];
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">HOLDOUT ${esc(String(h.year || ''))}</span>
+            Frozen keeper recipe on a year it was never tuned on &mdash;
+            scored <strong>${esc(h.determination || '—')}</strong>
+            against <strong>${esc(effectiveDet(keeper))}</strong> in-sample.
+            ${degraded.length
+              ? `Degraded out-of-sample: <strong>${degraded.map(esc).join(', ')}</strong>.`
+              : 'No criterion degraded out-of-sample.'}
+            ${runLink ? ` <a class="run-id-link" href="${runLink}">${esc(h.run_id)}</a>` : ''}
+          </p>
+          ${h.caveat ? `<p style="margin: 4px 0; font-size: 0.78rem;">${esc(h.caveat)}</p>` : ''}
+        </div>`;
+      }
+
       // Keeper run info
       if (keeper.run_id) {
         const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(keeper.run_id)}`;
