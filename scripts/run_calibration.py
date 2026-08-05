@@ -2242,7 +2242,38 @@ def run_year(
     # (data.nyiso_seam_envelope docstring; rule 20 [R-DOF]). Applied here, after
     # the monthly/LCR overrides, so the measured envelope supersedes the
     # statics on its two links while every other link keeps the run's own TTC.
-    if getattr(config, "nyiso_seam_deliverability_envelope", False) and iso == "NYISO":
+    # NYISO FULL-SEAM PAR attribution (nyiso-127, ScenarioConfig.
+    # nyiso_seam_par_attribution): rebuild ALL FOUR NYISO_external border-link
+    # caps from the measured MIS P-32 per-neighbour schedules. Each posted row
+    # goes to the model zone its ties physically land in (Gold Book external
+    # interconnections); the one row that does NOT land in a single zone --
+    # SCH - PJ - NY, which spans the Central-East cutset -- is split hour by hour
+    # by NYISO's OWN published NY-NJ PAR interchange percentages, conditioned on
+    # published PAR availability (MIS P-33 outSched). This SUPERSEDES the
+    # nyiso-125 two-link envelope rather than stacking on it (rule 19
+    # [R-ONE-MECH]): it computes those same two links from the same measured
+    # rows, so exactly one of the two mechanisms is applied.
+    if getattr(config, "nyiso_seam_par_attribution", False) and iso == "NYISO":
+        from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
+        from market_sim.data.nyiso_par_attribution import (
+            nyiso_par_attributed_ttc_hourly,
+        )
+
+        ttc, ttc_import = nyiso_par_attributed_ttc_hourly(
+            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+        )
+        logger.info(
+            "%s %d: nyiso_seam_par_attribution — all four border links follow "
+            "the measured p%.0f directional envelope of the ATTRIBUTED seam "
+            "(SCH - PJ - NY split by the published PAR shares under published "
+            "PAR availability); supersedes nyiso_seam_deliverability_envelope",
+            iso,
+            year,
+            NYISO_SEAM_FLOW_PERCENTILE,
+        )
+    elif (
+        getattr(config, "nyiso_seam_deliverability_envelope", False) and iso == "NYISO"
+    ):
         from market_sim.config.constants import NYISO_SEAM_FLOW_PERCENTILE
         from market_sim.data.nyiso_seam_envelope import nyiso_seam_ttc_hourly
 
