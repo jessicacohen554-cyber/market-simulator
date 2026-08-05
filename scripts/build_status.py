@@ -505,6 +505,14 @@ def build_part(iso: str) -> dict | None:
     # purely declarative — never gating, never touching the verdict.
     if rec.get("frontier"):
         verdict["frontier"] = rec["frontier"]
+    # Validation touchpoint (rule 22): the ISO's frozen keeper recipe scored on
+    # a HELD-OUT year. Carried onto the status page beside the in-sample
+    # determination so the two are read together — an in-sample CALIBRATED
+    # means something different once the held-out score is visible next to it.
+    # Declarative, never gating: the determination above is the train-tier
+    # (2023-2025) verdict and a holdout result never silently rewrites it.
+    if rec.get("holdout_touchpoint"):
+        verdict["holdout_touchpoint"] = rec["holdout_touchpoint"]
     d7 = statmode.get("isos", {}).get(iso)
     if d7:
         # REPORTED line, never gating: the overlay-vs-statistical fail
