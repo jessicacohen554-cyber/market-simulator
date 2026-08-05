@@ -1093,6 +1093,10 @@ COAL_PERPLANT_OFFER_CURVE_BY_ISO: dict[
 # Rule-23 frozen; rule-25 ERCOT-only; window entries are (months, hours,
 # curve) with exhaustive non-overlapping (month × hour) coverage, validated
 # at resolution time.
+# Machine-emitted block (derive_coal_perplant_offer.py --year): one window per
+# line, trailing commas load-bearing for 1-tuples; keep the emitter's bytes so
+# a re-derive diffs cleanly against the provenance JSON.
+# fmt: off
 COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO: dict[
     str,
     dict[
@@ -1272,6 +1276,7 @@ COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO: dict[
         },
     },
 }
+# fmt: on
 
 # CO2 emission rates (tCO2/MWh), derived from heat rate × fuel emission factor.
 # Keyed by fuel class and efficiency bin, mirroring HEAT_RATE_BINS.
