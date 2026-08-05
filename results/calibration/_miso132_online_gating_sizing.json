@@ -1,0 +1,265 @@
+{
+ "prereg": "results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md",
+ "prereg_pushed_at": "9a0033bb",
+ "keeper": "2026-08-04-miso-127-onlinepmin",
+ "bundle": "results/calibration/miso127_onlinepmin_B",
+ "bars": {
+  "S1_min_req_on_mw": 800.0,
+  "S2_min_tightness": 0.25,
+  "S3_min_coal_share": 0.4,
+  "S3_min_coal_reach_mw": 500.0
+ },
+ "years": {
+  "2023": {
+   "rho": {
+    "n_members": 2457,
+    "member_cap_mw": 111978.68639800002,
+    "plants_with_positive_pmin": 0,
+    "plants_total": 504,
+    "cap_share_with_positive_pmin": 0.0,
+    "rho_pmin_raw": NaN,
+    "rho_pmin_clipped": null,
+    "mlf_cap_weighted": 0.35228609058734556,
+    "mlf_cems_covered_cap_share": 0.8749539591111857,
+    "rho_mlf_raw": 1.8386019962717228,
+    "rho_mlf_clipped": 1.8386019962717228
+   },
+   "rho_used": 1.8386019962717228,
+   "requirement": {
+    "online_annual_mean_mw": 1346.3264788899264,
+    "total_annual_mean_mw": 2447.23555335399,
+    "online_share_annual": 0.5501417618115086,
+    "online_july_night_mean_mw": 1315.7745521070924,
+    "total_july_night_mean_mw": 2394.8008296288535,
+    "online_july_night_min_mw": 1196.225,
+    "online_july_night_max_mw": 1732.025
+   },
+   "online_capability": {
+    "july_night_mean_mw": 13212.898631832737,
+    "annual_mean_mw": 12351.583675245933,
+    "july_day_h10_18_mean_mw": 14383.15239719459,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 5058.025504814751,
+     "coal": 5112.369966647422,
+     "gas_ct": 1610.812576521934,
+     "gas_st": 1431.6905838486305,
+     "oil": 0.0
+    },
+    "fuels_covered": [
+     "coal",
+     "gas_cc",
+     "gas_ct",
+     "gas_st",
+     "oil"
+    ],
+    "dispatch_above_capacity_hour_share": {
+     "gas_cc": 0.0007990867579908676,
+     "coal": 0.007762557077625571,
+     "gas_ct": 0.0,
+     "gas_st": 0.0006849315068493151,
+     "oil": 0.0
+    }
+   },
+   "ungated_capability_descriptive": {
+    "july_night_mean_mw": 32493.348896696672,
+    "annual_mean_mw": 28195.442625054733,
+    "online_share_of_ungated_july_night": 0.4066339444985919,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 5058.025504814751,
+     "coal": 5112.369966647422,
+     "gas_ct": 17940.342841385864,
+     "gas_st": 1431.6905838486305,
+     "oil": 2950.9200000000055
+    }
+   },
+   "S2_region_robustness_descriptive": {
+    "Midwest": {
+     "req_on_july_night_mw": 1071.2876866786141,
+     "online_cap_july_night_mw": 8767.710861096417,
+     "tightness": 0.12218556287389339
+    },
+    "South": {
+     "req_on_july_night_mw": 244.4868654284783,
+     "online_cap_july_night_mw": 4445.187770736336,
+     "tightness": 0.0550003460006774
+    }
+   },
+   "screen": {
+    "S1_req_on_july_night_mw": 1315.7745521070924,
+    "S2_tightness_req_on_over_online_cap": 0.09958258129197375,
+    "S3a_coal_share_of_online_cap": 0.38692266618398286,
+    "S3b_coal_reach_mw": 509.10299779831206
+   }
+  },
+  "2024": {
+   "rho": {
+    "n_members": 2454,
+    "member_cap_mw": 111975.383728,
+    "plants_with_positive_pmin": 0,
+    "plants_total": 504,
+    "cap_share_with_positive_pmin": 0.0,
+    "rho_pmin_raw": NaN,
+    "rho_pmin_clipped": null,
+    "mlf_cap_weighted": 0.3522931484384434,
+    "mlf_cems_covered_cap_share": 0.8749797655348472,
+    "rho_mlf_raw": 1.8385451276374487,
+    "rho_mlf_clipped": 1.8385451276374487
+   },
+   "rho_used": 1.8385451276374487,
+   "requirement": {
+    "online_annual_mean_mw": 1454.1396745628167,
+    "total_annual_mean_mw": 2556.6174212131095,
+    "online_share_annual": 0.568774843861007,
+    "online_july_night_mean_mw": 1550.0619970441744,
+    "total_july_night_mean_mw": 2630.4006945608153,
+    "online_july_night_min_mw": 1355.3916666666667,
+    "online_july_night_max_mw": 2023.0083333333334
+   },
+   "online_capability": {
+    "july_night_mean_mw": 13731.755095855553,
+    "annual_mean_mw": 12599.548819972875,
+    "july_day_h10_18_mean_mw": 16576.52779253328,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 3755.2427389496866,
+     "coal": 5106.002789847943,
+     "gas_ct": 3438.5296364042288,
+     "gas_st": 1431.9799306536936,
+     "oil": 0.0
+    },
+    "fuels_covered": [
+     "coal",
+     "gas_cc",
+     "gas_ct",
+     "gas_st",
+     "oil"
+    ],
+    "dispatch_above_capacity_hour_share": {
+     "gas_cc": 0.12602739726027398,
+     "coal": 0.05924657534246575,
+     "gas_ct": 0.0,
+     "gas_st": 0.009703196347031963,
+     "oil": 0.0
+    }
+   },
+   "ungated_capability_descriptive": {
+    "july_night_mean_mw": 30191.153846169538,
+    "annual_mean_mw": 27049.59112223186,
+    "online_share_of_ungated_july_night": 0.4548271048473939,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 3755.2427389496866,
+     "coal": 5106.002789847943,
+     "gas_ct": 16947.00838671821,
+     "gas_st": 1431.9799306536936,
+     "oil": 2950.9200000000055
+    }
+   },
+   "S2_region_robustness_descriptive": {
+    "Midwest": {
+     "req_on_july_night_mw": 1083.287489875716,
+     "online_cap_july_night_mw": 9656.795413941898,
+     "tightness": 0.1121787760266445
+    },
+    "South": {
+     "req_on_july_night_mw": 466.7745071684588,
+     "online_cap_july_night_mw": 4074.9596819136677,
+     "tightness": 0.1145470246589664
+    }
+   },
+   "screen": {
+    "S1_req_on_july_night_mw": 1550.0619970441744,
+    "S2_tightness_req_on_over_online_cap": 0.11288156439026546,
+    "S3a_coal_share_of_online_cap": 0.3718390514690296,
+    "S3b_coal_reach_mw": 576.3735826990957
+   }
+  },
+  "2025": {
+   "rho": {
+    "n_members": 2454,
+    "member_cap_mw": 111975.383728,
+    "plants_with_positive_pmin": 0,
+    "plants_total": 504,
+    "cap_share_with_positive_pmin": 0.0,
+    "rho_pmin_raw": NaN,
+    "rho_pmin_clipped": null,
+    "mlf_cap_weighted": 0.3522931484384434,
+    "mlf_cems_covered_cap_share": 0.8749797655348472,
+    "rho_mlf_raw": 1.8385451276374487,
+    "rho_mlf_clipped": 1.8385451276374487
+   },
+   "rho_used": 1.8385451276374487,
+   "requirement": {
+    "online_annual_mean_mw": 1551.6679008517167,
+    "total_annual_mean_mw": 2642.22638579286,
+    "online_share_annual": 0.5872577418782015,
+    "online_july_night_mean_mw": 1519.0235729413957,
+    "total_july_night_mean_mw": 2562.9010826001954,
+    "online_july_night_min_mw": 1161.9083333333333,
+    "online_july_night_max_mw": 2047.9462121212123
+   },
+   "online_capability": {
+    "july_night_mean_mw": 13774.112321004752,
+    "annual_mean_mw": 12444.058486590911,
+    "july_day_h10_18_mean_mw": 14811.56792092606,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 5415.279023365639,
+     "coal": 3368.2593397061773,
+     "gas_ct": 3558.9996726760573,
+     "gas_st": 1431.5742852568774,
+     "oil": 0.0
+    },
+    "fuels_covered": [
+     "coal",
+     "gas_cc",
+     "gas_ct",
+     "gas_st",
+     "oil"
+    ],
+    "dispatch_above_capacity_hour_share": {
+     "gas_cc": 0.040753424657534246,
+     "coal": 0.3675799086757991,
+     "gas_ct": 0.0,
+     "gas_st": 0.015296803652968037,
+     "oil": 0.0
+    }
+   },
+   "ungated_capability_descriptive": {
+    "july_night_mean_mw": 30045.424805246545,
+    "annual_mean_mw": 27794.619067531577,
+    "online_share_of_ungated_july_night": 0.4584429213528547,
+    "by_fuel_july_night_mean_mw": {
+     "gas_cc": 5415.279023365639,
+     "coal": 3368.2593397061773,
+     "gas_ct": 16879.392156917846,
+     "gas_st": 1431.5742852568774,
+     "oil": 2950.9200000000055
+    }
+   },
+   "S2_region_robustness_descriptive": {
+    "Midwest": {
+     "req_on_july_night_mw": 950.416682260392,
+     "online_cap_july_night_mw": 9053.706783050233,
+     "tightness": 0.104975421121402
+    },
+    "South": {
+     "req_on_july_night_mw": 568.6068906810035,
+     "online_cap_july_night_mw": 4720.405537954531,
+     "tightness": 0.12045721201475308
+    }
+   },
+   "screen": {
+    "S1_req_on_july_night_mw": 1519.0235729413957,
+    "S2_tightness_req_on_over_online_cap": 0.11028105024415763,
+    "S3a_coal_share_of_online_cap": 0.24453549246652867,
+    "S3b_coal_reach_mw": 371.45517747749017
+   }
+  }
+ },
+ "verdict": {
+  "S1_pass": true,
+  "S2_pass": false,
+  "S3_pass": false,
+  "S3a_pass": false,
+  "S3b_pass": false,
+  "screen_pass": false
+ }
+}
