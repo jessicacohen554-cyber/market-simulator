@@ -2183,3 +2183,120 @@ This is the J.1/L.3 discipline applied to my own handoff.
   CONE**. **FFR-3V's ranking of this as "the largest single suppressor" is refuted.** I chartered
   it on that ranking; the lane cost one diagnosis and returned a decisive null, which is the
   system working.
+
+---
+
+## Addendum R — successor sitting: the Q.2 exposure measured closed, two cards put, Wave 5 opens
+
+**Written 2026-08-05 by the workstream manager (successor session) at `origin/main` `4d8f0c06`.**
+Verified at writing, from the artifacts: keepers are Addendum Q's six, unchanged (ERCOT re-read
+from its shard, not quoted from a doc). `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; holdout
+freeze ACTIVE; zero open PRs. Overnight churn, for the record: PR #3563 (ercot-165 keeper-auditor
+repairs) went stale-based and un-mergeable ("dirty", 71 files of carried branch history against
+its title's two text repairs) and was closed UNMERGED; a rescue session re-cut the repairs
+cleanly and merged them as PR #3565 (`ba2b47d6` → `4d8f0c06`). Nothing remained for this sitting
+to do there. Main moved twice during this sitting's own verification pass — the re-verify
+discipline is not ceremonial.
+
+### R.1 — Q.2's handed-over exposure, DISCHARGED BY MEASUREMENT: FFR-3Q-3 carries a stated limitation, not an inherited belief
+
+Q.2 (last paragraph) left the successor one exposure: FFR-3Q-3's arms were solved before ERCOT's
+keeper moved to `2026-08-04-ercot165-unpooled-share`, and the outgoing manager *believed* the
+findings keeper-insensitive without measuring it. Measured now, committed artifacts only, no
+solve:
+
+1. **The promotion moved no shipped default.** ercot-165's two new fields land default-neutral —
+   `ercot_wtx_curtail_unpooled: bool = False`, `ercot_wtx_panhandle_owner: str = "tie"`
+   (`scenarios.py`, diff `68e7bfcd..HEAD`) — and the keeper arms them in the **bundle only**
+   (`ercot_wtx_curtail_unpooled=true` / `owner="share"`, per the promotion note in the ERCOT
+   shard). ERCOT's `ISOConfig` is untouched in that range (the only `default_scenario_overrides`
+   change is FFR-4B's MISO-scoped D-2′ arm). FFR-3Q-3's arms inherited shipped defaults, so
+   **the keeper move did not change the config they realized.** The battery's parity re-point to
+   the new keeper remains a re-measurement-time concern under Q.2's operating rule — not a defect
+   in the FFR-3Q-3 record.
+2. **The arms are nonetheless NOT byte-reproducible at today's HEAD — for a reason unrelated to
+   the keeper.** D-13 (`7bdc58c6`) added the shipped forecast-path default
+   `ira_ptc_credit_window_years: int | None = 10`, which moves wind vintage offers in every ISO's
+   forecast/hindcast lane (and moves the cache keys). The other new default-True field,
+   `storage_measured_base_fleet`, is gated to backcast mode AND
+   `STORAGE_MEASURED_BASE_FLEET_ISOS` (= CAISO; `runner.py:782`), so it cannot touch an ERCOT
+   hindcast.
+3. **Determination.** FFR-3Q-3's findings stand **as-measured at base `68e7bfcd` under shipped
+   defaults** (recorded keys `6a824992b5fb1baf` / `d065923f427349d1`); keeper-insensitivity is
+   neither claimed nor needed. No re-run is commissioned for keeper churn (Q.2). **FFR-5A's
+   step 0 (R.4) re-verifies the reversal reproduces at its own HEAD** — the one lane that needs
+   the phenomenon live is the one that re-measures it. Expected direction of the D-13 delta,
+   stated as expectation and NOT as measurement: out-of-window wind vintages' offers rise →
+   prices rise → coal screen margins rise → the re-clear, if anything, more likely. If FFR-5A
+   finds the reversal does NOT reproduce, the D-13 delta is the first attribution candidate.
+
+### R.2 — CARD D-17, put this sitting: implement the FFR-4A entry-cap fix?
+
+**Measured (FFR-4A, `docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md`; the diagnosis is already
+accepted on record, Q.3).** The freeze is a **dimensional double-count**: the pending-pipeline
+**stock** is netted from two annual-**flow** caps, capping long-run average decisions at `C / L`
+and freezing the ladder ratchet whenever `K ≤ L` — and `(K, L) = (2, 2)` puts **24 of 24**
+ISO × entry-tech cells on the knife-edge, at both vintages. `K = 2.0` (ReEDS; corroborated
+between the measured p75 and p90 of the EIA-860 growth-ratio distribution) and `L = 2` (LBNL)
+both survive with citations intact; the defect is the **third, uncited term**. The documented
+intent nets the per-tech cap only; the ladder half of the netting is an implementation extension
+(FFR-4A §1.1(b)). The shipped mechanism forbids what the EIA-860 record shows ~30 % of
+ISO-tech-years (a new annual-build maximum). Validated end-to-end: FFR-4A's harness reproduces
+the registered MISO legs to the MW, and the `C/L` law predicts wind's 4,000/0 alternation and its
+2,000 MW mean exactly.
+
+**Recommendation — (a) CHARTER THE IMPLEMENTATION LANE (FFR-5C): land FFR-4A's E-1 + E-2
+TOGETHER, as one gated default-OFF field.** Remove the stock netting from **both** flow caps and
+make the entry pro-forma **see its own pending pipeline** (`_lookahead_reprice_signal` prices the
+current fleet only; pending rows already carry `mw` + `cod_year`, so the relocation is zero-DOF).
+One mechanism per phenomenon (rule 19): the throughput caps go back to bounding throughput; the
+anti-cobweb guard moves to the information gap that is the actual cobweb. Default OFF with its
+matrix row (rule 28c) and a paired arm; the shipped path stays byte-identical until armed.
+Pre-registered and carried: **this does not rescue MISO solar's FC-3 band** — that leg's solar
+dies on revenue before any cap is consulted (FFR-4A §5.4.3).
+
+**Option (b), delete the netting without relocating the guard — I think this is wrong.** Cost:
+the cobweb phenomenon is real (a pro-forma blind to committed-not-online MW re-decides the same
+opportunity every lag year); deleting the netting alone un-guards it. Rule 19 wants the guard at
+its phenomenon, not removed.
+
+**Option (c), leave as shipped — I think this is wrong.** Cost: every cap the netting touches is
+effectively halved (`C/L`); the ratchet is dead in all 24 cells; and E-3's latent trap stands —
+the growth factor is `K − L + 1`, so the planned per-tech IA→COD refinement that pushes any
+tech's `L` to 3 would **silently zero its economic entry** while every parameter still carries a
+valid citation.
+
+**Sign-off D-17:** ☐ (a) charter FFR-5C (E-1+E-2 together, gated default-OFF)
+☐ (b) delete netting only  ☐ (c) leave as shipped  ☐ other: ____________  owner: ______  date: ____
+
+### R.3 — D-16 re-put (the Addendum P card, unchanged)
+
+Per the handover queue, D-16 (represent the procurement channel that actually built MISO's
+solar — card at the end of Addendum P) is put to the owner this sitting, unchanged:
+recommendation **(a) charter a STRUCTURAL SCOPING lane** (design + rule-13 `[R-MEASURED]`
+admissibility argument, no implementation — dispatched as FFR-5B if signed); the option I think
+is wrong, **(b) disclosed limitation**, carries the cost recorded on the card (MISO's FC-3
+additions can never be right for the right reason; every future lane is pushed toward the fitted
+revenue adder rule 1 forbids; every capacity-market ISO's VRE build rests on an unmodeled
+channel).
+
+### R.4 — FFR-5A chartered: the soft-latch root cause (the FH-4/FH-5 blocker) — Wave 5 opens
+
+Manager charter, no owner card — the same manager-charterable class as FFR-4E (P.3(b)): it
+diagnoses why an **existing** mechanism behaves as measured and proposes nothing. The question
+(Q.1; FFR-3Q-3 §3.5, §7.1): why does the soft latch (`retirements.py` pipeline component 3)
+re-clear a 29-unit / 8,218 MW coal cohort at 2024 — its own `execute_year` — on 2023 dispatch
+($15.77/MWh system mean) that is *cheaper* than the 2021 dispatch that failed them ($23.40)?
+First suspect on record: the reserve leg of the attainable margin
+(`screen_reserve_value_enabled` on). Until a decided cohort survives to execution, the exit half
+of the retirement layer cannot be exercised and FH-4/FH-5 cannot lift (Q.1) — this lane owns the
+blocker. **Q.2 compliance:** the deliverables are findings plus a ledger instrument (a
+margin-component enrichment of `pipeline_events` rows — not a tunable); the diagnostic solve is
+chartered under Q.2's own exception because the per-unit screen-margin decomposition exists in
+**no committed artifact** (T1-FF bundles are slim by convention, zero parquets, and `results/`
+dies with the container). Prompt: pack §0k. Model: FABLE (rule 27 — `src/` instrumentation in
+scope; and this is the program's hardest open root cause).
+
+### R.5 — signatures this sitting
+
+*(recorded on receipt of the owner's answers to D-16 and D-17)*
