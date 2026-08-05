@@ -1723,12 +1723,22 @@ unchanged, and 2022's 117 actual tail hours simply make the same gap bigger.
 
 **What this is NOT.** Validation tier is **ITERABLE model-SELECTION evidence**.
 +14.7 % is **not** a certified out-of-sample skill number and must never be
-quoted as one. It is also scored against the **known-imperfect availability
-envelope** the freeze was declared for (the CAMPD economic-layup residual that
-survives the merit-order guard), so the two degradations are **not attributable
-to forecast error alone** until the touchpoint is re-run after that fix — which
-the validation tier explicitly permits, and which is exactly why the owner spent
-this tier rather than the touch-once locked one.
+quoted as one.
+
+**AVAILABILITY-ENVELOPE PARITY IS VERIFIED — corrected 2026-08-05.** An earlier
+draft of this entry carried the envelope defect as a reason to discount the two
+degradations. That was too broad and is withdrawn. 2022 is built from the SAME
+uniform 2018–2026 CAMPD detector regeneration as 2023–2025 (one pass, not a
+separate holdout derive), carries the SAME merit-order guard (layup windows are
+disjoint from the standard extract — 0 of 3,189 NEISO windows overlap), was
+solved against the **byte-identical** layup artifact the keeper used
+(`unit_outages_layup-cb80c81b7c2b`), and sits in family with the tuned years on
+every volume measure (1.98 M MW-days vs a 2023–2025 range of 1.23–2.19 M;
+median window 13 d vs 10–15 d). The residual over-count behind the freeze is
+therefore **baked into the tuned years too**. Correct reading: it discounts the
+**absolute level** of the in-sample and holdout scores alike, but **not** the
+in-sample→holdout **delta**, which is measured like-for-like. **The C3a/C3b
+degradations are not explained by the holdout year having worse data.**
 
 **No re-tune was performed.** Rule 22's response to a validation miss is to send
 the issue back to 2023–2025; this session only measured and reported. 2022 is a
