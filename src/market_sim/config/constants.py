@@ -736,10 +736,31 @@ COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # block's own declared price corroborates it independently (Min Gen Cost p25
 # $18.00, 28–31 % coverage — corroboration only, never the anchor). At
 # ``fuel == anchor`` the resolved ``_mustrun`` bid equals this level exactly.
-# 2023 application is a declared extrapolation (no 2023 SCED disclosure
-# exists) — the margin is fuel-invariant by construction, gated LOYO per-year
-# in the ERCOT-137 precommit. Re-derives only with its source disclosure
-# (rule 23), via the same derive script; per-ISO, never transferred (rule 25).
+# 2023 application is a declared extrapolation, gated LOYO per-year in the
+# ERCOT-137 precommit. Its ORIGINAL premise ("no 2023 SCED disclosure exists")
+# was dissolved by the ercot-157 delivery-2023 corpus re-upload and TESTED at
+# ercot-169 (matrix §5.1 item 13, Phase 0, no LP; decision rule pre-registered
+# in docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md; full record
+# results/calibration/ercot169_margin_fuel_invariance.json +
+# FINDING-ercot169-margin-fuel-invariance-2026-08-05.md). **The test could not
+# be completed: NOT-IDENTIFIABLE-2023.** The instrument's own licensing test
+# (ERCOT-138 §3.4 curve coverage) fails on the delivery-2023 COAL rows —
+# curve_share 0.9702 (full-day 0.9794) against the 0.9876 floor this constant
+# was licensed on — because Martin Lake units 1-3 (~2.3 GW) submit NO
+# incremental curve in 20-24 % of their online intervals, concentrated
+# March-June 2023 (monthly curve_share 0.907-0.937 there vs 0.995-1.000 in
+# Jan and Jul-Nov). A biased instrument cannot certify OR refute, so the
+# verdict is withheld in both directions and the extrapolation note STANDS.
+# Reported UNLICENSED for the record, not as a verdict: the 2023 measured
+# bottom is 18.380 $/MWh, i.e. level_2023 = 17.5211 after removing this form's
+# own fuel response (10.9832 × (1.8169 − 1.7387) = +0.8589), **+1.6404 above
+# this constant — 1.76× the ±0.9300 band**. That gap is far too large for a
+# 1.7 pp coverage shortfall to have manufactured, and it points the same way as
+# the ercot-168 measured 2023 coal repricing, so it is carried to the owner as
+# an open question on this constant's 2023 application — NOT as a refutation
+# and NOT as a licence to arm anything (rule 13). Re-derives only with its
+# source disclosure (rule 23), via the same derive script (``--year`` runs the
+# ercot-169 test); per-ISO, never transferred (rule 25).
 COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 15.8807,
 }
@@ -775,14 +796,35 @@ COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
 # (rule 19 [R-ONE-MECH] bookkeeping). At ``fuel == anchor`` the resolved
 # ``_committed`` bid equals this level exactly.
 #
-# 2023 application is a declared extrapolation (no 2023 SCED disclosure
-# exists) — the margin is fuel-invariant by construction, gated LOYO per-year
-# in the ERCOT-139 precommit exactly as ERCOT-137's was. Re-derives only with
-# its source disclosure (rule 23), via
-# ``scripts/data/derive_cc_committed_offer_margin.py``. ISOs absent from the
-# registry hard-fail when the flag is armed (rule 24 — never a silent
-# fallback); ERCOT-identified from ERCOT conduct and never transferred
-# (rule 25).
+# **The 2023 declared extrapolation is RETIRED BY VERIFICATION (ercot-169,
+# 2026-08-05 — matrix §5.1 item 13, Phase 0, no LP, keeper UNCHANGED).** Its
+# premise ("no 2023 SCED disclosure exists") was dissolved by the ercot-157
+# delivery-2023 corpus re-upload, and because this is a MARGIN form the corpus
+# tested the fuel-invariance claim itself rather than merely re-deriving. On
+# the delivery-2023 corpus (2.34 M rows, 365 days), reconstructing THIS
+# identification's own instrument (ERCOT-136 §B1 HSL-cap-weighted p50 curve
+# bottom, same row filters, same cap-weighting, CPT→CST at derivation) on the
+# window three of the four identification subsets sample (h11–22 CST):
+#   measured bottom 13.390 − 7.8521 × (2.6012 − 2.2494) = **level₂₀₂₃ 10.6276**
+# against the armed 10.354 — **+0.2736, inside the ±6.47 % (±$0.6699) band this
+# constant is identified to**, i.e. 0.41 of the band. The full-day read agrees
+# (10.7076, +0.3536) and the raw-CPT clock sensitivity is ±$0.01. The
+# delivered-gas basis is the identification's OWN (ERCOT-138 §J ``fuel_capwtd``),
+# re-established by a no-LP keeper reconstruction that reproduces its committed
+# 2024/2025 values to 2.2129/3.2324 vs 2.213/3.232. **Caveat carried, not
+# buried:** the licensing margin is negligible — 2023 CC curve coverage is
+# 0.95084 against the 0.95054 floor (+0.0003), and the full-day window's 0.95051
+# sits 0.00003 BELOW it, so this limb passes its coverage licence essentially at
+# the boundary. The confirmation is real under the pre-registered rule and is
+# the tightest of the three limbs on value; it is not a wide-margin result.
+# Record: docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md,
+# results/calibration/ercot169_margin_fuel_invariance.json,
+# results/calibration/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md.
+# Re-derives only with its source disclosure (rule 23), via
+# ``scripts/data/derive_cc_committed_offer_margin.py`` (``--year`` runs the
+# ercot-169 test). ISOs absent from the registry hard-fail when the flag is
+# armed (rule 24 — never a silent fallback); ERCOT-identified from ERCOT
+# conduct and never transferred (rule 25).
 CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 10.354,
 }
@@ -813,14 +855,32 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
 # identification point for the whole offer surface). At ``gas == anchor`` the
 # resolved ``_peak`` bid equals this level exactly.
 #
-# 2023 application is a declared extrapolation (no 2023 SCED disclosure
-# exists), gated per-year in the ERCOT-140 precommit §4.1; the ERCOT-138 §H
-# same-plants 2025 flip is that precommit's declared identification risk
-# (§2.2). Re-derives only with its source disclosure (rule 23), via
-# ``scripts/data/derive_coal_peak_offer_margin.py``. ISOs absent from the
-# registries hard-fail when the flag is armed (rule 24 — never a silent
-# fallback); ERCOT-identified from ERCOT conduct and never transferred
-# (rule 25).
+# 2023 application is a declared extrapolation, gated per-year in the ERCOT-140
+# precommit §4.1; the ERCOT-138 §H same-plants 2025 flip is that precommit's
+# declared identification risk (§2.2). Its ORIGINAL premise ("no 2023 SCED
+# disclosure exists") was dissolved by the ercot-157 delivery-2023 corpus and
+# TESTED at ercot-169 (matrix §5.1 item 13, Phase 0, no LP; pre-registered rule
+# in docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md).
+# **The test could not be completed: NOT-IDENTIFIABLE-2023** — this limb shares
+# the COAL class's licensing failure (curve_share 0.9702 vs the 0.9876 floor;
+# the Martin Lake March-June no-curve block — see COAL_OFFER_MARGIN_LEVEL_BY_ISO
+# above), so the verdict is withheld in both directions and the extrapolation
+# note STANDS. Reported UNLICENSED for the record, not as a verdict, because the
+# magnitude is the largest finding of that session: the delivery-2023 measured
+# above-min-load p90 is **75.00 $/MWh** (flat at $75 in 9 of 12 months; the two
+# most common submitted TOP steps in 2023 are $78.00 and $75.01, so it is
+# widespread conduct and not one plant), i.e. level₂₀₂₃ = 71.3378 after removing
+# the gas response (10.4100 × (2.6012 − 2.2494) = +3.6622) — **+36.14 above this
+# constant, 14.4× the ±7.12 % (±$2.5062) band.** No coverage shortfall of
+# 1.7 pp can produce a 2× level shift, and it corroborates at fleet scale the
+# ercot-168 finding that 2023 coal offer conduct differs structurally from
+# 2024/25 (Oak Grove's measured overnight top $60.26/$61.46). It is carried to
+# the owner as an OPEN question on this constant's 2023 application — never a
+# refutation, never a licence to arm (rule 13). Re-derives only with its source
+# disclosure (rule 23), via ``scripts/data/derive_coal_peak_offer_margin.py``
+# (``--year`` runs the ercot-169 test). ISOs absent from the registries
+# hard-fail when the flag is armed (rule 24 — never a silent fallback);
+# ERCOT-identified from ERCOT conduct and never transferred (rule 25).
 COAL_PEAK_OFFER_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 35.1989,
 }

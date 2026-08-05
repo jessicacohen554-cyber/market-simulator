@@ -1,0 +1,1237 @@
+{
+ "lane": "ercot169-margin-fuel-invariance",
+ "phase": 0,
+ "no_lp": true,
+ "keeper_unchanged": true,
+ "charter": "mechanism-testing-matrix \u00a75.1 item 13",
+ "precommit": "docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md",
+ "armed_constants": {
+  "coal_mustrun": 15.8807,
+  "cc_committed": 10.354,
+  "coal_peak": 35.1989
+ },
+ "corpus": {
+  "root": "data/raw/ercot/SCED",
+  "rows": 2336210,
+  "days": 365,
+  "by_class": {
+   "CC": 1604263,
+   "COAL": 731947
+  }
+ },
+ "section_0_harness_fidelity": [
+  {
+   "subset": "2024_ercot74_tail_days",
+   "class": "COAL",
+   "bot_p50": 16.86,
+   "bot_p50_committed": 16.86,
+   "p90": 34.82,
+   "p90_committed": 34.82,
+   "curve_share": 0.996872,
+   "curve_share_committed": 0.996872,
+   "reproduced": true
+  },
+  {
+   "subset": "2024_ercot74_tail_days",
+   "class": "CC",
+   "bot_p50": 9.83,
+   "bot_p50_committed": 9.83,
+   "p90": 24.46,
+   "p90_committed": 24.46,
+   "curve_share": 0.951784,
+   "curve_share_committed": 0.951784,
+   "reproduced": true
+  },
+  {
+   "subset": "2024_ercot75_control_days",
+   "class": "COAL",
+   "bot_p50": 16.37,
+   "bot_p50_committed": 16.37,
+   "p90": 34.82,
+   "p90_committed": 34.82,
+   "curve_share": 1.0,
+   "curve_share_committed": 1.0,
+   "reproduced": true
+  },
+  {
+   "subset": "2024_ercot75_control_days",
+   "class": "CC",
+   "bot_p50": 10.35,
+   "bot_p50_committed": 10.35,
+   "p90": 25.24,
+   "p90_committed": 25.24,
+   "curve_share": 0.950537,
+   "curve_share_committed": 0.950537,
+   "reproduced": true
+  },
+  {
+   "subset": "2025_ercot75_control_days",
+   "class": "COAL",
+   "bot_p50": 15.0,
+   "bot_p50_committed": 15.0,
+   "p90": 43.0,
+   "p90_committed": 43.0,
+   "curve_share": 0.996263,
+   "curve_share_committed": 0.996263,
+   "reproduced": true
+  },
+  {
+   "subset": "2025_ercot75_control_days",
+   "class": "CC",
+   "bot_p50": 17.39,
+   "bot_p50_committed": 17.39,
+   "p90": 38.52,
+   "p90_committed": 38.52,
+   "curve_share": 0.971433,
+   "curve_share_committed": 0.971433,
+   "reproduced": true
+  },
+  {
+   "subset": "2025_ercot86_tail_days",
+   "class": "COAL",
+   "bot_p50": 15.0,
+   "bot_p50_committed": 15.0,
+   "p90": 48.01,
+   "p90_committed": 48.01,
+   "curve_share": 0.987633,
+   "curve_share_committed": 0.987633,
+   "reproduced": true
+  },
+  {
+   "subset": "2025_ercot86_tail_days",
+   "class": "CC",
+   "bot_p50": 18.73,
+   "bot_p50_committed": 18.73,
+   "p90": 47.12,
+   "p90_committed": 47.12,
+   "curve_share": 0.979844,
+   "curve_share_committed": 0.979844,
+   "reproduced": true
+  }
+ ],
+ "section_1_instruments_2023": {
+  "T1_COAL": {
+   "year": 2023,
+   "class": "COAL",
+   "hours": "h11-22 CST",
+   "days": 365,
+   "coverage": {
+    "res_hours": 366494,
+    "resources": 26,
+    "HSL_GW": 0.4828406023018112,
+    "curve_share": 0.9702205220276457,
+    "a_offered": 0.9477532725429902,
+    "b_selfsched": 0.05129041517365953,
+    "e_residual": 0.0009563122833502023,
+    "c_as_of_Htel": 0.030153438629107993,
+    "lsl_over_hsl": 0.4102731723506044,
+    "loading": 0.7714971930454438
+   },
+   "curve_bottom": {
+    "res_hours": 355580,
+    "resources": 26,
+    "bot_p10": 3.16,
+    "bot_p25": 13.0,
+    "bot_p50": 18.38,
+    "bot_p75": 21.28,
+    "bot_p90": 30.47,
+    "bot_mean_capwtd": 14.414183846302231
+   },
+   "inc_bid": {
+    "res_hours": 366494,
+    "resources": 26,
+    "capability_MW": 176958183.7,
+    "minload_of_capability": 0.4103,
+    "incremental_of_capability": 0.5897,
+    "cap_share": {
+     "<=0": 0.4105,
+     "<=4.5": 0.4817,
+     "<=10": 0.482,
+     "<=15": 0.4952,
+     "<=20": 0.6158,
+     "<=25": 0.824,
+     "<=30": 0.8587,
+     "<=35": 0.8902,
+     "<=40": 0.8945,
+     "<=50": 0.9007,
+     "<=60": 0.9011,
+     "<=100": 0.9411
+    },
+    "inc_share": {
+     "<=0": 0.0003,
+     "<=4.5": 0.1212,
+     "<=10": 0.1215,
+     "<=15": 0.1439,
+     "<=20": 0.3485,
+     "<=25": 0.7016,
+     "<=30": 0.7605,
+     "<=35": 0.8139,
+     "<=40": 0.8211,
+     "<=50": 0.8316,
+     "<=60": 0.8323,
+     "<=100": 0.9001
+    },
+    "inc_bid_q": {
+     "p10": 4.42,
+     "p25": 18.66,
+     "p50": 21.41,
+     "p75": 25.47,
+     "p90": 75.0
+    },
+    "offered_share_of_incremental": 0.9491
+   }
+  },
+  "T2_COAL": {
+   "year": 2023,
+   "class": "COAL",
+   "hours": "full-day",
+   "days": 365,
+   "coverage": {
+    "res_hours": 731947,
+    "resources": 26,
+    "HSL_GW": 0.4778889792566949,
+    "curve_share": 0.9794247397694096,
+    "a_offered": 0.9641175078654602,
+    "b_selfsched": 0.034852829178341004,
+    "e_residual": 0.0010296629561985897,
+    "c_as_of_Htel": 0.031195771567764003,
+    "lsl_over_hsl": 0.4092140953290573,
+    "loading": 0.7040671677886874
+   },
+   "curve_bottom": {
+    "res_hours": 716887,
+    "resources": 26,
+    "bot_p10": 3.16,
+    "bot_p25": 13.0,
+    "bot_p50": 18.69,
+    "bot_p75": 21.33,
+    "bot_p90": 30.47,
+    "bot_mean_capwtd": 14.670606441751564
+   },
+   "inc_bid": {
+    "res_hours": 731947,
+    "resources": 26,
+    "capability_MW": 349789404.7,
+    "minload_of_capability": 0.4092,
+    "incremental_of_capability": 0.5908,
+    "cap_share": {
+     "<=0": 0.4094,
+     "<=4.5": 0.4723,
+     "<=10": 0.4725,
+     "<=15": 0.4855,
+     "<=20": 0.6094,
+     "<=25": 0.8194,
+     "<=30": 0.8612,
+     "<=35": 0.8922,
+     "<=40": 0.8963,
+     "<=50": 0.9026,
+     "<=60": 0.9046,
+     "<=100": 0.9502
+    },
+    "inc_share": {
+     "<=0": 0.0003,
+     "<=4.5": 0.1067,
+     "<=10": 0.107,
+     "<=15": 0.1291,
+     "<=20": 0.3389,
+     "<=25": 0.6942,
+     "<=30": 0.7651,
+     "<=35": 0.8175,
+     "<=40": 0.8245,
+     "<=50": 0.8351,
+     "<=60": 0.8385,
+     "<=100": 0.9157
+    },
+    "inc_bid_q": {
+     "p10": 4.42,
+     "p25": 18.75,
+     "p50": 21.46,
+     "p75": 26.13,
+     "p90": 75.0
+    },
+    "offered_share_of_incremental": 0.965
+   }
+  },
+  "T1cpt_COAL": {
+   "year": 2023,
+   "class": "COAL",
+   "hours": "h11-22 CPT",
+   "days": 365,
+   "coverage": {
+    "res_hours": 366529,
+    "resources": 26,
+    "HSL_GW": 0.4827104447397068,
+    "curve_share": 0.9699259813002519,
+    "a_offered": 0.9471623952731913,
+    "b_selfsched": 0.05186198809956904,
+    "e_residual": 0.0009756166272395933,
+    "c_as_of_Htel": 0.030468383244539824,
+    "lsl_over_hsl": 0.4107139058772434,
+    "loading": 0.7697231621910002
+   },
+   "curve_bottom": {
+    "res_hours": 355506,
+    "resources": 26,
+    "bot_p10": 3.16,
+    "bot_p25": 13.0,
+    "bot_p50": 18.38,
+    "bot_p75": 21.28,
+    "bot_p90": 30.47,
+    "bot_mean_capwtd": 14.404605593468268
+   },
+   "inc_bid": {
+    "res_hours": 366529,
+    "resources": 26,
+    "capability_MW": 176927376.6,
+    "minload_of_capability": 0.4107,
+    "incremental_of_capability": 0.5893,
+    "cap_share": {
+     "<=0": 0.4109,
+     "<=4.5": 0.482,
+     "<=10": 0.4823,
+     "<=15": 0.4955,
+     "<=20": 0.6159,
+     "<=25": 0.823,
+     "<=30": 0.8582,
+     "<=35": 0.8898,
+     "<=40": 0.8941,
+     "<=50": 0.9002,
+     "<=60": 0.9007,
+     "<=100": 0.9408
+    },
+    "inc_share": {
+     "<=0": 0.0003,
+     "<=4.5": 0.121,
+     "<=10": 0.1214,
+     "<=15": 0.1439,
+     "<=20": 0.3481,
+     "<=25": 0.6997,
+     "<=30": 0.7593,
+     "<=35": 0.813,
+     "<=40": 0.8203,
+     "<=50": 0.8307,
+     "<=60": 0.8315,
+     "<=100": 0.8995
+    },
+    "inc_bid_q": {
+     "p10": 4.42,
+     "p25": 18.66,
+     "p50": 21.41,
+     "p75": 25.52,
+     "p90": 75.0
+    },
+    "offered_share_of_incremental": 0.9485
+   }
+  },
+  "T1_CC": {
+   "year": 2023,
+   "class": "CC",
+   "hours": "h11-22 CST",
+   "days": 365,
+   "coverage": {
+    "res_hours": 841346,
+    "resources": 230,
+    "HSL_GW": 0.4699284993332113,
+    "curve_share": 0.9508371110102146,
+    "a_offered": 0.952316497959063,
+    "b_selfsched": 0.03459280141899879,
+    "e_residual": 0.013090700621938189,
+    "c_as_of_Htel": 0.035439016768341006,
+    "lsl_over_hsl": 0.5786683921997531,
+    "loading": 0.8879092036382873
+   },
+   "curve_bottom": {
+    "res_hours": 799983,
+    "resources": 215,
+    "bot_p10": 5.13,
+    "bot_p25": 9.44,
+    "bot_p50": 13.39,
+    "bot_p75": 16.37,
+    "bot_p90": 19.4,
+    "bot_mean_capwtd": 11.897186705553638
+   },
+   "inc_bid": {
+    "res_hours": 841346,
+    "resources": 230,
+    "capability_MW": 395372463.2,
+    "minload_of_capability": 0.5787,
+    "incremental_of_capability": 0.4213,
+    "cap_share": {
+     "<=0": 0.5842,
+     "<=4.5": 0.5944,
+     "<=10": 0.629,
+     "<=15": 0.7461,
+     "<=20": 0.8539,
+     "<=25": 0.9163,
+     "<=30": 0.9449,
+     "<=35": 0.9519,
+     "<=40": 0.9537,
+     "<=50": 0.9558,
+     "<=60": 0.9562,
+     "<=100": 0.9746
+    },
+    "inc_share": {
+     "<=0": 0.0132,
+     "<=4.5": 0.0373,
+     "<=10": 0.1195,
+     "<=15": 0.3973,
+     "<=20": 0.6531,
+     "<=25": 0.8012,
+     "<=30": 0.8693,
+     "<=35": 0.8857,
+     "<=40": 0.8901,
+     "<=50": 0.8951,
+     "<=60": 0.896,
+     "<=100": 0.9397
+    },
+    "inc_bid_q": {
+     "p10": 9.31,
+     "p25": 12.25,
+     "p50": 16.45,
+     "p75": 21.69,
+     "p90": 28.37
+    },
+    "offered_share_of_incremental": 0.9535
+   }
+  },
+  "T2_CC": {
+   "year": 2023,
+   "class": "CC",
+   "hours": "full-day",
+   "days": 365,
+   "coverage": {
+    "res_hours": 1604263,
+    "resources": 236,
+    "HSL_GW": 0.4711642529310967,
+    "curve_share": 0.9505074916020627,
+    "a_offered": 0.9560791091560735,
+    "b_selfsched": 0.029738128520094692,
+    "e_residual": 0.014182762323831775,
+    "c_as_of_Htel": 0.03759154863879146,
+    "lsl_over_hsl": 0.5760007211935998,
+    "loading": 0.863396552655642
+   },
+   "curve_bottom": {
+    "res_hours": 1524864,
+    "resources": 221,
+    "bot_p10": 5.42,
+    "bot_p25": 9.68,
+    "bot_p50": 13.47,
+    "bot_p75": 16.35,
+    "bot_p90": 19.25,
+    "bot_mean_capwtd": 11.785375741934809
+   },
+   "inc_bid": {
+    "res_hours": 1604263,
+    "resources": 236,
+    "capability_MW": 755871377.9,
+    "minload_of_capability": 0.576,
+    "incremental_of_capability": 0.424,
+    "cap_share": {
+     "<=0": 0.5818,
+     "<=4.5": 0.5897,
+     "<=10": 0.6245,
+     "<=15": 0.7453,
+     "<=20": 0.8547,
+     "<=25": 0.9168,
+     "<=30": 0.9457,
+     "<=35": 0.9534,
+     "<=40": 0.9552,
+     "<=50": 0.9572,
+     "<=60": 0.9577,
+     "<=100": 0.9754
+    },
+    "inc_share": {
+     "<=0": 0.0137,
+     "<=4.5": 0.0324,
+     "<=10": 0.1143,
+     "<=15": 0.3993,
+     "<=20": 0.6574,
+     "<=25": 0.8038,
+     "<=30": 0.872,
+     "<=35": 0.8902,
+     "<=40": 0.8945,
+     "<=50": 0.8991,
+     "<=60": 0.9002,
+     "<=100": 0.9419
+    },
+    "inc_bid_q": {
+     "p10": 9.48,
+     "p25": 12.31,
+     "p50": 16.41,
+     "p75": 21.65,
+     "p90": 28.52
+    },
+    "offered_share_of_incremental": 0.9572
+   }
+  },
+  "T1cpt_CC": {
+   "year": 2023,
+   "class": "CC",
+   "hours": "h11-22 CPT",
+   "days": 365,
+   "coverage": {
+    "res_hours": 842685,
+    "resources": 229,
+    "HSL_GW": 0.4696922129858725,
+    "curve_share": 0.950936589591603,
+    "a_offered": 0.9516064780915667,
+    "b_selfsched": 0.03537987283383682,
+    "e_residual": 0.01301364907459648,
+    "c_as_of_Htel": 0.03593270726009491,
+    "lsl_over_hsl": 0.5784746917359994,
+    "loading": 0.88776155697688
+   },
+   "curve_bottom": {
+    "res_hours": 801340,
+    "resources": 214,
+    "bot_p10": 5.07,
+    "bot_p25": 9.41,
+    "bot_p50": 13.38,
+    "bot_p75": 16.36,
+    "bot_p90": 19.39,
+    "bot_mean_capwtd": 11.887147427245242
+   },
+   "inc_bid": {
+    "res_hours": 842685,
+    "resources": 229,
+    "capability_MW": 395802582.5,
+    "minload_of_capability": 0.5785,
+    "incremental_of_capability": 0.4215,
+    "cap_share": {
+     "<=0": 0.584,
+     "<=4.5": 0.5943,
+     "<=10": 0.629,
+     "<=15": 0.7458,
+     "<=20": 0.8538,
+     "<=25": 0.9162,
+     "<=30": 0.9448,
+     "<=35": 0.9517,
+     "<=40": 0.9535,
+     "<=50": 0.9556,
+     "<=60": 0.956,
+     "<=100": 0.9746
+    },
+    "inc_share": {
+     "<=0": 0.0132,
+     "<=4.5": 0.0375,
+     "<=10": 0.1199,
+     "<=15": 0.397,
+     "<=20": 0.6532,
+     "<=25": 0.8012,
+     "<=30": 0.8691,
+     "<=35": 0.8855,
+     "<=40": 0.8898,
+     "<=50": 0.8948,
+     "<=60": 0.8957,
+     "<=100": 0.9398
+    },
+    "inc_bid_q": {
+     "p10": 9.296,
+     "p25": 12.24,
+     "p50": 16.44,
+     "p75": 21.68,
+     "p90": 28.33
+    },
+    "offered_share_of_incremental": 0.9529
+   }
+  }
+ },
+ "section_1b_monthly": {
+  "COAL_bot_p50": [
+   {
+    "month": 1,
+    "res_hours": 25367,
+    "bot_p50": 19.1
+   },
+   {
+    "month": 2,
+    "res_hours": 24456,
+    "bot_p50": 17.38
+   },
+   {
+    "month": 3,
+    "res_hours": 21447,
+    "bot_p50": 18.79
+   },
+   {
+    "month": 4,
+    "res_hours": 23865,
+    "bot_p50": 16.93
+   },
+   {
+    "month": 5,
+    "res_hours": 28022,
+    "bot_p50": 17.75
+   },
+   {
+    "month": 6,
+    "res_hours": 31588,
+    "bot_p50": 17.4
+   },
+   {
+    "month": 7,
+    "res_hours": 36070,
+    "bot_p50": 18.13
+   },
+   {
+    "month": 8,
+    "res_hours": 35678,
+    "bot_p50": 18.52
+   },
+   {
+    "month": 9,
+    "res_hours": 33853,
+    "bot_p50": 16.7
+   },
+   {
+    "month": 10,
+    "res_hours": 33899,
+    "bot_p50": 18.7
+   },
+   {
+    "month": 11,
+    "res_hours": 30052,
+    "bot_p50": 19.23
+   },
+   {
+    "month": 12,
+    "res_hours": 31283,
+    "bot_p50": 18.7
+   }
+  ],
+  "CC_bot_p50": [
+   {
+    "month": 1,
+    "res_hours": 55448,
+    "bot_p50": 16.03
+   },
+   {
+    "month": 2,
+    "res_hours": 51029,
+    "bot_p50": 12.15
+   },
+   {
+    "month": 3,
+    "res_hours": 54802,
+    "bot_p50": 12.66
+   },
+   {
+    "month": 4,
+    "res_hours": 51124,
+    "bot_p50": 11.09
+   },
+   {
+    "month": 5,
+    "res_hours": 70172,
+    "bot_p50": 11.64
+   },
+   {
+    "month": 6,
+    "res_hours": 77964,
+    "bot_p50": 12.48
+   },
+   {
+    "month": 7,
+    "res_hours": 87889,
+    "bot_p50": 14.89
+   },
+   {
+    "month": 8,
+    "res_hours": 92170,
+    "bot_p50": 15.02
+   },
+   {
+    "month": 9,
+    "res_hours": 84678,
+    "bot_p50": 14.84
+   },
+   {
+    "month": 10,
+    "res_hours": 65232,
+    "bot_p50": 14.21
+   },
+   {
+    "month": 11,
+    "res_hours": 52150,
+    "bot_p50": 13.78
+   },
+   {
+    "month": 12,
+    "res_hours": 57325,
+    "bot_p50": 12.67
+   }
+  ],
+  "COAL_p90": [
+   {
+    "month": 1,
+    "res_hours": 25367,
+    "p90": 75.01
+   },
+   {
+    "month": 2,
+    "res_hours": 25104,
+    "p90": 75.01
+   },
+   {
+    "month": 3,
+    "res_hours": 23075,
+    "p90": 75.01
+   },
+   {
+    "month": 4,
+    "res_hours": 25475,
+    "p90": 75.0
+   },
+   {
+    "month": 5,
+    "res_hours": 30890,
+    "p90": 75.01
+   },
+   {
+    "month": 6,
+    "res_hours": 34433,
+    "p90": 75.0
+   },
+   {
+    "month": 7,
+    "res_hours": 36078,
+    "p90": 43.0
+   },
+   {
+    "month": 8,
+    "res_hours": 35854,
+    "p90": 75.0
+   },
+   {
+    "month": 9,
+    "res_hours": 33954,
+    "p90": 75.0
+   },
+   {
+    "month": 10,
+    "res_hours": 33968,
+    "p90": 65.0
+   },
+   {
+    "month": 11,
+    "res_hours": 30053,
+    "p90": 75.0
+   },
+   {
+    "month": 12,
+    "res_hours": 32243,
+    "p90": 65.0
+   }
+  ]
+ },
+ "section_2_fuel_basis": {
+  "construction": "ERCOT-138 J fuel_capwtd = sum(pmax*fuel_price)/sum(pmax), committed+econ rows, no LP",
+  "bundle": "ercot168_yearcurves_B",
+  "years": {
+   "2024": {
+    "CC": 2.2129,
+    "COAL": 1.7481
+   },
+   "2025": {
+    "CC": 3.2324,
+    "COAL": 1.6296
+   },
+   "2023": {
+    "CC": 2.6012,
+    "COAL": 1.8142
+   }
+  },
+  "footing": [
+   {
+    "class": "CC",
+    "year": 2024,
+    "reconstructed": 2.2129,
+    "committed": 2.213,
+    "delta": -0.0001,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "CC",
+    "year": 2025,
+    "reconstructed": 3.2324,
+    "committed": 3.232,
+    "delta": 0.0004,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "COAL",
+    "year": 2024,
+    "reconstructed": 1.7481,
+    "committed": 1.748,
+    "delta": 0.0001,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "COAL",
+    "year": 2025,
+    "reconstructed": 1.6296,
+    "committed": 1.63,
+    "delta": -0.0004,
+    "tol": 0.02,
+    "pass": true
+   }
+  ],
+  "footing_pass": true,
+  "gas_2023": 2.6012,
+  "coal_2023_ercot137_basis": 1.8169
+ },
+ "section_3_verdicts": {
+  "coal_mustrun": {
+   "T1_gating": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "h11-22 CST",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 18.38,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 17.5211,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 1.6404,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 1.76,
+    "curve_share": 0.97022,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   },
+   "T2_reported": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "full-day",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 18.69,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 17.8311,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 1.9504,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 2.1,
+    "curve_share": 0.97942,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   },
+   "T1cpt_sensitivity": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "h11-22 CPT",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 18.38,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 17.5211,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 1.6404,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 1.76,
+    "curve_share": 0.96993,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   }
+  },
+  "cc_committed": {
+   "T1_gating": {
+    "limb": "B",
+    "constant": "CC_COMMITTED_OFFER_LEVEL_BY_ISO",
+    "mechanism": "cc_committed_offer_margin",
+    "lane": "ERCOT-139",
+    "class": "CC",
+    "window": "h11-22 CST",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 13.39,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 7.8521,
+    "hr_source": "ERCOT-139 HR_implied (the corpus's own measured fuel response)",
+    "fuel_response_removed_usd_mwh": 2.7624,
+    "level_year_usd_mwh": 10.6276,
+    "armed_usd_mwh": 10.354,
+    "delta_usd_mwh": 0.2736,
+    "band_usd_mwh": 0.6699,
+    "band_note": "+/-6.47 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 0.41,
+    "curve_share": 0.95084,
+    "licence_threshold": 0.95054,
+    "licensed": true,
+    "value_read": "INSIDE",
+    "verdict": "CONFIRMED"
+   },
+   "T2_reported": {
+    "limb": "B",
+    "constant": "CC_COMMITTED_OFFER_LEVEL_BY_ISO",
+    "mechanism": "cc_committed_offer_margin",
+    "lane": "ERCOT-139",
+    "class": "CC",
+    "window": "full-day",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 13.47,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 7.8521,
+    "hr_source": "ERCOT-139 HR_implied (the corpus's own measured fuel response)",
+    "fuel_response_removed_usd_mwh": 2.7624,
+    "level_year_usd_mwh": 10.7076,
+    "armed_usd_mwh": 10.354,
+    "delta_usd_mwh": 0.3536,
+    "band_usd_mwh": 0.6699,
+    "band_note": "+/-6.47 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 0.53,
+    "curve_share": 0.95051,
+    "licence_threshold": 0.95054,
+    "licensed": false,
+    "value_read": "INSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   },
+   "T1cpt_sensitivity": {
+    "limb": "B",
+    "constant": "CC_COMMITTED_OFFER_LEVEL_BY_ISO",
+    "mechanism": "cc_committed_offer_margin",
+    "lane": "ERCOT-139",
+    "class": "CC",
+    "window": "h11-22 CPT",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 13.38,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 7.8521,
+    "hr_source": "ERCOT-139 HR_implied (the corpus's own measured fuel response)",
+    "fuel_response_removed_usd_mwh": 2.7624,
+    "level_year_usd_mwh": 10.6176,
+    "armed_usd_mwh": 10.354,
+    "delta_usd_mwh": 0.2636,
+    "band_usd_mwh": 0.6699,
+    "band_note": "+/-6.47 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 0.39,
+    "curve_share": 0.95094,
+    "licence_threshold": 0.95054,
+    "licensed": true,
+    "value_read": "INSIDE",
+    "verdict": "CONFIRMED"
+   }
+  },
+  "coal_peak": {
+   "T1_gating": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "h11-22 CST",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.0,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3378,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1389,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.97022,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   },
+   "T2_reported": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "full-day",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.0,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3378,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1389,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.97942,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   },
+   "T1cpt_sensitivity": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "h11-22 CPT",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.0,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3378,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1389,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.96993,
+    "licence_threshold": 0.9876,
+    "licensed": false,
+    "value_read": "OUTSIDE",
+    "verdict": "NOT-IDENTIFIABLE"
+   }
+  }
+ },
+ "section_4_licensing_diagnostic": {
+  "COAL": {
+   "n_resources": 26,
+   "monthly_curve_share": [
+    {
+     "month": 1,
+     "curve_share": 1.0,
+     "res_hours": 25367
+    },
+    {
+     "month": 2,
+     "curve_share": 0.9742,
+     "res_hours": 25104
+    },
+    {
+     "month": 3,
+     "curve_share": 0.9294,
+     "res_hours": 23075
+    },
+    {
+     "month": 4,
+     "curve_share": 0.9368,
+     "res_hours": 25475
+    },
+    {
+     "month": 5,
+     "curve_share": 0.9072,
+     "res_hours": 30890
+    },
+    {
+     "month": 6,
+     "curve_share": 0.9174,
+     "res_hours": 34433
+    },
+    {
+     "month": 7,
+     "curve_share": 0.9998,
+     "res_hours": 36078
+    },
+    {
+     "month": 8,
+     "curve_share": 0.9951,
+     "res_hours": 35854
+    },
+    {
+     "month": 9,
+     "curve_share": 0.997,
+     "res_hours": 33954
+    },
+    {
+     "month": 10,
+     "curve_share": 0.998,
+     "res_hours": 33968
+    },
+    {
+     "month": 11,
+     "curve_share": 1.0,
+     "res_hours": 30053
+    },
+    {
+     "month": 12,
+     "curve_share": 0.9702,
+     "res_hours": 32243
+    }
+   ],
+   "worst_covered_resources": [
+    {
+     "resource": "MLSES_UNIT1",
+     "res_hours": 15315,
+     "curve_share": 0.7572,
+     "hsl_mw": 790.0
+    },
+    {
+     "resource": "MLSES_UNIT2",
+     "res_hours": 16269,
+     "curve_share": 0.7611,
+     "hsl_mw": 752.7
+    },
+    {
+     "resource": "MLSES_UNIT3",
+     "res_hours": 13455,
+     "curve_share": 0.797,
+     "hsl_mw": 782.8
+    },
+    {
+     "resource": "WAP_WAP_G8",
+     "res_hours": 5653,
+     "curve_share": 0.9489,
+     "hsl_mw": 543.8
+    },
+    {
+     "resource": "CALAVERS_JKS2",
+     "res_hours": 11249,
+     "curve_share": 0.9827,
+     "hsl_mw": 728.5
+    },
+    {
+     "resource": "FPPYD1_FPP_G1_J02",
+     "res_hours": 16776,
+     "curve_share": 0.9984,
+     "hsl_mw": 294.0
+    }
+   ]
+  },
+  "CC": {
+   "n_resources": 230,
+   "monthly_curve_share": [
+    {
+     "month": 1,
+     "curve_share": 0.9163,
+     "res_hours": 60513
+    },
+    {
+     "month": 2,
+     "curve_share": 0.9336,
+     "res_hours": 54659
+    },
+    {
+     "month": 3,
+     "curve_share": 0.9565,
+     "res_hours": 57295
+    },
+    {
+     "month": 4,
+     "curve_share": 0.9517,
+     "res_hours": 53716
+    },
+    {
+     "month": 5,
+     "curve_share": 0.939,
+     "res_hours": 74730
+    },
+    {
+     "month": 6,
+     "curve_share": 0.9426,
+     "res_hours": 82715
+    },
+    {
+     "month": 7,
+     "curve_share": 0.9604,
+     "res_hours": 91512
+    },
+    {
+     "month": 8,
+     "curve_share": 0.9671,
+     "res_hours": 95307
+    },
+    {
+     "month": 9,
+     "curve_share": 0.9661,
+     "res_hours": 87650
+    },
+    {
+     "month": 10,
+     "curve_share": 0.9548,
+     "res_hours": 68321
+    },
+    {
+     "month": 11,
+     "curve_share": 0.9543,
+     "res_hours": 54646
+    },
+    {
+     "month": 12,
+     "curve_share": 0.9509,
+     "res_hours": 60282
+    }
+   ],
+   "worst_covered_resources": [
+    {
+     "resource": "AMOCOOIL_CC2_4",
+     "res_hours": 3761,
+     "curve_share": 0.0,
+     "hsl_mw": 162.3
+    },
+    {
+     "resource": "AMOCOOIL_CC2_5",
+     "res_hours": 1012,
+     "curve_share": 0.0,
+     "hsl_mw": 127.7
+    },
+    {
+     "resource": "AMOCOOIL_CC2_7",
+     "res_hours": 7064,
+     "curve_share": 0.0,
+     "hsl_mw": 250.4
+    },
+    {
+     "resource": "AMOCOOIL_CC2_9",
+     "res_hours": 5186,
+     "curve_share": 0.0,
+     "hsl_mw": 279.0
+    },
+    {
+     "resource": "B_DAVIS_CC1_3",
+     "res_hours": 2,
+     "curve_share": 0.0,
+     "hsl_mw": 171.0
+    },
+    {
+     "resource": "B_DAVIS_CC1_4",
+     "res_hours": 3,
+     "curve_share": 0.0,
+     "hsl_mw": 342.0
+    }
+   ]
+  }
+ }
+}

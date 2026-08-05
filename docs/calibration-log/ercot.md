@@ -5545,4 +5545,75 @@ marker). ercot167 (run167b-soc-reserve) stays on the dashboard as the immediate-
 comparison; its carried honest limits (C3b-2024 0.206 maintenance-season root, the SOC-reserve
 re-gate expectation) transfer unchanged to this keeper's attestation.
 
-Next shorthand: ercot-169.
+## ercot-169 (2026-08-05) — the FUEL-INVARIANCE claim of the three armed ERCOT margin identifications, TESTED on the delivery-2023 SCED corpus: 1 CONFIRMED, 2 NOT-IDENTIFIABLE-2023; Phase 0, NO LP, keeper UNCHANGED (run168b-year-curves)
+
+**Task.** Matrix §5.1 **item 13**, chartered by this session's handoff on the ercot-168 FINDING §4
+named-successor list. `COAL_OFFER_MARGIN_LEVEL_BY_ISO` 15.8807 (ERCOT-137, coal `_mustrun`),
+`CC_COMMITTED_OFFER_LEVEL_BY_ISO` 10.354 + `HR_implied` 7.8521 (ERCOT-139, gas-CC `_committed`)
+and `COAL_PEAK_OFFER_LEVEL_BY_ISO` 35.1989 + `GAS_HR` 10.4100 (ERCOT-140, coal `_peak`) each
+declare *"2023 application is a declared extrapolation (no 2023 SCED disclosure exists) — the
+margin is fuel-invariant by construction"*. The ercot-157 corpus re-upload dissolves that premise
+— the same rule-14/23 trigger ercot-168 executed for the per-plant curves. Unlike ercot-168 these
+are MARGIN forms, so the corpus tests the invariance claim itself:
+`level₂₀₂₃ = measured₂₀₂₃ − HR × (fuel₂₀₂₃ − anchor)` vs the armed constant.
+
+**Discipline.** Decision rule pre-registered and **pushed before the corpus was read**
+(`docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md`): instruments, row filters,
+CPT→CST clock, the gating matched window (T1 h11–22 CST — three of the four identification
+subsets sample exactly that window, carrying 77.9 % of pooled COAL and 75.0 % of pooled CC
+res-hours) with full-day as a reported non-gating T2, per-limb coverage-licensing thresholds, the
+fuel-basis footing gate and its fallback, the predictions and the bands. **No band, threshold or
+instrument moved after measurement; no amendment was needed.**
+
+**Footing.** The harness (`scripts/lib/sced_corpus_instruments.py`) imports the ERCOT-136/138/123
+constructions verbatim and reproduces **8/8** committed subset-class reads exactly (all three
+instruments, both classes, four subsets). The fuel-basis footing gate PASSED: a no-LP keeper
+reconstruction reproduces ERCOT-138 §J's committed `fuel_capwtd` at CC 2.2129/3.2324 vs
+2.213/3.232 and COAL 1.7481/1.6296 vs 1.748/1.630 (|Δ| ≤ 0.0004 vs a ±0.02 tolerance), so
+`gas₂₀₂₃ = 2.6012` is basis-consistent and the basis-drift fallback was never invoked.
+
+**Result (delivery-2023: 2.34 M rows, 365 days, 26 coal / 215 CC resources).**
+- **Limb B `cc_committed_offer_margin` — CONFIRMED.** 13.390 − 7.8521 × (2.6012 − 2.2494) =
+  **10.6276** vs 10.354, **+0.2736 = 0.41 of its ±6.47 % (±$0.6699) band**; full-day agrees
+  (10.7076), clock sensitivity ±$0.01. **The declared extrapolation is RETIRED BY VERIFICATION** —
+  constants comment + matrix updated, **no solve, no new mechanism, no new DOF, keeper unchanged**.
+  *Caveat carried:* its coverage licence passes at the boundary (2023 CC `curve_share` 0.95084 vs
+  the 0.95054 floor, +0.0003; the full-day 0.95051 sits 0.00003 BELOW it).
+- **Limbs A and C — NOT-IDENTIFIABLE-2023.** The ERCOT-138 §3.4 licensing test fails on the 2023
+  COAL rows: `curve_share` **0.9702** (full-day 0.9794) vs the **0.9876** floor they were licensed
+  on, because **Martin Lake 1–3 (~2.3 GW) submit NO incremental curve in 20–24 % of their online
+  intervals, concentrated March–June** (monthly 0.907–0.937 there vs 0.995–1.000 in Jan and
+  Jul–Nov). Verdict **withheld in BOTH directions** per the pre-registered rule — a biased
+  instrument manufactures a false refutation as easily as a false confirmation, so the bar is not
+  lowered against the constants either. Both extrapolation notes STAND.
+
+**The unlicensed readings, surfaced as the session's substantive finding — NOT verdicts, NOT a
+licence to arm (rule 13).** Limb A: level₂₀₂₃ **17.5211**, +1.6404 = **1.76×** its ±0.9300 band.
+Limb C: the measured above-min-load p90 is **75.00 $/MWh**, flat at $75 in 9 of 12 months —
+fleet-wide conduct, not one plant (the two most common submitted TOP steps in delivery-2023 COAL
+are **$78.00** at 21,677 intervals and **$75.01** at 17,869; $34.82, the 2024/25 level, is a
+distant tenth) — giving level₂₀₂₃ **71.3378**, +36.14 = **14.4×** its ±$2.5062 band, i.e. the
+armed constant is roughly half the measured 2023 top. A 1.7 pp coverage shortfall cannot produce
+a 2× level shift, and the direction corroborates at FLEET scale, on an independent instrument,
+what ercot-168 already measured and promoted (Oak Grove's overnight top $60.26/$61.46) — limb C
+is the TOP of the curve whose MID-BAND item 12 re-identified per-year.
+
+**OWNER DECISION NEEDED** on how the two COAL limbs' 2023 application should be treated. The
+pre-registered REFUTED branch was **not reached** (the licensing gate fired first), so **no
+candidate arm is named and none may be built without a fresh adjudication**. Filed not acted on:
+the three margin constants have no dedicated DOF-ledger entries in the keeper attestation — zero
+fitted scalars, so bookkeeping rather than hidden freedom; the next ERCOT keeper-promoting
+session should add them and carry limb B's verification into that ledger.
+
+**Bookkeeping (rule 28b/c).** Matrix §5.1 item 13 added AND stamped EXECUTED in the same session;
+all three mechanism rows re-cited (cells unchanged at `K`); `check_mechanism_matrix.py` exit 0.
+`--year` mode added to all three frozen derives (rule-23 re-run cite: the ercot-157 corpus
+landing); shared harness + probe committed; full record
+`results/calibration/ercot169_margin_fuel_invariance.json` +
+`results/calibration/FINDING-ercot169-margin-fuel-invariance-2026-08-05.md`. **No run registered —
+no solve was run.** DO-NOT-REDO honored: no CT extension (ERCOT-147), lignite SLOPE (ERCOT-143),
+`coal_min_load_floor` both grains, daily unit commitment, seasonal LEVEL split,
+`coal_offer_level_rebasis` R, `tranche_startup_amortization` G, ercot-168 OPTION B still DEFERRED,
+item 11 untouched.
+
+Next shorthand: ercot-170.
