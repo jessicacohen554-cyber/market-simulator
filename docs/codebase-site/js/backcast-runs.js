@@ -997,7 +997,12 @@
 
     function renderHoldoutPanel(h) {
       const rows = Array.isArray(h.criteria) ? h.criteria : [];
-      const kYears = (h.keeperYears || []).join('–') || 'in-sample';
+      // Contiguous spans read as a range ("2023–2025"); anything else lists.
+      const ky = (h.keeperYears || []).map(Number).filter(Number.isFinite).sort();
+      const kYears = !ky.length ? 'in-sample'
+        : (ky.length > 1 && ky[ky.length - 1] - ky[0] === ky.length - 1)
+          ? `${ky[0]}–${ky[ky.length - 1]}`
+          : ky.join(', ');
       const keeperLink = h.keeper
         ? `<a class="run-id-link" href="#iso=${encodeURIComponent(st.iso)}&run=${encodeURIComponent(h.keeper)}">${esc(h.keeper)}</a>`
         : '<em>unknown</em>';
@@ -1006,7 +1011,7 @@
       // has never seen. Stated as a count, not a determination label, because
       // the determination alone ("NOT-YET") hides which criteria moved.
       const headline = h.nDegraded
-        ? `${h.nDegraded} criterion${h.nDegraded === 1 ? '' : 'a'} degraded out-of-sample`
+        ? `${h.nDegraded} ${h.nDegraded === 1 ? 'criterion' : 'criteria'} degraded out-of-sample`
         : 'No criterion degraded out-of-sample';
 
       const body = rows.map(r => {
