@@ -2651,3 +2651,16 @@ follow-ups (caiso-174 legitimacy sidecar, ruff-autofix/constants.py, assign_zone
   recommends a design-only scoping lane on the FFR-5B pattern before any implementation.
 
 Owner dispositions to be recorded by addendum when signed.
+
+### U.5 Owner signatures (same sitting, 2026-08-05)
+
+Both U.4 cards signed AS RECOMMENDED via AskUserQuestion:
+* **D-20(a) — SIGNED:** charter **FFR-6A**, the repaired-level margin-gap decomposition
+  against the Potomac-SOM net-revenue benchmark. Measurement lane, committed-artifact-first,
+  no tuning. Its output is the candidate evidence for U.2's lift condition (i); the lift
+  itself stays the manager's.
+* **E-1/E-2(a) — SIGNED:** charter **FFR-6B**, the design-only scoping lane settling the
+  zonal RPS row grain and the clean/carbon-free-tier question TOGETHER, on the FFR-5B
+  pattern. The FFR-5B §5.4 residual sizing (manager-charterable, committed-artifact) rides
+  along as a bounded second deliverable.
+Prompts: pack §0p. These two lanes open Wave 6.
