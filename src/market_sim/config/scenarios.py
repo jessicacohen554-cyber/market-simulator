@@ -198,6 +198,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "entry_vre_capacity_revenue",
     "entry_rate_limits",
     "entry_commissioning_lag",
+    # FFR-5C entry anti-cobweb guard relocation (GATED default-off): dropped
+    # from the hash at its default so every pre-existing cache key is
+    # byte-stable; an armed run changes both the flow caps and the pro-forma
+    # price signal and so gets a distinct key.
+    "entry_pipeline_aware_signal",
     # FFR-3F exit-throughput cap (GATED default-off): dropped from the hash at
     # its default so every pre-existing cache key is byte-stable; an armed run
     # bounds the deactivation queue and so gets a distinct key. Owner decision
@@ -755,6 +760,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_storage_as_soc_reserve": "False",
     "entry_rate_limits": "True",
     "entry_commissioning_lag": "True",
+    "entry_pipeline_aware_signal": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
@@ -3073,6 +3079,69 @@ class ScenarioConfig:
     # deliberately not wired (load_planned_additions skips them) — so arming
     # the lag there shifts the whole entry path late by construction; see
     # ff-entry-stack-completion-2026-07.md before arming in a hindcast leg.
+    entry_pipeline_aware_signal: bool = False  # GATED default-OFF (FFR-5C,
+    # owner decision D-17(a), sitting Addendum R.2/R.5 signed 2026-08-05).
+    # RELOCATES the entry stack's anti-cobweb guard from the FLOW caps to the
+    # pro-forma PRICE SIGNAL, which is the object the phenomenon actually lives
+    # on (rule 19 [R-ONE-MECH]: the guard moves, it neither vanishes nor
+    # duplicates). Both halves are ONE field because either alone is wrong —
+    # half (i) without (ii) deletes a real guard, (ii) without (i) stacks two
+    # mechanisms on one phenomenon.
+    #
+    # NAME. The field is named for what it makes true — the entry pro-forma
+    # becomes AWARE of its own committed pipeline — rather than for the netting
+    # it deletes, because the deletion is a CONSEQUENCE of moving the guard, not
+    # the mechanism. Off, the pipeline is visible only to the caps; on, only to
+    # the signal.
+    #
+    # WHEN ON:
+    #  (i) the pending-pipeline STOCK is no longer netted from either annual
+    #      FLOW cap in capacity_evolution/new_entry.py — the growth ladder
+    #      (ENTRY_GROWTH_LIMIT_MULTIPLE x prior max) and the static per-tech
+    #      queue cap (QUEUE_CAP_PER_TECH_GW) both bind as the GW/yr rates their
+    #      own citations define. The netting was a dimensional double-count: a
+    #      stock (MW, no time denominator, summed over L-1 decision cohorts)
+    #      subtracted from an annual rate. Measured consequence (FFR-4A §3.3,
+    #      §5.1): it caps the long-run average decision rate at C/L instead of
+    #      C, and on the ladder it kills the ratchet outright whenever K <= L —
+    #      at the shipped (K, L) = (2, 2) the growth factor K - L + 1 is exactly
+    #      1 in 24 of 24 ISO x entry-tech cells at both EIA-860 vintages.
+    #      NEITHER K NOR L MOVES: K = 2.0 is ReEDS's published 200 % annual-
+    #      install bound and sits between the p75 and p90 of the measured
+    #      EIA-860 growth-ratio distribution (FFR-4A §3.4(ii)); L = 2 is LBNL
+    #      Queued Up 2024's median IA->COD. The defect is a third, uncited term.
+    # (ii) pending entry_pipeline rows enter the merit stack the capacity
+    #      screens' look-ahead pro-forma prices against
+    #      (runner._lookahead_reprice_signal), at their own mw, from their own
+    #      cod_year forward — thermal rows as stack entries built by the SAME
+    #      _make_new_generator the commissioning step uses and priced by the
+    #      SAME resolve_fuel_prices/assemble_mc seam, VRE rows as an addition to
+    #      the net-load VRE term at their zone's own hourly CF. ZERO new
+    #      tunables: the rows already carry mw and cod_year, and every cost
+    #      parameter is read from the shipped helpers. Without it the pro-forma
+    #      prices next year's net load into the CURRENT fleet only, so a
+    #      developer cannot see two years of their own committed pipeline and
+    #      re-decides the same opportunity every lag year — the actual
+    #      pipeline-stuffing cobweb the netting was aimed at from the wrong
+    #      object (FFR-4A §3.5 / E-2). Requires entry_lookahead_reprice (the
+    #      pro-forma) and entry_commissioning_lag (the pipeline) to be on;
+    #      without both, half (ii) is structurally a no-op and only (i) fires.
+    #
+    # E-3, RECORDED SO NO LATER L REFINEMENT RE-INTRODUCES IT BLIND (FFR-4A
+    # §7.2): under the OLD (unarmed) construction the growth factor is
+    # K - L + 1, so it reaches ZERO at L = 3 and goes NEGATIVE beyond —
+    # economic entry shuts off entirely while every parameter still carries a
+    # valid citation. The per-tech IA->COD refinement that
+    # ff-entry-stack-completion-2026-07.md records as future work would very
+    # plausibly push wind past 2 years and silently kill wind entry. Arming
+    # this field removes that trap; it is a reason to land the relocation
+    # BEFORE L is ever refined.
+    #
+    # NOT reconciled here (FFR-4A §1.3, carried unchanged in both arms): the
+    # reserve-margin backstop nets the same ladder budget against THIS YEAR's
+    # decisions only (evolve.py) and commissions in-year with no pipeline row
+    # (adequacy.py), so the two consumers of one physical queue still net
+    # differently. Default off is byte-identical.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -11711,6 +11780,7 @@ TIER_TAGS: dict[str, int] = {
     "entry_vre_capacity_revenue": 1,
     "entry_rate_limits": 1,
     "entry_commissioning_lag": 1,
+    "entry_pipeline_aware_signal": 1,
     "exit_rate_limits": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
