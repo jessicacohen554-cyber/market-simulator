@@ -3138,6 +3138,39 @@ recording the verified determination, the M1 pass, and the citation chain
 section was being pushed — FFR-5D/FFR-5E's step-0 precondition is ALREADY SATISFIED; the
 verification step in each prompt now passes trivially. Dispatch all three immediately.
 
+## §0n — §0l prompts RE-DISPATCHED after owner confirmed they were never pasted (2026-08-05 @ `70acd78c`)
+
+The §0m manager continuation session re-verified state end-to-end and asked the owner about
+the silent canary (CAISO-GRANT: zero evidence >1 h after the §0l dispatch — no branches, no
+PRs open or closed, no handoffs, CAISO absent from `complete`). **Owner answer: the §0l
+prompts were never pasted into sessions.** All three (FFR-5D, FFR-5E, CAISO-GRANT) were
+re-dispatched in chat, verbatim from §0l, each with the following dated note prepended inside
+the block (recorded here so the pack matches what was dispatched):
+
+> [RE-DISPATCH NOTE 2026-08-05, manager, @ origin/main 70acd78c — supplements the VERIFIED
+> STATE header below, which is retained from the original 5543c4c0 dispatch: ERCOT keeper is
+> now 2026-08-05-run167b-soc-reserve (ercot-167 promotion, PR #3580); the manager verified
+> ercot_storage_as_soc_reserve and every ercot_storage_as_* sibling ships default False at
+> this HEAD, so the SHIPPED posture (and FFR-5D's paired-arm comparability) is unchanged.
+> CAISO keeper verified still 2026-08-05-caiso-174-measured-fleet — the CAISO-GRANT
+> precondition holds. PR #3577 is merged; step-0 passes. All other header state re-verifies
+> unchanged; re-verify at your own head as ordered.]
+
+Re-verification results backing the note (all read at `70acd78c`, 2026-08-05):
+- **§0m check (a) PASS:** `ercot_storage_as_soc_reserve: bool = False` (scenarios.py:6044)
+  and all `ercot_storage_as_*` siblings default False/off. The run167b promotion moved keeper
+  JSON only — no shipped default flipped. No stop-the-line for FFR-5D.
+- **§0m check (b) PASS:** CAISO keeper shard reads `2026-08-05-caiso-174-measured-fleet`.
+- Keepers otherwise as §0m; `complete` = {NEISO, NYISO, PJM}; `final` EMPTY; freeze ACTIVE.
+- Landed since §0m was written, both outside the FFR/FH lanes: nyiso-127 REJECTED at kill
+  gate K3 (PRs #3584/#3586, keeper stays nyiso-125) and miso-131 dead at prerequisite 1,
+  zero solves (PR #3585).
+- **New trap for future sessions:** these containers are SHALLOW clones (`.git/shallow`, 7
+  graft boundaries). `git fetch` may report a spurious "(forced update)" on main and
+  merge-base/ancestry queries return garbage (this session measured contradictory answers).
+  Never diagnose a history rewrite from a shallow clone — check `git rev-parse
+  --is-shallow-repository` first.
+
 ## §0m — MANAGER CONTINUATION HANDOFF (written 2026-08-05 ~06:25Z @ `b4581c49`)
 
 The predecessor manager session (Addenda R/S) ends here. The block below is the continuation
