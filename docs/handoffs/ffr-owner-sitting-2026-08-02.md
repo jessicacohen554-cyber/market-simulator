@@ -2578,3 +2578,76 @@ qualifies under Q.2 (no committed-artifact answer exists).
   E-1/E-2 scoping card (next sitting), FFR-5B §5.4 residual sizing, FFR-3V §6.1 (still blocks
   FFR-5E's hindcast arm AND now gates the useful half of any future arming card), FFR-4D
   row-4, CAISO anchor (D-15), pre-existing test failures.
+
+## Addendum U — FFR-5D-M adjudicated; the FH-4/FH-5 lift determination (HELD); Wave 5 CLOSED
+
+**Written 2026-08-05 by the workstream manager at `origin/main` `8693b75d`.**
+
+### U.1 FFR-5D-M — ADJUDICATED CLEAN (PR #3611)
+
+Verdict-grade continuation: both §2 invocations run VERBATIM as two concurrent cold jobs;
+comparability re-verified at its own head; the shipped arm reproduces FFR-5A's §2(a)/§2(c)
+records EXACTLY on the identical runtime key `6a824992b5fb1baf`, so the paired delta is the
+mechanism's, not drift's. Manager-verified independently at this HEAD: both hindcast sidecars
+registered (`ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}`, never the backcast registry);
+pre-registration integrity holds (git diff from the pre-solve commit shows ZERO altered lines
+above the §3 marker); the matrix cell keeps verdict `O` with the full measured citation and
+correctly reserves adjudication to the manager; `leakage_violations: []` in both metas (2022
+bridged, never read). Nothing armed, promoted, or tuned. The §2 honest expectation held in its
+sharpest form and the number came to the manager as-is — the discipline throughout this chain
+(FFR-5A → 5D → 5D-M) is what makes the determination below possible.
+
+### U.2 THE FH-4/FH-5 LIFT DETERMINATION — **HELD, NOT LIFTED** (I.1; fifth hold, first on the unified object's own measurement)
+
+Adjudicated against Addendum G.2's three binds and S.5's rider, off the registered arms:
+
+* **Bind 1 (a control that flips identically is not the fix's green): PASSES.** The control
+  did not flip — byte-reproduction of FFR-5A on the same key. Attribution is clean.
+* **Bind 2 (inverted-sign invariants): FAILS.** The retirement layer swings −100 % → +613.5 %:
+  a single 45-unit / 10.9 GW ALL-gas_st exit wave (actual gas_st exits: 0.0 GW), decided at
+  the Uri-priced 2021 screen and executed in the pre-window 2022 bridge-ledger year. Unit
+  recall 0/3 in BOTH arms; coal — the fuel that actually exited — first decides at the 2024
+  screen with execution 2027, also outside the window.
+* **Bind 3 (vacancy is not validation): FAILS.** Inside the scored 2023–2025 window both arms
+  execute nothing. The in-window exit path remains untested at both postures.
+* **S.5's rider is unsatisfied on its own terms.** A cohort now decides AND executes under the
+  unified object — the necessary evidence exists — but the object is not yet *defensible* for
+  exit validation: at the repaired level the margin bar fails essentially the whole merchant
+  fleet (entry_capped 554–564 units / 63.0–66.1 GW in 2024/2025) and the adequacy admission
+  cap does ALL the retention work. FFR-5A §6.3's both-bases-fail finding SURVIVES the level
+  repairs: the pipeline's output is still governed by cap geometry, not unit economics.
+  Validating FH-4/FH-5 against that layer would measure the cap.
+
+**What would lift:** (i) a measured decomposition showing the repaired-level margin failure is
+a completeness defect with an identified, rule-13-admissible fix (→ card D-20 below), and
+(ii) a non-vacuous in-window exercise of the exit path under whatever that fix produces. FFR-5D
+reporting green was never the bar; this is what the bar looks like now that it is measurable.
+
+### U.3 WAVE 5 — CLOSED
+
+All six lanes landed and adjudicated: **5A** (soft-latch root cause; reserve-leg suspect dead)
+· **5B** (procurement partition design; D-16 discharged, D-18 signed, E-1/E-2 escalated) ·
+**5C** (entry_pipeline_aware_signal; FFR-4A chain closed) · **5D + 5D-M** (unification + level
+repairs landed; paired-arm measurement executed; U.1/U.2) · **5E** (VRE procurement channel;
+D-18(a) discharged) · **CAISO-GRANT** (CAISO `complete`; D-5(b) now binding on CAISO
+promotions). Wave-close checks: every new `ScenarioConfig` field default-OFF with a matrix row
+in its landing PR (28c) and every tested cell stamped with citations, rejections included
+(28b); registrations confined to their correct namespaces; no lane touched a keeper, marker,
+or the freeze; byte-identity proven in every implementation lane; both mid-wave keeper-churn
+events R.1-checked (no shipped default moved). The wave's residue is fully enumerated: card
+D-20, cards E-1/E-2, FFR-5B §5.4 residual sizing (manager-charterable), FFR-3V §6.1 (blocks
+FFR-5E's hindcast arm and any arming card's hindcast evidence), and Addendum T's three adopted
+follow-ups (caiso-174 legitimacy sidecar, ruff-autofix/constants.py, assign_zone_by_coords).
+
+### U.4 Cards put at this sitting
+
+* **D-20 — the repaired-level margin gap.** With the honest price object, the retirement
+  screen fails ~66 GW of merchant fleet and cannot reproduce 1.534 GW of real exits; either
+  the screen object is missing a real revenue leg or the bar is mis-leveled. Manager
+  recommends a measurement lane (margin-gap decomposition against the Potomac-SOM net-revenue
+  benchmark — the screen's own cited definition), committed-artifact-first, no tuning.
+* **E-1/E-2 — the RPS row's spatial grain + the clean/carbon-free tiers** (FFR-5B §5.3,
+  "the largest single finding in this lane"). Settled together, never separately. Manager
+  recommends a design-only scoping lane on the FFR-5B pattern before any implementation.
+
+Owner dispositions to be recorded by addendum when signed.
