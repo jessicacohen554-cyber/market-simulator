@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-05 — ercot-167: the storage AS SOC reservation built, 2023-probed, A/B-tested — arm REJECTED-AS-ARMED on its own pre-registered gates, reopen condition cited (keeper unchanged)
+
+Matrix §5.1 item 10 executed (owner-directed, separate-2023-first per the distinct 2023 scarcity
+design). New mechanism `ercot_storage_as_soc_reserve` (+ derive
+`scripts/data/derive_ercot_storage_as_products.py`): battery SOC floored at the measured AS award ×
+the published per-product duration, deployment-netted, pin-reachability-clipped (two probe-found
+infeasibilities localized exactly — LP-bounds dump + per-unit feasibility LP — and fixed
+structurally; precommit amendments 1–2, zero fitted scalars). 2023 passes every gate (scarcity-hour
+discharge 666→520 MW vs SCED-measured actual 423); kills fired on 2024 C3a (+1.4 pp, concentrated
+on the known maintenance-season fabricated-spike days) and one 2025 spurious hour ($43 graze
+adjacent to two newly-captured real tail hours) — verdict REJECTED-AS-ARMED, re-gate the identical
+arm after the 2024 availability defect lands. Runs `2026-08-05-run167a-soc-control` +
+`2026-08-05-run167b-soc-reserve`; `FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md`.
+
 ## 2026-08-05 — ercot-166: ERCOT 2023 diagnosis triage; Oak Grove conduct solved from the disclosure corpora; rubric v3.0 model-class ledger kind and the ERCOT C3c caveat (no LP, no solve, keeper unchanged)
 
 Owner-directed. Full record `results/calibration/FINDING-ercot166-2023-diagnosis-triage-2026-08-05.md`;
