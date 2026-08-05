@@ -1,0 +1,104 @@
+{
+ "probe": "caiso174_fleet_gate",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "arms": {
+  "2023": {
+   "A control": {
+    "battery_mw": 15450.0,
+    "total_mw": 17527.6,
+    "n_units": 16,
+    "n_battery_units": 15,
+    "power_cap_profile_shape": [
+     16
+    ],
+    "power_cap_is_2d": false,
+    "power_cap_varies_within_year": false
+   },
+   "B treated": {
+    "battery_mw": 7492.4,
+    "total_mw": 9570.0,
+    "n_units": 6,
+    "n_battery_units": 5,
+    "power_cap_profile_shape": [
+     6,
+     8760
+    ],
+    "power_cap_is_2d": true,
+    "power_cap_varies_within_year": true
+   }
+  },
+  "2024": {
+   "A control": {
+    "battery_mw": 15450.0,
+    "total_mw": 17527.6,
+    "n_units": 16,
+    "n_battery_units": 15,
+    "power_cap_profile_shape": [
+     16
+    ],
+    "power_cap_is_2d": false,
+    "power_cap_varies_within_year": false
+   },
+   "B treated": {
+    "battery_mw": 11131.3,
+    "total_mw": 13208.9,
+    "n_units": 6,
+    "n_battery_units": 5,
+    "power_cap_profile_shape": [
+     6,
+     8760
+    ],
+    "power_cap_is_2d": true,
+    "power_cap_varies_within_year": true
+   }
+  },
+  "2025": {
+   "A control": {
+    "battery_mw": 15450.0,
+    "total_mw": 17527.6,
+    "n_units": 16,
+    "n_battery_units": 15,
+    "power_cap_profile_shape": [
+     16
+    ],
+    "power_cap_is_2d": false,
+    "power_cap_varies_within_year": false
+   },
+   "B treated": {
+    "battery_mw": 15448.4,
+    "total_mw": 17526.0,
+    "n_units": 6,
+    "n_battery_units": 5,
+    "power_cap_profile_shape": [
+     6,
+     8760
+    ],
+    "power_cap_is_2d": true,
+    "power_cap_varies_within_year": true
+   }
+  }
+ },
+ "separation": {
+  "2023": {
+   "delta_mw": -7957.6,
+   "pct_of_treated": -106.2
+  },
+  "2024": {
+   "delta_mw": -4318.7,
+   "pct_of_treated": -38.8
+  },
+  "2025": {
+   "delta_mw": -1.6,
+   "pct_of_treated": -0.0
+  }
+ },
+ "coincident_years": [
+  2025
+ ],
+ "failures": [],
+ "passed": true
+}

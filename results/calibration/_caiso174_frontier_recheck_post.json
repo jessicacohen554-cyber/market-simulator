@@ -1,0 +1,376 @@
+{
+ "probe": "caiso173_frontier_recheck",
+ "keeper_run_id": "2026-08-05-caiso-174-measured-fleet",
+ "keeper_bundle": "results/calibration/caiso174_measured_fleet",
+ "g0_epoch_gate": {
+  "epoch_tag": "2026-08-04c",
+  "ffr4d_head": "58c22e32",
+  "ffr4d_merged_into_main": true,
+  "keeper_git_sha": "",
+  "keeper_sha_subject": "",
+  "keeper_sha_predates_epoch": null,
+  "epoch_field": "storage_measured_base_fleet",
+  "epoch_field_in_keeper_run_config": true,
+  "epoch_field_in_current_scenarios_py": true,
+  "keeper_is_pre_epoch": false,
+  "fleet_shortfall_mw": {
+   "2023": -507.6,
+   "2024": 3131.3,
+   "2025": 7448.4
+  },
+  "fleet_shortfall_pct_of_measured": {
+   "2023": -6.8,
+   "2024": 28.1,
+   "2025": 48.2
+  }
+ },
+ "f1_keeper_state": {
+  "ledgered": [
+   {
+    "criterion": "price_tail",
+    "year": 2023
+   },
+   {
+    "criterion": "price_tail",
+    "year": 2024
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2025
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2024
+   }
+  ],
+  "raw_exceptions_type": "list",
+  "governance_keys": [
+   "attested_by",
+   "levers_trace_to_measured_input",
+   "no_fit_to_price_residuals",
+   "no_pinning_to_actuals",
+   "note",
+   "outage_filter_exogenous_net_load"
+  ]
+ },
+ "f2_dof": {
+  "CAISO": {
+   "keeper": "2026-08-05-caiso-174-measured-fleet",
+   "bundle": "results/calibration/caiso174_measured_fleet",
+   "n_entries": 11,
+   "n_residual": 8,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 3,
+   "iso_specific": [
+    "battery_dispatch_adder",
+    "WECC_import_simultaneous.cap_mw",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]"
+   ],
+   "holds_complete_marker": false
+  },
+  "PJM": {
+   "keeper": "2026-08-04-pjm-152-collapse",
+   "bundle": "results/calibration/pjm152_collapse_A",
+   "n_entries": 19,
+   "n_residual": 6,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 1,
+   "iso_specific": [
+    "wefor_residual"
+   ],
+   "holds_complete_marker": true
+  },
+  "NYISO": {
+   "keeper": "2026-08-04-nyiso-125-seam-envelope",
+   "bundle": "results/calibration/nyiso125_seam_A",
+   "n_entries": 34,
+   "n_residual": 6,
+   "n_core_residual": 4,
+   "n_iso_specific_residual": 2,
+   "iso_specific": [
+    "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']",
+    "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]"
+   ],
+   "holds_complete_marker": true
+  },
+  "NEISO": {
+   "keeper": "2026-08-04-neiso81-chpheatrate",
+   "bundle": "results/calibration/neiso81_chpheatrate_B",
+   "n_entries": 13,
+   "n_residual": 5,
+   "n_core_residual": 5,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": true
+  },
+  "MISO": {
+   "keeper": "2026-08-04-miso-127-onlinepmin",
+   "bundle": "results/calibration/miso127_onlinepmin_B",
+   "n_entries": 28,
+   "n_residual": 2,
+   "n_core_residual": 2,
+   "n_iso_specific_residual": 0,
+   "iso_specific": [],
+   "holds_complete_marker": false
+  }
+ },
+ "f2_verdict": {
+  "caiso_iso_specific": 3,
+  "max_iso_specific": 3,
+  "isos_at_max": [
+   "CAISO"
+  ],
+  "caiso_is_sole_highest": true,
+  "caiso_is_at_or_above_all": true
+ },
+ "f3_ns_basis": {
+  "2023": {
+   "measured_basis": 5.947096542824075,
+   "measured_dMCC": 4.77080242824074,
+   "measured_dMCL": 1.1762941192129628,
+   "measured_congestion_share": 0.8022069912894549,
+   "model_basis": 0.3276435983169417,
+   "model_separated_pct": 100.0,
+   "model_share_of_measured": 0.055093035056288965
+  },
+  "2024": {
+   "measured_basis": 8.576498797814208,
+   "measured_dMCC": 7.474897973588342,
+   "measured_dMCL": 1.101600841302368,
+   "measured_congestion_share": 0.8715558801932387,
+   "model_basis": 0.21159927540447857,
+   "model_separated_pct": 100.0,
+   "model_share_of_measured": 0.024671987997993586
+  },
+  "2025": {
+   "measured_basis": 5.726817916666667,
+   "measured_dMCC": 4.677448150684931,
+   "measured_dMCL": 1.0493696837899544,
+   "measured_congestion_share": 0.8167621680800022,
+   "model_basis": 0.17251840895027182,
+   "model_separated_pct": 100.0,
+   "model_share_of_measured": 0.030124654120431218
+  }
+ },
+ "f4_intra_sp15": {
+  "2023": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 0.0,
+    "belly_mean": 0.0,
+    "belly_sd": 0.0,
+    "ratio_mean": 0.0,
+    "ratio_sd": 0.0
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 1.1643835616438356,
+    "belly_mean": 0.049877764883862516,
+    "belly_sd": 0.7422649293130956,
+    "ratio_mean": 0.0008833457976521422,
+    "ratio_sd": 0.013867817718143726
+   }
+  },
+  "2024": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": 0.5824748409483527,
+    "belly_sd": 0.6521386806847866,
+    "ratio_mean": 0.025818365604148307,
+    "ratio_sd": 0.003815114894780437
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": -2.176688968489167,
+    "belly_sd": 9.07298351291967,
+    "ratio_mean": -3.1370270181499613,
+    "ratio_sd": 161.36459131890444
+   }
+  },
+  "2025": {
+   "LA_BASIN-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": 0.6634816091236256,
+    "belly_sd": 0.5638172171547962,
+    "ratio_mean": 0.027363441555212364,
+    "ratio_sd": 0.0026088454044952843
+   },
+   "SDGE-SP15_rest": {
+    "belly_separated_pct": 100.0,
+    "belly_mean": -4.753706793057907,
+    "belly_sd": 13.424754840557142,
+    "ratio_mean": -0.07500109775838822,
+    "ratio_sd": 16.707306610884512
+   }
+  }
+ },
+ "f5_evidence": {
+  "n_globs": 19,
+  "n_resolved": 19,
+  "n_missing": 0,
+  "rows": [
+   {
+    "glob": "FINDING-caiso144-*.md",
+    "file": "FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md",
+    "lines": 201
+   },
+   {
+    "glob": "FINDING-caiso167-*.md",
+    "file": "FINDING-caiso167-import-price-basis-2026-08-04.md",
+    "lines": 312
+   },
+   {
+    "glob": "FINDING-caiso142*.md",
+    "file": "FINDING-caiso142-export-sink-seam-2026-07-30.md",
+    "lines": 465
+   },
+   {
+    "glob": "FINDING-caiso143*.md",
+    "file": "FINDING-caiso143-node-export-constraint-2026-07-30.md",
+    "lines": 398
+   },
+   {
+    "glob": "FINDING-caiso170-*.md",
+    "file": "FINDING-caiso170-s2-foresight-phase0-2026-08-04.md",
+    "lines": 410
+   },
+   {
+    "glob": "FINDING-caiso169-*.md",
+    "file": "FINDING-caiso169-storage-foresight-horizon-2026-08-04.md",
+    "lines": 362
+   },
+   {
+    "glob": "FINDING-caiso149-*.md",
+    "file": "FINDING-caiso149-tranche-startup-2026-07-31.md",
+    "lines": 266
+   },
+   {
+    "glob": "FINDING-caiso136-*.md",
+    "file": "FINDING-caiso136-unit-availability-windows-2026-07-28.md",
+    "lines": 140
+   },
+   {
+    "glob": "FINDING-caiso146-*.md",
+    "file": "FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md",
+    "lines": 266
+   },
+   {
+    "glob": "FINDING-caiso147-*.md",
+    "file": "FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md",
+    "lines": 392
+   },
+   {
+    "glob": "FINDING-caiso148-*.md",
+    "file": "FINDING-caiso148-nuclear-availability-2026-07-31.md",
+    "lines": 391
+   },
+   {
+    "glob": "FINDING-caiso153-*.md",
+    "file": "FINDING-caiso153-offer-classifier-reid-2026-08-02.md",
+    "lines": 246
+   },
+   {
+    "glob": "FINDING-caiso165*.md",
+    "file": "FINDING-caiso165-dlap-intake-intra-sp15-2026-08-04.md",
+    "lines": 312
+   },
+   {
+    "glob": "FINDING-caiso164*.md",
+    "file": "FINDING-caiso164-zonal-loss-surface-2026-08-04.md",
+    "lines": 382
+   },
+   {
+    "glob": "FINDING-caiso163*.md",
+    "file": "FINDING-caiso163-asymmetric-path-ratings-2026-08-03.md",
+    "lines": 275
+   },
+   {
+    "glob": "FINDING-caiso157*.md",
+    "file": "FINDING-caiso157-derived-partition-restore-2026-08-02.md",
+    "lines": 273
+   },
+   {
+    "glob": "FINDING-caiso172-*.md",
+    "file": "FINDING-caiso172-path15-load-split-2026-08-04.md",
+    "lines": 358
+   },
+   {
+    "glob": "PRECHECK-caiso172-*.md",
+    "file": "PRECHECK-caiso172-path15-load-split-2026-08-04.md",
+    "lines": 229
+   },
+   {
+    "glob": "ASSESSMENT-caiso171-*.md",
+    "file": "ASSESSMENT-caiso171-frontier-2026-08-04.md",
+    "lines": 412
+   }
+  ]
+ },
+ "f6_mwd_tac": {
+  "2023": {
+   "areas_in_committed_series": [
+    "CA ISO-TAC",
+    "PGE-TAC",
+    "SCE-TAC",
+    "SDGE-TAC",
+    "VEA-TAC"
+   ],
+   "has_MWD_TAC": false,
+   "iso_total_mean_mw": 24083.094086021505,
+   "modelled_sum_mean_mw": 23957.302419354837,
+   "unmodelled_residual_mean_mw": 125.79166666666667,
+   "unmodelled_residual_pct_of_iso": 0.5223235279377149
+  },
+  "2024": {
+   "areas_in_committed_series": [
+    "CA ISO-TAC",
+    "PGE-TAC",
+    "SCE-TAC",
+    "SDGE-TAC",
+    "VEA-TAC"
+   ],
+   "has_MWD_TAC": false,
+   "iso_total_mean_mw": 25598.8087213936,
+   "modelled_sum_mean_mw": 25427.246840487303,
+   "unmodelled_residual_mean_mw": 171.56188090629627,
+   "unmodelled_residual_pct_of_iso": 0.670194784349154
+  },
+  "2025": {
+   "areas_in_committed_series": [
+    "CA ISO-TAC",
+    "PGE-TAC",
+    "SCE-TAC",
+    "SDGE-TAC",
+    "VEA-TAC"
+   ],
+   "has_MWD_TAC": false,
+   "iso_total_mean_mw": 25664.400456621006,
+   "modelled_sum_mean_mw": 25520.33630136986,
+   "unmodelled_residual_mean_mw": 144.06415525114156,
+   "unmodelled_residual_pct_of_iso": 0.5613384793252605
+  }
+ },
+ "f7_weights": {
+  "keys": [
+   "PGE-TAC",
+   "SCE-TAC",
+   "SDGE-TAC",
+   "VEA-TAC"
+  ],
+  "has_MWD_TAC": false,
+  "table": {
+   "PGE-TAC": {
+    "NP15": 0.883951,
+    "ZP26": 0.116049
+   },
+   "SCE-TAC": {
+    "LA_BASIN": 0.835,
+    "SP15_rest": 0.165
+   },
+   "SDGE-TAC": {
+    "SDGE": 1.0
+   },
+   "VEA-TAC": {
+    "SP15_rest": 1.0
+   }
+  }
+ }
+}
