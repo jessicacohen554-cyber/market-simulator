@@ -6357,3 +6357,78 @@ Matrix: **NO cell verdict moves — no mechanism was tested**; §5.2 header re-s
 `results/calibration/ASSESSMENT-caiso173-frontier-2026-08-04.md`, instrument
 `scripts/probes/caiso173_frontier_recheck.py`, record
 `results/calibration/_caiso173_frontier_recheck.json`.
+
+## 2026-08-05 — CAISO — caiso-174: the FFR-4D epoch re-solve — `storage_measured_base_fleet` is a MEASURED NULL, the keeper is POST-EPOCH, and `complete` is recommended **YES**
+
+**Runs:** BOTH registered (rule 15). Keeper PROMOTED
+`2026-08-04-caiso-172-measured-path15` → **`2026-08-05-caiso-174-measured-fleet`**;
+control `2026-08-05-caiso-174-control-flatfleet` registered as a CONTROL, never a
+candidate. Determination **CALIBRATED-WITH-CAVEATS**, 0 FAIL, same 2 ledgered
+caveats (C3a, C3c), D-10 12/12 · free 8/8. Solved 2023/2024/2025 in one bundle per
+arm (rule 16); arms run SEQUENTIALLY (rule 12 — peak 8.31 GB resident on a 15 GB
+box, two concurrent would OOM). `calibration-complete.json` and
+`holdout-freeze.json` **UNTOUCHED** (owner acts, rule 22).
+
+**Why this session existed.** `ASSESSMENT-caiso173` found every CAISO frontier limb
+intact and withheld its YES on `complete` for ONE reason: FFR-4D's cache epoch
+`2026-08-04c` had landed and the keeper predated it. This is the re-solve FFR-4D §7
+D-2 stated as owed.
+
+**THE RESULT IS A MEASURED NULL.** `storage_measured_base_fleet` is **PROVABLY
+INERT** on the CAISO keeper's recipe: against its own same-head control the treated
+arm is **BIT-IDENTICAL** — `max |Δprice| = 0.000000` over ALL P1 zone-hours of ALL
+THREE years, 0 hours differ, battery peak discharge/charge equal to the decimal,
+every displaced-class energy **+0.000 TWh**. **WHY, measured not argued:** the keeper
+arms `caiso_storage_shape_anchor`, whose `caiso_storage_shape_caps` envelope is a
+per-year MEASURED capability capping battery discharge at **4,256.5 / 6,914.6 /
+9,550.3 MW** — strictly below BOTH the flat scalar (15,450 MW post-re-vintage) AND
+the measured fleet (7,492.4 / 11,131.3 / 15,448.4 MW) in EVERY year. The base-fleet
+scalar was never the operative constraint. Restates caiso-168 (the LP rides the
+anchor). **INERT BY COMPOSITION, NOT BY CONSTRUCTION** — disarm the anchor and the
+base fleet would bind. **THE FIELD STAYS ARMED AND DEFAULT-ON** (rule 14; rule 1
+forbids reverting a correct measured input because it did not move a residual).
+**The epoch invalidated the CACHE, not the ANSWER** — but only a solve could
+establish that, which is why caiso-173 was right to refuse to declare on pre-epoch
+metrics. G0 now reads `KEEPER IS PRE-EPOCH: False`.
+
+**FFR-4D §5's explicitly-not-claimed hypothesis is REFUTED** — it proposed C3a-2025
+(+14.4 % hot) was partly this fleet defect since "7.4 GW of missing evening-peak
+battery leaves that load to thermal". **C3a moves −0.01 $/MWh.** The missing battery
+never had that load to leave; C3a's root cause remains the caiso-141 A2 pumped-storage
+data wall.
+
+**The control earned its keep.** `B − A = 0` exactly, but `B − keeper` is
+small-and-nonzero (C3a −0.02/−0.00/−0.01 $/MWh; every class ≤0.011 TWh) — the control
+is what proves that residue is incidental code drift between head `789e28b8` and this
+one, NOT the epoch. Without it, it would have been misattributed.
+
+**The verdict rule fired as pre-registered.** PRECHECK §2 fixed, before any number was
+read, that CALIBRATED-WITH-CAVEATS with no NEW FAIL and no new caveat slot ⇒ PROMOTE
+and recommend YES, while a degraded determination ⇒ do not promote and ESCALATE. First
+branch fired. **Rule 20:** `n_entries` 11 / `n_residual` 8 both UNCHANGED — zero free
+parameters; `gen_caiso174_attestation.py` fails closed on that invariant, on the arms
+differing by exactly one config key, and on the arm re-resolving the measured fleet
+from the shipped path. **LOYO** reduces to no-held-out-degradation and passes trivially.
+
+**The quantity gate caught a wrong pre-registration** (the caiso-162 lesson applied to
+myself): §4 expected the control at flat 8,000 MW, but FFR-4D made TWO changes — it
+ALSO re-vintaged the constant `STORAGE_BASE_FLEET_MW['CAISO']` 8,000 → 15,450 MW,
+which no flag gates — so the control runs 15,450 and the pre-epoch 8,000 is not
+reproducible by any flag. Recorded as PRECHECK §4a, not silently corrected. Second
+correction: the 2-D ramp comes from `storage_cap_profiles`, not
+`storage_units_to_arrays`; the first draft checked the latter and would have reported
+a FALSE FAILURE. **Dead flag closed:** `storage_vintage_ramp` is live for batteries for
+the first time (2-D `(6, 8760)` profile varying within the year).
+
+**`complete` RECOMMENDED YES** per PRECHECK §2 / caiso-173 §6 — the marker remains the
+owner's act and was not written. **KNOWN-OPEN 2 resolved as a concern rather than
+deferred** (the caiso-170 pointer needs no re-reading: dispatch is bit-identical).
+KNOWN-OPEN 1 stays wide open (model 5.5/2.5/3.0 % of the measured basis; no N–S
+topology lever chartered). MWD-TAC stays a recorded open demand-input item, kept OUT
+of this re-solve so the one delta stayed attributable.
+
+Matrix: **`storage_measured_base_fleet` CAISO `O` → `I`** (adjudicated by solve — the
+one cell only a CAISO backcast could settle); §5.2 header re-stamped. Evidence:
+`results/calibration/FINDING-caiso174-epoch-resolve-2026-08-05.md`,
+`PRECHECK-caiso174-epoch-resolve-2026-08-05.md`, probes `_caiso174_fleet_gate.py` /
+`_caiso174_ab_compare.py`, generator `scripts/gen_caiso174_attestation.py`.

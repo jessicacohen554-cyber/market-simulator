@@ -1,0 +1,225 @@
+{
+ "probe": "caiso174_ab_compare",
+ "fleet_ladder": {
+  "keeper (PRE-epoch)": {
+   "2023": 8000.0,
+   "2024": 8000.0,
+   "2025": 8000.0
+  },
+  "A control (new const)": {
+   "2023": 15450.0,
+   "2024": 15450.0,
+   "2025": 15450.0
+  },
+  "B treated (measured)": {
+   "2023": 7492.4,
+   "2024": 11131.3,
+   "2025": 15448.4
+  }
+ },
+ "determination": {
+  "keeper": {
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "n_fail": 0,
+   "fails": [],
+   "caveats": {
+    "protective": [],
+    "ledgered": [
+     "C3a mean LMP",
+     "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+     "protective_max": 1,
+     "ledgered_max": 3
+    }
+   }
+  },
+  "A": {
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "n_fail": 0,
+   "fails": [],
+   "caveats": {
+    "protective": [],
+    "ledgered": [
+     "C3a mean LMP",
+     "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+     "protective_max": 1,
+     "ledgered_max": 3
+    }
+   }
+  },
+  "B": {
+   "determination": "CALIBRATED-WITH-CAVEATS",
+   "n_fail": 0,
+   "fails": [],
+   "caveats": {
+    "protective": [],
+    "ledgered": [
+     "C3a mean LMP",
+     "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+     "protective_max": 1,
+     "ledgered_max": 3
+    }
+   }
+  }
+ },
+ "dof": {
+  "keeper": {
+   "n_entries": 11,
+   "n_residual": 8
+  },
+  "A": {
+   "n_entries": 11,
+   "n_residual": 8
+  },
+  "B": {
+   "n_entries": 11,
+   "n_residual": 8
+  }
+ },
+ "c3a_price": {
+  "2023": {
+   "keeper": 56.1772,
+   "A": 56.1615,
+   "B": 56.1615,
+   "B_minus_keeper": -0.0158,
+   "B_minus_A": 0.0
+  },
+  "2024": {
+   "keeper": 38.5876,
+   "A": 38.5866,
+   "B": 38.5866,
+   "B_minus_keeper": -0.001,
+   "B_minus_A": 0.0
+  },
+  "2025": {
+   "keeper": 39.3578,
+   "A": 39.3459,
+   "B": 39.3459,
+   "B_minus_keeper": -0.0119,
+   "B_minus_A": 0.0
+  }
+ },
+ "displaced_twh": {
+  "2023": {
+   "CC_REGULAR": {
+    "keeper": 48.405,
+    "A": 48.4014,
+    "B": 48.4014,
+    "B_minus_keeper": -0.0035,
+    "B_minus_A": 0.0
+   },
+   "CT_PEAKER": {
+    "keeper": 1.7418,
+    "A": 1.7452,
+    "B": 1.7452,
+    "B_minus_keeper": 0.0034,
+    "B_minus_A": 0.0
+   },
+   "ST_GAS": {
+    "keeper": 0.3358,
+    "A": 0.3376,
+    "B": 0.3376,
+    "B_minus_keeper": 0.0018,
+    "B_minus_A": 0.0
+   },
+   "import": {
+    "keeper": 36.9607,
+    "A": 36.9562,
+    "B": 36.9562,
+    "B_minus_keeper": -0.0045,
+    "B_minus_A": 0.0
+   }
+  },
+  "2024": {
+   "CC_REGULAR": {
+    "keeper": 45.3308,
+    "A": 45.3261,
+    "B": 45.3261,
+    "B_minus_keeper": -0.0047,
+    "B_minus_A": 0.0
+   },
+   "CT_PEAKER": {
+    "keeper": 0.6834,
+    "A": 0.6843,
+    "B": 0.6843,
+    "B_minus_keeper": 0.0009,
+    "B_minus_A": 0.0
+   },
+   "ST_GAS": {
+    "keeper": 0.916,
+    "A": 0.9155,
+    "B": 0.9155,
+    "B_minus_keeper": -0.0005,
+    "B_minus_A": 0.0
+   },
+   "import": {
+    "keeper": 40.0515,
+    "A": 40.05,
+    "B": 40.05,
+    "B_minus_keeper": -0.0016,
+    "B_minus_A": 0.0
+   }
+  },
+  "2025": {
+   "CC_REGULAR": {
+    "keeper": 38.1256,
+    "A": 38.1323,
+    "B": 38.1323,
+    "B_minus_keeper": 0.0067,
+    "B_minus_A": 0.0
+   },
+   "CT_PEAKER": {
+    "keeper": 0.4442,
+    "A": 0.4472,
+    "B": 0.4472,
+    "B_minus_keeper": 0.003,
+    "B_minus_A": 0.0
+   },
+   "ST_GAS": {
+    "keeper": 0.2151,
+    "A": 0.2159,
+    "B": 0.2159,
+    "B_minus_keeper": 0.0008,
+    "B_minus_A": 0.0
+   },
+   "import": {
+    "keeper": 42.0042,
+    "A": 41.9935,
+    "B": 41.9935,
+    "B_minus_keeper": -0.0107,
+    "B_minus_A": 0.0
+   }
+  }
+ },
+ "ns_basis": {
+  "2023": {
+   "measured": 5.947,
+   "keeper": 0.3332,
+   "A": 0.3276,
+   "B": 0.3276,
+   "B_pct_of_measured": 5.51
+  },
+  "2024": {
+   "measured": 8.576,
+   "keeper": 0.2174,
+   "A": 0.2116,
+   "B": 0.2116,
+   "B_pct_of_measured": 2.47
+  },
+  "2025": {
+   "measured": 5.727,
+   "keeper": 0.1793,
+   "A": 0.1725,
+   "B": 0.1725,
+   "B_pct_of_measured": 3.01
+  }
+ }
+}

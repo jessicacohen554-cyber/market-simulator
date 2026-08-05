@@ -881,7 +881,77 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; FRONTIER RE-CHECKED AND INTACT — but the KEEPER IS PRE-EPOCH and `complete` is NOT YET** (keeper `2026-08-04-caiso-172-measured-path15`, CALIBRATED-WITH-CAVEATS; **owes the FFR-4D epoch-2026-08-04c re-solve**)
+### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; FRONTIER INTACT; THE EPOCH RE-SOLVE IS DONE AND THE KEEPER IS POST-EPOCH — `complete` RECOMMENDED YES** (keeper `2026-08-05-caiso-174-measured-fleet`, CALIBRATED-WITH-CAVEATS)
+
+> **caiso-174 (2026-08-05) — THE FFR-4D EPOCH RE-SOLVE, AND THE FIELD IS A MEASURED NULL.
+> RECOMMENDATION: `complete` = YES.** Keeper PROMOTED
+> `2026-08-04-caiso-172-measured-path15` -> **`2026-08-05-caiso-174-measured-fleet`**.
+> `calibration-complete.json` / `holdout-freeze.json` **UNTOUCHED** (owner acts, rule 22);
+> 2023/2024/2025 only (rule 16). Full record
+> `results/calibration/FINDING-caiso174-epoch-resolve-2026-08-05.md`, pre-registration
+> `PRECHECK-caiso174-epoch-resolve-2026-08-05.md`.
+>
+> **`storage_measured_base_fleet` CAISO `O` -> `I`, ADJUDICATED BY SOLVE — the one cell only
+> a CAISO backcast could settle.** Against its own same-head control
+> (`2026-08-05-caiso-174-control-flatfleet`, field=False) the treated arm is **BIT-IDENTICAL**:
+> `max |dprice| = 0.000000` over ALL P1 zone-hours of ALL THREE years, **0 hours differ**,
+> battery peak discharge/charge equal to the decimal, every displaced-class energy
+> **+0.000 TWh**. **WHY — a composition fact, measured not argued:** the keeper arms
+> `caiso_storage_shape_anchor`, whose `caiso_storage_shape_caps` envelope is a PER-YEAR
+> MEASURED capability (EIA-930 NG:OTH / EIA-860 monthly fleet) capping battery discharge at
+> **4,256.5 / 6,914.6 / 9,550.3 MW** — STRICTLY BELOW BOTH the flat scalar (15,450 MW after
+> FFR-4D's constant re-vintage) AND the measured fleet (7,492.4 / 11,131.3 / 15,448.4 MW) in
+> EVERY year. The base-fleet scalar was never the operative constraint, so moving it moves
+> nothing; this restates caiso-168 (the LP RIDES the anchor). **INERT BY COMPOSITION, NOT BY
+> CONSTRUCTION** — disarm the anchor and the base fleet would bind, so the verdict is scoped to
+> this recipe. **THE FIELD STAYS ARMED AND DEFAULT-ON** (rule 14 `[R-ACCURATE]` measured input;
+> rule 1 `[R-STRUCT]` forbids reverting a correct mechanism because it did not move a residual).
+> **THE EPOCH INVALIDATED THE CACHE, NOT THE ANSWER** — but that could only be established by
+> SOLVING, which is why `ASSESSMENT-caiso173` was right to refuse to declare on pre-epoch
+> metrics. G0 now reads `KEEPER IS PRE-EPOCH: False`.
+>
+> **FFR-4D §5's EXPLICITLY-NOT-CLAIMED HYPOTHESIS IS REFUTED** — it proposed C3a-2025
+> (+14.4 % hot) was partly this fleet defect since *'7.4 GW of missing evening-peak battery
+> leaves that load to thermal'*. **C3a moves −0.01 $/MWh.** The missing battery never had that
+> load to leave. C3a's root cause remains the caiso-141 A2 pumped-storage data wall.
+>
+> **THE CONTROL EARNED ITS KEEP.** `B − A = 0` exactly, but `B − keeper` is small-and-nonzero
+> (C3a −0.02/−0.00/−0.01 $/MWh; every class ≤0.011 TWh) — the control is what proves that
+> residue is **incidental code drift** between head `789e28b8` and this one (FFR-4C, ercot-165,
+> miso-127/129, nyiso-127, neiso-83), **not** the epoch. Without it that residue would have
+> been misattributed.
+>
+> **THE VERDICT RULE FIRED AS PRE-REGISTERED.** PRECHECK §2 fixed BEFORE any number was read:
+> CALIBRATED-WITH-CAVEATS with no NEW FAIL and no new caveat slot => PROMOTE + recommend YES;
+> a degraded determination => do not promote, ESCALATE. First branch fired. Both arms:
+> **0 FAIL**, same 2 ledgered caveats (C3a, C3c), D-10 **12/12 · free 8/8**, no criterion flips
+> in any year. **RULE 20 `[R-DOF]`: `n_entries` 11 / `n_residual` 8 BOTH UNCHANGED** — zero free
+> parameters; `gen_caiso174_attestation.py` fails closed on that invariant, on the arms
+> differing by EXACTLY ONE config key, and on the arm re-resolving the measured fleet from the
+> shipped path rather than a hand-typed number. **LOYO** reduces to no-held-out-degradation and
+> passes trivially — all three years bit-identical, so no year can carry the result.
+>
+> **THE QUANTITY GATE CAUGHT A WRONG PRE-REGISTRATION** (the caiso-162 lesson, applied to
+> myself): §4 had expected the control at flat 8,000 MW; FFR-4D made TWO changes (it ALSO
+> re-vintaged the constant `STORAGE_BASE_FLEET_MW['CAISO']` 8,000 -> 15,450 MW, which no flag
+> gates), so a control at this head runs 15,450 and the pre-epoch 8,000 is **not reproducible by
+> any flag**. Recorded as **PRECHECK §4a**, not silently corrected. Consequence: the re-vintaged
+> constant IS the 2025 measured fleet rounded, so the arms coincide in 2025 by construction and
+> the field's per-year reach is 2023/2024 — inert there too. Second correction: the 2-D ramp
+> comes from `storage_cap_profiles`, NOT `storage_units_to_arrays`; the first draft checked the
+> latter and would have reported a FALSE FAILURE. **DEAD FLAG CLOSED:** `storage_vintage_ramp`,
+> armed on this recipe but reaching pumped storage only while the fleet was a scalar, is live
+> for batteries for the first time (2-D `(6, 8760)` profile that varies within the year).
+>
+> **KNOWN-OPEN 2 RESOLVED AS A CONCERN, NOT DEFERRED:** caiso-173 flagged that the caiso-170
+> storage-placement pointer was measured on a pre-epoch fleet and needed re-reading. It does
+> not — the fleet change is bit-identical in dispatch, so its statistics are unaffected.
+> **KNOWN-OPEN 1 STAYS WIDE OPEN** (model 5.5/2.5/3.0 % of the measured basis; no N–S topology
+> lever chartered, caiso-164 §0/§6 stands). **MWD-TAC** stays a recorded open demand-input item,
+> deliberately kept OUT of this re-solve so the one delta stayed attributable.
+>
+> *(caiso-173's assessment block, unedited, follows.)*
+
 
 > **caiso-173 (2026-08-05) — FRONTIER RE-ASSESSMENT ON THE CLOSED LEDGER.
 > RECOMMENDATION: **NOT YET**, and the reason is NOT CAISO's calibration.** No LP, no
