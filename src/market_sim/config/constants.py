@@ -751,16 +751,42 @@ COAL_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
 # March-June 2023 (monthly curve_share 0.907-0.937 there vs 0.995-1.000 in
 # Jan and Jul-Nov). A biased instrument cannot certify OR refute, so the
 # verdict is withheld in both directions and the extrapolation note STANDS.
-# Reported UNLICENSED for the record, not as a verdict: the 2023 measured
-# bottom is 18.380 $/MWh, i.e. level_2023 = 17.5211 after removing this form's
-# own fuel response (10.9832 × (1.8169 − 1.7387) = +0.8589), **+1.6404 above
-# this constant — 1.76× the ±0.9300 band**. That gap is far too large for a
-# 1.7 pp coverage shortfall to have manufactured, and it points the same way as
-# the ercot-168 measured 2023 coal repricing, so it is carried to the owner as
-# an open question on this constant's 2023 application — NOT as a refutation
-# and NOT as a licence to arm anything (rule 13). Re-derives only with its
-# source disclosure (rule 23), via the same derive script (``--year`` runs the
-# ercot-169 test); per-ISO, never transferred (rule 25).
+# Reported UNLICENSED at ercot-169, not as a verdict: the 2023 measured bottom
+# was 18.380 $/MWh, i.e. level_2023 = 17.5211 after removing this form's own
+# fuel response, +1.6404 = 1.76× the ±0.9300 band.
+#
+# **RESOLVED AT ercot-171 (2026-08-05) — the extrapolation note is RETIRED BY
+# VERIFICATION, and the ercot-169 UNLICENSED reading above is SUPERSEDED: it was
+# the coverage defect, not the level.** On the owner's in-session adjudication of
+# the ERCOT-169 §6 open decision (option 2, "charter a licensed sub-population
+# instrument"), the coverage shortfall was removed by a RULE applied identically
+# to every year — drop the COAL resources whose OWN curve_share falls below the
+# SAME 0.9876 floor (never lowered) — and the resulting instrument was gated on
+# its NEUTRALITY: the identical rule applied to the four 2024/25 identification
+# subsets must still reproduce this constant within its own band, because a
+# coverage restriction is admissible only if it fixes coverage and not level.
+# Both gates PASS. G-LIC: delivery-2023 curve_share 0.97022 → **0.99969** (the
+# rule drops CALAVERS_JKS2, MLSES_UNIT1/2/3, WAP_WAP_G8). G-NEUT: the restricted
+# 2024/25 pooled level is 15.4549 vs this constant's 15.8807, **−0.4258 = 0.46×
+# the band** — level-neutral. The restricted delivery-2023 reading is then
+# measured bottom 16.87 → **level_2023 = 16.0111**, i.e. **+0.1304 above this
+# constant = 0.14× the ±0.9300 band — CONFIRMED** (full-day T2 16.0811, also
+# inside). So this constant IS the measured 2023 level; its 2023 application is
+# no longer an extrapolation but a verification. No solve, no new mechanism, no
+# new DOF, keeper unchanged. **Caveat carried, not buried:** the alternative
+# month-scoped restriction (S2, pre-declared REPORTED-NOT-GATING before
+# measuring, because season selection biases a coal statistic the ercot-168
+# repricing showed is seasonally structured) licenses at 0.99818 but reads
+# level_2023 17.8411, +1.9604 = 2.11× band — OUTSIDE. S2 keeps Jan + Jul-Nov and
+# so selects the scarcity season, which lifts a curve-BOTTOM statistic in exactly
+# the direction observed; the pre-registered gate is S1 and S1 passes, but the
+# two routes disagree and that should be read alongside the verdict, not behind
+# it. Record: docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
+# results/calibration/ercot171_coal_licensed_subpop.json +
+# FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md.
+# Re-derives only with its source disclosure (rule 23), via the same derive
+# script (``--year`` runs the ercot-169 test); per-ISO, never transferred
+# (rule 25).
 COAL_OFFER_MARGIN_LEVEL_BY_ISO: dict[str, float] = {
     "ERCOT": 15.8807,
 }
@@ -876,7 +902,32 @@ CC_COMMITTED_OFFER_LEVEL_BY_ISO: dict[str, float] = {
 # ercot-168 finding that 2023 coal offer conduct differs structurally from
 # 2024/25 (Oak Grove's measured overnight top $60.26/$61.46). It is carried to
 # the owner as an OPEN question on this constant's 2023 application — never a
-# refutation, never a licence to arm (rule 13). Re-derives only with its source
+# refutation, never a licence to arm (rule 13).
+#
+# **ercot-171 (2026-08-05) — the licensed-sub-population route CANNOT reach this
+# limb, and the extrapolation note STANDS.** On the owner's in-session
+# adjudication of the ERCOT-169 §6 open decision (option 2), the coverage
+# shortfall was removed by a rule applied identically to every year (drop the
+# COAL resources whose OWN curve_share falls below the same 0.9876 floor) and the
+# instrument was gated on NEUTRALITY: the identical rule applied to the four
+# 2024/25 identification subsets must still reproduce this constant within its
+# own band. **G-LIC passes (2023 curve_share 0.97022 → 0.99969) but G-NEUT FAILS
+# decisively** — the restricted 2024/25 pooled level is **54.3658** against this
+# constant's 35.1989, **+19.17 = 7.6× the ±2.5062 band**, and the re-derived gas
+# slope moves 10.4049 → 8.9503. The reason is structural and is the whole point
+# of the gate: this limb's statistic is a **p90 of the top of the curve**, and
+# dropping 18–28 % of the subsets' cap-weight moves a top-decile boundary
+# violently, where the same rule is level-neutral on limb A's **median of the
+# curve bottom** (−0.4258 = 0.46× band). The restriction is therefore a
+# level-SELECTING filter here, not a coverage fix, so the 2023 reading under it is
+# not comparable to this constant and **NOT-IDENTIFIABLE-2023 is CONFIRMED**.
+# ERCOT-169 §6 option 1 holds by default: this note stands, **no candidate arm is
+# named, and none may be built on this record** (rule 13). A different instrument
+# — one that does not select on the tail — would need its own charter.
+# Record: docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md,
+# results/calibration/ercot171_coal_licensed_subpop.json +
+# FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md.
+# Re-derives only with its source
 # disclosure (rule 23), via ``scripts/data/derive_coal_peak_offer_margin.py``
 # (``--year`` runs the ercot-169 test). ISOs absent from the registries
 # hard-fail when the flag is armed (rule 24 — never a silent fallback);
