@@ -3694,3 +3694,164 @@ per-ISO reconciliation verification, the E-2 ex-ante bind/slack adjudication and
 binds) its design, the double-count exclusion statement, the §5.4 residual table, explicit
 "what I did NOT decide", and the implementation card for the owner's signature.
 ```
+
+## §0q — Wave 6 landed same-day; cards D-21/D-22 at the owner (2026-08-06 @ `e2ea0b59`)
+
+FFR-6A and FFR-6B both LANDED and adjudicated CLEAN (Addendum V). Headlines: the retirement
+margin gap is the forward price object's missing scarcity content (bars exonerated, reserve
+leg exonerated, refusals recorded); ERCOT's true in-window economic-exit total is ≈ 0 GW —
+1.534 GW was never a margin-screen target; the RPS row's real defects are MISO's forbidden
+intra-ISO REC trade, MISO-only clean-tier binding, and a three-ISO clean-on-renewable-row
+mis-encoding whose ACP-pinned dual is an unstatutory $40–50/MWh entry subsidy. FFR-6B's
+proposed card renumbered D-19 → **D-22** (collision with the spent D-19). FH-4/FH-5 still
+HELD, conditions restated (V.3: α/β/γ). Cards D-21/D-22 are at the owner; Wave-7 prompts
+follow the signatures.
+
+**§0q addendum (same sitting, 2026-08-06):** signatures in (Addendum V.6) — D-21(a)
+DEFERRED (owner, against recommendation: the FH-4/FH-5 lift path is parked until re-opened);
+D-21(b) hygiene-only, 5c REFUSED; D-22(a) one-lane-three-arms. Wave 7 = FFR-7A + FFR-7B.
+
+## §0r — Wave-7 prompts (2026-08-06 @ `e2ea0b59`)
+
+### FFR-7A [OPUS] — retirement scoring-target hygiene (D-21(b))
+
+```
+[OPUS] FFR-7A — Fix the retirement scoring target so it measures what a margin screen can
+legitimately see (owner decision D-21(b), sitting Addendum V.5/V.6, signed 2026-08-06;
+evidence base FFR-6A docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md §3.3 and
+verdict rows 5a/5b). DATA/SCORER lane: no model mechanism, no ScenarioConfig field, no
+arming, no keeper contact. 5c (honoring announced fossil planned-retirement dates in
+hindcast arms) is REFUSED by the owner — do not implement it, do not re-propose it.
+
+=== VERIFIED STATE (2026-08-06 @ origin/main e2ea0b59 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-05-run168b-year-curves · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-06-caiso-175-tac-intake · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-05-miso-132b-cc-committed (READ the shards
+yourself). `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY; HOLDOUT FREEZE ACTIVE.
+PREREQUISITES: `uv sync` (~2 min); regenerate_clean.py only if a scorer path needs CLEAN
+inputs you touch — likely NOT needed; state what you actually ran.
+
+=== THE MEASURED DEFECTS YOU FIX (FFR-6A §3.3 — verify each at your head, then fix) ===
+1. (5b) `build_capacity_actuals` counts EIA status "RE" only: it BOOKS J T Deely's 932 MW
+   at its 2023 paper date (physically ceased 2018, status OS at vintage 2020, absent from
+   the model's vintage-2020 CAMPD fleet basis) and MISSES V H Braunig 1+2's real 477 MW
+   2025 exit (status OS, never RE). The target must count physical exits (status
+   transitions to OS/RE with actual cessation dates) and must not contain units the vintage
+   fleet basis cannot carry.
+2. (5a) Vintage fleet-status hygiene: units already status-OS at the run's vintage (dead
+   before the window) must not sit in the actuals target a hindcast arm is graded against —
+   whether by excluding them from the target, or from the vintage base fleet, or both;
+   justify the choice against the information gate (everything used is vintage-visible or
+   outcome-registry data used ONLY as a validation target, rule 13's benchmark branch).
+=== WHAT YOU DO ===
+1. Fix the builder (scripts/ data path for capacity_actuals) generically — the status-
+   handling fix is structural, not an ERCOT patch. Cite the EIA-860 source fields (rule 23:
+   the re-derivation cites its source data). Tests: the Deely row leaves the ERCOT target,
+   the Braunig rows enter it, and a no-change ISO's target is byte-identical.
+2. Regenerate the target artifact(s); report the per-ISO delta table (MW added/removed by
+   fuel-year) in the handoff — every changed row named and sourced.
+3. RE-SCORE, COMMITTED-ARTIFACT-ONLY (no solve): the two registered ffr5d arms' retirement
+   scorecards against the corrected target. Expected per FFR-6A: the shipped arm's in-window
+   "0.000 GW executed" grades correctly against a ≈0 GW economic-exit truth; the unified
+   arm's false 10.9 GW wave still FAILS (it is a real defect of the price object, not the
+   target — D-21(a) owns it and is DEFERRED). If the re-score surprises either way, report
+   before interpreting.
+4. Do NOT re-register the ffr5d arms and do NOT touch their committed bundles; the re-score
+   table lives in your handoff. Rule 28: stamp only if you adjudicate a matrix cell
+   (unlikely — no mechanism changes here).
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit —
+`git status --short` after every Python write; restore exact HEAD bytes; never stage the
+reflow. Push 413: fetch main + rebase first; owner merges fast, prune stale refs. Never
+push_files a >=300-line file. Shell cwd persists. Stop-hook on merged history: rev-list 0
+=> nothing to amend. results/ dies with the container — commit early.
+
+Deliverable: the PR (builder fix + tests + regenerated target) and
+docs/handoffs/ffr-7a-scoring-target-hygiene-<date>.md — the per-ISO delta table with per-row
+sources, the ffr5d re-score table, the 5c refusal restated, and what you did NOT change.
+```
+
+### FFR-7B [FABLE] — the RPS/clean-tier repair, three arms in order (D-22(a))
+
+```
+[FABLE] FFR-7B — The RPS/clean-tier repair: one lane, three arms, IN ORDER (owner decision
+D-22(a), sitting Addendum V.5/V.6, signed 2026-08-06; the design and every level/citation:
+FFR-6B docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md — it IS the spec; implement,
+do not redesign). If budget runs short: LAND ARM 1 COMPLETE AND MEASURED, hand off the rest
+— never land a partial arm. E-1 NEVER ACQUIRES A BUILD LIMB (the row's only output is a
+price). The §45U-vs-clean-dual composition for nuclear is OPEN and blocks ARM 3's ARMING
+ONLY, not its implementation (state it in the code comment and handoff).
+
+=== VERIFIED STATE (2026-08-06 @ origin/main e2ea0b59 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-05-run168b-year-curves · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-06-caiso-175-tac-intake · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-05-miso-132b-cc-committed (READ the shards
+yourself). `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY; HOLDOUT FREEZE ACTIVE
+(in-sample 2023-2025 paired controls are unaffected). PREREQUISITES IN ORDER: `uv sync`
+(~2 min), then scripts/regenerate_clean.py (~63-65 min) before any solve. Rule 12 PER
+PROMPT: <=5 solve-years per invocation, years sequential within one, <=2 concurrent
+invocations. Rule 27: FABLE (policy/ LP rows + new_entry consumers are core; exact bytes,
+blob verification).
+
+=== ARM 1 (FIRST, standalone-landable) — tier/eligible-set level fix: NYISO, NEISO, CAISO ===
+The measured defect (FFR-6B §8): clean-tier statutory targets encoded on the renewable-only
+row (NYISO 2040:1.00 = CLCPA zero-emission; NEISO's "CES blend"; CAISO 2040:0.80/2045:1.00 =
+SB 100) with eligible sets under-counting what the statutes count (NYISO by 20.2 pp — CLCPA
+70% counts existing hydro; CAISO by 7.1 pp — geothermal, biomass, small hydro), pinning the
+row's dual at the ACP ceiling: an unstatutory $40-50/MWh entry subsidy. THE FIX: per-ISO
+cited constant corrections — the RENEWABLE row carries the statute's RENEWABLE trajectory
+and its statute-defined eligible set (data, not hardcoded class tuples — FFR-6B §6.3(2)'s
+FUEL_TYPE_MAP resolution pattern); the clean-tier years leave the renewable row (their
+representation is Arm 3's, MISO-only for now — NYISO/NEISO/CAISO clean rows are NOT built
+here, rule 25: no MISO result transfers). Every level cites its statute
+(docs/parameter-citations.md pattern; FFR-6B §3.4/§6.1 carry the citations).
+CRITICAL — BACKCAST CONTACT IS POSSIBLE AND MUST BE MEASURED, NOT DISCOVERED: these
+constants feed the backcast RPS rows of three keeper ISOs. Run the D-1/D-2 paired-control
+discipline (Addendum D): same-head control vs corrected arm on each affected ISO's keeper
+recipe, 2023-2025 (this is in-sample, freeze-irrelevant; <=5 solve-years per invocation —
+budget one ISO at a time, NYISO and CAISO first as the largest corrections). Report deltas;
+if a keeper metric moves, HOLD PROMOTION and report to the manager — a keeper moving under
+an accurate-input correction is rule 14 working, adjudicated at a sitting, never silently
+promoted (and never reverted to the wrong constant to protect a fit, rule 14's core clause).
+=== ARM 2 — K-row generalization, MISO ARMED ONLY ===
+Generalize _build_rps_row to K rows, each (obligated_zones, eligible_zones, RHS, ACP);
+today's behaviour is the K=1/mask=all special case, so the four non-MISO ISOs are
+BYTE-IDENTICAL BY CONSTRUCTION — prove it with a regression test, not an assertion. One
+default-OFF, forecast-mode gate flag arms MISO's state-group rows (FFR-6B §3: East/Plains
+splits, the verified STATE_RPS_FLOORS reconciliation; zones are exact state unions).
+REQUIRED COMPANION (FFR-6B card Arm 2): rps_shadow_price becomes PER-ZONE at its three
+consumers (new_entry.py entry credit x2, retirements.py screen) — a scalar left in place
+would broadcast MISO-East's dual to an Arkansas candidate and rebuild the defect. PJM/NEISO
+zonal rows are REFUSED ON STRUCTURE (FFR-6B §7) — do not build them.
+=== ARM 3 — clean-tier row family, MISO-West + MISO-East ONLY ===
+Second independent row family (never a widened renewable row), second default-OFF gate flag;
+qualifying sets are per-statute data (MN carbon-free includes hydrogen+biomass; MI clean
+admits qualified CCS gas — FFR-6B §6.3); rule-19 composition per §6.4: the clean dual enters
+the EXISTING max(eac, rps_shadow) doctrine for nuclear/hydro (never a sum);
+federal_ces_replaces_state_rps suppresses state clean rows too; the wind-MWh-satisfies-both-
+rows case is CORRECT (two constraints, one MWh) with generator credit = max(), never sum;
+the §45U composition question is left OPEN in a cited comment — ARMING BLOCKED on it.
+Illinois gets NO row (recorded null — CEJA is not an LSE share obligation).
+=== EVERY ARM ===
+Matrix rows for every new flag in the SAME PR (rule 28c); byte-identity of every default-off
+path proven by test; cache-key registration for new fields (_CACHE_KEY_OPTIONAL_FIELDS —
+the FFR-5E §6.2 precedent: an unregistered field silently invalidates every cached bundle);
+zero free parameters (the tunable surface is two gate flags + cited statutory tables);
+measurement of armed behavior via the cheapest honest instrument (evolve-path harness or
+bounded 2026+ MISO forecast pair; register any full runs to frontend/data/forecast/ via
+register_forecast_run.py, NEVER the backcast registry).
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit —
+`git status --short` after every Python write; restore exact HEAD bytes; never stage the
+reflow (and your Arm-1 constants edits must be the ONLY constants.py delta you push — diff
+it line-by-line before staging). Push 413: fetch main + rebase first; owner merges fast,
+prune stale refs. Never push_files a >=300-line file. Shell cwd persists. Stop-hook on
+merged history: rev-list 0 => nothing to amend. results/ dies with the container. The D-13
+hash-out hazard: same cache key does not imply byte-identity across the D-13 boundary.
+
+Deliverable: the PR(s) (arms in order, each complete) and
+docs/handoffs/ffr-7b-rps-clean-tier-repair-<date>.md — per-arm: what landed, byte-identity
+proof, the Arm-1 paired-control keeper deltas (with HOLD-PROMOTION posture if any moved),
+the Arm-2 regression proof + per-zone dual wiring, the Arm-3 composition statement with the
+open §45U question, and what you did NOT separate.
+```

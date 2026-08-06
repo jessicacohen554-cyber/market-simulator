@@ -2664,3 +2664,108 @@ Both U.4 cards signed AS RECOMMENDED via AskUserQuestion:
   pattern. The FFR-5B §5.4 residual sizing (manager-charterable, committed-artifact) rides
   along as a bounded second deliverable.
 Prompts: pack §0p. These two lanes open Wave 6.
+
+## Addendum V — Wave 6 measured out: the gap is the price object; the RPS row's real defects; cards D-21/D-22
+
+**Written 2026-08-06 by the workstream manager at `origin/main` `e2ea0b59`.** Both Wave-6
+lanes landed within hours of dispatch and are adjudicated below off their committed
+artifacts.
+
+### V.1 FFR-6A — ADJUDICATED CLEAN (PR #3628)
+
+Reproduction rigor: the unified arm re-run reproduced FFR-5D-M on the identical runtime key
+`49eac64f146b3460` with a byte-identical `crossover_score.json`; reads pre-registered before
+ledgers were read; SOM intake bounded to 2023–2025; nothing tuned, armed, or re-registered.
+The three chartered answers, measured:
+* **(a) The gap is not a missing product leg — it is the missing scarcity content of the
+  energy price itself.** At the repaired forward screens every fossil class earns 0.04–4.4 %
+  of its measured-price margin (e.g. gas_cc $3.79 vs replica $86.7 vs SOM $89, 2024); the
+  object generates ZERO hours > $100 where the measured tail carries 37–88 % of attainable
+  margin. The FFR-5A reserve-leg $0.0 was RE-MEASURED at the repaired level as chartered:
+  still $0.0 — and now shown CONSISTENT with the 2024/25 market's own ≈-zero AS-product
+  share. The 2023 reserve gap enters through the ENERGY price (ECRS effects), not the leg.
+* **(b) The bars are exonerated** — externally consistent within ~5 %, wrong sign to explain
+  anything. Standing refusals recorded: verdict rows 3 (bar re-leveling at a residual) and
+  4 (any signal-scaling knob) are REFUSED BY NAME; future lanes cite, never re-argue.
+* **(c) THE BOUNDING FINDING: ERCOT's true margin-driven exit total 2021–2025 is ≈ 0 GW.**
+  The 1.534 GW scoring target decomposes into a paper event outside the fleet basis (Deely,
+  physically dead 2018, status OS), a margin-positive municipal fleet-plan exit (Decker,
+  3.7× its bar at exit), sub-grain small units — and it MISSES the window's one real
+  > 300 MW gas_st exit (Braunig, status OS not RE, dropped by `build_capacity_actuals`).
+  A correct margin screen SHOULD retire ≈ nothing in this window. 1.534 GW is not a
+  margin-screen target and no admissible fix may chase it.
+
+### V.2 FFR-6B — ADJUDICATED CLEAN (PR #3626), with ONE manager correction
+
+The correction: the lane's proposed card titled itself "CARD D-19" — that number is SPENT
+(D-19(a), lookahead unification, Addendum S.3). **Renumbered D-22 by the manager**; recorded
+once here, cited hereafter (the J.1/L.3/P.1 pattern: correct by addendum, no re-litigation).
+Substance, measured: **E-1's diagnosis needed correcting** — the defect is not ISO-wide-ness
+but a silent free-intra-ISO-REC-trade assumption, TRUE in four ISOs (their single rows are
+arithmetically EXACT) and FALSE only in MISO (MCL 460.1029: Iowa's surplus is paying
+Michigan's bill; MISO-East 24.7 pp deficit at zone grain vs 0.2 pp ISO-wide). **E-2 binds
+only at that same grain** (MISO-West 14.0→29.4 pp, MISO-East 21.7→33.1 pp; ISO-wide it is
+slack every year; Illinois is a recorded null — CEJA is not an LSE share obligation).
+**And a §8 cross-cutting defect that outranks both:** NYISO/NEISO/CAISO encode clean-tier
+statutory targets on the renewable-only row with under-counted eligible sets (NYISO 20.2 pp,
+CAISO 7.1 pp), pinning those rows' duals at the ACP ceiling — a permanent, mechanism-
+generated $40–50/MWh entry subsidy in three ISOs with no statute behind it. The rider
+delivered the §5.4 residual: 35–73 % of realized 2021–25 VRE build has no admissible
+representation at h=1 (85–96 % at h=2) — an upper bound and a disclosure number, never a
+target. PJM/NEISO zonal rows REFUSED ON STRUCTURE (their compliance regions ARE the ISO;
+PJM zones cut Pennsylvania three ways). E-1 must never acquire a build limb.
+
+### V.3 The FH-4/FH-5 lift, restated on measured grounds — STILL HELD
+
+U.2's condition (i) is DELIVERED: FFR-6A identifies the repaired-level failure as a
+completeness defect with a rule-13-admissible fix (scarcity restoration from published
+market design — ORDC parameters, RDPA, AS demand curves, uncertainty at the stack grain —
+plus the inherited fleet-length knot, additions 17.0 vs 55.4 GW actual). Condition (ii) is
+RESTATED per V.1(c): a "non-vacuous in-window exercise" was the wrong test — the true
+in-window answer IS ≈ 0 economic exits. Validation of the exit half now means, measured on
+a defensible object: (α) the screen retires ≈ nothing in-window for economic cause, (β) the
+false pre-window 10.9 GW gas_st wave is GONE, and (γ) the fixed actuals target (D-21(b))
+shows instrument-driven exits carried by their own channels. FH-4/FH-5 remain BLOCKED until
+a lane demonstrates (α)–(γ); the determination stays the manager's (I.1).
+
+### V.4 Housekeeping verified
+
+caiso-175 promoted with the FIRST exercise of CAISO's D-5(b) re-key duty — executed
+correctly (`keeper` → caiso-175, `keeper_at_declaration` preserved, determination
+RE-VERIFIED on promotion without a solve) — and the lane itself closed Addendum T's
+caiso-174 C7/C8 follow-up (legitimacy sidecar now scored). STRUCK from the open queue.
+Only ScenarioConfig field added since U: `nyiso_solar_market_generator_basis` (default
+False). Shipped posture intact.
+
+### V.5 Cards put at this sitting
+
+* **D-21 (FFR-6A follow-ons):** (a) charter the forward-object scarcity-restoration
+  diagnosis [the FH-4/FH-5 critical path]; (b) charter the scoring-target hygiene fix
+  (verdict rows 5a/5b) with 5c (honor announced fossil dates in hindcast) put as an
+  explicit refuse-or-adopt; (c) ECRS measured AS quantities — manager disposition DEFER
+  until a lane must reproduce 2023-level revenues (no card needed now).
+* **D-22 (renumbered from FFR-6B's proposed "D-19"):** the RPS/clean-tier lane — options
+  (a) one lane three arms in order / (b) E-1 first / (c) zonal everywhere / (d) nothing;
+  manager concurs with the lane: (a).
+Dispositions to be recorded by addendum when signed.
+
+### V.6 Owner signatures (same sitting, 2026-08-06)
+
+* **D-21(a) — DEFERRED (owner decision, against the manager's recommendation).** Recorded
+  once with its measured consequence, per the standing protocol: the scarcity-restoration
+  diagnosis is the only lane that can produce lift conditions α/β (V.3), so **FH-4/FH-5
+  remain blocked with NO open path to the lift** until the owner re-opens D-21(a); the
+  capacity-evolution chain continues to run on a forward object measured at 0.04–4.4 % of
+  real margins, retained by the admission cap. Q.2 (no T1 battery re-measurement) stands.
+  No session re-litigates this; a future sitting may re-open it.
+* **D-21(b) — SIGNED AS RECOMMENDED: hygiene only, 5c REFUSED.** Charter **FFR-7A**: the
+  scoring-target fixes (verdict rows 5a/5b — OS-status vintage handling, `build_capacity_
+  actuals` beyond status-RE). 5c (announced fossil dates in hindcast) is REFUSED and
+  recorded as such — cite, don't re-propose.
+* **D-21(c) — manager disposition stands:** ECRS quantities deferred until a lane must
+  reproduce 2023-level revenues.
+* **D-22(a) — SIGNED AS RECOMMENDED:** charter **FFR-7B**, one lane, three arms, in order
+  (Arm 1 tier/eligible-set level fix NYISO/NEISO/CAISO → Arm 2 K-row generalization, MISO
+  armed only → Arm 3 clean-tier rows, MISO-West/East). §45U-vs-clean-dual composition stays
+  OPEN and blocks Arm 3's arming only. E-1 never acquires a build limb.
+Prompts: pack §0r. Wave 7 opens with FFR-7A and FFR-7B.
