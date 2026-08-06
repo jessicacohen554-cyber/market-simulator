@@ -2901,3 +2901,20 @@ own briefs stop repeating SPENT and cite this addendum instead.
   pass (X.1). Manager recommends: redefine it against the reachable set (fleet-carried,
   non-instrument exits) as part of scoring, not chase it.
 Dispositions recorded by addendum when signed.
+
+### X.6 Owner signatures (same sitting, 2026-08-06)
+
+* **D-23 — SIGNED: correct the NEISO locked-test record.** The owner's signature here IS the
+  authorization for the marker edit (the CAISO-GRANT pattern: a governance lane executes a
+  signed owner act against committed artifacts). Charter **NEISO-RECORD**: SPENT →
+  never-granted across all 13 files (marker `locked_test`/`locked_test_note`, `final._note`,
+  CLAUDE.md rule 22's "NEISO is the latter" clause, holdout-freeze.json, the 2022 touchpoint
+  sidecar, matrix doc, calibration-log entries, second-hand handoff/audit repeats), every
+  edit citing neiso-87 §1 + peer review §6.3 + this signature. The correction GRANTS
+  NOTHING — neiso-87's merits answer on `final` (NOT YET) stands untouched.
+* **D-24 — SIGNED AS RECOMMENDED (after owner clarification, re-put with the
+  couldn't/wouldn't decomposition): redefine the ≥300 MW recall gate against the reachable
+  set** — members = fleet-carried units whose exit was economic or vintage-visible-
+  instrument-driven; empty set reports n/a, never 0/N. Charter **SCORE-GATE** (small,
+  scorer-only).
+Both prompts: pack §0t addendum. FFR-7B-2 (already in §0t) dispatches alongside them.
