@@ -8,8 +8,11 @@ in full **before any solve** at
 **Rule 22:** 2023–2025 only. No out-of-training year was solved, scored, read or
 registered; the holdout spend freeze was checked and not touched.
 
-*(§5 onward — the A/B result, gates and disposition — is written from the arms'
-own artifacts once both bundles exist. §1–§4 are settled without a solve.)*
+**Headline: the arm is REJECTED as armed by its own pre-registered kill gate
+(§5–§6); the IDENTIFICATION stands and is the durable result. The keeper is
+UNCHANGED and NYISO now reads `CALIBRATED-WITH-CAVEATS` under an explicit owner
+authorization for the in-training C3c ledger entry (§7).** §1–§4 were settled
+without a solve and were committed before the arms finished.
 
 ---
 
@@ -143,3 +146,118 @@ replaces a mis-typed quantity with the published one and removes a double count
 the model carries twice elsewhere. What *would* refute it: kill gates K1–K6, or
 a load-bearing / protective criterion breaking — C3a most of all, since the arm
 pushes all three years **down** against a ±10 % band.
+
+---
+
+## 5. The A/B result — the arm is REJECTED by its own pre-registered kill gate
+
+Arms `nyiso130_control` / `nyiso130_n11tsl`, both 2023–2025 in one bundle each
+(rule 16), years sequential and invocations concurrent (rule 12). Registered as
+`2026-08-06-nyiso-130-control` and `2026-08-06-nyiso-130-n11-tsl`.
+
+**The baseline is sound — the nyiso-128 stale-baseline failure does NOT recur.**
+The control reproduces the designated keeper exactly: 22 h tail, all Long
+Island, bound 325 MW, at-bound 80.1 %.
+
+| gate | verdict | |
+|---|---|---|
+| K1 config isolation | **PASS** | exactly one differing field, and it is `nyiso_li_tsl_n11_security` |
+| K2 feasibility | **PASS** | zero slack and zero dump, both arms, all three years |
+| K3 liveness | **PASS** | in-window bound reads exactly **940.0** in the treatment, 325/275/275 in the control |
+| K4 scope | **PASS** | no other link's bound moves |
+| K5 seam | **PASS** | external import energy moves 0.000 / 0.000 / **+0.047 %** — the seam is exonerated |
+| **K6 forcing** | **FIRED** | the downstate ST_GAS reliability floor forces **+0.22 / +0.42 / +0.23 TWh** more |
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| C3c control → treatment | 22 → **2** | 3 → **0** | 24 → **5** |
+| RT actual / band | 10, [5, 20] | 12, [6, 24] | 42, [21, 84] |
+| verdict | FAIL (0.20×) | FAIL (0.00×) | FAIL (0.12×) |
+| LI AC in-window p50 | 325 → **621** MW | 275 → **671** MW | 275 → **428** MW |
+| at-bound share, in-window | 80.1 → **21.9 %** | 85.5 → **17.0 %** | 66.3 → **4.7 %** |
+| mean LMP | 33.855 → 33.604 | 37.043 → 36.937 | 61.113 → 61.113 |
+
+C1 / C2 / C3a / C3b / C4 / C6 / C8 **PASS in both arms**, and the pre-registered
+C3a adverse case **did not materialise** — mean LMP barely moves.
+
+**P4 is confirmed far past its prediction.** The tail did not move years; it
+**collapsed**, and 2024 forms **zero** scarcity hours. That settles §3's
+measurement into a finding: **NYISO's entire modelled scarcity tail was
+manufactured by the in-window Zone-K bound.** The incumbent's 2025 C3c PASS
+(24 h against a band floor of 21) was a right number produced by a number NYISO
+says is not a transfer limit — the failure mode rule 1 `[R-STRUCT]` names in its
+second half ("never reach the right number through a mechanism that isn't real").
+
+### 5a. Why K6 firing is substantive, not a rounding artifact
+
+Most of the rises K6 caught are denominator effects (nuclear 0.7769 → 0.7771).
+One is not. `reliability_floor × ST_GAS` rises in **forced energy**, not merely
+in share: **2.784 → 3.002**, **2.797 → 3.216**, **2.371 → 2.598 TWh**. The floor
+is a `min_gen` bound, so as cheaper imports displace the downstate steam fleet
+its economic dispatch falls *below* the floor in more hours and the floor forces
+more energy up to it. C8 still passes (ST_GAS forced share 23.5 / **27.9** /
+19.3 % against a 30 % cap) — but 2024 lands within 2.1 pp of the cap.
+
+## 6. Disposition — REJECTED AS ARMED, and why that is not rule 1 in reverse
+
+The pre-registration fixed **REJECT on any kill gate** before the solve. K6
+fired. The arm is rejected, and the grounds are stated precisely because rule 1
+forbids the other kind:
+
+1. **A protective gate fired, substantively** — not "the residual didn't move".
+2. **The arm RELOCATES a proxy rather than removing one.** Zone-K reliability in
+   this model is carried by **two** proxies — the too-tight transfer bound and
+   the LI/NYC ST_GAS `min_gen` floor — and relieving the first loads the second.
+   That makes the model *more* floor-driven, the opposite of what rule 20
+   `[R-FORCED-BUDGET]` asks (floors are commitment scaffolding, not the dispatch
+   model).
+3. **It leaves the model forming essentially no scarcity**, which is a
+   **mechanism** deficiency — rule 1's own primary criterion — not merely a fit
+   one.
+
+**The identification is untouched and is this session's durable result.** The
+275/325 MW is demonstrably a transfer limit minus a generation contingency; the
+double count is real and measured. What is refuted is the **bare number swap**
+as the fix.
+
+**Named successor (rule 19 `[R-ONE-MECH]`):** a **joint** reconciliation of the
+Zone-K transfer bound **and** the downstate ST_GAS floor — one local-security
+representation replacing both — with its own charter and pre-registration. Do
+**not** re-test the bare swap.
+
+## 7. What the keeper does, and the owner directive
+
+**Keeper UNCHANGED**: `2026-08-06-nyiso-128-solar-basis`. Its C3c-2023 miss is
+exactly the *"+12 hours in 2023"* the owner's directive names, and C3c is its
+sole non-passing criterion. Applied as written, the directive supplies the
+in-training authorization rule 22's C3c standing rule does not reach, so the
+exception nyiso-129 withheld is now **written** — with its **own correctly-signed
+OVER-production classification**, not folded under the 2024 under-production
+caveat, and with the withheld block **preserved** as
+`_withheld_exception_history`.
+
+**NYISO reads `CALIBRATED-WITH-CAVEATS`** (re-verified from committed artifacts,
+no solve). Ledgered caveats **1 of 1**. `audit_keepers.py --iso NYISO`: **PASS,
+0 failures, 0 warnings**.
+
+The ledger entry says, in the artifact itself, that the lane is **not exhausted**:
+this session identified the object and tested the obvious fix, and the fix failed
+its own gate.
+
+## 8. Priority 2 — the GWh reconciliation, discharged
+
+**981.8 GWh CONFIRMED; nyiso-128's 1,081.8 GWh RETIRED.** Detail and the CF
+identification (narrowed against interest to the one mature-fleet year, 0.1955)
+are in `PREREG-nyiso130-solar-cf-level-2026-08-06.md` and
+`_nyiso130_solar_gwh_reconciliation.json`. The lever is identified, sized and
+**deliberately not armed**: it pushes C3a and C3c the same direction as the
+Priority-1 arm, so arming both on the same arms would make neither attributable.
+
+## 9. Session integrity note, recorded against interest
+
+The first recipe-fidelity check was run **without an explicit `--out-dir`** and
+overwrote the committed `results/calibration/nyiso128_control` bundle with a
+24-hour solve. It was caught immediately and restored from git; every tracked
+blob in that bundle was then verified byte-identical to `HEAD`, and the check was
+re-run against a scratch directory. Recorded so the next session knows the
+driver's default out-dir points at a **committed** bundle.
