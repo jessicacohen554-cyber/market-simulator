@@ -1,0 +1,110 @@
+{
+ "session": "ercot-172",
+ "artifact": "addendum",
+ "phase": 0,
+ "lp_solved": false,
+ "year": 2023,
+ "bundle": "results/calibration/ercot168_yearcurves_B",
+ "object": "C3a-2023 mean-LMP under-run",
+ "M1_the_miss_priced": {
+  "actual_above_200_hours": 181,
+  "model_caught_hours": 58,
+  "tail_recall": 0.32044198895027626,
+  "missed_hours": 123,
+  "actual_in_missed": {
+   "p50": 461.8275146484375,
+   "mean": 651.5666644088622,
+   "max": 3540.6298828125
+  },
+  "model_in_missed": {
+   "p50": 93.7613551570771,
+   "mean": 97.84606122088371,
+   "max": 196.45521015956507
+  },
+  "missed_share_of_positive_underpricing": 0.45414334875763335,
+  "c3a_hub_basis_pct": -29.876550641052244,
+  "note": "the model's MAX price across every missed hour is the headline: it never crosses $200 in an hour where ERCOT did"
+ },
+ "M2_real_top_of_stack": {
+  "scope": "delivery Aug+Sep 2023 (FINDING-ercot166 \u00a71: 88% of the annual gap)",
+  "missed_hours_in_scope": 80,
+  "corpus_rows": 331744,
+  "online_rows": 260780,
+  "by_threshold": {
+   "200": {
+    "total_mw_mean": 3797.4240382605726,
+    "total_mw_p10": 3237.9127936678005,
+    "total_mw_p50": 3644.8858303371817,
+    "total_mw_p90": 4652.426517876238,
+    "by_resource_type_mw": {
+     "PWRSTR": 2752.666065602284,
+     "SCLE90": 811.8607334315777,
+     "CCGT90": 74.56499938964839,
+     "GSREH": 61.51125240325943,
+     "PVGR": 33.03859927574488,
+     "GSSUP": 18.75249938964845,
+     "SCGT90": 16.80625,
+     "CCLE90": 13.57990038394928,
+     "GSNONR": 12.81875,
+     "CLLIG": 1.2
+    },
+    "storage_share": 0.7248771898708355
+   },
+   "500": {
+    "total_mw_mean": 3516.508101096007,
+    "total_mw_p10": 2913.112484628707,
+    "total_mw_p50": 3435.4874922763556,
+    "total_mw_p90": 4331.399793199822,
+    "by_resource_type_mw": {
+     "PWRSTR": 2701.071378113469,
+     "SCLE90": 711.8107334315777,
+     "CCGT90": 23.257499694824197,
+     "GSREH": 21.847502422332912,
+     "SCGT90": 16.80625,
+     "CCLE90": 13.57990038394928,
+     "GSSUP": 11.877499389648449,
+     "GSNONR": 11.39375,
+     "PVGR": 3.038599275744878,
+     "CLLIG": 1.2
+    },
+    "storage_share": 0.7681118030900066
+   },
+   "1000": {
+    "total_mw_mean": 3057.9449742685565,
+    "total_mw_p10": 2636.788987799268,
+    "total_mw_p50": 3028.6931186829456,
+    "total_mw_p90": 3508.5894984245306,
+    "by_resource_type_mw": {
+     "PWRSTR": 2623.862315488327,
+     "SCLE90": 347.69417104125023,
+     "SCGT90": 16.80625,
+     "GSREH": 14.280000305175799,
+     "CCGT90": 13.5875,
+     "CCLE90": 13.57990038394928,
+     "GSSUP": 11.877499389648449,
+     "GSNONR": 11.39375,
+     "PVGR": 3.038599275744878,
+     "CLLIG": 1.2
+    },
+    "storage_share": 0.8580475899884171
+   },
+   "2000": {
+    "total_mw_mean": 2711.850574934273,
+    "total_mw_p10": 2283.1549818348135,
+    "total_mw_p50": 2763.822851367295,
+    "total_mw_p90": 3020.817482819408,
+    "by_resource_type_mw": {
+     "PWRSTR": 2525.5215030697873,
+     "SCLE90": 126.59729604125023,
+     "SCGT90": 16.80625,
+     "CCGT90": 13.5875,
+     "CCLE90": 13.57990038394928,
+     "GSREH": 12.496250057220463,
+     "PVGR": 2.3812503814697497
+    },
+    "storage_share": 0.9312908042992001
+   }
+  }
+ },
+ "does_not_overturn": "ercot_storage_rt_offer_surface stays R (ercot-162). That refutation is structural \u2014 a cap-priced battery offer is an equilibrium object and transplanted as an LP marginal cost it only withholds the fleet. This addendum corroborates the ladder's composition and depth; it is a quantity/scarcity-depth statement, which is where ercot-162 itself re-pointed the residual."
+}

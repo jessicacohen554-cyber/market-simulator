@@ -256,4 +256,58 @@ commitment, coal seasonal LEVEL split, `coal_offer_level_rebasis`,
 `tranche_startup_amortization`, ercot-168 OPTION B, the West/Panhandle topology
 split.
 
+## 7. ADDENDUM (owner-authorised in-session) — what actually sets price in the 2023 hours the model misses
+
+Added on the owner's direction after the main result, because the standing ERCOT
+object is **C3a-2023** and no session had put this question to the delivery-2023
+SCED corpus. Record:
+`results/calibration/ercot172_addendum_2023_topofstack.json`; probe
+`scripts/probes/ercot172_addendum_2023_topofstack.py`. No LP, 2023 only.
+
+**M1 — the miss, priced.** 2023 tail recall **0.32** (58 of 181 actual >$200
+hours caught). In the **123 missed hours**, actual is **p50 $462 / mean $652 /
+max $3,541** while the keeper prices them **p50 $93.8 / mean $97.8 / max
+$196.5**. **The model's maximum price across every single missed hour is
+$196.5 — it never once crosses $200 in an hour where ERCOT did.** Those 123
+hours carry **45 %** of all positive hourly under-pricing in the year, on a
+hub-basis C3a of **−29.9 %**.
+
+**M2 — the real top-of-stack at those hours** (delivery Aug+Sep 2023, the months
+`FINDING-ercot166` §1 measured as 88 % of the annual gap — scope stated, not
+silent; 80 of the 123 missed hours; 260,780 online SCED rows):
+
+| offered at | total MW (mean/hour) | PWRSTR | share | next largest |
+|---|---|---|---|---|
+| ≥ $200 | 3,797 | 2,753 | 72 % | SCLE90 812 |
+| ≥ $500 | 3,517 | 2,701 | 77 % | SCLE90 712 |
+| ≥ $1,000 | 3,058 | 2,624 | **86 %** | SCLE90 348 |
+| ≥ $2,000 | 2,712 | 2,526 | **93 %** | SCLE90 127 |
+
+ERCOT's entire upper offer stack in the hours the model misses is **storage**,
+2.5–2.8 GW of it, with simple-cycle gas the only other material block. The model
+carries no supply above ~$200 and therefore cannot clear there at any price.
+
+**This does NOT overturn `ercot_storage_rt_offer_surface` = `R` (ercot-162), and
+must not be read as licensing a re-arm.** That refutation is **structural and
+stands**: a battery's cap-priced SCED offer is an *equilibrium* object — offered
+at the cap in the knowledge that it clears in the market's real scarcity hours —
+and transplanted as an LP marginal cost into a model whose prices never reach the
+cap it merely **withholds** the fleet (discharge collapsed ~74 % in every year,
+spurious mid-band tripped in all three). M2 corroborates the ladder ercot-162
+already derived to the cent; what it adds is the stack's **composition and
+depth**, which is a **quantity / scarcity-depth** statement — precisely where
+ercot-162 itself re-pointed the residual, and what ercot-167's storage AS/energy
+split then went after.
+
+**The causal chain this closes, on committed evidence.** ercot-162 measured that
+its tranches never bind because *"thermal + the ERCOT-88 pool + the model's own CC
+depth absorb the load"*; ercot-163 refuted the cheap-CC-offline reading of that
+depth and re-attributed it to **the model's own ~2.7 GW of CC headroom** —
+**item 11's extreme-hour face**, which is chartered and **NOT data-blocked** (only
+its per-unit crosswalk half is, at L1 0.3375). So the 2023 under-run runs:
+*excess cheap model depth absorbs the load before the expensive stack is reached
+→ storage never becomes marginal → price ceilings at $196.5 → −29.9 %.* The lever
+is the **depth**, not the offer price. Recorded here as the named 2023 successor;
+not acted on in this session.
+
 **Next shorthand: ercot-173.**
