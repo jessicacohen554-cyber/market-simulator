@@ -3388,3 +3388,179 @@ unless `MARKET_SIM_USE_CLEAN` is set, and it is unset), and most curate scripts
 accept `--years`, so only 2023-2025 need building.
 
 Next shorthand: **pjm-159.**
+
+---
+
+## pjm-159 — FINAL-declaration assessment: **HOLD**. Two new blockers found; the locked tier is not spendable, and would not run the keeper's model if it were (2026-08-06)
+
+**Full assessment:** `results/calibration/ASSESSMENT-pjm159-final-declaration-2026-08-06.md`.
+**No LP.** No solve, no score of any out-of-training year, no registration, no
+mechanism tested, no keeper touched, no marker edited, no freeze touched. Every
+number is a read of a committed artifact, a re-run of the committed-artifacts-only
+scorer on the **in-sample** years, or a read of source at HEAD.
+
+**RECOMMENDATION: HOLD — do not declare PJM `final`.** Four blockers, each
+sufficient alone; two are new this session.
+
+**What is in good order, stated first.** The keeper `2026-08-04-pjm-152-collapse`
+re-verifies **CALIBRATED, 9/9, C1 all 16/16 free 12/12, ZERO fails and ZERO
+caveats** (four C8 grounded-above-budget report notes, clean PASSes under rule
+21). `audit_keepers.py --iso PJM` → **0 failures, 0 warnings** across keeper,
+holdout, marker and status shards. Lever queue still clear (pjm-153), frontier
+still owner-declared (pjm-142). The objection is not that PJM's calibration is
+unfinished.
+
+**B1 — neither locked-test year is solvable today (verified on disk).** PJM 2019
+has no demand driver (`eia_demand_profiles.parquet` starts at 2021 for EVERY ISO
+— the cross-ISO F3 gap, hand-uploaded artifact with no in-repo builder), no
+`calibration_reference.json` `isos.PJM.2019` block (on-disk coverage is
+2021-2025) and no `PJM_2019_renewable_capacity.csv` (same span). H1-2026 is
+blocked by construction: the full-8760 demand contract is unbuildable from a
+partial year, `pjm_2026_as_up_mw.parquet` is absent because the builder refuses a
+partial year, the LMP parquet block is deliberately not built, CAMPD Q2-2026 is
+unposted and EIA delivered gas stops before May-2026. **A `final` grant issued
+today would be unspendable** — permanent authorization, touch-once years, and no
+way to exercise it.
+
+**B2 — NEW: the frozen keeper recipe does not reproduce on 2019.**
+`pjm_seam_measured_ladder` is armed, but `PJM_SEAM_LADDER_BY_YEAR`
+(`model/interchange/spec.py:1251`) carries **{2023, 2024, 2025} only** — and
+`import_nodes.py:971-981` shows that outside those years the ladder silently
+no-ops **AND `inject_reference_price_firm_export` fires in its place** — the firm
+scheduled-export floor the ladder DISPLACES under rule 19. A 2019 run of "the
+frozen keeper config" would run the keeper's rule-19 *alternative*, chosen by a
+year key, in the exact channel (the seam) that carries PJM's largest one-signed
+volume error. Two further armed overlays are pooled on the training window by
+construction: `measured_ramp_capability` (`POOLED_VINTAGES = (2023, 2024, 2025)`,
+an explicit rule-22 quarantine constant) and `measured_ct_heat_rates`
+(`years == "2023-2024-2025"`, plant-keyed, already graded DEGRADED-accepted).
+And the `pjm_da_virtual_bids` corpus is gitignored/absent with a loader that
+**raises** rather than degrading, so 2019 needs its own channel-1 intake
+authorization (retention is indefinite; a step, not a wall). The code is correct
+as written — the defect is that "spend the frozen keeper config on 2019" is not a
+well-defined operation while a load-bearing armed mechanism is year-keyed to the
+training window.
+
+**B3 — NEW: the locked-test C3a would use a different statistic than every
+in-sample number.** The rubric-v2.4 basis ladder is `rt_lw > da_lw > rt > da`
+(`calibration_verdict.py:1250-1257`); PJM's bench parts carry `rt_lw`/`da_lw` for
+**2023-2025 ONLY** (checked all four committed parts — 2022 has `da`/`rt` alone).
+Load-weighting raises PJM's RT actual by **+1.11/+1.78/+2.91 $/MWh =
++3.9/+6.0/+6.8 %**, against a C3a band of ±10 %. Restating the keeper's own gated
+C3a on the legacy basis it would be forced onto: **2023 +6.4 % PASS -> +10.5 %
+FAIL**, 2024 -0.4 % -> +5.6 %, 2025 -7.5 % -> -1.3 %. A basis change alone moves
+the keeper across the gate boundary. **And it cannot be fixed for 2019
+independently of B1:** `lw_retrofit` (`derive_actual_lmp.py:963`) calls
+`load_demand`, the same F3-blocked artifact — B1 and B3 close together or not at
+all. *Recorded retrospectively:* the spent 2022 touchpoint's C3a is on the legacy
+basis while every in-sample number is load-weighted; its caveat establishes
+availability-envelope parity (correctly) but this price-statistic non-parity was
+never recorded. 2022 is iterable, so it is a note to carry, not a defect to
+repair.
+
+**B4 — the pjm-158 DA/RT basis defect IS disqualifying for the touch-once tier**
+(not for the keeper — pjm-158's rule-14 disposition stands and the cell stays
+`K` — and not for the iterable validation tier). The reason is sharper than "an
+open defect": the layer's C1 contribution is `-(DA-RT) x gain`, and **PJM's DA-RT
+spread flips sign outside the training window.** Read off the committed bench
+(measured data only, no model output, no scoring — the pjm-157/pjm-158 §1 class
+of read): **2023/24/25 = +0.89/+0.25/+0.82** but **2019 = +0.10** (an order of
+magnitude smaller) and 2018/2020/2021/2022 = **-0.03/-0.25/-0.27/-1.49**. So the
+in-sample near-cancellation is regime-specific in BOTH terms, not just in the
+model's price error: on a year where DA-RT ~ 0 the basis term largely vanishes
+and the price error stands uncancelled. A 2019 miss could not be attributed, and
+a 2019 pass could not be trusted — the exact condition the freeze exists to
+prevent, applied to a second independent input defect. The pjm-158 standing
+warning is re-stated: improving C3b toward RT GROWS the layer's phantom demand
+toward the condemned pjm-102 clamp, so the certified number's known trajectory is
+to break.
+
+**pjm-135 M4 — open, uncharted, and asymmetric in the direction the error runs.**
+NOT independently disqualifying (fails no gate, fully disclosed, root cause is a
+declared representation boundary), but it compounds B2/B4. The model
+under-exports **one-signed at -9.57/-9.17/-5.40 TWh** on the keeper's own
+attested net position, while the only mechanism bounding the net position
+(`build_pjm_external_net_position_cut_groups`, `interchange/pjm.py:293`) is
+**`bidirectional=False` by design** — it caps net IMPORT and "never bounds net
+export". pjm-158's A/B proved it absorbs perturbations (**+1.00/+0.67/+0.37 TWh**
+into the star node, which is why P1's point predictions missed). pjm-153 collapsed
+item 15b into the frontier, so chartering it "would re-open the frontier under a
+new name" — it stays uncharted deliberately.
+
+**The freeze's `lifts_when`: the owner RE-ADJUDICATED it on 2026-08-06 and chose
+to HOLD.** State at this session's HEAD (`305688a4`, rebased mid-session):
+`holdout-freeze.json` reads `active: false`, but that is a **transient
+NEISO-2022-only lift** (session neiso-86, re-solving NEISO 2022 on a corrected
+gas-basis input) whose own `lift_scope` says *"NOT 2019 or H1-2026 … and NOT any
+other ISO"* and which is re-armed in the same session by design — **PJM is
+authorized nothing by it.** And the same owner entry disposes of what an earlier
+draft flagged as a stale contradiction: *"charter section 9 records the
+investigation CLOSED ON EVIDENCE across four lanes … with a recommendation to
+close with cause and lift FULLY — **but the owner deliberately did NOT take that
+broader step here**."* So the freeze's basis is a **live owner decision made the
+same day as this assessment**, which STRENGTHENS the HOLD. The charter's evidence,
+for completeness (`campd-economic-layup-fix-charter-2026-07.md` §9, residual
+investigation **CLOSED on evidence**, all steps done, no LP): step 1 PASSED
+(residual tracks ISO-NE's published `uncommitted_available_gen_nonfast_mw` at
++0.70..+0.85, anti-correlated with published outages -0.85/-0.86), step 2
+NEGATIVE (AUC 0.47-0.57), LANE B negative (82/180 cells, median gain -0.0003),
+LP-side closure negative (neiso-68) — the over-count is a **definitional seam**
+(published *unavailability* vs CEMS *non-operation*), "explained, quantified,
+bounded and shown not to be closable by a detector change. That is a cause, not a
+stall". **Lifting the freeze would not make PJM ready in any case:** B1-B4 are all
+independent of it, and B1/B3 are data-availability facts no governance act can
+change.
+
+**The precedent that should settle it.** NEISO's locked test was spent 2026-07-07
+on `2026-07-07-neiso53-winter-fuelsec-coldsnap`; the keeper moved to `neiso-54`
+the NEXT DAY and stands at `2026-08-05-neiso-83-ca1-reclass` — **thirty keeper
+generations later.** Its honest out-of-sample number describes a model that no
+longer exists and is never re-grantable. PJM is in a better position than NEISO
+was, but it also carries three defects NEISO's declaration did not know about,
+**two of them found in the last 48 hours** (pjm-157 2026-08-05, pjm-158
+2026-08-06) and two more found today. A lane still producing material findings at
+that rate is not a lane at rest — that is the strongest single argument for HOLD,
+and it is about rate of discovery, not any one defect's severity.
+
+**Path to ready (assessment §9, ordered):** (1) close the F3 demand gap for 2019
+— fixes B1 and, via `lw_retrofit`, B3 in one no-LP step; (2) build PJM 2019
+`rt_lw`/`da_lw`; (3) owner decision on the year-keyed recipe (derive
+`PJM_SEAM_LADDER_BY_YEAR[2019]` on the frozen formula from the already-landed 2019
+tie file — rule 23's "source data extends" case — or declare explicitly that the
+locked test runs the rule-19 alternative; same for the pooled vintages) — silence
+is the one unacceptable option; (4) authorize the 2019 `pjm-da-virtuals` intake;
+(5) dispose of B4 (charter the architecture question, or record the regime
+dependence as a stated limitation of the certified number); (6) owner lifts the
+freeze; (7) then declare and spend once. **Note `final` as written grants BOTH
+locked years at once** — the owner may prefer to grant 2019 alone rather than
+issue a two-year grant of which one year is structurally unspendable.
+
+**Recorded in passing, nothing re-opened.** (a) **pjm-158 §5.3's C3a row is not on
+the C3a gate's basis.** Re-running the committed scorer on both registered arms
+gives, on the gated `rt_lw` basis: control **+6.4/-0.4/-7.5 %**, treatment
+**+6.5/+0.5/-9.7 %** (control identical to the keeper, as byte-identical dispatch
+requires) — not the +8.8->+9.7 / +2.1->+3.5 / -5.0->-6.3 the finding tabulates.
+**The A/B's conclusion is unaffected and STRENGTHENED:** C3a degrades in all three
+years and the treatment's 2025 error is **-9.7 %, 0.3 pp inside the ±10 % band**,
+i.e. it very nearly fails C3a as well as C3c. Both arms score NOT-YET on
+C6-unattested alone, exactly as pjm-158 §5.4 reported. (b) C3c on the gate basis:
+control 3/10/32 h vs RT actual 6/18/59 h, all PASS; treatment 2/24/22 h with
+**2025 FAIL at 0.37x** — confirms §5.4 and watch-item W2 exactly. (c) **The
+three-bases trap generalizes past coal and CC_REGULAR to PRICES**: check which of
+the four price bases (`rt_lw`/`da_lw`/`rt`/`da`) an inherited PJM number is on
+before sizing against it; only 2023-2025 have all four. (d) The cross-ISO bench
+`npl = 1 MW` defect (task C) is confirmed **still open at HEAD and unfixed**;
+pjm-158's inventory stands. It remains the cheapest cross-ISO win and is
+unaffected by the freeze.
+
+**Governance.** Rule 22: freeze respected absolutely, no out-of-training year
+solved/scored/registered (branch rebased onto `origin/main` 305688a4 mid-session
+and the freeze re-verified at that HEAD — see above); the 2019 and 2018-2022 figures are reads of measured
+committed bench artifacts with **no model output on either side**, present
+precisely to size a governance risk WITHOUT spending the year. Rules 16/12: no
+bundle, no solve. Rule 28: matrix and PJM lever queue checked; no mechanism
+proposed or tested, so no cell moves. Rule 15: no run produced, nothing owed to
+either dashboard. Rule 27: Opus. Keeper **UNCHANGED**; no marker re-keyed; `final`
+stays **EMPTY** — the declaration is the owner's.
+
+Next shorthand: **pjm-160.**
