@@ -211,26 +211,15 @@ def rubric() -> list[dict]:
             "(four assertions, all required true).",
             "pass/fail — never graded, never caveatable; an unattested run is NOT-YET.",
         ),
-        row(
-            "shape",
-            "Per-class hour-of-day mean dispatch profile, model vs CAMPD, for the "
-            "peaker/intermediate duty classes (CT_PEAKER, ST_GAS) — the diurnal-shape "
-            "check a flat forced floor cannot pass (audit D-1; the caiso-42 signature "
-            "was model off-peak CV 0.000 vs actual 0.35–0.45). Added 2026-07-04: the "
-            "statistical-mode study showed the C1 volume band absorbed a >6× ERCOT "
-            "CT_PEAKER miss — annual volume bands cannot see class-shape failure.",
-            "The bundle's committed legitimacy_diagnostics.json (written by "
-            "scripts/legitimacy_diagnostics.py --json-out; model payload vs the "
-            "committed CAMPD bench series). SKIPPED — capping the determination — "
-            "when the artifact is absent.",
-            "profile r ≥ 0.8 AND off-peak (h0–14) CV ratio ≥ 0.5, per gated class "
-            "(thresholds live in scripts/legitimacy_diagnostics.py D1_*, embedded in "
-            "the artifact's gates block — re-stated here, never re-typed by the "
-            "scorer). Materiality floor (v2.1, owner amendment 2026-07-06): gated "
-            f"only for classes ≥ {cv.PROTECTIVE_MIN_LOAD_FRAC:.0%} of total ISO load "
-            "(max of model/actual energy, so forcing can't hide a class below the "
-            "line); smaller classes are reported by the diagnostics, never gated.",
-        ),
+        # (The C7 diurnal-shape row was REMOVED by the v3.1 owner amendment
+        # 2026-08-06: C7 is retired from the calibration report and the
+        # determination, on the finding that no commercial-grade comparable
+        # gates or publishes diurnal-shape accuracy — the comparables row below
+        # scores C6/C7/C8 "beyond commercial practice", i.e. with no external
+        # anchor at all, and every other graded criterion here is two-band
+        # scored against a published one. The D-1 measurement it read is NOT
+        # retired: it still backs C8's grounded-above-budget escalation, whose
+        # tolerance line names the profile-r / CV-ratio gates.)
         row(
             "forced_share",
             "Share of each class's annual energy dispatched AT a binding min_gen "

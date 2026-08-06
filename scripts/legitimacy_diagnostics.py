@@ -142,10 +142,16 @@ D1_OFFPEAK_LAST_HOUR: int = 14  # off-peak window = local hours 0..14 inclusive
 # classes — ERCOT COAL_LIGNITE 2023 (profile r 0.745, cv_ratio 0.294: the
 # lignite fleet pinned flat at its availability ceiling) carried the exact
 # C7 failure signature ungated. CHP classes stay ungated (host-steam-pinned
-# duty, same rationale as D2_EXEMPT_CLASSES); the rubric scorer
-# (calibration_verdict.C7_GATED_CLASSES) derives gatedness itself so
-# committed artifacts written under the old set re-score without
-# regeneration — keep the two sets in sync.
+# duty, same rationale as D2_EXEMPT_CLASSES).
+# NOTE (rubric v3.1, owner amendment 2026-08-06): the C7 criterion this set
+# used to feed is RETIRED — ``calibration_verdict.score_shape`` and its
+# ``C7_GATED_CLASSES`` mirror of this tuple are deleted, so there is no longer
+# a second set to keep in sync. D-1 itself is NOT retired: these rows are still
+# computed, still written to every bundle, and still gated — by C8's
+# grounded-above-budget escalation (``calibration_verdict._d1_shape``), which
+# applies the ``gates`` block below to whichever class is over its forced-energy
+# budget rather than to a fixed tuple. This set now governs only which rows
+# carry a baked ``gated`` flag for reporting.
 D1_GATED_CLASSES: tuple[str, ...] = (
     "CT_PEAKER",
     "ST_GAS",
