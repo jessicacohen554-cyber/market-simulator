@@ -364,6 +364,7 @@ def fetch_dataset(
     end_date: dt.date | None = None,
     start_date: dt.date | None = None,
     nodes: tuple[str, ...] = HUBS,
+    force: bool = False,
 ) -> None:
     """Fetch one dataset for the given years with adaptive window sizing.
 
@@ -380,6 +381,15 @@ def fetch_dataset(
     aged-out day walking the window down to 1 day and back up again.
 
     ``nodes`` is the node list for per-node datasets (see :func:`_resolve_nodes`).
+
+    ``force`` re-fetches windows the aggregates already cover. The coverage
+    check is keyed on ONE reference series (``CA ISO-TAC`` for the load
+    report), so once an aggregate exists it reports every day covered even for
+    a series that was never kept — which makes back-filling a NEWLY kept series
+    impossible without it. That is exactly how ``MWD-TAC`` stayed missing from
+    ``CAISO_tac_load_hourly_<year>.csv`` after it was added to
+    ``postprocess_oasis_downloads.CAISO_TACS`` (caiso-175). Use it when the
+    KEPT SET widens, not to re-pull data already on disk.
     """
     spec = DATASETS[key]
     out_dir: Path = spec["out_dir"]
@@ -406,7 +416,7 @@ def fetch_dataset(
             tag = f"{key}_{node or 'ALL'}_{cur:%Y%m%d}_{win_end:%Y%m%d}"
             target = out_dir / f"{tag}.csv"
             need = _expected_days(cur, win_end)
-            if target.exists() or need <= done_days:
+            if target.exists() or (not force and need <= done_days):
                 cur = win_end
                 continue
             url = _url(spec["params"], cur, win_end, node)
@@ -492,6 +502,14 @@ def main() -> None:
         "(2023-04-22 as re-measured 2026-08-04 — it MOVES, so re-check)",
     )
     parser.add_argument(
+        "--force",
+        action="store_true",
+        help="re-fetch windows the hourly aggregates already cover. Needed "
+        "only when the KEPT SERIES SET widens (the coverage check reads one "
+        "reference series, so a newly kept series can never be back-filled "
+        "without it) — not for re-pulling data already on disk",
+    )
+    parser.add_argument(
         "--nodes",
         nargs="+",
         default=None,
@@ -519,6 +537,7 @@ def main() -> None:
             args.end_date,
             args.start_date,
             nodes,
+            args.force,
         )
     print("done. Commit the new files under data/raw/ when finished.")
 
