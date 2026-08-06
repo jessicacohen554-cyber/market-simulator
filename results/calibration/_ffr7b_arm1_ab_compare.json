@@ -1,0 +1,36 @@
+{
+ "lane": "FFR-7B Arm 1 (owner D-22(a)); Addendum D paired-control discipline",
+ "question": "Do the corrected RPS trajectory/eligible-set constants touch any keeper backcast?",
+ "design": "Control = keeper recipe replayed at branch base a9e1d084 (unmodified tree); arm = same recipe at the Arm-1 commits. replay_keeper.py pins MARKET_SIM_WARMSTART_XYEAR=0 (basis cache hard-OFF, both sides cold); no --reuse-solved. Years 2023-2025 sequential per invocation; invocations serial (two concurrent OOM-killed the box at 15 GB - measured, CAISO 6.9 GB RSS kill).",
+ "code_path_proof": "get_rps_target/get_rps_acp/get_rps_eligible_fuels have a single consumer seam (runner.py) gated on config.rps_enabled; pipeline.backcast_config.build_calibration_config sets rps_enabled=False unconditionally; all three keeper run_config.json files record rps_enabled: false.",
+ "per_iso": {
+  "NYISO": {
+   "control": "results/calibration/ffr7b_arm1_nyiso_ctrl",
+   "arm": "results/calibration/ffr7b_arm1_nyiso_arm",
+   "n_parquet_compared": 25,
+   "n_byte_identical": 25,
+   "n_differing_or_missing": 0,
+   "differing": [],
+   "verdict": "BYTE-IDENTICAL"
+  },
+  "CAISO": {
+   "control": "results/calibration/ffr7b_arm1_caiso_ctrl",
+   "arm": "results/calibration/ffr7b_arm1_caiso_arm",
+   "n_parquet_compared": 22,
+   "n_byte_identical": 22,
+   "n_differing_or_missing": 0,
+   "differing": [],
+   "verdict": "BYTE-IDENTICAL"
+  },
+  "NEISO": {
+   "control": "results/calibration/ffr7b_arm1_neiso_ctrl",
+   "arm": "results/calibration/ffr7b_arm1_neiso_arm",
+   "n_parquet_compared": 28,
+   "n_byte_identical": 28,
+   "n_differing_or_missing": 0,
+   "differing": [],
+   "verdict": "BYTE-IDENTICAL"
+  }
+ },
+ "verdict": "BYTE-IDENTICAL in all three ISOs \u2014 zero backcast contact; no keeper metric moved; no promotion hold required"
+}
