@@ -680,6 +680,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # armed, and an armed run always carries the gate too.
     "ercot_wtx_curtail_unpooled",
     "ercot_wtx_panhandle_owner",
+    # NYISO market-generator solar basis (nyiso-128, default off): BACKFILLED
+    # at FFR-7B — the field landed UNREGISTERED, so its mere addition moved
+    # the pinned default key 603c2498bf71d21d -> 318c22035173707c and broke
+    # every default-key pin test on main (the ercot-162/FFR-4B incident class,
+    # see the backfill note in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS). Dropped
+    # from the hash at its default so every pre-existing cache key stays
+    # byte-stable (the pinned default 603c2498bf71d21d holds); unarmed the
+    # mechanism never fires, so the off arm is byte-identical; an armed run
+    # re-bases the NYISO solar series and hashes distinctly.
+    "nyiso_solar_market_generator_basis",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -782,6 +792,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_pipeline_aware_signal": "False",
     "capacity_screen_unified_lookahead": "False",
     "vre_procurement_additions_enabled": "False",
+    # Backfilled at FFR-7B alongside the field's (missing) registration above:
+    # nyiso-128 landed the field unregistered, moving the pinned default key.
+    "nyiso_solar_market_generator_basis": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
