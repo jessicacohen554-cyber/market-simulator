@@ -119,8 +119,18 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     `docs/governance/rule-history.md` §4.)* The tiers:
     - **Train / calibration = 2023–2025.** The ONLY years tuned against. Every keeper is built and
       scored here, all three in one bundle (rule 16).
-    - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022 →
-      earlier as data lands and is authorized). **Iterable.** After an ISO's `complete` marker
+    - **THE PROGRAM'S WORKING SPAN IS 2019–2025 FOR ALL ISOs.** *(Owner decision 2026-08-06.)*
+      **2018 and earlier are DROPPED** — removed from `VALIDATION_YEARS`, so `tier_for_year`
+      falls through to its fail-closed default and treats them as **locked-test tier**: they
+      need a `final` marker no ISO holds, and are unsolvable in practice. This is a
+      RESTRICTION, not a relaxation. The substantive reason beyond simplicity: NEISO's 2018
+      basis is **unrepairable** — ISO-NE migrated its newswire mid-2018 and the Mar–Jun recaps
+      were never carried over, so those four rows stay on the seasonally-inverted EIA N3050MA3
+      proxy and June-2018 (+6.2124) is one of the inverted summer values
+      (`FINDING-neiso86-gas-basis-intake-2026-08-06.md` §5.1).
+    - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022,
+      as data lands and is authorized; **the ladder now bottoms out at 2020**). **Iterable.**
+      After an ISO's `complete` marker
       exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
       2023–2025 and re-solve — that is its purpose (model selection). Because it is iterated
       against, a validation number is selection evidence, **NOT** a certified out-of-sample skill
@@ -149,6 +159,20 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       from "authorized once, **SPENT**, never re-grantable" (NEISO is the latter). Tier
       membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
       **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
+    - **C3c STANDING RULE (owner, 2026-08-06): a LONE C3c failure on an out-of-training year is
+      an AUTO-LEDGERED `CALIBRATED-WITH-CAVEATS`, in every ISO, going forward.** When C3c
+      (price tail / scarcity, RT hourly) is the **only** failing criterion and the governance
+      gate passes, `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to a
+      CAVEAT (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It is
+      deliberately narrow and **cannot become a general escape hatch**: (a) **lone failure
+      only** — if any other criterion fails, the rule stays silent and *every* failure stands,
+      C3c's included; (b) **governance must PASS** — a failing or unattested C6 blocks it;
+      (c) **out-of-training ONLY** (validation + locked tiers) — in-sample 2023–2025 keepers
+      still need an explicit, session-justified ledger entry, so the training-window discipline
+      is untouched; (d) it is **never a PASS** — the miss is reported at full magnitude and the
+      run can never read `CALIBRATED`. Admissible because C3c is SUPPORTING tier; the v3.0
+      fail-closed guard still refuses `model-class` on load-bearing (C1/C2/C3a/C3b) and
+      protective (C6/C7/C8) criteria.
     - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
       and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is

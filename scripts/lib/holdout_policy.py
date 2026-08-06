@@ -77,7 +77,25 @@ LOCKED_TEST_YEARS: frozenset[int] = frozenset({2019, 2026})
 # Rule 22's validation ladder: "2022, extensible backward as a staged ladder
 # (2022 -> 2020-2022 -> earlier as data lands and is authorized)". Enumerated
 # rather than open-ended so that adding a rung is an explicit, reviewable edit.
-VALIDATION_YEARS: frozenset[int] = frozenset({2018, 2020, 2021, 2022})
+#
+# 2018 REMOVED 2026-08-06 (owner decision, session neiso-86: "drop 2018 from
+# solve years then and have it be 2019-2025 for all ISOs to keep things
+# simpler"). The program's working span is now 2019-2025 and the ladder's
+# earliest rung is 2020. This is a RESTRICTION, not a relaxation: with 2018
+# absent from every enumerated set, `year_tier` falls through to its
+# fail-closed default and treats it as LOCKED-TEST tier, so 2018 needs a
+# `final` marker no ISO holds and is unsolvable in practice.
+#
+# The substantive reason 2018 is not merely "simpler" to drop: NEISO's 2018
+# gas basis is UNREPAIRABLE at present. neiso-86 replaced the seasonally
+# inverted EIA N3050MA3 proxy with the measured ISO-NE MA index for 2019-2022,
+# but ISO-NE migrated its newswire mid-2018 and the March-June 2018 recaps were
+# never carried over (WP archive jumps 2018-03-26 -> 2018-08-24, legacy
+# /updates/ URLs 301 to the homepage, no Wayback capture). Those four rows
+# remain proxy-sourced, and June-2018 (+6.2124) is one of the inverted summer
+# values -- so a 2018 solve would fire the summer inversion in the worst month.
+# See results/calibration/FINDING-neiso86-gas-basis-intake-2026-08-06.md 5.1.
+VALIDATION_YEARS: frozenset[int] = frozenset({2020, 2021, 2022})
 
 # Which marker block authorizes which tier.
 TIER_MARKER_BLOCK: dict[str, str] = {
