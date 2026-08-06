@@ -5063,3 +5063,131 @@ construction and miso-104 opened the ask.
 **Ledger position:** 1/1 — C3c price tail alone. After v3.1 there is no
 load-bearing slot to ledger into at all, so rule 24's "the next load-bearing
 miss must be BUILT, not ledgered" is now structural rather than a discipline.
+
+## 2026-08-06 — miso-137: the mean-LMP gap has NO tail/body separation — it is a MONOTONE CONTINUUM in the actual price level; the pre-registered threshold guard fired and the tail/body verdict is NOT ASSERTED. The stable object is a COMPRESSED PRICE DISTRIBUTION localised to summer h12–17. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+
+Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
+`miso132_ccmin_B`, **NOT-YET**). Charter lane **(a)** — decompose the 2024/2025
+mean-LMP gap on the committed keeper sidecars, no solve. **PREREG pushed at
+`b0e3425d` BEFORE any adjudicating statistic**, two-sided prior with an explicit
+MIXED branch, look-alike trap (diffuse spike spillover) named in advance with a
+pre-committed measurement and override. Owner directive honoured: the target is
+the 2024/2025 mean-LMP level miss; no C7 lane, no C7 ledger.
+
+### The verdict is NOT ASSERTED, and the reason is the finding
+
+PREREG §3's sensitivity guard fired. On the gated RT basis the primary
+statistic `body_share` (2024 / 2025):
+
+| threshold | 2024 | 2025 | branch |
+|---|---:|---:|---|
+| actual > $100 | −0.519 | −0.154 | HOLDS |
+| actual > $200 | +0.227 | +0.301 | HOLDS |
+| actual > $500 | +0.655 | +0.678 | **FAILS** |
+
+The verdict flips between $200 and $500, so per the pre-committed rule no
+tail/body verdict is asserted. A "share" ranging −0.52 → +0.68 across arbitrary
+cuts of one dataset is not measuring a stable quantity.
+
+### Why — the gap is monotone in the actual price level, with no break
+
+RT 2025, per-hour deficit by actual band: **+12.63** (0,20] · **+5.97** (20,40] ·
+−5.33 (40,60] · −26.43 (60,100] · **−84.48** (100,200] · −239.80 (200,500] ·
+−824.46 (>500). The model over-prices every hour below ~$40 and under-prices
+every hour above it, its own price crawling 42 → 48 → 51 → 56 → 70 while the
+actual runs 48 → 74 → 135 → 296 → 895. **The largest single under-pricing band
+is (100,200] at −$2.91/MWh — inside the BODY under the $200 cut** — larger than
+(200,500] (−$2.41) and larger than >$500 (−$2.07). The $200 line does not
+separate two mechanisms; it cuts one continuum in half.
+
+### The stable object: a compressed price distribution, summer h12–17
+
+Unlike the split, the season × hour-of-day map is consistent across all three
+years and both bases. `summer/h12–17` is the dominant under-priced body cell
+everywhere, mirrored by a persistently **over**-priced `summer/h00–05`:
+
+| window (load-weighted $/MWh, RT) | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| summer h12–17 model / actual | 39.49 / 47.82 | 39.10 / 49.77 | **44.24 / 74.68** |
+| summer h00–05 model / actual | 27.79 / **19.74** | 24.93 / **19.69** | 33.40 / **28.41** |
+
+2025 summer afternoon carries −$2.51 of the −$6.41 RT gap (39 %) at −41 % on
+level; summer night runs +18 % **above** actual. This unifies miso-89 (diurnal
+spread compression), miso-130 (July-night regime), miso-134 (hour-invariant flat
+CT margin), miso-87 (summer-2025 body) **and the C3c tail** into one
+phenomenon — a stack too flat to disperse prices disperses too little at *both*
+ends. C3b PASSES on this keeper: the duration curve and the level-conditional
+error are not the same test.
+
+### The trap, measured not assumed
+
+Spillover (share of the body gap within ±3 h of an actual spike): **0.626 on
+RT 2025** — material, exactly the look-alike the PREREG named — and **0.135 on
+DA 2025** — immaterial. Both follow from the continuum: with no spike *edge*,
+adjacency mostly measures how much continuum the $200 cut left on the body side.
+
+### The two bases agree on structure, differ only in bookkeeping
+
+RT and DA actuals carry nearly the same 2025 annual mean ($45.39 vs $46.29) but
+very different distributions, so the SAME error books 70 % "tail" against RT and
+84 % "body" against DA. **The tail/body split is a property of which actual you
+difference against, not of the model's error.** Net of the committed DA−RT
+premium (+0.90) the 2025 DA body gap is still −$5.24/MWh. **The 2023 control is
+the sharpest row: C3a passes at −0.5 % BY CANCELLATION** (RT body +0.87 against
+tail −1.00) — a passing C3a year here is not evidence of correct price formation.
+
+### G-0, and a bench defect it surfaced
+
+Reproduction of the scorer passes EXACTLY: model scalar 32.7156 / 30.3676 /
+39.0472 vs the scorer's 32.72 / 30.37 / 39.05, percentages to 0.04 pp,
+additivity residual exactly 0.0 in every cell. But recomputing the committed
+`*_lw` actual scalars from today's committed inputs gives **45.4555 vs the
+committed 45.39** (2025 RT; 2023 Δ −0.023, 2024 Δ +0.031). The price series
+reproduces exactly (legacy `rt` 42.85 ✓) and `load_demand`'s and the sidecar's
+weights are identical today, so the committed MISO `*_lw` bench came from an
+**earlier demand vintage** — the scorer compares a model dispatched on today's
+demand against an actual weighted on a stale one. Small ($0.07; C3a 2025 reads
+−14.1 % not −14.0 %) but real; it belongs to whoever next refreshes the MISO
+bench. The PREREG stop rule fired and is honoured: the defect is reported and
+its effect **bounded exactly** — forcing the whole Δ into either side moves 2025
+`body_share` only within [0.294, 0.304] (2024 [0.215, 0.231]), unable to reach
+any pre-registered boundary.
+
+**§0 correction:** the charter quoted C3a 2023 −2.2 % / 2024 −8.0 %; the
+committed artifacts for this keeper read **−0.5 %** / **−5.9 %** (2025 −14.0 %
+and all three DA diagnostics match). Corrected trend −0.5 → −5.9 → −14.0.
+
+### What it does to the 2025 C3a ledger
+
+Neither confirmed nor refuted — **shown to be ill-posed as stated**. The 88
+hours do carry $4.48 of $6.41 at the $200 cut, so the arithmetic is true *at that
+cut*; but the cut is arbitrary, (100,200] under-prices harder per hour, $500
+reverses it, and DA books 84 % to the body. The ledger's inference — "NOT an
+independent level error" — does not follow from its arithmetic. No ledger edit is
+made here (a promotion-time act); the evidence is on record.
+
+### The generalisable lesson — A THRESHOLD IS A HYPOTHESIS, NOT A DEFINITION
+
+A partition only carries information when the structure it cuts has a **break**
+there. MISO's price error has none, so the split reported **the cut, not the
+market**, and would have reported a different "fact" at any other cut. *Before
+splitting a residual at a threshold, test whether the threshold is where the
+structure changes; if the answer moves with the cut, the cut is the finding.*
+Family: miso-129 → miso-131 → miso-132(a) → miso-133 → miso-134 → miso-135 →
+miso-136 → **miso-137**.
+
+### Rule duties
+
+**Rule 15**: no LP solved, so no run to register (miso-131…136 precedent).
+**Rule 28(b)**: **no cell verdict minted** — no mechanism tested, probed or
+armed; `measured_offer_surface` MISO stays `U`; §5.4 queue stamp written this
+session (and §5.4's header re-targeted to the mean-LMP miss per the owner
+directive). **Rule 22**: 2023–2025 only. **Rules 13/19/21/24/25**: nothing sized
+on any residual, no parameter derived, no artifact re-derived, no tuning channel
+created, nothing written under `data/raw/`, no other ISO's cell touched.
+
+FINDING `results/calibration/FINDING-miso137-gap-is-a-monotone-continuum-2026-08-06.md`;
+PREREG `results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`;
+probe `scripts/probes/_miso137_c3a_gap_decomposition.py`;
+record `results/calibration/_miso137_c3a_gap_decomposition.json`.
+Next number: **miso-138**.
