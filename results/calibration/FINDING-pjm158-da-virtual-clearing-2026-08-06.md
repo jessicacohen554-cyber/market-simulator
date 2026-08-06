@@ -207,6 +207,22 @@ project's own load-bearing price gate — would clear this layer at +5.08 / +3.0
 **$8.0–$11.7/MWh**, and at a −400 MW/$ gain that is worth several TWh/yr by
 construction.
 
+**Neither half of the basis can be corrected away separately.** Clearing at an
+intermediate price — RT's hour-by-hour *shape* carrying DA's *mean* — splits
+the basis exactly:
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| LEVEL (same shape, DA mean → RT mean) | +2.991 | +0.973 | +2.432 |
+| SHAPE / hour-by-hour dispersion | +2.845 | +3.648 | +4.145 |
+| = DA−RT basis | +5.836 | +4.621 | +6.577 |
+
+The level leg reproduces `−mean(DA−RT) × gain` to ~1 % (2024: 0.256 $/MWh ×
+462.8 MW/$ × 8760 h = 1.04 TWh vs +0.973 measured), which validates the split.
+Dispersion is the larger leg in 2024 and 2025, so **a level adjustment alone
+would not close it** — and a level adjustment tuned to the gap would be a
+rule-13 violation in any case.
+
 Three consequences:
 
 1. **The invariant is unreachable in this LP.** It is not a calibration
