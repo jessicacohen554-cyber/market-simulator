@@ -3947,3 +3947,50 @@ clears the 0.25 falsification bar (FINDING-pjm159 §4); or the step-2 forecast t
 evidence — the third would fold B4 into the sequence instead of leaving it open-ended.
 
 Next shorthand: **pjm-161.**
+
+## 2026-08-06 — RECORD CORRECTION (owner decision D-23, cross-ISO): the "precedent that should settle it" rested on a FALSE premise — NEISO's locked test was never spent
+
+**GOVERNANCE lane, committed artifacts only. No solve, no scoring, no year touched,
+no PJM lane state changed, no PJM marker granted or withdrawn. Correct-by-addendum —
+the pjm-159 entry this corrects is left intact, as is the pjm-160 addendum that
+follows it (checked this session: pjm-160 does **not** repeat the claim).**
+
+**THIS ONE IS LOAD-BEARING FOR AN OPEN PJM DECISION, which is why it gets its own
+entry rather than a footnote.** The pjm-159 `final`-declaration argument in this log
+(§ *"The precedent that should settle it"*) reads:
+
+> "NEISO's locked test was spent 2026-07-07 on
+> `2026-07-07-neiso53-winter-fuelsec-coldsnap`; the keeper moved to `neiso-54` the NEXT
+> DAY and stands at `2026-08-05-neiso-83-ca1-reclass` — **thirty keeper generations
+> later.** Its honest out-of-sample number describes a model that no longer exists and
+> is never re-grantable."
+
+**The premise is false and the cited precedent does not exist.** NEISO's locked test
+was **never granted and never spent**: no NEISO 2019 or H1-2026 year has ever been
+solved, scored or registered (every NEISO registry sidecar ever committed declares
+years drawn only from {2022, 2023, 2024, 2025}; `bench/NEISO/` holds 2022–2025;
+`actual_tail.json` has no 2019 row; the memo cited as the authorization never mentions
+2019, and the one-shot it *did* authorize was on **2022** and was held the same day).
+The id named as the "frozen config" is a **TRAIN-tier 2023–2025 run**. There is no
+"honest out-of-sample number" describing a superseded NEISO model, because there is no
+out-of-sample number.
+
+**What this does to the pjm-159 argument.** The *conclusion* — HOLD, do not declare PJM
+`final` — is **untouched and not revisited here**; this correction neither grants nor
+withdraws anything for PJM, and the B1–B4 blockers stand on their own evidence. What
+is withdrawn is one *supporting analogy*. Note the direction of the error: the analogy
+was deployed as a **caution** ("look how fast a spent one-shot goes stale"), and the
+true state of the record — *nobody has ever spent one* — is if anything a **stronger**
+caution, because the program has no worked example of a locked-test spend at all. A
+future PJM session must not cite NEISO as precedent for either half of the question:
+NEISO is not an example of a spent one-shot, and it is not an example of a foreclosed
+one. Its own `final` answer is **NOT YET** on independent merits (2019 unsolvable at
+HEAD; C3c non-discriminating in 2019).
+
+Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
+at the 2026-08-06 sitting Addendum X.6**. Full record:
+`docs/handoffs/neiso-record-correction-2026-08-06.md`. *(The same false premise appears
+in `results/calibration/ASSESSMENT-pjm159-final-declaration-2026-08-06.md` §8 and its
+§1 summary. That file is an immutable per-run session record and was deliberately NOT
+rewritten; this entry is the live correction for the PJM lane.)*

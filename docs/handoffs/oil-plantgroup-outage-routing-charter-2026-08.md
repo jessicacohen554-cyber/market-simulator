@@ -187,7 +187,9 @@ mechanism live elsewhere. **Scope the lane to both legs or state explicitly why 
   cause.
 - **Rule 15 / 16.** Any solve is 2023 + 2024 + 2025 in one bundle and gets registered.
 - **Rule 22 `[R-HOLDOUT]`.** The spend freeze is ACTIVE. `--year` strictly {2023, 2024,
-  2025}. NEISO's locked test is SPENT and never re-grantable.
+  2025}. NEISO's locked test has **NEVER BEEN GRANTED** (*corrected 2026-08-06, owner
+  decision D-23 — this read "is SPENT and never re-grantable", which was false; either way
+  this charter touches no out-of-training year*).
 - **Rule 28 `[R-MECH-MATRIX]`.** A new `ScenarioConfig` gate needs its matrix row in the
   same PR; each ISO's verdict is its own cell and never transfers (28d).
 

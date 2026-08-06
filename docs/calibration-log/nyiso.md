@@ -5634,3 +5634,30 @@ Evidence:
 `_nyiso130_ab_gates.py`, `_nyiso130_solar_gwh_reconciliation.py`.
 
 * Next number: **nyiso-131**.
+
+## 2026-08-06 — RECORD CORRECTION (owner decision D-23, cross-ISO): NEISO's locked test was NEVER GRANTED, not "SPENT"
+
+**GOVERNANCE lane, committed artifacts only. No solve, no scoring, no year touched,
+no NYISO lane state changed. Correct-by-addendum — the entry below is left intact.**
+
+The tiered-holdout entry in this log (§ "locked test | 2019, 2026 (H1) | **`final`**")
+states that **"NEISO's locked test is already SPENT (2026-07-07, frozen neiso-53) and
+must never be re-granted"**, and uses that as the worked contrast against NYISO's
+"never scored, not granted". **The NEISO half of that contrast is false.** No NEISO
+2019 or H1-2026 year has ever been solved, scored or registered: every NEISO registry
+sidecar ever committed declares years drawn only from {2022, 2023, 2024, 2025},
+`bench/NEISO/` holds 2022–2025, `actual_tail.json` has no 2019 row, and the memo cited
+as the authorization never mentions 2019. **NEISO is in the SAME category as NYISO —
+never scored, not granted.**
+
+Nothing about **NYISO's** posture changes: NYISO holds `complete` (validation only),
+is absent from `final`, and `holdout_policy.authorized(NYISO, locked_test)` is still
+`False`. The surviving general point is also unchanged and still correct — *a blank
+`final` must never read as an invitation* — but the reason is now uniform across ISOs
+rather than ISO-specific: **no ISO is currently in the "spent" state at all**, so every
+blank today means "never authorized".
+
+Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
+at the 2026-08-06 sitting Addendum X.6**. Full record:
+`docs/handoffs/neiso-record-correction-2026-08-06.md`.
