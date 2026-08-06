@@ -46,7 +46,19 @@ LOAD_DIR = paths.RAW_DATA_DIR / "zone-specific-demand" / "CAISO"
 # CAISO TAC areas kept from SLD_FCST (the report also carries the other WECC
 # BAs' system loads, which we drop). VEA is Valley Electric, the small NV
 # member; CA ISO-TAC is the system total used for reconciliation.
-CAISO_TACS = ("CA ISO-TAC", "PGE-TAC", "SCE-TAC", "SDGE-TAC", "VEA-TAC")
+#
+# MWD-TAC ADDED 2026-08-05 (caiso-175). Metropolitan Water District of Southern
+# California is a CAISO metered subsystem and the SIXTH CAISO-internal area the
+# live SLD_FCST domain carries — it was omitted here, so the committed
+# CAISO_tac_load_hourly_<year>.csv carried five areas and MWD's ~126-172 MW was
+# invisible to data/eia930/zonal_shares.py. Because load_zonal_shares
+# NORMALISES the component TACs to 1.0, the omission is not missing load: MWD
+# was silently re-apportioned PRO RATA across the four modelled TACs, sending
+# ~58-76 MW (0.24-0.30 % of ISO load) north of Path 15 that belongs in SP15.
+# Named as an open demand-input gap by caiso-172 §1.1, measured by caiso-173 §C
+# (ASSESSMENT-caiso173-frontier-2026-08-04.md), closed here. Rule 14
+# [R-ACCURATE]: a measured area replaces a pro-rata estimate of it.
+CAISO_TACS = ("CA ISO-TAC", "MWD-TAC", "PGE-TAC", "SCE-TAC", "SDGE-TAC", "VEA-TAC")
 
 # Raw window files written by fetch_caiso_oasis.py: {key}_{node}_{Ymd}_{Ymd}.csv
 _FETCH_NAME = re.compile(r"^(dam|rtm|load)_.+_\d{8}_\d{8}\.csv$")

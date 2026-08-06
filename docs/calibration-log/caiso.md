@@ -6455,3 +6455,113 @@ entry itself: C7/C8 are **unscored-protective** on caiso-174 because its bundle 
 `legitimacy_diagnostics.json` (the superseded caiso-172 does, and scores both PASS) — a
 scorer-only gap under rule 21, deliberately not repaired in this committed-artifacts-only lane.
 Full record: `docs/handoffs/caiso-complete-grant-2026-08-05.md`.
+
+## 2026-08-06 — CAISO — caiso-175: the TAC load-series intake — MWD-TAC closed, the 2023 series was covering **744 of 8,760 hours**, and C7/C8 are scored for the first time
+
+**Runs:** BOTH registered (rule 15). Keeper PROMOTED
+`2026-08-05-caiso-174-measured-fleet` → **`2026-08-06-caiso-175-tac-intake`**;
+control `2026-08-06-caiso-175-control-tacbase` registered as a CONTROL, never a
+candidate. Determination **CALIBRATED-WITH-CAVEATS**, **0 FAILs**, same 2 ledgered
+caveats (C3a, C3c), D-10 12/12 · free 8/8. Solved 2023/2024/2025 in one bundle per
+arm (rule 16); arms SEQUENTIAL (rule 12). `holdout-freeze.json` **UNTOUCHED**
+(owner act); `calibration-complete.json` re-keyed **only** as rule 22 D-5(b)
+requires on promotion.
+
+**Why this session existed.** Asked to find gates not yet calibrated on the testing
+years and then run a bundle at them. Three things were found, in this order.
+
+**(1) C7 AND C8 HAD NEVER BEEN SCORED ON ANY CAISO KEEPER.** No CAISO bundle carried
+`legitimacy_diagnostics.json`, so both PROTECTIVE criteria read `SKIPPED` — the gap
+the `complete` grant itself recorded against interest as *"a scorer-only gap under
+rule 21, deliberately not repaired in this committed-artifacts-only lane"*. Closed
+with **NO LP** (rule 21: scorer-only, existing keepers re-score in place) for both
+arms **and retro-fitted to the superseded caiso-174 bundle** so the incumbent is
+comparable. Both **PASS**. **Scored surface 7 → 9 criteria.**
+
+**RECORDED AGAINST INTEREST:** the raw D-1 diagnostic reports `Overall: FAIL`,
+failing `ST_GAS` on profile r (2024 **0.114**, 2025 **−0.021**). Those rows are real
+and are **not dismissed**. They do not raise a C7 FAIL because `score_shape` applies
+rule 21's materiality screen and CAISO ST_GAS is **0.6/0.4/0.1 % of ISO load** —
+the rubric's own pre-existing `PROTECTIVE_MIN_LOAD_FRAC = 0.02` (owner amendment
+2026-07-06), **not a threshold chosen here**. **No scorer constant was touched.**
+Filed as owed: `run_d1`'s `gated` column screens on the class list alone while
+`score_shape` screens on class list **and** load share, so the artifact reads FAIL
+where the rubric reads PASS.
+
+**(2) MWD-TAC — the dedicated session caiso-173 §C asked for.** The sixth
+CAISO-internal `SLD_FCST` area was hard-coded out of
+`postprocess_oasis_downloads.CAISO_TACS`. Because `load_zonal_shares` NORMALISES the
+component TACs to 1.0 this was **not missing load** but a **pro-rata
+misapportionment** of the measured **119.1/171.6/144.1 MW**. Mapped **1:1 onto
+`SP15_rest`** — structural, not fitted: MWD's metered load is the Colorado River
+Aqueduct pumping chain, which the CAISO LCT taxonomy carries as `Blythe`/`Parker`,
+distinct from `LA Basin` and `San Diego/Imperial Valley`, and `SP15_rest` is exactly
+that SP26 residual. The measured shape **corroborates** the identification rather
+than assuming it: hour-of-day CV **0.005** against 0.115–0.128 for the retail TACs,
+summer/winter **1.50** — a flat industrial pumping block on water-delivery
+seasonality. **caiso-173 §C is CONFIRMED ON DATA:** it predicted 0.297/0.243 pp of
+ISO load misplaced north of Path 15; realised **−0.262/−0.215 pp** (its estimate ran
+~12 % high, being computed against the January-window MWD mean).
+
+**(3) THE 2023 COVERAGE HOLE — found while performing (2), and NOT previously on the
+record.** `CAISO_tac_load_hourly_2023.csv` spanned **2023-01-01 → 2023-02-01 only**:
+744 of 8,760 hours, so **91.5 % of a SCORED calibration year ran on a flat
+January-average zonal split** with no diurnal and no seasonal shape. The loader had
+been announcing it in every 2023 run (*"covers 744/8760 hours; uncovered hours use
+the sample-average zone shares"*) and it had never been actioned. Its
+re-apportionment is **five times** the MWD leg: NP15 **−1.123 pp**, LA_BASIN
+**+1.239 pp** — January year-round over-weighted the winter-heavy north and
+under-weighted the summer-peaking LA Basin. **It could not have been back-filled by
+re-running the fetcher:** `fetch_caiso_oasis`'s coverage check keys on ONE reference
+series (`CA ISO-TAC`), so once an aggregate exists it reports every day covered even
+for a series never kept. `--force` was added for exactly the widened-kept-set case.
+
+**THE CONTROL EARNED ITS KEEP, DECISIVELY.** Incidental code drift (A − keeper) is
+**+0.168/+0.049/+0.115 $/MWh** on load-weighted mean LMP — **larger in every year**
+than the intake itself (B − A) at **+0.118/−0.004/+0.002**. Without Arm A the 2023
+movement would have been read as the intake when most of it is drift between head
+`ae7658d0` and this one. **The attribution separated BY YEAR for free** (PRECHECK
+§3a): 2024/2025 were already fully covered, so their delta is **MWD alone — a
+measured null on price** (≤0.01 %); 2023 carries both, so the coverage leg is the
+remainder. Intra-ISO 2023 still moves even though the ISO mean barely does: SDGE
+**−0.860**, LA_BASIN/SP15_rest **+0.418** $/MWh, with CC_REGULAR **−0.367 TWh**
+re-dispatched to CT_PEAKER +0.151 and ST_GAS +0.149.
+
+**The verdict rule fired as pre-registered.** PRECHECK §2 fixed, before any number
+was read, that determination-holds + no-new-FAIL + no-new-caveat ⇒ PROMOTE — and,
+the row that actually binds, that a **degraded** criterion would **not revert the
+input**, because rule 14 makes a worse fit on accurate data a *discovered bug*, not
+grounds to restore the estimate. First branch fired. Arms' `scenario_config`
+**IDENTICAL across all 692 keys** (fail-closed in `gen_caiso175_attestation.py` —
+this session's delta is a data file plus a `constants.py` table, not a config field);
+re-fetch **byte-faithful** on every pre-existing row (max |Δ| **0.000000 MW**, 0 rows
+differing); DOF ledger **UNCHANGED** at n_entries 11 / n_residual 8.
+
+**REPORTED AGAINST INTEREST — KNOWN-OPEN 1 moves slightly AWAY from measured**
+(5.7→5.2 %, 2.5→2.4 %, 3.0→2.9 % of the measured +5.947/+8.576/+5.727). The
+direction is **physically obligatory** — load moved south of Path 15 needs less N→S
+transfer, hence less congestion — and **the input stays regardless** (rules 1/14).
+No N–S topology lever is chartered off this (caiso-164 §0/§6 stands).
+
+**Rule 22 D-5(b) re-keying performed:** `complete`'s `keeper` re-keyed and its
+`determination` re-verified from committed artifacts only
+(`calibration_verdict.py --run-id`, never a solve) before the promotion landed. The
+re-verified determination is **not worse** — same determination, same caveats, same
+0 FAILs, two MORE criteria scored — so the escalation branch did not fire.
+`keeper_at_declaration` preserved at `2026-08-05-caiso-174-measured-fleet`; a
+`rekey_log` entry records the transition. `audit_keepers.py --iso CAISO` **PASS**
+(0 failures, 0 warnings, M1 included).
+
+**Owed, named, not buried:** the other five `tac_load_coverage` cells are **`U`, not
+`.`** — no structural reason another ISO's zonal-load series cannot carry the same
+completeness defect, and **no sweep has been run**. That no-LP cross-ISO audit is
+the highest-value follow-on this session opens.
+
+Matrix: **new row `tac_load_coverage`, CAISO `K`**; §5.2 header re-stamped and the
+`keepers.CAISO` stamp corrected (it had been stale at caiso-172, skipping the
+caiso-174 promotion). No existing cell verdict moves. Evidence:
+`results/calibration/FINDING-caiso175-tac-load-intake-2026-08-06.md`,
+`PRECHECK-caiso175-tac-load-intake-2026-08-05.md`, probe
+`scripts/probes/_caiso175_ab_compare.py`, record
+`results/calibration/_caiso175_ab_compare.json`, attestation generator
+`scripts/gen_caiso175_attestation.py`.

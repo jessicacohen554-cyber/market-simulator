@@ -3274,12 +3274,37 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # ISO load (same LCT `peak_load` table used for the zones' static load_share,
 # 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and
 # VEA-TAC map 1:1 onto their own sub-zones (measured, clean).
+# MWD-TAC (added caiso-175, 2026-08-05) is the Metropolitan Water District of
+# Southern California metered subsystem — the SIXTH CAISO-internal area the live
+# OASIS SLD_FCST domain carries. It was missing from
+# scripts/data/postprocess_oasis_downloads.CAISO_TACS, so it never reached the
+# committed TAC series and had no row here; because load_zonal_shares NORMALISES
+# the component TACs to 1.0, its load was not dropped but silently re-apportioned
+# PRO RATA across the other four (caiso-173 §C measured the misplacement at
+# 0.24-0.30 % of ISO load landing north of Path 15). Measured 2023/2024/2025
+# means: 119.1 / 171.6 / 144.1 MW.
+#
+# IT MAPS 1:1 ONTO SP15_rest, and the assignment is structural, not fitted.
+# MWD's CAISO-metered load is the Colorado River Aqueduct pumping chain (Whitsett
+# Intake, Gene, Iron Mountain, Eagle Mountain, Hinds) in eastern Riverside/San
+# Bernardino County. The CAISO LCT study's own local-area taxonomy carries that
+# corridor as `Blythe` / `Parker` — areas DISTINCT from both `LA Basin` and
+# `San Diego/Imperial Valley` (data/raw/capacity-deliverability/caiso/caiso.csv)
+# — and SP15_rest is defined above as exactly the SP26 residual outside those two
+# pockets. The measured load shape corroborates the identification rather than
+# assuming it: MWD's hour-of-day CV is 0.005 against 0.115-0.128 for the retail
+# TACs (a flat industrial pumping block, not a retail diurnal shape) with a
+# summer/winter ratio of 1.50 (water-delivery seasonality). Rule 14 [R-ACCURATE]:
+# a measured area replaces the pro-rata estimate of it; rule 5 [R-NO-MAGIC]: the
+# 1.0 is a 1:1 area containment, not a tuned split.
 CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
     # MEASURED: caiso-172 derive, backcast-mean 2023-2025 (see comment above).
     "PGE-TAC": {"NP15": 0.883951, "ZP26": 0.116049},
     "SCE-TAC": {"LA_BASIN": 0.835, "SP15_rest": 0.165},
     "SDGE-TAC": {"SDGE": 1.0},
     "VEA-TAC": {"SP15_rest": 1.0},
+    # caiso-175: 1:1 containment, see the module note directly above.
+    "MWD-TAC": {"SP15_rest": 1.0},
 }
 
 # NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
