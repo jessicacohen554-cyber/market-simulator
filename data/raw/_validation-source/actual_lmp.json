@@ -116,7 +116,38 @@
         "p95": 49.98,
         "p99": 236.51,
         "max": 9000.0
-      }
+      },
+      "rt_lw": 46.9,
+      "rt_lw_mon": [
+        24.82,
+        26.36,
+        29.94,
+        27.65,
+        27.93,
+        28.93,
+        34.08,
+        163.24,
+        60.7,
+        40.3,
+        30.33,
+        20.54
+      ],
+      "da_lw": 49.29,
+      "da_lw_mon": [
+        26.27,
+        22.47,
+        31.41,
+        25.07,
+        26.39,
+        28.68,
+        33.39,
+        156.21,
+        98.82,
+        37.96,
+        29.34,
+        22.71
+      ],
+      "src_lw": "zonal LZ settlement prices (RTM 15-min / DAM hourly) load-weighted by measured zonal demand (eia_loader.load_demand), model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
     },
     "2020": {
       "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
@@ -175,7 +206,38 @@
         "p95": 35.9,
         "p99": 143.97,
         "max": 1696.16
-      }
+      },
+      "rt_lw": 25.5,
+      "rt_lw_mon": [
+        18.01,
+        27.54,
+        32.54,
+        20.86,
+        19.78,
+        16.06,
+        21.39,
+        42.07,
+        22.91,
+        33.9,
+        26.79,
+        21.53
+      ],
+      "da_lw": 26.4,
+      "da_lw_mon": [
+        18.52,
+        24.68,
+        31.55,
+        22.81,
+        20.77,
+        21.1,
+        25.56,
+        48.85,
+        20.84,
+        26.67,
+        26.31,
+        22.65
+      ],
+      "src_lw": "zonal LZ settlement prices (RTM 15-min / DAM hourly) load-weighted by measured zonal demand (eia_loader.load_demand), model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
     },
     "2021": {
       "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
@@ -997,7 +1059,38 @@
         "p99": 75.74,
         "max": 672.47
       },
-      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
+      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)",
+      "rt_lw": 26.54,
+      "rt_lw_mon": [
+        30.8,
+        27.56,
+        29.17,
+        25.9,
+        23.4,
+        22.69,
+        29.5,
+        23.82,
+        28.02,
+        26.72,
+        27.12,
+        22.9
+      ],
+      "da_lw": 26.56,
+      "da_lw_mon": [
+        32.78,
+        26.63,
+        29.47,
+        26.04,
+        24.3,
+        23.02,
+        29.39,
+        25.11,
+        25.35,
+        24.16,
+        27.72,
+        23.23
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     },
     "2020": {
       "da": 19.99,
@@ -1056,7 +1149,38 @@
         "p99": 65.67,
         "max": 340.65
       },
-      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)"
+      "src": "PJM RT/DA LMP, mean of the 12 trading hubs (hourly)",
+      "rt_lw": 21.2,
+      "rt_lw_mon": [
+        21.73,
+        19.07,
+        17.58,
+        17.07,
+        17.29,
+        19.8,
+        26.33,
+        24.34,
+        19.59,
+        22.04,
+        20.55,
+        25.22
+      ],
+      "da_lw": 20.91,
+      "da_lw_mon": [
+        21.98,
+        19.56,
+        17.7,
+        16.67,
+        17.04,
+        19.2,
+        25.85,
+        23.62,
+        19.35,
+        20.92,
+        20.23,
+        25.03
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     },
     "2021": {
       "da": 36.87,
