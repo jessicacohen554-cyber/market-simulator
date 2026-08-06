@@ -21,6 +21,7 @@ artifacts, which is what pjm-157 did and what Question C required.
 | **0.3** — is the `N_RUNGS` compression a representation bug? | **NO.** It contributes **−0.068 / −0.008 / −0.110 TWh**; λ0 displacement **−0.19/−0.23/−0.48 $/MWh**; 8→64 rungs moves the cleared volume ≤ 0.13 TWh. | The docstring's "resolution only, never tunable values" is **VERIFIED**. The hoped-for representation-exact fix **does not exist**. |
 | **0.2** — what is the layer's gain? | `dNet/dλ` = **−440 / −463 / −340 MW per $/MWh**, steepest overnight (h00–h09, −450 to −540), flattest at the afternoon peak. A uniform $1/MWh error is worth **3.0–4.1 TWh/yr**. | C1 is quantitatively conditional on C3b, as pjm-157 argued. |
 | **0.2b** — *against which price is the invariant even defined?* | The anchor reproduces at actual **DA** prices (−0.76/−1.62/+0.20 TWh). The model's dual is gated as **RT**. Clearing the same curve at actual RT gives **+5.08/+3.00/+6.78 TWh of phantom demand**. | **THE FINDING.** The invariant is **unreachable in this LP** at any price-calibration quality. |
+| **Phase 1** — the pre-registered A/B | **P1, P2, P3 all CONFIRMED.** Disarming adds +5.95/+5.18/−2.01 TWh of physical generation, moves `CC_REGULAR` by **+5.22/+6.85/+2.69 TWh**, and degrades every price gate. Control passes all criteria; **treatment FAILS C3c-2025**. | The layer's effect is real and large. **The fit is better armed** — reported, not decisive (rule 1). |
 
 **The one sentence that replaces pjm-157's open question.** pjm-157 asked
 whether a layer whose net clearing runs ±8 TWh from its own admissibility
@@ -298,10 +299,153 @@ price**, not of the curve.
 
 ---
 
-## §5 — Phase 1: the pre-registered A/B
+## §5 — Phase 1: the pre-registered A/B — all three predictions CONFIRMED
 
-*(Filled in below once both arms land; predictions are frozen in the
-pre-registration and were pushed before either arm solved.)*
+Registered runs: **`2026-08-06-pjm-158-control-virtual`** (`pjm158_ctl_A`,
+layer armed) and **`2026-08-06-pjm-158-novirtual-disarmed`**
+(`pjm158_novirt_B`, layer disarmed). Both `--year 2023 2024 2025` in one
+invocation, years sequential (rules 12/16).
+
+**The control validates the whole A/B: it reproduces the pjm-152 keeper
+BYTE-IDENTICALLY — max |Δ| = 0.00000 TWh across every class and every year.**
+So HEAD *is* solve-identical to the keeper's basis for PJM's backcast path; the
+37-file / 6,414-insertion diff since `bc9e6dbf` is entirely forecast-lane code.
+The handoff asked for this to be verified rather than assumed, and it was
+verified by solving. The delta is also visible in the solver logs — the control
+builds "64 DEC-form + 64 INC-form pseudo-units" in each year, the treatment
+builds none, and the LP matrix build drops 44.3 s → 18.8 s.
+
+### §5.1 — P1 (system generation): CONFIRMED in all three years
+
+| TWh | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| layer net demand in control (+ = phantom load) | −7.451 | −6.552 | +0.905 |
+| Δ physical generation (treatment − control) | **+5.949** | **+5.182** | **−2.011** |
+| Δ seam (`import`) | +0.999 | +0.667 | +0.368 |
+| implied NG-equivalent error, control → treatment | −9.94 → **−3.99** | −9.25 → **−4.07** | +1.72 → **−0.29** |
+
+The error moves toward zero in **all three** years. The pre-registered point
+predictions (−2.49/−2.70/+0.81) are not hit exactly, and the reason is the
+caveat pre-registered with them: the unconstrained star node (pjm-135 M4)
+absorbed **+1.00/+0.67/+0.37 TWh** of the removed supply. P1 was registered as
+a direction test and passes as one.
+
+### §5.2 — P2 (the mechanism): CONFIRMED decisively
+
+| `CC_REGULAR`, TWh | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| control (armed) | 322.218 | 335.446 | 334.317 |
+| treatment (disarmed) | 327.439 | 342.295 | 337.006 |
+| **Δ** | **+5.220** | **+6.848** | **+2.689** |
+| actual (`classFull`) | 325.670 | 335.124 | 330.361 |
+| error, control → treatment | −3.451 → +1.769 | +0.322 → **+7.171** | +3.957 → **+6.645** |
+
+The falsification bar was |Δ| < 2 TWh in both 2023 and 2024; the observed Δ is
+**+5.22 and +6.85**. **The cleared virtual is displacing `CC_REGULAR`, and
+pjm-157 §1.1's causal channel is confirmed.** Roughly 80 % of the withdrawn net
+supply lands on physical generation and ~13 % on the seam.
+
+**Where my prediction was wrong, stated plainly.** P2 also predicted the
+`CC_REGULAR` *error* would move **away** from zero in 2023 and 2024. It does in
+2024 (+0.32 → +7.17) and 2025 (+3.96 → +6.65), but **not in 2023**, where it
+crosses zero and |error| improves (3.45 → 1.77). The reason is a baseline
+error of mine: I anchored the prediction on pjm-157's `CC_REGULAR` errors
+(+3.28/+6.32/+10.73), which are on the **CEMS census** basis, while the C1 gate
+scores against **EIA-923 `classFull`**. That is the same three-bases trap §1
+documents for coal, and it is not coal-specific:
+
+| `CC_REGULAR` actual, TWh | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|
+| `classFull` (EIA-923 — **what C1 scores**) | 297.130 | 325.670 | 335.124 | 330.361 |
+| `c_ann` (CEMS census — what pjm-157 used) | 290.008 | 318.941 | 329.125 | 323.587 |
+| offset | +7.123 | +6.729 | +5.999 | +6.774 |
+
+The offset is stable at ~+6–7 TWh in every year, so pjm-157's *year-over-year*
+decomposition is unaffected. Its *level* statements are not: **the 2022
+`CC_REGULAR` error is +25.40 TWh on the CEMS basis and +18.28 TWh on the basis
+the gate actually uses.** (Recorded because it is the same measurement issue
+Question C resolves — not a re-test of the CC object, which this session did
+not re-open.)
+
+### §5.3 — P3 (prices): CONFIRMED in all three years
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| C3a mean error, control → treatment | +8.8 % → **+9.7 %** | +2.1 % → **+3.5 %** | −5.0 % → **−6.3 %** |
+| hourly MAE vs actual RT ($/MWh) | 9.20 → **9.94** | 10.50 → **11.82** | 13.97 → **15.24** |
+| hours > $200 (model / actual) | 0 / 6 | 0→8 / 18 | 16→11 / 59 |
+
+Prices degrade on level and on MAE in every year, as pre-registered.
+
+### §5.4 — the rubric verdict
+
+| criterion | CONTROL (armed) | TREATMENT (disarmed) |
+|---|---|---|
+| C1 fuel-mix by class | **PASS** | **PASS** |
+| C2 system volume | **PASS** | **PASS** |
+| C3a mean LMP | **PASS** | **PASS** |
+| C3b price duration/shape | **PASS** | **PASS** |
+| **C3c price tail / scarcity** | **PASS** | **FAIL** — 2025 model 22 h vs RT actual 59 h (0.37×) |
+| C4 dispatch correlation | **PASS** | **PASS** |
+| C7 diurnal shape | **PASS** | **PASS** |
+| C8 forced-energy share | **PASS** | **PASS** |
+| determination | NOT-YET (C6 unattested) | NOT-YET (C6 unattested) |
+
+**Disarming costs exactly the criterion pjm-105's adoption note credited the
+layer with fixing** ("moved 2025 C3c 0→17h").
+
+### §5.5 — what the A/B does and does NOT settle (rule 1)
+
+**Settled.** The mechanism is doing real, large work: it injects 5–7 TWh/yr of
+net virtual supply, that supply displaces `CC_REGULAR`, and removing it
+degrades C1 `CC_REGULAR`, all three price gates, and breaks C3c-2025. pjm-157's
+channel is confirmed. **The fit is unambiguously better with the layer armed —
+and under rule 1 that is reported, not decisive.**
+
+**Not settled by the A/B, and this is the point.** Phase 0 established that the
+layer's rule-13 admissibility invariant is **unreachable in this LP** (§4): its
+anchor is a Day-Ahead quantity, the model's dual is gated as real-time, and the
+DA−RT basis alone is +4.6 to +6.6 TWh. No A/B can fix that, because it is a
+property of the model's architecture — the LP carries **one** price series —
+not of the mechanism's parameters. The A/B measures the mechanism's *effect*;
+Phase 0 measures its *justification*, and the justification is the part that
+fails.
+
+**Departure from my own pre-registered decision rule, and why.** §3(1) of the
+pre-registration said: if P2 confirms, "recommend the matrix cell move `K` →
+`R` … and say plainly that the fit gets worse". P2 confirmed. I am **not**
+executing that status change, and the reason is that the rule was written
+against an expectation the evidence overturned. It assumed disarming would
+*improve* the fit, making `R` the rule-1-clean call (real structure kept
+despite a worse residual is the rule; a phantom mechanism kept *because* of a
+better residual is what rule 1 forbids). The measured outcome is the opposite:
+disarming makes the model worse on **every** load-bearing and supporting gate
+and removes real, measured DA depth (~7–11 GW at the peaks) that pjm-105
+documented. Moving `K` → `R` on that evidence would be rejecting real market
+structure — which rule 1 forbids just as firmly as keeping a fitted one.
+
+The defect this session actually found is better described by rule 14
+`[R-ACCURATE]`: a **real measured input genuinely misaligned to our
+representation**. Rule 14's instruction for exactly that case is to keep the
+accurate input, **document the misalignment explicitly**, and open the
+root-cause investigation rather than bury the error in a worse input. So:
+
+- the cell stays **`K`**, with the DA−RT basis logged as a **material,
+  measured, open defect** on the armed mechanism;
+- the layer's **cleared volume must not be read as a measured cleared volume**
+  — it is an LP output at a price the curve was never submitted into;
+- the root cause (**the model represents one price, gated as RT; the layer
+  needs a DA price**) is an **architecture question inside PJM's
+  owner-declared-closed price-formation frontier (pjm-142)**, so it is escalated
+  to the owner, not pulled as a lever here.
+
+**A warning the owner should have.** The two error terms currently oppose each
+other — basis +5.8/+4.6/+6.6 against model price error −12.5/−9.6/−5.9. They
+do not cancel by design. If PJM's price shape improves toward RT, which is the
+stated goal of the price-formation lane, **the layer's phantom energy grows
+toward +5 to +7 TWh of phantom demand** — i.e. toward the condemned pjm-102
+clamp's +10.3/+14.8/+17.2, not away from it. Any future C3b work on PJM should
+expect this mechanism's C1 contribution to move against it.
 
 ---
 
