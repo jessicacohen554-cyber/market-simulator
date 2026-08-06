@@ -4683,3 +4683,151 @@ PREREG `results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-
 probe `scripts/probes/_miso133_overnight_identity_basis.py`;
 record `results/calibration/_miso133_overnight_identity_basis.json`.
 Next number: **miso-134**.
+
+## 2026-08-05 — miso-134: the CT_PEAKER night deficit IS an ORDER object and the constraint BINDS — and the only zero-DOF lever is REFUSED anyway, because the swap is a CATEGORY ERROR and the class is already at annual parity. NO LP, NO field added, NO arm, NO run, keeper UNCHANGED
+
+Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
+`miso132_ccmin_B`, **NOT-YET**, sole FAIL C7 `COAL_PRB` 2025 `cv_ratio` 0.338,
+ledgered caveats 2/3 {C3a, C3c}). Charter lane **(a)** — the new-evidence
+ORDER-dimension screen on the miso-133 §4 `CT_PEAKER` overnight row
+(−854/−691/−666 MW, July night h0–5). **PREREG pushed at `06918ca1` BEFORE any
+adjudicating statistic**, two-sided prior declared in both dimensions with KILL
+declared at least as likely as PASS. Rule 22: 2023–2025 only.
+
+### The object, and the construction check that licensed quoting it
+
+`offer_curve_by_group["CT_PEAKER"]` bids `econ_low`/`econ_high` = **1.0/1.0**
+against the class's own measured `marg_econ_low_p50`/`_high_p50` =
+**0.687/0.691** (n = 249 units, IQR 0.640–0.779). Under the armed
+`gas_offer_net_revenue_margin` form the gap is a **fuel-invariant $7.321/MWh**
+cap-weighted margin over the 17,977.9 MW econ band (median **$10.976** on the
+11,050.6 MW that carries one). The committed band carries **$0.000** (already
+measured-grounded at 1.025 = `phys_committed`); the peak band's $75.67 is the
+deliberate MISO-cap scarcity wall and is **outside the arm** — a band-scoping
+correction made against the PREREG's own §5 *before* any verdict was quoted, and
+it moves every number in the conservative direction.
+
+S-0 (GATING) passed first: assembled CT capacity **22,281.8 MW** vs the
+22,291.8 MW miso-133 §6 reference (**−0.04 %**, ±2 % bar), cap-weighted
+plant-grain base heat rate **12.0351** reproducing miso-117b's published value
+**exactly**. Price-taking runs **1.96×/1.42×/1.39×** hot against the keeper's own
+July-night CT dispatch — disclosed, and used to discount the headline.
+
+### THE CONSTRAINT BINDS — S-2 PASSES 3/3
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| `R(Δ_max)` July night, MW | **2,944.6** | **3,299.5** | **4,130.5** |
+| miso-133 §4 shortfall, MW | 854 | 691 | 666 |
+| multiple | 3.4× | 4.8× | 6.2× |
+
+Discounted by the measured price-taking bias it is still 1.8×/3.4×/4.5×, and the
+2025 shortfall is crossed at **Δ ≈ $3.2** of the $7.32 available. **This is the
+first MISO overnight object in five lanes that is not slack**, and it answers the
+charter's question: what prices MISO's peakers out of the July night is the econ
+band's residual-identified level.
+
+### AND THE ARM IS REFUSED — S-3 fires 3/3 (bar needed 2)
+
+The pre-registered annual leg, plus a disclosed bias-cancelling refinement (the
+raw price-taking bound ignores the demand constraint, so the ratio
+`E_pt(Δ_max)/E_pt(0)` is reported alongside it):
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| ratio estimator × | 2.29 | 2.17 | 2.12 |
+| keeper model / EIA-923 actual TWh | 14.496 / 19.199 | 19.062 / 19.296 | 17.479 / 18.425 |
+| keeper C1 ratio | 0.755 | **0.988** | **0.949** |
+| predicted arm C1 ratio | **1.73** | **2.14** | **2.01** |
+| headroom to parity, TWh | +4.70 | **+0.23** | **+0.95** |
+
+The lever roughly **doubles** a class already within 1.2 % (2024) and 5.1 %
+(2025) of its measured annual energy. Any pass-through above ~5 % of the
+price-taking bound breaks 2024, so the refusal does not rest on either
+estimator's calibration.
+
+### Why the lane is CLOSED on identification, not compute — the category error
+
+miso-132(b) swapped a **PROXY** (the generic 1.20 part-load-premium claim) for
+its own **MEASURAND** (`avg_committed_p50`). This is not that.
+`marg_econ_low_p50` is the measurand for **`phys_econ_low`**, and **the keeper
+already carries it there exactly**. The offer multiplier is `phys + margin`, and
+the margin's measurand is **offer CONDUCT**, not incremental burn — so
+`econ_low := phys_econ_low` asserts *a MISO peaker offers at marginal burn with
+zero net-revenue margin*: unsupported by any MISO offer corpus, **contradicted by
+the class's own annual volume** (0.988/0.949 of actual is positive evidence
+*for* a non-zero margin), and rule-1 forbidden. The residual can only be closed
+by a **tuned Δ**, which K5 and rules 1/24 forbid in advance ⇒ under rule 20 it is
+an **open root-cause issue, not a parameter**.
+
+The object's real shape: the model carries approximately the **right ANNUAL CT
+energy in the wrong HOURS** (0.95–0.99 of actual over the year; 666–854 MW short
+at July night at 6.1 % dispatched). The margin is fuel-invariant *and*
+hour-invariant by construction, so **a LEVEL lever cannot fix an
+HOUR-DISTRIBUTION defect** — which is why S-2 and S-3 fire together.
+
+### Two grains disagree, and S-6 kills the C7 claim in the year that matters
+
+**S-5** (plant grain governing by pre-registration): the class grain **FAILS**
+all three years (Δ_max 7.321 vs class cap-wtd offer-minus-price
+**25.80/18.14/16.53**) while the tranche grain **PASSES** — the cap-weighted
+average offer of a 22 GW ladder is dominated by its expensive tail while the MW
+that enters is the cheap end. **miso-117b's lesson on a new quantity**: a
+class-average OFFER is the wrong statistic for a reachability prediction, and a
+class-grain-only screen would have returned the opposite S-2 verdict.
+
+**S-6** (gates the C7 CLAIM, not the arm): the entering CT undercuts the hour's
+OWN marginal `COAL_PRB` econ offer on **0.993/0.972** of entering MW in
+2023/2024 but only **0.279** in 2025 — the one year C7 fails (entering p50
+$28.91 vs marginal PRB $28.00). **No C7 relief is claimed**, independently of the
+S-3 refusal. miso-130's regime statistic from a third direction.
+
+### S-4, banked and ungated
+
+MISO's measured start recovery on the same tranches is **$2.335/MWh**
+cap-weighted (654 tranches, `campd_ct_run_lengths_MISO.csv`); the residual econ
+margin is **3.14×** that, **4.70×** on markup-carrying tranches — with MISO
+arming **both** `tranche_startup_amortization` and `gas_offer_net_revenue_margin`.
+Declared ungated in advance; **no verdict is taken from it** and nothing is sized
+on it. Rule 25: CAISO's structurally identical 2.19–7.86× measurement is
+precedent for making the comparison and transfers **no** verdict.
+
+### The generalisable lesson — BINDING IS NOT LICENSING
+
+miso-132(a) taught that a missing market rule is not automatically a binding one.
+miso-134 is the harder mirror: this constraint **does** bind, in exactly the
+hours it was recruited for, **and the lever is still refused — because a lever
+that binds in the target window also binds in every other window.** *Before
+arming a lever that clears its target-hour bar, measure what it does OUTSIDE the
+target window — same fleet assembly, no LP.* Second half: **check that the
+"measured" value you are importing is the measurand of the slot you are putting
+it in.** Family: miso-129 → miso-131 → miso-132(a) → miso-133 → **miso-134**.
+
+### What this licenses — nothing, and one named successor
+
+* **DO NOT re-open the `CT_PEAKER` econ LEVEL** with more memory, and **do not
+  propose a partial Δ** — §4 of the FINDING removes the premise, not just the
+  budget.
+* **NAMED, NOT CHARTERED:** any future MISO CT lever must be **HOUR-ORGANIZING**.
+  Its binding prerequisite is **an identification for within-day MISO CT offer
+  conduct that is NOT the C7 residual** — a data question this session neither
+  answers nor assumes.
+* **Matrix hygiene, NAMED and NOT EDITED:** `measured_offer_surface`'s `cells`
+  string is `KKRUGI` (MISO = `U`) while its own note prose says *"MISO cell R"*.
+  Flagged for the session that next touches that row — it is where the
+  hour-organizing successor would land.
+* Charter option **(b)** (the Michigan PSCR lead) is **UNSPENT and untouched**;
+  option (c) was not opened. The C7-2025 continuation stays the data ask and the
+  instrument-blocked miso-89/90 under-derate.
+
+**Rule duties.** Rule 15: no run produced (no LP), nothing to register. Rule
+28(b): `offer_curve_by_group` MISO **stays `K`** with a sub-scalar REFUSAL note
+stamped this session; no other cell moves and S-4 mints none. Rules 19/21/24/25:
+nothing sized on any Δ, no parameter derived, no artifact re-derived, no tuning
+channel created, no other ISO's cell touched.
+
+FINDING `results/calibration/FINDING-miso134-ct-night-order-binding-not-licensing-2026-08-05.md`;
+PREREG `results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`;
+probe `scripts/probes/_miso134_ct_night_order_screen.py`;
+record `results/calibration/_miso134_ct_night_order_screen.json`.
+Next number: **miso-135**.

@@ -1,0 +1,337 @@
+{
+ "session": "miso-134",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "bundle": "results/calibration/miso132_ccmin_B",
+ "prereg": "results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md",
+ "prereg_pushed_at": "06918ca1",
+ "note": "pre-registered ORDER screen; NO LP solved. S-4 declared UNGATED (descriptive). S-6 gates the C7 claim only.",
+ "screen": {
+  "anchor_per_mmbtu": 3.0492,
+  "years": {
+   "2023": {
+    "S0": {
+     "assembled_ct_pmax_mw": 22281.8,
+     "assembled_ct_plants": 516,
+     "cap_wtd_plant_base_hr": 12.0351,
+     "ref_base_hr": 12.0351,
+     "ref_ct_cap_mw_2025": 22291.8,
+     "keeper_july_night_ct_mw": 321.0,
+     "price_taking_recon_july_night_ct_mw": 629.2,
+     "price_taking_over_keeper_ratio": 1.96
+    },
+    "S1": {
+     "band_census": {
+      "committed": {
+       "cap_mw": 2935.5,
+       "markup_capwtd_per_mwh": 0.0,
+       "moved_by_arm": false
+      },
+      "econ": {
+       "cap_mw": 17977.9,
+       "markup_capwtd_per_mwh": 7.321,
+       "moved_by_arm": true
+      },
+      "peak": {
+       "cap_mw": 1368.4,
+       "markup_capwtd_per_mwh": 75.67,
+       "moved_by_arm": false
+      }
+     },
+     "availability_capwtd_july_night": 0.8112,
+     "ct_cap_with_markup_mw": 11050.6,
+     "ct_cap_with_markup_share": 0.4959,
+     "residual_margin_econ_capwtd_per_mwh": 7.321,
+     "residual_margin_capwtd_per_mwh": 5.907,
+     "residual_margin_p50_per_mwh": 10.976,
+     "july_night_offer_capwtd_per_mwh": 60.03
+    },
+    "S2": {
+     "delta_max_capwtd_per_mwh": 7.321,
+     "delta_max_max_per_mwh": 27.172,
+     "R_full_july_night_mw": 2944.6,
+     "shortfall_mw": 854.0,
+     "PASS": true,
+     "reachability_curve_mw_by_delta": {
+      "0.0": 0.0,
+      "1.0": 168.7,
+      "2.0": 304.4,
+      "3.0": 425.7,
+      "4.0": 569.1,
+      "5.0": 753.1,
+      "6.0": 966.7,
+      "7.0": 1268.2,
+      "8.0": 1654.4,
+      "9.0": 2039.2,
+      "10.0": 2357.4,
+      "11.0": 2615.7,
+      "12.0": 2808.0,
+      "13.0": 2904.6,
+      "14.0": 2937.4,
+      "15.0": 2944.4,
+      "16.0": 2944.4,
+      "17.0": 2944.6,
+      "18.0": 2944.6,
+      "19.0": 2944.6,
+      "20.0": 2944.6,
+      "21.0": 2944.6,
+      "22.0": 2944.6,
+      "23.0": 2944.6,
+      "24.0": 2944.6,
+      "25.0": 2944.6,
+      "26.0": 2944.6,
+      "27.0": 2944.6,
+      "28.0": 2944.6
+     }
+    },
+    "S3": {
+     "R_full_all_hours_mw": 2954.4,
+     "annual_newly_in_merit_twh_upper_bound": 25.88,
+     "ratio_estimator_annual_multiple": 2.2853,
+     "ratio_estimator_july_night_multiple": 5.6801,
+     "keeper_ct_peaker_twh": 14.496,
+     "actual_ct_peaker_twh": 19.199,
+     "keeper_c1_ratio": 0.755,
+     "predicted_arm_ct_twh_ratio_estimator": 33.127,
+     "predicted_arm_c1_ratio": 1.7255,
+     "headroom_to_parity_twh": 4.703
+    },
+    "S4": {
+     "measured_start_recovery_capwtd_per_mwh": 2.335,
+     "n_tranches_with_measured_run": 654,
+     "residual_over_measured_multiple": 3.14
+    },
+    "S5": {
+     "class_grain_capwtd_offer_july_night": 54.03,
+     "class_grain_lw_price_july_night": 28.23,
+     "class_grain_offer_minus_price": 25.8,
+     "class_grain_delta_max": 7.321,
+     "class_grain_PASS": false
+    },
+    "S6": {
+     "prb_econ_marginal_offer_july_night_p50": 28.09,
+     "entering_ct_offer_july_night_p50": 23.94,
+     "entering_ct_offer_july_night_p25": 22.49,
+     "entering_ct_offer_july_night_p75": 25.55,
+     "entering_mw_share_below_hourly_marginal_prb": 0.9933,
+     "prb_econ_cap_mw": 9296.2
+    }
+   },
+   "2024": {
+    "S0": {
+     "assembled_ct_pmax_mw": 22281.8,
+     "assembled_ct_plants": 516,
+     "cap_wtd_plant_base_hr": 12.0351,
+     "ref_base_hr": 12.0351,
+     "ref_ct_cap_mw_2025": 22291.8,
+     "keeper_july_night_ct_mw": 1257.9,
+     "price_taking_recon_july_night_ct_mw": 1779.5,
+     "price_taking_over_keeper_ratio": 1.415
+    },
+    "S1": {
+     "band_census": {
+      "committed": {
+       "cap_mw": 2935.5,
+       "markup_capwtd_per_mwh": 0.0,
+       "moved_by_arm": false
+      },
+      "econ": {
+       "cap_mw": 17977.9,
+       "markup_capwtd_per_mwh": 7.321,
+       "moved_by_arm": true
+      },
+      "peak": {
+       "cap_mw": 1368.4,
+       "markup_capwtd_per_mwh": 75.67,
+       "moved_by_arm": false
+      }
+     },
+     "availability_capwtd_july_night": 0.8112,
+     "ct_cap_with_markup_mw": 11050.6,
+     "ct_cap_with_markup_share": 0.4959,
+     "residual_margin_econ_capwtd_per_mwh": 7.321,
+     "residual_margin_capwtd_per_mwh": 5.907,
+     "residual_margin_p50_per_mwh": 10.976,
+     "july_night_offer_capwtd_per_mwh": 49.01
+    },
+    "S2": {
+     "delta_max_capwtd_per_mwh": 7.321,
+     "delta_max_max_per_mwh": 27.172,
+     "R_full_july_night_mw": 3299.5,
+     "shortfall_mw": 691.0,
+     "PASS": true,
+     "reachability_curve_mw_by_delta": {
+      "0.0": 0.0,
+      "1.0": 151.0,
+      "2.0": 363.9,
+      "3.0": 539.1,
+      "4.0": 726.5,
+      "5.0": 983.4,
+      "6.0": 1236.9,
+      "7.0": 1489.0,
+      "8.0": 1741.9,
+      "9.0": 2078.1,
+      "10.0": 2486.8,
+      "11.0": 2858.1,
+      "12.0": 3103.9,
+      "13.0": 3197.3,
+      "14.0": 3243.1,
+      "15.0": 3277.5,
+      "16.0": 3295.4,
+      "17.0": 3298.3,
+      "18.0": 3299.3,
+      "19.0": 3299.3,
+      "20.0": 3299.3,
+      "21.0": 3299.5,
+      "22.0": 3299.5,
+      "23.0": 3299.5,
+      "24.0": 3299.5,
+      "25.0": 3299.5,
+      "26.0": 3299.5,
+      "27.0": 3299.5,
+      "28.0": 3299.5
+     }
+    },
+    "S3": {
+     "R_full_all_hours_mw": 3514.2,
+     "annual_newly_in_merit_twh_upper_bound": 30.784,
+     "ratio_estimator_annual_multiple": 2.1686,
+     "ratio_estimator_july_night_multiple": 2.8542,
+     "keeper_ct_peaker_twh": 19.062,
+     "actual_ct_peaker_twh": 19.296,
+     "keeper_c1_ratio": 0.9879,
+     "predicted_arm_ct_twh_ratio_estimator": 41.338,
+     "predicted_arm_c1_ratio": 2.1423,
+     "headroom_to_parity_twh": 0.234
+    },
+    "S4": {
+     "measured_start_recovery_capwtd_per_mwh": 2.335,
+     "n_tranches_with_measured_run": 654,
+     "residual_over_measured_multiple": 3.14
+    },
+    "S5": {
+     "class_grain_capwtd_offer_july_night": 43.64,
+     "class_grain_lw_price_july_night": 25.5,
+     "class_grain_offer_minus_price": 18.14,
+     "class_grain_delta_max": 7.321,
+     "class_grain_PASS": false
+    },
+    "S6": {
+     "prb_econ_marginal_offer_july_night_p50": 26.06,
+     "entering_ct_offer_july_night_p50": 21.58,
+     "entering_ct_offer_july_night_p25": 19.07,
+     "entering_ct_offer_july_night_p75": 24.39,
+     "entering_mw_share_below_hourly_marginal_prb": 0.9723,
+     "prb_econ_cap_mw": 9296.2
+    }
+   },
+   "2025": {
+    "S0": {
+     "assembled_ct_pmax_mw": 22281.8,
+     "assembled_ct_plants": 516,
+     "cap_wtd_plant_base_hr": 12.0351,
+     "ref_base_hr": 12.0351,
+     "ref_ct_cap_mw_2025": 22291.8,
+     "keeper_july_night_ct_mw": 1350.1,
+     "price_taking_recon_july_night_ct_mw": 1875.6,
+     "price_taking_over_keeper_ratio": 1.389
+    },
+    "S1": {
+     "band_census": {
+      "committed": {
+       "cap_mw": 2935.5,
+       "markup_capwtd_per_mwh": 0.0,
+       "moved_by_arm": false
+      },
+      "econ": {
+       "cap_mw": 17977.9,
+       "markup_capwtd_per_mwh": 7.321,
+       "moved_by_arm": true
+      },
+      "peak": {
+       "cap_mw": 1368.4,
+       "markup_capwtd_per_mwh": 75.67,
+       "moved_by_arm": false
+      }
+     },
+     "availability_capwtd_july_night": 0.8112,
+     "ct_cap_with_markup_mw": 11050.6,
+     "ct_cap_with_markup_share": 0.4959,
+     "residual_margin_econ_capwtd_per_mwh": 7.321,
+     "residual_margin_capwtd_per_mwh": 5.907,
+     "residual_margin_p50_per_mwh": 10.976,
+     "july_night_offer_capwtd_per_mwh": 56.63
+    },
+    "S2": {
+     "delta_max_capwtd_per_mwh": 7.321,
+     "delta_max_max_per_mwh": 27.172,
+     "R_full_july_night_mw": 4130.5,
+     "shortfall_mw": 666.0,
+     "PASS": true,
+     "reachability_curve_mw_by_delta": {
+      "0.0": 0.0,
+      "1.0": 190.0,
+      "2.0": 391.2,
+      "3.0": 621.5,
+      "4.0": 882.4,
+      "5.0": 1225.2,
+      "6.0": 1616.4,
+      "7.0": 2038.3,
+      "8.0": 2469.1,
+      "9.0": 2887.8,
+      "10.0": 3324.0,
+      "11.0": 3653.1,
+      "12.0": 3958.5,
+      "13.0": 4057.3,
+      "14.0": 4110.1,
+      "15.0": 4121.1,
+      "16.0": 4130.3,
+      "17.0": 4130.5,
+      "18.0": 4130.5,
+      "19.0": 4130.5,
+      "20.0": 4130.5,
+      "21.0": 4130.5,
+      "22.0": 4130.5,
+      "23.0": 4130.5,
+      "24.0": 4130.5,
+      "25.0": 4130.5,
+      "26.0": 4130.5,
+      "27.0": 4130.5,
+      "28.0": 4130.5
+     }
+    },
+    "S3": {
+     "R_full_all_hours_mw": 3073.4,
+     "annual_newly_in_merit_twh_upper_bound": 26.923,
+     "ratio_estimator_annual_multiple": 2.1165,
+     "ratio_estimator_july_night_multiple": 3.2023,
+     "keeper_ct_peaker_twh": 17.479,
+     "actual_ct_peaker_twh": 18.425,
+     "keeper_c1_ratio": 0.9487,
+     "predicted_arm_ct_twh_ratio_estimator": 36.994,
+     "predicted_arm_c1_ratio": 2.0078,
+     "headroom_to_parity_twh": 0.946
+    },
+    "S4": {
+     "measured_start_recovery_capwtd_per_mwh": 2.335,
+     "n_tranches_with_measured_run": 654,
+     "residual_over_measured_multiple": 3.14
+    },
+    "S5": {
+     "class_grain_capwtd_offer_july_night": 50.61,
+     "class_grain_lw_price_july_night": 34.08,
+     "class_grain_offer_minus_price": 16.53,
+     "class_grain_delta_max": 7.321,
+     "class_grain_PASS": false
+    },
+    "S6": {
+     "prb_econ_marginal_offer_july_night_p50": 28.0,
+     "entering_ct_offer_july_night_p50": 28.91,
+     "entering_ct_offer_july_night_p25": 27.04,
+     "entering_ct_offer_july_night_p75": 31.35,
+     "entering_mw_share_below_hourly_marginal_prb": 0.2789,
+     "prb_econ_cap_mw": 9296.2
+    }
+   }
+  }
+ }
+}
