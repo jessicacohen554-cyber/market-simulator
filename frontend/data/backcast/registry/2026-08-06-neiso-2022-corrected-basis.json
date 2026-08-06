@@ -1,0 +1,13 @@
+{
+  "id": "2026-08-06-neiso-2022-corrected-basis",
+  "label": "neiso 2022 corrected basis",
+  "date": "2026-08-06",
+  "shorthand": "neiso-2022-corrected-basis",
+  "definition": "neiso-86: NEISO 2022 re-solved on the CORRECTED measured ISO-NE MA gas-basis input (neiso-86 intake). Exact replay of the neiso2022_touchpoint recipe; the ONLY difference is the repaired data. Owner narrow freeze lift 2026-08-06.",
+  "years": [
+    2022
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-neiso-2022-corrected-basis.js",
+  "bundle": "results/calibration/neiso86_2022_corrected"
+}
