@@ -15,6 +15,26 @@ must-run/self-commit start shares, regulated vs merchant, with net revenues).
 - Source PDFs live in the ISO's raw dir (`data/raw/MISO/` for the MISO
   reports, mirroring the NYISO SOM PDFs under `data/raw/NYISO/`).
 
+## Authoritative sources (ERCOT)
+
+All from potomaceconomics.com (ERCOT Independent Market Monitor), PDFs
+committed under `data/raw/ERCOT/`. Seeded 2026-08-05 for the FFR-6A
+retirement-screen margin-gap decomposition — the SOM Net Revenue Analysis
+(new-CT/CC net revenue $/kW-yr, energy vs reserves stack), CONE, and the
+existing-unit (coal/nuclear) cost benchmarks:
+
+- 2023 SOM: `2023-State-of-the-Market-Report_Final_060624.pdf`
+  (wp-content/uploads/2024/05/…) — §Resource Adequacy A "Net Revenue
+  Analysis" (PDF p.108, printed p.76; Figures 45/46 PDF p.109) and
+  B "Net Revenues of Existing Units" (PDF p.110).
+- 2024 SOM: `2024-State-of-the-Market-Report.pdf`
+  (wp-content/uploads/2025/06/…) — §Resource Adequacy B/C/D (PDF
+  pp.117-120, printed pp.78-82; Figure 56 PDF p.118).
+- 2025 SOM: `2025-State-of-the-Market-Report-for-ERCOT.pdf`
+  (wp-content/uploads/2026/06/…) — §Resource Adequacy C/D (PDF
+  pp.123-125, printed pp.100-103; Figure 56 PDF p.124; summary bullets
+  PDF p.119).
+
 ## Authoritative sources (MISO)
 
 All from potomaceconomics.com (MISO Independent Market Monitor):
@@ -46,5 +66,7 @@ DATA NEEDED: 2025 MISO SOM (expected ~June 2026, not yet published as of
 the 2025 price-cost mark-up; its publication is the rule-23 re-derive
 trigger for anything grounded on the 2024 values (the MISO coal offer
 level carries 2024's mark-up ≈ 0 forward into 2025 until then).
-DATA NEEDED (extension): NYISO / ERCOT / ISO-NE SOM conduct sections, to
-extend the datatype beyond MISO when their offer structures are examined.
+DATA NEEDED (extension): NYISO / ISO-NE SOM conduct sections, to extend
+the datatype further when their offer structures are examined. (ERCOT
+net-revenue/CONE rows seeded 2026-08-05; the ERCOT SOM *conduct* sections
+— price-cost mark-up, output gap — remain untranscribed.)
