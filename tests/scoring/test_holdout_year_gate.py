@@ -156,11 +156,18 @@ class TestHoldoutMarkerTiers:
             _RCF.enforce_holdout_year_gate([2027], "NYISO", True, root)
 
     def test_rule22_tier_membership_matches_the_rule_text(self):
-        """2022+ladder = validation; 2019 and H1-2026 = locked test."""
+        """2022+ladder = validation; 2019 and H1-2026 = locked test.
+
+        2018 was DROPPED from the ladder by owner decision 2026-08-06 (the
+        program's working span is 2019-2025), so it must fall through to the
+        fail-closed default and read as locked-test tier rather than validation.
+        """
         from scripts.lib import holdout_policy as hp
 
         assert hp.LOCKED_TEST_YEARS == frozenset({2019, 2026})
-        assert {2018, 2020, 2021, 2022} <= hp.VALIDATION_YEARS
+        assert {2020, 2021, 2022} <= hp.VALIDATION_YEARS
+        assert 2018 not in hp.VALIDATION_YEARS
+        assert hp.tier_for_year(2018) == hp.TIER_LOCKED
         assert not (hp.VALIDATION_YEARS & hp.LOCKED_TEST_YEARS)
         assert not (hp.VALIDATION_YEARS & hp.CALIBRATION_YEARS)
         assert not (hp.LOCKED_TEST_YEARS & hp.CALIBRATION_YEARS)
@@ -219,15 +226,24 @@ class TestActualTailTierGate:
             assert not _TAIL._year_emittable("MISO", year, self._VALIDATION_ONLY)
 
     def test_ladder_rungs_stay_outside_the_considered_set(self):
-        """2018/2020/2021 are staged owner decisions, not part of this grant.
+        """2020/2021 are staged owner decisions, not part of this grant.
 
         They are validation-TIER years, so the tier gate alone would pass them
         for a `complete` ISO; ``CONSIDERED_HOLDOUT_YEARS`` is what holds them.
+        2018 is checked separately below: owner decision 2026-08-06 dropped it
+        from the ladder entirely, so it is held by the STRICTER locked-test
+        default, not merely by CONSIDERED_HOLDOUT_YEARS.
         """
-        for year in (2018, 2020, 2021):
+        for year in (2020, 2021):
             assert holdout_policy.tier_for_year(year) == holdout_policy.TIER_VALIDATION
             assert year not in _TAIL.CONSIDERED_HOLDOUT_YEARS
             assert not _TAIL._year_emittable("PJM", year, self._VALIDATION_ONLY)
+
+    def test_2018_is_dropped_and_held_by_the_stricter_default(self):
+        """2018 left the ladder on 2026-08-06 and must be MORE restricted, not less."""
+        assert holdout_policy.tier_for_year(2018) == holdout_policy.TIER_LOCKED
+        assert 2018 not in _TAIL.CONSIDERED_HOLDOUT_YEARS
+        assert not _TAIL._year_emittable("PJM", 2018, self._VALIDATION_ONLY)
 
     def test_empty_marker_doc_fails_closed(self):
         for year in (2018, 2019, 2022, 2026):
