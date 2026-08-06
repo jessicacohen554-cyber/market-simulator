@@ -1,0 +1,170 @@
+{
+  "session": "neiso-87",
+  "prereg": "results/calibration/PREREG-neiso87-aug2025-basis-refresh-2026-08-06.md",
+  "arm_a": "results/calibration/neiso87_control_A",
+  "arm_b": "results/calibration/neiso87_aug2025basis_B",
+  "edited_row": {
+    "iso": "NEISO",
+    "year": 2025,
+    "month": 8,
+    "before": 0.04,
+    "after": -0.38
+  },
+  "properties": {
+    "P1_scope_fidelity": {
+      "untouched_years": {
+        "2023": {
+          "class_hourly": true,
+          "system": true,
+          "storage": true
+        },
+        "2024": {
+          "class_hourly": true,
+          "system": true,
+          "storage": true
+        }
+      },
+      "pass": true
+    },
+    "P2_firing": {
+      "class_hourly_identical": false,
+      "largest_class_move_twh": {
+        "class": 2025,
+        "delta_twh": -0.00185394287109375
+      },
+      "abs_max_move_twh": 0.00185394287109375,
+      "pass": true
+    },
+    "P3_conservation": {
+      "pass": true,
+      "per_arm": {
+        "A": 0.26880476992416974,
+        "B": 0.26880476992416974
+      }
+    },
+    "P4_system_integrity": {
+      "pass": true,
+      "years": {
+        "2023": {
+          "total_gen_twh_a": 96.98641967773438,
+          "total_gen_twh_b": 96.98641967773438,
+          "rel_drift": 0.0,
+          "slack_a": 0,
+          "slack_b": 0,
+          "dump_a": 0,
+          "dump_b": 0,
+          "pass": true
+        },
+        "2024": {
+          "total_gen_twh_a": 103.92343139648438,
+          "total_gen_twh_b": 103.92343139648438,
+          "rel_drift": 0.0,
+          "slack_a": 0,
+          "slack_b": 0,
+          "dump_a": 0,
+          "dump_b": 0,
+          "pass": true
+        },
+        "2025": {
+          "total_gen_twh_a": 107.31947326660156,
+          "total_gen_twh_b": 107.31761932373047,
+          "rel_drift": 1.727499040633763e-05,
+          "slack_a": 0,
+          "slack_b": 0,
+          "dump_a": 0,
+          "dump_b": 0,
+          "pass": true
+        }
+      }
+    }
+  },
+  "reported": {
+    "2023": {
+      "price_a": {
+        "mean": 38.43242502149789,
+        "max": 248.968212698,
+        "hours_gt_300": 0,
+        "hours_gt_200": 58,
+        "edited_month_mean": 26.798371508791504,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "price_b": {
+        "mean": 38.43242502149789,
+        "max": 248.968212698,
+        "hours_gt_300": 0,
+        "hours_gt_200": 58,
+        "edited_month_mean": 26.798371508791504,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "d_mean_lambda": 0.0,
+      "d_edited_month_mean": 0.0,
+      "d_hours_gt_300": 0
+    },
+    "2024": {
+      "price_a": {
+        "mean": 43.69708617108032,
+        "max": 218.24122038000002,
+        "hours_gt_300": 0,
+        "hours_gt_200": 1,
+        "edited_month_mean": 33.928844156237695,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "price_b": {
+        "mean": 43.69708617108032,
+        "max": 218.24122038000002,
+        "hours_gt_300": 0,
+        "hours_gt_200": 1,
+        "edited_month_mean": 33.928844156237695,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "d_mean_lambda": 0.0,
+      "d_edited_month_mean": 0.0,
+      "d_hours_gt_300": 0
+    },
+    "2025": {
+      "price_a": {
+        "mean": 69.71492555574471,
+        "max": 280.85415499400006,
+        "hours_gt_300": 0,
+        "hours_gt_200": 70,
+        "edited_month_mean": 47.42535838345903,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "price_b": {
+        "mean": 69.39896850644881,
+        "max": 280.85415499400006,
+        "hours_gt_300": 0,
+        "hours_gt_200": 70,
+        "edited_month_mean": 43.70039428382291,
+        "edited_month_hours": 744,
+        "slack_hours": 0,
+        "dump_hours": 0
+      },
+      "d_mean_lambda": -0.3159570492959034,
+      "d_edited_month_mean": -3.724964099636118,
+      "d_hours_gt_300": 0
+    },
+    "class_moves_edited_year_twh": {
+      "2025": -0.00185394287109375
+    }
+  },
+  "verdict": {
+    "construction_valid": true,
+    "gates_scored": [
+      "P1_scope_fidelity",
+      "P2_firing",
+      "P4_system_integrity"
+    ],
+    "note": "V1 INVALID if construction_valid is false. V2/V3 need the determination legs (N1/N2) from scripts/calibration_verdict.py."
+  }
+}
