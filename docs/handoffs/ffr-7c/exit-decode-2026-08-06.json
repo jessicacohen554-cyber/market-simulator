@@ -1,0 +1,538 @@
+{
+ "reproduction_gate": {
+  "2021": {
+   "gas_ct": {
+    "ffr7c": 945.1,
+    "ffr6a": 945.1,
+    "delta": -0.04
+   },
+   "gas_cc": {
+    "ffr7c": 972.4,
+    "ffr6a": 972.4,
+    "delta": -0.04
+   },
+   "coal": {
+    "ffr7c": 1013.3,
+    "ffr6a": 1013.3,
+    "delta": 0.02
+   },
+   "nuclear": {
+    "ffr7c": 1094.5,
+    "ffr6a": 1094.5,
+    "delta": -0.03
+   }
+  },
+  "2022": {
+   "gas_ct": {
+    "ffr7c": 129.7,
+    "ffr6a": 129.7,
+    "delta": 0.04
+   },
+   "gas_cc": {
+    "ffr7c": 176.4,
+    "ffr6a": 176.4,
+    "delta": 0.04
+   },
+   "coal": {
+    "ffr7c": 321.7,
+    "ffr6a": 321.7,
+    "delta": -0.02
+   },
+   "nuclear": {
+    "ffr7c": 415.3,
+    "ffr6a": 415.3,
+    "delta": 0.04
+   }
+  },
+  "2023": {
+   "gas_ct": {
+    "ffr7c": 216.4,
+    "ffr6a": 216.4,
+    "delta": 0.01
+   },
+   "gas_cc": {
+    "ffr7c": 240.0,
+    "ffr6a": 240.0,
+    "delta": -0.05
+   },
+   "coal": {
+    "ffr7c": 234.1,
+    "ffr6a": 234.1,
+    "delta": -0.01
+   },
+   "nuclear": {
+    "ffr7c": 306.5,
+    "ffr6a": 306.5,
+    "delta": 0.01
+   }
+  },
+  "2024": {
+   "gas_ct": {
+    "ffr7c": 65.6,
+    "ffr6a": 65.6,
+    "delta": -0.01
+   },
+   "gas_cc": {
+    "ffr7c": 86.7,
+    "ffr6a": 86.7,
+    "delta": -0.02
+   },
+   "coal": {
+    "ffr7c": 75.4,
+    "ffr6a": 75.4,
+    "delta": 0.02
+   },
+   "nuclear": {
+    "ffr7c": 139.8,
+    "ffr6a": 139.8,
+    "delta": 0.0
+   }
+  },
+  "2025": {
+   "gas_ct": {
+    "ffr7c": 47.0,
+    "ffr6a": 47.0,
+    "delta": -0.02
+   },
+   "gas_cc": {
+    "ffr7c": 76.4,
+    "ffr6a": 76.4,
+    "delta": 0.03
+   },
+   "coal": {
+    "ffr7c": 97.2,
+    "ffr6a": 97.2,
+    "delta": 0.0
+   },
+   "nuclear": {
+    "ffr7c": 181.6,
+    "ffr6a": 181.6,
+    "delta": 0.01
+   }
+  }
+ },
+ "bars": {
+  "coal": 58.5,
+  "gas_cc": 30.0,
+  "gas_ct": 21.0,
+  "gas_st": 35.0,
+  "oil": 25.0
+ },
+ "exec_lag": {
+  "coal": 3,
+  "gas_ct": 2,
+  "gas_cc": 1,
+  "gas_st": 1,
+  "oil": 1,
+  "nuclear": 3
+ },
+ "outage_rate": 0.1,
+ "units": {
+  "56611_S01": {
+   "name": "Sandy Creek 1",
+   "plant": 56611,
+   "mw": 1008.0,
+   "exit_year": 2025,
+   "target_fuel": "coal",
+   "physical_class": "coal",
+   "model_bin": "SC_COAL3 (plant 56611, 936.0 MW, HR 9.50)",
+   "bar_target_taxonomy": 58.5,
+   "bar_physical_class": 58.5,
+   "primary_year": 2024,
+   "primary_margin": 73.41,
+   "primary_margin_basis": "unit_net",
+   "economically_consistent_target_bar": false,
+   "economically_consistent_physical_bar": false,
+   "bar_invariant": true,
+   "loss_year_target_lag": 2022,
+   "loss_year_physical_lag": 2022,
+   "loss_year_margin_target_lag": 298.67,
+   "loss_year_margin_physical_lag": 298.67,
+   "margins_by_year": {
+    "2021": {
+     "campd": {
+      "gross_hr": 9.90507737778132,
+      "gross_mwh": 5721384.0,
+      "op_hours": 7734.75
+     },
+     "class_proxy": 1013.32,
+     "bin_hr": 9.5,
+     "model_bin_hr": 1022.98,
+     "hr_gross": 9.91,
+     "hr_net": 10.65,
+     "unit_gross": 1019.63,
+     "unit_net": 1013.81
+    },
+    "2022": {
+     "campd": {
+      "gross_hr": 10.659562299298358,
+      "gross_mwh": 4176909.0,
+      "op_hours": 6668.780000000001
+     },
+     "class_proxy": 321.68,
+     "bin_hr": 9.5,
+     "model_bin_hr": 322.93,
+     "hr_gross": 10.66,
+     "hr_net": 11.46,
+     "unit_gross": 308.35,
+     "unit_net": 298.67
+    },
+    "2023": {
+     "campd": {
+      "gross_hr": 10.189446697653297,
+      "gross_mwh": 3549703.0,
+      "op_hours": 7195.31
+     },
+     "class_proxy": 234.09,
+     "bin_hr": 9.5,
+     "model_bin_hr": 239.35,
+     "hr_gross": 10.19,
+     "hr_net": 10.96,
+     "unit_gross": 234.85,
+     "unit_net": 230.44,
+     "unit_net_fuel_sens": 220.97
+    },
+    "2024": {
+     "campd": {
+      "gross_hr": 10.348853134407234,
+      "gross_mwh": 3277398.0,
+      "op_hours": 6790.6
+     },
+     "class_proxy": 75.42,
+     "bin_hr": 9.5,
+     "model_bin_hr": 81.84,
+     "hr_gross": 10.35,
+     "hr_net": 11.13,
+     "unit_gross": 77.12,
+     "unit_net": 73.41,
+     "unit_net_fuel_sens": 67.21
+    },
+    "2025": {
+     "campd": {
+      "gross_hr": 10.05052363787786,
+      "gross_mwh": 768470.0,
+      "op_hours": 1320.3100000000002
+     },
+     "class_proxy": 97.2,
+     "bin_hr": 9.5,
+     "model_bin_hr": 115.49,
+     "hr_gross": 10.05,
+     "hr_net": 10.81,
+     "unit_gross": 110.45,
+     "unit_net": 103.87,
+     "unit_net_fuel_sens": 84.46
+    }
+   }
+  },
+  "3548_2": {
+   "name": "Decker Creek 2",
+   "plant": 3548,
+   "mw": 405.0,
+   "exit_year": 2022,
+   "target_fuel": "gas_ct",
+   "physical_class": "gas_st",
+   "model_bin": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW)",
+   "bar_target_taxonomy": 21.0,
+   "bar_physical_class": 35.0,
+   "primary_year": 2021,
+   "primary_margin": 937.8,
+   "primary_margin_basis": "unit_net",
+   "economically_consistent_target_bar": false,
+   "economically_consistent_physical_bar": false,
+   "bar_invariant": true,
+   "loss_year_target_lag": 2020,
+   "loss_year_physical_lag": 2021,
+   "loss_year_margin_target_lag": null,
+   "loss_year_margin_physical_lag": 937.8,
+   "margins_by_year": {
+    "2021": {
+     "campd": {
+      "gross_hr": 11.612298060872593,
+      "gross_mwh": 672158.0,
+      "op_hours": 5876.29
+     },
+     "class_proxy": 945.06,
+     "hr_gross": 11.61,
+     "hr_net": 12.22,
+     "unit_gross": 940.14,
+     "unit_net": 937.8,
+     "unit_net_fuel_sens": 813.28
+    },
+    "2022": {
+     "campd": {
+      "gross_hr": 12.183504077523283,
+      "gross_mwh": 79460.0,
+      "op_hours": 936.16
+     },
+     "class_proxy": 129.74,
+     "hr_gross": 12.18,
+     "hr_net": 12.82,
+     "unit_gross": 121.22,
+     "unit_net": 118.7,
+     "unit_net_fuel_sens": 118.32
+    },
+    "2023": {
+     "campd": null,
+     "class_proxy": 216.41
+    },
+    "2024": {
+     "campd": null,
+     "class_proxy": 65.59
+    },
+    "2025": {
+     "campd": null,
+     "class_proxy": 46.98
+    }
+   }
+  },
+  "3612_2": {
+   "name": "V H Braunig 2",
+   "plant": 3612,
+   "mw": 252.0,
+   "exit_year": 2025,
+   "target_fuel": "gas_ct",
+   "physical_class": "gas_st",
+   "model_bin": "SC_STGAS3 (plant 3612, 1138.0 MW, HR 8.49)",
+   "bar_target_taxonomy": 21.0,
+   "bar_physical_class": 35.0,
+   "primary_year": 2024,
+   "primary_margin": 63.35,
+   "primary_margin_basis": "unit_net",
+   "economically_consistent_target_bar": false,
+   "economically_consistent_physical_bar": false,
+   "bar_invariant": true,
+   "loss_year_target_lag": 2023,
+   "loss_year_physical_lag": 2024,
+   "loss_year_margin_target_lag": 212.04,
+   "loss_year_margin_physical_lag": 63.35,
+   "margins_by_year": {
+    "2021": {
+     "campd": {
+      "gross_hr": 10.9785762961184,
+      "gross_mwh": 133244.0,
+      "op_hours": 1358.19
+     },
+     "class_proxy": 945.06,
+     "bin_hr": 8.49,
+     "model_bin_hr": 957.29,
+     "hr_gross": 10.98,
+     "hr_net": 11.56,
+     "unit_gross": 942.83,
+     "unit_net": 940.36,
+     "unit_net_fuel_sens": 820.48
+    },
+    "2022": {
+     "campd": {
+      "gross_hr": 12.310498476643103,
+      "gross_mwh": 134243.0,
+      "op_hours": 1888.55
+     },
+     "class_proxy": 129.74,
+     "bin_hr": 8.49,
+     "model_bin_hr": 148.19,
+     "hr_gross": 12.31,
+     "hr_net": 12.96,
+     "unit_gross": 120.7,
+     "unit_net": 118.2,
+     "unit_net_fuel_sens": 117.82
+    },
+    "2023": {
+     "campd": {
+      "gross_hr": 10.949526665792378,
+      "gross_mwh": 183006.0,
+      "op_hours": 2039.96
+     },
+     "class_proxy": 216.41,
+     "bin_hr": 8.49,
+     "model_bin_hr": 227.67,
+     "hr_gross": 10.95,
+     "hr_net": 11.53,
+     "unit_gross": 214.41,
+     "unit_net": 212.04,
+     "unit_net_fuel_sens": 202.29
+    },
+    "2024": {
+     "campd": {
+      "gross_hr": 10.52526826402953,
+      "gross_mwh": 114063.0,
+      "op_hours": 1142.64
+     },
+     "class_proxy": 65.59,
+     "bin_hr": 8.49,
+     "model_bin_hr": 75.7,
+     "hr_gross": 10.53,
+     "hr_net": 11.08,
+     "unit_gross": 65.49,
+     "unit_net": 63.35,
+     "unit_net_fuel_sens": 58.27
+    },
+    "2025": {
+     "campd": {
+      "gross_hr": 10.644689232680255,
+      "gross_mwh": 17711.0,
+      "op_hours": 202.77
+     },
+     "class_proxy": 46.98,
+     "bin_hr": 8.49,
+     "model_bin_hr": 61.04,
+     "hr_gross": 10.64,
+     "hr_net": 11.2,
+     "unit_gross": 46.19,
+     "unit_net": 43.31,
+     "unit_net_fuel_sens": 55.29
+    }
+   }
+  },
+  "3612_1": {
+   "name": "V H Braunig 1",
+   "plant": 3612,
+   "mw": 225.0,
+   "exit_year": 2025,
+   "target_fuel": "gas_ct",
+   "physical_class": "gas_st",
+   "model_bin": "SC_STGAS3 (plant 3612, 1138.0 MW, HR 8.49)",
+   "bar_target_taxonomy": 21.0,
+   "bar_physical_class": 35.0,
+   "primary_year": 2024,
+   "primary_margin": 69.74,
+   "primary_margin_basis": "unit_net",
+   "economically_consistent_target_bar": false,
+   "economically_consistent_physical_bar": false,
+   "bar_invariant": true,
+   "loss_year_target_lag": 2023,
+   "loss_year_physical_lag": 2024,
+   "loss_year_margin_target_lag": 219.82,
+   "loss_year_margin_physical_lag": 69.74,
+   "margins_by_year": {
+    "2021": {
+     "campd": {
+      "gross_hr": 10.768678425969691,
+      "gross_mwh": 198878.0,
+      "op_hours": 2139.75
+     },
+     "class_proxy": 945.06,
+     "bin_hr": 8.49,
+     "model_bin_hr": 957.29,
+     "hr_gross": 10.77,
+     "hr_net": 11.34,
+     "unit_gross": 943.79,
+     "unit_net": 941.28,
+     "unit_net_fuel_sens": 822.89
+    },
+    "2022": {
+     "campd": {
+      "gross_hr": 11.205847303013881,
+      "gross_mwh": 334021.0,
+      "op_hours": 3465.59
+     },
+     "class_proxy": 129.74,
+     "bin_hr": 8.49,
+     "model_bin_hr": 148.19,
+     "hr_gross": 11.21,
+     "hr_net": 11.8,
+     "unit_gross": 125.76,
+     "unit_net": 122.89,
+     "unit_net_fuel_sens": 122.62
+    },
+    "2023": {
+     "campd": {
+      "gross_hr": 9.312571440421383,
+      "gross_mwh": 409887.0,
+      "op_hours": 3169.33
+     },
+     "class_proxy": 216.41,
+     "bin_hr": 8.49,
+     "model_bin_hr": 227.67,
+     "hr_gross": 9.31,
+     "hr_net": 9.8,
+     "unit_gross": 222.48,
+     "unit_net": 219.82,
+     "unit_net_fuel_sens": 209.34
+    },
+    "2024": {
+     "campd": {
+      "gross_hr": 9.09066510703364,
+      "gross_mwh": 327000.0,
+      "op_hours": 2344.37
+     },
+     "class_proxy": 65.59,
+     "bin_hr": 8.49,
+     "model_bin_hr": 75.7,
+     "hr_gross": 9.09,
+     "hr_net": 9.57,
+     "unit_gross": 72.21,
+     "unit_net": 69.74,
+     "unit_net_fuel_sens": 64.05
+    },
+    "2025": {
+     "campd": {
+      "gross_hr": 8.85209842892937,
+      "gross_mwh": 236272.0,
+      "op_hours": 1338.79
+     },
+     "class_proxy": 46.98,
+     "bin_hr": 8.49,
+     "model_bin_hr": 61.04,
+     "hr_gross": 8.85,
+     "hr_net": 9.32,
+     "unit_gross": 58.0,
+     "unit_net": 54.46,
+     "unit_net_fuel_sens": 68.43
+    }
+   }
+  },
+  "52120_G-66": {
+   "name": "Freeport Energy G-66",
+   "plant": 52120,
+   "mw": 119.0,
+   "exit_year": 2023,
+   "target_fuel": "gas_cc",
+   "physical_class": "gas_cc",
+   "model_bin": "H_CHP2 (plant 52120, 419.3 MW, HR 5.86, class CC_CHP)",
+   "bar_target_taxonomy": 30.0,
+   "bar_physical_class": 30.0,
+   "primary_year": 2022,
+   "primary_margin": 176.44,
+   "primary_margin_basis": "class_proxy",
+   "economically_consistent_target_bar": false,
+   "economically_consistent_physical_bar": false,
+   "bar_invariant": true,
+   "loss_year_target_lag": 2022,
+   "loss_year_physical_lag": 2022,
+   "loss_year_margin_target_lag": 176.44,
+   "loss_year_margin_physical_lag": 176.44,
+   "margins_by_year": {
+    "2021": {
+     "campd": null,
+     "class_proxy": 972.36,
+     "bin_hr": 5.86,
+     "model_bin_hr": 996.56
+    },
+    "2022": {
+     "campd": null,
+     "class_proxy": 176.44,
+     "bin_hr": 5.86,
+     "model_bin_hr": 215.07
+    },
+    "2023": {
+     "campd": null,
+     "class_proxy": 239.95,
+     "bin_hr": 5.86,
+     "model_bin_hr": 263.12
+    },
+    "2024": {
+     "campd": null,
+     "class_proxy": 86.68,
+     "bin_hr": 5.86,
+     "model_bin_hr": 108.27
+    },
+    "2025": {
+     "campd": null,
+     "class_proxy": 76.43,
+     "bin_hr": 5.86,
+     "model_bin_hr": 102.12
+    }
+   }
+  }
+ }
+}
