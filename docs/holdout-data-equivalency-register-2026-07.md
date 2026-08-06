@@ -15,6 +15,56 @@ but sparser grain, different derivation vintage, proxy vintage, partial
 coverage, or a source substitution) / **MISSING** (absent). Every DEGRADED /
 MISSING row carries materiality and a fix (or "accepted").
 
+> ## ⚠ CORRECTION 2026-08-06 (pjm-160): **every "F3 demand-profile blocker" row
+> ## in this register is MIS-STATED, and the gap is now CLOSED for 2019-2020**
+>
+> This register states, in the PJM, NEISO, CAISO, MISO and NYISO sections alike,
+> that `eia_demand_profiles.parquet` starting at 2021 is *"the primary demand
+> driver"* and that without it *"no dispatch is possible"* / those years
+> *"cannot be dispatched at all regardless of every other input's status"*.
+> **That is false at HEAD, and it has been false since every ISO gained a per-BA
+> EIA-930 hourly adapter.** Measured 2026-08-06 by calling the real loaders:
+>
+> ```
+> load_demand(iso, 2019) and (iso, 2020)      : OK for ALL SIX ISOs
+> load_demand_meta(iso, 2019) and (iso, 2020) : RAISES for all six
+> ```
+>
+> `load_demand` resolves through `eia930.demand.DEMAND_LOADERS` over the per-BA
+> `data/raw/eia-930-hourly/<BA> hourly.parquet` extracts, which cover **2018-2026**
+> (PJM: 8760 rows in 2019); the demand-profiles parquet is only the *fallback*.
+> The real gap was **one function wide** — `load_demand_meta` falls through to the
+> legacy `eia_demand_meta.parquet` summary, which starts at 2021 like the profiles
+> file it summarizes — and that single `ValueError` is what blocked
+> `build_calibration_reference._demand_totals` and every downstream row.
+>
+> **CLOSED for 2019-2020** at the curation seam by
+> `scripts/data/curate_demand_profile.py::curate_pre_window` (12 partitions, six
+> ISOs × 2019-2020, sourced from the same adapter `load_demand` serves).
+> `data/raw` is untouched. Evidence and the full argument:
+> `results/calibration/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
+>
+> **Read every row below tagged "F3" / "cross-ISO F3 blocker" / "MISSING
+> 2018-2020" for the demand driver as superseded by this block.** The rows are
+> left unedited as the historical record; the *fix* column in all of them
+> ("extend `eia_demand_profiles{,_meta}.parquet` first") describes an extension
+> that was never the thing needed.
+>
+> **Three things this correction does NOT change.** (1) **2018 is out of scope**
+> — the owner's 2026-08-06 decision drops it and bottoms the ladder at 2020, so
+> only 2019-2020 were built. (2) **H1-2026 is genuinely blocked** by construction
+> (a partial year cannot satisfy the 8760 demand contract) — those rows stand as
+> written. (3) **Nothing here is authorization.** The holdout freeze is ACTIVE and
+> `final` is EMPTY; data readiness is not a grant (rule 22).
+>
+> **One new defect, recorded here so it is not rediscovered:** PJM's **2020**
+> `peak_mw` carries two metering-artifact hours (192,229 / 176,085 MW against a
+> 145,428 third-highest) that neither the loader's 2.5×-median spike screen nor
+> the curator's 5×-median bounds screen catches. PJM **2020 is therefore
+> deliberately NOT added** to `CALIBRATION_YEARS_BY_ISO`; **2019 is**. The root
+> cause is a threshold in a shared, solve-affecting loader screen and belongs to
+> its own cross-ISO session (finding §2.1).
+
 ## Summary matrix
 
 > **Coverage baseline 2026-07-31:** the cross-ISO availability audit
