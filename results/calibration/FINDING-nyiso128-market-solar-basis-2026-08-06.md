@@ -89,7 +89,16 @@ Both arms are same-HEAD, same recipe; **K1 confirms exactly one differing
 | **K2** no new unserved energy | **PASS** — zero slack in both arms, all three years |
 | **K4** live, not inert | **PASS** — max zonal \|ΔLMP\| 100.5 / 97.3 / 283.0 $/MWh |
 | **K5** seam does not absorb it | **PASS** — import p50 +52 / 0 / +42 MW; import energy +0.076 / −0.000 / +0.027 TWh |
+| **K3** C1 does not regress | **PASS** — zero per-class C1 FAILs in either arm; no class leaves its band (contrast the nyiso-127 PAR arm, which failed K3 here with ST_GAS 2023 +3.63 TWh) |
 | **K6** control reproduces keeper | **FAIL** — §3 |
+| **K7** C7/C8 hold | **PASS** — C7 and C8 both PASS in both arms |
+
+**Correction on the gate scoring, recorded because it changes what may be
+claimed.** K7 was initially **unscored, not passing**: both arms read C7/C8
+`SKIPPED` because their bundles carried no `legitimacy_diagnostics.json`. The
+artifact was generated for both arms and K7 then scored PASS. `governance` reads
+`UNATTESTED` in both arms (no `calibration_attestation.json` — neither arm is a
+keeper), which is why both determinations are NOT-YET independently of C3c.
 
 **K5 is the load-bearing check on the whole claim** and it holds: the removed
 solar is replaced by **in-state thermal**, not by imports.

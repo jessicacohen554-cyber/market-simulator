@@ -229,5 +229,92 @@
     }
    }
   ]
+ },
+ "k3": {
+  "gate": "K3 C1 does not regress",
+  "control_class_fails": 0,
+  "treatment_class_fails": 0,
+  "control_fuelmix": "PASS",
+  "treatment_fuelmix": "PASS",
+  "pass": true,
+  "note": "zero per-class C1 FAILs in either arm; no class leaves its band. Contrast the nyiso-127 PAR arm, which failed K3 exactly here with ST_GAS 2023 +3.63 TWh."
+ },
+ "k6": {
+  "gate": "K6 control reproduces the keeper C3a to +/-0.2 pp",
+  "pass": false,
+  "keeper_c3a_pct": [
+   7.7,
+   -0.8,
+   -10.2
+  ],
+  "control_c3a_pct": [
+   6.2,
+   -1.7,
+   -7.0
+  ],
+  "delta_pp": [
+   -1.5,
+   -0.9,
+   3.2
+  ],
+  "note": "FIRES. Identical 680-field recipe; the keeper's SOLE FAIL (C3a-2025 -10.2 %) is absent at current HEAD (-7.0 %, PASS). Benchmark unmoved (actual 66.53 both), so model-side: main's advance and/or a from-scratch data/clean rebuild."
+ },
+ "k7": {
+  "gate": "K7 C7/C8 protective gates hold",
+  "control": {
+   "C7": "PASS",
+   "C8": "PASS"
+  },
+  "treatment": {
+   "C7": "PASS",
+   "C8": "PASS"
+  },
+  "pass": true,
+  "note": "Scored only after legitimacy_diagnostics.json was generated for both arms; both read SKIPPED until then, so K7 was initially UNSCORED rather than passing."
+ },
+ "c3a": {
+  "control_pct": [
+   6.2,
+   -1.7,
+   -7.0
+  ],
+  "treatment_pct": [
+   8.8,
+   0.8,
+   -3.2
+  ],
+  "all_pass_both_arms": true
+ },
+ "c3c_hours_gt300": {
+  "actual": [
+   10,
+   12,
+   42
+  ],
+  "control": [
+   18,
+   2,
+   21
+  ],
+  "treatment": [
+   22,
+   3,
+   24
+  ],
+  "note": "REGRESSES: 2023 flips PASS -> FAIL at 2.20x over-produced."
+ },
+ "summary": {
+  "gates_passed": [
+   "K1",
+   "K2",
+   "K3",
+   "K4",
+   "K5",
+   "K7"
+  ],
+  "gates_failed": [
+   "K6"
+  ],
+  "promotion": "NO \u2014 PREREG section 8-1 is unconditional; K6 fired."
  }
 }
