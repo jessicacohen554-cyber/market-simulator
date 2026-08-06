@@ -225,7 +225,44 @@ argument for spending it *after* the C3c lane resolves, not before.
 Pre-registered in `PREREG-neiso87-aug2025-basis-refresh-2026-08-06.md`, committed before any
 data byte was edited.
 
-<!-- RESULTS FILLED IN BELOW -->
+### 4.0 An unplanned finding: **the committed keeper no longer reproduces at HEAD in 2025**
+
+The control arm was run because the keeper's `git.sha` is unresolvable in this shallow clone,
+so zero code drift could not be *proven*. It turns out not to hold. Replaying the keeper's own
+recipe at HEAD against the *unmodified* committed data:
+
+| year | `class_hourly` | `system` | `storage` | `reserve_family` |
+|---|---|---|---|---|
+| 2023 | **identical** | **identical** | **identical** | **identical** |
+| 2024 | **identical** | **identical** | **identical** | **identical** |
+| **2025** | **differs** | **differs** | **differs** | **differs** |
+
+The 2025 divergence is **confined entirely to January** — 731 of the year's 8,760 hours, every
+one of them in Jan-2025 (hour index 0 → 743), none outside it. Magnitude: **max |Δλ| $25.52**
+in a single hour, **mean Δλ over the year −0.334 $/MWh** (arm A $69.715 vs keeper $70.049).
+
+Ruled out this session, by direct comparison rather than inference:
+
+- **Not the AGT daily series.** Rebuilt via `hubs._algonquin_daily` under both the pre- and
+  post-neiso-86 file: NEISO 2025 resolves to **identical prints in every month** (Jan-2025 has
+  exactly one, 2025-01-29 @ $4.06), and Dec-2024 is unchanged too.
+- **Not the monthly basis rows.** NEISO 2023–2025 are md5-identical pre-intake, post-intake and
+  at HEAD (`382113c6…`).
+- **Not the FFR-7B RPS change**, despite it naming NEISO: `backcast_config` sets
+  `rps_enabled=False`, so the RPS row is inert in every backcast.
+
+The keeper solved at merge-base `243b4ab1…` against a HEAD roughly fifty commits back; the
+cause lies somewhere in that range and was not isolated here. **Consequences, stated plainly:**
+
+1. **The A/B in §4.1 is unaffected.** Both arms are solved at the same HEAD, in the same
+   year-chain, differing only in the edited row — which is exactly what the control was for.
+   Had the committed keeper been used as arm A, this January-2025 drift would have been
+   misattributed to the basis correction.
+2. **The keeper's registered 2025 numbers are stale with respect to HEAD**, by −0.33 $/MWh on
+   mean λ. Small, but it means **any future NEISO A/B must solve its own same-HEAD control** —
+   the committed bundle is no longer a valid baseline. Flagged for the owner as an open item.
+
+### 4.1 The correction and its A/B
 
 ## 5. What the owner is being asked to decide
 
