@@ -3924,3 +3924,81 @@ pre-registered unit list + decision rule, the per-unit margin table with evidenc
 restated bound, which FFR-6A conclusions survive, the D-21(a) implication (reported, not
 recommended), and the §9.3 OP-only table.
 ```
+
+## §0t — Wave 7 closed; FFR-7B-2 dispatched; cards D-23/D-24 at the owner (2026-08-06 @ `97e37b0f`)
+
+FFR-7C: the ≈0 bound SURVIVES on the corrected target (0 of 2,294 MW; Sandy Creek clears
+1.25×) — FFR-6A's price-object and bar conclusions verified untouched; the window can only
+FALSIFY a screen via exits, never confirm one (positive validation is price-side). FFR-7B
+Arm 1: statutory corrections landed, paired controls BYTE-IDENTICAL ×3 ISOs, no promotion
+hold; Arms 2–3 handed off → FFR-7B-2 below. neiso-87: the NEISO locked-test SPENT claim is
+FALSE (13 files, incl. CLAUDE.md) → card D-23. Full record: Addendum X.
+
+### FFR-7B-2 [FABLE] — Arms 2–3 of the RPS/clean-tier repair (D-22(a) continuation)
+
+```
+[FABLE] FFR-7B-2 — Implement Arms 2 and 3 of the RPS/clean-tier repair (owner decision
+D-22(a), sitting Addendum V.6; continuation chartered at Addendum X.2/X.3). THE SPEC IS
+TWO DOCUMENTS, IN ORDER: FFR-7B's §6 design-to-implementation notes
+(docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md — code-verified pointers: LP
+layout/costs/rows/model touch points, the per-zone dual companion, the MISO state-row table
+with citations, the test list) and FFR-6B (docs/handoffs/ffr-6b-rps-grain-clean-tiers-
+2026-08-05.md §§3, 6) where §6 defers. Implement, do not redesign. ARM 2 LANDS COMPLETE
+BEFORE ARM 3 BEGINS; if budget runs short, land Arm 2 complete and hand off Arm 3 — never a
+partial arm. E-1 NEVER ACQUIRES A BUILD LIMB. The §45U-vs-clean-dual composition is OPEN
+and blocks ARM 3's ARMING ONLY (cited comment + handoff statement).
+
+=== VERIFIED STATE (2026-08-06 @ origin/main 97e37b0f — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-05-run168b-year-curves · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-06-caiso-175-tac-intake · NYISO 2026-08-06-nyiso-128-solar-basis · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-05-miso-132b-cc-committed (READ the shards
+yourself; keepers move mid-lane — FFR-7B had two move under it; re-verify before any
+paired measurement). `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY; freeze ACTIVE
+(all your solves are in-sample or forecast-mode). Arm 1 is ON MAIN (statutory
+STATE_RPS_FLOORS + RPS_ELIGIBLE_FUELS_BY_ISO) — your base includes it.
+PREREQUISITES IN ORDER: `uv sync` (~2 min), then scripts/regenerate_clean.py (~63-65 min)
+before any solve. Rule 12 PER PROMPT: <=5 solve-years per invocation, years sequential
+within one, <=2 concurrent invocations. Rule 27: FABLE (model/lp is core; exact bytes, blob
+verification).
+
+=== ARM 2 — K-row generalization, MISO ARMED ONLY (7B §6.1 steps 1-9 ARE the plan) ===
+Follow the nine steps verbatim: layout n_rec_acp=K + rec_acp_col(k,t); costs (K,) ACP
+vector; _build_rps_rows per-region masks + RHS; dual recovery K-slice with
+rps_shadow_price scalar at K==1 / per-zone max-over-eligible vector at K>1; the REQUIRED
+per-zone credit companion at new_entry.py + retirements.py via a shared helper; the gate
+flag (default OFF, forecast-mode, MISO-only arming) registered in
+_CACHE_KEY_OPTIONAL_FIELDS + defaults ledger IN THE SAME COMMIT (nyiso-128's unregistered
+field was found live on main — run the default-key pin tests FIRST and confirm they pass at
+your base before you start, so you never debug someone else's red); matrix row same PR
+(28c). The MISO state-row table and MT-exclusion are in §6.1(7) with citations — copy, do
+not re-derive. Tests per §6.1(8): flag-off byte-identity (toy + K=1 legacy), armed
+mask-binds toy, blend reproduction (Σ rhs/demand ≈ .1139/.1606/.1981 at 2026/30/40),
+per-zone credit wiring. K=1 BYTE-IDENTITY IS A REGRESSION TEST, NOT AN ASSERTION.
+Measurement: bounded 2026+ MISO forecast pair (off vs armed), <=5 solve-years each,
+registered to frontend/data/forecast/ via register_forecast_run.py (NEVER the backcast
+registry), Q.2 supersession noted.
+=== ARM 3 — clean-tier row family, MISO-West + MISO-East ONLY (7B §6.2 + FFR-6B §6.3/§6.4) ===
+Second independent row family on Arm 2's K-row machinery; second default-OFF gate flag
+(same-commit cache-key registration, same-PR matrix row); per-statute qualifying sets as
+DATA (MN carbon-free incl. hydrogen+biomass; MI clean incl. qualified CCS gas); rule-19
+composition per FFR-6B §6.4 — clean dual enters the EXISTING max(eac, rps_shadow) doctrine
+for nuclear/hydro (never a sum); federal_ces_replaces_state_rps suppresses state clean rows
+too; wind-satisfies-both-rows is CORRECT with generator credit = max(); §45U composition
+OPEN — ARMING BLOCKED, stated in a cited comment. Illinois: NO row (recorded null).
+Measurement: extend the Arm-2 forecast pair or a separate bounded pair; same registration
+rules.
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit —
+`git status --short` after every Python write; restore exact HEAD bytes; never stage the
+reflow; your constants edits (if any) must be the only constants.py delta you push. Push
+413 + flaky transport: 7B §5's operational notes are REQUIRED READING — fetch main + rebase
+before every push; owner merges fast and deletes branches (`git remote prune origin`).
+Never push_files a >=300-line file. Shell cwd persists. Stop-hook on merged history:
+rev-list 0 => nothing to amend. results/ dies with the container — commit registrations and
+handoff before tail work. The D-13 hash-out hazard stands.
+
+Deliverable: the PR(s) (Arm 2 complete; Arm 3 complete or handed off) and
+docs/handoffs/ffr-7b2-rps-krow-clean-rows-<date>.md — per-arm: byte-identity proof, the
+armed measurement with per-region duals shown, the per-zone credit wiring evidence, the
+Arm-3 composition statement with the open §45U question, and what you did NOT separate.
+```
