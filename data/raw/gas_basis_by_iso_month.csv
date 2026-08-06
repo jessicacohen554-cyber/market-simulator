@@ -527,7 +527,7 @@ NEISO,2025,4,Algonquin Citygate (ISO-NE MA gas index),-0.28,https://isonewswire.
 NEISO,2025,5,Algonquin Citygate (ISO-NE MA gas index),-0.57,https://isonewswire.com/2025/07/01/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2025/
 NEISO,2025,6,Algonquin Citygate (ISO-NE MA gas index),-0.13,https://isonewswire.com/2025/07/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2025/
 NEISO,2025,7,Algonquin Citygate (ISO-NE MA gas index),1.03,https://isonewswire.com/2025/08/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2025/
-NEISO,2025,8,Algonquin Citygate (interp Jul/Sep ISO-NE MA gas index),0.04,interpolated from Jul (+1.03) and Sep (-0.95) measured ISO-NE MA index; EIA N3050MA3 proxy (+13.46) rejected - low-volume summer LDC citygate average overstates marginal AGT basis (actual Aug-2025 NEISO DA LMP $45.6 vs winter-level proxy implied $167)
+NEISO,2025,8,Algonquin Citygate (ISO-NE MA gas index),-0.38,https://isonewswire.com/2025/10/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2025/
 NEISO,2025,9,Algonquin Citygate (ISO-NE MA gas index),-0.95,https://isonewswire.com/2025/11/05/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2025/
 NEISO,2025,10,Algonquin Citygate (ISO-NE MA gas index),-0.82,https://isonewswire.com/2025/11/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2025/
 NEISO,2025,11,Algonquin Citygate (ISO-NE MA gas index),0.89,https://isonewswire.com/2025/12/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2025/
