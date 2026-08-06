@@ -146,5 +146,87 @@ class TestCurateAll(unittest.TestCase):
         self.assertFalse(df["repaired"].drop(index=5).any())
 
 
+class TestCuratePreWindow(unittest.TestCase):
+    """The pjm-160 F3 closure: the pre-2021 years the legacy extract omits.
+
+    Hermetic — the per-ISO demand adapter is stubbed, so these never read the
+    real per-BA extracts and assert on the *contract* (which years, which
+    source, what the screen does) rather than on measured values.
+    """
+
+    def setUp(self):
+        self._tmp = TemporaryDirectory()
+        self._orig_clean = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = Path(self._tmp.name) / "clean"
+        self._orig_series = cdp.pre_window_series
+
+    def tearDown(self):
+        clean_io.paths.CLEAN_DIR = self._orig_clean
+        cdp.pre_window_series = self._orig_series
+        self._tmp.cleanup()
+
+    def _stub(self, series_for):
+        cdp.pre_window_series = series_for
+
+    def test_writes_every_model_iso_for_every_pre_window_year(self):
+        self._stub(lambda iso, year: _series(1000.0, cdp.HOURS_PER_YEAR))
+        written = cdp.curate_pre_window()
+        self.assertEqual(len(written), len(cdp.MODEL_ISOS) * len(cdp.PRE_WINDOW_YEARS))
+        for year in cdp.PRE_WINDOW_YEARS:
+            for iso in cdp.MODEL_ISOS:
+                path = clean_io.paths.clean_path("demand-profile", iso=iso, year=year)
+                self.assertTrue(path.exists(), f"{iso} {year} not written")
+                validate_clean(path)
+
+    def test_pre_window_years_are_below_the_legacy_extracts_floor(self):
+        # The legacy eia_demand_profiles.parquet starts at 2021; this pass must
+        # only ever cover years BELOW it, never overwrite a legacy partition.
+        self.assertTrue(all(y < 2021 for y in cdp.PRE_WINDOW_YEARS))
+
+    def test_full_year_contract_and_normalization(self):
+        self._stub(lambda iso, year: _series(1000.0, cdp.HOURS_PER_YEAR))
+        cdp.curate_pre_window()
+        path = clean_io.paths.clean_path("demand-profile", iso="PJM", year=2019)
+        df = pd.read_parquet(path).sort_values("hour").reset_index(drop=True)
+        self.assertEqual(len(df), cdp.HOURS_PER_YEAR)
+        self.assertEqual(df["year"].unique().tolist(), [2019])
+        self.assertAlmostEqual(df["normalized"].sum(), 1.0, places=6)
+        self.assertFalse(df["repaired"].any())
+
+    def test_screen_and_repair_apply_to_the_pre_window_source_too(self):
+        def _with_spike(iso, year):
+            mw = _series(1000.0, cdp.HOURS_PER_YEAR)
+            if iso == "PJM":
+                mw[42] = 5.0e8
+            return mw
+
+        self._stub(_with_spike)
+        cdp.curate_pre_window()
+        df = (
+            pd.read_parquet(
+                clean_io.paths.clean_path("demand-profile", iso="PJM", year=2019)
+            )
+            .sort_values("hour")
+            .reset_index(drop=True)
+        )
+        self.assertTrue(df.loc[42, "repaired"])
+        self.assertLess(df.loc[42, "raw_mw"], 2000.0)
+
+    def test_short_or_missing_series_is_skipped_not_written(self):
+        # A partial year (H1-2026-shaped) or an absent extract must NOT produce
+        # a partition — the 8760 contract is what load_demand_meta relies on.
+        self._stub(lambda iso, year: None if iso == "PJM" else _series(9.0, 4000))
+        self.assertEqual(cdp.curate_pre_window(), [])
+
+    def test_nan_series_is_skipped(self):
+        def _with_nan(iso, year):
+            mw = _series(1000.0, cdp.HOURS_PER_YEAR)
+            mw[7] = np.nan
+            return mw
+
+        self._stub(_with_nan)
+        self.assertEqual(cdp.curate_pre_window(), [])
+
+
 if __name__ == "__main__":
     unittest.main()
