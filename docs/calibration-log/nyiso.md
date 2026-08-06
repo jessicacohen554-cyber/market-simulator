@@ -5484,7 +5484,16 @@ reconcile that first, since it moves the 2025 over-removal from 0.33 to
 
 **(6) THE LEVER QUEUE IS NO LONGER EMPTY** (it was, at nyiso-127/128). Two
 items, each needing its own prereg: **(a)** the unmasked **Long Island scarcity
-over-production** — the route back to CALIBRATED-WITH-CAVEATS; **(b)** the
+over-production**, whose owner is MEASURED — in **100 % of the 22 tail hours**
+(both arms) BOTH LI import paths sit at their bound: `NYC>Long_Island` at
+**325 MW** (at bound only 26.5 % of the year, so it binds precisely in the
+scarcity episode) and `NYISO_external>Long_Island` at ~849 MW. The 325 MW is not
+the link's TTC but the **published capacity-market LCR import limit**, applied by
+the armed `nyiso_li_lcr_tsl` as an in-window **hourly energy** cap — a
+deliverability quantity doing an energy job, a boundary mismatch
+`model/interchange/nyiso.py` already documents. An existing armed mechanism to
+RECONCILE (rule 19), not a new floor to stack — and the route back to
+CALIBRATED-WITH-CAVEATS; **(b)** the
 **NYISO solar CF level**, after the GWh reconciliation. Matrix cell
 `vre_market_generator_basis` NYISO **`O` → `K`**; NYISO column and
 `docs/mechanism-testing-matrix.md` §5.5 header re-stamped in-session (rule 28).

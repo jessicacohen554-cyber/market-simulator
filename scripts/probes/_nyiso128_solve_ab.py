@@ -1,7 +1,16 @@
-"""nyiso-128 A/B driver: solve the control and treatment arms on the keeper recipe.
+"""NYISO A/B driver: solve arms on the DESIGNATED KEEPER's recipe.
 
-The NYISO keeper (``2026-08-04-nyiso-125-seam-envelope``) was **not produced by
-the documented CLI** — nyiso-127 recorded the same finding when it discovered
+**Re-pointed 2026-08-06 (nyiso-129) and kept live for the successor lane.**
+:data:`KEEPER_RUN_CONFIG` now reads the newly promoted
+``2026-08-06-nyiso-128-solar-basis`` (bundle ``nyiso128_treatment``) instead of
+the superseded ``nyiso125_seam_A``, because an A/B whose control reproduces a
+*superseded* recipe is exactly the stale-baseline defect that fired nyiso-128's
+K6 gate. Two consequences to know before running it: ``--arm control`` now
+reproduces the **solar-basis keeper** (that flag is in the keeper's own recorded
+override block), so ``--arm treatment`` is a no-op duplicate of it; and a NEW
+lever is armed with ``--override FIELD=VALUE`` rather than by editing this file.
+
+The NYISO keeper was **not produced by the documented CLI** — nyiso-127 recorded the same finding when it discovered
 ``--nyiso-seam-deliverability-envelope`` had no argparse path at all. Thirteen
 of the keeper's non-default ``ScenarioConfig`` fields have no CLI flag and are
 not built into ``run_calibration_full.main``'s ``prb_overrides`` dict; they
@@ -29,9 +38,10 @@ is caught in minutes instead of after a multi-hour solve.
 
 Usage::
 
-    python scripts/probes/_nyiso128_solve_ab.py --arm control   --years 2023 2024 2025
-    python scripts/probes/_nyiso128_solve_ab.py --arm treatment --years 2023 2024 2025
     python scripts/probes/_nyiso128_solve_ab.py --arm control --verify-only
+    python scripts/probes/_nyiso128_solve_ab.py --arm control   --years 2023 2024 2025
+    python scripts/probes/_nyiso128_solve_ab.py --arm control --years 2023 2024 2025 \
+        --override some_new_lever=true --out-dir results/calibration/nyiso130_B
 """
 
 from __future__ import annotations
@@ -45,7 +55,16 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-KEEPER_RUN_CONFIG = REPO / "results/calibration/nyiso125_seam_A/run_config.json"
+# The DESIGNATED keeper's own run_config — the provenance record every arm is
+# built from and verified against. RE-POINTED 2026-08-06 (nyiso-129) from
+# nyiso125_seam_A to the newly promoted nyiso128_treatment. Keep this pointing at
+# the CURRENT keeper: an A/B whose control reproduces a superseded recipe is the
+# stale-baseline failure that fired nyiso-128's K6 gate. Consequence to know
+# before using it: the current keeper ALREADY carries
+# ``nyiso_solar_market_generator_basis``, so ``--arm control`` now reproduces the
+# solar-basis keeper, and ``--arm treatment`` (which sets that same flag) is a
+# no-op duplicate of it. A new lever is added with ``--override KEY=VALUE``.
+KEEPER_RUN_CONFIG = REPO / "results/calibration/nyiso128_treatment/run_config.json"
 
 # The CLI-expressible half of the keeper recipe. Everything else arrives through
 # the recorded override block (see the module docstring).
@@ -190,6 +209,19 @@ def main() -> int:
         action="store_true",
         help="short-hours solve + config diff against the keeper, no full run",
     )
+    ap.add_argument(
+        "--override",
+        action="append",
+        default=[],
+        metavar="FIELD=VALUE",
+        help=(
+            "extra ScenarioConfig field to arm on top of the keeper recipe, "
+            "repeatable — the way a NEW lever is A/B'd without editing this file "
+            "(VALUE is parsed as JSON, so use true/false/12.5/\"text\"). Note "
+            "--verify-only will report each one as a keeper-fidelity difference, "
+            "which is the intended reading: it is the arm's single declared delta."
+        ),
+    )
     args = ap.parse_args()
 
     hours = 24 if args.verify_only else args.hours
@@ -204,6 +236,14 @@ def main() -> int:
     overrides.update(keeper_overrides())
     if args.arm == "treatment":
         overrides["nyiso_solar_market_generator_basis"] = True
+    for item in args.override:
+        field, _, raw = item.partition("=")
+        if not _:
+            raise SystemExit(f"--override needs FIELD=VALUE, got {item!r}")
+        try:
+            overrides[field.strip()] = json.loads(raw)
+        except json.JSONDecodeError:
+            overrides[field.strip()] = raw  # bare string, e.g. --override mode=backcast
     kwargs["prb_overrides"] = overrides
 
     print(f"nyiso-128 {args.arm}: years={years} hours={hours} out={out_dir}")

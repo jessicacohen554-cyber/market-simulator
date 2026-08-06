@@ -74,6 +74,31 @@ estimate was silently compensating for it."* The phantom Zone-K solar was
 masking an over-tight Long Island representation. That is now the ISO's named
 successor lever, and the queue was **EMPTY** before this session.
 
+### 3a. And the over-tightness has a measured owner
+
+Read straight off both arms' committed `hourly/network_2023.parquet`, **both** of
+Long Island's import paths are pinned at their bound in **100 % of the 22 tail
+hours**, in both arms:
+
+| link | median `limit_up` | at bound, all hours | at bound, tail hours | flow in tail hours |
+|---|---:|---:|---:|---:|
+| `NYC>Long_Island` | 1,650 MW | **26.5 %** | **100 %** | **325 MW** |
+| `NYISO_external>Long_Island` | 1,012 MW | 99.9 % | **100 %** | 849 MW |
+
+The 325 MW is not the link's TTC — it is the **published capacity-market LCR
+import limit** for Long Island (2023/24 = 325 MW, 2024/25 = 275 MW), applied by
+the armed `nyiso_li_lcr_tsl` as an in-window **hourly energy** cap on the
+NYC→Long_Island link. `model/interchange/nyiso.py` already documents that
+boundary mismatch in its own docstring. So Zone K enters every scarcity hour
+with **both** import paths saturated and its in-zone fleet as the only
+respondent — which is exactly why removing 97.7 MW of Zone-K afternoon solar
+walks the price up the ladder, and why the same removal upstate does not.
+
+That makes the successor lever **specific and pre-registrable**: whether a
+*deliverability* planning quantity should be the hourly energy transfer cap in
+the hours the C3c tail forms. It is an existing armed mechanism to reconcile
+(rule 19 `[R-ONE-MECH]`), not a new floor to stack.
+
 **The 2023 exception stays WITHHELD.** The miss is an *over*-production; the
 ledgered C3c caveat's own classification licenses only an under-production
 (*"five-zone representation cannot form the sub-zonal scarcity"*). It is

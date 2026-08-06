@@ -283,8 +283,61 @@ def tail_localization(control: str, treatment: str) -> dict:
     return out
 
 
+def _treatment_tail_hours_2023() -> list[int]:
+    """Return the treated arm's 2023 >$300 tail hours, recomputed from its sidecar."""
+    df = pd.read_parquet(
+        REPO / "results/calibration/nyiso128_treatment/hourly/system_2023.parquet"
+    )
+    mx = df.pivot_table(index="hour", columns="zone", values="price").max(axis=1)
+    return [int(h) for h in mx[mx > TAIL_THRESHOLD_USD].index]
+
+
+def li_import_binding(bundles: tuple[str, ...], year: int, tail_hours: list[int]) -> dict:
+    """Return how often Long Island's two import paths sit at their bound.
+
+    The C3c-2023 cost localizes entirely to Zone K (see
+    :func:`tail_localization`), so the question that names the successor lever is
+    *what is holding Long Island short in those hours*. This reads the committed
+    ``hourly/network_<year>.parquet`` sidecars and reports, for both LI import
+    links, the share of all hours and of the tail hours at ``limit_up``.
+
+    Args:
+        bundles: Bundle directory names to read.
+        year: Solve year.
+        tail_hours: The year's >$300 tail hours (from :func:`tail_localization`).
+
+    Returns:
+        Per-bundle, per-link at-bound shares, median limit and tail-hour flows.
+    """
+    links = ("NYC>Long_Island", "NYISO_external>Long_Island")
+    out: dict[str, dict] = {}
+    for bundle in bundles:
+        net = pd.read_parquet(
+            REPO / "results" / "calibration" / bundle / "hourly" / f"network_{year}.parquet"
+        )
+        net = net[net["pass"] == "P1"]
+        per_link: dict[str, dict] = {}
+        for name in links:
+            g = net[net["name"] == name].set_index("hour")
+            if g.empty:
+                continue
+            at_bound = g["mw"] >= g["limit_up"] - 1e-6
+            per_link[name] = {
+                "limit_up_median_mw": round(float(g["limit_up"].median()), 1),
+                "at_bound_share_all_hours": round(float(at_bound.mean()), 4),
+                "at_bound_share_tail_hours": round(
+                    float(at_bound.reindex(tail_hours).mean()), 4
+                ),
+                "flow_mw_in_tail_hours_median": round(
+                    float(g["mw"].reindex(tail_hours).median()), 1
+                ),
+            }
+        out[bundle] = per_link
+    return out
+
+
 def main() -> int:
-    """Run all three measurements and write the record."""
+    """Run all measurements and write the record."""
     record = {
         "session": "nyiso-129",
         "date": "2026-08-06",
@@ -305,6 +358,20 @@ def main() -> int:
             "nyiso128_control", "nyiso128_treatment"
         ),
     }
+    tail_2023 = sorted(
+        {
+            *(
+                h["hour"]
+                for h in record["measurement_3b_tail_localization"]["2023"][
+                    "added_by_treatment"
+                ]
+            ),
+            *_treatment_tail_hours_2023(),
+        }
+    )
+    record["measurement_4_li_import_binding"] = li_import_binding(
+        ("nyiso128_control", "nyiso128_treatment"), 2023, tail_2023
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(record, indent=1))
     g = record["measurement_1_geometry_ratio"]

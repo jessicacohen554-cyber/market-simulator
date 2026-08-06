@@ -351,5 +351,35 @@
     20
    ]
   }
+ },
+ "measurement_4_li_import_binding": {
+  "nyiso128_control": {
+   "NYC>Long_Island": {
+    "limit_up_median_mw": 1650.0,
+    "at_bound_share_all_hours": 0.2648,
+    "at_bound_share_tail_hours": 1.0,
+    "flow_mw_in_tail_hours_median": 325.0
+   },
+   "NYISO_external>Long_Island": {
+    "limit_up_median_mw": 1012.4,
+    "at_bound_share_all_hours": 0.9995,
+    "at_bound_share_tail_hours": 1.0,
+    "flow_mw_in_tail_hours_median": 848.9
+   }
+  },
+  "nyiso128_treatment": {
+   "NYC>Long_Island": {
+    "limit_up_median_mw": 1650.0,
+    "at_bound_share_all_hours": 0.2676,
+    "at_bound_share_tail_hours": 1.0,
+    "flow_mw_in_tail_hours_median": 325.0
+   },
+   "NYISO_external>Long_Island": {
+    "limit_up_median_mw": 1012.4,
+    "at_bound_share_all_hours": 0.9994,
+    "at_bound_share_tail_hours": 1.0,
+    "flow_mw_in_tail_hours_median": 848.9
+   }
+  }
  }
 }
