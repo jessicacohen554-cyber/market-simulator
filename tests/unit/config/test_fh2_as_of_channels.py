@@ -476,21 +476,26 @@ class TestPolicyAsOfRows(unittest.TestCase):
         # the 2026 target it used to hand every historic year.
         self.assertAlmostEqual(get_rps_target("CAISO", 2019), 0.33)
 
-    def test_forecast_era_rps_targets_unchanged(self):
-        # Every knot at/after 2026 is untouched, so a plain 2026+ forecast is
-        # byte-identical for every ISO.
+    def test_forecast_era_rps_targets_pinned(self):
+        # Pinned forecast-era knots. DELIBERATELY UPDATED by FFR-7B Arm 1
+        # (rule 14 [R-ACCURATE]; FFR-6B §8): the renewable row now carries
+        # each statute's RENEWABLE tier only — NEISO's 2026 knot is the
+        # per-state Class-I blend (0.29, was the CES-blend 0.30) and CAISO
+        # plateaus at the statutory 60% RPS (§399.15(b)(2)(C)) instead of
+        # ramping to SB 100's zero-carbon 1.00. Clean/zero-emission tiers
+        # left the row (they are a separate row family, FFR-6B §6.3).
         expected_2026 = {
             "ERCOT": 0.0,
             "CAISO": 0.50,
             "NYISO": 0.40,
-            "NEISO": 0.30,
+            "NEISO": 0.29,
             "PJM": 0.185,
             "MISO": 0.11,
         }
         for iso, target in expected_2026.items():
             self.assertAlmostEqual(get_rps_target(iso, 2026), target, msg=iso)
         self.assertAlmostEqual(get_rps_target("CAISO", 2030), 0.60)
-        self.assertAlmostEqual(get_rps_target("CAISO", 2045), 1.00)
+        self.assertAlmostEqual(get_rps_target("CAISO", 2045), 0.60)
 
     def test_other_isos_still_edge_hold_and_that_is_disclosed(self):
         # Documented FH-2 disclose row: the five blend-based ISOs carry no
