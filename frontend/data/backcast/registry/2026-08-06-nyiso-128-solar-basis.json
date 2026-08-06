@@ -1,15 +1,15 @@
 {
-  "id": "2026-08-06-nyiso-128-solar-basis",
-  "label": "nyiso 128 solar basis",
-  "date": "2026-08-06",
-  "shorthand": "nyiso-128-solar-basis",
-  "definition": "Calibration run from bundle nyiso128_treatment.",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "NYISO",
-  "file": "frontend/data/backcast/runs/2026-08-06-nyiso-128-solar-basis.js",
-  "bundle": "results/calibration/nyiso128_treatment"
+ "id": "2026-08-06-nyiso-128-solar-basis",
+ "label": "nyiso 128 solar basis",
+ "date": "2026-08-06",
+ "shorthand": "nyiso-128-solar-basis",
+ "definition": "THE DESIGNATED NYISO KEEPER from 2026-08-06 (promoted nyiso-129). Arms exactly one field over the 2026-08-06-nyiso-128-control baseline: nyiso_solar_market_generator_basis, a rule 14 [R-ACCURATE] INPUT REPAIR with ZERO free parameters (n_residual unchanged at 6) that takes NYISO solar capacity from NYISO's own Gold Book Table III-2a 'NYISO Market Generators' registry (15 units, 573.4 MW; published load zone, nameplate MW and in-service date, crosswalked by the existing A-K -> five-zone map and ramped by the same month-of-commercial-operation construction the EIA-860 path applies) instead of the EIA-860 utility-scale operable schedule. THE DEFECT IT CORRECTS IS A DOUBLE COUNT: EIA-860's NY population lists every NY solar plant >= 1 MW, including ~2 GW of distribution-connected NY-Sun community solar that is not a NYISO market generator and whose output is ALREADY NETTED OUT of the EIA-930 NYIS demand series the model uses as load (NYIS 'NG: SUN' identically zero, 8,760/8,760 h) — so the same MWh was counted once as reduced demand and once as supply. Model capacity 1,645 / 2,566 / 2,930 MW becomes the registered 174.4 / 573.4 / 573.4 MW. RESULT: C3a PASSES all three years and improves where it was furthest out, +6.2 / -1.7 / -7.0 % -> +8.8 / +0.8 / -3.2 %; C1/C2/C3b/C4/C6/C8 PASS; the removed solar is replaced by IN-STATE THERMAL, not imports (JJA h16-h18 2025 CT_PEAKER +109 MW, ST_GAS +365 MW, CC_REGULAR +142 MW against solar -1,218 MW; import p50 +52 / 0 / +42 MW). THE COST, CARRIED OPENLY: the run is NOT-YET, sole FAIL C3c-2023 (model 22 h vs RT actual 10 h, 2.20x OVER-produced), an in-training miss of the OPPOSITE sign to the ledgered C3c caveat, so its 2023 exception is WITHHELD rather than laundered. Promoted anyway on rules 1 [R-STRUCT] / 14 [R-ACCURATE] under the owner's standing structure-over-gates standard, re-given verbatim in session nyiso-129: 'If structural integrity improves but gates regress that may still be a keeper.' nyiso-129 localized the whole C3c-2023 tail to Long Island (all 22 hours Zone K, h14-h19, Aug-21 + the Sept 4-9 heat wave), where the arm removes 97.7 of 152.1 MW — rule 14's own reading: the phantom solar was masking an over-tight Long Island representation, now the ISO's named successor lever. Evidence: results/calibration/FINDING-nyiso129-solar-basis-promotion-and-cf-successor-2026-08-06.md, FINDING-nyiso128-market-solar-basis-2026-08-06.md, PREREG-nyiso128-market-solar-basis-2026-08-05.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-06-nyiso-128-solar-basis.js",
+ "bundle": "results/calibration/nyiso128_treatment"
 }

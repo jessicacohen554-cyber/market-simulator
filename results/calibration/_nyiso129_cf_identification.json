@@ -1,0 +1,355 @@
+{
+ "session": "nyiso-129",
+ "date": "2026-08-06",
+ "no_solve": true,
+ "measurement_1_geometry_ratio": {
+  "2023": {
+   "whole_ny_fleet": {
+    "capacity_mw": 1769.4,
+    "tracking_mix": {
+     "single_axis": 0.2993,
+     "fixed": 0.6982,
+     "dual_axis": 0.0025
+    },
+    "centroid_lat_deg": 42.558,
+    "dc_ac_ratio": 1.3651,
+    "annual_mean_poa": 0.193061
+   },
+   "registered_subset": {
+    "capacity_mw": 194.4,
+    "tracking_mix": {
+     "single_axis": 0.3086,
+     "fixed": 0.6914,
+     "dual_axis": 0.0
+    },
+    "centroid_lat_deg": 42.253,
+    "dc_ac_ratio": 1.3385,
+    "annual_mean_poa": 0.193849
+   },
+   "poa_ratio_registered_over_whole": 1.0041
+  },
+  "2024": {
+   "whole_ny_fleet": {
+    "capacity_mw": 2723.5,
+    "tracking_mix": {
+     "single_axis": 0.4498,
+     "fixed": 0.5486,
+     "dual_axis": 0.0016
+    },
+    "centroid_lat_deg": 42.685,
+    "dc_ac_ratio": 1.3531,
+    "annual_mean_poa": 0.198612
+   },
+   "registered_subset": {
+    "capacity_mw": 572.5,
+    "tracking_mix": {
+     "single_axis": 0.608,
+     "fixed": 0.392,
+     "dual_axis": 0.0
+    },
+    "centroid_lat_deg": 42.54,
+    "dc_ac_ratio": 1.3397,
+    "annual_mean_poa": 0.205016
+   },
+   "poa_ratio_registered_over_whole": 1.0322
+  },
+  "2025": {
+   "whole_ny_fleet": {
+    "capacity_mw": 3096.5,
+    "tracking_mix": {
+     "single_axis": 0.4727,
+     "fixed": 0.5259,
+     "dual_axis": 0.0014
+    },
+    "centroid_lat_deg": 42.679,
+    "dc_ac_ratio": 1.3535,
+    "annual_mean_poa": 0.199514
+   },
+   "registered_subset": {
+    "capacity_mw": 572.5,
+    "tracking_mix": {
+     "single_axis": 0.608,
+     "fixed": 0.392,
+     "dual_axis": 0.0
+    },
+    "centroid_lat_deg": 42.54,
+    "dc_ac_ratio": 1.3397,
+    "annual_mean_poa": 0.205016
+   },
+   "poa_ratio_registered_over_whole": 1.0276
+  }
+ },
+ "measurement_2_gold_book_2025": {
+  "units": {
+   "Galt Power Inc. Puckett Solar C 323809 Greene 017 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 31.8,
+    "cf_2025": 0.1815
+   },
+   "Galt Power Inc. Janis Solar C 323808 Willet 023 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 31.0,
+    "cf_2025": 0.1769
+   },
+   "Galt Power Inc. Morris Ridge Solar C 323848 Mt Morris 051 36": {
+    "nameplate_mw": 179.0,
+    "net_energy_2025_gwh": 312.5,
+    "cf_2025": 0.1993
+   },
+   "Galt Power Inc. Branscomb Solar F 323811 Easton 115 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 34.3,
+    "cf_2025": 0.1958
+   },
+   "Galt Power Inc. Darby Solar F 323810 Easton 115 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 32.1,
+    "cf_2025": 0.1832
+   },
+   "Galt Power Inc. Regan Solar F 323812 Greene 057 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 35.7,
+    "cf_2025": 0.2038
+   },
+   "Galt Power Inc. Grissom Solar F 323813 Mohawk 057 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 35.5,
+    "cf_2025": 0.2026
+   },
+   "Galt Power Inc. Stillwater Solar F 323814 Stillwater 091 36": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 32.7,
+    "cf_2025": 0.1866
+   },
+   "Galt Power Inc. Pattersonville Solar F 323815 Schenectady 09": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 37.3,
+    "cf_2025": 0.2129
+   },
+   "Hecate Energy Albany 1 LLC Albany County Solar 1 F 323833 Co": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 27.7,
+    "cf_2025": 0.1581
+   },
+   "Hecate Energy Albany 2 LLC Albany County Solar 2 F 323834 Co": {
+    "nameplate_mw": 20.0,
+    "net_energy_2025_gwh": 30.5,
+    "cf_2025": 0.1741
+   },
+   "NextEra Energy Marketing, LLC East Point Solar F 323840 Shar": {
+    "nameplate_mw": 50.0,
+    "net_energy_2025_gwh": 97.2,
+    "cf_2025": 0.2219
+   },
+   "NextEra Energy Marketing, LLC High River Solar F 323847 Flor": {
+    "nameplate_mw": 90.0,
+    "net_energy_2025_gwh": 156.6,
+    "cf_2025": 0.1986
+   },
+   "Long Island Power Authority Long Island Solar Farm K 323691 ": {
+    "nameplate_mw": 31.5,
+    "net_energy_2025_gwh": 45.2,
+    "cf_2025": 0.1638
+   },
+   "Long Island Power Authority Calverton Solar K 323806 Riverhe": {
+    "nameplate_mw": 22.9,
+    "net_energy_2025_gwh": 41.7,
+    "cf_2025": 0.2079
+   }
+  },
+  "n_units": 15,
+  "total_nameplate_mw": 573.4,
+  "total_net_energy_2025_gwh": 981.8,
+  "fleet_cf_2025": 0.1955
+ },
+ "measurement_2b_model_cf_constant": {
+  "symbol": "RENEWABLE_AVG_CF['NYISO']['solar']",
+  "value": 0.15,
+  "note": "constants.py labels the MISO/NYISO/NEISO block a Tier-3 approximation with 'needs-citation: verify against EIA-923 ISO totals before quoting a forecast'; the donor-repaired profile realizes ~0.133 after clipping"
+ },
+ "measurement_3_zone_removal": {
+  "2023": {
+   "Upstate_West": {
+    "eia860_mw": 1013.7,
+    "registry_mw": 40.0,
+    "removed_mw": 973.7
+   },
+   "Capital_Hudson": {
+    "eia860_mw": 445.5,
+    "registry_mw": 80.0,
+    "removed_mw": 365.5
+   },
+   "Lower_Hudson": {
+    "eia860_mw": 20.4,
+    "registry_mw": 0.0,
+    "removed_mw": 20.4
+   },
+   "NYC": {
+    "eia860_mw": 12.9,
+    "registry_mw": 0.0,
+    "removed_mw": 12.9
+   },
+   "Long_Island": {
+    "eia860_mw": 152.1,
+    "registry_mw": 54.4,
+    "removed_mw": 97.7
+   }
+  },
+  "2024": {
+   "Upstate_West": {
+    "eia860_mw": 1637.1,
+    "registry_mw": 219.0,
+    "removed_mw": 1418.1
+   },
+   "Capital_Hudson": {
+    "eia860_mw": 730.3,
+    "registry_mw": 300.0,
+    "removed_mw": 430.3
+   },
+   "Lower_Hudson": {
+    "eia860_mw": 33.9,
+    "registry_mw": 0.0,
+    "removed_mw": 33.9
+   },
+   "NYC": {
+    "eia860_mw": 12.9,
+    "registry_mw": 0.0,
+    "removed_mw": 12.9
+   },
+   "Long_Island": {
+    "eia860_mw": 152.1,
+    "registry_mw": 54.4,
+    "removed_mw": 97.7
+   }
+  },
+  "2025": {
+   "Upstate_West": {
+    "eia860_mw": 1902.5,
+    "registry_mw": 219.0,
+    "removed_mw": 1683.5
+   },
+   "Capital_Hudson": {
+    "eia860_mw": 811.3,
+    "registry_mw": 300.0,
+    "removed_mw": 511.3
+   },
+   "Lower_Hudson": {
+    "eia860_mw": 38.8,
+    "registry_mw": 0.0,
+    "removed_mw": 38.8
+   },
+   "NYC": {
+    "eia860_mw": 19.1,
+    "registry_mw": 0.0,
+    "removed_mw": 19.1
+   },
+   "Long_Island": {
+    "eia860_mw": 158.1,
+    "registry_mw": 54.4,
+    "removed_mw": 103.7
+   }
+  }
+ },
+ "measurement_3b_tail_localization": {
+  "2023": {
+   "control_tail_hours": 18,
+   "treatment_tail_hours": 22,
+   "added_by_treatment": [
+    {
+     "hour": 5920,
+     "timestamp": "2023-09-04 16:00",
+     "zone": "Long_Island",
+     "price": 386.7
+    },
+    {
+     "hour": 5991,
+     "timestamp": "2023-09-07 15:00",
+     "zone": "Long_Island",
+     "price": 386.7
+    },
+    {
+     "hour": 6038,
+     "timestamp": "2023-09-09 14:00",
+     "zone": "Long_Island",
+     "price": 347.3
+    },
+    {
+     "hour": 6039,
+     "timestamp": "2023-09-09 15:00",
+     "zone": "Long_Island",
+     "price": 386.7
+    }
+   ],
+   "removed_by_treatment": [],
+   "treatment_tail_zones": [
+    "Long_Island"
+   ],
+   "treatment_tail_hours_of_day": [
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ]
+  },
+  "2024": {
+   "control_tail_hours": 2,
+   "treatment_tail_hours": 3,
+   "added_by_treatment": [
+    {
+     "hour": 4528,
+     "timestamp": "2024-07-07 16:00",
+     "zone": "Long_Island",
+     "price": 323.6
+    }
+   ],
+   "removed_by_treatment": [],
+   "treatment_tail_zones": [
+    "Long_Island"
+   ],
+   "treatment_tail_hours_of_day": [
+    16,
+    17,
+    18
+   ]
+  },
+  "2025": {
+   "control_tail_hours": 21,
+   "treatment_tail_hours": 24,
+   "added_by_treatment": [
+    {
+     "hour": 4214,
+     "timestamp": "2025-06-25 14:00",
+     "zone": "Long_Island",
+     "price": 329.4
+    },
+    {
+     "hour": 4527,
+     "timestamp": "2025-07-08 15:00",
+     "zone": "Long_Island",
+     "price": 313.3
+    },
+    {
+     "hour": 5032,
+     "timestamp": "2025-07-29 16:00",
+     "zone": "Long_Island",
+     "price": 313.3
+    }
+   ],
+   "removed_by_treatment": [],
+   "treatment_tail_zones": [
+    "Long_Island"
+   ],
+   "treatment_tail_hours_of_day": [
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  }
+ }
+}
