@@ -40,8 +40,11 @@ AUTHORIZED_YEARS = [2018, 2019, 2020, 2021, 2022, 2026]
 IN_SAMPLE_YEARS = [2023, 2024, 2025]
 WINTER = (1, 2, 12)
 SUMMER = (6, 7, 8)
-# Pre-intake baseline commit: the PREREG commit, which touched no data file.
-BASE_REF = "HEAD"
+# Pre-intake baseline, PINNED to the PREREG commit (which touched no data file) so
+# this probe keeps reproducing the recorded before/after long after HEAD has moved
+# past the intake. Must NOT be "HEAD": once the intake landed, HEAD became the
+# post-intake state and every gate would compare the corrected file against itself.
+BASE_REF = "5b27332f"
 
 
 def _git_show(ref: str, rel: str) -> str:
