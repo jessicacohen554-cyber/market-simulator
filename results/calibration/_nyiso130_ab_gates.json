@@ -1,0 +1,415 @@
+{
+  "all_gates_silent": false,
+  "arms": {
+    "control": "results/calibration/nyiso130_control",
+    "treatment": "results/calibration/nyiso130_n11tsl"
+  },
+  "kill_gates": [
+    {
+      "differing": {
+        "nyiso_li_tsl_n11_security": [
+          false,
+          true
+        ]
+      },
+      "gate": "K1 config isolation",
+      "n_fields_compared": 695,
+      "passed": true
+    },
+    {
+      "gate": "K2 feasibility",
+      "passed": true,
+      "rows": {
+        "control_2023": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        },
+        "control_2024": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        },
+        "control_2025": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        },
+        "treatment_2023": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        },
+        "treatment_2024": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        },
+        "treatment_2025": {
+          "dump_mwh": 0.0,
+          "slack_mwh": 0.0
+        }
+      }
+    },
+    {
+      "gate": "K3 liveness",
+      "passed": true,
+      "rows": {
+        "control_2023": {
+          "in_window_mw": [
+            325.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        },
+        "control_2024": {
+          "in_window_mw": [
+            275.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        },
+        "control_2025": {
+          "in_window_mw": [
+            275.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        },
+        "treatment_2023": {
+          "in_window_mw": [
+            940.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        },
+        "treatment_2024": {
+          "in_window_mw": [
+            940.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        },
+        "treatment_2025": {
+          "in_window_mw": [
+            940.0
+          ],
+          "off_window_mw": [
+            1650.0
+          ]
+        }
+      }
+    },
+    {
+      "gate": "K4 scope",
+      "links_with_changed_bounds": {
+        "2023": [
+          "NYC>Long_Island"
+        ],
+        "2024": [
+          "NYC>Long_Island"
+        ],
+        "2025": [
+          "NYC>Long_Island"
+        ]
+      },
+      "passed": true
+    },
+    {
+      "band": 0.02,
+      "gate": "K5 seam",
+      "passed": true,
+      "rows": {
+        "2023": {
+          "control_import_twh": 23.9228,
+          "relative_change": 0.0,
+          "treatment_import_twh": 23.9228
+        },
+        "2024": {
+          "control_import_twh": 20.7538,
+          "relative_change": 0.0,
+          "treatment_import_twh": 20.7538
+        },
+        "2025": {
+          "control_import_twh": 19.4071,
+          "relative_change": 0.00047,
+          "treatment_import_twh": 19.4162
+        }
+      }
+    },
+    {
+      "gate": "K6 forcing",
+      "mechanisms_whose_forced_share_rose": {
+        "2023 firm_import": [
+          0.2228,
+          0.2229
+        ],
+        "2023 nuclear_mustrun": [
+          0.7769,
+          0.7771
+        ],
+        "2023 reliability_floor ST_GAS": [
+          0.2042,
+          0.2218
+        ],
+        "2024 hydro_min_flow hydro": [
+          0.2293,
+          0.2315
+        ],
+        "2024 nuclear_mustrun": [
+          0.7736,
+          0.7737
+        ],
+        "2024 reliability_floor ST_GAS": [
+          0.2204,
+          0.2597
+        ],
+        "2025 firm_import": [
+          0.2175,
+          0.2176
+        ],
+        "2025 hydro_min_flow hydro": [
+          0.3823,
+          0.3831
+        ],
+        "2025 nuclear_mustrun": [
+          0.7821,
+          0.7823
+        ],
+        "2025 reliability_floor ST_GAS": [
+          0.1541,
+          0.1699
+        ]
+      },
+      "passed": false,
+      "selfsupply_mechanisms_present_in_treatment_d2": []
+    }
+  ],
+  "predictions": {
+    "2023": {
+      "class_twh_delta": {
+        "CC_CHP": 0.1693,
+        "CC_REGULAR": 0.0461,
+        "CT_CHP": 0.0104,
+        "CT_PEAKER": -0.1545,
+        "OTHER": 0.0,
+        "ST_CHP": 0.0182,
+        "ST_GAS": -0.0636,
+        "biomass": 0.0,
+        "hydro": 0.0,
+        "import": 0.0,
+        "nuclear": 0.0,
+        "oil": -0.0099,
+        "solar": 0.0,
+        "wind": 0.0
+      },
+      "control": {
+        "at_bound_share_in_window": 0.8014,
+        "class_twh": {
+          "CC_CHP": 12.3379,
+          "CC_REGULAR": 33.2358,
+          "CT_CHP": 1.0943,
+          "CT_PEAKER": 0.551,
+          "OTHER": 2.1973,
+          "ST_CHP": 0.7453,
+          "ST_GAS": 11.4165,
+          "biomass": 0.8395,
+          "hydro": 28.3833,
+          "import": 23.9228,
+          "nuclear": 27.4871,
+          "oil": 0.1235,
+          "solar": 0.2136,
+          "wind": 4.6009
+        },
+        "li_ac_import_in_window_p50_mw": 325.0,
+        "li_ac_import_twh": 3.0233,
+        "mean_lmp": 33.855,
+        "tail_hours": 22,
+        "tail_zones": {
+          "Long_Island": 22
+        }
+      },
+      "rt_actual_tail_hours": 10,
+      "tail_gate_band_hours": [
+        5.0,
+        20.0
+      ],
+      "treatment": {
+        "at_bound_share_in_window": 0.2188,
+        "class_twh": {
+          "CC_CHP": 12.5072,
+          "CC_REGULAR": 33.2819,
+          "CT_CHP": 1.1047,
+          "CT_PEAKER": 0.3965,
+          "OTHER": 2.1973,
+          "ST_CHP": 0.7635,
+          "ST_GAS": 11.3529,
+          "biomass": 0.8395,
+          "hydro": 28.3833,
+          "import": 23.9228,
+          "nuclear": 27.4871,
+          "oil": 0.1136,
+          "solar": 0.2136,
+          "wind": 4.6009
+        },
+        "li_ac_import_in_window_p50_mw": 621.1,
+        "li_ac_import_twh": 4.0694,
+        "mean_lmp": 33.604,
+        "tail_hours": 2,
+        "tail_zones": {
+          "Long_Island": 2
+        }
+      }
+    },
+    "2024": {
+      "class_twh_delta": {
+        "CC_CHP": 0.2269,
+        "CC_REGULAR": 0.12,
+        "CT_CHP": 0.0051,
+        "CT_PEAKER": -0.0783,
+        "OTHER": 0.0,
+        "ST_CHP": 0.0425,
+        "ST_GAS": -0.3049,
+        "biomass": 0.0,
+        "hydro": 0.0,
+        "import": 0.0,
+        "nuclear": 0.0,
+        "oil": -0.0064,
+        "solar": 0.0,
+        "wind": 0.0
+      },
+      "control": {
+        "at_bound_share_in_window": 0.8551,
+        "class_twh": {
+          "CC_CHP": 14.0491,
+          "CC_REGULAR": 38.5362,
+          "CT_CHP": 0.9518,
+          "CT_PEAKER": 0.4259,
+          "OTHER": 2.2014,
+          "ST_CHP": 0.7692,
+          "ST_GAS": 10.5048,
+          "biomass": 0.7597,
+          "hydro": 27.8294,
+          "import": 20.7538,
+          "nuclear": 26.9532,
+          "oil": 0.3478,
+          "solar": 0.5154,
+          "wind": 6.0116
+        },
+        "li_ac_import_in_window_p50_mw": 275.0,
+        "li_ac_import_twh": 3.0795,
+        "mean_lmp": 37.043,
+        "tail_hours": 3,
+        "tail_zones": {
+          "Long_Island": 3
+        }
+      },
+      "rt_actual_tail_hours": 12,
+      "tail_gate_band_hours": [
+        6.0,
+        24.0
+      ],
+      "treatment": {
+        "at_bound_share_in_window": 0.1695,
+        "class_twh": {
+          "CC_CHP": 14.276,
+          "CC_REGULAR": 38.6562,
+          "CT_CHP": 0.9569,
+          "CT_PEAKER": 0.3476,
+          "OTHER": 2.2014,
+          "ST_CHP": 0.8117,
+          "ST_GAS": 10.1999,
+          "biomass": 0.7597,
+          "hydro": 27.8294,
+          "import": 20.7538,
+          "nuclear": 26.9532,
+          "oil": 0.3414,
+          "solar": 0.5154,
+          "wind": 6.0116
+        },
+        "li_ac_import_in_window_p50_mw": 670.8,
+        "li_ac_import_twh": 4.3089,
+        "mean_lmp": 36.937,
+        "tail_hours": 0,
+        "tail_zones": {}
+      }
+    },
+    "2025": {
+      "class_twh_delta": {
+        "CC_CHP": 0.0912,
+        "CC_REGULAR": 0.0389,
+        "CT_CHP": -0.0013,
+        "CT_PEAKER": -0.0313,
+        "OTHER": -0.0001,
+        "ST_CHP": 0.0106,
+        "ST_GAS": -0.0834,
+        "biomass": 0.0,
+        "hydro": 0.0,
+        "import": 0.0091,
+        "nuclear": 0.0,
+        "oil": -0.0169,
+        "solar": 0.0,
+        "wind": 0.0
+      },
+      "control": {
+        "at_bound_share_in_window": 0.6627,
+        "class_twh": {
+          "CC_CHP": 16.4928,
+          "CC_REGULAR": 38.1961,
+          "CT_CHP": 1.4552,
+          "CT_PEAKER": 1.474,
+          "OTHER": 1.9484,
+          "ST_CHP": 1.2202,
+          "ST_GAS": 12.7035,
+          "biomass": 0.6724,
+          "hydro": 21.0482,
+          "import": 19.4071,
+          "nuclear": 28.3416,
+          "oil": 1.198,
+          "solar": 0.7534,
+          "wind": 7.0487
+        },
+        "li_ac_import_in_window_p50_mw": 275.0,
+        "li_ac_import_twh": 2.2174,
+        "mean_lmp": 61.113,
+        "tail_hours": 24,
+        "tail_zones": {
+          "Long_Island": 24
+        }
+      },
+      "rt_actual_tail_hours": 42,
+      "tail_gate_band_hours": [
+        21.0,
+        84.0
+      ],
+      "treatment": {
+        "at_bound_share_in_window": 0.0466,
+        "class_twh": {
+          "CC_CHP": 16.584,
+          "CC_REGULAR": 38.235,
+          "CT_CHP": 1.4539,
+          "CT_PEAKER": 1.4427,
+          "OTHER": 1.9483,
+          "ST_CHP": 1.2308,
+          "ST_GAS": 12.6201,
+          "biomass": 0.6724,
+          "hydro": 21.0482,
+          "import": 19.4162,
+          "nuclear": 28.3416,
+          "oil": 1.1811,
+          "solar": 0.7534,
+          "wind": 7.0487
+        },
+        "li_ac_import_in_window_p50_mw": 427.6,
+        "li_ac_import_twh": 2.8449,
+        "mean_lmp": 61.113,
+        "tail_hours": 5,
+        "tail_zones": {
+          "Long_Island": 5
+        }
+      }
+    }
+  },
+  "prereg": "results/calibration/PREREG-nyiso130-li-transfer-security-limit-2026-08-06.md",
+  "session": "nyiso-130"
+}
