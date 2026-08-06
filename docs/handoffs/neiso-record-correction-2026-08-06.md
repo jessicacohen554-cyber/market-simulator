@@ -225,5 +225,39 @@ stays small. Post-push blob verification (line count + SHA-256, local vs fetched
 
 ## 8. Post-push blob verification
 
-See the session's final verification block — every file ≥300 lines compared line-for-line and
-hash-for-hash against the pushed blob, with **no mismatch**.
+Every file ≥300 lines in this change, fetched back from the pushed branch and compared to the
+local on-disk bytes (line count + SHA-256):
+
+| file | lines (local = remote) | sha256[:10] (local = remote) | verdict |
+|---|---|---|---|
+| `CLAUDE.md` | 493 | `ec867c1c73` | MATCH |
+| `docs/mechanism-testing-matrix.md` | 7,439 | `d494ec9778` | MATCH |
+| `docs/calibration-log/neiso.md` | 1,844 | `ac920c5e0b` | MATCH |
+| `docs/calibration-log/nyiso.md` | 5,546 | `085d55520f` | MATCH |
+| `docs/calibration-log/pjm.md` | 3,938 | `7ad32a12be` | MATCH |
+| `docs/forecast-readiness-prompt-pack-2026-07.md` | 4,096 | `0befeedcaf` | MATCH |
+| `docs/codebase-site/data/mechanism-matrix.js` | 2,328 | `caae5239d5` | MATCH |
+| `docs/handoffs/ffr-owner-sitting-2026-08-02.md` | 2,926 | `d06a672ac6` | MATCH |
+| `docs/handoffs/ffr-3q-window-recut-2026-08-04.md` | 505 | `b9c5573eb0` | MATCH |
+| `docs/iso-2022-holdout-data-availability-audit-2026-07.md` | 526 | `24090598c9` | MATCH |
+
+**No truncation, no drift.** Every change is additive (CLAUDE.md 478 → 493 lines), so
+`file-integrity-guard.yml`'s >30 % shrink check is not engaged.
+
+**Final gate state at the pushed commit:**
+
+```
+scripts/audit_keepers.py --iso NEISO --check   →  PASS: 0 failure(s), 0 warning(s)  (exit 0)
+
+NEISO locked_test authorized : False      <-- required
+NEISO validation authorized  : True       (unchanged)
+NEISO in `final` block       : False      (unchanged)
+holdout freeze active        : True       (unchanged)
+RESULT: PASS — nothing granted
+```
+
+The branch was rebased onto a freshly-fetched `origin/main` (`dd4e919c`) before pushing, so the
+pack carried only this session's objects. The rebase was clean; the two files that also moved
+upstream (`docs/calibration-log/pjm.md`, `docs/mechanism-testing-matrix.md`) merged without
+conflict, and the newly-landed `ASSESSMENT-pjm160-final-declaration-2026-08-06.md` was checked
+and does **not** repeat the claim.
