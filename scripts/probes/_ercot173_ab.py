@@ -38,7 +38,10 @@ MID_BAND = (150.0, 500.0)
 # RG-2 named hour, on the model's fixed non-leap clock.
 SPIKE_2024 = {"2024-04-28": range(2808, 2832), "2024-05-08": range(3048, 3072)}
 RG2_HOUR_2025 = 7051  # 2025-10-21 19:00 CST
-# G-C3c ledgered tail counts on the keeper (caught/actual, >$200).
+# G-C3c ledgered tail counts on the keeper (model total >$200 / actual >$200
+# — the standing _ercot89_span_check basis, which reproduces the ledger's
+# 61/25/3 on the committed keeper exactly; "degrade" = the model count moves
+# AWAY from the actual count).
 C3C_LEDGER = {2023: (61, 181), 2024: (25, 53), 2025: (3, 31)}
 
 
@@ -76,6 +79,7 @@ def year_stats(m: np.ndarray, a: np.ndarray) -> dict:
         "c3a_hub_pct": round(float((m.mean() - a.mean()) / a.mean() * 100.0), 2),
         "nrmse": round(float(np.sqrt(np.mean((m - a) ** 2)) / a.mean()), 4),
         "spurious": int(spur.sum()),
+        "tail_model": int((m > 200.0).sum()),
         "tail_caught": int((hi & (m > 200.0)).sum()),
         "tail_actual": int(hi.sum()),
         "model_mean": round(float(m.mean()), 3),
@@ -143,9 +147,12 @@ def main() -> None:
     g_spur = all(
         stats[y]["probe"]["spurious"] <= stats[y]["base"]["spurious"] for y in YEARS
     )
-    # --- G-C3c: the ledgered caught/actual counts must not degrade.
+    # --- G-C3c: the ledgered tail counts must not degrade (standing basis:
+    #     the model's total >$200 count must not move AWAY from the actual).
     g_c3c = all(
-        stats[y]["probe"]["tail_caught"] >= C3C_LEDGER[y][0] for y in YEARS
+        abs(stats[y]["probe"]["tail_model"] - C3C_LEDGER[y][1])
+        <= abs(stats[y]["base"]["tail_model"] - C3C_LEDGER[y][1])
+        for y in YEARS
     )
     # --- G-SPAN (G-BIT N/A, declared pre-solve): 2023+2025 class energy ≤0.5 %,
     #     shed not increased, C3c tails not degraded (the latter two above).
@@ -163,7 +170,11 @@ def main() -> None:
             len(stats[y]["shed_probe"]) <= len(stats[y]["shed_base"])
             for y in (2023, 2025)
         )
-        and all(stats[y]["probe"]["tail_caught"] >= C3C_LEDGER[y][0] for y in (2023, 2025))
+        and all(
+            abs(stats[y]["probe"]["tail_model"] - C3C_LEDGER[y][1])
+            <= abs(stats[y]["base"]["tail_model"] - C3C_LEDGER[y][1])
+            for y in (2023, 2025)
+        )
     )
     out["gates"] = {
         "G-BIT": "N/A (declared pre-solve: year-agnostic rule; replaced by G-SPAN)",
@@ -184,8 +195,8 @@ def main() -> None:
             "by_year": {
                 str(y): {
                     "ledger": C3C_LEDGER[y],
-                    "base": stats[y]["base"]["tail_caught"],
-                    "probe": stats[y]["probe"]["tail_caught"],
+                    "base": stats[y]["base"]["tail_model"],
+                    "probe": stats[y]["probe"]["tail_model"],
                 }
                 for y in YEARS
             },
