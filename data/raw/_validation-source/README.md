@@ -16,8 +16,8 @@ it as not yet migrated to the `data/clean` curation seam (`data/README.md`).
 | `ct_deployment_floor_{CAISO,ERCOT,NEISO,NYISO,PJM}.parquet`, `reliability_deployment_floor_ERCOT.parquet` | `scripts/derive_reliability_deployment.py` / `scripts/derive_ct_deployment.py` | model-side derived reliability-deployment floors |
 | `offer_curve_dam_hrmults*.json`, `offer_curve_deltas_*.json` | `scripts/derive_dam_offer_hrmults.py` | ERCOT DAM offer archives |
 | `ercot_ordc_lolp_params.csv`, `pjm_ordc_curve.csv`, `cf_emd_baseline_ERCOT.json` | model-side derived reference curves | — |
-| `capacity_actuals_{ercot,pjm,nyiso,miso}.csv`, `actual_as_reserve_NYISO.parquet` | `scripts/build_capacity_actuals.py`, validation reconciliation inputs | EIA-860/923 |
-| `retired_sheet_coverage_gaps.csv` | hand-curated (RD-5); read by `scripts/build_capacity_actuals.py::load_retired_sheet_gap_fix` | this repo's own committed `data/raw/eia-860/vintage_{2021,2022}/` snapshots |
+| `capacity_actuals_{ercot,pjm,nyiso,miso,neiso}.csv`, `actual_as_reserve_NYISO.parquet` | `scripts/data/build_capacity_actuals.py`, validation reconciliation inputs | EIA-860/923 |
+| `retired_sheet_coverage_gaps.csv` | hand-curated (RD-5); read by `scripts/data/build_capacity_actuals.py::load_retired_sheet_gap_fix` | this repo's own committed `data/raw/eia-860/vintage_{2021,2022}/` snapshots |
 
 `scripts/curate_validation.py` is the reconciler that reads only the
 already-materialized artifacts here (EIA-860 renewable capacity, EIA-923
@@ -56,3 +56,24 @@ full provenance:
   (`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §1.1 item
   3, §5 RD-5) — this fix only makes the underlying fact available to score
   against; it does not itself resolve the Palisades restart question.
+
+**FFR-7A physical-exit dating (2026-08-06, owner decision D-21(b)).** The
+`capacity_actuals_*.csv` targets are now dated at the EIA-860 **status
+transition to OS/RE**, not at the reported `Retirement Year`, and units already
+out of service at the fleet-basis vintage are excluded — see
+`scripts/data/build_capacity_actuals.py::physical_exit_year` and
+`docs/handoffs/ffr-7a-scoring-target-hygiene-2026-08-06.md` for the rule, the
+per-ISO delta and the sources of every changed row. Two consequences for this
+directory:
+
+- The builder now reads the whole committed EIA-860 **release series**
+  (`data/raw/eia-860/vintage_*/` plus the current release), which generalises
+  what `retired_sheet_coverage_gaps.csv` does by hand: 106 of the 442 units the
+  2022-vintage retired sheet dates to 2021-2022 have since been dropped from the
+  current release's retired sheet, and the release series recovers all of them.
+  **Indian Point 3 no longer depends on the gap-fix file** (it is recovered
+  from `vintage_2021`/`vintage_2022` generically; the union de-duplicates).
+- **Palisades still does**, and that is the point: its latest EIA status is
+  `OP`, so the status rule correctly declines to call it an exit, and only the
+  curated override keeps the 2022 event in the target. The RC-0B adjudication
+  above is untouched and still open.
