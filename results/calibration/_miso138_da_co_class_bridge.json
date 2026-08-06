@@ -1,0 +1,1434 @@
+{
+ "prereg": "PREREG-miso138-da-co-class-bridge-2026-08-06.md",
+ "prereg_commit": "848d387ab761755a9c190c10e69b844f292943b2",
+ "sample_days": {
+  "2023": {
+   "summer": [
+    "20230718",
+    "20230719",
+    "20230815",
+    "20230816"
+   ],
+   "winter": [
+    "20230117",
+    "20230118",
+    "20230214",
+    "20230215"
+   ]
+  },
+  "2024": {
+   "summer": [
+    "20240716",
+    "20240717",
+    "20240813",
+    "20240814"
+   ],
+   "winter": [
+    "20240116",
+    "20240117",
+    "20240213",
+    "20240214"
+   ]
+  },
+  "2025": {
+   "summer": [
+    "20250715",
+    "20250716",
+    "20250812",
+    "20250813"
+   ],
+   "winter": [
+    "20250114",
+    "20250115",
+    "20250211",
+    "20250212"
+   ]
+  }
+ },
+ "grains": {
+  "generator": {
+   "G1": {
+    "n_train": 5454,
+    "cv_balanced_accuracy": 0.7054209175596811,
+    "cv_folds": [
+     0.6736738895104832,
+     0.7205925865491829,
+     0.7114063684408611,
+     0.7165041330696282,
+     0.7049276102282493
+    ],
+    "per_class": {
+     "CT": {
+      "n_train": 3439,
+      "recall_insample": 0.7752253562082001
+     },
+     "CC": {
+      "n_train": 1603,
+      "recall_insample": 0.7567061759201498
+     },
+     "COAL": {
+      "n_train": 330,
+      "recall_insample": 0.38181818181818183
+     },
+     "NUC": {
+      "n_train": 82,
+      "recall_insample": 0.9634146341463414
+     }
+    },
+    "passes": true
+   },
+   "eia860_miso": {
+    "CT": {
+     "n": 636,
+     "mw": 24989.84,
+     "p50": 18.8,
+     "p90": 89.9
+    },
+    "CC": {
+     "n": 231,
+     "mw": 34220.9,
+     "p50": 146.6,
+     "p90": 265.1
+    },
+    "COAL": {
+     "n": 115,
+     "mw": 43039.50000000001,
+     "p50": 425.5,
+     "p90": 753.0400000000001
+    },
+    "NUC": {
+     "n": 14,
+     "mw": 12287.8,
+     "p50": 896.9,
+     "p90": 1175.3
+    }
+   },
+   "primary": {
+    "2023": {
+     "screens": {
+      "units_total": 1237,
+      "excluded_storage": 7,
+      "excluded_ver": 331,
+      "excluded_ver_capacity_mw": 34385.5,
+      "excluded_coverage": 62,
+      "kept": 837,
+      "kept_capacity_mw": 129262.59999999999
+     },
+     "G0": {
+      "corpus_mw": 129262.59999999999,
+      "corpus_n": 837,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.12855606748640014,
+      "rel_n": -0.15963855421686746,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 372,
+       "mw": 13710.3,
+       "p50": 22.5,
+       "p90": 56.0
+      },
+      "CC": {
+       "n": 404,
+       "mw": 76643.29999999999,
+       "p50": 125.5,
+       "p90": 466.4
+      },
+      "COAL": {
+       "n": 49,
+       "mw": 27164.000000000004,
+       "p50": 535.0,
+       "p90": 740.72
+      },
+      "NUC": {
+       "n": 12,
+       "mw": 11745.0,
+       "p50": 955.0,
+       "p90": 1169.9
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.45136503475012246,
+       "S_count": -0.41509433962264153
+      },
+      "CC": {
+       "S_cap": 1.2396634805046034,
+       "S_count": 0.748917748917749
+      },
+      "COAL": {
+       "S_cap": -0.36885883897350114,
+       "S_count": -0.5739130434782609
+      }
+     },
+     "G3_discrepancy": 1.7508639731356834,
+     "G3_null": {
+      "null_p05": 8.787920965001733,
+      "null_p50": 9.67006925149531,
+      "null_min": 7.800940516890969
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 12,
+      "eia860_n": 14,
+      "d_n": -2,
+      "rel_mw": -0.04417389605950617
+     },
+     "max_class_share": 0.5929271111674993,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.7704338903547348
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.03703703703703709,
+       "minfrac_p50": 0.6221395881006865
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.25,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.3333333333333333
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.7916666666666667,
+       "mustrun_frac_p50": 0.875,
+       "derate_p50": 0.0049554013875123815,
+       "minfrac_p50": 1.0
+      }
+     }
+    },
+    "2024": {
+     "screens": {
+      "units_total": 1274,
+      "excluded_storage": 12,
+      "excluded_ver": 375,
+      "excluded_ver_capacity_mw": 36525.9,
+      "excluded_coverage": 73,
+      "kept": 814,
+      "kept_capacity_mw": 124841.6
+     },
+     "G0": {
+      "corpus_mw": 124841.6,
+      "corpus_n": 814,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.08995753725137967,
+      "rel_n": -0.18273092369477917,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 333,
+       "mw": 12377.7,
+       "p50": 21.0,
+       "p90": 54.940000000000005
+      },
+      "CC": {
+       "n": 432,
+       "mw": 79895.0,
+       "p50": 115.0,
+       "p90": 456.80000000000007
+      },
+      "COAL": {
+       "n": 37,
+       "mw": 21003.2,
+       "p50": 535.0,
+       "p90": 719.36
+      },
+      "NUC": {
+       "n": 12,
+       "mw": 11565.699999999999,
+       "p50": 955.0,
+       "p90": 1129.8
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.5046907063030415,
+       "S_count": -0.4764150943396226
+      },
+      "CC": {
+       "S_cap": 1.3346843595580475,
+       "S_count": 0.8701298701298701
+      },
+      "COAL": {
+       "S_cap": -0.5120017658197702,
+       "S_count": -0.6782608695652175
+      }
+     },
+     "G3_discrepancy": 1.7466433602432603,
+     "G3_null": {
+      "null_p05": 8.48001467008434,
+      "null_p50": 9.566691545112363,
+      "null_min": 7.807528109926517
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 12,
+      "eia860_n": 14,
+      "d_n": -2,
+      "rel_mw": -0.05876560490893412
+     },
+     "max_class_share": 0.6399709712147233,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.6675105318328356
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.07415996287128707,
+       "minfrac_p50": 0.6207213635941706
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.5,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.32251562185043336
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8333333333333334,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.017463998780151813,
+       "minfrac_p50": 0.7443903031823562
+      }
+     }
+    },
+    "2025": {
+     "screens": {
+      "units_total": 1322,
+      "excluded_storage": 22,
+      "excluded_ver": 433,
+      "excluded_ver_capacity_mw": 44504.2,
+      "excluded_coverage": 82,
+      "kept": 785,
+      "kept_capacity_mw": 121411.50000000001
+     },
+     "G0": {
+      "corpus_mw": 121411.50000000001,
+      "corpus_n": 785,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.06001028130043107,
+      "rel_n": -0.2118473895582329,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 335,
+       "mw": 13012.600000000002,
+       "p50": 20.0,
+       "p90": 55.0
+      },
+      "CC": {
+       "n": 403,
+       "mw": 78140.9,
+       "p50": 128.0,
+       "p90": 479.00000000000006
+      },
+      "COAL": {
+       "n": 37,
+       "mw": 20063.3,
+       "p50": 517.0,
+       "p90": 731.6800000000001
+      },
+      "NUC": {
+       "n": 10,
+       "mw": 10194.7,
+       "p50": 1032.0,
+       "p90": 1131.8999999999999
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.4792843811725084,
+       "S_count": -0.4732704402515723
+      },
+      "CC": {
+       "S_cap": 1.2834262102983844,
+       "S_count": 0.7445887445887447
+      },
+      "COAL": {
+       "S_cap": -0.533839844793736,
+       "S_count": -0.6782608695652175
+      }
+     },
+     "G3_discrepancy": 1.6291862501512604,
+     "G3_null": {
+      "null_p05": 8.461930938507045,
+      "null_p50": 9.536379095160392,
+      "null_min": 7.612115691802424
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 10,
+      "eia860_n": 14,
+      "d_n": -4,
+      "rel_mw": -0.1703396865183352
+     },
+     "max_class_share": 0.6436037772369174,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.6542640951243102
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.06299999999999994,
+       "minfrac_p50": 0.6046037296037297
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.375,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.32064128256513025
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8125,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.02127745805301129,
+       "minfrac_p50": 0.9771689497716896
+      }
+     }
+    }
+   },
+   "uniform_prior": {
+    "2023": {
+     "screens": {
+      "units_total": 1237,
+      "excluded_storage": 7,
+      "excluded_ver": 331,
+      "excluded_ver_capacity_mw": 34385.5,
+      "excluded_coverage": 62,
+      "kept": 837,
+      "kept_capacity_mw": 129262.59999999999
+     },
+     "G0": {
+      "corpus_mw": 129262.59999999999,
+      "corpus_n": 837,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.12855606748640014,
+      "rel_n": -0.15963855421686746,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 189,
+       "mw": 2995.3,
+       "p50": 13.3,
+       "p90": 27.040000000000003
+      },
+      "CC": {
+       "n": 334,
+       "mw": 40288.700000000004,
+       "p50": 77.1,
+       "p90": 264.0
+      },
+      "COAL": {
+       "n": 295,
+       "mw": 69202.5,
+       "p50": 147.0,
+       "p90": 557.8000000000001
+      },
+      "NUC": {
+       "n": 19,
+       "mw": 16776.1,
+       "p50": 834.0,
+       "p90": 1162.2
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.8801392886068898,
+       "S_count": -0.7028301886792453
+      },
+      "CC": {
+       "S_cap": 0.1773126948736008,
+       "S_count": 0.4458874458874458
+      },
+      "COAL": {
+       "S_cap": 0.6078834558951658,
+       "S_count": 1.5652173913043477
+      }
+     },
+     "G3_discrepancy": 2.383796238259836,
+     "G3_null": {
+      "null_p05": 7.8622849376355415,
+      "null_p50": 9.471756153650142,
+      "null_min": 6.095843113280175
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 19,
+      "eia860_n": 14,
+      "d_n": 5,
+      "rel_mw": 0.36526473412653204
+     },
+     "max_class_share": 0.5353636705435292,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 1.0
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.06515548165705592,
+       "minfrac_p50": 0.706722780288773
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.3980099502487562
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.625,
+       "mustrun_frac_p50": 0.75,
+       "derate_p50": 0.008291873963515717,
+       "minfrac_p50": 1.0
+      }
+     }
+    },
+    "2024": {
+     "screens": {
+      "units_total": 1274,
+      "excluded_storage": 12,
+      "excluded_ver": 375,
+      "excluded_ver_capacity_mw": 36525.9,
+      "excluded_coverage": 73,
+      "kept": 814,
+      "kept_capacity_mw": 124841.6
+     },
+     "G0": {
+      "corpus_mw": 124841.6,
+      "corpus_n": 814,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.08995753725137967,
+      "rel_n": -0.18273092369477917,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 160,
+       "mw": 2281.0,
+       "p50": 11.85,
+       "p90": 25.059999999999995
+      },
+      "CC": {
+       "n": 392,
+       "mw": 48153.0,
+       "p50": 76.0,
+       "p90": 299.00000000000034
+      },
+      "COAL": {
+       "n": 243,
+       "mw": 57684.2,
+       "p50": 157.9,
+       "p90": 550.0
+      },
+      "NUC": {
+       "n": 19,
+       "mw": 16723.4,
+       "p50": 838.0,
+       "p90": 1128.4
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.9087229049885873,
+       "S_count": -0.7484276729559749
+      },
+      "CC": {
+       "S_cap": 0.40712254791662406,
+       "S_count": 0.696969696969697
+      },
+      "COAL": {
+       "S_cap": 0.3402618524843455,
+       "S_count": 1.1130434782608694
+      }
+     },
+     "G3_discrepancy": 2.5989197698631528,
+     "G3_null": {
+      "null_p05": 7.7012335222667625,
+      "null_p50": 9.383445379813391,
+      "null_min": 6.611753315189667
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 19,
+      "eia860_n": 14,
+      "d_n": 5,
+      "rel_mw": 0.36097592734256767
+     },
+     "max_class_share": 0.4620591213185348,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 1.0
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.11085015761020672,
+       "minfrac_p50": 0.6944444444444444
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.052083333333333336,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.4
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.7916666666666666,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.015100671140939603,
+       "minfrac_p50": 0.9087591240875912
+      }
+     }
+    },
+    "2025": {
+     "screens": {
+      "units_total": 1322,
+      "excluded_storage": 22,
+      "excluded_ver": 433,
+      "excluded_ver_capacity_mw": 44504.2,
+      "excluded_coverage": 82,
+      "kept": 785,
+      "kept_capacity_mw": 121411.50000000001
+     },
+     "G0": {
+      "corpus_mw": 121411.50000000001,
+      "corpus_n": 785,
+      "eia860_miso_mw": 114538.04,
+      "eia860_miso_n": 996,
+      "rel_mw": 0.06001028130043107,
+      "rel_n": -0.2118473895582329,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 165,
+       "mw": 2462.5,
+       "p50": 12.0,
+       "p90": 28.299999999999997
+      },
+      "CC": {
+       "n": 365,
+       "mw": 47723.4,
+       "p50": 78.0,
+       "p90": 300.0
+      },
+      "COAL": {
+       "n": 236,
+       "mw": 53460.0,
+       "p50": 149.25,
+       "p90": 548.0
+      },
+      "NUC": {
+       "n": 19,
+       "mw": 17765.6,
+       "p50": 959.0,
+       "p90": 1139.8
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.9014599533250313,
+       "S_count": -0.7405660377358491
+      },
+      "CC": {
+       "S_cap": 0.3945688161328311,
+       "S_count": 0.58008658008658
+      },
+      "COAL": {
+       "S_cap": 0.24211480151953424,
+       "S_count": 1.0521739130434784
+      }
+     },
+     "G3_discrepancy": 2.568015524701132,
+     "G3_null": {
+      "null_p05": 7.763369183694381,
+      "null_p50": 9.366498171016868,
+      "null_min": 6.62964603938696
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 19,
+      "eia860_n": 14,
+      "d_n": 5,
+      "rel_mw": 0.44579176093360884
+     },
+     "max_class_share": 0.44032072744344647,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 1.0
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.09523809523809523,
+       "minfrac_p50": 0.6632985658409387
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.4
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8333333333333334,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.01972386587771202,
+       "minfrac_p50": 0.5636743215031316
+      }
+     }
+    }
+   }
+  },
+  "cc_block": {
+   "G1": {
+    "n_train": 4436,
+    "cv_balanced_accuracy": 0.7184544772166129,
+    "cv_folds": [
+     0.7583742498636116,
+     0.7725485996613857,
+     0.6719637353269067,
+     0.7080359871314801,
+     0.6813498140996803
+    ],
+    "per_class": {
+     "CT": {
+      "n_train": 3439,
+      "recall_insample": 0.9505670252980517
+     },
+     "CC": {
+      "n_train": 585,
+      "recall_insample": 0.6547008547008547
+     },
+     "COAL": {
+      "n_train": 330,
+      "recall_insample": 0.31212121212121213
+     },
+     "NUC": {
+      "n_train": 82,
+      "recall_insample": 0.9390243902439024
+     }
+    },
+    "passes": true
+   },
+   "eia860_miso": {
+    "CT": {
+     "n": 636,
+     "mw": 24989.84,
+     "p50": 18.8,
+     "p90": 89.9
+    },
+    "CC": {
+     "n": 84,
+     "mw": 34220.9,
+     "p50": 437.0,
+     "p90": 682.5500000000001
+    },
+    "COAL": {
+     "n": 115,
+     "mw": 43039.50000000001,
+     "p50": 425.5,
+     "p90": 753.0400000000001
+    },
+    "NUC": {
+     "n": 14,
+     "mw": 12287.8,
+     "p50": 896.9,
+     "p90": 1175.3
+    }
+   },
+   "primary": {
+    "2023": {
+     "screens": {
+      "units_total": 1237,
+      "excluded_storage": 7,
+      "excluded_ver": 331,
+      "excluded_ver_capacity_mw": 34385.5,
+      "excluded_coverage": 62,
+      "kept": 837,
+      "kept_capacity_mw": 129262.59999999999
+     },
+     "G0": {
+      "corpus_mw": 129262.59999999999,
+      "corpus_n": 837,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.12855606748639992,
+      "rel_n": -0.014134275618374548,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 610,
+       "mw": 37616.6,
+       "p50": 42.0,
+       "p90": 114.10000000000002
+      },
+      "CC": {
+       "n": 150,
+       "mw": 51215.6,
+       "p50": 284.5,
+       "p90": 591.02
+      },
+      "COAL": {
+       "n": 65,
+       "mw": 28685.399999999998,
+       "p50": 400.0,
+       "p90": 729.24
+      },
+      "NUC": {
+       "n": 12,
+       "mw": 11745.0,
+       "p50": 955.0,
+       "p90": 1169.9
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": 0.505275744062387,
+       "S_count": -0.04088050314465408
+      },
+      "CC": {
+       "S_cap": 0.496617564120172,
+       "S_count": 0.7857142857142858
+      },
+      "COAL": {
+       "S_cap": -0.33350991531035457,
+       "S_count": -0.4347826086956522
+      }
+     },
+     "G3_discrepancy": 2.0778355790148924,
+     "G3_null": {
+      "null_p05": 8.88322121007602,
+      "null_p50": 9.509151362638509,
+      "null_min": 7.860294597572352
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 12,
+      "eia860_n": 14,
+      "d_n": -2,
+      "rel_mw": -0.04417389605950617
+     },
+     "max_class_share": 0.3962135992932217,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.6666666666666666
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.038954419688364605,
+       "minfrac_p50": 0.6
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.375,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.31621047369078864
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.7916666666666667,
+       "mustrun_frac_p50": 0.875,
+       "derate_p50": 0.0049554013875123815,
+       "minfrac_p50": 1.0
+      }
+     }
+    },
+    "2024": {
+     "screens": {
+      "units_total": 1274,
+      "excluded_storage": 12,
+      "excluded_ver": 375,
+      "excluded_ver_capacity_mw": 36525.9,
+      "excluded_coverage": 73,
+      "kept": 814,
+      "kept_capacity_mw": 124841.6
+     },
+     "G0": {
+      "corpus_mw": 124841.6,
+      "corpus_n": 814,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.08995753725137945,
+      "rel_n": -0.04122497055359242,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 595,
+       "mw": 34508.4,
+       "p50": 42.0,
+       "p90": 114.9
+      },
+      "CC": {
+       "n": 157,
+       "mw": 59056.5,
+       "p50": 356.0,
+       "p90": 589.56
+      },
+      "COAL": {
+       "n": 50,
+       "mw": 19711.0,
+       "p50": 364.0,
+       "p90": 633.0
+      },
+      "NUC": {
+       "n": 12,
+       "mw": 11565.699999999999,
+       "p50": 955.0,
+       "p90": 1129.8
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": 0.38089719662070665,
+       "S_count": -0.06446540880503149
+      },
+      "CC": {
+       "S_cap": 0.7257436245101676,
+       "S_count": 0.8690476190476191
+      },
+      "COAL": {
+       "S_cap": -0.5420253488074909,
+       "S_count": -0.5652173913043479
+      }
+     },
+     "G3_discrepancy": 2.1376661536921193,
+     "G3_null": {
+      "null_p05": 8.760001509721745,
+      "null_p50": 9.430184226278664,
+      "null_min": 8.27408716699413
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 12,
+      "eia860_n": 14,
+      "d_n": -2,
+      "rel_mw": -0.05876560490893412
+     },
+     "max_class_share": 0.47305145079845184,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.6666666666666666
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.05737704918032782,
+       "minfrac_p50": 0.5942857142857143
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.5,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.32085641113977126
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8333333333333334,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.017463998780151813,
+       "minfrac_p50": 0.7443903031823562
+      }
+     }
+    },
+    "2025": {
+     "screens": {
+      "units_total": 1322,
+      "excluded_storage": 22,
+      "excluded_ver": 433,
+      "excluded_ver_capacity_mw": 44504.2,
+      "excluded_coverage": 82,
+      "kept": 785,
+      "kept_capacity_mw": 121411.50000000001
+     },
+     "G0": {
+      "corpus_mw": 121411.50000000001,
+      "corpus_n": 785,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.060010281300430846,
+      "rel_n": -0.07538280329799762,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 585,
+       "mw": 36908.600000000006,
+       "p50": 42.0,
+       "p90": 130.0
+      },
+      "CC": {
+       "n": 138,
+       "mw": 54285.7,
+       "p50": 364.04999999999995,
+       "p90": 602.74
+      },
+      "COAL": {
+       "n": 54,
+       "mw": 22093.5,
+       "p50": 370.5,
+       "p90": 706.7900000000001
+      },
+      "NUC": {
+       "n": 8,
+       "mw": 8123.7,
+       "p50": 1032.0,
+       "p90": 1147.7
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": 0.4769442301351272,
+       "S_count": -0.08018867924528306
+      },
+      "CC": {
+       "S_cap": 0.586331744635588,
+       "S_count": 0.6428571428571428
+      },
+      "COAL": {
+       "S_cap": -0.48666922245843947,
+       "S_count": -0.5304347826086957
+      }
+     },
+     "G3_discrepancy": 2.154633936949846,
+     "G3_null": {
+      "null_p05": 8.771243687453852,
+      "null_p50": 9.420276521893541,
+      "null_min": 7.97024814813028
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 8,
+      "eia860_n": 14,
+      "d_n": -6,
+      "rel_mw": -0.3388808411595241
+     },
+     "max_class_share": 0.44712156591426677,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.6356589147286822
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.05473382013355799,
+       "minfrac_p50": 0.5754089301503094
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.375,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.32842785085190196
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.9166666666666667,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.01949682137698988,
+       "minfrac_p50": 1.0
+      }
+     }
+    }
+   },
+   "uniform_prior": {
+    "2023": {
+     "screens": {
+      "units_total": 1237,
+      "excluded_storage": 7,
+      "excluded_ver": 331,
+      "excluded_ver_capacity_mw": 34385.5,
+      "excluded_coverage": 62,
+      "kept": 837,
+      "kept_capacity_mw": 129262.59999999999
+     },
+     "G0": {
+      "corpus_mw": 129262.59999999999,
+      "corpus_n": 837,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.12855606748639992,
+      "rel_n": -0.014134275618374548,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 340,
+       "mw": 12520.1,
+       "p50": 21.0,
+       "p90": 71.0
+      },
+      "CC": {
+       "n": 240,
+       "mw": 54438.5,
+       "p50": 167.5,
+       "p90": 525.0
+      },
+      "COAL": {
+       "n": 241,
+       "mw": 47546.90000000001,
+       "p50": 95.0,
+       "p90": 550.0
+      },
+      "NUC": {
+       "n": 16,
+       "mw": 14757.099999999999,
+       "p50": 859.0,
+       "p90": 1165.5
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.4989923905075022,
+       "S_count": -0.46540880503144655
+      },
+      "CC": {
+       "S_cap": 0.5907968522160434,
+       "S_count": 1.8571428571428572
+      },
+      "COAL": {
+       "S_cap": 0.10472705305591368,
+       "S_count": 1.0956521739130434
+      }
+     },
+     "G3_discrepancy": 2.221145621948012,
+     "G3_null": {
+      "null_p05": 8.328573834400537,
+      "null_p50": 9.407161102654776,
+      "null_min": 7.242157849156341
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 16,
+      "eia860_n": 14,
+      "d_n": 2,
+      "rel_mw": 0.2009554191962759
+     },
+     "max_class_share": 0.4211465652091169,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 1.0
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.05012531328320807,
+       "minfrac_p50": 0.6517172086225795
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.36
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.6875,
+       "mustrun_frac_p50": 0.75,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.7879449800686011
+      }
+     }
+    },
+    "2024": {
+     "screens": {
+      "units_total": 1274,
+      "excluded_storage": 12,
+      "excluded_ver": 375,
+      "excluded_ver_capacity_mw": 36525.9,
+      "excluded_coverage": 73,
+      "kept": 814,
+      "kept_capacity_mw": 124841.6
+     },
+     "G0": {
+      "corpus_mw": 124841.6,
+      "corpus_n": 814,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.08995753725137945,
+      "rel_n": -0.04122497055359242,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 368,
+       "mw": 13425.5,
+       "p50": 22.549999999999997,
+       "p90": 73.60000000000002
+      },
+      "CC": {
+       "n": 236,
+       "mw": 60968.5,
+       "p50": 183.5,
+       "p90": 544.0
+      },
+      "COAL": {
+       "n": 193,
+       "mw": 34903.2,
+       "p50": 95.0,
+       "p90": 510.60000000000014
+      },
+      "NUC": {
+       "n": 17,
+       "mw": 15544.399999999998,
+       "p50": 842.0,
+       "p90": 1128.8
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.4627616663412011,
+       "S_count": -0.42138364779874216
+      },
+      "CC": {
+       "S_cap": 0.7816159130823561,
+       "S_count": 1.8095238095238093
+      },
+      "COAL": {
+       "S_cap": -0.1890426236364272,
+       "S_count": 0.6782608695652175
+      }
+     },
+     "G3_discrepancy": 2.2625426041093966,
+     "G3_null": {
+      "null_p05": 8.248369659262371,
+      "null_p50": 9.350806728516988,
+      "null_min": 7.245215035310805
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 17,
+      "eia860_n": 14,
+      "d_n": 3,
+      "rel_mw": 0.2650271000504565
+     },
+     "max_class_share": 0.48836685848306977,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.025833333333333375,
+       "minfrac_p50": 0.9658385093167701
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.08090909090909087,
+       "minfrac_p50": 0.6410256410256411
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.125,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.36259541984732824
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8333333333333334,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.017293142788519344,
+       "minfrac_p50": 0.5800214822771214
+      }
+     }
+    },
+    "2025": {
+     "screens": {
+      "units_total": 1322,
+      "excluded_storage": 22,
+      "excluded_ver": 433,
+      "excluded_ver_capacity_mw": 44504.2,
+      "excluded_coverage": 82,
+      "kept": 785,
+      "kept_capacity_mw": 121411.50000000001
+     },
+     "G0": {
+      "corpus_mw": 121411.50000000001,
+      "corpus_n": 785,
+      "eia860_miso_mw": 114538.04000000001,
+      "eia860_miso_n": 849,
+      "rel_mw": 0.060010281300430846,
+      "rel_n": -0.07538280329799762,
+      "passes": true,
+      "hard_stop": false
+     },
+     "corpus_classified": {
+      "CT": {
+       "n": 348,
+       "mw": 14165.6,
+       "p50": 23.25,
+       "p90": 76.0
+      },
+      "CC": {
+       "n": 210,
+       "mw": 54232.6,
+       "p50": 185.0,
+       "p90": 562.2
+      },
+      "COAL": {
+       "n": 210,
+       "mw": 36809.7,
+       "p50": 88.0,
+       "p90": 499.0
+      },
+      "NUC": {
+       "n": 17,
+       "mw": 16203.6,
+       "p50": 959.0,
+       "p90": 1155.6000000000001
+      }
+     },
+     "G2_separation": {
+      "CT": {
+       "S_cap": -0.4331456303841881,
+       "S_count": -0.4528301886792453
+      },
+      "CC": {
+       "S_cap": 0.5847800613075633,
+       "S_count": 1.5
+      },
+      "COAL": {
+       "S_cap": -0.14474610532185572,
+       "S_count": 0.826086956521739
+      }
+     },
+     "G3_discrepancy": 2.2748385719584485,
+     "G3_null": {
+      "null_p05": 8.239731323478408,
+      "null_p50": 9.286616461179246,
+      "null_min": 7.590898587310748
+     },
+     "G3_beats_null": true,
+     "G4_nuclear": {
+      "corpus_n": 17,
+      "eia860_n": 14,
+      "d_n": 3,
+      "rel_mw": 0.31867380653982
+     },
+     "max_class_share": 0.44668421030956706,
+     "secondary_features": {
+      "CT": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.9781181619256017
+      },
+      "CC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.08175939311974384,
+       "minfrac_p50": 0.623906146846692
+      },
+      "COAL": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.0,
+       "mustrun_frac_p50": 0.0,
+       "derate_p50": 0.0,
+       "minfrac_p50": 0.3783778367415649
+      },
+      "NUC": {
+       "emerg_headroom_p50": 0.0,
+       "selfsched_frac_p50": 0.8333333333333334,
+       "mustrun_frac_p50": 1.0,
+       "derate_p50": 0.01972386587771202,
+       "minfrac_p50": 0.5596071259432833
+      }
+     }
+    }
+   }
+  }
+ }
+}
