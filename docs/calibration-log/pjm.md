@@ -3732,3 +3732,144 @@ and NYISO `nyiso_seam_deliverability_envelope` armed with no forecast-parity
 registry declaration). Another lane's debt, reported not adopted.
 
 Next shorthand: **pjm-160.**
+
+---
+
+### pjm-160 task 1 — the bench-regen blast radius: **3 of 26 D-1 rows move, all improving, NO gate flips** (2026-08-06)
+
+`results/calibration/FINDING-pjm160-bench-nameplate-blast-radius-2026-08-06.md`.
+No LP solve; committed artifacts in, committed artifacts out. Keeper **UNCHANGED**
+at `2026-08-04-pjm-152-collapse`, which **re-verifies CALIBRATED, zero fails, zero
+caveats**.
+
+pjm-159 task C fixed the `npl = 1 MW` nameplate fall-through but left the
+**committed** bench parts pre-fix (they rebuild only on a run registration, and
+no PJM run has registered since). `scripts/regen_bench_nameplate.py` applies it
+to the committed parts directly — a full re-render needs `system.parquet` +
+`dispatch/*_P1.parquet` + the `_shared/` store, all gitignored and absent outside
+a solve.
+
+| | before | after |
+|---|---:|---:|
+| 2023 COAL_BIT `profile_r` / `cv_ratio` | 0.888 / 0.890 | **0.892 / 0.876** |
+| 2023 ST_GAS `profile_r` / `cv_ratio` | 0.970 / 1.830 | **0.973 / 1.583** |
+| 2024 COAL_BIT `profile_r` / `cv_ratio` | 0.869 / 1.137 | **0.870 / 1.136** |
+
+Every other row byte-identical; the pre-existing `2025 COAL_WC profile r 0.749`
+D-1 failure unchanged at the same value (non-gating — C7 is retired and COAL_WC
+is not over its C8 budget).
+
+**The parity guard is what makes a targeted patch admissible.** The CAMPD frame
+is rebuilt from `data/raw` with the **solver's own** `_campd_hourly_frame`, then
+every unaffected single-class plant is re-encoded at its committed nameplate and
+must return byte-identical: **194 / 197 / 197 / 196** per year, and the only
+plants that ever differ are exactly the `npl == 1` population. (Trap worth
+recording: `npl` is `round(cap)` but the blob is encoded at the **unrounded**
+`cap` — re-encoding at the rounded value mismatches 113 of 206 plants and looks
+like a basis failure.)
+
+**Repaired:** 21 plant-years / 13.54 TWh across 2022-2024 (2025 had none). Per-plant
+hourly L1 movement is **10-67 % of the plant's own energy** — the defect really did
+destroy the loading profile — but the plants are 0.3-7.6 % of their class, which
+is why D-1 moves ≤ 0.004. Every class that moved holds a repaired plant, every
+class holding one at ≥ 0.3 % moved, nothing else moved: fully attributed by the
+`--exclusion-diagnostic` pass.
+
+**THE DEFECT IS TWO-SIDED and pjm-159 did not state it.** `runs/<id>.js`
+`plants[*].m` is encoded through the same `cap` and is equally saturated (2
+distinct byte values for 2866 / 3122 / 10678). Repairing it needs a re-solve. The
+naive expectation — that fixing only the actual side breaks a spuriously high
+correlation and *lowers* `profile_r` — is contradicted in all three cells, which
+bounds the residual model-side defect at a few thousandths. It closes for free on
+PJM's next registration; **no re-solve is justified for this defect alone.**
+
+**C7 was retired the same day** (rubric v3.1 owner amendment): `score_shape` and
+`C7_GATED_CLASSES` are deleted, so D-1 now binds only through rule 21's
+grounded-above-budget escalation for C8. None of the four grounded C8 notes
+(CT_PEAKER 2023/24/25, ST_GAS 2025) holds a repaired plant in its year — all four
+stay clean grounded PASSes.
+
+**PJM 2022 is repaired but NOT re-scored** (freeze ACTIVE; a measured input is
+applied consistently across all years, but its committed diagnostics stay on the
+pre-repair basis). **Cross-ISO:** MISO 6.16 / NEISO 4.27 / CAISO 0.29 TWh still
+carry the defect; `--iso` is required so one lane cannot move another's gates
+(rule 25) and only PJM was run.
+
+### pjm-160 task 2 — the F3 gap was **`load_demand_META`, not `load_demand`**: B1 and B3 CLOSED for PJM 2019 (2026-08-06)
+
+`results/calibration/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
+Channel-1 data intake, zero LP solves, freeze ACTIVE and untouched, `final` still
+EMPTY.
+
+**The blocker was recorded one layer away from where it lived, and that is why
+four ISOs routed around it.** The register and the pjm-159 assessment both had it
+as the demand driver (*"`load_demand('PJM', 2019)` raises"*). Measured at HEAD:
+
+```
+load_demand(iso, 2019) and (iso, 2020)      : OK for ALL SIX ISOs
+load_demand_meta(iso, 2019) and (iso, 2020) : RAISES for all six
+```
+
+`load_demand` has resolved through the per-BA `DEMAND_LOADERS` adapters since
+every ISO gained one (`PJM hourly.parquet` covers **2018-2026**); the
+demand-profiles parquet is only the fallback. The gap was one function wide —
+`load_demand_meta` falls through to `eia_demand_meta.parquet`, which starts at
+2021 like the profiles file it summarizes. That single `ValueError` blocked
+`build_calibration_reference._demand_totals` and with it the whole `isos.PJM.2019`
+block.
+
+**Fixed at the curation seam** (`data/raw` is immutable; nothing appended, no new
+raw artifact): `curate_demand_profile` gains `PRE_WINDOW_YEARS = (2019, 2020)` and
+`curate_pre_window()`, sourcing each series from **the ISO's own `DEMAND_LOADERS`
+adapter** — the exact series `load_demand` serves — so the pre-window meta is by
+construction the summary of the demand the LP would dispatch against. 12 partitions,
+6 ISOs × 2 years, 0 impossible hours. 2021-2025 untouched.
+
+| blocker | status |
+|---|---|
+| **B1** 2019 unsolvable | **CLOSED** — `isos.PJM` = [2019, 2021…2025]; `PJM_2019_renewable_capacity.csv` built; readiness probe reports **`2019: SOLVABLE`** |
+| **B3** locked-test C3a on a different statistic | **CLOSED at the source** — `actual_lmp.json` PJM 2019 carries `rt_lw 26.54 / da_lw 26.56` |
+| **B2** year-keyed recipe | **STANDS** — owner decision, untouched |
+| **B4** DA-RT regime flip | **STANDS, SHARPENED** — on the gate's own load-weighted basis 2019 is **+0.02** vs +0.96/+0.29/+0.78 in training |
+
+**The readiness probe now tests instead of quoting.** `check_solvability` carried a
+hardcoded `demand_years = [2021…2025]` *"taken from the register's measured
+statement rather than re-read here"*; it now calls `load_demand` /
+`load_demand_meta`. The assumption is what produced the wrong answer.
+
+**Two defects found, reported, not buried (rule 14).**
+
+1. **PJM 2020 `peak_mw` is wrong by ~47 GW** — top hours 192,229 / 176,085 against
+   a 145,428 third-highest; `max/median` **2.26** where every other PJM year is
+   1.66-1.75 and this module's own docstring derives a ≤ 2.1 envelope. They survive
+   because the loader spike screen fires at 2.5× median and the curator's bounds
+   screen at 5×. **Not fixed here** — the root cause is a threshold in a shared,
+   solve-affecting loader screen that every training year runs through (its own
+   cross-ISO sweep + keeper re-verification), a second pre-window-only screen would
+   stack two mechanisms on one phenomenon (rule 19), and inventing a threshold is
+   rule 5. **Consequence: PJM 2020 is deliberately NOT added** to
+   `CALIBRATION_YEARS_BY_ISO` — a reference block is where a wrong `peak_mw` would
+   hide. **This is the open item for whoever wants the 2020 ladder rung.**
+2. **The committed 2023-2025 `rt_lw` rows do NOT re-derive** (assessment §9 item 2
+   asked for this check): PJM gives **29.58 / 31.36 / 45.89** at HEAD against the
+   committed **29.55 / 31.31 / 45.80**, because PJM's load weights moved when
+   `load_demand` switched to the per-BA extract and gained the dropout/spike
+   screens. **Restored, not landed** — `rt_lw` IS a gate input (the scorer reads it
+   off the bench part, which re-renders from this file on the next registration),
+   so refreshing it would silently move C3a for six ISOs. Cross-ISO and
+   owner-visible, not a side effect of a PJM data task.
+
+**`calibration_reference.json`** moves 152 numeric fields across existing blocks —
+inspected, not waved through. It is the `curate_demand_profile` repair finally
+reaching the reference: PJM 2021 `peak_mw` **2,147,480,000 → 149,590** and
+`total_twh` **4,902.59 → 796.52**; MISO 2021/22/24 `min_mw` **0.0 → ~52 GW**. Both
+sentinels are named in that script's own docstring as the defects it exists to
+repair. **Verified not a gate input before landing:** `calibration_verdict`,
+`legitimacy_diagnostics` and `audit_keepers` never read the file; the solve reads
+only the top-level `henry_hub_actual` table (unchanged); the one solve-side use of
+`isos.*` is a printed report.
+
+**Cross-ISO:** the 12 partitions let CAISO / NYISO / NEISO / MISO add their own
+pre-2021 reference blocks whenever their lanes want them — the *"extending it is
+not a <ISO> task"* comments in `build_calibration_reference.py` no longer describe
+a real obstacle. **This session adds no other ISO's years.**
