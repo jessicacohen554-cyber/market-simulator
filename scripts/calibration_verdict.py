@@ -172,7 +172,49 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # ledgerable" example accordingly: never ledgerable AS A MEASURED-INPUT claim,
 # ledgerable as model-class only under this owner-signed, exhaustion-cited
 # form.
-RUBRIC_VERSION = 3.0
+# v3.1 (OWNER AMENDMENT 2026-08-06, session-logged in this session's directive)
+# — TWO changes, both narrowing what a determination may excuse:
+#   (a) LEDGERING IS NARROWED TO C3c ALONE (``LEDGERABLE_CRITERIA``). The owner's
+#       determination is that C3c price tail / scarcity is the ONLY acceptable
+#       ledgered caveat: it is the one criterion with no published commercial
+#       comparable at all (see the C3c band note — "no commercial or public
+#       model publishes tail-hour-count accuracy"), so a documented bound is the
+#       honest reporting form for it. EVERY other criterion now stands or falls
+#       on its own band, ledger entry or not — in particular C3a mean LMP, whose
+#       band IS the certification claim: a mean-LMP miss beyond ±10% is a model
+#       miss, and calling it an accepted limitation certified a price level the
+#       model does not reproduce. Enforced in :func:`_apply_ledger` and
+#       fail-closed: an entry for any other criterion is IGNORED and the FAIL
+#       stands. Pre-existing entries are not deleted (they stay on their
+#       bundles' attestations as the historical record) — they simply no longer
+#       reclassify anything, so every affected keeper re-scores in place with no
+#       re-solve. EFFECT AT AMENDMENT: CAISO 2026-08-06-caiso-175-tac-intake
+#       CALIBRATED-WITH-CAVEATS -> NOT-YET (C3a 2024 +11.7% / 2025 +14.8%) and
+#       MISO 2026-08-05-miso-132b-cc-committed NOT-YET (unchanged label; C3a
+#       2025 -14.0% moves CAVEAT -> FAIL). NEISO/PJM/NYISO/ERCOT unchanged.
+#   (b) C7 DIURNAL SHAPE IS RETIRED — dropped from the calibration report AND
+#       the determination altogether, on the owner's stated condition that no
+#       other commercial-grade model gates or publishes on it. That condition is
+#       met on this rubric's OWN benchmark evidence: the v2 benchmark memo
+#       (docs/rubric-v2-benchmark-memo-2026-07.md §, the comparables table) and
+#       rubric §8's comparables row both record C6/C7/C8 as "beyond commercial
+#       practice" with NO external anchor — every graded criterion here is
+#       two-band scored against a published comparable, and C7 never had one.
+#       Unlike C5a/C5b/C5c (removed but REPORTED_ONLY) this is a full removal
+#       per rule 26 [R-DELETE]: ``score_shape`` and ``C7_GATED_CLASSES`` are
+#       deleted, not zeroed, so the gate cannot be silently re-armed.
+#       WHAT SURVIVES, DELIBERATELY: the D-1 diurnal rows stay in
+#       ``legitimacy_diagnostics.json`` and C8 still reads them through
+#       :func:`_d1_shape` — CLAUDE.md rule 20 [R-FORCED-BUDGET] makes an
+#       over-budget class's conditional pass depend on its D-1 profile clearing
+#       ``profile_r``/``cv_ratio``, so retiring the C7 GATE must not retire the
+#       D-1 MEASUREMENT. The anti-flat-floor protection therefore still binds
+#       exactly where rule 20 puts it: on classes that are actually being
+#       forced. EFFECT AT AMENDMENT: C7 was PASS on CAISO/NYISO/PJM/ERCOT,
+#       SKIPPED on NEISO and FAIL on MISO (COAL_PRB 2025) — so only MISO's
+#       reported basis changes, and its NOT-YET label is unaffected because C3a
+#       fails it independently under (a).
+RUBRIC_VERSION = 3.1
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -404,8 +446,33 @@ FORBIDDEN_FLAGS: tuple[str, ...] = ()
 #    availability rather than model quality. Each ledgered caveat still
 #    requires its own named measured-input reason — the budget bounds excuses,
 #    it never grants them.
-MAX_PROTECTIVE_CAVEATS = 1  # C7/C8 (C6 is never caveatable) — unchanged from v1
-MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
+# v3.1 (owner amendment 2026-08-06) collapses BOTH budgets, because ledgering
+# is now restricted to C3c alone (LEDGERABLE_CRITERIA below) and C3c is a
+# single SUPPORTING-tier criterion:
+#  - protective -> 0: no protective criterion is ledgerable any more, so a C8
+#    forced-share FAIL is NOT-YET, full stop (C6 was never caveatable). This
+#    HARDENS the anti-self-deception tier — the v1/v2 budget of 1 let one
+#    protective gate be excused.
+#  - ledgered -> 1: exactly one ledgerable criterion exists, and caveats
+#    aggregate per criterion, so 1 is the true ceiling. Publishing "0/3" would
+#    advertise slots that cannot be filled.
+# Both checks are retained as defense-in-depth invariants rather than deleted:
+# they are the assertion that re-widening LEDGERABLE_CRITERIA without an owner
+# amendment cannot silently buy back excuse capacity.
+MAX_PROTECTIVE_CAVEATS = 0  # C6/C8 — no protective criterion is ledgerable (v3.1)
+MAX_LEDGERED_CAVEATS = 1  # C3c is the only ledgerable criterion (v3.1)
+
+# Criteria a ledger entry may reclassify at all (rubric v3.1, OWNER AMENDMENT
+# 2026-08-06). C3c price tail / scarcity is the ONLY one: it is the single
+# criterion with no published commercial comparable (see PRICE_TAIL_BAND below
+# — "no commercial or public model publishes tail-hour-count accuracy at all"),
+# so an owner-accepted documented bound is the honest reporting form for it.
+# Every other criterion is two-band scored against a published comparable, and
+# for those the band IS the certification claim — C3a mean LMP most of all: a
+# mean-LMP miss beyond ±10% is a MODEL MISS, and ledgering it certified a price
+# level the model does not reproduce. The budget above still applies on top
+# (a criterion being ledgerABLE never means ledgering is free).
+LEDGERABLE_CRITERIA = frozenset({"price_tail"})
 
 # C7/C8 materiality floor (rubric v2.1, owner amendment 2026-07-06): the
 # protective shape / forced-share gates score only classes whose annual energy
@@ -417,41 +484,21 @@ MAX_LEDGERED_CAVEATS = 3  # non-protective ledgered measured-input caveats
 # (mirrors C2's 10 TWh / C4's 5 TWh immateriality cut-offs). 2% is the clean
 # cut in the keeper data: NEISO ST_GAS 0.1-0.3%, NEISO CT 0.5-0.7% and NYISO
 # CT 1.4-1.9% of load (the named trivial cases) fall below it, while CAISO CT
-# 2023/24 (2.1-2.3% — the caiso-42 flat-floor case C7/C8 exist to catch),
+# 2023/24 (2.1-2.3% — the caiso-42 flat-floor case C8 exists to catch),
 # PJM/MISO CT (3.5-4.2%) and every material ST_GAS (2.1-10.6%) stay gated.
+# Any change to this floor — or to the D-1 thresholds C8's grounded-pass
+# escalation reads — is an owner amendment: date and attribute it AT the point
+# of change, not afterwards.
 PROTECTIVE_MIN_LOAD_FRAC = 0.02
-# Rubric-side C7 gate set (v2.8, 2026-07-27 — the ERCOT-121 coal
-# gate-blindness correction; RATIFIED as an OWNER AMENDMENT 2026-07-27 in
-# miso-96 — see the rubric §9 ratification note. It originally shipped
-# WITHOUT the ``owner amendment <date>`` marker that v2.1/v2.2/v2.3/v2.7 all
-# carry, while retroactively re-grading designated keepers in two lanes it
-# was not working in. Any future change to this tuple — or to
-# ``PROTECTIVE_MIN_LOAD_FRAC`` / the D-1 thresholds — is an owner amendment:
-# date and attribute it AT the point of change, not afterwards.)
-# The artifact's baked ``gated`` flag reflects
-# the D1_GATED_CLASSES vintage it was written under (peaker/intermediate
-# only, through 2026-07-27), so the scorer derives gatedness itself — a
-# committed artifact re-scores in place, exactly like C8's measured-share-
-# overrides-baked-verdict rule. Gated: peaker/intermediate duty (the
-# original caiso-42 set) plus the MERCHANT COAL classes (bare rank-fallback
-# + the four rank splits, config/plant_taxonomy.py PLANT_CLASSES) — ERCOT
-# COAL_LIGNITE 2023 (profile r 0.745, off-peak CV ratio 0.294: Oak Grove
-# pinned flat at its ceiling) and MISO COAL_PRB 2023-25 (cv_ratio
-# 0.36-0.45) carried the C7 failure signature invisibly. NOT gated: CHP
-# classes (host-steam-pinned duty, the same structural-must-run rationale
-# as their D2_EXEMPT_CLASSES entry), nuclear (flat-baseload CV degenerate),
-# non-thermal. CC_REGULAR stays ungated pending an owner call (it passes
-# D-1 in all six keepers today; widening beyond the evidenced blindness is
-# an owner amendment).
-C7_GATED_CLASSES = (
-    "CT_PEAKER",
-    "ST_GAS",
-    "COAL",
-    "COAL_LIGNITE",
-    "COAL_PRB",
-    "COAL_BIT",
-    "COAL_WC",
-)
+# (The rubric-side C7 gate set ``C7_GATED_CLASSES`` was DELETED by the v3.1
+# owner amendment 2026-08-06 along with ``score_shape`` — C7 is retired, and
+# rule 26 [R-DELETE] says a retired gate is removed, not zeroed, so it cannot
+# be silently re-armed. The D-1 rows it read still exist in
+# legitimacy_diagnostics.json and are still scored by C8's grounded-above-budget
+# escalation via :func:`_d1_shape`, which applies the artifact's own
+# ``d1_min_profile_r``/``d1_min_cv_ratio`` gates to whichever class is actually
+# over its forced-energy budget — a wider test than a fixed class tuple, and
+# the one CLAUDE.md rule 20 [R-FORCED-BUDGET] actually requires.)
 # D-2 rows/summary label classes by CAMPD plant_group (the floor-attribution
 # vocabulary: coal plants are "COAL"), while the run payload's gmModel and
 # the bench classFull carry the scored-class rank split. _class_load_share
@@ -548,7 +595,16 @@ CRITERIA = {
     # calibration determination. The storage numbers stay visible on the
     # dashboard run pages as payload/bench diagnostics.)
     "governance": ("C6 governance gate", TIER_PROTECT),
-    "shape": ("C7 diurnal shape (D-1)", TIER_PROTECT),
+    # (C7 diurnal shape (D-1) was RETIRED OUTRIGHT by the v3.1 owner amendment
+    # 2026-08-06 — dropped from the report AND the determination, on the finding
+    # that no commercial-grade comparable gates or publishes diurnal-shape
+    # accuracy (rubric §8's comparables row and the v2 benchmark memo both score
+    # C6/C7/C8 "beyond commercial practice", i.e. with no external anchor at
+    # all). This is a HARDER removal than C5a/C5b/C5c, which stayed computed and
+    # REPORTED_ONLY: score_shape and C7_GATED_CLASSES are deleted per rule 26
+    # [R-DELETE]. The D-1 measurement itself is untouched — it stays in
+    # legitimacy_diagnostics.json and C8 still gates on it through _d1_shape
+    # wherever CLAUDE.md rule 20 requires a forced class to prove its shape.)
     "forced_share": ("C8 forced-energy share (D-2)", TIER_PROTECT),
 }
 
@@ -727,14 +783,23 @@ def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
     when the entry carries ``"kind": "model-class"`` (rubric v3.0). A FAIL
     without an entry stays a FAIL (MODEL MISS).
 
-    Fail-closed guard (v3.0): a model-class entry is admissible ONLY for a
-    SUPPORTING-tier criterion — matched against a load-bearing or protective
-    criterion it is ignored and the FAIL stands. Owner acceptance of a
-    model-class limit never waves through the certifying or anti-self-deception
-    tiers.
+    Fail-closed guards, applied in order:
+
+    * **v3.1 (owner amendment 2026-08-06)** — the criterion must be in
+      :data:`LEDGERABLE_CRITERIA`, i.e. C3c and nothing else. An entry naming
+      any other criterion is IGNORED and the FAIL stands, whatever its kind or
+      reason. Entries already sitting on committed attestations are left in
+      place as the historical record; they simply stop reclassifying, so every
+      keeper re-scores from its committed artifacts with no re-solve.
+    * **v3.0** — a model-class entry is admissible ONLY for a SUPPORTING-tier
+      criterion; matched against a load-bearing or protective criterion it is
+      ignored and the FAIL stands. Owner acceptance of a model-class limit never
+      waves through the certifying or anti-self-deception tiers.
     """
     if rec["status"] != FAIL:
         return rec
+    if rec["criterion"] not in LEDGERABLE_CRITERIA:
+        return rec  # fail-closed: C3c is the only ledgerable criterion (v3.1)
     entry = _ledger_match(exceptions, rec["criterion"], rec["year"], rec.get("key"))
     if not entry:
         return rec
@@ -1850,107 +1915,12 @@ def _immaterial_protective(criterion, klass, year, share, extra=""):
     return rec
 
 
-def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list[dict]:
-    """C7 — diurnal shape (audit D-1), from the bundle's committed artifact.
-
-    Reads ``<bundle>/legitimacy_diagnostics.json`` (written by
-    ``scripts/legitimacy_diagnostics.py --json-out``) — the verdict never
-    recomputes the diagnostic, so the S1 suite stays the single
-    implementation. A gated class FAILs the year when its hour-of-day profile
-    correlation or off-peak CV ratio breaches the artifact's D-1 gates — the
-    caiso-42 flat-floor signature (model CV 0.000 vs actual 0.35-0.45) that
-    annual-volume bands cannot see. Gatedness is derived RUBRIC-SIDE
-    (:data:`C7_GATED_CLASSES` — peaker/intermediate + merchant coal, v2.8 —
-    union the artifact's own baked ``gated`` flag), and the verdict is
-    evaluated from the row's STORED ``profile_r``/``cv_ratio`` against the
-    artifact's ``gates`` block rather than the row's baked ``verdict``: an
-    artifact written under the pre-v2.8 gate set (coal rows baked
-    ``gated=False``/``pass``) re-scores in place, mirroring C8's
-    measured-share-overrides-baked-verdict rule. A ``cv_ratio`` of ``None``
-    (degenerate actual off-peak CV) skips the CV leg, matching ``run_d1``.
-    Materiality floor (rubric v2.1): a class below
-    ``PROTECTIVE_MIN_LOAD_FRAC`` of ISO load is SKIPPED-immaterial (reported,
-    never gated). SKIPPED (never a silent pass) when the artifact or the year
-    is absent.
-    """
-    if legit is None:
-        return [
-            _skip(
-                "shape",
-                year,
-                f"no legitimacy_diagnostics.json in bundle — {_LEGIT_HOWTO}",
-            )
-        ]
-    gates = legit.get("gates", {})
-    rows = [
-        r
-        for r in legit.get("diagnostics", {}).get("D1", {}).get("rows", [])
-        if int(r.get("year", -1)) == int(year)
-        and (str(r.get("class")) in C7_GATED_CLASSES or r.get("gated"))
-    ]
-    if not rows:
-        return [
-            _skip(
-                "shape",
-                year,
-                "no gated-class D-1 rows for this year in legitimacy_diagnostics.json",
-            )
-        ]
-    min_r = gates.get("d1_min_profile_r")
-    min_cv = gates.get("d1_min_cv_ratio")
-    tol = (
-        f"profile r ≥ {min_r} & off-peak CV ratio ≥ "
-        f"{min_cv} (h0-{gates.get('d1_offpeak_last_hour')}); "
-        f"class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} of load"
-    )
-    out = []
-    for r in rows:
-        klass = r.get("class")
-        share = _class_load_share(klass, ypay, ybench)
-        if share is not None and share < PROTECTIVE_MIN_LOAD_FRAC:
-            out.append(
-                _immaterial_protective(
-                    "shape",
-                    klass,
-                    year,
-                    share,
-                    extra=(
-                        f"; D-1 reads profile r {r.get('profile_r')}, "
-                        f"off-peak CV ratio {r.get('cv_ratio')}"
-                    ),
-                )
-            )
-            continue
-        pr = r.get("profile_r")
-        cvr = r.get("cv_ratio")
-        if pr is None and min_r is not None:
-            # No stored metric to evaluate (defensive; every committed
-            # artifact carries profile_r) — trust the baked verdict.
-            ok = r.get("verdict") != "FAIL"
-        else:
-            fail_r = min_r is not None and pr is not None and float(pr) < float(min_r)
-            fail_cv = (
-                min_cv is not None and cvr is not None and float(cvr) < float(min_cv)
-            )
-            ok = not (fail_r or fail_cv)
-        out.append(
-            {
-                "criterion": "shape",
-                "key": klass,
-                "year": year,
-                "status": PASS if ok else FAIL,
-                "classification": None if ok else MODEL_MISS,
-                "metric": f"{klass} hour-of-day profile vs CAMPD (D-1)",
-                "model": f"r={r.get('profile_r')} cv={r.get('model_offpeak_cv')}",
-                "actual": f"cv={r.get('actual_offpeak_cv')}",
-                "tol": tol,
-                "magnitude": (
-                    f"profile r {r.get('profile_r')}, off-peak CV ratio "
-                    f"{r.get('cv_ratio')}"
-                ),
-            }
-        )
-    return out
+# (``score_shape`` — the C7 diurnal-shape scorer — was DELETED by the v3.1
+# owner amendment 2026-08-06. C7 is retired from the report and the
+# determination, and rule 26 [R-DELETE] requires removal rather than a
+# zeroed/dormant gate. Its D-1 source rows are untouched: C8's
+# grounded-above-budget escalation still reads them via ``_d1_shape`` below,
+# which is where CLAUDE.md rule 20 [R-FORCED-BUDGET] puts the shape test.)
 
 
 def _binding_merchant_mechs(legit: dict, year: int, klass: str) -> list[str]:
@@ -2365,7 +2335,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records += score_price_tail(year, ypay, iso)
         records += score_dispatch_corr(year, ypay, ybench, iso)
         records.append(score_co2(year, ypay, ybench))
-        records += score_shape(year, art.get("legitimacy"), ypay, ybench)
+        # (No C7 row: retired outright by the v3.1 owner amendment 2026-08-06.)
         records += score_forced_share(year, art.get("legitimacy"), ypay, ybench)
 
     # Apply the exceptions ledger (FAIL -> CAVEAT where documented).

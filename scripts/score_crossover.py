@@ -33,7 +33,7 @@ itself** (a crossover bundle is NOT the calibration bundle layout
 the reconstructible criteria are scored (C1 fuelmix, C3a price-mean, C3b
 price-shape, C5a CO2); metrics that need artifacts a crossover bundle does not
 carry (C2 system-volume EIA-930 family, C3c hourly scarcity tail, C4 per-plant
-CAMPD hourly correlation, C7/C8 legitimacy diagnostics) are reported as DEFERRED
+CAMPD hourly correlation, C8 legitimacy diagnostics) are reported as DEFERRED
 with the reason — never faked.
 
 Nothing here is tuned and no LP is solved. Usage::
@@ -515,8 +515,8 @@ _DEFERRED = {
     "payload (ordc.hoursGt200) the crossover DispatchResult does not carry.",
     "dispatch_corr": "C4 per-plant hourly correlation: needs the per-plant CAMPD "
     "b64 hourly bench + per-plant model hourly series (calibration-bundle only).",
-    "shape": "C7 diurnal shape: needs the bundle's legitimacy_diagnostics.json "
-    "(not produced for a crossover bundle).",
+    # (C7 diurnal shape retired from the rubric by the v3.1 owner amendment
+    # 2026-08-06 — no longer a criterion, so nothing to defer.)
     "forced_share": "C8 forced-share: needs the bundle's legitimacy_diagnostics.json "
     "(not produced for a crossover bundle).",
 }

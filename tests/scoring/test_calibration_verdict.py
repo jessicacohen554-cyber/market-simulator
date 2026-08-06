@@ -890,9 +890,11 @@ class GovernanceTests(unittest.TestCase):
 
 class LedgerTests(unittest.TestCase):
     def test_documented_fail_becomes_caveat(self):
+        # v3.1: only C3c (price_tail) is ledgerable at all, so the documented
+        # FAIL -> ledgered CAVEAT path is exercised there.
         rec = {
-            "criterion": "fuelmix",
-            "key": "CT_PEAKER",
+            "criterion": "price_tail",
+            "key": None,
             "year": 2024,
             "status": cv.FAIL,
             "classification": cv.MODEL_MISS,
@@ -901,10 +903,9 @@ class LedgerTests(unittest.TestCase):
             rec,
             [
                 {
-                    "criterion": "fuelmix",
-                    "klass": "CT_PEAKER",
+                    "criterion": "price_tail",
                     "year": 2024,
-                    "reason": "NEISO model-zeroed peaker",
+                    "reason": "data-blocked scarcity requirement series",
                 }
             ],
         )
@@ -913,14 +914,73 @@ class LedgerTests(unittest.TestCase):
 
     def test_unmatched_fail_stays_fail(self):
         rec = {
-            "criterion": "fuelmix",
-            "key": "CT_PEAKER",
+            "criterion": "price_tail",
+            "key": None,
             "year": 2024,
             "status": cv.FAIL,
             "classification": cv.MODEL_MISS,
         }
         cv._apply_ledger(rec, [{"criterion": "sysvol", "family": "gas", "year": 2024}])
         self.assertEqual(rec["status"], cv.FAIL)
+
+    def test_price_tail_is_the_only_ledgerable_criterion(self):
+        # v3.1 owner amendment 2026-08-06: C3c is the sole ledgerable criterion.
+        self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))
+
+    def test_price_mean_fail_is_never_ledgerable(self):
+        # v3.1 fail-closed guard, the amendment's headline case: a mean-LMP miss
+        # beyond +/-10% is a MODEL MISS and no ledger entry — measured-input or
+        # model-class — may reclassify it. Ledgering C3a certified a price level
+        # the model does not reproduce (the CAISO caiso-175 case: 2024 +11.7%,
+        # 2025 +14.8%, carried as CALIBRATED-WITH-CAVEATS until this amendment).
+        for entry in (
+            {"criterion": "price_mean", "year": 2025, "reason": "unrestrained PS"},
+            {"criterion": "price_mean", "year": 2025, "kind": "model-class"},
+        ):
+            rec = {
+                "criterion": "price_mean",
+                "key": None,
+                "year": 2025,
+                "status": cv.FAIL,
+                "classification": cv.MODEL_MISS,
+            }
+            cv._apply_ledger(rec, [entry])
+            self.assertEqual(rec["status"], cv.FAIL, entry)
+            self.assertEqual(rec["classification"], cv.MODEL_MISS, entry)
+            self.assertNotIn("ledger_reason", rec)
+
+    def test_other_criteria_are_never_ledgerable(self):
+        # Every non-C3c criterion, including the ones whose entries sit on
+        # already-committed attestations (fuelmix / sysvol / dispatch_corr):
+        # the entry stays on the bundle as the historical record but no longer
+        # reclassifies, so keepers re-score in place with no re-solve.
+        for criterion, key in (
+            ("fuelmix", "CT_PEAKER"),
+            ("sysvol", "gas"),
+            ("price_shape", None),
+            ("dispatch_corr", "gas"),
+            ("forced_share", "CT_PEAKER"),
+        ):
+            rec = {
+                "criterion": criterion,
+                "key": key,
+                "year": 2024,
+                "status": cv.FAIL,
+                "classification": cv.MODEL_MISS,
+            }
+            cv._apply_ledger(
+                rec,
+                [
+                    {
+                        "criterion": criterion,
+                        "klass": key,
+                        "family": key,
+                        "year": 2024,
+                        "reason": "documented limitation",
+                    }
+                ],
+            )
+            self.assertEqual(rec["status"], cv.FAIL, criterion)
 
     def test_model_class_entry_caveats_supporting_criterion(self):
         # v3.0: kind=model-class reclassifies a SUPPORTING-tier FAIL to a
@@ -966,7 +1026,7 @@ class LedgerTests(unittest.TestCase):
 
     def test_model_class_entry_ignored_on_protective_criterion(self):
         rec = {
-            "criterion": "shape",
+            "criterion": "forced_share",
             "key": "COAL_LIGNITE",
             "year": 2023,
             "status": cv.FAIL,
@@ -976,7 +1036,7 @@ class LedgerTests(unittest.TestCase):
             rec,
             [
                 {
-                    "criterion": "shape",
+                    "criterion": "forced_share",
                     "klass": "COAL_LIGNITE",
                     "year": 2023,
                     "kind": "model-class",
@@ -1051,13 +1111,17 @@ class DeterminationTests(unittest.TestCase):
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["determination"], cv.NOT_YET)
 
-    def test_documented_fail_within_budget_is_caveats(self):
+    def test_documented_non_c3c_fail_is_not_excused(self):
         # ST_GAS (9 TWh actual) overshoots by +5 TWh: the fixture's lmp zone demand
         # is 100 TWh, so the volume band = min(2.0% of load, 8 TWh) = 2.0 TWh and
         # the +5 TWh miss still exceeds it -> the class FAILs C1 on volume (share
         # stays within 3.0pp), but C2 defers to C1 for the fully-reported family
-        # so it still PASSes -> a single isolated hard-gate fail, ledgered ->
-        # CAVEAT in budget.
+        # so it still PASSes.
+        # RUBRIC v3.1 (owner amendment 2026-08-06): the ledger entry documenting
+        # that C1 fail no longer reclassifies it — C3c is the only ledgerable
+        # criterion — so the FAIL stands and the determination is NOT-YET. (This
+        # test pinned the OPPOSITE behaviour through v3.0, where the same fixture
+        # scored CALIBRATED-WITH-CAVEATS on a documented C1 miss.)
         ypay = {
             "gmModel": {
                 "CC_REGULAR": 325.0,
@@ -1104,30 +1168,25 @@ class DeterminationTests(unittest.TestCase):
             attestation=att,
         )
         v = cv.determine_from_artifacts("t", art)
-        # One hard-gate caveat is within the budget (<=1) -> CALIBRATED-WITH-CAVEATS.
-        self.assertEqual(v["criteria"]["fuelmix"]["status"], cv.CAVEAT)
+        self.assertEqual(v["criteria"]["fuelmix"]["status"], cv.FAIL)
         self.assertEqual(v["criteria"]["sysvol"]["status"], cv.PASS)
-        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+        self.assertEqual(v["caveats"]["ledgered"], [])
 
-    def test_ledgered_caveat_budget_is_three(self):
-        # Pins MAX_LEDGERED_CAVEATS = 3 (rubric v2, memo §3a): ledgered
-        # (beyond-commercial-band, measured-input-documented) caveats are
-        # budgeted at 3; four of them (price_mean -13.8%, price_shape NRMSE
-        # 0.241, price_tail 0.25x, dispatch_corr gas r=0.55) exceed the
-        # budget -> NOT-YET; with the gas fleet correlation back above the
-        # floor there are three -> CALIBRATED-WITH-CAVEATS. Caveats aggregate
-        # per CRITERION, not per record, so the four slots must come from four
-        # distinct criteria. (Caveat slot
-        # genealogy: storage +50% retired with C5b under v2.6(c), then co2
-        # +15% carried the 4th slot until C5a itself was removed from the
-        # rubric by the v2.9 owner amendment 2026-07-27 — eGRID publishes no
-        # 2025 vintage, so a scored year had no measured actual. C3b price
-        # shape now carries it; the budget being pinned is the rubric's, not
-        # any one criterion's.)
+    def test_only_c3c_can_consume_a_ledgered_slot(self):
+        # RUBRIC v3.1 (owner amendment 2026-08-06). This test replaces
+        # test_ledgered_caveat_budget_is_three, which pinned the v2/v3.0 rule
+        # that any criterion could be ledgered up to a budget of 3.
+        #
+        # The fixture presents FOUR documented out-of-band results at once
+        # (price_mean -13.8%, price_shape NRMSE 0.241, price_tail 0.25x,
+        # dispatch_corr gas r=0.55), each with its own attestation entry — the
+        # exact shape that scored CALIBRATED-WITH-CAVEATS on three slots before.
+        # Now only C3c is ledgerable, so the other three stay FAILs and carry
+        # the determination to NOT-YET; the ledgered list holds C3c alone.
         def art_with(gas_r):
             ypay = self._clean_year_payload()
             ypay["lmp"]["Z"]["p"] = 25.0  # -13.8% vs rt 29.0: beyond ±10% comm.
-            ypay["lmp"]["Z"]["pMon"] = [25] * 12  # NRMSE 0.138 <= 0.15 -> PASS
             ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 25}}  # 0.25x
             ypay["lmp"]["Z"]["pMon"] = [22] * 12  # NRMSE 0.241 > 0.20 -> FAIL
             ypay["fuelRows"][0]["r"] = gas_r
@@ -1148,14 +1207,38 @@ class DeterminationTests(unittest.TestCase):
 
         _tail({"PJM": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
         try:
-            v = cv.determine_from_artifacts("t", art_with(0.55))  # 4 ledgered
-            self.assertEqual(v["determination"], cv.NOT_YET)
-            self.assertIn("caveat budget exceeded", v["reasons"][0])
-            v = cv.determine_from_artifacts("t", art_with(0.80))  # 3 ledgered
-            self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-            self.assertEqual(len(v["caveats"]["ledgered"]), 3)
+            for gas_r in (0.55, 0.80):
+                v = cv.determine_from_artifacts("t", art_with(gas_r))
+                self.assertEqual(v["determination"], cv.NOT_YET)
+                # C3c is ledgered; the three non-ledgerable ones stay FAILs.
+                self.assertEqual(v["criteria"]["price_tail"]["status"], cv.CAVEAT)
+                self.assertEqual(
+                    v["caveats"]["ledgered"], [cv.CRITERIA["price_tail"][0]]
+                )
+                self.assertEqual(v["criteria"]["price_mean"]["status"], cv.FAIL)
+                self.assertEqual(v["criteria"]["price_shape"]["status"], cv.FAIL)
+                self.assertIn("price_mean", v["reasons"][0])
         finally:
             _reset_tail()
+
+    def test_caveat_budgets_match_the_ledgerable_set(self):
+        # v3.1 invariant: the budgets are not free-floating numbers — they are
+        # the arithmetic consequence of LEDGERABLE_CRITERIA. Caveats aggregate
+        # per criterion, so the ledgered ceiling is the number of ledgerable
+        # non-protective criteria, and the protective ceiling is the number of
+        # ledgerable protective ones (zero). Re-widening the ledgerable set
+        # without revisiting the budgets fails here.
+        by_tier = [
+            cv.CRITERIA[c][1] for c in cv.LEDGERABLE_CRITERIA if c in cv.CRITERIA
+        ]
+        self.assertEqual(
+            cv.MAX_LEDGERED_CAVEATS,
+            sum(1 for t in by_tier if t != cv.TIER_PROTECT),
+        )
+        self.assertEqual(
+            cv.MAX_PROTECTIVE_CAVEATS,
+            sum(1 for t in by_tier if t == cv.TIER_PROTECT),
+        )
 
     def test_commercial_band_caveats_unbudgeted(self):
         # Auto COMMERCIAL_BAND caveats (inside the evidence-anchored outer band,
@@ -1195,11 +1278,14 @@ class DeterminationTests(unittest.TestCase):
             cv._band_result(0.07, 0.05, 0.10), (cv.CAVEAT, cv.COMMERCIAL_BAND)
         )
 
-    def test_protective_caveat_budget_is_one(self):
-        # C7/C8 keep the v1 hard budget of 1 (CLAUDE.md rule 20 / audit D-1/D-2
-        # enforcement unchanged): both protective gates ledgered at once ->
-        # budget exceeded -> NOT-YET; a single ledgered protective caveat with
-        # the other passing -> CALIBRATED-WITH-CAVEATS.
+    def test_protective_gate_is_never_ledgerable(self):
+        # RUBRIC v3.1 (owner amendment 2026-08-06). Replaces
+        # test_protective_caveat_budget_is_one: the protective tier used to
+        # allow ONE ledgered excuse, so a documented C8 forced-share breach
+        # could still certify. It cannot now — C3c is the only ledgerable
+        # criterion, so a C8 FAIL is NOT-YET whatever the attestation says.
+        # This is the anti-self-deception tier getting stricter, not looser
+        # (CLAUDE.md rule 20 [R-FORCED-BUDGET]).
         def art_with(legit, exceptions):
             art = _artifacts(
                 self._clean_year_payload(),
@@ -1209,14 +1295,8 @@ class DeterminationTests(unittest.TestCase):
             art["legitimacy"] = legit
             return art
 
-        both_fail = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.55)
+        over_budget = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.55)
         exceptions = [
-            {
-                "criterion": "shape",
-                "klass": "CT_PEAKER",
-                "year": 2024,
-                "reason": "documented",
-            },
             {
                 "criterion": "forced_share",
                 "klass": "CT_PEAKER",
@@ -1224,13 +1304,16 @@ class DeterminationTests(unittest.TestCase):
                 "reason": "documented",
             },
         ]
-        v = cv.determine_from_artifacts("t", art_with(both_fail, exceptions))
+        v = cv.determine_from_artifacts("t", art_with(over_budget, exceptions))
         self.assertEqual(v["determination"], cv.NOT_YET)
-        self.assertIn("caveat budget exceeded", v["reasons"][0])
-        shape_only = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
-        v = cv.determine_from_artifacts("t", art_with(shape_only, exceptions))
+        self.assertEqual(v["criteria"]["forced_share"]["status"], cv.FAIL)
+        self.assertEqual(v["caveats"]["protective"], [])
+        self.assertIn("forced_share", v["reasons"][0])
+        # Below the materiality floor the class is not gated at all, so the
+        # same artifact certifies — the gate, not the ledger, is what moved.
+        immaterial = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
+        v = cv.determine_from_artifacts("t", art_with(immaterial, exceptions))
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-        self.assertEqual(len(v["caveats"]["protective"]), 1)
 
     def test_data_blocked_year_recorded(self):
         art = _artifacts(
@@ -1330,49 +1413,6 @@ def _legit_artifact(
 class ShapeForcedShareTests(unittest.TestCase):
     """C7 (D-1 diurnal shape) and C8 (D-2 forced share) from the artifact."""
 
-    def test_shape_skipped_without_artifact(self):
-        recs = cv.score_shape(2024, None, *_mat())
-        self.assertEqual(recs[0]["status"], cv.SKIPPED)
-        self.assertIn("legitimacy_diagnostics.json", recs[0]["magnitude"])
-
-    def test_shape_flat_floor_fails(self):
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02)  # the caiso-42 signature
-        recs = cv.score_shape(2024, legit, *_mat())
-        self.assertEqual(recs[0]["status"], cv.FAIL)
-        self.assertEqual(recs[0]["classification"], cv.MODEL_MISS)
-
-    def test_shape_good_profile_passes(self):
-        recs = cv.score_shape(2024, _legit_artifact(r=0.92, cv_ratio=1.1), *_mat())
-        self.assertEqual(recs[0]["status"], cv.PASS)
-
-    def test_shape_year_missing_is_skipped(self):
-        recs = cv.score_shape(2023, _legit_artifact(year=2024), *_mat())
-        self.assertEqual(recs[0]["status"], cv.SKIPPED)
-
-    def test_shape_immaterial_class_skipped(self):
-        # v2.1 materiality floor: a class at 1% of ISO load (1 of 100 TWh) is
-        # SKIPPED-immaterial even with the caiso-42 flat-floor signature — the
-        # D-1 reading is annotated, never gated. At 3% of load it gates again.
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02)
-        recs = cv.score_shape(
-            2024, legit, *_mat(model_twh=1.0, actual_twh=1.0, total_twh=100.0)
-        )
-        self.assertEqual(recs[0]["status"], cv.SKIPPED)
-        self.assertIn("immaterial", recs[0]["magnitude"])
-        recs = cv.score_shape(
-            2024, legit, *_mat(model_twh=3.0, actual_twh=3.0, total_twh=100.0)
-        )
-        self.assertEqual(recs[0]["status"], cv.FAIL)
-
-    def test_shape_forcing_cannot_hide_below_materiality(self):
-        # max(model, actual) basis: actual 1 TWh (1% of load) but the model
-        # forces the class to 5 TWh (5%) -> still gated (and failing).
-        legit = _legit_artifact(r=0.9, cv_ratio=0.02)
-        recs = cv.score_shape(
-            2024, legit, *_mat(model_twh=5.0, actual_twh=1.0, total_twh=100.0)
-        )
-        self.assertEqual(recs[0]["status"], cv.FAIL)
-
     def test_forced_share_peaker_gate_is_15pct(self):
         # v2.1 owner amendment: CT_PEAKER cap 15% (was 10%). 12% now PASSes
         # (pins the amendment), 16% FAILs, 55% FAILs, 5% PASSes.
@@ -1413,39 +1453,6 @@ class ShapeForcedShareTests(unittest.TestCase):
         self.assertIn("lower bound", recs[0]["magnitude"])
 
     # --- v2.8 coal gate-blindness correction (ERCOT-121) --------------------
-
-    def test_shape_coal_gated_from_pre_v28_artifact(self):
-        # A pre-v2.8 artifact baked coal rows gated=False / verdict "pass"
-        # (D1_GATED_CLASSES was peaker/intermediate only). The scorer now
-        # derives gatedness rubric-side and evaluates the STORED metrics, so
-        # the ERCOT COAL_LIGNITE 2023 signature (r 0.745, cv_ratio 0.294 —
-        # the lignite fleet pinned flat) re-scores FAIL in place.
-        legit = _legit_artifact(klass="COAL_LIGNITE", r=0.745, cv_ratio=0.294)
-        legit["diagnostics"]["D1"]["rows"][0]["gated"] = False
-        legit["diagnostics"]["D1"]["rows"][0]["verdict"] = "pass"
-        recs = cv.score_shape(2024, legit, *_mat(klass="COAL_LIGNITE"))
-        self.assertEqual(recs[0]["status"], cv.FAIL)
-        self.assertEqual(recs[0]["classification"], cv.MODEL_MISS)
-
-    def test_shape_chp_class_stays_ungated(self):
-        # CHP duty is host-steam-pinned (same structural-must-run rationale as
-        # D2_EXEMPT_CLASSES): a failing CT_CHP profile is reported by D-1 but
-        # never scored by C7.
-        legit = _legit_artifact(klass="CT_CHP", r=0.37, cv_ratio=0.02)
-        legit["diagnostics"]["D1"]["rows"][0]["gated"] = False
-        legit["diagnostics"]["D1"]["rows"][0]["verdict"] = "pass"
-        recs = cv.score_shape(2024, legit, *_mat(klass="CT_CHP"))
-        self.assertEqual(recs[0]["status"], cv.SKIPPED)
-        self.assertIn("no gated-class D-1 rows", recs[0]["magnitude"])
-
-    def test_shape_cv_ratio_none_skips_cv_leg(self):
-        # run_d1 stores cv_ratio=None when the actual off-peak CV is
-        # degenerate; the scorer-side evaluation must skip the CV leg (not
-        # fail it), matching run_d1's isfinite guard.
-        legit = _legit_artifact(klass="CT_PEAKER", r=0.9, cv_ratio=1.0)
-        legit["diagnostics"]["D1"]["rows"][0]["cv_ratio"] = None
-        recs = cv.score_shape(2024, legit, *_mat())
-        self.assertEqual(recs[0]["status"], cv.PASS)
 
     def test_forced_share_plant_group_aggregate_resolves_materiality(self):
         # The D-2 summary labels classes by CAMPD plant_group ("COAL") while
@@ -1596,10 +1603,19 @@ class ShapeForcedShareTests(unittest.TestCase):
             any("unscored PROTECTIVE criteria" in r for r in v["reasons"]),
             v["reasons"],
         )
-        self.assertEqual(v["criteria"]["shape"]["status"], cv.SKIPPED)
+        self.assertEqual(v["criteria"]["forced_share"]["status"], cv.SKIPPED)
+        self.assertNotIn("shape", v["criteria"])  # C7 retired (v3.1)
 
     def test_flat_floor_forces_not_yet(self):
-        """A flat-floor keeper FAILs C7/C8 -> NOT-YET, whatever C1 says."""
+        """A flat-floor keeper still FAILs -> NOT-YET after C7's retirement.
+
+        This is the regression that the v3.1 C7 removal did not surrender the
+        caiso-42 protection. The signature (off-peak CV 0.000 vs a real
+        0.35-0.45) used to be caught twice — by C7 on its fixed class tuple and
+        by C8's grounded-above-budget escalation. With C7 retired, C8 alone
+        catches it: the class is forced past its cap, so the escalation reads
+        the SAME D-1 row through ``_d1_shape`` and the flat profile fails it.
+        """
         d = DeterminationTests()
         art = _artifacts(
             d._clean_year_payload(),
@@ -1609,8 +1625,8 @@ class ShapeForcedShareTests(unittest.TestCase):
         art["legitimacy"] = _legit_artifact(r=0.9, cv_ratio=0.0, share=0.55)
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["determination"], cv.NOT_YET)
-        self.assertEqual(v["criteria"]["shape"]["status"], cv.FAIL)
         self.assertEqual(v["criteria"]["forced_share"]["status"], cv.FAIL)
+        self.assertNotIn("shape", v["criteria"])
 
 
 class FreeClassScoreTests(unittest.TestCase):
@@ -1777,18 +1793,23 @@ class LedgerMatchTests(unittest.TestCase):
         exceptions = [{"criterion": "price_mean", "year": 2024, "reason": "x"}]
         self.assertIsNotNone(cv._ledger_match(exceptions, "price_mean", 2024, None))
 
-    def test_apply_ledger_end_to_end_only_documented_class_becomes_caveat(self):
+    def test_apply_ledger_end_to_end_only_documented_year_becomes_caveat(self):
         # Regression for the "mis-scoped ledger waives an unrelated failure"
-        # failure mode: two FAILing classes, only one documented -> only that
-        # one becomes a CAVEAT, the other stays a FAIL.
-        documented = _fm("CT_PEAKER", cv.FAIL)
-        undocumented = _fm("COAL_BIT", cv.FAIL)
-        exceptions = [
-            {"criterion": "fuelmix", "klass": "CT_PEAKER", "year": None, "reason": "x"}
-        ]
-        documented["year"] = 2024
-        undocumented["year"] = 2024
-        exceptions[0]["year"] = 2024
+        # failure mode: two FAILing years, only one documented -> only that one
+        # becomes a CAVEAT, the other stays a FAIL. Scoped to C3c since v3.1
+        # (the only ledgerable criterion); the cross-CRITERION half of the same
+        # protection is now structural — see LedgerTests.
+        def tail_fail(year):
+            return {
+                "criterion": "price_tail",
+                "key": None,
+                "year": year,
+                "status": cv.FAIL,
+                "classification": cv.MODEL_MISS,
+            }
+
+        documented, undocumented = tail_fail(2024), tail_fail(2025)
+        exceptions = [{"criterion": "price_tail", "year": 2024, "reason": "x"}]
         cv._apply_ledger(documented, exceptions)
         cv._apply_ledger(undocumented, exceptions)
         self.assertEqual(documented["status"], cv.CAVEAT)
