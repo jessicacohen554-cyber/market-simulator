@@ -1,0 +1,555 @@
+{
+ "_provenance": {
+  "probe": "scripts/probes/ercot171_coal_licensed_subpop_phase0.py",
+  "session": "ercot-171 Phase 0 (no LP, no solve, keeper unchanged)",
+  "keeper": "2026-08-05-run168b-year-curves",
+  "precommit": "docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md",
+  "charter": "OWNER ADJUDICATION in-session 2026-08-05 on the ercot-169 \u00a76 open decision: option 2, a licensed sub-population instrument",
+  "year": 2023,
+  "licence_floor": 0.9876,
+  "elapsed_s": 154.2
+ },
+ "footing": {
+  "subset_reads": [
+   {
+    "subset": "2024_ercot74_tail_days",
+    "stat": "bot_p50",
+    "reconstructed": 16.86,
+    "committed": 16.86,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2024_ercot74_tail_days",
+    "stat": "p90",
+    "reconstructed": 34.82,
+    "committed": 34.82,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2024_ercot75_control_days",
+    "stat": "bot_p50",
+    "reconstructed": 16.37,
+    "committed": 16.37,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2024_ercot75_control_days",
+    "stat": "p90",
+    "reconstructed": 34.82,
+    "committed": 34.82,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2025_ercot75_control_days",
+    "stat": "bot_p50",
+    "reconstructed": 15.0,
+    "committed": 15.0,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2025_ercot75_control_days",
+    "stat": "p90",
+    "reconstructed": 43.0,
+    "committed": 43.0,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2025_ercot86_tail_days",
+    "stat": "bot_p50",
+    "reconstructed": 15.0,
+    "committed": 15.0,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "subset": "2025_ercot86_tail_days",
+    "stat": "p90",
+    "reconstructed": 48.01,
+    "committed": 48.01,
+    "delta": 0.0,
+    "tol": 0.02,
+    "pass": true
+   }
+  ],
+  "pass": true
+ },
+ "fuel_basis": {
+  "footing": [
+   {
+    "class": "CC",
+    "year": 2024,
+    "reconstructed": 2.2129,
+    "committed": 2.213,
+    "delta": -0.0001,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "CC",
+    "year": 2025,
+    "reconstructed": 3.2324,
+    "committed": 3.232,
+    "delta": 0.0004,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "COAL",
+    "year": 2024,
+    "reconstructed": 1.7481,
+    "committed": 1.748,
+    "delta": 0.0001,
+    "tol": 0.02,
+    "pass": true
+   },
+   {
+    "class": "COAL",
+    "year": 2025,
+    "reconstructed": 1.6296,
+    "committed": 1.63,
+    "delta": -0.0004,
+    "tol": 0.02,
+    "pass": true
+   }
+  ],
+  "footing_pass": true,
+  "gas_by_year": {
+   "2024": 2.2129,
+   "2025": 3.2324,
+   "2023": 2.6012
+  },
+  "coal_by_year": {
+   "2023": 1.8169,
+   "2024": 1.7556,
+   "2025": 1.6436
+  }
+ },
+ "G_LIC": {
+  "curve_share_unrestricted": 0.97022,
+  "curve_share_restricted": 0.99969,
+  "floor": 0.9876,
+  "pass": true,
+  "n_dropped": 5,
+  "dropped": [
+   "CALAVERS_JKS2",
+   "MLSES_UNIT1",
+   "MLSES_UNIT2",
+   "MLSES_UNIT3",
+   "WAP_WAP_G8"
+  ],
+  "cap_share_dropped": 0.26077,
+  "per_resource_curve_share": {
+   "MLSES_UNIT1": 0.7572,
+   "MLSES_UNIT2": 0.7611,
+   "MLSES_UNIT3": 0.797,
+   "WAP_WAP_G8": 0.9489,
+   "CALAVERS_JKS2": 0.9827,
+   "FPPYD1_FPP_G1_J02": 0.9984,
+   "FPPYD1_FPP_G2_J02": 0.9989,
+   "LEG_LEG_G2": 0.9997,
+   "COLETO_COLETOG1": 0.9997,
+   "LEG_LEG_G1": 0.9998,
+   "SCES_UNIT1_J01": 0.9998,
+   "SCES_UNIT1_J03": 0.9998,
+   "SCES_UNIT1_J02": 0.9998,
+   "SCES_UNIT1_J04": 0.9998,
+   "WAP_WAP_G6": 0.9998,
+   "WAP_WAP_G5": 0.9998,
+   "WAP_WAP_G7": 0.9998,
+   "TNP_ONE_TNP_O_1": 0.9998,
+   "OGSES_UNIT2": 0.9998,
+   "OGSES_UNIT1A": 0.9998,
+   "FPPYD1_FPP_G1_J01": 0.9998,
+   "FPPYD1_FPP_G2_J01": 0.9998,
+   "TNP_ONE_TNP_O_2": 0.9998,
+   "CALAVERS_JKS1": 1.0,
+   "SANMIGL_G1": 1.0,
+   "FPPYD2_FPP_G3": 1.0
+  }
+ },
+ "G_NEUT": {
+  "coal_mustrun": {
+   "pooled_restricted": 15.4549,
+   "pooled_unrestricted": 15.8807,
+   "armed": 15.8807,
+   "delta_vs_armed": -0.4258,
+   "band": 0.93,
+   "pass": true
+  },
+  "coal_peak": {
+   "pooled_restricted": 54.3658,
+   "pooled_unrestricted": 35.1998,
+   "armed": 35.1989,
+   "delta_vs_armed": 19.1669,
+   "band": 2.5062,
+   "pass": false
+  },
+  "gas_hr_restricted": 8.9503,
+  "gas_hr_unrestricted": 10.4049,
+  "gas_hr_armed": 10.41,
+  "subset_rows_restricted": [
+   {
+    "subset": "2024_ercot74_tail_days",
+    "year": 2024,
+    "family": "tail",
+    "res_hours_curve": 19069,
+    "bot_p50": 15.91,
+    "res_hours_inc": 19069,
+    "p90": 75.01,
+    "curve_share": 1.0,
+    "n_dropped": 4,
+    "dropped": [
+     "MLSES_UNIT1",
+     "MLSES_UNIT2",
+     "MLSES_UNIT3",
+     "OGSES_UNIT1A"
+    ],
+    "cap_share_dropped": 0.27891
+   },
+   {
+    "subset": "2024_ercot75_control_days",
+    "year": 2024,
+    "family": "control",
+    "res_hours_curve": 20807,
+    "bot_p50": 16.37,
+    "res_hours_inc": 20807,
+    "p90": 34.82,
+    "curve_share": 1.0,
+    "n_dropped": 0,
+    "dropped": [],
+    "cap_share_dropped": 0.0
+   },
+   {
+    "subset": "2025_ercot75_control_days",
+    "year": 2025,
+    "family": "control",
+    "res_hours_curve": 18457,
+    "bot_p50": 14.73,
+    "res_hours_inc": 18465,
+    "p90": 53.0,
+    "curve_share": 0.99957,
+    "n_dropped": 1,
+    "dropped": [
+     "MLSES_UNIT2"
+    ],
+    "cap_share_dropped": 0.06021
+   },
+   {
+    "subset": "2025_ercot86_tail_days",
+    "year": 2025,
+    "family": "tail",
+    "res_hours_curve": 15843,
+    "bot_p50": 14.55,
+    "res_hours_inc": 15843,
+    "p90": 75.01,
+    "curve_share": 1.0,
+    "n_dropped": 3,
+    "dropped": [
+     "LEG_LEG_G2",
+     "MLSES_UNIT2",
+     "MLSES_UNIT3"
+    ],
+    "cap_share_dropped": 0.18159
+   }
+  ],
+  "subset_rows_unrestricted": [
+   {
+    "subset": "2024_ercot74_tail_days",
+    "year": 2024,
+    "family": "tail",
+    "res_hours_curve": 22949,
+    "bot_p50": 16.86,
+    "res_hours_inc": 23021,
+    "p90": 34.82,
+    "curve_share": 0.99687,
+    "n_dropped": 0,
+    "cap_share_dropped": 0.0
+   },
+   {
+    "subset": "2024_ercot75_control_days",
+    "year": 2024,
+    "family": "control",
+    "res_hours_curve": 20807,
+    "bot_p50": 16.37,
+    "res_hours_inc": 20807,
+    "p90": 34.82,
+    "curve_share": 1.0,
+    "n_dropped": 0,
+    "cap_share_dropped": 0.0
+   },
+   {
+    "subset": "2025_ercot75_control_days",
+    "year": 2025,
+    "family": "control",
+    "res_hours_curve": 19193,
+    "bot_p50": 15.0,
+    "res_hours_inc": 19265,
+    "p90": 43.0,
+    "curve_share": 0.99626,
+    "n_dropped": 0,
+    "cap_share_dropped": 0.0
+   },
+   {
+    "subset": "2025_ercot86_tail_days",
+    "year": 2025,
+    "family": "tail",
+    "res_hours_curve": 17889,
+    "bot_p50": 15.0,
+    "res_hours_inc": 18113,
+    "p90": 48.01,
+    "curve_share": 0.98763,
+    "n_dropped": 0,
+    "cap_share_dropped": 0.0
+   }
+  ]
+ },
+ "limbs": {
+  "coal_mustrun": {
+   "limb": "A",
+   "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+   "G_LIC_pass": true,
+   "G_NEUT_pass": true,
+   "T1_gating": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "h11-22 CST (S1-restricted)",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 16.87,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 16.0111,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 0.1304,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 0.14,
+    "curve_share": 0.99969,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "INSIDE",
+    "verdict": "CONFIRMED"
+   },
+   "T2_reported": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "full-day (S1-restricted)",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 16.94,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 16.0811,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 0.2004,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 0.22,
+    "curve_share": 0.99967,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "INSIDE",
+    "verdict": "CONFIRMED"
+   },
+   "verdict": "CONFIRMED"
+  },
+  "coal_peak": {
+   "limb": "C",
+   "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+   "G_LIC_pass": true,
+   "G_NEUT_pass": false,
+   "T1_gating": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "h11-22 CST (S1-restricted)",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.01,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3478,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1489,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.99969,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "OUTSIDE",
+    "verdict": "REFUTED"
+   },
+   "T2_reported": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "full-day (S1-restricted)",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.01,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3478,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1489,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.99967,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "OUTSIDE",
+    "verdict": "REFUTED"
+   },
+   "verdict": "NOT-IDENTIFIABLE-2023 CONFIRMED"
+  }
+ },
+ "S2_sensitivity": {
+  "note": "REPORTED SENSITIVITY, pre-declared NON-GATING (precommit \u00a71a)",
+  "monthly_curve_share": [
+   {
+    "month": 1,
+    "curve_share": 1.0
+   },
+   {
+    "month": 2,
+    "curve_share": 0.9742
+   },
+   {
+    "month": 3,
+    "curve_share": 0.9294
+   },
+   {
+    "month": 4,
+    "curve_share": 0.9368
+   },
+   {
+    "month": 5,
+    "curve_share": 0.9072
+   },
+   {
+    "month": 6,
+    "curve_share": 0.9174
+   },
+   {
+    "month": 7,
+    "curve_share": 0.9998
+   },
+   {
+    "month": 8,
+    "curve_share": 0.9951
+   },
+   {
+    "month": 9,
+    "curve_share": 0.997
+   },
+   {
+    "month": 10,
+    "curve_share": 0.998
+   },
+   {
+    "month": 11,
+    "curve_share": 1.0
+   },
+   {
+    "month": 12,
+    "curve_share": 0.9702
+   }
+  ],
+  "months_kept": [
+   1,
+   7,
+   8,
+   9,
+   10,
+   11
+  ],
+  "curve_share": 0.99818,
+  "limbs": {
+   "coal_mustrun": {
+    "limb": "A",
+    "constant": "COAL_OFFER_MARGIN_LEVEL_BY_ISO",
+    "mechanism": "coal_offer_net_revenue_margin",
+    "lane": "ERCOT-137",
+    "class": "COAL",
+    "window": "h11-22 CST (S2 months [1, 7, 8, 9, 10, 11])",
+    "instrument": "curve_bottom.bot_p50",
+    "measured_usd_mwh": 18.7,
+    "fuel_year_usd_mmbtu": 1.8169,
+    "anchor_usd_mmbtu": 1.7387,
+    "hr": 10.9832,
+    "hr_source": "ERCOT-137 derive hr_capwtd (ercot135 per-plant, identical in all three years)",
+    "fuel_response_removed_usd_mwh": 0.8589,
+    "level_year_usd_mwh": 17.8411,
+    "armed_usd_mwh": 15.8807,
+    "delta_usd_mwh": 1.9604,
+    "band_usd_mwh": 0.93,
+    "band_note": "+/-5.86 % raw half-range; ERCOT-137 precommit P7 states the same tolerance as +/-$1.00, so $0.9300-$1.0000 is the declared marginal zone",
+    "delta_over_band": 2.11,
+    "curve_share": 0.99818,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "OUTSIDE",
+    "verdict": "REFUTED"
+   },
+   "coal_peak": {
+    "limb": "C",
+    "constant": "COAL_PEAK_OFFER_LEVEL_BY_ISO",
+    "mechanism": "coal_peak_offer_margin",
+    "lane": "ERCOT-140",
+    "class": "COAL",
+    "window": "h11-22 CST (S2 months [1, 7, 8, 9, 10, 11])",
+    "instrument": "inc_bid.p90",
+    "measured_usd_mwh": 75.0,
+    "fuel_year_usd_mmbtu": 2.6012,
+    "anchor_usd_mmbtu": 2.2494,
+    "hr": 10.41,
+    "hr_source": "COAL_PEAK_OFFER_GAS_HR_BY_ISO (gas-parity slope, ERCOT-140)",
+    "fuel_response_removed_usd_mwh": 3.6622,
+    "level_year_usd_mwh": 71.3378,
+    "armed_usd_mwh": 35.1989,
+    "delta_usd_mwh": 36.1389,
+    "band_usd_mwh": 2.5062,
+    "band_note": "+/-7.12 % anchored (dispersion_anchored_pct)",
+    "delta_over_band": 14.42,
+    "curve_share": 0.99818,
+    "licence_threshold": 0.9876,
+    "licensed": true,
+    "value_read": "OUTSIDE",
+    "verdict": "REFUTED"
+   }
+  }
+ }
+}
