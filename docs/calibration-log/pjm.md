@@ -3324,6 +3324,61 @@ pjm-142); the diurnal-amplitude family and the overnight gas commitment bridge
 were **not** re-opened, net interchange (pjm-135) was **not** opened, and the CC
 gas-elasticity object was **not** re-tested.
 
+**PHASE 1 — the pre-registered A/B is SOLVED, both arms REGISTERED (rule 15).**
+`2026-08-06-pjm-158-control-virtual` (`pjm158_ctl_A`, armed) vs
+`2026-08-06-pjm-158-novirtual-disarmed` (`pjm158_novirt_B`, single delta
+`pjm_da_virtual_bids=false`); 2023 2024 2025 each in one invocation, years
+sequential (rules 12/16). **The CONTROL reproduces the pjm-152 keeper
+BYTE-IDENTICALLY — max |Δ| 0.00000 TWh over every class and year** — so HEAD IS
+solve-identical for PJM's backcast path (the 37-file / 6,414-insertion diff
+since `bc9e6dbf` is all forecast-lane code) and the delta is clean. Verified by
+solving, as the handoff required, not by inspection.
+
+**All three pre-registered predictions CONFIRMED.**
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| **P1** NG-equivalent error, control → treatment | −9.94 → **−3.99** | −9.25 → **−4.07** | +1.72 → **−0.29** |
+| **P2** Δ `CC_REGULAR` (bar was \|Δ\| ≥ 2 TWh) | **+5.220** | **+6.848** | **+2.689** |
+| **P3** hourly price MAE ($/MWh) | 9.20 → **9.94** | 10.50 → **11.82** | 13.97 → **15.24** |
+
+P1's point predictions are missed because the **unconstrained star node
+(pjm-135 M4) absorbed +1.00/+0.67/+0.37 TWh** — the caveat pre-registered with
+them. **Rubric: control passes EVERY criterion; treatment FAILS C3c-2025**
+(model 22 h > $200 vs RT actual 59 h, 0.37×) — exactly the criterion pjm-105's
+adoption note credited the layer with fixing.
+
+**Reported against my own prediction.** P2's fit-DIRECTION sub-claim (that
+`CC_REGULAR` would move away from zero) holds in 2024/2025 but fails in 2023,
+because I anchored it on pjm-157's CEMS-basis errors while **C1 scores EIA-923
+`classFull`**. The two bases differ by a stable **+6–7 TWh** for `CC_REGULAR`
+in every year, so **the 2022 `CC_REGULAR` error is +18.28 TWh on the gate's own
+basis, not +25.40** — the same three-bases trap Question C resolves for coal.
+The CC object itself was **not** re-tested.
+
+**VERDICT — cell stays `K`, DEPARTING from the pre-registration's own `K` → `R`
+recommendation, with cause (finding §5.5).** That rule assumed disarming would
+*improve* the fit, which is what would have made `R` the rule-1-clean call. The
+measured outcome is the opposite on **every** load-bearing and supporting gate,
+and rejecting real market structure violates rule 1 as firmly as keeping a
+fitted one. The defect is **rule 14 `[R-ACCURATE]`-shaped — a real measured
+input misaligned to our representation** — so it is documented, not buried:
+the layer's cleared volume **must not be read as a measured cleared volume**,
+and the root cause (the LP carries ONE price series, gated as RT, while the
+curve needs a DA price) is an **architecture question inside PJM's
+owner-declared-closed price-formation frontier (pjm-142)** and is **escalated
+to the owner**, not pulled as a lever here.
+
+**Standing warning for the PJM price lane.** The DA−RT basis (+5.8/+4.6/+6.6)
+and the model's own price error (−12.5/−9.6/−5.9) currently oppose each other
+by coincidence. **Improving C3b toward RT GROWS this layer's phantom energy
+toward +5 to +7 TWh of phantom DEMAND** — toward the condemned pjm-102 clamp,
+not away from it. Expect this mechanism's C1 contribution to move against any
+future PJM price-shape work.
+
+**Keeper UNCHANGED** at `2026-08-04-pjm-152-collapse`; no marker re-keyed, no
+promotion, no `ScenarioConfig` field added.
+
 **Environment note for the next session.** This container had **15 GB RAM, 0
 swap** and an **empty `data/clean`** (gitignored, so a fresh clone has none).
 Both had to be solved before any solve: 8 GB of swap was added, and the clean
