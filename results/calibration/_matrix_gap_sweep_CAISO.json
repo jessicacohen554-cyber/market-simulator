@@ -1,0 +1,5031 @@
+{
+  "iso": "CAISO",
+  "keeper": "2026-08-06-caiso-175-tac-intake",
+  "keeper_bundle_fields": 692,
+  "n_scenario_fields": 693,
+  "n_matrix_rows": 202,
+  "n_bundles_scanned": 20,
+  "family": [
+    {
+      "field": "caiso_asymmetric_path_ratings",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso163_asym_path_ratings",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
+      ]
+    },
+    {
+      "field": "caiso_bidir_intertie",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_charge_allocation_schedule",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_citygate_flow_date",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_citygate_spot_level",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_commitment_posture",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_corridor_atc_forward",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_corridor_flow_limit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_corridor_export_path",
+          "cells": ".R....",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "K",
+        "R"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dam_outages",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_demand_clock_realign",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_daytime_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_daytime_evening_trim",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_overnight_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_dsw_surplus_clean",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_endogenous_wecc_node",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wecc_endogenous_node",
+          "cells": ".R....",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_firm_import_envelope_clip",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_selfsched_clip",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
+      ],
+      "armed_in_bundles": [
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_selfschedule",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_firm_import_shape",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_gas_commitment_floor",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_gas_floor_frac",
+      "default": 1.0,
+      "keeper_value": 0.8,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_import_gas_coupling",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_import_hub_prices",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_import_solar_shape",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_intertie_reference_price",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_lcr_commitment_credit",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        "."
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_locational_as_families",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_nqc_accreditation",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "elcc_accreditation",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
+        }
+      ],
+      "cells": [
+        "K",
+        "O"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_binned_path",
+      "default": null,
+      "keeper_value": null,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_conditional",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_measured",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_min_bin",
+      "default": 0,
+      "keeper_value": 0,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_offer_surface_netload_pcts",
+      "default": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_offer_surface_price_cap_frac",
+      "default": 0.95,
+      "keeper_value": 0.95,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_p1_export_sink_seam",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "caiso_p1_export_sink_seam",
+          "cells": "IR..OU",
+          "cell": "R"
+        }
+      ],
+      "cells": [
+        "R"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_per_hub_intertie",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G",
+        "K",
+        "U"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_per_year_import_caps",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".KUUK.",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
+      ]
+    },
+    {
+      "field": "caiso_perhub_firm_base",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_bridge_curtailment_release",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_ra_bridge_decommit",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_bridge_startup_aware",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_min_load_frac",
+      "default": 0.4,
+      "keeper_value": 0.26,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_mustoffer",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "miso_coal_night_floor",
+          "cells": "...I..",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        ".",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_mustoffer_quantity_gate",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_ra_startup_bridge",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_ra_startup_trajectory",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_reference_price_seam",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        }
+      ],
+      "cells": [
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_reserve_coopt",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "I"
+        },
+        {
+          "row": "measured_ramp_capability",
+          "cells": "IUKUIU",
+          "cell": "U"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "I",
+        "K",
+        "U"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_reserve_online_scoped",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        }
+      ],
+      "cells": [
+        "I"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_scarcity_import_headroom",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_scarcity_pricing",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_cap_at_delivered",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        },
+        {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
+        }
+      ],
+      "cells": [
+        ".",
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_solar_deliverability",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_deliverability_floor",
+      "default": 0.5,
+      "keeper_value": 0.5,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_deliverability_k",
+      "default": 0.15,
+      "keeper_value": 0.15,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_endogenous_spill",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_shape_nl_hi_pct",
+      "default": 30.0,
+      "keeper_value": 30.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_solar_shape_nl_lo_pct",
+      "default": 10.0,
+      "keeper_value": 10.0,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_storage_as_reservation",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_storage_shape_anchor",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".I....",
+          "cell": "I"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "storage_daily_cycling",
+          "cells": "KG....",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G",
+        "I",
+        "K",
+        "R"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_supply_consistent_demand",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "cells": [
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso124_control_A",
+        "caiso126_control_A",
+        "caiso156_meter_screen_B",
+        "caiso162_control_A",
+        "caiso162_peryear_import_caps",
+        "caiso162_peryear_import_caps_v2",
+        "caiso163_asym_path_ratings",
+        "caiso163_control_A",
+        "caiso164_control_lossless",
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
+        "caiso92_repro_A",
+        "caiso_netrev_base"
+      ]
+    },
+    {
+      "field": "caiso_zonal_gas_basis",
+      "default": false,
+      "keeper_value": false,
+      "keeper_arms_it": false,
+      "mentioned_in_matrix": false,
+      "coverage": "own_row",
+      "owning_rows": [],
+      "cells": [],
+      "armed_in_bundles": []
+    },
+    {
+      "field": "caiso_zonal_loss_surface",
+      "default": false,
+      "keeper_value": true,
+      "keeper_arms_it": true,
+      "mentioned_in_matrix": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".KKR..",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        }
+      ],
+      "cells": [
+        "G",
+        "K"
+      ],
+      "armed_in_bundles": [
+        "caiso164_zonal_loss_surface",
+        "caiso166_control_hubsurface",
+        "caiso166_measured_loss_zones",
+        "caiso172_control_pge_estimate",
+        "caiso172_measured_path15_split",
+        "caiso174_control_flatfleet",
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
+      ]
+    }
+  ],
+  "family_matrix_gaps_absent": [],
+  "family_prose_only": [],
+  "armed_on_keeper_with_no_cell": [],
+  "shared_armed_on_keeper": [
+    {
+      "field": "battery_dispatch_adder",
+      "default": 0.0,
+      "keeper_value": 5.0,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "battery_dispatch_adder",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_storage_rt_offer_surface",
+          "cells": "R.....",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "capacity_deliverability_limits",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".KUUK.",
+          "cell": "K"
+        },
+        {
+          "row": "capacity_deliverability",
+          "cells": ".K....",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "capacity_market_clearing_by_iso",
+      "default": {
+        "PJM": true,
+        "MISO": true,
+        "CAISO": true,
+        "NEISO": true
+      },
+      "keeper_value": null,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "capacity_market_clearing",
+          "cells": ".KKKOK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_capacity_reconcile_path",
+      "default": null,
+      "keeper_value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_capacity_reconcile_path",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_committed_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_mustrun_per_plant",
+          "cells": ".RK...",
+          "cell": "R"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_duct_peaking",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_duct_peaking",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_nameplate_summer_derate",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_outage_derate_from_top",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "cc_peaking_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_mustrun_per_plant",
+          "cells": ".RK...",
+          "cell": "R"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "chp_steam_floor_p25",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "chp_steam_following",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "chp_steam_following",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "chp_steam_following",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "coal_drop_pof",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_drop_pof",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "coal_mustrun_per_plant",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..IKIU",
+          "cell": "."
+        },
+        {
+          "row": "coal_econ_bound",
+          "cells": "K..K..",
+          "cell": "."
+        },
+        {
+          "row": "coal_offer_net_revenue_margin",
+          "cells": "K.UU..",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "coal_prb_passthrough_sigmoid",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "coal_prb_passthrough_tiered",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "correlated_forced_outage",
+      "default": true,
+      "keeper_value": false,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "."
+        },
+        {
+          "row": "correlated_forced_outage",
+          "cells": "K.....",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "ct_drag_cap",
+      "default": 0.47,
+      "keeper_value": 0.36,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "ct_drag_intercept",
+      "default": -0.1427,
+      "keeper_value": -0.1124,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "ct_drag_slope_per_gw",
+      "default": 0.00703,
+      "keeper_value": 0.00901,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "datacenter_load_path",
+      "default": "mid",
+      "keeper_value": "off",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "datacenter_load_block",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "dump_cost_full_offer_domain",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "dump_cost_full_offer_domain",
+          "cells": "IKIIII",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "entry_lookahead_reprice",
+      "default": true,
+      "keeper_value": false,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
+        {
+          "row": "entry_lookahead_reprice",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_daily_shape",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_hub_basis_overlay",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_monthly_actuals",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_monthly_actuals",
+          "cells": "GKK.KK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_offer_margin_anchor",
+      "default": null,
+      "keeper_value": 4.7964,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IIK.",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_offer_net_revenue_margin",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IIK.",
+          "cell": "."
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUGU",
+          "cell": "U"
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_plant_monthly_fuel_pricing",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_plant_monthly_pricing",
+          "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_price_override",
+      "default": null,
+      "keeper_value": 2.54,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        },
+        {
+          "row": "gas_price_override",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "gas_st_startup_spread",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_st_startup_spread",
+          "cells": "UUUUKU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "historic_outage_overlay",
+      "default": true,
+      "keeper_value": false,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "historic_outage_overlay",
+          "cells": "UUUUIU",
+          "cell": "U"
+        },
+        {
+          "row": "nyiso_central_east_measured_ttc",
+          "cells": "....K.",
+          "cell": "."
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "hydro_budget_nameplate_aware",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "hydro_budget_nameplate_aware",
+          "cells": ".KIIIU",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "hydro_dispatch_envelope",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "hydro_dispatch_envelope",
+          "cells": ".KUUKU",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "hydro_min_flow_floor",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "hydro_min_flow_floor",
+          "cells": ".KU.KU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_ror_split",
+          "cells": ".KUUGU",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "hydro_ror_split",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "hydro_ror_split",
+          "cells": ".KUUGU",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "iso",
+      "default": "ERCOT",
+      "keeper_value": "CAISO",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_steam_part_capacity",
+          "cells": ".U.K.I",
+          "cell": "U"
+        },
+        {
+          "row": "cc_steam_part_reclass",
+          "cells": "...U.K",
+          "cell": "."
+        },
+        {
+          "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
+        },
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "."
+        },
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        },
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IIK.",
+          "cell": "."
+        },
+        {
+          "row": "diurnal_price_amplitude",
+          "cells": "UUGGGO",
+          "cell": "U"
+        },
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        },
+        {
+          "row": "dump_cost_full_offer_domain",
+          "cells": "IKIIII",
+          "cell": "K"
+        },
+        {
+          "row": "maxgen_emergency_tier_pricing",
+          "cells": "U..KIU",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_rcpf_family",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "reserve_family_dual_sidecar",
+          "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
+          "cell": "I"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "energy_reserve_coopt",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "."
+        },
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "I"
+        },
+        {
+          "row": "dynamic_reserve_requirements",
+          "cells": "UUKKKR",
+          "cell": "U"
+        },
+        {
+          "row": "measured_ramp_capability",
+          "cells": "IUKUIU",
+          "cell": "U"
+        },
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        },
+        {
+          "row": "nyiso_li_locational_reserve",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_east_reserve_families",
+          "cells": "....I.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_spin_reserve_online",
+          "cells": "....I.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_incity_commitment_obligation",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_hydro_reserve_eligible",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_scr_edrp_reserve_eligible",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_import_reconciliation",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_downstate_ct_gas_basis",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_local_selfsupply",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_firm_imports",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_rcpf_postsolve_overlay",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_nyc_rcpf_step_curve",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_ordc_measured_step_span",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "reliability_floor",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_takeorpay_committed",
+          "cells": "...K..",
+          "cell": "."
+        },
+        {
+          "row": "coal_prb_committed_dispatchable",
+          "cells": "...R..",
+          "cell": "."
+        },
+        {
+          "row": "coal_prb_committed_split",
+          "cells": "...R..",
+          "cell": "."
+        },
+        {
+          "row": "miso_coal_night_floor",
+          "cells": "...I..",
+          "cell": "."
+        },
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..IKIU",
+          "cell": "."
+        },
+        {
+          "row": "historic_outage_overlay",
+          "cells": "UUUUIU",
+          "cell": "U"
+        },
+        {
+          "row": "coal_drop_pof",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "gas_st_startup_spread",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_duct_peaking",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_capacity_reconcile_path",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_mustrun_per_plant",
+          "cells": ".RK...",
+          "cell": "R"
+        },
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "."
+        },
+        {
+          "row": "chp_steam_following",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
+        },
+        {
+          "row": "ramp_envelopes",
+          "cells": "RIKUKU",
+          "cell": "I"
+        },
+        {
+          "row": "forced_share_d4_census",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "reserve_family_sidecar",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "diagnostics_plant_set",
+          "cells": "IIOIII",
+          "cell": "I"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        },
+        {
+          "row": "coal_econ_bound",
+          "cells": "K..K..",
+          "cell": "."
+        },
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUGU",
+          "cell": "U"
+        },
+        {
+          "row": "coal_perplant_offer_level",
+          "cells": "K.UU..",
+          "cell": "."
+        },
+        {
+          "row": "coal_offer_level_rebasis",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "da_virtual_bids",
+          "cells": ".UKGGR",
+          "cell": "U"
+        },
+        {
+          "row": "negative_renewable_offers",
+          "cells": "GK....",
+          "cell": "K"
+        },
+        {
+          "row": "gas_monthly_actuals",
+          "cells": "GKK.KK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_plant_monthly_pricing",
+          "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        },
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KKKK",
+          "cell": "."
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "outage_artifact_provenance",
+          "cells": "IIIOII",
+          "cell": "I"
+        },
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "U"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "I"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        },
+        {
+          "row": "temp_dependent_derate",
+          "cells": "UKRKGK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "."
+        },
+        {
+          "row": "nysdec_peaker_rule_availability",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        },
+        {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
+        },
+        {
+          "row": "hydro_dispatch_envelope",
+          "cells": ".KUUKU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_min_flow_floor",
+          "cells": ".KU.KU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_ror_split",
+          "cells": ".KUUGU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_budget_nameplate_aware",
+          "cells": ".KIIIU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_level_923_hy",
+          "cells": "..KK.K",
+          "cell": "."
+        },
+        {
+          "row": "hydro_vintage_input_repair",
+          "cells": "UKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_wind_zone_shape",
+          "cells": "K.KKKK",
+          "cell": "."
+        },
+        {
+          "row": "battery_dispatch_adder",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".I....",
+          "cell": "I"
+        },
+        {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "storage_daily_cycling",
+          "cells": "KG....",
+          "cell": "G"
+        },
+        {
+          "row": "pumped_storage_cycling_depth",
+          "cells": ".UGUUG",
+          "cell": "U"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "internal_congestion_split",
+          "cells": "G..G..",
+          "cell": "."
+        },
+        {
+          "row": "tsa_transfer_derate",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "scuc_load_pocket_commitment",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".KKR..",
+          "cell": "K"
+        },
+        {
+          "row": "rdt_tcdc",
+          "cells": "...K..",
+          "cell": "."
+        },
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KKK.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seam_par_attribution",
+          "cells": "....R.",
+          "cell": "."
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        },
+        {
+          "row": "import_shape_lever",
+          "cells": "...GG.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_import_sil_retire",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_central_east_measured_ttc",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_gj_locality_tsl",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_corridor_export_path",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "caiso_node_export_constraint",
+          "cells": ".G..UU",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_p1_export_sink_seam",
+          "cells": "IR..OU",
+          "cell": "R"
+        },
+        {
+          "row": "wecc_endogenous_node",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".KUUK.",
+          "cell": "K"
+        },
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "path15_load_split",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "tac_load_coverage",
+          "cells": "UKUUUU",
+          "cell": "K"
+        },
+        {
+          "row": "demand_dropout_screen",
+          "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "scr_edrp_dr",
+          "cells": "G...K.",
+          "cell": "."
+        },
+        {
+          "row": "td_loss_factor",
+          "cells": "UUUURU",
+          "cell": "U"
+        },
+        {
+          "row": "demand_growth_vintage",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
+        {
+          "row": "capacity_market_clearing",
+          "cells": ".KKKOK",
+          "cell": "K"
+        },
+        {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "capacity_deliverability",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "entry_dampers",
+          "cells": "IOUOUU",
+          "cell": "O"
+        },
+        {
+          "row": "entry_vre_capacity_revenue",
+          "cells": "IUUKUU",
+          "cell": "U"
+        },
+        {
+          "row": "elcc_accreditation",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "hydro_accreditation",
+          "cells": "OKOKKO",
+          "cell": "K"
+        },
+        {
+          "row": "electrification_layers",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "transmission_expansion",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "state_carbon_pricing",
+          "cells": ".KOUKK",
+          "cell": "K"
+        },
+        {
+          "row": "ira_credits",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "plant_emission_rates_v2",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "measured_chp_heat_rates",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "measured_ct_heat_rates",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "measured_ramp_capability",
+          "cells": "IUKUIU",
+          "cell": "U"
+        },
+        {
+          "row": "reliability_floor",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "mode",
+      "default": "forecast",
+      "keeper_value": "backcast",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_steam_part_capacity",
+          "cells": ".U.K.I",
+          "cell": "U"
+        },
+        {
+          "row": "cc_steam_part_reclass",
+          "cells": "...U.K",
+          "cell": "."
+        },
+        {
+          "row": "use_campd_bins",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "thermal_tranche_artifact_coverage",
+          "cells": ".OOIOO",
+          "cell": "O"
+        },
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "p1_bidcost_pass",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "legacy_p2",
+          "cells": "G....K",
+          "cell": "."
+        },
+        {
+          "row": "priced_interchange",
+          "cells": ".KKKKU",
+          "cell": "K"
+        },
+        {
+          "row": "reference_price_interface",
+          "cells": ".UKKGU",
+          "cell": "U"
+        },
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_offer_margin_zonal_anchor",
+          "cells": "K.IIK.",
+          "cell": "."
+        },
+        {
+          "row": "diurnal_price_amplitude",
+          "cells": "UUGGGO",
+          "cell": "U"
+        },
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        },
+        {
+          "row": "dump_cost_full_offer_domain",
+          "cells": "IKIIII",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_rtordpa_overlay",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "maxgen_emergency_tier_pricing",
+          "cells": "U..KIU",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_rcpf_family",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "reserve_family_dual_sidecar",
+          "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "unit_network_layer_sidecar",
+          "cells": "IIIKKI",
+          "cell": "I"
+        },
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "forecast_xyear_warmstart",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "energy_reserve_coopt",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "ercot_multiproduct_as",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "online_capacity_envelope",
+          "cells": "R.RR..",
+          "cell": "."
+        },
+        {
+          "row": "reserve_pergen",
+          "cells": ".IKK..",
+          "cell": "I"
+        },
+        {
+          "row": "dynamic_reserve_requirements",
+          "cells": "UUKKKR",
+          "cell": "U"
+        },
+        {
+          "row": "measured_ramp_capability",
+          "cells": "IUKUIU",
+          "cell": "U"
+        },
+        {
+          "row": "reserve_deliverability_scoping",
+          "cells": ".IIR..",
+          "cell": "I"
+        },
+        {
+          "row": "nyiso_li_locational_reserve",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_east_reserve_families",
+          "cells": "....I.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_synchronised_reserve",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_spin_reserve_online",
+          "cells": "....I.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_incity_commitment_obligation",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_hydro_reserve_eligible",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_scr_edrp_reserve_eligible",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_import_reconciliation",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_downstate_ct_gas_basis",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_local_selfsupply",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_firm_imports",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_rcpf_postsolve_overlay",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_nyc_rcpf_step_curve",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_ordc_measured_step_span",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seny_rcpf_increment_step",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "gas_commitment_bridge",
+          "cells": "KKRUKK",
+          "cell": "K"
+        },
+        {
+          "row": "reliability_floor",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "coal_mustrun_per_plant",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_takeorpay_committed",
+          "cells": "...K..",
+          "cell": "."
+        },
+        {
+          "row": "coal_prb_committed_dispatchable",
+          "cells": "...R..",
+          "cell": "."
+        },
+        {
+          "row": "coal_prb_committed_split",
+          "cells": "...R..",
+          "cell": "."
+        },
+        {
+          "row": "miso_coal_night_floor",
+          "cells": "...I..",
+          "cell": "."
+        },
+        {
+          "row": "coal_min_load_floor",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..IKIU",
+          "cell": "."
+        },
+        {
+          "row": "historic_outage_overlay",
+          "cells": "UUUUIU",
+          "cell": "U"
+        },
+        {
+          "row": "coal_drop_pof",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "gas_st_startup_spread",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_duct_peaking",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_capacity_reconcile_path",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "cc_mustrun_per_plant",
+          "cells": ".RK...",
+          "cell": "R"
+        },
+        {
+          "row": "winter_fuelsec_posture",
+          "cells": "U..U.K",
+          "cell": "."
+        },
+        {
+          "row": "chp_steam_following",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "netload_drag_floors",
+          "cells": "KRKURU",
+          "cell": "R"
+        },
+        {
+          "row": "ramp_envelopes",
+          "cells": "RIKUKU",
+          "cell": "I"
+        },
+        {
+          "row": "forced_share_d4_census",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "reserve_family_sidecar",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "diagnostics_plant_set",
+          "cells": "IIOIII",
+          "cell": "I"
+        },
+        {
+          "row": "energy_online_capability_cap",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_faststart_pool_offer",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "measured_offer_surface",
+          "cells": "KKRUGI",
+          "cell": "K"
+        },
+        {
+          "row": "pjm_midcurve_belt",
+          "cells": "U.K...",
+          "cell": "."
+        },
+        {
+          "row": "coal_passthrough_sigmoids",
+          "cells": "KKKRK.",
+          "cell": "K"
+        },
+        {
+          "row": "coal_econ_bound",
+          "cells": "K..K..",
+          "cell": "."
+        },
+        {
+          "row": "coal_offer_net_revenue_margin",
+          "cells": "K.UU..",
+          "cell": "."
+        },
+        {
+          "row": "cc_committed_offer_margin",
+          "cells": "KUUUGU",
+          "cell": "U"
+        },
+        {
+          "row": "coal_peak_offer_margin",
+          "cells": "K.UU..",
+          "cell": "."
+        },
+        {
+          "row": "coal_perplant_offer_level",
+          "cells": "K.UU..",
+          "cell": "."
+        },
+        {
+          "row": "coal_offer_level_rebasis",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "measured_chp_heat_rates",
+          "cells": "UKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "da_virtual_bids",
+          "cells": ".UKGGR",
+          "cell": "U"
+        },
+        {
+          "row": "negative_renewable_offers",
+          "cells": "GK....",
+          "cell": "K"
+        },
+        {
+          "row": "wind_ptc_vintage_offers",
+          "cells": "I.....",
+          "cell": "."
+        },
+        {
+          "row": "gas_offer_curve_tranches",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_monthly_actuals",
+          "cells": "GKK.KK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_plant_monthly_pricing",
+          "cells": "GKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_daily_shape",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "zonal_gas_basis",
+          "cells": "KKKKK.",
+          "cell": "K"
+        },
+        {
+          "row": "gas_hub_basis_overlay",
+          "cells": "UK.UKK",
+          "cell": "K"
+        },
+        {
+          "row": "winter_citygate_daily",
+          "cells": "U.RK..",
+          "cell": "."
+        },
+        {
+          "row": "dual_fuel_switching",
+          "cells": "U.KKKK",
+          "cell": "."
+        },
+        {
+          "row": "gas_price_override",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_plant_monthly_pricing",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "outage_artifact_provenance",
+          "cells": "IIIOII",
+          "cell": "I"
+        },
+        {
+          "row": "dam_availability_rebasis",
+          "cells": "KUGR.R",
+          "cell": "U"
+        },
+        {
+          "row": "ercot_dam_availability_coal_event_cap",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "ercot_dam_availability_gas_event_cap",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "I"
+        },
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        },
+        {
+          "row": "temp_dependent_derate",
+          "cells": "UKRKGK",
+          "cell": "K"
+        },
+        {
+          "row": "gas_coldsnap_derate",
+          "cells": "U..U.K",
+          "cell": "."
+        },
+        {
+          "row": "nysdec_peaker_rule_availability",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "correlated_forced_outage",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "retiree_cems_cap",
+          "cells": "..K...",
+          "cell": "."
+        },
+        {
+          "row": "solar_deliverability",
+          "cells": "UK....",
+          "cell": "K"
+        },
+        {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
+        },
+        {
+          "row": "wtx_curtailment_driver",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "wtx_curtail_unpooled",
+          "cells": "K.....",
+          "cell": "."
+        },
+        {
+          "row": "hydro_dispatch_envelope",
+          "cells": ".KUUKU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_min_flow_floor",
+          "cells": ".KU.KU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_ror_split",
+          "cells": ".KUUGU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_budget_nameplate_aware",
+          "cells": ".KIIIU",
+          "cell": "K"
+        },
+        {
+          "row": "hydro_level_923_hy",
+          "cells": "..KK.K",
+          "cell": "."
+        },
+        {
+          "row": "hydro_vintage_input_repair",
+          "cells": "UKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_wind_zone_shape",
+          "cells": "K.KKKK",
+          "cell": "."
+        },
+        {
+          "row": "battery_dispatch_adder",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "ercot_storage_rt_offer_surface",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".I....",
+          "cell": "I"
+        },
+        {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        },
+        {
+          "row": "storage_daily_cycling",
+          "cells": "KG....",
+          "cell": "G"
+        },
+        {
+          "row": "pumped_storage_cycling_depth",
+          "cells": ".UGUUG",
+          "cell": "U"
+        },
+        {
+          "row": "caiso_da_rt_two_settlement",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "caiso_ps_charge_shape_anchor",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
+          "row": "measured_interface_limits",
+          "cells": "KKKUGU",
+          "cell": "K"
+        },
+        {
+          "row": "internal_congestion_split",
+          "cells": "G..G..",
+          "cell": "."
+        },
+        {
+          "row": "tsa_transfer_derate",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "scuc_load_pocket_commitment",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "pjm_congestion_star",
+          "cells": "..K...",
+          "cell": "."
+        },
+        {
+          "row": "pjm_apsouth_cut",
+          "cells": "..I...",
+          "cell": "."
+        },
+        {
+          "row": "pjm_external_net_position_cut",
+          "cells": "..K...",
+          "cell": "."
+        },
+        {
+          "row": "zonal_loss_surface",
+          "cells": ".KKR..",
+          "cell": "K"
+        },
+        {
+          "row": "rdt_tcdc",
+          "cells": "...K..",
+          "cell": "."
+        },
+        {
+          "row": "seam_flow_envelopes",
+          "cells": "..KKK.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_seam_par_attribution",
+          "cells": "....R.",
+          "cell": "."
+        },
+        {
+          "row": "import_hub_pricing",
+          "cells": ".KUKKK",
+          "cell": "K"
+        },
+        {
+          "row": "import_shape_lever",
+          "cells": "...GG.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_import_sil_retire",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_central_east_measured_ttc",
+          "cells": "....K.",
+          "cell": "."
+        },
+        {
+          "row": "nyiso_gj_locality_tsl",
+          "cells": "....G.",
+          "cell": "."
+        },
+        {
+          "row": "caiso_firm_envelope_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_firm_selfsched_floor",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "caiso_firm_selfsched_clip",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_seam_loss_surface",
+          "cells": ".G....",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_corridor_export_path",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "caiso_node_export_constraint",
+          "cells": ".G..UU",
+          "cell": "G"
+        },
+        {
+          "row": "caiso_p1_export_sink_seam",
+          "cells": "IR..OU",
+          "cell": "R"
+        },
+        {
+          "row": "wecc_endogenous_node",
+          "cells": ".R....",
+          "cell": "R"
+        },
+        {
+          "row": "lcr_tsl_published",
+          "cells": ".KUUK.",
+          "cell": "K"
+        },
+        {
+          "row": "demand_repairs",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "path15_load_split",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "tac_load_coverage",
+          "cells": "UKUUUU",
+          "cell": "K"
+        },
+        {
+          "row": "demand_dropout_screen",
+          "cells": "IIIIKI",
+          "cell": "I"
+        },
+        {
+          "row": "scr_edrp_dr",
+          "cells": "G...K.",
+          "cell": "."
+        },
+        {
+          "row": "td_loss_factor",
+          "cells": "UUUURU",
+          "cell": "U"
+        },
+        {
+          "row": "demand_growth_vintage",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "confirmed_exits",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "economic_retirement_screen",
+          "cells": "OORRRR",
+          "cell": "O"
+        },
+        {
+          "row": "capacity_market_clearing",
+          "cells": ".KKKOK",
+          "cell": "K"
+        },
+        {
+          "row": "net_cone_forward_vintages",
+          "cells": "..OOOO",
+          "cell": "."
+        },
+        {
+          "row": "reserve_margin_backstop",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "capacity_deliverability",
+          "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "storage_entry_value_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "ccs_retrofit_screen",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "entry_lookahead_reprice",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "exit_rate_limits",
+          "cells": "OUOUUU",
+          "cell": "U"
+        },
+        {
+          "row": "entry_dampers",
+          "cells": "IOUOUU",
+          "cell": "O"
+        },
+        {
+          "row": "entry_pipeline_aware_signal",
+          "cells": "UUUOUU",
+          "cell": "U"
+        },
+        {
+          "row": "capacity_screen_unified_lookahead",
+          "cells": "OUUUUU",
+          "cell": "U"
+        },
+        {
+          "row": "entry_vre_capacity_revenue",
+          "cells": "IUUKUU",
+          "cell": "U"
+        },
+        {
+          "row": "vre_procurement_additions",
+          "cells": "UUUOUU",
+          "cell": "U"
+        },
+        {
+          "row": "elcc_accreditation",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "caiso_nqc_accreditation",
+          "cells": ".O....",
+          "cell": "O"
+        },
+        {
+          "row": "hydro_accreditation",
+          "cells": "OKOKKO",
+          "cell": "K"
+        },
+        {
+          "row": "datacenter_load_block",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "electrification_layers",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "transmission_expansion",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "t1ff_solve_year_weather",
+          "cells": "......",
+          "cell": "."
+        },
+        {
+          "row": "rps_lp_constraint",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "state_carbon_pricing",
+          "cells": ".KOUKK",
+          "cell": "K"
+        },
+        {
+          "row": "mass_cap_lp_row",
+          "cells": "UUUUUU",
+          "cell": "U"
+        },
+        {
+          "row": "ira_credits",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "federal_ces",
+          "cells": "O.....",
+          "cell": "."
+        },
+        {
+          "row": "plant_emission_rates_v2",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "startup_co2_reporting",
+          "cells": "UUUUUU",
+          "cell": "U"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "nearby_fuel_price_fallback",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_plant_monthly_pricing",
+          "cells": "GKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "negative_renewable_offers",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "negative_renewable_offers",
+          "cells": "GK....",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "nuclear_unit_availability",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nuclear_unit_availability",
+          "cells": "KKUUKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "offer_curve_by_group",
+      "default": {},
+      "keeper_value": {
+        "CC_REGULAR": {
+          "committed": 1.0,
+          "econ_low": 1.066,
+          "econ_high": 1.072,
+          "peak": 1.386,
+          "econ_low_share": 0.5,
+          "pct_peaking": 8.0,
+          "phys_committed": 1.103,
+          "phys_econ_low": 0.836,
+          "phys_econ_high": 0.968,
+          "phys_peak": 2.25,
+          "peak_ladder": [
+            [
+              0.2,
+              1.386
+            ],
+            [
+              0.2,
+              1.386
+            ],
+            [
+              0.2,
+              1.386
+            ],
+            [
+              0.2,
+              1.386
+            ],
+            [
+              0.2,
+              1.386
+            ]
+          ]
+        },
+        "CC_INTERMEDIATE": {
+          "committed": 0.92,
+          "econ_low": 0.95,
+          "econ_high": 1.08,
+          "peak": 2.25,
+          "econ_low_share": 0.5,
+          "pct_peaking": 8.0
+        },
+        "CC_CHP": {
+          "committed": 1.0,
+          "econ_low": 0.96,
+          "econ_high": 1.12,
+          "peak": 2.25,
+          "econ_low_share": 0.5,
+          "pct_peaking": 8.0,
+          "phys_committed": 1.028,
+          "phys_econ_low": 0.88,
+          "phys_econ_high": 0.942,
+          "phys_peak": 2.25
+        },
+        "CT_CHP": {
+          "committed": 1.1,
+          "econ_low": 1.2,
+          "econ_high": 1.2,
+          "peak": 1.4,
+          "econ_low_share": 0.5,
+          "phys_committed": 1.073,
+          "phys_econ_low": 0.594,
+          "phys_econ_high": 0.598,
+          "phys_peak": 1.0
+        },
+        "CT_PEAKER": {
+          "committed": 1.35,
+          "econ_low": 1.145,
+          "econ_high": 1.166,
+          "peak": 1.166,
+          "econ_low_share": 0.526,
+          "pct_peaking": 7.0,
+          "phys_committed": 0.991,
+          "phys_econ_low": 0.686,
+          "phys_econ_high": 0.71,
+          "phys_peak": 1.0,
+          "peak_ladder": [
+            [
+              0.2,
+              1.166
+            ],
+            [
+              0.2,
+              1.166
+            ],
+            [
+              0.2,
+              1.166
+            ],
+            [
+              0.2,
+              1.166
+            ],
+            [
+              0.2,
+              1.166
+            ]
+          ]
+        },
+        "CT_INTERMEDIATE": {
+          "committed": 1.0,
+          "econ_low": 1.0,
+          "econ_high": 1.2,
+          "peak": 3.0,
+          "econ_low_share": 0.5,
+          "pct_peaking": 5.0
+        },
+        "ST_GAS": {
+          "committed": 0.81,
+          "econ_low": 1.05,
+          "econ_high": 1.4,
+          "peak": 4.2,
+          "econ_low_share": 0.5,
+          "pct_peaking": 15.0,
+          "phys_committed": 1.683,
+          "phys_econ_low": 0.725,
+          "phys_econ_high": 0.755,
+          "phys_peak": 1.0
+        },
+        "ST_GAS_INTERMEDIATE": {
+          "committed": 1.0,
+          "econ_low": 1.0,
+          "econ_high": 1.15,
+          "peak": 2.2,
+          "econ_low_share": 0.5,
+          "pct_peaking": 6.0
+        },
+        "COAL_LIGNITE": {
+          "committed": 0.95,
+          "econ_low": 1.14,
+          "econ_high": 1.15,
+          "peak": 1.55,
+          "econ_low_share": 0.556
+        },
+        "COAL_PRB": {
+          "committed": 0.95,
+          "econ_low": 0.77,
+          "econ_high": 1.19,
+          "peak": 1.48,
+          "econ_low_share": 0.556
+        },
+        "COAL_BIT": {
+          "committed": 0.9,
+          "econ_low": 0.95,
+          "econ_high": 1.1,
+          "peak": 1.45,
+          "econ_low_share": 0.55
+        },
+        "COAL_WC": {
+          "committed": 0.85,
+          "econ_low": 0.9,
+          "econ_high": 1.02,
+          "peak": 1.2,
+          "econ_low_share": 0.55
+        },
+        "COAL": {
+          "committed": 0.9,
+          "econ_low": 0.95,
+          "econ_high": 1.1,
+          "peak": 1.45,
+          "econ_low_share": 0.55
+        }
+      },
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "gas_offer_net_revenue_margin",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "coal_perplant_offer_level",
+          "cells": "K.UU..",
+          "cell": "."
+        },
+        {
+          "row": "coal_offer_level_rebasis",
+          "cells": "R.....",
+          "cell": "."
+        },
+        {
+          "row": "tranche_startup_amortization",
+          "cells": "GGKKKK",
+          "cell": "G"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "outage_source",
+      "default": "statistical",
+      "keeper_value": "historic",
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        },
+        {
+          "row": "historic_outage_overlay",
+          "cells": "UUUUIU",
+          "cell": "U"
+        },
+        {
+          "row": "campd_outage_windows",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "unit_outage_short_windows",
+          "cells": "IIKKIR",
+          "cell": "I"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "plant_level_fleet",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "plant_level_fleet",
+          "cells": ".KKKKK",
+          "cell": "K"
+        },
+        {
+          "row": "diurnal_price_amplitude",
+          "cells": "UUGGGO",
+          "cell": "U"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "reliability_floor",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "nyiso_incity_commitment_obligation",
+          "cells": "....U.",
+          "cell": "."
+        },
+        {
+          "row": "reliability_floor",
+          "cells": "KIKKKK",
+          "cell": "I"
+        },
+        {
+          "row": "coal_takeorpay_committed",
+          "cells": "...K..",
+          "cell": "."
+        },
+        {
+          "row": "st_gas_mustrun_p25",
+          "cells": "..IKIU",
+          "cell": "."
+        },
+        {
+          "row": "forced_share_d4_census",
+          "cells": "IIIIII",
+          "cell": "I"
+        },
+        {
+          "row": "measured_ct_heat_rates",
+          "cells": "IKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "rps_enabled",
+      "default": true,
+      "keeper_value": false,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "rps_lp_constraint",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "scarcity_pricing_enabled",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "ordc_scarcity_overlay",
+          "cells": "RKGG.K",
+          "cell": "K"
+        },
+        {
+          "row": "entry_dampers",
+          "cells": "IOUOUU",
+          "cell": "O"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "storage_vintage_ramp",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "storage_measured_base_fleet",
+          "cells": ".I....",
+          "cell": "I"
+        },
+        {
+          "row": "storage_vintage_ramp",
+          "cells": "KKUUIK",
+          "cell": "K"
+        },
+        {
+          "row": "storage_measured_anchors",
+          "cells": "KK....",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "temp_dependent_derate",
+      "default": false,
+      "keeper_value": true,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "cc_nameplate_summer_derate",
+          "cells": "UUUUKU",
+          "cell": "U"
+        },
+        {
+          "row": "temp_dependent_derate",
+          "cells": "UKRKGK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    },
+    {
+      "field": "weather_year",
+      "default": 2024,
+      "keeper_value": 2023,
+      "coverage": "prose_only",
+      "owning_rows": [
+        {
+          "row": "matrix_gap_census",
+          "cells": "KKKKKO",
+          "cell": "K"
+        }
+      ],
+      "excluded": true,
+      "exclusion_reason": "run identity, not a mechanism: a backcast pins the weather year to the solve year by construction (ScenarioConfig.mode='backcast'), so every multi-year bundle necessarily records a non-default value for two of its three years. Nothing is armed and nothing is tunable \u2014 the pinning IS the backcast, and it is already governed by rule 13 [R-MEASURED] and the mode field rather than by a matrix cell."
+    },
+    {
+      "field": "wefor_multiplier",
+      "default": 1.0,
+      "keeper_value": 0.7,
+      "coverage": "own_row",
+      "owning_rows": [
+        {
+          "row": "wefor_statistical_stack",
+          "cells": "KKKKKK",
+          "cell": "K"
+        }
+      ],
+      "excluded": false,
+      "exclusion_reason": null
+    }
+  ],
+  "shared_matrix_gaps_absent": [],
+  "shared_prose_only": [],
+  "shared_excluded": [
+    "weather_year"
+  ],
+  "live_but_invisible": []
+}

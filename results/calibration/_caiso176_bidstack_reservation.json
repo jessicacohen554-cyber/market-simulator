@@ -1,0 +1,809 @@
+{
+  "probe": "caiso-176 storage bid-stack reservation-price identification",
+  "source": "data/raw/storage-as-awards/CAISO/storage-report-*.xlsx (bid_stack sheet)",
+  "rows_read": 3634555,
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "markets": [
+    "IFM",
+    "RTPD"
+  ],
+  "res_types": [
+    "HYBD",
+    "LESR"
+  ],
+  "states": [
+    "CHARGE",
+    "DISCHAR"
+  ],
+  "range_vocab": [
+    "(-100,-50]",
+    "(-15,0]",
+    "(-50,-15]",
+    "(0,15]",
+    "(100,200]",
+    "(15,50]",
+    "(1e+03,2e+03]",
+    "(200,500]",
+    "(50,100]",
+    "(500,1e+03]",
+    "SELF-SCHED",
+    "[-150,-100]"
+  ],
+  "bucket_edges": [
+    {
+      "label": "[-150,-100]",
+      "low": -150.0,
+      "high": -100.0
+    },
+    {
+      "label": "(-100,-50]",
+      "low": -100.0,
+      "high": -50.0
+    },
+    {
+      "label": "(-50,-15]",
+      "low": -50.0,
+      "high": -15.0
+    },
+    {
+      "label": "(-15,0]",
+      "low": -15.0,
+      "high": 0.0
+    },
+    {
+      "label": "(0,15]",
+      "low": 0.0,
+      "high": 15.0
+    },
+    {
+      "label": "(15,50]",
+      "low": 15.0,
+      "high": 50.0
+    },
+    {
+      "label": "(50,100]",
+      "low": 50.0,
+      "high": 100.0
+    },
+    {
+      "label": "(100,200]",
+      "low": 100.0,
+      "high": 200.0
+    },
+    {
+      "label": "(200,500]",
+      "low": 200.0,
+      "high": 500.0
+    },
+    {
+      "label": "(500,1e+03]",
+      "low": 500.0,
+      "high": 1000.0
+    },
+    {
+      "label": "(1e+03,2e+03]",
+      "low": 1000.0,
+      "high": 2000.0
+    }
+  ],
+  "incumbent_adder": 5.0,
+  "atb_derived_adder": 22.63,
+  "G1_resolution": {
+    "bucket_containing_incumbent": "(0,15]",
+    "bucket_containing_atb_derived": "(15,50]",
+    "separable": true,
+    "note": "PASS requires the two candidate values to fall in DIFFERENT published buckets; identical buckets mean the instrument cannot distinguish them."
+  },
+  "discharge_stack": {
+    "IFM|HYBD": {
+      "2023": {
+        "total_bid_mw": 4058485.5,
+        "priced_bid_mw": 4052758.71,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.022384
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.112746
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.088341
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.081705
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.051901
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.1099
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.104724
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.132202
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.075166
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.220932
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.001411,
+        "G3_share_priced_at_or_below_zero": 0.305176,
+        "G2_bound_at_1pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(-100,-50]",
+          "implied_max_marginal_cost": -50.0
+        }
+      },
+      "2024": {
+        "total_bid_mw": 7086820.62,
+        "priced_bid_mw": 6562270.18,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.072682
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.04852
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.072191
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.069543
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.07691
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.180133
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.155781
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.05027
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.018473
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.255498
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.074018,
+        "G3_share_priced_at_or_below_zero": 0.262936,
+        "G2_bound_at_1pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        }
+      },
+      "2025": {
+        "total_bid_mw": 11430229.75,
+        "priced_bid_mw": 11346753.35,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.054519
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.033121
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.083549
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.134637
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.036939
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.093552
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.101691
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.218489
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.00548
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.238023
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.007303,
+        "G3_share_priced_at_or_below_zero": 0.305825,
+        "G2_bound_at_1pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        }
+      }
+    },
+    "IFM|LESR": {
+      "2023": {
+        "total_bid_mw": 40726256.92,
+        "priced_bid_mw": 40592792.81,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.000388
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 8.2e-05
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.001212
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.00292
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.087156
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.251735
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.26264
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.165081
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.100695
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.128091
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.003277,
+        "G3_share_priced_at_or_below_zero": 0.004602,
+        "G2_bound_at_1pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        }
+      },
+      "2024": {
+        "total_bid_mw": 70182316.26,
+        "priced_bid_mw": 70088578.34,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.002387
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.003032
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.004812
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.005139
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.164282
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.297835
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.181384
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.075691
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.038616
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.226823
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.001336,
+        "G3_share_priced_at_or_below_zero": 0.01537,
+        "G2_bound_at_1pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        }
+      },
+      "2025": {
+        "total_bid_mw": 91746685.93,
+        "priced_bid_mw": 91653355.4,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.001798
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.002536
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.00345
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.006584
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.175205
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.236878
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.243181
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.090249
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.018236
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.221881
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.001017,
+        "G3_share_priced_at_or_below_zero": 0.014369,
+        "G2_bound_at_1pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        }
+      }
+    },
+    "RTPD|HYBD": {
+      "2023": {
+        "total_bid_mw": 18401836.054,
+        "priced_bid_mw": 17068204.991,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.00173
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.180003
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.229628
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.04128
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.015645
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.099596
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.186554
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.103286
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.060567
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.08171
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.072473,
+        "G3_share_priced_at_or_below_zero": 0.452642,
+        "G2_bound_at_1pct": {
+          "bucket": "(-100,-50]",
+          "implied_max_marginal_cost": -50.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(-100,-50]",
+          "implied_max_marginal_cost": -50.0
+        }
+      },
+      "2024": {
+        "total_bid_mw": 28609038.901,
+        "priced_bid_mw": 24629271.641,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.080116
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.276323
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.065628
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.060342
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.029297
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.192625
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.176808
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.038865
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.019561
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.060434
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.139109,
+        "G3_share_priced_at_or_below_zero": 0.48241,
+        "G2_bound_at_1pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        }
+      },
+      "2025": {
+        "total_bid_mw": 35974560.515,
+        "priced_bid_mw": 34333335.555,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.124763
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.102066
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.246828
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.06516
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.033703
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.145988
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.170595
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.046979
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.006154
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.057765
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.045622,
+        "G3_share_priced_at_or_below_zero": 0.538817,
+        "G2_bound_at_1pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "[-150,-100]",
+          "implied_max_marginal_cost": -100.0
+        }
+      }
+    },
+    "RTPD|LESR": {
+      "2023": {
+        "total_bid_mw": 158147112.826,
+        "priced_bid_mw": 157279317.23,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.003719
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 8.8e-05
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.00321
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.005069
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.033206
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.183044
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.396129
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.178631
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.0921
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.104803
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.005487,
+        "G3_share_priced_at_or_below_zero": 0.012086,
+        "G2_bound_at_1pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(15,50]",
+          "implied_max_marginal_cost": 50.0
+        }
+      },
+      "2024": {
+        "total_bid_mw": 276283662.811,
+        "priced_bid_mw": 275570294.26,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.002535
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.001265
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.007631
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.010578
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.091465
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.320629
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.317243
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.076406
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.02709
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.145157
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.002582,
+        "G3_share_priced_at_or_below_zero": 0.02201,
+        "G2_bound_at_1pct": {
+          "bucket": "(-15,0]",
+          "implied_max_marginal_cost": 0.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        }
+      },
+      "2025": {
+        "total_bid_mw": 357711030.147,
+        "priced_bid_mw": 356045278.64,
+        "share_by_bucket_of_priced": [
+          {
+            "bucket": "[-150,-100]",
+            "share_of_priced": 0.000741
+          },
+          {
+            "bucket": "(-100,-50]",
+            "share_of_priced": 0.001634
+          },
+          {
+            "bucket": "(-50,-15]",
+            "share_of_priced": 0.004165
+          },
+          {
+            "bucket": "(-15,0]",
+            "share_of_priced": 0.007564
+          },
+          {
+            "bucket": "(0,15]",
+            "share_of_priced": 0.092042
+          },
+          {
+            "bucket": "(15,50]",
+            "share_of_priced": 0.298694
+          },
+          {
+            "bucket": "(50,100]",
+            "share_of_priced": 0.353105
+          },
+          {
+            "bucket": "(100,200]",
+            "share_of_priced": 0.079479
+          },
+          {
+            "bucket": "(200,500]",
+            "share_of_priced": 0.014014
+          },
+          {
+            "bucket": "(500,1e+03]",
+            "share_of_priced": 0.148562
+          }
+        ],
+        "G3_share_self_scheduled_of_all": 0.004657,
+        "G3_share_priced_at_or_below_zero": 0.014104,
+        "G2_bound_at_1pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        },
+        "G2_bound_at_5pct": {
+          "bucket": "(0,15]",
+          "implied_max_marginal_cost": 15.0
+        }
+      }
+    }
+  },
+  "G2_stability": {
+    "implied_max_marginal_cost_by_year_1pct": {
+      "2023": 15.0,
+      "2024": 15.0,
+      "2025": 15.0
+    },
+    "implied_max_marginal_cost_by_year_5pct": {
+      "2023": 15.0,
+      "2024": 15.0,
+      "2025": 15.0
+    },
+    "stable_across_years_1pct": true,
+    "stable_across_years_5pct": true
+  },
+  "G3_contamination": {
+    "share_self_scheduled_by_year": {
+      "2023": 0.003277,
+      "2024": 0.001336,
+      "2025": 0.001017
+    },
+    "share_priced_at_or_below_zero_by_year": {
+      "2023": 0.004602,
+      "2024": 0.01537,
+      "2025": 0.014369
+    }
+  }
+}

@@ -883,7 +883,60 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; `complete` HELD; THE TAC LOAD SERIES IS NOW COMPLETE AND C7/C8 ARE SCORED FOR THE FIRST TIME** (keeper `2026-08-06-caiso-175-tac-intake`, CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs)
+### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; `complete` HELD; THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs)
+
+> **caiso-176 (2026-08-06) — THE FRONTIER RE-ASSESSMENT ON THE NEW KEEPER, AND THE
+> `battery_dispatch_adder` WALL.** NO LP, NO solve, NO arm, nothing registered, keeper
+> UNCHANGED, DOF ledger UNCHANGED at 11 / 8. `holdout-freeze.json` and
+> `calibration-complete.json` UNTOUCHED. Prereg
+> `results/calibration/PRECHECK-caiso176-frontier-dof-2026-08-06.md`; records
+> `ASSESSMENT-caiso176-frontier-2026-08-06.md` and
+> `FINDING-caiso176-battery-adder-wall-2026-08-06.md`; instrument
+> `scripts/probes/_caiso176_bidstack_reservation.py`.
+>
+> **FRONTIER HOLDS, re-measured two promotions on from caiso-173.** `gap_sweep --iso CAISO`
+> **0/0/0/0/0** (63 family fields); column census **61 K · 23 U · 14 I · 6 R · 5 G · 5 O** (was
+> 60/20/13/6/5/**6** — `storage_measured_base_fleet` moved off `O` at caiso-174); §5.2 evidence
+> **19/19 resolved, 0 missing**; `audit_keepers --iso CAISO` **PASS 0/0**; G0 confirms the keeper
+> is **POST-EPOCH**. **Wall 1 (C3a, hourly pumped storage) re-ran LIVE: 5/5 `unchanged`** — CISO
+> publishes 0 EIA-930 `PS` rows, Outlook hydro is the same PS-net feed as `WAT` (n=72, corr
+> 0.950), and CDEC has **0 hourly sensors at CTG/WSN/SHV** (Helms + Eastwood, 60.3 % of the
+> fleet). **Wall 3 (C3c, the SoCalGas OFO record) HOLDS** — the only SoCalGas artifact on disk is
+> a price series. **caiso-173 §C's MWD-TAC gap is CLOSED ON DATA**: 6 areas, unmodelled load
+> **+0.00 %** in every year. **CAISO's ISO-specific DOF fell 4 → 3** (the PG&E Path-15 weight
+> became measured at caiso-172); of the three left, `WECC_import_simultaneous.cap_mw` is not in
+> the binding path and `IMPORT/EXPORT_TRANCHES` is the class NYISO carries while holding its own
+> marker.
+>
+> **`battery_dispatch_adder` — WALLED, NOT CLOSED; the parameter stays at 5.0 and the cell stays
+> `K`.** The DOF ledger's named replacement is **spent on both halves** (AS half INERT at
+> caiso-74 / refuted at caiso-127/129; ATB half REJECTED PROBE at caiso-100/101 on the ±15 %
+> throughput guard), and the ATB route is **worse now than when it was rejected** — the capex
+> constant moved 285 → 452.6 \$/kWh, so the same formula gives **\$22.63** today. **NEW
+> MODEL-FREE EVIDENCE:** the `bid_stack` sheet of CAISO's Daily Energy Storage Report — the one
+> CAISO-own storage instrument no session had read — bounds the fleet's DAM discharge marginal
+> cost at **≤ \$15/MWh in all three years** (≥1 % and ≥5 % thresholds alike; `(0,15]` carries
+> 8.72/16.43/17.52 % of priced discharge; SELF-SCHED ≤ 0.33 %). **\$22.63 is REFUTED
+> independently of the model**; \$5.00 is consistent — **but the 15 \$/MWh bucket bounds without
+> identifying**, so the DOF does not close. Named exits, none available today: the per-resource
+> CAISO Storage-DEB cycle-cost filings (**confidential by tariff construction**), the gitignored
+> `data/raw/caiso-public-bids` OASIS `PUB_DAM_GRP` corpus (its own intake session — the
+> highest-value exit), or an identified cell-vs-system split replacing the declared-tunable 0.25
+> fraction. **DO-NOT-REDO:** any value > \$15; `caiso_storage_as_reservation` as this parameter's
+> replacement; the stack's upper rungs or the hybrid panel as a cost curve; and picking a value
+> inside `(0,15]` *because* it sits inside the bound.
+>
+> **`final` (locked test, 2019 + H1-2026) — RECOMMENDED `NO`, on EXECUTABILITY not judgement.**
+> CAISO has **no 2019 LMP bench, no 2019 calibration reference and no 2019 renewable-capacity
+> input** — and that is a **source wall**: OASIS's retention boundary was binary-searched at the
+> 2026-07-31 intake to **2023-04-19**, with 2018/2020/2022 returning `ERR_CODE 1000`. H1-2026 has
+> a price bench (4,343 h) but **no 2026 calibration-reference block at all**, so C1/C2/C4 have no
+> reference. A touch-once one-shot that cannot be scored is not a test, and the live risk is that
+> it gets spent on the half that resolves. Two further conditions also fail: CAISO has **never
+> spent its validation tier** (2022 unspent — the ladder is ordered for a reason), and the keeper
+> has **not been re-audited on the corrected availability envelope** its own 2026-07-24 outage
+> regeneration flagged. **No marker written; `final` stays empty; no locked-test year touched.**
+
 
 > **caiso-175 (2026-08-06) — THE TAC LOAD-SERIES INTAKE, AND THE PROTECTIVE GATES THAT WERE
 > NEVER SCORED.** Keeper PROMOTED `2026-08-05-caiso-174-measured-fleet` ->
