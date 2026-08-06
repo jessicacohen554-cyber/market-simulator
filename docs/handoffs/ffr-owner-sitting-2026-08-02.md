@@ -2748,3 +2748,24 @@ False). Shipped posture intact.
   (a) one lane three arms in order / (b) E-1 first / (c) zonal everywhere / (d) nothing;
   manager concurs with the lane: (a).
 Dispositions to be recorded by addendum when signed.
+
+### V.6 Owner signatures (same sitting, 2026-08-06)
+
+* **D-21(a) — DEFERRED (owner decision, against the manager's recommendation).** Recorded
+  once with its measured consequence, per the standing protocol: the scarcity-restoration
+  diagnosis is the only lane that can produce lift conditions α/β (V.3), so **FH-4/FH-5
+  remain blocked with NO open path to the lift** until the owner re-opens D-21(a); the
+  capacity-evolution chain continues to run on a forward object measured at 0.04–4.4 % of
+  real margins, retained by the admission cap. Q.2 (no T1 battery re-measurement) stands.
+  No session re-litigates this; a future sitting may re-open it.
+* **D-21(b) — SIGNED AS RECOMMENDED: hygiene only, 5c REFUSED.** Charter **FFR-7A**: the
+  scoring-target fixes (verdict rows 5a/5b — OS-status vintage handling, `build_capacity_
+  actuals` beyond status-RE). 5c (announced fossil dates in hindcast) is REFUSED and
+  recorded as such — cite, don't re-propose.
+* **D-21(c) — manager disposition stands:** ECRS quantities deferred until a lane must
+  reproduce 2023-level revenues.
+* **D-22(a) — SIGNED AS RECOMMENDED:** charter **FFR-7B**, one lane, three arms, in order
+  (Arm 1 tier/eligible-set level fix NYISO/NEISO/CAISO → Arm 2 K-row generalization, MISO
+  armed only → Arm 3 clean-tier rows, MISO-West/East). §45U-vs-clean-dual composition stays
+  OPEN and blocks Arm 3's arming only. E-1 never acquires a build limb.
+Prompts: pack §0r. Wave 7 opens with FFR-7A and FFR-7B.
