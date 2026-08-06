@@ -73,6 +73,7 @@ from market_sim.data.fleet import (
 from market_sim.model.dispatch import DispatchResult
 from market_sim.policy.federal_ces import effective_eac_price_for_unit
 from market_sim.policy.ira import section_45u_credit_per_mwh
+from market_sim.policy.rps import rps_credit_for_zone
 
 logger = logging.getLogger(__name__)
 
@@ -1598,7 +1599,7 @@ def apply_economic_retirements(
     config: ScenarioConfig,
     consecutive_loss_years: dict[str, int],
     peak_demand: float,
-    rps_shadow_price: float = 0.0,
+    rps_shadow_price: "float | np.ndarray" = 0.0,
     mc: np.ndarray | None = None,
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
@@ -1703,7 +1704,10 @@ def apply_economic_retirements(
             ``unit_id``; not mutated in place.
         peak_demand: Peak net demand in MW, used to size the reliability
             floor below which thermal capacity is not retired.
-        rps_shadow_price: Prior year's RPS constraint dual in $/MWh. Only
+        rps_shadow_price: Prior year's RPS constraint dual in $/MWh — a
+            scalar (legacy single ISO-wide row) or a per-zone ``(n_zones,)``
+            vector (K-row compliance-region grain, FFR-7B Arm 2), resolved
+            at each unit's zone via ``policy.rps.rps_credit_for_zone``. Only
             credited to RPS-eligible (clean) fuels, and never stacked with
             an exogenous EAC -- the higher of the two is taken.
         mc: Full variable cost aligned row-for-row with
@@ -1958,7 +1962,16 @@ def apply_economic_retirements(
                 eac_price,
                 section_45u_credit_per_mwh(year, avg_energy_price, config),
             )
-        rps_for_unit = rps_shadow_price if g.fuel_type in _RPS_ELIGIBLE_FUELS else 0.0
+        # RPS credit resolved at the UNIT's zone under the K-row
+        # compliance-region grain (FFR-7B Arm 2 / FFR-6B §3.2): a scalar
+        # passes through; a per-zone vector indexes by the unit's own zone,
+        # so a unit outside every region's eligibility geography earns 0 —
+        # never a broadcast of another region's dual.
+        rps_for_unit = (
+            rps_credit_for_zone(rps_shadow_price, zone)
+            if g.fuel_type in _RPS_ELIGIBLE_FUELS
+            else 0.0
+        )
         attribute_revenue_usd = compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
         )

@@ -703,6 +703,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # mechanism never fires, so the off arm is byte-identical; an armed run
     # re-bases the NYISO solar series and hashes distinctly.
     "nyiso_solar_market_generator_basis",
+    # MISO per-state RPS compliance-region rows (FFR-7B Arm 2, default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the pinned default 603c2498bf71d21d holds); unarmed
+    # the K-row grain never builds, so the off arm is byte-identical; an armed
+    # run replaces the ISO-wide RPS row with K per-region rows (a different
+    # LP layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline — never the nyiso-128/nyiso-115 miss).
+    "miso_rps_compliance_regions",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -808,6 +816,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
     "nyiso_solar_market_generator_basis": "False",
+    # Added by FFR-7B-2 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_rps_compliance_regions": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
@@ -1765,10 +1776,29 @@ class ScenarioConfig:
     # new attribute; storage adapts endogenously to VRE via arbitrage).
     # Toggle retained for sensitivity.
     federal_ces_replaces_state_rps: bool = False  # Pure-federal
-    # counterfactual: suppress state RPS rows where they exist (CAISO/NYISO/
-    # NEISO; W2-A wiring). Moot for ERCOT/PJM, which carry no RPS row
-    # (plan §1 "Interaction with existing policy").
+    # counterfactual: suppress state RPS rows where they exist. Moot only for
+    # ERCOT (all-zero STATE_RPS_FLOORS — no row either way); every other ISO
+    # incl. PJM carries a row since the FF-1E-policy refresh, so the
+    # suppression is live there (stale-comment fix, FFR-6B §5.4). Suppresses
+    # the K-row per-region grain (miso_rps_compliance_regions) identically.
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
+    # FFR-7B Arm 2 (FFR-6B E-1; owner decision D-22(a), sitting Addendum
+    # V.6). GATED default OFF — byte-identical off; forecast-mode, MISO-only
+    # arming in runner.py (rule 25 [R-ISO-SCOPE]: the four other RPS ISOs'
+    # single ISO-wide row is arithmetically exact under free intra-ISO REC
+    # trade, FFR-6B §2.1). When armed, the single MISO-wide RPS row is
+    # REPLACED by K per-state compliance-region rows (one per binding state
+    # standard — MISO_RPS_COMPLIANCE_REGIONS, cited constants), each with its
+    # statute's eligibility mask over zones (MCL 460.1029 restricts Michigan
+    # to in-state systems), its obligated-load RHS and its own ACP escape.
+    # THE ROWS' ONLY OUTPUT IS A PRICE: each row's dual is that compliance
+    # market's REC price, consumed per-zone by the capacity screens
+    # (policy.rps.rps_credit_for_zone). E-1 NEVER ACQUIRES A BUILD LIMB
+    # (FFR-6B §5.3) — a force-build limb would stack against the FFR-5E
+    # procurement channel, the rule-19 [R-ONE-MECH] failure FFR-5B refused.
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key; an
+    # armed run is a distinct scenario with a distinct key).
+    miso_rps_compliance_regions: bool = False
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
     h2_available_year: int = 2035  # was 2032.
     # Source: engineering judgment. §45V credit terminates for construction

@@ -105,6 +105,15 @@ class DispatchSpec:
     # row. UNSET (backcast — rps disabled; or no active row) omits the key, so
     # the LP key set is unchanged and the row stays wind+solar-only.
     rps_eligible_fuels: Any = UNSET
+    # K-row per-compliance-region RPS grain (FFR-7B Arm 2, GATED
+    # miso_rps_compliance_regions, MISO forecast only): the (K, n_zones)
+    # eligibility mask, (K, n_zones) RHS weights and (K,) ACP prices from
+    # policy.rps.build_rps_region_arrays. UNSET (gate off / every other ISO)
+    # omits the keys, so the dispatch key set — and every unarmed LP — is
+    # unchanged (byte-identity).
+    rps_region_zone_mask: Any = UNSET
+    rps_region_obligation_frac: Any = UNSET
+    rps_region_acp_price: Any = UNSET
     # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
     # symmetric -ttc.
     ttc_import: Any = UNSET

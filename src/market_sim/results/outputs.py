@@ -211,7 +211,20 @@ def to_parquet(
         "has_flows": self.flows is not None,
         "has_emissions": self.emissions is not None,
         "has_demand": demand is not None,
-        "rps_shadow_price": self.rps_shadow_price,
+        # Scalar (legacy single RPS row) stored verbatim; the K-row grain's
+        # per-zone vector (FFR-7B Arm 2) as a JSON list — from_parquet
+        # restores the ndarray. The per-region raw duals ride alongside so a
+        # cached armed solve keeps its diagnostics.
+        "rps_shadow_price": (
+            self.rps_shadow_price.tolist()
+            if isinstance(self.rps_shadow_price, np.ndarray)
+            else self.rps_shadow_price
+        ),
+        "rps_region_duals": (
+            self.rps_region_duals.tolist()
+            if self.rps_region_duals is not None
+            else None
+        ),
     }
 
     schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
@@ -325,7 +338,18 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         build_time=meta["build_time"],
         solve_time=meta["solve_time"],
         emissions=array("emissions") if has_emissions else None,
-        rps_shadow_price=meta.get("rps_shadow_price"),
+        # A list is the K-row grain's per-zone vector (stored via tolist());
+        # a scalar/None passes through unchanged.
+        rps_shadow_price=(
+            np.asarray(meta["rps_shadow_price"], dtype=float)
+            if isinstance(meta.get("rps_shadow_price"), list)
+            else meta.get("rps_shadow_price")
+        ),
+        rps_region_duals=(
+            np.asarray(meta["rps_region_duals"], dtype=float)
+            if meta.get("rps_region_duals") is not None
+            else None
+        ),
     )
 
 

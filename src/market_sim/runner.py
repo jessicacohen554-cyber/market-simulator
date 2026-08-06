@@ -138,6 +138,7 @@ from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
 from market_sim.policy.rps import (
+    build_rps_region_arrays,
     get_rps_acp,
     get_rps_eligible_fuels,
     get_rps_target,
@@ -1488,9 +1489,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         else:
             # The RPS shadow price from the prior year's dispatch raises the
             # expected revenue of clean technologies in the new-entry screen.
+            # Scalar (legacy row) or per-zone vector (K-row grain, FFR-7B
+            # Arm 2 — an ndarray has no truth value, so test ndim, not
+            # truthiness).
             prior_rps_shadow = 0.0
-            if prior_results is not None and prior_results.get("rps_shadow_price"):
-                prior_rps_shadow = prior_results["rps_shadow_price"]
+            if prior_results is not None:
+                _prior_rs = prior_results.get("rps_shadow_price")
+                if _prior_rs is not None and (np.ndim(_prior_rs) > 0 or _prior_rs):
+                    prior_rps_shadow = _prior_rs
             # Gas price and carbon price for the year feed the new-entry
             # screen so gas CC is charged its expected variable fuel cost.
             # The annual (seasonality-free) delivered gas price keeps
@@ -2047,10 +2053,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # (all-zero STATE_RPS_FLOORS entry — no row either way); PJM DOES
             # carry a row (0.185→0.33 since the FF-1E-policy refresh), so the
             # suppression is live there (stale-comment fix, FFR-6B §5.4).
+            # Per-state compliance-region grain (FFR-7B Arm 2 / FFR-6B E-1),
+            # GATED miso_rps_compliance_regions (default OFF), forecast-mode,
+            # MISO-only arming (rule 25 [R-ISO-SCOPE] — the four other RPS
+            # ISOs' single ISO-wide row is arithmetically exact under free
+            # intra-ISO REC trade, FFR-6B §2.1, and stays byte-identical).
+            # When armed, the K per-region rows REPLACE the ISO-wide row
+            # (rps_target stays None — one row family per phenomenon,
+            # rule 19). The CES suppression above applies to the region rows
+            # exactly as to the ISO-wide row: under a pure-federal
+            # counterfactual no state row of either grain is built.
+            rps_region_arrays = None
             if config.rps_enabled and not federal_ces_suppresses_state_rps(config):
-                rps_target = get_rps_target(iso, year)
-                rps_acp_price = get_rps_acp(iso)
-                rps_eligible_fuels = get_rps_eligible_fuels(iso)
+                if (
+                    iso == "MISO"
+                    and config.mode == "forecast"
+                    and getattr(config, "miso_rps_compliance_regions", False)
+                ):
+                    rps_region_arrays = build_rps_region_arrays(iso, year, zone_names)
+                if rps_region_arrays is None:
+                    rps_target = get_rps_target(iso, year)
+                    rps_acp_price = get_rps_acp(iso)
+                    rps_eligible_fuels = get_rps_eligible_fuels(iso)
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
@@ -2297,6 +2321,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # row is off or default (byte-identity; FFR-7B Arm 1).
                 rps_eligible_fuels=(
                     rps_eligible_fuels if rps_eligible_fuels is not None else UNSET
+                ),
+                # K-row compliance-region grain (FFR-7B Arm 2): omitted
+                # (UNSET) off the gate, so the dispatch-kwargs key set — and
+                # with it every unarmed LP — is unchanged (byte-identity).
+                rps_region_zone_mask=(
+                    rps_region_arrays.eligible_zone_mask
+                    if rps_region_arrays is not None
+                    else UNSET
+                ),
+                rps_region_obligation_frac=(
+                    rps_region_arrays.obligation_frac
+                    if rps_region_arrays is not None
+                    else UNSET
+                ),
+                rps_region_acp_price=(
+                    rps_region_arrays.acp_price
+                    if rps_region_arrays is not None
+                    else UNSET
                 ),
                 # Bound storage foresight to within-day arbitrage when the
                 # config asks for it (methodology spec §1.3); previously
@@ -2629,6 +2671,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 storage.energy_cap,
             )
             result = p1_result
+            # K-row compliance-region diagnostics (FFR-7B Arm 2): each
+            # region's dual IS that compliance market's REC price — logged
+            # per year so an armed measurement can quote the per-region
+            # duals without replaying the solve.
+            if rps_region_arrays is not None and result.rps_region_duals is not None:
+                logger.info(
+                    "%s %d: RPS compliance-region duals ($/MWh): %s",
+                    iso,
+                    year,
+                    {
+                        label: round(float(d), 4)
+                        for label, d in zip(
+                            rps_region_arrays.labels, result.rps_region_duals
+                        )
+                    },
+                )
 
             # === LEGACY: P2 Commitment Screen (ARCHIVED -- last resort) ===
             # P2 (opt-in, CLAUDE.md "Dispatch & Commitment"): screen CC/CT
@@ -3140,7 +3198,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             planned_additions=planned_additions,
             procured_vre_additions=procured_vre_additions,
             mc_cost=mc_cost,
-            rps_shadow_price=result.rps_shadow_price or 0.0,
+            # Scalar (legacy row) or per-zone vector (K-row grain, FFR-7B
+            # Arm 2) — an ndarray has no truth value, so gate on ndim.
+            rps_shadow_price=(
+                result.rps_shadow_price
+                if result.rps_shadow_price is not None
+                and np.ndim(result.rps_shadow_price) > 0
+                else (result.rps_shadow_price or 0.0)
+            ),
             retrofit_log=retrofit_log,
             # AS-eligible (storage) fleet power for the AS-revenue saturation
             # in next year's capacity screens (capacity.evolve_fleet).
@@ -3299,7 +3364,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 float(sum(u.power_cap_mw for u in storage_units)), 3
             ),
             storage_firm_mw=round(float(prior_results["storage_firm_mw"]), 3),
-            rps_dual=round(float(result.rps_shadow_price or 0.0), 6),
+            # Scalar dual verbatim (legacy row); under the K-row grain the
+            # ledger scalar is the MAX region dual (the binding compliance
+            # market's REC price) — the full per-region vector is logged at
+            # solve time and carried on DispatchResult.rps_region_duals.
+            rps_dual=round(
+                float(
+                    np.max(result.rps_shadow_price)
+                    if result.rps_shadow_price is not None
+                    and np.ndim(result.rps_shadow_price) > 0
+                    else (result.rps_shadow_price or 0.0)
+                ),
+                6,
+            ),
             storage_additions=_storage_additions_since(
                 storage_units, prior_storage_ids, zone_names
             ),

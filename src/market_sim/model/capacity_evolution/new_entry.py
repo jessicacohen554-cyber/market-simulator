@@ -67,6 +67,7 @@ from market_sim.data.fleet import Generator
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.policy.federal_ces import effective_eac_price_for_tech
+from market_sim.policy.rps import rps_credit_for_zone
 from market_sim.policy.ira import (
     apply_ira_credits_to_lcoe,
     ccus_45q_credit_per_mwh,
@@ -116,6 +117,27 @@ _NEW_ENTRY_TECHS: tuple[str, ...] = (
 # Generator objects. Variable-output renewables must follow a CF profile.
 # Offshore wind is NOT here: it enters as a zero-MC Generator (Option A).
 _RENEWABLE_NEW_FUELS: frozenset[str] = frozenset({"wind", "solar"})
+
+
+def _candidate_zone_idx(
+    tech: str, iso: str, zone_names: list[str] | None
+) -> int | None:
+    """Return a VRE candidate's build-zone LP index, or ``None`` unknown.
+
+    The zone the K-row RPS credit is resolved at (FFR-7B Arm 2): the same
+    ``get_renewable_zone`` target the shape-aware revenue screen and the RA
+    payment already use — one notion of the candidate's location. ``None``
+    (no zone ordering supplied, or the target zone is not in it) makes
+    ``rps_credit_for_zone`` degrade to 0.0 for a vector credit — never a
+    broadcast max.
+    """
+    if not zone_names:
+        return None
+    target_zone = get_renewable_zone(iso, tech)
+    if target_zone in zone_names:
+        return zone_names.index(target_zone)
+    return None
+
 
 # Emerging-technology candidates, mapped to the ScenarioConfig field that
 # names the calendar year each first becomes available for new entry.
@@ -719,7 +741,7 @@ def apply_economic_new_entry(
     year: int,
     config: ScenarioConfig,
     iso: str,
-    rps_shadow_price: float = 0.0,
+    rps_shadow_price: "float | np.ndarray" = 0.0,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -779,9 +801,13 @@ def apply_economic_new_entry(
         year: Simulation year.
         config: Scenario config.
         iso: ISO identifier, supplying the queue caps and build zone.
-        rps_shadow_price: Prior year's RPS shadow price in $/MWh. Credited
-            to RPS-eligible renewables as an attribute payment, taken as
-            the max of it and the exogenous EAC (the two do not stack).
+        rps_shadow_price: Prior year's RPS shadow price in $/MWh — a scalar
+            (legacy single ISO-wide row) or a per-zone ``(n_zones,)`` vector
+            (K-row compliance-region grain, FFR-7B Arm 2), resolved at each
+            candidate's build zone via ``policy.rps.rps_credit_for_zone``.
+            Credited to RPS-eligible renewables as an attribute payment,
+            taken as the max of it and the exogenous EAC (the two do not
+            stack).
         cumulative: Global cumulative deployment, used to discount each
             candidate's capex along its Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price, used to charge gas CC
@@ -931,8 +957,19 @@ def apply_economic_new_entry(
             # highest single buyer among the legacy exogenous EAC, the
             # federal CES premium × tech credit fraction (W2-A plan §5.3 —
             # this is what lets hydrogen_ct/hydrogen_ccgt and gas_cc_ccs
-            # candidates earn the premium), and the RPS shadow price.
-            rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
+            # candidates earn the premium), and the RPS shadow price — the
+            # latter resolved at the candidate's BUILD ZONE under the K-row
+            # compliance-region grain (FFR-7B Arm 2: a scalar passes
+            # through; a per-zone vector indexes by zone, so an ineligible
+            # zone's candidate is never credited another region's dual).
+            rps_for_tech = (
+                rps_credit_for_zone(
+                    rps_shadow_price,
+                    _candidate_zone_idx(tech, iso_config.name, zone_names),
+                )
+                if tech in _RENEWABLE_NEW_FUELS
+                else 0.0
+            )
             effective_attribute_price = max(
                 effective_eac_price_for_tech(config, tech, year), rps_for_tech
             )
@@ -1107,8 +1144,19 @@ def apply_economic_new_entry(
         # Attribute payment: the highest single buyer among the legacy
         # exogenous EAC, the federal CES premium × tech credit fraction
         # (W2-A plan §5.3 — this is what lets a nuclear_smr candidate earn
-        # the premium), and the RPS shadow price — never a sum.
-        rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
+        # the premium), and the RPS shadow price — never a sum. The RPS
+        # credit is resolved at the candidate's BUILD ZONE under the K-row
+        # compliance-region grain (FFR-7B Arm 2 / FFR-6B §3.2: a broadcast
+        # scalar would credit MISO-East's dual to an Arkansas candidate and
+        # rebuild the defect the row grain fixed).
+        rps_for_tech = (
+            rps_credit_for_zone(
+                rps_shadow_price,
+                _candidate_zone_idx(tech, iso_config.name, zone_names),
+            )
+            if tech in _RENEWABLE_NEW_FUELS
+            else 0.0
+        )
         effective_attribute_price = max(
             effective_eac_price_for_tech(config, tech, year), rps_for_tech
         )
@@ -1189,7 +1237,12 @@ def apply_economic_new_entry(
                 "energy_revenue_per_mw_yr": float(energy_only_rev),
                 "attribute_revenue_per_mw_yr": float(_attr_rev),
                 "attribute_price": float(effective_attribute_price),
-                "rps_shadow_price": float(rps_shadow_price),
+                # Scalar dual recorded verbatim (legacy); under the K-row
+                # grain the vector is recorded as the credit THIS tech's
+                # build zone resolves to.
+                "rps_shadow_price": float(
+                    rps_shadow_price if np.ndim(rps_shadow_price) == 0 else rps_for_tech
+                ),
                 # Measured VRE capacity payment (BLK-7): $0 unless the
                 # entry_vre_capacity_revenue gate is armed in a capacity-
                 # market ISO.

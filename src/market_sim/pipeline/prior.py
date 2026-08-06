@@ -43,7 +43,10 @@ class PriorYearResults:
     peak_demand: float
     planned_additions: list
     mc_cost: "np.ndarray"
-    rps_shadow_price: float
+    # Scalar (legacy single ISO-wide RPS row) or per-zone (n_zones,) vector
+    # (K-row compliance-region grain, FFR-7B Arm 2 — consumers resolve it at
+    # a candidate's/unit's zone via policy.rps.rps_credit_for_zone).
+    rps_shadow_price: "float | np.ndarray"
     retrofit_log: list[dict]
     storage_power_mw: float
     # Endogenous AS-revenue rates DERIVED from this year's co-opt reserve duals
