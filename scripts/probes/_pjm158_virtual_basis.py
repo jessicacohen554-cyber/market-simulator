@@ -137,6 +137,19 @@ def main() -> None:
         d = da - rt
         print(f"  mean DA-RT {d.mean():+6.2f} $/MWh   MAE {np.abs(d).mean():6.2f}   "
               f"hours DA>RT {int((d > 0).sum()):5d} / 8760")
+        # LEVEL vs SHAPE. ``a_mid`` clears at RT's hour-by-hour SHAPE carrying
+        # DA's MEAN, so it sits exactly between the two anchors:
+        #   a_mid − a_da  = shape/dispersion (same mean, different shape)
+        #   a_rt  − a_mid = level            (same shape, different mean)
+        # Cross-check: the level leg must equal −mean(DA−RT) × the measured
+        # gain; it does, to ~1 % (2024: 0.256 × 462.8 MW × 8760 h = 1.04 TWh).
+        a_mid = eval_net_fast(hours, rt + d.mean()).sum() / TWH
+        shape_term = a_mid - a_da
+        level_term = a_rt - a_mid
+        print(f"  basis split: LEVEL {level_term:+6.3f} TWh   "
+              f"SHAPE/dispersion {shape_term:+6.3f} TWh"
+              f"   (mid anchor {a_mid:+.3f}; sum {level_term + shape_term:+.3f} "
+              f"vs basis {basis:+.3f})")
         print(f"  model dual: mean ${lam_m.mean():6.2f}  vs DA ${da.mean():6.2f}  "
               f"vs RT ${rt.mean():6.2f};  MAE vs RT {np.abs(lam_m - rt).mean():5.2f}")
 
