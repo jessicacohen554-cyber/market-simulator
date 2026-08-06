@@ -1,0 +1,220 @@
+{
+ "cache_dir": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified/ERCOT/49eac64f146b3460",
+ "years": {
+  "2022": {
+   "gas_st": {
+    "n": 90,
+    "mw": 21885.8,
+    "events": {
+     "decided": 45,
+     "executed": 45
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 17.9,
+     "going_forward_cost": 35.0,
+     "energy_margin": 17.9,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 52.715,
+     "screen_price_max_usd_mwh": 5000.0,
+     "reserve_signal_mean_usd_mwh": 1.126,
+     "availability_mean": 0.595,
+     "mc_mean_usd_mwh": 44.261
+    }
+   }
+  },
+  "2024": {
+   "coal": {
+    "n": 40,
+    "mw": 13963.9,
+    "events": {
+     "entry_capped": 40
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 0.17,
+     "going_forward_cost": 58.5,
+     "energy_margin": 0.17,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 10.49,
+     "screen_price_max_usd_mwh": 24.412,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.795,
+     "mc_mean_usd_mwh": 23.382
+    }
+   },
+   "gas_cc": {
+    "n": 160,
+    "mw": 37241.0,
+    "events": {
+     "entry_capped": 160
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 3.79,
+     "going_forward_cost": 30.0,
+     "energy_margin": 3.79,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 10.49,
+     "screen_price_max_usd_mwh": 24.412,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.867,
+     "mc_mean_usd_mwh": 19.49
+    }
+   },
+   "gas_ct": {
+    "n": 359,
+    "mw": 11413.2,
+    "events": {
+     "entry_capped": 359
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 0.43,
+     "going_forward_cost": 21.0,
+     "energy_margin": 0.43,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 10.49,
+     "screen_price_max_usd_mwh": 24.412,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.805,
+     "mc_mean_usd_mwh": 26.415
+    }
+   },
+   "gas_st": {
+    "n": 5,
+    "mw": 353.6,
+    "events": {
+     "entry_capped": 5
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 1.17,
+     "going_forward_cost": 35.0,
+     "energy_margin": 1.17,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 10.49,
+     "screen_price_max_usd_mwh": 24.412,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.737,
+     "mc_mean_usd_mwh": 34.858
+    }
+   }
+  },
+  "2025": {
+   "coal": {
+    "n": 40,
+    "mw": 13963.9,
+    "events": {
+     "decided": 11,
+     "entry_capped": 29
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 0.04,
+     "going_forward_cost": 58.5,
+     "energy_margin": 0.04,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 9.544,
+     "screen_price_max_usd_mwh": 46.217,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.791,
+     "mc_mean_usd_mwh": 22.755
+    }
+   },
+   "gas_cc": {
+    "n": 161,
+    "mw": 40241.0,
+    "events": {
+     "entry_capped": 161
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 3.25,
+     "going_forward_cost": 30.0,
+     "energy_margin": 3.25,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 9.544,
+     "screen_price_max_usd_mwh": 46.217,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.872,
+     "mc_mean_usd_mwh": 16.227
+    }
+   },
+   "gas_ct": {
+    "n": 359,
+    "mw": 12984.2,
+    "events": {
+     "entry_capped": 359
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 0.28,
+     "going_forward_cost": 21.0,
+     "energy_margin": 0.28,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 9.544,
+     "screen_price_max_usd_mwh": 46.217,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.82,
+     "mc_mean_usd_mwh": 22.067
+    }
+   },
+   "gas_st": {
+    "n": 5,
+    "mw": 353.6,
+    "events": {
+     "entry_capped": 5
+    },
+    "bar_usd_per_kw_yr": {
+     "net_revenue": 0.73,
+     "going_forward_cost": 35.0,
+     "energy_margin": 0.73,
+     "reserve_uplift": 0.0,
+     "attribute_revenue": 0.0,
+     "capacity_revenue": 0.0,
+     "as_annual_credit": 0.0
+    },
+    "basis": {
+     "screen_price_mean_usd_mwh": 9.544,
+     "screen_price_max_usd_mwh": 46.217,
+     "reserve_signal_mean_usd_mwh": 0.0,
+     "availability_mean": 0.736,
+     "mc_mean_usd_mwh": 29.579
+    }
+   }
+  }
+ }
+}

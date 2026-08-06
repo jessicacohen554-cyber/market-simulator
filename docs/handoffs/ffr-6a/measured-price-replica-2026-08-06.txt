@@ -1,0 +1,5 @@
+2021 {'gas_ct_som_proxy': 945.1, 'gas_cc_som_proxy': 972.4, 'gas_st_hr10.5': 945.1, 'coal_som_mc': 1013.3, 'nuclear_mc10': 1094.5, 'p_mean': 148.19, 'gas_mean': 3.86}
+2022 {'gas_ct_som_proxy': 129.7, 'gas_cc_som_proxy': 176.4, 'gas_st_hr10.5': 129.7, 'coal_som_mc': 321.7, 'nuclear_mc10': 415.3, 'p_mean': 62.3, 'gas_mean': 6.43}
+2023 {'gas_ct_som_proxy': 216.4, 'gas_cc_som_proxy': 240.0, 'gas_st_hr10.5': 216.4, 'coal_som_mc': 234.1, 'nuclear_mc10': 306.5, 'p_mean': 48.36, 'gas_mean': 2.53}
+2024 {'gas_ct_som_proxy': 65.6, 'gas_cc_som_proxy': 86.7, 'gas_st_hr10.5': 65.6, 'coal_som_mc': 75.4, 'nuclear_mc10': 139.8, 'p_mean': 26.82, 'gas_mean': 2.25}
+2025 {'gas_ct_som_proxy': 47.0, 'gas_cc_som_proxy': 76.4, 'gas_st_hr10.5': 47.0, 'coal_som_mc': 97.2, 'nuclear_mc10': 181.6, 'p_mean': 32.49, 'gas_mean': 3.54}
