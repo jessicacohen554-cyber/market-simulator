@@ -5973,3 +5973,90 @@ registered: `2026-08-06-run173a-reconc-control` + `2026-08-06-run173b-event-cap-
   ercot149-gas-event-cap and ercot150a-control.
 
 Next shorthand: ercot-174.
+
+## 2026-08-06 — ercot-174 (the ercot-173-named UNIT-ATTRIBUTED successor; derive half owner-chartered under rule 23): the unit-attributed partial extract BUILT and PROVEN grain-only (BE-1/2/3), the unit-scoped composition BUILT and seam-proven (SP-1..SP-5), and then STOPPED BY ITS OWN PRE-REGISTERED AT-2 RULE BEFORE ANY SOLVE — the window and partial layers share units at 94–96 % of both-active bin-hours (ρ = 0.9381/0.9585/0.9606 vs a 0.5 stop bar), so the unit-scoped arm IS the rejected blanket arm; `FINDING-ercot173` §3's disjointness premise is REFUTED; NO LP RUN, none registered; keeper UNCHANGED (run168b)
+
+**Charter.** The handoff opening ercot-174 named the unit-attributed partial
+extract as "the ONLY admissible route left" to (a) the 2024 event-cap ceiling
+defect (ercot-172 ACTIONABLE) and (b) the ercot-167 SOC re-gate, and granted
+owner adjudication for the derive half. Pre-registration written and pushed
+**before the derive was built**:
+`docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md` — the
+attribution rule, the composition rule verbatim, the BE/SP proofs, the
+predictions, and two explicit STOP rules. Kill gates: `PRECOMMIT-ercot172` §5
+inherited verbatim.
+
+**Phase A — delivered and proven.** `derive_partial_outages.py --emit-units`
+writes `data/raw/campd-partial-outages-units.csv` from the *same detection
+pass* as the plant-grain file: same plateaus, same `derate_factor`s, now
+carrying which CAMPD units carry each one, their capacity, and the unit's own
+measured `ceiling_ratio`. The detector's frozen constants are imported verbatim
+and never re-valued (rule 23); the carry test is the plant detector's own
+depressed-ceiling test at unit grain, so **zero** new scalars. **BE-1** the
+unmodified deriver reproduces the committed 2018–2026 extract (sha256
+`8d6f049e…c736b5`); **BE-2** the plant-grain file written alongside the
+attribution is byte-identical to it; **BE-3** the companion's 909 rows project
+back onto the seven committed columns and reproduce all 501 plateaus exactly —
+asserted inside the deriver and in `tests/unit/data/test_outages.py`. 498/501
+plateaus resolve to ≥1 carrying unit.
+
+**Phase B — built, seam-proven, default-off.**
+`ercot_dam_availability_event_cap_unit_scoped`: `min(f_window, f_partial)` only
+where the two layers' CAMPD unit sets intersect at that hour, the incumbent
+product where disjoint; unattributed plateau ⇒ empty set ⇒ product (fail-safe).
+2024 capture triple (A default / B pre-cap / R armed): **SP-1** arm
+`== min(B, intended ceiling)` max dev 2.9e-08; **SP-2** 600 out-of-scope
+tranches byte-identical; **SP-3** C1 inert on 20 bins; **SP-4** the gate at its
+DEFAULT reproduces the incumbent product exactly (max dev 2.7e-08, 158 layered
+tranches); **SP-5** the bracket `product ≤ unit-scoped ≤ min` holds pointwise
+and the ceiling is two-valued. Seam movement 2024: 150 tranches, max +0.2500,
+**min 0.0000** — restore-only, empirically.
+
+**The verdict — AT-2 fired in all three years.** ρ, the share of the rejected
+blanket arm's total ceiling lift surviving unit scoping, is **0.9381 / 0.9585 /
+0.9606** against a 0.5 stop bar; the layers share a unit at **94.47 % /
+95.88 % / 96.17 %** of both-layers-active bin-hours. The unit-scoped arm is not
+a refinement of the blanket arm — it *is* the blanket arm, so its
+G-COAL148/G-SPAN/G-C3c failures would reproduce at ~95 % strength. The
+pre-registration required stopping before the solve; **no LP was run and no run
+is registered** (stated explicitly so the absence is not read as a skipped
+rule-15 registration). Robustness, reported and explicitly non-selecting: ρ
+stays 0.87–0.96 even demanding the unit be dead through the entire plateau; no
+threshold separates this arm from the rejected one, and none was hunted for.
+
+**What it refutes, and the collision it exposes.** `FINDING-ercot173` §3
+inferred — at composition grain, with no unit attribution then available — that
+the layers are "measurably DISJOINT at most overlaps". At unit grain that is
+**false**: the partial detector runs on plant-*aggregate* CF, so a ≥5-day
+single-unit stop is caught by the window layer at unit grain **and** re-read as
+a plateau from the collapsed plant ceiling — one outage, two instruments, one
+CEMS record (Limestone 2024: window `LIM1 01-01→01-08`, plateau `01-01→01-09`
+derate 0.416 attributed to LIM1 alone; the product holds the plant at 0.2152
+while LIM2, 51.7 % of it, ran normally). So the double-count is real and
+**pervasive**, and the ERCOT-148/149 product ceiling and its removal **cannot
+both stand** — no composition rule reconciles them. That is an owner
+adjudication, surfaced not decided; G-COAL148 has now forced it into the open
+twice, which is its job.
+
+**Riders.** `min()` is not even the right reconciliation at a shared-unit hour
+(the finer-grained instrument should win, not the numerically deeper one — that
+variant is strictly *more* restorative; named, not built). Neither composition
+closes the ercot-172 object: W A Parish h2827 unit-scoped 0.3630 vs same-hour
+CEMS 0.7843 — fault 3, the multi-week flat plateau used as an hourly ceiling,
+is untouched by any composition rule and is the only remaining structural
+route. P-NULL did **not** fire: the ercot-172 named plants *are* shared-unit
+overlaps and the h2827 restorations reproduce.
+
+**Gates.** G-DOF **PASS** (zero new fitted scalars, both halves); G-BIT **N/A**
+declared pre-solve (year-agnostic rule ⇒ G-SPAN); G-NEUT **not reached**. Every
+solve-dependent gate (G-SPAN, G-SHED, G-SPUR, G-C3c, G-COAL148, G-D2, LOYO)
+recorded **NOT REACHED**. **The ercot-167 SOC re-gate STAYS UNMET** — nothing
+landed — and the discharge path the handoff named is now **CLOSED**.
+
+**Carried forward, surfaced not decided:** (1) the ERCOT-148/149 ↔ double-count
+collision; (2) the finer-grain-wins variant; (3) ercot-172 fault 3 as the sole
+remaining structural route; (4) the run168b keeper still does not reproduce at
+current main (ercot-173 §5, untouched here — re-key vs re-solve at HEAD is an
+owner question). Keeper **UNCHANGED** at `2026-08-05-run168b-year-curves`;
+determination NOT-YET, fail set {C3a, C3b}.
+`results/calibration/FINDING-ercot174-unit-attributed-partial-outage-2026-08-06.md`.
