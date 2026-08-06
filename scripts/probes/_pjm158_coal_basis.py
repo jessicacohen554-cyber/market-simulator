@@ -238,3 +238,45 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------------------
+# §6 — the npl<=1 bench defect, scanned across every committed bench part.
+# ---------------------------------------------------------------------------
+def section_6_npl_defect() -> pd.DataFrame:
+    """Plants whose bench nameplate defaulted to 1 MW, by (ISO, year).
+
+    The per-plant ``campd`` blob is ``uint8 % of nameplate``, so a plant whose
+    ``npl`` lookup failed carries a destroyed hourly series while its ``c_ann``
+    stays correct.  Annual gates are unaffected; hourly/monthly reconstructions
+    from the blobs are not.  The cause is the same in every ISO: a plant that
+    retires inside the backcast window is absent from the operable vintage the
+    nameplate lookup reads.
+    """
+    import glob
+    import os
+
+    rows = []
+    root = "frontend/data/backcast/bench"
+    for iso in sorted(os.listdir(root)):
+        if not os.path.isdir(f"{root}/{iso}"):
+            continue
+        for f in sorted(glob.glob(f"{root}/{iso}/*.json.gz")):
+            year = os.path.basename(f).split(".")[0]
+            b = json.load(gzip.open(f))["bench"]
+            bad = [
+                (pid, r["name"], float(r.get("c_ann") or 0.0))
+                for pid, r in b["plants"].items()
+                if float(r.get("npl", 0)) <= 1 and float(r.get("c_ann") or 0.0) > 0.05
+            ]
+            if bad:
+                rows.append(
+                    {
+                        "iso": iso,
+                        "year": year,
+                        "plants": len(bad),
+                        "twh_stranded": round(sum(x[2] for x in bad), 2),
+                        "names": ", ".join(sorted(x[1] for x in bad)),
+                    }
+                )
+    return pd.DataFrame(rows)

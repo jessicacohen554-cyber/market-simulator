@@ -74,14 +74,15 @@ the three candidate causes the handoff named:
 
 ### §1.1 — a real bench defect found on the way (hourly only, not `c_ann`)
 
-Three PJM coal plants carry **`npl = 1 MW`** in the bench because the nameplate
-lookup ran against an operable vintage that no longer contains them:
+Three PJM **coal** plants carry **`npl = 1 MW`** in the bench because the
+nameplate lookup ran against an operable vintage that no longer contains them
+(a fourth, `384` = **Joliet 29**, IL, is `ST_GAS` and strands a further 0.54 TWh):
 
-| bench id | plant | state | note |
-|---|---|---|---|
-| 2866 | **W H Sammis** | OH | retired 2023 |
-| 3122 | **Homer City Generating Station** | PA | 2,012 MW BIT, retired |
-| 10678 | **AES Warrior Run Cogeneration** | MD | coal cogen |
+| bench id | plant | state | group | 2022 `c_ann` TWh |
+|---|---|---|---|---:|
+| 2866 | **W H Sammis** | OH | COAL_BIT | 4.944 |
+| 3122 | **Homer City Generating Station** | PA | COAL_BIT | 3.165 |
+| 10678 | **AES Warrior Run Cogeneration** | MD | COAL_BIT | 1.222 |
 
 Their `c_ann` is correct, so **`coal_cems`, `classFull` and every annual gate
 are unaffected**. But the per-plant hourly `campd` blob is `uint8 % of
@@ -97,6 +98,26 @@ panel** — is running on a series that is 6.3 % short in 2022 and 2.2 % short i
 coal. *This does not re-open the CC object* (which this session is barred from
 re-testing and did not test); it is logged as a bench-data defect for whoever
 next reads those blobs.
+
+**It is a CROSS-ISO bench-builder defect, not a PJM one.** Scanning every
+committed bench part for plants with `npl ≤ 1 MW` and `c_ann > 0.05 TWh`:
+
+| ISO | year | plants | TWh stranded in the hourly blob |
+|---|---|---:|---:|
+| **PJM** | 2022 | 4 | **9.87** |
+| PJM | 2023 | 4 | 3.26 |
+| PJM | 2024 | 1 | 0.32 |
+| MISO | 2023 / 2024 / 2025 | 2 / 2 / 1 | 2.77 / 1.79 / 1.60 |
+| NEISO | 2022 / 2023 / 2024 | 1 / 1 / 1 | 1.66 / 1.34 / 1.27 |
+| CAISO | 2023 | 1 | 0.29 |
+
+The pattern is the same everywhere — a plant that retires inside the backcast
+window drops out of the operable vintage the nameplate lookup reads, and
+defaults to 1 MW. Annual gates are unaffected in every ISO; **hourly/monthly
+reconstructions from `bench.plants[*].campd` are not.** Reported, not fixed:
+repairing the bench builder is outside this session's charter, and no verdict
+is transferred between ISOs (rule 25 — this is a shared data-builder defect,
+not a mechanism verdict).
 
 ---
 
