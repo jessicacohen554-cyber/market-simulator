@@ -268,6 +268,26 @@ Three consequences:
    SUPPLY** — and pjm-105's own results table records that adopting it moved
    2024 `CC_REGULAR` from **+9.07 → −1.78 TWh**, which is why it was adopted.
 
+### §4.1 — a correction to pjm-157's deviation numbers
+
+pjm-157 §1.1 reported the model's deviation from the anchor as
+**+8.13 / +7.50 / −2.23 TWh**. Those were computed with the anchor carried on
+the *opposite* sign convention from the model (`7.45 − (−0.68) = 8.13`), so the
+two were **added** rather than differenced. On one consistent convention the
+deviations are:
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| pjm-157 as published | +8.13 | +7.50 | −2.23 |
+| **corrected (this session)** | **−6.70** | **−4.93** | **+0.70** |
+
+The direction of pjm-157's conclusion is unaffected — the layer does clear
+materially away from its anchor in the tuned years — but the effect is **1.4 /
+2.6 / 1.5 TWh smaller** than reported, and 2025's is small enough that only
+2023 and 2024 carry a material deviation. The handoff's P1 arithmetic is
+unaffected: it used the model's own cleared volume (7.45 / 6.55 / −0.91), not
+the deviation.
+
 **Caveat, stated plainly.** The anchor is sensitive to the reference price, which
 is itself part of the finding: across PJM's published hubs the same curve's
 annual net spans **12.7–24.4 TWh** (2024: EASTERN −1.5, AEP-DAYTON −6.3, WESTERN
