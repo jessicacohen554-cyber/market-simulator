@@ -87,16 +87,33 @@ def check_solvability() -> dict:
         for p in RENEW_DIR.glob(RENEW_GLOB)
         if (m := re.search(r"PJM_(\d{4})_renewable_capacity\.csv$", p.name))
     )
-    # The demand-profile artifact is parquet and this probe is stdlib-only, so
-    # its coverage is taken from the register's measured statement rather than
-    # re-read here (docs/holdout-data-equivalency-register-2026-07.md §PJM:
-    # "MISSING 2018-2020 (cross-ISO F3 blocker)"; 2021-2025 present).
-    demand_years = [2021, 2022, 2023, 2024, 2025]
+    # THE DEMAND DRIVER IS TESTED, NOT ASSUMED (pjm-160). This check previously
+    # copied the register's statement — "eia_demand_profiles.parquet MISSING
+    # 2018-2020, the cross-ISO F3 blocker" — and reported 2019 unsolvable on
+    # that basis. The statement is STALE: the demand-profiles parquet has been
+    # only a FALLBACK since every ISO gained a per-BA EIA-930 hourly adapter
+    # (``eia930.demand.DEMAND_LOADERS``), and PJM's extract covers 2018-2026, so
+    # ``load_demand('PJM', 2019)`` returns a full 8-zone x 8760 array today. The
+    # real pre-2021 gap was ``load_demand_meta`` — closed at the curation seam by
+    # ``curate_demand_profile.curate_pre_window``. Both are now called for real:
+    # an assumption is what produced the wrong answer, so the probe stops making
+    # one. (Requires the repo importable; stdlib-only elsewhere.)
+    def _demand_ok(yr: int) -> tuple[bool, str]:
+        try:
+            from market_sim.data.eia_loader import load_demand, load_demand_meta
+
+            load_demand("PJM", yr)
+            load_demand_meta("PJM", yr)
+            return True, ""
+        except Exception as exc:
+            return False, f"{type(exc).__name__}: {exc}"
+
+    demand_probe = {yr: _demand_ok(yr) for yr in (VALIDATION_YEAR, *LOCKED_YEARS)}
 
     out = {
         "calibration_reference_PJM_years": calref_years,
         "renewable_capacity_years": renew_years,
-        "demand_profile_years_per_register": demand_years,
+        "demand_probe": {y: {"ok": ok, "error": err} for y, (ok, err) in demand_probe.items()},
         "per_year": {},
     }
     for yr in (VALIDATION_YEAR, *LOCKED_YEARS):
@@ -105,8 +122,8 @@ def check_solvability() -> dict:
             missing.append("calibration_reference.json isos.PJM")
         if yr not in renew_years:
             missing.append(f"PJM_{yr}_renewable_capacity.csv")
-        if yr not in demand_years:
-            missing.append("eia_demand_profiles.parquet (load_demand)")
+        if not demand_probe[yr][0]:
+            missing.append(f"load_demand/load_demand_meta ({demand_probe[yr][1]})")
         out["per_year"][yr] = {
             "solvable": not missing,
             "missing": missing,
@@ -337,7 +354,11 @@ def main() -> None:
     print("=" * 74)
     print(f"  calibration_reference.json isos.PJM : {b1['calibration_reference_PJM_years']}")
     print(f"  PJM_<y>_renewable_capacity.csv      : {b1['renewable_capacity_years']}")
-    print(f"  eia_demand_profiles (per register)  : {b1['demand_profile_years_per_register']}")
+    for _y, _d in sorted(b1["demand_probe"].items()):
+        print(
+            f"  load_demand + _meta('PJM', {_y})     : "
+            + ("OK" if _d["ok"] else f"RAISES {_d['error'][:70]}")
+        )
     for yr, v in b1["per_year"].items():
         tag = "SOLVABLE" if v["solvable"] else "BLOCKED"
         print(f"  {yr}: {tag}")

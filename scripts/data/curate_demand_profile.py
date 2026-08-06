@@ -39,6 +39,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import EIA_930_DIR
 from scripts.lib.clean_io import validate_clean, write_clean
 
@@ -55,6 +56,13 @@ MAX_MEDIAN_RATIO: float = 5.0
 MODEL_ISOS: frozenset[str] = frozenset(
     {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"}
 )
+
+# Pre-window years the legacy extract does NOT carry, curated here from the
+# per-BA EIA-930 hourly extracts instead (see :func:`curate_pre_window`). The
+# span is the program's working span below the legacy file's 2021 floor: 2019
+# (locked-test tier) and 2020 (the validation ladder's bottom rung after the
+# owner's 2026-08-06 scope decision, which DROPPED 2018 and earlier).
+PRE_WINDOW_YEARS: tuple[int, ...] = (2019, 2020)
 
 
 def screen_physical_bounds(mw: np.ndarray) -> np.ndarray:
@@ -106,12 +114,123 @@ def repair_series(iso: str, year: int, g: pd.DataFrame) -> tuple[pd.DataFrame, i
     return out, int(bad.sum())
 
 
+def pre_window_series(iso: str, year: int) -> np.ndarray | None:
+    """Return the system demand (MW) for a pre-2021 ``(iso, year)``, or ``None``.
+
+    Sourced from the **per-BA EIA-930 hourly extract**
+    (``data/raw/eia-930-hourly/<BA> hourly.parquet``, which covers 2018-2026)
+    through ``eia930.demand``'s own per-ISO adapter — i.e. the exact series
+    :func:`market_sim.data.eia_loader.load_demand` already serves for these
+    years, screens and all. Reusing the adapter rather than re-reading the
+    frame here is what makes the curated pre-window partition consistent with
+    the demand the LP would dispatch against, instead of a second, parallel
+    reconstruction of it.
+
+    Returns ``None`` when the ISO has no per-BA extract covering the year.
+    """
+    from market_sim.data.eia930.demand import DEMAND_LOADERS
+
+    adapter = DEMAND_LOADERS.get(iso)
+    if adapter is None:
+        return None
+    # The adapters share one signature; only CAISO reads these two keys, and
+    # both take the ScenarioConfig defaults (this is a data-curation pass, not
+    # a scenario, so no run-specific override can apply).
+    from market_sim.config.scenarios import ScenarioConfig
+
+    cfg = ScenarioConfig()
+    raw_mw, _interchange = adapter(
+        year,
+        {
+            "caiso_demand_clock_realign": cfg.caiso_demand_clock_realign,
+            "caiso_supply_consistent_demand": cfg.caiso_supply_consistent_demand,
+        },
+    )
+    return raw_mw
+
+
+def curate_pre_window() -> list:
+    """Write ``demand-profile`` partitions for :data:`PRE_WINDOW_YEARS`.
+
+    THE F3 GAP, STATED PRECISELY. The legacy ``eia_demand_profiles.parquet``
+    starts at 2021 for every ISO, and so does its ``eia_demand_meta.parquet``
+    summary. The *hourly demand driver* has not depended on that file since
+    every ISO gained a per-BA extract adapter — ``load_demand(iso, 2019)``
+    works today for all six — but :func:`load_demand_meta` still reads the
+    legacy summary whenever no clean partition exists, so it raises
+    ``ValueError: No EIA-930 data for ISO '<iso>' in year 2019``. That single
+    raise is what blocks ``build_calibration_reference._demand_totals``, and
+    through it the ``calibration_reference.json`` block and
+    ``<ISO>_<year>_renewable_capacity.csv`` for every pre-2021 year.
+
+    Writing the partition here closes it at the curation seam:
+    ``load_demand_meta`` prefers the clean partition, recomputes
+    peak/min/avg/total from it, and never reaches the legacy summary. ``raw/``
+    is untouched (it is immutable, CLAUDE.md), no new raw artifact is invented,
+    and the pre-window meta is by construction the summary of the *same* series
+    ``load_demand`` serves — which the legacy 2021-2025 summary is not
+    (rule 14 ``[R-ACCURATE]``: the accurate source wins).
+
+    Rule 22: this is data preparation, not a spend. Building the partition
+    solves, scores and registers nothing; the holdout freeze's
+    ``frozen_operations`` are solve/score/registration and its ``not_frozen``
+    list names data intake explicitly.
+    """
+    written = []
+    for year in PRE_WINDOW_YEARS:
+        for iso in sorted(MODEL_ISOS):
+            mw = pre_window_series(iso, year)
+            if mw is None or len(mw) != HOURS_PER_YEAR or np.isnan(mw).any():
+                print(
+                    f"  [skip ] {iso} {year}: no usable per-BA hourly series "
+                    "— partition not written"
+                )
+                continue
+            bad = screen_physical_bounds(mw)
+            repaired_mw = repair_by_interpolation(mw, bad)
+            total = repaired_mw.sum()
+            frame = pd.DataFrame(
+                {
+                    "iso": iso,
+                    "year": int(year),
+                    "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
+                    "raw_mw": repaired_mw,
+                    "normalized": repaired_mw / total if total > 0 else np.nan,
+                    "repaired": bad,
+                }
+            )
+            path = write_clean(
+                frame,
+                "demand-profile",
+                iso=iso,
+                year=int(year),
+                source="data/raw/eia-930-hourly/<BA> hourly.parquet",
+                extra_provenance={
+                    "n_repaired_hours": int(bad.sum()),
+                    "basis": "per-BA EIA-930 hourly extract (load_demand adapter)",
+                },
+            )
+            validate_clean(path)
+            written.append(path)
+            print(
+                f"  [write] {iso} {year}: pre-window partition from the per-BA "
+                f"extract ({int(bad.sum())} hour(s) repaired, "
+                f"peak {repaired_mw.max():,.0f} MW, "
+                f"total {total / 1e6:,.1f} TWh)"
+            )
+    return written
+
+
 def curate_all() -> list:
     """Screen + repair every (iso, year) series; write clean Parquet for modeled ISOs.
 
     Returns the list of clean Parquet paths written. Prints a report of every
     (iso, year) series the physical-bounds screen flagged, including
     non-modeled ISOs (SPP) that are screened but not written.
+
+    Covers two sources: the legacy raw extract (2021-2025, repaired in place at
+    this seam) and the pre-window years the legacy extract omits (see
+    :func:`curate_pre_window`).
     """
     if not _RAW_FILE.is_file():
         print(f"no raw demand-profiles extract at {_RAW_FILE}; nothing to curate")
@@ -140,6 +259,9 @@ def curate_all() -> list:
         )
         validate_clean(path)
         written.append(path)
+
+    print(f"\npre-window years ({', '.join(str(y) for y in PRE_WINDOW_YEARS)})")
+    written.extend(curate_pre_window())
     return written
 
 
