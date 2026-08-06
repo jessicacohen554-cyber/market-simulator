@@ -356,6 +356,7 @@ def run_year(
     coal_perplant_offer_level: bool = False,
     coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
+    nyiso_solar_market_generator_basis: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
     storage_daily_cycling: bool = False,
@@ -1053,6 +1054,15 @@ def run_year(
         # availability only, never an offer/price change (rule #12 class of
         # the CAMPD outage windows).
         config = config.with_overrides(nysdec_peaker_rule_availability=True)
+    if nyiso_solar_market_generator_basis:
+        # NYISO front-of-meter solar capacity basis (rule 14 [R-ACCURATE]): the
+        # EIA-860 utility-scale NY population includes ~2 GW of distribution-
+        # connected community solar already netted out of the EIA-930 NYIS
+        # demand series used as load, so carrying it as grid supply double-
+        # counts it. Swap the capacity basis to NYISO's own Gold Book Table
+        # III-2a market-generator registry. Input only, never an offer/price
+        # change (rule 13 class of the CAMPD outage windows).
+        config = config.with_overrides(nyiso_solar_market_generator_basis=True)
     if oil_primary_bin_fuel:
         # Measured EIA-860 oil-primary fuel correction (plant-registry screen
         # unioned with the generator-level Energy-Source-1 majority screen);
