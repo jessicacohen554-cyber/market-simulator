@@ -86,6 +86,7 @@ def evolve_fleet(
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
     rps_shadow_price: "float | np.ndarray" = 0.0,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -174,6 +175,11 @@ def evolve_fleet(
             ``policy.rps.rps_credit_for_zone``) — passed to the economic
             retirement and new-entry screens as the endogenous attribute
             payment (taken as max with the exogenous EAC).
+        clean_attribute_price_by_fuel: Prior year's clean-tier row duals
+            mapped to per-(fuel, zone) credits
+            (``policy.clean_tiers.clean_credit_by_fuel``; FFR-7B Arm 3) —
+            composed into the SAME max(eac, rps) attribute doctrine at both
+            screens, never a sum. ``None`` (family off) is byte-identical.
         cumulative: Global cumulative deployment, passed to the new-entry
             screen so candidate capex follows a Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price for the year, passed to
@@ -518,6 +524,7 @@ def evolve_fleet(
             loss_tracker,
             peak_demand_used,
             rps_shadow_price=rps_shadow_price,
+            clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
@@ -698,6 +705,7 @@ def evolve_fleet(
             config,
             config.iso,
             rps_shadow_price=rps_shadow_price,
+            clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
             cumulative=cumulative,
             gas_price_per_mmbtu=gas_price_per_mmbtu,
             carbon_price=carbon_price,

@@ -197,6 +197,7 @@ def reference_config(
     entry_screen_diagnostics: bool = False,
     caiso_nqc_accreditation: bool = False,
     miso_rps_compliance_regions: bool = False,
+    miso_clean_tier_rows: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -255,6 +256,13 @@ def reference_config(
     registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed
     leg keeps its historical key and an armed leg keys distinctly. Default
     ``False``: the arming posture is an OWNER decision, not this runner's.
+
+    ``miso_clean_tier_rows`` (FFR-7B Arm 3 / FFR-6B E-2) adds the MN
+    carbon-free + MI clean tier row family on the Arm-2 machinery (REQUIRES
+    ``miso_rps_compliance_regions`` — the runner fails loud otherwise).
+    Registered cache-optional at ``False``. ARMING AS A DEFAULT IS BLOCKED
+    pending the §45U-vs-clean-dual composition (see the ScenarioConfig
+    field comment); bounded default-off probe pairs are its only use.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -296,6 +304,7 @@ def reference_config(
         entry_screen_diagnostics=entry_screen_diagnostics,
         caiso_nqc_accreditation=caiso_nqc_accreditation,
         miso_rps_compliance_regions=miso_rps_compliance_regions,
+        miso_clean_tier_rows=miso_clean_tier_rows,
         # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
         # bundles run cross-year warm start OFF, so a killed-and-resumed
         # forecast reproduces from its own cache. Passed explicitly — and
@@ -825,6 +834,19 @@ def main(argv: list[str] | None = None) -> int:
             "with an unarmed control. No-op in every other ISO (rule 25)."
         ),
     )
+    ap.add_argument(
+        "--miso-clean-tier-rows",
+        action="store_true",
+        help=(
+            "FFR-7B Arm 3 arm (MISO only, DEFAULT OFF; requires "
+            "--miso-rps-compliance-regions): add the MN carbon-free + MI "
+            "clean tier row family (MISO_CLEAN_TIER_REGIONS, cited) on the "
+            "Arm-2 K-row machinery, each row with its own $30 feasibility "
+            "escape. ARMING AS A DEFAULT IS BLOCKED pending the "
+            "§45U-vs-clean-dual composition (owner); bounded default-off "
+            "probe pairs only. Solve-affecting, distinct cache key."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -850,6 +872,7 @@ def main(argv: list[str] | None = None) -> int:
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         caiso_nqc_accreditation=args.caiso_nqc_accreditation,
         miso_rps_compliance_regions=args.miso_rps_compliance_regions,
+        miso_clean_tier_rows=args.miso_clean_tier_rows,
     )
     summary = solve_and_summarize(
         config,

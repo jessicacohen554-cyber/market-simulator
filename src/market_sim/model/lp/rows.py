@@ -142,6 +142,42 @@ def _resolve_rps_eligible_gen_idx(
     return gidx if gidx.size else None
 
 
+def _resolve_clean_region_gen_idx(
+    fleet: FleetArrays,
+    region_fuels: "tuple[tuple[str, ...], ...]",
+) -> "list[np.ndarray | None]":
+    """Resolve each clean-tier region's qualifying fuels to generator indices.
+
+    The clean-family sibling of :func:`_resolve_rps_eligible_gen_idx`, with
+    the ONE deliberate difference: NUCLEAR IS ADMITTED here. A clean/
+    carbon-free tier that counts nuclear is exactly this separate row family
+    (FFR-6B §6.3) — the renewable row's CX-6a refusal is what keeps nuclear
+    out of the REC dual, not out of clean tiers. Wind and solar are the LP's
+    zone columns and are counted by every region row directly, so only names
+    beyond ``_RPS_ROW_BASE_FUELS`` resolve here, against ``FUEL_TYPE_MAP``
+    (data-driven — the statutes genuinely differ: MN admits hydrogen and
+    biomass, MI admits qualified CCS gas). An unknown fuel name is a hard
+    error, never a silent drop.
+
+    Returns one index array (or ``None`` when no such generator exists in
+    the fleet) per region, aligned with ``region_fuels``.
+    """
+    fuel_idx = np.asarray(fleet.fuel_type_idx)
+    out: "list[np.ndarray | None]" = []
+    for fuels in region_fuels:
+        extra = [f for f in fuels if f not in _RPS_ROW_BASE_FUELS]
+        unknown = sorted(f for f in extra if f not in FUEL_TYPE_MAP)
+        if unknown:
+            raise ValueError(
+                f"unknown clean-tier qualifying fuel name(s) {unknown}: every "
+                "entry must resolve against FUEL_TYPE_MAP"
+            )
+        codes = np.array([FUEL_TYPE_MAP[f] for f in extra], dtype=int)
+        gidx = np.flatnonzero(np.isin(fuel_idx, codes))
+        out.append(gidx if gidx.size else None)
+    return out
+
+
 def _build_rps_region_rows(
     layout: VariableLayout,
     eligible_zone_mask: np.ndarray,
@@ -1130,6 +1166,9 @@ def build_constraints(
     rps_eligible_fuels: tuple[str, ...] | None = None,
     rps_region_zone_mask: np.ndarray | None = None,
     rps_region_obligation_frac: np.ndarray | None = None,
+    clean_region_zone_mask: np.ndarray | None = None,
+    clean_region_obligation_frac: np.ndarray | None = None,
+    clean_region_fuels: "tuple[tuple[str, ...], ...] | None" = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -1269,6 +1308,18 @@ def build_constraints(
         rps_region_obligation_frac: ``(K, n_zones)`` float per-(region,
             zone) RHS weights — within-zone obligated load share times the
             region's statutory target.
+        clean_region_zone_mask: ``(K2, n_zones)`` bool clean/carbon-free
+            tier eligibility mask (FFR-7B Arm 3, MISO West/East) — a SECOND
+            independent row family on the same region machinery, appended
+            after the RPS family; requires the RPS region family (the
+            model-level assembler enforces it). ``None`` (default) adds no
+            rows (byte-identical).
+        clean_region_obligation_frac: ``(K2, n_zones)`` float clean-tier
+            RHS weights.
+        clean_region_fuels: Per-region statutory qualifying fuel-name
+            tuples resolved to generator columns via
+            :func:`_resolve_clean_region_gen_idx` (nuclear ADMITTED —
+            FFR-6B §6.3; unknown names hard-error).
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -1754,6 +1805,36 @@ def build_constraints(
         del region_block
         row_lower = np.concatenate([row_lower, region_rhs])
         row_upper = np.concatenate([row_upper, np.full(k_regions, np.inf)])
+        # Optional clean/carbon-free tier family (FFR-7B Arm 3, FFR-6B E-2):
+        # a SECOND independent row family on the same machinery, appended
+        # directly after the RPS family (dual layout [... | mass_cap |
+        # rps K1 | clean K2 | reserve]). Its ACP escape columns occupy the
+        # region-major slots AFTER the RPS family's (acp_k0 = K1). A wind
+        # MWh satisfying both its renewable row and its clean row is CORRECT
+        # — two constraints, one MWh (FFR-6B §6.4); the one-certificate
+        # revenue composition happens at the capacity screens (max(), never
+        # sum), not here.
+        if clean_region_zone_mask is not None:
+            clean_block, clean_rhs = _build_rps_region_rows(
+                layout,
+                clean_region_zone_mask,
+                clean_region_obligation_frac,
+                demand,
+                acp_k0=k_regions,
+                region_gen_idx=_resolve_clean_region_gen_idx(fleet, clean_region_fuels),
+            )
+            k_clean = clean_block.shape[0]
+            blocks.append(clean_block)
+            del clean_block
+            row_lower = np.concatenate([row_lower, clean_rhs])
+            row_upper = np.concatenate([row_upper, np.full(k_clean, np.inf)])
+    elif clean_region_zone_mask is not None:
+        raise ValueError(
+            "clean_region_zone_mask (clean-tier rows) requires the per-region "
+            "RPS family (rps_region_zone_mask) — E-2 rides E-1's machinery "
+            "and its ACP block slots (FFR-6B §6.2: the dependency is strict "
+            "and one-directional)"
+        )
     elif rps_target is not None and rps_target > 0.0:
         rps_row, rhs = _build_rps_row(
             layout,

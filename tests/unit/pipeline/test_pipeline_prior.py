@@ -124,6 +124,10 @@ def test_all_cross_year_keys_present():
         # by capacity.evolve_fleet step 4 — a real cross-year field, so the
         # exact-key-set contract includes it.
         "procured_vre_additions",
+        # FFR-7B Arm 3 clean-tier per-(fuel, zone) credits (GATED
+        # miso_clean_tier_rows, default OFF ⇒ always None), read by next
+        # year's retirement/new-entry screens — a real cross-year field.
+        "clean_attribute_price_by_fuel",
     }
     assert set(PriorYearResults._field_names()) == expected
 

@@ -711,6 +711,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # LP layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline — never the nyiso-128/nyiso-115 miss).
     "miso_rps_compliance_regions",
+    # MISO clean/carbon-free tier rows (FFR-7B Arm 3, default off; ARMING
+    # BLOCKED pending the §45U composition — see the field comment): dropped
+    # from the hash at its default so every pre-existing cache key stays
+    # byte-stable; an armed run adds the second row family (a different LP
+    # layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "miso_clean_tier_rows",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -819,6 +826,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by FFR-7B-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_rps_compliance_regions": "False",
+    "miso_clean_tier_rows": "False",
     "exit_rate_limits": "False",
     "federal_ces_enabled": "False",
     "federal_ces_premium_usd_per_mwh": "0.0",
@@ -1799,6 +1807,34 @@ class ScenarioConfig:
     # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key; an
     # armed run is a distinct scenario with a distinct key).
     miso_rps_compliance_regions: bool = False
+    # FFR-7B Arm 3 (FFR-6B E-2; owner decision D-22(a)). GATED default OFF —
+    # byte-identical off; REQUIRES miso_rps_compliance_regions (the clean
+    # family rides the Arm-2 K-row machinery and its ACP block slots;
+    # FFR-6B §6.2: the dependency is strict and one-directional). When
+    # armed, TWO clean/carbon-free tier rows are built — MN carbon-free
+    # (Minn. Stat. §216B.1691 subd. 2g: 80/90/100% by 2030/35/40; qualifying
+    # set includes hydrogen and biomass) and MI clean (2023 PA 235: 80% by
+    # 2035 / 100% by 2040; qualifying admits qualified CCS gas) — a SECOND
+    # independent row family, never a widening of the renewable row
+    # (MISO_CLEAN_TIER_REGIONS, cited constants; Illinois deliberately has
+    # NO row — CEJA is a source-side phase-out, not an LSE share
+    # obligation). Each row carries its own $30 feasibility escape (a hard
+    # 100%-by-2040 row is an infeasibility bomb). The clean dual enters the
+    # EXISTING max(eac, rps_shadow) attribute doctrine for nuclear/hydro at
+    # the capacity screens — never a sum; federal_ces_replaces_state_rps
+    # suppresses these rows too; a wind MWh satisfying both its renewable
+    # row and its clean row is CORRECT (two constraints, one MWh) with
+    # generator credit = max(), never sum (FFR-6B §6.4).
+    # *** ARMING IS BLOCKED (owner): "The §45U-vs-clean-dual composition
+    # for nuclear is OPEN and blocks ARM 3's ARMING ONLY, not its
+    # implementation" (FFR-6B §6.4/§11) — §45U(b)(2)'s gross-receipts
+    # phase-down implies phase-down-then-add, not max(); as implemented the
+    # clean dual composes max(max(eac, §45U), clean) at the retirement
+    # screen, which is the existing doctrine and provisional. Do not arm
+    # this flag in a keeper or forecast default until the owner resolves
+    # the composition; bounded default-off probe pairs are its only use. ***
+    # Registered in _CACHE_KEY_OPTIONAL_FIELDS (off runs keep their key).
+    miso_clean_tier_rows: bool = False
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
     h2_available_year: int = 2035  # was 2032.
     # Source: engineering judgment. §45V credit terminates for construction

@@ -71,6 +71,7 @@ from market_sim.data.fleet import (
     Generator,
 )
 from market_sim.model.dispatch import DispatchResult
+from market_sim.policy.clean_tiers import clean_credit_for_zone
 from market_sim.policy.federal_ces import effective_eac_price_for_unit
 from market_sim.policy.ira import section_45u_credit_per_mwh
 from market_sim.policy.rps import rps_credit_for_zone
@@ -1600,6 +1601,7 @@ def apply_economic_retirements(
     consecutive_loss_years: dict[str, int],
     peak_demand: float,
     rps_shadow_price: "float | np.ndarray" = 0.0,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
     mc: np.ndarray | None = None,
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
@@ -1710,6 +1712,12 @@ def apply_economic_retirements(
             at each unit's zone via ``policy.rps.rps_credit_for_zone``. Only
             credited to RPS-eligible (clean) fuels, and never stacked with
             an exogenous EAC -- the higher of the two is taken.
+        clean_attribute_price_by_fuel: Prior year's clean-tier row duals
+            mapped to per-(fuel, zone) credits (FFR-7B Arm 3,
+            ``policy.clean_tiers.clean_credit_by_fuel``) — the first LP
+            attribute channel that pays nuclear/hydro. Enters the SAME
+            max() attribute doctrine, never a sum. ``None`` (family off)
+            is byte-identical.
         mc: Full variable cost aligned row-for-row with
             ``dispatch_result.dispatch``, shape ``(n_gen, T)`` in $/MWh.
             ``None`` falls back to gross-revenue screening (see above).
@@ -1972,8 +1980,23 @@ def apply_economic_retirements(
             if g.fuel_type in _RPS_ELIGIBLE_FUELS
             else 0.0
         )
+        # Clean-tier credit (FFR-7B Arm 3, FFR-6B §6.4): the clean row's
+        # dual enters the EXISTING max() attribute doctrine — for nuclear
+        # and hydro this is the first LP row that pays them at all — never
+        # a sum: one certificate, sold to whichever attribute market clears
+        # higher. Fuel- AND zone-resolved (a gas_cc_ccs unit in MISO-West
+        # earns nothing from MN's row, whose carbon-free definition
+        # excludes CCS gas). §45U COMPOSITION IS OPEN AND BLOCKS ARM 3's
+        # ARMING ONLY (FFR-6B §6.4, carried verbatim): §45U is folded into
+        # eac_price by max() above, so the clean dual composes as
+        # max(max(eac, §45U), clean) — but §45U(b)(2)'s gross-receipts
+        # phase-down implies phase-down-then-add, not max(); unresolved,
+        # owner call pending. See the miso_clean_tier_rows field comment.
+        clean_for_unit = clean_credit_for_zone(
+            clean_attribute_price_by_fuel, g.fuel_type, zone
+        )
         attribute_revenue_usd = compute_attribute_revenue(
-            g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
+            g.fuel_type, annual_gen_mwh, eac_price, max(rps_for_unit, clean_for_unit)
         )
         net_revenue += attribute_revenue_usd
 

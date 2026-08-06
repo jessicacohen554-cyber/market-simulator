@@ -137,6 +137,10 @@ from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
+from market_sim.policy.clean_tiers import (
+    build_clean_region_arrays,
+    clean_credit_by_fuel,
+)
 from market_sim.policy.rps import (
     build_rps_region_arrays,
     get_rps_acp,
@@ -1493,10 +1497,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Arm 2 — an ndarray has no truth value, so test ndim, not
             # truthiness).
             prior_rps_shadow = 0.0
+            prior_clean_by_fuel = None
             if prior_results is not None:
                 _prior_rs = prior_results.get("rps_shadow_price")
                 if _prior_rs is not None and (np.ndim(_prior_rs) > 0 or _prior_rs):
                     prior_rps_shadow = _prior_rs
+                # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3) — None
+                # off the family, byte-identical.
+                prior_clean_by_fuel = prior_results.get("clean_attribute_price_by_fuel")
             # Gas price and carbon price for the year feed the new-entry
             # screen so gas CC is charged its expected variable fuel cost.
             # The annual (seasonality-free) delivered gas price keeps
@@ -1516,6 +1524,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config,
                 loss_tracker,
                 rps_shadow_price=prior_rps_shadow,
+                clean_attribute_price_by_fuel=prior_clean_by_fuel,
                 cumulative=cumulative,
                 gas_price_per_mmbtu=gas_price_year,
                 carbon_price=carbon_price_year,
@@ -2063,14 +2072,34 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # rule 19). The CES suppression above applies to the region rows
             # exactly as to the ISO-wide row: under a pure-federal
             # counterfactual no state row of either grain is built.
+            # Clean-tier family (FFR-7B Arm 3): rides the Arm-2 machinery —
+            # arming it without the compliance-region grain is a wiring
+            # error, refused loudly. §45U-vs-clean-dual composition is OPEN
+            # and blocks ARMING (see the ScenarioConfig field comment).
             rps_region_arrays = None
+            clean_region_arrays = None
+            if getattr(config, "miso_clean_tier_rows", False) and not getattr(
+                config, "miso_rps_compliance_regions", False
+            ):
+                raise ValueError(
+                    "miso_clean_tier_rows requires miso_rps_compliance_regions "
+                    "— the clean-tier family rides the Arm-2 K-row machinery "
+                    "(FFR-6B §6.2: the dependency is strict and one-directional)"
+                )
             if config.rps_enabled and not federal_ces_suppresses_state_rps(config):
+                # The CES suppression above covers the state CLEAN rows too
+                # (FFR-6B §6.4): under a pure-federal counterfactual neither
+                # family is built, or the counterfactual stops being pure.
                 if (
                     iso == "MISO"
                     and config.mode == "forecast"
                     and getattr(config, "miso_rps_compliance_regions", False)
                 ):
                     rps_region_arrays = build_rps_region_arrays(iso, year, zone_names)
+                    if getattr(config, "miso_clean_tier_rows", False):
+                        clean_region_arrays = build_clean_region_arrays(
+                            iso, year, zone_names
+                        )
                 if rps_region_arrays is None:
                     rps_target = get_rps_target(iso, year)
                     rps_acp_price = get_rps_acp(iso)
@@ -2338,6 +2367,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 rps_region_acp_price=(
                     rps_region_arrays.acp_price
                     if rps_region_arrays is not None
+                    else UNSET
+                ),
+                # Clean-tier family (FFR-7B Arm 3): omitted (UNSET) off the
+                # gate — byte-identity, same discipline as the RPS family.
+                clean_region_zone_mask=(
+                    clean_region_arrays.eligible_zone_mask
+                    if clean_region_arrays is not None
+                    else UNSET
+                ),
+                clean_region_obligation_frac=(
+                    clean_region_arrays.obligation_frac
+                    if clean_region_arrays is not None
+                    else UNSET
+                ),
+                clean_region_acp_price=(
+                    clean_region_arrays.acp_price
+                    if clean_region_arrays is not None
+                    else UNSET
+                ),
+                clean_region_fuels=(
+                    clean_region_arrays.qualifying_fuels
+                    if clean_region_arrays is not None
                     else UNSET
                 ),
                 # Bound storage foresight to within-day arbitrage when the
@@ -2684,6 +2735,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         label: round(float(d), 4)
                         for label, d in zip(
                             rps_region_arrays.labels, result.rps_region_duals
+                        )
+                    },
+                )
+            if (
+                clean_region_arrays is not None
+                and result.clean_region_duals is not None
+            ):
+                logger.info(
+                    "%s %d: clean-tier region duals ($/MWh): %s",
+                    iso,
+                    year,
+                    {
+                        label: round(float(d), 4)
+                        for label, d in zip(
+                            clean_region_arrays.labels, result.clean_region_duals
                         )
                     },
                 )
@@ -3205,6 +3271,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if result.rps_shadow_price is not None
                 and np.ndim(result.rps_shadow_price) > 0
                 else (result.rps_shadow_price or 0.0)
+            ),
+            # Clean-tier per-(fuel, zone) credits (FFR-7B Arm 3): the clean
+            # region spec is recomputed from the cited table (cheap, pure)
+            # so the cached-year path — which never assembles the solve-side
+            # arrays — maps its restored duals identically.
+            clean_attribute_price_by_fuel=(
+                clean_credit_by_fuel(
+                    build_clean_region_arrays(iso, year, zone_names),
+                    result.clean_region_duals,
+                )
+                if result.clean_region_duals is not None
+                else None
             ),
             retrofit_log=retrofit_log,
             # AS-eligible (storage) fleet power for the AS-revenue saturation

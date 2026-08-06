@@ -138,6 +138,12 @@ class DispatchResult:
     rps_shadow_price: "float | np.ndarray | None" = None
     # Per-compliance-region RPS row duals (K,) — None off the K-row grain.
     rps_region_duals: np.ndarray | None = None
+    # Clean/carbon-free tier row duals (K2,) — each state's clean attribute
+    # price, capped at its own escape (FFR-7B Arm 3). None off the family.
+    # Consumers map them to per-(fuel, zone) credits via
+    # policy.clean_tiers.clean_credit_by_fuel and compose them into the
+    # EXISTING max(eac, rps_shadow) doctrine — never a sum (FFR-6B §6.4).
+    clean_region_duals: np.ndarray | None = None
     # Endogenous CO2 allowance price(s) ($/tCO2), one per active mass-cap row;
     # None unless a mass cap was enabled.
     co2_cap_price: list[float] | None = None
@@ -316,6 +322,10 @@ def solve_dispatch(
     rps_region_zone_mask: np.ndarray | None = None,
     rps_region_obligation_frac: np.ndarray | None = None,
     rps_region_acp_price: np.ndarray | None = None,
+    clean_region_zone_mask: np.ndarray | None = None,
+    clean_region_obligation_frac: np.ndarray | None = None,
+    clean_region_acp_price: np.ndarray | None = None,
+    clean_region_fuels: "tuple[tuple[str, ...], ...] | None" = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -461,6 +471,17 @@ def solve_dispatch(
             RHS weights (within-zone obligated load share x target).
         rps_region_acp_price: ``(K,)`` per-region ACP escape prices in $/MWh
             (REQUIRED with the region rows — each row's feasibility escape).
+        clean_region_zone_mask: ``(K2, n_zones)`` bool clean/carbon-free tier
+            eligibility mask (FFR-7B Arm 3, MISO West/East —
+            ``policy.clean_tiers.build_clean_region_arrays``). A second
+            independent row family; REQUIRES the RPS region family. ``None``
+            (default) adds no rows, byte-identical to before.
+        clean_region_obligation_frac: ``(K2, n_zones)`` float clean-tier RHS
+            weights.
+        clean_region_acp_price: ``(K2,)`` clean-row feasibility-escape prices
+            in $/MWh (REQUIRED with the clean rows).
+        clean_region_fuels: Per-region statutory qualifying fuel-name tuples
+            (nuclear admitted; unknown names hard-error).
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no
@@ -523,6 +544,10 @@ def solve_dispatch(
         rps_region_zone_mask=rps_region_zone_mask,
         rps_region_obligation_frac=rps_region_obligation_frac,
         rps_region_acp_price=rps_region_acp_price,
+        clean_region_zone_mask=clean_region_zone_mask,
+        clean_region_obligation_frac=clean_region_obligation_frac,
+        clean_region_acp_price=clean_region_acp_price,
+        clean_region_fuels=clean_region_fuels,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,

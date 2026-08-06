@@ -66,6 +66,7 @@ from market_sim.model.ancillary import as_revenue_per_mw_yr
 from market_sim.data.fleet import Generator
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
+from market_sim.policy.clean_tiers import clean_credit_for_zone
 from market_sim.policy.federal_ces import effective_eac_price_for_tech
 from market_sim.policy.rps import rps_credit_for_zone
 from market_sim.policy.ira import (
@@ -117,6 +118,45 @@ _NEW_ENTRY_TECHS: tuple[str, ...] = (
 # Generator objects. Variable-output renewables must follow a CF profile.
 # Offshore wind is NOT here: it enters as a zero-MC Generator (Option A).
 _RENEWABLE_NEW_FUELS: frozenset[str] = frozenset({"wind", "solar"})
+
+
+# Candidate-tech aliases for ATTRIBUTE (clean-tier) crediting: the clean
+# qualifying sets are FUEL_TYPE_MAP names, so a nuclear candidate tech maps
+# to its fleet fuel class. Every other tech name IS its fuel name.
+_TECH_TO_ATTRIBUTE_FUEL: dict[str, str] = {
+    "nuclear_smr": "nuclear",
+    "nuclear_large": "nuclear",
+}
+
+
+def _clean_credit_for_tech(
+    tech: str,
+    iso_config,
+    zone_names: list[str] | None,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None",
+) -> float:
+    """Return a candidate tech's clean-tier attribute credit (FFR-7B Arm 3).
+
+    Fuel- and zone-resolved through the ONE shared consumer helper
+    (``policy.clean_tiers.clean_credit_for_zone``): VRE candidates at their
+    ``get_renewable_zone`` build zone, thermal/emerging candidates at the
+    ISO's default build zone (``_default_build_zone`` — the same siting the
+    built Generator receives). 0.0 whenever the family is off, the fuel is
+    in no region's qualifying set, or no zone context exists.
+    """
+    if not clean_attribute_price_by_fuel:
+        return 0.0
+    fuel = _TECH_TO_ATTRIBUTE_FUEL.get(tech, tech)
+    if tech in _RENEWABLE_NEW_FUELS:
+        zi = _candidate_zone_idx(tech, iso_config.name, zone_names)
+    else:
+        default_zone = _default_build_zone(iso_config)
+        zi = (
+            zone_names.index(default_zone)
+            if zone_names and default_zone in zone_names
+            else None
+        )
+    return clean_credit_for_zone(clean_attribute_price_by_fuel, fuel, zi)
 
 
 def _candidate_zone_idx(
@@ -742,6 +782,7 @@ def apply_economic_new_entry(
     config: ScenarioConfig,
     iso: str,
     rps_shadow_price: "float | np.ndarray" = 0.0,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -808,6 +849,11 @@ def apply_economic_new_entry(
             Credited to RPS-eligible renewables as an attribute payment,
             taken as the max of it and the exogenous EAC (the two do not
             stack).
+        clean_attribute_price_by_fuel: Prior year's clean-tier row duals
+            mapped to per-(fuel, zone) credits (FFR-7B Arm 3,
+            ``policy.clean_tiers.clean_credit_by_fuel``). Enters the SAME
+            max() as the EAC and RPS credits — never a sum. ``None``
+            (family off) is byte-identical.
         cumulative: Global cumulative deployment, used to discount each
             candidate's capex along its Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price, used to charge gas CC
@@ -970,8 +1016,17 @@ def apply_economic_new_entry(
                 if tech in _RENEWABLE_NEW_FUELS
                 else 0.0
             )
+            # Clean-tier credit (FFR-7B Arm 3): enters the SAME max() —
+            # this is what lets a hydrogen_ct/hydrogen_ccgt (MN carbon-free)
+            # or gas_cc_ccs (MI clean) candidate earn a state clean dual —
+            # never a sum (one certificate, FFR-6B §6.4).
+            clean_for_tech = _clean_credit_for_tech(
+                tech, iso_config, zone_names, clean_attribute_price_by_fuel
+            )
             effective_attribute_price = max(
-                effective_eac_price_for_tech(config, tech, year), rps_for_tech
+                effective_eac_price_for_tech(config, tech, year),
+                rps_for_tech,
+                clean_for_tech,
             )
             attribute_rev = 0.0
             if effective_attribute_price > 0.0:
@@ -1157,8 +1212,16 @@ def apply_economic_new_entry(
             if tech in _RENEWABLE_NEW_FUELS
             else 0.0
         )
+        # Clean-tier credit (FFR-7B Arm 3): the SAME max() — this is what
+        # lets a nuclear_smr candidate earn a state clean dual (the first LP
+        # row that pays nuclear at all) — never a sum (FFR-6B §6.4).
+        clean_for_tech = _clean_credit_for_tech(
+            tech, iso_config, zone_names, clean_attribute_price_by_fuel
+        )
         effective_attribute_price = max(
-            effective_eac_price_for_tech(config, tech, year), rps_for_tech
+            effective_eac_price_for_tech(config, tech, year),
+            rps_for_tech,
+            clean_for_tech,
         )
         if effective_attribute_price > 0.0:
             effective_revenue += (
