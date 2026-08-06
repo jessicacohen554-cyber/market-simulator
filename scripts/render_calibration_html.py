@@ -1100,23 +1100,56 @@ def _eia860_plant_info() -> tuple[dict[int, float], dict[int, str]]:
     The national per-plant nameplate (summed over units) and plant name, so
     non-ERCOT bundles (PJM, etc.) — whose plants are absent from the ERCOT
     CAMPD bin sheet — still get a real capacity and label in the dashboard.
+
+    **Unions the within-window retiree vintage** (pjm-159, the cross-ISO defect
+    pjm-158 §1.1 found): the committed operable snapshot is a single recent
+    vintage, so a plant that ran through part of the backcast window and retired
+    before that vintage is absent from it — exactly the gap
+    :func:`market_sim.data.fleet.load_retired_within_window` exists to close on
+    the model side. Without the union those plants fell through the
+    ``or 1.0`` guard at the payload sites and silently defaulted to ``npl = 1``,
+    which destroys their per-plant hourly ``campd`` blob (stored as
+    ``uint8 % of nameplate × npl``) while leaving ``c_ann`` and every annual gate
+    correct — so it was invisible to the gates and wrong for any probe
+    reconstructing hourly/monthly actuals from the blob. Measured at the fix:
+    PJM 2022 stranded 4 plants / 9.87 TWh (W H Sammis 1,706.5 MW, Homer City
+    2,012.0, AES Warrior Run 229.0, Joliet 29 1,320.0), and MISO / NEISO / CAISO
+    were affected the same way.
+
+    Operable wins on conflict — a plant present in both keeps its operable
+    nameplate, so every already-correct entry is byte-identical and the union is
+    purely additive. No parameter is introduced: both vintages are the same
+    committed EIA-860 release.
     """
     from market_sim.config.paths import EIA_860_DIR
     from market_sim.data.fleet import EIA_860_PARQUET_NAME
+    from market_sim.data.fleet.eia860 import EIA_860_RETIRED_WINDOW_PARQUET_NAME
 
-    path = EIA_860_DIR / EIA_860_PARQUET_NAME
-    if not path.exists():
-        return {}, {}
-    df = pd.read_parquet(
-        path, columns=["plant_id", "plant_name", "nameplate_capacity_mw"]
-    )
-    df["plant_id"] = df["plant_id"].astype(int)
-    npl = df.groupby("plant_id")["nameplate_capacity_mw"].sum().to_dict()
-    nm = df.groupby("plant_id")["plant_name"].first().to_dict()
-    return (
-        {int(k): float(v) for k, v in npl.items()},
-        {int(k): str(v) for k, v in nm.items()},
-    )
+    cols = ["plant_id", "plant_name", "nameplate_capacity_mw"]
+    npl: dict[int, float] = {}
+    nm: dict[int, str] = {}
+    # Retiree vintage FIRST so the operable pass overwrites it on conflict.
+    for name in (EIA_860_RETIRED_WINDOW_PARQUET_NAME, EIA_860_PARQUET_NAME):
+        path = EIA_860_DIR / name
+        if not path.exists():
+            continue
+        df = pd.read_parquet(path, columns=cols)
+        df["plant_id"] = df["plant_id"].astype(int)
+        npl.update(
+            {
+                int(k): float(v)
+                for k, v in df.groupby("plant_id")["nameplate_capacity_mw"]
+                .sum()
+                .items()
+            }
+        )
+        nm.update(
+            {
+                int(k): str(v)
+                for k, v in df.groupby("plant_id")["plant_name"].first().items()
+            }
+        )
+    return npl, nm
 
 
 def _nameplates() -> dict[int, float]:
@@ -1398,8 +1431,17 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # Per-slice nameplate for EVERY dispatch plant (model payload CF
             # scale needs it whether or not the plant is CAMPD-benched).
             npl_s: dict[str, float] = {}
+            # pjm-159: the `or 1.0` guard below is a last resort, and it used to
+            # be SILENT — a plant missing from every EIA-860 vintage got npl = 1,
+            # which destroys its hourly `campd` blob while leaving `c_ann` and
+            # all annual gates correct. Collect and report instead, so the next
+            # vintage gap is visible on the build rather than found by a probe
+            # three sessions later.
+            _npl_missing: list[int] = []
             for code, klasses in classes_p.items():
                 cap_plant = float(npl.get(code, 0.0)) or 1.0
+                if not float(npl.get(code, 0.0)):
+                    _npl_missing.append(int(code))
                 if code not in multi_p:
                     npl_s[str(code)] = cap_plant
                 else:
@@ -1410,6 +1452,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     )
                     for k in klasses:
                         npl_s[bm.slice_key(code, k)] = _shares[k]
+            if _npl_missing:
+                print(
+                    f"  WARNING {meta.get('iso', '?')} {year}: "
+                    f"{len(_npl_missing)} plant(s) have NO EIA-860 nameplate in "
+                    "either the operable or the within-window retiree vintage and "
+                    "fall back to npl = 1 MW — their per-plant hourly `campd` blob "
+                    "is NOT usable (c_ann and annual gates are unaffected): "
+                    + ", ".join(str(c) for c in sorted(_npl_missing)),
+                    file=sys.stderr,
+                )
             cn_s: dict[str, np.ndarray] = {}
             grp_b: dict[str, str] = {}
             split_notes: dict[str, str] = {}
