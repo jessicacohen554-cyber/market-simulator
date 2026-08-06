@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-caiso-175-tac-intake",
+  "label": "caiso 175 tac intake",
+  "date": "2026-08-06",
+  "shorthand": "caiso-175-tac-intake",
+  "definition": "caiso-175 Arm B TREATED: the caiso-174 keeper recipe replayed at THIS head on the CORRECTED CAISO TAC load series. Two rule-14 [R-ACCURATE] demand-input corrections, zero free parameters: (1) MWD-TAC, the sixth CAISO-internal SLD_FCST area, is intaken and mapped 1:1 onto SP15_rest (it was omitted from postprocess_oasis_downloads.CAISO_TACS, so load_zonal_shares re-apportioned its 119/172/144 MW pro rata across the other four TACs -- caiso-172 s1.1 opened this, caiso-173 sC measured it at 0.24-0.30 pct of ISO load misplaced north of Path 15); (2) the 2023 series, which covered only 744 of 8760 hours (Jan-2023 only) so 91.5 pct of the year ran on a FLAT January-average zonal split, is completed to 8759 hours. Byte-faithful on every pre-existing row: max |delta| 0.000000 MW, 0 rows differing.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-caiso-175-tac-intake.js",
+  "bundle": "results/calibration/caiso175_tac_intake"
+}

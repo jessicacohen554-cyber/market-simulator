@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-caiso-175-control-tacbase",
+  "label": "caiso 175 control tacbase",
+  "date": "2026-08-06",
+  "shorthand": "caiso-175-control-tacbase",
+  "definition": "caiso-175 Arm A CONTROL: the caiso-174 keeper recipe replayed at THIS head on the AS-COMMITTED CAISO TAC load series (five areas, MWD-TAC absent; 2023 covering 744 of 8760 hours). Establishes the incidental-code-drift baseline against which Arm B's demand-input correction is attributed, so the delta cannot be misread as drift between head ae7658d0 and this one.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-caiso-175-control-tacbase.js",
+  "bundle": "results/calibration/caiso175_control"
+}

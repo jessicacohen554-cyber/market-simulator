@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-05-caiso-174-measured-fleet",
+  "run_id": "2026-08-06-caiso-175-control-tacbase",
   "iso": "CAISO",
-  "label": "caiso 174 measured fleet",
+  "label": "caiso 175 control tacbase",
   "target_years": [
     2023,
     2024,
