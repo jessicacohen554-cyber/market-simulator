@@ -6752,3 +6752,55 @@ hourly PS water state is walled on public data (FINDING-caiso141 — Helms +
 Eastwood, 60.3% of the fleet, have no public hourly telemetry at all), so the
 one unfitted path is an owner-level non-public data acquisition. Never closable
 by a price adder, haircut or any value tuned to the level residual (rules 1/13).
+
+## 2026-08-06 — CAISO — caiso-176 follow-up: the §5.2 header and the caiso-176 assessment re-stamped for RUBRIC v3.1 (C3a FAIL, determination NOT-YET, 8 criteria)
+
+**Runs:** NONE. No LP, no solve, no bundle regenerated, no attestation touched,
+keeper UNCHANGED at `2026-08-06-caiso-175-tac-intake`.
+
+**Why.** The owner directed that C3a be switched to FAIL and CAISO to NOT-YET.
+That is **already true on main** and was delivered by a different and better
+mechanism than a per-bundle ledger withdrawal: **rubric v3.1** (owner amendment,
+commit `d9bb7a2c`) restricts ledgering to **C3c alone** (`LEDGERABLE_CRITERIA`,
+fail-closed in `_apply_ledger`), so CAISO's C3a `price_mean` entries — the
+owner's own 2026-07-30 act at caiso-145 — **go inert while staying on their
+bundles as the historical record**, and C3a scores FAIL. v3.1 also **retires C7**
+(`score_shape` and `C7_GATED_CLASSES` deleted per rule 26, not zeroed).
+
+**RECORDED AGAINST INTEREST.** This session had independently implemented the
+same outcome by *deleting* the C3a exceptions entries from both caiso-175 arms'
+`calibration_attestation.json` and re-keying the marker. That commit was
+**discarded unpushed** once v3.1 was found on main: deleting the entries
+directly contradicts v3.1's stated design ("existing non-C3c ledger entries stay
+on their bundles as the historical record and simply go inert"), and it would
+have destroyed the ledger's provenance to reach a determination the rubric
+already reaches. The bundles on main are untouched and correct.
+
+**Live verdict on main (scorer-only, committed artifacts, no LP):**
+determination **NOT-YET**, rubric **3.1**, **8 criteria scored** — C1 PASS ·
+C2 PASS · **C3a FAIL (2024 +11.7 %, 2025 +14.8 %; 2023 not in the fail set)** ·
+C3b PASS · C3c CAVEAT [the sole ledgered caveat] · C4 PASS · C6 PASS · C8 PASS;
+D-10 free-class C1 12/12 · free 8/8. `audit_keepers --iso CAISO` **PASS 0/0** —
+`keepers/CAISO.json` and `calibration-complete.json` were already brought into
+line by the v3.1 commit, so nothing was owed there.
+
+**What this session actually fixed:** two documents **it authored** that were
+merged before v3.1 landed and had gone stale on main — the §5.2 header (which
+still read "NO failing criterion … CALIBRATED-WITH-CAVEATS, 9 criteria scored,
+0 FAILs") and `ASSESSMENT-caiso176-frontier-2026-08-06.md`. Both are re-stamped
+in place with the v3.1 verdict. The caiso-176 **PRECHECK is deliberately NOT
+edited** — a pre-registration rewritten after the fact is not one; its C7
+references stand as written on the pre-v3.1 rubric.
+
+**Consequences carried.** (1) **C3a is now an OPEN root-cause issue**, not an
+accepted limitation: driver named (FINDING-caiso140 §B, a +793 MW belly wedge off
+a 2,078 MW PS fleet), closure route **WALLED** and re-verified 5/5 `unchanged` on
+live bytes at caiso-176. Never closable by a price adder, haircut or any value
+tuned to the level residual (rules 1/13); export/absorption stays DO-NOT-REDO
+(caiso-142 §H). (2) The caiso-176 **`final` recommendation is UNCHANGED at NO**
+and now fails **four of four** conditions rather than three — an ISO carrying a
+live failing load-bearing criterion is a worse candidate for a touch-once test,
+not a better one. (3) The `run_d1`/`score_shape` inconsistency caiso-176 carried
+forward is **CLOSED by v3.1's deletion of `score_shape`**, not by this session.
+(4) The `complete` marker stands: a NOT-YET determination does not withdraw it
+(NYISO precedent), and the freeze outranks it regardless.

@@ -1,7 +1,15 @@
 # ASSESSMENT — caiso-176: the CAISO frontier, re-run on the caiso-175 keeper
 
-**Keeper:** `2026-08-06-caiso-175-tac-intake` · CALIBRATED-WITH-CAVEATS · 0 FAILs · 9/9 scored ·
+**Keeper:** `2026-08-06-caiso-175-tac-intake` · **NOT-YET** · **1 FAIL (C3a mean LMP)** · 8 criteria scored ·
 DOF `n_entries` 11 / `n_residual` 8.
+**AMENDED 2026-08-06, after this assessment was written**, for **rubric v3.1** (owner amendment,
+commit `d9bb7a2c`): ledgering is restricted to **C3c alone**, so CAISO's C3a entries go **inert**
+and C3a scores **FAIL** (2024 +11.7 %, 2025 +14.8 %) — determination **NOT-YET**; and **C7 is
+retired**, so the scored surface is **8 criteria, not 9**. The C3a ledger entries stay on their
+bundles as the historical record, inert rather than deleted, exactly as v3.1 requires. Nothing
+else in this assessment moves: no input, mechanism or solved quantity changed, and the C3a
+magnitudes are the same ones the now-inert caveat was recorded against. The change **strengthens**
+§2's `final` recommendation rather than altering it — see §2 F-d.
 **NO LP, NO SOLVE, NO year outside 2023–2025.** Every number below is read from committed
 artifacts, or from a **live** re-run of a walled-route survey. `holdout-freeze.json` and
 `calibration-complete.json` are UNTOUCHED.
@@ -11,9 +19,13 @@ Pre-registration: `PRECHECK-caiso176-frontier-dof-2026-08-06.md`.
 
 ## 0. Headline
 
-**The frontier holds, and it is now measured on a keeper two promotions newer than the last
-assessment.** Every caiso-173 check re-runs clean, the one demand-input gap it left open is
-CLOSED on data, and CAISO's ISO-specific DOF count has fallen 4 → 3.
+**The frontier holds — in the sense `complete` uses, which is that everything testable has been
+tested, not that every criterion passes.** Every caiso-173 check re-runs clean, the one
+demand-input gap it left open is CLOSED on data, and CAISO's ISO-specific DOF count has fallen
+4 → 3. **What changed under rubric v3.1 is the LABEL, not the model:** C3a is no longer
+ledgerable, so it scores **FAIL** (2024 +11.7 %, 2025 +14.8 %) and the determination is
+**NOT-YET**. No input, mechanism or solved quantity moved; C3a's driver is named and its closure
+route is the same wall §1a re-verifies live.
 
 **The `final` recommendation is NO — and it does not rest on a judgement about model quality.**
 CAISO's locked-test tier is **not executable**: the ISO has **no 2019 price bench, no 2019
@@ -35,7 +47,7 @@ useless: it would be spent on a partial score.
 | CAISO matrix column census | **61 K · 23 U · 14 I · 6 R · 5 G · 5 O** (was 60/20/13/6/5/**6**) |
 | §5.2 evidence documents (probe F5) | **19 of 19 resolved, 0 missing** |
 | `audit_keepers.py --iso CAISO` | **PASS** — 0 failures, 0 warnings |
-| `calibration_verdict.py --run-id 2026-08-06-caiso-175-tac-intake` | CALIBRATED-WITH-CAVEATS, 0 FAILs, C3a + C3c ledgered, C7 **PASS**, C8 **PASS** |
+| `calibration_verdict.py --run-id 2026-08-06-caiso-175-tac-intake` | **NOT-YET** (rubric v3.1) — C1 PASS · C2 PASS · **C3a FAIL** (2024 +11.7 %, 2025 +14.8 %) · C3b PASS · C3c CAVEAT [sole ledgered] · C4 PASS · C6 PASS · C8 PASS. *As first written this read CALIBRATED-WITH-CAVEATS with 0 FAILs and 9 criteria, on the pre-v3.1 rubric.* |
 | `check_mechanism_matrix.py --base origin/main` | gap ratchet **OK**, shared ratchet **OK** (anchor warnings pre-existing, other lanes) |
 | `check_registry_payload_parity.py` | **OK** — 76 runs, 0 unsynced |
 | `check_cache_key_registration.py` | **ok** — 693 fields, 139 registered, all resolve |
@@ -117,8 +129,9 @@ edited — it belongs to that probe's own lane.
 
 ## 2. THE DECLARATION QUESTION — does the evidence support recommending `final`?
 
-**Recommendation: NO.** Three of the four pre-registered conditions fail, and the first fails on
-plain arithmetic rather than judgement.
+**Recommendation: NO.** Under rubric v3.1 **all four** pre-registered conditions fail (F-a…F-c
+failed as first written; F-d flipped when C3a stopped being ledgerable). The first fails on plain
+arithmetic rather than judgement, and is on its own sufficient.
 
 ### F-a — IS THE TIER EXECUTABLE? **NO. This alone is dispositive.**
 
@@ -174,10 +187,17 @@ precondition for spending **2022**. It is *a fortiori* a precondition for the lo
 
 ### F-d — IS THE MODEL AT ITS FRONTIER? **YES** — necessary, not sufficient.
 
-§1 establishes it: in-model lever queue empty, both ledgered caveats walled on live-re-verified
-evidence, gap sweep 0/0/0/0/0, 19/19 evidence documents resolving, 9/9 criteria scored with
-0 FAILs, and CAISO's last free parameter now carrying a measured bound (companion FINDING). This
-is the `complete` criterion and CAISO clears it. It is not a `final` criterion.
+§1 establishes it: in-model lever queue empty, the blockers behind **both** C3a and C3c walled on
+live-re-verified evidence, gap sweep 0/0/0/0/0, 19/19 evidence documents resolving, and CAISO's
+last free parameter now carrying a measured bound (companion FINDING). This is the `complete`
+criterion — *frontier* means everything testable has been tested, not that every criterion passes
+— and CAISO clears it. It is not a `final` criterion.
+
+**Rubric v3.1 makes this limb weaker, not stronger, and the direction matters.** With C3a no
+longer ledgerable the keeper carries an **open FAIL** (2024 +11.7 %, 2025 +14.8 %) whose driver is
+named and whose closure route is walled. An ISO with a live failing load-bearing criterion is a
+**worse** candidate for a touch-once test, not a better one — so the `final` answer stays **NO**
+and now fails four of four conditions rather than three.
 
 ### What would change the answer, in order
 
@@ -202,12 +222,14 @@ empty; no locked-test year was solved, scored, read or registered.
 1. **KNOWN-OPEN 1** — the N–S congestion majority (§1d). Named, no lever chartered; an N–S
    topology lever stays FORBIDDEN.
 2. **KNOWN-OPEN 2** — the caiso-170 within-day storage placement pointer. Untouched.
-3. **The `run_d1` / `score_shape` gating inconsistency** — `run_d1`'s `gated` column screens on
-   the class list alone while the rubric's `score_shape` screens on class list **and** load
-   share, so `legitimacy_diagnostics.json` reads `Overall: FAIL` on CAISO `ST_GAS` where C7
-   correctly reads PASS (0.6 / 0.4 / 0.1 % of load, under rule 21's 2 % floor). Still a clean
-   scorer-only fix, still deliberately **not made here** — this session's frontier verdict would
-   depend on the answer, which is the wrong session to change it in.
+3. ~~**The `run_d1` / `score_shape` gating inconsistency**~~ — **CLOSED, and not by this session.**
+   As first written this carried the mismatch forward: `run_d1`'s `gated` column screened on the
+   class list alone while the rubric's `score_shape` screened on class list **and** load share, so
+   `legitimacy_diagnostics.json` read `Overall: FAIL` on CAISO `ST_GAS` where C7 read PASS. Rubric
+   **v3.1 retires C7 entirely and deletes `score_shape` and `C7_GATED_CLASSES`** (rule 26
+   `[R-DELETE]`, not zeroed), so the inconsistent pair no longer exists — there is nothing left to
+   reconcile. The D-1 measurement survives and still reaches the determination through C8's
+   grounded-above-budget escalation, which rule 20 requires.
 4. **CAISO `ST_GAS` diurnal shape is genuinely poor** (r 0.114 / −0.021). Below rule 21's
    materiality floor; recorded so the next material-class review does not rediscover it as new.
 5. **Other ISOs' zonal load series have never been audited** for the coverage defect caiso-175
