@@ -55,6 +55,7 @@ from scripts.lib.backcast_artifacts import (  # noqa: E402
     resolve_run_id,
 )
 from scripts.lib.bundle_io import bundle_meta  # noqa: E402  (stdlib-only helpers)
+from scripts.lib.holdout_policy import TIER_TRAIN, tier_for_year  # noqa: E402
 
 DATA_DIR = ba.DATA
 REGISTRY_DIR = ba.REGISTRY
@@ -663,6 +664,59 @@ def _ledger_match(exceptions: list[dict], criterion: str, year: int, key: str | 
         if key is None or ekey is None or str(ekey) == str(key):
             return e
     return None
+
+
+C3C_STANDING_RULE_REASON = (
+    'OWNER STANDING RULE, declared 2026-08-06 (session neiso-86), verbatim: "a c3c '
+    "failure with all other gates passing should always be treated as a ledgered "
+    "calibrated with caveats across all ISOs for holdout years and testing years going "
+    'forward as a rule". Auto-applied: C3c (price tail / scarcity) is the ONLY failing '
+    "criterion, the governance gate passes, and this year is out-of-training "
+    "(validation or locked-test tier). Classified ACCEPTED MODEL-CLASS LIMITATION -- "
+    "admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard still "
+    "refuses model-class on load-bearing and protective criteria, so this rule can "
+    "never wave through C1/C2/C3a/C3b or C6/C7/C8. IT IS NOT A PASS: the miss is "
+    "reported at full magnitude and the run reads CALIBRATED-WITH-CAVEATS, never "
+    "CALIBRATED. Scope is deliberately out-of-training ONLY -- in-sample 2023-2025 "
+    "keepers still require their own explicit ledger entry, so the training-window "
+    "discipline is untouched."
+)
+
+
+def _apply_c3c_standing_rule(records: list[dict], gov: dict) -> None:
+    """Reclassify a LONE out-of-training C3c failure to a ledgered CAVEAT.
+
+    The owner's standing rule of 2026-08-06. C3c (scarcity price tail) is a
+    known, declared frontier in several ISOs; when it is the *only* thing
+    failing on a holdout or locked-test year, the run is a
+    CALIBRATED-WITH-CAVEATS reading rather than a NOT-YET.
+
+    Deliberately narrow, so it cannot become a general escape hatch:
+
+    * **Lone failure only.** If ANY other criterion fails, the rule does not
+      fire and every failure stands -- including C3c's.
+    * **Governance must pass.** A failing or unattested C6 blocks it.
+    * **Out-of-training only.** In-sample years keep needing an explicit
+      ledger entry written by a session that justified it.
+    * **Never upgrades to CALIBRATED.** It produces a CAVEAT, and the
+      magnitude is still reported in full.
+
+    Args:
+        records: Scored criterion records, mutated in place.
+        gov: The governance-gate record from :func:`score_governance`.
+    """
+    fails = [r for r in records if r["status"] == FAIL]
+    if not fails or any(r["criterion"] != "price_tail" for r in fails):
+        return  # nothing failing, or something OTHER than C3c is -- rule silent
+    if str(gov.get("status", "")).upper() != PASS:
+        return  # governance failing/unattested -- never waved through
+    for rec in fails:
+        if tier_for_year(int(rec["year"])) == TIER_TRAIN:
+            continue  # in-sample keeps its explicit-ledger discipline
+        rec["status"] = CAVEAT
+        rec["classification"] = MODEL_LIMIT
+        rec["ledger_reason"] = C3C_STANDING_RULE_REASON
+        rec["standing_rule"] = "c3c-out-of-training-2026-08-06"
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
@@ -2319,6 +2373,11 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         _apply_ledger(r, exceptions)
 
     gov = score_governance(art["config"], art["attestation"])
+
+    # Owner STANDING RULE (2026-08-06) — auto-ledger a LONE C3c failure on an
+    # out-of-training year. Runs AFTER the explicit ledger and AFTER governance,
+    # because it is conditioned on both.
+    _apply_c3c_standing_rule(records, gov)
 
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}
