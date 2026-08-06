@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-06-run173b-event-cap-reconc",
+ "label": "run173b event cap reconc",
+ "date": "2026-08-06",
+ "shorthand": "run173b-event-cap-reconc",
+ "definition": "(PROBE) REJECTED-AS-ARMED on three pre-registered non-renegotiable gates (PRECOMMIT-ercot172 \u00a75 inherited verbatim via PRECOMMIT-ercot173 \u00a75). Single delta off the run168b keeper recipe: ercot_dam_availability_event_cap_reconciliation=true (the ercot-172-specified C1 grain repair + C2 min() composition of the event-cap ceiling's own two measured layers; zero DOF; seam proof SP-1/2/3 exact pre-solve). THE 2024 OBJECT BEHAVES EXACTLY AS ATTRIBUTED: the 2024-04-28 shed CLEARS (predicted: +1,118.8 MW restored >= 565.1 shed) and 2024-05-08 shrinks (predicted: +353.3 < 550.3), shed 2->1 (G-SHED PASS), spike-day day-mean |err| 382->120 and 268->227 \\$/h, C3a-2024 +11.8%->+3.9%, NRMSE-2024 3.00->2.26, spurious falls EVERY year (10->9, 13->10, 1->0; G-SPUR PASS), and the ercot-167 RG-1 (G4-2024) kill CLEARS on its pre-registered definition. BUT the blanket min() over-restores fleet-wide: coal dispatch above the incumbent PRODUCT ceiling rises +0.98/+1.95/+2.73 TWh (bar +0.5; G-COAL148 FAIL - the ERCOT-148/149 adjudication is not survived), class annual energy moves far past the 0.5% G-SPAN band (2025 COAL_PRB +5.1%, CT_PEAKER -10.4%, ST_GAS -4.5%; 2023 CT_PEAKER -3.4%; G-SPAN FAIL), and the tail formation degrades (2024 model>\\$200 26->14 vs actual 53; 2025 3->0 vs 31; G-C3c FAIL). C3a-2023 (the owner object): -22.5% -> -23.8% (-1.3pp, inside the pre-registered P-C3a-2023 band '0 to -1.5pp more negative'). STRUCTURAL READING (rule 1): min() is correct ONLY where the two layers measure the SAME units' downtime (the ercot-172 named plants); the fleet-wide response measures the layers as substantially DISJOINT at most overlaps, where the product is the better composition - the correction must be UNIT-ATTRIBUTED inside the partial extract, not composition-wide (named successor). Keeper UNCHANGED at run168b. Full record: results/calibration/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-08-06-run173b-event-cap-reconc.js",
+ "bundle": "results/calibration/ercot173_reconc_B"
+}
