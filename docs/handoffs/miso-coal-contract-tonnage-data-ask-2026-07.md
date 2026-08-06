@@ -220,6 +220,38 @@ coal burn and coal purchases", and EIA regional price charts. Contract
 specifics live in confidential attachments. Indiana alone is 8 plants and
 13.3 Mt (2025) of the target set.
 
+> **STATUS 2026-08-06 (miso-135) — MICHIGAN IS SPENT AND CLOSED ON KIND. DO NOT
+> RE-DERIVE.** The paragraph below is preserved as written; its premise is
+> **falsified** and it must be read against this block.
+> **Both utilities DO publish an ex-ante coal-contract tonnage, publicly, for all
+> three training years** — DTE Exhibit **A-15** *Long-Term Coal Contracts*, whose
+> column (b) is defined by the exhibit as *"the minimum tonnage contracted to
+> purchase in the <Y> PSCR plan year"* (**6,015 / 6,165 / 4,818** kt), and
+> Consumers Exhibit **A-22/A-24 (AKR-1)** *Coal Contract & Purchase Data*
+> (committed **4,019,216 / 2,710,680 / 156,000** t). Volumes are neither
+> confidential nor cost projections: **leg A PASSES**.
+> **Leg B FAILS 6/6 — no destination-plant column exists** in either utility in
+> any of the three plan years (Consumers **U-21257 / U-21423 / U-21592**, DTE
+> **U-21259 / U-21425 / U-21594**), machine-verified by re-deriving every column
+> header from the live docket (`plant_word_on_page` FALSE 6/6). DTE burns at
+> Monroe **and** Belle River, Consumers at Campbell **and** Karn in 2023, so only
+> delivered-tons weights would split the totals — **§2B disqualifying**. The only
+> plant-grain coal tonnage in the filings is a **projected as-burned** volume,
+> closed on principle at §3(c).
+> **The §2C bar fails on measurement, not arithmetic alone**: Michigan is **2 of
+> 39 plants** and **10.6 / 12.6 / 12.8 %**; the §2B 1:1 carve-out yields
+> Consumers/**J H Campbell** in 2024–25 only = **1 plant, 0 in 2023**.
+> **This paragraph's "combined with a Form 580 pull" premise is FALSE**: Michigan
+> cannot compose, because its tonnage attaches to no plant at all; it is strictly
+> **worse than Form 580 on leg B**; and for **DTE the PSCR route is DOMINATED**
+> (DTE is a Form 580 filer — partial-waiver request 2024-10-31, 90 FR 7691 —
+> so the same contracts reach Form 580 *with* a Destination Plant). **§8 remains
+> the decisive, undischarged next step.**
+> Do **not** re-open the PSCR **reconciliation** cases either: they report against
+> the plan **ex post**, i.e. the miso-103 answer key.
+> `results/calibration/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`.
+> *(Original text follows.)*
+
 **Not yet checked, and the highest-value remaining state: Michigan.** The PSCR
 process (MCL 460.6j) is the most genuinely *ex-ante* state mechanism in MISO —
 a plan-year filing plus a five-year forecast, filed **before** the plan year,
