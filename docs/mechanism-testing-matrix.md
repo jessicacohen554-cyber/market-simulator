@@ -5639,6 +5639,78 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
 
+**neiso-86 (2026-08-06) — THE DEFECTIVE INPUT neiso-85 REFUSED TO PAPER OVER IS NOW
+REPAIRED. A DATA INTAKE, NOT A MODEL CHANGE. NO LP, NO SOLVE, NOTHING SCORED OR
+REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL VERDICT MOVED
+(rule 28d — no mechanism was tested), NO `ScenarioConfig` FIELD (rule 28c not engaged),
+ZERO NEW DOF.** neiso-85 diagnosed the object and **refused to charter a lever**; this
+session executes the fix that refusal implied. The lever queue stays CLEARED.
+
+**WHAT WAS DONE.** NEISO's `basis_usd_mmbtu` rows were sourced from the `EIA N3050MA3` LDC
+city-gate **purchase-portfolio AVERAGE** (summer $/Mcf balloons as fixed reservation charges
+spread over collapsed summer LDC throughput), making `basis = N3050 − HenryHub`
+**SUMMER-peaking** — the opposite of the marginal Algonquin basis a gas unit's offer tracks.
+For the owner-authorized window **NEISO 2018 / 2019 / 2020 / 2021 / 2022 / 2026** it is now
+the measured **ISO-NE MASSACHUSETTS GAS INDEX** — the SAME series and provenance style
+already committed for 2023–2025, one cited source URL per row. Rule 14 `[R-ACCURATE]`
+misalignment clause; the CAISO precedent is `caiso_citygate_spot_level` (caiso-84).
+**61 basis rows corrected**, and every complete year flips
+`winter(Jan,Feb,Dec) − summer(Jun,Jul,Aug)` from NEGATIVE to POSITIVE: **2018 −4.79 → +2.85,
+2019 −6.71 → +2.80, 2020 −7.18 → +1.32, 2021 −8.56 → +3.78, 2022 −7.84 → +11.56**, against
+the measured 2023–2025 +2.83 / +4.54 / +10.97. 2022-01 moves **+2.3545 → +15.7370**, 2022-08
+**+10.3931 → −0.4357**.
+
+**THE SECOND FILE, which mattered more than the charter assumed.**
+`algonquin_citygate_daily.csv` covered 2023–2025 only, and **the NEISO 2022 touchpoint ran
+`gas_hub_basis_daily=True`** — so with no 2022 prints the daily leg had been falling through
+to its **Transco Z6 NY shape-borrow fallback**: 2022 carried an inverted level *and* a
+borrowed within-month shape. Extended via the existing scraper's `--merge` mode: **+313
+measured AGT prints** (292 EIA archive pages, 0 failures, 123 committed rows frozen), 2022
+now at 62 prints including the true-calendar-day blowouts **$22.69 (01-19), $22.81 (02-03),
+$22.48 (02-14)**, so the primary measured leg fires instead of the fallback.
+
+**PRE-REGISTERED NO-LP GATES (written and committed BEFORE any data edit, `5b27332f`):
+V1 PASS · V2 PASS · V3 FAIL-AND-REPORTED · V4 PASS · V5 PASS.** V2 (the gate protecting the
+keeper): NEISO 2023–2025 rows **36 before / 36 after byte-identical** and all 124
+pre-existing AGT lines preserved — held *by construction*. V5: **804 non-NEISO lines
+byte-identical**. **V3 FAILED and was NOT reconciled** — no adjustment, shift or blend was
+applied. A control falsifies the **gate**, not the data: **8/9 of the KEEPER's own measured
+in-sample winter months fail V3 identically**, because NEISO's EIA-923 gas sample is **2
+reporting plants** (4 pre-2021) and "partly LNG-priced" per `pipeline/backcast_config.py` —
+which is the stated reason this overlay **supersedes** 923 for NEISO, so 923 is not a valid
+lower bound on the marginal hub. The intake moved V3 the right way anyway (15/15 failing
+before → 13/15 after). **Pipeline falsified at scale before adoption:** re-deriving the 36
+committed in-sample rows from source reproduced **33/36 exactly**, 2 rounding ties, 1
+material — the `2025,8` row that declares itself an interpolation.
+
+**STILL DEFECTIVE — DO NOT TREAT NEISO's BASIS AS CLEAN.** (a) **2015–2017** not authorized,
+still 100 % proxy/inverted. (b) **2018 Mar–Jun UNOBTAINABLE** — ISO-NE migrated its newswire
+mid-2018 (WP archive jumps 2018-03-26 → 2018-08-24, legacy `/updates/` URLs 301 to the
+homepage, no Wayback capture; three routes tried), so those 4 rows stay on the proxy, **2018
+is a MIXED year whose June (+6.2124) is still inverted, and 2018 SHOULD NOT BE SOLVED until
+they are resolved.** They were left rather than deleted because deleting drops overlay
+coverage 12/12 → 8/12 and hands those months to the 923 fallback — a mechanism-coverage
+change, outside the authorization. (c) **2026 partial** on both legs (monthly Jan–May; AGT
+daily 1 print). (d) **An IN-SAMPLE stale row was found and DELIBERATELY NOT TOUCHED**:
+`NEISO,2025,8` is a committed interpolation (+0.04) but the Aug-2025 recap (published
+2025-10-02) states **$2.53/MMBtu** → basis **−0.3829**; 2025 is in-sample and V2 is absolute,
+so it is flagged for a future in-sample-authorized session, not changed here.
+
+**CROSS-ISO, untouched by design.** **CAISO arms this same overlay and is 100 % proxy in ALL
+years INCLUDING its tuned window** — rule 25 `[R-ISO-SCOPE]`, flagged for the CAISO lane, no
+CAISO cell or row touched. PJM (−1.46 to −4.06, 2015–2019) carries a milder version but does
+not arm the overlay.
+
+**UNBLOCKED BUT NOT DONE.** A **corrected 2022 re-solve** needs its own **separate owner
+lift** of the still-ACTIVE holdout freeze — not requested here. The **C3c winter-derate
+depth/trigger identification**, which neiso-85 showed cannot be identified while the input is
+inverted, is unblocked for 2019–2022 but still needs its own authorization and charter. The
+**SPENT 2019 + H1-2026 locked-test one-shot was NOT re-opened, re-scored or re-interpreted**
+— it stands exactly as scored, on the proxy input it consumed; the data repair's
+discontinuity is recorded in `calibration-complete.json`'s `intake_log`.
+`results/calibration/{PREREG,FINDING}-neiso86-gas-basis-intake-2026-08-06.md`,
+`_neiso86_intake_gates.json`, probe `scripts/probes/_neiso86_intake_gates.py`.
+
 **neiso-85 (2026-08-05) — THE 2022 SEASONAL INVERSION IS *ONE OBJECT* AND IT IS A DEFECTIVE
 FUEL INPUT, NOT A MECHANISM. NO LP, NO SOLVE, NOTHING SCORED OR REGISTERED, KEEPER
 UNCHANGED, NO CELL VERDICT MINTED (rule 28d: no mechanism was tested).** Off-queue by
