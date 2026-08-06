@@ -67,10 +67,15 @@ Per `frontend/data/backcast/calibration-complete.json` `.complete.NEISO`:
 - **Declared:** 2026-07-07, by owner (session `neiso-calibration-complete-w1c`,
   `AskUserQuestion`: "Declare + run one-shot"; memo
   `docs/handoffs/neiso-calibration-complete-memo-2026-07.md`).
-- **Locked-test scored on:** `2026-07-07-neiso53-winter-fuelsec-coldsnap`. The
-  2019 + H1-2026 locked-test one-shot was scored ONCE with the frozen neiso-53
-  config and STANDS (rule 22); it was **not** re-scored for neiso-54 (or for
-  neiso-55/56 since).
+- **Locked test: NEVER GRANTED, NEVER SPENT.** *(Corrected 2026-08-06, owner decision
+  D-23.)* This bullet previously read: "**Locked-test scored on:**
+  `2026-07-07-neiso53-winter-fuelsec-coldsnap`. The 2019 + H1-2026 locked-test one-shot
+  was scored ONCE with the frozen neiso-53 config and STANDS (rule 22); it was **not**
+  re-scored for neiso-54 (or for neiso-55/56 since)." **That was false.** No NEISO 2019
+  or H1-2026 year has ever been solved, scored or registered, and the id named above is a
+  TRAIN-tier 2023–2025 config, not a 2019 run. Citation chain:
+  `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+  `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
 - **Train-tier keeper promoted:** 2026-07-08 (session
   `neiso-steamgas-ct-drag`), i.e. neiso-54 superseding neiso-53 as the
   2023–2025 keeper the day after the marker was written.
@@ -132,10 +137,23 @@ with LOYO trivially satisfied because the deltas are ≈0.
 
 ## 5. Locked-test status (rule 22 — touch-once)
 
-- **2019 + H1-2026:** scored EXACTLY ONCE, against the frozen neiso-53 config,
-  on 2026-07-07. Stands untouched since; will **never** be re-scored against
-  neiso-54/55/56 or any future keeper (a locked-test year re-solved after its
-  one-shot would be a governance breach, not a CI failure — CLAUDE.md rule 22).
+- **2019 + H1-2026: NEVER GRANTED, NEVER SPENT, NEVER RUN.** *(Corrected 2026-08-06,
+  owner decision D-23.)* This bullet previously read: "scored EXACTLY ONCE, against the
+  frozen neiso-53 config, on 2026-07-07. Stands untouched since; will **never** be
+  re-scored against neiso-54/55/56 or any future keeper (a locked-test year re-solved
+  after its one-shot would be a governance breach, not a CI failure — CLAUDE.md rule 22)."
+  **That was false.** The artifact search — reproduced independently and extended across
+  full git history — finds no NEISO 2019 or H1-2026 solve of any kind: every NEISO registry
+  sidecar ever committed declares years drawn only from {2022, 2023, 2024, 2025},
+  `bench/NEISO/` holds 2022–2025, `actual_tail.json` has no 2019 row to score against, and
+  the memo cited as the authorization never mentions 2019 (its 2026-07-07 decision
+  authorized a **2022** one-shot, held the same day). NEISO's locked test is therefore an
+  **open, ungranted** question — and neiso-87 §3 answers it **NOT YET** on the merits:
+  2019 is unsolvable at HEAD (no NEISO demand rows before 2021) and could not discriminate
+  on C3c even if it were (zero actual RT hours > $300 in 2019). The touch-once discipline
+  itself is unchanged and still governs whenever a grant is made. Citation chain:
+  `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+  `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
 - **2022 (validation, iterable):** intake done, one-shot execution HELD
   pending the cross-ISO data-equivalency gate (G-19) per memo §4/§6 — not yet
   run.

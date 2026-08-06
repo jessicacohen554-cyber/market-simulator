@@ -461,7 +461,9 @@ Mirrors FFR-3C §5 / FFR-3F §7.
   unarmed** outside the explicitly-labelled `--retirement-rule legacy` control arm. `exit_rate_limits`
   stays default-OFF and was never armed. D-1 and D-2 stay armed exactly as Addendum D left them.
 * **No holdout marker spent and no marker file modified.** `final` EMPTY, `complete` unchanged,
-  `holdout-freeze.json` unmodified, NEISO's locked test still SPENT.
+  `holdout-freeze.json` unmodified, NEISO's locked test still unspent. *[Corrected
+  2026-08-06, D-23: this read "still SPENT"; NEISO's locked test was never granted or
+  spent. This session's no-spend attestation is unaffected.]*
 * **Nothing registered anywhere.** No backcast registry, no `frontend/data/hindcast/` sidecar, no
   forecast namespace, no dashboard entry. Both bundles carry a `QUARANTINE-DO-NOT-REGISTER.txt`.
 * **No mechanism-matrix verdict was claimed from the quarantined arms.** A run that solved a

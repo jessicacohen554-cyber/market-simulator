@@ -6574,9 +6574,16 @@ reserve-short, so the in-LP ISO-NE RCPF co-opt remains DORMANT. The ledgered C3c
 sizing re-verifies (model **0 h > $300 in all three years**, on the scored pass and the
 other one, any-zone and load-weighted) and the determination reproduces byte-for-byte via
 `calibration_verdict.py --run-id`. **`complete` unchanged** (no promotion ⇒ no re-key, no
-D-5(b) due). **`final` NOT PROPOSABLE — NEISO's locked test is SPENT and never
-re-grantable**; its absence from `final` is not a pending grant. The spend freeze is ACTIVE
-and outranks both markers.
+D-5(b) due). **`final` NOT PROPOSED — NEISO's locked test has NEVER BEEN GRANTED**; its
+absence from `final` is not a pending grant either. *(Corrected 2026-08-06, owner decision
+D-23: this read "**`final` NOT PROPOSABLE — NEISO's locked test is SPENT and never
+re-grantable**". That was false — no NEISO 2019 or H1-2026 year has ever been solved, scored
+or registered. The practical posture is unchanged, `final` is still not proposed here, but
+the reason is that the one-shot is UNGRANTED rather than foreclosed, and neiso-87 §3 answers
+the grant question NOT YET on the merits: 2019 is unsolvable at HEAD and cannot discriminate
+on C3c. Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md`
+§1 → `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.)*
+The spend freeze is ACTIVE and outranks both markers.
 
 **THREE CARRIED-FORWARD NUMBERS WERE WRONG AND ARE CORRECTED IN PLACE (no re-solve).** The
 third exposed a basis defect: **the NEISO keeper is SCORED ON THE PASS LABELLED `P2`, NOT

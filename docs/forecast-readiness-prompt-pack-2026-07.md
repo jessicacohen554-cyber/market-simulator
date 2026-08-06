@@ -72,8 +72,11 @@ session ran** (no `docs/handoffs/ffr-*` exists; every FR code finding re-verifie
 (2019/H1-2026, touch-once) — **deliberately empty** ("Neither is final"). `complete` now holds
 **{NEISO, NYISO, PJM}**: PJM declared 2026-07-31 (CALIBRATED, zero caveats, at pjm-140), NYISO
 re-declared 2026-07-31 (CALIBRATED-WITH-CAVEATS, C3c ledgered, at nyiso-100 — the old withdrawal
-is marked superseded), NEISO re-scoped validation-only (its locked test is SPENT, never
-re-grantable). Consequences for this pack: the FFR-2D D-5 briefs are rewritten (see the prompt);
+is marked superseded), NEISO re-scoped validation-only (its locked test has **NEVER BEEN
+GRANTED** — *corrected 2026-08-06, D-23; this read "its locked test is SPENT, never
+re-grantable", which was false: no NEISO 2019/H1-2026 year has ever been solved, scored or
+registered. NEISO stays validation-only either way and the correction grants nothing*).
+Consequences for this pack: the FFR-2D D-5 briefs are rewritten (see the prompt);
 gate (a) of §2.1b is now arguably met by THREE ISOs, not one — but §2.1b(a)'s text predates the
 two-block split and still cites the superseded NYISO withdrawal, so the reconciliation of
 "gate (a) keys on `complete`" is itself a D-5 residue item. All three markers record the
@@ -379,7 +382,8 @@ battery, not behind it. A lane is now held only for evidence dependency or an ow
 **5. Standing, unchanged.** HOLDOUT FREEZE **ACTIVE** (all ISOs, both tiers) — it blocks
 out-of-training **backcast** years and does **not** block forecast-mode 2026+, T1-F/T1-X/T1-H/T1-FF
 work, or in-sample 2023–2025. `complete` = {NEISO, NYISO, PJM}; `final` = **EMPTY**, deliberately;
-NEISO's locked test is SPENT and never re-grantable. **CACHE EPOCH 2026-08-02** — every pre-epoch
+NEISO's locked test has **NEVER BEEN GRANTED** (*corrected 2026-08-06, D-23 — previously
+"is SPENT and never re-grantable"; `final` stays EMPTY either way*). **CACHE EPOCH 2026-08-02** — every pre-epoch
 forecast cache is invalid, so forecast work solves COLD by design. **FH-4/FH-5 stay BLOCKED**: the
 block lifts only when a retirement-lane fix **lands** and FH-1's §3.3 gate **re-probes green**.
 `data/clean` is a hard prerequisite for every forecast leg (≈65 min / 50 datatypes / 1.6 GB) and
@@ -3223,8 +3227,13 @@ SOC-reserve arm) · PJM 2026-08-04-pjm-152-collapse · CAISO 2026-08-05-caiso-17
 Markers: `complete` = {NEISO, NYISO, PJM}. THE CAISO GRANT IS OWNER-SIGNED (Addendum S.4/S.5)
 BUT NOT YET EXECUTED — the CAISO-GRANT governance lane writes it; watch for CAISO appearing in
 `complete`. NEISO's `complete` entry is correctly re-keyed to neiso-83 (D-5(b) executed by the
-promoting session; verified in S). `final` = EMPTY; NEISO's locked test is SPENT, never
-re-grantable. HOLDOUT FREEZE ACTIVE — it blocks out-of-training BACKCAST solve/score/
+promoting session; verified in S). `final` = EMPTY; NEISO's locked test has **NEVER BEEN
+GRANTED** (*corrected 2026-08-06, owner decision D-23 — this read "is SPENT, never
+re-grantable"; the artifact record carries no NEISO 2019/H1-2026 solve of any kind. `final`
+stays EMPTY and the correction grants nothing; citation chain
+`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6*).
+HOLDOUT FREEZE ACTIVE — it blocks out-of-training BACKCAST solve/score/
 registration only; forecast-mode 2026+, the T1 windows, and in-sample 2023-2025 are unaffected.
 THE MARKER AND THE FREEZE ARE ORTHOGONAL (caiso-171): a freeze SUSPENDS what a marker grants;
 NYISO and PJM were declared complete six days INTO the freeze. Any session reasoning otherwise
@@ -3932,7 +3941,11 @@ FFR-7C: the ≈0 bound SURVIVES on the corrected target (0 of 2,294 MW; Sandy Cr
 FALSIFY a screen via exits, never confirm one (positive validation is price-side). FFR-7B
 Arm 1: statutory corrections landed, paired controls BYTE-IDENTICAL ×3 ISOs, no promotion
 hold; Arms 2–3 handed off → FFR-7B-2 below. neiso-87: the NEISO locked-test SPENT claim is
-FALSE (13 files, incl. CLAUDE.md) → card D-23. Full record: Addendum X.
+FALSE (incl. CLAUDE.md) → card D-23. **EXECUTED 2026-08-06** by the NEISO-RECORD governance
+session: the record now reads **NEVER GRANTED**; 20 live files corrected (neiso-87 estimated
+13 — the reconciliation, and the ~22 `results/calibration/` session records deliberately left
+as history, are in `docs/handoffs/neiso-record-correction-2026-08-06.md`). Nothing granted;
+`final` still EMPTY, freeze still ACTIVE. Full record: Addendum X.
 
 ### FFR-7B-2 [FABLE] — Arms 2–3 of the RPS/clean-tier repair (D-22(a) continuation)
 

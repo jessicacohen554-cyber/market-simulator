@@ -3,7 +3,7 @@
  "label": "neiso 2022 touchpoint",
  "date": "2026-08-05",
  "shorthand": "neiso-2022-touchpoint",
- "definition": "NEISO 2022 VALIDATION TOUCHPOINT (rule 22, validation tier). Byte-faithful replay of the neiso-83 keeper recipe (2026-08-05-neiso-83-ca1-reclass, CALIBRATED-WITH-CAVEATS) on the held-out 2022 year. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2022. Iterable model-SELECTION evidence, NEVER a certified out-of-sample skill number. NEISO's locked test (2019 + H1-2026) is SPENT and is NOT re-opened here. Spent under a narrow owner lift of the 2026-07-25 holdout freeze, which is re-armed in the same session.",
+ "definition": "NEISO 2022 VALIDATION TOUCHPOINT (rule 22, validation tier). Byte-faithful replay of the neiso-83 keeper recipe (2026-08-05-neiso-83-ca1-reclass, CALIBRATED-WITH-CAVEATS) on the held-out 2022 year. Frozen recipe, zero deltas: no parameter was tuned for, against, or in response to 2022. Iterable model-SELECTION evidence, NEVER a certified out-of-sample skill number. NEISO's locked test (2019 + H1-2026) is NOT touched here. [CORRECTED 2026-08-06, owner decision D-23: this previously read \"is SPENT and is NOT re-opened here\". NEISO's locked test has NEVER BEEN GRANTED and has never been run - no 2019 or H1-2026 year has ever been solved, scored or registered for this ISO. This run's own posture is unchanged: a VALIDATION-tier 2022 spend only. Citation chain: results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md section 1 -> docs/third-party-peer-review-2026-07.md section 6.3 item 1 -> D-23 / sitting Addendum X.6.] Spent under a narrow owner lift of the 2026-07-25 holdout freeze, which is re-armed in the same session.",
  "years": [
   2022
  ],
