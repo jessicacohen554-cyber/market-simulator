@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-nyiso-130-control",
+  "label": "nyiso 130 control",
+  "date": "2026-08-06",
+  "shorthand": "nyiso-130-control",
+  "definition": "Calibration run from bundle nyiso130_control.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-nyiso-130-control.js",
+  "bundle": "results/calibration/nyiso130_control"
+}
