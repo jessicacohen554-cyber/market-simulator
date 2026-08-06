@@ -45,10 +45,28 @@ sheet after its 2025 restart, the first US commercial restart of a retired
 nuclear plant). `data/raw/_validation-source/retired_sheet_coverage_gaps.csv`
 restores both rows verbatim from this repo's own already-committed earlier
 vintage snapshots (`vintage_2021`, `vintage_2022`) and is unioned in by
-`scripts/build_capacity_actuals.py` (it lives under `_validation-source/`,
+`scripts/data/build_capacity_actuals.py` (it lives under `_validation-source/`,
 not here, because `data/raw/eia-860/*.csv` is gitignored as a local-override
 convention — see that file's own header). **Palisades' restart makes its
 2022 retirement scoring-ambiguous** (a since-reversed exit) — see
 `data/raw/_validation-source/README.md` for the full note; this repo does
 not adjudicate here how a reversed retirement should score against a
 hindcast (RC-0B's call), only makes the underlying EIA-860 fact available.
+
+**The coverage gap is wider than those two plants (FFR-7A, 2026-08-06).**
+Measured across the committed snapshots: of the 442 units the `vintage_2022`
+retired sheet dates to 2021-2022, **106 are absent from the current release's
+retired sheet** — EIA prunes older retirements from an Early Release rather
+than carrying them forward. `build_capacity_actuals.py` therefore reads the
+whole release series (every `vintage_<year>/` plus the current release) rather
+than the current retired sheet alone, which recovers all 106 generically; the
+hand-curated gap-fix file above is still required only for Palisades, whose
+*latest* status is `OP`. The same series read supplies the `Status` history
+that dates a retirement at physical cessation instead of its paper date
+(`physical_exit_year`).
+
+**Vintage snapshot completeness.** `vintage_2018`-`vintage_2022` carry the
+full sheet set; `vintage_2023` and `vintage_2024` carry the **operable sheet
+only** (no retired-and-canceled sheet). Consumers that walk the series must
+treat a missing sheet as *no observation for that year*, never as evidence a
+unit was absent — the release year is simply a gap in that unit's history.
