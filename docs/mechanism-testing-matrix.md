@@ -884,7 +884,26 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **NO failing criterion; IN-MODEL LEVER QUEUE EMPTY; `complete` HELD; THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` HELD; THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+
+> **HEADER RE-STAMPED 2026-08-06 (caiso-176 follow-up).** This header previously read
+> "NO failing criterion … CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs". That was written
+> before **rubric v3.1** (owner amendment, commit `d9bb7a2c`) landed on main and is corrected
+> here rather than left standing. v3.1 restricts ledgering to **C3c alone** (`LEDGERABLE_CRITERIA`,
+> fail-closed in `_apply_ledger`), so CAISO's C3a `price_mean` entries — the owner's own
+> 2026-07-30 act at caiso-145 — **go inert** and C3a scores **FAIL**: **2024 +11.7 %, 2025
+> +14.8 %** (2023 is not in the fail set). Determination **NOT-YET**. v3.1 also **retires C7**, so
+> the scored surface is **8 criteria, not 9**. Live verdict, scorer-only, no LP: C1 PASS · C2 PASS
+> · **C3a FAIL** · C3b PASS · C3c CAVEAT [ledgered, the sole one] · C4 PASS · C6 PASS · C8 PASS;
+> D-10 free-class C1 12/12 · free 8/8. The C3a ledger entries **stay on their bundles as the
+> historical record** exactly as v3.1 requires — they are *inert*, not deleted.
+> **C3a is now an OPEN root-cause issue**: its driver is the model's unrestrained pumped-storage
+> pumping (FINDING-caiso140 §B, a +793 MW belly wedge off a 2,078 MW PS fleet) and closing it
+> needs the hourly PS water state — **WALLED**, re-verified **5/5 `unchanged` on live bytes at
+> caiso-176**. Never closable by a price adder, haircut or any value tuned to the level residual
+> (rules 1/13); the export/absorption family stays DO-NOT-REDO (caiso-142 §H). The `complete`
+> marker is **not** withdrawn by a NOT-YET determination (NYISO precedent), the freeze outranks it
+> regardless, and `audit_keepers --iso CAISO` is **PASS 0/0** on main.
 
 > **caiso-176 (2026-08-06) — THE FRONTIER RE-ASSESSMENT ON THE NEW KEEPER, AND THE
 > `battery_dispatch_adder` WALL.** NO LP, NO solve, NO arm, nothing registered, keeper
