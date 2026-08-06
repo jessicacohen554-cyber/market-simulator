@@ -3042,6 +3042,7 @@ def solve_and_persist(
     coal_perplant_offer_level: bool = False,
     coal_perplant_offer_yearly: bool = False,
     nysdec_peaker_rule_availability: bool = False,
+    nyiso_solar_market_generator_basis: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
     st_gas_intermediate_cf_threshold: float | None = None,
@@ -4370,6 +4371,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 nysdec_peaker_rule_availability=True
             )
+        if nyiso_solar_market_generator_basis:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_solar_market_generator_basis=True
+            )
         if oil_primary_bin_fuel:
             recorded_cfg = recorded_cfg.with_overrides(oil_primary_bin_fuel=True)
         if st_gas_intermediate:
@@ -4637,6 +4642,7 @@ def solve_and_persist(
             coal_perplant_offer_level=coal_perplant_offer_level,
             coal_perplant_offer_yearly=coal_perplant_offer_yearly,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
+            nyiso_solar_market_generator_basis=nyiso_solar_market_generator_basis,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
             st_gas_intermediate_cf_threshold=st_gas_intermediate_cf_threshold,
@@ -5382,6 +5388,7 @@ def solve_and_persist(
         "coal_perplant_offer_level": coal_perplant_offer_level,
         "coal_perplant_offer_yearly": coal_perplant_offer_yearly,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
+        "nyiso_solar_market_generator_basis": nyiso_solar_market_generator_basis,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
         "st_gas_intermediate_cf_threshold": st_gas_intermediate_cf_threshold,
@@ -8194,6 +8201,22 @@ def main() -> None:
         "byte-identical — the ercot-168 precommit's G-BIT kill gate). "
         "Identification: derive_coal_perplant_offer.py --year 2023. "
         "Default OFF -> prior keepers byte-identical.",
+    )
+    parser.add_argument(
+        "--nyiso-solar-market-generator-basis",
+        dest="nyiso_solar_market_generator_basis",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="NYISO front-of-meter solar capacity basis (rule 14 [R-ACCURATE] "
+        "input correction, NYISO-only). EIA-860's NY utility-scale solar "
+        "population includes ~2 GW of distribution-connected NY-Sun community "
+        "solar that is not a NYISO market generator and is already netted out "
+        "of the EIA-930 NYIS demand series used as load (NYIS 'NG: SUN' is "
+        "identically zero, nyiso-106), so carrying it as grid supply "
+        "double-counts it. When set, NYISO solar capacity comes from NYISO's "
+        "own Gold Book Table III-2a market-generator registry "
+        "(data/raw/reference/nyiso-market-solar-capacity.csv). Zero free "
+        "parameters. Default OFF -> prior keepers byte-identical.",
     )
     parser.add_argument(
         "--nysdec-peaker-rule",
@@ -11182,6 +11205,7 @@ def main() -> None:
         coal_perplant_offer_level=args.coal_perplant_offer_level,
         coal_perplant_offer_yearly=args.coal_perplant_offer_yearly,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
+        nyiso_solar_market_generator_basis=(args.nyiso_solar_market_generator_basis),
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,

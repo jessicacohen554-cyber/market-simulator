@@ -146,6 +146,7 @@ from market_sim.config.paths import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import COD_FALLBACK_MONTH, monthly_online_mask
+from market_sim.data.nyiso_market_solar import load_market_solar_monthly
 from market_sim.data.eia_loader import (
     DATA_DIR,
     load_eia_hourly_renewable_gen,
@@ -2317,6 +2318,23 @@ def load_renewable_profiles(
     allocated: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     for fuel in _RENEWABLE_FUELS:
         monthly = _eia860_monthly_capacity(iso, fuel, zone_names, year)
+        if (
+            fuel == "solar"
+            and iso == "NYISO"
+            and getattr(config, "nyiso_solar_market_generator_basis", False)
+        ):
+            # Rule 14 [R-ACCURATE] basis swap: EIA-860's NY utility-scale solar
+            # population includes ~2 GW of distribution-connected community
+            # solar that is not a NYISO market generator and is already netted
+            # out of the EIA-930 NYIS demand series used as load, so carrying it
+            # here double-counts it. Replace the capacity basis with NYISO's own
+            # Table III-2a registry; everything downstream (installed_mw, the
+            # zone split, the vintage ramp) follows unchanged. See
+            # data.nyiso_market_solar for the identification and the declared
+            # CF-basis limitation.
+            registered = load_market_solar_monthly(iso, year, zone_names)
+            if registered is not None:
+                monthly = registered
         if monthly is not None:
             # A calibration backcast (config.mode == "backcast", set
             # explicitly — never inferred from gas_price_override) is

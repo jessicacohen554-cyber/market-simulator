@@ -6763,6 +6763,45 @@ class ScenarioConfig:
     # Default off.
     nysdec_peaker_rule_availability: bool = False
 
+    # NYISO front-of-meter solar capacity basis (rule 14 [R-ACCURATE] INPUT
+    # correction; NYISO-only, rule 25). The model distributes NYISO solar
+    # capacity from the EIA-860 utility-scale operable schedule, which lists
+    # every NY solar plant >= 1 MW — including the ~2 GW of DISTRIBUTION-
+    # CONNECTED NY-Sun community solar that is NOT a NYISO market generator and
+    # whose output is ALREADY NETTED OUT of the EIA-930 NYIS demand series the
+    # model uses as load (EIA-930 NYIS "NG: SUN" is identically zero in every
+    # hour of 2023-2025 — nyiso-106 measured 8,760/8,760 zero hours,
+    # "structurally absent (NY grid solar is overwhelmingly distribution-
+    # connected / net-metered)"). Carrying it a second time as a grid-supply
+    # decision variable DOUBLE-COUNTS the same MWh: once as a reduction in
+    # demand, once as supply. When set, NYISO solar capacity comes instead from
+    # NYISO's own registry — Gold Book Table III-2a "NYISO Market Generators",
+    # published load zone / nameplate MW / in-service date, crosswalked by the
+    # existing A-K -> five-zone map and ramped by the same month-of-commercial-
+    # operation construction the EIA-860 path already applies
+    # (data.nyiso_market_solar; artifact
+    # data/raw/reference/nyiso-market-solar-capacity.csv, frozen under rule 23 —
+    # re-derive only on a new Gold Book vintage). Membership is an identity, so
+    # ZERO free parameters and n_residual is unchanged. Rule 13 admissible: an
+    # INPUT (which plants are market generators) that regenerates for a forward
+    # year from the same registry and responds to changed conditions — NOT the
+    # measured generation series, and NOT a cap at delivered output (contrast
+    # caiso_solar_cap_at_delivered, which pins an outcome and is barred from any
+    # keeper). The LP still dispatches and curtails solar endogenously.
+    # DECLARED LIMITATION (bounds what may be claimed): this swaps the capacity
+    # BASIS only and keeps the existing ISO-wide CF normalization, a whole-NY-
+    # fleet blend the model realizes at ~0.133, while NYISO's registered fleet
+    # is more tracking-heavy (~0.20 CF on the Gold Book's own Net Energy
+    # column). MEASURED against the registry's published output
+    # (0.23/0.50/1.08 TWh), the armed arm delivers 0.21/0.52/0.75 TWh — within
+    # 8% and 4% in 2023/2024 but 0.33 TWh SHORT in 2025, where the large
+    # tracking plants dominate. The residual 2025 error is in the TIGHTENING
+    # direction and a 2025 price gain must be read against that bound.
+    # Re-identifying the fleet CF is a separate object (rule 19 [R-ONE-MECH])
+    # and is deliberately not bundled.
+    # Default off -> every prior keeper stays byte-identical.
+    nyiso_solar_market_generator_basis: bool = False
+
     # ISO-gated gas-steam forced-outage base override. The global ST_GAS WEFOR
     # base (constants.THERMAL_AVAILABILITY["ST_GAS"] = 0.21) is fitted to ERCOT's
     # once-through 1950s-60s steamers and is >2x every other thermal class — an
