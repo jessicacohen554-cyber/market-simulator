@@ -3789,6 +3789,23 @@ grounded-above-budget escalation for C8. None of the four grounded C8 notes
 (CT_PEAKER 2023/24/25, ST_GAS 2025) holds a repaired plant in its year — all four
 stay clean grounded PASSes.
 
+**D-2 moves too, and the mechanism is worth recording** — a first reading (that
+`npl` cannot reach D-2, since `_decode_cf_bytes` ignores it whenever `c_ann` /
+`m_ann` is present) is **wrong**. `at_floor_mask` widens its tolerance as
+`atol += 0.01 × npl`, so a plant at `npl = 1` was given a ~0.01 MW tolerance
+against a series quantized at ~17 MW and its at-floor hours were **under**-counted.
+Measured like-for-like (identical bundle, floors, container; only the bench parts
+swapped): **3 of 35 D-2 rows move, all in 2023** — COAL `coal_mustrun`
+5.0838 → **5.4141** TWh (4.48 % → 4.77 % of class), ST_GAS `st_netload_drag`
+4.8171 → **4.8378** (50.89 % → 51.11 %), CT_PEAKER `ct_netload_drag` +0.0006 —
+and **D-2's gate failures are byte-identical** (the same three CT_PEAKER budget
+breaches at 16.4 / 16.7 / 16.8 %), **D-4 PASSES on both sides**. The accurate
+input therefore moves a *protective* metric **against** the model (+0.33 TWh of
+measured forced coal) and is kept anyway — rule 14 as written — landing at 4.77 %
+against a 30 % budget. C8 **as gated today** cannot have moved at all: the scorer
+reads the bundle's committed `legitimacy_diagnostics.json`, which was
+deliberately **not** overwritten.
+
 **PJM 2022 is repaired but NOT re-scored** (freeze ACTIVE; a measured input is
 applied consistently across all years, but its committed diagnostics stay on the
 pre-repair basis). **Cross-ISO:** MISO 6.16 / NEISO 4.27 / CAISO 0.29 TWh still
