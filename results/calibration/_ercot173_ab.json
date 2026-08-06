@@ -1,0 +1,266 @@
+{
+ "_provenance": {
+  "scorer": "scripts/probes/_ercot173_ab.py",
+  "base": "results/calibration/ercot173_control_A",
+  "probe": "results/calibration/ercot173_reconc_B",
+  "gates": "PRECOMMIT-ercot172 \u00a75 inherited verbatim per PRECOMMIT-ercot173 \u00a75"
+ },
+ "years": {
+  "2023": {
+   "base": {
+    "c3a_hub_pct": -22.5,
+    "nrmse": 2.8108,
+    "spurious": 10,
+    "tail_model": 66,
+    "tail_caught": 63,
+    "tail_actual": 181,
+    "model_mean": 37.476,
+    "actual_mean": 48.357
+   },
+   "probe": {
+    "c3a_hub_pct": -23.77,
+    "nrmse": 2.8271,
+    "spurious": 9,
+    "tail_model": 64,
+    "tail_caught": 61,
+    "tail_actual": 181,
+    "model_mean": 36.861,
+    "actual_mean": 48.357
+   },
+   "shed_hours_base": [
+    4097,
+    4098,
+    5490,
+    5682,
+    5802
+   ],
+   "shed_hours_probe": [
+    4097,
+    4098,
+    5490,
+    5682,
+    5802
+   ],
+   "class_energy_delta_pct": {
+    "CC_CHP": -0.345,
+    "CC_REGULAR": -0.143,
+    "COAL_LIGNITE": 0.355,
+    "COAL_PRB": 1.938,
+    "CT_CHP": -0.306,
+    "CT_PEAKER": -3.377,
+    "OTHER": 0.0,
+    "ST_GAS": -1.778,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "nuclear": 0.0,
+    "solar": -0.035,
+    "wind": -0.009
+   }
+  },
+  "2024": {
+   "base": {
+    "c3a_hub_pct": 11.75,
+    "nrmse": 3.0042,
+    "spurious": 13,
+    "tail_model": 26,
+    "tail_caught": 18,
+    "tail_actual": 53,
+    "model_mean": 29.978,
+    "actual_mean": 26.825
+   },
+   "probe": {
+    "c3a_hub_pct": 3.94,
+    "nrmse": 2.2635,
+    "spurious": 10,
+    "tail_model": 14,
+    "tail_caught": 9,
+    "tail_actual": 53,
+    "model_mean": 27.881,
+    "actual_mean": 26.825
+   },
+   "shed_hours_base": [
+    2827,
+    3067
+   ],
+   "shed_hours_probe": [
+    3067
+   ],
+   "class_energy_delta_pct": {
+    "CC_CHP": -0.712,
+    "CC_REGULAR": -0.154,
+    "COAL_LIGNITE": 2.952,
+    "COAL_PRB": 3.738,
+    "CT_CHP": -0.708,
+    "CT_PEAKER": -8.743,
+    "OTHER": 0.0,
+    "ST_GAS": -4.222,
+    "biomass": 0.0,
+    "hydro": 0.0,
+    "nuclear": 0.0,
+    "solar": -0.05,
+    "wind": -0.002
+   }
+  },
+  "2025": {
+   "base": {
+    "c3a_hub_pct": 0.3,
+    "nrmse": 0.9397,
+    "spurious": 1,
+    "tail_model": 3,
+    "tail_caught": 2,
+    "tail_actual": 31,
+    "model_mean": 32.588,
+    "actual_mean": 32.491
+   },
+   "probe": {
+    "c3a_hub_pct": -2.3,
+    "nrmse": 0.9514,
+    "spurious": 0,
+    "tail_model": 0,
+    "tail_caught": 0,
+    "tail_actual": 31,
+    "model_mean": 31.744,
+    "actual_mean": 32.491
+   },
+   "shed_hours_base": [],
+   "shed_hours_probe": [],
+   "class_energy_delta_pct": {
+    "CC_CHP": -0.764,
+    "CC_REGULAR": -0.999,
+    "COAL_LIGNITE": 3.214,
+    "COAL_PRB": 5.143,
+    "CT_CHP": -1.246,
+    "CT_PEAKER": -10.429,
+    "OTHER": 0.0,
+    "ST_GAS": -4.451,
+    "biomass": 0.0,
+    "nuclear": 0.0,
+    "solar": -0.014,
+    "wind": 0.0
+   }
+  }
+ },
+ "gates": {
+  "G-BIT": "N/A (declared pre-solve: year-agnostic rule; replaced by G-SPAN)",
+  "G-SPAN": {
+   "pass": false,
+   "class_energy_violations_pct": {
+    "2023": {
+     "COAL_PRB": 1.938,
+     "CT_PEAKER": -3.377,
+     "ST_GAS": -1.778
+    },
+    "2025": {
+     "CC_CHP": -0.764,
+     "CC_REGULAR": -0.999,
+     "COAL_LIGNITE": 3.214,
+     "COAL_PRB": 5.143,
+     "CT_CHP": -1.246,
+     "CT_PEAKER": -10.429,
+     "ST_GAS": -4.451
+    }
+   }
+  },
+  "G-SHED": {
+   "pass": true,
+   "shed_2024": [
+    2,
+    1
+   ]
+  },
+  "G-SPUR": {
+   "pass": true,
+   "by_year": {
+    "2023": [
+     10,
+     9
+    ],
+    "2024": [
+     13,
+     10
+    ],
+    "2025": [
+     1,
+     0
+    ]
+   }
+  },
+  "G-C3c": {
+   "pass": false,
+   "by_year": {
+    "2023": {
+     "ledger": [
+      61,
+      181
+     ],
+     "base": 66,
+     "probe": 64
+    },
+    "2024": {
+     "ledger": [
+      25,
+      53
+     ],
+     "base": 26,
+     "probe": 14
+    },
+    "2025": {
+     "ledger": [
+      3,
+      31
+     ],
+     "base": 3,
+     "probe": 0
+    }
+   }
+  },
+  "G-DOF": "structural: zero new fitted scalars (the flag is boolean; reviewed in the FINDING)",
+  "G-COAL148": "scored separately post-registration (ercot149 payload machinery vs the incumbent product ceiling)",
+  "G-D2": "scored from the arm bundle's legitimacy_diagnostics.json",
+  "LOYO": "N/A (parameter-free rule; nothing identified on any year \u2014 per-year deltas reported instead)"
+ },
+ "rg_ercot167": {
+  "RG-1_g4_2024": {
+   "clears": true,
+   "spike_days": {
+    "2024-04-28": {
+     "base_daymean_abs_err": 382.21,
+     "probe_daymean_abs_err": 120.49
+    },
+    "2024-05-08": {
+     "base_daymean_abs_err": 268.45,
+     "probe_daymean_abs_err": 227.19
+    }
+   },
+   "c3a_2024_delta_pp": -7.81
+  },
+  "RG-2_g3_2025": {
+   "spurious_2025": [
+    1,
+    0
+   ],
+   "named_hour": {
+    "hour": 7051,
+    "base_model": 249.64,
+    "probe_model": 109.1,
+    "actual": 191.57,
+    "spurious_in_probe": false
+   }
+  }
+ },
+ "owner_object_2023": {
+  "c3a_hub_base_pct": -22.5,
+  "c3a_hub_probe_pct": -23.77,
+  "delta_pp": -1.27,
+  "missed_set_n": 118,
+  "missed_model_mean": [
+   96.07,
+   91.47
+  ],
+  "missed_model_max": [
+   199.44,
+   190.17
+  ],
+  "missed_flipped_gt200": 0
+ }
+}
