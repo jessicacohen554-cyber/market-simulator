@@ -320,7 +320,7 @@
               <tr>
                 <td><code>scripts/calibration_verdict.py</code></td>
                 <td><span class="role-pill gates">Gates</span></td>
-                <td><code>RUBRIC_VERSION = 2.4</code>. Scores C1–C8 per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
+                <td><code>RUBRIC_VERSION = 3.1</code>. Scores the criterion set per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
               </tr>
             </tbody>
           </table>
@@ -329,7 +329,7 @@
         <div class="insight-box info">
           <div class="insight-title">The one-sentence rule</div>
           <p>
-            <strong>The diagnostic MEASURES; the verdict GATES.</strong> The scorer <em>reads</em> the committed <code>legitimacy_diagnostics.json</code> — it never recomputes it (the diagnostic suite stays the single implementation). Conversely, the diagnostic's own embedded per-row verdicts do not decide the outcome: for C8 the scorer re-gates the artifact's <em>measured</em> forced share against the rubric's current caps, and for C7 it applies its own materiality floor before honouring the D-1 gate result. So a bundle written under an earlier gate value re-scores correctly with no regeneration.
+            <strong>The diagnostic MEASURES; the verdict GATES.</strong> The scorer <em>reads</em> the committed <code>legitimacy_diagnostics.json</code> — it never recomputes it (the diagnostic suite stays the single implementation). Conversely, the diagnostic's own embedded per-row verdicts do not decide the outcome: for C8 the scorer re-gates the artifact's <em>measured</em> forced share against the rubric's current caps, and applies its own materiality floor before reading the D-1 rows in its grounded-above-budget escalation. So a bundle written under an earlier gate value re-scores correctly with no regeneration — which is also how the v3.1 amendment re-scored every keeper in place without a single re-solve.
           </p>
         </div>
 
@@ -359,7 +359,7 @@
           <ul style="margin: 0 0 var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><span class="rs-tier tier-load">Load-bearing</span> — certifies the intended uses directly (price level &amp; shape, generation mix by class, system CO₂). Two-band scored where a published commercial comparable exists.</li>
             <li style="margin-bottom: var(--space-sm);"><span class="rs-tier tier-support">Supporting</span> — informative sub-annual dynamics (hourly correlation, storage cycling, the scarcity-tail count). Single wide band; a gross breach still FAILs.</li>
-            <li><span class="rs-tier tier-protect">Protective</span> — the anti-self-deception gates (C6 governance, C7 diurnal shape, C8 forced share). These catch a run that hits the right numbers through the wrong mechanism.</li>
+            <li><span class="rs-tier tier-protect">Protective</span> — the anti-self-deception gates (C6 governance, C8 forced share). These catch a run that hits the right numbers through the wrong mechanism. <em>C7 diurnal shape was retired at v3.1</em> — no commercial-grade model gates or publishes on it — but the D-1 shape measurement it read survives and still gates through C8's grounded-above-budget escalation.</li>
           </ul>
           <p style="margin-bottom: 0;">
             <strong>Any FAIL on any tier forces <code>NOT-YET</code>.</strong> The table below is interactive: click a criterion to see its coded threshold and the note behind its status. Badges use the full vocabulary — <span class="rs-badge st-pass">PASS</span> <span class="rs-badge st-caveat">CAVEAT</span> <span class="rs-badge st-grounded">GROUNDED</span> <span class="rs-badge st-skip">SKIP</span> <span class="rs-badge st-fail">FAIL</span>.
@@ -405,14 +405,14 @@
             </thead>
             <tbody>
               <tr>
-                <td>Protective ledgered <span style="font-weight:400;color:var(--text-muted)">(C7 / C8)</span></td>
-                <td><code>MAX_PROTECTIVE_CAVEATS = 1</code></td>
-                <td>The v1 hard budget of one, unchanged. C6 itself is <strong>never caveatable</strong>.</td>
+                <td>Protective ledgered <span style="font-weight:400;color:var(--text-muted)">(C6 / C8)</span></td>
+                <td><code>MAX_PROTECTIVE_CAVEATS = 0</code></td>
+                <td><strong>v3.1:</strong> no protective criterion is ledgerable, so a C8 forced-share <code>FAIL</code> is <code>NOT-YET</code> full stop. Stricter than the v1/v2 budget of one, which let a single protective gate be excused. C6 was already never caveatable.</td>
               </tr>
               <tr>
                 <td>Non-protective ledgered</td>
-                <td><code>MAX_LEDGERED_CAVEATS = 3</code></td>
-                <td>An out-of-band criterion reclassified by an explicit ledger entry as an accepted measured-input limitation. Three recurring data-limitation classes exist by construction (preliminary-923 vintage, EIA-930 storage coverage, data-blocked scarcity series), so the budget bounds excuses without mechanically forcing <code>NOT-YET</code> on data availability.</td>
+                <td><code>MAX_LEDGERED_CAVEATS = 1</code></td>
+                <td><strong>v3.1: only C3c is ledgerable at all</strong> (<code>LEDGERABLE_CRITERIA</code>) — it is the one criterion with no published commercial comparable, so a documented, exhaustion-cited bound is its honest reporting form. Every other criterion is scored against a published comparable and its band <em>is</em> the certification claim; an entry naming one is ignored and the <code>FAIL</code> stands. Caveats aggregate per criterion, so one ledgerable criterion means a ceiling of one.</td>
               </tr>
               <tr>
                 <td>Auto commercial-band</td>
@@ -450,7 +450,7 @@
           </p>
           <ul style="margin: 0 0 var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>Caps:</strong> forced share below <strong>15%</strong> for peakers (<code>FORCED_SHARE_PEAKER_MAX</code>, raised 10% → 15% in v2.1) and below <strong>30%</strong> for other merchant classes (<code>FORCED_SHARE_MERCHANT_MAX</code>).</li>
-            <li><strong>Materiality floor:</strong> C7 and C8 gate only classes whose annual energy — <code>max(model, actual)</code>, so forcing can't hide a class below the line — is at least <strong>2% of ISO load</strong> (<code>PROTECTIVE_MIN_LOAD_FRAC</code>). Smaller classes are reported by the D-1/D-2 diagnostics but never gated.</li>
+            <li><strong>Materiality floor:</strong> C8 gates only classes whose annual energy — <code>max(model, actual)</code>, so forcing can't hide a class below the line — is at least <strong>2% of ISO load</strong> (<code>PROTECTIVE_MIN_LOAD_FRAC</code>). Smaller classes are reported by the D-1/D-2 diagnostics but never gated.</li>
           </ul>
           <p>
             <strong>The grounded-above-budget escalation (v2.2)</strong> is the key subtlety. A <em>material</em> class <em>above</em> its cap is no longer an automatic FAIL — because forcing can be legitimate past the budget when it reproduces a real grid/RA/AS driver. It escalates to a conditional pass requiring <strong>both</strong>:
@@ -527,9 +527,17 @@
             <div class="ver-head"><span class="ver-tag">v2.3</span><span class="ver-date">2026-07-09</span></div>
             <p>C3a/C3b target bands set to the commercial values (single-band in effect); C5a re-based to the full-plant, CHP-inclusive CO₂ basis (measured BTM CHP host supply added back on both sides).</p>
           </li>
-          <li class="ver-item is-current">
-            <div class="ver-head"><span class="ver-tag">v2.4</span><span class="ver-date">2026-07-09</span><span class="rs-badge st-grounded">current</span></div>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v2.4</span><span class="ver-date">2026-07-09</span></div>
             <p>C3a/C3b score on the like-for-like <strong>load-weighted</strong> actual (<code>rt_lw</code>/<code>da_lw</code>) instead of the legacy equal-hour hub mean — a wedge that grew with tail realism. The legacy basis remains an explicitly-labelled fallback for ISO-years the retrofit doesn't cover.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v2.5 → v3.0</span><span class="ver-date">2026-07-13 → 08-05</span></div>
+            <p>Summarised — full entries in <code>docs/calibration-determination-rubric.md</code> §9. C2 gates only fully-reported EIA-923 vintages (v2.5); C3c re-gated on the actual <strong>RT</strong> hourly scarcity tail for every ISO and C5b/C5c storage criteria removed from the rubric (v2.6/v2.7); the C7 gate set widened to the merchant coal classes (v2.8, ratified 2026-07-27); C5a CO₂ removed from the rubric and demoted to reported-only, since eGRID publishes no 2025 vintage (v2.9); and the <code>ACCEPTED MODEL-CLASS LIMITATION</code> ledger kind added for supporting-tier criteria only (v3.0).</p>
+          </li>
+          <li class="ver-item is-current">
+            <div class="ver-head"><span class="ver-tag">v3.1</span><span class="ver-date">2026-08-06</span><span class="rs-badge st-grounded">current</span></div>
+            <p><strong>Ledgering restricted to C3c alone</strong> (<code>LEDGERABLE_CRITERIA</code>, fail-closed): every other criterion stands or falls on its own band, so both caveat budgets collapse (protective 1 → 0, non-protective 3 → 1). <strong>C7 diurnal shape retired</strong> from the report and the determination outright — §8's comparables row already scored the protective gates "beyond commercial practice", i.e. with no external anchor — with <code>score_shape</code> and <code>C7_GATED_CLASSES</code> deleted, while the D-1 measurement survives and keeps gating through C8's grounded-above-budget escalation. Scorer-only: keepers re-score in place, no re-solve. <em>Effects:</em> CAISO <code>CALIBRATED-WITH-CAVEATS</code> → <code>NOT-YET</code> (C3a mean LMP 2024 +11.7%, 2025 +14.8%, formerly ledgered), and its <code>complete</code> marker and frontier claim withdrawn; MISO C3a <code>CAVEAT</code> → <code>FAIL</code> with its <code>NOT-YET</code> label unchanged; NEISO, PJM, NYISO and ERCOT unchanged.</p>
           </li>
         </ol>
 
@@ -602,7 +610,7 @@
         <div class="insight-box success">
           <div class="insight-title">🎯 Backcast match is NOT the objective</div>
           <p>
-            A keeper is the <strong>most structurally faithful</strong> run, not the lowest-error one. The whole point of this rubric is to certify that the model's <em>mechanisms</em> mirror the real market — reserve co-optimization, scarcity pricing, congestion, commitment, fuel physics — and only then to check that the levels land in band. A structurally-correct mechanism stays in even if it makes the fit <em>worse</em> (then you fix the real root cause); a lower-MAE run that is missing real structure is <strong>not</strong> a keeper. That is why the protective tier (C6/C7/C8) can veto a run the load-bearing metrics would wave through, why forced energy is budgeted, and why "frontier achieved" is an honest stopping point rather than a passing grade. <em>(CLAUDE.md rule 1.)</em>
+            A keeper is the <strong>most structurally faithful</strong> run, not the lowest-error one. The whole point of this rubric is to certify that the model's <em>mechanisms</em> mirror the real market — reserve co-optimization, scarcity pricing, congestion, commitment, fuel physics — and only then to check that the levels land in band. A structurally-correct mechanism stays in even if it makes the fit <em>worse</em> (then you fix the real root cause); a lower-MAE run that is missing real structure is <strong>not</strong> a keeper. That is why the protective tier (C6/C8) can veto a run the load-bearing metrics would wave through, why forced energy is budgeted, and why "frontier achieved" is an honest stopping point rather than a passing grade. <em>(CLAUDE.md rule 1.)</em>
           </p>
         </div>
       </div>

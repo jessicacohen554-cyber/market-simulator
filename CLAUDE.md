@@ -85,10 +85,14 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     unexplained residual of an old one.
 1. `[R-FORCED-BUDGET]` **Forced energy is budgeted.** A keeper fails if any merchant class dispatches > 30 %
     (peakers: > 15 %) of its energy at binding floors. Floors are commitment scaffolding, not the
-    dispatch model. This budget — plus the C7 diurnal-shape gate — applies only to classes whose
+    dispatch model. This budget applies only to classes whose
     annual energy (max of model and actual, so forcing can't hide a class below the line) is ≥ 2 %
     of total ISO load; smaller classes are reported by the D-1/D-2 diagnostics but never gated —
-    trivial-class shape/forcing is not worth structural work. A material class **above** its cap is
+    trivial-class shape/forcing is not worth structural work. *(The standalone C7 diurnal-shape
+    gate that shared this materiality floor was RETIRED by the rubric v3.1 owner amendment
+    2026-08-06 — no commercial-grade model gates or publishes diurnal-shape accuracy. The D-1
+    measurement is untouched and still binds through this rule's own shape leg below, which is
+    now its sole gating path.)* A material class **above** its cap is
     not an automatic fail. It escalates to a conditional pass on **provenance + shape**: it passes
     iff (a) every binding non-exempt mechanism forcing it clears **D-4 off-window binding** (binds
     only in its driver-justified window — a mechanism with no declared window fails, per rule 12),

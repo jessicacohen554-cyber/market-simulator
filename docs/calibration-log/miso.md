@@ -5028,3 +5028,38 @@ PREREG `results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md
 probe `scripts/probes/_miso136_ct_offer_conduct_survey.py`;
 record `results/calibration/_miso136_ct_offer_conduct_survey.json`.
 Next number: **miso-137**.
+## 2026-08-06 — MISO blocker moves C7 → C3a under rubric v3.1 (owner amendment — no solve, label unchanged)
+
+Cross-ISO entry with the full amendment record:
+`docs/calibration-log/governance.md` 2026-08-06 (rubric v3.1). MISO-lane
+summary — keeper unchanged (`2026-08-05-miso-132b-cc-committed`), no LP solved,
+determination **NOT-YET before and after**.
+
+**READ WITH miso-136 DIRECTLY ABOVE, WHICH LANDED THE SAME DAY.** That session
+went looking for a within-day CT offer-conduct identification that is *not* the
+C7 residual, and returned the pre-declared conditional (corpus exists, class
+bridge unproven). Its premise is unaffected and its verdict stands: the reason
+it refused to identify conduct off the C7 residual — rule 13, you cannot derive
+an input from the thing it is meant to explain — is independent of whether C7
+gates. If anything this amendment sharpens it, since the residual miso-136
+declined to use is no longer scored at all.
+
+**The blocker changed identity, and one half of it was retired rather than
+fixed.** v3.1 restricts ledgering to C3c alone, so C3a mean LMP 2025 (−14.0%,
+model $39.05 vs actual $45.39) moves `CAVEAT → FAIL` and is now the sole
+failing criterion. 2023 (−0.5%) and 2024 (−5.9%) pass. The *previous* sole
+blocker — C7 COAL_PRB diurnal shape 2025, cv_ratio 0.338 against the 0.50 gate,
+standing since miso-127 — is gone because the same amendment **retired C7
+outright**, not because anything improved.
+
+**Do not read that as the COAL_PRB question being closed.** The D-1 measurement
+is not retired: the row is still computed and written to every bundle, and it
+still gates through C8's grounded-above-budget escalation for any class over
+its forced-energy budget (COAL_PRB is not one, which is why C7 was the only
+thing scoring it). The standing data ask behind it is unchanged and still open
+— ex-ante coal contract tonnage; miso-103 refuted the receipts-derived
+construction and miso-104 opened the ask.
+
+**Ledger position:** 1/1 — C3c price tail alone. After v3.1 there is no
+load-bearing slot to ledger into at all, so rule 24's "the next load-bearing
+miss must be BUILT, not ledgered" is now structural rather than a discipline.
