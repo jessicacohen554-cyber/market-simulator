@@ -253,6 +253,36 @@ def import_limit_by_area(
     return _metric_by_area(iso, "import_limit", delivery_year, season)
 
 
+def transfer_security_limit_by_area(
+    iso: str,
+    delivery_year: str,
+    season: str = "annual",
+) -> dict[str, float]:
+    """Return ``{area: transfer_security_limit_mw}`` — the N-1-1 transfer limit.
+
+    The area boundary's transmission transfer capability **before** any
+    capacity-market loss-of-source deduction, for the ISOs that publish the two
+    separately. It is NOT interchangeable with :func:`import_limit_by_area`:
+    ``import_limit`` is the capacity-adequacy accounting term a locational
+    requirement is computed against (NYISO enters it in the LCR "TSL Floor
+    Calculation" as ``UCAP requirement = load forecast - import_limit``), while
+    this metric is the transfer capability itself — the quantity an *hourly
+    energy* transfer bound needs.
+
+    NYISO Zone K is the reference case and the reason the metric exists: the
+    Locality Bulk Power Transmission Capability Report's TABLE 1 publishes a
+    275 MW "Locality Limit" and states in its own note 2 that *"the true N-1-1
+    Transmission Security Limit is 940 in this scenario, the Bulk Transfer Limit
+    accounts for the loss-of-source of 660 MW"* (the Neptune HVDC). Consumed by
+    :func:`market_sim.model.interchange.nyiso.apply_nyiso_li_tsl_import_cap`
+    under ``ScenarioConfig.nyiso_li_tsl_n11_security``.
+
+    Args, Returns: as :func:`requirement_by_area`. Empty for an ISO/area that
+    publishes no separate transfer-security row.
+    """
+    return _metric_by_area(iso, "transfer_security_limit", delivery_year, season)
+
+
 def area_types_by_area(
     iso: str,
     delivery_year: str,

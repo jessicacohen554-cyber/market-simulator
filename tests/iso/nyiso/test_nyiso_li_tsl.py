@@ -106,6 +106,76 @@ class TestTslImportCap:
         assert out is ttc
 
 
+class TestN11SecurityBasis:
+    """nyiso-130: the cap on the PUBLISHED N-1-1 transmission security limit.
+
+    ``import_limit`` is the locality limit NET of the 660 MW Neptune HVDC
+    loss-of-source (NYISO Locality Bulk Power Transmission Capability Report
+    TABLE 1 note 2); ``transfer_security_limit`` is the transfer limit itself,
+    940 MW. Selecting it is a change of published number only — same link, same
+    window, same symmetry.
+    """
+
+    def test_arms_the_published_n11_limit_every_year(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        li = _li_link_idx(iso_config)
+        on = NYISO_SELFSUPPLY_FLOOR_HOURS[0]
+        for year in (2023, 2024, 2025):
+            out = apply_nyiso_li_tsl_import_cap(
+                ttc, iso_config, "NYISO", year, T, n11_security_basis=True
+            )
+            assert out[on, li] == pytest.approx(940.0)
+
+    def test_default_is_byte_identical_to_the_import_limit_basis(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        base = apply_nyiso_li_tsl_import_cap(ttc, iso_config, "NYISO", 2023, T)
+        default = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=False
+        )
+        np.testing.assert_array_equal(base, default)
+
+    def test_window_and_off_window_semantics_unchanged(self):
+        """Only the in-window number moves; the window itself is untouched."""
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        li = _li_link_idx(iso_config)
+        out = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=True
+        )
+        hod = np.arange(T) % 24
+        in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+        np.testing.assert_allclose(out[in_window, li], 940.0)
+        np.testing.assert_allclose(out[~in_window, li], iso_config.links[li].ttc_mw)
+
+    def test_other_links_untouched(self):
+        iso_config = _nyiso_cfg()
+        ttc = np.array([ln.ttc_mw for ln in iso_config.links], dtype=float)
+        out = apply_nyiso_li_tsl_import_cap(
+            ttc, iso_config, "NYISO", 2023, T, n11_security_basis=True
+        )
+        li = _li_link_idx(iso_config)
+        for i in range(len(iso_config.links)):
+            if i == li:
+                continue
+            np.testing.assert_allclose(out[:, i], ttc[i])
+
+    def test_published_deduction_identity_holds_in_the_source_table(self):
+        """275 = 940 - 660: the two metrics are one table row and its footnote."""
+        from market_sim.data.capacity_deliverability import (
+            import_limit_by_area,
+            transfer_security_limit_by_area,
+        )
+
+        net = import_limit_by_area("NYISO", "2024/2025")["Long Island"]
+        gross = transfer_security_limit_by_area("NYISO", "2024/2025")["Long Island"]
+        # The report rounds its published limit to the nearest 25 MW, so the
+        # identity is asserted at that resolution, not to the MW.
+        assert gross == pytest.approx(940.0)
+        assert abs((gross - 660.0) - net) <= 25.0
+
+
 class TestFloorExclusion:
     def _fa(self):
         return FleetArrays(

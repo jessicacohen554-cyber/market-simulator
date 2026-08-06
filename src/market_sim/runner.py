@@ -2200,15 +2200,24 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     apply_nyiso_li_tsl_import_cap,
                 )
 
+                _li_n11 = bool(getattr(config, "nyiso_li_tsl_n11_security", False))
                 year_ttc = apply_nyiso_li_tsl_import_cap(
-                    year_ttc, _year_iso_config, iso, year, year_demand.shape[1]
+                    year_ttc,
+                    _year_iso_config,
+                    iso,
+                    year,
+                    year_demand.shape[1],
+                    n11_security_basis=_li_n11,
                 )
                 logger.info(
                     "%s %d: Zone-K LCR/TSL import cap on NYC->Long_Island "
-                    "(HB14-21, published locality import limit; replaces the "
+                    "(HB14-21, published %s; replaces the "
                     "LI self-supply energy floor)",
                     iso,
                     year,
+                    "N-1-1 transmission security limit"
+                    if _li_n11
+                    else "locality import limit",
                 )
             if iso == "NYISO" and getattr(config, "nyiso_nyc_lcr_tsl", False):
                 from market_sim.model.transmission import (

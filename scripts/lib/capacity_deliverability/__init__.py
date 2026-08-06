@@ -64,6 +64,17 @@ METRIC_VOCAB: frozenset[str] = frozenset(
         # import_cap = peak_load - requirement is computed on one consistent
         # boundary (market_sim.data.local_capacity).
         "peak_load",
+        # The area boundary's N-1-1 transmission transfer capability BEFORE any
+        # capacity-market loss-of-source deduction, where the ISO publishes the
+        # two separately. NOT interchangeable with `import_limit`: that one is
+        # the capacity-adequacy accounting term a locational requirement is
+        # computed against, this one is the transfer capability itself and is
+        # what an HOURLY energy bound needs. NYISO Zone K is the reference case
+        # and the reason the metric exists — one table row (275 MW) and its own
+        # footnote ("the true N-1-1 Transmission Security Limit is 940 in this
+        # scenario, the Bulk Transfer Limit accounts for the loss-of-source of
+        # 660 MW"). See data/raw/capacity-deliverability/nyiso/README.md.
+        "transfer_security_limit",
     }
 )
 
