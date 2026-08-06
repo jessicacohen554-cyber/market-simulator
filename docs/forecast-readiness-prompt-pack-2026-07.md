@@ -3694,3 +3694,15 @@ per-ISO reconciliation verification, the E-2 ex-ante bind/slack adjudication and
 binds) its design, the double-count exclusion statement, the §5.4 residual table, explicit
 "what I did NOT decide", and the implementation card for the owner's signature.
 ```
+
+## §0q — Wave 6 landed same-day; cards D-21/D-22 at the owner (2026-08-06 @ `e2ea0b59`)
+
+FFR-6A and FFR-6B both LANDED and adjudicated CLEAN (Addendum V). Headlines: the retirement
+margin gap is the forward price object's missing scarcity content (bars exonerated, reserve
+leg exonerated, refusals recorded); ERCOT's true in-window economic-exit total is ≈ 0 GW —
+1.534 GW was never a margin-screen target; the RPS row's real defects are MISO's forbidden
+intra-ISO REC trade, MISO-only clean-tier binding, and a three-ISO clean-on-renewable-row
+mis-encoding whose ACP-pinned dual is an unstatutory $40–50/MWh entry subsidy. FFR-6B's
+proposed card renumbered D-19 → **D-22** (collision with the spent D-19). FH-4/FH-5 still
+HELD, conditions restated (V.3: α/β/γ). Cards D-21/D-22 are at the owner; Wave-7 prompts
+follow the signatures.
