@@ -6271,6 +6271,46 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
 
+**neiso-88 (2026-08-06) — A FORECAST-READINESS ASSESSMENT. NO LP, NO SOLVE, NOTHING
+SCORED OR REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL
+VERDICT MOVED (rule 28d — no mechanism was tested), NO `ScenarioConfig` FIELD (rule 28c
+not engaged), NO HOLDOUT YEAR SPENT.** The lever queue stays CLEARED and no queue item
+was opened; the session was asked to assess a proposed 2022–2035 NEISO forecast run, not
+to calibrate. **VERDICT: DO NOT AUTHORIZE** — 14 solve-years against the §2.1b cap of 5
+(and *larger* than the DEFERRED T2 tier itself), no instrument in the repo spans the
+window (2022 is a bridge year every harness skips), and T1-H **FC-3 fails 12 of 12
+capacity-evolution bands**, which is the mechanism a 2035 horizon rests on.
+
+**THREE FINDINGS THAT TOUCH THIS MATRIX'S OWN §4 ITEM 6 (registry hygiene).**
+(a) **§2.1b leg (a) now PASSES for NEISO** — the forecast board's gate-(a) keeper name
+was TWO PROMOTIONS stale (read `2026-08-03-neiso-caiso156-meter-screen`); the §5.6 header
+here was already correct. (b) **The A1/I4 capacity-accounting leak is CLOSED** — `I4 =
+PASS ("closes")` on the live FFR-3A-2 sidecars of NEISO, PJM, MISO **and** CAISO, i.e.
+all four ISOs the board's `honest_unfit` row still lists as blocked on it. NEISO's real
+T1-F blocker is **I7** (2028: accredited firm 25,386 < requirement 25,604 MW). (c) **The
+keeper's recipe has no route into the forecast entry point**: eleven keeper mechanisms —
+`measured_ct_heat_rates`, `measured_chp_heat_rates`, **`cc_steam_part_reclass` (this
+keeper's own promoted mechanism)**, `nuclear_unit_availability`, `neiso_winter_fuel_{inventory,mustrun}`,
+`dual_fuel_switching`, `dual_fuel_oil_reattribution`, `temp_dependent_derate`,
+`scarcity_price_overlay`, `gas_plant_monthly_fuel_pricing` — construct fine in
+`mode="forecast"` (so they are rule-13 admissible forward) but are **default-OFF and
+unsettable through `run_full_horizon.py::reference_config`**, which is "all defaults,
+forecast mode". Four further keeper arms (`outage_source="historic"`, `gas_monthly_actuals`,
+`gas_hub_basis_overlay`, `gas_hub_basis_daily`) are **code-REFUSED** in forecast mode by
+`_BACKCAST_ONLY_OVERLAY_FIELDS`. Consequence for this matrix's forecast-lane column: **no
+NEISO forecast run has ever carried the backcast keeper's mechanisms**, so a forecast-lane
+cell must not be read as inheriting a backcast keeper verdict.
+
+**Also corrected (evidence, not a verdict):** neiso-87 §3.1's "2019 cannot be dispatched"
+probed `load_demand_meta`, which has no solve-path consumer; `load_demand` — what
+`runner.py:961` calls — resolves NEISO **2019–2025** at full 8,760 h off the per-BA
+`ISNE hourly` extract. The `final` question is unaffected (neiso-87 §3.3's
+non-discrimination argument stands and is the stronger one). The CAMPD outage-detector
+vintage split cannot reach any hindcast/forecast leg — `outage_source="historic"` is
+refused in `mode="forecast"`, the harness included.
+`docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md`; NEISO row of
+`frontend/data/forecast/program-status.json` corrected in the same session.
+
 **neiso-86 (2026-08-06) — THE DEFECTIVE INPUT neiso-85 REFUSED TO PAPER OVER IS NOW
 REPAIRED. A DATA INTAKE, NOT A MODEL CHANGE. NO LP, NO SOLVE, NOTHING SCORED OR
 REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL VERDICT MOVED

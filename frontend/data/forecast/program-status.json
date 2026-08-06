@@ -341,26 +341,27 @@
    "flip": "curve-ON (capacity clearing) \u2014 priced RA closed base-year adequacy (I7/I12 fixed)",
    "fc": {
     "FC-1": "FAIL",
-    "FC-2": "PASS",
+    "FC-2": "CAVEAT",
     "FC-7": "CAVEAT",
     "FC-8": "PASS"
    },
    "blocking_rows": [
-    "FC-1 I4 (2028 coal off 54 MW, A1) \u2014 sole T1-F blocker"
+    "FC-1 I7 (2028: accredited firm 25,386 < requirement 25,604 MW) \u2014 sole T1-F blocker. CORRECTED at neiso-88 (2026-08-06, HEAD 7c857c51): this row read 'FC-1 I4 (2028 coal off 54 MW, A1)'. I4 PASSES ('closes') on the live FFR-3A-2 sidecar frontend/data/hindcast/neiso-2026-2030-ffr3a2-t1f.json \u2014 and on PJM/MISO/CAISO's too, so the A1 leak is CLOSED in all four ISOs this board still lists under honest_unfit 'I4 / A1' (that cross-ISO row and gate_reading are left for the cross-ISO lane). docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md \u00a71.1."
    ],
    "gate": {
     "a_keeper_marker": {
-     "status": "fail",
-     "detail": "keeper 2026-08-03-neiso-caiso156-meter-screen; determination CALIBRATED-WITH-CAVEATS; marker complete=True final=False.",
-     "read_live_at": "e2a422c1"
+     "status": "pass",
+     "detail": "keeper 2026-08-05-neiso-83-ca1-reclass (full-span 2023-2025, rule 16); determination CALIBRATED-WITH-CAVEATS; marker complete=True final=False. \u00a72.1b(a) needs the complete block only \u2014 `final` is never required for forecast work. Was 'fail' on a TWO-PROMOTIONS-STALE keeper name (2026-08-03-neiso-caiso156-meter-screen; neiso-81 then neiso-83 landed after the e2a422c1 read). calibration-complete.json's NEISO entry is already re-keyed to the live keeper.",
+     "read_live_at": "7c857c51",
+     "corrected_by": "neiso-88 (2026-08-06)"
     },
     "b_t1f_verdict": {
      "status": "fail",
-     "detail": "HOLD \u2014 FC-1 FAIL I4 (2028 coal off 54 MW)."
+     "detail": "HOLD \u2014 FC-1 FAIL on I7 (2028: accredited firm 25,386 < requirement 25,604 MW), not I4. FC-2 CAVEAT (I12 WARN 2026:15.3% / 2028:-0.6%; backstop share 11.7%). The live trajectory carries a 3,297.9 MW single-year exit in 2027 with zero same-step build and reserve margin 15.26% -> 0.70% -> -0.61%: the BLK-10 curve-ON over-retirement wave, now measured post-D1. Corrected at neiso-88."
     },
     "c_crossover_gap": {
-     "status": "na",
-     "detail": "not run (FF-2D scope)."
+     "status": "fail",
+     "detail": "NEISO has NO T1-X crossover run \u2014 no `neiso-t1x` key exists in ff-verdicts.json and FC-4 reads n/a in every NEISO verdict. \u00a72.1b(c) requires the crossover input gap (FC-4) measured AND FF-3E readiness; only the readiness half is green, so the leg does not pass. Was 'na (FF-2D scope)'. Corrected at neiso-88."
     },
     "c_readiness": {
      "status": "green",
@@ -376,13 +377,15 @@
     },
     "open": false,
     "closed_on": [
-     "b"
+     "b",
+     "c",
+     "d"
     ],
-    "note": "Closest to the gate \u2014 the only ISO meeting (a); fix the I4/A1 lane and NEISO clears FC-1 (b)."
+    "note": "Closest to the gate \u2014 and since neiso-88 (2026-08-06) it is the only ISO whose leg (a) PASSES. Legs (b), (c) and (d) all remain closed: (b) on I7/BLK-10 (a behavioural adequacy defect, NOT the I4 bookkeeping leak, which is closed), (c) because no NEISO T1-X has ever been run, (d) because no authorization exists. See docs/handoffs/neiso-88-forecast-readiness-2026-08-06.md."
    },
    "golden": "deferred (\u00a72.1b).",
    "candidate": null,
-   "keeper": "2026-08-03-neiso-caiso156-meter-screen",
+   "keeper": "2026-08-05-neiso-83-ca1-reclass",
    "marker_complete": true,
    "marker_final": false,
    "t1h_determination": "HOLD",
