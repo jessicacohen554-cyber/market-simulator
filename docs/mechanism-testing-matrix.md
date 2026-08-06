@@ -3153,6 +3153,108 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**, C7 failing **2025 only**)
 
+> **QUEUE STAMP miso-135 (2026-08-06) — THE MICHIGAN PSCR LEAD IS SPENT AND
+> CLOSED ON KIND. The datum is REAL, PUBLIC and genuinely EX-ANTE — DTE's own
+> exhibit calls it "the minimum tonnage contracted to purchase in the <Y> PSCR
+> plan year" — and it is STILL inadmissible, because it is published at CONTRACT
+> grain and the only bridge to plant grain is the forbidden series. NO LP, NO
+> FIELD, NO ARM, NO RUN, NO CELL VERDICT MINTED, KEEPER UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`. Charter lane **(a)**, the sole unspent
+> item on the MISO board (tonnage ask §3(b)). PREREG pushed at `d4d182a5` BEFORE
+> any adjudicating statistic **and before any MPSC document was opened**;
+> two-sided prior declared with closure called MORE likely than clearance.
+>
+> **(a) THE ASK'S OPEN QUESTION IS ANSWERED, AND IT SPLITS.** §3(b) asked whether
+> the public PSCR exhibits carry per-plant contracted tonnage "as opposed to cost
+> projections, with volumes confidential". **The volumes are neither confidential
+> nor projections** — both utilities publish an ex-ante contract tonnage for all
+> three training years. **Leg A PASSES 6/6.** DTE plan-year minimum contracted
+> tonnage **6,015 / 6,165 / 4,818** kt; Consumers committed **4,019,216 /
+> 2,710,680 / 156,000** t (reconstructed two independent ways, agreeing to ±1 t).
+>
+> **(b) AND LEG B FAILS 6/6 — NO DESTINATION-PLANT COLUMN EXISTS.** Two utilities
+> × three plan years, machine-verified: `--verify-source` re-fetches all six
+> exhibits from the live docket, re-derives every column header, and reports
+> `all_columns_confirmed` true 6/6 and **`plant_word_on_page` FALSE 6/6**. DTE
+> burns coal at Monroe **and** Belle River in all three years, Consumers at
+> Campbell **and** Karn in 2023 — so the contract totals span plants and only
+> delivered-tons weights would split them: **§2B DISQUALIFYING**.
+>
+> **(c) THE PRE-REGISTERED TRAP FIRED.** PREREG K7 named in advance the failure
+> mode that looks like success: a public **plant-grain projected BURN**. It is
+> there (Consumers A-17/A-16 KCL-1 *Projected As-Burned Coal Costs*, in tons;
+> DTE A-11 *Forecast of Plant Generation*) and it is **closed on principle** at
+> ask §3(c). Ex-ante exists without plant grain; plant grain exists without
+> ex-ante-ness; **the two halves never meet.** This is an IDENTIFICATION gap, not
+> a retrieval gap — more Michigan searching cannot close it.
+>
+> **(d) THE §2B 1:1 CARVE-OUT, MEASURED NOT WAIVED.** A leg-B-clearing
+> sub-population does exist — Consumers/**J H Campbell** in 2024 and 2025 (Karn
+> burn = 0 from 2024) — and it is **1 plant, 2 of 3 years, 4.6 % / 4.9 % of target
+> tonnage, ZERO in 2023**. **G-2 §2C FAILS** on thresholds held exactly as
+> written: Michigan is **2 of 39 plants**, **10.6 / 12.6 / 12.8 %** vs ≥ 15 and
+> ≥ 60 %. **G-3 NOT RUN — NOT ACCEPTED, never acquitted** (at n ≤ 1 a
+> cross-section cannot reject, and §4.2 is the ask's SUFFICIENCY test).
+>
+> **(e) A CONFOUND CAUGHT, that would have produced a FALSE closure.** The one
+> single-basis symmetry-clause comparison (Consumers 2024/25, Campbell both
+> sides) reads 0.73 and **0.04** committed-to-actual — which looks like "MISO coal
+> minimums are slack". It is not: Consumers' 2025 plan was filed on the premise
+> that **Campbell 1–3 retire 2025-05-31** (U-21090 settlement, stated four times
+> in the filing). The plant did not retire. **No verdict is taken**; banked with
+> its confound named. Reading the ratio without reading the retirement premise
+> would have falsely closed the whole minimum-take hypothesis on n = 1.
+>
+> **(f) WHAT IT DOES TO THE FORM 580 LANE — a PRIOR update, not a verdict.** Ask
+> §3(b)'s "second-largest addressable block, combined with a Form 580 pull" is
+> **FALSIFIED**: Michigan cannot compose, because its tonnage attaches to no plant
+> at all. Michigan is strictly **worse than Form 580 on leg B** (Q6b carries a
+> Destination Plant; these exhibits carry none), and for **DTE the PSCR route is
+> DOMINATED** — DTE is a Form 580 filer (partial-waiver request 2024-10-31,
+> 90 FR 7691), so the same contracts reach Form 580 *with* a plant. **The §8 count
+> remains the decisive, undischarged next step.**
+>
+> **(g) ACCESS, BANKED FOR REUSE — MPSC is NOT eLibrary.** The E-Dockets portal is
+> a Salesforce SPA (13,995-byte shell) **but its guest Aura endpoint answers**
+> (`Case` → `Filings__r` related list), `robots.txt` is `Allow: /`,
+> `/s/sitemap.xml` enumerates **167,735 filings / 5,931 cases**, and PDFs download
+> directly from `/sfc/servlet.shepherd/version/download/<id>`. **This docket is
+> machine-readable from a standard session** — worth knowing for any future
+> Michigan question.
+>
+> **(h) THE GENERALISABLE LESSON: GRAIN IS A PROPERTY OF THE PUBLICATION'S
+> PURPOSE.** A source can publish exactly the right quantity — here, one that even
+> carries the name "minimum tonnage contracted" — and still be the wrong source,
+> because its grain is set by the FILER's purpose (portfolio cost recovery), not
+> by the quantity's nature. **Check the publication's purpose before budgeting the
+> search, and check whether the bridge from its grain to the model's grain is the
+> forbidden series.** Family: miso-129 *a signature is not a cause* → miso-131 *a
+> plant-grain signature is not a class-grain defect* → miso-132(a) *a missing rule
+> is not a binding one* → miso-133 *measure the slack, on one basis* → miso-134
+> *binding is not licensing* → **miso-135 *the right quantity at the wrong grain
+> is the wrong source***.
+>
+> **(i) THE QUEUE NOW.** §5.4 stays **EMPTY of chartered levers** and the board's
+> last unspent data lead is **gone**. **DO-NOT-REDO, added:** the Michigan PSCR
+> plan cases (headers machine-verified, no plant column); the projected-burn
+> exhibits (§3(c), closed on principle); apportioning a contract total by
+> delivered tons (§2B); the Consumers 2024–25 Campbell sub-population as a partial
+> build (1 plant, 0 in 2023, cannot feed a rule-16 bundle); and the PSCR
+> **reconciliation** cases, which report ex post and are the miso-103 answer key.
+> **Cell effect: NONE — no mechanism was tested and no verdict is minted.** The
+> one matrix edit is a **RECORD REPAIR** on `measured_offer_surface` (miso-134
+> §9.5's flagged self-contradiction): the `cells` string MISO = **`U`** is
+> **CORRECT** and the note prose was a **MIS-CITATION** — MISO-53 adjudicated the
+> coal deep-discount premise and already grounds the **`coal_passthrough_sigmoids`**
+> row (`ev.M`), while `measured_offer_surface`'s own `ev` block has **no `M` entry
+> at all**. MISO is `U` by absence of a testable input, not `R` by refusal.
+>
+> **FINDING:** `results/calibration/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`
+> · **PREREG:** `results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md`
+> · **Probe:** `scripts/probes/_miso135_michigan_pscr_tonnage_lead.py`
+> · **Record:** `results/calibration/_miso135_michigan_pscr_tonnage_lead.json`.
+
+
 > **QUEUE STAMP miso-134 (2026-08-05) — THE OBJECT IS REAL, IT IS AN *ORDER*
 > OBJECT, AND THE CONSTRAINT *BINDS* — AND THE ONLY ZERO-DOF LEVER IS STILL
 > REFUSED. NO LP, NO FIELD, NO ARM, NO RUN, KEEPER UNCHANGED** at
