@@ -5190,4 +5190,109 @@ FINDING `results/calibration/FINDING-miso137-gap-is-a-monotone-continuum-2026-08
 PREREG `results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`;
 probe `scripts/probes/_miso137_c3a_gap_decomposition.py`;
 record `results/calibration/_miso137_c3a_gap_decomposition.json`.
-Next number: **miso-138**.
+
+
+## 2026-08-06 — miso-138: the offer-side-only class bridge for the `da_co` corpus is REFUTED on the pre-committed rule — the corpus IS the MISO fleet and its declarations DO carry class information, but coal and CC are not separable in this feature family, and that ceiling was measurable on GROUND TRUTH before a single masked unit was classified. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+
+**Lane:** charter option **(b)** — the §5.4 standing chartered item
+(`FINDING-miso136` §6). Taken over the charter's priority lane (a) because
+lane (a)'s admissible family — a mechanism that **steepens the offer stack**
+and explains the summer sign reversal — requires a **measured-conduct**
+identification under rule 13 `[R-MEASURED]`, and every non-measured route is
+already on DO-NOT-REDO (fitted trough adder REFUSED miso-128; trough
+marginal-unit pricing SPENT miso-134; level levers disqualified by miso-137's
+sign reversal). The `da_co` corpus is the only MISO source of offer-curve
+shape at class grain, so **its bridge GATES lane (a)**.
+
+**PREREG** `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`,
+pushed at **`848d387a`** before any adjudicating statistic — two-sided prior,
+most-likely failure mode named in advance, look-alike trap named with a
+pre-committed size-preserving permutation null that **outranks** the aggregate
+statistic. Keeper unchanged at `2026-08-05-miso-132b-cc-committed` (NOT-YET;
+sole FAIL C7 `shape`; ledgered caveats 2/3 `{C3a, C3c}` — re-verified from the
+committed `metrics.json` this session).
+
+**Design.** Gaussian naive Bayes over (`logcap`, `derate`, `minfrac`)
+**identified on EIA-860 generators OUTSIDE MISO** and validated against
+EIA-860 **inside** MISO: zero parameters fitted to the corpus, zero to MISO.
+All `Price*`/`MW*` curve columns, `Slope`, `Curtailment Offer Price` and the
+outcome columns (DA `MW`, RT `Cleared MW*`) are **forbidden and
+machine-enforced** — classifying by the offer curve is classifying by the very
+conduct statistic the successor lever would measure (miso-136 §6). Two EIA-860
+grains (generator; CC-block-aggregated), never blended.
+
+**VERDICT — `REFUTED`, stable.** PREREG §7 **R2** fires: CC carries
+|S_cap| > 0.50 at **both** grains in 2024 **and** 2025 (generator
+**+1.240/+1.335/+1.283**; cc_block +0.497/**+0.726**/**+0.586**). **D1** fails
+at every grain, year and target class. No flip across grains or years, so
+`NOT ASSERTED` does not apply. Prior-robust (uniform priors fail harder: CT
+S_cap −0.880/−0.909/−0.901) and vintage-robust.
+
+**What is ESTABLISHED (the reusable half).** **G-0 PASSES** — the screened
+corpus reconciles with EIA-860 MISO at fleet grain to **+12.9/+9.0/+6.0 %** MW
+and **−1.4/−4.1/−7.5 %** count (cc_block): the failure is **not** a population
+mismatch. **The permutation null is beaten ~5× everywhere** (observed G-3
+1.63–2.16 vs null p05 8.46–8.88) — the assignment is **informative and
+insufficient**, and only one of those is fixable by better features. **G-4
+nuclear substantially passes**: 12 of 14 units recovered from offer-side
+declarations alone, capacity −4.4 % (2023) / −5.9 % (2024) at both grains.
+
+**WHY, measured on ground truth.** G-1 over 5,454 held-out non-MISO EIA-860
+generators: **COAL recall 0.382**, with **120 true-coal units predicted CC**
+against 126 correct (CT 0.775, CC 0.757, NUC 0.963 — the 0.705 CV pass was
+carried by CT and NUC). Ablation, in-sample COAL recall: `logcap` **0.000** ·
+`+minfrac` 0.061 · `+derate` 0.097 · all three 0.382. **The physical reason is
+in the registration data**: EIA-860 MISO derate p50 CT **+0.076** vs CC
+**+0.081** (the seasonal derate does not separate the two gas technologies at
+all), COAL +0.000 / 70.4 % exactly flat (separating coal *toward nuclear*),
+and minfrac p50 COAL **0.317** vs CT/CC ≈ 0.50 — the feature that should carry
+coal's commitment physics **points the wrong way**.
+
+**A PRIOR CORRECTED AGAINST INTEREST.** The PREREG's named most-likely failure
+mode (*"`Economic Max` is a static commercial declaration, so the derate
+fingerprint is identically zero"*) is **largely WRONG and recorded wrong**:
+the corpus's flat-declaration share is **0.466/0.396/0.410** against EIA-860
+MISO's own **0.413**, derate p90 +0.16 to +0.19. Participants **do** declare a
+seasonal capability. The bridge failed for a different reason than predicted.
+
+**WHERE THE TRAP FIRED.** cc_block CT `S_count` **−0.041/−0.064/−0.080** (an
+apparently excellent count reconciliation) against `S_cap`
+**+0.505/+0.381/+0.477** on the same class and grain — right number of units,
+wrong units. Quoting that count agreement as class recovery is exactly the
+look-alike; the pre-registered pairing of count with capacity and within-class
+quantiles is what made it unquotable.
+
+**NOT ADJUDICATED.** The secondary offer-side features (emergency-range,
+must-run/self-schedule structure, Region) were excluded from the discriminant
+**by design** — no EIA-860 analogue, so they cannot cross the held-out
+training population. Their apparent contrast by *predicted* class is
+**CIRCULAR** and is not evidence.
+
+**WHERE THE LANE STANDS.** Per `FINDING-miso136` §6's own pre-commitment, the
+**measured-offer-surface route to lane (a) is CLOSED for this feature
+family**, the corpus is on record and validated as a population, and the
+lane-(c) owner assessment is the honest next step. **No lever licensed, none
+proposed**; the charter's lane (c) needs (a)+(b) to license an arm, so **no
+solve**. The miso-137 MISO `*_lw` bench defect was **not** taken up — it
+changes the C3a comparator for every MISO run and needs its own PREREG.
+
+**Rule duties.** Rule 15: no LP ⇒ **no run to register** (miso-131…137
+precedent). Rule 28(b): **no cell verdict minted** — `measured_offer_surface`
+MISO stays **`U`**; §5.4 queue stamp written this session. Rule 22:
+2023/2024/2025 only, 24 `da_co` days, all listed in the finding's audit line;
+MISO holds no `calibration-complete` marker. Charter DATA GATE: transient
+scratch fetches only, **nothing written under `data/raw/`**, corpus not
+committed. Rules 13/19/21/24/25 throughout. Owner directive: no C7 work.
+
+**Lesson — MEASURE AN IDENTIFICATION'S CEILING WHERE THE ANSWER IS KNOWN.**
+*If it cannot make the split on labelled data, it will not make it on masked
+data — and no amount of distributional agreement downstream will tell you so,
+because aggregates survive a scramble.*
+
+FINDING `results/calibration/FINDING-miso138-da-co-class-bridge-refuted-2026-08-06.md`;
+PREREG `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`;
+probes `scripts/probes/_miso138_fetch_da_co.py`,
+`_miso138_da_co_class_bridge.py`, `_miso138_bridge_diagnostics.py`;
+records `results/calibration/_miso138_da_co_class_bridge.json`,
+`_miso138_bridge_diagnostics.json`.
+Next number: **miso-139**.
