@@ -1,0 +1,259 @@
+{
+ "V1": [
+  {
+   "year": 2018,
+   "evaluable": true,
+   "before": -4.7884,
+   "after": 2.8547,
+   "pass": true
+  },
+  {
+   "year": 2019,
+   "evaluable": true,
+   "before": -6.7091,
+   "after": 2.7953,
+   "pass": true
+  },
+  {
+   "year": 2020,
+   "evaluable": true,
+   "before": -7.1829,
+   "after": 1.3184,
+   "pass": true
+  },
+  {
+   "year": 2021,
+   "evaluable": true,
+   "before": -8.5568,
+   "after": 3.7796,
+   "pass": true
+  },
+  {
+   "year": 2022,
+   "evaluable": true,
+   "before": -7.8377,
+   "after": 11.5598,
+   "pass": true
+  },
+  {
+   "year": 2026,
+   "evaluable": false
+  }
+ ],
+ "V1b_2026": 14.2033,
+ "V2": {
+  "basis_in_sample_identical": true,
+  "agt_rows_before": 124,
+  "agt_rows_after": 437,
+  "agt_rows_lost": 0
+ },
+ "V3": [
+  {
+   "year": 2018,
+   "month": 1,
+   "hub_before": 9.035,
+   "hub_after": 15.37,
+   "eia923": 15.588,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2018,
+   "month": 2,
+   "hub_before": 3.465,
+   "hub_after": 4.42,
+   "eia923": 6.81,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2018,
+   "month": 12,
+   "hub_before": 6.129,
+   "hub_after": 5.72,
+   "eia923": 8.178,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2019,
+   "month": 1,
+   "hub_before": 4.759,
+   "hub_after": 6.94,
+   "eia923": 10.569,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2019,
+   "month": 2,
+   "hub_before": 4.624,
+   "hub_after": 4.18,
+   "eia923": 8.206,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2019,
+   "month": 12,
+   "hub_before": 4.392,
+   "hub_after": 4.71,
+   "eia923": 7.065,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2020,
+   "month": 1,
+   "hub_before": 3.996,
+   "hub_after": 2.87,
+   "eia923": 5.856,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2020,
+   "month": 2,
+   "hub_before": 3.996,
+   "hub_after": 2.27,
+   "eia923": 5.214,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2020,
+   "month": 12,
+   "hub_before": 4.508,
+   "hub_after": 4.26,
+   "eia923": 4.867,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2021,
+   "month": 1,
+   "hub_before": 4.469,
+   "hub_after": 4.97,
+   "eia923": 5.999,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2021,
+   "month": 2,
+   "hub_before": 4.981,
+   "hub_after": 8.57,
+   "eia923": 7.511,
+   "pass": true,
+   "was_pass": false
+  },
+  {
+   "year": 2021,
+   "month": 12,
+   "hub_before": 6.303,
+   "hub_after": 8.38,
+   "eia923": 13.598,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2022,
+   "month": 1,
+   "hub_before": 6.738,
+   "hub_after": 20.12,
+   "eia923": 16.27,
+   "pass": true,
+   "was_pass": false
+  },
+  {
+   "year": 2022,
+   "month": 2,
+   "hub_before": 6.091,
+   "hub_after": 14.59,
+   "eia923": 14.604,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2022,
+   "month": 12,
+   "hub_before": 8.668,
+   "hub_after": 13.86,
+   "eia923": 15.376,
+   "pass": false,
+   "was_pass": false
+  },
+  {
+   "year": 2026,
+   "evaluable": false
+  }
+ ],
+ "V5": {
+  "identical": true,
+  "isos_untouched": [
+   "CAISO",
+   "ERCOT",
+   "MISO",
+   "NYISO",
+   "PJM",
+   "SPP"
+  ]
+ },
+ "residual_proxy_rows": {
+  "2015": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "2016": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "2017": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12
+  ],
+  "2018": [
+   3,
+   4,
+   5,
+   6
+  ]
+ },
+ "verdicts": {
+  "V1": "PASS",
+  "V1b_2026": "PASS",
+  "V2": "PASS",
+  "V3": "FAIL",
+  "V5": "PASS"
+ }
+}
