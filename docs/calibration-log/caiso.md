@@ -6565,3 +6565,138 @@ caiso-174 promotion). No existing cell verdict moves. Evidence:
 `scripts/probes/_caiso175_ab_compare.py`, record
 `results/calibration/_caiso175_ab_compare.json`, attestation generator
 `scripts/gen_caiso175_attestation.py`.
+
+## 2026-08-06 — CAISO — caiso-176: frontier RE-ASSESSED on the caiso-175 keeper (holds, MWD-TAC gap closed on data, ISO-specific DOF 4→3); `battery_dispatch_adder` WALLED not closed — CAISO's own bid stack bounds it at ≤ $15/MWh and REFUTES the ledger's named ATB replacement model-free; `final` RECOMMENDED **NO** on executability
+
+**Runs:** NONE. No LP, no solve, no arm, no bundle, nothing registered — the
+pre-registered Branch II fired, and Branch II's whole content is that no arm
+exists to solve. Keeper UNCHANGED at `2026-08-06-caiso-175-tac-intake`; DOF
+ledger UNCHANGED at `n_entries` 11 / `n_residual` 8; `holdout-freeze.json` and
+`calibration-complete.json` UNTOUCHED. Pre-registration
+`results/calibration/PRECHECK-caiso176-frontier-dof-2026-08-06.md` (pushed
+before any verdict was written). Records:
+`ASSESSMENT-caiso176-frontier-2026-08-06.md`,
+`FINDING-caiso176-battery-adder-wall-2026-08-06.md`. Instrument
+`scripts/probes/_caiso176_bidstack_reservation.py`, record
+`results/calibration/_caiso176_bidstack_reservation.json`.
+
+### Arc 1 — the frontier re-assessment (caiso-173 was two promotions stale)
+
+Everything re-ran clean on the new keeper. `gap_sweep --iso CAISO`
+**0/0/0/0/0** over 63 family fields; CAISO column census **61 K · 23 U · 14 I ·
+6 R · 5 G · 5 O** (was 60/20/13/6/5/**6**; the `O` fell because
+`storage_measured_base_fleet` moved off it at caiso-174); §5.2 evidence census
+**19/19 resolved, 0 missing**; `audit_keepers --iso CAISO` **PASS 0/0**;
+`calibration_verdict --run-id` re-verifies CALIBRATED-WITH-CAVEATS, 0 FAILs,
+C7/C8 PASS; payload parity OK (76 runs); cache-key registration ok (693 fields).
+G0 confirms the keeper is **POST-EPOCH**.
+
+**Both walls re-verified rather than assumed.** Wall 1 (C3a, non-public hourly
+pumped storage) re-ran on **live network**: 5/5 `unchanged` — CISO publishes 0
+EIA-930 `PS` rows; CAISO Outlook hydro vs EIA-930 `WAT` n=72 corr **0.950**,
+mean abs diff 287 MW (the same PS-net feed, not a second one); Outlook
+`storage.csv` battery-only; CDEC **0 hourly sensors at CTG/WSN/SHV** (Helms
+1,053 MW + Eastwood 199.8 MW, 60.3 % of the fleet); sub-BA demand-only. Wall 3
+(C3c, the SoCalGas OFO declaration record) HOLDS on a `data/raw` census — the
+only SoCalGas artifact anywhere is `pge_socal_citygate_weekly.csv`, a price
+series.
+
+**caiso-173 §C is CLOSED ON DATA, not carried forward.** The TAC series now
+resolves 6 areas with MWD-TAC present and **unmodelled load +0.00 %** in every
+year (was the named 0.24–0.30 % gap). **CAISO's ISO-specific DOF count fell
+4 → 3** — the PG&E Path-15 weight became measured at caiso-172. Of the three
+left, `WECC_import_simultaneous.cap_mw` is not in the keeper's binding path and
+`IMPORT/EXPORT_TRANCHES` is the entry class NYISO carries *while holding its own
+marker*, so `battery_dispatch_adder` was the one live item — Arc 2.
+
+**Reported against interest:** `caiso173_frontier_recheck.py` prints its
+"battery fleet the keeper did NOT see" block unconditionally, including after
+its own G0 gate returns `PRE-EPOCH: False`. On this keeper those numbers describe
+a counterfactual that no longer applies. Flagged, not edited — that probe's lane.
+
+### Arc 2 — `battery_dispatch_adder`: WALLED, and the ledger's named replacement is refuted twice
+
+**The DOF ledger's forward-valid replacement is SPENT ON BOTH HALVES**, and this
+session re-ran neither (rule 28 DO-NOT-REDO): the AS half
+(`caiso_storage_as_reservation`) was probe-adjudicated INERT at caiso-74 and the
+family refuted by arithmetic at caiso-127/129; the ATB degradation half was
+built at $14.25/MWh and **REJECTED PROBE** at caiso-100/101 on the pre-registered
+±15 % battery-only throughput guard, with caiso-101's structural finding —
+**battery charge volume is inelastic to marginal cost** — governing. **The ATB
+route is worse now than when it was rejected:** the capex constant moved
+285 → 452.6 $/kWh, so the same formula gives **$22.63/MWh** today. Refused *a
+fortiori*, not re-solved. Routing the LP through `_degradation_cost_per_mwh` is
+**not** a closure either — it imports `STORAGE_DEGRADATION_REPLACEMENT_FRACTION
+= 0.25`, which its own constant block calls "tunable": DOF substitution.
+
+**NEW EVIDENCE — CAISO's own published bid stack, no model in the loop.** The
+`bid_stack` sheet of the Daily Energy Storage Report (committed 2026-07-11, its
+README recording it as "retained but not curated") had never been read by any
+session. 3,634,555 rows, 2023–2025. On the one-sided premise CAISO's own DEB
+mitigation rests on — no participant offers below its own marginal cost — the
+lowest priced bucket carrying material DAM (IFM) battery (LESR) discharge volume
+bounds the fleet's throughput cost **from above at $15/MWh in all three years**,
+at the ≥1 % and ≥5 % mass thresholds alike. `(0,15]` carries **8.72/16.43/17.52 %**
+of priced discharge and its share *grows* with the fleet; contamination is low
+and cuts the right way (SELF-SCHED 0.33/0.13/0.10 % of all volume, excluded
+before the bound is read; priced ≤$0 only 0.46/1.54/1.44 %).
+
+**So $22.63 is REFUTED independently of the model** — a second instrument
+agreeing with caiso-101's solved verdict — and $5.00 is consistent. **But the
+published grain is a 15 $/MWh-wide bucket exactly where the parameter lives, so
+it BOUNDS without IDENTIFYING and the DOF does not close.** Wall filed: CAISO's
+Storage DEB carries the exact object (a cycle-cost/cell-degradation $/MWh
+component) but its values are submitted per-resource from manufacturer
+documentation and never published — a **disclosure** wall, not a fetch task.
+Named exits, none available today: the DEB `CD` filings (confidential by tariff
+construction); the gitignored `data/raw/caiso-public-bids` OASIS `PUB_DAM_GRP`
+corpus (~1,096 daily zips at ~1 request/6 s — its own intake session, and the
+highest-value exit since it replaces the bucket with a price); or an identified
+cell-vs-system cost split replacing the 0.25 fraction, which would have to land
+**below $15** to be admissible at all.
+
+**Reported against interest:** 12.8/22.7/22.2 % of priced DAM discharge sits in
+`(500,1e+03]`, near the bid cap — the equilibrium object ERCOT-162 refused to
+transplant. It is reported because it *strengthens* the case against reading the
+stack as a cost curve, and is why only the lower envelope is used. Hybrids
+(HYBD) bid deeply negative (1 % bound `[-150,-100]` every year) — a co-located-solar
+curtailment-avoidance object, not the LP's battery class, and not used.
+
+A probe defect was found and fixed mid-session before any verdict was written:
+the first revision's bucket-label regex silently dropped CAISO's two
+scientific-notation buckets. The bound was unaffected (a dropped high bucket can
+never be the lowest), but the census did not close to 100 %. Fixed, and a
+hard-error completeness guard added so the class of silent drop cannot recur;
+re-run reproduces the bound identically with shares summing to exactly 100.00 %.
+
+### Arc 3 — `final` (locked test, 2019 + H1-2026): RECOMMENDED **NO**, on executability
+
+The criterion was fixed in the PRECHECK before any of its four limbs was
+evaluated. **F-a — is the tier EXECUTABLE? NO, and this alone is dispositive.**
+CAISO has **no 2019 LMP bench, no 2019 calibration reference and no 2019
+renewable-capacity input** — not one scored criterion could be evaluated — and
+this is a **source wall**, not an un-run fetch: the 2026-07-31 intake
+binary-searched OASIS's retention boundary to **2023-04-19**, with 2018/2020/2022
+returning `ERR_CODE 1000`. H1-2026 has a price bench (4,343 dense hours) but **no
+2026 calibration-reference block at all**, so C1/C2/C4 have no reference. A
+touch-once one-shot that cannot be scored is not a test, and the live risk is
+that it is spent on the half that happens to resolve — which rule 22 makes
+unrecoverable. **F-b — tier ORDER: NO.** CAISO has never spent its validation
+tier; 2022 is unspent, and validation exists to catch problems *before* the
+unrepeatable test is burned. **F-c — settled envelope: NO by the owner's own
+standing choice.** The freeze is ACTIVE (re-armed 2026-08-06 after a narrow
+NEISO-2022-only lift); the layup charter §9 now records the residual
+investigation CLOSED ON EVIDENCE with a recommendation to lift fully, and the
+owner deliberately did not take that step. CAISO-specifically, its own 2023–2025
+outage windows were regenerated on the current detector at the 2026-07-24 intake
+(2023 439→640, 2024 405→622, 2025 509→733) and the re-audit that entry flagged is
+still outstanding. **F-d — frontier: YES** — necessary, not sufficient.
+
+**No marker written. `final` stays empty. No locked-test year was solved, scored,
+read or registered.** The route to a different answer, in order: land a CAISO
+2019 bench (hand-downloaded OASIS GRP bulk zips are the only route past the
+retention wall) plus its calibration reference and renewable capacity — *or* the
+owner explicitly grants a **scoped** `final` naming H1-2026 alone on the price
+criteria alone, with the 2019 half recorded as never-grantable until its bench
+exists; then spend 2022; then re-audit the keeper on the corrected availability
+envelope.
