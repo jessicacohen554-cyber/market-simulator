@@ -5344,3 +5344,70 @@ Evidence:
 `_nyiso128_ab_gates.json`, probes `_nyiso128_solve_ab.py`, `_nyiso128_ab_gates.py`.
 
 * Next number: **nyiso-129**.
+
+---
+
+## nyiso-128b (2026-08-06) — KEEPER PROMOTED `2026-08-06-nyiso-128-control`; determination NOT-YET → CALIBRATED-WITH-CAVEATS with NO mechanism armed
+
+**OWNER RULING, and it is what unblocked this** (2026-08-06): *"We don't need to
+investigate why the results are better if they're better now… fixes have been
+made and this would make sense."* The nyiso-128 K6 failure — the incumbent
+keeper not reproducing on main — is **adjudicated a STALE-BASELINE artifact, not
+a defect owing a deep diagnosis**. The substantive basis: main advanced by dozens
+of merged fixes since the incumbent's `git_sha 49aac023`, and nyiso-106's solar
+benchmark repair states in its own finding that it *"applies to the next NYISO
+solve"*. A baseline that **improved after fixes landed** is expected behaviour.
+The PREREG's K6 assumed a **static** baseline; that assumption was wrong, not the
+result. **Promoting the control resolves the staleness by construction** — the
+designated keeper now reproduces on main.
+
+**(1) THE PROMOTION.** NYISO keeper → **`2026-08-06-nyiso-128-control`**
+(bundle `results/calibration/nyiso128_control`), superseding
+`2026-08-04-nyiso-125-seam-envelope`. **NOTHING NEW IS ARMED** — this is the
+superseded keeper's OWN recipe re-solved on current main, all **680**
+`scenario_config` fields verified identical before the solve. **Determination
+NOT-YET → CALIBRATED-WITH-CAVEATS.** C3a **PASSES all three years** at
+**+6.2 / −1.7 / −7.0 %** against the incumbent's recorded +7.7 / −0.8 / −10.2 %,
+whose 2025 FAIL was the sole blocker. C3c stays the **single** ledgered caveat
+(2024 only, model 2 h vs RT actual 12 h, **0.17×** — a genuine under-production,
+exactly what the ledger licenses), budget **UNSPENT at 1 of 3**.
+C1/C2/C3b/C4/C6/C7/C8 all PASS. `audit_keepers --iso NYISO` **PASS 0/0**;
+`calibration-complete.json` re-keyed with the determination re-verified from
+committed artifacts (rule 22 D-5(b), no solve).
+
+**(2) THE SOLAR-BASIS TREATMENT IS ESCALATED, NOT PROMOTED.**
+`2026-08-06-nyiso-128-solar-basis` arms `nyiso_solar_market_generator_basis`, a
+rule 14 `[R-ACCURATE]` input repair with **zero free parameters** correcting a
+genuine **double count** (EIA-860's NY utility-scale population carries ~2 GW of
+distribution-connected NY-Sun community solar that is not a NYISO market
+generator and is already netted out of the EIA-930 `NYIS` demand series used as
+load). It is **structurally the more faithful run**, moves C3a further
+(**−7.0 → −3.2 %** in 2025, −1.7 → +0.8 % in 2024), passes **six of seven** kill
+gates, and confirms P1 (JJA h16–h18 2025 CT_PEAKER **+109 MW**, ST_GAS
+**+365 MW** against solar **−1,218 MW**), with the seam exonerated (K5: import
+p50 +52 / 0 / +42 MW).
+
+**It is not promoted because it costs a DETERMINATION DOWNGRADE against the new
+baseline.** Its C3c-2023 goes 18 h → **22 h** against a measured 10 h — **2.20×
+OVER-produced**, the **opposite sign** to the inherited caveat, whose own
+classification licenses only an under-production (*"five-zone representation
+CANNOT FORM the sub-zonal … scarcity"*). **The 2023 exception was WITHHELD rather
+than laundered** — `scripts/gen_nyiso128_attestation.py` records that decision in
+the artifact itself — so the treatment reads **NOT-YET**. Rule 22 D-5(b) says a
+worse re-verified determination **stops the promotion and escalates**, so it is
+escalated. Matrix cell stays **O**: LIVE, unrefuted, armed on no keeper.
+
+**(3) THE NAMED SUCCESSOR.** The treatment's own declared limitation is the next
+object: it swapped the capacity BASIS but kept the ISO-wide CF blend (~0.133)
+while the registered fleet measures **~0.20 CF** on the Gold Book's own Net
+Energy column, still leaving **0.33 TWh** of 2025 solar over-removed in the
+**tightening** direction (~0.45 pp of its +3.8 pp C3a-2025 gain unearned).
+Re-identifying the fleet CF from EIA-860 tracking mix + latitude is forward-native
+and rule-13 clean, and is a **separate object** (rule 19) needing its own prereg.
+
+Evidence:
+`results/calibration/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
+`PREREG-nyiso128-market-solar-basis-2026-08-05.md`, `_nyiso128_ab_gates.json`,
+`scripts/gen_nyiso128_attestation.py`.
+
+* Next number: **nyiso-129**.
