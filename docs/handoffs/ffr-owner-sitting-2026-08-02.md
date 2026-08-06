@@ -2769,3 +2769,60 @@ Dispositions to be recorded by addendum when signed.
   armed only → Arm 3 clean-tier rows, MISO-West/East). §45U-vs-clean-dual composition stays
   OPEN and blocks Arm 3's arming only. E-1 never acquires a build limb.
 Prompts: pack §0r. Wave 7 opens with FFR-7A and FFR-7B.
+
+## Addendum W — FFR-7A adjudicated (with a real surprise); rule-22 regime change; FFR-7B in flight; FFR-7C chartered
+
+**Written 2026-08-06 by the workstream manager at `origin/main` `82765525`.**
+
+### W.1 FFR-7A — ADJUDICATED CLEAN (PR #3644); the surprise is real and properly escalated
+
+Both charter targets hit (Deely's 932 MW paper event OUT, Braunig's 477 MW real exit IN), a
+third defect found and fixed on the way (the builder now reads the whole committed release
+series, not one retired sheet), 5c refusal honoured, rule 27 blob discipline recorded,
+no solve, no registration, no matrix contact. **The pre-registered expectation FAILED and
+was reported before interpretation, as chartered:** the corrected ERCOT thermal target is
+LARGER (1.534 → 2.294 GW) — removing Deely is outweighed by +1.7 GW of physical exits the
+old target could not see. The consequential row is **Sandy Creek (56611_S01, 1,008 MW
+supercritical coal, OP through RY2024, OS in RY2025)**: carried by the vintage-2020 fleet
+basis, retirable by a screen, and never examined by FFR-6A's decode because the old target
+lacked it. **Consequence recorded: FFR-6A's V.1(c) bounding finding ("true margin-driven
+exit total ≈ 0 GW") is CAVEATED — derived on a target now known incomplete — and must not
+be relied on until re-derived (→ FFR-7C).** The unified arm's 10.9 GW false wave is
+unchanged; its err_frac improvement is purely the denominator growing and is NOT progress.
+Also found, deliberately not fixed (out of charter): the `gas_st`↔`gas_ct` taxonomy seam —
+the target can never contain `gas_st`, so no `gas_st` model retirement can ever be credited
+in any ISO. On the open queue for an owner card after FFR-7C reports.
+
+### W.2 Rule-22 regime change — owner clarification, acknowledged and operationalized
+
+Commit 06c5971f (session neiso-86, owner clarification 2026-08-06) rewrites rule 22's
+posture: **what is held out is the SCORE, never the data or the architecture.** Intake needs
+no per-ISO/per-window authorization; measured inputs apply consistently across ALL years;
+2020–2022 are ITERATIVE diagnostic touchpoints (diagnose → re-train on 2023–2025 only →
+re-test); 2019 is THE one-touch year. Manager duties executed: (a) standing prompt
+boilerplate updated — no future prompt carries the old per-window intake-authorization
+language; (b) verified the freeze still gates the spend and is ACTIVE (a second owner
+lift/spend/re-arm cycle landed 2026-08-06 — the touchpoint loop working as the new text
+describes).
+
+### W.3 FFR-7B — IN FLIGHT, adjudication deferred
+
+Arm 1's code is on main (PR #3649: statutory RPS trajectories + eligible sets for
+NYISO/NEISO/CAISO, parameter registry citations, byte-identity tests, spec sync) but the
+Arm-1 paired-control keeper deltas and the lane handoff are NOT yet committed — the controls
+are multi-hour solves; presumed still running. No adjudication until the handoff lands; the
+prompt's HOLD-PROMOTION posture governs whatever the controls show.
+
+### W.4 FFR-7C — chartered by the manager (Q.2 test: committed-artifact question, no answer)
+
+Re-derive the exit decode on the CORRECTED target: per-unit margins at measured prices vs
+bars for every newly-visible in-window exit (Sandy Creek foremost), via FFR-6A's replica
+method, committed artifacts only. Restate the economic-exit bound; report — not re-open —
+its implication for the deferred D-21(a). Also report (not decide) FFR-7A §9.3's OP-only
+vintage-gate question. Prompt: pack §0s.
+
+### W.5 Queue delta
+
+ADD: the gas_st taxonomy seam (owner card after FFR-7C). CARRY: FFR-3V §6.1 (unowned),
+FFR-4D row-4, ruff-autofix/constants.py lint fix, assign_zone_by_coords, pre-existing test
+failures, D-21(a) DEFERRED (owner re-opens, not the manager). STRUCK: nothing this cycle.

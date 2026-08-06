@@ -3855,3 +3855,72 @@ proof, the Arm-1 paired-control keeper deltas (with HOLD-PROMOTION posture if an
 the Arm-2 regression proof + per-zone dual wiring, the Arm-3 composition statement with the
 open §45U question, and what you did NOT separate.
 ```
+
+## §0s — FFR-7A landed (target GREW); rule-22 regime change; FFR-7C dispatched (2026-08-06 @ `82765525`)
+
+FFR-7A adjudicated CLEAN with a properly-escalated surprise: the corrected ERCOT thermal
+target is 2.294 GW (was 1.534) and Sandy Creek (1,008 MW coal, fleet-carried) is now its
+largest in-window exit — FFR-6A's "≈0 GW economic exits" bound is CAVEATED until re-derived.
+Rule 22 was rewritten by owner clarification (holdout is on the SCORE; intake unrestricted;
+2020–2022 iterative touchpoints; 2019 one-touch) — prompts from here carry the new regime.
+FFR-7B Arm 1 code is on main; controls/handoff pending. FFR-7C below.
+
+### FFR-7C [OPUS] — re-derive the exit decode on the corrected target (Addendum W.4)
+
+```
+[OPUS] FFR-7C — Re-derive FFR-6A's exit decode on the CORRECTED retirement target (manager
+charter, sitting Addendum W.4; evidence chain FFR-6A §3.3 → FFR-7A §4/§9.1). COMMITTED-
+ARTIFACT measurement lane: no solve, no model change, no arming, no keeper contact. THE
+QUESTION: FFR-6A bounded ERCOT's true margin-driven exits at ≈0 GW from a four-row decode of
+the OLD target; FFR-7A's corrected target (thermal 1.534 → 2.294 GW) contains +1.7 GW of
+physical exits that decode never saw — foremost Sandy Creek (56611_S01, 1,008 MW
+supercritical coal, OP through RY2024, OS in RY2025, PRESENT in the vintage-2020 fleet
+basis, retirable by a screen). Was ANY newly-visible exit margin-driven? Restate the bound.
+
+=== VERIFIED STATE (2026-08-06 @ origin/main 82765525 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-05-run168b-year-curves · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-06-caiso-175-tac-intake · NYISO 2026-08-04-nyiso-125-seam-envelope · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-05-miso-132b-cc-committed (read the shards
+yourself). Freeze ACTIVE — irrelevant here (no solve, no out-of-training score; per the
+2026-08-06 rule-22 clarification the holdout is on the SCORE, and this lane scores nothing
+out-of-training). FFR-7B may land mid-session — it does not touch your inputs.
+PREREQUISITES: `uv sync` (~2 min) only.
+
+=== WHAT YOU DO ===
+1. INPUTS, all committed: FFR-7A's corrected target + docs/handoffs/ffr-7a/target-delta.csv
+   (334 rows, per-row sourced); FFR-6A's replica method + artifacts (docs/handoffs/ffr-6a/,
+   the measured-price replica and SOM benchmark, 2023-2025); the committed fleet/CAMPD data
+   for unit characteristics (heat rate, VOM, fuel) of each newly-visible exit unit.
+2. For EVERY corrected-target ERCOT in-window thermal exit ≥ 100 MW (Sandy Creek, Braunig,
+   and the rest of the +1.7 GW): compute the FFR-6A-style pro-forma margin AT MEASURED
+   PRICES for its exit-decision years vs its fuel's bar (same construction FFR-6A §3.1
+   validated against SOM 0.89-0.97 — reuse its scripts/probes machinery; extend, don't
+   fork). PRE-REGISTER the unit list and the decision rule (margin < bar in the year before
+   exit ⇒ economically consistent exit) BEFORE computing any margin.
+3. RESTATE THE BOUND: ERCOT's margin-consistent exit total 2021-2025 on the corrected
+   target, per unit, with the per-unit evidence. State plainly which of FFR-6A's four
+   conclusions survive (the gap decomposition and bar exoneration are untouched by the
+   target — say so explicitly if verified) and which needed this re-derivation.
+4. REPORT — DO NOT RE-OPEN — the implication for D-21(a) (DEFERRED by the owner, V.6): if
+   Sandy Creek's exit was margin-driven, the corrected screen has a real in-window
+   economic-exit target and the price-object diagnosis gains a validation case; if not, the
+   ≈0 bound is restored at the larger denominator. Either way the manager brings it to the
+   owner; you recommend nothing about D-21(a) or the FH-4/FH-5 lift.
+5. Also REPORT (not decide) FFR-7A §9.3: whether an OP-only vintage gate would change the
+   corrected target (row count + MW), as a measured table the owner can decide on.
+6. Rule 28: no mechanism tested — no matrix cell expected; stamp only if you genuinely
+   adjudicate one.
+
+=== TRAPS ===
+The ruff-autofix hook reflows src/market_sim/config/constants.py on ANY .py Write/Edit —
+`git status --short` after every Python write; restore exact HEAD bytes; never stage the
+reflow. Push 413: fetch main + rebase first; owner merges fast, prune stale refs. Never
+push_files a >=300-line file. Shell cwd persists. Stop-hook on merged history: rev-list 0
+=> nothing to amend. The gas_st↔gas_ct taxonomy seam (FFR-7A §4.1) is KNOWN and OUT OF
+SCOPE — note where it touches your rows, change nothing.
+
+Deliverable: docs/handoffs/ffr-7c-exit-decode-corrected-target-<date>.md — the
+pre-registered unit list + decision rule, the per-unit margin table with evidence, the
+restated bound, which FFR-6A conclusions survive, the D-21(a) implication (reported, not
+recommended), and the §9.3 OP-only table.
+```
