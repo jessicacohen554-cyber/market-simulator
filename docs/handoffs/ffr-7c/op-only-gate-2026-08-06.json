@@ -1,0 +1,1145 @@
+{
+ "fleet_vintage": 2020,
+ "note": "Rows are the CURRENT (shipped-gate) target. vintage_status is the unit's EIA-860 Status at the fleet-vintage release; ABSENT means that release does not carry the unit (a genuine in-window build, or a release coverage gap). OS/RE cannot appear \u2014 the shipped gate already drops those.",
+ "per_iso": {
+  "ERCOT": {
+   "rows": 44,
+   "thermal_gw": 2.294,
+   "sb_oa_rows": 1,
+   "sb_oa_mw": 7.6,
+   "sb_oa_thermal_mw": 7.6,
+   "absent_rows": 3,
+   "absent_mw": 112.0,
+   "absent_thermal_mw": 0.0,
+   "status_census": {
+    "ABSENT": 3,
+    "OP": 40,
+    "SB": 1
+   },
+   "sb_oa_units": [
+    {
+     "unit_id": "50118_GEN4",
+     "fuel": "gas_cc",
+     "mw": 7.6,
+     "year": 2024,
+     "vintage_status": "SB"
+    }
+   ],
+   "absent_units_ge_25mw": [
+    {
+     "unit_id": "63737_CHS01",
+     "fuel": "storage",
+     "mw": 100.0,
+     "year": 2025
+    }
+   ]
+  },
+  "PJM": {
+   "rows": 305,
+   "thermal_gw": 15.062,
+   "sb_oa_rows": 18,
+   "sb_oa_mw": 150.5,
+   "sb_oa_thermal_mw": 126.5,
+   "absent_rows": 13,
+   "absent_mw": 1167.8,
+   "absent_thermal_mw": 1167.8,
+   "status_census": {
+    "ABSENT": 13,
+    "OA": 9,
+    "OP": 274,
+    "SB": 9
+   },
+   "sb_oa_units": [
+    {
+     "unit_id": "8008_MICK",
+     "fuel": "gas_ct",
+     "mw": 71.2,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "2836_10",
+     "fuel": "oil",
+     "mw": 32.1,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62856_MBSS",
+     "fuel": "storage",
+     "mw": 20.0,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "52021_GEN1",
+     "fuel": "gas_ct",
+     "mw": 3.7,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "52021_GEN2",
+     "fuel": "gas_ct",
+     "mw": 3.7,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58887_ADAM",
+     "fuel": "wind",
+     "mw": 2.5,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58172_UINT3",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58172_UNIT1",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58051_L1",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58172_UNIT2",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "59797_WT1",
+     "fuel": "wind",
+     "mw": 1.5,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58921_GEN2",
+     "fuel": "biomass",
+     "mw": 1.4,
+     "year": 2025,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58921_GEN1",
+     "fuel": "biomass",
+     "mw": 1.4,
+     "year": 2025,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "57929_STG",
+     "fuel": "gas_ct",
+     "mw": 1.3,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "52149_GEN8",
+     "fuel": "gas_ct",
+     "mw": 1.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54886_GEN4",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "52148_GEN2",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54886_GEN5",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2024,
+     "vintage_status": "SB"
+    }
+   ],
+   "absent_units_ge_25mw": [
+    {
+     "unit_id": "65285_ST1",
+     "fuel": "coal",
+     "mw": 364.0,
+     "year": 2021
+    },
+    {
+     "unit_id": "65285_ST2",
+     "fuel": "coal",
+     "mw": 364.0,
+     "year": 2021
+    },
+    {
+     "unit_id": "69979_GT8",
+     "fuel": "gas_ct",
+     "mw": 192.0,
+     "year": 2025
+    },
+    {
+     "unit_id": "69979_GT9",
+     "fuel": "gas_ct",
+     "mw": 192.0,
+     "year": 2025
+    }
+   ]
+  },
+  "MISO": {
+   "rows": 289,
+   "thermal_gw": 17.369,
+   "sb_oa_rows": 84,
+   "sb_oa_mw": 426.0,
+   "sb_oa_thermal_mw": 392.7,
+   "absent_rows": 2,
+   "absent_mw": 3.0,
+   "absent_thermal_mw": 3.0,
+   "status_census": {
+    "ABSENT": 2,
+    "OA": 6,
+    "OP": 203,
+    "SB": 78
+   },
+   "sb_oa_units": [
+    {
+     "unit_id": "10075_GEN1",
+     "fuel": "coal",
+     "mw": 84.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10075_GEN2",
+     "fuel": "coal",
+     "mw": 84.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10477_GEN2",
+     "fuel": "biomass",
+     "mw": 40.3,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "10477_GEN1",
+     "fuel": "biomass",
+     "mw": 32.0,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "54677_TG-3",
+     "fuel": "other",
+     "mw": 23.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1024_5",
+     "fuel": "coal",
+     "mw": 12.6,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10397_GEN6",
+     "fuel": "gas_ct",
+     "mw": 12.5,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1024_4",
+     "fuel": "coal",
+     "mw": 11.5,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50933_GEN5",
+     "fuel": "gas_ct",
+     "mw": 10.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54201_GEN4",
+     "fuel": "gas_ct",
+     "mw": 6.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "2067_2",
+     "fuel": "gas_cc",
+     "mw": 5.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "7200_1",
+     "fuel": "hydro",
+     "mw": 4.0,
+     "year": 2023,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "7200_2",
+     "fuel": "hydro",
+     "mw": 4.0,
+     "year": 2022,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "2023_GT1",
+     "fuel": "oil",
+     "mw": 3.0,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "943_7",
+     "fuel": "oil",
+     "mw": 2.6,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54224_DG7",
+     "fuel": "gas_ct",
+     "mw": 2.4,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54224_DG6",
+     "fuel": "gas_ct",
+     "mw": 2.4,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "935_4",
+     "fuel": "oil",
+     "mw": 2.2,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "946_IC6",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "946_IC5",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63099_EP-10",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "57208_4",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-01",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-06",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-05",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-04",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-03",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-02",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-08",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63097_EP-07",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "56247_1",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "56247_2",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "57208_2",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "57208_1",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "51008_2000",
+     "fuel": "biomass",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_9",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "57208_3",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "56247_4",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "56247_3",
+     "fuel": "oil",
+     "mw": 2.0,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50937_GENB",
+     "fuel": "oil",
+     "mw": 1.9,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50937_GENA",
+     "fuel": "oil",
+     "mw": 1.9,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54968_0385",
+     "fuel": "oil",
+     "mw": 1.8,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54968_5824",
+     "fuel": "oil",
+     "mw": 1.8,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54968_0386",
+     "fuel": "oil",
+     "mw": 1.8,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54775_DG7",
+     "fuel": "oil",
+     "mw": 1.7,
+     "year": 2022,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "56937_IPE",
+     "fuel": "oil",
+     "mw": 1.5,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_8",
+     "fuel": "oil",
+     "mw": 1.3,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54283_0209",
+     "fuel": "hydro",
+     "mw": 1.3,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54967_7906",
+     "fuel": "oil",
+     "mw": 1.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50935_3516",
+     "fuel": "oil",
+     "mw": 1.2,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_2A",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "969_4",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_3A",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58129_GEN1",
+     "fuel": "gas_ct",
+     "mw": 1.1,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_1A",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54714_1794",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "4102_4",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54714_1265",
+     "fuel": "oil",
+     "mw": 1.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58043_1",
+     "fuel": "oil",
+     "mw": 1.0,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62782_PEMWT",
+     "fuel": "wind",
+     "mw": 1.0,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "943_4",
+     "fuel": "oil",
+     "mw": 1.0,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54714_1270",
+     "fuel": "oil",
+     "mw": 1.0,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58043_2",
+     "fuel": "oil",
+     "mw": 1.0,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "56073_01",
+     "fuel": "gas_ct",
+     "mw": 1.0,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50990_P2-3",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50990_P2-4",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1852_3",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "58265_EP-6",
+     "fuel": "oil",
+     "mw": 0.8,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "969_6",
+     "fuel": "oil",
+     "mw": 0.6,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "943_3",
+     "fuel": "oil",
+     "mw": 0.6,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "948_2",
+     "fuel": "oil",
+     "mw": 0.6,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1852_2",
+     "fuel": "oil",
+     "mw": 0.6,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54731_GEO2",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "971_6",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "971_5",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "50969_GEN6",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54731_GEO1",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "943_1",
+     "fuel": "oil",
+     "mw": 0.4,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "943_2",
+     "fuel": "oil",
+     "mw": 0.4,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "54731_GEO3",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1943_D1",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "971_3",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "971_2",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1943_D2",
+     "fuel": "oil",
+     "mw": 0.1,
+     "year": 2021,
+     "vintage_status": "SB"
+    }
+   ],
+   "absent_units_ge_25mw": []
+  },
+  "NYISO": {
+   "rows": 99,
+   "thermal_gw": 1.711,
+   "sb_oa_rows": 35,
+   "sb_oa_mw": 36.5,
+   "sb_oa_thermal_mw": 18.4,
+   "absent_rows": 3,
+   "absent_mw": 1.1,
+   "absent_thermal_mw": 1.1,
+   "status_census": {
+    "ABSENT": 3,
+    "OA": 14,
+    "OP": 61,
+    "SB": 21
+   },
+   "sb_oa_units": [
+    {
+     "unit_id": "625_2",
+     "fuel": "hydro",
+     "mw": 8.2,
+     "year": 2025,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "2530_3",
+     "fuel": "hydro",
+     "mw": 7.0,
+     "year": 2025,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58156_GE",
+     "fuel": "gas_ct",
+     "mw": 1.8,
+     "year": 2023,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58201_4",
+     "fuel": "gas_ct",
+     "mw": 1.4,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58201_3",
+     "fuel": "gas_ct",
+     "mw": 1.4,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58201_2",
+     "fuel": "gas_ct",
+     "mw": 1.4,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "58201_1",
+     "fuel": "gas_ct",
+     "mw": 1.4,
+     "year": 2024,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "6526_1",
+     "fuel": "hydro",
+     "mw": 1.3,
+     "year": 2023,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "61416_GP9",
+     "fuel": "oil",
+     "mw": 0.9,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10549_3",
+     "fuel": "biomass",
+     "mw": 0.8,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "10549_2",
+     "fuel": "biomass",
+     "mw": 0.8,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "61378_5",
+     "fuel": "oil",
+     "mw": 0.8,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "61378_4",
+     "fuel": "oil",
+     "mw": 0.8,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62270_CATN3",
+     "fuel": "oil",
+     "mw": 0.7,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62270_CAT04",
+     "fuel": "oil",
+     "mw": 0.7,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62270_CATN1",
+     "fuel": "oil",
+     "mw": 0.7,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62270_CATN2",
+     "fuel": "oil",
+     "mw": 0.7,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62002_SR4",
+     "fuel": "oil",
+     "mw": 0.5,
+     "year": 2022,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "52057_04",
+     "fuel": "hydro",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "52057_01",
+     "fuel": "hydro",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "52057_02",
+     "fuel": "hydro",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "52057_03",
+     "fuel": "hydro",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "OA"
+    },
+    {
+     "unit_id": "50292_GEN4",
+     "fuel": "oil",
+     "mw": 0.4,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62051_EG400",
+     "fuel": "oil",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62423_777NG",
+     "fuel": "gas_ct",
+     "mw": 0.4,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62452_CT250",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62051_EG300",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "64440_ENGN1",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62453_EG2",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62398_CM111",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62051_EG200",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62453_EG1",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2025,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "62423_778NG",
+     "fuel": "gas_ct",
+     "mw": 0.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63580_CM175",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2023,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "63602_EG150",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2021,
+     "vintage_status": "SB"
+    }
+   ],
+   "absent_units_ge_25mw": []
+  },
+  "NEISO": {
+   "rows": 85,
+   "thermal_gw": 3.253,
+   "sb_oa_rows": 7,
+   "sb_oa_mw": 21.5,
+   "sb_oa_thermal_mw": 21.5,
+   "absent_rows": 0,
+   "absent_mw": 0.0,
+   "absent_thermal_mw": 0.0,
+   "status_census": {
+    "OP": 78,
+    "SB": 7
+   },
+   "sb_oa_units": [
+    {
+     "unit_id": "10491_3STG",
+     "fuel": "gas_ct",
+     "mw": 12.5,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10883_DEG6",
+     "fuel": "oil",
+     "mw": 6.8,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "1670_8",
+     "fuel": "oil",
+     "mw": 1.1,
+     "year": 2024,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10553_6033",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10553_6035",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "10553_6046",
+     "fuel": "oil",
+     "mw": 0.3,
+     "year": 2021,
+     "vintage_status": "SB"
+    },
+    {
+     "unit_id": "59717_TOW1",
+     "fuel": "oil",
+     "mw": 0.2,
+     "year": 2023,
+     "vintage_status": "SB"
+    }
+   ],
+   "absent_units_ge_25mw": []
+  }
+ }
+}
