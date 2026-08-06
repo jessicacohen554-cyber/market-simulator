@@ -488,7 +488,400 @@ def model_plant_gen(unit_id: str) -> tuple[str, str] | None:
     return None
 
 
-def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
+# --------------------------------------------------------------------------- #
+# Gate membership — the REACHABLE set (owner decision D-24)
+# --------------------------------------------------------------------------- #
+# D-24, SIGNED 2026-08-06 (sitting Addendum X.6). Evidence: FFR-7C
+# ``docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md`` §5 +
+# Addendum X.1. ERCOT's >=300 MW recall gate was measuring something no
+# admissible screen can pass: of its two members, one (Decker Creek 2, 405 MW)
+# is capacity the run's fleet never carried, and the other (Sandy Creek 1,
+# 1008 MW) clears its going-forward bar in every window year on every variant —
+# so a CORRECT economic screen must NOT retire it. A gate whose members are
+# unreachable grades plumbing, not skill (rule 1 ``[R-STRUCT]``).
+#
+# THE MEMBER RULE. A target exit is a gate member iff BOTH hold:
+#
+#   (i)  the unit exists in the run's FLEET BASIS — the vintage fleet the run
+#        actually built; and
+#   (ii) its exit is REACHABLE by an admissible channel, either
+#          * **economic** — no economic exclusion is recorded for it, or
+#          * **instrument-driven** — a non-superseded confirmed-registry
+#            instrument whose ``instrument_date <= the run's vintage cutoff``.
+#            That is the confirmed-exits information gate's OWN rule
+#            (``data.confirmed_retirements.load_confirmed_exits(as_of=...)``),
+#            not a scorer invention: an instrument dated after the vintage is
+#            unknowable at forecast start, so the channel cannot fire.
+#
+# Unreachable exits leave the DENOMINATOR and are listed in a NON-GATED
+# diagnostic, so the blind spot stays visible on every report rather than
+# silently shrinking the metric. An empty member set reports **n/a** — never
+# 0/N, which would read as a total miss on exits nothing could have produced.
+#
+# FAIL-CLOSED. The gate excludes only on POSITIVE, CITED evidence from committed
+# artifacts (the corrected target, ``data/raw/confirmed-retirements/``, and the
+# per-unit exit decode below). A unit with no evidence either way stays IN. The
+# two channel-applicability gates below work the same way: when the run's own
+# config cannot corroborate that the evidence applies to THIS run, the exclusion
+# is not taken.
+EXIT_DECODE_EVIDENCE = {
+    "ERCOT": {
+        "path": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+        "citation": (
+            "FFR-7C §2.2 (per-unit margin table) / §2.4 (fleet-basis facts) — "
+            "docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+        ),
+    },
+}
+
+# The exit decode's fleet-basis facts are read off the CAMPD per-plant bin sheet
+# (``data/raw/reference/custom-bin-assignments.csv``), which is the fleet only
+# when the run solved with ``use_campd_bins``. A run on the legacy equal-width
+# heat-rate bins has a different basis, so the fleet-absence exclusion does not
+# transfer to it and is not taken (fail-closed).
+FLEET_EVIDENCE_CONFIG_GATE = "use_campd_bins"
+
+# The economic exclusion says "an admissible ECONOMIC screen would not retire
+# this unit". It is only decisive when the economic screen is what governs the
+# unit's fuel: with ``forecast_fossil_retirement_economic`` off, step 1's
+# announced-date channel is live for fossil and could reach the exit by a route
+# the decode never measured — so the exclusion is not taken (fail-closed).
+ECONOMIC_EVIDENCE_CONFIG_GATE = "forecast_fossil_retirement_economic"
+
+
+def load_solved_scenario_config(bundle: Path | None) -> dict | None:
+    """The bundle's solved ``ScenarioConfig`` as a flat mapping, or ``None``.
+
+    Reads ``run_config.yaml`` (the flat ``to_yaml_full`` dump) when present and
+    falls back to ``run_config.json``'s nested ``scenario_config`` block, which
+    is what older hindcast out-dirs carry. Distinct from
+    :func:`load_solved_config`, which is the additions-basis ``RecordSpec``'s
+    input and is deliberately left on the yaml-only path.
+    """
+    if bundle is None:
+        return None
+    y = Path(bundle) / "run_config.yaml"
+    if y.exists():
+        return yaml.safe_load(y.read_text()) or None
+    j = Path(bundle) / "run_config.json"
+    if j.exists():
+        blob = json.loads(j.read_text())
+        sc = blob.get("scenario_config") if isinstance(blob, dict) else None
+        return sc if isinstance(sc, dict) else None
+    return None
+
+
+def vintage_cutoff_of(
+    meta: dict | None = None, solved_config: dict | None = None
+) -> date:
+    """The run's vintage cutoff V — the last date knowable at forecast start.
+
+    Prefers the solved config's ``eia860_vintage_year`` (the fleet snapshot the
+    run initialised from), then ``meta.json``'s ``vintage_year``, and falls back
+    to :data:`IS2020_CUTOFF` — the plain-hindcast vintage every registered
+    bundle uses. Year-end, matching the confirmed-exit information gate's own
+    convention (a 2020-vintage run knows every instrument public in 2020).
+    """
+    for src, key in ((solved_config, "eia860_vintage_year"), (meta, "vintage_year")):
+        if isinstance(src, dict) and src.get(key) is not None:
+            try:
+                return date(int(src[key]), 12, 31)
+            except (TypeError, ValueError):
+                continue
+    return IS2020_CUTOFF
+
+
+def load_exit_decode(iso: str) -> dict[str, dict]:
+    """Per-unit exit-decode evidence for an ISO, keyed by target ``unit_id``.
+
+    Reads the committed decode named in :data:`EXIT_DECODE_EVIDENCE` and
+    normalises each unit onto the two facts the member rule consumes, each
+    carrying the verbatim decode text as its citation:
+
+    * ``in_fleet`` — ``False`` when the decode records the unit as absent from
+      the model's fleet (an ``ABSENT`` ``model_bin``), ``True`` when it names
+      the bin that carries it, ``None`` when the decode is silent.
+    * ``economic_excluded`` — ``True`` only when the decode adjudicates the exit
+      **not** margin-driven under **both** bars (the ``gas_st``↔``gas_ct``
+      taxonomy seam gives some units two). A seam-dependent verdict, or a
+      margin-driven one, leaves the economic channel open (fail-closed).
+
+    Returns ``{}`` for an ISO with no committed decode — which is every ISO but
+    ERCOT, so no other ISO's gate membership changes.
+    """
+    spec = EXIT_DECODE_EVIDENCE.get(iso.upper())
+    if spec is None:
+        return {}
+    path = Path(spec["path"])
+    if not path.exists():
+        return {}
+    blob = json.loads(path.read_text())
+    out: dict[str, dict] = {}
+    for uid, u in (blob.get("units") or {}).items():
+        bin_txt = str(u.get("model_bin") or "").strip()
+        in_fleet = None
+        if bin_txt:
+            in_fleet = not bin_txt.upper().startswith("ABSENT")
+        tgt = u.get("economically_consistent_target_bar")
+        phys = u.get("economically_consistent_physical_bar")
+        econ_excluded = None
+        if isinstance(tgt, bool):
+            # Not margin-driven under the bar actually applied AND (where the
+            # seam gives a second bar) under the physical one too.
+            econ_excluded = (not tgt) and (not phys if isinstance(phys, bool) else True)
+        out[str(uid)] = {
+            "unit_id": str(uid),
+            "name": u.get("name"),
+            "mw": u.get("mw"),
+            "in_fleet": in_fleet,
+            "fleet_note": bin_txt or None,
+            "economic_excluded": econ_excluded,
+            "economic_note": (
+                None
+                if econ_excluded is None
+                else (
+                    f"primary-year margin {u.get('primary_margin')} vs bar "
+                    f"{u.get('bar_target_taxonomy')} $/kW-yr in "
+                    f"{u.get('primary_year')} ({u.get('primary_margin_basis')})"
+                    + (", bar-invariant" if u.get("bar_invariant") else "")
+                )
+            ),
+            "citation": spec["citation"],
+        }
+    return out
+
+
+def load_instrument_index(iso: str) -> dict[tuple[str, str], dict]:
+    """Earliest non-superseded confirmed-registry instrument per ``(plant, gen)``.
+
+    The same collapse ``data.confirmed_retirements.load_confirmed_exits`` does —
+    superseded rows dropped (a counter-instrument suspends the exit), earliest
+    instrument kept — so the scorer's view of the instrument channel is the
+    mechanism's own view. ``{}`` when the ISO has no registry file.
+    """
+    path = Path("data/raw/confirmed-retirements") / f"{iso.lower()}.csv"
+    if not path.exists():
+        return {}
+    lines = [
+        ln
+        for ln in path.read_text().splitlines(keepends=True)
+        if not ln.lstrip().startswith("#")
+    ]
+    out: dict[tuple[str, str], dict] = {}
+    for row in csv.DictReader(lines):
+        if str(row.get("superseded") or "").strip().lower() in ("true", "1", "yes"):
+            continue
+        key = (
+            str(row.get("plant_id") or "").strip(),
+            str(row.get("generator_id") or "").strip(),
+        )
+        inst_date = pd.to_datetime(
+            (row.get("instrument_date") or "").strip(), errors="coerce"
+        )
+        prev = out.get(key)
+        if prev is not None and pd.notna(prev["instrument_date"]):
+            if pd.isna(inst_date) or inst_date >= prev["instrument_date"]:
+                continue
+        out[key] = {
+            "instrument_id": (row.get("instrument_id") or "").strip(),
+            "instrument_date": inst_date,
+            "confirmation_class": (row.get("confirmation_class") or "").strip(),
+            "unit_name": (row.get("unit_name") or "").strip(),
+        }
+    return out
+
+
+def classify_exit_reachability(
+    iso: str,
+    actuals: pd.DataFrame,
+    *,
+    vintage_cutoff: date | None = None,
+    solved_config: dict | None = None,
+    decode: dict[str, dict] | None = None,
+    instruments: dict[tuple[str, str], dict] | None = None,
+) -> dict:
+    """Classify every thermal target exit as reachable or not (D-24).
+
+    Implements the member rule stated above this function. The classification
+    runs over **every** thermal retirement row, not just the >= ``LARGE_UNIT_MW``
+    ones, so the diagnostic shows the whole blind spot; ``members`` is the
+    subset that is both large enough to gate and reachable.
+
+    Args:
+        iso: ISO code (selects the committed decode + registry).
+        actuals: The scoring target (``load_actuals`` output).
+        vintage_cutoff: The run's V; defaults to :data:`IS2020_CUTOFF`.
+        solved_config: The run's flat ``ScenarioConfig`` mapping, used ONLY to
+            check that each evidence class applies to this run. ``None`` ⇒ the
+            fleet-absence exclusion is not taken (fail-closed).
+        decode / instruments: Injected evidence, for tests. Loaded from the
+            committed artifacts when omitted.
+
+    Returns:
+        The reachability block. ``applied`` is ``False`` — and ``members`` is
+        ``None``, meaning "do not filter" — when the target carries no
+        ``unit_id`` column to key evidence on.
+    """
+    cutoff = vintage_cutoff or IS2020_CUTOFF
+    decode = load_exit_decode(iso) if decode is None else decode
+    instruments = load_instrument_index(iso) if instruments is None else instruments
+    spec = EXIT_DECODE_EVIDENCE.get(iso.upper(), {})
+
+    cfg = solved_config if isinstance(solved_config, dict) else {}
+    use_bins = cfg.get(FLEET_EVIDENCE_CONFIG_GATE)
+    fossil_econ = cfg.get(ECONOMIC_EVIDENCE_CONFIG_GATE)
+    fleet_applies = use_bins is True
+    econ_applies = fossil_econ is not False
+
+    block: dict = {
+        "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+        "rule": (
+            "a target exit gates the >=%g MW recall metric only if the unit "
+            "exists in the run's fleet basis AND its exit is reachable by an "
+            "admissible channel — economic (no exclusion recorded) or "
+            "instrument-driven with instrument_date <= the run's vintage "
+            "cutoff. Unreachable exits leave the denominator and are reported "
+            "here, NON-GATED." % LARGE_UNIT_MW
+        ),
+        "vintage_cutoff": cutoff.isoformat(),
+        "large_unit_mw": LARGE_UNIT_MW,
+        "evidence": {
+            "target": f"data/raw/_validation-source/capacity_actuals_{iso.lower()}.csv",
+            "confirmed_registry": f"data/raw/confirmed-retirements/{iso.lower()}.csv",
+            "exit_decode": spec.get("path"),
+            "exit_decode_citation": spec.get("citation"),
+        },
+        "applicability": {
+            FLEET_EVIDENCE_CONFIG_GATE: use_bins,
+            "fleet_evidence_applied": fleet_applies,
+            ECONOMIC_EVIDENCE_CONFIG_GATE: fossil_econ,
+            "economic_evidence_applied": econ_applies,
+        },
+        "fail_closed": (
+            "excludes only on positive, cited evidence; a unit with no evidence "
+            "either way stays IN the member set"
+        ),
+    }
+
+    act = actuals[actuals["kind"] == "retirement"]
+    act = act[act["fuel"].isin(THERMAL_FUELS)]
+    if "unit_id" not in act.columns:
+        block.update(
+            {
+                "applied": False,
+                "members": None,
+                "excluded": [],
+                "n_target_large": int((act["mw"] >= LARGE_UNIT_MW).sum())
+                if not act.empty
+                else 0,
+                "n_members": None,
+                "n_excluded_gated": 0,
+                "note": (
+                    "target carries no unit_id column — evidence cannot be keyed "
+                    "per unit, so no exclusion is taken (fail-closed)"
+                ),
+            }
+        )
+        return block
+
+    members: list[str] = []
+    excluded: list[dict] = []
+    for _, a in act.sort_values("mw", ascending=False).iterrows():
+        uid = str(a["unit_id"])
+        mw = float(a["mw"])
+        ev = decode.get(uid, {})
+        pg = model_plant_gen(uid)
+        inst = instruments.get(pg) if pg is not None else None
+        inst_date = inst["instrument_date"] if inst else pd.NaT
+        inst_reachable = bool(
+            inst is not None
+            and pd.notna(inst_date)
+            and inst_date.date() <= cutoff  # the confirmed-exit information gate
+        )
+        econ_excluded = bool(econ_applies and ev.get("economic_excluded") is True)
+        not_in_fleet = bool(fleet_applies and ev.get("in_fleet") is False)
+
+        if inst is None:
+            driver = (
+                "not margin-driven (exit decode); no confirmed-registry "
+                "instrument exists"
+                if econ_excluded
+                else "not established from committed artifacts"
+            )
+        else:
+            d = "" if pd.isna(inst_date) else inst_date.date().isoformat()
+            driver = (
+                f"confirmed instrument {inst['instrument_id']}"
+                f" ({inst['confirmation_class']}, instrument_date {d or 'unknown'})"
+            )
+
+        reason = why = None
+        if not_in_fleet:
+            reason = "not_in_fleet_basis"
+            why = (
+                f"{ev.get('fleet_note')} — no screen can retire capacity the "
+                f"run's fleet never carried"
+            )
+        elif econ_excluded and not inst_reachable:  # neither channel can fire
+            if inst is not None:
+                reason = "post_vintage_instrument"
+                d = "" if pd.isna(inst_date) else inst_date.date().isoformat()
+                why = (
+                    f"no admissible channel — economic screen must not retire it "
+                    f"({ev.get('economic_note')}), and its only instrument "
+                    f"({inst['instrument_id']}, {d}) post-dates the vintage "
+                    f"cutoff {cutoff.isoformat()}"
+                )
+            else:
+                reason = "no_instrument"
+                why = (
+                    f"no admissible channel — economic screen must not retire it "
+                    f"({ev.get('economic_note')}), and no confirmed-registry "
+                    f"instrument exists"
+                )
+
+        if reason is None:
+            if mw >= LARGE_UNIT_MW:
+                members.append(uid)
+            continue
+        excluded.append(
+            {
+                "unit_id": uid,
+                "unit_name": ev.get("name") or (inst or {}).get("unit_name"),
+                "mw": round(mw, 1),
+                "fuel": a["fuel"],
+                "exit_year": int(a["year"]),
+                "driver": driver,
+                "reason": reason,
+                "why": why,
+                "gated": mw >= LARGE_UNIT_MW,
+                "citation": ev.get("citation")
+                or block["evidence"]["confirmed_registry"],
+            }
+        )
+
+    n_large = int((act["mw"] >= LARGE_UNIT_MW).sum())
+    block.update(
+        {
+            "applied": True,
+            "members": members,
+            "excluded": excluded,
+            "n_target_large": n_large,
+            "n_members": len(members),
+            "n_excluded_gated": sum(1 for r in excluded if r["gated"]),
+            "note": (
+                "NON-GATED diagnostic. Rows here left the recall denominator (or "
+                "were never in it, below the size threshold); nothing in this "
+                "block bands, and no verdict reads off it."
+            ),
+        }
+    )
+    return block
+
+
+def score_retirements(
+    model: pd.DataFrame, actuals: pd.DataFrame, reachability: dict | None = None
+) -> dict:
     """Retirement GW (total + per-fuel), grain-corrected recall + false-retire.
 
     **Grain fix (G-31).** The economic screen retires *plant-binned tranches*
@@ -519,6 +912,16 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
 
     ``plant_recall_frac`` is reported (not banded) as a stricter diagnostic: the
     share of large actual units whose exact plant the model also retired.
+
+    **Gate membership (owner decision D-24).** ``reachability`` — the block
+    :func:`classify_exit_reachability` returns — redefines the recall
+    denominator as the **reachable** set: a target exit gates only if it exists
+    in the run's fleet basis and an admissible channel could produce it.
+    Unreachable exits are excluded and reported in the non-gated
+    ``reachability`` block; an empty member set reports **n/a** (band ``SKIP``),
+    never 0/N. ``None`` (the default) keeps the pre-D-24 denominator — every
+    large target row — so a caller with no evidence to key on, and every
+    existing caller, is unchanged.
     """
     act = actuals[actuals["kind"] == "retirement"]
     act_thermal = act[act["fuel"].isin(THERMAL_FUELS)]
@@ -549,6 +952,18 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
     big = act_thermal[act_thermal["mw"] >= LARGE_UNIT_MW].sort_values(
         "mw", ascending=False
     )
+    n_target_large = int(len(big))
+    member_rule = "all-large-target-rows (pre-D-24)"
+    applied_reach = bool(
+        reachability
+        and reachability.get("applied")
+        and reachability.get("members") is not None
+        and "unit_id" in big.columns
+    )
+    if applied_reach:
+        member_rule = "reachable-set (D-24)"
+        members = {str(u) for u in reachability["members"]}
+        big = big[big["unit_id"].astype(str).isin(members)]
     fuel_pool = {f: float(mw) for f, mw in model_fuel_mw.items()}
     matched = 0
     for _, a in big.iterrows():
@@ -582,7 +997,7 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
         )
     false_frac = false_gw / mod_gw if mod_gw else 0.0
 
-    return {
+    out = {
         "total_gw": {
             "actual": round(act_gw, 3),
             "model": round(mod_gw, 3),
@@ -597,6 +1012,19 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
             "matched": matched,
             "recall": None if np.isnan(recall) else round(recall, 3),
             "grain": "fuel-mw-coverage",  # G-31: not exact unit identity
+            # D-24: the denominator is the REACHABLE set, and how it was
+            # arrived at travels with the verdict — never basis-implicit.
+            "member_rule": member_rule,
+            "n_target_large": n_target_large,
+            "n_excluded_unreachable": n_target_large - int(len(big)),
+            "n_a": bool(applied_reach and len(big) == 0),
+            "n_a_reason": (
+                "no target exit >= %g MW is reachable by an admissible channel "
+                "on this run's fleet basis — reported n/a, never 0/N (D-24)"
+                % LARGE_UNIT_MW
+            )
+            if applied_reach and len(big) == 0
+            else None,
             "plant_recall_frac": None
             if np.isnan(plant_recall)
             else round(plant_recall, 3),
@@ -612,6 +1040,12 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
             "band": "PASS" if false_frac <= BANDS["false_retire_frac_max"] else "FAIL",
         },
     }
+    if reachability is not None:
+        # NON-GATED (D-24). It carries no band and no consumer reads a verdict
+        # off it; it exists so the excluded blind spot is visible on every
+        # report rather than silently shrinking the denominator.
+        out["reachability"] = reachability
+    return out
 
 
 def score_additions(
@@ -912,7 +1346,10 @@ def reversal_exposure(model: pd.DataFrame, reversal_set: dict) -> dict:
 
 
 def score_retirements_is2020(
-    model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict
+    model: pd.DataFrame,
+    actuals: pd.DataFrame,
+    reversal_set: dict,
+    reachability: dict | None = None,
 ) -> dict:
     """IS-2020 retirement scoring: raw metric with reversal-exposed MW removed.
 
@@ -929,7 +1366,7 @@ def score_retirements_is2020(
         if exposure["unit_ids"]
         else model
     )
-    base = score_retirements(keep, actuals)
+    base = score_retirements(keep, actuals, reachability)
     base["reversal_exposure_gw"] = exposure["exposure_gw"]
     base["reversal_instruments"] = exposure["instruments"]
     base["reversal_rows"] = exposure["rows"]
@@ -1154,7 +1591,12 @@ def blk10_backstop_fired(ledgers: dict) -> dict:
     }
 
 
-def loyo_folds(model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict) -> dict:
+def loyo_folds(
+    model: pd.DataFrame,
+    actuals: pd.DataFrame,
+    reversal_set: dict,
+    reachability: dict | None = None,
+) -> dict:
     """Leave-one-year-out folds within the scored years (rule 22 LOYO clause).
 
     Fold ``y`` re-scores the cumulative window with year ``y``'s events removed
@@ -1165,13 +1607,19 @@ def loyo_folds(model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict) -
     guard. The promotion criterion (plan §2.1 item 4 / rule 22) is that a
     verdict holds in >= 2 of 3 folds; ``holds_2of3`` grades exactly that for
     recall-PASS, T-R10a-PASS and T-R10b-PASS.
+
+    ``reachability`` (D-24) is passed straight through to each fold: membership
+    is a property of the target row, so dropping a fold's actuals drops that
+    year's members with them. When every fold's recall is n/a — no reachable
+    member survives in any fold — ``holds_2of3["recall_pass"]`` is ``None``
+    (n/a), never ``False``: a >=2/3 bar over three n/a folds is not a failure.
     """
     folds: dict[str, dict] = {}
     for y in SCORED_YEARS:
         m = model[model["year"] != y]
         a = actuals[actuals["year"] != y]
-        ret = score_retirements(m, a)
-        ret_is = score_retirements_is2020(m, a, reversal_set)
+        ret = score_retirements(m, a, reachability)
+        ret_is = score_retirements_is2020(m, a, reversal_set, reachability)
         tr10 = score_tr10(m, a)
         rr = ret["unit_recall_gt300"]
         folds[str(y)] = {
@@ -1191,16 +1639,25 @@ def loyo_folds(model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict) -
     def _holds(key: str, ok: str) -> bool:
         return sum(1 for f in folds.values() if f[key] == ok) >= 2
 
+    recall_na = bool(folds) and all(f["recall_band"] == "SKIP" for f in folds.values())
+
     return {
         "folds": folds,
         "holds_2of3": {
-            "recall_pass": _holds("recall_band", "PASS"),
+            "recall_pass": None if recall_na else _holds("recall_band", "PASS"),
             "tr10a_pass": _holds("tr10a", "PASS"),
             "tr10b_pass": _holds("tr10b", "PASS"),
         },
         "note": (
             "Scorer-side LOYO: fold y drops year-y events from model AND "
             "actuals; no re-solve. >=2/3 folds is the rule-22 promotion bar."
+            + (
+                " recall_pass is null: every fold's recall is n/a (no reachable "
+                "member survives the fold), so the >=2/3 bar has nothing to "
+                "grade — D-24."
+                if recall_na
+                else ""
+            )
         ),
     }
 
@@ -1219,6 +1676,13 @@ def _flip_gate_extras(bundle: Path) -> int:
     actuals = load_actuals(iso)
     mret = model_retirements(ledgers)
     reversal_set = load_reversal_set(iso)
+    solved = load_solved_scenario_config(bundle)
+    reach = classify_exit_reachability(
+        iso,
+        actuals,
+        vintage_cutoff=vintage_cutoff_of(meta, solved),
+        solved_config=solved,
+    )
 
     tr10 = score_tr10(mret, actuals)
     exposure = reversal_exposure(mret, reversal_set)
@@ -1228,7 +1692,7 @@ def _flip_gate_extras(bundle: Path) -> int:
         else mret
     )
     tr10_is = score_tr10(mret_is, actuals)
-    loyo = loyo_folds(mret, actuals, reversal_set)
+    loyo = loyo_folds(mret, actuals, reversal_set, reach)
     blk10 = blk10_backstop_fired(ledgers)
 
     score_path = cache_dir / "score.json"
@@ -1274,6 +1738,65 @@ def _flip_gate_extras(bundle: Path) -> int:
 # --------------------------------------------------------------------------- #
 def _fmt_band(x: str) -> str:
     return {"PASS": "✅ PASS", "FAIL": "❌ FAIL", "SKIP": "—"}.get(x, x)
+
+
+def render_reachability_section(reach: dict | None, rr: dict) -> list[str]:
+    """The D-24 gate-membership disclosure + the NON-GATED unreachable list.
+
+    Rendered under the retirement table on every report, whether or not the
+    exclusion moved anything: the point of the diagnostic is that the blind spot
+    stays visible. ``[]`` when the run carries no reachability block (pre-D-24
+    denominator, nothing to disclose).
+    """
+    if not reach or not reach.get("applied"):
+        return []
+    L = [
+        f"> **Gate membership (D-24, {reach['decision'].split(',', 1)[-1].strip()}):** "
+        f"the >={reach['large_unit_mw']:.0f} MW recall denominator is the "
+        f"**reachable** set — a target exit gates only if the unit exists in the "
+        f"run's fleet basis AND an admissible channel could produce its exit "
+        f"(economic with no exclusion recorded, or an instrument dated on or "
+        f"before the run's vintage cutoff **{reach['vintage_cutoff']}**). "
+        f"Members: **{rr['n_big_actual']} of {rr['n_target_large']}** target rows "
+        f">={reach['large_unit_mw']:.0f} MW"
+        + (
+            f" — recall **n/a** (never 0/N): {rr['n_a_reason']}."
+            if rr.get("n_a")
+            else "."
+        ),
+        "",
+    ]
+    excl = reach.get("excluded") or []
+    if not excl:
+        L.append(
+            "No target exit is classified unreachable on committed evidence "
+            "(fail-closed: the gate excludes only on positive, cited evidence)."
+        )
+        L.append("")
+        return L
+    L.append(
+        f"**Unreachable exits — NON-GATED diagnostic** ({len(excl)} rows, "
+        f"{reach['n_excluded_gated']} of them >={reach['large_unit_mw']:.0f} MW and "
+        "therefore out of the denominator). Nothing here bands:"
+    )
+    L.append("")
+    L.append("| unit | MW | fuel | exit | driver | why unreachable | gated |")
+    L.append("|---|--:|---|--:|---|---|:--|")
+    for r in excl:
+        name = r["unit_name"] or r["unit_id"]
+        L.append(
+            f"| `{r['unit_id']}` {name} | {r['mw']} | {r['fuel']} | {r['exit_year']} "
+            f"| {r['driver']} | {r['reason']} — {r['why']} | "
+            f"{'yes' if r['gated'] else 'no (below size threshold)'} |"
+        )
+    L.append("")
+    L.append(
+        f"_Evidence, per unit: {reach['evidence']['exit_decode_citation'] or '—'}; "
+        f"`{reach['evidence']['confirmed_registry']}`. "
+        f"{reach['fail_closed'].capitalize()}._"
+    )
+    L.append("")
+    return L
 
 
 def write_report(
@@ -1322,7 +1845,8 @@ def write_report(
     rr = ret["unit_recall_gt300"]
     L.append(
         f"| unit recall >300MW | {rr['n_big_actual']} units | {rr['matched']} matched | "
-        f"{('' if rr['recall'] is None else format(rr['recall'], '.0%'))} | {_fmt_band(rr['band'])} |"
+        f"{('n/a' if rr.get('n_a') else '') if rr['recall'] is None else format(rr['recall'], '.0%')}"
+        f" | {_fmt_band(rr['band'])} |"
     )
     fr = ret["false_retire"]
     L.append(
@@ -1347,6 +1871,7 @@ def write_report(
         "over-retirement (screen root-cause, e.g. G-30), not a scoring artifact."
     )
     L.append("")
+    L.extend(render_reachability_section(ret.get("reachability"), rr))
     L.append("Per-fuel retired GW:")
     L.append("")
     L.append("| fuel | actual | model | err |")
@@ -1496,10 +2021,16 @@ def render_rescore_section(
         f"{format(fr_is['frac_of_model'], '.0%')} |"
     )
     rr_is = ret_is["unit_recall_gt300"]
+
+    def _recall_cell(x: dict) -> str:
+        if x.get("n_a"):
+            return "n/a"  # D-24: no reachable member, never 0/N
+        return "" if x["recall"] is None else format(x["recall"], ".0%")
+
     L.append(
-        f"| unit recall >300MW | {('' if rr['recall'] is None else format(rr['recall'], '.0%'))} "
+        f"| unit recall >300MW | {_recall_cell(rr)} "
         f"({rr['matched']}/{rr['n_big_actual']}) | "
-        f"{('' if rr_is['recall'] is None else format(rr_is['recall'], '.0%'))} "
+        f"{_recall_cell(rr_is)} "
         f"({rr_is['matched']}/{rr_is['n_big_actual']}) |"
     )
     pr = rr.get("plant_recall_frac")
@@ -1510,6 +2041,7 @@ def render_rescore_section(
     )
     L.append(f"| reversal exposure (GW, §c.5-1) | — | {exp} |")
     L.append("")
+    L.extend(render_reachability_section(ret.get("reachability"), rr))
     # Finding: plant-exact recall above fuel-MW recall means the model retired the
     # right plant(s) but carries a pmax below the EIA nameplate the RD-5 actuals
     # use — a units-basis near-miss, not a screen miss (rules 1/11: keep the
@@ -1617,14 +2149,21 @@ def _rescore(bundle: Path, report: Path | None) -> int:
     madd = model_additions(ledgers, basis=ADDITIONS_BASIS_DECISION)
     madd_cod = model_additions(ledgers, basis=ADDITIONS_BASIS_COD)
 
-    ret = score_retirements(mret, actuals)  # raw, RD-5 actuals
+    solved = load_solved_scenario_config(bundle)
+    reach = classify_exit_reachability(
+        iso,
+        actuals,
+        vintage_cutoff=vintage_cutoff_of(meta, solved),
+        solved_config=solved,
+    )
+    ret = score_retirements(mret, actuals, reach)  # raw, RD-5 actuals
     add = score_additions(madd, actuals, basis=ADDITIONS_BASIS_DECISION)
     add_cod = score_additions(madd_cod, actuals, basis=ADDITIONS_BASIS_COD)
     add_basis = additions_basis_record(
         ledgers, ADDITIONS_BASIS_DECISION, load_solved_config(bundle)
     )
     reversal_set = load_reversal_set(iso)
-    ret_is = score_retirements_is2020(mret, actuals, reversal_set)
+    ret_is = score_retirements_is2020(mret, actuals, reversal_set, reach)
     channels = score_channels(mret, actuals)
     add_is = additions_is2020(madd, actuals)
 
@@ -1742,7 +2281,14 @@ def main(argv: list[str] | None = None) -> int:
     madd = model_additions(ledgers, basis=ADDITIONS_BASIS_DECISION)
     madd_cod = model_additions(ledgers, basis=ADDITIONS_BASIS_COD)
 
-    ret = score_retirements(mret, actuals)
+    solved = load_solved_scenario_config(args.bundle)
+    reach = classify_exit_reachability(
+        iso,
+        actuals,
+        vintage_cutoff=vintage_cutoff_of(meta, solved),
+        solved_config=solved,
+    )
+    ret = score_retirements(mret, actuals, reach)
     add = score_additions(madd, actuals, basis=ADDITIONS_BASIS_DECISION)
     add_cod = score_additions(madd_cod, actuals, basis=ADDITIONS_BASIS_COD)
     add_basis = additions_basis_record(
