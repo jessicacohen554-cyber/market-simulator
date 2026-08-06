@@ -436,66 +436,66 @@ NEISO,2017,9,Algonquin Citygate (EIA MA citygate proxy),5.5764,EIA N3050MA3 city
 NEISO,2017,10,Algonquin Citygate (EIA MA citygate proxy),3.1832,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
 NEISO,2017,11,Algonquin Citygate (EIA MA citygate proxy),1.4266,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
 NEISO,2017,12,Algonquin Citygate (EIA MA citygate proxy),2.2354,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,1,Algonquin Citygate (EIA MA citygate proxy),5.1592,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,2,Algonquin Citygate (EIA MA citygate proxy),0.7948,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
+NEISO,2018,1,Algonquin Citygate (ISO-NE MA gas index),11.4945,https://isonewswire.com/2018/02/28/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2018/
+NEISO,2018,2,Algonquin Citygate (ISO-NE MA gas index),1.7495,https://isonewswire.com/2018/03/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2018/
 NEISO,2018,3,Algonquin Citygate (EIA MA citygate proxy),1.8341,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
 NEISO,2018,4,Algonquin Citygate (EIA MA citygate proxy),2.3679,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
 NEISO,2018,5,Algonquin Citygate (EIA MA citygate proxy),3.2898,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
 NEISO,2018,6,Algonquin Citygate (EIA MA citygate proxy),6.2124,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,7,Algonquin Citygate (EIA MA citygate proxy),7.7468,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,8,Algonquin Citygate (EIA MA citygate proxy),8.4476,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,9,Algonquin Citygate (EIA MA citygate proxy),6.9275,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,10,Algonquin Citygate (EIA MA citygate proxy),2.1785,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,11,Algonquin Citygate (EIA MA citygate proxy),1.0441,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2018,12,Algonquin Citygate (EIA MA citygate proxy),2.0876,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,1,Algonquin Citygate (EIA MA citygate proxy),1.6355,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,2,Algonquin Citygate (EIA MA citygate proxy),1.9361,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,3,Algonquin Citygate (EIA MA citygate proxy),1.9259,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,4,Algonquin Citygate (EIA MA citygate proxy),2.1309,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,5,Algonquin Citygate (EIA MA citygate proxy),3.1638,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,6,Algonquin Citygate (EIA MA citygate proxy),7.7849,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,7,Algonquin Citygate (EIA MA citygate proxy),9.2651,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,8,Algonquin Citygate (EIA MA citygate proxy),8.8216,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,9,Algonquin Citygate (EIA MA citygate proxy),7.4422,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,10,Algonquin Citygate (EIA MA citygate proxy),3.6629,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,11,Algonquin Citygate (EIA MA citygate proxy),2.0381,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2019,12,Algonquin Citygate (EIA MA citygate proxy),2.1728,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,1,Algonquin Citygate (EIA MA citygate proxy),1.9775,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,2,Algonquin Citygate (EIA MA citygate proxy),2.0829,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,3,Algonquin Citygate (EIA MA citygate proxy),2.7742,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,4,Algonquin Citygate (EIA MA citygate proxy),2.6722,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,5,Algonquin Citygate (EIA MA citygate proxy),4.2457,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,6,Algonquin Citygate (EIA MA citygate proxy),7.8759,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,7,Algonquin Citygate (EIA MA citygate proxy),10.2588,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,8,Algonquin Citygate (EIA MA citygate proxy),9.4061,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,9,Algonquin Citygate (EIA MA citygate proxy),7.7301,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,10,Algonquin Citygate (EIA MA citygate proxy),3.7306,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,11,Algonquin Citygate (EIA MA citygate proxy),2.4828,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2020,12,Algonquin Citygate (EIA MA citygate proxy),1.9318,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,1,Algonquin Citygate (EIA MA citygate proxy),1.7565,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,2,Algonquin Citygate (EIA MA citygate proxy),-0.373,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,3,Algonquin Citygate (EIA MA citygate proxy),2.1018,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,4,Algonquin Citygate (EIA MA citygate proxy),2.7908,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,5,Algonquin Citygate (EIA MA citygate proxy),5.2535,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,6,Algonquin Citygate (EIA MA citygate proxy),10.0912,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,7,Algonquin Citygate (EIA MA citygate proxy),9.6537,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,8,Algonquin Citygate (EIA MA citygate proxy),9.8545,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,9,Algonquin Citygate (EIA MA citygate proxy),8.3714,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,10,Algonquin Citygate (EIA MA citygate proxy),3.5692,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,11,Algonquin Citygate (EIA MA citygate proxy),1.4939,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2021,12,Algonquin Citygate (EIA MA citygate proxy),2.5454,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,1,Algonquin Citygate (EIA MA citygate proxy),2.3545,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,2,Algonquin Citygate (EIA MA citygate proxy),1.3991,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,3,Algonquin Citygate (EIA MA citygate proxy),1.3565,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,4,Algonquin Citygate (EIA MA citygate proxy),1.5314,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,5,Algonquin Citygate (EIA MA citygate proxy),5.6486,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,6,Algonquin Citygate (EIA MA citygate proxy),8.9955,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,7,Algonquin Citygate (EIA MA citygate proxy),11.0167,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,8,Algonquin Citygate (EIA MA citygate proxy),10.3931,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,9,Algonquin Citygate (EIA MA citygate proxy),9.0017,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,10,Algonquin Citygate (EIA MA citygate proxy),5.0827,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,11,Algonquin Citygate (EIA MA citygate proxy),3.3424,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2022,12,Algonquin Citygate (EIA MA citygate proxy),3.1385,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
+NEISO,2018,7,Algonquin Citygate (ISO-NE MA gas index),-0.0324,https://isonewswire.com/2018/08/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2018/
+NEISO,2018,8,Algonquin Citygate (ISO-NE MA gas index),0.1783,https://isonewswire.com/2018/09/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2018/
+NEISO,2018,9,Algonquin Citygate (ISO-NE MA gas index),-0.0753,https://isonewswire.com/2018/10/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2018/
+NEISO,2018,10,Algonquin Citygate (ISO-NE MA gas index),0.0448,https://isonewswire.com/2018/11/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2018/
+NEISO,2018,11,Algonquin Citygate (ISO-NE MA gas index),2.219,https://isonewswire.com/2018/12/21/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2018/
+NEISO,2018,12,Algonquin Citygate (ISO-NE MA gas index),1.6783,https://isonewswire.com/2019/01/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2018/
+NEISO,2019,1,Algonquin Citygate (ISO-NE MA gas index),3.8168,https://isonewswire.com/2019/02/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2019/
+NEISO,2019,2,Algonquin Citygate (ISO-NE MA gas index),1.4925,https://isonewswire.com/2019/03/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2019/
+NEISO,2019,3,Algonquin Citygate (ISO-NE MA gas index),1.0814,https://isonewswire.com/2019/04/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2019/
+NEISO,2019,4,Algonquin Citygate (ISO-NE MA gas index),-0.0871,https://isonewswire.com/2019/05/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2019/
+NEISO,2019,5,Algonquin Citygate (ISO-NE MA gas index),-0.3074,https://isonewswire.com/2019/06/28/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2019/
+NEISO,2019,6,Algonquin Citygate (ISO-NE MA gas index),-0.2885,https://isonewswire.com/2019/07/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2019/
+NEISO,2019,7,Algonquin Citygate (ISO-NE MA gas index),-0.0962,https://isonewswire.com/2019/08/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2019/
+NEISO,2019,8,Algonquin Citygate (ISO-NE MA gas index),-0.2009,https://isonewswire.com/2019/10/08/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2019/
+NEISO,2019,9,Algonquin Citygate (ISO-NE MA gas index),-0.5981,https://isonewswire.com/2019/10/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2019/
+NEISO,2019,10,Algonquin Citygate (ISO-NE MA gas index),-0.6713,https://isonewswire.com/2019/11/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2019/
+NEISO,2019,11,Algonquin Citygate (ISO-NE MA gas index),0.697,https://isonewswire.com/2020/01/07/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2019/
+NEISO,2019,12,Algonquin Citygate (ISO-NE MA gas index),2.4909,https://isonewswire.com/2020/01/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2019/
+NEISO,2020,1,Algonquin Citygate (ISO-NE MA gas index),0.8514,https://isonewswire.com/2020/02/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2020/
+NEISO,2020,2,Algonquin Citygate (ISO-NE MA gas index),0.3568,https://isonewswire.com/2020/04/06/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2020/
+NEISO,2020,3,Algonquin Citygate (ISO-NE MA gas index),-0.2114,https://isonewswire.com/2020/04/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2020/
+NEISO,2020,4,Algonquin Citygate (ISO-NE MA gas index),-0.099,https://isonewswire.com/2020/05/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2020/
+NEISO,2020,5,Algonquin Citygate (ISO-NE MA gas index),-0.3685,https://isonewswire.com/2020/06/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2020/
+NEISO,2020,6,Algonquin Citygate (ISO-NE MA gas index),-0.1118,https://isonewswire.com/2020/07/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2020/
+NEISO,2020,7,Algonquin Citygate (ISO-NE MA gas index),-0.1386,https://isonewswire.com/2020/08/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2020/
+NEISO,2020,8,Algonquin Citygate (ISO-NE MA gas index),-0.8124,https://isonewswire.com/2020/10/08/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2020/
+NEISO,2020,9,Algonquin Citygate (ISO-NE MA gas index),-0.4824,https://isonewswire.com/2020/11/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2020/
+NEISO,2020,10,Algonquin Citygate (ISO-NE MA gas index),-0.4291,https://isonewswire.com/2020/11/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2020/
+NEISO,2020,11,Algonquin Citygate (ISO-NE MA gas index),-0.6337,https://isonewswire.com/2020/12/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2020/
+NEISO,2020,12,Algonquin Citygate (ISO-NE MA gas index),1.6841,https://isonewswire.com/2021/01/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2020/
+NEISO,2021,1,Algonquin Citygate (ISO-NE MA gas index),2.2574,https://isonewswire.com/2021/03/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2021/
+NEISO,2021,2,Algonquin Citygate (ISO-NE MA gas index),3.2163,https://isonewswire.com/2021/04/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2021/
+NEISO,2021,3,Algonquin Citygate (ISO-NE MA gas index),0.7817,https://isonewswire.com/2021/05/07/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2021/
+NEISO,2021,4,Algonquin Citygate (ISO-NE MA gas index),-0.3129,https://isonewswire.com/2021/05/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2021/
+NEISO,2021,5,Algonquin Citygate (ISO-NE MA gas index),-0.6225,https://isonewswire.com/2021/06/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2021/
+NEISO,2021,6,Algonquin Citygate (ISO-NE MA gas index),-0.4482,https://isonewswire.com/2021/07/21/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2021/
+NEISO,2021,7,Algonquin Citygate (ISO-NE MA gas index),-0.6505,https://isonewswire.com/2021/08/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2021/
+NEISO,2021,8,Algonquin Citygate (ISO-NE MA gas index),-0.1441,https://isonewswire.com/2021/09/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2021/
+NEISO,2021,9,Algonquin Citygate (ISO-NE MA gas index),-0.7314,https://isonewswire.com/2021/10/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2021/
+NEISO,2021,10,Algonquin Citygate (ISO-NE MA gas index),-0.7638,https://isonewswire.com/2021/11/30/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2021/
+NEISO,2021,11,Algonquin Citygate (ISO-NE MA gas index),0.5895,https://isonewswire.com/2022/01/05/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2021/
+NEISO,2021,12,Algonquin Citygate (ISO-NE MA gas index),4.6223,https://isonewswire.com/2022/01/20/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2021/
+NEISO,2022,1,Algonquin Citygate (ISO-NE MA gas index),15.737,https://isonewswire.com/2022/03/01/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2022/
+NEISO,2022,2,Algonquin Citygate (ISO-NE MA gas index),9.8984,https://isonewswire.com/2022/03/28/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2022/
+NEISO,2022,3,Algonquin Citygate (ISO-NE MA gas index),1.7717,https://isonewswire.com/2022/04/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2022/
+NEISO,2022,4,Algonquin Citygate (ISO-NE MA gas index),-0.116,https://isonewswire.com/2022/05/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2022/
+NEISO,2022,5,Algonquin Citygate (ISO-NE MA gas index),-0.3748,https://isonewswire.com/2022/06/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2022/
+NEISO,2022,6,Algonquin Citygate (ISO-NE MA gas index),-0.4833,https://isonewswire.com/2022/07/26/monthly-wholesale-electricity-prices-and-demand-in-new-england-june-2022/
+NEISO,2022,7,Algonquin Citygate (ISO-NE MA gas index),0.2055,https://isonewswire.com/2022/09/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-july-2022/
+NEISO,2022,8,Algonquin Citygate (ISO-NE MA gas index),-0.4357,https://isonewswire.com/2022/09/28/monthly-wholesale-electricity-prices-and-demand-in-new-england-august-2022/
+NEISO,2022,9,Algonquin Citygate (ISO-NE MA gas index),-1.0905,https://isonewswire.com/2022/10/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-september-2022/
+NEISO,2022,10,Algonquin Citygate (ISO-NE MA gas index),-0.7005,https://isonewswire.com/2022/11/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2022/
+NEISO,2022,11,Algonquin Citygate (ISO-NE MA gas index),0.309,https://isonewswire.com/2023/01/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2022/
+NEISO,2022,12,Algonquin Citygate (ISO-NE MA gas index),8.3305,https://isonewswire.com/2023/02/03/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2022/
 NEISO,2023,1,Algonquin Citygate (ISO-NE MA gas index),1.46,https://isonewswire.com/2023/03/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2023/
 NEISO,2023,2,Algonquin Citygate (ISO-NE MA gas index),5.75,https://isonewswire.com/2023/03/23/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2023/
 NEISO,2023,3,Algonquin Citygate (ISO-NE MA gas index),0.63,https://isonewswire.com/2023/04/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2023/
@@ -532,8 +532,11 @@ NEISO,2025,9,Algonquin Citygate (ISO-NE MA gas index),-0.95,https://isonewswire.
 NEISO,2025,10,Algonquin Citygate (ISO-NE MA gas index),-0.82,https://isonewswire.com/2025/11/24/monthly-wholesale-electricity-prices-and-demand-in-new-england-october-2025/
 NEISO,2025,11,Algonquin Citygate (ISO-NE MA gas index),0.89,https://isonewswire.com/2025/12/29/monthly-wholesale-electricity-prices-and-demand-in-new-england-november-2025/
 NEISO,2025,12,Algonquin Citygate (ISO-NE MA gas index),10.64,https://isonewswire.com/2026/02/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-december-2025/
-NEISO,2026,1,Algonquin Citygate (EIA MA citygate proxy),2.1277,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
-NEISO,2026,2,Algonquin Citygate (EIA MA citygate proxy),3.2992,EIA N3050MA3 citygate - Henry Hub (RNGWHHD monthly mean)
+NEISO,2026,1,Algonquin Citygate (ISO-NE MA gas index),16.5321,https://isonewswire.com/2026/02/25/monthly-wholesale-electricity-prices-and-demand-in-new-england-january-2026/
+NEISO,2026,2,Algonquin Citygate (ISO-NE MA gas index),10.6884,https://isonewswire.com/2026/03/27/monthly-wholesale-electricity-prices-and-demand-in-new-england-february-2026/
+NEISO,2026,3,Algonquin Citygate (ISO-NE MA gas index),0.6659,https://isonewswire.com/2026/04/28/monthly-wholesale-electricity-prices-and-demand-in-new-england-march-2026/
+NEISO,2026,4,Algonquin Citygate (ISO-NE MA gas index),-0.4476,https://isonewswire.com/2026/06/02/monthly-wholesale-electricity-prices-and-demand-in-new-england-april-2026/
+NEISO,2026,5,Algonquin Citygate (ISO-NE MA gas index),-0.7385,https://isonewswire.com/2026/07/01/monthly-wholesale-electricity-prices-and-demand-in-new-england-may-2026/
 NYISO,2015,1,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.7121,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
 NYISO,2015,2,Transco Z6 NY / Iroquois (EIA NY citygate proxy),1.4014,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
 NYISO,2015,3,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.2483,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
