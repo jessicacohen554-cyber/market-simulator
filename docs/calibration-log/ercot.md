@@ -5925,3 +5925,51 @@ Rule 27: no existing ≥300-line source file rewritten; pushes blob-verified. DO
 honoured in full; **ercot-170's and ercot-171's results stand untouched**.
 
 Next shorthand: ercot-173.
+
+## ercot-173 (2026-08-06) — Phase 0: the 2023 "excess cheap depth" premise REFUTED at the aggregate (FILED-REDIRECTED, X/M p50 −1.21 vs +0.60 bar); the ercot-172-specified C1+C2 event-cap ceiling reconciliation BUILT and solved once — fixes the 2024 object exactly as attributed, REJECTED-AS-ARMED on G-SPAN + G-C3c + G-COAL148; keeper UNCHANGED (run168b)
+
+Full record: `results/calibration/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md`;
+decision rules + predictions pre-registered BEFORE measurement in
+`docs/PRECOMMIT-ercot173-2023-depth-and-ceiling-reconciliation-2026-08-06.md` (gates inherited
+verbatim from PRECOMMIT-ercot172 §5; G-BIT declared N/A pre-solve, replaced by G-SPAN). Runs
+registered: `2026-08-06-run173a-reconc-control` + `2026-08-06-run173b-event-cap-reconc`
+(REJECTED-AS-ARMED). Headlines:
+
+- **Owner object first, C3a-2023 (lw hub): control −28.48 % → arm −29.71 % (−1.23 pp, inside the
+  pre-registered "0 to −1.5 pp" band).** C3a-2024 +10.45 % → **+3.05 %**; C3a-2025 −0.76 % →
+  −3.17 % (the coal-flood side effect).
+- **Phase 0 (no LP, licensed L1 1.0000 / L2 0.9675):** at the 123 missed >$200 hours the model's
+  sub-$200 supply (55.2 GW mean) is LESS than the market's own sub-$200 offered depth (56.5 GW) —
+  X/M p50 **−1.21**. The CC availability face vs COP is real (+6.6 GW) but offset by CT tightness
+  (−2.1 GW) and neutralized on the offer face (model sub-$200 CC 29.6 vs SCED-online 29.1 GW).
+  Reality cleared $462 p50 over ≥56 GW of sub-$200 offers ⇒ the >$200 formation is not a
+  supply-curve crossing reachable by depth removal; re-pointed to the offered-vs-deliverable wedge
+  at SCED grain (ramp/HDL, AS holdback; the C3c ledger's equilibrium-conduct basis). No zero-DOF
+  limb-2 correction exists on committed instruments; limb 1 shipped alone. Shed face: Jun-20 17h
+  SAME-DEFECT as ercot-172 (E 1.21× shed; Spruce product-ceiling 0.3855 vs CEMS 0.5563); the three
+  August VOLL evenings are NOT (E 0.00–0.15× shed).
+- **Limb 1** (`ercot_dam_availability_event_cap_reconciliation`, one default-off gate, zero DOF;
+  seam proof SP-1/2/3 exact pre-solve; matrix row same PR): the 2024 prediction confirmed at the
+  seam (+1,118.8 MW restored at h2827 ≥ shed 565.1 → CLEARS; +353.3 MW at h3067 < 550.3 →
+  shrinks). A/B: G-SHED PASS (2024 shed 2→1), G-SPUR PASS (10→9, 13→10, 1→0), G-DOF PASS, G-D2
+  PASS, NRMSE-2024 3.00→2.26, spike-day errors 382→120 / 268→227 $/h. **FAILS: G-SPAN** (2025
+  COAL_PRB +5.1 %, CT_PEAKER −10.4 %, ST_GAS −4.5 %; 2023 CT −3.4 %), **G-C3c** (2024 tail 26→14
+  vs actual 53; 2025 3→0 vs 31), **G-COAL148** (coal above the incumbent product ceiling
+  **+0.98/+1.95/+2.73 TWh** vs +0.5 bar).
+- **Structural reading (rule 1):** min() is right ONLY where the window and partial layers measure
+  the SAME units' downtime (the ercot-172 named plants); the fleet-wide response measures the
+  layers substantially DISJOINT elsewhere, where the product is right. Named successor: a
+  **unit-attributed partial extract** (derive-grain change, own charter, rule 23) so the cap can
+  min() at shared-unit overlaps and multiply at disjoint ones. The ERCOT-148/149 precedence is
+  reconciled, never repealed — G-COAL148 did its exact job.
+- **ercot-167 re-gate (re-score, not re-arm): RG-1 (G4-2024) CLEARS on the arm** (spike days
+  corrected with the SOC reserve armed); RG-2's named hour no longer spurious (by under-shoot).
+  The arm is rejected, so the reopen condition stays UNMET — the unit-attributed successor is the
+  discharge path.
+- **Disclosed:** the run168b keeper does not reproduce at current main (control drift: C3a-2023
+  −28.48 vs committed −29.88, 2023 spurious 10 vs 3, tail 66 vs 61, a 5th shed hour 4098; the
+  nyiso-128 K6-class condition on ERCOT); one control solve was discarded unregistered after a
+  mid-solve rebase made it non-same-HEAD (the arm itself solved exactly once); retention pruned
+  ercot149-gas-event-cap and ercot150a-control.
+
+Next shorthand: ercot-174.
