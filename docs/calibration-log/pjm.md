@@ -3209,4 +3209,127 @@ pjm-157 evidence and the open question are appended to that cell's note and
 the pjm-156 touchpoint stands as-is. Keeper **UNCHANGED**, no marker re-keyed.
 Availability parity not re-litigated, as instructed.
 
-Next shorthand: **pjm-158.**
+---
+
+## pjm-158 — the DA virtual layer's admissibility invariant is defined at a price this LP does not produce; the rung compression is **exact**; question C is **CLOSED** (2026-08-06)
+
+**Pre-registration:** `results/calibration/PREREG-pjm158-da-virtual-clearing-2026-08-05.md`,
+committed and pushed at `6a3dab7a` **before either arm solved** (the pjm-143
+precedent). Full write-up:
+`results/calibration/FINDING-pjm158-da-virtual-clearing-2026-08-06.md`.
+Probes: `_pjm158_coal_basis.py`, `_pjm158_virtual_gain.py`,
+`_pjm158_virtual_basis.py`, `_pjm158_virtual_shape.py`.
+**Holdout freeze (rule 22): intact.** 2022 was not solved, scored or registered;
+every identification is in-sample on 2023-2025. The measured corpus was fetched
+with `scripts/data/fetch_pjm_da_virtuals.py`, whose default span **is** 2023-2025
+— in-sample, unrestricted, not data intake.
+
+**Question C is CLOSED, and the 2022 coal rows were readable all along.** The
+bench carries THREE coal measures and pjm-157 differenced against the two the
+scorer does **not** use. 2022 is absent from `completeness.js`, so
+`family_is_complete(PJM, "coal", 2022)` is `True` and C1/C2 score coal against
+EIA-923 `classFull` — where the model's 2022 coal is **-0.012 TWh (-0.008 %)**,
+the *smallest* error of the four years, and the committed touchpoint metrics
+already record **C2 = PASS**. Of the three candidate causes: **(a) net/gross is
+excluded** by scaling (the in-sample gap-vs-output fit predicts 13.7 TWh for
+2022 against 19.9 observed) *and* by sign (2022's census ran at CF 0.443 vs
+0.341/0.347/0.405, so the parasitic fraction should be *smaller*); **(c) a CAMPD
+extract defect is excluded** because the widening also appears between EIA-930
+and EIA-923 (+14.66 TWh in 2022 vs +8.49/+7.16/+9.02), two full-footprint
+sources that never touch CAMPD; **(b) out-of-census coal is the residual** —
+EIA-860 records 4,431.9 MW retiring during 2022 and 4,014.1 MW during 2023
+against a census frozen at the same 42 plants for both years.
+
+**A CROSS-ISO bench defect found on the way (hourly only).** Plants whose
+nameplate lookup fails default to `npl = 1 MW`, which destroys their per-plant
+hourly `campd` blob (`uint8 % of nameplate`) while leaving `c_ann` and every
+annual gate correct. PJM 2022: **4 plants / 9.87 TWh** stranded (W H Sammis,
+Homer City, AES Warrior Run, Joliet 29); PJM 2023 4/3.26; also MISO
+(2.77/1.79/1.60), NEISO (1.66/1.34/1.27) and CAISO (0.29). Same cause
+everywhere: a plant retiring inside the backcast window drops out of the
+operable vintage. **Any probe reconstructing hourly/monthly actuals from those
+blobs is affected** — including pjm-157 §2's monthly coal panel, whose fidelity
+check was run on `CC_REGULAR` (exact) rather than coal. Reported, not fixed; no
+verdict crosses an ISO boundary (rule 25 — a shared data-builder defect is not a
+mechanism verdict).
+
+**Phase 0.3 — the `N_RUNGS` compression is EXACT, so the representation fix the
+lane hoped for does not exist.** A five-step attribution chain (anchor -> price
+level -> zonal dispersion -> ladder -> the LP) reproduces the LP's own cleared
+volume to **<= 0.09 TWh** against a 30-36 TWh gross turnover:
+
+| step (TWh, + = net virtual DEMAND) | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| anchor @ actual DA price | -0.755 | -1.620 | +0.204 |
+| + model price level | -7.408 | -6.649 | +0.852 |
+| + zonal dual dispersion | -7.395 | -6.577 | +0.925 |
+| + `N_RUNGS` ladder compression | -7.462 | -6.585 | +0.815 |
+| OBSERVED (the LP) | -7.451 | -6.552 | +0.905 |
+
+Compression contributes **-0.068/-0.008/-0.110 TWh**, lambda-0 displacement is
+**-0.19/-0.23/-0.48 $/MWh**, and 8->64 rungs moves the cleared volume by
+**<= 0.13 TWh**. `virtual_bids.N_RUNGS`'s "resolution only, never tunable
+values" is **verified, not merely asserted**. 97-99 % of the deviation is the
+price the curve is cleared at.
+
+**Phase 0.2 — the gain.** `dNet/dlambda` = **-440 / -463 / -340 MW per $/MWh**
+(stable across +-$1/$5/$10), steepest overnight (h00-h09, -450 to -540) and
+flattest at the afternoon peak; **3.0-4.1 TWh/yr** per uniform $1/MWh. The
+layer's time-of-day *reshaping* survives in the LP (hour-of-day corr
+**+0.755/+0.661/+0.651** against the reference position) but runs **1.3-1.4x too
+large**, concentrated in h00-h05.
+
+**THE FINDING — the invariant is defined at a price this LP does not produce.**
+The rule-13 anchor **reproduces** at actual DA prices (-0.755/-1.620/+0.204 TWh;
+pjm-105's -0.68/-0.95/+1.32 to within rung discretization, on the same committed
+series `_pjm105_symmetric_equilibrium.py` used). But the model's dual is gated as
+**real-time** by the scorer's own definition — `calibration_verdict
+.score_price_mean`: *"vs actual RT (fallback DA) ... perfect-foresight dispatch
+LP prices RT physics, not day-ahead risk"*, with DA a **non-gated diagnostic** —
+and PJM's bench carries `rt_lw` in all three years, so the RT branch is taken.
+Clearing the **same measured curve** at actual RT:
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| anchor @ actual **DA** (the rule-13 reference) | -0.755 | -1.620 | +0.204 |
+| anchor @ actual **RT** (what the model is gated on) | **+5.082** | **+3.001** | **+6.781** |
+| **DA-RT basis term** | **+5.836** | **+4.621** | **+6.577** |
+| — LEVEL leg | +2.991 | +0.973 | +2.432 |
+| — SHAPE / dispersion leg | +2.845 | +3.648 | +4.145 |
+
+**A model whose dual reproduced actual RT exactly — a perfect model by the
+project's own load-bearing price gate — would clear this layer at +5.08/+3.00/
++6.78 TWh of phantom DEMAND, not ~0.** So the deviation pjm-157 opened is **not**
+a C3b symptom a better price would cure; it is a market-basis mismatch, and
+neither leg is closable alone (the level leg reproduces `-mean(DA-RT) x gain` to
+~1 %, validating the split). Two consequences: the keeper's near-cancellation is
+a **coincidence of two large opposing errors** (basis +5.8/+4.6/+6.6 against
+model price error -12.5/-9.6/-5.9), so improving PJM's price shape moves the
+layer **toward** phantom demand; and the adopted symmetric form clears at up to
+**7.45 TWh of phantom SUPPLY** — the mirror image of the pjm-102 clamp condemned
+for +10.3/+14.8/+17.2 TWh of phantom demand — with pjm-105's own table recording
+that it moved 2024 `CC_REGULAR` **+9.07 -> -1.78 TWh**.
+
+**Caveat, stated plainly.** The anchor is reference-price sensitive: across PJM's
+published hubs the same curve's annual net spans **12.7-24.4 TWh**. The canonical
+committed system series is the right reference and it does give ~0, so the
+admissibility argument stands *as written* — but "~0" is a property of the curve
+**evaluated at one particular price**, not of the curve.
+
+**Rule 28.** The `da_virtual_bids` PJM cell's note and `ev.P` carry the Phase-0
+evidence; the **status move is conditioned on the A/B**, per the
+pre-registration's own decision rule, not on Phase 0. Session is **OFF-QUEUE BY
+NECESSITY** (PJM's queue cleared at pjm-153, frontier owner-declared at
+pjm-142); the diurnal-amplitude family and the overnight gas commitment bridge
+were **not** re-opened, net interchange (pjm-135) was **not** opened, and the CC
+gas-elasticity object was **not** re-tested.
+
+**Environment note for the next session.** This container had **15 GB RAM, 0
+swap** and an **empty `data/clean`** (gitignored, so a fresh clone has none).
+Both had to be solved before any solve: 8 GB of swap was added, and the clean
+tree rebuilt from raw. Two time savers worth recording: `data/clean/emissions`
+is **not on the solve path** (`campd.load_campd_hourly` reads the RAW extracts
+unless `MARKET_SIM_USE_CLEAN` is set, and it is unset), and most curate scripts
+accept `--years`, so only 2023-2025 need building.
+
+Next shorthand: **pjm-159.**
