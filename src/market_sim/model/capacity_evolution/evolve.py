@@ -25,12 +25,16 @@ facade; see the package ``__init__``).
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from market_sim.config.constants import NONFOSSIL_ANNOUNCED_HORIZON_YEARS
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.confirmed_retirements import ConfirmedExit
 from market_sim.data.fleet import Generator, aggregate_fleet
+
+if TYPE_CHECKING:
+    import numpy as np
 
 from .adequacy import (
     accredited_firm_capacity_mw,
@@ -81,7 +85,8 @@ def evolve_fleet(
     year: int,
     config: ScenarioConfig,
     loss_tracker: dict[str, int],
-    rps_shadow_price: float = 0.0,
+    rps_shadow_price: "float | np.ndarray" = 0.0,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
@@ -163,9 +168,18 @@ def evolve_fleet(
         config: Scenario config.
         loss_tracker: Per-unit consecutive-loss counters; not mutated in
             place.
-        rps_shadow_price: Prior year's RPS shadow price in $/MWh, passed to
-            the economic retirement and new-entry screens as the endogenous
-            attribute payment (taken as max with the exogenous EAC).
+        rps_shadow_price: Prior year's RPS shadow price in $/MWh — a scalar
+            (legacy single ISO-wide row) or a per-zone ``(n_zones,)`` vector
+            (K-row compliance-region grain, FFR-7B Arm 2; each screen
+            resolves it at the candidate's/unit's zone via
+            ``policy.rps.rps_credit_for_zone``) — passed to the economic
+            retirement and new-entry screens as the endogenous attribute
+            payment (taken as max with the exogenous EAC).
+        clean_attribute_price_by_fuel: Prior year's clean-tier row duals
+            mapped to per-(fuel, zone) credits
+            (``policy.clean_tiers.clean_credit_by_fuel``; FFR-7B Arm 3) —
+            composed into the SAME max(eac, rps) attribute doctrine at both
+            screens, never a sum. ``None`` (family off) is byte-identical.
         cumulative: Global cumulative deployment, passed to the new-entry
             screen so candidate capex follows a Wright's-Law learning curve.
         gas_price_per_mmbtu: Delivered gas price for the year, passed to
@@ -510,6 +524,7 @@ def evolve_fleet(
             loss_tracker,
             peak_demand_used,
             rps_shadow_price=rps_shadow_price,
+            clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
             mc=mc_cost,
             storage_power_mw=storage_power_mw,
             deliverability_headroom=deliverability_headroom,
@@ -690,6 +705,7 @@ def evolve_fleet(
             config,
             config.iso,
             rps_shadow_price=rps_shadow_price,
+            clean_attribute_price_by_fuel=clean_attribute_price_by_fuel,
             cumulative=cumulative,
             gas_price_per_mmbtu=gas_price_per_mmbtu,
             carbon_price=carbon_price,

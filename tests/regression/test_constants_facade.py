@@ -90,6 +90,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "MARKET_DESIGN",
         "MARKET_DESIGN_VINTAGES",
         "MISOSeasonRBDC",
+        # FFR-7B Arm 3: the per-state MISO clean/carbon-free tier table.
+        "MISO_CLEAN_TIER_REGIONS",
+        # FFR-7B Arm 2: the per-state MISO RPS compliance-region table.
+        "MISO_RPS_COMPLIANCE_REGIONS",
+        "MISO_RPS_MIDWEST_FOOTPRINT_ZONES",
         "MISO_SEASONAL_RBDC",
         "MarketDesign",
         "MarketDesignVintage",

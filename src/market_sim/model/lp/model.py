@@ -82,6 +82,13 @@ class DispatchModel:
         rps_target: float | None = None,
         rps_acp_price: float | None = None,
         rps_eligible_fuels: tuple[str, ...] | None = None,
+        rps_region_zone_mask: np.ndarray | None = None,
+        rps_region_obligation_frac: np.ndarray | None = None,
+        rps_region_acp_price: np.ndarray | None = None,
+        clean_region_zone_mask: np.ndarray | None = None,
+        clean_region_obligation_frac: np.ndarray | None = None,
+        clean_region_acp_price: np.ndarray | None = None,
+        clean_region_fuels: "tuple[tuple[str, ...], ...] | None" = None,
         hydro_monthly_energy: np.ndarray | None = None,
         hydro_month_index: np.ndarray | None = None,
         hydro_gen_idx: np.ndarray | None = None,
@@ -313,17 +320,59 @@ class DispatchModel:
                 if reserve_posture_pools is None
                 else int(np.asarray(reserve_posture_pools).size)
             )
-        # RPS ACP escape column: present only when an ACP price accompanies an
-        # active RPS target. Absent (default) leaves the layout byte-identical.
-        n_rec_acp = (
-            1
+        # RPS ACP escape columns. Legacy single ISO-wide row: one column,
+        # present only when an ACP price accompanies an active RPS target.
+        # Per-compliance-region grain (FFR-7B Arm 2, MISO): one column per
+        # region — every region row REQUIRES its own escape (its acp price),
+        # because a certificate-short region with no buyout would turn the LP
+        # infeasible. Absent (default) leaves the layout byte-identical.
+        rps_region_on = rps_region_zone_mask is not None
+        if rps_region_on:
+            if rps_target is not None and rps_target > 0.0:
+                raise ValueError(
+                    "rps_region_zone_mask (per-region RPS rows) is mutually "
+                    "exclusive with rps_target (the single ISO-wide row) — "
+                    "the K-row grain REPLACES the ISO-wide row, never stacks "
+                    "on it (rule 19 [R-ONE-MECH])"
+                )
+            if rps_region_obligation_frac is None or rps_region_acp_price is None:
+                raise ValueError(
+                    "per-region RPS rows require rps_region_obligation_frac "
+                    "and rps_region_acp_price — the per-region ACP escape is "
+                    "the feasibility guarantee, not an option"
+                )
+            n_rps_rows = int(np.asarray(rps_region_zone_mask).shape[0])
+            n_rec_acp = n_rps_rows
+        else:
+            n_rps_rows = 1 if (rps_target is not None and rps_target > 0.0) else 0
+            n_rec_acp = 1 if (n_rps_rows and rps_acp_price is not None) else 0
+        # Clean/carbon-free tier family (FFR-7B Arm 3): a SECOND independent
+        # row family riding the region machinery — requires the RPS region
+        # family (its ACP escape columns occupy the region-major slots after
+        # the RPS family's), and every clean row likewise REQUIRES its own
+        # escape (FFR-6B §6.3: a hard 100%-by-2040 row is an infeasibility
+        # bomb).
+        clean_region_on = clean_region_zone_mask is not None
+        n_clean_rows = 0
+        if clean_region_on:
+            if not rps_region_on:
+                raise ValueError(
+                    "clean_region_zone_mask (clean-tier rows) requires the "
+                    "per-region RPS family (rps_region_zone_mask) — E-2 rides "
+                    "E-1's machinery and its ACP block slots (FFR-6B §6.2)"
+                )
             if (
-                rps_target is not None
-                and rps_target > 0.0
-                and rps_acp_price is not None
-            )
-            else 0
-        )
+                clean_region_obligation_frac is None
+                or clean_region_acp_price is None
+                or clean_region_fuels is None
+            ):
+                raise ValueError(
+                    "clean-tier rows require clean_region_obligation_frac, "
+                    "clean_region_acp_price (the feasibility escape) and "
+                    "clean_region_fuels (the per-statute qualifying sets)"
+                )
+            n_clean_rows = int(np.asarray(clean_region_zone_mask).shape[0])
+            n_rec_acp += n_clean_rows
 
         layout = VariableLayout(
             n_gen=n_gen,
@@ -401,6 +450,11 @@ class DispatchModel:
             eta_dis=eta_dis,
             rps_target=rps_target,
             rps_eligible_fuels=rps_eligible_fuels,
+            rps_region_zone_mask=rps_region_zone_mask,
+            rps_region_obligation_frac=rps_region_obligation_frac,
+            clean_region_zone_mask=clean_region_zone_mask,
+            clean_region_obligation_frac=clean_region_obligation_frac,
+            clean_region_fuels=clean_region_fuels,
             hydro_monthly_energy=hydro_monthly_energy,
             hydro_month_index=hydro_month_index,
             hydro_gen_idx=hydro_gen_idx,
@@ -652,6 +706,28 @@ class DispatchModel:
             self.link_flow_cost = None
         self.rps_target = rps_target
         self.rps_acp_price = rps_acp_price
+        # Per-compliance-region RPS state (FFR-7B Arm 2): the eligibility mask
+        # is kept for the per-zone dual mapping in solve(); the (K,) ACP
+        # vector prices the region-major ACP block. Both None on the legacy
+        # single-row path.
+        self._rps_region_zone_mask = (
+            np.asarray(rps_region_zone_mask, dtype=bool) if rps_region_on else None
+        )
+        self.rps_region_acp_price = (
+            np.asarray(rps_region_acp_price, dtype=float) if rps_region_on else None
+        )
+        self._n_rps_rows = n_rps_rows
+        # Clean-tier family state (FFR-7B Arm 3): the clean ACP prices are
+        # CONCATENATED after the RPS family's in the region-major ACP block,
+        # matching the rows' acp_k0 = K1 slot assignment.
+        self._n_clean_rows = n_clean_rows
+        if clean_region_on:
+            self.rps_region_acp_price = np.concatenate(
+                [
+                    self.rps_region_acp_price,
+                    np.asarray(clean_region_acp_price, dtype=float),
+                ]
+            )
         self._lcr_row_offset = lcr_row_offset
         self._n_lcr_areas = n_lcr_areas
         self._lcr_gen_idx = (
@@ -939,7 +1015,11 @@ class DispatchModel:
             storage_discharge_cost=self.storage_discharge_cost,
             ordc_penalties=self.ordc_penalties,
             posture_startup_cost=self._posture_startup,
-            rps_acp_price=(self.rps_acp_price or 0.0),
+            rps_acp_price=(
+                self.rps_region_acp_price
+                if self.rps_region_acp_price is not None
+                else (self.rps_acp_price or 0.0)
+            ),
             link_flow_cost=self.link_flow_cost,
             slack_cost=self.slack_cost,
             min_injectable_mc=min_injectable_mc,
@@ -999,25 +1079,58 @@ class DispatchModel:
         # for a minimization the equality dual is the zonal price (no negation).
         prices = row_dual[: n_zones * T].reshape(T, n_zones).T
 
-        # The RPS row, when present, is appended after the energy/storage/hydro
-        # rows; its dual is the RPS shadow price. The reserve block (when on) is
-        # appended *after* the RPS row, so index from the end past it.
+        # The RPS row family, when present, is appended after the energy/
+        # storage/hydro/mass-cap rows; the reserve block (when on) is appended
+        # *after* it, so index from the end past the reserve tail. Legacy
+        # single row: scalar dual — THE REC price. Per-compliance-region grain
+        # (FFR-7B Arm 2): a K-slice at the same end anchor — region r's dual
+        # is compliance market r's REC price (MIRECS Michigan RECs and M-RETS
+        # Iowa RECs are different products at different prices, FFR-6B §3.2) —
+        # reported BOTH as the raw per-region vector (``rps_region_duals``,
+        # diagnostics) and as the per-zone consumer vector
+        # ``p[z] = max{dual_r : z in eligible_zones(r)}`` (0 where no region's
+        # certificate can be generated in z), which is what the capacity
+        # screens index by a candidate's/unit's zone.
         rps_shadow_price = None
-        if self.rps_target is not None and self.rps_target > 0.0:
-            rps_idx = -1 - self._n_reserve_rows
-            rps_shadow_price = float(row_dual[rps_idx])
+        rps_region_duals = None
+        clean_region_duals = None
+        if self._n_rps_rows:
+            rps_start = row_dual.size - (
+                self._n_reserve_rows + self._n_clean_rows + self._n_rps_rows
+            )
+            rps_duals = row_dual[rps_start : rps_start + self._n_rps_rows]
+            if self._rps_region_zone_mask is None:
+                rps_shadow_price = float(rps_duals[0])
+            else:
+                rps_region_duals = np.asarray(rps_duals, dtype=float).copy()
+                rps_shadow_price = np.where(
+                    self._rps_region_zone_mask, rps_region_duals[:, None], 0.0
+                ).max(axis=0)
+        # Clean-tier family duals (FFR-7B Arm 3): the K2 rows directly after
+        # the RPS family — each dual is that state's clean/carbon-free
+        # attribute price, capped at its own escape. Exposed RAW; the
+        # per-(fuel, zone) consumer mapping happens at the runner
+        # (policy.clean_tiers.clean_credit_by_fuel), because it needs the
+        # per-region qualifying sets the LP deliberately does not keep.
+        if self._n_clean_rows:
+            clean_start = row_dual.size - (self._n_reserve_rows + self._n_clean_rows)
+            clean_region_duals = np.asarray(
+                row_dual[clean_start : clean_start + self._n_clean_rows],
+                dtype=float,
+            ).copy()
 
-        # Emissions mass-cap duals sit before the RPS row and after the
-        # import-node rows: [ ... | mass_cap (k) | rps (0/1) | reserve (n) ].
-        # Recover them end-anchored past the reserve and RPS tails. HiGHS min
+        # Emissions mass-cap duals sit before the RPS/clean families and after
+        # the import-node rows:
+        # [ ... | mass_cap (k) | rps (0..K1) | clean (0..K2) | reserve (n) ].
+        # Recover them end-anchored past the reserve/clean/RPS tails. HiGHS min
         # problem, <= row → dual <= 0; the reported allowance price is -λ >= 0.
         co2_cap_price = None
         if self._n_masscap_rows:
-            rps_present = (
-                1 if (self.rps_target is not None and self.rps_target > 0.0) else 0
-            )
             start = row_dual.size - (
-                self._n_reserve_rows + rps_present + self._n_masscap_rows
+                self._n_reserve_rows
+                + self._n_clean_rows
+                + self._n_rps_rows
+                + self._n_masscap_rows
             )
             mass_duals = row_dual[start : start + self._n_masscap_rows]
             co2_cap_price = [float(-d) for d in mass_duals]
@@ -1216,6 +1329,8 @@ class DispatchModel:
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
+            rps_region_duals=rps_region_duals,
+            clean_region_duals=clean_region_duals,
             co2_cap_price=co2_cap_price,
             lcr_dual=lcr_dual,
             lcr_gen_idx=lcr_gen_idx_out,

@@ -71,8 +71,10 @@ from market_sim.data.fleet import (
     Generator,
 )
 from market_sim.model.dispatch import DispatchResult
+from market_sim.policy.clean_tiers import clean_credit_for_zone
 from market_sim.policy.federal_ces import effective_eac_price_for_unit
 from market_sim.policy.ira import section_45u_credit_per_mwh
+from market_sim.policy.rps import rps_credit_for_zone
 
 logger = logging.getLogger(__name__)
 
@@ -1598,7 +1600,8 @@ def apply_economic_retirements(
     config: ScenarioConfig,
     consecutive_loss_years: dict[str, int],
     peak_demand: float,
-    rps_shadow_price: float = 0.0,
+    rps_shadow_price: "float | np.ndarray" = 0.0,
+    clean_attribute_price_by_fuel: "dict[str, np.ndarray] | None" = None,
     mc: np.ndarray | None = None,
     storage_power_mw: float = 0.0,
     deliverability_headroom: dict[str, float] | None = None,
@@ -1703,9 +1706,18 @@ def apply_economic_retirements(
             ``unit_id``; not mutated in place.
         peak_demand: Peak net demand in MW, used to size the reliability
             floor below which thermal capacity is not retired.
-        rps_shadow_price: Prior year's RPS constraint dual in $/MWh. Only
+        rps_shadow_price: Prior year's RPS constraint dual in $/MWh — a
+            scalar (legacy single ISO-wide row) or a per-zone ``(n_zones,)``
+            vector (K-row compliance-region grain, FFR-7B Arm 2), resolved
+            at each unit's zone via ``policy.rps.rps_credit_for_zone``. Only
             credited to RPS-eligible (clean) fuels, and never stacked with
             an exogenous EAC -- the higher of the two is taken.
+        clean_attribute_price_by_fuel: Prior year's clean-tier row duals
+            mapped to per-(fuel, zone) credits (FFR-7B Arm 3,
+            ``policy.clean_tiers.clean_credit_by_fuel``) — the first LP
+            attribute channel that pays nuclear/hydro. Enters the SAME
+            max() attribute doctrine, never a sum. ``None`` (family off)
+            is byte-identical.
         mc: Full variable cost aligned row-for-row with
             ``dispatch_result.dispatch``, shape ``(n_gen, T)`` in $/MWh.
             ``None`` falls back to gross-revenue screening (see above).
@@ -1958,9 +1970,33 @@ def apply_economic_retirements(
                 eac_price,
                 section_45u_credit_per_mwh(year, avg_energy_price, config),
             )
-        rps_for_unit = rps_shadow_price if g.fuel_type in _RPS_ELIGIBLE_FUELS else 0.0
+        # RPS credit resolved at the UNIT's zone under the K-row
+        # compliance-region grain (FFR-7B Arm 2 / FFR-6B §3.2): a scalar
+        # passes through; a per-zone vector indexes by the unit's own zone,
+        # so a unit outside every region's eligibility geography earns 0 —
+        # never a broadcast of another region's dual.
+        rps_for_unit = (
+            rps_credit_for_zone(rps_shadow_price, zone)
+            if g.fuel_type in _RPS_ELIGIBLE_FUELS
+            else 0.0
+        )
+        # Clean-tier credit (FFR-7B Arm 3, FFR-6B §6.4): the clean row's
+        # dual enters the EXISTING max() attribute doctrine — for nuclear
+        # and hydro this is the first LP row that pays them at all — never
+        # a sum: one certificate, sold to whichever attribute market clears
+        # higher. Fuel- AND zone-resolved (a gas_cc_ccs unit in MISO-West
+        # earns nothing from MN's row, whose carbon-free definition
+        # excludes CCS gas). §45U COMPOSITION IS OPEN AND BLOCKS ARM 3's
+        # ARMING ONLY (FFR-6B §6.4, carried verbatim): §45U is folded into
+        # eac_price by max() above, so the clean dual composes as
+        # max(max(eac, §45U), clean) — but §45U(b)(2)'s gross-receipts
+        # phase-down implies phase-down-then-add, not max(); unresolved,
+        # owner call pending. See the miso_clean_tier_rows field comment.
+        clean_for_unit = clean_credit_for_zone(
+            clean_attribute_price_by_fuel, g.fuel_type, zone
+        )
         attribute_revenue_usd = compute_attribute_revenue(
-            g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
+            g.fuel_type, annual_gen_mwh, eac_price, max(rps_for_unit, clean_for_unit)
         )
         net_revenue += attribute_revenue_usd
 

@@ -270,6 +270,11 @@ frontend/data/forecast/program-status.js
 # loose top-level run logs (e.g. results/probe-pjm-rps.log).
 /results/full-horizon/
 /results/ff-t1f-baseline/
+# FFR-7B-2 Arm-2/3 measurement legs (run_full_horizon --out-dir): same class as
+# /results/full-horizon/ — transient full-horizon forecast solves; the
+# registered record is the frontend/data/hindcast sidecar, and the readout
+# lives in docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md.
+/results/ffr7b2/
 # D-9 forecast warm-start A/B arms (scripts/probes/_d9_forecast_warmstart_ab.py
 # --out-dir). Same class as /results/full-horizon/ — it IS a full-horizon
 # forecast solve, one per arm, and nothing here is dashboard-registered. The
