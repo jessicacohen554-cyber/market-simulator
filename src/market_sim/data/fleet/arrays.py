@@ -48,9 +48,12 @@ from market_sim.data.floor_mechanisms import (
 from market_sim.data.outages import (
     ct_deployment_floor_for_year,
     ercot_noncampd_availability_caps,
+    partial_outage_active_units,
     partial_outage_derate_factors,
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
+    shared_unit_hours,
+    unit_outage_active_units,
     unit_outage_derate_factors,
     unit_outage_maxgen_derate_factors,
     unit_outage_short_derate_factors,
@@ -1229,7 +1232,7 @@ def _apply_outage_overlays(
             # see partial_outage_derate_factors).
             _pgrain = getattr(
                 config, "ercot_dam_availability_event_cap_reconciliation", False
-            )
+            ) or getattr(config, "ercot_dam_availability_event_cap_unit_scoped", False)
             pfac = partial_outage_derate_factors(
                 config.weather_year, hours, class_grain=_pgrain
             )
@@ -1612,13 +1615,50 @@ def _apply_outage_overlays(
             # and the plant-grain partial plateau keys by the extract's own
             # (plant_code, plant_group) (C1; inert on the current bins
             # sheet). Off: the incumbent product, byte-identical.
-            _reconc = getattr(
-                config, "ercot_dam_availability_event_cap_reconciliation", False
+            #
+            # ercot-174 UNIT-SCOPED composition (default off, and the SUCCESSOR
+            # the ercot-173 rejection named — it takes precedence when both
+            # gates are set). ercot-173 measured the blanket min() in both
+            # directions: right at the ercot-172 shed hours, wrong fleet-wide
+            # (+0.98/+1.95/+2.73 TWh/yr of coal re-admitted above the product
+            # ceiling, G-COAL148 FAIL), because the window and partial layers
+            # measure the SAME units' downtime at some overlaps and DIFFERENT
+            # units' at most others. So neither composition is right
+            # fleet-wide, and the choice is made PER HOUR from the two layers'
+            # measured CAMPD unit sets: min() where they INTERSECT (the
+            # double-count is real there), the incumbent PRODUCT where they are
+            # disjoint (each layer removes its own units). Pointwise
+            # product <= this <= min(), so the arm can only RESTORE capability
+            # and every movement is bounded by the ercot-173 record; an
+            # unattributed plateau leaves the unit set empty and keeps the
+            # product (fail-safe). The window-family layers keep their
+            # incumbent product composition among themselves — only the
+            # window-vs-partial seam is refined.
+            _unit_scoped = getattr(
+                config, "ercot_dam_availability_event_cap_unit_scoped", False
+            )
+            _reconc = (
+                getattr(
+                    config, "ercot_dam_availability_event_cap_reconciliation", False
+                )
+                and not _unit_scoped
             )
             _plant_partial = partial_outage_derate_factors(
-                int(_yr), hours, class_grain=_reconc
+                int(_yr), hours, class_grain=_reconc or _unit_scoped
+            )
+            _w_units = (
+                unit_outage_active_units(int(_yr), hours, iso="ERCOT")
+                if _unit_scoped
+                else {}
+            )
+            _p_units = (
+                partial_outage_active_units(int(_yr), hours, iso="ERCOT")
+                if _unit_scoped
+                else {}
             )
             _n_capped = 0
+            _n_shared_bins = 0
+            _n_shared_hours = 0
             for g_idx, gen in enumerate(generators):
                 if gen.plant_group not in _evcap_scope:
                     continue
@@ -1632,15 +1672,24 @@ def _apply_outage_overlays(
                             _ceil_w = np.minimum(_ceil_w, _f)
                         else:
                             _ceil_w = _ceil_w * _f
-                _ppkey = (
-                    (int(gen.plant_code), gen.plant_group)
-                    if _reconc
-                    else int(gen.plant_code)
-                )
+                _binkey = (int(gen.plant_code), gen.plant_group)
+                _ppkey = _binkey if (_reconc or _unit_scoped) else int(gen.plant_code)
                 _fp = _plant_partial.get(_ppkey)
                 if _fp is not None:
                     if _ceil_w is None:
                         _ceil_w = np.array(_fp, dtype=float, copy=True)
+                    elif _unit_scoped:
+                        _shared = shared_unit_hours(
+                            _w_units.get(_binkey), _p_units.get(_binkey), hours
+                        )
+                        _ceil_w = np.where(
+                            _shared[: _ceil_w.size],
+                            np.minimum(_ceil_w, _fp),
+                            _ceil_w * _fp,
+                        )
+                        if _shared.any():
+                            _n_shared_bins += 1
+                            _n_shared_hours += int(_shared.sum())
                     elif _reconc:
                         _ceil_w = np.minimum(_ceil_w, _fp)
                     else:
@@ -1661,6 +1710,15 @@ def _apply_outage_overlays(
                 _n_capped,
                 "/".join(sorted(_evcap_scope)),
             )
+            if _unit_scoped:
+                logger.info(
+                    "ERCOT unit-scoped event-cap composition (%d): min() on "
+                    "%d bin(s) / %d bin-hour(s) where the window and partial "
+                    "layers share a CAMPD unit; product elsewhere",
+                    int(_yr),
+                    _n_shared_bins,
+                    _n_shared_hours,
+                )
 
     # NEISO measured FLEET operable-capacity availability (backcast overlay,
     # config.neiso_operable_capacity_availability): the ISO-NE analogue of the

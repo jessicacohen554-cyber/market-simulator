@@ -42,6 +42,7 @@ from __future__ import annotations
 import calendar
 import logging
 import os
+import re
 from functools import lru_cache
 from pathlib import Path
 
@@ -763,6 +764,136 @@ def partial_outage_derate_factors(
         arr = out.setdefault(key, np.ones(hours))
         arr[mask] = np.minimum(arr[mask], float(r.derate_factor))
     return out
+
+
+# Unit-ATTRIBUTED partial-outage plateaus (ercot-174): the same plateaus as
+# PARTIAL_OUTAGE_CSV, carrying which CAMPD units carry each one (written by
+# scripts/data/derive_partial_outages.py --emit-units, whose BE-3 assertion proves
+# the plant-grain aggregation is byte-identical to the file above — only the
+# GRAIN differs, rule 23 [R-FROZEN-DERIVE]). Raw-only, like its siblings
+# campd-unit-outages-short-<ISO>.csv and campd-partial-outages-<ISO>.csv: no
+# curated datatype is minted for it.
+PARTIAL_OUTAGE_UNITS_CSV: Path = RAW_DATA_DIR / "campd-partial-outages-units.csv"
+
+
+@lru_cache(maxsize=None)
+def partial_outage_active_units(
+    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
+) -> dict[tuple[int, str], dict[str, np.ndarray]]:
+    """Return ``{(plant_code, plant_group): {unit_id: (hours,) bool}}``.
+
+    Which CAMPD units carry an active partial-outage plateau at each hour, from
+    the unit-attributed extract :data:`PARTIAL_OUTAGE_UNITS_CSV`. Each row is
+    routed to its model bin by the SAME :func:`_unit_outage_target` the window
+    layer uses, so the two layers' unit sets are directly comparable; rows with
+    an empty ``unit_id`` (a plateau no single unit's own ceiling resolves) are
+    dropped, which leaves the bin's partial unit set empty and makes the
+    consumer fall back to the incumbent composition — fail-safe.
+
+    Consumed only by the unit-scoped event-cap composition
+    (``ScenarioConfig.ercot_dam_availability_event_cap_unit_scoped``). ERCOT-only
+    (the extract is keyed to ERCOT plant codes); a missing file or an
+    uncovered year returns an empty dict, so the gate is inert.
+    """
+    if (iso or "ERCOT").upper() != "ERCOT" or not PARTIAL_OUTAGE_UNITS_CSV.exists():
+        return {}
+    df = pd.read_csv(PARTIAL_OUTAGE_UNITS_CSV)
+    df = df[(df["year"] == year) & df["unit_id"].notna()]
+    out: dict[tuple[int, str], dict[str, np.ndarray]] = {}
+    for r in df.itertuples(index=False):
+        uid = str(r.unit_id).strip()
+        if not uid:
+            continue
+        tgt = _unit_outage_target(int(r.oris_code), uid, r.plant_group)
+        if tgt is None:
+            continue
+        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
+        if not mask.any():
+            continue
+        per_unit = out.setdefault(tgt, {})
+        arr = per_unit.setdefault(uid, np.zeros(hours, dtype=bool))
+        arr |= mask
+    return out
+
+
+@lru_cache(maxsize=None)
+def unit_outage_active_units(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    iso: str = "ERCOT",
+) -> dict[tuple[int, str], dict[str, np.ndarray]]:
+    """Return ``{(plant_code, plant_group): {unit_id: (hours,) bool}}``.
+
+    The window-layer companion of :func:`partial_outage_active_units`: which
+    CAMPD units are inside a ``>= UNIT_OUTAGE_MIN_DAYS`` full-stop window at
+    each hour, from the same events and under the same duration filter and
+    :func:`_unit_outage_target` routing :func:`unit_outage_derate_factors` uses
+    to build its factors — so a unit present here is exactly a unit whose
+    downtime that factor removed.
+
+    The window mask matches the factor's own convention
+    (``outage_end + 1 day``, the inclusive end date). Consumed only by the
+    unit-scoped event-cap composition.
+    """
+    iso = (iso or "ERCOT").upper()
+    df = _load_unit_outage_events(unit_outage_csv_for_iso(iso), iso)
+    if df is None:
+        return {}
+    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    out: dict[tuple[int, str], dict[str, np.ndarray]] = {}
+    for r in df.itertuples(index=False):
+        uid = str(r.unit_id).strip()
+        tgt = _unit_outage_target(int(r.facility_id), uid, r.plant_group)
+        if tgt is None or not uid:
+            continue
+        mask = outage_hour_mask(
+            r.outage_start,
+            pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
+            year,
+            hours,
+        )
+        if not mask.any():
+            continue
+        per_unit = out.setdefault(tgt, {})
+        arr = per_unit.setdefault(uid, np.zeros(hours, dtype=bool))
+        arr |= mask
+    return out
+
+
+def shared_unit_hours(
+    window_units: dict[str, np.ndarray] | None,
+    partial_units: dict[str, np.ndarray] | None,
+    hours: int = HOURS_PER_YEAR,
+) -> np.ndarray:
+    """Return the ``(hours,)`` bool mask where the two layers share a unit.
+
+    ``True`` at hour ``t`` iff at least one CAMPD unit is simultaneously inside
+    a window-layer full stop AND carrying a partial-outage plateau at ``t`` —
+    i.e. the two measured layers are removing the SAME unit's downtime, so
+    multiplying them double-counts it (rule 19 `[R-ONE-MECH]`). ``False``
+    everywhere when either side is absent, which keeps the incumbent product.
+
+    Unit ids are matched after :func:`_norm_partial_unit_id` normalisation;
+    both sides originate in the same CAMPD ``unitId``, so raw equality is the
+    expected case and normalisation only guards a punctuation/case difference.
+    """
+    if not window_units or not partial_units:
+        return np.zeros(hours, dtype=bool)
+    w = {_norm_partial_unit_id(u): m for u, m in window_units.items()}
+    p = {_norm_partial_unit_id(u): m for u, m in partial_units.items()}
+    shared = np.zeros(hours, dtype=bool)
+    for uid in w.keys() & p.keys():
+        shared |= w[uid][:hours] & p[uid][:hours]
+    return shared
+
+
+def _norm_partial_unit_id(uid: object) -> str:
+    """Return an upper-cased alphanumeric-only unit id (drop spaces/dashes).
+
+    Mirrors ``scripts.data.derive_campd_unit_outages._norm_unit_id`` so the two
+    layers' CAMPD unit ids join the same way the derivers label them.
+    """
+    return re.sub(r"[^0-9A-Za-z]", "", str(uid)).upper()
 
 
 # ERCOT per-reactor DAILY nuclear availability (60-Day DAM disclosure NUC

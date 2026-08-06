@@ -1496,5 +1496,119 @@ class PartialOutageClassGrainTest(unittest.TestCase):
                 self.assertTrue(np.array_equal(arr, plant[code]))
 
 
+class UnitScopedEventCapCompositionTest(unittest.TestCase):
+    """The ercot-174 unit-scoped event-cap composition's loader layer.
+
+    The composition picks ``min()`` over the incumbent product only at hours
+    where the window and partial layers share a CAMPD unit, so the correctness
+    that matters is (a) the two unit-set loaders agree on unit ids and routing,
+    (b) :func:`shared_unit_hours` is a true per-hour AND over shared ids, and
+    (c) every absent-side case is fail-safe (no shared hours ⇒ the incumbent
+    product survives).
+    """
+
+    def test_shared_unit_hours_is_a_per_hour_and(self):
+        from market_sim.data.outages import shared_unit_hours
+
+        h = 24
+        w = {"U1": np.zeros(h, dtype=bool), "U2": np.zeros(h, dtype=bool)}
+        p = {"U1": np.zeros(h, dtype=bool), "U3": np.ones(h, dtype=bool)}
+        w["U1"][2:8] = True
+        p["U1"][5:12] = True
+        w["U2"][0:24] = True  # U2 is not in the partial layer at all
+        shared = shared_unit_hours(w, p, h)
+        # only U1's OVERLAP counts: hours 5,6,7
+        self.assertEqual(list(np.flatnonzero(shared)), [5, 6, 7])
+
+    def test_absent_side_is_fail_safe(self):
+        from market_sim.data.outages import shared_unit_hours
+
+        h = 12
+        live = {"U1": np.ones(h, dtype=bool)}
+        for a, b in ((None, live), (live, None), (None, None), ({}, live)):
+            self.assertFalse(shared_unit_hours(a, b, h).any())
+
+    def test_unit_ids_are_matched_after_normalisation(self):
+        from market_sim.data.outages import shared_unit_hours
+
+        h = 8
+        w = {"CTG-1": np.ones(h, dtype=bool)}
+        p = {"ctg1": np.ones(h, dtype=bool)}
+        self.assertTrue(shared_unit_hours(w, p, h).all())
+
+    def test_active_unit_sets_match_their_factor_layers(self):
+        """A bin with a non-trivial factor must carry at least one unit."""
+        from market_sim.data.outages import (
+            partial_outage_active_units,
+            partial_outage_derate_factors,
+            unit_outage_active_units,
+            unit_outage_derate_factors,
+        )
+
+        for year in (2023, 2024, 2025):
+            w_fac = unit_outage_derate_factors(year, HOURS_PER_YEAR, iso="ERCOT")
+            w_units = unit_outage_active_units(year, HOURS_PER_YEAR, iso="ERCOT")
+            if not w_fac:
+                continue
+            # Every bin the window layer derates carries named units, and each
+            # unit's active hours sit inside the bin's derated hours.
+            for key, fac in w_fac.items():
+                self.assertIn(key, w_units, msg=f"window bin {key} has no units")
+                derated = fac < 1.0
+                for uid, mask in w_units[key].items():
+                    self.assertTrue(
+                        bool((mask & ~derated).sum() == 0),
+                        msg=f"{key} {uid} active outside its own derate",
+                    )
+            p_fac = partial_outage_derate_factors(
+                year, HOURS_PER_YEAR, class_grain=True
+            )
+            p_units = partial_outage_active_units(year, HOURS_PER_YEAR, iso="ERCOT")
+            # Carriers are indexed by the bin the UNIT routes to, which for a
+            # split facility (W A Parish 3470 coal / 34702 gas-steam) can differ
+            # from the bin its extract row keys. Those off-bin entries are inert
+            # by construction — the composition consults the unit sets only for
+            # a bin that carries a partial factor — and that is the invariant
+            # asserted here, together with in-window containment.
+            for key, units in p_units.items():
+                if key not in p_fac:
+                    continue  # unreachable: no partial factor on this bin
+                derated = p_fac[key] < 1.0
+                for uid, mask in units.items():
+                    self.assertTrue(
+                        bool((mask & ~derated).sum() == 0),
+                        msg=f"{key} {uid} active outside its own plateau",
+                    )
+            self.assertTrue(
+                any(k in p_fac for k in p_units),
+                msg="no partial carrier lands on a bin the plateau derates",
+            )
+
+    def test_unit_attributed_extract_aggregates_to_the_plant_grain_file(self):
+        """BE-3 on the COMMITTED files: the grain is the only difference."""
+        from market_sim.data.outages import (
+            PARTIAL_OUTAGE_CSV,
+            PARTIAL_OUTAGE_UNITS_CSV,
+        )
+
+        if not (PARTIAL_OUTAGE_CSV.exists() and PARTIAL_OUTAGE_UNITS_CSV.exists()):
+            self.skipTest("partial-outage extracts absent in a minimal checkout")
+        plant = pd.read_csv(PARTIAL_OUTAGE_CSV)
+        units = pd.read_csv(PARTIAL_OUTAGE_UNITS_CSV)
+        cols = list(plant.columns)
+        back = (
+            units[cols]
+            .drop_duplicates()
+            .sort_values(["year", "oris_code", "outage_start"])
+            .reset_index(drop=True)
+        )
+        pd.testing.assert_frame_equal(
+            back,
+            plant.sort_values(["year", "oris_code", "outage_start"]).reset_index(
+                drop=True
+            ),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
