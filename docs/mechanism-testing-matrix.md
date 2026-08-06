@@ -886,7 +886,7 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` HELD; THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected here at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
 
 > **HEADER RE-STAMPED 2026-08-06 (caiso-176 follow-up).** This header previously read
 > "NO failing criterion … CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs". That was written
@@ -903,9 +903,20 @@ rule-13-admissible mechanism available to carry it.
 > pumping (FINDING-caiso140 §B, a +793 MW belly wedge off a 2,078 MW PS fleet) and closing it
 > needs the hourly PS water state — **WALLED**, re-verified **5/5 `unchanged` on live bytes at
 > caiso-176**. Never closable by a price adder, haircut or any value tuned to the level residual
-> (rules 1/13); the export/absorption family stays DO-NOT-REDO (caiso-142 §H). The `complete`
-> marker is **not** withdrawn by a NOT-YET determination (NYISO precedent), the freeze outranks it
-> regardless, and `audit_keepers --iso CAISO` is **PASS 0/0** on main.
+> (rules 1/13); the export/absorption family stays DO-NOT-REDO (caiso-142 §H).
+> **THE `complete` MARKER IS WITHDRAWN — corrected 2026-08-06 (caiso-178), against the committed
+> file.** This block previously read "the `complete` marker is **not** withdrawn by a NOT-YET
+> determination (NYISO precedent)". That sentence is **stale and was wrong for CAISO**:
+> `frontend/data/backcast/calibration-complete.json` carries CAISO under **`withdrawn`**
+> (`declared` 2026-08-05, `withdrawn` 2026-08-06, `keeper_at_withdrawal`
+> `2026-08-06-caiso-175-tac-intake`), withdrawn **by owner directive** on the rubric-v3.1
+> amendment because a marker cannot rest on a NOT-YET keeper — the NYISO precedent was not
+> applied here. **NOTHING WAS EVER SPENT under it**: the validation tier (2022 + its backward
+> ladder) was authorized for the marker's entire life while the holdout spend freeze was active,
+> and the touch-once LOCKED TEST (2019, H1-2026) was **never authorized** and remains fully
+> available to a re-calibrated keeper. With the marker withdrawn the tier-aware quarantine gates
+> re-block every CAISO out-of-training solve/score/registration, which is the correct state. The
+> freeze outranks the marker either way, and `audit_keepers --iso CAISO` is **PASS 0/0** on main.
 
 > **caiso-176 (2026-08-06) — THE FRONTIER RE-ASSESSMENT ON THE NEW KEEPER, AND THE
 > `battery_dispatch_adder` WALL.** NO LP, NO solve, NO arm, nothing registered, keeper

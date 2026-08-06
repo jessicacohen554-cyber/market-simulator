@@ -134,9 +134,19 @@ MODE_WINDOW = 0.50  # +/- $ window reported alongside the bare bin
 MODE_STABILITY = 1.00  # the three yearly modes must lie inside a $1.00 window
 CAISO_BOUND = 15.0  # caiso-176's model-free upper bound; admissibility screen
 
-#: Independently MEASURED CAISO battery capacity envelope (caiso-174's
-#: ``caiso_storage_shape_anchor``) — the H1a reference. Not derived here.
+#: The H1a reference AS PRE-REGISTERED: caiso-174's measured p95 DISPATCH
+#: envelope (``caiso_storage_shape_caps``). Kept exactly as fixed in
+#: PRECHECK-caiso178 §3c — the gate is not rewritten to pass.
 MEASURED_BATTERY_MW = {2023: 4256.5, 2024: 6914.6, 2025: 9550.3}
+
+#: REPORTED ALONGSIDE, NOT A GATE. The pre-registration compared this session's
+#: classified BID-IN CAPABILITY against an OPERATING envelope — two different
+#: objects, which is a defect in the pre-registration, not in the classifier.
+#: The comparable object is caiso-174's measured FLEET capacity. Both ratios are
+#: emitted; only ``MEASURED_BATTERY_MW`` decides H1a. (docs/calibration-log/caiso.md
+#: caiso-174: the anchor envelope is "strictly below BOTH the flat scalar AND the
+#: measured fleet ... in EVERY year".)
+MEASURED_FLEET_MW = {2023: 7492.4, 2024: 11131.3, 2025: 15448.4}
 
 #: Known CAISO pumped-storage fleet (FINDING-caiso140 §B) — the S4 cross-check.
 CAISO_PS_FLEET_MW = 2078.0
@@ -534,6 +544,12 @@ def main(argv: list[str] | None = None) -> int:
             "ratio": round(tot / ref, 4),
             "within_tol": bool(abs(tot / ref - 1.0) <= H1A_TOL),
             "n_resources": int(len(mem)),
+            # Reported, NOT gated — see MEASURED_FLEET_MW.
+            "measured_fleet_mw": MEASURED_FLEET_MW[y],
+            "ratio_vs_fleet": round(tot / MEASURED_FLEET_MW[y], 4),
+            "within_tol_vs_fleet": bool(
+                abs(tot / MEASURED_FLEET_MW[y] - 1.0) <= H1A_TOL
+            ),
             "ps_excluded_mw": round(
                 float(
                     cls[(cls["year"] == y) & cls["is_ps_excluded"]]["p95_max_mw"].sum()
