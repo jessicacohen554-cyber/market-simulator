@@ -107,6 +107,8 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "RGGI_MEMBER_STATES_BY_YEAR",
         "RGGI_RESERVE_ESCALATION",
         "RGGI_STATE_CO2_BUDGET",
+        # FFR-7B Arm 1: the statute-defined RPS eligible-fuel sets.
+        "RPS_ELIGIBLE_FUELS_BY_ISO",
         "RenewableElccCurve",
         "SHORT_TON_TO_METRIC_TONNE",
         "STATE_RPS_ACP",
@@ -114,6 +116,11 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "STORAGE_ANNUAL_BUILD_CAP_MW",
         "STORAGE_BASE_FLEET_MW",
         "STORAGE_DEGRADATION_REPLACEMENT_FRACTION",
+        # Backfilled at FFR-7B: FFR-4D added this to capacity_market + the
+        # constants facade without extending this inventory — the test was
+        # failing on main for every session (pre-existing, verified at
+        # a9e1d084).
+        "STORAGE_MEASURED_BASE_FLEET_ISOS",
         "STORAGE_DEPLOYMENT_CEILING_MW",
         "STORAGE_ELCC_BY_DURATION",
         "STORAGE_ELCC_BY_DURATION_BY_ISO",

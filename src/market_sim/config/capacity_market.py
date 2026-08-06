@@ -2728,8 +2728,14 @@ STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
 # LFP warranty cycle life; tunable.
 STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 
-# State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
-# Source: CA SB 100.
+# State renewable-portfolio-standard floors (RENEWABLE-tier fraction) by ISO
+# and year. Every trajectory is the statute's (or the load-weighted blend of
+# member states') RENEWABLE tier — the wind+solar-analogue obligation the RPS
+# LP row enforces. Nuclear-counting clean/carbon-free/zero-emission tiers
+# (CLCPA 100x40, SB 100 zero-carbon, MA CES, MN/MI carbon-free) do NOT belong
+# on these trajectories (FFR-7B Arm 1; FFR-6B §8) — they are a separate
+# clean-tier row family (FFR-6B §6.3). Per-ISO statutory citations in each
+# block; eligible generation per row: RPS_ELIGIBLE_FUELS_BY_ISO below.
 #
 # AS-OF STATUS (FH-2, hindcast-forward plan §4 row 14). policy.rps.get_rps_target
 # edge-holds below the first knot, so any year before an ISO's earliest knot
@@ -2746,7 +2752,7 @@ STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 # sets rps_enabled=False, so no backcast builds an RPS row.
 STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
     "ERCOT": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},  # No binding state RPS floor
-    "CAISO": {  # CA SB 100 — clean energy trajectory
+    "CAISO": {  # CA RPS renewable tier (Pub. Util. Code §399.15(b)(2))
         # HISTORIC (as-of) knots, FH-2: before these landed the earliest knot was
         # 2026, and get_rps_target edge-holds below the first knot, so EVERY
         # pre-2026 year in a forward-lane run (T1-H / T1-X / T1-FF hindcast, all
@@ -2769,20 +2775,76 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         2024: 0.44,
         2026: 0.50,
         2030: 0.60,
-        2040: 0.80,
-        2045: 1.00,
+        # FFR-7B Arm 1 (rule 14 [R-ACCURATE]; FFR-6B §8.1): the former
+        # 2040: 0.80 / 2045: 1.00 knots were SB 100's ZERO-CARBON path
+        # (§454.53, as amended by SB 1020: 90% 2035 / 95% 2040 / 100% 2045
+        # — counts large hydro and nuclear), spliced onto this RENEWABLE
+        # (RPS) row mid-trajectory. The RPS itself is 60% by 2030 and "not
+        # less than 60 percent" for ALL SUBSEQUENT YEARS (Pub. Util. Code
+        # §399.15(b)(2)(C), verified verbatim 2026-08-06), so the renewable
+        # row plateaus at 0.60; the zero-carbon tier is a separate
+        # clean-tier row family (FFR-6B §6.3), never a widening of this row.
+        # Eligible set: RPS_ELIGIBLE_FUELS_BY_ISO (geothermal/biomass count).
+        2040: 0.60,
+        2045: 0.60,
     },
-    "NYISO": {  # NY CLCPA — 70% renewable by 2030, 100% zero-emission by 2040
+    "NYISO": {  # NY CLCPA renewable tier — 70% renewable by 2030 (PSL §66-p)
+        # FFR-7B Arm 1 (rule 14 [R-ACCURATE]; FFR-6B §8.1): the former
+        # 2040/2045 knots (1.00) encoded the CLCPA's 100%-by-2040
+        # ZERO-EMISSION standard (PSL §66-p(2)(b), nuclear-counting) on this
+        # RENEWABLE row — with a wind+solar-only eligible set, that pinned
+        # the row's dual at the ACP ceiling for the whole horizon. The
+        # statutory RENEWABLE target (§66-p(2)(a)) is 70% by 2030 and NO
+        # post-2030 renewable percentage exists in the statute (verified
+        # against PSL §66-p text, 2026-08-06), so the renewable row plateaus
+        # at 0.70. The zero-emission tier is a separate clean-tier row family
+        # (FFR-6B §6.3) — never a widening of this row. The 2026 knot is the
+        # pre-existing Tier-1 procurement-ramp interpolation, untouched.
+        # Eligible set: RPS_ELIGIBLE_FUELS_BY_ISO (existing hydro counts).
         2026: 0.40,
         2030: 0.70,
-        2040: 1.00,
-        2045: 1.00,
-    },
-    "NEISO": {  # MA Clean Energy Standard + regional state CES blend
-        2026: 0.30,
-        2030: 0.45,
         2040: 0.70,
-        2045: 0.80,
+        2045: 0.70,
+    },
+    "NEISO": {
+        # New England load-weighted NEW-RENEWABLE tier blend (Class I / RES
+        # analogue — the wind+solar-tier convention shared with PJM/MISO).
+        # FFR-7B Arm 1 (rule 14 [R-ACCURATE]; FFR-6B §8.1): the former knots
+        # (.30/.45/.70/.80) were self-described as a "MA Clean Energy
+        # Standard + regional state CES blend" — the MA CES (225 CMR 25.00)
+        # is the NUCLEAR-COUNTING clean tier, not the renewable tier, so the
+        # out-year knots overstated the wind+solar obligation and pinned the
+        # row's dual at the ACP ceiling. Corrected to the per-state
+        # new-renewable-tier schedules (each verified against statute text,
+        # 2026-08-06), blended on the ISO-NE state load shares the ACP block
+        # already carries (MA .48 / CT .24 / NH .09 / ME .09 / RI .06 /
+        # VT .04):
+        #   MA Class I (G.L. c.25A §11F, 2021 c.8): +3%/yr 2025-29, +1%/yr
+        #     after → 30% 2026, 40% 2030, 50% 2040, 55% 2045.
+        #   CT Class I (CGS §16-245a / PA 18-50): 32% 2026 → 40% 2030,
+        #     plateaus (no statutory increase after 2030).
+        #   RI RES (R.I.G.L. §39-26-4, 2022 amendment): 41% 2026, 72% 2030,
+        #     100% by 2033 and thereafter.
+        #   ME Class I+IA (35-A M.R.S. §3210, LD 1494; LD 1868 (2025)
+        #     extension): 33% 2026, 50% 2030, 60% by 2040 and thereafter.
+        #   NH (RSA 362-F:3): Class I 15% + Class II 0.7% flat from 2025 —
+        #     0.157 at every knot (no escalation).
+        #   VT (30 V.S.A. §8005, Act 179 2024): new-renewable analogue
+        #     (Tier II distributed + Tier IV new in-region) ≈ .07/.14/.40/.40
+        #     — Tier I is EXCLUDED as misaligned (it counts existing large
+        #     hydro incl. HQ imports, rule 14 exception); VT is 4% of load,
+        #     so its ±20 pp tier-attribution uncertainty moves the blend
+        #     < 1 pp (below the rounding grain).
+        # Blend: 2026 .292, 2030 .396, 2040 .480, 2045 .504 — stored rounded.
+        # Tier 3 (calibration); a per-state re-blend on refreshed load
+        # weights is a bounded intake follow-up. The nuclear-counting MA
+        # CES/state clean tiers leave this row (clean-tier family, FFR-6B
+        # §6.3). Eligible set: RPS_ELIGIBLE_FUELS_BY_ISO (offshore wind —
+        # the region's dominant Class I compliance build — now counts).
+        2026: 0.29,
+        2030: 0.40,
+        2040: 0.48,
+        2045: 0.50,
     },
     "PJM": {
         # PJM has no single ISO-wide standard: this is the PJM-load-weighted
@@ -2919,6 +2981,58 @@ STATE_RPS_ACP: dict[str, float] = {
     "NEISO": 50.0,  # was 65.0 — stale MA Class I input ($67.62→$40); see above
     "PJM": 45.0,
     "MISO": 30.0,  # low forward REC-price-ceiling proxy — see note above
+}
+
+# Statute-defined RPS-row eligible fuel sets by ISO (FFR-7B Arm 1; FFR-6B §8).
+#
+# Each entry names the fuel classes (FUEL_TYPE_MAP names) the ISO's governing
+# *renewable-tier* statute counts toward its target. The RPS LP row counts
+# wind/solar via their zone columns and resolves every other name to the
+# matching thermal-block generator columns (model.lp.rows.
+# _resolve_rps_eligible_gen_idx) — the eligible set is data, never a hardcoded
+# class tuple at the row builder (FFR-6B §6.3(2)). Rule 14 [R-ACCURATE]: the
+# previous universal wind+solar-only convention under-counted what the
+# statutes count (NYISO by 20.2 pp, CAISO by 7.1 pp — FFR-6B §8.2, measured
+# eGRID 2023 shares of ISO load), pinning those rows' duals at the ACP
+# ceiling for the whole horizon — a mechanism-generated $40-50/MWh entry
+# subsidy with no statute behind it (FFR-6B §8.3). Nuclear is NEVER eligible
+# here (CX-6a): a clean/carbon-free tier that counts nuclear is a separate
+# row family (FFR-6B §6.3), not a widening of the renewable row — the row
+# builder refuses it by name.
+#
+# Sources (rule 5):
+#   NYISO — NY PSL §66-p(1)(b) (CLCPA): "renewable energy systems" = solar,
+#     on-land and offshore wind, HYDROELECTRIC (no new-build restriction —
+#     existing large hydro, NYPA's Niagara/St. Lawrence, counts toward the
+#     70x30 target), geothermal, tidal/wave/ocean thermal, non-fossil fuel
+#     cells. Biomass/biogas are NOT in the statutory definition (verified
+#     against §66-p text 2026-08-06 — legacy PSC Tier 1 orders admitted some
+#     biomass, but the statute does not; FFR-6B §8.2's parenthetical
+#     over-included it). Model classes: + hydro, offshore_wind.
+#   CAISO — Pub. Res. Code §25741(a) (RPS-eligible renewable energy
+#     resource): wind, solar, GEOTHERMAL, BIOMASS, small hydro ≤30 MW.
+#     Model classes: + geothermal, biomass, offshore_wind. Small hydro ≤30 MW
+#     is statutorily eligible but EXCLUDED here as misaligned to our
+#     representation (rule 14 exception): the fleet's single "hydro" class
+#     aggregates small RPS-eligible hydro with large (>30 MW) NON-eligible
+#     hydro (~10% of CA load), so counting the class literally would
+#     over-count by an order of magnitude more than the ~1 pp the small-hydro
+#     share adds; the residual under-count is within the folded-in tolerance
+#     adjudicated sound for PJM/MISO (FFR-6B §8.2).
+#   NEISO — MA Class I (225 CMR 14.05): new wind (on/offshore), solar,
+#     small hydro, low-emission biomass, landfill gas; EXCLUDES existing
+#     large hydro (and the HQ_import node is not in-region generation).
+#     Model classes: + offshore_wind (the region's dominant Class I
+#     compliance build); small-hydro/biomass share stays folded in
+#     (~3.8 pp, FFR-6B §8.2 — same convention as PJM/MISO).
+#   PJM / MISO — NO entry (wind+solar-only row unchanged): their blends'
+#     "small biomass/landfill/hydro folded in" convention is measured
+#     accurate to within ~2 pp (FFR-6B §8.2) — adjudicated sound.
+#   ERCOT — no RPS row is ever built (all-zero STATE_RPS_FLOORS entry).
+RPS_ELIGIBLE_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
+    "NYISO": ("wind", "solar", "offshore_wind", "hydro"),
+    "CAISO": ("wind", "solar", "offshore_wind", "geothermal", "biomass"),
+    "NEISO": ("wind", "solar", "offshore_wind"),
 }
 
 # Annual interconnection queue caps (GW/yr) by ISO.
