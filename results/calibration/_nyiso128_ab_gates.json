@@ -1,0 +1,320 @@
+{
+ "probe": "_nyiso128_ab_gates",
+ "prereg": "results/calibration/PREREG-nyiso128-market-solar-basis-2026-08-05.md",
+ "control_bundle": "results/calibration/nyiso128_control",
+ "treatment_bundle": "results/calibration/nyiso128_treatment",
+ "keeper_bundle": "results/calibration/nyiso125_seam_A",
+ "k1": {
+  "gate": "K1 no free parameter",
+  "differing_fields": [
+   "nyiso_solar_market_generator_basis"
+  ],
+  "pass": true
+ },
+ "k2": {
+  "gate": "K2 no new unserved energy",
+  "rows": [
+   {
+    "year": 2023,
+    "control_slack_mwh": 0.0,
+    "treat_slack_mwh": 0.0,
+    "new_slack_mwh": 0.0,
+    "new_slack_hours": 0
+   },
+   {
+    "year": 2024,
+    "control_slack_mwh": 0.0,
+    "treat_slack_mwh": 0.0,
+    "new_slack_mwh": 0.0,
+    "new_slack_hours": 0
+   },
+   {
+    "year": 2025,
+    "control_slack_mwh": 0.0,
+    "treat_slack_mwh": 0.0,
+    "new_slack_mwh": 0.0,
+    "new_slack_hours": 0
+   }
+  ],
+  "pass": true
+ },
+ "k4": {
+  "gate": "K4 live not inert",
+  "rows": [
+   {
+    "year": 2023,
+    "max_abs_dlmp": 100.5345,
+    "mean_abs_dlmp": 0.8163
+   },
+   {
+    "year": 2024,
+    "max_abs_dlmp": 97.32,
+    "mean_abs_dlmp": 0.9362
+   },
+   {
+    "year": 2025,
+    "max_abs_dlmp": 282.9858,
+    "mean_abs_dlmp": 2.3454
+   }
+  ],
+  "pass": true
+ },
+ "k5": {
+  "gate": "K5 seam does not absorb the correction",
+  "rows": [
+   {
+    "year": 2023,
+    "control_p50_mw": 2841.1,
+    "treat_p50_mw": 2893.4,
+    "delta_p50_mw": 52.2,
+    "delta_annual_twh": 0.0762
+   },
+   {
+    "year": 2024,
+    "control_p50_mw": 2280.0,
+    "treat_p50_mw": 2280.0,
+    "delta_p50_mw": 0.0,
+    "delta_annual_twh": -0.0
+   },
+   {
+    "year": 2025,
+    "control_p50_mw": 2047.5,
+    "treat_p50_mw": 2089.2,
+    "delta_p50_mw": 41.7,
+    "delta_annual_twh": 0.027
+   }
+  ]
+ },
+ "mean_price": {
+  "metric": "system mean LMP (zone-mean of hourly)",
+  "rows": [
+   {
+    "year": 2023,
+    "control_mean": 33.121,
+    "treat_mean": 33.855,
+    "delta": 0.733
+   },
+   {
+    "year": 2024,
+    "control_mean": 36.176,
+    "treat_mean": 37.043,
+    "delta": 0.866
+   },
+   {
+    "year": 2025,
+    "control_mean": 58.863,
+    "treat_mean": 61.113,
+    "delta": 2.25
+   }
+  ]
+ },
+ "p1_summer_peaking": {
+  "prediction": "P1 summer peaking fleet is called",
+  "rows": [
+   {
+    "year": 2023,
+    "CT_PEAKER": {
+     "control_peak_mw": 342.4,
+     "treat_peak_mw": 398.0,
+     "delta_peak_mw": 55.6,
+     "delta_annual_twh": 0.054
+    },
+    "ST_GAS": {
+     "control_peak_mw": 3165.6,
+     "treat_peak_mw": 3308.2,
+     "delta_peak_mw": 142.7,
+     "delta_annual_twh": 0.4137
+    },
+    "CC_REGULAR": {
+     "control_peak_mw": 4570.3,
+     "treat_peak_mw": 4693.7,
+     "delta_peak_mw": 123.4,
+     "delta_annual_twh": 0.7132
+    },
+    "CC_CHP": {
+     "control_peak_mw": 2012.1,
+     "treat_peak_mw": 2067.7,
+     "delta_peak_mw": 55.6,
+     "delta_annual_twh": 0.3907
+    },
+    "solar": {
+     "control_peak_mw": 689.2,
+     "treat_peak_mw": 78.2,
+     "delta_peak_mw": -611.0,
+     "delta_annual_twh": -1.7245
+    },
+    "import": {
+     "control_peak_mw": 2487.9,
+     "treat_peak_mw": 2632.4,
+     "delta_peak_mw": 144.5,
+     "delta_annual_twh": 0.0762
+    }
+   },
+   {
+    "year": 2024,
+    "CT_PEAKER": {
+     "control_peak_mw": 399.2,
+     "treat_peak_mw": 469.0,
+     "delta_peak_mw": 69.8,
+     "delta_annual_twh": 0.0549
+    },
+    "ST_GAS": {
+     "control_peak_mw": 3390.4,
+     "treat_peak_mw": 3657.7,
+     "delta_peak_mw": 267.3,
+     "delta_annual_twh": 0.5076
+    },
+    "CC_REGULAR": {
+     "control_peak_mw": 5165.1,
+     "treat_peak_mw": 5282.1,
+     "delta_peak_mw": 117.1,
+     "delta_annual_twh": 0.9197
+    },
+    "CC_CHP": {
+     "control_peak_mw": 2068.0,
+     "treat_peak_mw": 2108.4,
+     "delta_peak_mw": 40.4,
+     "delta_annual_twh": 0.5761
+    },
+    "solar": {
+     "control_peak_mw": 1119.7,
+     "treat_peak_mw": 202.8,
+     "delta_peak_mw": -916.9,
+     "delta_annual_twh": -2.1284
+    },
+    "import": {
+     "control_peak_mw": 2531.1,
+     "treat_peak_mw": 2788.6,
+     "delta_peak_mw": 257.5,
+     "delta_annual_twh": -0.0
+    }
+   },
+   {
+    "year": 2025,
+    "CT_PEAKER": {
+     "control_peak_mw": 445.8,
+     "treat_peak_mw": 555.2,
+     "delta_peak_mw": 109.4,
+     "delta_annual_twh": 0.2028
+    },
+    "ST_GAS": {
+     "control_peak_mw": 3658.4,
+     "treat_peak_mw": 4023.8,
+     "delta_peak_mw": 365.4,
+     "delta_annual_twh": 0.8966
+    },
+    "CC_REGULAR": {
+     "control_peak_mw": 4990.0,
+     "treat_peak_mw": 5132.2,
+     "delta_peak_mw": 142.2,
+     "delta_annual_twh": 1.0713
+    },
+    "CC_CHP": {
+     "control_peak_mw": 2243.2,
+     "treat_peak_mw": 2288.7,
+     "delta_peak_mw": 45.4,
+     "delta_annual_twh": 0.4723
+    },
+    "solar": {
+     "control_peak_mw": 1545.3,
+     "treat_peak_mw": 327.6,
+     "delta_peak_mw": -1217.7,
+     "delta_annual_twh": -2.801
+    },
+    "import": {
+     "control_peak_mw": 1650.6,
+     "treat_peak_mw": 1837.7,
+     "delta_peak_mw": 187.1,
+     "delta_annual_twh": 0.027
+    }
+   }
+  ]
+ },
+ "k3": {
+  "gate": "K3 C1 does not regress",
+  "control_class_fails": 0,
+  "treatment_class_fails": 0,
+  "control_fuelmix": "PASS",
+  "treatment_fuelmix": "PASS",
+  "pass": true,
+  "note": "zero per-class C1 FAILs in either arm; no class leaves its band. Contrast the nyiso-127 PAR arm, which failed K3 exactly here with ST_GAS 2023 +3.63 TWh."
+ },
+ "k6": {
+  "gate": "K6 control reproduces the keeper C3a to +/-0.2 pp",
+  "pass": false,
+  "keeper_c3a_pct": [
+   7.7,
+   -0.8,
+   -10.2
+  ],
+  "control_c3a_pct": [
+   6.2,
+   -1.7,
+   -7.0
+  ],
+  "delta_pp": [
+   -1.5,
+   -0.9,
+   3.2
+  ],
+  "note": "FIRES. Identical 680-field recipe; the keeper's SOLE FAIL (C3a-2025 -10.2 %) is absent at current HEAD (-7.0 %, PASS). Benchmark unmoved (actual 66.53 both), so model-side: main's advance and/or a from-scratch data/clean rebuild."
+ },
+ "k7": {
+  "gate": "K7 C7/C8 protective gates hold",
+  "control": {
+   "C7": "PASS",
+   "C8": "PASS"
+  },
+  "treatment": {
+   "C7": "PASS",
+   "C8": "PASS"
+  },
+  "pass": true,
+  "note": "Scored only after legitimacy_diagnostics.json was generated for both arms; both read SKIPPED until then, so K7 was initially UNSCORED rather than passing."
+ },
+ "c3a": {
+  "control_pct": [
+   6.2,
+   -1.7,
+   -7.0
+  ],
+  "treatment_pct": [
+   8.8,
+   0.8,
+   -3.2
+  ],
+  "all_pass_both_arms": true
+ },
+ "c3c_hours_gt300": {
+  "actual": [
+   10,
+   12,
+   42
+  ],
+  "control": [
+   18,
+   2,
+   21
+  ],
+  "treatment": [
+   22,
+   3,
+   24
+  ],
+  "note": "REGRESSES: 2023 flips PASS -> FAIL at 2.20x over-produced."
+ },
+ "summary": {
+  "gates_passed": [
+   "K1",
+   "K2",
+   "K3",
+   "K4",
+   "K5",
+   "K7"
+  ],
+  "gates_failed": [
+   "K6"
+  ],
+  "promotion": "NO \u2014 PREREG section 8-1 is unconditional; K6 fired."
+ }
+}
