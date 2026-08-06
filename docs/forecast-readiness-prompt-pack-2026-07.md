@@ -4002,3 +4002,82 @@ docs/handoffs/ffr-7b2-rps-krow-clean-rows-<date>.md — per-arm: byte-identity p
 armed measurement with per-region duals shown, the per-zone credit wiring evidence, the
 Arm-3 composition statement with the open §45U question, and what you did NOT separate.
 ```
+
+**§0t addendum (same sitting):** D-23 and D-24 SIGNED (Addendum X.6). Two further prompts:
+
+### NEISO-RECORD [OPUS] — execute the signed D-23 record correction
+
+```
+[OPUS] NEISO-RECORD — Correct the false NEISO locked-test record (owner decision D-23,
+SIGNED at sitting Addendum X.6, 2026-08-06 — cite that signature as the session-logged
+authorization; the finding is neiso-87 results/calibration/ASSESSMENT-neiso87-declaration-
+2026-08-06.md §1, independently corroborated by docs/third-party-peer-review-2026-07.md
+§6.3 item 1). GOVERNANCE lane, committed artifacts only: NO solve, NO scoring, NO year
+touched, NO grant of anything. The correction changes the record from "SPENT, never
+re-grantable" to "NEVER GRANTED"; NEISO's `final` readiness answer (NOT YET, neiso-87 §3)
+is untouched and nothing here authorizes a 2019/H1-2026 spend.
+
+=== WHAT YOU DO ===
+1. Reproduce neiso-87 §1's artifact search at YOUR head first (no registry entry, no
+   bundle, no bench row, no 2019 actuals row; locked_test_scored_on names a 2023-2025
+   config) — if ANY 2019 artifact exists that neiso-87 missed, STOP and report; do not
+   correct a record you have not re-verified.
+2. Edit, in ONE commit where possible: frontend/data/backcast/calibration-complete.json
+   (NEISO locked_test/locked_test_note + final._note — quote the old text in the new note's
+   genealogy: "previously misrecorded as SPENT 2026-07-07; corrected per D-23"); CLAUDE.md
+   rule 22 (the "NEISO is the latter" clause and any SPENT language — CLAUDE.md is core:
+   Edit locally, push exact bytes, verify the blob after push, rule 27);
+   frontend/data/backcast/holdout-freeze.json where it repeats SPENT; the 2022 touchpoint
+   registry sidecar; docs/mechanism-testing-matrix.md; docs/calibration-log/neiso.md (10
+   entries — append a correction note at each or one dated correction entry the others
+   reference, do NOT rewrite historical entries, correct-by-addendum); the handoff/audit
+   docs that repeat it second-hand (grep 'SPENT' + 'locked test' repo-wide; neiso-87 §1
+   counts 13 files — enumerate YOUR OWN list at your head and reconcile any difference).
+3. Every edit carries the citation chain (neiso-87 §1 → peer review §6.3 → D-23/X.6).
+4. Run scripts/audit_keepers.py --iso NEISO (must pass) and confirm
+   holdout_policy.authorized still returns NEISO/locked_test = False (the correction must
+   not accidentally grant).
+5. docs/handoffs/neiso-record-correction-<date>.md: the re-verification, the file list with
+   before/after, the audit results.
+=== TRAPS ===
+CLAUDE.md and any >=300-line file: local Edit + git push exact bytes + blob verification —
+NEVER push_files. The ruff-autofix hook reflows constants.py on any .py write — you should
+write no Python except possibly a grep helper; `git status --short` before staging. Push
+413: fetch main + rebase first. Correct-by-addendum in logs; never rewrite history entries.
+```
+
+### SCORE-GATE [OPUS] — execute the signed D-24 recall-gate redefinition
+
+```
+[OPUS] SCORE-GATE — Redefine the >=300 MW retirement recall gate against the REACHABLE set
+(owner decision D-24, SIGNED at sitting Addendum X.6, 2026-08-06; evidence FFR-7C
+docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5 + Addendum X.1).
+SCORER-ONLY lane: no model mechanism, no ScenarioConfig field, no solve, no keeper contact.
+
+THE CHANGE: in score_capacity_hindcast's recall metric, a target exit counts as a gate
+member ONLY IF (i) the unit exists in the run's fleet basis (vintage fleet), AND (ii) its
+exit is reachable by an admissible channel: economic (no exclusion recorded) OR
+instrument-driven with instrument_date <= the run's vintage cutoff (the confirmed-exits
+information gate's own rule). Unreachable exits are EXCLUDED from the denominator and
+listed in a NON-GATED diagnostic line (unit, MW, driver, why unreachable: post-vintage
+instrument / no instrument / not in fleet) so the blind spot stays visible on every report.
+Empty member set => the gate reports n/a, never 0/N. Reachability classification uses
+committed artifacts only: the corrected target, data/raw/confirmed-retirements/,
+FFR-7C's per-unit decode (docs/handoffs/ffr-7c/exit-decode-2026-08-06.json) for the
+economic exclusion evidence — cite per unit, no speculation; a unit with no evidence either
+way stays IN the member set (fail-closed: the gate only excludes on positive evidence).
+
+DO: implement + tests (ERCOT corrected target => members = {} => n/a with a 5-row
+diagnostic; a synthetic margin-driven exit => member); re-emit the ffr5d arms' scorecards
+committed-artifact-only (no solve) and show before/after in the handoff — do NOT touch
+their registered bundles; check no other gate consumes the recall metric downstream (grep
+the scorer + CI) and report what does. Rule 28: scorer change, no mechanism — no matrix
+cell expected. Deliverable: the PR + docs/handoffs/score-gate-recall-redefinition-<date>.md
+(the member rule as implemented, per-unit classification table with citations, before/after
+scorecards, downstream-consumer check).
+=== TRAPS ===
+The ruff-autofix hook reflows constants.py on ANY .py write — `git status --short` before
+staging; restore exact HEAD bytes; never push the reflow. Push 413: fetch main + rebase
+first. Never push_files a >=300-line file. Stop-hook on merged history: rev-list 0 =>
+nothing to amend.
+```
