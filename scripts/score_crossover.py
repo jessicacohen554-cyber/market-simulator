@@ -759,7 +759,19 @@ def score_capacity_events(
     if not madd_cod.empty:
         madd_cod = madd_cod[madd_cod["year"] <= max(SCORED_YEARS)]
 
-    ret = CH.score_retirements(mret, actuals)
+    # Gate membership is the REACHABLE set (owner decision D-24) — the same
+    # rule as the hindcast scorer, read off the same committed evidence, so one
+    # run's recall verdict never depends on which of the two scorers produced
+    # it. A crossover bundle with no run_config falls back to the fail-closed
+    # pre-D-24 denominator, exactly as the hindcast path does.
+    solved = CH.load_solved_scenario_config(bundle)
+    reach = CH.classify_exit_reachability(
+        iso,
+        actuals,
+        vintage_cutoff=CH.vintage_cutoff_of(None, solved),
+        solved_config=solved,
+    )
+    ret = CH.score_retirements(mret, actuals, reach)
     add = CH.score_additions(madd, actuals, basis=CH.ADDITIONS_BASIS_DECISION)
     add_cod = CH.score_additions(madd_cod, actuals, basis=CH.ADDITIONS_BASIS_COD)
     add_basis = CH.additions_basis_record(
@@ -945,13 +957,16 @@ def write_report(score: dict, report_path: Path) -> None:
     )
     L.append(
         f"| unit recall >300MW | {rr['n_big_actual']} units | {rr['matched']} matched | "
-        f"{_fmt(rr['recall'], '.0%')} | {rr['band']} |"
+        f"{'n/a' if rr.get('n_a') else _fmt(rr['recall'], '.0%')} | {rr['band']} |"
     )
     L.append(
         f"| total additions | — | {score['additions']['model_total_gw']} GW | "
         f"(actual {score['additions']['actual_total_gw']} GW) | — |"
     )
     L.append("")
+    L.extend(
+        CH.render_reachability_section(score["retirements"].get("reachability"), rr)
+    )
     # (c) forward invariants
     fi = score["forward_invariants"]
     L.append("## (c) Forward years (>= 2026) — invariants / plausibility only")
