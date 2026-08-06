@@ -228,7 +228,7 @@ def render_page(sidecars: list[dict]) -> str:
         body += '<div class="fv-grid">'+
           metric(tg.model+' GW','thermal retired ('+cls2(tg.band)+')')+
           metric(tg.actual+' GW','actual retired')+
-          metric((rr.recall==null?'—':(rr.recall*100).toFixed(0)+'%'),'unit recall &gt;300MW ('+cls2(rr.band)+')')+
+          metric((rr.n_a?'n/a':(rr.recall==null?'—':(rr.recall*100).toFixed(0)+'%')),'unit recall &gt;300MW ('+(rr.n_a?'no reachable member — D-24':cls2(rr.band))+')')+
           metric(sc.additions.model_total_gw+' GW','total additions')+
         '</div>';
         body += is2020Block(sc);

@@ -343,8 +343,8 @@
         out += `<h3 style="margin:var(--space-md) 0 6px;font-size:.92rem">Retirements (GW)</h3>
           <p class="ff-kv">Total: actual <b>${r.total_gw.actual}</b> · model <b>${r.total_gw.model}</b>
           <span class="ff-chip ${stCls(r.total_gw.band)}">${esc(r.total_gw.band)}</span>
-          · unit recall &gt;300 MW ${r.unit_recall_gt300 && r.unit_recall_gt300.recall != null ? (r.unit_recall_gt300.recall * 100).toFixed(0) + '%' : '—'}
-          <span class="ff-chip ${stCls(r.unit_recall_gt300 && r.unit_recall_gt300.band)}">${esc(r.unit_recall_gt300 && r.unit_recall_gt300.band || 'n/a')}</span></p>
+          · unit recall &gt;300 MW ${r.unit_recall_gt300 && r.unit_recall_gt300.n_a ? 'n/a' : (r.unit_recall_gt300 && r.unit_recall_gt300.recall != null ? (r.unit_recall_gt300.recall * 100).toFixed(0) + '%' : '—')}
+          <span class="ff-chip ${stCls(r.unit_recall_gt300 && r.unit_recall_gt300.band)}">${esc(r.unit_recall_gt300 && r.unit_recall_gt300.n_a ? 'no reachable member (D-24)' : (r.unit_recall_gt300 && r.unit_recall_gt300.band || 'n/a'))}</span></p>
           <div class="bc-table-wrap"><table><thead><tr><th>Fuel</th><th>Actual GW</th><th>Model GW</th><th>Err</th></tr></thead><tbody>${fuelRows}</tbody></table></div>`;
       }
       // Additions
