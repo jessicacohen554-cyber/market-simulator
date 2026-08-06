@@ -196,6 +196,7 @@ def reference_config(
     electrification_path: str = "off",
     entry_screen_diagnostics: bool = False,
     caiso_nqc_accreditation: bool = False,
+    miso_rps_compliance_regions: bool = False,
 ) -> ScenarioConfig:
     """The P-3A reference forecast: all defaults, forecast mode, P-2A pins.
 
@@ -247,6 +248,13 @@ def reference_config(
     ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed leg keeps its
     historical key and an armed leg keys distinctly. Default ``False``: the
     arming posture is an OWNER decision, not this runner's.
+
+    ``miso_rps_compliance_regions`` (FFR-7B Arm 2 / FFR-6B E-1) replaces
+    MISO's single ISO-wide RPS row with K per-state compliance-region rows
+    (MISO only, forecast-mode; no-op in every other ISO, rule 25). It is
+    registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` at ``False``, so an unarmed
+    leg keeps its historical key and an armed leg keys distinctly. Default
+    ``False``: the arming posture is an OWNER decision, not this runner's.
     """
     cmc_by_iso = None
     if golden_posture:
@@ -287,6 +295,7 @@ def reference_config(
         electrification_path=electrification_path,
         entry_screen_diagnostics=entry_screen_diagnostics,
         caiso_nqc_accreditation=caiso_nqc_accreditation,
+        miso_rps_compliance_regions=miso_rps_compliance_regions,
         # Owner decision D-10 (2026-08-04, sitting Addendum K.3): forecast
         # bundles run cross-year warm start OFF, so a killed-and-resumed
         # forecast reproduces from its own cache. Passed explicitly — and
@@ -803,6 +812,19 @@ def main(argv: list[str] | None = None) -> int:
             "control. No-op in every other ISO (rule 25)."
         ),
     )
+    ap.add_argument(
+        "--miso-rps-compliance-regions",
+        action="store_true",
+        help=(
+            "FFR-7B Arm 2 arm (MISO only, DEFAULT OFF pending an owner "
+            "decision): replace the single MISO-wide RPS row with K per-state "
+            "compliance-region rows (MN/MI/WI/IL/MO — cited "
+            "MISO_RPS_COMPLIANCE_REGIONS table), each with its statute's "
+            "eligibility mask, obligated-load RHS and own $30 ACP escape. "
+            "Solve-affecting (distinct LP layout, distinct cache key); pair "
+            "with an unarmed control. No-op in every other ISO (rule 25)."
+        ),
+    )
     args = ap.parse_args(argv)
 
     # §2.1b full-solve authorization gate (the FF-3E schedulability guard). No
@@ -827,6 +849,7 @@ def main(argv: list[str] | None = None) -> int:
         electrification_path=args.electrification_path,
         entry_screen_diagnostics=args.entry_screen_diagnostics,
         caiso_nqc_accreditation=args.caiso_nqc_accreditation,
+        miso_rps_compliance_regions=args.miso_rps_compliance_regions,
     )
     summary = solve_and_summarize(
         config,
