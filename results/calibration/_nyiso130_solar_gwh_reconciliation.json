@@ -1,0 +1,150 @@
+{
+  "capacity_crosscheck": {
+    "source": "data/raw/reference/nyiso-market-solar-capacity.csv (derive_nyiso_market_solar.py, built from the same Table III-2a for a different purpose)",
+    "year_end_registered_mw": {
+      "2023": 174.4,
+      "2024": 573.4,
+      "2025": 573.4
+    }
+  },
+  "extraction": {
+    "fleet_cf_2025": 0.1955,
+    "name_key_collisions_60char": [],
+    "pv_sun_lines_seen": 16,
+    "rows_matched": 15,
+    "rows_unmatched": [
+      {
+        "line": "Shoreham Solar Commons LLC Shoreham Solar K 323752 East Shoreham 103 36 2018-07-01 25.0 0.0 0.0 0.0 0.0 PV SUN",
+        "page": 103
+      }
+    ],
+    "total_nameplate_mw": 573.4,
+    "total_net_energy_2025_gwh": 981.8,
+    "units": [
+      {
+        "cf_2025": 0.1815,
+        "name": "Galt Power Inc. Puckett Solar C 323809 Greene 017 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 31.8,
+        "page": 88
+      },
+      {
+        "cf_2025": 0.1769,
+        "name": "Galt Power Inc. Janis Solar C 323808 Willet 023 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 31.0,
+        "page": 88
+      },
+      {
+        "cf_2025": 0.1993,
+        "name": "Galt Power Inc. Morris Ridge Solar C 323848 Mt Morris 051 36",
+        "nameplate_mw": 179.0,
+        "net_energy_2025_gwh": 312.5,
+        "page": 88
+      },
+      {
+        "cf_2025": 0.1958,
+        "name": "Galt Power Inc. Branscomb Solar F 323811 Easton 115 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 34.3,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1832,
+        "name": "Galt Power Inc. Darby Solar F 323810 Easton 115 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 32.1,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.2038,
+        "name": "Galt Power Inc. Regan Solar F 323812 Greene 057 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 35.7,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.2026,
+        "name": "Galt Power Inc. Grissom Solar F 323813 Mohawk 057 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 35.5,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1866,
+        "name": "Galt Power Inc. Stillwater Solar F 323814 Stillwater 091 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 32.7,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.2129,
+        "name": "Galt Power Inc. Pattersonville Solar F 323815 Schenectady 093 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 37.3,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1581,
+        "name": "Hecate Energy Albany 1 LLC Albany County Solar 1 F 323833 Colonie 001 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 27.7,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1741,
+        "name": "Hecate Energy Albany 2 LLC Albany County Solar 2 F 323834 Colonie 001 36",
+        "nameplate_mw": 20.0,
+        "net_energy_2025_gwh": 30.5,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.2219,
+        "name": "NextEra Energy Marketing, LLC East Point Solar F 323840 Sharon Springs 095 36",
+        "nameplate_mw": 50.0,
+        "net_energy_2025_gwh": 97.2,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1986,
+        "name": "NextEra Energy Marketing, LLC High River Solar F 323847 Florida 057 36",
+        "nameplate_mw": 90.0,
+        "net_energy_2025_gwh": 156.6,
+        "page": 93
+      },
+      {
+        "cf_2025": 0.1638,
+        "name": "Long Island Power Authority Long Island Solar Farm K 323691 Upton 103 36",
+        "nameplate_mw": 31.5,
+        "net_energy_2025_gwh": 45.2,
+        "page": 98
+      },
+      {
+        "cf_2025": 0.2079,
+        "name": "Long Island Power Authority Calverton Solar K 323806 Riverhead 103 36",
+        "nameplate_mw": 22.9,
+        "net_energy_2025_gwh": 41.7,
+        "page": 98
+      }
+    ]
+  },
+  "phase": "Priority 2 Phase 0 (reconciliation, no solve)",
+  "question": "nyiso-129 extracted 981.8 GWh where nyiso-128 quoted 1,081.8 GWh from the same Table III-2a over the same 15 units.",
+  "session": "nyiso-130",
+  "verdict": {
+    "agrees_with": "nyiso-129",
+    "armed_arm_2025_twh": 0.75,
+    "capacity_crosscheck_passes": true,
+    "distance_from_p63_bound_pct": {
+      "nyiso128_figure": 8.83,
+      "reproduced": -1.23
+    },
+    "nyiso128_figure_gwh": 1081.8,
+    "nyiso129_figure_gwh": 981.8,
+    "over_removal_2025_twh_on_nyiso128_figure": 0.332,
+    "over_removal_2025_twh_on_reproduced": 0.232,
+    "reproduced_total_gwh": 981.8,
+    "status": "RECONCILED",
+    "third_instrument_nyiso106_p63_lower_bound_twh": 0.994
+  }
+}

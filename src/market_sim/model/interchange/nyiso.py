@@ -179,6 +179,7 @@ def apply_nyiso_li_tsl_import_cap(
     iso: str,
     year: int,
     hours: int,
+    n11_security_basis: bool = False,
 ) -> np.ndarray:
     """Cap the NYC->Long_Island link at the published Zone-K locality import
     limit during the peak window (issue #1345, ``config.nyiso_li_lcr_tsl``).
@@ -212,6 +213,31 @@ def apply_nyiso_li_tsl_import_cap(
     bound); measured LI peak-window exports toward NYC are ~0 MW, a
     documented, immaterial misalignment accepted over one-way link plumbing.
 
+    RULE-14/19 RECONCILIATION, ``n11_security_basis`` (nyiso-130,
+    ``config.nyiso_li_tsl_n11_security``): the ``import_limit`` row above is
+    NOT the interface's transfer limit — it is that limit **net of a generation
+    loss-of-source contingency**, and NYISO says so in the same table. TABLE 1
+    note 2 of the 2024-25, 2025-26 and 2026-27 Locality Bulk Power Transmission
+    Capability Reports reads, identically: *"The true N-1-1 Transmission
+    Security Limit is 940 in this scenario, the Bulk Transfer Limit accounts
+    for the loss-of-source of 660 MW"* (the Neptune HVDC). The published 275 MW
+    is what the LCR **TSL Floor Calculation** consumes as
+    ``UCAP requirement = load forecast - import_limit`` — a capacity-adequacy
+    accounting term, not a bound on an hour. Worse, in THIS model the 660 MW
+    deduction is a DOUBLE COUNT: Neptune's energy is already delivered on the
+    separate ``NYISO_external->Long_Island`` link (at its measured seam
+    envelope, bound ~99 % of hours), and the contingency reserve against losing
+    it is already carried explicitly by the armed published Zone-K locational
+    reserve ladder (``config.nyiso_li_locational_reserve``) — so rule 19
+    ``[R-ONE-MECH]`` makes the implicit copy inside a transmission bound the one
+    that goes. When ``n11_security_basis`` is set, the in-window cap therefore
+    reads the ``transfer_security_limit`` metric (940 MW, the published N-1-1
+    figure) instead of ``import_limit``. Same window, same link, same symmetry,
+    ZERO free parameters — one published number replaces another. The
+    interface both numbers describe is the TSL report's own Appendix A Zone-K
+    definition (Y49 + Y50 from Zone I plus the two PAR-controlled 138 kV J->K
+    ties), which is exactly what this single reduced-network link represents.
+
     Args:
         ttc: ``(n_links,)`` static or ``(hours, n_links)`` per-hour transfer
             capabilities (MW).
@@ -220,15 +246,18 @@ def apply_nyiso_li_tsl_import_cap(
             unchanged.
         year: Backcast/solve calendar year (resolves the capability-year row).
         hours: LP horizon length T.
+        n11_security_basis: read the published N-1-1 transmission security
+            limit (``transfer_security_limit``) instead of the loss-of-source-
+            net ``import_limit``. Default ``False`` — byte-identical.
 
     Returns:
         ``(hours, n_links)`` per-hour TTC matrix with the in-window LI cap
         applied (a copy), or ``ttc`` unchanged for non-NYISO.
 
     Raises:
-        ValueError: NYISO without a published Long Island import limit for the
-            resolved capability year, or no NYC->Long_Island link — the
-            mechanism must never silently no-op when explicitly enabled.
+        ValueError: NYISO without a published Long Island limit on the selected
+            basis for the resolved capability year, or no NYC->Long_Island link
+            — the mechanism must never silently no-op when explicitly enabled.
     """
     if iso != "NYISO":
         return ttc
@@ -236,14 +265,19 @@ def apply_nyiso_li_tsl_import_cap(
     from market_sim.data.capacity_deliverability import (
         import_limit_by_area,
         resolve_delivery_year,
+        transfer_security_limit_by_area,
     )
 
     delivery_year = resolve_delivery_year(iso, int(year))
-    limits = import_limit_by_area(iso, delivery_year)
+    basis = "transfer_security_limit" if n11_security_basis else "import_limit"
+    reader = (
+        transfer_security_limit_by_area if n11_security_basis else import_limit_by_area
+    )
+    limits = reader(iso, delivery_year)
     tsl = limits.get("Long Island")
     if tsl is None:
         raise ValueError(
-            f"nyiso_li_lcr_tsl=True but no published Long Island import limit "
+            f"nyiso_li_lcr_tsl=True but no published Long Island {basis} "
             f"for delivery year {delivery_year} in the capacity-deliverability "
             f"table (data/raw/capacity-deliverability/nyiso/nyiso.csv); "
             f"available areas: {sorted(limits)}"
