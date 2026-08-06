@@ -13,7 +13,8 @@
 #            CIL  -> import_limit ; CEL -> export_limit ; ZIA -> import_ability ;
 #            PRMR -> system_requirement                    (per LRZ 1-10 x season)
 #   NYISO  : ICAP req (MW) + LCR% -> requirement (value_mw + value_pu) ;
-#            Bulk Power Transmission Limit -> import_limit ; IRM -> system_requirement
+#            Bulk Power Transmission Limit -> import_limit ;
+#            true N-1-1 TSL -> transfer_security_limit ; IRM -> system_requirement
 #   ISO-NE : LSR  -> requirement ; MCL -> export_limit ;
 #            interface import limit -> import_limit ; ICR -> system_requirement
 #   CAISO  : LCR "Capacity Needed" -> requirement (per local area) ;
@@ -81,12 +82,21 @@ columns:
     nullable: false
     description: >-
       Canonical metric: requirement | local_clearing_requirement | import_limit
-      | export_limit | import_ability | system_requirement | peak_load.
+      | export_limit | import_ability | system_requirement | peak_load |
+      transfer_security_limit.
       (requirement is the CETO analog; import_limit is the CETL analog;
       peak_load is the area/zone peak-demand forecast published in the same
       study as the requirement — CAISO LCT "Load+Losses+Pumps" and Table 3.2-1
       — pairing with requirement so import_cap = peak_load - requirement sits
-      on one consistent boundary.)
+      on one consistent boundary. transfer_security_limit is the area
+      boundary's N-1-1 transmission transfer capability BEFORE any
+      capacity-market loss-of-source deduction: where an ISO publishes both,
+      import_limit is the capacity-adequacy accounting term that a locational
+      requirement is computed against, while transfer_security_limit is the
+      transfer capability itself and is the one an hourly energy bound needs.
+      NYISO Zone K is the reference case — import_limit 275 MW =
+      transfer_security_limit 940 MW - 660 MW Neptune HVDC loss-of-source, from
+      one table and its own footnote; see the nyiso raw README.)
   - name: value_mw
     dtype: float64
     unit: mw

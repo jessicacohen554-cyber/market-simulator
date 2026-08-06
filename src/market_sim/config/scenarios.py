@@ -502,6 +502,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # now holds the invariant.)
     "nyiso_east_reserve_families",
     "nyiso_spin_reserve_online",
+    # NYISO Zone-K transfer-basis reconciliation (nyiso-130): default False and
+    # dropped from the hash so every pre-existing cache key is byte-stable; True
+    # enters the key (a distinct transmission-limit scenario).
+    "nyiso_li_tsl_n11_security",
     # NYISO gas commitment bridge (nyiso-87) — the flag plus every parameter it
     # reads. All are inert at their defaults (the gate is off), so registering
     # them here keeps the pinned default cache_key byte-stable at edbc1b1; an
@@ -822,6 +826,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "transmission_expansion_enabled": "False",
     "nyiso_li_locational_reserve": "False",
     "nyiso_incity_commitment_obligation": "False",
+    "nyiso_li_tsl_n11_security": "False",
     "nyiso_scr_edrp": "False",
     "nyiso_scr_edrp_strike": "500.0",
     # DECLARED FLIP, owner decision D-3a signed 2026-08-03: "hold_last" ->
@@ -3822,6 +3827,47 @@ class ScenarioConfig:
     # skips Long_Island (one mechanism per phenomenon, rule 19); the 0.45
     # scalar remains only for the default-off legacy path. Default off
     # (byte-identical); NYISO-only.
+    nyiso_li_tsl_n11_security: bool = False  # NYISO Zone-K cap reads the
+    # PUBLISHED N-1-1 TRANSMISSION SECURITY LIMIT instead of the loss-of-source-
+    # net locality import limit (nyiso-130). A rule-14 [R-ACCURATE] / rule-19
+    # [R-ONE-MECH] RECONCILIATION of nyiso_li_lcr_tsl above — same link, same
+    # HB14-21 window, same symmetry, ZERO free parameters; only the published
+    # number changes (325/275/275 -> 940 MW). Effective only when
+    # nyiso_li_lcr_tsl is on; NYISO-only; default off (byte-identical).
+    #
+    # THE DEFECT IT REPAIRS. The import_limit the cap reads today is NOT the
+    # interface's transfer limit — NYISO says so in the same table. TABLE 1
+    # note 2 of the Locality Bulk Power Transmission Capability Reports, worded
+    # identically in the 2024-25, 2025-26 and 2026-27 editions: "The true N-1-1
+    # Transmission Security Limit is 940 in this scenario, the Bulk Transfer
+    # Limit accounts for the loss-of-source of 660 MW" (the Neptune HVDC). The
+    # published 275 MW is the term the LCR TSL Floor Calculation consumes as
+    # UCAP requirement = load forecast - import_limit (2023 LCR Report: "[B] =
+    # Studied 325"), i.e. capacity-adequacy accounting, not a bound on an hour.
+    #
+    # WHY IT IS A DOUBLE COUNT HERE, which is what makes it a rule-19 matter and
+    # not merely a boundary note: the model already carries the 660 MW twice.
+    # Neptune's ENERGY is delivered on the separate NYISO_external->Long_Island
+    # link (measured seam envelope 1,012/986/990 MW, at bound 99.9/99.9/98.9 %
+    # of hours), and the RESERVE against losing it is carried explicitly by the
+    # armed published Zone-K locational reserve ladder
+    # (nyiso_li_locational_reserve). Deducting the same contingency a third
+    # time, inside a transmission bound, is the implicit copy — so it is the one
+    # that goes.
+    #
+    # BOUNDARY, clean: the TSL report's Appendix A defines the Zone-K interface
+    # as Y49 (Sprain Brook-East Garden City) + Y50 (Dunwoodie-Shore Road) 345 kV
+    # plus the two PAR-controlled 138 kV J->K ties, with the UDR-backed external
+    # cables counted SEPARATELY — exactly the model's two-link split. 940 MW is
+    # a NET Zone-K import limit (the base case schedules 300 MW K->J on the
+    # PARs), so it maps onto this single net link directly. Every edition names
+    # the same limiting element at the same rating (Y50 @ LTE 964 MVA), so the
+    # figure is one published constant across 2023-2025, not a per-year fit;
+    # the 2023/24 edition prints no true-N-1-1 figure and its row carries the
+    # 2024-25 value, which is the TIGHTER of the two candidates (the implied
+    # 2023/24 value is 325 + 660 ~ 985 MW). Provenance and the carry-back are
+    # documented at data/raw/capacity-deliverability/nyiso/README.md.
+    # Forward-reproducible: NYISO republishes the table every capability year.
     nyiso_nyc_lcr_tsl: bool = False  # NYISO New York City (Zone J) LCR/TSL
     # mechanism (nyiso-61, the Zone-J analog of nyiso_li_lcr_tsl above):
     # REPLACES the Lower_Hudson->NYC (Dunwoodie-South) link's 3,900 MW energy-TTC
@@ -12039,6 +12085,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_dynamic_reserve_requirements": 1,
     "nyiso_ordc_measured_step_span": 1,
     "nyiso_li_lcr_tsl": 1,
+    "nyiso_li_tsl_n11_security": 1,
     "nyiso_nyc_lcr_tsl": 1,
     "neiso_rcpf_enabled": 1,
     "neiso_rcpf_products": 2,
