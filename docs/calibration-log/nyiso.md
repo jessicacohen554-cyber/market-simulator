@@ -5278,3 +5278,69 @@ probe `scripts/probes/_nyiso127_cc_outage_envelope.py`,
 record `results/calibration/_nyiso127_cc_outage_envelope.json`.
 
 * Next number: **nyiso-128**.
+
+---
+
+## nyiso-128 (2026-08-06) — NYISO grid solar is double-counted against the load series; correction LIVE, K6 fires because the keeper does not reproduce on main
+
+**Keeper UNCHANGED** `2026-08-04-nyiso-125-seam-envelope`. **No promotion.** Both
+pre-registered arms solved 2023–2025 and registered (rule 15):
+`2026-08-06-nyiso-128-control`, `2026-08-06-nyiso-128-solar-basis`.
+
+**(1) THE DEFECT (rule 14 `[R-ACCURATE]`, a DOUBLE COUNT).** The model takes NYISO
+solar capacity from the EIA-860 utility-scale operable schedule, which includes
+~2 GW of **distribution-connected NY-Sun community solar that is not a NYISO
+market generator** and whose output is **already netted out of the EIA-930 `NYIS`
+demand series used as load** (`NG: SUN` identically zero, 8,760/8,760 hours —
+nyiso-106 measured this and recorded the reason without connecting it to the
+supply side). Model capacity 1,645 / 2,566 / 2,930 MW and energy 1.94 / 2.64 /
+3.55 TWh against a **registered** fleet of 174.4 / 573.4 / 573.4 MW producing a
+published 0.23 / 0.50 / 1.08 TWh (Gold Book Table III-2a). Three NYISO
+instruments agree on the registered level: the III-2a registry, the 2026 Gold
+Book (**no PV market generator entered during 2025**), and nyiso-106's own MIS
+P-63 daylight-bulge decomposition. **Zero free parameters** — membership is an
+identity; `n_residual` unchanged at 6.
+
+**(2) K6 FIRES, AND NOT BECAUSE OF THE MECHANISM.** The same-HEAD control runs the
+keeper recipe with **all 680 `scenario_config` fields verified identical** and
+still reads C3a **+6.2 / −1.7 / −7.0 %** against the keeper's recorded **+7.7 /
+−0.8 / −10.2 %**. **THE KEEPER'S SOLE FAIL IS ABSENT AT CURRENT HEAD** —
+C3a-2025 −10.2 % (FAIL) re-solves to −7.0 % (PASS) with no mechanism change. The
+benchmark did not move (actual 66.53 both), so it is a **model-side** change from
+main's advance and/or a from-scratch `data/clean` rebuild. PREREG §8-1 is
+unconditional and is honoured **on a favourable result**. Owner-disposition event
+of the same class as the recorded 2026-07-26 de-designation.
+
+**(3) THE A/B IS VALID AND IS READ** (same HEAD, K1 confirms exactly one differing
+field). K1/K2/K4/K5 **PASS**; K5 is the load-bearing one — import p50 moves only
++52 / 0 / +42 MW, so the removed solar is replaced by **in-state thermal**, not
+imports. **P1 CONFIRMED**: JJA h16–h18 2025 CT_PEAKER **+109 MW**, ST_GAS
+**+365 MW**, CC_REGULAR +142 MW against solar **−1,218 MW**. C3a +6.2/−1.7/−7.0 →
+**+8.8/+0.8/−3.2 %**, all six PASS; the pre-registered adverse case (2023 crossing
++10 %) **did not** materialise.
+
+**(4) REPORTED AGAINST INTEREST, TWICE.** **C3c REGRESSES** — 2023 18 h → **22 h**
+against a measured 10 h (1.80× → **2.20×** over-produced), **PASS → FAIL**; 2024
+2 h → 3 h vs 12 h still failing. And the PREREG §4 declared limitation bites: the
+arm removes 2.80 TWh of 2025 solar where the registry implies ~2.47, so **~0.45 pp
+of the +3.8 pp C3a-2025 gain is UNEARNED** and only ~3.35 pp is attributable to
+the correction.
+
+**(5) TWO OWNER DECISIONS ARE DUE, IN ORDER.** (a) Diagnose the
+keeper-reproduction failure — until it is understood every NYISO A/B has an
+unstable baseline. (b) Then the promotion: if the control is accepted as the true
+current baseline, the treatment is the recommended keeper on rules 1/14, carrying
+the C3c-2023 regression openly as its cost.
+
+**Also found and committed for the next session:** the NYISO keeper is **not
+reproducible from the documented CLI** — thirteen of its non-default fields have
+no argparse path and reach the solve only through the generic `prb_overrides`
+channel. `scripts/probes/_nyiso128_solve_ab.py` drives from the keeper's own
+recorded provenance block and verifies fidelity on a 24-hour solve.
+
+Evidence:
+`results/calibration/FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
+`PREREG-nyiso128-market-solar-basis-2026-08-05.md`,
+`_nyiso128_ab_gates.json`, probes `_nyiso128_solve_ab.py`, `_nyiso128_ab_gates.py`.
+
+* Next number: **nyiso-129**.
