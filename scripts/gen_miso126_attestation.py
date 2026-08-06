@@ -109,7 +109,6 @@ def _disclosures() -> str:
     """Disclosures, with THIS run's own measured magnitudes substituted in."""
     ab, sc = _ab(), _screen()
     dl = ab.get("max_zonal_abs_dlmp", {})
-    k4 = ab.get("K4_liveness", {})
     k5 = ab.get("K5_direction_integrity", {})
     k6 = ab.get("K6_energy_conservation", {})
     k7 = ab.get("K7_no_gate_regression", {})
@@ -121,7 +120,6 @@ def _disclosures() -> str:
     cc = k5.get("cc_chp_energy_delta_gwh", {})
     net = k6.get("net_class_energy_delta_gwh", {})
     dsys = k5.get("d_system_demand_weighted_lambda", {})
-    energy = k4.get("class_energy_delta_gwh", {})
     p2 = (sc.get("P2_one_meter_one_rate") or {}).get("per_plant", {})
     p3 = (sc.get("P3_design_share") or {}).get("per_plant", {}).get("55088", {})
     ke3 = (sc.get("KE3_inert_by_dispatch") or {}).get("per_plant", {}).get("55088", {})
