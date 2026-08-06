@@ -710,11 +710,24 @@ PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 
 @lru_cache(maxsize=None)
 def partial_outage_derate_factors(
-    year: int, hours: int = HOURS_PER_YEAR, iso: str = "ERCOT"
-) -> dict[int, np.ndarray]:
-    """Return ``{plant_code: (hours,) availability multiplier}`` from the
-    CAMPD-derived partial-outage windows. 1.0 outside detected ceiling plateaus,
-    the window's derate factor within (deepest wins where they overlap).
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    iso: str = "ERCOT",
+    class_grain: bool = False,
+) -> dict[int, np.ndarray] | dict[tuple[int, str], np.ndarray]:
+    """Return the CAMPD-derived partial-outage plateau availability multipliers.
+
+    1.0 outside detected ceiling plateaus, the window's derate factor within
+    (deepest wins where they overlap). Keyed ``{plant_code: (hours,)}`` by
+    default; with ``class_grain=True`` (the ercot-173 C1 grain repair, gated by
+    ``ScenarioConfig.ercot_dam_availability_event_cap_reconciliation``) keyed
+    ``{(plant_code, plant_group): (hours,)}`` using the extract's OWN
+    ``plant_group`` column — the plant-code-only keying discards it, so a
+    facility-wide plateau lands on every class bin of that plant code
+    (FINDING-ercot172 §4 fault 2). On the current bins sheet no partial-extract
+    plant code carries more than one class bin, so the two grains induce
+    identical per-bin factors today; the repair is wiring correctness, asserted
+    inert by the ercot-173 seam proof.
 
     When ``MARKET_SIM_USE_CLEAN`` is set and the ISO's curated
     ``partial-outages`` clean partition exists (written by
@@ -723,31 +736,31 @@ def partial_outage_derate_factors(
     """
     iso = (iso or "ERCOT").upper()
     df = None
+    cols = ["plant_id", "year", "outage_start", "outage_stop", "derate_factor"]
+    if class_grain:
+        cols.insert(1, "plant_group")
     if _use_clean():
         clean_io = _clean_io()
         if clean_io.clean_exists("partial-outages", iso=iso):
             df = clean_io.read_clean(
                 "partial-outages",
                 iso=iso,
-                columns=[
-                    "plant_id",
-                    "year",
-                    "outage_start",
-                    "outage_stop",
-                    "derate_factor",
-                ],
+                columns=cols,
             ).rename(columns={"plant_id": "oris_code"})
     if df is None:
         if not PARTIAL_OUTAGE_CSV.exists():
             return {}
         df = pd.read_csv(PARTIAL_OUTAGE_CSV)
     df = df[df["year"] == year]
-    out: dict[int, np.ndarray] = {}
+    out: dict = {}
     for r in df.itertuples(index=False):
         mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
         if not mask.any():
             continue
-        arr = out.setdefault(int(r.oris_code), np.ones(hours))
+        key: int | tuple[int, str] = int(r.oris_code)
+        if class_grain:
+            key = (int(r.oris_code), str(r.plant_group))
+        arr = out.setdefault(key, np.ones(hours))
         arr[mask] = np.minimum(arr[mask], float(r.derate_factor))
     return out
 
