@@ -281,3 +281,121 @@ and it is the reason the HOLD is now a decision point rather than a backlog.
 - **`final` is not declared and cannot be by this session.**
 
 **Next shorthand: pjm-161.**
+
+---
+
+## §10 — ADDENDUM: the owner's answers, a correction to B2, and the new sequencing (2026-08-06, same session)
+
+### §10.1 — the four decisions, as answered
+
+| # | question | answer | vs recommendation |
+|---|---|---|---|
+| **B2** | seam mechanism outside 2023–2025 | **Derive the ladder** | as recommended |
+| **B4** | DA−RT regime dependence | **Wait for the price lane** | **against** — recorded as decided |
+| **B5** | `rt_lw` weight vintage | **Refresh cross-ISO first** | as recommended |
+| **Freeze** | lift for PJM, at what scope | **Hold** | **against** — recorded as decided |
+
+**Net: `final` stays undeclared, the freeze stays ACTIVE on its 2026-07-25 basis, and no
+year is spent.** `holdout-freeze.json` is untouched — "hold" is the status quo, so there
+is nothing to write. Two prep workstreams are authorized (§10.4 step 0), and prep is
+explicitly unrestricted: what is held out is the score, never the data or the config.
+
+### §10.2 — CORRECTION: B2 is worse than §3.1 stated, and pjm-160 propagated the error
+
+**pjm-159 §3.1 wrote** that outside the ladder years *"the ladder no-ops AND
+`inject_reference_price_firm_export` fires — the firm scheduled-export floor that the
+ladder displaces under rule 19"*, and concluded the 2019 run *"would be the keeper's
+**rule-19 alternative**"*. **The second half is wrong**, and this assessment's §0/§3
+repeated it.
+
+`inject_reference_price_firm_export` applies a floor only *"for each neighbor carrying a
+`firm_export_floor_by_year` entry for `year`"* and returns `False` — byte-identical, nothing
+applied — otherwise. Both PJM neighbour specs (`spec.py:903, 915`) carry
+`firm_export_floor_by_year={2023: …, 2024: …, 2025: …}` and nothing else. The gate site's
+own comment states the consequence outright:
+
+> *"Forecast years have no ladder entry AND no floor entry, so both paths no-op
+> identically there."*
+
+**So outside 2023–2025 the keeper's seam runs with NEITHER mechanism** — not with an
+alternative — leaving only the bare economic tranches. That is a stronger form of B2, not a
+weaker one: the question is not *which* seam representation the locked year gets, it is that
+the keeper's entire measured seam pricing is **absent**.
+
+**How the error survived three sessions:** `_pjm159_final_readiness.py::check_recipe_reproducibility`
+reports `rule-19 firm scheduled-export floor fires: True` from
+`alternative = "if not _pjm_ladder_active and inject_reference_price_firm_export" in nodes`
+— a **source-text check that the branch exists**, not a test that a floor applies in any
+year. It was read as the latter. (The probe is not edited here; the correction is recorded
+and the probe line should be re-worded or made year-aware by whoever next touches it.)
+
+### §10.3 — the correction reaches BACKWARD: the spent 2022 touchpoint ran with no seam pricing
+
+`results/calibration/pjm2022_touchpoint/run_config.json` carries
+`pjm_seam_measured_ladder: true`, and `2022 ∉ PJM_SEAM_LADDER_BY_YEAR`. By §10.2 the floor
+has no 2022 entry either. **So `2026-08-05-pjm-2022-touchpoint` was solved with PJM's
+measured seam pricing entirely absent** — in the channel carrying the keeper's largest
+single-signed volume error (net export −9.57 / −9.17 / −5.40 TWh in-sample, one-signed
+under-export in all three years).
+
+Its determination is **NOT-YET on exactly two criteria: C1** (driven by `CC_REGULAR`
++18.28 TWh, per pjm-159 §1) **and C3b** (NRMSE 0.206). **Net-export error lands in
+`CC_REGULAR` volume.**
+
+**This is a hypothesis, not a finding.** Nothing here re-scores 2022 — every number above is
+a read of a committed artifact (the bundle's `run_config.json`, the registry sidecar, the
+pjm-159 record), with no model output produced. But it is a *testable* hypothesis, and
+deriving the 2022 ladder is the direct test of it. It also means the 2022 result should not
+be read as evidence about the keeper's seam representation, because that representation was
+not in the run.
+
+**Consequence for the B2 work you authorized: extend its scope to 2019, 2021 AND 2022** —
+the same frozen formula, wherever the tie file exists. Derived only for 2019, it serves a
+year that is now four steps away; derived for 2022 it tests the step that is next.
+
+### §10.4 — the sequencing (owner directive, 2026-08-06)
+
+> *"After 2022 passes we will run a 2022-2035 forecast test on the keeper formula before
+> testing any further holdout years and then 2021 will be the next touchpoint testing year."*
+
+| step | what | gate |
+|---|---|---|
+| **0** | Derive `PJM_SEAM_LADDER_BY_YEAR` for 2019/2021/2022; cross-ISO `rt_lw` refresh | **none** — prep, no solve/score/registration. Rule 23 covers the derive: the *source data extends* |
+| **1** | **2022 passes** — touchpoint loop (run → diagnose → re-train on 2023–2025 → re-test) | **BLOCKED by the held freeze** — see §10.5 |
+| **2** | **2022–2035 forecast test** on the keeper formula | running it is **unrestricted** (forecast mode uses no measured overlays); registers on the **separate** forecast dashboard via `scripts/register_forecast_run.py`, **never** the backcast registry (rule 15). Scoring its 2022 leg against measured 2022 actuals is still a holdout score and stays gated |
+| **3** | **2021 touchpoint** | validation tier — needs a lift, same pattern as 2022. Its inputs are prepared: the pre-window demand partition landed this session |
+| **4** | **2019** — the one-touch year | `final` marker (EMPTY) **and** the freeze. *(2020, if ever wanted, additionally needs the PJM peak-artifact fix — F3 finding §2.1)* |
+
+This reordering is **coherent with B4 = wait**: the locked year moves far enough out that
+waiting costs nothing near-term. It also **raises B5's priority** rather than lowering it —
+2022 and 2021 are scored on `rt_lw` too, so the weight vintage should be settled before
+either is re-run, not after.
+
+### §10.5 — the one scheduling conflict, stated plainly
+
+**Step 1 cannot start under the answer given to the freeze.** "After 2022 passes" presumes
+2022 can be solved and scored; `holdout-freeze.json`'s `frozen_operations` are exactly
+`solve` / `score` / `dashboard registration`, for every out-of-training year including the
+validation tier.
+
+The established remedy is a **narrow 2022-only lift with a same-session re-arm** — used
+twice already (2026-08-05, PJM + NEISO; 2026-08-06, NEISO on the corrected gas basis). It
+leaves 2021, 2020, 2019 and H1-2026 fully protected, and it is the disposition the
+validation tier exists for: 2022 is *iterable* by design, re-spendable, and never a
+certified out-of-sample number.
+
+**Not requested and not taken here.** The freeze answer recorded in §10.1 is HOLD, and it
+stands until the owner says otherwise. This section records the conflict so the sequence is
+not started against a gate that will refuse it.
+
+### §10.6 — B4's exit condition, still unnamed
+
+"Wait" needs something to wait for. The architecture route is closed by measurement
+(pjm-159 task B: adj R² 0.038 / 0.047 / 0.054 against a 0.25 bar, plus the no-MIP mandate),
+and PJM's price lane is at an owner-declared frontier whose known trajectory moves this
+mechanism *against* the number. Three candidates: the no-MIP mandate changes; a proposal
+clears the 0.25 falsification bar (FINDING-pjm159 §4); or **the step-2 forecast test supplies
+the evidence**. The third is plausible and would fold B4 into the sequence instead of leaving
+it open-ended — worth naming now rather than rediscovering at step 4.
+
+**Next shorthand: pjm-161.**
