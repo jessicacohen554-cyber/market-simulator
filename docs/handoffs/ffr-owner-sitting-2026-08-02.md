@@ -2826,3 +2826,78 @@ vintage-gate question. Prompt: pack §0s.
 ADD: the gas_st taxonomy seam (owner card after FFR-7C). CARRY: FFR-3V §6.1 (unowned),
 FFR-4D row-4, ruff-autofix/constants.py lint fix, assign_zone_by_coords, pre-existing test
 failures, D-21(a) DEFERRED (owner re-opens, not the manager). STRUCK: nothing this cycle.
+
+## Addendum X — Wave 7 closes: the bound survives; Arm 1 zero-delta; the NEISO locked-test record is false
+
+**Written 2026-08-06 by the workstream manager at `origin/main` `97e37b0f`.**
+
+### X.1 FFR-7C — ADJUDICATED CLEAN (PR #3658)
+
+Pre-registration discipline held (unit list + decision rule committed before any margin was
+computed; the reproduction gate re-derived FFR-6A's replica exactly). **The restated bound:
+ERCOT's margin-consistent exit total 2021–2025 on the CORRECTED target is 0 MW of 2,294 MW**,
+decoded unit-by-unit over 87.6 % of the thermal target with per-unit measured heat rates —
+every large exit clears its bar at measured prices (Sandy Creek 1.25×, the tightest), and
+the taxonomy-seam units were scored against BOTH bars with bar-invariant verdicts. FFR-6A's
+conclusions 1 (price object) and 2 (bars exonerated) are VERIFIED UNTOUCHED; the V.1(c)
+caveat is DISCHARGED — the bound is restored, stronger, at the larger denominator. **The
+evidence-kind finding the manager carries to the owner:** this window can FALSIFY an
+over-retiring screen but can never CONFIRM a correctly-retiring one (a correct object must
+produce ≈ 0 economic exits here) — any positive validation of a repaired price object must
+come from the PRICE side (the 161/217 h > $100 the object misses), not the exit side. This
+sharpens what the deferred D-21(a) lane would measure, without re-opening it. Second-order
+flag → card D-24: the ERCOT ≥ 300 MW recall gate's two members are Decker (not in the fleet
+— unreachable by construction) and Sandy Creek (which a correct screen must NOT retire), so
+the gate as constructed is one no admissible screen can pass. The §9.3 OP-only question was
+measured and reported: ERCOT essentially invariant (one 7.6 MW row); widening (a) bites
+MISO (84 rows / 392.7 MW thermal) — recorded as available, no action recommended now.
+
+### X.2 FFR-7B Arm 1 — ADJUDICATED CLEAN (PRs #3649/#3654); Arms 2–3 handed off correctly
+
+Statutory trajectory + eligible-set corrections landed for NYISO (2040 1.00 → 0.70, PSL
+§66-p), CAISO (0.60 flat, §399.15(b)(2)(C)), NEISO (per-state new-renewable blend
+.29/.40/.48/.50 replacing the "CES blend") — every level web-verified against primary
+statute text, zero free parameters, no gate flag (an ungated rule-14 accurate-data
+correction). **The Addendum-D paired controls came back BYTE-IDENTICAL in all three ISOs**
+(NYISO 25/25, CAISO 22/22, NEISO 28/28 parquet sha256-equal; registered as verification
+runs) — backcast contact NONE, no promotion hold needed. The forecast-side mechanism removed
+is exactly FFR-6B §8.3's unstatutory ACP-pinned entry subsidy. In passing the lane found and
+fixed THREE pre-existing main breakages, most seriously **nyiso-128's unregistered
+cache-key field live on main** (the FFR-5E §6.2 hazard class in the wild: the pinned default
+key had moved and every default-key pin test was failing on clean main) — noted as a CI-gap
+data point: the pin tests exist but main was red and nothing stopped the merge. Arms 2–3
+were HANDED OFF, not landed ("never land a partial arm" honored), with implementation-ready
+notes (7B handoff §6) — continuation FFR-7B-2 dispatched (pack §0t).
+
+### X.3 Wave 7 — CLOSED (with one continuation)
+
+FFR-7A, FFR-7B Arm 1, FFR-7C adjudicated clean; FFR-7B-2 (Arms 2–3) is the sole carry-over,
+chartered under the same owner decision D-22(a). Registration/matrix hygiene verified on all
+three lanes; keepers moved twice mid-wave (NYISO → nyiso-128-solar-basis; CAISO → caiso-175
+earlier) with zero shipped-default flips (R.1-checked).
+
+### X.4 The NEISO locked-test record is FALSE — neiso-87's governance finding, verified
+
+Not an FFR lane, but a record the manager's own brief repeats. neiso-87
+(`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1) searched the
+artifact record at HEAD: **no NEISO 2019 solve, score, bundle, bench row, or registry entry
+exists**; the memo cited as authorization contains no mention of 2019; `locked_test_scored_on`
+points at a config id whose own record says "solved full-span 2023–2025"; and the 2026-07-07
+owner decision authorized a one-shot on 2022 (pre-tier-split terminology) whose execution
+was HELD the same day. The third-party peer review reached the same conclusion independently
+(§6.3 item 1). **The "SPENT, never re-grantable" claim is documentation drift, live in 13
+files including CLAUDE.md rule 22 itself, the marker, and the freeze file.** The correct
+framing of any future NEISO `final` question is "should a never-granted one-shot be granted"
+— and neiso-87's own merits answer is NOT YET (unrunnable year, non-discriminating test).
+Editing a locked-tier marker is an OWNER ACT: card D-23 put. Until signed, the manager's
+own briefs stop repeating SPENT and cite this addendum instead.
+
+### X.5 Cards put at this sitting
+
+* **D-23 — correct the NEISO locked-test record** (SPENT → never-granted) across the 13
+  files, by a chartered record-correction lane, with the marker edit as the owner's own
+  signed act. Manager recommends: sign.
+* **D-24 — the ERCOT ≥ 300 MW recall gate** measures something no admissible screen can
+  pass (X.1). Manager recommends: redefine it against the reachable set (fleet-carried,
+  non-instrument exits) as part of scoring, not chase it.
+Dispositions recorded by addendum when signed.
