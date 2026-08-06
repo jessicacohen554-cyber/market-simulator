@@ -463,7 +463,10 @@ def federal_ces_suppresses_state_rps(config: ScenarioConfig) -> bool:
     ``federal_ces_enabled`` AND ``federal_ces_replaces_state_rps`` both
     on, the state RPS LP row is not built (``rps_target`` stays ``None``),
     so no RPS dual exists and the federal premium is the only attribute
-    mechanism. Moot for ERCOT/PJM, which carry no RPS row.
+    mechanism. Moot only for ERCOT (all-zero ``STATE_RPS_FLOORS`` entry — no
+    row either way); PJM carries a row (0.185→0.33 since the FF-1E-policy
+    refresh), so the suppression is live there (stale-comment fix, FFR-6B
+    §5.4).
     """
     return bool(config.federal_ces_enabled and config.federal_ces_replaces_state_rps)
 
