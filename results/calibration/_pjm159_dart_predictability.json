@@ -1,0 +1,77 @@
+{
+  "probe": "pjm-159 K-A1/K-C1 \u2014 DA-RT predictability from model-visible state",
+  "bar": "adjusted R2 >= 0.25 in every year",
+  "verdict": "FAIL",
+  "kills": [
+    "C-A (two-price LP)",
+    "C-C (wedge)"
+  ],
+  "years": [
+    {
+      "year": 2023,
+      "n_hours": 8760,
+      "spread_mean": 0.893,
+      "spread_sd": 14.514,
+      "spread_mean_abs": 6.647,
+      "adj_r2_ladder": {
+        "calendar (hod + month)": 0.0037,
+        "+ weekend": 0.0038,
+        "+ net-load percentile": 0.0044,
+        "+ load level & VRE share": 0.0134,
+        "+ net-load ramp": 0.014,
+        "+ tightness proxy": 0.0381,
+        "+ hod x month interaction": 0.0299
+      },
+      "adj_r2_best": 0.0381,
+      "passes_bar": false,
+      "basis_twh_pjm158": 5.836,
+      "shape_leg_twh": 2.845,
+      "shape_leg_reachable_twh": 0.108,
+      "shape_leg_unreachable_twh": 2.737
+    },
+    {
+      "year": 2024,
+      "n_hours": 8760,
+      "spread_mean": 0.256,
+      "spread_sd": 16.491,
+      "spread_mean_abs": 7.972,
+      "adj_r2_ladder": {
+        "calendar (hod + month)": 0.0155,
+        "+ weekend": 0.0161,
+        "+ net-load percentile": 0.0172,
+        "+ load level & VRE share": 0.0216,
+        "+ net-load ramp": 0.0217,
+        "+ tightness proxy": 0.0471,
+        "+ hod x month interaction": 0.0374
+      },
+      "adj_r2_best": 0.0471,
+      "passes_bar": false,
+      "basis_twh_pjm158": 4.621,
+      "shape_leg_twh": 3.648,
+      "shape_leg_reachable_twh": 0.172,
+      "shape_leg_unreachable_twh": 3.476
+    },
+    {
+      "year": 2025,
+      "n_hours": 8760,
+      "spread_mean": 0.825,
+      "spread_sd": 35.11,
+      "spread_mean_abs": 11.699,
+      "adj_r2_ladder": {
+        "calendar (hod + month)": 0.0106,
+        "+ weekend": 0.0105,
+        "+ net-load percentile": 0.0111,
+        "+ load level & VRE share": 0.017,
+        "+ net-load ramp": 0.0179,
+        "+ tightness proxy": 0.0274,
+        "+ hod x month interaction": 0.054
+      },
+      "adj_r2_best": 0.054,
+      "passes_bar": false,
+      "basis_twh_pjm158": 6.577,
+      "shape_leg_twh": 4.145,
+      "shape_leg_reachable_twh": 0.224,
+      "shape_leg_unreachable_twh": 3.921
+    }
+  ]
+}
