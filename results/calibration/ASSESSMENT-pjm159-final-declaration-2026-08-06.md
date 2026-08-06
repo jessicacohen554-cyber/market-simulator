@@ -369,14 +369,17 @@ whose mechanism differs from the keeper's.
 
 ## §7 — the CAMPD economic-layup residual: the freeze's `lifts_when`
 
-**Freeze state at this session's HEAD (`305688a4`), stated precisely.** The file
-reads `active: false` — but that is a **transient, NEISO-only lift** granted
-2026-08-06 (session neiso-86) for exactly one spend: re-solving **NEISO** 2022 on
-the corrected gas-basis input. Its own `lift_scope` says *"Nothing else is
-authorized and nothing else may be spent — … NOT 2019 or H1-2026 … and NOT any
-other ISO,"* and it is re-armed in the same session by design, so *"the file's
-steady state remains FROZEN."* **PJM is authorized nothing by it.** Every
-governance statement in this assessment holds unchanged.
+**Freeze state, stated precisely — and now settled.** This session first read the
+file at `origin/main` `305688a4`, where it showed `active: false` under a
+**transient, NEISO-only lift** granted 2026-08-06 (session neiso-86) for exactly
+one spend: re-solving **NEISO** 2022 on the corrected gas-basis input. Its own
+`lift_scope` said *"Nothing else is authorized and nothing else may be spent — …
+NOT 2019 or H1-2026 … and NOT any other ISO,"* and promised a same-session
+re-arm. **That re-arm has since landed** (`1af56e4a`): the authorized spend
+completed and registered as `2026-08-06-neiso-2022-corrected-basis`, and the
+freeze is **ACTIVE again on its original 2026-07-25 basis**, `reason` and
+`lifts_when` unchanged. **PJM was authorized nothing at any point in that
+sequence.** Every governance statement in this assessment holds unchanged.
 
 **And the discrepancy an earlier draft of this section flagged is now RESOLVED on
 the record — in favour of the freeze.** `holdout-freeze.json`'s `lifts_when`
@@ -464,7 +467,12 @@ discovery*, not about any individual defect's severity.
    `eia_demand_profiles{,_meta}.parquet` extended below 2021, then
    `calibration_reference.json` `isos.PJM.2019` + `PJM_2019_renewable_capacity.csv`
    rebuilt by their own committed builders. **Fixes B1 and — via `lw_retrofit` —
-   B3 in one step.** No LP required.
+   B3 in one step.** No LP required. *Scope note (owner decision 2026-08-06, after
+   this assessment's first draft): the program's working span is now **2019–2025**,
+   2018 and earlier are DROPPED, and the validation ladder bottoms out at 2020. So
+   this gap is now only 2019–2020 wide, not 2018–2020 — a smaller job than the
+   register's "MISSING 2018-2020" rows imply. 2019 itself remains **locked-test
+   tier**, needing a `final` marker no ISO holds, so B1 stands unchanged.*
 2. **Build PJM 2019 `rt_lw`/`da_lw`** (`derive_actual_lmp.py --lw-retrofit`,
    unblocked by step 1) so the locked-test C3a is on the same statistic as every
    in-sample number. Verify the committed 2023–2025 rows re-derive byte-identically.
@@ -485,8 +493,8 @@ discovery*, not about any individual defect's severity.
    dependence as a stated limitation of the certified number.
 6. **Lift the freeze for PJM** (owner act). Note the owner declined a full lift
    on 2026-08-06 despite the charter recommending it (§7), so this is a live
-   decision to revisit, not a formality — and the current `active: false` state
-   is a NEISO-only transient that authorizes PJM nothing.
+   decision to revisit, not a formality — the freeze is **ACTIVE** again after
+   the NEISO-only spend it was briefly lifted for.
 7. **Then** declare `final`, and spend once: `--year 2019 --holdout-authorized`,
    frozen keeper recipe, result recorded whatever it is, `locked_test_scored_on`
    frozen and never re-keyed (rule 22).
@@ -530,10 +538,10 @@ year is structurally unspendable.
 ## §11 — governance statement
 
 - **Rule 22 (holdout):** freeze respected absolutely. No out-of-training year was
-  solved, scored or registered. This session rebased onto `origin/main`
-  **`305688a4`** mid-way and re-verified the freeze at that HEAD: it reads
-  `active: false` under a **NEISO-2022-only transient lift** (2026-08-06, session
-  neiso-86) that authorizes PJM nothing and is re-armed by design — see §7. The
+  solved, scored or registered. This session rebased twice as `origin/main`
+  advanced (`2321ce86` → `305688a4` → **`1af56e4a`**) and re-verified the freeze at
+  each HEAD; it is now **ACTIVE**, the NEISO-2022-only transient lift having been
+  spent and re-armed — see §7. PJM was authorized nothing at any point. The
   2019 and 2018–2022 numbers in §4 and §5 are
   reads of **measured committed bench artifacts** with **no model output on
   either side** — the same class of read pjm-157 and pjm-158 §1 performed, and

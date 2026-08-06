@@ -3563,4 +3563,172 @@ proposed or tested, so no cell moves. Rule 15: no run produced, nothing owed to
 either dashboard. Rule 27: Opus. Keeper **UNCHANGED**; no marker re-keyed; `final`
 stays **EMPTY** — the declaration is the owner's.
 
+---
+
+### pjm-159 task B — the DA/RT architecture question: **NO admissible architecture exists; the mismatch is a MEASURED, CLOSED representation boundary.** And PJM is **NOT** a lambda0 attractor (2026-08-06)
+
+**Owner-authorized** 2026-08-06 ("Do task B and c") -- the explicit authorization
+the pjm-158 escalation required. The pjm-142 frontier was opened for **this
+question only** and **closes again** with the finding.
+**PREREG:** `results/calibration/PREREG-pjm159-da-rt-architecture-2026-08-06.md`,
+committed at `d4310783` **before any probe ran**. **FINDING:**
+`FINDING-pjm159-da-rt-architecture-closed-2026-08-06.md`. Probes
+`_pjm159_dart_predictability.py`, `_pjm159_lambda0_attractor.py`; committed JSON
+`_pjm159_{dart_predictability,lambda0_attractor}.json`. **Zero LP solves. No
+ScenarioConfig field added. Keeper UNCHANGED.**
+
+**All four candidate architectures are dead.**
+
+**(1) TWO-PRICE LP -- dead on measurement AND on mandate.** A second LP pass can
+differ from the first only through state it can SEE, so the DA-RT spread it would
+reproduce must be a function of model-visible state. It is not: adjusted R2
+**0.038 / 0.047 / 0.054** against the pre-registered **0.25** bar, on a
+deliberately generous seven-block ladder (calendar -> weekend -> net-load
+percentile -> load level & VRE share -> net-load ramp -> tightness proxy -> a
+264-column hod x month interaction). The interaction block LOWERS adjusted R2 in
+2023/2024 (0.0381->0.0299, 0.0471->0.0374) -- the penalty correctly refusing to
+pay for 264 columns. Nothing measured is on the RHS: no LMP, no cleared price, no
+DA quantity, because a regressor the model cannot produce forward is not an
+admissible driver and including one would manufacture a pass. K-A2 kills it again
+independently: the repo is no-MIP and P2 is archived, so a DA pass without
+commitment is a second copy of the same LP with the same dual, and pjm-138 already
+put the reserve-opportunity-cost half of PJM's price gap outside a no-MIP LP.
+
+**(2) MEASURED RECONCILIATION WEDGE -- dead on the same regression, as rule 13's
+forward test.** A state-conditional wedge reaches **0.108 / 0.172 / 0.224 TWh** of
+pjm-158's **2.845 / 3.648 / 4.145 TWh** SHAPE leg = **4-5 %** of the leg it exists
+to close. (The LEVEL leg is closed by any intercept *definitionally*, which says
+nothing about identifiability, and a constant tuned to a measured mean has no
+forward analogue.) What the spread actually is: mean **+0.89/+0.26/+0.83** against
+sd **14.5/16.5/35.1** and mean|.| **6.65/7.97/11.70** $/MWh -- a forecast-error and
+risk-premium process, exactly what a perfect-foresight LP cannot generate and must
+not be made to imitate. Independent hazard even had it passed: the spread FLIPS
+SIGN outside the training window (assessment section 5), so an in-sample wedge
+would carry the wrong sign in four of five other committed years.
+
+**(3) RE-ANCHOR TO THE MODEL'S OWN DUAL -- dead on rule 13's face, NOT on its kill
+test.** Re-deriving the measured book so it nets ~0 at the model's price is
+rescaling a measured input so the model's output lands somewhere -- the forbidden
+move -- and it destroys the identification, since the book's net-zero property at
+the actual DA price is a measured fact about what participants submitted. PREREG
+section 4 anticipated this ("killed by K-B1 **or by rule 13 on its face**"), so it
+is not a deviation.
+
+**(4) RE-GATE THE SCORER TO DA -- REFUSED EX ANTE**, no measurement: the model IS
+an RT analogue and bending a load-bearing rubric criterion to accommodate one
+mechanism is worse than fitting a parameter. Any future attempt needs its own
+owner decision as a rubric amendment.
+
+**=> PREREG section 4 branch 2. The DA/RT clearing-basis mismatch is a MEASURED,
+CLOSED representation boundary**, with a falsification bar (finding section 4) any
+future proposal must clear. Phase 1 was correctly never entered -- no candidate
+survived Phase 0, so no mechanism was built and no A/B was solved.
+
+**THE CELL'S PRE-IDENTIFIED OPEN ITEM IS NOW RUN, AND PJM PASSES IT: PJM IS NOT A
+lambda0 ATTRACTOR.** The matrix cell had carried "the lambda0-attractor question
+... was never asked in PJM ... it needs PJM's own lambda0-gap and N/(S+N)
+measurement." Run on PJM's own corpus, on miso-105's bars:
+
+| K-B1 | 2023 | 2024 | 2025 | bar | MISO, for contrast |
+|---|---:|---:|---:|---|---|
+| (i) median \|lambda0 - actual DA\| | $3.90 | $3.78 | $5.33 | <= $2 | $0.09 / $1.80 / $0.17 |
+| hours within $2 | 27.4 % | 28.5 % | 19.2 % | — | — |
+| (ii) displacement share N/(S+N) | 11.9 % | 11.6 % | 11.5 % | >= 30 % | 31-34 % |
+
+**NEITHER bar fires.** PJM's book does not pin the price it cleared at, and PJM's
+stack is far more elastic (pjm-142's measured **2.88/3.37/2.57 GW per $1**), so the
+same-sized book supplies about a third as much price displacement. **Rule 25
+vindicated by MEASUREMENT rather than assertion:** the family is `G` in MISO
+*because* MISO is an attractor, and PJM measurably is not.
+
+**So `da_virtual_bids` PJM stays `K` on an evidential basis pjm-158 LACKED.** Two
+additions: the misalignment is **irreparable rather than merely unrepaired**, so
+rule 14's "keep the accurate input and document the misalignment" is the TERMINAL
+disposition, not a deferral; and the mechanism is measurably **not corrupting the
+model's price**, so the rule-1 worry that killed MISO's version does not apply here.
+
+**STATED AGAINST INTEREST -- this session CORRECTED its own pre-registered
+estimator.** The PREREG said bar (ii) would be judged on a net-load-CONDITIONAL
+stack slope, reasoning it was the conservative choice. That was wrong:
+conditioning on net load removes the movement ALONG the stack together with the
+demand shift (within a decile, dispatchable quantity is nearly pinned by load), so
+`dQ/dlambda` is driven toward zero mechanically -- it lands at **0.085/0.496/0.424
+GW/$**, 6-30x below pjm-142's independent measurement of the same quantity. **On
+that broken slope bar (ii) WOULD have fired at 82/47/44 %, and I would have
+reported an attractor finding that is an artifact.** Bar (ii) is therefore judged
+on pjm-142's directly measured slope, cross-checked by this probe's revealed slope
+(1.54/1.94/1.26 GW/$, giving 18.6-21.0 % -- also below the bar). The correction
+moves the result TOWARD the incumbent, so it gets the most scrutiny, not the least:
+all three estimates are in the committed JSON, both readings of the kill rule are
+recorded (the PREREG's "either bar" vs miso-105's conjunction -- moot here, since
+neither fires), and the falsification route is explicit -- **a stack-derived S
+below ~0.9 GW/$ would cross 30 % and re-open the attractor question.**
+
+**STANDING WARNING UNCHANGED, now with a reason.** The DA-RT basis
+(+5.84/+4.62/+6.58) and the model's own price error (-12.53/-9.55/-5.88) still
+oppose each other by coincidence, so improving C3b toward RT still **GROWS** this
+layer's phantom demand toward +5 to +7 TWh -- toward the condemned pjm-102 clamp.
+Task B's contribution is the reason it cannot be fixed in passing: the basis is not
+a calibration residual with a driver, so there is nothing to co-calibrate, and
+**section 1 is the standing record that no admissible wedge exists to offset it --
+do not reach for one.**
+
+**Governance.** Frontier opened by owner authorization for this question only and
+CLOSED again by the finding; no successor lane opened or implied. Rule 28 duty (b)
+discharged -- the `da_virtual_bids` PJM cell is updated in this session with the
+lambda0 result and the closed-boundary verdict (`scripts/check_mechanism_matrix.py`
+integrity OK); duty (c) does not arise, no new mechanism. Rules 12/16: no bundle,
+no solve. Rule 15: no run, nothing owed to either dashboard. Rule 22: freeze
+respected, no out-of-training year solved/scored/registered; the 2018-2022 and 2019
+spreads are reads of measured committed artifacts with no model output on either
+side. Corpus: 36 `hrl_da_incs_decs` files fetched, default span 2023-2025 --
+in-sample, unrestricted, NOT rule-22 intake (the pjm-158 precedent).
+
+---
+
+### pjm-159 task C — the cross-ISO bench `npl = 1 MW` defect is FIXED (2026-08-06)
+
+`scripts/render_calibration_html.py::_eia860_plant_info` now unions
+`eia860_generator_retired_within_window.parquet` -- the SAME artifact the model
+side already consumes via `fleet.load_retired_within_window` for exactly this gap,
+whose docstring names **Mystic (plant 1588)** as its motivating example. The bench
+side never got the same treatment, and NEISO 1588 is in the stranded population.
+Retiree pass read FIRST so the operable pass wins on conflict: purely additive,
+every already-correct entry byte-identical, no parameter introduced.
+
+**Severity sharpened.** pjm-158 said the hourly blob was "destroyed"; measured, it
+is more specific. `_b64` clips at 250, so with `npl = 1` every generation hour
+above 2.5 MW saturates and the blob collapses to 2-6 distinct byte values (13-87 %
+at the clip). Consequence: **energy is EXACT** (consumers rescale by the committed
+`c_ann`, which is why no annual gate ever caught it), the **commitment pattern
+survives**, and the **loading profile inside committed hours is LOST**.
+
+**Population and recovery: 18 stranded plant-years / 24.17 TWh -> 0.00 TWh, all
+four ISOs.** PJM 13.45 (2022 9.87 / 2023 3.26 / 2024 0.32), MISO 6.16, NEISO 4.27,
+CAISO 0.29. Names repaired too -- the bench carried bare plant codes and now reads
+W H Sammis (1,706.5 MW), Homer City (2,012.0), AES Warrior Run (229.0), Joliet 29
+(1,320.0), Mystic (1,744.4), Rush Island (1,242.0), Edwardsport (812.7), CAISO 356
+(821.4). The residual `or 1.0` guard now REPORTS on stderr instead of failing
+silently.
+
+**NO GATED NUMBER MOVES IN THIS COMMIT** -- committed bench parts are unchanged, so
+every keeper scores exactly as before. The bench payload is rebuilt on every run
+registration (`dashboard_add_run.py`), so the correction **propagates to each ISO
+the next time it registers a run**, at which point D-1/D-2 for a class holding one
+of these plants may move. That is the point of the fix and must be reported by
+whichever session next registers in PJM / MISO / NEISO / CAISO (rule 14: keep the
+accurate input, find the root cause, do not bury it). Rule 25: a shared
+data-builder defect is not a mechanism verdict -- no verdict transfers.
+
+Tests: `tests/scoring/test_bench_nameplate_retiree_vintage.py`, 4 hermetic tests
+(both vintages read; operable wins on conflict; a retiree-only plant resolves to
+its real MW; the `_b64` 250-clip that made the defect silent is pinned). Probe
+`_pjm159_bench_nameplate_fix.py` + committed `_pjm159_bench_nameplate_fix.json`.
+
+**Pre-existing and NOT fixed here:** 7 failures in `tests/scoring/`
+`test_ff_readiness_battery.py` + `test_forecast_parity.py` reproduce identically on
+`origin/main` with this session's changes stashed (ERCOT `ercot_storage_as_soc_reserve`
+and NYISO `nyiso_seam_deliverability_envelope` armed with no forecast-parity
+registry declaration). Another lane's debt, reported not adopted.
+
 Next shorthand: **pjm-160.**
