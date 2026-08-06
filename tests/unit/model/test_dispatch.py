@@ -1056,6 +1056,126 @@ class TestRPSConstraint(unittest.TestCase):
         self.assertIsNotNone(result.rps_shadow_price)
         self.assertAlmostEqual(result.rps_shadow_price, 0.0, places=3)
 
+    def _hydro_gas_fleet(self):
+        """A two-unit fleet: one hydro unit, one gas unit, both in Z0."""
+        generators = [
+            Generator(
+                unit_id="H0",
+                name="H0",
+                zone="Z0",
+                fuel_type="hydro",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+        ]
+        return generators_to_fleet_arrays(generators, ["Z0"], hours=self.T)
+
+    def test_rps_eligible_default_set_is_byte_identical(self):
+        # FFR-7B Arm 1 byte-identity proof at the matrix level: the None
+        # default and the explicit wind+solar-only set produce the identical
+        # constraint matrix and bounds — the eligible-set generalization is
+        # the wind+solar special case by construction, not by assertion. A
+        # hydro unit is present so a widened set WOULD differ (the contrast
+        # that makes the identity non-vacuous, asserted at the end).
+        layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=24)
+        fleet = self._hydro_gas_fleet()
+        demand = np.full((1, 24), 80.0)
+        base = build_constraints(layout, fleet, demand, rps_target=0.5)
+        explicit = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_target=0.5,
+            rps_eligible_fuels=("wind", "solar"),
+        )
+        self.assertEqual((base[0] != explicit[0]).nnz, 0)
+        np.testing.assert_array_equal(base[1], explicit[1])
+        np.testing.assert_array_equal(base[2], explicit[2])
+        widened = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_target=0.5,
+            rps_eligible_fuels=("wind", "solar", "hydro"),
+        )
+        self.assertGreater((base[0] != widened[0]).nnz, 0)
+
+    def test_rps_eligible_hydro_counts_toward_target(self):
+        # NYISO semantics (PSL §66-p: existing hydro counts toward the
+        # renewable target): with hydro in the eligible set, cheap hydro
+        # satisfies the 50% floor and the REC dual collapses to zero; with
+        # the default wind+solar-only set the same fleet must run expensive
+        # wind and the dual is the wind premium.
+        fleet = self._hydro_gas_fleet()
+        # Row 0 hydro (MC 5), row 1 gas (MC 20).
+        mc = np.vstack([np.full(self.T, 5.0), np.full(self.T, 20.0)])
+        demand = np.full((1, self.T), 80.0)
+        common = dict(
+            mc=mc,
+            T=self.T,
+            rps_target=0.5,
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),
+            wind_mc=100.0,  # expensive renewable, idle absent the RPS
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
+        wide = solve_dispatch(
+            fleet,
+            demand,
+            rps_eligible_fuels=("wind", "solar", "hydro"),
+            **common,
+        )
+        self.assertEqual(wide.status, "Optimal")
+        # Hydro (50% of demand at MC 5) clears the floor: dual ~ 0.
+        self.assertAlmostEqual(wide.rps_shadow_price, 0.0, places=3)
+
+        narrow = solve_dispatch(fleet, demand, **common)
+        self.assertEqual(narrow.status, "Optimal")
+        # Wind must displace hydro/gas to reach the floor: dual is the wind
+        # premium over the displaced marginal unit, far above zero.
+        self.assertGreater(narrow.rps_shadow_price, 50.0)
+
+    def test_rps_eligible_nuclear_refused_by_name(self):
+        # CX-6a: nuclear never widens the renewable row — a clean tier that
+        # counts nuclear is a separate row family (FFR-6B §6.3).
+        fleet = self._hydro_gas_fleet()
+        demand = np.full((1, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                demand,
+                T=self.T,
+                rps_target=0.5,
+                rps_eligible_fuels=("wind", "solar", "nuclear"),
+                **self._no_renewables(1),
+            )
+
+    def test_rps_eligible_unknown_fuel_refused(self):
+        # An eligible-fuel name that does not resolve against FUEL_TYPE_MAP
+        # is a hard error, never a silent drop.
+        fleet = self._hydro_gas_fleet()
+        demand = np.full((1, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                demand,
+                T=self.T,
+                rps_target=0.5,
+                rps_eligible_fuels=("wind", "solar", "smallhydro"),
+                **self._no_renewables(1),
+            )
+
 
 class TestMassCapConstraint(unittest.TestCase):
     """The emissions mass-cap row, its endogenous dual, and membership."""

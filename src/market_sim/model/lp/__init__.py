@@ -297,6 +297,7 @@ def solve_dispatch(
     storage_discharge_cost: np.ndarray | float = 0.0,
     rps_target: float | None = None,
     rps_acp_price: float | None = None,
+    rps_eligible_fuels: tuple[str, ...] | None = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -418,8 +419,8 @@ def solve_dispatch(
             ``(n_zones, T)``.
         storage_discharge_eac: Exogenous EAC paid per MWh discharged in
             $/MWh, lowering the storage discharge slot cost.
-        rps_target: Required renewable-energy (wind+solar) share. When not
-            ``None`` and positive, an annual RPS constraint is enforced and its
+        rps_target: Required renewable-energy share. When not ``None`` and
+            positive, an annual RPS constraint is enforced and its
             dual is returned as ``DispatchResult.rps_shadow_price``.
         rps_acp_price: Optional RPS Alternative Compliance Payment ceiling in
             $/MWh. When set alongside a positive ``rps_target``, an ACP escape
@@ -427,6 +428,11 @@ def solve_dispatch(
             fall short (paying the ACP substitutes for renewable energy) and its
             dual (the REC price) is capped at this ceiling. ``None`` (default)
             keeps the RPS a hard constraint, byte-identical to before.
+        rps_eligible_fuels: The ISO statute's renewable-tier eligible fuel
+            names (``policy.rps.get_rps_eligible_fuels``); names beyond
+            wind/solar add the matching thermal-block generator columns to the
+            RPS row (FFR-7B Arm 1). ``None`` (default) keeps the
+            wind+solar-only row, byte-identical to before.
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no
@@ -485,6 +491,7 @@ def solve_dispatch(
         storage_discharge_cost=storage_discharge_cost,
         rps_target=rps_target,
         rps_acp_price=rps_acp_price,
+        rps_eligible_fuels=rps_eligible_fuels,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,

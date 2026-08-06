@@ -100,6 +100,11 @@ class DispatchSpec:
     # row feasible and caps its dual. UNSET (backcast, which disables the RPS)
     # is omitted from the kwargs, so the LP key set there is unchanged.
     rps_acp_price: Any = UNSET
+    # RPS statutory eligible-fuel names (FFR-7B Arm 1) — names beyond
+    # wind/solar add the matching thermal-block generator columns to the RPS
+    # row. UNSET (backcast — rps disabled; or no active row) omits the key, so
+    # the LP key set is unchanged and the row stays wind+solar-only.
+    rps_eligible_fuels: Any = UNSET
     # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
     # symmetric -ttc.
     ttc_import: Any = UNSET

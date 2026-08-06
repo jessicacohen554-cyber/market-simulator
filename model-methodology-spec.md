@@ -219,15 +219,16 @@ Import-node and inter-zone flow columns get a zero coefficient (in-region emissi
 
 **Build rule:** Every policy parameter in the config is tagged `kind: "adder"` or `kind: "constraint"`. The LP builder checks for active constraint-type policies and appends rows.
 
-**RPS (active):** When `rps_enabled` is set and the ISO has an RPS floor for the year, the dispatch LP appends one annual constraint row requiring wind, solar and nuclear generation to reach `rps_target` of total demand:
+**RPS (active):** When `rps_enabled` is set and the ISO has an RPS floor for the year, the dispatch LP appends one annual constraint row requiring the statute's renewable-tier eligible generation to reach `rps_target` of total demand. The target is the statute's RENEWABLE tier (`STATE_RPS_FLOORS` — never a nuclear-counting clean/zero-emission tier, FFR-7B Arm 1), and the eligible set is the statute's (`RPS_ELIGIBLE_FUELS_BY_ISO`, cited per ISO): the wind/solar zone columns always count, and any further statutorily-eligible classes (NYISO existing hydro; CAISO geothermal/biomass; offshore wind where present) enter via their thermal-block dispatch columns. **Nuclear is never eligible** (CX-6a — counting it would crush the REC dual; nuclear's zero-emission support flows through `eac_price_nuclear`/CES instead; the spec's original nuclear-counting formulation is superseded):
 
 ```
 # RPS constraint (annual)
-Σ_z Σ_t (W[z,t] + S[z,t]) + Σ_{g∈nuclear} Σ_t P[g,t]
+Σ_z Σ_t (W[z,t] + S[z,t]) + Σ_{g∈eligible non-W/S classes} Σ_t P[g,t] (+ Σ_t ACP[t])
     ≥ rps_target × Σ_z Σ_t Demand[z,t]
 
-Dual on this constraint = REC price ($/MWh), which feeds into
-the economic new entry screen as additional clean energy revenue.
+Dual on this constraint = REC price ($/MWh), capped at the ACP ceiling by the
+escape column, which feeds into the economic new entry screen as additional
+clean energy revenue.
 ```
 
 The constraint creates a shadow price that raises clean revenue and compresses thermal margins, so clean additions and thermal retirements are driven entirely through the economic screens — no force-build in capacity evolution.
@@ -249,7 +250,7 @@ The CO2 mass cap above is the first realized constraint of this family; a NOx ma
 - **Premium path (year-aware, real 2026$/MWh):** `premium_for_year` resolves sparse `{year: value}` knots (linear interpolation, edge-held — the `STATE_RPS_FLOORS` pattern) or `base × (1 + escalation_real)^(year − 2026)`. A flat real premium is CPI-tracking in nominal terms (owner default: escalation 0).
 - **Crediting modes:** `clean_capture` (default) credits eligible zero-carbon fuels at 1.0, abated gas at the policy-assumed `federal_ces_ccs_capture_fraction` (0.95 — the owner's target capture rate; distinct from the engineering capture-rate fields), unabated fossil 0. `cesa_ci` credits eligible fuels `clip(1 − CI/0.82, 0, 1)` (Bingaman S.2146 benchmark) on each unit's own LP-boundary CO2 rate, extended to unabated gas CC at or under the 0.45 t/MWh eligibility cutoff (≈ EPA §111(b) new-CCGT NSPS; the fraction is always computed against the benchmark, never the cutoff).
 - **Effective prices, all consumers:** every seam takes `max(legacy eac_price_*, premium × credit fraction)` — dispatch per-unit (`effective_unit_eac_prices` through `apply_eac_to_mc(mc, fleet, config, year)`), wind/solar/storage dispatch credits (storage only under `federal_ces_storage_eligible`, owner default off), the retirement screen per-unit (`effective_eac_price_for_unit` on the unit's own fuel + CI), and both new-entry screens per-tech (`effective_eac_price_for_tech` — this is what lets `nuclear_smr` and the hydrogen turbines earn the premium). The caller-side `max()` against the RPS dual and the §45U fold are unchanged. The **CCS-retrofit screen is deliberately not wired** — its economics are redesigned in W2-C (plan §11) and it keeps its legacy `eac_price_gas_cc_ccs` input until then.
-- **State-RPS suppression counterfactual:** `federal_ces_replaces_state_rps` (with the master gate) skips the state RPS LP row entirely (`rps_target` stays `None`), so no REC dual exists and the federal premium is the only attribute mechanism — the pure-federal scenario for RPS ISOs (moot in ERCOT/PJM, which carry no RPS row).
+- **State-RPS suppression counterfactual:** `federal_ces_replaces_state_rps` (with the master gate) skips the state RPS LP row entirely (`rps_target` stays `None`), so no REC dual exists and the federal premium is the only attribute mechanism — the pure-federal scenario for RPS ISOs (moot only in ERCOT, whose all-zero floors build no row; PJM carries a row since the FF-1E-policy refresh — stale-comment fix, FFR-6B §5.4).
 
 ### 1.5 Emerging Technologies
 
