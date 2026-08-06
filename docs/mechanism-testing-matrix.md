@@ -3154,6 +3154,94 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**, C7 failing **2025 only**)
 
+> **QUEUE STAMP miso-136 (2026-08-06) — THE miso-134 §9.3 ABSENCE ASSERTION IS
+> FALSE: MISO PUBLISHES A DAILY MASKED SUBMITTED-OFFER CORPUS AT UNIT-HOUR
+> GRAIN, AND THE VERDICT IS THE PRE-DECLARED CONDITIONAL — CORPUS-EXISTS /
+> BRIDGE-UNPROVEN. NO LP, NO FIELD, NO ARM, NO RUN, NO CELL VERDICT MINTED,
+> KEEPER UNCHANGED** at `2026-08-05-miso-132b-cc-committed`. Charter lane
+> **(a)** — the miso-134 named successor's data prerequisite (the one item
+> miso-135 did not spend). PREREG pushed at `ebca8364` BEFORE any MISO / IMM /
+> FERC source was opened, model-memory prior disclosed AS a prior, two-sided,
+> with G-2 (the class bridge) declared the likely failure point — which is
+> where it failed.
+>
+> **(a) THE CORPUS.** `docs.misoenergy.org/marketreports/YYYYMMDD_da_co.zip`
+> / `rt_co.zip`: one row per masked unit × hour, 10-segment price/MW curve,
+> econ/emergency limits, must-run/available/economic flags, self-sched MW,
+> Region N/C/S, ~90-day lag (the Order-719-family conduct-transparency
+> publication — the energy sibling of the `asm_rt_co` report the repo already
+> fetches daily). Full 2023–2025 daily span live (boundary files 20230102 and
+> 20251231 both HTTP 200). Scale: 1,319/1,351/1,376 units, ~32–33k unit-hour
+> rows per sample day, all three regions populated.
+>
+> **(b) IT IS THE OFFER BOOK, NOT A CLEARED-SET RECONSTRUCTION.** 392–614
+> units per sample day clear ZERO MW in every hour and still appear with full
+> submitted curves — G-1 kind PASSES with no clearing conditioning. Within-day
+> variation exists in the DATA, not just the format: 309–435 units/day submit
+> hour-varying curves (grain-existence count only; PREREG K4 — NO conduct
+> statistic, level, class split or hour profile was computed).
+>
+> **(c) THE BRIDGE IS THE FAILURE POINT, exactly as the purpose test
+> predicted.** The corpus carries NO unit-type/fuel attribute (0 columns
+> matching fuel|type|technolog, 4/4 sample days) — a conduct-transparency
+> publication publishes conduct and withholds identity BY PURPOSE. Bridge
+> class A (direct attribute) ABSENT; bridge class B material PRESENT: masked
+> IDs are PERSISTENT (1,351/1,351 day-over-day; 1,278/1,335/1,263 shared
+> across 2023↔24/24↔25/23↔25, ~92–99 % — unlike PJM's annual re-mask) plus
+> Region, econ max/min structure, emergency ranges, flags. Class B is
+> admissible in kind and UNDEMONSTRATED ⇒ CONDITIONAL, per the PREREG §4
+> pre-committed rule. **The prerequisite is NOT discharged and no lever is
+> licensed.**
+>
+> **(d) PER-SOURCE CLOSURES.** S2 Data Exchange: WAF-403, immaterial (S1 is
+> the publication of record). S3 Potomac SOM: closed on purpose + form —
+> aggregate PDF analytics on confidential reference-level estimates (T2+T4).
+> S4 FERC EQR: closed on kind (sales-transaction reporting, not offers).
+> Trap register closed: T1 no-fire (flagged: the corpus EMBEDS outcome
+> columns — DA MW award, RT Cleared MW1-12 — off-limits to any bridge);
+> T2/T4 fired at S3 as anticipated; T3 fired in CONDITIONAL form and was
+> CAUGHT by the pre-declared category; T5 honoured (FINDING §5 audit line,
+> 2023–2025 dates only).
+>
+> **(e) THE ONE CHARTERED SUCCESSOR (the §5.4 queue is no longer empty):**
+> demonstrate — or refute — a CT-class bridge for the `da_co` corpus using
+> OFFER-SIDE information only (econ max/min structure, emergency ranges,
+> availability/self-sched structure, Region; storage columns for exclusion),
+> validated DISTRIBUTIONALLY against EIA-860 MISO CT fleet aggregates, with a
+> pre-registered two-sided separation statistic. FORBIDDEN: matching masked
+> units to CEMS/dispatch/generation (miso-103 answer-key family);
+> classifying by the conduct statistic the successor lever would measure
+> (circular); reading the corpus's outcome columns. If the bridge CLEARS, the
+> hour-organizing CT lever lane (miso-134's named successor) becomes
+> charterable with its own PREREG + full kill stack; if it FAILS, the
+> prerequisite closes NO with the corpus on record and the lane-(c)
+> owner-facing assessment becomes the honest next step. Lane (c) was NOT
+> opened this session: the charter gates it on (a) closing NO, and (a)
+> closed CONDITIONAL.
+>
+> **(f) THE GENERALISABLE LESSON: AN ABSENCE CLAIM IS A MEASUREMENT, NOT A
+> PREMISE.** miso-134 asserted "no submitted-curve corpus" without surveying;
+> the corpus was one URL pattern away from a fetcher the repo runs daily.
+> A negative existence claim carries the same evidential burden as a positive
+> one — survey it before building on it. The constructive half of miso-135's
+> purpose test: the filer's purpose predicts what a source MUST carry, not
+> only what it cannot. Family: miso-129 → miso-131 → miso-132(a) → miso-133 →
+> miso-134 → miso-135 → **miso-136 *an absence claim is a measurement, not a
+> premise***.
+>
+> **(g) CELL EFFECT: NONE — `measured_offer_surface` MISO STAYS `U`** (no
+> mechanism tested, no verdict minted); its note GROUND is updated
+> (unsurveyed absence → surveyed corpus-exists/bridge-unproven) and the row
+> gains its first `ev.M` entry (the survey citation). DO-NOT-REDO, added:
+> re-asserting corpus absence; deep-reading SOM PDFs for a unit-hour corpus;
+> EQR as an offer source; bridging masked IDs via CEMS/dispatch matching.
+> Charter lane (b) (CT_CHP/ST_CHP S-2 residuals) inherited untouched.
+>
+> **FINDING:** `results/calibration/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`
+> · **PREREG:** `results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`
+> · **Probe:** `scripts/probes/_miso136_ct_offer_conduct_survey.py`
+> · **Record:** `results/calibration/_miso136_ct_offer_conduct_survey.json`.
+
 > **QUEUE STAMP miso-135 (2026-08-06) — THE MICHIGAN PSCR LEAD IS SPENT AND
 > CLOSED ON KIND. The datum is REAL, PUBLIC and genuinely EX-ANTE — DTE's own
 > exhibit calls it "the minimum tonnage contracted to purchase in the <Y> PSCR

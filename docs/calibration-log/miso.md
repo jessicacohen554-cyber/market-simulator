@@ -4948,3 +4948,83 @@ PREREG `results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06
 probe `scripts/probes/_miso135_michigan_pscr_tonnage_lead.py`;
 record `results/calibration/_miso135_michigan_pscr_tonnage_lead.json`.
 Next number: **miso-136**.
+
+## 2026-08-06 — miso-136: the miso-134 "no submitted-curve corpus" absence assertion is FALSE — MISO publishes a daily masked SUBMITTED-offer book at unit-hour grain — and the verdict is the pre-declared CONDITIONAL: corpus-exists / bridge-unproven. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+
+Charter lane (a): the miso-134 named successor's data prerequisite — an
+identification for within-day MISO CT offer conduct that is NOT the C7
+residual. PREREG (`results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`)
+pushed at `ebca8364` BEFORE any MISO/IMM/FERC source was opened, with the
+model-memory prior disclosed as a prior and G-2 (the class bridge) declared
+the likely failure point in advance.
+
+### The corpus
+
+`docs.misoenergy.org/marketreports/YYYYMMDD_{da,rt}_co.zip` — one CSV row per
+masked unit × hour: 10-segment price/MW offer curve, economic/emergency
+limits, must-run/available/economic flags, self-scheduled MW, curtailment
+offer price, Region (N/C/S), storage energy-level bounds; ~90-day publication
+lag (zip member timestamps); the energy sibling of the `asm_rt_co` report
+`fetch_miso_asm.py` already consumes. Full 2023–2025 daily span live
+(20230102 and 20251231 both answer). Scale 1,319/1,351/1,376 units and
+~32–33k unit-hour rows per sample day.
+
+### Gates (pre-registered)
+
+G-0 access PASS · G-1 kind PASS — decisively, the DA file is the OFFER BOOK,
+not a cleared-set reconstruction: 392–614 units per sample day clear ZERO MW
+all 24 hours yet appear with full submitted curves · G-2(i) within-day grain
+PASS — hourly rows, and 309–435 units/day submit hour-varying curves
+(grain-existence count only; K4 — no conduct statistic computed) ·
+G-2(ii) CT bridge: class A ABSENT (no unit-type/fuel column, 4/4 days),
+class B material PRESENT (masked IDs PERSISTENT — 1,351/1,351 day-over-day,
+~92–99 % cross-year, unlike PJM's annual re-mask — plus Region and limit
+structure) but UNDEMONSTRATED ⇒ **CONDITIONAL** · G-3 coverage PASS.
+
+S2 Data Exchange: WAF-403, immaterial (S1 is the publication of record).
+S3 Potomac SOM: closed on purpose + form (aggregate PDF analytics on
+confidential reference-level estimates — T2/T4). S4 FERC EQR: closed on kind.
+Trap register closed in the FINDING §4; T3 (corpus real, bridge missing)
+fired in exactly the CONDITIONAL form the PREREG pre-declared for it.
+
+### Consequences
+
+The prerequisite is NOT discharged and no lever is licensed. ONE chartered
+successor enters §5.4 (the queue is no longer empty): demonstrate or refute
+an OFFER-SIDE-ONLY CT-class bridge (econ max/min structure, emergency
+ranges, availability/self-sched structure, Region), validated
+distributionally against EIA-860 MISO CT fleet aggregates under a
+pre-registered two-sided separation statistic. FORBIDDEN: CEMS/dispatch
+matching (miso-103 answer-key family), conduct-circular classification, the
+corpus's own outcome columns (DA `MW` award, RT `Cleared MW1-12`). Bridge
+clears → the hour-organizing CT lever lane becomes charterable (own PREREG,
+full kill stack). Bridge fails → the prerequisite closes NO and the lane-(c)
+owner-facing assessment is the honest next step. Lane (c) NOT opened this
+session (charter gates it on a NO; the answer is CONDITIONAL).
+
+### The generalisable lesson — AN ABSENCE CLAIM IS A MEASUREMENT, NOT A PREMISE
+
+miso-134 §9.3 asserted the corpus's absence without surveying; the corpus
+was one URL pattern away from a fetcher the repo runs daily. A negative
+existence claim carries the same evidential burden as a positive one —
+survey it before building on it, and record the survey so the ground stops
+being an assertion. Family: miso-129 → miso-131 → miso-132(a) → miso-133 →
+miso-134 → miso-135 → **miso-136**.
+
+### Rule duties
+
+**Rule 15**: no LP solved, no run to register (miso-131…135 precedent).
+**Rule 28(b)**: NO cell verdict minted (no mechanism tested);
+`measured_offer_surface` MISO stays `U` with its note GROUND updated
+(unsurveyed absence → surveyed corpus-exists/bridge-unproven) and the row's
+first `ev.M` entry added; §5.4 queue stamp written this session.
+**Rule 22**: only 2023–2025-dated files fetched (FINDING §5 audit line);
+nothing under `data/raw/` (assessment, not intake). **Rules 13/19/21/24/25**:
+nothing sized on any residual, no parameter derived, no tuning channel
+created, no other ISO's verdict transferred.
+
+FINDING `results/calibration/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`;
+PREREG `results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`;
+probe `scripts/probes/_miso136_ct_offer_conduct_survey.py`;
+record `results/calibration/_miso136_ct_offer_conduct_survey.json`.
+Next number: **miso-137**.
