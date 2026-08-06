@@ -15,7 +15,10 @@ mechanism touched.
 |---|---|---|
 | **Determination** | CALIBRATED, 0 fails, 0 caveats | **CALIBRATED, 0 fails, 0 caveats** |
 | **D-1 rows moved** | — | **3 of 26** (all others byte-identical) |
+| **D-2 rows moved** | — | **3 of 35**, all 2023, largest +0.33 TWh |
 | **D-1 gate failures** | `2025 COAL_WC: profile r 0.749 < 0.8` | **identical** — same row, same value |
+| **D-2 gate failures** | 3 × CT_PEAKER budget (16.4/16.7/16.8 %) | **identical to the decimal** |
+| **D-4** | PASS | **PASS** |
 | **Plant-years repaired** | — | 21 / 13.54 TWh (PJM 2022-2024; 2025 had none) |
 | **Parity guard** | — | 194 / 197 / 197 / 196 plants re-encode **byte-identically** |
 
@@ -25,9 +28,11 @@ mechanism touched.
 2024 COAL_BIT   profile_r 0.869 -> 0.870  (+0.001)   cv_ratio 1.137 -> 1.136
 ```
 
-**Rule 14 disposition: the accurate input is kept, and it did not cost
-anything.** All three `profile_r` values *improve*, and `COAL_BIT`'s `cv_ratio`
-moves toward 1.0 in both years. C8 is unaffected (§4). Nothing to escalate.
+**Rule 14 disposition: the accurate input is kept.** All three `profile_r` values
+*improve* and `COAL_BIT`'s `cv_ratio` moves toward 1.0 in both years; D-2 moves
++0.33 TWh **against** the model (more measured forced coal — §4), on a class at
+4.77 % of a 30 % budget, and is kept anyway. **Nothing to escalate: no gate
+flips on either diagnostic.**
 
 ---
 
@@ -176,13 +181,48 @@ per rule 26 `[R-DELETE]`. D-1 survives as a measurement and now binds **only**
 through rule 21's grounded-above-budget escalation for C8. So the D-1 movement
 above has exactly one gating route, and it is C8's.
 
-**C8 is untouched by this repair, structurally.** Its forced-share numerator and
-denominator are D-2 quantities — floor energy and dispatch energy — read from
-the model payload's `m_ann` and the rebuilt floor arrays. The bench `npl` enters
-D-2 only as `bench_pl[p]["npl"]`, and the decode of both sides is annual-anchored
-(`_decode_cf_bytes` ignores `npl` whenever `c_ann`/`m_ann` is present, which is
-always). D-1's `profile_r` / `cv_ratio` reach C8 only through the four
-grounded-above-budget notes, whose margins are wide:
+**C8 does not move — but NOT for the reason a first reading suggests, and the
+difference is worth stating because it was measured rather than argued.** An
+earlier draft of this section claimed the bench `npl` cannot reach D-2 at all,
+since `_decode_cf_bytes` ignores `npl` whenever `c_ann`/`m_ann` is present
+(which is always). **That is wrong.** `npl` reaches D-2 through a second door:
+
+```python
+def at_floor_mask(dispatch, min_gen, npl=None):
+    atol = np.full(dispatch.shape[0], D2_FLOOR_MIN_MW)
+    if npl is not None:
+        atol = atol + 0.01 * np.asarray(npl, dtype=float)   # <- here
+```
+
+The at-floor tolerance widens with nameplate, because the payload's byte encoding
+quantizes to ~1 % of it. A plant sitting at `npl = 1` was therefore given a
+tolerance of ~0.01 MW against a series quantized at ~17 MW — so its at-floor
+hours were **under**-counted. The repair widens the tolerance to the correct
+value and the measured forced energy goes **up**.
+
+**Measured like-for-like** (identical bundle, identical rebuilt floors, identical
+container; only the bench parts swapped between `origin/main` and the repair):
+
+| year | class | mechanism | forced TWh | share of class |
+|---|---|---|---:|---:|
+| 2023 | COAL | `coal_mustrun` | 5.0838 → **5.4141** | 4.48 % → **4.77 %** |
+| 2023 | ST_GAS | `st_netload_drag` | 4.8171 → **4.8378** | 50.89 % → **51.11 %** |
+| 2023 | CT_PEAKER | `ct_netload_drag` | 2.2475 → **2.2481** | 10.89 % → 10.89 % |
+
+**3 of 35 D-2 rows moved, all in 2023, and D-2's gate failures are byte-identical
+before and after** — the same three CT_PEAKER budget breaches at the same
+16.4 / 16.7 / 16.8 %. **D-4 PASSES on both sides.**
+
+That the accurate input moves a *protective* metric **against** the model
+(+0.33 TWh of measured forced coal) and is kept anyway is the rule-14 disposition
+working as intended — and it lands nowhere near a cap: COAL at 4.77 % against a
+30 % merchant budget, and ST_GAS 2023's 51.1 % is **immaterial** (1.4 % of ISO
+load, below the 2 % gating floor) and was already 50.9 % before.
+
+**None of the four C8 grounded notes is affected.** CT_PEAKER's repaired plants
+are 0.0 % of the class in every year, and 2025 — which carries the ST_GAS note —
+had **zero** repairs. D-1's `profile_r` / `cv_ratio` reach C8 only through those
+four notes, whose margins are wide:
 
 | note | profile_r | gate | off-peak CV | gate |
 |---|---:|---|---:|---|
@@ -191,9 +231,15 @@ grounded-above-budget notes, whose margins are wide:
 | 2025 CT_PEAKER 16.7 % | 0.974 | ≥0.8 | 0.836 | ≥0.5 |
 | 2025 ST_GAS 39.9 % | 0.896 | ≥0.8 | 2.242 | ≥0.5 |
 
-**None of those four classes holds a repaired plant in its year** (2025 had zero
-repairs; CT_PEAKER's repaired plants are 0.0 % of the class). All four remain
-clean grounded PASSes.
+All four remain clean grounded PASSes.
+
+**And C8 as *gated today* cannot have moved at all**, because
+`calibration_verdict` reads C8 from the bundle's **committed**
+`legitimacy_diagnostics.json`, which this session deliberately did not overwrite
+(it was generated on the higher-fidelity `dispatch/*.parquet` path, which is
+absent here). The D-2 numbers above are what a regeneration *would* read. Both
+statements are reported because only together do they answer "did the gate
+move?" — no, and it would not move if regenerated either.
 
 **Verdict re-verified on committed artifacts, no solve:**
 
@@ -249,15 +295,30 @@ python scripts/regen_bench_nameplate.py --iso PJM --check                # dry r
 python scripts/regen_bench_nameplate.py --iso PJM                        # apply
 python scripts/regen_bench_nameplate.py --iso PJM --exclusion-diagnostic # attribution
 python scripts/legitimacy_diagnostics.py --bundle results/calibration/pjm152_collapse_A \
-    --iso PJM --years 2023 2024 2025 --only D1
+    --iso PJM --years 2023 2024 2025          # D-1 + D-2 + D-4
 python scripts/calibration_verdict.py --run-id 2026-08-04-pjm-152-collapse
 ```
 
-The D-1 before/after comparison is run on the **payload** dispatch path on both
-sides (the committed `legitimacy_diagnostics.json` was generated with
-`dispatch/*.parquet` present, which reproduces `profile_r` to ±0.001 but differs
-on the non-gated CHP classes' `cv_ratio`). Comparing across paths would have
-manufactured deltas; both numbers here are payload-path.
+The D-2/D-4 half needs two things this container did not start with: the clean
+tree (`python scripts/regenerate_clean.py`, for the floor rebuild) and the
+`pjm-da-virtuals` corpus, which is **gitignored** and whose loader refuses to
+degrade — `python scripts/data/fetch_pjm_da_virtuals.py --feeds hrl_da_incs_decs`
+(2023-2025, in-sample, unrestricted). Worth recording as a general fact rather
+than a session note: **that fetch is a prerequisite of ANY PJM solve or floor
+rebuild in a fresh container**, not something specific to a holdout year.
+
+The before/after is a true swap — the pre-fix bench parts were restored from
+`origin/main`, the identical command re-run, and the parts put back — so the
+floor rebuild, the container and the bundle are common to both sides and the
+only difference is the bench.
+
+Both sides run the **payload** dispatch path (the committed
+`legitimacy_diagnostics.json` was generated with `dispatch/*.parquet` present,
+which reproduces `profile_r` to ±0.001 but differs on the non-gated CHP classes'
+`cv_ratio`, and shifts CT_PEAKER's D-2 share by ~0.2 pp). Comparing a
+payload-path "after" against the committed "before" would have manufactured
+deltas of exactly that size and attributed them to the repair; every number in
+§0/§3/§4 is payload-path on both sides.
 
 ---
 
@@ -275,6 +336,19 @@ manufactured deltas; both numbers here are payload-path.
   and still clear.
 - **Rule 27 `[R-PUSH]`.** Opus. No existing source file ≥300 lines rewritten;
   one new script added.
-- **Keeper UNCHANGED** at `2026-08-04-pjm-152-collapse`.
+- **Keeper UNCHANGED** at `2026-08-04-pjm-152-collapse`; `audit_keepers.py --iso
+  PJM` re-run after the repair → **0 failures, 0 warnings**. The bundle's
+  committed `legitimacy_diagnostics.json` was **not** overwritten.
+- **Test suite.** `tests/curation` + `tests/scoring`: 1,650 passed, 8 failed —
+  **none of them this session's.** Four (`test_curate_ercot_wtx_congestion.py`
+  ×3, `test_dam_public_bids_expand_rle.py`) were a **missing `tzdata` package**
+  in this container (`ZoneInfoNotFoundError: US/Central`, the same cause that
+  failed the `ercot-wtx-congestion` clean regen) and **pass once it is
+  installed**; two are the forecast-parity debt the session brief already named
+  as pre-existing (ERCOT `ercot_storage_as_soc_reserve`, NYISO
+  `nyiso_seam_deliverability_envelope`); one is a stale data-dictionary table for
+  `som-competitive-conduct`, a datatype untouched here; one is a clean-vs-raw
+  LMP parity check on the regenerated clean tree, reading no file this session
+  modified.
 
 **Next shorthand: pjm-161.**
