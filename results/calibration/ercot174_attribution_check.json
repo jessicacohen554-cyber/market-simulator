@@ -1,0 +1,1154 @@
+{
+  "years": {
+    "2023": {
+      "both_layers_active_bin_hours": 22128,
+      "AT1_min_composed_bin_hours": 20904,
+      "AT1_share_of_both_active": 0.944685,
+      "ceiling_lift_unit_scoped": 4090.687,
+      "ceiling_lift_blanket_min": 4360.706,
+      "AT2_rho": 0.938079,
+      "AT2_stop": true,
+      "shared_bins": [
+        {
+          "plant": 7097,
+          "name": "J K Spruce",
+          "group": "COAL",
+          "shared_hours": 3960,
+          "shared_and_active_hours": 3960,
+          "shared_units": [
+            "**1",
+            "**2"
+          ]
+        },
+        {
+          "plant": 3470,
+          "name": "W A Parish",
+          "group": "COAL",
+          "shared_hours": 2856,
+          "shared_and_active_hours": 2856,
+          "shared_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7",
+            "WAP8"
+          ]
+        },
+        {
+          "plant": 6179,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 2784,
+          "shared_and_active_hours": 2784,
+          "shared_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 298,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 2112,
+          "shared_and_active_hours": 2112,
+          "shared_units": [
+            "LIM1",
+            "LIM2"
+          ]
+        },
+        {
+          "plant": 55097,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1392,
+          "shared_and_active_hours": 1392,
+          "shared_units": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "plant": 55153,
+          "name": "Guadalupe",
+          "group": "CC_REGULAR",
+          "shared_hours": 1296,
+          "shared_and_active_hours": 1296,
+          "shared_units": [
+            "CTG-1",
+            "CTG-2",
+            "CTG-3",
+            "CTG-4"
+          ]
+        },
+        {
+          "plant": 55215,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1176,
+          "shared_and_active_hours": 1176,
+          "shared_units": [
+            "GT3",
+            "GT4"
+          ]
+        },
+        {
+          "plant": 6146,
+          "name": "Martin Lake",
+          "group": "COAL",
+          "shared_hours": 1104,
+          "shared_and_active_hours": 1104,
+          "shared_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 7030,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 912,
+          "shared_and_active_hours": 912,
+          "shared_units": [
+            "U1",
+            "U2"
+          ]
+        },
+        {
+          "plant": 55230,
+          "name": "Jack County",
+          "group": "CC_REGULAR",
+          "shared_hours": 864,
+          "shared_and_active_hours": 864,
+          "shared_units": [
+            "CT-1",
+            "CT-2",
+            "CT-3",
+            "CT-4"
+          ]
+        },
+        {
+          "plant": 55226,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 696,
+          "shared_and_active_hours": 696,
+          "shared_units": [
+            "GT1",
+            "GT2",
+            "GT3",
+            "GT4"
+          ]
+        },
+        {
+          "plant": 55144,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 600,
+          "shared_and_active_hours": 600,
+          "shared_units": [
+            "STK1",
+            "STK2",
+            "STK3",
+            "STK4"
+          ]
+        },
+        {
+          "plant": 55480,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 576,
+          "shared_and_active_hours": 576,
+          "shared_units": [
+            "U1",
+            "U2",
+            "U3",
+            "U4",
+            "U5",
+            "U6"
+          ]
+        },
+        {
+          "plant": 55172,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 528,
+          "shared_and_active_hours": 528,
+          "shared_units": [
+            "GT-1",
+            "GT-2",
+            "GT-3"
+          ]
+        },
+        {
+          "plant": 6183,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 24,
+          "shared_and_active_hours": 24,
+          "shared_units": [
+            "SM-1"
+          ]
+        },
+        {
+          "plant": 56611,
+          "name": "Sandy Creek",
+          "group": "COAL",
+          "shared_hours": 24,
+          "shared_and_active_hours": 24,
+          "shared_units": [
+            "S01"
+          ]
+        }
+      ]
+    },
+    "2024": {
+      "both_layers_active_bin_hours": 27958,
+      "AT1_min_composed_bin_hours": 26806,
+      "AT1_share_of_both_active": 0.958795,
+      "ceiling_lift_unit_scoped": 5737.484,
+      "ceiling_lift_blanket_min": 5986.214,
+      "AT2_rho": 0.95845,
+      "AT2_stop": true,
+      "shared_bins": [
+        {
+          "plant": 298,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 2928,
+          "shared_and_active_hours": 2928,
+          "shared_units": [
+            "LIM1",
+            "LIM2"
+          ]
+        },
+        {
+          "plant": 6179,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 2807,
+          "shared_and_active_hours": 2807,
+          "shared_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 3470,
+          "name": "W A Parish",
+          "group": "COAL",
+          "shared_hours": 2592,
+          "shared_and_active_hours": 2592,
+          "shared_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7"
+          ]
+        },
+        {
+          "plant": 7097,
+          "name": "J K Spruce",
+          "group": "COAL",
+          "shared_hours": 2424,
+          "shared_and_active_hours": 2424,
+          "shared_units": [
+            "**1",
+            "**2"
+          ]
+        },
+        {
+          "plant": 55230,
+          "name": "Jack County",
+          "group": "CC_REGULAR",
+          "shared_hours": 2184,
+          "shared_and_active_hours": 2184,
+          "shared_units": [
+            "CT-1",
+            "CT-2",
+            "CT-3",
+            "CT-4"
+          ]
+        },
+        {
+          "plant": 55153,
+          "name": "Guadalupe",
+          "group": "CC_REGULAR",
+          "shared_hours": 2040,
+          "shared_and_active_hours": 2040,
+          "shared_units": [
+            "CTG-1",
+            "CTG-2",
+            "CTG-3",
+            "CTG-4"
+          ]
+        },
+        {
+          "plant": 6146,
+          "name": "Martin Lake",
+          "group": "COAL",
+          "shared_hours": 1967,
+          "shared_and_active_hours": 1967,
+          "shared_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 60122,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1632,
+          "shared_and_active_hours": 1632,
+          "shared_units": [
+            "CT7",
+            "CT8"
+          ]
+        },
+        {
+          "plant": 55097,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1392,
+          "shared_and_active_hours": 1392,
+          "shared_units": [
+            "3",
+            "4"
+          ]
+        },
+        {
+          "plant": 55215,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1272,
+          "shared_and_active_hours": 1272,
+          "shared_units": [
+            "GT1",
+            "GT2"
+          ]
+        },
+        {
+          "plant": 55226,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1224,
+          "shared_and_active_hours": 1224,
+          "shared_units": [
+            "GT1",
+            "GT2",
+            "GT3",
+            "GT4"
+          ]
+        },
+        {
+          "plant": 6180,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 1128,
+          "shared_and_active_hours": 1128,
+          "shared_units": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "plant": 7030,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 960,
+          "shared_and_active_hours": 960,
+          "shared_units": [
+            "U1",
+            "U2"
+          ]
+        },
+        {
+          "plant": 59812,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 744,
+          "shared_and_active_hours": 744,
+          "shared_units": [
+            "CGT4",
+            "CGT5"
+          ]
+        },
+        {
+          "plant": 55480,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 624,
+          "shared_and_active_hours": 624,
+          "shared_units": [
+            "U2",
+            "U3",
+            "U4",
+            "U5",
+            "U6"
+          ]
+        },
+        {
+          "plant": 56349,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 600,
+          "shared_and_active_hours": 600,
+          "shared_units": [
+            "CT1A",
+            "CT1B",
+            "CT2A",
+            "CT2B"
+          ]
+        },
+        {
+          "plant": 55144,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 144,
+          "shared_and_active_hours": 144,
+          "shared_units": [
+            "STK1",
+            "STK2"
+          ]
+        },
+        {
+          "plant": 55137,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 120,
+          "shared_and_active_hours": 120,
+          "shared_units": [
+            "CTG-1"
+          ]
+        },
+        {
+          "plant": 56611,
+          "name": "Sandy Creek",
+          "group": "COAL",
+          "shared_hours": 24,
+          "shared_and_active_hours": 24,
+          "shared_units": [
+            "S01"
+          ]
+        }
+      ]
+    },
+    "2025": {
+      "both_layers_active_bin_hours": 28173,
+      "AT1_min_composed_bin_hours": 27093,
+      "AT1_share_of_both_active": 0.961665,
+      "ceiling_lift_unit_scoped": 5711.065,
+      "ceiling_lift_blanket_min": 5945.421,
+      "AT2_rho": 0.960582,
+      "AT2_stop": true,
+      "shared_bins": [
+        {
+          "plant": 7097,
+          "name": "J K Spruce",
+          "group": "COAL",
+          "shared_hours": 3696,
+          "shared_and_active_hours": 3696,
+          "shared_units": [
+            "**1",
+            "**2"
+          ]
+        },
+        {
+          "plant": 298,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 3624,
+          "shared_and_active_hours": 3624,
+          "shared_units": [
+            "LIM1",
+            "LIM2"
+          ]
+        },
+        {
+          "plant": 6179,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 2568,
+          "shared_and_active_hours": 2568,
+          "shared_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 55230,
+          "name": "Jack County",
+          "group": "CC_REGULAR",
+          "shared_hours": 2543,
+          "shared_and_active_hours": 2543,
+          "shared_units": [
+            "CT-1",
+            "CT-2",
+            "CT-3",
+            "CT-4"
+          ]
+        },
+        {
+          "plant": 56349,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1847,
+          "shared_and_active_hours": 1847,
+          "shared_units": [
+            "CT1A",
+            "CT1B",
+            "CT2A",
+            "CT2B"
+          ]
+        },
+        {
+          "plant": 55226,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1512,
+          "shared_and_active_hours": 1512,
+          "shared_units": [
+            "GT1",
+            "GT2",
+            "GT3",
+            "GT4"
+          ]
+        },
+        {
+          "plant": 60122,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 1464,
+          "shared_and_active_hours": 1464,
+          "shared_units": [
+            "CT8"
+          ]
+        },
+        {
+          "plant": 55153,
+          "name": "Guadalupe",
+          "group": "CC_REGULAR",
+          "shared_hours": 1392,
+          "shared_and_active_hours": 1392,
+          "shared_units": [
+            "CTG-1",
+            "CTG-2",
+            "CTG-3",
+            "CTG-4"
+          ]
+        },
+        {
+          "plant": 6146,
+          "name": "Martin Lake",
+          "group": "COAL",
+          "shared_hours": 1367,
+          "shared_and_active_hours": 1367,
+          "shared_units": [
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 3470,
+          "name": "W A Parish",
+          "group": "COAL",
+          "shared_hours": 1344,
+          "shared_and_active_hours": 1344,
+          "shared_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7"
+          ]
+        },
+        {
+          "plant": 7030,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 1104,
+          "shared_and_active_hours": 1104,
+          "shared_units": [
+            "U1",
+            "U2"
+          ]
+        },
+        {
+          "plant": 6180,
+          "name": "",
+          "group": "COAL",
+          "shared_hours": 1080,
+          "shared_and_active_hours": 1080,
+          "shared_units": [
+            "1",
+            "2"
+          ]
+        },
+        {
+          "plant": 55480,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 768,
+          "shared_and_active_hours": 768,
+          "shared_units": [
+            "U4",
+            "U5",
+            "U6"
+          ]
+        },
+        {
+          "plant": 58001,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 768,
+          "shared_and_active_hours": 768,
+          "shared_units": [
+            "CTG1",
+            "CTG2"
+          ]
+        },
+        {
+          "plant": 55097,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 696,
+          "shared_and_active_hours": 696,
+          "shared_units": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        {
+          "plant": 55132,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 504,
+          "shared_and_active_hours": 504,
+          "shared_units": [
+            "OGTDB1",
+            "OGTDB3"
+          ]
+        },
+        {
+          "plant": 55144,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 456,
+          "shared_and_active_hours": 456,
+          "shared_units": [
+            "STK1",
+            "STK2",
+            "STK3",
+            "STK4"
+          ]
+        },
+        {
+          "plant": 55215,
+          "name": "",
+          "group": "CC_REGULAR",
+          "shared_hours": 360,
+          "shared_and_active_hours": 360,
+          "shared_units": [
+            "GT1",
+            "GT2",
+            "GT3",
+            "GT4"
+          ]
+        }
+      ]
+    }
+  },
+  "shed_face": {
+    "2827": {
+      "label": "2024-04-28 19:00",
+      "plants": [
+        {
+          "plant": 298,
+          "name": "",
+          "group": "COAL",
+          "f_window": 0.0,
+          "f_partial": 1.0,
+          "ceil_product": 0.0,
+          "ceil_min": 0.0,
+          "ceil_unit_scoped": 0.0,
+          "shares_unit": false,
+          "window_units": [
+            "LIM1",
+            "LIM2"
+          ],
+          "partial_units": [
+            "LIM1",
+            "LIM2"
+          ]
+        },
+        {
+          "plant": 3470,
+          "name": "W A Parish",
+          "group": "COAL",
+          "f_window": 0.6995,
+          "f_partial": 0.363,
+          "ceil_product": 0.2539,
+          "ceil_min": 0.363,
+          "ceil_unit_scoped": 0.363,
+          "shares_unit": true,
+          "window_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7",
+            "WAP8"
+          ],
+          "partial_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7"
+          ]
+        },
+        {
+          "plant": 6146,
+          "name": "Martin Lake",
+          "group": "COAL",
+          "f_window": 0.6667,
+          "f_partial": 0.502,
+          "ceil_product": 0.3347,
+          "ceil_min": 0.502,
+          "ceil_unit_scoped": 0.502,
+          "shares_unit": true,
+          "window_units": [
+            "1",
+            "2",
+            "3"
+          ],
+          "partial_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 6179,
+          "name": "",
+          "group": "COAL",
+          "f_window": 0.6361,
+          "f_partial": 0.616,
+          "ceil_product": 0.3918,
+          "ceil_min": 0.616,
+          "ceil_unit_scoped": 0.616,
+          "shares_unit": true,
+          "window_units": [
+            "1",
+            "2",
+            "3"
+          ],
+          "partial_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 6183,
+          "name": "",
+          "group": "COAL",
+          "f_window": 0.0,
+          "f_partial": 1.0,
+          "ceil_product": 0.0,
+          "ceil_min": 0.0,
+          "ceil_unit_scoped": 0.0,
+          "shares_unit": false,
+          "window_units": [
+            "SM-1"
+          ],
+          "partial_units": [
+            "SM-1"
+          ]
+        },
+        {
+          "plant": 7097,
+          "name": "J K Spruce",
+          "group": "COAL",
+          "f_window": 0.3802,
+          "f_partial": 0.208,
+          "ceil_product": 0.0791,
+          "ceil_min": 0.208,
+          "ceil_unit_scoped": 0.208,
+          "shares_unit": true,
+          "window_units": [
+            "**1",
+            "**2"
+          ],
+          "partial_units": [
+            "**1",
+            "**2"
+          ]
+        },
+        {
+          "plant": 55097,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.4999,
+          "f_partial": 0.471,
+          "ceil_product": 0.2355,
+          "ceil_min": 0.471,
+          "ceil_unit_scoped": 0.471,
+          "shares_unit": true,
+          "window_units": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "partial_units": [
+            "3",
+            "4"
+          ]
+        },
+        {
+          "plant": 55144,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.5112,
+          "f_partial": 0.479,
+          "ceil_product": 0.2449,
+          "ceil_min": 0.479,
+          "ceil_unit_scoped": 0.479,
+          "shares_unit": true,
+          "window_units": [
+            "STK1",
+            "STK2",
+            "STK3",
+            "STK4"
+          ],
+          "partial_units": [
+            "STK1",
+            "STK2"
+          ]
+        },
+        {
+          "plant": 55153,
+          "name": "Guadalupe",
+          "group": "CC_REGULAR",
+          "f_window": 0.4999,
+          "f_partial": 0.482,
+          "ceil_product": 0.241,
+          "ceil_min": 0.482,
+          "ceil_unit_scoped": 0.482,
+          "shares_unit": true,
+          "window_units": [
+            "CTG-1",
+            "CTG-2",
+            "CTG-3",
+            "CTG-4"
+          ],
+          "partial_units": [
+            "CTG-1",
+            "CTG-2",
+            "CTG-3",
+            "CTG-4"
+          ]
+        },
+        {
+          "plant": 55215,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.4743,
+          "f_partial": 1.0,
+          "ceil_product": 0.4743,
+          "ceil_min": 0.4743,
+          "ceil_unit_scoped": 0.4743,
+          "shares_unit": false,
+          "window_units": [
+            "GT1",
+            "GT2",
+            "GT3",
+            "GT4"
+          ],
+          "partial_units": [
+            "GT1",
+            "GT2"
+          ]
+        },
+        {
+          "plant": 55230,
+          "name": "Jack County",
+          "group": "CC_REGULAR",
+          "f_window": 0.5,
+          "f_partial": 1.0,
+          "ceil_product": 0.5,
+          "ceil_min": 0.5,
+          "ceil_unit_scoped": 0.5,
+          "shares_unit": false,
+          "window_units": [
+            "CT-1",
+            "CT-2",
+            "CT-3",
+            "CT-4"
+          ],
+          "partial_units": [
+            "CT-1",
+            "CT-2",
+            "CT-3",
+            "CT-4"
+          ]
+        },
+        {
+          "plant": 56611,
+          "name": "Sandy Creek",
+          "group": "COAL",
+          "f_window": 1.0,
+          "f_partial": 0.485,
+          "ceil_product": 0.485,
+          "ceil_min": 0.485,
+          "ceil_unit_scoped": 0.485,
+          "shares_unit": false,
+          "window_units": [
+            "S01"
+          ],
+          "partial_units": [
+            "S01"
+          ]
+        },
+        {
+          "plant": 59812,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.0,
+          "f_partial": 1.0,
+          "ceil_product": 0.0,
+          "ceil_min": 0.0,
+          "ceil_unit_scoped": 0.0,
+          "shares_unit": false,
+          "window_units": [
+            "CGT4",
+            "CGT5"
+          ],
+          "partial_units": [
+            "CGT4",
+            "CGT5"
+          ]
+        },
+        {
+          "plant": 60122,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.5,
+          "f_partial": 1.0,
+          "ceil_product": 0.5,
+          "ceil_min": 0.5,
+          "ceil_unit_scoped": 0.5,
+          "shares_unit": false,
+          "window_units": [
+            "CT7",
+            "CT8"
+          ],
+          "partial_units": [
+            "CT7",
+            "CT8"
+          ]
+        }
+      ]
+    },
+    "3067": {
+      "label": "2024-05-08 19:00",
+      "plants": [
+        {
+          "plant": 298,
+          "name": "",
+          "group": "COAL",
+          "f_window": 0.0,
+          "f_partial": 1.0,
+          "ceil_product": 0.0,
+          "ceil_min": 0.0,
+          "ceil_unit_scoped": 0.0,
+          "shares_unit": false,
+          "window_units": [
+            "LIM1",
+            "LIM2"
+          ],
+          "partial_units": [
+            "LIM1",
+            "LIM2"
+          ]
+        },
+        {
+          "plant": 3470,
+          "name": "W A Parish",
+          "group": "COAL",
+          "f_window": 0.6995,
+          "f_partial": 1.0,
+          "ceil_product": 0.6995,
+          "ceil_min": 0.6995,
+          "ceil_unit_scoped": 0.6995,
+          "shares_unit": false,
+          "window_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7",
+            "WAP8"
+          ],
+          "partial_units": [
+            "WAP5",
+            "WAP6",
+            "WAP7"
+          ]
+        },
+        {
+          "plant": 6146,
+          "name": "Martin Lake",
+          "group": "COAL",
+          "f_window": 0.3333,
+          "f_partial": 0.502,
+          "ceil_product": 0.1673,
+          "ceil_min": 0.3333,
+          "ceil_unit_scoped": 0.3333,
+          "shares_unit": true,
+          "window_units": [
+            "1",
+            "2",
+            "3"
+          ],
+          "partial_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 6179,
+          "name": "",
+          "group": "COAL",
+          "f_window": 0.6361,
+          "f_partial": 1.0,
+          "ceil_product": 0.6361,
+          "ceil_min": 0.6361,
+          "ceil_unit_scoped": 0.6361,
+          "shares_unit": false,
+          "window_units": [
+            "1",
+            "2",
+            "3"
+          ],
+          "partial_units": [
+            "1",
+            "2",
+            "3"
+          ]
+        },
+        {
+          "plant": 55097,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.4999,
+          "f_partial": 0.471,
+          "ceil_product": 0.2355,
+          "ceil_min": 0.471,
+          "ceil_unit_scoped": 0.471,
+          "shares_unit": true,
+          "window_units": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "partial_units": [
+            "3",
+            "4"
+          ]
+        },
+        {
+          "plant": 56611,
+          "name": "Sandy Creek",
+          "group": "COAL",
+          "f_window": 1.0,
+          "f_partial": 0.485,
+          "ceil_product": 0.485,
+          "ceil_min": 0.485,
+          "ceil_unit_scoped": 0.485,
+          "shares_unit": false,
+          "window_units": [
+            "S01"
+          ],
+          "partial_units": [
+            "S01"
+          ]
+        },
+        {
+          "plant": 59812,
+          "name": "",
+          "group": "CC_REGULAR",
+          "f_window": 0.5,
+          "f_partial": 0.44,
+          "ceil_product": 0.22,
+          "ceil_min": 0.44,
+          "ceil_unit_scoped": 0.44,
+          "shares_unit": true,
+          "window_units": [
+            "CGT4",
+            "CGT5"
+          ],
+          "partial_units": [
+            "CGT4",
+            "CGT5"
+          ]
+        }
+      ]
+    }
+  },
+  "robustness_nonselecting": {
+    "2023": {
+      "0.50": {
+        "rho": 0.932168,
+        "min_composed_bin_hours": 20688
+      },
+      "0.30": {
+        "rho": 0.894938,
+        "min_composed_bin_hours": 19800
+      },
+      "0.10": {
+        "rho": 0.86863,
+        "min_composed_bin_hours": 19320
+      },
+      "0.02": {
+        "rho": 0.86863,
+        "min_composed_bin_hours": 19320
+      }
+    },
+    "2024": {
+      "0.50": {
+        "rho": 0.941382,
+        "min_composed_bin_hours": 26350
+      },
+      "0.30": {
+        "rho": 0.941382,
+        "min_composed_bin_hours": 26350
+      },
+      "0.10": {
+        "rho": 0.928225,
+        "min_composed_bin_hours": 25966
+      },
+      "0.02": {
+        "rho": 0.91744,
+        "min_composed_bin_hours": 25678
+      }
+    },
+    "2025": {
+      "0.50": {
+        "rho": 0.960582,
+        "min_composed_bin_hours": 27093
+      },
+      "0.30": {
+        "rho": 0.960582,
+        "min_composed_bin_hours": 27093
+      },
+      "0.10": {
+        "rho": 0.960582,
+        "min_composed_bin_hours": 27093
+      },
+      "0.02": {
+        "rho": 0.960582,
+        "min_composed_bin_hours": 27093
+      }
+    }
+  }
+}
