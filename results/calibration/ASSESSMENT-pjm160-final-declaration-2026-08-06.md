@@ -17,14 +17,19 @@ declares nothing, lifts nothing, and reads no metric as authorization.
 
 **HOLD.** Not for the same reasons, and the difference matters.
 
-| # | blocker | pjm-159 | **pjm-160** | whose call |
-|---|---|---|---|---|
-| **B1** | neither locked-test year is solvable | BLOCKING | **CLOSED for 2019** | — |
-| **B3** | locked-test C3a on a different statistic | BLOCKING | **CLOSED at the source** | — |
-| **B2** | the frozen keeper recipe does not reproduce on 2019 | BLOCKING | **STANDS, unchanged** | **owner** |
-| **B4** | the DA-RT basis flips sign outside training | BLOCKING | **STANDS, sharpened** | **owner** |
-| **B5** | *(new)* the in-sample `rt_lw` the C3a gate scores against no longer re-derives | — | **NEW** | **owner** |
-| — | holdout freeze ACTIVE, `final` EMPTY | standing | **unchanged** | **owner** |
+| # | blocker | pjm-159 | **pjm-160** | sufficient alone? | whose call |
+|---|---|---|---|---|---|
+| **B1** | neither locked-test year is solvable | BLOCKING | **CLOSED for 2019** | — | — |
+| **B3** | locked-test C3a on a different statistic | BLOCKING | **CLOSED at the source** | — | — |
+| **B2** | the frozen keeper recipe does not reproduce on 2019 | BLOCKING | **STANDS, unchanged** | **YES** | **owner** |
+| **B4** | the DA-RT basis flips sign outside training | BLOCKING | **STANDS, sharpened** | **YES** | **owner** |
+| **B5** | *(new)* the in-sample `rt_lw` the C3a gate scores against no longer re-derives | — | **NEW** | **NO — ~0.1-0.2 pp; a cheap parity fix to make before the spend, not a reason to hold by itself** | **owner** |
+| — | holdout freeze ACTIVE, `final` EMPTY | standing | **unchanged** | **YES** | **owner** |
+
+**Only B2 and B4 are independently disqualifying**, and both are exactly the two
+the task brief named as owner decisions rather than session work. B5 is a
+pre-spend hygiene item that costs PJM nothing and would be embarrassing to
+discover afterwards on a tier that cannot be re-scored.
 
 **The character of the HOLD has changed.** pjm-159's case rested substantially on
 a data gap a session could close — and this session closed it. What is left is
@@ -159,7 +164,8 @@ PJM's `load_demand` switched from the legacy demand-profiles series to the per-B
 extract and gained the dropout/spike screens **after** those rows were derived.
 The committed values are on the **old weight basis**.
 
-**Why this is a `final` blocker and not a footnote.** The 2019 `rt_lw` this
+**Why it belongs on the pre-spend list — and why it is NOT independently
+disqualifying.** The 2019 `rt_lw` this
 session built (26.54) is on the **current** weight basis; the training years'
 committed `rt_lw` are on the **old** one. A locked-test C3a would therefore be
 compared — in the declaration, in any table, in every later citation — against
@@ -167,7 +173,9 @@ in-sample numbers computed with a different weighting. That is the same *class*
 of non-parity B3 was about, one level deeper: B3 asked whether the locked year
 used the same **statistic**; B5 asks whether it uses the same **vintage of that
 statistic**. On an iterable tier this is a footnote. On a touch-once tier it
-cannot be re-scored once spent.
+cannot be re-scored once spent — but the effect is **0.1-0.2 pp on a ±10 % band**,
+so it is a defect to close cheaply *before* the spend, **not a reason to hold on
+its own**. Stated plainly so it is not read as heavier than it is.
 
 **Deliberately not fixed here, and the reason is that it is a gate input.**
 `calibration_verdict.score_price_mean` reads `rt_lw` off the **bench part**,
