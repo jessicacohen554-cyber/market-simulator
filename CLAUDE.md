@@ -178,24 +178,57 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is
       unrestricted (see the 2026 clause below).
 
-    Standing quarantine clauses (carried over unchanged by the tier amendment):
-    - **Data intake is permitted** for any out-of-training period (validation or locked), but ONLY
-      under explicit, session-logged owner authorization, and validation of intaken data is no-LP
-      only (byte-identity / loader-resolvability checks — never a dispatch solve). Codifies the
-      authorized 2026-07-04 ERCOT/PJM intake (PRs #1298/#1300/#1304); each further intake (per-ISO,
-      per-window — now including 2018–2021, itemized in `docs/out-of-sample-results-2026-07.md` §1)
-      requires its own authorization.
-    - **No solve, no scoring, no registration** may touch ANY out-of-training year (2022, 2019,
-      ≤2021, H1-2026) — no backcast, no diagnostic probe, no "throwaway" solve — until the ISO
+    **WHAT IS HELD OUT IS THE *SCORE*, NEVER THE *DATA* OR THE *ARCHITECTURE*.** *(Owner
+    clarification 2026-08-06, session neiso-86 — this REPLACES the former per-window intake
+    authorization regime, which had it backwards.)* Measured data inputs are **collected once and
+    applied CONSISTENTLY ACROSS ALL YEARS** against the keeper. There is no such thing as an input
+    that is "held out": an input is either the best measured representation of a physical/market
+    quantity or it is not, and if it is, it belongs in **every** year — 2019 through 2025 alike.
+    The whole point is that when we hit **go** on 2019, it is already configured **precisely** like
+    the frontier / `complete` / `final` keeper, with nothing left to prepare and no input newer
+    than the moment the config froze. Concretely:
+    - **Data intake needs NO per-ISO/per-window authorization and no marker.** Prep it, apply it to
+      every year, keep it consistent. A measured-input fix (e.g. the neiso-86 gas-basis repair)
+      lands across the full span in one pass, not year-by-year under separate grants.
+    - **Architecture, mechanisms and config are likewise never "held out"** — the keeper recipe is
+      one recipe, and the out-of-training years run it unchanged.
+    - What remains restricted is exactly one thing: **looking at the answer.** Solving, scoring or
+      registering an out-of-training year is the spend, because it consumes the year's power to
+      surprise you.
+
+    **THE TOUCHPOINT LOOP — how 2020/2021/2022 are actually used** *(owner, 2026-08-06)*. These
+    are **iterative diagnostic instruments, not one-shots**, and **nothing is ever trained or
+    fitted to them**:
+    1. Run the touchpoint year on the frozen keeper recipe.
+    2. **Diagnose what it surfaces** — the object, not the residual (neiso-85/86 is the model
+       case: 2022 surfaced an inverted fuel input; the fix was a data repair with zero DOF, never
+       a parameter tuned to 2022).
+    3. **Re-train on 2023–2025 around the diagnosed issue** — the training window is the only
+       place fitting ever happens.
+    4. **Re-test the touchpoint** to see whether it resolved. Repeat as needed, and repeat the
+       same loop on 2021 and 2020.
+    A touchpoint number is therefore *diagnostic evidence*, never a skill claim — the discipline
+    that makes it honest is step 3, that no parameter is ever identified against the touchpoint
+    year itself.
+
+    **2019 is THE one-touch year.** It is spent exactly once, at the end, against the fully
+    prepared frontier/`complete`/`final` keeper. It is the only year whose result is a certified
+    out-of-sample number, and the only one that cannot be re-run.
+    Standing clauses:
+    - **No solve, no scoring, no registration** may touch an out-of-training year until the ISO
       holds **that year's tier marker** in `frontend/data/backcast/calibration-complete.json`
-      (`complete` for validation, `final` for the locked test).
+      (`complete` for the validation touchpoints 2020–2022, `final` for the 2019/H1-2026 locked
+      test). This gates the **spend**, i.e. looking at the answer — it does NOT gate preparing the
+      inputs or the config, which are unrestricted per the clause above. A `complete` ISO may
+      re-run its touchpoints iteratively as the loop requires; the marker is the standing
+      authorization for that, not a one-shot ticket.
     - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode="forecast"`)
       span 2026+ and use no measured H1-2026 actuals (overlays are backcast-only by construction) —
       NOT restricted. Only a *backcast* of H1-2026 on real data, or scoring output against measured
       H1-2026 actuals, is quarantined.
     - Structural mechanism changes are still scored leave-one-year-out within 2023–2025 before
       promotion. In-sample gain with held-out degradation is overfitting, not skill.
-    Enforcement (**TIER-AWARE since 2026-07-31**): CI (`.github/workflows/ci.yml`,
+    Enforcement (**TIER-AWARE since 2026-07-31; SPEND-ONLY since 2026-08-06** — the gates below check solve/score/register, never data prep): CI (`.github/workflows/ci.yml`,
     `quarantine-gates` job) fails any PR whose registered bundle contains a solve year outside
     2023–2025 before that ISO holds **the marker for that year's tier**, and
     `scripts/run_calibration_full.py` hard-fails any `--year` outside {2023, 2024, 2025} unless
