@@ -14,8 +14,12 @@
 #
 # MISO seeded 2026-07-10 (2023/2024 SOM annual tables + 2025 IMM
 # quarterly output-gap rows) for the coal offer-structure adjudication
-# (docs/handoffs/miso-coal-offer-som-redesign-2026-07.md). Other ISOs'
-# SOMs (NYISO/ERCOT/ISO-NE) publish analogous sections and extend this
+# (docs/handoffs/miso-coal-offer-som-redesign-2026-07.md). ERCOT seeded
+# 2026-08-05 (2023/2024/2025 ERCOT SOM Net Revenue Analysis + CONE +
+# existing-unit cost benchmarks; PDFs under data/raw/ERCOT/) for the
+# FFR-6A retirement-screen margin-gap decomposition
+# (docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md). Other
+# ISOs' SOMs (NYISO/ISO-NE) publish analogous sections and extend this
 # datatype with new iso rows; annual grain except where a monitor only
 # publishes seasonal/quarterly values.
 #
@@ -64,8 +68,13 @@ columns:
     nullable: false
     description: >-
       Fleet the metric describes: "system" (all suppliers),
-      "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows) or
-      "coal_merchant" (SOM Table 7 "Merchants" coal rows).
+      "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows),
+      "coal_merchant" (SOM Table 7 "Merchants" coal rows),
+      "new_gas_ct" / "new_gas_cc" (the ERCOT SOM Net Revenue Analysis
+      hypothetical new-entrant proxies: CT 10.5 / CC 7.0 MMBtu/MWh heat
+      rate, $4/MWh VOM, 10% outage rate), or "coal_existing" /
+      "nuclear_existing" (the SOM existing-unit profitability
+      discussions' cost benchmarks).
   - name: metric
     dtype: string
     unit: none
@@ -81,7 +90,18 @@ columns:
       (fraction of starts with must-run [self-commit] status, split by
       whether market revenues covered commitment + variable cost by the
       first full day), "net_revenue_usd_per_mwh" (net operating revenue of
-      the segment's starts).
+      the segment's starts). ERCOT SOM net-revenue rows add:
+      "net_revenue_usd_per_kw_yr" (single published value; "_min"/"_max"
+      variants for locational ranges; "_houston"/"_west" variants for the
+      named-zone values), "ecrs_effect_share_of_net_revenue" (share of
+      2023 net revenue the monitor attributes to ECRS price effects),
+      "cone_usd_per_kw_yr_min"/"_max" (Potomac CONE estimates),
+      "cone_planning_usd_per_kw_yr" / "cone_pnm_threshold_usd_per_kw_yr"
+      (PUCT planning CONE vs legacy PNM-threshold CONE),
+      "peaker_net_margin_usd_per_kw_yr", and existing-unit cost
+      benchmarks "fixed_om_usd_per_kw_yr", "vom_usd_per_mwh",
+      "fuel_cost_usd_per_mwh", "marginal_cost_usd_per_mwh",
+      "total_generating_cost_usd_per_mwh".
   - name: value
     dtype: float64
     unit: mixed
@@ -91,7 +111,8 @@ columns:
     dtype: string
     unit: none
     nullable: false
-    description: One of "fraction", "count", "usd_per_mwh", "mw".
+    description: >-
+      One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw".
   - name: source_doc
     dtype: string
     unit: none
