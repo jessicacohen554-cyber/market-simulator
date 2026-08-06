@@ -41,12 +41,14 @@
  *   are inadmissible; its `complete` marker and frontier claim were withdrawn the
  *   same day) and MISO's blocker moves from the retired C7 to C3a 2025. The ERCOT
  *   cell's C7 clause is struck as moot. KNOWN-STALE, NOT TOUCHED BY THIS SESSION
- *   (pre-existing drift, flagged rather than half-repaired): the NYISO cell still
- *   describes the nyiso-109 basis and calls the determination
- *   CALIBRATED-WITH-CAVEATS, but the current keeper 2026-08-04-nyiso-125-seam-envelope
- *   scores NOT-YET (C3a 2025 -10.2 %); and the NEISO cell still calls NEISO the
- *   "only calibration-complete ISO", which has not been true since NYISO and PJM
- *   were declared on 2026-07-31. Both belong to their own lanes' next sessions.
+ *   (pre-existing drift, flagged rather than half-repaired): the NEISO cell still
+ *   calls NEISO the "only calibration-complete ISO", untrue since NYISO and PJM
+ *   were declared on 2026-07-31. Belongs to that lane's next session. (An earlier
+ *   revision of this stamp also flagged the NYISO cell as stale against
+ *   2026-08-04-nyiso-125-seam-envelope; NYISO promoted to
+ *   2026-08-06-nyiso-128-control on 2026-08-06, which re-scores
+ *   CALIBRATED-WITH-CAVEATS under v3.1 with C3a passing all three years, so that
+ *   flag is resolved and the cell's determination reads correctly again.)
  * CAISO column re-stamped 2026-08-06 on the caiso-175 keeper promotion
  *   (keeper -> 2026-08-06-caiso-175-tac-intake; the stamp had also been stale
  *   at caiso-172, skipping the caiso-174 promotion). ONE new row, NO existing
