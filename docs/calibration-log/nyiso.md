@@ -5411,3 +5411,109 @@ Evidence:
 `scripts/gen_nyiso128_attestation.py`.
 
 * Next number: **nyiso-129**.
+
+---
+
+## nyiso-129 (2026-08-06) — the escalated solar-basis treatment is PROMOTED on structure at the cost of the determination; the named CF successor is REFUTED as specified and the real object identified; the empty lever queue re-opens with two items
+
+**KEEPER PROMOTED** → **`2026-08-06-nyiso-128-solar-basis`** (bundle
+`results/calibration/nyiso128_treatment`), superseding
+`2026-08-06-nyiso-128-control`. **Determination CALIBRATED-WITH-CAVEATS →
+NOT-YET, carried openly.** **NO SOLVE** — both arms already existed and were
+registered at nyiso-128; every number here is from committed artifacts,
+published inputs, or the scorer read at this HEAD under **rubric v3.1**.
+`audit_keepers --iso NYISO` **PASS 0/0**; `check_mechanism_matrix` exit 0.
+Rule 22: 2023–2025 only, freeze checked and untouched.
+
+**(1) THE OWNER RULING THAT RELEASED IT**, verbatim (session nyiso-129): *"Is
+this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper."* The session's
+recommendation was **YES** on rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`. Rule 22
+D-5(b)'s worse-determination stop **did fire** at nyiso-128b; the owner is its
+escalation target and released it, so the downgrade is **recorded, not
+laundered**.
+
+**(2) WHAT IS ARMED AND WHAT IT BUYS.** `nyiso_solar_market_generator_basis` —
+**zero free parameters**, `n_residual` unchanged at 6 — replaces the EIA-860
+utility-scale capacity basis with NYISO's own Gold Book Table III-2a registry
+(15 units, 573.4 MW), removing a **double count** of ~2 GW of
+distribution-connected NY-Sun community solar already netted out of the EIA-930
+`NYIS` load series (`NG: SUN` identically zero, 8,760/8,760 h). C3a **PASSES all
+three years at +8.8 / +0.8 / −3.2 %** against the superseded control's
++6.2 / −1.7 / −7.0 % (2025 +3.8 pp, 2024 +2.5 pp; 2023 −2.6 pp but in band, and
+the pre-registered adverse case of 2023 crossing +10 % did NOT materialise).
+C1/C2/C3b/C4/C6/C8 all PASS. The removed solar is replaced by **in-state
+thermal**, not imports.
+
+**(3) THE COST, LOCALIZED — AND WHY RULE 14 SAYS KEEP IT.** C3c-2023 18 h →
+**22 h** vs a measured 10 h (**2.20× over**). Counted off both arms' committed
+`hourly/system_2023.parquet`: **every one of the 22 tail hours is Long Island**,
+h14–h19, on 08-21 plus the **Sept 4–9 heat wave**, and **all four added hours
+sit in that episode** (09-04 16h, 09-07 15h, 09-09 14h/15h; none removed).
+**Zone K is where the arm removes 97.7 of 152.1 MW.** Measured sensitivity: the
+control carries ~800 MW more system solar and prices Long Island at **$286.4**
+where the treatment prices it at **$386.7** — one to two steps up the published
+Zone-K ladder. Rule 14's own words apply: a more accurate input that worsens the
+fit is a **discovered bug elsewhere** — the phantom Zone-K solar was **masking**
+an over-tight Long Island representation. **The 2023 exception stays WITHHELD**
+(an over-production, the opposite sign to the caveat's classification;
+in-training, so the 2026-08-06 C3c standing rule does not reach it). Ledger
+budget **1 of 3**.
+
+**(4) THE nyiso-128b NAMED SUCCESSOR IS REFUTED AS SPECIFIED — ex ante, NO SOLVE
+SPENT.** That lever was *"re-identify the registered fleet's CF from EIA-860
+tracking mix + latitude"*, premised on the ~0.20 vs ~0.133 gap being **geometry**.
+Measured with the machinery the premise named: clear-sky POA ratio
+registered-over-whole-fleet **1.0041 / 1.0322 / 1.0276** — the two populations
+sit at the **same latitude** (42.54 vs 42.69 °N), differ only modestly in
+tracking share (61 % vs 47 % single-axis), and the registered fleet's **DC:AC
+ratio is LOWER** (1.340 vs 1.353). Geometry buys CF 0.133 → **0.137**, so the
+lever as named is **INERT** and rule 26 `[R-DELETE]` forbids parking it.
+
+**(5) THE REAL OBJECT, NEWLY IDENTIFIED.**
+`RENEWABLE_AVG_CF["NYISO"]["solar"] = 0.15` is a **self-declared Tier-3
+approximation** — `constants.py` carries *"needs-citation: verify against
+EIA-923 ISO totals before quoting a forecast"* on that block — realized ~0.133,
+against a **measured 0.1955** for the very fleet this keeper installs (2026 Gold
+Book per-unit 2025 Net Energy: **981.8 GWh over 573.4 MW**, per-unit range
+0.158–0.222). A **CF-LEVEL defect on a different input**, its own object under
+rule 19. **Reported against interest:** this session extracts **981.8 GWh** where
+nyiso-128 quoted **1,081.8 GWh** — exactly 100 GWh apart; the successor must
+reconcile that first, since it moves the 2025 over-removal from 0.33 to
+**0.23 TWh**. Nothing in this promotion depends on which is right.
+
+**(6) THE LEVER QUEUE IS NO LONGER EMPTY** (it was, at nyiso-127/128). Two
+items, each needing its own prereg: **(a)** the unmasked **Long Island scarcity
+over-production**, whose owner is MEASURED — in **100 % of the 22 tail hours**
+(both arms) BOTH LI import paths sit at their bound: `NYC>Long_Island` at
+**325 MW** (at bound only 26.5 % of the year, so it binds precisely in the
+scarcity episode) and `NYISO_external>Long_Island` at ~849 MW. The 325 MW is not
+the link's TTC but the **published capacity-market LCR import limit**, applied by
+the armed `nyiso_li_lcr_tsl` as an in-window **hourly energy** cap — a
+deliverability quantity doing an energy job, a boundary mismatch
+`model/interchange/nyiso.py` already documents. An existing armed mechanism to
+RECONCILE (rule 19), not a new floor to stack — and the route back to
+CALIBRATED-WITH-CAVEATS; **(b)** the
+**NYISO solar CF level**, after the GWh reconciliation. Matrix cell
+`vre_market_generator_basis` NYISO **`O` → `K`**; NYISO column and
+`docs/mechanism-testing-matrix.md` §5.5 header re-stamped in-session (rule 28).
+
+**(7) FRONTIER / `complete`.** The `complete` entry is re-keyed to the new
+keeper with the determination re-verified from committed artifacts (rule 22
+D-5(b)); `tier_authorized` and the absent `final` are untouched. **A frontier
+re-declaration is NOT appropriate while NYISO reads NOT-YET** — the block lapsed
+at nyiso-120, nyiso-127 §3 recommended re-declaration over a third amendment,
+and the determination has now moved again; it becomes assessable once (6a)
+lands. The nyiso-127 §5 four-item decision package — including the phantom DOF
+entry `GAS_AVAILABILITY_FACTOR[NYISO] = 0.866`, ledgered as living in
+`constants.py` but present nowhere in `src/market_sim/` — remains **open and
+untouched**.
+
+Evidence:
+`results/calibration/FINDING-nyiso129-solar-basis-promotion-and-cf-successor-2026-08-06.md`,
+`_nyiso129_cf_identification.json`, probe
+`scripts/probes/_nyiso129_cf_identification.py`,
+`FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
+`PREREG-nyiso128-market-solar-basis-2026-08-05.md`.
+
+* Next number: **nyiso-130**.
