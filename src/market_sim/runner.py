@@ -137,7 +137,11 @@ from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
 from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
-from market_sim.policy.rps import get_rps_acp, get_rps_target
+from market_sim.policy.rps import (
+    get_rps_acp,
+    get_rps_eligible_fuels,
+    get_rps_target,
+)
 from market_sim.results.cache import (
     get_cache_path,
     is_cached,
@@ -2032,14 +2036,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # in-region wind+solar cannot reach the target and its dual (REC
             # price) is capped at the ACP (policy/rps.get_rps_acp; rule 13).
             rps_acp_price = None
+            # Statute-defined eligible-fuel set for the RPS row (FFR-7B Arm 1):
+            # names beyond wind/solar add the matching thermal-block generator
+            # columns (e.g. NYISO existing hydro, CAISO geothermal/biomass).
+            rps_eligible_fuels = None
             # Pure-federal counterfactual (W2-A plan §5.3): with the federal
             # CES enabled AND federal_ces_replaces_state_rps, the state RPS
             # row is not built (rps_target stays None), so no RPS dual exists
-            # and the premium is the only attribute mechanism. Moot for
-            # ERCOT/PJM (no RPS row either way).
+            # and the premium is the only attribute mechanism. Moot for ERCOT
+            # (all-zero STATE_RPS_FLOORS entry — no row either way); PJM DOES
+            # carry a row (0.185→0.33 since the FF-1E-policy refresh), so the
+            # suppression is live there (stale-comment fix, FFR-6B §5.4).
             if config.rps_enabled and not federal_ces_suppresses_state_rps(config):
                 rps_target = get_rps_target(iso, year)
                 rps_acp_price = get_rps_acp(iso)
+                rps_eligible_fuels = get_rps_eligible_fuels(iso)
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
@@ -2272,6 +2283,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 storage_discharge_cost=storage.vom,
                 rps_target=rps_target,
                 rps_acp_price=rps_acp_price,
+                # Omitted (UNSET) when no eligible set accompanies an active
+                # row, so the dispatch-kwargs key set is unchanged wherever the
+                # row is off or default (byte-identity; FFR-7B Arm 1).
+                rps_eligible_fuels=(
+                    rps_eligible_fuels if rps_eligible_fuels is not None else UNSET
+                ),
                 # Bound storage foresight to within-day arbitrage when the
                 # config asks for it (methodology spec §1.3); previously
                 # only the backcast script honored this flag.

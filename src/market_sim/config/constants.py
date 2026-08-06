@@ -50,6 +50,7 @@ from market_sim.config.capacity_market import (
     RGGI_MEMBER_STATES_BY_YEAR,
     RGGI_RESERVE_ESCALATION,
     RGGI_STATE_CO2_BUDGET,
+    RPS_ELIGIBLE_FUELS_BY_ISO,
     RenewableElccCurve,
     SHORT_TON_TO_METRIC_TONNE,
     STATE_RPS_ACP,

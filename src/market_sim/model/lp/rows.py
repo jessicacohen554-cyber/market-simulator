@@ -28,6 +28,7 @@ def _build_rps_row(
     layout: VariableLayout,
     rps_target: float,
     demand: np.ndarray,
+    eligible_gen_idx: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, float]:
     """Return the single annual RPS constraint row and its lower bound.
 
@@ -46,15 +47,26 @@ def _build_rps_row(
     row's dual (the REC price) at or below the ACP ceiling — exactly how a REC
     market clears when supply is short.
 
-    Only wind and solar count toward the target: an RPS is a *renewable*
-    portfolio standard, so existing nuclear and large hydro -- clean but not
-    renewable -- are excluded (CX-6a, capacity-economics plan 2026-07 §6.5).
-    Counting nuclear here would let its output satisfy the target and depress
-    the REC dual toward zero wherever nuclear+VRE already clear it, killing the
-    renewable-entry signal the dual exists to send. Nuclear's zero-emission
-    support flows separately through ``eac_price_nuclear`` (ZEC/CES). This
-    matches the capacity screens' ``_RPS_ELIGIBLE_FUELS``/``_RENEWABLE_NEW_FUELS``
-    (both wind/solar only).
+    ``eligible_gen_idx`` extends the counted set beyond the wind/solar zone
+    columns with thermal-block generator columns (``P[g,t]``) whose fuel the
+    governing statute counts toward its *renewable* tier — e.g. NYISO existing
+    hydro and biomass (CLCPA 70x30, PSL §66-p), CAISO geothermal and biomass
+    (Pub. Res. Code §25741) — resolved per ISO from the cited
+    ``RPS_ELIGIBLE_FUELS_BY_ISO`` table (FFR-7B Arm 1, rule 14 [R-ACCURATE];
+    the under-counted set pinned those rows' duals at the ACP ceiling, FFR-6B
+    §8). ``None`` (the default) keeps the exact wind+solar-only row.
+
+    Nuclear is NEVER admitted here: an RPS is a *renewable* portfolio
+    standard, so nuclear -- clean but not renewable -- is excluded (CX-6a,
+    capacity-economics plan 2026-07 §6.5). Counting nuclear here would let its
+    output satisfy the target and depress the REC dual toward zero wherever
+    nuclear+VRE already clear it, killing the renewable-entry signal the dual
+    exists to send. Nuclear's zero-emission support flows separately through
+    ``eac_price_nuclear`` (ZEC/CES); a *clean/carbon-free* tier that counts
+    nuclear is a separate row family (FFR-6B §6.3), never a widening of this
+    row. The capacity screens' ``_RPS_ELIGIBLE_FUELS``/``_RENEWABLE_NEW_FUELS``
+    remain wind/solar only: new-entry candidates are wind/solar, and existing
+    non-VRE renewables' attribute revenue stays on the ``eac_*`` channels.
     """
     T = layout.T  # T: number of hours
     vph = layout.vars_per_hour
@@ -65,6 +77,10 @@ def _build_rps_row(
     solar_cols = (hours * vph + layout._s_off + zones).ravel()
 
     col_groups = [wind_cols, solar_cols]
+    if eligible_gen_idx is not None:
+        gidx = np.asarray(eligible_gen_idx, dtype=int)  # g: eligible generators
+        if gidx.size:
+            col_groups.append((hours * vph + layout._p_off + gidx).ravel())
     if layout.n_rec_acp:
         # One ACP escape column per hour (a single non-negative variable),
         # +1 in the row so paying ACP substitutes for physical RECs.
@@ -77,6 +93,53 @@ def _build_rps_row(
     ).tocsr()
     rhs = rps_target * float(np.asarray(demand, dtype=float).sum())
     return row, rhs
+
+
+# The two renewables that are LP *zone columns* (W[z,t]/S[z,t]), always counted
+# by the RPS row; every other eligible fuel is a thermal-block generator class
+# resolved through FUEL_TYPE_MAP.
+_RPS_ROW_BASE_FUELS: tuple[str, str] = ("wind", "solar")
+
+
+def _resolve_rps_eligible_gen_idx(
+    fleet: FleetArrays,
+    eligible_fuels: tuple[str, ...] | None,
+) -> np.ndarray | None:
+    """Resolve an RPS eligible-fuel name set to thermal-block generator indices.
+
+    ``eligible_fuels`` is the governing statute's renewable-tier eligible set
+    for the ISO (``policy.rps.get_rps_eligible_fuels``). Wind and solar are the
+    LP's zone columns and are counted by the row directly, so only the names
+    beyond ``_RPS_ROW_BASE_FUELS`` resolve here, against ``FUEL_TYPE_MAP``
+    (data-driven per FFR-6B §6.3(2) — never a hardcoded class tuple at the call
+    site). An unknown fuel name is a hard error, never a silent drop; nuclear
+    is refused by name (CX-6a — a clean tier that counts nuclear is a separate
+    row family, FFR-6B §6.3, not a widening of the renewable row).
+
+    Returns ``None`` (byte-identical row) for ``None``/empty input, for the
+    default wind+solar-only set, and when no generator of an eligible class
+    exists in the fleet.
+    """
+    if not eligible_fuels:
+        return None
+    extra = [f for f in eligible_fuels if f not in _RPS_ROW_BASE_FUELS]
+    if not extra:
+        return None
+    if "nuclear" in extra:
+        raise ValueError(
+            "nuclear is never RPS-row eligible (CX-6a): a clean/carbon-free "
+            "tier that counts nuclear is a separate row family (FFR-6B §6.3), "
+            "not a widening of the renewable row"
+        )
+    unknown = sorted(f for f in extra if f not in FUEL_TYPE_MAP)
+    if unknown:
+        raise ValueError(
+            f"unknown RPS-eligible fuel name(s) {unknown}: every entry must "
+            "resolve against FUEL_TYPE_MAP"
+        )
+    codes = np.array([FUEL_TYPE_MAP[f] for f in extra], dtype=int)
+    gidx = np.flatnonzero(np.isin(np.asarray(fleet.fuel_type_idx), codes))
+    return gidx if gidx.size else None
 
 
 def _build_mass_cap_rows(layout: VariableLayout, coeffs: np.ndarray) -> sp.csr_matrix:
@@ -978,6 +1041,7 @@ def build_constraints(
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
     rps_target: float | None = None,
+    rps_eligible_fuels: tuple[str, ...] | None = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -1100,8 +1164,14 @@ def build_constraints(
             to ``1.0`` (lossless).
         eta_dis: Discharge efficiency, scalar or ``(n_storage,)``. Defaults
             to ``1.0`` (lossless).
-        rps_target: Required renewable-energy (wind+solar) share. When not
-            ``None`` and positive, one annual RPS constraint row is appended.
+        rps_target: Required renewable-energy share. When not ``None`` and
+            positive, one annual RPS constraint row is appended.
+        rps_eligible_fuels: The ISO statute's renewable-tier eligible fuel
+            names (``policy.rps.get_rps_eligible_fuels``). Wind/solar count
+            via their zone columns; other names resolve to thermal-block
+            generator columns through ``FUEL_TYPE_MAP``
+            (:func:`_resolve_rps_eligible_gen_idx`). ``None`` keeps the
+            wind+solar-only row (byte-identical).
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -1557,11 +1627,17 @@ def build_constraints(
             row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
             row_upper = np.concatenate([row_upper, cap_rhs])
 
-    # Optional RPS inequality: one annual row, renewable (wind+solar)
-    # generation must reach rps_target * total demand, with an infinite upper
-    # bound.
+    # Optional RPS inequality: one annual row, statutorily-eligible renewable
+    # generation (the wind+solar zone columns, plus any thermal-block classes
+    # the ISO's statute counts — ``rps_eligible_fuels``) must reach
+    # rps_target * total demand, with an infinite upper bound.
     if rps_target is not None and rps_target > 0.0:
-        rps_row, rhs = _build_rps_row(layout, rps_target, demand)
+        rps_row, rhs = _build_rps_row(
+            layout,
+            rps_target,
+            demand,
+            eligible_gen_idx=_resolve_rps_eligible_gen_idx(fleet, rps_eligible_fuels),
+        )
         blocks.append(rps_row)
         del rps_row
         row_lower = np.concatenate([row_lower, [rhs]])
