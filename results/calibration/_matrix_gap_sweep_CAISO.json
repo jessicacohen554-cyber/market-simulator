@@ -1,9 +1,9 @@
 {
   "iso": "CAISO",
-  "keeper": "2026-08-05-caiso-174-measured-fleet",
-  "keeper_bundle_fields": 685,
-  "n_scenario_fields": 685,
-  "n_matrix_rows": 196,
+  "keeper": "2026-08-06-caiso-175-tac-intake",
+  "keeper_bundle_fields": 692,
+  "n_scenario_fields": 693,
+  "n_matrix_rows": 202,
   "n_bundles_scanned": 20,
   "family": [
     {
@@ -37,7 +37,9 @@
         "caiso172_control_pge_estimate",
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
-        "caiso174_measured_fleet"
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
       ]
     },
     {
@@ -99,8 +101,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -114,6 +114,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -139,8 +141,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -154,6 +154,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -220,8 +222,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -235,6 +235,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -279,8 +281,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -294,6 +294,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -319,8 +321,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -334,6 +334,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso_netrev_base"
       ]
     },
@@ -358,8 +360,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -373,6 +373,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso_netrev_base"
       ]
     },
@@ -397,8 +399,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -412,6 +412,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso_netrev_base"
       ]
     },
@@ -436,8 +438,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -451,6 +451,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -498,8 +500,6 @@
       ],
       "armed_in_bundles": [
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -512,7 +512,9 @@
         "caiso172_control_pge_estimate",
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
-        "caiso174_measured_fleet"
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
       ]
     },
     {
@@ -540,8 +542,6 @@
       ],
       "armed_in_bundles": [
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -554,7 +554,9 @@
         "caiso172_control_pge_estimate",
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
-        "caiso174_measured_fleet"
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
       ]
     },
     {
@@ -589,8 +591,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -604,6 +604,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -629,8 +631,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -644,6 +644,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -698,8 +700,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -713,6 +713,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -901,8 +903,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -916,6 +916,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -947,8 +949,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -962,6 +962,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1014,8 +1016,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1029,6 +1029,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1054,8 +1056,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1069,6 +1069,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1130,8 +1132,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1145,6 +1145,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1183,7 +1185,9 @@
         "caiso172_control_pge_estimate",
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
-        "caiso174_measured_fleet"
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
       ]
     },
     {
@@ -1207,8 +1211,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1222,6 +1224,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1266,8 +1270,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1281,6 +1283,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1306,8 +1310,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1321,6 +1323,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1351,8 +1355,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1366,6 +1368,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1397,8 +1401,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1412,6 +1414,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1456,8 +1460,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1471,6 +1473,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1496,8 +1500,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1511,6 +1513,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso_netrev_base"
       ]
     },
@@ -1628,8 +1632,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1643,6 +1645,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1659,9 +1663,15 @@
           "row": "solar_deliverability",
           "cells": "UK....",
           "cell": "K"
+        },
+        {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
         }
       ],
       "cells": [
+        ".",
         "K"
       ],
       "armed_in_bundles": []
@@ -1692,8 +1702,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1707,6 +1715,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1737,8 +1747,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1752,6 +1760,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1782,8 +1792,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1797,6 +1805,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1827,8 +1837,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1842,6 +1850,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1872,8 +1882,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1887,6 +1895,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1917,8 +1927,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -1932,6 +1940,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -1999,8 +2009,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -2014,6 +2022,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso_netrev_base"
       ]
     },
@@ -2038,8 +2048,6 @@
         "caiso124_control_A",
         "caiso126_control_A",
         "caiso156_meter_screen_B",
-        "caiso157_capdel_C",
-        "caiso157_ror_D",
         "caiso162_control_A",
         "caiso162_peryear_import_caps",
         "caiso162_peryear_import_caps_v2",
@@ -2053,6 +2061,8 @@
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
         "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake",
         "caiso92_repro_A",
         "caiso_netrev_base"
       ]
@@ -2103,7 +2113,9 @@
         "caiso172_control_pge_estimate",
         "caiso172_measured_path15_split",
         "caiso174_control_flatfleet",
-        "caiso174_measured_fleet"
+        "caiso174_measured_fleet",
+        "caiso175_control",
+        "caiso175_tac_intake"
       ]
     }
   ],
@@ -2643,6 +2655,11 @@
           "cell": "K"
         },
         {
+          "row": "offer_curve_by_group",
+          "cells": "KKKKKK",
+          "cell": "K"
+        },
+        {
           "row": "cc_committed_offer_margin",
           "cells": "KUUUGU",
           "cell": "U"
@@ -2814,7 +2831,7 @@
         },
         {
           "row": "cc_steam_part_reclass",
-          "cells": "...U.O",
+          "cells": "...U.K",
           "cell": "."
         },
         {
@@ -3258,6 +3275,11 @@
           "cell": "K"
         },
         {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
+        },
+        {
           "row": "hydro_dispatch_envelope",
           "cells": ".KUUKU",
           "cell": "K"
@@ -3368,6 +3390,11 @@
           "cell": "."
         },
         {
+          "row": "nyiso_seam_par_attribution",
+          "cells": "....R.",
+          "cell": "."
+        },
+        {
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
           "cell": "K"
@@ -3445,6 +3472,11 @@
         {
           "row": "path15_load_split",
           "cells": ".K....",
+          "cell": "K"
+        },
+        {
+          "row": "tac_load_coverage",
+          "cells": "UKUUUU",
           "cell": "K"
         },
         {
@@ -3604,7 +3636,7 @@
         },
         {
           "row": "cc_steam_part_reclass",
-          "cells": "...U.O",
+          "cells": "...U.K",
           "cell": "."
         },
         {
@@ -4138,6 +4170,11 @@
           "cell": "K"
         },
         {
+          "row": "vre_market_generator_basis",
+          "cells": "....O.",
+          "cell": "."
+        },
+        {
           "row": "wtx_curtailment_driver",
           "cells": "K.....",
           "cell": "."
@@ -4278,6 +4315,11 @@
           "cell": "."
         },
         {
+          "row": "nyiso_seam_par_attribution",
+          "cells": "....R.",
+          "cell": "."
+        },
+        {
           "row": "import_hub_pricing",
           "cells": ".KUKKK",
           "cell": "K"
@@ -4358,6 +4400,11 @@
           "cell": "K"
         },
         {
+          "row": "tac_load_coverage",
+          "cells": "UKUUUU",
+          "cell": "K"
+        },
+        {
           "row": "demand_dropout_screen",
           "cells": "IIIIKI",
           "cell": "I"
@@ -4433,8 +4480,23 @@
           "cell": "O"
         },
         {
+          "row": "entry_pipeline_aware_signal",
+          "cells": "UUUOUU",
+          "cell": "U"
+        },
+        {
+          "row": "capacity_screen_unified_lookahead",
+          "cells": "OUUUUU",
+          "cell": "U"
+        },
+        {
           "row": "entry_vre_capacity_revenue",
           "cells": "IUUKUU",
+          "cell": "U"
+        },
+        {
+          "row": "vre_procurement_additions",
+          "cells": "UUUOUU",
           "cell": "U"
         },
         {
