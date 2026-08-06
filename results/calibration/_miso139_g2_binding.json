@@ -1,0 +1,505 @@
+{
+  "prereg": "PREREG-miso139-... @ 6263f43d, \u00a75",
+  "keeper": "2026-08-05-miso-132b-cc-committed",
+  "note": "binding := derate removal exceeds the class's own unloaded headroom in that hour, so the class is forced DOWN. A removal inside headroom eats slack and cannot change the marginal unit.",
+  "years": {
+    "2023": {
+      "classes": {
+        "CT_PEAKER": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17763.96661697187,
+            "mean_dispatch_mw": 4503.53369140625,
+            "mean_headroom_mw": 13260.432793864758,
+            "p10_headroom_mw": 10510.27192976563,
+            "min_headroom_mw": 64.49193869154624,
+            "mean_removal_mw": 952.655213913332,
+            "binding_hours": 3,
+            "binding_share": 0.004098360655737705,
+            "forced_down_mwh": 2774.478987503904
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17782.186791967222,
+            "mean_dispatch_mw": 370.9525146484375,
+            "mean_headroom_mw": 17411.234270973986,
+            "p10_headroom_mw": 16860.675117324223,
+            "min_headroom_mw": 15245.676301406253,
+            "mean_removal_mw": 391.28405651472616,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17773.076704469546,
+            "mean_dispatch_mw": 2401.75146484375,
+            "mean_headroom_mw": 15371.325190127884,
+            "p10_headroom_mw": 12244.793356171886,
+            "min_headroom_mw": 64.49193869154624,
+            "mean_removal_mw": 657.5157931076461,
+            "binding_hours": 3,
+            "binding_share": 0.0010245901639344263,
+            "forced_down_mwh": 2774.478987503904
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17763.96661697187,
+            "mean_dispatch_mw": 4503.53369140625,
+            "mean_headroom_mw": 13260.432793864758,
+            "p10_headroom_mw": 10510.27192976563,
+            "min_headroom_mw": 64.49193869154624,
+            "mean_removal_mw": 297.347560910073,
+            "binding_hours": 3,
+            "binding_share": 0.004098360655737705,
+            "forced_down_mwh": 1091.6356227048545
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17782.186791967222,
+            "mean_dispatch_mw": 370.9525146484375,
+            "mean_headroom_mw": 17411.234270973986,
+            "p10_headroom_mw": 16860.675117324223,
+            "min_headroom_mw": 15245.676301406253,
+            "mean_removal_mw": -262.9838074635739,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17773.076704469546,
+            "mean_dispatch_mw": 2401.75146484375,
+            "mean_headroom_mw": 15371.325190127884,
+            "p10_headroom_mw": 12244.793356171886,
+            "min_headroom_mw": 64.49193869154624,
+            "mean_removal_mw": -0.20235862825871873,
+            "binding_hours": 3,
+            "binding_share": 0.0010245901639344263,
+            "forced_down_mwh": 1091.6356227048545
+          }
+        },
+        "CC_REGULAR": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 21782.352768990648,
+            "mean_dispatch_mw": 20124.533203125,
+            "mean_headroom_mw": 1657.8185759621304,
+            "p10_headroom_mw": 1081.926193212495,
+            "min_headroom_mw": -695.4216961645761,
+            "mean_removal_mw": 598.0366240332622,
+            "binding_hours": 11,
+            "binding_share": 0.015027322404371584,
+            "forced_down_mwh": 9486.279155441658
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 21796.82032247225,
+            "mean_dispatch_mw": 16852.021484375,
+            "mean_headroom_mw": 4944.799976086065,
+            "p10_headroom_mw": 2589.1335370000015,
+            "min_headroom_mw": 1709.3745745909036,
+            "mean_removal_mw": 216.76541005969892,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 21789.58654573145,
+            "mean_dispatch_mw": 18817.6875,
+            "mean_headroom_mw": 2971.899675761013,
+            "p10_headroom_mw": 1330.921387624992,
+            "min_headroom_mw": -695.4216961645761,
+            "mean_removal_mw": 397.64191208694416,
+            "binding_hours": 12,
+            "binding_share": 0.004098360655737705,
+            "forced_down_mwh": 10467.759695847319
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 21782.352768990648,
+            "mean_dispatch_mw": 20124.533203125,
+            "mean_headroom_mw": 1657.8185759621304,
+            "p10_headroom_mw": 1081.926193212495,
+            "min_headroom_mw": -695.4216961645761,
+            "mean_removal_mw": 205.36054501971665,
+            "binding_hours": 6,
+            "binding_share": 0.00819672131147541,
+            "forced_down_mwh": 6111.208306126642
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 21796.82032247225,
+            "mean_dispatch_mw": 16852.021484375,
+            "mean_headroom_mw": 4944.799976086065,
+            "p10_headroom_mw": 2589.1335370000015,
+            "min_headroom_mw": 1709.3745745909036,
+            "mean_removal_mw": -177.38477407015776,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 21789.58654573145,
+            "mean_dispatch_mw": 18817.6875,
+            "mean_headroom_mw": 2971.899675761013,
+            "p10_headroom_mw": 1330.921387624992,
+            "min_headroom_mw": -695.4216961645761,
+            "mean_removal_mw": 3.151976656659496,
+            "binding_hours": 7,
+            "binding_share": 0.0023907103825136613,
+            "forced_down_mwh": 6724.1870944816765
+          }
+        }
+      },
+      "cushion": {
+        "summer_aft": {
+          "coal_unloaded_mw_mean": 2625.592939942799,
+          "cc_unloaded_mw_mean": 1657.8185759621304
+        },
+        "summer_night": {
+          "coal_unloaded_mw_mean": 8578.670740807303,
+          "cc_unloaded_mw_mean": 4944.799976086065
+        },
+        "summer_all": {
+          "coal_unloaded_mw_mean": 5491.2263281333335,
+          "cc_unloaded_mw_mean": 2971.899675761013
+        }
+      }
+    },
+    "2024": {
+      "classes": {
+        "CT_PEAKER": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17750.44696690975,
+            "mean_dispatch_mw": 4725.0322265625,
+            "mean_headroom_mw": 13025.414590362421,
+            "p10_headroom_mw": 10216.536204984384,
+            "min_headroom_mw": -141.75187218832252,
+            "mean_removal_mw": 924.1364730037901,
+            "binding_hours": 5,
+            "binding_share": 0.006830601092896175,
+            "forced_down_mwh": 5788.415916540029
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17766.368089750005,
+            "mean_dispatch_mw": 633.8912963867188,
+            "mean_headroom_mw": 17132.476783809605,
+            "p10_headroom_mw": 15647.828538968759,
+            "min_headroom_mw": 13684.556566312509,
+            "mean_removal_mw": 370.0950878362282,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17760.79569675592,
+            "mean_dispatch_mw": 2702.63818359375,
+            "mean_headroom_mw": 15058.15735126846,
+            "p10_headroom_mw": 11590.167406156259,
+            "min_headroom_mw": -141.75187218832252,
+            "mean_removal_mw": 633.2560152925374,
+            "binding_hours": 6,
+            "binding_share": 0.0020491803278688526,
+            "forced_down_mwh": 6954.4169892153295
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17750.44696690975,
+            "mean_dispatch_mw": 4725.0322265625,
+            "mean_headroom_mw": 13025.414590362421,
+            "p10_headroom_mw": 10216.536204984384,
+            "min_headroom_mw": -141.75187218832252,
+            "mean_removal_mw": 293.80509418028225,
+            "binding_hours": 5,
+            "binding_share": 0.006830601092896175,
+            "forced_down_mwh": 3095.663686759872
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17766.368089750005,
+            "mean_dispatch_mw": 633.8912963867188,
+            "mean_headroom_mw": 17132.476783809605,
+            "p10_headroom_mw": 15647.828538968759,
+            "min_headroom_mw": 13684.556566312509,
+            "mean_removal_mw": -261.36982525822526,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17760.79569675592,
+            "mean_dispatch_mw": 2702.63818359375,
+            "mean_headroom_mw": 15058.15735126846,
+            "p10_headroom_mw": 11590.167406156259,
+            "min_headroom_mw": -141.75187218832252,
+            "mean_removal_mw": -0.19178776529619318,
+            "binding_hours": 6,
+            "binding_share": 0.0020491803278688526,
+            "forced_down_mwh": 3721.7572581795066
+          }
+        },
+        "CC_REGULAR": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 20982.631557088924,
+            "mean_dispatch_mw": 19754.998046875,
+            "mean_headroom_mw": 1227.6331686838691,
+            "p10_headroom_mw": 791.4336897430709,
+            "min_headroom_mw": -868.9058139401131,
+            "mean_removal_mw": 547.0468733828876,
+            "binding_hours": 35,
+            "binding_share": 0.04781420765027322,
+            "forced_down_mwh": 19763.9542699323
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 20991.862091270563,
+            "mean_dispatch_mw": 17999.642578125,
+            "mean_headroom_mw": 2992.2176627463996,
+            "p10_headroom_mw": 1318.0624160018633,
+            "min_headroom_mw": 876.2834711268661,
+            "mean_removal_mw": 196.88687681050303,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 20988.63140430699,
+            "mean_dispatch_mw": 19058.931640625,
+            "mean_headroom_mw": 1929.6992647279246,
+            "p10_headroom_mw": 985.455410001865,
+            "min_headroom_mw": -868.9058139401131,
+            "mean_removal_mw": 363.0902163733017,
+            "binding_hours": 42,
+            "binding_share": 0.014344262295081968,
+            "forced_down_mwh": 24103.178132597597
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 20982.631557088924,
+            "mean_dispatch_mw": 19754.998046875,
+            "mean_headroom_mw": 1227.6331686838691,
+            "p10_headroom_mw": 791.4336897430709,
+            "min_headroom_mw": -868.9058139401131,
+            "mean_removal_mw": 189.6250239662688,
+            "binding_hours": 16,
+            "binding_share": 0.02185792349726776,
+            "forced_down_mwh": 11789.057151424382
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 20991.862091270563,
+            "mean_dispatch_mw": 17999.642578125,
+            "mean_headroom_mw": 2992.2176627463996,
+            "p10_headroom_mw": 1318.0624160018633,
+            "min_headroom_mw": 876.2834711268661,
+            "mean_removal_mw": -161.79584027650387,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 20988.63140430699,
+            "mean_dispatch_mw": 19058.931640625,
+            "mean_headroom_mw": 1929.6992647279246,
+            "p10_headroom_mw": 985.455410001865,
+            "min_headroom_mw": -868.9058139401131,
+            "mean_removal_mw": 4.125935292675522,
+            "binding_hours": 19,
+            "binding_share": 0.006489071038251366,
+            "forced_down_mwh": 14358.618931480276
+          }
+        }
+      },
+      "cushion": {
+        "summer_aft": {
+          "coal_unloaded_mw_mean": 4575.260212101881,
+          "cc_unloaded_mw_mean": 1227.6331686838691
+        },
+        "summer_night": {
+          "coal_unloaded_mw_mean": 10256.426805731364,
+          "cc_unloaded_mw_mean": 2992.2176627463996
+        },
+        "summer_all": {
+          "coal_unloaded_mw_mean": 7510.267813967063,
+          "cc_unloaded_mw_mean": 1929.6992647279246
+        }
+      }
+    },
+    "2025": {
+      "classes": {
+        "CT_PEAKER": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17653.053428924166,
+            "mean_dispatch_mw": 6070.18896484375,
+            "mean_headroom_mw": 11582.863548597366,
+            "p10_headroom_mw": 7890.130837000012,
+            "min_headroom_mw": 466.2754280510617,
+            "mean_removal_mw": 1003.6371494452055,
+            "binding_hours": 1,
+            "binding_share": 0.001366120218579235,
+            "forced_down_mwh": 697.7556327141065
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17667.823278267497,
+            "mean_dispatch_mw": 1350.6475830078125,
+            "mean_headroom_mw": 16317.175763087815,
+            "p10_headroom_mw": 14836.527541101575,
+            "min_headroom_mw": 11699.919712619294,
+            "mean_removal_mw": 463.2795890816819,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17660.438353595826,
+            "mean_dispatch_mw": 3737.3486328125,
+            "mean_headroom_mw": 13923.089561229184,
+            "p10_headroom_mw": 9329.091188562512,
+            "min_headroom_mw": 113.41214680106168,
+            "mean_removal_mw": 720.0527665129188,
+            "binding_hours": 4,
+            "binding_share": 0.001366120218579235,
+            "forced_down_mwh": 1826.8211562979268
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 17653.053428924166,
+            "mean_dispatch_mw": 6070.18896484375,
+            "mean_headroom_mw": 11582.863548597366,
+            "p10_headroom_mw": 7890.130837000012,
+            "min_headroom_mw": 466.2754280510617,
+            "mean_removal_mw": 281.25835868531317,
+            "binding_hours": 1,
+            "binding_share": 0.001366120218579235,
+            "forced_down_mwh": 56.08445865429712
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 17667.823278267497,
+            "mean_dispatch_mw": 1350.6475830078125,
+            "mean_headroom_mw": 16317.175763087815,
+            "p10_headroom_mw": 14836.527541101575,
+            "min_headroom_mw": 11699.919712619294,
+            "mean_removal_mw": -250.16715441580524,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 17660.438353595826,
+            "mean_dispatch_mw": 3737.3486328125,
+            "mean_headroom_mw": 13923.089561229184,
+            "p10_headroom_mw": 9329.091188562512,
+            "min_headroom_mw": 113.41214680106168,
+            "mean_removal_mw": -1.1459454067713184,
+            "binding_hours": 2,
+            "binding_share": 0.0006830601092896175,
+            "forced_down_mwh": 428.13997565432146
+          }
+        },
+        "CC_REGULAR": {
+          "A_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 19935.093673479798,
+            "mean_dispatch_mw": 18475.9609375,
+            "mean_headroom_mw": 1459.132801350789,
+            "p10_headroom_mw": 1248.680194290042,
+            "min_headroom_mw": -92.08012608234276,
+            "mean_removal_mw": 553.4717161300978,
+            "binding_hours": 11,
+            "binding_share": 0.015027322404371584,
+            "forced_down_mwh": 5594.00659750036
+          },
+          "A_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 19946.216972106482,
+            "mean_dispatch_mw": 17217.83984375,
+            "mean_headroom_mw": 2728.3756448353097,
+            "p10_headroom_mw": 1707.1530443411393,
+            "min_headroom_mw": 988.4701510911382,
+            "mean_removal_mw": 221.30731355379808,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "A_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 19940.655322793144,
+            "mean_dispatch_mw": 17918.412109375,
+            "mean_headroom_mw": 2022.2442413435615,
+            "p10_headroom_mw": 1287.3100931650442,
+            "min_headroom_mw": -92.08012608234276,
+            "mean_removal_mw": 379.0372415490786,
+            "binding_hours": 18,
+            "binding_share": 0.006147540983606557,
+            "forced_down_mwh": 9382.415153298378
+          },
+          "B_misoslope|summer_aft": {
+            "hours": 732,
+            "mean_capability_mw": 19935.093673479798,
+            "mean_dispatch_mw": 18475.9609375,
+            "mean_headroom_mw": 1459.132801350789,
+            "p10_headroom_mw": 1248.680194290042,
+            "min_headroom_mw": -92.08012608234276,
+            "mean_removal_mw": 177.59688882863455,
+            "binding_hours": 8,
+            "binding_share": 0.01092896174863388,
+            "forced_down_mwh": 2367.0139210229645
+          },
+          "B_misoslope|summer_night": {
+            "hours": 732,
+            "mean_capability_mw": 19946.216972106482,
+            "mean_dispatch_mw": 17217.83984375,
+            "mean_headroom_mw": 2728.3756448353097,
+            "p10_headroom_mw": 1707.1530443411393,
+            "min_headroom_mw": 988.4701510911382,
+            "mean_removal_mw": -152.91626949630134,
+            "binding_hours": 0,
+            "binding_share": 0.0,
+            "forced_down_mwh": 0.0
+          },
+          "B_misoslope|summer_all": {
+            "hours": 2928,
+            "mean_capability_mw": 19940.655322793144,
+            "mean_dispatch_mw": 17918.412109375,
+            "mean_headroom_mw": 2022.2442413435615,
+            "p10_headroom_mw": 1287.3100931650442,
+            "min_headroom_mw": -92.08012608234276,
+            "mean_removal_mw": 2.871686087807461,
+            "binding_hours": 14,
+            "binding_share": 0.0047814207650273225,
+            "forced_down_mwh": 3792.7479957566175
+          }
+        }
+      },
+      "cushion": {
+        "summer_aft": {
+          "coal_unloaded_mw_mean": 677.6659073349185,
+          "cc_unloaded_mw_mean": 1459.132801350789
+        },
+        "summer_night": {
+          "coal_unloaded_mw_mean": 4389.243875752939,
+          "cc_unloaded_mw_mean": 2728.3756448353097
+        },
+        "summer_all": {
+          "coal_unloaded_mw_mean": 2301.8840200552845,
+          "cc_unloaded_mw_mean": 2022.2442413435615
+        }
+      }
+    }
+  }
+}
