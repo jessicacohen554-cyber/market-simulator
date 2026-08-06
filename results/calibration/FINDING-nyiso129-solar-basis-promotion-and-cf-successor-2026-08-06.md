@@ -163,8 +163,26 @@ the tightening direction, and neither is a free parameter.
   (E4 definition rewritten from the auto-placeholder; M1b marker determination
   re-keyed and re-verified per rule 22 D-5(b)).
 * Evidence record: `results/calibration/_nyiso129_cf_identification.json`,
-  probe `scripts/probes/_nyiso129_cf_identification.py` (all three measurements
+  probe `scripts/probes/_nyiso129_cf_identification.py` (all four measurements
   reproducible, no solve).
+* `scripts/probes/_nyiso128_solve_ab.py` re-pointed from the superseded
+  `nyiso125_seam_A` to the designated keeper's own `run_config.json`, and
+  **validated**: `--arm control --verify-only` reads **RECIPE FIDELITY: PASS —
+  all 693 keeper fields reproduced** (693, not nyiso-128's 680, because main's
+  `scenarios.py` has since gained fields). `--override FIELD=VALUE` added so the
+  next lever is armed without editing the driver.
+* **Fresh-container data prerequisites, recorded because they cost this session
+  two failed solves before the check above could run.** The NYISO keeper
+  hard-errors — it never silently no-ops — without the `capacity-deliverability`
+  and `nyiso-interface-flows` clean partitions, both of which land LATE in
+  `scripts/regenerate_clean.py`; the standing environment note listing only
+  `emissions` / `emissions-unit-annual` / `validation` as unbuilt is incomplete.
+  The regen finishes 49/50: the lone failure is `ercot-wtx-congestion`, on a
+  missing `US/Central` tzdata entry in the container (ERCOT-only, irrelevant
+  here, `pip install tzdata` if an ERCOT session needs it). The solve's
+  `no hydro-plant-modes clean partition for NYISO` warning is **expected**, not a
+  gap — `curate_hydro_plant_modes.py` registers `DEFAULT_ISOS = ("CAISO",)` by
+  design.
 
 ## 7. What the next session inherits
 
