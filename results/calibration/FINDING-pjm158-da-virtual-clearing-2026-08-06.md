@@ -190,6 +190,13 @@ diagnostic**."* And `render_calibration_html` builds the hourly price residual
 against `_actual_rt_padded` *"because the model's clearing price is a real-time
 marginal-energy analogue (no day-ahead unit-commitment smoothing)"*.
 
+**And PJM takes the RT branch, not the DA fallback.** `score_price_mean`
+selects `rt_lw` when the bench carries it and only falls back to `da_lw`/`da`
+when it does not; PJM's bench parts carry `rt_lw` in **all three years**
+(29.55 / 31.31 / 45.80 $/MWh). The DA−RT spread is also basis-robust: +0.96 /
++0.29 / +0.78 $/MWh load-weighted vs +0.89 / +0.26 / +0.83 on the unweighted
+system series this probe (and pjm-105) clears at.
+
 Clearing the **same measured curve** at actual RT instead of actual DA:
 
 | | 2023 | 2024 | 2025 |
