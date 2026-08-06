@@ -225,6 +225,11 @@ def to_parquet(
             if self.rps_region_duals is not None
             else None
         ),
+        "clean_region_duals": (
+            self.clean_region_duals.tolist()
+            if self.clean_region_duals is not None
+            else None
+        ),
     }
 
     schema_metadata = {_METADATA_KEY: json.dumps(metadata).encode()}
@@ -348,6 +353,11 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         rps_region_duals=(
             np.asarray(meta["rps_region_duals"], dtype=float)
             if meta.get("rps_region_duals") is not None
+            else None
+        ),
+        clean_region_duals=(
+            np.asarray(meta["clean_region_duals"], dtype=float)
+            if meta.get("clean_region_duals") is not None
             else None
         ),
     )

@@ -114,6 +114,16 @@ class DispatchSpec:
     rps_region_zone_mask: Any = UNSET
     rps_region_obligation_frac: Any = UNSET
     rps_region_acp_price: Any = UNSET
+    # Clean/carbon-free tier row family (FFR-7B Arm 3, GATED
+    # miso_clean_tier_rows, MISO forecast only; requires the Arm-2 region
+    # family): the (K2, n_zones) mask, RHS weights, (K2,) escape prices and
+    # per-region qualifying fuel-name tuples from
+    # policy.clean_tiers.build_clean_region_arrays. UNSET (gate off) omits
+    # the keys — byte-identity.
+    clean_region_zone_mask: Any = UNSET
+    clean_region_obligation_frac: Any = UNSET
+    clean_region_acp_price: Any = UNSET
+    clean_region_fuels: Any = UNSET
     # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
     # symmetric -ttc.
     ttc_import: Any = UNSET

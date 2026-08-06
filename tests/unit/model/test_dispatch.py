@@ -1323,6 +1323,167 @@ class TestRpsComplianceRegionRows(unittest.TestCase):
         self.assertIsNone(result.rps_region_duals)
 
 
+class TestCleanTierRegionRows(unittest.TestCase):
+    """The clean/carbon-free tier row family (FFR-7B Arm 3 / FFR-6B E-2)."""
+
+    T = 24
+
+    def _nuclear_gas_fleet(self, zone="Z0"):
+        generators = [
+            Generator(
+                unit_id="N0",
+                name="N0",
+                zone=zone,
+                fuel_type="nuclear",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="G0",
+                name="G0",
+                zone=zone,
+                fuel_type="gas_cc",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                eford=0.0,
+            ),
+        ]
+        return generators_to_fleet_arrays(generators, [zone], hours=self.T)
+
+    def _no_renewables(self, n_zones):
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def _rps_carrier(self, n_zones):
+        # A zero-RHS RPS region family: the clean family rides its machinery
+        # (ACP slots), so every clean toy carries one slack renewable row.
+        return dict(
+            rps_region_zone_mask=np.ones((1, n_zones), dtype=bool),
+            rps_region_obligation_frac=np.zeros((1, n_zones)),
+            rps_region_acp_price=np.array([30.0]),
+        )
+
+    def test_clean_rows_require_rps_region_family(self):
+        # FFR-6B §6.2: the dependency is strict and one-directional — clean
+        # rows without the Arm-2 family are refused, at the assembler and at
+        # the model.
+        fleet = self._nuclear_gas_fleet()
+        demand = np.full((1, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                demand,
+                mc=np.vstack([np.full(self.T, 10.0), np.full(self.T, 50.0)]),
+                T=self.T,
+                clean_region_zone_mask=np.ones((1, 1), dtype=bool),
+                clean_region_obligation_frac=np.full((1, 1), 0.8),
+                clean_region_acp_price=np.array([30.0]),
+                clean_region_fuels=(("nuclear", "hydro", "wind", "solar"),),
+                **self._no_renewables(1),
+            )
+
+    def test_nuclear_satisfies_clean_row_and_binds_without_it(self):
+        # The E-2 semantics: nuclear IS clean-row eligible (the separate row
+        # family CX-6a pointed to). With nuclear in the qualifying set the
+        # in-merit nuclear unit covers the 80% clean obligation and the dual
+        # is 0; strip nuclear from the set and the row is certificate-short,
+        # escaping at its own $30 ceiling — the feasibility escape doing its
+        # job instead of an infeasibility bomb.
+        fleet = self._nuclear_gas_fleet()
+        mc = np.vstack([np.full(self.T, 10.0), np.full(self.T, 50.0)])
+        demand = np.full((1, self.T), 80.0)
+        common = dict(
+            mc=mc,
+            T=self.T,
+            **self._rps_carrier(1),
+            clean_region_zone_mask=np.ones((1, 1), dtype=bool),
+            clean_region_obligation_frac=np.full((1, 1), 0.8),
+            clean_region_acp_price=np.array([30.0]),
+            **self._no_renewables(1),
+        )
+        with_nuclear = solve_dispatch(
+            fleet,
+            demand,
+            clean_region_fuels=(("nuclear", "hydro", "wind", "solar"),),
+            **common,
+        )
+        self.assertEqual(with_nuclear.status, "Optimal")
+        np.testing.assert_allclose(with_nuclear.clean_region_duals, [0.0], atol=1e-3)
+        without_nuclear = solve_dispatch(
+            fleet,
+            demand,
+            clean_region_fuels=(("hydro", "wind", "solar"),),
+            **common,
+        )
+        self.assertEqual(without_nuclear.status, "Optimal")
+        np.testing.assert_allclose(
+            without_nuclear.clean_region_duals, [30.0], atol=1e-3
+        )
+        # The renewable family's dual is untouched by the clean family in
+        # both arms (zero-RHS carrier row stays slack at 0).
+        np.testing.assert_allclose(with_nuclear.rps_region_duals, [0.0], atol=1e-3)
+
+    def test_wind_column_counts_in_both_families(self):
+        # FFR-6B §6.4, the least obvious case stated as a matrix fact: a
+        # wind MWh satisfies BOTH its renewable row and its clean row — two
+        # constraints, one MWh — so the wind column carries +1 in each
+        # family's row. (The one-certificate revenue composition is the
+        # consumers' max(), out of LP scope.)
+        layout = VariableLayout(
+            n_gen=2, n_zones=1, n_storage=0, n_links=0, T=self.T, n_rec_acp=2
+        )
+        fleet = self._nuclear_gas_fleet()
+        demand = np.full((1, self.T), 80.0)
+        A, lower, upper = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_region_zone_mask=np.ones((1, 1), dtype=bool),
+            rps_region_obligation_frac=np.full((1, 1), 0.2),
+            clean_region_zone_mask=np.ones((1, 1), dtype=bool),
+            clean_region_obligation_frac=np.full((1, 1), 0.8),
+            clean_region_fuels=(("nuclear", "hydro", "wind", "solar"),),
+        )[:3]
+        rps_row = A.shape[0] - 2
+        clean_row = A.shape[0] - 1
+        wind_col = layout.w_col(0, 0)
+        self.assertEqual(A[rps_row, wind_col], 1.0)
+        self.assertEqual(A[clean_row, wind_col], 1.0)
+        # And the clean row (alone) also counts the nuclear column.
+        nuc_col = layout.p_col(0, 0)
+        self.assertEqual(A[rps_row, nuc_col], 0.0)
+        self.assertEqual(A[clean_row, nuc_col], 1.0)
+        # Each family escapes through its OWN ACP slot (region-major).
+        self.assertEqual(A[rps_row, layout.acp_col(0, 0)], 1.0)
+        self.assertEqual(A[rps_row, layout.acp_col(0, 1)], 0.0)
+        self.assertEqual(A[clean_row, layout.acp_col(0, 1)], 1.0)
+        self.assertEqual(A[clean_row, layout.acp_col(0, 0)], 0.0)
+
+    def test_unknown_clean_fuel_refused(self):
+        # An unknown qualifying-fuel name is a hard error, never a silent
+        # drop — same discipline as the renewable resolver.
+        fleet = self._nuclear_gas_fleet()
+        demand = np.full((1, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                demand,
+                mc=np.vstack([np.full(self.T, 10.0), np.full(self.T, 50.0)]),
+                T=self.T,
+                **self._rps_carrier(1),
+                clean_region_zone_mask=np.ones((1, 1), dtype=bool),
+                clean_region_obligation_frac=np.full((1, 1), 0.8),
+                clean_region_acp_price=np.array([30.0]),
+                clean_region_fuels=(("nuclear", "smallmodular"),),
+                **self._no_renewables(1),
+            )
+
+
 class TestMassCapConstraint(unittest.TestCase):
     """The emissions mass-cap row, its endogenous dual, and membership."""
 

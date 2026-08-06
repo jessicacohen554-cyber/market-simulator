@@ -3133,6 +3133,88 @@ MISO_RPS_COMPLIANCE_REGIONS: dict[str, dict] = {
     },
 }
 
+# Per-state MISO CLEAN/CARBON-FREE tier compliance regions (FFR-7B Arm 3 /
+# FFR-6B E-2) — a SECOND, INDEPENDENT row family on the Arm-2 K-row
+# machinery, never a widening of the renewable row (the renewable row keeps
+# its statute's renewable eligibility; a state with both tiers gets TWO rows,
+# which is what the statutes say — FFR-6B §6.3(1)).
+#
+# Adjudication (FFR-6B §6.2, measured eGRID 2023 at both grains): built
+# ISO-wide the clean row is SLACK in every modelled year through 2040
+# (-22.9 pp falling to -6.9 pp) — an inert mechanism; at the state-group
+# grain it binds materially in two zones covering 39% of MISO load
+# (MISO-West short 14.0 pp by 2030 rising to 29.4 pp by 2040; MISO-East
+# short 21.7 pp by 2035 rising to 33.1 pp by 2040). Hence exactly two rows.
+#
+# Each row's QUALIFYING SET is per-statute DATA resolved against
+# FUEL_TYPE_MAP (rule 18's spirit — never a hardcoded class tuple at the
+# builder), because the statutes genuinely differ (FFR-6B §6.3(2)):
+#   MN — Minn. Stat. §216B.1691 subd. 2g (2023 HF7): 80% carbon-free by 2030
+#     (IOU; the .80 knot follows the FFR-6B §6.2 adjudication table) / 90% by
+#     2035 / 100% by 2040. Carbon-free INCLUDES HYDROGEN AND BIOMASS →
+#     nuclear, hydro, wind, solar, hydrogen_ct, hydrogen_ccgt, biomass.
+#     Obligated: MN ≈ .77 of MISO-West (the same EIA-861 split as the
+#     renewable row). Eligibility: Midwest footprint (same delivery
+#     construction as its renewable tier).
+#   MI — 2023 PA 235 (SB 271): 80% clean by 2035 — THE INTERIM KNOT MISSING
+#     from the old code comment, the knot that makes MISO-East bind five
+#     years earlier — / 100% by 2040. Clean = renewables + nuclear +
+#     QUALIFIED CCS GAS (90% capture) → nuclear, hydro, wind, solar,
+#     biomass, gas_cc_ccs. Obligated: MI ≈ .57 of MISO-East. Eligibility:
+#     MISO-East ONLY (the same MCL 460.1029 in-state restriction as its
+#     renewable tier).
+#   IL — NO ROW, RECORDED AS THE NULL IT IS (FFR-6B §6.1): CEJA
+#     (P.A. 102-0662) sets a state POLICY GOAL of 100% clean by 2050 plus
+#     dated SOURCE-SIDE fossil-emission phase-outs — a different instrument,
+#     not an LSE share obligation. A clean row for Illinois would invent an
+#     obligation the statute does not impose.
+#
+# Trajectory convention: a clean tier imposes NOTHING before its first
+# statutory compliance knot — policy.clean_tiers returns 0.0 for years
+# strictly before the first knot (NOT the edge-hold used by the RPS
+# trajectories, which would compel 80% carbon-free in 2026, four years
+# before the law requires it). Interpolation between knots is linear, as
+# everywhere else.
+#
+# FEASIBILITY ESCAPE (required — FFR-6B §6.3: "a 100%-by-2040 clean row MUST
+# carry a feasibility escape; a hard row is an infeasibility bomb"): each row
+# carries its own ACP-style escape column priced at STATE_RPS_ACP["MISO"]'s
+# $30/MWh forward REC-price-ceiling proxy — reused, documented: neither MN
+# nor MI publishes a $/MWh clean-tier buyout (MN/MI compliance is physical
+# with PUC/MPSC-set penalties), so the same deliberately-low Midwest
+# attribute-price ceiling proxy bounds the clean dual.
+MISO_CLEAN_TIER_REGIONS: dict[str, dict] = {
+    "MN": {
+        "obligated_zone": "MISO-West",
+        "obligated_load_share": 0.77,
+        "floors": {2030: 0.80, 2035: 0.90, 2040: 1.00, 2045: 1.00},
+        "eligible_zones": MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
+        "qualifying_fuels": (
+            "nuclear",
+            "hydro",
+            "wind",
+            "solar",
+            "hydrogen_ct",
+            "hydrogen_ccgt",
+            "biomass",
+        ),
+    },
+    "MI": {
+        "obligated_zone": "MISO-East",
+        "obligated_load_share": 0.57,
+        "floors": {2035: 0.80, 2040: 1.00, 2045: 1.00},
+        "eligible_zones": ("MISO-East",),
+        "qualifying_fuels": (
+            "nuclear",
+            "hydro",
+            "wind",
+            "solar",
+            "biomass",
+            "gas_cc_ccs",
+        ),
+    },
+}
+
 # Annual interconnection queue caps (GW/yr) by ISO.
 #
 # Semantics: this is a *ceiling* on the total nameplate MW the economic
