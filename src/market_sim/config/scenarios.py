@@ -335,6 +335,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # dropped from the hash at its default; an armed run enters the key as a
     # distinct scenario.
     "ercot_dam_availability_event_cap_reconciliation",
+    # ercot-174 unit-scoped successor: same treatment (default-off,
+    # byte-identical at its default, so dropped from the hash there).
+    "ercot_dam_availability_event_cap_unit_scoped",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -861,6 +864,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # nyiso-115 miss where a cache-optional field had no recorded default and
     # a flip of it was undetectable).
     "ercot_dam_availability_event_cap_reconciliation": "False",
+    "ercot_dam_availability_event_cap_unit_scoped": "False",
     "coal_econ_marginal_hr_bound": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
@@ -996,6 +1000,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # it is a no-op, but the family is kept complete on principle (the
     # FFR-W1X lesson recorded on the gas entry directly above).
     "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
+    "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
@@ -8259,6 +8264,32 @@ class ScenarioConfig:
     # same construction as the two gates above. Forecast untouched.
     ercot_dam_availability_event_cap_reconciliation: bool = False
 
+    # ERCOT-174 UNIT-SCOPED event-cap composition (default off, ERCOT
+    # backcast-gated). The successor the ercot-173 rejection named. That
+    # session measured the blanket min() above in BOTH directions: at the
+    # ercot-172 shed hours the double-count is real and removing it restores
+    # exactly the attributed capability, but fleet-wide min() re-admitted
+    # +0.98/+1.95/+2.73 TWh/yr of coal above the product ceiling (G-COAL148
+    # FAIL) — because the two layers measure the SAME units' downtime at some
+    # overlaps and DIFFERENT units' at most others. So the composition-wide
+    # choice is wrong either way, and the correction must be UNIT-SCOPED:
+    # the window and partial ceilings compose by min() ONLY at hours where
+    # their two CAMPD unit sets INTERSECT (there the product double-counts one
+    # unit's downtime, rule 19 [R-ONE-MECH]) and by the incumbent PRODUCT
+    # where the sets are disjoint (there each layer removes its own units and
+    # the product stands). The unit sets come from the unit-attributed partial
+    # extract (data/raw/campd-partial-outages-units.csv, derive_partial_outages
+    # .py --emit-units) and the window extract, routed through the same
+    # _unit_outage_target; zero fitted scalars, and the attribution reuses the
+    # detector's own frozen constants (rule 23). Provable bracket: pointwise
+    # product <= this <= min(), so the arm can only RESTORE capability, never
+    # remove more, and every movement is bounded by the ercot-173 record. An
+    # unattributed plateau leaves the unit set empty and keeps the product —
+    # fail-safe. Takes precedence over the rejected blanket gate above when
+    # both are set. Backcast-only by the same construction; forecast untouched.
+    # docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md
+    ercot_dam_availability_event_cap_unit_scoped: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -12212,6 +12243,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_dam_availability_coal_event_cap": 3,
     "ercot_dam_availability_gas_event_cap": 3,
     "ercot_dam_availability_event_cap_reconciliation": 3,
+    "ercot_dam_availability_event_cap_unit_scoped": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
