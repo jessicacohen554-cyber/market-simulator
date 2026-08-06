@@ -1169,3 +1169,135 @@ exits 0, a PR breaking one anchor exits 1, and a tree carrying the base's own 22
 anchors exits 0 with 221 `pre-existing` warnings. **General lesson: a gate keyed on absolute
 line numbers in a file every lane edits cannot hard-fail on INHERITED state — a gate that
 gets disabled protects nothing.** (FINDING §10.)
+
+## 2026-08-06 — Rubric v3.1 (owner amendment): C3c is the only ledgerable caveat; C7 retired; CAISO reverted to NOT-YET and its complete + frontier labels stripped
+
+**Owner directive (verbatim).** *"Any ISOs backcast calibrated with caveats on
+LMP exceeding 10% from actual should be reverted to not yet, frontier and
+complete labels stripped. 3c3 is only acceptable ledgered caveat, and to be
+frank I don't even know why c7 matters and I think we should drop it from the
+calibration report and declaration altogether if no other commercial grade
+model is gating or publishing on that."*
+
+**Scorer-only. No LP was solved, no bundle regenerated, no keeper changed, no
+mechanism tested, no holdout year touched.** Every number below comes from
+re-scoring committed artifacts with `scripts/calibration_verdict.py --run-id`.
+
+### (a) Ledgering restricted to C3c alone
+
+`calibration_verdict.LEDGERABLE_CRITERIA = {"price_tail"}`, enforced
+fail-closed in `_apply_ledger`: an exceptions-ledger entry naming any other
+criterion is ignored and the `FAIL` stands, whatever its `kind` or reason.
+Existing entries are **not deleted** — they stay on their bundles' attestations
+as the historical record of what was accepted and why — they simply stop
+reclassifying, so keepers re-score in place.
+
+Rationale, on this rubric's own §8 evidence: C3c is the one criterion with **no
+published commercial comparable at all** (nothing commercial or public
+publishes tail-hour-count accuracy), so a documented, exhaustion-cited bound is
+its honest reporting form. Every other criterion is scored against a published
+comparable, and for those the band **is** the certification claim. C3a mean LMP
+is the case that forced it: ledgering a mean-LMP miss beyond ±10% certified a
+price level the model does not reproduce.
+
+Both caveat budgets collapse as an arithmetic consequence (caveats aggregate
+per criterion): protective **1 → 0** — no protective criterion is ledgerable,
+so a C8 forced-share `FAIL` is `NOT-YET` full stop, which *hardens* rule 20
+enforcement rather than relaxing it — and non-protective **3 → 1**. Both checks
+are kept as defense-in-depth invariants against a silent re-widening.
+
+### (b) C7 diurnal shape retired outright
+
+Dropped from the calibration report **and** the determination. The owner's
+condition — *if no other commercial grade model is gating or publishing on
+that* — is met on evidence this rubric already carried before the amendment:
+§8's comparables row scores the protective gates *"beyond commercial
+practice"* and states that C7/C8 gate *"the diurnal shape and forced-energy
+share **no external model reports**"*. Every graded criterion here is two-band
+scored against a published comparable; C7's `r ≥ 0.8` / CV-ratio `≥ 0.5` were
+self-set numbers gating a determination against nothing external.
+
+A **full removal**, harder than the C5a/C5b/C5c retirements that left those
+criteria `REPORTED_ONLY`: `score_shape` and `C7_GATED_CLASSES` are **deleted**
+per rule 26 `[R-DELETE]`, so the gate cannot be silently re-armed.
+
+**The D-1 measurement is NOT retired, deliberately.**
+`legitimacy_diagnostics.py` still computes the diurnal rows and writes them to
+every bundle, and **C8 still gates on them** through `_d1_shape` — rule 20
+`[R-FORCED-BUDGET]` makes an over-budget class's conditional pass depend on its
+D-1 profile clearing `profile_r`/`cv_ratio`. The caiso-42 flat-floor signature
+(model off-peak CV 0.000 vs a real 0.35–0.45) used to be caught twice; it is
+still caught by C8's escalation, which is the better-aimed of the two because
+it reads the D-1 row for **whichever class is actually being forced** instead
+of a hard-coded class tuple. Pinned by
+`DeterminationTests.test_flat_floor_forces_not_yet`.
+
+### Effects — all six keepers re-scored from committed artifacts
+
+| ISO | keeper | before | after | why |
+|---|---|---|---|---|
+| **CAISO** | `2026-08-06-caiso-175-tac-intake` | CALIBRATED-WITH-CAVEATS | **NOT-YET** | C3a 2024 +11.7% (model $38.63 vs actual $34.60), 2025 +14.8% ($39.46 vs $34.39) — ledgered since caiso-145, now `FAIL`. 2023 +4.2% passes. |
+| **MISO** | `2026-08-05-miso-132b-cc-committed` | NOT-YET | NOT-YET | C3a 2025 −14.0% moves `CAVEAT → FAIL` and becomes the sole blocker; the previous blocker (C7 COAL_PRB 2025, cv_ratio 0.338) is retired, not fixed. |
+| NEISO | `2026-08-05-neiso-83-ca1-reclass` | CALIBRATED-WITH-CAVEATS | unchanged | C3a `PASS` all years; C3c its only caveat. Dormant C1/C2/governance entries were reclassifying nothing. |
+| PJM | `2026-08-04-pjm-152-collapse` | CALIBRATED | unchanged | Zero caveats, zero fails. |
+| NYISO | `2026-08-06-nyiso-128-control` | CALIBRATED-WITH-CAVEATS | unchanged | C3a PASSES all three years (+6.2 / −1.7 / −7.0 %); C3c its only ledgered caveat. *(Scored on the keeper NYISO promoted 2026-08-06, after this amendment was written against `2026-08-04-nyiso-125-seam-envelope`. That run was NOT-YET on a C3a 2025 −10.2 % `FAIL` that was never ledgered, so it was unaffected by the amendment either way — the promotion, not v3.1, is what moved NYISO.)* |
+| ERCOT | `2026-08-05-run168b-year-curves` | NOT-YET | unchanged | C3a 2023 −32.2%, C3b already failing. |
+
+C7 was `PASS` on CAISO/NYISO/PJM/ERCOT, `SKIPPED` on NEISO and `FAIL` on MISO,
+so its retirement changes only MISO's reported basis — and MISO's label is
+unaffected because C3a fails it independently.
+
+### Governance consequence — CAISO `complete` + frontier withdrawn
+
+A `complete` marker cannot rest on a `NOT-YET` keeper, so the CAISO entry moved
+from `complete` to `withdrawn` in
+`frontend/data/backcast/calibration-complete.json` (declared 2026-08-05,
+withdrawn 2026-08-06 — a one-day marker). Rule 22's D-5(b) re-verification
+branch is satisfied *against interest*: the re-verified determination is
+**worse** than the one the marker was declared on, which is exactly the
+stop-and-escalate case; here the owner is the escalation's author and the
+disposition is withdrawal.
+
+**Nothing was spent, so nothing is lost.** The validation tier (2022) was
+authorized but never spent — the holdout spend freeze was active for the
+marker's entire life. The touch-once locked test (2019, H1-2026) was **never
+authorized** (CAISO never appeared in `final`) and stays fully available to a
+re-calibrated keeper. With the marker gone the tier-aware gates
+(`scripts/lib/holdout_policy.py`) re-block every CAISO out-of-training
+solve/score/registration — verified: `authorized(CAISO, validation)` is now
+`False`.
+
+**The frontier evidence is not retracted; the frontier *claim* is.** The walled
+hourly PS water state (FINDING-caiso141), the export/absorption family rejected
+on sign (caiso-142 §H), the closed offer rungs (caiso-131 §10) and the inert
+reserve co-optimization (caiso-144 §B/§C) all stand as adjudicated and remain
+DO-NOT-REDO under rule 27. What is withdrawn is the claim that an empty in-model
+lever queue on C3a is a terminal state. On a criterion that cannot be ledgered,
+an empty queue is an **open root-cause item** (rule 1 `[R-STRUCT]`, rule 20
+`[R-DOF]`), not a documentable bound. The open lane is the +793 MW belly wedge
+FINDING-caiso140 §B measures from the LP dispatching a 2,078 MW pumped-storage
+fleet on economics alone; the identifying data is non-public and an owner-level
+acquisition. Nothing here licenses closing C3a with an adder, haircut or any
+value tuned to the level residual (rules 1/13).
+
+### Files touched
+
+`scripts/calibration_verdict.py` (v3.1: `LEDGERABLE_CRITERIA`, budgets,
+`score_shape`/`C7_GATED_CLASSES` deleted) · `scripts/build_status.py`,
+`scripts/score_crossover.py`, `scripts/legitimacy_diagnostics.py` (C7 references)
+· `tests/scoring/test_calibration_verdict.py` (ledger + C7 coverage re-based;
+the flat-floor regression now pins the C8 path) · `CLAUDE.md` rule 20 ·
+`docs/calibration-determination-rubric.md` (banner, §1, §2, §3, C7 section, §8,
+§9) · `docs/codebase-site/calibration-rubric.html` ·
+`docs/codebase-site/data/mechanism-matrix.js` (gates board + header stamp) ·
+`frontend/data/backcast/calibration-complete.json`,
+`frontend/data/backcast/keepers/CAISO.json`,
+`frontend/data/backcast/status/*.js`.
+
+`scripts/audit_keepers.py` PASSes 0 failures / 0 warnings after the change.
+
+**Known-stale, flagged not repaired** (pre-existing, belongs to those lanes):
+the mechanism matrix's NYISO gate cell still describes the nyiso-109 basis and
+calls the determination CALIBRATED-WITH-CAVEATS though nyiso-125 scores
+NOT-YET; and its NEISO cell still calls NEISO the "only calibration-complete
+ISO", untrue since NYISO and PJM were declared on 2026-07-31.

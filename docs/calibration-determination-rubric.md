@@ -1,7 +1,25 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 3.0** (2026-08-05 owner
-amendment, session-logged, ERCOT-2023-diagnosis session: a second ledgered
+Status: **canonical, machine-enforced. RUBRIC VERSION 3.1** (2026-08-06 owner
+amendment, session-logged. TWO changes, both narrowing what a determination may
+excuse. **(a) Ledgering is restricted to C3c alone** —
+`calibration_verdict.LEDGERABLE_CRITERIA`, fail-closed: an exceptions-ledger
+entry naming any other criterion is ignored and the FAIL stands. C3c is the one
+criterion with no published commercial comparable, so a documented bound is its
+honest reporting form; every other criterion is scored against a published
+comparable and its band **is** the certification claim. Both caveat budgets
+collapse as a consequence — protective 1 → **0**, non-protective 3 → **1**.
+**(b) C7 diurnal shape is RETIRED** from the report and the determination
+outright, on the finding — already recorded in §8 before the amendment — that
+the protective gates are "beyond commercial practice" with no external anchor;
+`score_shape` and `C7_GATED_CLASSES` are deleted per rule 26 `[R-DELETE]`, while
+the D-1 measurement they read survives untouched and still gates through C8's
+grounded-above-budget escalation. Scorer-only: no re-solve, keepers re-score in
+place. Effects: CAISO CALIBRATED-WITH-CAVEATS → **NOT-YET** (C3a 2024 +11.7 %,
+2025 +14.8 %, formerly ledgered) and its `complete` marker + frontier claim
+withdrawn; MISO C3a `CAVEAT → FAIL`, label unchanged; NEISO/PJM/NYISO/ERCOT
+unchanged. Full detail in §2, §3, §9. Prior banner, v3.0,
+2026-08-05 owner amendment, ERCOT-2023-diagnosis session: a second ledgered
 caveat kind, **`ACCEPTED MODEL-CLASS LIMITATION`** — exceptions-ledger entries
 carrying `"kind": "model-class"` reclassify a FAIL to a budgeted ledgered
 CAVEAT exactly like the measured-input kind, but are admissible **only for
@@ -52,7 +70,7 @@ every deviation either inside an evidence-anchored commercial band (listed) or
 an explicitly ledgered measured-input limitation (budgeted). `CALIBRATED`
 additionally requires every criterion at the stricter *target* grade with
 nothing unscored. Both determinations remain conditional on the protective
-anti-self-deception gates (C6/C7/C8) — those are UNCHANGED from v1 and are what
+anti-self-deception gates (C6/C8 — C7 was retired at v3.1), which are what
 make the accuracy claims believable at all. Every band in this rubric is
 anchored to a *published external benchmark* wherever one exists
 (`docs/rubric-v2-benchmark-memo-2026-07.md` — the comparison table is also on
@@ -107,7 +125,7 @@ known use cases:
 | **LOAD-BEARING** — the test must certify these | Annual/monthly price level & seasonal shape (uses 1, 4, 5, 6); generation mix by class & family (2, 4, 5); system CO2 (3, 5) | C1, C2, C3a, C3b, C5a |
 | **SUPPORTING** — informative, not certification-critical | Hourly dispatch timing (r/NRMSE); scarcity-tail hour counts (the *level* contribution of scarcity is already in C3a/C3b; the count is a diagnostic of the scarcity mechanism, and no intended use consumes exact tail-hour counts) | C3c, C4 |
 | **REMOVED** — no longer part of the rubric (v2.7) | Storage cycling volume/season (ex-C5b/C5c): EIA-930 storage-dispatch data is not reliable enough to participate in a calibration determination at any level (missing/partial breakouts; the one scored year was fabricated zeros). Removed outright by the 2026-07-16 owner amendment (v2.6(c) had briefly held them report-only). Storage numbers stay visible on the dashboard run pages as payload/bench diagnostics. | (ex-C5b, ex-C5c) |
-| **PROTECTIVE** — make the other rows believable | Governance (no residual fitting / pinning); diurnal-shape reality of the duty classes; forced-energy budget (floors are scaffolding, not dispatch) | C6, C7, C8 — **unchanged from v1** |
+| **PROTECTIVE** — make the other rows believable | Governance (no residual fitting / pinning); forced-energy budget (floors are scaffolding, not dispatch), including the D-1 diurnal-shape test its grounded-above-budget escalation applies | C6, C8 — v1 logic, minus C7 (retired v3.1) and with no ledgered excuse available (budget 0, v3.1) |
 | **OUT OF REPRESENTATION** — the test must not demand these | The DA−RT risk premium (DART) an offer-cost, realized-weather LP cannot price without fitting; hourly-exact dispatch of individual units (NREL TP-581-42305’s explicit guidance) | scored as report-only diagnostics (C3a DA row; C3c’s non-gated DA companion row — every ISO gates on the actual RT hourly tail since v2.7), never gated |
 
 A criterion’s tier decides how its tolerance is set and budgeted (§1, §2) —
@@ -131,7 +149,7 @@ never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
 | `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/data/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) RT (gated, v2.7) and DA (diagnostic) scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
 | `results/calibration/<name>/run_config.json`, `meta.json` | bundle | governance config (outage source, lever flags), gas vintage |
 | `results/calibration/<name>/calibration_attestation.json` | bundle (this rubric) | governance attestation + the exceptions ledger |
-| `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — D-1 diurnal-shape rows and the D-2 per-class forced-share summary that C7/C8 score; the verdict never recomputes the diagnostics |
+| `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — the D-2 per-class forced-share summary C8 scores, plus the D-1 diurnal-shape rows C8's grounded-above-budget escalation reads (D-1 is still measured and still gates through C8; the C7 criterion that also read it was retired v3.1). The verdict never recomputes the diagnostics |
 
 The model payload and benchmark parts are the **same numbers the dashboard
 renders** (`scripts/render_calibration_html.py:build_payload`), so the verdict
@@ -200,12 +218,15 @@ Each criterion below names: **the metric**, **the authoritative actual source**,
 MEASURED-INPUT LIMITATION` (the *actual* is itself partial/zeroed for a
 documented, forward-valid reason, and the miss is not a model defect). A miss is
 `MODEL MISS` **by default**; it is reclassified to `ACCEPTED MEASURED-INPUT
-LIMITATION` only by a matching entry in the exceptions ledger (§3).
+LIMITATION` only by a matching entry in the exceptions ledger (§3) — and since
+**v3.1, only for C3c**: on every other criterion a miss is a `MODEL MISS` that
+no ledger entry can excuse.
 
 Criteria carry a **tier** (§0): `LOAD-BEARING`, `SUPPORTING`, or `PROTECTIVE`.
 The v1 HARD/SOFT split is retired — it conflated strict data gates (C1/C2) with
-the anti-gaming gates (C6/C7/C8); the protective tier keeps the v1 hard-gate
-semantics unchanged.
+the anti-gaming gates (C6/C8, and C7 until its v3.1 retirement); the protective
+tier keeps the v1 hard-gate semantics, and since v3.1 no protective criterion is
+ledgerable at all.
 
 **Two-band scoring (v2), graded load-bearing criteria only.** Where a published
 external comparable exists (C2 family fallback, C3a, C3b, C5a), the criterion
@@ -639,56 +660,49 @@ FAILS regardless of every score above.** Four assertions, all required:
   **`UNATTESTED`** (⇒ `NOT-YET`) if no attestation file exists — you cannot certify
   a run you have not attested.
 
-### C7 — Diurnal shape, gated classes  *(PROTECTIVE, added 2026-07-04, audit D-1; UNCHANGED in v2)*
+### C7 — Diurnal shape  *(RETIRED 2026-08-06, rubric v3.1 owner amendment)*
 
-- **Metric:** per plant-class hour-of-day mean profile, model vs CAMPD: the
-  **profile correlation r** and the **off-peak (h0–14) CV ratio**
-  (model CV / actual CV). Gated classes are the peaker/intermediate duty
-  classes (`CT_PEAKER`, `ST_GAS`) **plus, since v2.8 (2026-07-27, the
-  ERCOT-121 coal gate-blindness correction), the merchant coal classes**
-  (`COAL` + the four rank splits); every class is still reported. CHP
-  classes stay ungated (host-steam-pinned duty — the same structural
-  rationale as their C8 `D2_EXEMPT_CLASSES` entry) and nuclear/non-thermal
-  are never profiled. Gatedness is derived **scorer-side**
-  (`calibration_verdict.C7_GATED_CLASSES`) and the verdict evaluated from
-  each row's stored `profile_r`/`cv_ratio` against the artifact's `gates`
-  block — not the row's baked `gated`/`verdict` fields — so artifacts
-  written under the pre-v2.8 gate set re-score in place (the C8
-  measured-share-overrides-baked-verdict rule, applied to C7).
-- **Source:** the bundle's committed `legitimacy_diagnostics.json`, written by
-  `scripts/legitimacy_diagnostics.py --json-out` (the S1 suite is the single
-  implementation; this scorer only reads its rows). Model side is the run
-  payload's per-plant hourly dispatch; actual side is the committed CAMPD
-  bench series.
-- **Tolerance:** profile **r ≥ 0.8** AND off-peak **CV ratio ≥ 0.5** (the
-  thresholds are read from the artifact's `gates` block, set in
-  `scripts/legitimacy_diagnostics.py` `D1_*`). A flat line — the caiso-42
-  signature, model off-peak CV 0.000 vs actual 0.35–0.45 — fails both.
-  **Materiality floor (v2.1, owner amendment 2026-07-06):** gated only for
-  classes whose annual energy — **max(model, actual)**, so a forced floor
-  cannot hide a class below the line by its own inflation — is
-  **≥ 2 % of total ISO load** (`PROTECTIVE_MIN_LOAD_FRAC`); smaller classes
-  are `SKIPPED`-immaterial with the D-1 readings annotated (reported, never
-  gated — trivial-class shape is not worth structural work; mirrors C2/C4
-  immateriality). At the amendment date this exempts NEISO ST_GAS/CT
-  (0.1–0.7 % of load) and NYISO CT (1.4–1.9 %) while CAISO CT 2023/24
-  (2.1–2.3 % — the motivating caiso-42 case), PJM/MISO CT (3.5–4.2 %) and
-  every material ST_GAS (2.1–10.6 %) stay gated.
-- **Why first-class (motivating evidence):** annual volume bands cannot see
-  class-shape failure. The D-7 statistical-mode study
-  (`docs/statistical-mode-results-2026-07.md`) showed the 2026-07-02-loosened
-  C1 class band (`min(2% load, 8 TWh)`) **absorbed a >6× growth in the ERCOT
-  CT_PEAKER miss** (2024: +0.04 → −6.27 TWh, still PASS), and **every ISO's
-  CAVEAT count collapses to ~0 with the overlays off** — the soft-caveat band
-  was absorbing overlay-narrowed near-misses, not model tolerance. A flat
-  floor *helped* C1 while destroying the diurnal shape nothing scored
-  (audit §5.4-1); C7 closes that hole so a flat floor can never again improve
-  a keeper's score.
-- **Failure classification:** `MODEL MISS` (a forced floor or missing
-  merit-order shape — commitment/offer structure, per audit §1). Essentially
-  never ledgerable: a flat profile is a mechanism defect by construction.
-  `SKIPPED` (never a silent pass — and it caps the determination, §2) when
-  the bundle carries no `legitimacy_diagnostics.json`.
+**C7 is no longer a criterion.** It is dropped from the calibration report and
+from the determination altogether — it produces no `PASS`/`FAIL`/`CAVEAT`, it
+appears in no verdict output, and it consumes no caveat budget. This is a
+**full removal**, stricter than the C5a/C5b/C5c retirements, which left those
+criteria computed and `REPORTED_ONLY`: `calibration_verdict.score_shape` and
+`C7_GATED_CLASSES` are **deleted** per CLAUDE.md rule 26 `[R-DELETE]`, so the
+gate cannot be silently re-armed.
+
+- **Why.** The owner's condition was: retire it *if no other commercial-grade
+  model gates or publishes on it*. That condition is met on **this rubric's own
+  benchmark evidence**, and was already recorded here before the amendment —
+  §8's comparables table scores the protective gates *"beyond commercial
+  practice"* and states in terms that C7/C8 gate *"the diurnal shape and
+  forced-energy share **no external model reports**"*. Every other graded
+  criterion in this rubric is two-band scored against a **published**
+  comparable (`docs/rubric-v2-benchmark-memo-2026-07.md`); C7 never had one, so
+  its thresholds (`r ≥ 0.8`, CV ratio `≥ 0.5`) were self-set numbers gating a
+  determination against nothing external.
+- **What survives, deliberately.** The **D-1 measurement itself is untouched**:
+  `scripts/legitimacy_diagnostics.py` still computes the per-class hour-of-day
+  profile rows, they are still written to every bundle's
+  `legitimacy_diagnostics.json`, and **C8 still gates on them** through
+  `_d1_shape`. CLAUDE.md rule 20 `[R-FORCED-BUDGET]` makes an over-budget
+  class's conditional pass depend on its D-1 profile clearing
+  `profile_r`/`cv_ratio`, so retiring the C7 *gate* must not retire the D-1
+  *measurement* — and does not.
+- **The anti-flat-floor protection is not lost.** The caiso-42 signature
+  (model off-peak CV 0.000 against a real 0.35–0.45) was caught twice: by C7 on
+  a fixed class tuple, and by C8's grounded-above-budget escalation. It is
+  still caught by the second, and the second is the better-aimed test — C7
+  gated a hard-coded list of classes, while C8's escalation reads the same D-1
+  row for **whichever class is actually being forced past its budget**. Pinned
+  as a regression by `DeterminationTests.test_flat_floor_forces_not_yet`.
+- **Effect at amendment.** C7 was `PASS` on the CAISO/NYISO/PJM/ERCOT keepers,
+  `SKIPPED` on NEISO and `FAIL` on MISO (COAL_PRB 2025). Only MISO's reported
+  basis changes, and its `NOT-YET` label is unaffected — C3a fails it
+  independently under the same amendment's ledger narrowing.
+- **Historical record.** The retired criterion's full specification — metric,
+  gated-class set, tolerances, materiality floor and the D-7 statistical-mode
+  evidence that motivated it in 2026-07-04 — is preserved in this file's git
+  history at the v3.0 revision.
 
 ### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; grounded-above-budget escalation v2.2 2026-07-07)*
 
@@ -814,31 +828,51 @@ differently:
   v3.0, `ACCEPTED MODEL-CLASS LIMITATION` (ledger entry `"kind":
   "model-class"` — an owner-signed acceptance that the model *class* cannot
   express the judged behaviour, admissible for **supporting-tier criteria
-  only** and requiring a cited exhaustion record; see §3). Budgeted:
-  - **Protective criteria (C7/C8):** at most **1**, unchanged from v1’s
-    hard-gate budget (C7/C8 are essentially never ledgerable — see their
-    sections; C6 is never caveatable). This is CLAUDE.md rule 20 / audit
-    D-1/D-2 enforcement, untouched.
-  - **Everything else (C1, C2, C3a/b/c, C4, C5a/b/c):** at most **3** total.
-    Re-derivation of the budget (replacing the 2026-07-02 3→2 cut, whose
-    stated concern — all three price sub-criteria caveated at once — is now
-    structurally addressed by the commercial band: a load-bearing price miss
-    beyond ±10%/0.20 needs a *named measured-input reason*, not just a slot):
-    the recurring documented data-limitation classes are three by construction
-    — the preliminary-923 vintage, EIA-930 storage-series coverage, and a
-    data-blocked scarcity-requirement series — and a budget of 2 mechanically
-    forced `NOT-YET` on *data availability* rather than model quality (the
-    nyiso-34 demotion had exactly this shape and no external rationale). The
-    budget bounds excuses; it never grants them — each entry still names its
-    metric, year, magnitude and measured-input reason, and the classes that
-    are never ledgerable (§3) stay never ledgerable.
+  only** and requiring a cited exhaustion record; see §3).
+
+  **v3.1 (owner amendment 2026-08-06) — only C3c is ledgerable at all.** The
+  budgets below are no longer independent numbers; they are the arithmetic
+  consequence of that one restriction, since caveats aggregate per criterion:
+  - **Ledgerable set:** `{C3c}` (`calibration_verdict.LEDGERABLE_CRITERIA`).
+    Every other criterion stands or falls on its own band, ledger entry or not.
+  - **Protective criteria (C6/C8):** budget **0** — no protective criterion is
+    ledgerable, so a C8 forced-share `FAIL` is `NOT-YET`, full stop. This is
+    *stricter* than v1/v2, which allowed one protective gate to be excused;
+    CLAUDE.md rule 20 / audit D-1/D-2 enforcement is hardened, not relaxed.
+  - **Everything else:** budget **1** — C3c is the single ledgerable
+    criterion, so 1 is the true ceiling and publishing “0/3” would advertise
+    slots that cannot be filled.
+  Both budget checks are retained as defense-in-depth invariants: they are the
+  assertion that re-widening the ledgerable set without an owner amendment
+  cannot silently buy back excuse capacity.
+
+  **Why C3c and nothing else.** C3c is the one criterion with *no published
+  commercial comparable at all* (§5 / the C3c band note: no commercial or
+  public model publishes tail-hour-count accuracy), so a documented,
+  exhaustion-cited bound is the honest reporting form for it. Every other
+  criterion is scored against a published comparable (§8), and for those the
+  band **is** the certification claim. C3a mean LMP is the case that forced
+  the amendment: a mean-LMP miss beyond ±10% is a `MODEL MISS`, and ledgering
+  it certified a price level the model does not reproduce.
+
+  *Superseded budget rationale (v2, retained for genealogy):* the former
+  3-slot non-protective budget replaced the 2026-07-02 3→2 cut on the argument
+  that the recurring documented data-limitation classes are three by
+  construction — the preliminary-923 vintage, EIA-930 storage-series coverage,
+  and a data-blocked scarcity-requirement series — and that a budget of 2
+  mechanically forced `NOT-YET` on *data availability* rather than model
+  quality. Two of those three classes attached to criteria the rubric has
+  since removed outright (C5b/C5c storage, v2.7) or made
+  `SKIPPED`-never-gated (the C2 preliminary-vintage fallback, v2.5), so the
+  surviving class is the scarcity-tail series — C3c, exactly the one slot v3.1
+  keeps.
 
 **Determination:**
 
 | Outcome | Conditions (all must hold) |
 |---|---|
 | **CALIBRATED** | C6 governance `PASS`; **every** criterion `PASS` at target grade (no `FAIL`, no `CAVEAT` of either kind, no `SKIPPED`); **no** data-blocked target year. |
-| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; ledgered caveats within budget (≤1 protective, ≤3 other) and **every** ledgered caveat has a ledger entry; one or more of {any caveat exists, a criterion is `SKIPPED` (e.g. C7/C8 with no committed `legitimacy_diagnostics.json` — named explicitly in the reasons), a target year is data-blocked}. **Certifies: intended-use delivery at or above commercial grade.** |
+| **CALIBRATED-WITH-CAVEATS** | C6 governance `PASS`; **no** `FAIL` on any criterion; ledgered caveats within budget (v3.1: ≤0 protective, ≤1 other — and only C3c is ledgerable at all) and **every** ledgered caveat has a ledger entry; one or more of {any caveat exists, a criterion is `SKIPPED` (e.g. C8 with no committed `legitimacy_diagnostics.json` — named explicitly in the reasons), a target year is data-blocked}. **Certifies: intended-use delivery at or above commercial grade.** |
 | **NOT-YET** | anything else — governance not `PASS`/`UNATTESTED`; **or any criterion `FAIL`** (an out-of-tolerance criterion with no ledger entry is a `FAIL` *by construction*); or a ledgered-caveat budget is exceeded. |
 
 The decisive rule, restated: **a determination with an undocumented
@@ -858,6 +892,16 @@ criterion in the rubric is again a judgment.)
 ---
 
 ## 3. The exceptions ledger (required, auditable)
+
+**v3.1 (owner amendment 2026-08-06) — C3c is the only ledgerable criterion.**
+An entry naming any other criterion is **ignored**, whatever its kind or reason,
+and the `FAIL` stands (`calibration_verdict.LEDGERABLE_CRITERIA`, enforced
+fail-closed in `_apply_ledger`). Entries for other criteria that already sit on
+committed attestations are **not deleted** — they stay on their bundles as the
+historical record of what was accepted and why — they simply stop reclassifying
+anything, so every keeper re-scores in place from committed artifacts with no
+re-solve and no bundle regeneration. The rest of this section describes the
+mechanics that still apply, now scoped to C3c.
 
 Every **ledgered** `CAVEAT` must be earned by an explicit ledger entry (auto
 commercial-band caveats are machine-derived from the committed artifacts and
@@ -911,17 +955,30 @@ and the entry goes inert in place.
 }
 ```
 
-Example accepted limitations (the named cases): NEISO’s model-zeroed `CT_PEAKER`;
-the 2025 preliminary-923 vintage system-volume residual. Examples that are **never**
-ledgerable as a *measured-input* claim (they are `MODEL MISS` and must be fixed,
-not excused): a coal/gas split error, a collapsed price tail, a
-fleet-correlation floor breach, an over-cycling storage fleet. *(v3.0
-narrowing: a collapsed price tail remains never ledgerable as measured-input —
-the RT tail actual is sound — but C3c, as a supporting-tier criterion, may
-carry an owner-signed `model-class` entry once the within-class mechanism
-space is exhaustion-cited; see the model-class paragraph above and §9 v3.0.
-The other three examples sit in load-bearing or protective tiers, where
-model-class entries are inadmissible by construction.)*
+**What is ledgerable, after v3.1:** the C3c scarcity-tail count, and nothing
+else. Either kind applies to it — `ACCEPTED MEASURED-INPUT LIMITATION` where a
+data-blocked scarcity-requirement series is the binding constraint, or the
+owner-signed `ACCEPTED MODEL-CLASS LIMITATION` of v3.0 once the within-class
+mechanism space is exhaustion-cited (C3c is supporting-tier, so the v3.0
+tier guard admits it).
+
+**Everything else is `MODEL MISS` and must be fixed, not excused** — a coal/gas
+split error, a fleet-correlation floor breach, an over-cycling storage fleet, a
+preliminary-vintage system-volume residual, and **C3a mean LMP above all**. C3a
+is the case that forced the amendment: CAISO's keeper carried +11.7 % (2024)
+and +14.8 % (2025) as ledgered measured-input limitations and was certified
+`CALIBRATED-WITH-CAVEATS` on that basis, which certified a price level the
+model does not reproduce. A mean-LMP band is not an excuse budget; it is the
+claim. An empty in-model lever queue on a non-ledgerable criterion is an **open
+root-cause item** (CLAUDE.md rule 1 `[R-STRUCT]`, rule 20 `[R-DOF]`: “a
+residual that can only be closed by a tuned value is an open root-cause issue,
+not a parameter”), never a documentable bound — and it never licenses closing
+the residual with an adder, haircut or any value tuned to it (rules 1/13).
+
+*(Superseded examples, retained for genealogy: NEISO's model-zeroed
+`CT_PEAKER` C1 entry and the 2025 preliminary-923 vintage C2 residual were the
+v2 named accepted-limitation cases. Both are now inadmissible; both are dormant
+on their bundles rather than active, so no determination moved on them.)*
 
 ---
 
@@ -1012,7 +1069,7 @@ Calibration Status page renders this comparison next to the live keeper scores
 | C5a CO2 (full-plant basis, v2.3) | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
 | C3c tail hours (actual RT hourly basis, v2.7) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
 | C4 hourly fleet r | r ≥ 0.70, NRMSE ≤ 0.30 | (single-band) | **none published**; NREL guidance: hourly comparison “not a valid test” — we score stricter deliberately |
-| C6/C7/C8 protective | pass/fail | — | **beyond commercial practice**: NYISO closed its residual with tuned hurdle rates; SEM tunes generator markups; our C6 forbids exactly that |
+| C6/C8 protective | pass/fail | — | **beyond commercial practice**: NYISO closed its residual with tuned hurdle rates; SEM tunes generator markups; our C6 forbids exactly that. *(This row is the evidence C7 was retired on at v3.1: “beyond commercial practice” means **no external anchor exists** for the protective gates. C6 and C8 keep their places anyway — they enforce CLAUDE.md rules 13/20 rather than claim accuracy against a comparable — but a diurnal-shape ACCURACY gate with no published counterpart was doing neither.)* |
 
 Honesty in both directions: where the six keepers sit **below** commercial
 grade (CAISO mean price +20–42%; MISO CC_REGULAR +44 TWh; collapsed RT tails
@@ -1040,6 +1097,80 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+- **v3.1 (2026-08-06, owner amendment — session-logged; directive: "Any ISOs
+  backcast calibrated with caveats on LMP exceeding 10% from actual should be
+  reverted to not yet, frontier and complete labels stripped. 3c3 is only
+  acceptable ledgered caveat, and … we should drop [C7] from the calibration
+  report and declaration altogether if no other commercial grade model is
+  gating or publishing on that.")** — two changes, both narrowing what a
+  determination may excuse.
+
+  **(a) Ledgering narrowed to C3c alone** (`LEDGERABLE_CRITERIA`, enforced
+  fail-closed in `_apply_ledger`). C3c is the one criterion with no published
+  commercial comparable, so a documented bound is its honest reporting form;
+  every other criterion is scored against a published comparable (§8) and its
+  band **is** the certification claim. Both caveat budgets collapse as an
+  arithmetic consequence: protective **1 → 0** (no protective criterion is
+  ledgerable, so a C8 `FAIL` is `NOT-YET` full stop — the anti-self-deception
+  tier gets *stricter*), non-protective **3 → 1** (one ledgerable criterion,
+  and caveats aggregate per criterion). Ledger entries for other criteria stay
+  on their committed attestations as the historical record and simply go
+  inert. **Scorer-only: no re-solve, no bundle regeneration, keepers re-score
+  in place.**
+
+  **Effects at amendment (all six keepers re-scored from committed
+  artifacts):** **CAISO `2026-08-06-caiso-175-tac-intake`
+  CALIBRATED-WITH-CAVEATS → NOT-YET** — C3a mean LMP 2024 +11.7 % (model
+  \$38.63 vs actual \$34.60) and 2025 +14.8 % (\$39.46 vs \$34.39) were
+  ledgered and now `FAIL`; 2023 (+4.2 %) still passes; C3c remains its single
+  ledgered caveat and no other criterion moves. **MISO
+  `2026-08-05-miso-132b-cc-committed`** keeps `NOT-YET`, with C3a 2025
+  −14.0 % moving `CAVEAT → FAIL`. NEISO (C3a `PASS`; C3c its only caveat), PJM
+  (zero caveats), NYISO and ERCOT are unchanged. Dormant non-C3c entries on
+  NEISO's and MISO's attestations (C1 `fuelmix`, C2 `sysvol`, C5b/C5c
+  `storage*`, `governance`) were reclassifying nothing and remain inert.
+
+  **Governance consequence:** a `complete` marker cannot rest on a `NOT-YET`
+  keeper, so **CAISO's `complete` marker and its frontier claim were withdrawn
+  the same day** (`frontend/data/backcast/calibration-complete.json`,
+  `withdrawn`.CAISO). Nothing was spent under it — the holdout freeze covered
+  its whole life — and CAISO's never-authorized locked test (2019, H1-2026)
+  stays available. Its frontier *evidence* is not retracted (the walled hourly
+  PS water state, the sign-refused export family, the closed offer rungs, the
+  inert reserve co-optimization all stand as adjudicated and stay DO-NOT-REDO);
+  what is withdrawn is the claim that an empty lever queue on C3a is terminal.
+  On a non-ledgerable criterion an empty queue is an **open root-cause item**,
+  not a documentable bound.
+
+  **(b) C7 diurnal shape RETIRED** — dropped from the calibration report and
+  the determination altogether, on the owner's stated condition that no other
+  commercial-grade model gates or publishes on it. **That condition is met on
+  this rubric's own prior evidence**: §8's comparables row scores the
+  protective gates *"beyond commercial practice"* and says in terms that C7/C8
+  gate *"the diurnal shape and forced-energy share no external model
+  reports"* — so C7's thresholds were self-set numbers gating a determination
+  against nothing external, while every graded criterion here is two-band
+  scored against a published comparable. A **full removal**, harder than the
+  C5a/C5b/C5c retirements that left those criteria `REPORTED_ONLY`:
+  `score_shape` and `C7_GATED_CLASSES` are deleted per CLAUDE.md rule 26
+  `[R-DELETE]` so the gate cannot be silently re-armed.
+
+  **What survives:** the **D-1 measurement is untouched** —
+  `legitimacy_diagnostics.py` still writes the diurnal rows to every bundle,
+  and **C8 still gates on them** via `_d1_shape`, because CLAUDE.md rule 20
+  `[R-FORCED-BUDGET]` makes an over-budget class's conditional pass depend on
+  its D-1 profile. The caiso-42 flat-floor signature was caught twice (C7's
+  fixed class tuple, C8's escalation); it is still caught by the second, which
+  is the better-aimed test since it reads the D-1 row for whichever class is
+  *actually* being forced. Pinned by
+  `DeterminationTests.test_flat_floor_forces_not_yet`.
+
+  **Effects at amendment:** C7 was `PASS` on CAISO/NYISO/PJM/ERCOT, `SKIPPED`
+  on NEISO, `FAIL` on MISO (COAL_PRB 2025). Only MISO's reported basis changes,
+  and its `NOT-YET` is unaffected — C3a fails it independently under (a). The
+  v2.8 gate-set widening and its 2026-07-27 ratification note below are now
+  historical: they describe a criterion that no longer exists.
 
 - **v3.0 (2026-08-05, owner amendment — session-logged, ERCOT-2023-diagnosis
   session; directive: "make C3c an accepted caveat because of known

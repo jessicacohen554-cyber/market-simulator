@@ -6700,3 +6700,55 @@ owner explicitly grants a **scoped** `final` naming H1-2026 alone on the price
 criteria alone, with the 2019 half recorded as never-grantable until its bench
 exists; then spend 2022; then re-audit the keeper on the corrected availability
 envelope.
+## 2026-08-06 — CAISO reverted to NOT-YET; `complete` marker and frontier claim stripped (rubric v3.1, owner amendment — no solve)
+
+Cross-ISO entry with the full amendment record:
+`docs/calibration-log/governance.md` 2026-08-06 (rubric v3.1). CAISO-lane
+summary:
+
+**THIS ENTRY SUPERSEDES THE caiso-176 ENTRY DIRECTLY ABOVE, WHICH LANDED THE
+SAME DAY.** caiso-176 re-assessed the frontier on this same keeper and found it
+**HOLDS**; that assessment was correct on the rubric in force when it was
+written (v3.0), where C3a was a ledgered caveat and an empty lever queue on a
+ledgered criterion is a coherent terminal state. The owner's v3.1 amendment
+removes that premise — C3a is no longer ledgerable, so an empty lever queue on
+it is an open root-cause item rather than a frontier — and the frontier claim
+goes with the `complete` marker. Read the two together in that order: caiso-176
+is the record of what was examined and adjudicated (all of which still stands),
+this entry is the record of the claim being withdrawn. caiso-176's `final`
+recommendation of **NO** is unaffected and, if anything, reinforced.
+
+**The keeper is unchanged and still designated** —
+`2026-08-06-caiso-175-tac-intake`. No LP was solved, no bundle regenerated, no
+ScenarioConfig field touched, no mechanism tested. What changed is what a
+determination is permitted to excuse.
+
+**Determination CALIBRATED-WITH-CAVEATS → NOT-YET.** Rubric v3.1 restricts
+ledgering to C3c alone, so this run's C3a mean-LMP ledger entries — carried
+since the owner's act of 2026-07-30 at caiso-145 — stop reclassifying and the
+miss scores as what it is: **`FAIL` on 2024 (+11.7%, model $38.63 vs actual
+$34.60) and 2025 (+14.8%, $39.46 vs $34.39)** against the load-weighted RT
+actual. 2023 (+4.2%) still passes. C3c price tail remains the single ledgered
+caveat. C1 (12/12, free 8/8), C2, C3b, C4, C6 and C8 are untouched and passing;
+C7 no longer exists as a criterion.
+
+**`complete` marker withdrawn** (`calibration-complete.json` → `withdrawn`.CAISO;
+declared 2026-08-05, withdrawn 2026-08-06). Nothing was spent under it — the
+holdout spend freeze covered its entire life — and the never-authorized locked
+test (2019, H1-2026) remains available. The out-of-training quarantine is back
+in force for CAISO.
+
+**Frontier claim withdrawn, frontier evidence retained.** caiso-140/141/142/143/144's
+adjudications stand and stay DO-NOT-REDO (rule 27): the walled hourly PS water
+state, the export/absorption family rejected on sign, the closed offer rungs,
+the inert reserve co-optimization. What is withdrawn is the claim that an empty
+in-model lever queue on C3a is terminal — on a criterion that cannot be
+ledgered, an empty queue is an **open root-cause item**, not a bound.
+
+**Open lane for this ISO.** Close the mean-LMP overshoot at its diagnosed
+source: the +793 MW belly wedge FINDING-caiso140 §B measures from the LP
+dispatching a 2,078 MW pumped-storage fleet on economics alone. The identifying
+hourly PS water state is walled on public data (FINDING-caiso141 — Helms +
+Eastwood, 60.3% of the fleet, have no public hourly telemetry at all), so the
+one unfitted path is an owner-level non-public data acquisition. Never closable
+by a price adder, haircut or any value tuned to the level residual (rules 1/13).
