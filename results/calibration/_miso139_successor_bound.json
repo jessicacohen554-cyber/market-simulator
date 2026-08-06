@@ -1,0 +1,123 @@
+{
+  "prereg": "PREREG-miso139-... @ 6263f43d",
+  "what": "upper bound on the reach of the ambient-derate family under the named successor convention (SUMMER-mean anchor), from MISO's own measured weather + EIA-860 identification. Not a mechanism; a ceiling.",
+  "slopes_used": {
+    "CT_PEAKER": 0.003631859749676445,
+    "CC_REGULAR": 0.0019197674862722746,
+    "ST_GAS": 0.00032821180398415434,
+    "COAL": 0.00025089811909371964
+  },
+  "years": {
+    "2023": {
+      "dT_aft_above_summer_c": {
+        "mean": 4.6767281952057,
+        "min": 4.150116684856577,
+        "max": 5.063972579383044
+      },
+      "dT_night_below_summer_c": {
+        "mean": 4.218433571031238,
+        "min": 3.741899200239537,
+        "max": 4.57458048075333
+      },
+      "classes": {
+        "CT_PEAKER": {
+          "slope_per_c": 0.003631859749676445,
+          "swing_aft_frac": 0.016985220892344548,
+          "swing_night_frac": 0.015320759093312226,
+          "mean_capability_mw": 17763.96661697187,
+          "successor_removal_aft_mw": 301.7248969135017,
+          "successor_uprate_night_mw": 272.4365999920084,
+          "own_idle_headroom_aft_mw": 13260.432793864758,
+          "removal_over_headroom": 0.022753774450944137
+        },
+        "CC_REGULAR": {
+          "slope_per_c": 0.0019197674862722746,
+          "swing_aft_frac": 0.008978230731288719,
+          "swing_night_frac": 0.008098411612665215,
+          "mean_capability_mw": 21782.352768990648,
+          "successor_removal_aft_mw": 195.56698903032375,
+          "successor_uprate_night_mw": 176.51962281868643,
+          "own_idle_headroom_aft_mw": 1657.8185759621304,
+          "removal_over_headroom": 0.11796646018206464
+        }
+      },
+      "total_successor_removal_aft_mw": 497.2918859438255,
+      "total_idle_cushion_aft_mw": 17543.844309769687,
+      "cushion_over_removal": 35.278766466242836
+    },
+    "2024": {
+      "dT_aft_above_summer_c": {
+        "mean": 4.5568802484229884,
+        "min": 4.353026369435149,
+        "max": 4.765596277359009
+      },
+      "dT_night_below_summer_c": {
+        "mean": 4.116796746613857,
+        "min": 3.9275524121770893,
+        "max": 4.305114300455468
+      },
+      "classes": {
+        "CT_PEAKER": {
+          "slope_per_c": 0.003631859749676445,
+          "swing_aft_frac": 0.016549949958343052,
+          "swing_night_frac": 0.014951628401625805,
+          "mean_capability_mw": 17750.44696690975,
+          "successor_removal_aft_mw": 293.76900904057857,
+          "successor_uprate_night_mw": 265.63613372444456,
+          "own_idle_headroom_aft_mw": 13025.414590362421,
+          "removal_over_headroom": 0.022553524650028408
+        },
+        "CC_REGULAR": {
+          "slope_per_c": 0.0019197674862722746,
+          "swing_aft_frac": 0.008748150539758779,
+          "swing_night_frac": 0.007903292541740763,
+          "mean_capability_mw": 20982.631557088924,
+          "successor_removal_aft_mw": 183.55921958170705,
+          "successor_uprate_night_mw": 165.9048271031893,
+          "own_idle_headroom_aft_mw": 1227.6331686838691,
+          "removal_over_headroom": 0.14952285769412593
+        }
+      },
+      "total_successor_removal_aft_mw": 477.3282286222856,
+      "total_idle_cushion_aft_mw": 18828.30797114817,
+      "cushion_over_removal": 39.445201105102015
+    },
+    "2025": {
+      "dT_aft_above_summer_c": {
+        "mean": 4.458189388198979,
+        "min": 4.146201719798871,
+        "max": 4.705338517056031
+      },
+      "dT_night_below_summer_c": {
+        "mean": 4.03416972213854,
+        "min": 3.749044057499507,
+        "max": 4.252220389448521
+      },
+      "classes": {
+        "CT_PEAKER": {
+          "slope_per_c": 0.003631859749676445,
+          "swing_aft_frac": 0.016191518595434527,
+          "swing_night_frac": 0.014651538637198373,
+          "mean_capability_mw": 17653.053428924166,
+          "successor_removal_aft_mw": 285.8297428606249,
+          "successor_uprate_night_mw": 258.86079539672903,
+          "own_idle_headroom_aft_mw": 11582.863548597366,
+          "removal_over_headroom": 0.024676949845898653
+        },
+        "CC_REGULAR": {
+          "slope_per_c": 0.0019197674862722746,
+          "swing_aft_frac": 0.008558687035108483,
+          "swing_night_frac": 0.007744667866665626,
+          "mean_capability_mw": 19935.093673479798,
+          "successor_removal_aft_mw": 170.61822776688467,
+          "successor_uprate_night_mw": 154.4768256454136,
+          "own_idle_headroom_aft_mw": 1459.132801350789,
+          "removal_over_headroom": 0.11693125369324521
+        }
+      },
+      "total_successor_removal_aft_mw": 456.44797062750956,
+      "total_idle_cushion_aft_mw": 13719.662257283073,
+      "cushion_over_removal": 30.05745044374222
+    }
+  }
+}

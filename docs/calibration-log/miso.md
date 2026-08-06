@@ -5295,4 +5295,146 @@ probes `scripts/probes/_miso138_fetch_da_co.py`,
 `_miso138_da_co_class_bridge.py`, `_miso138_bridge_diagnostics.py`;
 records `results/calibration/_miso138_da_co_class_bridge.json`,
 `_miso138_bridge_diagnostics.json`.
-Next number: **miso-139**.
+Next number: **miso-139**. *(superseded — see the miso-139 entry below.)*
+
+---
+
+## 2026-08-06 — miso-139: the ambient capability-derate is NOT "already armed and mis-scoped" — it is armed in an ANCHORING CONVENTION that cannot express the effect at ANY slope, and the whole family's ceiling is 30–39× too small for the object. Verdict `REFUSED-AT-G0`. NO LP, NO field, NO arm, NO run, NO parameter, keeper UNCHANGED
+
+Keeper unchanged at `2026-08-05-miso-132b-cc-committed` (bundle
+`results/calibration/miso132_ccmin_B`). PREREG
+`results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`
+pushed at **`6263f43d`** before any adjudicating statistic, carrying a two-sided
+prior with **four falsifiable numeric predictions**, the convention decision rule
+fixed on basis consistency in advance, and four look-alike traps with
+pre-committed counter-measurements. Owner directive honoured: no C7 lane, no C7
+ledger.
+
+### §0 corrections, re-verified from committed artifacts
+
+`calibration_verdict.py --run-id 2026-08-05-miso-132b-cc-committed` at HEAD:
+the keeper's **sole FAIL is C3a `price_mean`**, not C7 — **C7 is not a scored
+criterion** under rubric v3.1 — and the **only ledgered caveat is C3c**
+(budget 1 of 1), because v3.1 makes C3c the only ledgerable criterion, so the
+bundle's `price_mean` ledger entry is inadmissible. C3a **−0.5 / −5.9 / −14.0 %**
+(DA companions −4.4 / −8.3 / −15.6). Neither correction changes the target.
+
+### The charter premise is falsified — the anchor is part of the mechanism
+
+`temp_derate_mean_anchored` pivots the curve about the zone **ANNUAL** mean.
+MISO's summer **NIGHT** mean dry-bulb sits **+3.64 to +9.14 °C ABOVE** that
+anchor in **18 of 18** zone-years, so the armed convention derates *both*
+miso-137 windows and delivers **no** within-summer sign reversal. The charter's
+sentence — *"derates h12–17 … and uprates h00–05"* — is arithmetically false for
+the convention the mechanism is armed in.
+
+It is **structural, not parametric**: since `T̄_summer > T̄_annual` everywhere,
+`mean(1 − s·(T − T̄_annual))` over summer `= 1 − s·(T̄_summer − T̄_annual) < 1`
+for **every** `s > 0`, so convention (A) is summer-neutral **only at `s = 0`**.
+Measured on the model's own `_availability_matrix` (so the trailing
+`np.clip(availability, 0, 1)` and every overlay are the code's), it moves
+summer-mean capability **−3.6/−3.6/−4.1 % (CT_PEAKER)** and **−1.8/−1.7/−1.9 %
+(CC_REGULAR)** against a `pmax` that **is** the EIA-860 net-summer rating
+(`eia860.py:998`) — a summer LEVEL move, failing the pre-registered ±1 % rule.
+
+### The alternative convention passes the rule and fires Trap 1
+
+`mean_anchored=False` (hinge + net-summer anchor) **is** summer-neutral
+(`summer_rel` 0.9998–1.0001) and **does** deliver the sign reversal — CT
+afternoon **0.983**, night **1.015**. But its unconditional
+`_anchor / mean(raw[summer])` rescale (`arrays.py:864-867`) applies **year-round**,
+so at MISO's small measured slope it becomes a **−10.1 % non-summer / −6.8 %
+ANNUAL** capability cut on CT (−8.5 % / −5.3 % on CC): a **LEVEL lever in shape
+clothing**, caught by the pre-committed annual-capability-integral
+counter-measurement. Measured, not assumed: the artifact shrinks to −4.0 %
+non-summer at literature-sized slopes (2.5× smaller — the predicted direction)
+but **does not vanish**, which corrects my own stronger prior claim. It also
+**re-treats the committed CHP classes** (CT_CHP annual **0.9234**) because the
+anchor bool is global — PREREG §3 pre-committed not to do that silently.
+
+### G-1 succeeded, and refuses the literature slopes a second time (rule 25)
+
+EIA-860 MISO two-point, on the model's own fleet and class taxonomy, against
+MISO's own load-weighted peak-hour dry-bulb pair (2023 33.88/−6.70,
+2024 32.59/−12.70, 2025 32.77/−12.00 °C), zero free parameters:
+
+| class | slope /°C (top-1 %, 3-yr mean) | committed literature | ratio |
+|---|---:|---:|---:|
+| CT_PEAKER | **0.00363** | 0.0126 | **3.5×** |
+| CC_REGULAR | **0.00192** | 0.0076 | **4.0×** |
+| ST_GAS | 0.00033 | 0.0054 | 16× |
+| COAL | 0.00025 (unit p50 **0.0000**, 52.8 % exactly flat) | 0.0040 | 16× |
+
+Robustness across the pre-registered {top-0.5 %, top-1 %, top-5 %, peak-day} set:
+**0.097–0.228** relative, inside the ±0.30 refusal bar. **COAL and ST_GAS are
+excluded BY MEASUREMENT.** MISO's second independent confirmation of pjm-95's
+non-transferability finding, agreeing in direction with the committed CHP
+identification (0.00141 from CAMPD within-day conduct).
+
+### G-2 and the family ceiling — the decisive numbers
+
+Binding (removal exceeding the class's **own** idle headroom, so the class is
+forced down), from the keeper's committed sidecars:
+
+| window | CT_PEAKER binding | CC_REGULAR binding |
+|---|---|---|
+| summer h12–17 | **3 / 5 / 1 of 732 h** (0.1–0.7 %) | **11 / 35 / 11 of 732 h** (1.5–4.8 %) |
+| summer h00–05 | **0 / 0 / 0** | **0 / 0 / 0** |
+
+The model runs its **CT fleet at 25.4 / 26.6 / 34.4 % of capability**, holding
+**11.6–13.3 GW idle**, in the very window it under-prices by 41 %. And the
+**named successor convention** (per-class SUMMER-mean anchor — the only one
+consistent with a net-summer basis) is bounded from measured inputs alone at a
+total summer h12–17 removal of **497 / 477 / 456 MW** against a measured idle
+cushion of **17,544 / 18,828 / 13,720 MW** — **35.3× / 39.4× / 30.1×**. Building
+the successor would **not** change the verdict.
+
+### What it licenses — nothing armed
+
+The **ambient-derate family is CLOSED as a candidate for the miso-137
+compression object**, on **reach** — not on fit and not on identification, which
+succeeded. Re-testing needs new evidence about the **cushion**, not the slope.
+The successor convention may be worth building for **basis correctness** (a
+mechanism change, rule 19/24, owner call) but must **not** be chartered as a
+price lever. A separate bounded rule-14 question is named and not taken up: the
+merchant classes carry a flat `SUMMER_CLASS_DERATE` (CC 10 %, CT 12.5 %) on top
+of a `pmax` that already **is** the net-summer rating, while MISO's own
+registration data puts the true summer↔winter spread at **+8.3 % (CC) / +15.8 %
+(CT)**. Flagged, not adjudicated: EIA-860 puts **ST_CHP** at spread +0.0008
+(80.6 % exactly flat) against the committed CAMPD within-day 0.00141/°C.
+
+### Prior scored against interest
+
+P1 (night above the annual anchor, 18/18) **RIGHT** · P2 (summer double-derate)
+**RIGHT** · P3 (MISO CT slope 0.0015–0.0040 vs 0.0126) **RIGHT** at 0.00363 ·
+P4 (non-binding ≥60 % of window hours) **RIGHT and badly under-stated** at
+95.2–99.9 %. Wrong: my claim that the non-anchored rescale is inert at
+literature slopes (it still cuts 2.5–2.7 % of annual capability), and my net
+P(arm licensed) of 0.45.
+
+### Rule duties
+
+**Rule 15** — no LP solved, so **no run to register** (the miso-131…138
+precedent). **Rule 28(b)** — `temp_dependent_derate` MISO **stays `K`** (that
+verdict is the **cogen** scope, untouched); the cell note and `ev.M` citation now
+carry the merchant-scope refusal, and a §5.4 queue stamp is written this session.
+**Rule 22** — 2023/2024/2025 only; MISO holds no `calibration-complete` marker.
+**Rule 13** — every input a physical/registration quantity entering as a
+forward-reproducible formula; no estimator saw a price, benchmark or model
+output. **Rules 1/19/20/21/23/24/25** — nothing sized to a residual, no mechanism
+added, no free parameter, no derive re-run against a residual, no tuning channel,
+no other ISO touched. **Owner directive** — no C7 work.
+
+**Lesson — A MECHANISM'S ANCHOR IS PART OF THE MECHANISM; BOUND ITS REACH BEFORE
+DEBATING ITS PARAMETER.** *An armed mechanism is not an available one: a
+re-scope inherits a convention that may be structurally incapable of the target,
+and the parameter argument that looks like the session's work can be moot before
+it starts.*
+
+FINDING `results/calibration/FINDING-miso139-ambient-derate-refused-at-anchor-2026-08-06.md`;
+PREREG `results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`;
+probes `scripts/probes/_miso139_derate_gates.py`, `_miso139_g2_binding.py`,
+`_miso139_successor_bound.py`;
+records `results/calibration/_miso139_derate_gates.json`,
+`_miso139_g2_binding.json`, `_miso139_successor_bound.json`.
+Next number: **miso-140**.
