@@ -5516,4 +5516,121 @@ Evidence:
 `FINDING-nyiso128-market-solar-basis-2026-08-06.md`,
 `PREREG-nyiso128-market-solar-basis-2026-08-05.md`.
 
-* Next number: **nyiso-130**.
+
+## nyiso-130 (2026-08-06) — the Long Island cap is a transfer limit MINUS a generation contingency; the bare number swap is REJECTED by its own kill gate, and the determination recovers to CALIBRATED-WITH-CAVEATS
+
+**KEEPER UNCHANGED** (`2026-08-06-nyiso-128-solar-basis`). **DETERMINATION
+NOT-YET → `CALIBRATED-WITH-CAVEATS`.** Rule 22: 2023–2025 only; the holdout
+spend freeze was checked and not touched.
+
+**(1) THE IDENTIFICATION — the durable result.** The armed `nyiso_li_lcr_tsl`
+caps the model's only mainland→Zone-K AC link at NYISO's published Zone-K
+"Locality Limit" (325/275/275 MW) as an **hourly energy** bound. NYISO's own
+report says that is not a transfer limit. Locality Bulk Power Transmission
+Capability Report **TABLE 1 note 2**, identical in the 2024-25, 2025-26 and
+2026-27 editions: *"The true N-1-1 Transmission Security Limit is 940 in this
+scenario, the Bulk Transfer Limit accounts for the loss-of-source of 660 MW"*
+(Neptune HVDC). Downstream it is consumed as capacity-adequacy accounting — the
+2023 LCR Report's TSL Floor Calculation enters it as `[B] = Studied 325` and
+computes `UCAP requirement = [A] − [B]` against a **load forecast**. **And in
+this model the 660 MW is already carried twice**: Neptune's *energy* on the
+separate `NYISO_external>Long_Island` link (at bound 99.9/99.9/98.9 % of hours)
+and the *reserve* against losing it in the armed Zone-K locational reserve
+ladder — rule 19 `[R-ONE-MECH]`. Boundary is clean: the report's Appendix A
+defines the Zone-K interface as Y49 + Y50 plus the two PAR-controlled 138 kV
+J→K ties with the UDR cables counted separately, exactly the model's two-link
+split.
+
+**(2) MEASURED EX ANTE, NO SOLVE.** **100 % of the model's C3c tail hours in ALL
+THREE years are Long Island**, inside HB14-21, with **both** Zone-K import paths
+at their bound.
+
+**(3) THE FIX AS SPECIFIED IS REJECTED BY ITS OWN PRE-REGISTERED KILL GATE.**
+New field `nyiso_li_tsl_n11_security` (default off, zero free parameters, one
+published number replacing another). Arms `2026-08-06-nyiso-130-control` /
+`2026-08-06-nyiso-130-n11-tsl`, both registered. The control **reproduces the
+keeper exactly** (22 h, all Zone K, bound 325) — the nyiso-128 stale-baseline
+failure does not recur. K1–K5 all PASS (one differing field; zero slack/dump;
+in-window bound reads exactly 940.0; no other link moves; the seam is exonerated
+at 0.000/0.000/+0.047 %). **K6 FIRED.** C3c collapses **22/3/24 → 2/0/5** against
+10/12/42 — all three years FAIL under-produced, **2024 forming zero scarcity
+hours** — and the downstate ST_GAS reliability floor takes up the slack, forcing
+**+0.22/+0.42/+0.23 TWh** more (share 20.4→22.2 / 22.0→26.0 / 15.4→17.0 %;
+C8 still passes at 23.5/**27.9**/19.3 % against a 30 % cap). C1/C2/C3a/C3b/C4/C6/C8
+PASS in **both** arms and the pre-registered C3a adverse case did **not**
+materialise (mean LMP 33.855→33.604 / 37.043→36.937 / 61.113→61.113).
+
+**(4) WHY THAT IS A REJECTION AND NOT RULE 1 IN REVERSE.** Not "the residual
+didn't move" — a protective gate fired, substantively. The arm **relocates** a
+proxy rather than removing one: Zone-K reliability here is carried by **two**
+proxies (the too-tight transfer bound and the LI/NYC ST_GAS `min_gen` floor) and
+relieving one loads the other, making the model *more* floor-driven — the
+opposite of rule 20 `[R-FORCED-BUDGET]`. And it leaves the model forming
+essentially no scarcity, a **mechanism** deficiency. **The incumbent's 2025 C3c
+PASS is now understood as a right number produced by a number NYISO says is not
+a transfer limit** — rule 1's second half. Matrix cell
+`nyiso_li_tsl_n11_security` NYISO **`R`**. **Successor: a JOINT reconciliation of
+the transfer bound AND the downstate ST_GAS floor (rule 19), one local-security
+representation replacing both, with its own charter. Do NOT re-test the bare
+swap.**
+
+**(5) THE DETERMINATION RECOVERS, BY LEDGER NOT BY RESULT.** **Owner directive,
+given in session, verbatim:** *"After this run if the only outstanding issue is
+c3c scarcity tail of +12 hours in 2023 I want NYISO registered as calibrated
+with caveats. C3c is an acceptable gate failure as a ledgered caveat."* The
+condition is met exactly as stated on the incumbent — C3c is the **sole**
+non-passing criterion and the 2023 miss is +12 h (22 vs 10). This supplies the
+**in-training** authorization rule 22's C3c standing rule does not reach. **Two
+disciplines kept, not waived:** the 2023 entry carries its **own correctly-signed
+OVER-production classification** and does **not** ride under the inherited 2024
+under-production caveat, and nyiso-129's withheld block is **preserved** as
+`_withheld_exception_history` so the record shows the exception was AUTHORIZED,
+not quietly widened; magnitude at full size. Ledgered caveats **1 of 1**.
+`audit_keepers.py --iso NYISO` **PASS 0/0**; `complete` marker re-keyed with the
+determination re-verified from committed artifacts (rule 22 D-5(b) — the label
+IMPROVES, so the worse-determination stop does not fire).
+
+**(6) PRIORITY 2 — the GWh reconciliation, DISCHARGED.** **981.8 GWh CONFIRMED;
+nyiso-128's 1,081.8 GWh RETIRED.** An independent re-extraction reproduces
+981.8 GWh over 573.4 MW / 15 units with no name-key collisions, and the capacity
+total matches the separately-derived registry to 0.1 MW. The error is
+**2025-only** — the 2024 and 2025 Gold Books reproduce nyiso-128's 2023
+(229.9 GWh) and 2024 (503.2 GWh) exactly. nyiso-128's own third instrument
+corroborates the reproduced figure: nyiso-106's MIS P-63 lower bound of
+0.994 TWh sits **1.2 %** from 981.8 and **8.8 %** below 1,081.8. The 2025
+over-removal is therefore **0.232 TWh**, not 0.332. **Reported against interest:**
+the CF identification is *narrower* than inherited — measured CF against the
+registry's own **monthly** capacity exposure is **0.1629 / 0.1468 / 0.1955**, a
+33 % swing, so "measured 0.1955" is a **2025-only** statement. The swing selects
+2025 for a non-fitted reason (2024 is the heavy build year and a monthly step
+counts a commissioning plant as fully present; 2025 added no PV market
+generator), making 2025 the only clean read of a mature fleet. The lever is
+**identified, sized and NOT armed** — it pushes C3a and C3c the same direction as
+the Priority-1 arm, so arming both on the same arms would make neither
+attributable (rule 19).
+
+**(7) FRONTIER / `complete`.** Marker re-keyed and determination re-verified;
+`tier_authorized` and the absent `final` untouched. A frontier re-declaration
+becomes assessable now that NYISO reads CALIBRATED-WITH-CAVEATS, but is **not
+done here** — nyiso-127 §3 recommends RE-DECLARATION over a third amendment, and
+the nyiso-127 §5 four-item decision package (including the phantom DOF entry
+`GAS_AVAILABILITY_FACTOR[NYISO] = 0.866`, ledgered as living in `constants.py`
+but present nowhere in `src/market_sim/`) remains **open and untouched**.
+
+**(8) SESSION INTEGRITY NOTE, against interest.** The first recipe-fidelity check
+ran without an explicit `--out-dir` and overwrote the committed
+`results/calibration/nyiso128_control` bundle with a 24-hour solve. Caught
+immediately, restored from git, and every tracked blob verified byte-identical to
+`HEAD` before work continued. The A/B driver's default out-dir points at a
+**committed** bundle — pass `--out-dir` always.
+
+Evidence:
+`results/calibration/FINDING-nyiso130-li-transfer-security-limit-2026-08-06.md`,
+`PREREG-nyiso130-li-transfer-security-limit-2026-08-06.md`,
+`PREREG-nyiso130-solar-cf-level-2026-08-06.md`,
+`_nyiso130_ab_gates.json`, `_nyiso130_li_tsl_identification.json`,
+`_nyiso130_solar_gwh_reconciliation.json`, probes
+`scripts/probes/_nyiso130_li_tsl_identification.py`,
+`_nyiso130_ab_gates.py`, `_nyiso130_solar_gwh_reconciliation.py`.
+
+* Next number: **nyiso-131**.
