@@ -5821,3 +5821,107 @@ only. Rule 23: no derive re-run, no constant value changed. Rule 25: ERCOT-scope
 **ercot-170's item-11 result stands untouched**.
 
 Next shorthand: ercot-172.
+
+## ercot-172 (2026-08-06) — the H4 item-4 2024 maintenance-season defect ATTRIBUTED at MW grain: the model is **removing REAL capability, not carrying phantom capability out**, and the event-cap ceiling sits BELOW the physical CEMS record at 8 of 9 named plants; verdict **ACTIONABLE**, correction SPECIFIED but **NOT BUILT**; Phase 0, NO LP, keeper UNCHANGED (run168b-year-curves)
+
+**Phase 0 — no LP, no solve, no mechanism armed, no `ScenarioConfig` field, no cell
+verdict flipped (both event-cap cells stay `K`), keeper UNCHANGED at
+`2026-08-05-run168b-year-curves`.** Charter: the H4 item-4 object named in
+`FINDING-ercot166` §5/§7, which is also the standing GATE on the ercot-167 SOC-reserve
+re-gate. Decision rule pre-registered, committed and pushed **before** any capture ran
+(`docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`); no bar, band,
+floor or window moved after measurement.
+
+**CALENDAR CORRECTION, repo-wide and load-bearing.** The object's days are
+**2024-04-28** and **2024-05-08**, not the "Apr 27 / May 7" carried by `FINDING-ercot166`
+§5 and the `ercot_dam_availability_gas_event_cap` matrix cell. Verified against raw
+`RTMLZHBSPP_2024` `HB_HUBAVG`: April's top day is 04-28 (**$126.86** day-mean /
+**$1,259.83** peak hour), May's is 05-08 (**$345.99** / **$3,048.98**) — the same
+$1,260/$3,049 the gas cell already quotes. The labels are a **naive-leap-index artifact**
+(an 8760 index on a 2024 calendar without dropping Feb 29 relabels everything after Feb 28
+one day early). Hours and prices in those records are correct; only the printed dates were
+wrong. Peak prevailing HE21 = 19:00–20:00 CST, so the model's error hour IS ERCOT's event
+hour. Every instrument lookup in this session is keyed on the corrected date.
+
+**The object.** The keeper's **only two 2024 shed hours**: 2024-04-28 19:00 CST
+(**565.1 MW** shed, model **$5,015.9** vs actual $1,259.83) and 2024-05-08 19:00 CST
+(**550.3 MW**, model **$5,000.0** vs actual $3,048.98) — both at VOLL on **real ERCOT
+tight evenings the model over-amplifies into a shortage**. Shed census 2023 → 4 / 2024 → 2
+/ 2025 → 0; day-mean price error +375.0 and +227.3 $/MWh on a year MAE of 13.04.
+
+**Construction.** `ercot148_availability_capture` run twice UNMODIFIED as a subprocess
+(A = keeper verbatim, B = only `ercot_dam_availability_{coal,gas}_event_cap=false`), so
+`E = A_pin − A_final` is exactly what the cap removed — the cap is a pure `np.minimum`.
+**Every pre-registered gate PASSES**: G-FOOT **1.0000** within 1e-3 over 35,128 class-hours
+(max Δ 5.03e-5), G-EXACT **0** violating rows, G-SEAM max |A−B| = **0.0** over 600
+out-of-scope rows, **L1 COP-resolvable 1.0000** (bar 0.90), **L2 0.0000** (bar 0.10),
+**E/shed 8.58× and 3.15×** (4,847.9 / 1,731.8 MW), **E_named/E 1.0000** on **9 and 6 named
+plants** (bar 0.60) → **branch 3 ACTIONABLE**.
+
+**The answer to the chartered question: REMOVED-REAL-CAPABILITY.** Fuel-matched CEMS gross
+sits **3,945.7 MW (6.98× the shed)** and **1,218.0 MW (2.21× the shed)** ABOVE the model's
+ENTIRE available envelope — the named plants were **generating** while the model held them
+unavailable. The ceiling is below the physical record at **8 of 9** and **4 of 6** plants,
+and **both certificates are TRUE for every named plant** (K-COP 9/9 + 6/6 filed live HSL;
+K-CEMS 9/9 + 6/6 operated the same fortnight). **The instrument the cap overrides is the
+accurate one**: the 60-Day DAM COP tracks CEMS to within a few points at 6 of 9 plants
+(W A Parish 0.7359 vs 0.7843, Martin Lake 0.6619 vs 0.6547, J K Spruce 0.2086 vs 0.1968,
+Bastrop 0.9049 vs 0.9067, Jack County 0.8841 vs 0.9344, Sandy Creek 0.5354 vs 0.5684) while
+`f_ceiling` misses by up to 0.53 (W A Parish 0.2539 vs 0.7843). Largest carriers: W A Parish
+1,177.5 MW, V H Braunig 1,108.0 / 883.0, Martin Lake 778.8 / 353.3, Guadalupe 744.4, Jack
+County 491.7, Sim Gideon 256.7, Bastrop 256.2.
+
+**Mechanism of the defect.** `f_ceiling = f_window × f_partial` compounds three faults:
+(1) a rule-19 `[R-ONE-MECH]` **double-count** — both layers derive from the same CEMS record
+and remove the same downtime twice; (2) a **grain mismatch** —
+`partial_outage_derate_factors` keys its dict by `oris_code` ONLY and discards its own
+extract's `plant_group` column, so one facility-wide plateau lands on every class bin, while
+`_unit_outage_target` deliberately splits W A Parish into (3470,COAL)/(34702,ST_GAS) for the
+window layer; (3) a **multi-week FLAT plateau used as an HOURLY ceiling** (W A Parish carries
+a single `derate_factor 0.363` spanning 2024-03-04 → 05-04). Hence the defect is **seasonal**:
+fleet-wide mean CEMS-above-model-available peaks in **April 2,713 MW / March 2,302 MW** and
+bottoms Feb 866 / Sep 1,062 — the maintenance season, exactly where both spike days sit (own
+construction, non-gating, NOT the committed impossible-plant-hours metric). *(The window
+extract's `plant_group=COAL` labels on W A Parish's GAS units WAP1–4 are a CSV-label defect
+that does NOT reach the LP — recorded so it is not re-found and mis-attributed.)*
+
+**Correction SPECIFIED, NOT BUILT.** Branch 3 authorises specification only and the owner
+adjudication was not taken. **C1** grain repair (zero DOF, pure wiring) + **C2** rule-19
+`min()` reconciliation, recommended together; **C2 alone does NOT close it** and this is
+reported honestly (Parish 0.2539 → 0.3630, still below CEMS 0.7843 — it removes the
+double-count, not the period-average-as-ceiling fault). **C3** (ceiling floored at
+contemporaneous output) is flagged LEAST ADMISSIBLE and recommended against under rule 13
+`[R-MEASURED]`. Kill gates fixed in the precommit §5, incl. **G-COAL148**: the ERCOT-148/149
+precedence removed a REAL 4.36/4.98/5.01 TWh coal + 4.27/5.93/4.14 TWh gas phantom and is
+**not repealed** by either correction. **G-NEUT is not reached** — neither C1 nor C2
+restricts the event-window population, so no population is selected; any future proposal that
+does must clear it first.
+
+**Reported against this session's own pre-registration.** **P-ERR passed at 1.0000 but is a
+WEAK discriminator** — `E(h) > 0` in 8,578 of 8,760 hours, so it could not have failed as
+written. Recorded as a pre-registration lesson, not softened after the fact; the load-bearing
+gates (`E ≥ shed`, `E_named/E`, L1, L2) could all have failed and did not. The rating-basis
+term **R is NOT the object** (+563.5 / +161.1 MW total, offsetting per class: CT_PEAKER
++2,869/+3,048 vs CC_REGULAR −1,406/−1,641, ST_GAS −850/−1,057) — new input to item 11.
+
+**THE ercot-167 SOC-RESERVE RE-GATE STAYS BLOCKED.** Its cited reopen condition is this
+defect **landing**, and nothing landed: the object is now attributed and a correction
+specified, but no fix is armed. The re-gate becomes available only after a correction is
+built and solved.
+
+**Bookkeeping (rule 28b/c).** Matrix §5.1 **item 15** added and stamped EXECUTED in the same
+session; both event-cap cells re-cited with the defect as an OPEN ROOT CAUSE (verdicts
+unchanged at `K`, and the gas cell's own one-day-early spurious-hour labels corrected in
+place); `check_mechanism_matrix.py` **exit 0** (229 pre-existing anchor warnings, 0 errors,
+none introduced here); `node --check` on the matrix JS passes. Probe
+`scripts/probes/ercot172_maintenance_availability_phase0.py` (reproduces every number from
+committed inputs plus two cached no-LP captures); record
+`results/calibration/ercot172_maintenance_availability.json`; write-up
+`results/calibration/FINDING-ercot172-maintenance-season-availability-2026-08-06.md`.
+**No run registered — no solve was run** (rule 15). Rule 22: 2024 object; 2023/2025 read only
+as the shed census; ERCOT holds no `complete` marker, so 2022 and all locked-test years stayed
+quarantined and unread. Rule 23: no derive re-run, no constant changed. Rule 25: ERCOT-scoped.
+Rule 27: no existing ≥300-line source file rewritten; pushes blob-verified. DO-NOT-REDO
+honoured in full; **ercot-170's and ercot-171's results stand untouched**.
+
+Next shorthand: ercot-173.
