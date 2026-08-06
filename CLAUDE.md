@@ -176,7 +176,9 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       is untouched; (d) it is **never a PASS** — the miss is reported at full magnitude and the
       run can never read `CALIBRATED`. Admissible because C3c is SUPPORTING tier; the v3.0
       fail-closed guard still refuses `model-class` on load-bearing (C1/C2/C3a/C3b) and
-      protective (C6/C7/C8) criteria.
+      protective (C6/C8) criteria — and since rubric v3.1 (owner amendment 2026-08-06) C3c is
+      the ONLY ledgerable criterion at all, so this rule and the explicit ledger now reach
+      exactly the same one criterion by two routes.
     - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
       and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
       input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is

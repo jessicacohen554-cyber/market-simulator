@@ -228,8 +228,8 @@ def test_guard_boundary_six_years_refused():
 # Registration & §2.1b gate scorecard (no LP)
 # --------------------------------------------------------------------------- #
 def test_marker_state_reflects_committed_markers():
-    # NEISO + NYISO + PJM complete, the three frontier ISOs none — read from the
-    # committed calibration-complete.json (no re-derivation).
+    # NEISO + NYISO + PJM complete; ERCOT + MISO never declared; CAISO withdrawn
+    # — read from the committed calibration-complete.json (no re-derivation).
     #
     # NYISO was `withdrawn` (2026-07-19 phantom-outage re-audit) until nyiso-104b
     # RE-DECLARED it 2026-07-31 on the post-correction keeper, alongside the
@@ -238,13 +238,24 @@ def test_marker_state_reflects_committed_markers():
     # asserting PJM == "none" for two days afterwards — an FR-21-class
     # bookkeeping desync, corrected by FFR-3B (2026-08-02).
     #
-    # All three markers are VALIDATION-tier only: the two-tier split means
-    # `complete` no longer authorizes the touch-once locked test, which now needs
-    # the separate `final` block (EMPTY at HEAD).
+    # CAISO is the SAME desync class, caught the same way. It was declared
+    # `complete` 2026-08-05 while this test still asserted "none" (so the test
+    # was already failing on that string), and the rubric v3.1 owner amendment
+    # 2026-08-06 then WITHDREW the marker — its keeper re-scores NOT-YET once
+    # C3a mean LMP stops being ledgerable. `withdrawn` and `none` are equally
+    # unauthorized to the gates (holdout_policy reads only `complete`/`final`),
+    # but they are not the same fact and the marker state should not flatten
+    # them: `withdrawn` records that a marker existed and was revoked, which is
+    # what a later re-declaration has to reckon with.
+    #
+    # All three `complete` markers are VALIDATION-tier only: the two-tier split
+    # means `complete` no longer authorizes the touch-once locked test, which
+    # needs the separate `final` block (EMPTY at HEAD).
     for iso in ("NEISO", "NYISO", "PJM"):
         assert B._marker_state(iso)["marker"] == "complete", iso
-    for iso in ("ERCOT", "CAISO", "MISO"):
+    for iso in ("ERCOT", "MISO"):
         assert B._marker_state(iso)["marker"] == "none", iso
+    assert B._marker_state("CAISO")["marker"] == "withdrawn"
 
 
 def test_t1f_verdict_reads_ff2d_hold():
