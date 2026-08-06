@@ -901,3 +901,324 @@ def test_retirements_scoring_untouched_by_the_basis_change():
     # ...and the pipeline rows do move additions, so the fixture is not vacuous.
     assert S.model_additions(withpipe)["mw"].sum() == 4000.0
     assert S.model_additions(base)["mw"].sum() == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# D-24 gate membership — the >=300 MW recall denominator is the REACHABLE set
+# (owner decision D-24, signed 2026-08-06, sitting Addendum X.6)
+# --------------------------------------------------------------------------- #
+def _reach_actuals(rows):
+    """A target frame with the ``unit_id`` column the member rule keys on."""
+    return pd.DataFrame(rows)
+
+
+def _decode(unit_id, *, in_fleet=True, econ_consistent=False, phys=None, **kw):
+    """One exit-decode evidence row in the shape ``load_exit_decode`` emits."""
+    excluded = None
+    if econ_consistent is not None:
+        excluded = (not econ_consistent) and (
+            not phys if isinstance(phys, bool) else True
+        )
+    return {
+        unit_id: {
+            "unit_id": unit_id,
+            "name": kw.get("name", unit_id),
+            "mw": kw.get("mw"),
+            "in_fleet": in_fleet,
+            "fleet_note": kw.get("fleet_note", "TEST_BIN (plant, 900.0 MW)"),
+            "economic_excluded": excluded,
+            "economic_note": "margin X vs bar Y",
+            "citation": "test",
+        }
+    }
+
+
+def _instrument(plant, gen, day, *, iid="test-instrument"):
+    return {
+        (plant, gen): {
+            "instrument_id": iid,
+            "instrument_date": pd.Timestamp(day),
+            "confirmation_class": "rto_deactivation",
+            "unit_name": "test unit",
+        }
+    }
+
+
+_BIG = [
+    {
+        "kind": "retirement",
+        "unit_id": "111_1",
+        "fuel": "coal",
+        "mw": 800.0,
+        "year": 2024,
+    }
+]
+
+
+def test_d24_ercot_corrected_target_has_no_reachable_member():
+    """The committed ERCOT case: members = {} → n/a, with a 5-row diagnostic.
+
+    FFR-7C §2.2/§2.4 decoded five >=100 MW exits in the corrected target and
+    none is reachable: Decker Creek 2 is capacity the CAMPD-binned fleet never
+    carried, and the other four clear their going-forward bar in every window
+    year (so a correct economic screen must not retire them) with either no
+    instrument at all or one dated after the 2020 vintage. Both of the target's
+    >=300 MW rows are among them, so the gate has nothing left to grade.
+    """
+    actuals = S.load_actuals("ERCOT")
+    reach = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        # The arms' own basis: the decode's fleet facts are read off the CAMPD
+        # bin sheet, which is the fleet only under use_campd_bins.
+        solved_config={
+            "use_campd_bins": True,
+            "forecast_fossil_retirement_economic": True,
+        },
+    )
+    assert reach["applied"] is True
+    assert reach["n_target_large"] == 2  # 56611_S01 (1008 MW), 3548_2 (405 MW)
+    assert reach["members"] == []
+    assert reach["n_excluded_gated"] == 2
+
+    # The NON-GATED diagnostic keeps the whole blind spot visible — every
+    # decoded exit, not only the two that moved the denominator.
+    excl = {r["unit_id"]: r for r in reach["excluded"]}
+    assert len(excl) == 5
+    assert excl["3548_2"]["reason"] == "not_in_fleet_basis"
+    assert excl["3548_2"]["gated"] is True
+    assert excl["56611_S01"]["reason"] == "no_instrument"
+    assert excl["56611_S01"]["gated"] is True
+    assert excl["52120_G-66"]["reason"] == "no_instrument"
+    assert excl["52120_G-66"]["gated"] is False  # 119 MW — never in the gate
+    for uid in ("3612_1", "3612_2"):
+        assert excl[uid]["reason"] == "post_vintage_instrument"
+        assert excl[uid]["gated"] is False  # 225/252 MW
+        assert "2024-03-13" in excl[uid]["driver"]  # ERCOT NSO M-C031324-01
+
+    # ...and the gate reports n/a, never 0/N.
+    model = pd.DataFrame([{"unit_id": "m1", "fuel": "coal", "mw": 100.0, "year": 2024}])
+    rr = S.score_retirements(model, actuals, reach)["unit_recall_gt300"]
+    assert rr["member_rule"] == "reachable-set (D-24)"
+    assert rr["n_target_large"] == 2
+    assert rr["n_big_actual"] == 0
+    assert rr["n_excluded_unreachable"] == 2
+    assert rr["recall"] is None
+    assert rr["band"] == "SKIP"
+    assert rr["n_a"] is True
+
+
+def test_d24_margin_driven_exit_is_a_member():
+    """A synthetic exit the decode adjudicates margin-driven stays in the gate.
+
+    The economic channel is reachable, so the unit gates — and is scored as a
+    miss when the model does not retire it. This is the case the metric exists
+    for, and D-24 must not touch it.
+    """
+    actuals = _reach_actuals(_BIG)
+    reach = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": True},
+        decode=_decode("111_1", econ_consistent=True),  # margin-driven
+        instruments={},
+    )
+    assert reach["members"] == ["111_1"]
+    assert reach["excluded"] == []
+    rr = S.score_retirements(
+        pd.DataFrame(columns=["unit_id", "fuel", "mw", "year"]), actuals, reach
+    )["unit_recall_gt300"]
+    assert rr["n_big_actual"] == 1
+    assert rr["recall"] == 0.0
+    assert rr["band"] == "FAIL"  # a reachable exit the model missed still fails
+    assert rr["n_a"] is False
+
+
+def test_d24_fail_closed_no_evidence_stays_in():
+    """A unit with no evidence either way is a member (the gate only excludes
+    on positive evidence)."""
+    actuals = _reach_actuals(_BIG)
+    reach = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": True},
+        decode={},
+        instruments={},
+    )
+    assert reach["members"] == ["111_1"]
+    assert reach["excluded"] == []
+
+
+def test_d24_pre_vintage_instrument_reaches_an_econ_excluded_exit():
+    """Economic channel excluded, but a knowable-at-V instrument reaches it →
+    still a member (the rule is economic OR instrument-driven)."""
+    actuals = _reach_actuals(_BIG)
+    common = dict(
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": True},
+        decode=_decode("111_1", econ_consistent=False),
+    )
+    pre = S.classify_exit_reachability(
+        "ERCOT", actuals, instruments=_instrument("111", "1", "2019-06-01"), **common
+    )
+    assert pre["members"] == ["111_1"]
+    assert pre["excluded"] == []
+
+    # ...and the same instrument dated after V cannot fire, so the exit leaves.
+    post = S.classify_exit_reachability(
+        "ERCOT", actuals, instruments=_instrument("111", "1", "2024-03-13"), **common
+    )
+    assert post["members"] == []
+    assert post["excluded"][0]["reason"] == "post_vintage_instrument"
+    assert "2024-03-13" in post["excluded"][0]["why"]
+
+
+def test_d24_fleet_absence_excludes_only_on_the_matching_fleet_basis():
+    """The fleet-absence exclusion is CAMPD-bin evidence, so it applies only to
+    a run that built that fleet; otherwise it is not taken (fail-closed)."""
+    actuals = _reach_actuals(_BIG)
+    common = dict(
+        vintage_cutoff=S.IS2020_CUTOFF,
+        decode=_decode(
+            "111_1",
+            in_fleet=False,
+            econ_consistent=True,  # margin-driven: only the fleet leg can exclude
+            fleet_note="ABSENT (111 carries only CT8)",
+        ),
+        instruments={},
+    )
+    binned = S.classify_exit_reachability(
+        "ERCOT", actuals, solved_config={"use_campd_bins": True}, **common
+    )
+    assert binned["members"] == []
+    assert binned["excluded"][0]["reason"] == "not_in_fleet_basis"
+
+    for cfg in ({"use_campd_bins": False}, None):
+        other = S.classify_exit_reachability(
+            "ERCOT", actuals, solved_config=cfg, **common
+        )
+        assert other["members"] == ["111_1"], cfg
+        assert other["applicability"]["fleet_evidence_applied"] is False
+
+
+def test_d24_economic_exclusion_needs_the_economic_screen_to_govern():
+    """With ``forecast_fossil_retirement_economic`` off, step 1's announced
+    channel is live for fossil, so the economic exclusion is not taken."""
+    actuals = _reach_actuals(_BIG)
+    common = dict(
+        vintage_cutoff=S.IS2020_CUTOFF,
+        decode=_decode("111_1", econ_consistent=False),
+        instruments={},
+    )
+    off = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        solved_config={
+            "use_campd_bins": True,
+            "forecast_fossil_retirement_economic": False,
+        },
+        **common,
+    )
+    assert off["members"] == ["111_1"]
+    assert off["applicability"]["economic_evidence_applied"] is False
+
+
+def test_d24_seam_dependent_verdict_does_not_exclude():
+    """A verdict that flips with the gas_st/gas_ct bar seam is not positive
+    evidence — the unit stays in the member set."""
+    actuals = _reach_actuals(_BIG)
+    reach = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": True},
+        decode=_decode("111_1", econ_consistent=False, phys=True),
+        instruments={},
+    )
+    assert reach["members"] == ["111_1"]
+
+
+def test_d24_reachability_none_keeps_the_pre_d24_denominator():
+    """Every pre-D-24 caller is unchanged: no reachability, no filtering."""
+    actuals = _reach_actuals(_BIG)
+    rr = S.score_retirements(
+        pd.DataFrame(columns=["unit_id", "fuel", "mw", "year"]), actuals
+    )["unit_recall_gt300"]
+    assert rr["member_rule"] == "all-large-target-rows (pre-D-24)"
+    assert rr["n_big_actual"] == 1
+    assert rr["n_excluded_unreachable"] == 0
+    assert rr["n_a"] is False
+    assert rr["band"] == "FAIL"
+
+
+def test_d24_target_without_unit_ids_is_not_filtered():
+    """No ``unit_id`` column ⇒ evidence cannot be keyed per unit ⇒ no exclusion."""
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 800.0, "year": 2024}]
+    )
+    reach = S.classify_exit_reachability(
+        "ERCOT", actuals, solved_config={"use_campd_bins": True}
+    )
+    assert reach["applied"] is False and reach["members"] is None
+    rr = S.score_retirements(
+        pd.DataFrame(columns=["unit_id", "fuel", "mw", "year"]), actuals, reach
+    )["unit_recall_gt300"]
+    assert rr["n_big_actual"] == 1  # unfiltered
+    assert rr["member_rule"] == "all-large-target-rows (pre-D-24)"
+
+
+def test_d24_loyo_recall_pass_is_na_not_false_when_every_fold_is_na():
+    """A >=2/3 bar over three n/a folds has nothing to grade — null, not False."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "m1",
+                "fuel": "coal",
+                "mw": 100.0,
+                "year": y,
+                "reason": "economic",
+            }
+            for y in (2023, 2024, 2025)
+        ]
+    )
+    actuals = _reach_actuals(
+        [
+            {
+                "kind": "retirement",
+                "unit_id": "111_1",
+                "fuel": "coal",
+                "mw": 800.0,
+                "year": y,
+            }
+            for y in (2023, 2024, 2025)
+        ]
+    )
+    reach = S.classify_exit_reachability(
+        "ERCOT",
+        actuals,
+        vintage_cutoff=S.IS2020_CUTOFF,
+        solved_config={"use_campd_bins": True},
+        decode=_decode("111_1", econ_consistent=False),
+        instruments={},
+    )
+    assert reach["members"] == []
+    lo = S.loyo_folds(model, actuals, reversal_set={}, reachability=reach)
+    assert all(f["recall_band"] == "SKIP" for f in lo["folds"].values())
+    assert lo["holds_2of3"]["recall_pass"] is None
+    assert "recall_pass is null" in lo["note"]
+
+
+def test_d24_vintage_cutoff_follows_the_run():
+    """The cutoff is the run's own vintage, not a scorer constant."""
+    assert S.vintage_cutoff_of(None, None) == S.IS2020_CUTOFF
+    assert S.vintage_cutoff_of({"vintage_year": 2023}, None).isoformat() == "2023-12-31"
+    # The solved config wins over meta.json.
+    assert (
+        S.vintage_cutoff_of(
+            {"vintage_year": 2020}, {"eia860_vintage_year": 2023}
+        ).isoformat()
+        == "2023-12-31"
+    )
