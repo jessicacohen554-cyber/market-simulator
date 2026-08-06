@@ -1,19 +1,29 @@
 {
-  "note": "HOLDOUT SPEND FREEZE (CLAUDE.md rule 22). A freeze is a SUSPENSION of the authorization that a calibration-complete marker grants, not a withdrawal of the marker itself. While `active` is true, NO out-of-training year may be solved, scored, or registered for ANY ISO — validation tier (2022 and any backward extension) and locked test (2019, H1-2026) alike — even with `--holdout-authorized` and a `complete` marker present. It is deliberately ADDITIVE and backward-compatible: `calibration-complete.json` is untouched, so every already-registered out-of-training bundle stays CI-legal and no prior one-shot is invalidated or re-armed. Enforced at the solve entry point by `scripts/run_calibration_full.py::enforce_holdout_year_gate`, which reads this file BEFORE the marker check and fails closed. Data intake for out-of-training windows is NOT frozen (rule 22 channel 1: intake is no-LP and remains permitted under session-logged owner authorization). Lifting the freeze is an owner action: set `active` to false and record the lift in `history` with the reason.",
-  "active": true,
+  "note": "HOLDOUT SPEND FREEZE (CLAUDE.md rule 22). A freeze is a SUSPENSION of the authorization that a calibration-complete marker grants, not a withdrawal of the marker itself. While `active` is true, NO out-of-training year may be solved, scored, or registered for ANY ISO \u2014 validation tier (2022 and any backward extension) and locked test (2019, H1-2026) alike \u2014 even with `--holdout-authorized` and a `complete` marker present. It is deliberately ADDITIVE and backward-compatible: `calibration-complete.json` is untouched, so every already-registered out-of-training bundle stays CI-legal and no prior one-shot is invalidated or re-armed. Enforced at the solve entry point by `scripts/run_calibration_full.py::enforce_holdout_year_gate`, which reads this file BEFORE the marker check and fails closed. Data intake for out-of-training windows is NOT frozen (rule 22 channel 1: intake is no-LP and remains permitted under session-logged owner authorization). Lifting the freeze is an owner action: set `active` to false and record the lift in `history` with the reason.",
+  "active": false,
   "declared": "2026-07-25",
-  "lifted_and_rearmed": "2026-08-05",
-  "lift_scope": "NARROW AND SPENT IN-SESSION. The owner lifted the freeze on 2026-08-05 for exactly one purpose: the PJM and NEISO 2022 VALIDATION touchpoints, each solved with its ISO's frozen keeper recipe. Nothing else was authorized and nothing else was spent — not 2018/2020/2021 (the backward ladder rungs), not 2019 or H1-2026 (locked tier, and `final` is still empty), and not any other ISO (CAISO/ERCOT/MISO hold no marker; NYISO holds one but was not run). The freeze is RE-ARMED in the same session immediately after the two spends land, so this `active: false` state is transient by design and the file's steady state remains frozen. The still-open CAMPD economic-layup residual that caused the freeze is NOT resolved — see `reason` — so a 2022 miss in either ISO must be read against a known-imperfect availability envelope, which is exactly what the touchpoint reports record.",
-  "by": "owner (session claude/neiso-operable-capacity-calibration-5pz8lc, explicit instruction: 'Open it and freeze holdout')",
+  "lifted_and_rearmed": "2026-08-06",
+  "lift_scope": "NARROW AND SINGLE-PURPOSE (2026-08-06, session neiso-86). The owner lifted the freeze for exactly one spend: RE-SOLVING NEISO 2022 on the CORRECTED gas-basis input landed earlier in this same session (neiso-86 intake; the EIA N3050MA3 summer-peaking proxy replaced by the measured ISO-NE MA gas index for 2018-2022+2026). Nothing else is authorized and nothing else may be spent -- NOT 2018/2020/2021 (the other validation rungs, and 2018 is a MIXED year whose Mar-Jun are still proxy-sourced), NOT 2019 or H1-2026 (locked tier; `final` is still empty and the 2019 one-shot is SPENT and stands as scored), and NOT any other ISO. The freeze is RE-ARMED in the same session immediately after the spend lands, so this active:false state is transient by design and the file's steady state remains FROZEN. RATIONALE: 2022 is VALIDATION tier -- ITERABLE by design, model-SELECTION evidence, re-spendable, and never a certified out-of-sample skill number. The 2026-08-05 spend measured the NEISO 2022 touchpoint against a DEFECTIVE, seasonally-inverted fuel input (neiso-85: winter/summer 0.397 against 2.390/3.778/4.608 in the tuned years); re-spending an iterable year against the repaired input is precisely the use that tier exists for. This lift is NOT a resolution of the CAMPD economic-layup residual and does not close that charter -- see `reason`, which is unchanged and still governs the re-armed state.",
+  "by": "owner (2026-08-06, session claude/neiso-gas-basis-intake-0a6h7e, AskUserQuestion: on the freeze question the owner selected 'Narrow lift: NEISO 2022 only, re-arm after' -- the same lift/spend/re-arm disposition used on 2026-08-05)",
   "scope": {
     "isos": "ALL",
-    "tiers": ["validation", "locked_test"],
+    "tiers": [
+      "validation",
+      "locked_test"
+    ],
     "years": "every year outside the 2023-2025 calibration window",
-    "frozen_operations": ["solve", "score", "dashboard registration"],
-    "not_frozen": ["data intake (no-LP, rule 22 channel 1)", "in-sample 2023-2025 work of any kind"]
+    "frozen_operations": [
+      "solve",
+      "score",
+      "dashboard registration"
+    ],
+    "not_frozen": [
+      "data intake (no-LP, rule 22 channel 1)",
+      "in-sample 2023-2025 work of any kind"
+    ]
   },
   "reason": "The CAMPD unit-outage detector books sustained economic layup as mechanical outage in ALL SIX ISO extracts (neiso-63, 2026-07-24; evidence results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md). Every ISO books 23-46% of its CC capacity-year as outage against a real EFOR+planned norm of ~10-15%. The availability envelope every keeper is calibrated against is therefore about to change materially. A validation or locked-test year scored now would be measuring the wrong fleet: a MISS would be uninterpretable (detector defect or genuine forecast error?) and a PASS would be actively misleading, because the locked tier is touch-once and cannot be re-scored after the fix lands. Freezing preserves the out-of-sample years as usable evidence instead of spending them on a known-defective input.",
-  "lifts_when": "The merit-order-guard fix charter (docs/handoffs/campd-economic-layup-fix-charter-2026-07.md) reaches a decision — either the corrected detector is adopted and each affected ISO's keeper is re-audited on the corrected envelope, or the charter is closed with cause and the extract is confirmed fit for purpose. The owner lifts the freeze explicitly; no session lifts it by inference from a passing metric.",
+  "lifts_when": "The merit-order-guard fix charter (docs/handoffs/campd-economic-layup-fix-charter-2026-07.md) reaches a decision \u2014 either the corrected detector is adopted and each affected ISO's keeper is re-audited on the corrected envelope, or the charter is closed with cause and the extract is confirmed fit for purpose. The owner lifts the freeze explicitly; no session lifts it by inference from a passing metric.",
   "history": [
     {
       "date": "2026-07-25",
@@ -24,20 +34,26 @@
     {
       "date": "2026-07-26",
       "action": "held",
-      "by": "owner (charter verdict, campd-economic-layup-fix-charter-2026-07.md §8)",
+      "by": "owner (charter verdict, campd-economic-layup-fix-charter-2026-07.md \u00a78)",
       "reason": "Merit-order guard ADOPTED-AS-IMPROVEMENT (adopt + hold freeze, not adopt + lift): corrected extracts commit and keeper re-audits proceed, but a residual over-count survives the guard (NEISO 2023-24 still 1.29-1.36x a whole-fleet published total on a thermal-only extract), so out-of-training years stay preserved until that residual is explained or fixed. Freeze remains active; only the owner lifts it."
     },
     {
       "date": "2026-08-05",
       "action": "lifted (NARROW, single-purpose)",
-      "by": "owner (this session, AskUserQuestion 2026-08-05: asked to run PJM and NEISO with the current keeper recipe for the 2022 touchpoint, and on the freeze question selected 'Lift, spend, re-arm' — record an owner-authorized lift, run the two 2022 spends, then re-declare the freeze in the same session so 2018-2021 / 2019 / H1-2026 and the other ISOs stay protected)",
-      "reason": "PJM and NEISO are the two ISOs that clear all three readiness conditions: a `complete` (validation-tier) marker, an owner-declared frontier, and a CLEARED cross-ISO lever queue (PJM at pjm-153, NEISO at neiso-80/81). Their 2022 validation touchpoint is the intended use of that grant. The lift is deliberately NOT a resolution of the layup residual: it is the owner electing to spend two ITERABLE validation-tier years (model-SELECTION evidence, re-runnable after the envelope fix, never a certified out-of-sample number) while leaving the TOUCH-ONCE locked tier untouched. That asymmetry is the whole justification — an iterable year spent on a known-imperfect envelope can be re-spent; a locked-test year cannot, which is why `final` stays empty."
+      "by": "owner (this session, AskUserQuestion 2026-08-05: asked to run PJM and NEISO with the current keeper recipe for the 2022 touchpoint, and on the freeze question selected 'Lift, spend, re-arm' \u2014 record an owner-authorized lift, run the two 2022 spends, then re-declare the freeze in the same session so 2018-2021 / 2019 / H1-2026 and the other ISOs stay protected)",
+      "reason": "PJM and NEISO are the two ISOs that clear all three readiness conditions: a `complete` (validation-tier) marker, an owner-declared frontier, and a CLEARED cross-ISO lever queue (PJM at pjm-153, NEISO at neiso-80/81). Their 2022 validation touchpoint is the intended use of that grant. The lift is deliberately NOT a resolution of the layup residual: it is the owner electing to spend two ITERABLE validation-tier years (model-SELECTION evidence, re-runnable after the envelope fix, never a certified out-of-sample number) while leaving the TOUCH-ONCE locked tier untouched. That asymmetry is the whole justification \u2014 an iterable year spent on a known-imperfect envelope can be re-spent; a locked-test year cannot, which is why `final` stays empty."
     },
     {
       "date": "2026-08-05",
       "action": "re-armed",
       "by": "owner (same session, the 'lift, spend, re-arm' disposition above)",
-      "reason": "The two authorized spends (PJM 2022, NEISO 2022) landed and are registered. The freeze returns to ACTIVE on its original 2026-07-25 basis — the CAMPD economic-layup residual is still open and every remaining out-of-training year for every ISO stays preserved. Re-arming is not a new declaration: the original `reason` and `lifts_when` are unchanged and still govern."
+      "reason": "The two authorized spends (PJM 2022, NEISO 2022) landed and are registered. The freeze returns to ACTIVE on its original 2026-07-25 basis \u2014 the CAMPD economic-layup residual is still open and every remaining out-of-training year for every ISO stays preserved. Re-arming is not a new declaration: the original `reason` and `lifts_when` are unchanged and still govern."
+    },
+    {
+      "date": "2026-08-06",
+      "action": "lifted (NARROW, single-purpose)",
+      "by": "owner (session neiso-86, AskUserQuestion 2026-08-06: asked whether to close the CAMPD layup charter with cause and lift fully, lift narrowly for NEISO 2022 only, or hold; the owner selected the NARROW lift with re-arm)",
+      "reason": "The neiso-86 intake repaired the seasonally-INVERTED NEISO hub-basis input that the 2026-08-05 NEISO 2022 touchpoint was scored against. That touchpoint measured a model burning gas at $6.09-8.68/MMBtu in winter and $13.79-19.20 in summer -- backwards for a pipeline-constrained New England -- so its miss is not interpretable as forecast error. Re-spending an ITERABLE validation-tier year against the corrected input is the intended use of that tier and is re-spendable again later. The CAMPD economic-layup residual remains OPEN as the freeze's standing basis: charter section 9 records the investigation CLOSED ON EVIDENCE across four lanes (published-side re-measure PASSED; commitment-economics discriminator NEGATIVE; LP-side closure NEGATIVE; cross-ISO day-grain replacement NEGATIVE at 82/180 cells) with a recommendation to close with cause and lift FULLY -- but the owner deliberately did NOT take that broader step here, so every other out-of-training year for every ISO stays preserved."
     }
   ]
 }
