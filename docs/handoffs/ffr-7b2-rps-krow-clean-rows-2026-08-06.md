@@ -139,7 +139,63 @@ Follows FFR-7B §6.2 + FFR-6B §6.3/§6.4:
 
 ## 3. Measurement — the bounded 2026–2030 MISO forecast pairs
 
-<!-- FILLED AFTER THE RUNS -->
+**Protocol.** `run_full_horizon.py --iso MISO --start-year 2026 --end-year 2030
+--golden-posture` (5 solve-years — the §2.1b schedulable cap, years sequential in one
+invocation), three legs run SERIALLY on the 15 GB box (peak RSS ≈ 9.6 GB/leg, wall
+≈ 62 min/leg): the shipped-default control, `--miso-rps-compliance-regions` (Arm 2), and
+`--miso-rps-compliance-regions --miso-clean-tier-rows` (Arm 3 — its control IS the Arm-2
+armed leg, §6). Cache keys distinct by construction and verified: control `0723d2cc432fa346`,
+Arm-2 armed `ff144cd25848e4d8`. Registered to the FORECAST namespace only (rule 15's
+forecast clause — `register_forecast_run.py --summary`, committed sidecars
+`frontend/data/hindcast/miso-2026-2030-ffr7b2-rpsk-{ctrl,armed}.json` + the Arm-3 leg;
+the backcast registry untouched). Q.2: this run-producing measurement is chartered
+explicitly by D-22(a)/X.2 (the prompt orders the bounded pair).
+
+### 3.1 Arm 2 pair — the grain is visible in exactly the right place, and nowhere else
+
+Per-region duals (the armed leg's year-parquet metadata; $/MWh):
+
+| year | MN | **MI** | WI | **IL** | MO | control ISO-wide dual |
+|---|---|---|---|---|---|---|
+| 2026 | 0 | **30.00** | 0 | 0 | 0 | 0 |
+| 2027 | 0 | **30.00** | 0 | **30.00** | 0 | 0 |
+| 2028 | 0 | **30.00** | 0 | **30.00** | 0 | 0 |
+| 2029 | 0 | **30.00** | 0 | **30.00** | 0 | 30.00 |
+| 2030 | 0 | **30.00** | 0 | **30.00** | 0 | 30.00 |
+
+* **Michigan's in-state row pins at its ACP ceiling in EVERY year** — MCL 460.1029's
+  restriction cannot be met from MISO-East generation, the 24.7 pp deficit FFR-6B §2.2
+  measured, now live as a $30 REC price in that compliance market. **Illinois pins from
+  2027.** The three delivery-based standards (MN/WI/MO — Midwest-footprint eligibility)
+  stay slack at 0: Iowa/Plains wind covers them, which is real (those statutes DO accept
+  regional certificates). The control's single ISO-wide row is slack until 2029 — the
+  Iowa-surplus-pays-Michigan's-bill arithmetic the grain exists to fence off, reproduced
+  exactly.
+* **Per-zone consumer vector** `p[z]` (W/P/IL/IN/E/S): `[0, 0, 30, 0, 30, 0]` from 2027 —
+  an East or Illinois candidate sees the REC signal; a South/Arkansas candidate sees 0.
+  The control broadcasts its scalar (0 through 2028, then 30) to EVERY zone — including
+  the 2029 5,650 MW **MISO-South** solar build, which the armed grain correctly credits
+  NOTHING (South is outside every eligibility geography). The broadcast defect is
+  therefore not hypothetical: the control paid an ineligible-zone candidate the ISO dual
+  in both build years.
+* **Dispatch, prices, builds and retirements are IDENTICAL across the pair** — lw_price
+  38.08/38.11/38.45/39.99/46.90 $/MWh, VRE 39.0→49.0 GW, 2030 retirements 633 MW, all
+  equal to the digit. Structural reading, pre-stated rather than discovered: the RPS
+  row family re-prices *compliance* (which escape column absorbs the shortfall, and what
+  a certificate is worth where) without moving *energy* (wind/solar dispatch at MC≈0 is
+  already bound by CF×capacity in both arms), and the window's only VRE addition is an
+  adequacy-backstop build (5,650.2 MW solar, MISO-South, identical in both arms — 
+  adequacy-driven, not credit-driven, so removing the mis-broadcast credit moved no MW
+  here). THE MECHANISM'S OUTPUT IS A PRICE (E-1's charter), and in this window that is
+  exactly what it changed: where the REC price exists, and who may earn it. A window in
+  which entry is margin-decided (not backstop/ladder-bound) is where the zonal credit
+  will move MW; that is a later, owner-charterable measurement, not this one.
+* I7 (accredited firm < requirement, 2026–27) and I12 (reserve-margin band WARN) fire
+  identically in both legs — the known pre-existing MISO forecast conditions, untouched.
+
+### 3.2 Arm 3 leg — clean-tier rows on top of the Arm-2 grain
+
+<!-- ARM3_LEG_RESULTS -->
 
 ## 4. Byte-identity evidence (per arm)
 
