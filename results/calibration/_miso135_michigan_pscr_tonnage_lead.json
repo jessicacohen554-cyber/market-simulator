@@ -1,0 +1,489 @@
+{
+ "session": "miso-135",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "bundle": "results/calibration/miso132_ccmin_B",
+ "prereg": "results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md",
+ "prereg_pushed_at": "d4d182a5",
+ "ask": "docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md",
+ "note": "source adjudication for the ask \u00a73(b) Michigan PSCR lead. NO LP, NO solve, NO intake, NO mechanism built. Rule 22: 2023-2025 only.",
+ "G0_access": {
+  "verdict": "PASS",
+  "plan_cases": {
+   "Consumers Energy Company|2023": {
+    "case": "U-21257",
+    "case_id": "5008y000004TN7WAAW",
+    "filed": "2022-09-30",
+    "application_cv": "0688y000004Nr2eAAC",
+    "pages": 190,
+    "public": true
+   },
+   "DTE Electric Company|2023": {
+    "case": "U-21259",
+    "case_id": "5008y000004TN8jAAG",
+    "filed": "2022-09-30",
+    "application_cv": "0688y000004NqY5AAK",
+    "pages": 150,
+    "public": true
+   },
+   "Consumers Energy Company|2024": {
+    "case": "U-21423",
+    "case_id": "5008y000007lF6jAAE",
+    "filed": "2023-09-29",
+    "application_cv": "0688y00000A4adZAAR",
+    "pages": 187,
+    "public": true
+   },
+   "DTE Electric Company|2024": {
+    "case": "U-21425",
+    "case_id": "5008y000007lF7rAAE",
+    "filed": "2023-09-29",
+    "application_cv": "0688y00000A4UoGAAV",
+    "pages": 123,
+    "public": true
+   },
+   "Consumers Energy Company|2025": {
+    "case": "U-21592",
+    "case_id": "5008y00000AJ8SrAAL",
+    "filed": "2024-09-30",
+    "application_cv": "068cs00000CFqsPAAT",
+    "pages": 174,
+    "public": true
+   },
+   "DTE Electric Company|2025": {
+    "case": "U-21594",
+    "case_id": "5008y00000AJ7owAAD",
+    "filed": "2024-09-30",
+    "application_cv": "068cs00000CJmq5AAD",
+    "pages": 129,
+    "public": true
+   }
+  },
+  "verification": {
+   "run": true,
+   "exhibits": {
+    "DTE Electric Company|2023": {
+     "http_ok": true,
+     "bytes": 12151062,
+     "columns_confirmed": [
+      "Contract Number",
+      "Cents/Mbtu",
+      "Begin",
+      "End",
+      "Fuel Type"
+     ],
+     "columns_confirmed_wrapped": [
+      "Tonnage (000's)"
+     ],
+     "columns_unconfirmed": [],
+     "n_confirmed": 6,
+     "n_transcribed": 6,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    },
+    "DTE Electric Company|2024": {
+     "http_ok": true,
+     "bytes": 8239955,
+     "columns_confirmed": [
+      "Contract Number",
+      "Cents/Mbtu",
+      "Begin",
+      "End",
+      "Fuel Type"
+     ],
+     "columns_confirmed_wrapped": [
+      "Tonnage (000's)"
+     ],
+     "columns_unconfirmed": [],
+     "n_confirmed": 6,
+     "n_transcribed": 6,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    },
+    "DTE Electric Company|2025": {
+     "http_ok": true,
+     "bytes": 9803052,
+     "columns_confirmed": [
+      "Contract Number",
+      "Cents/Mbtu",
+      "Begin",
+      "End",
+      "Fuel Type"
+     ],
+     "columns_confirmed_wrapped": [
+      "Tonnage (000's)"
+     ],
+     "columns_unconfirmed": [],
+     "n_confirmed": 6,
+     "n_transcribed": 6,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    },
+    "Consumers Energy Company|2023": {
+     "http_ok": true,
+     "bytes": 1927463,
+     "columns_confirmed": [
+      "Supplier Contract No",
+      "Coal Type",
+      "Contract Execution Date",
+      "Contract Start Date",
+      "Contract End Date",
+      "Volume (Tons)",
+      "Price ($/Ton)"
+     ],
+     "columns_confirmed_wrapped": [],
+     "columns_unconfirmed": [],
+     "n_confirmed": 7,
+     "n_transcribed": 7,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    },
+    "Consumers Energy Company|2024": {
+     "http_ok": true,
+     "bytes": 1552763,
+     "columns_confirmed": [
+      "Supplier Contract No",
+      "Coal Type",
+      "Contract Execution Date",
+      "Contract Start Date",
+      "Contract End Date",
+      "Volume (Tons)",
+      "Price ($/Ton)"
+     ],
+     "columns_confirmed_wrapped": [],
+     "columns_unconfirmed": [],
+     "n_confirmed": 7,
+     "n_transcribed": 7,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    },
+    "Consumers Energy Company|2025": {
+     "http_ok": true,
+     "bytes": 1109770,
+     "columns_confirmed": [
+      "Supplier Contract No",
+      "Coal Type",
+      "Contract Execution Date",
+      "Contract Start Date",
+      "Contract End Date",
+      "Volume (Tons)",
+      "Price ($/Ton)"
+     ],
+     "columns_confirmed_wrapped": [],
+     "columns_unconfirmed": [],
+     "n_confirmed": 7,
+     "n_transcribed": 7,
+     "all_columns_confirmed": true,
+     "plant_word_on_page": false
+    }
+   }
+  }
+ },
+ "G1_kind": {
+  "A_ex_ante": {
+   "verdict": "PASS",
+   "why": "all six exhibits are filed BEFORE their plan year (2022-09-30 / 2023-09-29 / 2024-09-30) and state a contract term: DTE's column (b) is literally 'the minimum tonnage contracted to purchase in the <Y> PSCR plan year'; Consumers reports committed vs uncommitted volume with a per-row Contract Execution Date."
+  },
+  "B_plant_grain": {
+   "verdict": "FAIL",
+   "plant_columns_found": {
+    "DTE Electric Company|2023": [],
+    "DTE Electric Company|2024": [],
+    "DTE Electric Company|2025": [],
+    "Consumers Energy Company|2023": [],
+    "Consumers Energy Company|2024": [],
+    "Consumers Energy Company|2025": []
+   },
+   "any_plant_column": false,
+   "why": "NO coal-contract exhibit, in either utility or any of the three plan years, carries a destination-plant column. The tonnage is at CONTRACT grain and the filings' only plant-grain coal quantity is a projected BURN (fails leg A on kind). Splitting a contract across plants would require delivered-tons weights \u2014 DISQUALIFYING under ask \u00a72B.",
+   "carve_out": {
+    "Consumers Energy Company|2023": {
+     "coal_plants": [
+      "J H Campbell",
+      "D E Karn"
+     ],
+     "single_destination": false
+    },
+    "DTE Electric Company|2023": {
+     "coal_plants": [
+      "Monroe",
+      "Belle River"
+     ],
+     "single_destination": false
+    },
+    "Consumers Energy Company|2024": {
+     "coal_plants": [
+      "J H Campbell"
+     ],
+     "single_destination": true
+    },
+    "DTE Electric Company|2024": {
+     "coal_plants": [
+      "Monroe",
+      "Belle River"
+     ],
+     "single_destination": false
+    },
+    "Consumers Energy Company|2025": {
+     "coal_plants": [
+      "J H Campbell"
+     ],
+     "single_destination": true
+    },
+    "DTE Electric Company|2025": {
+     "coal_plants": [
+      "Monroe",
+      "Belle River"
+     ],
+     "single_destination": false
+    }
+   }
+  },
+  "E_terms": {
+   "verdict": "PARTIAL",
+   "present": [
+    "contract term (begin/end dates)",
+    "price ($/ton or c/MBtu)",
+    "fuel type",
+    "contract execution date (Consumers)",
+    "not-fully-executed flag (Consumers 2023)",
+    "carry-over/make-up tons (Consumers 2024 footnote)"
+   ],
+   "absent": [
+    "price/quantity reopeners",
+    "force majeure",
+    "buy-out / buy-down provisions"
+   ],
+   "why": "richer than a bare tonnage and genuinely forward-looking, but short of ask \u00a72E's full mechanics; not reached as a binding leg because B fails first."
+  },
+  "verdict": "FAIL"
+ },
+ "G2_coverage": {
+  "bar_min_plants": 15,
+  "bar_min_tonnage_share": 0.6,
+  "bar_battery_min_n": 8,
+  "per_year": {
+   "2023": {
+    "plants": 2,
+    "tonnage_share": 0.1057067547915827,
+    "meets_plant_bar": false,
+    "meets_tonnage_bar": false,
+    "b_clearing_plants_n": 0,
+    "b_clearing_share": 0.0
+   },
+   "2024": {
+    "plants": 2,
+    "tonnage_share": 0.12631642114032637,
+    "meets_plant_bar": false,
+    "meets_tonnage_bar": false,
+    "b_clearing_plants_n": 1,
+    "b_clearing_share": 0.04617903243216629
+   },
+   "2025": {
+    "plants": 2,
+    "tonnage_share": 0.1277513613623977,
+    "meets_plant_bar": false,
+    "meets_tonnage_bar": false,
+    "b_clearing_plants_n": 1,
+    "b_clearing_share": 0.048782791187135896
+   }
+  },
+  "verdict_2C": "FAIL",
+  "battery_powered": false
+ },
+ "G3_battery": {
+  "run": false,
+  "why_not": "G-1 leg B FAILS, so no candidate series exists to test; and the G-2 sub-bar fails at n = 0 < 8. Per PREREG \u00a72/\u00a74 an under-powered battery cannot ACQUIT \u2014 the candidate is NOT ACCEPTED, never acquitted.",
+  "verdict": "NOT RUN \u2014 CANDIDATE NOT ACCEPTED"
+ },
+ "coverage_detail": {
+  "target_set_plants": 39,
+  "michigan_plants": {
+   "1710": "J H Campbell",
+   "1733": "Monroe (MI)"
+  },
+  "per_year": {
+   "2023": {
+    "target_set_tons": 93986586.0,
+    "michigan_tons": 9935017.0,
+    "michigan_plants_n": 2,
+    "michigan_share": 0.1057067547915827,
+    "b_clearing_plants": [],
+    "b_clearing_plants_n": 0,
+    "b_clearing_tons": 0.0,
+    "b_clearing_share": 0.0,
+    "per_plant_tons": {
+     "1710": 4287009.0,
+     "1733": 5648008.0
+    }
+   },
+   "2024": {
+    "target_set_tons": 80672132.0,
+    "michigan_tons": 10190215.0,
+    "michigan_plants_n": 2,
+    "michigan_share": 0.12631642114032637,
+    "b_clearing_plants": [
+     1710
+    ],
+    "b_clearing_plants_n": 1,
+    "b_clearing_tons": 3725361.0,
+    "b_clearing_share": 0.04617903243216629,
+    "per_plant_tons": {
+     "1710": 3725361.0,
+     "1733": 6464854.0
+    }
+   },
+   "2025": {
+    "target_set_tons": 89518412.0,
+    "michigan_tons": 11436099.0,
+    "michigan_plants_n": 2,
+    "michigan_share": 0.1277513613623977,
+    "b_clearing_plants": [
+     1710
+    ],
+    "b_clearing_plants_n": 1,
+    "b_clearing_tons": 4366958.0,
+    "b_clearing_share": 0.048782791187135896,
+    "per_plant_tons": {
+     "1710": 4366958.0,
+     "1733": 7069141.0
+    }
+   }
+  }
+ },
+ "coal_contract_exhibits": {
+  "DTE Electric Company|2023": {
+   "exhibit": "A-15",
+   "title": "Long-Term Coal Contracts",
+   "page": 19,
+   "witness": "K. A. Maro",
+   "source_cv": "0688y000004NqlGAAS",
+   "columns": [
+    "Contract Number",
+    "Tonnage (000's)",
+    "Cents/Mbtu",
+    "Begin",
+    "End",
+    "Fuel Type"
+   ],
+   "ex_ante_language": "the minimum tonnage contracted to purchase in the 2023 PSCR plan year",
+   "plan_year_tonnage_000t": 6015,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/0688y000004NqlGAAS"
+  },
+  "DTE Electric Company|2024": {
+   "exhibit": "A-15",
+   "title": "Long-Term Coal Contracts",
+   "page": 20,
+   "witness": "K. A. Maro",
+   "source_cv": "0688y00000A4UlPAAV",
+   "columns": [
+    "Contract Number",
+    "Tonnage (000's)",
+    "Cents/Mbtu",
+    "Begin",
+    "End",
+    "Fuel Type"
+   ],
+   "ex_ante_language": "the minimum tonnage contracted to purchase in the 2023 PSCR plan year",
+   "plan_year_tonnage_000t": 6165,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/0688y00000A4UlPAAV"
+  },
+  "DTE Electric Company|2025": {
+   "exhibit": "A-15",
+   "title": "Long-Term Coal Contracts",
+   "page": 23,
+   "witness": "D. Swiech",
+   "source_cv": "068cs00000CJdpzAAD",
+   "columns": [
+    "Contract Number",
+    "Tonnage (000's)",
+    "Cents/Mbtu",
+    "Begin",
+    "End",
+    "Fuel Type"
+   ],
+   "ex_ante_language": "the minimum tonnage contracted to purchase in the 2025 PSCR plan year",
+   "plan_year_tonnage_000t": 4818,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/068cs00000CJdpzAAD"
+  },
+  "Consumers Energy Company|2023": {
+   "exhibit": "A-22 (AKR-1)",
+   "title": "Coal Contract & Purchase Data",
+   "page": 163,
+   "witness": "A. K. Rissman",
+   "source_cv": "0688y000004Nr2eAAC",
+   "columns": [
+    "Supplier Contract No",
+    "Coal Type",
+    "Contract Execution Date",
+    "Contract Start Date",
+    "Contract End Date",
+    "Volume (Tons)",
+    "Price ($/Ton)"
+   ],
+   "ex_ante_language": "committed (contract execution date per row)",
+   "committed_tons": 4019216,
+   "uncommitted_tons": 1894818,
+   "plan_year_total_tons": 5914034,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/0688y000004Nr2eAAC"
+  },
+  "Consumers Energy Company|2024": {
+   "exhibit": "A-24 (AKR-1)",
+   "title": "Coal Contract & Purchase Data",
+   "page": 155,
+   "witness": "A. K. Rissman",
+   "source_cv": "0688y00000A4adZAAR",
+   "columns": [
+    "Supplier Contract No",
+    "Coal Type",
+    "Contract Execution Date",
+    "Contract Start Date",
+    "Contract End Date",
+    "Volume (Tons)",
+    "Price ($/Ton)"
+   ],
+   "ex_ante_language": "committed (contract execution date per row)",
+   "committed_tons": 2710680,
+   "uncommitted_tons": 2262488,
+   "plan_year_total_tons": 4973168,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/0688y00000A4adZAAR"
+  },
+  "Consumers Energy Company|2025": {
+   "exhibit": "A-22 (AKR-1)",
+   "title": "Coal Contract & Purchase Data",
+   "page": 145,
+   "witness": "A. K. Rissman",
+   "source_cv": "068cs00000CFqsPAAT",
+   "columns": [
+    "Supplier Contract No",
+    "Coal Type",
+    "Contract Execution Date",
+    "Contract Start Date",
+    "Contract End Date",
+    "Volume (Tons)",
+    "Price ($/Ton)"
+   ],
+   "ex_ante_language": "committed (contract execution date per row)",
+   "committed_tons": 156000,
+   "uncommitted_tons": 1501938,
+   "plan_year_total_tons": 1657938,
+   "url": "https://mi-psc.my.site.com/sfc/servlet.shepherd/version/download/068cs00000CFqsPAAT"
+  }
+ },
+ "plant_grain_but_projected": {
+  "Consumers Energy Company": {
+   "exhibit": "A-17/A-16 (KCL-1)",
+   "title": "Projected As-Burned Coal Costs",
+   "grain": "plant",
+   "quantity": "Burn Volume (Tons)",
+   "why_inadmissible": "projected/modelled BURN, not a contract term"
+  },
+  "DTE Electric Company": {
+   "exhibit": "A-11",
+   "title": "Forecast of Plant Generation",
+   "grain": "plant",
+   "quantity": "GWh (not tons)",
+   "why_inadmissible": "forecast GENERATION; no plant-grain tonnage exists"
+  }
+ },
+ "branch": "CLOSED ON KIND"
+}
