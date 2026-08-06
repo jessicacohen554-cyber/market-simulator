@@ -1,0 +1,15 @@
+{
+ "id": "2026-08-06-caiso-177-ffr7b-arm1",
+ "label": "caiso 177 ffr7b arm1",
+ "date": "2026-08-06",
+ "shorthand": "caiso-177-ffr7b-arm1",
+ "definition": "FFR-7B Arm 1 paired-control ARM (Addendum D): the caiso-175 keeper recipe replayed at the Arm-1 commits (corrected statutory RPS constants: RPS plateaus at the statutory 60% per Pub. Util. Code §399.15(b)(2)(C); eligible set gains geothermal/biomass/offshore wind per §25741(a), small hydro ≤30 MW excluded as misaligned to the aggregated hydro class). BYTE-IDENTICAL to the same-head control at base a9e1d084: 22/22 parquet outputs sha256-equal (control ffr7b_arm1_caiso_ctrl; hash table in results/calibration/_ffr7b_arm1_ab_compare.json). Determination reproduces the keeper verbatim (CALIBRATED-WITH-CAVEATS: C3a, C3c). NOT a keeper candidate - a rule-14 input-correction verification run.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-08-06-caiso-177-ffr7b-arm1.js",
+ "bundle": "results/calibration/ffr7b_arm1_caiso_arm"
+}
