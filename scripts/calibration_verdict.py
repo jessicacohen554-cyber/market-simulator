@@ -6,8 +6,10 @@ only — the registry sidecar, the run payload, the per-(ISO, year) benchmark
 parts, the committed actual-tail part (``tail/actual_tail.json``), the bundle
 config, the bundle's calibration attestation, and the bundle's
 legitimacy-diagnostics artifact (``legitimacy_diagnostics.json``, written by
-``scripts/legitimacy_diagnostics.py --json-out``, scored as C7 diurnal shape
-and C8 forced-energy share) — and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per
+``scripts/legitimacy_diagnostics.py --json-out``, whose D-2 forced-share
+summary is scored as C8 and whose D-1 diurnal rows C8's grounded-above-budget
+escalation reads; the C7 criterion that also scored D-1 was retired at v3.1) —
+and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per
 criterion plus one overall determination in
 ``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. Criteria are tiered
 (load-bearing / supporting / protective) against the §0 statement of intended
@@ -243,9 +245,10 @@ NOT_YET = "NOT-YET"
 #  - supporting: informative sub-annual dynamics (hourly correlation, storage
 #    cycling, scarcity-tail counts) — single wide band; a gross breach still
 #    FAILs, a documented data limitation may be ledgered.
-#  - protective: the anti-self-deception gates (C6 governance, C7 diurnal
-#    shape, C8 forced share). UNCHANGED from rubric v1 in logic, thresholds
-#    and ledger behavior (CLAUDE.md rules 13/14/17-22).
+#  - protective: the anti-self-deception gates (C6 governance, C8 forced
+#    share; C7 diurnal shape until its v3.1 retirement). v1 logic and
+#    thresholds, and since v3.1 NO protective criterion is ledgerable at all —
+#    stricter than v1's budget of 1 (CLAUDE.md rules 13/14/17-22).
 TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protective"
 # Tier of a criterion that was removed from the rubric but is still computed and
 # displayed (REPORTED_ONLY below). It never gates and never budgets a caveat.
@@ -435,9 +438,11 @@ FORBIDDEN_FLAGS: tuple[str, ...] = ()
 #    construction; the scorer lists every one with its magnitude.
 #  - LEDGERED caveats (beyond the outer band, reclassified by an explicit
 #    exceptions-ledger entry as an accepted measured-input limitation):
-#    budgeted. Protective criteria (C7/C8) keep the v1 hard budget of 1 —
-#    unchanged enforcement of CLAUDE.md rule 20 / audit D-1/D-2. Non-protective
-#    ledgered caveats: at most 3. Rationale (memo §3a, replacing the 2026-07-02
+#    budgeted. THE BUDGET NUMBERS BELOW ARE v3.1's (protective 0, ledgered 1)
+#    and are derived from LEDGERABLE_CRITERIA, not set independently; the v2
+#    rationale that follows is retained for genealogy. Under v2 the protective
+#    criteria (C7/C8) kept the v1 hard budget of 1 and non-protective ledgered
+#    caveats were capped at 3. v2 rationale (memo §3a, replacing the 2026-07-02
 #    3->2 cut whose stated concern — price caveated wholesale — is now
 #    structurally addressed by the commercial outer band): the recurring
 #    documented data-limitation classes are three by construction
@@ -474,8 +479,10 @@ MAX_LEDGERED_CAVEATS = 1  # C3c is the only ledgerable criterion (v3.1)
 # (a criterion being ledgerABLE never means ledgering is free).
 LEDGERABLE_CRITERIA = frozenset({"price_tail"})
 
-# C7/C8 materiality floor (rubric v2.1, owner amendment 2026-07-06): the
-# protective shape / forced-share gates score only classes whose annual energy
+# C8 materiality floor (rubric v2.1, owner amendment 2026-07-06; scoped to C8
+# alone since C7's v3.1 retirement): the protective forced-share gate — and the
+# D-1 shape leg of its grounded-above-budget escalation — scores only classes
+# whose annual energy
 # — max(model, actual), so a forced floor cannot hide a class below the line
 # by its own inflation, and a model that zeroes a material class stays scored
 # — is at least this fraction of total ISO load. Smaller classes are emitted
@@ -731,7 +738,7 @@ C3C_STANDING_RULE_REASON = (
     "(validation or locked-test tier). Classified ACCEPTED MODEL-CLASS LIMITATION -- "
     "admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard still "
     "refuses model-class on load-bearing and protective criteria, so this rule can "
-    "never wave through C1/C2/C3a/C3b or C6/C7/C8. IT IS NOT A PASS: the miss is "
+    "never wave through C1/C2/C3a/C3b or C6/C8. IT IS NOT A PASS: the miss is "
     "reported at full magnitude and the run reads CALIBRATED-WITH-CAVEATS, never "
     "CALIBRATED. Scope is deliberately out-of-training ONLY -- in-sample 2023-2025 "
     "keepers still require their own explicit ledger entry, so the training-window "
@@ -1873,7 +1880,7 @@ _LEGIT_HOWTO = (
 
 
 def _class_load_share(klass: str, ypay: dict, ybench: dict) -> float | None:
-    """Class annual energy as a fraction of total ISO load (C7/C8 materiality).
+    """Class annual energy as a fraction of total ISO load (C8 materiality).
 
     Uses ``max(model, actual)`` energy for the class — a binding floor cannot
     hide a class below the materiality line by its own forcing (forcing raises
@@ -1900,7 +1907,7 @@ def _class_load_share(klass: str, ypay: dict, ybench: dict) -> float | None:
 
 
 def _immaterial_protective(criterion, klass, year, share, extra=""):
-    """SKIPPED-immaterial record for a C7/C8 class below the materiality floor."""
+    """SKIPPED-immaterial record for a C8 class below the materiality floor."""
     rec = _skip(
         criterion,
         year,
@@ -2410,7 +2417,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
     fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
     # An unscored criterion can never be a silent pass: it caps the
     # determination at CALIBRATED-WITH-CAVEATS and is named in the reasons
-    # (protective skips — e.g. C7/C8 with no committed
+    # (protective skips — e.g. C8 with no committed
     # legitimacy_diagnostics.json — are called out explicitly).
     skipped = [
         cid
