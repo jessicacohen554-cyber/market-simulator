@@ -74,7 +74,9 @@ def evidence(iso: str) -> dict[str, dict[str, object]]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", default="origin/main", help="git ref for the old CSVs")
+    parser.add_argument(
+        "--base", default="origin/main", help="git ref for the old CSVs"
+    )
     args = parser.parse_args(argv)
 
     rows: list[dict] = []
