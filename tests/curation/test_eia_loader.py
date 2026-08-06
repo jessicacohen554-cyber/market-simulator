@@ -1,13 +1,16 @@
 """Tests for the EIA-930 demand and generation loaders."""
 
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
 import numpy as np
+import pandas as pd
 
 
 from market_sim.config.constants import HOURS_PER_YEAR
+from market_sim.config.paths import ZONE_DEMAND_DIR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import (
     _eia_hourly_frame_filled,
@@ -22,6 +25,7 @@ from market_sim.data.eia_loader import (
     measured_interchange_envelope,
     pjm_zonal_interchange_envelope,
 )
+from scripts.data import curate_zonal_shares
 from scripts.data.curate_zonal_shares import (
     parse_caiso_shares as caiso_zonal_load_shares,
     parse_ercot_shares as ercot_zonal_load_shares,
@@ -34,8 +38,11 @@ _TEST_YEAR = 2024
 # MISO sub-BA demand file covers 2023–2025.
 _MISO_TEST_YEAR = 2024
 
-# The only year with a TAC-area load file so far (upload U4 is partial:
-# 2023-01 landed; the remaining monthly pulls are pending).
+# CAISO TAC-area load year. Upload U4 was partial for a long time — only
+# 2023-01 had landed — and caiso-175 completed it: 2023/2024/2025 now each
+# carry the full year across all SIX CAISO-internal TAC areas (MWD-TAC had
+# been hard-coded out of postprocess_oasis_downloads.CAISO_TACS). See
+# results/calibration/FINDING-caiso175-tac-load-intake-2026-08-06.md.
 _CAISO_TAC_YEAR = 2023
 
 # NYISO primary backcast year: 2023 is the cleanest year in the NYIS hourly
@@ -157,16 +164,51 @@ class TestEIALoader(unittest.TestCase):
     def test_caiso_zonal_shares_measured_window_moves(self):
         """Measured hours carry real hourly shapes, not one constant split.
 
-        Only January is covered by the partial U4 upload, so the January
-        shares must vary hour to hour while the uncovered remainder of the
-        year carries the constant sample-average shares.
+        This asserted the OPPOSITE of its own name until caiso-175: it
+        required the post-January remainder to be a single constant, which
+        codified the 744-of-8760-hour coverage hole in the committed 2023
+        series as expected behaviour. The series is complete now, so the
+        assertion is what the docstring always said — EVERY month varies
+        hour to hour. The sample-average fallback is real and still matters
+        for a genuinely partial year; it is covered on its own terms in
+        ``test_caiso_zonal_shares_partial_year_falls_back_to_sample_average``
+        against a synthetic truncation, rather than by depending on a defect
+        in the shipped data.
         """
         zone_names = get_iso_config("CAISO").zone_names
         shares = caiso_zonal_load_shares(_CAISO_TAC_YEAR, zone_names)
-        jan = shares[zone_names.index("NP15"), : 31 * 24]
-        self.assertGreater(jan.std(), 1e-3)
-        rest = shares[zone_names.index("NP15"), 31 * 24 :]
-        self.assertEqual(len(np.unique(rest)), 1)
+        np15 = shares[zone_names.index("NP15")]
+        # Every month carries its own measured hourly shape.
+        for month_start in range(0, HOURS_PER_YEAR - 24 * 28, 24 * 28):
+            window = np15[month_start : month_start + 24 * 28]
+            self.assertGreater(window.std(), 1e-3)
+        # And the year is not one flat number broadcast everywhere.
+        self.assertGreater(len(np.unique(np15)), HOURS_PER_YEAR // 2)
+
+    def test_caiso_zonal_shares_partial_year_falls_back_to_sample_average(self):
+        """A genuinely partial TAC series pins uncovered hours to the mean.
+
+        The mechanism the previous test used to assert incidentally, now
+        exercised deliberately against a SYNTHETIC truncation so it can
+        never again be satisfied by the shipped data being incomplete.
+        """
+        zone_names = get_iso_config("CAISO").zone_names
+        src = ZONE_DEMAND_DIR / "CAISO" / f"CAISO_tac_load_hourly_{_CAISO_TAC_YEAR}.csv"
+        frame = pd.read_csv(src, parse_dates=["interval_start_gmt"])
+        cutoff = frame["interval_start_gmt"].min() + pd.Timedelta(days=31)
+        with tempfile.TemporaryDirectory() as tmp:
+            stage = Path(tmp) / "CAISO"
+            stage.mkdir(parents=True)
+            frame[frame["interval_start_gmt"] < cutoff].to_csv(
+                stage / f"CAISO_tac_load_hourly_{_CAISO_TAC_YEAR}.csv", index=False
+            )
+            with mock.patch.object(curate_zonal_shares, "ZONE_DEMAND_DIR", Path(tmp)):
+                shares = caiso_zonal_load_shares(_CAISO_TAC_YEAR, zone_names)
+        self.assertIsNotNone(shares)
+        np15 = shares[zone_names.index("NP15")]
+        self.assertGreater(np15[: 31 * 24].std(), 1e-3)  # measured window varies
+        self.assertEqual(len(np.unique(np15[31 * 24 :])), 1)  # remainder is the mean
+        np.testing.assert_allclose(shares.sum(axis=0), 1.0, rtol=1e-9)
 
     def test_caiso_zonal_shares_fall_back_without_file(self):
         """A year with no TAC-area file returns None."""
