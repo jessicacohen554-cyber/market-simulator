@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-neiso-87-control",
+  "label": "neiso 87 control",
+  "date": "2026-08-06",
+  "shorthand": "neiso-87-control",
+  "definition": "neiso-87 arm A: same-HEAD zero-delta control of the 2026-08-05-neiso-83-ca1-reclass keeper recipe, current committed gas basis (NEISO,2025,8 = +0.04 interpolation). Baseline for the Aug-2025 measured-basis A/B.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-neiso-87-control.js",
+  "bundle": "results/calibration/neiso87_control_A"
+}
