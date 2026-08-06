@@ -6060,3 +6060,71 @@ current main (ercot-173 §5, untouched here — re-key vs re-solve at HEAD is an
 owner question). Keeper **UNCHANGED** at `2026-08-05-run168b-year-curves`;
 determination NOT-YET, fail set {C3a, C3b}.
 `results/calibration/FINDING-ercot174-unit-attributed-partial-outage-2026-08-06.md`.
+
+## ercot-175 (2026-08-06) — matrix §5.1 item 18: the ercot-173 re-pointing MEASURED — the offered-vs-deliverable wedge at SCED grain is fully licensed, the RIGHT SIZE (0.93 × M at the median) and the WRONG SHAPE for any single admissible mechanism (AS 0.47 / ramp 0.26 / residual 0.13 of M); **FILED-REDIRECTED** on the pre-registered rule; Phase 0, NO LP, nothing built, keeper UNCHANGED (run168b)
+
+**Charter.** The ercot-175 handoff: the ercot-173 §1 re-pointing of the 2023
+tail object (C3a-2023 −29.9 % lw-hub) to the offered-vs-deliverable wedge at
+SCED grain, now that `data/raw/ercot/SCED/` holds the FULL delivery-2023
+NP3-965 corpus (315 shards, 897 MB) with HSL/HASL/HDL/LSL/LASL/LDL, Base
+Point, net output and per-product AS awards at 5-min grain. Precommit pushed
+BEFORE any measurement
+(`docs/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md`): hour sets
+H123/H61 imported verbatim from the ercot-173 construction, L1/L2/L3 bars,
+the branch rule (0.60 twice, the majority-plus-margin form), the rule-13 line
+(HDL/HASL/BP as measurement evidence ONLY — never model inputs; ramp physics
+admissible, AS-side fenced by the CLOSED reserve family), kill gates
+inherited PRECOMMIT-ercot172 §5 verbatim, predictions P-W/P-AS/P-RAMP/
+P-START/P-L.
+
+**Measurement (all licences 1.0000; construction bridges exact).** Per 5-min
+interval, per online scope-S resource, the monotone min-chain O → HASL → HDL
+→ Base Point over the sub-$200 offered stack, interval-mean per hour, H123:
+O 53.90 GW mean (35-step, HSL-clipped) → delivered D 51.95; the wedge
+W_AS 1.00 / W_RAMP 0.64 / W_RESID 0.31 GW mean, total 1.95 mean / 1.96 p50 =
+**0.927 × M per-hour p50** — but split 0.47/0.26/0.13 as shares of M, no term
+near the 0.60 bar. M(h) reproduced the committed record within 1 %
+(3.3003/2.2131 vs 3.3007/2.2165 GW); the committed V_r reproduced to 0.01 GW
+on its own unclipped basis, and decomposes as 53.9 physical + **~3.0 GW of
+sub-$200 curve-MW ABOVE HSL** (paper, not capability) − 1.45 recovered in
+steps 11–35 + ~1.0 startable — so on the physical basis the market's cheap
+stack is slightly BELOW V_m, SHARPENING the ercot-173 depth refutation.
+
+**The three structural facts.** (1) **Reality delivered its cheap stack**:
+D 51.95 GW mean vs the model's own dispatched sub-$200 ≈ 51.9 — the missed
+>$200 formation is a MARGINAL-PRICE phenomenon, not a quantity phenomenon
+(at the same ~52 GW delivered, reality's next deliverable MW priced $462 p50,
+the model's <$200). (2) **The AS term names no missing structure**: the
+keeper already withholds H_model 3.79 GW p50, **2.87 GW MORE** than reality's
+thermal sub-$200 AS wedge — ERCOT-102/107/108 corroborated at unit-scoped
+SCED grain; the reserve family stays CLOSED. (3) **OFF-startable resources
+carry only ~0.9 GW of sub-$200 SCED offers** (Base Point 0.03) against the
+model's cheap DAM-basis treatment of the whole OFF increment — measured
+corroboration of the ercot-151 marginal re-offer/start-economics
+identification. The ramp term is real but minority and concentrated in
+winter-morning deep misses (h704/h706 Jan-30, W_RAMP 2.8/2.2 GW where M is
+15–16 GW), not the August evenings; `ramp_envelopes` ERCOT stays `R`,
+loader-path promotion not sought.
+
+**Predictions adjudicated honestly**: P-W 1.96 vs ≥2 GW (2 % near-miss, the
+~0 stop clause did not fire); P-AS magnitude missed (1.05 vs 2–6 GW band —
+most holdback sits above the cheap curve MW; gross online-thermal awards
+3.2 GW), direction confirmed stronger than predicted (net wedge NEGATIVE);
+P-RAMP's evening-concentration expectation WRONG (winter mornings); P-START
+missed by an order of magnitude (0.93 vs ~13.5 GW DAM-analogue) — itself the
+informative fact; P-L confirmed.
+
+**The redirect.** The 2023 missed-tail formation is now bounded away from
+excess model depth (ercot-173, sharpened), reserve-side/AS structure
+(corroborated closed), any single SCED-grain deliverability term (this
+session), and the frozen ceiling lane (ercot-174 §3b). What remains
+consistent with every committed measurement is the marginal re-offer /
+start-economics conduct at ~52 GW delivered — **the ercot-151
+offline-increment re-pricing lane, whose sole blocker (the delivery-2023
+corpus) is now DISSOLVED**; its standing owner ask (2) (authorize the design
+round) is the recommended next ERCOT session. Kill gates NOT REACHED (no
+solve; no run registered — stated explicitly). Owner items carried: the
+148/149 collision (lane frozen), finer-grain-wins, ercot-172 fault 3, the
+run168b non-reproduction at HEAD. Keeper **UNCHANGED** at
+`2026-08-05-run168b-year-curves`; determination NOT-YET, fail set {C3a, C3b}.
+`results/calibration/FINDING-ercot175-sced-deliverable-wedge-2026-08-06.md`.
