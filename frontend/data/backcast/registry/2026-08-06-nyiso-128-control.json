@@ -1,15 +1,15 @@
 {
-  "id": "2026-08-06-nyiso-128-control",
-  "label": "nyiso 128 control",
-  "date": "2026-08-06",
-  "shorthand": "nyiso-128-control",
-  "definition": "Calibration run from bundle nyiso128_control.",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "NYISO",
-  "file": "frontend/data/backcast/runs/2026-08-06-nyiso-128-control.js",
-  "bundle": "results/calibration/nyiso128_control"
+ "id": "2026-08-06-nyiso-128-control",
+ "label": "nyiso 128 control",
+ "date": "2026-08-06",
+ "shorthand": "nyiso-128-control",
+ "definition": "nyiso-128 CONTROL, and the DESIGNATED NYISO KEEPER from 2026-08-06. Arms NOTHING new: it is the superseded 2026-08-04-nyiso-125-seam-envelope keeper's OWN recipe re-solved on current main, with all 680 scenario_config fields verified identical to the incumbent before the solve (scripts/probes/_nyiso128_solve_ab.py --verify-only). It exists as the single-delta baseline for the nyiso_solar_market_generator_basis A/B and became the keeper because the re-solve alone lifts the determination NOT-YET -> CALIBRATED-WITH-CAVEATS: C3a PASSES all three years at +6.2 / -1.7 / -7.0 % against the incumbent's recorded +7.7 / -0.8 / -10.2 %, whose 2025 FAIL was the sole blocker. C3c stays the single ledgered caveat (2024 only, model 2 h vs RT actual 12 h, 0.17x under-produced); C1/C2/C3b/C4/C6/C7/C8 all PASS. The movement without a mechanism change is attributed to main's advance since the incumbent's git_sha 49aac023 plus nyiso-106's solar benchmark repair, which its own finding says applies from the next NYISO solve \u2014 an improved baseline after fixes land, ruled by the owner 2026-08-06 to need no deep diagnosis.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-08-06-nyiso-128-control.js",
+ "bundle": "results/calibration/nyiso128_control"
 }
