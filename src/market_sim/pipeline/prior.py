@@ -43,7 +43,10 @@ class PriorYearResults:
     peak_demand: float
     planned_additions: list
     mc_cost: "np.ndarray"
-    rps_shadow_price: float
+    # Scalar (legacy single ISO-wide RPS row) or per-zone (n_zones,) vector
+    # (K-row compliance-region grain, FFR-7B Arm 2 — consumers resolve it at
+    # a candidate's/unit's zone via policy.rps.rps_credit_for_zone).
+    rps_shadow_price: "float | np.ndarray"
     retrofit_log: list[dict]
     storage_power_mw: float
     # Endogenous AS-revenue rates DERIVED from this year's co-opt reserve duals
@@ -81,6 +84,12 @@ class PriorYearResults:
     zone_names: "list[str] | None" = None
     wind_cf: "np.ndarray | None" = None
     solar_cf: "np.ndarray | None" = None
+    # Clean-tier per-(fuel, zone) attribute credits (FFR-7B Arm 3, GATED
+    # miso_clean_tier_rows — None off the family): the prior year's clean-row
+    # duals mapped through policy.clean_tiers.clean_credit_by_fuel, consumed
+    # by next year's retirement and new-entry screens in the same max()
+    # attribute doctrine as the RPS credit.
+    clean_attribute_price_by_fuel: "dict | None" = None
     # FFR-5E procurement channel (GATED vre_procurement_additions_enabled,
     # default OFF ⇒ ALWAYS EMPTY, so the shipped path is byte-identical):
     # construction-committed EIA-860 proposed WIND/SOLAR rows — the VRE limb

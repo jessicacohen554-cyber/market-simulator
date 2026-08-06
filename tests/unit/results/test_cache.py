@@ -308,6 +308,30 @@ class TestParquetSerialization(unittest.TestCase):
             self.assertEqual(exp.shape, act.shape, f"{field} shape differs")
             self.assertTrue(np.allclose(exp, act), f"{field} values differ")
 
+    def test_round_trips_per_zone_rps_vector_and_region_duals(self):
+        # K-row compliance-region grain (FFR-7B Arm 2): the per-zone
+        # rps_shadow_price vector and the per-region raw duals survive the
+        # JSON metadata round trip as ndarrays; the legacy scalar stays a
+        # scalar (every existing reader's type contract).
+        result = _make_result()
+        result.rps_shadow_price = np.array([0.0, 30.0])
+        result.rps_region_duals = np.array([30.0, 0.0])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "krow.parquet"
+            result.to_parquet(path)
+            loaded = DispatchResult.from_parquet(path)
+        self.assertIsInstance(loaded.rps_shadow_price, np.ndarray)
+        np.testing.assert_array_equal(loaded.rps_shadow_price, [0.0, 30.0])
+        np.testing.assert_array_equal(loaded.rps_region_duals, [30.0, 0.0])
+        scalar = _make_result()
+        scalar.rps_shadow_price = 12.5
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "scalar.parquet"
+            scalar.to_parquet(path)
+            loaded = DispatchResult.from_parquet(path)
+        self.assertEqual(loaded.rps_shadow_price, 12.5)
+        self.assertIsNone(loaded.rps_region_duals)
+
     def test_reads_file_written_by_legacy_serializer(self):
         """A Parquet file written with the old ``.tolist()`` path still loads.
 

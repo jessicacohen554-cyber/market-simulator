@@ -68,15 +68,19 @@ class VariableLayout:
     # ``n_posture`` = the postured (non-fast-start) pool count, 0 (default)
     # leaves the layout byte-identical.
     n_posture: int = 0
-    # RPS Alternative-Compliance-Payment (ACP) escape column. A single
-    # non-negative variable per hour (``n_rec_acp`` == 0 or 1) carrying a ``+1``
-    # coefficient in the annual RPS row and a cost of the ACP price ($/MWh) in
-    # the objective. It represents the real-market ACP: an LSE short of RECs
-    # pays the ACP rate rather than physically failing the standard, so the RPS
-    # row is never infeasible and its dual (the REC price) is capped at the ACP.
-    # Appended AFTER the posture block so every existing offset is unchanged; 0
-    # (the default — set only when an ACP price accompanies an active RPS
-    # target) leaves the layout byte-identical to the hard-constraint LP.
+    # RPS Alternative-Compliance-Payment (ACP) escape columns. One non-negative
+    # variable per compliance region per hour (``n_rec_acp`` == K, region-major
+    # within the hour block), each carrying a ``+1`` coefficient in its own
+    # annual RPS/clean row and a cost of that region's ACP price ($/MWh) in the
+    # objective. It represents the real-market ACP: an LSE short of RECs pays
+    # the ACP rate rather than physically failing the standard, so no RPS row
+    # is ever infeasible and each row's dual (that region's REC price) is
+    # capped at its own ACP. The legacy single ISO-wide row is the K == 1 case
+    # (byte-identical); per-state compliance regions (FFR-7B Arm 2, MISO) carry
+    # K > 1. Appended AFTER the posture block so every existing offset is
+    # unchanged; 0 (the default — set only when an ACP price accompanies an
+    # active RPS target) leaves the layout byte-identical to the
+    # hard-constraint LP.
     n_rec_acp: int = 0
     # Storage RT discharge-offer tranche columns (ERCOT
     # ercot_storage_rt_offer_surface). Each ARMED battery unit's single
@@ -193,7 +197,7 @@ class VariableLayout:
 
     @property
     def _rec_acp_off(self) -> int:
-        """Per-hour offset of the RPS ACP escape column (RPS only)."""
+        """Per-hour offset of the RPS ACP escape columns (RPS only)."""
         return self._posture_su_off + self.n_posture
 
     @property
@@ -257,9 +261,13 @@ class VariableLayout:
         """Return the startup column of postured pool ``p``, hour ``t``."""
         return t * self.vars_per_hour + self._posture_su_off + p
 
-    def acp_col(self, t: int) -> int:
-        """Return the RPS ACP escape column in hour ``t`` (RPS only)."""
-        return t * self.vars_per_hour + self._rec_acp_off
+    def acp_col(self, t: int, k: int = 0) -> int:
+        """Return region ``k``'s RPS ACP escape column in hour ``t`` (RPS only).
+
+        ``k`` indexes the compliance region (region-major within the hour
+        block); the default ``k=0`` is the legacy single ISO-wide row.
+        """
+        return t * self.vars_per_hour + self._rec_acp_off + k
 
     def dis_tranche_col(self, a: int, k: int, t: int) -> int:
         """Return the discharge-tranche column of armed unit ``a``, tranche ``k``, hour ``t``."""

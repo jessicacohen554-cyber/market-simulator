@@ -8,12 +8,17 @@ taxonomy, so drift in either is a deliberate, cited edit — never silent.
 
 import unittest
 
+import numpy as np
+
 from market_sim.config.constants import RPS_ELIGIBLE_FUELS_BY_ISO
+from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.fleet import FUEL_TYPE_MAP
 from market_sim.policy.rps import (
+    build_rps_region_arrays,
     get_rps_acp,
     get_rps_eligible_fuels,
     get_rps_target,
+    rps_credit_for_zone,
 )
 
 
@@ -93,6 +98,105 @@ class TestEligibleFuelSets(unittest.TestCase):
         self.assertEqual(get_rps_acp("NYISO"), 40.0)
         self.assertEqual(get_rps_acp("CAISO"), 50.0)
         self.assertEqual(get_rps_acp("NEISO"), 50.0)
+
+
+class TestMisoComplianceRegions(unittest.TestCase):
+    """The per-state MISO compliance-region table (FFR-7B Arm 2 / FFR-6B E-1)."""
+
+    def _miso_zones(self):
+        cfg = get_iso_config("MISO")
+        return [z.name for z in cfg.zones], {z.name: z.load_share for z in cfg.zones}
+
+    def test_blend_reproduces_iso_wide_knots(self):
+        # FFR-6B §1.5 verification, re-run against the SHIPPED table: the
+        # per-region obligations re-blended onto the model's own zone load
+        # shares reproduce the ISO-wide STATE_RPS_FLOORS["MISO"] knots —
+        # Σ_r rhs_r / total demand ≈ .1139 / .1606 / .1981 at 2026/30/40. The
+        # zonal grain moves WHERE compliance is met, never HOW MUCH is owed.
+        zone_names, shares = self._miso_zones()
+        share_vec = [shares[z] for z in zone_names]
+        for year, expected in ((2026, 0.1139), (2030, 0.1606), (2040, 0.1981)):
+            arrays = build_rps_region_arrays("MISO", year, zone_names)
+            blended = float(
+                sum(
+                    arrays.obligation_frac[r, z] * share_vec[z]
+                    for r in range(arrays.obligation_frac.shape[0])
+                    for z in range(len(zone_names))
+                )
+            )
+            self.assertAlmostEqual(blended, expected, delta=1e-4, msg=str(year))
+
+    def test_mi_row_is_east_only_and_footprint_excludes_south(self):
+        # MCL 460.1029 ("located within this state", MIRECS): Michigan's row
+        # admits MISO-East certificates ONLY — the restriction that IS E-1.
+        # Every delivery-based row's footprint excludes MISO-South.
+        zone_names, _ = self._miso_zones()
+        arrays = build_rps_region_arrays("MISO", 2030, zone_names)
+        mi = arrays.labels.index("MI")
+        east = zone_names.index("MISO-East")
+        south = zone_names.index("MISO-South")
+        self.assertTrue(arrays.eligible_zone_mask[mi, east])
+        self.assertEqual(int(arrays.eligible_zone_mask[mi].sum()), 1)
+        for r in range(len(arrays.labels)):
+            self.assertFalse(arrays.eligible_zone_mask[r, south])
+
+    def test_row_count_is_year_invariant(self):
+        # Layout (and with it cache identity) is a function of the table
+        # alone: a region whose target is flat/zero at some year still emits
+        # its row, so K never varies with the solve year.
+        zone_names, _ = self._miso_zones()
+        for year in (2026, 2035, 2045):
+            arrays = build_rps_region_arrays("MISO", year, zone_names)
+            self.assertEqual(len(arrays.labels), 5, msg=str(year))
+            self.assertEqual(arrays.acp_price.shape, (5,))
+
+    def test_acp_is_miso_proxy_for_every_region(self):
+        # STATE_RPS_ACP["MISO"]'s $30 forward REC-price-ceiling proxy prices
+        # every region's escape (per-region ACPs are a refinement, not a
+        # requirement — FFR-6B §3.4).
+        zone_names, _ = self._miso_zones()
+        arrays = build_rps_region_arrays("MISO", 2030, zone_names)
+        for price in arrays.acp_price:
+            self.assertEqual(float(price), 30.0)
+
+    def test_non_miso_has_no_region_table(self):
+        # Rule 25 [R-ISO-SCOPE] + FFR-6B §2.1: the other RPS ISOs' single
+        # ISO-wide row is exact — no region table exists for them.
+        for iso in ("ERCOT", "CAISO", "PJM", "NYISO", "NEISO"):
+            self.assertIsNone(build_rps_region_arrays(iso, 2030, ["Z0"]), msg=iso)
+
+    def test_topology_drift_fails_loud(self):
+        # A zone name in the table absent from the model ordering is a
+        # KeyError, never a silently dropped state standard.
+        with self.assertRaises(KeyError):
+            build_rps_region_arrays("MISO", 2030, ["MISO-West", "MISO-East"])
+
+
+class TestRpsCreditForZone(unittest.TestCase):
+    """The shared per-zone credit helper every capacity screen routes through."""
+
+    def test_scalar_passes_through(self):
+        # Legacy single-row dual: unchanged for every consumer, zone or not.
+        self.assertEqual(rps_credit_for_zone(12.5, 3), 12.5)
+        self.assertEqual(rps_credit_for_zone(12.5, None), 12.5)
+
+    def test_vector_indexes_by_zone(self):
+        # K-row grain: an East candidate sees East's dual; a South candidate
+        # (outside every region's eligibility geography) sees 0 — never a
+        # broadcast of another region's dual (FFR-6B §3.2).
+        per_zone = np.array([0.0, 0.0, 0.0, 0.0, 30.0, 0.0])
+        self.assertEqual(rps_credit_for_zone(per_zone, 4), 30.0)
+        self.assertEqual(rps_credit_for_zone(per_zone, 5), 0.0)
+
+    def test_vector_without_zone_context_degrades_to_zero(self):
+        # No zone context → 0.0, the conservative side: the broadcast max
+        # would rebuild the defect the grain fixed.
+        per_zone = np.array([30.0, 0.0])
+        self.assertEqual(rps_credit_for_zone(per_zone, None), 0.0)
+        self.assertEqual(rps_credit_for_zone(per_zone, 7), 0.0)
+
+    def test_none_is_zero(self):
+        self.assertEqual(rps_credit_for_zone(None, 2), 0.0)
 
 
 if __name__ == "__main__":

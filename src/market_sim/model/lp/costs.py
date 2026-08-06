@@ -22,7 +22,7 @@ def build_cost_vector(
     storage_discharge_cost: np.ndarray | float = 0.0,
     ordc_penalties: np.ndarray | None = None,
     posture_startup_cost: np.ndarray | None = None,
-    rps_acp_price: float = 0.0,
+    rps_acp_price: "np.ndarray | float" = 0.0,
     link_flow_cost: np.ndarray | None = None,
     slack_cost: np.ndarray | None = None,
     min_injectable_mc: float | None = None,
@@ -65,10 +65,12 @@ def build_cost_vector(
             min-load energy through the coupled P variables, and cycling
             costs the SU charge; U itself is free by design.
         rps_acp_price: Alternative Compliance Payment rate in $/MWh applied to
-            the RPS ACP escape column (``layout.n_rec_acp``). Sets the marginal
-            cost of buying out of the RPS with an ACP, which caps the RPS row's
-            dual (the REC price) at this ceiling. Ignored when the layout
-            carries no ACP column.
+            the RPS ACP escape columns (``layout.n_rec_acp``); a scalar (the
+            legacy single ISO-wide row) or a ``(K,)`` vector pricing each
+            compliance region's own escape (FFR-7B Arm 2). Sets the marginal
+            cost of buying out of each row with an ACP, which caps that row's
+            dual (its region's REC price) at its own ceiling. Ignored when the
+            layout carries no ACP column.
         link_flow_cost: Optional ``(n_links,)`` per-MWh cost on each link's
             directed flow (MISO RDT TCDC priced tiers). ``None`` keeps the
             flow block zero-cost (byte-identical). Nonzero entries are only
@@ -241,13 +243,18 @@ def build_cost_vector(
             su_cost[np.newaxis, :]
         )
 
-    # RPS ACP escape column: priced at the Alternative Compliance Payment rate.
-    # Paying ACP is the marginal cost of the last unit of RPS compliance when
-    # physical RECs (wind+solar) run short, so the RPS row's dual cannot exceed
-    # this ceiling. Only present when an ACP price accompanies an active RPS.
+    # RPS ACP escape columns: priced at the Alternative Compliance Payment
+    # rate — a scalar for the legacy single row, or one rate per compliance
+    # region (region-major, matching the layout's ACP block order). Paying ACP
+    # is the marginal cost of the last unit of RPS compliance when physical
+    # RECs run short, so each row's dual cannot exceed its own ceiling.
+    # Only present when an ACP price accompanies an active RPS.
     if layout.n_rec_acp:
-        block[:, layout._rec_acp_off : layout._rec_acp_off + layout.n_rec_acp] = (
-            rps_acp_price
-        )
+        acp = np.asarray(rps_acp_price, dtype=float)
+        if acp.ndim > 0 and acp.shape != (layout.n_rec_acp,):
+            raise ValueError(
+                f"rps_acp_price shape {acp.shape} != ({layout.n_rec_acp},)"
+            )
+        block[:, layout._rec_acp_off : layout._rec_acp_off + layout.n_rec_acp] = acp
 
     return cost

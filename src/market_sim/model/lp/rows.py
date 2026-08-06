@@ -142,6 +142,128 @@ def _resolve_rps_eligible_gen_idx(
     return gidx if gidx.size else None
 
 
+def _resolve_clean_region_gen_idx(
+    fleet: FleetArrays,
+    region_fuels: "tuple[tuple[str, ...], ...]",
+) -> "list[np.ndarray | None]":
+    """Resolve each clean-tier region's qualifying fuels to generator indices.
+
+    The clean-family sibling of :func:`_resolve_rps_eligible_gen_idx`, with
+    the ONE deliberate difference: NUCLEAR IS ADMITTED here. A clean/
+    carbon-free tier that counts nuclear is exactly this separate row family
+    (FFR-6B §6.3) — the renewable row's CX-6a refusal is what keeps nuclear
+    out of the REC dual, not out of clean tiers. Wind and solar are the LP's
+    zone columns and are counted by every region row directly, so only names
+    beyond ``_RPS_ROW_BASE_FUELS`` resolve here, against ``FUEL_TYPE_MAP``
+    (data-driven — the statutes genuinely differ: MN admits hydrogen and
+    biomass, MI admits qualified CCS gas). An unknown fuel name is a hard
+    error, never a silent drop.
+
+    Returns one index array (or ``None`` when no such generator exists in
+    the fleet) per region, aligned with ``region_fuels``.
+    """
+    fuel_idx = np.asarray(fleet.fuel_type_idx)
+    out: "list[np.ndarray | None]" = []
+    for fuels in region_fuels:
+        extra = [f for f in fuels if f not in _RPS_ROW_BASE_FUELS]
+        unknown = sorted(f for f in extra if f not in FUEL_TYPE_MAP)
+        if unknown:
+            raise ValueError(
+                f"unknown clean-tier qualifying fuel name(s) {unknown}: every "
+                "entry must resolve against FUEL_TYPE_MAP"
+            )
+        codes = np.array([FUEL_TYPE_MAP[f] for f in extra], dtype=int)
+        gidx = np.flatnonzero(np.isin(fuel_idx, codes))
+        out.append(gidx if gidx.size else None)
+    return out
+
+
+def _build_rps_region_rows(
+    layout: VariableLayout,
+    eligible_zone_mask: np.ndarray,
+    obligation_frac: np.ndarray,
+    demand: np.ndarray,
+    acp_k0: int = 0,
+    region_gen_idx: "list[np.ndarray | None] | None" = None,
+) -> tuple[sp.csr_matrix, np.ndarray]:
+    """Return the K per-region annual RPS rows and their lower bounds.
+
+    The K-row generalization of :func:`_build_rps_row` (FFR-7B Arm 2 /
+    FFR-6B §3): one annual inequality per compliance region ``r``::
+
+        sum_{z in eligible_zones(r)} sum_t (W[z,t] + S[z,t])
+            + sum_t ACP_r[t]  (+ sum_{g in region_gen_idx[r]} sum_t P[g,t])
+        >=  sum_z obligation_frac[r, z] * sum_t demand[z, t]
+
+    Each region draws only on the certificates its statute admits (the
+    zone-mask filter on the same arange column expression the single row
+    uses — rule 2 [R-VECTOR]: the only Python loop is over K <= 6 regions,
+    the same shape as ``_build_mass_cap_rows``' loop over caps) and escapes
+    through its OWN ACP column (region-major slot ``acp_k0 + r`` of the
+    layout's ACP block), so each row's dual is that compliance market's REC
+    price, capped at its own ACP. ``K = 1, mask = all zones`` reproduces the
+    single ISO-wide row byte-identically — proven by regression test
+    (``tests/unit/policy/test_rps.py``), not asserted.
+
+    THE ROWS' ONLY OUTPUT IS A PRICE. E-1 never acquires a build limb
+    (FFR-6B §5.3): a force-build limb would stack against the FFR-5E
+    procurement channel — the rule-19 [R-ONE-MECH] failure FFR-5B refused.
+
+    Args:
+        layout: Variable layout describing the column structure.
+        eligible_zone_mask: ``(K, n_zones)`` bool LHS mask — where region
+            ``r``'s certificates may be generated.
+        obligation_frac: ``(K, n_zones)`` float RHS weights — within-zone
+            obligated load share times the region's target.
+        demand: Zonal demand ``(n_zones, T)`` in MW.
+        acp_k0: First region-major ACP slot this family occupies (0 for the
+            renewable family; the clean-tier family stacks after it).
+        region_gen_idx: Optional per-region thermal-block generator index
+            arrays (statute-qualifying non-W/S classes — the clean-tier
+            family's nuclear/hydro/etc. columns). ``None`` entries add no
+            generator columns for that region.
+
+    Returns:
+        Tuple ``(rows, rhs)``: a ``(K, total_columns)`` CSR block and the
+        ``(K,)`` lower bounds.
+    """
+    T = layout.T  # T: number of hours
+    vph = layout.vars_per_hour
+    hours = np.arange(T)[:, np.newaxis]  # t: hour index
+    mask = np.asarray(eligible_zone_mask, dtype=bool)
+    frac = np.asarray(obligation_frac, dtype=float)
+    k_regions = mask.shape[0]
+    zone_annual = np.asarray(demand, dtype=float).sum(axis=1)  # (n_zones,)
+
+    row_idx_groups: list[np.ndarray] = []
+    col_groups: list[np.ndarray] = []
+    for r in range(k_regions):  # r: compliance region (K <= 6, never hours)
+        zones_r = np.flatnonzero(mask[r])  # z: eligible zone indices
+        wind_cols = (hours * vph + layout._w_off + zones_r).ravel()
+        solar_cols = (hours * vph + layout._s_off + zones_r).ravel()
+        groups_r = [wind_cols, solar_cols]
+        gidx = region_gen_idx[r] if region_gen_idx is not None else None
+        if gidx is not None:
+            gidx = np.asarray(gidx, dtype=int)  # g: qualifying generators
+            if gidx.size:
+                groups_r.append((hours * vph + layout._p_off + gidx).ravel())
+        # Region r's own ACP escape column (one per hour), +1 so paying its
+        # ACP substitutes for physical certificates in THIS region only.
+        groups_r.append(np.arange(T) * vph + layout._rec_acp_off + acp_k0 + r)
+        cols_r = np.concatenate(groups_r)
+        col_groups.append(cols_r)
+        row_idx_groups.append(np.full(cols_r.size, r, dtype=int))
+
+    cols = np.concatenate(col_groups)
+    rows_idx = np.concatenate(row_idx_groups)
+    block = sp.coo_matrix(
+        (np.ones(cols.size), (rows_idx, cols)),
+        shape=(k_regions, layout.total_columns),
+    ).tocsr()
+    rhs = frac @ zone_annual  # (K,)
+    return block, rhs
+
+
 def _build_mass_cap_rows(layout: VariableLayout, coeffs: np.ndarray) -> sp.csr_matrix:
     """Return the stacked emissions mass-cap constraint block (rule 2).
 
@@ -1042,6 +1164,11 @@ def build_constraints(
     eta_dis: np.ndarray | float | None = None,
     rps_target: float | None = None,
     rps_eligible_fuels: tuple[str, ...] | None = None,
+    rps_region_zone_mask: np.ndarray | None = None,
+    rps_region_obligation_frac: np.ndarray | None = None,
+    clean_region_zone_mask: np.ndarray | None = None,
+    clean_region_obligation_frac: np.ndarray | None = None,
+    clean_region_fuels: "tuple[tuple[str, ...], ...] | None" = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -1172,6 +1299,27 @@ def build_constraints(
             generator columns through ``FUEL_TYPE_MAP``
             (:func:`_resolve_rps_eligible_gen_idx`). ``None`` keeps the
             wind+solar-only row (byte-identical).
+        rps_region_zone_mask: ``(K, n_zones)`` bool per-compliance-region
+            eligibility mask (FFR-7B Arm 2, MISO). With
+            ``rps_region_obligation_frac`` it REPLACES the single ISO-wide
+            row with K per-region rows (:func:`_build_rps_region_rows`);
+            mutually exclusive with ``rps_target``. ``None`` (default)
+            keeps the legacy single-row path byte-identical.
+        rps_region_obligation_frac: ``(K, n_zones)`` float per-(region,
+            zone) RHS weights — within-zone obligated load share times the
+            region's statutory target.
+        clean_region_zone_mask: ``(K2, n_zones)`` bool clean/carbon-free
+            tier eligibility mask (FFR-7B Arm 3, MISO West/East) — a SECOND
+            independent row family on the same region machinery, appended
+            after the RPS family; requires the RPS region family (the
+            model-level assembler enforces it). ``None`` (default) adds no
+            rows (byte-identical).
+        clean_region_obligation_frac: ``(K2, n_zones)`` float clean-tier
+            RHS weights.
+        clean_region_fuels: Per-region statutory qualifying fuel-name
+            tuples resolved to generator columns via
+            :func:`_resolve_clean_region_gen_idx` (nuclear ADMITTED —
+            FFR-6B §6.3; unknown names hard-error).
         hydro_monthly_energy: Monthly hydro energy budget in MWh, shape
             ``(n_hydro, n_months)``. When ``None`` the hydro family is
             omitted (identical LP); otherwise one budget row per hydro
@@ -1627,11 +1775,67 @@ def build_constraints(
             row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
             row_upper = np.concatenate([row_upper, cap_rhs])
 
-    # Optional RPS inequality: one annual row, statutorily-eligible renewable
-    # generation (the wind+solar zone columns, plus any thermal-block classes
-    # the ISO's statute counts — ``rps_eligible_fuels``) must reach
-    # rps_target * total demand, with an infinite upper bound.
-    if rps_target is not None and rps_target > 0.0:
+    # Optional RPS inequality family, one of two mutually-exclusive grains:
+    #  * K per-compliance-region rows (rps_region_zone_mask — FFR-7B Arm 2,
+    #    MISO): each state standard's eligible-zone certificates + its own
+    #    ACP escape must reach its own obligated-load RHS.
+    #  * one ISO-wide row (rps_target — every other RPS ISO, where the single
+    #    row is arithmetically exact under free intra-ISO REC trade,
+    #    FFR-6B §2.1): statutorily-eligible renewable generation (the
+    #    wind+solar zone columns, plus any thermal-block classes the ISO's
+    #    statute counts — ``rps_eligible_fuels``) must reach
+    #    rps_target * total demand.
+    # Both are >= rows with an infinite upper bound.
+    if rps_region_zone_mask is not None:
+        if rps_target is not None and rps_target > 0.0:
+            raise ValueError(
+                "rps_region_zone_mask (per-region RPS rows) is mutually "
+                "exclusive with rps_target (the single ISO-wide row) — the "
+                "K-row grain REPLACES the ISO-wide row, never stacks on it "
+                "(rule 19 [R-ONE-MECH])"
+            )
+        region_block, region_rhs = _build_rps_region_rows(
+            layout,
+            rps_region_zone_mask,
+            rps_region_obligation_frac,
+            demand,
+        )
+        k_regions = region_block.shape[0]
+        blocks.append(region_block)
+        del region_block
+        row_lower = np.concatenate([row_lower, region_rhs])
+        row_upper = np.concatenate([row_upper, np.full(k_regions, np.inf)])
+        # Optional clean/carbon-free tier family (FFR-7B Arm 3, FFR-6B E-2):
+        # a SECOND independent row family on the same machinery, appended
+        # directly after the RPS family (dual layout [... | mass_cap |
+        # rps K1 | clean K2 | reserve]). Its ACP escape columns occupy the
+        # region-major slots AFTER the RPS family's (acp_k0 = K1). A wind
+        # MWh satisfying both its renewable row and its clean row is CORRECT
+        # — two constraints, one MWh (FFR-6B §6.4); the one-certificate
+        # revenue composition happens at the capacity screens (max(), never
+        # sum), not here.
+        if clean_region_zone_mask is not None:
+            clean_block, clean_rhs = _build_rps_region_rows(
+                layout,
+                clean_region_zone_mask,
+                clean_region_obligation_frac,
+                demand,
+                acp_k0=k_regions,
+                region_gen_idx=_resolve_clean_region_gen_idx(fleet, clean_region_fuels),
+            )
+            k_clean = clean_block.shape[0]
+            blocks.append(clean_block)
+            del clean_block
+            row_lower = np.concatenate([row_lower, clean_rhs])
+            row_upper = np.concatenate([row_upper, np.full(k_clean, np.inf)])
+    elif clean_region_zone_mask is not None:
+        raise ValueError(
+            "clean_region_zone_mask (clean-tier rows) requires the per-region "
+            "RPS family (rps_region_zone_mask) — E-2 rides E-1's machinery "
+            "and its ACP block slots (FFR-6B §6.2: the dependency is strict "
+            "and one-directional)"
+        )
+    elif rps_target is not None and rps_target > 0.0:
         rps_row, rhs = _build_rps_row(
             layout,
             rps_target,

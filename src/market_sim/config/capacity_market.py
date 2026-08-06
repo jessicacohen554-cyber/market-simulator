@@ -3035,6 +3035,186 @@ RPS_ELIGIBLE_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
     "NEISO": ("wind", "solar", "offshore_wind"),
 }
 
+# The MISO "Midwest footprint" REC-eligibility region: every model zone except
+# MISO-South. Delivery-based state standards (MN §216B.1691's
+# delivered-to-Minnesota-retail construction; WI/MO likewise) accept
+# certificates generated anywhere in MISO's Midwest region, while MISO-South
+# (AR/LA/MS/E-TX — no binding RPS, and separated by the RDT) is outside every
+# Midwest state's eligibility geography (FFR-6B §2.1).
+MISO_RPS_MIDWEST_FOOTPRINT_ZONES: tuple[str, ...] = (
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East",
+)
+
+# Per-state MISO RPS compliance regions (FFR-7B Arm 2 / FFR-6B E-1).
+#
+# MISO is the ONE ISO where the single ISO-wide RPS row is wrong: a single row
+# silently asserts free intra-ISO REC trade, which is TRUE in PJM/NEISO/NYISO/
+# CAISO (footprint-wide REC products / one obligated state) and FALSE in MISO —
+# Michigan's credits must come from systems "located within this state"
+# (MCL 460.1029, tracked in MIRECS), Illinois's CEJA obligation is discharged
+# through centralized IPA procurement, and Minnesota's §216B.1691 standard is a
+# delivered-to-MN-retail obligation. Measured consequence (FFR-6B §2.2):
+# MISO-East owes 0.328 of zone load against 0.081 measured VRE (2030) while
+# MISO-Plains runs a 41.5 pp surplus — Iowa's surplus paying Michigan's bill,
+# which Michigan's statute forbids. The K-row generalization gives each state
+# standard its own constraint row with its own eligibility mask.
+#
+# EVERY number below is copied from the cited derivation already recorded in
+# the STATE_RPS_FLOORS["MISO"] comment block above (FFR-7B §6.1(7): "copy, do
+# not re-derive") — per-state renewable-tier trajectories at the same
+# 2026/30/40/45 knot convention, and within-zone state load shares from
+# EIA-861 2023 retail sales restricted to the MISO-served portion. Rule 5
+# [R-NO-MAGIC] / rule 13 [R-MEASURED]: statutory levels + measured load
+# shares, zero fitted parameters.
+#
+#   MN — Minn. Stat. §216B.1691 (2023 HF7), 55% renewable by 2035; MN ≈ .77 of
+#     MISO-West load. Eligibility: the Midwest footprint (delivery-based
+#     standard, self-supplied by vertically-integrated utilities across MISO
+#     Midwest).
+#   MI — 2023 PA 235 (SB 271) / MCL 460.1028; 50% by 2030, 60% by 2035;
+#     MI ≈ .57 of MISO-East load. Eligibility: MISO-East ONLY — MCL 460.1029
+#     restricts credits to systems "located within this state" (MIRECS, a
+#     Michigan-only registry). This restriction IS the E-1 defect's core.
+#   WI — Wis. Stat. §196.378, flat 10%; WI ≈ .43 of MISO-East load.
+#     Eligibility: Midwest footprint (WI accepts regional RECs).
+#   IL — CEJA (P.A. 102-0662) / 20 ILCS 3855, Ameren/MISO portion; 40% by
+#     2030, 50% by 2040. Whole zone (share 1.0 — MISO-Illinois IS the IL-Ameren
+#     footprint). Eligibility: MISO-Illinois (the CEJA IPA-procurement narrow
+#     reading, documented; FFR-6B §3.4 permits the wider adjacent reading — the
+#     narrow one is taken so the row never silently re-imports the Iowa
+#     surplus the family exists to fence off).
+#   MO — RSMo §393.1030, flat 15% (cost-capped); MO ≈ .43 of MISO-Plains load.
+#     Eligibility: Midwest footprint.
+#   MT — EXCLUDED (FFR-6B §1.4): MN ≈ .77 of MISO-West is cited but the .23
+#     ND/SD/MT residual is not decomposed; MT's 15% standard is bracketed at
+#     ±0.0345 on the West target by MT taking none or all of it. Recorded as
+#     the open one-EIA-861-line intake; excluding it is the conservative
+#     (obligation-understating) side of the bracket.
+#   IA / ND / SD / IN / KY / AR / LA / MS / E-TX — no binding standard, no row.
+#
+# The rows' ONLY output is a price (each row's dual = that compliance market's
+# REC price, capped by its ACP escape). E-1 NEVER ACQUIRES A BUILD LIMB
+# (FFR-6B §5.3): a force-build limb would stack against the FFR-5E procurement
+# channel — the rule-19 [R-ONE-MECH] failure FFR-5B already refused.
+MISO_RPS_COMPLIANCE_REGIONS: dict[str, dict] = {
+    "MN": {
+        "obligated_zone": "MISO-West",
+        "obligated_load_share": 0.77,
+        "floors": {2026: 0.26, 2030: 0.40, 2040: 0.55, 2045: 0.55},
+        "eligible_zones": MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
+    },
+    "MI": {
+        "obligated_zone": "MISO-East",
+        "obligated_load_share": 0.57,
+        "floors": {2026: 0.35, 2030: 0.50, 2040: 0.60, 2045: 0.60},
+        "eligible_zones": ("MISO-East",),
+    },
+    "WI": {
+        "obligated_zone": "MISO-East",
+        "obligated_load_share": 0.43,
+        "floors": {2026: 0.10, 2030: 0.10, 2040: 0.10, 2045: 0.10},
+        "eligible_zones": MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
+    },
+    "IL": {
+        "obligated_zone": "MISO-Illinois",
+        "obligated_load_share": 1.0,
+        "floors": {2026: 0.25, 2030: 0.40, 2040: 0.50, 2045: 0.50},
+        "eligible_zones": ("MISO-Illinois",),
+    },
+    "MO": {
+        "obligated_zone": "MISO-Plains",
+        "obligated_load_share": 0.43,
+        "floors": {2026: 0.15, 2030: 0.15, 2040: 0.15, 2045: 0.15},
+        "eligible_zones": MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
+    },
+}
+
+# Per-state MISO CLEAN/CARBON-FREE tier compliance regions (FFR-7B Arm 3 /
+# FFR-6B E-2) — a SECOND, INDEPENDENT row family on the Arm-2 K-row
+# machinery, never a widening of the renewable row (the renewable row keeps
+# its statute's renewable eligibility; a state with both tiers gets TWO rows,
+# which is what the statutes say — FFR-6B §6.3(1)).
+#
+# Adjudication (FFR-6B §6.2, measured eGRID 2023 at both grains): built
+# ISO-wide the clean row is SLACK in every modelled year through 2040
+# (-22.9 pp falling to -6.9 pp) — an inert mechanism; at the state-group
+# grain it binds materially in two zones covering 39% of MISO load
+# (MISO-West short 14.0 pp by 2030 rising to 29.4 pp by 2040; MISO-East
+# short 21.7 pp by 2035 rising to 33.1 pp by 2040). Hence exactly two rows.
+#
+# Each row's QUALIFYING SET is per-statute DATA resolved against
+# FUEL_TYPE_MAP (rule 18's spirit — never a hardcoded class tuple at the
+# builder), because the statutes genuinely differ (FFR-6B §6.3(2)):
+#   MN — Minn. Stat. §216B.1691 subd. 2g (2023 HF7): 80% carbon-free by 2030
+#     (IOU; the .80 knot follows the FFR-6B §6.2 adjudication table) / 90% by
+#     2035 / 100% by 2040. Carbon-free INCLUDES HYDROGEN AND BIOMASS →
+#     nuclear, hydro, wind, solar, hydrogen_ct, hydrogen_ccgt, biomass.
+#     Obligated: MN ≈ .77 of MISO-West (the same EIA-861 split as the
+#     renewable row). Eligibility: Midwest footprint (same delivery
+#     construction as its renewable tier).
+#   MI — 2023 PA 235 (SB 271): 80% clean by 2035 — THE INTERIM KNOT MISSING
+#     from the old code comment, the knot that makes MISO-East bind five
+#     years earlier — / 100% by 2040. Clean = renewables + nuclear +
+#     QUALIFIED CCS GAS (90% capture) → nuclear, hydro, wind, solar,
+#     biomass, gas_cc_ccs. Obligated: MI ≈ .57 of MISO-East. Eligibility:
+#     MISO-East ONLY (the same MCL 460.1029 in-state restriction as its
+#     renewable tier).
+#   IL — NO ROW, RECORDED AS THE NULL IT IS (FFR-6B §6.1): CEJA
+#     (P.A. 102-0662) sets a state POLICY GOAL of 100% clean by 2050 plus
+#     dated SOURCE-SIDE fossil-emission phase-outs — a different instrument,
+#     not an LSE share obligation. A clean row for Illinois would invent an
+#     obligation the statute does not impose.
+#
+# Trajectory convention: a clean tier imposes NOTHING before its first
+# statutory compliance knot — policy.clean_tiers returns 0.0 for years
+# strictly before the first knot (NOT the edge-hold used by the RPS
+# trajectories, which would compel 80% carbon-free in 2026, four years
+# before the law requires it). Interpolation between knots is linear, as
+# everywhere else.
+#
+# FEASIBILITY ESCAPE (required — FFR-6B §6.3: "a 100%-by-2040 clean row MUST
+# carry a feasibility escape; a hard row is an infeasibility bomb"): each row
+# carries its own ACP-style escape column priced at STATE_RPS_ACP["MISO"]'s
+# $30/MWh forward REC-price-ceiling proxy — reused, documented: neither MN
+# nor MI publishes a $/MWh clean-tier buyout (MN/MI compliance is physical
+# with PUC/MPSC-set penalties), so the same deliberately-low Midwest
+# attribute-price ceiling proxy bounds the clean dual.
+MISO_CLEAN_TIER_REGIONS: dict[str, dict] = {
+    "MN": {
+        "obligated_zone": "MISO-West",
+        "obligated_load_share": 0.77,
+        "floors": {2030: 0.80, 2035: 0.90, 2040: 1.00, 2045: 1.00},
+        "eligible_zones": MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
+        "qualifying_fuels": (
+            "nuclear",
+            "hydro",
+            "wind",
+            "solar",
+            "hydrogen_ct",
+            "hydrogen_ccgt",
+            "biomass",
+        ),
+    },
+    "MI": {
+        "obligated_zone": "MISO-East",
+        "obligated_load_share": 0.57,
+        "floors": {2035: 0.80, 2040: 1.00, 2045: 1.00},
+        "eligible_zones": ("MISO-East",),
+        "qualifying_fuels": (
+            "nuclear",
+            "hydro",
+            "wind",
+            "solar",
+            "biomass",
+            "gas_cc_ccs",
+        ),
+    },
+}
+
 # Annual interconnection queue caps (GW/yr) by ISO.
 #
 # Semantics: this is a *ceiling* on the total nameplate MW the economic
