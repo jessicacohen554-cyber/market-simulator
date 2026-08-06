@@ -6804,3 +6804,106 @@ not a better one. (3) The `run_d1`/`score_shape` inconsistency caiso-176 carried
 forward is **CLOSED by v3.1's deletion of `score_shape`**, not by this session.
 (4) The `complete` marker stands: a NOT-YET determination does not withdraw it
 (NYISO precedent), and the freeze outranks it regardless.
+
+---
+
+## 2026-08-06 — CAISO — caiso-178: the OASIS `PUB_DAM_GRP` intake — the corpus is landed, and caiso-176's highest-value exit is SPENT AND CLOSED
+
+**Keeper UNCHANGED at `2026-08-06-caiso-175-tac-intake`. NO LP, NO solve, NO arm,
+nothing registered — because nothing was run.** DOF ledger unchanged at `n_entries`
+11 / `n_residual` 8. `holdout-freeze.json` and `calibration-complete.json` UNTOUCHED.
+2023–2025 only; **no rule-22 authorization was needed or taken** — the training window
+is not gated, and under the 2026-08-06 owner clarification data intake is not
+window-gated at all.
+
+Pre-registration `results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md`
+(pushed **before any bid price was read**); record
+`FINDING-caiso178-public-bid-floor-2026-08-06.md`; instrument
+`scripts/data/derive_caiso_battery_bid_floor.py`; artifacts
+`_caiso178_public_bid_floor.json` + `_caiso178_bid_floor_resources.csv` +
+`_caiso178_bid_floor_hist.csv`.
+
+**THE INTAKE.** 1,095 of 1,096 trade dates, **2,589,238 storage curve-hours**, 422 MB.
+The single hole (**2023-06-01**) is a genuine OASIS `ERR_CODE 1000` archive gap, not a
+fetch failure; **zero rate-limit failures and zero retries** across 1,096 requests.
+Zips gitignored (`pjm-energy-offers` precedent); deriver and derived artifacts committed.
+
+**BRANCH II — A SHARPER WALL — BY THREE INDEPENDENT ROUTES:** classifier **PROVISIONAL**
+(H1a missed 2025 at ratio 1.278 vs ±25 %), **H1c NOT ROBUST** (spread 3.675 / 3.070 vs
+≤ $1.00), and the **mass-point test FAILED**.
+
+**NEITHER THE CORPUS NOR THE CLASSIFIER IS THE LIMITATION.** A **price-blind** classifier
+(resource type, MW-axis sign/symmetry, hour counts — no price in any stage) reproduces
+CAISO's *own published* IFM|LESR bucket distribution to **0.595 / 1.118 / 1.483 pp MAD**;
+`(0,15]` priced-volume share ours **7.65 / 12.87 / 14.86 %** against published
+**8.72 / 16.43 / 17.52 %**. Two independent CAISO publications, different pipelines,
+different files, agreeing to ~1.5 pp.
+
+**WHAT FAILS IS THE OBJECT.** The modal first discharge rung is **$1,000/MWh — the SOFT
+BID CAP — in all three years** (7.7 / 18.5 / 16.5 % of resource-hours; 14.3 / 30.6 /
+28.1 % resource-weighted), **81–90 %** of first rungs sit above $15, and the cheap-bid
+mass carries an **hour-of-day shape** peaking at **h19 PT (1.89 / 1.59 / 1.57 ×)**,
+depleted overnight and through the solar belly. **The discharge bid encodes WHEN the
+battery intends to run, not WHAT it costs to run** — a marginal cost has no diurnal
+shape, a dispatch intention does. **No finer grain repairs that**, which is why exit 2 is
+CLOSED rather than narrowed. caiso-176 §3a / ERCOT-162 confirmed at full resolution, now
+visible in the **first** rung rather than only the upper ones.
+
+**REPORTED AGAINST INTEREST.** caiso-176's one-sided premise ("no participant offers
+below marginal cost") does **not** strictly hold for storage: the shadow value of stored
+energy can be **negative**, **1.1 / 3.4 / 3.8 %** of first rungs are ≤ $0, and a quarter
+of the 2025 fleet offers to discharge at **−$32/MWh or below** at some point in the year.
+caiso-176's **measurement stands** (reproduced here to ~1.5 pp from a different file) and
+its **conclusion stands**; what is qualified is the **inference** — ≤ $15 is a
+**revealed-conduct** statement, not a strict upper bound on marginal cost. The wall is
+**HIGHER**, not lower.
+
+**REPORTED AND REFUSED.** The pre-registered floor statistic lands at **$15.91 / $6.00 /
+$6.00**, and **$5.00** is a top-5 modal bin every year (2.20 / 2.76 / 5.19 %) — both near
+the incumbent 5.0. **NOT confirmation**, on four independent grounds: a **$9.91**
+three-year spread against a $1.00 stability requirement; not robust under H1c (moves to
+$9.675 / $8.57 at `sym ≥ 0.7`); not the pre-registered identifying statistic; and
+round-number bid conventions generate it. Adopting it would be exactly the caiso-176
+DO-NOT-REDO item, made **more** seductive by landing near the incumbent.
+
+**H1a's miss is a pre-registration error, disclosed not repaired.** The gate compared this
+session's *bid-in capability* against caiso-174's measured *p95 dispatch envelope* — two
+different objects. Against the measured *fleet capacity* the same numbers read
+0.641 / 0.715 / 0.790, and the classified set sits sensibly between the two published
+references. **The gate is reported as it fired and was NOT rewritten to pass**; the fleet
+ratio is emitted as a field no verdict branch reads. Nothing turns on it — the mass-point
+test fails independently.
+
+**EXITS RE-SCORED.** Exit 1 (per-resource Storage-DEB `CD` filings) UNCHANGED and still
+the primary wall — confidential by tariff construction. **Exit 2 (a finer public bid-price
+grain) SPENT AND CLOSED.** Exit 3 (an identified cell-vs-system split replacing the
+declared-tunable `STORAGE_DEGRADATION_REPLACEMENT_FRACTION = 0.25`) UNCHANGED and **now
+the only live exit**. `battery_dispatch_adder` **stays at 5.0**; matrix cell stays **`K`**.
+
+**CORRECTION TO THIS LOG'S OWN PRIOR ENTRY.** The caiso-176 entry's item (4) reads "The
+`complete` marker stands: a NOT-YET determination does not withdraw it (NYISO precedent)."
+**That is wrong for CAISO and is corrected here rather than rewritten above.**
+`frontend/data/backcast/calibration-complete.json` carries CAISO under **`withdrawn`**
+(declared 2026-08-05, withdrawn 2026-08-06, `keeper_at_withdrawal`
+`2026-08-06-caiso-175-tac-intake`), withdrawn **by owner directive** on the rubric-v3.1
+amendment because a marker cannot rest on a NOT-YET keeper — the NYISO precedent was not
+applied to CAISO. **Nothing was ever spent under it**; the touch-once locked test (2019,
+H1-2026) was **never authorized** and remains available. The §5.2 matrix header carried
+the same stale sentence and is corrected in this session under rule 28 duty (e). It
+constrained nothing here — the freeze already restricted this session to 2023–2025.
+
+**ALSO FILED.** `scripts/data/curate_dam_public_bids.py` cannot process a full CAISO year
+in a ~15 GB environment: measured 141 days → 12,915,667 rows at **5.51 GB peak RSS**,
+extrapolating to **~14.3 GB** for 365 days, because `_curate_spec` `pd.concat`s every
+day-frame at once. The deriver streams instead. Not fixed — `clean_io.write_clean` is a
+frozen shared seam.
+
+**ESCALATED TO THE OWNER.** CAISO's 2023–2025 outage windows were regenerated on the
+current CAMPD detector (`intake_log` 2026-07-24) and **the re-audit that entry flagged is
+STILL OUTSTANDING**. It is a precondition for spending 2022 and is on the path back to any
+`complete` re-declaration.
+
+**STATE AFTER THIS SESSION: CAISO's in-model lever queue is EMPTY, its one FAIL (C3a) is
+walled on non-public hourly pumped-storage water state, and its last free parameter is
+walled with two of three exits closed.** The next CAISO move is an owner-level data
+question, not a session lever.
