@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-06-nyiso-128-solar-basis",
+  "label": "nyiso 128 solar basis",
+  "date": "2026-08-06",
+  "shorthand": "nyiso-128-solar-basis",
+  "definition": "Calibration run from bundle nyiso128_treatment.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-06-nyiso-128-solar-basis.js",
+  "bundle": "results/calibration/nyiso128_treatment"
+}
