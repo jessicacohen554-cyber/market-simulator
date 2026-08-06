@@ -1240,7 +1240,7 @@ of a hard-coded class tuple. Pinned by
 | **MISO** | `2026-08-05-miso-132b-cc-committed` | NOT-YET | NOT-YET | C3a 2025 −14.0% moves `CAVEAT → FAIL` and becomes the sole blocker; the previous blocker (C7 COAL_PRB 2025, cv_ratio 0.338) is retired, not fixed. |
 | NEISO | `2026-08-05-neiso-83-ca1-reclass` | CALIBRATED-WITH-CAVEATS | unchanged | C3a `PASS` all years; C3c its only caveat. Dormant C1/C2/governance entries were reclassifying nothing. |
 | PJM | `2026-08-04-pjm-152-collapse` | CALIBRATED | unchanged | Zero caveats, zero fails. |
-| NYISO | `2026-08-04-nyiso-125-seam-envelope` | NOT-YET | unchanged | C3a 2025 −10.2% was already a `FAIL` (never ledgered). |
+| NYISO | `2026-08-06-nyiso-128-control` | CALIBRATED-WITH-CAVEATS | unchanged | C3a PASSES all three years (+6.2 / −1.7 / −7.0 %); C3c its only ledgered caveat. *(Scored on the keeper NYISO promoted 2026-08-06, after this amendment was written against `2026-08-04-nyiso-125-seam-envelope`. That run was NOT-YET on a C3a 2025 −10.2 % `FAIL` that was never ledgered, so it was unaffected by the amendment either way — the promotion, not v3.1, is what moved NYISO.)* |
 | ERCOT | `2026-08-05-run168b-year-curves` | NOT-YET | unchanged | C3a 2023 −32.2%, C3b already failing. |
 
 C7 was `PASS` on CAISO/NYISO/PJM/ERCOT, `SKIPPED` on NEISO and `FAIL` on MISO,
