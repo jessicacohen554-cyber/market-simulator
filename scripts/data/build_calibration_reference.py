@@ -90,6 +90,29 @@ CALIBRATION_ISOS: tuple[str, ...] = (
 # CEMS coverage of the new ISOs). ISOs not listed use the full
 # CALIBRATION_YEARS span.
 CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
+    # PJM gained 2019 on 2026-08-06 (session pjm-160), the first pre-2021 year
+    # any ISO carries. What unblocked it is the F3 closure in
+    # scripts/data/curate_demand_profile.py::curate_pre_window: the pre-2021
+    # gap was never the hourly demand DRIVER (load_demand('PJM', 2019) has
+    # worked since PJM gained its per-BA extract adapter — the extract covers
+    # 2018-2026), only load_demand_meta, which fell through to the legacy
+    # eia_demand_meta.parquet summary and raised. The curator now writes a
+    # pre-window `demand-profile` clean partition from the SAME per-BA series
+    # load_demand serves, so _demand_totals resolves for 2019.
+    # This is DATA READINESS ONLY (rule 22): 2019 is LOCKED-TEST tier, PJM
+    # holds no `final` marker, and the holdout spend freeze is ACTIVE — so no
+    # 2019 solve, score or registration is authorized by this entry. Its whole
+    # purpose is that when a `final` grant is eventually issued, the inputs are
+    # already prepared and frozen, with nothing left to assemble mid-spend
+    # (rule 22's "already configured precisely like the frontier keeper").
+    # 2020 is deliberately NOT added: PJM's 2020 per-BA demand series carries
+    # two residual metering-artifact hours (192,229 and 176,085 MW against a
+    # 145 GW third-highest and an 85 GW median) that the loader's 2.5x-median
+    # spike screen leaves in place, so its peak_mw would be wrong by ~47 GW.
+    # That is a root-cause fix in eia930.demand._screen_demand_spikes, not
+    # something to bury in a reference block (rule 14 [R-ACCURATE]); see
+    # FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md.
+    "PJM": (2019, 2021, 2022, 2023, 2024, 2025),
     # CAISO gained 2021-2022 on 2026-07-31 under the owner-authorized rule-22
     # Option-2 DATA intake (calibration-complete.json intake_log; CAISO holds
     # NO marker, so no solve/score/registration of either year — reference and
