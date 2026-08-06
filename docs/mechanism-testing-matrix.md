@@ -3027,6 +3027,115 @@ loss.
 
 ### 5.4 MISO — target C7 COAL_PRB (non-ledgerable), the SOLE failing criterion (keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**, C7 failing **2025 only**)
 
+> **QUEUE STAMP miso-134 (2026-08-05) — THE OBJECT IS REAL, IT IS AN *ORDER*
+> OBJECT, AND THE CONSTRAINT *BINDS* — AND THE ONLY ZERO-DOF LEVER IS STILL
+> REFUSED. NO LP, NO FIELD, NO ARM, NO RUN, KEEPER UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`. Charter lane **(a)**, the miso-133 §4
+> `CT_PEAKER` overnight row (−854/−691/−666 MW, July night h0–5). PREREG pushed
+> at `06918ca1` BEFORE any adjudicating statistic; two-sided prior declared in
+> BOTH dimensions (size and C7 direction), with KILL declared at least as likely
+> as PASS.
+>
+> **(a) THE OBJECT, NAMED.** What prices MISO's peakers out of the July night is
+> the `CT_PEAKER` **econ band's residual-identified level**: `econ_low`/`econ_high`
+> = 1.0/1.0 against the class's own measured `marg_econ_low_p50`/`_high_p50` =
+> **0.687/0.691** (n = 249 units, IQR 0.640–0.779). Under the armed
+> `gas_offer_net_revenue_margin` form that gap is a fuel-invariant **$7.321/MWh**
+> cap-weighted margin over the 17,977.9 MW econ band (median **$10.976** on the
+> 11,050.6 MW carrying one). The committed band carries **$0.000** (already
+> measured-grounded at 1.025 = `phys_committed`) and the peak band's $75.67 is
+> the deliberate MISO-cap scarcity wall, outside the arm. Construction validated
+> FIRST: assembled CT capacity **22,281.8 MW** vs the 22,291.8 MW miso-133 §6
+> reference (**−0.04 %**, ±2 % bar) and cap-weighted plant-grain base heat rate
+> **12.0351**, reproducing miso-117b's published value **exactly**.
+>
+> **(b) IT BINDS — the first MISO overnight object in five lanes that is not
+> slack.** `R(Δ_max)` at the keeper's own July-night zonal prices is
+> **2,944.6 / 3,299.5 / 4,130.5 MW** against the shortfall 854/691/666 —
+> **3.4× / 4.8× / 6.2×**, with the 2025 shortfall crossed at **Δ ≈ $3.2** of the
+> $7.32 available. **S-2 PASSES 3/3.** The charter's question is answered.
+>
+> **(c) AND THE ARM IS REFUSED**, on the pre-registered S-3 C1 counter-risk,
+> **3/3** where the bar needed 2. The bias-cancelling ratio estimator
+> `E_pt(Δ_max)/E_pt(0)` = **2.29 / 2.17 / 2.12**: the swap roughly **DOUBLES** a
+> class already at **0.988 / 0.949** of EIA-923 actual (model 14.496/19.062/17.479
+> vs actual 19.199/19.296/18.425 TWh), predicting C1 ratios **1.73 / 2.14 / 2.01**
+> against headroom to parity of only **+4.70 / +0.23 / +0.95 TWh**. Any
+> pass-through above ~5 % of the price-taking bound breaks 2024.
+>
+> **(d) THE LANE IS CLOSED ON *IDENTIFICATION*, NOT COMPUTE — the swap is a
+> CATEGORY ERROR.** miso-132(b) swapped a PROXY (the generic 1.20
+> part-load-premium claim) for its own MEASURAND (`avg_committed_p50`). Here
+> `marg_econ_low_p50` is the measurand for **`phys_econ_low`** — and the keeper
+> **already carries it there exactly**. The offer multiplier is `phys + margin`
+> and the margin's measurand is **offer CONDUCT**, not incremental burn, so
+> `econ_low := phys_econ_low` asserts *a MISO peaker offers at marginal burn with
+> zero net-revenue margin* — unsupported by any MISO offer corpus, contradicted by
+> the class's own annual volume, rule-1 forbidden. The residual can only be closed
+> by a **tuned Δ**, which PREREG K5 and rules 1/24 forbid in advance ⇒ under rule
+> 20 it is an **OPEN ROOT-CAUSE ISSUE, NOT A PARAMETER**. **DO NOT re-open the
+> `CT_PEAKER` econ LEVEL with more memory, and DO NOT propose a partial Δ.**
+>
+> **(e) TWO GRAINS DISAGREE, reported not buried** (S-5, plant grain governing by
+> pre-registration): the class grain **FAILS** all three years (Δ_max 7.321 vs
+> class cap-wtd offer-minus-price **25.80 / 18.14 / 16.53**) while the tranche
+> grain **PASSES**. The cap-weighted *average* offer of a 22 GW ladder is
+> dominated by its expensive tail; the MW that enters is the cheap end. This is
+> **miso-117b's lesson recurring on a different quantity** — a class-average
+> OFFER is the wrong statistic for a reachability prediction, and a class-grain-only
+> screen would have returned the opposite S-2 verdict.
+>
+> **(f) THE C7 CLAIM FAILS INDEPENDENTLY, IN THE YEAR THAT MATTERS** (S-6, which
+> gates the claim not the arm): the entering CT undercuts the hour's OWN marginal
+> `COAL_PRB` econ offer on **0.993 / 0.972** of entering MW in 2023/2024 but only
+> **0.279** in 2025 — the one year C7 fails (entering p50 $28.91 vs marginal PRB
+> $28.00). No C7 relief is claimed. miso-130's regime statistic from a third
+> direction: 2025's gas re-pricing lifts the whole gas stack past the cheap-PRB
+> majority, so a gas-side order lever reaches the *price* but not the *block*.
+>
+> **(g) S-4, BANKED AND UNGATED (no verdict taken).** The residual econ margin is
+> **3.14×** MISO's own measured start recovery (**$7.321** vs **$2.335**/MWh
+> cap-weighted, 654 tranches on `campd_ct_run_lengths_MISO.csv`), **4.70×** on
+> markup-carrying tranches — and MISO arms **both** `tranche_startup_amortization`
+> and `gas_offer_net_revenue_margin`. Rule 25: CAISO's structurally identical
+> 2.19–7.86× measurement is precedent for MAKING the comparison and transfers
+> **no** verdict.
+>
+> **(h) THE GENERALISABLE LESSON, the mirror of miso-132(a): BINDING IS NOT
+> LICENSING.** miso-132(a) taught that a missing market rule is not automatically
+> a binding one. This is the harder half: the constraint **does** bind, in exactly
+> the hours it was recruited for, **and the lever is still refused — because a
+> lever that binds in the target window also binds in every other window.** The
+> model carries approximately the **right ANNUAL CT energy in the wrong HOURS**,
+> and **a LEVEL lever cannot fix an HOUR-DISTRIBUTION defect**. *Before arming a
+> lever that clears its target-hour bar, measure what it does OUTSIDE the target
+> window — same fleet assembly, no LP.* Second half: **check that the "measured"
+> value you are importing is the measurand of the slot you are putting it in.**
+> Family: miso-129 *a signature is not a cause* → miso-131 *a plant-grain
+> signature is not a class-grain defect* → miso-132(a) *a missing rule is not a
+> binding one* → miso-133 *measure the slack, on one basis* → **miso-134 *binding
+> is not licensing*.**
+>
+> **(i) THE QUEUE NOW.** §5.4 stays **EMPTY of chartered levers**. Cell effect:
+> `offer_curve_by_group` MISO **stays `K`** with a sub-scalar REFUSAL note (the
+> band is not moved); no other cell moves and S-4 mints none. **NAMED, NOT
+> CHARTERED:** any future MISO CT lever must be **HOUR-ORGANIZING**, not level —
+> the incumbent margin is hour-invariant by construction, which is exactly why it
+> cannot deliver; its binding prerequisite is **an identification for within-day
+> MISO CT offer conduct that is NOT the C7 residual**, a data question this
+> session neither answers nor assumes. **A matrix hygiene item, NAMED and NOT
+> EDITED:** the `measured_offer_surface` row's `cells` string is `KKRUGI`
+> (MISO = **`U`**) while its own note prose says *"MISO cell R"* — the two
+> disagree, and it matters because the hour-organizing successor would land on
+> that row. Charter option **(b)**, the Michigan PSCR lead, is **UNSPENT and
+> untouched** — inherited exactly as the ask left it; option (c) not opened.
+>
+> **FINDING:** `results/calibration/FINDING-miso134-ct-night-order-binding-not-licensing-2026-08-05.md`
+> · **PREREG:** `results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`
+> · **Probe:** `scripts/probes/_miso134_ct_night_order_screen.py`
+> · **Record:** `results/calibration/_miso134_ct_night_order_screen.json`.
+
+
 > **QUEUE STAMP miso-133 (2026-08-05) — THE ST_GAS COVERAGE BLOCKER IS DEAD AS A
 > MEASUREMENT ARTIFACT, THE CHP ROW IS CORRECTED, AND A WHOLE SUCCESSOR FAMILY
 > IS CLOSED BY A SLACK MEASUREMENT. NO LP, NO FIELD, NO ARM, NO RUN, KEEPER
