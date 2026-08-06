@@ -887,7 +887,7 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected here at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS WALLED (not closed) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected here at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS WALLED (not closed — and its public-bid exit is **SPENT AND CLOSED** at caiso-178) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
 
 > **HEADER RE-STAMPED 2026-08-06 (caiso-176 follow-up).** This header previously read
 > "NO failing criterion … CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs". That was written
@@ -918,6 +918,47 @@ rule-13-admissible mechanism available to carry it.
 > available to a re-calibrated keeper. With the marker withdrawn the tier-aware quarantine gates
 > re-block every CAISO out-of-training solve/score/registration, which is the correct state. The
 > freeze outranks the marker either way, and `audit_keepers --iso CAISO` is **PASS 0/0** on main.
+
+> **caiso-178 (2026-08-06) — THE OASIS `PUB_DAM_GRP` INTAKE, AND caiso-176's HIGHEST-VALUE EXIT
+> SPENT AND CLOSED.** NO LP, NO solve, NO arm, nothing registered, keeper UNCHANGED, DOF ledger
+> UNCHANGED at 11 / 8. `holdout-freeze.json` and `calibration-complete.json` UNTOUCHED; no rule-22
+> authorization needed or taken (2023–2025 is the training window). Prereg
+> `results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md` (pushed **before** any bid
+> price was read); record `FINDING-caiso178-public-bid-floor-2026-08-06.md`; instrument
+> `scripts/data/derive_caiso_battery_bid_floor.py`.
+>
+> **THE CORPUS IS LANDED: 1,095 / 1,096 trade dates**, the single hole (2023-06-01) a genuine
+> OASIS `ERR_CODE 1000` archive gap rather than a fetch failure, **zero rate-limit failures**
+> across 1,096 requests, 422 MB, **2,589,238 storage curve-hours**. Zips gitignored
+> (`pjm-energy-offers` precedent); the deriver and its three derived artifacts are committed.
+>
+> **BRANCH II — A SHARPER WALL — BY THREE INDEPENDENT ROUTES:** classifier **PROVISIONAL**
+> (H1a missed 2025, ratio 1.278 vs ±25 %), **H1c NOT ROBUST** (spread 3.675 / 3.070 vs ≤ \$1.00),
+> and the **mass-point test FAILED**. **NEITHER THE CORPUS NOR THE CLASSIFIER IS THE LIMITATION** —
+> a **price-blind** classifier reproduces CAISO's *own published* IFM|LESR bucket distribution to
+> **0.595 / 1.118 / 1.483 pp MAD**, two independent CAISO publications agreeing to ~1.5 pp.
+> **WHAT FAILS IS THE OBJECT:** the modal first discharge rung is **\$1,000/MWh — the SOFT BID
+> CAP — in all three years** (7.7 / 18.5 / 16.5 % of resource-hours; 14.3 / 30.6 / 28.1 %
+> resource-weighted), **81–90 %** of first rungs sit above \$15, and the cheap-bid mass carries an
+> **hour-of-day shape** peaking at **h19 PT (1.89 / 1.59 / 1.57 ×)**, depleted overnight and
+> through the solar belly. **The discharge bid encodes WHEN the battery intends to run, not WHAT
+> it costs to run** — a marginal cost has no diurnal shape, a dispatch intention does. **No finer
+> grain repairs that**, so exit 2 is CLOSED rather than narrowed.
+> **REPORTED AGAINST INTEREST:** caiso-176's one-sided premise does **not** strictly hold for
+> storage — the shadow value of stored energy can be **negative**, 1.1 / 3.4 / 3.8 % of first
+> rungs are ≤ \$0, and a quarter of the 2025 fleet offers to discharge at **−\$32/MWh or below**
+> at some point. caiso-176's measurement and conclusion both **stand**; what is qualified is the
+> inference — ≤ \$15 is a **revealed-conduct** statement, not a strict upper bound on marginal
+> cost. **REPORTED AND REFUSED:** the floor statistic lands at **\$15.91 / \$6.00 / \$6.00** and
+> \$5.00 is a top-5 modal bin every year — near the incumbent, and **not** confirmation (a \$9.91
+> three-year spread; not robust; not the identifying statistic; round-number bid conventions).
+> **EXITS RE-SCORED:** exit 1 (per-resource Storage-DEB `CD` filings) unchanged and still the
+> primary wall; **exit 2 SPENT AND CLOSED**; exit 3 (an identified cell-vs-system split replacing
+> the declared-tunable 0.25 fraction) unchanged and **now the only live exit**.
+> **`battery_dispatch_adder` stays at 5.0; the cell stays `K`.**
+> Also filed: `curate_dam_public_bids.py` cannot process a full CAISO year here — measured
+> 141 days → 12.9 M rows at **5.51 GB peak RSS**, extrapolating to ~14.3 GB against ~15 GB RAM,
+> because `_curate_spec` `pd.concat`s every day-frame at once. The deriver streams instead.
 
 > **caiso-176 (2026-08-06) — THE FRONTIER RE-ASSESSMENT ON THE NEW KEEPER, AND THE
 > `battery_dispatch_adder` WALL.** NO LP, NO solve, NO arm, nothing registered, keeper
