@@ -97,9 +97,22 @@ class DispatchResult:
         solve_time: Seconds spent inside the solver.
         emissions: CO2 emissions per generator, shape ``(n_gen, T)``;
             ``None`` until populated by downstream emissions accounting.
-        rps_shadow_price: Dual of the annual RPS constraint in $/MWh -- the
-            endogenous RPS compliance cost. ``None`` when no RPS constraint
-            was active. Distinct from the exogenous EAC prices.
+        rps_shadow_price: Endogenous RPS compliance cost in $/MWh. Legacy
+            single ISO-wide row: a scalar (that row's dual, THE REC price).
+            Per-compliance-region grain (FFR-7B Arm 2, MISO): a per-zone
+            ``(n_zones,)`` vector ``p[z] = max{dual_r : z in
+            eligible_zones(r)}`` — the highest price a certificate generated
+            in zone ``z`` commands across the regions whose statutes admit
+            it (0 where none do). Capacity-screen consumers must index it by
+            the candidate's/unit's zone via
+            ``policy.rps.rps_credit_for_zone`` — a broadcast scalar would
+            rebuild the E-1 defect (FFR-6B §3.2). ``None`` when no RPS
+            constraint was active. Distinct from the exogenous EAC prices.
+        rps_region_duals: Per-compliance-region raw row duals ``(K,)`` in
+            $/MWh — region r's dual is compliance market r's REC price,
+            capped at its own ACP. Diagnostics companion of the per-zone
+            ``rps_shadow_price`` mapping; ``None`` on the legacy single-row
+            path and when no RPS constraint was active.
         co2_cap_price: Endogenous allowance price ($/tCO2) per active emissions
             mass-cap row -- the negated dual of each cap (one entry per cap).
             ``None`` when no mass cap was active. This is a power-sector,
@@ -122,7 +135,9 @@ class DispatchResult:
     build_time: float
     solve_time: float
     emissions: np.ndarray | None = None
-    rps_shadow_price: float | None = None
+    rps_shadow_price: "float | np.ndarray | None" = None
+    # Per-compliance-region RPS row duals (K,) — None off the K-row grain.
+    rps_region_duals: np.ndarray | None = None
     # Endogenous CO2 allowance price(s) ($/tCO2), one per active mass-cap row;
     # None unless a mass cap was enabled.
     co2_cap_price: list[float] | None = None
@@ -298,6 +313,9 @@ def solve_dispatch(
     rps_target: float | None = None,
     rps_acp_price: float | None = None,
     rps_eligible_fuels: tuple[str, ...] | None = None,
+    rps_region_zone_mask: np.ndarray | None = None,
+    rps_region_obligation_frac: np.ndarray | None = None,
+    rps_region_acp_price: np.ndarray | None = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -433,6 +451,16 @@ def solve_dispatch(
             wind/solar add the matching thermal-block generator columns to the
             RPS row (FFR-7B Arm 1). ``None`` (default) keeps the
             wind+solar-only row, byte-identical to before.
+        rps_region_zone_mask: ``(K, n_zones)`` bool per-compliance-region
+            eligibility mask (FFR-7B Arm 2, MISO — see
+            ``policy.rps.build_rps_region_arrays``). With the two companions
+            below it REPLACES the single ISO-wide row with K per-region rows;
+            mutually exclusive with ``rps_target``. ``None`` (default) keeps
+            the legacy path, byte-identical to before.
+        rps_region_obligation_frac: ``(K, n_zones)`` float per-(region, zone)
+            RHS weights (within-zone obligated load share x target).
+        rps_region_acp_price: ``(K,)`` per-region ACP escape prices in $/MWh
+            (REQUIRED with the region rows — each row's feasibility escape).
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no
@@ -492,6 +520,9 @@ def solve_dispatch(
         rps_target=rps_target,
         rps_acp_price=rps_acp_price,
         rps_eligible_fuels=rps_eligible_fuels,
+        rps_region_zone_mask=rps_region_zone_mask,
+        rps_region_obligation_frac=rps_region_obligation_frac,
+        rps_region_acp_price=rps_region_acp_price,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,

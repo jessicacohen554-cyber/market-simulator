@@ -1177,6 +1177,152 @@ class TestRPSConstraint(unittest.TestCase):
             )
 
 
+class TestRpsComplianceRegionRows(unittest.TestCase):
+    """The K-row per-compliance-region RPS grain (FFR-7B Arm 2 / FFR-6B E-1)."""
+
+    T = 24
+
+    def _no_renewables(self, n_zones):
+        return dict(
+            wind_cf=np.zeros((n_zones, self.T)),
+            wind_cap=np.zeros(n_zones),
+            solar_cf=np.zeros((n_zones, self.T)),
+            solar_cap=np.zeros(n_zones),
+        )
+
+    def test_k1_all_zones_reproduces_legacy_row_byte_identical(self):
+        # THE Arm-2 regression contract (FFR-7B §6.1(3)): the K = 1,
+        # mask = all-zones special case of the region builder reproduces the
+        # legacy single ISO-wide row byte-identically — matrix AND bounds —
+        # proven here, not asserted. Demand values are dyadic so the RHS
+        # summation order cannot differ in the last ulp. A masked build is
+        # then shown to DIFFER (the contrast that makes the identity
+        # non-vacuous).
+        layout = VariableLayout(
+            n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=1
+        )
+        fleet = _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=self.T)
+        demand = np.full((2, self.T), 80.0)
+        legacy = build_constraints(layout, fleet, demand, rps_target=0.5)
+        k1 = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+            rps_region_obligation_frac=np.full((1, 2), 0.5),
+        )
+        self.assertEqual((legacy[0] != k1[0]).nnz, 0)
+        np.testing.assert_array_equal(legacy[1], k1[1])
+        np.testing.assert_array_equal(legacy[2], k1[2])
+        masked = build_constraints(
+            layout,
+            fleet,
+            demand,
+            rps_region_zone_mask=np.array([[False, True]]),
+            rps_region_obligation_frac=np.array([[0.0, 1.0]]),
+        )
+        self.assertGreater((legacy[0] != masked[0]).nnz, 0)
+
+    def test_region_grain_mutually_exclusive_with_scalar_target(self):
+        # The K-row grain REPLACES the ISO-wide row (rule 19 [R-ONE-MECH]) —
+        # supplying both is a wiring error, refused at the assembler.
+        layout = VariableLayout(
+            n_gen=2, n_zones=2, n_storage=0, n_links=0, T=self.T, n_rec_acp=1
+        )
+        fleet = _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=self.T)
+        demand = np.full((2, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            build_constraints(
+                layout,
+                fleet,
+                demand,
+                rps_target=0.5,
+                rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+                rps_region_obligation_frac=np.full((1, 2), 0.5),
+            )
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=self.T),
+                demand,
+                mc=np.full((2, self.T), 50.0),
+                T=self.T,
+                rps_target=0.5,
+                rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+                rps_region_obligation_frac=np.full((1, 2), 0.5),
+                rps_region_acp_price=np.array([30.0]),
+                **self._no_renewables(2),
+            )
+
+    def test_region_rows_require_acp_escape(self):
+        # Every region row needs its own ACP escape — a certificate-short
+        # region with no buyout would be an infeasibility bomb, so the model
+        # refuses the spec without prices rather than building a hard row.
+        fleet = _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=self.T)
+        demand = np.full((2, self.T), 80.0)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                demand,
+                mc=np.full((2, self.T), 50.0),
+                T=self.T,
+                rps_region_zone_mask=np.ones((1, 2), dtype=bool),
+                rps_region_obligation_frac=np.full((1, 2), 0.5),
+                **self._no_renewables(2),
+            )
+
+    def test_armed_masked_row_binds_and_per_zone_duals(self):
+        # The E-1 toy (FFR-7B §6.1(8)): an East-restricted row that Plains
+        # wind CANNOT satisfy (the MCL 460.1029 semantics). Two islanded
+        # zones P and E, cheap wind only in P; region 0 ("MI-like") obligates
+        # E at 50% and admits E-generation only, so it escapes through its
+        # own ACP and its dual pins at the $30 ceiling; region 1 ("MN-like")
+        # obligates P at 20% and admits the whole footprint, so P's in-merit
+        # wind leaves it slack at dual 0. The per-zone consumer vector maps
+        # each zone to the max dual among the regions whose statutes admit
+        # its certificates: p[P] = 0 (region 1 only), p[E] = 30 (region 0).
+        fleet = _make_fleet(["P", "E"], ["P", "E"], hours=self.T, pmin=0.0, eford=0.0)
+        mc = np.full((2, self.T), 50.0)
+        demand = np.full((2, self.T), 40.0)
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_region_zone_mask=np.array([[False, True], [True, True]]),
+            rps_region_obligation_frac=np.array([[0.0, 0.5], [0.2, 0.0]]),
+            rps_region_acp_price=np.array([30.0, 30.0]),
+            wind_cf=np.full((2, self.T), 0.5),
+            wind_cap=np.array([100.0, 0.0]),
+            wind_mc=0.0,
+            solar_cf=np.zeros((2, self.T)),
+            solar_cap=np.zeros(2),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rps_region_duals)
+        np.testing.assert_allclose(result.rps_region_duals, [30.0, 0.0], atol=1e-3)
+        # Per-zone consumer vector (max over eligible regions, 0 elsewhere).
+        self.assertEqual(np.ndim(result.rps_shadow_price), 1)
+        np.testing.assert_allclose(result.rps_shadow_price, [0.0, 30.0], atol=1e-3)
+
+    def test_legacy_scalar_path_still_returns_scalar_dual(self):
+        # Consumer-value contract: off the region grain the dual stays a
+        # scalar float — every existing reader (prior_results, ledgers,
+        # persisted metadata) sees the exact legacy type.
+        fleet = _make_fleet(["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0)
+        result = solve_dispatch(
+            fleet,
+            np.full((1, self.T), 80.0),
+            mc=np.full((1, self.T), 50.0),
+            T=self.T,
+            rps_target=1.0,
+            rps_acp_price=65.0,
+            **self._no_renewables(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsInstance(result.rps_shadow_price, float)
+        self.assertIsNone(result.rps_region_duals)
+
+
 class TestMassCapConstraint(unittest.TestCase):
     """The emissions mass-cap row, its endogenous dual, and membership."""
 

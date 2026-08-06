@@ -33,6 +33,8 @@ from market_sim.config.capacity_market import (
     MARKET_DESIGN,
     MARKET_DESIGN_VINTAGES,
     MISOSeasonRBDC,
+    MISO_RPS_COMPLIANCE_REGIONS,
+    MISO_RPS_MIDWEST_FOOTPRINT_ZONES,
     MISO_SEASONAL_RBDC,
     MarketDesign,
     MarketDesignVintage,
