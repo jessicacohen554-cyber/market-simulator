@@ -5738,3 +5738,86 @@ the ercot-167 SOC-reserve re-gate still waiting on the H4-item-4 defect, West/Pa
 split CLOSED.
 
 Next shorthand: ercot-171.
+
+## ercot-171 (2026-08-05) — the OWNER-ADJUDICATED licensed sub-population instrument for the 2023 COAL rows: limb A **CONFIRMED** (the coverage defect, not the level — the ercot-169 UNLICENSED +1.64 is SUPERSEDED), limb C **NOT-IDENTIFIABLE-2023 CONFIRMED**; Phase 0, NO LP, keeper UNCHANGED (run168b-year-curves), both constant VALUES unchanged
+
+**Phase 0 — no LP, no solve, no mechanism armed, no `ScenarioConfig` field, both matrix cells stay
+`K`, keeper UNCHANGED at `2026-08-05-run168b-year-curves`.** Charter: the **owner adjudication taken
+in-session 2026-08-05** on the ercot-169 §6 open decision — *option 2, "charter a licensed
+sub-population instrument for the 2023 COAL rows."* Decision rule pre-registered, committed and
+pushed **before** any derive ran
+(`docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md`); no bar, band, floor or window
+moved after measurement.
+
+**The construction.** The coverage shortfall is removed by a **RULE applied identically to every
+year** — drop the COAL resources whose OWN `curve_share` falls below the **SAME 0.9876 floor**
+ercot-169 failed on (never lowered, and not lowered against the constants either) — and the
+instrument is gated on **NEUTRALITY**: the identical rule applied to the four committed 2024/25
+identification subsets must still reproduce each constant within its own band, **because a coverage
+restriction is admissible only if it fixes COVERAGE and not LEVEL**, and the licensed years are the
+direct test of that. **Footing exact**: the unrestricted pipeline re-pools to **15.8807** (limb A,
+armed 15.8807) and **35.1998** (limb C, armed 35.1989) and reproduces all eight committed
+subset-class reads, so any movement under the restriction is attributable to the restriction alone.
+
+**G-LIC passes for both**: delivery-2023 `curve_share` **0.97022 → 0.99969**; the rule drops
+`CALAVERS_JKS2`, `MLSES_UNIT1/2/3`, `WAP_WAP_G8` (26.1 % of HSL-cap). On the 2024/25 subsets the
+same rule drops 4/0/1/3 resources (27.9/0/6.0/18.2 % of cap), so it is not a 2023-only restriction —
+which is what makes its neutrality testable.
+
+**LIMB A (`coal_offer_net_revenue_margin`, ERCOT-137) — CONFIRMED.** G-NEUT passes: restricted
+2024/25 pool **15.4549** vs armed 15.8807, **−0.4258 = 0.46× band**, level-neutral. The restricted
+delivery-2023 reading is measured bottom **16.87** → **level₂₀₂₃ 16.0111**, **+0.1304 = 0.14× the
+±0.9300 band, INSIDE** (full-day 16.0811, also inside). **The ercot-169 UNLICENSED +1.6404 (1.76×
+band) is SUPERSEDED: it was the coverage defect, not the level.** The declared-extrapolation note is
+**RETIRED BY VERIFICATION** in `constants.py` + the matrix cell — constants-comment-and-matrix only,
+**no solve, no new mechanism, no new DOF, keeper unchanged**.
+
+**LIMB C (`coal_peak_offer_margin`, ERCOT-140) — NOT-IDENTIFIABLE-2023 CONFIRMED.** G-NEUT **fails
+decisively**: restricted 2024/25 pool **54.3658** vs armed 35.1989, **+19.17 = 7.6× the ±2.5062
+band**, and the re-derived gas slope moves 10.4049 → 8.9503. The cause is structural and is the whole
+point of the gate: limb C's statistic is a **p90 of the TOP of the curve**, and dropping 18–28 % of
+the subsets' cap-weight moves a top-decile boundary violently, where the SAME rule is level-neutral
+on limb A's **median of the curve BOTTOM**. The restriction is a level-SELECTING filter there, not a
+coverage fix, so its 2023 reading is not comparable to the armed constant. **ercot-169 §6 option 1
+holds by default**: the extrapolation note STANDS, **no candidate arm is named and none may be built
+on this record** (rule 13); an instrument that does not select on the tail would need its own
+charter. Without this gate limb C's 2023 reading would have looked like a clean refutation and
+licensed an arm built on a filter that had itself moved the level by $19/MWh.
+
+**CAVEAT CARRIED, not buried.** The alternative **month-scoped S2** restriction — pre-declared
+**REPORTED-NOT-GATING before measuring**, on the stated ground that season selection biases a coal
+statistic ercot-168 showed is seasonally structured — licenses at 0.99818 but reads limb A
+level₂₀₂₃ **17.8411, +1.9604 = 2.11× band, OUTSIDE**. **The two routes disagree for limb A.** The
+pre-declaration holds on its own logic: S2 keeps months {1,7,8,9,10,11}, dropping Feb–Jun *and* Dec
+while keeping January plus the whole summer scarcity season, which lifts a curve-BOTTOM statistic in
+exactly the observed direction (measured bottom 18.70 under S2 vs 16.87 under S1). S1 is a
+*population* restriction leaving the calendar intact; S2 is a *calendar* restriction leaving the
+population intact. Only S1 was gated and neutrality-tested, and only S1 passed — but the
+disagreement bounds how strongly limb A's CONFIRMED should be read.
+
+**Withdrawn, in the interest of accuracy.** ercot-169 read limb A's unlicensed +1.64 as pointing the
+same way as the ercot-168 2023 coal repricing. That reading is **withdrawn for limb A** — on the
+licensed instrument the 2023 fleet min-load level is the armed one. ercot-168's per-plant repricing
+stands on its own evidence and is untouched; what dissolves is the *fleet-level min-load*
+corroboration, not the per-plant finding. Limb C's unlicensed magnitude still points that way and
+still cannot be certified.
+
+**NOT a keeper candidate.** No solve was run and no solve-affecting value changed: the
+`constants.py` diff is **comment-only** (62 insertions / 11 deletions, zero non-comment lines) and
+all three constants import unchanged (15.8807 / 35.1989 / 10.4100). What improves is epistemic
+status, not dispatch.
+
+**Bookkeeping (rule 28b/c).** Matrix §5.1 **item 14** added and stamped EXECUTED in the same session;
+both mechanism rows' cells re-cited (verdicts unchanged at `K`); `check_mechanism_matrix.py` **exit
+0** (230 pre-existing warnings, 0 errors). Harness `scripts/lib/sced_corpus_instruments.py`
+**unchanged** — `LIMBS`, `assess_limb`, `fuel_basis_by_year`, `coverage`, `curve_bottom`,
+`inc_bid_quantiles` reused verbatim. Probe
+`scripts/probes/ercot171_coal_licensed_subpop_phase0.py`; record
+`results/calibration/ercot171_coal_licensed_subpop.json`; write-up
+`results/calibration/FINDING-ercot171-coal-licensed-subpopulation-2026-08-05.md`. **No run
+registered — no solve was run** (rule 15). Rule 22: delivery-2023 corpus + training-span probe days
+only. Rule 23: no derive re-run, no constant value changed. Rule 25: ERCOT-scoped. Rule 27:
+`constants.py` edited locally and blob-verified after push. DO-NOT-REDO honored in full, and
+**ercot-170's item-11 result stands untouched**.
+
+Next shorthand: ercot-172.
