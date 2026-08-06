@@ -1222,12 +1222,26 @@ def _apply_outage_overlays(
             # Partial-outage derate (CAMPD CF-ceiling plateaus): approximate
             # half-units-out events for baseload coal + a confirmed CC
             # allowlist where no unit data exists. Multiplies availability
-            # over the window.
-            pfac = partial_outage_derate_factors(config.weather_year, hours)
+            # over the window. Under the ercot-173 reconciliation gate the
+            # lookup keys by the extract's own (plant_code, plant_group) — C1
+            # grain repair — so a plateau lands only on the class bin its
+            # extract row names (provably identical on the current bins sheet;
+            # see partial_outage_derate_factors).
+            _pgrain = getattr(
+                config, "ercot_dam_availability_event_cap_reconciliation", False
+            )
+            pfac = partial_outage_derate_factors(
+                config.weather_year, hours, class_grain=_pgrain
+            )
             if pfac:
                 applied_p = 0
                 for g_idx, gen in enumerate(generators):
-                    f = pfac.get(int(gen.plant_code))
+                    _pkey = (
+                        (int(gen.plant_code), gen.plant_group)
+                        if _pgrain
+                        else int(gen.plant_code)
+                    )
+                    f = pfac.get(_pkey)
                     if f is not None:
                         availability[g_idx, :] *= f
                         applied_p += 1
@@ -1586,7 +1600,24 @@ def _apply_outage_overlays(
                         int(_yr), hours, _bins_path, iso="ERCOT"
                     )
                 )
-            _plant_partial = partial_outage_derate_factors(int(_yr), hours)
+            # ercot-173 C1+C2 ceiling reconciliation (default off): the
+            # ceiling's own layers all derive from the same CEMS record and
+            # each estimates "how much of this plant is unavailable", so
+            # multiplying them removes the same downtime twice — the rule-19
+            # double-count ercot-172 measured at the two 2024 shed hours
+            # (W A Parish 0.6995 x 0.3630 = 0.2539 vs its own-hour CEMS
+            # 0.7843). Under the gate the layers compose by min() — the
+            # deepest single measured resolution wins, the same way the
+            # finished ceiling already composes with the COP layer below —
+            # and the plant-grain partial plateau keys by the extract's own
+            # (plant_code, plant_group) (C1; inert on the current bins
+            # sheet). Off: the incumbent product, byte-identical.
+            _reconc = getattr(
+                config, "ercot_dam_availability_event_cap_reconciliation", False
+            )
+            _plant_partial = partial_outage_derate_factors(
+                int(_yr), hours, class_grain=_reconc
+            )
             _n_capped = 0
             for g_idx, gen in enumerate(generators):
                 if gen.plant_group not in _evcap_scope:
@@ -1595,18 +1626,25 @@ def _apply_outage_overlays(
                 for _layer in _cap_layers:
                     _f = _layer.get((int(gen.plant_code), gen.plant_group))
                     if _f is not None:
-                        _ceil_w = (
-                            np.array(_f, dtype=float, copy=True)
-                            if _ceil_w is None
-                            else _ceil_w * _f
-                        )
-                _fp = _plant_partial.get(int(gen.plant_code))
+                        if _ceil_w is None:
+                            _ceil_w = np.array(_f, dtype=float, copy=True)
+                        elif _reconc:
+                            _ceil_w = np.minimum(_ceil_w, _f)
+                        else:
+                            _ceil_w = _ceil_w * _f
+                _ppkey = (
+                    (int(gen.plant_code), gen.plant_group)
+                    if _reconc
+                    else int(gen.plant_code)
+                )
+                _fp = _plant_partial.get(_ppkey)
                 if _fp is not None:
-                    _ceil_w = (
-                        np.array(_fp, dtype=float, copy=True)
-                        if _ceil_w is None
-                        else _ceil_w * _fp
-                    )
+                    if _ceil_w is None:
+                        _ceil_w = np.array(_fp, dtype=float, copy=True)
+                    elif _reconc:
+                        _ceil_w = np.minimum(_ceil_w, _fp)
+                    else:
+                        _ceil_w = _ceil_w * _fp
                 if _ceil_w is None:
                     continue
                 np.minimum(

@@ -1459,5 +1459,42 @@ class UnitPartialOutageDerateTest(unittest.TestCase):
             self.assertTrue((arr == 1.0).all())
 
 
+class PartialOutageClassGrainTest(unittest.TestCase):
+    """The ercot-173 C1 grain repair of ``partial_outage_derate_factors``.
+
+    ``class_grain=True`` keys by the extract's own ``(oris_code, plant_group)``
+    instead of ``oris_code`` alone (gated by
+    ``ScenarioConfig.ercot_dam_availability_event_cap_reconciliation``). On the
+    committed extract no plant code carries more than one group, so the two
+    grains must induce identical per-plant factor arrays — the P-C1-INERT
+    prediction of PRECOMMIT-ercot173 §5, asserted here at loader grain.
+    """
+
+    def test_default_keys_are_plant_codes(self):
+        from market_sim.data.outages import partial_outage_derate_factors
+
+        plant = partial_outage_derate_factors(2024, HOURS_PER_YEAR)
+        if not plant:  # extract absent in a minimal checkout
+            self.skipTest("no partial-outage extract on disk")
+        self.assertTrue(all(isinstance(k, int) for k in plant))
+
+    def test_class_grain_keys_and_inertness(self):
+        from market_sim.data.outages import partial_outage_derate_factors
+
+        for year in (2023, 2024, 2025):
+            plant = partial_outage_derate_factors(year, HOURS_PER_YEAR)
+            cls = partial_outage_derate_factors(year, HOURS_PER_YEAR, class_grain=True)
+            if not plant:
+                continue
+            self.assertTrue(all(isinstance(k, tuple) and len(k) == 2 for k in cls))
+            # one group per plant code on the committed extract ...
+            codes = [k[0] for k in cls]
+            self.assertEqual(len(set(codes)), len(codes))
+            self.assertEqual(set(codes), set(plant))
+            # ... and byte-identical factor arrays per plant (C1 inert).
+            for (code, _group), arr in cls.items():
+                self.assertTrue(np.array_equal(arr, plant[code]))
+
+
 if __name__ == "__main__":
     unittest.main()

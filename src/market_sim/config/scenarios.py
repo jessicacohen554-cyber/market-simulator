@@ -329,6 +329,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # availability array is touched), so it is dropped from the hash at its
     # default; an armed run enters the key as a distinct scenario.
     "ercot_dam_availability_gas_event_cap",
+    # ercot-173 event-cap ceiling reconciliation (C1 grain + C2 min()). Default
+    # off and byte-identical for every existing config (with the gate off both
+    # the loader keying and the product composition are unchanged), so it is
+    # dropped from the hash at its default; an armed run enters the key as a
+    # distinct scenario.
+    "ercot_dam_availability_event_cap_reconciliation",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -837,6 +843,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_thermal_dam_availability_coal": "False",
     "ercot_dam_availability_coal_event_cap": "False",
     "ercot_dam_availability_gas_event_cap": "False",
+    # Added by ercot-173 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline — never the
+    # nyiso-115 miss where a cache-optional field had no recorded default and
+    # a flip of it was undetectable).
+    "ercot_dam_availability_event_cap_reconciliation": "False",
     "coal_econ_marginal_hr_bound": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
@@ -966,6 +977,12 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # committed forecast-mode run_config exists at all, and the only config
     # arming this field is the backcast ERCOT keeper.
     "ercot_dam_availability_gas_event_cap": "measured DAM-award gas event cap",
+    # ercot-173: the reconciliation flag composes the SAME measured event-cap
+    # family (it changes how the two measured layers combine), so it belongs
+    # to this backcast-only family with them — with it armed and the caps off
+    # it is a no-op, but the family is kept complete on principle (the
+    # FFR-W1X lesson recorded on the gas entry directly above).
+    "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
@@ -8203,6 +8220,32 @@ class ScenarioConfig:
     # overlay is armed AND outage_source == "historic"). Forecast untouched.
     ercot_dam_availability_gas_event_cap: bool = False
 
+    # ercot-173 reconciliation of the event-cap CEILING's own two measured
+    # layers (default off, ERCOT backcast-gated; inert unless one of the two
+    # event-cap gates above is armed). ercot-172 attributed the keeper's only
+    # two 2024 shed hours (2024-04-28/05-08 19:00 CST, both real tight
+    # evenings the model amplified into 565/550 MW of shed at VOLL) to the
+    # ceiling itself being measurably BELOW the physical CEMS record at 8 of
+    # 9 / 4 of 6 named plants (FINDING-ercot172 §3): the ceiling composed
+    # f_window × f_partial as a PRODUCT, but both layers are derived from the
+    # SAME CEMS record and remove the same units' downtime — a rule-19
+    # [R-ONE-MECH] double-count (W A Parish: 0.6995 × 0.3630 = 0.2539 against
+    # a plant that ran at 0.7843 of its coal pmax that hour, COP 0.7359).
+    # With this gate on: (C2) the cap ceiling composes its armed measured
+    # layers by min() — two resolutions of one phenomenon reconciled, exactly
+    # how the cap already composes with the COP layer — and (C1) the ERCOT
+    # plant-grain partial plateaus key by the extract's own
+    # (oris_code, plant_group) instead of oris_code alone, in both consumers,
+    # so a plateau lands only on the class bin its own extract row names
+    # (grain repair; provably inert on the current bins sheet — no partial-
+    # extract plant code carries more than one class bin — and asserted so by
+    # the ercot-173 seam proof). Zero fitted parameters. Never a repeal of
+    # the ERCOT-148/149 precedence: the cap stays a hard min() against the
+    # measured window family; only the double-count between the family's own
+    # layers is removed (G-COAL148 bounds the movement). Backcast-only by the
+    # same construction as the two gates above. Forecast untouched.
+    ercot_dam_availability_event_cap_reconciliation: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -12155,6 +12198,7 @@ TIER_TAGS: dict[str, int] = {
     "unit_outage_maxgen_events": 3,
     "ercot_dam_availability_coal_event_cap": 3,
     "ercot_dam_availability_gas_event_cap": 3,
+    "ercot_dam_availability_event_cap_reconciliation": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
