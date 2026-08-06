@@ -208,11 +208,30 @@ one is fixed to report n/a, the other already handles `SKIP` correctly.
 | `test_d24_loyo_recall_pass_is_na_not_false_when_every_fold_is_na` | the LOYO bar reports `null`, not `False` |
 | `test_d24_vintage_cutoff_follows_the_run` | the cutoff comes from the run, solved config over `meta.json` |
 
-Suite state: `tests/scoring/test_capacity_hindcast_scoring.py` 44 passed;
-`test_score_crossover.py` + `test_forecast_verdict.py` 100 passed. The 6 failures in
-`test_ff_readiness_battery.py` / `test_forecast_parity.py` are **pre-existing on clean
-HEAD** (verified by stashing this branch's diff) and untouched by this change; so is
-`check_site_sri.py`'s exit-1 (KaTeX pins in `policy-scarcity.html`).
+Suite state:
+
+* `tests/scoring/` — **914 passed**, 0 failed (excluding the two pre-existing-failure files
+  below); `test_capacity_hindcast_scoring.py` 44, `test_score_crossover.py` +
+  `test_forecast_verdict.py` 100.
+* `tests/regression/test_run_record_provenance.py` — 21 passed (the only test outside
+  `tests/scoring/` that imports any changed module).
+* **CI fast tier** (`pytest -n 2 -m "not slow and not integration and not fulldata"`) —
+  **6408 passed, 8 failed**, every failure pre-existing or environmental, none in a module
+  this change touches (the diff contains nothing under `src/`):
+
+  | failure | status |
+  |---|---|
+  | `test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion` ×2 | pre-existing — reproduced with this branch's five modified files reverted to `origin/main` |
+  | `test_data_dictionary_sync.py` subfails (`capacity-deliverability`, `som-competitive-conduct`) | pre-existing — same check |
+  | `test_outages.py::test_unknown_iso_degrades_to_empty` | pre-existing — same check |
+  | `test_forecast_parity.py` ×2 | pre-existing — verified separately by stashing the diff |
+  | `test_integration.py::TestFullYearPerformance::test_full_year` | **perf flake under `-n 2`** — passes in isolation on BOTH the reverted baseline (29.7 s) and this branch (29.5 s) |
+
+* `check_site_sri.py` exits 1 on both this branch and clean HEAD (KaTeX pins in
+  `policy-scarcity.html`) — pre-existing, unrelated.
+* Green: repo-wide `ruff check` + `ruff format --check`, `check_mechanism_matrix.py`,
+  `ci_refactor_guards.py`, `check_registry_payload_parity.py`,
+  `check_cache_key_registration.py`.
 
 ---
 
