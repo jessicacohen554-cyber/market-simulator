@@ -26,7 +26,9 @@ relying on any id here.
   `2026-07-31-miso-109b-hy-level`.
 - **Markers** (`frontend/data/backcast/calibration-complete.json`, two-block structure, owner
   decision 2026-07-31): `complete` = **{NEISO, NYISO, PJM}** — NEISO declared 2026-07-07,
-  re-scoped validation-only 2026-07-31 (its locked test is **SPENT, never re-grantable**); NYISO
+  re-scoped validation-only 2026-07-31 (its locked test has **NEVER BEEN GRANTED** — *corrected
+  2026-08-06, owner decision D-23; this read "is **SPENT, never re-grantable**", which was false.
+  NEISO stays validation-only either way and nothing is granted*); NYISO
   re-declared 2026-07-31 (CALIBRATED-WITH-CAVEATS, C3c ledgered, at `nyiso-100`; the 2026-07-13
   withdrawal is superseded); PJM declared 2026-07-31 (CALIBRATED, zero caveats, at `pjm-140`).
   `final` = **deliberately empty** ("Neither is final").
@@ -1211,7 +1213,11 @@ years, are the same defect seen from two ends. Five years fixes both.
   re-probed*; it does not pre-approve the result. A session that reports the re-probe green
   does not thereby unblock FH — the lift remains the manager's, on the re-cut gate's evidence.
 * **It does NOT spend a holdout marker, and it must not.** `final` stays EMPTY, the holdout
-  spend freeze stays ACTIVE, and NEISO's locked test stays SPENT. The five-year window is legal
+  spend freeze stays ACTIVE, and NEISO's locked test stays unspent. *[Corrected 2026-08-06,
+  owner decision D-23: this read "NEISO's locked test stays SPENT". It was never spent — no
+  NEISO 2019/H1-2026 year has ever been solved, scored or registered; the record now reads
+  NEVER GRANTED. The clause's force is unchanged and if anything stronger: this carve-out
+  spends no locked test, and there is none spent to preserve.]* The five-year window is legal
   by a **carve-out**, not by a marker.
 * **It does NOT authorize tuning to the re-cut gate.** Rules 1/11/14 apply unchanged: if the
   re-probe fails, that is a finding written up, not a threshold moved.

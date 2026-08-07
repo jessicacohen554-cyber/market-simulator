@@ -1757,3 +1757,88 @@ the touchpoint and every run cited by `calibration-complete.json` or
 `keepers/NEISO.json`.
 
 Next shorthand: **neiso-85.**
+
+## 2026-08-06 — RECORD CORRECTION (owner decision D-23): NEISO's locked test was NEVER GRANTED, not "SPENT" — every prior entry below that says otherwise is superseded by this one
+
+**GOVERNANCE lane. NO solve, NO scoring, NO year touched, NO grant of anything.**
+Committed artifacts only. This entry is a **correct-by-addendum**: the historical
+entries it supersedes are left exactly as written, because what they recorded is a
+faithful account of what the governance record said at the time. It was the record
+that was wrong.
+
+**THE CORRECTION.** The marker file, CLAUDE.md rule 22, and a chain of session
+records asserted that NEISO's 2019 + H1-2026 locked-test one-shot "was scored ONCE
+with the frozen neiso-53 config on 2026-07-07 and STANDS", and therefore that it was
+**SPENT and never re-grantable**. **That claim is false.** The record now reads
+**NEVER GRANTED**.
+
+**THE ARTIFACT SEARCH** — reproduced independently at this session's HEAD before any
+file was edited, and **extended beyond neiso-87's search to the full git history**:
+
+| evidence | result |
+|---|---|
+| NEISO registry sidecars declaring a 2019 or H1-2026 solve year | **none** — all 27 NEISO sidecars *ever committed* (including retention-pruned ones, recovered from their pre-deletion blobs) declare years drawn only from {2022, 2023, 2024, 2025} |
+| `frontend/data/backcast/bench/NEISO/` | 2022–2025 only |
+| `actual_tail.json` NEISO | 2022–2025 — **no 2019 row exists to score against** |
+| the memo cited as the authorization (`docs/handoffs/neiso-calibration-complete-memo-2026-07.md`) | **zero mentions of 2019**; its 2026-07-07 owner decision authorized a one-shot on **2022** (pre-dating the 2026-07-31 tier split, when "one-shot" still meant the validation year), and execution was **HELD the same day** pending the G-19 register |
+| what `locked_test_scored_on` actually named | `2026-07-07-neiso53-winter-fuelsec-coldsnap` — a **TRAIN-tier 2023–2025 config id**, not a 2019 run |
+
+Independently corroborated by the third-party peer review
+(`docs/third-party-peer-review-2026-07.md` §6.3 item 1): *"On the evidence, no holdout
+year has ever been solved, and the 'scored once and stands' claim is documentation
+drift that should be corrected before it is ever cited as an out-of-sample result."*
+
+**WHAT THIS CHANGES, AND WHAT IT EMPHATICALLY DOES NOT.** It changes *which question
+is open* — from "may a spent one-shot be re-granted" (which forecloses it) to "should a
+never-granted one-shot be granted now". **It grants nothing.** NEISO remains absent
+from `final`; `holdout_policy.authorized(NEISO, locked_test)` still returns **False**
+(re-verified this session); the holdout spend freeze is still **ACTIVE** and outranks
+both marker blocks. **NEISO's `final` readiness answer is unchanged and is still NOT
+YET** — neiso-87 §3 finds 2019 **unsolvable at HEAD** (`eia_demand_profiles.parquet`
+carries NEISO 2021–2025 only, so the LP cannot be constructed), three further scoring
+inputs absent, and — decisively — that 2019 **cannot discriminate** on the criterion
+NEISO's frontier is declared on: the real market had **zero** RT hours over $300 in
+2019, so C3c returns a free small-count PASS whatever the model does.
+
+**ENTRIES IN THIS LOG SUPERSEDED BY THIS CORRECTION** (text left intact; read each one
+with this entry attached — in every case the *substantive* rule-22 posture the entry
+was asserting is unaffected, since all of them were declaring that they had spent **no**
+out-of-training year, which remains true):
+
+| § | entry | the superseded phrase |
+|---|---|---|
+| L702 | `neiso-70` (2026-07-31) | "locked test is already SPENT (2026-07-07), never re-grantable" |
+| L803 | `neiso-71` | "locked test is already SPENT (2026-07-07), never re-grantable" |
+| L860 | `neiso-72` | "locked test SPENT, untouched" |
+| L921 | `neiso-73` | "locked test SPENT and untouched" |
+| L991 | `neiso-74` | "NEISO locked test SPENT and untouched" |
+| L1255 | `neiso-76` | "locked test SPENT and untouched" |
+| L1442 | `neiso-78` | "locked test remains SPENT and untouched" |
+| L1574 | `neiso-79` | "locked test remains SPENT and untouched" |
+| L1673 | `neiso-80` | "locked test remains SPENT and untouched" |
+| L1700 | `neiso-84` (2026-08-05) | "locked test (2019 + H1-2026) is **SPENT since 2026-07-07 and was NOT re-opened**" |
+
+Note that `neiso-84`'s own headline — *"the 2022 VALIDATION TOUCHPOINT is SPENT"* — is
+**correct and untouched**: 2022 is validation tier and was genuinely spent. Only its
+*locked*-tier clause is superseded.
+
+**FILES CORRECTED IN THIS SESSION** (live record; the ~22 `results/calibration/`
+per-run session records that repeat the claim are **historical artifacts and were
+deliberately NOT rewritten**): `frontend/data/backcast/calibration-complete.json`
+(`locked_test`, `locked_test_note`, `locked_test_scored_on` → `…_WITHDRAWN`,
+`phantom_reaudit_2026_07_19`, `determination`, `keeper_rekey_policy`, `final._note`),
+`CLAUDE.md` rule 22, `frontend/data/backcast/holdout-freeze.json`,
+`frontend/data/backcast/keepers/NEISO.json` (+ regenerated `status/NEISO.js`),
+`frontend/data/backcast/registry/2026-08-05-neiso-2022-touchpoint.json`,
+`docs/mechanism-testing-matrix.md`, `docs/calibration-best-so-far-neiso.md`,
+`docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md`,
+`docs/forecast-readiness-prompt-pack-2026-07.md`, and correction addenda in
+`docs/calibration-log/{neiso,nyiso,pjm}.md`. Full record:
+`docs/handoffs/neiso-record-correction-2026-08-06.md`.
+
+**Authorization / citation chain.**
+`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
+at the 2026-08-06 sitting Addendum X.6** (session-logged authorization for this
+correction). `scripts/audit_keepers.py --iso NEISO` PASSES (0 failures, 0 warnings)
+after the edits.

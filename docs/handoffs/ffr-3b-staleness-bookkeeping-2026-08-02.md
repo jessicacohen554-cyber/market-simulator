@@ -72,8 +72,15 @@ what was signed for.
 | NEISO | `2026-07-08-neiso-54-steamgas-ct` | `2026-07-31-neiso-72-hy-window` | **CALIBRATED-WITH-CAVEATS**, 1 ledgered caveat (C3c) — this entry had **no** `determination` field before the re-key |
 
 `keeper_at_declaration` preserves each entry's original evidence basis. NEISO's
-`locked_test_scored_on` — the SPENT one-shot's frozen `neiso-53` config — is
-deliberately **NOT** re-keyed: that score stands as taken (rule 22).
+`locked_test_scored_on` was deliberately **NOT** re-keyed by this lane. *[Corrected
+2026-08-06, owner decision D-23: this sentence described that field as "the SPENT
+one-shot's frozen `neiso-53` config" whose "score stands as taken (rule 22)". There was
+no such score — NEISO's locked test has **never been granted or run**, and the id the
+field named is a **TRAIN-tier 2023–2025 config**, not a 2019 run. The field is now
+`locked_test_scored_on_WITHDRAWN`. This lane's own action is unaffected: not re-keying
+it was correct, but the exemption was **moot** rather than exercised. Citation chain:
+`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.]*
 
 **M1 caught real drift on its first live run.** NYISO's designated keeper had
 already moved past the id this lane was dispatched against (`nyiso109` →

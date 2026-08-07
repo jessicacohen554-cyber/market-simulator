@@ -160,7 +160,22 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       authorizes the validation ladder and **`final`** authorizes the locked test. An ISO in
       `complete` but not `final` may spend 2022 and **nothing else**. Absence from `final` is NOT
       self-explaining — read the ISO's `locked_test` note, which distinguishes "never authorized"
-      from "authorized once, **SPENT**, never re-grantable" (NEISO is the latter). Tier
+      from "authorized once, **SPENT**, never re-grantable". **NO ISO IS CURRENTLY IN THE SPENT
+      state: no locked-test year has ever been solved, scored or registered for any ISO.**
+      *(Corrected 2026-08-06, owner decision D-23: this clause previously read "(NEISO is the
+      latter)" — i.e. that NEISO's 2019 + H1-2026 one-shot had been SPENT on 2026-07-07 and was
+      never re-grantable. That was false. The artifact record carries no NEISO 2019 or H1-2026
+      solve of any kind — every NEISO registry sidecar ever committed declares years drawn only
+      from {2022, 2023, 2024, 2025}, `bench/NEISO/` holds 2022–2025, `actual_tail.json` has no
+      2019 row to score against, and the memo cited as the authorization never mentions 2019.
+      NEISO's locked test is **NEVER GRANTED**, not spent. The correction changes only which
+      question is open — "should a never-granted one-shot be granted now" rather than "may a
+      spent one be re-granted" — and **grants nothing**: NEISO stays absent from `final`, the
+      gates still refuse it, and its `final` readiness answer is **NOT YET** on the merits
+      (2019 is unsolvable at HEAD and cannot discriminate on C3c). Citation chain:
+      `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+      `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6;
+      genealogy in `docs/governance/rule-history.md` §4.)* Tier
       membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
       **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks and is checked first.
     - **C3c STANDING RULE (owner, 2026-08-06): a LONE C3c failure on an out-of-training year is
