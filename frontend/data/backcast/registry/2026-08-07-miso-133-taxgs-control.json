@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-07-miso-133-taxgs-control",
+  "label": "miso 133 taxgs control",
+  "date": "2026-08-07",
+  "shorthand": "miso-133-taxgs-control",
+  "definition": "gas_st taxonomy paired CONTROL (origin/main c710d17e code) (per-year chain, year 2023)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-07-miso-133-taxgs-control.js",
+  "bundle": "results/calibration/miso133_taxgs_control"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-07-nyiso-131-taxgs-arm",
+  "label": "nyiso 131 taxgs arm",
+  "date": "2026-08-07",
+  "shorthand": "nyiso-131-taxgs-arm",
+  "definition": "gas_st taxonomy paired ARM (D-25 reclass)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-07-nyiso-131-taxgs-arm.js",
+  "bundle": "results/calibration/nyiso131_taxgs_arm"
+}

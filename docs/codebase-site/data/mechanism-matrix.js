@@ -49,6 +49,30 @@
  *   2026-08-06-nyiso-128-control on 2026-08-06, which re-scores
  *   CALIBRATED-WITH-CAVEATS under v3.1 with C3a passing all three years, so that
  *   flag is resolved and the cell's determination reads correctly again.)
+ * NYISO FRONTIER STATUS CLEARED 2026-08-06 by OWNER DECISION (session
+ *   nyiso-130): "Just clear it and clear frontier status". The `frontier` block
+ *   is removed from frontend/data/backcast/keepers/NYISO.json (preserved
+ *   verbatim under `frontier_cleared.withdrawn_note_preserved_verbatim`) and the
+ *   `complete` marker's `frontier_basis` is WITHDRAWN. REASON: the claim's
+ *   load-bearing limb is false at HEAD. Frontier means "we have tested
+ *   everything we could have" (owner, 2026-08-04, the caiso-171 block below),
+ *   and nyiso-130 OPENED a new named object and chartered its successor — so
+ *   the queue is NOT exhausted. NOT a determination change: NYISO reads
+ *   CALIBRATED-WITH-CAVEATS and `complete` is untouched, but neither now rests
+ *   on a frontier claim. The keeper's own C3c ledger was corrected in the same
+ *   act so the artifact cannot re-assert what was cleared: the 2024/2025
+ *   classifications lose "every admissible mechanism tried on record" and the
+ *   absolute "cannot form" (falsified in the OPPOSITE direction — 2023
+ *   OVER-produces), and the inherited nine-candidate adjudication record is
+ *   RETAINED VERBATIM behind a supersede notice. Separately, the rule 20
+ *   [R-DOF] phantom ledger entry nyiso-127 §1.4 flagged is REMOVED by owner
+ *   decision (GAS_AVAILABILITY_FACTOR[NYISO] = 0.866, cited at
+ *   "constants.py GAS_AVAILABILITY_FACTOR" but absent from src/market_sim/;
+ *   rule 26 [R-DELETE] — removed, not zeroed): n_entries 35 -> 34, n_residual
+ *   UNCHANGED at 6 (its identification was "published", so it never counted
+ *   toward the residual total — an OVER-count corrected). All three edits are
+ *   made by scripts/gen_nyiso130_keeper_ledger.py, verified idempotent, and
+ *   audit_keepers --iso NYISO PASSES 0/0 after them.
  * NYISO column re-stamped 2026-08-06 (nyiso-130). KEEPER UNCHANGED
  *   (2026-08-06-nyiso-128-solar-basis); DETERMINATION NOT-YET ->
  *   CALIBRATED-WITH-CAVEATS, under an explicit owner authorization given in
