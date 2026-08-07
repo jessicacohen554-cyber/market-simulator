@@ -5473,3 +5473,111 @@ worse — it carries **zero** hour-of-day signal, so summer afternoon and summer
 night take the identical multiplier and there is no diurnal reshape at all,
 which is exactly why miso-101 armed the hour-grain leg
 (`FINDING-miso100-stchp-diurnal-2026-07.md` §4/§5).
+
+---
+
+## 2026-08-07 — miso-140: the MISO comparator refresh REPRODUCES EXACTLY and is CONFINED to `*_lw`; every C3a re-verified; the determination does NOT change. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+
+**Queue item 1 (§5.4) DISCHARGED.** PREREG
+`results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` pushed at
+`483091b3` before any adjudicating statistic. FINDING
+`results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`;
+handoff `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`; probe
+`scripts/probes/_miso140_bench_lw_verify.py`; record
+`results/calibration/_miso140_bench_lw_verify.json`.
+
+**The refresh had already been performed before the session opened**, by a
+cross-ISO lane: pjm-160 B5 re-derived `*_lw` in
+`data/raw/_validation-source/actual_lmp.json` for all six ISOs (`1d63141c`,
+2026-08-07 ~06:0x UTC) and propagated MISO's into the three bench parts
+(`056eb164`, 06:14:59). The PREREG disclosed that in advance and re-pointed the
+session from *performing* the refresh to **adjudicating whether it is right** —
+which nobody had checked. Re-deriving it a third way was refused explicitly
+(PREREG S1): a reference that does not reproduce is a worse defect than a stale
+one, and a third vintage destroys the ability to tell which is correct.
+
+**G-1 — the miso-137 G-0(i) test re-run against the NEW values: PASS, 0/78
+mismatches.** `derive_actual_lmp._lw_fields` recomputed at HEAD reproduces the
+committed reference exactly across 2 bases × 3 years annual (6) + 72 monthly
+cells, and the unrounded 2025 RT lands on **45.4555**, matching miso-137's
+published recompute to the fourth decimal (pre-declared band ±0.0005). The
+stale-demand-vintage defect is **closed and independently confirmed**.
+
+**G-2 — faithfulness + confinement: PASS, 0/78 mismatches and ZERO non-`*_lw`
+leaves.** Every `*_lw` cell in the bench parts equals the reference, and of the
+**19 / 22 / 20** leaves that moved in `056eb164` (out of 8178 / 8109 / 8074),
+**100 % are `avgLMP.*_lw` / `*_lw_mon`**. The PREREG's S3 blast-radius stop rule
+did not fire: the pjm-160 PJM-side bench regen on a *corrected nameplate union*
+(`f6e88aa3`) did **not** reach MISO. Comparator moves: `rt_lw`
+32.87→**32.85**, 32.27→**32.30**, 45.39→**45.46**; `da_lw` 34.24→**34.23**,
+33.13→**33.14**, 46.29→**46.35**. Provenance recorded in the PREREG §0c *before*
+verification: prices are the Indiana-Hub `actual_lmp_hourly_MISO.parquet`
+(**last touched `f434590d`, unchanged by the refresh** — it moved *weights*, not
+prices, exactly as miso-137 diagnosed); weights are
+`eia_loader.load_demand("MISO", y, cfg)` summed over 6 zones, **640.993 /
+644.633 / 663.810 TWh**.
+
+**G-3 — every C3a re-verified on committed artifacts, no re-solve, all three
+years in one invocation (rule 16).** Scored twice — at HEAD and with the bench
+reverted in place to `056eb164^` — to isolate the comparator's own effect;
+model scalars identical in both.
+
+| year | basis | model | actual PRE → POST | C3a PRE → POST | status |
+|---:|---|---:|---|---|---|
+| 2023 | RT (gated) | 32.72 | 32.87 → **32.85** | −0.5 % → **−0.4 %** | PASS → PASS |
+| 2024 | RT (gated) | 30.37 | 32.27 → **32.30** | −5.9 % → **−6.0 %** | PASS → PASS |
+| 2025 | RT (gated) | 39.05 | 45.39 → **45.46** | −14.0 % → **−14.1 %** | **FAIL → FAIL** |
+| 2023 | DA (diag) | 32.72 | 34.24 → 34.23 | −4.4 % → −4.4 % | SKIPPED |
+| 2024 | DA (diag) | 30.37 | 33.13 → 33.14 | −8.3 % → **−8.4 %** | SKIPPED |
+| 2025 | DA (diag) | 39.05 | 46.29 → **46.35** | −15.6 % → **−15.8 %** | SKIPPED |
+
+**THE DETERMINATION DOES NOT CHANGE** — `NOT-YET` → `NOT-YET`, sole FAIL C3a
+`price_mean`, caveat ledger identical (1 of 1 on C3c), and **ZERO
+criterion-status flips across all eight criteria**, checked record-by-record
+rather than at the headline. PREREG §2 branch 2 applies as written; the
+escalation path (second independent invocation +
+`calibration-keeper-auditor --iso MISO`) was **not triggered** and not run, and
+no keeper text moved. **The correction is ADVERSE on the blocker year** — 2025
+−13.97 → −14.09 %, 2024 −5.90 → −5.98 %, only 2023 improves — so it is
+structurally incapable of being good news, and **is not reported as progress
+against the −14 % gap**.
+
+**Two things carried, neither repaired.** (i) **Registry sidecars store no
+scored value** (`id/label/date/shorthand/definition/years/iso/file/bundle`
+only), so the charter's "moves the comparator for every MISO run" is
+self-healing: scoring is derived from the bench at render/deploy time and every
+MISO run re-scores automatically — no per-run repair exists or is needed. The
+one built artifact that stores the scored numbers,
+`frontend/data/backcast/status/MISO.js`, was already regenerated by pjm-160
+(stamp `2026-08-07 05:53`) and **matches this session's independent
+re-verification exactly**. (ii) The keeper bundle attestation's
+`.exceptions[5].reason` — the **C3a `price_mean` ledger, inadmissible under
+rubric v3.1** (the run's basis reads *"undocumented out-of-tolerance (FAIL)
+criteria: price_mean"*) — still quotes `$45.39`, and was **already** stale on
+two further numbers beforehand (model `$38.66` vs the keeper's `$39.05`;
+*"2023 (−2.2 %) and 2024 (−8.0 %)"* vs the actual −0.4 % / −6.0 %). Inert prose
+the scorer never reads; repair belongs to the next MISO promotion, which
+regenerates the attestation.
+
+**Rule duties.** Rule 15 — no LP solved, so **no run to register** (the
+miso-131…137 precedent). Rule 16 — all three years, one invocation. Rule 19 —
+no mechanism proposed or tested; queue item 2 untouched. Rule 22 — MISO holds
+no `calibration-complete` marker; 2023–2025 only. Rules 13/21/24 — nothing
+sized on any residual, no parameter derived, no tuning channel created; the
+comparator is a measured input recomputed from unchanged measured sources.
+Rule 25 — MISO artifacts only (the other five ISOs' `*_lw` also moved in
+`1d63141c`; not a MISO lane's business). Rule 28(b) — **NO cell verdict
+minted**; the only matrix edit is the §5.4 stamp retiring item 1 and promoting
+item 2 to the queue head. Owner directives — no C7 work,
+`temp_derate_mean_anchored` not re-opened, the anchor-convention successor not
+opened.
+
+**Lesson — A REPAIR IS NOT A VERIFICATION.** The two tempting readings were both
+wrong: "already done, nothing to do" accepts a number nobody checked, and "do it
+again my way" mints a third vintage of the same scalar. What discharges the item
+is neither — it is re-running the failing test against the new values, and
+separately bounding the blast radius. That second half carried the real risk:
+the same cross-ISO session had, on another ISO, regenerated bench parts on a
+corrected nameplate union, and a comparator mandate is no licence to import it.
+Family: miso-136 *an absence claim is a measurement* → miso-137 *a threshold is
+a hypothesis, not a definition* → **miso-140 *a repair is not a verification***.
