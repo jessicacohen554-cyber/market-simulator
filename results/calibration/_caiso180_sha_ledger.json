@@ -1,0 +1,16 @@
+{
+ "A0": {
+  "before": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e",
+  "after": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e"
+ },
+ "A1": {
+  "before": "7f80b94e1c5576d626cb9ea1c37fa312b73e5dbe2633d97b0ba23adae555ece0",
+  "after": "7f80b94e1c5576d626cb9ea1c37fa312b73e5dbe2633d97b0ba23adae555ece0"
+ },
+ "A2": {
+  "before": "a35990908aa2ea8f7ef62f3ee8ab1066e27c0c55c8c0a40080c4df29b4e85e9e",
+  "after": "a35990908aa2ea8f7ef62f3ee8ab1066e27c0c55c8c0a40080c4df29b4e85e9e"
+ },
+ "_restored_on_disk": "c4ded33df08de5927fd58fa7200320353e73ceedfeb0084586ffd2e32f93ff5e",
+ "_restored_matches_committed": true
+}
