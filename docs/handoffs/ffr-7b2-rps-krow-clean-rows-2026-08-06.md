@@ -25,6 +25,10 @@ rule-22 clause explicitly permits it: no measured H1-2026 actual is read or scor
   escapes, the rule-19 `max()` composition — behind `miso_clean_tier_rows` (default OFF). The
   §45U-vs-clean-dual composition is OPEN and blocks ARMING ONLY, stated in cited comments at
   the gate flag and at the retirement-screen composition site (§5).
+* **The code landed on main mid-lane** (owner fast-merge of the pushed branch as PR #3679,
+  commits `d0085e16..fa9b5da` + the runner arms) BEFORE the measurement legs finished; the
+  measurement registrations + this handoff follow on the re-created branch as their own PR
+  — exactly the FFR-7B §5 merge-velocity pattern.
 * **Byte-identity of every unarmed path is proven, not asserted**: the pinned default cache key
   `603c2498bf71d21d` verified unchanged with both fields present; K=1/mask=all reproduces the
   legacy single row byte-identically by regression test; every default-key pin test passed at
@@ -139,7 +143,96 @@ Follows FFR-7B §6.2 + FFR-6B §6.3/§6.4:
 
 ## 3. Measurement — the bounded 2026–2030 MISO forecast pairs
 
-<!-- FILLED AFTER THE RUNS -->
+**Protocol.** `run_full_horizon.py --iso MISO --start-year 2026 --end-year 2030
+--golden-posture` (5 solve-years — the §2.1b schedulable cap, years sequential in one
+invocation), three legs run SERIALLY on the 15 GB box (peak RSS ≈ 9.6 GB/leg, wall
+≈ 62 min/leg): the shipped-default control, `--miso-rps-compliance-regions` (Arm 2), and
+`--miso-rps-compliance-regions --miso-clean-tier-rows` (Arm 3 — its control IS the Arm-2
+armed leg, §6). Cache keys distinct by construction and verified: control `0723d2cc432fa346`,
+Arm-2 armed `ff144cd25848e4d8`. Registered to the FORECAST namespace only (rule 15's
+forecast clause — `register_forecast_run.py --summary`, committed sidecars
+`frontend/data/hindcast/miso-2026-2030-ffr7b2-rpsk-{ctrl,armed}.json` + the Arm-3 leg;
+the backcast registry untouched). Q.2: this run-producing measurement is chartered
+explicitly by D-22(a)/X.2 (the prompt orders the bounded pair).
+
+### 3.1 Arm 2 pair — the grain is visible in exactly the right place, and nowhere else
+
+Per-region duals (the armed leg's year-parquet metadata; $/MWh):
+
+| year | MN | **MI** | WI | **IL** | MO | control ISO-wide dual |
+|---|---|---|---|---|---|---|
+| 2026 | 0 | **30.00** | 0 | 0 | 0 | 0 |
+| 2027 | 0 | **30.00** | 0 | **30.00** | 0 | 0 |
+| 2028 | 0 | **30.00** | 0 | **30.00** | 0 | 0 |
+| 2029 | 0 | **30.00** | 0 | **30.00** | 0 | 30.00 |
+| 2030 | 0 | **30.00** | 0 | **30.00** | 0 | 30.00 |
+
+* **Michigan's in-state row pins at its ACP ceiling in EVERY year** — MCL 460.1029's
+  restriction cannot be met from MISO-East generation, the 24.7 pp deficit FFR-6B §2.2
+  measured, now live as a $30 REC price in that compliance market. **Illinois pins from
+  2027.** The three delivery-based standards (MN/WI/MO — Midwest-footprint eligibility)
+  stay slack at 0: Iowa/Plains wind covers them, which is real (those statutes DO accept
+  regional certificates). The control's single ISO-wide row is slack until 2029 — the
+  Iowa-surplus-pays-Michigan's-bill arithmetic the grain exists to fence off, reproduced
+  exactly.
+* **Per-zone consumer vector** `p[z]` (W/P/IL/IN/E/S): `[0, 0, 30, 0, 30, 0]` from 2027 —
+  an East or Illinois candidate sees the REC signal; a South/Arkansas candidate sees 0.
+  The control broadcasts its scalar (0 through 2028, then 30) to EVERY zone — including
+  the 2029 5,650 MW **MISO-South** solar build, which the armed grain correctly credits
+  NOTHING (South is outside every eligibility geography). The broadcast defect is
+  therefore not hypothetical: the control paid an ineligible-zone candidate the ISO dual
+  in both build years.
+* **Dispatch, prices, builds and retirements are IDENTICAL across the pair** — lw_price
+  38.08/38.11/38.45/39.99/46.90 $/MWh, VRE 39.0→49.0 GW, 2030 retirements 633 MW, all
+  equal to the digit. Structural reading, pre-stated rather than discovered: the RPS
+  row family re-prices *compliance* (which escape column absorbs the shortfall, and what
+  a certificate is worth where) without moving *energy* (wind/solar dispatch at MC≈0 is
+  already bound by CF×capacity in both arms), and the window's only VRE addition is an
+  adequacy-backstop build (5,650.2 MW solar, MISO-South, identical in both arms — 
+  adequacy-driven, not credit-driven, so removing the mis-broadcast credit moved no MW
+  here). THE MECHANISM'S OUTPUT IS A PRICE (E-1's charter), and in this window that is
+  exactly what it changed: where the REC price exists, and who may earn it. A window in
+  which entry is margin-decided (not backstop/ladder-bound) is where the zonal credit
+  will move MW; that is a later, owner-charterable measurement, not this one.
+* I7 (accredited firm < requirement, 2026–27) and I12 (reserve-margin band WARN) fire
+  identically in both legs — the known pre-existing MISO forecast conditions, untouched.
+
+### 3.2 Arm 3 leg — clean-tier rows on top of the Arm-2 grain: QUIET IN-WINDOW, and why
+
+Third leg (`--miso-rps-compliance-regions --miso-clean-tier-rows`, cache key
+`587dc5b32ba71ceb`, registered `miso-2026-2030-ffr7b2-clean-armed`; its control is the
+Arm-2 armed leg, §6):
+
+* **The clean rows are SLACK (dual 0) in every year of the window, and the whole
+  trajectory — prices, builds, retirements, and the RPS family's own per-region duals —
+  is identical to the Arm-2 leg to the digit.** Two structural reasons, neither a bug:
+  1. **MI's tier starts at 2035** (2023 PA 235's first knot) and the zero-before-first-knot
+     convention imposes nothing before it — so MI's row cannot bind inside ANY
+     §2.1b-schedulable (≤5-year) window starting 2026. Its binding years lie beyond the
+     window by construction.
+  2. **MN's 2030 obligation (.616 of West load ≈ 9.0% of ISO demand) is covered under the
+     delivery-based Midwest-footprint eligibility mask** the shipped table gives MN
+     (mirroring its renewable tier's §216B.1691 delivery construction): Midwest-wide
+     clean generation (VRE + nuclear + hydro + biomass) exceeds it comfortably.
+     **This is the one place the implementation's statutory reading diverges from the
+     FFR-6B §6.2 sizing**, stated plainly: §6.2's "West short 14.0 pp by 2030" measured
+     IN-ZONE clean supply against the obligation — implicitly a zone-grain (host-zone-only)
+     eligibility mask — while the shipped mask follows the same delivery construction as
+     MN's renewable row. The mask is DATA (`MISO_CLEAN_TIER_REGIONS["MN"]["eligible_zones"]`,
+     one line): if the owner adjudicates §216B.1691's carbon-free tier as
+     effectively in-state (utility self-supply actually located in MN), flipping it to
+     `("MISO-West",)` re-creates the §6.2 binding without touching code. Recorded as an
+     OPEN statutory-reading question for the arming decision — which is blocked on §45U
+     anyway, so nothing downstream consumed a provisional answer.
+* What the leg DOES demonstrate: the second family co-exists with the first (RPS
+  region duals bit-identical; the wind-satisfies-both-rows structure carried at zero
+  cost), the feasibility escapes are present and unused (no infeasibility, no phantom
+  ACP spend on slack rows), and the layout/cache-key isolation holds
+  (`ff144cd25848e4d8` → `587dc5b32ba71ceb`).
+* The binding-year measurement (a window reaching 2035+, where MI's 80% knot and MN's
+  0.90/1.00 knots engage against a much larger obligation) requires a full-horizon
+  authorization (§2.1b) or a later-start window, and should follow the owner's §45U and
+  MN-mask rulings — handed off, not run.
 
 ## 4. Byte-identity evidence (per arm)
 
