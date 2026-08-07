@@ -1,0 +1,1357 @@
+{
+  "session": "caiso-181",
+  "precheck": "results/calibration/PRECHECK-caiso181-envelope-depth-2026-08-07.md",
+  "envelope_csv": "data/raw/campd-unit-outages-CAISO.csv",
+  "detector_contract": {
+    "rule": "detect_outages_eventbased",
+    "cf_peak": 0.02,
+    "real_run_cf": 0.05,
+    "admissible_in_window_hours_above_cf_peak": 0
+  },
+  "bars": {
+    "B1_interior_share_above_contract": 0.005,
+    "B2_impossible_share_of_depth": 0.05,
+    "B3_edge_dominance": 0.7
+  },
+  "years": {
+    "2023": {
+      "L1": {
+        "n_windows": 545,
+        "n_unmatched": 2,
+        "unmatched": [
+          {
+            "facility_id": 50851,
+            "unit_id": "NET0-923",
+            "facility_name": "CSUCI Site Authority",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 61754,
+            "unit_id": "NET0-923",
+            "facility_name": "SunSelect1",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          }
+        ],
+        "total_in_window_hours": 218880,
+        "total_interior_hours": 192720,
+        "total_edge_hours": 26160,
+        "n_reported": 7671,
+        "n_running": 7453,
+        "n_above_contract": 7350,
+        "n_above_realrun": 7166,
+        "share_reported_running": 0.03405062134502924,
+        "share_above_contract": 0.03358004385964912,
+        "share_above_realrun": 0.03273940058479532,
+        "interior_share_above_contract": 0.0,
+        "edge_share_above_contract": 0.2809633027522936,
+        "n_above_contract_interior": 0,
+        "n_above_contract_edge": 7350,
+        "cems_mwh_total": 762479.0,
+        "cems_mwh_edge": 762431.0,
+        "cems_mwh_interior": 48.0,
+        "edge_share_of_contradicted_mwh": 0.9999370474465527,
+        "per_window_share_distribution": {
+          "p50": 0.041666666666666664,
+          "p90": 0.10416666666666667,
+          "p99": 0.15472222222222204,
+          "max": 0.20238095238095238,
+          "n_windows_share_gt_0": 544,
+          "n_windows_share_gt_0p05": 228
+        },
+        "contradiction_distance_from_boundary": {
+          "n": 7350,
+          "p50": 7.0,
+          "p90": 18.0,
+          "max": 22.0,
+          "share_within_24h": 1.0
+        },
+        "by_duration_quartile": {
+          "Q1": {
+            "n_windows": 146,
+            "duration_days_range": [
+              5.0,
+              6.8
+            ],
+            "n_hours": 24192,
+            "n_above_contract": 2013,
+            "share_above_contract": 0.08320932539682539,
+            "cems_mwh": 225788.0
+          },
+          "Q2": {
+            "n_windows": 128,
+            "duration_days_range": [
+              6.9,
+              10.7
+            ],
+            "n_hours": 29136,
+            "n_above_contract": 1821,
+            "share_above_contract": 0.0625,
+            "cems_mwh": 196925.0
+          },
+          "Q3": {
+            "n_windows": 136,
+            "duration_days_range": [
+              10.8,
+              17.9
+            ],
+            "n_hours": 48336,
+            "n_above_contract": 1776,
+            "share_above_contract": 0.036742800397219465,
+            "cems_mwh": 172487.0
+          },
+          "Q4": {
+            "n_windows": 135,
+            "duration_days_range": [
+              18.0,
+              148.3
+            ],
+            "n_hours": 117216,
+            "n_above_contract": 1740,
+            "share_above_contract": 0.014844389844389844,
+            "cems_mwh": 167279.0
+          }
+        },
+        "by_capacity_source": {
+          "eia_digits": {
+            "n_windows": 134,
+            "n_hours": 51024,
+            "n_above_contract": 1573,
+            "cems_mwh": 129768.0
+          },
+          "eia_digits_cc": {
+            "n_windows": 39,
+            "n_hours": 19728,
+            "n_above_contract": 463,
+            "cems_mwh": 73626.0
+          },
+          "eia_exact": {
+            "n_windows": 28,
+            "n_hours": 9504,
+            "n_above_contract": 246,
+            "cems_mwh": 5932.0
+          },
+          "eia_exact_cc": {
+            "n_windows": 178,
+            "n_hours": 70800,
+            "n_above_contract": 2718,
+            "cems_mwh": 210675.0
+          },
+          "observed_peak": {
+            "n_windows": 166,
+            "n_hours": 67824,
+            "n_above_contract": 2350,
+            "cems_mwh": 342478.0
+          }
+        },
+        "worst_10_windows_by_cems_mwh": [
+          {
+            "facility_id": 55333,
+            "facility_name": "Delta Energy Center, LLC",
+            "unit_id": "1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 22.3,
+            "detect_mw": 307.0,
+            "n_hours": 576,
+            "n_above_contract": 40,
+            "cems_mwh": 9200.0,
+            "cems_mwh_edge": 9200.0
+          },
+          {
+            "facility_id": 358,
+            "facility_name": "Mountainview Generating Station",
+            "unit_id": "3-1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 41.5,
+            "detect_mw": 284.0,
+            "n_hours": 1032,
+            "n_above_contract": 34,
+            "cems_mwh": 7487.0,
+            "cems_mwh_edge": 7478.0
+          },
+          {
+            "facility_id": 55217,
+            "facility_name": "Los Medanos Energy Center, LLC",
+            "unit_id": "X725",
+            "plant_group": "CC_CHP",
+            "duration_days": 14.7,
+            "detect_mw": 317.0,
+            "n_hours": 384,
+            "n_above_contract": 31,
+            "cems_mwh": 7333.0,
+            "cems_mwh_edge": 7333.0
+          },
+          {
+            "facility_id": 55393,
+            "facility_name": "Metcalf Energy Center",
+            "unit_id": "2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 6.8,
+            "detect_mw": 200.0,
+            "n_hours": 192,
+            "n_above_contract": 29,
+            "cems_mwh": 7259.0,
+            "cems_mwh_edge": 7259.0
+          },
+          {
+            "facility_id": 55333,
+            "facility_name": "Delta Energy Center, LLC",
+            "unit_id": "2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 17.6,
+            "detect_mw": 212.0,
+            "n_hours": 456,
+            "n_above_contract": 29,
+            "cems_mwh": 6803.0,
+            "cems_mwh_edge": 6803.0
+          },
+          {
+            "facility_id": 55333,
+            "facility_name": "Delta Energy Center, LLC",
+            "unit_id": "2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 13.8,
+            "detect_mw": 212.0,
+            "n_hours": 360,
+            "n_above_contract": 29,
+            "cems_mwh": 6800.0,
+            "cems_mwh_edge": 6800.0
+          },
+          {
+            "facility_id": 55400,
+            "facility_name": "Elk Hills Power",
+            "unit_id": "CTG-1",
+            "plant_group": "CC_CHP",
+            "duration_days": 9.7,
+            "detect_mw": 199.0,
+            "n_hours": 264,
+            "n_above_contract": 31,
+            "cems_mwh": 6614.0,
+            "cems_mwh_edge": 6614.0
+          },
+          {
+            "facility_id": 62116,
+            "facility_name": "AES Huntington Beach Energy Project",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 6.1,
+            "detect_mw": 347.0,
+            "n_hours": 168,
+            "n_above_contract": 22,
+            "cems_mwh": 6466.0,
+            "cems_mwh_edge": 6466.0
+          },
+          {
+            "facility_id": 358,
+            "facility_name": "Mountainview Generating Station",
+            "unit_id": "3-2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 25.8,
+            "detect_mw": 287.0,
+            "n_hours": 648,
+            "n_above_contract": 28,
+            "cems_mwh": 6388.0,
+            "cems_mwh_edge": 6388.0
+          },
+          {
+            "facility_id": 55656,
+            "facility_name": "Pastoria Energy Facility",
+            "unit_id": "CT004",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.5,
+            "detect_mw": 268.0,
+            "n_hours": 168,
+            "n_above_contract": 34,
+            "cems_mwh": 6353.0,
+            "cems_mwh_edge": 6353.0
+          }
+        ]
+      },
+      "L2": {
+        "n_bins_with_factors": 30,
+        "n_bins_confronted": 29,
+        "impossible_bin_hours": 27159,
+        "impossible_mwh": 1349277.48,
+        "committed_depth_mwh": 36680000.0,
+        "impossible_share_of_depth": 0.036785100327153764,
+        "basis_excess_mwh": 461440.9599999998,
+        "envelope_excess_mwh": 887836.5199999999,
+        "envelope_excess_edge_mwh": 658363.0599999999,
+        "envelope_excess_interior_mwh": 229473.46000000008,
+        "envelope_excess_share_of_depth": 0.024204921483097053,
+        "envelope_excess_edge_share": 0.7415363585178947,
+        "feb29_cems_mwh_excluded": 0.0,
+        "worst_10_bins": [
+          {
+            "plant_code": 55217,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 559.0,
+            "impossible_hours": 4898,
+            "impossible_mwh": 199447.00000000006,
+            "basis_excess_mwh": 86810.0,
+            "envelope_excess_mwh": 112637.00000000004,
+            "envelope_excess_edge_mwh": 25488.0,
+            "max_impossible_mw": 346.00000000000006,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1341681574239715
+          },
+          {
+            "plant_code": 358,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1018.0,
+            "impossible_hours": 1467,
+            "impossible_mwh": 160880.99999999997,
+            "basis_excess_mwh": 43608.0,
+            "envelope_excess_mwh": 117272.99999999996,
+            "envelope_excess_edge_mwh": 84457.0,
+            "max_impossible_mw": 932.9999999999998,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1168958742632613
+          },
+          {
+            "plant_code": 62115,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 603.0,
+            "impossible_hours": 2121,
+            "impossible_mwh": 146494.0,
+            "basis_excess_mwh": 125492.0,
+            "envelope_excess_mwh": 21002.0,
+            "envelope_excess_edge_mwh": 17363.0,
+            "max_impossible_mw": 678.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1459369817578773
+          },
+          {
+            "plant_code": 62116,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 630.0,
+            "impossible_hours": 2831,
+            "impossible_mwh": 138184.99999999994,
+            "basis_excess_mwh": 96005.99999999994,
+            "envelope_excess_mwh": 42179.0,
+            "envelope_excess_edge_mwh": 28807.0,
+            "max_impossible_mw": 585.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0984126984126985
+          },
+          {
+            "plant_code": 55151,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1010.0,
+            "impossible_hours": 911,
+            "impossible_mwh": 103955.99999999997,
+            "basis_excess_mwh": 25.00000000000002,
+            "envelope_excess_mwh": 103930.99999999997,
+            "envelope_excess_edge_mwh": 92510.99999999997,
+            "max_impossible_mw": 1009.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.004950495049505
+          },
+          {
+            "plant_code": 260,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1020.0,
+            "impossible_hours": 2822,
+            "impossible_mwh": 81202.99999999991,
+            "basis_excess_mwh": 31722.99999999989,
+            "envelope_excess_mwh": 49480.00000000003,
+            "envelope_excess_edge_mwh": 16531.000000000007,
+            "max_impossible_mw": 374.00000000000006,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0450980392156863
+          },
+          {
+            "plant_code": 55333,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 842.0,
+            "impossible_hours": 611,
+            "impossible_mwh": 56370.19999999998,
+            "basis_excess_mwh": 6110.0,
+            "envelope_excess_mwh": 50260.19999999998,
+            "envelope_excess_edge_mwh": 50021.399999999994,
+            "max_impossible_mw": 622.8,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0510688836104514
+          },
+          {
+            "plant_code": 55393,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 557.0,
+            "impossible_hours": 2559,
+            "impossible_mwh": 52222.49999999996,
+            "basis_excess_mwh": 26828.999999999978,
+            "envelope_excess_mwh": 25393.499999999985,
+            "envelope_excess_edge_mwh": 10931.499999999998,
+            "max_impossible_mw": 329.5,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0754039497307002
+          },
+          {
+            "plant_code": 56467,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 605.0,
+            "impossible_hours": 492,
+            "impossible_mwh": 45210.0,
+            "basis_excess_mwh": 1456.9999999999984,
+            "envelope_excess_mwh": 43753.0,
+            "envelope_excess_edge_mwh": 42340.5,
+            "max_impossible_mw": 614.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0429752066115703
+          },
+          {
+            "plant_code": 55400,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 525.0,
+            "impossible_hours": 1411,
+            "impossible_mwh": 44855.500000000015,
+            "basis_excess_mwh": 3423.9999999999973,
+            "envelope_excess_mwh": 41431.500000000015,
+            "envelope_excess_edge_mwh": 26014.0,
+            "max_impossible_mw": 421.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0266666666666666
+          }
+        ]
+      },
+      "B1_fires": false,
+      "B2_fires": false,
+      "B3_edge_dominated": true
+    },
+    "2024": {
+      "L1": {
+        "n_windows": 456,
+        "n_unmatched": 2,
+        "unmatched": [
+          {
+            "facility_id": 58625,
+            "unit_id": "NET0-923",
+            "facility_name": "Santa Rita Jail Hybrid",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 61754,
+            "unit_id": "NET0-923",
+            "facility_name": "SunSelect1",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          }
+        ],
+        "total_in_window_hours": 204096,
+        "total_interior_hours": 182208,
+        "total_edge_hours": 21888,
+        "n_reported": 6894,
+        "n_running": 6730,
+        "n_above_contract": 6630,
+        "n_above_realrun": 6464,
+        "share_reported_running": 0.03297467858262778,
+        "share_above_contract": 0.032484713076199434,
+        "share_above_realrun": 0.03167137033552838,
+        "interior_share_above_contract": 0.0,
+        "edge_share_above_contract": 0.30290570175438597,
+        "n_above_contract_interior": 0,
+        "n_above_contract_edge": 6630,
+        "cems_mwh_total": 927356.0,
+        "cems_mwh_edge": 927326.0,
+        "cems_mwh_interior": 30.0,
+        "edge_share_of_contradicted_mwh": 0.9999676499639836,
+        "per_window_share_distribution": {
+          "p50": 0.04246794871794872,
+          "p90": 0.1130952380952381,
+          "p99": 0.15476190476190477,
+          "max": 0.17857142857142858,
+          "n_windows_share_gt_0": 453,
+          "n_windows_share_gt_0p05": 205
+        },
+        "contradiction_distance_from_boundary": {
+          "n": 6630,
+          "p50": 6.0,
+          "p90": 16.0,
+          "max": 22.0,
+          "share_within_24h": 1.0
+        },
+        "by_duration_quartile": {
+          "Q1": {
+            "n_windows": 115,
+            "duration_days_range": [
+              5.0,
+              6.7
+            ],
+            "n_hours": 18288,
+            "n_above_contract": 1774,
+            "share_above_contract": 0.09700349956255468,
+            "cems_mwh": 259582.0
+          },
+          "Q2": {
+            "n_windows": 114,
+            "duration_days_range": [
+              6.8,
+              11.5
+            ],
+            "n_hours": 26952,
+            "n_above_contract": 1768,
+            "share_above_contract": 0.06559810032650638,
+            "cems_mwh": 263383.0
+          },
+          "Q3": {
+            "n_windows": 113,
+            "duration_days_range": [
+              11.6,
+              20.7
+            ],
+            "n_hours": 43896,
+            "n_above_contract": 1470,
+            "share_above_contract": 0.03348824494259158,
+            "cems_mwh": 204545.0
+          },
+          "Q4": {
+            "n_windows": 114,
+            "duration_days_range": [
+              20.8,
+              112.8
+            ],
+            "n_hours": 114960,
+            "n_above_contract": 1618,
+            "share_above_contract": 0.01407446068197634,
+            "cems_mwh": 199846.0
+          }
+        },
+        "by_capacity_source": {
+          "eia_digits": {
+            "n_windows": 74,
+            "n_hours": 33480,
+            "n_above_contract": 924,
+            "cems_mwh": 113501.0
+          },
+          "eia_digits_cc": {
+            "n_windows": 51,
+            "n_hours": 24336,
+            "n_above_contract": 723,
+            "cems_mwh": 126008.0
+          },
+          "eia_exact_cc": {
+            "n_windows": 145,
+            "n_hours": 64776,
+            "n_above_contract": 2307,
+            "cems_mwh": 222856.0
+          },
+          "observed_peak": {
+            "n_windows": 186,
+            "n_hours": 81504,
+            "n_above_contract": 2676,
+            "cems_mwh": 464991.0
+          }
+        },
+        "worst_10_windows_by_cems_mwh": [
+          {
+            "facility_id": 62116,
+            "facility_name": "AES Huntington Beach Energy Project",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 20.2,
+            "detect_mw": 352.0,
+            "n_hours": 528,
+            "n_above_contract": 41,
+            "cems_mwh": 8657.0,
+            "cems_mwh_edge": 8657.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 10.8,
+            "detect_mw": 200.0,
+            "n_hours": 288,
+            "n_above_contract": 28,
+            "cems_mwh": 7754.0,
+            "cems_mwh_edge": 7754.0
+          },
+          {
+            "facility_id": 260,
+            "facility_name": "Moss Landing Power Plant",
+            "unit_id": "1A",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 27.4,
+            "detect_mw": 279.0,
+            "n_hours": 696,
+            "n_above_contract": 35,
+            "cems_mwh": 7719.0,
+            "cems_mwh_edge": 7719.0
+          },
+          {
+            "facility_id": 260,
+            "facility_name": "Moss Landing Power Plant",
+            "unit_id": "4A",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 31.7,
+            "detect_mw": 272.0,
+            "n_hours": 792,
+            "n_above_contract": 32,
+            "cems_mwh": 6872.0,
+            "cems_mwh_edge": 6872.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 7.7,
+            "detect_mw": 313.0,
+            "n_hours": 216,
+            "n_above_contract": 30,
+            "cems_mwh": 6779.0,
+            "cems_mwh_edge": 6778.0
+          },
+          {
+            "facility_id": 62115,
+            "facility_name": "AES Alamitos Energy Center",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 7.8,
+            "detect_mw": 345.0,
+            "n_hours": 216,
+            "n_above_contract": 23,
+            "cems_mwh": 6617.0,
+            "cems_mwh_edge": 6617.0
+          },
+          {
+            "facility_id": 358,
+            "facility_name": "Mountainview Generating Station",
+            "unit_id": "4-2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 13.7,
+            "detect_mw": 289.0,
+            "n_hours": 360,
+            "n_above_contract": 32,
+            "cems_mwh": 6512.0,
+            "cems_mwh_edge": 6512.0
+          },
+          {
+            "facility_id": 55393,
+            "facility_name": "Metcalf Energy Center",
+            "unit_id": "2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 62.8,
+            "detect_mw": 200.0,
+            "n_hours": 1536,
+            "n_above_contract": 30,
+            "cems_mwh": 6188.0,
+            "cems_mwh_edge": 6188.0
+          },
+          {
+            "facility_id": 358,
+            "facility_name": "Mountainview Generating Station",
+            "unit_id": "3-2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 9.8,
+            "detect_mw": 292.0,
+            "n_hours": 264,
+            "n_above_contract": 27,
+            "cems_mwh": 6130.0,
+            "cems_mwh_edge": 6130.0
+          },
+          {
+            "facility_id": 55333,
+            "facility_name": "Delta Energy Center, LLC",
+            "unit_id": "1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 56.5,
+            "detect_mw": 308.0,
+            "n_hours": 1392,
+            "n_above_contract": 28,
+            "cems_mwh": 6113.0,
+            "cems_mwh_edge": 6113.0
+          }
+        ]
+      },
+      "L2": {
+        "n_bins_with_factors": 28,
+        "n_bins_confronted": 28,
+        "impossible_bin_hours": 29136,
+        "impossible_mwh": 1714458.02,
+        "committed_depth_mwh": 42880000.0,
+        "impossible_share_of_depth": 0.0399826963619403,
+        "basis_excess_mwh": 694252.3999999998,
+        "envelope_excess_mwh": 1020205.6199999999,
+        "envelope_excess_edge_mwh": 811623.82,
+        "envelope_excess_interior_mwh": 208581.8,
+        "envelope_excess_share_of_depth": 0.02379210867537313,
+        "envelope_excess_edge_share": 0.7955492540807607,
+        "feb29_cems_mwh_excluded": 77321.0,
+        "worst_10_bins": [
+          {
+            "plant_code": 62115,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 603.0,
+            "impossible_hours": 3381,
+            "impossible_mwh": 288871.99999999994,
+            "basis_excess_mwh": 255293.99999999994,
+            "envelope_excess_mwh": 33578.0,
+            "envelope_excess_edge_mwh": 28423.0,
+            "max_impossible_mw": 689.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1459369817578773
+          },
+          {
+            "plant_code": 62116,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 630.0,
+            "impossible_hours": 3259,
+            "impossible_mwh": 221602.9999999999,
+            "basis_excess_mwh": 172118.99999999994,
+            "envelope_excess_mwh": 49484.0,
+            "envelope_excess_edge_mwh": 49484.0,
+            "max_impossible_mw": 691.0000000000001,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0984126984126985
+          },
+          {
+            "plant_code": 358,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1018.0,
+            "impossible_hours": 1639,
+            "impossible_mwh": 170329.0,
+            "basis_excess_mwh": 66168.0,
+            "envelope_excess_mwh": 104161.0,
+            "envelope_excess_edge_mwh": 76500.0,
+            "max_impossible_mw": 817.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1296660117878192
+          },
+          {
+            "plant_code": 55151,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1010.0,
+            "impossible_hours": 1691,
+            "impossible_mwh": 154576.99999999988,
+            "basis_excess_mwh": 174.00000000000017,
+            "envelope_excess_mwh": 154402.99999999988,
+            "envelope_excess_edge_mwh": 95361.99999999996,
+            "max_impossible_mw": 589.9999999999999,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0148514851485149
+          },
+          {
+            "plant_code": 55217,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 559.0,
+            "impossible_hours": 3748,
+            "impossible_mwh": 135693.0,
+            "basis_excess_mwh": 91887.99999999999,
+            "envelope_excess_mwh": 43805.0,
+            "envelope_excess_edge_mwh": 17224.0,
+            "max_impossible_mw": 379.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1216457960644006
+          },
+          {
+            "plant_code": 55400,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 525.0,
+            "impossible_hours": 2302,
+            "impossible_mwh": 87988.00000000006,
+            "basis_excess_mwh": 297.99999999999943,
+            "envelope_excess_mwh": 87690.00000000006,
+            "envelope_excess_edge_mwh": 49199.0,
+            "max_impossible_mw": 511.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0247619047619048
+          },
+          {
+            "plant_code": 260,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1020.0,
+            "impossible_hours": 2098,
+            "impossible_mwh": 82300.99999999994,
+            "basis_excess_mwh": 18751.999999999935,
+            "envelope_excess_mwh": 63549.000000000015,
+            "envelope_excess_edge_mwh": 39494.0,
+            "max_impossible_mw": 878.9999999999999,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0254901960784313
+          },
+          {
+            "plant_code": 55295,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 514.0,
+            "impossible_hours": 1150,
+            "impossible_mwh": 68732.99999999999,
+            "basis_excess_mwh": 0.0,
+            "envelope_excess_mwh": 68732.99999999999,
+            "envelope_excess_edge_mwh": 50047.0,
+            "max_impossible_mw": 491.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 0.9649805447470817
+          },
+          {
+            "plant_code": 56467,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 605.0,
+            "impossible_hours": 391,
+            "impossible_mwh": 67831.0,
+            "basis_excess_mwh": 977.9999999999995,
+            "envelope_excess_mwh": 66853.0,
+            "envelope_excess_edge_mwh": 66697.0,
+            "max_impossible_mw": 599.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0396694214876032
+          },
+          {
+            "plant_code": 55333,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 842.0,
+            "impossible_hours": 554,
+            "impossible_mwh": 58056.8,
+            "basis_excess_mwh": 4974.999999999998,
+            "envelope_excess_mwh": 53081.8,
+            "envelope_excess_edge_mwh": 52903.0,
+            "max_impossible_mw": 829.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0558194774346794
+          }
+        ]
+      },
+      "B1_fires": false,
+      "B2_fires": false,
+      "B3_edge_dominated": true
+    },
+    "2025": {
+      "L1": {
+        "n_windows": 603,
+        "n_unmatched": 32,
+        "unmatched": [
+          {
+            "facility_id": 10115,
+            "unit_id": "NET0-923",
+            "facility_name": "Grossmont Hospital",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 10720,
+            "unit_id": "NET0-923",
+            "facility_name": "Kyocera International Inc.(San Diego)",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50064,
+            "unit_id": "NET0-923",
+            "facility_name": "University of California Santa Cruz",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50234,
+            "unit_id": "NET0-923",
+            "facility_name": "San Antonio Regional Hospital",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50495,
+            "unit_id": "NET0-923",
+            "facility_name": "High Sierra Limited",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50541,
+            "unit_id": "NET0-923",
+            "facility_name": "Harbor Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50748,
+            "unit_id": "NET0-923",
+            "facility_name": "Agnews Power Plant",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50750,
+            "unit_id": "NET0-923",
+            "facility_name": "Coalinga Cogeneration Facility",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50850,
+            "unit_id": "NET0-923",
+            "facility_name": "CamChino Leasing LLC",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50851,
+            "unit_id": "NET0-923",
+            "facility_name": "CSUCI Site Authority",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 50985,
+            "unit_id": "NET0-923",
+            "facility_name": "Solano County Cogen Plant",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52076,
+            "unit_id": "NET0-923",
+            "facility_name": "McKittrick Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52077,
+            "unit_id": "NET0-923",
+            "facility_name": "Lost Hills Cogeneration Plant",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52081,
+            "unit_id": "NET0-923",
+            "facility_name": "Cymric 31X Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52082,
+            "unit_id": "NET0-923",
+            "facility_name": "Cymric 6Z Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52086,
+            "unit_id": "NET0-923",
+            "facility_name": "Coalinga 25D Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52104,
+            "unit_id": "NET0-923",
+            "facility_name": "Cymric 36W Cogen",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 52186,
+            "unit_id": "NET0-923",
+            "facility_name": "Yuba City Cogen Partners",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 54447,
+            "unit_id": "NET0-923",
+            "facility_name": "Welport Lease Project",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          },
+          {
+            "facility_id": 54449,
+            "unit_id": "NET0-923",
+            "facility_name": "Dome Project",
+            "capacity_source": "eia923_netzero",
+            "duration_days": 365.0
+          }
+        ],
+        "total_in_window_hours": 253752,
+        "total_interior_hours": 224808,
+        "total_edge_hours": 28944,
+        "n_reported": 9363,
+        "n_running": 9139,
+        "n_above_contract": 9008,
+        "n_above_realrun": 8777,
+        "share_reported_running": 0.03601547968094833,
+        "share_above_contract": 0.03549922759229484,
+        "share_above_realrun": 0.03458888993978373,
+        "interior_share_above_contract": 0.0,
+        "edge_share_above_contract": 0.3112216694306247,
+        "n_above_contract_interior": 0,
+        "n_above_contract_edge": 9008,
+        "cems_mwh_total": 1263185.0,
+        "cems_mwh_edge": 1263116.0,
+        "cems_mwh_interior": 69.0,
+        "edge_share_of_contradicted_mwh": 0.9999453761721363,
+        "per_window_share_distribution": {
+          "p50": 0.046296296296296294,
+          "p90": 0.11904761904761904,
+          "p99": 0.19642857142857142,
+          "max": 0.26785714285714285,
+          "n_windows_share_gt_0": 601,
+          "n_windows_share_gt_0p05": 277
+        },
+        "contradiction_distance_from_boundary": {
+          "n": 9008,
+          "p50": 6.0,
+          "p90": 17.0,
+          "max": 22.0,
+          "share_within_24h": 1.0
+        },
+        "by_duration_quartile": {
+          "Q1": {
+            "n_windows": 152,
+            "duration_days_range": [
+              5.0,
+              6.8
+            ],
+            "n_hours": 24648,
+            "n_above_contract": 2495,
+            "share_above_contract": 0.10122525154170724,
+            "cems_mwh": 425854.0
+          },
+          "Q2": {
+            "n_windows": 155,
+            "duration_days_range": [
+              6.9,
+              10.0
+            ],
+            "n_hours": 33840,
+            "n_above_contract": 2322,
+            "share_above_contract": 0.06861702127659575,
+            "cems_mwh": 334080.0
+          },
+          "Q3": {
+            "n_windows": 147,
+            "duration_days_range": [
+              10.2,
+              18.5
+            ],
+            "n_hours": 52488,
+            "n_above_contract": 2003,
+            "share_above_contract": 0.0381611034903216,
+            "cems_mwh": 247894.0
+          },
+          "Q4": {
+            "n_windows": 149,
+            "duration_days_range": [
+              18.6,
+              153.9
+            ],
+            "n_hours": 142776,
+            "n_above_contract": 2188,
+            "share_above_contract": 0.015324704432117442,
+            "cems_mwh": 255357.0
+          }
+        },
+        "by_capacity_source": {
+          "eia_digits": {
+            "n_windows": 111,
+            "n_hours": 50496,
+            "n_above_contract": 1717,
+            "cems_mwh": 233885.0
+          },
+          "eia_digits_cc": {
+            "n_windows": 53,
+            "n_hours": 21216,
+            "n_above_contract": 799,
+            "cems_mwh": 148614.0
+          },
+          "eia_exact": {
+            "n_windows": 9,
+            "n_hours": 3024,
+            "n_above_contract": 63,
+            "cems_mwh": 1409.0
+          },
+          "eia_exact_cc": {
+            "n_windows": 160,
+            "n_hours": 69288,
+            "n_above_contract": 2780,
+            "cems_mwh": 242890.0
+          },
+          "observed_peak": {
+            "n_windows": 270,
+            "n_hours": 109728,
+            "n_above_contract": 3649,
+            "cems_mwh": 636387.0
+          }
+        },
+        "worst_10_windows_by_cems_mwh": [
+          {
+            "facility_id": 56476,
+            "facility_name": "Gateway Generating Station",
+            "unit_id": "GT2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.1,
+            "detect_mw": 290.0,
+            "n_hours": 168,
+            "n_above_contract": 45,
+            "cems_mwh": 10880.0,
+            "cems_mwh_edge": 10880.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.2,
+            "detect_mw": 311.0,
+            "n_hours": 168,
+            "n_above_contract": 42,
+            "cems_mwh": 9682.0,
+            "cems_mwh_edge": 9682.0
+          },
+          {
+            "facility_id": 260,
+            "facility_name": "Moss Landing Power Plant",
+            "unit_id": "3A",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 6.2,
+            "detect_mw": 350.0,
+            "n_hours": 192,
+            "n_above_contract": 41,
+            "cems_mwh": 8423.0,
+            "cems_mwh_edge": 8423.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 8.5,
+            "detect_mw": 311.0,
+            "n_hours": 240,
+            "n_above_contract": 37,
+            "cems_mwh": 8360.0,
+            "cems_mwh_edge": 8360.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.7,
+            "detect_mw": 311.0,
+            "n_hours": 168,
+            "n_above_contract": 31,
+            "cems_mwh": 8278.0,
+            "cems_mwh_edge": 8278.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.3,
+            "detect_mw": 200.0,
+            "n_hours": 168,
+            "n_above_contract": 35,
+            "cems_mwh": 8104.0,
+            "cems_mwh_edge": 8104.0
+          },
+          {
+            "facility_id": 56467,
+            "facility_name": "Russell City Energy Company LLC",
+            "unit_id": "CT2",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 5.8,
+            "detect_mw": 200.0,
+            "n_hours": 168,
+            "n_above_contract": 29,
+            "cems_mwh": 7837.0,
+            "cems_mwh_edge": 7837.0
+          },
+          {
+            "facility_id": 260,
+            "facility_name": "Moss Landing Power Plant",
+            "unit_id": "3A",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 10.5,
+            "detect_mw": 350.0,
+            "n_hours": 288,
+            "n_above_contract": 35,
+            "cems_mwh": 7777.0,
+            "cems_mwh_edge": 7777.0
+          },
+          {
+            "facility_id": 260,
+            "facility_name": "Moss Landing Power Plant",
+            "unit_id": "4A",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 11.6,
+            "detect_mw": 267.0,
+            "n_hours": 312,
+            "n_above_contract": 32,
+            "cems_mwh": 7725.0,
+            "cems_mwh_edge": 7725.0
+          },
+          {
+            "facility_id": 55985,
+            "facility_name": "Palomar Energy Center",
+            "unit_id": "CTG1",
+            "plant_group": "CC_REGULAR",
+            "duration_days": 6.8,
+            "detect_mw": 165.0,
+            "n_hours": 192,
+            "n_above_contract": 29,
+            "cems_mwh": 7351.0,
+            "cems_mwh_edge": 7351.0
+          }
+        ]
+      },
+      "L2": {
+        "n_bins_with_factors": 35,
+        "n_bins_confronted": 30,
+        "impossible_bin_hours": 26478,
+        "impossible_mwh": 1839441.3599999999,
+        "committed_depth_mwh": 55430000.0,
+        "impossible_share_of_depth": 0.033184942449936854,
+        "basis_excess_mwh": 414254.2799999999,
+        "envelope_excess_mwh": 1425187.0799999998,
+        "envelope_excess_edge_mwh": 1151867.9799999997,
+        "envelope_excess_interior_mwh": 273319.10000000003,
+        "envelope_excess_share_of_depth": 0.02571147537434602,
+        "envelope_excess_edge_share": 0.8082223001909334,
+        "feb29_cems_mwh_excluded": 0.0,
+        "worst_10_bins": [
+          {
+            "plant_code": 55151,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1010.0,
+            "impossible_hours": 1884,
+            "impossible_mwh": 236811.99999999988,
+            "basis_excess_mwh": 0.0,
+            "envelope_excess_mwh": 236811.99999999988,
+            "envelope_excess_edge_mwh": 172786.99999999994,
+            "max_impossible_mw": 737.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 0.9762376237623762
+          },
+          {
+            "plant_code": 358,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1018.0,
+            "impossible_hours": 1343,
+            "impossible_mwh": 201012.0,
+            "basis_excess_mwh": 29245.0,
+            "envelope_excess_mwh": 171767.0,
+            "envelope_excess_edge_mwh": 136248.0,
+            "max_impossible_mw": 933.9999999999999,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.117878192534381
+          },
+          {
+            "plant_code": 260,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 1020.0,
+            "impossible_hours": 1405,
+            "impossible_mwh": 176159.0,
+            "basis_excess_mwh": 2362.999999999992,
+            "envelope_excess_mwh": 173796.0,
+            "envelope_excess_edge_mwh": 126413.0,
+            "max_impossible_mw": 1016.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.018627450980392
+          },
+          {
+            "plant_code": 62115,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 603.0,
+            "impossible_hours": 1786,
+            "impossible_mwh": 170251.99999999997,
+            "basis_excess_mwh": 126639.99999999997,
+            "envelope_excess_mwh": 43612.0,
+            "envelope_excess_edge_mwh": 42821.0,
+            "max_impossible_mw": 689.9999999999999,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1459369817578773
+          },
+          {
+            "plant_code": 62116,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 630.0,
+            "impossible_hours": 2163,
+            "impossible_mwh": 147374.99999999994,
+            "basis_excess_mwh": 107562.99999999994,
+            "envelope_excess_mwh": 39812.0,
+            "envelope_excess_edge_mwh": 39812.0,
+            "max_impossible_mw": 690.0000000000001,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.096825396825397
+          },
+          {
+            "plant_code": 56467,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 605.0,
+            "impossible_hours": 650,
+            "impossible_mwh": 125959.5,
+            "basis_excess_mwh": 817.9999999999999,
+            "envelope_excess_mwh": 125141.5,
+            "envelope_excess_edge_mwh": 124860.5,
+            "max_impossible_mw": 601.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0363636363636364
+          },
+          {
+            "plant_code": 55217,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 559.0,
+            "impossible_hours": 3847,
+            "impossible_mwh": 116770.0,
+            "basis_excess_mwh": 78016.0,
+            "envelope_excess_mwh": 38754.000000000015,
+            "envelope_excess_edge_mwh": 15154.000000000004,
+            "max_impossible_mw": 369.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.1162790697674418
+          },
+          {
+            "plant_code": 55400,
+            "plant_group": "CC_CHP",
+            "plant_cap_mw": 525.0,
+            "impossible_hours": 3256,
+            "impossible_mwh": 100156.50000000009,
+            "basis_excess_mwh": 2029.999999999998,
+            "envelope_excess_mwh": 98126.50000000009,
+            "envelope_excess_edge_mwh": 43470.5,
+            "max_impossible_mw": 432.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0247619047619048
+          },
+          {
+            "plant_code": 55295,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 514.0,
+            "impossible_hours": 543,
+            "impossible_mwh": 99084.0,
+            "basis_excess_mwh": 48.999999999999815,
+            "envelope_excess_mwh": 99035.0,
+            "envelope_excess_edge_mwh": 97382.0,
+            "max_impossible_mw": 504.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0077821011673151
+          },
+          {
+            "plant_code": 55393,
+            "plant_group": "CC_REGULAR",
+            "plant_cap_mw": 557.0,
+            "impossible_hours": 2509,
+            "impossible_mwh": 57619.499999999956,
+            "basis_excess_mwh": 22241.99999999997,
+            "envelope_excess_mwh": 35377.499999999985,
+            "envelope_excess_edge_mwh": 18886.999999999996,
+            "max_impossible_mw": 561.0,
+            "min_f_model_when_impossible": 0.0,
+            "max_f_cems_when_impossible": 1.0754039497307002
+          }
+        ]
+      },
+      "B1_fires": false,
+      "B2_fires": false,
+      "B3_edge_dominated": true
+    }
+  },
+  "verdict": {
+    "B1_any_year": false,
+    "B2_any_year": false
+  }
+}
