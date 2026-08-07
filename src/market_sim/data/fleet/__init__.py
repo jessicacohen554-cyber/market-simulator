@@ -577,6 +577,7 @@ from market_sim.data.fleet.offer_surfaces import (  # noqa: F401
     build_ercot_offer_surface_conditional_markup,
     build_ercot_offer_surface_lowcurve_floorscoped_markdown,
     build_ercot_offer_surface_lowcurve_markdown,
+    build_ercot_offline_commit_target,
     build_neiso_offer_surface_conditional_markup,
     build_pjm_ct_measured_max_target,
     build_pjm_offer_midcurve_conditional_markup,

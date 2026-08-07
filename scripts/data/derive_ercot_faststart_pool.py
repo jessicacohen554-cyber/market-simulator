@@ -12,7 +12,14 @@ per year, the full-year publication-month corpus when it majority-covers the
 delivery year (2023, via the wall derive's ``_sced_source_files``), else the
 legacy sample-day extracts (2024/2025):
 
-* Pool rows: CT-class resources (SCGT90/SCLE90) telemetered OFFQS or OFFNS.
+* Pool rows: resources of the block's class telemetered OFFQS or OFFNS —
+  ``CT`` (SCGT90/SCLE90, the ERCOT-88 fast-start pool) and, since ERCOT-176,
+  ``CC`` (CCGT90/CCLE90, the SLOW-START tier of the offline-increment
+  re-pricing, ``ScenarioConfig.ercot_offline_commit_offer``). Each class is
+  measured on its own conduct against its own live capability; the
+  construction is otherwise identical, so the CT blocks are byte-identical
+  across the CC extension. ST_GAS is deliberately excluded (rule 19 + the
+  ERCOT-151 §3 condition: the steam lane is `R` from ERCOT-91).
 * **Above-LSL startable increment only** (charter §8.2 caveat c): per
   interval-resource, segment the SCED2 (as-dispatched) curve between
   ``max(LSL, 0)`` and ``min(step MW, HASL)`` — the below-LSL min-gen curve
@@ -105,6 +112,29 @@ OFFLINE_POOL = ("OFFQS", "OFFNS")
 # physics min-down <= 2 h, rule 12, this map is only the measured-data key).
 CT_RESTYPES = ("SCGT90", "SCLE90")
 
+# CC-class SCED Resource Types (the wall derive's CLASS_OF_RESTYPE "CC" scope)
+# — the SLOW-START tier of the offline-increment re-pricing (ERCOT-176,
+# ScenarioConfig.ercot_offline_commit_offer). Same construction as the CT
+# pool above, measured on this class's own OFFQS/OFFNS conduct; the
+# apply-time ELIGIBILITY gate is unit physics (min-down 4-8 h AND min-run
+# <= 12 h — the within-day start-and-run band, rule 12/18), never a class
+# tuple, and this map is only the measured-data key.
+#
+# ST_GAS is deliberately EXCLUDED (rule 19 and the ERCOT-151 §3 condition):
+# the steam class's own lane was REJECTED at ERCOT-91 on the ERCOT-89
+# zero-spurious/C3a guards — the trip is intrinsic to the DAM-basis ST
+# ladder in cold-snap hours — so its cell is `R` and re-testing it here
+# would breach DO-NOT-REDO. The wall derive excludes it for the same reason.
+CC_RESTYPES = ("CCGT90", "CCLE90")
+
+# Measured-data key per derived pool class. The CT block is the ERCOT-88
+# artifact (unchanged, byte-identical across this extension); CC is the
+# ERCOT-176 slow-start tier.
+POOL_CLASS_RESTYPES: dict[str, tuple[str, ...]] = {
+    "CT": CT_RESTYPES,
+    "CC": CC_RESTYPES,
+}
+
 _S2_MW = [f"SCED2 Curve-MW{i}" for i in range(1, 36)]
 _S2_PR = [f"SCED2 Curve-Price{i}" for i in range(1, 36)]
 _READ_COLS = [
@@ -124,8 +154,10 @@ _READ_COLS = [
 _LIVE_COLS = ["SCED Time Stamp", "Telemetered Resource Status", "HSL"]
 
 
-def _load_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
-    """``(live_df, pool_df, files)`` of CT-class SCED rows for ``year``.
+def _load_year(
+    year: int, restypes: tuple[str, ...] = CT_RESTYPES
+) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
+    """``(live_df, pool_df, files)`` of ``restypes``-class SCED rows for ``year``.
 
     ``live_df`` carries ALL CT rows at ``_LIVE_COLS`` (for the non-OUT live
     HSL sum and the interval->hoy map); ``pool_df`` carries the OFFQS/OFFNS
@@ -149,7 +181,7 @@ def _load_year(year: int) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
     for path in files:
         df = pd.read_parquet(path, columns=_READ_COLS)
         df = _delivery_year_rows(df, year)
-        df = df[df["Resource Type"].isin(CT_RESTYPES)]
+        df = df[df["Resource Type"].isin(restypes)]
         stat = df["Telemetered Resource Status"].astype(str).str.strip()
         live_frames.append(_coerce_sced_numeric(df[_LIVE_COLS].copy()))
         pool_frames.append(_coerce_sced_numeric(df[stat.isin(OFFLINE_POOL)].copy()))
@@ -243,9 +275,18 @@ def _prep_clock_gas(df: pd.DataFrame, gas_day: pd.Series) -> pd.DataFrame:
     return df[df["gas_day"] > 0].copy()
 
 
-def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[str]]:
-    """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``."""
-    live_df, pool_df, files = _load_year(year)
+def derive_year(
+    year: int, gas_day: pd.Series, restypes: tuple[str, ...] = CT_RESTYPES
+) -> tuple[dict, list[dict], list[str]]:
+    """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``.
+
+    ``restypes`` selects the measured pool class (CT = the ERCOT-88 fast-start
+    pool; CC = the ERCOT-176 slow-start tier). The construction is identical
+    for every class — only the row scope of both the pool numerator and the
+    live-capability denominator changes, so each class's share is measured
+    against its OWN live capability.
+    """
+    live_df, pool_df, files = _load_year(year, restypes)
     if live_df.empty:
         return {}, [], files
 
@@ -254,9 +295,9 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, list[dict], list[s
     segments = _pool_segments(pool)
 
     # Per-interval pool share of the class's LIVE capability: pool above-LSL
-    # startable MW / sum HSL over non-OUT CT rows (only-OUT-is-out — the
-    # measured DAM availability's own convention, so the share maps onto the
-    # capacity that overlay leaves in the LP).
+    # startable MW / sum HSL over the class's non-OUT rows (only-OUT-is-out —
+    # the measured DAM availability's own convention, so the share maps onto
+    # the capacity that overlay leaves in the LP).
     live = live_all[live_all["stat"] != "OUT"]
     live_mw = live.groupby("_ts")["HSL"].sum()
     pool_startable = (
@@ -322,22 +363,37 @@ def main() -> None:
     """Derive and write the fast-start pool ladder + share JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
+    ap.add_argument(
+        "--classes",
+        nargs="+",
+        default=list(POOL_CLASS_RESTYPES),
+        choices=list(POOL_CLASS_RESTYPES),
+        help="measured pool classes to derive (CT = ERCOT-88 fast-start pool, "
+        "CC = ERCOT-176 slow-start tier)",
+    )
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = ap.parse_args()
 
     gas_day = _gas_day_series()
-    per_year: dict[int, dict] = {}
-    coverage: dict[str, list[dict]] = {}
-    sources: dict[str, list[str]] = {}
-    for y in args.years:
-        per_year[y], cov, files = derive_year(y, gas_day)
-        coverage[str(y)] = cov
-        sources[str(y)] = files
-        if per_year[y]:
-            p70 = [lad[3][1] for lad in per_year[y]["ladder"]]
-            print(f"{y} CT pool: p70 mult by bin  = {p70}")
-            print(f"          pool_frac by bin   = {per_year[y]['pool_frac']}")
-            print(f"          intervals by bin   = {[c['intervals'] for c in cov]}")
+    per_class: dict[str, dict[int, dict]] = {}
+    coverage: dict[str, dict[str, list[dict]]] = {}
+    sources: dict[str, dict[str, list[str]]] = {}
+    for cls in args.classes:
+        per_year: dict[int, dict] = {}
+        cls_cov: dict[str, list[dict]] = {}
+        cls_src: dict[str, list[str]] = {}
+        for y in args.years:
+            per_year[y], cov, files = derive_year(y, gas_day, POOL_CLASS_RESTYPES[cls])
+            cls_cov[str(y)] = cov
+            cls_src[str(y)] = files
+            if per_year[y]:
+                p70 = [lad[3][1] for lad in per_year[y]["ladder"]]
+                print(f"{y} {cls} pool: p70 mult by bin  = {p70}")
+                print(f"          pool_frac by bin   = {per_year[y]['pool_frac']}")
+                print(f"          intervals by bin   = {[c['intervals'] for c in cov]}")
+        per_class[cls] = per_year
+        coverage[cls] = cls_cov
+        sources[cls] = cls_src
 
     result: dict = {
         "_provenance": {
@@ -353,22 +409,31 @@ def main() -> None:
             "method": (
                 "per-interval above-LSL startable segments (max(LSL,0) -> "
                 "min(step MW, HASL)) of the SCED2 offer curve of OFFQS/OFFNS "
-                "CT-class resources; MW-weighted quantile ladder of segment "
-                "prices as effective-HR multipliers (price / HH-daily+ERCOT-"
-                "basis gas); pool_frac = interval-mean pool startable MW / "
-                "sum HSL of non-OUT CT rows (only-OUT-is-out, the measured "
-                "DAM availability convention); derived within net-load-"
-                "percentile bins"
+                "resources of the block's own class; MW-weighted quantile "
+                "ladder of segment prices as effective-HR multipliers (price "
+                "/ HH-daily+ERCOT-basis gas); pool_frac = interval-mean pool "
+                "startable MW / sum HSL of that class's non-OUT rows "
+                "(only-OUT-is-out, the measured DAM availability convention); "
+                "derived within net-load-percentile bins. IDENTICAL "
+                "construction for every class block — only the row scope of "
+                "both numerator and denominator changes"
             ),
             "driver": (
                 "system net-load percentile within year (EIA-930 demand - "
                 "wind - solar), forward-native"
             ),
             "apply_gate": (
-                "unit physics min_down_hours <= 2 (rule 12), never a class "
-                "tuple; charter §9 (ercot-residual-midband-formation-lane)"
+                "unit physics, never a class tuple (rule 12/18). CT block: "
+                "min_down_hours <= 2 h (constants.FASTSTART_POOL_MIN_DOWN_"
+                "HOURS) — charter §9 (ercot-residual-midband-formation-lane). "
+                "CC block: 4 h <= min_down_hours <= 8 h AND min_run_hours "
+                "<= 12 h (constants.RA_BRIDGE_ECON_MIN_DOWN_HOURS / "
+                "OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX / OFFLINE_COMMIT_MIN_RUN_"
+                "HOURS_MAX) — the within-day start-and-run band, ERCOT-176 "
+                "(docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1)"
             ),
             "offline_pool_statuses": list(OFFLINE_POOL),
+            "class_restypes": {k: list(v) for k, v in POOL_CLASS_RESTYPES.items()},
             "ct_restypes": list(CT_RESTYPES),
             "netload_pct_edges": list(NETLOAD_PCT_EDGES),
             "ladder_quantiles": list(LADDER_QUANTILES),
@@ -396,11 +461,19 @@ def main() -> None:
             ),
             "frozen": (
                 "rule 23 — re-derive only on a SCED disclosure source-data "
-                "update, never because a residual moved"
+                "update, never because a residual moved. The CC block was "
+                "added at ERCOT-176 under a source-data change (the "
+                "ERCOT-157 delivery-2023 corpus) plus a NEW class scope; the "
+                "CT blocks are byte-identical across that extension"
             ),
         },
-        "CT": {"years": {str(y): per_year[y] for y in args.years if per_year[y]}},
     }
+    for cls in args.classes:
+        result[cls] = {
+            "years": {
+                str(y): per_class[cls][y] for y in args.years if per_class[cls][y]
+            }
+        }
 
     args.out.write_text(json.dumps(result, indent=1))
     print(f"wrote {args.out}")
