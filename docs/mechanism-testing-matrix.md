@@ -3288,10 +3288,21 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-140 (2026-08-07) — ONE OPEN ITEM. Item 1 is
-> DISCHARGED (stamp below); item 2 is the queue head. Neither was or is a price
-> lever and neither may be chartered as one.** *(Queue set by owner decision at
-> miso-139, 2026-08-06.)*
+> **LIVE QUEUE AS OF miso-141 (2026-08-07) — BOTH ITEMS DISCHARGED, QUEUE EMPTY.
+> Item 1 discharged at miso-140/140b; **item 2 discharged at miso-141** (stamp
+> below): the double count is CONFIRMED at ~5.8 GW and NO existing mechanism can
+> repair it, so nothing was armed. Neither item was or is a price lever and
+> neither may be chartered as one.** *(Queue set by owner decision at miso-139,
+> 2026-08-06.)* **THE LANE NEEDS A NEW OWNER-SELECTED ITEM.** Two candidates are
+> named and NEITHER may be opened without an explicit owner decision, because
+> both are mechanism changes (rules 19/24) whose value is basis correctness only
+> and whose price reach is already measured as too small: **(A)** miso-141's
+> named successor — a CLASS-AGNOSTIC net-summer basis switch covering CT as well
+> as CC, a PURE basis swap with the POF/age-derate drops kept behind their own
+> flag and the corrupt-filing plants handled explicitly; **(B)** miso-139 §10(3)'s
+> anchor-convention successor (per-class SUMMER-mean anchor, no year-round
+> rescale, selectable so the committed CHP identification is untouched). The
+> miso-137 object itself — the PRICE compression — remains unaddressed by both.
 >
 > **QUEUE ITEM 1 — EXECUTED and DISCHARGED at miso-140 (2026-08-07). NO LP, no
 > solve, no registration, keeper UNCHANGED at `2026-08-05-miso-132b-cc-committed`,
@@ -3401,8 +3412,11 @@ loss.
 > reported as progress against it. Unowned before this stamp; owned by the next
 > MISO session.
 >
-> **QUEUE ITEM 2 (NEXT — promoted to queue head at miso-140, 2026-08-07 on the
-> discharge of item 1) — THE FLAT SUMMER CAPACITY HAIRCUT vs THE NET-SUMMER `pmax`
+> **QUEUE ITEM 2 — DISCHARGED AT miso-141 (2026-08-07); stamp above. CONFIRMED
+> on measured evidence, ~5.8 GW, NO existing mechanism repairs it, nothing armed,
+> keeper UNCHANGED.** *(Original charter text follows.)* **(NEXT — promoted to
+> queue head at miso-140, 2026-08-07 on the discharge of item 1) — THE FLAT SUMMER
+> CAPACITY HAIRCUT vs THE NET-SUMMER `pmax`
 > BASIS (rule 14 `[R-ACCURATE]`), its own session.** Owner-selected 2026-08-06,
 > surfaced by miso-139 §10(2). MISO's merchant gas classes carry a flat
 > `SUMMER_CLASS_DERATE` (`fuel_trajectories.py`: **CC_REGULAR/CC_CHP 0.10,
@@ -3489,6 +3503,97 @@ loss.
 > Evidence: `results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`,
 > `_miso140_bench_refresh_gates.json`, `_miso140_c3a_reverification.json`,
 > probe `scripts/probes/_miso140_bench_refresh_gates.py`.
+
+> **QUEUE STAMP miso-141 (2026-08-07) — QUEUE ITEM 2 EXECUTED AND DISCHARGED.
+> THE DOUBLE COUNT IS **CONFIRMED** ON MEASURED EVIDENCE AND IS **~5.8 GW**, BUT
+> **NO EXISTING MECHANISM CAN REPAIR IT**, SO NOTHING WAS ARMED. NO LP, NO SOLVE,
+> NO REGISTRATION, NO `ScenarioConfig` FIELD, NO PARAMETER, KEEPER UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`. PREREG
+> `PREREG-miso141-summer-derate-basis-2026-08-07.md` pushed at `15de62ea` before
+> any adjudicating statistic, with **seven falsifiable numeric predictions**, five
+> traps each carrying a pre-committed counter-measurement, and the decisive gate
+> specified so that it does **not depend on provenance at all**. §0 re-verified
+> from committed artifacts (`calibration_verdict.py --run-id`, no re-solve, all
+> three years in one invocation): `NOT-YET`, rubric v3.1, 8 criteria, sole FAIL
+> C3a `price_mean` RT **−0.4 / −6.0 / −14.1 %** (DA **−4.4 / −8.4 / −15.8**), sole
+> ledgered caveat C3c 1 of 1, C3b PASS 0.075 / 0.112 / 0.191 — **identical to the
+> charter §0 in every cell**, determination unchanged.
+> **(a) THE BASIS IS NET-SUMMER, measured per unit** on the model's own loader:
+> **100.0 %** of matched class capacity within 1 % of the EIA-860 net-summer
+> rating for **CT_PEAKER / CT_CHP / CC_CHP**, and 83.6 % for CC_REGULAR. The
+> pre-registered counter-branch (basis is NAMEPLATE), which would have killed the
+> charter outright, was checked FIRST and **did not fire**.
+> **(b) THE FLAT DERATE IS THE SAME OBJECT AS THE GAP ALREADY IN THE BASE.**
+> `SUMMER_CLASS_DERATE` removes a further flat 10 % (CC) / 12.5 % (CT) on top of
+> it; the measured clean-subset nameplate→summer gap is **CC_REGULAR 11.40 %,
+> CC_CHP 14.34 %, CT_PEAKER 16.35 %, CT_CHP 15.25 %**. Excess = `d/(1−d)` =
+> **11.11 % (CC) / 14.29 % (CT)** of the class's own summer capability, an order
+> of magnitude over the 2 % materiality bar. CT_PEAKER's stacked summer
+> availability sits at **67.0–67.5 % of nameplate** against a published summer
+> rating of **83.65 %**. G-1 returns **P-A and P-C jointly**: no derivation
+> artifact exists, and the committed record identifies the object as the
+> nameplate→net-summer gap in three independent places — `fuel_trajectories.py`'s
+> own "UNCITED FLAT APPROXIMATION" note, `capacity-audit-860-923-campd.md:134`,
+> and `cc-high-cf-investigation.md:267-275` naming it in terms (*"a second summer
+> derate on a number that was already the summer rating"*). MISO's exclusion is a
+> **recorded deferral** — commit `4fb54b53`: *"ERCOT (CAMPD-bin basis) and MISO
+> (cap-only static keeper) left as-is"*.
+> **(c) THE ALTERNATIVE READING IS REFUTED WITHOUT PROVENANCE — the load-bearing
+> result.** If the derate were an INCREMENTAL loss below the rating point, its
+> honest magnitude at MISO's own committed slopes is **−1.9 to −2.0 % (CC)** and
+> **−3.6 to −3.8 % (CT)** — an **UPRATE**, because the mean summer hour sits
+> **8.3–11.9 °C BELOW** the p99 summer-peak rating condition in **18 of 18**
+> zone-years. The flat derate is **3.3–5.2× too large AND inverted in sign**. This
+> would stand even if a derivation surfaced tomorrow.
+> **(d) NOT A LEVER — and the margin is much tighter than the family miso-139
+> closed.** Restored summer h12–17 capability **5,933 / 5,853 / 5,686 MW** against
+> miso-139 §7's own cushion **17,544 / 18,828 / 13,720 MW** (**reproduced here to
+> the MW**, three years for three, from the keeper's committed sidecar) = **2.4–
+> 3.2× inside**. Still cannot reach the marginal unit, so the verdict holds — but
+> it is **~12×** the ambient family's 456–497 MW reach. **2.4× is not 30×**, and
+> the next session must not treat it as the same kind of "safely inside". The
+> repair ADDS capability, so its price sign is DOWN, the wrong way for a model
+> already −14.1 % low: **no C3a claim attaches and none was made.**
+> **(e) WHY NOTHING WAS ARMED (P6 confirmed, and worse than predicted).**
+> `cc_nameplate_summer_derate` reaches CC only — **50.3–52.1 %** of the MW — while
+> the CT half (**2,824–2,841 MW/yr**) has NO mechanism; and it is **not a basis
+> swap**: on this `outage_source="historic"` keeper it ALSO drops the statistical
+> POF and the age/performance derate for CC, with `wefor_residual = None`, i.e.
+> **four changes in one flag** (rule 19 `[R-ONE-MECH]`). Cell
+> `cc_nameplate_summer_derate` MISO **STAYS `U`** — adjudicated as a candidate and
+> refused as insufficient, but **no solve spent, so no tested verdict is
+> licensed**; the note + `ev.M` record the measurement (rule 28(b)). No other
+> ISO's cell moved (28(d)); no new field, so 28(c) does not fire.
+> **(f) MISO IS ALONE, measured across every committed bundle** (rule 25: a READ,
+> no transfer): `plant_level_fleet=True` **and** the flag `False` is **MISO only,
+> 34/34**, against CAISO 20/20, NYISO 18/18, NEISO 9/9, PJM 6/6 all `True`. ERCOT
+> is `False` but not comparable — CAMPD-bin `Nameplate_MW` basis, so its flat
+> derate sits on nameplate and is **not** a double count.
+> **RECORDED AGAINST INTEREST, twice.** (i) **P3 and P5 both UNDER-SHOT the
+> object** — predicted a 3–8 % CC gap and 2.5–4.5 GW of reach, measured **11.4 %**
+> and **5.7–5.9 GW**. The prior was anchored on miso-139's summer↔WINTER spread,
+> and *even while writing Trap 1 to warn against exactly that basis crossing I
+> still let it set my numeric band*: the trap caught the reporting, not the prior.
+> (ii) The first cushion run read **48.6–51.5 GW** because the sidecar splits coal
+> into `COAL_BIT`/`COAL_LIGNITE`/`COAL_PRB` while the model's `plant_group` is the
+> bare `COAL` — the unmapped lookup silently returned zero dispatch and handed
+> ~32 GW back as phantom headroom. Caught only because it disagreed with
+> miso-139's committed prior; fixed with an explicit alias map **and an assertion**
+> that now fails loudly on any unmapped class.
+> **A LIMIT DISCLOSED RATHER THAN PAPERED OVER:** the git-history leg of G-1 is
+> **not measurable here** — this clone is SHALLOW (12 grafts; `rev-list --count`
+> = 1 at the boundary), so `git log -S` sees every file as "added" at the graft,
+> and the API path reaches back only to 2026-06-27. **No claim of "no commit ever
+> derived it" is made**; what is certified is that no derivation artifact exists
+> on disk at HEAD and that miso-94 independently recorded the same.
+> **LESSON — A DERATE IS A DELTA; NAME ITS BASE OR IT IS NOT A NUMBER.** The same
+> literal 0.125 is defensible against nameplate and indefensible against
+> net-summer. Three audits checked the *value* and none checked the *base*.
+> `results/calibration/FINDING-miso141-summer-derate-double-count-confirmed-2026-08-07.md` ·
+> `PREREG-miso141-summer-derate-basis-2026-08-07.md` ·
+> `_miso141_summer_derate_basis.json` · `_miso141_cc_rows_and_cushion.json` ·
+> probes `scripts/probes/_miso141_summer_derate_basis.py`,
+> `scripts/probes/_miso141_cc_rows_and_cushion.py`.
 
 > **QUEUE STAMP miso-139 (2026-08-06) — THE AMBIENT CAPABILITY-DERATE IS **NOT**
 > "ALREADY ARMED AND MIS-SCOPED". IT IS ARMED IN AN **ANCHORING CONVENTION THAT
