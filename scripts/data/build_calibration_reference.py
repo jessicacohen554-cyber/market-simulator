@@ -144,12 +144,28 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # for the frozen keeper, never a calibration year. 2021 added 2026-07-13
     # under the same marker's rule-22 Option-2 DATA-INTAKE channel (owner
     # authorization, calibration-complete.json intake_log) — a pre-window
-    # holdout year, never a calibration year either. 2018-2020 are NOT added:
-    # eia_demand_profiles.parquet (the demand driver load_demand_meta reads)
-    # has no NEISO rows before 2021, so _demand_totals hard-fails — see
-    # docs/holdout-data-equivalency-register-2026-07.md sec. NEISO (MISSING,
-    # fix = extend eia_demand_profiles{,_meta}.parquet, F3/F4-class).
-    "NEISO": (2021, 2022, 2023, 2024, 2025),
+    # holdout year, never a calibration year either.
+    # 2019 and 2020 added 2026-08-07 (session neiso-89), on the SAME F3 closure
+    # that unblocked PJM 2019 above: the blocker was never the hourly demand
+    # DRIVER (load_demand('NEISO', 2019) has resolved 8,760 h off the per-BA
+    # `ISNE hourly` extract all along — neiso-88 §2.3 corrects neiso-87 §3.1 on
+    # this) but load_demand_meta, which fell through to the legacy
+    # eia_demand_meta.parquet summary and raised. curate_demand_profile's
+    # pre-window partition closes it at the curation seam for all six ISOs.
+    # Unlike PJM, NEISO's 2020 per-BA series is CLEAN — 0 hours flagged by the
+    # physical-bounds screen, max/median 1.93 against the 5.0 ceiling and the
+    # 2.1 empirical bound — so the metering-artifact exclusion that keeps PJM
+    # 2020 out does not apply here (measured this session; PJM 2020 peaks at
+    # 192,229 MW, NEISO 2020 at 24,697 MW against a 12,790 MW median).
+    # This is DATA READINESS ONLY (rule 22 as rewritten 2026-08-06: "what is
+    # held out is the SCORE, never the DATA"). 2019 is LOCKED-TEST tier and
+    # NEISO holds no `final` marker; 2020 is validation tier and the holdout
+    # spend freeze is ACTIVE — so this entry authorizes no solve, no scoring
+    # and no registration of either year. Its whole purpose is rule 22's
+    # "already configured precisely like the frontier keeper, with nothing left
+    # to prepare": the inputs are applied consistently across ALL years now, so
+    # that if a grant is ever issued nothing is assembled mid-spend.
+    "NEISO": (2019, 2020, 2021, 2022, 2023, 2024, 2025),
     # MISO is the Stage-F addition: the EIA-923/930 by-fuel and demand
     # extracts all cover 2023-2025 (the 2025 EIA-923 release is the partial
     # monthly survey, handled by the incomplete-vintage guard). 2021-2022
