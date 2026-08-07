@@ -21,8 +21,12 @@ Source: ``data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet``
 recorded so a partially-covered series (e.g. CAISO 2023 DA, whose Jan–Feb aged
 out of OASIS retention) is visibly a LOWER BOUND on the count.
 
-Holdout guard (CLAUDE.md rule 22): only 2023–2025 are read or written. The
-script refuses to emit any other year even if present in the source files.
+Holdout guard (CLAUDE.md rule 22), TIER-AWARE: the training years 2023-2025
+always emit; any other year present in the source files emits only for an ISO
+holding the marker block for THAT year's tier (``complete`` for the validation
+ladder 2020-2022, ``final`` for the locked test 2019 / H1-2026). The gate is
+:mod:`scripts.lib.holdout_policy` and it fails closed, so an unenumerated year
+resolves to the strictest tier and is refused.
 
 Usage:
     uv run python scripts/data/derive_actual_tail.py
@@ -74,13 +78,25 @@ TAIL_THRESHOLD = {
 # locked-tier row emitted off a declaration that does not authorize it.
 ALLOWED_YEARS = tuple(sorted(holdout_policy.CALIBRATION_YEARS))
 
-# Out-of-training years this deriver will CONSIDER at all. Deliberately NOT
-# the full ``holdout_policy.VALIDATION_YEARS`` ladder: rule 22 makes the
-# backward rungs (2018/2020/2021) staged owner decisions taken one at a time,
-# and no ISO has been granted one — PJM's own marker reads "validation ONLY
-# (2022)". Widening this tuple is that separate owner decision; the tier gate
-# below then still requires the right marker block for whatever is added.
-CONSIDERED_HOLDOUT_YEARS: tuple[int, ...] = (2022, 2026)
+# NOTE (neiso-89, 2026-08-07): this module used to carry a SECOND year ladder,
+# ``CONSIDERED_HOLDOUT_YEARS = (2022, 2026)``, gating emission on top of the
+# tier check below. It is DELETED, not widened and not zeroed (rule 26
+# ``[R-DELETE]``), because rule 22's 2026-08-06 rewrite removed the premise it
+# rested on: "WHAT IS HELD OUT IS THE *SCORE*, NEVER THE *DATA*", and per-window
+# data-intake authorizations are no longer a thing to enumerate. With it gone
+# the emission gate has exactly ONE point of control — the tier marker each ISO
+# does or does not hold — which is what :mod:`scripts.lib.holdout_policy`'s own
+# docstring describes and what the other three rule-22 gates already do.
+#
+# This is a RESTRICTION-PRESERVING simplification, not a relaxation: the tier
+# gate is untouched and still fails closed, so an unenumerated year (2017, 2018)
+# resolves to LOCKED-TEST tier and needs a ``final`` marker no ISO holds.
+# Measured cross-ISO impact of the deletion, against the marker file at HEAD
+# (``complete``: NEISO/NYISO/PJM; ``final``: EMPTY): six rows are newly emitted
+# — NEISO/NYISO/PJM x {2020, 2021}, every one of them VALIDATION tier for an ISO
+# that already holds the validation marker authorizing that ladder. NOTHING
+# locked-tier is unlocked for anyone: 2019 and 2026 stay absent for all six ISOs,
+# and ERCOT/CAISO/MISO gain nothing because they hold no marker at all.
 
 _MARKER_PATH = (
     Path(__file__).resolve().parent.parent.parent / holdout_policy.MARKER_FILE
@@ -99,17 +115,18 @@ def _marker_doc() -> dict:
 
 
 def _year_emittable(iso: str, year: int, marker_doc: dict) -> bool:
-    """Whether ``iso``'s ``year`` may be emitted under the rule-22 tier gates.
+    """Whether ``iso``'s ``year`` may be emitted under the rule-22 tier gate.
 
-    Two conditions, both required for an out-of-training year: it is one this
-    deriver considers at all (:data:`CONSIDERED_HOLDOUT_YEARS`), and the ISO
-    holds the marker block for that year's tier.
+    Training years always emit. An out-of-training year emits only when the ISO
+    holds the marker block for THAT YEAR'S TIER (``complete`` for the validation
+    ladder, ``final`` for the locked test) — the single point of control, per
+    the note above. Fails closed through
+    :func:`holdout_policy.tier_for_year`: a year in none of the enumerated sets
+    is treated as locked-test, the strictest tier.
     """
     tier = holdout_policy.tier_for_year(year)
     if tier == holdout_policy.TIER_TRAIN:
         return True
-    if int(year) not in CONSIDERED_HOLDOUT_YEARS:
-        return False
     return holdout_policy.authorized(marker_doc, iso.upper(), tier)
 
 
@@ -154,9 +171,11 @@ def derive() -> dict:
             "source series updates (rule 23: re-derivation commits cite the "
             "data change). Years restricted by the rule-22 TIER gates "
             "(scripts/lib/holdout_policy): 2023-2025 always; a validation-"
-            "ladder year (2018/2020/2021/2022) only for an ISO in the marker "
+            "ladder year (2020/2021/2022) only for an ISO in the marker "
             "file's `complete` block; a locked-test year (2019, H1-2026) only "
-            "for an ISO in `final`."
+            "for an ISO in `final`. The tier marker is the SOLE gate — any "
+            "year not enumerated as train or validation (2017, 2018) fails "
+            "closed to the locked tier."
         ),
         "thresholds": TAIL_THRESHOLD,
         "isos": isos,
