@@ -6468,6 +6468,66 @@ capability envelope/floor pair is now the keeper — cells K above):
 
 ### 5.6 NEISO — keeper `2026-08-05-neiso-83-ca1-reclass` (**PROMOTED at neiso-83, 2026-08-05** — `cc_steam_part_reclass` `U` → `K` on the pre-registered V3 branch; the superseded `2026-08-04-neiso81-chpheatrate` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior header state: **PROMOTED at neiso-81, 2026-08-04** — `measured_chp_heat_rates` re-adjudicated `O` → `K` on the OWNER'S STANDING STANDARD; the superseded `2026-08-03-neiso-caiso156-meter-screen` is SUPERSEDED-NOT-RETRACTED and its recipe is carried forward with exactly one added delta. Prior keeper id was corrected at neiso-78 — the header had gone stale at `2026-07-31-neiso-72-hy-window`, which caiso-159 SUPERSEDED-NOT-RETRACTED on 2026-08-03); **rule-28(c) column CLOSED at neiso-78 (item 5d)**; target: C3c (ledgered; FRONTIER DECLARED — **C3c CHARTER WRITTEN at neiso-75, 2026-08-02; its ONE lever REFUTED at Phase-0 at neiso-76, same day**); ~~item 6~~ CLOSED at neiso-71 and its capacity prerequisite ADJUDICATED-ARTIFACT at neiso-73; ~~item 7~~ EXECUTED-with-keeper at neiso-71; ~~item 4~~ EXECUTED-with-keeper at neiso-72; ~~item 8~~ REFUSED-at-screen at neiso-74 (premise inverted — the defect is diurnal price amplitude, not storage); ~~item 1~~ **SPENT at neiso-76 — both limbs refuted, no solve spent, `da_virtual_bids` NEISO `O`→`R`**; **BOTH CROSS-ISO QUEUE ITEMS SPENT at neiso-80 (2026-08-04, NO LP, NO solve, NO run registered, keeper UNCHANGED)** — see the neiso-80 block immediately below; **THE LEVER QUEUE'S ONE LIVE ITEM IS SPENT AT neiso-81 — see the block immediately below**
 
+**neiso-90 (2026-08-07) — A `final`-READINESS RE-ASSESSMENT. NO LP, NO SOLVE, NOTHING
+SCORED OR REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL VERDICT
+MOVED (rule 28d — no mechanism was tested), NO `ScenarioConfig` FIELD (rule 28c not engaged),
+NO HOLDOUT YEAR SPENT, FREEZE UNTOUCHED AND NOT ENGAGED.** The lever queue stays CLEARED and
+no queue item was opened; the session re-asked the `final` question after neiso-88 (the
+`load_demand` correction) and neiso-89 (PR #3693) closed the four prerequisites neiso-87
+refused on. **VERDICT: STILL DO NOT GRANT — but every reason neiso-87 gave has expired and
+the surviving one is different and permanent.**
+
+**(a) 2019 IS NOW FULLY PREPARED.** Every input the keeper arms resolves at HEAD for 2019
+*and* 2020, with 2023 carried as a control (`scripts/probes/neiso90_final_prereq_audit.py`,
+loader-resolvability only). Two of neiso-87 §3.2's remaining ⚠ rows also dissolve on the code
+path: `parasitic_load_factors` is **year-independent** (the only solve-path consumer,
+`campd_bins._ramp_parasitic_factor_map`, reads the pooled `year == 0` rows exclusively; the
+per-year rows have no consumer), and `capacity_actuals_neiso.csv` has **zero consumers in
+`src/market_sim/`** — it is the capacity-hindcast target, not a backcast input.
+
+**(b) THE LAST APPARENT BLOCKER IS THE TIER GATE ITSELF, AND IT SELF-HEALS.** The missing
+NEISO 2019 row in `actual_tail.json` is **not a data gap** — the source hub series holds
+8,760 h at coverage 1.000 — it is `derive_actual_tail._year_emittable` refusing a locked-tier
+year to an ISO with no `final` marker. Granting `final` unlocks it (verified in memory,
+nothing written). **But it is a live ORDERING HAZARD**: the deriver is a hand-run committed
+part, so a 2019 solve run before re-running it makes C3c **SKIP** — not the free PASS
+neiso-87 predicted, and *worse*, since a SKIP caps the determination at
+CALIBRATED-WITH-CAVEATS and names C3c unscored. `_apply_c3c_standing_rule` does **not** cover
+it: the rule opens on `status == FAIL` and a SKIP is not a FAIL.
+
+**(c) THE DISCRIMINATION ARGUMENT HOLDS AND SHARPENS — AND IT GENERALISES TO EVERY UNTOUCHED
+YEAR.** 2019's *whole-year* RT hub maximum is **$261.35**, $38.65 UNDER the $300 threshold
+(2020: $236.11); actual RT h > $300 is 0 and 0. At `TAIL_SMALL_COUNT = 10` the small-count
+branch passes any model tail 0–10 h — **already demonstrated in-sample: NEISO 2024 (actual
+8 h, model 0 h) takes exactly this silent free PASS**, which is why the keeper prints C3c
+CAVEAT rows for 2023 and 2025 only. Actual RT tails across the working span are 2019 **0**,
+2020 **0**, 2021 **2**, 2022 **117**, 2023 15, 2024 8, 2025 20 — so **the ONLY out-of-training
+year that can fail C3c is 2022**, which is validation tier, already authorized, already spent
+twice and re-spendable. **No never-touched year can test the criterion the frontier is
+declared on, and none ever will.** Corollary for this matrix's own record: the C3c standing
+rule declared 2026-08-06 has exactly ONE year in NEISO's out-of-training span it can ever fire
+on — 2022, spent the day before the rule existed.
+
+**(d) THE NAMED CONDITION INVERTS neiso-87's.** Spend the one-shot when the C3c lane arms a
+tail-forming mechanism — not because 2019 could then test **sensitivity** (it never can; the
+actual is 0), but because it would then test **specificity**: at actual = 0 the small-count
+guard FAILS any model tail > 10 h, making 2019 the cleanest zero-scarcity year on record for
+catching a new mechanism that over-fires. Today, with the model tail identically 0, that test
+is trivially passed and carries no information. **Instrument recommendation: if out-of-training
+evidence is wanted now, spend a VALIDATION touchpoint — 2021 first (adjacent to the worked
+2022, no COVID-demand confound), 2020 second — needing only a freeze lift, not a `final` grant.**
+**Independently: the grant's OTHER half is hard-blocked** — `actual_lmp_hourly_NEISO.parquet`
+carries 2018–2025 and **no 2026 rows at all**, so H1-2026 cannot be scored on C3a/C3b/C3c under
+any ordering; that is an ordinary unrestricted intake gap, not a marker question.
+
+**Also flagged, not acted on (owner-editable governance files):** the D-23 correction has two
+residues — `holdout-freeze.json`'s 2026-08-06 `re-armed` history entry still asserts "the SPENT
+one-shot stands as scored", contradicting the corrected `lift_scope` in the same file (and that
+file is read by a live gate), and `calibration-complete.json`'s `final._note` still cites the
+withdrawn "2019 is unsolvable at HEAD (no NEISO demand rows before 2021)" as its reason. The
+conclusion both support is still correct; the first clause of the second is not.
+`results/calibration/ASSESSMENT-neiso90-final-reassessment-2026-08-07.md`.
+
 **neiso-88 (2026-08-06) — A FORECAST-READINESS ASSESSMENT. NO LP, NO SOLVE, NOTHING
 SCORED OR REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL
 VERDICT MOVED (rule 28d — no mechanism was tested), NO `ScenarioConfig` FIELD (rule 28c
