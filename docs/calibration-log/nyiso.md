@@ -5661,3 +5661,108 @@ Citation chain: `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.m
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → **owner decision D-23, SIGNED
 at the 2026-08-06 sitting Addendum X.6**. Full record:
 `docs/handoffs/neiso-record-correction-2026-08-06.md`.
+
+## 2026-08-07 — nyiso-131: KEEPER → `2026-08-07-nyiso-131-taxgs-arm` (owner decision D-27, gas_st taxonomy)
+
+**GOVERNANCE lane, committed artifacts only. NO SOLVE, no mechanism tested, no year touched,
+no cell verdict moved, no matrix row added.**
+
+**Owner decision D-27, SIGNED at the 2026-08-06 sitting Addendum AA.4 (2026-08-07)**, verbatim:
+*"D-27 — SIGNED AS RECOMMENDED: NYISO promotes now, MISO defers."* This session executes the
+NYISO half only; **MISO's paired `taxgs` arm stays registered-not-promoted** by the same decision,
+pending its own lane settling the Addendum AA.2 rubric-v3.1 C3a re-score question, and no MISO
+file was touched.
+
+### What was promoted
+
+`2026-08-06-nyiso-128-solar-basis` → **`2026-08-07-nyiso-131-taxgs-arm`**
+(bundle `results/calibration/nyiso131_taxgs_arm`, years 2023–2025, registered at the
+taxonomy session under the Addendum-D paired-control + HOLD-PROMOTION discipline).
+
+**It is the incumbent's own recipe, not a new one.** The arm is a same-head `replay_keeper` of
+the keeper's own bundle (`nyiso128_treatment`) with owner decision **D-25** applied. Verified,
+not asserted: of the arm's 698 `scenario_config` fields, the **693 shared with the keeper are
+identical (zero differing)**, and the 5 arm-only fields are entries that landed on `main` after
+the keeper solved, **all five at default `False`** — including `nyiso_li_tsl_n11_security`, the
+nyiso-130 lever rejected on its own kill gate, confirmed **not armed**. So the whole nyiso-128
+lineage (nyiso-100 SIL retirement → 109 zonal gas-offer anchor → 117 NYC RCPF → 118 ORDC measured
+step span → 119 SENY increment → 120 East River scope gate → 125 seam envelope → 128 solar basis)
+stays armed and unchanged.
+
+**What D-25 changes:** natural-gas steam turbines (EIA-860 prime mover `ST`, energy source `NG`)
+map to the dedicated `gas_st` fuel — the fuel the CAMPD bin path always carried via
+`BIN_GROUP_TO_FUEL` — instead of folding into `gas_ct`. A rule 14 `[R-ACCURATE]` correction: the
+class structure was already right (`classify_plant` has had `ST_GAS`/`ST_CHP` all along) and only
+the **fuel label on the loader record** was wrong, where it set the heat-rate fallback, VOM,
+EFORd, CO2/NOx and the **scoring-target fuel**. NYISO's entire solve-affecting residue is **one
+synthesized-bin heat rate** — RED-Rochester ST_CHP, 11.454 → 10.3 MMBtu/MWh on 119.6 MW. Zero
+free parameters, zero `ScenarioConfig` fields (so rule 28(c) books no matrix row; CI's
+`mechanism-matrix-guard` checks that half and there is no new field).
+
+### Rule 22 D-5(b) re-key — determination RE-VERIFIED, stop does NOT fire
+
+NYISO holds `complete`, so the marker's `keeper` field re-keys **and** its `determination` is
+re-verified against the new run before the promotion commit lands. Run:
+`scripts/calibration_verdict.py --run-id 2026-08-07-nyiso-131-taxgs-arm`, committed artifacts
+only, **never a solve**.
+
+| | incumbent `nyiso-128-solar-basis` | promoted `nyiso-131-taxgs-arm` |
+|---|---|---|
+| determination | CALIBRATED-WITH-CAVEATS | **CALIBRATED-WITH-CAVEATS** |
+| C1 / C2 / C3a / C3b / C4 / C6 / C8 | PASS | **PASS** (identical) |
+| C3c | lone ledgered caveat | **lone ledgered caveat** (identical) |
+| ledger budget | 1 of 1 | **1 of 1** |
+
+**The label is identical, so D-5(b)'s worse-determination stop does not fire and no escalation is
+owed.** The re-verification is criterion-for-criterion, not label-only. The only difference across
+the two scorer runs is an **ungated SKIPPED diagnostic line** (C3a-2023 DA diagnostic
++6.7 % → +6.6 %).
+
+### Deltas, reported at full size
+
+Verdict grain: nothing moves. Hourly grain: not byte-identical.
+
+| year | class energy deltas (TWh, arm − control) | demand-wt ΔLMP | max zonal \|ΔLMP\| |
+|---|---|--:|--:|
+| 2023 | ST_CHP +0.037; ST_GAS −0.016; CC_REGULAR −0.011; CC_CHP −0.007 | −0.013 $/MWh | 1.25 |
+| 2024 | ST_CHP +0.052; CC_REGULAR −0.023; CC_CHP −0.016; ST_GAS −0.012 | −0.023 $/MWh | 3.85 |
+| 2025 | ST_CHP +0.005; CC_REGULAR −0.002; CC_CHP −0.001; ST_GAS −0.001 | −0.002 $/MWh | 2.71 |
+
+34 of 188 numeric verdict fields move; **no gate is approached, let alone crossed**. Direction is
+physical and follows from the sign of the correction: the corrected (cheaper, EIA Table 8.2) heat
+rate lets the cogen bin run more, displacing merchant CC and the ST_GAS class.
+
+### What this promotion does NOT do
+
+* **Does not close, narrow or re-open C3c.** Tail counts are the incumbent's; the diagnosed owner
+  is unchanged (100 % of the modelled tail in all three years is Long Island inside HB14-21 with
+  both Zone-K import paths at their bound). The successor remains the **chartered joint
+  reconciliation** of the Zone-K transfer bound and the downstate ST_GAS `min_gen` floor under
+  rule 19 `[R-ONE-MECH]` — the bare 940 MW number swap was pre-registered, tested and **rejected**
+  on kill gate K6 at nyiso-130, and must not be re-tested.
+* **Does not restore frontier status.** NYISO's frontier was CLEARED 2026-08-06 and stays cleared.
+* **Does not touch the holdout posture.** `complete` (validation only) untouched, NYISO stays
+  **absent from `final`**, and the ACTIVE holdout spend freeze independently blocks every
+  out-of-training solve. 2023–2025 only.
+* **Does not change the lever queue:** (1) the joint Long Island transfer-bound / `min_gen`
+  reconciliation, (2) the NYISO solar **CF level** (`RENEWABLE_AVG_CF` 0.15 Tier-3, realized
+  ~0.133, vs a measured 0.1955 on the registered fleet).
+
+### Artifacts changed
+
+`frontend/data/backcast/keepers/NYISO.json` (keeper + promotion note),
+`frontend/data/backcast/status/NYISO.js` (rebuilt, `build_status.py --iso NYISO`),
+`frontend/data/backcast/calibration-complete.json` (D-5(b) re-key + `rekey_history`),
+`docs/codebase-site/data/mechanism-matrix.js` (keeper stamp, header, NYISO gates clause),
+`docs/mechanism-testing-matrix.md` (§5.5 prose header), this log, and
+`docs/handoffs/nyiso-taxgs-promotion-2026-08-07.md`.
+
+Gates run: `scripts/audit_keepers.py --iso NYISO` **PASS 0 failures / 0 warnings** (M1),
+`scripts/check_mechanism_matrix.py` clean on all four checks.
+
+Evidence: `docs/handoffs/taxonomy-gas-st-2026-08-07.md` §4.1,
+`docs/handoffs/ffr-owner-sitting-2026-08-02.md` §§AA.3–AA.4,
+`docs/handoffs/nyiso-taxgs-promotion-2026-08-07.md`.
+
+* **Session numbering:** `nyiso-131` is consumed by this promotion (the run id
+  `2026-08-07-nyiso-131-taxgs-arm` already carries it). Next number: **nyiso-132**.
