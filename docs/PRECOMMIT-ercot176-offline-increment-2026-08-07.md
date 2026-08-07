@@ -325,4 +325,80 @@ cap.
 * **Rules 15/16:** both runs registered, all three years, in one bundle each.
 * **GitHub Actions:** no workflow is added; both solves run in-session.
 
+---
+
+## AMENDMENT 1 — 2026-08-07, pre-derive and PRE-SOLVE: the composition seam is corrected from ADDITIVE replace-by-mask to a bid-LEVEL `max()` reconciliation
+
+**Status when written: no year solved, no measurement of the arm taken, the CC
+ladder not yet derived.** Recorded here rather than discovered afterwards, in the
+same manner PRECOMMIT-ercot172 §5 requires of its own G-BIT/G-SPAN election
+("whichever applies is stated before the solve, never after").
+
+**What was wrong.** §1 and §2 above specified the ERCOT-88 form: an additive
+markup `max(0, target - mc_base)` delivered through the `mc_bid_adjust` seam and
+composed REPLACE-BY-MASK. Implementation against the solve core shows that seam
+is additive against a bid that **already carries P1's monthly startup
+amortization**:
+
+```
+mc_bid = mc_base + compute_monthly_markup(...) + mc_bid_adjust     # solve.py
+```
+
+So an additive form of this tier prices its rows at **`ladder + startup`**. The
+measured ladder is **start-INCLUSIVE by construction** — that is the entire
+identification (§0.2) — so the additive form **double-counts the start**. §2 of
+this precommit already forbids exactly that ("P1 startup amortization … must be
+REPLACED, not stacked"); what §1 could not know is that the seam it named cannot
+deliver it, because the startup markup is computed *inside* `run_energy_solve`,
+after `mc_bid_adjust` has been passed in. The two clauses were in conflict and
+the anti-double-count clause is the one that governs.
+
+**The correction.** The tier returns a bid **LEVEL** and goes to the
+purpose-built `p1_bid_max_target` seam
+(`pipeline.solve.apply_bid_max_target`), which applies `max(bid, target)` **after**
+the startup amortization. Builder renamed accordingly
+(`build_ercot_offline_commit_target`).
+
+This seam exists for precisely this failure: its own docstring records that the
+additive form of the analogous PJM CT_FAST reprice over-expressed at **CT −12
+TWh** (pjm-101/102) and was replaced by the `max()` reconciliation (pjm-103).
+Using it here is precedent-following, not novelty.
+
+**Why the correction is strictly safer, not a loosening:**
+
+* **The start is counted once.** Whichever of {model bid incl. amortization,
+  measured start-inclusive ladder} is higher sets the row — never their sum.
+* **It cannot LOWER any price.** `max()` can only raise a bid, so the tier can
+  never undercut a level another measured surface set. §4 SP-5 becomes
+  structural rather than an assertion to check.
+* **Rule 19 `[R-ONE-MECH]` is satisfied by reconciliation rather than by
+  precedence.** No mechanism stacks on another's residual — the seam's stated
+  contract ("RECONCILES with — never adds to").
+
+**Consequential edits to what was pre-registered** (nothing else changes; the
+mechanism, class scope, physics band, artifact, year-scoping, guards, kill gates
+and predictions all stand exactly as written):
+
+* **§1 / §2** — "REPLACE-BY-MASK" is replaced by "bid-LEVEL `max()`
+  reconciliation" wherever it describes *this tier's* composition. The rule-19
+  table's rows are otherwise unchanged: the gas commitment bridge stays disjoint
+  by object (bound vs price), the CT pool disjoint by physics, the steam/coal
+  lanes disjoint by min-run. The wall/RT/peak surfaces are now **reconciled by
+  `max()`** rather than replaced — a weaker claim on those rows, and the honest
+  one.
+* **§4 SP-4** is restated: *on the tier's own row-hours the composed P1 bid
+  equals `max(control bid, tier level)`* — proving reconciliation, and in
+  particular that the tier's rows are **not** priced at `ladder + startup`. The
+  old formulation (composed == tier markup alone) described the additive design
+  and is void.
+* **§4 SP-5** is restated as: no row's P1 bid is lower under the arm than under
+  the control, anywhere. (Structural under `max()`; asserted anyway.)
+* **§8 P-5** is unchanged and if anything easier to satisfy: a bid level touches
+  no bound, so D-2/D-4 stay vacuous.
+
+**No kill gate is relaxed, and no prediction is revised.** G-DOF is untouched:
+the correction removes an arithmetic error, it adds no scalar.
+
+---
+
 **Next shorthand: ercot-177.**
