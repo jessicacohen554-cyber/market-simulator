@@ -103,6 +103,14 @@ ramp_capability POOLED    : [2023, 2024, 2025]
 measured_ct_heat_rates    : ['2023-2024-2025']
 ```
 
+> **CORRECTED BY §11.2 — read that first.** The probe's `rule-19 firm-export
+> floor: FIRES` line is a **source-text check that the branch exists**, not a
+> year-aware test, and the floor has no entry outside 2023-2025 either. What
+> actually runs on 2019/2021/2022 is the **forecast track** — the gas-elastic
+> reference-price formula — not the rule-19 alternative. §3's conclusion (a
+> touchpoint or locked year does not run the keeper's own seam representation)
+> stands; its mechanism attribution does not.
+
 The decision is pjm-159 §9 item 3 verbatim and I do not improve on it: either
 (a) derive `PJM_SEAM_LADDER_BY_YEAR[2019]` from the 2019 tie file with the frozen
 formula — rule 23 permits re-derivation when the *source data extends*, which is
@@ -397,5 +405,75 @@ mechanism *against* the number. Three candidates: the no-MIP mandate changes; a 
 clears the 0.25 falsification bar (FINDING-pjm159 §4); or **the step-2 forecast test supplies
 the evidence**. The third is plausible and would fold B4 into the sequence instead of leaving
 it open-ended — worth naming now rather than rediscovering at step 4.
+
+**Next shorthand: pjm-161.**
+
+---
+
+## §11 — Is the seam ladder forecastable? **No — and that is by design, as a two-track mechanism.** (Owner question, 2026-08-06)
+
+### §11.1 — the answer, from the code
+
+`inject_pjm_seam_ladder_prices` states it in its own docstring:
+
+> *"Returns `True` when at least one band row was repriced, `False` when `iso`/`year`
+> has no ladder entry … (byte-identical no-op — **forecast years fall through to the
+> gas-elastic reference-price formula, the `hr_by_year` two-track design**)."*
+
+So PJM's seam is priced by **one of two mechanisms**, selected by year:
+
+| track | years | what prices the seam bands | forecastable? |
+|---|---|---|---|
+| **measured ladder** | **2023–2025 only** | Q-Q duration coupling of PJM's settlement-grade tie-line flows against the measured DA system LMP (`derive_pjm_seam_ladders.py`) | **NO** — it needs that year's *realized* flows and that year's *realized* prices. There is no forward construction. |
+| **gas-elastic reference price** | every other year, backcast **and** forecast | the hurdle-gated `gas × heat-rate × load-shape` reference-price formula | **YES** — its drivers are gas price, heat rate and load, all forward quantities that respond to changed conditions |
+
+Under rule 13's own test — *"could this same quantity be produced for a forward year from
+forward drivers, and would it respond to changed conditions?"* — the **measured ladder
+fails and the fallback passes.** That is exactly why the repo built it as two tracks rather
+than one, and why `PJM_SEAM_LADDER_BY_YEAR`'s preamble says *"backcast years below only."*
+
+### §11.2 — CORRECTION to §10.2: "neither mechanism" was too strong
+
+§10.2 concluded that outside 2023–2025 the keeper's seam runs with *"NEITHER mechanism …
+leaving only the bare economic tranches."* **The first half is right and the second is
+wrong.** What is absent outside the ladder years is the **measured ladder** and the
+**firm-export floor** — but the seam's reference-price bands are still priced, by the
+gas-elastic formula. `_inject_seam_ladder` *overwrites* the band `mc`; returning `False`
+leaves the reference-price formula's values in place, it does not zero them.
+
+So the accurate statement is: **outside 2023–2025 PJM's seam runs the FORECAST track.**
+That is a defined, forecastable mechanism — not a void. §10.2's substance survives (a
+locked-test or touchpoint year does **not** run the keeper's own seam representation) but
+its severity was overstated, and the 2022 hypothesis in §10.3 should be read as *"ran the
+forecast-track seam"*, not *"ran with no seam pricing."*
+
+### §11.3 — what this means for the decisions already taken
+
+**B4 (owner answer: the 2022–2035 forecast test decides it).** The test will run on the
+**gas-elastic track**, because forecast years have no ladder entry by construction. So it
+will characterise the seam representation the *forecast* actually uses — which is precisely
+what a forecast test should do — but it will **not** validate the measured ladder, and it
+cannot. Worth stating in the test's own charter so nobody later reads a clean forecast
+result as evidence for the backcast mechanism.
+
+**The larger point, which is the strongest argument for the owner's sequencing.** The keeper
+is calibrated *with* the measured ladder; the forecast runs *without* it. That is a genuine
+backcast→forecast representation gap sitting in PJM's largest single-signed volume channel —
+exactly the class of thing rule 22's crossover window exists to measure. Running a
+forecast test before spending further holdout years is therefore well-aimed, and this is a
+concrete object for it to measure rather than a general readiness check.
+
+**The 2022 question now has two defensible answers, not one.** Deriving a 2022 ladder is
+legitimate (rule 23: the source data extends — the 2022 tie file and 2022 DA LMP both
+exist) and would make the touchpoint test *the keeper's own model*. But it would also make
+2022 test a mechanism **the forecast does not use**. Those are different questions:
+
+- *"Does the keeper reproduce 2022?"* → derive the 2022 ladder first.
+- *"Does the thing we will actually forecast with reproduce 2022?"* → leave 2022 on the
+  forecast track, and read its C1/C3b miss as information about the **forecast** seam.
+
+The second reading makes the existing, already-spent 2022 result more valuable than §10.3
+implied: it is a measurement of the forecast-track seam against a real year. **Not
+adjudicated here** — it is an owner choice, and it is the open item this session ends on.
 
 **Next shorthand: pjm-161.**
