@@ -2978,3 +2978,15 @@ Every signed decision through D-24 is discharged. The remaining board:
   the statutes bind; unarmed leaves Michigan's and Illinois' binding statutes diluted to
   the ISO-wide blend through 2028. Rule-25 clean (MISO evidence, MISO arming).
 Dispositions recorded by addendum when signed.
+
+### Y.4 Owner signatures (same sitting, 2026-08-06)
+
+* **D-25 — SIGNED: charter the gas_st taxonomy fix** (lane TAXONOMY, FABLE). The manager
+  flags the load-bearing risk for the lane: `_map_fuel_type` feeds the LEGACY FLEET LOADER
+  as well as the target builder, so reclassing gas-steam units changes non-ERCOT class
+  structure and therefore SOLVES — this is a potentially keeper-moving accurate-data
+  correction and runs under the Addendum-D paired-control + HOLD-PROMOTION discipline.
+* **D-26 — SIGNED: arm `miso_rps_compliance_regions` for MISO forecast runs** (lane
+  ARM-MISO, OPUS; the D-2' ISOConfig pattern; matrix cell re-stamped K-armed; backcast
+  untouched by the forecast-mode gate).
+Prompts: pack §0u addendum.
