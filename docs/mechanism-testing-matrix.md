@@ -889,6 +889,44 @@ rule-13-admissible mechanism available to carry it.
 
 ### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
 
+> **caiso-180 (2026-08-07) — THE OUTAGE RE-AUDIT IS DONE. The one un-blocked outstanding item,
+> escalated to the owner for two sessions running, is CLOSED.** Three arms at one head from the
+> caiso-175 keeper recipe via `--replay-bundle`, all registered
+> (`2026-08-07-caiso-180-a0-control` / `-a1-pre` / `-a2-regen`), 2023+2024+2025 each. Keeper
+> **UNCHANGED**, DOF **11/8** per arm, `calibration-complete.json` and `holdout-freeze.json`
+> **UNTOUCHED**.
+> **Phase 0 recovered the pre-regeneration envelope EXACTLY** — PRE (`49e85fb4^`) 439/405/509 and
+> REGEN (`49e85fb4`) 640/622/733 reproduce the `intake_log` figures in **both** directions, and
+> GUARD (`6a8f285c`) is byte-identical to on-disk. **The charter described ONE change; there are
+> TWO** — kept + layup closes to the regenerated total with **zero residual** (547+93=640,
+> 458+164=622, 635+98=733) — so the third arm was made mandatory to keep the opposite-signed legs
+> unconfounded.
+> **RESULT — pre-registered BRANCH I: the REGENERATION leg is MATERIAL and UNFAVOURABLE**
+> (C3a **+0.60 / +1.20 / +1.70 pp**) while **the GUARD leg is INERT** (−0.10 pp every year, and
+> favourable); net **+0.50 / +1.10 / +1.60 pp** against a pre-registered 1.0 pp bar. **The control
+> is EXACT — A0 reproduces the keeper at \$0.000 in all three years**, so BRANCH IV does not fire
+> (contrast caiso-175's +0.168/+0.049/+0.115 drift). It **independently corroborates caiso-123**
+> five keepers later, which measured the guard at −0.18 % favourable and the extract content at
+> +1.24 % λ. **Mechanism:** the regeneration changed window **shape**, not merely count — the
+> superseded phantom-outage detector produced fewer but far longer windows (median 14.7–16.6 d)
+> against the current more-and-shorter ones (10.5–11.6 d) — and the deeper envelope removes
+> CC_REGULAR (−0.44/−0.67 TWh) with ST_GAS/CT_PEAKER backfilling, lifting price exactly where the
+> model already ran hot. **Per rule 14 `[R-ACCURATE]` the accurate envelope STAYS and the
+> +1.1/+1.6 pp becomes an OPEN ROOT-CAUSE issue** — the keeper's offer curves were identified
+> against the stale envelope and were silently compensating. No revert; no promotion (C3a is a live
+> FAIL, so a C3a move is never a promotion basis, rule 1). **No criterion status differs across any
+> arm**; determination NOT-YET throughout. **The caiso-171 precondition for spending 2022 is
+> DISCHARGED on this item** — explicitly not a statement about the freeze (ACTIVE) or the marker
+> (CAISO does **not** hold `complete`), both of which remain owner acts.
+> **Rule-14 gate check, same session:** `unit_outage_short_windows` / `unit_partial_outage_windows`
+> are empty **by construction** (coal-only detectors; CAMPD's CAISO population carries **zero**
+> coal; CAISO's only fleet coal, Argus Cogen 50 MW = 0.16 %, is not a CAMPD reporter; cross-ISO
+> control PJM 934 / MISO 987 / NEISO 1 / CAISO 0 / NYISO 0), reproducing **caiso-136's `I`** on a
+> stronger basis and **cited, not re-minted**. `unit_outage_maxgen_events` is a **DATA GAP**
+> (no CAISO registry exists) — **reported, not armed**. The layup companion is **not** a finding:
+> the deriver's own help declares it one "which no loader reads".
+> `results/calibration/FINDING-caiso180-outage-reaudit-2026-08-07.md`.
+
 > **CAISO-179 (2026-08-07) — READ THIS BEFORE PROPOSING ANY `battery_dispatch_adder` LEVER.**
 > The last of caiso-176's three named exits is spent. **NO LP, NO solve, NO arm, keeper
 > unchanged, DOF ledger unchanged at 11/8, nothing registered.** The cell-versus-system split
