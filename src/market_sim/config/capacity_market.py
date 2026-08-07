@@ -2724,8 +2724,41 @@ STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
 # warranties run to ~80% retention, so the full energy capex over rated cycles
 # overstates the true marginal cost). Degradation $/MWh discharged =
 # capex_per_kwh × 1000 / cycles × STORAGE_DEGRADATION_REPLACEMENT_FRACTION.
-# Source: modeling simplification grounded in NREL ATB augmentation costs and
-# LFP warranty cycle life; tunable.
+#
+# CITATION CORRECTED 2026-08-07 (caiso-179). This block previously read
+# "Source: modeling simplification grounded in NREL ATB augmentation costs and
+# LFP warranty cycle life; tunable." BOTH halves of that attribution are wrong,
+# and the correction is recorded rather than left standing (rule 5
+# [R-NO-MAGIC]):
+#   * NREL ATB 2024 and its own storage basis (Cole & Karmakar, NREL/TP-6A40-
+#     85332, and the 2025 update 93281) publish NO per-MWh augmentation cost and
+#     NO cycle life. They do the OPPOSITE: "assume no variable O&M (VOM) costs.
+#     All operating costs are instead represented using fixed O&M (FOM) costs.
+#     The FOM costs include battery augmentation costs, which enables the system
+#     to operate at its rated capacity throughout its 15-year lifetime" (ATB 2024
+#     Utility-Scale Battery Storage). There is no ATB augmentation table to read.
+#   * No primary, named, public LFP *warranty* document was locatable; the public
+#     record is vendor summaries quoting ranges (4,000-10,000 cycles, 70-80 %
+#     end-of-life retention), which identifies nothing.
+# The ONE primary source that does publish a complete (cycles, retention) pair
+# is PNNL-33283 Table 4.2 (LFP, end of life at 60 % of rated energy). Combined
+# with the ATB's own energy-vs-power cost share for this tech (0.742426,
+# recovered EXACTLY from ATB's published duration construction), it implies an
+# equivalent fraction of 0.309-0.387 at the committed ``cycles`` -- i.e. this
+# 0.25 is 19-35 % LOW, not high.
+#
+# THE VALUE IS DELIBERATELY LEFT AT 0.25. caiso-179 pre-registered that an
+# identified-but-refuted result changes nothing (BRANCH III-R): the implied
+# dispatch adder is $28.00-$35.00/MWh, refuted twice over in CAISO (caiso-101's
+# solved +/-15 % throughput guard at $14.25; caiso-176's revealed-conduct
+# reading), and the identification still carries a selectable depth-of-discharge
+# row, so it is not a clean replacement either. Re-pricing this constant is a
+# FORECAST-lane act with six-ISO reach (it feeds only the storage new-entry
+# screen at storage.py::estimate_storage_revenue, never the LP objective and
+# never a backcast) and is chartered there, not taken by a CAISO backcast
+# session. Derivation + gates: results/calibration/FINDING-caiso179-degradation-
+# split-2026-08-07.md, instrument scripts/probes/_caiso179_degradation_split.py,
+# record results/calibration/_caiso179_degradation_split.json.
 STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
 
 # State renewable-portfolio-standard floors (RENEWABLE-tier fraction) by ISO
