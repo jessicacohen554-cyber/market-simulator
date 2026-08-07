@@ -5438,3 +5438,38 @@ probes `scripts/probes/_miso139_derate_gates.py`, `_miso139_g2_binding.py`,
 records `results/calibration/_miso139_derate_gates.json`,
 `_miso139_g2_binding.json`, `_miso139_successor_bound.json`.
 Next number: **miso-140**.
+
+### Owner decisions on the miso-139 successors (2026-08-06)
+
+Recorded the same session. Two items queued, one left explicitly open:
+
+1. **NEXT — refresh the MISO bench** (owner-selected). The miso-137 §5 defect:
+   committed `*_lw` actual scalars recompute to 45.4555 vs the committed 45.39
+   (2025 RT) against a ±$0.05 tolerance, because the committed scalars carry an
+   earlier demand vintage while the model dispatches on today's. Its own PREREG
+   and session; re-verify all three C3a years + DA companions from committed
+   artifacts, **no re-solve**. **Bench hygiene, not a lever** — it cannot close a
+   −14 % gap and must not be reported as progress against it.
+2. **QUEUED — the flat `SUMMER_CLASS_DERATE` vs the net-summer `pmax` basis**
+   (owner-selected, its own session, rule 14 `[R-ACCURATE]`). CC 0.10 / CT 0.125
+   applied Jun–Sep on top of a `pmax` that already **is** the EIA-860 net-summer
+   rating, against MISO's own measured summer↔winter spread of **CC +8.3 % /
+   CT +15.8 %**. A double-count is the **hypothesis, not the premise** — the
+   session must first establish what the flat derate was identified against and
+   on which basis. Touches every gas plant in every MISO year. **Not a lever**
+   (miso-139 §7 bounds the family at 30–39× too small) and **not** to be folded
+   into a mechanism-change session (rule 19).
+3. **OPEN, NOT QUEUED — the anchor-convention successor.** Specified at
+   miso-139 §10(3); a mechanism change (rules 19/24) whose value is basis
+   correctness only. **Needs an explicit owner decision before anyone opens it.**
+
+**Clarification recorded, because the two miso-101 legs conflate easily.** The
+miso-139 refusal is about `temp_derate_mean_anchored` — the curve's **ANCHOR**,
+the zone **annual** mean at `arrays.py:843` — and **not** about the input. The
+input on the keeper is `iso_zone_hourly_drybulb`: the same curated **daily
+TMIN/TMAX**, reconstructed to an hourly wave (Parton & Logan 1981 two-piece
+cosine). Reverting to the day-flat `iso_zone_tmax` default would be strictly
+worse — it carries **zero** hour-of-day signal, so summer afternoon and summer
+night take the identical multiplier and there is no diurnal reshape at all,
+which is exactly why miso-101 armed the hour-grain leg
+(`FINDING-miso100-stchp-diurnal-2026-07.md` §4/§5).
