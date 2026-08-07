@@ -6128,3 +6128,118 @@ solve; no run registered — stated explicitly). Owner items carried: the
 run168b non-reproduction at HEAD. Keeper **UNCHANGED** at
 `2026-08-05-run168b-year-curves`; determination NOT-YET, fail set {C3a, C3b}.
 `results/calibration/FINDING-ercot175-sced-deliverable-wedge-2026-08-06.md`.
+
+## 2026-08-07 — ERCOT-176 (the owner-authorized ERCOT-151 §3 design round): the offline-increment SLOW-START tier BUILT, derived and seam-proven — and MEASURED PROVABLY INERT (`pool_frac_CC` 0.0002–0.0007, ~30× below the pre-registered threshold), so no arm was solved; the CONTROL replay reproduces run168b at HEAD and BECOMES THE KEEPER, retiring the non-reproduction item
+
+**Task.** Discharge ERCOT-151 §4 ask (2) — the owner-authorized design round for
+the offline-increment re-pricing lane (ask (1) having been discharged at
+ercot-157 with the delivery-2023 NP3-965 corpus). Object: **C3a-2023** (−29.9 %
+lw-hub / −32.2 % scorer), fail set {C3a, C3b}, on keeper
+`2026-08-05-run168b-year-curves`.
+
+**Pre-registration.** `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
+pushed **before any derive or measurement**, with **three amendments all written
+and pushed PRE-SOLVE**:
+
+* **§0 — the charter's own premise was corrected before anything was built.** The
+  handoff cited ERCOT-151 §0.2 ("18.1 GW startable-OFF CC+CT, ~13.5 GW at
+  submitted-DAM ≤$200") as THE CHARTER. That figure is **REFUTED** by the
+  ERCOT-163 correction banner carried at the head of that same diagnosis, and
+  this session did not rest on it. ERCOT-151's expected-magnitude arithmetic was
+  withdrawn with it; no magnitude was promised.
+* **Amendment 1 — composition seam.** The pre-registered additive
+  `mc_bid_adjust` form would have priced the tier's rows at `ladder + startup`,
+  double-counting the start (the ladder is start-inclusive by construction) —
+  which §2 of the same precommit already forbade. Moved to the purpose-built
+  bid-**LEVEL** `p1_bid_max_target` seam (`max(bid, target)` after the
+  amortization), the seam created because the additive form of the analogous PJM
+  CT_FAST reprice over-expressed at CT −12 TWh.
+* **Amendment 2 — physics grain.** Fleet assembly records unit physics on the
+  `committed` tranche ONLY, so every `econ*`/`peak*` bid row carries
+  `min_down = min_run = 0` and a rule-18 gate is **vacuous in both directions** at
+  tranche-row grain. Fixed to read physics per PLANT, inherited by the plant's bid
+  rows: 42 CC plants → **23 eligible, 213 bid rows**, 17 excluded by the
+  pre-registered 12 h min-run bound — which was deliberately **not** widened after
+  seeing what it excluded.
+* **Amendment 3 — the pair collapses to the control.** The arm is not a different
+  run (see verdict), so it was not solved and no arm run is registered.
+
+**Delivered.** (a) `derive_ercot_faststart_pool.py` parameterized by measured pool
+class; the `CC` block derives by the IDENTICAL construction as CT against its own
+live capability, and **the CT sub-tree reproduces BYTE-IDENTICALLY for all three
+years** (sha256 `7f02b6f5…` — the ERCOT-105 integrity check applied to the whole
+sub-tree, not just untouched years). (b) `ercot_offline_commit_offer` — one
+default-off gate, zero fitted scalars, matrix row in the same PR, eligibility by
+unit physics. (c) Seam proof on the real keeper fleet for every scored year,
+`ALL_ASSERTIONS_PASS = true`.
+
+**Verdict — the pre-registered P-2 falsifier fired exactly as written.**
+`build_ercot_offline_commit_target` returns `None` for 2023, 2024 AND 2025 with
+the real artifact loaded and 213 physics-eligible rows, so `p1_bid_max_target`
+stays `None` and the arm takes a **byte-identical code path** to the control.
+Two independent sufficient reasons: **QUANTITY** — measured `pool_frac_CC` is
+**0.0002–0.0007** of CC live capability, ~30× below the pre-registered 0.02
+threshold, putting the boundary at **0.9993–0.9994** above the largest
+within-plant tranche midpoint **0.9984**, so no row can ever clear it; and
+**PRICE** — the ladder is cheap (p70 24–40× gas ≈ $100/MWh vs the CT tier's p50
+$271–707).
+
+**Structural reading (rule 1).** ERCOT's merchant CC fleet does not sit
+offline-and-cheap at tight hours — it self-commits into real time and is already
+loaded. This is a **third independent corroboration** of ERCOT-163 (DAM
+instrument: 96.4 % committed / 98.0 % loaded, 0.020 GW startable) and ercot-175
+(SCED sub-$200 slice: ~0.9 GW), now on the CC class's own full-year RT conduct.
+The start-economics identification stays correct in principle, but its MW live in
+the **fast-start CT** pool already armed at ERCOT-88 — not in the slow-start
+offered-capability share.
+
+**A defect found in an armed keeper mechanism — reported, NOT acted on.** The same
+grain fact behind Amendment 2 means `ercot_faststart_pool_offer` (armed, cell
+`K`) admits **every** CT bid row regardless of physics — its effective scope is
+the `CT_PEAKER` class map, i.e. the class tuple rule 18 `[R-PHYSICS]` forbids,
+rather than the intended min-down test. It likely does not change *which* rows are
+priced (CT physics is uniform at min-down 1 h), so this is a loss of protection
+rather than a known mis-scoping — but the gate is not testing anything. Fixing it
+would move the keeper and needs its own pre-registered round. Filed as an owner
+item.
+
+**KEEPER RE-KEYED (owner ruling 2026-08-07, the ercot-175 decision card).** The
+control replay doubles as the keeper re-solve, so ERCOT →
+`2026-08-07-run176-control-offline-increment` (bundle
+`results/calibration/ercot176_control_A`). **The run168b non-reproduction item
+(ercot-175 §5 item 4 / ercot-173 §5) is RETIRED — the recipe DOES reproduce at
+HEAD:** C3a-2023 −32.2 → **−32.4 %**, C3b-2023 0.604 → **0.602**, C3b-2024 0.206
+→ **0.205**, C3c tail counts **IDENTICAL** (61/181, 25/53, 3/31). Determination
+**NOT-YET**, fail set **{C3a, C3b}** — unchanged; C1/C2/C4/C6/C8 PASS, C3c
+ledgered CAVEAT ×3. DOF ledger inherited unchanged (n_entries 13, n_residual 6).
+`audit_keepers --iso ERCOT` PASS (0 failures, 0 warnings). ERCOT holds no
+`complete` and no `final` marker, so no `calibration-complete.json` re-key applies.
+
+**Gates.** G-DOF **PASS** (zero fitted scalars created). G-BIT **N/A declared
+pre-solve** (year-agnostic rule ⇒ G-SPAN′ — itself re-stated pre-solve because
+G-SPAN/G-SHED were written against ercot-172's 2024-scoped object and would kill
+any year-agnostic mechanism by construction; protective intent preserved, success
+clauses declared N/A with the reason recorded). Every solve-dependent gate
+(G-SPAN′, G-SHED, G-SPUR, G-C3c, G-COAL148, G-D2, LOYO) recorded **NOT REACHED**.
+
+**Governance.** Rule 22: 2023–2025 only; no out-of-training year solved, scored,
+read or registered. Rule 23: the re-derive is licensed by a source-data change
+plus a new class scope, never a residual. Rule 28: matrix §5.1 gains **item 19**,
+the `ercot_offline_commit_offer` cell is `I`, the `ercot_faststart_pool_offer`
+cell is annotated with the grain defect (status unchanged), and both the JS keeper
+stamp and the §5.1 prose header are re-stamped to the new keeper. Mid-session the
+working branch was auto-deleted by the merge of PR #3690; the three merged commits
+were left in main and the one unmerged commit rebased onto the new default branch,
+per the merged-PR protocol.
+
+**DO-NOT-REDO honoured in full** — the event-cap ceiling lane was not entered (the
+`DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md` ruling stays PENDING and
+was not acted on); the depth premise was not re-litigated; the reserve family was
+not re-opened; no ramp mechanism; no storage offer surface; no per-hour or
+aggregate capability cap; no coal offer lane; West/Panhandle stayed closed;
+ercot-172's C3 not attempted; the CC-headroom crosswalk stays FILED-UNLICENSED.
+
+Records: `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
+`results/calibration/FINDING-ercot176-offline-increment-slowstart-2026-08-07.md`,
+`results/calibration/ercot176_offline_commit_seamproof.json`,
+`scripts/probes/ercot176_offline_commit_seamproof.py`. Next: ercot-177.
