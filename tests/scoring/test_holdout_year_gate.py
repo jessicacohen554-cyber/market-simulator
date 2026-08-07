@@ -225,25 +225,53 @@ class TestActualTailTierGate:
         for year in (2018, 2019, 2020, 2021, 2022, 2026):
             assert not _TAIL._year_emittable("MISO", year, self._VALIDATION_ONLY)
 
-    def test_ladder_rungs_stay_outside_the_considered_set(self):
-        """2020/2021 are staged owner decisions, not part of this grant.
+    def test_validation_ladder_rungs_follow_the_marker(self):
+        """2020/2021 emit for a `complete` ISO and are refused for an unmarked one.
 
-        They are validation-TIER years, so the tier gate alone would pass them
-        for a `complete` ISO; ``CONSIDERED_HOLDOUT_YEARS`` is what holds them.
-        2018 is checked separately below: owner decision 2026-08-06 dropped it
-        from the ladder entirely, so it is held by the STRICTER locked-test
-        default, not merely by CONSIDERED_HOLDOUT_YEARS.
+        REWRITTEN at neiso-89 (2026-08-07) with the deletion of the deriver's
+        second ladder ``CONSIDERED_HOLDOUT_YEARS``. It previously asserted the
+        opposite — that a `complete` ISO is still refused 2020/2021 because that
+        tuple withheld them on top of the tier gate. Rule 22's 2026-08-06
+        rewrite removed the premise: "WHAT IS HELD OUT IS THE *SCORE*, NEVER THE
+        *DATA*", and the touchpoint loop makes 2020-2022 the ITERABLE rungs a
+        `complete` marker exists to authorize. The tier marker is now the sole
+        gate, so what this asserts is that the gate DISCRIMINATES — marker in,
+        marker out — rather than that a second constant blanket-refuses.
         """
+        unmarked = {"complete": {"NEISO": {}}, "final": {}}
         for year in (2020, 2021):
             assert holdout_policy.tier_for_year(year) == holdout_policy.TIER_VALIDATION
-            assert year not in _TAIL.CONSIDERED_HOLDOUT_YEARS
-            assert not _TAIL._year_emittable("PJM", year, self._VALIDATION_ONLY)
+            assert _TAIL._year_emittable("PJM", year, self._VALIDATION_ONLY)
+            assert not _TAIL._year_emittable("PJM", year, unmarked)
 
     def test_2018_is_dropped_and_held_by_the_stricter_default(self):
-        """2018 left the ladder on 2026-08-06 and must be MORE restricted, not less."""
+        """2018 left the ladder on 2026-08-06 and must be MORE restricted, not less.
+
+        This is the case the deleted ``CONSIDERED_HOLDOUT_YEARS`` was NOT what
+        protected: 2018 is absent from every enumerated set, so
+        :func:`holdout_policy.tier_for_year` fails closed to the locked tier and
+        a `complete` marker cannot reach it. Deleting the second ladder leaves
+        that protection exactly where it was.
+        """
         assert holdout_policy.tier_for_year(2018) == holdout_policy.TIER_LOCKED
-        assert 2018 not in _TAIL.CONSIDERED_HOLDOUT_YEARS
         assert not _TAIL._year_emittable("PJM", 2018, self._VALIDATION_ONLY)
+        assert not _TAIL._year_emittable("PJM", 2018, {"complete": {"PJM": {}}})
+
+    def test_the_second_ladder_is_deleted_not_zeroed(self):
+        """rule 26 ``[R-DELETE]``: a deprecated gate must not still parse.
+
+        ``CONSIDERED_HOLDOUT_YEARS`` was the deriver's private year ladder,
+        duplicating :mod:`scripts.lib.holdout_policy`'s tier sets. An emptied or
+        widened tuple left in place would be a re-armable second control point;
+        it is removed outright.
+        """
+        assert not hasattr(_TAIL, "CONSIDERED_HOLDOUT_YEARS")
+
+    def test_locked_tier_still_needs_final_after_the_deletion(self):
+        """The deletion must not have made 2019 / H1-2026 reachable on `complete`."""
+        for year in (2019, 2026):
+            assert holdout_policy.tier_for_year(year) == holdout_policy.TIER_LOCKED
+            assert not _TAIL._year_emittable("NEISO", year, {"complete": {"NEISO": {}}})
 
     def test_empty_marker_doc_fails_closed(self):
         for year in (2018, 2019, 2022, 2026):
