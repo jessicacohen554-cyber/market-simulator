@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-07-miso-133-taxgs-arm",
+  "label": "miso 133 taxgs arm",
+  "date": "2026-08-07",
+  "shorthand": "miso-133-taxgs-arm",
+  "definition": "gas_st taxonomy paired ARM (D-25 reclass) (per-year chain, year 2023)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-08-07-miso-133-taxgs-arm.js",
+  "bundle": "results/calibration/miso133_taxgs_arm"
+}
