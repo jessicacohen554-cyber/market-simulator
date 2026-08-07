@@ -1,0 +1,242 @@
+{
+  "iso": "ERCOT",
+  "arms": {
+    "shipped": {
+      "bundle": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-shipped",
+      "before": {
+        "n_big_actual": 2,
+        "matched": 0,
+        "recall": 0.0,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "all-large-target-rows (pre-D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 0,
+        "n_a": false,
+        "n_a_reason": null,
+        "plant_recall_frac": 0.0,
+        "plant_matched": 0,
+        "band": "FAIL"
+      },
+      "after": {
+        "n_big_actual": 0,
+        "matched": 0,
+        "recall": null,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "reachable-set (D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 2,
+        "n_a": true,
+        "n_a_reason": "no target exit >= 300 MW is reachable by an admissible channel on this run's fleet basis \u2014 reported n/a, never 0/N (D-24)",
+        "plant_recall_frac": null,
+        "plant_matched": 0,
+        "band": "SKIP"
+      },
+      "total_gw": {
+        "actual": 2.294,
+        "model": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      },
+      "false_retire": {
+        "false_gw": 0.0,
+        "frac_of_model": 0.0,
+        "grain": "per-fuel-excess",
+        "band": "PASS"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 1.008,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.271,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.102,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_st": {
+          "actual_gw": 0.888,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "oil": {
+          "actual_gw": 0.005,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        }
+      }
+    },
+    "unified": {
+      "bundle": "results/hindcast/ercot-2021-2025-t1ff-armr-ffr5d-unified",
+      "before": {
+        "n_big_actual": 2,
+        "matched": 1,
+        "recall": 0.5,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "all-large-target-rows (pre-D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 0,
+        "n_a": false,
+        "n_a_reason": null,
+        "plant_recall_frac": 0.0,
+        "plant_matched": 0,
+        "band": "FAIL"
+      },
+      "after": {
+        "n_big_actual": 0,
+        "matched": 0,
+        "recall": null,
+        "grain": "fuel-mw-coverage",
+        "member_rule": "reachable-set (D-24)",
+        "n_target_large": 2,
+        "n_excluded_unreachable": 2,
+        "n_a": true,
+        "n_a_reason": "no target exit >= 300 MW is reachable by an admissible channel on this run's fleet basis \u2014 reported n/a, never 0/N (D-24)",
+        "plant_recall_frac": null,
+        "plant_matched": 0,
+        "band": "SKIP"
+      },
+      "total_gw": {
+        "actual": 2.294,
+        "model": 10.943,
+        "err_frac": 3.77,
+        "band": "FAIL"
+      },
+      "false_retire": {
+        "false_gw": 10.055,
+        "frac_of_model": 0.919,
+        "grain": "per-fuel-excess",
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 1.008,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.271,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.102,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_st": {
+          "actual_gw": 0.888,
+          "model_gw": 10.943,
+          "err_frac": 11.323
+        },
+        "oil": {
+          "actual_gw": 0.005,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        }
+      }
+    }
+  },
+  "reachability": {
+    "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
+    "rule": "a target exit gates the >=300 MW recall metric only if the unit exists in the run's fleet basis AND its exit is reachable by an admissible channel \u2014 economic (no exclusion recorded) or instrument-driven with instrument_date <= the run's vintage cutoff. Unreachable exits leave the denominator and are reported here, NON-GATED.",
+    "vintage_cutoff": "2020-12-31",
+    "large_unit_mw": 300.0,
+    "evidence": {
+      "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
+      "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
+      "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+    },
+    "applicability": {
+      "use_campd_bins": true,
+      "fleet_evidence_applied": true,
+      "forecast_fossil_retirement_economic": true,
+      "economic_evidence_applied": true
+    },
+    "fail_closed": "excludes only on positive, cited evidence; a unit with no evidence either way stays IN the member set",
+    "applied": true,
+    "members": [],
+    "excluded": [
+      {
+        "unit_id": "56611_S01",
+        "unit_name": "Sandy Creek 1",
+        "mw": 1008.0,
+        "fuel": "coal",
+        "exit_year": 2025,
+        "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+        "reason": "no_instrument",
+        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
+        "gated": true,
+        "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      },
+      {
+        "unit_id": "3548_2",
+        "unit_name": "Decker Creek 2",
+        "mw": 405.0,
+        "fuel": "gas_st",
+        "exit_year": 2022,
+        "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+        "reason": "not_in_fleet_basis",
+        "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
+        "gated": true,
+        "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      },
+      {
+        "unit_id": "3612_2",
+        "unit_name": "V H Braunig 2",
+        "mw": 252.0,
+        "fuel": "gas_st",
+        "exit_year": 2025,
+        "driver": "confirmed instrument ercot-nso-braunig-2 (rto_deactivation, instrument_date 2024-03-13)",
+        "reason": "post_vintage_instrument",
+        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+        "gated": false,
+        "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      },
+      {
+        "unit_id": "3612_1",
+        "unit_name": "V H Braunig 1",
+        "mw": 225.0,
+        "fuel": "gas_st",
+        "exit_year": 2025,
+        "driver": "confirmed instrument ercot-nso-braunig-1 (rto_deactivation, instrument_date 2024-03-13)",
+        "reason": "post_vintage_instrument",
+        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
+        "gated": false,
+        "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      },
+      {
+        "unit_id": "52120_G-66",
+        "unit_name": "Freeport Energy G-66",
+        "mw": 119.0,
+        "fuel": "gas_cc",
+        "exit_year": 2023,
+        "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
+        "reason": "no_instrument",
+        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
+        "gated": false,
+        "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      }
+    ],
+    "n_target_large": 2,
+    "n_members": 0,
+    "n_excluded_gated": 2,
+    "note": "NON-GATED diagnostic. Rows here left the recall denominator (or were never in it, below the size threshold); nothing in this block bands, and no verdict reads off it."
+  }
+}

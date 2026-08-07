@@ -1,0 +1,189 @@
+iso,unit_id,name,zone,plant_group,fuel_type_before,pmax_mw,heat_rate,efficiency_bin_before,vom_before,eford_before,co2_before,online_year,plant_code,campd_types,campd_has_boiler
+ERCOT,3452_1,Lake Hubbard,North,ST_GAS,gas_ct,392.0,11.454,older,3.5,0.06,0.65,1970,3452,['Dry bottom wall-fired boiler'],True
+ERCOT,3452_2,Lake Hubbard,North,ST_GAS,gas_ct,523.0,11.454,older,3.5,0.06,0.65,1973,3452,['Dry bottom wall-fired boiler'],True
+ERCOT,3453_6,Mountain Creek,North,ST_GAS,gas_ct,122.0,11.969,older,3.5,0.06,0.65,1956,3453,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3453_7,Mountain Creek,North,ST_GAS,gas_ct,118.0,11.969,older,3.5,0.06,0.65,1958,3453,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3453_8,Mountain Creek,North,ST_GAS,gas_ct,568.0,11.969,older,3.5,0.06,0.65,1967,3453,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3460_1,Cedar Bayou,Houston,ST_GAS,gas_ct,746.0,10.711,older,3.5,0.06,0.65,1970,3460,['Dry bottom wall-fired boiler'],True
+ERCOT,3460_2,Cedar Bayou,Houston,ST_GAS,gas_ct,749.0,10.711,older,3.5,0.06,0.65,1972,3460,['Dry bottom wall-fired boiler'],True
+ERCOT,3470_1,W A Parish,Houston,ST_GAS,gas_ct,169.0,10.761,older,3.5,0.06,0.65,1958,3470,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3470_2,W A Parish,Houston,ST_GAS,gas_ct,169.0,10.761,older,3.5,0.06,0.65,1958,3470,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3470_3,W A Parish,Houston,ST_GAS,gas_ct,240.0,10.761,older,3.5,0.06,0.65,1961,3470,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3470_4,W A Parish,Houston,ST_GAS,gas_ct,527.0,10.761,older,3.5,0.06,0.65,1968,3470,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3490_1,Graham,North,ST_GAS,gas_ct,239.0,10.172,older,3.5,0.06,0.65,1960,3490,['Dry bottom wall-fired boiler'],True
+ERCOT,3490_2,Graham,North,ST_GAS,gas_ct,395.0,10.172,older,3.5,0.06,0.65,1969,3490,['Dry bottom wall-fired boiler'],True
+ERCOT,3491_3,Handley,North,ST_GAS,gas_ct,375.0,12.575,older,3.5,0.06,0.65,1963,3491,['Dry bottom wall-fired boiler'],True
+ERCOT,3491_4,Handley,North,ST_GAS,gas_ct,435.0,12.575,older,3.5,0.06,0.65,1976,3491,['Dry bottom wall-fired boiler'],True
+ERCOT,3491_5,Handley,North,ST_GAS,gas_ct,435.0,12.575,older,3.5,0.06,0.65,1977,3491,['Dry bottom wall-fired boiler'],True
+ERCOT,3504_ST1,Stryker Creek,Northeast,ST_GAS,gas_ct,170.0,10.989,older,3.5,0.06,0.65,1958,3504,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3504_ST2,Stryker Creek,Northeast,ST_GAS,gas_ct,502.0,10.989,older,3.5,0.06,0.65,1965,3504,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3507_6,Trinidad (TX),North,ST_GAS,gas_ct,236.0,12.796,older,3.5,0.06,0.65,1965,3507,['Tangentially-fired'],False
+ERCOT,3576_1,Ray Olinger,North,ST_GAS,gas_ct,75.0,11.834,older,3.5,0.06,0.65,1967,3576,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3576_2,Ray Olinger,North,ST_GAS,gas_ct,107.0,11.834,older,3.5,0.06,0.65,1971,3576,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3576_3,Ray Olinger,North,ST_GAS,gas_ct,138.0,11.834,older,3.5,0.06,0.65,1976,3576,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3601_1,Sim Gideon,South_Central,ST_GAS,gas_ct,136.0,10.898,older,3.5,0.06,0.65,1965,3601,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3601_2,Sim Gideon,South_Central,ST_GAS,gas_ct,136.0,10.898,older,3.5,0.06,0.65,1968,3601,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3601_3,Sim Gideon,South_Central,ST_GAS,gas_ct,335.0,10.898,older,3.5,0.06,0.65,1972,3601,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+ERCOT,3611_1,O W Sommers,South_Central,ST_GAS,gas_ct,420.0,10.969,older,3.5,0.06,0.65,1972,3611,['Tangentially-fired'],False
+ERCOT,3611_2,O W Sommers,South_Central,ST_GAS,gas_ct,410.0,10.969,older,3.5,0.06,0.65,1974,3611,['Tangentially-fired'],False
+ERCOT,3628_2,R W Miller,North,ST_GAS,gas_ct,118.0,13.021,older,3.5,0.06,0.65,1972,3628,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+ERCOT,3628_3,R W Miller,North,ST_GAS,gas_ct,195.0,13.021,older,3.5,0.06,0.65,1975,3628,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+ERCOT,4195_ST1,Powerlane Plant,North,ST_GAS,gas_ct,18.0,7.536,older,3.5,0.06,0.65,1966,4195,['Dry bottom wall-fired boiler'],True
+ERCOT,4266_4,Spencer,North,ST_GAS,gas_ct,61.0,13.647,older,3.5,0.06,0.65,1966,4266,['Dry bottom wall-fired boiler'],True
+ERCOT,4266_5,Spencer,North,ST_GAS,gas_ct,61.0,13.647,older,3.5,0.06,0.65,1973,4266,['Dry bottom wall-fired boiler'],True
+ERCOT,4939_1,Barney M Davis,South,ST_GAS,gas_ct,292.0,8.625,older,3.5,0.06,0.65,1974,4939,"['Combined cycle', 'Tangentially-fired']",False
+ERCOT,6243_1,Dansby,South_Central,ST_GAS,gas_ct,110.0,9.957,older,3.5,0.06,0.65,1978,6243,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+CAISO,315_3,AES Alamitos LLC,LA_BASIN,ST_GAS,gas_ct,327.0,11.85,older,3.5,0.06,0.65,1961,315,"['Combined cycle', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+CAISO,315_4,AES Alamitos LLC,LA_BASIN,ST_GAS,gas_ct,335.0,11.85,older,3.5,0.06,0.65,1962,315,"['Combined cycle', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+CAISO,315_5,AES Alamitos LLC,LA_BASIN,ST_GAS,gas_ct,480.0,11.85,older,3.5,0.06,0.65,1964,315,"['Combined cycle', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+CAISO,335_2,AES Huntington Beach LLC,LA_BASIN,ST_GAS,gas_ct,225.8,11.85,older,3.5,0.06,0.65,1958,335,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+CAISO,350_1,Ormond Beach,LA_BASIN,ST_GAS,gas_ct,741.0,11.845,older,3.5,0.06,0.65,1971,350,['Dry bottom wall-fired boiler'],True
+CAISO,350_2,Ormond Beach,LA_BASIN,ST_GAS,gas_ct,750.0,11.845,older,3.5,0.06,0.65,1973,350,['Dry bottom wall-fired boiler'],True
+PJM,593_3,Edge Moor,PJM_EMAAC,ST_GAS,gas_ct,86.0,13.422,older,3.5,0.06,0.65,1954,593,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,593_4,Edge Moor,PJM_EMAAC,ST_GAS,gas_ct,171.0,13.422,older,3.5,0.06,0.65,1966,593,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,593_5,Edge Moor,PJM_EMAAC,ST_GAS,gas_ct,438.0,13.422,older,3.5,0.06,0.65,1973,593,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,1353_1,Big Sandy,PJM_AEP_Ohio,ST_GAS,gas_ct,260.0,10.01,older,3.5,0.06,0.65,1963,1353,['Dry bottom wall-fired boiler'],True
+PJM,1571_3,Chalk Point Power,PJM_SWMAAC,ST_GAS,gas_ct,595.0,12.565,older,3.5,0.06,0.65,1975,1571,"['Combustion turbine', 'Tangentially-fired']",False
+PJM,1571_4,Chalk Point Power,PJM_SWMAAC,ST_GAS,gas_ct,585.3,12.565,older,3.5,0.06,0.65,1981,1571,"['Combustion turbine', 'Tangentially-fired']",False
+PJM,3131_1,Shawville,PJM_Central_PA,ST_GAS,gas_ct,122.3,11.426,older,3.5,0.06,0.65,1954,3131,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,3131_2,Shawville,PJM_Central_PA,ST_GAS,gas_ct,124.7,11.426,older,3.5,0.06,0.65,1954,3131,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,3131_3,Shawville,PJM_Central_PA,ST_GAS,gas_ct,174.0,11.426,older,3.5,0.06,0.65,1959,3131,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,3131_4,Shawville,PJM_Central_PA,ST_GAS,gas_ct,175.0,11.426,older,3.5,0.06,0.65,1960,3131,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+PJM,3138_3,New Castle Plant,PJM_West_APS,ST_GAS,gas_ct,92.3,11.267,older,3.5,0.06,0.65,1952,3138,['Dry bottom wall-fired boiler'],True
+PJM,3138_4,New Castle Plant,PJM_West_APS,ST_GAS,gas_ct,93.0,11.267,older,3.5,0.06,0.65,1958,3138,['Dry bottom wall-fired boiler'],True
+PJM,3138_5,New Castle Plant,PJM_West_APS,ST_GAS,gas_ct,141.0,11.267,older,3.5,0.06,0.65,1964,3138,['Dry bottom wall-fired boiler'],True
+PJM,3140_1,Brunner Island,PJM_Central_PA,ST_GAS,gas_ct,306.0,11.362,older,3.5,0.06,0.65,1961,3140,['Tangentially-fired'],False
+PJM,3140_2,Brunner Island,PJM_Central_PA,ST_GAS,gas_ct,363.0,11.362,older,3.5,0.06,0.65,1965,3140,['Tangentially-fired'],False
+PJM,3140_3,Brunner Island,PJM_Central_PA,ST_GAS,gas_ct,742.0,11.362,older,3.5,0.06,0.65,1969,3140,['Tangentially-fired'],False
+PJM,3148_3,TalenEnergy Martins Creek,PJM_Central_PA,ST_GAS,gas_ct,850.0,13.117,older,3.5,0.06,0.65,1975,3148,['Tangentially-fired'],False
+PJM,3148_4,TalenEnergy Martins Creek,PJM_Central_PA,ST_GAS,gas_ct,850.0,13.117,older,3.5,0.06,0.65,1977,3148,['Tangentially-fired'],False
+PJM,3149_1,TalenEnergy Montour,PJM_Central_PA,ST_GAS,gas_ct,752.0,11.551,older,3.5,0.06,0.65,1972,3149,['Tangentially-fired'],False
+PJM,3149_2,TalenEnergy Montour,PJM_Central_PA,ST_GAS,gas_ct,752.0,11.551,older,3.5,0.06,0.65,1973,3149,['Tangentially-fired'],False
+PJM,3161_3,Eddystone Generating Station,PJM_EMAAC,ST_GAS,gas_ct,380.0,16.709,older,3.5,0.06,0.65,1974,3161,['Tangentially-fired'],False
+PJM,3161_4,Eddystone Generating Station,PJM_EMAAC,ST_GAS,gas_ct,380.0,16.709,older,3.5,0.06,0.65,1976,3161,['Tangentially-fired'],False
+PJM,3775_1,Clinch River,PJM_Dominion,ST_GAS,gas_ct,230.0,13.104,older,3.5,0.06,0.65,1958,3775,['Dry bottom vertically-fired boiler'],True
+PJM,3775_2,Clinch River,PJM_Dominion,ST_GAS,gas_ct,230.0,13.104,older,3.5,0.06,0.65,1958,3775,['Dry bottom vertically-fired boiler'],True
+PJM,10244_T-13,Pixelle Specialty Solutions LLC - Chilli,PJM_AEP_Ohio,ST_CHP,gas_ct,12.4,4.493,older,3.5,0.06,0.65,1978,10244,"['Tangentially-fired', 'Wet bottom wall-fired boiler']",True
+PJM,50279_GEN1,Archbald Power Station,PJM_Central_PA,ST_GAS,gas_ct,20.0,7.818,older,3.5,0.06,0.65,1988,50279,['Combustion turbine'],False
+PJM,50397_GEN1,Pixelle Specialty Solutions LLC - Spring,PJM_Central_PA,ST_CHP,gas_ct,5.0,5.515,older,3.5,0.06,0.65,1948,50397,"['Circulating fluidized bed boiler', 'Other boiler']",True
+PJM,50397_GEN3,Pixelle Specialty Solutions LLC - Spring,PJM_Central_PA,ST_CHP,gas_ct,4.0,5.515,older,3.5,0.06,0.65,1948,50397,"['Circulating fluidized bed boiler', 'Other boiler']",True
+PJM,50397_GEN4,Pixelle Specialty Solutions LLC - Spring,PJM_Central_PA,ST_CHP,gas_ct,8.7,5.515,older,3.5,0.06,0.65,1962,50397,"['Circulating fluidized bed boiler', 'Other boiler']",True
+PJM,50463_GEN2,Procter & Gamble Mehoopany Mill,PJM_Central_PA,ST_CHP,gas_ct,0.9,5.623,older,3.5,0.06,0.65,1984,50463,['Combustion turbine'],False
+PJM,50479_GEN1,Georgia-Pacific Big Island,PJM_Dominion,ST_CHP,gas_ct,7.0,4.021,older,3.5,0.06,0.65,1965,50479,['Other boiler'],True
+PJM,50481_TG16,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,10.4,5.713,older,3.5,0.06,0.65,1966,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG17,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,10.4,5.713,older,3.5,0.06,0.65,1966,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG18,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,10.4,5.713,older,3.5,0.06,0.65,1967,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG19,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,10.4,5.713,older,3.5,0.06,0.65,1970,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG20,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,10.4,5.713,older,3.5,0.06,0.65,1972,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG21,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,15.0,5.713,older,3.5,0.06,0.65,1969,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50481_TG24,Tennessee Eastman Operations,PJM_AEP_Ohio,ST_CHP,gas_ct,16.8,5.713,older,3.5,0.06,0.65,1983,50481,"['Dry bottom wall-fired boiler', 'Stoker', 'Tangentially-fired']",True
+PJM,50491_GEN4,Axiall Natrium Plant,PJM_West_APS,ST_CHP,gas_ct,7.5,6.597,older,3.5,0.06,0.65,1943,50491,['Dry bottom wall-fired boiler'],True
+PJM,50491_GEN6,Axiall Natrium Plant,PJM_West_APS,ST_CHP,gas_ct,26.0,6.597,older,3.5,0.06,0.65,1954,50491,['Dry bottom wall-fired boiler'],True
+PJM,50491_GEN7,Axiall Natrium Plant,PJM_West_APS,ST_CHP,gas_ct,82.0,6.597,older,3.5,0.06,0.65,1966,50491,['Dry bottom wall-fired boiler'],True
+PJM,52089_GEN1,Celanese Acetate LLC,PJM_Dominion,ST_CHP,gas_ct,6.0,5.805,older,3.5,0.06,0.65,1942,52089,['Other boiler'],True
+PJM,52089_GEN2,Celanese Acetate LLC,PJM_Dominion,ST_CHP,gas_ct,6.0,5.805,older,3.5,0.06,0.65,1942,52089,['Other boiler'],True
+PJM,52089_GEN3,Celanese Acetate LLC,PJM_Dominion,ST_CHP,gas_ct,6.0,5.805,older,3.5,0.06,0.65,1944,52089,['Other boiler'],True
+PJM,52089_GEN4,Celanese Acetate LLC,PJM_Dominion,ST_CHP,gas_ct,9.2,5.805,older,3.5,0.06,0.65,1966,52089,['Other boiler'],True
+PJM,54081_GEN3,Spruance Operating Services LLC,PJM_Dominion,ST_CHP,gas_ct,42.5,6.014,older,3.5,0.06,0.65,1992,54081,['Stoker'],False
+PJM,54081_GEN4,Spruance Operating Services LLC,PJM_Dominion,ST_CHP,gas_ct,12.5,6.014,older,3.5,0.06,0.65,1992,54081,['Stoker'],False
+PJM,54556_TGO1,Ingredion Incorporated,PJM_ComEd,ST_CHP,gas_ct,21.1,7.17,older,3.5,0.06,0.65,1991,54556,"['Circulating fluidized bed boiler', 'Other boiler']",True
+PJM,54556_TGO2,Ingredion Incorporated,PJM_ComEd,ST_CHP,gas_ct,21.1,7.17,older,3.5,0.06,0.65,1991,54556,"['Circulating fluidized bed boiler', 'Other boiler']",True
+PJM,54785_GEN1,Grays Ferry Cogeneration,PJM_EMAAC,ST_CHP,gas_ct,56.6,5.358,older,3.5,0.06,0.65,1997,54785,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+PJM,54795_GEN1,Domino Sugar Baltimore,PJM_SWMAAC,ST_CHP,gas_ct,5.0,4.016,older,3.5,0.06,0.65,1959,54795,['Dry bottom wall-fired boiler'],True
+PJM,54795_GEN2,Domino Sugar Baltimore,PJM_SWMAAC,ST_CHP,gas_ct,2.5,4.016,older,3.5,0.06,0.65,1955,54795,['Dry bottom wall-fired boiler'],True
+PJM,54795_GEN4,Domino Sugar Baltimore,PJM_SWMAAC,ST_CHP,gas_ct,10.0,4.016,frame,3.5,0.06,0.6,2001,54795,['Dry bottom wall-fired boiler'],True
+MISO,170_4,Lake Catherine,MISO-South,ST_GAS,gas_ct,522.0,11.003,older,3.5,0.06,0.65,1970,170,['Dry bottom wall-fired boiler'],True
+MISO,203_1,McClellan (AR),MISO-South,ST_GAS,gas_ct,134.0,11.889,older,3.5,0.06,0.65,1972,203,['Dry bottom wall-fired boiler'],True
+MISO,990_5,Harding Street,MISO-Indiana,ST_GAS,gas_ct,101.0,10.824,older,3.5,0.06,0.65,1958,990,"['Combustion turbine', 'Tangentially-fired']",False
+MISO,990_6,Harding Street,MISO-Indiana,ST_GAS,gas_ct,99.0,10.824,older,3.5,0.06,0.65,1961,990,"['Combustion turbine', 'Tangentially-fired']",False
+MISO,990_7,Harding Street,MISO-Indiana,ST_GAS,gas_ct,418.0,10.824,older,3.5,0.06,0.65,1973,990,"['Combustion turbine', 'Tangentially-fired']",False
+MISO,992_6,CC Perry K,MISO-Indiana,ST_GAS,gas_ct,3.0,5.326,older,3.5,0.06,0.65,1938,992,"['Dry bottom wall-fired boiler', 'Stoker']",True
+MISO,1073_4,Prairie Creek,MISO-Plains,ST_CHP,gas_ct,111.7,12.303,older,3.5,0.06,0.65,1967,1073,['Dry bottom wall-fired boiler'],True
+MISO,1104_1,Burlington (IA),MISO-Plains,ST_GAS,gas_ct,170.3,11.5,older,3.5,0.06,0.65,1968,1104,['Tangentially-fired'],False
+MISO,1122_7,Ames Electric Services Power Plant,MISO-Plains,ST_GAS,gas_ct,40.2,14.23,older,3.5,0.06,0.65,1968,1122,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,1122_8,Ames Electric Services Power Plant,MISO-Plains,ST_GAS,gas_ct,68.5,14.23,older,3.5,0.06,0.65,1982,1122,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,1131_6,Streeter Station,MISO-Plains,ST_GAS,gas_ct,19.4,17.155,older,3.5,0.06,0.65,1963,1131,['Dry bottom wall-fired boiler'],True
+MISO,1131_7,Streeter Station,MISO-Plains,ST_GAS,gas_ct,35.2,17.155,older,3.5,0.06,0.65,1973,1131,['Dry bottom wall-fired boiler'],True
+MISO,1393_4,R S Nelson,MISO-South,ST_CHP,gas_ct,424.7,11.5,older,3.5,0.06,0.65,1970,1393,['Tangentially-fired'],False
+MISO,1402_2,Little Gypsy,MISO-South,ST_GAS,gas_ct,403.8,11.272,older,3.5,0.06,0.65,1966,1402,['Dry bottom wall-fired boiler'],True
+MISO,1402_3,Little Gypsy,MISO-South,ST_GAS,gas_ct,512.7,11.272,older,3.5,0.06,0.65,1969,1402,['Dry bottom wall-fired boiler'],True
+MISO,1403_5,Nine Mile Point,MISO-South,ST_GAS,gas_ct,742.6,8.538,older,3.5,0.06,0.65,1973,1403,"['Combined cycle', 'Tangentially-fired']",False
+MISO,1403_6(4),Nine Mile Point,MISO-South,ST_GAS,gas_ct,722.8,8.538,older,3.5,0.06,0.65,1971,1403,"['Combined cycle', 'Tangentially-fired']",False
+MISO,1464_1,Big Cajun 1,MISO-South,ST_GAS,gas_ct,89.0,12.878,older,3.5,0.06,0.65,1972,1464,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+MISO,1464_2,Big Cajun 1,MISO-South,ST_GAS,gas_ct,85.5,12.878,older,3.5,0.06,0.65,1972,1464,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+MISO,1702_3,Dan E Karn,MISO-East,ST_GAS,gas_ct,593.5,12.838,older,3.5,0.06,0.65,1975,1702,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,1702_4,Dan E Karn,MISO-East,ST_GAS,gas_ct,606.3,12.838,older,3.5,0.06,0.65,1977,1702,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,1891_1,Syl Laskin,MISO-West,ST_GAS,gas_ct,49.0,12.834,older,3.5,0.06,0.65,1953,1891,['Tangentially-fired'],False
+MISO,1891_2,Syl Laskin,MISO-West,ST_GAS,gas_ct,49.0,12.834,older,3.5,0.06,0.65,1953,1891,['Tangentially-fired'],False
+MISO,2001_4,New Ulm,MISO-West,ST_CHP,gas_ct,13.2,11.5,older,3.5,0.06,0.65,1965,2001,['Combustion turbine'],False
+MISO,2001_6,New Ulm,MISO-West,ST_CHP,gas_ct,4.7,11.5,older,3.5,0.06,0.65,1997,2001,['Combustion turbine'],False
+MISO,2070_3,Moselle,MISO-South,ST_GAS,gas_ct,59.0,8.891,older,3.5,0.06,0.65,1970,2070,"['Combined cycle', 'Combustion turbine', 'Dry bottom wall-fired boiler']",True
+MISO,2123_8,Columbia (MO),MISO-Plains,ST_GAS,gas_ct,35.0,14.809,older,3.5,0.06,0.65,1970,2123,"['Dry bottom wall-fired boiler', 'Stoker']",True
+MISO,3457_1,Lewis Creek,MISO-South,ST_GAS,gas_ct,250.1,10.394,older,3.5,0.06,0.65,1970,3457,['Dry bottom wall-fired boiler'],True
+MISO,3457_2,Lewis Creek,MISO-South,ST_GAS,gas_ct,249.2,10.394,older,3.5,0.06,0.65,1971,3457,['Dry bottom wall-fired boiler'],True
+MISO,3459_1,Sabine,MISO-South,ST_GAS,gas_ct,202.5,10.417,older,3.5,0.06,0.65,1962,3459,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,3459_3,Sabine,MISO-South,ST_GAS,gas_ct,369.3,10.417,older,3.5,0.06,0.65,1966,3459,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,3459_4,Sabine,MISO-South,ST_GAS,gas_ct,490.1,10.417,older,3.5,0.06,0.65,1974,3459,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,3459_5,Sabine,MISO-South,ST_GAS,gas_ct,439.5,10.417,older,3.5,0.06,0.65,1979,3459,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+MISO,3992_6,Blount Street,MISO-East,ST_GAS,gas_ct,47.2,21.479,older,3.5,0.06,0.65,1957,3992,['Dry bottom wall-fired boiler'],True
+MISO,3992_7,Blount Street,MISO-East,ST_GAS,gas_ct,48.5,21.479,older,3.5,0.06,0.65,1961,3992,['Dry bottom wall-fired boiler'],True
+MISO,4042_1,Valley (WI),MISO-East,ST_CHP,gas_ct,124.7,6.639,older,3.5,0.06,0.65,1968,4042,['Dry bottom wall-fired boiler'],True
+MISO,4042_2,Valley (WI),MISO-East,ST_CHP,gas_ct,139.2,6.639,older,3.5,0.06,0.65,1969,4042,['Dry bottom wall-fired boiler'],True
+MISO,6035_1,Greenwood (MI),MISO-East,ST_GAS,gas_ct,785.0,11.185,older,3.5,0.06,0.65,1979,6035,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+MISO,6055_2,Big Cajun 2,MISO-South,ST_GAS,gas_ct,546.4,11.436,older,3.5,0.06,0.65,1982,6055,['Dry bottom wall-fired boiler'],True
+MISO,6190_1,Brame Energy Center,MISO-South,ST_GAS,gas_ct,428.5,11.703,older,3.5,0.06,0.65,1975,6190,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,6639_1,R D Green,MISO-Indiana,ST_GAS,gas_ct,231.0,13.818,older,3.5,0.06,0.65,1979,6639,['Dry bottom wall-fired boiler'],True
+MISO,6639_2,R D Green,MISO-Indiana,ST_GAS,gas_ct,223.0,13.818,older,3.5,0.06,0.65,1981,6639,['Dry bottom wall-fired boiler'],True
+MISO,8054_1,Gerald Andrus,MISO-South,ST_GAS,gas_ct,701.1,12.449,older,3.5,0.06,0.65,1975,8054,['Dry bottom wall-fired boiler'],True
+MISO,8056_2,Waterford 1 & 2,MISO-South,ST_GAS,gas_ct,417.3,11.083,older,3.5,0.06,0.65,1975,8056,"['Combustion turbine', 'Dry bottom wall-fired boiler']",True
+MISO,10328_GEN1,T B Simon Power Plant,MISO-East,ST_CHP,gas_ct,12.5,5.278,older,3.5,0.06,0.65,1965,10328,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,10328_GEN2,T B Simon Power Plant,MISO-East,ST_CHP,gas_ct,12.5,5.278,older,3.5,0.06,0.65,1966,10328,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,10328_GEN3,T B Simon Power Plant,MISO-East,ST_CHP,gas_ct,15.0,5.278,older,3.5,0.06,0.65,1974,10328,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,10328_GEN4,T B Simon Power Plant,MISO-East,ST_CHP,gas_ct,21.0,5.278,older,3.5,0.06,0.65,1993,10328,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,10328_GEN5,T B Simon Power Plant,MISO-East,ST_CHP,gas_ct,23.8,5.278,frame,3.5,0.06,0.6,2006,10328,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler']",True
+MISO,50240_GEN1,Purdue University,MISO-Indiana,ST_CHP,gas_ct,30.8,7.128,older,3.5,0.06,0.65,1995,50240,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler', 'Other boiler']",True
+MISO,50240_GEN2,Purdue University,MISO-Indiana,ST_CHP,gas_ct,7.0,7.128,older,3.5,0.06,0.65,1969,50240,"['Circulating fluidized bed boiler', 'Dry bottom wall-fired boiler', 'Other boiler']",True
+MISO,50625_TG22,ExxonMobil Beaumont Refinery,MISO-South,ST_CHP,gas_ct,25.0,5.679,older,3.5,0.06,0.65,1978,50625,['Combined cycle'],False
+MISO,50625_TG23,ExxonMobil Beaumont Refinery,MISO-South,ST_CHP,gas_ct,38.6,5.679,older,3.5,0.06,0.65,1993,50625,['Combined cycle'],False
+MISO,50625_TG32,ExxonMobil Beaumont Refinery,MISO-South,ST_CHP,gas_ct,25.0,5.679,older,3.5,0.06,0.65,1970,50625,['Combined cycle'],False
+MISO,50625_TG33,ExxonMobil Beaumont Refinery,MISO-South,ST_CHP,gas_ct,20.0,5.679,older,3.5,0.06,0.65,1966,50625,['Combined cycle'],False
+MISO,50625_TG34,ExxonMobil Beaumont Refinery,MISO-South,ST_CHP,gas_ct,30.0,5.679,older,3.5,0.06,0.65,1967,50625,['Combined cycle'],False
+MISO,55096_ST,Portside Energy,MISO-Indiana,ST_CHP,gas_ct,19.0,4.77,older,3.5,0.06,0.65,1997,55096,"['Combustion turbine', 'Other boiler']",True
+MISO,56786_1,Spiritwood Station,MISO-West,ST_CHP,gas_ct,94.1,6.345,aero,3.5,0.06,0.51,2014,56786,['Circulating fluidized bed boiler'],True
+NYISO,2480_1,Danskammer Generating Station,Capital_Hudson,ST_GAS,gas_ct,68.0,11.282,older,3.5,0.06,0.65,1951,2480,['Tangentially-fired'],False
+NYISO,2480_2,Danskammer Generating Station,Capital_Hudson,ST_GAS,gas_ct,65.7,11.282,older,3.5,0.06,0.65,1954,2480,['Tangentially-fired'],False
+NYISO,2480_3,Danskammer Generating Station,Capital_Hudson,ST_GAS,gas_ct,137.7,11.282,older,3.5,0.06,0.65,1959,2480,['Tangentially-fired'],False
+NYISO,2480_4,Danskammer Generating Station,Capital_Hudson,ST_GAS,gas_ct,225.9,11.282,older,3.5,0.06,0.65,1967,2480,['Tangentially-fired'],False
+NYISO,2490_2,Arthur Kill Generating Station,NYC,ST_GAS,gas_ct,358.2,11.268,older,3.5,0.06,0.65,1959,2490,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,2490_3,Arthur Kill Generating Station,NYC,ST_GAS,gas_ct,518.4,11.268,older,3.5,0.06,0.65,1969,2490,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,2493_6,East River,NYC,ST_CHP,gas_ct,132.7,7.42,older,3.5,0.06,0.65,1951,2493,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+NYISO,2493_7,East River,NYC,ST_CHP,gas_ct,176.8,7.42,older,3.5,0.06,0.65,1955,2493,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+NYISO,2500_1,Ravenswood,NYC,ST_GAS,gas_ct,364.5,9.5,older,3.5,0.06,0.65,1963,2500,"['Combined cycle', 'Combustion turbine', 'Tangentially-fired']",False
+NYISO,2500_2,Ravenswood,NYC,ST_GAS,gas_ct,375.2,9.5,older,3.5,0.06,0.65,1963,2500,"['Combined cycle', 'Combustion turbine', 'Tangentially-fired']",False
+NYISO,2500_3,Ravenswood,NYC,ST_GAS,gas_ct,985.1,9.5,older,3.5,0.06,0.65,1965,2500,"['Combined cycle', 'Combustion turbine', 'Tangentially-fired']",False
+NYISO,2511_ST1,E F Barrett,Long_Island,ST_GAS,gas_ct,194.2,11.076,older,3.5,0.06,0.65,1956,2511,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2511_ST2,E F Barrett,Long_Island,ST_GAS,gas_ct,178.0,11.076,older,3.5,0.06,0.65,1963,2511,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2516_2,Northport,Long_Island,ST_GAS,gas_ct,398.0,10.887,older,3.5,0.06,0.65,1968,2516,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2516_3,Northport,Long_Island,ST_GAS,gas_ct,398.5,10.887,older,3.5,0.06,0.65,1972,2516,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2516_4,Northport,Long_Island,ST_GAS,gas_ct,398.0,10.887,older,3.5,0.06,0.65,1977,2516,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2516_ST1,Northport,Long_Island,ST_GAS,gas_ct,397.7,10.887,older,3.5,0.06,0.65,1967,2516,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2517_3,Port Jefferson,Long_Island,ST_GAS,gas_ct,192.0,12.015,older,3.5,0.06,0.65,1958,2517,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2517_4,Port Jefferson,Long_Island,ST_GAS,gas_ct,193.0,12.015,older,3.5,0.06,0.65,1960,2517,"['Combustion turbine', 'Tangentially-fired']",False
+NYISO,2527_4,Greenidge Generation LLC,Upstate_West,ST_GAS,gas_ct,104.5,10.486,older,3.5,0.06,0.65,1953,2527,['Tangentially-fired'],False
+NYISO,2625_1,Bowline Point,Capital_Hudson,ST_GAS,gas_ct,586.0,10.186,older,3.5,0.06,0.65,1972,2625,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,2625_2,Bowline Point,Capital_Hudson,ST_GAS,gas_ct,573.6,10.186,older,3.5,0.06,0.65,1974,2625,"['Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,2682_5,S A Carlson,Upstate_West,ST_GAS,gas_ct,22.5,9.357,older,3.5,0.06,0.65,1951,2682,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+NYISO,2682_6,S A Carlson,Upstate_West,ST_GAS,gas_ct,22.5,9.357,older,3.5,0.06,0.65,1968,2682,"['Combined cycle', 'Dry bottom wall-fired boiler']",True
+NYISO,8006_1,Roseton Generating Facility,Capital_Hudson,ST_GAS,gas_ct,614.8,10.95,older,3.5,0.06,0.65,1974,8006,['Tangentially-fired'],False
+NYISO,8006_2,Roseton Generating Facility,Capital_Hudson,ST_GAS,gas_ct,607.2,10.95,older,3.5,0.06,0.65,1974,8006,['Tangentially-fired'],False
+NYISO,8906_2,Astoria Generating Station,NYC,ST_GAS,gas_ct,177.0,11.949,older,3.5,0.06,0.65,1954,8906,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,8906_3,Astoria Generating Station,NYC,ST_GAS,gas_ct,369.9,11.949,older,3.5,0.06,0.65,1958,8906,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,8906_ST5,Astoria Generating Station,NYC,ST_GAS,gas_ct,376.3,11.949,older,3.5,0.06,0.65,1962,8906,"['Combustion turbine', 'Dry bottom wall-fired boiler', 'Tangentially-fired']",True
+NYISO,10025_17TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,15.0,11.5,older,3.5,0.06,0.65,1968,10025,['Tangentially-fired'],False
+NYISO,10025_41TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,25.6,11.5,older,3.5,0.06,0.65,1964,10025,['Tangentially-fired'],False
+NYISO,10025_42TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,25.6,11.5,older,3.5,0.06,0.65,1967,10025,['Tangentially-fired'],False
+NYISO,10025_43TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,25.6,11.5,older,3.5,0.06,0.65,1969,10025,['Tangentially-fired'],False
+NYISO,10025_44TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,25.6,11.5,older,3.5,0.06,0.65,1987,10025,['Tangentially-fired'],False
+NYISO,10025_75TG,"RED-Rochester, LLC",Upstate_West,ST_CHP,gas_ct,2.2,9.0,aero,3.5,0.06,0.51,2015,10025,['Tangentially-fired'],False
+NYISO,54099_GEN1,Ticonderoga Mill,Upstate_West,ST_CHP,gas_ct,41.0,6.233,older,3.5,0.06,0.65,1970,54099,['Dry bottom wall-fired boiler'],True
+NEISO,546_5,Montville Station,Connecticut,ST_GAS,gas_ct,81.0,12.755,older,3.5,0.06,0.65,1954,546,['Tangentially-fired'],False

@@ -2850,8 +2850,11 @@ def run_year(
         # raw LP unit so it dispatches as the scarcity peaker it is — the
         # backcast's historical divergence from the runner's oil-excluding
         # default set (see build_base_fleet's nonthermal_exclude note).
+        # gas_st mirrors the default set's D-25 addition: ERCOT's gas-steam
+        # rows classed gas_ct before the taxonomy fix and were excluded here;
+        # without it they would re-enter as raw duplicates of curated bins.
         nonthermal_exclude=(
-            frozenset({"gas_cc", "gas_ct", "coal", "biomass"})
+            frozenset({"gas_cc", "gas_ct", "gas_st", "coal", "biomass"})
             if iso == "ERCOT"
             else None
         ),
