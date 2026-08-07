@@ -7069,3 +7069,116 @@ remain **owner acts**. CAISO's in-model lever queue remains **EMPTY**; C3a remai
 now carrying **two** named contributors — the walled hourly pumped-storage water state
 (FINDING-caiso140 §B) and, new here, offer curves identified against a superseded outage
 envelope. `battery_dispatch_adder` remains a **PERMANENT DECLARED-RESIDUAL DOF**, untouched.
+
+## 2026-08-07 — CAISO — caiso-181: the regenerated outage envelope IS **DEPTH-CORRECT** — interior CEMS contradiction is **EXACTLY ZERO** — so the caiso-180 residual is **re-located to the offer curves**; H-EDGE confirmed sub-bar and filed; **no LP, nothing registered**
+
+**Runs:** **NONE — no solve was run, so no bundle exists and none is registered.** Stated
+explicitly so the absence is not read as a skipped registration (rule 15 is not engaged
+without a solve; rule 16 likewise). Keeper **UNCHANGED** at `2026-08-06-caiso-175-tac-intake`
+(**NOT-YET**, rubric v3.1, C3a the sole FAIL). DOF ledger **UNCHANGED at 11 / 8**. No
+`ScenarioConfig` field added, removed or re-valued. No derive re-run and **no output byte
+changed** — rule 23 `[R-FROZEN-DERIVE]` **not** engaged. `calibration-complete.json` and
+`holdout-freeze.json` **UNTOUCHED** (owner acts). 2023 + 2024 + 2025 only; the holdout spend
+freeze respected.
+
+**Pre-registration.** `results/calibration/PRECHECK-caiso181-envelope-depth-2026-08-07.md`,
+pushed and **blob-verified** (sha256 `1c8e91f8…`, 482 lines, byte-identical both sides)
+**before any metric was read**. It fixed both readings, the bars (B-1 interior contract
+violation > 0.5 %; B-2 impossible MW-h ≥ 5 % of committed depth), the H-EDGE hypothesis
+*from source*, the verdict branches, and the gates any repair would have had to clear.
+
+**The object.** caiso-180 kept the regenerated envelope under rule 14 `[R-ACCURATE]` against a
+worse fit and filed its +0.5 / +1.1 / +1.6 pp C3a cost as an open root-cause issue. The
+question here: is the committed depth (36.68 / 42.88 / 55.43 M outage MW-h) **correct**, or is
+the model asserting unavailability the units' **own CEMS record contradicts**?
+
+**Route 1 — the ercot-172 fault-3 instrument, ported.** A same-hour CEMS confrontation of every
+committed window against `data/raw/campd-unit-level/CA_*.parquet` — a pure
+**internal-consistency** test of the detector against its **own source**, hence **immune to the
+charter-§9 NEISO definitional seam** (a hit is a *construction* error, not a
+published-vs-measured difference). Zero intake, zero DOF, zero LP. Two code facts make it
+razor-sharp: **100 % of CAISO's envelope is event-based** (zero coal), and
+`detect_outages_eventbased`'s contract admits **zero** in-window hours at CF ≥ `ST_GAS_CF_PEAK`
+= 0.02.
+
+**RESULT — pre-registered BRANCH I, CLEAN, both bars clear.**
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| interior in-window hours | 192,720 | 182,208 | 224,808 |
+| **INTERIOR contradictions (B-1)** | **0** | **0** | **0** |
+| contradicted hours, all **edge** | 7,350 | 6,630 | 9,008 |
+| max distance from a window boundary | **22 h** | **22 h** | **22 h** |
+| **B-2** impossible MW-h / committed depth | **3.68 %** | **4.00 %** | **3.32 %** |
+
+**B-1 clears at exactly zero** — not one hour in **599,736** interior in-window hours across
+three years shows a windowed unit generating above the detector's break threshold — and **every
+one of the 22,988 contradicted hours** lies within a hard **22 h** bound of a window boundary.
+**B-2 clears** in all three years, and decomposes exactly into a **basis mismatch**
+1.26 / 1.62 / 0.75 pp (CEMS gross **above the bin's entire EIA-860 nameplate**, `f_CEMS` to
+1.146 — un-representable by any envelope) and an **envelope excess** 2.42 / 2.38 / 2.57 pp, of
+which 74 / 80 / 81 % is edge-day. The interior-day remainder cannot be a windowed unit running
+(L1 proves that is exactly zero) and is arithmetically forced to be the same bin-grain capacity
+allocation.
+
+**CONSEQUENCE — READING (i) ADOPTED, and the memo §3 framing resolved.** The regeneration did
+**not** over-derate. The stale envelope fit better **not** because it was more accurate but
+because the keeper's offer curves had been identified against its phantom depth and were
+silently compensating — the `DECISION-MEMO-ercot-148149` §3 **compensating error pair**,
+confirmed here on CAISO's own data rather than transferred. **The +1.1 / +1.6 pp is LOCATED: it
+belongs to the offer curves.** caiso-180 filed the residual with a suspected owner; this session
+**discharges the suspicion by eliminating the alternative**, so the re-identification can no
+longer bury a data error inside a fitted curve. Rule 14 is **vindicated**, not merely obeyed.
+
+**NEW OPEN ITEM — H-EDGE: confirmed, sized, sub-bar, NOT fixed, and CROSS-ISO.** The deriver
+detects in **hours** (`start = clock[s]`, `last = clock[e-1]`) but writes `strftime("%Y-%m-%d")`,
+and the loader re-expands `outage_start` 00:00 → `outage_end` 23:00 — asserting up to **23 h per
+edge** the detector never detected, exactly where the event contract guarantees the neighbouring
+hour was **running**. Pre-registered from source **before** measurement and confirmed at **100 %**
+concentration. Its signature is decisive: the cost is a **fixed ~23 h per WINDOW**, so as a share
+it scales **1/duration** — the contradicted share falls **monotonically** 8.32→1.48 / 9.70→1.41 /
+10.12→1.53 % from the shortest to the longest duration quartile. **That FALSIFIES this session's
+own pre-registered "concentrates in the longest windows" prediction**, and it is reported as a
+falsification (caiso-180's window-**shape** measurement itself stands). **Sized against
+interest:** at 1,208 / 1,780 / 1,910 MW-h per window, the +108 / +53 / +126 windows the
+regeneration added carry only 0.130 / 0.094 / 0.241 M MW-h = **9.7 / 2.3 / 4.4 %** of the
+|A1→A0| depth change — **the seam is NOT the caiso-180 driver**. Repair **named not built**
+(carry the window start/end **hour** through schema + loader: zero DOF, a strict grain change of
+the ercot-174 BE-1/2/3 class), needing its own charter. The writer and loader serve **all six
+ISOs**; magnitude elsewhere is **unmeasured** and no verdict transfers (rule 25).
+
+**Route 2 NOT REACHED** — it is entered only on the ambiguous branch, and Route 1 was
+unambiguous. Recorded as **available**, however: CAISO's Curtailed and Non-Operational Generator
+prior-trade-date reports are already fetched (1,094 daily snapshots), curated
+(`caiso-dam-outage-windows.parquet`, 794,103 episodes, 2021-05-07 → 2025-12-31), crosswalked and
+wired behind `ScenarioConfig.caiso_dam_outages` (default off, matrix cell `U`). **Not armed, not
+compared, not adjudicated here**, and any future use must clear the charter-§9 definitional seam
+first.
+
+**Nothing from PR #3685 transferred but METHOD and SEQUENCING.** CAISO has no two-layer product
+(partial/short files header-only, `campd-partial-outages.csv` ERCOT-only, all three gates off,
+zero coal), so no `min()`/product rule was proposed and G-COAL148 is not relevant (rule 25,
+rule 28 duty d). The memo §5 option-C ordering — **construction first, offer curves last** —
+bound this session and **paid off**: no offer-curve re-tune was opened, and the construction
+question came back clean.
+
+**Scope honesty.** 2 / 2 / 32 windows excluded from L1 are all `eia923_netzero` — synthetic
+full-year rows for **non-CEMS** plants derived from EIA-923, where confronting CEMS is a category
+error; the 2025 jump is the EIA-923 filing lag. Feb 29 2024 (77,321 MW-h of CEMS gross) has no
+counterpart on the model's fixed 8760-hour clock and is excluded from **both** sides of L2. Every
+convention was chosen to **under**-count contradictions (a NaN CAMPD hour is never a
+contradiction; CF uses the detector's own `detect_mw` basis) — and the count still came back
+exactly zero.
+
+**STATE AFTER THIS SESSION.** CAISO's in-model lever queue is no longer empty in the sense that
+matters: **the named successor is the offer-curve re-identification** (caiso-182), on the rule-23
+`[R-FROZEN-DERIVE]` **source-data-changed** basis cited to the 2026-07-24 CAMPD change — **never**
+to the C3a residual — scored leave-one-year-out within 2023–2025, with C3a remaining a
+**reported** quantity and never the promotion basis (rule 1). C3a stays a live FAIL with two
+named contributors: the walled hourly pumped-storage water state (FINDING-caiso140 §B, owner-level
+data) and, now **confirmed rather than suspected**, the offer curves. `battery_dispatch_adder`
+remains a **PERMANENT DECLARED-RESIDUAL DOF**, untouched. Freeze **ACTIVE**, `complete` **not
+held**, both owner acts. Record:
+`results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md`,
+`scripts/probes/_caiso181_cems_confrontation.py`,
+`results/calibration/_caiso181_cems_confrontation.json`.
