@@ -1,0 +1,167 @@
+{
+  "session": "miso-140",
+  "iso": "MISO",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "G-1": {
+    "gate": "G-1 refresh correctness",
+    "pass": true,
+    "rows": [
+      {
+        "year": 2023,
+        "basis": "RT",
+        "recomputed": 32.85,
+        "committed": 32.85,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      },
+      {
+        "year": 2023,
+        "basis": "DA",
+        "recomputed": 34.23,
+        "committed": 34.23,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      },
+      {
+        "year": 2024,
+        "basis": "RT",
+        "recomputed": 32.3,
+        "committed": 32.3,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      },
+      {
+        "year": 2024,
+        "basis": "DA",
+        "recomputed": 33.14,
+        "committed": 33.14,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      },
+      {
+        "year": 2025,
+        "basis": "RT",
+        "recomputed": 45.46,
+        "committed": 45.46,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      },
+      {
+        "year": 2025,
+        "basis": "DA",
+        "recomputed": 46.35,
+        "committed": 46.35,
+        "delta": 0.0,
+        "monthly_mismatches": [],
+        "pass": true
+      }
+    ]
+  },
+  "G-2": {
+    "gate": "G-2 model-side vintage",
+    "pass": true,
+    "rows": [
+      {
+        "year": 2023,
+        "hours_compared": 8760,
+        "zones_absent_from_sidecar": [],
+        "annual_energy_head_MWh": 640992712.0,
+        "annual_energy_bundle_MWh": 640992712.0,
+        "rel_energy_delta": 0.0,
+        "max_abs_hourly_delta_MW": 0.0,
+        "pass": true
+      },
+      {
+        "year": 2024,
+        "hours_compared": 8760,
+        "zones_absent_from_sidecar": [],
+        "annual_energy_head_MWh": 644633002.0,
+        "annual_energy_bundle_MWh": 644633002.0,
+        "rel_energy_delta": 0.0,
+        "max_abs_hourly_delta_MW": 0.0,
+        "pass": true
+      },
+      {
+        "year": 2025,
+        "hours_compared": 8760,
+        "zones_absent_from_sidecar": [],
+        "annual_energy_head_MWh": 663809971.0,
+        "annual_energy_bundle_MWh": 663809971.0,
+        "rel_energy_delta": 0.0,
+        "max_abs_hourly_delta_MW": 0.0,
+        "pass": true
+      }
+    ]
+  },
+  "G-3": {
+    "gate": "G-3 scope completeness",
+    "pass": true,
+    "load_demand_call_sites": [
+      {
+        "path": "scripts/data/build_calibration_reference.py",
+        "role": "INPUT (calibration_reference.json demand totals)"
+      },
+      {
+        "path": "scripts/data/curate_demand_profile.py",
+        "role": "INPUT (the demand series itself)"
+      },
+      {
+        "path": "scripts/data/curate_zonal_shares.py",
+        "role": "INPUT (zonal demand shares)"
+      },
+      {
+        "path": "scripts/data/derive_actual_lmp.py",
+        "role": "COMPARATOR (actual_lmp.json *_lw -> bench avgLMP)"
+      },
+      {
+        "path": "scripts/data/derive_ercot_rtolcap_forward.py",
+        "role": "OTHER"
+      },
+      {
+        "path": "scripts/data/derive_import_tranches.py",
+        "role": "INPUT (import tranche sizing)"
+      },
+      {
+        "path": "scripts/export_lce_lmp.py",
+        "role": "OTHER"
+      },
+      {
+        "path": "scripts/render_data_dictionary.py",
+        "role": "OTHER"
+      },
+      {
+        "path": "scripts/run_calibration.py",
+        "role": "INPUT (solve driver)"
+      },
+      {
+        "path": "scripts/run_calibration_full.py",
+        "role": "INPUT (solve driver)"
+      },
+      {
+        "path": "scripts/validate_ercot_as_forward_requirement.py",
+        "role": "OTHER"
+      },
+      {
+        "path": "scripts/validate_ercot_rtolcap_forward.py",
+        "role": "OTHER"
+      },
+      {
+        "path": "scripts/verify_holdout_intake.py",
+        "role": "OTHER"
+      }
+    ],
+    "demand_weighted_comparators": [
+      "scripts/data/derive_actual_lmp.py"
+    ],
+    "actual_tail_uses_load_demand": false
+  }
+}

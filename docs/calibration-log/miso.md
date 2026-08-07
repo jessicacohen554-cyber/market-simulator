@@ -5437,7 +5437,7 @@ probes `scripts/probes/_miso139_derate_gates.py`, `_miso139_g2_binding.py`,
 `_miso139_successor_bound.py`;
 records `results/calibration/_miso139_derate_gates.json`,
 `_miso139_g2_binding.json`, `_miso139_successor_bound.json`.
-Next number: **miso-140**.
+Next number: **miso-140**. *(superseded — see the miso-140 entry below.)*
 
 ### Owner decisions on the miso-139 successors (2026-08-06)
 
@@ -5581,3 +5581,106 @@ the same cross-ISO session had, on another ISO, regenerated bench parts on a
 corrected nameplate union, and a comparator mandate is no licence to import it.
 Family: miso-136 *an absence claim is a measurement* → miso-137 *a threshold is
 a hypothesis, not a definition* → **miso-140 *a repair is not a verification***.
+
+---
+
+## 2026-08-07 — miso-140b (concurrent independent session): the C3a re-verification REPLICATES exactly, and two checks the canonical entry did not run both PASS — plus a `load_demand` hazard found in passing. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+
+A **second miso-140 session ran concurrently** on the same §5.4 queue item 1 and
+landed after the entry above. Its numbers are recorded here **as an independent
+replication, not a second discharge** — the item is discharged by the canonical
+entry. PREREG
+`results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md`
+pushed at `78e2cec4` before any adjudicating statistic; FINDING
+`results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`;
+probe `scripts/probes/_miso140_bench_refresh_gates.py`; records
+`_miso140_bench_refresh_gates.json`, `_miso140_c3a_reverification.json`.
+
+**The replication.** Recomputing `*_lw` from
+`actual_lmp_hourly_MISO.parquet` × `eia_loader.load_demand` through the
+deriver's own path gives **Δ = 0.000000** on 6/6 annual scalars and 72/72
+monthlies, and `calibration_verdict.py --run-id` at HEAD returns gated RT
+**−0.4 / −6.0 / −14.1 %**, DA **−4.4 / −8.4 / −15.8 %**, determination
+**`NOT-YET`**, sole FAIL C3a, sole ledgered caveat C3c 1/1, C3b PASS
+0.075/0.112/0.191, zero criterion flips. **Identical to the canonical entry in
+every cell**, reached independently and pre-registered separately — which is the
+strongest thing that can be said about a comparator this load-bearing.
+
+### The two additive results
+
+**(1) THE OTHER SIDE OF THE COMPARISON ALSO CHECKS OUT — the model side is on
+the SAME demand vintage.** The canonical G-2 bounds the *blast radius* of the
+refresh within the bench; this is a different question: the diagnosed defect was
+a **vintage mismatch between the two sides**, so refreshing the actual side only
+closes it if the model side is on today's vintage too. Measured — the keeper's
+committed `hourly/system_<year>.parquet` demand vs `load_demand('MISO', y, cfg)`
+at HEAD — **0.0 MW max hourly Δ and 0.0 relative annual energy, 3/3 years, 6/6
+zones** (640.993 / 644.633 / 663.810 TWh). **The mismatch is fully closed, not
+half closed.** This was the branch that would have made the session an
+escalation rather than a discharge, and it is now measured rather than assumed.
+
+**(2) THE COMPARATOR SET IS A SINGLETON, so nothing else inherited the stale
+vintage.** Enumerated over `scripts/`: of every `load_demand` call site, exactly
+one produces a committed **comparator** (`derive_actual_lmp.py` → `actual_lmp.json`
+`*_lw` → bench `avgLMP`); all others are model **inputs**. In particular
+`derive_actual_tail.py` never calls `load_demand`, so **C3c's tail carries no
+demand weighting and cannot have inherited the defect** — the one criterion where
+an unnoticed stale weight would have been most consequential.
+
+### A hazard found in passing — `load_demand` silently changes its ZONAL split with `sys.path`
+
+`eia930.zonal_shares._zonal_shares_from_raw` obtains the measured hourly zonal
+shares via `from scripts.data.curate_zonal_shares import _PARSE_FUNCS`, which
+needs the **repo root** on `sys.path`. `data/clean` is gitignored and therefore
+absent in a fresh clone, so that raw path is the **only** measured route. When
+the import fails, `load_zonal_shares` returns `None` **silently** and
+`load_demand` falls back to the static Gold-Book `load_share` — **same ISO
+total, different zonal allocation**. Measured on MISO 2025: **up to 6,747 MW per
+zone-hour** (MISO-South; MISO-East 4,272; MISO-West 4,202) with annual ISO energy
+identical to the MWh.
+
+**Solve and scoring are NOT affected** — checked, not assumed:
+`run_calibration_full.py:74` and `calibration_verdict.py:51` both insert the repo
+root. **The exposure is ad-hoc probes**: of 749 files in `scripts/probes/`, **9
+touch `load_demand`/`load_zonal_shares` and 8 of those do not put the repo root
+on `sys.path`**, so invoked the documented way they receive static shares with no
+warning. The effect is **nil** for consumers that use only the ISO total — which
+is exactly why the `*_lw` verification was unaffected, since the deriver weights
+by `demand.sum(axis=0)` — and **material** for any per-zone consumer. Reported,
+not fixed: making the loader warn or fail loudly is a `src/` change, outside a
+hygiene lane (rules 19/24). The probe here is hardened both ways.
+
+### Where this session was wrong, recorded
+
+Its own G-2 gate **reported a 7 GW mismatch that did not exist**, because the
+probe put `scripts/` but not the repo root on `sys.path` and so compared the
+keeper's measured-share demand against the static fallback. It was caught only
+because the signature — **identical annual totals with large per-cell deltas** —
+is arithmetically impossible for a vintage error and inevitable for a different
+zonal split. Had the gate been non-gating, or its failure signature less
+distinctive, this entry would have reported a defect in the artifacts that is
+not there.
+
+### Rule duties
+
+Rule 15 — no LP solved, so **no run to register**. Rule 28(b) — **no cell verdict
+minted**; no mechanism tested. Rule 22 — 2023–2025 only; MISO holds no marker.
+Rules 1/13/19/21/24/25 — nothing sized on any residual, one question, no measured
+outcome fed back, no tuning channel, no parameter, no other ISO's artifact
+touched. Owner directive — no C7 work, and **no progress claimed against the
+−14 % level miss**: the movement is ±0.1–0.2 pp, 100 % comparator-side, and
+adverse on both failing-side years.
+
+### The generalisable lesson — A CORRECTION IS NOT VERIFIED BY THE COMMIT THAT MAKES IT, AND THE INSTRUMENT THAT CHECKS IT NEEDS CHECKING TOO
+
+Three things had to be measured before "already done" could become "done", and
+none is visible from the commit that did it: whether the numbers **reproduce**,
+whether the **other side of the comparison** moved with them, and whether
+anything else carried the **same defect**. Only the first is about the artifact
+that changed. And the corollary this session paid for: *a gate that can fail for
+a reason outside the thing it is gating must be able to tell the two apart before
+its verdict is quotable.* Family: miso-139 *a mechanism's anchor is part of the
+mechanism* → miso-140 *a repair is not a verification* → **miso-140b *…and a
+correction is not verified by the commit that makes it***.
+
+Next number: **miso-141**.

@@ -3298,6 +3298,51 @@ loss.
 > `results/calibration/_miso140_bench_lw_verify.json` ·
 > `scripts/probes/_miso140_bench_lw_verify.py` ·
 > `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`.
+> **miso-140b ADDENDUM (2026-08-07) — a CONCURRENT independent session on the
+> same item. It does NOT re-discharge item 1; it REPLICATES the numbers above and
+> adds two checks the canonical stamp did not run.** Separate PREREG
+> (`PREREG-miso140-bench-refresh-verification-2026-08-07.md` @ `78e2cec4`),
+> separate probe, same result in **every cell**: Δ = 0.000000 on 6/6 annual + 72/72
+> monthly, gated RT **−0.4 / −6.0 / −14.1 %**, DA **−4.4 / −8.4 / −15.8 %**,
+> `NOT-YET`, sole FAIL C3a, C3c 1/1, C3b 0.075/0.112/0.191, zero flips.
+> **(i) THE OTHER SIDE OF THE COMPARISON ALSO CHECKS OUT.** The canonical G-2
+> bounds the refresh's blast radius *within the bench*; this is the different
+> question the diagnosis implies — the defect was a **vintage mismatch between the
+> two sides**, so refreshing the actual side closes it only if the MODEL side is on
+> today's vintage. Measured (keeper's committed `hourly/system_<year>.parquet`
+> demand vs `load_demand('MISO', y, cfg)` at HEAD): **0.0 MW max hourly Δ, 0.0
+> relative annual energy, 3/3 years, 6/6 zones** (640.993 / 644.633 / 663.810 TWh).
+> **Fully closed, not half closed** — the branch that would have made the session an
+> escalation, now measured rather than assumed.
+> **(ii) THE COMPARATOR SET IS A SINGLETON.** Of every `load_demand` call site under
+> `scripts/`, exactly one produces a committed **comparator**
+> (`derive_actual_lmp.py`); all others are model **inputs**. `derive_actual_tail.py`
+> never calls it, so **C3c's tail carries no demand weighting and cannot have
+> inherited the stale vintage** — the criterion where an unnoticed stale weight
+> would have mattered most.
+> **(iii) A HAZARD FOUND IN PASSING, reported not fixed — `load_demand` silently
+> changes its ZONAL split with `sys.path`.** `eia930.zonal_shares._zonal_shares_from_raw`
+> imports `scripts.data.curate_zonal_shares`, needing the **repo root** on
+> `sys.path`; `data/clean` is gitignored and absent in a fresh clone, so that raw
+> path is the ONLY measured route. On failure `load_zonal_shares` returns `None`
+> **silently** and `load_demand` drops to the static Gold-Book `load_share` — same
+> ISO total, different allocation, measured on MISO 2025 at up to **6,747 MW per
+> zone-hour** (MISO-South; East 4,272; West 4,202). **Solve and scoring are NOT
+> affected** — checked: `run_calibration_full.py:74` and `calibration_verdict.py:51`
+> both insert the repo root. The exposure is ad-hoc probes: of 749 files in
+> `scripts/probes/`, **9 touch `load_demand`/`load_zonal_shares` and 8 of those do
+> not put the repo root on `sys.path`**. Effect is **nil** for ISO-total consumers
+> (which is why the `*_lw` verification was unaffected — the deriver weights by
+> `demand.sum(axis=0)`) and **material** for per-zone consumers. Fixing the loader
+> is a `src/` change, outside a hygiene lane (rules 19/24).
+> **Recorded against interest:** this session's own gate first reported a 7 GW
+> mismatch that did not exist, for exactly the reason in (iii); it was caught only
+> because identical annual totals with large per-cell deltas are impossible for a
+> vintage error and inevitable for a different zonal split.
+> `results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md` ·
+> `_miso140_bench_refresh_gates.json` · `_miso140_c3a_reverification.json` ·
+> `scripts/probes/_miso140_bench_refresh_gates.py`.
+>
 > *(Original charter text follows.)* **QUEUE ITEM 1 — REFRESH THE MISO BENCH,
 > then re-verify every MISO
 > C3a.** Owner-selected 2026-08-06. miso-137 §5 found the committed MISO `*_lw`
@@ -3359,6 +3404,53 @@ loss.
 > afternoon and night take the identical multiplier and there is no diurnal
 > reshape at all, which is why miso-101 armed the hour-grain leg in the first
 > place, FINDING-miso100-stchp-diurnal-2026-07.md §4/§5.)*
+
+> **QUEUE STAMP miso-140b (2026-08-07) — A CONCURRENT INDEPENDENT SESSION ON
+> QUEUE ITEM 1. IT DOES **NOT** RE-DISCHARGE THE ITEM (the canonical miso-140
+> stamp does); IT **REPLICATES** THE COMPARATOR VERIFICATION AND THE C3a
+> RE-VERIFICATION IN EVERY CELL, AND ADDS TWO CHECKS THE CANONICAL STAMP DID NOT
+> RUN. NO LP, NO BUNDLE REGEN, NO FIELD, NO ARM, NO RUN, NO PARAMETER, **NO CELL
+> VERDICT MINTED** (no mechanism tested), KEEPER UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`. Separate PREREG
+> `PREREG-miso140-bench-refresh-verification-2026-08-07.md` @ `78e2cec4`, pushed
+> before any adjudicating statistic, four gating gates and six falsifiable numeric
+> predictions — **all six came in exactly**.
+> **(a) THE REPLICATION.** Δ = **0.000000** on 6/6 annual scalars and 72/72
+> monthlies, recomputed from `actual_lmp_hourly_MISO.parquet` × `load_demand`
+> through the deriver's own path; `calibration_verdict.py --run-id` at HEAD returns
+> gated **RT −0.4 / −6.0 / −14.1 %**, DA **−4.4 / −8.4 / −15.8 %**, `NOT-YET`,
+> sole FAIL C3a, sole ledgered caveat C3c 1/1, C3b PASS 0.075/0.112/0.191, zero
+> criterion flips. **Identical to the canonical stamp in every cell**, reached
+> independently and pre-registered separately.
+> **(b) THE MODEL SIDE IS ON THE SAME DEMAND VINTAGE.** The diagnosed defect was a
+> vintage mismatch **between the two sides**, so refreshing the actual side closes
+> it only if the model side is on today's vintage. Measured (keeper's committed
+> `hourly/system_<year>.parquet` demand vs `load_demand` at HEAD): **0.0 MW max
+> hourly Δ, 0.0 relative annual energy, 3/3 years, 6/6 zones**. **Fully closed, not
+> half closed** — the branch that would have made the session an escalation.
+> **(c) THE COMPARATOR SET IS A SINGLETON.** Exactly one `load_demand` call site
+> under `scripts/` produces a committed comparator (`derive_actual_lmp.py`); the
+> rest are model inputs. `derive_actual_tail.py` never calls it, so **C3c cannot
+> have inherited the stale vintage.**
+> **(d) A HAZARD FOUND IN PASSING, REPORTED NOT FIXED.** `load_demand` **silently**
+> swaps its ZONAL split when the repo root is off `sys.path`
+> (`_zonal_shares_from_raw` imports `scripts.data.curate_zonal_shares`; `data/clean`
+> is gitignored so that raw path is the only measured route). Same ISO total,
+> different allocation — **up to 6,747 MW per zone-hour** on MISO 2025. Solve and
+> scoring are unaffected (`run_calibration_full.py:74`, `calibration_verdict.py:51`
+> both insert the repo root); **8 of the 9 demand-touching files in
+> `scripts/probes/` are exposed**. Nil for ISO-total consumers (why the `*_lw`
+> verification was unaffected), material for per-zone consumers. A `src/` fix is
+> outside a hygiene lane (rules 19/24).
+> **RECORDED AGAINST INTEREST:** this session's own gate first reported a **7 GW
+> mismatch that does not exist**, for exactly the reason in (d) — caught only
+> because identical annual totals with large per-cell deltas are impossible for a
+> vintage error and inevitable for a different zonal split. *A gate that can fail
+> for a reason outside the thing it is gating must be able to tell the two apart
+> before its verdict is quotable.*
+> Evidence: `results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`,
+> `_miso140_bench_refresh_gates.json`, `_miso140_c3a_reverification.json`,
+> probe `scripts/probes/_miso140_bench_refresh_gates.py`.
 
 > **QUEUE STAMP miso-139 (2026-08-06) — THE AMBIENT CAPABILITY-DERATE IS **NOT**
 > "ALREADY ARMED AND MIS-SCOPED". IT IS ARMED IN AN **ANCHORING CONVENTION THAT
