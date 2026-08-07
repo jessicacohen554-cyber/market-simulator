@@ -6576,6 +6576,70 @@ withdrawn "2019 is unsolvable at HEAD (no NEISO demand rows before 2021)" as its
 conclusion both support is still correct; the first clause of the second is not.
 `results/calibration/ASSESSMENT-neiso90-final-reassessment-2026-08-07.md`.
 
+**neiso-89 (2026-08-07) — THE `final` PREREQUISITES. NO MECHANISM TESTED, NO CELL VERDICT
+MOVED (rule 28d), NO `ScenarioConfig` FIELD (rule 28c not engaged), KEEPER UNCHANGED
+(`2026-08-05-neiso-83-ca1-reclass`), NOTHING REGISTERED, NO HOLDOUT YEAR SPENT.** The lever
+queue stays CLEARED and no queue item was opened — the session was asked to close the
+`final` prerequisites, not to calibrate. Every solve run here is a rule-16 throwaway
+diagnostic probe on in-sample years. Record:
+`results/calibration/ASSESSMENT-neiso89-final-prereqs-2026-08-07.md`.
+
+**THE HEADLINE IS A NEGATIVE RESULT ON THE KEEPER-DRIFT BISECT (owner decision D-88.3).
+THERE IS NOTHING IN THE COMMIT RANGE TO BISECT.** neiso-87 §4.0 recorded the keeper's
+2025 non-reproduction as lying "in ~50 commits after merge-base 243b4ab1". Replaying the
+keeper's own recipe for 2025 at its own sha `f8f803dd` and at HEAD `c710d17e` — **373
+commits apart, same data root** — gives **byte-identical** `class_hourly`, `system`,
+`storage` and `reserve_family`, and **0 of 8,760 hours** of price difference. Five
+candidate causes are eliminated by measurement, not argument: **code** (byte-identical),
+**inputs** (`neiso87_control_A`'s content-addressed `shared_inputs` hashes are identical to
+the keeper's on `campd`/`eia923`/`eia930` **and all five outage artifacts**), **solver
+version** (`neiso87_control_A` ran highspy 1.14.0, the keeper's own, and still diverges),
+**cross-year LP warm-start** (a full 2023-25 chain with `replay_keeper`'s pin removed gives
+2025 bit-identical to xyear-OFF, and 2023/2024 prices bit-identical to the keeper — the
+2024 primal move is the documented zero-aggregate marginal-tie reshuffle, total gen Δ = 0.0
+GWh), and **a missing gitignored `data/clean/hydro-plant-modes` partition** (curated, then
+inert). Four independent solves agree with each other to the bit and all differ from the
+committed bundle by the identical 731-hour January pattern (mean −3.9372, max |Δλ| 25.5244
+$/MWh): **the committed bundle is the outlier**, and the residual cause is solve-time state
+the bundle does not record. Recommended fix, NOT taken here because re-registering the
+designated keeper is a promotion-class act with rule-22 D-5(b) obligations: re-solve and
+re-register at HEAD (`--year 2023 2024 2025`), expected 2025 mean λ **69.399** against the
+bundle's registered 70.0493.
+
+**TWO CROSS-ISO REPRODUCIBILITY HOLES SURFACED (reported, not changed — rule 25).**
+(a) `MARKET_SIM_WARMSTART_XYEAR` is a solve-affecting **env-var knob absent from
+`run_config.json`** (rule 24 `[R-REGISTRY]`), excused as "basis-neutral by design"; this
+session VERIFIED the neutrality holds at NEISO, but `docs/cross-year-warmstart.md`'s
+evidence covers ERCOT and MISO only and already documents a MISO-2025 dual-degeneracy price
+exception. (b) **`highspy` is unpinned** (`>=1.7`) and the committed bundle fleet has
+already split mid-program: **73 bundles record 1.14.0, 11 record 1.15.1**, the break on
+2026-08-05/06, spanning all six ISOs.
+
+**THE OTHER THREE ITEMS.** (1) **NEISO 2019 + 2020 calibration-reference blocks and
+renewable-capacity CSVs PREPARED** on pjm-160's F3 closure — every pre-existing ISO-year
+block and all 29 pre-existing CSVs byte-frozen, verified before the write; NEISO 2020 is
+included where PJM's is excluded because NEISO's per-BA series is clean (0 hours flagged,
+max/median 1.93). (2) **`actual_tail.json` NEISO 2019 is NOT a gap** — 2019 is locked-tier
+and `final` is empty for every ISO, so the tier gate refuses it regardless of the deriver's
+private `CONSIDERED_HOLDOUT_YEARS` tuple; that tuple is **DELETED** (rule 26 `[R-DELETE]`,
+not emptied) after a full cross-ISO impact enumeration, leaving the tier marker as the sole
+gate and emitting six validation-tier rows (NEISO/NYISO/PJM × {2020, 2021}) to ISOs that
+already hold the validation marker. (3) **The CAMPD outage-detector vintage split DOES NOT
+EXIST** — `campd-unit-outages-NEISO.csv` was CREATED in one commit (`59f8bc30`, 4,484
+insertions / 0 deletions) covering 2018-2026, then guard-filtered uniformly (`6a8f285c`,
+1,294 deletions matching the layup companion's 2018-2026 span exactly); detector fingerprint
+uniform (5.00-day floor is the minimum in every year), and the register's own superseded
+counts match nothing in the current file. `docs/holdout-data-equivalency-register-2026-07.md`
+corrected; **the NYISO row carries the same stale premise and is left for the NYISO lane.**
+
+**`final`: DO NOT DECLARE — and the reason has changed.** *(This half ran CONCURRENTLY with neiso-90, whose PR merged first; where the two differ, THE neiso-90 BLOCK ABOVE GOVERNS — it corrects the expected C3c outcome from a free PASS to a SKIP ordering hazard, and dissolves the `parasitic_load_factors` / `capacity_actuals_neiso` rows outright. The BISECT above is unique to this session.)* The input blockers are closed;
+what remains is neiso-87 §3.3, now standing alone and unrefuted: 2019 had **ZERO** actual RT
+hours > $300, so C3c (NEISO's declared frontier, its one chartered lever refuted at Phase-0
+at neiso-76) returns a free small-count PASS and **cannot discriminate**. Spend the one-touch
+year after the C3c lane resolves. `final` stays EMPTY, the freeze stays ACTIVE, and the CLI
+gate was verified still refusing NEISO 2019/2020/2022 while allowing 2023-2025.
+
+
 **neiso-88 (2026-08-06) — A FORECAST-READINESS ASSESSMENT. NO LP, NO SOLVE, NOTHING
 SCORED OR REGISTERED, KEEPER UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`), NO CELL
 VERDICT MOVED (rule 28d — no mechanism was tested), NO `ScenarioConfig` FIELD (rule 28c
