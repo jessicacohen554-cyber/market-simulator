@@ -445,7 +445,7 @@ Data-consuming flags ON in the keeper: `use_campd_bins`, `plant_level_fleet`,
 | CAMPD unit-level CT/MA/ME/NH/RI/VT (`campd-unit-level/{ST}_{YEAR}.parquet`) | EPA CAMPD hourly, per unit, 2023-2025 | **EQUIVALENT** (pre-existing 2018-2026 landing, prior lane — 2026-07-08/10 intake_log entries) | — |
 | Fleet statics (`custom-bin-assignments.csv`, `master-plant-registry.csv`) | single registry snapshot, year-agnostic | **DEGRADED (accepted)** — same static vintage for every year including 2018-2022; identical caveat already applies in-sample | accepted, same convention as NYISO §NYISO |
 | EIA-860 vintage snapshots (`eia-860/vintage_<year>/…`) | per-year vintage subfolder | **EQUIVALENT** — vintage_2018 … vintage_2022 all on disk | — |
-| Unit-outage windows (`campd-unit-outages-NEISO.csv`) | derived windows, 2023-2025, committed vintage | **DEGRADED** — this session appended 573/656/587/606/502 HEAD-vintage windows for 2018/2019/2020/2021/2022 (`scripts/archive/land_neiso_holdout_multiyear.py` + `land_neiso_2022_readiness.py`; committed 968 rows byte-frozen as prefix throughout). Same detector-vintage asymmetry as the register-handoff-documented 2022 issue (committed in-sample vintage vs a HEAD re-derivation — unknown args/code vintage, last touched PR #1593): the appended years are a *different* detector vintage than 2023-2025, not a parity issue specific to any one year | **HIGH** (outage overlay shapes prices+volumes). Fix: calibration-owner adjudication — reconstruct the committed recipe or re-derive ALL years (2018-2025) at one pinned vintage (changes keeper inputs) |
+| Unit-outage windows (`campd-unit-outages-NEISO.csv`) | derived windows, **2018-2026, one committed vintage** | **EQUIVALENT — the vintage split described here was REAL WHEN WRITTEN and has since been SUPERSEDED; adjudicated CLOSED at neiso-89, 2026-08-07** (see the note below this table) | **none outstanding.** No reconstruction, no re-derivation, no keeper-input change |
 | Zone temp (`neiso-weather/neiso_zone_temp_daily.csv`) | NOAA GHCN per-zone daily, 2023-2025 | **EQUIVALENT** (this session: 1460/1460/1464/1460/1460 zone-days appended for 2018-2022 from the committed on-disk `_{year}h1/h2` NOAA splits, same schema, in-sample rows byte-frozen as prefix) | — |
 | Load-weighted temp (`neiso_load_weighted_temp_daily.csv`) | 6-station NOAA GHCN load-weighted daily | **EQUIVALENT** (this session: re-derived via the frozen `derive_neiso_temp_reliability_floor.fetch_neiso_temp` recipe for 2018-2022, in-sample rows byte-frozen) | — |
 | Winter fuel-security study figures (`winter-fuel-inventory/isone/isone.csv`) | hand-curated ISO-NE program figures, year-agnostic capacity/logistics inputs | **DEGRADED (accepted)** — static across all years by design (rule 13: forward-derivable capacity input, not a measured outcome); identical in-sample | accepted, same as fleet statics |
@@ -463,6 +463,48 @@ Data-consuming flags ON in the keeper: `use_campd_bins`, `plant_level_fleet`,
 | Driver demand — raw wide extract (`eia-930-hourly/ISNE hourly.parquet`) | hourly, underlies the repaired series above | **EQUIVALENT** 2018-2025 (full 8760/8784-hour years); **DEGRADED** H1-2026 (3,359 h through ~May, publication lag) | this is the *upstream* raw series the missing 2018-2020 repaired profile above would be rebuilt from — the gap is in the repair/normalization step, not raw availability |
 | Zonal load actuals (`zone-specific-demand/NEISO/…`) | NYISO-style per-zone hourly actuals | **accepted structural absence** — NEISO carries no zonal-load file at all (the `land_actual_lmp`/`lw_retrofit` step logs `NEISO zonal load file not found` for **every** year including keeper years 2023-2025); the load-weighted LMP (`_lw` fields) falls back to the CAMPD-generation-weighted proxy the same way in-sample and out-of-sample | not a holdout-specific gap; NEISO has never had this input |
 | NEISO-AS measured hourly reserve requirements (dynamic-RR non-keeper limb) | raw absent all years | **MISSING** (same finding as the 2026-07-12 gap-register entry) — needed only by `neiso57_dynamic_rr`, not the frozen keeper | not keeper-material; owner decision on committing the raw exports, unchanged from the 2026-07-12 finding |
+
+> **NEISO unit-outage vintage split — ADJUDICATED CLOSED, neiso-89 (2026-08-07). There is
+> no split.** This row previously read DEGRADED/HIGH and asked the calibration owner to
+> either reconstruct the committed recipe or re-derive all of 2018-2025 at one pinned
+> vintage. **Neither is needed: the file already IS one pinned vintage**, and the entry
+> describes a PREDECESSOR artifact that the 2026-07-24 all-ISO backfill superseded two days
+> before this register's NEISO section was written. Evidence, from git and from the file
+> itself:
+>
+> 1. **One creation, all years.** `data/raw/campd-unit-outages-NEISO.csv` does not exist in
+>    `59f8bc30^`. Commit `59f8bc30` (2026-07-24, "campd-outage-backfill 2018-2026, all six
+>    ISOs + EIA-923 non-CAMPD fallback") **creates** it — git raw status `A`, `000000 ->
+>    100644`, **4,484 insertions / 0 deletions** — covering 2018-2026 in a single
+>    derivation. The path has never been deleted or renamed since, and only one other
+>    commit has ever touched it.
+> 2. **That other commit removed layup windows UNIFORMLY, across every year.** `6a8f285c`
+>    (2026-07-26, neiso-65) is `0 insertions / 1,294 deletions`, and the companion it
+>    created, `campd-unit-outages-layup-NEISO.csv`, carries exactly those 1,294 windows
+>    spanning **2018-2026** (138/173/146/209/161/104/153/187/23). So the merit-order guard
+>    ran on all nine years in one pass, not on the in-sample three. Arithmetic closes:
+>    4,484 - 1,294 = **3,190** = the file's current line count.
+> 3. **The detector fingerprint is uniform.** Same `capacity_source` taxonomy in every year
+>    (`observed_peak` / `eia_digits_cc` / `eia_exact` / `eia_digits` / `eia_exact_cc` /
+>    `eia923_netzero`); the detector's **5.00-day minimum-duration floor is exactly the
+>    minimum in every year 2018-2026**; median duration 10.5-15.1 d with no cliff at the
+>    2022/2023 boundary; 33-35 distinct facilities per year for 2018-2024. The only
+>    gradient is `eia923_netzero` (2/2/1 in 2020-2022, 2/3/23 in 2023-2025) — a
+>    source-availability trend that runs *through* the in-sample window, so it is not a
+>    2018-2022-vs-2023-2025 signature at all.
+> 4. **The superseded counts are the tell.** This row's own figures — 573/656/587/606/502
+>    appended windows and a "committed 968 rows" in-sample prefix — match nothing in the
+>    current file, which holds **434/483/441/397/340** for 2018-2022 and **981** for
+>    2023-2025. The `scripts/archive/…` appenders it cites are in `scripts/archive/`
+>    precisely because they were retired.
+>
+> The same conclusion was already recorded for NYISO in `docs/mechanism-testing-matrix.md`
+> §5.6 ("the 2026-07-24 all-ISO re-derivation gives `campd-unit-outages-NYISO.csv`
+> uniform-detector windows for 2018-2026"); this register was simply never updated. **The
+> NYISO row at the top of this file (§NYISO, "MISSING 2022 + DEGRADED vintage") carries the
+> same stale premise and is left for the NYISO lane to re-check (rule 25) — the method
+> above transfers directly.** Nothing in this adjudication changes a keeper input, so no
+> re-audit follows from it.
 
 ### Bench / scoring series
 
