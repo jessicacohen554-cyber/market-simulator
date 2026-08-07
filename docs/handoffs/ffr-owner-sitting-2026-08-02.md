@@ -2990,3 +2990,45 @@ Dispositions recorded by addendum when signed.
   ARM-MISO, OPUS; the D-2' ISOConfig pattern; matrix cell re-stamped K-armed; backcast
   untouched by the forecast-mode gate).
 Prompts: pack §0u addendum.
+
+## Addendum Z — ARM-MISO discharged; TAXONOMY landed its fix, controls pending
+
+**Written 2026-08-07 by the workstream manager at `origin/main` `0e47ab67`.**
+
+### Z.1 ARM-MISO — ADJUDICATED CLEAN (PR #3687). D-26 EXECUTED
+
+`miso_rps_compliance_regions` is the MISO forecast default via
+`ISOConfig.default_scenario_overrides` (rule 25 by construction; ScenarioConfig default
+stays False). The backcast-untouched property is PROVEN BY TEST (13 assertions — the gate
+is consumption-enforced, so the lane rightly refused to rely on a comment, and extracted
+the inline gate predicate to a testable helper on the existing precedent). Matrix
+re-stamped O → K in the MISO forecast lane with the registered-pair citation. Arm 3 stays
+unarmed on §45U, correctly stated as not this lane's decision. No solve run — the
+FFR-7B-2 registered pair is the evidence, exactly as chartered.
+
+### Z.2 TAXONOMY — fix LANDED CLEAN; paired controls IN FLIGHT (placeholder live)
+
+PR #3691 landed the D-25 fix with exemplary blast-radius discipline: measured BEFORE any
+edit (326 units / 44.9 GW re-label; per-unit CSV + CAMPD cross-check committed);
+**CAISO, PJM and ERCOT solve inputs are byte-identical**; the solve-affecting residue is
+exactly 14 synthesized-bin heat rates (MISO 11 / NEISO 2 / NYISO 1 — bins whose fallback
+moves from gas_ct vintage bins to the gas_st bin). Scoring targets regenerated; FFR-7C's
+decode + the FFR-5D scorecards + the SCORE-GATE diagnostic re-emitted on the gas_st
+target. **But the merged handoff's §4 carries a live `RESULTS_PLACEHOLDER_PAIRED_CONTROLS`**
+— the MISO/NYISO same-head control-vs-arm pairs were launched (phased on the 15 GB box)
+and their results are NOT yet committed; the NEISO tail (9.3 MW of CHP bins) is handed off
+with the harness committed and documented. HOLD-PROMOTION posture governs: no adjudication
+of the keeper impact until the control results land. **Standing note for every parallel
+calibration session until then: MISO/NYISO/NEISO solves at HEAD run on the reclassed
+fleet — small deltas vs pre-taxonomy keeper metrics are expected and are D-25's, not your
+lever's; cite this addendum rather than chasing them.** If the results have not landed by
+the next manager cycle, ask the owner whether the session is still running and re-charter
+the remainder from the committed harness (the FFR-5D-M pattern).
+
+### Z.3 Noted in passing (outside the FFR/FH lanes)
+
+pjm-160 refreshed the B5 bench load-weighted series across all six ISOs; neiso-88/89 are
+working the NEISO `final` prerequisites on the corrected never-granted framing (the system
+digesting D-23 as intended); a DECISION-MEMO on an ercot-148/149 dashboard double-count
+was filed by a calibration session for the owner — not an FFR matter, flagged so it is not
+lost. Keepers unmoved all cycle.
