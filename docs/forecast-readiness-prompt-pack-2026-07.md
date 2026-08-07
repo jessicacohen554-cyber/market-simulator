@@ -4322,3 +4322,42 @@ Deliverable: the PR + docs/handoffs/house-1-lint-ci-<date>.md (hook before/after
 exclusion list with --check evidence, the CI-gap mechanism found and the minimal fix, the
 pinned baseline failure list).
 ```
+
+## §0w — TAXONOMY complete; D-27 signed; NYISO-PROMOTE dispatched (2026-08-07 @ `d3340718`)
+
+D-25 fully executed (controls in, HOLD PROMOTION honoured, deltas small/physical/no gate).
+AA.2: MISO's keeper re-scores NOT-YET at HEAD under rubric v3.1 — pre-existing drift, the
+MISO lane's to settle, MISO taxgs promotion DEFERRED on it (D-27). NYISO promotes:
+
+### NYISO-PROMOTE [OPUS] — promote the NYISO taxonomy arm (D-27)
+
+```
+[OPUS] NYISO-PROMOTE — Promote 2026-08-07-nyiso-131-taxgs-arm to NYISO keeper (owner
+decision D-27, SIGNED sitting Addendum AA.4, 2026-08-07; evidence taxonomy-gas-st handoff
+§4.1: verdict-identical to the standing keeper, deltas <=0.02 $/MWh, registered and scored
+— NO SOLVE). GOVERNANCE lane, committed artifacts only.
+
+STEP 0: verify NYISO's keeper is still 2026-08-06-nyiso-128-solar-basis and the arm bundle
++ registry sidecar exist at your head; if the keeper has moved, STOP and report (the
+promotion was adjudicated against nyiso-128 — a newer keeper needs fresh adjudication).
+THEN, per the CLAUDE.md promotion protocol: (1) edit frontend/data/backcast/keepers/
+NYISO.json -> keeper 2026-08-07-nyiso-131-taxgs-arm with a note citing D-27/AA.4 + the
+taxonomy handoff §4.1 (carry forward the nyiso-128 recipe genealogy — the arm IS the
+nyiso-128 recipe on the corrected taxonomy); (2) rebuild status/NYISO.js
+(build_status.py --iso NYISO); (3) D-5(b) RE-KEY: NYISO holds `complete` — update its
+entry's keeper field AND re-verify the determination against the new run
+(scripts/calibration_verdict.py --run-id 2026-08-07-nyiso-131-taxgs-arm, committed
+artifacts, never a solve); a WORSE determination STOPS the promotion and escalates —
+expected: identical CALIBRATED-WITH-CAVEATS; (4) matrix header re-stamp (keeper ids +
+open gates) + re-check the NYISO column (rule 28); (5) calibration-log entry
+(docs/calibration-log/nyiso.md, one dated entry citing D-27); (6) audit: audit_keepers.py
+--iso NYISO (M1) must pass — then run the calibration-keeper-auditor convention your head
+uses for keeper-shard edits; (7) one small commit, push (fetch main + rebase first),
+verify the pushed shard blob. DO NOT touch MISO's shard or any other ISO's files (D-27
+defers MISO explicitly).
+TRAPS: ruff-autofix reflows constants.py on any .py write — git status --short before
+staging. Push 413: fetch main + rebase first. push_files acceptable only for the small
+JSON/js files. Stop-hook on merged history: rev-list 0 => nothing to amend.
+Deliverable: the merged commit + a SHORT note docs/handoffs/nyiso-taxgs-promotion-
+<date>.md (the re-verified determination, M1 pass, matrix re-stamp).
+```

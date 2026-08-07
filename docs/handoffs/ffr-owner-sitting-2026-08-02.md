@@ -3074,3 +3074,11 @@ registered scoring already provides); **(b) MISO — DEFER** until the AA.2 v3.1
 question is adjudicated by its own lane (promoting into a disputed determination would
 entangle two changes). The NEISO 9.3 MW tail rides whichever future NEISO session solves
 next (not worth a standalone lane).
+
+### AA.4 Owner signature (same sitting, 2026-08-07)
+
+**D-27 — SIGNED AS RECOMMENDED: NYISO promotes now, MISO defers.** Charter NYISO-PROMOTE
+(OPUS, governance): keeper → `2026-08-07-nyiso-131-taxgs-arm`, no solve, D-5(b) re-key
+with determination re-verification (NYISO holds `complete`), matrix header re-stamp,
+auditor pass. MISO's taxgs arm stays registered-not-promoted until the MISO lane settles
+the AA.2 v3.1 re-score question. Prompt: pack §0w.
