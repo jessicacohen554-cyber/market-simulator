@@ -6984,3 +6984,88 @@ outage re-audit (`intake_log` 2026-07-24) is STILL OUTSTANDING and is escalated 
 the second session running** — a precondition for spending 2022 and on the path back to any
 `complete` re-declaration. The next CAISO move is an owner-level data question, not a session
 lever.
+
+---
+
+## caiso-180 — 2026-08-07 — THE OUTAGE RE-AUDIT IS **DONE**: the regeneration is MATERIAL and UNFAVOURABLE, the guard leg is INERT, and the accurate envelope **STAYS**
+
+**Keeper UNCHANGED** at `2026-08-06-caiso-175-tac-intake` (**NOT-YET**, rubric v3.1, 8 criteria,
+C3a the sole FAIL). DOF ledger **UNCHANGED at 11 / 8**, verified per arm. No `ScenarioConfig`
+field added, removed or re-valued. `holdout-freeze.json` and `calibration-complete.json`
+**UNTOUCHED** — CAISO does **not** hold `complete` (withdrawn 2026-08-06). 2023+2024+2025 only,
+one bundle per arm, arms sequential, years sequential.
+
+Pre-registration `PRECHECK-caiso180-outage-reaudit-2026-08-07.md` (pushed and blob-verified
+**before any scored metric was read**). Finding
+`FINDING-caiso180-outage-reaudit-2026-08-07.md`. Runs `2026-08-07-caiso-180-a0-control` /
+`-a1-pre` / `-a2-regen`, all three registered with their own `legitimacy_diagnostics.json`.
+Instruments `scripts/probes/_caiso180_arm_identity.py`, `_caiso180_gate_check.py`; records
+`_caiso180_outage_reaudit.json`, `_caiso180_sha_ledger.json`, `_caiso180_gate_check.json`.
+
+**Outcome — pre-registered BRANCH I: MATERIAL, and the current envelope scores WORSE.**
+
+* **Phase 0 answered branch (a): the pre-regeneration envelope IS recoverable, exactly.** PRE
+  (`49e85fb4^`, blob `e40847c8`) 439/405/509 and REGEN (`49e85fb4`, blob `3dc01fae`)
+  640/622/733 reproduce the `intake_log`'s quoted figures **in both directions**; GUARD
+  (`6a8f285c`, blob `e0de2fc3`) is **byte-identical** to the on-disk file. The clone was shallow
+  and needed `--deepen`.
+* **THE CHARTER DESCRIBED ONE CHANGE; THERE ARE TWO.** The keeper does not consume 640/622/733:
+  the merit-order guard later moved the economic-layup windows to the companion file, and
+  kept + layup closes with **zero residual** (547+93=640, 458+164=622, 635+98=733). The legs are
+  opposite-signed, so the third arm was made **mandatory rather than conditional**.
+* **The decomposition.** REGENERATION leg **+0.60 / +1.20 / +1.70 pp** C3a (MATERIAL in 2024 and
+  2025 against a pre-registered 1.0 pp bar); GUARD leg **−0.10 pp every year** (IMMATERIAL, and
+  favourable); net **+0.50 / +1.10 / +1.60 pp**. The regeneration is ~12× the guard leg — the
+  legs did not cancel, the guard is simply small.
+* **THE CONTROL IS EXACT: A0 reproduces the keeper at \$0.000 in all three years** (C3a Δ +0.00 pp).
+  BRANCH IV does **not** fire — unlike caiso-175's +0.168/+0.049/+0.115 same-head drift. It also
+  proves *in effect* that the 8 `ScenarioConfig` fields added since the keeper solved are inert
+  for CAISO.
+* **Independently CORROBORATES caiso-123 five keepers later.** caiso-123 measured the guard at
+  −0.18 % (favourable) and the extract content at +1.24 % λ on the caiso-120-era keeper; this
+  session measures −0.10 pp and +1.20 pp (2024) on a keeper five promotions and one TAC-load
+  correction later. Not sought, and the strongest thing in the finding.
+* **Mechanism.** The regeneration changed window **SHAPE**, not merely count: the superseded
+  pre-2026-07-19 phantom-outage detector produced **fewer but far longer** windows (median
+  14.7–16.6 d) against the current **more and shorter** ones (10.5–11.6 d). The deeper envelope
+  removes CC_REGULAR (**−0.44 / −0.67 TWh** in 2024/2025) with ST_GAS and CT_PEAKER backfilling,
+  lifting the clearing price **exactly where the model already ran hot** (+11.5 / +14.7 %).
+* **Disposition (rule 14 `[R-ACCURATE]`, rule 1 `[R-STRUCT]`): the accurate envelope STAYS.** The
+  +1.1 / +1.6 pp becomes an **OPEN ROOT-CAUSE issue** — the keeper's offer curves were identified
+  against the stale envelope and were silently compensating. No revert; **no promotion**, since
+  C3a is a live FAIL and a C3a move is never a promotion basis. **No criterion status differs
+  across any arm**; determination NOT-YET throughout. The regeneration does not create a new
+  failure — it **widens an existing one**.
+
+**TWO PRE-REGISTERED GATES CORRECTED, both reported rather than quietly applied.** (a) §3a leg 2
+is **WITHDRAWN AS MALFORMED**, falsified by this session's own measurement: it inferred an
+availability ordering from window **count**, but count is not depth — in 2023 the 439-window PRE
+envelope is *deeper* (38.03 M outage MW-h) than the 547-window GUARD one (36.68 M), so A1
+legitimately derates **more** tranches than A0 (284 vs 275); and in 2024 A1 carries *less* depth
+yet still derates more, because it touches more plants (38 vs 36). Replaced by a pairwise
+**distinctness** check, with the sha ladder the load-bearing proof. (b) The §4 config predicate
+was **SPLIT, not relaxed**: L1 exact identity over the keeper's own 692 keys (**0 differences**,
+none missing at HEAD — the replayed recipe is byte-identical), L2 arm-to-arm identity over all
+700 keys (**0 differences**), L3 additive drift disclosed and **failing closed** unless every new
+field is at its code default and outside CAISO's namespace.
+
+**Rule-14 `[R-ACCURATE]` gate check (no LP), answered per gate because the answers differ.**
+`unit_outage_short_windows` and `unit_partial_outage_windows` are OFF because the data is
+**genuinely empty, BY CONSTRUCTION**: both detectors filter `plant_group == "COAL"`, CAMPD's
+CAISO population is Natural Gas / Other Gas / Pipeline Natural Gas / Wood with **zero** coal, and
+CAISO's only model-fleet coal — **Argus Cogen Plant, 2 × 25 MW, 0.16 % of fleet** — is **not a
+CAMPD reporter**. Cross-ISO control corroborates rather than asserts: short-window rows track
+coal fleet size (**PJM 934 / MISO 987 / NEISO 1 / CAISO 0 / NYISO 0**). This independently
+reproduces **caiso-136's `I`** verdict, **cited not re-minted** (rule 28), on a stronger basis.
+`unit_outage_maxgen_events` is deliberately **not** collapsed into that reading: no CAISO input
+exists at all (the registry is hand-curated and only MISO's lane built one, while CAISO declares
+real EEA analogues) — a **DATA GAP, reported not armed**. The layup companion is **not** a
+finding: the deriver's own help declares it a companion *"which no loader reads"*.
+
+**STATE AFTER THIS SESSION.** The re-audit that caiso-178 and caiso-179 each escalated to the
+owner is **CLOSED**, and the caiso-171 precondition is **DISCHARGED on this item** — explicitly
+**not** a statement about the freeze (ACTIVE) or the `complete` marker (not held), both of which
+remain **owner acts**. CAISO's in-model lever queue remains **EMPTY**; C3a remains a live FAIL
+now carrying **two** named contributors — the walled hourly pumped-storage water state
+(FINDING-caiso140 §B) and, new here, offer curves identified against a superseded outage
+envelope. `battery_dispatch_adder` remains a **PERMANENT DECLARED-RESIDUAL DOF**, untouched.

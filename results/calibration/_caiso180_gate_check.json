@@ -1,0 +1,189 @@
+{
+ "session": "caiso-180",
+ "precheck_section": "\u00a75 (cheap rule-14 [R-ACCURATE] gate check)",
+ "no_lp": true,
+ "companions": {
+  "short": {
+   "file": "campd-unit-outages-short-CAISO.csv",
+   "exists": true,
+   "bytes": 192,
+   "data_rows": 0
+  },
+  "partial": {
+   "file": "campd-partial-outages-CAISO.csv",
+   "exists": true,
+   "bytes": 206,
+   "data_rows": 0
+  },
+  "layup": {
+   "file": "campd-unit-outages-layup-CAISO.csv",
+   "exists": true,
+   "bytes": 81524,
+   "data_rows": 810
+  },
+  "standard": {
+   "file": "campd-unit-outages-CAISO.csv",
+   "exists": true,
+   "bytes": 461352,
+   "data_rows": 4328
+  },
+  "maxgen": {
+   "dir": "data/raw/maxgen-events",
+   "exists": true,
+   "iso_subdirs": [
+    "miso"
+   ],
+   "caiso_file_present": false
+  }
+ },
+ "campd_coal_population": {
+  "files_scanned": [
+   "CA_2018",
+   "CA_2019",
+   "CA_2020",
+   "CA_2021",
+   "CA_2022",
+   "CA_2023",
+   "CA_2024",
+   "CA_2025",
+   "CA_2026"
+  ],
+  "fuel_vocabulary": [
+   "Natural Gas",
+   "Other Gas",
+   "Pipeline Natural Gas",
+   "Wood"
+  ],
+  "coal_like_entries": [],
+  "any_coal_in_campd_caiso": false
+ },
+ "model_fleet_coal": {
+  "n_coal_tranches": 2,
+  "plant_ids": [
+   10684
+  ],
+  "plant_names": [
+   "Argus Cogen Plant"
+  ],
+  "zones": [
+   "ZP26"
+  ],
+  "total_pmax_mw": 50.0,
+  "iso_fleet_pmax_mw": 31978.619999999995,
+  "share_of_fleet_pct": 0.1564,
+  "in_campd_outage_extract": {
+   "10684": 0
+  },
+  "in_campd_layup_extract": {
+   "10684": 0
+  },
+  "outage_extract_plant_group_vocab": [
+   "CC_CHP",
+   "CC_REGULAR",
+   "CT_CHP",
+   "ST_GAS"
+  ],
+  "outage_extract_coal_rows": 0
+ },
+ "cross_iso_control": {
+  "ERCOT": {
+   "short": {
+    "exists": false,
+    "bytes": null,
+    "data_rows": null
+   },
+   "partial": {
+    "exists": false,
+    "bytes": null,
+    "data_rows": null
+   }
+  },
+  "CAISO": {
+   "short": {
+    "exists": true,
+    "bytes": 192,
+    "data_rows": 0
+   },
+   "partial": {
+    "exists": true,
+    "bytes": 206,
+    "data_rows": 0
+   }
+  },
+  "PJM": {
+   "short": {
+    "exists": true,
+    "bytes": 84996,
+    "data_rows": 934
+   },
+   "partial": {
+    "exists": true,
+    "bytes": 7191,
+    "data_rows": 76
+   }
+  },
+  "MISO": {
+   "short": {
+    "exists": true,
+    "bytes": 88298,
+    "data_rows": 987
+   },
+   "partial": {
+    "exists": false,
+    "bytes": null,
+    "data_rows": null
+   }
+  },
+  "NYISO": {
+   "short": {
+    "exists": true,
+    "bytes": 192,
+    "data_rows": 0
+   },
+   "partial": {
+    "exists": true,
+    "bytes": 206,
+    "data_rows": 0
+   }
+  },
+  "NEISO": {
+   "short": {
+    "exists": true,
+    "bytes": 271,
+    "data_rows": 1
+   },
+   "partial": {
+    "exists": true,
+    "bytes": 206,
+    "data_rows": 0
+   }
+  }
+ },
+ "verdicts": {
+  "unit_outage_short_windows": {
+   "reading": "E",
+   "off_because": "the data is genuinely empty, BY CONSTRUCTION",
+   "basis": "Both detectors are coal-only (outages.py unit_outage_short_derate_factors filters plant_group == 'COAL'; the partial layer's docstring declares the same identification guards). CAMPD's CAISO population carries NO coal-fired unit of any kind (fuel vocabulary ['Natural Gas', 'Other Gas', 'Pipeline Natural Gas', 'Wood']), and the model fleet's only coal \u2014 ['Argus Cogen Plant'] (50.0 MW, 0.1564% of CAISO fleet capacity) \u2014 does not appear in the CAMPD extract at all. The detector cannot produce a CAISO row by construction, so arming the gate is provably inert.",
+   "prior_adjudication": "Independently reproduces caiso-136's existing matrix verdict I (inert) for this cell \u2014 cited, NOT re-minted (rule 28 DO-NOT-REDO). This session's basis is stronger than the prior one: not merely 'no rows produced' but 'no coal in the source population at all'.",
+   "armed_by_this_session": false
+  },
+  "unit_partial_outage_windows": {
+   "reading": "E",
+   "off_because": "the data is genuinely empty, BY CONSTRUCTION",
+   "basis": "Both detectors are coal-only (outages.py unit_outage_short_derate_factors filters plant_group == 'COAL'; the partial layer's docstring declares the same identification guards). CAMPD's CAISO population carries NO coal-fired unit of any kind (fuel vocabulary ['Natural Gas', 'Other Gas', 'Pipeline Natural Gas', 'Wood']), and the model fleet's only coal \u2014 ['Argus Cogen Plant'] (50.0 MW, 0.1564% of CAISO fleet capacity) \u2014 does not appear in the CAMPD extract at all. The detector cannot produce a CAISO row by construction, so arming the gate is provably inert.",
+   "armed_by_this_session": false
+  },
+  "unit_outage_maxgen_events": {
+   "reading": "U (narrow) \u2014 DATA GAP, not a structural n/a",
+   "off_because": "NO CAISO input exists at all",
+   "basis": "data/raw/maxgen-events/ contains only ['miso'] plus a README. The registry is a HAND-CURATED per-ISO set of publicly declared capacity-emergency instruments, built for the MISO price-formation lane (M-1); no CAISO registry has ever been curated. CAISO does declare real analogues (EEA levels), so this is a data-intake gap rather than a structural n/a \u2014 the gate cannot be armed because there is no file, not because a detector proved it inert.",
+   "disposition": "REPORTED, NOT ARMED (PRECHECK \u00a75 binding clause). Landing a CAISO registry is a separate data-intake charter with its own pre-registration, D-4 window and matrix cell.",
+   "armed_by_this_session": false
+  },
+  "layup_companion": {
+   "reading": "NOT a finding",
+   "basis": "campd-unit-outages-layup-CAISO.csv is the merit-order guard's record of the windows it REMOVED, not an unconsumed input. The deriver's own --help declares the companion is one 'which no loader reads' (scripts/data/derive_campd_unit_outages.py). Its row counts are exactly the guard's removals: kept + layup reproduces the 2026-07-24 regenerated totals with zero residual (547+93=640, 458+164=622, 635+98=733).",
+   "armed_by_this_session": false
+  }
+ }
+}
