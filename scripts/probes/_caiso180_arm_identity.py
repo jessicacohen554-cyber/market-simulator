@@ -7,23 +7,22 @@ are not actually comparable.
 
 What it asserts, in the order the PRECHECK fixes them:
 
-* **§4 — key-by-key ``scenario_config`` identity.** This session's delta is the
-  *bytes of one data file*, never a ``ScenarioConfig`` field, so all three arms
-  and the incumbent keeper must agree on **every** key. The comparison is over
-  the union of key sets (a key present in one config and absent in another is a
-  difference, not a skip) and **no key is exempted** — the caiso-175 predicate,
-  not the caiso-174 one. Any difference at all stops the session.
+* **§4 — ``scenario_config`` identity**, on three fail-closed legs (L1 the
+  pre-registered predicate over the keeper's own 692 keys; L2 arm-to-arm
+  identity over the full union; L3 additive schema drift disclosed and gated on
+  code-default + non-CAISO scope). See :func:`check_config_identity` for why the
+  single union comparison was split rather than relaxed.
 * **§3a leg 1 — the sha ladder.** All three arms read one mutable path. Each
   arm's recorded pre-solve and post-solve sha256 of
   ``data/raw/campd-unit-outages-CAISO.csv`` must be equal to each other and to
   that arm's intended envelope state. An arm whose envelope moved under it is
-  void.
-* **§3a leg 2 — solved-output evidence.** Each arm is evidenced from its OWN
-  bundle, never from the on-disk CSV (which cannot simultaneously evidence three
-  arms). The per-arm outage-derate census is read back from the solve log and
-  the availability ordering ``A1 <= A0`` and ``A1 <= A2`` in *derated tranches*
-  — equivalently ``A1 >= A0, A2`` in available capability — must hold, because
-  A1 carries strictly fewer outage windows.
+  void. This is the load-bearing proof of which bytes each arm read.
+* **§3a leg 2 — WITHDRAWN AS MALFORMED, falsified by this session's own
+  measurement.** It asserted an availability ORDERING inferred from window
+  COUNT; window count is not envelope DEPTH, and in 2023 the 439-window
+  pre-regeneration envelope is *deeper* than the 547-window current one. See
+  :func:`envelope_evidence`. Replaced by a pairwise distinctness check — the
+  hazard actually worth catching is two arms silently solving the same input.
 * **§6.6 — the DOF ledger** must be UNCHANGED at ``n_entries`` 11 /
   ``n_residual`` 8. This session swaps input bytes and measures; it introduces
   no free parameter, so a moved count is a defect in the session itself.
