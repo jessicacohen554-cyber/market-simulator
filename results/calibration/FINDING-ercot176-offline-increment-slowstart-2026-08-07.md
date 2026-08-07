@@ -21,8 +21,8 @@ pushed **before** any derive or measurement, with **three pre-solve amendments**
 | **Seam proof** | `ALL_ASSERTIONS_PASS = true` (SP-1, SP-2a/b, SP-6 pass; SP-3/4/5 vacuous with reason) |
 | **Arm verdict** | **PROVABLY INERT** — builder returns `None` for 2023, 2024 and 2025 on the real keeper fleet with 213 physics-eligible bid rows |
 | **Arm solved?** | **NO — and no arm run is registered.** It is not a different run: `None` ⇒ `p1_bid_max_target` stays `None` ⇒ byte-identical code path. Stated explicitly so the absence is not read as a skipped registration (rules 15/16), the ercot-175 §0 precedent. |
-| **Control** | SOLVED and REGISTERED, full span `--year 2023 2024 2025` |
-| **Keeper** | **RE-KEYED to the control replay** per the owner ruling; run168b non-reproduction item retired |
+| **Control** | SOLVED and REGISTERED, full span `--year 2023 2024 2025` — `2026-08-07-run176-control-offline-increment` |
+| **Keeper** | **RE-KEYED to the control replay** per the owner ruling; run168b non-reproduction item **RETIRED — it reproduces** (§2b) |
 | **Kill gates** | G-DOF satisfied outright (zero scalars created); every other gate requires a solved arm — **NOT REACHED** |
 
 ## 1. The charter premise this session did NOT rest on
@@ -83,6 +83,31 @@ loaded. There is no slow-start OFF increment to reprice. The start-economics
 identification remains correct in principle — but its MW live in the **fast-start
 CT** pool (already armed, ERCOT-88) and, if anywhere else, in **commitment
 state** rather than in the offered-capability share this construction can see.
+
+## 2b. The control — the run168b non-reproduction item is RETIRED
+
+The control is the run168b recipe replayed at HEAD with **zero deltas**
+(`scripts/replay_keeper.py`, no `--set`), full span solved in-session. ercot-173
+§5 had disclosed that run168b "does not reproduce at current main". **It does.**
+
+| | run168b (committed) | ercot-176 control @ HEAD |
+|---|---|---|
+| C3a 2023 | −32.2 % | **−32.4 %** |
+| C3b 2023 | 0.6043 | **0.602** |
+| C3b 2024 | 0.206 | **0.205** |
+| C3c tail counts | 61/181, 25/53, 3/31 | **identical** |
+| determination | NOT-YET {C3a, C3b} | **NOT-YET {C3a, C3b}** |
+| C1 / C2 / C4 / C6 / C8 | PASS | **PASS** |
+| DOF ledger | 13 entries / 6 residual | **inherited unchanged** |
+
+The residual drift is **0.2 pp on C3a-2023** and sub-0.002 on both C3b legs, with
+the ledgered tail counts bit-stable — i.e. the recipe is reproducible at HEAD and
+the ercot-173 observation was a transient of that session's base, not a defect in
+the keeper. `audit_keepers --iso ERCOT` PASS (0 failures, 0 warnings), with the
+scorer re-run independently against the committed artifacts.
+
+ERCOT holds **no `complete` and no `final` marker**, so no
+`calibration-complete.json` re-key applies (rule 22 D-5(b) does not fire).
 
 ## 3. The defect found in an armed keeper mechanism (rule 18, reported not acted on)
 
