@@ -1248,7 +1248,96 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 # (inject_reference_price_firm_export) on the years it covers — the firm
 # base the floor pinned is exactly the deep-duration structure the ladder
 # prices (alternatives, never stacked; rule 19).
+#
+# EXTENDED to 2019 / 2021 / 2022 on 2026-08-07 (session pjm-160, owner
+# decision "does the KEEPER reproduce 2022 — derive the ladder first"). This
+# is a rule-23 re-derivation because the SOURCE DATA EXTENDS, not because a
+# residual moved: derive_pjm_seam_ladders.py runs the FROZEN formula over
+# PJM_<year>_import_export_act_sch_interchange.csv (2018-2025 on disk) and
+# actual_lmp_hourly_PJM.parquet `da` (2018-2025), and both inputs already
+# covered these years. No parameter is introduced and the 2023-2025 entries
+# are byte-identical (verified against the prior file).
+#
+# WHY IT MATTERS BEYOND TIDINESS: outside the years listed here PJM's seam
+# runs the FORECAST track (the gas-elastic reference-price formula), because
+# neither this ladder nor firm_export_floor_by_year has an entry — so the
+# already-spent 2022 touchpoint did NOT run the keeper's own seam
+# representation, in the channel carrying PJM's largest single-signed volume
+# error. Adding 2022 is what makes a 2022 re-run a test of the keeper.
+# The ladder remains NOT forecastable by construction (it needs that year's
+# realized flows and prices); forecast years still fall through to the
+# gas-elastic formula, and that two-track design is unchanged.
+# Offline P9 reproduction of the added years: every seam's measured volume
+# within ±0.02 TWh, duration RMSE 40-280 MW, import-hour shares within a few
+# points — the same quality as 2023-2025.
+# Evidence: results/calibration/ASSESSMENT-pjm160-final-declaration-2026-08-06.md §11.
 PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
+    2019: {
+        "MISO": {
+            "import": (156.18, 156.18, 156.18, 156.18, 156.18, 156.18, 156.18, 156.18),
+            "export": (100.41, 47.78, 33.55, 25.49, 20.82, 17.07, 13.41, 10.39),
+        },
+        "NYISO": {
+            "import": (61.69, 131.38, 156.18, 156.18, 156.18, 156.18, 156.18, 156.18),
+            "export": (40.59, 31.21, 24.7, 20.77, 17.88, 14.81, 12.47, 9.46),
+        },
+        "Carolinas": {
+            "import": (22.34, 25.75, 29.84, 35.98, 44.48, 66.51, 93.61, 123.09),
+            "export": (19.47, 17.47, 15.47, 14.06, 12.78, 11.92, 10.93, 8.6),
+        },
+        "TVA": {
+            "import": (16.52, 18.85, 21.5, 24.33, 28.41, 34.35, 40.88, 49.94),
+            "export": (14.65, 13.5, 12.2, 10.39, 8.6, 8.18, 8.18, 8.18),
+        },
+        "LGEE": {
+            "import": (18.99, 21.36, 24.08, 26.85, 30.35, 34.72, 39.6, 49.34),
+            "export": (16.99, 14.34, 12.17, 8.38, 8.18, 8.18, 8.18, 8.18),
+        },
+    },
+    2021: {
+        "MISO": {
+            "import": (169.76, 169.76, 169.76, 169.76, 169.76, 169.76, 169.76, 169.76),
+            "export": (154.74, 84.76, 59.14, 37.72, 26.07, 20.99, 18.28, 16.98),
+        },
+        "NYISO": {
+            "import": (148.1, 169.76, 169.76, 169.76, 169.76, 169.76, 169.76, 169.76),
+            "export": (83.17, 51.67, 36.59, 28.03, 23.38, 19.92, 17.08, 14.92),
+        },
+        "Carolinas": {
+            "import": (30.84, 41.67, 55.23, 68.31, 88.97, 154.74, 169.76, 169.76),
+            "export": (24.8, 21.61, 19.09, 17.38, 16.38, 15.6, 14.94, 14.72),
+        },
+        "TVA": {
+            "import": (19.9, 22.43, 27.43, 37.59, 53.36, 71.93, 117.54, 168.12),
+            "export": (18.39, 17.35, 16.82, 16.41, 16.12, 15.93, 15.7, 15.5),
+        },
+        "LGEE": {
+            "import": (25.75, 34.3, 48.3, 63.63, 79.93, 119.03, 161.25, 169.76),
+            "export": (21.55, 18.56, 16.84, 15.98, 15.75, 15.62, 15.22, 15.01),
+        },
+    },
+    2022: {
+        "MISO": {
+            "import": (398.79, 431.93, 431.93, 431.93, 431.93, 431.93, 431.93, 431.93),
+            "export": (196.82, 119.08, 78.08, 58.48, 46.3, 37.14, 28.07, 19.23),
+        },
+        "NYISO": {
+            "import": (187.54, 345.39, 398.79, 431.93, 431.93, 431.93, 431.93, 431.93),
+            "export": (115.85, 79.66, 63.67, 54.76, 47.9, 42.35, 38.04, 27.71),
+        },
+        "Carolinas": {
+            "import": (56.05, 65.28, 76.55, 90.99, 112.85, 149.96, 227.3, 375.18),
+            "export": (47.79, 41.72, 37.53, 33.5, 29.51, 25.6, 20.04, 14.61),
+        },
+        "TVA": {
+            "import": (36.28, 41.27, 48.6, 57.75, 70.08, 93.13, 123.22, 166.78),
+            "export": (31.44, 26.97, 22.42, 19.66, 17.94, 16.67, 16.27, 15.83),
+        },
+        "LGEE": {
+            "import": (42.45, 52.41, 63.45, 78.4, 99.51, 123.38, 150.78, 199.58),
+            "export": (36.82, 32.43, 28.53, 24.18, 17.64, 14.12, 13.01, 13.01),
+        },
+    },
     2023: {
         "MISO": {
             "import": (140.34, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05),
