@@ -3249,6 +3249,69 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
+> **LIVE QUEUE AS OF miso-139 (owner decision, 2026-08-06) — TWO ITEMS, IN
+> ORDER. Neither is a price lever and neither may be chartered as one.**
+>
+> **QUEUE ITEM 1 (NEXT) — REFRESH THE MISO BENCH, then re-verify every MISO
+> C3a.** Owner-selected 2026-08-06. miso-137 §5 found the committed MISO `*_lw`
+> actual scalars recompute to **45.4555 vs the committed 45.39** for 2025 RT
+> (2023 Δ −$0.023, 2024 Δ +$0.031, `da_lw` 2025 Δ +$0.064) against a ±$0.05
+> tolerance. **Diagnosed, not a price-series defect**: the legacy equal-hour `rt`
+> field reproduces from `actual_lmp_hourly_MISO.parquet` EXACTLY, and
+> `load_demand`'s weights are identical today, so the committed scalars came from
+> an **earlier demand vintage** — the scorer currently compares a model dispatched
+> on today's demand against an actual weighted on a stale one. Small ($0.07,
+> 0.14 % of level; 2025 C3a reads −14.1 % rather than −14.0 %) but real, and it
+> moves the **comparator for every MISO run**, so it needs its own PREREG and its
+> own session rather than a ride-along (miso-138 §8 declined it for exactly that
+> reason). Scope: refresh the bench, re-verify all three C3a years and the DA
+> companions on committed artifacts (`calibration_verdict.py --run-id`, **no
+> re-solve**), and state whether the keeper's determination changes. **This is
+> bench hygiene, NOT a lever** — it cannot close a −14 % gap and must not be
+> reported as progress against it. Unowned before this stamp; owned by the next
+> MISO session.
+>
+> **QUEUE ITEM 2 — THE FLAT SUMMER CAPACITY HAIRCUT vs THE NET-SUMMER `pmax`
+> BASIS (rule 14 `[R-ACCURATE]`), its own session.** Owner-selected 2026-08-06,
+> surfaced by miso-139 §10(2). MISO's merchant gas classes carry a flat
+> `SUMMER_CLASS_DERATE` (`fuel_trajectories.py`: **CC_REGULAR/CC_CHP 0.10,
+> CT_PEAKER/CT_CHP 0.125**) applied to Jun–Sep hours **on top of** a `pmax` that
+> **is already** the EIA-860 net-summer rating (`eia860.py:998`,
+> `pmax = net_summer_capacity_mw`) — i.e. a rating that already embeds the
+> hot-weather derate. Against that, MISO's own registration data (miso-139 G-1,
+> committed in `_miso139_derate_gates.json`) puts the true summer↔winter
+> capability spread at **CC +8.3 % / CT +15.8 % aggregate** (unit-p50 +8.2 % /
+> +8.8 %). The two numbers are not obviously reconcilable and a **double-count is
+> the live hypothesis, NOT the premise** (an absence claim is a measurement —
+> miso-136): the session must first establish what the flat derate was
+> identified against and on which basis, because a haircut that is genuinely a
+> *forced-outage/ambient blend* on a net-summer base is not the same object as
+> one that re-applies the net-summer derate. Touches **every gas plant in every
+> year of every MISO run**, so it is a bench-wide input question with a real right
+> answer — and under rule 14 the accurate input stays even if the backcast gets
+> worse. **NOT a lever**: miso-139 §7 already measured the whole capability family
+> at 30–39× too small to move the summer-afternoon marginal unit, so no C3a claim
+> may be attached to it. **DO NOT fold into a mechanism-change session** — one
+> mechanism per session (rule 19); if the anchor-convention successor is ever
+> chartered, this stays a separate pre-registered gate.
+>
+> **THE ANCHOR-CONVENTION SUCCESSOR IS NOT QUEUED — it is an OPEN OWNER
+> DECISION.** miso-139 §10(3) specifies it (per-class SUMMER-mean anchor, no
+> year-round rescale, selectable so the committed CHP identification is
+> untouched). It is a **mechanism change** (rules 19/24) whose value is basis
+> correctness only; its price reach is already measured at **456–497 MW against a
+> 13.7–18.8 GW cushion (30–39×)**, so it must never be chartered as a lever. **Do
+> not open it without an explicit owner decision.** *(Clarification recorded
+> 2026-08-06 because the two miso-101 legs are easy to conflate: the refusal is
+> about `temp_derate_mean_anchored` — the curve's ANCHOR, the zone ANNUAL mean at
+> `arrays.py:843` — and NOT about the input, which is `iso_zone_hourly_drybulb`
+> on the keeper: the same curated daily TMIN/TMAX reconstructed to an hourly wave
+> (Parton & Logan 1981). Reverting to the day-flat `iso_zone_tmax` default would
+> make it strictly worse — that input carries ZERO hour-of-day signal, so
+> afternoon and night take the identical multiplier and there is no diurnal
+> reshape at all, which is why miso-101 armed the hour-grain leg in the first
+> place, FINDING-miso100-stchp-diurnal-2026-07.md §4/§5.)*
+
 > **QUEUE STAMP miso-139 (2026-08-06) — THE AMBIENT CAPABILITY-DERATE IS **NOT**
 > "ALREADY ARMED AND MIS-SCOPED". IT IS ARMED IN AN **ANCHORING CONVENTION THAT
 > CANNOT EXPRESS THE EFFECT AT ANY SLOPE**, AND THE WHOLE FAMILY'S CEILING IS
