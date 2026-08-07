@@ -1,13 +1,23 @@
 {
  "_provenance": {
   "source": "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), delivery years 2023-2024-2025; per-year basis as disclosed in source_files \u2014 the full-year publication-month corpus where it majority-covers the delivery year (2023: the 2026-08-03 re-upload under data/raw/ercot/SCED/, rows delivery-year-filtered), else the scoped sample-day extracts (2024/2025)",
-  "method": "per-interval above-LSL startable segments (max(LSL,0) -> min(step MW, HASL)) of the SCED2 offer curve of OFFQS/OFFNS CT-class resources; MW-weighted quantile ladder of segment prices as effective-HR multipliers (price / HH-daily+ERCOT-basis gas); pool_frac = interval-mean pool startable MW / sum HSL of non-OUT CT rows (only-OUT-is-out, the measured DAM availability convention); derived within net-load-percentile bins",
+  "method": "per-interval above-LSL startable segments (max(LSL,0) -> min(step MW, HASL)) of the SCED2 offer curve of OFFQS/OFFNS resources of the block's own class; MW-weighted quantile ladder of segment prices as effective-HR multipliers (price / HH-daily+ERCOT-basis gas); pool_frac = interval-mean pool startable MW / sum HSL of that class's non-OUT rows (only-OUT-is-out, the measured DAM availability convention); derived within net-load-percentile bins. IDENTICAL construction for every class block \u2014 only the row scope of both numerator and denominator changes",
   "driver": "system net-load percentile within year (EIA-930 demand - wind - solar), forward-native",
-  "apply_gate": "unit physics min_down_hours <= 2 (rule 12), never a class tuple; charter \u00a79 (ercot-residual-midband-formation-lane)",
+  "apply_gate": "unit physics, never a class tuple (rule 12/18). CT block: min_down_hours <= 2 h (constants.FASTSTART_POOL_MIN_DOWN_HOURS) \u2014 charter \u00a79 (ercot-residual-midband-formation-lane). CC block: 4 h <= min_down_hours <= 8 h AND min_run_hours <= 12 h (constants.RA_BRIDGE_ECON_MIN_DOWN_HOURS / OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX / OFFLINE_COMMIT_MIN_RUN_HOURS_MAX) \u2014 the within-day start-and-run band, ERCOT-176 (docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md \u00a71)",
   "offline_pool_statuses": [
    "OFFQS",
    "OFFNS"
   ],
+  "class_restypes": {
+   "CT": [
+    "SCGT90",
+    "SCLE90"
+   ],
+   "CC": [
+    "CCGT90",
+    "CCLE90"
+   ]
+  },
   "ct_restypes": [
    "SCGT90",
    "SCLE90"
@@ -31,447 +41,891 @@
   "iso": "ERCOT",
   "year_scoped": "NO pooled fallback by design (rule 13): a year absent from this artifact gets NO pool leg (the wall basis is retained byte-identical), and each year's ladder derives only from that year's own posted conduct \u2014 a 2024/2025-derived ladder remains barred from 2023's post-Uri conservative-operations regime. 2023 now carries its OWN measured block: the owner authorized the SCED-basis extension to 2023 (ERCOT-105) and the 2026-08-03 corpus re-upload (ERCOT-151 \u00a74) supplies complete delivery-2023 coverage",
   "source_files": {
-   "2023": [
-    "2023-03.part0000.parquet",
-    "2023-03.part0001.parquet",
-    "2023-03.part0002.parquet",
-    "2023-03.part0003.parquet",
-    "2023-03.part0004.parquet",
-    "2023-03.part0005.parquet",
-    "2023-03.part0006.parquet",
-    "2023-03.part0007.parquet",
-    "2023-03.part0008.parquet",
-    "2023-03.part0009.parquet",
-    "2023-03.part0010.parquet",
-    "2023-03.part0011.parquet",
-    "2023-03.part0012.parquet",
-    "2023-03.part0013.parquet",
-    "2023-03.part0014.parquet",
-    "2023-03.part0015.parquet",
-    "2023-04.part0000.parquet",
-    "2023-04.part0001.parquet",
-    "2023-04.part0002.parquet",
-    "2023-04.part0003.parquet",
-    "2023-04.part0004.parquet",
-    "2023-04.part0005.parquet",
-    "2023-04.part0006.parquet",
-    "2023-04.part0007.parquet",
-    "2023-04.part0008.parquet",
-    "2023-04.part0009.parquet",
-    "2023-04.part0010.parquet",
-    "2023-04.part0011.parquet",
-    "2023-04.part0012.parquet",
-    "2023-04.part0013.parquet",
-    "2023-04.part0014.parquet",
-    "2023-05.part0000.parquet",
-    "2023-05.part0001.parquet",
-    "2023-05.part0002.parquet",
-    "2023-05.part0003.parquet",
-    "2023-05.part0004.parquet",
-    "2023-05.part0005.parquet",
-    "2023-05.part0006.parquet",
-    "2023-05.part0007.parquet",
-    "2023-05.part0008.parquet",
-    "2023-05.part0009.parquet",
-    "2023-05.part0010.parquet",
-    "2023-05.part0011.parquet",
-    "2023-05.part0012.parquet",
-    "2023-05.part0013.parquet",
-    "2023-05.part0014.parquet",
-    "2023-05.part0015.parquet",
-    "2023-06.part0000.parquet",
-    "2023-06.part0001.parquet",
-    "2023-06.part0002.parquet",
-    "2023-06.part0003.parquet",
-    "2023-06.part0004.parquet",
-    "2023-06.part0005.parquet",
-    "2023-06.part0006.parquet",
-    "2023-06.part0007.parquet",
-    "2023-06.part0008.parquet",
-    "2023-06.part0009.parquet",
-    "2023-06.part0010.parquet",
-    "2023-06.part0011.parquet",
-    "2023-06.part0012.parquet",
-    "2023-06.part0013.parquet",
-    "2023-06.part0014.parquet",
-    "2023-06.part0015.parquet",
-    "2023-07.part0000.parquet",
-    "2023-07.part0001.parquet",
-    "2023-07.part0002.parquet",
-    "2023-07.part0003.parquet",
-    "2023-07.part0004.parquet",
-    "2023-07.part0005.parquet",
-    "2023-07.part0006.parquet",
-    "2023-07.part0007.parquet",
-    "2023-07.part0008.parquet",
-    "2023-07.part0009.parquet",
-    "2023-07.part0010.parquet",
-    "2023-07.part0011.parquet",
-    "2023-07.part0012.parquet",
-    "2023-07.part0013.parquet",
-    "2023-07.part0014.parquet",
-    "2023-07.part0015.parquet",
-    "2023-07.part0016.parquet",
-    "2023-07.part0017.parquet",
-    "2023-07.part0018.parquet",
-    "2023-07.part0019.parquet",
-    "2023-07.part0020.parquet",
-    "2023-07.part0021.parquet",
-    "2023-07.part0022.parquet",
-    "2023-07.part0023.parquet",
-    "2023-07.part0024.parquet",
-    "2023-07.part0025.parquet",
-    "2023-07.part0026.parquet",
-    "2023-07.part0027.parquet",
-    "2023-07.part0028.parquet",
-    "2023-07.part0029.parquet",
-    "2023-08.part0000.parquet",
-    "2023-08.part0001.parquet",
-    "2023-08.part0002.parquet",
-    "2023-08.part0003.parquet",
-    "2023-08.part0004.parquet",
-    "2023-08.part0005.parquet",
-    "2023-08.part0006.parquet",
-    "2023-08.part0007.parquet",
-    "2023-08.part0008.parquet",
-    "2023-08.part0009.parquet",
-    "2023-08.part0010.parquet",
-    "2023-08.part0011.parquet",
-    "2023-08.part0012.parquet",
-    "2023-08.part0013.parquet",
-    "2023-08.part0014.parquet",
-    "2023-08.part0015.parquet",
-    "2023-08.part0016.parquet",
-    "2023-08.part0017.parquet",
-    "2023-08.part0018.parquet",
-    "2023-08.part0019.parquet",
-    "2023-08.part0020.parquet",
-    "2023-08.part0021.parquet",
-    "2023-08.part0022.parquet",
-    "2023-08.part0023.parquet",
-    "2023-08.part0024.parquet",
-    "2023-08.part0025.parquet",
-    "2023-08.part0026.parquet",
-    "2023-08.part0027.parquet",
-    "2023-08.part0028.parquet",
-    "2023-08.part0029.parquet",
-    "2023-08.part0030.parquet",
-    "2023-09.part0000.parquet",
-    "2023-09.part0001.parquet",
-    "2023-09.part0002.parquet",
-    "2023-09.part0003.parquet",
-    "2023-09.part0004.parquet",
-    "2023-09.part0005.parquet",
-    "2023-09.part0006.parquet",
-    "2023-09.part0007.parquet",
-    "2023-09.part0008.parquet",
-    "2023-09.part0009.parquet",
-    "2023-09.part0010.parquet",
-    "2023-09.part0011.parquet",
-    "2023-09.part0012.parquet",
-    "2023-09.part0013.parquet",
-    "2023-09.part0014.parquet",
-    "2023-09.part0015.parquet",
-    "2023-09.part0016.parquet",
-    "2023-09.part0017.parquet",
-    "2023-09.part0018.parquet",
-    "2023-09.part0019.parquet",
-    "2023-09.part0020.parquet",
-    "2023-09.part0021.parquet",
-    "2023-09.part0022.parquet",
-    "2023-09.part0023.parquet",
-    "2023-09.part0024.parquet",
-    "2023-09.part0025.parquet",
-    "2023-09.part0026.parquet",
-    "2023-09.part0027.parquet",
-    "2023-09.part0028.parquet",
-    "2023-09.part0029.parquet",
-    "2023-10.part0000.parquet",
-    "2023-10.part0001.parquet",
-    "2023-10.part0002.parquet",
-    "2023-10.part0003.parquet",
-    "2023-10.part0004.parquet",
-    "2023-10.part0005.parquet",
-    "2023-10.part0006.parquet",
-    "2023-10.part0007.parquet",
-    "2023-10.part0008.parquet",
-    "2023-10.part0009.parquet",
-    "2023-10.part0010.parquet",
-    "2023-10.part0011.parquet",
-    "2023-10.part0012.parquet",
-    "2023-10.part0013.parquet",
-    "2023-10.part0014.parquet",
-    "2023-10.part0015.parquet",
-    "2023-10.part0016.parquet",
-    "2023-10.part0017.parquet",
-    "2023-10.part0018.parquet",
-    "2023-10.part0019.parquet",
-    "2023-10.part0020.parquet",
-    "2023-10.part0021.parquet",
-    "2023-10.part0022.parquet",
-    "2023-10.part0023.parquet",
-    "2023-10.part0024.parquet",
-    "2023-10.part0025.parquet",
-    "2023-10.part0026.parquet",
-    "2023-10.part0027.parquet",
-    "2023-10.part0028.parquet",
-    "2023-10.part0029.parquet",
-    "2023-10.part0030.parquet",
-    "2023-11.part0000.parquet",
-    "2023-11.part0001.parquet",
-    "2023-11.part0002.parquet",
-    "2023-11.part0003.parquet",
-    "2023-11.part0004.parquet",
-    "2023-11.part0005.parquet",
-    "2023-11.part0006.parquet",
-    "2023-11.part0007.parquet",
-    "2023-11.part0008.parquet",
-    "2023-11.part0009.parquet",
-    "2023-11.part0010.parquet",
-    "2023-11.part0011.parquet",
-    "2023-11.part0012.parquet",
-    "2023-11.part0013.parquet",
-    "2023-11.part0014.parquet",
-    "2023-11.part0015.parquet",
-    "2023-11.part0016.parquet",
-    "2023-11.part0017.parquet",
-    "2023-11.part0018.parquet",
-    "2023-11.part0019.parquet",
-    "2023-11.part0020.parquet",
-    "2023-11.part0021.parquet",
-    "2023-11.part0022.parquet",
-    "2023-11.part0023.parquet",
-    "2023-11.part0024.parquet",
-    "2023-11.part0025.parquet",
-    "2023-11.part0026.parquet",
-    "2023-11.part0027.parquet",
-    "2023-11.part0028.parquet",
-    "2023-11.part0029.parquet",
-    "2023-12.part0000.parquet",
-    "2023-12.part0001.parquet",
-    "2023-12.part0002.parquet",
-    "2023-12.part0003.parquet",
-    "2023-12.part0004.parquet",
-    "2023-12.part0005.parquet",
-    "2023-12.part0006.parquet",
-    "2023-12.part0007.parquet",
-    "2023-12.part0008.parquet",
-    "2023-12.part0009.parquet",
-    "2023-12.part0010.parquet",
-    "2023-12.part0011.parquet",
-    "2023-12.part0012.parquet",
-    "2023-12.part0013.parquet",
-    "2023-12.part0014.parquet",
-    "2023-12.part0015.parquet",
-    "2023-12.part0016.parquet",
-    "2023-12.part0017.parquet",
-    "2023-12.part0018.parquet",
-    "2023-12.part0019.parquet",
-    "2023-12.part0020.parquet",
-    "2023-12.part0021.parquet",
-    "2023-12.part0022.parquet",
-    "2023-12.part0023.parquet",
-    "2023-12.part0024.parquet",
-    "2023-12.part0025.parquet",
-    "2023-12.part0026.parquet",
-    "2023-12.part0027.parquet",
-    "2023-12.part0028.parquet",
-    "2023-12.part0029.parquet",
-    "2023-12.part0030.parquet",
-    "2024-01.part0000.parquet",
-    "2024-01.part0001.parquet",
-    "2024-01.part0002.parquet",
-    "2024-01.part0003.parquet",
-    "2024-01.part0004.parquet",
-    "2024-01.part0005.parquet",
-    "2024-01.part0006.parquet",
-    "2024-01.part0007.parquet",
-    "2024-01.part0008.parquet",
-    "2024-01.part0009.parquet",
-    "2024-01.part0010.parquet",
-    "2024-01.part0011.parquet",
-    "2024-01.part0012.parquet",
-    "2024-01.part0013.parquet",
-    "2024-01.part0014.parquet",
-    "2024-01.part0015.parquet",
-    "2024-01.part0016.parquet",
-    "2024-01.part0017.parquet",
-    "2024-01.part0018.parquet",
-    "2024-01.part0019.parquet",
-    "2024-01.part0020.parquet",
-    "2024-01.part0021.parquet",
-    "2024-01.part0022.parquet",
-    "2024-01.part0023.parquet",
-    "2024-01.part0024.parquet",
-    "2024-01.part0025.parquet",
-    "2024-01.part0026.parquet",
-    "2024-01.part0027.parquet",
-    "2024-01.part0028.parquet",
-    "2024-01.part0029.parquet",
-    "2024-01.part0030.parquet",
-    "2024-02.part0000.parquet",
-    "2024-02.part0001.parquet",
-    "2024-02.part0002.parquet",
-    "2024-02.part0003.parquet",
-    "2024-02.part0004.parquet",
-    "2024-02.part0005.parquet",
-    "2024-02.part0006.parquet",
-    "2024-02.part0007.parquet",
-    "2024-02.part0008.parquet",
-    "2024-02.part0009.parquet",
-    "2024-02.part0010.parquet",
-    "2024-02.part0011.parquet",
-    "2024-02.part0012.parquet",
-    "2024-02.part0013.parquet",
-    "2024-02.part0014.parquet",
-    "2024-02.part0015.parquet",
-    "2024-02.part0016.parquet",
-    "2024-02.part0017.parquet",
-    "2024-02.part0018.parquet",
-    "2024-02.part0019.parquet",
-    "2024-02.part0020.parquet",
-    "2024-02.part0021.parquet",
-    "2024-02.part0022.parquet",
-    "2024-02.part0023.parquet",
-    "2024-02.part0024.parquet",
-    "2024-02.part0025.parquet",
-    "2024-02.part0026.parquet",
-    "2024-02.part0027.parquet",
-    "2024-02.part0028.parquet",
-    "2024-03.part0000.parquet",
-    "2024-03.part0001.parquet",
-    "2024-03.part0002.parquet",
-    "2024-03.part0003.parquet",
-    "2024-03.part0004.parquet",
-    "2024-03.part0005.parquet",
-    "2024-03.part0006.parquet",
-    "2024-03.part0007.parquet",
-    "2024-03.part0008.parquet"
-   ],
-   "2024": [
-    "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet",
-    "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet"
-   ],
-   "2025": [
-    "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet",
-    "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot86_tail_days.parquet"
-   ]
+   "CT": {
+    "2023": [
+     "2023-03.part0000.parquet",
+     "2023-03.part0001.parquet",
+     "2023-03.part0002.parquet",
+     "2023-03.part0003.parquet",
+     "2023-03.part0004.parquet",
+     "2023-03.part0005.parquet",
+     "2023-03.part0006.parquet",
+     "2023-03.part0007.parquet",
+     "2023-03.part0008.parquet",
+     "2023-03.part0009.parquet",
+     "2023-03.part0010.parquet",
+     "2023-03.part0011.parquet",
+     "2023-03.part0012.parquet",
+     "2023-03.part0013.parquet",
+     "2023-03.part0014.parquet",
+     "2023-03.part0015.parquet",
+     "2023-04.part0000.parquet",
+     "2023-04.part0001.parquet",
+     "2023-04.part0002.parquet",
+     "2023-04.part0003.parquet",
+     "2023-04.part0004.parquet",
+     "2023-04.part0005.parquet",
+     "2023-04.part0006.parquet",
+     "2023-04.part0007.parquet",
+     "2023-04.part0008.parquet",
+     "2023-04.part0009.parquet",
+     "2023-04.part0010.parquet",
+     "2023-04.part0011.parquet",
+     "2023-04.part0012.parquet",
+     "2023-04.part0013.parquet",
+     "2023-04.part0014.parquet",
+     "2023-05.part0000.parquet",
+     "2023-05.part0001.parquet",
+     "2023-05.part0002.parquet",
+     "2023-05.part0003.parquet",
+     "2023-05.part0004.parquet",
+     "2023-05.part0005.parquet",
+     "2023-05.part0006.parquet",
+     "2023-05.part0007.parquet",
+     "2023-05.part0008.parquet",
+     "2023-05.part0009.parquet",
+     "2023-05.part0010.parquet",
+     "2023-05.part0011.parquet",
+     "2023-05.part0012.parquet",
+     "2023-05.part0013.parquet",
+     "2023-05.part0014.parquet",
+     "2023-05.part0015.parquet",
+     "2023-06.part0000.parquet",
+     "2023-06.part0001.parquet",
+     "2023-06.part0002.parquet",
+     "2023-06.part0003.parquet",
+     "2023-06.part0004.parquet",
+     "2023-06.part0005.parquet",
+     "2023-06.part0006.parquet",
+     "2023-06.part0007.parquet",
+     "2023-06.part0008.parquet",
+     "2023-06.part0009.parquet",
+     "2023-06.part0010.parquet",
+     "2023-06.part0011.parquet",
+     "2023-06.part0012.parquet",
+     "2023-06.part0013.parquet",
+     "2023-06.part0014.parquet",
+     "2023-06.part0015.parquet",
+     "2023-07.part0000.parquet",
+     "2023-07.part0001.parquet",
+     "2023-07.part0002.parquet",
+     "2023-07.part0003.parquet",
+     "2023-07.part0004.parquet",
+     "2023-07.part0005.parquet",
+     "2023-07.part0006.parquet",
+     "2023-07.part0007.parquet",
+     "2023-07.part0008.parquet",
+     "2023-07.part0009.parquet",
+     "2023-07.part0010.parquet",
+     "2023-07.part0011.parquet",
+     "2023-07.part0012.parquet",
+     "2023-07.part0013.parquet",
+     "2023-07.part0014.parquet",
+     "2023-07.part0015.parquet",
+     "2023-07.part0016.parquet",
+     "2023-07.part0017.parquet",
+     "2023-07.part0018.parquet",
+     "2023-07.part0019.parquet",
+     "2023-07.part0020.parquet",
+     "2023-07.part0021.parquet",
+     "2023-07.part0022.parquet",
+     "2023-07.part0023.parquet",
+     "2023-07.part0024.parquet",
+     "2023-07.part0025.parquet",
+     "2023-07.part0026.parquet",
+     "2023-07.part0027.parquet",
+     "2023-07.part0028.parquet",
+     "2023-07.part0029.parquet",
+     "2023-08.part0000.parquet",
+     "2023-08.part0001.parquet",
+     "2023-08.part0002.parquet",
+     "2023-08.part0003.parquet",
+     "2023-08.part0004.parquet",
+     "2023-08.part0005.parquet",
+     "2023-08.part0006.parquet",
+     "2023-08.part0007.parquet",
+     "2023-08.part0008.parquet",
+     "2023-08.part0009.parquet",
+     "2023-08.part0010.parquet",
+     "2023-08.part0011.parquet",
+     "2023-08.part0012.parquet",
+     "2023-08.part0013.parquet",
+     "2023-08.part0014.parquet",
+     "2023-08.part0015.parquet",
+     "2023-08.part0016.parquet",
+     "2023-08.part0017.parquet",
+     "2023-08.part0018.parquet",
+     "2023-08.part0019.parquet",
+     "2023-08.part0020.parquet",
+     "2023-08.part0021.parquet",
+     "2023-08.part0022.parquet",
+     "2023-08.part0023.parquet",
+     "2023-08.part0024.parquet",
+     "2023-08.part0025.parquet",
+     "2023-08.part0026.parquet",
+     "2023-08.part0027.parquet",
+     "2023-08.part0028.parquet",
+     "2023-08.part0029.parquet",
+     "2023-08.part0030.parquet",
+     "2023-09.part0000.parquet",
+     "2023-09.part0001.parquet",
+     "2023-09.part0002.parquet",
+     "2023-09.part0003.parquet",
+     "2023-09.part0004.parquet",
+     "2023-09.part0005.parquet",
+     "2023-09.part0006.parquet",
+     "2023-09.part0007.parquet",
+     "2023-09.part0008.parquet",
+     "2023-09.part0009.parquet",
+     "2023-09.part0010.parquet",
+     "2023-09.part0011.parquet",
+     "2023-09.part0012.parquet",
+     "2023-09.part0013.parquet",
+     "2023-09.part0014.parquet",
+     "2023-09.part0015.parquet",
+     "2023-09.part0016.parquet",
+     "2023-09.part0017.parquet",
+     "2023-09.part0018.parquet",
+     "2023-09.part0019.parquet",
+     "2023-09.part0020.parquet",
+     "2023-09.part0021.parquet",
+     "2023-09.part0022.parquet",
+     "2023-09.part0023.parquet",
+     "2023-09.part0024.parquet",
+     "2023-09.part0025.parquet",
+     "2023-09.part0026.parquet",
+     "2023-09.part0027.parquet",
+     "2023-09.part0028.parquet",
+     "2023-09.part0029.parquet",
+     "2023-10.part0000.parquet",
+     "2023-10.part0001.parquet",
+     "2023-10.part0002.parquet",
+     "2023-10.part0003.parquet",
+     "2023-10.part0004.parquet",
+     "2023-10.part0005.parquet",
+     "2023-10.part0006.parquet",
+     "2023-10.part0007.parquet",
+     "2023-10.part0008.parquet",
+     "2023-10.part0009.parquet",
+     "2023-10.part0010.parquet",
+     "2023-10.part0011.parquet",
+     "2023-10.part0012.parquet",
+     "2023-10.part0013.parquet",
+     "2023-10.part0014.parquet",
+     "2023-10.part0015.parquet",
+     "2023-10.part0016.parquet",
+     "2023-10.part0017.parquet",
+     "2023-10.part0018.parquet",
+     "2023-10.part0019.parquet",
+     "2023-10.part0020.parquet",
+     "2023-10.part0021.parquet",
+     "2023-10.part0022.parquet",
+     "2023-10.part0023.parquet",
+     "2023-10.part0024.parquet",
+     "2023-10.part0025.parquet",
+     "2023-10.part0026.parquet",
+     "2023-10.part0027.parquet",
+     "2023-10.part0028.parquet",
+     "2023-10.part0029.parquet",
+     "2023-10.part0030.parquet",
+     "2023-11.part0000.parquet",
+     "2023-11.part0001.parquet",
+     "2023-11.part0002.parquet",
+     "2023-11.part0003.parquet",
+     "2023-11.part0004.parquet",
+     "2023-11.part0005.parquet",
+     "2023-11.part0006.parquet",
+     "2023-11.part0007.parquet",
+     "2023-11.part0008.parquet",
+     "2023-11.part0009.parquet",
+     "2023-11.part0010.parquet",
+     "2023-11.part0011.parquet",
+     "2023-11.part0012.parquet",
+     "2023-11.part0013.parquet",
+     "2023-11.part0014.parquet",
+     "2023-11.part0015.parquet",
+     "2023-11.part0016.parquet",
+     "2023-11.part0017.parquet",
+     "2023-11.part0018.parquet",
+     "2023-11.part0019.parquet",
+     "2023-11.part0020.parquet",
+     "2023-11.part0021.parquet",
+     "2023-11.part0022.parquet",
+     "2023-11.part0023.parquet",
+     "2023-11.part0024.parquet",
+     "2023-11.part0025.parquet",
+     "2023-11.part0026.parquet",
+     "2023-11.part0027.parquet",
+     "2023-11.part0028.parquet",
+     "2023-11.part0029.parquet",
+     "2023-12.part0000.parquet",
+     "2023-12.part0001.parquet",
+     "2023-12.part0002.parquet",
+     "2023-12.part0003.parquet",
+     "2023-12.part0004.parquet",
+     "2023-12.part0005.parquet",
+     "2023-12.part0006.parquet",
+     "2023-12.part0007.parquet",
+     "2023-12.part0008.parquet",
+     "2023-12.part0009.parquet",
+     "2023-12.part0010.parquet",
+     "2023-12.part0011.parquet",
+     "2023-12.part0012.parquet",
+     "2023-12.part0013.parquet",
+     "2023-12.part0014.parquet",
+     "2023-12.part0015.parquet",
+     "2023-12.part0016.parquet",
+     "2023-12.part0017.parquet",
+     "2023-12.part0018.parquet",
+     "2023-12.part0019.parquet",
+     "2023-12.part0020.parquet",
+     "2023-12.part0021.parquet",
+     "2023-12.part0022.parquet",
+     "2023-12.part0023.parquet",
+     "2023-12.part0024.parquet",
+     "2023-12.part0025.parquet",
+     "2023-12.part0026.parquet",
+     "2023-12.part0027.parquet",
+     "2023-12.part0028.parquet",
+     "2023-12.part0029.parquet",
+     "2023-12.part0030.parquet",
+     "2024-01.part0000.parquet",
+     "2024-01.part0001.parquet",
+     "2024-01.part0002.parquet",
+     "2024-01.part0003.parquet",
+     "2024-01.part0004.parquet",
+     "2024-01.part0005.parquet",
+     "2024-01.part0006.parquet",
+     "2024-01.part0007.parquet",
+     "2024-01.part0008.parquet",
+     "2024-01.part0009.parquet",
+     "2024-01.part0010.parquet",
+     "2024-01.part0011.parquet",
+     "2024-01.part0012.parquet",
+     "2024-01.part0013.parquet",
+     "2024-01.part0014.parquet",
+     "2024-01.part0015.parquet",
+     "2024-01.part0016.parquet",
+     "2024-01.part0017.parquet",
+     "2024-01.part0018.parquet",
+     "2024-01.part0019.parquet",
+     "2024-01.part0020.parquet",
+     "2024-01.part0021.parquet",
+     "2024-01.part0022.parquet",
+     "2024-01.part0023.parquet",
+     "2024-01.part0024.parquet",
+     "2024-01.part0025.parquet",
+     "2024-01.part0026.parquet",
+     "2024-01.part0027.parquet",
+     "2024-01.part0028.parquet",
+     "2024-01.part0029.parquet",
+     "2024-01.part0030.parquet",
+     "2024-02.part0000.parquet",
+     "2024-02.part0001.parquet",
+     "2024-02.part0002.parquet",
+     "2024-02.part0003.parquet",
+     "2024-02.part0004.parquet",
+     "2024-02.part0005.parquet",
+     "2024-02.part0006.parquet",
+     "2024-02.part0007.parquet",
+     "2024-02.part0008.parquet",
+     "2024-02.part0009.parquet",
+     "2024-02.part0010.parquet",
+     "2024-02.part0011.parquet",
+     "2024-02.part0012.parquet",
+     "2024-02.part0013.parquet",
+     "2024-02.part0014.parquet",
+     "2024-02.part0015.parquet",
+     "2024-02.part0016.parquet",
+     "2024-02.part0017.parquet",
+     "2024-02.part0018.parquet",
+     "2024-02.part0019.parquet",
+     "2024-02.part0020.parquet",
+     "2024-02.part0021.parquet",
+     "2024-02.part0022.parquet",
+     "2024-02.part0023.parquet",
+     "2024-02.part0024.parquet",
+     "2024-02.part0025.parquet",
+     "2024-02.part0026.parquet",
+     "2024-02.part0027.parquet",
+     "2024-02.part0028.parquet",
+     "2024-03.part0000.parquet",
+     "2024-03.part0001.parquet",
+     "2024-03.part0002.parquet",
+     "2024-03.part0003.parquet",
+     "2024-03.part0004.parquet",
+     "2024-03.part0005.parquet",
+     "2024-03.part0006.parquet",
+     "2024-03.part0007.parquet",
+     "2024-03.part0008.parquet"
+    ],
+    "2024": [
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet",
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet"
+    ],
+    "2025": [
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet",
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot86_tail_days.parquet"
+    ]
+   },
+   "CC": {
+    "2023": [
+     "2023-03.part0000.parquet",
+     "2023-03.part0001.parquet",
+     "2023-03.part0002.parquet",
+     "2023-03.part0003.parquet",
+     "2023-03.part0004.parquet",
+     "2023-03.part0005.parquet",
+     "2023-03.part0006.parquet",
+     "2023-03.part0007.parquet",
+     "2023-03.part0008.parquet",
+     "2023-03.part0009.parquet",
+     "2023-03.part0010.parquet",
+     "2023-03.part0011.parquet",
+     "2023-03.part0012.parquet",
+     "2023-03.part0013.parquet",
+     "2023-03.part0014.parquet",
+     "2023-03.part0015.parquet",
+     "2023-04.part0000.parquet",
+     "2023-04.part0001.parquet",
+     "2023-04.part0002.parquet",
+     "2023-04.part0003.parquet",
+     "2023-04.part0004.parquet",
+     "2023-04.part0005.parquet",
+     "2023-04.part0006.parquet",
+     "2023-04.part0007.parquet",
+     "2023-04.part0008.parquet",
+     "2023-04.part0009.parquet",
+     "2023-04.part0010.parquet",
+     "2023-04.part0011.parquet",
+     "2023-04.part0012.parquet",
+     "2023-04.part0013.parquet",
+     "2023-04.part0014.parquet",
+     "2023-05.part0000.parquet",
+     "2023-05.part0001.parquet",
+     "2023-05.part0002.parquet",
+     "2023-05.part0003.parquet",
+     "2023-05.part0004.parquet",
+     "2023-05.part0005.parquet",
+     "2023-05.part0006.parquet",
+     "2023-05.part0007.parquet",
+     "2023-05.part0008.parquet",
+     "2023-05.part0009.parquet",
+     "2023-05.part0010.parquet",
+     "2023-05.part0011.parquet",
+     "2023-05.part0012.parquet",
+     "2023-05.part0013.parquet",
+     "2023-05.part0014.parquet",
+     "2023-05.part0015.parquet",
+     "2023-06.part0000.parquet",
+     "2023-06.part0001.parquet",
+     "2023-06.part0002.parquet",
+     "2023-06.part0003.parquet",
+     "2023-06.part0004.parquet",
+     "2023-06.part0005.parquet",
+     "2023-06.part0006.parquet",
+     "2023-06.part0007.parquet",
+     "2023-06.part0008.parquet",
+     "2023-06.part0009.parquet",
+     "2023-06.part0010.parquet",
+     "2023-06.part0011.parquet",
+     "2023-06.part0012.parquet",
+     "2023-06.part0013.parquet",
+     "2023-06.part0014.parquet",
+     "2023-06.part0015.parquet",
+     "2023-07.part0000.parquet",
+     "2023-07.part0001.parquet",
+     "2023-07.part0002.parquet",
+     "2023-07.part0003.parquet",
+     "2023-07.part0004.parquet",
+     "2023-07.part0005.parquet",
+     "2023-07.part0006.parquet",
+     "2023-07.part0007.parquet",
+     "2023-07.part0008.parquet",
+     "2023-07.part0009.parquet",
+     "2023-07.part0010.parquet",
+     "2023-07.part0011.parquet",
+     "2023-07.part0012.parquet",
+     "2023-07.part0013.parquet",
+     "2023-07.part0014.parquet",
+     "2023-07.part0015.parquet",
+     "2023-07.part0016.parquet",
+     "2023-07.part0017.parquet",
+     "2023-07.part0018.parquet",
+     "2023-07.part0019.parquet",
+     "2023-07.part0020.parquet",
+     "2023-07.part0021.parquet",
+     "2023-07.part0022.parquet",
+     "2023-07.part0023.parquet",
+     "2023-07.part0024.parquet",
+     "2023-07.part0025.parquet",
+     "2023-07.part0026.parquet",
+     "2023-07.part0027.parquet",
+     "2023-07.part0028.parquet",
+     "2023-07.part0029.parquet",
+     "2023-08.part0000.parquet",
+     "2023-08.part0001.parquet",
+     "2023-08.part0002.parquet",
+     "2023-08.part0003.parquet",
+     "2023-08.part0004.parquet",
+     "2023-08.part0005.parquet",
+     "2023-08.part0006.parquet",
+     "2023-08.part0007.parquet",
+     "2023-08.part0008.parquet",
+     "2023-08.part0009.parquet",
+     "2023-08.part0010.parquet",
+     "2023-08.part0011.parquet",
+     "2023-08.part0012.parquet",
+     "2023-08.part0013.parquet",
+     "2023-08.part0014.parquet",
+     "2023-08.part0015.parquet",
+     "2023-08.part0016.parquet",
+     "2023-08.part0017.parquet",
+     "2023-08.part0018.parquet",
+     "2023-08.part0019.parquet",
+     "2023-08.part0020.parquet",
+     "2023-08.part0021.parquet",
+     "2023-08.part0022.parquet",
+     "2023-08.part0023.parquet",
+     "2023-08.part0024.parquet",
+     "2023-08.part0025.parquet",
+     "2023-08.part0026.parquet",
+     "2023-08.part0027.parquet",
+     "2023-08.part0028.parquet",
+     "2023-08.part0029.parquet",
+     "2023-08.part0030.parquet",
+     "2023-09.part0000.parquet",
+     "2023-09.part0001.parquet",
+     "2023-09.part0002.parquet",
+     "2023-09.part0003.parquet",
+     "2023-09.part0004.parquet",
+     "2023-09.part0005.parquet",
+     "2023-09.part0006.parquet",
+     "2023-09.part0007.parquet",
+     "2023-09.part0008.parquet",
+     "2023-09.part0009.parquet",
+     "2023-09.part0010.parquet",
+     "2023-09.part0011.parquet",
+     "2023-09.part0012.parquet",
+     "2023-09.part0013.parquet",
+     "2023-09.part0014.parquet",
+     "2023-09.part0015.parquet",
+     "2023-09.part0016.parquet",
+     "2023-09.part0017.parquet",
+     "2023-09.part0018.parquet",
+     "2023-09.part0019.parquet",
+     "2023-09.part0020.parquet",
+     "2023-09.part0021.parquet",
+     "2023-09.part0022.parquet",
+     "2023-09.part0023.parquet",
+     "2023-09.part0024.parquet",
+     "2023-09.part0025.parquet",
+     "2023-09.part0026.parquet",
+     "2023-09.part0027.parquet",
+     "2023-09.part0028.parquet",
+     "2023-09.part0029.parquet",
+     "2023-10.part0000.parquet",
+     "2023-10.part0001.parquet",
+     "2023-10.part0002.parquet",
+     "2023-10.part0003.parquet",
+     "2023-10.part0004.parquet",
+     "2023-10.part0005.parquet",
+     "2023-10.part0006.parquet",
+     "2023-10.part0007.parquet",
+     "2023-10.part0008.parquet",
+     "2023-10.part0009.parquet",
+     "2023-10.part0010.parquet",
+     "2023-10.part0011.parquet",
+     "2023-10.part0012.parquet",
+     "2023-10.part0013.parquet",
+     "2023-10.part0014.parquet",
+     "2023-10.part0015.parquet",
+     "2023-10.part0016.parquet",
+     "2023-10.part0017.parquet",
+     "2023-10.part0018.parquet",
+     "2023-10.part0019.parquet",
+     "2023-10.part0020.parquet",
+     "2023-10.part0021.parquet",
+     "2023-10.part0022.parquet",
+     "2023-10.part0023.parquet",
+     "2023-10.part0024.parquet",
+     "2023-10.part0025.parquet",
+     "2023-10.part0026.parquet",
+     "2023-10.part0027.parquet",
+     "2023-10.part0028.parquet",
+     "2023-10.part0029.parquet",
+     "2023-10.part0030.parquet",
+     "2023-11.part0000.parquet",
+     "2023-11.part0001.parquet",
+     "2023-11.part0002.parquet",
+     "2023-11.part0003.parquet",
+     "2023-11.part0004.parquet",
+     "2023-11.part0005.parquet",
+     "2023-11.part0006.parquet",
+     "2023-11.part0007.parquet",
+     "2023-11.part0008.parquet",
+     "2023-11.part0009.parquet",
+     "2023-11.part0010.parquet",
+     "2023-11.part0011.parquet",
+     "2023-11.part0012.parquet",
+     "2023-11.part0013.parquet",
+     "2023-11.part0014.parquet",
+     "2023-11.part0015.parquet",
+     "2023-11.part0016.parquet",
+     "2023-11.part0017.parquet",
+     "2023-11.part0018.parquet",
+     "2023-11.part0019.parquet",
+     "2023-11.part0020.parquet",
+     "2023-11.part0021.parquet",
+     "2023-11.part0022.parquet",
+     "2023-11.part0023.parquet",
+     "2023-11.part0024.parquet",
+     "2023-11.part0025.parquet",
+     "2023-11.part0026.parquet",
+     "2023-11.part0027.parquet",
+     "2023-11.part0028.parquet",
+     "2023-11.part0029.parquet",
+     "2023-12.part0000.parquet",
+     "2023-12.part0001.parquet",
+     "2023-12.part0002.parquet",
+     "2023-12.part0003.parquet",
+     "2023-12.part0004.parquet",
+     "2023-12.part0005.parquet",
+     "2023-12.part0006.parquet",
+     "2023-12.part0007.parquet",
+     "2023-12.part0008.parquet",
+     "2023-12.part0009.parquet",
+     "2023-12.part0010.parquet",
+     "2023-12.part0011.parquet",
+     "2023-12.part0012.parquet",
+     "2023-12.part0013.parquet",
+     "2023-12.part0014.parquet",
+     "2023-12.part0015.parquet",
+     "2023-12.part0016.parquet",
+     "2023-12.part0017.parquet",
+     "2023-12.part0018.parquet",
+     "2023-12.part0019.parquet",
+     "2023-12.part0020.parquet",
+     "2023-12.part0021.parquet",
+     "2023-12.part0022.parquet",
+     "2023-12.part0023.parquet",
+     "2023-12.part0024.parquet",
+     "2023-12.part0025.parquet",
+     "2023-12.part0026.parquet",
+     "2023-12.part0027.parquet",
+     "2023-12.part0028.parquet",
+     "2023-12.part0029.parquet",
+     "2023-12.part0030.parquet",
+     "2024-01.part0000.parquet",
+     "2024-01.part0001.parquet",
+     "2024-01.part0002.parquet",
+     "2024-01.part0003.parquet",
+     "2024-01.part0004.parquet",
+     "2024-01.part0005.parquet",
+     "2024-01.part0006.parquet",
+     "2024-01.part0007.parquet",
+     "2024-01.part0008.parquet",
+     "2024-01.part0009.parquet",
+     "2024-01.part0010.parquet",
+     "2024-01.part0011.parquet",
+     "2024-01.part0012.parquet",
+     "2024-01.part0013.parquet",
+     "2024-01.part0014.parquet",
+     "2024-01.part0015.parquet",
+     "2024-01.part0016.parquet",
+     "2024-01.part0017.parquet",
+     "2024-01.part0018.parquet",
+     "2024-01.part0019.parquet",
+     "2024-01.part0020.parquet",
+     "2024-01.part0021.parquet",
+     "2024-01.part0022.parquet",
+     "2024-01.part0023.parquet",
+     "2024-01.part0024.parquet",
+     "2024-01.part0025.parquet",
+     "2024-01.part0026.parquet",
+     "2024-01.part0027.parquet",
+     "2024-01.part0028.parquet",
+     "2024-01.part0029.parquet",
+     "2024-01.part0030.parquet",
+     "2024-02.part0000.parquet",
+     "2024-02.part0001.parquet",
+     "2024-02.part0002.parquet",
+     "2024-02.part0003.parquet",
+     "2024-02.part0004.parquet",
+     "2024-02.part0005.parquet",
+     "2024-02.part0006.parquet",
+     "2024-02.part0007.parquet",
+     "2024-02.part0008.parquet",
+     "2024-02.part0009.parquet",
+     "2024-02.part0010.parquet",
+     "2024-02.part0011.parquet",
+     "2024-02.part0012.parquet",
+     "2024-02.part0013.parquet",
+     "2024-02.part0014.parquet",
+     "2024-02.part0015.parquet",
+     "2024-02.part0016.parquet",
+     "2024-02.part0017.parquet",
+     "2024-02.part0018.parquet",
+     "2024-02.part0019.parquet",
+     "2024-02.part0020.parquet",
+     "2024-02.part0021.parquet",
+     "2024-02.part0022.parquet",
+     "2024-02.part0023.parquet",
+     "2024-02.part0024.parquet",
+     "2024-02.part0025.parquet",
+     "2024-02.part0026.parquet",
+     "2024-02.part0027.parquet",
+     "2024-02.part0028.parquet",
+     "2024-03.part0000.parquet",
+     "2024-03.part0001.parquet",
+     "2024-03.part0002.parquet",
+     "2024-03.part0003.parquet",
+     "2024-03.part0004.parquet",
+     "2024-03.part0005.parquet",
+     "2024-03.part0006.parquet",
+     "2024-03.part0007.parquet",
+     "2024-03.part0008.parquet"
+    ],
+    "2024": [
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_tail_days.parquet",
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot75_control_days.parquet"
+    ],
+    "2025": [
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot75_control_days.parquet",
+     "60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2025_ercot86_tail_days.parquet"
+    ]
+   }
   },
   "coverage": {
-   "2023": [
-    {
-     "intervals": 8750,
-     "days": 187,
-     "mean_pool_mw": 879.6
-    },
-    {
-     "intervals": 8759,
-     "days": 253,
-     "mean_pool_mw": 838.2
-    },
-    {
-     "intervals": 7002,
-     "days": 268,
-     "mean_pool_mw": 828.5
-    },
-    {
-     "intervals": 3504,
-     "days": 211,
-     "mean_pool_mw": 872.6
-    },
-    {
-     "intervals": 3500,
-     "days": 162,
-     "mean_pool_mw": 837.3
-    },
-    {
-     "intervals": 2408,
-     "days": 105,
-     "mean_pool_mw": 736.4
-    },
-    {
-     "intervals": 809,
-     "days": 48,
-     "mean_pool_mw": 344.7
-    }
-   ],
-   "2024": [
-    {
-     "intervals": 356,
-     "days": 17,
-     "mean_pool_mw": 702.8
-    },
-    {
-     "intervals": 512,
-     "days": 32,
-     "mean_pool_mw": 649.3
-    },
-    {
-     "intervals": 372,
-     "days": 35,
-     "mean_pool_mw": 508.3
-    },
-    {
-     "intervals": 217,
-     "days": 29,
-     "mean_pool_mw": 474.6
-    },
-    {
-     "intervals": 259,
-     "days": 26,
-     "mean_pool_mw": 463.0
-    },
-    {
-     "intervals": 299,
-     "days": 21,
-     "mean_pool_mw": 487.3
-    },
-    {
-     "intervals": 178,
-     "days": 9,
-     "mean_pool_mw": 543.1
-    }
-   ],
-   "2025": [
-    {
-     "intervals": 244,
-     "days": 12,
-     "mean_pool_mw": 297.9
-    },
-    {
-     "intervals": 348,
-     "days": 22,
-     "mean_pool_mw": 361.2
-    },
-    {
-     "intervals": 336,
-     "days": 28,
-     "mean_pool_mw": 339.9
-    },
-    {
-     "intervals": 304,
-     "days": 24,
-     "mean_pool_mw": 378.9
-    },
-    {
-     "intervals": 312,
-     "days": 25,
-     "mean_pool_mw": 414.9
-    },
-    {
-     "intervals": 304,
-     "days": 23,
-     "mean_pool_mw": 336.0
-    },
-    {
-     "intervals": 162,
-     "days": 10,
-     "mean_pool_mw": 428.5
-    }
-   ]
+   "CT": {
+    "2023": [
+     {
+      "intervals": 8750,
+      "days": 187,
+      "mean_pool_mw": 879.6
+     },
+     {
+      "intervals": 8759,
+      "days": 253,
+      "mean_pool_mw": 838.2
+     },
+     {
+      "intervals": 7002,
+      "days": 268,
+      "mean_pool_mw": 828.5
+     },
+     {
+      "intervals": 3504,
+      "days": 211,
+      "mean_pool_mw": 872.6
+     },
+     {
+      "intervals": 3500,
+      "days": 162,
+      "mean_pool_mw": 837.3
+     },
+     {
+      "intervals": 2408,
+      "days": 105,
+      "mean_pool_mw": 736.4
+     },
+     {
+      "intervals": 809,
+      "days": 48,
+      "mean_pool_mw": 344.7
+     }
+    ],
+    "2024": [
+     {
+      "intervals": 356,
+      "days": 17,
+      "mean_pool_mw": 702.8
+     },
+     {
+      "intervals": 512,
+      "days": 32,
+      "mean_pool_mw": 649.3
+     },
+     {
+      "intervals": 372,
+      "days": 35,
+      "mean_pool_mw": 508.3
+     },
+     {
+      "intervals": 217,
+      "days": 29,
+      "mean_pool_mw": 474.6
+     },
+     {
+      "intervals": 259,
+      "days": 26,
+      "mean_pool_mw": 463.0
+     },
+     {
+      "intervals": 299,
+      "days": 21,
+      "mean_pool_mw": 487.3
+     },
+     {
+      "intervals": 178,
+      "days": 9,
+      "mean_pool_mw": 543.1
+     }
+    ],
+    "2025": [
+     {
+      "intervals": 244,
+      "days": 12,
+      "mean_pool_mw": 297.9
+     },
+     {
+      "intervals": 348,
+      "days": 22,
+      "mean_pool_mw": 361.2
+     },
+     {
+      "intervals": 336,
+      "days": 28,
+      "mean_pool_mw": 339.9
+     },
+     {
+      "intervals": 304,
+      "days": 24,
+      "mean_pool_mw": 378.9
+     },
+     {
+      "intervals": 312,
+      "days": 25,
+      "mean_pool_mw": 414.9
+     },
+     {
+      "intervals": 304,
+      "days": 23,
+      "mean_pool_mw": 336.0
+     },
+     {
+      "intervals": 162,
+      "days": 10,
+      "mean_pool_mw": 428.5
+     }
+    ]
+   },
+   "CC": {
+    "2023": [
+     {
+      "intervals": 2993,
+      "days": 113,
+      "mean_pool_mw": 4.4
+     },
+     {
+      "intervals": 3100,
+      "days": 178,
+      "mean_pool_mw": 5.9
+     },
+     {
+      "intervals": 2172,
+      "days": 187,
+      "mean_pool_mw": 6.3
+     },
+     {
+      "intervals": 1280,
+      "days": 163,
+      "mean_pool_mw": 7.5
+     },
+     {
+      "intervals": 1766,
+      "days": 136,
+      "mean_pool_mw": 9.6
+     },
+     {
+      "intervals": 1480,
+      "days": 92,
+      "mean_pool_mw": 14.3
+     },
+     {
+      "intervals": 343,
+      "days": 35,
+      "mean_pool_mw": 19.7
+     }
+    ],
+    "2024": [
+     {
+      "intervals": 288,
+      "days": 15,
+      "mean_pool_mw": 4.0
+     },
+     {
+      "intervals": 403,
+      "days": 27,
+      "mean_pool_mw": 3.8
+     },
+     {
+      "intervals": 212,
+      "days": 25,
+      "mean_pool_mw": 5.6
+     },
+     {
+      "intervals": 143,
+      "days": 20,
+      "mean_pool_mw": 7.7
+     },
+     {
+      "intervals": 128,
+      "days": 17,
+      "mean_pool_mw": 9.1
+     },
+     {
+      "intervals": 110,
+      "days": 15,
+      "mean_pool_mw": 10.7
+     },
+     {
+      "intervals": 117,
+      "days": 7,
+      "mean_pool_mw": 18.3
+     }
+    ],
+    "2025": [
+     {
+      "intervals": 68,
+      "days": 3,
+      "mean_pool_mw": 10.9
+     },
+     {
+      "intervals": 21,
+      "days": 4,
+      "mean_pool_mw": 11.0
+     },
+     {
+      "intervals": 70,
+      "days": 6,
+      "mean_pool_mw": 11.0
+     },
+     {
+      "intervals": 52,
+      "days": 8,
+      "mean_pool_mw": 13.1
+     },
+     {
+      "intervals": 41,
+      "days": 7,
+      "mean_pool_mw": 11.0
+     },
+     {
+      "intervals": 68,
+      "days": 6,
+      "mean_pool_mw": 11.0
+     },
+     {
+      "intervals": 35,
+      "days": 4,
+      "mean_pool_mw": 11.0
+     }
+    ]
+   }
   },
   "corpus_caveat": "2024/2025 remain on scoped sample days (ERCOT-74/75/86 intake): the Jan-2024 winter-morning mid-band cluster is NOT in that basis \u2014 disclosed unmeasured (charter \u00a78). 2023 derives from the full-year publication-month corpus (complete delivery-year coverage, all 365 days)",
-  "frozen": "rule 23 \u2014 re-derive only on a SCED disclosure source-data update, never because a residual moved"
+  "frozen": "rule 23 \u2014 re-derive only on a SCED disclosure source-data update, never because a residual moved. The CC block was added at ERCOT-176 under a source-data change (the ERCOT-157 delivery-2023 corpus) plus a NEW class scope; the CT blocks are byte-identical across that extension"
  },
  "CT": {
   "years": {
@@ -972,6 +1426,511 @@
       [
        0.9,
        390.961
+      ]
+     ]
+    ]
+   }
+  }
+ },
+ "CC": {
+  "years": {
+   "2023": {
+    "pool_frac": [
+     0.0002,
+     0.0003,
+     0.0003,
+     0.0003,
+     0.0003,
+     0.0005,
+     0.0006
+    ],
+    "ladder": [
+     [
+      [
+       0.1,
+       22.041
+      ],
+      [
+       0.3,
+       28.947
+      ],
+      [
+       0.5,
+       31.818
+      ],
+      [
+       0.7,
+       36.585
+      ],
+      [
+       0.9,
+       45.562
+      ]
+     ],
+     [
+      [
+       0.1,
+       27.005
+      ],
+      [
+       0.3,
+       30.8
+      ],
+      [
+       0.5,
+       34.389
+      ],
+      [
+       0.7,
+       38.31
+      ],
+      [
+       0.9,
+       51.333
+      ]
+     ],
+     [
+      [
+       0.1,
+       27.5
+      ],
+      [
+       0.3,
+       34.389
+      ],
+      [
+       0.5,
+       36.493
+      ],
+      [
+       0.7,
+       38.901
+      ],
+      [
+       0.9,
+       47.531
+      ]
+     ],
+     [
+      [
+       0.1,
+       33.047
+      ],
+      [
+       0.3,
+       35.814
+      ],
+      [
+       0.5,
+       37.682
+      ],
+      [
+       0.7,
+       39.286
+      ],
+      [
+       0.9,
+       49.405
+      ]
+     ],
+     [
+      [
+       0.1,
+       34.375
+      ],
+      [
+       0.3,
+       36.321
+      ],
+      [
+       0.5,
+       37.931
+      ],
+      [
+       0.7,
+       39.286
+      ],
+      [
+       0.9,
+       44.509
+      ]
+     ],
+     [
+      [
+       0.1,
+       35.0
+      ],
+      [
+       0.3,
+       36.493
+      ],
+      [
+       0.5,
+       37.561
+      ],
+      [
+       0.7,
+       38.901
+      ],
+      [
+       0.9,
+       40.513
+      ]
+     ],
+     [
+      [
+       0.1,
+       35.909
+      ],
+      [
+       0.3,
+       37.089
+      ],
+      [
+       0.5,
+       37.931
+      ],
+      [
+       0.7,
+       39.691
+      ],
+      [
+       0.9,
+       40.716
+      ]
+     ]
+    ]
+   },
+   "2024": {
+    "pool_frac": [
+     0.0002,
+     0.0002,
+     0.0003,
+     0.0003,
+     0.0003,
+     0.0004,
+     0.0006
+    ],
+    "ladder": [
+     [
+      [
+       0.1,
+       32.083
+      ],
+      [
+       0.3,
+       42.308
+      ],
+      [
+       0.5,
+       54.225
+      ],
+      [
+       0.7,
+       55.882
+      ],
+      [
+       0.9,
+       76.0
+      ]
+     ],
+     [
+      [
+       0.1,
+       43.75
+      ],
+      [
+       0.3,
+       54.225
+      ],
+      [
+       0.5,
+       61.29
+      ],
+      [
+       0.7,
+       67.857
+      ],
+      [
+       0.9,
+       108.451
+      ]
+     ],
+     [
+      [
+       0.1,
+       43.75
+      ],
+      [
+       0.3,
+       49.673
+      ],
+      [
+       0.5,
+       56.846
+      ],
+      [
+       0.7,
+       77.778
+      ],
+      [
+       0.9,
+       97.407
+      ]
+     ],
+     [
+      [
+       0.1,
+       41.355
+      ],
+      [
+       0.3,
+       44.592
+      ],
+      [
+       0.5,
+       50.331
+      ],
+      [
+       0.7,
+       57.895
+      ],
+      [
+       0.9,
+       77.778
+      ]
+     ],
+     [
+      [
+       0.1,
+       45.294
+      ],
+      [
+       0.3,
+       45.833
+      ],
+      [
+       0.5,
+       52.74
+      ],
+      [
+       0.7,
+       55.245
+      ],
+      [
+       0.9,
+       61.111
+      ]
+     ],
+     [
+      [
+       0.1,
+       43.75
+      ],
+      [
+       0.3,
+       47.239
+      ],
+      [
+       0.5,
+       52.74
+      ],
+      [
+       0.7,
+       55.226
+      ],
+      [
+       0.9,
+       61.003
+      ]
+     ],
+     [
+      [
+       0.1,
+       45.833
+      ],
+      [
+       0.3,
+       48.325
+      ],
+      [
+       0.5,
+       52.74
+      ],
+      [
+       0.7,
+       54.11
+      ],
+      [
+       0.9,
+       57.895
+      ]
+     ]
+    ]
+   },
+   "2025": {
+    "pool_frac": [
+     0.0007,
+     0.0005,
+     0.0004,
+     0.0005,
+     0.0004,
+     0.0004,
+     0.0004
+    ],
+    "ladder": [
+     [
+      [
+       0.1,
+       20.643
+      ],
+      [
+       0.3,
+       20.643
+      ],
+      [
+       0.5,
+       20.643
+      ],
+      [
+       0.7,
+       24.062
+      ],
+      [
+       0.9,
+       24.062
+      ]
+     ],
+     [
+      [
+       0.1,
+       24.062
+      ],
+      [
+       0.3,
+       24.062
+      ],
+      [
+       0.5,
+       29.057
+      ],
+      [
+       0.7,
+       29.057
+      ],
+      [
+       0.9,
+       31.011
+      ]
+     ],
+     [
+      [
+       0.1,
+       29.057
+      ],
+      [
+       0.3,
+       30.677
+      ],
+      [
+       0.5,
+       31.048
+      ],
+      [
+       0.7,
+       32.627
+      ],
+      [
+       0.9,
+       33.478
+      ]
+     ],
+     [
+      [
+       0.1,
+       29.057
+      ],
+      [
+       0.3,
+       29.07
+      ],
+      [
+       0.5,
+       29.304
+      ],
+      [
+       0.7,
+       33.08
+      ],
+      [
+       0.9,
+       33.624
+      ]
+     ],
+     [
+      [
+       0.1,
+       29.057
+      ],
+      [
+       0.3,
+       30.677
+      ],
+      [
+       0.5,
+       32.627
+      ],
+      [
+       0.7,
+       33.478
+      ],
+      [
+       0.9,
+       33.624
+      ]
+     ],
+     [
+      [
+       0.1,
+       29.167
+      ],
+      [
+       0.3,
+       30.677
+      ],
+      [
+       0.5,
+       31.048
+      ],
+      [
+       0.7,
+       32.627
+      ],
+      [
+       0.9,
+       33.624
+      ]
+     ],
+     [
+      [
+       0.1,
+       29.167
+      ],
+      [
+       0.3,
+       29.167
+      ],
+      [
+       0.5,
+       33.478
+      ],
+      [
+       0.7,
+       33.478
+      ],
+      [
+       0.9,
+       33.478
       ]
      ]
     ]

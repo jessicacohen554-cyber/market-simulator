@@ -3871,7 +3871,7 @@ def run_year(
     # start-cost pricing reconcile instead of stacking (rule 19; the additive
     # pjm-101/102 form over-expressed at CT -12 TWh). None for every
     # non-PJM / gate-off run (byte-identical).
-    pjm_ct_max_target = None
+    p1_bid_max_target = None
     if getattr(config, "pjm_ct_measured_max_reprice", False) and iso == "PJM":
         from market_sim.data.fleet import build_pjm_ct_measured_max_target
 
@@ -3880,9 +3880,36 @@ def run_year(
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
-        pjm_ct_max_target = build_pjm_ct_measured_max_target(
+        p1_bid_max_target = build_pjm_ct_measured_max_target(
             fleet_arrays, fleet, mc_base, _ct_net_load, config, year
         )
+    # ERCOT-176 offline-increment SLOW-START tier
+    # (ScenarioConfig.ercot_offline_commit_offer): the merchant CC bid rows
+    # above the measured offline boundary priced at that band's own measured
+    # start-inclusive above-LSL SCED2 ladder
+    # (fleet.build_ercot_offline_commit_target). A bid LEVEL, not a markup —
+    # run_energy_solve applies it as max(bid, target) AFTER the startup
+    # amortization, so the measured start-inclusive ladder and P1's start
+    # pricing RECONCILE instead of stacking (rule 19; an additive form would
+    # price the row at ladder + startup and double-count the start, the
+    # pjm-101/102 failure mode). Disjoint from the ERCOT-88 fast-start pool
+    # by unit physics (min-down 1 h vs 4-8 h). None for every non-ERCOT /
+    # gate-off / unmeasured-year run (byte-identical).
+    # PRECOMMIT-ercot176 §2 + its 2026-08-07 pre-solve amendment.
+    if getattr(config, "ercot_offline_commit_offer", False) and iso == "ERCOT":
+        from market_sim.data.fleet import build_ercot_offline_commit_target
+
+        _oc_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _oc = build_ercot_offline_commit_target(
+            fleet_arrays, fleet, mc_base, _oc_net_load, config, year
+        )
+        if _oc is not None:
+            # ERCOT and PJM gate exclusively, so the seam carries one target.
+            p1_bid_max_target = _oc[0]
     # v4 condition-keyed fast-start amortization horizon
     # (tranche_startup_conditional_runs): the hour's within-year net-load
     # percentile band scales the v3 CAMPD-measured run-length ceiling by the
@@ -4964,7 +4991,7 @@ def run_year(
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
         # at most one is non-None here.
         p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
-        p1_bid_max_target=pjm_ct_max_target,
+        p1_bid_max_target=p1_bid_max_target,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     _t_solve_end = time.perf_counter()
