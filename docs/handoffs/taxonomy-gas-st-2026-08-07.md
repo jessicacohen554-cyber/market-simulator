@@ -161,7 +161,46 @@ cd /home/user/market-simulator-control && for d in data results frontend docs te
   --out-dir <scratch>/<iso>_tax_<arm> --note "gas_st taxonomy paired <arm>"
 ```
 
-RESULTS_PLACEHOLDER_PAIRED_CONTROLS
+### 4.1 NYISO — registered `2026-08-07-nyiso-131-taxgs-{control,arm}`
+
+Same-head pair on the keeper recipe `2026-08-06-nyiso-128-solar-basis`
+(bundle `nyiso128_treatment`), 2023–2025. Both arms scored through the full
+registration pipeline (`dashboard_add_run` + `calibration_verdict --write-metrics`,
+attestations derived from the keeper's with session-specific `attested_by`).
+
+**Verdict grain — nothing moves:** determination **CALIBRATED-WITH-CAVEATS in both
+arms**, all 8 criterion statuses identical (C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the same
+lone ledgered caveat), caveat budget identical.
+
+**Hourly grain — not byte-identical** (the RED-Rochester ST_CHP bin re-rate,
+11.454 → 10.3 MMBtu/MWh on 119.6 MW):
+
+| year | class energy deltas (TWh, arm − control) | demand-wt ΔLMP | max zonal \|ΔLMP\| |
+|---|---|--:|--:|
+| 2023 | ST_CHP +0.037; ST_GAS −0.016; CC_REGULAR −0.011; CC_CHP −0.007 | −0.013 $/MWh | 1.25 |
+| 2024 | ST_CHP +0.052; CC_REGULAR −0.023; CC_CHP −0.016; ST_GAS −0.012 | −0.023 $/MWh | 3.85 |
+| 2025 | ST_CHP +0.005; CC_REGULAR −0.002; CC_CHP −0.001; ST_GAS −0.001 | −0.002 $/MWh | 2.71 |
+
+Direction is physical: the corrected (cheaper) heat rate lets the cogen bin run more,
+displacing merchant CC and the ST_GAS class. 34 of 188 numeric verdict fields move, max
+|d| = 0.052 TWh of class volume / 0.02 $/MWh of mean LMP; **no gate is approached, let
+alone crossed**.
+
+**Posture: HOLD PROMOTION honoured** — metrics moved (numerically), so per Addendum D
+the delta is reported and the NYISO keeper is untouched
+(`2026-08-06-nyiso-128-solar-basis` stays; keeper shard not edited). Adjudication of
+whether the arm becomes the successor recipe is the manager/owner's; the arm bundle is
+registered and scored, ready to promote without re-solving if adjudicated in.
+
+### 4.2 MISO — RESULTS_PLACEHOLDER_MISO
+
+### 4.3 Memory note (binding for the NEISO tail and any re-run)
+
+A MISO 3-year invocation OOMs on a 15 GB box even solo (year loop accumulates; killed at
+~11.5 GB RSS in year 2). The working recipe is `replay_keeper`'s own per-year chain:
+`--years <y> --reuse-solved <prior>` — one fresh process per year, which the tool's help
+documents as the rule-12 chain for exactly this OOM. NYISO solves fine in one 3-year
+invocation alongside nothing else.
 
 **NEISO is handed off, not run** (charter: run the top two, hand off the rest): its
 entire delta is two CHP bins totalling 9.3 MW (Indian Orchard 3.2 MW 11.5→10.3,
