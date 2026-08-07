@@ -7717,6 +7717,44 @@ class ScenarioConfig:
     # Path to the frozen fast-start pool JSON (default:
     # data/raw/_validation-source/ercot_faststart_pool_condbinned.json).
     ercot_faststart_pool_offer_path: str | None = None
+    # ERCOT-176 offline-increment re-pricing, SLOW-START tier (default off;
+    # docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md, the
+    # owner-authorized ERCOT-151 §3 design round). The model's availability
+    # basis is only-OUT-is-out (correct — startability is physical, rule 13),
+    # so every non-outaged unit is offered to the LP at its base/wall-basis
+    # curve whether or not serving the next MW would require a START. P1's
+    # startup amortization is the only start term and is the wrong
+    # identification by ~30x (physical startup $/MW over min-run at LSL ~
+    # $20-30/MWh); measured SCED conduct prices that same capability
+    # start-inclusive (the CT tier's own ladder reads p50 $271-707). This
+    # tier closes that gap for the SLOW-START band at its OWN measured
+    # ladder, from the "CC" block of the same artifact
+    # (scripts/data/derive_ercot_faststart_pool.py --classes CC).
+    #
+    # Its own builder (fleet.build_ercot_offline_commit_markup) prices the
+    # merchant bid rows (econ*/peak*) above the measured boundary
+    # (1 - pool_frac per net-load bin, within-plant share coordinates).
+    # Composition is REPLACE-BY-MASK at the call site (rule 19, one owner per
+    # row-hour): in this tier's row-hours every other offer surface's markup
+    # is replaced, INCLUDING P1's startup amortization — the measured ladder
+    # already contains the start, so stacking would double-count it.
+    # Eligibility is UNIT PHYSICS (rule 18): min-down in
+    # [constants.OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN,
+    # OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX] AND min-run <=
+    # OFFLINE_COMMIT_MIN_RUN_HOURS_MAX — never a class tuple. CT rows fail by
+    # min-down (1 h; the ERCOT-88 tier owns them, so the two are disjoint by
+    # physics), ST_GAS and coal by min-run (24/48 h) — which is what keeps
+    # the ERCOT-91-`R` steam lane closed.
+    # An offer-availability, NEVER a floor: no min_gen, no forced energy —
+    # D-2/D-4 exposure is structurally vacuous. YEAR-SCOPED (rule 13): no
+    # pooled fallback; a year absent from the artifact is byte-identical.
+    # Requires the cleared-share wall armed (the same rule-19 enumeration
+    # context ERCOT-88 carries). Zero fitted scalars; frozen against
+    # residuals (rule 23).
+    ercot_offline_commit_offer: bool = False
+    # Path override for the offline-increment artifact (defaults to the
+    # fast-start pool JSON — the CC block lives in the same file).
+    ercot_offline_commit_offer_path: str | None = None
     # ERCOT-89 shoulder online-span anchor (default off; step-2 mechanism of
     # docs/handoffs/ercot-shoulder-online-envelope-2026-07.md, owner-authorized
     # design round 2026-07-19). The charter §8 measurement: the model's
@@ -12101,6 +12139,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_rt_mode": 1,
     "ercot_faststart_pool_offer": 1,
     "ercot_faststart_pool_offer_path": 3,
+    "ercot_offline_commit_offer": 1,
+    "ercot_offline_commit_offer_path": 3,
     "ercot_shoulder_online_span": 1,
     "ercot_shoulder_online_span_path": 3,
     "nysdec_peaker_rule_availability": 1,
