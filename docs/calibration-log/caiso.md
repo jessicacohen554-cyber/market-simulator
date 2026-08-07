@@ -6907,3 +6907,24 @@ STILL OUTSTANDING**. It is a precondition for spending 2022 and is on the path b
 walled on non-public hourly pumped-storage water state, and its last free parameter is
 walled with two of three exits closed.** The next CAISO move is an owner-level data
 question, not a session lever.
+
+### Owner decisions, 2026-08-06 (recorded at caiso-178 close)
+
+Taken by the owner in-session via `AskUserQuestion`. Recorded here so the next CAISO
+session inherits them. **No owner-act file was touched** — `calibration-complete.json` and
+`holdout-freeze.json` are unchanged.
+
+1. **`battery_dispatch_adder` — PURSUE EXIT 3.** The last untried route (an identified
+   cell-vs-system split replacing the declared-tunable
+   `STORAGE_DEGRADATION_REPLACEMENT_FRACTION = 0.25`) is authorized as a session. Exits 1
+   and 2 stay closed. If exit 3 fails, the parameter becomes a permanent declared-residual
+   DOF and that is an owner-level disclosure, not a session failure.
+2. **The CAISO outage re-audit IS THE NEXT SESSION.** The re-audit flagged at
+   `intake_log` 2026-07-24 — never performed — is prioritized ahead of exit 3, because it
+   gates BOTH the 2022 validation touchpoint AND any path back to a `complete`
+   re-declaration. **Ordering: re-audit first, exit 3 second.**
+3. **C3a — PURSUE THE DATA.** The hourly pumped-storage water state that would close the
+   only failing criterion is an owner-level data-access question (approach CAISO directly
+   or evaluate commercial vendors), not a session lever. The wall stays walled and
+   `caiso_ps_charge_shape_anchor` stays `G` until such data exists; **no session may open a
+   lever against it in the meantime** (rules 1/13).
