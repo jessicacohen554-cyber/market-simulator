@@ -265,9 +265,17 @@
  *   2021) and a new 'final' block authorizes the touch-once locked test (2019,
  *   H1-2026). Previously ONE marker bought both, so declaring an ISO complete
  *   silently armed its locked test (rule 22 said so itself: "the CI gate is
- *   tier-agnostic"). NEISO and NYISO hold 'complete'; 'final' is EMPTY — NEISO's
- *   locked test is already SPENT (2026-07-07, frozen neiso-53) and must never be
- *   re-granted. All three gates read scripts/lib/holdout_policy.py and FAIL CLOSED
+ *   tier-agnostic"). NEISO and NYISO hold 'complete'; 'final' is EMPTY — and it is
+ *   empty because NO ISO's locked test has EVER been granted or spent.
+ *   [CORRECTED 2026-08-06, owner decision D-23: this read "NEISO's locked test is
+ *   already SPENT (2026-07-07, frozen neiso-53) and must never be re-granted."
+ *   That was FALSE — no NEISO 2019 or H1-2026 year has ever been solved, scored or
+ *   registered, and the id named as the frozen config is a TRAIN-tier 2023-2025 run.
+ *   NEISO's locked test is NEVER GRANTED. The correction grants nothing: 'final'
+ *   stays EMPTY and the gates still refuse. Citation chain:
+ *   results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md §1 ->
+ *   docs/third-party-peer-review-2026-07.md §6.3 item 1 -> D-23 / sitting
+ *   Addendum X.6.] All three gates read scripts/lib/holdout_policy.py and FAIL CLOSED
  *   (an unenumerated year maps to locked). The ACTIVE holdout spend freeze still
  *   outranks both blocks, so nothing is spendable until the owner lifts it.
  *   docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md.

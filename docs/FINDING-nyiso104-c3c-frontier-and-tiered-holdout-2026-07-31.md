@@ -91,12 +91,23 @@ Current state:
 
 | ISO | `complete` | `final` |
 |---|---|---|
-| NEISO | ✓ (validation only) | ✗ — locked test **already SPENT** 2026-07-07 on the frozen neiso-53 config |
+| NEISO | ✓ (validation only) | ✗ — **never scored, not granted** (corrected 2026-08-06, D-23 — see below) |
 | NYISO | ✓ (validation only, re-declared) | ✗ — never scored, not granted |
 | all others | ✗ | ✗ |
 
+> **CORRECTION 2026-08-06 (owner decision D-23).** The NEISO row above previously read
+> "✗ — locked test **already SPENT** 2026-07-07 on the frozen neiso-53 config", and the
+> paragraph below cited NEISO as the worked example of the "spent" case. **That was false.**
+> No NEISO 2019 or H1-2026 year has ever been solved, scored or registered; the id cited as
+> the frozen config is a TRAIN-tier 2023–2025 run. NEISO belongs in the same category as
+> NYISO — never scored, not granted. Citation chain:
+> `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+> `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
+> **This corrects the record only; it grants nothing.** NEISO stays absent from `final`.
+
 **Absence from `final` is deliberately not self-explaining.** It covers both "never authorized"
-(NYISO) and "authorized once, spent, never re-grantable" (NEISO). The per-ISO `locked_test` note
+and "authorized once, spent, never re-grantable" — though **no ISO is currently in the spent
+state**, so today every blank means "never authorized". The per-ISO `locked_test` note
 in the marker file is what distinguishes them, and both files now say so explicitly, so a future
 session cannot read the blank as an invitation.
 

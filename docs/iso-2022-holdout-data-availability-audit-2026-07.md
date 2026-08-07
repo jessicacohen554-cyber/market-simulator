@@ -20,7 +20,9 @@ the owner.
 (`frontend/data/backcast/holdout-freeze.json`, declared 2026-07-25, HELD
 2026-07-26) is **ACTIVE** — nothing in this doc is spendable until the owner
 lifts it. Markers: `complete` = {NEISO, NYISO, PJM}; `final` = {} (empty;
-NEISO's locked test already SPENT). ERCOT / CAISO / MISO carry **no marker**,
+NEISO's locked test **NEVER GRANTED** — *corrected 2026-08-06, owner decision D-23;
+this read "already SPENT", which was false: no NEISO 2019/H1-2026 year has ever been
+solved, scored or registered. `final` stays empty either way*). ERCOT / CAISO / MISO carry **no marker**,
 so their 2022 solves are quarantined regardless of data readiness. 2019 is
 **locked-test tier** — although inside the "2018–2021" span, its data is
 censused here (intake is marker-free) but it is *not* part of the validation
@@ -189,7 +191,7 @@ delta since then, re-graded against the **current** keeper:
 | LMP bench 2022 | ✓ landed, but **must be re-derived on the fixed clock** before scoring (§5.6) |
 | In-sample flag (unchanged) | `calibration_reference.json` `isos.NYISO.2024` + `NYISO_2024_renewable_capacity.csv` still MISSING (builder pinning) — an **in-sample** defect worth fixing regardless of holdouts |
 
-### 3.6 NEISO (`neiso-61`; `complete` marker; locked test SPENT)
+### 3.6 NEISO (`neiso-61`; `complete` marker; locked test NEVER GRANTED — *corrected 2026-08-06, D-23; this header read "locked test SPENT", which was false*)
 
 Confirmed READY for 2022 — every keeper-consumed family present at parity:
 demand ✓, CAMPD ✓, unit outages 2018–2026 ✓, v2 rates 2022 ✓ (179 units),

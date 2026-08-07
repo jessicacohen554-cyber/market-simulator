@@ -35,8 +35,11 @@ only** — no solve, no LP, no bundle regeneration. They are not copied from pro
 * `scripts/audit_keepers.py` — **PASS, 0 failures / 0 warnings** at head, so it
   did not displace the scoped work.
 * Markers: `complete` = {NEISO, NYISO, PJM}; **`final` is EMPTY**, verified in
-  `calibration-complete.json`. NEISO's `locked_test` reads *SPENT, NOT
-  RE-GRANTABLE*.
+  `calibration-complete.json`. NEISO's `locked_test` read *SPENT, NOT
+  RE-GRANTABLE* at the time of this session — **corrected 2026-08-06 (owner decision
+  D-23) to NEVER GRANTED**, the earlier text having been false (no NEISO 2019/H1-2026
+  year has ever been solved, scored or registered). This session's own posture is
+  unaffected: it touched no out-of-training year.
 * **Holdout freeze active** (`holdout-freeze.json`, 2026-07-25) and outranks
   every marker. Nothing in this session touched an out-of-training year in any
   mode; all six determinations above are 2023–2025 in-sample.
