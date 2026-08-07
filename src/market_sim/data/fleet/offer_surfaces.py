@@ -2221,7 +2221,10 @@ def build_ercot_offline_commit_target(
     * **Eligibility is unit physics** (rule 18 ``[R-PHYSICS]``), never a class
       tuple: ``OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN <= min_down_hours <=
       OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX`` **and** ``min_run_hours <=
-      OFFLINE_COMMIT_MIN_RUN_HOURS_MAX``. CT rows fail by min-down (1 h) —
+      OFFLINE_COMMIT_MIN_RUN_HOURS_MAX``, evaluated **per PLANT and inherited
+      by its bid rows** — fleet assembly records unit physics on the
+      ``committed`` tranche only, so at tranche-row grain the test is vacuous
+      in both directions (ERCOT-176 §Amendment 2). CT rows fail by min-down (1 h) —
       the ERCOT-88 tier owns them, so the two tiers are **disjoint by
       physics**, never by agreement. ST_GAS and coal fail by min-run (24/48
       h), which is what keeps the ERCOT-91-``R`` steam lane closed rather
@@ -2348,6 +2351,23 @@ def build_ercot_offline_commit_target(
             continue
         prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
 
+    # Unit physics is a property of the PLANT, and fleet assembly records it
+    # on the ``committed`` tranche only — every ``econ*``/``peak*`` row (the
+    # bid rows this tier prices) carries min_down = min_run = 0. So the
+    # rule-18 band MUST be evaluated per plant and inherited by its bid rows;
+    # read at tranche-row grain it is vacuous in both directions (a
+    # ``>= 4 h`` test rejects every bid row, a ``<= 2 h`` test admits every
+    # bid row) and would not be a physics gate at all.
+    plant_md: dict[str, float] = {}
+    plant_mr: dict[str, float] = {}
+    for pref, rows in prefixes.items():
+        plant_md[pref] = max(
+            float(getattr(generators[g], "min_down_hours", 0) or 0) for g in rows
+        )
+        plant_mr[pref] = max(
+            float(getattr(generators[g], "min_run_hours", 0) or 0) for g in rows
+        )
+
     pmax = fleet_arrays.pmax
     voll_cap = float(
         getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
@@ -2356,7 +2376,19 @@ def build_ercot_offline_commit_target(
     own_mask = np.zeros_like(mc_base, dtype=bool)
     n_priced = 0
     mean_mc = mc_base.mean(axis=1)
-    for rows in prefixes.values():
+    for pref, rows in prefixes.items():
+        # Rule-18 physics gate, evaluated on the PLANT (see plant_md/plant_mr):
+        # the SLOW-START band — a start that cannot happen inside the
+        # operating hour, but still a within-day start-and-run decision.
+        # Disjoint from the ERCOT-88 fast-start pool by min-down.
+        md = plant_md[pref]
+        mr = plant_mr[pref]
+        if not (
+            OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN <= md <= OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX
+        ):
+            continue
+        if mr > OFFLINE_COMMIT_MIN_RUN_HOURS_MAX:
+            continue
         rows_arr = np.asarray(rows, dtype=int)
         order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
         caps = pmax[order]
@@ -2367,20 +2399,6 @@ def build_ercot_offline_commit_target(
         mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
         for g, s_g in zip(order, mids):
             gen = generators[g]
-            # Rule-18 physics gate: the SLOW-START band — a start that cannot
-            # happen inside the operating hour, but still a within-day
-            # start-and-run decision. Disjoint from the ERCOT-88 fast-start
-            # pool by min-down, and from the steam/coal lanes by min-run.
-            md = float(getattr(gen, "min_down_hours", 0) or 0)
-            mr = float(getattr(gen, "min_run_hours", 0) or 0)
-            if not (
-                OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN
-                <= md
-                <= OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX
-            ):
-                continue
-            if mr > OFFLINE_COMMIT_MIN_RUN_HOURS_MAX:
-                continue
             # Committed and must-run blocks stay with their own floor
             # structure (rule 19 — the gas commitment bridge owns them);
             # only the bid tranches join this tier's universe.

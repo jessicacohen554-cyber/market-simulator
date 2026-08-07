@@ -4206,3 +4206,158 @@ until they land. PARALLEL SESSIONS: MISO/NYISO/NEISO solves at HEAD are on the r
 fleet — small metric deltas vs keepers are D-25's, cite Addendum Z.2. No new dispatch this
 cycle; next manager action is tracking the control results (re-charter from the committed
 harness if silent — the FFR-5D-M pattern).
+
+**§0v addendum (2026-08-07 @ `638cd378`):** three further prompts. TAXONOMY-M is
+CONDITIONAL — the owner pastes it ONLY if the TAXONOMY session is no longer running (its
+controls may still be solving); its step 0 also self-checks. FFR-3V-FIX and HOUSE-1 are
+independent parallel lanes from the Y.2 queue, dispatchable at will.
+
+### TAXONOMY-M [OPUS] — collect/run the D-25 paired controls (CONDITIONAL)
+
+```
+[OPUS] TAXONOMY-M — Finish D-25's paired-control measurement (continuation; charter
+Addendum Z.2, the FFR-5D-M pattern). STEP 0, HARD STOP: read
+docs/handoffs/taxonomy-gas-st-2026-08-07.md §4 at YOUR head — if
+RESULTS_PLACEHOLDER_PAIRED_CONTROLS is GONE, the original session finished; report that
+and END. Also STOP if a branch claude/fuel-taxonomy-gas-st-* exists with commits newer
+than the handoff. Otherwise: the fix is ON MAIN (PR #3691), the harness is committed in §4
+(control tree via git archive + replay_keeper per arm), and your job is ONLY the controls:
+(1) MISO pair and NYISO pair, same-head control-vs-arm on each keeper's committed bundle,
+2023-2025, phased exactly as §4's memory note orders (never two large-ISO solves at once;
+PJM/MISO never co-run); (2) the NEISO tail (9.3 MW, two CHP bins) with the same harness;
+(3) replace the §4 placeholder with the results table (per-ISO: metric deltas or
+BYTE-IDENTICAL) by editing the handoff IN PLACE below §4's header — nothing above it
+changes; (4) HOLD-PROMOTION posture: any keeper metric that moves is a REPORT to the
+manager, never a promotion, never a revert of the taxonomy; (5) no dashboard registration
+(these are verification runs — register only if the manager's standing convention for
+zero-delta verification runs applies, i.e. follow what FFR-7B Arm 1 did: register the
+verification trio to the backcast dashboard as its runs were; mirror that convention, cite
+it). PREREQUISITES: uv sync, then regenerate_clean.py (~63-65 min) before solving.
+Rule 12 PER PROMPT. TRAPS: ruff-autofix reflows constants.py on any .py write — git status
+--short before staging; push 413 — fetch main + rebase first; results/ dies with the
+container — commit the filled §4 immediately after each pair completes, not at the end.
+Deliverable: the filled §4 + a short report (deltas, posture).
+```
+
+### FFR-3V-FIX [OPUS] — close the hindcast renewable-pool vintage leak (unblocks FFR-5E's hindcast arm)
+
+```
+[OPUS] FFR-3V-FIX — Close FFR-3V §6.1: hindcast renewable pools seed from the canonical
+forecast constant instead of the vintage-measured fleet (manager charter from the Y.2
+unowned queue; the finding: a capacity hindcast is mode="forecast"+hindcast=True, so
+load_renewable_profiles' is_backcast gate falls through to RENEWABLE_INSTALLED_MW — MISO
+solar seeds 7,000 MW against 2,056 MW actual at vintage 2020, 3.4x over. This is the
+BLOCKER on FFR-5E's hindcast arm: injected procured MW double-count invisibly on an
+inflated pool).
+
+=== VERIFIED STATE (2026-08-07 @ origin/main 638cd378 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT run168b-year-curves · PJM pjm-152-collapse · CAISO caiso-175-tac-intake ·
+NYISO nyiso-128-solar-basis · NEISO neiso-83-ca1-reclass · MISO miso-132b-cc-committed
+(read the shards). `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY; freeze ACTIVE
+(hindcast T1-FF windows are the enumerated carve-out; you solve nothing out-of-training).
+NOTE: D-25's taxonomy paired controls may be in flight in a parallel session — they touch
+MISO/NYISO/NEISO backcast replays, not your hindcast path; do not be surprised by small
+keeper-metric deltas discussed in Addendum Z.2. PREREQUISITES: uv sync, then
+regenerate_clean.py before any solve. Rule 12 PER PROMPT. Rule 27: OPUS ok.
+
+=== WHAT YOU DO ===
+1. VERIFY the leak at your head first (FFR-3V §6.1's numbers re-derived: the pool a
+   vintage-2020 MISO hindcast actually seeds vs the vintage-2020 EIA-860 measured VRE
+   fleet). State the per-ISO, per-tech gap table.
+2. THE FIX: in hindcast runs, seed the renewable pools from the RUN'S OWN VINTAGE EIA-860
+   measured fleet (rule 13: measured physical input, information-gate compliant — the
+   vintage sheet is what a run at that vintage may know; rule 14: measured beats the
+   canonical constant). Respect the existing vintage machinery (active_eia860_dir); no new
+   tunable — if you cannot build it without inventing a parameter, STOP and escalate. Gate
+   ONLY if needed for byte-stability of existing registered hindcasts — prefer an ungated
+   accurate-data fix IF the only affected artifacts are hindcast runs (which are Q.2
+   evidence, expected to be superseded); state your choice and why. Plain forecast (non-
+   hindcast) runs are UNTOUCHED — prove by test.
+3. MEASUREMENT: a bounded before/after hindcast pair (ERCOT or MISO, the FFR-5A posture,
+   <=5 solve-years, sequential; register to frontend/data/hindcast/ NEVER the backcast
+   registry) showing the corrected pool sizes and what moves. Pre-register the reads.
+4. Matrix/rule 28: if you add any ScenarioConfig field, its row rides the same PR; stamp
+   what you adjudicate. Handoff states explicitly: FFR-5E's HINDCAST ARM IS NOW UNBLOCKED
+   (or still blocked and why) — that sentence is the deliverable the manager is waiting on.
+=== TRAPS ===
+ruff-autofix reflows constants.py on any .py write — git status --short before staging.
+Push 413: fetch main + rebase first. Never push_files a >=300-line file. Cache keys from
+the runtime line; the D-13 hash-out hazard; results/ dies with the container.
+Deliverable: the PR + docs/handoffs/ffr-3v-fix-<date>.md (gap table, the fix + gating
+choice, the paired measurement, the unblocked/blocked statement).
+```
+
+### HOUSE-1 [FABLE] — the ruff-autofix hazard and the red-main CI gap
+
+```
+[FABLE] HOUSE-1 — Two infrastructure repairs from the manager's Y.2 unowned queue
+(sitting Addenda T.1 and X.2 record the incidents). NO model behavior may change: every
+edit is hooks/lint/CI config or test wiring.
+
+1. THE RUFF-AUTOFIX HAZARD (T.1): .claude/hooks/ruff-autofix.sh runs whole-tree
+   `uv run ruff format .` on ANY .py Write/Edit, which reflows
+   src/market_sim/config/constants.py 3,960 -> 9,508 lines (the file is not in
+   pyproject.toml extend-exclude and main's own bytes fail `ruff format --check`). Every
+   session since has carried a manual trap. FIX: (a) scope the hook to format ONLY the
+   file(s) actually edited (not the tree); (b) add constants.py (and any other core file
+   failing --check at HEAD — enumerate them) to extend-exclude with a comment citing this
+   charter — do NOT reformat the files themselves (a 5,500-line rewrite of a core file is
+   rule 27's forbidden act even when AST-identical; the exclusion is the fix). Verify: an
+   Edit to a scratch .py leaves constants.py untouched; ruff format --check on the
+   excluded set is quiet by exclusion.
+2. THE RED-MAIN CI GAP (X.2): FFR-7B found every default-cache-key pin test FAILING on
+   clean main (nyiso-128's unregistered field) yet merges proceeded. Diagnose WHY CI did
+   not stop it: are tests/regression/test_persisted_identity.py + the default-key pin
+   tests in the ci.yml test job? Advisory or blocking? Report the actual mechanism, then
+   make the MINIMAL change so a moved pinned default key blocks a PR (add the test file(s)
+   to the blocking job, or a dedicated quick job — no new workflow file; extend ci.yml;
+   no scheduled triggers, private-repo minutes rule). Also enumerate (report-only, fix
+   nothing) the current pre-existing failures on main's fast tier so the baseline is
+   finally written down (FFR-5E counted 13 environmental; pin the list).
+Rule 27: FABLE for .github/workflows + hooks; exact bytes; blob verification on any
+>=300-line file you touch. TRAPS: the hook you are editing is the one that reflows
+constants.py — verify git status --short after every .py write DURING this lane too; push
+413 — fetch main + rebase first.
+Deliverable: the PR + docs/handoffs/house-1-lint-ci-<date>.md (hook before/after, the
+exclusion list with --check evidence, the CI-gap mechanism found and the minimal fix, the
+pinned baseline failure list).
+```
+
+## §0w — TAXONOMY complete; D-27 signed; NYISO-PROMOTE dispatched (2026-08-07 @ `d3340718`)
+
+D-25 fully executed (controls in, HOLD PROMOTION honoured, deltas small/physical/no gate).
+AA.2: MISO's keeper re-scores NOT-YET at HEAD under rubric v3.1 — pre-existing drift, the
+MISO lane's to settle, MISO taxgs promotion DEFERRED on it (D-27). NYISO promotes:
+
+### NYISO-PROMOTE [OPUS] — promote the NYISO taxonomy arm (D-27)
+
+```
+[OPUS] NYISO-PROMOTE — Promote 2026-08-07-nyiso-131-taxgs-arm to NYISO keeper (owner
+decision D-27, SIGNED sitting Addendum AA.4, 2026-08-07; evidence taxonomy-gas-st handoff
+§4.1: verdict-identical to the standing keeper, deltas <=0.02 $/MWh, registered and scored
+— NO SOLVE). GOVERNANCE lane, committed artifacts only.
+
+STEP 0: verify NYISO's keeper is still 2026-08-06-nyiso-128-solar-basis and the arm bundle
++ registry sidecar exist at your head; if the keeper has moved, STOP and report (the
+promotion was adjudicated against nyiso-128 — a newer keeper needs fresh adjudication).
+THEN, per the CLAUDE.md promotion protocol: (1) edit frontend/data/backcast/keepers/
+NYISO.json -> keeper 2026-08-07-nyiso-131-taxgs-arm with a note citing D-27/AA.4 + the
+taxonomy handoff §4.1 (carry forward the nyiso-128 recipe genealogy — the arm IS the
+nyiso-128 recipe on the corrected taxonomy); (2) rebuild status/NYISO.js
+(build_status.py --iso NYISO); (3) D-5(b) RE-KEY: NYISO holds `complete` — update its
+entry's keeper field AND re-verify the determination against the new run
+(scripts/calibration_verdict.py --run-id 2026-08-07-nyiso-131-taxgs-arm, committed
+artifacts, never a solve); a WORSE determination STOPS the promotion and escalates —
+expected: identical CALIBRATED-WITH-CAVEATS; (4) matrix header re-stamp (keeper ids +
+open gates) + re-check the NYISO column (rule 28); (5) calibration-log entry
+(docs/calibration-log/nyiso.md, one dated entry citing D-27); (6) audit: audit_keepers.py
+--iso NYISO (M1) must pass — then run the calibration-keeper-auditor convention your head
+uses for keeper-shard edits; (7) one small commit, push (fetch main + rebase first),
+verify the pushed shard blob. DO NOT touch MISO's shard or any other ISO's files (D-27
+defers MISO explicitly).
+TRAPS: ruff-autofix reflows constants.py on any .py write — git status --short before
+staging. Push 413: fetch main + rebase first. push_files acceptable only for the small
+JSON/js files. Stop-hook on merged history: rev-list 0 => nothing to amend.
+Deliverable: the merged commit + a SHORT note docs/handoffs/nyiso-taxgs-promotion-
+<date>.md (the re-verified determination, M1 pass, matrix re-stamp).
+```

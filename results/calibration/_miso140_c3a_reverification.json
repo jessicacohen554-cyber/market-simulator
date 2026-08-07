@@ -1,0 +1,112 @@
+{
+  "session": "miso-140",
+  "gate": "G-4 C3a re-verification on the refreshed bench (committed artifacts, NO re-solve)",
+  "run_id": "2026-08-05-miso-132b-cc-committed",
+  "iso": "MISO",
+  "rubric_version": 3.1,
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
+  ],
+  "caveats": {
+    "protective": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "criteria_status": {
+    "fuelmix": "PASS",
+    "sysvol": "PASS",
+    "price_mean": "FAIL",
+    "price_shape": "PASS",
+    "price_tail": "CAVEAT",
+    "dispatch_corr": "PASS",
+    "governance": "PASS",
+    "forced_share": "PASS"
+  },
+  "price_mean_records": [
+    {
+      "year": 2023,
+      "basis": "RT",
+      "model": 32.72,
+      "actual": 32.85,
+      "magnitude": "-0.4%",
+      "status": "PASS"
+    },
+    {
+      "year": 2023,
+      "basis": "DA",
+      "model": 32.72,
+      "actual": 34.23,
+      "magnitude": "-4.4% vs DA (DA\u2212RT premium $+1.38)",
+      "status": "SKIPPED"
+    },
+    {
+      "year": 2024,
+      "basis": "RT",
+      "model": 30.37,
+      "actual": 32.3,
+      "magnitude": "-6.0%",
+      "status": "PASS"
+    },
+    {
+      "year": 2024,
+      "basis": "DA",
+      "model": 30.37,
+      "actual": 33.14,
+      "magnitude": "-8.4% vs DA (DA\u2212RT premium $+0.84)",
+      "status": "SKIPPED"
+    },
+    {
+      "year": 2025,
+      "basis": "RT",
+      "model": 39.05,
+      "actual": 45.46,
+      "magnitude": "-14.1%",
+      "status": "FAIL"
+    },
+    {
+      "year": 2025,
+      "basis": "DA",
+      "model": 39.05,
+      "actual": 46.35,
+      "magnitude": "-15.8% vs DA (DA\u2212RT premium $+0.89)",
+      "status": "SKIPPED"
+    }
+  ],
+  "price_shape_nrmse": {
+    "2023": 0.075,
+    "2024": 0.112,
+    "2025": 0.191
+  },
+  "prior_bench_c3a_pct": {
+    "RT": {
+      "2023": -0.5,
+      "2024": -5.9,
+      "2025": -14.0
+    },
+    "DA": {
+      "2023": -4.4,
+      "2024": -8.3,
+      "2025": -15.6
+    }
+  },
+  "model_scalar_invariance": {
+    "note": "the model side is untouched: the keeper bundle's last commit is the miso-132(b) promotion 654abd8b; pjm-160 touched only bench/ + status/",
+    "model_scalar_by_year": {
+      "2023": 32.72,
+      "2024": 30.37,
+      "2025": 39.05
+    }
+  }
+}
