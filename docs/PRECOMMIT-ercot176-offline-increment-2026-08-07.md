@@ -401,4 +401,95 @@ the correction removes an arithmetic error, it adds no scalar.
 
 ---
 
+## AMENDMENT 2 — 2026-08-07, PRE-SOLVE: the rule-18 physics gate is evaluated per PLANT, not per tranche row
+
+**Status when written: seam proof run, no year solved.** A bug fix to the
+implementation of the pre-registered gate — the band itself (§1) is unchanged.
+
+**What the seam proof surfaced.** The first run returned
+`n_physics_eligible_rows = 0`. Cause: fleet assembly records unit physics on the
+**`committed` tranche only**. Every `econ*`/`peak*` row — the bid rows this tier
+prices — carries `min_down_hours = min_run_hours = 0`:
+
+| group | tranche | (min_down, min_run) |
+|---|---|---|
+| CC_REGULAR | committed | (4,4) (4,6) (4,8) (6,16) |
+| CC_REGULAR | econc / peak | **(0, 0)** |
+| CT_PEAKER | econc / peak | **(0, 0)** |
+
+At tranche-row grain a physics test is therefore **vacuous in both
+directions**: `4 <= min_down <= 8` rejects every bid row (what happened), and
+`min_down <= 2` admits every bid row.
+
+**The correction.** Physics is a property of the **plant**; the tier now reads
+`min_down`/`min_run` per plant prefix (max over the plant's rows, i.e. the value
+assembly recorded on its `committed` tranche) and the plant's bid rows inherit
+it. Measured effect on the real 2023 fleet: **42 CC plants → 23 physics-eligible
+(213 bid rows)**, with **17 excluded by the min-run bound** (assembled min-run 16
+h > the pre-registered 12 h).
+
+**The min-run bound is NOT moved to recapture those 17 plants.** The bound was
+pre-registered at 12 h in §1 and it stays there; widening it after seeing which
+plants it excludes is exactly the goalpost-moving pre-registration exists to
+prevent. Two honest notes for the record: (a) the bound's §1 rationale was framed
+against `ST_GAS_COMMITMENT_PARAMS`' 24/48 h, but **assembled** ST_GAS physics
+reads (8, 8) — so the bound is *not* what excludes gas steam here; the **row
+universe** does (the builder scopes to the wall's measured CC class, which is
+also the class the ladder is measured on, so ST_GAS cannot enter at all and the
+ERCOT-91-`R` cell stays closed either way). (b) A successor that wants the 16 h
+CC plants must pre-register that band itself.
+
+**A finding beyond this session's object, recorded not acted on.** The same
+grain defect means `ercot_faststart_pool_offer`'s own rule-18 gate
+(`skip if min_down > 2`) admits **every** CT bid row regardless of physics — its
+effective scope is the `CT_PEAKER` class map, i.e. the class tuple rule 18
+forbids, rather than the intended min-down test. That mechanism is **armed in
+the current keeper** (`K`). This session does **not** touch it: it is out of
+charter, changing it would move the keeper, and it needs its own pre-registered
+round. Filed as an owner item (FINDING §5).
+
+## AMENDMENT 3 — 2026-08-07, PRE-SOLVE: the arm is PROVABLY INERT, so the pair collapses to the control alone
+
+**Status when written: no year solved.** §7 pre-registered "ONE pair, control +
+arm, BOTH registered whatever the outcome". The seam proof
+(`results/calibration/ercot176_offline_commit_seamproof.json`,
+`ALL_ASSERTIONS_PASS = true`) shows the arm is **not a different run**:
+
+* `build_ercot_offline_commit_target` returns `None` for **2023, 2024 and 2025**
+  on the real keeper fleet, with the real artifact loaded and 213
+  physics-eligible bid rows — logged three times as *"no slow-start row above
+  the measured boundary — byte-identical"*.
+* `None` ⇒ `p1_bid_max_target` stays `None` ⇒ `run_energy_solve` takes the
+  **identical code path** as the control. The arm bundle would be bit-identical
+  to the control bundle.
+
+**Therefore the arm is not solved, and no arm run is registered** — stated
+explicitly here so the absence is never read as a skipped registration (rules
+15/16), the ercot-175 §0 precedent. Registering a bit-identical duplicate under
+a second run id would put the same numbers on the dashboard twice and actively
+mislead it. The evidence of record is the **proof**, which is stronger than an
+A/B that could only reproduce it.
+
+**The CONTROL is still solved and registered in full** — it is required
+independently as the keeper re-solve (§7 owner ruling), full span
+`--year 2023 2024 2025`.
+
+**Why this is inertness and not a null implementation** (the P-2 falsifier, fired
+exactly as written): the measured slow-start offline share is
+`pool_frac_CC` = **0.0002–0.0007** of CC live capability in every bin and every
+year — against the pre-registered inertness threshold of 0.02, i.e. **~30x
+below** it. The resulting boundary `1 - pool_frac` = **0.9993–0.9994** sits above
+the largest within-plant share midpoint the model's tranche geometry produces,
+**0.9984**. The measured CC offline increment is *finer than the model's finest
+bid tranche*, so no row can clear the boundary. Its ladder is also **cheap**
+(p70 multiplier 24–40 × gas ≈ $100/MWh), nowhere near the CT tier's p50
+$271–707 — so even a fleet with the granularity to express it would not be
+repriced into scarcity by this conduct.
+
+**Kill gates:** G-SPAN′/G-SHED/G-SPUR/G-C3c/G-COAL148/G-D2 and LOYO all require a
+solved arm and are recorded **NOT REACHED** (the ercot-174/175 precedent). G-DOF
+is satisfied outright: zero fitted scalars were created.
+
+---
+
 **Next shorthand: ercot-177.**
