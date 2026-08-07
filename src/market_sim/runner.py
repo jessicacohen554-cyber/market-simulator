@@ -851,6 +851,43 @@ def _confirmed_exits_active(config: ScenarioConfig) -> bool:
     return config.mode == "forecast" and config.confirmed_exits_enabled
 
 
+def _rps_region_grain_active(config: ScenarioConfig, iso: str) -> bool:
+    """Return True when the K-row per-compliance-region RPS grain is built.
+
+    THE single gate on FFR-7B Arm 2 / FFR-6B E-1 (``miso_rps_compliance_regions``).
+    All three legs must hold:
+
+    * **MISO only** (rule 25 ``[R-ISO-SCOPE]``) -- the four other RPS ISOs'
+      single ISO-wide row is arithmetically exact under free intra-ISO REC
+      trade (FFR-6B §2.1), so their LP stays byte-identical.
+    * **Forecast mode only.** The gate is enforced HERE, at consumption, not at
+      config construction: since owner decision D-26 (sitting Addendum Y.4)
+      MISO's ``ISOConfig.default_scenario_overrides`` arms the flag, so a
+      backcast-mode MISO config can legitimately carry ``True`` and must still
+      resolve the legacy ISO-wide row. Backcast is doubly insulated --
+      ``run_calibration_full.py`` never applies ``default_scenario_overrides``
+      at all -- but this leg is what makes the flag's presence harmless.
+    * **The flag itself**, default-off for every non-MISO caller.
+
+    When False the caller falls through to the scalar ``rps_target`` path; the
+    K=1/mask-all special case of the region builder reproduces that row
+    byte-identically (``tests/unit/model/test_dispatch.py``
+    ``TestRpsComplianceRegionRows``).
+
+    Args:
+        config: The scenario configuration being run.
+        iso: Resolved ISO identifier, already upper-cased by the caller.
+
+    Returns:
+        True when the per-region rows replace the ISO-wide RPS row.
+    """
+    return (
+        iso == "MISO"
+        and config.mode == "forecast"
+        and getattr(config, "miso_rps_compliance_regions", False)
+    )
+
+
 def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     """Run every simulation year for one scenario and one ISO, sequentially.
 
@@ -2063,10 +2100,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # carry a row (0.185→0.33 since the FF-1E-policy refresh), so the
             # suppression is live there (stale-comment fix, FFR-6B §5.4).
             # Per-state compliance-region grain (FFR-7B Arm 2 / FFR-6B E-1),
-            # GATED miso_rps_compliance_regions (default OFF), forecast-mode,
-            # MISO-only arming (rule 25 [R-ISO-SCOPE] — the four other RPS
-            # ISOs' single ISO-wide row is arithmetically exact under free
-            # intra-ISO REC trade, FFR-6B §2.1, and stays byte-identical).
+            # GATED miso_rps_compliance_regions — the FIELD default is OFF, but
+            # MISO's ISOConfig.default_scenario_overrides ARMS it for the
+            # forecast lane (owner decision D-26, sitting Addendum Y.4,
+            # 2026-08-06; measured basis FFR-7B-2 §3.1). The three-leg gate is
+            # _rps_region_grain_active — MISO-only (rule 25 [R-ISO-SCOPE]: the
+            # four other RPS ISOs' single ISO-wide row is arithmetically exact
+            # under free intra-ISO REC trade, FFR-6B §2.1, and stays
+            # byte-identical) AND forecast-mode, so a backcast-mode MISO config
+            # carrying the armed override still lands on the legacy row below.
             # When armed, the K per-region rows REPLACE the ISO-wide row
             # (rps_target stays None — one row family per phenomenon,
             # rule 19). The CES suppression above applies to the region rows
@@ -2090,11 +2132,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # The CES suppression above covers the state CLEAN rows too
                 # (FFR-6B §6.4): under a pure-federal counterfactual neither
                 # family is built, or the counterfactual stops being pure.
-                if (
-                    iso == "MISO"
-                    and config.mode == "forecast"
-                    and getattr(config, "miso_rps_compliance_regions", False)
-                ):
+                if _rps_region_grain_active(config, iso):
                     rps_region_arrays = build_rps_region_arrays(iso, year, zone_names)
                     if getattr(config, "miso_clean_tier_rows", False):
                         clean_region_arrays = build_clean_region_arrays(

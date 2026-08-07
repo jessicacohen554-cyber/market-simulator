@@ -715,8 +715,54 @@ def _miso_config() -> ISOConfig:
         # control for MISO. Same pre-existing property as ERCOT's
         # scarcity_price_overlay and CAISO's negative_renewable_offers. FFR-4B's
         # own controls were therefore solved BEFORE this arming landed.
+        #
+        # miso_rps_compliance_regions — ARMED FOR MISO by owner decision D-26
+        # (sitting Addendum Y.4, signed 2026-08-06; lane ARM-MISO, measured
+        # basis FFR-7B-2 §3.1,
+        # docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md). The single
+        # MISO-wide RPS row silently asserts FREE INTRA-ISO REC TRADE, which is
+        # FALSE in MISO (MCL 460.1029 restricts Michigan credits to in-state
+        # systems; CEJA's centralized IPA procurement; MN's delivered-to-retail
+        # construction) — so the ISO-wide row let Iowa's surplus pay Michigan's
+        # bill. Armed, that row is REPLACED (rule 19 [R-ONE-MECH] — never
+        # stacked) by the K=5 per-state compliance-region rows, each with its
+        # statute's eligibility mask, its obligated-load RHS and its own $30 ACP
+        # escape. ZERO fitted parameters: every obligation is copied from the
+        # cited STATE_RPS_FLOORS["MISO"] derivation.
+        #
+        # Measured on the FFR-7B-2 bounded 2026-2030 T1-F pair (control
+        # 0723d2cc432fa346 vs armed ff144cd25848e4d8, registered
+        # miso-2026-2030-ffr7b2-rpsk-{ctrl,armed}): Michigan's in-state row pins
+        # at its $30 ACP in EVERY year and Illinois from 2027, while the
+        # delivery-based MN/WI/MO rows correctly stay slack on Plains wind — the
+        # regional shortfall the control's ISO-wide row (slack until 2029)
+        # cannot see. Per-zone consumer vector [0,0,30,0,30,0] (W/P/IL/IN/E/S)
+        # from 2027: the control BROADCAST its scalar to the 2029 MISO-South
+        # 5,650 MW backstop solar build that the armed grain correctly credits
+        # 0. Dispatch, prices, builds and retirements are IDENTICAL across the
+        # pair — the mechanism's only output is a price (E-1 never acquires a
+        # build limb, FFR-6B §5.3), so arming re-prices compliance without
+        # moving energy in this window.
+        #
+        # FORECAST-LANE ONLY, and the gate that makes that true is at
+        # CONSUMPTION, not here: runner.py requires config.mode == "forecast"
+        # before build_rps_region_arrays is reached, so a backcast-mode MISO
+        # config carrying this override still resolves the legacy ISO-wide row.
+        # The backcast lane is doubly insulated — run_calibration_full.py never
+        # applies default_scenario_overrides at all. BOTH legs are proven by
+        # test, not asserted here: tests/unit/config/test_miso_rps_region_arming.py.
+        #
+        # Rule 25 [R-ISO-SCOPE]: MISO ONLY. The other four RPS ISOs' single
+        # ISO-wide row is arithmetically EXACT under free intra-ISO REC trade
+        # (FFR-6B §2.1) and stays byte-identical; PJM/NEISO zonal rows were
+        # REFUSED ON STRUCTURE (FFR-6B §7).
+        #
+        # miso_clean_tier_rows (Arm 3) is deliberately NOT armed here: its
+        # arming is BLOCKED on the open §45U-vs-clean-dual composition for
+        # nuclear (owner D-22/X.2), which is not this lane's decision.
         default_scenario_overrides={
             "entry_vre_capacity_revenue": True,
+            "miso_rps_compliance_regions": True,
         },
     )
 
