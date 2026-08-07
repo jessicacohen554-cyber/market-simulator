@@ -4103,3 +4103,95 @@ executed D-23 (record reads NEVER GRANTED everywhere, nothing granted); SCORE-GA
 D-24 (reachable-set recall + unreachable diagnostic). Keepers unmoved. Full adjudication:
 Addendum Y. No lane is in flight; remaining work is owner-gated (D-21(a) deferred, cards
 D-25/D-26, §45U design) or unowned housekeeping (Y.2). Prompts follow signatures.
+
+**§0u addendum (same sitting):** D-25 and D-26 SIGNED (Addendum Y.4). Two prompts:
+
+### TAXONOMY [FABLE] — the gas_st↔gas_ct fuel-classing fix (D-25)
+
+```
+[FABLE] TAXONOMY — Add the gas_st branch to data.fleet._map_fuel_type and carry the
+reclassification through honestly (owner decision D-25, SIGNED sitting Addendum Y.4,
+2026-08-06; evidence FFR-7A §4.1, FFR-7C §1.1 note, SCORE-GATE handoff §1). THE RISK THE
+MANAGER FLAGS UP FRONT: _map_fuel_type feeds BOTH the scoring-target builder AND the legacy
+fleet loader — non-ERCOT ISOs' class structure can change, which changes SOLVES. This is a
+potentially keeper-moving accurate-data correction (rule 14): it runs under the Addendum-D
+paired-control + HOLD-PROMOTION discipline, and a keeper metric moving is a REPORT, never a
+silent promotion and never a reason to revert the accurate classing.
+
+=== VERIFIED STATE (2026-08-06 @ origin/main 2f4792cd — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-05-run168b-year-curves · PJM 2026-08-04-pjm-152-collapse · CAISO
+2026-08-06-caiso-175-tac-intake · NYISO 2026-08-06-nyiso-128-solar-basis · NEISO
+2026-08-05-neiso-83-ca1-reclass · MISO 2026-08-05-miso-132b-cc-committed (read the shards
+yourself). `complete` = {CAISO, NEISO, NYISO, PJM}; `final` EMPTY (NEISO reads NEVER
+GRANTED post-D-23); freeze ACTIVE — all paired controls are in-sample 2023-2025.
+PREREQUISITES IN ORDER: `uv sync`, then regenerate_clean.py (~63-65 min) before any solve.
+Rule 12 PER PROMPT: <=5 solve-years per invocation, sequential within one, <=2 concurrent;
+PJM and MISO never co-run in one session. Rule 27: FABLE; exact bytes + blob verification.
+
+=== WHAT YOU DO, IN ORDER ===
+1. MEASURE THE BLAST RADIUS FIRST, NO EDIT: for every ISO, enumerate the units
+   _map_fuel_type currently classes gas_ct that are physically gas STEAM (EIA-860
+   prime-mover ST + gas fuel; cross-check CAMPD unitType where covered). Per-ISO table:
+   units, MW, share of class. THE ERCOT CAMPD-BIN PATH IS UNAFFECTED BY CONSTRUCTION
+   (fuel classing there comes from CAMPD binning) — verify and state it rather than assume.
+2. THE FIX: add the gas_st branch (prime-mover-based, cited to the EIA-860 field — rule 23);
+   regenerate affected CLEAN artifacts and the scoring targets (FFR-7A's builder + the
+   corrected targets); per-ISO before/after delta tables for BOTH the fleet classing and
+   the targets in the handoff.
+3. PAIRED CONTROLS (Addendum D), only for ISOs whose step-1 table is non-empty: same-head
+   control vs reclassed arm on the affected ISO's keeper recipe, 2023-2025, budget rule 12
+   (largest-impact ISO first; if >2 ISOs are affected, run the top two and hand off the
+   rest with the harness committed). BYTE-IDENTICAL => say so and move on. Any metric move
+   => HOLD PROMOTION, report the delta, keeper adjudication is the manager/owner's.
+4. Re-emit (committed-artifact, no re-solve, no bundle mutation) the ffr5d arms' scorecards
+   and the SCORE-GATE diagnostic on the reclassed targets — the Braunig rows should now
+   carry gas_st and their bar should be the gas_st bar; state what changes in the
+   unreachable-exits diagnostic.
+5. Rule 28: no new ScenarioConfig field expected (a taxonomy fix, not a mechanism) — but if
+   any solve-affecting behavior needs a gate to keep keepers byte-stable pending
+   adjudication, STOP and consult the manager rather than inventing an ungated flip that
+   moves keepers silently.
+=== TRAPS ===
+The ruff-autofix hook reflows constants.py on ANY .py write — `git status --short` after
+every Python write; restore exact HEAD bytes; never stage the reflow. Push 413: fetch main
++ rebase first; owner merges fast, prune stale refs. Never push_files a >=300-line file.
+results/ dies with the container — commit the delta tables and handoff before tail work.
+Cache keys from the runtime line. Evolution-ledger path trap stands.
+
+Deliverable: the PR(s) + docs/handoffs/taxonomy-gas-st-<date>.md — the blast-radius table,
+the fix with citations, per-ISO before/after deltas, the paired-control results with
+HOLD-PROMOTION posture if anything moved, the re-emitted scorecard/diagnostic deltas, and
+what you did NOT separate.
+```
+
+### ARM-MISO [OPUS] — arm miso_rps_compliance_regions for MISO forecast runs (D-26)
+
+```
+[OPUS] ARM-MISO — Arm miso_rps_compliance_regions for MISO forecast runs (owner decision
+D-26, SIGNED sitting Addendum Y.4, 2026-08-06; measured basis FFR-7B-2 §3.1 — MI pins $30
+every year, IL from 2027, delivery-based states correctly slack, control blind until 2029).
+SMALL GOVERNANCE/CONFIG lane, the D-2' pattern.
+
+WHAT YOU DO: (1) Add the MISO ISOConfig.default_scenario_overrides entry arming
+miso_rps_compliance_regions (follow the entry_vre_capacity_revenue / D-2' precedent
+exactly: config/iso_configs.py::_miso_config, cited comment naming D-26/Y.4).
+(2) VERIFY the flag's forecast-mode gate means backcast solves are untouched: run the
+existing flag-off/K=1 byte-identity tests plus a targeted assertion that a backcast-mode
+MISO ScenarioConfig resolves the K=1 path even with the override present; if the gate is
+mode-checked at consumption (not construction), prove it with a test, not a comment.
+(3) Matrix: re-stamp the miso_rps_compliance_regions MISO cell armed-K (rule 28b, citation
+D-26 + the ffr7b2-rpsk pair ids). (4) check_mechanism_matrix.py + the fast tier of the
+config/model unit tests; report their state honestly (pre-existing failures enumerated,
+not absorbed). (5) NOTE in the handoff: miso_clean_tier_rows stays UNARMED (blocked on the
+open §45U composition — D-22/X.2; not this lane's decision), and Arm-3's armed-leg
+registration already on the dashboard is measurement evidence, not an arming.
+NO solve is required; the FFR-7B-2 registered pair IS the evidence. If you believe a
+confirmation solve is needed, say why to the manager first rather than running one.
+=== TRAPS ===
+The ruff-autofix hook reflows constants.py on ANY .py write — `git status --short` before
+staging; restore exact HEAD bytes. Push 413: fetch main + rebase first. Never push_files a
+>=300-line file. Stop-hook on merged history: rev-list 0 => nothing to amend.
+
+Deliverable: the PR + docs/handoffs/arm-miso-rps-regions-<date>.md — the override entry,
+the backcast-untouched proof, the matrix re-stamp, and the §45U/Arm-3 unarmed statement.
+```
