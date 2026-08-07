@@ -887,7 +887,28 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected here at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS WALLED (not closed — and its public-bid exit is **SPENT AND CLOSED** at caiso-178) AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+
+> **CAISO-179 (2026-08-07) — READ THIS BEFORE PROPOSING ANY `battery_dispatch_adder` LEVER.**
+> The last of caiso-176's three named exits is spent. **NO LP, NO solve, NO arm, keeper
+> unchanged, DOF ledger unchanged at 11/8, nothing registered.** The cell-versus-system split
+> **IDENTIFIES** — φ = **0.742426**, recovered by *inverting* ATB's own published duration
+> construction (max relative residual **5.5 × 10⁻¹⁶**; one deflator reproducing four committed
+> constants), bracketed correctly by Ramasamy's bare-pack 0.348/0.370 and cabinet 0.574/0.605 —
+> and so does the degradation rate (PNNL-33283, **end-of-life-threshold invariant**:
+> `0.20/1,920 ≡ 0.40/3,840`). **The value it produces is REFUTED: \$28.00–\$35.00/MWh against a
+> \$15 screen, with the already-refuted \$22.63 sitting *below* the identified range.** The
+> exit's own named primary source refutes the formula's **form**, not just its value — ATB
+> publishes **no** per-MWh augmentation cost, by an explicit and repeated choice (VOM = 0, all
+> augmentation in fixed O&M). A second, independent reason it does not close: PNNL's cycle life
+> is DOD-indexed and the LP has no DOD dimension, so a residual selection survives. **Consequence,
+> stated as the owner-level disclosure it is: `battery_dispatch_adder = 5.0` is a PERMANENT
+> DECLARED-RESIDUAL DOF, not an open item** — its ledger `root_cause` ("open item to re-derive
+> from those") is now unachievable by every route it named, and a future keeper-lane session
+> should re-word it. `STORAGE_DEGRADATION_REPLACEMENT_FRACTION` stays **0.25**, value
+> byte-unchanged; only its citation was corrected (both halves named documents that do not carry
+> the quantity). Re-pricing it is a **forecast-lane** act with six-ISO reach and is chartered
+> there. `results/calibration/FINDING-caiso179-degradation-split-2026-08-07.md`.
 
 > **HEADER RE-STAMPED 2026-08-06 (caiso-176 follow-up).** This header previously read
 > "NO failing criterion … CALIBRATED-WITH-CAVEATS, 9 criteria scored, 0 FAILs". That was written
