@@ -3994,3 +3994,53 @@ at the 2026-08-06 sitting Addendum X.6**. Full record:
 in `results/calibration/ASSESSMENT-pjm159-final-declaration-2026-08-06.md` §8 and its
 §1 summary. That file is an immutable per-run session record and was deliberately NOT
 rewritten; this entry is the live correction for the PJM lane.)*
+
+### pjm-160 (cont.) — B5 refresh landed; is the seam ladder forecastable? **No, by design** (2026-08-06)
+
+**B5 EXECUTED (owner-authorized).** `rt_lw`/`da_lw` refreshed across all six ISOs for
+2023–2025, propagated into all 17 committed bench parts, every keeper re-scored, status
+shards rebuilt. **17 of 18 ISO-years move (−0.08 to +0.31 $/MWh); NO determination flips and
+NO C3a criterion flips in any lane**, largest shift 0.8 pp (ERCOT 2024 +3.3 % → +2.5 %).
+`audit_keepers.py` 0/0. Done as ONE pass because `rt_lw` is a gate input the scorer reads
+off the bench part — refreshing the reference alone would have moved C3a for six ISOs
+silently at whatever moment each next registered. **Attribution checked, not assumed:** an
+early baseline showed NYISO flipping NOT-YET → CALIBRATED-WITH-CAVEATS, but scoring NYISO at
+`origin/main` with the tree stashed already returns CALIBRATED-WITH-CAVEATS — that flip is
+caiso-179/neiso-88/nyiso's, not this change's.
+
+**OWNER QUESTION: is seam pricing a forecastable mechanism? Answer: the measured ladder is
+NOT, and the repo already knows it.** `inject_pjm_seam_ladder_prices`'s own docstring:
+*"forecast years fall through to the gas-elastic reference-price formula, the `hr_by_year`
+two-track design."* So PJM's seam has **two tracks**, selected by year:
+
+| track | years | prices the bands by | rule-13 forecastable? |
+|---|---|---|---|
+| measured ladder | **2023–2025 only** | Q-Q duration coupling of settlement tie flows × measured DA LMP | **NO** — needs that year's realized flows and prices |
+| gas-elastic reference price | every other year, backcast **and** forecast | hurdle-gated gas × heat-rate × load-shape | **YES** |
+
+**CORRECTION to the §10.2 addendum above** (`ASSESSMENT-pjm160` §11.2): "outside 2023–2025 the
+seam runs with NEITHER mechanism / bare economic tranches" was **too strong**. The bands are
+still priced — by the gas-elastic formula; `_inject_seam_ladder` returning `False` leaves the
+reference-price values in place rather than zeroing them. Accurate statement: **outside
+2023–2025 PJM's seam runs the FORECAST track.** §10.2's substance survives (a touchpoint or
+locked year does not run the keeper's own seam representation); its severity was overstated,
+and §10.3's 2022 hypothesis should read *"ran the forecast-track seam"*, not *"ran with no
+seam pricing"*. The §3 probe line is annotated with a forward pointer so this does not
+propagate a fourth time.
+
+**B4 DECIDED (owner): the 2022–2035 forecast test is its exit condition.** Note the test will
+run on the **gas-elastic track** by construction, so it characterises the seam the *forecast*
+uses and **cannot validate the measured ladder** — worth stating in that test's charter.
+
+**The larger point, and the strongest argument for the owner's sequencing:** the keeper is
+calibrated *with* the measured ladder and the forecast runs *without* it — a real
+backcast→forecast representation gap sitting in PJM's largest single-signed volume channel,
+which is exactly what rule 22's crossover window exists to measure.
+
+**OPEN, not adjudicated — the 2022 question now has two defensible answers.** *"Does the
+keeper reproduce 2022?"* → derive the 2022 ladder first. *"Does the thing we will actually
+forecast with reproduce 2022?"* → leave 2022 on the forecast track and read its C1/C3b miss
+as information about the **forecast** seam, which makes the already-spent result more
+valuable than §10.3 implied. Owner choice; this session ends on it.
+
+Next shorthand: **pjm-161.**
