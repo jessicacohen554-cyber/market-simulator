@@ -419,24 +419,44 @@ Ranked, with an owner for each:
 | **3** | **T1-H FC-3: 12/12 capacity-evolution bands FAIL** | **FF-1A / FF-2A retirement + entry lanes** | A 2035 horizon *is* capacity evolution. Every retirement band and every addition band misses. |
 | **4** | **BLK-10 unbounded for NEISO, now measured post-D1** — 3.3 GW exit wave, RM to −0.61 %, I7 FAIL 2028, 11.7 % backstop | **Flip-gate / retirement lane** (BLK-10 owner) | This is §2.1b(b)'s live blocker. It is a real behavioural defect, not a bookkeeping one. |
 | **5** | **§2.1b(c) has never been satisfied — NEISO has no T1-X crossover run** | **FF-1D crossover lane** | The board scores (c) on the readiness half only. The input-gap half is unmeasured for NEISO. |
-| **6** | **The keeper's recipe has no route into the forecast entry point** (§3.B, 11 mechanisms) | **FF harness lane** | Until this is closed, "a forecast built on the keeper's recipe" cannot be produced, so no authorization can mean what the request means. |
+| **6** | **The keeper's recipe has no route into the forecast entry point** (§3.B, 11 mechanisms) | **FF harness lane** | Until this is closed, "a forecast built on the keeper's recipe" cannot be produced, so no authorization can mean what the request means. **Owner elected this as the FIRST item — D-88.1, §6.1.** |
 | **7** | **Net-CONE ladder ends 2027-28; FCM sunsets; D-3(a) unsigned** | **Owner** (FF-G3 box D-3(a)) + L-CAP | 8 of 14 requested years price capacity on a frozen anchor for a construct that has been retired. |
 
-**What I would do instead, in this order:**
+### 6.1 OWNER DECISIONS, taken 2026-08-06 on this assessment
 
-1. **Refresh the forecast board** (partly done, §7) — leg (a) passes, the A1/I4 leak is closed
-   in four ISOs, and the live blocker is I7. Three ISOs' gate readings are currently wrong in
-   the same direction.
-2. **Charter the I7/BLK-10 lane for NEISO.** It is now the single blocker on (b), it is
-   measured, and it is the same defect that would dominate a 2035 answer.
-3. **Run NEISO's T1-X crossover** (2023–2027, 5 yr — schedulable today, ~10 min). It closes
-   leg (c)'s missing half and yields the backcast→forecast input gap, which is *exactly* the
-   §3 substitution table measured rather than enumerated.
-4. **Close the recipe-carrier gap** (§3.B) so a forecast can actually run the keeper's
-   mechanisms; then re-run T1-F and see how much of I7 survives the winter fuel-security stack
-   and the dual-fuel physics being present.
-5. Only then put a **T2 (2026–2035)** authorization to the owner — with the net-CONE
-   forward-mode question (D-3(a)) answered first.
+Put to the owner at the close of session neiso-88 (`AskUserQuestion`) and signed the same day.
+**These SUPERSEDE the ordering this session originally recommended** (which led with the T1-X
+crossover); the record of that recommendation is kept below so the change is visible rather
+than silently overwritten.
+
+| # | decision | owner's choice | consequence |
+|---|---|---|---|
+| **D-88.1** | What the next NEISO forecast session does | **Close the recipe-carrier gap first** (§3.B) | The T1-X crossover is **deferred behind it**, not cancelled. Rationale the choice implies: I7 is currently measured on a forecast that carries **none** of the keeper's eleven mechanisms, so its magnitude — and possibly its existence — is not yet attributable. Diagnosing a blocker on a stripped-down model risks chartering a lane against an artifact. Build the carrier, re-run T1-F, *then* see what survives. |
+| **D-88.2** | Who fixes the board's stale cross-ISO I4/A1 text | **A separate cross-ISO session** | This session corrected the **NEISO row only**. The `gate_reading` and `honest_unfit` "I4 / A1" prose, and the per-ISO blocking rows for CAISO/PJM/MISO, stay as they are until that session runs. The evidence is already gathered and cited in §1.1 — all four sidecars read `I4 = PASS ("closes")` — so that session does not need to re-measure, only to re-word and re-verify. |
+| **D-88.3** | The keeper's HEAD non-reproduction (§5 item (i)) | **Bisect it in its own session** | Not absorbed into another lane and not papered over with a re-solve. The reason bisecting wins over "live with it": the workaround (every NEISO A/B solves its own same-HEAD control) is a permanent per-session tax, and the drift compounds silently the longer the cause is unknown. A re-solve would fix the symptom without answering whether the change was intended. |
+
+**Consequent order of work:**
+
+1. **Close the recipe-carrier gap** (§3.B) — give `run_full_horizon.py` a route for the
+   keeper's eleven default-OFF, forward-admissible mechanisms (or a scenario-YAML path through
+   `assert_config_schedulable`). Then **re-run T1-F** and re-read I7 against a forecast that
+   actually carries NEISO's winter fuel-security stack, dual-fuel physics, measured heat rates
+   and scarcity price formation. **[D-88.1]**
+2. **Bisect the keeper drift** (~50 commits, Jan-2025, −0.33 $/MWh) so NEISO has a valid A/B
+   baseline again. Independent of 1 and can run in parallel. **[D-88.3]**
+3. **Refresh the board's cross-ISO text** — leg (a), the closed A1 leak, and the I7 reality
+   across four ISOs. **[D-88.2]**
+4. **Then** NEISO's T1-X crossover (2023–2027, 5 yr, schedulable today, ~10 min) to close
+   leg (c)'s missing half — now interpretable, because the run it is compared against will
+   carry the keeper's recipe.
+5. **Then** charter the I7/BLK-10 lane, if step 1 leaves a blocker to charter.
+6. Only then put a **T2 (2026–2035)** authorization to the owner — with the net-CONE
+   forward-mode question (D-3(a), §4.4) answered first.
+
+*Session neiso-88's original recommendation, superseded by D-88.1: run the T1-X crossover
+first (cheapest, closes leg (c), measures the §3 gap), then charter I7/BLK-10, with the
+recipe-carrier gap fourth. The owner inverted it — carrier first — on the attributability
+argument in D-88.1.*
 
 **One thing this assessment does not do:** it takes no position on `final` or on the locked
 test. NEISO's locked test is **UNSPENT**; the record claiming otherwise is flagged for owner
