@@ -2163,6 +2163,272 @@ def build_ercot_faststart_pool_markup(
     return markup, own_mask
 
 
+def build_ercot_offline_commit_target(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "tuple[np.ndarray, np.ndarray] | None":
+    """Build the ERCOT-176 offline-increment SLOW-START ``(target, own_mask)``.
+
+    ``ScenarioConfig.ercot_offline_commit_offer`` — the owner-authorized
+    ERCOT-151 §3 design round
+    (``docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md``).
+
+    The defect: the model's availability basis is only-OUT-is-out (correct —
+    startability is physical, rule 13), so every non-outaged unit is offered
+    to the LP at its base/wall-basis curve **whether or not serving the next
+    MW would require a start**. P1's startup amortization is the only start
+    term and is the wrong identification by ~30x (physical startup $/MW over
+    min-run at LSL ~ $20-30/MWh). Measured SCED conduct prices that same
+    capability start-inclusive — the CT tier's own ladder reads p50 $271-707.
+    This builder closes the gap for the SLOW-START band, at that band's OWN
+    measured ladder::
+
+        boundary(bin) = 1 - pool_frac(bin)          # measured offline share
+        rel           = (share_g - boundary) / (1 - boundary)
+        target[g, t]  = min(interp(rel, ladder_q, ladder(bin)) x gas_day(t),
+                            cap_frac x VOLL)
+
+    on the merchant bid rows whose WITHIN-PLANT cumulative-capacity midpoint
+    lies above the hour-bin's measured boundary.
+
+    **It returns a bid LEVEL, not a markup** — the one deliberate departure
+    from :func:`build_ercot_faststart_pool_markup`, whose construction this
+    otherwise reproduces exactly against the ``"CC"`` block of the same
+    artifact rather than ``"CT"`` (and without the ERCOT-89 span
+    generalization, which is measured for the fast-start pool only). The
+    level goes to ``run_energy_solve``'s ``p1_bid_max_target`` seam, which
+    applies ``max(bid, target)`` AFTER the startup amortization
+    (:func:`market_sim.pipeline.solve.apply_bid_max_target`).
+
+    That is forced by rule 19 ``[R-ONE-MECH]``, not a style choice. The
+    ``mc_bid_adjust`` seam is additive against a bid that already carries
+    P1's monthly startup amortization (``mc_bid = mc_base + markup +
+    adjust``), so an additive form of THIS tier would price the row at
+    ``ladder + startup`` — double-counting the start, because the measured
+    ladder is already start-INCLUSIVE. The bid-max seam exists for precisely
+    this failure (the additive pjm-101/102 form over-expressed at CT -12
+    TWh); here the amortization keeps ownership wherever it already prices
+    the row above the measured corpus, and the measured level binds only
+    where the model is cheaper. It also makes the no-markdown property
+    structural: ``max`` can never LOWER a bid another measured surface set.
+
+    The remaining differences from the fast-start pool are the physics band:
+
+    * **Eligibility is unit physics** (rule 18 ``[R-PHYSICS]``), never a class
+      tuple: ``OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN <= min_down_hours <=
+      OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX`` **and** ``min_run_hours <=
+      OFFLINE_COMMIT_MIN_RUN_HOURS_MAX``. CT rows fail by min-down (1 h) —
+      the ERCOT-88 tier owns them, so the two tiers are **disjoint by
+      physics**, never by agreement. ST_GAS and coal fail by min-run (24/48
+      h), which is what keeps the ERCOT-91-``R`` steam lane closed rather
+      than silently re-tested (rule 19 ``[R-ONE-MECH]``).
+    * **Bid tranches only** (``econ*``/``peak*`` suffixes): must-run and
+      committed blocks keep their own floor structure, so
+      ``ercot_gas_commitment_bridge`` — which owns the ON committed CC
+      min-gen state — stays disjoint by object (it sets a bound; this sets a
+      price).
+    * **Reconciling composition, never additive** (rule 19): the returned
+      ``own_mask`` marks the row-hours this tier covers (a diagnostic and the
+      seam-proof's disjointness handle); the LEVEL reconciles with every
+      other surface and with the startup amortization via ``max``, so no
+      mechanism stacks on another's residual and the start is counted once.
+    * **An offer-availability, never a floor**: no ``min_gen`` is touched and
+      the level can only RAISE a bid, so forced-energy (D-2) and
+      off-window-binding (D-4) exposure is vacuous by construction — the
+      rule-17 ``[R-FLOOR-WINDOW]`` hazard is structurally impossible.
+    * **Above-LSL basis**: the ladder derives from the startable increment's
+      above-LSL segments only, so below-LSL min-gen curve bottoms never enter.
+    * **Year-scoped** (rule 13): no pooled fallback — a year absent from the
+      artifact returns None and every surface stays byte-identical. Zero
+      fitted scalars; the artifact is frozen against residuals (rule 23).
+    * P1-only via the shared ``mc_bid_adjust`` seam: P0 run lengths and the
+      startup-amortization coupling are untouched.
+
+    Requires the cleared-share wall armed — the same recipe context the
+    rule-19 enumeration was performed against; arming this leg without it is
+    a hard error.
+    """
+    if not getattr(config, "ercot_offline_commit_offer", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    if not getattr(config, "ercot_offer_surface_cleared_share", False):
+        raise ValueError(
+            "ercot_offline_commit_offer composes against the cleared-share "
+            "wall's row pricing (PRECOMMIT-ercot176 §2 enumeration) — arm "
+            "ercot_offer_surface_cleared_share too."
+        )
+    from market_sim.config.constants import (
+        OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX,
+        OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN,
+        OFFLINE_COMMIT_MIN_RUN_HOURS_MAX,
+    )
+
+    art_path = getattr(config, "ercot_offline_commit_offer_path", None)
+    if not art_path:
+        art_path = getattr(config, "ercot_faststart_pool_offer_path", None)
+    if not art_path:
+        from market_sim.config import paths as _paths
+
+        art_path = str(_paths.CALIBRATION_DIR / "ercot_faststart_pool_condbinned.json")
+    surface = json.loads(Path(art_path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
+    if not edges or ladder_q.size == 0:
+        raise ValueError(
+            "ercot_offline_commit_offer: artifact carries no edges/quantiles "
+            "— re-derive scripts/data/derive_ercot_faststart_pool.py"
+        )
+    # Same bin geometry as the wall artifacts by construction; assert against
+    # the wall so a drifted re-derive is loud (the ERCOT-88 check).
+    wall_path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
+    if not wall_path:
+        from market_sim.config import paths as _paths
+
+        wall_path = str(
+            _paths.CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json"
+        )
+    wall_prov = json.loads(Path(wall_path).read_text()).get("_provenance", {})
+    wall_edges = tuple(float(x) for x in wall_prov.get("netload_pct_edges", ()))
+    if wall_edges and wall_edges != edges:
+        raise ValueError(
+            "ercot_offline_commit_offer: artifact bin edges "
+            f"{edges} != cleared-share wall edges {wall_edges} — re-derive "
+            "scripts/data/derive_ercot_faststart_pool.py"
+        )
+    n_bins = len(edges) + 1
+
+    tbl = surface.get("CC", {}).get("years", {}).get(str(year))
+    if not tbl:  # year-scoped: no pooled fallback (rule 13)
+        logger.info(
+            "ERCOT offline-increment slow-start tier (ERCOT-176): year %s "
+            "absent from the artifact — every surface byte-identical "
+            "(year-scoped, rule 13)",
+            year,
+        )
+        return None
+    frac = np.asarray(tbl.get("pool_frac", ()), dtype=float)
+    lad = tbl.get("ladder", ())
+    if frac.size != n_bins or len(lad) != n_bins:
+        return None
+    bnd = 1.0 - np.clip(frac, 0.0, 1.0)  # (n_bins,)
+    wall = np.array(
+        [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
+    )  # (n_bins, n_q)
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Delivered-gas day series (the wall's own price normalizer).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Row universe: the wall's measured CC class scope (the ladder's own
+    # measured class); ELIGIBILITY within it is unit physics.
+    cc_groups = {
+        grp for grp, key in _ERCOT_CLEARED_SHARE_CLASS_OF.items() if key == "CC"
+    }
+    prefixes: dict[str, list[int]] = {}
+    for g, gen in enumerate(generators):
+        if (getattr(gen, "plant_group", None) or "") not in cc_groups:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    target_lvl = np.zeros_like(mc_base)
+    own_mask = np.zeros_like(mc_base, dtype=bool)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            # Rule-18 physics gate: the SLOW-START band — a start that cannot
+            # happen inside the operating hour, but still a within-day
+            # start-and-run decision. Disjoint from the ERCOT-88 fast-start
+            # pool by min-down, and from the steam/coal lanes by min-run.
+            md = float(getattr(gen, "min_down_hours", 0) or 0)
+            mr = float(getattr(gen, "min_run_hours", 0) or 0)
+            if not (
+                OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN
+                <= md
+                <= OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX
+            ):
+                continue
+            if mr > OFFLINE_COMMIT_MIN_RUN_HOURS_MAX:
+                continue
+            # Committed and must-run blocks stay with their own floor
+            # structure (rule 19 — the gas commitment bridge owns them);
+            # only the bid tranches join this tier's universe.
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not (sfx.startswith("econ") or sfx.startswith("peak")):
+                continue
+            mult_b = np.zeros(n_bins)
+            has_b = np.zeros(n_bins, dtype=bool)
+            for b in range(n_bins):
+                pb = bnd[b]
+                if not np.isfinite(pb) or pb >= 1.0 or s_g <= pb:
+                    continue
+                if not np.isfinite(wall[b]).all():
+                    continue
+                rel = (s_g - pb) / (1.0 - pb)
+                mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
+                has_b[b] = True
+            if not has_b.any():
+                continue
+            mult_h = mult_b[hour_bin]  # (T,)
+            mask = has_b[hour_bin]  # (T,)
+            target = np.minimum(mult_h * gas_day, voll_cap)  # (T,) bid LEVEL
+            # A non-positive entry is a no-op at the bid-max seam, so an
+            # uncovered row-hour keeps whatever the rest of the stack priced.
+            target_lvl[g, :] = np.where(mask, target, 0.0)
+            own_mask[g, :] = mask
+            n_priced += 1
+
+    if not own_mask.any():
+        logger.info(
+            "ERCOT offline-increment slow-start tier (ERCOT-176): no "
+            "slow-start row above the measured boundary — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT offline-increment slow-start tier (ERCOT-176): %d slow-start "
+        "rows carry the offline above-LSL SCED2 ladder (year table %s; "
+        "physics gate min_down in [%.0f, %.0f] h and min_run <= %.0f h; "
+        "bid-LEVEL max() reconciliation, never additive)",
+        n_priced,
+        year,
+        OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN,
+        OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX,
+        OFFLINE_COMMIT_MIN_RUN_HOURS_MAX,
+    )
+    return target_lvl, own_mask
+
+
 # Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
 # economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
 # suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/

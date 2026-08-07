@@ -317,6 +317,37 @@ RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 # docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md).
 FASTSTART_POOL_MIN_DOWN_HOURS: float = 2.0
 
+# SLOW-START eligibility band (h) for the ERCOT offline-increment re-pricing
+# tier (ScenarioConfig.ercot_offline_commit_offer, ERCOT-176). The tier prices
+# the capability whose next MW requires a START that cannot happen inside the
+# operating hour — the complement of the fast-start pool above — at that
+# class's own measured start-inclusive SCED2 ladder.
+#
+# Eligibility is UNIT PHYSICS, never a class-name tuple (rule 18
+# [R-PHYSICS]). Both bounds are read off the committed commitment tables
+# above, not fitted:
+#   * min-down band [4, 8] h = CC_COMMITMENT_PARAMS' own floor and ceiling
+#     (older 4 h, f-class 6 h, h-class 8 h). The floor coincides with
+#     RA_BRIDGE_ECON_MIN_DOWN_HOURS above, already documented as the line
+#     where "every CC row qualifies, every CT row (1 h) is excluded".
+#   * min-run <= 12 h is the WITHIN-DAY start-and-run line: a unit whose
+#     minimum run is 24-48 h is not making a within-day start decision at
+#     all — its commitment is a multi-day choice. It sits above every CC
+#     class (min-run 5/8/10 h) and below ST_GAS_COMMITMENT_PARAMS (24/48 h)
+#     and coal, so the band admits the CC classes and excludes gas steam and
+#     coal by physics.
+#
+# The min-run bound is load-bearing for rule 19 [R-ONE-MECH], not decoration:
+# ST_GAS min-down (8 h) is inside the min-down band, and the gas-steam offer
+# lane is REJECTED (`R`) from ERCOT-91 on the ERCOT-89 zero-spurious/C3a
+# guards. Without the min-run bound this tier would silently re-test that
+# closed cell.
+# Source: NREL/SR-5500-55433 (Kumar et al. 2012) via the *_COMMITMENT_PARAMS
+# tables above; docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md §1.
+OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN: float = 4.0
+OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX: float = 8.0
+OFFLINE_COMMIT_MIN_RUN_HOURS_MAX: float = 12.0
+
 # CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by compliance
 # year — the PUBLISHED quantity the RA must-offer bridge is gated to when
 # ScenarioConfig.caiso_ra_mustoffer_quantity_gate is on (gap G-61 path (a)).
