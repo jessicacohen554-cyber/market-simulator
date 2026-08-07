@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-07-caiso-180-a2-regen",
+  "label": "caiso 180 a2 regen",
+  "date": "2026-08-07",
+  "shorthand": "caiso-180-a2-regen",
+  "definition": "caiso-180 Arm A2 REGEN: the caiso-175 keeper recipe replayed at THIS head on the 2026-07-24 REGENERATED, GUARD-OFF outage envelope (blob 3dc01fae at 49e85fb4, sha256 a3599090, 2023/2024/2025 = 640/622/733 windows). Isolates the regeneration leg from the merit-order-guard leg.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-08-07-caiso-180-a2-regen.js",
+  "bundle": "results/calibration/caiso180_a2_regen"
+}
