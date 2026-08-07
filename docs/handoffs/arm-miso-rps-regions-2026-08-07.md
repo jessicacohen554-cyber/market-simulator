@@ -133,6 +133,39 @@ the remediation the error itself prints:
 `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py`. **Not run here** — this
 lane has no reason to materialise ERCOT's retirement registry.
 
+### 3.2 CI on PR #3687 — 6 green, 4 red, all four red pre-existing on `main`
+
+Recorded because it is a standing condition of `main` (`c710d17e`) that the next session will
+hit too, not a property of this branch.
+
+**Green, including every gate this lane touches:** Rule-28 mechanism-matrix guard ·
+Cache-key registration guard · Structural refactor guards · Ruff lint + format ·
+shrink-guard · FR-21 forecast-board staleness.
+
+**Red, and reproduced on base:**
+
+| Check | Failure | Owner lane |
+|---|---|---|
+| Fast test tier | 5 failures: 2× `test_ercot_thermal_as_endogenous.py::TestScreenMutualExclusion`, 2× `tests/scoring/test_forecast_parity.py`, 1× `test_outages.py::NuclearUnitAvailabilityTest::test_unknown_iso_degrades_to_empty` | ERCOT / parity / outages |
+| FR-22 backcast→forecast parity | ERCOT `ercot_storage_as_soc_reserve`, NYISO `nyiso_seam_deliverability_envelope` — armed in keeper, no forecast consumer, no registry declaration | ERCOT, NYISO |
+| Rule-22 quarantine gates | `audit_keepers.py --check` → `S1: stale vs the current verdicts: frontend/data/backcast/status/ERCOT.js` | ERCOT |
+| Forecast-invariant artifact audit | 36 CAISO/ERCOT/PJM run sidecars whose `I7` FAILs are undeclared in `invariant-failures.json` | CAISO, ERCOT, PJM |
+
+**Verification method** (worth reusing): revert the branch's tracked edits to base content in
+place — `git checkout origin/main -- <the three modified files>` plus removing the new files —
+re-run each gate, then `git checkout HEAD -- …` to restore. Every output was **identical**
+across the two trees: same ids, same counts, same text. (A `git stash` does **not** work for
+this once the work is committed — the tree is clean, `stash push` is a silent no-op, and both
+"arms" of the comparison then run the same content. A full `git worktree add` of `origin/main`
+timed out on this repo at 2 min.)
+
+**Not fixed here, deliberately.** Every item is an ERCOT/NYISO/CAISO/PJM artifact and none is
+mechanical: `status/ERCOT.js` is an ERCOT keeper-shard artifact and
+`frontend/data/backcast/keepers/README.md` makes promotion strictly per-ISO ("never another
+ISO's files"); the FR-22 entries need a substantive per-ISO registry verdict
+(backcast-only-by-design vs needs-a-forecast-consumer); the 36 invariant declarations each
+need "the finding it belongs to". Reported on the PR thread rather than silently absorbed.
+
 The K=1 byte-identity contract is the pre-existing
 `TestRpsComplianceRegionRows::test_k1_all_zones_reproduces_legacy_row_byte_identical` — it
 proves the K=1/mask-all region build reproduces the legacy single row byte-identically
