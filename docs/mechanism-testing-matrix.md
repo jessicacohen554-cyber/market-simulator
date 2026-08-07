@@ -3249,10 +3249,56 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-139 (owner decision, 2026-08-06) — TWO ITEMS, IN
-> ORDER. Neither is a price lever and neither may be chartered as one.**
+> **LIVE QUEUE AS OF miso-140 (2026-08-07) — ONE OPEN ITEM. Item 1 is
+> DISCHARGED (stamp below); item 2 is the queue head. Neither was or is a price
+> lever and neither may be chartered as one.** *(Queue set by owner decision at
+> miso-139, 2026-08-06.)*
 >
-> **QUEUE ITEM 1 (NEXT) — REFRESH THE MISO BENCH, then re-verify every MISO
+> **QUEUE ITEM 1 — EXECUTED and DISCHARGED at miso-140 (2026-08-07). NO LP, no
+> solve, no registration, keeper UNCHANGED at `2026-08-05-miso-132b-cc-committed`,
+> NO cell verdict minted (rule 28(b) — no mechanism tested). DETERMINATION DOES
+> NOT CHANGE: `NOT-YET` before and after, and ZERO criterion-status flips across
+> all eight criteria.** The refresh itself had **already been performed** by a
+> cross-ISO session ~45 min before miso-140 opened — pjm-160 B5 re-derived `*_lw`
+> in `data/raw/_validation-source/actual_lmp.json` for all six ISOs (`1d63141c`)
+> and propagated MISO's into the bench parts (`056eb164`) — so miso-140's PREREG
+> disclosed that in advance and re-pointed the session from *doing* the refresh
+> to **adjudicating whether it is right**, which nobody had checked.
+> **BOTH VERIFICATION GATES PASS, 78/78 cells each.** *G-1, the miso-137 G-0(i)
+> test re-run against the NEW values*: `derive_actual_lmp._lw_fields` recomputed
+> at HEAD reproduces the committed reference EXACTLY in all 78 cells (2 bases ×
+> 3 years annual + 72 monthly), and the unrounded 2025 RT lands on **45.4555**,
+> matching miso-137's published recompute to the fourth decimal. *G-2,
+> faithfulness + confinement*: every `*_lw` cell in the bench parts equals the
+> reference, and of the **19 / 22 / 20 leaves that moved** (out of 8178 / 8109 /
+> 8074) **100 % are `avgLMP.*_lw` or `*_lw_mon` — ZERO non-`*_lw` leaves**, so
+> the PREREG's S3 blast-radius stop rule did not fire and the pjm-160 PJM
+> nameplate-union regen (`f6e88aa3`) did **not** reach MISO. Comparator moves:
+> `rt_lw` 32.87→**32.85**, 32.27→**32.30**, 45.39→**45.46**; `da_lw`
+> 34.24→**34.23**, 33.13→**33.14**, 46.29→**46.35**. C3a re-verified on
+> committed artifacts, all three years in one invocation (rule 16), **no
+> re-solve**: **2023 −0.5 %→−0.4 % PASS · 2024 −5.9 %→−6.0 % PASS · 2025
+> −14.0 %→−14.1 % FAIL**; DA companions −4.4 %→−4.4 %, −8.3 %→−8.4 %,
+> −15.6 %→−15.8 %. **The refresh is ADVERSE on the blocker year** (2025 and 2024
+> both worsen; only 2023 improves), so it is structurally incapable of being good
+> news about the gap and **is not reported as progress against it**. Two findings
+> carried, neither repaired here: (i) **registry sidecars store NO scored value**
+> (`id/label/date/shorthand/definition/years/iso/file/bundle` only), so every
+> MISO run re-scores off the refreshed bench automatically — no per-run repair
+> exists or is needed; (ii) the keeper bundle attestation's `.exceptions[5].reason`
+> (the C3a `price_mean` ledger, **already inadmissible under rubric v3.1** —
+> C3a scores as an *undocumented* FAIL) still quotes `$45.39`, and was **already**
+> stale on two further numbers before this refresh (model `$38.66` vs the
+> keeper's `$39.05`; "2023 (−2.2 %) and 2024 (−8.0 %)" vs the actual −0.4 %/−6.0 %).
+> It is inert prose the scorer never reads; repairing it is a keeper-text move
+> and belongs to the next MISO promotion, which regenerates the attestation.
+> `results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` ·
+> `results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md` ·
+> `results/calibration/_miso140_bench_lw_verify.json` ·
+> `scripts/probes/_miso140_bench_lw_verify.py` ·
+> `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`.
+> *(Original charter text follows.)* **QUEUE ITEM 1 — REFRESH THE MISO BENCH,
+> then re-verify every MISO
 > C3a.** Owner-selected 2026-08-06. miso-137 §5 found the committed MISO `*_lw`
 > actual scalars recompute to **45.4555 vs the committed 45.39** for 2025 RT
 > (2023 Δ −$0.023, 2024 Δ +$0.031, `da_lw` 2025 Δ +$0.064) against a ±$0.05
@@ -3271,7 +3317,8 @@ loss.
 > reported as progress against it. Unowned before this stamp; owned by the next
 > MISO session.
 >
-> **QUEUE ITEM 2 — THE FLAT SUMMER CAPACITY HAIRCUT vs THE NET-SUMMER `pmax`
+> **QUEUE ITEM 2 (NEXT — promoted to queue head at miso-140, 2026-08-07 on the
+> discharge of item 1) — THE FLAT SUMMER CAPACITY HAIRCUT vs THE NET-SUMMER `pmax`
 > BASIS (rule 14 `[R-ACCURATE]`), its own session.** Owner-selected 2026-08-06,
 > surfaced by miso-139 §10(2). MISO's merchant gas classes carry a flat
 > `SUMMER_CLASS_DERATE` (`fuel_trajectories.py`: **CC_REGULAR/CC_CHP 0.10,

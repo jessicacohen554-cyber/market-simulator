@@ -1,0 +1,135 @@
+{
+  "iso": "MISO",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "g1": {
+    "2023": {
+      "annual": {
+        "rt_lw": {
+          "fresh": 32.85,
+          "committed": 32.85,
+          "match": true
+        },
+        "da_lw": {
+          "fresh": 34.23,
+          "committed": 34.23,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "unrounded": {
+        "rt": 32.847,
+        "da": 34.2319
+      }
+    },
+    "2024": {
+      "annual": {
+        "rt_lw": {
+          "fresh": 32.3,
+          "committed": 32.3,
+          "match": true
+        },
+        "da_lw": {
+          "fresh": 33.14,
+          "committed": 33.14,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "unrounded": {
+        "rt": 32.3006,
+        "da": 33.1427
+      }
+    },
+    "2025": {
+      "annual": {
+        "rt_lw": {
+          "fresh": 45.46,
+          "committed": 45.46,
+          "match": true
+        },
+        "da_lw": {
+          "fresh": 46.35,
+          "committed": 46.35,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "unrounded": {
+        "rt": 45.4555,
+        "da": 46.3537
+      }
+    }
+  },
+  "g2": {
+    "2023": {
+      "annual": {
+        "rt_lw": {
+          "bench": 32.85,
+          "reference": 32.85,
+          "match": true
+        },
+        "da_lw": {
+          "bench": 34.23,
+          "reference": 34.23,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "leaves_total": 8178,
+      "leaves_moved": 19,
+      "leaves_moved_non_lw": []
+    },
+    "2024": {
+      "annual": {
+        "rt_lw": {
+          "bench": 32.3,
+          "reference": 32.3,
+          "match": true
+        },
+        "da_lw": {
+          "bench": 33.14,
+          "reference": 33.14,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "leaves_total": 8109,
+      "leaves_moved": 22,
+      "leaves_moved_non_lw": []
+    },
+    "2025": {
+      "annual": {
+        "rt_lw": {
+          "bench": 45.46,
+          "reference": 45.46,
+          "match": true
+        },
+        "da_lw": {
+          "bench": 46.35,
+          "reference": 46.35,
+          "match": true
+        }
+      },
+      "monthly_mismatches": [],
+      "leaves_total": 8074,
+      "leaves_moved": 20,
+      "leaves_moved_non_lw": []
+    }
+  },
+  "gates": {
+    "G1_reference_reproduces": {
+      "cells": 78,
+      "mismatches": 0,
+      "verdict": "PASS"
+    },
+    "G2_propagation_faithful_and_confined": {
+      "cells": 78,
+      "mismatches": 0,
+      "verdict": "PASS"
+    }
+  }
+}
