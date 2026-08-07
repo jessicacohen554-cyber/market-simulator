@@ -4044,3 +4044,40 @@ as information about the **forecast** seam, which makes the already-spent result
 valuable than §10.3 implied. Owner choice; this session ends on it.
 
 Next shorthand: **pjm-161.**
+
+### pjm-160 (cont.) — B2 EXECUTED: seam ladders derived for 2019, 2021, 2022 (2026-08-07)
+
+Owner decision on the reframed 2022 question: ***"Does the KEEPER reproduce 2022?" — derive
+the ladder first.*** Done. `PJM_SEAM_LADDER_BY_YEAR` now carries **2019, 2021, 2022, 2023,
+2024, 2025**; the 2023–2025 entries are **byte-identical** (verified against the prior file).
+
+**Rule 23 basis: the SOURCE DATA EXTENDS, not a residual.** `derive_pjm_seam_ladders.py` ran
+the **frozen** formula — no script edit — over inputs that already covered these years:
+`PJM_<year>_import_export_act_sch_interchange.csv` (2018–2025 on disk) and
+`actual_lmp_hourly_PJM.parquet` `da` (2018–2025). **No parameter is introduced.**
+
+**Reproduction quality of the added years matches 2023–2025** (offline P9, per seam):
+
+| year | DA anchor | MISO | NYISO | Carolinas | TVA | LGEE |
+|---|---:|---|---|---|---|---|
+| 2019 | $25.54 | −30.81 vs −30.79 | −11.92 vs −11.92 | +2.37 vs +2.37 | +5.68 vs +5.69 | +3.07 vs +3.08 |
+| 2021 | $36.87 | −32.09 vs −32.09 | −13.44 vs −13.45 | +1.33 vs +1.32 | +4.93 vs +4.93 | +1.46 vs +1.47 |
+| 2022 | $67.30 | −28.40 vs −28.46 | −14.11 vs −14.12 | +2.15 vs +2.14 | +6.05 vs +6.07 | +2.59 vs +2.59 |
+
+TWh, model vs actual; duration RMSE 40–280 MW; import-hour shares within a few points; the
+direction-structural signature the ladder exists to reproduce holds in every year (MISO/NYISO
+0–1 % import hours, Carolinas/TVA/LGEE 52–92 %).
+
+**What this changes.** A 2022 re-run will now run **the keeper's own seam mechanism** instead
+of the forecast track, so its C1 (`CC_REGULAR` +18.28 TWh) / C3b miss becomes a test of the
+keeper rather than an artifact of year-keying. **It does NOT make the ladder forecastable** —
+it still needs that year's realized flows and prices, forecast years still fall through to the
+gas-elastic formula, and the two-track design is unchanged.
+
+**Nothing is spent.** This is ungated prep: no year solved, scored or registered; the freeze
+is ACTIVE and untouched; `final` is EMPTY. The 2022 re-run itself still requires a narrow
+owner lift. Verification: 285 seam/interchange/ladder tests pass, mechanism-matrix guard
+clean, keeper re-verifies **CALIBRATED** and `audit_keepers --iso PJM` 0/0 (the keeper's own
+2023–2025 solve is untouched by construction).
+
+Next shorthand: **pjm-161.**
