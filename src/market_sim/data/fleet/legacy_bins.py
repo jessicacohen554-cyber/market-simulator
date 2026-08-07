@@ -33,9 +33,13 @@ logger = logging.getLogger("market_sim.data.fleet")
 # also means ERCOT's CAMPD-bin path (which sources non-aggregatable fuels
 # from EIA-860) excludes the handful of ERCOT oil/biomass units exactly as it
 # already excluded their gas_ct-classified predecessors, keeping ERCOT
-# dispatch unchanged.
+# dispatch unchanged. gas_st joined when the D-25 taxonomy fix gave gas-steam
+# boilers their own fuel (they classed gas_ct before): it must stay in this
+# set so the ERCOT exclusion keeps covering those rows — dropping it would
+# re-admit ~10 GW of curated-bin-covered ERCOT steam capacity as raw
+# duplicate LP units.
 _AGGREGATABLE_FUELS: frozenset[str] = frozenset(
-    {"gas_cc", "gas_ct", "coal", "oil", "biomass"}
+    {"gas_cc", "gas_ct", "gas_st", "coal", "oil", "biomass"}
 )
 
 

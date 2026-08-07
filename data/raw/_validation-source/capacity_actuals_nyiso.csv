@@ -1,6 +1,6 @@
 # capacity_actuals_nyiso.csv — capacity-hindcast scoring target (W2-P5, plan §1.2.3)
 # Source: latest committed EIA-860 (data/raw/eia-860/ operable + retired_and_canceled sheets); registry outcome facts, not bench.
-# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-06.
+# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-07.
 # Units >= 300 MW flagged (large_unit). BA(s): ['NYIS'].
 # Retirements dated at PHYSICAL cessation (EIA-860 Status series across releases [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], FFR-7A / D-21(b)), not at the reported paper date; units already OS/RE at the 2020 fleet vintage are excluded (0 here).
 # RD-5 actuals-coverage fix applied: plant(s) [8907] unioned in from /home/user/market-simulator/data/raw/_validation-source/retired_sheet_coverage_gaps.csv (missing from the current top-level retired sheet) -- see that file's header and data/raw/eia-860/README.md.

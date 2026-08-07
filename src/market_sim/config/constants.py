@@ -174,6 +174,13 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
         "frame": 10.5,  # EIA Table 8 — heavy-frame combustion turbines
         "older": 11.5,  # EIA Table 8 — legacy combustion turbines
     },
+    # Legacy natural-gas steam boilers (fuel gas_st, D-25 taxonomy fix). One
+    # "default" bin like oil/biomass: the vintage classifier carries no
+    # sub-bins for them (fleet._efficiency_bin). Fallback only — nearly every
+    # gas_st row carries a unit-level eGRID heat rate.
+    "gas_st": {
+        "default": 10.3,  # EIA Table 8.2 — natural-gas steam generators (~10,300 Btu/kWh)
+    },
     "coal": {
         "supercritical": 8.8,  # EIA Table 8 — supercritical steam units
         "subcritical": 10.0,  # EIA Table 8 — subcritical steam units
@@ -1437,6 +1444,13 @@ CO2_RATES: dict[str, dict[str, float]] = {
         "aero": 0.51,  # EPA eGRID 2022 — aeroderivative combustion turbines
         "frame": 0.60,  # EPA eGRID 2022 — heavy-frame combustion turbines
         "older": 0.65,  # EPA eGRID 2022 — legacy combustion turbines
+    },
+    # Legacy natural-gas steam boilers (fuel gas_st, D-25 taxonomy fix).
+    # 0.59 = 10.3 heat rate × 0.057 tCO2/MMBtu, the same back-solve
+    # convention as FUEL_CO2_FACTOR_PER_MMBTU below, so the vintage-bin and
+    # CAMPD-bin fleets stay consistent.
+    "gas_st": {
+        "default": 0.59,  # 10.3 × FUEL_CO2_FACTOR_PER_MMBTU["gas_st"] (0.057)
     },
     "coal": {
         "supercritical": 0.88,  # EPA eGRID 2022 — supercritical steam units

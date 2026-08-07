@@ -304,9 +304,9 @@ def _map_fuel_type(
 ) -> str | None:
     """Map raw technology / fuel / prime-mover codes to a model fuel type.
 
-    Returns one of ``gas_cc``, ``gas_ct``, ``coal``, ``nuclear``, ``oil`` or
-    ``biomass``, or ``None`` for wind, solar, hydro and other non-thermal
-    resources, which are handled elsewhere.
+    Returns one of ``gas_cc``, ``gas_ct``, ``gas_st``, ``coal``, ``nuclear``,
+    ``oil`` or ``biomass``, or ``None`` for wind, solar, hydro and other
+    non-thermal resources, which are handled elsewhere.
     """
     tech = str(technology or "").strip().lower()
     source = str(energy_source or "").strip().upper()
@@ -319,6 +319,15 @@ def _map_fuel_type(
     if source == "NG" or "natural gas" in tech:
         if "combined cycle" in tech or mover in _CC_PRIME_MOVERS:
             return "gas_cc"
+        # Legacy natural-gas steam boilers: EIA-860 prime mover ``ST``
+        # (Schedule 3 "Prime Mover" code, steam turbine) — the dedicated
+        # ``gas_st`` fuel the CAMPD bin path already carries
+        # (BIN_GROUP_TO_FUEL), not a combustion turbine. The string branch
+        # mirrors the combined-cycle line above for rows that carry only the
+        # EIA-860 "Technology" description. Taxonomy fix D-25 (sitting
+        # Addendum Y.4, 2026-08-06; seam: FFR-7A §4.1).
+        if "steam turbine" in tech or mover == "ST":
+            return "gas_st"
         return "gas_ct"
     if source in _OIL_ENERGY_SOURCES or "petroleum" in tech:
         # Oil / distillate / residual units — peakers (mainly NYISO/ISO-NE)
@@ -1045,7 +1054,7 @@ def _rows_to_generators(
         chp_flag = str(data.get("chp") or "").strip().upper().startswith("Y")
         if fuel_type == "coal":
             group = "COAL"
-        elif fuel_type in ("gas_cc", "gas_cc_ccs", "gas_ct"):
+        elif fuel_type in ("gas_cc", "gas_cc_ccs", "gas_ct", "gas_st"):
             group = classify_plant(
                 data.get("energy_source"),
                 data.get("prime_mover"),

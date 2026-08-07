@@ -1,6 +1,6 @@
 # capacity_actuals_pjm.csv — capacity-hindcast scoring target (W2-P5, plan §1.2.3)
 # Source: latest committed EIA-860 (data/raw/eia-860/ operable + retired_and_canceled sheets); registry outcome facts, not bench.
-# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-06.
+# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-08-07.
 # Units >= 300 MW flagged (large_unit). BA(s): ['PJM'].
 # Retirements dated at PHYSICAL cessation (EIA-860 Status series across releases [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], FFR-7A / D-21(b)), not at the reported paper date; units already OS/RE at the 2020 fleet vintage are excluded (4 here).
 kind,unit_id,plant_id,fuel,mw,year,state,large_unit
@@ -23,13 +23,13 @@ addition,64873_GEN2,64873,gas_ct,4.4,2021,PA,False
 addition,64873_GEN3,64873,gas_ct,4.4,2021,PA,False
 addition,64873_GEN4,64873,gas_ct,4.4,2021,PA,False
 addition,64873_GEN5,64873,gas_ct,4.4,2021,PA,False
-addition,58194_WC6,58194,gas_ct,2.8,2021,PA,False
 addition,65213_ATC03,65213,gas_ct,2.0,2021,NJ,False
 addition,66393_P103,66393,gas_ct,1.6,2021,PA,False
 addition,66393_P104,66393,gas_ct,1.6,2021,PA,False
 addition,66393_P105,66393,gas_ct,1.6,2021,PA,False
-addition,52148_GEN6,52148,gas_ct,1.2,2021,VA,False
-addition,52148_GEN7,52148,gas_ct,1.2,2021,VA,False
+addition,58194_WC6,58194,gas_st,2.8,2021,PA,False
+addition,52148_GEN6,52148,gas_st,1.2,2021,VA,False
+addition,52148_GEN7,52148,gas_st,1.2,2021,VA,False
 addition,3825_4,3825,hydro,0.7,2021,VA,False
 addition,62747_1,62747,hydro,0.5,2021,KY,False
 addition,62747_2,62747,hydro,0.5,2021,KY,False
@@ -724,8 +724,8 @@ retirement,54693_GT-1,54693,gas_cc,8.3,2021,PA,False
 retirement,54693_GT-2,54693,gas_cc,8.3,2021,PA,False
 retirement,54693_GT-5,54693,gas_cc,8.3,2021,PA,False
 retirement,54693_GT-6,54693,gas_cc,8.3,2021,PA,False
-retirement,599_3,599,gas_ct,113.6,2021,DE,False
 retirement,62622_CHPS1,62622,gas_ct,1.0,2021,NJ,False
+retirement,599_3,599,gas_st,113.6,2021,DE,False
 retirement,54525_1,54525,hydro,0.4,2021,IL,False
 retirement,54525_2,54525,hydro,0.4,2021,IL,False
 retirement,50628_GEN4,50628,oil,18.0,2021,NJ,False
@@ -792,9 +792,9 @@ retirement,50385_GEN3,50385,gas_cc,42.0,2022,NJ,False
 retirement,2401_9,2401,gas_ct,93.6,2022,NJ,False
 retirement,3148_CTG3,3148,gas_ct,22.3,2022,PA,False
 retirement,7770_GT1,7770,gas_ct,4.2,2022,IL,False
-retirement,57929_STG,57929,gas_ct,1.3,2022,OH,False
 retirement,52148_GEN3,52148,gas_ct,1.1,2022,VA,False
 retirement,62622_CHPS2,62622,gas_ct,1.0,2022,NJ,False
+retirement,57929_STG,57929,gas_st,1.3,2022,OH,False
 retirement,54525_3,54525,hydro,0.4,2022,IL,False
 retirement,2836_10,2836,oil,32.1,2022,OH,False
 retirement,6776_1,6776,oil,27.0,2022,NJ,False
@@ -855,15 +855,15 @@ retirement,3797_6,3797,coal,693.9,2023,VA,True
 retirement,3122_3,3122,coal,692.0,2023,PA,True
 retirement,3122_2,3122,coal,660.0,2023,PA,True
 retirement,3797_5,3797,coal,359.0,2023,VA,True
-retirement,3809_3,3809,gas_ct,882.0,2023,VA,True
-retirement,384_7,384,gas_ct,660.0,2023,IL,True
-retirement,384_8,384,gas_ct,660.0,2023,IL,True
-retirement,874_6,874,gas_ct,360.4,2023,IL,True
 retirement,55109_TG3,55109,gas_ct,41.5,2023,IL,False
 retirement,3148_CTG1,3148,gas_ct,23.6,2023,PA,False
 retirement,3148_CTG2,3148,gas_ct,23.6,2023,PA,False
 retirement,3148_CTG4,3148,gas_ct,23.6,2023,PA,False
 retirement,52148_GEN4,52148,gas_ct,0.3,2023,VA,False
+retirement,3809_3,3809,gas_st,882.0,2023,VA,True
+retirement,384_7,384,gas_st,660.0,2023,IL,True
+retirement,384_8,384,gas_st,660.0,2023,IL,True
+retirement,874_6,874,gas_st,360.4,2023,IL,True
 retirement,1580_8,1580,oil,2.5,2023,MD,False
 retirement,56692_1A,56692,oil,0.3,2023,VA,False
 retirement,56692_1B,56692,oil,0.3,2023,VA,False
@@ -961,11 +961,11 @@ retirement,3122_1,3122,coal,660.0,2024,PA,True
 retirement,8008_MICK,8008,gas_ct,71.2,2024,NJ,False
 retirement,2379_CA1,2379,gas_ct,41.9,2024,NJ,False
 retirement,2379_CA2,2379,gas_ct,41.9,2024,NJ,False
-retirement,972_4,972,gas_ct,9.4,2024,IL,False
 retirement,52021_GEN1,52021,gas_ct,3.7,2024,IL,False
 retirement,52021_GEN2,52021,gas_ct,3.7,2024,IL,False
 retirement,59055_CHP1,59055,gas_ct,3.0,2024,NJ,False
 retirement,52149_GEN8,52149,gas_ct,1.0,2024,PA,False
+retirement,972_4,972,gas_st,9.4,2024,IL,False
 retirement,54886_GEN4,54886,oil,0.9,2024,IL,False
 retirement,54886_GEN5,54886,oil,0.9,2024,IL,False
 retirement,10398_GENC,10398,other,22.0,2024,OH,False
@@ -982,10 +982,10 @@ retirement,69979_GT8,69979,gas_ct,192.0,2025,IL,False
 retirement,69979_GT9,69979,gas_ct,192.0,2025,IL,False
 retirement,56038_1,56038,gas_ct,11.0,2025,MD,False
 retirement,56038_2,56038,gas_ct,11.0,2025,MD,False
-retirement,52148_GEN1,52148,gas_ct,7.2,2025,VA,False
-retirement,56038_3,56038,gas_ct,5.4,2025,MD,False
-retirement,50316_3516,50316,gas_ct,2.0,2025,IN,False
-retirement,52148_GEN5,52148,gas_ct,0.4,2025,VA,False
+retirement,52148_GEN1,52148,gas_st,7.2,2025,VA,False
+retirement,56038_3,56038,gas_st,5.4,2025,MD,False
+retirement,50316_3516,50316,gas_st,2.0,2025,IN,False
+retirement,52148_GEN5,52148,gas_st,0.4,2025,VA,False
 retirement,7657_3A,7657,hydro,0.9,2025,OH,False
 retirement,1554_1,1554,oil,132.8,2025,MD,False
 retirement,1554_GT1,1554,oil,16.0,2025,MD,False
