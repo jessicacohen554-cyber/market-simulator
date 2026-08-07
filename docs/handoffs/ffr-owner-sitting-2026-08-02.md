@@ -3082,3 +3082,20 @@ next (not worth a standalone lane).
 with determination re-verification (NYISO holds `complete`), matrix header re-stamp,
 auditor pass. MISO's taxgs arm stays registered-not-promoted until the MISO lane settles
 the AA.2 v3.1 re-score question. Prompt: pack §0w.
+
+## Addendum AB — NYISO-PROMOTE adjudicated clean; D-27's NYISO half executed
+
+**Written 2026-08-07 by the workstream manager at `origin/main` `af478c01`.**
+
+NYISO's keeper is `2026-08-07-nyiso-131-taxgs-arm` (PRs #3706/#3708). Adjudication:
+verdict-grade. Step-0 preconditions checked before any edit; the promoted run proven to be
+the incumbent's OWN recipe by config diff (693 shared fields, ZERO differing; the 5
+arm-only fields are all post-keeper `ScenarioConfig` additions at default False — including
+the matrix-`R` nyiso_li_tsl_n11_security lever, explicitly confirmed NOT smuggled in behind
+the taxonomy fix); D-5(b) re-key executed with the determination RE-VERIFIED identical
+(CALIBRATED-WITH-CAVEATS, every criterion status unchanged); M1 PASS 0/0; matrix guard
+clean after the session itself caught and re-stamped the stale §5.5 prose header;
+`keeper_at_declaration` preserved. **D-27's NYISO half is EXECUTED. The MISO half stays
+DEFERRED on the AA.2 rubric-v3.1 re-score question, which remains with the MISO lane.**
+Board otherwise unchanged: FFR-3V-FIX and HOUSE-1 ready in pack §0v (not yet pasted);
+D-21(a) deferred (owner's); the NEISO 9.3 MW taxonomy tail rides the next NEISO session.
