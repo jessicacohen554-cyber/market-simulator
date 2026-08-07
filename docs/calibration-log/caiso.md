@@ -6907,3 +6907,80 @@ STILL OUTSTANDING**. It is a precondition for spending 2022 and is on the path b
 walled on non-public hourly pumped-storage water state, and its last free parameter is
 walled with two of three exits closed.** The next CAISO move is an owner-level data
 question, not a session lever.
+
+---
+
+## caiso-179 — 2026-08-07 — exit 3 (the degradation cell-vs-system split) is SPENT AND REFUTED; `battery_dispatch_adder` is now a PERMANENT DECLARED RESIDUAL
+
+**NO LP, NO SOLVE, no arm, no bundle, nothing registered.** Keeper unchanged at
+`2026-08-06-caiso-175-tac-intake` (**NOT-YET**, 8 criteria, C3a the sole FAIL). DOF ledger
+unchanged at `n_entries` 11 / `n_residual` 8. `holdout-freeze.json` and
+`calibration-complete.json` UNTOUCHED — CAISO does **not** hold `complete` (`withdrawn`
+2026-08-06). No year was solved at all.
+
+Pre-registration `PRECHECK-caiso179-degradation-split-2026-08-07.md` (pushed and blob-verified
+before any source value was read); finding `FINDING-caiso179-degradation-split-2026-08-07.md`;
+instrument `scripts/probes/_caiso179_degradation_split.py`; record
+`_caiso179_degradation_split.json`.
+
+**Outcome — BRANCH III-R, IDENTIFIED AND REFUTED** (a branch fixed in advance precisely so a
+refutation could not be relabelled a wall).
+
+* **The split IDENTIFIES, exactly.** φ = **0.742426** is not a regression estimate: NREL's ATB
+  *constructs* its storage duration classes as `Total ($/kWh) = Energy ($/kWh) + Power ($/kW) /
+  Duration` (NREL/TP-6A40-85332 p. 3), so the two-parameter fit **inverts that construction** —
+  max relative residual **5.481 × 10⁻¹⁶** across all five duration classes on both on-disk file
+  families, with a single deflator `k = 1.090940` reproducing **four** committed constants
+  (`capex_per_kw` 4h/8h *and* `fom_per_kw_yr` 4h/8h, the FOM rows an out-of-construction check).
+  Ramasamy et al. (NREL/TP-7A40-83586) brackets it exactly where physics requires — bare pack
+  0.3477/0.3700, cabinet 0.5736/0.6054, both below φ.
+* **So does the degradation rate, and its EOL threshold cancels.** PNNL-33283 Table 4.2 (LFP,
+  EOL at 60 % of rated energy) gives 1.0417 × 10⁻⁴ of capacity per full-energy discharge at
+  100 % DOD; PNNL's own 80 %-retention reading of the same row (Table 4.3) gives
+  `0.20/1,920` = the **same value bit-identically** under linear fade. No convention was chosen.
+* **And the value is REFUTED.** Headline **\$28.00 – \$35.00/MWh** against the \$15 screen;
+  **12 of 15** cells in the full φ × DOD grid fail; the already-refuted \$22.63 sits *below* the
+  identified range. At the code's own `cycles = 5000` the identified `F` is **0.309 – 0.387**,
+  so the committed **0.25 is 19–35 % LOW, not high**.
+* **The exit's own named primary source refutes the formula's FORM.** There is no ATB
+  augmentation-cost table: ATB 2024 and its basis (and the 2025 update verbatim) publish no
+  cycle life and no retention, and explicitly decline to charge degradation per MWh — *"assume
+  no variable O&M (VOM) costs. All operating costs are instead represented using fixed O&M (FOM)
+  costs. The FOM costs include battery augmentation costs…"*. Converting ATB's own
+  augmentation-inclusive FOM at its own duty (1 cycle/day) gives **\$28.04/MWh** — inside the
+  identified band.
+* **Second, independent reason it does not close (G5 FAIL).** PNNL's cycle life is DOD-indexed
+  and the LP has no DOD dimension, so a residual row selection survives — a new DOF appears where
+  the old one was removed. The verdict is invariant across it, which is why BRANCH III-R fires
+  cleanly.
+* **REPORTED AGAINST INTEREST.** Three of fifteen cells *do* clear \$15 (\$13.11 / \$14.99 /
+  \$13.95), all bare-pack φ at shallower DOD. Not adopted: the pre-registration named S1 the
+  headline and S2 a bracket "never substituted, whichever way they land"; a bare-pack φ is
+  physically wrong for augmentation; and **the most favourable cell in the whole grid is still
+  2.6 × the keeper's \$5.00**. The sources do not support the incumbent either — they are
+  consistent only with a value the model has already measured unusable.
+
+**Code change: exactly one, and it is a CITATION correction** (rule 5 `[R-NO-MAGIC]`) on
+`STORAGE_DEGRADATION_REPLACEMENT_FRACTION` — both halves of its old attribution ("NREL ATB
+augmentation costs and LFP warranty cycle life") name documents that do not carry the quantity,
+and no primary public LFP warranty document exists (only vendor ranges: 4,000–10,000 cycles,
+70–80 % EOL). **Value byte-unchanged at 0.25.** Re-pricing it is a **forecast-lane** act with
+six-ISO reach — it feeds only `storage.py::estimate_storage_revenue`'s entry screen, never the LP
+objective and never a backcast — and is chartered there, not taken by a CAISO backcast session.
+
+**Rule-14 `[R-ACCURATE]` finding named, not buried:** `cycles = 5000` is attributed to "NREL
+Annual Technology Baseline 2024" in `docs/parameter-citations.md`, but ATB publishes no cycle
+life at all; against the only primary pair it is **2.6 ×** PNNL's 1,920 full-energy-equivalent
+discharges to 80 % retention.
+
+**STATE AFTER THIS SESSION — the owner-level disclosure this session owes.** All three of
+caiso-176's named exits are closed: exit 1 confidential by tariff construction, exit 2 spent and
+closed at caiso-178, exit 3 spent and **refuted** here. **`battery_dispatch_adder = 5.0` is a
+PERMANENT DECLARED-RESIDUAL DOF, not an open item.** Its ledger `root_cause` ("open item to
+re-derive from those") is unachievable by every route it named; a future keeper-lane session
+should re-word it to *permanent declared residual*. CAISO's in-model lever queue remains EMPTY
+and its one FAIL remains walled on non-public hourly pumped-storage water state. **The CAISO
+outage re-audit (`intake_log` 2026-07-24) is STILL OUTSTANDING and is escalated to the owner for
+the second session running** — a precondition for spending 2022 and on the path back to any
+`complete` re-declaration. The next CAISO move is an owner-level data question, not a session
+lever.
