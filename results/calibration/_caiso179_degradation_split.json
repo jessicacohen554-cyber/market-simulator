@@ -1,0 +1,242 @@
+{
+  "session": "caiso-179",
+  "prereg": "results/calibration/PRECHECK-caiso179-degradation-split-2026-08-07.md",
+  "committed_under_test": {
+    "STORAGE_DEGRADATION_REPLACEMENT_FRACTION": 0.25,
+    "capex_per_kwh": 452.6,
+    "cycles": 5000.0,
+    "implied_adder_per_mwh": 22.63,
+    "keeper_battery_dispatch_adder": 5.0
+  },
+  "G1": {
+    "families": {
+      "atb_2024_electricity_filtered": {
+        "capex_raw_by_duration": {
+          "2": 1043.405862330124,
+          "4": 1659.3941388521046,
+          "6": 2275.382415374085,
+          "8": 2891.3706918960656,
+          "10": 3507.3589684180465
+        },
+        "power_component_per_kw_raw": 427.4175858081423,
+        "energy_component_per_kwh_raw": 307.9941382609905,
+        "max_abs_residual": 9.094947017729282e-13,
+        "max_rel_residual": 5.480884140051721e-16,
+        "deflator_from_capex4": 1.0909403363641417,
+        "deflator_from_capex8": 1.0909358695655567,
+        "fom4_deflated": 40.934697367758,
+        "fom4_committed": 40.9,
+        "fom8_deflated": 73.35051612445461,
+        "fom8_committed": 73.4,
+        "phi_energy_share_4hr": 0.7424255179641583
+      },
+      "atb_2024v4_electricity_filtered": {
+        "capex_raw_by_duration": {
+          "2": 1043.405862330124,
+          "4": 1659.3941388521046,
+          "6": 2275.382415374085,
+          "8": 2891.3706918960656,
+          "10": 3507.3589684180465
+        },
+        "power_component_per_kw_raw": 427.4175858081423,
+        "energy_component_per_kwh_raw": 307.9941382609905,
+        "max_abs_residual": 9.094947017729282e-13,
+        "max_rel_residual": 5.480884140051721e-16,
+        "deflator_from_capex4": 1.0909403363641417,
+        "deflator_from_capex8": 1.0909358695655567,
+        "fom4_deflated": 40.934697367758,
+        "fom4_committed": 40.9,
+        "fom8_deflated": 73.35051612445461,
+        "fom8_committed": 73.4,
+        "phi_energy_share_4hr": 0.7424255179641583
+      }
+    },
+    "linearity_pass": true,
+    "deflator_pass": true,
+    "deflator": 1.0909403363641417,
+    "phi_S1": 0.7424255179641583,
+    "families_agree": true,
+    "PASS": true
+  },
+  "G2": {
+    "phi_S1_headline": 0.7424255179641583,
+    "S2_brackets": {
+      "MSP": {
+        "phi_cell_bare_pack": 0.3477157360406091,
+        "phi_cabinet_energy_hardware": 0.5736040609137056,
+        "pack_share_of_cabinet": 0.6061946902654868
+      },
+      "MMP": {
+        "phi_cell_bare_pack": 0.36995515695067266,
+        "phi_cabinet_energy_hardware": 0.6053811659192825,
+        "pack_share_of_cabinet": 0.6111111111111112
+      }
+    },
+    "consistency_phi_S2_le_phi_S1": true,
+    "PASS": true
+  },
+  "G3": {
+    "source": "PNNL-33283 Table 4.2 (+ Table 4.3 cross-check), LFP",
+    "eol_retention": 0.6,
+    "rows": [
+      {
+        "dod_provided_pct": 100,
+        "average_dod_pct": 80,
+        "cycles_to_eol": 4800,
+        "equiv_cycles_100pct_dod": 4800,
+        "corrected_equiv_cycles": 3840,
+        "fade_per_full_equivalent_discharge": 0.00010416666666666667,
+        "in_headline_span": true
+      },
+      {
+        "dod_provided_pct": 80,
+        "average_dod_pct": 70,
+        "cycles_to_eol": 6000,
+        "equiv_cycles_100pct_dod": 4800,
+        "corrected_equiv_cycles": 4200,
+        "fade_per_full_equivalent_discharge": 9.523809523809524e-05,
+        "in_headline_span": true
+      },
+      {
+        "dod_provided_pct": 60,
+        "average_dod_pct": 60,
+        "cycles_to_eol": 8000,
+        "equiv_cycles_100pct_dod": 4800,
+        "corrected_equiv_cycles": 4800,
+        "fade_per_full_equivalent_discharge": 8.333333333333334e-05,
+        "in_headline_span": true
+      },
+      {
+        "dod_provided_pct": 30,
+        "average_dod_pct": 30,
+        "cycles_to_eol": 32000,
+        "equiv_cycles_100pct_dod": 9600,
+        "corrected_equiv_cycles": 9600,
+        "fade_per_full_equivalent_discharge": 4.166666666666667e-05,
+        "in_headline_span": false
+      },
+      {
+        "dod_provided_pct": 5,
+        "average_dod_pct": 5,
+        "cycles_to_eol": 192000,
+        "equiv_cycles_100pct_dod": 9600,
+        "corrected_equiv_cycles": 9600,
+        "fade_per_full_equivalent_discharge": 4.166666666666667e-05,
+        "in_headline_span": false
+      }
+    ],
+    "eol_threshold_invariance": {
+      "rate_at_80pct_retention": 0.00010416666666666667,
+      "rate_at_60pct_retention": 0.00010416666666666667,
+      "identical": true
+    },
+    "r1_r2_carry_pair": false,
+    "r3_primary_document_found": false,
+    "PASS": true
+  },
+  "adder_grid": {
+    "S1_atb_energy_scaling (HEADLINE, pre-registered) @ DOD 100%": {
+      "adder_per_mwh": 35.002269732351884,
+      "F_equivalent_at_committed_cycles": 0.3866799572729992,
+      "clears_screen": false
+    },
+    "S1_atb_energy_scaling (HEADLINE, pre-registered) @ DOD 80%": {
+      "adder_per_mwh": 32.00207518386458,
+      "F_equivalent_at_committed_cycles": 0.35353596093531353,
+      "clears_screen": false
+    },
+    "S1_atb_energy_scaling (HEADLINE, pre-registered) @ DOD 60%": {
+      "adder_per_mwh": 28.001815785881508,
+      "F_equivalent_at_committed_cycles": 0.30934396581839935,
+      "clears_screen": false
+    },
+    "S2_cabinet_MMP @ DOD 100%": {
+      "adder_per_mwh": 28.541199551569505,
+      "F_equivalent_at_committed_cycles": 0.3153026905829596,
+      "clears_screen": false
+    },
+    "S2_cabinet_MMP @ DOD 80%": {
+      "adder_per_mwh": 26.094811018577833,
+      "F_equivalent_at_committed_cycles": 0.2882767456758488,
+      "clears_screen": false
+    },
+    "S2_cabinet_MMP @ DOD 60%": {
+      "adder_per_mwh": 22.832959641255606,
+      "F_equivalent_at_committed_cycles": 0.2522421524663677,
+      "clears_screen": false
+    },
+    "S2_cabinet_MSP @ DOD 100%": {
+      "adder_per_mwh": 27.043041455160747,
+      "F_equivalent_at_committed_cycles": 0.29875211505922167,
+      "clears_screen": false
+    },
+    "S2_cabinet_MSP @ DOD 80%": {
+      "adder_per_mwh": 24.725066473289825,
+      "F_equivalent_at_committed_cycles": 0.2731447909112884,
+      "clears_screen": false
+    },
+    "S2_cabinet_MSP @ DOD 60%": {
+      "adder_per_mwh": 21.6344331641286,
+      "F_equivalent_at_committed_cycles": 0.23900169204737737,
+      "clears_screen": false
+    },
+    "S2_bare_pack_MMP @ DOD 100%": {
+      "adder_per_mwh": 17.44184417040359,
+      "F_equivalent_at_committed_cycles": 0.19268497757847536,
+      "clears_screen": false
+    },
+    "S2_bare_pack_MMP @ DOD 80%": {
+      "adder_per_mwh": 15.946828955797567,
+      "F_equivalent_at_committed_cycles": 0.17616912235746318,
+      "clears_screen": false
+    },
+    "S2_bare_pack_MMP @ DOD 60%": {
+      "adder_per_mwh": 13.953475336322873,
+      "F_equivalent_at_committed_cycles": 0.1541479820627803,
+      "clears_screen": true
+    },
+    "S2_bare_pack_MSP @ DOD 100%": {
+      "adder_per_mwh": 16.393348138747886,
+      "F_equivalent_at_committed_cycles": 0.18110194585448394,
+      "clears_screen": false
+    },
+    "S2_bare_pack_MSP @ DOD 80%": {
+      "adder_per_mwh": 14.988204012569495,
+      "F_equivalent_at_committed_cycles": 0.1655789219240996,
+      "clears_screen": true
+    },
+    "S2_bare_pack_MSP @ DOD 60%": {
+      "adder_per_mwh": 13.11467851099831,
+      "F_equivalent_at_committed_cycles": 0.14488155668358715,
+      "clears_screen": true
+    }
+  },
+  "headline_span_per_mwh": {
+    "min": 28.001815785881508,
+    "max": 35.002269732351884
+  },
+  "most_favourable_admissible_reading_per_mwh": 13.11467851099831,
+  "atb_augmentation_finding": {
+    "atb_2024_page": "assume no variable O&M (VOM) costs. All operating costs are instead represented using fixed O&M (FOM) costs. The FOM costs include battery augmentation costs, which enables the system to operate at its rated capacity throughout its 15-year lifetime. FOM costs are estimated at 2.5% of the capital costs in $/kW.",
+    "nrel_85332": "We have allocated all operating costs (at the one-cycle-per-day level) to the FOM. By putting the operations and maintenance costs in the FOM rather than the VOM we in essence assume that battery performance has been guaranteed over the lifetime, such that operating the battery does not incur any costs to the battery operator.",
+    "carries_cycle_life": false,
+    "carries_retention": false,
+    "fom4_deflated_per_kw_yr": 40.934697367758,
+    "atb_fom_per_mwh_at_one_cycle_per_day": 28.03746395051918
+  },
+  "verdict": {
+    "G1_atb_cell_and_linearity": true,
+    "G2_phi_cited": true,
+    "G3_pair_cited": true,
+    "G4_admissibility_below_15": false,
+    "G5_no_new_dof": false,
+    "branch": "BRANCH_III_R_identified_and_refuted"
+  },
+  "sources": {
+    "ATB_2024_extract": "data/raw/nrel-atb/atb_2024{,v4}_electricity_filtered.part*.csv",
+    "ATB_2024_page": "https://atb.nrel.gov/electricity/2024/utility-scale_battery_storage",
+    "NREL_TP-6A40-85332": "https://www.osti.gov/servlets/purl/1984976 (sha256 3d351e895dd70c6e86c0d3ee22892fab73cccc040b597e12842d0c36dc46c676)",
+    "NREL_TP-7A40-83586": "https://www.osti.gov/servlets/purl/1891204 (sha256 2ee8ed8256f6df8496743b8a67ee248a2848feb2ba8e1653abe63be10c5e5569)",
+    "PNNL-33283": "https://www.energy.gov/sites/default/files/2022-09/2022%20Grid%20Energy%20Storage%20Technology%20Cost%20and%20Performance%20Assessment.pdf (sha256 8c15c2fdd30f0452d75e15767fb9128ac866c3e9dd15a03669d92fad1048976d)"
+  }
+}
