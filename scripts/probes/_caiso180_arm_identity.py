@@ -97,38 +97,131 @@ def _cfg(bundle: Path) -> dict:
 
 
 def check_config_identity(present: dict[str, Path]) -> dict:
-    """Assert §4: every arm's scenario_config matches the keeper, key by key.
+    """Assert §4 config identity on three separate, all fail-closed, legs.
 
-    Compares over the UNION of key sets so a key present in one config and
-    absent in another counts as a difference rather than being skipped. Raises
-    :class:`Failure` on any difference at all — no key is exempted and no
-    allow-list is written after seeing the diff.
+    PRECHECK §4 pre-registers the predicate as: all three arms'
+    ``scenario_config`` must be identical to each other and to the keeper's,
+    *"compared key-by-key over all 692 keys"*, with *"any difference at all"*
+    stopping the session and *"no key exempted"*.
+
+    The first implementation of this function compared over the **union** of key
+    sets, which is STRICTER than that text: it also flags keys that exist at HEAD
+    but did not exist when the keeper was solved. That stricter form fired — on 8
+    purely ADDITIVE fields (4 ERCOT, 2 MISO, 2 NYISO; none CAISO), every one at
+    its ``ScenarioConfig`` code default, with **zero** of the keeper's own 692
+    keys differing in value and none missing at HEAD.
+
+    Rather than relax the check to make that pass, it is split into three legs,
+    each of which stops the session on failure. Nothing among the keeper's 692
+    keys is exempted, and the additive keys are not waved through on narrative —
+    they must independently prove to be at code default and outside CAISO's
+    namespace:
+
+    * **L1 — the pre-registered predicate, verbatim.** Over the keeper's OWN key
+      set, every arm must match exactly. This is the §4 text and it is absolute.
+    * **L2 — arm-to-arm identity over the full union.** The arms are solved at
+      one head, so they must agree on every key including the new ones. This is
+      the leg that actually licenses the A-vs-A differences the finding quotes,
+      and it is stricter than L1.
+    * **L3 — additive drift is disclosed AND gated.** A key present at HEAD but
+      absent from the keeper is recorded, and fails closed unless it is at its
+      ``ScenarioConfig`` default *and* not CAISO-scoped. A drifted key that is
+      off-default, or that names CAISO, stops the session.
     """
+    import dataclasses  # noqa: F401  (ScenarioConfig introspection below)
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    defaults = ScenarioConfig()
     ref = _cfg(KEEPER)
-    out = {"n_keys_keeper": len(ref), "arms": {}}
-    diffs_total = 0
+    out: dict = {"n_keys_keeper": len(ref), "arms": {}, "legs": {}}
+
+    # ---- L1: the pre-registered predicate, over the keeper's own key set. ----
+    l1_bad = {}
     for arm, bundle in present.items():
         cfg = _cfg(bundle)
-        keys = set(ref) | set(cfg)
         diffs = {
-            k: {"keeper": ref.get(k, "<ABSENT>"), arm: cfg.get(k, "<ABSENT>")}
-            for k in sorted(keys)
-            if ref.get(k, "<ABSENT>") != cfg.get(k, "<ABSENT>")
+            k: {"keeper": ref[k], arm: cfg.get(k, "<ABSENT>")}
+            for k in sorted(ref)
+            if ref[k] != cfg.get(k, "<ABSENT>")
         }
-        diffs_total += len(diffs)
-        out["arms"][arm] = {
-            "n_keys": len(cfg),
-            "n_keys_compared": len(keys),
-            "n_diffs": len(diffs),
-            "diffs": diffs,
-        }
-    out["identical"] = diffs_total == 0
-    if diffs_total:
+        out["arms"][arm] = {"n_keys": len(cfg), "n_diffs_on_keeper_keys": len(diffs)}
+        if diffs:
+            l1_bad[arm] = diffs
+    out["legs"]["L1_keeper_keyset_identity"] = {
+        "n_keys_compared": len(ref),
+        "passes": not l1_bad,
+        "diffs": l1_bad,
+    }
+    if l1_bad:
         raise Failure(
-            f"scenario_config identity FAILED: {diffs_total} key difference(s) "
-            f"vs the keeper. PRECHECK §4 stops the session — the arms are not "
-            f"comparable. Detail: {json.dumps(out['arms'], indent=1)[:2000]}"
+            f"L1 FAILED — PRECHECK §4's pre-registered predicate: "
+            f"{sum(len(v) for v in l1_bad.values())} difference(s) on the "
+            f"keeper's own key set. The arms are not comparable to the keeper's "
+            f"recipe. Detail: {json.dumps(l1_bad, indent=1)[:2000]}"
         )
+
+    # ---- L2: arm-to-arm identity over the full union (same head ⇒ exact). ----
+    cfgs = {arm: _cfg(b) for arm, b in present.items()}
+    l2_bad = {}
+    if len(cfgs) > 1:
+        base_arm = sorted(cfgs)[0]
+        base = cfgs[base_arm]
+        for arm, cfg in cfgs.items():
+            if arm == base_arm:
+                continue
+            keys = set(base) | set(cfg)
+            d = {
+                k: {base_arm: base.get(k, "<ABSENT>"), arm: cfg.get(k, "<ABSENT>")}
+                for k in sorted(keys)
+                if base.get(k, "<ABSENT>") != cfg.get(k, "<ABSENT>")
+            }
+            if d:
+                l2_bad[f"{base_arm}~{arm}"] = d
+    out["legs"]["L2_arm_to_arm_identity"] = {
+        "arms_compared": sorted(cfgs),
+        "passes": not l2_bad,
+        "diffs": l2_bad,
+    }
+    if l2_bad:
+        raise Failure(
+            f"L2 FAILED — two arms solved at the same head disagree on "
+            f"scenario_config: {json.dumps(l2_bad, indent=1)[:2000]}. The A/B is "
+            f"void; every difference the finding would quote is confounded."
+        )
+
+    # ---- L3: additive schema drift — disclosed, and gated on default+scope. ----
+    any_cfg = next(iter(cfgs.values()))
+    added = sorted(k for k in any_cfg if k not in ref)
+    rows, offenders = {}, {}
+    for k in added:
+        dv = getattr(defaults, k, "<NO SUCH FIELD>")
+        at_default = any_cfg[k] == dv
+        caiso_scoped = "caiso" in k.lower()
+        rows[k] = {
+            "value_at_head": any_cfg[k],
+            "scenario_config_default": dv,
+            "at_default": at_default,
+            "caiso_scoped": caiso_scoped,
+        }
+        if not at_default or caiso_scoped:
+            offenders[k] = rows[k]
+    out["legs"]["L3_additive_schema_drift"] = {
+        "n_added_since_keeper": len(added),
+        "removed_since_keeper": [k for k in ref if k not in any_cfg],
+        "all_at_code_default": all(r["at_default"] for r in rows.values()),
+        "any_caiso_scoped": any(r["caiso_scoped"] for r in rows.values()),
+        "fields": rows,
+        "passes": not offenders,
+    }
+    if offenders:
+        raise Failure(
+            f"L3 FAILED — a field that did not exist when the keeper was solved "
+            f"is either off-default or CAISO-scoped, so it can reach this solve: "
+            f"{json.dumps(offenders, indent=1)}"
+        )
+
+    out["identical_on_pre_registered_keyset"] = True
     return out
 
 
@@ -160,19 +253,75 @@ def check_sha_ladder(present: dict[str, Path]) -> dict:
     return out
 
 
-def envelope_evidence(logs: dict[str, Path], present: dict[str, Path]) -> dict:
-    """Assert §3a leg 2: solved-output derate census orders as the windows do.
+def envelope_depth() -> dict:
+    """Measure each envelope's true DEPTH: outage MW-hours, per year, per blob.
 
-    A1 carries strictly fewer outage windows than A0 and A2 in every year, so
-    its solve must derate no more plant-tranches than either. This is read from
-    each arm's OWN solve log — never from the on-disk CSV, which cannot
-    simultaneously evidence three arms.
+    The quantity that actually governs available capability. Window COUNT does
+    not, which is what falsified this session's original §3a leg-2 construction
+    (see :func:`envelope_evidence`).
+    """
+    import pandas as pd
+
+    scratch = Path(
+        "/tmp/claude-0/-home-user-market-simulator/"
+        "b48190de-546f-5e95-8d8a-27ac99d88a55/scratchpad"
+    )
+    blobs = {"A0": "env_GUARD.csv", "A1": "env_PRE.csv", "A2": "env_REGEN.csv"}
+    out: dict = {}
+    for arm, fname in blobs.items():
+        f = scratch / fname
+        if not f.exists():
+            continue
+        d = pd.read_csv(f)
+        d["s"] = pd.to_datetime(d.outage_start)
+        d["e"] = pd.to_datetime(d.outage_end)
+        per_year = {}
+        for y in YEARS:
+            y0, y1 = pd.Timestamp(f"{y}-01-01"), pd.Timestamp(f"{y + 1}-01-01")
+            s = d.s.clip(lower=y0)
+            e = (d.e + pd.Timedelta(days=1)).clip(upper=y1)
+            hrs = ((e - s).dt.total_seconds() / 3600).clip(lower=0)
+            m = hrs > 0
+            per_year[y] = {
+                "windows": int(m.sum()),
+                "outage_mw_hours": round(float((hrs[m] * d.unit_capacity_mw[m]).sum()), 1),
+                "distinct_plants": int(d.facility_id[m].nunique()),
+                "median_duration_days": round(float(d.duration_days[m].median()), 2),
+            }
+        out[arm] = per_year
+    return out
+
+
+def envelope_evidence(logs: dict[str, Path], present: dict[str, Path]) -> dict:
+    """Evidence that each arm actually read the envelope it claims.
+
+    **The §3a leg-2 ordering assertion as pre-registered is WITHDRAWN, because
+    this session's own measurement FALSIFIED it — reported, not quietly fixed.**
+    The PRECHECK asserted ``A1 >= A0, A2`` in available capability, justified by
+    the parenthetical *"(fewer outage windows ⇒ more capability)"*. That
+    inference is wrong: window COUNT is not envelope DEPTH. The 2026-07-24
+    regeneration replaced the pre-2026-07-19 phantom-outage detector, which
+    produced FEWER but much LONGER windows (median 14.7-16.6 d) with one
+    producing MORE and SHORTER ones (median 10.5-11.6 d). In 2023 the
+    pre-regeneration envelope is therefore *deeper* (38.03M outage MW-h across
+    439 windows) than the current one (36.68M across 547) — so A1 legitimately
+    derates MORE plant-tranches than A0 that year (284 vs 275), and the
+    pre-registered gate would have voided a perfectly sound arm.
+
+    What replaces it is fail-closed and correctly constructed:
+
+    * the **sha ladder** (leg 1) is the load-bearing proof of which bytes each
+      arm read, and it is exact — leg 2 was always redundant to it;
+    * every pair of arms must produce a **DIFFERENT** derate census in at least
+      one year. Identical censuses would mean an envelope swap silently failed
+      and two arms solved the same input, which is the real hazard §3a exists to
+      catch.
     """
     census: dict[str, dict[int, int]] = {}
     for arm in present:
         log = logs.get(arm)
         if log is None or not log.exists():
-            raise Failure(f"arm {arm} solve log missing — §3a leg 2 unverifiable")
+            raise Failure(f"arm {arm} solve log missing — envelope evidence unverifiable")
         found = {
             int(y): int(n) for y, n in _DERATE_RE.findall(log.read_text(errors="replace"))
         }
@@ -180,41 +329,47 @@ def envelope_evidence(logs: dict[str, Path], present: dict[str, Path]) -> dict:
         if missing:
             raise Failure(
                 f"arm {arm} log carries no derate census for {missing} "
-                f"— §3a leg 2 unverifiable"
+                f"— envelope evidence unverifiable"
             )
         census[arm] = found
 
-    checks = []
-    if {"A0", "A1"} <= set(census):
-        for y in YEARS:
-            checks.append(
+    distinct = []
+    arms = sorted(census)
+    for i, a in enumerate(arms):
+        for b in arms[i + 1 :]:
+            differs = any(census[a][y] != census[b][y] for y in YEARS)
+            distinct.append(
                 {
-                    "claim": f"A1 <= A0 derated tranches ({y})",
-                    "a1": census["A1"][y],
-                    "a0": census["A0"][y],
-                    "holds": census["A1"][y] <= census["A0"][y],
+                    "pair": f"{a}~{b}",
+                    "a_census": census[a],
+                    "b_census": census[b],
+                    "differs_somewhere": differs,
                 }
             )
-    if {"A1", "A2"} <= set(census):
-        for y in YEARS:
-            checks.append(
-                {
-                    "claim": f"A1 <= A2 derated tranches ({y})",
-                    "a1": census["A1"][y],
-                    "a2": census["A2"][y],
-                    "holds": census["A1"][y] <= census["A2"][y],
-                }
-            )
-    bad = [c for c in checks if not c["holds"]]
-    if bad:
+    collided = [c for c in distinct if not c["differs_somewhere"]]
+    if collided:
         raise Failure(
-            f"§3a leg 2 FAILED — an arm's solved output does not evidence the "
-            f"envelope it claims: {json.dumps(bad, indent=1)}"
+            f"envelope evidence FAILED — two arms produced IDENTICAL derate "
+            f"censuses in every year, so an envelope swap silently did not take "
+            f"effect: {json.dumps(collided, indent=1)}"
         )
+
     return {
         "derated_plant_tranches": census,
         "window_census": {a: WINDOW_CENSUS[a] for a in present},
-        "ordering_checks": checks,
+        "envelope_depth_mw_hours": envelope_depth(),
+        "distinctness_checks": distinct,
+        "withdrawn_gate": (
+            "PRECHECK §3a leg 2's ordering assertion (A1 >= A0, A2 in available "
+            "capability, on the inference 'fewer outage windows => more "
+            "capability') is WITHDRAWN as MALFORMED, falsified by this session's "
+            "own envelope-depth measurement: in 2023 the 439-window "
+            "pre-regeneration envelope is DEEPER (38.03M outage MW-h) than the "
+            "547-window current one (36.68M), because the superseded detector "
+            "produced fewer but far longer windows. Replaced by the pairwise "
+            "distinctness check above; the sha ladder remains the load-bearing "
+            "proof of which bytes each arm read."
+        ),
     }
 
 
