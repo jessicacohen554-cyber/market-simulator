@@ -3032,3 +3032,45 @@ working the NEISO `final` prerequisites on the corrected never-granted framing (
 digesting D-23 as intended); a DECISION-MEMO on an ercot-148/149 dashboard double-count
 was filed by a calibration session for the owner — not an FFR matter, flagged so it is not
 lost. Keepers unmoved all cycle.
+
+## Addendum AA — TAXONOMY complete: controls in, HOLD PROMOTION honoured; the promotion card; the v3.1/MISO re-score finding
+
+**Written 2026-08-07 by the workstream manager at `origin/main` `d3340718`.**
+
+### AA.1 TAXONOMY — ADJUDICATED CLEAN AND COMPLETE (PRs #3691/#3697); D-25 executed
+
+The paired controls landed (the session was alive — the manager's conditional TAXONOMY-M
+prompt is MOOT, correctly never pasted): NYISO pair `2026-08-07-nyiso-131-taxgs-{control,
+arm}` and MISO pair `2026-08-07-miso-133-taxgs-{control,arm}`, both registered and scored
+through the full pipeline. **Verdict grain: nothing moves in either ISO** (all criterion
+statuses and determinations identical between arms). Hourly grain: small, physical,
+direction-correct deltas (NYISO: the cogen bin runs more on its corrected heat rate,
+≤0.02 $/MWh mean-LMP; MISO: ST_GAS +0.25 TWh displacing peakers/PRB/imports, ≤0.03 $/MWh —
+and NOTABLY the move NARROWS the ST_GAS overnight under-supply seam miso-130/132b name as
+their open root cause). No gate approached. HOLD PROMOTION honoured to the letter: both
+keepers untouched, both arm bundles registered ready-to-promote WITHOUT re-solving. The
+NEISO tail (9.3 MW, two CHP bins) remains handed off with the working per-year
+replay_keeper chain documented (the MISO 3-year OOM recipe — a trap now on record).
+
+### AA.2 Surfaced finding, NOT a D-25 effect: MISO's keeper re-scores NOT-YET at HEAD under rubric v3.1
+
+The session proved it cleanly: re-running today's `calibration_verdict` on the MISO keeper
+bundle itself yields C3a 2025 −14.1 % FAIL where the committed metrics.json records a
+ledgered CAVEAT — the rubric-v3.1 amendment (C3c now the only ledgerable criterion; the
+fail-closed guard refuses the old C3a ledger entry). Keeper, control and arm all read
+identically, so this is RE-SCORING DRIFT affecting the standing keeper's status at HEAD,
+not a taxonomy effect. This belongs to the MISO calibration lane / rubric governance, not
+FFR — recorded here so it is not lost, flagged to the owner, and NOT adjudicated by this
+manager.
+
+### AA.3 Card D-27 — promote the taxonomy arms?
+
+The accurate taxonomy is the truthful fleet representation (rule 14); the current
+NYISO/MISO keepers embed the superseded heat rates and any future replay at HEAD runs
+reclassed. Manager recommendation, SPLIT: **(a) NYISO — promote `nyiso-131-taxgs-arm`
+now** (determination identical, deltas tiny and physical, D-5(b) does not bind — NYISO's
+`complete` keeper field re-keys with determination re-verification per rule 22, which the
+registered scoring already provides); **(b) MISO — DEFER** until the AA.2 v3.1 re-score
+question is adjudicated by its own lane (promoting into a disputed determination would
+entangle two changes). The NEISO 9.3 MW tail rides whichever future NEISO session solves
+next (not worth a standalone lane).
