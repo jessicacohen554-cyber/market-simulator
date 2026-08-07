@@ -2924,3 +2924,57 @@ Dispositions recorded by addendum when signed.
   instrument-driven; empty set reports n/a, never 0/N. Charter **SCORE-GATE** (small,
   scorer-only).
 Both prompts: pack §0t addendum. FFR-7B-2 (already in §0t) dispatches alongside them.
+
+## Addendum Y — Wave 7 fully discharged: D-22/D-23/D-24 executed; program position
+
+**Written 2026-08-06 by the workstream manager at `origin/main` `2f4792cd`.**
+
+### Y.1 The three lanes, adjudicated
+
+* **FFR-7B-2 — CLEAN (PRs #3679/#3682). D-22(a) is FULLY DISCHARGED** (Arm 1 at X.2, Arms
+  2–3 here). `miso_rps_compliance_regions` and `miso_clean_tier_rows` both default OFF and
+  cache-key-registered (pin tests run before edit and after — the guard held); K=1
+  byte-identity by regression test; per-zone credit companion at all three consumers; Arm-3
+  arming BLOCKED on the open §45U composition, stated in cited comments as ordered. The
+  bounded 2026–2030 MISO pairs (three serial legs, forecast namespace only) show the grain
+  live exactly where the statutes put it: **Michigan's in-state row pins at its $30 ACP
+  every year** (MCL 460.1029's restriction unmeetable from MISO-East generation — FFR-6B's
+  24.7 pp deficit as a price), **Illinois pins from 2027**, and the delivery-based MN/WI/MO
+  rows stay correctly slack on Midwest-footprint wind. The control's ISO-wide row only pins
+  from 2029 — the dilution defect, visible in the same table.
+* **NEISO-RECORD — CLEAN (PR #3676). D-23 EXECUTED**: marker, `final._note`, CLAUDE.md rule
+  22, freeze file, sidecar, matrix doc, logs and second-hand repeats all corrected to NEVER
+  GRANTED with the citation chain; blob verification recorded for the CLAUDE.md push;
+  `holdout_policy.authorized` re-confirmed False for NEISO/locked_test (the correction
+  granted nothing). The sitting record's own second-hand SPENT repeats were corrected by
+  addendum, not rewritten.
+* **SCORE-GATE — CLEAN (PR #3673). D-24 EXECUTED**: `unit_recall_gt300` now measures the
+  reachable set (fleet-carried AND economic-or-vintage-visible-instrument), fail-closed on
+  missing evidence, with the non-gated unreachable-exits diagnostic line; ERCOT reports n/a
+  with the 5-row diagnostic instead of a permanent 0/2 FAIL.
+
+### Y.2 Program position after Wave 7
+
+Every signed decision through D-24 is discharged. The remaining board:
+* **Owner-gated:** D-21(a) scarcity-restoration diagnosis (DEFERRED — the FH-4/FH-5 path;
+  only the owner re-opens); the gas_st↔gas_ct taxonomy seam (card ready — D-25 below); the
+  Arm-2 arming decision (card ready — D-26 below); Arm-3 arming (blocked on §45U, needs its
+  own design decision first); any NEISO `final` grant (correctly framed now as
+  never-granted; neiso-87's merits answer NOT YET).
+* **Unowned housekeeping:** FFR-3V §6.1 (still blocks FFR-5E's hindcast arm), FFR-4D row-4,
+  the ruff-autofix/constants.py lint config, assign_zone_by_coords PJM/MISO zone rules, the
+  CI gap (default-key pin tests red on main did not block a merge), pre-existing test
+  failures.
+
+### Y.3 Cards put at this sitting
+
+* **D-25 — the gas_st↔gas_ct taxonomy seam** (FFR-7A §4.1, carried through 7C bar-invariant):
+  `_map_fuel_type` has no gas_st branch, so no gas_st model retirement can ever be credited
+  against an actual in any ISO, and gas-steam target rows carry a CT bar. Fix = add the
+  branch + regenerate affected artifacts; blast radius = every ISO's fleet/target fuel
+  classing, so it needs an owner signature and a careful lane, not a drive-by.
+* **D-26 — arm `miso_rps_compliance_regions` for MISO forecast runs** (ISOConfig override,
+  the D-2' pattern): the measurement shows the grain real, statutory, and confined to where
+  the statutes bind; unarmed leaves Michigan's and Illinois' binding statutes diluted to
+  the ISO-wide blend through 2028. Rule-25 clean (MISO evidence, MISO arming).
+Dispositions recorded by addendum when signed.
