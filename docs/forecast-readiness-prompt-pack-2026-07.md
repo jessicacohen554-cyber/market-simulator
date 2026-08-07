@@ -4195,3 +4195,14 @@ staging; restore exact HEAD bytes. Push 413: fetch main + rebase first. Never pu
 Deliverable: the PR + docs/handoffs/arm-miso-rps-regions-<date>.md — the override entry,
 the backcast-untouched proof, the matrix re-stamp, and the §45U/Arm-3 unarmed statement.
 ```
+
+## §0v — ARM-MISO discharged; TAXONOMY controls pending (2026-08-07 @ `0e47ab67`)
+
+D-26 EXECUTED (MISO forecast default armed, backcast-untouched proven by test, matrix
+O → K). D-25's fix is ON MAIN (CAISO/PJM/ERCOT byte-identical; MISO/NYISO/NEISO carry a
+14-bin heat-rate residue) but its MISO/NYISO paired-control RESULTS ARE NOT — the merged
+handoff carries a live placeholder; NEISO tail handed off with harness. HOLD PROMOTION
+until they land. PARALLEL SESSIONS: MISO/NYISO/NEISO solves at HEAD are on the reclassed
+fleet — small metric deltas vs keepers are D-25's, cite Addendum Z.2. No new dispatch this
+cycle; next manager action is tracking the control results (re-charter from the committed
+harness if silent — the FFR-5D-M pattern).
