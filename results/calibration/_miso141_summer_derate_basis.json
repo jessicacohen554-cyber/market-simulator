@@ -1,0 +1,1721 @@
+{
+ "bundle": "miso132_ccmin_B",
+ "controls": [
+  "ST_GAS",
+  "ST_CHP",
+  "COAL"
+ ],
+ "g2_basis": {
+  "2023": {
+   "CC_CHP": {
+    "lp_pmax_mw": 7286.400000000001,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 7286.400000000001,
+    "n_matched_860": 86,
+    "n_units": 86,
+    "share_cap_eq_nameplate_1pct": 0.14695871761089155,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 8155.499999999999,
+    "sum_net_summer_mw": 7286.400000000001,
+    "sum_winter_mw": 8139.5
+   },
+   "CC_REGULAR": {
+    "lp_pmax_mw": 27410.399999999998,
+    "match_share_of_class_cap": 0.8943853435492015,
+    "matched_pmax_mw": 24515.460020821032,
+    "n_matched_860": 139,
+    "n_units": 160,
+    "share_cap_eq_nameplate_1pct": 0.2123231624280847,
+    "share_cap_eq_net_summer_1pct": 0.8359011000648439,
+    "sum_nameplate_mw": 25850.899999999998,
+    "sum_net_summer_mw": 26206.800000000003,
+    "sum_winter_mw": 27005.4
+   },
+   "COAL": {
+    "lp_pmax_mw": 42800.20000000001,
+    "match_share_of_class_cap": 0.9999649534347971,
+    "matched_pmax_mw": 42798.70000000001,
+    "n_matched_860": 108,
+    "n_units": 109,
+    "share_cap_eq_nameplate_1pct": 0.03880725349134435,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 46532.100000000006,
+    "sum_net_summer_mw": 42798.70000000001,
+    "sum_winter_mw": 43265.200000000004
+   },
+   "CT_CHP": {
+    "lp_pmax_mw": 2625.5000000000005,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 2625.5000000000005,
+    "n_matched_860": 96,
+    "n_units": 96,
+    "share_cap_eq_nameplate_1pct": 0.05755094267758522,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 3090.7000000000003,
+    "sum_net_summer_mw": 2625.5000000000005,
+    "sum_winter_mw": 2970.8
+   },
+   "CT_PEAKER": {
+    "lp_pmax_mw": 22289.160000000003,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 22289.160000000003,
+    "n_matched_860": 516,
+    "n_units": 516,
+    "share_cap_eq_nameplate_1pct": 0.07203950261023744,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 26348.399999999998,
+    "sum_net_summer_mw": 22289.160000000003,
+    "sum_winter_mw": 25805.95
+   },
+   "ST_CHP": {
+    "lp_pmax_mw": 1931.5,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 1931.5,
+    "n_matched_860": 98,
+    "n_units": 98,
+    "share_cap_eq_nameplate_1pct": 0.2361377168004142,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 2272.9999999999995,
+    "sum_net_summer_mw": 1931.5,
+    "sum_winter_mw": 1933.1000000000001
+   },
+   "ST_GAS": {
+    "lp_pmax_mw": 10991.4,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 10991.4,
+    "n_matched_860": 39,
+    "n_units": 39,
+    "share_cap_eq_nameplate_1pct": 0.029950688720272213,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 12519.0,
+    "sum_net_summer_mw": 10991.4,
+    "sum_winter_mw": 11146.800000000001
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "lp_pmax_mw": 7286.400000000001,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 7286.400000000001,
+    "n_matched_860": 86,
+    "n_units": 86,
+    "share_cap_eq_nameplate_1pct": 0.14695871761089155,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 8155.499999999999,
+    "sum_net_summer_mw": 7286.400000000001,
+    "sum_winter_mw": 8139.5
+   },
+   "CC_REGULAR": {
+    "lp_pmax_mw": 27410.399999999998,
+    "match_share_of_class_cap": 0.8943853435492015,
+    "matched_pmax_mw": 24515.460020821032,
+    "n_matched_860": 139,
+    "n_units": 160,
+    "share_cap_eq_nameplate_1pct": 0.2123231624280847,
+    "share_cap_eq_net_summer_1pct": 0.8359011000648439,
+    "sum_nameplate_mw": 25850.899999999998,
+    "sum_net_summer_mw": 26206.800000000003,
+    "sum_winter_mw": 27005.4
+   },
+   "COAL": {
+    "lp_pmax_mw": 42800.20000000001,
+    "match_share_of_class_cap": 0.9999649534347971,
+    "matched_pmax_mw": 42798.70000000001,
+    "n_matched_860": 108,
+    "n_units": 109,
+    "share_cap_eq_nameplate_1pct": 0.03880725349134435,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 46532.100000000006,
+    "sum_net_summer_mw": 42798.70000000001,
+    "sum_winter_mw": 43265.200000000004
+   },
+   "CT_CHP": {
+    "lp_pmax_mw": 2625.5000000000005,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 2625.5000000000005,
+    "n_matched_860": 96,
+    "n_units": 96,
+    "share_cap_eq_nameplate_1pct": 0.05755094267758522,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 3090.7000000000003,
+    "sum_net_summer_mw": 2625.5000000000005,
+    "sum_winter_mw": 2970.8
+   },
+   "CT_PEAKER": {
+    "lp_pmax_mw": 22289.160000000003,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 22289.160000000003,
+    "n_matched_860": 516,
+    "n_units": 516,
+    "share_cap_eq_nameplate_1pct": 0.07203950261023744,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 26348.399999999998,
+    "sum_net_summer_mw": 22289.160000000003,
+    "sum_winter_mw": 25805.95
+   },
+   "ST_CHP": {
+    "lp_pmax_mw": 1935.4,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 1935.4,
+    "n_matched_860": 99,
+    "n_units": 99,
+    "share_cap_eq_nameplate_1pct": 0.23566187868140953,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 2276.2,
+    "sum_net_summer_mw": 1935.4,
+    "sum_winter_mw": 1935.0000000000002
+   },
+   "ST_GAS": {
+    "lp_pmax_mw": 10987.499999999998,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 10987.499999999998,
+    "n_matched_860": 38,
+    "n_units": 38,
+    "share_cap_eq_nameplate_1pct": 0.029961319681456204,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 12515.8,
+    "sum_net_summer_mw": 10987.499999999998,
+    "sum_winter_mw": 11144.9
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "lp_pmax_mw": 7286.400000000001,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 7286.400000000001,
+    "n_matched_860": 86,
+    "n_units": 86,
+    "share_cap_eq_nameplate_1pct": 0.14695871761089155,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 8155.499999999999,
+    "sum_net_summer_mw": 7286.400000000001,
+    "sum_winter_mw": 8139.5
+   },
+   "CC_REGULAR": {
+    "lp_pmax_mw": 27410.399999999998,
+    "match_share_of_class_cap": 0.8943853435492015,
+    "matched_pmax_mw": 24515.460020821032,
+    "n_matched_860": 139,
+    "n_units": 160,
+    "share_cap_eq_nameplate_1pct": 0.2123231624280847,
+    "share_cap_eq_net_summer_1pct": 0.8359011000648439,
+    "sum_nameplate_mw": 25850.899999999998,
+    "sum_net_summer_mw": 26206.800000000003,
+    "sum_winter_mw": 27005.4
+   },
+   "COAL": {
+    "lp_pmax_mw": 42800.20000000001,
+    "match_share_of_class_cap": 0.9999649534347971,
+    "matched_pmax_mw": 42798.70000000001,
+    "n_matched_860": 108,
+    "n_units": 109,
+    "share_cap_eq_nameplate_1pct": 0.03880725349134435,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 46532.100000000006,
+    "sum_net_summer_mw": 42798.70000000001,
+    "sum_winter_mw": 43265.200000000004
+   },
+   "CT_CHP": {
+    "lp_pmax_mw": 2625.5000000000005,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 2625.5000000000005,
+    "n_matched_860": 96,
+    "n_units": 96,
+    "share_cap_eq_nameplate_1pct": 0.05755094267758522,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 3090.7000000000003,
+    "sum_net_summer_mw": 2625.5000000000005,
+    "sum_winter_mw": 2970.8
+   },
+   "CT_PEAKER": {
+    "lp_pmax_mw": 22289.160000000003,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 22289.160000000003,
+    "n_matched_860": 516,
+    "n_units": 516,
+    "share_cap_eq_nameplate_1pct": 0.07203950261023744,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 26348.399999999998,
+    "sum_net_summer_mw": 22289.160000000003,
+    "sum_winter_mw": 25805.95
+   },
+   "ST_CHP": {
+    "lp_pmax_mw": 1935.4,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 1935.4,
+    "n_matched_860": 99,
+    "n_units": 99,
+    "share_cap_eq_nameplate_1pct": 0.23566187868140953,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 2276.2,
+    "sum_net_summer_mw": 1935.4,
+    "sum_winter_mw": 1935.0000000000002
+   },
+   "ST_GAS": {
+    "lp_pmax_mw": 10987.499999999998,
+    "match_share_of_class_cap": 1.0,
+    "matched_pmax_mw": 10987.499999999998,
+    "n_matched_860": 38,
+    "n_units": 38,
+    "share_cap_eq_nameplate_1pct": 0.029961319681456204,
+    "share_cap_eq_net_summer_1pct": 1.0,
+    "sum_nameplate_mw": 12515.8,
+    "sum_net_summer_mw": 10987.499999999998,
+    "sum_winter_mw": 11144.9
+   }
+  }
+ },
+ "g3_magnitude": {
+  "2023": {
+   "CC_CHP": {
+    "eia860_nameplate_mw": 8155.499999999999,
+    "eia860_net_summer_mw": 7286.400000000001,
+    "eia860_winter_mw": 8139.5,
+    "excess_share_of_summer_capability_pct": 11.11111111111106,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 671.7352878089595,
+    "flat_derate_removal_mw_summer_mean": 671.8402506056333,
+    "gap_nameplate_to_summer_pct": 10.656612102262264,
+    "lp_pmax_mw": 7286.400000000001,
+    "n_units_lp": 86,
+    "ratio_net_summer_over_nameplate": 0.8934338789773774,
+    "ratio_winter_over_net_summer": 1.1170811374615721,
+    "spread_summer_to_winter_pct": 11.708113746157212,
+    "stacked_summer_vs_nameplate_ratio": 0.7414091417387934,
+    "stacked_summer_vs_net_summer_ratio": 0.8298422067757367,
+    "summer_mean_availability": 0.8298422067757366,
+    "summer_mean_availability_no_flat_derate": 0.9220468964174847,
+    "summer_mean_capability_mw": 6046.562255450728,
+    "summer_mean_capability_mw_no_flat_derate": 6718.402506056361
+   },
+   "CC_REGULAR": {
+    "eia860_nameplate_mw": 25850.899999999998,
+    "eia860_net_summer_mw": 26206.800000000003,
+    "eia860_winter_mw": 27005.4,
+    "excess_share_of_summer_capability_pct": 11.11111111111111,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 2420.2614187767444,
+    "flat_derate_removal_mw_summer_mean": 2421.065171747939,
+    "gap_nameplate_to_summer_pct": -1.3767412353148378,
+    "lp_pmax_mw": 27410.399999999998,
+    "n_units_lp": 160,
+    "ratio_net_summer_over_nameplate": 1.0137674123531484,
+    "ratio_winter_over_net_summer": 1.0304730070058152,
+    "spread_summer_to_winter_pct": 3.0473007005815234,
+    "stacked_summer_vs_nameplate_ratio": 0.8428946978918125,
+    "stacked_summer_vs_net_summer_ratio": 0.8314478130001164,
+    "summer_mean_availability": 0.7949386563396177,
+    "summer_mean_availability_no_flat_derate": 0.8832651737106862,
+    "summer_mean_capability_mw": 21789.586545731454,
+    "summer_mean_capability_mw_no_flat_derate": 24210.65171747939
+   },
+   "COAL": {
+    "eia860_nameplate_mw": 46532.100000000006,
+    "eia860_net_summer_mw": 42798.70000000001,
+    "eia860_winter_mw": 43265.200000000004,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 8.023278553944468,
+    "lp_pmax_mw": 42800.20000000001,
+    "n_units_lp": 109,
+    "ratio_net_summer_over_nameplate": 0.9197672144605553,
+    "ratio_winter_over_net_summer": 1.010899863780909,
+    "spread_summer_to_winter_pct": 1.0899863780909014,
+    "stacked_summer_vs_nameplate_ratio": 0.687812793455378,
+    "stacked_summer_vs_net_summer_ratio": 0.7478118187315268,
+    "summer_mean_availability": 0.747785610495862,
+    "summer_mean_availability_no_flat_derate": 0.747785610495862,
+    "summer_mean_capability_mw": 32005.373686345003,
+    "summer_mean_capability_mw_no_flat_derate": 32005.373686345003
+   },
+   "CT_CHP": {
+    "eia860_nameplate_mw": 3090.7000000000003,
+    "eia860_net_summer_mw": 2625.5000000000005,
+    "eia860_winter_mw": 2970.8,
+    "excess_share_of_summer_capability_pct": 14.28571428571429,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 303.6398964935008,
+    "flat_derate_removal_mw_summer_mean": 305.9466065338207,
+    "gap_nameplate_to_summer_pct": 15.051606432199815,
+    "lp_pmax_mw": 2625.5000000000005,
+    "n_units_lp": 96,
+    "ratio_net_summer_over_nameplate": 0.8494839356780018,
+    "ratio_winter_over_net_summer": 1.1315178061321651,
+    "spread_summer_to_winter_pct": 13.151780613216513,
+    "stacked_summer_vs_nameplate_ratio": 0.6929259539058285,
+    "stacked_summer_vs_net_summer_ratio": 0.8157022455672229,
+    "summer_mean_availability": 0.815702245567223,
+    "summer_mean_availability_no_flat_derate": 0.9322311377911121,
+    "summer_mean_capability_mw": 2141.6262457367443,
+    "summer_mean_capability_mw_no_flat_derate": 2447.572852270565
+   },
+   "CT_PEAKER": {
+    "eia860_nameplate_mw": 26348.399999999998,
+    "eia860_net_summer_mw": 22289.160000000003,
+    "eia860_winter_mw": 25805.95,
+    "excess_share_of_summer_capability_pct": 14.285714285714292,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 2537.7095167102657,
+    "flat_derate_removal_mw_summer_mean": 2539.010957781363,
+    "gap_nameplate_to_summer_pct": 15.406020858951564,
+    "lp_pmax_mw": 22289.160000000003,
+    "n_units_lp": 516,
+    "ratio_net_summer_over_nameplate": 0.8459397914104844,
+    "ratio_winter_over_net_summer": 1.1577802842278486,
+    "spread_summer_to_winter_pct": 15.778028422784862,
+    "stacked_summer_vs_nameplate_ratio": 0.6745410235334797,
+    "stacked_summer_vs_net_summer_ratio": 0.7973865638933694,
+    "summer_mean_availability": 0.7973865638933694,
+    "summer_mean_availability_no_flat_derate": 0.9112989301638507,
+    "summer_mean_capability_mw": 17773.076704469535,
+    "summer_mean_capability_mw_no_flat_derate": 20312.0876622509
+   },
+   "ST_CHP": {
+    "eia860_nameplate_mw": 2272.9999999999995,
+    "eia860_net_summer_mw": 1931.5,
+    "eia860_winter_mw": 1933.1000000000001,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 15.024197096348423,
+    "lp_pmax_mw": 1931.5,
+    "n_units_lp": 98,
+    "ratio_net_summer_over_nameplate": 0.8497580290365158,
+    "ratio_winter_over_net_summer": 1.0008283717318147,
+    "spread_summer_to_winter_pct": 0.08283717318147144,
+    "stacked_summer_vs_nameplate_ratio": 0.6630977791368865,
+    "stacked_summer_vs_net_summer_ratio": 0.7803371742056135,
+    "summer_mean_availability": 0.7803371742056135,
+    "summer_mean_availability_no_flat_derate": 0.7803371742056135,
+    "summer_mean_capability_mw": 1507.2212519781426,
+    "summer_mean_capability_mw_no_flat_derate": 1507.2212519781426
+   },
+   "ST_GAS": {
+    "eia860_nameplate_mw": 12519.0,
+    "eia860_net_summer_mw": 10991.4,
+    "eia860_winter_mw": 11146.800000000001,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 12.20225257608435,
+    "lp_pmax_mw": 10991.4,
+    "n_units_lp": 39,
+    "ratio_net_summer_over_nameplate": 0.8779774742391565,
+    "ratio_winter_over_net_summer": 1.0141383263278565,
+    "spread_summer_to_winter_pct": 1.4138326327856499,
+    "stacked_summer_vs_nameplate_ratio": 0.4869826744337523,
+    "stacked_summer_vs_net_summer_ratio": 0.554664201215145,
+    "summer_mean_availability": 0.554664201215145,
+    "summer_mean_availability_no_flat_derate": 0.554664201215145,
+    "summer_mean_capability_mw": 6096.536101236145,
+    "summer_mean_capability_mw_no_flat_derate": 6096.536101236145
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "eia860_nameplate_mw": 8155.499999999999,
+    "eia860_net_summer_mw": 7286.400000000001,
+    "eia860_winter_mw": 8139.5,
+    "excess_share_of_summer_capability_pct": 11.111111111111093,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 682.4594793268288,
+    "flat_derate_removal_mw_summer_mean": 682.7533761561922,
+    "gap_nameplate_to_summer_pct": 10.656612102262264,
+    "lp_pmax_mw": 7286.400000000001,
+    "n_units_lp": 86,
+    "ratio_net_summer_over_nameplate": 0.8934338789773774,
+    "ratio_winter_over_net_summer": 1.1170811374615721,
+    "spread_summer_to_winter_pct": 11.708113746157212,
+    "stacked_summer_vs_nameplate_ratio": 0.7534523187303955,
+    "stacked_summer_vs_net_summer_ratio": 0.8433218579004363,
+    "summer_mean_availability": 0.8433218579004363,
+    "summer_mean_availability_no_flat_derate": 0.9370242865560402,
+    "summer_mean_capability_mw": 6144.78038540574,
+    "summer_mean_capability_mw_no_flat_derate": 6827.533761561932
+   },
+   "CC_REGULAR": {
+    "eia860_nameplate_mw": 25850.899999999998,
+    "eia860_net_summer_mw": 26206.800000000003,
+    "eia860_winter_mw": 27005.4,
+    "excess_share_of_summer_capability_pct": 11.111111111111086,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 2331.4035063432175,
+    "flat_derate_removal_mw_summer_mean": 2332.070156034105,
+    "gap_nameplate_to_summer_pct": -1.3767412353148378,
+    "lp_pmax_mw": 27410.399999999998,
+    "n_units_lp": 160,
+    "ratio_net_summer_over_nameplate": 1.0137674123531484,
+    "ratio_winter_over_net_summer": 1.0304730070058152,
+    "spread_summer_to_winter_pct": 3.0473007005815234,
+    "stacked_summer_vs_nameplate_ratio": 0.8119110516193631,
+    "stacked_summer_vs_net_summer_ratio": 0.800884938424645,
+    "summer_mean_availability": 0.7657178079964901,
+    "summer_mean_availability_no_flat_derate": 0.8507975644405444,
+    "summer_mean_capability_mw": 20988.63140430699,
+    "summer_mean_capability_mw_no_flat_derate": 23320.7015603411
+   },
+   "COAL": {
+    "eia860_nameplate_mw": 46532.100000000006,
+    "eia860_net_summer_mw": 42798.70000000001,
+    "eia860_winter_mw": 43265.200000000004,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 8.023278553944468,
+    "lp_pmax_mw": 42800.20000000001,
+    "n_units_lp": 109,
+    "ratio_net_summer_over_nameplate": 0.9197672144605553,
+    "ratio_winter_over_net_summer": 1.010899863780909,
+    "spread_summer_to_winter_pct": 1.0899863780909014,
+    "stacked_summer_vs_nameplate_ratio": 0.6993918758129839,
+    "stacked_summer_vs_net_summer_ratio": 0.7604009632189143,
+    "summer_mean_availability": 0.7603743137769763,
+    "summer_mean_availability_no_flat_derate": 0.7603743137769763,
+    "summer_mean_capability_mw": 32544.172704517354,
+    "summer_mean_capability_mw_no_flat_derate": 32544.172704517354
+   },
+   "CT_CHP": {
+    "eia860_nameplate_mw": 3090.7000000000003,
+    "eia860_net_summer_mw": 2625.5000000000005,
+    "eia860_winter_mw": 2970.8,
+    "excess_share_of_summer_capability_pct": 14.285714285714294,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 303.61123952515106,
+    "flat_derate_removal_mw_summer_mean": 305.8939986555396,
+    "gap_nameplate_to_summer_pct": 15.051606432199815,
+    "lp_pmax_mw": 2625.5000000000005,
+    "n_units_lp": 96,
+    "ratio_net_summer_over_nameplate": 0.8494839356780018,
+    "ratio_winter_over_net_summer": 1.1315178061321651,
+    "spread_summer_to_winter_pct": 13.151780613216513,
+    "stacked_summer_vs_nameplate_ratio": 0.6928068044743182,
+    "stacked_summer_vs_net_summer_ratio": 0.8155619846081794,
+    "summer_mean_availability": 0.8155619846081795,
+    "summer_mean_availability_no_flat_derate": 0.9320708395522053,
+    "summer_mean_capability_mw": 2141.2579905887756,
+    "summer_mean_capability_mw_no_flat_derate": 2447.1519892443152
+   },
+   "CT_PEAKER": {
+    "eia860_nameplate_mw": 26348.399999999998,
+    "eia860_net_summer_mw": 22289.160000000003,
+    "eia860_winter_mw": 25805.95,
+    "excess_share_of_summer_capability_pct": 14.285714285714326,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 2535.778138129967,
+    "flat_derate_removal_mw_summer_mean": 2537.2565281079937,
+    "gap_nameplate_to_summer_pct": 15.406020858951564,
+    "lp_pmax_mw": 22289.160000000003,
+    "n_units_lp": 516,
+    "ratio_net_summer_over_nameplate": 0.8459397914104844,
+    "ratio_winter_over_net_summer": 1.1577802842278486,
+    "spread_summer_to_winter_pct": 15.778028422784862,
+    "stacked_summer_vs_nameplate_ratio": 0.6740749228323507,
+    "stacked_summer_vs_net_summer_ratio": 0.7968355782252855,
+    "summer_mean_availability": 0.7968355782252855,
+    "summer_mean_availability_no_flat_derate": 0.9106692322574694,
+    "summer_mean_capability_mw": 17760.795696755908,
+    "summer_mean_capability_mw_no_flat_derate": 20298.0522248639
+   },
+   "ST_CHP": {
+    "eia860_nameplate_mw": 2276.2,
+    "eia860_net_summer_mw": 1935.4,
+    "eia860_winter_mw": 1935.0000000000002,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 14.97232229153852,
+    "lp_pmax_mw": 1935.4,
+    "n_units_lp": 99,
+    "ratio_net_summer_over_nameplate": 0.8502767770846148,
+    "ratio_winter_over_net_summer": 0.9997933243773898,
+    "spread_summer_to_winter_pct": -0.020667562261023065,
+    "stacked_summer_vs_nameplate_ratio": 0.6729083703763222,
+    "stacked_summer_vs_net_summer_ratio": 0.7913992108352714,
+    "summer_mean_availability": 0.7913992108352715,
+    "summer_mean_availability_no_flat_derate": 0.7913992108352715,
+    "summer_mean_capability_mw": 1531.6740326505844,
+    "summer_mean_capability_mw_no_flat_derate": 1531.6740326505844
+   },
+   "ST_GAS": {
+    "eia860_nameplate_mw": 12515.8,
+    "eia860_net_summer_mw": 10987.499999999998,
+    "eia860_winter_mw": 11144.9,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 12.210965339810487,
+    "lp_pmax_mw": 10987.499999999998,
+    "n_units_lp": 38,
+    "ratio_net_summer_over_nameplate": 0.8778903466018951,
+    "ratio_winter_over_net_summer": 1.0143253697383392,
+    "spread_summer_to_winter_pct": 1.43253697383392,
+    "stacked_summer_vs_nameplate_ratio": 0.5214337106194663,
+    "stacked_summer_vs_net_summer_ratio": 0.5939622330258127,
+    "summer_mean_availability": 0.5939622330258127,
+    "summer_mean_availability_no_flat_derate": 0.5939622330258127,
+    "summer_mean_capability_mw": 6526.1600353711165,
+    "summer_mean_capability_mw_no_flat_derate": 6526.1600353711165
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "eia860_nameplate_mw": 8155.499999999999,
+    "eia860_net_summer_mw": 7286.400000000001,
+    "eia860_winter_mw": 8139.5,
+    "excess_share_of_summer_capability_pct": 11.111111111111114,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 647.0847652718842,
+    "flat_derate_removal_mw_summer_mean": 647.2688742132458,
+    "gap_nameplate_to_summer_pct": 10.656612102262264,
+    "lp_pmax_mw": 7286.400000000001,
+    "n_units_lp": 86,
+    "ratio_net_summer_over_nameplate": 0.8934338789773774,
+    "ratio_winter_over_net_summer": 1.1170811374615721,
+    "spread_summer_to_winter_pct": 11.708113746157212,
+    "stacked_summer_vs_nameplate_ratio": 0.714293405422011,
+    "stacked_summer_vs_net_summer_ratio": 0.7994921865282183,
+    "summer_mean_availability": 0.7994921865282183,
+    "summer_mean_availability_no_flat_derate": 0.8883246516980204,
+    "summer_mean_capability_mw": 5825.41986791921,
+    "summer_mean_capability_mw_no_flat_derate": 6472.688742132456
+   },
+   "CC_REGULAR": {
+    "eia860_nameplate_mw": 25850.899999999998,
+    "eia860_net_summer_mw": 26206.800000000003,
+    "eia860_winter_mw": 27005.4,
+    "excess_share_of_summer_capability_pct": 11.111111111111127,
+    "flat_derate": 0.1,
+    "flat_derate_removal_mw_aft_mean": 2215.0104081644195,
+    "flat_derate_removal_mw_summer_mean": 2215.6283691992394,
+    "gap_nameplate_to_summer_pct": -1.3767412353148378,
+    "lp_pmax_mw": 27410.399999999998,
+    "n_units_lp": 160,
+    "ratio_net_summer_over_nameplate": 1.0137674123531484,
+    "ratio_winter_over_net_summer": 1.0304730070058152,
+    "spread_summer_to_winter_pct": 3.0473007005815234,
+    "stacked_summer_vs_nameplate_ratio": 0.7713718022503329,
+    "stacked_summer_vs_net_summer_ratio": 0.7608962300926907,
+    "summer_mean_availability": 0.7274850174675719,
+    "summer_mean_availability_no_flat_derate": 0.8083166860750799,
+    "summer_mean_capability_mw": 19940.65532279313,
+    "summer_mean_capability_mw_no_flat_derate": 22156.28369199237
+   },
+   "COAL": {
+    "eia860_nameplate_mw": 46532.100000000006,
+    "eia860_net_summer_mw": 42798.70000000001,
+    "eia860_winter_mw": 43265.200000000004,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 8.023278553944468,
+    "lp_pmax_mw": 42800.20000000001,
+    "n_units_lp": 109,
+    "ratio_net_summer_over_nameplate": 0.9197672144605553,
+    "ratio_winter_over_net_summer": 1.010899863780909,
+    "spread_summer_to_winter_pct": 1.0899863780909014,
+    "stacked_summer_vs_nameplate_ratio": 0.6655363969507235,
+    "stacked_summer_vs_net_summer_ratio": 0.7235922160381216,
+    "summer_mean_availability": 0.7235668566163419,
+    "summer_mean_availability_no_flat_derate": 0.7235668566163419,
+    "summer_mean_capability_mw": 30968.806176550766,
+    "summer_mean_capability_mw_no_flat_derate": 30968.806176550766
+   },
+   "CT_CHP": {
+    "eia860_nameplate_mw": 3090.7000000000003,
+    "eia860_net_summer_mw": 2625.5000000000005,
+    "eia860_winter_mw": 2970.8,
+    "excess_share_of_summer_capability_pct": 14.28571428571431,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 301.7814352258247,
+    "flat_derate_removal_mw_summer_mean": 304.01802752371157,
+    "gap_nameplate_to_summer_pct": 15.051606432199815,
+    "lp_pmax_mw": 2625.5000000000005,
+    "n_units_lp": 96,
+    "ratio_net_summer_over_nameplate": 0.8494839356780018,
+    "ratio_winter_over_net_summer": 1.1315178061321651,
+    "spread_summer_to_winter_pct": 13.151780613216513,
+    "stacked_summer_vs_nameplate_ratio": 0.6885579941974237,
+    "stacked_summer_vs_net_summer_ratio": 0.8105603476160644,
+    "summer_mean_availability": 0.8105603476160645,
+    "summer_mean_availability_no_flat_derate": 0.9263546829897882,
+    "summer_mean_capability_mw": 2128.1261926659777,
+    "summer_mean_capability_mw_no_flat_derate": 2432.1442201896893
+   },
+   "CT_PEAKER": {
+    "eia860_nameplate_mw": 26348.399999999998,
+    "eia860_net_summer_mw": 22289.160000000003,
+    "eia860_winter_mw": 25805.95,
+    "excess_share_of_summer_capability_pct": 14.285714285714269,
+    "flat_derate": 0.125,
+    "flat_derate_removal_mw_aft_mean": 2521.8647755605925,
+    "flat_derate_removal_mw_summer_mean": 2522.919764799399,
+    "gap_nameplate_to_summer_pct": 15.406020858951564,
+    "lp_pmax_mw": 22289.160000000003,
+    "n_units_lp": 516,
+    "ratio_net_summer_over_nameplate": 0.8459397914104844,
+    "ratio_winter_over_net_summer": 1.1577802842278486,
+    "spread_summer_to_winter_pct": 15.778028422784862,
+    "stacked_summer_vs_nameplate_ratio": 0.6702660637304663,
+    "stacked_summer_vs_net_summer_ratio": 0.7923330602676733,
+    "summer_mean_availability": 0.7923330602676733,
+    "summer_mean_availability_no_flat_derate": 0.9055234974487693,
+    "summer_mean_capability_mw": 17660.438353595815,
+    "summer_mean_capability_mw_no_flat_derate": 20183.358118395216
+   },
+   "ST_CHP": {
+    "eia860_nameplate_mw": 2276.2,
+    "eia860_net_summer_mw": 1935.4,
+    "eia860_winter_mw": 1935.0000000000002,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 14.97232229153852,
+    "lp_pmax_mw": 1935.4,
+    "n_units_lp": 99,
+    "ratio_net_summer_over_nameplate": 0.8502767770846148,
+    "ratio_winter_over_net_summer": 0.9997933243773898,
+    "spread_summer_to_winter_pct": -0.020667562261023065,
+    "stacked_summer_vs_nameplate_ratio": 0.5480707565481341,
+    "stacked_summer_vs_net_summer_ratio": 0.6445792373952995,
+    "summer_mean_availability": 0.6445792373952995,
+    "summer_mean_availability_no_flat_derate": 0.6445792373952995,
+    "summer_mean_capability_mw": 1247.5186560548627,
+    "summer_mean_capability_mw_no_flat_derate": 1247.5186560548627
+   },
+   "ST_GAS": {
+    "eia860_nameplate_mw": 12515.8,
+    "eia860_net_summer_mw": 10987.499999999998,
+    "eia860_winter_mw": 11144.9,
+    "excess_share_of_summer_capability_pct": 0.0,
+    "flat_derate": 0.0,
+    "flat_derate_removal_mw_aft_mean": 0.0,
+    "flat_derate_removal_mw_summer_mean": 0.0,
+    "gap_nameplate_to_summer_pct": 12.210965339810487,
+    "lp_pmax_mw": 10987.499999999998,
+    "n_units_lp": 38,
+    "ratio_net_summer_over_nameplate": 0.8778903466018951,
+    "ratio_winter_over_net_summer": 1.0143253697383392,
+    "spread_summer_to_winter_pct": 1.43253697383392,
+    "stacked_summer_vs_nameplate_ratio": 0.5592985566337413,
+    "stacked_summer_vs_net_summer_ratio": 0.6370938680424646,
+    "summer_mean_availability": 0.6370938680424646,
+    "summer_mean_availability_no_flat_derate": 0.6370938680424646,
+    "summer_mean_capability_mw": 7000.068875116579,
+    "summer_mean_capability_mw_no_flat_derate": 7000.068875116579
+   }
+  }
+ },
+ "g3b_incremental": {
+  "2023": {
+   "classes": {
+    "CC_CHP": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.02032319415436865,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 4.920486378294237
+    },
+    "CC_REGULAR": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.02032319415436865,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 4.920486378294237
+    },
+    "CT_CHP": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.03842353894810322,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.253214134409413
+    },
+    "CT_PEAKER": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.03842353894810322,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.253214134409413
+    }
+   },
+   "mean_delta_mean_minus_peak_p99_c": -10.584996955400337,
+   "n_zones": 6,
+   "n_zones_delta_negative_p99": 6,
+   "zone_rows": [
+    {
+     "delta_mean_minus_peak_p100_c": -13.741093314395194,
+     "delta_mean_minus_peak_p95_c": -9.092763667001222,
+     "delta_mean_minus_peak_p99_c": -11.851021816645591,
+     "summer_mean_c": 22.95890668560481,
+     "summer_peak_p100_c": 36.7,
+     "summer_peak_p95_c": 32.05167035260603,
+     "summer_peak_p99_c": 34.8099285022504,
+     "year": 2023,
+     "zone": "MISO-West"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -13.278248912825703,
+     "delta_mean_minus_peak_p95_c": -8.191856755094818,
+     "delta_mean_minus_peak_p99_c": -11.187779802558765,
+     "summer_mean_c": 24.471751087174297,
+     "summer_peak_p100_c": 37.75,
+     "summer_peak_p95_c": 32.663607842269116,
+     "summer_peak_p99_c": 35.65953088973306,
+     "year": 2023,
+     "zone": "MISO-Plains"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -15.246684872265003,
+     "delta_mean_minus_peak_p95_c": -8.435592168491617,
+     "delta_mean_minus_peak_p99_c": -11.207609125749133,
+     "summer_mean_c": 22.553315127734994,
+     "summer_peak_p100_c": 37.8,
+     "summer_peak_p95_c": 30.98890729622661,
+     "summer_peak_p99_c": 33.76092425348413,
+     "year": 2023,
+     "zone": "MISO-Illinois"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.627210117673876,
+     "delta_mean_minus_peak_p95_c": -7.975223637000077,
+     "delta_mean_minus_peak_p99_c": -9.610536629373307,
+     "summer_mean_c": 22.772789882326123,
+     "summer_peak_p100_c": 34.4,
+     "summer_peak_p95_c": 30.7480135193262,
+     "summer_peak_p99_c": 32.38332651169943,
+     "year": 2023,
+     "zone": "MISO-Indiana"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.48467116914151,
+     "delta_mean_minus_peak_p95_c": -7.7922539421446615,
+     "delta_mean_minus_peak_p99_c": -10.145475609688557,
+     "summer_mean_c": 21.175328830858486,
+     "summer_peak_p100_c": 32.66,
+     "summer_peak_p95_c": 28.967582773003148,
+     "summer_peak_p99_c": 31.320804440547043,
+     "year": 2023,
+     "zone": "MISO-East"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.229882225784554,
+     "delta_mean_minus_peak_p95_c": -7.666497296496718,
+     "delta_mean_minus_peak_p99_c": -9.507558748386668,
+     "summer_mean_c": 28.390117774215444,
+     "summer_peak_p100_c": 39.62,
+     "summer_peak_p95_c": 36.05661507071216,
+     "summer_peak_p99_c": 37.89767652260211,
+     "year": 2023,
+     "zone": "MISO-South"
+    }
+   ]
+  },
+  "2024": {
+   "classes": {
+    "CC_CHP": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.019277339578125063,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 5.187437799429278
+    },
+    "CC_REGULAR": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.019277339578125063,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 5.187437799429278
+    },
+    "CT_CHP": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.036446220139892696,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.4297109417714235
+    },
+    "CT_PEAKER": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.036446220139892696,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.4297109417714235
+    }
+   },
+   "mean_delta_mean_minus_peak_p99_c": -10.04028103027347,
+   "n_zones": 6,
+   "n_zones_delta_negative_p99": 6,
+   "zone_rows": [
+    {
+     "delta_mean_minus_peak_p100_c": -11.451404455427312,
+     "delta_mean_minus_peak_p95_c": -7.551404455427313,
+     "delta_mean_minus_peak_p99_c": -9.846027825678995,
+     "summer_mean_c": 21.848595544572685,
+     "summer_peak_p100_c": 33.3,
+     "summer_peak_p95_c": 29.4,
+     "summer_peak_p99_c": 31.69462337025168,
+     "year": 2024,
+     "zone": "MISO-West"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -12.875822906335252,
+     "delta_mean_minus_peak_p95_c": -8.109672836891718,
+     "delta_mean_minus_peak_p99_c": -10.701629533015804,
+     "summer_mean_c": 24.62417709366475,
+     "summer_peak_p100_c": 37.5,
+     "summer_peak_p95_c": 32.73384993055647,
+     "summer_peak_p99_c": 35.32580662668055,
+     "year": 2024,
+     "zone": "MISO-Plains"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -14.11324718391695,
+     "delta_mean_minus_peak_p95_c": -8.43062296559248,
+     "delta_mean_minus_peak_p99_c": -11.008857609888157,
+     "summer_mean_c": 23.086752816083052,
+     "summer_peak_p100_c": 37.2,
+     "summer_peak_p95_c": 31.517375781675533,
+     "summer_peak_p99_c": 34.09561042597121,
+     "year": 2024,
+     "zone": "MISO-Illinois"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -12.304999233097277,
+     "delta_mean_minus_peak_p95_c": -7.948728676708075,
+     "delta_mean_minus_peak_p99_c": -9.859581123751852,
+     "summer_mean_c": 23.295000766902724,
+     "summer_peak_p100_c": 35.6,
+     "summer_peak_p95_c": 31.2437294436108,
+     "summer_peak_p99_c": 33.154581890654576,
+     "year": 2024,
+     "zone": "MISO-Indiana"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -12.874320396715461,
+     "delta_mean_minus_peak_p95_c": -7.780364721873259,
+     "delta_mean_minus_peak_p99_c": -10.484630365670064,
+     "summer_mean_c": 21.885679603284537,
+     "summer_peak_p100_c": 34.76,
+     "summer_peak_p95_c": 29.666044325157795,
+     "summer_peak_p99_c": 32.3703099689546,
+     "year": 2024,
+     "zone": "MISO-East"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -10.219911001579025,
+     "delta_mean_minus_peak_p95_c": -7.069242830223647,
+     "delta_mean_minus_peak_p99_c": -8.340959723635944,
+     "summer_mean_c": 27.77508899842098,
+     "summer_peak_p100_c": 37.995000000000005,
+     "summer_peak_p95_c": 34.84433182864463,
+     "summer_peak_p99_c": 36.116048722056924,
+     "year": 2024,
+     "zone": "MISO-South"
+    }
+   ]
+  },
+  "2025": {
+   "classes": {
+    "CC_CHP": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.01946556758065249,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 5.137276351468606
+    },
+    "CC_REGULAR": {
+     "flat_derate": 0.1,
+     "implied_incremental_derate_at_p99": -0.01946556758065249,
+     "miso_slope_per_c": 0.00192,
+     "ratio_flat_over_abs_implied": 5.137276351468606
+    },
+    "CT_CHP": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.03680208870717112,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.3965463480784166
+    },
+    "CT_PEAKER": {
+     "flat_derate": 0.125,
+     "implied_incremental_derate_at_p99": -0.03680208870717112,
+     "miso_slope_per_c": 0.00363,
+     "ratio_flat_over_abs_implied": 3.3965463480784166
+    }
+   },
+   "mean_delta_mean_minus_peak_p99_c": -10.138316448256505,
+   "n_zones": 6,
+   "n_zones_delta_negative_p99": 6,
+   "zone_rows": [
+    {
+     "delta_mean_minus_peak_p100_c": -13.536907577675809,
+     "delta_mean_minus_peak_p95_c": -8.190770479711027,
+     "delta_mean_minus_peak_p99_c": -11.085664356650742,
+     "summer_mean_c": 22.063092422324193,
+     "summer_peak_p100_c": 35.6,
+     "summer_peak_p95_c": 30.25386290203522,
+     "summer_peak_p99_c": 33.148756778974935,
+     "year": 2025,
+     "zone": "MISO-West"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.445253875342907,
+     "delta_mean_minus_peak_p95_c": -8.090250691140746,
+     "delta_mean_minus_peak_p99_c": -10.060066920102436,
+     "summer_mean_c": 24.404746124657095,
+     "summer_peak_p100_c": 35.85,
+     "summer_peak_p95_c": 32.49499681579784,
+     "summer_peak_p99_c": 34.46481304475953,
+     "year": 2025,
+     "zone": "MISO-Plains"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.883840665798818,
+     "delta_mean_minus_peak_p95_c": -8.93703502579255,
+     "delta_mean_minus_peak_p99_c": -11.09382166108681,
+     "summer_mean_c": 23.116159334201182,
+     "summer_peak_p100_c": 35.0,
+     "summer_peak_p95_c": 32.05319435999373,
+     "summer_peak_p99_c": 34.20998099528799,
+     "year": 2025,
+     "zone": "MISO-Illinois"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -11.23378982649723,
+     "delta_mean_minus_peak_p95_c": -7.9598490858404,
+     "delta_mean_minus_peak_p99_c": -9.39640732129753,
+     "summer_mean_c": 23.76621017350277,
+     "summer_peak_p100_c": 35.0,
+     "summer_peak_p95_c": 31.72605925934317,
+     "summer_peak_p99_c": 33.1626174948003,
+     "year": 2025,
+     "zone": "MISO-Indiana"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -13.22001455617383,
+     "delta_mean_minus_peak_p95_c": -8.401889611740923,
+     "delta_mean_minus_peak_p99_c": -10.722153180362014,
+     "summer_mean_c": 21.53998544382617,
+     "summer_peak_p100_c": 34.76,
+     "summer_peak_p95_c": 29.941875055567092,
+     "summer_peak_p99_c": 32.26213862418818,
+     "year": 2025,
+     "zone": "MISO-East"
+    },
+    {
+     "delta_mean_minus_peak_p100_c": -10.017697518945138,
+     "delta_mean_minus_peak_p95_c": -6.844388940137893,
+     "delta_mean_minus_peak_p99_c": -8.471785250039506,
+     "summer_mean_c": 27.72730248105486,
+     "summer_peak_p100_c": 37.745,
+     "summer_peak_p95_c": 34.57169142119275,
+     "summer_peak_p99_c": 36.199087731094366,
+     "year": 2025,
+     "zone": "MISO-South"
+    }
+   ]
+  }
+ },
+ "g4_reach": {
+  "2023": {
+   "restored_summer_aft_mw": 5933.34611978947,
+   "sidecar_columns": [
+    "year",
+    "pass",
+    "klass",
+    "hour",
+    "mw"
+   ]
+  },
+  "2024": {
+   "restored_summer_aft_mw": 5853.252363325164,
+   "sidecar_columns": [
+    "year",
+    "pass",
+    "klass",
+    "hour",
+    "mw"
+   ]
+  },
+  "2025": {
+   "restored_summer_aft_mw": 5685.741384222721,
+   "sidecar_columns": [
+    "year",
+    "pass",
+    "klass",
+    "hour",
+    "mw"
+   ]
+  }
+ },
+ "g5_treatments": {
+  "by_iso": {
+   "CAISO": [
+    {
+     "bundle": "caiso124_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso126_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso162_peryear_import_caps",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso163_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso164_control_lossless",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso164_zonal_loss_surface",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso166_control_hubsurface",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso166_measured_loss_zones",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso172_control_pge_estimate",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso172_measured_path15_split",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso174_control_flatfleet",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso174_measured_fleet",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso175_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso175_tac_intake",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso180_a0_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso180_a1_pre",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso180_a2_regen",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso92_repro_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "caiso_netrev_base",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "ffr7b_arm1_caiso_arm",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    }
+   ],
+   "ERCOT": [
+    {
+     "bundle": "ercot158_honest_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot158_poolarm_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot159_cap_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot159_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot162_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot162_stormarm_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot165_unpooled_share_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot165_unpooled_tie_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot167_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot167_socreserve_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot168_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot168_yearcurves_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot173_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot173_reconc_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot176_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot71_availability_fullspan",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot73_state_wall_fullspan",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot76_ne_import_fullspan",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    },
+    {
+     "bundle": "ercot86_rtwall_2025_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": true,
+     "plant_level_fleet": false
+    }
+   ],
+   "MISO": [
+    {
+     "bundle": "miso106_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso119_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso119_zonalanchor_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso121_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso121_dualfuel_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso122_control_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso122_scopegate_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso124_dualfuel_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso126_steampart_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso126_steampart_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso127_onlinepmin_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso127_onlinepmin_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso132_ccmin_A",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso132_ccmin_B",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso133_taxgs_arm",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso133_taxgs_control",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso65_outage_regen",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso66_coalconduct",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso67_stgas_vlr_level",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso71_midwest",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso71_midwest-base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso72_winter_citygate",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso72_winter_citygate-base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso73_seam_meritcap",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso73_seam_meritcap-base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso74_manitoba_base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso74_manitoba_seam",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso75_manitoba_meritcap",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso75_meritcap_base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso76_loss_base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso76_loss_surface",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso81_phantom_outage",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso_gasshape_interpfix_base",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "miso_gasshape_interpfix_main",
+     "cc_nameplate_summer_derate": false,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    }
+   ],
+   "NEISO": [
+    {
+     "bundle": "ffr7b_arm1_neiso_arm",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso2022_touchpoint",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso72_hy_window_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso81_chpheatrate_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso83_ca1reclass_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso83_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso86_2022_corrected",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso87_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "neiso_c156_meter_screen_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    }
+   ],
+   "NYISO": [
+    {
+     "bundle": "_nyiso114_baseattrib_2024",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "ffr7b_arm1_nyiso_arm",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso120_c119_scopegate",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso120_control_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso120_control_A2",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso120_scopegate_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso125_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso125_seam_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso127_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso127_par_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso128_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso128_treatment",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso130_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso130_n11tsl",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso131_taxgs_arm",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso131_taxgs_control",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso83_control_2024",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "nyiso83_control_2025",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    }
+   ],
+   "PJM": [
+    {
+     "bundle": "pjm140_rampenv_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "pjm151_seam_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "pjm152_collapse_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "pjm158_ctl_A",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "pjm158_novirt_B",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    },
+    {
+     "bundle": "pjm2022_touchpoint",
+     "cc_nameplate_summer_derate": true,
+     "coal_nameplate_summer_derate": false,
+     "plant_level_fleet": true
+    }
+   ]
+  }
+ },
+ "iso": "MISO",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "prereg": "results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md",
+ "scope": [
+  "CC_REGULAR",
+  "CC_CHP",
+  "CT_PEAKER",
+  "CT_CHP"
+ ],
+ "summer_class_derate": {
+  "CC_CHP": 0.1,
+  "CC_REGULAR": 0.1,
+  "CT_CHP": 0.125,
+  "CT_PEAKER": 0.125
+ },
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "zonal_shares_ok": true
+}
