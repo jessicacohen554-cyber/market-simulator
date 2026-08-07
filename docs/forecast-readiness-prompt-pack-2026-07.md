@@ -4094,3 +4094,12 @@ staging; restore exact HEAD bytes; never push the reflow. Push 413: fetch main +
 first. Never push_files a >=300-line file. Stop-hook on merged history: rev-list 0 =>
 nothing to amend.
 ```
+
+## §0u — Wave 7 fully discharged; cards D-25/D-26 at the owner (2026-08-06 @ `2f4792cd`)
+
+FFR-7B-2 landed Arms 2–3 complete (D-22(a) fully discharged; MI row pins $30 every year, IL
+from 2027, delivery-based states slack — the grain is real and confined); NEISO-RECORD
+executed D-23 (record reads NEVER GRANTED everywhere, nothing granted); SCORE-GATE executed
+D-24 (reachable-set recall + unreachable diagnostic). Keepers unmoved. Full adjudication:
+Addendum Y. No lane is in flight; remaining work is owner-gated (D-21(a) deferred, cards
+D-25/D-26, §45U design) or unowned housekeeping (Y.2). Prompts follow signatures.
