@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-02T19:31:28",
+  "timestamp": "2026-08-07T08:06:02",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -42,7 +42,9 @@
   "cc_committed_offer_margin": true,
   "coal_peak_offer_margin": true,
   "coal_perplant_offer_level": true,
+  "coal_perplant_offer_yearly": true,
   "nysdec_peaker_rule_availability": false,
+  "nyiso_solar_market_generator_basis": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
   "st_gas_intermediate_cf_threshold": null,
@@ -85,7 +87,14 @@
     "gas_daily_shape": true,
     "ercot_dam_availability_coal_event_cap": true,
     "ercot_dam_availability_gas_event_cap": true,
-    "gas_offer_margin_zonal_anchor": true
+    "gas_offer_margin_zonal_anchor": true,
+    "ercot_faststart_pool_offer": true,
+    "ercot_wtx_curtail_unpooled": true,
+    "ercot_wtx_panhandle_owner": "share",
+    "ercot_wtx_curtail_depth_wind": 0.1354,
+    "ercot_wtx_curtail_depth_solar": 0.1614,
+    "ercot_storage_as_soc_reserve": true,
+    "coal_perplant_offer_yearly": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -298,6 +307,9 @@
   "caiso_intertie_reference_price": null,
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
+  "caiso_per_year_import_caps": null,
+  "caiso_asymmetric_path_ratings": null,
+  "caiso_zonal_loss_surface": null,
   "capacity_deliverability_limits": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -333,6 +345,8 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
   "miso_seam_envelope_merit_cap": false,
+  "nyiso_seam_deliverability_envelope": false,
+  "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -346,8 +360,8 @@
   "ercot_gtc_limits_measured": true,
   "pjm_measured_interface_limits": false,
   "ercot_wtx_curtailment_driver": false,
-  "ercot_wtx_curtail_depth_wind": null,
-  "ercot_wtx_curtail_depth_solar": null,
+  "ercot_wtx_curtail_depth_wind": 0.1354,
+  "ercot_wtx_curtail_depth_solar": 0.1614,
   "mass_cap_enabled": false,
   "mass_cap_tons": null,
   "mass_cap_program": null,
@@ -359,18 +373,18 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "e8fabfb",
-  "basis_sha": "37cc8e3aed6e71b2bdd011c339945988ac7ce15f",
-  "highspy_version": "1.14.0",
+  "git_sha": "a081de44",
+  "basis_sha": "638cd378464c031385711aab6ef508c346ace809",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.0",
       "pydantic": "2.13.4"
     }
   }
