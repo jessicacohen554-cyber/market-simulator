@@ -135,23 +135,8 @@ def run_year(year: int) -> dict:
         OFFLINE_COMMIT_MIN_RUN_HOURS_MAX,
     )
 
-    n_elig = 0
-    top_share = 0.0
-    for g, gen in enumerate(fleet):
-        md = float(getattr(gen, "min_down_hours", 0) or 0)
-        mr = float(getattr(gen, "min_run_hours", 0) or 0)
-        sfx = gen.unit_id.rpartition("_")[2]
-        if (
-            OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN <= md <= OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX
-            and mr <= OFFLINE_COMMIT_MIN_RUN_HOURS_MAX
-            and (sfx.startswith("econ") or sfx.startswith("peak"))
-        ):
-            n_elig += 1
-    rec["n_physics_eligible_rows"] = n_elig
-
-    # The decisive geometry: a row is priced only if its within-plant share
-    # midpoint exceeds 1 - pool_frac. Report the largest midpoint in the
-    # eligible universe against the loosest (largest) measured pool_frac.
+    # Physics is recorded on the ``committed`` tranche only, so eligibility is
+    # a PLANT property inherited by the plant's bid rows (Amendment 2).
     pmax = fa.pmax
     mean_mc = mc_base.mean(axis=1)
     cc_groups = {"CC_REGULAR"}
@@ -159,7 +144,27 @@ def run_year(year: int) -> dict:
     for g, gen in enumerate(fleet):
         if (getattr(gen, "plant_group", None) or "") in cc_groups:
             prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+
+    n_elig_plants = 0
+    n_elig = 0
+    n_excl_minrun = 0
+    top_share = 0.0
     for rows in prefixes.values():
+        md = max(float(getattr(fleet[g], "min_down_hours", 0) or 0) for g in rows)
+        mr = max(float(getattr(fleet[g], "min_run_hours", 0) or 0) for g in rows)
+        in_md = (
+            OFFLINE_COMMIT_MIN_DOWN_HOURS_MIN <= md <= OFFLINE_COMMIT_MIN_DOWN_HOURS_MAX
+        )
+        if in_md and mr > OFFLINE_COMMIT_MIN_RUN_HOURS_MAX:
+            n_excl_minrun += 1
+        if not (in_md and mr <= OFFLINE_COMMIT_MIN_RUN_HOURS_MAX):
+            continue
+        n_elig_plants += 1
+        n_elig += sum(
+            1
+            for g in rows
+            if fleet[g].unit_id.rpartition("_")[2].startswith(("econ", "peak"))
+        )
         arr = np.asarray(rows, dtype=int)
         order = arr[np.argsort(mean_mc[arr], kind="stable")]
         caps = pmax[order]
@@ -168,6 +173,14 @@ def run_year(year: int) -> dict:
             continue
         mids = (np.cumsum(caps) - 0.5 * caps) / tot
         top_share = max(top_share, float(mids.max()))
+    rec["n_cc_plants"] = len(prefixes)
+    rec["n_physics_eligible_plants"] = n_elig_plants
+    rec["n_physics_eligible_rows"] = n_elig
+    rec["n_plants_excluded_by_min_run"] = n_excl_minrun
+
+    # The decisive geometry: a row is priced only if its within-plant share
+    # midpoint exceeds 1 - pool_frac. Largest midpoint in the ELIGIBLE
+    # universe against the loosest (largest) measured pool_frac.
     rec["max_within_plant_share_midpoint"] = round(top_share, 6)
     rec["boundary_min_over_bins"] = round(1.0 - max(frac), 6) if frac else None
     rec["geometry_priced_any_row"] = bool(

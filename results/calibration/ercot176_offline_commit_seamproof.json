@@ -1,0 +1,122 @@
+{
+ "precommit": "docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md",
+ "bundle": "results/calibration/ercot168_yearcurves_B",
+ "SP6_ct_subtree_sha256": "7f02b6f5183bca7a828e0d79656a0587a9716b82cd0deda296e9ca62595e32fe",
+ "SP6_ct_subtree_sha256_before": "7f02b6f5183bca7a828e0d79656a0587a9716b82cd0deda296e9ca62595e32fe",
+ "SP6_ct_byte_identical": true,
+ "years": [
+  {
+   "year": 2023,
+   "n_gen": 1780,
+   "SP2a_gate_off_is_none": true,
+   "SP2b_year_absent_is_none": true,
+   "SP1_non_ercot_is_none": true,
+   "SP7_armed_is_none": true,
+   "cc_pool_frac_by_bin": [
+    0.0002,
+    0.0003,
+    0.0003,
+    0.0003,
+    0.0003,
+    0.0005,
+    0.0006
+   ],
+   "cc_pool_frac_max": 0.0006,
+   "cc_ladder_p70_by_bin": [
+    36.585,
+    38.31,
+    38.901,
+    39.286,
+    39.286,
+    38.901,
+    39.691
+   ],
+   "n_cc_plants": 42,
+   "n_physics_eligible_plants": 23,
+   "n_physics_eligible_rows": 213,
+   "n_plants_excluded_by_min_run": 17,
+   "max_within_plant_share_midpoint": 0.9984,
+   "boundary_min_over_bins": 0.9994,
+   "geometry_priced_any_row": false,
+   "SP3_disjoint_from_ct_pool": "VACUOUS (tier owns no row-hour)",
+   "SP4_max_reconciliation": "VACUOUS (tier owns no row-hour)",
+   "SP5_no_markdown": "VACUOUS (tier owns no row-hour)"
+  },
+  {
+   "year": 2024,
+   "n_gen": 1778,
+   "SP2a_gate_off_is_none": true,
+   "SP2b_year_absent_is_none": true,
+   "SP1_non_ercot_is_none": true,
+   "SP7_armed_is_none": true,
+   "cc_pool_frac_by_bin": [
+    0.0002,
+    0.0002,
+    0.0003,
+    0.0003,
+    0.0003,
+    0.0004,
+    0.0006
+   ],
+   "cc_pool_frac_max": 0.0006,
+   "cc_ladder_p70_by_bin": [
+    55.882,
+    67.857,
+    77.778,
+    57.895,
+    55.245,
+    55.226,
+    54.11
+   ],
+   "n_cc_plants": 42,
+   "n_physics_eligible_plants": 23,
+   "n_physics_eligible_rows": 213,
+   "n_plants_excluded_by_min_run": 17,
+   "max_within_plant_share_midpoint": 0.9984,
+   "boundary_min_over_bins": 0.9994,
+   "geometry_priced_any_row": false,
+   "SP3_disjoint_from_ct_pool": "VACUOUS (tier owns no row-hour)",
+   "SP4_max_reconciliation": "VACUOUS (tier owns no row-hour)",
+   "SP5_no_markdown": "VACUOUS (tier owns no row-hour)"
+  },
+  {
+   "year": 2025,
+   "n_gen": 1767,
+   "SP2a_gate_off_is_none": true,
+   "SP2b_year_absent_is_none": true,
+   "SP1_non_ercot_is_none": true,
+   "SP7_armed_is_none": true,
+   "cc_pool_frac_by_bin": [
+    0.0007,
+    0.0005,
+    0.0004,
+    0.0005,
+    0.0004,
+    0.0004,
+    0.0004
+   ],
+   "cc_pool_frac_max": 0.0007,
+   "cc_ladder_p70_by_bin": [
+    24.062,
+    29.057,
+    32.627,
+    33.08,
+    33.478,
+    32.627,
+    33.478
+   ],
+   "n_cc_plants": 41,
+   "n_physics_eligible_plants": 23,
+   "n_physics_eligible_rows": 213,
+   "n_plants_excluded_by_min_run": 17,
+   "max_within_plant_share_midpoint": 0.9984,
+   "boundary_min_over_bins": 0.9993,
+   "geometry_priced_any_row": false,
+   "SP3_disjoint_from_ct_pool": "VACUOUS (tier owns no row-hour)",
+   "SP4_max_reconciliation": "VACUOUS (tier owns no row-hour)",
+   "SP5_no_markdown": "VACUOUS (tier owns no row-hour)"
+  }
+ ],
+ "ALL_ASSERTIONS_PASS": true,
+ "ARM_PROVABLY_INERT": true
+}
