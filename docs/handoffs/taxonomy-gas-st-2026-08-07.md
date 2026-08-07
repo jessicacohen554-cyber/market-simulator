@@ -161,7 +161,91 @@ cd /home/user/market-simulator-control && for d in data results frontend docs te
   --out-dir <scratch>/<iso>_tax_<arm> --note "gas_st taxonomy paired <arm>"
 ```
 
-RESULTS_PLACEHOLDER_PAIRED_CONTROLS
+### 4.1 NYISO — registered `2026-08-07-nyiso-131-taxgs-{control,arm}`
+
+Same-head pair on the keeper recipe `2026-08-06-nyiso-128-solar-basis`
+(bundle `nyiso128_treatment`), 2023–2025. Both arms scored through the full
+registration pipeline (`dashboard_add_run` + `calibration_verdict --write-metrics`,
+attestations derived from the keeper's with session-specific `attested_by`).
+
+**Verdict grain — nothing moves:** determination **CALIBRATED-WITH-CAVEATS in both
+arms**, all 8 criterion statuses identical (C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the same
+lone ledgered caveat), caveat budget identical.
+
+**Hourly grain — not byte-identical** (the RED-Rochester ST_CHP bin re-rate,
+11.454 → 10.3 MMBtu/MWh on 119.6 MW):
+
+| year | class energy deltas (TWh, arm − control) | demand-wt ΔLMP | max zonal \|ΔLMP\| |
+|---|---|--:|--:|
+| 2023 | ST_CHP +0.037; ST_GAS −0.016; CC_REGULAR −0.011; CC_CHP −0.007 | −0.013 $/MWh | 1.25 |
+| 2024 | ST_CHP +0.052; CC_REGULAR −0.023; CC_CHP −0.016; ST_GAS −0.012 | −0.023 $/MWh | 3.85 |
+| 2025 | ST_CHP +0.005; CC_REGULAR −0.002; CC_CHP −0.001; ST_GAS −0.001 | −0.002 $/MWh | 2.71 |
+
+Direction is physical: the corrected (cheaper) heat rate lets the cogen bin run more,
+displacing merchant CC and the ST_GAS class. 34 of 188 numeric verdict fields move, max
+|d| = 0.052 TWh of class volume / 0.02 $/MWh of mean LMP; **no gate is approached, let
+alone crossed**.
+
+**Posture: HOLD PROMOTION honoured** — metrics moved (numerically), so per Addendum D
+the delta is reported and the NYISO keeper is untouched
+(`2026-08-06-nyiso-128-solar-basis` stays; keeper shard not edited). Adjudication of
+whether the arm becomes the successor recipe is the manager/owner's; the arm bundle is
+registered and scored, ready to promote without re-solving if adjudicated in.
+
+### 4.2 MISO — registered `2026-08-07-miso-133-taxgs-{control,arm}`
+
+Same-head pair on the keeper recipe `2026-08-05-miso-132b-cc-committed` (bundle
+`miso132_ccmin_B`), 2023–2025, via the rule-12 per-year invocation chain (§4.3): each
+year a fresh `replay_keeper --years <y>` process, per-year dirs merged (file-copy +
+year-column concat) and benchmarks rebuilt post-merge with `--rebuild-benchmark`.
+
+**The control reproduces the keeper exactly**: its C3a mean-LMP models
+(32.72 / 30.37 / 39.05 $/MWh for 2023/24/25) are identical to the cent to a fresh
+`calibration_verdict` run on the keeper's own bundle at this head — the replay is
+byte-faithful at the price grain, so the arm's delta is attributable to D-25 alone.
+
+**Verdict grain — nothing moves between arms:** determination identical (NOT-YET),
+all criterion statuses identical (C1/C2/C3b/C4/C6/C8 PASS; C3c the same ledgered
+caveat; C3a FAIL in **both** arms), caveat sets identical. 61 of 221 numeric verdict
+fields move; the largest is ST_GAS 2023 volume 13.005 → 13.26 TWh (tolerance ±8 TWh,
+PASS both sides); every mean-LMP move is ≤ 0.03 $/MWh.
+
+**The C3a FAIL is inherited re-scoring drift, NOT caused by the taxonomy** (nor by the
+replay): re-running today's `calibration_verdict` on the keeper bundle `miso132_ccmin_B`
+itself ALSO yields C3a FAIL (2025 −14.1 %, `caveat=None`) where the keeper's committed
+`metrics.json` recorded C3a as a ledgered CAVEAT. The flip is the rubric-v3.1 amendment
+(C3c is now the only ledgerable criterion; the fail-closed guard refuses the keeper's
+old C3a ledger entry on a load-bearing criterion). This affects the MISO keeper's
+re-scored verdict at HEAD independent of this session and is surfaced here as a
+finding for the owner — it is not a D-25 effect (keeper, control and arm all read
+C3a 2025 ≈ −14.1/−14.2 % identically).
+
+**Hourly grain** (the 11 re-rated MISO bins, ~692 MW, dominated by Burlington 170 MW
+ST_GAS and R S Nelson 424.7 MW ST_CHP, both 11.5 → 10.3 MMBtu/MWh):
+
+| year | class energy deltas (TWh, arm − control) | demand-wt ΔLMP | max zonal \|ΔLMP\| |
+|---|---|--:|--:|
+| 2023 | ST_GAS +0.251; CT_PEAKER −0.093; COAL_PRB −0.063; import −0.061; COAL_BIT −0.021; CC_REGULAR −0.020; ST_CHP +0.018 | −0.028 $/MWh | 3.12 |
+| 2024 | ST_GAS +0.053; CT_PEAKER −0.029; ST_CHP +0.018; COAL_PRB −0.014; import −0.012 | −0.007 $/MWh | 2.45 |
+| 2025 | ST_GAS +0.219; CC_REGULAR −0.061; CT_PEAKER −0.055; COAL_PRB −0.038; import −0.036; COAL_BIT −0.023; ST_CHP +0.012 | −0.023 $/MWh | 3.14 |
+
+Direction is physical: the corrected (cheaper, EIA Table 8.2) steam heat rate lets the
+re-rated boilers clear more, displacing peakers, PRB coal and imports — the same class
+(ST_GAS) whose overnight under-supply miso-130/132b's promotion notes name as the open
+root-cause seam, moved in the direction that narrows it.
+
+**Posture: HOLD PROMOTION honoured** — metrics moved (numerically), the delta is
+reported here, the MISO keeper (`2026-08-05-miso-132b-cc-committed`) is untouched and
+its shard not edited. Both bundles are registered and scored, ready to adjudicate
+without re-solving.
+
+### 4.3 Memory note (binding for the NEISO tail and any re-run)
+
+A MISO 3-year invocation OOMs on a 15 GB box even solo (year loop accumulates; killed at
+~11.5 GB RSS in year 2). The working recipe is `replay_keeper`'s own per-year chain:
+`--years <y> --reuse-solved <prior>` — one fresh process per year, which the tool's help
+documents as the rule-12 chain for exactly this OOM. NYISO solves fine in one 3-year
+invocation alongside nothing else.
 
 **NEISO is handed off, not run** (charter: run the top two, hand off the rest): its
 entire delta is two CHP bins totalling 9.3 MW (Indian Orchard 3.2 MW 11.5→10.3,

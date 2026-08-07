@@ -5474,138 +5474,213 @@ night take the identical multiplier and there is no diurnal reshape at all,
 which is exactly why miso-101 armed the hour-grain leg
 (`FINDING-miso100-stchp-diurnal-2026-07.md` §4/§5).
 
-## 2026-08-07 — miso-140: the MISO bench `*_lw` refresh had ALREADY LANDED, and it VERIFIES — correct, complete, and consistent with the model side. C3a re-reads −0.4 / −6.0 / −14.1 %, determination UNCHANGED. NO LP, NO bundle regen, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
+---
 
-Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
-`miso132_ccmin_B`, **NOT-YET**, rubric v3.1, sole FAIL C3a `price_mean` 2025,
-sole ledgered caveat C3c 1/1). Charter: §5.4 **QUEUE ITEM 1** — refresh the MISO
-bench, re-verify every MISO C3a, state whether the determination changes.
-**PREREG pushed at `78e2cec4` BEFORE any adjudicating statistic**, four gating
-gates, six falsifiable numeric predictions, four look-alike traps with
-pre-committed counter-measurements. Rule 22: 2023–2025 only; MISO holds no
-marker. Owner directive honoured — no C7 lane, no C7 ledger, and **bench hygiene
-is not a lever**.
+## 2026-08-07 — miso-140: the MISO comparator refresh REPRODUCES EXACTLY and is CONFINED to `*_lw`; every C3a re-verified; the determination does NOT change. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
 
-### §0 re-verification moved the lane before it started
+**Queue item 1 (§5.4) DISCHARGED.** PREREG
+`results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` pushed at
+`483091b3` before any adjudicating statistic. FINDING
+`results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`;
+handoff `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`; probe
+`scripts/probes/_miso140_bench_lw_verify.py`; record
+`results/calibration/_miso140_bench_lw_verify.json`.
 
-The refresh was **already committed at HEAD**: pjm-160's cross-ISO B5 ride-along
-on 2026-08-07 (`1d63141c` reference `actual_lmp.json`, `056eb164` MISO bench
-parts), with committed deltas matching miso-137 §5's diagnosis to the cent
-(2025 `rt_lw` 45.39 → **45.46**, 2023 −0.02, 2024 +0.03, 2025 `da_lw` +0.06).
-Only the four `*_lw` fields moved; the legacy equal-hour `rt`/`da` and every
-other bench block are byte-identical — confirming this was never a price-series
-defect. So the still-open half was the half **miso-138 §8 declined this as a
-ride-along to protect**: is the committed refresh correct, complete, and
-consistent with the model side it is compared against?
+**The refresh had already been performed before the session opened**, by a
+cross-ISO lane: pjm-160 B5 re-derived `*_lw` in
+`data/raw/_validation-source/actual_lmp.json` for all six ISOs (`1d63141c`,
+2026-08-07 ~06:0x UTC) and propagated MISO's into the three bench parts
+(`056eb164`, 06:14:59). The PREREG disclosed that in advance and re-pointed the
+session from *performing* the refresh to **adjudicating whether it is right** —
+which nobody had checked. Re-deriving it a third way was refused explicitly
+(PREREG S1): a reference that does not reproduce is a worse defect than a stale
+one, and a third vintage destroys the ability to tell which is correct.
 
-### All four gating gates PASS; all six predictions came in exactly
+**G-1 — the miso-137 G-0(i) test re-run against the NEW values: PASS, 0/78
+mismatches.** `derive_actual_lmp._lw_fields` recomputed at HEAD reproduces the
+committed reference exactly across 2 bases × 3 years annual (6) + 72 monthly
+cells, and the unrounded 2025 RT lands on **45.4555**, matching miso-137's
+published recompute to the fourth decimal (pre-declared band ±0.0005). The
+stale-demand-vintage defect is **closed and independently confirmed**.
 
-* **G-1 correctness** — recomputed from `actual_lmp_hourly_MISO.parquet` ×
-  `eia_loader.load_demand` through the deriver's own path: **Δ = 0.000000** on
-  6/6 annual scalars **and** 72/72 monthly entries.
-* **G-2 model-side vintage** — the keeper's committed `hourly/system_<year>.parquet`
-  demand matches `load_demand` at HEAD to **0.0 MW** max hourly Δ and 0.0
-  relative annual energy, 3/3 years, 6/6 zones. **The miso-137 vintage mismatch
-  is FULLY closed, not half closed** — this was the branch that would have made
-  the session an escalation rather than a discharge.
-* **G-3 completeness** — the demand-weighted **comparator** set is a
-  **singleton** (`derive_actual_lmp.py`); every other `load_demand` call site is
-  a model *input*. `derive_actual_tail.py` never calls it, so C3c cannot have
-  inherited the stale vintage.
+**G-2 — faithfulness + confinement: PASS, 0/78 mismatches and ZERO non-`*_lw`
+leaves.** Every `*_lw` cell in the bench parts equals the reference, and of the
+**19 / 22 / 20** leaves that moved in `056eb164` (out of 8178 / 8109 / 8074),
+**100 % are `avgLMP.*_lw` / `*_lw_mon`**. The PREREG's S3 blast-radius stop rule
+did not fire: the pjm-160 PJM-side bench regen on a *corrected nameplate union*
+(`f6e88aa3`) did **not** reach MISO. Comparator moves: `rt_lw`
+32.87→**32.85**, 32.27→**32.30**, 45.39→**45.46**; `da_lw` 34.24→**34.23**,
+33.13→**33.14**, 46.29→**46.35**. Provenance recorded in the PREREG §0c *before*
+verification: prices are the Indiana-Hub `actual_lmp_hourly_MISO.parquet`
+(**last touched `f434590d`, unchanged by the refresh** — it moved *weights*, not
+prices, exactly as miso-137 diagnosed); weights are
+`eia_loader.load_demand("MISO", y, cfg)` summed over 6 zones, **640.993 /
+644.633 / 663.810 TWh**.
 
-### G-4 — C3a re-verified from committed artifacts, NO re-solve, one basis at a time
+**G-3 — every C3a re-verified on committed artifacts, no re-solve, all three
+years in one invocation (rule 16).** Scored twice — at HEAD and with the bench
+reverted in place to `056eb164^` — to isolate the comparator's own effect;
+model scalars identical in both.
 
-| year | basis | model | actual | C3a | prior | Δ pp | status |
-|---|---|---:|---:|---:|---:|---:|---|
-| 2023 | RT (gated) | 32.72 | 32.85 | **−0.4 %** | −0.5 | +0.1 | PASS |
-| 2024 | RT (gated) | 30.37 | 32.30 | **−6.0 %** | −5.9 | −0.1 | PASS |
-| 2025 | RT (gated) | 39.05 | 45.46 | **−14.1 %** | −14.0 | −0.1 | **FAIL** |
-| 2023 | DA (diag.) | 32.72 | 34.23 | −4.4 % | −4.4 | 0.0 | not gated |
-| 2024 | DA (diag.) | 30.37 | 33.14 | −8.4 % | −8.3 | −0.1 | not gated |
-| 2025 | DA (diag.) | 39.05 | 46.35 | −15.8 % | −15.6 | −0.2 | not gated |
+| year | basis | model | actual PRE → POST | C3a PRE → POST | status |
+|---:|---|---:|---|---|---|
+| 2023 | RT (gated) | 32.72 | 32.87 → **32.85** | −0.5 % → **−0.4 %** | PASS → PASS |
+| 2024 | RT (gated) | 30.37 | 32.27 → **32.30** | −5.9 % → **−6.0 %** | PASS → PASS |
+| 2025 | RT (gated) | 39.05 | 45.39 → **45.46** | −14.0 % → **−14.1 %** | **FAIL → FAIL** |
+| 2023 | DA (diag) | 32.72 | 34.24 → 34.23 | −4.4 % → −4.4 % | SKIPPED |
+| 2024 | DA (diag) | 30.37 | 33.13 → 33.14 | −8.3 % → **−8.4 %** | SKIPPED |
+| 2025 | DA (diag) | 39.05 | 46.29 → **46.35** | −15.6 % → **−15.8 %** | SKIPPED |
 
-**Determination `NOT-YET`, UNCHANGED.** Sole FAIL C3a `price_mean`; sole ledgered
-caveat C3c (1 of 1); C1/C2/C3b/C4/C6/C8 all PASS; **no criterion flips**. C3b was
-the prediction most at risk (the monthly vectors moved too) and held at
-0.075 / 0.112 / **0.191** against a ≤0.20 bar. No promotion, no re-key, no
-escalation. The trend the lane quotes should now read **−0.4 → −6.0 → −14.1**.
+**THE DETERMINATION DOES NOT CHANGE** — `NOT-YET` → `NOT-YET`, sole FAIL C3a
+`price_mean`, caveat ledger identical (1 of 1 on C3c), and **ZERO
+criterion-status flips across all eight criteria**, checked record-by-record
+rather than at the headline. PREREG §2 branch 2 applies as written; the
+escalation path (second independent invocation +
+`calibration-keeper-auditor --iso MISO`) was **not triggered** and not run, and
+no keeper text moved. **The correction is ADVERSE on the blocker year** — 2025
+−13.97 → −14.09 %, 2024 −5.90 → −5.98 %, only 2023 improves — so it is
+structurally incapable of being good news, and **is not reported as progress
+against the −14 % gap**.
 
-### The look-alike fired exactly as pre-registered, and was caught
+**Two things carried, neither repaired.** (i) **Registry sidecars store no
+scored value** (`id/label/date/shorthand/definition/years/iso/file/bundle`
+only), so the charter's "moves the comparator for every MISO run" is
+self-healing: scoring is derived from the bench at render/deploy time and every
+MISO run re-scores automatically — no per-run repair exists or is needed. The
+one built artifact that stores the scored numbers,
+`frontend/data/backcast/status/MISO.js`, was already regenerated by pjm-160
+(stamp `2026-08-07 05:53`) and **matches this session's independent
+re-verification exactly**. (ii) The keeper bundle attestation's
+`.exceptions[5].reason` — the **C3a `price_mean` ledger, inadmissible under
+rubric v3.1** (the run's basis reads *"undocumented out-of-tolerance (FAIL)
+criteria: price_mean"*) — still quotes `$45.39`, and was **already** stale on
+two further numbers beforehand (model `$38.66` vs the keeper's `$39.05`;
+*"2023 (−2.2 %) and 2024 (−8.0 %)"* vs the actual −0.4 % / −6.0 %). Inert prose
+the scorer never reads; repair belongs to the next MISO promotion, which
+regenerates the attestation.
 
-2023's C3a "improves" −0.5 → −0.4. **A comparator that moves in the model's
-favour is not an improvement in the model.** The pre-committed counter-measurement
-discharged two independent ways: the **model scalar is unchanged** (32.72 / 30.37
-/ 39.05, identical to miso-137 §5's penny-verified values), and the keeper
-bundle's last commit is still the miso-132(b) promotion `654abd8b` — pjm-160
-wrote only `bench/` and `status/`. So **100 % of the movement is comparator-side**,
-it is ±0.1–0.2 pp against a **14 pp** gap, and **on the failing years it goes
-against the model**. No progress against the level miss is claimed or claimable.
+**Rule duties.** Rule 15 — no LP solved, so **no run to register** (the
+miso-131…137 precedent). Rule 16 — all three years, one invocation. Rule 19 —
+no mechanism proposed or tested; queue item 2 untouched. Rule 22 — MISO holds
+no `calibration-complete` marker; 2023–2025 only. Rules 13/21/24 — nothing
+sized on any residual, no parameter derived, no tuning channel created; the
+comparator is a measured input recomputed from unchanged measured sources.
+Rule 25 — MISO artifacts only (the other five ISOs' `*_lw` also moved in
+`1d63141c`; not a MISO lane's business). Rule 28(b) — **NO cell verdict
+minted**; the only matrix edit is the §5.4 stamp retiring item 1 and promoting
+item 2 to the queue head. Owner directives — no C7 work,
+`temp_derate_mean_anchored` not re-opened, the anchor-convention successor not
+opened.
 
-### Two new record-repair items, reported and deliberately NOT repaired
+**Lesson — A REPAIR IS NOT A VERIFICATION.** The two tempting readings were both
+wrong: "already done, nothing to do" accepts a number nobody checked, and "do it
+again my way" mints a third vintage of the same scalar. What discharges the item
+is neither — it is re-running the failing test against the new values, and
+separately bounding the blast radius. That second half carried the real risk:
+the same cross-ISO session had, on another ISO, regenerated bench parts on a
+corrected nameplate union, and a comparator mandate is no licence to import it.
+Family: miso-136 *an absence claim is a measurement* → miso-137 *a threshold is
+a hypothesis, not a definition* → **miso-140 *a repair is not a verification***.
 
-**(1a)** `miso132_ccmin_B/calibration_attestation.json` → `exceptions` →
-`price_mean` 2025 still reads *"2023 (−2.2 %) and 2024 (−8.0 %) both PASS … the
-$6.73/MWh gap between the actual load-weighted mean $45.39 and the model
-$38.66"*, magnitude −14.0 % — **five numbers, none of which is this keeper's**,
-carried forward verbatim across promotions. It has **zero scoring effect**
-(under v3.1 C3c is the only ledgerable criterion, so the entry is inadmissible
-and C3a scores as an undocumented FAIL — miso-139 §3, confirmed independently).
-Amending a committed keeper attestation is promotion-adjacent and the
-amend-vs-delete disposition (rule 26 `[R-DELETE]`) is a rubric-transition
-decision, so it is written to the queue, not patched. The MISO keeper shard's
-promotion prose likewise still says *"ledgered caveats unchanged at 2/3: C3a,
-C3c"*; **MISO is the only ISO whose shard carries such a phrase**. **The live
-scorecard is truthful** — `status/MISO.js` is record-for-record identical to an
-independent verdict run.
+---
 
-**(1b)** A hazard the verification surfaced: **`load_demand` silently changes its
-ZONAL split with `sys.path`.** `eia930.zonal_shares._zonal_shares_from_raw`
-imports `scripts.data.curate_zonal_shares`, needing the **repo root** on
-`sys.path`; `data/clean` is gitignored and absent in a fresh clone, so that raw
-path is the only measured route. On failure `load_zonal_shares` returns `None`
-**silently** and `load_demand` drops to the static Gold-Book `load_share` — same
-ISO total, different allocation, measured on MISO 2025 at up to **6,747 MW** per
-zone-hour. **Solve and scoring are unaffected** (`run_calibration_full.py:74`,
-`calibration_verdict.py:51` both insert the repo root); the exposure is ad-hoc
-probes — **8 of the 9 files in `scripts/probes/` that touch `load_demand` /
-`load_zonal_shares` do not put the repo root on `sys.path`**. Effect is nil for
-ISO-total consumers (which is why G-1 was unaffected: the `*_lw` deriver weights
-by `demand.sum(axis=0)`) and material for per-zone consumers. Reported, not
-fixed — a `src/` change is outside a hygiene lane (rules 19/24).
+## 2026-08-07 — miso-140b (concurrent independent session): the C3a re-verification REPLICATES exactly, and two checks the canonical entry did not run both PASS — plus a `load_demand` hazard found in passing. NO LP, NO field, NO arm, NO run, NO cell verdict, keeper UNCHANGED
 
-### The generalisable lesson — A CORRECTION IS NOT VERIFIED BY THE COMMIT THAT MAKES IT
+A **second miso-140 session ran concurrently** on the same §5.4 queue item 1 and
+landed after the entry above. Its numbers are recorded here **as an independent
+replication, not a second discharge** — the item is discharged by the canonical
+entry. PREREG
+`results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md`
+pushed at `78e2cec4` before any adjudicating statistic; FINDING
+`results/calibration/FINDING-miso140b-model-side-vintage-and-scope-2026-08-07.md`;
+probe `scripts/probes/_miso140_bench_refresh_gates.py`; records
+`_miso140_bench_refresh_gates.json`, `_miso140_c3a_reverification.json`.
 
-The cheap move was to read pjm-160's commit message — which asserted this
-session's conclusion — and close the item. Three things had to be measured before
-"already done" could become "done", and none is visible from the commit: whether
-the new numbers **reproduce** (G-1), whether the **other side of the comparison**
-moved with them (G-2), and whether anything else carried the **same defect**
-(G-3). Only G-1 is about the artifact that changed.
+**The replication.** Recomputing `*_lw` from
+`actual_lmp_hourly_MISO.parquet` × `eia_loader.load_demand` through the
+deriver's own path gives **Δ = 0.000000** on 6/6 annual scalars and 72/72
+monthlies, and `calibration_verdict.py --run-id` at HEAD returns gated RT
+**−0.4 / −6.0 / −14.1 %**, DA **−4.4 / −8.4 / −15.8 %**, determination
+**`NOT-YET`**, sole FAIL C3a, sole ledgered caveat C3c 1/1, C3b PASS
+0.075/0.112/0.191, zero criterion flips. **Identical to the canonical entry in
+every cell**, reached independently and pre-registered separately — which is the
+strongest thing that can be said about a comparator this load-bearing.
 
-The corollary arrived unasked: **the instrument that checks the correction needs
-checking too.** G-2's first run reported a 7 GW mismatch that did not exist, and
-it was recognisable as an instrument fault only because its signature —
-identical annual totals with large per-cell deltas — is arithmetically impossible
-for a vintage error and inevitable for a different zonal split. *A gate that can
-fail for a reason outside the thing it is gating must be able to tell the two
-apart before its verdict is quotable.* Family: miso-135 → miso-136 → miso-137 →
-miso-138 → miso-139 → **miso-140**.
+### The two additive results
+
+**(1) THE OTHER SIDE OF THE COMPARISON ALSO CHECKS OUT — the model side is on
+the SAME demand vintage.** The canonical G-2 bounds the *blast radius* of the
+refresh within the bench; this is a different question: the diagnosed defect was
+a **vintage mismatch between the two sides**, so refreshing the actual side only
+closes it if the model side is on today's vintage too. Measured — the keeper's
+committed `hourly/system_<year>.parquet` demand vs `load_demand('MISO', y, cfg)`
+at HEAD — **0.0 MW max hourly Δ and 0.0 relative annual energy, 3/3 years, 6/6
+zones** (640.993 / 644.633 / 663.810 TWh). **The mismatch is fully closed, not
+half closed.** This was the branch that would have made the session an
+escalation rather than a discharge, and it is now measured rather than assumed.
+
+**(2) THE COMPARATOR SET IS A SINGLETON, so nothing else inherited the stale
+vintage.** Enumerated over `scripts/`: of every `load_demand` call site, exactly
+one produces a committed **comparator** (`derive_actual_lmp.py` → `actual_lmp.json`
+`*_lw` → bench `avgLMP`); all others are model **inputs**. In particular
+`derive_actual_tail.py` never calls `load_demand`, so **C3c's tail carries no
+demand weighting and cannot have inherited the defect** — the one criterion where
+an unnoticed stale weight would have been most consequential.
+
+### A hazard found in passing — `load_demand` silently changes its ZONAL split with `sys.path`
+
+`eia930.zonal_shares._zonal_shares_from_raw` obtains the measured hourly zonal
+shares via `from scripts.data.curate_zonal_shares import _PARSE_FUNCS`, which
+needs the **repo root** on `sys.path`. `data/clean` is gitignored and therefore
+absent in a fresh clone, so that raw path is the **only** measured route. When
+the import fails, `load_zonal_shares` returns `None` **silently** and
+`load_demand` falls back to the static Gold-Book `load_share` — **same ISO
+total, different zonal allocation**. Measured on MISO 2025: **up to 6,747 MW per
+zone-hour** (MISO-South; MISO-East 4,272; MISO-West 4,202) with annual ISO energy
+identical to the MWh.
+
+**Solve and scoring are NOT affected** — checked, not assumed:
+`run_calibration_full.py:74` and `calibration_verdict.py:51` both insert the repo
+root. **The exposure is ad-hoc probes**: of 749 files in `scripts/probes/`, **9
+touch `load_demand`/`load_zonal_shares` and 8 of those do not put the repo root
+on `sys.path`**, so invoked the documented way they receive static shares with no
+warning. The effect is **nil** for consumers that use only the ISO total — which
+is exactly why the `*_lw` verification was unaffected, since the deriver weights
+by `demand.sum(axis=0)` — and **material** for any per-zone consumer. Reported,
+not fixed: making the loader warn or fail loudly is a `src/` change, outside a
+hygiene lane (rules 19/24). The probe here is hardened both ways.
+
+### Where this session was wrong, recorded
+
+Its own G-2 gate **reported a 7 GW mismatch that did not exist**, because the
+probe put `scripts/` but not the repo root on `sys.path` and so compared the
+keeper's measured-share demand against the static fallback. It was caught only
+because the signature — **identical annual totals with large per-cell deltas** —
+is arithmetically impossible for a vintage error and inevitable for a different
+zonal split. Had the gate been non-gating, or its failure signature less
+distinctive, this entry would have reported a defect in the artifacts that is
+not there.
 
 ### Rule duties
 
-**Rule 15**: no LP solved, so no run to register (miso-131…139 precedent); the
-live dashboard was checked against an independent verdict run and is truthful.
-**Rule 28(b)**: **no cell verdict minted** — no mechanism was tested; §5.4 queue
-stamp written this session and QUEUE ITEM 1 marked DISCHARGED. **Rule 22**:
-2023–2025 only. **Rule 14 `[R-ACCURATE]`**: the refreshed comparator is kept
-although it makes the failing year read *worse*. **Rules 1/13/19/21/24/25**:
-nothing sized on any residual, one question (queue item 2 explicitly not folded
-in), no measured outcome fed back, no tuning channel, no parameter, no other
-ISO's artifact touched.
+Rule 15 — no LP solved, so **no run to register**. Rule 28(b) — **no cell verdict
+minted**; no mechanism tested. Rule 22 — 2023–2025 only; MISO holds no marker.
+Rules 1/13/19/21/24/25 — nothing sized on any residual, one question, no measured
+outcome fed back, no tuning channel, no parameter, no other ISO's artifact
+touched. Owner directive — no C7 work, and **no progress claimed against the
+−14 % level miss**: the movement is ±0.1–0.2 pp, 100 % comparator-side, and
+adverse on both failing-side years.
 
-FINDING `results/calibration/FINDING-miso140-bench-refresh-verified-2026-08-07.md`;
-PREREG `results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md`;
-probe `scripts/probes/_miso140_bench_refresh_gates.py`;
-records `results/calibration/_miso140_bench_refresh_gates.json`,
-`results/calibration/_miso140_c3a_reverification.json`.
+### The generalisable lesson — A CORRECTION IS NOT VERIFIED BY THE COMMIT THAT MAKES IT, AND THE INSTRUMENT THAT CHECKS IT NEEDS CHECKING TOO
+
+Three things had to be measured before "already done" could become "done", and
+none is visible from the commit that did it: whether the numbers **reproduce**,
+whether the **other side of the comparison** moved with them, and whether
+anything else carried the **same defect**. Only the first is about the artifact
+that changed. And the corollary this session paid for: *a gate that can fail for
+a reason outside the thing it is gating must be able to tell the two apart before
+its verdict is quotable.* Family: miso-139 *a mechanism's anchor is part of the
+mechanism* → miso-140 *a repair is not a verification* → **miso-140b *…and a
+correction is not verified by the commit that makes it***.
+
 Next number: **miso-141**.
