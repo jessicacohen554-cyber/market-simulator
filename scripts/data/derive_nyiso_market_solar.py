@@ -43,8 +43,32 @@ raises it). It is not the measured solar *generation* series and it is not
 capped at delivered output: the LP still dispatches and curtails solar
 endogenously against this capacity.
 
-**Rule 23 [R-FROZEN-DERIVE].** Re-run only when a new Gold Book vintage lands.
-Never re-run against a residual.
+**THE SECOND DATE BASIS (nyiso-133,
+``ScenarioConfig.nyiso_solar_registry_cod_dates``).** The artifact carries the
+same registry on TWO published in-service date bases, in parallel columns:
+``capacity_mw`` (the Gold Book ``In-Service Date``, unchanged) and
+``capacity_mw_cod`` (EIA-860's capacity-weighted ``Operating Year`` /
+``Operating Month`` for the crosswalked plant, falling back to the Gold Book date
+where no EIA-860 record exists). Membership and nameplate stay **100 % Gold
+Book** on both bases — only the month a plant's capacity switches on differs.
+
+The Gold Book in-service date is a registration / interconnection-service date
+and **leads the plant's metered commercial start**; EIA-860's ``Operating
+Month`` matches it. Measured on this very registry against EIA-923 metered
+monthly output (probe ``scripts/probes/_nyiso133_commissioning_ramp.py``, record
+``results/calibration/_nyiso133_commissioning_ramp.json``): EIA-860's month
+equals the first metered-output month in **11 of the 12 uncensored plants**,
+while the Gold Book date leads by **+2 months on Morris Ridge (179 MW)**, +1 on
+High River (90 MW) and East Point (50 MW) — and trails by 1 and 3 months on two
+others, so the difference is signed both ways rather than a one-directional
+correction. That is rule 14 ``[R-ACCURATE]``'s *reconciled-real-data* path: two
+published registries disagree on one field and a third published series
+adjudicates. Rule 23 ``[R-FROZEN-DERIVE]``: the trigger is that measurement, NOT
+a residual — the swap makes the 2023 advisory band WORSE (+20.0 % -> +21.2 %)
+while halving 2024's (+32.7 % -> +19.1 %).
+
+**Rule 23 [R-FROZEN-DERIVE].** Re-run only when a new Gold Book vintage (or
+EIA-860 vintage) lands. Never re-run against a residual.
 
 **Rule 25 [R-ISO-SCOPE].** NYISO-only, from NYISO's own posting. The artifact
 records the ISO and the loader hard-errors on a mismatch.
@@ -61,6 +85,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
@@ -91,6 +116,44 @@ SKIPROWS: int = 8
 
 YEARS: tuple[int, ...] = (2023, 2024, 2025)
 OUT = RAW_DIR / "reference" / "nyiso-market-solar-capacity.csv"
+
+# EIA-860 operable generator schedule — the second published in-service date
+# basis (nyiso-133). Same file the EIA-860 solar path already reads.
+EIA860 = RAW_DIR / "eia-860" / "eia860_generator_operable.parquet"
+
+# Gold Book Table III-2a PTID -> EIA plant code. An IDENTITY mapping between two
+# published registries for the same physical plant, not a parameter: every row
+# is verified below on nameplate agreement and an unverifiable row is DROPPED
+# (it then keeps its Gold Book date) rather than guessed. Albany County Solar 2
+# is mapped to None deliberately — EIA-860 carries only "Hecate Energy Albany
+# County 1" at 20 MW, so unit 2 has no separate record to cross to.
+PTID_TO_EIA: dict[int, int | None] = {
+    323809: 65125,  # Puckett Solar          -> NY8 - Puckett Solar
+    323808: 65123,  # Janis Solar            -> NY8 - Janis Solar
+    323848: 68274,  # Morris Ridge Solar     -> Morris Ridge Solar
+    323811: 65122,  # Branscomb Solar        -> NY8 - Branscomb Solar
+    323812: 65124,  # Regan Solar            -> NY8 - Regan Solar
+    323813: 65121,  # Grissom Solar          -> NY8 - Grissom Solar
+    323810: 65839,  # Darby Solar            -> NY8 - Darby Solar
+    323814: 65841,  # Stillwater Solar       -> NY8 - ELP Stillwater Solar
+    323833: 64077,  # Albany County Solar 1  -> Hecate Energy Albany County 1
+    323834: None,  # Albany County Solar 2  -> no separate EIA-860 record
+    323815: 65840,  # Pattersonville Solar   -> NY8 - Teichos Pattersonville
+    323840: 65805,  # East Point Solar       -> East Point Energy Center
+    323847: 65765,  # High River Solar       -> High River Energy Center, LLC
+    323691: 57589,  # Long Island Solar Farm -> Long Island Solar Farm LLC
+    323806: 65679,  # Calverton Solar        -> Calverton Solar Energy Center
+}
+
+# A crosswalk row survives only when the two registries agree on nameplate to
+# within this band. Wide enough to absorb an AC/DC rating convention difference
+# (Morris Ridge is 179.0 Gold Book vs 177.0 EIA-860), narrow enough that a
+# wrong plant cannot pass. A failing row is DROPPED, never rescaled.
+CROSSWALK_MW_TOLERANCE: tuple[float, float] = (0.75, 1.34)
+
+# Month assumed when EIA-860 knows a unit's operating YEAR but not its month —
+# the same mid-year convention data.cod_ramp.COD_FALLBACK_MONTH applies.
+COD_FALLBACK_MONTH: int = 7
 
 
 def _read_pv_rows(vintage: int, workbook: str) -> pd.DataFrame:
@@ -138,6 +201,56 @@ def _read_pv_rows(vintage: int, workbook: str) -> pd.DataFrame:
     return out
 
 
+def _eia860_cod_dates(reg: pd.DataFrame) -> pd.Series:
+    """Return each registry PTID's EIA-860 commercial-operation date (or NaT).
+
+    The plant's date is the **capacity-weighted** mean of its EIA-860 units'
+    ``(Operating Year, Operating Month)``, the same reduction
+    :func:`market_sim.data.cod_ramp._load_cod_map` applies, so a multi-unit
+    plant lands on the date the bulk of its nameplate came online. A row is
+    returned only when the crosswalk is verified: the plant must be in
+    :data:`PTID_TO_EIA`, present in EIA-860, and agree with the Gold Book
+    nameplate within :data:`CROSSWALK_MW_TOLERANCE`. Every other PTID gets
+    ``NaT`` and keeps its published Gold Book date.
+
+    Args:
+        reg: The union registry from :func:`build_registry` (needs ``ptid`` and
+            ``nameplate_mw``).
+
+    Returns:
+        A ``Timestamp``/``NaT`` series indexed like *reg*.
+    """
+    e860 = pd.read_parquet(EIA860)
+    e860 = e860[e860["Status"].astype(str).str.strip().str.upper() == "OP"]
+    dates: list[pd.Timestamp] = []
+    for _, row in reg.iterrows():
+        code = PTID_TO_EIA.get(int(row["ptid"]))
+        sub = e860[e860["Plant Code"] == code] if code is not None else e860.iloc[:0]
+        if sub.empty:
+            dates.append(pd.NaT)
+            continue
+        cap = pd.to_numeric(sub["Nameplate Capacity (MW)"], errors="coerce").fillna(0.0)
+        oy = pd.to_numeric(sub["Operating Year"], errors="coerce")
+        om = pd.to_numeric(sub["Operating Month"], errors="coerce").fillna(
+            COD_FALLBACK_MONTH
+        )
+        known = oy.notna()
+        ratio = float(cap.sum()) / float(row["nameplate_mw"])
+        lo, hi = CROSSWALK_MW_TOLERANCE
+        if not known.any() or not (lo <= ratio <= hi):
+            dates.append(pd.NaT)
+            continue
+        weights = cap[known].to_numpy()
+        if weights.sum() <= 0.0:
+            weights = np.ones(int(known.sum()))
+        continuous = oy[known].to_numpy() + (om[known].to_numpy() - 1.0) / 12.0
+        mean = float(np.average(continuous, weights=weights))
+        year = int(np.floor(mean))
+        month = min(max(int(round((mean - year) * 12.0)) + 1, 1), 12)
+        dates.append(pd.Timestamp(year=year, month=month, day=1))
+    return pd.Series(dates, index=reg.index, dtype="datetime64[ns]")
+
+
 def build_registry() -> pd.DataFrame:
     """Return the union registry of NYISO market-generator PV units.
 
@@ -178,31 +291,44 @@ def monthly_capacity(reg: pd.DataFrame) -> pd.DataFrame:
 
     Returns:
         Long-form frame with ``year``, ``month``, ``model_zone``,
-        ``capacity_mw`` and ``n_units``.
+        ``capacity_mw`` / ``n_units`` (the Gold Book in-service date basis) and
+        ``capacity_mw_cod`` / ``n_units_cod`` (the EIA-860 ``Operating Month``
+        basis, nyiso-133). The two bases differ ONLY in the month a unit's
+        capacity switches on — membership and nameplate are identical.
     """
     model_zones = sorted(set(_ZONE_TO_MODEL.values()))
     reg = reg.assign(model_zone=reg["zone"].map(_ZONE_TO_MODEL))
+    # EIA-860 date where the crosswalk verifies, published Gold Book date
+    # otherwise — an unmatched unit is never given an invented date.
+    cod = _eia860_cod_dates(reg)
+    reg = reg.assign(in_service_cod=cod.fillna(reg["in_service"]))
     rows: list[dict] = []
     for year in YEARS:
         for month in range(1, 13):
-            stamp = pd.Timestamp(year=year, month=month, day=1)
+            month_end = pd.Timestamp(
+                year=year, month=month, day=1
+            ) + pd.offsets.MonthEnd(0)
             # Registration ends after the last vintage that lists the unit;
             # a unit listed in the final vintage stays registered to the end.
-            live = reg[
-                (reg["in_service"] <= stamp + pd.offsets.MonthEnd(0))
-                & (reg["last_vintage"] >= year)
-            ]
+            registered = reg[reg["last_vintage"] >= year]
+            live = registered[registered["in_service"] <= month_end]
+            live_cod = registered[registered["in_service_cod"] <= month_end]
             by_zone = live.groupby("model_zone")["nameplate_mw"].agg(["sum", "size"])
+            by_zone_cod = live_cod.groupby("model_zone")["nameplate_mw"].agg(
+                ["sum", "size"]
+            )
             for mz in model_zones:
-                cap = float(by_zone["sum"].get(mz, 0.0))
-                n = int(by_zone["size"].get(mz, 0))
                 rows.append(
                     {
                         "year": year,
                         "month": month,
                         "model_zone": mz,
-                        "capacity_mw": round(cap, 3),
-                        "n_units": n,
+                        "capacity_mw": round(float(by_zone["sum"].get(mz, 0.0)), 3),
+                        "n_units": int(by_zone["size"].get(mz, 0)),
+                        "capacity_mw_cod": round(
+                            float(by_zone_cod["sum"].get(mz, 0.0)), 3
+                        ),
+                        "n_units_cod": int(by_zone_cod["size"].get(mz, 0)),
                     }
                 )
     return pd.DataFrame(rows)
@@ -217,10 +343,37 @@ def main() -> int:
     )
     print(reg.to_string(index=False))
 
+    cod = _eia860_cod_dates(reg)
+    matched = int(cod.notna().sum())
+    print(
+        f"\nEIA-860 crosswalk (nyiso-133): {matched}/{len(reg)} units verified; "
+        f"{len(reg) - matched} keep their Gold Book date"
+    )
+    for (_, row), date in zip(reg.iterrows(), cod):
+        if pd.isna(date):
+            continue
+        lead = (date.year - row["in_service"].year) * 12 + (
+            date.month - row["in_service"].month
+        )
+        if lead:
+            print(
+                f"    {row['station']:24s} {row['nameplate_mw']:6.1f} MW  "
+                f"gold book {row['in_service']:%Y-%m} -> EIA-860 {date:%Y-%m} "
+                f"({lead:+d} mo)"
+            )
+
     monthly = monthly_capacity(reg)
-    print("\nISO-total registered PV capacity by month (MW):")
+    print("\nISO-total registered PV capacity by month (MW), gold-book basis:")
     tot = monthly.groupby(["year", "month"])["capacity_mw"].sum().unstack()
     print(tot.round(1).to_string())
+    print("\nmean-monthly MW by basis:")
+    means = monthly.groupby("year")[["capacity_mw", "capacity_mw_cod"]].sum() / 12.0
+    for year, row in means.iterrows():
+        print(
+            f"    {year}: gold book {row['capacity_mw']:8.2f}   "
+            f"EIA-860 {row['capacity_mw_cod']:8.2f}   "
+            f"ratio {row['capacity_mw_cod'] / row['capacity_mw']:.4f}"
+        )
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT, "w") as fh:
@@ -237,11 +390,29 @@ def main() -> int:
             "#   as grid supply double-counts it.\n"
             "# ZERO FREE PARAMETERS. Rule 13 input, rule 23 frozen (re-derive only on\n"
             "#   a new Gold Book vintage), rule 25 NYISO-only.\n"
+            "# TWO PUBLISHED DATE BASES, same membership and same nameplate (nyiso-133,\n"
+            "#   ScenarioConfig.nyiso_solar_registry_cod_dates):\n"
+            "#     capacity_mw     — Gold Book 'In-Service Date' (a registration /\n"
+            "#                       interconnection-service date), the historical basis;\n"
+            "#     capacity_mw_cod — EIA-860 capacity-weighted Operating Year/Month for\n"
+            "#                       the crosswalked plant, which matches the first\n"
+            "#                       METERED month of output in 11 of 12 uncensored\n"
+            "#                       plants (EIA-923); Gold Book date where unmatched.\n"
+            "#   Evidence: results/calibration/_nyiso133_commissioning_ramp.json.\n"
             "# Regenerate: python scripts/data/derive_nyiso_market_solar.py\n"
-            "iso,year,month,model_zone,capacity_mw,n_units\n"
+            "iso,year,month,model_zone,capacity_mw,n_units,capacity_mw_cod,n_units_cod\n"
         )
         monthly.assign(iso="NYISO")[
-            ["iso", "year", "month", "model_zone", "capacity_mw", "n_units"]
+            [
+                "iso",
+                "year",
+                "month",
+                "model_zone",
+                "capacity_mw",
+                "n_units",
+                "capacity_mw_cod",
+                "n_units_cod",
+            ]
         ].to_csv(fh, index=False, header=False)
     print(f"\nwrote {OUT}")
     return 0
