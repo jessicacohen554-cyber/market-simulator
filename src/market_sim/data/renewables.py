@@ -2332,7 +2332,20 @@ def load_renewable_profiles(
             # zone split, the vintage ramp) follows unchanged. See
             # data.nyiso_market_solar for the identification and the declared
             # CF-basis limitation.
-            registered = load_market_solar_monthly(iso, year, zone_names)
+            #
+            # nyiso_solar_registry_cod_dates (nyiso-133) selects WHICH published
+            # in-service date starts each plant: the Gold Book's own
+            # registration date (default) or EIA-860's Operating Month, which
+            # matches the first METERED month of output in 11 of 12 uncensored
+            # plants. Same membership, same nameplate — only the switch-on month.
+            registered = load_market_solar_monthly(
+                iso,
+                year,
+                zone_names,
+                cod_basis=bool(
+                    getattr(config, "nyiso_solar_registry_cod_dates", False)
+                ),
+            )
             if registered is not None:
                 monthly = registered
         if monthly is not None:
