@@ -12,24 +12,80 @@ H2_LHV_MMBTU_PER_KG: float = 0.1137  # MMBtu per kg H2 (lower heating value)
 # Source: IRA §45Q.
 CCUS_45Q_CREDIT_PER_TON: float = 85.0  # $/tCO2 geologically stored
 
-# IRA §45U zero-emission (existing) nuclear production tax credit. Base
-# credit 0.3 cents/kWh, multiplied 5x for facilities meeting prevailing
-# wage requirements — this module assumes the prevailing-wage rate
-# throughout (the same convention already used for the wind PTC's
-# ``ira_ptc_wind``, which is likewise the wage-compliant rate, not the
-# unmultiplied base). Source: 26 U.S.C. §45U(a),(d)(1); triangulated in
+# IRA §45U zero-emission (existing) nuclear production tax credit.
+#
+# STATUTORY ORDERING — the 5x multiplies the NET credit, not the rate.
+# §45U(a) is itself a net quantity: "the amount by which (1) the product of
+# (A) 0.3 cents, multiplied by (B) the kilowatt hours ... exceeds (2) the
+# reduction amount for such taxable year". §45U(d)(1) then multiplies "the
+# amount of the credit determined under SUBSECTION (a) ... by 5" for a
+# facility meeting the prevailing-wage requirements. The 5x operand is
+# therefore the post-phase-down amount:
+#
+#     §45U (cents/kWh) = 5 x max(0, R_year - 0.16 x max(0, GR - T_year))
+#
+# i.e. $15/MWh below the threshold, dying at GR = T_year + R_year / 0.16
+# ($43.75/MWh at the nominal amounts). This module previously folded the 5x
+# into the 0.3-cent rate and then subtracted an UNMULTIPLIED reduction,
+# which left the phase-down slope 5x too shallow (0.16 vs 0.80 $/$) and
+# pushed the zero-out price out to $118.75/MWh — finding F-1 of
+# docs/handoffs/d28-45u-composition-memo-2026-08-08.md §1.1/§4, corroborated
+# there against the primary text and an independent industry worked example.
+# This module assumes the prevailing-wage rate throughout (the same
+# convention already used for the wind PTC's ``ira_ptc_wind``, which is
+# likewise the wage-compliant rate, not the unmultiplied base).
+# Source: 26 U.S.C. §45U(a)(1)(A), (d)(1); triangulated in
 # data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv.
-SECTION_45U_BASE_CREDIT_CENTS_PER_KWH: float = 0.3
-SECTION_45U_PREVAILING_WAGE_MULTIPLIER: float = 5.0
-SECTION_45U_CREDIT_CENTS_PER_KWH: float = (
-    SECTION_45U_BASE_CREDIT_CENTS_PER_KWH * SECTION_45U_PREVAILING_WAGE_MULTIPLIER
-)  # 1.5 cents/kWh = $15/MWh
+SECTION_45U_BASE_CREDIT_CENTS_PER_KWH: float = 0.3  # §45U(a)(1)(A)
+SECTION_45U_PREVAILING_WAGE_MULTIPLIER: float = 5.0  # §45U(d)(1), applied to the NET
 
-# §45U(b)(2) gross-receipts phase-down: the credit is reduced (not below
-# zero) by 16% of the amount by which the facility's average per-MWh sale
-# price of electricity exceeds 2.5 cents/kWh. Source: 26 U.S.C. §45U(b)(2).
+# §45U(b)(2)(A) reduction amount: the LESSER of (i) the (a)(1) amount or
+# (ii) 16 percent of the excess of the facility's gross receipts from
+# electricity sold over the product of 2.5 cents and those kWh. The
+# "lesser of" is what floors the credit at zero. Dividing through by kWh
+# gives the per-unit form used below. Sources: 26 U.S.C.
+# §45U(b)(2)(A)(ii) (the 16 percent) and §45U(b)(2)(A)(ii)(II)(aa) (the
+# 2.5 cents).
 SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH: float = 2.5
 SECTION_45U_PHASE_DOWN_RATE: float = 0.16
+
+# §45U(c)(1)-(2) inflation adjustment, base calendar year 2023: the
+# (a)(1)(A) 0.3-cent amount and the (b)(2)(A)(ii)(II)(aa) 2.5-cent amount
+# "shall each be adjusted by multiplying such amount by the inflation
+# adjustment factor ... for the calendar year in which the sale occurs",
+# the first rounded to the nearest 0.05 cent and the second to the nearest
+# 0.1 cent. Values below are the applicable amounts AS PRINTED in the IRS
+# notices — not our own arithmetic from the published factor:
+#   2024 — no §45U notice published. The 2024 factor is
+#          deflator(2023)/deflator(2023) = 1.0000 under the construction
+#          both notices below use, so the statutory nominal amounts stand
+#          unadjusted; the pair is taken from the constants above rather
+#          than restated.
+#   2025 — Notice 2025-37 (IRB 2025-30), factor 1.0242 (GDP implicit price
+#          deflator 2024 = 125.234 over 2023 = 122.273). Printed: the
+#          §45U(a)(1)(A) amount is "0.3 cents (0.3 cents (or $0.003) x
+#          1.0242, then rounded to the nearest multiple of 0.05 cent)" and
+#          the §45U(b)(2)(A)(ii)(II)(aa) amount is "2.6 cents (2.5 cents
+#          (or $0.025) x 1.0242, then rounded to the nearest multiple of
+#          0.1 cent)".
+#   2026 — Notice 2026-41 (IRB 2026-29, 2026-07-13) §3.01, factor 1.0539
+#          (deflator 2025 = 128.986 over 2023 = 122.39). Printed amounts
+#          read from the bulletin text: §45U(a)(1)(A) "0.3 cents",
+#          §45U(b)(2)(A)(ii)(II)(aa) "2.6 cents".
+# Years beyond the last published notice HOLD the last published pair, and
+# years before the first hold the first. That is deterministic and adds no
+# degree of freedom (rule 21 [R-DOF]): no factor is published for a forward
+# year, and extrapolating an escalator would be a tuned forward assumption
+# with no primary source. Holding is one-sided conservative — a frozen
+# threshold understates T_year and so understates the credit.
+SECTION_45U_APPLICABLE_AMOUNTS_CENTS_PER_KWH: dict[int, tuple[float, float]] = {
+    2024: (
+        SECTION_45U_BASE_CREDIT_CENTS_PER_KWH,
+        SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH,
+    ),
+    2025: (0.3, 2.6),
+    2026: (0.3, 2.6),
+}
 
 
 def h2_45v_credit_per_mmbtu(year: int, config: ScenarioConfig) -> float:
@@ -86,25 +142,62 @@ def ccus_45q_credit_per_mwh(
     return CCUS_45Q_CREDIT_PER_TON * co2_captured_per_mwh
 
 
+def section_45u_applicable_amounts_cents_per_kwh(year: int) -> tuple[float, float]:
+    """Return the §45U(c)(1) inflation-adjusted amounts for a sale year.
+
+    Looks up the calendar year's published applicable amounts in
+    :data:`SECTION_45U_APPLICABLE_AMOUNTS_CENTS_PER_KWH` — the IRS-notice
+    amounts for the §45U(a)(1)(A) credit rate and the
+    §45U(b)(2)(A)(ii)(II)(aa) gross-receipts threshold. A year outside the
+    published range holds the nearest published pair (the earliest for
+    years before the table, the latest for years after it); see the table's
+    own comment for why that is the zero-DOF choice rather than an
+    extrapolated escalator.
+
+    Args:
+        year: Calendar year in which the sale occurs, per §45U(c)(1).
+
+    Returns:
+        ``(rate_cents_per_kwh, threshold_cents_per_kwh)`` for that year.
+    """
+    published = SECTION_45U_APPLICABLE_AMOUNTS_CENTS_PER_KWH
+    if year in published:
+        return published[year]
+    if year < min(published):
+        return published[min(published)]
+    return published[max(published)]
+
+
 def section_45u_credit_per_mwh(
     year: int, avg_price_per_mwh: float, config: ScenarioConfig
 ) -> float:
     """Return the IRA §45U existing-nuclear PTC as a $/MWh revenue credit.
 
-    §45U pays :data:`SECTION_45U_CREDIT_CENTS_PER_KWH` per kWh, reduced —
-    never below zero — by :data:`SECTION_45U_PHASE_DOWN_RATE` of the amount
-    by which the unit's own average realized energy-market price (the
-    statute's "gross receipts" basis) exceeds
-    :data:`SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH`. This is the
-    nuclear retirement screen's revenue input, not a dispatch-cost adder —
-    §45U is a per-MWh production credit paid on realized output, so it
-    enters the same attribute-revenue seam as ``eac_price_nuclear``/the RPS
-    shadow price (the caller takes ``max()``; see
-    ``model.capacity.apply_economic_retirements``). The credit expires
+    Implements the statutory ordering (26 U.S.C. §45U; module comment
+    above). Writing ``R``/``T`` for the year's §45U(c)(1) inflation-adjusted
+    rate and threshold from
+    :func:`section_45u_applicable_amounts_cents_per_kwh` and ``GR`` for the
+    per-kWh gross receipts::
+
+        reduction = min(R, SECTION_45U_PHASE_DOWN_RATE x max(0, GR - T))
+        credit    = SECTION_45U_PREVAILING_WAGE_MULTIPLIER x (R - reduction)
+
+    The ``min(R, ...)`` is §45U(b)(2)(A)'s "lesser of", which is what floors
+    the credit at zero; the 5x is §45U(d)(1) applied to the subsection-(a)
+    net, NOT to the rate. At the nominal amounts that is $15/MWh below
+    $25/MWh, phasing down at $0.80 per $1 of gross receipts and reaching
+    zero at $43.75/MWh.
+
+    This is the nuclear retirement screen's revenue input, not a
+    dispatch-cost adder — §45U is a per-MWh production credit paid on
+    realized output, so it enters the same attribute-revenue seam as
+    ``eac_price_nuclear``/the RPS shadow price (the caller takes ``max()``;
+    see ``model.capacity.apply_economic_retirements``). The credit expires
     after ``config.ira_45u_last_year``.
 
     Args:
-        year: Simulation year, compared against the §45U expiry year.
+        year: Simulation year. Compared against the §45U expiry year, and
+            used as the sale calendar year for the §45U(c)(1) amounts.
         avg_price_per_mwh: The unit's average realized energy-market price
             in $/MWh, used as the "gross receipts" phase-down basis.
         config: Scenario config supplying the §45U expiry year.
@@ -115,13 +208,19 @@ def section_45u_credit_per_mwh(
     """
     if year > config.ira_45u_last_year:
         return 0.0
-    avg_price_cents_per_kwh = avg_price_per_mwh / 10.0  # $/MWh -> cents/kWh
-    excess = max(
-        0.0,
-        avg_price_cents_per_kwh - SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH,
+    rate_cents_per_kwh, threshold_cents_per_kwh = (
+        section_45u_applicable_amounts_cents_per_kwh(year)
     )
-    reduction = SECTION_45U_PHASE_DOWN_RATE * excess
-    credit_cents_per_kwh = max(0.0, SECTION_45U_CREDIT_CENTS_PER_KWH - reduction)
+    gross_receipts_cents_per_kwh = avg_price_per_mwh / 10.0  # $/MWh -> cents/kWh
+    excess = max(0.0, gross_receipts_cents_per_kwh - threshold_cents_per_kwh)
+    # §45U(b)(2)(A): the reduction is the LESSER of the (a)(1) amount or 16%
+    # of the excess -- so the subsection-(a) net never goes below zero.
+    reduction = min(rate_cents_per_kwh, SECTION_45U_PHASE_DOWN_RATE * excess)
+    net_credit_cents_per_kwh = rate_cents_per_kwh - reduction  # the (a) amount
+    # §45U(d)(1): 5x the amount determined under subsection (a).
+    credit_cents_per_kwh = (
+        SECTION_45U_PREVAILING_WAGE_MULTIPLIER * net_credit_cents_per_kwh
+    )
     return credit_cents_per_kwh * 10.0  # cents/kWh -> $/MWh
 
 
