@@ -4913,3 +4913,101 @@ Deliverable: the PR + docs/handoffs/f1-45u-ordering-<date>.md (the statutory rea
 before/after credit curve, the stage-1 table, stage-2 run-or-skip with evidence, F-3's
 primary-source amounts or its escalation).
 ```
+
+## §0aa — All four lanes live; F1-45U adjudicated CLEAN; F2-45U dispatched; the enforcement card (2026-08-08 @ `0501f9b8`)
+
+State delta since §0z (full detail: sitting record Addendum AE): **all four §0z-cycle
+prompts were pasted and show evidence.** FFR-8A-P3 mid-flight and healthy (E3
+ESCALATED-NOT-LANDED recorded in §3; §3.4 honest expectation pre-committed before the
+repair arm; control arm solving with per-screen dumps committed as produced; found+fixed
+the E4 runner-import F821 and backfilled caiso-184's unregistered field — the THIRD
+nyiso-128-pattern occurrence). FFR-3V-FIX: the vintage-seed fix + MISO-pair prereg merged
+(#3745), measurement in flight. F1-45U MERGED (#3746) and adjudicated CLEAN: statutory
+ordering landed, F-3 from the notices' PRINTED amounts, stage-1 found NO margin-vs-bar
+crossing at any CF so stage-2 was SKIPPED per its pre-registered gate, backcast inertness
+pinned by reachability + regression test. HOUSE-1 PR #3749 OPEN: hook scoped to
+edited-file-only (+--force-exclude), constants.py excluded prophylactically, and the X.2
+diagnosis is load-bearing — the pin tests were ALREADY blocking in three jobs; the real
+mechanism is that MERGES DO NOT WAIT FOR CHECKS (sampled: PRs merged 8-86 s after
+creation) plus ambient red; the new isolated `cache-key-pin` check fixes the signal, and
+ENFORCEMENT is an owner-only act (branch protection) — card put this sitting. CAISO
+keeper moved to 2026-08-08-caiso-183-b1-hour (hour-grain outage envelope; CAISO-scoped
+data-grain repair, zero DOF, R.1 clean; no `complete` marker so no re-key duty).
+
+**NEW STANDING LINE FOR EVERY FUTURE PROMPT** (adopted from HOUSE-1 §3.5(2)): *a session
+that opens a PR waits for the `cache-key-pin` check verdict (~3 min) before merging;
+a red verdict is the session's own field-registration miss until proven otherwise.*
+
+### F2-45U [OPUS] — land composition (c): the §45U/attribute seam (D-28 step 2 of 3)
+
+```
+[OPUS] F2-45U — Land composition (c): the §45U/attribute seam in the retirement screen.
+Owner decision D-28 option A (sitting Addendum AD.5), sequencing step 2 of 3. F1-45U is
+MERGED (PR #3746): ira.py now carries the statutory net-then-5x ordering and the
+§45U(c)(1) adjusted amounts. This charter is the retirements.py seam ONLY; Arm-3 arming
+is step 3 and is NOT yours.
+
+Repo /home/user/market-simulator. Rule 27: OPUS ok (capacity_evolution module). Branch
+claude/f2-45u-composition-<suffix> off fresh origin/main. Authority:
+docs/handoffs/d28-45u-composition-memo-2026-08-08.md §3 (the interaction audit; §3.2's
+(c) row IS the design), §5 (the signed card); docs/handoffs/f1-45u-ordering-2026-08-08.md.
+
+=== THE SEAM (memo §5, the signed composition) ===
+  attribute = max(eac_price_nuclear, federal_ces_premium x fraction, rps_dual, clean_dual)
+  s45u      = section_45u_credit_per_mwh(year, GR = avg_energy_price + attribute, config)
+  revenue  += (attribute + s45u) x attainable_in_merit_MWh
+Concretely in model/capacity_evolution/retirements.py: (1) DELETE §45U from the
+eac_price max() fold (the :1969-1972 site — the fold carrying the "owner call pending"
+annotation; retire that annotation, citing D-28/AD.5); (2) the RESOLVED attribute price
+joins §45U's gross-receipts basis argument; (3) compute_attribute_revenue and the max()
+doctrine ACROSS ATTRIBUTE BUYERS are unchanged (memo: "(c) requires no change to
+compute_attribute_revenue" — one deletion, one addition).
+
+=== KEY ACCEPTANCE — LATENT AT TODAY'S DEFAULTS ===
+With eac_price_nuclear=0.0, federal CES off, clean rows OFF, and nuclear earning no RPS
+row, attribute=0 for every nuclear unit at shipped defaults, so the seam change must be
+EXACTLY a no-op on the default path: §45U(P+0) = §45U(P). Prove it three ways:
+(a) unit test — default-config nuclear unit net revenue identical before/after, pinned
+numerically; (b) re-cite the F1-45U reachability argument (one call site, evolve_fleet
+only — no backcast contact); (c) the pinned default cache key UNMOVED. No new
+ScenarioConfig field is expected; if one becomes unavoidable: matrix row +
+_CACHE_KEY_OPTIONAL_FIELDS + defaults ledger in the SAME COMMIT, and WAIT for the
+`cache-key-pin` CI check verdict before merging (HOUSE-1 gate; caiso-184 was the THIRD
+unregistered-field recurrence). A default-path move of ANY kind is a stop-the-line
+finding, not something to absorb.
+
+=== TESTS (extend tests/unit/policy/test_ira.py + the retirement-screen suite) ===
+- memo §2.3 column (c) pinned at interior duals: (P=30.80, D=10) -> $12.36/MWh total;
+  (P=42.85, D=10) -> $10.00; (P=60.00, D=10) -> $10.00.
+- the ACP-ceiling coincidence rows: (any P, D=30) -> $30.00 — today's max() already
+  agrees there; pin it as a regression across the seam swap.
+- the branch-(iii)/eac_price_nuclear edge (memo §1.4 + §3.2(d)): eac_price_nuclear is
+  documented as a NY/IL-ZEC-style netting program; under (c) it sits in the attribute
+  max() and feeds the basis like any attribute payment. NOTE this reading and its
+  unsettledness in the handoff — default 0.0 keeps it latent; do NOT build a
+  branch-(iii) netting mechanism in this lane (future charter if a genuine netting
+  program is ever armed).
+
+=== MEASUREMENT (stage-1 style; no solve expected) ===
+Extend scripts/probes/_f1_45u_stage1_margin.py (or a sibling probe) with interior-dual
+columns (D = 0/10/30 illustrative): the composition delta at today's defaults must be
+ZERO in every D=0 row; the D>0 columns are the memo §2.3 (c) column reproduced. A paired
+forecast solve happens ONLY if the default path is not provably a no-op — which per the
+acceptance above is itself a stop-the-line escalation, not a license to solve.
+
+=== SCOPE GUARDS ===
+No Arm-3 arming, no keeper contact, no backcast-registry touch, no STATE_RPS_ACP or
+clean-tier config change, no ira.py arithmetic change (F-1/F-3 are landed; this lane
+only re-bases the GR argument). Matrix: update the ira_credits row citation; no cell
+verdict moves.
+
+=== TRAPS ===
+If HOUSE-1 (PR #3749) is not yet merged, the ruff-autofix hook still reflows
+src/market_sim/config/constants.py on ANY .py write: git status --short after every
+Python write; restore exact HEAD bytes; never stage the reflow. Push: fetch+rebase fresh
+origin/main first; never push_files a >=300-line file; no new GitHub Actions workflows.
+uv sync before tests; no regenerate_clean.py needed (no solve).
+
+Deliverable: the PR + docs/handoffs/f2-45u-composition-<date>.md (the seam diff walk,
+the three-way no-op proof at defaults, the pinned (c) table, the branch-(iii) note).
+```
