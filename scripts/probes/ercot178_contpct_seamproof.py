@@ -154,7 +154,6 @@ def _encode_step_tables(state: dict, year: int, tmpdir: Path) -> dict:
     byte-for-byte (SP-3). Returns the four override paths + coverage notes.
     """
     nl = _net_load(state)
-    hours = nl.size
     p_t = _rank_pct(nl)
     notes: dict = {}
 
