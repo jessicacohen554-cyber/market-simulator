@@ -5766,3 +5766,94 @@ Evidence: `docs/handoffs/taxonomy-gas-st-2026-08-07.md` §4.1,
 
 * **Session numbering:** `nyiso-131` is consumed by this promotion (the run id
   `2026-08-07-nyiso-131-taxgs-arm` already carries it). Next number: **nyiso-132**.
+
+## 2026-08-07/08 — nyiso-132: solar CF LEVEL armed and A/B'd (0.15 -> 0.1955). KEEPER UNCHANGED pending owner call
+
+**Lever-queue item 2, the second of the two named successors.** Paired A/B on the
+keeper recipe `2026-08-07-nyiso-131-taxgs-arm`, 2023-2025, both arms registered:
+`2026-08-08-nyiso-132-cf-control` / `2026-08-08-nyiso-132-cf-arm`.
+Charter: `PREREG-nyiso130-solar-cf-level-2026-08-06.md` §4; ex-ante settlement:
+`PREREG-nyiso132-solar-cf-level-2026-08-07.md`; result:
+`FINDING-nyiso132-solar-cf-level-2026-08-07.md`.
+
+**Construction (owner decision, in session): UNGATED `constants.py` edit**, the
+D-25 / caiso-175 pattern — zero `ScenarioConfig` fields, so the A/B runs on the
+paired-control **tree** harness and its config-isolation gate is inverted
+(configs must be identical). The gated-flag alternative was declined: a permanent
+gate whose "off" position is the known-wrong value is the rule 26 `[R-DELETE]`
+anti-pattern for a pure accuracy repair. Declared blast radius, stated before the
+choice: this also moves the NYISO **forecast** lane, where 11 committed
+`nyiso-*` hindcast sidecars exist.
+
+### The control reproduces the keeper byte-identically
+
+The replay flagged a toolchain drift (platform v18->v20, highspy 1.14.0->1.15.1,
+pandas 3.0.3->3.0.5, pyarrow 24.0.0->25.0.0), so this was treated as
+load-bearing, not a formality. Against the keeper's committed sidecars: **0.000
+GWh** per class-year (14 classes x 3 years), **max |delta| 0.000000000 MW** over
+122,640 hourly P1 rows x 3 years, and identical `reserve_family` duals. The
+nyiso-128-class hazard — a control that fails to reproduce its keeper — does not
+fire, so the arm's delta is attributable to the CF alone.
+
+### Result: determination identical, both adverse cases refuted
+
+`CALIBRATED-WITH-CAVEATS` in **both** arms, all 8 criterion statuses identical
+(C1/C2/C3a/C3b/C4/C6/C8 PASS; C3c the lone ledgered caveat, budget 1 of 1).
+
+| criterion | actual | control | arm |
+|---|---:|---:|---:|
+| C3a 2023 | 32.25 | 35.12 (+8.90 %) | **35.08 (+8.78 %)** |
+| C3a 2024 | 38.13 | 38.50 (+0.97 %) | **38.40 (+0.71 %)** |
+| C3a 2025 | 66.45 | 64.36 (-3.14 %) | **64.16 (-3.45 %)** |
+| C3c 2023 | 10 h | 22 h (2.20x) | **21 h (2.10x)** |
+| C3c 2024 | 12 h | 3 h | **3 h** |
+| C3c 2025 | 42 h | 24 h PASS | **24 h PASS** |
+
+Pre-registered adverse cases, both **refuted by measurement**: C3a-2025 did NOT
+cross -10 % (largest mean-LMP move in any year 0.31 %), and C3c-2025 did NOT
+fall through its 21 h floor (unchanged at 24 h). C3c-2023 improves by one hour.
+Construction gates K1-K4 all PASS (K1 after folding six checkout-prefix `*_path`
+artifacts the sibling control tree reports — the same fold
+`_normalize_cache_key_paths` applies to the cache key).
+
+### Reported against interest, and the defect it opened
+
+Solar vs the published Gold Book registry: **-7.1 / +2.4 / -23.3 %** ->
+**+20.9 / +33.2 / -0.1 %**. The arm buys an essentially exact mature year and
+costs **two** advisory-band breaches instead of one. That band
+(`calibration_verdict.VRE_TOL`, +/-10 %) is explicitly **report-only** and D-1
+classes solar `delivered_pinned` — "advisory-only, excluded from skill claims" —
+so no gated criterion moves on it; but it is not called a clean win.
+
+The cause is named and is its **own object** (rule 19 `[R-ONE-MECH]`, not
+bundled): **the model has NO COMMISSIONING CURVE.** The monthly capacity ramp
+counts a plant fully from its in-service month, so one CF cannot track a fleet
+whose realized CF runs 0.1629 / 0.1468 / 0.1955 (worst in 2024, the heavy build
+year, mean-month/year-end 0.6800). Carried as an open item in the arm's
+attestation.
+
+### Falsified en route
+
+The nyiso-130 prereg attributed the 0.15 -> 0.133 gap to "clipping and the donor
+profile". **Both limbs refuted**: the distribution sums to 1.000000, the hourly
+mean cf is **0.150000 exactly**, and **zero hours clip** in all three years. The
+gap is entirely the year-end-capacity **denominator convention**; on the
+registered basis in the flat 2025 fleet the model realizes **0.1500 exactly**.
+This decided the sizing — off the constant, 2025 lands at 981.3 GWh vs a
+published 981.8 (-0.1 %); off the reported 0.133 it would have over-shot the
+fleet's own published output by **+12.3 %**.
+
+### Status
+
+**KEEPER UNCHANGED at `2026-08-07-nyiso-131-taxgs-arm`.** The session recommends
+PROMOTE (structure improves, zero free parameters, `n_residual` unchanged at 6,
+no gated criterion regresses), but promotion is the owner's call and the keeper
+shard, the `complete` marker and the matrix keeper stamp are all untouched. The
+matrix cell `vre_avg_cf_level` NYISO is **`O`** — built and adjudicated, armed on
+no keeper. Rule 25: NEISO carries the identical Tier-3 0.15 and is **not**
+covered (cell `U`).
+
+Retention: the top-15-per-ISO sweep pruned `2026-08-04-nyiso-120-c119-scope` and
+`2026-08-04-nyiso-120a-control`.
+
+* Next number: **nyiso-133**.
