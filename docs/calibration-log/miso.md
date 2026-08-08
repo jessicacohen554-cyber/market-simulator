@@ -5821,4 +5821,183 @@ mechanism's anchor is part of the mechanism* → miso-140/140b *a correction is
 not verified by the commit that makes it* → **miso-141 *a derate is a delta;
 name its base or it is not a number***.
 
-Next number: **miso-142**.
+Next number: **miso-142**. *(superseded — see the miso-142 entry below.)*
+
+---
+
+## 2026-08-08 — miso-142: §5.4 QUEUE ITEM 3 SET AND DISCHARGED — H1 is REFUTED in all three years. MISO's summer-afternoon problem is not a supply QUANTITY defect but a supply-curve SLOPE defect: the model's stack rises $0.64/MWh per GW where the real one rises $2.15, 3.4× too flat, so no quantity repair of any admissible size can close C3a. The PREREG stop rule fired. No LP, no solve, no registration, no cell verdict, keeper UNCHANGED
+
+**Lane.** §5.4 queue item 3, owner-set 2026-08-08: the summer-afternoon supply
+stack — four owner-observed objects (O1 the Jun/Jul h8–20 miss, O2 coal over /
+CT under, O3 hydro "way off", O4 OTHER over-runs, O5 imports inverted) against
+one unifying hypothesis **H1** (the model fills the summer afternoon with cheap
+non-thermal supply that is not really there) and its null **H0** (an independent
+coal-vs-CT merit-order defect).
+
+**Posture.** NO LP SOLVED, no keeper moved, no mechanism armed, no run
+registered, no `ScenarioConfig` field, no parameter, nothing written under
+`data/raw/`. Keeper unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
+`miso132_ccmin_B`). PREREG
+`results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md` pushed at
+`771cf19c` (blob `f2315248`, verified against the remote) **before any
+adjudicating statistic**, carrying ten falsifiable numeric predictions, four
+pre-committed verdict branches, a stop rule, kill-gate bars fixed before their
+numbers were seen, and seven traps each with a counter-measurement (Trap 7, the
+EIA-930 adjustment residual, added by this session).
+
+**§0 re-verified from committed artifacts** (`calibration_verdict.py --run-id`,
+no re-solve, all three years in one invocation, rule 16): `NOT-YET`, rubric
+v3.1, 8 criteria, sole FAIL C3a `price_mean` RT **−0.4 / −6.0 / −14.1 %** (model
+32.72 / 30.37 / 39.05 vs 32.85 / 32.30 / 45.46; DA −4.4 / −8.4 / −15.8), sole
+ledgered caveat C3c **1 of 1**, C3b PASS 0.075 / 0.112 / 0.191. **Identical to
+the charter §0 in every cell.** Rule 22: MISO holds no marker — 2023–2025 only.
+
+### The decisive measurement — two supply curves, built the same way on both sides
+
+Bin the window's hours by the thermal MW that had to be served, take the median
+clearing price per bin. Model = keeper P1 price + P1 class dispatch; actual =
+measured RT LMP + EIA-930 generation, on the repo's own clock.
+
+| 2025 JJA h12–17 | slope ($/MWh per GW) |
+|---|---|
+| model | **+0.637** (se 0.032, R² 0.477) |
+| actual | **+2.154** (se 0.318, R² 0.095) |
+| ratio | **actual 3.38× steeper** |
+
+The ratio grows **1.74× → 3.04× → 3.38×** across 2023/24/25 against C3a
+−0.4 / −6.0 / −14.1 % — the same object tracked over three years. On a
+self-centred axis the curves **cross near −2 GW**: the model is over-priced at
+the bottom and under-priced at the top. **This is miso-137's compressed price
+distribution, measured as a slope for the first time.** The model's own maximum
+clearing price anywhere in those 552 hours is **$51.97** against a load-weighted
+actual of **$74.68** — it never reaches the actual price at any quantity it
+observes.
+
+### H1 refuted — Branch C, every year, both windows
+
+ΔQ over {hydro, OTHER, import} = **+0.100 / +0.658 / +0.118 GW** (W1
+2023/24/25) against a **+2 GW** bar, and **below the EIA-930 adjustment-residual
+noise floor (1.36 / 1.64 / 1.62 GW)** in every case — so Trap 7's guard fires
+too and the number is not assertable as non-zero in either direction. Price
+reach **0.20–7.4 %** of the deficit. Closing 2025 by quantity would need
+**47.7 GW** of displacement against a **13.28 GW** cushion (**3.60×**).
+
+**The PREREG stop rule fired as written**, unconditional on O3/O4/O5: *no
+quantity lever can close C3a in MISO.*
+
+### The four objects, one at a time
+
+* **O1 CONFIRMED in detail.** W1 (Jun+Jul h8–20, 793 h) carries **55.2 %** of the
+  2025 gap — the point prediction was 55 %. The owner's "concentrated Jun 21–24
+  and ALL of July" is exactly right: **84 % of June's window deficit sits in
+  those four days** (−1.417 of −1.695) while July is broadly bad at a near-uniform
+  −40 %. Two qualifications the number forces: the complement still carries
+  **44.8 %** (the gap is 55/45, not localised), and the summer-afternoon deficit
+  **exists in all three years** (−0.53 / −1.19 / −3.54) — 2023 passes C3a only
+  because an over-priced complement (+0.40) cancels it, the calendar-split
+  analogue of miso-137 §4.
+* **O2 CONFIRMED, 2025-specific, and currently UNGATED.** On the scorer's own C2
+  basis coal flips **−2.3 % → +4.2 %** and gas **−2.7 % → −11.2 %**, a step change
+  tracking the $2.19 → $3.52/MMBtu gas move. Coal is genuinely **marginal**
+  (absorbs **43.6 %** of incremental thermal MW), so the miso-129 bar is MET — but
+  its channel is **merit order, not quantity**, which the slope does **not** bound
+  and this session did **not** measure.
+* **O3 REFUTED AS STATED**, by this session's own pre-registered rule. Hydro
+  tracks the diurnal shape (*r* +0.86/+0.87/+0.89) **and** the seasonal one
+  (*r* +0.80/+0.86/+0.88, peak month matching), annual level −8.2/−15.7/−12.1 %,
+  3,503–4,254 distinct hourly values (a genuinely dispatched LP resource), and it
+  is **under** measured in Jul/Aug 2025 — the wrong way for the hypothesis.
+* **O4 EXPLAINED — not a dispatch defect.** The MISO fleet contains **ZERO**
+  `OTHER` units. The sidecar class is an **injected must-run residual**
+  (`_INJECTED_MUSTRUN_CLASSES = ("biomass","OTHER")`, `_must_run_profiles`):
+  EIA-923-anchored annual energy, **flat within each month** (exactly **12
+  distinct hourly values per year**), netted out of LP demand — a demand
+  reduction that can neither set nor respond to price. The apparent +60–470 %
+  overrun is an **EIA-923 vs EIA-930 instrument crossing**; the same two
+  instruments differ ~6 % on coal.
+* **O5 PARTIALLY CONFIRMED.** Inverted in **2024 only** (*r* −0.821); 2023
+  (−0.236) and **2025 (−0.062)** fall inside the pre-registered "no clear phase
+  relation" band, so the blocker year is **not** an inversion. The real all-year
+  defect is **dispersion** — model import CV is **2.2–5.2×** the measured one
+  (`interchange_shaping=False`, so the profile is set by seam economics rather
+  than a measured shape). Worth **−94 MW** in W1 2025: a rule-14
+  input-correctness item, never a price lever.
+
+### Trap 3 answered plainly
+
+`hydro` is reported and never gated (1.5–1.7 % of load); `OTHER` and `import` are
+keys in **no criterion at all**; and **C1 and C2 are both SKIPPED for 2025** on
+EIA-923 vintage grounds. MISO's largest measured fuel-mix miss in its blocker
+year currently scores nothing — a successor must not read C1/C2 PASS as evidence
+against the coal-for-gas candidate.
+
+### Recorded against interest, four times
+
+(i) **P7 was wrong in both directions and about the wrong object** — I predicted
+the naive `OTHER`↔`NG: OTH` comparison would *overstate* the overrun; on the
+repo's own rollup it **understates** it, and the real answer was that `OTHER` is
+not a fleet class at all. I had named P7 in PREREG §9 as the most likely way this
+session would go wrong, and it was, by a different mechanism than I named.
+(ii) **My own G-A0 gate caught a defect in my own probe on its first run** — the
+2025 total returned `NaN` because the RT actual carries a NaN hour and miso-137's
+`contrib` does not mask; fixed by adopting miso-137's G-1 masking verbatim.
+(iii) **The `OTHER` probe's first version returned 0 units** against a sidecar
+dispatching ~1 GW, because I filtered on `plant_group` (populated for fossil
+classes only); caught only because an assertion made it fail loudly — a
+*plausible* wrong number would have produced the wrong O4 verdict.
+(iv) **P3's point estimate missed** — 52 hours carry **22.1 %** of the annual gap,
+not the <15 % predicted (falsification bar ≥25 %, not hit).
+
+**A limit disclosed:** the actual-side curve's R² is low (0.095) because real
+prices are hugely dispersed at any given quantity. The **slope** is nevertheless
+well identified (6.8σ from zero, 4.8σ from the model's), and the load-bearing
+result — *the model's own curve never reaches the actual price* — does not depend
+on the fit at all.
+
+### What it licenses — nothing armed, and the successor
+
+G-D was never reached; no object resolved to a repairable input defect with an
+existing mechanism **and** material reach. **The successor is a price-formation
+lane and it now has a numeric target:** MISO's real summer-afternoon supply curve
+rises **$2.15/MWh per GW**, the model's **$0.64** — the model must get ~3.4×
+steeper in that window, structurally (rule 1), never by a level adder
+(DO-NOT-REDO). Two candidates NAMED, neither opened, each needing its own owner
+decision and prereg (rule 19): **(A)** the coal-vs-gas merit order in the 2025
+high-gas regime — its price gain is unmeasured and measuring it is the first
+thing to do; **(B)** whatever makes the real curve steep (offer conduct above
+SRMC at high load, reserve/scarcity co-optimization, congestion, peak-day
+capability loss), which needs a NEW measured identification since MISO's
+scarcity-tail list is already recorded as exhausted.
+
+### Rule duties
+
+Rule 15 — no LP solved, so **no run to register** (the miso-131…141 precedent).
+Rule 28(b) — **no cell verdict minted** (no mechanism tested, armed or refused);
+the §5.4 queue stamp is written in this session and item 3 written into the
+queue. No new field, so 28(c) does not fire; no other ISO's cell touched (28(d)).
+Rule 22 — 2023–2025 only. Rules 13 / 14 / 19 / 21 / 24 / 25 observed throughout:
+every input a measured physical or market quantity, nothing sized to a residual,
+no derive script re-run, no tuning channel created, no cross-ISO transfer. Probe
+hygiene (miso-140b §6): all five probes insert the **repo root** and assert
+`load_zonal_shares(...) is not None`, including those consuming no per-zone
+demand, so the guard cannot rot. DO-NOT-REDO honoured — the price-threshold gap
+split was not re-run (the calendar/hour-of-day split is a different object and is
+in scope), miso-134's **trough** marginal-unit work was not re-run (G-B's
+**summer-peak** window is a different one), no level adder, no third `*_lw`
+derivation, and the miso-141 / miso-139 successors were not re-opened as price
+levers. Owner directive: no C7 work. Concurrent-session check run at open and
+close — zero open PRs, no other MISO remote branch.
+
+### The generalisable lesson — A QUANTITY HYPOTHESIS MUST BE MULTIPLIED BY A SLOPE BEFORE IT IS A PRICE CLAIM
+
+Four separate objects in this charter each looked like an explanation in MW — a
+42 % `OTHER` overrun, a phase-inverted import profile, a 15 % hydro level miss, a
+14.6 % coal overrun. Every one of them, multiplied by the model's own measured
+supply-curve slope, buys a fraction of a dollar against a −$30 deficit. The MW
+were real; the *reach* never was. The corollary is the more useful half: **when
+every quantity in a window is roughly right and the price is badly wrong, the
+defect is in the curve's slope, not in its position** — and both slopes are
+directly measurable from committed artifacts, on both sides, without a single
+solve.
+
+Next number: **miso-143**.
