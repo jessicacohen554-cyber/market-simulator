@@ -1,0 +1,164 @@
+{
+  "control": "/home/user/market-simulator/results/calibration/nyiso132_cf_control",
+  "arm": "/home/user/market-simulator/results/calibration/nyiso132_cf_arm",
+  "gates": [
+    {
+      "gate": "K1 config isolation (ungated-constant arm: expect ZERO diffs)",
+      "passed": false,
+      "n_fields_compared": 700,
+      "differing": {
+        "campd_bins_path": [
+          "/home/user/market-simulator-control/data/raw/reference/custom-bin-assignments.csv",
+          "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv"
+        ],
+        "cc_capacity_reconcile_path": [
+          "/home/user/market-simulator-control/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv",
+          "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_NYISO.csv"
+        ],
+        "control_retrofit_path": [
+          "/home/user/market-simulator-control/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
+          "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet"
+        ],
+        "plant_emission_rates_path": [
+          "/home/user/market-simulator-control/data/raw/_processed-legacy/plant_emission_rates.parquet",
+          "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet"
+        ],
+        "plant_emission_rates_v2_path": [
+          "/home/user/market-simulator-control/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+          "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet"
+        ],
+        "plant_registry_path": [
+          "/home/user/market-simulator-control/data/raw/reference/master-plant-registry.csv",
+          "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv"
+        ]
+      }
+    },
+    {
+      "gate": "K2 feasibility",
+      "passed": true,
+      "rows": {
+        "control_2023": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "control_2024": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "control_2025": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "arm_2023": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "arm_2024": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        },
+        "arm_2025": {
+          "slack_mwh": 0.0,
+          "dump_mwh": 0.0
+        }
+      }
+    },
+    {
+      "gate": "K3 liveness",
+      "passed": true,
+      "rows": {
+        "2023": {
+          "control_gwh": 213.56,
+          "arm_gwh": 277.85,
+          "ratio": 1.301,
+          "expected_ratio": 1.3033,
+          "within_tol": true
+        },
+        "2024": {
+          "control_gwh": 515.43,
+          "arm_gwh": 670.18,
+          "ratio": 1.3003,
+          "expected_ratio": 1.3033,
+          "within_tol": true
+        },
+        "2025": {
+          "control_gwh": 753.45,
+          "arm_gwh": 981.28,
+          "ratio": 1.3024,
+          "expected_ratio": 1.3033,
+          "within_tol": true
+        }
+      }
+    },
+    {
+      "gate": "K4 scope (wind unchanged)",
+      "passed": true,
+      "rows": {
+        "2023": {
+          "control_gwh": 4600.91,
+          "arm_gwh": 4600.91,
+          "delta_gwh": 0.0,
+          "within_1pct": true
+        },
+        "2024": {
+          "control_gwh": 6011.65,
+          "arm_gwh": 6011.65,
+          "delta_gwh": 0.0,
+          "within_1pct": true
+        },
+        "2025": {
+          "control_gwh": 7048.69,
+          "arm_gwh": 7048.69,
+          "delta_gwh": 0.0,
+          "within_1pct": true
+        }
+      }
+    },
+    {
+      "gate": "K5 solar level vs published (ADVISORY, report-only)",
+      "passed": null,
+      "note": "calibration_verdict.VRE_TOL is a +/-10 % ADVISORY band for wind/solar, explicitly report-only, so neither arm can fail C1 on this. Reported because the arm trades an exact mature year for two commissioning years: the model's monthly capacity ramp has no commissioning curve, so one CF cannot track a fleet whose own realized CF runs 0.1468-0.1955.",
+      "rows": {
+        "2023": {
+          "published_gwh": 229.9,
+          "control": {
+            "gwh": 213.56,
+            "pct_vs_published": -7.1,
+            "within_advisory_band": true
+          },
+          "arm": {
+            "gwh": 277.85,
+            "pct_vs_published": 20.9,
+            "within_advisory_band": false
+          }
+        },
+        "2024": {
+          "published_gwh": 503.2,
+          "control": {
+            "gwh": 515.43,
+            "pct_vs_published": 2.4,
+            "within_advisory_band": true
+          },
+          "arm": {
+            "gwh": 670.18,
+            "pct_vs_published": 33.2,
+            "within_advisory_band": false
+          }
+        },
+        "2025": {
+          "published_gwh": 981.8,
+          "control": {
+            "gwh": 753.45,
+            "pct_vs_published": -23.3,
+            "within_advisory_band": false
+          },
+          "arm": {
+            "gwh": 981.28,
+            "pct_vs_published": -0.1,
+            "within_advisory_band": true
+          }
+        }
+      }
+    }
+  ]
+}
