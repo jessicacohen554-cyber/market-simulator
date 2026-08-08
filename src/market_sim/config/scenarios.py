@@ -209,6 +209,25 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # capacity screen consumes (and that object's level) and so gets a
     # distinct key. Owner decision D-19(a).
     "capacity_screen_unified_lookahead",
+    # FFR-8A lookahead scarcity restoration (GATED default-off): dropped from
+    # the hash at its default so every pre-existing cache key is byte-stable;
+    # an armed run changes the lookahead tail's reserve quantity, energy-stack
+    # AS withholding and uncertainty integration — a different screen price
+    # object — and so gets a distinct key. Owner decision D-21(a)/AC.1.
+    "capacity_screen_scarcity_restoration",
+    # ERCOT-176 offline-increment slow-start commit-offer tier (GATED
+    # default-off; consumer hard-gated at data/fleet/offer_surfaces.py
+    # ``if not getattr(config, "ercot_offline_commit_offer", False)`` so the
+    # off path is byte-identical, and the path override is only read under the
+    # bool). BACKFILL registration (the nyiso-128 pattern, second occurrence):
+    # the pair landed on main unregistered and entered the default hash,
+    # moving the pinned default key 603c2498bf71d21d -> efd1cda1683a0ebe —
+    # with TWO fields at once, so the pin test's single-field blame could not
+    # name them. Registering both restores every orphaned default-config
+    # cache key; armed runs keep their distinct keys (explicit non-default
+    # values never drop). Found and repaired by FFR-8A, 2026-08-08.
+    "ercot_offline_commit_offer",
+    "ercot_offline_commit_offer_path",
     # FFR-5E near-term VRE procurement channel (GATED default-off): dropped
     # from the hash at its default so every pre-existing cache key is
     # byte-stable; an armed run injects committed EIA-860 pipeline MW into the
@@ -819,6 +838,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "entry_commissioning_lag": "True",
     "entry_pipeline_aware_signal": "False",
     "capacity_screen_unified_lookahead": "False",
+    "capacity_screen_scarcity_restoration": "False",
+    "ercot_offline_commit_offer": "False",
+    "ercot_offline_commit_offer_path": "None",
     "vre_procurement_additions_enabled": "False",
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
@@ -3320,6 +3342,68 @@ class ScenarioConfig:
     # (the object itself) to be on; with it off this gate is structurally
     # a no-op. Forecast-machinery only (the backcast has no capacity
     # evolution). Default off is byte-identical.
+    capacity_screen_scarcity_restoration: bool = False  # GATED default-OFF
+    # (FFR-8A, owner decision D-21(a) re-opened at sitting Addendum AC.1,
+    # 2026-08-07; docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md).
+    # Restores the published-design scarcity content of the capacity-screen
+    # lookahead's ORDC tail, which FFR-6A measured at 0.04-4.4 % of the
+    # measured-price per-fuel margin (zero pro-forma hours > $100 where the
+    # 2024/2025 market priced 161/217) because the tail prices the INSTALLED
+    # availability-derated headroom of the whole fleet — a quantity that on a
+    # 22-32 % reserve-margin fleet never approaches the LOLP knee — where the
+    # published ORDC prices REALIZED COMMITTED on-line reserves (RTOLCAP /
+    # RTOFFCAP, NP6-905-CD). Three armed changes to the lookahead tail
+    # (runner._lookahead_reprice_signal), every input an existing model object
+    # or a published design constant — zero new tunables (rules 5/23/24):
+    #  (E1) RESERVE QUANTITY: R_online = min(RTOLCAP_fwd + storage_as,
+    #       physical stack headroom), R_full likewise + RTOFFCAP_fwd — the
+    #       model's own forward committed-capability formula
+    #       (results.scarcity.ercot_rtolcap_forward_supply_cap_mw share
+    #       tables, CAMPD-quantity-identified) on the ENTERING year's own net
+    #       load and the EVOLVED fleet; storage_as = evolved storage power x
+    #       ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC (the formula's own storage
+    #       term); the physical min() keeps energy-shortage hours pricing to
+    #       VOLL through the same published curve. The load-resource term is
+    #       deliberately absent (already inside the deliv coefficient's fit —
+    #       adding it would double-count). The storage peak-shave
+    #       correspondingly uses only the non-AS-committed (1 - frac) share of
+    #       storage power/energy — one constant, two disjoint uses.
+    #  (E2) PRE-RTC AS-PLAN WITHHOLDING: the energy-stack search runs at
+    #       net_load + AS_held_thermal, where AS_held_thermal = clip(REGUP +
+    #       RRS + ECRS - LR_credit - storage_as, 0) from the model's own
+    #       forward AS-requirement model (NP3-160-CD methodology,
+    #       ercot_as_forward_requirement_mw) — SCED dispatches around the
+    #       day-ahead AS awards, so responsive AS capacity is not offered to
+    #       energy. NSPIN is excluded (a 30-minute product the offline
+    #       quick-start tier supplies). ECRS is design-date-gated (launched
+    #       2023-06-10). The ORDC R does NOT net these MW — RTOLCAP counts
+    #       AS-held headroom as reserve (the published definition, the
+    #       ordc_as_plan_mw=0 validation).
+    #  (E4) LOLP-BEARING OUTAGE UNCERTAINTY: the tail prices
+    #       E[adder(R + eps)], eps ~ N(0, sigma_R(t)^2), by Gauss-Hermite
+    #       quadrature, where sigma_R is the fleet's capacity-on-forced-outage
+    #       std from the model's OWN per-unit WEFOR/EFORD rates at the plant
+    #       grain (results.scarcity.ercot_fleet_forced_outage_sigma_mw) — the
+    #       year-ahead realization uncertainty a point evaluation cannot see.
+    #       The published curve's own sigma (intra-hour projection error)
+    #       composes orthogonally and is never rescaled
+    #       (correlated_outage_sigma_scale stays gated at 1.0); the
+    #       correlated cold-event derate keeps shifting only the MEAN
+    #       availability (charter D.6 seam), entering through the physical
+    #       headroom bound. The OBDRR048 multi-step floor is date-gated by the
+    #       ENTERING year (effective 2023-11-01, floor_active_mask) — the
+    #       design's own effective date.
+    # The LOLP curve parameters stay the shipped published set (VOLL $5,000 /
+    # 16 TAC 25.509, X=3,000 MW / OBDRR038, shift 0.5 sigma / PUCT 48551,
+    # mu/sigma per resolve_lolp_params) — the FFR-8A Phase-1 reproduction test
+    # validated the as-shipped fallback against the measured RTORPA series and
+    # REFUTED the committed NP6-576-ER table transcription (over-produces
+    # ~2.6x), so no parameter moves with this flag. Requires
+    # capacity_screen_unified_lookahead (the repair extends that object's
+    # armed stack — one object, one gate per layer) and iso == "ERCOT" (the
+    # committed-capability tables are ERCOT-identified; rule 25 — other ISOs
+    # enter the matrix as U). Screens-only: dispatch, results and persisted
+    # prices never see it. Default off is byte-identical.
     vre_procurement_additions_enabled: bool = False  # GATED default-OFF
     # (FFR-5E, owner decision D-18(a), sitting Addendum S.2/S.5 signed
     # 2026-08-05; design docs/handoffs/ffr-5b-procurement-channel-design-
@@ -10946,6 +11030,26 @@ class ScenarioConfig:
                 "correlated_outage_sigma_scale must be positive, got "
                 f"{self.correlated_outage_sigma_scale!r}"
             )
+
+        # FFR-8A scarcity restoration extends the UNIFIED lookahead object's
+        # armed stack (one object, one gate per layer) and its committed-
+        # capability tables are ERCOT-identified (rule 25 [R-ISO-SCOPE]) — an
+        # armed run on any other posture is an untested combination and is
+        # refused rather than approximated.
+        if self.capacity_screen_scarcity_restoration:
+            if not self.capacity_screen_unified_lookahead:
+                raise ValueError(
+                    "capacity_screen_scarcity_restoration requires "
+                    "capacity_screen_unified_lookahead: the repair extends the "
+                    "unified lookahead object's armed stack (FFR-8A)."
+                )
+            if str(self.iso).upper() != "ERCOT":
+                raise ValueError(
+                    "capacity_screen_scarcity_restoration is ERCOT-only: the "
+                    "forward committed-capability (RTOLCAP/RTOFFCAP) share "
+                    "tables are ERCOT-identified (rule 25 [R-ISO-SCOPE]); got "
+                    f"iso={self.iso!r}."
+                )
 
         # PJM mid-curve PEAK-row scope vs the pjm-99 top-of-curve surface: both
         # price the same ``peak*`` rungs, and the two markups SUM at the shared

@@ -104,6 +104,8 @@ from market_sim.config.reserve_config import (
     ERCOT_AS_RRS_FLOOR_MW,
     ERCOT_AS_RRS_INERTIA_COEF_MW,
     ERCOT_AS_RRS_MAX_MW,
+    ERCOT_ECRS_LAUNCH_HOUR,
+    ERCOT_ECRS_LAUNCH_YEAR,
     ERCOT_LR_RRS_ENROLL_BASE_MW,
     ERCOT_LR_RRS_ENROLL_BASE_YEAR,
     ERCOT_LR_RRS_ENROLL_CAP_MW,
@@ -1160,6 +1162,22 @@ def ercot_as_forward_requirement_mw(
         # Forward requested but the forecast drivers were not threaded through —
         # defer to the measured requirement rather than guess.
         return None
+    return _ercot_as_forward_requirement_formula(product_code, hours, drivers)
+
+
+def _ercot_as_forward_requirement_formula(
+    product_code: str,
+    hours: int,
+    drivers: dict[str, np.ndarray],
+) -> np.ndarray | None:
+    """The per-product NP3-160-CD requirement formula (ungated body).
+
+    Extracted from :func:`ercot_as_forward_requirement_mw` (byte-identical
+    behaviour behind that wrapper's gates) so the FFR-8A capacity-screen
+    lookahead can consume the same formulas without the co-opt lane's
+    ``ercot_as_forward_requirement`` gate — one formula, two consumers
+    (rule 19 ``[R-ONE-MECH]``).
+    """
     sigma = drivers["sigma_fe"]
     code = str(product_code).upper()
     if code == "REGUP":
@@ -1277,6 +1295,7 @@ def ercot_rtolcap_forward_supply_cap_mw(
     *,
     net_load: np.ndarray,
     storage_reserve: np.ndarray | None = None,
+    include_offline: bool | None = None,
 ) -> np.ndarray | None:
     """ERCOT's FORWARD online-responsive reserve-supply cap, ``(n_rows, hours)`` MW.
 
@@ -1358,7 +1377,18 @@ def ercot_rtolcap_forward_supply_cap_mw(
         ERCOT_RTOLCAP_FWD_ONLINE_SHARE, ERCOT_RTOLCAP_FWD_ONLINE_CLASSES
     )
     rtolcap = rtolcap + storage
-    if getattr(config, "ercot_multiproduct_as_coopt", False):
+    # ``include_offline`` overrides which tiers the caller gets: ``None`` (the
+    # default, byte-identical) keeps the legacy co-opt-flag-driven row shape;
+    # ``True``/``False`` force the two-row / one-row form regardless of the
+    # co-opt posture (the FFR-8A capacity-screen lookahead needs BOTH tiers
+    # for the published RTORPA's two half-hour terms without arming the
+    # multi-product co-opt).
+    two_rows = (
+        getattr(config, "ercot_multiproduct_as_coopt", False)
+        if include_offline is None
+        else bool(include_offline)
+    )
+    if two_rows:
         rtoffcap = float(ERCOT_RTOLCAP_FWD_OFFLINE_DELIV_COEF) * _tier_mw(
             ERCOT_RTOLCAP_FWD_OFFLINE_SHARE, ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES
         )
@@ -1366,6 +1396,292 @@ def ercot_rtolcap_forward_supply_cap_mw(
     else:
         cap = rtolcap.reshape(1, T)  # (1, T)
     return cap.astype(float)
+
+
+def ercot_fleet_forced_outage_sigma_mw(
+    generators,
+    config,
+    fleet_year: int,
+    hours: int,
+) -> np.ndarray:
+    """Fleet capacity-on-forced-outage std ``(hours,)`` MW (FFR-8A element E4).
+
+    The year-ahead realization uncertainty of available thermal capacity,
+    derived from the model's OWN statistical forced-outage machinery and
+    nothing else: the WEFOR model is per-unit INDEPENDENT
+    (``data/fleet/arrays.py::_thermal_outage``, GADS-anchored, age-escalated),
+    so the fleet's capacity-on-forced-outage variance is the exact
+    mathematical consequence of that documented structure,
+
+        sigma_R(t)^2 = SUM_plants q_p(t) * (1 - q_p(t)) * P_p^2 ,
+
+    with ``q_p(t)`` the plant's seasonal forced-outage rate — the SAME
+    composition the availability builder applies (winter = WEFOR;
+    summer = SUMMER_WEFOR_SHARE x WEFOR; shoulder absorbs the displaced
+    share; ``gas_st_wefor_base_override`` and ``wefor_multiplier``
+    honoured) — and ``P_p`` the plant's summed capacity at the model's own
+    plant grain (tranches of one CAMPD-binned plant share a physical outage
+    state, so they aggregate before squaring; the grain slightly overstates
+    the variance of genuinely multi-unit plants, stated here rather than
+    corrected with an invented unit count). Units outside the WEFOR table
+    (nuclear, oil, new-entry units with no plant group) carry their flat
+    ``eford``, exactly as the builder's base initialization does. The
+    backcast-only ``wefor_residual`` cap is not applied (this function serves
+    forecast-machinery pro-formas only), and the builder's mean-side branch
+    exceptions (reliability-floor CTs, coal sync tranches) are deliberately
+    ignored — they manage MEAN double-counting against measured overlays,
+    while the physical trip risk this variance carries remains (docstring
+    note, not a knob). Only reserve-backing thermal classes
+    (:data:`RESERVE_FUEL_TYPES`) contribute — VRE/storage/hydro uncertainty
+    is out of this element's charter scope.
+
+    Zero new tunables (rules 5/23/24): every input is an existing model
+    parameter. Consumed by the FFR-8A lookahead tail's Gauss-Hermite
+    expectation; composes orthogonally with the published ORDC curve's own
+    intra-hour sigma (different horizon — see the field docstring).
+    """
+    from market_sim.data.fleet.arrays import (
+        _CC_SHOULDER_MONTHS,
+        _SUMMER_MONTHS,
+        _SUMMER_WEFOR_SHARE,
+        _thermal_outage,
+    )
+    from market_sim.data.fleet.arrays import (
+        THERMAL_AVAILABILITY as _WEFOR_TABLE,
+    )
+
+    T = int(hours)
+    months = _month_of_hour(np.arange(T))
+    summer = np.isin(months, sorted(_SUMMER_MONTHS))
+    shoulder = np.isin(months, sorted(_CC_SHOULDER_MONTHS))
+    summer_to_shoulder = float(summer.sum()) / float(max(shoulder.sum(), 1))
+
+    st_override = getattr(config, "gas_st_wefor_base_override", None)
+    mult = float(getattr(config, "wefor_multiplier", 1.0))
+
+    # Per-plant seasonal (winter, summer, shoulder) rate and capacity.
+    var_terms: dict[object, list] = {}
+    for i, gen in enumerate(generators):
+        if gen.fuel_type not in RESERVE_FUEL_TYPES:
+            continue
+        pmax = float(gen.pmax_mw)
+        if pmax <= 0.0:
+            continue
+        group = getattr(gen, "plant_group", "") or ""
+        if group in _WEFOR_TABLE:
+            _, wefor, _ = _thermal_outage(group, fleet_year - gen.online_year)
+            if st_override is not None and group in ("ST_GAS", "ST_CHP"):
+                _, _w_base, _w_rate, _w_onset, *_ = _WEFOR_TABLE[group]
+                age = fleet_year - gen.online_year
+                wefor = float(st_override) + max(0.0, age - _w_onset) * _w_rate
+            wefor *= mult
+            q3 = (
+                wefor,  # winter
+                _SUMMER_WEFOR_SHARE * wefor,  # summer
+                wefor + (1.0 - _SUMMER_WEFOR_SHARE) * wefor * summer_to_shoulder,
+            )
+        else:
+            q = float(getattr(gen, "eford", 0.05))
+            q3 = (q, q, q)
+        code = int(getattr(gen, "plant_code", 0) or 0)
+        key = code if code > 0 else f"unit_{i}"
+        var_terms.setdefault(key, [0.0, np.zeros(3)])
+        entry = var_terms[key]
+        # Capacity-weighted plant rate (tranches share the group rate, so
+        # this is exact for single-group plants and a weighted mean for the
+        # rare mixed-group plant code).
+        entry[1] = (entry[1] * entry[0] + np.asarray(q3) * pmax) / (entry[0] + pmax)
+        entry[0] += pmax
+
+    var3 = np.zeros(3)
+    for pmax_p, q3 in var_terms.values():
+        q = np.clip(np.asarray(q3, dtype=float), 0.0, 1.0)
+        var3 += q * (1.0 - q) * pmax_p * pmax_p
+
+    sigma3 = np.sqrt(var3)  # (winter, summer, shoulder) MW
+    out = np.full(T, sigma3[0], dtype=float)
+    out[summer] = sigma3[1]
+    out[shoulder] = sigma3[2]
+    return out
+
+
+def ercot_lookahead_as_hold_mw(
+    entering_year: int,
+    hours: int,
+    *,
+    load_mw: np.ndarray,
+    wind_mw: np.ndarray,
+    solar_mw: np.ndarray,
+    storage_as_mw: float,
+) -> np.ndarray:
+    """Thermal-held responsive AS MW for the lookahead energy stack (E2).
+
+    The pre-RTC design procures the AS plan day-ahead and SCED dispatches
+    around the awards, so capacity holding responsive AS is not offered to
+    energy. The withheld-from-thermal quantity is
+
+        clip(REGUP + RRS + ECRS - LR_credit - storage_as, 0, .)
+
+    with the product requirements from the model's own forward NP3-160-CD
+    methodology model (:func:`_ercot_as_forward_requirement_formula`, drivers
+    from the ENTERING year's own load/wind/solar — validated against the
+    measured ASPLANNP433 plan in the FFR-8A Phase-1 probe: RegUp 407 vs 406,
+    RRS 2710 vs 2722, ECRS 1484 vs 1752, NSPIN 2762 vs 2684 MW mean, 2024),
+    the forward load-resource enrollment credit
+    (:func:`ercot_load_resource_reserve_forward_mw` — LR provides RRS from
+    the load side, so it is netted from the thermal hold), and the same
+    storage AS award the reserve quantity counts (each MW counted once).
+    NSPIN is excluded — a 30-minute product the OFFLINE quick-start tier
+    supplies (the RTOFFCAP definition), not withheld from the online energy
+    stack; REGDN is down-product headroom, also not withheld. ECRS is
+    design-date-gated at its go-live (:data:`ERCOT_ECRS_LAUNCH_YEAR` /
+    :data:`ERCOT_ECRS_LAUNCH_HOUR`, 2023-06-10 — the published design date
+    the measured plan's own onset carries).
+
+    The ORDC reserve quantity does NOT net these MW: RTOLCAP counts AS-held
+    headroom as reserve (the published definition; the ``ordc_as_plan_mw=0``
+    run92 validation). Zero new tunables.
+    """
+    T = int(hours)
+    drivers = ercot_as_forward_drivers(
+        np.asarray(load_mw, dtype=float)[:T],
+        np.asarray(wind_mw, dtype=float)[:T],
+        np.asarray(solar_mw, dtype=float)[:T],
+    )
+    held = np.zeros(T, dtype=float)
+    for product in ("REGUP", "RRS", "ECRS"):
+        req = _ercot_as_forward_requirement_formula(product, T, drivers)
+        if req is None:
+            continue
+        if product == "ECRS":
+            if int(entering_year) < ERCOT_ECRS_LAUNCH_YEAR:
+                continue
+            if int(entering_year) == ERCOT_ECRS_LAUNCH_YEAR:
+                req = np.where(np.arange(T) >= ERCOT_ECRS_LAUNCH_HOUR, req, 0.0)
+        held = held + req
+    lr = ercot_load_resource_reserve_forward_mw(int(entering_year), T)
+    return np.clip(held - lr - float(max(storage_as_mw, 0.0)), 0.0, None)
+
+
+def ercot_lookahead_committed_reserves(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    *,
+    net_load: np.ndarray,
+    phys_headroom: np.ndarray,
+    storage_as_mw: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Lookahead ORDC reserve quantities ``(r_online, r_full)`` MW (E1).
+
+    The committed on-line capability the published ORDC actually prices —
+    the model's own forward RTOLCAP/RTOFFCAP formula
+    (:func:`ercot_rtolcap_forward_supply_cap_mw`, CAMPD-quantity-identified
+    share tables on the ENTERING year's own net load and the EVOLVED fleet's
+    class capacities; the load-resource term stays absent because the deliv
+    coefficient's fit target retained it) with the evolved storage fleet's
+    AS-award share as the storage term — bounded above by the PHYSICAL stack
+    headroom (available capacity minus served net load): commitment can
+    withhold capability below the physical bound, never create reserves
+    beyond it. The min() is a physical identity, not a parameter, and it is
+    what carries energy-shortage hours to VOLL through the same published
+    curve (headroom below the MCL pins LOLP to 1).
+
+    Raises rather than approximates when the fleet carries no plant groups —
+    the armed path is ERCOT-only by ``__post_init__`` and the ERCOT fleets
+    (binned and vintage alike) carry them; a silent fallback would be an
+    unregistered second construction (rule 19).
+    """
+    T = int(hours)
+    storage = np.full(T, float(max(storage_as_mw, 0.0)))
+    rows = ercot_rtolcap_forward_supply_cap_mw(
+        config,
+        fleet_arrays,
+        T,
+        net_load=net_load,
+        storage_reserve=storage,
+        include_offline=True,
+    )
+    if rows is None:
+        raise ValueError(
+            "capacity_screen_scarcity_restoration: the fleet carries no "
+            "plant_group array, so the forward committed-capability formula "
+            "cannot be built (rule 19 — no silent fallback)."
+        )
+    phys = np.asarray(phys_headroom, dtype=float)[:T]
+    r_online = np.minimum(rows[0], phys)
+    r_full = np.minimum(rows[1], phys)
+    return r_online, r_full
+
+
+# Gauss-Hermite quadrature order for the FFR-8A expected-adder integral. A
+# resolution constant, not a tunable. The integrand is smooth except at the
+# administrative LOLP=1 pin below the MCL (a step the published curve itself
+# carries), which slows GH convergence for reserve means near the knee:
+# measured on that worst case, order 15/21 oscillate by 2-9 % around the
+# converged value while 31 sits within 0.3 % of order 61 (the unit test pins
+# this). Away from the pin the error is < 0.1 % at every order tested.
+_FFR8A_GH_ORDER: int = 31
+
+
+def ercot_lookahead_expected_ordc_adder(
+    config,
+    entering_year: int,
+    *,
+    r_online_mw: np.ndarray,
+    r_full_mw: np.ndarray,
+    system_lambda: np.ndarray,
+    sigma_r_mw: np.ndarray,
+) -> np.ndarray:
+    """``E[ordc_adder(R + eps)]``, ``eps ~ N(0, sigma_R^2)`` ``(T,)`` (E4).
+
+    The published RTORPA construction (:func:`ordc_adder` — two half-hour
+    LOLP terms, PUCT 48551 shift, OBDRR048 multi-step floor, VOLL cap)
+    integrated over the fleet's year-ahead forced-outage realization
+    distribution by fixed-order Gauss-Hermite quadrature. A year-ahead
+    pro-forma cannot know which hours will carry the outage dips; the
+    expectation prices exactly the low-probability deep-reserve tail a point
+    evaluation is blind to — LOLP-bearing, not smooth. The same ``eps``
+    shifts both reserve tiers (an outage removes capacity from whichever
+    tier carries it). ``system_lambda`` is held at its point value inside
+    ``(VOLL - lambda)`` — the factor moves < 1 % over the eps range — and the
+    per-node VOLL cap keeps every draw protocol-consistent, so
+    ``E[adder] <= VOLL - lambda`` by construction.
+
+    The curve parameters are the config's shipped published set
+    (:func:`resolve_lolp_params` — the FFR-8A Phase-1 reproduction test
+    validated the as-shipped fallback against the measured RTORPA series);
+    the OBDRR048 floor is date-gated by the ENTERING year via
+    :func:`floor_active_mask` (its 2023-11-01 effective date is the design's
+    own, applied here regardless of run mode — the mode-keyed overlay gate
+    stays untouched for the post-solve path).
+    """
+    T = int(len(r_full_mw))
+    mu, sigma = resolve_lolp_params(config, T)
+    floor_mask = floor_active_mask(int(entering_year), T)
+    nodes, weights = np.polynomial.hermite.hermgauss(_FFR8A_GH_ORDER)
+    weights = weights / np.sqrt(np.pi)
+    sig = np.asarray(sigma_r_mw, dtype=float)[:T]
+    r_on = np.asarray(r_online_mw, dtype=float)[:T]
+    r_fu = np.asarray(r_full_mw, dtype=float)[:T]
+    lam = np.asarray(system_lambda, dtype=float)[:T]
+    expected = np.zeros(T, dtype=float)
+    for x, w in zip(nodes, weights):
+        eps = np.sqrt(2.0) * sig * x
+        expected = expected + w * ordc_adder(
+            r_fu + eps,
+            lam,
+            voll=config.ordc_voll,
+            mcl_mw=config.ordc_mcl_mw,
+            mu_mw=mu,
+            sigma_mw=sigma,
+            shift_sigma=config.ordc_lolp_shift_sigma,
+            multistep_floor=config.ordc_multistep_floor,
+            floor_active=floor_mask,
+            reserves_online_mw=r_on + eps,
+        )
+    # Belt-and-suspenders protocol cap (each node already respects it).
+    return np.minimum(expected, np.maximum(config.ordc_voll - lam, 0.0))
 
 
 def ercot_online_capacity_envelope_classes(config) -> tuple[str, ...]:
