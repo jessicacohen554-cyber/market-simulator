@@ -455,6 +455,7 @@ META_RECORD_SPEC = RecordSpec(
         "entry_commissioning_lag": FromConfig(cast=bool),
         "exit_rate_limits": FromConfig(cast=bool),
         "capacity_screen_unified_lookahead": FromConfig(cast=bool),
+        "capacity_screen_scarcity_restoration": FromConfig(cast=bool),
         "renewable_elcc_curves": FromConfig(cast=bool),
         "gas_price_path": FromConfig(),
         "crossover_forward_year": FromConfig(),
@@ -546,6 +547,7 @@ def build_config(
     entry_commissioning_lag: "bool | None" = None,
     exit_rate_limits: "bool | None" = None,
     capacity_screen_unified_lookahead: "bool | None" = None,
+    capacity_screen_scarcity_restoration: "bool | None" = None,
     ptc_window: "int | str | None" = None,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
@@ -738,6 +740,15 @@ def build_config(
                 # hourly availability). Screens-only, zero new tunables.
                 "capacity_screen_unified_lookahead": (
                     capacity_screen_unified_lookahead
+                ),
+                # FFR-8A scarcity restoration (owner decision D-21(a)/AC.1):
+                # the lookahead tail prices the published ORDC on the forward
+                # COMMITTED-capability reserve quantity, with the pre-RTC
+                # AS-plan withholding in the energy-stack search and the
+                # fleet's own forced-outage uncertainty integrated (LOLP-
+                # bearing). Requires the unified lookahead; ERCOT-only.
+                "capacity_screen_scarcity_restoration": (
+                    capacity_screen_scarcity_restoration
                 ),
                 # FF-1B correlated cold-event forced-outage derate
                 # (data/outages.apply_correlated_outage_derate): a leg's deep-
@@ -1321,6 +1332,23 @@ def main(argv: list[str] | None = None) -> int:
             "--no-capacity-screen-unified-lookahead forces the control."
         ),
     )
+    parser.add_argument(
+        "--capacity-screen-scarcity-restoration",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "FFR-8A PROBE arm (owner decision D-21(a) re-opened at Addendum "
+            "AC.1, 2026-08-07): restore the published-design scarcity content "
+            "of the unified lookahead's ORDC tail — the published curve on "
+            "the forward COMMITTED-capability reserve quantity (RTOLCAP/"
+            "RTOFFCAP share tables, storage AS share), the pre-RTC AS-plan "
+            "withholding in the energy-stack search (forward NP3-160-CD "
+            "requirement model), and the fleet's own forced-outage "
+            "uncertainty integrated by Gauss-Hermite quadrature (LOLP-"
+            "bearing). Requires --capacity-screen-unified-lookahead; "
+            "ERCOT-only. OMIT to inherit the shipped default (OFF)."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -1468,6 +1496,9 @@ def main(argv: list[str] | None = None) -> int:
         entry_commissioning_lag=args.entry_commissioning_lag,
         exit_rate_limits=args.exit_rate_limits,
         capacity_screen_unified_lookahead=args.capacity_screen_unified_lookahead,
+        capacity_screen_scarcity_restoration=(
+            args.capacity_screen_scarcity_restoration
+        ),
         ptc_window=args.ptc_window,
     )
 
