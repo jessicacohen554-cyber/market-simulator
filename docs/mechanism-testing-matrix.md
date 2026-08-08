@@ -3413,7 +3413,95 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-142 (2026-08-08) — ITEM 3 SET AND DISCHARGED IN THE
+> **LIVE QUEUE AS OF miso-143 (2026-08-08) — ITEM 4 SET AND DISCHARGED IN THE
+> SAME SESSION. QUEUE EMPTY AGAIN. THE MERIT-ORDER CHANNEL IS NOW MEASURED:
+> IT IS MATERIAL AND IT IS UNOWNED.** Item 4 (miso-142's named successor
+> candidate **(A)** — the coal-vs-gas merit order in the 2025 high-gas regime)
+> was executed as a **no-solve Phase 0**. **NO LP, no registration, no
+> `ScenarioConfig` field, no parameter, NO CELL VERDICT MINTED (no mechanism
+> armed, refused, or proposed for arming), keeper UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`.
+>
+> **THE GAIN IS MATERIAL — AND THAT IS NOT ENOUGH.** Displacing the
+> **measured** C2-2025 coal excess (+4.2 %, the scorer's own basis; never the
+> price residual) up the model's own offer ladder is worth **+$2.297 (lower
+> bound) to +$5.474 (upper bound) /MWh** against the 2025 JJA h12–17 deficit of
+> **−$30.435** — **7.5 % to 18.0 %**, BRANCH-MATERIAL at **both**
+> replacement-supply bounds. *(EIA-930 endpoint, separately labelled and never
+> averaged with it: +$11.28 → +$28.55.)* **But all FOUR candidate mechanisms
+> are ELIMINATED BY MEASUREMENT**, so nothing can deliver it and sizing
+> something to the number would be a fitted input:
+> **B-1** `gas_offer_net_revenue_margin`'s fixed-anchor form — fleet-wide
+> haircut **$5.70/MWh** but **price-relevant haircut $0.33**, 2023→2025 swing
+> **$0.18** against a $0.50 inert bar (a factor-of-17 gap between where the
+> mechanism is LARGE and where it is MARGINAL; the ERCOT-138 §J scope nuance
+> reproduced independently in a second ISO — **cell stays `K`**, status
+> unchanged, note + evidence updated only);
+> **B-2** delivered coal price — trajectory-fallback share **0.62 %** of coal
+> capability in 2025 and **0.00 %** in 2023/24, i.e. the model's coal price IS
+> the measured EIA-923 monthly series, REFUTED;
+> **B-3** the coal tranche offer curve — marginal-coal effective passthrough
+> **1.000**, so the sunk-fuel 0.0/0.35 bands are INFRAMARGINAL, ELIMINATED;
+> **B-4** CC/CT heat rates — flat to **<0.4 %** across all three years,
+> structurally incapable of a 2025-specific step.
+> **Candidate (A) is CLOSED AS A LEVER, NOT AS AN OBJECT.**
+>
+> **THE PRE-REGISTERED FOOTING STOP GATE FAILED AND THE BAR WAS NOT MOVED.** A
+> copperplate merit-order clear of the rebuilt stack under-prices the keeper's
+> own committed P1 price by **$8.7–12.8/MWh** (median |Δ| **9.998** vs a
+> **4.00** bar fixed in advance; the startup-markup bracket moves it $0.25), so
+> BRANCH-INSTRUMENT-FAIL fired and the ladder was re-anchored on the keeper's
+> OWN committed P1 price, reporting **gaps only**. The re-anchored instrument
+> then reproduced miso-142's six committed window deficits **exactly**
+> (−4.75 / −8.333 / −10.676 / −10.671 / −30.999 / −30.435).
+>
+> **A CORRECTION TO miso-142's INSTRUMENT, two-sided by design and it went this
+> way.** The **true within-hour offer ladder** is steeper than miso-142's
+> *empirical* binned curve in **every** year-window pair (model side vs model
+> side): **1.23× / 3.03× / 1.42× / 2.59× / 2.49× / 2.35×**; 2025 JJA h12–17 is
+> **$1.496/MWh per GW** against its **0.637**. Walking that ladder to the
+> measured actual price takes **16.14 GW**, not **47.7**. **miso-142's VERDICT
+> SURVIVES — no quantity lever of admissible size closes C3a in MISO — but its
+> MARGIN was overstated**, and re-deriving it is NOT a division against the
+> 13.28 GW cushion (see the successor: the ladder and the cushion are not
+> disjoint).
+>
+> **THE SUCCESSOR — a NEW object, measured here for the first time, and NOT
+> opened (rule 19; it needs its own owner decision and PREREG): THE IN-MERIT
+> IDLE BLOCK.** In 2025 JJA h12–17 the model offers **84.2 GW at or below its
+> own clearing price** while serving **65.8 GW** — **19.3 GW (29 %) of in-merit
+> capability is not dispatched** (2023: 22.0 GW; 2024: 20.0 GW). **Congestion
+> is REFUTED as the cause**: *r* = **−0.113**, and the under-price is LARGEST
+> (**$12.06**) in the 320 hours with **zero** zonal price spread, falling to
+> **$9.84** in the top spread quartile. Idle by class: **CT_PEAKER 64.5 %**,
+> **ST_GAS 41.6 %**, CC_REGULAR 7.3 %, COAL 4.1 % — against ST_GAS **45.1 %**
+> forced (C8, grounded) and twelve live reliability-floor limbs. **The floors
+> are a HYPOTHESIS, not a finding**: this session measured the block and refuted
+> congestion; it did **not** attribute the block, and the D-2 attribution must
+> precede any floor work.
+>
+> **THE CHARTER'S OWN FRAMING DID NOT SURVIVE ITS BLOCKER YEAR** (reported
+> against interest): at the model's own clearing price in 2025 JJA h12–17 the
+> marginal tranche is **CT_PEAKER 43.7 %** and **COAL 20.1 %** — coal's marginal
+> share **FALLS** in 2025 (33.3 % → 45.7 % → 20.1 %), the marginal coal band
+> **halves** (2,734 → 3,503 → **1,602 MW**), and coal runs at **95.9 %** of
+> capability. Three instruments give three marginal-coal shares (OLS absorption
+> 43.6 %, copperplate clearing tranche 38.0 %, at-anchor tranche 20.1 %) because
+> they measure three different things; the price-anchored one is the one that
+> bears on price formation. **A successor must re-pose the coal question at the
+> MARGIN, not in annual volumes.**
+>
+> **GOVERNANCE, carried forward unchanged:** C1 and C2 are both SKIPPED for 2025
+> on EIA-923 preliminary-vintage grounds, so the +4.2 % coal / −11.2 % gas
+> substitution that SIZED this session's displacement **is not certifiable until
+> the final 2025 vintage lands** — a reportable limit on the finding, and a
+> blind spot that would not catch a regression either.
+> `results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`
+> (`1f79a700`, blob `a7979fd8`);
+> `results/calibration/FINDING-miso143-merit-order-gain-is-material-but-unowned-2026-08-08.md`;
+> `_miso143_footing.json` · `_miso143_ladder.json` · `_miso143_gb_mechanisms.json`.
+>
+> *(Prior state, unedited.)* **LIVE QUEUE AS OF miso-142 (2026-08-08) — ITEM 3 SET AND DISCHARGED IN THE
 > SAME SESSION. QUEUE EMPTY AGAIN, BUT THE LANE'S OBJECT IS NOW MEASURED AND
 > NUMERIC.** Item 3 (owner-set 2026-08-08: the summer-afternoon supply stack,
 > O1–O5 + H1) was executed as a no-solve Phase 0 and **H1 is REFUTED in all three
