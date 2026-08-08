@@ -4361,3 +4361,115 @@ JSON/js files. Stop-hook on merged history: rev-list 0 => nothing to amend.
 Deliverable: the merged commit + a SHORT note docs/handoffs/nyiso-taxgs-promotion-
 <date>.md (the re-verified determination, M1 pass, matrix re-stamp).
 ```
+
+## §0x — D-21(a) RE-OPENED; FFR-8A dispatched (2026-08-07 @ `2cd4b120`)
+
+The owner re-opened D-21(a) and ordered the completion path (Addendum AC). ERCOT keeper is
+now run176-control-offline-increment; CAISO's `complete` was WITHDRAWN 2026-08-06 (nothing
+spent). FFR-3V-FIX + HOUSE-1 (§0v) stay live. The critical lane:
+
+### FFR-8A [FABLE] — restore the forward price object's scarcity content (D-21(a), re-opened)
+
+```
+[FABLE] FFR-8A — Diagnose and repair the forward price object's missing scarcity content,
+from published market design only (owner decision D-21(a), DEFERRED at sitting Addendum
+V.6, RE-OPENED by the owner at Addendum AC.1, 2026-08-07). THE critical lane of the
+forecast program: every capacity-evolution screen now consumes this object under
+capacity_screen_unified_lookahead (FFR-5D), and FFR-6A measured it at 0.04-4.4% of the
+real per-fuel margin — ZERO hours > $100 where the measured 2024/2025 market priced
+161/217 — so retirement fails the whole merchant fleet (cap-retained) and entry builds
+17 GW vs 55.4 actual. The bars and reserve legs are EXONERATED (FFR-6A, verified again by
+FFR-7C) — do not revisit them. Rule 1: the repaired level is a MEASUREMENT; nothing is
+tuned toward 1.534 GW, toward the measured price curve, or toward any residual.
+
+=== VERIFIED STATE (2026-08-07 @ origin/main 2cd4b120 — RE-VERIFY AT YOUR OWN HEAD) ===
+Keepers: ERCOT 2026-08-07-run176-control-offline-increment (moved this morning) · PJM
+2026-08-04-pjm-152-collapse · CAISO 2026-08-06-caiso-175-tac-intake · NYISO
+2026-08-07-nyiso-131-taxgs-arm · NEISO 2026-08-05-neiso-83-ca1-reclass · MISO
+2026-08-05-miso-132b-cc-committed (READ the shards yourself). `complete` = {NEISO, NYISO,
+PJM} — CAISO's marker was WITHDRAWN 2026-08-06, nothing spent. `final` EMPTY. FREEZE
+ACTIVE — your T1-FF windows are the enumerated carve-out; 2022 is BRIDGED, never read.
+The D-25 gas_st taxonomy is on main (ERCOT solve inputs byte-identical — your ERCOT arms
+are unaffected by it). PREREQUISITES IN ORDER: uv sync (~2 min), then
+scripts/regenerate_clean.py (~63-65 min) before any solve. Rule 12 PER PROMPT: <=5
+solve-years per invocation, sequential within one, <=2 concurrent invocations. Rule 27:
+FABLE (runner/model core).
+
+=== THE EVIDENCE CHAIN (read in this order; do not re-derive) ===
+FFR-5A §2a (the three level gaps, now repaired by FFR-5D) -> FFR-5D/5D-M handoff
+(docs/handoffs/ffr-5d-price-object-2026-08-05.md, registered arms
+ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}, runtime key 49eac64f146b3460) ->
+FFR-6A (docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md: the gap table, the
+identity split — 96-100% energy price-level/tail; verdict row 1 = your charter; row 2 =
+the ADMISSIBLE ECRS/AS-quantity input, in scope if your diagnosis shows the 2023 term
+needs it) -> FFR-7C (docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md §5:
+THE VALIDATION INSTRUMENT IS PRICE-SIDE — this window can only FALSIFY a screen via exits;
+a correct object must produce ~0 economic exits AND approach the measured scarcity-hour
+content).
+
+=== PHASE 1 — DIAGNOSIS (measure each term before repairing anything) ===
+Why is the repaired object's pro-forma scarcity ZERO on a 21.9-31.8% RM fleet when the
+real market at 34.8% RM priced 161 h > $100 (2024)? Decompose, with measured
+contributions, at the 2024 and 2025 screens on the FFR-5D unified arm's own stack:
+(a) DETERMINISM: the stack is a smooth deterministic supply curve — no forced-outage or
+    net-load UNCERTAINTY term, so the hourly reserve margin never approaches the ORDC
+    knee. Measure: the distribution of pro-forma hourly headroom vs the knee.
+(b) THE ORDC IMPLEMENTATION: does the lookahead's tail implement the PUBLISHED ERCOT ORDC
+    (X, mu, sigma by season/block, VOLL, RDPA, post-RTC AS demand curves) or an
+    approximation? Diff the code's construction against the published design, cite each
+    parameter (docs/parameter-citations.md pattern).
+(c) THE FLEET-LENGTH INHERITANCE: the object prices the EVOLVED fleet (additions 17.0 GW
+    vs 55.4 actual under the unified arm) — quantify how much of the scarcity shortfall
+    is fleet length vs price construction by re-pricing the same construction on the
+    known-vintage actual fleet (a diagnostic re-price, no solve).
+(d) The 2023 ECRS term (FFR-6A: ~half of 2023 net revenue entered through ENERGY price
+    effects of ECRS procurement) — does reproducing 2023-level revenue need the verdict
+    row-2 measured AS-quantity input? Scope it; intake only if your Phase-2 repair
+    consumes it.
+=== PHASE 2 — REPAIR (published-design inputs ONLY, zero fitted parameters) ===
+Build the scarcity content the diagnosis says is missing, each element rule-13 tested
+(reproducible from published market design/physics, forward analogue, condition-
+responsive): the published ORDC on per-hour reserves WITH an uncertainty term derived from
+the model's OWN outage machinery (LOLP-bearing, not smooth), RDPA/AS demand curves as
+published. NO scalar uplift, NO calibration to the measured curve (FFR-6A verdict row 4 is
+REFUSED BY NAME). Gating: EXTEND the armed behavior of the existing
+capacity_screen_unified_lookahead field if the repair is inseparable from that object
+(rule 19: one object, one gate — justify), OR one new default-OFF field registered in
+_CACHE_KEY_OPTIONAL_FIELDS + defaults ledger IN THE SAME COMMIT with its matrix row in the
+same PR (28c). Run the default-key pin tests before you start AND after (the nyiso-128
+incident). Byte-identity of every unarmed path proven by test.
+=== PHASE 3 — MEASUREMENT (pre-register before solving) ===
+Paired arms on the FFR-5D posture (ERCOT T1-FF vintage 2020, window 2021-2025, Arm R,
+shipped defaults): ffr5d-unified (your control — reuse the registered arm's recorded
+expectations; its runtime key is on record) vs unified+repair. Ids
+ercot-2021-2025-t1ff-armr-ffr8a-{unified,scarcity}, hindcast namespace, NEVER the backcast
+registry. PRE-REGISTERED READS: (i) THE PRICE-SIDE VALIDATION — the repaired object's
+per-screen hour distribution (h>$100, h>$1000, mean, max) vs the MEASURED distribution and
+vs the FFR-6A replica margins per fuel: report the approach honestly, whatever it is — the
+inputs are cited design constants, the output is a measurement, and a shortfall is a
+FINDING; (ii) the exit-side falsification checks — the 10.9 GW gas_st false wave (does the
+repaired 2021/Uri-basis screen still manufacture it?), in-window executions (must be ~0
+economic), the entry_capped census, the FFR-5A coal cohort's event sequence; (iii)
+additions vs 55.4 GW (the fleet-length knot — expected NOT fixed by this lane; say so).
+STATE THE HONEST EXPECTATION BEFORE SOLVING. Two invocations max, 4 LP years each,
+sequential within each, cold.
+=== WHAT THIS LANE IS NOT ===
+No arming, no promotion, no keeper contact, no tuning. The FH-4/FH-5 lift determination is
+the MANAGER'S (Addendum I.1, V.3 conditions as sharpened by FFR-7C) — you report, you do
+not lift and do not recommend on it. If a repair element cannot be built without inventing
+a parameter, STOP on that element and escalate — land the rest.
+=== TRAPS ===
+ruff-autofix reflows constants.py on ANY .py write — git status --short after every
+Python write; restore exact HEAD bytes; never stage the reflow. Push 413: fetch main +
+rebase before EVERY push; owner merges fast, prune stale refs. Never push_files a
+>=300-line file. Evolution ledgers at <out-dir>/<ISO>/<runtime-key>/ — verify the path
+before believing a zero; decided_year is on event rows. Cache keys from the runtime
+`cache_key=` line. The D-13 hash-out hazard. results/ dies with the container — commit
+prereg, then results, then handoff, in that order, as they exist.
+
+Deliverable: the PR(s) (diagnosis probes + repair + tests + matrix) and
+docs/handoffs/ffr-8a-scarcity-restoration-<date>.md — the Phase-1 decomposition with
+per-term contributions, the repair with every parameter cited, the pre-registered
+price-side and exit-side reads with results, which elements landed vs escalated, and what
+you did NOT separate.
+```
