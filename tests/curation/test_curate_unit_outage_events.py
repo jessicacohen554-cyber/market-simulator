@@ -111,6 +111,30 @@ class TestCurateUnitOutageEvents(unittest.TestCase):
                 pd.read_parquet(first[iso]), pd.read_parquet(second[iso])
             )
 
+    def test_day_grain_iso_validates_without_the_optional_hour_columns(self):
+        # The two caiso-183 grain columns are declared nullable precisely so an
+        # ISO that has not re-derived still curates and validates.
+        written = cuoe.curate(raw_dir=self.raw_dir)
+        df = pd.read_parquet(written["PJM"])
+        for col in cuoe.HOUR_GRAIN_COLUMNS:
+            self.assertNotIn(col, df.columns)
+
+    def test_hour_grain_columns_pass_through_when_present(self):
+        src = self.raw_dir / "campd-unit-outages-PJM.csv"
+        raw = pd.read_csv(src)
+        raw["outage_start_hour"] = [22, 0]
+        raw["outage_end_hour"] = [1, 23]
+        raw.to_csv(src, index=False)
+
+        written = cuoe.curate(raw_dir=self.raw_dir, isos=["PJM"])
+        validate_clean(written["PJM"])
+        df = pd.read_parquet(written["PJM"]).sort_values("unit_id")
+        self.assertEqual(list(df["outage_start_hour"]), [22, 0])
+        self.assertEqual(list(df["outage_end_hour"]), [1, 23])
+        # ERCOT, untouched, still curates day-grain alongside it.
+        ercot = cuoe.curate(raw_dir=self.raw_dir, isos=["ERCOT"])
+        self.assertNotIn("outage_start_hour", pd.read_parquet(ercot["ERCOT"]).columns)
+
 
 if __name__ == "__main__":
     unittest.main()

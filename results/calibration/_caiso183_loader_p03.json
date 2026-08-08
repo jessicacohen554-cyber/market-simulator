@@ -1,0 +1,302 @@
+{
+ "CAISO": {
+  "2018": {
+   "active_units": {
+    "n_units": 61,
+    "sha256": "02f15208ab93b8d685543427cf5502888a5596ac55bd927e9992f083db341b9f",
+    "true_hours": 184704
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 82624.626991,
+    "n_keys": 27,
+    "sha256": "e99f23c0aa4ba1bceec065c314c188132c3e2ed0707c200a1849e7a752c72f8d"
+   }
+  },
+  "2019": {
+   "active_units": {
+    "n_units": 61,
+    "sha256": "6d8d08b1b649fe57858dc53ea22fa6e11e411b139fc19db2b2f6570d2f557fd4",
+    "true_hours": 189864
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 90253.583628,
+    "n_keys": 28,
+    "sha256": "2dfc13bbeaa04ac3ebf61c04b057e48c0ff124f6bdbc576e3beebf9c18b47006"
+   }
+  },
+  "2020": {
+   "active_units": {
+    "n_units": 66,
+    "sha256": "7881bed0942205ff15b85f3c19a39a124e9a728a174cc46d271554d45da2013b",
+    "true_hours": 179784
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 88431.136333,
+    "n_keys": 30,
+    "sha256": "e947f33b206bb0b24f77f8238a4b5606bd3599be13a572bc43b2c9d415a8370f"
+   }
+  },
+  "2021": {
+   "active_units": {
+    "n_units": 68,
+    "sha256": "5f06f619f36b0a1f46c547d234a7a45dcb34a73e0e19378a168554d9e3e9dd4c",
+    "true_hours": 188688
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 84533.672662,
+    "n_keys": 31,
+    "sha256": "59f031d480a67a1f6a823fd416c709cda6f28290423d4b4817596da2fdebbac2"
+   }
+  },
+  "2022": {
+   "active_units": {
+    "n_units": 66,
+    "sha256": "ef7eb8c6fd52f92820c600d982808797e8443f77673f6217815a99fb836e1eb1",
+    "true_hours": 165264
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 80219.035675,
+    "n_keys": 30,
+    "sha256": "f471fe87acacb5046fefde5b6ebf1d9d62b0730a1fde7470df04418ef351986a"
+   }
+  },
+  "2023": {
+   "active_units": {
+    "n_units": 65,
+    "sha256": "639cc11f666a4c28861a4c0f099d73ee0e56380cd7801d548b5ad148d4836e2a",
+    "true_hours": 190008
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 96232.949768,
+    "n_keys": 30,
+    "sha256": "d45cbbc47cffd4b8e2f6d4516fa074bd86c5355e7deb547c86c3d326cefab530"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 62,
+    "sha256": "d3cc2e43c6a1409d20ee02a59f74de3c83245f9c60964e9f0e221d002de4d32c",
+    "true_hours": 186000
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 86932.713435,
+    "n_keys": 28,
+    "sha256": "96ad1e9ec03db14a14f2f47d525f2fb25f61dff973b83f402931126c4d6320aa"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 71,
+    "sha256": "558f1dd9f5b36d753dedc42fdb69efa96a3008e2527f0f22f714b5ddb7713164",
+    "true_hours": 269208
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 143828.346506,
+    "n_keys": 35,
+    "sha256": "08a1660347470be95fd765aabbe6912929ad09e7e8c3071cbabfa9e071431702"
+   }
+  },
+  "2026": {
+   "active_units": {
+    "n_units": 66,
+    "sha256": "4fc17d055b9587d1d7b82f01a023d01a0aa9e82e53be95aca005f217872e0494",
+    "true_hours": 134352
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 89022.129534,
+    "n_keys": 33,
+    "sha256": "09a33ac00184d06517ec9f4652e80a69afaf3934f4e2420959f8f7b5d3767aa9"
+   }
+  }
+ },
+ "ERCOT": {
+  "2023": {
+   "active_units": {
+    "n_units": 166,
+    "sha256": "ec4785e6d1ffdb2df026a90b97b103319ff6424d0fd35f22775538f58384495e",
+    "true_hours": 271272
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 99141.415362,
+    "n_keys": 58,
+    "sha256": "695d11d86dec8b27ca3f20ef4bdb997630c79de7b35a078cc21372efe2944623"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 183,
+    "sha256": "f59ac3274fb9be48fb21a56a304b61aa8818a7b4387c6d79958660b1750feb11",
+    "true_hours": 298752
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 107778.8837,
+    "n_keys": 61,
+    "sha256": "0546782a923bd3581678fbae6f81cce0ed5212fc4b2d723192901331cc5e2035"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 172,
+    "sha256": "f4eeffd9e7ce2975c624ff48181dbc8c8e3926480782dacf979aa0d19cbac9a1",
+    "true_hours": 309864
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 119168.873047,
+    "n_keys": 61,
+    "sha256": "a76d72b5dad14d9c81444bc9fde9ba4ddafc6ab9adfbbba300c2883fcf6c3099"
+   }
+  }
+ },
+ "MISO": {
+  "2023": {
+   "active_units": {
+    "n_units": 271,
+    "sha256": "158266afede6ebd57a39b47a487bdd93e2befb16b3162892eaec19d04674a4e8",
+    "true_hours": 741576
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 352280.170765,
+    "n_keys": 120,
+    "sha256": "6adbd7198f4502164dc68937f845f43983ba49fcd0585a07915f97df341512ad"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 271,
+    "sha256": "68b0d1a0b001cff4c740f38a821712caf5600e35c9f60d8d3b4a18a6645ffb12",
+    "true_hours": 745608
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 361790.227254,
+    "n_keys": 121,
+    "sha256": "b2d8dc6fbb1dbe6331b93e79ba6f6066c1698bfdee4a848abf4505120b06a00c"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 300,
+    "sha256": "c78c81625650debd7fc151a51e7fbd80dafec8bbbd8d798e2a303cdf137163c3",
+    "true_hours": 954408
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 614455.71157,
+    "n_keys": 153,
+    "sha256": "3d9c997bf79e6f1aa3a632615dc4243e43f21026b94c2b2b6faeba9e849c493c"
+   }
+  }
+ },
+ "NEISO": {
+  "2023": {
+   "active_units": {
+    "n_units": 56,
+    "sha256": "42efa601db66a9b0b69e65935e2eccb43bfc8b5a9eaf595acade0f054fb18b26",
+    "true_hours": 243816
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 123350.378784,
+    "n_keys": 31,
+    "sha256": "ebb4c38b3da3ae81c9a872519d634a58aa5589d804276d9f02d11980427e7494"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 53,
+    "sha256": "63fcd80e70cdfc46ec2d30e27b845ba173df03aedc1fc7f0a6d00ea0a42a43f2",
+    "true_hours": 197976
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 108338.74995,
+    "n_keys": 30,
+    "sha256": "bb2bf28fa88740d411a247d9b36d7f7b3a5e8442b24ea0f6e0be76e16a9c53de"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 50,
+    "sha256": "7cd00a03b59343f6c7fb8566dca6b9321721f5f73e6ef01ee78bbbefbb3d5d6a",
+    "true_hours": 163704
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 115983.490327,
+    "n_keys": 32,
+    "sha256": "bbbc2782075e87f9798598f2d07f1cb5c4d1e26e9b26747e22fa302a13ed5a58"
+   }
+  }
+ },
+ "NYISO": {
+  "2023": {
+   "active_units": {
+    "n_units": 89,
+    "sha256": "c6e51214d4182da4192092494eaf907322d88f0eab98afcae473b5dea7ebd3ac",
+    "true_hours": 342192
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 176605.634565,
+    "n_keys": 41,
+    "sha256": "f7357d46ed282a8e2023734ffd5c2d281458536a78a3c89a21b417164d1d18a8"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 82,
+    "sha256": "6151dde0f10741bc62a9b9ba72f8ffa63ac7040a703c1dd1c84dd3b13452768e",
+    "true_hours": 323352
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 171500.999548,
+    "n_keys": 39,
+    "sha256": "e81df972aa110a969d3d1d24180bd5e191295dabceed91d0848a8ebe4fde450b"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 89,
+    "sha256": "d469120cec7c6129b003163078a025e186298b2255bf04374fbdd8e451e654ec",
+    "true_hours": 345336
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 177007.57638,
+    "n_keys": 41,
+    "sha256": "6546648d4ff4cbf26d6e2a7a1155549c062d9b0fe575d4038a57066b9296c354"
+   }
+  }
+ },
+ "PJM": {
+  "2023": {
+   "active_units": {
+    "n_units": 306,
+    "sha256": "bc628d0b1904725645da650425cd42f9d971ecede33211b9494d2ae8cd51597c",
+    "true_hours": 864408
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 330691.633864,
+    "n_keys": 124,
+    "sha256": "d166f5c0cd375a845bbfed7aafde694a999971969a071078a5be3dc3e55db4ab"
+   }
+  },
+  "2024": {
+   "active_units": {
+    "n_units": 307,
+    "sha256": "cf16bdab27b79c12791f7397d6c7f1d7328fc257d774e6d31ee185e68281c353",
+    "true_hours": 790032
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 321204.413421,
+    "n_keys": 129,
+    "sha256": "1db5b084df5e71111aabaaf7afc19988a8402e5071cfd85a4b61022093cd3cf5"
+   }
+  },
+  "2025": {
+   "active_units": {
+    "n_units": 318,
+    "sha256": "c85487a3c0a7463784755a23dfa807d8643ddcdc55b4ba13ad32c8f45ccedbf5",
+    "true_hours": 905304
+   },
+   "derate_factors": {
+    "derate_mw_hours_unweighted": 463944.721339,
+    "n_keys": 138,
+    "sha256": "5ccc3cd048de12641ba00c71c866acc8b719232946a079a5eac98eef9b37f088"
+   }
+  }
+ }
+}
