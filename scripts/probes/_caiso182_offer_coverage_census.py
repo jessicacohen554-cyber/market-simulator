@@ -233,9 +233,67 @@ def main(argv: list[str] | None = None) -> int:
     for cand in _candidate_cuts(base_hr):
         anti = _is_antimode(centres, hist, cand["cut"], IT2_WINDOW_MMBTU)
         cand = {**cand, "antimodes_within_window": anti, "antimode_found": bool(anti)}
-        cand["pass"] = bool(anti)
+
+        # LEG (b), pre-registered in PRECHECK §3c and required by the
+        # conjunction: the sub-buckets the cut actually produces must
+        # reconcile to the fleet MW of the classes it claims to separate,
+        # inside the G1 bounds already registered for that side. A cut that
+        # finds a dip but sorts the wrong capacity into each side has not
+        # separated anything.
+        lo_mw = float(caps[slopes < cand["cut"]].sum())
+        hi_mw = float(caps[slopes >= cand["cut"]].sum())
+        below_fleet = census["by_class"].get(cand["below"], {}).get("nameplate_mw")
+        above_fleet = census["by_class"].get(cand["above"], {}).get("nameplate_mw")
+        side_bounds = G1_BOUNDS.get(BUCKET_OF.get(cand["below"], cand["below"]),
+                                    G1_BOUNDS["CT_PEAKER"])
+        recon = {}
+        for side, mw, fleet in (
+            ("below", lo_mw, below_fleet),
+            ("above", hi_mw, above_fleet),
+        ):
+            r = (mw / fleet) if fleet else float("nan")
+            recon[side] = {
+                "sub_bucket_mw": round(mw, 1),
+                "target_fleet_mw": fleet,
+                "ratio": round(r, 3),
+                "bounds": list(side_bounds),
+                "pass": bool(side_bounds[0] <= r <= side_bounds[1]),
+            }
+        cand["reconciliation"] = recon
+        cand["leg_b_pass"] = all(v["pass"] for v in recon.values())
+
+        # Reported diagnostic, NOT a bar: a cut can only separate two classes
+        # if the dip it names lies BETWEEN their base heat rates. Recorded so
+        # a letter-pass on leg (a) cannot be mistaken for a real valley.
+        between = [
+            a
+            for a in anti
+            if cand["below_base_hr"] < a["bin_centre"] < cand["above_base_hr"]
+        ]
+        cand["antimodes_between_the_two_base_hrs"] = between
+        cand["antimode_actually_separates"] = bool(between)
+
+        cand["pass"] = bool(anti) and cand["leg_b_pass"]
         it2["candidates"].append(cand)
+    it2["resources_classified"] = int(len(gaslike))
+    it2["nonempty_density_bins"] = int((hist > 0).sum())
+    it2["mean_resources_per_nonempty_bin"] = round(
+        len(gaslike) / max(1, int((hist > 0).sum())), 2
+    )
     it2["any_candidate_passes"] = any(c["pass"] for c in it2["candidates"])
+    # A cut only EXTENDS COVERAGE if one of the classes it separates is
+    # currently uncovered. The CC_REGULAR|CT_PEAKER boundary is already served
+    # by the incumbent hr_cut, so a pass there buys no new class and cannot
+    # trigger route (i) (PRECHECK §5: "derive per-class measured bands directly
+    # for the SEPARATED class").
+    it2["coverage_extending_candidates"] = [
+        c["cut"]
+        for c in it2["candidates"]
+        if c["pass"] and (c["below"] in UNCOVERED or c["above"] in UNCOVERED)
+    ]
+    it2["any_coverage_extending_candidate_passes"] = bool(
+        it2["coverage_extending_candidates"]
+    )
 
     # ---------------------------------------------------------------- #
     # IT-1 — CONDUCT HOMOGENEITY on the own-HR normalisation            #
@@ -325,7 +383,7 @@ def main(argv: list[str] | None = None) -> int:
         "IT1_conduct_homogeneity": it1,
         "route": (
             "SEPARATION"
-            if it2["any_candidate_passes"]
+            if it2["any_coverage_extending_candidate_passes"]
             else ("BUCKET_BAND" if it1["all_buckets_pass"] else "REFUSED")
         ),
     }
@@ -333,12 +391,26 @@ def main(argv: list[str] | None = None) -> int:
     OUT.write_text(json.dumps(rec, indent=1) + "\n")
     print()
     print(f"IT-2 separability : any candidate passes = {it2['any_candidate_passes']}")
+    print(
+        f"   ({it2['resources_classified']} resources over "
+        f"{it2['nonempty_density_bins']} non-empty bins = "
+        f"{it2['mean_resources_per_nonempty_bin']} per bin)"
+    )
     for c in it2["candidates"]:
+        rb = c["reconciliation"]["below"]
+        ra = c["reconciliation"]["above"]
         print(
             f"   cut {c['cut']:6.3f} ({c['below']} {c['below_base_hr']} | "
             f"{c['above']} {c['above_base_hr']}, sep {c['separation_mmbtu']}) "
-            f"-> antimode {c['antimode_found']}"
+            f"-> (a) antimode {c['antimode_found']}"
+            f" [separating: {c['antimode_actually_separates']}]"
+            f", (b) recon {rb['ratio']}/{ra['ratio']} {c['leg_b_pass']}"
+            f" => {'PASS' if c['pass'] else 'FAIL'}"
         )
+    print(
+        f"   coverage-extending passes: "
+        f"{it2['coverage_extending_candidates'] or 'NONE'}"
+    )
     print(f"IT-1 homogeneity  : all buckets pass = {it1['all_buckets_pass']}")
     for cls, b in it1["buckets"].items():
         for band, d in b["bands"].items():
