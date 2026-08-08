@@ -1,0 +1,301 @@
+{
+ "probe": "nyiso-133 commissioning-ramp attribution",
+ "question": "Does the ABSENCE OF A COMMISSIONING CURVE explain the keeper's +20.9 / +33.2 / -0.1 % NYISO market-solar error (nyiso-132 \u00a75)?",
+ "A_national_commissioning_ramp": {
+  "sample": {
+   "n_plants": 716,
+   "capacity_gw": 36.26,
+   "cod_years": [
+    2019,
+    2022
+   ],
+   "min_plant_mw": 5.0
+  },
+  "by_age": [
+   {
+    "age_months": 0,
+    "n_obs": 657,
+    "n_plants": 657,
+    "ratio_capacity_weighted": 0.7232,
+    "ratio_median": 0.7384
+   },
+   {
+    "age_months": 1,
+    "n_obs": 693,
+    "n_plants": 693,
+    "ratio_capacity_weighted": 0.9616,
+    "ratio_median": 0.9201
+   },
+   {
+    "age_months": 2,
+    "n_obs": 695,
+    "n_plants": 695,
+    "ratio_capacity_weighted": 0.9947,
+    "ratio_median": 0.9244
+   },
+   {
+    "age_months": 3,
+    "n_obs": 699,
+    "n_plants": 699,
+    "ratio_capacity_weighted": 1.0092,
+    "ratio_median": 0.9525
+   },
+   {
+    "age_months": 4,
+    "n_obs": 700,
+    "n_plants": 700,
+    "ratio_capacity_weighted": 1.0233,
+    "ratio_median": 0.9657
+   },
+   {
+    "age_months": 5,
+    "n_obs": 702,
+    "n_plants": 702,
+    "ratio_capacity_weighted": 1.0232,
+    "ratio_median": 0.9651
+   },
+   {
+    "age_months": 6,
+    "n_obs": 706,
+    "n_plants": 706,
+    "ratio_capacity_weighted": 1.0461,
+    "ratio_median": 0.9722
+   },
+   {
+    "age_months": 7,
+    "n_obs": 711,
+    "n_plants": 711,
+    "ratio_capacity_weighted": 1.0472,
+    "ratio_median": 0.9766
+   },
+   {
+    "age_months": 8,
+    "n_obs": 712,
+    "n_plants": 712,
+    "ratio_capacity_weighted": 1.0497,
+    "ratio_median": 0.9798
+   },
+   {
+    "age_months": 9,
+    "n_obs": 714,
+    "n_plants": 714,
+    "ratio_capacity_weighted": 1.0358,
+    "ratio_median": 1.0073
+   },
+   {
+    "age_months": 10,
+    "n_obs": 716,
+    "n_plants": 716,
+    "ratio_capacity_weighted": 1.0351,
+    "ratio_median": 1.0156
+   },
+   {
+    "age_months": 11,
+    "n_obs": 716,
+    "n_plants": 716,
+    "ratio_capacity_weighted": 1.0482,
+    "ratio_median": 1.017
+   }
+  ],
+  "placebo_age_36_47": {
+   "ratio_capacity_weighted": 1.0072,
+   "ratio_median": 1.0092,
+   "n_obs": 16960
+  },
+  "commissioning_month_equivalents_lost": 0.321
+ },
+ "B_C_nyiso_date_basis": {
+  "armed_cf": 0.1955,
+  "plants": [
+   {
+    "ptid": 323809,
+    "station": "Puckett Solar",
+    "zone": "C",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2022-09",
+    "eia860_operating": "2022-10",
+    "first_metered_output": "2022-10",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323808,
+    "station": "Janis Solar",
+    "zone": "C",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2023-02",
+    "eia860_operating": "2023-03",
+    "first_metered_output": "2023-03",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323848,
+    "station": "Morris Ridge Solar",
+    "zone": "C",
+    "nameplate_mw": 179.0,
+    "gold_book_in_service": "2024-09",
+    "eia860_operating": "2024-11",
+    "first_metered_output": "2024-11",
+    "eia860_lead_months": 2
+   },
+   {
+    "ptid": 323811,
+    "station": "Branscomb Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2021-12",
+    "eia860_operating": "2021-12",
+    "first_metered_output": "2022-01",
+    "eia860_lead_months": 0
+   },
+   {
+    "ptid": 323812,
+    "station": "Regan Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2022-12",
+    "eia860_operating": "2022-12",
+    "first_metered_output": "2022-12",
+    "eia860_lead_months": 0
+   },
+   {
+    "ptid": 323813,
+    "station": "Grissom Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2023-02",
+    "eia860_operating": "2023-03",
+    "first_metered_output": "2023-03",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323810,
+    "station": "Darby Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2023-07",
+    "eia860_operating": "2023-06",
+    "first_metered_output": "2023-06",
+    "eia860_lead_months": -1
+   },
+   {
+    "ptid": 323814,
+    "station": "Stillwater Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2024-02",
+    "eia860_operating": "2023-11",
+    "first_metered_output": "2023-12",
+    "eia860_lead_months": -3
+   },
+   {
+    "ptid": 323833,
+    "station": "Albany County Solar 1",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2024-02",
+    "eia860_operating": "2024-02",
+    "first_metered_output": "2024-03",
+    "eia860_lead_months": 0
+   },
+   {
+    "ptid": 323834,
+    "station": "Albany County Solar 2",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2024-02",
+    "eia860_operating": null,
+    "first_metered_output": null,
+    "eia860_lead_months": null
+   },
+   {
+    "ptid": 323815,
+    "station": "Pattersonville Solar",
+    "zone": "F",
+    "nameplate_mw": 20.0,
+    "gold_book_in_service": "2024-02",
+    "eia860_operating": "2024-02",
+    "first_metered_output": "2024-02",
+    "eia860_lead_months": 0
+   },
+   {
+    "ptid": 323840,
+    "station": "East Point Solar",
+    "zone": "F",
+    "nameplate_mw": 50.0,
+    "gold_book_in_service": "2024-04",
+    "eia860_operating": "2024-05",
+    "first_metered_output": "2024-05",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323847,
+    "station": "High River Solar",
+    "zone": "F",
+    "nameplate_mw": 90.0,
+    "gold_book_in_service": "2024-07",
+    "eia860_operating": "2024-08",
+    "first_metered_output": "2024-08",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323691,
+    "station": "Long Island Solar Farm",
+    "zone": "K",
+    "nameplate_mw": 31.5,
+    "gold_book_in_service": "2011-11",
+    "eia860_operating": "2011-12",
+    "first_metered_output": "2018-01",
+    "eia860_lead_months": 1
+   },
+   {
+    "ptid": 323806,
+    "station": "Calverton Solar",
+    "zone": "K",
+    "nameplate_mw": 22.9,
+    "gold_book_in_service": "2022-06",
+    "eia860_operating": "2022-08",
+    "first_metered_output": "2022-08",
+    "eia860_lead_months": 2
+   }
+  ],
+  "unverified_crosswalk_rows": [],
+  "years": [
+   {
+    "year": 2023,
+    "published_gwh": 229.9,
+    "mean_monthly_mw_gold_book": 161.07,
+    "mean_monthly_mw_eia860": 162.73,
+    "model_gwh_gold_book": 275.8,
+    "model_gwh_eia860": 278.7,
+    "err_pct_gold_book": 20.0,
+    "err_pct_eia860": 21.2,
+    "implied_fleet_cf_gold_book": 0.1629,
+    "implied_fleet_cf_eia860": 0.1613
+   },
+   {
+    "year": 2024,
+    "published_gwh": 503.2,
+    "mean_monthly_mw_gold_book": 389.9,
+    "mean_monthly_mw_eia860": 350.07,
+    "model_gwh_gold_book": 667.7,
+    "model_gwh_eia860": 599.5,
+    "err_pct_gold_book": 32.7,
+    "err_pct_eia860": 19.1,
+    "implied_fleet_cf_gold_book": 0.1473,
+    "implied_fleet_cf_eia860": 0.1641
+   },
+   {
+    "year": 2025,
+    "published_gwh": 981.8,
+    "mean_monthly_mw_gold_book": 573.4,
+    "mean_monthly_mw_eia860": 573.4,
+    "model_gwh_gold_book": 982.0,
+    "model_gwh_eia860": 982.0,
+    "err_pct_gold_book": 0.0,
+    "err_pct_eia860": 0.0,
+    "implied_fleet_cf_gold_book": 0.1955,
+    "implied_fleet_cf_eia860": 0.1955
+   }
+  ]
+ }
+}
