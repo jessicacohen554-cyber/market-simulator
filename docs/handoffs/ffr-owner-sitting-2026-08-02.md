@@ -3230,3 +3230,27 @@ promote (commissioning-curve attribution REFUTED, date-basis repair built); miso
 only (no LP); caiso-183 registered its B0/B1 hedge-grain pair (control passes, NOT bit-zero
 — that lane's own finding). ERCOT and NYISO keepers now ~15–24 h stable with the two most
 recent probes rejecting; Q.2's battery hold STAYS until FFR-8A Phase 3 lands regardless.
+
+### AD.5 Owner signature on D-28 (this sitting, 2026-08-08) — and the card round's other returns
+
+**D-28 — OPTION A: adopt composition (c) branch (i), F-1 FIRST (owner decision, with the
+memo's and the manager's recommendation).** The owner asked for and received the plain-terms
+explanation before signing (it is the IRA §45U existing-nuclear PTC; the composition choice
+is small money at $0–17/kW-yr; F-1 is the big number at ~$90/kW-yr and is a statutory bug
+fix, not a policy call). Sequencing as signed: (1) **F1-45U** charter — the ira.py
+5×-ordering fix (F-1) + the §45U(c)(1) inflation adjustment (F-3), composition seam
+untouched — dispatched this sitting (pack §0z addendum); (2) the F-2/composition-(c) seam
+charter dispatches ONLY after F1-45U lands (attribution is the point of A); (3) Arm-3
+arming returns as its own card on its own evidence afterward (the longer-horizon
+measurement noted at AC-era queue item 4 still applies). FFR-6B §6.4 row 3 is thereby
+DECIDED: composition (c); the retirements.py "owner call pending" annotation retires when
+the F-2 charter lands it.
+
+Same card round: **FFR-8A-P3 paste APPROVED** (the owner pastes now; pre-flight check makes
+any race with the original session harmless). **FFR-3V-FIX and HOUSE-1 confirmed NEVER
+PASTED** — both re-delivered this sitting; HOUSE-1 verbatim from §0v, FFR-3V-FIX with its
+embedded VERIFIED STATE block refreshed to 69addfdf (the §0v original predates the ERCOT
+run176 and NYISO nyiso-132 promotions and CAISO's `complete` withdrawal) plus one
+coordination note toward the in-flight FFR-8A-P3 reproduction gate. Paste-order guidance
+given: FFR-8A-P3 first (critical lane checks out its base immediately), HOUSE-1 second
+(kills the reflow trap every other lane hand-guards), FFR-3V-FIX and F1-45U at will.
