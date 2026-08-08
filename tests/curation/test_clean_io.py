@@ -22,6 +22,7 @@ from scripts.lib.clean_io import (
     validate_clean,
     validate_df,
     write_clean,
+    write_clean_iter,
 )
 
 # Datatypes that must each have a parseable schema (the standardization
@@ -298,6 +299,88 @@ class TestReadClean(CleanIORedirectMixin):
         pq.write_table(table.replace_schema_metadata(md), path)
         with self.assertRaises(SchemaError):
             read_clean("lmp", iso="CAISO", year=2024, market="DAM")
+
+
+class TestWriteCleanIter(CleanIORedirectMixin):
+    """The streaming writer must be a drop-in for write_clean (caiso-182).
+
+    Its whole purpose is to curate a dataset too large to concatenate without
+    changing a byte of what lands on disk, so the load-bearing test is
+    equivalence with the single-shot writer, not merely "it wrote something".
+    """
+
+    @staticmethod
+    def _chunks(n: int):
+        """``n`` one-row lmp chunks with distinct, ordered timestamps."""
+        base = _good_lmp().iloc[:1]
+        for i in range(n):
+            chunk = base.copy()
+            chunk["interval_start_utc"] = pd.to_datetime(
+                [f"2024-01-01T{i:02d}:00:00Z"], utc=True
+            )
+            chunk["lmp_usd_per_mwh"] = [float(i)]
+            yield chunk
+
+    def _read(self, path):
+        import pyarrow.parquet as pq
+
+        return pq.read_table(path).to_pandas()
+
+    def test_streamed_write_equals_single_shot_write(self):
+        chunks = list(self._chunks(7))
+        streamed = write_clean_iter(
+            iter(chunks), "lmp", iso="CAISO", year=2024, market="DAM", source="s"
+        )
+        streamed_frame = self._read(streamed)
+        streamed.unlink()
+
+        single = write_clean(
+            pd.concat(chunks, ignore_index=True),
+            "lmp",
+            iso="CAISO",
+            year=2024,
+            market="DAM",
+            source="s",
+        )
+        self.assertTrue(streamed_frame.equals(self._read(single)))
+
+    def test_row_group_boundaries_honour_the_size(self):
+        import pyarrow.parquet as pq
+
+        path = write_clean_iter(
+            self._chunks(7),
+            "lmp",
+            iso="CAISO",
+            year=2024,
+            market="DAM",
+            source="s",
+            row_group_rows=2,
+        )
+        md = pq.read_metadata(str(path))
+        self.assertEqual(
+            [md.row_group(i).num_rows for i in range(md.num_row_groups)],
+            [2, 2, 2, 1],
+        )
+
+    def test_validates_every_chunk_and_removes_the_file(self):
+        bad = _good_lmp().iloc[:1].drop(columns=["node"])
+        with self.assertRaises(SchemaError):
+            write_clean_iter(
+                iter([*self._chunks(1), bad]),
+                "lmp",
+                iso="CAISO",
+                year=2024,
+                market="DAM",
+                source="s",
+            )
+        # A partial file must not be left behind for a reader to pick up.
+        self.assertFalse(
+            (clean_io.paths.CLEAN_DIR / "lmp/CAISO/DAM/lmp_2024.parquet").exists()
+        )
+
+    def test_empty_input_raises(self):
+        with self.assertRaises(SchemaError):
+            write_clean_iter(iter([]), "lmp", iso="CAISO", year=2024, market="DAM")
 
 
 class TestRegenerateEntrypoint(unittest.TestCase):
