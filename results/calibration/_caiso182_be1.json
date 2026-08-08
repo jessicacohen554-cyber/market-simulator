@@ -1,0 +1,13 @@
+{
+ "caiso_offer_curve_measured.json": {
+  "identical": true,
+  "committed_sha": "e47d74b19fcfad6b676e0d7c3985f2cc03e6d9dd0e00bc51683acf7ab33f29b9",
+  "rederived_sha": "e47d74b19fcfad6b676e0d7c3985f2cc03e6d9dd0e00bc51683acf7ab33f29b9"
+ },
+ "caiso_offer_surface_condbinned.json": {
+  "identical": true,
+  "committed_sha": "985d5fc831bd804a19dbbf6679727a974ba856153d49646d4263ac305cd804d4",
+  "rederived_sha": "985d5fc831bd804a19dbbf6679727a974ba856153d49646d4263ac305cd804d4"
+ },
+ "summary_csv_identical": false
+}

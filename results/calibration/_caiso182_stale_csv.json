@@ -1,0 +1,11 @@
+{
+ "committed_json_vs_committed_csv_bins_agreeing": [
+  0,
+  8
+ ],
+ "committed_json_vs_rederived_csv_bins_agreeing": [
+  8,
+  8
+ ],
+ "conclusion": "caiso_offer_surface_summary.csv committed at HEAD is STALE: it disagrees with the committed condbinned JSON that the SAME main() invocation writes from the SAME `ladder` object, while the re-derived CSV reproduces that JSON exactly. Consumed artifacts are unaffected \u2014 the CSV is a human-readable summary no loader reads."
+}
