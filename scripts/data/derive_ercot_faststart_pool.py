@@ -276,7 +276,10 @@ def _prep_clock_gas(df: pd.DataFrame, gas_day: pd.Series) -> pd.DataFrame:
 
 
 def derive_year(
-    year: int, gas_day: pd.Series, restypes: tuple[str, ...] = CT_RESTYPES
+    year: int,
+    gas_day: pd.Series,
+    restypes: tuple[str, ...] = CT_RESTYPES,
+    edges_override: "tuple[float, ...] | None" = None,
 ) -> tuple[dict, list[dict], list[str]]:
     """Return ``({"pool_frac": [...], "ladder": [...]}, coverage, files)``.
 
@@ -308,7 +311,7 @@ def derive_year(
     hoy_of_ts = dict(zip(live_all["_ts"], live_all["hoy"]))
 
     pct = _netload_pct(year)
-    edges = np.asarray(NETLOAD_PCT_EDGES)
+    edges = np.asarray(NETLOAD_PCT_EDGES if edges_override is None else edges_override)
     hour_bin = np.searchsorted(edges, pct, side="right")  # (HOURS,)
     n_bins = len(edges) + 1
     if len(segments):
@@ -461,7 +464,21 @@ def main() -> None:
         "(ercot_faststart_pool_contpct.json) instead of the stepped bins — "
         "the frozen stepped artifact is never touched by this mode",
     )
+    ap.add_argument(
+        "--top-scoped",
+        action="store_true",
+        help="ERCOT-180: write the top-scoped vintage "
+        "(ercot_faststart_pool_topscoped.json) — frozen stepped values below "
+        "p97, conduct-identified stepped sub-bins above, ULP-pair "
+        "step-encoded (PRECOMMIT-ercot180 §3); neither frozen artifact is "
+        "touched",
+    )
     args = ap.parse_args()
+    if args.continuous and args.top_scoped:
+        raise SystemExit("--continuous and --top-scoped are mutually exclusive")
+    if args.top_scoped:
+        _main_topscoped(args)
+        return
     if args.continuous:
         _main_continuous(args)
         return
@@ -655,6 +672,132 @@ def _main_continuous(args) -> None:
             }
         }
 
+    out_path.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out_path}")
+
+
+def _main_topscoped(args) -> None:
+    """Write the ercot-180 TOP-SCOPED vintage (``--top-scoped``), CT block only.
+
+    PRECOMMIT-ercot180 §1/§3: below p97 the FROZEN stepped artifact's own
+    per-bin ``pool_frac`` and ladders are byte-copied; the former p97-p100 top
+    bin is split at the conduct-identified edges, each sub-bin computed by the
+    IDENTICAL stepped statistics on the sub-bin's own rows; zero-support
+    sub-bins inherit the frozen parent values (frac and ladder independently).
+    ULP-pair step-encoded; year-scoped CT block only (the armed
+    ``ercot_faststart_pool_offer`` reads CT alone; the CC slow-start block is
+    the adjudicated-inert ercot-176 tier and is NOT reproduced). Neither
+    frozen artifact is touched.
+    """
+    if str(REPO) not in sys.path:
+        sys.path.insert(0, str(REPO))
+    from scripts.lib.topscoped_encode import (
+        TOPSCOPED_TAG,
+        encode_step_nodes,
+        load_identified_edges,
+        rows_from_pairs,
+        split_top_bin,
+    )
+
+    out_path = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_faststart_pool_topscoped.json"
+    )
+    frozen = json.loads(DEFAULT_OUT.read_text())
+    legacy_edges = [float(x) for x in frozen["_provenance"]["netload_pct_edges"]]
+    new_edges = load_identified_edges()
+    edges_ext = tuple(legacy_edges + new_edges)
+    n_legacy = len(legacy_edges)
+    n_sub = len(new_edges) + 1
+
+    gas_day = _gas_day_series()
+    years_entry: dict[str, dict] = {}
+    coverage: dict[str, list[dict]] = {}
+    sources: dict[str, list[str]] = {}
+    for y in args.years:
+        fro_tbl = frozen.get("CT", {}).get("years", {}).get(str(y))
+        if not fro_tbl:
+            continue  # year-scoped: absent years stay absent
+        ext, cov, files = derive_year(y, gas_day, CT_RESTYPES, edges_override=edges_ext)
+        sources[str(y)] = files
+        if not ext:
+            continue
+        sub_fr: list = []
+        sub_ld: list = []
+        disc: list[dict] = []
+        for k in range(n_sub):
+            b = n_legacy + k
+            fr = float(ext["pool_frac"][b])
+            lad = rows_from_pairs([ext["ladder"][b]])[0]
+            ok_f = bool(np.isfinite(fr))
+            ok_l = all(np.isfinite(v) for v in lad)
+            sub_fr.append([fr] if ok_f else None)
+            sub_ld.append(lad if ok_l else None)
+            cov_b = cov[b] if b < len(cov) else {}
+            disc.append(
+                {
+                    "frac_computed": ok_f,
+                    "ladder_computed": ok_l,
+                    **{k2: cov_b.get(k2) for k2 in ("intervals", "days")},
+                }
+            )
+        e_fr, r_fr = split_top_bin(
+            legacy_edges,
+            [[float(s)] for s in fro_tbl["pool_frac"]],
+            new_edges,
+            sub_fr,
+        )
+        xs_f, ys_f = encode_step_nodes(e_fr, r_fr)
+        e_ld, r_ld = split_top_bin(
+            legacy_edges, rows_from_pairs(fro_tbl["ladder"]), new_edges, sub_ld
+        )
+        xs_l, ys_l = encode_step_nodes(e_ld, r_ld)
+        years_entry[str(y)] = {
+            "frac_pct": xs_f,
+            "pool_frac": [r[0] for r in ys_f],
+            "pct": xs_l,
+            "ladder": ys_l,
+        }
+        coverage[str(y)] = disc
+        print(f"{y} CT pool: sub-bins {[d['ladder_computed'] for d in disc]}")
+
+    result: dict = {
+        "_provenance": {
+            "source": frozen["_provenance"].get("source"),
+            "method": (
+                "TOP-SCOPED (ercot-180, form b): frozen stepped per-bin "
+                "pool_frac/ladders byte-copied below p97; the p97-p100 bin "
+                "split at the conduct-identified edges with the IDENTICAL "
+                "statistics per sub-bin; zero-support sub-bins inherit the "
+                "frozen parent values; ULP-pair step-encoded "
+                "(PRECOMMIT-ercot180 §1/§3, zero fitted scalars)"
+            ),
+            "driver": frozen["_provenance"].get("driver"),
+            "conditioning": TOPSCOPED_TAG,
+            "netload_pct_edges": list(edges_ext),
+            "new_edges": list(new_edges),
+            "edge_identification": "results/calibration/"
+            "ercot180_edge_identification.json",
+            "ladder_quantiles": list(LADDER_QUANTILES),
+            "apply_gate": frozen["_provenance"].get("apply_gate"),
+            "offline_pool_statuses": frozen["_provenance"].get("offline_pool_statuses"),
+            "ct_restypes": list(CT_RESTYPES),
+            "iso": "ERCOT",
+            "year_scoped": (
+                "Per-year CT node tables, NO pooled fallback (rule 13), "
+                "exactly as the frozen stepped vintage; training years only"
+            ),
+            "source_files": sources,
+            "topscoped_sub_bin_coverage": coverage,
+            "frozen": (
+                "rule 23 — re-derive only on a SCED disclosure source-data "
+                "update or a re-identified edge record, never because a "
+                "residual moved; neither frozen artifact is touched"
+            ),
+        },
+        "CT": {"years": years_entry},
+    }
     out_path.write_text(json.dumps(result, indent=1))
     print(f"wrote {out_path}")
 
