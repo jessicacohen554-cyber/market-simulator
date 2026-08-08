@@ -6464,3 +6464,22 @@ Records: `results/calibration/FINDING-ercot178-continuous-grain-2026-08-08.md`,
 `results/calibration/ercot178_contpct_seamproof.json`,
 `scripts/probes/ercot178_contpct_seamproof.py`, bundles
 `ercot178_control_A` / `ercot178_grain_B`. Next: ercot-179.
+
+**POST-REGISTRATION QUANTIFICATION (2026-08-08, same session, no solve — the
+keeper-candidacy question answered on committed artifacts).** Asked whether the
+arm is a keeper under the standing structural standard ("structural integrity
+improves but gates regress may still be a keeper"), the shed channel was
+decomposed against `actual_lmp_hourly_ERCOT.parquet`: **67.5 % of the +$8.18/MWh
+comes from the 10 NEW load-shed hours at VOLL** (+$5.53; all 14 arm-shed hours
+68.0 %), leaving **+$2.62/MWh (32 %) of genuine offer-based formation**. The
+shed hours are real tight afternoons (Jun 20; Aug 17/24/25/26/27/30; Sep 7) but
+the arm prices them by PHYSICAL SHORTAGE and **overshoots actual by > 1.5× in 7
+of 10** — 2023-08-26 18:00 actual **$570** → **$5,000** (8.8×), 2023-08-27
+15:00 actual **$359** → **$5,000** (13.9×) — against reality's **4 hours
+≥ $4,500 in all of 2023**. That is the ERCOT-48/49 manufactured-shortage
+signature the owner REJECTED WITH CAUSE on 2026-07-09. **Verdict: NOT a keeper
+candidate on STRUCTURAL grounds, independently of the gate failures** — rule 1
+`[R-STRUCT]`'s "never reach the right number through a mechanism that isn't
+real". The successor's honest budget from this family is **~$2.6/MWh, not
+$8.2**, and `shed_hours must not rise in ANY year` becomes a PRIMARY falsifier
+rather than an inherited protective clause.
