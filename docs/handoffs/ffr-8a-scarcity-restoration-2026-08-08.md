@@ -499,7 +499,77 @@ counterfactual emitted as a clearly-labelled annex column, never a candidate.
 
 ### 3.4 The honest expectation (the prereg-2 commit)
 
-*(committed BEFORE invocation 2 — the repair arm — solves; §1.5 requires it)*
+*(Committed BEFORE invocation 2 — the repair arm — solves; §1.5 requires it. This section's
+content is the prereg-2 commit — hash recorded here: `PREREG2-HASH-PENDING` (backfilled by
+the immediately-following header-only edit, content untouched). Derived from Part A + the
+ablation-chain REASONING alone — the control arm had not finished and the repair arm had not
+started when this was written. Nothing below is a target; every line is a falsifiable
+statement the §4 reads will confirm or refute at full magnitude.)*
+
+**What the elements can and cannot move, from Part A alone.** The measured scarcity content
+the charter cites (161/217 h > $100) is λ-led (§2.3): the adder proper contributed > $100 in
+5 (2024) / 1 (2025) hours with mean $0.20/$0.065. The repair's tail elements (E1+E4) act on
+the ADDER analogue; E2 shifts the ENERGY-stack search point. A design-faithful tail on a
+faithful committed-capability series should therefore restore adder content of the measured
+RTORPA's ORDER (mean ≲ $1, tail counts in the tens of h > $1, single digits > $100) — NOT
+the measured λ tail (mean $28.79/$34.77, p99 $158/$135), which is real-time offer conduct
+and volatility a time-mean-mc static stack cannot reproduce and must not be tuned toward
+(rule 1). E2's search shift is bounded by the §2.4 quantities: REGUP+RRS+ECRS forward means
+≈ 4.60 GW (2024) / 4.76 GW (2025), minus the forward LR credit and the evolved storage AS
+share — a net thermal hold of roughly 1.5–3.5 GW, which moves the marginal unit up the
+merit stack in every hour; its price effect concentrates where the stack is steep (the
+scarcity shoulder), raising the base price by a few $/MWh on average and more in tight
+hours. The forward committed-capability formula (E1) is a share-table point model on
+net-load deciles — SMOOTHER than realized RTOLCAP — so its own dips will under-visit the
+measured p1 tail; E4's expectation over σ_R partially compensates by pricing the
+outage-realization mass the point evaluation cannot see. Directionally the two should
+land the tail's content between the point-evaluation zero and the measured RTORPA.
+
+Numbered expectations for the §4 reads:
+
+1. **Tail nonzero but adder-scaled.** Repaired per-screen h > $1 of order 10¹–10²;
+   h > $100 of order 10⁰–10¹; h > $1000 zero or low single digits (only E4's expectation
+   near the deepest committed dips can reach it). The recorded control zeros (p_max
+   $24.4/$46.2, 0 h > $100) must NOT reproduce under the repair — if they do, the repair is
+   inert at the screens and that is the finding.
+2. **Mean well below measured.** Repaired screen p_mean rises from $10.49/$9.54 by roughly
+   $1–5/MWh (E2 shift + small mean adder), remaining WELL BELOW the measured $26.82/$32.49.
+   The residual λ-led gap is the honest headline, not a failure of the tail elements.
+3. **Max may be large.** A single deep committed-dip hour under E4 can carry an expected
+   adder in the $10²–10³ range (protocol-capped at VOLL − λ), so repaired p_max in the
+   hundreds is consistent with expectation 2's modest mean.
+4. **Per-fuel margins move by single-digit $/kW-yr.** The restored content integrates to
+   roughly $1–10/kW-yr per fuel — a FRACTION of the FFR-6A replica margins (47–97 $/kW-yr)
+   and far below the bars (21–58.5). Expectation: the margin gap does NOT close; the
+   measurement establishes how much a design-faithful forward ORDC restores (≲ ~20 % of
+   the replica margins), and the remainder is λ-led content this object does not carry.
+5. **The 10.9 GW gas_st false wave shrinks; full disappearance is the open question.** The
+   control decided gas_st 45 / 10,942.9 MW at net $17.90 vs bar $35.00 (into-2022 screen,
+   2021 stack basis). The repair only ADDS revenue, so the wave cannot grow. It vanishes
+   iff the restored content at that screen adds ≥ ~$17.1/kW-yr to gas_st's
+   dispatch-weighted margin — plausible if the 2022 entering net load carries genuinely
+   tight hours against the 2021 fleet, but not guaranteed by expectation 4's range. Either
+   branch is reported as measured; partial shrink (fewer units/MW deciding) also counts as
+   movement toward the truth (actual gas_st exits in-window: 0.0).
+6. **In-window economic executions stay ≈ 0** (FFR-7C falsification bound). The repair
+   raises pro-forma revenue everywhere, so any NEW economic execution the control did not
+   carry would be a mechanism bug, not a market finding.
+7. **entry_capped stays fleet-wide.** With bars at 21–58.5 $/kW-yr against expectation 4's
+   restored margins, the adequacy cap keeps doing the retention work: entry_capped counts
+   remain at the control's order (564 / 62,971.7 MW in 2024; 554 / 66,060.5 in 2025),
+   shrinking only by whatever units the restored margin lifts over their bar.
+8. **The FFR-5A coal cohort still decides.** Control: coal 11 / 1,482.1 MW decided in the
+   2025 ledger at net $0.04 vs bar $58.5 — the repair must add ~$58/kW-yr at that screen to
+   flip it, ~3× expectation 4's upper range. Expected: still decided; a flip would be a
+   surprise worth its own diagnosis.
+9. **Additions move little.** The entry screen consumes the same repaired object, so
+   additions may tick up from 17.0 GW but remain FAR below the 55.4 GW actual — the entry
+   economics and caps are FFR-4/5 lanes' objects (§1.5(iii): reported, not targeted).
+
+The FALSIFIABLE core, one line: **the repair should produce a nonzero, adder-scaled tail
+and single-digit-$/kW-yr margin restoration with ≈ 0 economic executions, and should NOT
+reproduce the measured price level — a repaired object that lands ON the measured curve
+would itself be suspect (nothing in E1/E2/E4 knows the measured prices).**
 
 ## 4. Phase 3 — the paired-arm measurement
 
