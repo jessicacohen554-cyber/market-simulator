@@ -3146,3 +3146,87 @@ more lane. Charter D28-MEMO (OPUS, design-only): work BOTH compositions through 
 §45U(b)(2) gross-receipts phase-down arithmetic with cited worked examples on real MISO
 nuclear units, and return a decidable card. No re-litigation; the memo's card supersedes
 this one.
+
+## Addendum AD — FFR-8A landed HALF-WAY (Phases 1–2 clean, Phase 3 never ran); D-28 memo returned; the card round
+
+**Written 2026-08-08 by the workstream manager at `origin/main` `69addfdf`.**
+
+### AD.1 FFR-8A: Phases 1–2 adjudicated CLEAN; Phase 3 is NOT run — continuation dispatched
+
+The FFR-8A prompt WAS pasted. PR #3722 (branch `claude/forward-price-scarcity-repair-3ak5b9`,
+merged 2026-08-08 01:58Z) landed: the §1 pre-registration
+(`docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md`, committed before any probe); the
+Phase-1 Part-A measured decomposition (`docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json`);
+the repair elements **E1/E2/E4** on the lookahead tail; the gated field
+`capacity_screen_scarcity_restoration` (default OFF, `__post_init__` requires
+`capacity_screen_unified_lookahead` + iso==ERCOT); and the Part-B ablation probe **script**
+(`scripts/probes/ffr8a_ablation_chain.py` — script only, no results committed). Adjudication
+of the landed half: **hygiene CLEAN** — matrix row + cell `O` with full citation in the same
+session, `_CACHE_KEY_OPTIONAL_FIELDS` + defaults-ledger registration in the SAME COMMIT
+(`cc0cbd6`; the nyiso-128 trap handled, with the ERCOT-176 cache-key registration backfilled),
+unit suite (`tests/unit/model/test_capacity_screen_scarcity_restoration.py`), no keeper
+contact, no backcast-registry touch, no lift recommendation. Notable and correct: **E3 (the
+NP6-576-ER curve-parameter swap) did NOT land** — the landed def carries E1/E2/E4 only; the
+Part-A reproduction test is mixed across years (2025 favours the table on h>$1 15/15 exact;
+2024 has the table overshooting the deep tail h>$100 11 vs 4 measured) and §3's narrative is
+unwritten, so E3's disposition is an OPEN item the continuation must record explicitly.
+
+**What is NOT done — the whole of Phase 3:** neither pre-registered invocation has run (no
+`ercot-2021-2025-t1ff-armr-ffr8a-{unified,scarcity}` hindcast sidecars exist), the §3.4
+HONEST-EXPECTATION prereg-2 commit was never made, the ablation-chain A1–A5 table has no
+committed results, doc §2–§5 are placeholders, and the matrix cell rightly still reads `O`.
+~19 h of repo silence since the merge; the branch is deleted. Evidence reading: the session
+ended mid-charter (the charter itself said "possibly phased"). **FFR-8A-P3 continuation
+prompt written to pack §0z and delivered**, with a pre-flight evidence check so it is safe to
+paste even if the original session later pushes. The FH-4/FH-5 lift determination REMAINS
+OPEN — nothing in Phases 1–2 is lift evidence; the determination consumes Phase 3's
+paired-arm measurement (V.3 α/β/γ as sharpened by FFR-7C, plus the price-side test).
+
+### AD.2 D-28 memo returned and VERIFIED against the code; the card is put
+
+D28-MEMO WAS pasted. PR #3720 returned
+`docs/handoffs/d28-45u-composition-memo-2026-08-08.md` — design-only as chartered, and it
+answers the composition question from the statute itself: §45U(b)(2)(B) is a purpose-built
+two-branch anti-stacking rule; the recommended composition is **(c) branch (i)** —
+`attribute = max(eac, ces, rps, clean)` unchanged, `+ §45U(gross receipts = energy +
+attribute)` — §45U comes OUT of the max() (it is not an attribute buyer) and the certificate
+price goes INTO its basis. Zero new DOF. The memo also surfaced findings OUTSIDE its charter,
+dominated by **F-1 (HIGH): `policy/ira.py` applies the §45U(d)(1) 5× wage multiplier to the
+0.3¢ rate instead of to the net credit** — phase-down slope 5× too shallow, credit zeroes at
+$118.75/MWh instead of $43.75, worth up to $90/kW-yr (~$1.04 B/yr) of unstatutory §45U at
+MISO's 2025 realised price, **not gated on D-28 and live today with Arm 3 OFF**. Manager
+verification (measure-don't-inherit): read `ira.py` (the 5× is folded into
+`SECTION_45U_CREDIT_CENTS_PER_KWH` at the constant, phase-down 0.16 applied after — F-1
+confirmed) and `retirements.py:1964-1999` (the §45U-in-max() fold with the "owner call
+pending" annotation — F-2's site confirmed as described). Memo caveat honoured: the 2026
+inflation-adjusted amounts are the memo's arithmetic from Notice 2026-41's factor, not the
+notice's printed amounts — any implementing charter re-reads the primary. The card
+(A: adopt (c) with F-1-first sequencing, the memo's and the manager's recommendation /
+B: single combined charter / C: keep max(), decided-by-doctrine / D: defer on Treasury) is
+put this sitting; disposition recorded at AD.5 when signed.
+
+### AD.3 nyiso-132-cf-arm R.1 shipped-default check: CLEAN
+
+The overnight NYISO promotion arms exactly ONE field over nyiso-131-taxgs-arm:
+`RENEWABLE_AVG_CF['NYISO']['solar']` 0.15 → 0.1955 — an UNGATED rule-14 constants re-level
+replacing a self-flagged needs-citation estimate with the registered fleet's measured
+mature-year CF (2026 Gold Book Table III-2a, reproduced to 0.02 %). Zero free parameters
+(n_residual unchanged at 6); determination re-verified IDENTICAL without a solve (D-5(b));
+the `complete` marker re-keyed to nyiso-132; reported against interest (solar vs the Gold
+Book registry trades one advisory-band breach for two; D-10 marks solar PINNED/advisory in
+all three years, no gated criterion moves). **ISO-scoped by construction — no shipped
+default that could touch ERCOT/FFR-8A comparability moved.** The FFR-8A control's
+reproduction gate is nonetheless verified BY CONTENT against the FFR-5D-M record (§1.3's
+enumerated numbers), never by assuming the runtime key survives HEAD drift.
+
+### AD.4 The rest of the sweep
+
+FFR-3V-FIX and HOUSE-1: still ZERO evidence (no branch, no PR, no handoff) ~36 h after
+delivery; the owner is demonstrably active (FFR-8A and D28-MEMO both got pasted), so paste
+status is ASKED this sitting, not assumed. Keeper churn since §0y, all non-moving: ercot-178
+REJECTED its continuous-grain probe (run178 control is a byte-reproduction of the run176
+recipe at HEAD — a useful stability fact); nyiso-133 registered its cod-arm pair and did NOT
+promote (commissioning-curve attribution REFUTED, date-basis repair built); miso-143 probes
+only (no LP); caiso-183 registered its B0/B1 hedge-grain pair (control passes, NOT bit-zero
+— that lane's own finding). ERCOT and NYISO keepers now ~15–24 h stable with the two most
+recent probes rejecting; Q.2's battery hold STAYS until FFR-8A Phase 3 lands regardless.
