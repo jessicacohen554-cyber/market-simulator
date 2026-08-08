@@ -16,7 +16,10 @@ Both layouts share one header (``facility_name, facility_id, unit_id,
 unit_capacity_mw, plant_capacity_mw, unit_pct_of_plant, plant_group,
 capacity_source, outage_start, outage_end, duration_days, peer_units_online,
 total_units_at_plant``); ``iso`` is stamped at curation time (the raw files
-carry no iso column).
+carry no iso column). An extract derived with ``--hour-grain`` additionally
+carries ``outage_start_hour`` / ``outage_end_hour`` (caiso-183), which are
+passed through when present and omitted when absent — the schema declares them
+nullable so a day-grain ISO still validates.
 
 Idempotent and re-runnable; reads only ``data/raw``.
 """
@@ -63,6 +66,14 @@ SCHEMA_COLUMNS: list[str] = [
     "total_units_at_plant",
 ]
 
+# OPTIONAL hour-grain columns (caiso-183), carried through only when the source
+# CSV has them — an extract derived with
+# ``derive_campd_unit_outages.py --hour-grain`` states the DETECTED hour-of-day
+# of its window edges, and market_sim.data.outages consumes them when present
+# and falls back to the day-granular reconstruction when absent. They are
+# declared nullable in the schema precisely so a day-grain ISO still validates.
+HOUR_GRAIN_COLUMNS: list[str] = ["outage_start_hour", "outage_end_hour"]
+
 
 def _rel(path: Path) -> str:
     """Repo-relative path string for embedded provenance (``source=``)."""
@@ -105,7 +116,10 @@ def load_iso_events(csv_path: Path, iso: str) -> pd.DataFrame:
             ).astype("float64"),
         }
     )
-    return df[SCHEMA_COLUMNS]
+    carried = [c for c in HOUR_GRAIN_COLUMNS if c in raw.columns]
+    for col in carried:
+        df[col] = pd.to_numeric(raw[col], errors="coerce").astype("Int64")
+    return df[SCHEMA_COLUMNS + carried]
 
 
 def curate(

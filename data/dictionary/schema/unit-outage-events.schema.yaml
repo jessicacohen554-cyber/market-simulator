@@ -79,6 +79,27 @@ columns:
     unit: local_timestamp
     nullable: false
     description: Outage window end (tz-naive, CAMPD local reporting clock).
+  - name: outage_start_hour
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      OPTIONAL (caiso-183). Hour-of-day 0-23 of the window's first DETECTED
+      outage hour. The detector works in hours but outage_start stores a date,
+      so without this column a consumer must re-expand the window from 00:00 and
+      asserts up to 23 h it never detected. Present only in extracts derived
+      with derive_campd_unit_outages.py --hour-grain; consumers fall back to the
+      day-granular reconstruction when it is absent, which is why it is
+      nullable/optional rather than required.
+  - name: outage_end_hour
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      OPTIONAL (caiso-183). Hour-of-day 0-23 of the window's LAST detected
+      outage hour, inclusive — so the return-to-service instant is
+      outage_end + (outage_end_hour + 1) hours. Absent means 23, i.e. the
+      incumbent outage_end + 1 day.
   - name: duration_days
     dtype: float64
     unit: days
