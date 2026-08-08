@@ -1,0 +1,728 @@
+{
+ "a_eia860_row_quality": {
+  "2023": {
+   "CC_CHP": {
+    "all_ratio_ns_over_np": 0.8934338789773774,
+    "clean_gap_nameplate_to_summer_pct": 14.335632042361912,
+    "clean_nameplate_mw": 6496.399999999999,
+    "clean_net_summer_mw": 5565.099999999999,
+    "clean_ratio_ns_over_np": 0.8566436795763809,
+    "clean_unit_p50_gap_pct": 13.221153846153843,
+    "clean_winter_mw": 6206.700000000001,
+    "corrupt_nameplate_mw": 1659.1,
+    "corrupt_net_summer_mw": 1721.3,
+    "corrupt_plants": [
+     7991,
+     10745,
+     55088
+    ],
+    "corrupt_share_of_rows": 0.18604651162790697,
+    "n_corrupt_rows": 16,
+    "n_rows": 86
+   },
+   "CC_REGULAR": {
+    "all_ratio_ns_over_np": 1.0137674123531484,
+    "clean_gap_nameplate_to_summer_pct": 11.401316661108286,
+    "clean_nameplate_mw": 21888.700000000008,
+    "clean_net_summer_mw": 19393.1,
+    "clean_ratio_ns_over_np": 0.8859868333889171,
+    "clean_unit_p50_gap_pct": 12.187333688131986,
+    "clean_winter_mw": 19330.300000000003,
+    "corrupt_nameplate_mw": 3962.2000000000003,
+    "corrupt_net_summer_mw": 6813.7,
+    "corrupt_plants": [
+     991,
+     1403,
+     2059,
+     4040,
+     55087,
+     55218,
+     55220,
+     55380,
+     55418,
+     55467,
+     55620,
+     56031
+    ],
+    "corrupt_share_of_rows": 0.14388489208633093,
+    "n_corrupt_rows": 20,
+    "n_rows": 139
+   },
+   "COAL": {
+    "all_ratio_ns_over_np": 0.9197672144605553,
+    "clean_gap_nameplate_to_summer_pct": 9.740523610474117,
+    "clean_nameplate_mw": 42080.90000000001,
+    "clean_net_summer_mw": 37982.00000000001,
+    "clean_ratio_ns_over_np": 0.9025947638952588,
+    "clean_unit_p50_gap_pct": 6.872286270399752,
+    "clean_winter_mw": 38364.200000000004,
+    "corrupt_nameplate_mw": 4451.200000000001,
+    "corrupt_net_summer_mw": 4816.7,
+    "corrupt_plants": [
+     976,
+     1004,
+     1012,
+     1893,
+     2103,
+     4271,
+     6098,
+     8023,
+     10864
+    ],
+    "corrupt_share_of_rows": 0.12037037037037036,
+    "n_corrupt_rows": 13,
+    "n_rows": 108
+   },
+   "CT_CHP": {
+    "all_ratio_ns_over_np": 0.8494839356780018,
+    "clean_gap_nameplate_to_summer_pct": 15.252796127935131,
+    "clean_nameplate_mw": 3057.800000000001,
+    "clean_net_summer_mw": 2591.4000000000005,
+    "clean_ratio_ns_over_np": 0.8474720387206487,
+    "clean_unit_p50_gap_pct": 8.820065944418282,
+    "clean_winter_mw": 2934.0,
+    "corrupt_nameplate_mw": 32.900000000000006,
+    "corrupt_net_summer_mw": 34.1,
+    "corrupt_plants": [
+     58428,
+     65400
+    ],
+    "corrupt_share_of_rows": 0.020833333333333332,
+    "n_corrupt_rows": 2,
+    "n_rows": 96
+   },
+   "CT_PEAKER": {
+    "all_ratio_ns_over_np": 0.8459397914104844,
+    "clean_gap_nameplate_to_summer_pct": 16.350736087315177,
+    "clean_nameplate_mw": 25214.4,
+    "clean_net_summer_mw": 21091.660000000003,
+    "clean_ratio_ns_over_np": 0.8364926391268482,
+    "clean_unit_p50_gap_pct": 8.881199538638985,
+    "clean_winter_mw": 24522.05,
+    "corrupt_nameplate_mw": 1134.0,
+    "corrupt_net_summer_mw": 1197.5,
+    "corrupt_plants": [
+     1206,
+     1743,
+     1877,
+     1913,
+     1980,
+     1997,
+     2004,
+     2009,
+     2039,
+     2177,
+     4112,
+     55135,
+     55229,
+     55395,
+     56166,
+     57884,
+     61391
+    ],
+    "corrupt_share_of_rows": 0.040697674418604654,
+    "n_corrupt_rows": 21,
+    "n_rows": 516
+   },
+   "ST_CHP": {
+    "all_ratio_ns_over_np": 0.8497580290365158,
+    "clean_gap_nameplate_to_summer_pct": 16.930731330306237,
+    "clean_nameplate_mw": 2070.2,
+    "clean_net_summer_mw": 1719.7,
+    "clean_ratio_ns_over_np": 0.8306926866969376,
+    "clean_unit_p50_gap_pct": 0.0,
+    "clean_winter_mw": 1720.3999999999996,
+    "corrupt_nameplate_mw": 202.79999999999998,
+    "corrupt_net_summer_mw": 211.79999999999998,
+    "corrupt_plants": [
+     1979,
+     4042,
+     10606,
+     10686,
+     10863,
+     54201
+    ],
+    "corrupt_share_of_rows": 0.061224489795918366,
+    "n_corrupt_rows": 6,
+    "n_rows": 98
+   },
+   "ST_GAS": {
+    "all_ratio_ns_over_np": 0.8779774742391565,
+    "clean_gap_nameplate_to_summer_pct": 12.444444444444457,
+    "clean_nameplate_mw": 12330.000000000002,
+    "clean_net_summer_mw": 10795.6,
+    "clean_ratio_ns_over_np": 0.8755555555555554,
+    "clean_unit_p50_gap_pct": 11.937478529714873,
+    "clean_winter_mw": 10951.000000000002,
+    "corrupt_nameplate_mw": 189.0,
+    "corrupt_net_summer_mw": 195.8,
+    "corrupt_plants": [
+     990,
+     1122,
+     1131
+    ],
+    "corrupt_share_of_rows": 0.10256410256410256,
+    "n_corrupt_rows": 4,
+    "n_rows": 39
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "all_ratio_ns_over_np": 0.8934338789773774,
+    "clean_gap_nameplate_to_summer_pct": 14.335632042361912,
+    "clean_nameplate_mw": 6496.399999999999,
+    "clean_net_summer_mw": 5565.099999999999,
+    "clean_ratio_ns_over_np": 0.8566436795763809,
+    "clean_unit_p50_gap_pct": 13.221153846153843,
+    "clean_winter_mw": 6206.700000000001,
+    "corrupt_nameplate_mw": 1659.1,
+    "corrupt_net_summer_mw": 1721.3,
+    "corrupt_plants": [
+     7991,
+     10745,
+     55088
+    ],
+    "corrupt_share_of_rows": 0.18604651162790697,
+    "n_corrupt_rows": 16,
+    "n_rows": 86
+   },
+   "CC_REGULAR": {
+    "all_ratio_ns_over_np": 1.0137674123531484,
+    "clean_gap_nameplate_to_summer_pct": 11.401316661108286,
+    "clean_nameplate_mw": 21888.700000000008,
+    "clean_net_summer_mw": 19393.1,
+    "clean_ratio_ns_over_np": 0.8859868333889171,
+    "clean_unit_p50_gap_pct": 12.187333688131986,
+    "clean_winter_mw": 19330.300000000003,
+    "corrupt_nameplate_mw": 3962.2000000000003,
+    "corrupt_net_summer_mw": 6813.7,
+    "corrupt_plants": [
+     991,
+     1403,
+     2059,
+     4040,
+     55087,
+     55218,
+     55220,
+     55380,
+     55418,
+     55467,
+     55620,
+     56031
+    ],
+    "corrupt_share_of_rows": 0.14388489208633093,
+    "n_corrupt_rows": 20,
+    "n_rows": 139
+   },
+   "COAL": {
+    "all_ratio_ns_over_np": 0.9197672144605553,
+    "clean_gap_nameplate_to_summer_pct": 9.740523610474117,
+    "clean_nameplate_mw": 42080.90000000001,
+    "clean_net_summer_mw": 37982.00000000001,
+    "clean_ratio_ns_over_np": 0.9025947638952588,
+    "clean_unit_p50_gap_pct": 6.872286270399752,
+    "clean_winter_mw": 38364.200000000004,
+    "corrupt_nameplate_mw": 4451.200000000001,
+    "corrupt_net_summer_mw": 4816.7,
+    "corrupt_plants": [
+     976,
+     1004,
+     1012,
+     1893,
+     2103,
+     4271,
+     6098,
+     8023,
+     10864
+    ],
+    "corrupt_share_of_rows": 0.12037037037037036,
+    "n_corrupt_rows": 13,
+    "n_rows": 108
+   },
+   "CT_CHP": {
+    "all_ratio_ns_over_np": 0.8494839356780018,
+    "clean_gap_nameplate_to_summer_pct": 15.252796127935131,
+    "clean_nameplate_mw": 3057.800000000001,
+    "clean_net_summer_mw": 2591.4000000000005,
+    "clean_ratio_ns_over_np": 0.8474720387206487,
+    "clean_unit_p50_gap_pct": 8.820065944418282,
+    "clean_winter_mw": 2934.0,
+    "corrupt_nameplate_mw": 32.900000000000006,
+    "corrupt_net_summer_mw": 34.1,
+    "corrupt_plants": [
+     58428,
+     65400
+    ],
+    "corrupt_share_of_rows": 0.020833333333333332,
+    "n_corrupt_rows": 2,
+    "n_rows": 96
+   },
+   "CT_PEAKER": {
+    "all_ratio_ns_over_np": 0.8459397914104844,
+    "clean_gap_nameplate_to_summer_pct": 16.350736087315177,
+    "clean_nameplate_mw": 25214.4,
+    "clean_net_summer_mw": 21091.660000000003,
+    "clean_ratio_ns_over_np": 0.8364926391268482,
+    "clean_unit_p50_gap_pct": 8.881199538638985,
+    "clean_winter_mw": 24522.05,
+    "corrupt_nameplate_mw": 1134.0,
+    "corrupt_net_summer_mw": 1197.5,
+    "corrupt_plants": [
+     1206,
+     1743,
+     1877,
+     1913,
+     1980,
+     1997,
+     2004,
+     2009,
+     2039,
+     2177,
+     4112,
+     55135,
+     55229,
+     55395,
+     56166,
+     57884,
+     61391
+    ],
+    "corrupt_share_of_rows": 0.040697674418604654,
+    "n_corrupt_rows": 21,
+    "n_rows": 516
+   },
+   "ST_CHP": {
+    "all_ratio_ns_over_np": 0.8502767770846148,
+    "clean_gap_nameplate_to_summer_pct": 16.870840165911037,
+    "clean_nameplate_mw": 2073.3999999999996,
+    "clean_net_summer_mw": 1723.6000000000001,
+    "clean_ratio_ns_over_np": 0.8312915983408896,
+    "clean_unit_p50_gap_pct": 0.0,
+    "clean_winter_mw": 1722.3,
+    "corrupt_nameplate_mw": 202.79999999999998,
+    "corrupt_net_summer_mw": 211.79999999999998,
+    "corrupt_plants": [
+     1979,
+     4042,
+     10606,
+     10686,
+     10863,
+     54201
+    ],
+    "corrupt_share_of_rows": 0.06060606060606061,
+    "n_corrupt_rows": 6,
+    "n_rows": 99
+   },
+   "ST_GAS": {
+    "all_ratio_ns_over_np": 0.8778903466018951,
+    "clean_gap_nameplate_to_summer_pct": 12.453353668429779,
+    "clean_nameplate_mw": 12326.800000000001,
+    "clean_net_summer_mw": 10791.699999999999,
+    "clean_ratio_ns_over_np": 0.8754664633157022,
+    "clean_unit_p50_gap_pct": 12.326566740895778,
+    "clean_winter_mw": 10949.1,
+    "corrupt_nameplate_mw": 189.0,
+    "corrupt_net_summer_mw": 195.8,
+    "corrupt_plants": [
+     990,
+     1122,
+     1131
+    ],
+    "corrupt_share_of_rows": 0.10526315789473684,
+    "n_corrupt_rows": 4,
+    "n_rows": 38
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "all_ratio_ns_over_np": 0.8934338789773774,
+    "clean_gap_nameplate_to_summer_pct": 14.335632042361912,
+    "clean_nameplate_mw": 6496.399999999999,
+    "clean_net_summer_mw": 5565.099999999999,
+    "clean_ratio_ns_over_np": 0.8566436795763809,
+    "clean_unit_p50_gap_pct": 13.221153846153843,
+    "clean_winter_mw": 6206.700000000001,
+    "corrupt_nameplate_mw": 1659.1,
+    "corrupt_net_summer_mw": 1721.3,
+    "corrupt_plants": [
+     7991,
+     10745,
+     55088
+    ],
+    "corrupt_share_of_rows": 0.18604651162790697,
+    "n_corrupt_rows": 16,
+    "n_rows": 86
+   },
+   "CC_REGULAR": {
+    "all_ratio_ns_over_np": 1.0137674123531484,
+    "clean_gap_nameplate_to_summer_pct": 11.401316661108286,
+    "clean_nameplate_mw": 21888.700000000008,
+    "clean_net_summer_mw": 19393.1,
+    "clean_ratio_ns_over_np": 0.8859868333889171,
+    "clean_unit_p50_gap_pct": 12.187333688131986,
+    "clean_winter_mw": 19330.300000000003,
+    "corrupt_nameplate_mw": 3962.2000000000003,
+    "corrupt_net_summer_mw": 6813.7,
+    "corrupt_plants": [
+     991,
+     1403,
+     2059,
+     4040,
+     55087,
+     55218,
+     55220,
+     55380,
+     55418,
+     55467,
+     55620,
+     56031
+    ],
+    "corrupt_share_of_rows": 0.14388489208633093,
+    "n_corrupt_rows": 20,
+    "n_rows": 139
+   },
+   "COAL": {
+    "all_ratio_ns_over_np": 0.9197672144605553,
+    "clean_gap_nameplate_to_summer_pct": 9.740523610474117,
+    "clean_nameplate_mw": 42080.90000000001,
+    "clean_net_summer_mw": 37982.00000000001,
+    "clean_ratio_ns_over_np": 0.9025947638952588,
+    "clean_unit_p50_gap_pct": 6.872286270399752,
+    "clean_winter_mw": 38364.200000000004,
+    "corrupt_nameplate_mw": 4451.200000000001,
+    "corrupt_net_summer_mw": 4816.7,
+    "corrupt_plants": [
+     976,
+     1004,
+     1012,
+     1893,
+     2103,
+     4271,
+     6098,
+     8023,
+     10864
+    ],
+    "corrupt_share_of_rows": 0.12037037037037036,
+    "n_corrupt_rows": 13,
+    "n_rows": 108
+   },
+   "CT_CHP": {
+    "all_ratio_ns_over_np": 0.8494839356780018,
+    "clean_gap_nameplate_to_summer_pct": 15.252796127935131,
+    "clean_nameplate_mw": 3057.800000000001,
+    "clean_net_summer_mw": 2591.4000000000005,
+    "clean_ratio_ns_over_np": 0.8474720387206487,
+    "clean_unit_p50_gap_pct": 8.820065944418282,
+    "clean_winter_mw": 2934.0,
+    "corrupt_nameplate_mw": 32.900000000000006,
+    "corrupt_net_summer_mw": 34.1,
+    "corrupt_plants": [
+     58428,
+     65400
+    ],
+    "corrupt_share_of_rows": 0.020833333333333332,
+    "n_corrupt_rows": 2,
+    "n_rows": 96
+   },
+   "CT_PEAKER": {
+    "all_ratio_ns_over_np": 0.8459397914104844,
+    "clean_gap_nameplate_to_summer_pct": 16.350736087315177,
+    "clean_nameplate_mw": 25214.4,
+    "clean_net_summer_mw": 21091.660000000003,
+    "clean_ratio_ns_over_np": 0.8364926391268482,
+    "clean_unit_p50_gap_pct": 8.881199538638985,
+    "clean_winter_mw": 24522.05,
+    "corrupt_nameplate_mw": 1134.0,
+    "corrupt_net_summer_mw": 1197.5,
+    "corrupt_plants": [
+     1206,
+     1743,
+     1877,
+     1913,
+     1980,
+     1997,
+     2004,
+     2009,
+     2039,
+     2177,
+     4112,
+     55135,
+     55229,
+     55395,
+     56166,
+     57884,
+     61391
+    ],
+    "corrupt_share_of_rows": 0.040697674418604654,
+    "n_corrupt_rows": 21,
+    "n_rows": 516
+   },
+   "ST_CHP": {
+    "all_ratio_ns_over_np": 0.8502767770846148,
+    "clean_gap_nameplate_to_summer_pct": 16.870840165911037,
+    "clean_nameplate_mw": 2073.3999999999996,
+    "clean_net_summer_mw": 1723.6000000000001,
+    "clean_ratio_ns_over_np": 0.8312915983408896,
+    "clean_unit_p50_gap_pct": 0.0,
+    "clean_winter_mw": 1722.3,
+    "corrupt_nameplate_mw": 202.79999999999998,
+    "corrupt_net_summer_mw": 211.79999999999998,
+    "corrupt_plants": [
+     1979,
+     4042,
+     10606,
+     10686,
+     10863,
+     54201
+    ],
+    "corrupt_share_of_rows": 0.06060606060606061,
+    "n_corrupt_rows": 6,
+    "n_rows": 99
+   },
+   "ST_GAS": {
+    "all_ratio_ns_over_np": 0.8778903466018951,
+    "clean_gap_nameplate_to_summer_pct": 12.453353668429779,
+    "clean_nameplate_mw": 12326.800000000001,
+    "clean_net_summer_mw": 10791.699999999999,
+    "clean_ratio_ns_over_np": 0.8754664633157022,
+    "clean_unit_p50_gap_pct": 12.326566740895778,
+    "clean_winter_mw": 10949.1,
+    "corrupt_nameplate_mw": 189.0,
+    "corrupt_net_summer_mw": 195.8,
+    "corrupt_plants": [
+     990,
+     1122,
+     1131
+    ],
+    "corrupt_share_of_rows": 0.10526315789473684,
+    "n_corrupt_rows": 4,
+    "n_rows": 38
+   }
+  }
+ },
+ "b_cushion": {
+  "2023": {
+   "classes": {
+    "CC_CHP": {
+     "capability_mw": 6045.6175902806235,
+     "dispatch_mw": 2912.6984289617485,
+     "headroom_mw": 3132.919161318875,
+     "loaded_frac": 0.48178674642676955,
+     "sidecar_cols": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "capability_mw": 21782.352768990648,
+     "dispatch_mw": 20124.532786885247,
+     "headroom_mw": 1657.8199821054004,
+     "loaded_frac": 0.923891601624161,
+     "sidecar_cols": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "capability_mw": 31990.457034994888,
+     "dispatch_mw": 29364.86338797814,
+     "headroom_mw": 2625.593647016747,
+     "loaded_frac": 0.9179257225320486,
+     "sidecar_cols": [
+      "COAL_BIT",
+      "COAL_LIGNITE",
+      "COAL_PRB"
+     ]
+    },
+    "CT_CHP": {
+     "capability_mw": 2125.4792754545056,
+     "dispatch_mw": 650.7377903005464,
+     "headroom_mw": 1474.7414851539593,
+     "loaded_frac": 0.3061604965126723,
+     "sidecar_cols": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "capability_mw": 17763.966616971855,
+     "dispatch_mw": 4503.5338114754095,
+     "headroom_mw": 13260.432805496446,
+     "loaded_frac": 0.25352073152246823,
+     "sidecar_cols": [
+      "CT_PEAKER"
+     ]
+    }
+   },
+   "cushion_mw": 22151.50708109143,
+   "n_hours": 732,
+   "sidecar": "results/calibration/miso132_ccmin_B/hourly/class_hourly_2023.parquet",
+   "sidecar_classes": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_BIT",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "OTHER",
+    "ST_CHP",
+    "ST_GAS",
+    "biomass",
+    "hydro",
+    "import",
+    "nuclear",
+    "oil",
+    "solar",
+    "wind"
+   ],
+   "window": "summer h12-17"
+  },
+  "2024": {
+   "classes": {
+    "CC_CHP": {
+     "capability_mw": 6142.135313941459,
+     "dispatch_mw": 2849.0800887978144,
+     "headroom_mw": 3293.0552251436443,
+     "loaded_frac": 0.46385824199134035,
+     "sidecar_cols": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "capability_mw": 20982.631557088924,
+     "dispatch_mw": 19754.99726775956,
+     "headroom_mw": 1227.6342893293622,
+     "loaded_frac": 0.9414928348720583,
+     "sidecar_cols": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "capability_mw": 32534.510649687258,
+     "dispatch_mw": 27959.251366120217,
+     "headroom_mw": 4575.25928356704,
+     "loaded_frac": 0.8593721192603516,
+     "sidecar_cols": [
+      "COAL_BIT",
+      "COAL_LIGNITE",
+      "COAL_PRB"
+     ]
+    },
+    "CT_CHP": {
+     "capability_mw": 2125.2786766760582,
+     "dispatch_mw": 664.2183657786885,
+     "headroom_mw": 1461.0603108973696,
+     "loaded_frac": 0.31253236249352856,
+     "sidecar_cols": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "capability_mw": 17750.44696690974,
+     "dispatch_mw": 4725.032445355191,
+     "headroom_mw": 13025.41452155455,
+     "loaded_frac": 0.26619230795503707,
+     "sidecar_cols": [
+      "CT_PEAKER"
+     ]
+    }
+   },
+   "cushion_mw": 23582.42363049197,
+   "n_hours": 732,
+   "sidecar": "results/calibration/miso132_ccmin_B/hourly/class_hourly_2024.parquet",
+   "sidecar_classes": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_BIT",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "OTHER",
+    "ST_CHP",
+    "ST_GAS",
+    "biomass",
+    "hydro",
+    "import",
+    "nuclear",
+    "oil",
+    "solar",
+    "wind"
+   ],
+   "window": "summer h12-17"
+  },
+  "2025": {
+   "classes": {
+    "CC_CHP": {
+     "capability_mw": 5823.762887446949,
+     "dispatch_mw": 2626.6132172131147,
+     "headroom_mw": 3197.1496702338345,
+     "loaded_frac": 0.4510165107983273,
+     "sidecar_cols": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "capability_mw": 19935.093673479787,
+     "dispatch_mw": 18475.96174863388,
+     "headroom_mw": 1459.1319248459076,
+     "loaded_frac": 0.926805865638493,
+     "sidecar_cols": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "capability_mw": 30961.931449620613,
+     "dispatch_mw": 30284.265027322403,
+     "headroom_mw": 677.6664222982108,
+     "loaded_frac": 0.978112915100246,
+     "sidecar_cols": [
+      "COAL_BIT",
+      "COAL_LIGNITE",
+      "COAL_PRB"
+     ]
+    },
+    "CT_CHP": {
+     "capability_mw": 2112.4700465807723,
+     "dispatch_mw": 665.68143784153,
+     "headroom_mw": 1446.7886087392421,
+     "loaded_frac": 0.31511994166213003,
+     "sidecar_cols": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "capability_mw": 17653.053428924148,
+     "dispatch_mw": 6070.189207650274,
+     "headroom_mw": 11582.864221273874,
+     "loaded_frac": 0.3438605809522108,
+     "sidecar_cols": [
+      "CT_PEAKER"
+     ]
+    }
+   },
+   "cushion_mw": 18363.60084739107,
+   "n_hours": 732,
+   "sidecar": "results/calibration/miso132_ccmin_B/hourly/class_hourly_2025.parquet",
+   "sidecar_classes": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_BIT",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "OTHER",
+    "ST_CHP",
+    "ST_GAS",
+    "biomass",
+    "hydro",
+    "import",
+    "nuclear",
+    "oil",
+    "solar",
+    "wind"
+   ],
+   "window": "summer h12-17"
+  }
+ },
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "prereg": "results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md"
+}
