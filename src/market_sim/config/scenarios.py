@@ -751,6 +751,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # an armed run prices the surfaces at node grain and hashes distinctly.
     # Registered in the same session as the field (the nyiso-119 discipline).
     "ercot_offer_surface_continuous",
+    # ERCOT-180 top-scoped offer-surface conditioning grain, form (b)
+    # (default off): dropped from the hash at its default so every
+    # pre-existing cache key stays byte-stable (gate-off is byte-identical by
+    # construction, SP-2/SP-3'); an armed run prices the family's top sub-bins
+    # at conduct-identified grain and hashes distinctly. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "ercot_offer_surface_top_scoped",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -993,6 +1000,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
     "ercot_offer_surface_continuous": "False",
+    "ercot_offer_surface_top_scoped": "False",
 }
 
 
@@ -7995,6 +8003,25 @@ class ScenarioConfig:
     # are inherited byte-unchanged; forward-native exactly as the stepped form
     # (rule 13: the solve year ranks its own net load).
     ercot_offer_surface_continuous: bool = False
+    # ERCOT-180 TOP-SCOPED conditioning grain, form (b) (default off, ERCOT-
+    # gated): the named successor to the REJECTED form-(a) continuous grain
+    # (FINDING-ercot178 §7a; docs/PRECOMMIT-ercot180-top-scoped-grain-
+    # 2026-08-08.md). Splits the four armed measured offer surfaces' former
+    # p97–p100 top bin into at most two conduct-identified stepped sub-bins;
+    # BELOW p97 every artifact carries the frozen stepped artifact's own
+    # values byte-identically (no body repricing, no sparse-year bridging —
+    # the two measured form-(a) failure channels). Loads the
+    # `*_topscoped.json` vintage (guard: `_provenance.conditioning ==
+    # "topscoped-netload-bins"`); edges come from submitted-offer conduct
+    # structure (scripts/probes/ercot180_topcurve_edge_id.py), never realized
+    # prices or residuals; zero fitted scalars. Mutually exclusive with
+    # ercot_offer_surface_continuous (one grain per family); shares its hard
+    # errors (min_bin != 0, unmigrated family members).
+    # `ercot_offer_surface_netload_pcts` is not consulted while armed. Year
+    # scoping, class/row scopes, composition and the mc_bid_adjust seam are
+    # inherited byte-unchanged; forward-native (rule 13: the solve year ranks
+    # its own net load against fixed conduct-identified rank edges).
+    ercot_offer_surface_top_scoped: bool = False
 
     # ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated):
     # the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above.
