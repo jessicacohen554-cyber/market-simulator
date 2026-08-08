@@ -1,0 +1,243 @@
+{
+ "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "P7_other_bucket": {
+  "2023": {
+   "injected_mustrun_classes": [
+    "biomass",
+    "OTHER"
+   ],
+   "OTHER_units_in_fleet": 0,
+   "fleet_pmax_by_klass_mw": {
+    "COAL": 42800.2,
+    "CC_REGULAR": 27410.4,
+    "CT_PEAKER": 22289.2,
+    "nuclear": 11519.3,
+    "ST_GAS": 10991.4,
+    "CC_CHP": 7286.4,
+    "oil": 3278.8,
+    "CT_CHP": 2625.5,
+    "ST_CHP": 1931.5,
+    "biomass": 1865.7
+   },
+   "hourly_structure": {
+    "OTHER": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 945.7,
+     "max_mw": 1485.0,
+     "mean_mw": 1178.7,
+     "flat_within_month": true
+    },
+    "biomass": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 857.7,
+     "max_mw": 969.8,
+     "mean_mw": 927.9,
+     "flat_within_month": true
+    },
+    "hydro": {
+     "n_distinct_hourly_values": 3503,
+     "min_mw": 0.0,
+     "max_mw": 2456.6,
+     "mean_mw": 1001.7,
+     "flat_within_month": false
+    }
+   },
+   "verdict": "OTHER is an INJECTED must-run residual on the EIA-923 basis, flat within each month, netted out of LP demand -- not a dispatched class. Comparing it to EIA-930 'NG: OTH' crosses instruments (EIA-923 vs EIA-930) rather than measuring a dispatch defect."
+  },
+  "2024": {
+   "injected_mustrun_classes": [
+    "biomass",
+    "OTHER"
+   ],
+   "OTHER_units_in_fleet": 0,
+   "fleet_pmax_by_klass_mw": {
+    "COAL": 42800.2,
+    "CC_REGULAR": 27410.4,
+    "CT_PEAKER": 22289.2,
+    "nuclear": 11519.3,
+    "ST_GAS": 10987.5,
+    "CC_CHP": 7286.4,
+    "oil": 3278.8,
+    "CT_CHP": 2625.5,
+    "ST_CHP": 1935.4,
+    "biomass": 1865.7
+   },
+   "hourly_structure": {
+    "OTHER": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 711.0,
+     "max_mw": 1149.0,
+     "mean_mw": 945.5,
+     "flat_within_month": true
+    },
+    "biomass": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 763.6,
+     "max_mw": 882.9,
+     "mean_mw": 826.5,
+     "flat_within_month": true
+    },
+    "hydro": {
+     "n_distinct_hourly_values": 3769,
+     "min_mw": 0.0,
+     "max_mw": 2366.3,
+     "mean_mw": 1030.7,
+     "flat_within_month": false
+    }
+   },
+   "verdict": "OTHER is an INJECTED must-run residual on the EIA-923 basis, flat within each month, netted out of LP demand -- not a dispatched class. Comparing it to EIA-930 'NG: OTH' crosses instruments (EIA-923 vs EIA-930) rather than measuring a dispatch defect."
+  },
+  "2025": {
+   "injected_mustrun_classes": [
+    "biomass",
+    "OTHER"
+   ],
+   "OTHER_units_in_fleet": 0,
+   "fleet_pmax_by_klass_mw": {
+    "COAL": 42800.2,
+    "CC_REGULAR": 27410.4,
+    "CT_PEAKER": 22289.2,
+    "nuclear": 11519.3,
+    "ST_GAS": 10987.5,
+    "CC_CHP": 7286.4,
+    "oil": 3278.8,
+    "CT_CHP": 2625.5,
+    "ST_CHP": 1935.4,
+    "biomass": 1865.7
+   },
+   "hourly_structure": {
+    "OTHER": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 505.9,
+     "max_mw": 887.4,
+     "mean_mw": 665.8,
+     "flat_within_month": true
+    },
+    "biomass": {
+     "n_distinct_hourly_values": 12,
+     "min_mw": 291.7,
+     "max_mw": 362.1,
+     "mean_mw": 334.3,
+     "flat_within_month": true
+    },
+    "hydro": {
+     "n_distinct_hourly_values": 4254,
+     "min_mw": 0.0,
+     "max_mw": 2366.5,
+     "mean_mw": 1034.7,
+     "flat_within_month": false
+    }
+   },
+   "verdict": "OTHER is an INJECTED must-run residual on the EIA-923 basis, flat within each month, netted out of LP demand -- not a dispatched class. Comparing it to EIA-930 'NG: OTH' crosses instruments (EIA-923 vs EIA-930) rather than measuring a dispatch defect."
+  }
+ },
+ "P6_hydro_monthly": {
+  "2023": {
+   "model_mw_by_month": [
+    1062.6,
+    1287.4,
+    1385.2,
+    1405.9,
+    1435.4,
+    938.5,
+    838.8,
+    741.5,
+    554.6,
+    688.1,
+    818.3,
+    882.3
+   ],
+   "actual_mw_by_month": [
+    1278.2,
+    1389.9,
+    1392.0,
+    1387.1,
+    1428.7,
+    1119.4,
+    1191.2,
+    1151.4,
+    824.1,
+    678.3,
+    916.3,
+    927.5
+   ],
+   "r": 0.8764,
+   "model_peak_month": 5,
+   "actual_peak_month": 5,
+   "model_cv": 0.2918,
+   "actual_cv": 0.2119
+  },
+  "2024": {
+   "model_mw_by_month": [
+    988.3,
+    1263.8,
+    988.3,
+    1209.1,
+    1456.7,
+    1494.3,
+    1203.0,
+    924.8,
+    610.6,
+    511.3,
+    899.6,
+    844.2
+   ],
+   "actual_mw_by_month": [
+    1048.4,
+    1265.0,
+    1063.3,
+    1274.2,
+    1599.9,
+    1885.7,
+    1693.0,
+    1410.4,
+    1009.5,
+    601.2,
+    953.4,
+    934.2
+   ],
+   "r": 0.8619,
+   "model_peak_month": 6,
+   "actual_peak_month": 6,
+   "model_cv": 0.283,
+   "actual_cv": 0.2865
+  },
+  "2025": {
+   "model_mw_by_month": [
+    980.2,
+    1254.0,
+    1014.4,
+    1226.3,
+    1455.2,
+    1474.6,
+    1201.6,
+    928.4,
+    630.5,
+    529.3,
+    889.5,
+    856.3
+   ],
+   "actual_mw_by_month": [
+    1087.1,
+    1019.3,
+    1260.8,
+    1369.3,
+    1456.6,
+    1460.4,
+    1582.5,
+    1131.5,
+    954.1,
+    682.0,
+    706.1,
+    808.6
+   ],
+   "r": 0.7989,
+   "model_peak_month": 6,
+   "actual_peak_month": 7,
+   "model_cv": 0.2742,
+   "actual_cv": 0.2593
+  }
+ },
+ "taxonomy_note": "classify_plant returns OTHER at plant_taxonomy.py:314 (fuel==NG, prime mover outside the CC/CT/ST sets) and :327 (terminal fallback). The repo's own PLANT_CLASSES rollup puts OTHER/biomass/geothermal in the EIA-930 'other' bucket; a :314 unit is reported by EIA-930 under NG: NG, so the two branches do NOT share a comparator."
+}
