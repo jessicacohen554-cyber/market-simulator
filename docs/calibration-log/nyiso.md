@@ -5857,3 +5857,50 @@ Retention: the top-15-per-ISO sweep pruned `2026-08-04-nyiso-120-c119-scope` and
 `2026-08-04-nyiso-120a-control`.
 
 * Next number: **nyiso-133**.
+
+## 2026-08-08 — nyiso-132 PROMOTION: keeper -> `2026-08-08-nyiso-132-cf-arm` (solar CF level)
+
+**Owner ruling, session nyiso-132, verbatim:** *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper."* The session's recommendation was **YES** on rules 1
+`[R-STRUCT]` / 14 `[R-ACCURATE]` — and the standing structure-over-gates clause
+was **not needed**, because **no gate regresses**.
+
+Keeper `2026-08-07-nyiso-131-taxgs-arm` -> **`2026-08-08-nyiso-132-cf-arm`**
+(bundle `nyiso132_cf_arm`). Full A/B evidence is the entry above; this entry
+records the promotion itself.
+
+**Rule 22 D-5(b) re-key:** NYISO holds `complete`, so the marker's `keeper` field
+re-keyed **and** its determination was re-verified against the new run on
+committed artifacts (`calibration_verdict.py --run-id`, **no solve**). Result
+**`CALIBRATED-WITH-CAVEATS` — IDENTICAL** to the superseded keeper, all 8
+criterion statuses matching (C1/C2/C3a/C3b/C4/C6/C8 PASS; C3c the lone ledgered
+caveat, budget 1 of 1), so the **worse-determination stop does not fire**.
+`rekey_history` now carries 4 entries.
+
+**Rule 28:** matrix keeper stamp re-pointed, header re-stamped, §5.5 prose header
+re-stamped, and the `vre_avg_cf_level` cell moved **`O` -> `K`** for NYISO in the
+same session that tested it. Guard clean on all four checks; `audit_keepers.py
+--iso NYISO` **PASS 0/0** (M1).
+
+**Lever queue after this promotion:**
+
+* item 2 (solar CF level) — **CLOSED-with-keeper**
+* item 1 (the chartered **joint** Zone-K transfer-bound + downstate ST_GAS
+  `min_gen` reconciliation under rule 19) — **REMAINS OPEN**, unchanged
+* **NEW**, opened by this session — **the model has no commissioning curve**
+  (one CF cannot track a fleet whose realized CF runs 0.1468-0.1955); it is the
+  declared cause of the solar advisory-band trade and is carried as an open item
+  in the keeper's attestation
+
+**Holdout posture UNCHANGED:** `complete` (validation only) untouched, NYISO stays
+**absent from `final`**, and the ACTIVE holdout spend freeze independently blocks
+every out-of-training solve. C3c is neither closed nor narrowed.
+
+**Open cross-lane item, flagged not fixed:** because the construction is
+**ungated**, the constant is on `main` and the NYISO **forecast** lane's 11
+committed `nyiso-*` hindcast sidecars are stale with respect to HEAD. That was the
+declared blast radius of the ungated choice and belongs to the forecast lane's own
+governance (rule 15's separate namespace).
+
+* Next number: **nyiso-133**.
