@@ -393,4 +393,41 @@ aggregate capability cap; no capability/availability mechanism of any kind
 
 ---
 
+## AMENDMENT 1 — 2026-08-08, PRE-SOLVE and PRE-MEASUREMENT: SP-4's "ownership never moves" is corrected to the exclusivity invariant it was protecting
+
+**Status when written: no derive output read, no measurement of the arm taken,
+no year solved.** Recorded in the ercot-176 Amendment manner (the election is
+stated before the solve, never after).
+
+**What was wrong.** §4's summary sentence ("No row-hour gains or loses an
+owner under the gate") and §5 SP-4's assertion ("the pool's `own_mask`
+row-hours … are IDENTICAL to control — ownership never moves") over-claim.
+The pool's ownership boundary IS the measured `pool_frac` boundary: under the
+stepped grain it moves across hours when hours change bins; under the
+continuous grain it moves across hours with the per-hour boundary. A row-hour
+near the boundary can therefore flip pool↔wall ownership relative to control —
+that is the measured boundary at its honest grain, i.e. the mechanism working
+as designed, not a composition defect. Asserting mask equality would fail any
+correct implementation by construction (exactly the class of error the
+ercot-176 G-BIT election exists to catch pre-solve).
+
+**The correction — SP-4 is restated as the invariant the original wording was
+protecting:**
+
+* **SP-4a (exclusivity, asserted):** every row-hour has EXACTLY ONE owner —
+  on pool-owned row-hours the composed `mc_bid_adjust` equals the pool's
+  markup alone; on every other row-hour it equals the conditional + wall sum
+  alone. Asserted per year, arm configuration.
+* **SP-4b (boundary movement, disclosed not gated):** the share of row-hours
+  whose owner flips vs control is REPORTED in the seam-proof record (a
+  measurement of the grain change's reach, carrying no pass/fail bar).
+
+**Nothing else changes.** §4's per-mechanism relations, the kill gates, the
+predictions and the SP-3 legacy-encoding byte-identity demonstration (which
+proves the machinery reproduces the step exactly when fed the step — under
+which the boundary, and hence ownership, IS control's) all stand exactly as
+written.
+
+---
+
 **Next shorthand: ercot-179.**
