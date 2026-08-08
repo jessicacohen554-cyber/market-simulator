@@ -1,0 +1,119 @@
+{
+ "precommit": "docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md",
+ "bundle": "results/calibration/ercot176_control_A",
+ "SP6_stepped_artifacts": {
+  "offer_curve_dam_hrmults_condbinned.json": {
+   "disk": "3cce02524e2dcbf2c36c1cd082ae42aec09b6ce1ee2308f68fd479561ade517f",
+   "head": "3cce02524e2dcbf2c36c1cd082ae42aec09b6ce1ee2308f68fd479561ade517f",
+   "identical": true
+  },
+  "ercot_dam_cleared_share_condbinned.json": {
+   "disk": "0b147b6d76ad7a43b72b9a5eaf562ae5965bef6425be32e3b026c2555de0bba5",
+   "head": "0b147b6d76ad7a43b72b9a5eaf562ae5965bef6425be32e3b026c2555de0bba5",
+   "identical": true
+  },
+  "ercot_sced_offer_wall_condbinned.json": {
+   "disk": "b292d62d6b562447c67a6b04e36868634dcd85c816229b85d13a7c962bc367b6",
+   "head": "b292d62d6b562447c67a6b04e36868634dcd85c816229b85d13a7c962bc367b6",
+   "identical": true
+  },
+  "ercot_faststart_pool_condbinned.json": {
+   "disk": "5b90bf6b6556ab98fe78f62544082951f4dc69c34f076a7a0813d4a4ec56c636",
+   "head": "5b90bf6b6556ab98fe78f62544082951f4dc69c34f076a7a0813d4a4ec56c636",
+   "identical": true
+  }
+ },
+ "SP6_all_identical": true,
+ "years": [
+  {
+   "year": 2023,
+   "n_gen": 1780,
+   "SP2_control_composed_sha": "25a4ba697e5902616dff9528c124a6f600d73d3530044087536f38ac7a579567",
+   "SP2_gate_default_off": true,
+   "SP3_encoding_notes": {
+    "wall_CC_share_finite": true,
+    "wall_CC_ladder_finite": true,
+    "wall_CT_share_finite": true,
+    "wall_CT_ladder_finite": true,
+    "rt_CC_ladder_finite": true,
+    "rt_CT_ladder_finite": true,
+    "pool_CT_frac_finite": true,
+    "pool_CT_ladder_finite": true
+   },
+   "SP3_encoded_composed_sha": "25a4ba697e5902616dff9528c124a6f600d73d3530044087536f38ac7a579567",
+   "SP3_byte_identical": true,
+   "ARM_composed_sha": "1933f2e171c59ea21c08a43818c64cb0f3bb9d4779efa8a47b2d35e4ce89a36f",
+   "ARM_differs_from_control": true,
+   "SP4a_exclusivity": true,
+   "SP4b_owner_flip_share": 0.006462982915191627,
+   "SP4b_pool_rowhours_control": 1493125,
+   "SP4b_pool_rowhours_arm": 1458981,
+   "SP5_no_markdown": true,
+   "SP1_non_ercot_all_none": true,
+   "SP7_forbidden_combos": {
+    "ercot_offer_surface_cleared_share_state": "raised: ValueError",
+    "ercot_offer_surface_cleared_share_steam": "raised: ValueError",
+    "ercot_shoulder_online_span": "raised: ValueError",
+    "ercot_offer_surface_lowcurve": "raised: ValueError",
+    "ercot_offer_surface_lowcurve_floorscoped": "raised: ValueError",
+    "ercot_offer_surface_midcurve_conditional": "raised: ValueError",
+    "ercot_offline_commit_offer": "raised: ValueError",
+    "ercot_offer_surface_min_bin": "raised: ValueError"
+   },
+   "SP7_all_raise": true
+  },
+  {
+   "year": 2024,
+   "n_gen": 1778,
+   "SP2_control_composed_sha": "4dfdad090e2ef7f77333c2029b2007029c43ad00084f40c924de5a2ed7d87a76",
+   "SP2_gate_default_off": true,
+   "SP3_encoding_notes": {
+    "wall_CC_share_finite": true,
+    "wall_CC_ladder_finite": true,
+    "wall_CT_share_finite": true,
+    "wall_CT_ladder_finite": true,
+    "rt_CC_ladder_finite": true,
+    "rt_CT_ladder_finite": true,
+    "pool_CT_frac_finite": true,
+    "pool_CT_ladder_finite": true
+   },
+   "SP3_encoded_composed_sha": "4dfdad090e2ef7f77333c2029b2007029c43ad00084f40c924de5a2ed7d87a76",
+   "SP3_byte_identical": true,
+   "ARM_composed_sha": "c220bc730a856ec387c5f55e40a6318a81b0b09eb539488f550098c903ae030e",
+   "ARM_differs_from_control": true,
+   "SP4a_exclusivity": true,
+   "SP4b_owner_flip_share": 0.015324090481840455,
+   "SP4b_pool_rowhours_control": 1328016,
+   "SP4b_pool_rowhours_arm": 1224837,
+   "SP5_no_markdown": true,
+   "SP1_non_ercot_all_none": true
+  },
+  {
+   "year": 2025,
+   "n_gen": 1767,
+   "SP2_control_composed_sha": "c9caf9dedb193ae5ef6fb8b0287ef6f48d57fac2257d5ebdf9e20710e9e44656",
+   "SP2_gate_default_off": true,
+   "SP3_encoding_notes": {
+    "wall_CC_share_finite": true,
+    "wall_CC_ladder_finite": true,
+    "wall_CT_share_finite": true,
+    "wall_CT_ladder_finite": true,
+    "rt_CC_ladder_finite": true,
+    "rt_CT_ladder_finite": true,
+    "pool_CT_frac_finite": true,
+    "pool_CT_ladder_finite": true
+   },
+   "SP3_encoded_composed_sha": "c9caf9dedb193ae5ef6fb8b0287ef6f48d57fac2257d5ebdf9e20710e9e44656",
+   "SP3_byte_identical": true,
+   "ARM_composed_sha": "cf13682f88c7cdd18028434cc9fd12f9817f2f5f3c36318e9c9cdac242ef9d19",
+   "ARM_differs_from_control": true,
+   "SP4a_exclusivity": true,
+   "SP4b_owner_flip_share": 0.012959625090122566,
+   "SP4b_pool_rowhours_control": 660510,
+   "SP4b_pool_rowhours_arm": 700127,
+   "SP5_no_markdown": true,
+   "SP1_non_ercot_all_none": true
+  }
+ ],
+ "ALL_ASSERTIONS_PASS": true
+}
