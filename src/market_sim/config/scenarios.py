@@ -722,6 +722,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # mechanism never fires, so the off arm is byte-identical; an armed run
     # re-bases the NYISO solar series and hashes distinctly.
     "nyiso_solar_market_generator_basis",
+    # NYISO market-solar in-service DATE basis (nyiso-133, default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the pinned default 603c2498bf71d21d holds); unarmed
+    # the alternate artifact column is never read, so the off arm is
+    # byte-identical; an armed run re-bases the NYISO solar monthly capacity
+    # ramp and hashes distinctly. Registered IN THE SAME COMMIT as the field
+    # (the nyiso-119 discipline).
+    "nyiso_solar_registry_cod_dates",
     # MISO per-state RPS compliance-region rows (FFR-7B Arm 2, default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the pinned default 603c2498bf71d21d holds); unarmed
@@ -851,6 +859,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Backfilled at FFR-7B alongside the field's (missing) registration above:
     # nyiso-128 landed the field unregistered, moving the pinned default key.
     "nyiso_solar_market_generator_basis": "False",
+    # Added by nyiso-133 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_solar_registry_cod_dates": "False",
     # Added by FFR-7B-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_rps_compliance_regions": "False",
@@ -7039,6 +7050,40 @@ class ScenarioConfig:
     # and is deliberately not bundled.
     # Default off -> every prior keeper stays byte-identical.
     nyiso_solar_market_generator_basis: bool = False
+
+    # NYISO market-solar IN-SERVICE DATE basis (nyiso-133). The registry basis
+    # above starts each plant's capacity in its Gold Book "In-Service Date"
+    # month. That is a REGISTRATION / interconnection-service date and it LEADS
+    # the plant's metered commercial start; EIA-860's "Operating Month" matches
+    # it. Measured on this very registry against EIA-923 metered monthly output
+    # (scripts/probes/_nyiso133_commissioning_ramp.py, record
+    # results/calibration/_nyiso133_commissioning_ramp.json): EIA-860's month
+    # equals the FIRST METERED month in 11 of the 12 uncensored plants, while
+    # the Gold Book date leads by +2 months on Morris Ridge (179 MW, 31 % of the
+    # 2025 fleet), +1 on High River (90 MW) and East Point (50 MW) — and TRAILS
+    # by 1 and 3 months on Darby and Stillwater, so the difference is signed
+    # BOTH WAYS, not a one-directional correction toward the residual. When set,
+    # the same artifact's capacity_mw_cod column is read instead of capacity_mw:
+    # identical membership, identical published nameplate, only the switch-on
+    # month differs. Mean-monthly registered capacity 161.07 -> 162.73 MW (2023),
+    # 389.90 -> 350.07 (2024), unchanged 2025.
+    # Rule 14 [R-ACCURATE]'s reconciled-real-data path (two published registries
+    # disagree on one field; a third published series adjudicates), rule 13
+    # admissible (an INPUT — when a plant existed — that regenerates forward
+    # through EIA-860M's proposed->operating transition), ZERO free parameters:
+    # the crosswalk is a 15-row identity between two registries, each row
+    # verified on nameplate agreement and DROPPED (keeping its Gold Book date)
+    # rather than guessed when it fails.
+    # REPORTED AGAINST INTEREST: this makes the 2023 report-only VRE advisory
+    # band WORSE (+20.0 % -> +21.2 %) while halving 2024's (+32.7 % -> +19.1 %);
+    # it is adopted for accuracy, not fit (rule 1 [R-STRUCT]).
+    # RULE 26 [R-DELETE] NOTE: a default-off gate whose "off" position is the
+    # less accurate date basis is a re-armable wrong answer. The gate exists to
+    # keep the A/B a clean single delta and to avoid silently re-staling the
+    # NYISO forecast lane's committed hindcast sidecars; on promotion it should
+    # be COLLAPSED TO UNCONDITIONAL — an owner decision, flagged not taken.
+    # Default off -> every prior keeper stays byte-identical. NYISO-only.
+    nyiso_solar_registry_cod_dates: bool = False
 
     # ISO-gated gas-steam forced-outage base override. The global ST_GAS WEFOR
     # base (constants.THERMAL_AVAILABILITY["ST_GAS"] = 0.21) is fitted to ERCOT's
