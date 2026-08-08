@@ -1,0 +1,40 @@
+{
+ "span_days": 40,
+ "first_file": "20230101_PUB_BID_DAM_v3_csv.zip",
+ "last_file": "20230209_PUB_BID_DAM_v3_csv.zip",
+ "rows": 3552863,
+ "row_group_rows": 1048576,
+ "BE_A_content": {
+  "pass": true,
+  "shape": true,
+  "columns": true,
+  "dtypes": true,
+  "frame_equals": true
+ },
+ "BE_B_layout": {
+  "pass": true,
+  "concat": [
+   1048576,
+   1048576,
+   1048576,
+   407135
+  ],
+  "stream": [
+   1048576,
+   1048576,
+   1048576,
+   407135
+  ]
+ },
+ "BE_C_data_bytes": {
+  "pass": true,
+  "concat_sha256": "fb5535a940bc5c83f90471481a8a8b4a25fefef701468eeb5b275409f76d3ed5",
+  "stream_sha256": "fb5535a940bc5c83f90471481a8a8b4a25fefef701468eeb5b275409f76d3ed5"
+ },
+ "timing_s": {
+  "concat": 14.6,
+  "stream": 12.2
+ },
+ "concat_peak_rss_gb": 0.897,
+ "note": "Raw-file byte identity is impossible by construction: _build_metadata stamps created_utc (and git_commit) at write time. BE-C normalises exactly those two values on BOTH sides and is the strongest identity available."
+}
