@@ -4473,3 +4473,40 @@ per-term contributions, the repair with every parameter cited, the pre-registere
 price-side and exit-side reads with results, which elements landed vs escalated, and what
 you did NOT separate.
 ```
+
+**§0x addendum (same sitting):** D-28 signed DESIGN MEMO FIRST (Addendum AC.4). One
+further prompt:
+
+### D28-MEMO [OPUS] — the §45U-vs-clean-dual composition memo
+
+```
+[OPUS] D28-MEMO — Design memo: how a clean-tier attribute dual composes with the IRA §45U
+existing-nuclear PTC in the retirement screen's revenue (owner decision D-28, sitting
+Addendum AC.4, 2026-08-07: memo BEFORE any composition is adopted). DESIGN-ONLY: no code,
+no ScenarioConfig field, no solve, no matrix cell. The open question is FFR-6B §6.4 row 3
+(docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md); the consumer would be Arm 3
+(miso_clean_tier_rows, landed default-OFF by FFR-7B-2, arming blocked on THIS question).
+
+WHAT YOU DELIVER (docs/handoffs/d28-45u-composition-memo-<date>.md):
+1. THE STATUTE, worked: §45U(b)(2)'s gross-receipts phase-down arithmetic, verbatim-cited
+   (credit rate, the reduction formula, what counts as gross receipts — SPECIFICALLY
+   whether state attribute/ZEC-style revenue is inside the phase-down's gross-receipts
+   base, which is the crux: if yes, phase-down-then-add is self-limiting; if no, adding a
+   dual on top can exceed what a real unit could receive). Cite primary text + IRS
+   guidance; where guidance is genuinely unsettled, say so — an unsettled point is a
+   finding, not a gap to paper over.
+2. WORKED EXAMPLES on real MISO nuclear units from committed data (the model's own
+   ira.py §45U implementation gives the current phase-down mechanics — read it and cite
+   its parameter sources): at 2-3 realistic price/revenue levels, compute nuclear
+   retirement-screen revenue under (a) phase-down-then-add, (b) max(45U, clean dual),
+   (c) any composition the statute itself implies that is neither. Show where they
+   diverge and by how much ($/kW-yr against the nuclear bar 130).
+3. INTERACTION AUDIT: the existing max(eac, rps_shadow) doctrine, federal_ces_* premiums
+   and federal_ces_replaces_state_rps — state the FULL nuclear revenue stack under each
+   composition so rule 19 (one payment per phenomenon) is checkable by inspection.
+4. THE CARD: a decidable owner card with your recommendation, the rejected option's real
+   cost, and the rule-5 citations for every number the winning composition would hardcode.
+TRAPS: ruff-autofix reflows constants.py on any .py write (scratch helpers included) —
+git status --short before staging. Push 413: fetch main + rebase first. No push_files on
+>=300-line files.
+```

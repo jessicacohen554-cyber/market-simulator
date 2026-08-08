@@ -3137,3 +3137,12 @@ phase-down (§45U(b)(2)) that already reduces the credit as revenue rises — so
 phase-down-then-add is the composition the statute itself describes, while a max() would
 understate statutory revenue; it stopped short of deciding. Disposition recorded at AC.4
 when signed.
+
+### AC.4 Owner signature on D-28 (same sitting, 2026-08-07)
+
+**D-28 — DESIGN MEMO FIRST (owner decision, against the manager's phase-down-then-add
+recommendation).** Recorded once with its consequence: Arm-3's arming question waits one
+more lane. Charter D28-MEMO (OPUS, design-only): work BOTH compositions through the
+§45U(b)(2) gross-receipts phase-down arithmetic with cited worked examples on real MISO
+nuclear units, and return a decidable card. No re-litigation; the memo's card supersedes
+this one.
