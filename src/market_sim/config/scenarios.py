@@ -7840,6 +7840,25 @@ class ScenarioConfig:
     # load instead of clearing the peak band). 0.95 × 5000 = $4750, above the measured
     # p90 wall (~$2,700) and below VOLL.
     ercot_offer_surface_price_cap_frac: float = 0.95
+    # ERCOT-178 CONTINUOUS conditioning grain (default off, ERCOT-gated): switch
+    # the four armed measured offer surfaces (conditional peak surface,
+    # cleared-share wall, RT/SCED leg, fast-start pool) from STEPPED net-load-
+    # percentile bins to CONTINUOUS interpolation over the corpus's own hour
+    # nodes — the same statistics, at rank grain, per-hour interpolated
+    # (docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md §2). The
+    # ercot-177 diagnosis measured the stepped top bin pooling 263 hours whose
+    # actual prices span 25x under one ladder (the tail is the top 2.07% of the
+    # year, ABOVE the p97 edge), a dilution CAUSED by stepping; the continuous
+    # form removes the step with zero fitted scalars and NO edge to fit (the
+    # rule-20 discipline). Loads the `_contpct.json` vintage of each artifact
+    # (vintage guard: `_provenance.conditioning == "continuous-netload-pct"`,
+    # the PJM within-season pattern); `ercot_offer_surface_netload_pcts` is not
+    # consulted while armed. Hard errors with min_bin != 0 or any unmigrated
+    # family member armed (state/steam/span/lowcurve/midcurve/offline-commit).
+    # Year scoping, class/row scopes, composition and the mc_bid_adjust seam
+    # are inherited byte-unchanged; forward-native exactly as the stepped form
+    # (rule 13: the solve year ranks its own net load).
+    ercot_offer_surface_continuous: bool = False
 
     # ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated):
     # the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above.

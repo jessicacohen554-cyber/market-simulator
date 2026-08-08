@@ -359,6 +359,88 @@ def derive_year(
     return {"pool_frac": pool_frac, "ladder": ladders}, coverage, files
 
 
+def derive_year_continuous(
+    year: int, gas_day: pd.Series, restypes: tuple[str, ...]
+) -> tuple[dict, dict, list[str]]:
+    """Per-hour-node pool share + ladder for one year/class (ERCOT-178).
+
+    The IDENTICAL statistics :func:`derive_year` computes per net-load bin —
+    interval-mean ``pool_frac`` and the MW-weighted :data:`LADDER_QUANTILES`
+    of above-LSL startable segment multipliers — keyed per corpus hour node
+    at the hour's within-year net-load percentile rank
+    (PRECOMMIT-ercot178 §2). Rank-tied hours pool their intervals/segments.
+    Zero new parameters; year-scoped, no pooled fallback.
+    """
+    live_df, pool_df, files = _load_year(year, restypes)
+    if live_df.empty:
+        return {}, {}, files
+
+    live_all = _prep_clock_gas(live_df, gas_day)
+    pool = _prep_clock_gas(pool_df, gas_day)
+    segments = _pool_segments(pool)
+
+    live = live_all[live_all["stat"] != "OUT"]
+    live_mw = live.groupby("_ts")["HSL"].sum()
+    pool_startable = (
+        segments.groupby("ts")["mw"].sum() if len(segments) else pd.Series(dtype=float)
+    )
+    frac_iv = (pool_startable / live_mw.reindex(pool_startable.index)).dropna()
+    frac_iv = frac_iv.clip(0.0, 1.0)
+    hoy_of_ts = dict(zip(live_all["_ts"], live_all["hoy"]))
+
+    pct = _netload_pct(year)
+    frac_x = (
+        pd.Series(
+            pct[
+                np.minimum(
+                    np.array([hoy_of_ts[t] for t in frac_iv.index], dtype=int),
+                    HOURS - 1,
+                )
+            ],
+            index=frac_iv.index,
+        )
+        if len(frac_iv)
+        else pd.Series(dtype=float)
+    )
+    frac_nodes = (
+        frac_iv.groupby(frac_x).mean().sort_index()
+        if len(frac_iv)
+        else pd.Series(dtype=float)
+    )
+
+    pct_nodes: list[float] = []
+    ladders: list[list[float]] = []
+    n_iv_total = 0
+    if len(segments):
+        segments = segments.copy()
+        segments["x"] = pct[np.minimum(segments["hoy"].to_numpy(int), HOURS - 1)]
+        segments["mult"] = segments["price"] / segments["gas_day"]
+        for x, gb in segments.groupby("x", sort=True):
+            qs = _weighted_quantiles(
+                gb["mult"].to_numpy(float), gb["mw"].to_numpy(float), LADDER_QUANTILES
+            )
+            if not all(np.isfinite(q) for q in qs):
+                continue
+            pct_nodes.append(round(float(x), 6))
+            ladders.append([round(float(m), 3) for m in qs])
+            n_iv_total += int(gb["ts"].nunique())
+
+    out = {
+        "frac_pct": [round(float(x), 6) for x in frac_nodes.index],
+        "pool_frac": [round(float(v), 4) for v in frac_nodes.to_numpy()],
+        "pct": pct_nodes,
+        "ladder": ladders,
+        "n_frac_nodes": int(len(frac_nodes)),
+        "n_ladder_nodes": len(pct_nodes),
+    }
+    coverage = {
+        "frac_nodes": int(len(frac_nodes)),
+        "ladder_nodes": len(pct_nodes),
+        "intervals": n_iv_total,
+    }
+    return out, coverage, files
+
+
 def main() -> None:
     """Derive and write the fast-start pool ladder + share JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
@@ -372,7 +454,17 @@ def main() -> None:
         "CC = ERCOT-176 slow-start tier)",
     )
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument(
+        "--continuous",
+        action="store_true",
+        help="ERCOT-178: write the continuous-node vintage "
+        "(ercot_faststart_pool_contpct.json) instead of the stepped bins — "
+        "the frozen stepped artifact is never touched by this mode",
+    )
     args = ap.parse_args()
+    if args.continuous:
+        _main_continuous(args)
+        return
 
     gas_day = _gas_day_series()
     per_class: dict[str, dict[int, dict]] = {}
@@ -477,6 +569,94 @@ def main() -> None:
 
     args.out.write_text(json.dumps(result, indent=1))
     print(f"wrote {args.out}")
+
+
+def _main_continuous(args) -> None:
+    """Write the ERCOT-178 continuous-node vintage (``--continuous``).
+
+    A NEW artifact (`ercot_faststart_pool_contpct.json` unless ``--out``
+    overrides) for the pre-registered `ercot_offer_surface_continuous` gate —
+    the frozen stepped artifact is never modified (PRECOMMIT-ercot178 §2).
+    Year-scoped, no pooled fallback, exactly as the stepped vintage. The CT
+    class is the armed consumer; the CC block is carried for parity with the
+    stepped artifact's class inventory.
+    """
+    out_path = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_faststart_pool_contpct.json"
+    )
+    gas_day = _gas_day_series()
+    per_class: dict[str, dict[int, dict]] = {}
+    coverage: dict[str, dict[str, dict]] = {}
+    sources: dict[str, dict[str, list[str]]] = {}
+    for cls in args.classes:
+        per_year: dict[int, dict] = {}
+        cls_cov: dict[str, dict] = {}
+        cls_src: dict[str, list[str]] = {}
+        for y in args.years:
+            per_year[y], cov, files = derive_year_continuous(
+                y, gas_day, POOL_CLASS_RESTYPES[cls]
+            )
+            cls_cov[str(y)] = cov
+            cls_src[str(y)] = files
+            if per_year[y]:
+                print(
+                    f"{y} {cls} pool: {per_year[y]['n_frac_nodes']} frac nodes, "
+                    f"{per_year[y]['n_ladder_nodes']} ladder nodes"
+                )
+        per_class[cls] = per_year
+        coverage[cls] = cls_cov
+        sources[cls] = cls_src
+
+    result: dict = {
+        "_provenance": {
+            "source": (
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "delivery years " + "-".join(str(y) for y in args.years)
+            ),
+            "method": (
+                "IDENTICAL statistics to the stepped vintage (interval-mean "
+                "offline-startable pool share of class live capability + "
+                "MW-weighted quantile ladder of above-LSL startable segment "
+                "multipliers), keyed per corpus HOUR NODE at the hour's "
+                "within-year net-load percentile rank instead of per bin; "
+                "rank-tied hours pool their intervals/segments "
+                "(PRECOMMIT-ercot178 §2, zero new parameters)"
+            ),
+            "driver": (
+                "system net-load percentile within year (EIA-930 demand - "
+                "wind - solar), forward-native"
+            ),
+            "conditioning": "continuous-netload-pct",
+            "offline_pool_statuses": list(OFFLINE_POOL),
+            "class_restypes": {k: list(v) for k, v in POOL_CLASS_RESTYPES.items()},
+            "ladder_quantiles": list(LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+            "year_scoped": (
+                "NO pooled fallback by design (rule 13), exactly as the "
+                "stepped vintage: a year absent from this artifact gets NO "
+                "pool leg"
+            ),
+            "source_files": sources,
+            "coverage": coverage,
+            "frozen": (
+                "rule 23 — re-derive only on a SCED disclosure source-data "
+                "update, never because a residual moved; the stepped artifact "
+                "is untouched by this vintage"
+            ),
+        },
+    }
+    for cls in args.classes:
+        result[cls] = {
+            "years": {
+                str(y): per_class[cls][y] for y in args.years if per_class[cls][y]
+            }
+        }
+
+    out_path.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out_path}")
 
 
 if __name__ == "__main__":
