@@ -814,6 +814,7 @@ def _lookahead_reprice_signal(
                     np.zeros_like(net_load) if adder is None else np.asarray(adder)
                 ),
                 "mc_sorted_usd_mwh": np.asarray(mc_sorted, dtype=float),
+                "cap_sorted_mean_mw": np.asarray(cap_gen, dtype=float)[order],
             }
         )
         if as_hold is not None:
@@ -3320,7 +3321,43 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     # FFR-8A diagnostic dump: the lookahead stack internals,
                     # next to the year's evolution ledger. Output-only — no
                     # config field, no cache-key term, no solve-path change
-                    # (the control arm's reproduction gate proves it).
+                    # (the control arm's reproduction gate proves it). The
+                    # fleet/storage/VRE context makes the dump self-contained
+                    # for the offline ablation probe (A1-A5) and the
+                    # actual-fleet re-price, so the diagnosis never replays a
+                    # solve.
+                    _pg = getattr(fleet_arrays, "plant_group", None)
+                    if _pg is not None:
+                        _pg = np.asarray(_pg, dtype=object)
+                        _cls_names = sorted({str(g) for g in _pg if str(g)})
+                        _diag["class_names"] = np.array(_cls_names)
+                        _diag["class_pmax_mw"] = np.array(
+                            [
+                                float(
+                                    np.asarray(fleet_arrays.pmax, dtype=float)[
+                                        _pg == c
+                                    ].sum()
+                                )
+                                for c in _cls_names
+                            ]
+                        )
+                    _diag.setdefault(
+                        "sigma_r_mw",
+                        ercot_fleet_forced_outage_sigma_mw(
+                            dispatch_fleet, config, year, config.hours
+                        ),
+                    )
+                    _shave_full = _storage_shave_terms(storage)
+                    if _shave_full is not None:
+                        _diag["storage_power_mw"] = float(_shave_full[0])
+                        _diag["storage_energy_mwh"] = float(_shave_full[1])
+                        _diag["storage_rte"] = float(_shave_full[2])
+                    _diag["wind_potential_mw"] = (
+                        wind_cf * np.asarray(wind_cap, dtype=float)[:, None]
+                    ).sum(axis=0)
+                    _diag["solar_potential_mw"] = (
+                        solar_cf * np.asarray(solar_cap, dtype=float)[:, None]
+                    ).sum(axis=0)
                     _diag_path = get_cache_path(iso, cache_key, year).parent / (
                         f"screen_signal_diag_{year}_for_{entering_year}.npz"
                     )
