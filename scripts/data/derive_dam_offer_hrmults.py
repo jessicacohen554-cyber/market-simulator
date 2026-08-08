@@ -642,8 +642,18 @@ def main() -> None:
         "offer_curve_dam_hrmults_coal_yearly.json (its own artifact; the "
         "pooled files are untouched, rule 23).",
     )
+    ap.add_argument(
+        "--continuous",
+        action="store_true",
+        help="ERCOT-178: write the continuous-node vintage of the "
+        "condition-binned peak surface (offer_curve_dam_hrmults_contpct.json) "
+        "— the frozen stepped artifact is never touched by this mode",
+    )
     args = ap.parse_args()
 
+    if args.continuous:
+        derive_condition_continuous(args.out_json)
+        return
     if args.coal_yearly:
         derive_coal_yearly(args.out_json, args.body_cap)
         return
@@ -890,6 +900,121 @@ def derive_condition_binned(edges: tuple[float, ...], out_json: str | None) -> N
             )
 
     out_path = Path(out_json) if out_json else OUT_JSON_CONDBINNED
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
+
+
+def derive_condition_continuous(out_json: str | None) -> None:
+    """Derive and write the ERCOT-178 continuous-node peak surface vintage.
+
+    The IDENTICAL statistic :func:`derive_condition_binned` computes per
+    net-load bin — the per-resource top-of-curve multiplier reduced by
+    :func:`_peak_ladder_from` with the class all-hours ``floor_mult`` and HCAP
+    clamps — keyed per corpus HOUR NODE at the hour's within-year net-load
+    percentile ``q`` instead of per bin (PRECOMMIT-ercot178 §2). The pooled
+    identification basis is unchanged: all disclosure years pool, and hours
+    from different years sharing an exactly tied rank pool their rows (the
+    only cross-hour pooling, forced by x-monotonicity). Zero new parameters;
+    the stepped artifact is never touched. Writes
+    ``offer_curve_dam_hrmults_contpct.json`` (mode B, gas only).
+    """
+    fleet_hr = class_base_hr()
+    df = load_offers()
+    netq = netload_pct_by_hour()
+    df = df.merge(netq, on=["delivery_date", "hour_ending"], how="inner")
+    print(
+        f"Loaded {len(df):,} offer-point rows with net-load percentile, "
+        f"{df['delivery_date'].min().date()} -> {df['delivery_date'].max().date()} "
+        f"(years {YEARS}); continuous-node vintage\n"
+    )
+
+    payload: dict = {
+        "_provenance": {
+            "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data, delivery "
+            "years 2023-2025 (ercot_dam_offers.parquet)",
+            "method": "IDENTICAL statistic to the stepped vintage (mode-B "
+            "per-resource top-of-curve heat-rate multiplier, capacity-weighted "
+            "quantiles, each rung clamped [class all-hours peak median, HCAP]), "
+            "keyed per corpus HOUR NODE at the hour's within-year net-load "
+            "percentile instead of per bin; rank-tied hours (within and across "
+            "years) pool their rows (PRECOMMIT-ercot178 §2, zero new "
+            "parameters)",
+            "driver": "system net-load percentile within year (DAM dispatchable "
+            "awarded quantity), forward-native (load+VRE forecast regenerates "
+            "it)",
+            "conditioning": "continuous-netload-pct",
+            "peak_ladder_quantiles": list(PEAK_LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+        }
+    }
+    for dam_cls, outputs in CLASS_TO_OUTPUT.items():
+        if dam_cls == "COAL":
+            continue
+        df_cls = df[df["model_class"] == dam_cls].copy()
+        df_cls["fuel"] = df_cls["gas"].astype(float)
+        for out_group, fleet_groups in outputs:
+            if out_group not in CONDBINNED_GROUPS:
+                continue
+            bhr = output_base_hr(fleet_hr, fleet_groups)
+            # All-hours peak median (mode B) — the below-clamp floor, computed
+            # exactly as the stepped derive (unchanged reference).
+            topf_all = (
+                df_cls[(df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)]
+                .assign(
+                    mult=lambda x: (
+                        x["curve_price"].to_numpy(float)
+                        / (x["fuel"].to_numpy(float) * bhr)
+                    ),
+                    cap=lambda x: x["hsl"].astype(float),
+                )
+                .groupby("resource_name")
+                .agg(peak=("mult", "max"), cap=("cap", "median"))
+                .reset_index()
+            )
+            p50 = _capwt_band(topf_all.rename(columns={"peak": "pk"}), "pk")["p50"]
+
+            d = df_cls[
+                (df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)
+            ].copy()
+            d["mult"] = d["curve_price"].to_numpy(float) / (
+                d["fuel"].to_numpy(float) * bhr
+            )
+            d["cap"] = d["hsl"].astype(float)
+            pct_nodes: list[float] = []
+            mult_nodes: list[list[float]] = []
+            for x, dn in d.groupby("q", sort=True):
+                topf = (
+                    dn.groupby("resource_name")
+                    .agg(peak=("mult", "max"), cap=("cap", "median"))
+                    .reset_index()
+                )
+                mean_fuel = float(dn["fuel"].mean()) if len(dn) else float("nan")
+                lad = _peak_ladder_from(topf, mean_fuel, bhr, floor_mult=p50)
+                if not lad:
+                    continue
+                pct_nodes.append(round(float(x), 6))
+                mult_nodes.append([float(m) for _s, m in lad])
+            payload[out_group] = {
+                "base_hr": round(bhr, 3),
+                "peak_p50": round(float(p50), 3),
+                "cont": {
+                    "pct": pct_nodes,
+                    "mult": mult_nodes,
+                    "n_rungs": len(PEAK_LADDER_QUANTILES),
+                    "n_nodes": len(pct_nodes),
+                },
+            }
+            print(
+                f"  {out_group:11s} base_HR {bhr:5.2f}  peak_p50 {p50:6.2f}  "
+                f"nodes {len(pct_nodes)}"
+            )
+
+    out_path = (
+        Path(out_json)
+        if out_json
+        else paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_contpct.json"
+    )
     out_path.write_text(json.dumps(payload, indent=1) + "\n")
     print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
 

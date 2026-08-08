@@ -737,6 +737,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "miso_clean_tier_rows",
+    # ERCOT-178 continuous offer-surface conditioning grain (default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (gate-off is byte-identical by construction, SP-2);
+    # an armed run prices the surfaces at node grain and hashes distinctly.
+    # Registered in the same session as the field (the nyiso-119 discipline).
+    "ercot_offer_surface_continuous",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -975,6 +981,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_nqc_accreditation": "False",
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
+    "ercot_offer_surface_continuous": "False",
 }
 
 
@@ -7924,6 +7931,25 @@ class ScenarioConfig:
     # load instead of clearing the peak band). 0.95 × 5000 = $4750, above the measured
     # p90 wall (~$2,700) and below VOLL.
     ercot_offer_surface_price_cap_frac: float = 0.95
+    # ERCOT-178 CONTINUOUS conditioning grain (default off, ERCOT-gated): switch
+    # the four armed measured offer surfaces (conditional peak surface,
+    # cleared-share wall, RT/SCED leg, fast-start pool) from STEPPED net-load-
+    # percentile bins to CONTINUOUS interpolation over the corpus's own hour
+    # nodes — the same statistics, at rank grain, per-hour interpolated
+    # (docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md §2). The
+    # ercot-177 diagnosis measured the stepped top bin pooling 263 hours whose
+    # actual prices span 25x under one ladder (the tail is the top 2.07% of the
+    # year, ABOVE the p97 edge), a dilution CAUSED by stepping; the continuous
+    # form removes the step with zero fitted scalars and NO edge to fit (the
+    # rule-20 discipline). Loads the `_contpct.json` vintage of each artifact
+    # (vintage guard: `_provenance.conditioning == "continuous-netload-pct"`,
+    # the PJM within-season pattern); `ercot_offer_surface_netload_pcts` is not
+    # consulted while armed. Hard errors with min_bin != 0 or any unmigrated
+    # family member armed (state/steam/span/lowcurve/midcurve/offline-commit).
+    # Year scoping, class/row scopes, composition and the mc_bid_adjust seam
+    # are inherited byte-unchanged; forward-native exactly as the stepped form
+    # (rule 13: the solve year ranks its own net load).
+    ercot_offer_surface_continuous: bool = False
 
     # ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated):
     # the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above.

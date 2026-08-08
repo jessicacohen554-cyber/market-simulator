@@ -139,8 +139,22 @@ def _parse_one_file(path: str, keep_classes: set[str]) -> pd.DataFrame:
 
     # Drop rows that carry neither a curve nor any three-part field — pure
     # non-offering placeholder rows contribute nothing to the offer distribution.
+    # The 37/38-column corpus vintages (all 2023-2025 shards on disk) lack the
+    # three-part columns entirely — only the 48-column 2026 refetches carry
+    # them — so an absent column is an all-NaN column here, exactly as the
+    # _CARRY_COLUMNS fill below already treats absent carry fields.
     has_curve = df["QSE submitted Curve-MW1"].notna()
-    has_three_part = df["Min Gen Cost"].notna() | df["Start Up Cold"].notna()
+    mgc = (
+        df["Min Gen Cost"]
+        if "Min Gen Cost" in df.columns
+        else pd.Series(pd.NA, index=df.index)
+    )
+    suc = (
+        df["Start Up Cold"]
+        if "Start Up Cold" in df.columns
+        else pd.Series(pd.NA, index=df.index)
+    )
+    has_three_part = mgc.notna() | suc.notna()
     df = df[has_curve | has_three_part].copy()
     if df.empty:
         return df
