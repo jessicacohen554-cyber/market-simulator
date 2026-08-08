@@ -118,7 +118,41 @@ no mechanism, no scalar; hour selection reads the control residual under the
 rule-13 diagnostic license and its output is barred from parameter
 identification.)*
 
-<!-- MARGPOS-RESULTS -->
+Record: `results/calibration/ercot180_marginal_position.json` (top-100 2023
+hours by demand-weighted actual−control gap; mean gap **$1,041/MWh**, actual
+RT p50 $1,032 vs model p50 $156; corpus side = delivery-2023 NP3-965, ON
+merchant gas CC/CT, per-interval SCED2 step price at Base Point).
+
+**P-7 is CONFIRMED — the position wedge is large, and it brackets the actual
+price:**
+
+* **Where reality's accepted MW sits:** q_act (Base Point ÷ curve-top MW of
+  the interval's max-price-at-BP resource) has median **0.9976** — the last
+  accepted MW sits at the 99.8th percentile of the marginal resource's own
+  submitted curve. The marginal-proxy resource is CC in 92/100 hours.
+* **Where the model's marginal row sits:** q_mod (share of the marginal
+  class's capacity at strictly lower P1 bids) has median **0.9117**
+  (p25–p75: 0.869–0.943). Position wedge median **+0.079**; q_act > q_mod in
+  **95/100** hours.
+* **The decisive containment statistic:** in **94/100 hours the actual RT
+  price lies INSIDE the position band of the SAME submitted curve** —
+  between the curve read at the model's position (p50 **−$50**: the cheap
+  body) and at the accepted position (p50 **$5,000**: the top sliver). The
+  real curves are CLIFFS — nearly all MW cheap-to-negative, an HCAP-priced
+  sliver at the very top — and the actual price forms partway up the cliff.
+  The model's class-level ladder statistics dilute that cliff across the
+  class, which is why every LEVEL lever (form (a), form (b), and the
+  ercot-175 wedge before them) leaves the p97–99 formation untouched.
+* **Disclosed proxy limits, at full magnitude:** the interval marginal proxy
+  (max price-at-BP over resources) is an UPPER ENVELOPE, not the clearing
+  lambda — its p50 is the $5,000 HCAP wall vs actual RT p50 $1,032 (≥ actual
+  in 99/100 hours). The headline "share explained by position" therefore
+  SATURATES above 1 (p50 6.0) and is not the sizing number; the containment
+  statistic (94/100) and the position medians are. Further disclosures in
+  the JSON: gas-class-only proxy (non-gas marginal invisible, biasing the
+  wedge LOW), model bids without startup amortization, static-pmax class
+  weights, and the normalized-position crosswalk. In 10/100 hours the model
+  marginal row maps to no thermal class (recorded as-is).
 
 ## 5. What remains, and the ercot-181 condition
 
@@ -126,11 +160,31 @@ With both conditioning-grain forms closed, the C3a-2023 tail residual's only
 remaining named object is the **quantity-position phenomenon**: reality's
 marginal price forming at a position far up a steep submitted curve (ERCOT's
 own SCED system_lambda $1,889.63 at hours the model prices ~$360), which no
-LEVEL statistic of any conditional ladder can see. The §4 measurement above
-is its sizing evidence. Opening that lane requires its own precommit
-(instrument, admissibility case, kill gates — G-SHED PRIMARY carried
-forward), per the standing discipline; this finding charters it iff §4
-measures a material wedge, and refutes it (P-7) iff the wedge is ≈ 0.
+LEVEL statistic of any conditional ladder can see. **§4 measures a material
+wedge and this finding therefore CHARTERS the lane as ercot-181**, under its
+own precommit fixed before anything is measured or built:
+
+* **A sharper marginal-identification instrument, fixed ex ante.** The §4
+  max-price-at-BP proxy is an upper envelope; a candidate replacement is the
+  clustering of price-at-BP over strictly-INTERIOR resources (0 < BP <
+  curve-top, away from both ends), which in an SCED-cleared market should
+  concentrate at lambda. Choosing and freezing that instrument is ercot-181's
+  precommit §1, not this session's.
+* **A rule-13-admissible mechanism form.** The mechanism must reproduce
+  position-conditional pricing of the LAST ACCEPTED INCREMENT from submitted
+  conduct (a market-design input that regenerates forward), never a pin to
+  lambda or to realized prices. The design tension to resolve ex ante: the
+  model's class-aggregate curve is structurally flatter than any real
+  resource's cliff, so the instrument must define where the model's top-of-
+  class position sits relative to the measured cliff without a fitted scalar.
+* **Kill gates carried verbatim**, G-SHED PRIMARY above all: a cliff-top
+  repricing that manufactures VOLL shortage is the twice-rejected ercot-48
+  signature, and the position lane is MORE exposed to it than the grain lane
+  was.
+* **If no admissible instrument survives the precommit stage**, the honest
+  terminus is an owner sitting on C3a-2023 reachability within this model
+  class (the C3c-caveat path) — reported as such, never bridged with a
+  scalar.
 
 ## 6. Predictions adjudicated (precommit §7, at full magnitude)
 
@@ -146,7 +200,11 @@ measures a material wedge, and refutes it (P-7) iff the wedge is ≈ 0.
   design was never exercised on artifacts; the gate-off control-path sha
   match (§2) is the session's realized integrity evidence.
 * **P-6 (D-2/D-4 vacuous):** NOT REACHED (no arm; no bound was ever touched).
-* **P-7 (the marginal-position expectation):** adjudicated in §4.
+* **P-7 (the marginal-position expectation):** **CONFIRMED** (§4) — the
+  actual marginal price forms at a materially higher position on the
+  accepted resource's own curve (0.9976 vs 0.9117, wedge in 95/100 hours,
+  actual price inside the position band in 94/100). The quantity-position
+  lane is chartered, not refuted.
 
 ## 7. Governance
 
