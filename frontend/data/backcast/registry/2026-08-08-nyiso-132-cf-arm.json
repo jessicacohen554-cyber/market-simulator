@@ -1,0 +1,15 @@
+{
+  "id": "2026-08-08-nyiso-132-cf-arm",
+  "label": "nyiso 132 cf arm",
+  "date": "2026-08-08",
+  "shorthand": "nyiso-132-cf-arm",
+  "definition": "nyiso-132 solar CF level: ARM (RENEWABLE_AVG_CF NYISO solar 0.15 -> 0.1955, measured mature-fleet CF), keeper recipe 2026-08-07-nyiso-131-taxgs-arm",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-08-08-nyiso-132-cf-arm.js",
+  "bundle": "results/calibration/nyiso132_cf_arm"
+}
