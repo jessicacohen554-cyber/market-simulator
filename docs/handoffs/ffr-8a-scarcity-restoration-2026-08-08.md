@@ -500,8 +500,10 @@ counterfactual emitted as a clearly-labelled annex column, never a candidate.
 ### 3.4 The honest expectation (the prereg-2 commit)
 
 *(Committed BEFORE invocation 2 — the repair arm — solves; §1.5 requires it. This section's
-content is the prereg-2 commit — hash recorded here: **`4a4cc75`** (backfilled by the
-immediately-following header-only edit, content untouched). Derived from Part A + the
+content is the prereg-2 commit — hash recorded here: **`ea04f03`** (originally committed as
+`4a4cc75`, rewritten to `ea04f03` by a push-discipline rebase onto the then-current
+`origin/main` `7fd1c28` BEFORE the repair arm started — same tree, same content; the hash
+was backfilled by header-only edits, content untouched). Derived from Part A + the
 ablation-chain REASONING alone — the control arm had not finished and the repair arm had not
 started when this was written. Nothing below is a target; every line is a falsifiable
 statement the §4 reads will confirm or refute at full magnitude.)*
