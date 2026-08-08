@@ -46,6 +46,48 @@ surfaces, both human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-08-08 — FFR-3V-FIX hindcast renewable-pool vintage seed. NO KEY
+MOVES ANYWHERE; EVERY CAPACITY-HINDCAST BUNDLE IS INVALIDATED.** A capacity
+hindcast is ``mode="forecast"`` + ``hindcast=True``, so ``data.renewables``
+skipped its backcast branch and seeded the wind/solar pools from the
+present-day ``RENEWABLE_INSTALLED_MW`` constant — post-vintage information in a
+run whose whole premise is the vintage cutoff, and a base the evolution
+channels then ADD to. ``load_renewable_profiles`` now seeds a hindcast from the
+run's own ``eia860_vintage_year`` EIA-860 measured year-end fleet, read AT the
+vintage year (so ``_add_proposed_capacity`` cannot graft the vintage's own
+proposed pipeline onto the base pool) and with the intra-year commissioning
+ramp off. **No ``ScenarioConfig`` field was added, removed or re-defaulted** —
+the switch is the existing ``hindcast`` × ``eia860_vintage_year`` pair — so no
+key moves and the pinned default key is unchanged. Vintage-2020 seed change
+(MW, wind / solar): ERCOT 42,000/38,000 → 27,541/4,864; CAISO 6,330/24,920 →
+5,776/14,615; PJM 11,000/14,000 → 10,154/4,550; MISO 32,000/7,000 →
+26,050/2,048; NYISO 2,400/1,500 → 1,989/664; NEISO 1,400/2,700 → 1,500/1,519.
+The direction is not uniform — at vintage 2023 MISO solar goes 7,000 → 7,348
+and NEISO wind 1,400 → 1,538 — and it is adopted in both directions (rule 14
+[R-ACCURATE]). See ``docs/handoffs/ffr-3v-fix-2026-08-08.md`` and the finding
+it closes, ``ffr-3v-miso-entry-screen-2026-08-04.md`` §6.1.
+
+*Invalidated:* **every cached bundle with ``hindcast=True`` and a committed
+``eia860_vintage_year``** — the T1-H plain hindcasts, the T1-X crossovers and
+the T1-FF full-forward legs, in every ISO — at any commit before this epoch.
+Their base VRE pools, and therefore every price, entry/retirement margin and
+ledger row downstream, were formed on the inflated seed. The 143 committed
+``frontend/data/hindcast/`` sidecars are pre-epoch evidence; they stand as the
+historical record of what the harness did, not as re-runnable results.
+**Specifically flagged for the manager (FFR-8A-P3 coordination):** the ERCOT
+control-arm numbers the FFR-8A prereg §1.3 reproduces from the FFR-5D-M record
+go stale for any ERCOT hindcast RE-RUN at or after this commit.
+
+*NOT invalidated:* **every backcast bundle, every keeper, and every plain
+forecast bundle.** A backcast never reached the changed branch (it already
+resolves its own year's EIA-860 month-end capacity), and a plain forecast has
+``hindcast=False``, so it keeps ``RENEWABLE_INSTALLED_MW`` even when an
+``eia860_vintage_year`` is set — the runner arms the vintage switch only for a
+backcast or a hindcast, and the seed override is gated to match. Both halves
+are pinned by test
+(``tests/unit/data/test_renewables.py::test_plain_forecast_ignores_the_vintage_seed``
+and the backcast/forward pair that predates this change).
+
 **Epoch 2026-08-04d — FFR-4C §45 wind-PTC statutory window (owner decision
 D-13). NO KEY MOVES AT THE DEFAULT.** The new-entry screen's wind LCOE now
 levelizes the §45 PTC over ``min(10 statutory years, book life)`` instead of
