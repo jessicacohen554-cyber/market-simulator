@@ -1,6 +1,17 @@
-# FINDING — caiso-183: the H-EDGE grain repair is **BUILT, PROVEN BYTE-INERT FOR FIVE ISOs, AND MEASURED**. After it the model asserts **ZERO** in-window hours its own CEMS contradicts — down from 3.36 / 3.25 / 3.55 %. One pre-registered gate, **G-DEPTH′, FAILS in 2023** and is reported at full magnitude
+# FINDING — caiso-183: the H-EDGE grain repair is **BUILT, PROVEN BYTE-INERT FOR FIVE ISOs, AND MEASURED**. After it the model asserts **ZERO** in-window hours its own CEMS contradicts — down from 3.36 / 3.25 / 3.55 % — and C3a narrows in **all three years**. **TWO pre-registered gates FAIL and the arm is NOT PROMOTED**
 
-<!-- RESULTS SECTION APPENDED AFTER THE ARMS SOLVED; PHASE 0 IS AS WRITTEN BEFORE. -->
+**Outcome: the repair is CORRECT, MEASURED, and NOT ADOPTED.** C3a moves
++4.2 → **+3.9 %**, +11.5 → **+10.9 %**, +14.7 → **+13.9 %** — the pre-registered
+direction prediction **confirmed**, well clear of the measured noise floor — but
+**2024 and 2025 remain FAIL, the determination stays NOT-YET, and the residual does
+NOT close.** Two gates I pre-registered myself, **G-DEPTH′** and **G-CAISO180**, fired;
+both are reported at full magnitude, **neither bar was moved**, and I am **not
+adjudicating my own gates**. Adoption is an owner decision.
+
+Keeper **UNCHANGED** at `2026-08-06-caiso-175-tac-intake`. DOF ledger **UNCHANGED at
+11 / 8** on both arms. No `ScenarioConfig` field added, removed or re-valued. No frozen
+identification constant touched. **`data/raw/campd-unit-outages-CAISO.csv` is left at
+the committed day-grain** (§8).
 
 **Pre-registration:** `PRECHECK-caiso183-hedge-grain-2026-08-08.md`, pushed and
 blob-verified (358 lines, blob `e7db168d…`, remote SHA identical to local)
@@ -70,9 +81,10 @@ not engaged).
 | **P0-3** | day-grain loader mask bit-identical to pre-change | **PASS** — 24 (ISO, year) digests identical on **both** consumer legs, against a snapshot taken **before** the change |
 | **G-NOFIT** | frozen detector constants unmoved | **PASS** — `_MIN_DAYS` 5, `_SMOOTH_DAYS` 7, `_CEILING_FRAC` 0.65, `_RUN_FLOOR_CF` 0.06, `_BASELOAD_CF` 0.55, `ST_GAS_CF_PEAK` 0.02 |
 
-**Exactly one data file changed: `data/raw/campd-unit-outages-CAISO.csv`**
-(`c4ded33d…` → `25360e90…`). The other five extracts and every layup companion are
-untouched on disk.
+**Exactly one data file was re-derived: `data/raw/campd-unit-outages-CAISO.csv`**
+(`c4ded33d…` → `25360e90…`). The other five extracts and every layup companion were
+untouched. **It is restored to the committed day-grain at session end and is NOT
+adopted** — see §8.
 
 ### 3a. TWO pre-existing BE-1 mismatches — one disclosed in advance, one NOT
 
@@ -191,3 +203,162 @@ B1 share a recipe, so a second arm run in the same tree would have **silently lo
 the first arm's parquet** and read as a perfect no-op. The cache is purged between
 arms, and `_caiso183_arm_identity.check_arms_distinct` asserts the two arms produced
 different hourly signatures rather than trusting that the purge happened.
+
+
+---
+
+## 7. THE ARMS — control exact, treated narrows C3a in all three years, residual does NOT close
+
+**Two arms, one delta, solved sequentially at one head** (rule 12), each 2023 + 2024 +
+2025 in **one** bundle (rule 16), both registered (rule 15):
+`2026-08-08-caiso-183-b0-control` and `2026-08-08-caiso-183-b1-hour`.
+
+### 7a. CONTROL — reproduces the keeper to the cent, but is NOT bit-zero
+
+| | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| keeper λ (load-weighted) | 56.4476819404 | 38.6313726293 | 39.4624179310 |
+| control λ | 56.4450007364 | 38.6290053930 | 39.4624179310 |
+| **drift** | **−0.0027** | **−0.0024** | **0.0000** |
+| drift, % of level | −0.0048 % | −0.0061 % | 0.0000 % |
+| zone-hours differing | 5,012 / 61,320 | 2,465 / 61,320 | **0** |
+| max \|Δprice\|, any zone | $81.01 | $125.57 | 0 |
+| max \|Δprice\|, **load-carrying** zones | $2.30 | $2.28 | 0 |
+
+**CONTROL PASSES as pre-registered** — scored C3a is identical to the keeper's
+(+4.2 % / +11.5 % / +14.7 %, level 56.45 / 38.63 / 39.46).
+
+**But it is not bit-zero, and that qualifies a claim two prior sessions made.** The
+large deltas sit **entirely on `WECC_PNW` / `WECC_DSW`, the two WECC import nodes,
+which carry ZERO CAISO demand** and so contribute nothing to the load-weighted mean;
+the signature is adjacent-hour price swaps at an import node, i.e. **LP alternate
+optima under degeneracy**, not a model change. caiso-180's and caiso-181's *"exactly
+$0.000"* was measured at **scored** precision, which cannot see sub-cent churn;
+measured hour-by-hour at full precision it is $0.000 only in 2025. **This is reported
+as a correction to the record, and it is what makes the treated arm readable: the
+same-head noise floor is ≤ 0.006 % of level, so any move above ~0.01 % is signal.**
+
+### 7b. TREATED — the direction prediction is CONFIRMED, and the residual still does not close
+
+| | actual | B0 control | B1 hour-grain | Δ$ | C3a B0 → B1 |
+|---|---:|---:|---:|---:|---|
+| 2023 | 54.17 | 56.45 | **56.30** | −0.15 | +4.2 % → **+3.9 %** PASS |
+| 2024 | 34.65 | 38.63 | **38.44** | −0.19 | +11.5 % → **+10.9 %** **FAIL** |
+| 2025 | 34.42 | 39.46 | **39.20** | −0.26 | +14.7 % → **+13.9 %** **FAIL** |
+
+The move is **−0.3 / −0.6 / −0.8 pp**, i.e. **50–130×** the same-head noise floor —
+signal, not churn. **PRECHECK §5's prediction was that the repair adds capability and
+therefore lowers price. It is CONFIRMED in all three years**, including 2023 where I
+allowed it might widen.
+
+**AND IT DOES NOT CLOSE THE RESIDUAL. 2024 and 2025 remain FAIL against the ±10 %
+band, C3a remains the sole load-bearing failure, and the determination stays
+NOT-YET on both arms.** The repair takes roughly **one-seventh** of the 2024 excess and
+**one-sixth** of the 2025 excess. Saying so is the point: the honest remaining named
+contributor is the **WALLED hourly pumped-storage water state**
+(`FINDING-caiso140` §B / caiso-141 A2), an **owner-funded intake decision, not a
+session lever**. No close is manufactured here.
+
+**The mechanism is coherent end to end.** Freeing wrongly-derated CC capability lets
+cheap CC displace expensive peakers and imports:
+
+| TWh, B1 − B0 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|
+| CC_REGULAR | **+0.195** | +0.172 | +0.253 |
+| CC_CHP | +0.055 | +0.069 | +0.054 |
+| CT_PEAKER | **−0.118** | −0.052 | −0.071 |
+| ST_GAS | −0.043 | −0.091 | −0.054 |
+| import | −0.091 | −0.098 | −0.200 |
+| nuclear / wind / solar / biomass | ~0 | ~0 | ~0 |
+
+### 7c. Gate tally
+
+| gate | verdict |
+|---|---|
+| **G-DOF** | **PASS** — 11 / 8 on both arms |
+| **G-NOFIT** | **PASS** |
+| **G-SIXISO** | **PASS** |
+| **G-CONTRACT** | **PASS**, decisively (§4) |
+| **G-C1** | **PASS** — C1 all 12/12, free 8/8, both arms |
+| **G-PROT** | C8 **PASS and SCORED** (`legitimacy_diagnostics.json` registered with both bundles). **C6 reads `UNATTESTED` on both arms** — a probe-arm artifact (neither carries a `calibration_attestation.json`; the keeper's ledger exceptions live in its own bundle), identical across arms and therefore discriminating nothing. Stated so it is not misread as an envelope effect, exactly as caiso-180 §5a stated it. |
+| **G-LOYO** | **not reached** — no verdict flipped (both arms NOT-YET), so there is nothing to score leave-one-year-out |
+| **CONTROL** | **PASS** to the cent (§7a) |
+| **G-DEPTH′** | **FAIL in 2023** (§5) |
+| **G-CAISO180** | **FAIL**, 5 of 9 banded cells (§7d) |
+
+### 7d. G-CAISO180 **FAILS** — reported at full magnitude, bar NOT moved
+
+The band is *"|ΔTWh| must not exceed the FULL regeneration leg it reverses"*:
+
+| class | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| CC_REGULAR | **+0.195 vs 0.11 — FAIL** | +0.172 vs 0.44 PASS | +0.253 vs 0.67 PASS |
+| ST_GAS | **−0.043 vs 0.03 — FAIL** | −0.091 vs 0.13 PASS | −0.054 vs 0.07 PASS |
+| CT_PEAKER | **−0.118 vs 0.02 — FAIL** | **−0.052 vs 0.04 — FAIL** | **−0.071 vs 0.06 — FAIL** |
+
+**Five of nine cells breach. The gate fired and the bar is not moved.**
+
+**G-CAISO180 and G-DEPTH′ fail for ONE shared reason, and it is a defect in how I
+built them, not a defect the gates detected.** Both bound the repair's footprint by
+**the caiso-180 regeneration leg's** footprint, which presumes the repair is the
+regeneration's *inverse*. It is not, and **BE-3 proves it**: the window set is
+identical to the regenerated one, so the repair strips edge hours from **every**
+window — including all the windows that pre-date the regeneration — and its footprint
+has no reason to sit inside the regeneration's. CT_PEAKER is the clearest case: its
+band is 0.02–0.06 TWh only because the *regeneration* barely moved peakers, whereas
+freeing CC capability across ~1,640 windows displaces them by more.
+
+**I am not withdrawing either gate on my own authority.** I designed both, both fired,
+and a session does not get to retire its own bar after seeing the number. The
+falsifying arithmetic is recorded (§5 for G-DEPTH′, here for G-CAISO180) and **routed
+to the owner**, exactly as caiso-180's §3a leg-2 withdrawal was recorded — and that
+leg stays withdrawn and is **not** reinstated here. **This is the second and third
+time a caiso-18x gate keyed to the caiso-180 regeneration leg has proved malformed;
+the recurrence is itself the reportable pattern.**
+
+## 8. DISPOSITION — measured, not adopted
+
+**NO PROMOTION. The keeper is UNCHANGED.** Two pre-registered gates failed; C3a was
+never an admissible promotion basis (rule 1 — it is a live FAIL; rule 13 — nothing was
+tuned to it), and the admissible basis (*the model no longer asserts unavailability its
+own detector never detected*, now proven at 100 % by G-CONTRACT) does not override a
+fired gate.
+
+**`data/raw/campd-unit-outages-CAISO.csv` is left at the committed day-grain
+`c4ded33d…`.** That path is what the **loader** reads, so committing the repaired
+extract would silently change what the designated keeper reproduces **without a
+promotion**. The extract is deterministically regenerable, byte-identically, from one
+command:
+
+```
+python scripts/data/derive_campd_unit_outages.py --iso CAISO \
+    --years 2018 2019 2020 2021 2022 2023 2024 2025 2026 \
+    --merit-order-guard --hour-grain
+```
+→ sha256 `25360e90a9d11f32c293edf3224047da0d6fab447b551fac81b983e2da1166c6`.
+
+**Flagged for the owner, against my own conservatism:** rule 14 `[R-ACCURATE]` and
+rule 1 `[R-STRUCT]` both point toward adopting the repaired extract — it is strictly
+the more faithful representation (CEMS contradiction 3.4 % → 0), it is zero-DOF, and
+its fit effect is *favourable* rather than the "worse fit" those rules exist to
+protect. **I am not making that call because two of my own gates fired on it.** The
+decision is one command wide either way.
+
+**The code is committed and is byte-inert by default**, so nothing changes for any ISO
+until an extract is re-derived with `--hour-grain`. The other five ISOs enter as
+**untested** for hour-grain adoption (rule 28 duty d); their magnitudes are unmeasured
+and no verdict transfers (rule 25).
+
+## 9. Known-open, carried forward
+
+1. **NEISO's undisclosed BE-1 drift** (§3a) — 21 windows kept → layup under a changed
+   delivered-fuel input, detected union identical, training-clean. NEISO lane, not
+   repaired here.
+2. **G-DEPTH′ and G-CAISO180 withdrawal** — routed to the owner with the falsifying
+   arithmetic (§5, §7d).
+3. **Adoption of the repaired CAISO extract** — owner decision (§8).
+4. **C3a's residual after the repair** — 2024 +10.9 %, 2025 +13.9 %. First named
+   contributor remains the **WALLED hourly pumped-storage water state**
+   (`FINDING-caiso140` §B / caiso-141 A2), an owner-funded intake.
+5. **Same-head control is not bit-zero in 2023/2024** (§7a) — WECC import-node
+   alternate optima. Corrects the record for caiso-180/181.

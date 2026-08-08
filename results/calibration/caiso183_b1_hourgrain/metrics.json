@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-08-04-caiso-166-control-hubsurface",
+  "run_id": "2026-08-08-caiso-183-b1-hour",
   "iso": "CAISO",
-  "label": "caiso 166 control hubsurface",
+  "label": "caiso 183 b1 hour",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.9,
+  "rubric_version": 3.1,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -55,15 +55,10 @@
       "tier": "protective",
       "status": "UNATTESTED"
     },
-    "shape": {
-      "label": "C7 diurnal shape (D-1)",
-      "tier": "protective",
-      "status": "PASS"
-    },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -71,13 +66,13 @@
     "ledgered": [],
     "commercial_band": [],
     "budget": {
-      "protective_max": 1,
-      "ledgered_max": 3
+      "protective_max": 0,
+      "ledgered_max": 1
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 6,
+    "scored": 6,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 2

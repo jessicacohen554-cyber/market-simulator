@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-04T07:00:23",
+  "timestamp": "2026-08-08T18:00:42",
   "iso": "CAISO",
   "years": [
     2023,
@@ -42,7 +42,9 @@
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
   "coal_perplant_offer_level": false,
+  "coal_perplant_offer_yearly": false,
   "nysdec_peaker_rule_availability": false,
+  "nyiso_solar_market_generator_basis": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
   "st_gas_intermediate_cf_threshold": null,
@@ -278,6 +280,8 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
   "miso_seam_envelope_merit_cap": false,
+  "nyiso_seam_deliverability_envelope": false,
+  "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -301,25 +305,24 @@
     "eia930": "../_shared/CAISO/eia930-3697b3115384.parquet",
     "eia923": "../_shared/CAISO/eia923-cd564d46cbf9.parquet",
     "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet",
-    "unit_outages": "../_shared/CAISO/unit_outages-ef8cd52c6acd.parquet",
+    "unit_outages": "../_shared/CAISO/unit_outages-23d4b0a72b11.parquet",
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet",
-    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet"
   },
-  "git_sha": "3bc37ce2",
-  "basis_sha": "3bc37ce277c18a4ce1a7b19189c00230452656de",
-  "highspy_version": "1.14.0",
+  "git_sha": "ab08cee5",
+  "basis_sha": "7307c4d822721df0943c28f91542bd78443b5b32",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-fc-v18-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.0",
       "pydantic": "2.13.4"
     }
   }
