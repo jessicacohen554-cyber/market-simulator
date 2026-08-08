@@ -344,6 +344,66 @@ _UNIT_OUTAGE_EVENT_COLUMNS: tuple[str, ...] = (
     "unit_capacity_mw",
 )
 
+# OPTIONAL hour-grain columns (caiso-183). The CAMPD unit-outage detector works
+# in HOURS (`start = clock[s]`, `last = clock[e - 1]` in
+# scripts/data/derive_campd_unit_outages.py) but the extract has always stored
+# DAYS, so the reconstruction below re-expanded every window to
+# `outage_start` 00:00 -> `outage_end` 23:00 and asserted up to 23 h at each edge
+# that the detector never detected — exactly where the event-based contract
+# guarantees the neighbouring hour was RUNNING. caiso-181 confirmed that seam at
+# 100 % of unit-grain CEMS contradictions, with every contradicted hour within
+# 22 h (< 24) of a window boundary in all three years
+# (results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md section 2).
+#
+# An extract that carries these two columns states the DETECTED hour-of-day of
+# its first and last outage hour, and :func:`unit_outage_event_window` uses them.
+# They are OPTIONAL because this loader serves all six ISOs and each adopts the
+# finer grain by re-deriving its own extract (`--hour-grain`) — an extract
+# without them reconstructs exactly as before (rule 25 [R-ISO-SCOPE]).
+_UNIT_OUTAGE_HOUR_COLUMNS: tuple[str, ...] = ("outage_start_hour", "outage_end_hour")
+
+
+def unit_outage_event_window(
+    row: object, has_hour_grain: bool
+) -> tuple[pd.Timestamp, pd.Timestamp]:
+    """Return one unit-outage event's half-open ``[start, stop)`` window.
+
+    ``stop`` is the return-to-service instant :func:`outage_hour_mask` expects
+    (the interval is half-open, so the stop hour itself is not masked).
+
+    With ``has_hour_grain`` and both hours present, the window is the DETECTED
+    one — ``[outage_start + start_hour, outage_end + end_hour + 1h)``. Otherwise
+    it is the incumbent day-granular reconstruction,
+    ``[outage_start, outage_end + 1 day)``.
+
+    The fallback is the incumbent behaviour by **identity**, not approximation:
+    an absent grain is exactly ``start_hour = 0`` / ``end_hour = 23``, and
+    ``+ (23 + 1) hours`` is ``+ 1 day``. A row whose hours are null falls back
+    on its own, so a partially-populated extract degrades per row rather than
+    raising.
+
+    Args:
+        row: An ``itertuples`` row carrying ``outage_start`` / ``outage_end``.
+        has_hour_grain: Whether the source frame carries
+            :data:`_UNIT_OUTAGE_HOUR_COLUMNS` (checked once per frame, not per
+            row).
+    """
+    start = pd.Timestamp(row.outage_start)
+    end = pd.Timestamp(row.outage_end)
+    if has_hour_grain:
+        h0, h1 = row.outage_start_hour, row.outage_end_hour
+        if not (pd.isna(h0) or pd.isna(h1)):
+            return (
+                start + pd.Timedelta(hours=int(h0)),
+                end + pd.Timedelta(hours=int(h1) + 1),
+            )
+    return start, end + pd.Timedelta(days=1)
+
+
+def _has_hour_grain(df: pd.DataFrame) -> bool:
+    """Whether an event frame carries both optional hour-grain columns."""
+    return all(c in df.columns for c in _UNIT_OUTAGE_HOUR_COLUMNS)
+
 
 def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
     """Return the ISO's unit-outage events, or ``None`` when no source exists.
@@ -356,11 +416,16 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
     if _use_clean():
         clean_io = _clean_io()
         if clean_io.clean_exists("unit-outage-events", iso=iso):
-            df = clean_io.read_clean(
-                "unit-outage-events",
-                iso=iso,
-                columns=["plant_id", *_UNIT_OUTAGE_EVENT_COLUMNS[1:]],
-            )
+            import pyarrow.parquet as pq
+
+            path = clean_io.paths.clean_path("unit-outage-events", iso=iso)
+            # The hour-grain columns are OPTIONAL in the schema (caiso-183), so
+            # project them only when this ISO's partition actually carries them
+            # — requesting an absent column would raise.
+            present = set(pq.read_schema(path).names)
+            wanted = ["plant_id", *_UNIT_OUTAGE_EVENT_COLUMNS[1:]]
+            wanted += [c for c in _UNIT_OUTAGE_HOUR_COLUMNS if c in present]
+            df = clean_io.read_clean("unit-outage-events", iso=iso, columns=wanted)
             return df.rename(columns={"plant_id": "facility_id"})
     if not csv_path.exists():
         return None
@@ -431,8 +496,10 @@ def unit_outage_derate_factors(
     :data:`UNIT_OUTAGE_MIN_DAYS` days whose window overlaps ``year`` derates
     its plant's availability by ``unit_capacity_mw / plant_capacity_mw`` over
     the outage window (concurrent units sum, clipped at full derate). Each
-    row's ``(outage_start, outage_end)`` is clipped to ``year`` on the model
-    clock, so a single multi-year file feeds every backcast year. Combustion
+    row's window — the detected hour grain when the extract carries it, else the
+    day-granular reconstruction (:func:`unit_outage_event_window`) — is clipped
+    to ``year`` on the model clock, so a single multi-year file feeds every
+    backcast year. Combustion
     turbines are excluded and rows without a matching plant or capacity are
     skipped. Years the file does not cover get an empty dict.
 
@@ -497,6 +564,10 @@ def _unit_outage_factors_from_events(
         cap = _iso_plant_capacity(iso, cc_steam_part_reclass)
         target_fn = _generic_unit_outage_target
     has_derate = "derate_factor" in df.columns
+    # Checked once per frame: an extract re-derived with --hour-grain states the
+    # detected window in hours, otherwise the day-granular reconstruction stands
+    # (caiso-183; see :func:`unit_outage_event_window`).
+    has_hours = _has_hour_grain(df)
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
@@ -515,12 +586,8 @@ def _unit_outage_factors_from_events(
             removed_frac = min(max(1.0 - float(dfac), 0.0), 1.0)
             if removed_frac <= 0.0:
                 continue
-        mask = outage_hour_mask(
-            r.outage_start,
-            pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
-            year,
-            hours,
-        )
+        w_start, w_stop = unit_outage_event_window(r, has_hours)
+        mask = outage_hour_mask(w_start, w_stop, year, hours)
         if not mask.any():
             continue
         arr = sums.setdefault(tgt, np.zeros(hours))
@@ -831,8 +898,9 @@ def unit_outage_active_units(
     to build its factors — so a unit present here is exactly a unit whose
     downtime that factor removed.
 
-    The window mask matches the factor's own convention
-    (``outage_end + 1 day``, the inclusive end date). Consumed only by the
+    The window mask matches the factor's own convention exactly — both route
+    through :func:`unit_outage_event_window`, so the two layers adopt the
+    optional hour grain together or not at all. Consumed only by the
     unit-scoped event-cap composition.
     """
     iso = (iso or "ERCOT").upper()
@@ -840,18 +908,15 @@ def unit_outage_active_units(
     if df is None:
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    has_hours = _has_hour_grain(df)
     out: dict[tuple[int, str], dict[str, np.ndarray]] = {}
     for r in df.itertuples(index=False):
         uid = str(r.unit_id).strip()
         tgt = _unit_outage_target(int(r.facility_id), uid, r.plant_group)
         if tgt is None or not uid:
             continue
-        mask = outage_hour_mask(
-            r.outage_start,
-            pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
-            year,
-            hours,
-        )
+        w_start, w_stop = unit_outage_event_window(r, has_hours)
+        mask = outage_hour_mask(w_start, w_stop, year, hours)
         if not mask.any():
             continue
         per_unit = out.setdefault(tgt, {})

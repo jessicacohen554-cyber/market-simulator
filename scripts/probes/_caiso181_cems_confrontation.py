@@ -68,6 +68,8 @@ from market_sim.data.outages import (  # noqa: E402
     _hour_of_year,
     _iso_plant_capacity,
     unit_outage_csv_for_iso,
+    unit_outage_event_window,
+    _has_hour_grain,
     unit_outage_derate_factors,
 )
 from scripts.data.derive_campd_unit_outages import (  # noqa: E402
@@ -142,6 +144,7 @@ def _pctl(a: list[float] | np.ndarray, q: float) -> float:
 
 def run_l1(year: int, windows: pd.DataFrame, grids, caps) -> dict:
     """L1 — per-window unit-grain confrontation against the unit's own CEMS."""
+    has_hour_grain = _has_hour_grain(windows)
     clock_len = len(
         pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00:00", freq="h")
     )
@@ -162,16 +165,15 @@ def run_l1(year: int, windows: pd.DataFrame, grids, caps) -> dict:
                 }
             )
             continue
-        # The LOADER's own reconstruction: outage_start 00:00 -> outage_end 23:00
-        # inclusive (outages.py _unit_outage_factors_from_events passes
-        # outage_end + 1 day as the half-open stop), clipped to the year.
-        lo = max(0, int((r.outage_start - base).total_seconds() // 3600))
-        hi = min(
-            clock_len,
-            int(
-                (r.outage_end + pd.Timedelta(days=1) - base).total_seconds() // 3600
-            ),
-        )
+        # The LOADER's own reconstruction, clipped to the year. Historically that
+        # was always outage_start 00:00 -> outage_end 23:00 inclusive; since
+        # caiso-183 the loader consumes the OPTIONAL detected hour grain when the
+        # extract carries it (outages.unit_outage_event_window), so this mirrors
+        # whichever grain the file on disk actually states — which is what makes
+        # this instrument a valid G-CONTRACT check on a repaired envelope.
+        w_start, w_stop = unit_outage_event_window(r, has_hour_grain)
+        lo = max(0, int((w_start - base).total_seconds() // 3600))
+        hi = min(clock_len, int((w_stop - base).total_seconds() // 3600))
         if hi <= lo:
             continue
         span = gross[lo:hi]
