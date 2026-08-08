@@ -718,6 +718,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # layout) and hashes distinctly. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "miso_clean_tier_rows",
+    # ERCOT-178 continuous offer-surface conditioning grain (default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (gate-off is byte-identical by construction, SP-2);
+    # an armed run prices the surfaces at node grain and hashes distinctly.
+    # Registered in the same session as the field (the nyiso-119 discipline).
+    "ercot_offer_surface_continuous",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -953,6 +959,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_nqc_accreditation": "False",
     "ercot_wtx_curtail_unpooled": "False",
     "ercot_wtx_panhandle_owner": '"tie"',
+    "ercot_offer_surface_continuous": "False",
 }
 
 
