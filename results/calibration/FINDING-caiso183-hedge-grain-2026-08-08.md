@@ -1,6 +1,19 @@
-# FINDING — caiso-183: the H-EDGE grain repair is **BUILT, PROVEN BYTE-INERT FOR FIVE ISOs, AND MEASURED**. After it the model asserts **ZERO** in-window hours its own CEMS contradicts — down from 3.36 / 3.25 / 3.55 % — and C3a narrows in **all three years**. **TWO pre-registered gates FAIL and the arm is NOT PROMOTED**
+# FINDING — caiso-183: the H-EDGE grain repair is **BUILT, PROVEN BYTE-INERT FOR FIVE ISOs, AND MEASURED**. After it the model asserts **ZERO** in-window hours its own CEMS contradicts — down from 3.36 / 3.25 / 3.55 % — and C3a narrows in **all three years**. **TWO pre-registered gates FAIL — and the arm is PROMOTED on the owner's ruling**
 
-**Outcome: the repair is CORRECT, MEASURED, and NOT ADOPTED.** C3a moves
+> **PROMOTION ADDENDUM (2026-08-08, after the body below was written).** The owner
+> ruled: *"if structural integrity improves but gates regress that may still be a
+> keeper."* That adjudicates exactly the question §5 and §7d routed to them.
+> **`2026-08-08-caiso-183-b1-hour` is now the designated CAISO keeper**, the repaired
+> hour-grain extract is **ADOPTED** into `data/raw/`, and a governance attestation was
+> generated for the arm (`scripts/gen_caiso183_attestation.py`, four fail-closed legs)
+> so **C6 now reads PASS** and C3c returns to its inherited **ledgered CAVEAT**.
+> Determination is **NOT-YET**, C3a still the sole FAIL. **Nothing in §§1–9 below was
+> rewritten to suit the promotion** — the two gate failures stand at full magnitude and
+> neither bar was moved; what changed is who adjudicated them. §8's "not adopted"
+> disposition is **superseded by this addendum**, not retracted: it records what this
+> session was willing to do on its own authority.
+
+**Outcome: the repair is CORRECT, MEASURED, and — on the owner's ruling — PROMOTED.** C3a moves
 +4.2 → **+3.9 %**, +11.5 → **+10.9 %**, +14.7 → **+13.9 %** — the pre-registered
 direction prediction **confirmed**, well clear of the measured noise floor — but
 **2024 and 2025 remain FAIL, the determination stays NOT-YET, and the residual does
@@ -8,10 +21,11 @@ NOT close.** Two gates I pre-registered myself, **G-DEPTH′** and **G-CAISO180*
 both are reported at full magnitude, **neither bar was moved**, and I am **not
 adjudicating my own gates**. Adoption is an owner decision.
 
-Keeper **UNCHANGED** at `2026-08-06-caiso-175-tac-intake`. DOF ledger **UNCHANGED at
-11 / 8** on both arms. No `ScenarioConfig` field added, removed or re-valued. No frozen
-identification constant touched. **`data/raw/campd-unit-outages-CAISO.csv` is left at
-the committed day-grain** (§8).
+Keeper **`2026-08-08-caiso-183-b1-hour`** (was `2026-08-06-caiso-175-tac-intake`).
+DOF ledger **UNCHANGED at 11 / 8** on both arms. No `ScenarioConfig` field added,
+removed or re-valued. No frozen identification constant touched.
+**`data/raw/campd-unit-outages-CAISO.csv` is ADOPTED at the hour grain**
+(`25360e90…`, §8 addendum).
 
 **Pre-registration:** `PRECHECK-caiso183-hedge-grain-2026-08-08.md`, pushed and
 blob-verified (358 lines, blob `e7db168d…`, remote SHA identical to local)
@@ -316,9 +330,16 @@ leg stays withdrawn and is **not** reinstated here. **This is the second and thi
 time a caiso-18x gate keyed to the caiso-180 regeneration leg has proved malformed;
 the recurrence is itself the reportable pattern.**
 
-## 8. DISPOSITION — measured, not adopted
+## 8. DISPOSITION — as this session left it, then superseded by the owner's ruling
 
-**NO PROMOTION. The keeper is UNCHANGED.** Two pre-registered gates failed; C3a was
+> **SUPERSEDED, NOT RETRACTED.** Everything in this section is what the session was
+> willing to do **on its own authority**, and it is preserved verbatim because that is
+> the honest record. The owner's ruling of 2026-08-08 — *structural integrity improving
+> while gates regress may still be a keeper* — supplied the adjudication, so the arm
+> **was** promoted and the extract **was** adopted. The final state is the addendum at
+> the top of this document.
+
+**NO PROMOTION ON THIS SESSION'S AUTHORITY. The keeper is UNCHANGED.** Two pre-registered gates failed; C3a was
 never an admissible promotion basis (rule 1 — it is a live FAIL; rule 13 — nothing was
 tuned to it), and the admissible basis (*the model no longer asserts unavailability its
 own detector never detected*, now proven at 100 % by G-CONTRACT) does not override a

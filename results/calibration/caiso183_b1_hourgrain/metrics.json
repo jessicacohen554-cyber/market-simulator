@@ -16,7 +16,7 @@
   "rubric_version": 3.1,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -53,17 +54,19 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -71,11 +74,11 @@
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 4,
+    "scored": 8,
+    "target_grade": 6,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 1,
+    "fails": 1
   },
   "free_class_score": {
     "iso": "CAISO",

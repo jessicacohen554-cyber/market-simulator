@@ -890,15 +890,19 @@ rule-13-admissible mechanism available to carry it.
      `results/calibration/ercot160_ct_population.{json,csv}`. NOT built this
      session: its only consumer is the lever, which (b) still blocks.
 
-### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper `2026-08-06-caiso-175-tac-intake`, **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**)
+### 5.2 CAISO — **C3a IS A FAIL AND THE DETERMINATION IS NOT-YET (rubric v3.1); IN-MODEL LEVER QUEUE EMPTY; `complete` **WITHDRAWN** (owner, 2026-08-06 — corrected at caiso-178; it is not "held"); THE LAST FREE PARAMETER IS NOW A **PERMANENT DECLARED RESIDUAL** — ALL THREE NAMED EXITS CLOSED, the public-bid exit **SPENT AND CLOSED** at caiso-178 and the degradation-split exit **SPENT AND REFUTED** at caiso-179 — AND `final` IS RECOMMENDED **NO** ON EXECUTABILITY** (keeper **`2026-08-08-caiso-183-b1-hour`** — caiso-183, the H-EDGE grain repair, promoted 2026-08-08 on STRUCTURAL INTEGRITY; **NOT-YET**, 8 criteria scored, **1 FAIL — C3a mean LMP**, now **+3.9 / +10.9 / +13.9 %** having narrowed in all three years)
 
 > **caiso-183 (2026-08-08) — THE H-EDGE GRAIN REPAIR IS BUILT, PROVEN BYTE-INERT FOR
-> FIVE ISOs, AND MEASURED. C3a NARROWS IN ALL THREE YEARS. TWO PRE-REGISTERED GATES
-> FAIL, THE ARM IS NOT PROMOTED, AND THE REPAIRED EXTRACT IS NOT ADOPTED.**
-> **Keeper UNCHANGED** (`2026-08-06-caiso-175-tac-intake`, NOT-YET), **DOF 11/8 on both
-> arms**, no `ScenarioConfig` field, no frozen constant touched, `calibration-complete.json`
-> and `holdout-freeze.json` untouched, 2023+2024+2025 only. `campd_outage_windows` CAISO
-> **stays K** — the cell is the day-grain envelope the keeper still reads.
+> FIVE ISOs, MEASURED, AND *PROMOTED*. C3a NARROWS IN ALL THREE YEARS. TWO
+> PRE-REGISTERED GATES FAIL AND ARE CARRIED ON THE RECORD AT FULL MAGNITUDE.**
+> **NEW KEEPER `2026-08-08-caiso-183-b1-hour`** (NOT-YET, C3a the sole FAIL) — promoted
+> on **STRUCTURAL INTEGRITY, not fit**, under the **OWNER'S RULING of 2026-08-08** that
+> structural-integrity gain may carry a keeper even where gates regress, which adjudicates
+> the two gates this session reported FAILING and **declined to withdraw on its own
+> authority**. **DOF 11/8 on both arms**, no `ScenarioConfig` field, no frozen constant
+> touched, `calibration-complete.json` and `holdout-freeze.json` untouched (owner acts),
+> 2023+2024+2025 only. `campd_outage_windows` CAISO **stays K** — the cell's verdict is
+> unchanged; what changed is the grain of the envelope behind it.
 > **THE OBJECT** (caiso-181 §5 item 1, named there and deliberately not built): the deriver
 > **detects in HOURS** (`start=clock[s]`, `last=clock[e-1]`) but wrote
 > `strftime("%Y-%m-%d")`, and `outages.py` re-expanded every window **00:00 → 23:00**,
@@ -940,14 +944,12 @@ rule-13-admissible mechanism available to carry it.
 > **routed to the OWNER**, and caiso-180's §3a leg-2 withdrawal **stays withdrawn and is NOT
 > reinstated**. This is the **second and third** caiso-18x gate keyed to that regeneration
 > leg to prove malformed.
-> **NOT ADOPTED:** `data/raw/campd-unit-outages-CAISO.csv` is **restored to the committed
-> day-grain `c4ded33d…`** — that path is what the **loader** reads, so committing the
-> repaired `25360e90…` would **silently change what the designated keeper reproduces without
-> a promotion**. It regenerates **byte-identically** from one `--hour-grain` command.
-> **FLAGGED AGAINST THIS SESSION'S OWN CONSERVATISM:** rules 14 `[R-ACCURATE]` and 1
-> `[R-STRUCT]` both point toward **adopting** it (strictly more faithful, zero DOF, and its
-> fit effect is **favourable** rather than the "worse fit" those rules exist to protect) —
-> the call is the **owner's**.
+> **ADOPTED:** `data/raw/campd-unit-outages-CAISO.csv` is now the **hour-grain** extract
+> (`25360e90…`), regenerable **byte-identically** with
+> `python scripts/data/derive_campd_unit_outages.py --iso CAISO --years 2018 … 2026
+> --merit-order-guard --hour-grain`. Rules 14 `[R-ACCURATE]` and 1 `[R-STRUCT]` both
+> support it: strictly more faithful, zero DOF, and its fit effect is **favourable**
+> rather than the "worse fit" those rules exist to protect.
 > **TWO RECORD CORRECTIONS.** (1) The same-head control is **NOT bit-zero**: 2025 is, but
 > 2023/2024 drift **−0.0027/−0.0024 $/MWh** over 5,012/2,465 differing zone-hours, with
 > **all** the large deltas ($81.01/$125.57) on **WECC_PNW/WECC_DSW, which carry ZERO CAISO
