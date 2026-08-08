@@ -4716,3 +4716,120 @@ CLOSED and NOT to be re-measured yet (Q.2).
    assign_zone_by_coords, pre-existing test failures (HOUSE-1 pins the baseline when it
    runs).
 ```
+
+## §0z — FFR-8A landed half-way; FFR-8A-P3 continuation dispatched; D-28 card put (2026-08-08 @ `69addfdf`)
+
+State delta since §0y (full detail: sitting record Addendum AD): **FFR-8A WAS pasted** — PR
+#3722 landed Phases 1–2 (prereg, Part-A decomposition, E1/E2/E4 + gated
+`capacity_screen_scarcity_restoration`, ablation probe script) with clean hygiene, then went
+silent with the WHOLE of Phase 3 unrun: no `ffr8a-{unified,scarcity}` sidecars, no §3.4
+honest-expectation commit, no ablation results, doc §2–§5 placeholders, matrix cell `O`.
+**D28-MEMO WAS pasted and returned** (PR #3720) — recommends composition (c) branch (i);
+surfaced F-1 (HIGH, `ira.py` 5×-ordering inversion, ~$90/kW-yr, not gated on D-28); card put.
+**nyiso-132-cf-arm R.1 check CLEAN** (one NYISO-scoped measured constant; no ERCOT contact).
+**FFR-3V-FIX / HOUSE-1 (§0v): still zero evidence** — paste status asked at the AD card
+round. The prompt below is the FFR-8A Phase-3 continuation — re-issue verbatim.
+
+```
+[FABLE] FFR-8A-P3 — run the pre-registered Phase-3 paired arms of the forward-price
+scarcity repair, fill the FFR-8A record, and measure. NO tuning, NO arming, NO lift call.
+
+Repo /home/user/market-simulator. Model FABLE (rule 27: runner/model core adjacent).
+Branch: claude/ffr-8a-phase3-<suffix> off fresh origin/main. This is the CONTINUATION of
+FFR-8A (PR #3722, merged 2026-08-08): Phases 1-2 landed and are adjudicated CLEAN — the
+prereg is COMMITTED and BINDING (docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md
+§1; nothing in §1 may change). Your job is Phase 3 exactly as pre-registered, plus the
+record-keeping the mid-charter stop left open. Sitting record: Addendum AD.1.
+
+=== PRE-FLIGHT EVIDENCE CHECK (do FIRST — makes this prompt safe to paste at any time) ===
+git fetch origin main. If ANY of these already exist at origin/main, the original session
+(or a parallel paste) got there first: STOP, adjudicate what exists against the prereg
+reads instead of re-solving, and report — do NOT double-run a two-invocation lane:
+- frontend/data/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-unified.json or -scarcity.json
+- a non-placeholder §2/§3/§4 in docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md
+- a live claude/forward-price-scarcity-repair-* or claude/ffr-8a-* remote branch
+
+=== PREREQUISITES, IN ORDER (cold container; results/ is gitignored — COLD solves) ===
+1. uv sync (~2 min) FIRST. 2. uv run python scripts/regenerate_clean.py (~63-65 min).
+"Expect cache hits" is never a budget.
+
+=== THE WORK, IN ORDER ===
+1. WRITE §2 (Phase-1 narrative) from the COMMITTED part-a json
+   (docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json) — narrative of what was measured,
+   no new measurement. RECORD E3's DISPOSITION EXPLICITLY in §3: the landed tail carries
+   E1/E2/E4 only; the §1.1(b) reproduction test is mixed across years (2025: NP6-576-ER
+   table exact on h>$1 15/15, fallback 4/15; 2024: table overshoots deep tail h>$100 11 vs
+   4 measured, fallback 6 vs 4). State which §1.4-E3 branch that outcome takes (landed /
+   escalated as a finding) and why — the prereg pre-committed to escalate-not-land if the
+   table fails reproduction; a mixed result is a finding to record, not a judgment call to
+   quietly absorb. Also fill §3's as-landed element inventory (E1/E2/E4 helper names,
+   the OBDRR048 entering-year date gate, the cc0cbd6 cache-key registration).
+2. COMMIT the §3.4 HONEST EXPECTATION (the prereg-2 commit) BEFORE the repair arm solves —
+   §1.5 requires it and §3.4's header records this commit's hash. It states the expected
+   repaired-object behaviour from Part A + the ablation reasoning alone.
+3. INVOCATION 1 — the CONTROL (prereg §1.3, verbatim):
+   uv run python scripts/run_capacity_hindcast.py \
+     --iso ERCOT --vintage 2020 --start-year 2021 --end-year 2025 \
+     --forward-from-base --arm realized --capacity-screen-unified-lookahead \
+     --out-dir results/hindcast/ercot-2021-2025-t1ff-armr-ffr8a-unified
+   Cold, 4 LP years (2022 bridged), years SEQUENTIAL within the invocation (rule 12).
+   REPRODUCTION GATE — verify BY CONTENT against the §1.3 enumerated FFR-5D-M numbers
+   (2022-ledger gas_st 45/10,942.9 MW net $17.90 vs bar $35.00; 2025-ledger coal 11/1,482.1
+   MW at $0.04; entry_capped 564/62,971.7 (2024) and 554/66,060.5 (2025); screen p_mean
+   $10.49/p_max $24.4 into-2024, $9.54/$46.2 into-2025; scored exits 2023-2025 = 0;
+   additions 17.0 GW). The recorded runtime key 49eac64f146b3460 MAY not survive HEAD drift
+   (nyiso-132 moved constants.py; the D-13 hazard: identical key never implies byte-identity
+   and a moved key never implies drift) — content is the gate, the key is a hint. ANY miss
+   on the enumerated numbers VOIDS the arm and STOPS the lane: diagnose the drift, report,
+   do not proceed to the repair arm on a broken control.
+4. INVOCATION 2 — the REPAIR arm (prereg §1.5, verbatim): same command plus
+   --capacity-screen-scarcity-restoration, --out-dir ...-ffr8a-scarcity. May run
+   CONCURRENTLY with invocation 3's ablation reads but NOT before step 2's commit lands.
+   Rule 12: the two invocations may overlap at <=2 concurrent; years sequential within each.
+5. ABLATION CHAIN (scripts/probes/ffr8a_ablation_chain.py) on the control arm's dumped
+   stack: the A1-A5 cumulative table at the 2024 and 2025 screens (A1 must reproduce the
+   recorded zero). Commit the resulting table as
+   docs/handoffs/ffr-8a/part-b-ablation-2026-08-<dd>.json + its §-narrative.
+6. REGISTER both arms in the HINDCAST namespace ONLY (scripts/register_hindcast.py,
+   meta.kind="full_forward", ids ercot-2021-2025-t1ff-armr-ffr8a-{unified,scarcity}) —
+   NEVER the backcast registry (plan §7.5); the backcast CI gates stay blind to this
+   namespace. Commit sidecars + prereg-2 + results + handoff AS THEY EXIST, in that order,
+   as they are produced — hindcast bundles die with the container.
+7. FILL §4 with the pre-registered reads, AT FULL MAGNITUDE, whatever they show:
+   (i) PRICE-SIDE (primary): repaired per-screen h>$100 / h>$1000 / mean / max vs measured
+   (2024: 161 h>$100, mean $26.82, max $3,060; 2025: 217, $32.49, $1,570); per-fuel screen
+   margins vs the FFR-6A replica margins. (ii) EXIT-SIDE falsification: the 10.9 GW gas_st
+   false wave (gone or manufactured?); in-window economic executions must be ~0 (FFR-7C —
+   any economic execution is a FALSIFICATION signal, not a success); entry_capped census;
+   the FFR-5A coal cohort event sequence. (iii) additions vs 55.4 GW actual — reported,
+   not targeted. Then §5 governance.
+8. MATRIX: update the capacity_screen_scarcity_restoration cell verdict + citation in the
+   SAME session (O -> measured outcome; rejections included). No other cell moves.
+
+=== HARD REFUSALS (the prereg's own §1.6 — restated so no drift survives the handoff) ===
+No arming, no promotion, no keeper contact, no tuning toward 2.294 GW or the measured price
+curve or any residual, no backcast-registry touch, no lift recommendation (the FH-4/FH-5
+determination is the MANAGER'S — Addendum I.1), no owner-decision re-opening, no measured
+ASPLANNP433 wiring into any solve path. Bar re-levels and signal scaling stay REFUSED BY
+NAME (FFR-6A). If a repair element cannot run without inventing a parameter it STOPS and
+escalates. A control that fails its gate is a stop-the-line finding, not a re-tune license.
+
+=== TRAPS (all live) ===
+- ruff-autofix PostToolUse hook reflows src/market_sim/config/constants.py on ANY .py
+  Write/Edit (HOUSE-1 not landed): git status --short after EVERY Python write; restore
+  exact HEAD bytes; never stage the reflow.
+- Evolution ledgers live at <out-dir>/<ISO>/<runtime-key>/ (never the out-dir root);
+  load_ledgers_for_run returns {} on a wrong path — VERIFY THE PATH BEFORE BELIEVING A
+  ZERO. decided_year is on event rows. The RECORDED key is the runtime cache_key= log
+  line, never the request-side cache_key().
+- Push discipline: fetch+rebase onto fresh origin/main before every push (stale base
+  defeats delta compression -> 413); never push_files a >=300-line file; small commits;
+  no new GitHub Actions workflows (private repo, billed minutes).
+- Session containers are SHALLOW clones: never diagnose history from ancestry; check
+  content. Shell cwd persists across commands.
+
+Budget honesty: prereqs ~65 min + two cold 4-LP-year ERCOT hindcast invocations + ablation
++ registration + doc fill. Most of a day. If the container cannot finish both invocations,
+land the control + ablation + records first (commit as they exist) and hand off the repair
+arm explicitly — a truthful partial beats a silent one.
+```
