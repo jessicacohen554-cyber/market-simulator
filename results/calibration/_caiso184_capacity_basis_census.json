@@ -1,0 +1,1176 @@
+{
+  "iso": "CAISO",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "precheck": "results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
+  "precheck_sha256": "33fa2093a8a253982f816a56c420515d4a5ddebbcf2ad1432974a15ccbce9a23",
+  "bars": {
+    "B_ATTRIB": 0.5,
+    "B_ARTIFACT_depth": 0.005,
+    "B_ARTIFACT_capyear": 0.002,
+    "B_DENOM": 0.02
+  },
+  "census": {
+    "2023": {
+      "year": 2023,
+      "n_bins": 31,
+      "n_bins_with_measured_parasitic": 0,
+      "excess_mwh": {
+        "n1d1": 461441.0,
+        "n2d1": 247715.4,
+        "n2d2": 17462.6,
+        "n2d3": 155396.1
+      },
+      "excess_share_of_depth": {
+        "n1d1": 0.013246,
+        "n2d1": 0.007111,
+        "n2d2": 0.000501,
+        "n2d3": 0.004461
+      },
+      "bin_hours_over": {
+        "n1d1": 17011,
+        "n2d1": 9192,
+        "n2d2": 842,
+        "n2d3": 5522
+      },
+      "attribution": {
+        "h_gross": 0.46317,
+        "h_npbasis": 0.498987,
+        "residual": 0.037844
+      },
+      "h_remap_share_of_residual": 0.0,
+      "h_remap_share_of_base": 0.0,
+      "thermal_capyear_mwh_d2": 146467200.0,
+      "residual_share_of_thermal_capyear": 0.00011923,
+      "committed_depth_mwh": 34836000.0,
+      "worst_15_bins": [
+        {
+          "plant_code": 62115,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 603.0,
+          "d2_lp_mw": 678.0,
+          "cc_summer_ratio": 0.889381,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.145937,
+          "max_f_cems_n2d2": 0.993695,
+          "x_n1d1_mwh": 125492.0,
+          "x_n2d1_mwh": 93467.5,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 23183.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 62116,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 630.0,
+          "d2_lp_mw": 699.2,
+          "cc_summer_ratio": 0.90103,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.098413,
+          "max_f_cems_n2d2": 0.96496,
+          "x_n1d1_mwh": 96006.0,
+          "x_n2d1_mwh": 59236.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 20704.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "cc_summer_ratio": 0.824119,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.134168,
+          "max_f_cems_n2d2": 0.911322,
+          "x_n1d1_mwh": 86810.0,
+          "x_n2d1_mwh": 48740.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 27792.6,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 358,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1018.0,
+          "d2_lp_mw": 1036.8,
+          "cc_summer_ratio": 0.981867,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.116896,
+          "max_f_cems_n2d2": 1.069227,
+          "x_n1d1_mwh": 43608.0,
+          "x_n2d1_mwh": 25249.5,
+          "x_n2d2_mwh": 13428.4,
+          "x_n2d3_mwh": 50072.3,
+          "hours_over_n2d2": 591
+        },
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "cc_summer_ratio": 0.729614,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.045098,
+          "max_f_cems_n2d2": 0.743455,
+          "x_n1d1_mwh": 31723.0,
+          "x_n2d1_mwh": 22.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 94.6,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55393,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 557.0,
+          "d2_lp_mw": 635.0,
+          "cc_summer_ratio": 0.877165,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.075404,
+          "max_f_cems_n2d2": 0.919724,
+          "x_n1d1_mwh": 26829.0,
+          "x_n2d1_mwh": 6787.7,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 2100.2,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "cc_summer_ratio": 0.818739,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.055258,
+          "max_f_cems_n2d2": 0.842382,
+          "x_n1d1_mwh": 16949.0,
+          "x_n2d1_mwh": 3317.8,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 15.9,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55333,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 842.0,
+          "d2_lp_mw": 943.5,
+          "cc_summer_ratio": 0.892422,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.051069,
+          "max_f_cems_n2d2": 0.914547,
+          "x_n1d1_mwh": 6110.0,
+          "x_n2d1_mwh": 834.9,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 227.8,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55933,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 320.1,
+          "d2_lp_mw": 336.1,
+          "cc_summer_ratio": 0.952395,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.080912,
+          "max_f_cems_n2d2": 1.003719,
+          "x_n1d1_mwh": 5911.4,
+          "x_n2d1_mwh": 2232.8,
+          "x_n2d2_mwh": 2.1,
+          "x_n2d3_mwh": 24.1,
+          "hours_over_n2d2": 4
+        },
+        {
+          "plant_code": 10294,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 115.0,
+          "d2_lp_mw": 133.2,
+          "cc_summer_ratio": 0.863363,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.434783,
+          "max_f_cems_n2d2": 1.20777,
+          "x_n1d1_mwh": 4269.0,
+          "x_n2d1_mwh": 3666.3,
+          "x_n2d2_mwh": 1653.3,
+          "x_n2d3_mwh": 13775.5,
+          "hours_over_n2d2": 98
+        },
+        {
+          "plant_code": 55400,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 525.0,
+          "d2_lp_mw": 623.0,
+          "cc_summer_ratio": 0.842697,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.026667,
+          "max_f_cems_n2d2": 0.843539,
+          "x_n1d1_mwh": 3424.0,
+          "x_n2d1_mwh": 1.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "cc_summer_ratio": 0.833995,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.039277,
+          "max_f_cems_n2d2": 0.845082,
+          "x_n1d1_mwh": 3309.6,
+          "x_n2d1_mwh": 154.3,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 6.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 422,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 84.0,
+          "d2_lp_mw": 87.0,
+          "cc_summer_ratio": 0.965517,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.869048,
+          "max_f_cems_n2d2": 1.759483,
+          "x_n1d1_mwh": 2739.0,
+          "x_n2d1_mwh": 2464.9,
+          "x_n2d2_mwh": 2202.4,
+          "x_n2d3_mwh": 11265.4,
+          "hours_over_n2d2": 83
+        },
+        {
+          "plant_code": 10034,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 101.0,
+          "d2_lp_mw": 130.0,
+          "cc_summer_ratio": 0.776923,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.178218,
+          "max_f_cems_n2d2": 0.8925,
+          "x_n1d1_mwh": 1945.0,
+          "x_n2d1_mwh": 1141.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 15.6,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56476,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 563.4,
+          "d2_lp_mw": 619.7,
+          "cc_summer_ratio": 0.90915,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.033014,
+          "max_f_cems_n2d2": 0.915685,
+          "x_n1d1_mwh": 1920.2,
+          "x_n2d1_mwh": 34.9,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.0,
+          "hours_over_n2d2": 0
+        }
+      ]
+    },
+    "2024": {
+      "year": 2024,
+      "n_bins": 30,
+      "n_bins_with_measured_parasitic": 0,
+      "excess_mwh": {
+        "n1d1": 694328.4,
+        "n2d1": 436788.0,
+        "n2d2": 24234.2,
+        "n2d3": 264614.3
+      },
+      "excess_share_of_depth": {
+        "n1d1": 0.016918,
+        "n2d1": 0.010642,
+        "n2d2": 0.00059,
+        "n2d3": 0.006447
+      },
+      "bin_hours_over": {
+        "n1d1": 19107,
+        "n2d1": 12556,
+        "n2d2": 1021,
+        "n2d3": 6766
+      },
+      "attribution": {
+        "h_gross": 0.37092,
+        "h_npbasis": 0.594177,
+        "residual": 0.034903
+      },
+      "h_remap_share_of_residual": 0.0,
+      "h_remap_share_of_base": 0.0,
+      "thermal_capyear_mwh_d2": 139196400.0,
+      "residual_share_of_thermal_capyear": 0.0001741,
+      "committed_depth_mwh": 41042000.0,
+      "worst_15_bins": [
+        {
+          "plant_code": 62115,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 603.0,
+          "d2_lp_mw": 678.0,
+          "cc_summer_ratio": 0.889381,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.145937,
+          "max_f_cems_n2d2": 0.993695,
+          "x_n1d1_mwh": 255294.0,
+          "x_n2d1_mwh": 200401.7,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 91285.8,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 62116,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 630.0,
+          "d2_lp_mw": 699.2,
+          "cc_summer_ratio": 0.90103,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.098413,
+          "max_f_cems_n2d2": 0.96496,
+          "x_n1d1_mwh": 172119.0,
+          "x_n2d1_mwh": 118404.5,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 48699.6,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "cc_summer_ratio": 0.824119,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.121646,
+          "max_f_cems_n2d2": 0.901261,
+          "x_n1d1_mwh": 91888.0,
+          "x_n2d1_mwh": 51211.9,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 9022.2,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 358,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1018.0,
+          "d2_lp_mw": 1036.8,
+          "cc_summer_ratio": 0.981867,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.129666,
+          "max_f_cems_n2d2": 1.081453,
+          "x_n1d1_mwh": 66168.0,
+          "x_n2d1_mwh": 40215.9,
+          "x_n2d2_mwh": 23277.1,
+          "x_n2d3_mwh": 63711.4,
+          "hours_over_n2d2": 853
+        },
+        {
+          "plant_code": 55393,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 557.0,
+          "d2_lp_mw": 635.0,
+          "cc_summer_ratio": 0.877165,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.078995,
+          "max_f_cems_n2d2": 0.922795,
+          "x_n1d1_mwh": 33371.0,
+          "x_n2d1_mwh": 9863.4,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 1547.3,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "cc_summer_ratio": 0.818739,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.074866,
+          "max_f_cems_n2d2": 0.858034,
+          "x_n1d1_mwh": 30903.0,
+          "x_n2d1_mwh": 10037.4,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 2.9,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "cc_summer_ratio": 0.729614,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.02549,
+          "max_f_cems_n2d2": 0.729506,
+          "x_n1d1_mwh": 18752.0,
+          "x_n2d1_mwh": 0.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 983.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55933,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 320.1,
+          "d2_lp_mw": 336.1,
+          "cc_summer_ratio": 0.952395,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.068416,
+          "max_f_cems_n2d2": 0.992115,
+          "x_n1d1_mwh": 6918.8,
+          "x_n2d1_mwh": 2139.7,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 3.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55333,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 842.0,
+          "d2_lp_mw": 943.5,
+          "cc_summer_ratio": 0.892422,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.055819,
+          "max_f_cems_n2d2": 0.91868,
+          "x_n1d1_mwh": 4975.0,
+          "x_n2d1_mwh": 446.5,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 72.5,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "cc_summer_ratio": 0.833995,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.049399,
+          "max_f_cems_n2d2": 0.853314,
+          "x_n1d1_mwh": 4178.2,
+          "x_n2d1_mwh": 709.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 1.9,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 10294,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 115.0,
+          "d2_lp_mw": 133.2,
+          "cc_summer_ratio": 0.863363,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.4,
+          "max_f_cems_n2d2": 1.178491,
+          "x_n1d1_mwh": 3447.0,
+          "x_n2d1_mwh": 2920.7,
+          "x_n2d2_mwh": 840.6,
+          "x_n2d3_mwh": 8465.6,
+          "hours_over_n2d2": 94
+        },
+        {
+          "plant_code": 56476,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 563.4,
+          "d2_lp_mw": 619.7,
+          "cc_summer_ratio": 0.90915,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.033014,
+          "max_f_cems_n2d2": 0.915685,
+          "x_n1d1_mwh": 2429.4,
+          "x_n2d1_mwh": 30.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56467,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 605.0,
+          "d2_lp_mw": 655.0,
+          "cc_summer_ratio": 0.923664,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.039669,
+          "max_f_cems_n2d2": 0.936298,
+          "x_n1d1_mwh": 978.0,
+          "x_n2d1_mwh": 95.7,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 74.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56532,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 640.0,
+          "d2_lp_mw": 712.4,
+          "cc_summer_ratio": 0.898372,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.015625,
+          "max_f_cems_n2d2": 0.889599,
+          "x_n1d1_mwh": 720.0,
+          "x_n2d1_mwh": 0.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56041,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 130.0,
+          "d2_lp_mw": 130.0,
+          "cc_summer_ratio": 1.0,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.161538,
+          "max_f_cems_n2d2": 1.1325,
+          "x_n1d1_mwh": 533.0,
+          "x_n2d1_mwh": 114.1,
+          "x_n2d2_mwh": 114.1,
+          "x_n2d3_mwh": 114.7,
+          "hours_over_n2d2": 72
+        }
+      ]
+    },
+    "2025": {
+      "year": 2025,
+      "n_bins": 30,
+      "n_bins_with_measured_parasitic": 0,
+      "excess_mwh": {
+        "n1d1": 414254.3,
+        "n2d1": 249723.2,
+        "n2d2": 10566.6,
+        "n2d3": 237650.7
+      },
+      "excess_share_of_depth": {
+        "n1d1": 0.007823,
+        "n2d1": 0.004716,
+        "n2d2": 0.0002,
+        "n2d3": 0.004488
+      },
+      "bin_hours_over": {
+        "n1d1": 12988,
+        "n2d1": 8401,
+        "n2d2": 462,
+        "n2d3": 6870
+      },
+      "attribution": {
+        "h_gross": 0.397174,
+        "h_npbasis": 0.577318,
+        "residual": 0.025508
+      },
+      "h_remap_share_of_residual": 0.0,
+      "h_remap_share_of_base": 0.0,
+      "thermal_capyear_mwh_d2": 139196400.0,
+      "residual_share_of_thermal_capyear": 7.591e-05,
+      "committed_depth_mwh": 52955000.0,
+      "worst_15_bins": [
+        {
+          "plant_code": 62115,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 603.0,
+          "d2_lp_mw": 678.0,
+          "cc_summer_ratio": 0.889381,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.145937,
+          "max_f_cems_n2d2": 0.993695,
+          "x_n1d1_mwh": 126640.0,
+          "x_n2d1_mwh": 98420.4,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 38371.2,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 62116,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 630.0,
+          "d2_lp_mw": 699.2,
+          "cc_summer_ratio": 0.90103,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.096825,
+          "max_f_cems_n2d2": 0.963566,
+          "x_n1d1_mwh": 107563.0,
+          "x_n2d1_mwh": 72831.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 27443.3,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "cc_summer_ratio": 0.824119,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.116279,
+          "max_f_cems_n2d2": 0.896948,
+          "x_n1d1_mwh": 78016.0,
+          "x_n2d1_mwh": 38114.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 19278.3,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "cc_summer_ratio": 0.818739,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.103387,
+          "max_f_cems_n2d2": 0.880801,
+          "x_n1d1_mwh": 29266.0,
+          "x_n2d1_mwh": 11719.1,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 10399.1,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 358,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1018.0,
+          "d2_lp_mw": 1036.8,
+          "cc_summer_ratio": 0.981867,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.117878,
+          "max_f_cems_n2d2": 1.070168,
+          "x_n1d1_mwh": 29245.0,
+          "x_n2d1_mwh": 17591.5,
+          "x_n2d2_mwh": 9840.9,
+          "x_n2d3_mwh": 65511.6,
+          "hours_over_n2d2": 392
+        },
+        {
+          "plant_code": 55393,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 557.0,
+          "d2_lp_mw": 635.0,
+          "cc_summer_ratio": 0.877165,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.075404,
+          "max_f_cems_n2d2": 0.919724,
+          "x_n1d1_mwh": 22242.0,
+          "x_n2d1_mwh": 7222.1,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 3604.7,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55933,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 320.1,
+          "d2_lp_mw": 336.1,
+          "cc_summer_ratio": 0.952395,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.062168,
+          "max_f_cems_n2d2": 0.986314,
+          "x_n1d1_mwh": 5531.8,
+          "x_n2d1_mwh": 1472.8,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.7,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55333,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 842.0,
+          "d2_lp_mw": 943.5,
+          "cc_summer_ratio": 0.892422,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.051069,
+          "max_f_cems_n2d2": 0.914547,
+          "x_n1d1_mwh": 5242.0,
+          "x_n2d1_mwh": 723.8,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 163.7,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "cc_summer_ratio": 0.729614,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.018627,
+          "max_f_cems_n2d2": 0.724624,
+          "x_n1d1_mwh": 2363.0,
+          "x_n2d1_mwh": 0.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 13050.9,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55400,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 525.0,
+          "d2_lp_mw": 623.0,
+          "cc_summer_ratio": 0.842697,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.024762,
+          "max_f_cems_n2d2": 0.841974,
+          "x_n1d1_mwh": 2030.0,
+          "x_n2d1_mwh": 0.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 5555.8,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56476,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 563.4,
+          "d2_lp_mw": 619.7,
+          "cc_summer_ratio": 0.90915,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.033014,
+          "max_f_cems_n2d2": 0.915685,
+          "x_n1d1_mwh": 1699.4,
+          "x_n2d1_mwh": 7.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 0.0,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 10294,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 115.0,
+          "d2_lp_mw": 133.2,
+          "cc_summer_ratio": 0.863363,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.434783,
+          "max_f_cems_n2d2": 1.20777,
+          "x_n1d1_mwh": 1692.0,
+          "x_n2d1_mwh": 1365.7,
+          "x_n2d2_mwh": 633.7,
+          "x_n2d3_mwh": 7353.6,
+          "hours_over_n2d2": 31
+        },
+        {
+          "plant_code": 56467,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 605.0,
+          "d2_lp_mw": 655.0,
+          "cc_summer_ratio": 0.923664,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.036364,
+          "max_f_cems_n2d2": 0.933321,
+          "x_n1d1_mwh": 818.0,
+          "x_n2d1_mwh": 47.6,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 83.3,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 56532,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 640.0,
+          "d2_lp_mw": 712.4,
+          "cc_summer_ratio": 0.898372,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.017187,
+          "max_f_cems_n2d2": 0.890967,
+          "x_n1d1_mwh": 593.0,
+          "x_n2d1_mwh": 0.0,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 5.8,
+          "hours_over_n2d2": 0
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "cc_summer_ratio": 0.833995,
+          "net_over_gross": 0.975,
+          "net_factor_source": "class_default",
+          "max_f_cems_n1d1": 1.032528,
+          "max_f_cems_n2d2": 0.839595,
+          "x_n1d1_mwh": 444.3,
+          "x_n2d1_mwh": 17.1,
+          "x_n2d2_mwh": 0.0,
+          "x_n2d3_mwh": 2.9,
+          "hours_over_n2d2": 0
+        }
+      ]
+    }
+  },
+  "h_denom": {
+    "2023": {
+      "year": 2023,
+      "n_bins_with_windows": 30,
+      "recomputed_depth_mwh_shipped_denominator": 34137559.6,
+      "recomputed_depth_mwh_lp_denominator": 32600825.0,
+      "caiso183_published_depth_mwh": 34836000.0,
+      "over_removal_mwh": 1536734.6,
+      "over_removal_share_of_depth": 0.045016,
+      "n_bin_hours_removal_would_increase": 0,
+      "by_plant_group_mwh": {
+        "CC_CHP": 335271.3,
+        "CC_REGULAR": 1201463.3
+      },
+      "worst_10_bins": [
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "over_removal_mwh": 292886.3
+        },
+        {
+          "plant_code": 55151,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1010.0,
+          "d2_lp_mw": 1156.0,
+          "over_removal_mwh": 203784.5
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "over_removal_mwh": 198101.8
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "over_removal_mwh": 143834.8
+        },
+        {
+          "plant_code": 56532,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 640.0,
+          "d2_lp_mw": 712.4,
+          "over_removal_mwh": 109248.7
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "over_removal_mwh": 88017.4
+        },
+        {
+          "plant_code": 55393,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 557.0,
+          "d2_lp_mw": 635.0,
+          "over_removal_mwh": 71338.6
+        },
+        {
+          "plant_code": 10034,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 101.0,
+          "d2_lp_mw": 130.0,
+          "over_removal_mwh": 71258.0
+        },
+        {
+          "plant_code": 56467,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 605.0,
+          "d2_lp_mw": 655.0,
+          "over_removal_mwh": 55583.4
+        },
+        {
+          "plant_code": 55400,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 525.0,
+          "d2_lp_mw": 623.0,
+          "over_removal_mwh": 50529.5
+        }
+      ]
+    },
+    "2024": {
+      "year": 2024,
+      "n_bins_with_windows": 28,
+      "recomputed_depth_mwh_shipped_denominator": 42195802.9,
+      "recomputed_depth_mwh_lp_denominator": 39820833.7,
+      "caiso183_published_depth_mwh": 41042000.0,
+      "over_removal_mwh": 2374969.2,
+      "over_removal_share_of_depth": 0.056284,
+      "n_bin_hours_removal_would_increase": 0,
+      "by_plant_group_mwh": {
+        "CC_CHP": 385149.4,
+        "CC_REGULAR": 1989819.8
+      },
+      "worst_10_bins": [
+        {
+          "plant_code": 55151,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1010.0,
+          "d2_lp_mw": 1156.0,
+          "over_removal_mwh": 554245.3
+        },
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "over_removal_mwh": 382394.6
+        },
+        {
+          "plant_code": 55295,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 514.0,
+          "d2_lp_mw": 591.0,
+          "over_removal_mwh": 319640.7
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "over_removal_mwh": 194176.2
+        },
+        {
+          "plant_code": 10034,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 101.0,
+          "d2_lp_mw": 130.0,
+          "over_removal_mwh": 137351.0
+        },
+        {
+          "plant_code": 55400,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 525.0,
+          "d2_lp_mw": 623.0,
+          "over_removal_mwh": 134318.8
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "over_removal_mwh": 124762.5
+        },
+        {
+          "plant_code": 56532,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 640.0,
+          "d2_lp_mw": 712.4,
+          "over_removal_mwh": 117940.5
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "over_removal_mwh": 107097.6
+        },
+        {
+          "plant_code": 56467,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 605.0,
+          "d2_lp_mw": 655.0,
+          "over_removal_mwh": 69017.0
+        }
+      ]
+    },
+    "2025": {
+      "year": 2025,
+      "n_bins_with_windows": 35,
+      "recomputed_depth_mwh_shipped_denominator": 52547320.9,
+      "recomputed_depth_mwh_lp_denominator": 48858510.6,
+      "caiso183_published_depth_mwh": 52955000.0,
+      "over_removal_mwh": 3688810.3,
+      "over_removal_share_of_depth": 0.0702,
+      "n_bin_hours_removal_would_increase": 0,
+      "by_plant_group_mwh": {
+        "CC_CHP": 531935.2,
+        "CC_REGULAR": 3156875.1
+      },
+      "worst_10_bins": [
+        {
+          "plant_code": 260,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1020.0,
+          "d2_lp_mw": 1398.0,
+          "over_removal_mwh": 1213121.9
+        },
+        {
+          "plant_code": 55151,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 1010.0,
+          "d2_lp_mw": 1156.0,
+          "over_removal_mwh": 540584.5
+        },
+        {
+          "plant_code": 55182,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 561.0,
+          "d2_lp_mw": 685.2,
+          "over_removal_mwh": 324062.7
+        },
+        {
+          "plant_code": 55295,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 514.0,
+          "d2_lp_mw": 591.0,
+          "over_removal_mwh": 303304.9
+        },
+        {
+          "plant_code": 55345,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 592.72,
+          "d2_lp_mw": 710.7,
+          "over_removal_mwh": 244914.7
+        },
+        {
+          "plant_code": 55217,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 559.0,
+          "d2_lp_mw": 678.3,
+          "over_removal_mwh": 206381.0
+        },
+        {
+          "plant_code": 55400,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 525.0,
+          "d2_lp_mw": 623.0,
+          "over_removal_mwh": 165252.8
+        },
+        {
+          "plant_code": 10034,
+          "plant_group": "CC_CHP",
+          "d1_net_summer_mw": 101.0,
+          "d2_lp_mw": 130.0,
+          "over_removal_mwh": 136710.0
+        },
+        {
+          "plant_code": 56532,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 640.0,
+          "d2_lp_mw": 712.4,
+          "over_removal_mwh": 109706.1
+        },
+        {
+          "plant_code": 55393,
+          "plant_group": "CC_REGULAR",
+          "d1_net_summer_mw": 557.0,
+          "d2_lp_mw": 635.0,
+          "over_removal_mwh": 101927.2
+        }
+      ]
+    }
+  },
+  "noncc_basis": {
+    "2023": {
+      "year": 2023,
+      "capacity_source_counts": {
+        "observed_peak": 37,
+        "eia_digits": 10,
+        "eia_exact": 2,
+        "eia_exact_cc": 18,
+        "eia923_netzero": 39,
+        "eia_digits_cc": 9
+      },
+      "n_mixed_group_facility_rows_skipped": 0,
+      "by_group": {
+        "ST_GAS": {
+          "n_bins": 1,
+          "mean_nameplate_over_net_summer": 0.9434,
+          "unrepaired_over_removal_mwh": 0.0,
+          "share_of_depth": 0.0
+        }
+      },
+      "total_unrepaired_share_of_depth": 0.0
+    },
+    "2024": {
+      "year": 2024,
+      "capacity_source_counts": {
+        "observed_peak": 37,
+        "eia_digits": 10,
+        "eia_exact": 2,
+        "eia_exact_cc": 18,
+        "eia923_netzero": 39,
+        "eia_digits_cc": 9
+      },
+      "n_mixed_group_facility_rows_skipped": 0,
+      "by_group": {
+        "ST_GAS": {
+          "n_bins": 1,
+          "mean_nameplate_over_net_summer": 0.9434,
+          "unrepaired_over_removal_mwh": 0.0,
+          "share_of_depth": 0.0
+        }
+      },
+      "total_unrepaired_share_of_depth": 0.0
+    },
+    "2025": {
+      "year": 2025,
+      "capacity_source_counts": {
+        "observed_peak": 37,
+        "eia_digits": 10,
+        "eia_exact": 2,
+        "eia_exact_cc": 18,
+        "eia923_netzero": 39,
+        "eia_digits_cc": 9
+      },
+      "n_mixed_group_facility_rows_skipped": 0,
+      "by_group": {
+        "ST_GAS": {
+          "n_bins": 1,
+          "mean_nameplate_over_net_summer": 0.9434,
+          "unrepaired_over_removal_mwh": 0.0,
+          "share_of_depth": 0.0
+        }
+      },
+      "total_unrepaired_share_of_depth": 0.0
+    }
+  },
+  "verdicts": {
+    "B_ATTRIB": "PASS",
+    "B_ARTIFACT": "FIRES",
+    "B_DENOM_years_at_or_above_bar": 3,
+    "B_DENOM": "licenses an arm",
+    "G_MONO_violations": 0,
+    "branch": "C (build the repair)"
+  }
+}
