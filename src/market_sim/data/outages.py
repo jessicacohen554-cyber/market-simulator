@@ -432,9 +432,18 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
     return pd.read_csv(csv_path)
 
 
+# The bin groups whose LP capacity fleet_to_bins raises to full EIA-860
+# nameplate under ScenarioConfig.cc_nameplate_summer_derate — and therefore the
+# only groups the ``cc_nameplate_basis`` denominator repair moves. Kept next to
+# the consumer so the two lists cannot drift.
+_CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
+
+
 @lru_cache(maxsize=None)
 def _iso_plant_capacity(
-    iso: str, cc_steam_part_reclass: bool = False
+    iso: str,
+    cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
 
@@ -453,6 +462,27 @@ def _iso_plant_capacity(
     more than actually went out). Default ``False`` keeps every existing caller
     — including PJM's and MISO's own outage loaders — on the identical cache key
     and the identical map.
+
+    ``cc_nameplate_basis`` (``ScenarioConfig.unit_outage_lp_capacity_basis``,
+    default ``False``) closes the SAME class of defect for the other flag that
+    moves a bin's LP capacity, ``cc_nameplate_summer_derate``. Under that flag
+    :func:`~market_sim.data.fleet.campd_bins.fleet_to_bins` divides a CC bin's
+    summed net-summer capacity by ``cc_summer_derate_ratio`` so **the LP carries
+    full nameplate**, while this map — the denominator the derate share divides
+    into — stays on net summer. Numerator and denominator then sit on different
+    bases: the extract's ``unit_capacity_mw`` is the EIA-860 **nameplate**
+    (``scripts.data.derive_campd_unit_outages.build_capacity_index``, whose own
+    docstring states it is written on "the same basis as the model bin
+    denominator the derate divides into"), so the removed FRACTION is inflated by
+    ``nameplate / net_summer`` and the model removes more MW than went out —
+    exactly the Stony Brook arithmetic above, for a different flag. When True the
+    CC bins are raised by the same ``cc_summer_derate_ratio`` ``fleet_to_bins``
+    uses, so the share is taken against the capacity it is applied to. Measured
+    (EIA-860 published net-summer and nameplate), **zero fitted scalars**, and
+    monotone: nameplate >= net summer, so a removed fraction can only fall.
+    Verified at CAISO (caiso-184): across every EIA-sourced CC bin the extract's
+    own ``plant_capacity_mw`` equals this raised denominator EXACTLY (median
+    ratio 1.000, against 1.072 on the unraised one).
     """
     from market_sim.config.iso_configs import get_iso_config
     from market_sim.data.fleet import (
@@ -476,6 +506,21 @@ def _iso_plant_capacity(
         cap[(code, g.plant_group)] = cap.get((code, g.plant_group), 0.0) + float(
             g.pmax_mw
         )
+    if cc_nameplate_basis:
+        # Reproduce fleet_to_bins' CC nameplate raise EXACTLY (campd_bins.py,
+        # `cap = cap / _ratio` under cc_nameplate_summer_derate) so this
+        # denominator is the capacity the derate multiplier is applied to. Same
+        # published ratio, same clamp, same absent-plant fallback — a bin whose
+        # plant is missing from the EIA-860 CC sheet is left untouched in BOTH
+        # places, so the two can never disagree.
+        from market_sim.data.fleet.campd_bins import cc_summer_derate_ratio
+
+        for key in list(cap):
+            if key[1] not in _CC_NAMEPLATE_BASIS_GROUPS:
+                continue
+            ratio = cc_summer_derate_ratio(int(key[0]))
+            if ratio is not None and ratio > 0.0:
+                cap[key] = cap[key] / ratio
     return cap
 
 
@@ -486,6 +531,7 @@ def unit_outage_derate_factors(
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -517,7 +563,7 @@ def unit_outage_derate_factors(
         return {}
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass
+        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
     )
 
 
@@ -528,6 +574,7 @@ def _unit_outage_factors_from_events(
     bins_path: str | Path,
     iso: str,
     cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -561,7 +608,7 @@ def _unit_outage_factors_from_events(
         }
         target_fn = _unit_outage_target
     else:
-        cap = _iso_plant_capacity(iso, cc_steam_part_reclass)
+        cap = _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
         target_fn = _generic_unit_outage_target
     has_derate = "derate_factor" in df.columns
     # Checked once per frame: an extract re-derived with --hour-grain states the
@@ -602,6 +649,7 @@ def unit_outage_short_derate_factors(
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -625,7 +673,7 @@ def unit_outage_short_derate_factors(
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
     ]
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass
+        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
     )
 
 
@@ -654,6 +702,7 @@ def unit_partial_outage_derate_factors(
     bins_path: str | Path = BINS_CSV_DEFAULT,
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -684,7 +733,7 @@ def unit_partial_outage_derate_factors(
         return {}
     df = pd.read_csv(csv_path)
     return _unit_outage_factors_from_events(
-        df, year, hours, bins_path, iso, cc_steam_part_reclass
+        df, year, hours, bins_path, iso, cc_steam_part_reclass, cc_nameplate_basis
     )
 
 
@@ -708,6 +757,7 @@ def unit_outage_maxgen_derate_factors(
     hours: int = HOURS_PER_YEAR,
     iso: str = "ERCOT",
     cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -738,7 +788,7 @@ def unit_outage_maxgen_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
-    cap = _iso_plant_capacity(iso, cc_steam_part_reclass)
+    cap = _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         code = int(r.facility_id)

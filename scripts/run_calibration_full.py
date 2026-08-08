@@ -3198,6 +3198,7 @@ def solve_and_persist(
     caiso_asymmetric_path_ratings: bool | None = None,
     caiso_zonal_loss_surface: bool | None = None,
     capacity_deliverability_limits: bool | None = None,
+    unit_outage_lp_capacity_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
     nyiso_local_selfsupply: bool | None = None,
@@ -4412,6 +4413,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 capacity_deliverability_limits=capacity_deliverability_limits
             )
+        if unit_outage_lp_capacity_basis is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis
+            )
         if ramp_limits is not None:
             recorded_cfg = recorded_cfg.with_overrides(ramp_limits=ramp_limits)
         if local_capacity_constraints is not None:
@@ -4814,6 +4819,7 @@ def solve_and_persist(
             caiso_asymmetric_path_ratings=caiso_asymmetric_path_ratings,
             caiso_zonal_loss_surface=caiso_zonal_loss_surface,
             capacity_deliverability_limits=capacity_deliverability_limits,
+            unit_outage_lp_capacity_basis=unit_outage_lp_capacity_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
             nyiso_local_selfsupply=nyiso_local_selfsupply,
@@ -5622,6 +5628,7 @@ def solve_and_persist(
         "caiso_asymmetric_path_ratings": caiso_asymmetric_path_ratings,
         "caiso_zonal_loss_surface": caiso_zonal_loss_surface,
         "capacity_deliverability_limits": capacity_deliverability_limits,
+        "unit_outage_lp_capacity_basis": unit_outage_lp_capacity_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
         "nyiso_local_selfsupply": nyiso_local_selfsupply,
@@ -10255,6 +10262,25 @@ def main() -> None:
         "base config value (off).",
     )
     parser.add_argument(
+        "--unit-outage-lp-capacity-basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Take the CAMPD unit-outage derate share against the capacity the "
+        "multiplier is APPLIED TO in the LP "
+        "(ScenarioConfig.unit_outage_lp_capacity_basis). A consistency repair, "
+        "not a market feature: the extract's unit_capacity_mw numerator is the "
+        "EIA-860 NAMEPLATE, while outages._iso_plant_capacity supplies a "
+        "NET-SUMMER denominator; with cc_nameplate_summer_derate armed the LP "
+        "additionally carries the CC bin at full nameplate, so the removed "
+        "fraction is inflated by nameplate/net_summer and the model removes more "
+        "MW than went out. Raises the denominator's CC bins by the same "
+        "published cc_summer_derate_ratio fleet_to_bins uses — the identical "
+        "invariant _iso_plant_capacity already enforces for cc_steam_part_reclass. "
+        "MEASURED (EIA-860 nameplate / net summer), zero fitted scalars, and "
+        "monotone (a removed fraction can only fall). caiso-184. Default (unset) "
+        "keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--ramp-limits",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -11394,6 +11420,7 @@ def main() -> None:
         caiso_asymmetric_path_ratings=args.caiso_asymmetric_path_ratings,
         caiso_zonal_loss_surface=args.caiso_zonal_loss_surface,
         capacity_deliverability_limits=args.capacity_deliverability_limits,
+        unit_outage_lp_capacity_basis=args.unit_outage_lp_capacity_basis,
         ramp_limits=args.ramp_limits,
         local_capacity_constraints=args.local_capacity_constraints,
         ct_netload_drag=args.ct_netload_drag,
