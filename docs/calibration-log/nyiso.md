@@ -5904,3 +5904,140 @@ declared blast radius of the ungated choice and belongs to the forecast lane's o
 governance (rule 15's separate namespace).
 
 * Next number: **nyiso-133**.
+
+## 2026-08-08 — nyiso-133: the commissioning-curve attribution is REFUTED; the defect is the in-service DATE basis. All seven gates PASS, KEEPER UNCHANGED pending the owner call
+
+**Lever-queue item 2 as nyiso-132 named it, RE-POINTED BY MEASUREMENT before any
+mechanism was built.** Paired single-delta A/B on the keeper recipe
+`2026-08-08-nyiso-132-cf-arm`, 2023–2025, both arms registered:
+`2026-08-08-nyiso-133-cod-control` / `2026-08-08-nyiso-133-cod-arm`.
+Pre-registration: `PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md`;
+result: `FINDING-nyiso133-market-solar-cod-basis-2026-08-08.md`; records
+`_nyiso133_commissioning_ramp.json`, `_nyiso133_ab_gates.json`. Rule 22:
+2023–2025 only; the ACTIVE holdout spend freeze was checked and not touched.
+
+### (1) The queue item is REFUTED, ex ante, with no solve spent
+
+nyiso-132's named successor was *"THE MODEL HAS NO COMMISSIONING CURVE."*
+Measured nationally first: 730 single-vintage EIA-860 `OP` PV plants ≥ 5 MW
+(36.4 GW, COD 2019–2022) against their own EIA-923 monthly metered history,
+two-way normalized by a mature-plant peer index per calendar month × each
+plant's own permanent quality factor. A new utility PV plant runs at **0.723**
+of mature in its COD month, **0.962** at month+1 and is **mature from month 2**;
+a placebo cohort (age 36–47) reads **1.0072**, calibrating the estimator. The
+whole commissioning shortfall is **0.321 month-equivalents** of nameplate —
+≈ 18 GWh on NYISO's 399 MW 2024 build wave against a +167 GWh over-statement,
+**~11 % of the effect it was named to explain**. No commissioning curve is
+built. This is the durable result and it stands whatever happens to the arm.
+
+### (2) What the same measurement found instead — the DATE basis
+
+The Gold Book Table III-2a **"In-Service Date"** is a registration /
+interconnection-service date and **leads** the plant's metered commercial start;
+**EIA-860's `Operating Month` matches it — equal to the first metered EIA-923
+month in 11 of the 12 uncensored plants.** The Gold Book leads **+2 months on
+Morris Ridge (179 MW, 31 % of the 2025 fleet)**, +1 on High River (90 MW), East
+Point (50 MW), Calverton, Puckett, Janis, Grissom and Long Island Solar Farm —
+and **TRAILS by 1 and 3 months on Darby and Stillwater**. Signed **both ways**,
+so it is a basis difference, not a correction aimed at the residual.
+
+### (3) The mechanism
+
+`ScenarioConfig.nyiso_solar_registry_cod_dates`, **gated, default off,
+byte-identical**. The derive script emits both published bases as parallel
+columns of the same artifact (`capacity_mw` / `capacity_mw_cod`); membership and
+nameplate stay 100 % Gold Book and only the switch-on month moves. Rule 14
+`[R-ACCURATE]`'s reconciled-real-data path, rule 13 admissible (an input that
+regenerates forward through EIA-860M), **ZERO free parameters** — the crosswalk
+is a 15-row identity between two registries, each row verified on nameplate
+agreement and **dropped** rather than guessed when it fails. DOF ledger **36 →
+37 entries, `n_residual` UNCHANGED at 6**, the new entry identified `published`.
+The gated construction was chosen over nyiso-132's ungated pattern, before the
+result was known, to keep the A/B a clean single delta and to avoid silently
+re-staling the NYISO forecast lane's committed hindcast sidecars.
+
+### (4) The control reproduces the superseded keeper EXACTLY
+
+**Max |class-year energy delta| = 0.000 GWh** over 14 classes × 3 years — and
+unlike nyiso-132 **no toolchain-drift excuse was available**: this session's
+environment matches the keeper bundle's recorded one exactly (Python 3.11.15,
+highspy 1.15.1, numpy 2.4.6, scipy 1.17.1, pandas 3.0.5, pyarrow 25.0.0,
+pydantic 2.13.4, same platform).
+
+### (5) ALL SEVEN pre-registered gates PASS; the determination is identical
+
+K1 config isolation (exactly ONE differing field of 701), K2 feasibility, K3
+liveness (**arm/control solar energy 1.0118 / 0.8746 / 1.0000 against ex-ante
+predictions of 1.0118 / 0.8746 / 1.0000**, measured through
+`load_renewable_profiles` before the solve), K4 scope (wind identical at 0.000
+GWh), K5 no gated regression, K6 no scarcity collapse, K7 forcing budget — all
+**PASS**. Determination **`CALIBRATED-WITH-CAVEATS` in both arms**, all 8
+criterion statuses identical, C3c the same lone ledgered caveat (budget 1 of 1).
+
+| criterion | actual | control | arm |
+|---|---:|---:|---:|
+| C3a 2023 / 2024 / 2025 | 32.25 / 38.13 / 66.45 | +8.8 / +0.7 / −3.4 % | **+8.8 / +0.8 / −3.4 %** |
+| C3c 2023 / 2024 / 2025 | 10 / 12 / 42 h | 21 / 3 / 24 h | **21 / 3 / 24 h** |
+
+Hourly grain at full size: demand-weighted ΔLMP **−0.0023 / +0.0345 / 0.0000
+$/MWh**, max zonal |ΔLMP| 4.55 / 5.67 / 0.00, and **2025 is BIT-IDENTICAL (zero
+hours move)** — the construction's own prediction, since the 2025 registry is
+flat and the two bases coincide. 2024 solar −84.06 GWh is taken up by
+CC_REGULAR +41.94, ST_GAS +21.28, CC_CHP +14.10; C1 moves four cells, all
+staying PASS, with **ST_GAS-2024 moving TOWARD its actual** and CC_REGULAR-2024
+away. C8 ST_GAS-2024 24.5 → 24.4 %.
+
+### (6) Reported against interest
+
+Solar vs the published registry: **+20.9 → +22.3 % (2023, WORSE)**, +33.2 →
+**+16.5 % (2024)**, −0.1 % (2025, unchanged). **ADV-1 materialized exactly as
+pre-registered** and was expressly ruled out ex ante as grounds for rejection —
+the band is report-only and D-10 classes NYISO solar `delivered_pinned`. Rule 1
+`[R-STRUCT]`: the accurate input stays. The signature that this is a repair and
+not a fit is the **coherence**, not the level: the implied fleet CF goes from
+0.1629 / 0.1473 (adjacent years disagreeing by 10 %) to **0.1613 / 0.1641**
+(agreeing to 1.7 %), and nothing in the construction targets that quantity.
+Second disclosed cost: 2023 year-end registered capacity rises 174.4 → 194.4 MW
+because Stillwater's EIA-860 month is 2023-11 and EIA-923 records it metering
+745 MWh that December.
+
+### (7) A test that has been FAILING ON MAIN, found and repaired
+
+`tests/test_nyiso_market_solar.py::test_flag_off_is_byte_identical_and_on_moves_only_solar`
+asserts the armed 2024 energy at `approx(0.503, rel=0.10)`. That was right at
+CF 0.15; **nyiso-132's ungated re-level to 0.1955 made the quantity 0.670 TWh
+and the assertion was not updated**, so the test has been red on `main` since
+that promotion. Confirmed against `origin/main`'s own artifacts, not inferred.
+
+### (8) Status and the lever queue
+
+**KEEPER UNCHANGED at `2026-08-08-nyiso-132-cf-arm`.** The session recommends
+**PROMOTE** (structure improves, zero free parameters, `n_residual` unchanged,
+no gated criterion regresses, the control reproduces exactly, 2025
+bit-identical), but promotion is the owner's call and the keeper shard, the
+`complete` marker and the matrix keeper stamp are all untouched. Matrix cell
+`vre_registry_cod_date_basis` NYISO is **`O`** — built and adjudicated, armed on
+no keeper. **If promoted, the gate should be collapsed to unconditional**
+(rule 26 `[R-DELETE]`) — flagged, not taken.
+
+**Lever queue after this session:**
+
+* item 1 — the chartered **joint** Zone-K transfer-bound + downstate ST_GAS
+  `min_gen` reconciliation (rule 19) — **REMAINS OPEN**, untouched
+* item 2's stated cause (no commissioning curve) — **REFUTED**, §1
+* **NEW, replacing it** — the **fleet-CF COMPOSITION** object: after the date
+  repair 2023 and 2024 both imply ~0.162 against 2025's 0.1955, and the residual
+  is measured per-plant mature CF (0.174–0.182 for the 2021–22 small fixed-tilt
+  NY8 units vs 0.198–0.221 for the 2024 tracking plants). One ISO-wide
+  `RENEWABLE_AVG_CF` cannot track a fleet going from 100 % fixed-tilt to 56 %
+  large tracking across the span
+
+**Holdout posture UNCHANGED:** `complete` (validation only) untouched, NYISO
+stays **absent from `final`**, the ACTIVE spend freeze independently blocks
+every out-of-training solve. C3c is neither closed nor narrowed — it is
+bit-unchanged.
+
+Retention: the top-15-per-ISO sweep pruned `2026-08-04-nyiso-120a2-control-samehead`
+and `2026-08-04-nyiso-120b-scope-gate`.
+
+* Next number: **nyiso-134**.

@@ -136,6 +136,36 @@ sizing and is a kill (K5).
 **ADV-3.** Less 2024 solar can only add scarcity hours, and C3c-2024 is
 under-produced (3 h vs 12). A DECREASE in the 2024 tail would be unexpected.
 
+### 4a. Construction addendum — measured after the code was built, before the solve
+
+Three things the §4 arithmetic (flat monthly capacity) did not capture, recorded
+here so they are pre-solve statements and not post-hoc explanations:
+
+1. **The energy ratio is not the capacity ratio.** Through the actual model path
+   (`load_renewable_profiles`), 2024 solar energy moves **670.2 → 586.1 GWh, a
+   ratio of 0.875**, below the flat mean-monthly capacity ratio of 0.898 —
+   because the re-timed months are not CF-neutral: Morris Ridge's +2-month shift
+   removes 179 MW from September and October, whose solar CF sits above the
+   annual mean. Measured errors against the published Net Energy are therefore
+   **+20.9 → +22.3 % (2023)**, **+33.2 → +16.5 % (2024)**, **−0.1 → −0.1 %
+   (2025)** — 2024 improves more than §4 predicted, 2023 worsens slightly more.
+   K3 is still measured on the **capacity** ratio (1.010 / 0.898 / 1.000), which
+   is the quantity the artifact controls directly.
+2. **2023 year-end solar capacity RISES 174.4 → 194.4 MW.** Stillwater Solar's
+   EIA-860 `Operating Month` is 2023-11 against a Gold Book 2024-02, and EIA-923
+   records it metering 745 MWh in December 2023, so on the measured basis its
+   20 MW belongs to the 2023 year-end fleet. `installed_mw` and the zone split
+   follow. This is the mechanism working, not a leak — but it means the "year-end
+   capacity is invariant" statement holds for 2024 and 2025 only, and §3's
+   "membership and nameplate stay 100 % Gold Book" should be read precisely: the
+   same 15 units at the same published nameplates, re-timed.
+3. **The control should reproduce the keeper byte-identically, and there is no
+   toolchain excuse if it does not.** Unlike nyiso-132, this session's
+   environment matches the keeper bundle's recorded one exactly (Python 3.11.15,
+   highspy 1.15.1, numpy 2.4.6, scipy 1.17.1, pandas 3.0.5, pyarrow 25.0.0,
+   pydantic 2.13.4, same platform). A non-reproducing control is a hard failure
+   here, not a drift note.
+
 ## 5. Kill gates — pre-registered, evaluated before any promotion claim
 
 | gate | condition | disposition if it fires |
