@@ -20,6 +20,7 @@ import numpy as np
 
 from market_sim.config.constants import (
     END_YEAR,
+    ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
     STORAGE_MEASURED_BASE_FLEET_ISOS,
@@ -189,6 +190,9 @@ from market_sim.results.outputs import FleetContext
 from market_sim.results.scarcity import (
     caiso_scarcity_overlay,
     effective_reliability_deployment_mw,
+    ercot_lookahead_as_hold_mw,
+    ercot_lookahead_committed_reserves,
+    ercot_lookahead_expected_ordc_adder,
     reserve_headroom,
     scarcity_prices,
 )
@@ -605,6 +609,8 @@ def _lookahead_reprice_signal(
     vre_capacity_potential: np.ndarray | None = None,
     storage_shave: tuple[float, float, float] | None = None,
     hourly_availability: bool = False,
+    scarcity_restoration: dict | None = None,
+    diagnostics: dict | None = None,
 ) -> np.ndarray:
     """Stack re-price of the entering year's known net load (plan §2.3.2).
 
@@ -681,6 +687,10 @@ def _lookahead_reprice_signal(
     if pipeline_vre is not None:
         vre = vre + np.asarray(pipeline_vre, dtype=float)
     net_load = demand_next - vre
+    # FFR-8A: the system net load BEFORE the storage shave — the axis the
+    # committed-capability share tables were derived on (demand - wind -
+    # solar, no storage term; scripts/data/derive_ercot_rtolcap_forward.py).
+    net_load_system = net_load
     if storage_shave is not None:
         # FFR-5D repair (a): the storage fleet shifts the net load the stack
         # prices — discharge at the peak, charge in the trough, per day.
@@ -706,6 +716,23 @@ def _lookahead_reprice_signal(
         )
     order = np.argsort(mc_gen, kind="stable")
     mc_sorted = mc_gen[order]
+    # FFR-8A element E2 (armed only): the pre-RTC design procures the AS plan
+    # day-ahead and SCED dispatches around the awards, so responsive AS held
+    # on thermal units is not offered to energy — the marginal ENERGY unit
+    # sits at net load PLUS the thermal-held AS. Search-target only: the
+    # reserve quantities below keep counting AS-held headroom as reserve
+    # (RTOLCAP's published definition).
+    as_hold = None
+    if scarcity_restoration is not None:
+        as_hold = ercot_lookahead_as_hold_mw(
+            next_year,
+            net_load.shape[0],
+            load_mw=demand_next,
+            wind_mw=scarcity_restoration["wind_potential_mw"],
+            solar_mw=scarcity_restoration["solar_potential_mw"],
+            storage_as_mw=scarcity_restoration["storage_as_mw"],
+        )
+    search_load = net_load if as_hold is None else net_load + as_hold
     if hourly_availability:
         # FFR-5D repair (c): per-hour availability-derated cumulative stack.
         # Merit order is unchanged (time-mean mc); only the capacity each
@@ -725,20 +752,79 @@ def _lookahead_reprice_signal(
                 ]
             )
         cum_cap_ht = np.cumsum(cap_ht[order], axis=0)  # (n_gen, T)
-        load_pos = np.clip(net_load, 0.0, None)
+        load_pos = np.clip(search_load, 0.0, None)
         idx = (cum_cap_ht < load_pos[None, :]).sum(axis=0)  # (T,)
         top_of_stack = cum_cap_ht[-1]  # (T,) per-hour available capacity
     else:
         cum_cap = np.cumsum(cap_gen[order])
-        idx = np.searchsorted(cum_cap, np.clip(net_load, 0.0, None), side="left")
+        idx = np.searchsorted(cum_cap, np.clip(search_load, 0.0, None), side="left")
         top_of_stack = cum_cap[-1]
     prices_h = mc_sorted[np.minimum(idx, mc_sorted.size - 1)]
     # ORDC scarcity tail where the stack exhausts (same curve, same gate as
     # the post-solve capacity-economics adder; reserve-rich hours get ~0).
+    adder = None
+    r_online = r_full = None
     if config.scarcity_pricing_enabled and config.scarcity_price_overlay:
         reserves = top_of_stack - net_load
-        adder = scarcity_prices(config, next_year, reserves, prices_h)["scarcity_adder"]
+        if scarcity_restoration is not None:
+            # FFR-8A elements E1 + E4: the published curve on the COMMITTED
+            # on-line capability (bounded by the physical headroom), integrated
+            # over the fleet's own forced-outage realization distribution —
+            # replaces the installed-headroom point evaluation below, one tail
+            # per run (rule 19).
+            r_online, r_full = ercot_lookahead_committed_reserves(
+                config,
+                fleet_arrays,
+                net_load.shape[0],
+                net_load=net_load_system,
+                phys_headroom=np.broadcast_to(
+                    np.asarray(top_of_stack, dtype=float), net_load.shape
+                )
+                - net_load,
+                storage_as_mw=scarcity_restoration["storage_as_mw"],
+            )
+            adder = ercot_lookahead_expected_ordc_adder(
+                config,
+                next_year,
+                r_online_mw=r_online,
+                r_full_mw=r_full,
+                system_lambda=prices_h,
+                sigma_r_mw=scarcity_restoration["sigma_r_mw"],
+            )
+        else:
+            adder = scarcity_prices(config, next_year, reserves, prices_h)[
+                "scarcity_adder"
+            ]
         prices_h = prices_h + adder
+    if diagnostics is not None:
+        diagnostics.update(
+            {
+                "entering_year": int(next_year),
+                "net_load_system_mw": np.asarray(net_load_system, dtype=float),
+                "net_load_mw": np.asarray(net_load, dtype=float),
+                "top_of_stack_mw": np.broadcast_to(
+                    np.asarray(top_of_stack, dtype=float), net_load.shape
+                ).copy(),
+                "installed_headroom_mw": np.broadcast_to(
+                    np.asarray(top_of_stack, dtype=float), net_load.shape
+                )
+                - net_load,
+                "price_base_usd_mwh": mc_sorted[np.minimum(idx, mc_sorted.size - 1)],
+                "adder_usd_mwh": (
+                    np.zeros_like(net_load) if adder is None else np.asarray(adder)
+                ),
+                "mc_sorted_usd_mwh": np.asarray(mc_sorted, dtype=float),
+            }
+        )
+        if as_hold is not None:
+            diagnostics["as_hold_mw"] = np.asarray(as_hold, dtype=float)
+        if r_online is not None:
+            diagnostics["r_online_mw"] = np.asarray(r_online, dtype=float)
+            diagnostics["r_full_mw"] = np.asarray(r_full, dtype=float)
+            diagnostics["sigma_r_mw"] = np.asarray(
+                scarcity_restoration["sigma_r_mw"], dtype=float
+            )
+            diagnostics["storage_as_mw"] = float(scarcity_restoration["storage_as_mw"])
     return np.tile(prices_h[None, :], (n_zones, 1))
 
 
@@ -3077,6 +3163,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # year loop swaps the matching one into prior_results.price_signal.
         next_year = year + 1
         unified_screens = getattr(config, "capacity_screen_unified_lookahead", False)
+        # FFR-8A scarcity restoration (GATED default OFF; __post_init__
+        # guarantees it only arms with the unified lookahead, ERCOT-only).
+        # The fleet's forced-outage sigma is a function of THIS year's solved
+        # fleet, shared by every entering-year signal priced off it.
+        scarcity_screens = getattr(
+            config, "capacity_screen_scarcity_restoration", False
+        )
+        scarcity_sigma_r = (
+            ercot_fleet_forced_outage_sigma_mw(
+                dispatch_fleet, config, year, config.hours
+            )
+            if scarcity_screens
+            else None
+        )
         if config.hindcast:
             lookahead_next_ok = next_year <= end_year and (
                 unified_screens or next_year not in HINDCAST_BRIDGE_YEARS
@@ -3166,6 +3266,38 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                         + solar_cf * np.asarray(solar_cap, dtype=float)[:, None]
                     ).sum(axis=0)
                     _uni_storage = _storage_shave_terms(storage)
+                # FFR-8A capacity_screen_scarcity_restoration (GATED, default
+                # OFF ⇒ the bundle stays None and the unified path is
+                # byte-identical). Armed: the storage fleet splits between its
+                # AS-award share (held reserve, counted in the tail's R) and
+                # its merchant share (the peak shave) — one measured constant,
+                # two disjoint uses; the entering year's separate wind/solar
+                # potentials feed the forward AS-requirement drivers; the
+                # fleet's forced-outage sigma feeds the tail's expectation.
+                _scar_bundle = None
+                if scarcity_screens and _uni_storage is not None:
+                    _p_mw, _e_mwh, _rte = _uni_storage
+                    _as_frac = float(ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC)
+                    _scar_storage_as = _as_frac * _p_mw
+                    _uni_storage = (
+                        (1.0 - _as_frac) * _p_mw,
+                        (1.0 - _as_frac) * _e_mwh,
+                        _rte,
+                    )
+                elif scarcity_screens:
+                    _scar_storage_as = 0.0
+                if scarcity_screens:
+                    _scar_bundle = {
+                        "wind_potential_mw": (
+                            wind_cf * np.asarray(wind_cap, dtype=float)[:, None]
+                        ).sum(axis=0),
+                        "solar_potential_mw": (
+                            solar_cf * np.asarray(solar_cap, dtype=float)[:, None]
+                        ).sum(axis=0),
+                        "sigma_r_mw": scarcity_sigma_r,
+                        "storage_as_mw": _scar_storage_as,
+                    }
+                _diag: dict | None = {} if unified_screens else None
                 sig = _lookahead_reprice_signal(
                     wx_config,
                     entering_year,
@@ -3181,7 +3313,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     vre_capacity_potential=_uni_vre,
                     storage_shave=_uni_storage,
                     hourly_availability=unified_screens,
+                    scarcity_restoration=_scar_bundle,
+                    diagnostics=_diag,
                 )
+                if _diag:
+                    # FFR-8A diagnostic dump: the lookahead stack internals,
+                    # next to the year's evolution ledger. Output-only — no
+                    # config field, no cache-key term, no solve-path change
+                    # (the control arm's reproduction gate proves it).
+                    _diag_path = get_cache_path(iso, cache_key, year).parent / (
+                        f"screen_signal_diag_{year}_for_{entering_year}.npz"
+                    )
+                    _diag_path.parent.mkdir(parents=True, exist_ok=True)
+                    np.savez_compressed(_diag_path, **_diag)
                 _sig_h = sig[0]  # system row; every zone identical
                 logger.info(
                     "year %d: lookahead stack re-price for %d capacity "

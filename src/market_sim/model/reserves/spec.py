@@ -117,6 +117,15 @@ ORDC_FLOOR_START_HOUR_2023: int = 304 * 24
 ERCOT_ECRS_RELEASE_REFORM_YEAR: int = 2024
 ERCOT_ECRS_RELEASE_REFORM_HOUR: int = 212 * 24  # 2024-08-01 00:00
 
+# ECRS go-live (Operating Day 2023-06-10, market notice M-D050523-01). The
+# MEASURED path needs no gate (ASPLANNP433 has no ECRS rows before go-live);
+# the FORWARD AS-requirement model does — a forward pro-forma of an entering
+# year before go-live must procure zero ECRS (FFR-8A element E2). Non-leap
+# fleet clock: Jan-May = 151 days + 9 full June days -> 2023-06-10 00:00 is
+# hour 160*24 = 3840. Published market-design date, never fitted (rule 5).
+ERCOT_ECRS_LAUNCH_YEAR: int = 2023
+ERCOT_ECRS_LAUNCH_HOUR: int = 160 * 24  # 2023-06-10 00:00
+
 # --- PJM -------------------------------------------------------------------
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
