@@ -6243,3 +6243,171 @@ Records: `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
 `results/calibration/FINDING-ercot176-offline-increment-slowstart-2026-08-07.md`,
 `results/calibration/ercot176_offline_commit_seamproof.json`,
 `scripts/probes/ercot176_offline_commit_seamproof.py`. Next: ercot-177.
+
+## 2026-08-07 — ercot-177: `temp_dependent_derate` at ERCOT REFUSED EX-ANTE — the matrix cell was STALE at `U` against a dated owner closure and is corrected to `R`; a second, independent rule-19 ground established; the `cc_nameplate_summer_derate` declared cell split DECIDED; NO precommit, NO derive, NO LP, keeper UNCHANGED
+
+**Task.** The handoff chartered `temp_dependent_derate` at ERCOT — matrix cell
+`U`, `K` at CAISO/MISO/NEISO, `R` at PJM, `G` at NYISO — against **C3a-2023**
+(−32.4 % scorer) + **C3b** {2023 0.602, 2024 0.205} on keeper
+`2026-08-07-run176-control-offline-increment`, with rule 25 `[R-ISO-SCOPE]`
+named as "the whole game": derive ERCOT's own slope, transfer nothing.
+
+**Outcome. NO PRECOMMIT WAS PUSHED, NO SLOPE WAS DERIVED, NO MEASUREMENT OF THE
+ARM WAS TAKEN, NO LP WAS RUN, NO `ScenarioConfig` FIELD WAS ADDED, NO RUN IS
+REGISTERED, AND THE KEEPER IS UNCHANGED.** The rule-28(a) `[R-MECH-MATRIX]`
+DO-NOT-REDO check that must *precede* pre-registration failed, so the lever
+never reached the precommit stage. Stated explicitly so the missing run is not
+read as a skipped rule-15/16 registration (the ercot-175 §0 / ercot-176
+Amendment 3 precedent), and the missing precommit is not read as a lapse of the
+precommit-first discipline — that discipline is what produced this outcome, one
+step earlier in the sequence than usual.
+
+**Ground 1 — the cell was stale, not untested (dispositive).** ERCOT armed this
+flag in **full-keeper LP A/B solves across all three train years** (the
+`ercot48` pair + the `ercot49` offer-retune pair, four dashboard registrations)
+and the **owner closed it "REJECTED WITH CAUSE for ERCOT" on 2026-07-09**
+(`docs/calibration-log.md:9752`). The four sidecars were retention-pruned on
+2026-07-10 under the top-15-per-ISO rule (`:10745`) and the bundle dirs are gone
+from disk — *the absence of artifacts is a retention artifact, not evidence of
+no test*, which is very likely how the cell came to be misread as `U`. ERCOT is
+the FIRST of this family's three own-fleet refutations, PJM's being the second
+and third (`:12639`), so the originating ISO reading `U` while both successors
+read `R` was incoherent on its face. The arms did not close the −32 % gap: C3a
+went to **+269/+161/+42 %**, and their C3c "improvement" was adjudicated
+**right-number-wrong-mechanism** (65 VOLL load-shed hours that both telemetry
+and unit-level CEMS refute). Three measured instruments, any one decisive:
+scarcity-hour p90 capability slope ≈0 or NEGATIVE for every gas class
+(CC_REGULAR −0.27 %/°C, CT_PEAKER −0.04, ST_GAS −0.29, **CC_CHP −1.41**) against
+the model's +0.76/+1.26/+0.54; the measured hot-hour envelope **flat at
+40–46 °C** (CC 1.00–1.01, CT 1.08–1.09, ST_GAS 1.00) where the literature curves
+predict 0.77–0.93, because **the TX fleet is equipped for TX summers (inlet
+evaporative cooling/chillers), so net-summer capability already IS its hot-day
+rating**; and telemetered RTOLCAP showing 6.9–8.3 GW spare online in the derated
+model's deep hours. The measured ERCOT parameterization therefore EQUALS the
+keeper's existing flat net-summer treatment. This is a **rule-1 `[R-STRUCT]`
+finding — the physics is measured ABSENT in this fleet** — never a fit
+judgement, so rule 1's "a real behaviour stays in even if the fit worsens" does
+not apply. The closure is load-bearing under "do not relitigate" headings in two
+live ERCOT handoffs (`ercot-offer-surface-conditional-2026-07.md:109`,
+`ercot-ordc-capdual-adder-2026-07.md:126`).
+
+**Ground 2 (NEW, independent — it did not exist in July) — rule 19
+`[R-ONE-MECH]`.** The ERCOT-95/96/97 measured-DAM line landed ~2026-07-22,
+AFTER the closure, and is armed on this keeper (`ercot_thermal_dam_availability`
++ `_hourly` + `_plant` + `_coal`). Its own docstring claims the phenomenon
+verbatim — **"Owns the hourly ambient-derate shape the day mean discards"**
+(`scenarios.py:8234`; ERCOT-95 Finding 6: real HSL dips below its day mean
+exactly in the hod 13–19 window where the missing tail sits). That is ERCOT's
+own published 60-Day DAM live HSL, per delivery hour, per crosswalked plant,
+which under rule 14 `[R-ACCURATE]` strictly dominates a class-level regression
+slope on a station-interpolated zone dry-bulb. **It also erases a rival
+arithmetically**: the temp derate is applied in `_availability_matrix`
+(`arrays.py:817-878`) but the DAM water-fill runs LATER in
+`_apply_outage_overlays` (`:1310-1459`; call order `:2632` then `:2636`), and
+both its branches drive the cap-weighted class-hour mean to the measured target
+INDEPENDENTLY of the pre-overlay value (restore `cur + λ(ceil_mean−cur) = t`;
+remove `cur·(t/cur) = t`). A pre-overlay derate survives only as within-class —
+here purely ZONAL — redistribution, and not even that for crosswalked plants,
+which `_plant` pins to their own measured site-hour fraction (redistribution
+being ERCOT-97's declared object anyway). In the saturated branch
+(`t > ceil_mean`, λ clipped to 1) `a' = ceil` for every unit and the arm is
+**bit-identical**. Verified to **4.2e-16** on a verbatim transcription of
+`arrays.py:1430-1447` (`scripts/probes/ercot177_waterfill_identity.py`) — an
+ARITHMETIC property of the committed code on synthetic arrays, **not a fleet
+measurement**; this session took none. Covered classes
+CC_REGULAR/COAL/CT_PEAKER/ST_GAS = **62.1 of 77.6 GW, 80 % of the ERCOT fleet**,
+on which the lever is inert-or-double-counting by construction. Also enumerated
+(the handoff's explicit ask): `coal_nameplate_summer_derate` is ARMED on this
+keeper and is applied OUTSIDE the `if not _td_covers(gen)` guard, and COAL is
+absent from `SUMMER_CLASS_DERATE` so `_anchor` is `None` and the raw curve would
+apply DIRECTLY ON TOP of the net-summer ratio — an unguarded rule-19 **stack**
+any ERCOT arm would have had to exclude COAL by class scope to avoid.
+
+**Ground 3 (NEW) — the one rule-19-clean scope is where ERCOT's own data is most
+adverse.** The CHP family is deliberately DAM-excluded (`scenarios.py:8162`) and
+is not token: CC_CHP 9,030 MW + CT_CHP 2,056 + ST_CHP 128 = **11,214 MW, 14.45 %
+of the fleet**, 42 plants, carrying **no `chp_grid_pmin_mw` floor and no
+must-run flag** (0 of 136 rows, unlike MISO's floored cogens), so a reshape there
+would genuinely bite on dispatch. But ERCOT measured **CC_CHP at −1.41 %/°C** —
+the largest magnitude in the fleet and NEGATIVE, i.e. capability RISING with
+temperature: precisely the sign inversion that took NYISO `U → G` at nyiso-111
+("physically impossible for a gas turbine … the DISPATCH shape, not an ambient
+capability response"). Under rule 25 the only admissible remedy is ERCOT's own
+slope, and ERCOT's own slope is the number that refutes it — so
+`derive_campd_temp_derate_params.py --iso ERCOT` was **not run** and no ERCOT
+parameter file exists. Two design notes are recorded for a successor, neither
+implemented: `temp_derate_hourly_grain` would have had to be armed (the day-flat
+TMAX carries zero hour-of-day signal, miso-100, so a day-flat arm cannot address
+an hour-of-day object at all); and **the miso-139 anchor dilemma reproduces at
+ERCOT with ERCOT's numbers** — hinged+summer-anchor preserves the summer mean but
+its unconditional `_anchor / mean(raw[summer])` rescale is a YEAR-ROUND level cut
+whenever the slope is small (ERCOT summer `mean(max(0,T−15)) ≈ 14 °C`, so neutral
+only at `s ≈ 0.0071`/°C for CC_CHP; a MISO-sized `s = 0.00141` would impose ≈ 8 %
+year-round), while mean-anchored is annual-neutral by construction but cuts the
+summer mean by `s·ΔT` for EVERY `s > 0` since ERCOT summer sits ~9–10 °C above
+the annual mean.
+
+**Where this leaves the object, stated without proposing a lever.** The
+handoff's reasoning — "every offer-price lane is closed, so the residual is a
+quantity/capability object" — is sound in its first half and does not follow in
+its second. ercot-175 measured the opposite directly: reality delivered 51.95 GW
+of sub-$200 energy against the model's dispatched ~51.9 GW, so *"the missed
+>$200 formation is a MARGINAL-PRICE phenomenon, not a quantity phenomenon"*.
+With the ambient-capability route now closed on measurement and the
+aggregate-quantity route closed at ercot-173/175, the capability family is
+bounded on both faces; "the offer lanes are closed, therefore capability" has
+now failed twice.
+
+**Also delivered — the `cc_nameplate_summer_derate` DECLARED CELL SPLIT is
+DECIDED: two rows.** The xiso-3 census registered `coal_nameplate_summer_derate`
+literally inside the CC row's `def` and filed the choice ("two rows or one
+re-scored cell") to this lane. `coal_nameplate_summer_derate` now has its own
+row, cells `K.UU..` — ERCOT `K` read from the keeper's own `run_config.json`;
+CAISO/NYISO/NEISO `.` on materiality (2/0/1 COAL fleet rows); PJM/MISO `U`
+(90/109 rows, plausibly applicable, untested). A one-character cell cannot
+represent two booleans with different verdicts in the same ISO — re-scoring to
+`K` would assert the CC leg is keeper-armed at ERCOT (false), leaving `U`
+conceals a keeper-armed mechanism, and both misreport. Rule 28(c)'s purpose is a
+VERDICT-BEARING cell: the CI gate is deliberately "mention-anywhere … checks
+registration, not taxonomy", so a solve-affecting field living in a sibling's
+prose passes the gate yet can never carry a verdict in any ISO.
+`cc_capacity_reconcile`/`_path` is the in-file precedent. Rule 28(d) respected —
+no verdict transferred; the CC row's own cells are unchanged.
+
+**Owner items.** (1) The ercot-176 rule-18 grain defect in the armed
+`ercot_faststart_pool_offer` was in scope ONLY on in-session owner
+authorization; **none was given, so it was not touched** — it moves the keeper
+and needs its own pre-registered round. (2) NEW, filed not built: the matrix row
+had **no `E:` evidence key at all** and its note still carried the pre-2026-07-09
+sentence "ERCOT/NYISO untested" through two later edits, so a CI leg asserting
+"every non-`U` cell has an `ev` key, and every ISO named in a note has one" would
+have caught this; that is a `check_mechanism_matrix.py` change belonging to a
+governance round, not this lane. (3) The ERCOT-148/149 double-count memo stays
+**PENDING**; the ceiling lane was not entered.
+
+**Governance.** Rule 28: duty (a) performed and it is what produced this
+finding; duty (b) discharged in-session (`U → R` with its evidence citation);
+duty (c) n/a (no field added); duty (d) respected in the split. Rules 15/16: no
+solve, so no run registered and no bundle exists; the keeper is untouched, so no
+re-key, no `build_status.py`, no `calibration-keeper-auditor` run. Rule 22: no
+year solved, scored, read or registered; ERCOT holds no `complete` and no
+`final` marker and the out-of-training quarterly files in
+`data/raw/ercot-weather/` were not read. Rule 23: no derive run. Rule 24: no
+`ScenarioConfig` field added or re-defaulted. Rule 25: no slope transferred into
+ERCOT. Rule 26: nothing deprecated or zeroed — the `temp_derate_*` fields stay
+live for the three ISOs whose keepers arm them. Rule 27: no ≥300-line source
+file rewritten; every push touching one blob-verified against the remote. No
+GitHub Actions workflow added.
+
+**DO-NOT-REDO honoured in full** — and it is the operative finding rather than a
+footnote: the event-cap ceiling lane was not entered (its memo stays PENDING);
+the offline-increment slow-start tier stays `I`; the ERCOT-151 §0.2 premise was
+not quoted forward; blanket `min()` and unit-scoped stay `R`; the 2023 depth
+premise was not re-litigated; the reserve family stays CLOSED; no ramp
+mechanism; no storage offer surface; no per-hour or aggregate capability cap; no
+coal offer lane; West/Panhandle stayed closed; ercot-172's C3 not attempted; the
+CC-headroom crosswalk stays FILED-UNLICENSED; per-year CT re-identification not
+attempted.
+
+Records: `results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md`,
+`scripts/probes/ercot177_waterfill_identity.py`. Next: ercot-178.
