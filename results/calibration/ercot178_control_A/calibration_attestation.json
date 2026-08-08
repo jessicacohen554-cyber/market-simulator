@@ -1,0 +1,327 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 13,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak",
+      "peak_ladder",
+      "phys_committed",
+      "phys_econ_high",
+      "phys_econ_low",
+      "phys_peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 107,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_perplant_offer_curves (per-plant measured TPO curves)",
+    "where": "constants.COAL_PERPLANT_OFFER_CURVE_BY_ISO via run_config.scenario_config.coal_perplant_offer_curves; applied in fleet.legacy_bins.apply_coal_tranches",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "n_scalars": 0,
+    "source": "each plant's merged modal 60-Day SCED Submitted TPO supply curve, pooled over the four 2024-2025 disclosure subsets \u2014 verbatim submitted conduct, zero fitted parameters (frozen scripts/data/derive_coal_perplant_offer.py; provenance data/raw/_processed-legacy/coal_perplant_offer_curves_ERCOT.json; ERCOT-144, chartered by ERCOT-143 \u00a72's per-plant measurement)",
+    "note": "re-derive trigger is a new SCED disclosure subset only (rule 23), never a residual; representation bounds declared in the ERCOT-144 precommit: the 2023 application WAS a declared extrapolation, RETIRED BY MEASURED REPLACEMENT at ercot-168 (the ercot-157 delivery-2023 corpus re-upload dissolved the 'no 2023 SCED exists' premise; 2023 now carries its own year's measured curves via coal_perplant_offer_yearly, and 2024/25 keep this entry's identification unchanged), levels are fuel-invariant by measurement (mid-band only \u2014 _mustrun/_peak keep their measured fuel/gas responses), and within-tranche measured dispersion is capacity-weight averaged at the CAMPD tranche grain"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 0.02,
+    "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "battery_dispatch_adder",
+    "where": "run_config.scenario_config.battery_dispatch_adder",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 10.0,
+    "source": "grid-battery throughput/cycling adder $/MWh \u2014 inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+    "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
+   },
+   {
+    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+    "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+    "identification": "residual",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "value": 35.0,
+    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=165 solves (audit \u00a75.1)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "gas_offer_margin_anchor_by_zone (ERCOT) \u2014 the gas-offer net-revenue margin's identification anchor resolved PER ZONE, so the mechanism's own identity (at fuel == anchor the reformed offer reduces exactly to the registered band multiplier) holds in every zone rather than only at the ISO-series level that carries the -0.50 scalar but neither the measured EP level correction nor the per-zone spread the solve applies",
+    "where": "run_config.scenario_config.gas_offer_margin_zonal_anchor + gas_offer_margin_anchor_by_zone; constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE['ERCOT']",
+    "identification": "measured/published",
+    "lineage_solves": "1 (ercot-150 arm B, against a same-HEAD zero-delta control)",
+    "value": {
+     "West": 1.9586,
+     "North": 2.7178,
+     "Northeast": 2.7178,
+     "Houston": 2.3111,
+     "South_Central": 2.7578,
+     "South": 3.2778
+    },
+    "source": "scripts/data/derive_gas_offer_margin_anchor.py --iso ERCOT --by-zone --weights-bundle results/calibration/ercot149_gas_event_cap_arm, which reads each zone's gas rows from the keeper reconstruction's own resolved fuel_prices (SOLVE_FUEL_ARRAY_ISOS; scripts.lib.bundle_fleet.reconstruct_bundle_fleet, no LP) \u2014 the exact (n_gen, T) array apply_gas_offer_margin prices against, so every fuel-path stage is included: the capacity-weighted mean-zero zonal spread + flat measured EP level correction (data.fuel.basis.ercot.apply_ercot_zonal_gas_basis over data/raw/ercot_zonal_gas_hub.csv and data/raw/ercot_electric_power_gas_price.csv) and the West net-load two-regime shape with its burner-tip delivered floor. Values are therefore by construction the delivered levels the solve prices those zones' gas units at; the full per-year decomposition (basis weights, level corrections, West floor lift, marked-up-tranche census with 0 band-scoped anchors) is committed in results/calibration/_ercot150_zonal_anchor_derivation.json, whose table_reproduces_from_solve_array check is exact.",
+    "free_parameters_added": 0,
+    "why_zero": "This is not a new constant, a new mechanism or a re-tune: it is the already-registered identification point evaluated at the grain the mechanism's own definition requires. apply_gas_offer_margin adds markup_hr x (anchor - fuel) and states that at fuel == anchor the reformed offer reduces EXACTLY to the registered band multiplier - a statement about a unit's OWN delivered fuel. The ISO anchor (2.2494) is derived from the registered ISO-level recipe (annual Henry Hub - 0.50 + seasonality), which carries neither the measured EP level correction nor the per-zone spread the keeper's armed ercot_zonal_gas_basis applies afterwards on the (n_gen, T) array, nor the West net-load shape that runs after that. Nothing here is swept: the anchors are the derive script's own output and rule 23 [R-FROZEN-DERIVE] re-derives them only when the gas source data, the per-zone hub table, the EP series, or the keeper fleet recipe the weights are read from changes, never because a residual moved. The honest identification CUT the West leg ~5x (from -1.46 pre-shape to -0.29 realised) - the direction a residual-hunting construction would never move.",
+    "rule_19_reconciliation": "One mechanism, one identification point. A band-scoped rebasis anchor (ERCOT-118/119 margin_anchor_* keys) keeps precedence over the zone anchor by construction, so the two channels never stack; the ercot149 curve carries no such key (derivation record: 0 band-scoped anchors on 1132/1132/1135 marked-up tranches), so every marked-up gas tranche resolves to its zone. The ERCOT-139 cc_committed_offer_margin reads the CONFIG-level ISO anchor only and is untouched by this delta (asserted equal in both arms by K1).",
+    "rule_25_scope": "constants.GAS_OFFER_MARGIN_ANCHOR_BY_ZONE carries NYISO, PJM and now ERCOT, each derived from its own basis data and its own keeper fleet; an ISO without a table hard-fails rather than borrowing one. MISO also arms a zonal gas basis on its keeper \u2014 its cell stays U and its exposure is never acted on here. Panhandle carries no gas capacity in any training year and is omitted from the map; absent zones keep the window anchor (a no-op on an empty zone).",
+    "measured_effect": "Anchors span 1.9586 (West, Waha-priced and net-load-shaped) to 3.2778 (South) around the ISO anchor 2.2494; the flat EP level correction the applier adds is +0.5045 / +0.4142 / +0.0366 $/MMBtu (2023/24/25) and the West net-load burner-tip floor lift inside the West anchor is +0.3650 / +1.0466 / +2.1010 $/MMBtu \u2014 both read from the committed derivation record. Measured A/B effect: max class-hour dispatch delta 1073 / 1458 / 1432 MW, max zonal |dLMP| 0.356 / 0.304 / 0.319 $/MWh, system load-weighted dLMP +0.446 / +0.329 / +0.339 $/MWh (2023/24/25; committed A/B JSON)."
+   },
+   {
+    "name": "ercot_faststart_pool_offer (ERCOT-88) \u2014 the telemetered-offline startable fast-start CT pool offered to the LP at its measured start-inclusive above-LSL SCED2 ladder, REPLACE-BY-MASK over the cleared-share wall's row pricing on the row-hours whose within-plant capacity midpoint lies above the hour-bin's measured pool boundary (1 \u2212 pool_frac)",
+    "where": "run_config.scenario_config.ercot_faststart_pool_offer (+ ercot_faststart_pool_offer_path default data/raw/_validation-source/ercot_faststart_pool_condbinned.json)",
+    "identification": "measured/published",
+    "lineage_solves": "1 (ercot-158 arm B, against the same-HEAD honest-inputs control A)",
+    "value": {
+     "pool_frac_by_bin": {
+      "2023": [
+       0.0953,
+       0.0902,
+       0.0873,
+       0.0906,
+       0.0868,
+       0.0754,
+       0.0353
+      ],
+      "2024": [
+       0.0774,
+       0.0724,
+       0.0562,
+       0.0504,
+       0.048,
+       0.0498,
+       0.0548
+      ],
+      "2025": [
+       0.0336,
+       0.0383,
+       0.0349,
+       0.0376,
+       0.0401,
+       0.0326,
+       0.0403
+      ]
+     },
+     "ladder_q50_mult_by_bin": {
+      "2023": [
+       308.3,
+       370.8,
+       405.3,
+       431.5,
+       427.6,
+       158.5,
+       171.8
+      ],
+      "2024": [
+       644.0,
+       707.2,
+       523.5,
+       529.3,
+       474.6,
+       525.9,
+       271.5
+      ],
+      "2025": [
+       245.2,
+       251.4,
+       275.4,
+       235.3,
+       232.5,
+       232.3,
+       56.6
+      ]
+     }
+    },
+    "source": "scripts/data/derive_ercot_faststart_pool.py over the NP3-965 60-Day SCED Gen Resource disclosures (delivery-2023 corpus: the ERCOT-157 owner re-upload, 315 shards verified complete \u2014 all 365 delivery days; 2024/2025 blocks byte-identical to the ERCOT-88 artifact, the derive-integrity check). The pool share and ladder are the telemetered OFFQS/OFFNS fleet's own submitted SCED2 above-LSL curves conditioned on net-load bin \u2014 measured market conduct with a forward story (regenerates from forward net load exactly as the DAM/RT walls do), rule-13-admissible, rule-23 frozen.",
+    "free_parameters_added": 0,
+    "why_zero": "This arms an ALREADY-BUILT measured mechanism (ERCOT-88, merged default-off 2026-07-19) whose only change since is a new YEAR BLOCK of the same measured artifact (ERCOT-157). Eligibility is unit physics (min_down_hours <= FASTSTART_POOL_MIN_DOWN_HOURS), the boundary and ladder are per-bin measured quantities, the markup is max(0, min(ladder-interp x gas_day, 0.95 x VOLL) \u2212 mc_base) with no scalar anywhere between the disclosure data and the LP column. Nothing is swept; rule 23 re-derives only on source-data update (this block's trigger was the ERCOT-157 corpus landing, not a residual). The arming decision itself is the pre-registered owner-authorized ERCOT-89 \u00a77 step-2 round with kill gates pushed before either arm solved.",
+    "rule_19_reconciliation": "One owner per row-hour, enforced at the composition site: the pool's own_mask REPLACES every other offer surface's markup (conditional peak surface, cleared-share DA wall, RT leg alike) in pool-owned row-hours; it hard-errors unless the cleared-share wall is armed (the enumeration context). ercot_gas_commitment_bridge owns the ON committed CC min-gen state (disjoint \u2014 the pool prices OFFLINE fast-start CT rows only); P1 startup amortization owns started-run pricing (replaced, never stacked, in the mask); the RT wall owns the ON fleet's ladder (disjoint by status). An offer-availability, never a floor: no min_gen is touched, so D-2/D-4 forced-energy exposure is vacuous by construction.",
+    "rule_25_scope": "ERCOT-only by construction (gates on config.iso == 'ERCOT'); the artifact derives from ERCOT's own NP3-965 disclosure instrument, which no other modeled ISO publishes \u2014 other ISOs' matrix cells stay '.' (no comparable RT offline-conduct disclosure).",
+    "measured_effect": "Pool artifact (frozen, year-scoped): per-net-load-bin pool_frac 2023 0.035\u20130.095; 2024 0.048\u20130.077; 2025 0.033\u20130.040; ladder q0.5 delivered-gas multipliers 2023 159\u2013432; 2024 271\u2013707; 2025 57\u2013275 \u2014 2023's post-Uri conservative-ops conduct sits ~2/3 of 2024's ladder level (ERCOT-157 derive record). Measured A/B effect (committed _ercot158_pool_ab.json): C3a -24.3%\u2192-24.5% / +10.2%\u2192+10.2% / -0.7%\u2192-0.7% (2023/24/25); matched-hour 2023 missed-set model mean $105\u2192$105 vs actual $860, 0 of 91 missed hours flipped to tail; kills fired: none."
+   },
+   {
+    "name": "ercot_wtx_curtail_depth_wind / _solar (ercot-165 WP-B v2, panhandle_owner=\"share\") \u2014 the TWO per-tech level scalars converting measured West-corridor congestion incidence into a curtailed fraction, re-identified against the UNPOOLED diurnal-family shares",
+    "where": "run_config.scenario_config.ercot_wtx_curtail_depth_wind / _solar, with ercot_wtx_curtail_unpooled=true and ercot_wtx_panhandle_owner=\"share\"",
+    "identification": "measured/published",
+    "lineage_solves": "1 (ercot-165; depths re-derived, not swept)",
+    "value": {
+     "ercot_wtx_curtail_depth_wind": 0.1354,
+     "ercot_wtx_curtail_depth_solar": 0.1614
+    },
+    "identification_source": "LEVEL: each depth is centred on the measured curtailment MW quantity (ERCOT HSL minus delivered, data/raw/ercot-hsl) over the capacity-weighted corridor share the LP actually applies \u2014 sum_y(HSL-GEN) / sum_y(HSL * share_hat), the same construction the pooled driver has always used. This is the ONLY quantity in the driver that reads the reported-curtailment aggregate, and it remains TWO scalars. SHAPE: the per-family congestion-share tables (data/raw/reference/ercot_wtx_curtailment_share_family.csv) are built ONLY from measured NP6-86 SCED binding incidence resolved through the NP4-160-SG spine, on the model's own net-load decile x hour-of-day x season axis. Family membership is a THRESHOLD-FREE lift test against the year's measured SCED-execution exposure (no cutoff, no minimum-n, no per-year tuning; rule 23). ZONE WEIGHTS: measured from the EIA-860 operable generator file through zone_assignment._ercot_zone (wind 0.630 West / 0.370 Panhandle; solar 0.969 / 0.031), so both A/B arms are centred on the same measured total and differ only in distribution. Nothing is fit to a price or volume residual.",
+    "anti_residual_validation": "Leave-one-year-out within 2023-2025 (results/calibration/ercot165_family_split_phase0.json): binding-weighted family-membership agreement 0.755 / 0.942 / 0.968; held-out family-share hod correlation +0.744..+0.999. The per-family table's LOYO shape correlation beats the pooled table in every year (D +0.388/+0.424/+0.419, N +0.400/+0.473/+0.473 vs pooled +0.347/+0.380/+0.338), and the arm's LOYO level prediction matches the pooled table's.",
+    "forward_story": "The shares stay functions of the model's OWN net-load (the decile axis re-ranks each forecast year, so more West solar deepens the daytime deciles and raises family-D pressure), hour-of-day and season are calendar, family membership re-derives whenever a new NP6-86 year lands, and the corridor zone weights re-derive from the forecast year's own evolved fleet. depth = 0 is the zero-forcing ablation.",
+    "dof_delta_vs_prior_keeper": 0
+   },
+   {
+    "name": "ercot_storage_as_soc_reserve",
+    "kind": "measured-published",
+    "n_scalars": 0,
+    "free_parameters_added": 0,
+    "identification": "Battery SOC floored at the MEASURED 60-Day DAM battery upward-AS award (the SAME committed by-restype 'storage' total storage_as_commitment power-docks - one award basis, both sides, rule 19) x the PUBLISHED per-product SOC durations (RegUp/RRS 1 h, ECRS 2 h, NonSpin 4 h - reserves.spec.ERCOT_AS_PRODUCT_DURATION_H, Nodal Protocols 3.17.3), per-product shares measured by scripts/data/derive_ercot_storage_as_products.py (reconstruction reproduces the committed total EXACTLY for 2023/2024). Deployment-netted (intra-day cumulative of the armed measured draw-down series - deployed AS energy leaves the tank) and clipped by the pin-reachability envelope (the unit's max-reachable SOC path under the model's own daily-pin scaffold and award-docked power; removes 0.16% of floor MWh - measured arrays only). Zero fitted scalars; forward runs price the split endogenously (ercot_storage_as_endogenous, G5 lane), so the measured record is backcast-only capability input, never a pinned outcome (rule 13). Identification record: docs/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md (gates pre-registered before any solve; two feasibility amendments, no gate touched) + results/calibration/FINDING-ercot167-storage-soc-reserve-ab-2026-08-05.md (the full A/B record)."
+   },
+   {
+    "name": "coal_perplant_offer_yearly (per-year 2023 windowed measured TPO curves)",
+    "where": "constants.COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO via run_config.scenario_config.coal_perplant_offer_curves_yearly; applied in fleet.legacy_bins.apply_coal_tranches (year-present branch; a year absent from the table falls through to the armed static curves bit-identically - verified by kill gate G-BIT, sha256 over all twelve 2024/25 hourly sidecars)",
+    "identification": "measured-physical",
+    "lineage_solves": "3 solves (ercot-168: 2023-only probe + full-span A/B)",
+    "n_scalars": 0,
+    "source": "each plant's per-(month x hour-window) modal 60-Day SCED Submitted TPO supply curve from the delivery-2023 corpus (data/raw/ercot/SCED/, 315 publication-month shards, delivery = filename - 2; 731,947 online CLLIG rows across 365 days) - verbatim submitted conduct at the corpus's own hourly submission grain under the mode's strict day-majority (>0.5 of the month's live days) stability license, CPT->CST converted at derivation; frozen scripts/data/derive_coal_perplant_offer.py --year 2023; provenance data/raw/_processed-legacy/coal_perplant_offer_curves_2023_ERCOT.json (admitted AND refused cells with day-shares - the ~15 (0.5,0.55] boundary cells disclosed); ercot-168, chartered as matrix 5.1 item 12, owner-adjudicated OPTION A 2026-08-05",
+    "note": "re-derive trigger is the delivery-year corpus landing only (rule 23: the ercot-157 re-upload IS the cited data change), never a residual; zero new DOF - same modal derive as the armed static mechanism, fed the year's own rows; the Aug-Oct Oak Grove $60-class overnight repricing is CONDUCT, not commodity (no measured fuel series moves at any offer step; no commodity backing claimed - precommit 1f), and 2024/2025 identification is UNTOUCHED (table carries only 2023). Identification record: docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md (gates pre-registered before any solve) + results/calibration/FINDING-ercot168-coal-perplant-year-curves-2026-08-05.md."
+   }
+  ]
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "ercot-178 2026-08-08 \u2014 the run176 keeper recipe REPLAYED AT HEAD with ZERO deltas (scripts/replay_keeper.py, no --set), solved in-session across the full 2023-2025 span as the pre-registered A/B control (docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md \u00a78). The DOF ledger and the exceptions ledger are INHERITED UNCHANGED from the ercot176_control_A attestation because the recipe is unchanged \u2014 no parameter was added, removed, re-identified or re-tuned on this run; n_entries stays 13 with n_residual 6. The session's mechanism ercot_offer_surface_continuous is DEFAULT-OFF and NOT armed here. Rule 22: 2023-2025 only; ERCOT holds no complete and no final marker and no out-of-training year was solved, scored, read or registered."
+ },
+ "exceptions": [
+  {
+   "criterion": "price_tail",
+   "year": 2023,
+   "kind": "model-class",
+   "magnitude": "model 61 h vs actual RT 181 h > $200/MWh (re-confirmed at ercot-178 control)",
+   "reason": "OWNER DECISION 2026-08-05 (ERCOT 2023 diagnosis session; directive: 'make C3c an accepted caveat because of known limitations of LP modeling underestimating the scarcity tail \u2014 across all 3 years'). ACCEPTED MODEL-CLASS LIMITATION (rubric v3.0, kind=model-class, supporting tier): the realized RT tail was formed on ERCOT's ENERGY offer stack \u2014 GWs offered across $500-3,000, 0.91 of the 1.10 GW offered >=$500 at the top-100 gap hours being storage (ercot-161) \u2014 with measured RTORPA p50 ~$1-5 and PRC p50 ~5.8 GW at the missed hours (no ORDC scarcity to recover: ercot-102, ercot52 cap-dual). An LP whose offers are competitive/measured marginal cost cannot form that equilibrium conduct, and the within-class mechanism space is exhausted: the measured storage RT offer surface REFUTED (ercot-162, discharge collapses ~74%/yr); the reserve/quantity families BISTABLE or killed (online-capacity envelope ERCOT-107/108 963-vs-69 h; energy_online_capability_cap 4 kill gates ERCOT-159; ORDC-LOLP swap ERCOT-97 lane 3; AS-plan netting rejected, backcast-measured-data-audit \u00a7); the '8 GW cheap CC offline block' premise refuted (ERCOT-163). Exhaustion record: ercot-95/97/102/107/108/155/159/161/162/163. OPEN RESIDUAL LANE \u2014 this caveat does NOT close root-causing: the AS-vs-energy split of storage capability at scarcity (FINDING-ercot162-storage-rt-surface-refuted-2026-08-04 \u00a72) and the CC headroom/capability identification (calibration-log/ercot.md ercot-163 close-out); a mechanism that lands there simply PASSes this criterion and this entry goes inert. CARRIED ONTO THE ercot167 KEEPER at the 2026-08-05 owner promotion (magnitudes updated to this run's counts; the owner decision applies to the ERCOT keeper lane and the exhaustion record is unchanged - the ercot-167 quantity mechanism moved the counts 58/20/0 -> 61/25/3, nowhere near the [0.5x] band, exactly as the model-class limitation predicts). CARRIED ONTO THE ercot-168 CANDIDATE (counts UNCHANGED by the arm: 61/25/3 - the year-curve repricing is deep inframarginal in every actual tail hour, exactly as the model-class limitation predicts)."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2024,
+   "kind": "model-class",
+   "magnitude": "model 25 h vs actual RT 53 h > $200/MWh (re-confirmed at ercot-178 control)",
+   "reason": "OWNER DECISION 2026-08-05 (ERCOT 2023 diagnosis session; directive: 'make C3c an accepted caveat because of known limitations of LP modeling underestimating the scarcity tail \u2014 across all 3 years'). ACCEPTED MODEL-CLASS LIMITATION (rubric v3.0, kind=model-class, supporting tier): the realized RT tail was formed on ERCOT's ENERGY offer stack \u2014 GWs offered across $500-3,000, 0.91 of the 1.10 GW offered >=$500 at the top-100 gap hours being storage (ercot-161) \u2014 with measured RTORPA p50 ~$1-5 and PRC p50 ~5.8 GW at the missed hours (no ORDC scarcity to recover: ercot-102, ercot52 cap-dual). An LP whose offers are competitive/measured marginal cost cannot form that equilibrium conduct, and the within-class mechanism space is exhausted: the measured storage RT offer surface REFUTED (ercot-162, discharge collapses ~74%/yr); the reserve/quantity families BISTABLE or killed (online-capacity envelope ERCOT-107/108 963-vs-69 h; energy_online_capability_cap 4 kill gates ERCOT-159; ORDC-LOLP swap ERCOT-97 lane 3; AS-plan netting rejected, backcast-measured-data-audit \u00a7); the '8 GW cheap CC offline block' premise refuted (ERCOT-163). Exhaustion record: ercot-95/97/102/107/108/155/159/161/162/163. OPEN RESIDUAL LANE \u2014 this caveat does NOT close root-causing: the AS-vs-energy split of storage capability at scarcity (FINDING-ercot162-storage-rt-surface-refuted-2026-08-04 \u00a72) and the CC headroom/capability identification (calibration-log/ercot.md ercot-163 close-out); a mechanism that lands there simply PASSes this criterion and this entry goes inert. CARRIED ONTO THE ercot167 KEEPER at the 2026-08-05 owner promotion (magnitudes updated to this run's counts; the owner decision applies to the ERCOT keeper lane and the exhaustion record is unchanged - the ercot-167 quantity mechanism moved the counts 58/20/0 -> 61/25/3, nowhere near the [0.5x] band, exactly as the model-class limitation predicts). CARRIED ONTO THE ercot-168 CANDIDATE (counts UNCHANGED by the arm: 61/25/3 - the year-curve repricing is deep inframarginal in every actual tail hour, exactly as the model-class limitation predicts)."
+  },
+  {
+   "criterion": "price_tail",
+   "year": 2025,
+   "kind": "model-class",
+   "magnitude": "model 3 h vs actual RT 31 h > $200/MWh (re-confirmed at ercot-178 control)",
+   "reason": "OWNER DECISION 2026-08-05 (ERCOT 2023 diagnosis session; directive: 'make C3c an accepted caveat because of known limitations of LP modeling underestimating the scarcity tail \u2014 across all 3 years'). ACCEPTED MODEL-CLASS LIMITATION (rubric v3.0, kind=model-class, supporting tier): the realized RT tail was formed on ERCOT's ENERGY offer stack \u2014 GWs offered across $500-3,000, 0.91 of the 1.10 GW offered >=$500 at the top-100 gap hours being storage (ercot-161) \u2014 with measured RTORPA p50 ~$1-5 and PRC p50 ~5.8 GW at the missed hours (no ORDC scarcity to recover: ercot-102, ercot52 cap-dual). An LP whose offers are competitive/measured marginal cost cannot form that equilibrium conduct, and the within-class mechanism space is exhausted: the measured storage RT offer surface REFUTED (ercot-162, discharge collapses ~74%/yr); the reserve/quantity families BISTABLE or killed (online-capacity envelope ERCOT-107/108 963-vs-69 h; energy_online_capability_cap 4 kill gates ERCOT-159; ORDC-LOLP swap ERCOT-97 lane 3; AS-plan netting rejected, backcast-measured-data-audit \u00a7); the '8 GW cheap CC offline block' premise refuted (ERCOT-163). Exhaustion record: ercot-95/97/102/107/108/155/159/161/162/163. OPEN RESIDUAL LANE \u2014 this caveat does NOT close root-causing: the AS-vs-energy split of storage capability at scarcity (FINDING-ercot162-storage-rt-surface-refuted-2026-08-04 \u00a72) and the CC headroom/capability identification (calibration-log/ercot.md ercot-163 close-out); a mechanism that lands there simply PASSes this criterion and this entry goes inert. CARRIED ONTO THE ercot167 KEEPER at the 2026-08-05 owner promotion (magnitudes updated to this run's counts; the owner decision applies to the ERCOT keeper lane and the exhaustion record is unchanged - the ercot-167 quantity mechanism moved the counts 58/20/0 -> 61/25/3, nowhere near the [0.5x] band, exactly as the model-class limitation predicts). CARRIED ONTO THE ercot-168 CANDIDATE (counts UNCHANGED by the arm: 61/25/3 - the year-curve repricing is deep inframarginal in every actual tail hour, exactly as the model-class limitation predicts)."
+  }
+ ]
+}
