@@ -3493,7 +3493,85 @@ loss.
 
 ### 5.4 MISO — target the **2024/2025 MEAN-LMP LEVEL MISS** (owner directive 2026-08-06; C7 COAL_PRB is DEPRIORITIZED by owner order and is NOT a lane) — keeper `2026-08-05-miso-132b-cc-committed`, **NOT-YET**
 
-> **LIVE QUEUE AS OF miso-143 (2026-08-08) — ITEM 4 SET AND DISCHARGED IN THE
+> **LIVE QUEUE AS OF miso-144 (2026-08-08) — ITEM 5 (the IN-MERIT IDLE BLOCK)
+> SET AND DISCHARGED IN THE SAME SESSION, WITH THE OBJECT DISSOLVED. QUEUE
+> EMPTY AGAIN — AND FOR THE FIRST TIME EVERY MODEL-SIDE FAMILY IS CLOSED BY
+> MEASUREMENT.** Phase 0, diagnosis-first, per the charter. **NO LP, no arm,
+> no `ScenarioConfig` field, no run, NO CELL VERDICT MINTED (BRANCH-INSTRUMENT
+> is an instrument verdict, not a mechanism verdict), keeper UNCHANGED** at
+> `2026-08-05-miso-132b-cc-committed`.
+>
+> **THE 19.3 GW BLOCK IS ~97 % AN INSTRUMENT UNIVERSE ARTIFACT, AND THE
+> PRE-REGISTERED ATTRIBUTION CLOSES.** miso-143's `below − thermal` subtracted
+> dispatch summed over `THERMAL_COLS` from capability summed over **every**
+> fleet row — nuclear, hydro, import and biomass included. Measured on the
+> same-universe ledger (G-A0 replication exact, ≤ 0.03 MW on all six committed
+> values): **T_universe = 18,765 MW** of the 2025 JJA h12–17 block (nuclear
+> 10,665 + hydro 2,372 + import 4,272 + biomass 1,456) against a one-weight
+> A0 of 18,523; injections (OTHER+biomass, −1,136) bring the same-universe
+> **thermal gap to +894 MW (`lo`) / −226 MW (`hi`)**. Strict in-merit idle at
+> each unit's OWN zonal price at the `hi` offer basis is **611 MW**, entirely
+> inside the LP's **2,543 MW** physical reserve holding (rbdc; family
+> partition asserted — midwest+south = rbdc ≤ 1 MW, so no family
+> double-count). Out-of-merit forced-in dispatch is **~1.3 GW** and fully
+> attributed by `min_gen_mechanism` id: ST_GAS per-plant must-run 966 +
+> reliability-floor limbs 202–271 + CHP steam 100–111 — the known,
+> D-4-cleared, C8-grounded families. **Residual NEGATIVE (over-explained) in
+> every year/window/bracket; the pre-registered stop (|resid| > 3 GW) never
+> fires. The twelve floor limbs are exonerated as the block's author.**
+>
+> **THE PRICE SIDE CLOSES TOO (supplementary, labelled post-hoc):** re-clearing
+> the THERMAL stack against the fleet-thermal need reproduces the keeper's P1
+> price at **median |Δ| $0.38–1.00, r ≈ 0.99, bias +$0.06 at `hi`** in 2025
+> JJA h12–17 — against miso-143's all-class-stack footing FAIL (median 9.998,
+> bias −10.9). **The model's summer-afternoon price IS the merit-order clear
+> of its own thermal stack at its own P1 offers, to a dollar. There is no
+> in-model dispatch defect.** (The v2 need+reserve variant overshoots −1.4 to
+> −4.7: reserve holding sits on above-margin capability, which is also why
+> reserve duals are ~0 outside 5 hours and the adopted reserve mechanisms do
+> not lift ordinary summer prices.)
+>
+> **WHAT SURVIVES OF miso-143:** every above-anchor instrument — the
+> merit-order gain bracket (+$2.30/+$5.47), the ladder slope ($1.496/MWh/GW),
+> the 16.14 GW walk to the actual price, the B-1…B-4 eliminations — and
+> miso-142's verdict (no admissible quantity lever), now REINFORCED: dispatch
+> is merit-order optimal, so there is no mis-dispatch to harvest either.
+> **CORRECTED:** the footing failure was the instrument's; the block's "idle
+> by class" table was TOTAL idle fractions, not the block's composition (true
+> strict CT_PEAKER in-merit idle: **411 MW = 2.3 %** of its capability, inside
+> reserve); the "cheap capability held out, dearer held in" reading is
+> REFUTED. Fourth instrument correction in four sessions — the
+> reproduce-before-extend discipline keeps firing.
+>
+> **WHERE THE C3a FRONTIER NOW STANDS (for the owner):** quantity (miso-142),
+> merit-order re-ranking (miso-143) and dispatch/price-formation optimality
+> (miso-144) are all closed by measurement. The deficit lives where miso-142
+> measured it and nobody has owned it since: **the stack itself never reaches
+> the actual price** (model max $51.97 in 2025 JJA h12–17 vs actual lw
+> $74.68) — i.e. **offer LEVELS above SRMC in ordinary summer-afternoon
+> hours**. This is NOT the exhausted C3c scarcity-tail list (that covers the
+> >$200 spike tail priced by ORDC/RCPF machinery; this is a −40 % miss across
+> 403 ordinary July hours at ~$75, below every scarcity step, zero shortfall,
+> reserve duals zero). A successor needs a **NEW measured identification of
+> summer-afternoon offer conduct**, and one admissible source has never been
+> intaken: **MISO publishes historical RT/DA offer curves at ~90-day lag** — a
+> measured, forward-regenerable, rule-13 input that would identify
+> offer-vs-SRMC conduct directly. Chartering that intake is an OWNER decision
+> (rules 19/24); it is named, not opened. **Item 5's reopen condition:** a
+> same-universe, own-zone-price, P1-offer-basis measurement of material
+> in-merit idle that reserve holding and D-4-cleared floors cannot absorb
+> (largest strict residual anywhere at HEAD: −0.9 GW, over-explained).
+>
+> **GOVERNANCE, carried forward unchanged:** C1/C2 both SKIPPED for 2025
+> (preliminary EIA-923 vintage) — the blocker year's fuel mix stays ungated;
+> nothing here reads C1/C2 PASS as 2025 safety.
+> `results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`
+> (`017f6bee`, blob `5599ba80`);
+> `results/calibration/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`;
+> `_miso144_attribution.json` · `_miso144_footing_corrected.json`; probes
+> `scripts/probes/_miso144_attribution.py`, `_miso144_footing_corrected.py`.
+>
+> *(Prior state, unedited.)* **LIVE QUEUE AS OF miso-143 (2026-08-08) — ITEM 4 SET AND DISCHARGED IN THE
 > SAME SESSION. QUEUE EMPTY AGAIN. THE MERIT-ORDER CHANNEL IS NOW MEASURED:
 > IT IS MATERIAL AND IT IS UNOWNED.** Item 4 (miso-142's named successor
 > candidate **(A)** — the coal-vs-gas merit order in the 2025 high-gas regime)
