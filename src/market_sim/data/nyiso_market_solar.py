@@ -57,6 +57,29 @@ that bound rather than banked whole. Re-identifying the fleet CF is a separate
 object with its own identification work (rule 19 ``[R-ONE-MECH]``) and is
 deliberately **not** bundled here.
 
+**THE IN-SERVICE DATE BASIS (nyiso-133,
+``ScenarioConfig.nyiso_solar_registry_cod_dates``).** The artifact carries the
+registry on two published date bases in parallel columns, and *cod_basis*
+selects between them. The Gold Book ``In-Service Date`` is a registration /
+interconnection-service date and **leads** the plant's metered commercial start;
+EIA-860's ``Operating Month`` matches it. Measured on this very registry against
+EIA-923 metered monthly output (``scripts/probes/_nyiso133_commissioning_ramp.py``,
+record ``results/calibration/_nyiso133_commissioning_ramp.json``), EIA-860's
+month equals the first metered-output month in **11 of the 12 uncensored
+plants**, while the Gold Book date leads by **+2 months on Morris Ridge
+(179 MW, 31 % of the 2025 fleet)**, +1 on High River (90 MW) and East Point
+(50 MW) — and TRAILS by 1 and 3 months on Darby and Stillwater, so the
+difference is signed both ways rather than a one-directional correction toward
+the residual. Mean-monthly registered capacity moves 161.07 -> 162.73 MW (2023),
+389.90 -> 350.07 (2024) and is unchanged in 2025.
+
+Membership and nameplate stay 100 % Gold Book on both bases — this swaps ONE
+published field for a better-evidenced published field (rule 14
+``[R-ACCURATE]``'s reconciled-real-data path), with zero free parameters. The
+crosswalk is a 15-row identity between two registries, each row verified on
+nameplate agreement and DROPPED (keeping its Gold Book date) rather than guessed
+when it fails.
+
 **Rule 25 ``[R-ISO-SCOPE]``.** NYISO-only, from NYISO's own posting; the
 artifact records its ISO and :func:`load_market_solar_monthly` hard-errors on
 a mismatch rather than falling back to another ISO's numbers.
@@ -77,20 +100,33 @@ ARTIFACT: Path = RAW_DIR / "reference" / "nyiso-market-solar-capacity.csv"
 MONTHS_PER_YEAR: int = 12
 
 
-@lru_cache(maxsize=1)
-def _read_artifact(path: str) -> dict[tuple[int, int, str], float]:
+# Artifact capacity column per in-service DATE basis (nyiso-133). Both columns
+# carry the SAME registry membership and the SAME published nameplate; they
+# differ only in the month a unit's capacity switches on.
+_CAPACITY_COLUMN: dict[bool, str] = {
+    False: "capacity_mw",  # Gold Book "In-Service Date"
+    True: "capacity_mw_cod",  # EIA-860 Operating Year/Month
+}
+
+
+@lru_cache(maxsize=2)
+def _read_artifact(path: str, column: str) -> dict[tuple[int, int, str], float]:
     """Return ``{(year, month, model_zone): capacity_mw}`` from the artifact.
 
     Args:
         path: Absolute path to the curated CSV (a string so the cache key is
             hashable).
+        column: Capacity column to read — one of :data:`_CAPACITY_COLUMN`'s
+            values, selecting the published in-service date basis.
 
     Returns:
         Mapping from ``(year, month, model zone)`` to registered nameplate MW.
 
     Raises:
         ValueError: if any row carries an ISO other than ``NYISO`` (rule 25 —
-            never silently consume another ISO's artifact).
+            never silently consume another ISO's artifact), or if *column* is
+            absent from the artifact (an armed basis must never fall back to
+            the other one silently).
     """
     out: dict[tuple[int, int, str], float] = {}
     with open(path, newline="") as fh:
@@ -101,8 +137,13 @@ def _read_artifact(path: str) -> dict[tuple[int, int, str], float]:
                     f"{path}: row carries iso={iso!r}; this artifact is NYISO-only "
                     "(rule 25 [R-ISO-SCOPE])"
                 )
+            if column not in row:
+                raise ValueError(
+                    f"{path}: no {column!r} column — regenerate with "
+                    "scripts/data/derive_nyiso_market_solar.py"
+                )
             key = (int(row["year"]), int(row["month"]), row["model_zone"].strip())
-            out[key] = float(row["capacity_mw"])
+            out[key] = float(row[column])
     if not out:
         raise ValueError(f"{path}: no rows")
     return out
@@ -113,6 +154,7 @@ def load_market_solar_monthly(
     year: int,
     zone_names: list[str] | tuple[str, ...],
     path: Path | None = None,
+    cod_basis: bool = False,
 ) -> np.ndarray | None:
     """Return NYISO registered market-generator solar capacity by zone-month.
 
@@ -122,6 +164,12 @@ def load_market_solar_monthly(
         year: Solve year.
         zone_names: Ordered model zone names, matching ``iso_config.zones``.
         path: Optional artifact override (tests).
+        cod_basis: Read the EIA-860 ``Operating Month`` in-service date basis
+            (``capacity_mw_cod``) instead of the Gold Book ``In-Service Date``
+            basis (``capacity_mw``) — ``ScenarioConfig.nyiso_solar_registry_cod_dates``,
+            nyiso-133. Default ``False`` (byte-identical). Same registry
+            membership and same published nameplate either way; only the month
+            a unit's capacity switches on differs.
 
     Returns:
         An ``(n_zones, 12)`` array of registered nameplate MW by month, ordered
@@ -142,7 +190,7 @@ def load_market_solar_monthly(
             f"nyiso_solar_market_generator_basis is armed but {src} is missing; "
             "regenerate with scripts/data/derive_nyiso_market_solar.py"
         )
-    table = _read_artifact(str(src))
+    table = _read_artifact(str(src), _CAPACITY_COLUMN[bool(cod_basis)])
     if not any(k[0] == year for k in table):
         return None
     monthly = np.zeros((len(zone_names), MONTHS_PER_YEAR), dtype=float)
