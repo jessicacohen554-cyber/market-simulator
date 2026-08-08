@@ -182,6 +182,167 @@ def test_forward_run_uses_renewable_installed_mw():
     np.testing.assert_allclose(wind_cap.sum(), RENEWABLE_INSTALLED_MW["ERCOT"]["wind"])
 
 
+def _load_under_vintage(iso, year, iso_config, config, vintage):
+    """Call ``load_renewable_profiles`` with the EIA-860 vintage switch armed.
+
+    The vintage is a process global (``config.paths.set_eia860_vintage``) that
+    ``runner`` sets once before loading; these tests reproduce that seam and
+    always reset it, so a failure cannot leak the vintage into another test.
+    """
+    from market_sim.config.paths import set_eia860_vintage
+
+    set_eia860_vintage(vintage)
+    try:
+        return load_renewable_profiles(iso, year, iso_config, config)
+    finally:
+        set_eia860_vintage(None)
+
+
+@pytest.mark.parametrize(
+    ("iso", "vintage", "expected"),
+    [
+        # EIA-860 vintage-2020 year-end operable nameplate, measured through
+        # _eia860_monthly_capacity on each vintage_2020 sheet (FFR-3V-FIX §1).
+        ("ERCOT", 2020, {"wind": 27_541.0, "solar": 4_864.0}),
+        ("MISO", 2020, {"wind": 26_050.0, "solar": 2_048.0}),
+        # The 2023 vintage the T1-X crossover seeds from; MISO solar lands
+        # ABOVE the 7,000 MW constant here, so the fix is not one-directional.
+        ("MISO", 2023, {"wind": 31_215.0, "solar": 7_348.0}),
+    ],
+)
+def test_hindcast_seeds_renewables_from_its_own_vintage_fleet(iso, vintage, expected):
+    """A capacity hindcast seeds the pools from its vintage EIA-860 fleet.
+
+    A hindcast is ``mode="forecast"`` + ``hindcast=True``, so it does not take
+    the backcast branch; before FFR-3V-FIX it fell through to the present-day
+    ``RENEWABLE_INSTALLED_MW`` constant and a vintage-2020 MISO run held 7,000
+    MW of solar against the 2,048 MW that existed at its own cutoff.
+    """
+    iso_config = get_iso_config(iso)
+    config = ScenarioConfig(
+        iso=iso,
+        mode="forecast",
+        hindcast=True,
+        eia860_vintage_year=vintage,
+        start_year=vintage + 1,
+        end_year=vintage + 1,
+    )
+    _, wind_cap, _, solar_cap = _load_under_vintage(
+        iso, config.weather_year, iso_config, config, vintage
+    )
+    np.testing.assert_allclose(wind_cap.sum(), expected["wind"], rtol=1e-3)
+    np.testing.assert_allclose(solar_cap.sum(), expected["solar"], rtol=1e-3)
+
+
+def test_hindcast_seed_excludes_the_vintages_own_proposed_pipeline():
+    """The hindcast seed is read at the VINTAGE year, not the weather year.
+
+    ``load_renewable_profiles`` is called once with the run's fixed weather
+    year (2024 by default), and reading the vintage sheet at 2024 switches on
+    ``_add_proposed_capacity`` -- which grafts the vintage's own 2021-2024
+    proposed pipeline onto what is supposed to be the BASE fleet (ERCOT solar
+    4,864 -> 12,831 MW). Those are exactly the post-vintage additions the
+    evolution pipeline decides for itself, so seeding them would double-count.
+    """
+    iso_config = get_iso_config("ERCOT")
+    config = ScenarioConfig(
+        iso="ERCOT",
+        mode="forecast",
+        hindcast=True,
+        eia860_vintage_year=2020,
+        start_year=2021,
+        end_year=2021,
+    )
+    assert config.weather_year == 2024  # the seam the bug rode in on
+    _, _, _, solar_cap = _load_under_vintage(
+        "ERCOT", config.weather_year, iso_config, config, 2020
+    )
+
+    from market_sim.config.paths import set_eia860_vintage
+
+    set_eia860_vintage(2020)
+    try:
+        at_vintage = _eia860_monthly_capacity(
+            "ERCOT", "solar", iso_config.zone_names, 2020
+        )
+        at_weather = _eia860_monthly_capacity(
+            "ERCOT", "solar", iso_config.zone_names, 2024
+        )
+    finally:
+        set_eia860_vintage(None)
+
+    # The pipeline graft is real and large on this sheet ...
+    assert at_weather[:, -1].sum() > 2.0 * at_vintage[:, -1].sum()
+    # ... and the seed takes the vintage year-end fleet, not the grafted one.
+    np.testing.assert_allclose(solar_cap.sum(), at_vintage[:, -1].sum(), rtol=1e-6)
+
+
+def test_hindcast_seed_is_not_derated_by_the_vintage_ramp():
+    """The base pool is fully online: no intra-year commissioning ramp.
+
+    Every plant in the vintage year-end array was in service before the run's
+    first solve year, so ramping the base pool down through the vintage year's
+    own COD months would de-rate a fleet that runs the whole horizon. The
+    per-zone capacity is the year-end split and each online zone's CF is the
+    flat ISO profile.
+    """
+    iso_config = get_iso_config("MISO")
+    kwargs = dict(
+        iso="MISO",
+        mode="forecast",
+        hindcast=True,
+        eia860_vintage_year=2020,
+        start_year=2021,
+        end_year=2021,
+    )
+    _, _, solar_cf_on, cap_on = _load_under_vintage(
+        "MISO",
+        2024,
+        iso_config,
+        ScenarioConfig(vintage_capacity_ramp=True, **kwargs),
+        2020,
+    )
+    _, _, solar_cf_off, cap_off = _load_under_vintage(
+        "MISO",
+        2024,
+        iso_config,
+        ScenarioConfig(vintage_capacity_ramp=False, **kwargs),
+        2020,
+    )
+    np.testing.assert_allclose(cap_on, cap_off)
+    np.testing.assert_allclose(solar_cf_on, solar_cf_off)
+
+
+def test_plain_forecast_ignores_the_vintage_seed():
+    """A non-hindcast forecast keeps RENEWABLE_INSTALLED_MW, vintage or not.
+
+    ``eia860_vintage_year`` alone must not move the production forecast path:
+    the runner only arms the vintage switch for a backcast or a hindcast, and
+    the seed override is gated on ``config.hindcast`` to match.
+    """
+    iso_config = get_iso_config("MISO")
+    config = ScenarioConfig(iso="MISO", mode="forecast", eia860_vintage_year=2020)
+    assert config.hindcast is False
+    _, wind_cap, _, solar_cap = load_renewable_profiles(
+        "MISO", _TEST_YEAR, iso_config, config
+    )
+    np.testing.assert_allclose(solar_cap.sum(), RENEWABLE_INSTALLED_MW["MISO"]["solar"])
+    np.testing.assert_allclose(wind_cap.sum(), RENEWABLE_INSTALLED_MW["MISO"]["wind"])
+
+
+def test_hindcast_without_a_vintage_keeps_the_constant():
+    """No vintage -> nothing measured to seed from -> the constant stands."""
+    iso_config = get_iso_config("MISO")
+    config = ScenarioConfig(
+        iso="MISO", mode="forecast", hindcast=True, eia860_vintage_year=None
+    )
+    _, wind_cap, _, solar_cap = load_renewable_profiles(
+        "MISO", _TEST_YEAR, iso_config, config
+    )
+    np.testing.assert_allclose(solar_cap.sum(), RENEWABLE_INSTALLED_MW["MISO"]["solar"])
+    np.testing.assert_allclose(wind_cap.sum(), RENEWABLE_INSTALLED_MW["MISO"]["wind"])
+
+
 def test_caiso_solar_allocated_to_trading_zones_not_import():
     """CAISO solar fills the NP15/ZP26/LA_BASIN/SDGE/SP15_rest trading zones, never WECC_import."""
     iso_config = get_iso_config("CAISO")

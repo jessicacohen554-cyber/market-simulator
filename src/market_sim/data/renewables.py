@@ -2315,9 +2315,24 @@ def load_renewable_profiles(
         cf = derive_cf_profile(values, RENEWABLE_AVG_CF[iso][fuel])
         return np.clip(cf * config.renewable_cf_adjustment, _CF_MIN, _CF_MAX)
 
-    allocated: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-    for fuel in _RENEWABLE_FUELS:
-        monthly = _eia860_monthly_capacity(iso, fuel, zone_names, year)
+    def _monthly_capacity(fuel: str, cal_year: int | None) -> np.ndarray | None:
+        """Return the ``(n_zones, 12)`` operable capacity for one fuel-year.
+
+        Wraps :func:`_eia860_monthly_capacity` with the one ISO-specific
+        capacity-basis swap that has to travel with it (NYISO market solar), so
+        every caller resolves the same population.
+
+        Args:
+            fuel: ``"wind"`` or ``"solar"``.
+            cal_year: Calendar year whose COD/retirement ramp is applied, or
+                ``None`` to treat every operable plant as online all year.
+
+        Returns:
+            The monthly capacity array, or ``None`` when no EIA-860 capacity
+            resolves for the ISO-fuel (the caller then falls back to the
+            hardcoded single-zone allocation).
+        """
+        monthly = _eia860_monthly_capacity(iso, fuel, zone_names, cal_year)
         if (
             fuel == "solar"
             and iso == "NYISO"
@@ -2340,7 +2355,7 @@ def load_renewable_profiles(
             # plants. Same membership, same nameplate — only the switch-on month.
             registered = load_market_solar_monthly(
                 iso,
-                year,
+                cal_year,
                 zone_names,
                 cod_basis=bool(
                     getattr(config, "nyiso_solar_registry_cod_dates", False)
@@ -2348,6 +2363,37 @@ def load_renewable_profiles(
             )
             if registered is not None:
                 monthly = registered
+        return monthly
+
+    # A capacity hindcast (W2-P5) is ``mode="forecast"`` + ``hindcast=True``, so
+    # it does NOT take the backcast branch below — yet it initialises from a
+    # vintage EIA-860 snapshot and evolves forward from it exactly as a backcast
+    # base year would. Before FFR-3V-FIX it therefore fell through to
+    # RENEWABLE_INSTALLED_MW, the canonical PRESENT-DAY forward-projection base:
+    # a vintage-2020 MISO hindcast seeded 7,000 MW of solar against the 2,048 MW
+    # that existed at its own cutoff (3.4x), and ERCOT 38,000 against 4,864
+    # (7.8x) — post-vintage information inside a run whose entire premise is the
+    # vintage cutoff, and a base the evolution channels then ADD to
+    # (runner.py wind_cap[z] += additions), so any injected/screened MW
+    # double-counts on an already-inflated pool. Resolve the run's own vintage
+    # once here; the pools are seeded from THAT year's measured EIA-860 fleet
+    # instead (rule 13 [R-MEASURED]: the vintage sheet is exactly what a run at
+    # that cutoff may know, and it regenerates for any vintage; rule 14
+    # [R-ACCURATE]: measured beats the constant). ``None`` for a plain forecast
+    # and for a hindcast carrying no vintage — both keep the constant, so the
+    # production forecast path is untouched. See
+    # docs/handoffs/ffr-3v-fix-2026-08-08.md.
+    hindcast_vintage: int | None = None
+    if (
+        config.mode != "backcast"
+        and getattr(config, "hindcast", False)
+        and config.eia860_vintage_year is not None
+    ):
+        hindcast_vintage = int(config.eia860_vintage_year)
+
+    allocated: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for fuel in _RENEWABLE_FUELS:
+        monthly = _monthly_capacity(fuel, year)
         if monthly is not None:
             # A calibration backcast (config.mode == "backcast", set
             # explicitly — never inferred from gas_price_override) is
@@ -2356,8 +2402,28 @@ def load_renewable_profiles(
             # RENEWABLE_INSTALLED_MW — the current-fleet base used as the
             # starting point for forward projections.
             is_backcast = config.mode == "backcast"
+            # The hindcast seed is read at the VINTAGE year, not at the weather
+            # year: ``year`` here is the fixed weather year (2024 by default for
+            # a plain hindcast), and reading the vintage sheet at 2024 also
+            # switches on _add_proposed_capacity, which grafts the vintage's own
+            # 2021-2024 proposed pipeline onto the "base" fleet (ERCOT solar
+            # 4,864 -> 12,831 MW) — precisely the post-vintage additions the
+            # evolution pipeline is supposed to decide for itself. Seeding at
+            # the vintage year takes the year-end measured fleet and nothing
+            # else, and it carries the zone split with it so the base pool's
+            # geography is the vintage's too.
+            seed_monthly = (
+                _monthly_capacity(fuel, hindcast_vintage)
+                if (hindcast_vintage is not None and not is_backcast)
+                else None
+            )
+            hindcast_seeded = False
             if is_backcast:
                 installed_mw = float(monthly[:, -1].sum())
+            elif seed_monthly is not None:
+                monthly = seed_monthly
+                installed_mw = float(seed_monthly[:, -1].sum())
+                hindcast_seeded = True
             else:
                 installed_mw = RENEWABLE_INSTALLED_MW[iso][fuel]
             # A backcast prefers a measured hourly profile on the
@@ -2397,7 +2463,14 @@ def load_renewable_profiles(
                 vintage_ramp = True
             else:
                 cf_profile = _eia930_cf(fuel)
-                vintage_ramp = config.vintage_capacity_ramp
+                # The intra-year commissioning ramp is OFF for a hindcast seed:
+                # ``monthly`` is now the VINTAGE year's array, and every plant
+                # in it was already online before the run's first solve year
+                # (vintage + 1), so ramping the base pool down through the
+                # vintage year's own COD months would de-rate a fleet that is
+                # fully in service for the whole horizon. The year-end split is
+                # the base fleet; nothing commissions inside it.
+                vintage_ramp = config.vintage_capacity_ramp and not hindcast_seeded
                 if (
                     not is_backcast
                     and iso == "ERCOT"
