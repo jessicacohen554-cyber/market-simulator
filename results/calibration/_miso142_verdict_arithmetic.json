@@ -1,0 +1,111 @@
+{
+ "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "gate": "G-C2 -- the counterfactual arithmetic",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "H1_gw_bar": 2.0,
+ "sufficiency_frac": 0.5,
+ "years": {
+  "2023": {
+   "W1_jun_jul_h8_20": {
+    "deficit_usd_per_mwh": -4.75,
+    "model_slope_usd_per_gw_ols": 0.5068,
+    "model_slope_usd_per_gw_binned_+2GW": 0.449,
+    "actual_slope_usd_per_gw_ols": 0.9576,
+    "actual_over_model_slope": 1.89,
+    "H1_deltaQ_gw": 0.6954,
+    "H1_deltaQ_vs_bar": "0.695 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.3524,
+    "H1_reach_frac_of_deficit": 0.0742,
+    "required_gw_to_close_by_quantity": 9.37,
+    "idle_cushion_gw": 18.43,
+    "required_over_cushion": 0.51,
+    "branch": "C -- H1 REFUTED"
+   },
+   "JJA_h12_17": {
+    "deficit_usd_per_mwh": -8.333,
+    "model_slope_usd_per_gw_ols": 0.5829,
+    "model_slope_usd_per_gw_binned_+2GW": 0.473,
+    "actual_slope_usd_per_gw_ols": 1.0146,
+    "actual_over_model_slope": 1.74,
+    "H1_deltaQ_gw": 1.0357,
+    "H1_deltaQ_vs_bar": "1.036 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.6037,
+    "H1_reach_frac_of_deficit": 0.0724,
+    "required_gw_to_close_by_quantity": 14.3,
+    "idle_cushion_gw": 16.61,
+    "required_over_cushion": 0.86,
+    "branch": "C -- H1 REFUTED"
+   }
+  },
+  "2024": {
+   "W1_jun_jul_h8_20": {
+    "deficit_usd_per_mwh": -10.676,
+    "model_slope_usd_per_gw_ols": 0.447,
+    "model_slope_usd_per_gw_binned_+2GW": 0.624,
+    "actual_slope_usd_per_gw_ols": 0.9205,
+    "actual_over_model_slope": 2.06,
+    "H1_deltaQ_gw": 0.7697,
+    "H1_deltaQ_vs_bar": "0.770 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.3441,
+    "H1_reach_frac_of_deficit": 0.0322,
+    "required_gw_to_close_by_quantity": 23.88,
+    "idle_cushion_gw": 20.92,
+    "required_over_cushion": 1.14,
+    "branch": "C -- H1 REFUTED"
+   },
+   "JJA_h12_17": {
+    "deficit_usd_per_mwh": -10.671,
+    "model_slope_usd_per_gw_ols": 0.4915,
+    "model_slope_usd_per_gw_binned_+2GW": 0.663,
+    "actual_slope_usd_per_gw_ols": 1.492,
+    "actual_over_model_slope": 3.04,
+    "H1_deltaQ_gw": 0.658,
+    "H1_deltaQ_vs_bar": "0.658 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.3234,
+    "H1_reach_frac_of_deficit": 0.0303,
+    "required_gw_to_close_by_quantity": 21.71,
+    "idle_cushion_gw": 18.65,
+    "required_over_cushion": 1.16,
+    "branch": "C -- H1 REFUTED"
+   }
+  },
+  "2025": {
+   "W1_jun_jul_h8_20": {
+    "deficit_usd_per_mwh": -30.999,
+    "model_slope_usd_per_gw_ols": 0.6346,
+    "model_slope_usd_per_gw_binned_+2GW": 0.381,
+    "actual_slope_usd_per_gw_ols": 1.7133,
+    "actual_over_model_slope": 2.7,
+    "H1_deltaQ_gw": 0.0996,
+    "H1_deltaQ_vs_bar": "0.100 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.0632,
+    "H1_reach_frac_of_deficit": 0.002,
+    "required_gw_to_close_by_quantity": 48.85,
+    "idle_cushion_gw": 13.83,
+    "required_over_cushion": 3.53,
+    "branch": "C -- H1 REFUTED"
+   },
+   "JJA_h12_17": {
+    "deficit_usd_per_mwh": -30.435,
+    "model_slope_usd_per_gw_ols": 0.6375,
+    "model_slope_usd_per_gw_binned_+2GW": 0.623,
+    "actual_slope_usd_per_gw_ols": 2.1537,
+    "actual_over_model_slope": 3.38,
+    "H1_deltaQ_gw": 0.1182,
+    "H1_deltaQ_vs_bar": "0.118 GW vs 2.0 GW bar",
+    "H1_below_instrument_noise_floor": true,
+    "H1_reach_usd_per_mwh": 0.0754,
+    "H1_reach_frac_of_deficit": 0.0025,
+    "required_gw_to_close_by_quantity": 47.74,
+    "idle_cushion_gw": 13.28,
+    "required_over_cushion": 3.6,
+    "branch": "C -- H1 REFUTED"
+   }
+  }
+ }
+}

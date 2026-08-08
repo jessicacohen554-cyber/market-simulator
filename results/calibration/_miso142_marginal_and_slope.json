@@ -1,0 +1,1075 @@
+{
+ "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "gate": "G-B (signature vs cause; the stack slope)",
+ "keeper": "2026-08-05-miso-132b-cc-committed",
+ "basis": "model-only: keeper P1 price + P1 class dispatch + model fleet capability. No EIA-930/EIA-923 instrument offset enters this gate.",
+ "years": {
+  "2023": {
+   "W1_jun_jul_h8_20": {
+    "n_hours": 793,
+    "model_lw_price": 36.223,
+    "actual_lw_price": 40.973,
+    "deficit_usd_per_mwh": -4.75,
+    "thermal_gw_median": 65.037,
+    "thermal_gw_p05_p95": [
+     52.4,
+     76.555
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      39.1228,
+      54.2403,
+      57.8487,
+      59.9874,
+      61.362,
+      63.3479,
+      65.0367,
+      66.2488,
+      67.5999,
+      69.0054,
+      70.5124,
+      72.7245,
+      82.3582
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 66,
+       "thermal_gw_median": 51.6032,
+       "price_median": 29.007,
+       "price_mean": 28.637
+      },
+      {
+       "bin": 1,
+       "n": 66,
+       "thermal_gw_median": 56.2158,
+       "price_median": 31.364,
+       "price_mean": 31.674
+      },
+      {
+       "bin": 2,
+       "n": 66,
+       "thermal_gw_median": 58.9618,
+       "price_median": 32.945,
+       "price_mean": 33.098
+      },
+      {
+       "bin": 3,
+       "n": 66,
+       "thermal_gw_median": 60.5974,
+       "price_median": 33.539,
+       "price_mean": 33.936
+      },
+      {
+       "bin": 4,
+       "n": 66,
+       "thermal_gw_median": 62.3189,
+       "price_median": 34.511,
+       "price_mean": 34.58
+      },
+      {
+       "bin": 5,
+       "n": 66,
+       "thermal_gw_median": 64.3965,
+       "price_median": 35.686,
+       "price_mean": 35.66
+      },
+      {
+       "bin": 6,
+       "n": 66,
+       "thermal_gw_median": 65.6498,
+       "price_median": 36.562,
+       "price_mean": 36.142
+      },
+      {
+       "bin": 7,
+       "n": 66,
+       "thermal_gw_median": 66.8902,
+       "price_median": 36.926,
+       "price_mean": 37.029
+      },
+      {
+       "bin": 8,
+       "n": 66,
+       "thermal_gw_median": 68.3583,
+       "price_median": 37.99,
+       "price_mean": 37.488
+      },
+      {
+       "bin": 9,
+       "n": 66,
+       "thermal_gw_median": 69.743,
+       "price_median": 38.202,
+       "price_mean": 38.504
+      },
+      {
+       "bin": 10,
+       "n": 66,
+       "thermal_gw_median": 71.5173,
+       "price_median": 39.704,
+       "price_mean": 39.888
+      },
+      {
+       "bin": 11,
+       "n": 67,
+       "thermal_gw_median": 77.5572,
+       "price_median": 41.149,
+       "price_mean": 43.308
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": 0.542,
+     "+2GW": 0.449,
+     "+5GW": 0.463,
+     "+12GW": 0.408
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": true,
+     "thermal_gw_at_target": 76.824,
+     "gw_above_base": 11.787
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.1074,
+     "COAL_LIGNITE": 0.0054,
+     "COAL_PRB": 0.3869,
+     "CC_REGULAR": 0.1162,
+     "CT_PEAKER": 0.2064,
+     "ST_GAS": 0.1424,
+     "CC_CHP": 0.0203,
+     "CT_CHP": 0.0034,
+     "ST_CHP": 0.0054,
+     "OTHER": 0.0063,
+     "oil": 0.0,
+     "biomass": -0.0,
+     "_sum_check": 1.0
+    }
+   },
+   "JJA_h12_17": {
+    "n_hours": 552,
+    "model_lw_price": 39.488,
+    "actual_lw_price": 47.821,
+    "deficit_usd_per_mwh": -8.333,
+    "thermal_gw_median": 67.777,
+    "thermal_gw_p05_p95": [
+     56.226,
+     80.403
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      43.6237,
+      57.839,
+      60.945,
+      63.2853,
+      65.2844,
+      66.442,
+      67.7771,
+      69.0413,
+      70.0679,
+      71.2789,
+      74.9234,
+      79.0968,
+      88.3901
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 46,
+       "thermal_gw_median": 55.532,
+       "price_median": 31.439,
+       "price_mean": 31.031
+      },
+      {
+       "bin": 1,
+       "n": 46,
+       "thermal_gw_median": 59.9871,
+       "price_median": 33.367,
+       "price_mean": 33.466
+      },
+      {
+       "bin": 2,
+       "n": 46,
+       "thermal_gw_median": 61.9345,
+       "price_median": 34.715,
+       "price_mean": 34.701
+      },
+      {
+       "bin": 3,
+       "n": 46,
+       "thermal_gw_median": 64.5397,
+       "price_median": 36.106,
+       "price_mean": 36.309
+      },
+      {
+       "bin": 4,
+       "n": 46,
+       "thermal_gw_median": 65.901,
+       "price_median": 36.527,
+       "price_mean": 36.216
+      },
+      {
+       "bin": 5,
+       "n": 46,
+       "thermal_gw_median": 67.2063,
+       "price_median": 37.363,
+       "price_mean": 37.238
+      },
+      {
+       "bin": 6,
+       "n": 46,
+       "thermal_gw_median": 68.5688,
+       "price_median": 37.99,
+       "price_mean": 37.89
+      },
+      {
+       "bin": 7,
+       "n": 46,
+       "thermal_gw_median": 69.6529,
+       "price_median": 38.457,
+       "price_mean": 39.03
+      },
+      {
+       "bin": 8,
+       "n": 46,
+       "thermal_gw_median": 70.6851,
+       "price_median": 39.407,
+       "price_mean": 40.149
+      },
+      {
+       "bin": 9,
+       "n": 46,
+       "thermal_gw_median": 72.4261,
+       "price_median": 40.55,
+       "price_mean": 40.937
+      },
+      {
+       "bin": 10,
+       "n": 46,
+       "thermal_gw_median": 77.9607,
+       "price_median": 42.516,
+       "price_mean": 43.509
+      },
+      {
+       "bin": 11,
+       "n": 46,
+       "thermal_gw_median": 81.2456,
+       "price_median": 46.172,
+       "price_mean": 56.872
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": 0.454,
+     "+2GW": 0.473,
+     "+5GW": 0.61,
+     "+12GW": 0.576
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": false,
+     "max_observed_price": 46.172,
+     "at_thermal_gw": 81.246,
+     "note": "the model's own summer stack never reaches the target price anywhere in its observed range -- no quantity displacement inside the window can produce it"
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.1467,
+     "COAL_LIGNITE": 0.0016,
+     "COAL_PRB": 0.3533,
+     "CC_REGULAR": 0.0939,
+     "CT_PEAKER": 0.2507,
+     "ST_GAS": 0.122,
+     "CC_CHP": 0.0137,
+     "CT_CHP": 0.0033,
+     "ST_CHP": 0.0072,
+     "OTHER": 0.007,
+     "oil": 0.0002,
+     "biomass": 0.0003,
+     "_sum_check": 1.0
+    }
+   },
+   "ct_headroom_W1": {
+    "n_hours": 793,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17755.9,
+      "dispatch_mw": 4167.1,
+      "headroom_mw": 13588.8,
+      "loaded_frac": 0.2347
+     },
+     "CC_REGULAR": {
+      "capability_mw": 22409.7,
+      "dispatch_mw": 20680.6,
+      "headroom_mw": 1729.1,
+      "loaded_frac": 0.9228
+     },
+     "COAL": {
+      "capability_mw": 32041.3,
+      "dispatch_mw": 28925.1,
+      "headroom_mw": 3116.1,
+      "loaded_frac": 0.9027
+     }
+    },
+    "cushion_mw": 18434.0
+   },
+   "ct_headroom_JJA_h12_17": {
+    "n_hours": 552,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17749.4,
+      "dispatch_mw": 5001.5,
+      "headroom_mw": 12747.9,
+      "loaded_frac": 0.2818
+     },
+     "CC_REGULAR": {
+      "capability_mw": 22323.0,
+      "dispatch_mw": 20791.8,
+      "headroom_mw": 1531.2,
+      "loaded_frac": 0.9314
+     },
+     "COAL": {
+      "capability_mw": 32710.6,
+      "dispatch_mw": 30382.9,
+      "headroom_mw": 2327.7,
+      "loaded_frac": 0.9288
+     }
+    },
+    "cushion_mw": 16606.8
+   },
+   "ct_headroom_JJAS_h12_17": {
+    "n_hours": 732,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17764.0,
+      "dispatch_mw": 4503.5,
+      "headroom_mw": 13260.4,
+      "loaded_frac": 0.2535
+     },
+     "CC_REGULAR": {
+      "capability_mw": 21782.4,
+      "dispatch_mw": 20124.5,
+      "headroom_mw": 1657.8,
+      "loaded_frac": 0.9239
+     },
+     "COAL": {
+      "capability_mw": 31990.5,
+      "dispatch_mw": 29364.9,
+      "headroom_mw": 2625.6,
+      "loaded_frac": 0.9179
+     }
+    },
+    "cushion_mw": 17543.8
+   }
+  },
+  "2024": {
+   "W1_jun_jul_h8_20": {
+    "n_hours": 793,
+    "model_lw_price": 33.297,
+    "actual_lw_price": 43.973,
+    "deficit_usd_per_mwh": -10.676,
+    "thermal_gw_median": 62.304,
+    "thermal_gw_p05_p95": [
+     44.927,
+     74.763
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      41.2169,
+      47.6316,
+      51.4623,
+      54.5856,
+      57.3931,
+      60.16,
+      62.3042,
+      63.9173,
+      65.2832,
+      67.8539,
+      70.2423,
+      73.2377,
+      83.712
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 66,
+       "thermal_gw_median": 44.1349,
+       "price_median": 24.675,
+       "price_mean": 24.618
+      },
+      {
+       "bin": 1,
+       "n": 66,
+       "thermal_gw_median": 49.7759,
+       "price_median": 28.487,
+       "price_mean": 28.027
+      },
+      {
+       "bin": 2,
+       "n": 66,
+       "thermal_gw_median": 52.8372,
+       "price_median": 30.566,
+       "price_mean": 29.673
+      },
+      {
+       "bin": 3,
+       "n": 66,
+       "thermal_gw_median": 55.8062,
+       "price_median": 29.898,
+       "price_mean": 30.412
+      },
+      {
+       "bin": 4,
+       "n": 66,
+       "thermal_gw_median": 59.2804,
+       "price_median": 30.612,
+       "price_mean": 30.637
+      },
+      {
+       "bin": 5,
+       "n": 66,
+       "thermal_gw_median": 61.3849,
+       "price_median": 31.344,
+       "price_mean": 31.645
+      },
+      {
+       "bin": 6,
+       "n": 66,
+       "thermal_gw_median": 63.0771,
+       "price_median": 32.883,
+       "price_mean": 33.021
+      },
+      {
+       "bin": 7,
+       "n": 66,
+       "thermal_gw_median": 64.6676,
+       "price_median": 33.589,
+       "price_mean": 33.791
+      },
+      {
+       "bin": 8,
+       "n": 66,
+       "thermal_gw_median": 66.4878,
+       "price_median": 34.839,
+       "price_mean": 35.014
+      },
+      {
+       "bin": 9,
+       "n": 66,
+       "thermal_gw_median": 68.7354,
+       "price_median": 36.627,
+       "price_mean": 36.744
+      },
+      {
+       "bin": 10,
+       "n": 66,
+       "thermal_gw_median": 71.5781,
+       "price_median": 38.433,
+       "price_mean": 38.813
+      },
+      {
+       "bin": 11,
+       "n": 67,
+       "thermal_gw_median": 76.0276,
+       "price_median": 41.293,
+       "price_mean": 41.68
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": 0.804,
+     "+2GW": 0.624,
+     "+5GW": 0.662,
+     "+12GW": 0.667
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": false,
+     "max_observed_price": 41.293,
+     "at_thermal_gw": 76.028,
+     "note": "the model's own summer stack never reaches the target price anywhere in its observed range -- no quantity displacement inside the window can produce it"
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.1252,
+     "COAL_LIGNITE": 0.0084,
+     "COAL_PRB": 0.3221,
+     "CC_REGULAR": 0.1314,
+     "CT_PEAKER": 0.2658,
+     "ST_GAS": 0.1107,
+     "CC_CHP": 0.0237,
+     "CT_CHP": 0.0041,
+     "ST_CHP": 0.0072,
+     "OTHER": 0.0006,
+     "oil": 0.0,
+     "biomass": 0.0007,
+     "_sum_check": 1.0
+    }
+   },
+   "JJA_h12_17": {
+    "n_hours": 552,
+    "model_lw_price": 39.1,
+    "actual_lw_price": 49.772,
+    "deficit_usd_per_mwh": -10.671,
+    "thermal_gw_median": 65.252,
+    "thermal_gw_p05_p95": [
+     49.182,
+     79.157
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      42.939,
+      51.5338,
+      55.8396,
+      59.9711,
+      62.4836,
+      64.0273,
+      65.252,
+      67.0628,
+      68.7804,
+      70.7428,
+      73.103,
+      76.8697,
+      84.3327
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 46,
+       "thermal_gw_median": 47.7691,
+       "price_median": 26.946,
+       "price_mean": 26.567
+      },
+      {
+       "bin": 1,
+       "n": 46,
+       "thermal_gw_median": 53.3591,
+       "price_median": 31.327,
+       "price_mean": 30.5
+      },
+      {
+       "bin": 2,
+       "n": 46,
+       "thermal_gw_median": 57.3949,
+       "price_median": 29.425,
+       "price_mean": 29.786
+      },
+      {
+       "bin": 3,
+       "n": 46,
+       "thermal_gw_median": 61.2269,
+       "price_median": 30.896,
+       "price_mean": 31.373
+      },
+      {
+       "bin": 4,
+       "n": 46,
+       "thermal_gw_median": 63.279,
+       "price_median": 32.605,
+       "price_mean": 32.818
+      },
+      {
+       "bin": 5,
+       "n": 46,
+       "thermal_gw_median": 64.7112,
+       "price_median": 33.14,
+       "price_mean": 33.302
+      },
+      {
+       "bin": 6,
+       "n": 46,
+       "thermal_gw_median": 66.0786,
+       "price_median": 33.806,
+       "price_mean": 33.967
+      },
+      {
+       "bin": 7,
+       "n": 46,
+       "thermal_gw_median": 68.0716,
+       "price_median": 35.376,
+       "price_mean": 35.304
+      },
+      {
+       "bin": 8,
+       "n": 46,
+       "thermal_gw_median": 69.6424,
+       "price_median": 36.771,
+       "price_mean": 36.492
+      },
+      {
+       "bin": 9,
+       "n": 46,
+       "thermal_gw_median": 72.0989,
+       "price_median": 38.106,
+       "price_mean": 38.442
+      },
+      {
+       "bin": 10,
+       "n": 46,
+       "thermal_gw_median": 74.4101,
+       "price_median": 38.271,
+       "price_mean": 38.91
+      },
+      {
+       "bin": 11,
+       "n": 46,
+       "thermal_gw_median": 80.5205,
+       "price_median": 44.806,
+       "price_mean": 86.505
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": 0.539,
+     "+2GW": 0.663,
+     "+5GW": 0.74,
+     "+12GW": 0.659
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": false,
+     "max_observed_price": 44.806,
+     "at_thermal_gw": 80.52,
+     "note": "the model's own summer stack never reaches the target price anywhere in its observed range -- no quantity displacement inside the window can produce it"
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.1454,
+     "COAL_LIGNITE": 0.0093,
+     "COAL_PRB": 0.3083,
+     "CC_REGULAR": 0.1111,
+     "CT_PEAKER": 0.2934,
+     "ST_GAS": 0.102,
+     "CC_CHP": 0.0184,
+     "CT_CHP": 0.0042,
+     "ST_CHP": 0.0064,
+     "OTHER": -0.0009,
+     "oil": 0.0019,
+     "biomass": 0.0005,
+     "_sum_check": 1.0
+    }
+   },
+   "ct_headroom_W1": {
+    "n_hours": 793,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17766.4,
+      "dispatch_mw": 4234.3,
+      "headroom_mw": 13532.1,
+      "loaded_frac": 0.2383
+     },
+     "CC_REGULAR": {
+      "capability_mw": 21578.9,
+      "dispatch_mw": 20015.2,
+      "headroom_mw": 1563.7,
+      "loaded_frac": 0.9275
+     },
+     "COAL": {
+      "capability_mw": 33107.3,
+      "dispatch_mw": 27287.1,
+      "headroom_mw": 5820.2,
+      "loaded_frac": 0.8242
+     }
+    },
+    "cushion_mw": 20916.0
+   },
+   "ct_headroom_JJA_h12_17": {
+    "n_hours": 552,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17745.3,
+      "dispatch_mw": 5119.1,
+      "headroom_mw": 12626.2,
+      "loaded_frac": 0.2885
+     },
+     "CC_REGULAR": {
+      "capability_mw": 21825.8,
+      "dispatch_mw": 20554.3,
+      "headroom_mw": 1271.5,
+      "loaded_frac": 0.9417
+     },
+     "COAL": {
+      "capability_mw": 33557.9,
+      "dispatch_mw": 28807.4,
+      "headroom_mw": 4750.5,
+      "loaded_frac": 0.8584
+     }
+    },
+    "cushion_mw": 18648.2
+   },
+   "ct_headroom_JJAS_h12_17": {
+    "n_hours": 732,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17750.4,
+      "dispatch_mw": 4725.0,
+      "headroom_mw": 13025.4,
+      "loaded_frac": 0.2662
+     },
+     "CC_REGULAR": {
+      "capability_mw": 20982.6,
+      "dispatch_mw": 19755.0,
+      "headroom_mw": 1227.6,
+      "loaded_frac": 0.9415
+     },
+     "COAL": {
+      "capability_mw": 32534.5,
+      "dispatch_mw": 27959.3,
+      "headroom_mw": 4575.3,
+      "loaded_frac": 0.8594
+     }
+    },
+    "cushion_mw": 18828.3
+   }
+  },
+  "2025": {
+   "W1_jun_jul_h8_20": {
+    "n_hours": 793,
+    "model_lw_price": 44.439,
+    "actual_lw_price": 75.438,
+    "deficit_usd_per_mwh": -30.999,
+    "thermal_gw_median": 65.544,
+    "thermal_gw_p05_p95": [
+     47.016,
+     76.547
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      39.2749,
+      50.3207,
+      55.3424,
+      58.1335,
+      61.3713,
+      63.0733,
+      65.5444,
+      67.8224,
+      69.431,
+      70.9799,
+      72.9211,
+      75.2369,
+      82.3952
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 66,
+       "thermal_gw_median": 45.8087,
+       "price_median": 32.704,
+       "price_mean": 33.025
+      },
+      {
+       "bin": 1,
+       "n": 66,
+       "thermal_gw_median": 53.3594,
+       "price_median": 36.037,
+       "price_mean": 36.233
+      },
+      {
+       "bin": 2,
+       "n": 66,
+       "thermal_gw_median": 56.871,
+       "price_median": 37.347,
+       "price_mean": 37.495
+      },
+      {
+       "bin": 3,
+       "n": 66,
+       "thermal_gw_median": 59.8835,
+       "price_median": 39.14,
+       "price_mean": 39.326
+      },
+      {
+       "bin": 4,
+       "n": 66,
+       "thermal_gw_median": 62.4229,
+       "price_median": 41.974,
+       "price_mean": 41.736
+      },
+      {
+       "bin": 5,
+       "n": 66,
+       "thermal_gw_median": 64.1537,
+       "price_median": 42.373,
+       "price_mean": 42.508
+      },
+      {
+       "bin": 6,
+       "n": 66,
+       "thermal_gw_median": 66.5937,
+       "price_median": 42.006,
+       "price_mean": 42.905
+      },
+      {
+       "bin": 7,
+       "n": 66,
+       "thermal_gw_median": 68.4505,
+       "price_median": 43.802,
+       "price_mean": 44.319
+      },
+      {
+       "bin": 8,
+       "n": 66,
+       "thermal_gw_median": 70.2951,
+       "price_median": 45.769,
+       "price_mean": 46.383
+      },
+      {
+       "bin": 9,
+       "n": 66,
+       "thermal_gw_median": 71.7929,
+       "price_median": 45.261,
+       "price_mean": 47.219
+      },
+      {
+       "bin": 10,
+       "n": 66,
+       "thermal_gw_median": 73.9751,
+       "price_median": 46.679,
+       "price_mean": 50.499
+      },
+      {
+       "bin": 11,
+       "n": 67,
+       "thermal_gw_median": 76.8755,
+       "price_median": 52.875,
+       "price_mean": 62.521
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": -0.15,
+     "+2GW": 0.381,
+     "+5GW": 0.704,
+     "+12GW": null
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": false,
+     "max_observed_price": 52.875,
+     "at_thermal_gw": 76.876,
+     "note": "the model's own summer stack never reaches the target price anywhere in its observed range -- no quantity displacement inside the window can produce it"
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.1342,
+     "COAL_LIGNITE": 0.0128,
+     "COAL_PRB": 0.2911,
+     "CC_REGULAR": 0.1108,
+     "CT_PEAKER": 0.3164,
+     "ST_GAS": 0.1095,
+     "CC_CHP": 0.0117,
+     "CT_CHP": 0.0011,
+     "ST_CHP": 0.0089,
+     "OTHER": 0.0031,
+     "oil": 0.0002,
+     "biomass": 0.0002,
+     "_sum_check": 1.0
+    }
+   },
+   "JJA_h12_17": {
+    "n_hours": 552,
+    "model_lw_price": 44.245,
+    "actual_lw_price": 74.68,
+    "deficit_usd_per_mwh": -30.435,
+    "thermal_gw_median": 68.167,
+    "thermal_gw_p05_p95": [
+     49.273,
+     76.704
+    ],
+    "stack_curve": {
+     "edges_gw": [
+      42.634,
+      51.6515,
+      56.7623,
+      59.965,
+      62.9689,
+      65.9576,
+      68.167,
+      69.8549,
+      70.9581,
+      72.5349,
+      74.0808,
+      75.7148,
+      81.9908
+     ],
+     "bins": [
+      {
+       "bin": 0,
+       "n": 46,
+       "thermal_gw_median": 48.3622,
+       "price_median": 33.742,
+       "price_mean": 33.493
+      },
+      {
+       "bin": 1,
+       "n": 46,
+       "thermal_gw_median": 54.8877,
+       "price_median": 35.594,
+       "price_mean": 35.678
+      },
+      {
+       "bin": 2,
+       "n": 46,
+       "thermal_gw_median": 57.8083,
+       "price_median": 37.894,
+       "price_mean": 38.301
+      },
+      {
+       "bin": 3,
+       "n": 46,
+       "thermal_gw_median": 61.7197,
+       "price_median": 41.163,
+       "price_mean": 40.99
+      },
+      {
+       "bin": 4,
+       "n": 46,
+       "thermal_gw_median": 64.2882,
+       "price_median": 40.872,
+       "price_mean": 42.176
+      },
+      {
+       "bin": 5,
+       "n": 46,
+       "thermal_gw_median": 67.0725,
+       "price_median": 41.557,
+       "price_mean": 42.327
+      },
+      {
+       "bin": 6,
+       "n": 46,
+       "thermal_gw_median": 68.7606,
+       "price_median": 43.254,
+       "price_mean": 43.753
+      },
+      {
+       "bin": 7,
+       "n": 46,
+       "thermal_gw_median": 70.4164,
+       "price_median": 44.018,
+       "price_mean": 44.82
+      },
+      {
+       "bin": 8,
+       "n": 46,
+       "thermal_gw_median": 71.5659,
+       "price_median": 44.756,
+       "price_mean": 46.475
+      },
+      {
+       "bin": 9,
+       "n": 46,
+       "thermal_gw_median": 73.2078,
+       "price_median": 44.996,
+       "price_mean": 46.213
+      },
+      {
+       "bin": 10,
+       "n": 46,
+       "thermal_gw_median": 74.7813,
+       "price_median": 48.088,
+       "price_mean": 51.58
+      },
+      {
+       "bin": 11,
+       "n": 46,
+       "thermal_gw_median": 76.856,
+       "price_median": 51.966,
+       "price_mean": 57.494
+      }
+     ]
+    },
+    "slope_usd_per_gw": {
+     "+1GW": 0.784,
+     "+2GW": 0.623,
+     "+5GW": 0.467,
+     "+12GW": null
+    },
+    "gw_needed_to_reach_actual": {
+     "reachable": false,
+     "max_observed_price": 51.966,
+     "at_thermal_gw": 76.856,
+     "note": "the model's own summer stack never reaches the target price anywhere in its observed range -- no quantity displacement inside the window can produce it"
+    },
+    "marginal_response_ols": {
+     "COAL_BIT": 0.138,
+     "COAL_LIGNITE": 0.0073,
+     "COAL_PRB": 0.2976,
+     "CC_REGULAR": 0.0986,
+     "CT_PEAKER": 0.3199,
+     "ST_GAS": 0.113,
+     "CC_CHP": 0.0135,
+     "CT_CHP": 0.0013,
+     "ST_CHP": 0.008,
+     "OTHER": 0.0026,
+     "oil": 0.0,
+     "biomass": 0.0002,
+     "_sum_check": 1.0
+    }
+   },
+   "ct_headroom_W1": {
+    "n_hours": 793,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17591.3,
+      "dispatch_mw": 6013.3,
+      "headroom_mw": 11578.0,
+      "loaded_frac": 0.3418
+     },
+     "CC_REGULAR": {
+      "capability_mw": 20013.9,
+      "dispatch_mw": 18539.9,
+      "headroom_mw": 1474.0,
+      "loaded_frac": 0.9264
+     },
+     "COAL": {
+      "capability_mw": 31612.8,
+      "dispatch_mw": 30838.4,
+      "headroom_mw": 774.4,
+      "loaded_frac": 0.9755
+     }
+    },
+    "cushion_mw": 13826.4
+   },
+   "ct_headroom_JJA_h12_17": {
+    "n_hours": 552,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17630.0,
+      "dispatch_mw": 6390.8,
+      "headroom_mw": 11239.1,
+      "loaded_frac": 0.3625
+     },
+     "CC_REGULAR": {
+      "capability_mw": 20335.1,
+      "dispatch_mw": 18905.0,
+      "headroom_mw": 1430.1,
+      "loaded_frac": 0.9297
+     },
+     "COAL": {
+      "capability_mw": 32103.3,
+      "dispatch_mw": 31495.2,
+      "headroom_mw": 608.1,
+      "loaded_frac": 0.9811
+     }
+    },
+    "cushion_mw": 13277.3
+   },
+   "ct_headroom_JJAS_h12_17": {
+    "n_hours": 732,
+    "classes": {
+     "CT_PEAKER": {
+      "capability_mw": 17653.1,
+      "dispatch_mw": 6070.2,
+      "headroom_mw": 11582.9,
+      "loaded_frac": 0.3439
+     },
+     "CC_REGULAR": {
+      "capability_mw": 19935.1,
+      "dispatch_mw": 18476.0,
+      "headroom_mw": 1459.1,
+      "loaded_frac": 0.9268
+     },
+     "COAL": {
+      "capability_mw": 30961.9,
+      "dispatch_mw": 30284.3,
+      "headroom_mw": 677.7,
+      "loaded_frac": 0.9781
+     }
+    },
+    "cushion_mw": 13719.7
+   }
+  }
+ }
+}
