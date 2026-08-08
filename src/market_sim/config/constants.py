@@ -3276,8 +3276,27 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     # (EIA EPM by-state utility-scale CFs); solar is the physical
     # utility-PV value for the latitude band. needs-citation: verify
     # against EIA-923 ISO totals before quoting a forecast.
+    #
+    # EXCEPTION, NYISO solar (nyiso-132, 2026-08-07): no longer Tier 3 — it is
+    # MEASURED off NYISO's own market-generator registry, discharging the
+    # needs-citation above for that one entry. 2026 Gold Book Table III-2a
+    # reports 981.8 GWh over 573.4 MW (15 units) for 2025, and 573.4 MW x
+    # 8,760 h x 0.1955 = 982.0 GWh reproduces it to 0.02 %. 2025 is the ONLY
+    # admissible year: 2023/2024 read 0.1629/0.1468, contaminated by
+    # commissioning ramps (registered capacity 174.4 -> 573.4 MW in 2024, mean
+    # month/year-end 0.6800), and 2025 added no PV market generator at all, so
+    # it is the one clean read of a mature fleet. The excluded years are the
+    # identification, not a preference, and are NOT averaged in.
+    # This is the normalization target derive_cf_profile scales the NYISO solar
+    # shape to; it pairs with nyiso_solar_market_generator_basis, which makes
+    # the registry the capacity basis, so constant and fleet are one
+    # population. Zero free parameters (registry energy / registry capacity is
+    # an identity). Rule 13 [R-MEASURED] admissible: regenerates from each Gold
+    # Book vintage and responds to fleet change. Rule 25 [R-ISO-SCOPE]: NEISO's
+    # 0.15 below is NOT covered and keeps its Tier-3 needs-citation.
+    # Identification: results/calibration/PREREG-nyiso132-solar-cf-level-2026-08-07.md
     "MISO": {"wind": 0.34, "solar": 0.22},
-    "NYISO": {"wind": 0.26, "solar": 0.15},
+    "NYISO": {"wind": 0.26, "solar": 0.1955},
     "NEISO": {"wind": 0.30, "solar": 0.15},
 }
 
