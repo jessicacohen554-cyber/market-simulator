@@ -305,12 +305,75 @@ def derive_year(year: int, gas_day: pd.Series) -> dict:
     return out
 
 
+def derive_year_continuous(year: int, gas_day: pd.Series) -> dict:
+    """Per-hour-node cleared share + wall ladder for one year (ERCOT-178).
+
+    The IDENTICAL statistics :func:`derive_year` computes per net-load bin,
+    keyed per corpus hour node instead (PRECOMMIT-ercot178 §2): a node's
+    x-coordinate is the hour's within-year net-load percentile rank
+    (:func:`_netload_pct`, unchanged); its ``share`` is Σcleared/Σlive over
+    that hour's site-rows; its ladder is the MW-weighted
+    :data:`LADDER_QUANTILES` of that hour's offered-but-uncleared segment
+    multipliers. Hours with exactly tied ranks pool their rows (the only
+    cross-hour pooling; forced by x-monotonicity). Zero new parameters.
+    """
+    df = _load_year(year)
+    if df.empty:
+        return {}
+    site_hours, segments = _collapse_and_segment(df, gas_day)
+    pct = _netload_pct(year)
+    site_hours = site_hours.copy()
+    segments = segments.copy()
+    site_hours["x"] = pct[site_hours["hoy"].to_numpy(int)]
+    segments["x"] = pct[segments["hoy"].to_numpy(int)]
+
+    out: dict[str, dict] = {}
+    for cls in sorted(site_hours["cls"].unique()):
+        sh = site_hours[site_hours["cls"] == cls]
+        seg = segments[segments["cls"] == cls]
+        g = sh.groupby("x").agg(live=("live", "sum"), cleared=("cleared", "sum"))
+        g = g[g["live"] > 0].sort_index()
+        share_pct = [round(float(x), 6) for x in g.index]
+        share = [
+            round(float(c) / float(lv), 4) for c, lv in zip(g["cleared"], g["live"])
+        ]
+        pct_nodes: list[float] = []
+        ladders: list[list[float]] = []
+        for x, gb in seg.groupby("x", sort=True):
+            qs = _weighted_quantiles(
+                gb["mult"].to_numpy(float), gb["mw"].to_numpy(float), LADDER_QUANTILES
+            )
+            if not all(np.isfinite(q) for q in qs):
+                continue
+            pct_nodes.append(round(float(x), 6))
+            ladders.append([round(float(m), 3) for m in qs])
+        out[cls] = {
+            "share_pct": share_pct,
+            "share": share,
+            "pct": pct_nodes,
+            "ladder": ladders,
+            "n_share_nodes": len(share_pct),
+            "n_ladder_nodes": len(pct_nodes),
+        }
+    return out
+
+
 def main() -> None:
     """Derive and write the cleared-share boundary + wall JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument(
+        "--continuous",
+        action="store_true",
+        help="ERCOT-178: write the continuous-node vintage "
+        "(ercot_dam_cleared_share_contpct.json) instead of the stepped bins — "
+        "the frozen stepped artifact is never touched by this mode",
+    )
     args = ap.parse_args()
+    if args.continuous:
+        _main_continuous(args)
+        return
 
     gas_day = _gas_day_series()
     per_year: dict[int, dict] = {}
@@ -395,6 +458,110 @@ def main() -> None:
 
     args.out.write_text(json.dumps(result, indent=1))
     print(f"wrote {args.out}")
+
+
+def _main_continuous(args) -> None:
+    """Write the ERCOT-178 continuous-node vintage (``--continuous``).
+
+    A NEW artifact (`ercot_dam_cleared_share_contpct.json` unless ``--out``
+    overrides) for the pre-registered `ercot_offer_surface_continuous` gate —
+    the frozen stepped artifact is never modified (PRECOMMIT-ercot178 §2; the
+    PJM within-season vintage precedent). Pooled fallback = the same node
+    statistics over the union of the years' rows at each rank.
+    """
+    out_path = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_dam_cleared_share_contpct.json"
+    )
+    gas_day = _gas_day_series()
+    per_year: dict[int, dict] = {}
+    pooled_frames: dict[str, dict[str, list]] = {}
+    for y in args.years:
+        per_year[y] = derive_year_continuous(y, gas_day)
+        for cls, entry in per_year[y].items():
+            print(
+                f"{y} {cls}: {entry['n_share_nodes']} share nodes, "
+                f"{entry['n_ladder_nodes']} ladder nodes"
+            )
+
+    # Pooled fallback: union of the years' node rows re-grouped by rank. Never
+    # consulted for a year carried in `years` (the apply precedence), so it
+    # only serves forward/unmapped years exactly as the stepped pooled table.
+    classes = sorted({c for d in per_year.values() for c in d})
+    for cls in classes:
+        rows: list[tuple[float, list[float]]] = []
+        srows: list[tuple[float, float]] = []
+        for y in args.years:
+            e = per_year.get(y, {}).get(cls)
+            if not e:
+                continue
+            rows += list(zip(e["pct"], e["ladder"]))
+            srows += list(zip(e["share_pct"], e["share"]))
+        lad_by_x: dict[float, list[list[float]]] = {}
+        for x, lad in rows:
+            lad_by_x.setdefault(x, []).append(lad)
+        sh_by_x: dict[float, list[float]] = {}
+        for x, s in srows:
+            sh_by_x.setdefault(x, []).append(s)
+        xs = sorted(lad_by_x)
+        sxs = sorted(sh_by_x)
+        pooled_frames[cls] = {
+            "share_pct": [round(x, 6) for x in sxs],
+            "share": [round(float(np.mean(sh_by_x[x])), 4) for x in sxs],
+            "pct": [round(x, 6) for x in xs],
+            "ladder": [
+                [
+                    round(float(np.mean([lad[r] for lad in lad_by_x[x]])), 3)
+                    for r in range(len(LADDER_QUANTILES))
+                ]
+                for x in xs
+            ],
+        }
+
+    result: dict = {
+        "_provenance": {
+            "source": (
+                "ERCOT 60-Day DAM Disclosure Gen Resource Data, delivery years "
+                + "-".join(str(y) for y in args.years)
+            ),
+            "method": (
+                "IDENTICAL statistics to the stepped vintage (config-collapsed "
+                "site-hour cleared share of live capability + MW-weighted "
+                "quantile ladder of offered-but-uncleared segment multipliers), "
+                "keyed per corpus HOUR NODE at the hour's within-year net-load "
+                "percentile rank instead of per bin; rank-tied hours pool "
+                "their rows (PRECOMMIT-ercot178 §2, zero new parameters)"
+            ),
+            "driver": (
+                "system net-load percentile within year (EIA-930 demand - wind "
+                "- solar), forward-native (a forecast year ranks its own "
+                "load+VRE)"
+            ),
+            "conditioning": "continuous-netload-pct",
+            "ladder_quantiles": list(LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+            "classes": {
+                "CC": ["CCGT90", "CCLE90"],
+                "CT": ["SCGT90", "SCLE90"],
+                "ST": ["GSREH", "GSNONR", "GSSUP"],
+            },
+            "frozen": (
+                "rule 23 — re-derive only on a disclosure source-data update, "
+                "never because a residual moved; the stepped artifact is "
+                "untouched by this vintage"
+            ),
+        }
+    }
+    for cls in classes:
+        years_entry = {
+            str(y): per_year[y][cls] for y in args.years if cls in per_year[y]
+        }
+        result[cls] = {"years": years_entry, "pooled": pooled_frames[cls]}
+
+    out_path.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out_path}")
 
 
 if __name__ == "__main__":

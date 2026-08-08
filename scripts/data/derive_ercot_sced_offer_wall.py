@@ -408,12 +408,97 @@ def derive_year(year: int, gas_day: pd.Series) -> tuple[dict, dict, list[str]]:
     return out, coverage, [p.name for p in files]
 
 
+def derive_year_continuous(
+    year: int, gas_day: pd.Series
+) -> tuple[dict, dict, list[str]]:
+    """Per-hour-node RT spare-offer ladder for one year (ERCOT-178).
+
+    The IDENTICAL statistic :func:`derive_year` computes per net-load bin —
+    the MW-weighted :data:`LADDER_QUANTILES` of online-spare SCED2 segment
+    multipliers — keyed per corpus hour node instead (PRECOMMIT-ercot178 §2):
+    a node's x-coordinate is the hour's within-year net-load percentile rank
+    (:func:`_netload_pct`, unchanged). Hours with exactly tied ranks pool
+    their segments (forced by x-monotonicity). Streaming accumulation exactly
+    as the stepped derive (per (class, hour) instead of per (class, bin)).
+    Zero new parameters; year-scoped with no pooled fallback, as the stepped
+    artifact.
+    """
+    files = _sced_source_files(year)
+    pct = _netload_pct(year)
+    # hour_bin is only consumed by _chunk_segments for the 'bin' column; feed
+    # the hour-of-year index instead so the same streaming leg keys per hour.
+    hour_key = np.arange(HOURS)
+
+    mult_acc: dict[tuple, list[np.ndarray]] = {}
+    mw_acc: dict[tuple, list[np.ndarray]] = {}
+    ts_seen: dict[tuple, set] = {}
+    saw_rows = False
+    for path in files:
+        df = pd.read_parquet(path, columns=_READ_COLS)
+        df = _delivery_year_rows(df, year)
+        df = df[df["Resource Type"].isin(CLASS_OF_RESTYPE)]
+        stat = df["Telemetered Resource Status"].astype(str).str.strip()
+        df = _coerce_sced_numeric(df[stat.str.startswith("ON")].copy())
+        seg = _chunk_segments(df, gas_day, hour_key)
+        del df
+        if seg.empty:
+            continue
+        saw_rows = True
+        for (cls, h), grp in seg.groupby(["cls", "bin"], sort=False):
+            key = (cls, int(h))
+            mult_acc.setdefault(key, []).append(grp["mult"].to_numpy())
+            mw_acc.setdefault(key, []).append(grp["mw"].to_numpy())
+            ts_seen.setdefault(key, set()).update(grp["ts"].tolist())
+        del seg
+    if not saw_rows:
+        return {}, {}, [p.name for p in files]
+
+    out: dict[str, dict] = {}
+    coverage: dict[str, dict] = {}
+    for cls in sorted({c for (c, _h) in mult_acc}):
+        by_x: dict[float, tuple[list[np.ndarray], list[np.ndarray]]] = {}
+        n_iv = 0
+        for (c, h), mults in mult_acc.items():
+            if c != cls:
+                continue
+            x = float(pct[h])
+            acc = by_x.setdefault(x, ([], []))
+            acc[0].extend(mults)
+            acc[1].extend(mw_acc[(c, h)])
+            n_iv += len(ts_seen[(c, h)])
+        pct_nodes: list[float] = []
+        ladders: list[list[float]] = []
+        for x in sorted(by_x):
+            mult = np.concatenate(by_x[x][0])
+            mw = np.concatenate(by_x[x][1])
+            qs = _weighted_quantiles(
+                mult.astype(float), mw.astype(float), LADDER_QUANTILES
+            )
+            if not all(np.isfinite(q) for q in qs):
+                continue
+            pct_nodes.append(round(x, 6))
+            ladders.append([round(float(m), 3) for m in qs])
+        out[cls] = {"pct": pct_nodes, "ladder": ladders, "n_nodes": len(pct_nodes)}
+        coverage[cls] = {"nodes": len(pct_nodes), "intervals": n_iv}
+    return out, coverage, [p.name for p in files]
+
+
 def main() -> None:
     """Derive and write the RT (SCED) spare-offer wall ladder JSON."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="+", default=[2024])
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument(
+        "--continuous",
+        action="store_true",
+        help="ERCOT-178: write the continuous-node vintage "
+        "(ercot_sced_offer_wall_contpct.json) instead of the stepped bins — "
+        "the frozen stepped artifact is never touched by this mode",
+    )
     args = ap.parse_args()
+    if args.continuous:
+        _main_continuous(args)
+        return
 
     gas_day = _gas_day_series()
     per_year: dict[int, dict] = {}
@@ -493,6 +578,83 @@ def main() -> None:
 
     args.out.write_text(json.dumps(result, indent=1))
     print(f"wrote {args.out}")
+
+
+def _main_continuous(args) -> None:
+    """Write the ERCOT-178 continuous-node vintage (``--continuous``).
+
+    A NEW artifact (`ercot_sced_offer_wall_contpct.json` unless ``--out``
+    overrides) for the pre-registered `ercot_offer_surface_continuous` gate —
+    the frozen stepped artifact is never modified (PRECOMMIT-ercot178 §2).
+    Year-scoped, no pooled fallback, exactly as the stepped vintage.
+    """
+    out_path = (
+        args.out
+        if args.out != DEFAULT_OUT
+        else CALIBRATION_DIR / "ercot_sced_offer_wall_contpct.json"
+    )
+    gas_day = _gas_day_series()
+    per_year: dict[int, dict] = {}
+    coverage: dict[str, dict] = {}
+    sources: dict[str, list[str]] = {}
+    for y in args.years:
+        per_year[y], cov, files = derive_year_continuous(y, gas_day)
+        coverage[str(y)] = cov
+        sources[str(y)] = files
+        for cls, entry in per_year[y].items():
+            print(f"{y} {cls}: {entry['n_nodes']} ladder nodes")
+
+    classes = sorted({c for d in per_year.values() for c in d})
+    result: dict = {
+        "_provenance": {
+            "source": (
+                "ERCOT 60-Day SCED Disclosure Gen Resource Data (NP3-965), "
+                "full-year publication-month corpus, rows filtered to "
+                "delivery years " + "-".join(str(y) for y in args.years)
+            ),
+            "method": (
+                "IDENTICAL statistic to the stepped vintage (MW-weighted "
+                "quantile ladder of online-spare SCED2 segment multipliers), "
+                "keyed per corpus HOUR NODE at the hour's within-year "
+                "net-load percentile rank instead of per bin; rank-tied hours "
+                "pool their segments (PRECOMMIT-ercot178 §2, zero new "
+                "parameters)"
+            ),
+            "driver": (
+                "system net-load percentile within year (EIA-930 demand - "
+                "wind - solar), forward-native"
+            ),
+            "conditioning": "continuous-netload-pct",
+            "ladder_quantiles": list(LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+            "classes": {
+                "CC": ["CCGT90", "CCLE90"],
+                "CT": ["SCGT90", "SCLE90"],
+            },
+            "year_scoped": (
+                "Per-year node tables, NO pooled fallback (rule 13): a year "
+                "absent from this artifact gets NO RT wall (the DAM basis is "
+                "retained byte-identical), exactly as the stepped vintage"
+            ),
+            "source_files": sources,
+            "coverage": coverage,
+            "frozen": (
+                "rule 23 — re-derive only on a SCED disclosure source-data "
+                "update, never because a residual moved; the stepped artifact "
+                "is untouched by this vintage"
+            ),
+        }
+    }
+    for cls in classes:
+        result[cls] = {
+            "years": {
+                str(y): per_year[y][cls] for y in args.years if cls in per_year[y]
+            }
+        }
+
+    out_path.write_text(json.dumps(result, indent=1))
+    print(f"wrote {out_path}")
 
 
 if __name__ == "__main__":
