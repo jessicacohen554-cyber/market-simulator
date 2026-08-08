@@ -1,0 +1,55 @@
+{
+ "session": "caiso-183",
+ "gate": "CONTROL",
+ "statement": "PRECHECK sec 7: the same-head control must reproduce the keeper TO THE CENT; if it does not, THAT is the finding.",
+ "years": {
+  "2023": {
+   "keeper_load_weighted_lambda": 56.4476819404,
+   "control_load_weighted_lambda": 56.4450007364,
+   "drift_usd_per_mwh": -0.002681204,
+   "drift_pct_of_level": -4.74989e-05,
+   "zone_hours_differing": 5012,
+   "zone_hours_total": 61320,
+   "max_abs_delta_any_zone": 81.006608,
+   "max_abs_delta_LOAD_CARRYING_zones": 2.29773,
+   "zero_load_zones": [
+    "WECC_PNW",
+    "WECC_DSW"
+   ]
+  },
+  "2024": {
+   "keeper_load_weighted_lambda": 38.6313726293,
+   "control_load_weighted_lambda": 38.629005393,
+   "drift_usd_per_mwh": -0.0023672362,
+   "drift_pct_of_level": -6.12776e-05,
+   "zone_hours_differing": 2465,
+   "zone_hours_total": 61320,
+   "max_abs_delta_any_zone": 125.56967,
+   "max_abs_delta_LOAD_CARRYING_zones": 2.278932,
+   "zero_load_zones": [
+    "WECC_PNW",
+    "WECC_DSW"
+   ]
+  },
+  "2025": {
+   "keeper_load_weighted_lambda": 39.462417931,
+   "control_load_weighted_lambda": 39.462417931,
+   "drift_usd_per_mwh": 0.0,
+   "drift_pct_of_level": 0.0,
+   "zone_hours_differing": 0,
+   "zone_hours_total": 61320,
+   "max_abs_delta_any_zone": 0.0,
+   "max_abs_delta_LOAD_CARRYING_zones": 0.0,
+   "zero_load_zones": [
+    "WECC_PNW",
+    "WECC_DSW"
+   ]
+  }
+ },
+ "verdict": {
+  "CONTROL": "PASS \u2014 reproduces to the cent",
+  "scored_C3a_identical": "+4.2 % / +11.5 % / +14.7 %, byte-equal to the keeper's, and the reported model level (56.45 / 38.63 / 39.46) matches at 2 dp",
+  "but_not_bit_identical": "2025 IS bit-identical (0 of 61,320 zone-hours differ). 2023 and 2024 are NOT: 5,012 and 2,465 zone-hours differ. The LARGE deltas (to $81.01 / $125.57) sit entirely on WECC_PNW / WECC_DSW, the two WECC IMPORT nodes, which carry ZERO CAISO demand and so contribute nothing to the load-weighted mean; the load-carrying zones move at most $2.30 / $2.28 in a few hundred hours. The signature is adjacent-hour price swaps at an import node -- LP alternate optima under degeneracy, not a model change.",
+  "why_it_matters": "This sets the NOISE FLOOR for reading the treated arm: same-head churn is 0.0048 % / 0.0061 % / 0.0000 % of level, so any B1 C3a move above ~0.01 % of level is signal. It also qualifies caiso-180's and caiso-181's 'exactly $0.000' -- that was measured at SCORED precision, which cannot see sub-cent churn; measured hour-by-hour at full precision it is $0.000 only in 2025."
+ }
+}

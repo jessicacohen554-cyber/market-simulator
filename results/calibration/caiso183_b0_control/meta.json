@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-03T21:04:39",
+  "timestamp": "2026-08-08T17:28:01",
   "iso": "CAISO",
   "years": [
     2023,
@@ -42,7 +42,9 @@
   "cc_committed_offer_margin": false,
   "coal_peak_offer_margin": false,
   "coal_perplant_offer_level": false,
+  "coal_perplant_offer_yearly": false,
   "nysdec_peaker_rule_availability": false,
+  "nyiso_solar_market_generator_basis": false,
   "oil_primary_bin_fuel": false,
   "st_gas_intermediate": false,
   "st_gas_intermediate_cf_threshold": null,
@@ -76,7 +78,8 @@
     "nuclear_unit_availability": true,
     "caiso_firm_import_selfsched_clip": true,
     "caiso_per_year_import_caps": true,
-    "caiso_asymmetric_path_ratings": false
+    "caiso_asymmetric_path_ratings": true,
+    "caiso_zonal_loss_surface": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -240,7 +243,8 @@
   "caiso_corridor_atc_forward": null,
   "caiso_reference_price_seam": null,
   "caiso_per_year_import_caps": true,
-  "caiso_asymmetric_path_ratings": false,
+  "caiso_asymmetric_path_ratings": true,
+  "caiso_zonal_loss_surface": true,
   "capacity_deliverability_limits": true,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -276,6 +280,8 @@
   "miso_seam_flow_percentile": null,
   "miso_seam_export_limit": false,
   "miso_seam_envelope_merit_cap": false,
+  "nyiso_seam_deliverability_envelope": false,
+  "nyiso_seam_par_attribution": false,
   "miso_pjm_border_anchor": false,
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
@@ -303,21 +309,20 @@
     "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
     "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
-    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet",
-    "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
+    "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-443e4e755ffb.parquet"
   },
-  "git_sha": "41a1e79",
-  "basis_sha": "98ad9c1b2a916ba340a24d23ee075a9774885238",
-  "highspy_version": "1.14.0",
+  "git_sha": "d14920d3",
+  "basis_sha": "7307c4d822721df0943c28f91542bd78443b5b32",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.5-fc-v20-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.0",
       "pydantic": "2.13.4"
     }
   }
