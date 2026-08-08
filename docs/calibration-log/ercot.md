@@ -6483,3 +6483,63 @@ candidate on STRUCTURAL grounds, independently of the gate failures** — rule 1
 real". The successor's honest budget from this family is **~$2.6/MWh, not
 $8.2**, and `shed_hours must not rise in ANY year` becomes a PRIMARY falsifier
 rather than an inherited protective clause.
+
+## 2026-08-08 — ercot-180: the TOP-SCOPED grain (form b) EXHAUSTED-AT-IDENTIFICATION — zero admissible conduct edges above p97, so conditioning grain is CLOSED as a family; the §8 marginal-position diagnostic CONFIRMS the quantity-position wedge (actual price inside the position band in 94/100 top-gap hours) and CHARTERS ercot-181; NO LP, NO run registered, keeper UNCHANGED
+
+**Charter:** FINDING-ercot178 §7a's named successor (matrix §5.1 item 22) — finer
+stepped sub-bins above p97 only, edges from submitted-offer conduct structure.
+**Precommit pushed BEFORE any corpus read**
+(`docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`): the instrument
+(last-3 SCED2 steps of ON merchant gas as delivered-gas HR multipliers,
+MW-weighted two-sample KS below/above candidate rank edges, ≥30 hours of 2023
+per sub-bin, day-block permutation p < 0.01, MAX_EDGES = 2, delivery-2023
+corpus ONLY), G-SHED promoted to PRIMARY falsifier, the honest ceiling
+≤ ~$2.6/MWh, EXHAUSTED-AT-IDENTIFICATION pre-registered as admissible, and the
+§8 marginal-position diagnostic — all fixed before looking.
+
+**The identification (263 hours, 403,007 rows):** ZERO admissible breaks. Best
+candidate rank 0.99486 — the ~p99.5 boundary the ercot-178 §4 node-median
+table anticipated — KS 0.0878, **p = 0.017 vs the 0.01 bar**; the argmax
+failure closes every smaller candidate a fortiori. Structural reading
+(rule 1): the 4–6× rank-local structure in per-hour ladder MEDIANS does not
+survive as a pooled MW-mass distributional break with day-block significance —
+the top-of-curve extremes are thin-MW. **With form (a) `R` on reach
+(ercot-178) and form (b) `R` on identification, conditioning grain is CLOSED
+for the 2023 tail.** The instrument was not re-designed after reading the
+answer; the near-miss is the one datum a future full-year-2024/2025-corpus
+re-identification could revisit under a NEW precommit. Scaffolding merged
+default-off (gate `ercot_offer_surface_top_scoped`, cache-key registered both
+registries with the default key pinned; mode-aware vintage/compat guards; the
+shared ULP-pair encoder `scripts/lib/topscoped_encode.py`; four `--top-scoped`
+derive modes; the authored-NEVER-RUN seam probe) — a revival is a
+derive-and-prove session, not a rebuild. Gate-off control path byte-identical
+at session HEAD (2023 compose sha == the ercot-178 recorded control sha).
+
+**The §8 diagnostic (P-7 CONFIRMED —
+`results/calibration/ercot180_marginal_position.json`):** at the top-100 gap
+hours (mean gap $1,041/MWh) the accepted MW sits at **q_act p50 0.9976** of
+the marginal resource's own submitted curve (CC 92/100) vs the model marginal
+row at **q_mod p50 0.9117** of its class curve; **the actual RT price lies
+INSIDE the position band [curve@q_mod, curve@q_act] of the SAME curve in
+94/100 hours** (band typically [−$50, $5,000]: the real curves are CLIFFS the
+model's class-level ladder statistics dilute). Disclosed: the max-price-at-BP
+proxy is an upper envelope (share-of-gap saturates > 1); the containment
+statistic is the sizing number. **ercot-181 = the quantity-position lane**,
+chartered with: its own precommit FIRST; a sharper marginal-identification
+instrument fixed ex ante (candidate: interior-resource price-at-BP
+clustering); a rule-13-admissible position-conditional mechanism with zero
+fitted scalars; kill gates verbatim, G-SHED PRIMARY (the position lane is
+MORE shed-exposed than grain); and the honest terminus named — if no
+admissible instrument survives, an owner sitting on C3a-2023 reachability
+(the C3c-caveat path).
+
+**Rules 15/16:** no run was produced (the precommit's exhaustion clause states
+this explicitly — the ercot-176/177 precedent); dashboard untouched, ERCOT
+stays at 15 registered runs. **Data blocker carried:** the 2024/2025 SCED
+RT/pool corpora remain sample-day-only (561/500 nodes vs 2023's 7,917) — above
+p97 they carry 50/42 hours vs 2023's 263 — bounding any future re-derive and
+gating the p = 0.017 re-identification. Records:
+`results/calibration/FINDING-ercot180-topscoped-exhausted-2026-08-08.md`,
+`results/calibration/ercot180_edge_identification.json`,
+`results/calibration/ercot180_marginal_position.json`,
+`docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`. Next: ercot-181.
